@@ -30,6 +30,7 @@
 2001-10-11: Strip non oracle stuff from otl.h.
 2001-10-11: Added option to move to error in worksheet.
 2001-10-11: Added support for reverse indexes in extract.
+2001-10-11: Removed charts list in chart setup.
 
 1.1.2: Released 2001-10-07
 
