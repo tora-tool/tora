@@ -35,6 +35,8 @@ Extended functionality:
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Posibility to delete rows in toResultContent.
 * Information about SGA memory in DB tuning.
+* Ability to generate into several script (One per object and type) in DB
+	extraction.
 
 Windows problems:
 
