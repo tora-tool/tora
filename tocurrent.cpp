@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tosql.h"
 #include "tocurrent.h"
+#include "toresultstats.h"
 
 #include "tocurrent.moc"
 
@@ -122,6 +123,8 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Parameters=new toResultView(true,false,Connection,Tabs);
   Parameters->setSQL(SQLParameters);
   Tabs->addTab(Parameters,"Parameters");
+  Statistics=new toResultStats(false,Connection,Tabs);
+  Tabs->addTab(Statistics,"Statistics");
   Connection.addWidget(this);
   refresh();
 }
@@ -191,6 +194,8 @@ void toCurrent::refresh()
   Parameters->refresh();
   Parameters->setSorting(0);
   Version->refresh();
+  Statistics->refreshStats();
+  Grants->clear();
 
   addList(NULL,"System",SQLUserSysPrivs);
   addList(NULL,"Object",SQLUserTabPrivs);

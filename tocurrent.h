@@ -39,6 +39,7 @@
 
 class toResultView;
 class QTabWidget;
+class toResultStats;
 
 class toCurrent : public QVBox {
   Q_OBJECT
@@ -47,6 +48,7 @@ class toCurrent : public QVBox {
   toResultView *Version;
   toListView *Grants;
   toResultView *Parameters;
+  toResultStats *Statistics;
   toConnection &Connection;
   virtual void addRole(QListViewItem *parent);
   virtual void addList(QListViewItem *parent,const QString &typ,toSQL &sql,const QString &role=QString::null);
