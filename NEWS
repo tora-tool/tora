@@ -1,5 +1,6 @@
 1.3.6.1: Released 2002-07-05
 
+2002-07-04: Removed license.c file from CVS repository (Not needed for nonlicensed version).
 2002-07-04: Rewrote toresultlistformatui.uui to 2.x Qt format.
 2002-07-04: Fixed refresh in SGA trace.
 2002-07-04: Fixed problem in worksheet with executionplan not updating.
