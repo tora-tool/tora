@@ -44,6 +44,7 @@
 #include "toresultextract.h"
 #include "toresultlong.h"
 #include "toresultview.h"
+#include "tosgastatement.h"
 #include "tosql.h"
 #include "totool.h"
 
@@ -67,37 +68,49 @@
 #include "icons/refresh.xpm"
 #include "icons/totemporary.xpm"
 
-static toSQL SQLListTemporarySortObjects(
-			"toTemporary:ListTemporarySortObjects",
-			"select s.sid || ',' || s.serial# sid," \
-             		"s.username, u.tablespace," \
-			"substr(a.sql_text, 1, 50) sql_text," \
-			"round(((u.blocks*p.value)/1024/1024),2) size_mb " \
-			"from v$sort_usage u, v$session s, v$sqlarea a, v$parameter p " \
-			"where s.saddr = u.session_addr " \
-			"and a.address (+) = s.sql_address "\
-			"and a.hash_value (+) = s.sql_hash_value "\
-			"and p.name = 'db_block_size' "\
-			"group by " \
-			"s.sid || ',' || s.serial#, " \
-			"s.username, " \
-			"substr(a.sql_text, 1, 50), "\
-			"u.tablespace, " \
-			"round(((u.blocks*p.value)/1024/1024),2)" ,
-		    "Get temporary sort usage.");
+static toSQL SQLListTemporaryObjects("toTemporary:ListTemporaryObjects",
+				     "SELECT s.sid || ',' || s.serial# \"Session\",\n"
+				     "       s.username \"User\",\n"
+				     "       u.TABLESPACE \"Tablespace\",\n"
+				     "       segtype \"Type\",\n"
+				     "       substr ( a.sql_text,1,50 ) \"SQL\",\n"
+				     "       round ( u.blocks * p.value / :siz<int>,2 )||:sizstr<char[50]> \"Size\",\n"
+				     "       s.sql_address || ':' || s.sql_hash_value \" \"\n"
+				     "  FROM v$sort_usage u,\n"
+				     "       v$session s,\n"
+				     "       v$sqlarea a,\n"
+				     "       v$parameter p\n"
+				     " WHERE s.saddr = u.session_addr\n"
+				     "   AND a.address ( + ) = s.sql_address\n"
+				     "   AND a.hash_value ( + ) = s.sql_hash_value\n"
+				     "   AND p.name = 'db_block_size'",
+				     "Get temporary usage.","8.0");
 
-static toSQL SQLListTemporaryObjects(
-		"toTemporary:ListTermporaryObjects",
-	        "select * from all_tables where DURATION = 'SYS$SESSION' or duration = 'SYS$TRANSACTION'",
-		 "Get temporary object usage.");
-
+static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
+				      "SELECT s.sid || ',' || s.serial# \"Session\",\n"
+				      "       s.username \"User\",\n"
+				      "       u.TABLESPACE \"Tablespace\",\n"
+				      "       u.segtype \"Type\",\n"
+				      "       substr ( a.sql_text,1,50 ) \"SQL\",\n"
+				      "       round ( u.blocks * p.value / :siz<int>,2 )||:sizstr<char[50]> \"Size\",\n"
+				      "       s.sql_address || ':' || s.sql_hash_value \" \"\n"
+				      "  FROM v$tempseg_usage u,\n"
+				      "       v$session s,\n"
+				      "       v$sqlarea a,\n"
+				      "       v$parameter p\n"
+				      " WHERE s.saddr = u.session_addr\n"
+				      "   AND a.address ( + ) = s.sql_address\n"
+				      "   AND a.hash_value ( + ) = s.sql_hash_value\n"
+				      "   AND p.name = 'db_block_size'",
+				      QString::null,
+				      "9.0");
 
 class toTemporaryTool : public toTool {
   virtual char **pictureXPM(void)
   { return totemporary_xpm; }
 public:
   toTemporaryTool()
-    : toTool(250,"Temporary Objects")
+    : toTool(130,"Temporary Objects")
   { }
   virtual const char *menuItem()
   { return "Temporary Objects"; }
@@ -121,27 +134,28 @@ toTemporary::toTemporary(QWidget *main,toConnection &connection)
 		  toolbar);
 
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
+
   QSplitter *splitter=new QSplitter(Vertical,this);
 
-  SortObjects =new toResultLong(false,false,toQuery::Background,splitter);
-  SortObjects->setSQL(SQLListTemporarySortObjects);
+  Objects =new toResultLong(false,false,toQuery::Background,splitter);
+  QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
+  toQList args;
+  toPush(args,toQValue(toSizeDecode(unit)));
+  toPush(args,toQValue(unit));
 
-  TmpObjects =new toResultLong(false,false,toQuery::Background,splitter);
-  TmpObjects->setSQL(SQLListTemporaryObjects);
- 
-  {
-    QValueList<int> sizes=splitter->sizes();
-    sizes[0]=500;
-    splitter->setSizes(sizes);
-    splitter->setResizeMode(SortObjects,QSplitter::KeepSize);
-  }
+  Objects->setSelectionMode(QListView::Single);
+  Objects->query(SQLListTemporaryObjects,args);
+  connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
+	  this,SLOT(changeItem(QListViewItem *)));
+
+  Statement=new toSGAStatement(splitter);
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  refresh();
-  setFocusProxy(SortObjects);
+  setFocusProxy(Objects);
 }
 
 
@@ -163,7 +177,11 @@ void toTemporary::windowActivated(QWidget *widget)
 
 void toTemporary::refresh(void)
 {
-  SortObjects->refresh();
-  TmpObjects->refresh();
+  Objects->refresh();
 }
 
+void toTemporary::changeItem(QListViewItem *item)
+{
+  if (item)
+    Statement->changeAddress(item->text(Objects->columns()));
+}

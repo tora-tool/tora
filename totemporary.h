@@ -41,11 +41,12 @@
 class QPopupMenu;
 class toResultView;
 class toTask;
+class toSGAStatement;
 
 class toTemporary : public toToolWidget {
   Q_OBJECT
-  toResultView *SortObjects;
-  toResultView *TmpObjects;
+  toResultView *Objects;
+  toSGAStatement *Statement;
   QPopupMenu *ToolMenu;
 public:
   toTemporary(QWidget *parent,toConnection &connection);
@@ -53,6 +54,7 @@ public:
 public slots:
   virtual void refresh(void);
   virtual void windowActivated(QWidget *widget);
+  virtual void changeItem(QListViewItem *item);
 };
 
 #endif
