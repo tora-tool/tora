@@ -68,6 +68,7 @@ my $Perl=`which perl`;
 chomp $Perl;
 my $Linux;
 my $KDEApplication;
+my $KDELegacy;
 my $KDEInclude;
 my $KDELibs;
 my $NoRPath;
@@ -103,6 +104,9 @@ for (@ARGV) {
 	$ForceTarget=1;
     } elsif (/^--with-kde$/) {
 	$KDEApplication=1;
+    } elsif (/^--with-kde-21$/) {
+	$KDEApplication=1;
+	$KDELegacy=1;
     } elsif (/^--without-rpath$/) {
 	$NoRPath=1;
     } elsif (/^--with-kde-include=(.*)$/) {
@@ -128,6 +132,7 @@ Options can be any of the following:
 --with-lib         Add extra library to include (Include -l as well)
 --with-static      Force static binary compilation
 --with-kde         Compile as KDE application (Requires KDE 2.2 or later)
+--with-kde-21      Enable KDE legacy (KDE 2.1) support.
 --with-kde-include Where to find KDE include files
 --with-kde-libs    Where to find KDE libraries
 --without-rpath    Compile without rpath to Oracle libraries
@@ -185,7 +190,7 @@ int main(int argv,char **argc)
     return 0;
 }
 __TEMP__
-    if ($KDEApplication) {
+    if ($KDEApplication&&!$KDELegacy) {
 	print TEMP <<__TEMP__;
 
 #include <ktoolbar.h>
@@ -643,7 +648,8 @@ __EOT__
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
 	print MAKEFILE "#   OTL_ORA8I    - Compile for Oracle 8.1.x\n";
 	print MAKEFILE "#   OTL_ORA8     - Compile for Oracle 8.0.x\n";
-	print MAKEFILE "#   TO_KDE       - Compile as KDE application (Very experimental)\n";
+	print MAKEFILE "#   TO_KDE       - Compile as KDE application\n";
+	print MAKEFILE "#   TO_KDE_21    - Enable KDE 2.1 legacy support (Must still add TO_KDE as well)\n";
 	print MAKEFILE "#   TO_NAMESPACE - Any namespaces that should be used\n";
 	
 	if ($ORACLE_RELEASE =~ /^8.0/) {
@@ -655,6 +661,9 @@ __EOT__
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
+	}
+	if ($KDELegacy) {
+	    print MAKEFILE "DEFINES+=-DTO_KDE_21\n";
 	}
 	print MAKEFILE "\n";
 

@@ -367,13 +367,14 @@ public:
   {
     if (Debugger->isRunning()&&enabled()) {
       try {
-	int ret;
+	int ret = -1;
 	do {
 	  otl_stream poll(1,
 			  SQLDebugOutputPoll(Connection),
 			  Connection.connection());
 	  poll>>ret;
 	  char buffer[101];
+          buffer[0] = 0;
 	  poll>>buffer;
 	  if (ret==0||strlen(buffer))
 	    insertLine(QString::fromUtf8(buffer));
@@ -426,6 +427,7 @@ void toDebug::targetTask::run(void)
     int colSize;
     {
       char buffer[201];
+      buffer[0] = 0;
       toLocker lock(Parent.Lock);
       init>>buffer;
       Parent.TargetID=QString::fromUtf8(buffer);
@@ -1391,6 +1393,10 @@ void toDebug::updateState(int reason)
       QListViewItem *item=NULL;
       StackTrace->clear();
       for (int num=2;num<=depth;num++) {
+        name[0] = 0;
+        schema[0] = 0;
+        line = 0;
+        type[0] = 0;
 	stack<<num;
 	stack>>name;
 	stack>>schema;
@@ -1426,9 +1432,10 @@ void toDebug::updateState(int reason)
   
 	QListViewItem *next=NULL;
 	for (QListViewItem *item=Watch->firstChild();item;item=next) {
-	  int ret;
+	  int ret = -1;
 	  int space;
 	  char buffer[4001];
+          buffer[0] = 0;
 	  if (item->text(0).isEmpty()) {
 	    local<<item->text(2).utf8();
 	    local>>ret;
@@ -1452,6 +1459,7 @@ void toDebug::updateState(int reason)
 	    item->setText(5,"LIST");
 	  } else if (ret==TO_ERROR_INDEX_TABLE) {
 	    char buffer[4001];
+            buffer[0] = 0;
 	    if (item->text(0).isEmpty()) {
 	      index<<item->text(2).utf8();
 	      index>>buffer;

@@ -79,6 +79,7 @@ public:
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
       ColInfo<<text(10).utf8()<<text(11).utf8()<<text(0).utf8();
       char buffer[4001];
+      buffer[0] = 0;
       QString result("<B>");
       result.append(text(0));
       result.append("</B><BR><BR>");

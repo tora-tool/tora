@@ -78,7 +78,8 @@ TARGET=tora-plugin
 # Additional defines to use while compiling, except for the normal these are available
 #   OTL_ORA8I    - Compile for Oracle 8.1.x
 #   OTL_ORA8     - Compile for Oracle 8.0.x
-#   TO_KDE       - Compile as KDE application (Very experimental)
+#   TO_KDE       - Compile as KDE application
+#   TO_KDE_21    - Enable KDE 2.1 legacy support (Must still add TO_KDE as well)
 #   TO_NAMESPACE - Any namespaces that should be used
 DEFINES+=-DOTL_ORA8I
 DEFINES+=-DTO_NAMESPACE="using namespace std"

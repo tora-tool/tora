@@ -2702,6 +2702,7 @@ QString toExtract::createMView(const QString &schema,const QString &owner,
 		 Connection.connection());
   inf<<table.utf8()<<owner.utf8();
   char buffer[100];
+  buffer[0] = 0;
   inf>>buffer;
   QString index(QString::fromUtf8(buffer));
 
@@ -2767,6 +2768,7 @@ void toExtract::describeMView(list<QString> &lst,
 		 Connection.connection());
   inf<<table.utf8()<<owner.utf8();
   char buffer[100];
+  buffer[0] = 0;
   inf>>buffer;
   QString index(QString::fromUtf8(buffer));
 

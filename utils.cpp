@@ -68,6 +68,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 	// but if someone specifies a dateformat longer than 100 bytes he
 	// deserves everything he gets!
 	buffer=new char[max(dsc.dbsize*2+1,100)];
+	buffer[0]=0;
 	q>>buffer;
 	if (q.is_null()) {
 	  delete buffer;
@@ -84,6 +85,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
     case otl_var_blob:
       {
 	buffer=new char[maxSize+1];
+	buffer[0]=0;
 	otl_long_string data(buffer,maxSize);
 	q>>data;
 	buffer[maxSize]=0;
@@ -140,6 +142,7 @@ QString toNow(toConnection &conn)
 	       SQLNow(conn),
 	       conn.connection());
   char buffer[1024];
+  buffer[0] = 0;
   q>>buffer;
   return QString::fromUtf8(buffer);
 }
@@ -291,8 +294,13 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
 #ifdef TO_KDE // Will only work after KDE2.2
   if (parent==toMainWidget())
     tool=new KToolBar(toMainWidget(),QMainWindow::Top);
-  else
+  else {
+#ifdef TO_KDE_21
+    tool=new QToolBar(name,toMainWidget(),parent);
+#else
     tool=new KToolBar(toMainWidget(),parent);
+#endif
+  }
 #else
   if (parent==toMainWidget())
     tool=new QToolBar(name,toMainWidget());

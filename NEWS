@@ -22,6 +22,9 @@
 2001-05-21: Fixed to drag in toListView.
 2001-05-22: Added context menu and memo edit to toResultContent.
 2001-05-22: Fixed readonly bug in toMemoEditor.
+2001-05-22: Added support for KDE 2.1 (Weird colors in toolbars though).
+2001-05-22: Applied patch for uninitialised buffers (Thanx Frank Pavageau).
+2001-05-22: Don't change values when changing unit in toFilesize.
 
 0.9.1: Released 2001-05-20
 

@@ -100,11 +100,15 @@ int toFilesize::value(void)
 void toFilesize::changeType(bool)
 {
   if (MBSize->isChecked()) {
+#if 0
     Value->setValue(Value->value()/1024);
+#endif
     Value->setMaxValue(2097151);
   } else {
     Value->setMaxValue(2147483647);
+#if 0
     Value->setValue(Value->value()*1024);
+#endif
   }
 }
 
