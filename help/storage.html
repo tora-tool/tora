@@ -53,6 +53,14 @@ Coalesced free data in the current tablespace.</TD></TR>
 <TR><TD VALIGN=top><B>
 Move datafile</B></TD><TD VALIGN=top>
 Move a datafile to another location.</TD></TR>
-</TABLE>
+<TR><TD VALIGN=top><B>
+Change connection</B></TD><TD VALIGN=top>
+Change the connection to administrate storage for.</TD></TR>
+</TABLE><P>
+When you select a tablespace or datafile the lower part of this tool displays the objects (to the left) and extents (to the right) in that tablespace or file.
+A used extent is displayed as green in the extent view if the object it belongs to is not selected in the list to the right. Selecting an item in the list to 
+the right will paint it's extents red in the right extent view. Unallocated space is colored whie. Some information about the number of files and extents
+are displayed at the top of the extents display. Several datafiles are separated by one line of black in the extent view if a tablespace containing several
+files are viewed.
 </BODY>
 </HTML>
