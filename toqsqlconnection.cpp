@@ -181,7 +181,7 @@ public:
     if (driv=="QMYSQL3")
       return "MySQL";
     else if (driv=="QPSQL7")
-      return "PostrgeSQL";
+      return "PostgreSQL";
     else if (driv=="QTDS")
       return "Microsoft SQL/TDS";
     else if (driv=="QODBC3")
