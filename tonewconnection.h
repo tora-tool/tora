@@ -55,9 +55,11 @@ class toNewConnection : public QDialog
     QLabel* TextLabel1;
     QLabel* TextLabel2;
     QLabel* TextLabel3;
+    QLabel* TextLabel4;
     QPushButton* OkButton;
     QPushButton* CancelButton;
     QComboBox* Database;
+    QComboBox* Mode;
     QLineEdit* Password;
     QLineEdit* User;
     QCheckBox* SqlNet;

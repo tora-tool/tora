@@ -59,7 +59,13 @@ otl_connect *toConnection::newConnection(void)
   }
   otl_connect *conn;
   try {
-    conn=new otl_connect((const char *)connectString(true),0);
+    int oper=0;
+    int dba=0;
+    if (Mode=="SYS_OPER")
+      oper=1;
+    else if (Mode=="SYS_DBA")
+      dba=1;
+    conn=new otl_connect((const char *)connectString(true),0,oper,dba);
   } catch (...) {
 #ifdef WIN32
     QString str="ORACLE_SID=";
@@ -135,14 +141,20 @@ void toConnection::setup(void)
   }
 }
 
-toConnection::toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost)
-: SqlNet(sqlNet),User(iuser),Password(ipassword),Host(ihost)
+toConnection::toConnection(bool sqlNet,
+			   const QString &iuser,const QString &ipassword,const QString &ihost,
+			   const QString &imode)
+  : SqlNet(sqlNet),User(iuser),Password(ipassword),Host(ihost),Mode(imode)
 {
+  if (Mode=="Normal")
+    Mode=QString::null;
+  else if (Mode!="SYS_DBA"&&Mode!="SYS_OPER")
+    throw QString("Malformed mode string");
   setup();
 }
 
 toConnection::toConnection(const toConnection &conn)
-: SqlNet(conn.SqlNet),User(conn.User),Password(conn.Password),Host(conn.Host)
+  : SqlNet(conn.SqlNet),User(conn.User),Password(conn.Password),Host(conn.Host),Mode(conn.Mode)
 {
   setup();
 }
@@ -179,6 +191,10 @@ QString toConnection::connectString(bool pw) const
   if (!pw||SqlNet) {
     ret.append("@");
     ret.append(Host);
+  }
+  if (!pw && !Mode.isEmpty()) {
+    ret+=" ";
+    ret+=Mode;
   }
   if (!pw && !Version.isEmpty()) {
     ret+=" [";

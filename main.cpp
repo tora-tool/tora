@@ -203,20 +203,13 @@ int main(int argc,char **argv)
 
     return mainApp.exec();
   } catch (const otl_exception &exc) {
-    TOMessageBox::critical(NULL,
-			   "Unhandled exception",
-			   QString(QString::fromUtf8((const char *)exc.msg)),
-			   "Exit");
+    printf("Unhandled exception:\n\n%s\n",
+	   (const char *)QString::fromUtf8((const char *)exc.msg));
   } catch (const QString &str) {
-    TOMessageBox::critical(NULL,
-			   "Unhandled exception",
-			   str,
-			   "Exit");
+    printf("Unhandled exception:\n\n%s\n",
+	   (const char *)str);
   } catch (...) {
-    TOMessageBox::critical(NULL,
-			   "Unhandled exception",
-			   "Unknown type",
-			   "Exit");
+    printf("Unhandled exception of unknown type.\n\n");
   }
   return 1;
 }

@@ -1,37 +1,3 @@
-/****************************************************************************
- *
- * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000 GlobeCom AB
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- *      As a special exception, you have permission to link this program
- *      with the Oracle Client libraries and distribute executables, as long
- *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
- *
- *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
- *      permitted to distribute binaries compiled against these libraries
- *      without written consent from GlobeCom AB. Observe that this does not
- *      disallow linking to the Qt Free Edition.
- *
- * All trademarks belong to their respective owners.
- *
- ****************************************************************************/
-
 //
 // Oracle, ODBC and DB2/CLI Template Library, Version 3.2.18,
 // Copyright (C) Sergei Kuchin, 1996,2001
@@ -2508,13 +2474,13 @@ public:
   retcode=1;
  }
 
- otl_tmpl_connect(const char* connect_str,const int auto_commit=0)
+ otl_tmpl_connect(const char* connect_str,const int auto_commit=0,const int oper=0,const int dba=0)
  {
   connected=0;
   throw_count=0;
   retcode=1;
   long_max_size=32760;
-  rlogon(connect_str,auto_commit);
+  rlogon(connect_str,auto_commit,oper,dba);
  }
 
  virtual ~otl_tmpl_connect()
@@ -2527,10 +2493,10 @@ public:
   return TConnectStruct::initialize(threaded_mode);
  }
 
- void rlogon(const char* connect_str,const int auto_commit=0)
+ void rlogon(const char* connect_str,const int auto_commit=0,const int oper=0,const int dba=0)
  {
   throw_count=0;
-  retcode=connect_struct.rlogon(connect_str,auto_commit);
+  retcode=connect_struct.rlogon(connect_str,auto_commit,oper,dba);
   if(retcode)
    connected=1;
   else{
@@ -6818,7 +6784,7 @@ public:
   cursor_type=acursor_type;
  }
 
- int rlogon(const char* connect_str,const int auto_commit)
+ int rlogon(const char* connect_str,const int auto_commit,const int oper=0,const int dba=0)
  {
   char username[256];
   char passwd[256];
@@ -7850,9 +7816,9 @@ public:
 
  virtual ~otl_connect(){}
 
- void rlogon(const char* connect_str, const int aauto_commit=0)
+ void rlogon(const char* connect_str, const int aauto_commit=0,const int oper=0,const int dba=0)
  {
-  otl_odbc_connect::rlogon(connect_str,aauto_commit);
+  otl_odbc_connect::rlogon(connect_str,aauto_commit,oper,dba);
  }
 
  void logoff(void)
@@ -8914,7 +8880,7 @@ public:
   return 1;
  }
 
- int rlogon(const char* connect_str,const int auto_commit)
+ int rlogon(const char* connect_str,const int auto_commit,const int oper=0,const int dba=0)
  {
   if(!extern_lda)delete lda;
   lda=new Lda_Def;
@@ -9639,8 +9605,8 @@ public:
 
 
  otl_connect():otl_ora7_connect(){}
- otl_connect(const char* connect_str, const int aauto_commit=0)
-   : otl_ora7_connect(connect_str, aauto_commit){}
+ otl_connect(const char* connect_str, const int aauto_commit=0,const int oper=0,const int dba=0)
+   : otl_ora7_connect(connect_str, aauto_commit, oper, dba){}
 
  virtual ~otl_connect(){}
 
@@ -9662,9 +9628,9 @@ public:
   }
  }
 
- void rlogon(const char* connect_str, const int aauto_commit=0)
+ void rlogon(const char* connect_str, const int aauto_commit=0,const int oper=0,const int dba=0)
  {
-  otl_ora7_connect::rlogon(connect_str,aauto_commit);
+  otl_ora7_connect::rlogon(connect_str,aauto_commit,oper,dba);
  }
 
  void logoff(void)
@@ -11798,6 +11764,7 @@ public:
  int in_session;
  int session_begin_count;
  int ext_cred;
+ int ses_mode;
 
  static int initialize(const int threaded_mode=0)
  {int status;
@@ -11929,7 +11896,7 @@ public:
     errhp,
     authp,
     cred_type,
-    OTL_SCAST(ub4,OCI_DEFAULT));
+    OTL_SCAST(ub4,ses_mode));
   if(status)return 0;
 
   in_session=1;
@@ -11981,7 +11948,7 @@ public:
     errhp,
     authp,
     cred_type,
-    OTL_SCAST(ub4,OCI_DEFAULT));
+    OTL_SCAST(ub4,ses_mode));
   if(status)return 0;
 
   status=OCIAttrSet
@@ -12045,7 +12012,7 @@ public:
   return 1;
  }
 
- int rlogon(const char* connect_str,const int aauto_commit)
+ int rlogon(const char* connect_str,const int aauto_commit,const int oper=0,const int dba=0)
  {int status;
   char username[256];
   char passwd[256];
@@ -12086,6 +12053,13 @@ public:
    }
    *tnsname_ptr=0;
   }
+
+  if (oper)
+   ses_mode=OCI_SYSOPER;
+  else if (dba)
+   ses_mode=OCI_SYSDBA;
+  else
+   ses_mode=OCI_DEFAULT;
 
   envhp=0;
   srvhp=0;
@@ -13275,8 +13249,8 @@ public:
 #endif
 
  otl_connect():otl_ora8_connect(){}
- otl_connect(const char* connect_str, const int aauto_commit=0)
-   : otl_ora8_connect(connect_str, aauto_commit){}
+ otl_connect(const char* connect_str, const int aauto_commit=0,const int oper=0,const int dba=0)
+   : otl_ora8_connect(connect_str, aauto_commit, oper, dba){}
 
  virtual ~otl_connect(){}
 
@@ -13303,9 +13277,9 @@ public:
   }
  }
 
- void rlogon(const char* connect_str, const int aauto_commit=0)
+ void rlogon(const char* connect_str, const int aauto_commit=0,const int oper=0,const int dba=0)
  {
-  otl_ora8_connect::rlogon(connect_str,aauto_commit);
+  otl_ora8_connect::rlogon(connect_str,aauto_commit,oper,dba);
  }
 
  void logoff(void)

@@ -48,6 +48,7 @@ class toConnection {
   QString Password;
   QString Host;
   QString Version;
+  QString Mode;
   list<QWidget *> Widgets;
   bool NeedCommit;
   otl_connect *newConnection(void);
@@ -55,7 +56,9 @@ class toConnection {
   void setup(void);
   list<otl_connect *> FreeConnect;
 public:
-  toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost);
+  toConnection(bool sqlNet,
+	       const QString &iuser,const QString &ipassword,const QString &ihost,
+	       const QString &mode=QString::null);
   toConnection(const toConnection &conn);
   ~toConnection();
   bool closeWidgets(void);
@@ -65,6 +68,8 @@ public:
   { return Password; }
   const QString &host() const
   { return Host; }
+  const QString &mode() const
+  { return Mode; }
   const QString &version() const
   { return Version; }
   bool needCommit(void) const

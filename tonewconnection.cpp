@@ -59,9 +59,9 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 {
   if (!name)
     setName("toNewConnection");
-  resize(240,240); 
-  setMinimumSize(240,240);
-  setMaximumSize(240,240);
+  resize(240,300); 
+  setMinimumSize(240,300);
+  setMaximumSize(240,300);
   setCaption(tr("New database connection"));
 
   TextLabel1=new QLabel(this,"TextLabel1");
@@ -73,8 +73,12 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   TextLabel2->setText(tr("Password"));
 
   TextLabel3=new QLabel(this,"TextLabel3");
-  TextLabel3->setGeometry(QRect(10,140,61,20)); 
+  TextLabel3->setGeometry(QRect(10,140,220,20)); 
   TextLabel3->setText(tr("Database"));
+
+  TextLabel4=new QLabel(this,"TextLabel3");
+  TextLabel4->setGeometry(QRect(10,200,220,20)); 
+  TextLabel4->setText(tr("Connection Mode"));
 
   User=new QLineEdit(this,"User");
   User->setGeometry(QRect(10,20,220,23)); 
@@ -103,13 +107,19 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   if (!defdb.isEmpty())
     Database->insertItem(defdb);
 
+  Mode=new QComboBox(false,this,"Mode");
+  Mode->setGeometry(QRect(10,220,220,27));
+  Mode->insertItem("Normal");
+  Mode->insertItem("SYS_DBA");
+  Mode->insertItem("SYS_OPER");
+
   OkButton=new QPushButton(this,"OkButton");
-  OkButton->move(10,200); 
+  OkButton->move(10,260); 
   OkButton->setText(tr("&Connect"));
   OkButton->setDefault(true);
 
   CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(130,200); 
+  CancelButton->move(130,260); 
   CancelButton->setText(tr("Cancel"));
 
   connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
@@ -193,7 +203,8 @@ toConnection *toNewConnection::makeConnection(void)
     toConnection *retCon=new toConnection(SqlNet->isChecked(),
 					  User->text(),
 					  Password->text(),
-					  Database->currentText());
+					  Database->currentText(),
+					  Mode->currentText());
     return retCon;
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");
