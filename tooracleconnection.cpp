@@ -159,7 +159,7 @@ public:
     { Connection->cancel(); }
     virtual void throwExtendedException(toConnection &conn,const otl_exception &exc)
     {
-      if (conn.version()<"8.0") {
+      if (conn.version()<"8.0"&&exc.errorofs==0) {
 	// Serious OCI voodoo to get the Parse error location on Oracle7 servers
 
 	Lda_Def lda;
@@ -173,7 +173,7 @@ public:
 		    -1,
 		    (OraText *)0,-1)==OCI_SUCCESS) {
 	    cda.peo=0;
-	    int ret=oparse(&cda,(OraText *)exc.stm_text,-1,FALSE,1);
+	    oparse(&cda,(OraText *)exc.stm_text,-1,FALSE,1);
 	    ((otl_exception &)exc).errorofs=cda.peo;
 	    oclose(&cda);
 	  }
