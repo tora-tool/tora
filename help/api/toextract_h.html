@@ -195,6 +195,9 @@ class toExtract {
   void describeView(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
 		    const QString &amp;name);
 
+  // Migrate functions
+  QString migrateConstraint(bool create,std::list&lt;QString&gt; &amp;lst);
+
   // Drop functions
   QString dropConstraint(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
 			 const QString &amp;owner);
@@ -292,6 +295,7 @@ class toExtract {
 		      const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
 		      const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
 		      const QString &amp;arg9=QString::null);
+  std::list&lt;QString&gt; splitDescribe(const QString &amp;str);
   void clearFlags(void);
   QString generateHeading(const QString &amp;action,std::list&lt;QString&gt; &amp;list);
   void initialNext(const QString &amp;blocks,QString &amp;initial,QString &amp;next);

@@ -72,6 +72,7 @@
 
 class QPainter;
 class toSyntaxSetup;
+class QListBox;
 
 /** This class implements a syntax parser to provide information to
  * a syntax highlighted editor.
@@ -229,11 +230,28 @@ private:
   /** The syntax analyzer to use.
    */
   toSyntaxAnalyzer *Analyzer;
+
+  bool NoCompletion;
+  bool KeepCompletion;
+  QListBox *Completion;
+  int CompleteItem;
+  std::list&lt;QString&gt; AllComplete;
+
+  bool invalidToken(int line,int col);
 protected:
   /** Set how much of the left margin to ignore painting.
    */
   void setLeftIgnore(int ignore)
   { LeftIgnore=ignore; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusOutEvent(QFocusEvent *e);
+  /** Check if to view completion.
+   */
+  virtual void checkComplete(void);
 public:
   /** Convert a linenumber after a change of the buffer to another linenumber. Can be
    * used to convert a specific linenumber after receiving a @ref insertedLines call.
@@ -248,6 +266,9 @@ public:
    * @param name Name of widget.
    */
   toHighlightedText(QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons
+   */
+  virtual ~toHighlightedText();
 
   /** Clear the editor.
    */
@@ -311,6 +332,8 @@ public slots:
   /** Go to previous error.
    */
   void previousError(void);
+private slots:
+  void selectComplete(void);
 };
 
 #endif

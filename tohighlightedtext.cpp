@@ -436,6 +436,25 @@ static QString UpperIdent(const QString &str)
     return str.upper();
 }
 
+bool toHighlightedText::invalidToken(int line,int col)
+{
+  bool ident=true;
+  while(line<numLines()) {
+    QString cl=textLine(line);
+    while(col<int(cl.length())) {
+      QChar c=cl[col];
+      if (!toIsIdent(c))
+	ident=false;
+      if (!ident&&!c.isSpace())
+	return c=='.';
+      col++;
+    }
+    line++;
+    col=0;
+  }
+  return false;
+}
+
 void toHighlightedText::checkComplete(void)
 {
   if (Completion||NoCompletion)
@@ -462,12 +481,15 @@ void toHighlightedText::checkComplete(void)
     if (token==".")
       owner=UpperIdent(toGetToken(this,curline,curcol,false));
     else {
-      while (token!=name&&token!=";"&&!token.isEmpty())
+      while ((invalidToken(curline,curcol+token.length())||token!=name)&&
+	     token!=";"&&!token.isEmpty()) {
 	token=UpperIdent(toGetToken(this,curline,curcol,false));
+      }
+
       if (token==";"||token.isEmpty()) {
 	getCursorPosition (&curline,&curcol);
 	token=UpperIdent(toGetToken(this,curline,curcol));
-	while (token!=name&&token!=";"&&!token.isEmpty())
+	while ((invalidToken(curline,curcol)||token!=name)&&token!=";"&&!token.isEmpty())
 	  token=UpperIdent(toGetToken(this,curline,curcol));
 	UpperIdent(toGetToken(this,curline,curcol,false));
       }

@@ -309,7 +309,7 @@ static toSQL SQLListTables("toBrowser:ListTables",
 			   "8.0");
 static toSQL SQLListTables7("toBrowser:ListTables",
 			    "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			    "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
+			    "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			    " ORDER BY Table_Name",
 			    QString::null,
 			    "7.3");
@@ -327,7 +327,14 @@ static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
 			     "  FROM ALL_TRIGGERS\n"
 			     " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			     "Display the triggers operating on a table");
+			     "Display the triggers operating on a table",
+			     "8.0");
+static toSQL SQLTableTrigger7("toBrowser:TableTrigger",
+			      "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
+			      "  FROM ALL_TRIGGERS\n"
+			      " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
+			      QString::null,
+			      "7.3");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
 			  "SELECT b.comments \"Comment\" ,a.*\n"
 			  "  FROM ALL_TABLES a,\n"
@@ -446,7 +453,18 @@ static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
 			    "       Description,Action_Type\n"
 			    "  FROM ALL_TRIGGERS\n"
 			    "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
-			    "Display information about a trigger");
+			    "Display information about a trigger",
+			    "8.0");
+static toSQL SQLTriggerInfo7("toBrowser:TriggerInfo",
+			     "SELECT Owner,Trigger_Name,\n"
+			     "       Trigger_Type,Triggering_Event,\n"
+			     "       Table_Owner,Table_Name,\n"
+			     "       Referencing_Names,When_Clause,Status,\n"
+			     "       Description\n"
+			     "  FROM ALL_TRIGGERS\n"
+			     "WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
+			     QString::null,
+			     "7.3");
 static toSQL SQLTriggerBody("toBrowser:TriggerBody",
 			    "SELECT Trigger_Body FROM ALL_TRIGGERS\n"
 			    " WHERE Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",

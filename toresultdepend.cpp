@@ -45,12 +45,25 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "       referenced_name \"Name\",\n"
 			     "       referenced_type \"Type\",\n"
 			     "       dependency_type \"Dependency Type\"\n"
-			     "  FROM dba_dependencies\n"
+			     "  FROM all_dependencies\n"
 			     " WHERE owner = :owner<char[101]>\n"
 			     "   AND name = :name<char[101]>\n"
 			     " ORDER BY referenced_owner,referenced_type,referenced_name",
 			     "Display dependencies on an object, must have first two "
-			     "columns same and same bindings");
+			     "columns same and same bindings",
+			     "8.0");
+static toSQL SQLResultDepend7("toResultDepend:Depends",
+			      "SELECT DISTINCT\n"
+			      "       referenced_owner \"Owner\",\n"
+			      "       referenced_name \"Name\",\n"
+			      "       referenced_type \"Type\",\n"
+			      "       'N/A' \"Dependency Type\"\n"
+			      "  FROM all_dependencies\n"
+			      " WHERE owner = :owner<char[101]>\n"
+			      "   AND name = :name<char[101]>\n"
+			      " ORDER BY referenced_owner,referenced_type,referenced_name",
+			      QString::null,
+			      "7.3");
 
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

@@ -128,6 +128,7 @@ class toSearchReplace;
 class toTool;
 class toToolWidget;
 class toConnection;
+class toMarkedText;
 
 /** This class defines the main window. Observe that this class will have different baseclass
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
@@ -638,6 +639,27 @@ template &lt;class T&gt; void toPush(std::list&lt;T&gt; &amp;lst,const T &amp;st
 {
   lst.push_back(str);
 }
+
+/** Find if an item exists in a list.
+ * @param lst List to search for value.
+ * @param str Object to search for.
+ */
+template &lt;class T&gt; std::list&lt;T&gt;::iterator toFind(std::list&lt;T&gt; &amp;lst,const T &amp;str)
+{
+  for(std::list&lt;T&gt;::iterator i=lst.begin();i!=lst.end();i++)
+    if (*i==str)
+      return i;
+  return lst.end();
+}
+
+/** Get next SQL token from an editor.
+ * @param text Editor to get token from
+ * @param curLine Current line when parsing, modified when calling.
+ * @param pos Current position when parsing, modified when calling.
+ * @param forward If true go forward from current position, otherwise backward.
+ * @return String with next token in editor
+ */
+QString toGetToken(toMarkedText *text,int &amp;curLine,int &amp;pos,bool forward=true);
 
 /** Convert a string representation to a font structure.
  * @param str String representing the font.

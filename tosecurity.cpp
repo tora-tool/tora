@@ -706,7 +706,7 @@ public:
 };
 
 toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
-  : QListView(parent),Connection(conn)
+  : toListView(parent),Connection(conn)
 {
   addColumn("Object");
   setRootIsDecorated(true);
@@ -921,7 +921,7 @@ void toSecurityObject::changed(QListViewItem *org)
 }
 
 toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
-  : QListView(parent),Connection(conn)
+  : toListView(parent),Connection(conn)
 {
   addColumn("Privilege name");
   setRootIsDecorated(true);
@@ -1046,7 +1046,7 @@ void toSecuritySystem::changeUser(const QString &user)
 }
 
 toSecurityRoleGrant::toSecurityRoleGrant(toConnection &conn,QWidget *parent)
-  : QListView(parent),Connection(conn)
+  : toListView(parent),Connection(conn)
 {
   addColumn("Role name");
   setRootIsDecorated(true);

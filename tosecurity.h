@@ -39,7 +39,7 @@
 
 #include <list>
 
-#include <qlistview.h>
+#include "toresultview.h"
 #include "totool.h"
 
 class toConnection;
@@ -49,7 +49,7 @@ class toSecurityQuota;
 class QTabWidget;
 class QToolButton;
 
-class toSecuritySystem : public QListView {
+class toSecuritySystem : public toListView {
   Q_OBJECT
 
   toConnection &Connection;
@@ -62,7 +62,7 @@ public slots:
   virtual void changed(QListViewItem *item);
 };
 
-class toSecurityRoleGrant : public QListView {
+class toSecurityRoleGrant : public toListView {
   Q_OBJECT
 
   toConnection &Connection;
@@ -76,7 +76,7 @@ public slots:
   virtual void changed(QListViewItem *item);
 };
 
-class toSecurityObject : public QListView {
+class toSecurityObject : public toListView {
   Q_OBJECT
 
   toConnection &Connection;

@@ -85,7 +85,19 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  " WHERE Table_Owner = :f1<char[101]>\n"
 			  "   AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Index_Name",
-			  "List the indexes available on a table");
+			  "List the indexes available on a table",
+			  "8.0");
+static toSQL SQLListIndex7("toResultIndexes:ListIndex",
+			   "SELECT Owner,\n"
+			   "       Index_Name,\n"
+			   "       'NORMAL',\n"
+			   "       Uniqueness\n"
+			   "  FROM All_Indexes\n"
+			   " WHERE Table_Owner = :f1<char[101]>\n"
+			   "   AND Table_Name = :f2<char[101]>\n"
+			   " ORDER BY Index_Name",
+			   QString::null,
+			   "7.3");
 
 static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
 			       "SHOW INDEX FROM :tab<noquote>",

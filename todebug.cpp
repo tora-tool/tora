@@ -145,8 +145,10 @@ public:
   {
     if (conn.provider()!="Oracle")
       return false;
+#if 1
     if (conn.version()<"8.0")
       return false;
+#endif
     return true;
   }
 };

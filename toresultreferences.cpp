@@ -92,11 +92,20 @@ static toSQL SQLConstraints("toResultReferences:References",
 			    "List the references from foreign constraints to specified table, must return same columns");
 static toSQL SQLDependencies("toResultReferences:Dependencies",
 			     "SELECT owner,name,type||' '||dependency_type\n"
-			     "  FROM dba_dependencies\n"
+			     "  FROM all_dependencies\n"
 			     " WHERE referenced_owner = :owner<char[101]>\n"
 			     "   AND referenced_name = :tab<char[101]>\n"
 			     " ORDER BY owner,type,name",
-			     "List the dependencies from other objects to this object, must return same number of columns");
+			     "List the dependencies from other objects to this object, must return same number of columns",
+			     "8.0");
+static toSQL SQLDependencies7("toResultReferences:Dependencies",
+			      "SELECT owner,name,type\n"
+			      "  FROM all_dependencies\n"
+			      " WHERE referenced_owner = :owner<char[101]>\n"
+			      "   AND referenced_name = :tab<char[101]>\n"
+			      " ORDER BY owner,type,name",
+			      QString::null,
+			      "7.3");
 
 void toResultReferences::query(const QString &sql,const toQList &param)
 {

@@ -87,7 +87,23 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 			    " WHERE Owner = :f1<char[101]>\n"
 			    "   AND Table_Name = :f2<char[101]>\n"
 			    " ORDER BY Constraint_Name",
-			    "List constraints on a table. Must have same column order");
+			    "List constraints on a table. Must have same column order",
+			    "8.0");
+static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
+			     "SELECT Constraint_Name,\n"
+			     "       Search_Condition,\n"
+			     "       R_Owner,\n"
+			     "       R_Constraint_Name,\n"
+			     "       Status,\n"
+			     "       Constraint_Type,\n"
+			     "       Delete_Rule,\n"
+			     "       'N/A'\n"
+			     "  FROM All_Constraints\n"
+			     " WHERE Owner = :f1<char[101]>\n"
+			     "   AND Table_Name = :f2<char[101]>\n"
+			     " ORDER BY Constraint_Name",
+			     QString::null,
+			     "7.3");
 
 void toResultConstraint::query(const QString &sql,const toQList &param)
 {

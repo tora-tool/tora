@@ -208,6 +208,8 @@ private:
   QListBox *Completion;
   int CompleteItem;
   std::list<QString> AllComplete;
+
+  bool invalidToken(int line,int col);
 protected:
   /** Set how much of the left margin to ignore painting.
    */
