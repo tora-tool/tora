@@ -664,51 +664,14 @@ void toExtract::describeConstraint(std::list<QString> &lst,const QString &schema
   }
 }
 
-QString toExtract::migrateConstraint(std::list<QString> &source,std::list<QString> &destin)
+QString toExtract::migrateConstraint(bool create,std::list<QString> &lst)
 {
   QString lastSchema;
   QString lastTable;
   QString lastName;
   QString lastType;
   QString sql;
-
-  std::list<QString> drop;
-  std::list<QString> create;
-
-  srcDst2DropCreate(source,destin,drop,create);
-
-  for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
-    std::list<QString> ctx=splitDescribe(*i);
-    QString schema=toShift(ctx);
-    QString table=toShift(ctx);
-    if (toShift(ctx)!="TABLE")
-      continue;
-    QString name=toShift(ctx);
-    if (toShift(ctx)!="CONSTRAINT")
-      continue;
-    QString type=toShift(ctx);
-    QString extra=toShift(ctx);
-    if ((schema!=lastSchema||
-	 table!=lastTable||
-	 name!=lastName||
-	 type!=lastType)&&
-	extra.isEmpty()) {
-      if (Prompt)
-	sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
-	  arg(schema).arg(table).arg(name);
-      sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
-	arg(schema).arg(table).arg(name);
-      lastSchema=schema;
-      lastTable=table;
-      lastName=name;
-      lastType=type;
-    }
-    
-  }
-
-  lastSchema=lastTable=lastName=lastType=QString::null;
-
-  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
     std::list<QString> ctx=splitDescribe(*i);
     QString schema=toShift(ctx);
     QString table=toShift(ctx);
@@ -723,20 +686,29 @@ QString toExtract::migrateConstraint(std::list<QString> &source,std::list<QStrin
 	table==lastTable&&
 	name==lastName&&
 	type==lastType) {
-      sql+=" "+extra;
+      if (create)
+	sql+=" "+extra;
     } else if (extra.isEmpty()) {
-      if (!sql.isEmpty())
-	sql+=";\n\n";
-      if (Prompt)
-	sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
+      if (create) {
+	if (!sql.isEmpty())
+	  sql+=";\n\n";
+	if (Prompt)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+	sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
+	  arg(schema).arg(table).arg(name).arg(type);
+      } else {
+	if (Prompt)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+	sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
 	  arg(schema).arg(table).arg(name);
-      sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
-	arg(schema).arg(table).arg(name).arg(type);
+      }
       lastSchema=schema;
       lastTable=table;
       lastName=name;
       lastType=type;
-    } else {
+    } else if (create) {
       if (Prompt)
 	sql+=QString("PROMPT ALTER TABLE %1%2 MODIFY CONSTRAINT %3\n\n").
 	  arg(schema).arg(table).arg(name);
@@ -744,9 +716,6 @@ QString toExtract::migrateConstraint(std::list<QString> &source,std::list<QStrin
 	arg(schema).arg(table).arg(name).arg(extra);
     }
   }
-  if (!sql.isEmpty())
-    sql+=";\n\n";
-  
   return sql;
 }
 
@@ -802,55 +771,11 @@ void toExtract::describeDBLink(std::list<QString> &lst,const QString &schema,con
   ctx.insert(ctx.end(),"DATABASE LINK");
   ctx.insert(ctx.end(),name.lower());
 
-  addDescription(lst,ctx,publ,QString("%1 IDENTIFIED BY %2 USING '%3'").
+  addDescription(lst,ctx,publ);
+  addDescription(lst,ctx,QString("%1 IDENTIFIED BY %2 USING '%3'").
 		 arg(user.lower()).
 		 arg(password.lower()).
 		 arg(prepareDB(host)));
-}
-
-QString toExtract::migrateDBLink(std::list<QString> &source,std::list<QString> &destin)
-{
-  std::list<QString> drop;
-  std::list<QString> create;
-
-  srcDst2DropCreate(source,destin,drop,create);
-
-  QString ret;
-
-  {
-    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
-      std::list<QString> ctx=splitDescribe(*i);
-      if (toShift(ctx)!="DATABASE LINK")
-	continue;
-      QString sql;
-      if (toShift(ctx)=="PUBLIC")
-	sql="DROP PUBLIC DATABASE LINK ";
-      else
-	sql="DROP DATABASE LINK";
-      sql+=toShift(ctx);
-      if (Prompt)
-	ret+="PROMPT "+sql+"\n\n";
-      ret+=sql;
-      ret+=";\n\n";
-    }
-  }
-  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
-    std::list<QString> ctx=splitDescribe(*i);
-    if (toShift(ctx)!="DATABASE LINK")
-      continue;
-    QString sql;
-    if (toShift(ctx)=="PUBLIC")
-      sql="CREATE PUBLIC DATABASE LINK ";
-    else
-      sql="CREATE DATABASE LINK";
-    sql+=toShift(ctx);
-    if (Prompt)
-      ret+="PROMPT "+sql+"\n\n";
-    ret+=sql;
-    ret+=toShift(ctx);
-    ret+=";\n\n";
-  }
-  return ret;
 }
 
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
@@ -1988,6 +1913,10 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   ret+=sql;
   ret+=indexColumns("",owner,name);
   if (domain=="DOMAIN") {
+    if(Connection.version()>="8.1" && domOwner=="CTXSYS" && domName=="CONTEXT") {
+      ret=createContextPrefs(schema,owner,name,ret);
+      return ret;
+    }
     ret+=QString("INDEXTYPE IS \"%1\".\"%2\"\nPARAMETERS ('%3');\n\n").
       arg(domOwner).arg(domName).arg(prepareDB(domParam));
     return ret;
@@ -2079,6 +2008,315 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
   describeAttributes(lst,ctx,storage);
   if (!compressed.isEmpty()&&compressed!="0"&&Storage)
     addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+}
+
+static toSQL SQLContextInfoDBA("toExtract:ContextInfoDBA",
+			       "SELECT\n"
+			       "        ixv_class\n"
+			       "      , ixv_object\n"
+			       "      , ixv_attribute\n"
+			       "      , ixv_value\n"
+			       " FROM\n"
+			       "        ctxsys.ctx_index_values\n"
+			       " WHERE\n"
+			       "        ixv_index_owner = :own<char[100]>\n"
+			       "    AND\n"
+			       "        ixv_index_name = :nam<char[100]>\n"
+			       "     AND\n"
+			       "        ixv_class = :cls<char[100]>\n"
+			       " ORDER BY\n"
+			       "        ixv_object",
+			       "Get information on context index preferences.",
+			       "8.1");
+
+static toSQL SQLContextInfoNoAttrDBA("toExtract:ContextInfoNoAttrDBA",
+				     "SELECT\n"
+				     "        ixo_object\n"
+				     " FROM\n"
+				     "        ctxsys.ctx_index_objects\n"
+				     " WHERE\n"
+				     "        ixo_index_owner = :own<char[100]>\n"
+				     "    AND\n"
+				     "        ixo_index_name = :nam<char[100]>\n"
+				     "    AND\n"
+				     "        ixo_class = :cls<char[100]>",
+				     "Get the context preferences w/o attributes.",
+				     "8.1");
+
+static toSQL SQLContextColumnDBA("toExtract:ContextColumnDBA",
+				 "SELECT\n" 
+				 "        idx_language_column\n"
+				 "      , idx_format_column\n"
+				 "      , idx_charset_column\n"
+				 " FROM\n"
+				 "        ctxsys.ctx_indexes\n"
+				 " WHERE\n"
+				 "        idx_owner = :own<char[100]>\n"
+				 "    AND\n"
+				 "        idx_name = :nam<char[100]>",
+				 "Get the context column designations.",
+				 "8.1");
+
+static toSQL SQLContextInfo("toExtract:ContextInfo",
+			    "SELECT\n"
+			    "        ixv_class\n"
+			    "      , ixv_object\n"
+			    "      , ixv_attribute\n"
+			    "      , ixv_value\n"
+			    " FROM\n"
+			    "        ctxsys.ctx_user_index_values\n"
+			    " WHERE\n"
+			    "        ixv_index_name = :nam<char[100]>\n"
+			    "     AND\n"
+			    "        ixv_class = :cls<char[100]>\n"
+			    " ORDER BY\n"
+			    "        ixv_object",
+			    "Get information on context index preferences.",
+			    "8.1");
+
+static toSQL SQLContextInfoNoAttr("toExtract:ContextInfoNoAttr",
+				  "SELECT\n"
+				  "        ixo_object\n"
+				  " FROM\n"
+				  "        ctxsys.ctx_user_index_objects\n"
+				  " WHERE\n"
+				  "        ixo_index_name = :nam<char[100]>\n"
+				  "    AND\n"
+				  "        ixo_class = :cls<char[100]>",
+				  "Get the context preferences w/o attributes.",
+				  "8.1");
+
+static toSQL SQLContextColumn("toExtract:ContextColumn",
+			      "SELECT\n" 
+			      "        idx_language_column\n"
+			      "      , idx_format_column\n"
+			      "      , idx_charset_column\n"
+			      " FROM\n"
+			      "        ctxsys.ctx_user_indexes\n"
+			      " WHERE\n"
+			      "        idx_name = :nam<char[100]>",
+			      "Get the context column designations.",
+			      "8.1");
+
+QString toExtract::createContextPrefs(const QString &schema,
+				      const QString &owner,
+				      const QString &name,
+				      const QString &sql)
+{
+  QString prefs="";
+  if(Prompt)
+    prefs+="PROMPT CREATE CONTEXT PREFERENCES\n\n";
+  prefs+="-- Context indexes can be quite complicated depending upon the\n"
+    "-- used parameters. The following is an attempt to recreate this\n"
+    "-- context index. But, a close scrutiny of the following code is\n"
+    "-- strongly recommended.\n\n";
+  QString tmp;
+  QString pre_name="";
+  QString parameters="";
+  QStringList ql;
+  toQList resultset;
+  bool first=true;
+  bool isDBA=true;
+  try {
+    resultset=toQuery::readQueryNull(Connection,
+				     "SELECT * FROM ctxsys.ctx_indexes "
+				     "WHERE idx_owner = 'DUMMY'");
+  } catch (...) {
+    isDBA=false;
+  }
+  ql << "DATASTORE" << "FILTER" << "LEXER" << "WORDLIST" << "STORAGE";
+  // Lets start with discovering the preferences
+  QStringList::Iterator it;
+  for(it=ql.begin();it!=ql.end();++it) {
+    if(isDBA)
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfoDBA,
+				       owner,name,*it);
+    else
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfo,
+				       name,*it);
+    if(resultset.size()>0) {
+      first=true;
+      while (resultset.size()>0) {
+	QString pre_class=toShift(resultset);
+	QString pre_obj=toShift(resultset);
+	QString pre_attr=toShift(resultset);
+	QString pre_val=toShift(resultset);
+	if(first) {
+	  first=false;
+	  pre_name=QString("%1_%2").arg(name).arg(pre_obj);
+	  pre_name.truncate(30);
+	  tmp=QString("BEGIN\n  CTX_DDL.CREATE_PREFERENCE('%1','%2');\n")
+	    .arg(pre_name).arg(pre_obj);
+	  prefs+=tmp;
+	  parameters+=QString("             %1 %2\n")
+	    .arg(pre_class).arg(pre_name);
+	}
+	tmp=QString("  CTX_DDL.SET_ATTRIBUTE('%1', '%2', '%3');\n")
+	  .arg(pre_name).arg(pre_attr).arg(pre_val);
+	prefs+=tmp;
+      }
+      prefs+="END;\n\n";
+    } else {
+      // some preferences don't have any attributes and 
+      // so won't be caught above
+      if(isDBA)
+	resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttrDBA,
+					 owner,name,*it);
+      else
+	resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttr,
+					 name,*it);
+      if(resultset.size()>0) {
+	QString pre_obj=toShift(resultset);
+	pre_name=QString("%1_%2").arg(name).arg(pre_obj);
+	pre_name.truncate(30);
+	tmp=QString("BEGIN\n  CTX_DDL.CREATE_PREFERENCE('%1', '%2');\nEND;\n\n").arg(pre_name).arg(pre_obj);
+	prefs+=tmp;
+	parameters+=QString("             %1 %2\n")
+	  .arg(*it).arg(pre_name);
+      }
+    }
+  }
+
+  // Now get the stoplist
+  if(isDBA)
+    resultset=toQuery::readQueryNull(Connection,SQLContextInfoDBA,
+				     owner,name,"STOPLIST");
+  else
+    resultset=toQuery::readQueryNull(Connection,SQLContextInfo,
+				     name,"STOPLIST");
+  pre_name="";
+  while (resultset.size()>0) {
+    QString pre_class=toShift(resultset);
+    QString pre_obj=toShift(resultset);
+    QString pre_attr=toShift(resultset);
+    QString pre_val=toShift(resultset);
+    if(pre_name=="") {
+      pre_name=QString("%1_STOPLIST").arg(name);
+      pre_name.truncate(30);
+      tmp=QString("BEGIN\n  CTX_DDL.CREATE_STOPLIST('%1');\n")
+	.arg(pre_name);
+      prefs+=tmp;
+      parameters+=QString("             STOPLIST %1\n").arg(pre_name);
+    }
+    pre_attr.remove(4,1);
+    tmp=QString("  CTX_DDL.ADD_%1('%2', '%3');\n")
+      .arg(pre_attr).arg(pre_name).arg(pre_val);
+    prefs+=tmp;
+  }
+  if(pre_name!="")
+    prefs+="END;\n\n";
+  else {
+    // this is most probably redundant but shouldn't hurt
+    if(isDBA)
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttrDBA,
+				       owner,name,"STOPLIST");
+    else
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttr,
+				       name,"STOPLIST");
+
+    if(resultset.size()>0) {
+      QString pre_obj=toShift(resultset);
+      pre_name=QString("%1_%2").arg(name).arg(pre_obj);
+      pre_name.truncate(30);
+      tmp=QString("BEGIN\n  CTX_DDL.CREATE_STOPLIST('%1');\nEND;\n\n")
+	.arg(pre_name);
+      prefs+=tmp;
+      parameters+=QString("             STOPLIST %1\n").arg(pre_name);
+    }
+  }
+
+  // get the section_groups 
+  if(isDBA)
+    resultset=toQuery::readQueryNull(Connection,SQLContextInfoDBA,
+				     owner,name,"SECTION_GROUP");
+  else
+    resultset=toQuery::readQueryNull(Connection,SQLContextInfo,
+				     name,"SECTION_GROUP");
+  pre_name="";
+  while (resultset.size()>0) {
+    QString pre_class=toShift(resultset);
+    QString pre_obj=toShift(resultset);
+    QString pre_attr=toShift(resultset);
+    QString pre_val=toShift(resultset);
+    QString pre_val1=pre_val.left(pre_val.find(':',0,false));
+    pre_val=pre_val.right(pre_val.length()-pre_val1.length()-1);
+    QString pre_val2=pre_val.left(pre_val.find(':',0,false));
+    QString pre_val4=pre_val.right(1);
+    if(pre_val4=="Y")
+      pre_val4="TRUE";
+    else
+      pre_val4="FALSE";
+    if(pre_name=="") {
+      pre_name=QString("%1_SECTION_GROUP").arg(name);
+      pre_name.truncate(30);
+      tmp=QString("BEGIN\n  CTX_DDL.CREATE_SECTION_GROUP('%1', '%2');\n")
+	.arg(pre_name).arg(pre_obj);
+      prefs+=tmp;
+      parameters+=QString("             SECTION GROUP %1\n").arg(pre_name);
+    }
+    if(pre_attr=="ZONE")
+      tmp=QString("  CTX_DDL.ADD_ZONE_SECTION('%1', '%2', '%3');\n")
+	.arg(pre_name).arg(pre_val1).arg(pre_val2);
+    else if(pre_attr=="FIELD")
+      tmp=QString("  CTX_DDL.ADD_FIELD_SECTION('%1', '%2', '%3', %4);\n")
+	.arg(pre_name).arg(pre_val1).arg(pre_val2).arg(pre_val4);
+    else if(pre_attr=="SPECIAL")
+      tmp=QString("  CTX_DDL.ADD_SPECIAL_SECTION('%1', '%2');\n")
+	.arg(pre_name).arg(pre_val1);
+    prefs+=tmp;
+  }
+  if(pre_name!="")
+    prefs+="END;\n\n";
+  else {
+    if(isDBA)
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttrDBA,
+				       owner,name,"SECTION_GROUP");
+    else
+      resultset=toQuery::readQueryNull(Connection,SQLContextInfoNoAttr,
+				       name,"SECTION_GROUP");
+    if(resultset.size()>0) {
+      QString pre_obj=toShift(resultset);
+      pre_name=QString("%1_%2").arg(name).arg(pre_obj);
+      pre_name.truncate(30);
+      tmp=QString("BEGIN\n  CTX_DDL.CREATE_SECTION_GROUP('%1', '%2');\nEND;\n\n").arg(pre_name).arg(pre_obj);
+      prefs+=tmp;
+      parameters+=QString("             SECTION GROUP %1\n").arg(pre_name);
+    }
+  }
+
+  // Lets look up the language, format, and charset columns
+  // only if Oracle 8.1.6 and above
+  if(Connection.version()>="8.1.6") {
+    if(isDBA)
+      resultset=toQuery::readQueryNull(Connection,SQLContextColumnDBA,
+				       owner,name);
+    else
+      resultset=toQuery::readQueryNull(Connection,SQLContextColumn,
+				       name);
+    if(resultset.size()>0) {
+      toQValue vlang=toShift(resultset);
+      toQValue vfrmt=toShift(resultset);
+      toQValue vcset=toShift(resultset);
+      if(!vlang.isNull()) {
+	tmp=QString("             LANGUAGE COLUMN %1\n").arg(vlang);
+	parameters+=tmp;
+      }
+      if(!vfrmt.isNull()) {
+	tmp=QString("             FORMAT COLUMN %1\n").arg(vfrmt);
+	parameters+=tmp;
+      }
+      if(!vcset.isNull()) {
+	tmp=QString("             CHARSET COLUMN %1\n").arg(vcset);
+	parameters+=tmp;
+      }
+    }
+  }
+  prefs+=sql;
+  parameters+="            ";
+  tmp=QString("INDEXTYPE IS CTXSYS.CONTEXT\nPARAMETERS ('\n%1');\n\n").
+      arg(parameters);
+  prefs+=tmp;
+  return prefs;
 }
 
 static toSQL SQLIndexPartition8("toExtract:IndexPartition",
@@ -6620,33 +6858,4 @@ QString toExtract::resize(std::list<QString> &objects)
 QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
 {
   throw QString("Migration not implemented yet");
-}
-
-void toExtract::srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
-				  std::list<QString> &drop,std::list<QString> &create)
-{
-  drop.clear();
-  create.clear();
-
-  std::list<QString>::iterator i=source.begin();
-  std::list<QString>::iterator j=destination.begin();
-  while(i!=source.end()&&j!=destination.end()) {
-    if (*i!=*j) {
-      if (*i<*j) {
-	drop.insert(drop.end(),*i);
-	i++;
-      } else {
-	create.insert(create.end(),*j);
-	j++;
-      }
-    }
-  }
-  while(i!=source.end()) {
-    drop.insert(drop.end(),*i);
-    i++;
-  }
-  while(j!=destination.end()) {
-    create.insert(create.end(),*j);
-    j++;
-  }
 }
