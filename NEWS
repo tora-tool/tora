@@ -6,6 +6,7 @@
 2001-03-24: Fixed bug regarding deselection role in toSecurity.
 2001-03-24: Added comments to Makefile.setup in configure script.
 2001-03-24: Separated settings and the rest into Makefile.setup better.
+2001-03-24: Added a README and INSTALL file.
 
 0.7: Released 2001-03-24
 
