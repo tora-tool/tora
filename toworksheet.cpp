@@ -790,7 +790,6 @@ void toWorksheet::query(const QString &str,bool direct)
 	return;
       }
     toStatusMessage("Processing query",true);
-    Plan->clear();
     if (direct) {
       try {
 	First=false;
@@ -807,6 +806,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	addLog(QueryString,exc);
       }
     } else {
+      Plan->clear();
       Result->stop();
       First=false;
       Timer.start();

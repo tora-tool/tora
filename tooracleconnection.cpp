@@ -34,7 +34,11 @@
 
 #include "utils.h"
 
-#include "otlv32.h"
+#define OTL_STL
+#define OTL_STREAM_POOLING_ON
+
+#include "otlv4.h"
+
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
@@ -56,7 +60,9 @@
 #include "tooraclesettingui.h"
 #include "tooraclesettingui.moc"
 
-#define CONF_MAX_LONG     "MaxLong"
+#define CONF_OPEN_CURSORS	"OpenCursors"
+#define DEFAULT_OPEN_CURSORS	"40"  // Defined to be able to update tuning view
+#define CONF_MAX_LONG		"MaxLong"
 
 // Must be larger than max long size in otl.
 
@@ -819,18 +825,24 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
   bool sqlNet=!connection().host().isEmpty();
   if (!sqlNet) {
     oldSid=getenv("ORACLE_SID");
-    toSetEnv("ORACLE_SID",connection().database().latin1());
+    toSetEnv("ORACLE_SID",connection().database().utf8());
   }
-  otl_connect *conn;
+  otl_connect *conn=NULL;
   try {
     QString mode=connection().mode();
-    int oper=0;
-    int dba=0;
+    int session_mode=OCI_DEFAULT;
     if (mode=="SYS_OPER")
-      oper=1;
+      session_mode=OCI_SYSOPER;
     else if (mode=="SYS_DBA")
-      dba=1;
-    conn=new otl_connect(connectString(),0,oper,dba);
+      session_mode=OCI_SYSDBA;
+    conn=new otl_connect;
+    conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
+							DEFAULT_OPEN_CURSORS).toInt(),1));
+    if(sqlNet)
+      conn->server_attach();
+    else
+      conn->server_attach(connection().database().utf8());
+    conn->session_begin(connection().user().utf8(),connection().password().utf8(),0,session_mode);
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())
@@ -838,6 +850,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       else
 	toSetEnv("ORACLE_SID",oldSid.latin1());
     }
+    delete conn;
     ThrowException(exc);
   }
   if (!sqlNet) {
@@ -909,6 +922,8 @@ public:
 					     DEFAULT_PLAN_CHECKPOINT));
     ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
 					      DEFAULT_PLAN_TABLE));
+    OpenCursors->setValue(toTool::globalConfig(CONF_OPEN_CURSORS,
+					       DEFAULT_OPEN_CURSORS).toInt());
     KeepPlans->setChecked(!toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty());
     int len=toTool::globalConfig(CONF_MAX_LONG,
 				 QString::number(DEFAULT_MAX_LONG)).toInt();
@@ -930,6 +945,7 @@ public:
     toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
     toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
     toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
+    toTool::globalSetConfig(CONF_OPEN_CURSORS,QString::number(OpenCursors->value()));
     if (Unlimited->isChecked()) {
       toMaxLong=-1;
       toTool::globalSetConfig(CONF_MAX_LONG,"-1");

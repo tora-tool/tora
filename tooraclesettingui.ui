@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>365</width>
+            <width>361</width>
             <height>287</height>
         </rect>
     </property>
@@ -80,89 +80,6 @@
                 <cstring>CheckPoint</cstring>
             </property>
         </widget>
-        <spacer row="5"  column="2" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer6</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="4"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CreatePlanTable</cstring>
-            </property>
-            <property stdset="1">
-                <name>enabled</name>
-                <bool>false</bool>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Create Table</string>
-            </property>
-        </widget>
-        <spacer row="4"  column="0"  rowspan="1"  colspan="2" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer2_2</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Horizontal</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="2"  column="0" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel6_3</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Explain plan table</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>ExplainPlan</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Name of the table to put explain plan output in.</string>
-            </property>
-        </widget>
         <widget row="3"  column="0" >
             <class>QLabel</class>
             <property stdset="1">
@@ -208,14 +125,97 @@
                 <bool>false</bool>
             </property>
         </widget>
-        <widget row="2"  column="1" >
+        <spacer row="6"  column="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer6</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="5"  column="0"  rowspan="1"  colspan="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="5"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CreatePlanTable</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Create Table</string>
+            </property>
+        </widget>
+        <widget row="4"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Explain plan table</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Name of the table to put explain plan output in.</string>
+            </property>
+        </widget>
+        <widget row="4"  column="1" >
             <class>QLineEdit</class>
             <property stdset="1">
                 <name>name</name>
                 <cstring>ExplainPlan</cstring>
             </property>
         </widget>
-        <widget row="2"  column="2" >
+        <widget row="4"  column="2" >
             <class>QCheckBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -228,6 +228,32 @@
             <property>
                 <name>toolTip</name>
                 <string>Keep records for the plan explanations in the plan table.</string>
+            </property>
+        </widget>
+        <widget row="2"  column="2" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>OpenCursors</cstring>
+            </property>
+            <property stdset="1">
+                <name>minValue</name>
+                <number>1</number>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Maximum cursors to keep open</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>OpenCursors</cstring>
             </property>
         </widget>
     </grid>
@@ -250,10 +276,11 @@
 <tabstops>
     <tabstop>CheckPoint</tabstop>
     <tabstop>DefaultDate</tabstop>
-    <tabstop>ExplainPlan</tabstop>
-    <tabstop>KeepPlans</tabstop>
+    <tabstop>OpenCursors</tabstop>
     <tabstop>MaxLong</tabstop>
     <tabstop>Unlimited</tabstop>
+    <tabstop>ExplainPlan</tabstop>
+    <tabstop>KeepPlans</tabstop>
     <tabstop>CreatePlanTable</tabstop>
 </tabstops>
 </UI>

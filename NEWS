@@ -27,6 +27,10 @@
 2001-12-19: Some more fixes to when profiler tables are missing.
 2001-12-19: Added option to never read object cache unless mandatory.
 2001-12-19: Always start reading object cache when choosing reread in menu.
+2001-12-19: Fixed SIGSEGV on execute in lite worksheet.
+2001-12-19: Upgraded to OTL 4.0.
+2001-12-19: Enabled stream pooling since it seems to work now.
+2001-12-19: Added open cursors number in oracle settings.
 
 1.3.0: Released 2001-12-17
 

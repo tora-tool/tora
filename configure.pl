@@ -1173,6 +1173,8 @@ __EOT__
 	
 	if ($OracleRelease =~ /^8.0/) {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";
+	} elsif ($OracleRelease ge "9") {
+	    print MAKEFILE "DEFINES+=-DOTL_ORA9I\n";
 	} else {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8I\n";
 	}
