@@ -1,4 +1,4 @@
-?package(DrakeLogo): needs="X11" icon="tora.xpm" \
+?package(tora): needs="X11" icon="tora.xpm" \
 section="Applications/Developement/Tools" \
 title="TOra" longtitle="Toolkit for Oracle" \
 command="/usr/bin/tora"
