@@ -32,6 +32,8 @@
 2001-08-10: Added default chart sample setting.
 2001-08-10: Added posibility to create chart with unlimited samples.
 2001-08-10: Lots of off by one pixel errors in charts fixed.
+2001-08-10: Some fixes to configure to make work on more systems.
+2001-08-10: Just generate binary packages on release and only copy same release.
 
 0.14: Released 2001-08-02
 

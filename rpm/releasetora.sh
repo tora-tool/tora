@@ -25,8 +25,8 @@ touch tora/* tora/*/*
 mv tora tora-$1
 tar czf ../tora-$1.tar.gz tora-$1
 tar cf - tora-$1 | bzip2 > /usr/src/RPM/SOURCES/tora-$1.tar.bz2
-rpm -ba tora-$1/rpm/tora.spec
-rpm -ba tora-$1/rpm/tora-mdk.spec
+rpm -bb tora-$1/rpm/tora.spec
+rpm -bb tora-$1/rpm/tora-mdk.spec
 
 SRCPWD=`pwd`
 cd /usr/src/RPM/BUILD/tora-$1
@@ -40,7 +40,7 @@ tar czf $SRCPWD/../tora-$1-bin.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENS
     tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
 cd $SRCPWD
-rpm -ba tora-$1/rpm/tora-static.spec
+rpm -bb tora-$1/rpm/tora-static.spec
 cd /usr/src/RPM/BUILD/tora-$1
 strip tora-static
 mv tora-static tora
@@ -51,7 +51,7 @@ tar czf $SRCPWD/../tora-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LIC
     tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
 cd $SRCPWD
-rpm -ba tora-$1/rpm/tora-qt.spec
+rpm -bb tora-$1/rpm/tora-qt.spec
 cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
@@ -64,6 +64,5 @@ tar czf $SRCPWD/../tora-$1-qt.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE
 
 cd $SRCPWD/..
 rm -rf t
-cp /usr/src/RPM/RPMS/i686/tora* .
-cp /usr/src/RPM/SRPMS/tora* .
+cp /usr/src/RPM/RPMS/i686/tora-$1-* .
 #rm -rf /usr/src/RPM/BUILD/*
