@@ -737,10 +737,13 @@ void toRollback::changeItem(QListViewItem *item)
       OfflineButton->setEnabled(false);
     else
       OfflineButton->setEnabled(true);
-    if (item->text(3)=="ONLINE")
+    if (item->text(3)=="ONLINE") {
       OnlineButton->setEnabled(false);
-    else
+      DropButton->setEnabled(false);
+    } else {
       OnlineButton->setEnabled(true);
+      DropButton->setEnabled(true);
+    }
   } else {
     OnlineButton->setEnabled(false);
     OfflineButton->setEnabled(false);

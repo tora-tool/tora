@@ -1499,6 +1499,7 @@ static toSQL SQLTableColumns("toExtract:TableColumns",
                ,'N','NOT NULL'
                ,     null
               )
+     , data_default
   FROM all_tab_columns
  WHERE table_name = :nam<char[100]>
    AND owner = :own<char[100]>
@@ -1587,11 +1588,7 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
                         )
              ,33
             )
-     || DECODE(
-                nullable
-               ,'N','NOT NULL'
-               ,     null
-              )
+     , data_default
   FROM all_tab_columns
  WHERE table_name = :nam<char[100]>
    AND owner = :own<char[100]>
@@ -1601,38 +1598,45 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 
 QString toExtract::tableColumns(const QString &owner,const QString &name)
 {
-  otl_stream inf(1,
-		 SQLTableColumns(Connection),
-		 Connection.connection());
-  inf<<name.utf8();
-  inf<<owner.utf8();
+  list<QString> cols=toReadQuery(Connection,
+				 SQLTableColumns(Columns),
+				 name,owner);
   bool first=true;
   QString ret;
-  while(!inf.eof()) {
-    char buffer[1024];
+  while(cols.size()>0) {
     if (first)
       first=false;
     else
       ret+="\n  , ";
-    inf>>buffer;
-    ret+=QString::fromUtf8(buffer);
+    ret+=toShift(cols);
+    QString default=toShift(cols);
+    if (!default.isEmpty()) {
+      ret+=" DEFAULT ";
+      ret+=default;
+    }
   }
-  ret+="\n";
   return ret;
 }
 
 void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
 				     const QString &owner,const QString &name)
 {
-  otl_stream inf(1,
-		 SQLTableColumns(Connection),
-		 Connection.connection());
-  inf<<name.utf8();
-  inf<<owner.utf8();
-  while(!inf.eof()) {
-    char buffer[1024];
-    inf>>buffer;
-    addDescription(lst,ctx,"COLUMN",QString::fromUtf8(buffer));
+  list<QString> cols=toReadQuery(Connection,
+				 SQLTableColumns(Columns),
+				 name,owner);
+  bool first=true;
+  while(cols.size()>0) {
+    if (first)
+      first=false;
+    else
+      ret+="\n  , ";
+    QString line+=toShift(cols);
+    QString default=toShift(cols);
+    if (!default.isEmpty()) {
+      line+=" DEFAULT ";
+      line+=default;
+    }
+    addDescription(lst,ctx,"COLUMN",line);
   }
 }
 
