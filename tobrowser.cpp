@@ -553,6 +553,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
   Filter=NULL;
+  CurrentTop=NULL;
 
   QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.description());
 
@@ -1040,9 +1041,9 @@ void toBrowser::changeSecondTab(QWidget *tab)
     // The change second tab can get called for other tabs than the current one. Ignore those
     // calls.
     QWidget *t=dynamic_cast<QWidget *>(newtab);
-    while(t&&t!=TopTab->currentPage())
+    while(t&&t!=CurrentTop)
       t=t->parentWidget();
-    if (t)
+    if (!t)
       return;
 
     SecondTab=newtab;
@@ -1058,6 +1059,7 @@ void toBrowser::changeTab(QWidget *tab)
     toResultView *newtab=Map[tab->name()];
     if (newtab==FirstTab)
       return;
+    CurrentTop=tab;
     setFocusProxy(newtab);
     FirstTab=newtab;
     SecondTab=SecondMap[tab->name()];

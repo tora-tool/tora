@@ -60,6 +60,7 @@ class toBrowser : public toToolWidget {
   toResultView *FirstTab;
   toResult *SecondTab;
   toResultFilter *Filter;
+  QWidget *CurrentTop;
 
   toResultContent *ViewContent;
   toResultContent *TableContent;
