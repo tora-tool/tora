@@ -173,7 +173,6 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
     setFont(font);
   }
 
-  MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
@@ -199,11 +198,15 @@ void toResultContentEditor::changeSort(int col)
 
 void toResultContentEditor::changeParams(const QString &Param1,const QString &Param2)
 {
+  if (Param1==Owner&&Param2==Table&&!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty())
+    return;
+
   Owner=Param1;
   Table=Param2;
   setNumRows(0);
   setNumCols(0);
   NewRecordRow = -1;
+  MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
 
   delete Query;
   Query=NULL;
@@ -232,7 +235,6 @@ void toResultContentEditor::poll(void)
 {
   try {
     if (Query&&Query->poll()) {
-      Poll.stop();
       if (numRows()==0) {
 	toQDescList desc=Query->describe();
 	setNumCols(desc.size());
@@ -248,8 +250,12 @@ void toResultContentEditor::poll(void)
       }
       
       for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
-	if (Row+2>=numRows())
-	  setNumRows(numRows()+INC_SIZE);
+	if (Row+2>=numRows()) {
+	  if (MaxNumber>0&&numRows()+INC_SIZE>MaxNumber)
+	    setNumRows(MaxNumber+1);
+	  else
+	    setNumRows(numRows()+INC_SIZE);
+	}
 	addRow();
       }
       setNumRows(Row+1);
@@ -258,7 +264,8 @@ void toResultContentEditor::poll(void)
 	delete Query;
 	Query=NULL;
 	Poll.stop();
-      }
+      } else if (Row>=MaxNumber)
+	Poll.stop();
     }
   } catch(const QString &str) {
     delete Query;
@@ -272,9 +279,9 @@ void toResultContentEditor::addRow(void)
 {
   AddRow=false;
   try {
-    if (Query&&!Query->eof()) {
+    if (Query&&Query->poll()&&!Query->eof()) {
       if (Row+1>=numRows())
-	setNumRows(Row+3);
+	setNumRows(Row+2);
       verticalHeader()->setLabel(Row,QString::number(Row+1));
       for (int j=0;j<numCols()&&!Query->eof();j++)
 	setText(Row,j,Query->readValueNull());
@@ -286,17 +293,13 @@ void toResultContentEditor::addRow(void)
 void toResultContentEditor::keyPressEvent(QKeyEvent *e)
 {
   if (e->key()==Key_PageDown) {
-    int height=verticalHeader()->sectionSize(0);
-    if (!Query->eof()&&height>0) {
-      int num=visibleHeight()/height;
-      setNumRows(Row+num+1);
-      for (int i=0;i<num&&!Query->eof();i++) {
-	if (Row+2>=numRows())
-	  setNumRows(numRows()+INC_SIZE);
-	addRow();
-      }
-      if (numRows()!=Row+1)
-	setNumRows(Row+1);
+    if (Query&&!Query->eof()) {
+      Poll.start(100);
+      if (MaxNumber>=0) {
+        int height=verticalHeader()->sectionSize(0);
+	MaxNumber+=max(height+1,20);
+      } else
+	MaxNumber+=20;
     }
   }
   QTable::keyPressEvent(e);
@@ -304,8 +307,13 @@ void toResultContentEditor::keyPressEvent(QKeyEvent *e)
 
 void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected)
 {
-  if (row+1>=Row)
-    AddRow=true;
+  if (row+1>=MaxNumber) {
+    if (Query&&!Query->eof()) {
+      Poll.start(100);
+      if (MaxNumber>=0)
+	MaxNumber+=5;
+    }
+  }
   QTable::paintCell(p,row,col,cr,selected);
 }
 
@@ -615,8 +623,6 @@ void toResultContentEditor::changePosition(int row,int col)
 void toResultContentEditor::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
 {
   QTable::drawContents(p,cx,cy,cw,ch);
-  if (AddRow)
-    addRow();
 }
 
 void toResultContentEditor::editReadAll(void)

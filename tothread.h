@@ -93,12 +93,12 @@ private:
 
   class taskRunner : public QThread {
   public:
-    toSemaphore		StartSemaphore;
-    toTask		*Task;
+    toSemaphore StartSemaphore;
+    toTask *Task;
     taskRunner(toTask *);
     virtual void run(void);
     friend class toThread;
-  }			Thread;
+  } Thread;
   static std::list<toThread *> *Threads;
   static toLock *Lock;
   static int LastID;
@@ -133,11 +133,11 @@ class toSemaphore {
 private:
   /** Actual semaphore.
    */
-  sem_t			Semaphore;
+  sem_t Semaphore;
   /** Initialise semaphore.
    * @param val Value to init semaphore to.
    */
-  void			init(int val);
+  void init(int val);
 
   toSemaphore(const toSemaphore &);
 public:

@@ -293,7 +293,7 @@ void toThread::startAsync(void)
 
 void toThread::msleep(int msec)
 {
-  QThread::msleep(msec);
+  taskRunner::msleep(msec);
 }
 
 toThread::taskRunner::taskRunner(toTask *task)

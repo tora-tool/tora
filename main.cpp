@@ -201,7 +201,7 @@ int main(int argc,char **argv)
                            "Unhandled exception",
                            str,
                            "Exit");
-#if 1
+#if 0
   } catch (...) {
     printf("Unhandled exception of unknown type.\n\n");
     TOMessageBox::critical(NULL,

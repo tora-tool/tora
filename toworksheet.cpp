@@ -786,6 +786,7 @@ void toWorksheet::query(const QString &str,bool direct)
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
 	saveHistory();
+	Result->setSQL(QString::null);
 	Result->query(QueryString,param);
       } catch (const toConnection::exception &exc) {
 	addLog(QueryString,exc);

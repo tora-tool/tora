@@ -69,8 +69,12 @@ toResultLong::toResultLong(QWidget *parent,const char *name)
 
 void toResultLong::query(const QString &sql,const toQList &param)
 {
-  if (!setSQLParams(sql,param))
+  if (!setSQLParams(sql,param)) {
+    emit firstResult(toResult::sql(),
+		     toConnection::exception("Will not reexecute same query"));
+    emit done();
     return;
+  }
   stop();
   Query=NULL;
   LastItem=NULL;
@@ -185,9 +189,12 @@ void toResultLong::addItem(void)
 	  cleanup();
 	  return;
 	}
-	if (MaxNumber<0||MaxNumber>RowNumber)
-	  Timer.start(1); // Must use timer, would mean really long recursion otherwise
-	else
+	if (MaxNumber<0||MaxNumber>RowNumber) {
+	  if (!Timer.isActive())
+	    Timer.start(1); // Must use timer, would mean really long recursion otherwise
+	  else
+	    Timer.start(TO_POLL_CHECK);
+	} else
 	  Timer.stop();
       } else {
 	if (Query->eof()) {

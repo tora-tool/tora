@@ -301,14 +301,16 @@ public:
     std::map<QString,QString> def=DefaultText();
 
     int tot=Tool->config("Number",QString::number(-1)).toInt();
-    for(int i=0;i<tot;i++) {
-      QString num=QString::number(i);
-      QString root=Tool->config(num,"");
-      num+="file";
-      QString file=Tool->config(num,"");
-      new QListViewItem(FileList,root,file);
-      if (def.find(root)!=def.end())
-	def.erase(def.find(root));
+    {
+      for(int i=0;i<tot;i++) {
+	QString num=QString::number(i);
+        QString root=Tool->config(num,"");
+        num+="file";
+        QString file=Tool->config(num,"");
+	new QListViewItem(FileList,root,file);
+	if (def.find(root)!=def.end())
+	  def.erase(def.find(root));
+      }
     }
     for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
       new QListViewItem(FileList,(*i).first,(*i).second);
@@ -514,14 +516,16 @@ void toTextTemplate::insertItems(QListView *parent)
   int tot=TemplateTool.config("Number",QString::number(-1)).toInt();
   std::map<QString,QString> def=DefaultText();
 
-  for(int i=0;i<tot;i++) {
-    QString num=QString::number(i);
-    QString root=TemplateTool.config(num,"");
-    num+="file";
-    QString file=TemplateTool.config(num,"");
-    addFile(parent,root,file);
-    if (def.find(root)!=def.end())
-      def.erase(def.find(root));
+  {
+    for(int i=0;i<tot;i++) {
+      QString num=QString::number(i);
+      QString root=TemplateTool.config(num,"");
+      num+="file";
+      QString file=TemplateTool.config(num,"");
+      addFile(parent,root,file);
+      if (def.find(root)!=def.end())
+	def.erase(def.find(root));
+    }
   }
   for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
     addFile(parent,(*i).first,(*i).second);

@@ -169,6 +169,7 @@ void toTool::createWindow(void)
 	toToolCaption(tool,name());
 
       newWin->show();
+      main->editFileMenu();
 
       // Maximize window if only window
       if (toMainWidget()->workspace()->windowList().count()==1&&

@@ -226,7 +226,7 @@ void toAnalyze::poll(void)
     bool eof=false;
     try {
       eof=(*i)->eof();
-    } catch(const QString &str) {
+    } catch(const QString &) {
       eof=true;
     }
     if (eof) {

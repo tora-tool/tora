@@ -1,5 +1,6 @@
 #include <qmovie.h>
 #include <qlabel.h>
+#include <qstatusbar.h>
 
 #include "tobackground.h"
 #include "tomain.h"
