@@ -53,6 +53,7 @@ Extended functionality:
 * Proxy connection provider.
 * QSql connection provider.
 * New configure script with better support for multiple databases.
+* Add tooltip to content editor.
 
 New tools:
 

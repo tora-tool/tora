@@ -83,6 +83,7 @@
 2001-12-03: Added option to hide extent view in storage manager.
 2001-12-03: Rewrote storage preferences using designer.
 2001-12-03: Totally revamped configure.
+2001-12-05: Some Qt only fixes.
 
 1.1.5: Released 2001-11-26
 

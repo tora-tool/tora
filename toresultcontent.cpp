@@ -42,6 +42,7 @@
 #include <qcheckbox.h>
 #include <qmessagebox.h>
 #include <qgrid.h>
+#include <qtooltip.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"

@@ -40,6 +40,7 @@
 #include <qsplitter.h>
 #include <qmessagebox.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 
 #include "toprofiler.h"
 #include "tosql.h"

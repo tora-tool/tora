@@ -36,6 +36,7 @@
 #include <qtoolbar.h>
 #include <qpopupmenu.h>
 #include <qsplitter.h>
+#include <qlabel.h>
 
 #include "tomain.h"
 #include "toworksheetstatistic.h"
