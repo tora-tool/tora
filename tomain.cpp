@@ -428,7 +428,15 @@ toMain::toMain()
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   WindowsMenu=new QPopupMenu(this);
+
   WindowsMenu->setCheckable(true);
+  WindowsMenu->insertItem("C&lose",TO_WINDOWS_CLOSE);
+  WindowsMenu->insertItem("Close &All",TO_WINDOWS_CLOSE_ALL);
+  WindowsMenu->insertSeparator();
+  WindowsMenu->insertItem("&Cascade",TO_WINDOWS_CASCADE);
+  WindowsMenu->insertItem("&Tile",TO_WINDOWS_TILE);
+  WindowsMenu->insertSeparator();
+
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
   menuBar()->insertItem("&Window",WindowsMenu,TO_WINDOWS_MENU);
   connect(WindowsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
@@ -599,8 +607,7 @@ void toMain::editFileMenu(void)
   menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,Edit&&Edit->selectAllEnabled());
   menuBar()->setItemEnabled(TO_EDIT_READ_ALL,Edit&&Edit->readAllEnabled());
   menuBar()->setItemEnabled(TO_EDIT_SEARCH,Edit&&Edit->searchEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
-			    Search&&Search->searchNextAvailable());
+  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
 
   menuBar()->setItemEnabled(TO_FILE_OPEN,Edit&&Edit->openEnabled());
   menuBar()->setItemEnabled(TO_FILE_SAVE,Edit&&Edit->saveEnabled());
@@ -636,8 +643,7 @@ void toMain::updateRecent()
 	  FileMenu->changeItem(TO_LAST_FILE_ID+i,fi.fileName());
 	}
       }
-      if (!Edit||!Edit->openEnabled())
-	menuBar()->setItemEnabled(TO_LAST_FILE_ID+i,false);
+      menuBar()->setItemEnabled(TO_LAST_FILE_ID+i,Edit&&Edit->openEnabled());
     }
   }
 }
@@ -667,30 +673,23 @@ void toMain::addRecentFile(const QString &file)
 
 void toMain::windowsMenu(void)
 {
-  WindowsMenu->clear();
-
-  WindowsMenu->insertItem("C&lose",TO_WINDOWS_CLOSE);
-  if (!workspace()->activeWindow())
-    WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE,false);
-
-  WindowsMenu->insertItem("Close &All",TO_WINDOWS_CLOSE_ALL);
-  WindowsMenu->insertSeparator();
-  WindowsMenu->insertItem("&Cascade",TO_WINDOWS_CASCADE);
-  WindowsMenu->insertItem("&Tile",TO_WINDOWS_TILE);
+  WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE,workspace()->activeWindow());
 
   bool first=true;
   QRegExp strip(" <[0-9]+>$");
   int id=0;
-  for (unsigned int i=0;i<workspace()->windowList().count();i++) {
+  unsigned int i;
+  for (i=0;i<workspace()->windowList().count();i++) {
     QWidget *widget=workspace()->windowList().at(i);
     if (widget&&!widget->isHidden()) {
-      if (first) {
+      if (first)
 	first=false;
-	WindowsMenu->insertSeparator();
-      }
       QString caption=widget->caption();
       caption.replace(strip,"");
-      WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
+      if(WindowsMenu->indexOf(TO_WINDOWS_WINDOWS+i)<0)
+	WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
+      else
+	WindowsMenu->changeItem(TO_WINDOWS_WINDOWS+i,caption);
       WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,workspace()->activeWindow()==workspace()->windowList().at(i));
       if (i<9) {
 	WindowsMenu->setAccel(Key_1+id|CTRL,TO_WINDOWS_WINDOWS+i);
@@ -700,6 +699,10 @@ void toMain::windowsMenu(void)
       }
       widget->setCaption(caption);
     }
+  }
+  while(WindowsMenu->indexOf(TO_WINDOWS_WINDOWS+i)>=0) {
+    WindowsMenu->removeItem(TO_WINDOWS_WINDOWS+i);
+    i++;
   }
 
   if (first) {

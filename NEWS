@@ -1,5 +1,6 @@
 1.3.7:
 
+2002-07-03: Fixed problem with menues not behaving like they should.
 2002-07-03: Fixed some minor exception problems.
 2002-07-03: Fixed a bug with not disabling unsupported features for different databases.
 2002-07-03: Added new template to view SQL dictionary.
