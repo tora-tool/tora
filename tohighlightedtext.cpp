@@ -787,7 +787,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	e->accept();
 	return;
       }
-    } else if (e->key()==Key_Return&&e->state()==0&&CompleteItem>=0) {
+    } else if ((e->key()==Key_Return||e->key()==Key_Enter)&&e->state()==0&&CompleteItem>=0) {
       if (CompleteItem>=0) {
 	QString tmp=Completion->text(CompleteItem);
 	unsigned int pos=0;
