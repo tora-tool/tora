@@ -2377,13 +2377,13 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 	turnMark( FALSE );
 
 #ifndef QT_NO_CLIPBOARD
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
     else if ( echoMode() == Normal )
 	copy();
 #endif
 
     if ( e->button() == MidButton && !readOnly ) {
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
 	paste();		// Will repaint the cursor line.
 #else
 #ifndef QT_NO_COMPAT
@@ -2847,7 +2847,7 @@ void QtMultiLineEdit::markWord( int posx, int posy )
     turnMark( markDragX != markAnchorX || markDragY != markAnchorY );
 
 #ifndef QT_NO_CLIPBOARD
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
     if ( echoMode() == Normal )
 	copy();
 #endif
@@ -2878,7 +2878,7 @@ void QtMultiLineEdit::copy() const
 {
     QString t = markedText();
     if ( !t.isEmpty() && echoMode() == Normal ) {
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
 	disconnect( QApplication::clipboard(), SIGNAL(dataChanged()), this, 0);
 #endif
 #if defined(_OS_WIN32_)
@@ -2887,7 +2887,7 @@ void QtMultiLineEdit::copy() const
 	t.replace( nl, "\r\n" );
 #endif
 	QApplication::clipboard()->setText( t );
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
 	connect( QApplication::clipboard(), SIGNAL(dataChanged()),
 		 this, SLOT(clipboardChanged()) );
 #endif
@@ -2927,7 +2927,7 @@ void QtMultiLineEdit::cut()
 
 void QtMultiLineEdit::clipboardChanged()
 {
-#if defined(_WS_X11_)
+#if defined(Q_WS_X11)
     disconnect( QApplication::clipboard(), SIGNAL(dataChanged()),
 		this, SLOT(clipboardChanged()) );
     turnMark( FALSE );

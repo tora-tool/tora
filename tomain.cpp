@@ -55,6 +55,7 @@
 
 #include <qapplication.h>
 #include <qcheckbox.h>
+#include <qclipboard.h>
 #include <qcombobox.h>
 #include <qevent.h>
 #include <qfile.h>
@@ -985,6 +986,11 @@ void toMain::editEnable(toEditWidget *edit)
 		     edit->searchEnabled(),
 		     edit->selectAllEnabled(),
 		     edit->readAllEnabled());
+
+  // Set Selection Mode on X11
+  QClipboard *clip=qApp->clipboard();
+  if(clip->supportsSelection())
+    clip->setSelectionMode(true);
 }
 
 void toMain::editDisable(toEditWidget *edit)
