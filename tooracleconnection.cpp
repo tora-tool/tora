@@ -110,6 +110,8 @@ public:
     { Connection=conn; }
     ~oracleSub()
     { delete Connection; }
+    virtual void cancel(void)
+    { Connection->cancel(); }
   };
 
   class oracleQuery : public toQuery::queryImpl {
@@ -372,46 +374,44 @@ public:
     virtual std::list<toConnection::objectName> objectNames(void)
     {
       std::list<toConnection::objectName> ret;
-      try {
-	std::list<toQValue> par;
-	toQuery objects(connection(),toQuery::Long,
-			SQLListObjects,par);
-	toConnection::objectName cur;
-	while(!objects.eof()) {
-	  cur.Owner=objects.readValueNull();
-	  cur.Name=objects.readValueNull();
-	  cur.Type=objects.readValueNull();
-	  cur.Comment=objects.readValueNull();
-	  ret.insert(ret.end(),cur);
-	}
-      } catch (...) {
+
+      std::list<toQValue> par;
+      toQuery objects(connection(),toQuery::Long,
+		      SQLListObjects,par);
+      toConnection::objectName cur;
+      while(!objects.eof()) {
+	cur.Owner=objects.readValueNull();
+	cur.Name=objects.readValueNull();
+	cur.Type=objects.readValueNull();
+	cur.Comment=objects.readValueNull();
+	ret.insert(ret.end(),cur);
       }
+
       return ret;
     }
     virtual std::map<QString,toConnection::objectName> synonymMap(std::list<toConnection::objectName> &objects)
     {
       std::map<QString,toConnection::objectName> ret;
-      try {
-	toConnection::objectName cur;
-	cur.Type="A";
-	std::list<toQValue> par;
-	par.insert(par.end(),toQValue(connection().user().upper()));
-	toQuery synonyms(connection(),toQuery::Long,
-			 SQLListSynonyms,par);
-	std::list<toConnection::objectName>::iterator i=objects.begin();
-	while(!synonyms.eof()) {
-	  QString synonym=synonyms.readValueNull();
-	  cur.Owner=synonyms.readValueNull();
-	  cur.Name=synonyms.readValueNull();
-	  while(i!=objects.end()&&(*i)<cur)
-	    i++;
-	  if (i==objects.end())
-	    break;
-	  if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner)
-	    ret[synonym]=(*i);
-	}
-      } catch(...) {
+
+      toConnection::objectName cur;
+      cur.Type="A";
+      std::list<toQValue> par;
+      par.insert(par.end(),toQValue(connection().user().upper()));
+      toQuery synonyms(connection(),toQuery::Long,
+		       SQLListSynonyms,par);
+      std::list<toConnection::objectName>::iterator i=objects.begin();
+      while(!synonyms.eof()) {
+	QString synonym=synonyms.readValueNull();
+	cur.Owner=synonyms.readValueNull();
+	cur.Name=synonyms.readValueNull();
+	while(i!=objects.end()&&(*i)<cur)
+	  i++;
+	if (i==objects.end())
+	  break;
+	if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner)
+	  ret[synonym]=(*i);
       }
+
       return ret;
     }
     virtual toQDescList columnDesc(const toConnection::objectName &table)
@@ -601,30 +601,35 @@ public:
 
     buf[size]=0;
 
-    char *begname=NULL;
+    int begname=-1;
+    int parambeg=-1;
     int pos=0;
     int param=0;
     while(pos<size) {
       if (buf[pos]=='#') {
-	buf[pos]=0;
 	while(pos<size&&buf[pos]!='\n')
 	  pos++;
-      } else if (isspace(buf[pos])) {
-	buf[pos]=0;
       } else if (buf[pos]=='=') {
 	if (param==0) {
-	  buf[pos]=0;
-	  if (begname)
-	    ret.insert(ret.end(),begname);
+	  if (begname>=0&&!host.isEmpty())
+	    ret.insert(ret.end(),QString::fromLatin1(buf+begname,pos-begname));
 	}
       } else if (buf[pos]=='(') {
-	begname=NULL;
+	begname=-1;
+	parambeg=pos+1;
 	param++;
       } else if (buf[pos]==')') {
-	begname=NULL;
+	if (parambeg>=0&&host.isEmpty()) {
+	  QString tmp=QString::fromLatin1(buf+parambeg,pos-parambeg);
+	  tmp.replace(QRegExp("\\s+"),"");
+	  if (tmp.lower().startsWith("sid="))
+	    ret.insert(ret.end(),tmp.mid(4));
+	}
+	begname=-1;
+	parambeg=-1;
 	param--;
-      } else if (!begname) {
-	begname=buf+pos;
+      } else if (!isspace(buf[pos])&&begname<0) {
+	begname=pos;
       }
       pos++;
     }

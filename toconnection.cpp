@@ -682,12 +682,16 @@ toConnection::toConnection(const toConnection &conn)
 toConnection::~toConnection()
 {
   toBusy busy;
-  ReadingValues.down();
   {
     for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
       delete (*i);
     }
   }
+  {
+    for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++)
+      (*i)->cancel();
+  }
+  ReadingValues.down();
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     Connection->closeConnection(*i);
   }
@@ -701,22 +705,31 @@ toConnectionSub *toConnection::mainConnection()
 
 toConnectionSub *toConnection::longConnection()
 {
-#if 0
-  if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
-    return mainConnection();
-#endif
   if (Connections.size()==1)
     addConnection();
   std::list<toConnectionSub *>::iterator i=Connections.begin();
   i++;
-  return (*i);
+  toConnectionSub *ret=(*i);
+  Connections.erase(i);
+  Running.insert(Running.end(),ret);
+  return ret;
 }
 
 void toConnection::freeConnection(toConnectionSub *sub)
 {
-  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if (*i==sub)
-      return;
+  {
+    for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++) {
+      if (*i==sub) {
+	Running.erase(i);
+	break;
+      }
+    }
+  }
+  {
+    for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+      if (*i==sub)
+	return;
+    }
   }
   Connections.insert(Connections.end(),sub);
 }
@@ -1068,8 +1081,8 @@ void toConnection::cacheObjects::run()
 {
   try {
     Connection.ObjectNames=Connection.Connection->objectNames();
-    Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
     Connection.ObjectNames.sort();
+    Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
   } catch(...) {
   }
   Connection.ReadingValues.up();
@@ -1109,6 +1122,7 @@ bool toConnection::checkAvail(bool block)
 {
   if (ReadingValues.getValue()==0) {
     if (block) {
+      toBusy busy;
       ReadingValues.down();
       ReadingValues.up();
     } else

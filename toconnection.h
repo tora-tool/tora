@@ -67,6 +67,10 @@ public:
    */
   virtual ~toConnectionSub()
   { }
+  /** Cancel anything running on this sub.
+   */
+  virtual void cancel(void)
+  { }
 };
 
 /** This class is used to perform a query on a database connection.
@@ -393,6 +397,7 @@ class toConnection {
   std::list<QWidget *> Widgets;
   std::list<QCString> InitStrings;
   std::list<toConnectionSub *> Connections;
+  std::list<toConnectionSub *> Running;
   bool NeedCommit;
 
 public:
@@ -473,12 +478,14 @@ public:
     { return name; }
 
     /** Extract available objects to query for connection. Any access to the
-     * database should always be run using a long running query.
+     * database should always be run using a long running query. If something
+     * goes wrong should throw exception.
      * @return List of available objects.
      */
     virtual std::list<objectName> objectNames(void);
     /** Get synonyms available for connection. Any access to the
-     * database should always be run using a long running query.
+     * database should always be run using a long running query. If something
+     * goes wrong should throw exception.
      * @param objects Available objects for the connection. Objects
      *                are sorted in owner and name order. Don't modify
      *                this list.

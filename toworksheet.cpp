@@ -425,7 +425,7 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,"Gather session statistic of execution");
-    new QLabel("Refresh",toolbar);
+    new QLabel("Refresh ",toolbar);
     Refresh=toRefreshCreate(toolbar);
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));

@@ -161,8 +161,13 @@ void toNewConnection::changeProvider(void)
 
 void toNewConnection::changeHost(void)
 {
+  QString host;
+  if (SqlNet->isHidden())
+    host=Host->currentText();
+  else
+    host=(SqlNet->isChecked()?QString("SQL*Net"):QString::null);
   std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
-							       Host->currentText(),
+							       host,
 							       Username->text(),
 							       Password->text());
   QString current=Database->currentText();

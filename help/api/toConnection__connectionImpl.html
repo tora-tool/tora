@@ -115,13 +115,15 @@
      </p>
 <A NAME="objectNames"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<objectName> &nbsp;<strong>objectNames</strong> (void)
 <br></td><td align="right"><h3><strong>objectNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection. Any access to the
- database should always be run using a long running query.
+ database should always be run using a long running query. If something
+ goes wrong should throw exception.
 </p>
 <p><b>Returns</b>: List of available objects.
      </p>
 <A NAME="synonymMap"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &nbsp;<strong>synonymMap</strong> (std::list<objectName> &objects)
 <br></td><td align="right"><h3><strong>synonymMap</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get synonyms available for connection. Any access to the
- database should always be run using a long running query.
+ database should always be run using a long running query. If something
+ goes wrong should throw exception.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>objects</i></TD><TD align="left" valign="top">Available objects for the connection. Objects

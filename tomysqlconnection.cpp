@@ -325,17 +325,16 @@ public:
     virtual std::list<toConnection::objectName> objectNames(void)
     {
       std::list<toConnection::objectName> ret;
-      try {
-	toQuery tables(connection(),SQLListTables);
-	toConnection::objectName cur;
-	cur.Type="TABLE";
-	while(!tables.eof()) {
-	  cur.Name=tables.readValueNull();
-	  cur.Owner=connection().database();
-	  ret.insert(ret.end(),cur);
-	}
-      } catch (...) {
+
+      toQuery tables(connection(),SQLListTables);
+      toConnection::objectName cur;
+      cur.Type="TABLE";
+      while(!tables.eof()) {
+	cur.Name=tables.readValueNull();
+	cur.Owner=connection().database();
+	ret.insert(ret.end(),cur);
       }
+
       return ret;
     }
     virtual toQDescList columnDesc(const toConnection::objectName &table)

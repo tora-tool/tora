@@ -42,6 +42,7 @@
 #include <qvalidator.h>
 #include <qprinter.h>
 #include <qpaintdevicemetrics.h>
+#include <qpopupmenu.h>
 
 #include "tolinechart.h"
 #include "tomain.h"

@@ -892,7 +892,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Refresh",toolbar);
+  new QLabel("Refresh ",toolbar);
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toRefreshParse(timer());
@@ -1292,9 +1292,11 @@ void toTuningFileIO::resizeEvent(QResizeEvent *e)
 
 void toTuningFileIO::changeConnection(void)
 {
-  for(std::map<QString,toBarChart *>::iterator i=ReadsCharts.begin();
-      i!=ReadsCharts.end();i++)
-    delete (*i).second;
+  {
+    for(std::map<QString,toBarChart *>::iterator i=ReadsCharts.begin();
+        i!=ReadsCharts.end();i++)
+      delete (*i).second;
+  }
   ReadsCharts.clear();
   for(std::map<QString,toLineChart *>::iterator i=TimeCharts.begin();
       i!=TimeCharts.end();i++)

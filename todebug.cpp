@@ -1855,11 +1855,13 @@ void toDebug::refresh(void)
 	Schema->insertItem(*i);
     }
     if (!selected.isEmpty()) {
-      for (int i=0;i<Schema->count();i++)
-	if (Schema->text(i)==selected) {
-	  Schema->setCurrentItem(i);
-	  break;
-	}
+      {
+	for (int i=0;i<Schema->count();i++)
+	  if (Schema->text(i)==selected) {
+	    Schema->setCurrentItem(i);
+	    break;
+	  }
+      }
       Objects->clear();
 
       std::list<toConnection::objectName> &objs=connection().objects(true);

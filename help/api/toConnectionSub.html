@@ -30,6 +30,8 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref2">~toConnectionSub</A></b> () 
 </LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref3">cancel</A></b> (void) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract definition of an actual connection to a database.
  Each <A HREF="toConnection.html">toConnection</A> object can have one or more actual connections to the
  database depending on long running queries. Normally you will never need to
@@ -41,6 +43,9 @@
    </p>
 <A NAME="~toConnectionSub"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toConnectionSub</strong> ()
 <br></td><td align="right"><h3><strong>~toConnectionSub</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Close connection.
+   </p>
+<A NAME="cancel"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>cancel</strong> (void)
+<br></td><td align="right"><h3><strong>cancel</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Cancel anything running on this sub.
    </p>
 <HR>
 	<table>

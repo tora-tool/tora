@@ -131,17 +131,17 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Schema",toolbar);
+  new QLabel("Schema ",toolbar);
   Schema=new QComboBox(false,toolbar);
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel("Refresh",toolbar);
+  new QLabel("Refresh ",toolbar);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel("Type",toolbar);
+  new QLabel("Type ",toolbar);
   Type=new QComboBox(toolbar);
   Type->insertItem("SGA");
   Type->insertItem("Long operations");

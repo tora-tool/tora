@@ -39,6 +39,7 @@
 #include <qworkspace.h>
 #include <qprinter.h>
 #include <qpaintdevicemetrics.h>
+#include <qpopupmenu.h>
 
 #include <math.h>
 
@@ -107,7 +108,7 @@ void toPieChart::openCopy(void)
 #endif
 }
 
-toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name=NULL,WFlags f=0)
+toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f),
     Values(pie->Values),
     Labels(pie->Labels),
