@@ -65,6 +65,7 @@ bool toMonolithic(void)
 
 int main(int argc,char **argv)
 {
+  otl_connect::otl_initialize(1);
   try {
 #ifdef ENABLE_QT_XFT
     setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
@@ -72,10 +73,11 @@ int main(int argc,char **argv)
 #ifdef TO_KDE
     KApplication mainApp(argc,argv,"tora");
 #else
-    if (toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty())
+    if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())
       QApplication::setDesktopSettingsAware(false);
     QApplication mainApp(argc,argv);
 #endif
+
     if (getenv("LANG"))
       mainApp.setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
@@ -144,7 +146,6 @@ int main(int argc,char **argv)
       setenv("NLS_LANG",nls,true);
     }
 
-    otl_connect::otl_initialize(1);
 
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
       toAbout *about=new toAbout(NULL,"About TOra",true);

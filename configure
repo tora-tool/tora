@@ -43,26 +43,26 @@ grep -E "^(UIC)|(MOC)|(FIXKDE)" Makefile.setup > configure.setup
 
 . ./configure.setup
 
+echo Compiling designer files
 for a in *.ui
 do
     base=`echo $a | sed s/\.[^\.]*$//`
-    echo Generating $base.h \& $base.cpp
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
 done
 
+echo Making KDE/Qt substitution
 for a in *.kde
 do
     b=`echo $a | sed 's/\.kde$/\.h/'`
-    echo Generating $b from $a
     $FIXKDE < $a > $b
 done
 
+echo Metacompiling moc files
 for a in *.h
 do
     if grep -i Q_OBJECT $a >/dev/null
     then
-        echo Metacompiling $a
 	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
 done

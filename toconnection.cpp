@@ -70,7 +70,6 @@ otl_connect *toConnection::newConnection(void)
   otl_stream date(1,str.utf8(),*conn);
   for (list<QString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
     try {
-      printf("%s\n",(const char *)(*i));
       otl_cursor::direct_exec(*conn,(*i).utf8());
     } catch (const otl_exception &exc) {
       toStatusMessage(QString::fromUtf8((const char *)exc.msg));

@@ -38,12 +38,32 @@ TO_NAMESPACE;
 
 toSQL::sqlMap *toSQL::Definitions;
 
+toSQL::toSQL(const QString &name,
+	     const QString &sql,
+	     const QString &description=QString::null,
+	     const QString &ver="8.1")
+  : Name(name)
+{
+  updateSQL(name,sql,description,ver,false);
+}
+
+toSQL::toSQL(const QString &name)
+  : Name(name)
+{
+}
+
+void toSQL::allocCheck(void)
+{
+  if (!Definitions) Definitions=new sqlMap;
+}
+
 bool toSQL::updateSQL(const QString &name,
 		      const QString &sql,
 		      const QString &description,
 		      const QString &ver,
 		      bool modified)
 {
+  printf("%s\n",(const char *)name);
   version def(ver,sql,modified);
 
   allocCheck();

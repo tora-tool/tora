@@ -57,12 +57,9 @@ private:
 
   QString Name;
 
-  toSQL(const QString &name)
-    : Name(name)
-  { }
+  toSQL(const QString &name);
 
-  static void allocCheck(void)
-  { if (!Definitions) Definitions=new sqlMap; }
+  static void allocCheck(void);
 
   static QString expandFile(const QString &file);
 public:
@@ -101,9 +98,7 @@ public:
   toSQL(const QString &name,
 	const QString &sql,
 	const QString &description=QString::null,
-	const QString &ver="8.1")
-    : Name(name)
-  { updateSQL(name,sql,description,ver,false); }
+	const QString &ver="8.1");
 };
 
 #endif

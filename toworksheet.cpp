@@ -401,8 +401,6 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   }
 }
 
-#include <stdio.h>
-
 void toWorksheet::windowActivated(QWidget *widget)
 {
   QWidget *w=this;

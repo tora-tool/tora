@@ -39,8 +39,8 @@ INSTALLLIB=/usr/local/lib
 # Additional includes needed to compile program
 INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/plsql/public" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/include/qt2"
 
-# C Compiler to use
-CC="/usr/bin/cc"
+# C++ Compiler to use
+GCC="gcc"
 
 # Additional libraries to link with
 LIBS_GLOB=-lcrypt -lm -lpthread -ldl

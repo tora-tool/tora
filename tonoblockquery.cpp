@@ -57,7 +57,6 @@ void toNoBlockQuery::queryTask::run(void)
       Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
       TO_DEBUGOUT("Open query\n");
 
-      // These are all read only parameters
       Query.open(1,
 		 Parent.SQL.utf8(),
 		 *Parent.LongConn);
@@ -147,6 +146,7 @@ void toNoBlockQuery::queryTask::run(void)
     toLocker lock(Parent.Lock);
     Parent.Error=str;
   }
+
   TO_DEBUGOUT("Locking EOQ\n");
   toLocker lock(Parent.Lock);
   TO_DEBUGOUT("Running up\n");

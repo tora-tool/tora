@@ -47,8 +47,6 @@ static toSQL SQLUserNames(TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
 
-#include <stdio.h>
-
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 {
   switch (dsc.otl_var_dbtype) {

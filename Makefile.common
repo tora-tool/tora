@@ -41,7 +41,7 @@ all: $(TARGET)
 .depends/%.d: %.cpp
 	@echo Making dependences for $<
 	if [ ! -d .depends ] ; then mkdir .depends ; fi
-	$(CC) -MM $(CPPFLAGS) $< > $@.tmp && \
+	$(GCC) -MM $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
 		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
 
@@ -51,7 +51,7 @@ include $(DEPENDS)
 	@echo Metacompiling $<
 	$(MOC) -o $@ $<
 
-%.cpp %h: %.ui
+%.cpp %.h: %.ui
 	echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
 	$(UIC) -o $(<:%.ui=%.h) $<
 	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
@@ -63,12 +63,12 @@ include $(DEPENDS)
 plugins/%.tso:
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir plugins ; fi
-	$(CC) -shared $(CFLAGS) -o $@ $^
+	$(GCC) -shared $(CFLAGS) -o $@ $^
 
 objs/%.o: %.cpp
 	@echo Compiling $<
 	if [ ! -d objs ] ; then mkdir objs ; fi
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(GCC) $(CFLAGS) -o $@ -c $<
 
 %.o : objs/%.o
 	@echo Faulty dependency, forgot the objs/ part

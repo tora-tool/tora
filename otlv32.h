@@ -1,5 +1,5 @@
 //
-// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.15,
+// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.18,
 // Copyright (C) Sergei Kuchin, 1996,2001
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -79,16 +79,28 @@
 #define OTL_ORA8_NAMESPACE_PREFIX oracle::
 #define OTL_ORA8_NAMESPACE_END }
 
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
 #else
 
+// Only one OTL is being intantiated
 #if defined(OTL_ODBC)&&!defined(OTL_ORA8)&& \
-    !defined(OTL_ORA7)&&!defined(OTL_DB2_CLI) \
+    !defined(OTL_ORA7)&&!defined(OTL_DB2_CLI)&& \
+    !defined(OTL_IBASE) \
  || !defined(OTL_ODBC)&&defined(OTL_ORA8)&& \
-    !defined(OTL_ORA7)&&!defined(OTL_DB2_CLI) \
+    !defined(OTL_ORA7)&&!defined(OTL_DB2_CLI)&& \
+    !defined(OTL_IBASE) \
  || !defined(OTL_ODBC)&&!defined(OTL_ORA8)&& \
-    defined(OTL_ORA7)&&!defined(OTL_DB2_CLI) \
+    defined(OTL_ORA7)&&!defined(OTL_DB2_CLI)&& \
+    !defined(OTL_IBASE) \
  || !defined(OTL_ODBC)&&!defined(OTL_ORA8)&& \
-    !defined(OTL_ORA7)&&defined(OTL_DB2_CLI)
+    !defined(OTL_ORA7)&&defined(OTL_DB2_CLI)&& \
+    !defined(OTL_IBASE) \
+ || !defined(OTL_ODBC)&&!defined(OTL_ORA8)&& \
+    !defined(OTL_ORA7)&&!defined(OTL_DB2_CLI)&& \
+    defined(OTL_IBASE)
 
 #define OTL_ODBC_NAMESPACE_BEGIN
 #define OTL_ODBC_NAMESPACE_PREFIX
@@ -102,10 +114,16 @@
 #define OTL_ORA8_NAMESPACE_PREFIX
 #define OTL_ORA8_NAMESPACE_END
 
+#define OTL_IBASE_NAMESPACE_BEGIN
+#define OTL_IBASE_NAMESPACE_PREFIX
+#define OTL_IBASE_NAMESPACE_END
+
 #endif
 
+// ================ Combinations of two OTLs =========================
 #if defined(OTL_ODBC) && defined(OTL_ORA7) && \
-    !defined(OTL_ORA8) && !defined(OTL_DB2_CLI)
+    !defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    !defined(OTL_IBASE) 
 
 #define OTL_ODBC_NAMESPACE_BEGIN namespace odbc{
 #define OTL_ODBC_NAMESPACE_PREFIX odbc::
@@ -118,11 +136,16 @@
 #define OTL_ORA8_NAMESPACE_BEGIN
 #define OTL_ORA8_NAMESPACE_PREFIX
 #define OTL_ORA8_NAMESPACE_END
+
+#define OTL_IBASE_NAMESPACE_BEGIN
+#define OTL_IBASE_NAMESPACE_PREFIX
+#define OTL_IBASE_NAMESPACE_END
 
 #endif
 
 #if defined(OTL_ODBC) && !defined(OTL_ORA7) && \
-    defined(OTL_ORA8) && !defined(OTL_DB2_CLI)
+    defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    !defined(OTL_IBASE) 
 
 #define OTL_ODBC_NAMESPACE_BEGIN namespace odbc{
 #define OTL_ODBC_NAMESPACE_PREFIX odbc::
@@ -136,10 +159,15 @@
 #define OTL_ORA7_NAMESPACE_PREFIX
 #define OTL_ORA7_NAMESPACE_END
 
+#define OTL_IBASE_NAMESPACE_BEGIN
+#define OTL_IBASE_NAMESPACE_PREFIX
+#define OTL_IBASE_NAMESPACE_END
+
 #endif
 
 #if !defined(OTL_ODBC) && defined(OTL_ORA7) && \
-    !defined(OTL_ORA8) && defined(OTL_DB2_CLI)
+    !defined(OTL_ORA8) && defined(OTL_DB2_CLI) && \
+    !defined(OTL_IBASE) 
 
 #define OTL_ORA7_NAMESPACE_BEGIN namespace oracle {
 #define OTL_ORA7_NAMESPACE_PREFIX oracle::
@@ -153,10 +181,15 @@
 #define OTL_ODBC_NAMESPACE_PREFIX db2::
 #define OTL_ODBC_NAMESPACE_END }
 
+#define OTL_IBASE_NAMESPACE_BEGIN
+#define OTL_IBASE_NAMESPACE_PREFIX
+#define OTL_IBASE_NAMESPACE_END
+
 #endif
 
 #if !defined(OTL_ODBC) && !defined(OTL_ORA7) && \
-    defined(OTL_ORA8) && defined(OTL_DB2_CLI)
+    defined(OTL_ORA8) && defined(OTL_DB2_CLI) && \
+    !defined(OTL_IBASE)
 
 #define OTL_ORA8_NAMESPACE_BEGIN namespace oracle {
 #define OTL_ORA8_NAMESPACE_PREFIX oracle::
@@ -169,6 +202,187 @@
 #define OTL_ODBC_NAMESPACE_BEGIN namespace db2 {
 #define OTL_ODBC_NAMESPACE_PREFIX db2::
 #define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN
+#define OTL_IBASE_NAMESPACE_PREFIX
+#define OTL_IBASE_NAMESPACE_END
+
+#endif
+
+#if defined(OTL_ODBC) && !defined(OTL_ORA7) && \
+    !defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN
+#define OTL_ORA8_NAMESPACE_PREFIX
+#define OTL_ORA8_NAMESPACE_END
+
+#define OTL_ORA7_NAMESPACE_BEGIN
+#define OTL_ORA7_NAMESPACE_PREFIX
+#define OTL_ORA7_NAMESPACE_END
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace odbc {
+#define OTL_ODBC_NAMESPACE_PREFIX odbc::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if !defined(OTL_ODBC) && defined(OTL_ORA7) && \
+    !defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN
+#define OTL_ORA8_NAMESPACE_PREFIX
+#define OTL_ORA8_NAMESPACE_END
+
+#define OTL_ORA7_NAMESPACE_BEGIN namespace oracle {
+#define OTL_ORA7_NAMESPACE_PREFIX oracel::
+#define OTL_ORA7_NAMESPACE_END }
+
+#define OTL_ODBC_NAMESPACE_BEGIN
+#define OTL_ODBC_NAMESPACE_PREFIX
+#define OTL_ODBC_NAMESPACE_END
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if !defined(OTL_ODBC) && !defined(OTL_ORA7) && \
+    defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN namespace oracel {
+#define OTL_ORA8_NAMESPACE_PREFIX oracle::
+#define OTL_ORA8_NAMESPACE_END }
+
+#define OTL_ORA7_NAMESPACE_BEGIN
+#define OTL_ORA7_NAMESPACE_PREFIX
+#define OTL_ORA7_NAMESPACE_END
+
+#define OTL_ODBC_NAMESPACE_BEGIN
+#define OTL_ODBC_NAMESPACE_PREFIX
+#define OTL_ODBC_NAMESPACE_END
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if !defined(OTL_ODBC) && !defined(OTL_ORA7) && \
+    !defined(OTL_ORA8) && defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN
+#define OTL_ORA8_NAMESPACE_PREFIX
+#define OTL_ORA8_NAMESPACE_END
+
+#define OTL_ORA7_NAMESPACE_BEGIN
+#define OTL_ORA7_NAMESPACE_PREFIX
+#define OTL_ORA7_NAMESPACE_END
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace db2 {
+#define OTL_ODBC_NAMESPACE_PREFIX db2::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+// ================= Combinations of three OTLs =====================
+#if defined(OTL_ODBC) && defined(OTL_ORA7) && \
+    !defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN
+#define OTL_ORA8_NAMESPACE_PREFIX
+#define OTL_ORA8_NAMESPACE_END
+
+#define OTL_ORA7_NAMESPACE_BEGIN namespace oracle {
+#define OTL_ORA7_NAMESPACE_PREFIX oracle::
+#define OTL_ORA7_NAMESPACE_END }
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace odbc {
+#define OTL_ODBC_NAMESPACE_PREFIX odbc::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if defined(OTL_ODBC) && !defined(OTL_ORA7) && \
+    defined(OTL_ORA8) && !defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN namespace oracle {
+#define OTL_ORA8_NAMESPACE_PREFIX oracle::
+#define OTL_ORA8_NAMESPACE_END }
+
+#define OTL_ORA7_NAMESPACE_BEGIN
+#define OTL_ORA7_NAMESPACE_PREFIX
+#define OTL_ORA7_NAMESPACE_END
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace odbc {
+#define OTL_ODBC_NAMESPACE_PREFIX odbc::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if !defined(OTL_ODBC) && defined(OTL_ORA7) && \
+    !defined(OTL_ORA8) && defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN 
+#define OTL_ORA8_NAMESPACE_PREFIX
+#define OTL_ORA8_NAMESPACE_END 
+
+#define OTL_ORA7_NAMESPACE_BEGIN namespace oracle {
+#define OTL_ORA7_NAMESPACE_PREFIX oracle::
+#define OTL_ORA7_NAMESPACE_END }
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace db2 {
+#define OTL_ODBC_NAMESPACE_PREFIX db2::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
+
+#endif
+
+#if !defined(OTL_ODBC) && !defined(OTL_ORA7) && \
+    defined(OTL_ORA8) && defined(OTL_DB2_CLI) && \
+    defined(OTL_IBASE)
+
+#define OTL_ORA8_NAMESPACE_BEGIN namespace oracle {
+#define OTL_ORA8_NAMESPACE_PREFIX oracle::
+#define OTL_ORA8_NAMESPACE_END }
+
+#define OTL_ORA7_NAMESPACE_BEGIN
+#define OTL_ORA7_NAMESPACE_PREFIX
+#define OTL_ORA7_NAMESPACE_END
+
+#define OTL_ODBC_NAMESPACE_BEGIN namespace db2 {
+#define OTL_ODBC_NAMESPACE_PREFIX db2::
+#define OTL_ODBC_NAMESPACE_END }
+
+#define OTL_IBASE_NAMESPACE_BEGIN namespace ibase {
+#define OTL_IBASE_NAMESPACE_PREFIX ibase::
+#define OTL_IBASE_NAMESPACE_END }
 
 #endif
 
@@ -209,6 +423,105 @@
 #define OTL_PCONV(_to,_from,_val) \
   OTL_SCAST(_to,*OTL_RCAST(_from*,OTL_CCAST(void*,_val)))
 
+#ifdef OTL_ACE
+
+#include <ace/SString.h>
+#include <ace/Array.h>
+#include <ace/Functor.h>
+#include <ace/RB_Tree.h>
+
+#define OTL_USER_DEFINED_STRING_CLASS_ON
+#define USER_DEFINED_STRING_CLASS ACE_TString
+#define OTL_VALUE_TEMPLATE_ON
+
+const int otl_tmpl_vector_default_size=16;
+
+template<class T>
+class otl_tmpl_vector: public ACE_Array<T>{
+public:
+
+ otl_tmpl_vector(const int init_size=otl_tmpl_vector_default_size)
+  : ACE_Array<T>(init_size==0?otl_tmpl_vector_default_size:init_size)
+ {
+  _length=0;
+ }
+
+ ~otl_tmpl_vector(){}
+
+ int capacity(void) const
+ {
+  return this->max_size();
+ }
+
+ int size(void) const
+ {
+  return _length;
+ }
+
+ void clear(void)
+ {
+  _length=0;
+ }
+
+ void resize(const int new_size, const T& t=T())
+ {
+  ACE_Array<T>::size(new_size);
+  if(new_size>_length){
+   for(int i=_length-1;i<new_size;++i)
+    (*this)[i]=t;
+  }
+  _length=new_size;
+ }
+
+ void push_back(const T& elem)
+ {
+  int curr_max_size=this->max_size();
+  if(_length==curr_max_size)
+   ACE_Array<T>::size(curr_max_size*2);
+  ++_length;
+  (*this)[_length-1]=elem;
+ }
+
+ void pop_back(void)
+ {
+  if(_length>0)
+   --_length;
+ }
+
+protected:
+
+ int _length;
+ 
+};
+
+
+#endif
+
+#ifdef OTL_STLPORT
+#define OTL_STLPORT_NAMESPACE __STLPORT_NAMESPACE
+#define OTL_STL
+#endif
+
+#if defined(OTL_VALUE_TEMPLATE_ON) && !defined(OTL_STL)
+#define STD_NAMESPACE_PREFIX
+#endif
+
+#ifdef OTL_USER_DEFINED_STRING_CLASS_ON
+
+#if defined(OTL_STL)
+#error OTL_STL cannot be used in combination with OTL_USER_DEFINED_STRING_CLASS_ON
+#endif
+
+#ifdef USER_DEFINED_STRING_CLASS
+#define OTL_STRING_CONTAINER USER_DEFINED_STRING_CLASS
+#define STD_NAMESPACE_PREFIX
+#else
+#error USER_DEFINED_STRING_CLASS macro needs to be defined before including otlv32.h
+#endif
+
+#endif
+
+
 #ifdef OTL_STL
 
 #ifdef _MSC_VER
@@ -218,15 +531,28 @@
 #endif
 
 #if defined(OTL_STL_NOSTD_NAMESPACE)
-#ifndef OTL_STL_STRING
-#define OTL_STL_STRING string
+#ifndef OTL_STRING_CONTAINER
+#define OTL_STRING_CONTAINER string
 #endif
 #define STD_NAMESPACE_PREFIX
 #else
-#ifndef OTL_STL_STRING
-#define OTL_STL_STRING std::string
+#ifndef OTL_STRING_CONTAINER
+
+#if defined(OTL_STLPORT)
+#define OTL_STRING_CONTAINER OTL_STLPORT_NAMESPACE ::string
+#else
+#define OTL_STRING_CONTAINER std::string
 #endif
+
+#endif
+
+#if defined(OTL_STLPORT)
+#define STD_NAMESPACE_PREFIX OTL_STLPORT_NAMESPACE ::
+#else
 #define STD_NAMESPACE_PREFIX std::
+#endif
+
+
 #endif
 
 #include <string>
@@ -978,7 +1304,7 @@ inline int otl_numeric_convert_double(
 class otl_ltstr{
 public:
  
- bool operator()(const OTL_STL_STRING& s1, const OTL_STL_STRING& s2) const
+ bool operator()(const OTL_STRING_CONTAINER& s1, const OTL_STRING_CONTAINER& s2) const
  {
   return strcmp(s1.c_str(), s2.c_str()) < 0;
  }
@@ -988,6 +1314,11 @@ public:
 const int otl_max_default_pool_size=32;
 
 #endif
+
+#ifdef OTL_ACE
+const int otl_max_default_pool_size=32;
+#endif
+
 
 class otl_stream_shell_generic{
 public:
@@ -1003,14 +1334,21 @@ public:
 
 };
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
 
+#if defined(OTL_STL)
 #include <map>
+#endif
 
 class otl_stream_pool_entry{
 public:
 
+#ifdef OTL_ACE
+ otl_tmpl_vector<otl_stream_shell_generic*> s;
+#else
  STD_NAMESPACE_PREFIX vector<otl_stream_shell_generic*> s;
+#endif
+
  int cnt;
  
  otl_stream_pool_entry()
@@ -1039,9 +1377,19 @@ class otl_stream_pool{
 public:
  
  typedef otl_stream_pool_entry cache_entry_type;
+#ifdef OTL_ACE
+ typedef
+ ACE_RB_Tree
+   <OTL_STRING_CONTAINER,cache_entry_type,
+    ACE_Less_Than<OTL_STRING_CONTAINER>,
+    ACE_Null_Mutex> sc_type;
+ typedef otl_tmpl_vector<otl_stream_shell_generic*> vec_type;
+ typedef ACE_RB_Tree_Node<OTL_STRING_CONTAINER,cache_entry_type> ace_map_entry;
+#else
  typedef STD_NAMESPACE_PREFIX
-  map<const OTL_STL_STRING,cache_entry_type,otl_ltstr> sc_type;
+  map<const OTL_STRING_CONTAINER,cache_entry_type,otl_ltstr> sc_type;
  typedef STD_NAMESPACE_PREFIX vector<otl_stream_shell_generic*> vec_type;
+#endif
 
  sc_type sc;
  int max_size;
@@ -1056,6 +1404,22 @@ public:
  void init(const int amax_size=otl_max_default_pool_size)
  {
   if(size==0&&max_size==0)return;
+#ifdef OTL_ACE
+  sc_type::iterator elem0=sc.begin();
+  sc_type::iterator elemN=sc.end();
+  for(sc_type::iterator i=elem0; i!=elemN; ++i){
+   cache_entry_type& ce=(*i).item();
+   int sz=ce.s.size();
+   for(int j=0;j<sz;++j){
+    ce.s[j]->should_delete=1;
+    delete ce.s[j];
+    ce.s[j]=0;
+    ce.s.clear();
+    ce.cnt=0;
+   }
+  }
+  sc.clear();
+#else
   sc_type::iterator elem0=sc.begin();
   sc_type::iterator elemN=sc.end();
   for(sc_type::iterator i=elem0; i!=elemN; ++i){
@@ -1070,13 +1434,28 @@ public:
    }
   }
   sc.clear();
+#endif
+
   size=0;
   max_size=amax_size;
+
  }
 
- otl_stream_shell_generic* find(const OTL_STL_STRING& stmtxt)
+ otl_stream_shell_generic* find(const OTL_STRING_CONTAINER& stmtxt)
  {
   otl_stream_shell_generic* s;
+  
+#ifdef OTL_ACE
+  ace_map_entry* ce=0;
+  int found=sc.find(stmtxt,ce);
+  if(found==-1)return 0; // entry not found
+  s=ce->item().s[ce->item().s.size()-1];
+  ce->item().s.pop_back();
+  if(ce->item().s.size()==0){
+   sc.unbind(ce);
+   --size;
+  }
+#else
   sc_type::iterator cur=sc.find(stmtxt);
   if(cur==sc.end())return 0; // entry not found
   cache_entry_type& ce=(*cur).second;
@@ -1086,11 +1465,31 @@ public:
    sc.erase(cur);
    --size;
   }
+#endif
+
   return s;
  }
 
- void remove(const otl_stream_shell_generic* s,const OTL_STL_STRING& stmtxt)
+ void remove(const otl_stream_shell_generic* s,const OTL_STRING_CONTAINER& stmtxt)
  {
+#ifdef OTL_ACE
+  ace_map_entry* cur=0;
+  int found=sc.find(stmtxt,cur);
+  if(found==-1)
+   return;
+  cache_entry_type& ce=(*cur).item();
+  for(int i=0;i<ce.s.size();++i)
+   if(ce.s[i]==s){
+    if(ce.s.size()>1 && i!=ce.s.size()-1){
+     otl_stream_shell_generic* temp_s=ce.s[i];
+     ce.s[i]=ce.s[ce.s.size()-1];
+     ce.s[ce.s.size()-1]=temp_s;
+    }
+    ce.s.pop_back();
+    --size;
+    return;
+   }
+#else
   sc_type::iterator cur=sc.find(stmtxt);
   if(cur==sc.end())
    return;
@@ -1103,12 +1502,70 @@ public:
     --size;
     return;
    }
+#endif
  }
-
 
  void add(otl_stream_shell_generic* s,const char* stm_text)
  {
-  OTL_STL_STRING stmtxt(stm_text);
+  OTL_STRING_CONTAINER stmtxt(stm_text);
+
+#ifdef OTL_ACE
+
+  ace_map_entry* cur=0;
+  int found_in_map=sc.find(stmtxt,cur);
+  if(found_in_map==0){ // entry found
+   bool found=false;
+   cache_entry_type& ce=(*cur).item();
+   int sz=ce.s.size();
+   for(int i=0;i<sz;++i){
+    if(s==ce.s[i]){
+     found=true;
+     break;
+    }
+   }
+   if(!found)ce.s.push_back(s);
+   ++ce.cnt;
+  }else{ // entry not found
+   if(size<max_size-1){ // add new entry
+    cache_entry_type ce;
+    ce.s.push_back(s);
+    ce.cnt=1;
+    sc.bind(stmtxt,ce);
+    ++size;
+   }else{ // erase the least used entry and add new one
+
+    sc_type::iterator elem0=sc.begin();
+    sc_type::iterator elemN=sc.end();
+    int min_cnt=0;
+    ace_map_entry* min_entry;
+    
+    for(sc_type::iterator i=elem0;i!=elemN;++i){
+     if(i==elem0){ // first element
+      min_entry=&(*i);
+      min_cnt=(*i).item().cnt;
+     }
+     if(min_cnt>(*i).item().cnt){ // found less used entry
+      min_entry=&(*i);
+      min_cnt=(*i).item().cnt;
+     }
+    }
+    cache_entry_type& me=(*min_entry).item();
+    int sz=me.s.size();
+    for(int n=0;n<sz;++n){
+     me.s[n]->should_delete=1;
+     delete me.s[n];
+    }
+    me.s.clear();
+    sc.unbind(min_entry);
+    cache_entry_type ce;
+    ce.cnt=1;
+    ce.s.push_back(s);
+    sc.bind(stmtxt,ce);
+   }
+  }
+
+#else
+
   sc_type::iterator cur=sc.find(stmtxt);
 
   if(cur!=sc.end()){ // entry found
@@ -1161,6 +1618,7 @@ public:
     sc[stmtxt]=ce;
    }
   }
+#endif
  }
  
  virtual ~otl_stream_pool()
@@ -1176,7 +1634,7 @@ public:
 // =========================== COMMON TEMPLATES  ============================
 
 
-#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+#if (defined(OTL_STL)||defined(OTL_VALUE_TEMPLATE_ON)) && defined(OTL_VALUE_TEMPLATE)
 
 template <class TData>
 class otl_value{
@@ -1541,7 +1999,7 @@ public:
  {
   this->p_v=OTL_RCAST(void*,&v);
   this->vtype=otl_var_long_int;
-  this->elem_size=sizeof(double);
+  this->elem_size=sizeof(long int);
  }
 
  virtual ~otl_long_int_vec(){}
@@ -1571,7 +2029,7 @@ public:
 class otl_string_vec: public otl_pl_vec_generic{
 public:
 
- STD_NAMESPACE_PREFIX vector<OTL_STL_STRING> v;
+ STD_NAMESPACE_PREFIX vector<OTL_STRING_CONTAINER> v;
 
  otl_string_vec()
  {
@@ -1597,7 +2055,7 @@ public:
   return v.size();
  }
 
- OTL_STL_STRING& operator[](int ndx)
+ OTL_STRING_CONTAINER& operator[](int ndx)
  {
   return v[ndx];
  }
@@ -3733,11 +4191,11 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
   otl_tmpl_select_stream
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct,
-    TTimestampStruct>& operator>>(OTL_STL_STRING& s)
+    TTimestampStruct>& operator>>(OTL_STRING_CONTAINER& s)
  {
   check_if_executed();
   if(eof_intern())return *this;
@@ -4199,11 +4657,11 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
   otl_tmpl_select_stream
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct,
-    TTimestampStruct>& operator<<(const OTL_STL_STRING& s)
+    TTimestampStruct>& operator<<(const OTL_STRING_CONTAINER& s)
  {
   check_in_var();
   if(check_in_type(otl_var_char,1)){
@@ -4723,11 +5181,11 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
  otl_tmpl_out_stream
    <TExceptionStruct,TConnectStruct,
     TCursorStruct,TVariableStruct,
-    TTimestampStruct>& operator<<(const OTL_STL_STRING& s)
+    TTimestampStruct>& operator<<(const OTL_STRING_CONTAINER& s)
  {
   if(this->vl_len>0){
    get_next();
@@ -4965,7 +5423,7 @@ public:
       otl_strcpy
        (OTL_RCAST(unsigned char*,this->vl[cur_x]->val(i)),
         OTL_RCAST(unsigned char*,
-                  OTL_CCAST(char*,(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STL_STRING>*,
+                  OTL_CCAST(char*,(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STRING_CONTAINER>*,
                                               vec.p_v))[i].c_str())),
         overflow,
         this->vl[cur_x]->elem_size
@@ -5645,11 +6103,11 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
  otl_tmpl_inout_stream
   <TExceptionStruct,TConnectStruct,
     TCursorStruct,TVariableStruct,
-    TTimestampStruct>& operator>>(OTL_STL_STRING& s)
+    TTimestampStruct>& operator>>(OTL_STRING_CONTAINER& s)
  {
   if(eof())return *this;
   if(check_in_type(otl_var_char,1)){
@@ -5839,7 +6297,7 @@ public:
     switch(vec.vtype){
     case otl_var_char:
      for(i=0;i<tmp_len;++i){
-      (*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STL_STRING>*,vec.p_v))[i]=
+      (*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STRING_CONTAINER>*,vec.p_v))[i]=
        OTL_RCAST(char*,in_vl[cur_in_x]->val(i));
      }
      break;
@@ -6043,6 +6501,60 @@ public:
 
 
 };
+
+// ==================== OTL-Adapter for Interbase  =========================
+#ifdef OTL_IBASE
+
+#include <ibase.h>
+
+OTL_IBASE_NAMESPACE_BEGIN
+
+class otl_exc{
+public:
+ unsigned char msg[1000];
+ int code;
+ char sqlstate[32];
+
+#ifdef OTL_EXTENDED_EXCEPTION
+ char** msg_arr;
+ char** sqlstate_arr;
+ int* code_arr;
+ int arr_len;
+#endif
+
+ enum{disabled=0,enabled=1};
+
+ otl_exc()
+ {
+  sqlstate[0]=0;
+  msg[0]=0;
+  code=0;
+#ifdef OTL_EXTENDED_EXCEPTION
+  msg_arr=0;
+  sqlstate_arr=0;
+  code_arr=0;
+  arr_len=0;
+#endif
+ }
+
+ void init(const char* amsg, const int acode)
+ {
+  strcpy(OTL_RCAST(char*,msg),amsg);
+  code=acode;
+#ifdef OTL_EXTENDED_EXCEPTION
+  msg_arr=0;
+  sqlstate_arr=0;
+  code_arr=0;
+  arr_len=0;
+#endif
+ }
+
+};
+
+// TBD...
+
+OTL_IBASE_NAMESPACE_END
+#endif
 
 
 // ==================== OTL-Adapter for ODBC/CLI =========================
@@ -7287,7 +7799,7 @@ typedef otl_tmpl_inout_stream
 class otl_connect: public otl_odbc_connect{
 public:
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  otl_stream_pool sc;
 
  void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
@@ -7343,7 +7855,7 @@ public:
  otl_select_struct_override override;
 
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
- OTL_STL_STRING orig_sql_stm;
+ OTL_STRING_CONTAINER orig_sql_stm;
 #endif
 
  otl_stream_shell()
@@ -7650,7 +8162,7 @@ public:
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
   char temp_buf[128];
   otl_itoa(arr_size,temp_buf);
-  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  OTL_STRING_CONTAINER sql_stm=OTL_STRING_CONTAINER(temp_buf)+OTL_STRING_CONTAINER("===>")+sqlstm;
   otl_stream_shell* temp_shell=OTL_RCAST(otl_stream_shell*,db.sc.find(sql_stm));
   if(temp_shell){
    if(shell!=0)shell_pt.destroy();
@@ -7755,7 +8267,7 @@ public:
   (*adb)=0;
  }
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  void close(const bool save_in_stream_pool=true)
 #else
  void close(void)
@@ -7895,8 +8407,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator>>(OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator>>(OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator>>(s);
@@ -8021,8 +8533,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator<<(const OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator<<(const OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator<<(s);
@@ -8154,7 +8666,7 @@ public:
 
 };
 
-#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+#if (defined(OTL_STL)||defined(OTL_VALUE_TEMPLATE_ON)) && defined(OTL_VALUE_TEMPLATE)
 template <class TData>
 otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
 {
@@ -8239,11 +8751,13 @@ OTL_ODBC_NAMESPACE_END
 
 // ==================== OTL-Adapter for Oracle 7 =====================
 #ifdef OTL_ORA7
+#define OTL_ORA_TEXT_ON
+#define text OTL_ORA_TEXT
 extern "C"{
 #include <ociapr.h>
 }
-OTL_ORA7_NAMESPACE_BEGIN
 
+OTL_ORA7_NAMESPACE_BEGIN
 
  const int inVarChar2=1;
  const int inNumber=2;
@@ -9079,7 +9593,7 @@ class otl_stream_shell;
 class otl_connect: public otl_ora7_connect{
 public:
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  otl_stream_pool sc;
 
  void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
@@ -9212,6 +9726,8 @@ public:
  {
   delete[] rvl;
   rvl=0;
+  if(sel_cur.connected && sel_cur.adb==0)
+   sel_cur.adb=adb;
   sel_cur.close();
   otl_tmpl_cursor
   <otl_exc,
@@ -9471,8 +9987,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_ref_select_stream& operator>>(OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_ref_select_stream& operator>>(OTL_STRING_CONTAINER& s)
  {
   check_if_executed();
   if(eof())return *this;
@@ -9692,8 +10208,8 @@ public:
  }
 
 
-#ifdef OTL_STL
- otl_ref_select_stream& operator<<(const OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_ref_select_stream& operator<<(const OTL_STRING_CONTAINER& s)
  {
   check_in_var();
   if(check_in_type(otl_var_char,1)){
@@ -10113,7 +10629,7 @@ public:
  otl_select_struct_override override;
 
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
- OTL_STL_STRING orig_sql_stm;
+ OTL_STRING_CONTAINER orig_sql_stm;
 #endif
 
 
@@ -10504,7 +11020,7 @@ public:
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
   char temp_buf[128];
   otl_itoa(arr_size,temp_buf);
-  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  OTL_STRING_CONTAINER sql_stm=OTL_STRING_CONTAINER(temp_buf)+OTL_STRING_CONTAINER("===>")+sqlstm;
   otl_stream_shell* temp_shell=OTL_RCAST(otl_stream_shell*,db.sc.find(sql_stm));
   if(temp_shell){
    if(shell!=0)
@@ -10570,7 +11086,7 @@ public:
   connected=1;
  }
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  void close(const bool save_in_stream_pool=true)
 #else
  void close(void)
@@ -10765,8 +11281,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator>>(OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator>>(OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator>>(s);
@@ -10915,8 +11431,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator<<(const OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator<<(const OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator<<(s);
@@ -11068,7 +11584,7 @@ public:
 
 };
 
-#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+#if (defined(OTL_STL)||defined(OTL_VALUE_TEMPLATE_ON)) && defined(OTL_VALUE_TEMPLATE)
 template <class TData>
 otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
 {
@@ -11130,6 +11646,8 @@ OTL_ORA7_NAMESPACE_END
 #else
 #define __STDC__ 1 // making OCI function prototypes show up in oci.h
 #endif
+#define OTL_ORA_TEXT_ON
+#define text OTL_ORA_TEXT
 #include <oci.h>
 
 #ifdef min
@@ -11800,6 +12318,17 @@ public:
   ub4 offset=1;
   int rc;
   memset(OTL_RCAST(void*,abuf),0,OTL_SCAST(size_t,buf_size));
+  int is_init=0;
+  rc=OCILobLocatorIsInit
+     (connect->envhp,
+      connect->errhp,
+      lob[ndx],
+      &is_init);
+  if (rc!=0) return 0;
+  if (!is_init){
+   len=0;
+   return 1;
+  }
   rc=OCILobRead
    (connect->svchp,
     connect->errhp,
@@ -11856,6 +12385,17 @@ public:
   ub4 amt=0;
   ub4 offset=aoffset;
   int rc;
+  int is_init=0;
+  rc=OCILobLocatorIsInit
+     (connect->envhp,
+      connect->errhp,
+      lob[andx],
+      &is_init);
+  if(rc!=0)return 0;
+  if(!is_init){
+   s.set_len(0);
+   return 1;
+  }
   rc=OCILobRead
    (connect->svchp,
     connect->errhp,
@@ -12690,7 +13230,7 @@ typedef otl_tmpl_ext_hv_decl
 class otl_connect: public otl_ora8_connect{
 public:
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  otl_stream_pool sc;
 
  void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
@@ -13291,8 +13831,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_ref_select_stream& operator>>(OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_ref_select_stream& operator>>(OTL_STRING_CONTAINER& s)
  {
   check_if_executed();
   if(eof_intern())return *this;
@@ -13536,8 +14076,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_ref_select_stream& operator<<(const OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_ref_select_stream& operator<<(const OTL_STRING_CONTAINER& s)
  {
   check_in_var();
   if(check_in_type(otl_var_char,1)){
@@ -13980,7 +14520,7 @@ public:
  otl_select_struct_override override;
 
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
- OTL_STL_STRING orig_sql_stm;
+ OTL_STRING_CONTAINER orig_sql_stm;
 #endif
 
 
@@ -14318,7 +14858,7 @@ public:
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
   char temp_buf[128];
   otl_itoa(arr_size,temp_buf);
-  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  OTL_STRING_CONTAINER sql_stm=OTL_STRING_CONTAINER(temp_buf)+OTL_STRING_CONTAINER("===>")+sqlstm;
   otl_stream_shell_generic* temp_shell=db.sc.find(sql_stm);
   if(temp_shell){
    if(shell!=0)
@@ -14437,7 +14977,7 @@ public:
   (*adb)=0;
  }
 
-#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+#if (defined(OTL_STL)||defined(OTL_ACE)) && defined(OTL_STREAM_POOLING_ON)
  void close(const bool save_in_stream_pool=true)
 #else
  void close(void)
@@ -14640,8 +15180,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator>>(OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator>>(OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator>>(s);
@@ -14803,8 +15343,8 @@ public:
   return *this;
  }
 
-#ifdef OTL_STL
- otl_stream& operator<<(const OTL_STL_STRING& s)
+#if defined(OTL_STL) || defined(USER_DEFINED_STRING_CLASS)
+ otl_stream& operator<<(const OTL_STRING_CONTAINER& s)
  {
   if((*io))
    (*io)->operator<<(s);
@@ -14956,8 +15496,7 @@ public:
 
 };
 
-
-#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+#if (defined(OTL_STL)||defined(OTL_VALUE_TEMPLATE_ON)) && defined(OTL_VALUE_TEMPLATE)
 template <class TData>
 otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
 {
@@ -15014,7 +15553,7 @@ OTL_ORA8_NAMESPACE_END
 #endif
 #endif
 
-#ifdef OTL_STL
+#if defined(OTL_STL) && !defined(OTL_STLPORT)
 
 #define OTL_ITERATORS                                                   \
 template <class T, class Distance>                                      \
@@ -15147,8 +15686,17 @@ OTL_ITERATORS
 OTL_ODBC_NAMESPACE_END
 #endif
 
+#ifdef OTL_IBASE
+OTL_IBASE_NAMESPACE_BEGIN
+OTL_ITERATORS
+OTL_IBASE_NAMESPACE_END
 #endif
 
+#endif
 
+#ifdef OTL_ORA_TEXT_ON
+#undef OTL_ORA_TEXT_ON
+#undef text
+#endif
 
 #endif

@@ -57,7 +57,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=
 {
   LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
-  DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty());
+  DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
   Refresh=toRefreshCreate(OptionGroup);
   Refresh->setGeometry(QRect(280,140,88,22));
   RefreshLabel->setBuddy(Refresh);

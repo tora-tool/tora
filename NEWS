@@ -53,11 +53,17 @@
 2001-04-08: Added destination objects to toScript.
 2001-04-21: Fix of extraction of profiles from new DDL::Oracle version.
 2001-04-23: Added a quote.
-2001-04-23: New version of otl.
 2001-04-26: Fixed a few compile warnings on GCC 2.96.
 2001-04-26: Fixed bug with missing default file in worksheet.
 2001-04-27: Added bugfix to font selection bug in Qt 2.3.
 2001-04-27: Added option to disable/enable antialiasing.
+2001-04-27: Changed default of desktop aware to true.
+2001-04-30: Check that gcc is compatible even if specified manually.
+2001-04-30: Added check not to allow 2.96 version of gcc (See BUGS).
+2001-04-30: Fixed bug in makefile regarding %.ui headerfiles.
+2001-04-30: Changed CC to GCC in Makefile.
+2001-04-30: Made configure output less after actual configure.
+2001-04-30: New version of otl (3.2.18)
 
 0.7: Released 2001-03-24
 

@@ -146,10 +146,15 @@ int main(int argv,char **argc)
 	exit(2);
     }
     static int GCCVersion=__GNUC__;
+    static int GCCVersionMinor=__GNUC_MINOR__;
     static int QtVersion=QT_VERSION;
     if (QtVersion<220) {
 	printf ("Requires Qt version >= 2.2 (Found %s)\n",QT_VERSION_STR);
 	exit(2);
+    }
+    if (GCCVersion==2&&GCCVersionMinor==96) {
+	printf("WARNING:TOra will not function well with gcc 2.96 since it has problems with\n"
+	       "        exception handling.\n");
     }
     return 0;
 }
@@ -362,9 +367,12 @@ __TEMP__
     $Includes.="\"-I".$QtInclude."\"";
 
     if (!-f $CC) {
-	findFile("^(gcc|cc)\$",\&finalTest,
+	findFile("^(gcc|cc|kgcc)\$",\&finalTest,
 		 "/usr/bin",
 		 "/usr/local/bin");
+    } elsif (!&finalTest($CC)) {
+	printf("Invalid compiler specified\n");
+	exit(2);
     }
     if (!-f $CC) {
 	print <<__EOT__;
@@ -454,8 +462,8 @@ __EOT__
 	print MAKEFILE "INCLUDES=$Includes\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# C Compiler to use\n";
-	print MAKEFILE "CC=\"$CC\"\n";
+	print MAKEFILE "# C++ Compiler to use\n";
+	print MAKEFILE "GCC=\"$CC\"\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional libraries to link with\n";
