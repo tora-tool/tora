@@ -251,7 +251,7 @@ list<QString> toScript::createObjectList(QListView *source)
 
   QListViewItem *next=NULL;
   for (QListViewItem *item=source->firstChild();item;item=next) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
     
     if (chk&&chk->isEnabled()) {
       QString name=chk->text(0);
@@ -460,7 +460,7 @@ void toScript::execute(void)
     fillDifference(sourceDescription,DropList);
     fillDifference(destinationDescription,CreateList);
   } TOCATCH
-}
+      }
 
 void toScript::fillDifference(list<QString> &objects,QListView *view)
 {
@@ -524,11 +524,11 @@ void toScript::changeConnection(int,bool source)
       for (QListViewItem *item=sourceL->firstChild();item;item=next) {
 	QListViewItem *lastParent=parent;
 	if (!parent)
-	  parent=new QCheckListItem(destinationL,item->text(0),
-				    QCheckListItem::CheckBox);
+	  parent=new toResultViewCheck(destinationL,item->text(0),
+				       QCheckListItem::CheckBox);
 	else
-	  parent=new QCheckListItem(parent,item->text(0),
-				    QCheckListItem::CheckBox);
+	  parent=new toResultViewCheck(parent,item->text(0),
+				       QCheckListItem::CheckBox);
 	parent->setText(1,item->text(1));
 	parent->setText(2,item->text(2));
 	if (item->firstChild())
@@ -575,24 +575,24 @@ void toScript::changeConnection(int,bool source)
 
       if (top!=(lastTop?lastTop->text(0):QString::null)) {
 	lastFirst=NULL;
-	lastTop=new QCheckListItem((source?SourceObjects:DestinationObjects),
-				   top,QCheckListItem::CheckBox);
+	lastTop=new toResultViewCheck((source?SourceObjects:DestinationObjects),
+				      top,QCheckListItem::CheckBox);
 	if (!second.isEmpty()||first.isEmpty())
 	  lastTop->setText(1,"USER");
       }
       if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
-	lastFirst=new QCheckListItem(lastTop,first,QCheckListItem::CheckBox);
+	lastFirst=new toResultViewCheck(lastTop,first,QCheckListItem::CheckBox);
 	if (second.isEmpty())
 	  lastFirst->setText(1,top);
       }
       if (!second.isEmpty()&&lastFirst) {
-	QListViewItem *item=new QCheckListItem(lastFirst,second,QCheckListItem::CheckBox);
+	QListViewItem *item=new toResultViewCheck(lastFirst,second,QCheckListItem::CheckBox);
 	item->setText(1,first);
 	item->setText(2,top);
       }
     }
   } TOCATCH
-}
+      }
 
 void toScript::changeMode(int mode)
 {
@@ -632,13 +632,13 @@ void toScript::changeMode(int mode)
 
 void toScript::objectClicked(QListViewItem *parent)
 {
-  QCheckListItem *pchk=dynamic_cast<QCheckListItem *>(parent);
+  toResultViewCheck *pchk=dynamic_cast<toResultViewCheck *>(parent);
   if (!pchk)
     return;
   bool on=pchk->isOn();
   QListViewItem *next=NULL;
   for (QListViewItem *item=parent->firstChild();item;item=next) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
     if (chk)
       chk->setOn(on);
 
@@ -665,13 +665,13 @@ void toScript::changeSchema(int,bool source)
   for(QListViewItem *parent=(source?SourceObjects:DestinationObjects)->firstChild();
       parent;
       parent=parent->nextSibling()) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(parent);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(parent);
     if (chk) {
       bool ena=((src==chk->text(0))||(src=="All"));
 
       QListViewItem *next=NULL;
       for (QListViewItem *item=parent;item;item=next) {
-	chk=dynamic_cast<QCheckListItem *>(item);
+	chk=dynamic_cast<toResultViewCheck *>(item);
 	if (chk) {
 	  chk->setEnabled(ena);
 	  (source?SourceObjects:DestinationObjects)->repaintItem(chk);

@@ -779,10 +779,10 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
       }
       nameItem=new QListViewItem(typeItem,nameItem,name);
       for (QStringList::Iterator i=Options.begin();i!=Options.end();i++) {
-	QListViewItem *item=new QCheckListItem(nameItem,*i,QCheckListItem::CheckBox);
+	QListViewItem *item=new toResultViewCheck(nameItem,*i,QCheckListItem::CheckBox);
 	item->setText(2,name);
 	item->setText(3,owner);
-	new QCheckListItem(item,"Admin",QCheckListItem::CheckBox);
+	new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
       }
     }
   } TOCATCH
@@ -793,7 +793,7 @@ void toSecurityObject::eraseUser(bool all)
 {
   QListViewItem *next=NULL;
   for (QListViewItem *item=firstChild();item;item=next) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
     if (chk) {
       if (all)
 	chk->setOn(false);
@@ -840,14 +840,14 @@ void toSecurityObject::changeUser(const QString &user)
 	if (ownerItem->text(0)==owner) {
 	  QListViewItem *next=NULL;
 	  for (QListViewItem *item=ownerItem->firstChild();item&&item!=ownerItem;item=next) {
-	    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+	    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
 	    if (chk) {
 	      if (chk->text(2)==object&&
 		  chk->text(0)==priv) {
 		chk->setText(1,"ON");
 		chk->setOn(true);
 		if (admin=="YES") {
-		  QCheckListItem *chld=dynamic_cast<QCheckListItem *>(item->firstChild());
+		  toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
 		  if (chld) {
 		    chld->setText(1,"ON");
 		    chld->setOn(true);
@@ -885,8 +885,8 @@ void toSecurityObject::sql(const QString &user,list<QString> &sqlLst)
 {
   QListViewItem *next=NULL;
   for (QListViewItem *item=firstChild();item;item=next) {
-    QCheckListItem *check=dynamic_cast<QCheckListItem *>(item);
-    QCheckListItem *chld=dynamic_cast<QCheckListItem *>(item->firstChild());
+    toResultViewCheck *check=dynamic_cast<toResultViewCheck *>(item);
+    toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
     if (check) {
       QString sql;
       QString what=item->text(0);
@@ -951,14 +951,14 @@ void toSecurityObject::sql(const QString &user,list<QString> &sqlLst)
 
 void toSecurityObject::changed(QListViewItem *org)
 {
-  QCheckListItem *item=dynamic_cast<QCheckListItem *>(org);
+  toResultViewCheck *item=dynamic_cast<toResultViewCheck *>(org);
   if (item) {
     if (item->isOn()) {
-      item=dynamic_cast<QCheckListItem *>(item->parent());
+      item=dynamic_cast<toResultViewCheck *>(item->parent());
       if (item)
 	item->setOn(true);
     } else {
-      item=dynamic_cast<QCheckListItem *>(item->firstChild());
+      item=dynamic_cast<toResultViewCheck *>(item->firstChild());
       if (item)
 	item->setOn(false);
     }
@@ -977,8 +977,8 @@ toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
     char buffer[100];
     while(!priv.eof()) {
       priv>>buffer;
-      QCheckListItem *item=new QCheckListItem(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
-      new QCheckListItem(item,"Admin",QCheckListItem::CheckBox);
+      toResultViewCheck *item=new toResultViewCheck(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
+      new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
     }
     setSorting(0);
   } TOCATCH
@@ -989,8 +989,8 @@ void toSecuritySystem::sql(const QString &user,list<QString> &sqlLst)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
     QString sql;
-    QCheckListItem *check=dynamic_cast<QCheckListItem *>(item);
-    QCheckListItem *chld=dynamic_cast<QCheckListItem *>(item->firstChild());
+    toResultViewCheck *check=dynamic_cast<toResultViewCheck *>(item);
+    toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
     if (chld&&chld->isOn()&&chld->text(1).isEmpty()) {
       sql="GRANT ";
       sql+=item->text(0);
@@ -1034,14 +1034,14 @@ void toSecuritySystem::sql(const QString &user,list<QString> &sqlLst)
 
 void toSecuritySystem::changed(QListViewItem *org)
 {
-  QCheckListItem *item=dynamic_cast<QCheckListItem *>(org);
+  toResultViewCheck *item=dynamic_cast<toResultViewCheck *>(org);
   if (item) {
     if (item->isOn()) {
-      item=dynamic_cast<QCheckListItem *>(item->parent());
+      item=dynamic_cast<toResultViewCheck *>(item->parent());
       if (item)
 	item->setOn(true);
     } else {
-      item=dynamic_cast<QCheckListItem *>(item->firstChild());
+      item=dynamic_cast<toResultViewCheck *>(item->firstChild());
       if (item)
 	item->setOn(false);
     }
@@ -1051,13 +1051,13 @@ void toSecuritySystem::changed(QListViewItem *org)
 void toSecuritySystem::eraseUser(bool all)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
     if (chk&&all)
       chk->setOn(false);
     item->setText(1,QString::null);
     for (QListViewItem *chld=item->firstChild();chld;chld=chld->nextSibling()) {
       chld->setText(1,QString::null);
-      QCheckListItem *chk=dynamic_cast<QCheckListItem *>(chld);
+      toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(chld);
       if (chk&&all)
 	chk->setOn(false);
     }
@@ -1080,12 +1080,12 @@ void toSecuritySystem::changeUser(const QString &user)
       QString admin=QString::fromUtf8(buffer);
       for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==str) {
-	  QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+	  toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
 	  if (chk)
 	    chk->setOn(true);
 	  item->setText(1,"ON");
 	  if (admin!="NO"&&item->firstChild()) {
-	    chk=dynamic_cast<QCheckListItem *>(item->firstChild());
+	    chk=dynamic_cast<toResultViewCheck *>(item->firstChild());
 	    if (chk)
 	      chk->setOn(true);
 	    if (chk->parent())
@@ -1111,9 +1111,9 @@ toSecurityRoleGrant::toSecurityRoleGrant(toConnection &conn,QWidget *parent)
     char buffer[100];
     while(!priv.eof()) {
       priv>>buffer;
-      QCheckListItem *item=new QCheckListItem(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
-      new QCheckListItem(item,"Admin",QCheckListItem::CheckBox);
-      new QCheckListItem(item,"Default",QCheckListItem::CheckBox);
+      toResultViewCheck *item=new toResultViewCheck(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
+      new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
+      new toResultViewCheck(item,"Default",QCheckListItem::CheckBox);
     }
     setSorting(0);
   } TOCATCH
@@ -1124,7 +1124,7 @@ QCheckListItem *toSecurityRoleGrant::findChild(QListViewItem *parent,const QStri
 {
   for (QListViewItem *item=parent->firstChild();item;item=item->nextSibling()) {
     if (item->text(0)==name) {
-      QCheckListItem *ret=dynamic_cast<QCheckListItem *>(item);
+      toResultViewCheck *ret=dynamic_cast<toResultViewCheck *>(item);
       if (ret->isEnabled())
 	return ret;
       else
@@ -1141,7 +1141,7 @@ void toSecurityRoleGrant::sql(const QString &user,list<QString> &sqlLst)
   QString except;
   QString sql;
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
-    QCheckListItem *check=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *check=dynamic_cast<toResultViewCheck *>(item);
     QCheckListItem *chld=findChild(item,"Admin");
     QCheckListItem *def=findChild(item,"Default");
     if (def&&check) {
@@ -1223,18 +1223,18 @@ void toSecurityRoleGrant::sql(const QString &user,list<QString> &sqlLst)
 
 void toSecurityRoleGrant::changed(QListViewItem *org)
 {
-  QCheckListItem *item=dynamic_cast<QCheckListItem *>(org);
+  toResultViewCheck *item=dynamic_cast<toResultViewCheck *>(org);
   if (item) {
     if (item->isOn()) {
       QCheckListItem *chld=findChild(item,"Default");
       if (chld)
 	chld->setOn(true);
-      item=dynamic_cast<QCheckListItem *>(item->parent());
+      item=dynamic_cast<toResultViewCheck *>(item->parent());
       if (item)
 	item->setOn(true);
     } else {
       for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
-	QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item->firstChild());
+	toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item->firstChild());
 	if (chk)
 	  chk->setOn(false);
       }
@@ -1245,13 +1245,13 @@ void toSecurityRoleGrant::changed(QListViewItem *org)
 void toSecurityRoleGrant::eraseUser(bool user,bool all)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
     if (chk&&all)
       chk->setOn(false);
     item->setText(1,QString::null);
     for (QListViewItem *chld=item->firstChild();chld;chld=chld->nextSibling()) {
       chld->setText(1,QString::null);
-      QCheckListItem *chk=dynamic_cast<QCheckListItem *>(chld);
+      toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(chld);
       if (chk) {
 	if (all) {
 	  chk->setOn(false);
@@ -1281,7 +1281,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
       QString def=QString::fromUtf8(buffer);
       for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==str) {
-	  QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+	  QCheckListItem *chk=dynamic_cast<toResultViewCheck *>(item);
 	  if (chk)
 	    chk->setOn(true);
 	  item->setText(1,"ON");

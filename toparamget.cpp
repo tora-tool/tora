@@ -219,7 +219,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
     if (widget->exec()) {
       list<QString>::iterator cn=names.begin();
       for (list<QWidget *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
-	QLineEdit *current=dynamic_cast<QLineEdit *>(*i);
+	QLineEdit *current=(QLineEdit *)*i;
 	QString val;
 	if (current) {
 	  if (current->isEnabled())

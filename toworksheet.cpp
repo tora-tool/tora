@@ -415,9 +415,12 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
 void toWorksheet::windowActivated(QWidget *widget)
 {
-  QWidget *w=this;
-  while(w&&w!=widget)
-    w=dynamic_cast<QWidget *>(w->parent());
+  QObject *w=this;
+  while(w&&w!=widget&&w!=toMainWidget()) {
+    w=w->parent();
+    if (!w->inherits("QWidget"))
+      w=NULL;
+  }
 
   if (widget==w) {
     if (!ToolMenu) {
@@ -581,7 +584,7 @@ void toWorksheet::query(const QString &str,bool direct)
       pos=chk.find("end",pos+1);
     }
     QString execSql=str;
-    if (!code&&execSql.length()>0&&execSql[execSql.length()-1]==';')
+    if (!code&&execSql.length()>0&&execSql.at(execSql.length()-1)==';')
       execSql.truncate(execSql.length()-1);
     QueryString=execSql;
 

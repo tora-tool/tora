@@ -40,10 +40,10 @@ Extended functionality:
 
 Windows problems:
 
-* New window coredump
 * Saving of settings
 * Locating tnsnames.ora without ORACLE_HOME
 * Can't abort queries when using QThreads
+* Problem reading data from no block query
 
 New tools:
 

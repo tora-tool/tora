@@ -406,7 +406,7 @@ toHelp::~toHelp()
   Window=NULL;
 }
 
-QString toHelp::path(const QString &path=QString::null)
+QString toHelp::path(const QString &path)
 {
   QString cur;
   if (path.isNull())
@@ -516,11 +516,13 @@ void toHelp::search(void)
 		aRestart=true;
 
 		bool incl=true;
-		for (size_t i=0;i<words.count();i++)
-		  if (!tmp.contains(words[i],false)) {
-		    incl=false;
-		    break;
-		  }
+		{
+		  for (size_t i=0;i<words.count();i++)
+		    if (!tmp.contains(words[i],false)) {
+		      incl=false;
+		      break;
+		    }
+		}
 
 		if (incl) {
 		  tmp.replace(strip," ");

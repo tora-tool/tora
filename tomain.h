@@ -35,6 +35,8 @@
 #ifndef __TOMAIN_H
 #define __TOMAIN_H
 
+TO_NAMESPACE;
+
 #include <list>
 #include <map>
 
@@ -599,12 +601,12 @@ bool toWriteFile(const QString &filename,const QCString &data);
  */
 bool toWriteFile(const QString &filename,const QString &data);
 /** Compare two string lists.
- * @param lst1 First list to compare.
- * @param lst2 Second list to compare.
+ * @param l1 First list to compare.
+ * @param l2 Second list to compare.
  * @param len Length of lists to compare.
  * @return True if all first len elements match.
  */
-bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len);
+bool toCompareLists(QStringList &l1,QStringList &l2,unsigned int len);
 /** Set environment variable.
  * @param var Variable name to set.
  * @param val Value to set variable to.
@@ -650,90 +652,6 @@ bool inline toIsIdent(QChar c)
     } catch (const QString &str) {\
       toStatusMessage(str);\
     }
-
-#ifdef TO_DEBUG_MEMORY
-
-/**
- * Only for TO_DEBUG_MEMORY
- * @internal
- * @deprecated
- */
-struct toPointerInfo {
-  size_t	index;
-  size_t	allocIndex;
-  size_t	size;
-  void		*ptr;
-};
-
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-struct toPointerInfo toGetPointerInfo(int ind);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-struct toPointerInfo toGetPointerInfo(void *p);
-
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void toInitPointers(void);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-size_t toGetAllocNum(void);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-size_t toCurrentIndex(void);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-int toDisplayMemLost(void);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void toPointerExpectLost(int);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void *operator new(size_t l);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void *operator new[](size_t l);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void operator delete[](void *p);
-/**
- * @internal
- * @deprecated
- * Only for TO_DEBUG_MEMORY
- */
-void operator delete(void *p);
-
-#endif
 
 #ifdef WIN32
 /**

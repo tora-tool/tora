@@ -207,12 +207,14 @@ int main(int argc,char **argv)
                            "Unhandled exception",
                            str,
                            "Exit");
+#ifndef WIN32
   } catch (...) {
     printf("Unhandled exception of unknown type.\n\n");
     TOMessageBox::critical(NULL,
                            "Unhandled exception",
                            "Unknown type",
                            "Exit");
+#endif
   }
   return 1;
 }

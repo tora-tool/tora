@@ -82,7 +82,7 @@
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program
-#define ENABLE_STYLE
+#undef ENABLE_STYLE
 // Undefining this will enable choosing Qt_Xft support
 #define ENABLE_QT_XFT
 #endif

@@ -244,7 +244,7 @@ bool toHtml::search(const QCString &all,const QString &str)
   unsigned int pos=0;
   char endString;
   for (size_t i=0;i<all.length();i++) {
-    char c=tolower(all[i]);
+    char c=tolower(all.at(i));
     if (c=='\''||c=='\"') {
       endString=c;
       state=inString;
@@ -257,13 +257,13 @@ bool toHtml::search(const QCString &all,const QString &str)
 	  state=lastState;
 	break;
       case beginning:
-	if (data[pos]!=c) {
+	if (data.at(pos)!=c) {
 	  pos=0;
 	  state=inWord;
 	} else {
 	  pos++;
 	  if (pos>=data.length()) {
-	    if (i+1>=all.length()||!isalnum(all[i+1]))
+	    if (i+1>=all.length()||!isalnum(all.at(i+1)))
 	      return true;
 	    pos=0;
 	  }

@@ -23,6 +23,10 @@
 2001-06-26: Fixed problem with caption in main window for KDE.
 2001-06-26: Fixed a couple of parsing problems in worksheet (Neverending!)
 2001-06-27: Fixed a program with toSGAStatement and changing tabs.
+2001-06-27: Some windows fixes.
+2001-06-27: Removed memory debugging stuff (Useless).
+2001-06-27: Don't do dynamic casting on objects in Qt since Qt might not have
+	RTTI information.
 
 0.11: Released 2001-06-03
 
