@@ -391,7 +391,7 @@ public:
   { Dock=NULL; }
   virtual const char *menuItem()
   { return "SQL Template"; }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
     if (Dock) {
       if (Dock->isHidden()) {
@@ -413,7 +413,7 @@ public:
   { Dock=NULL; }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toTemplatePrefs(this,parent); }
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 };
 
@@ -540,6 +540,12 @@ void toTemplate::collapse(QListViewItem *item)
   toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
   if (ti)
     ti->collapse();
+}
+
+
+QWidget *toTemplateItem::selectedWidget(QWidget *)
+{
+  return NULL;
 }
 
 void toTemplateItem::setSelected(bool sel)

@@ -103,7 +103,7 @@ public:
   toSQLTemplate()
     : toTemplateProvider("SQL Dictionary")
   { }
-  virtual void insertItems(QListView *parent,QToolBar *toolbar)
+  virtual void insertItems(QListView *parent,QToolBar *)
   { new toSQLTemplateItem(parent); }
 };
 

@@ -475,7 +475,7 @@ void test2(void)
 __TEMP__
     }
     close TEMP;
-    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o$tmpName $tmpName.cpp")) {
+    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o $tmpName $tmpName.cpp")) {
 	if (!system($tmpName)) {
 	    $CC=$gcc;
 	}
@@ -562,7 +562,7 @@ __TEMP__
 
 	print "checking for KDE libraries ... ";
 
-	$KDELibs=findFile("^libDCOP.s[ol]",sub {
+	$KDELibs=findFile("^libDCOP\\.(?:s[ol]|dylib)",sub {
                                    	    return -f $_[0];
 					},
 			     $KDELibs,
@@ -632,7 +632,7 @@ __TEMP__
 
 	print "checking for Qt library linked to KDE ... ";
 	my $found=0;
-	if (open(LDD,"ldd $KDELibs/libkdecore.s[ol] 2>&1 |")) {
+	if (open(LDD,"ldd $KDELibs/libkdecore\\.s[ol] 2>&1 |")) {
 	    while(<LDD>) {
 		if (/\/([^\/]+qt[^\.]*)/) {
 		    $QtSearch="$1";
@@ -653,14 +653,16 @@ __TEMP__
 
     print "checking for Qt library ... ";
 
-    $QtLib=findFile("^".$QtSearch."[23]\\.s[ol]",sub {
+    $QtLib=findFile("^".$QtSearch."[23]\\.(?:s[ol]|dylib)",sub {
 	                                        if (-f $_[0] && ! -l $_[0]) {
 						    my $lib;
-						    ($lib,$QtLibShared)=($_[0]=~/^(.*)\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+						    ($lib,$QtLibShared)=($_[0]=~/^(.*)\/lib(qt-mt[23]?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }
-						    if (-f "$lib/lib$QtLibShared.so" || -f "$lib/lib$QtLibShared.sl") {
+						    if (-f "$lib/lib$QtLibShared.so" || 
+							-f "$lib/lib$QtLibShared.sl" ||
+							-f "$lib/lib$QtLibShared.dylib") {
 							$QtLibShared=" -l$QtLibShared";
 							return 1;
 						    }
@@ -695,9 +697,9 @@ __TEMP__
 		    );
 
     if (! -d $QtLib) {
-	$QtLib=findFile("^$QtSearch\\.s[ol]\\.[23]",sub {
+	$QtLib=findFile("^$QtSearch\\.(?:s[ol]|dylib)\\.[23]",sub {
 		                                     if (-f $_[0] && ! -l $_[0]) {
-							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+							 ($QtLibShared)=($_[0]=~/\/lib(qt-mt[23]?)[^\/]*$/);
 							 if (!defined $QtLibShared) {
 							     return 0;
 							 }
@@ -1054,7 +1056,7 @@ __TEMP__
 	} else {
 	    print "$MySQLInclude\n";
 	    print "checking for MySQL library ... ";
-	    $MySQLLib=findFile("^libmysqlclient\\.s[ol]",sub {
+	    $MySQLLib=findFile("^libmysqlclient\\.(?:s[ol]|dylib)",sub {
 		                                          return -f $_[0] && ! -l $_[0];
 						      },
 			       $MySQLLib,
@@ -1364,7 +1366,7 @@ __EOT__
 	if (!$NewCheck) {
 	    print MAKEFILE "DEFINED+=-DTO_NO_NEW_CHECK\n";
 	}
-	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
+	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\" -DQT_THREAD_SUPPORT\n";
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
 	}

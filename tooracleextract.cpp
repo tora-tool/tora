@@ -6530,7 +6530,7 @@ QString toOracleExtract::migrateSource(toExtract &ext,
 QString toOracleExtract::migratePrivs(toExtract &ext,
 				      std::list<QString> &source,
 				      std::list<QString> &destin,
-				      const QString &) const
+				      const QString &onlyGrantee) const
 {
   std::list<QString> drop;
   std::list<QString> create;
@@ -6545,6 +6545,8 @@ QString toOracleExtract::migratePrivs(toExtract &ext,
       if (toShift(ctx)!="NONE")
 	continue;
       QString grantee=toShift(ctx);
+      if (!onlyGrantee.isEmpty()&&grantee!=onlyGrantee)
+	continue;
       QString priv=toShift(ctx);
       QString admin=toShift(ctx);
       if (priv.isEmpty())
@@ -6571,6 +6573,9 @@ QString toOracleExtract::migratePrivs(toExtract &ext,
     if (toShift(ctx)!="NONE")
       continue;
     QString grantee=toShift(ctx);
+    if (!onlyGrantee.isEmpty()&&grantee!=onlyGrantee)
+      continue;
+
     QString priv=toShift(ctx);
     QString admin=toShift(ctx);
     if (priv.isEmpty())
@@ -6855,7 +6860,42 @@ QString toOracleExtract::migrateRole(toExtract &ext,
 				     std::list<QString> &source,
 				     std::list<QString> &destin) const
 {
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+
+  std::list<QString> privs;
+
   QString ret;
+
+  {
+    bool dropped=false;
+    QString lrole;
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString owner=toShift(ctx);
+      if (toShift(ctx)!="ROLE")
+	continue;
+      QString role=toShift(ctx);
+      if (role!=lrole)
+	dropped=false;
+      if (ctx.begin()==ctx.end()) {
+	QString sql="DROP ROLE "+QUOTE(role)+";";
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+	dropped=true;
+      } else if (role!=lrole&&!dropped)
+	privs.insert(privs.end(),role);
+      lrole=role;
+    }
+  }
+
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+    QString owner=toShift(ctx);
+  }
   return ret;
 }
 

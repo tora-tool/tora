@@ -100,7 +100,7 @@ public:
   {
     Window=NULL;
   }
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 };
 
@@ -539,7 +539,7 @@ void toSQLTemplateItem::expand(void)
   }
 }
 
-QString toSQLTemplateItem::allText(int col) const
+QString toSQLTemplateItem::allText(int) const
 {
   try {
     toSQL::sqlMap defs=toSQL::definitions();

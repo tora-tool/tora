@@ -363,7 +363,7 @@ QString toStorageDatafile::getName(void)
   return Name->text();
 }
 
-void toStorageDatafile::valueChanged(const QString &str)
+void toStorageDatafile::valueChanged(const QString &)
 {
   if ((Name->isHidden()||!Name->text().isEmpty())&&
       !Filename->text().isEmpty())
@@ -1356,7 +1356,7 @@ void toStorageExtent::setFile(const QString &tablespace,int file)
   update();
 }
 
-void toStorageExtent::paintEvent(QPaintEvent *e)
+void toStorageExtent::paintEvent(QPaintEvent *)
 {
   QPainter paint(this);
   if (FileOffset.begin()==FileOffset.end())

@@ -1764,7 +1764,7 @@ void toTuningFileIO::changeCharts(int val)
   }
 }
 
-void toTuningFileIO::allocCharts(const QString &name,const QString &label)
+void toTuningFileIO::allocCharts(const QString &name)
 {
   std::list<QString> labels;
   labels.insert(labels.end(),tr("Reads"));
@@ -1832,7 +1832,7 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
     LastValues[name]=vals;
 
     if (ReadsCharts.find(name)==ReadsCharts.end())
-      allocCharts(name,label);
+      allocCharts(name);
 
     if (dispVal.size()>0) {
       toBarChart *chart=ReadsCharts[name];

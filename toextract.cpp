@@ -80,6 +80,45 @@ void toExtract::extractor::unregisterExtract(const QString &db,
     (*toExtract::Extractors).erase(i);
 }
 
+void toExtract::extractor::initialize(toExtract &) const
+{
+}
+
+QString toExtract::extractor::create(toExtract &,
+				     const QString &,
+				     const QString &,
+				     const QString &,
+				     const QString &) const
+{
+  return QString::null;
+}
+
+void toExtract::extractor::describe(toExtract &,
+				    std::list<QString> &,
+				    const QString &,
+				    const QString &,
+				    const QString &,
+				    const QString &) const
+{
+}
+
+QString toExtract::extractor::migrate(toExtract &,
+				      const QString &,
+				      std::list<QString> &,
+				      std::list<QString> &) const
+{
+  return QString::null;
+}
+
+QString toExtract::extractor::drop(toExtract &,
+				   const QString &,
+				   const QString &,
+				   const QString &,
+				   const QString &) const
+{
+  return QString::null;
+}
+
 toExtract::extractor::extractor()
 {
 }

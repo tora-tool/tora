@@ -385,6 +385,10 @@ public:
 #define TAB_TRIGGER_DEPEND	"TriggerDepend"
 #define TAB_TRIGGER_EXTRACT	"TriggerExtract"
 
+#define TAB_DBLINK		"DBLink"
+#define TAB_DBLINK_INFO		"DBLinkInfo"
+#define TAB_DBLINK_SYNONYMS	"DBLinkSynonyms"
+
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			   "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"

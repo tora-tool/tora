@@ -96,8 +96,7 @@ public:
      * toExtract::setBlocksize).
      * @param ext Extractor to generate script.
      */
-    virtual void initialize(toExtract &ext) const
-    { }
+    virtual void initialize(toExtract &ext) const;
 
     /** Called to generate a script to recreate a database object.
      * @param ext Extractor to generate script.
@@ -113,8 +112,7 @@ public:
 			   const QString &type,
 			   const QString &schema,
 			   const QString &owner,
-			   const QString &name) const
-    { return QString::null; }
+			   const QString &name) const;
     /** Called to describe a database object.
      * @param ext Extractor to generate script.
      * @param lst List of descriptions for the object. Should be appended.
@@ -130,8 +128,7 @@ public:
 			  const QString &type,
 			  const QString &schema,
 			  const QString &owner,
-			  const QString &name) const 
-    { }
+			  const QString &name) const;
     /** Called to generate a script to migrate a database object from one description to
      * another description.
      * @param ext Extractor to generate script.
@@ -143,8 +140,7 @@ public:
     virtual QString migrate(toExtract &ext,
 			    const QString &type,
 			    std::list<QString> &src,
-			    std::list<QString> &dst) const
-    { return QString::null; }
+			    std::list<QString> &dst) const;
     /** Called to generate a script to drop an object.
      * @param ext Extractor to generate script.
      * @param type Type of object to recreate.
@@ -159,8 +155,7 @@ public:
 			 const QString &type,
 			 const QString &schema,
 			 const QString &owner,
-			 const QString &name) const
-    { return QString::null; }
+			 const QString &name) const;
   };
 
 private:

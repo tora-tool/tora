@@ -43,6 +43,32 @@
 #include <qapplication.h>
 #include <qstring.h>
 
+void toSemaphore::up(void)
+{
+  Mutex.lock();
+  Value++;
+  if (Value>0)
+    Condition.wakeOne();
+  Mutex.unlock();
+}
+
+void toSemaphore::down(void)
+{
+  Mutex.lock();
+  while(Value<=0)
+    Condition.wait(&Mutex);
+  Value--;
+  Mutex.unlock();
+}
+
+int toSemaphore::getValue(void)
+{
+  Mutex.lock();
+  int val=Value;
+  Mutex.unlock();
+  return val;
+}
+
 #ifndef WIN32
 
 #include <time.h>
@@ -50,47 +76,6 @@
 pthread_t toThread::MainThread=pthread_self();
 toThread *toThread::DeleteThread;
 toLock *toThread::Lock;
-
-#define SEM_ASSERT(x) if((x)!=0) { toStatusMessage(\
-qApp->translate("toSemaphore","Error in semaphore function \"%1\" didn't work").arg(QString::fromLatin1( #x ))); }
-
-void toSemaphore::init(int ival)
-{
-  SEM_ASSERT(sem_init(&Semaphore,0,ival));
-}
-
-toSemaphore::toSemaphore() 
-{
-  init(0);
-}
-
-
-toSemaphore::toSemaphore(int i)
-{
-  init(i);
-}
-
-toSemaphore::~toSemaphore()
-{
-  SEM_ASSERT(sem_destroy(&Semaphore));
-}
-
-void toSemaphore::up()
-{
-  SEM_ASSERT(sem_post(&Semaphore));
-}
-
-void toSemaphore::down()
-{
-  SEM_ASSERT(sem_wait(&Semaphore));
-}
-
-int toSemaphore::getValue()
-{
-  int r;
-  SEM_ASSERT(sem_getvalue(&Semaphore, &r));
-  return r;
-}
 
 #define MUTEX_ASSERT(x) if((x)!=0) toStatusMessage(\
 qApp->translate("toLock","The mutex function \"%1\" failed").arg(QString::fromLatin1( #x )));
@@ -223,32 +208,6 @@ int toThread::MainThread=0;
 bool toThread::mainThread(void)
 {
   return MainThread==ThreadID;
-}
-
-void toSemaphore::up(void)
-{
-  Mutex.lock();
-  Value++;
-  if (Value>0)
-    Condition.wakeOne();
-  Mutex.unlock();
-}
-
-void toSemaphore::down(void)
-{
-  Mutex.lock();
-  while(Value<=0)
-    Condition.wait(&Mutex);
-  Value--;
-  Mutex.unlock();
-}
-
-int toSemaphore::getValue(void)
-{
-  Mutex.lock();
-  int val=Value;
-  Mutex.unlock();
-  return val;
 }
 
 toThread::toThread(toTask *task)

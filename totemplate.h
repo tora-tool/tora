@@ -79,7 +79,7 @@ public:
   static toTemplate *templateWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListView *obj);
 
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 
   void closeFrame(void);
@@ -189,8 +189,7 @@ public:
    * this item. Return NULL if no widget is to be displayed. The widget will be deleted
    * when this item is no longer shown.
    */
-  virtual QWidget *selectedWidget(QWidget *parent)
-  { return NULL; }
+  virtual QWidget *selectedWidget(QWidget *parent);
   /** Reimplemented for internal reasons.
    */
   virtual void setSelected(bool sel);

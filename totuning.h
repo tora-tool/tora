@@ -105,7 +105,7 @@ class toTuningFileIO : public QScrollView {
 		  double avgTim,double minTim,
 		  double maxRead,double maxWrite);
 
-  void allocCharts(const QString &,const QString &);
+  void allocCharts(const QString &);
 
   toBackground Poll;
 public:

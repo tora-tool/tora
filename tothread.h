@@ -35,6 +35,8 @@
 #ifndef TOTHREAD_H
 #define TOTHREAD_H
 
+#include <qthread.h>
+
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
  */
@@ -46,10 +48,11 @@ public:
   virtual void run(void) = 0;
 };
 
-#include <list>
-
-#ifdef WIN32
-#include <qthread.h>
+/** Encapsulation of pthread semaphores. A semaphore can be raise to any value
+ * but will wait till raised above zero when lowered below 0. Can also be implemented
+ * without pthreads using Qt multithreaded primitives. Observe that these function
+ * different than Qt semaphores.
+ */
 
 class toSemaphore {
 private:
@@ -57,18 +60,35 @@ private:
   QWaitCondition Condition;
   int Value;
 public:
+  /** Create semaphore
+   */
   toSemaphore()
     : Condition()
   { Value=0; }
+  /** Unimplemented copy constructor.
+   */
   toSemaphore(const toSemaphore &);
+  /** Create semaphore
+   * @param val Value of new semaphore.
+   */
   toSemaphore(int val)
     : Condition()
   { Value=val; }
 
+  /** Increase semaphore value by 1.
+   */
   void up();
+  /** Decrease semaphore value by 1, wait for it to never go below 0.
+   */
   void down();
+  /** Get current semaphore value.
+   */
   int getValue();
 };
+
+#include <list>
+
+#ifdef WIN32
 
 class toLock {
 private:
@@ -118,47 +138,8 @@ public:
 
 #else
 #include <pthread.h>
-#include <semaphore.h>
 #include <signal.h>
 #include <time.h>
-
-/** Encapsulation of pthread semaphores. A semaphore can be raise to any value
- * but will wait till raised above zero when lowered below 0. Can also be implemented
- * without pthreads using Qt multithreaded primitives. Observe that these function
- * different than Qt semaphores.
- */
-
-class toSemaphore {
-private:
-  /** Actual semaphore.
-   */
-  sem_t Semaphore;
-  /** Initialise semaphore.
-   * @param val Value to init semaphore to.
-   */
-  void init(int val);
-
-  toSemaphore(const toSemaphore &);
-public:
-  /** Create semaphore
-   */
-  toSemaphore();
-  /** Create semaphore
-   * @param val Value of new semaphore.
-   */
-  toSemaphore(int val);
-  ~toSemaphore();
-
-  /** Increase semaphore value by 1.
-   */
-  void up();
-  /** Decrease semaphore value by 1, wait for it to never go below 0.
-   */
-  void down();
-  /** Get current semaphore value.
-   */
-  int getValue();
-};
 
 /** A wrapper around the pthread mutexfunctions. A lock can only be locked
  *  by one thread at a time and is the basis of most thread synchronisation.
