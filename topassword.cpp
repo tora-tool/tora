@@ -62,11 +62,25 @@ public:
 				     NULL,
 				     toMainWidget());
     if (!np.isNull()) {
-      try {
-	connection.execute(toSQL::string(SQLChangePassword,connection).
-			   arg(connection.user()).arg(np));
-      } catch(const QString &exc) {
-	toStatusMessage(exc);
+      QString np2=QInputDialog::getText("Enter new password again for confirmation",
+					"Enter new password again for confirmation",
+					QLineEdit::Password,
+					QString::null,
+					NULL,
+					toMainWidget());
+      if (!np2.isNull()) {
+	if (np!=np2)
+	  TOMessageBox::warning(toMainWidget(),
+				"Passwords doesn't match",
+				"The two givens passwords doesn't match, please try again");
+	else {
+	  try {
+	    connection.execute(toSQL::string(SQLChangePassword,connection).
+			       arg(connection.user()).arg(np));
+	  } catch(const QString &exc) {
+	    toStatusMessage(exc);
+	  }
+	}
       }
     }
     return NULL;
