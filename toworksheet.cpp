@@ -85,6 +85,7 @@ TO_NAMESPACE;
 #define CONF_LOG_AT_END  "LogAtEnd"
 #define CONF_LOG_MULTI   "LogMulti"
 #define CONF_PLSQL_PARSE "PLSQLParse"
+#define CONF_STATISTICS	 "Statistics"
 
 static struct {
   int Pos;
@@ -144,15 +145,20 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
 				"but it if you forget one end the rest of the editor will\n"
 				"be one block.") );
 
+  Statistics = new QCheckBox( GroupBox1, "Statistics" );
+  Statistics->setGeometry( QRect( 20, 230, 340, 20 ) ); 
+  Statistics->setText( tr( "&Enable Statistics."  ) );
+  QToolTip::add(Statistics, tr( "Enable statistic collection per default.") );
+
   FileChoose = new QPushButton( GroupBox1, "FileChoose" );
-  FileChoose->setGeometry( QRect( 280, 264, 80, 32 ) ); 
+  FileChoose->setGeometry( QRect( 280, 304, 80, 32 ) ); 
   FileChoose->setText( tr( "&Browse"  ) );
   
   DefaultFile = new QLineEdit( GroupBox1, "DefaultFile" );
-  DefaultFile->setGeometry( QRect( 100, 270, 170, 23 ) ); 
+  DefaultFile->setGeometry( QRect( 100, 310, 170, 23 ) ); 
   
   TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
-  TextLabel2->setGeometry( QRect( 20, 270, 80, 20 ) ); 
+  TextLabel2->setGeometry( QRect( 20, 310, 80, 20 ) ); 
   TextLabel2->setText( tr( "&Default file"  ) );
   QToolTip::add(  TextLabel2, tr( "File to automatically load when opening a worksheet." ) );
   
@@ -170,6 +176,8 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
     LogMulti->setChecked(true);
   if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
     PLSQLParse->setChecked(true);
+  if (!tool->config(CONF_STATISTICS,"").isEmpty())
+    Statistics->setChecked(true);
   DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
 
   connect(FileChoose,SIGNAL(clicked()),this,SLOT(chooseFile()));
@@ -201,6 +209,7 @@ void toWorksheetPrefs::saveSetting(void)
     Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
   else
     Tool->setConfig(CONF_PLSQL_PARSE,"");
+  Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
   Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
 }
 
@@ -382,6 +391,11 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
+
+  if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
+    show();
+    StatisticButton->setOn(true);
+  }
 }
 
 void toWorksheet::windowActivated(QWidget *widget)

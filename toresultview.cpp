@@ -307,3 +307,18 @@ void toResultView::readAll(void)
   while(!eof())
     addItem();
 }
+
+void toResultView::keyPressEvent(QKeyEvent *e)
+{
+  if (e->key()==Key_PageDown) {
+    QListViewItem *item=firstChild();
+    if (item&&!eof()&&item->height()) {
+      int num=viewport()->height()/item->height();
+      while(num>0) {
+	addItem();
+	num--;
+      }
+    }
+  }
+  QListView::keyPressEvent(e);
+}

@@ -186,6 +186,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   Quit=EOQ=false;
   Processed=0;
   MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+
   toLocker lock(Lock);
   try {
     LongConn=Connection.longOperation();

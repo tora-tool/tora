@@ -96,6 +96,8 @@ protected:
   virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
   virtual bool eof(void)
   { return !Query||Query->eof(); }
+
+  virtual void keyPressEvent (QKeyEvent * e);
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);

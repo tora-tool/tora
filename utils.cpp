@@ -46,12 +46,17 @@ static toSQL SQLUserNames(TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
 
+#include <stdio.h>
+
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 {
   switch (dsc.otl_var_dbtype) {
   default:  // Try using char if all else fails
     {
-      char buffer[dsc.dbsize*2+1]; // The *2 is for raw columns
+      // The *2 is for raw columns, also dates and numbers are a bit tricky
+      // but if someone specifies a dateformat longer than 100 bytes he
+      // deserves everything he gets!
+      char buffer[max(dsc.dbsize*2+1,100)];
       q>>buffer;
       if (q.is_null())
 	return "{null}";
@@ -66,6 +71,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
       char buffer[maxSize+1];
       otl_long_string data(buffer,maxSize);
       q>>data;
+      buffer[maxSize]=0;
       if (q.is_null())
 	return "{null}";
       buffer[data.len()]=0; // Not sure if this is needed

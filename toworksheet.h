@@ -65,6 +65,7 @@ class toWorksheetPrefs : public QFrame, public toSettingTab
   QCheckBox* LogAtEnd;
   QCheckBox* LogMulti;
   QCheckBox* PLSQLParse;
+  QCheckBox* Statistics;
   QLabel* TextLabel2;
   toTool *Tool;
 
