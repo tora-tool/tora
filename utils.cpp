@@ -44,6 +44,7 @@ TO_NAMESPACE;
 #endif
 
 #include <qapplication.h>
+#include <qfiledialog.h>
 #include <qstatusbar.h>
 #include <qcombobox.h>
 #include <qtimer.h>
@@ -798,3 +799,222 @@ void toUnSetEnv(const QCString &var)
   unsetenv(var);
 #endif
 }
+
+#ifdef TO_DEBUG_MEMORY
+#  ifndef LARGE_NUMBER
+#    define LARGE_NUMBER 1024
+#  endif
+
+#include "tothread.h"
+
+static toLock Lock;
+static void **Pointers=NULL;
+static size_t *PointerInd=NULL;
+static size_t *PointerSize=NULL;
+static size_t PointerNum=0;
+static size_t PointerAlloc=0;
+static size_t PointerIndex=0;
+static size_t PointerStartup=0;
+static bool PointerError=false;
+
+struct toPointerInfo toGetPointerInfo(int ind)
+{
+  toLocker current(Lock);
+  toPointerInfo data;
+  if (ind<-int(PointerStartup)||
+      ind>=int((PointerNum-PointerStartup)/sizeof(void *))) {
+    data.index=ind;
+    data.allocIndex=0;
+    data.size=0;
+    data.ptr=NULL;
+  } else {
+    data.index=ind;
+    data.allocIndex=PointerInd[ind+PointerStartup/sizeof(void *)];
+    data.size=PointerSize[ind+PointerStartup/sizeof(void *)];
+    data.ptr=Pointers[ind+PointerStartup/sizeof(void *)];
+  }
+  return data;
+}
+
+void toInitPointers(void)
+{
+  toLocker current(Lock);
+  PointerStartup=PointerNum;
+}
+
+void toPointerExpectLost(int num)
+{
+  toLocker current(Lock);
+  PointerStartup+=num*sizeof(void *);
+}
+
+struct toPointerInfo toGetPointerInfo(void *p)
+{
+  int i;
+  Lock.lock();
+  for (i=0;i<int(PointerNum/sizeof(void *));i++)
+    if (Pointers[i]==p)
+      break;
+  int ind=i-PointerStartup;
+  Lock.unlock();
+  return toGetPointerInfo(ind);
+}
+
+size_t toCurrentIndex(void)
+{
+  return PointerIndex;
+}
+
+size_t toGetAllocNum(void)
+{
+  toLocker current(Lock);
+  return (PointerNum-PointerStartup)/sizeof(void *);
+}
+
+static void *getmem(size_t l)
+{
+  toLocker current(Lock);
+  void *p;
+  if (l==0) {
+    printf ("Tried to allocate 0 bytes of memory\n");
+    l=1;
+  }
+  p=malloc(l);
+  if (!p) {
+    fprintf (stderr,"Failed to allocated %lu bytes of memory\n",
+	     (unsigned long)l);
+    PointerError=true;
+    return NULL;
+  }
+  if (PointerNum==PointerAlloc) {
+    void **t;
+    size_t *s;
+    PointerAlloc+=LARGE_NUMBER;
+    t=(void **)malloc(PointerAlloc);
+    if(Pointers) {
+      memmove(t,Pointers,PointerAlloc-LARGE_NUMBER);
+      free(Pointers);
+    }
+    Pointers=t;
+    s=(size_t *)malloc(PointerAlloc*sizeof(size_t)/sizeof(void *));
+    if(PointerSize) {
+      memmove(s,PointerSize,(PointerAlloc-LARGE_NUMBER)*sizeof(size_t)/
+	      sizeof(void *));
+      free(PointerSize);
+    }
+    PointerSize=s;
+    s=(size_t *)malloc(PointerAlloc*sizeof(size_t)/sizeof(void *));
+    if(PointerInd) {
+      memmove(s,PointerInd,(PointerAlloc-LARGE_NUMBER)*sizeof(size_t)/
+	      sizeof(void *));
+      free(PointerInd);
+    }
+    PointerInd=s;
+  }
+  Pointers[PointerNum/sizeof(void *)]=p;
+  PointerInd[PointerNum/sizeof(void *)]=PointerIndex;
+  PointerIndex++;
+  PointerSize[PointerNum/sizeof(void *)]=l;
+  PointerNum+=sizeof(void *);
+  return p;
+}
+
+void *operator new[](size_t l)
+{
+  return getmem(l);
+}
+
+void *operator new(size_t l)
+{
+  return getmem(l);
+}
+
+void del (void *p)
+{
+  if (!p)
+    return;
+  toLocker current(Lock);
+  unsigned int i;
+  for (i=0;i<PointerNum/sizeof(void *);i++)
+    if (Pointers[i]==p)
+      break;
+  if(i==(PointerNum/sizeof(void *))) {
+    for (i=0;i<PointerNum/sizeof(void *);i++)
+      if (Pointers[i]>p&&(char *)(Pointers[i])+PointerSize[i]<p)
+	break;
+    if(PointerNum==(PointerNum/sizeof(void *)))
+      fprintf (stderr,"Tried to dealloc unalloced memory (Withing block with index %d)\n",i);
+    else
+      fprintf (stderr,"Tried to dealloc unalloced memory\n");
+    PointerError=true;
+    return;
+  }
+  if(PointerNum>=(i+1)*sizeof(void *)) {
+    memmove(Pointers+i,Pointers+i+1,PointerNum-(i+1)*sizeof(void *));
+    memmove(PointerSize+i,PointerSize+i+1,(PointerNum-(i+1)*sizeof(void *))*
+	    sizeof(size_t)/sizeof(void *));
+    memmove(PointerInd+i,PointerInd+i+1,(PointerNum-(i+1)*sizeof(void *))*
+	    sizeof(size_t)/sizeof(void *));
+  }
+  PointerNum-=sizeof(void *);
+  free(p);
+}
+
+void operator delete[](void *p)
+{
+  del (p);
+}
+
+void operator delete(void *p)
+{
+  del(p);
+}
+
+static void DisplayLast(char *p,size_t ind)
+{
+  int start;
+  if (!ind)
+    return;
+  printf ("  ");
+  for (start=int((ind-1)&~0xf);start<int(ind);start++) {
+    if (!(start%8))
+      printf (" ");
+    if (isprint(p[start]))
+      printf ("%c",p[start]);
+    else
+      printf (".");
+  }
+}
+
+int toDisplayMemLost(void)
+{
+  printf("Lost %lu blocks of memory\n",(unsigned long)(toGetAllocNum()));
+  size_t i;
+  for (i=0;i<toGetAllocNum();i++) {
+    toPointerInfo ptr=toGetPointerInfo(i);
+    toLocker current(Lock);    
+    printf ("  Index    :%lu\n",(unsigned long)(ptr.index));
+    printf ("    Alloced:%lu\n",(unsigned long)(ptr.allocIndex));
+    printf ("    Size   :%lu\n",(unsigned long)(ptr.size));
+    printf ("    Content:");
+    size_t j;
+    for (j=0;j<ptr.size;j++) {
+      if (!(j%16)) {
+	DisplayLast((char *)ptr.ptr,j);
+	printf ("\n");
+      } else if (!(j%8)) {
+	printf ("  ");
+      }
+      printf ("%02x ",((unsigned char *)ptr.ptr)[j]);
+    }
+    DisplayLast((char *)ptr.ptr,j);
+    printf("\n");
+  }
+  if (toGetAllocNum())
+    return 2;
+  if (PointerError)
+    return 3;
+  return 0;
+}
+
+#endif

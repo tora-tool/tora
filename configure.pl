@@ -733,10 +733,11 @@ __EOT__
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
-	print MAKEFILE "#   OTL_ORA8I    - Compile for Oracle 8.1.x\n";
-	print MAKEFILE "#   OTL_ORA8     - Compile for Oracle 8.0.x\n";
-	print MAKEFILE "#   TO_KDE       - Compile as KDE application\n";
-	print MAKEFILE "#   TO_NAMESPACE - Any namespaces that should be used\n";
+	print MAKEFILE "#   OTL_ORA8I       - Compile for Oracle 8.1.x\n";
+	print MAKEFILE "#   OTL_ORA8        - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   TO_KDE          - Compile as KDE application\n";
+	print MAKEFILE "#   TO_NAMESPACE    - Any namespaces that should be used\n";
+	print MAKEFILE "#   TO_DEBUG_MEMORY - Enable memory debugging framework (SLOW)\n";
 	
 	if ($ORACLE_RELEASE =~ /^8.0/) {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";

@@ -79,16 +79,16 @@ int main(int argc,char **argv)
   toSetEnv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT).latin1());
 #endif
 #ifdef TO_KDE
-  KApplication mainApp(argc,argv,"tora");
+  new KApplication(argc,argv,"tora");
 #else
   if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())
     QApplication::setDesktopSettingsAware(false);
-  QApplication mainApp(argc,argv);
+  new QApplication(argc,argv);
 #endif
   try {
 
     if (getenv("LANG"))
-      mainApp.setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
+      qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
 #ifdef ENABLE_STYLE
     QString style=toTool::globalConfig(CONF_STYLE,"");
@@ -110,7 +110,7 @@ int main(int argc,char **argv)
       QLabel *label=splash.label();
       progress->setTotalSteps(failed.size());
       progress->setProgress(1);
-      mainApp.processEvents();
+      qApp->processEvents();
       bool success;
       do {
 	success=false;
@@ -126,7 +126,7 @@ int main(int argc,char **argv)
 	    QFileInfo file(*i);
 	    str+=file.fileName();
 	    label->setText(str);
-	    mainApp.processEvents();
+	    qApp->processEvents();
 	  }
 	}
       } while(failed.begin()!=failed.end()&&success);
@@ -165,11 +165,11 @@ int main(int argc,char **argv)
       toTool::globalSetConfig("LastVersion",TOVERSION);
     }
 
-    if (mainApp.argc()>2||(mainApp.argc()==2&&mainApp.argv()[1][0]=='-')) {
+    if (qApp->argc()>2||(qApp->argc()==2&&qApp->argv()[1][0]=='-')) {
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
       exit(2);
-    } else if (mainApp.argc()==2) {
-      QString connect=mainApp.argv()[1];
+    } else if (qApp->argc()==2) {
+      QString connect=qApp->argv()[1];
       QString user;
       int pos=connect.find("@");
       if (pos>-1) {
@@ -193,7 +193,8 @@ int main(int argc,char **argv)
 
     new toMain;
 
-    return mainApp.exec();
+    int ret=qApp->exec();
+    return ret;
   } catch (const otl_exception &exc) {
     printf("Unhandled exception:\n\n%s\n",
 	   (const char *)QString::fromUtf8((const char *)exc.msg));

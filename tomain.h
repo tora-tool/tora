@@ -229,6 +229,60 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
 
 #define toIsIdent(c) (c.isLetterOrNumber()||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
 
+#ifdef TO_DEBUG_MEMORY
+
+/** @name Miscellaneous routines
+ * Miscellaneous routines related to any of the other classes in the library.
+ */
+
+//@{
+
+struct toPointerInfo {
+  size_t	index;
+  size_t	allocIndex;
+  size_t	size;
+  void		*ptr;
+};
+
+struct toPointerInfo toGetPointerInfo(int ind);
+struct toPointerInfo toGetPointerInfo(void *p);
+
+void toInitPointers(void);
+size_t toGetAllocNum(void);
+size_t toCurrentIndex(void);
+int toDisplayMemLost(void);
+void toPointerExpectLost(int);
+
+/** Allocate memory.
+ * @param l Length of block to allocate.
+ * @return Allocated block.
+ * @exception jOutOfMemoryException Whenever allocation failed.
+ */
+void *operator new(size_t l);
+/** Allocate memory.
+ * @param l Length of block to allocate.
+ * @return Allocated block.
+ * @exception jOutOfMemoryException Whenever allocation failed.
+ */
+void *operator new[](size_t l);
+/** Deallocate allocate memory block.
+ * @param p Block to dealloc.
+ */
+void operator delete[](void *p);
+/** Deallocate allocate memory block.
+ * @param p Block to dealloc.
+ */
+void operator delete(void *p);
+
+/** Change size of allocated block.
+ * @param buf Block to change size on.
+ * @param size New size of block.
+ * @exception jOutOfMemoryException Whenever allocation failed.
+ * @return Pointer to new block (not necessarily moved).
+ */
+
+#endif
+
 #ifdef WIN32
 template <class T>
 T max(T a, T b)

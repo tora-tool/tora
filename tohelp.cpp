@@ -53,6 +53,7 @@ TO_NAMESPACE;
 #include <qtabwidget.h>
 #include <qtextbrowser.h>
 #include <qtextview.h>
+#include <qcombobox.h>
 #include <qtimer.h>
 #include <qvbox.h>
 

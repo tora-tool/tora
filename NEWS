@@ -31,6 +31,8 @@
 2001-05-30: Support for KIO in KDE.
 2001-05-30: Added support for search in help.
 2001-05-30: Added option to add entire Oracle manual collection in help setup.
+2001-05-31: Some Qt fixes.
+2001-05-31: Added an optional memory debugging framework.
 
 0.10: Released 2001-05-25
 
