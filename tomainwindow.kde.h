@@ -35,6 +35,10 @@
 #ifndef __TOMAINWINDOW_KDE_H
 #define __TOMAINWINDOW_KDE_H
 
+/**
+ * A container class that either inherits KDE or Qt main window.
+ */
+
 class toMainWindow : public KDockMainWindow {
   Q_OBJECT
 public:

@@ -35,6 +35,10 @@
 #ifndef __TOMARKEDTEXT_2_H
 #define __TOMARKEDTEXT_2_H
 
+/**
+ * Container to the correct multi line editor for Qt 2 or 3.
+ */
+
 class toMultiLineEdit : public QMultiLineEdit {
   Q_OBJECT
 public:
