@@ -15,6 +15,7 @@ Extended functionality:
 * Ability to save a session (Including breakpoints, parameter cache windows etc)
 * Add context menues to all tools, like in debugger.
 * Add consumer group settings to security manager.
+* Expand admin/default in security for all privtypes.
 
 New tools:
 * Info about current session.
