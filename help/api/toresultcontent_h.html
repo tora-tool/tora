@@ -190,10 +190,10 @@ class toResultContentEditor : public QTable,public toEditWidget {
   bool AllFilter;
   /** Filter selection criteria
    */
-  std::map&lt;QCString,QString&gt; Criteria;
+  static std::map&lt;QCString,QString&gt; Criteria;
   /** Filter retrieve order
    */
-  std::map&lt;QCString,QString&gt; Order;
+  static std::map&lt;QCString,QString&gt; Order;
   /** Current filter name in map
    */
   QString FilterName;
@@ -405,6 +405,10 @@ public slots:
    * @param all If true can replace all, otherwise can replace right now.
    */
   virtual bool searchCanReplace(bool all);
+signals:
+  /** Emitted to indicate wether a filter is used.
+   */
+  void filterEnabled(bool);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.
@@ -509,7 +513,7 @@ public slots:
    */
   virtual void saveUnsaved(toConnection &amp;conn,bool cmt);
 
-  /** Handle Oracle &amp; MySQL
+  /** Handle all databases
    */
   virtual bool canHandle(toConnection &amp;);
 };

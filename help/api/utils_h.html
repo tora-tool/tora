@@ -365,6 +365,15 @@ toToolWidget *toCurrentTool(QObject *widget);
 /** Check if this connection is an oracle connection.
  */
 bool toIsOracle(const toConnection &amp;);
+/** Check if this connection is an sapdb connection.
+ */
+bool toIsSapDB(const toConnection &amp;);
+/** Check if this connection is an MySQL connection.
+ */
+bool toIsMySQL(const toConnection &amp;);
+/** Check if this connection is an PostgreSQL connection.
+ */
+bool toIsPostgreSQL(const toConnection &amp;);
 /** Strip extra bind specifier from an SQL statement. (That means the extra &lt;***&gt; part after
  * the bind variable.
  * @param sql The sql to strip.

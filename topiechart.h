@@ -54,6 +54,9 @@ class toPieChart : public QWidget {
   QString Title;
   QPopupMenu *Menu;
 
+  QRect ChartRect;
+  std::list<int> Angels;
+
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *e);
   virtual void mousePressEvent(QMouseEvent *e);
@@ -140,6 +143,13 @@ public:
    */
   std::list<QString> &labels(void)
   { return Labels; }
+  /** Find the label if any of a point in the chart.
+   */
+  QString findLabel(QPoint p);
+  /** Get rectangle that the chart is contained in.
+   */
+  QRect chartRectangle()
+  { return ChartRect; }
 signals:
   void newValues(std::list<double> &values,std::list<QString> &labels);
 public slots:

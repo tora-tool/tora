@@ -51,12 +51,31 @@
 #include <qpainter.h>
 #include <qpopupmenu.h>
 #include <qprinter.h>
+#include <qtooltip.h>
 #include <qworkspace.h>
 
 #include "topiechart.moc"
 
 #include "icons/grid.xpm"
 #include "icons/print.xpm"
+
+class toPieTip : public QToolTip {
+private:
+  toPieChart *Chart;
+public:
+  toPieTip(toPieChart *parent)
+    : QToolTip(parent)
+  {
+    Chart=parent;
+  }
+
+  virtual void maybeTip(const QPoint &p)
+  {
+    QString t=Chart->findLabel(p);
+    if (!t.isEmpty())
+      tip(QRect(p.x()-20,p.y()-20,40,40),t);
+  }
+};
 
 toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
@@ -75,6 +94,7 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
     QFont font(toStringToFont(str));
     setFont(font);
   }
+  new toPieTip(this);
 }
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
@@ -140,6 +160,7 @@ toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name,WFlags f
     QFont font(toStringToFont(str));
     setFont(font);
   }
+  new toPieTip(this);
 }
 
 void toPieChart::mousePressEvent(QMouseEvent *e)
@@ -272,6 +293,8 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
   int cp=0;
   int pos=0;
   unsigned int count=0;
+  ChartRect=p->xForm(QRect(2,2,right-4,bottom-4));
+  Angels.clear();
   for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++) {
     count++;
     int size=int(*i*5760/tot);
@@ -290,8 +313,39 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
       p->restore();
       pos+=size;
     }
+    Angels.insert(Angels.end(),pos);
     cp++;
   }
+}
+
+QString toPieChart::findLabel(QPoint p)
+{
+  if (ChartRect.contains(p)) {
+    QPoint center=ChartRect.center();
+    p-=center;
+    int iang;
+    if (p.x()!=0) {
+      double angle=atan(double(-p.y())/p.x());
+      iang=int(angle*180*16/M_PI);
+      if (p.x()<0)
+	iang+=180*16;
+      if (iang<0)
+	iang+=360*16;
+    } else if (p.y()<=0)
+      iang=90*16;
+    else
+      iang=270*16;
+
+    std::list<int>::iterator i=Angels.begin();
+    std::list<QString>::iterator j=Labels.begin();
+    while(i!=Labels.end()&&j!=Angels.end()) {
+      if ((*i)>iang)
+	return *j;
+      i++;
+      j++;
+    }
+  }
+  return QString::null;
 }
 
 void toPieChart::paintEvent(QPaintEvent *)

@@ -29,7 +29,6 @@ Extended functionality:
 	Don't lock during execution
 	Support for Oracle 7
 	Support for multiple open editors
-	Use toSQLParse
 	Attaching to remote debugging session
 	Support for one referential cursor output variable
 * Full support for Oracle 9i.
