@@ -36,6 +36,7 @@ Extended functionality:
 * File I/O statistics in storage.
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
+* Statistics in debugger as well.
 
 New tools:
 
