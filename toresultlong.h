@@ -66,6 +66,9 @@ class toResultLong : public toResultView {
   /** Widget to store query statistics to.
    */
   toResultStats *Statistics;
+  /** Number of rows to fetch when starting. (-1 for all)
+   */
+  int MaxNumber;
 
   /** Check if at eof.
    */
@@ -107,7 +110,9 @@ public:
    */
   void query(const QString &sql)
   { list<QString> p; query(sql,p); }
-
+  /** Reimplemented for internal reasons.
+   */
+  virtual void readAll(void);
 signals:
   /** Emitted when query is finnished.
    */

@@ -50,6 +50,7 @@ class QListViewItem;
 class QProgressBar;
 class toHelpBrowser;
 class QToolButton;
+class toHelpPrefs;
 
 /**
  * Additional help tool. Also used as object to connect to to display help
@@ -208,6 +209,8 @@ public:
    * @param dialog Dialog to connect accelerator to.
    */
   static void connectDialog(QDialog *dialog);
+
+  friend toHelpPrefs;
 };
 
 /** This class is used to indicate a help context of an object. When the current context

@@ -104,6 +104,7 @@ TO_NAMESPACE;
 #define CONF_LOG_MULTI   "LogMulti"
 #define CONF_PLSQL_PARSE "PLSQLParse"
 #define CONF_STATISTICS	 "Statistics"
+#define CONF_TIMED_STATS "TimedStats"
 #define CONF_NUMBER	 "Number"
 
 static struct {
@@ -153,6 +154,7 @@ public:
       PLSQLParse->setChecked(true);
     if (!tool->config(CONF_STATISTICS,"").isEmpty())
       Statistics->setChecked(true);
+    TimedStatistics->setChecked(!tool->config(CONF_TIMED_STATS,"Yes").isEmpty());
     if (!tool->config(CONF_NUMBER,"Yes").isEmpty())
       DisplayNumber->setChecked(true);
     DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
@@ -184,6 +186,7 @@ public:
     else
       Tool->setConfig(CONF_PLSQL_PARSE,"");
     Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
+    Tool->setConfig(CONF_TIMED_STATS,TimedStatistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_NUMBER,DisplayNumber->isChecked()?"Yes":"");
     Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
   }
@@ -300,13 +303,17 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
   Editor=new toHighlightedText(splitter);
   ResultTab=new QTabWidget(splitter);
-  Result=new toResultLong(connection,ResultTab);
+  QVBox *box=new QVBox(ResultTab);
+  ResultTab->addTab(box,"Result");
+
+  Result=new toResultLong(connection,box);
   connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
   connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
 	  this,SLOT(addLog(const QString &,const QString &)));
-  ResultTab->addTab(Result,"Data");
-  Columns=new toResultCols(connection,ResultTab);
-  ResultTab->addTab(Columns,"Describe");
+
+  Columns=new toResultCols(connection,box);
+  Columns->hide();
+
   ResultTab->setTabEnabled(Columns,false);
   Plan=new toResultPlan(connection,ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
@@ -504,15 +511,15 @@ bool toWorksheet::describe(const QString &query)
     } else
       throw QString("Wrong number of parameters for describe");
     QWidget *curr=ResultTab->currentPage();
-    ResultTab->setTabEnabled(Columns,true);
-    ResultTab->setTabEnabled(Result,false);
+    Columns->show();
+    Result->hide();
     if (curr==Result)
       ResultTab->showPage(Columns);
     return true;
   } else {
     QWidget *curr=ResultTab->currentPage();
-    ResultTab->setTabEnabled(Columns,false);
-    ResultTab->setTabEnabled(Result,true);
+    Columns->hide();
+    Result->show();
     if (curr==Columns)
       ResultTab->showPage(Result);
     return false;
@@ -869,6 +876,10 @@ void toWorksheet::queryDone(void)
   }
 }
 
+static toSQL SQLTimedStatistics("toWorksheet:EnableTimed",
+				"ALTER SESSION SET TIMED_STATISTICS = TRUE",
+				"Enable timed statistics for the current session");
+
 void toWorksheet::enableStatistic(bool ena)
 {
   if (ena) {
@@ -882,6 +893,17 @@ void toWorksheet::enableStatistic(bool ena)
     ResultTab->setTabEnabled(Statistics,true);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);
     Statistics->clear();
+    if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
+      try {
+	otl_cursor::direct_exec(otlConnect(),SQLTimedStatistics(connection()));
+	list<otl_connect *> &other=connection().otherSessions();
+	for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++) {
+	  otl_cursor::direct_exec(*(*i),
+				  SQLTimedStatistics(connection()));
+	}
+	connection().addInit(QString::fromUtf8(SQLTimedStatistics(connection())));
+      } TOCATCH
+    }
   } else {
     Result->setStatistics(NULL);
     ResultTab->setTabEnabled(Statistics,false);

@@ -20,6 +20,12 @@
 2001-07-06: Ask to create plan table if it doesn't exist when explaining plan.
 2001-07-06: Updated documentation to the 1.0 release so I don't forget it.
 2001-07-06: Added option to specify message history size.
+2001-07-06: Enable timed statistics in session when using statistics in
+	worksheet.
+2001-07-06: Collapsed Data and Description to one Result tab in worksheet.
+2001-07-06: Fixed bug in prefetch for resultlong.
+2001-07-06: Don't hang when reading all in resultlong.
+2001-07-06: Last part of general documentation done, only the tools left.
 
 0.12: Released 2001-07-01
 

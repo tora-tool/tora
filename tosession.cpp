@@ -244,8 +244,6 @@ void toSession::enableStatistics(bool enable)
   }
 }
 
-#include <stdio.h>
-
 void toSession::changeTab(QWidget *tab)
 {
   CurrentTab=tab;

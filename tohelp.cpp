@@ -193,6 +193,7 @@ public:
       i++;
     }
     Tool->setConfig("Number",QString::number(i));
+    delete toHelp::Window;
   }
   virtual void addFile(void)
   {

@@ -467,7 +467,7 @@ public:
   /** Get read all flag
    * @return Value of read all flag.
    */
-  void readAll(void);
+  virtual void readAll(void);
 
   /** Get the number of columns in query.
    * @return Columns in query.

@@ -86,12 +86,8 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
   try {
     Query=new toNoBlockQuery(Connection,sql,param,Statistics);
 
-    int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
-    if (MaxNumber<0)
-      readAll();
-    else
-      addItem();
-
+    MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
+    addItem();
   } catch (const otl_exception &exc) {
     emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
     emit done();
@@ -105,6 +101,12 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
 }
 
 #define TO_POLL_CHECK 500
+
+void toResultLong::readAll(void)
+{
+  MaxNumber=-1;
+  addItem();
+}
 
 void toResultLong::addItem(void)
 {
@@ -182,6 +184,8 @@ void toResultLong::addItem(void)
 	  emit done();
 	  return;
 	}
+	if (MaxNumber<0||MaxNumber>RowNumber)
+	  Timer.start(1,true); // Must use timer, would mean really long recursion otherwise
       } catch (const otl_exception &exc) {
 	if (First) {
 	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));

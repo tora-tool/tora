@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
+            <width>584</width>
             <height>480</height>
         </rect>
     </property>
@@ -137,55 +137,7 @@
                         <string>Parse PL/SQL blocks in worksheet. You usually need this but it if you forget one end the rest of the editor will be one block.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Statistics</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Enable statistics</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Enable statistic collection per default.</string>
-                    </property>
-                </widget>
-                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DisplayNumber</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Display number column</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Add a numbering column to the left of the result.</string>
-                    </property>
-                </widget>
-                <widget row="8"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>FileChoose</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Browse</string>
-                    </property>
-                </widget>
-                <widget row="8"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                </widget>
-                <widget row="8"  column="0" >
+                <widget row="9"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -202,6 +154,69 @@
                     <property>
                         <name>toolTip</name>
                         <string>File to automatically open in a new worksheet.</string>
+                    </property>
+                </widget>
+                <widget row="9"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>FileChoose</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Browse</string>
+                    </property>
+                </widget>
+                <widget row="9"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                </widget>
+                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Statistics</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Enable statistics</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Enable statistic collection per default.</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DisplayNumber</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Display number column</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Add a numbering column to the left of the result.</string>
+                    </property>
+                </widget>
+                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TimedStatistics</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Enable &amp;timed statistics</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Enable timed statistics as well when collecting normal statistics.</string>
                     </property>
                 </widget>
             </grid>
@@ -225,6 +240,7 @@
     <tabstop>LogMulti</tabstop>
     <tabstop>PLSQLParse</tabstop>
     <tabstop>Statistics</tabstop>
+    <tabstop>TimedStatistics</tabstop>
     <tabstop>DisplayNumber</tabstop>
     <tabstop>DefaultFile</tabstop>
     <tabstop>FileChoose</tabstop>
