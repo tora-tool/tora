@@ -186,6 +186,10 @@ public:
   virtual void editSelectAll(void)
   { selectAll(); }
 
+  /** Start incremental search mode, or search next if started.
+   */
+  void incrementalSearch(bool forward);
+
   /** Export data to a map.
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.

@@ -316,6 +316,18 @@ public:
   virtual void saveSetting(void);
 };
 
+void toEditExtensions::searchForward(void)
+{
+  if (Current)
+    Current->incrementalSearch(true);
+}
+
+void toEditExtensions::searchBackward(void)
+{
+  if (Current)
+    Current->incrementalSearch(false);
+}
+
 #define TO_EDIT_SEARCH_NEXT	209
 
 class toEditExtensionTool : public toTool {
@@ -347,14 +359,13 @@ public:
 
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
     
-    IncrementalSearch=menu->insertItem("Forward");
-    ReverseSearch=menu->insertItem("Backward");
+    IncrementalSearch=menu->insertItem("Forward",&EditExtensions,SLOT(searchForward()),
+				       CTRL+Key_S);
+    IncrementalSearch=menu->insertItem("Backward",&EditExtensions,SLOT(searchBackward()),
+				       CTRL+Key_R);
 
     toMainWidget()->editMenu()->insertItem("Incremental Search",menu,-1,(idx>=0?idx+1:0));
     
-    toMainWidget()->editMenu()->setAccel(Key_S+CTRL,IncrementalSearch);
-    toMainWidget()->editMenu()->setAccel(Key_R+CTRL,ReverseSearch);
-
     menu=new QPopupMenu(toMainWidget());
     AutoIndentBlock=menu->insertItem("Selection",
 				     &EditExtensions,

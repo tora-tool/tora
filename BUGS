@@ -23,3 +23,6 @@ toMysqlConnection:
 
 otl:
 	Sometimes looses open cursors when cancelling and multiple queries are running.
+
+toSQLParse:
+	Doesn't handle case statements very well.

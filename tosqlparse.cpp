@@ -85,6 +85,21 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+DECLARE
+grade CHAR(1);
+appraisal VARCHAR2(20);
+BEGIN
+appraisal := 
+CASE grade
+WHEN 'A' THEN 'Excellent'
+WHEN 'B' THEN 'Very Good'
+WHEN 'C' THEN 'Good'
+WHEN 'D' THEN 'Fair'
+WHEN 'F' THEN 'Poor'
+ELSE 'No such grade'
+END;
+END;
+
 CREATE TABLE ess.EssCalLog (
         CalID		CHAR(5) NOT NULL,		-- Calender type
 	SeqID		NUMBER(8) NOT NULL,
@@ -105,7 +120,7 @@ CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NU
 IS
   vYear  CHAR(4);
 BEGIN
-
+    <<label>>
     DECLARE
       oTrdStt NUMBER;
     BEGIN
@@ -350,7 +365,8 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
     any,
     identifier,
     string,
-    comment
+    comment,
+    label
   } state=space;
 
   QString token;
@@ -377,6 +393,9 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
       }
       if(c=='/'&&nc=='*')
 	state=comment;
+      else if((forward&&c=='<'&&nc=='<')||
+	      (!forward&&c=='>'&&nc=='>'))
+	state=label;
       else if(!c.isSpace())
 	state=any;
     }
@@ -403,6 +422,17 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
 	    state=space;
 	    token=QString::null;
 	  }
+	}
+	break;
+      case label:
+	if((forward&&c=='>'&&nc=='>')||
+	   (!forward&&c=='<'&&nc=='<')) {
+	  if(forward)
+	    token+=nc;
+	  else
+	    token.prepend(nc);
+	  pos+=inc;
+	  return token;
 	}
 	break;
       case space:
@@ -568,10 +598,8 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,token));
       statement lst=parseStatement(str,pos,false);
       statement t=toPop(*lst.SubTokens);
-      if (lst.Type!=statement::List) {
+      if (lst.Type!=statement::List)
 	toStatusMessage("Unbalanced parenthesis (Too many '(')");
-	return ret;
-      }
       nokey=false;
       if (first=="CREATE"&&!block) {
 	statement end=parseStatement(str,pos,false);
@@ -896,7 +924,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       } else if ((*i).Type==statement::Keyword&&(upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS")) {
 	if (!Settings.BlockOpenLine) {
 	  if (ret.length()>0) {
-	    if (toIsIdent(ret.at(ret.length()-1))||Settings.OperatorSpace) {
+	    if (toIsIdent(ret.at(ret.length()-1))||
+		ret.at(ret.length()-1)=='\"'||
+		ret.at(ret.length()-1)=='\''||
+		Settings.OperatorSpace) {
 	      ret+=" ";
 	      current++;
 	    }
@@ -959,9 +990,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  if (ret.length()>0&&
 	      !ret.at(ret.length()-1).isSpace()&&
 	      (Settings.OperatorSpace||((toIsIdent(t[0])||
-					 t[0]=='\"')&&
+					 t[0]=='\"'||t[0]=='\'')&&
 					(toIsIdent(ret.at(ret.length()-1))||
-					 ret.at(ret.length()-1)=='\"')
+					 ret.at(ret.length()-1)=='\"'||
+					 ret.at(ret.length()-1)=='\'')
 					)
 	       )
 	      ) {
@@ -990,6 +1022,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	}
 	ret+=t;
 	current+=t.length();
+	if(t.startsWith("<<")) {
+	  ret+="\n";
+	  current=0;
+	}
 
 	if (add)
 	  maxlev+=t.length()+1;

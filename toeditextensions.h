@@ -61,6 +61,9 @@ public slots:
 
   void obfuscateBlock(void);
   void obfuscateBuffer(void);
+
+  void searchForward(void);
+  void searchBackward(void);
 };
 
 #endif
