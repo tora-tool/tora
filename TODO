@@ -42,6 +42,8 @@ Extended functionality:
 * Full support for Oracle 9i
 * Port to Oracle C++ OCCI instead of OTL?
 * Completion on column & function names in editor.
+* Ability to disable tools from options.
+* Ability to select default tool in options.
 
 Windows problems:
 

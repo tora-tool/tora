@@ -508,14 +508,20 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
       menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
+      menuBar()->setItemEnabled(TO_FILE_SAVE,true);
+      menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
       if (currWidget && currWidget->inherits("toListView")) {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
         menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
+	menuBar()->setItemEnabled(TO_FILE_SAVE,true);
+	menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
       } else {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,false);
         menuBar()->setItemEnabled(TO_EDIT_SEARCH,false);
+	menuBar()->setItemEnabled(TO_FILE_SAVE,false);
+	menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
       }
     }
   }
@@ -653,6 +659,22 @@ void toMain::commandCallback(int cmd)
 	  res->readAll();
 	else if (cnt)
 	  cnt->readAll();
+      }
+      break;
+    case TO_FILE_SAVE_AS:
+    case TO_FILE_SAVE:
+      {
+	toListView *res;
+	try {
+	  res=dynamic_cast<toListView *>(qApp->focusWidget());
+	} catch(...) {
+	  res=NULL;
+	}
+	toResultContent *cnt=toContent(qApp->focusWidget());
+	if (res)
+	  res->exportFile();
+	else if (cnt)
+	  cnt->exportFile();
       }
       break;
     case TO_FILE_PRINT:

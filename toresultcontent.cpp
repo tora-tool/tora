@@ -436,7 +436,7 @@ void toResultContent::activateNextCell()
 
 void toResultContent::focusInEvent (QFocusEvent *e)
 {
-  toMain::editEnable(false,false,true,
+  toMain::editEnable(false,true,true,
 		     false,false,
 		     false,false,false,true);
   QTable::focusInEvent(e);

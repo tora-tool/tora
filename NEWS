@@ -14,6 +14,7 @@
 2001-07-04: Added option to remove numbering column in worksheet.
 2001-07-04: Another parsing fix for worksheet (It was rediculous a long
 	time ago!)
+2001-07-04: Allow saving list to export them as files.
 
 0.12: Released 2001-07-01
 

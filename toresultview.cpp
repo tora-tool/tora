@@ -596,7 +596,7 @@ QString toListView::menuText(void)
 
 void toListView::focusInEvent (QFocusEvent *e)
 {
-  toMain::editEnable(false,false,true,
+  toMain::editEnable(false,true,true,
 		     false,false,
 		     false,false,false,true);
   QListView::focusInEvent(e);

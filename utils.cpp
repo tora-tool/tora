@@ -202,7 +202,7 @@ void toStatusMessage(const QString &str,bool save)
       main->statusBar()->message(str);
     else
       main->statusBar()->message(str,sec*1000);
-    if (!save) {
+    if (!save&&!str.isEmpty()) {
       toPush(LastMessages,str);
       if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
 							DEFAULT_STATUS_SAVE).toInt())
