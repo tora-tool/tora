@@ -179,13 +179,9 @@ const int toMain::TO_LAST_FILE_ID_END	= 5999;
 #define TO_HELP_ABOUT		902
 #define TO_HELP_LICENSE		903
 #define TO_HELP_QUOTES		904
-#define TO_HELP_REGISTER	905
 
 #define TO_TOOLS		1000
 #define TO_ABOUT_ID_OFFSET	(toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
-
-QString toCheckLicense(bool);
-bool toFreeware(void);
 
 toMain::toMain()
   : toMainWindow()
@@ -388,10 +384,6 @@ toMain::toMain()
   HelpMenu->insertItem(tr("&Quotes..."),TO_HELP_QUOTES);
 #endif
   HelpMenu->setAccel(toKeySequence(tr("F1", "Help|Help")),TO_HELP_CONTEXT);
-  if (!toFreeware()) {
-    HelpMenu->insertSeparator();
-    HelpMenu->insertItem(tr("&Register..."),TO_HELP_REGISTER);
-  }
 
   int toolID=TO_TOOLS;
   SQLEditor=-1;
@@ -509,12 +501,6 @@ toMain::toMain()
     (*j).first->setEnabled(false);
 
   QString welcome;
-
-  do {
-    welcome=toCheckLicense(false);
-  } while(welcome.isNull());
-
-  toStatusMessage(tr(welcome),true);
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(checkCaching()));
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -820,9 +806,6 @@ void toMain::commandCallback(int cmd)
 	toAbout about(cmd-TO_HELP_ABOUT,this,"About " TOAPPNAME,true);
 	about.exec();
       }
-      break;
-    case TO_HELP_REGISTER:
-      toCheckLicense(true);
       break;
     case TO_EDIT_OPTIONS:
       toPreferences::displayPreferences(this);

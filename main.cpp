@@ -178,7 +178,6 @@ int main(int argc,char **argv)
       toSetEnv("NLS_LANG",nls);
     }
 
-#if !defined(TO_LICENSE) && !defined(OAS)
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
       toAbout *about=new toAbout(0,NULL,"About " TOAPPNAME,true);
       if (!about->exec()) {
@@ -186,7 +185,6 @@ int main(int argc,char **argv)
       }
       delete about;
     }
-#endif
     toTool::globalSetConfig("LastVersion",TOVERSION);
 
     if (toTool::globalConfig("FirstInstall","").isEmpty()) {

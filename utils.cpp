@@ -1386,33 +1386,3 @@ bool toCheckKeyEvent(QKeyEvent *event,const QKeySequence &key)
 
   return (event->state()==state&&event->key()==val);
 }
-
-#ifndef TO_LICENSE
-
-QString toCheckLicense(bool)
-{
-#  ifdef TOEXPIRES
-  QDate from=QDate::fromString(TOEXPIRES,Qt::ISODate);
-  if (!from.isNull()&&from<QDate::currentDate()) {
-    TOMessageBox::critical(NULL,qApp->translate("toCheckLicense","This copy of %1 has expired").arg(TOAPPNAME),
-			   qApp->translate("toCheckLicense","This copy of %1 expired on %2.\n"
-					   "you need to download a newer version from http://www.quest.com/.").arg(TOAPPNAME).arg(TOEXPIRES),
-			   qApp->translate("toCheckLicense","Quit"));
-    exit(0);
-  }
-  return qApp->translate("toCheckLicense",qApp->translate("toCheckLicense","Welcome to " TOAPPNAME " (Expires %1)").arg(TOEXPIRES));
-#else
-  return qApp->translate("toCheckLicense",qApp->translate("toCheckLicense","Welcome to " TOAPPNAME));
-#  endif
-}
-
-bool toFreeware(void)
-{
-  return true;
-}
-
-#else
-#include "toabout.h"
-#include "license/tolicense.cpp"
-#include "license/tolicenseui.cpp"
-#endif

@@ -145,8 +145,6 @@
 #define CONF_DISPLAY_GRIDLINES	"Gridlines"
 #define DEFAULT_DISPLAY_GRIDLINES "Yes"
 
-#define TOEXPIRES		"never"
-
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"
 #else
