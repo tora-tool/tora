@@ -74,34 +74,34 @@ TOVERSION=-DTOVERSION=\"0.7\"
 include Makefile.setup
 include Makefile.common
 
-plugins/tobrowser.so:objs/tobrowser.o
-plugins/todebug.so:\
+plugins/tobrowser.tso:objs/tobrowser.o
+plugins/todebug.tso:\
 	objs/todebug.o \
 	objs/todebugwatch.o \
 	objs/todebugtext.o \
 	objs/todebugchange.o
-plugins/tofilesize.so:objs/tofilesize.o
-plugins/tooutput.so:objs/tooutput.o
-plugins/tonoblockquery.so:objs/tonoblockquery.o
-plugins/toparamget.so:objs/toparamget.o
-plugins/toresultcols.so:objs/toresultcols.o
-plugins/toresultconstraint.so:objs/toresultconstraint.o
-plugins/toresultcontent.so:objs/toresultcontent.o
-plugins/toresultdepend.so:objs/toresultdepend.o
-plugins/toresultindexes.so:objs/toresultindexes.o
-plugins/toresultlock.so:objs/toresultlock.o
-plugins/toresultlong.so:objs/toresultlong.o
-plugins/toresultreferences.so:objs/toresultreferences.o
-plugins/toresultstats.so:objs/toresultstats.o
-plugins/toresultstorage.so:objs/toresultstorage.o
-plugins/torollback.so:objs/torollback.o
-plugins/tosession.so:objs/tosession.o
-plugins/tosgastatement.so:objs/tosgastatement.o
-plugins/tosgatrace.so:objs/tosgatrace.o
-plugins/tosqledit.so:objs/tosqledit.o
-plugins/tostorage.so:objs/tostorage.o
-plugins/tostoragedefinition.so:objs/tostoragedefinition.o
-plugins/toworksheet.so:objs/toworksheet.o
+plugins/tofilesize.tso:objs/tofilesize.o
+plugins/tooutput.tso:objs/tooutput.o
+plugins/tonoblockquery.tso:objs/tonoblockquery.o
+plugins/toparamget.tso:objs/toparamget.o
+plugins/toresultcols.tso:objs/toresultcols.o
+plugins/toresultconstraint.tso:objs/toresultconstraint.o
+plugins/toresultcontent.tso:objs/toresultcontent.o
+plugins/toresultdepend.tso:objs/toresultdepend.o
+plugins/toresultindexes.tso:objs/toresultindexes.o
+plugins/toresultlock.tso:objs/toresultlock.o
+plugins/toresultlong.tso:objs/toresultlong.o
+plugins/toresultreferences.tso:objs/toresultreferences.o
+plugins/toresultstats.tso:objs/toresultstats.o
+plugins/toresultstorage.tso:objs/toresultstorage.o
+plugins/torollback.tso:objs/torollback.o
+plugins/tosession.tso:objs/tosession.o
+plugins/tosgastatement.tso:objs/tosgastatement.o
+plugins/tosgatrace.tso:objs/tosgatrace.o
+plugins/tosqledit.tso:objs/tosqledit.o
+plugins/tostorage.tso:objs/tostorage.o
+plugins/tostoragedefinition.tso:objs/tostoragedefinition.o
+plugins/toworksheet.tso:objs/toworksheet.o
 
 # Monolithic target, for non ELF platforms
 
@@ -115,36 +115,37 @@ tora-mono: $(OBJECTS) main.cpp
 tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(CC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) -L/usr/X11R6/lib -lXt -lz -ljpeg -lXext
+		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) \
+		-L/usr/X11R6/lib -lXt -lz -ljpeg -lXext -lmng
 
 # Plugin based binary and its plugins
 
 tora-plugin: \
 	tora \
-	plugins/tobrowser.so \
-	plugins/todebug.so \
-	plugins/tofilesize.so \
-	plugins/tonoblockquery.so \
-	plugins/tooutput.so \
-	plugins/toparamget.so \
-	plugins/toresultcols.so \
-	plugins/toresultconstraint.so \
-	plugins/toresultcontent.so \
-	plugins/toresultdepend.so \
-	plugins/toresultindexes.so \
-	plugins/toresultlock.so \
-	plugins/toresultlong.so \
-	plugins/toresultreferences.so \
-	plugins/toresultstats.so \
-	plugins/toresultstorage.so \
-	plugins/torollback.so \
-	plugins/tosession.so \
-	plugins/tosgastatement.so \
-	plugins/tosgatrace.so \
-	plugins/tosqledit.so \
-	plugins/tostorage.so \
-	plugins/tostoragedefinition.so \
-	plugins/toworksheet.so \
+	plugins/tobrowser.tso \
+	plugins/todebug.tso \
+	plugins/tofilesize.tso \
+	plugins/tonoblockquery.tso \
+	plugins/tooutput.tso \
+	plugins/toparamget.tso \
+	plugins/toresultcols.tso \
+	plugins/toresultconstraint.tso \
+	plugins/toresultcontent.tso \
+	plugins/toresultdepend.tso \
+	plugins/toresultindexes.tso \
+	plugins/toresultlock.tso \
+	plugins/toresultlong.tso \
+	plugins/toresultreferences.tso \
+	plugins/toresultstats.tso \
+	plugins/toresultstorage.tso \
+	plugins/torollback.tso \
+	plugins/tosession.tso \
+	plugins/tosgastatement.tso \
+	plugins/tosgatrace.tso \
+	plugins/tosqledit.tso \
+	plugins/tostorage.tso \
+	plugins/tostoragedefinition.tso \
+	plugins/toworksheet.tso \
 
 # The binary for the pluginbased tora
 

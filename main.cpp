@@ -76,7 +76,7 @@ int main(int argc,char **argv)
       splash.show();
       list<QString> failed;
       QString dirPath=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
-      QDir d(dirPath,"*.so",QDir::Name,QDir::Files);
+      QDir d(dirPath,"*.tso",QDir::Name,QDir::Files);
       for (unsigned int i=0;i<d.count();i++) {
 	failed.insert(failed.end(),d.filePath(d[i]));
       }
