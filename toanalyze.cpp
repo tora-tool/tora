@@ -296,7 +296,7 @@ void toAnalyze::execute(void)
     if (!sql.isEmpty())
       toPush(Running,new toNoBlockQuery(connection(),sql,par));
   }
-  Poll->start(500);
+  Poll->start(100);
   Stop->setEnabled(true);
   poll();
 }

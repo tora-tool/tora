@@ -75,6 +75,7 @@
 2001-10-07: Fixed bug with multiple running background queries.
 2001-10-07: Cancel all background queries when deleting connection.
 2001-10-07: Extract SID from TNS_NAMES if not using SQL*Net when connecting.
+2001-10-07: Fixed a race condition in connections (Especially closing them).
 
 1.1.1: Released 2001-09-24
 

@@ -396,6 +396,7 @@ class toConnection {
   QString Version;
   std::list<QWidget *> Widgets;
   std::list<QCString> InitStrings;
+  toLock Lock;
   std::list<toConnectionSub *> Connections;
   std::list<toConnectionSub *> Running;
   bool NeedCommit;

@@ -492,18 +492,24 @@ bool toQuery::eof(void)
 {
   if (Mode==All) {
     if (Query->eof()) {
+      Connection.Lock.lock();
+      bool found=false;
       std::list<toConnectionSub *> &cons=Connection.connections();
       for(std::list<toConnectionSub *>::iterator i=cons.begin();i!=cons.end();i++) {
 	if (*i==ConnectionSub) {
 	  i++;
 	  if (i!=cons.end()) {
 	    ConnectionSub=*i;
+            Connection.Lock.unlock();
+	    found=true;
 	    delete Query;
 	    Query=connection().Connection->createQuery(this,ConnectionSub);
 	  }
 	  break;
 	}
       }
+      if (!found)
+	Connection.Lock.unlock();
     }
   }
   return Query->eof();
@@ -639,6 +645,7 @@ void toConnection::addConnection(void)
 {
   toBusy busy;
   toConnectionSub *sub=Connection->createConnection();
+  toLocker lock(Lock);
   Connections.insert(Connections.end(),sub);
   toQList params;
   for(std::list<QCString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
@@ -683,13 +690,16 @@ toConnection::~toConnection()
 {
   toBusy busy;
   {
-    for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
-      delete (*i);
+    toLocker lock(Lock);
+    {
+      for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+	delete (*i);
+      }
     }
-  }
-  {
-    for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++)
-      (*i)->cancel();
+    {
+      for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++)
+	(*i)->cancel();
+    }
   }
   ReadingValues.down();
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
@@ -700,6 +710,7 @@ toConnection::~toConnection()
 
 toConnectionSub *toConnection::mainConnection()
 {
+  toLocker lock(Lock);
   return (*(Connections.begin()));
 }
 
@@ -707,6 +718,7 @@ toConnectionSub *toConnection::longConnection()
 {
   if (Connections.size()==1)
     addConnection();
+  toLocker lock(Lock);
   std::list<toConnectionSub *>::iterator i=Connections.begin();
   i++;
   toConnectionSub *ret=(*i);
@@ -717,6 +729,7 @@ toConnectionSub *toConnection::longConnection()
 
 void toConnection::freeConnection(toConnectionSub *sub)
 {
+  toLocker lock(Lock);
   {
     for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++) {
       if (*i==sub) {
@@ -737,6 +750,7 @@ void toConnection::freeConnection(toConnectionSub *sub)
 void toConnection::commit(void)
 {
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
     Connection->commit(*i);
   while(Connections.size()>2) {
@@ -751,6 +765,7 @@ void toConnection::commit(void)
 void toConnection::rollback(void)
 {
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
     Connection->rollback(*i);
   while(Connections.size()>2) {
@@ -941,6 +956,7 @@ void toConnection::execute(const QString &sql,
 void toConnection::allExecute(toSQL &sql,toQList &params)
 {
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,toSQL::sql(sql,*this),params);
@@ -951,6 +967,7 @@ void toConnection::allExecute(toSQL &sql,toQList &params)
 void toConnection::allExecute(const QString &sql,toQList &params)
 {
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,sql.utf8(),params);
@@ -1008,6 +1025,7 @@ void toConnection::allExecute(toSQL &sql,
     args.insert(args.end(),arg9);
 
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,toSQL::sql(sql,*this),args);
@@ -1065,6 +1083,7 @@ void toConnection::allExecute(const QString &sql,
     args.insert(args.end(),arg9);
 
   toBusy busy;
+  toLocker lock(Lock);
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,sql.utf8(),args);
@@ -1082,7 +1101,8 @@ void toConnection::cacheObjects::run()
   try {
     Connection.ObjectNames=Connection.Connection->objectNames();
     Connection.ObjectNames.sort();
-    Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
+    if (Connection.ObjectNames.size()>0)
+      Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
   } catch(...) {
   }
   Connection.ReadingValues.up();
