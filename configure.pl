@@ -193,8 +193,9 @@ int main(int argv,char **argc)
 	exit(2);
     }
     if (GCCVersion==2&&GCCVersionMinor==96) {
-	printf("TOra will not function if compiled with gcc 2.96 since it has problems\n"
-	       "with the exception handling. (You can't compile it in Mandrake 8/RedHat 7)\n");
+	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\n"
+	       "has problems with exception handling. I know you can not compile this in\n"
+	       "Mandrake 8.0, RedHat 7.0-7.2. You can however compile TOra in Mandrake 8.1\n";
 	return 0;
     }
     return 0;
