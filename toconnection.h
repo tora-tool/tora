@@ -451,7 +451,7 @@ private:
 
   connectionImpl *Connection;
 
-  std::map<tableName,list<QString> > ColumnCache;
+  std::map<tableName,std::list<QString> > ColumnCache;
   std::list<tableName> TableNames;
 
   toConnectionSub *mainConnection(void);

@@ -1052,7 +1052,7 @@ const toConnection::tableName &toConnection::realName(const QString &object)
 {
   QString uo=object.upper();
   readObjects();
-  for(list<tableName>::iterator i=TableNames.begin();i!=TableNames.end();i++) {
+  for(std::list<tableName>::iterator i=TableNames.begin();i!=TableNames.end();i++) {
     if ((*i).Synonym==uo)
       return *i;
     if ((*i).Name==uo&&(*i).Owner==user())
@@ -1063,9 +1063,9 @@ const toConnection::tableName &toConnection::realName(const QString &object)
 
 std::list<QString> &toConnection::columns(const tableName &table)
 {
-  std::map<tableName,list<QString> >::iterator i=ColumnCache.find(table);
+  std::map<tableName,std::list<QString> >::iterator i=ColumnCache.find(table);
   if (i==ColumnCache.end()) {
-    list<QString> cols;
+    std::list<QString> cols;
     QString SQL="SELECT * FROM \"";
     SQL+=table.Owner;
     SQL+="\".\"";

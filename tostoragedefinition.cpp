@@ -68,7 +68,7 @@ std::list<QString> toStorageDefinition::sql(void)
     str.append(OptimalSize->sizeString());
   }
   str.append(")");
-  list<QString> ret;
+  std::list<QString> ret;
   ret.insert(ret.end(),str);
   return ret;
 }

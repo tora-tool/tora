@@ -240,7 +240,7 @@ void toTool::saveConfig(void)
 #ifdef WIN32
   CRegistry registry;
   QRegExp re(":");
-  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+  for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
     QString path=(*i).first;
     QString value=(*i).second;
     path.prepend(APPLICATION_NAME);
@@ -272,7 +272,7 @@ void toTool::saveConfig(void)
 #  else
   QSettings settings;
   QRegExp re(":");
-  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+  for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
     QString path=(*i).first;
     QString value=(*i).second;
     path.prepend(APPLICATION_NAME);
@@ -288,7 +288,7 @@ void toTool::saveConfig(void)
 
 #if QT_VERSION >= 300
 
-static void ReadConfig(QSettings &settings,const QString &path,map<QString,QString> &conf)
+static void ReadConfig(QSettings &settings,const QString &path,std::map<QString,QString> &conf)
 {
   QStringList lst=settings.entryList(path);
   for(unsigned int i=0;i<lst.count();i++) {

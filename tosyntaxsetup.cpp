@@ -30,6 +30,8 @@
 #include <qapplication.h>
 #include <qlistview.h>
 #include <qcheckbox.h>
+#include <qlistbox.h>
+#include <qlabel.h>
 
 #include "tosyntaxsetupui.moc"
 

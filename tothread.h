@@ -87,7 +87,7 @@ private:
     taskRunner(toTask *);
     virtual void run(void);
   }			Thread;
-  static list<toThread *> *Threads;
+  static std::list<toThread *> *Threads;
   static toLock *Lock;
   static HANDLE MainThread;
   toThread(const toThread &);

@@ -221,14 +221,14 @@ toThread::toThread(toTask *task)
   : Thread(task)
 {
   if (!Threads)
-    Threads=new list<toThread *>;
+    Threads=new std::list<toThread *>;
   if (!Lock)
     Lock=new toLock;
 
   // This is a cludge to clean up finnished threads, there won't be many hanging at least
 
   Lock->lock();
-  for (list<toThread *>::iterator i=Threads->begin();i!=Threads->end();) {
+  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();) {
     if ((*i)->Thread.finished()&&(*i)!=this) {
       Lock->unlock();
       delete (*i);
@@ -243,7 +243,7 @@ toThread::toThread(toTask *task)
 toThread::~toThread()
 {
   Lock->lock();
-  for (list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++) {
+  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++) {
     if ((*i)==this) {
       Threads->erase(i);
       break;

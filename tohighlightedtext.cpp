@@ -435,7 +435,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
     
   }
 
-  map<int,QString> tables;
+  std::map<int,QString> tables;
   toMarkedText::keyPressEvent(e);
 }
 #endif
