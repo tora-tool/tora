@@ -4,6 +4,7 @@
 2001-05-20: Fixed problem with Makefile.install.
 2001-05-20: Some fixes to the README and release scripts.
 2001-05-20: Optionally skip rpath in configure.pl
+2001-05-20: Fixed the specfiles to install the tpl file.
 
 0.9: Released 2001-05-19
 

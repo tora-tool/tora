@@ -51,4 +51,3 @@ rm -rf $RPM_BUILD_ROOT
 %doc NEWS
 
 %{_prefix}/X11R6/bin/tora
-%define name tora
