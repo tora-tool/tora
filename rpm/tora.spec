@@ -138,6 +138,9 @@ export QTDIR="%{_qtdir}"
 	 plugins/*.tso \
 	 tora
 
+# Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
+perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' plugins/tooracleconnection.tso
+
 %install
 %{__rm} -rf "${RPM_BUILD_ROOT}"
 %{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"

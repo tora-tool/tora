@@ -12,7 +12,7 @@ Source:				%{_name}-%{_version}.tar.gz
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 9.0
+Distribution:			Mandrake Linux 9.1
 Copyright:			GPL
 BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
@@ -101,6 +101,9 @@ export QTDIR="%{_qt3dir}"
 %{__make}
 %{__strip} \
 	 tora-static
+
+# Ugly hack to remove version from libclntsh.so, if someone knows a better way please let me know
+perl -pi -e 's/libclntsh.so.\d.\d/libclntsh.so\0\0\0\0/g' tora-static
 
 %install
 %{__rm} -rf "${RPM_BUILD_ROOT}"
