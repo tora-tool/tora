@@ -124,6 +124,7 @@ void toMarkedText::editPrint(void)
   if (printer.setup()) {
     printer.setCreator("TOra");
     QPainter painter(&printer);
+
     int line=0;
     int offset=0;
     int page=1;

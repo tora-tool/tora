@@ -80,13 +80,15 @@
 #include "tobrowserconstraintui.moc"
 #include "tobrowsertableui.moc"
 
-#include "icons/addtable.xpm"
 #include "icons/filter.xpm"
 #include "icons/function.xpm"
 #include "icons/index.xpm"
+#if 0
+#include "icons/addtable.xpm"
 #include "icons/modconstraint.xpm"
 #include "icons/modtable.xpm"
 #include "icons/modindex.xpm"
+#endif
 #include "icons/nofilter.xpm"
 #include "icons/refresh.xpm"
 #include "icons/schema.xpm"
@@ -544,6 +546,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   QVBox *box=new QVBox(splitter);
   splitter->setResizeMode(box,QSplitter::Stretch);
+
+#if 0
   toolbar=toAllocBar(box,"Table browser",connection.description());
   new QToolButton(QPixmap((const char **)addtable_xpm),
 		  "Create new table",
@@ -567,6 +571,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  this,SLOT(modifyTable()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+#endif
 
   QTabWidget *curr=new QTabWidget(box);
   toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);

@@ -443,6 +443,10 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
     painter->drawLine(0,header()->height()-1,
 		      int(mwidth),header()->height()-1);
   }
+  font=toListView::font();
+  font.setPointSizeFloat(font.pointSizeFloat()/max(wpscalex,wpscaley));
+  painter->setFont(font);
+
   for (int i=column;i<columns();i++) {
     double width=columnWidth(i);
     if (width+x>=mwidth) {
@@ -525,7 +529,6 @@ void toListView::editPrint(void)
   if (printer.setup()) {
     printer.setCreator("TOra");
     QPainter painter(&printer);
-
 
     QListViewItem *item=firstChild();
     int column=0;
