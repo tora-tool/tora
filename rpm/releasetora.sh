@@ -41,7 +41,8 @@ tar czf $SRCPWD/../tora-$1-bin.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENS
 cd $SRCPWD
 rpm -ba tora-$1/rpm/tora-static.spec
 cd /usr/src/RPM/BUILD/tora-$1
-mv tora-$1/tora-static tora-$1/tora
+strip tora-static
+mv tora-static tora
 cp icons/* help
 cd ..
 echo Packing tora-$1-static.tar.gz
@@ -54,9 +55,9 @@ rpm -ba tora-$1/rpm/tora-qt.spec
 cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
+mv tora-mono tora
 cp icons/* help
 cd ..
-mv tora-$1/tora-mono tora-$1/tora
 echo Packing tora-$1-qt.tar.gz
 tar czf $SRCPWD/../tora-$1-qt.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \

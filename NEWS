@@ -1,3 +1,7 @@
+1.0:
+
+2001-07-02: Upgraded to 3.2.20 of OTL.
+
 0.12: Released 2001-07-01
 
 2001-06-06: Fixed problem with explain plan in toWorksheet.
