@@ -55,8 +55,6 @@ static toSQL SQLInfo("toResultCols:Info",
 		     "   AND Column_Name = :f3<char[100]>",
 		     "Display analyze statistics about a column");
 
-#include <stdio.h>
-
 class toResultColsItem : public toResultViewMLine {
 public:
   toResultColsItem(QListView *parent,QListViewItem *after,const char *buffer)
@@ -80,8 +78,6 @@ public:
       ColInfo.open(1,
 		   SQLInfo(view->Connection),
 		   view->Connection.connection());
-      printf("Checking %s %s %s\n",(const char *)text(10),(const char *)text(11),
-	     (const char *)text(1));
       list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(1));
       QString result("<B>");
       result+=(text(1));
