@@ -319,14 +319,15 @@ public:
       if (!Connection)
 	throw QString("Can't initialize MySQL connection");
       QString db=conn->database();
+      QString host=conn->host(); 
       int port=0;
-      int pos=db.find(":");
-      if (pos>=0) {
-	port=db.mid(pos+1).toInt();
-	db=db.mid(0,pos);
+      int pos=host.find(":"); 
+      if (pos>=0) { 
+	port=host.mid(pos+1).toInt(); 
+	host=host.mid(0,pos); 
       }
       Connection=mysql_real_connect(Connection,
-				    conn->host(),
+				    host,
 				    conn->user(),
 				    conn->password(),
 				    db==QString::null?NULL:(const char *)db,
