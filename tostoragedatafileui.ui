@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>592</width>
+            <width>588</width>
             <height>480</height>
         </rect>
     </property>
@@ -207,12 +207,6 @@
 </images>
 <connections>
     <connection>
-        <sender>Filename</sender>
-        <signal>textChanged(const QString&amp;)</signal>
-        <receiver>toStorageDatafileUI</receiver>
-        <slot>valueChanged(const QString &amp;)</slot>
-    </connection>
-    <connection>
         <sender>AutoExtend</sender>
         <signal>toggled(bool)</signal>
         <receiver>toStorageDatafileUI</receiver>
@@ -229,6 +223,12 @@
         <signal>clicked()</signal>
         <receiver>toStorageDatafileUI</receiver>
         <slot>browseFile()</slot>
+    </connection>
+    <connection>
+        <sender>Filename</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>toStorageDatafileUI</receiver>
+        <slot>valueChanged(const QString &amp;)</slot>
     </connection>
     <slot access="public">browseFile()</slot>
     <slot access="public">autoExtend(bool)</slot>

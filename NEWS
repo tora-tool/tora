@@ -83,6 +83,7 @@
 2001-08-22: Added ability to display SQL executed in security manager.
 2001-08-22: Remade storage manager dialogs in designer.
 2001-08-22: Display SQL to be used by modifying objects in storage manager.
+2001-08-23: Fixed bug in rollback.
 
 0.14: Released 2001-08-02
 

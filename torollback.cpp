@@ -530,7 +530,7 @@ public:
     NumExtents=0;
     setSQLName("toRollbackOpen");
   }
-  virtual void query(const QString &sql,toQList &param)
+  virtual void query(const QString &sql,const toQList &param)
   {
     try {
       clear();

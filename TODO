@@ -37,8 +37,9 @@ Extended functionality:
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
 * Printing of charts and toResultItems.
-* Remake new rollback dialog in designer
+* Remake new rollback dialog in designer.
 * Make it possible to see sql in rollback dialog.
+* File statistics with min/max time and by tablespace.
 
 New tools:
 
