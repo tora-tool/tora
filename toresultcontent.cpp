@@ -699,7 +699,7 @@ void toResultContentEditor::deleteCurrent()
     toConnection &conn=connection();
       
     for(int i=0;i<numCols();i++) {
-      if (!(*di).Datatype.startsWith("LONG")) {
+      if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
 	if (where)
 	  sql+=" AND ";
 	else
@@ -715,12 +715,16 @@ void toResultContentEditor::deleteCurrent()
       }
       di++;
     }
+    if (!where) {
+      toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+      return;
+    }
     try {
       toQList args;
       toQDescList::iterator di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!str.isNull()&&!(*di).Datatype.startsWith("LONG"))
+	if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
 	  toPush(args,toQValue(str));
 	di++;
       }
@@ -840,7 +844,7 @@ void toResultContentEditor::saveUnsaved(void)
 	bool where=false;
 	toQDescList::iterator di=Description.begin();
 	for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	  if (!(*di).Datatype.startsWith("LONG")) {
+	  if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
 	    if (where)
 	      sql+=" AND ";
 	    else
@@ -855,6 +859,10 @@ void toResultContentEditor::saveUnsaved(void)
 	    }
 	  }
 	  di++;
+	}
+	if (!where) {
+	  toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+	  return;
 	}
 	if(oracle)
 	  sql+=" RETURNING ROWID INTO :r<char[101],out>";
@@ -871,7 +879,7 @@ void toResultContentEditor::saveUnsaved(void)
 	  toQDescList::iterator di=Description.begin();
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	    QString str=(*j);
-	    if (!str.isNull()&&!(*di).Datatype.startsWith("LONG"))
+	    if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
 	      toPush(args,toQValue(str));
 	    di++;
 	  }
