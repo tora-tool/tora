@@ -657,18 +657,19 @@ void toHighlightedText::checkComplete(void)
     else {
       QString cmp=UpperIdent(name);
       QString lastToken;
-      while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp||lastToken==".")&&
+      while ((invalidToken(tokens.line(),tokens.offset()+token.length())||UpperIdent(token)!=cmp||lastToken==".")&&
 	     token!=";"&&!token.isEmpty()) {
 	lastToken=token;
 	token=tokens.getToken(false);
       }
 
       if (token==";"||token.isEmpty()) {
-	getCursorPosition (&curline,&curcol);
+	tokens.setLine(curline);
+	tokens.setOffset(curcol);
 	token=tokens.getToken();
-	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp&&lastToken!=".")&&
+	while ((invalidToken(tokens.line(),tokens.offset())||UpperIdent(token)!=cmp&&lastToken!=".")&&
 	       token!=";"&&!token.isEmpty())
-	  token=tokens.getToken(curcol);
+	  token=tokens.getToken();
 	lastToken=token;
 	tokens.getToken(false);
       }
