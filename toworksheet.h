@@ -37,6 +37,8 @@
 #ifndef __TOWORKSHEET_H
 #define __TOWORKSHEET_H
 
+#include <map>
+
 #include <qmultilineedit.h>
 #include <qframe.h>
 #include <qtoolbutton.h>
@@ -89,11 +91,16 @@ class toWorksheet : public toToolWidget {
   QComboBox *SavedSQL;
   QTime Timer;
 
+  QWidget *Current;
+  std::map<int,toResultLong *> History;
+  int LastID;
+
   int LastLine;
   int LastOffset;
 
   QPopupMenu *ToolMenu;
 
+  void saveHistory(void);
   void viewResources(void);
   void query(const QString &str,bool direct);
   bool checkSave(bool input);

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>572</width>
+            <width>568</width>
             <height>480</height>
         </rect>
     </property>
@@ -155,43 +155,6 @@
                         <string>Enable timed statistics as well when collecting normal statistics.</string>
                     </property>
                 </widget>
-                <widget row="9"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Default &amp;file</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>File to automatically open in a new worksheet.</string>
-                    </property>
-                </widget>
-                <widget row="9"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                </widget>
-                <widget row="9"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>FileChoose</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Browse</string>
-                    </property>
-                </widget>
                 <widget row="7"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -207,22 +170,7 @@
                         <string>Add a numbering column to the left of the result.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>MoveToError</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Move &amp;cursor to error</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Move the cursor to an error if the error occurs.</string>
-                    </property>
-                </widget>
-                <spacer row="10"  column="1" >
+                <spacer row="11"  column="1" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -243,6 +191,73 @@
                         </size>
                     </property>
                 </spacer>
+                <widget row="10"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>FileChoose</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Browse</string>
+                    </property>
+                </widget>
+                <widget row="10"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                </widget>
+                <widget row="10"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Default &amp;file</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>File to automatically open in a new worksheet.</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MoveToError</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Move &amp;cursor to error</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Move the cursor to an error if the error occurs.</string>
+                    </property>
+                </widget>
+                <widget row="9"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>History</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Save previous results</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Keep previous results in while worksheet is open. Will consume lot of memory.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>

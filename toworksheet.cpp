@@ -108,6 +108,7 @@
 #define CONF_TIMED_STATS "TimedStats"
 #define CONF_NUMBER	 "Number"
 #define CONF_MOVE_TO_ERR "MoveToError"
+#define CONF_HISTORY	 "History"
 
 static struct {
   int Pos;
@@ -160,6 +161,7 @@ public:
     if (!tool->config(CONF_STATISTICS,"").isEmpty())
       Statistics->setChecked(true);
     TimedStatistics->setChecked(!tool->config(CONF_TIMED_STATS,"Yes").isEmpty());
+    History->setChecked(!tool->config(CONF_HISTORY,"").isEmpty());
     if (!tool->config(CONF_NUMBER,"Yes").isEmpty())
       DisplayNumber->setChecked(true);
     DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
@@ -188,6 +190,7 @@ public:
       Tool->setConfig(CONF_PLSQL_PARSE,"");
     Tool->setConfig(CONF_MOVE_TO_ERR,MoveToError->isChecked()?"Yes":"");
     Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
+    Tool->setConfig(CONF_HISTORY,History->isChecked()?"Yes":"");
     Tool->setConfig(CONF_TIMED_STATS,TimedStatistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_NUMBER,DisplayNumber->isChecked()?"Yes":"");
     Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
@@ -318,10 +321,11 @@ void toWorksheet::setup(bool autoLoad)
 		  toolbar);
 
   LastLine=LastOffset=-1;
+  LastID=0;
 
   if (Light) {
     Editor=new toWorksheetText(this,this);
-    Result=new toResultLong(this);
+    Current=Result=new toResultLong(this);
     Result->hide();
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
     connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
@@ -360,7 +364,7 @@ void toWorksheet::setup(bool autoLoad)
     QVBox *box=new QVBox(ResultTab);
     ResultTab->addTab(box,"&Result");
 
-    Result=new toResultLong(box);
+    Current=Result=new toResultLong(box);
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
     connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
 	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
@@ -639,6 +643,7 @@ bool toWorksheet::close(bool del)
 toWorksheet::~toWorksheet()
 {
   checkSave(false);
+  eraseLogButton();
 }
 
 #define LARGE_BUFFER 4096
@@ -701,15 +706,17 @@ bool toWorksheet::describe(const QString &query)
       } else
 	throw QString("Wrong number of parameters for describe");
     }
+    Current->hide();
     Columns->show();
-    Result->hide();
+    Current=Columns;
     return true;
   } else {
     if (Light)
       return false;
     QWidget *curr=ResultTab->currentPage();
-    Columns->hide();
+    Current->hide();
     Result->show();
+    Current=Result;
     if (curr==Columns)
       ResultTab->showPage(Result);
     return false;
@@ -776,6 +783,7 @@ void toWorksheet::query(const QString &str,bool direct)
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
+	saveHistory();
 	Result->query(QueryString,param);
       } catch (const toConnection::exception &exc) {
 	addLog(QueryString,exc);
@@ -791,10 +799,33 @@ void toWorksheet::query(const QString &str,bool direct)
   }
 }
 
+void toWorksheet::saveHistory(void)
+{
+  if (WorksheetTool.config(CONF_HISTORY,"").isEmpty())
+    return;
+  if (Result->firstChild()&&Current==Result&&!Light) {
+    History[LastID]=Result;
+    Result->hide();
+    Result->stop();
+    disconnect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
+    disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
+	       this,SLOT(addLog(const QString &,const toConnection::exception &)));
+
+    Result=new toResultLong(Result->parentWidget());
+    Result->show();
+    Current=Result;
+    connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
+  }
+}
+
 void toWorksheet::addLog(const QString &sql,const toConnection::exception &result)
 {
   QString now=toNow(connection());
   toResultViewItem *item;
+
+  LastID++;
 
   int dur=0;
   if (!Timer.isNull()) {
@@ -818,6 +849,8 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     LastLogItem=item;
     item->setText(1,result);
     item->setText(2,now);
+    if (!WorksheetTool.config(CONF_HISTORY,"").isEmpty())
+      item->setText(4,QString::number(LastID));
   }
 
   if (result.offset()>=0&&LastLine>=0&&LastOffset>=0&&
@@ -1126,6 +1159,9 @@ void toWorksheet::eraseLogButton()
 {
   Logging->clear();
   LastLogItem=NULL;
+  for(std::map<int,toResultLong *>::iterator i=History.begin();i!=History.end();i++)
+    delete (*i).second;
+  History.clear();
 }
 
 void toWorksheet::queryDone(void)
@@ -1229,8 +1265,9 @@ void toWorksheet::describe(void)
     Columns->changeParams(table);
   else
     Columns->changeParams(owner,table);
+  Current->hide();
   Columns->show();
-  Result->hide();
+  Current=Columns;
 }
 
 void toWorksheet::executeSaved(void)
@@ -1269,6 +1306,7 @@ void toWorksheet::executePreviousLog(void)
     return;
 
   LastLine=LastOffset=-1;
+  saveHistory();
 
   QListViewItem *item=Logging->currentItem();
   if (item) {
@@ -1278,7 +1316,16 @@ void toWorksheet::executePreviousLog(void)
     toResultViewItem *item=dynamic_cast<toResultViewItem *>(prev);
     if (item) {
       Logging->setCurrentItem(item);
-      query(item->allText(0),false);
+      if (item->text(4).isEmpty())
+	query(item->allText(0),false);
+      else {
+	std::map<int,toResultLong *>::iterator i=History.find(item->text(4).toInt());
+	if (i!=History.end()&&(*i).second) {
+	  Current->hide();
+	  Current=(*i).second;
+	  Current->show();
+	}
+      }
     }
   }
 }
@@ -1289,13 +1336,24 @@ void toWorksheet::executeNextLog(void)
     return;
 
   LastLine=LastOffset=-1;
+  saveHistory();
 
   QListViewItem *item=Logging->currentItem();
   if (item&&item->nextSibling()) {
     toResultViewItem *next=dynamic_cast<toResultViewItem *>(item->nextSibling());
     if (next) {
       Logging->setCurrentItem(next);
-      query(next->allText(0),false);
+
+      if (next->text(4).isEmpty())
+	query(next->allText(0),false);
+      else {
+	std::map<int,toResultLong *>::iterator i=History.find(next->text(4).toInt());
+	if (i!=History.end()&&(*i).second) {
+	  Current->hide();
+	  Current=(*i).second;
+	  Current->show();
+	}
+      }
     }
   }
 }

@@ -41,7 +41,6 @@ Extended functionality:
 * Tabbed source windows in debugger.
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
-* Cache results in worksheet.
 
 New tools:
 

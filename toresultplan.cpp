@@ -159,7 +159,7 @@ void toResultPlan::query(const QString &sql,
     conn.execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
   } catch (const QString &str) {
     try {
-      if (str.contains("2404")) {
+      if (str.startsWith("ORA-02404")) {
 	int ret=TOMessageBox::warning(this,
 				      "Plan table doesn't exist",
 				      QString("Specified plan table %1 didn't exist.\n"
