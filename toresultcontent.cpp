@@ -419,12 +419,12 @@ void toResultContentEditor::poll(void)
 
       for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
 	for (int k=0;k<numCols();k++)
-	  if (SkipNumber==0||j<SkipNumber) {
+	  if (SkipNumber<=0||j<SkipNumber) {
 	    data.insert(data.end(),Query->readValueNull());
 	    dataSize++;
 	  } else
 	    Query->readValueNull();
-	if (SkipNumber!=0&&j>=SkipNumber)
+	if (SkipNumber>0&&j>=SkipNumber)
 	  SkipNumber--;
       }
 
