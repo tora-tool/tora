@@ -1843,7 +1843,7 @@ public:
   {
     try {
       toTemplateItem *item=new toTemplateItem(this,name);
-      QPixmap image(schema_xpm);
+      QPixmap image((const char **)schema_xpm);
       item->setPixmap(0,image);
       QPixmap table((const char **)table_xpm);
       QPixmap view((const char **)view_xpm);

@@ -97,6 +97,7 @@
 #include "icons/execute.xpm"
 #include "icons/executeall.xpm"
 #include "icons/executestep.xpm"
+#include "icons/explainplan.xpm"
 #include "icons/filesave.xpm"
 #include "icons/previous.xpm"
 #include "icons/refresh.xpm"
@@ -459,6 +460,11 @@ void toWorksheet::setup(bool autoLoad)
 		    tr("Describe under cursor"),
 		    tr("Describe under cursor"),
 		    this,SLOT(describe(void)),
+		    toolbar);
+    new QToolButton(QPixmap((const char **)explainplan_xpm),
+		    tr("Explain plan of current statement"),
+		    tr("Explain plan of current statement"),
+		    this,SLOT(explainPlan(void)),
 		    toolbar);
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       tr("Stop execution"),
