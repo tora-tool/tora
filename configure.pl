@@ -642,6 +642,9 @@ __EOT__
 	    open(STDIN,"<tomain.kde");
 	    open(STDOUT,">tomain.h");
 	    require "fixkde.pl";
+	} else {
+	    use File::Copy;
+	    copy("tomain.kde","tomain.h");
 	}
     } else {
 	print "Couldn't open Makefile.setup for writing\n";

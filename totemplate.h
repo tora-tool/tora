@@ -56,13 +56,13 @@ class toTemplate : public QVBox {
   QSplitter *Splitter;
   toListView *List;
   map<toTemplateItem *,toTemplateProvider *> Providers;
-  QWidget *Info;
+  QWidget *WidgetExtra;
 public:
   toTemplate(QWidget *parent);
   virtual ~toTemplate();
   void setWidget(QWidget *widget);
   QWidget *widget(void)
-  { return Info; }
+  { return WidgetExtra; }
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -99,6 +99,7 @@ public:
   { }
   virtual void collapse(void)
   { }
+  virtual void setSelected(bool);
 };
 
 class toTemplateText : public toTemplateItem {

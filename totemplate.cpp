@@ -103,7 +103,8 @@ toTemplate::toTemplate(QWidget *parent)
       Providers[item]=(*i);
     }
 
-  Info=NULL;
+  WidgetExtra=NULL;
+  setWidget(NULL);
 }
 
 toTemplate::~toTemplate()
@@ -148,6 +149,13 @@ toTemplate *toTemplateProvider::templateWidget(QListViewItem *item)
   throw("Not a toTemplate parent");
 }
 
+void toTemplateItem::setSelected(bool sel)
+{
+  toTemplate *temp=provider().templateWidget(this);
+  if (sel)
+    temp->setWidget(NULL);
+  toResultViewItem::setSelected(sel);
+}
 void toTemplateText::setSelected(bool sel)
 {
   toTemplate *temp=provider().templateWidget(this);
@@ -163,15 +171,21 @@ void toTemplateText::setSelected(bool sel)
     else
       temp->setWidget(NULL);
   }
-  toTemplateItem::setSelected(sel);
+  toResultViewItem::setSelected(sel);
 }
 
 void toTemplate::setWidget(QWidget *widget)
 {
-  delete Info;
-  Info=widget;
-  if (Info)
-    Info->show();
+  if (!widget)
+    widget=new QTextView(Splitter);
+
+  QValueList<int> siz=Splitter->sizes();
+  widget->show();
+  if (WidgetExtra)
+    delete WidgetExtra;
+  Splitter->setSizes(siz);
+
+  WidgetExtra=widget;
 }
 
 class toTextTemplate : toTemplateProvider {
