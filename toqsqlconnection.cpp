@@ -969,11 +969,14 @@ public:
     }
     virtual std::list<toQuery::queryDescribe> describe(void)
     {
-      QCString provider=query()->connection().provider();
-      Connection->lockDown();
-      QSqlRecordInfo recInfo=Connection->Connection->recordInfo(*Query);
-      std::list<toQuery::queryDescribe> ret=Describe(provider,recInfo);
-      Connection->lockUp();
+      std::list<toQuery::queryDescribe> ret;
+      if (Query&&Query->isSelect()) {
+	QCString provider=query()->connection().provider();
+	Connection->lockDown();
+	QSqlRecordInfo recInfo=Connection->Connection->recordInfo(*Query);
+	ret=Describe(provider,recInfo);
+	Connection->lockUp();
+      }
       return ret;
     }
   };
