@@ -298,8 +298,15 @@ public:
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    if (Dock)
-      delete Dock;
+    if (Dock) {
+      if (Dock->isHidden())
+	delete Dock;
+      else {
+	delete Dock;
+	Dock=NULL;
+	return NULL;
+      }
+    }
     Dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
     QWidget *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);

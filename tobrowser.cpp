@@ -925,6 +925,17 @@ public:
   }
 };
 
+class toBrowseTemplateItem : public toTemplateItem {
+public:
+  toBrowseTemplateItem(toTemplateProvider &prov,QListView *parent,const QString &name)
+    : toTemplateItem(prov,parent,name)
+  { }
+  virtual ~toBrowseTemplateItem()
+  {
+    dynamic_cast<toBrowseTemplate &>(provider()).removeItem(this);
+  }
+};
+
 void toBrowseTemplate::insertItems(QListView *parent)
 {
   if (!Registered) {
@@ -933,7 +944,7 @@ void toBrowseTemplate::insertItems(QListView *parent)
     connect(toMainWidget(),SIGNAL(removedConnection(const QString &)),
 	    this,SLOT(removeDatabase(const QString &)));
   }
-  toTemplateItem *dbitem=new toTemplateItem(*this,parent,"DB Browser");
+  toTemplateItem *dbitem=new toBrowseTemplateItem(*this,parent,"DB Browser");
   list<QString> conn=toMainWidget()->connections();
   for (list<QString>::iterator i=conn.begin();i!=conn.end();i++) {
     toConnection &conn=toMainWidget()->connection(*i);

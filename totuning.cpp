@@ -117,10 +117,10 @@ protected:
   { return totuning_xpm; }
 public:
   toTuningTool()
-    : toTool(10,"SQL Tuning")
+    : toTool(10,"Server Tuning")
   { }
   virtual const char *menuItem()
-  { return "SQL Tuning"; }
+  { return "Server Tuning"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     QWidget *window=new toTuning(parent,connection);
@@ -139,7 +139,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SQL Tuning",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Refresh",
