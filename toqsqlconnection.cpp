@@ -72,6 +72,15 @@ static toSQL SQLListTablesPgSQL("toQSqlConnection:ListTables",
 				"7.1",
 				"PostgreSQL");
 
+static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
+			     "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
+			     "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+			     " WHERE relkind = 'r'"
+			     " ORDER BY \"Tablename\" ORDER BY u.usename, c.relname",
+			     "Get synonym list, should have same columns",
+			     "7.1",
+			     "PostgreSQL");
+
 static QString QueryParam(const QString &in,toQList &params)
 {
   QString ret;
@@ -480,7 +489,25 @@ public:
     {
       std::map<QString,toConnection::objectName> ret;
 
-      // Need implementation.
+      try {
+	toConnection::objectName cur;
+	cur.Type="A";
+
+	toQuery synonyms(connection(),SQLListSynonyms);
+	std::list<toConnection::objectName>::iterator i=objects.begin();
+	while(!synonyms.eof()) {
+	  QString synonym=synonyms.readValueNull();
+	  cur.Owner=synonyms.readValueNull();
+	  cur.Name=synonyms.readValueNull();
+	  while(i!=objects.end()&&(*i)<cur)
+	    i++;
+	  if (i==objects.end())
+	    break;
+	  if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner)
+	    ret[synonym]=(*i);
+	}
+      } catch(...) {
+      }
 
       return ret;
     }

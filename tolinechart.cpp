@@ -599,6 +599,8 @@ void toLineChart::mousePressEvent(QMouseEvent *e)
 	Menu->insertSeparator();
 	Menu->insertItem("&Chart Manager...",this,SLOT(chartSetup()));
 	Menu->insertItem("&Properties...",this,SLOT(setup()));
+	Menu->insertSeparator();
+	Menu->insertItem("Clear Chart",this,SLOT(clear()));
 	addMenues(Menu);
       }
       Menu->popup(e->globalPos());
