@@ -50,7 +50,7 @@
 2001-10-03: Don't delete connection before emitting it will be removed.
 2001-10-03: Added support for Oracle7 in tuning tool.
 2001-10-03: Allow non string parameters in worksheet for oracle.
-2001-10-03: Made changing connections work.
+2001-10-03: Made changing connections work in tuning.
 2001-10-04: Ignore store and spool commands in worksheet.
 2001-10-04: Don't change connection if same as before.
 2001-10-04: Don't print selection on row (Problem on some BW printers).
