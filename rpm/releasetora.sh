@@ -52,10 +52,11 @@ then
 fi
 echo Building rpm tora$TYPE-$1-1oracle$ORA.i686.rpm 
 rpm -bb tora-$1/rpm/tora-static.spec
+cp /usr/src/RPM/RPMS/*/tora-$1-1static.*.rpm ../tora$TYPE-$1-1oracle$ORA.i686.rpm 
+
 cd /usr/src/RPM/BUILD/tora-$1
 strip tora-static
 mv tora-static tora
-cp /usr/src/RPM/RPMS/*/tora-$1-1static.*.rpm ../tora$TYPE-$1-1oracle$ORA.i686.rpm 
 cd ..
 echo Packing tora$TYPE-$1-oracle$ORA.tar.gz
 tar czf $SRCPWD/../tora$TYPE-$1-orale$ORA.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
