@@ -177,7 +177,7 @@
 #define TOHOMEPAGE		"http://www.globecom.se/tora"
 
 #ifndef TOVERSION
-#  define TOVERSION               "1.3.14"
+#  define TOVERSION               "1.3.14.1"
 #endif
 // Stable or development version of TOra
 #define TOTYPE			"DEVELOP"
