@@ -385,7 +385,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       if (connection().provider()=="Oracle")
 	init="SELECT * FROM ("+SQL+") WHERE ROWNUM <= "+QString::number(SkipNumber);
       else if (connection().provider()=="MySQL")
-	init=SQL+=" LIMIT "+QString::number(SkipNumber);
+	init=SQL+" LIMIT "+QString::number(SkipNumber);
     }
     Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
     Poll.start(100);
@@ -465,6 +465,7 @@ void toResultContentEditor::poll(void)
 	delete Query;
 	Query=NULL;
 
+	printf("%d==%d?\n",SkipNumber,Row);
 	if (SkipNumber>0&&Row==SkipNumber) {
 	  toQList par;
 	  Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);
