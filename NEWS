@@ -51,6 +51,9 @@
 2001-04-07: Fixed bug when resultlong encounteres error.
 2001-04-08: Fixed problem with Execute All in worksheet.
 2001-04-08: Added destination objects to toScript.
+2001-04-21: Fix of extraction of profiles from new DDL::Oracle version.
+2001-04-23: Added a quote.
+2001-04-23: New version of otl.
 
 0.7: Released 2001-03-24
 

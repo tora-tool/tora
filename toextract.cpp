@@ -4254,7 +4254,12 @@ static toSQL SQLProfileInfo("toExtract:ProfileInfo",
         profile = :nam<char[100]>
  ORDER
     BY
-        resource_type
+        DECODE(
+               SUBSTR(resource_name,1,8)
+              ,'FAILED_L',2
+              ,'PASSWORD',2
+              ,1
+             )
       , resource_name",
 			    "Get information about a profile, must have same binds and columns");
 

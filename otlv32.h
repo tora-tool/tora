@@ -1,5 +1,5 @@
 //
-// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.13,
+// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.15,
 // Copyright (C) Sergei Kuchin, 1996,2001
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -211,11 +211,21 @@
 
 #ifdef OTL_STL
 
+#ifdef _MSC_VER
+#if (_MSC_VER >= 1200)
+#pragma warning (disable:4786) 
+#endif
+#endif
+
 #if defined(OTL_STL_NOSTD_NAMESPACE)
+#ifndef OTL_STL_STRING
 #define OTL_STL_STRING string
+#endif
 #define STD_NAMESPACE_PREFIX
 #else
+#ifndef OTL_STL_STRING
 #define OTL_STL_STRING std::string
+#endif
 #define STD_NAMESPACE_PREFIX std::
 #endif
 
@@ -433,7 +443,6 @@ inline ostream& operator<<(ostream& s, const otl_datetime& dt)
 
 #endif
 
-//static 
 inline void convert_date(otl_datetime& t,const otl_oracle_date& s)
 {
  t.year=(OTL_SCAST(int, s.century-100)*100+(OTL_SCAST(int, s.year-100)));
@@ -444,7 +453,6 @@ inline void convert_date(otl_datetime& t,const otl_oracle_date& s)
  t.second=s.second-1;
 }
 
-//static 
 inline void convert_date(otl_oracle_date& t,const otl_datetime& s)
 {
  t.year=(s.year%100)+100;
@@ -560,7 +568,7 @@ public:
  }
 
 
- ~otl_long_string()
+ virtual ~otl_long_string()
  {
   if(!extern_buffer_flag)delete[] v;
  }
@@ -572,7 +580,6 @@ public:
 
 };
 
-//static 
 inline const char* otl_var_type_name(const int ftype)
 {static const char* const_CHAR="CHAR";
  static const char* const_DOUBLE="DOUBLE";
@@ -621,7 +628,6 @@ inline const char* otl_var_type_name(const int ftype)
  }
 }
 
-//static 
 inline void otl_var_info_var
 (const char* name,
  const int ftype,
@@ -639,7 +645,6 @@ inline void otl_var_info_var
  strcat(var_info,buf2);
 }
 
-//static 
 inline void otl_strcpy(
   unsigned char* trg,
   unsigned char* src,
@@ -661,7 +666,6 @@ inline void otl_strcpy(
   overflow=1;
 }
 
-//static 
 inline void otl_itoa(int i,char* a)
 {
  int n=i,k;
@@ -700,7 +704,6 @@ inline void otl_itoa(int i,char* a)
  *c1=0;
 }
 
-//static 
 inline void otl_var_info_col
 (const int pos,
  const int ftype,
@@ -742,7 +745,7 @@ public:
   vtype=0;
  }
 
- ~otl_pl_tab_generic(){}
+ virtual ~otl_pl_tab_generic(){}
 
  unsigned char* val(int ndx=0)
  {
@@ -783,7 +786,6 @@ public:
 
 };
 
-//static 
 inline int otl_numeric_convert_int(
   const int ftype,
   const void* val,
@@ -815,7 +817,6 @@ inline int otl_numeric_convert_int(
  return rc;
 }
 
-//static 
 inline int otl_numeric_convert_unsigned(
   const int ftype,
   const void* val,
@@ -847,7 +848,6 @@ inline int otl_numeric_convert_unsigned(
  return rc;
 }
 
-//static 
 inline int otl_numeric_convert_short(
   const int ftype,
   const void* val,
@@ -879,7 +879,6 @@ inline int otl_numeric_convert_short(
  return rc;
 }
 
-//static 
 inline int otl_numeric_convert_long_int(
   const int ftype,
   const void* val,
@@ -911,7 +910,6 @@ inline int otl_numeric_convert_long_int(
  return rc;
 }
 
-//static 
 inline int otl_numeric_convert_float(
   const int ftype,
   const void* val,
@@ -943,7 +941,6 @@ inline int otl_numeric_convert_float(
  return rc;
 }
 
-//static 
 inline int otl_numeric_convert_double(
   const int ftype,
   const void* val,
@@ -976,7 +973,208 @@ inline int otl_numeric_convert_double(
 }
 
 
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+
+class otl_ltstr{
+public:
+ 
+ bool operator()(const OTL_STL_STRING& s1, const OTL_STL_STRING& s2) const
+ {
+  return strcmp(s1.c_str(), s2.c_str()) < 0;
+ }
+ 
+};
+
+const int otl_max_default_pool_size=32;
+
+#endif
+
+class otl_stream_shell_generic{
+public:
+
+ int should_delete;
+
+ otl_stream_shell_generic()
+ {
+  should_delete=0;
+ }
+
+ virtual ~otl_stream_shell_generic(){}
+
+};
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+
+#include <map>
+
+class otl_stream_pool_entry{
+public:
+
+ STD_NAMESPACE_PREFIX vector<otl_stream_shell_generic*> s;
+ int cnt;
+ 
+ otl_stream_pool_entry()
+ {
+  cnt=0;
+ }
+ 
+ otl_stream_pool_entry(const otl_stream_pool_entry& sc)
+ {
+  s=sc.s;
+  cnt=sc.cnt;
+ }
+ 
+ otl_stream_pool_entry& operator=(const otl_stream_pool_entry& sc)
+ {
+  s=sc.s;
+  cnt=sc.cnt;
+  return *this;
+ }
+ 
+ virtual ~otl_stream_pool_entry(){}
+ 
+};
+
+class otl_stream_pool{
+public:
+ 
+ typedef otl_stream_pool_entry cache_entry_type;
+ typedef STD_NAMESPACE_PREFIX
+  map<const OTL_STL_STRING,cache_entry_type,otl_ltstr> sc_type;
+ typedef STD_NAMESPACE_PREFIX vector<otl_stream_shell_generic*> vec_type;
+
+ sc_type sc;
+ int max_size;
+ int size;
+ 
+ otl_stream_pool()
+ {
+  max_size=otl_max_default_pool_size;
+  size=0;
+ }
+
+ void init(const int amax_size=otl_max_default_pool_size)
+ {
+  if(size==0&&max_size==0)return;
+  sc_type::iterator elem0=sc.begin();
+  sc_type::iterator elemN=sc.end();
+  for(sc_type::iterator i=elem0; i!=elemN; ++i){
+   cache_entry_type& ce=(*i).second;
+   int sz=ce.s.size();
+   for(int j=0;j<sz;++j){
+    ce.s[j]->should_delete=1;
+    delete ce.s[j];
+    ce.s[j]=0;
+    ce.s.clear();
+    ce.cnt=0;
+   }
+  }
+  sc.clear();
+  size=0;
+  max_size=amax_size;
+ }
+
+ otl_stream_shell_generic* find(const OTL_STL_STRING& stmtxt)
+ {
+  otl_stream_shell_generic* s;
+  sc_type::iterator cur=sc.find(stmtxt);
+  if(cur==sc.end())return 0; // entry not found
+  cache_entry_type& ce=(*cur).second;
+  s=ce.s[ce.s.size()-1];
+  ce.s.pop_back();
+  if(ce.s.size()==0){
+   sc.erase(cur);
+   --size;
+  }
+  return s;
+ }
+
+ void remove(const otl_stream_shell_generic* s,const OTL_STL_STRING& stmtxt)
+ {
+  sc_type::iterator cur=sc.find(stmtxt);
+  if(cur==sc.end())
+   return;
+  cache_entry_type& ce=(*cur).second;
+  vec_type::iterator bgn=ce.s.begin();
+  vec_type::iterator end=ce.s.end();
+  for(vec_type::iterator i=bgn;i!=end;++i)
+   if((*i)==s){
+    ce.s.erase(i);
+    --size;
+    return;
+   }
+ }
+
+
+ void add(otl_stream_shell_generic* s,const char* stm_text)
+ {
+  OTL_STL_STRING stmtxt(stm_text);
+  sc_type::iterator cur=sc.find(stmtxt);
+
+  if(cur!=sc.end()){ // entry found
+   bool found=false;
+   cache_entry_type& ce=(*cur).second;
+   int sz=ce.s.size();
+   for(int i=0;i<sz;++i){
+    if(s==ce.s[i]){
+     found=true;
+     break;
+    }
+   }
+   if(!found)ce.s.push_back(s);
+   ++ce.cnt;
+  }else{ // entry not found
+   if(size<max_size-1){ // add new entry
+    cache_entry_type ce;
+    ce.s.push_back(s);
+    ce.cnt=1;
+    sc[stmtxt]=ce;
+    ++size;
+   }else{ // erase the least used entry and add new one
+
+    sc_type::iterator elem0=sc.begin();
+    sc_type::iterator elemN=sc.end();
+    int min_cnt=0;
+    sc_type::iterator min_entry;
+    
+    for(sc_type::iterator i=elem0;i!=elemN;++i){
+     if(i==elem0){ // first element
+      min_entry=i;
+      min_cnt=(*i).second.cnt;
+     }
+     if(min_cnt>(*i).second.cnt){ // found less used entry
+      min_entry=i;
+      min_cnt=(*i).second.cnt;
+     }
+    }
+    cache_entry_type& me=(*min_entry).second;
+    int sz=me.s.size();
+    for(int n=0;n<sz;++n){
+     me.s[n]->should_delete=1;
+     delete me.s[n];
+    }
+    me.s.clear();
+    sc.erase(min_entry);
+    cache_entry_type ce;
+    ce.cnt=1;
+    ce.s.push_back(s);
+    sc[stmtxt]=ce;
+   }
+  }
+ }
+ 
+ virtual ~otl_stream_pool()
+ {
+  init();
+ }
+ 
+};
+
+#endif
+
+
 // =========================== COMMON TEMPLATES  ============================
+
 
 #if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
 
@@ -988,7 +1186,7 @@ public:
  bool ind;
 
  otl_value(){ind=true;}
- ~otl_value(){}
+ virtual ~otl_value(){}
 
  otl_value(const otl_value<TData>& var)
  {
@@ -1051,9 +1249,61 @@ public:
   ptr=new T[arr_size];
  }
 
- ~otl_auto_array_ptr()
+ virtual ~otl_auto_array_ptr()
  {
   delete[] ptr;
+ }
+
+};
+
+template <class T>
+class otl_ptr{
+public:
+
+ T** ptr;
+ int arr_flag;
+
+ otl_ptr()
+ {
+  ptr=0;
+  arr_flag=0;
+ }
+
+ void assign(T** var)
+ {
+  ptr=var;
+  arr_flag=0;
+ }
+
+ void assign_array(T** var)
+ {
+  ptr=var;
+  arr_flag=1;
+ }
+
+
+ void disconnect(void)
+ {
+  if(ptr!=0)
+   *ptr=0;
+  ptr=0;
+ }
+
+ void destroy(void)
+ {
+  if(ptr==0)return;
+  if(*ptr!=0){
+   if(arr_flag)
+    delete[] *ptr;
+   else
+    delete *ptr;
+   *ptr=0;
+  }
+ }
+
+ ~otl_ptr()
+ {
+  destroy();
  }
 
 };
@@ -1109,7 +1359,7 @@ public:
   elem_size=0;
  }
 
- virtual int len(void)
+ virtual int len(void) const
  {
   return 0;
  }
@@ -1138,31 +1388,19 @@ public:
 
 };
 
-template <class T,const int avtype>
-class otl_tmpl_pl_vec: public otl_pl_vec_generic{
+class otl_int_vec: public otl_pl_vec_generic{
 public:
 
- typedef typename STD_NAMESPACE_PREFIX vector<T> v_type;
- v_type v;
+ STD_NAMESPACE_PREFIX vector<int> v;
 
- otl_tmpl_pl_vec()
+ otl_int_vec()
  {
   this->p_v=OTL_RCAST(void*,&v);
-  this->vtype=avtype;
-  switch(avtype){
-  case otl_var_timestamp:
-   this->elem_size=sizeof(otl_oracle_date);
-   break;
-  case otl_var_char:
-   this->elem_size=1;
-   break;
-  default:
-   this->elem_size=sizeof(T);
-   break;
-  }
+  this->vtype=otl_var_int;
+  this->elem_size=sizeof(int);
  }
 
- virtual ~otl_tmpl_pl_vec(){}
+ virtual ~otl_int_vec(){}
 
  virtual void set_len(const int new_len=0)
  {int i,vsize;
@@ -1174,58 +1412,233 @@ public:
    this->null_flag[i]=false;
  }
 
- virtual int len(void)
+ virtual int len(void) const
  {
   return v.size();
  }
 
- T& operator[](int ndx)
+ int& operator[](int ndx)
  {
   return v[ndx];
  }
 
 };
 
-class otl_int_vec: public otl_tmpl_pl_vec<int,otl_var_int>{
+class otl_double_vec: public otl_pl_vec_generic{
 public:
- otl_int_vec():otl_tmpl_pl_vec<int,otl_var_int>(){}
+
+ STD_NAMESPACE_PREFIX vector<double> v;
+
+ otl_double_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_double;
+  this->elem_size=sizeof(double);
+ }
+
+ virtual ~otl_double_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ double& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
 };
 
-class otl_double_vec: public otl_tmpl_pl_vec<double,otl_var_double>{
+class otl_float_vec: public otl_pl_vec_generic{
 public:
- otl_double_vec():otl_tmpl_pl_vec<double,otl_var_double>(){}
+
+ STD_NAMESPACE_PREFIX vector<float> v;
+
+ otl_float_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_float;
+  this->elem_size=sizeof(float);
+ }
+
+ virtual ~otl_float_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ float& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
 };
 
-class otl_float_vec: public otl_tmpl_pl_vec<float,otl_var_float>{
+class otl_short_vec: public otl_pl_vec_generic{
 public:
- otl_float_vec():otl_tmpl_pl_vec<float,otl_var_float>(){}
+
+ STD_NAMESPACE_PREFIX vector<short int> v;
+
+ otl_short_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_short;
+  this->elem_size=sizeof(short int);
+ }
+
+ virtual ~otl_short_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ short int& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
 };
 
-class otl_unsigned_vec: public otl_tmpl_pl_vec<unsigned,otl_var_unsigned_int>{
+class otl_long_int_vec: public otl_pl_vec_generic{
 public:
- otl_unsigned_vec():otl_tmpl_pl_vec<unsigned,otl_var_unsigned_int>(){}
+
+ STD_NAMESPACE_PREFIX vector<long int> v;
+
+ otl_long_int_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_long_int;
+  this->elem_size=sizeof(double);
+ }
+
+ virtual ~otl_long_int_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ long int& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
 };
 
-class otl_short_vec: public otl_tmpl_pl_vec<short,otl_var_short>{
+class otl_string_vec: public otl_pl_vec_generic{
 public:
- otl_short_vec():otl_tmpl_pl_vec<short,otl_var_short>(){}
+
+ STD_NAMESPACE_PREFIX vector<OTL_STL_STRING> v;
+
+ otl_string_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_char;
+  this->elem_size=1;
+ }
+
+ virtual ~otl_string_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ OTL_STL_STRING& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
 };
 
-class otl_long_int_vec: public otl_tmpl_pl_vec<long,otl_var_long_int>{
+class otl_datetime_vec: public otl_pl_vec_generic{
 public:
- otl_long_int_vec():otl_tmpl_pl_vec<long,otl_var_long_int>(){}
-};
 
-class otl_string_vec: public otl_tmpl_pl_vec<OTL_STL_STRING,otl_var_char>{
-public:
- otl_string_vec():otl_tmpl_pl_vec<OTL_STL_STRING,otl_var_char>(){}
-};
+ STD_NAMESPACE_PREFIX vector<otl_datetime> v;
 
-class otl_datetime_vec: public otl_tmpl_pl_vec<otl_datetime,otl_var_timestamp>{
-public:
- otl_datetime_vec():otl_tmpl_pl_vec<otl_datetime,otl_var_timestamp>(){}
-};
+ otl_datetime_vec()
+ {
+  this->p_v=OTL_RCAST(void*,&v);
+  this->vtype=otl_var_timestamp;
+  this->elem_size=sizeof(otl_oracle_date);
+ }
 
+ virtual ~otl_datetime_vec(){}
+
+ virtual void set_len(const int new_len=0)
+ {int i,vsize;
+
+  v.resize(new_len);
+  this->null_flag.resize(new_len);
+  vsize=v.size();
+  for(i=0;i<vsize;++i)
+   this->null_flag[i]=false;
+ }
+
+ virtual int len(void) const
+ {
+  return v.size();
+ }
+
+ otl_datetime& operator[](int ndx)
+ {
+  return v[ndx];
+ }
+
+};
 
 #endif
 
@@ -1253,7 +1666,7 @@ public:
   init();
  }
 
- ~otl_tmpl_pl_tab(){}
+ virtual ~otl_tmpl_pl_tab(){}
 
 };
 
@@ -1318,7 +1731,7 @@ public:
   init();
  }
 
- ~otl_cstr_tab(){}
+ virtual ~otl_cstr_tab(){}
 
 };
 
@@ -1348,7 +1761,7 @@ public:
   init();
  }
 
- ~otl_datetime_tab(){}
+ virtual ~otl_datetime_tab(){}
 
 };
 
@@ -1380,7 +1793,7 @@ public:
   init(atab_size);
  }
 
- ~otl_tmpl_dyn_pl_tab()
+ virtual ~otl_tmpl_dyn_pl_tab()
  {
   delete[] v;
   delete[] null_flag;
@@ -1454,7 +1867,7 @@ public:
   init(atab_size);
  }
 
- ~otl_dynamic_cstr_tab()
+ virtual ~otl_dynamic_cstr_tab()
  {
   delete[] v;
   delete[] null_flag;
@@ -1491,7 +1904,7 @@ public:
   init(atab_size);
  }
 
- ~otl_dynamic_datetime_tab()
+ virtual ~otl_dynamic_datetime_tab()
  {
   delete[] v;
   delete[] null_flag;
@@ -1536,8 +1949,8 @@ public:
  }
 
  otl_tmpl_exception
- (const char* msg,
-  const int code,
+ (const char* amsg,
+  const int acode,
   const char* sqlstm=0,
   const char* varinfo=0)
  {
@@ -1548,17 +1961,15 @@ public:
    stm_text[sizeof(stm_text)-1]=0;
   }
   if(varinfo)strcpy(OTL_RCAST(char*,var_info),varinfo);
-  TExceptionStruct::init(msg,code);
+  TExceptionStruct::init(amsg,acode);
  }
 
- ~otl_tmpl_exception(){}
+ virtual ~otl_tmpl_exception(){}
 
 };
 
 template <class TExceptionStruct,class TConnectStruct,class TCursorStruct>
 class otl_tmpl_connect{
-protected:
-
 public:
 
  int connected;
@@ -1614,7 +2025,7 @@ public:
   rlogon(connect_str,auto_commit);
  }
 
- ~otl_tmpl_connect()
+ virtual ~otl_tmpl_connect()
  {
   logoff();
  }
@@ -1781,7 +2192,7 @@ public:
   param_type=otl_input_param;
  }
 
- ~otl_tmpl_variable()
+ virtual ~otl_tmpl_variable()
  {
   delete[] name;
  }
@@ -2205,7 +2616,6 @@ public:
 
 };
 
-//static 
 inline char otl_to_upper(char c)
 {
  return OTL_SCAST(char,toupper(c));
@@ -2324,7 +2734,7 @@ public:
   len=i;
  }
 
- ~otl_tmpl_ext_hv_decl()
+ virtual ~otl_tmpl_ext_hv_decl()
  {int i;
   for(i=0;hv[i]!=0;++i)
    delete[] hv[i];
@@ -2673,6 +3083,8 @@ public:
 
 };
 
+#if defined(OTL_ORA8)
+
 const int otl_lob_stream_read_mode=1;
 const int otl_lob_stream_write_mode=2;
 const int otl_lob_stream_zero_mode=3;
@@ -2749,7 +3161,7 @@ public:
   init(0,0,0,0,otl_lob_stream_zero_mode);
  }
 
- ~otl_tmpl_lob_stream()
+ virtual ~otl_tmpl_lob_stream()
  {in_destructor=1;
   close();
  }
@@ -2955,6 +3367,8 @@ public:
 
 };
 
+#endif
+
 template <class TExceptionStruct,
           class TConnectStruct,
           class TCursorStruct,
@@ -2996,7 +3410,7 @@ public:
   delete[] sl_desc;
  }
 
- ~otl_tmpl_select_stream()
+ virtual ~otl_tmpl_select_stream()
  {
   cleanup();
  }
@@ -3559,12 +3973,12 @@ public:
    s.v[len]=0;
    look_ahead();
   }else{
-   char var_info[256];
+   char tmp_var_info[256];
    otl_var_info_col
     (sl[cur_col].pos,
      sl[cur_col].ftype,
      otl_var_long_string,
-     var_info);
+     tmp_var_info);
    if(this->adb)this->adb->throw_count++;
    if(this->adb&&this->adb->throw_count>1)return *this;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -3577,7 +3991,7 @@ public:
     (otl_error_msg_0,
      otl_error_code_0,
      this->stm_text,
-     var_info);
+     tmp_var_info);
   }
   return *this;
  }
@@ -3615,12 +4029,12 @@ public:
      this->is_null());
    delay_next=1;
   }else{
-   char var_info[256];
+   char tmp_var_info[256];
    otl_var_info_col
     (sl[cur_col].pos,
      sl[cur_col].ftype,
      otl_var_long_string,
-     var_info);
+     tmp_var_info);
    if(this->adb)this->adb->throw_count++;
    if(this->adb&&this->adb->throw_count>1)return *this;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -3633,7 +4047,7 @@ public:
     (otl_error_msg_0,
      otl_error_code_0,
      this->stm_text,
-     var_info);
+     tmp_var_info);
   }
   return *this;
  }
@@ -3757,12 +4171,12 @@ public:
      this->vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char tmp_var_info[256];
     otl_var_info_var
      (this->vl[cur_in]->name,
       this->vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      tmp_var_info);
     if(this->adb)this->adb->throw_count++;
     if(this->adb&&this->adb->throw_count>1)return *this;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -3775,7 +4189,7 @@ public:
      (otl_error_msg_4,
       otl_error_code_4,
       this->stm_text,
-      var_info);
+      tmp_var_info);
    }
 
    this->vl[cur_in]->set_not_null(0);
@@ -4002,6 +4416,8 @@ public:
  int in_destruct_flag;
  int should_delete_flag;
  char var_info[256];
+ bool flush_flag;
+ bool flush_flag2;
 
 
  void cleanup(void)
@@ -4028,6 +4444,8 @@ public:
  {int i;
   dirty=0;
   auto_commit_flag=1;
+  flush_flag=true;
+  flush_flag2=true;
   cur_x=-1;
   cur_y=0;
   should_delete_flag=1;
@@ -4074,22 +4492,30 @@ public:
   in_destruct_flag=0;
   dirty=0;
   auto_commit_flag=1;
+  flush_flag=true;
+  flush_flag2=true;
   cur_x=-1;
   cur_y=0;
   this->stm_text=0;
  }
 
- ~otl_tmpl_out_stream()
+ virtual ~otl_tmpl_out_stream()
  {in_destruct_flag=1;
   this->in_destructor=1;
-  if(dirty&&!in_exception_flag)flush();
+  if(dirty&&!in_exception_flag&&
+     flush_flag&&flush_flag2)
+   flush();
   cleanup();
   in_destruct_flag=0;
  }
 
  virtual void flush(void)
  {int i,rc;
+
+ _rpc=0;
+
   if(!dirty)return;
+  if(!flush_flag2)return;
 
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
   if(STD_NAMESPACE_PREFIX uncaught_exception()){
@@ -4470,12 +4896,12 @@ public:
         this->vl[cur_x]->elem_size
        );
       if(overflow){
-       char var_info[256];
+       char tmp_var_info[256];
        otl_var_info_var
         (this->vl[cur_x]->name,
          this->vl[cur_x]->ftype,
          otl_var_char,
-         var_info);
+         tmp_var_info);
        if(this->adb)this->adb->throw_count++;
        if(this->adb&&this->adb->throw_count>1)return *this;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -4488,7 +4914,7 @@ public:
         (otl_error_msg_4,
          otl_error_code_4,
          this->stm_text,
-         var_info);
+         tmp_var_info);
       }
      }
     }else if(tab.vtype==otl_var_timestamp){
@@ -4981,12 +5407,12 @@ public:
     iv_len=0; this->vl_len=0; avl_len=hvd.len;
     for(j=0;j<avl_len;++j){
      if(hvd.pl_tab_size[j]>32767){
-      char var_info[256];
+      char tmp_var_info[256];
       otl_var_info_var
        (hvd[j],
         otl_var_none,
         otl_var_none,
-        var_info);
+        tmp_var_info);
       if(this->adb)this->adb->throw_count++;
       if(this->adb&&this->adb->throw_count>1)return;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -4999,7 +5425,7 @@ public:
        (otl_error_msg_6,
         otl_error_code_6,
         this->stm_text,
-        var_info);
+        tmp_var_info);
       }
      otl_tmpl_variable<TVariableStruct>* v=hvd.alloc_var
       (hvd[j],
@@ -5063,7 +5489,7 @@ public:
 
  }
 
- ~otl_tmpl_inout_stream()
+ virtual ~otl_tmpl_inout_stream()
  {this->in_destructor=1;
   if(!this->in_exception_flag)
    flush();
@@ -5424,8 +5850,9 @@ public:
        OTL_RCAST(otl_oracle_date*,in_vl[cur_in_x]->val());
       int j;
       for(j=0;j<tmp_len;++j){
-       ext_dt=OTL_RCAST(otl_datetime*,
-                        &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<otl_datetime>*,vec.p_v))[j]);
+       ext_dt=OTL_RCAST
+        (otl_datetime*,
+         &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<otl_datetime>*,vec.p_v))[j]);
        convert_date(*ext_dt,*int_dt);
        ++int_dt;
       }
@@ -5588,12 +6015,12 @@ public:
      otl_lob_stream_read_mode,
      this->is_null());
   }else{
-   char var_info[256];
+   char tmp_var_info[256];
    otl_var_info_var
     (in_vl[cur_in_x]->name,
      in_vl[cur_in_x]->ftype,
      otl_var_long_string,
-     var_info);
+     tmp_var_info);
    if(this->adb)this->adb->throw_count++;
    if(this->adb&&this->adb->throw_count>1)return *this;
 #if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
@@ -5606,7 +6033,7 @@ public:
     (otl_error_msg_0,
      otl_error_code_0,
      this->stm_text,
-     var_info);
+     tmp_var_info);
   }
   get_in_next();
   return *this;
@@ -5614,666 +6041,6 @@ public:
 #undef OTL_TMPL_CUR_DUMMY
 #endif
 
-
-};
-
-
-template <class TExceptionStruct,
-          class TConnectStruct,
-          class TCursorStruct,
-          class TVariableStruct,
-          class TSelectCursorStruct,
-          class TTimestampStruct>
-class otl_tmpl_basic_stream{
-public:
-
- otl_tmpl_select_stream
- <TExceptionStruct,TConnectStruct,TCursorStruct,
-  TVariableStruct,TSelectCursorStruct,TTimestampStruct>* ss;
-
- otl_tmpl_inout_stream
-  <TExceptionStruct,TConnectStruct,TCursorStruct,
-   TVariableStruct,TTimestampStruct>* io;
-
- otl_select_struct_override override;
-
- void set_column_type(const int column_ndx,
-                      const int col_type,
-                      const int col_size=0)
- {
-  override.add_override(column_ndx,col_type,col_size);
- }
-
-  void set_all_column_types(const unsigned mask=0)
-  {
-    override.set_all_column_types(mask);
-  }
-
- otl_tmpl_connect
-   <TExceptionStruct,
-    TConnectStruct,
-    TCursorStruct>* adb;
-
- int auto_commit_flag;
-
- otl_var_desc* iov;
- int iov_len;
-
- otl_var_desc* ov;
- int ov_len;
-
- long get_rpc()
- {
-  if(io){
-   adb->reset_throw_count();
-   return io->get_rpc();
-  }else
-   return 0;
- }
-
- void create_var_desc(void)
- {int i;
-   delete[] iov;
-   delete[] ov;
-   iov=0; iov_len=0;
-   ov=0; ov_len=0;
-  if(ss){
-   if(ss->vl_len>0){
-    iov=new otl_var_desc[ss->vl_len];
-    iov_len=ss->vl_len;
-    for(i=0;i<ss->vl_len;++i)
-     ss->vl[i]->copy_var_desc(iov[i]);
-   }
-   if(ss->sl_len>0){
-    ov=new otl_var_desc[ss->sl_len];
-    ov_len=ss->sl_len;
-    for(i=0;i<ss->sl_len;++i)
-     ss->sl[i].copy_var_desc(ov[i]);
-   }
-  }else if(io){
-   if(io->vl_len>0){
-    iov=new otl_var_desc[io->vl_len];
-    iov_len=io->vl_len;
-    for(i=0;i<io->vl_len;++i)
-     io->vl[i]->copy_var_desc(iov[i]);
-   }
-   if(io->iv_len>0){
-    ov=new otl_var_desc[io->iv_len];
-    ov_len=io->iv_len;
-    for(i=0;i<io->iv_len;++i)
-     io->in_vl[i]->copy_var_desc(ov[i]);
-   }
-  }
- }
-
- otl_tmpl_basic_stream
- (const short arr_size,
-  const char* sqlstm,
-  otl_tmpl_connect
-   <TExceptionStruct,
-    TConnectStruct,
-    TCursorStruct>& db,
-  const int implicit_select=otl_explicit_select)
- {
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  io=0; ss=0;
-  auto_commit_flag=1;
-  adb=&db;
-  open(arr_size,sqlstm,db,implicit_select);
- }
-
- otl_tmpl_basic_stream()
- {
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  io=0; ss=0;
-  auto_commit_flag=1;
-  adb=0;
- }
-
- ~otl_tmpl_basic_stream()
- {
-  close();
- }
-
- int eof(void)
- {
-  if(io){
-   adb->reset_throw_count();
-   return io->eof();
-  }else if(ss){
-   adb->reset_throw_count();
-   return ss->eof();
-  }else
-   return 1;
- }
-
- void flush(void)
- {
-  if(io){
-   adb->reset_throw_count();
-   io->flush();
-  }
- }
-
- void clean(const int clean_up_error_flag=0)
- {
-  if(io){
-   adb->reset_throw_count();
-   io->clean(clean_up_error_flag);
-  }
- }
-
- void rewind(void)
- {
-  if(io){
-   adb->reset_throw_count();
-   io->rewind();
-  }else if(ss){
-   adb->reset_throw_count();
-   ss->rewind();
-  }
- }
-
- int is_null(void)
- {
-  if(io){
-   adb->reset_throw_count();
-   return io->is_null();
-  }else if(ss){
-   adb->reset_throw_count();
-   return ss->is_null();
-  }else
-   return 0;
- }
-
- otl_column_desc* describe_select(int& desc_len)
- {
-  desc_len=0;
-  if(!ss)return 0;
-  desc_len=ss->sl_len;
-  return ss->sl_desc;
- }
-
- void set_commit(int auto_commit=0)
- {
-  auto_commit_flag=auto_commit;
-  adb->reset_throw_count();
-  if(io)io->set_commit(auto_commit);
- }
-
-
- void open
- (short arr_size,
-  const char* sqlstm,
-  otl_tmpl_connect
-   <TExceptionStruct,
-    TConnectStruct,
-    TCursorStruct>& db,
-  const int implicit_select=otl_explicit_select
- )
- {
-
-  delete[] iov;
-  delete[] ov;
-
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-
-  char tmp[7];
-  char* c=OTL_CCAST(char*,sqlstm);
-
-  while(isspace(*c))++c;
-  strncpy(tmp,c,6);
-  tmp[6]=0;
-  c=tmp;
-  while(*c){
-   *c=otl_to_upper(*c);
-   ++c;
-  }
-  adb=&db;
-  adb->reset_throw_count();
-  if(strncmp(tmp,"SELECT",6)==0){
-   ss=new otl_tmpl_select_stream
-        <TExceptionStruct,
-         TConnectStruct,
-         TCursorStruct,
-         TVariableStruct,
-         TSelectCursorStruct,
-         TTimestampStruct>(&override,arr_size,sqlstm,db);
-  }else {
-   if(implicit_select)
-    ss=new otl_tmpl_select_stream
-        <TExceptionStruct,
-         TConnectStruct,
-         TCursorStruct,
-         TVariableStruct,
-         TSelectCursorStruct,
-         TTimestampStruct>(&override,arr_size,sqlstm,db,1);
-   else{
-    io=new otl_tmpl_inout_stream
-        <TExceptionStruct,
-         TConnectStruct,
-         TCursorStruct,
-         TVariableStruct,
-         TTimestampStruct>(arr_size,sqlstm,db);
-   }
-  }
-  if(io)io->set_commit(auto_commit_flag);
-  create_var_desc();
- }
-
- void close(void)
- {
-  delete[] iov;
-  delete[] ov;
-
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  override.len=0;
-
-  delete ss;
-  delete io;
-  ss=0; io=0;
-  adb=0;
- }
-
- int good(void)
- {
-  if(io||ss)
-   return 1;
-  else
-   return 0;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(char& c)
- {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(unsigned char& c)
- {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  return *this;
- }
-
-#ifdef OTL_STL
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>&
- operator>>(OTL_STL_STRING& s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  return *this;
- }
-#endif
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(char* s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(unsigned char* s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(int& n)
- {
-  if(io)
-   io->operator>>(n);
-  else if(ss)
-   ss->operator>>(n);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(unsigned& u)
- {
-  if(io)
-   io->operator>>(u);
-  else if(ss)
-   ss->operator>>(u);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(short& sh)
- {
-  if(io)
-   io->operator>>(sh);
-  else if(ss)
-   ss->operator>>(sh);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(long int& l)
- {
-  if(io)
-   io->operator>>(l);
-  else if(ss)
-   ss->operator>>(l);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(float& f)
- {
-  if(io)
-   io->operator>>(f);
-  else if(ss)
-   ss->operator>>(f);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(double& d)
- {
-  if(io)
-   io->operator>>(d);
-  else if(ss)
-   ss->operator>>(d);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(TTimestampStruct& t)
- {
-  if(io)
-   io->operator>>(t);
-  else if(ss)
-   ss->operator>>(t);
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>(otl_long_string& s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  return *this;
- }
-
-#ifdef OTL_ORA8
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator>>
-  (otl_tmpl_lob_stream
-   <TExceptionStruct,
-    TConnectStruct,
-    TCursorStruct,
-    TVariableStruct>& s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  return *this;
- }
-#endif
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const char c)
- {
-  if(io)
-   io->operator<<(c);
-  else if(ss){
-   ss->operator<<(c);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const unsigned char c)
- {
-  if(io)
-   io->operator<<(c);
-  else if(ss){
-   ss->operator<<(c);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
-#ifdef OTL_STL
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>&
- operator<<(const OTL_STL_STRING& s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss){
-   ss->operator<<(s);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-#endif
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const char* s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss){
-   ss->operator<<(s);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const unsigned char* s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss){
-   ss->operator<<(s);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const int n)
- {
-  if(io)
-   io->operator<<(n);
-  else if(ss){
-   ss->operator<<(n);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const unsigned u)
- {
-  if(io)
-   io->operator<<(u);
-  else if(ss){
-   ss->operator<<(u);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const short sh)
- {
-  if(io)
-   io->operator<<(sh);
-  else if(ss){
-   ss->operator<<(sh);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const long int l)
- {
-  if(io)
-   io->operator<<(l);
-  else if(ss){
-   ss->operator<<(l);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const float f)
- {
-  if(io)
-   io->operator<<(f);
-  else if(ss){
-   ss->operator<<(f);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const double d)
- {
-  if(io)
-   io->operator<<(d);
-  else if(ss){
-   ss->operator<<(d);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const TTimestampStruct& t)
- {
-  if(io)
-   io->operator<<(t);
-  else if(ss){
-   ss->operator<<(t);
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const otl_long_string& s)
- {
-  if(io)io->operator<<(s);
-  return *this;
- }
-
-#ifdef OTL_ORA8
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<
-  (otl_tmpl_lob_stream
-   <TExceptionStruct,
-    TConnectStruct,
-    TCursorStruct,
-    TVariableStruct>& s)
- {
-  if(io)io->operator<<(s);
-  return *this;
- }
-#endif
-
- otl_tmpl_basic_stream
-  <TExceptionStruct,TConnectStruct,
-   TCursorStruct,TVariableStruct,
-   TSelectCursorStruct,TTimestampStruct>& operator<<(const otl_null n)
- {
-  OTL_UNUSED_ARG(n)
-  if(io)io->operator<<(otl_null());
-  if(ss){
-   ss->operator<<(otl_null());
-   if(!ov&&ss->sl) create_var_desc();
-  }
-  return *this;
- }
 
 };
 
@@ -6372,7 +6139,7 @@ public:
 #endif
  }
 
-  ~otl_exc()
+  virtual ~otl_exc()
   {
 #ifdef OTL_EXTENDED_EXCEPTION
     int i;
@@ -6487,7 +6254,7 @@ public:
   status=SQL_SUCCESS;
  }
 
- ~otl_conn()
+ virtual ~otl_conn()
  {
   status=SQLFreeHandle(SQL_HANDLE_DBC,hdbc);
   hdbc=0;
@@ -6626,8 +6393,6 @@ public:
     SQL_IS_INTEGER);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
 #endif
-
-
 
   if(oracle_format){
    status=SQLConnect
@@ -6768,12 +6533,16 @@ public:
   act_elem_size=0;
  }
 
- ~otl_var()
+ virtual ~otl_var()
  {
-  delete p_v;
-  delete p_len;
+  delete[] p_v;
+  delete[] p_len;
  }
 
+ void set_lob_stream_flag(const int flg=1)
+ {
+  OTL_UNUSED_ARG(flg)
+ }
 
  int put_blob(void)
  {
@@ -7047,7 +6816,7 @@ public:
   direct_exec_flag=0;
  }
 
- ~otl_cur(){}
+ virtual ~otl_cur(){}
 
  void set_direct_exec(const int flag)
  {
@@ -7102,7 +6871,9 @@ public:
     (cda,
      OTL_RCAST(OTL_SQLCHAR_PTR,stm_text),
      SQL_NTS);
-   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
+   if(status!=SQL_SUCCESS&&
+      status!=SQL_SUCCESS_WITH_INFO&&
+      status!=SQL_NO_DATA)
     return 0;
    else{
     SQLINTEGER tmp_rpc=0;
@@ -7391,7 +7162,7 @@ public:
   implicit_cursor=0;
  }
 
- ~otl_sel(){}
+ virtual ~otl_sel(){}
 
  void set_select_type(const int atype)
  {
@@ -7484,7 +7255,7 @@ public:
 typedef otl_tmpl_connect
   <otl_exc,
    otl_conn,
-   otl_cur> otl_connect;
+   otl_cur> otl_odbc_connect;
 
 typedef otl_tmpl_cursor
   <otl_exc,
@@ -7497,69 +7268,598 @@ typedef otl_tmpl_exception
    otl_conn,
    otl_cur> otl_exception;
 
-typedef otl_tmpl_basic_stream
+typedef otl_tmpl_select_stream
  <otl_exc,
   otl_conn,
   otl_cur,
   otl_var,
   otl_sel,
-  otl_time> otl_basic_stream;
+  otl_time> otl_select_stream;
 
-class otl_stream: public otl_tmpl_basic_stream
+typedef otl_tmpl_inout_stream
  <otl_exc,
   otl_conn,
   otl_cur,
   otl_var,
-  otl_sel,
-  otl_time>{
+  otl_time> otl_inout_stream;
+
+
+class otl_connect: public otl_odbc_connect{
 public:
 
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ otl_stream_pool sc;
 
- otl_stream()
-  :otl_tmpl_basic_stream
- <otl_exc,
-  otl_conn,
-  otl_cur,
-  otl_var,
-  otl_sel,
-  otl_time>(){}
+ void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
+ {
+  sc.init(max_size);
+ }
+
+#endif
+
+
+ otl_connect():otl_odbc_connect(){}
+ otl_connect(const char* connect_str, const int aauto_commit=0)
+   : otl_odbc_connect(connect_str, aauto_commit){}
+
+ virtual ~otl_connect(){}
+
+ void rlogon(const char* connect_str, const int aauto_commit=0)
+ {
+  otl_odbc_connect::rlogon(connect_str,aauto_commit);
+ }
+
+ void logoff(void)
+ {
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(connected)
+   sc.init(sc.max_size);
+#endif
+  otl_odbc_connect::logoff();
+ }
+
+};
+
+class otl_stream_shell: public otl_stream_shell_generic{
+public:
+
+ otl_select_stream* ss;
+ otl_inout_stream* io;
+ otl_connect* adb;
+
+
+ int auto_commit_flag;
+
+ otl_var_desc* iov;
+ int iov_len;
+ int next_iov_ndx;
+
+ otl_var_desc* ov;
+ int ov_len;
+ int next_ov_ndx;
+
+ bool flush_flag;
+
+ otl_select_struct_override override;
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ OTL_STL_STRING orig_sql_stm;
+#endif
+
+ otl_stream_shell()
+ {
+  should_delete=0;
+ }
+
+ otl_stream_shell(const int ashould_delete)
+ {
+  should_delete=0;
+  iov=0; iov_len=0;
+  ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
+  override.len=0;
+  ss=0; io=0;
+  adb=0;
+  flush_flag=true;
+  should_delete=ashould_delete;
+ }
+
+ virtual ~otl_stream_shell()
+ {
+  if(should_delete){
+   delete[] iov;
+   delete[] ov;
+
+   iov=0; iov_len=0;
+   ov=0; ov_len=0;
+   next_iov_ndx=0;
+   next_ov_ndx=0;
+   override.len=0;
+   flush_flag=true;
+
+   delete ss;
+   delete io;
+   ss=0; io=0;
+   adb=0;
+  }
+ }
+
+};
+
+class otl_stream{
+public:
+
+ otl_stream_shell* shell;
+ otl_ptr<otl_stream_shell> shell_pt;
+ int connected;
+
+ otl_select_stream** ss;
+ otl_inout_stream** io;
+ otl_connect** adb;
+
+ int* auto_commit_flag;
+
+ otl_var_desc** iov;
+ int* iov_len;
+ int* next_iov_ndx;
+
+ otl_var_desc** ov;
+ int* ov_len;
+ int* next_ov_ndx;
+
+ otl_select_struct_override* override;
+
+ long get_rpc()
+ {
+  if((*io)){
+   (*adb)->reset_throw_count();
+   return (*io)->get_rpc();
+  }else
+   return 0;
+ }
+
+ void create_var_desc(void)
+ {int i;
+  delete[] (*iov);
+  delete[] (*ov);
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  if((*ss)){
+   if((*ss)->vl_len>0){
+    (*iov)=new otl_var_desc[(*ss)->vl_len];
+    (*iov_len)=(*ss)->vl_len;
+    for(i=0;i<(*ss)->vl_len;++i)
+     (*ss)->vl[i]->copy_var_desc((*iov)[i]);
+   }
+   if((*ss)->sl_len>0){
+    (*ov)=new otl_var_desc[(*ss)->sl_len];
+    (*ov_len)=(*ss)->sl_len;
+    for(i=0;i<(*ss)->sl_len;++i)
+     (*ss)->sl[i].copy_var_desc((*ov)[i]);
+   }
+  }else if((*io)){
+   if((*io)->vl_len>0){
+    (*iov)=new otl_var_desc[(*io)->vl_len];
+    (*iov_len)=(*io)->vl_len;
+    for(i=0;i<(*io)->vl_len;++i)
+     (*io)->vl[i]->copy_var_desc((*iov)[i]);
+   }
+   if((*io)->iv_len>0){
+    (*ov)=new otl_var_desc[(*io)->iv_len];
+    (*ov_len)=(*io)->iv_len;
+    for(i=0;i<(*io)->iv_len;++i)
+     (*io)->in_vl[i]->copy_var_desc((*ov)[i]);
+   }
+  }
+ }
+
+ void set_column_type(const int column_ndx,
+                      const int col_type,
+                      const int col_size=0)
+ {
+  override->add_override(column_ndx,col_type,col_size);
+ }
+
+  void set_all_column_types(const unsigned mask=0)
+  {
+    override->set_all_column_types(mask);
+  }
+
+ void set_flush(const bool flush_flag=true)
+ {
+  if(shell==0)return;
+  shell->flush_flag=flush_flag;
+ }
+
+ void inc_next_ov(void)
+ {
+  if((*ov_len)==0)return;
+  if((*next_ov_ndx)<(*ov_len)-1)
+   ++(*next_ov_ndx);
+  else
+   (*next_ov_ndx)=0;
+ }
+ 
+ void inc_next_iov(void)
+ {
+  if((*iov_len)==0)return;
+  if((*next_iov_ndx)<(*iov_len)-1)
+   ++(*next_iov_ndx);
+  else
+   (*next_iov_ndx)=0;
+ }
+
+ void init_stream(void)
+ {
+  shell=0;
+  shell=new otl_stream_shell(0);
+  shell_pt.assign(&shell);
+  connected=0;
+
+  ss=&(shell->ss);
+  io=&(shell->io);
+  adb=&(shell->adb);
+  auto_commit_flag=&(shell->auto_commit_flag);
+  iov=&(shell->iov);
+  iov_len=&(shell->iov_len);
+  next_iov_ndx=&(shell->next_iov_ndx);
+  ov=&(shell->ov);
+  ov_len=&(shell->ov_len);
+  next_ov_ndx=&(shell->next_ov_ndx);
+  override=&(shell->override);
+  
+  (*io)=0;
+  (*ss)=0;
+  (*adb)=0;
+  (*ov)=0; 
+  (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*auto_commit_flag)=1;
+  (*iov)=0; 
+  (*iov_len)=0;
+ }
 
  otl_stream
  (const short arr_size,
   const char* sqlstm,
   otl_connect& db,
   const int implicit_select=otl_explicit_select)
-  : otl_tmpl_basic_stream
- <otl_exc,
-  otl_conn,
-  otl_cur,
-  otl_var,
-  otl_sel,
-  otl_time>(arr_size,sqlstm,db,implicit_select)
- {}
+ {
+  init_stream();
 
+  (*io)=0; (*ss)=0;
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*auto_commit_flag)=1;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*adb)=&db;
+  shell->flush_flag=true;
+  open(arr_size,sqlstm,db,implicit_select);
+ }
+
+ otl_stream()
+ {
+  init_stream();
+  shell->flush_flag=true;
+ }
+
+ virtual ~otl_stream()
+ {
+  if(!connected)return;
+  try{
+   if((*io)!=0&&shell->flush_flag==false)
+    (*io)->flush_flag2=false;
+   close();
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+  }catch(otl_exception&){
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+   clean(1);
+   shell->should_delete=1;
+   shell_pt.destroy();
+#else
+   shell_pt.destroy();
+#endif
+   throw;
+  }
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if((*adb) && (*adb)->throw_count>0
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+  || STD_NAMESPACE_PREFIX uncaught_exception()
+#endif
+     ){
+   //
+  }
+#else
+   shell_pt.destroy();
+#endif
+ }
+
+ int eof(void)
+ {
+  if((*io)){
+   (*adb)->reset_throw_count();
+   return (*io)->eof();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   return (*ss)->eof();
+  }else
+   return 1;
+ }
+
+ void flush(void)
+ {
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->flush();
+  }
+ }
+
+ void clean(const int clean_up_error_flag=0)
+ {
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->clean(clean_up_error_flag);
+  }
+ }
+
+ void rewind(void)
+ {
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->rewind();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   (*ss)->rewind();
+  }
+ }
+
+ 
+ int is_null(void)
+ {
+  if((*io))
+   return (*io)->is_null();
+  else if((*ss))
+   return (*ss)->is_null();
+  else
+   return 0;
+ }
+
+ void set_commit(int auto_commit=0)
+ {
+  (*auto_commit_flag)=auto_commit;
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->set_commit(auto_commit);
+  }
+ }
+ 
  void open
- (short int arr_size,
+ (const short arr_size,
   const char* sqlstm,
   otl_connect& db,
   const int implicit_select=otl_explicit_select)
  {
-  otl_tmpl_basic_stream
- <otl_exc,
-  otl_conn,
-  otl_cur,
-  otl_var,
-  otl_sel,
-  otl_time>::open(arr_size,sqlstm,db,implicit_select);
+  if(shell==0)
+   init_stream();
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  char temp_buf[128];
+  otl_itoa(arr_size,temp_buf);
+  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  otl_stream_shell* temp_shell=OTL_RCAST(otl_stream_shell*,db.sc.find(sql_stm));
+  if(temp_shell){
+   if(shell!=0)shell_pt.destroy();
+   shell=temp_shell;
+   ss=&(shell->ss);
+   io=&(shell->io);
+   adb=&(shell->adb);
+   auto_commit_flag=&(shell->auto_commit_flag);
+   iov=&(shell->iov);
+   iov_len=&(shell->iov_len);
+   next_iov_ndx=&(shell->next_iov_ndx);
+   ov=&(shell->ov);
+   ov_len=&(shell->ov_len);
+   next_ov_ndx=&(shell->next_ov_ndx);
+   override=&(shell->override);
+   if((*iov_len)==0)
+    this->rewind();
+   connected=1;
+   return;
+  }
+  shell->orig_sql_stm=sql_stm;
+#endif
+
+  delete[] (*iov);
+  delete[] (*ov);
+
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+
+  char tmp[7];
+  char* c=OTL_CCAST(char*,sqlstm);
+
+  while(isspace(*c))++c;
+  strncpy(tmp,c,6);
+  tmp[6]=0;
+  c=tmp;
+  while(*c){
+   *c=OTL_SCAST(char,otl_to_upper(*c));
+   ++c;
+  }
+  (*adb)=&db;
+  (*adb)->reset_throw_count();
+  try{
+   if(strncmp(tmp,"SELECT",6)==0){
+    (*ss)=new otl_select_stream(override,arr_size,sqlstm,db);
+   }
+   else{
+    if(implicit_select)
+     (*ss)=new otl_select_stream(override,arr_size,sqlstm,db,1);
+    else{
+     (*io)=new otl_inout_stream(arr_size,sqlstm,db);
+     (*io)->flush_flag=shell->flush_flag;
+    }
+   }
+  }catch(otl_exception&){
+   shell_pt.destroy();
+   throw;
+  }
+  if((*io))(*io)->set_commit((*auto_commit_flag));
+  create_var_desc();
+  connected=1;
  }
 
-#define OTL_BASSTR otl_tmpl_basic_stream         \
-                   <otl_exc,                     \
-                    otl_conn,                    \
-                    otl_cur,                     \
-                    otl_var,                     \
-                    otl_sel,                     \
-                    otl_time>
+ void intern_cleanup(void)
+ {
+  delete[] (*iov);
+  delete[] (*ov);
+
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  override->len=0;
+
+  if((*ss)){
+   try{
+    (*ss)->close();
+   }catch(otl_exception&){
+    delete (*ss);
+    (*ss)=0;
+    throw;
+   }
+   delete (*ss);
+   (*ss)=0;
+  }
+
+  if((*io)){
+   try{
+    (*io)->flush();
+   }catch(otl_exception&){
+    clean(1);
+    delete (*io);
+    (*io)=0;
+    throw;
+   }
+   delete (*io);
+   (*io)=0;
+  }
+  (*ss)=0; (*io)=0;
+  (*adb)=0;
+ }
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ void close(const bool save_in_stream_pool=true)
+#else
+ void close(void)
+#endif
+ {
+  if(shell==0)return;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(save_in_stream_pool&&(*adb)&&
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+     !(STD_NAMESPACE_PREFIX uncaught_exception())&&
+#endif
+     (*adb)->throw_count==0){
+   try{
+    this->flush();
+   }catch(otl_exception&){
+    this->clean(1);
+    throw;
+   }
+   if((*adb) && (*adb)->throw_count>0){
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return;
+   }
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+   if(STD_NAMESPACE_PREFIX uncaught_exception()){
+    if((*adb))
+     (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return; 
+   }
+#endif
+   (*adb)->sc.add(shell,shell->orig_sql_stm.c_str());
+   shell_pt.disconnect();
+   connected=0;
+  }else{
+   if((*adb))
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+   intern_cleanup();
+   shell_pt.destroy();
+   connected=0;
+  }
+#else
+  intern_cleanup();
+  connected=0;
+#endif
+ }
+
+ otl_column_desc* describe_select(int& desc_len)
+ {
+  desc_len=0;
+  if((*ss)){
+   (*adb)->reset_throw_count();
+   desc_len=(*ss)->sl_len;
+   return (*ss)->sl_desc;
+  }
+  return 0;
+ }
+
+ int good(void)
+ {
+  if(!connected)return 0;
+  if((*io)||(*ss)){
+   (*adb)->reset_throw_count();
+   return 1;
+  }else
+   return 0;
+ }
+
+ otl_stream& operator>>(otl_time& s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  return *this;
+ }
+
+ otl_stream& operator<<(const otl_time& n)
+ {
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss)){
+   (*ss)->operator<<(n);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  return *this;
+ }
+
+ otl_stream& operator>>(otl_datetime& s)
+ {otl_time tmp;
+  (*this)>>tmp;
+  s.year=tmp.year;
+  s.month=tmp.month;
+  s.day=tmp.day;
+  s.hour=tmp.hour;
+  s.minute=tmp.minute;
+  s.second=tmp.second;
+  inc_next_ov();
+  return *this;
+ }
 
  otl_stream& operator<<(const otl_datetime& s)
  {otl_time tmp;
@@ -7570,188 +7870,288 @@ public:
   tmp.minute=s.minute;
   tmp.second=s.second;
   tmp.fraction=0;
-  (*OTL_RCAST(OTL_BASSTR*,this))<<tmp;
+  (*this)<<tmp;  
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator>>(otl_datetime& s)
- {otl_time tmp;
-  (*OTL_RCAST(OTL_BASSTR*,this))>>tmp;
-  s.year=tmp.year;
-  s.month=tmp.month;
-  s.day=tmp.day;
-  s.hour=tmp.hour;
-  s.minute=tmp.minute;
-  s.second=tmp.second;
+ otl_stream& operator>>(char& c)
+ {
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(unsigned char& c)
+ {
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  inc_next_ov();
+  return *this;
+ }
+
+#ifdef OTL_STL
+ otl_stream& operator>>(OTL_STL_STRING& s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+#endif
+
+ otl_stream& operator>>(char* s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(unsigned char* s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(int& n)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
+  if((*io))
+   (*io)->operator>>(n);
+  else if((*ss))
+   (*ss)->operator>>(n);
+  inc_next_ov();
   return *this;
  }
 
- otl_stream& operator>>(char& n)
+ otl_stream& operator>>(unsigned& u)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
+  if((*io))
+   (*io)->operator>>(u);
+  else if((*ss))
+   (*ss)->operator>>(u);
+  inc_next_ov();
   return *this;
  }
 
- otl_stream& operator>>(unsigned char& n)
+ otl_stream& operator>>(short& sh)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
+  if((*io))
+   (*io)->operator>>(sh);
+  else if((*ss))
+   (*ss)->operator>>(sh);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(long int& l)
+ {
+  if((*io))
+   (*io)->operator>>(l);
+  else if((*ss))
+   (*ss)->operator>>(l);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(float& f)
+ {
+  if((*io))
+   (*io)->operator>>(f);
+  else if((*ss))
+   (*ss)->operator>>(f);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(double& d)
+ {
+  if((*io))
+   (*io)->operator>>(d);
+  else if((*ss))
+   (*ss)->operator>>(d);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(otl_long_string& s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const char c)
+ {
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss)){
+   (*ss)->operator<<(c);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const unsigned char c)
+ {
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss)){
+   (*ss)->operator<<(c);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
 #ifdef OTL_STL
- otl_stream& operator>>(OTL_STL_STRING& n)
+ otl_stream& operator<<(const OTL_STL_STRING& s)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss)){
+   (*ss)->operator<<(s);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 #endif
 
- otl_stream& operator>>(char* n)
+ otl_stream& operator<<(const char* s)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss)){
+   (*ss)->operator<<(s);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator>>(unsigned char* n)
+ otl_stream& operator<<(const unsigned char* s)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(unsigned& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(short& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(long int& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(float& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(double& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(otl_time& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator>>(otl_long_string& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))>>n;
-  return *this;
- }
-
- otl_stream& operator<<(const char n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-
- otl_stream& operator<<(const unsigned char n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-
-#ifdef OTL_STL
- otl_stream& operator<<(const OTL_STL_STRING& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-#endif
-
- otl_stream& operator<<(const char* n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-
- otl_stream& operator<<(const unsigned char* n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss)){
+   (*ss)->operator<<(s);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const int n)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss)){
+   (*ss)->operator<<(n);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator<<(const unsigned n)
+ otl_stream& operator<<(const unsigned u)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(u);
+  else if((*ss)){
+   (*ss)->operator<<(u);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator<<(const short n)
+ otl_stream& operator<<(const short sh)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(sh);
+  else if((*ss)){
+   (*ss)->operator<<(sh);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator<<(const long int n)
+ otl_stream& operator<<(const long int l)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(l);
+  else if((*ss)){
+   (*ss)->operator<<(l);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator<<(const float n)
+ otl_stream& operator<<(const float f)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(f);
+  else if((*ss)){
+   (*ss)->operator<<(f);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
- otl_stream& operator<<(const double n)
+ otl_stream& operator<<(const double d)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-
- otl_stream& operator<<(const otl_time& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
-  return *this;
- }
-
- otl_stream& operator<<(const otl_long_string& n)
- {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  if((*io))
+   (*io)->operator<<(d);
+  else if((*ss)){
+   (*ss)->operator<<(d);
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const otl_null n)
  {
-  (*OTL_RCAST(OTL_BASSTR*,this))<<n;
+  OTL_UNUSED_ARG(n)
+  if((*io))(*io)->operator<<(otl_null());
+  if((*ss)){
+   (*ss)->operator<<(otl_null());
+   if(!(*ov)&&(*ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
   return *this;
  }
-#undef OTL_BASSTR
+
+ otl_stream& operator<<(const otl_long_string& d)
+ {
+  if((*io)){
+   (*io)->operator<<(d);
+   inc_next_iov();
+  }
+  return *this;
+ }
+
 };
 
 #if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
@@ -7786,7 +8186,6 @@ STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const 
  return s;
 }
 
-//static 
 inline STD_NAMESPACE_PREFIX ostream& operator<<(
  STD_NAMESPACE_PREFIX ostream& s, 
  const otl_value<otl_datetime>& var
@@ -7944,7 +8343,7 @@ public:
   memset(hda,0,sizeof(hda));
  }
 
- ~otl_conn()
+ virtual ~otl_conn()
  {
   delete lda;
  }
@@ -8082,12 +8481,12 @@ public:
   pl_tab_flag=0;
  }
 
- ~otl_var()
+ virtual ~otl_var()
  {
-  delete p_v;
-  delete p_ind;
-  delete p_rlen;
-  delete p_rcode;
+  delete[] p_v;
+  delete[] p_ind;
+  delete[] p_rlen;
+  delete[] p_rcode;
  }
 
  int actual_elem_size(void)
@@ -8368,7 +8767,7 @@ public:
   memset(&cda,0,sizeof(cda));
  }
 
- ~otl_cur(){}
+ virtual ~otl_cur(){}
 
  long get_rpc()
  {
@@ -8578,7 +8977,7 @@ public:
   implicit_cursor=0;
  }
 
- ~otl_sel(){}
+ virtual ~otl_sel(){}
 
  void set_select_type(const int atype)
  {
@@ -8667,14 +9066,6 @@ typedef otl_tmpl_select_stream
   otl_sel,
   otl_time0> otl_select_stream;
 
-typedef otl_tmpl_basic_stream
- <otl_exc,
-  otl_conn,
-  otl_cur,
-  otl_var,
-  otl_sel,
-  otl_time0> otl_basic_stream;
-
 
 typedef otl_tmpl_ext_hv_decl
  <otl_var,
@@ -8683,14 +9074,27 @@ typedef otl_tmpl_ext_hv_decl
   otl_conn,
   otl_cur> otl_ext_hv_decl;
 
+class otl_stream_shell;
+
 class otl_connect: public otl_ora7_connect{
 public:
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ otl_stream_pool sc;
+
+ void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
+ {
+  sc.init(max_size);
+ }
+
+#endif
+
 
  otl_connect():otl_ora7_connect(){}
  otl_connect(const char* connect_str, const int aauto_commit=0)
    : otl_ora7_connect(connect_str, aauto_commit){}
 
- ~otl_connect(){}
+ virtual ~otl_connect(){}
 
  void rlogon(Lda_Def* alda)
  {
@@ -8713,6 +9117,15 @@ public:
  void rlogon(const char* connect_str, const int aauto_commit=0)
  {
   otl_ora7_connect::rlogon(connect_str,aauto_commit);
+ }
+
+ void logoff(void)
+ {
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(connected)
+   sc.init(sc.max_size);
+#endif
+  otl_ora7_connect::logoff();
  }
 
 };
@@ -8767,7 +9180,7 @@ public:
  {
  }
 
- ~otl_ref_cursor()
+ virtual ~otl_ref_cursor()
  {
   this->in_destructor=1;
   delete[] rvl;
@@ -8968,9 +9381,9 @@ public:
  (otl_select_struct_override* aoverride,
   const short arr_size,
   const char* sqlstm,
-  const char* cur_placeholder,
+  const char* acur_placeholder,
   otl_connect& db)
-  :otl_ref_cursor(db,cur_placeholder,arr_size)
+  :otl_ref_cursor(db,acur_placeholder,arr_size)
  {
   init();
 
@@ -8996,7 +9409,7 @@ public:
 
  }
 
- ~otl_ref_select_stream()
+ virtual ~otl_ref_select_stream()
  {
   cleanup();
  }
@@ -9676,77 +10089,158 @@ protected:
 
 };
 
-class otl_stream{
+class otl_stream_shell: public otl_stream_shell_generic{
 public:
-
- otl_select_struct_override override;
 
  otl_ref_select_stream* ref_ss;
  otl_select_stream* ss;
  otl_inout_stream* io;
  otl_connect* adb;
 
+
  int auto_commit_flag;
 
  otl_var_desc* iov;
  int iov_len;
+ int next_iov_ndx;
 
  otl_var_desc* ov;
  int ov_len;
+ int next_ov_ndx;
+
+ bool flush_flag;
+
+ otl_select_struct_override override;
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ OTL_STL_STRING orig_sql_stm;
+#endif
+
+
+ otl_stream_shell()
+ {
+  should_delete=0;
+ }
+
+ otl_stream_shell(const int ashould_delete)
+ {
+  should_delete=0;
+  iov=0; iov_len=0;
+  ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
+  override.len=0;
+  ss=0; io=0; ref_ss=0;
+  adb=0;
+  flush_flag=true;
+  should_delete=ashould_delete;
+ }
+
+ virtual ~otl_stream_shell()
+ {
+  if(should_delete){
+   delete[] iov;
+   delete[] ov;
+
+   iov=0; iov_len=0;
+   ov=0; ov_len=0;
+   next_iov_ndx=0;
+   next_ov_ndx=0;
+   override.len=0;
+   flush_flag=true;
+
+   delete ss;
+   delete io;
+   delete ref_ss;
+   ss=0; io=0; ref_ss=0;
+   adb=0;
+  }
+ }
+
+};
+
+class otl_stream{
+public:
+
+
+ otl_stream_shell* shell;
+ otl_ptr<otl_stream_shell> shell_pt;
+ int connected;
+
+ otl_ref_select_stream** ref_ss;
+ otl_select_stream** ss;
+ otl_inout_stream** io;
+ otl_connect** adb;
+
+ int* auto_commit_flag;
+
+ otl_var_desc** iov;
+ int* iov_len;
+ int* next_iov_ndx;
+
+ otl_var_desc** ov;
+ int* ov_len;
+ int* next_ov_ndx;
+
+ otl_select_struct_override* override;
 
  long get_rpc()
  {
-  if(io){
-   adb->reset_throw_count();
-   return io->get_rpc();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   return (*io)->get_rpc();
   }else
    return 0;
  }
 
  void create_var_desc(void)
  {int i;
-  delete[] iov;
-  delete[] ov;
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  if(ss){
-   if(ss->vl_len>0){
-    iov=new otl_var_desc[ss->vl_len];
-    iov_len=ss->vl_len;
-    for(i=0;i<ss->vl_len;++i)
-     ss->vl[i]->copy_var_desc(iov[i]);
+  delete[] (*iov);
+  delete[] (*ov);
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  if((*ss)){
+   if((*ss)->vl_len>0){
+    (*iov)=new otl_var_desc[(*ss)->vl_len];
+    (*iov_len)=(*ss)->vl_len;
+    for(i=0;i<(*ss)->vl_len;++i)
+     (*ss)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(ss->sl_len>0){
-    ov=new otl_var_desc[ss->sl_len];
-    ov_len=ss->sl_len;
-    for(i=0;i<ss->sl_len;++i)
-     ss->sl[i].copy_var_desc(ov[i]);
+   if((*ss)->sl_len>0){
+    (*ov)=new otl_var_desc[(*ss)->sl_len];
+    (*ov_len)=(*ss)->sl_len;
+    for(i=0;i<(*ss)->sl_len;++i){
+     (*ss)->sl[i].copy_var_desc((*ov)[i]);
+     (*ov)[i].copy_name((*ss)->sl_desc[i].name);
+    }
    }
-  }else if(io){
-   if(io->vl_len>0){
-    iov=new otl_var_desc[io->vl_len];
-    iov_len=io->vl_len;
-    for(i=0;i<io->vl_len;++i)
-     io->vl[i]->copy_var_desc(iov[i]);
+  }else if((*io)){
+   if((*io)->vl_len>0){
+    (*iov)=new otl_var_desc[(*io)->vl_len];
+    (*iov_len)=(*io)->vl_len;
+    for(i=0;i<(*io)->vl_len;++i)
+     (*io)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(io->iv_len>0){
-    ov=new otl_var_desc[io->iv_len];
-    ov_len=io->iv_len;
-    for(i=0;i<io->iv_len;++i)
-     io->in_vl[i]->copy_var_desc(ov[i]);
+   if((*io)->iv_len>0){
+    (*ov)=new otl_var_desc[(*io)->iv_len];
+    (*ov_len)=(*io)->iv_len;
+    for(i=0;i<(*io)->iv_len;++i)
+     (*io)->in_vl [i]->copy_var_desc((*ov)[i]);
    }
-  }else if(ref_ss){
-   if(ref_ss->vl_len>0){
-    iov=new otl_var_desc[ref_ss->vl_len];
-    iov_len=ref_ss->vl_len;
-    for(i=0;i<ref_ss->vl_len;++i)
-     ref_ss->vl[i]->copy_var_desc(iov[i]);
+  }else if((*ref_ss)){
+   if((*ref_ss)->vl_len>0){
+    (*iov)=new otl_var_desc[(*ref_ss)->vl_len];
+    (*iov_len)=(*ref_ss)->vl_len;
+    for(i=0;i<(*ref_ss)->vl_len;++i)
+     (*ref_ss)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(ref_ss->sl_len>0){
-    ov=new otl_var_desc[ref_ss->sl_len];
-    ov_len=ref_ss->sl_len;
-    for(i=0;i<ref_ss->sl_len;++i)
-     ref_ss->sl[i].copy_var_desc(ov[i]);
+   if((*ref_ss)->sl_len>0){
+    (*ov)=new otl_var_desc[(*ref_ss)->sl_len];
+    (*ov_len)=(*ref_ss)->sl_len;
+    for(i=0;i<(*ref_ss)->sl_len;++i){
+     (*ref_ss)->sl[i].copy_var_desc((*ov)[i]);
+     (*ov)[i].copy_name((*ref_ss)->sl_desc[i].name);
+    }
    }
   }
  }
@@ -9755,14 +10249,71 @@ public:
                       const int col_type,
                       const int col_size=0)
  {
-  override.add_override(column_ndx,col_type,col_size);
+  override->add_override(column_ndx,col_type,col_size);
  }
 
-  void set_all_column_types(const unsigned mask=0)
-  {
-    override.set_all_column_types(mask);
-  }
+ void set_all_column_types(const unsigned mask=0)
+ {
+  override->set_all_column_types(mask);
+ }
 
+ void set_flush(const bool flush_flag=true)
+ {
+  if(shell==0)return;
+  shell->flush_flag=flush_flag;
+ }
+
+
+ void inc_next_ov(void)
+ {
+  if((*ov_len)==0)return;
+  if((*next_ov_ndx)<(*ov_len)-1)
+   ++(*next_ov_ndx);
+  else
+   (*next_ov_ndx)=0;
+ }
+ 
+ void inc_next_iov(void)
+ {
+  if((*iov_len)==0)return;
+  if((*next_iov_ndx)<(*iov_len)-1)
+   ++(*next_iov_ndx);
+  else
+   (*next_iov_ndx)=0;
+ }
+
+ void init_stream(void)
+ {
+  shell=0;
+  shell=new otl_stream_shell(0);
+  shell_pt.assign(&shell);
+  connected=0;
+
+  ref_ss=&(shell->ref_ss);
+  ss=&(shell->ss);
+  io=&(shell->io);
+  adb=&(shell->adb);
+  auto_commit_flag=&(shell->auto_commit_flag);
+  iov=&(shell->iov);
+  iov_len=&(shell->iov_len);
+  next_iov_ndx=&(shell->next_iov_ndx);
+  ov=&(shell->ov);
+  ov_len=&(shell->ov_len);
+  next_ov_ndx=&(shell->next_ov_ndx);
+  override=&(shell->override);
+  
+  (*ref_ss)=0;
+  (*io)=0;
+  (*ss)=0;
+  (*adb)=0;
+  (*ov)=0; 
+  (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*auto_commit_flag)=1;
+  (*iov)=0; 
+  (*iov_len)=0;
+ }
 
  otl_stream
  (const short arr_size,
@@ -9770,108 +10321,222 @@ public:
   otl_connect& db,
   const char* ref_cur_placeholder=0)
  {
-  io=0; ss=0; ref_ss=0;
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  auto_commit_flag=1;
-  adb=&db;
+  init_stream();
+
+  (*io)=0; (*ss)=0; (*ref_ss)=0;
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*auto_commit_flag)=1;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*adb)=&db;
+  shell->flush_flag=true;
   open(arr_size,sqlstm,db,ref_cur_placeholder);
  }
 
  otl_stream()
  {
-  ref_ss=0;
-  io=0;
-  ss=0;
-  adb=0;
-  ov=0; ov_len=0;
-  auto_commit_flag=1;
-  iov=0; iov_len=0;
+  init_stream();
+  shell->flush_flag=true;
  }
 
- ~otl_stream()
+ virtual ~otl_stream()
  {
-  close();
+  if(!connected)return;
+  try{
+   if((*io)!=0&&shell->flush_flag==false)
+    (*io)->flush_flag2=false;
+   close();
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+  }catch(otl_exception&){
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+   clean(1);
+   shell->should_delete=1;
+   shell_pt.destroy();
+#else
+   shell_pt.destroy();
+#endif
+   throw;
+  }
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if((*adb) && (*adb)->throw_count>0
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+  || STD_NAMESPACE_PREFIX uncaught_exception()
+#endif
+     ){
+   //
+  }
+#else
+   shell_pt.destroy();
+#endif
  }
-
 
  int eof(void)
  {
-  if(io){
-   adb->reset_throw_count();
-   return io->eof();
-  }else if(ss){
-   adb->reset_throw_count();
-   return ss->eof();
-  }else if(ref_ss){
-   adb->reset_throw_count();
-   return ref_ss->eof();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   return (*io)->eof();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   return (*ss)->eof();
+  }else if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   return (*ref_ss)->eof();
   }else
    return 1;
  }
 
  void flush(void)
  {
-  if(io){
-   adb->reset_throw_count();
-   io->flush();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->flush();
   }
  }
 
  void clean(const int clean_up_error_flag=0)
  {
-  if(io){
-   adb->reset_throw_count();
-   io->clean(clean_up_error_flag);
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->clean(clean_up_error_flag);
   }
  }
 
  void rewind(void)
  {
-  if(io){
-   adb->reset_throw_count();
-   io->rewind();
-  }else if(ss){
-   adb->reset_throw_count();
-   ss->rewind();
-  }else if(ref_ss){
-   adb->reset_throw_count();
-   ref_ss->rewind();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->rewind();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   (*ss)->rewind();
+  }else if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   (*ref_ss)->rewind();
   }
  }
 
+ 
  int is_null(void)
  {
-  if(io)
-   return io->is_null();
-  else if(ss)
-   return ss->is_null();
-  else if(ref_ss)
-   return ref_ss->is_null();
+  if((*io))
+   return (*io)->is_null();
+  else if((*ss))
+   return (*ss)->is_null();
+  else if((*ref_ss))
+   return (*ref_ss)->is_null();
   else
    return 0;
  }
 
  void set_commit(int auto_commit=0)
  {
-  auto_commit_flag=auto_commit;
-  if(io){
-   adb->reset_throw_count();
-   io->set_commit(auto_commit);
+  (*auto_commit_flag)=auto_commit;
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->set_commit(auto_commit);
   }
  }
 
+ void intern_cleanup(void)
+ {
+  delete[] (*iov);
+  delete[] (*ov);
+
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  override->len=0;
+
+  if((*ref_ss)){
+   try{
+    (*ref_ss)->close();
+   }catch(otl_exception&){
+    delete (*ref_ss);
+    (*ref_ss)=0;
+    throw;
+   }
+   delete (*ref_ss);
+   (*ref_ss)=0;
+  }
+
+  if((*ss)){
+   try{
+    (*ss)->close();
+   }catch(otl_exception&){
+    delete (*ss);
+    (*ss)=0;
+    throw;
+   }
+   delete (*ss);
+   (*ss)=0;
+  }
+  
+  if((*io)){
+   try{
+    (*io)->flush();
+   }catch(otl_exception&){
+    clean(1);
+    delete (*io);
+    (*io)=0;
+    throw;
+   }
+   delete (*io);
+   (*io)=0;
+  }
+
+  (*ss)=0; (*io)=0; (*ref_ss)=0;
+  (*adb)=0;
+ }
+ 
  void open
  (const short arr_size,
   const char* sqlstm,
   otl_connect& db,
   const char* ref_cur_placeholder=0)
  {
-  delete[] iov;
-  delete[] ov;
+  if(shell==0)
+   init_stream();
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  char temp_buf[128];
+  otl_itoa(arr_size,temp_buf);
+  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  otl_stream_shell* temp_shell=OTL_RCAST(otl_stream_shell*,db.sc.find(sql_stm));
+  if(temp_shell){
+   if(shell!=0)
+    shell_pt.destroy();
+   shell=temp_shell;
+   ref_ss=&(shell->ref_ss);
+   ss=&(shell->ss);
+   io=&(shell->io);
+   adb=&(shell->adb);
+   auto_commit_flag=&(shell->auto_commit_flag);
+   iov=&(shell->iov);
+   iov_len=&(shell->iov_len);
+   next_iov_ndx=&(shell->next_iov_ndx);
+   ov=&(shell->ov);
+   ov_len=&(shell->ov_len);
+   next_ov_ndx=&(shell->next_ov_ndx);
+   override=&(shell->override);
+   if((*iov_len)==0)
+    this->rewind();
+   connected=1;
+   return;
+  }
+  shell->orig_sql_stm=sql_stm;
+#endif
 
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
+  delete[] (*iov);
+  delete[] (*ov);
+
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
 
   char tmp[7];
   char* c=OTL_CCAST(char*,sqlstm);
@@ -9884,338 +10549,181 @@ public:
    *c=OTL_SCAST(char,otl_to_upper(*c));
    ++c;
   }
-  adb=&db;
-  adb->reset_throw_count();
-  if(strncmp(tmp,"SELECT",6)==0){
-   ss=new otl_select_stream(&override,arr_size,sqlstm,db);
+  (*adb)=&db;
+  (*adb)->reset_throw_count();
+  try{
+   if(strncmp(tmp,"SELECT",6)==0){
+    (*ss)=new otl_select_stream(override,arr_size,sqlstm,db);
+   }else if(ref_cur_placeholder!=0){
+    (*ref_ss)=new otl_ref_select_stream
+     (override,arr_size,sqlstm,ref_cur_placeholder,db);
+   }else {
+    (*io)=new otl_inout_stream(arr_size,sqlstm,db);
+    (*io)->flush_flag=shell->flush_flag;
+   }
+  }catch(otl_exception&){
+   shell_pt.destroy();
+   throw;
   }
-  else if(ref_cur_placeholder!=0){
-   ref_ss=new otl_ref_select_stream(&override,arr_size,sqlstm,ref_cur_placeholder,db);
-  }else {
-   io=new otl_inout_stream(arr_size,sqlstm,db);
-  }
-  if(io)io->set_commit(auto_commit_flag);
+  if((*io))(*io)->set_commit((*auto_commit_flag));
   create_var_desc();
+  connected=1;
  }
 
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ void close(const bool save_in_stream_pool=true)
+#else
  void close(void)
+#endif
  {
-  delete[] iov;
-  delete[] ov;
-
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  override.len=0;
-
-  delete ss;
-  delete io;
-  delete ref_ss;
-  ss=0; io=0; ref_ss=0;
-  adb=0;
+  if(shell==0)return;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(save_in_stream_pool&&(*adb)&&
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+     !(STD_NAMESPACE_PREFIX uncaught_exception())&&
+#endif
+     (*adb)->throw_count==0){
+   try{
+    this->flush();
+   }catch(otl_exception&){
+    this->clean(1);
+    throw;
+   }
+   if((*adb) && (*adb)->throw_count>0){
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return;
+   }
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+   if(STD_NAMESPACE_PREFIX uncaught_exception()){
+    if((*adb))
+     (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return; 
+   }
+#endif
+   (*adb)->sc.add(shell,shell->orig_sql_stm.c_str());
+   shell_pt.disconnect();
+   connected=0;
+  }else{
+   if((*adb))
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+   intern_cleanup();
+   shell_pt.destroy();
+   connected=0;
+  }
+#else
+  intern_cleanup();
+  connected=0;
+#endif
  }
 
  otl_column_desc* describe_select(int& desc_len)
  {
   desc_len=0;
-  if(ss){
-   adb->reset_throw_count();
-   desc_len=ss->sl_len;
-   return ss->sl_desc;
+  if((*ss)){
+   (*adb)->reset_throw_count();
+   desc_len=(*ss)->sl_len;
+   return (*ss)->sl_desc;
   }
-  if(ref_ss){
-   adb->reset_throw_count();
-   desc_len=ref_ss->sl_len;
-   return ref_ss->sl_desc;
+  if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   desc_len=(*ref_ss)->sl_len;
+   return (*ref_ss)->sl_desc;
   }
   return 0;
  }
 
-
  int good(void)
  {
-  if(io||ss||ref_ss){
-   adb->reset_throw_count();
+  if(!connected)return 0;
+  if((*io)||(*ss)||(*ref_ss)){
+   (*adb)->reset_throw_count();
    return 1;
   }else
    return 0;
  }
 
+
  otl_stream& operator>>(otl_pl_tab_generic& tab)
  {
-  if(io)io->operator>>(tab);
+  if((*io)){
+   (*io)->operator>>(tab);
+   inc_next_ov();
+  }
   return *this;
  }
 
  otl_stream& operator<<(otl_pl_tab_generic& tab)
  {
-  if(io)io->operator<<(tab);
+  if((*io)){
+   (*io)->operator<<(tab);
+   inc_next_iov();
+  }
   return *this;
  }
-
 
 #if defined(OTL_PL_TAB) && defined(OTL_STL)
 
  otl_stream& operator>>(otl_pl_vec_generic& vec)
  {
-  if(io)io->operator>>(vec);
+  if((*io)){
+   (*io)->operator>>(vec);
+   inc_next_ov();
+  }
   return *this;
  }
 
  otl_stream& operator<<(otl_pl_vec_generic& vec)
  {
-  if(io)io->operator<<(vec);
+  if((*io)){
+   (*io)->operator<<(vec);
+   inc_next_iov();
+  }
   return *this;
  }
 
 #endif
 
- otl_stream& operator>>(char& c)
- {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  else if(ref_ss)
-   ref_ss->operator>>(c);
-  return *this;
- }
-
- otl_stream& operator>>(unsigned char& c)
- {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  else if(ref_ss)
-   ref_ss->operator>>(c);
-  return *this;
- }
-
-#ifdef OTL_STL
- otl_stream& operator>>(OTL_STL_STRING& s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
-  return *this;
- }
-#endif
-
- otl_stream& operator>>(char* s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
-  return *this;
- }
-
- otl_stream& operator>>(unsigned char* s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
-  return *this;
- }
-
- otl_stream& operator>>(int& n)
- {
-  if(io)
-   io->operator>>(n);
-  else if(ss)
-   ss->operator>>(n);
-  else if(ref_ss)
-   ref_ss->operator>>(n);
-  return *this;
- }
-
- otl_stream& operator>>(unsigned& u)
- {
-  if(io)
-   io->operator>>(u);
-  else if(ss)
-   ss->operator>>(u);
-  else if(ref_ss)
-   ref_ss->operator>>(u);
-  return *this;
- }
-
- otl_stream& operator>>(short& sh)
- {
-  if(io)
-   io->operator>>(sh);
-  else if(ss)
-   ss->operator>>(sh);
-  else if(ref_ss)
-   ref_ss->operator>>(sh);
-  return *this;
- }
-
- otl_stream& operator>>(long int& l)
- {
-  if(io)
-   io->operator>>(l);
-  else if(ss)
-   ss->operator>>(l);
-  else if(ref_ss)
-   ref_ss->operator>>(l);
-  return *this;
- }
-
- otl_stream& operator>>(float& f)
- {
-  if(io)
-   io->operator>>(f);
-  else if(ss)
-   ss->operator>>(f);
-  else if(ref_ss)
-   ref_ss->operator>>(f);
-  return *this;
- }
-
- otl_stream& operator>>(double& d)
- {
-  if(io)
-   io->operator>>(d);
-  else if(ss)
-   ss->operator>>(d);
-  else if(ref_ss)
-   ref_ss->operator>>(d);
-  return *this;
- }
-
- otl_stream& operator>>(otl_long_string& s)
- {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
-  return *this;
- }
-
- otl_stream& operator<<(const char c)
- {
-  if(io)
-   io->operator<<(c);
-  else if(ss)
-   ss->operator<<(c);
-  else if(ref_ss){
-   ref_ss->operator<<(c);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_stream& operator<<(const unsigned char c)
- {
-  if(io)
-   io->operator<<(c);
-  else if(ss)
-   ss->operator<<(c);
-  else if(ref_ss){
-   ref_ss->operator<<(c);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
-#ifdef OTL_STL
- otl_stream& operator<<(const OTL_STL_STRING& s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
-#endif
-
- otl_stream& operator<<(const char* s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_stream& operator<<(const unsigned char* s)
- {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
 
  otl_stream& operator>>(otl_time0& s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
   else if(ref_ss)
-   ref_ss->operator>>(s);
+   (*ref_ss)->operator>>(s);
+  return *this;
+ }
+
+ otl_stream& operator<<(const otl_time0& n)
+ {
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss))
+   (*ss)->operator<<(n);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(n);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
   return *this;
  }
 
  otl_stream& operator>>(otl_datetime& s)
  {otl_time0 tmp;
   (*this)>>tmp;
-  s.year=(OTL_SCAST(int,tmp.century-100))*100+(OTL_SCAST(int,tmp.year-100));
+  s.year=(OTL_SCAST(int,tmp.century)-100)*100+(OTL_SCAST(int,tmp.year)-100);
   s.month=tmp.month;
   s.day=tmp.day;
   s.hour=tmp.hour-1;
   s.minute=tmp.minute-1;
   s.second=tmp.second-1;
-  return *this;
- }
-
- otl_stream& operator<<(const int n)
- {
-  if(io)
-   io->operator<<(n);
-  else if(ss)
-   ss->operator<<(n);
-  else if(ref_ss){
-   ref_ss->operator<<(n);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
-  return *this;
- }
-
- otl_stream& operator<<(const otl_time0& n)
- {
-  if(io)
-   io->operator<<(n);
-  else if(ss)
-   ss->operator<<(n);
-  else if(ref_ss){
-   ref_ss->operator<<(n);
-   if(!ov&&ref_ss->sl) create_var_desc();
-  }
+  inc_next_ov();
   return *this;
  }
 
@@ -10229,90 +10737,332 @@ public:
   tmp.minute=s.minute+1;
   tmp.second=s.second+1;
   (*this)<<tmp;
+  inc_next_iov();
   return *this;
  }
 
+ otl_stream& operator>>(char& c)
+ {
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(c);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(unsigned char& c)
+ {
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(c);
+  inc_next_ov();
+  return *this;
+ }
+
+#ifdef OTL_STL
+ otl_stream& operator>>(OTL_STL_STRING& s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+#endif
+
+ otl_stream& operator>>(char* s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(unsigned char* s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(int& n)
+ {
+  if((*io))
+   (*io)->operator>>(n);
+  else if((*ss))
+   (*ss)->operator>>(n);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(n);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(unsigned& u)
+ {
+  if((*io))
+   (*io)->operator>>(u);
+  else if((*ss))
+   (*ss)->operator>>(u);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(u);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(short& sh)
+ {
+  if((*io))
+   (*io)->operator>>(sh);
+  else if((*ss))
+   (*ss)->operator>>(sh);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(sh);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(long int& l)
+ {
+  if((*io))
+   (*io)->operator>>(l);
+  else if((*ss))
+   (*ss)->operator>>(l);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(l);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(float& f)
+ {
+  if((*io))
+   (*io)->operator>>(f);
+  else if((*ss))
+   (*ss)->operator>>(f);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(f);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(double& d)
+ {
+  if((*io))
+   (*io)->operator>>(d);
+  else if((*ss))
+   (*ss)->operator>>(d);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(d);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator>>(otl_long_string& s)
+ {
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
+  inc_next_ov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const char c)
+ {
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss))
+   (*ss)->operator<<(c);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(c);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const unsigned char c)
+ {
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss))
+   (*ss)->operator<<(c);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(c);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+
+#ifdef OTL_STL
+ otl_stream& operator<<(const OTL_STL_STRING& s)
+ {
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+#endif
+
+
+ otl_stream& operator<<(const char* s)
+ {
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const unsigned char* s)
+ {
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
+
+ otl_stream& operator<<(const int n)
+ {
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss))
+   (*ss)->operator<<(n);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(n);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
+  }
+  inc_next_iov();
+  return *this;
+ }
 
  otl_stream& operator<<(const unsigned u)
  {
-  if(io)
-   io->operator<<(u);
-  else if(ss)
-   ss->operator<<(u);
-  else if(ref_ss){
-   ref_ss->operator<<(u);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(u);
+  else if((*ss))
+   (*ss)->operator<<(u);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(u);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const short sh)
  {
-  if(io)
-   io->operator<<(sh);
-  else if(ss)
-   ss->operator<<(sh);
-  else if(ref_ss){
-   ref_ss->operator<<(sh);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(sh);
+  else if((*ss))
+   (*ss)->operator<<(sh);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(sh);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const long int l)
  {
-  if(io)
-   io->operator<<(l);
-  else if(ss)
-   ss->operator<<(l);
-  else if(ref_ss){
-   ref_ss->operator<<(l);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(l);
+  else if((*ss))
+   (*ss)->operator<<(l);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(l);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const float f)
  {
-  if(io)
-   io->operator<<(f);
-  else if(ss)
-   ss->operator<<(f);
-  else if(ref_ss){
-   ref_ss->operator<<(f);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(f);
+  else if((*ss))
+   (*ss)->operator<<(f);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(f);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const double d)
  {
-  if(io)
-   io->operator<<(d);
-  else if(ss)
-   ss->operator<<(d);
-  else if(ref_ss){
-   ref_ss->operator<<(d);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(d);
+  else if((*ss))
+   (*ss)->operator<<(d);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(d);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const otl_null n)
  {
   OTL_UNUSED_ARG(n)
-  if(io)io->operator<<(otl_null());
-  if(ss)ss->operator<<(otl_null());
-  if(ref_ss){
-   ref_ss->operator<<(otl_null());
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))(*io)->operator<<(otl_null());
+  if((*ss))(*ss)->operator<<(otl_null());
+  if((*ref_ss)){
+   (*ref_ss)->operator<<(otl_null());
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const otl_long_string& d)
  {
-  if(io)io->operator<<(d);
+  if((*io)){
+   (*io)->operator<<(d);
+   inc_next_iov();
+  }
   return *this;
  }
 
@@ -10350,7 +11100,6 @@ STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const 
  return s;
 }
 
-//static 
 inline STD_NAMESPACE_PREFIX ostream& operator<<(
  STD_NAMESPACE_PREFIX ostream& s, 
  const otl_value<otl_datetime>& var
@@ -10533,7 +11282,7 @@ public:
   ext_cred=0;
  }
 
- ~otl_conn(){}
+ virtual ~otl_conn(){}
 
  void set_timeout(const int atimeout=0){OTL_UNUSED_ARG(atimeout)}
  void set_cursor_type(const int acursor_type=0){OTL_UNUSED_ARG(acursor_type)}
@@ -10917,7 +11666,7 @@ public:
   pl_tab_flag=0;
  }
 
- ~otl_var()
+ virtual ~otl_var()
  {int i;
   if(ftype==otl_var_blob||ftype==otl_var_clob&&lob!=0){
    for(i=0;i<array_size;++i)
@@ -11409,7 +12158,7 @@ public:
   commit_on_success=0;
  }
 
- ~otl_cur(){}
+ virtual ~otl_cur(){}
 
  void set_direct_exec(const int flag){OTL_UNUSED_ARG(flag)}
 
@@ -11828,7 +12577,7 @@ public:
   implicit_cursor=0;
  }
 
- ~otl_sel(){}
+ virtual ~otl_sel(){}
 
  void set_select_type(const int atype)
  {
@@ -11928,14 +12677,6 @@ typedef otl_tmpl_select_stream
   otl_sel,
   otl_time0> otl_select_stream;
 
-typedef otl_tmpl_basic_stream
- <otl_exc,
-  otl_conn,
-  otl_cur,
-  otl_var,
-  otl_sel,
-  otl_time0> otl_basic_stream;
-
 
 typedef otl_tmpl_ext_hv_decl
  <otl_var,
@@ -11944,14 +12685,26 @@ typedef otl_tmpl_ext_hv_decl
   otl_conn,
   otl_cur> otl_ext_hv_decl;
 
+
+
 class otl_connect: public otl_ora8_connect{
 public:
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ otl_stream_pool sc;
+
+ void set_stream_pool_size(const int max_size=otl_max_default_pool_size)
+ {
+  sc.init(max_size);
+ }
+
+#endif
 
  otl_connect():otl_ora8_connect(){}
  otl_connect(const char* connect_str, const int aauto_commit=0)
    : otl_ora8_connect(connect_str, aauto_commit){}
 
- ~otl_connect(){}
+ virtual ~otl_connect(){}
 
   void auto_commit_off(void)
   {
@@ -11983,6 +12736,10 @@ public:
 
  void logoff(void)
  {
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(connected)
+   sc.init(sc.max_size);
+#endif
   if(!connected){
    connect_struct.session_end();
    connect_struct.server_detach();
@@ -12072,6 +12829,10 @@ public:
 
  void session_end(void)
  {
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(connected)
+   sc.init(sc.max_size);
+#endif
   connected=0;
   retcode=connect_struct.session_end();
   if(!retcode){
@@ -12136,7 +12897,7 @@ public:
  {
  }
 
- ~otl_ref_cursor()
+ virtual ~otl_ref_cursor()
  {
   delete[] rvl;
   rvl=0;
@@ -12443,7 +13204,7 @@ public:
 
  }
 
- ~otl_ref_select_stream()
+ virtual ~otl_ref_select_stream()
  {
   cleanup();
   close();
@@ -13195,13 +13956,14 @@ protected:
 
 };
 
-class otl_stream{
+class otl_stream_shell: public otl_stream_shell_generic{
 public:
 
  otl_ref_select_stream* ref_ss;
  otl_select_stream* ss;
  otl_inout_stream* io;
  otl_connect* adb;
+
 
  int auto_commit_flag;
 
@@ -13213,96 +13975,211 @@ public:
  int ov_len;
  int next_ov_ndx;
 
+ bool flush_flag;
+
  otl_select_struct_override override;
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ OTL_STL_STRING orig_sql_stm;
+#endif
+
+
+ otl_stream_shell()
+ {
+  should_delete=0;
+ }
+
+ otl_stream_shell(const int ashould_delete)
+ {
+  should_delete=0;
+  iov=0; iov_len=0;
+  ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
+  override.len=0;
+  ss=0; io=0; ref_ss=0;
+  adb=0;
+  flush_flag=true;
+  should_delete=ashould_delete;
+ }
+
+ virtual ~otl_stream_shell()
+ {
+  if(should_delete){
+   delete[] iov;
+   delete[] ov;
+
+   iov=0; iov_len=0;
+   ov=0; ov_len=0;
+   next_iov_ndx=0;
+   next_ov_ndx=0;
+   override.len=0;
+   flush_flag=true;
+
+   delete ss;
+   delete io;
+   delete ref_ss;
+   ss=0; io=0; ref_ss=0;
+   adb=0;
+  }
+ }
+
+};
+
+class otl_stream{
+public:
+
+ otl_stream_shell* shell;
+ otl_ptr<otl_stream_shell> shell_pt;
+ int connected;
+
+ otl_ref_select_stream** ref_ss;
+ otl_select_stream** ss;
+ otl_inout_stream** io;
+ otl_connect** adb;
+
+ int* auto_commit_flag;
+
+ otl_var_desc** iov;
+ int* iov_len;
+ int* next_iov_ndx;
+
+ otl_var_desc** ov;
+ int* ov_len;
+ int* next_ov_ndx;
+
+ otl_select_struct_override* override;
+
 
  void set_column_type(const int column_ndx,
                       const int col_type,
                       const int col_size=0)
  {
-  override.add_override(column_ndx,col_type,col_size);
+  override->add_override(column_ndx,col_type,col_size);
  }
 
-  void set_all_column_types(const unsigned mask=0)
-  {
-    override.set_all_column_types(mask);
-  }
+ 
+ void set_all_column_types(const unsigned mask=0)
+ {
+  override->set_all_column_types(mask);
+ }
 
+ void set_flush(const bool flush_flag=true)
+ {
+  if(shell==0)return;
+  shell->flush_flag=flush_flag;
+ }
+ 
  void inc_next_ov(void)
  {
-  if(ov_len==0)return;
-  if(next_ov_ndx<ov_len-1)
-   ++next_ov_ndx;
+  if((*ov_len)==0)return;
+  if((*next_ov_ndx)<(*ov_len)-1)
+   ++(*next_ov_ndx);
   else
-   next_ov_ndx=0;
+   (*next_ov_ndx)=0;
  }
-
+ 
  void inc_next_iov(void)
  {
-  if(iov_len==0)return;
-  if(next_iov_ndx<iov_len-1)
-   ++next_iov_ndx;
+  if((*iov_len)==0)return;
+  if((*next_iov_ndx)<(*iov_len)-1)
+   ++(*next_iov_ndx);
   else
-   next_iov_ndx=0;
+   (*next_iov_ndx)=0;
  }
-
+ 
  long get_rpc()
  {
-  if(io)
-   return io->get_rpc();
-  else
+  if(*io){
+   (*adb)->reset_throw_count();
+   return (*io)->get_rpc();
+  }else
    return 0;
  }
-
+ 
  void create_var_desc(void)
  {int i;
-  delete[] iov;
-  delete[] ov;
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  if(ss){
-   if(ss->vl_len>0){
-    iov=new otl_var_desc[ss->vl_len];
-    iov_len=ss->vl_len;
-    for(i=0;i<ss->vl_len;++i)
-     ss->vl[i]->copy_var_desc(iov[i]);
+  delete[] (*iov);
+  delete[] (*ov);
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  if((*ss)){
+   if((*ss)->vl_len>0){
+    (*iov)=new otl_var_desc[(*ss)->vl_len];
+    (*iov_len)=(*ss)->vl_len;
+    for(i=0;i<(*ss)->vl_len;++i)
+     (*ss)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(ss->sl_len>0){
-    ov=new otl_var_desc[ss->sl_len];
-    ov_len=ss->sl_len;
-    for(i=0;i<ss->sl_len;++i){
-     ss->sl[i].copy_var_desc(ov[i]);
-     ov[i].copy_name(ss->sl_desc[i].name);
+   if((*ss)->sl_len>0){
+    (*ov)=new otl_var_desc[(*ss)->sl_len];
+    (*ov_len)=(*ss)->sl_len;
+    for(i=0;i<(*ss)->sl_len;++i){
+     (*ss)->sl[i].copy_var_desc((*ov)[i]);
+     (*ov)[i].copy_name((*ss)->sl_desc[i].name);
     }
    }
-  }else if(io){
-   if(io->vl_len>0){
-    iov=new otl_var_desc[io->vl_len];
-    iov_len=io->vl_len;
-    for(i=0;i<io->vl_len;++i)
-     io->vl[i]->copy_var_desc(iov[i]);
+  }else if((*io)){
+   if((*io)->vl_len>0){
+    (*iov)=new otl_var_desc[(*io)->vl_len];
+    (*iov_len)=(*io)->vl_len;
+    for(i=0;i<(*io)->vl_len;++i)
+     (*io)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(io->iv_len>0){
-    ov=new otl_var_desc[io->iv_len];
-    ov_len=io->iv_len;
-    for(i=0;i<io->iv_len;++i)
-     io->in_vl[i]->copy_var_desc(ov[i]);
+   if((*io)->iv_len>0){
+    (*ov)=new otl_var_desc[(*io)->iv_len];
+    (*ov_len)=(*io)->iv_len;
+    for(i=0;i<(*io)->iv_len;++i)
+     (*io)->in_vl [i]->copy_var_desc((*ov)[i]);
    }
-  }else if(ref_ss){
-   if(ref_ss->vl_len>0){
-    iov=new otl_var_desc[ref_ss->vl_len];
-    iov_len=ref_ss->vl_len;
-    for(i=0;i<ref_ss->vl_len;++i)
-     ref_ss->vl[i]->copy_var_desc(iov[i]);
+  }else if((*ref_ss)){
+   if((*ref_ss)->vl_len>0){
+    (*iov)=new otl_var_desc[(*ref_ss)->vl_len];
+    (*iov_len)=(*ref_ss)->vl_len;
+    for(i=0;i<(*ref_ss)->vl_len;++i)
+     (*ref_ss)->vl[i]->copy_var_desc((*iov)[i]);
    }
-   if(ref_ss->sl_len>0){
-    ov=new otl_var_desc[ref_ss->sl_len];
-    ov_len=ref_ss->sl_len;
-    for(i=0;i<ref_ss->sl_len;++i){
-     ref_ss->sl[i].copy_var_desc(ov[i]);
-     ov[i].copy_name(ref_ss->sl_desc[i].name);
+   if((*ref_ss)->sl_len>0){
+    (*ov)=new otl_var_desc[(*ref_ss)->sl_len];
+    (*ov_len)=(*ref_ss)->sl_len;
+    for(i=0;i<(*ref_ss)->sl_len;++i){
+     (*ref_ss)->sl[i].copy_var_desc((*ov)[i]);
+     (*ov)[i].copy_name((*ref_ss)->sl_desc[i].name);
     }
    }
   }
+ }
+
+ void init_stream(void)
+ {
+  shell=0;
+  shell=new otl_stream_shell(0);
+  shell_pt.assign(&shell);
+  connected=0;
+
+  ref_ss=&(shell->ref_ss);
+  ss=&(shell->ss);
+  io=&(shell->io);
+  adb=&(shell->adb);
+  auto_commit_flag=&(shell->auto_commit_flag);
+  iov=&(shell->iov);
+  iov_len=&(shell->iov_len);
+  next_iov_ndx=&(shell->next_iov_ndx);
+  ov=&(shell->ov);
+  ov_len=&(shell->ov_len);
+  next_ov_ndx=&(shell->next_ov_ndx);
+  override=&(shell->override);
+  
+  (*ref_ss)=0;
+  (*io)=0;
+  (*ss)=0;
+  (*adb)=0;
+  (*ov)=0; 
+  (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*auto_commit_flag)=1;
+  (*iov)=0; 
+  (*iov_len)=0;
  }
 
  otl_stream
@@ -13311,102 +14188,172 @@ public:
   otl_connect& db,
   const char* ref_cur_placeholder=0)
  {
-  io=0; ss=0; ref_ss=0;
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  auto_commit_flag=1;
-  next_iov_ndx=0;
-  next_ov_ndx=0;
-  adb=&db;
+  init_stream();
+
+  (*io)=0; (*ss)=0; (*ref_ss)=0;
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*auto_commit_flag)=1;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  (*adb)=&db;
+  shell->flush_flag=true;
   open(arr_size,sqlstm,db,ref_cur_placeholder);
  }
-
+ 
  otl_stream()
  {
-  ref_ss=0;
-  io=0;
-  ss=0;
-  adb=0;
-  ov=0; ov_len=0;
-  next_iov_ndx=0;
-  next_ov_ndx=0;
-  auto_commit_flag=1;
-  iov=0; iov_len=0;
+  init_stream();
+  shell->flush_flag=true;
  }
-
- ~otl_stream()
+ 
+ virtual ~otl_stream()
  {
-  close();
+  if(!connected)return;
+  try{
+   if((*io)!=0&&shell->flush_flag==false)
+    (*io)->flush_flag2=false;
+   close();
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+  }catch(otl_exception&){
+   if((*io)!=0)
+    (*io)->flush_flag2=true;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+   clean(1);
+   shell->should_delete=1;
+   shell_pt.destroy();
+#else
+   shell_pt.destroy();
+#endif
+   throw;
+  }
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if((*adb) && (*adb)->throw_count>0
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+  || STD_NAMESPACE_PREFIX uncaught_exception()
+#endif
+     ){
+   //
+  }
+#else
+   shell_pt.destroy();
+#endif
  }
-
 
  int eof(void)
  {
-  if(io)
-   return io->eof();
-  else if(ss)
-   return ss->eof();
-  else if(ref_ss)
-   return ref_ss->eof();
-  else
+  if((*io)){
+   (*adb)->reset_throw_count();
+   return (*io)->eof();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   return (*ss)->eof();
+  }else if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   return (*ref_ss)->eof();
+  }else
    return 1;
  }
-
+ 
  void flush(void)
  {
-  if(io)io->flush();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->flush();
+  }
  }
-
+ 
  void clean(const int clean_up_error_flag=0)
  {
-  if(io)io->clean(clean_up_error_flag);
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->clean(clean_up_error_flag);
+  }
  }
-
 
  void rewind(void)
  {
-  if(io)
-   io->rewind();
-  else if(ss)
-   ss->rewind();
-  else if(ref_ss)
-   ref_ss->rewind();
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->rewind();
+  }else if((*ss)){
+   (*adb)->reset_throw_count();
+   (*ss)->rewind();
+  }else if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   (*ref_ss)->rewind();
+  }
  }
-
+ 
  int is_null(void)
  {
-  if(io)
-   return io->is_null();
-  else if(ss)
-   return ss->is_null();
-  else if(ref_ss)
-   return ref_ss->is_null();
+  if((*io))
+   return (*io)->is_null();
+  else if((*ss))
+   return (*ss)->is_null();
+  else if((*ref_ss))
+   return (*ref_ss)->is_null();
   else
    return 0;
  }
 
  void set_commit(int auto_commit=0)
  {
-  auto_commit_flag=auto_commit;
-  if(io)io->set_commit(auto_commit);
+  (*auto_commit_flag)=auto_commit;
+  if((*io)){
+   (*adb)->reset_throw_count();
+   (*io)->set_commit(auto_commit);
+  }
  }
-
+ 
  void open
  (const short arr_size,
   const char* sqlstm,
   otl_connect& db,
   const char* ref_cur_placeholder=0)
  {
-  delete[] iov;
-  delete[] ov;
+   if(shell==0)
+    init_stream();
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  char temp_buf[128];
+  otl_itoa(arr_size,temp_buf);
+  OTL_STL_STRING sql_stm=OTL_STL_STRING(temp_buf)+OTL_STL_STRING("===>")+sqlstm;
+  otl_stream_shell_generic* temp_shell=db.sc.find(sql_stm);
+  if(temp_shell){
+   if(shell!=0)
+    shell_pt.destroy();
+   shell=OTL_RCAST(otl_stream_shell*,temp_shell);
+   ref_ss=&(shell->ref_ss);
+   ss=&(shell->ss);
+   io=&(shell->io);
+   adb=&(shell->adb);
+   auto_commit_flag=&(shell->auto_commit_flag);
+   iov=&(shell->iov);
+   iov_len=&(shell->iov_len);
+   next_iov_ndx=&(shell->next_iov_ndx);
+   ov=&(shell->ov);
+   ov_len=&(shell->ov_len);
+   next_ov_ndx=&(shell->next_ov_ndx);
+   override=&(shell->override);
+   if((*iov_len)==0)
+    this->rewind();
+   connected=1;
+   return;
+  }
+  shell->orig_sql_stm=sql_stm;
+#endif
 
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  next_iov_ndx=0;
-  next_ov_ndx=0;
+  delete[] (*iov);
+  delete[] (*ov);
+
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
 
   char tmp[7];
-  char* c=(char*)sqlstm;
+  char* c=OTL_CCAST(char*,sqlstm);
 
   while(isspace(*c))++c;
   strncpy(tmp,c,6);
@@ -13416,65 +14363,163 @@ public:
    *c=OTL_SCAST(char,otl_to_upper(*c));
    ++c;
   }
-  adb=&db;
-  adb->reset_throw_count();
-  if(strncmp(tmp,"SELECT",6)==0){
-   ss=new otl_select_stream(&override,arr_size,sqlstm,db);
+  (*adb)=&db;
+  (*adb)->reset_throw_count();
+  try{
+   if(strncmp(tmp,"SELECT",6)==0){
+    (*ss)=new otl_select_stream(override,arr_size,sqlstm,db);
+   }
+   else if(ref_cur_placeholder!=0){
+    (*ref_ss)=new otl_ref_select_stream
+     (override,arr_size,sqlstm,ref_cur_placeholder,db);
+   }else {
+    (*io)=new otl_inout_stream(arr_size,sqlstm,db);
+    (*io)->flush_flag=shell->flush_flag;
+   }
+  }catch(otl_exception&){
+   shell_pt.destroy();
+   throw;
   }
-  else if(ref_cur_placeholder!=0){
-   ref_ss=new otl_ref_select_stream(&override,arr_size,sqlstm,ref_cur_placeholder,db);
-  }else {
-   io=new otl_inout_stream(arr_size,sqlstm,db);
-  }
-  if(io)io->set_commit(auto_commit_flag);
+  if((*io))(*io)->set_commit((*auto_commit_flag));
   create_var_desc();
+  connected=1;
  }
 
- void close(void)
+ void intern_cleanup(void)
  {
-  delete[] iov;
-  delete[] ov;
+  delete[] (*iov);
+  delete[] (*ov);
 
-  iov=0; iov_len=0;
-  ov=0; ov_len=0;
-  next_iov_ndx=0;
-  next_ov_ndx=0;
-  override.len=0;
+  (*iov)=0; (*iov_len)=0;
+  (*ov)=0; (*ov_len)=0;
+  (*next_iov_ndx)=0;
+  (*next_ov_ndx)=0;
+  override->len=0;
 
-  delete ss;
-  delete io;
-  delete ref_ss;
-  ss=0; io=0; ref_ss=0;
-  adb=0;
+  if((*ref_ss)){
+   try{
+    (*ref_ss)->close();
+   }catch(otl_exception&){
+    delete (*ref_ss);
+    (*ref_ss)=0;
+    throw;
+   }
+   delete (*ref_ss);
+   (*ref_ss)=0;
+  }
+
+  if((*ss)){
+   try{
+    (*ss)->close();
+   }catch(otl_exception&){
+    delete (*ss);
+    (*ss)=0;
+    throw;
+   }
+   delete (*ss);
+   (*ss)=0;
+  }
+  
+  if((*io)){
+   try{
+    (*io)->flush();
+   }catch(otl_exception&){
+    clean(1);
+    delete (*io);
+    (*io)=0;
+    throw;
+   }
+   delete (*io);
+   (*io)=0;
+  }
+
+  (*ss)=0; (*io)=0; (*ref_ss)=0;
+  (*adb)=0;
+ }
+
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+ void close(const bool save_in_stream_pool=true)
+#else
+ void close(void)
+#endif
+ {
+  if(shell==0)return;
+#if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
+  if(save_in_stream_pool&&(*adb)&&
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+     !(STD_NAMESPACE_PREFIX uncaught_exception())&&
+#endif
+     (*adb)->throw_count==0){
+   try{
+    this->flush();
+   }catch(otl_exception&){
+    this->clean(1);
+    throw;
+   }
+   if((*adb) && (*adb)->throw_count>0){
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return;
+   }
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+   if(STD_NAMESPACE_PREFIX uncaught_exception()){
+    if((*adb))
+     (*adb)->sc.remove(shell,shell->orig_sql_stm);
+    intern_cleanup();
+    shell_pt.destroy();
+    connected=0;
+    return; 
+   }
+#endif
+   (*adb)->sc.add(shell,shell->orig_sql_stm.c_str());
+   shell_pt.disconnect();
+   connected=0;
+  }else{
+   if((*adb))
+    (*adb)->sc.remove(shell,shell->orig_sql_stm);
+   intern_cleanup();
+   shell_pt.destroy();
+   connected=0;
+  }
+#else
+  intern_cleanup();
+  connected=0;
+#endif
  }
 
  otl_column_desc* describe_select(int& desc_len)
  {
   desc_len=0;
-  if(ss){
-   desc_len=ss->sl_len;
-   return ss->sl_desc;
+  if((*ss)){
+   (*adb)->reset_throw_count();
+   desc_len=(*ss)->sl_len;
+   return (*ss)->sl_desc;
   }
-  if(ref_ss){
-   desc_len=ref_ss->sl_len;
-   return ref_ss->sl_desc;
+  if((*ref_ss)){
+   (*adb)->reset_throw_count();
+   desc_len=(*ref_ss)->sl_len;
+   return (*ref_ss)->sl_desc;
   }
   return 0;
  }
 
  int good(void)
  {
-  if(io||ss||ref_ss)
+  if(!connected)return 0;
+  if((*io)||(*ss)||(*ref_ss)){
+   (*adb)->reset_throw_count();
    return 1;
-  else
+  }else
    return 0;
  }
 
 
  otl_stream& operator>>(otl_pl_tab_generic& tab)
  {
-  if(io){
-   io->operator>>(tab);
+  if((*io)){
+   (*io)->operator>>(tab);
    inc_next_ov();
   }
   return *this;
@@ -13482,8 +14527,8 @@ public:
 
  otl_stream& operator<<(otl_pl_tab_generic& tab)
  {
-  if(io){
-   io->operator<<(tab);
+  if((*io)){
+   (*io)->operator<<(tab);
    inc_next_iov();
   }
   return *this;
@@ -13493,8 +14538,8 @@ public:
 
  otl_stream& operator>>(otl_pl_vec_generic& vec)
  {
-  if(io){
-   io->operator>>(vec);
+  if((*io)){
+   (*io)->operator>>(vec);
    inc_next_ov();
   }
   return *this;
@@ -13502,8 +14547,8 @@ public:
 
  otl_stream& operator<<(otl_pl_vec_generic& vec)
  {
-  if(io){
-   io->operator<<(vec);
+  if((*io)){
+   (*io)->operator<<(vec);
    inc_next_iov();
   }
   return *this;
@@ -13513,8 +14558,8 @@ public:
 
  otl_stream& operator<<(otl_lob_stream& s)
  {
-  if(io){
-   io->operator<<(s);
+  if((*io)){
+   (*io)->operator<<(s);
    inc_next_iov();
   }
   return *this;
@@ -13522,24 +14567,24 @@ public:
 
  otl_stream& operator>>(otl_time0& s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
   else if(ref_ss)
-   ref_ss->operator>>(s);
+   (*ref_ss)->operator>>(s);
   return *this;
  }
 
  otl_stream& operator<<(const otl_time0& n)
  {
-  if(io)
-   io->operator<<(n);
-  else if(ss)
-   ss->operator<<(n);
-  else if(ref_ss){
-   ref_ss->operator<<(n);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss))
+   (*ss)->operator<<(n);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(n);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   return *this;
  }
@@ -13573,24 +14618,24 @@ public:
 
  otl_stream& operator>>(char& c)
  {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  else if(ref_ss)
-   ref_ss->operator>>(c);
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(c);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(unsigned char& c)
  {
-  if(io)
-   io->operator>>(c);
-  else if(ss)
-   ss->operator>>(c);
-  else if(ref_ss)
-   ref_ss->operator>>(c);
+  if((*io))
+   (*io)->operator>>(c);
+  else if((*ss))
+   (*ss)->operator>>(c);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(c);
   inc_next_ov();
   return *this;
  }
@@ -13598,12 +14643,12 @@ public:
 #ifdef OTL_STL
  otl_stream& operator>>(OTL_STL_STRING& s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
   inc_next_ov();
   return *this;
  }
@@ -13611,120 +14656,120 @@ public:
 
  otl_stream& operator>>(char* s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(unsigned char* s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(int& n)
  {
-  if(io)
-   io->operator>>(n);
-  else if(ss)
-   ss->operator>>(n);
-  else if(ref_ss)
-   ref_ss->operator>>(n);
+  if((*io))
+   (*io)->operator>>(n);
+  else if((*ss))
+   (*ss)->operator>>(n);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(n);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(unsigned& u)
  {
-  if(io)
-   io->operator>>(u);
-  else if(ss)
-   ss->operator>>(u);
-  else if(ref_ss)
-   ref_ss->operator>>(u);
+  if((*io))
+   (*io)->operator>>(u);
+  else if((*ss))
+   (*ss)->operator>>(u);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(u);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(short& sh)
  {
-  if(io)
-   io->operator>>(sh);
-  else if(ss)
-   ss->operator>>(sh);
-  else if(ref_ss)
-   ref_ss->operator>>(sh);
+  if((*io))
+   (*io)->operator>>(sh);
+  else if((*ss))
+   (*ss)->operator>>(sh);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(sh);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(long int& l)
  {
-  if(io)
-   io->operator>>(l);
-  else if(ss)
-   ss->operator>>(l);
-  else if(ref_ss)
-   ref_ss->operator>>(l);
+  if((*io))
+   (*io)->operator>>(l);
+  else if((*ss))
+   (*ss)->operator>>(l);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(l);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(float& f)
  {
-  if(io)
-   io->operator>>(f);
-  else if(ss)
-   ss->operator>>(f);
-  else if(ref_ss)
-   ref_ss->operator>>(f);
+  if((*io))
+   (*io)->operator>>(f);
+  else if((*ss))
+   (*ss)->operator>>(f);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(f);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(double& d)
  {
-  if(io)
-   io->operator>>(d);
-  else if(ss)
-   ss->operator>>(d);
-  else if(ref_ss)
-   ref_ss->operator>>(d);
+  if((*io))
+   (*io)->operator>>(d);
+  else if((*ss))
+   (*ss)->operator>>(d);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(d);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(otl_long_string& s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
   inc_next_ov();
   return *this;
  }
 
  otl_stream& operator>>(otl_lob_stream& s)
  {
-  if(io)
-   io->operator>>(s);
-  else if(ss)
-   ss->operator>>(s);
-  else if(ref_ss)
-   ref_ss->operator>>(s);
+  if((*io))
+   (*io)->operator>>(s);
+  else if((*ss))
+   (*ss)->operator>>(s);
+  else if((*ref_ss))
+   (*ref_ss)->operator>>(s);
   inc_next_ov();
   return *this;
  }
@@ -13732,13 +14777,13 @@ public:
 
  otl_stream& operator<<(const char c)
  {
-  if(io)
-   io->operator<<(c);
-  else if(ss)
-   ss->operator<<(c);
-  else if(ref_ss){
-   ref_ss->operator<<(c);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss))
+   (*ss)->operator<<(c);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(c);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13746,13 +14791,13 @@ public:
 
  otl_stream& operator<<(const unsigned char c)
  {
-  if(io)
-   io->operator<<(c);
-  else if(ss)
-   ss->operator<<(c);
-  else if(ref_ss){
-   ref_ss->operator<<(c);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(c);
+  else if((*ss))
+   (*ss)->operator<<(c);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(c);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13761,13 +14806,13 @@ public:
 #ifdef OTL_STL
  otl_stream& operator<<(const OTL_STL_STRING& s)
  {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13777,13 +14822,13 @@ public:
 
  otl_stream& operator<<(const char* s)
  {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13791,13 +14836,13 @@ public:
 
  otl_stream& operator<<(const unsigned char* s)
  {
-  if(io)
-   io->operator<<(s);
-  else if(ss)
-   ss->operator<<(s);
-  else if(ref_ss){
-   ref_ss->operator<<(s);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(s);
+  else if((*ss))
+   (*ss)->operator<<(s);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(s);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13805,13 +14850,13 @@ public:
 
  otl_stream& operator<<(const int n)
  {
-  if(io)
-   io->operator<<(n);
-  else if(ss)
-   ss->operator<<(n);
-  else if(ref_ss){
-   ref_ss->operator<<(n);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(n);
+  else if((*ss))
+   (*ss)->operator<<(n);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(n);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13819,13 +14864,13 @@ public:
 
  otl_stream& operator<<(const unsigned u)
  {
-  if(io)
-   io->operator<<(u);
-  else if(ss)
-   ss->operator<<(u);
-  else if(ref_ss){
-   ref_ss->operator<<(u);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(u);
+  else if((*ss))
+   (*ss)->operator<<(u);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(u);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13833,13 +14878,13 @@ public:
 
  otl_stream& operator<<(const short sh)
  {
-  if(io)
-   io->operator<<(sh);
-  else if(ss)
-   ss->operator<<(sh);
-  else if(ref_ss){
-   ref_ss->operator<<(sh);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(sh);
+  else if((*ss))
+   (*ss)->operator<<(sh);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(sh);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13847,13 +14892,13 @@ public:
 
  otl_stream& operator<<(const long int l)
  {
-  if(io)
-   io->operator<<(l);
-  else if(ss)
-   ss->operator<<(l);
-  else if(ref_ss){
-   ref_ss->operator<<(l);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(l);
+  else if((*ss))
+   (*ss)->operator<<(l);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(l);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13861,13 +14906,13 @@ public:
 
  otl_stream& operator<<(const float f)
  {
-  if(io)
-   io->operator<<(f);
-  else if(ss)
-   ss->operator<<(f);
-  else if(ref_ss){
-   ref_ss->operator<<(f);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(f);
+  else if((*ss))
+   (*ss)->operator<<(f);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(f);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13875,13 +14920,13 @@ public:
 
  otl_stream& operator<<(const double d)
  {
-  if(io)
-   io->operator<<(d);
-  else if(ss)
-   ss->operator<<(d);
-  else if(ref_ss){
-   ref_ss->operator<<(d);
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))
+   (*io)->operator<<(d);
+  else if((*ss))
+   (*ss)->operator<<(d);
+  else if((*ref_ss)){
+   (*ref_ss)->operator<<(d);
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13890,11 +14935,11 @@ public:
  otl_stream& operator<<(const otl_null n)
  {
   OTL_UNUSED_ARG(n)
-  if(io)io->operator<<(otl_null());
-  if(ss)ss->operator<<(otl_null());
-  if(ref_ss){
-   ref_ss->operator<<(otl_null());
-   if(!ov&&ref_ss->sl) create_var_desc();
+  if((*io))(*io)->operator<<(otl_null());
+  if((*ss))(*ss)->operator<<(otl_null());
+  if((*ref_ss)){
+   (*ref_ss)->operator<<(otl_null());
+   if(!(*ov)&&(*ref_ss)->sl) create_var_desc();
   }
   inc_next_iov();
   return *this;
@@ -13902,8 +14947,8 @@ public:
 
  otl_stream& operator<<(const otl_long_string& d)
  {
-  if(io){
-   io->operator<<(d);
+  if((*io)){
+   (*io)->operator<<(d);
    inc_next_iov();
   }
   return *this;
@@ -13944,7 +14989,6 @@ STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const 
  return s;
 }
 
-//static 
 inline STD_NAMESPACE_PREFIX ostream& operator<<(
  STD_NAMESPACE_PREFIX ostream& s, 
  const otl_value<otl_datetime>& var
@@ -14106,342 +15150,5 @@ OTL_ODBC_NAMESPACE_END
 #endif
 
 
-#ifdef OTL_DATA_CONT
-
-// ====== DATA CONTAINER CLASSES FOR READING FROM/WRITING TO OTL STREAMS ======
-//
-// These data container classes read/write values from/to OTL stream
-// together with the NULL indicators. Also, <</>> operators are
-// defined for the data containers.
-
-template <class TData>
-class otl_host_var{
-public:
- TData v;
- short int ind;
-
- otl_host_var(){ind=0;}
- ~otl_host_var(){}
-
- otl_host_var& operator=(const otl_host_var& var)
- {
-  v=var.v;
-  ind=var.ind;
-  return *this;
- }
-
- otl_host_var(const otl_host_var& var)
- {
-  v=var.v;
-  ind=var.ind;
- }
-
- otl_host_var& operator=(const TData& var)
- {
-  v=var;
-  ind=0;
-  return *this;
- }
-
- int is_null(void){return ind;} const
- void set_null(void){ind=1;}
- void set_non_null(void){ind=0;}
-
-};
-
-template <class T>
-inline bool operator==(const otl_host_var<T>& x, const otl_host_var<T>& y)
-{
- return !x.ind&&!y.ind&&x.v-y.v<0.001||y.v-x.v<0.001||x.ind&&y.ind;
-}
-
-typedef otl_host_var<int> otl_host_int;
-typedef otl_host_var<double> otl_host_double;
-typedef otl_host_var<float> otl_host_float;
-typedef otl_host_var<unsigned int> otl_host_unsigned;
-typedef otl_host_var<short int> otl_host_short;
-typedef otl_host_var<long int> otl_host_long_int;
-typedef otl_host_var<char> otl_host_char;
-typedef otl_host_var<otl_datetime> otl_host_datetime;
-
-template <class base_char, const int size>
-class otl_base_host_string{
-public:
-
- base_char v[size];
- short int ind;
-
- otl_base_host_string(){ind=0;}
- ~otl_base_host_string(){}
-
- otl_base_host_string& operator=(const otl_base_host_string& var)
- {
-  strcpy(v,var.v);
-  ind=var.ind;
-  return *this;
- }
-
- otl_base_host_string(const otl_base_host_string& var)
- {
-  strcpy(v,var.v);
-  ind=var.ind;
- }
-
- otl_base_host_string& operator=(const base_char* str)
- {
-  strcpy(v,str);
-  ind=0;
-  return *this;
- }
-
- int is_null(void){return ind;}
- void set_null(void){ind=1;}
- void set_non_null(void){ind=0;}
-
-};
-
-template <const int size>
-struct otl_host_string: public otl_base_host_string<char,size>{
-
- otl_host_string():otl_base_host_string<char,size>(){}
- ~otl_host_string(){}
-
- otl_host_string& operator=(const otl_host_string& var)
- {
-
-  strcpy(v,var.v);
-  ind=var.ind;
-  return *this;
- }
-
- otl_host_string(const otl_host_string& var)
-  :otl_base_host_string<char,size>(var){}
-
- otl_host_string& operator=(const char* str)
- {
-  strcpy(v,str);
-  ind=0;
-  return *this;
- }
-
-};
-
-template <const int size>
-struct otl_host_ustring: public otl_base_host_string<unsigned char,size>{
-
- otl_host_ustring():otl_base_host_string<unsigned char,size>(){}
- ~otl_host_ustring(){}
-
- otl_host_ustring& operator=(const otl_host_ustring& var)
- {
-  strcpy(v,var.v);
-  ind=var.ind;
-  return *this;
- }
-
- otl_host_ustring(const otl_host_ustring& var)
-  :otl_base_host_string<unsigned char,size>(var){}
-
- otl_host_ustring& operator=(const unsigned char* str)
- {
-  strcpy((char*)v,(char*)str);
-  ind=0;
-  return *this;
- }
-
-};
-
-template <const int size>
-inline bool operator==(const otl_host_string<size>& x,
-                       const otl_host_string<size>& y)
-{
- return !x.ind&&!y.ind&&strcmp(x.v,y.v)==0||
-        x.ind&&y.ind;
-}
-
-#ifdef OTL_ORA7
-// Oracle 7 compatible stream operators for the data container classes
-template <class T>
-OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
-   otl_host_var<T>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.set_null();
- else
-  var.set_non_null();
- return s;
-}
-
-template <class T>
-OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
-   const otl_host_var<T>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-template <class T,const int size>
-OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
-   otl_base_host_string<T,size>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.ind=1;
- else
-  var.ind=0;
- return s;
-}
-
-template <class T,const int size>
-OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
-   const otl_base_host_string<T,size>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-#endif
-
-#ifdef OTL_ORA8
-// Oracle 8 compatible stream operators for the data container classes
-template <class T>
-OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
-   otl_host_var<T>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.set_null();
- else
-  var.set_non_null();
- return s;
-}
-
-template <class T>
-OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
-   const otl_host_var<T>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-template <class T,const int size>
-OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
-   otl_base_host_string<T,size>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.ind=1;
- else
-  var.ind=0;
- return s;
-}
-
-template <class T,const int size>
-OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
-   const otl_base_host_string<T,size>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-#endif
-
-#ifdef OTL_ODBC
-// ODBC compatible stream operators for the data container classes
-template <class T>
-OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
-   otl_host_var<T>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.set_null();
- else
-  var.set_non_null();
- return s;
-}
-
-template <class T>
-OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
-   const otl_host_var<T>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-template <class T,const int size>
-OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
-   otl_base_host_string<T,size>& var)
-{
- s>>var.v;
- if(s.is_null())
-  var.ind=1;
- else
-  var.ind=0;
- return s;
-}
-
-template <class T,const int size>
-OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
-   const otl_base_host_string<T,size>& var)
-{
- if(var.ind)
-  s<<otl_null();
- else
-  s<<var.v;
- return s;
-}
-
-#endif
-
-// template <class T>
-// ostream& operator<<(ostream& s, const otl_host_var<T>& var)
-// {
-//  if(var.ind==1)
-//   s<<"NULL";
-//  else
-//   s<<var.v;
-//  return s;
-// }
-
-// template <class T,const int size>
-// ostream& operator<<(ostream& s, const otl_base_host_string<T,size>& var)
-// {
-//  if(var.ind==1)
-//   s<<"NULL";
-//  else
-//   s<<(char*)var.v;
-//  return s;
-// }
-
-
-#endif
 
 #endif

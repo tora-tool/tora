@@ -118,6 +118,9 @@ but I'll defend your right to say it to the death.</H3>
 <H3>Life is a sexually transmittable desease with terminal outcome.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
+<H3>Software is like sex, it is better when it is free.</H3>
+<DIV ALIGN=RIGHT>Unknown
+<DIV ALIGN=LEFT>
 <H3>If you don't know where you are going you are never lost.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
