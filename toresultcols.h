@@ -76,6 +76,10 @@ public slots:
 class toResultCols : public QVBox, public toResult {
   Q_OBJECT
 
+  class resultCols;
+  class resultColsEdit;
+  friend class resultCols;
+  friend class resultColsEdit;
   class resultColsEdit : public toResultItem {
     QString Table;
     bool Cached;
@@ -86,9 +90,10 @@ class toResultCols : public QVBox, public toResult {
     virtual QWidget *createValue(QWidget *parent);
     virtual void setValue(QWidget *widget,const QString &title,const QString &value);
     void describe(toQDescList &desc,const QString &table,bool cached);
+    friend class resultCols;
   };
   class resultCols : public toListView {
-    resultColsEdit *Edit;
+    toResultCols::resultColsEdit *Edit;
     QString Owner;
     QString Name;
   public:
@@ -97,7 +102,7 @@ class toResultCols : public QVBox, public toResult {
     void describe(toQDescList &desc);
     void query(const toConnection::objectName &,bool);
     void query(const QString &table,const QString &owner,const QString &name);
-    friend class toResultColsItem;
+    friend class toResultCols;
   };
 
   QLabel *Title;
@@ -106,7 +111,6 @@ class toResultCols : public QVBox, public toResult {
   QCheckBox *Edit;
   resultCols *Columns;
 
-  friend class resultCols;
   virtual void query(const QString &sql,const toQList &param,bool nocache);
 public:
   /** Create the widget.

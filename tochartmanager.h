@@ -72,6 +72,11 @@ public slots:
 class toChartManager : public QVBox, public toHelpContext {
   Q_OBJECT
 
+  struct alarmSignal;
+  struct chartAlarm;
+  friend struct chartAlarm;
+  friend struct alarmSignal;
+
   enum action {
     StatusMessage = 0,
     Email = 1,
@@ -158,8 +163,6 @@ class toChartManager : public QVBox, public toHelpContext {
   toListView *List;
   QPopupMenu *ToolMenu;
 
-  friend struct chartAlarm;
-  friend struct alarmSignal;
 
   toChartReceiver *selectedChart(void);
 public:
