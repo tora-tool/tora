@@ -42,6 +42,8 @@
 
 #include <qstring.h>
 
+#include "toqvalue.h"
+
 class QWidget;
 class toConnection;
 class toConnectionProvider;
@@ -99,74 +101,6 @@ public:
      */
     bool Null;
   };
-  /** This function is used to represent values that are passed to and from queries
-   */
-  class queryValue {
-    enum {
-      intType,
-      doubleType,
-      stringType,
-      nullType
-    } Type;
-    union {
-      int Int;
-      double Double;
-      QString *String;
-    } Value;
-  public:
-    /** Create null value.
-     */
-    queryValue(void);
-    /** Create integer value.
-     * @param i Value.
-     */
-    queryValue(int i);
-    /** Create string value.
-     * @param str Value.
-     */
-    queryValue(const QString &str);
-    /** Create double value.
-     * @param d Value.
-     */
-    queryValue(double d);
-    /** Destruct query.
-     */
-    ~queryValue();
-    
-    /** Create a copy of a value.
-     */
-    queryValue(const queryValue &copy);
-    /** Assign this value from another value.
-     */
-    const queryValue &operator = (const queryValue &copy);
-
-    /** Check if this is an int value.
-     */
-    bool isInt(void) const;
-    /** Check if this is a double value.
-     */
-    bool isDouble(void) const;
-    /** Check if this is a string value.
-     */
-    bool isString(void) const;
-    /** Check if this value is null.
-     */
-    bool isNull(void) const;
-
-    /** Get utf8 format of this value.
-     */
-    QCString utf8Value(void) const;
-    /** Get integer representation of this value.
-     */
-    int toInt(void) const;
-    /** Get double representation of this value.
-     */
-    double toDouble(void) const;
-
-    /** Convert value to a string.
-     */
-    operator QString() const;
-  };
   /** Abstract parent of implementations of a query for a database provider
    * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
    */
@@ -197,7 +131,7 @@ public:
     /** Read the next value from the stream.
      * @return The value read from the query.
      */
-    virtual queryValue readValue(void) = 0;
+    virtual toQValue readValue(void) = 0;
     /** Check if the end of the query has been reached.
      * @return True if all values have been read.
      */
@@ -218,7 +152,7 @@ public:
 private:
   toConnection &Connection;
   toConnectionSub *ConnectionSub;
-  std::list<queryValue> Params;
+  std::list<toQValue> Params;
   QCString SQL;
   queryMode Mode;
 
@@ -230,13 +164,13 @@ public:
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  toQuery(toConnection &conn,toSQL &sql,const std::list<queryValue> &params);
+  toQuery(toConnection &conn,toSQL &sql,const std::list<toQValue> &params);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  toQuery(toConnection &conn,const QString &sql,const std::list<queryValue> &params);
+  toQuery(toConnection &conn,const QString &sql,const std::list<toQValue> &params);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
@@ -266,14 +200,14 @@ public:
    * @param sql SQL to run.
    * @param params Arguments to pass to query.
    */
-  toQuery(toConnection &conn,queryMode mode,toSQL &sql,const std::list<queryValue> &params);
+  toQuery(toConnection &conn,queryMode mode,toSQL &sql,const std::list<toQValue> &params);
   /** Create a query.
    * @param conn Connection to create query on.
    * @param mode Mode to run query in.
    * @param sql SQL to run.
    * @param params Arguments to pass to query.
    */
-  toQuery(toConnection &conn,queryMode mode,const QString &sql,const std::list<queryValue> &params);
+  toQuery(toConnection &conn,queryMode mode,const QString &sql,const std::list<toQValue> &params);
   /** Create a query. Don't runn any SQL using it yet. Observe though that the @ref
    * toConnectionSub object is assigned here so you know that all queries run using this
    * query object will run on the same actual connection to the database (Unless mode is All off
@@ -290,12 +224,12 @@ public:
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  void execute(toSQL &sql,const std::list<queryValue> &params);
+  void execute(toSQL &sql,const std::list<toQValue> &params);
   /** Execute an SQL statement using this query.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  void execute(const QString &sql,const std::list<queryValue> &params);
+  void execute(const QString &sql,const std::list<toQValue> &params);
 
   /** Connection object of this object.
    */
@@ -307,7 +241,7 @@ public:
   { return ConnectionSub; }
   /** Parameters of the current query.
    */
-  std::list<queryValue> &params(void)
+  std::list<toQValue> &params(void)
   { return Params; }
   /** SQL to run. Observe that this string is in UTF8 format.
    */
@@ -317,11 +251,11 @@ public:
   /** Read a value from the query. Convert the value NULL to the string {null}.
    * @return Value read.
    */
-  queryValue readValue(void);
-  /** Read a value from the query. Nulls are returned as empty @ref queryValue.
+  toQValue readValue(void);
+  /** Read a value from the query. Nulls are returned as empty @ref toQValue.
    * @return Value read.
    */
-  queryValue readValueNull(void);
+  toQValue readValueNull(void);
   /** Check if end of query is reached.
    * @return True if end of query is reached.
    */
@@ -344,52 +278,46 @@ public:
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
-   * @return A list of @ref queryValues:s read from the query.
+   * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<queryValue> readQuery(toConnection &conn,
-					 toSQL &sql,
-					 std::list<queryValue> &params);
+  static std::list<toQValue> readQuery(toConnection &conn,
+				       toSQL &sql,
+				       std::list<toQValue> &params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
-   * @return A list of @ref queryValues:s read from the query.
+   * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<queryValue> readQuery(toConnection &conn,
-					 const QString &sql,
-					 std::list<queryValue> &params);
+  static std::list<toQValue> readQuery(toConnection &conn,
+				       const QString &sql,
+				       std::list<toQValue> &params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
-   * @return A list of @ref queryValues:s read from the query.
+   * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<queryValue> readQuery(toConnection &conn,toSQL &sql,
-					 const QString &arg1=QString::null,const QString &arg2=QString::null,
-					 const QString &arg3=QString::null,const QString &arg4=QString::null,
-					 const QString &arg5=QString::null,const QString &arg6=QString::null,
-					 const QString &arg7=QString::null,const QString &arg8=QString::null,
-					 const QString &arg9=QString::null);
+  static std::list<toQValue> readQuery(toConnection &conn,toSQL &sql,
+				       const QString &arg1=QString::null,const QString &arg2=QString::null,
+				       const QString &arg3=QString::null,const QString &arg4=QString::null,
+				       const QString &arg5=QString::null,const QString &arg6=QString::null,
+				       const QString &arg7=QString::null,const QString &arg8=QString::null,
+				       const QString &arg9=QString::null);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
-   * @return A list of @ref queryValues:s read from the query.
+   * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<queryValue> readQuery(toConnection &conn,const QString &sql,
-					 const QString &arg1=QString::null,const QString &arg2=QString::null,
-					 const QString &arg3=QString::null,const QString &arg4=QString::null,
-					 const QString &arg5=QString::null,const QString &arg6=QString::null,
-					 const QString &arg7=QString::null,const QString &arg8=QString::null,
-					 const QString &arg9=QString::null);
+  static std::list<toQValue> readQuery(toConnection &conn,const QString &sql,
+				       const QString &arg1=QString::null,const QString &arg2=QString::null,
+				       const QString &arg3=QString::null,const QString &arg4=QString::null,
+				       const QString &arg5=QString::null,const QString &arg6=QString::null,
+				       const QString &arg7=QString::null,const QString &arg8=QString::null,
+				       const QString &arg9=QString::null);
 };
 
-/** A short representation of a @ref toQuery::queryValue
- */
-typedef toQuery::queryValue toQValue;
-/** A short representation of list<toQuery::queryValue>
- */
-typedef std::list<toQValue> toQList;
 /** A short representation of a @ref toQuery::queryDescribe
  */
 typedef toQuery::queryDescribe toQDescribe;
@@ -704,6 +632,7 @@ public:
 class toConnectionProvider {
   static std::map<QString,toConnectionProvider *> *Providers;
   QString Provider;
+  static void checkAlloc(void);
 public:
   /** Create a new provider with the specified name.
    * @param provider Name of the provider.

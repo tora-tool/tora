@@ -58,6 +58,7 @@
 #include "tosql.h"
 #include "tosgastatement.h"
 #include "tomain.h"
+#include "toconnection.h"
 
 #include "tosgatrace.moc"
 

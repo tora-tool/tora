@@ -44,6 +44,7 @@
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 
+#include "tomarkedtext.h"
 #include "tofilesize.h"
 #include "toresultview.h"
 #include "toscript.h"

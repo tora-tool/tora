@@ -46,6 +46,7 @@
 #include "tosql.h"
 #include "tocurrent.h"
 #include "toresultstats.h"
+#include "toconnection.h"
 
 #include "tocurrent.moc"
 

@@ -39,6 +39,7 @@
 #include "totool.h"
 #include "toconf.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 toResultReferences::toResultReferences(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

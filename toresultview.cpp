@@ -918,3 +918,8 @@ void toResultView::menuCallback(int cmd)
     toListView::menuCallback(cmd);
   }
 }
+
+int toResultView::queryColumns(void) const
+{
+  return Query?Query->columns():0;
+}

@@ -54,6 +54,7 @@
 #include "tomarkedtext.h"
 #include "toconf.h"
 #include "tohelp.h"
+#include "toconnection.h"
 
 #include "totemplate.moc"
 #include "totemplatesetupui.moc"
@@ -61,8 +62,6 @@
 #include "totemplateeditui.moc"
 
 #include "icons/totemplate.xpm"
-
-#include <stdio.h>
 
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   std::map<QString,QString> &TemplateMap;

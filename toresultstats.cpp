@@ -37,6 +37,7 @@
 #include "tomain.h"
 #include "toresultstats.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 #include "toresultstats.moc"
 

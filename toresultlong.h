@@ -39,6 +39,7 @@
 
 #include <qtimer.h>
 #include "toresultview.h"
+#include "toconnection.h"
 
 class QListViewItem;
 class toresultlong;

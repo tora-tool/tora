@@ -34,59 +34,84 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULT_H
-#define __TORESULT_H
+#ifndef __TOQVALUE_H
+#define __TOQVALUE_H
 
 #include <list>
 
-#include "toqvalue.h"
+#include <qstring.h>
 
-class toTimer;
-class toConnection;
-
-/** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
- * the query without knowing how it's UI is presented.
+/** This function is used to represent values that are passed to and from queries
  */
-
-class toResult {
-protected:
-  /** Get the current connection from the closest tool.
-   * @return Reference to connection.
-   */
-  toConnection &connection(void);
-  /** Get the timer associated with the closest tool.
-   * @return Pointer to tool timer.
-   */
-  toTimer *timer(void);
+class toQValue {
+  enum {
+    intType,
+    doubleType,
+    stringType,
+    nullType
+  } Type;
+  union {
+    int Int;
+    double Double;
+    QString *String;
+  } Value;
 public:
-  toResult(void)
-  { }
-  virtual ~toResult()
-  { }
+  /** Create null value.
+   */
+  toQValue(void);
+  /** Create integer value.
+   * @param i Value.
+   */
+  toQValue(int i);
+  /** Create string value.
+   * @param str Value.
+   */
+  toQValue(const QString &str);
+  /** Create double value.
+   * @param d Value.
+   */
+  toQValue(double d);
+  /** Destruct query.
+   */
+  ~toQValue();
+    
+  /** Create a copy of a value.
+   */
+  toQValue(const toQValue &copy);
+  /** Assign this value from another value.
+   */
+  const toQValue &operator = (const toQValue &copy);
 
-  /** Re execute last query
+  /** Check if this is an int value.
    */
-  virtual void refresh(void) = 0;
-  /** Perform a query.
-   * @param sql Execute an SQL statement.
-   * @param params Parameters needed as input to execute statement.
+  bool isInt(void) const;
+  /** Check if this is a double value.
    */
-  virtual void query(const QString &sql,const toQList &params) = 0;
-  /** Reexecute with changed parameters.
-   * @param Param1 First parameter.
+  bool isDouble(void) const;
+  /** Check if this is a string value.
    */
-  virtual void changeParams(const QString &Param1) = 0;
-  /** Reexecute with changed parameters.
-   * @param Param1 First parameter.
-   * @param Param1 Second parameter.
+  bool isString(void) const;
+  /** Check if this value is null.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2) = 0;
-  /** Reexecute with changed parameters.
-   * @param Param1 First parameter.
-   * @param Param2 Second parameter.
-   * @param Param3 Third parameter.
+  bool isNull(void) const;
+
+  /** Get utf8 format of this value.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = 0;
+  QCString utf8Value(void) const;
+  /** Get integer representation of this value.
+   */
+  int toInt(void) const;
+  /** Get double representation of this value.
+   */
+  double toDouble(void) const;
+
+  /** Convert value to a string.
+   */
+  operator QString() const;
 };
+
+/** A short representation of list<toQuery::queryValue>
+ */
+typedef std::list<toQValue> toQList;
 
 #endif

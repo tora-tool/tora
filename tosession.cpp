@@ -54,6 +54,7 @@
 #include "toresultstats.h"
 #include "toresultlock.h"
 #include "toresultbar.h"
+#include "toconnection.h"
 
 #include "tosession.moc"
 

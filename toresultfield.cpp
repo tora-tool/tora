@@ -39,6 +39,7 @@
 #include "totool.h"
 #include "toconf.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 #include "toresultfield.moc"
 

@@ -42,9 +42,7 @@
 #include <qtoolbutton.h>
 #include <qdatetime.h>
 
-#include "tomain.h"
 #include "totool.h"
-#include "tomarkedtext.h"
 
 class QTabWidget;
 class toResultLong;

@@ -42,6 +42,7 @@
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 class toResultStorageItem : public QListViewItem {
 public:

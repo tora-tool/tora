@@ -45,9 +45,15 @@
 
 std::map<QString,toConnectionProvider *> *toConnectionProvider::Providers;
 
+void toConnectionProvider::checkAlloc(void)
+{
+  if (!Providers)
+    Providers=new std::map<QString,toConnectionProvider *>;
+}
+
 toConnectionProvider::toConnectionProvider(const QString &provider)
 {
-  Providers=new std::map<QString,toConnectionProvider *>;
+  checkAlloc();
   Provider=provider; (*Providers)[Provider]=this;
 }
 
@@ -83,6 +89,7 @@ std::list<QString> toConnectionProvider::modes(void)
 
 toConnectionProvider &toConnectionProvider::fetchProvider(const QString &provider)
 {
+  checkAlloc();
   std::map<QString,toConnectionProvider *>::iterator i=Providers->find(provider);
   if (i==Providers->end())
     throw QString("Tried to fetch unknown provider %1").arg(provider);
@@ -112,19 +119,19 @@ std::list<QString> toConnectionProvider::databases(const QString &provider,const
 
 // Query value implementation
 
-toQuery::queryValue::queryValue(int i)
+toQValue::toQValue(int i)
 {
   Type=intType;
   Value.Int=i;
 }
 
-toQuery::queryValue::queryValue(double i)
+toQValue::toQValue(double i)
 {
   Type=doubleType;
   Value.Double=i;
 }
 
-toQuery::queryValue::queryValue(const queryValue &copy)
+toQValue::toQValue(const toQValue &copy)
 {
   Type=copy.Type;
   switch(Type) {
@@ -142,7 +149,7 @@ toQuery::queryValue::queryValue(const queryValue &copy)
   }
 }
 
-const toQuery::queryValue &toQuery::queryValue::operator = (const queryValue &copy)
+const toQValue &toQValue::operator = (const toQValue &copy)
 {
   if (Type==stringType)
     delete Value.String;
@@ -164,39 +171,39 @@ const toQuery::queryValue &toQuery::queryValue::operator = (const queryValue &co
   return *this;
 }
 
-toQuery::queryValue::queryValue(const QString &str)
+toQValue::toQValue(const QString &str)
 {
   Type=stringType;
   Value.String=new QString(str);
 }
 
-toQuery::queryValue::queryValue(void)
+toQValue::toQValue(void)
 {
   Type=nullType;
 }
 
-toQuery::queryValue::~queryValue()
+toQValue::~toQValue()
 {
   if (Type==stringType)
     delete Value.String;
 }
 
-bool toQuery::queryValue::isInt(void) const
+bool toQValue::isInt(void) const
 {
   return Type==intType;
 }
 
-bool toQuery::queryValue::isDouble(void) const
+bool toQValue::isDouble(void) const
 {
   return Type==doubleType;
 }
 
-bool toQuery::queryValue::isString(void) const
+bool toQValue::isString(void) const
 {
   return Type==stringType;
 }
 
-bool toQuery::queryValue::isNull(void) const
+bool toQValue::isNull(void) const
 {
   if (Type==nullType)
     return true;
@@ -205,7 +212,7 @@ bool toQuery::queryValue::isNull(void) const
   return false;
 }
 
-QCString toQuery::queryValue::utf8Value(void) const
+QCString toQValue::utf8Value(void) const
 {
   switch(Type) {
   case nullType:
@@ -231,7 +238,7 @@ QCString toQuery::queryValue::utf8Value(void) const
   throw QString("Unknown type of query value");
 }
 
-int toQuery::queryValue::toInt(void) const
+int toQValue::toInt(void) const
 {
   switch(Type) {
   case nullType:
@@ -246,7 +253,7 @@ int toQuery::queryValue::toInt(void) const
   throw QString("Unknown type of query value");
 }
 
-double toQuery::queryValue::toDouble(void) const
+double toQValue::toDouble(void) const
 {
   switch(Type) {
   case nullType:
@@ -261,7 +268,7 @@ double toQuery::queryValue::toDouble(void) const
   throw QString("Unknown type of query value");
 }
 
-toQuery::queryValue::operator QString() const
+toQValue::operator QString() const
 {
   switch(Type) {
   case nullType:
@@ -531,7 +538,7 @@ toQList toQuery::readQuery(toConnection &conn,const QString &sql,
   return ret;
 }
 
-toQuery::queryValue toQuery::readValue(void)
+toQValue toQuery::readValue(void)
 {
   toBusy busy;
   if (Mode==All)
@@ -542,7 +549,7 @@ toQuery::queryValue toQuery::readValue(void)
   return ret;
 }
 
-toQuery::queryValue toQuery::readValueNull(void)
+toQValue toQuery::readValueNull(void)
 {
   toBusy busy;
   if (Mode==All)

@@ -32,37 +32,79 @@
 </LI>
 <LI>struct <A HREF="toQuery__queryDescribe.html">queryDescribe</A>
 </LI>
-<LI>class <A HREF="toQuery__queryValue.html">queryValue</A>
+<LI>class <i><A HREF="toQuery__queryImpl.html">queryImpl</A></i>
 </LI>
-</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">queryValue</A></b> (void) 
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref11">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref5">queryValue</A></b> (int i) 
+<LI>&nbsp;<b><A HREF="#ref12">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref6">queryValue</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>&nbsp;<b><A HREF="#ref13">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref7">queryValue</A></b> (double d) 
+<LI>&nbsp;<b><A HREF="#ref14">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref8">~queryValue</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref15">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode,<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref9">queryValue</A></b> (const queryValue &amp;copy) 
+<LI>&nbsp;<b><A HREF="#ref16">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>const queryValue &amp;&nbsp;<b><A HREF="#ref10">operator = </A></b> (const queryValue &amp;copy) 
+<LI>&nbsp;<b><A HREF="#ref17">toQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode=Normal) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref11">isInt</A></b> (void)  const
+<LI>virtual  &nbsp;<b><A HREF="#ref18">~toQuery</A></b> () 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref12">isDouble</A></b> (void)  const
+<LI>void &nbsp;<b><A HREF="#ref19">execute</A></b> (<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref13">isString</A></b> (void)  const
+<LI>void &nbsp;<b><A HREF="#ref20">execute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref14">isNull</A></b> (void)  const
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref21">connection</A></b> (void) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref15">utf8Value</A></b> (void)  const
+<LI><A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<b><A HREF="#ref22">connectionSub</A></b> (void) 
 </LI>
-<LI>int &nbsp;<b><A HREF="#ref16">toInt</A></b> (void)  const
+<LI>std::list&lt;toQValue&gt; &amp;&nbsp;<b><A HREF="#ref23">params</A></b> (void) 
 </LI>
-<LI>double &nbsp;<b><A HREF="#ref17">toDouble</A></b> (void)  const
+<LI><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref24">sql</A></b> (void) 
 </LI>
-<LI>operator &nbsp;<b><A HREF="#ref18">QString</A></b> ()  const
+<LI>toQValue &nbsp;<b><A HREF="#ref25">readValue</A></b> (void) 
+</LI>
+<LI>toQValue &nbsp;<b><A HREF="#ref26">readValueNull</A></b> (void) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref27">eof</A></b> (void) 
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref28">rowsProcessed</A></b> (void) 
+</LI>
+<LI>std::list&lt;queryDescribe&gt; &nbsp;<b><A HREF="#ref29">describe</A></b> (void) 
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref30">columns</A></b> (void) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  std::list&lt;toQValue&gt; &nbsp;<b><A HREF="#ref31">readQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+				       <A HREF="toSQL.html">toSQL</A> &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params) 
+</LI>
+<LI>static  std::list&lt;toQValue&gt; &nbsp;<b><A HREF="#ref32">readQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params) 
+</LI>
+<LI>static  std::list&lt;toQValue&gt; &nbsp;<b><A HREF="#ref33">readQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
+</LI>
+<LI>static  std::list&lt;toQValue&gt; &nbsp;<b><A HREF="#ref34">readQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is used to perform a query on a database connection.
  </p>
@@ -73,65 +115,223 @@
      </p>
 <A NAME="toQuery__queryDescribe.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>queryDescribe</strong> <small>(struct)</small></td><td align="right"><h3><strong>queryDescribe</strong></h3></td></tr></table><p></p><p> This structure is used to describe the resultset of a query.
    </p>
-<A NAME="toQuery__queryValue.html"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>queryValue</strong> <small>(class)</small></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> This function is used to represent values that are passed to and from queries
+<A NAME="toQuery__queryImpl.html"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>queryImpl</strong> <small>(class)</small></td><td align="right"><h3><strong>queryImpl</strong></h3></td></tr></table><p></p><p> Abstract parent of implementations of a query for a database provider
+ (See <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
    </p>
-<A NAME="queryValue"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (void)
-<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> Create null value.
-     </p>
-<A NAME="queryValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (int i)
-<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> Create integer value.
+<A NAME="toQuery"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a normal query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>i</i></TD><TD align="left" valign="top">Value.
-     </TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
 </TABLE></P>
-<A NAME="queryValue"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
-<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> Create string value.
+<A NAME="toQuery"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a normal query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Value.
-     </TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
 </TABLE></P>
-<A NAME="queryValue"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (double d)
-<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> Create double value.
+<A NAME="toQuery"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a normal query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>d</i></TD><TD align="left" valign="top">Value.
-     </TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Arguments to pass to query.
+   </TD></TR>
 </TABLE></P>
-<A NAME="~queryValue"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~queryValue</strong> ()
-<br></td><td align="right"><h3><strong>~queryValue</strong></h3></td></tr></table><p></p><p> Destruct query.
-     </p>
-<A NAME="queryValue"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (const queryValue &amp;copy)
-<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><p> Create a copy of a value.
-     </p>
-<A NAME="operator%20=%20"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const queryValue &amp;&nbsp;<strong>operator = </strong> (const queryValue &amp;copy)
-<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Assign this value from another value.
-     </p>
-<A NAME="isInt"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isInt</strong> (void)
-<br></td><td align="right"><h3><strong>isInt</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is an int value.
-     </p>
-<A NAME="isDouble"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isDouble</strong> (void)
-<br></td><td align="right"><h3><strong>isDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is a double value.
-     </p>
-<A NAME="isString"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isString</strong> (void)
-<br></td><td align="right"><h3><strong>isString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is a string value.
-     </p>
-<A NAME="isNull"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isNull</strong> (void)
-<br></td><td align="right"><h3><strong>isNull</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this value is null.
-     </p>
-<A NAME="utf8Value"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>utf8Value</strong> (void)
-<br></td><td align="right"><h3><strong>utf8Value</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get utf8 format of this value.
-     </p>
-<A NAME="toInt"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>toInt</strong> (void)
-<br></td><td align="right"><h3><strong>toInt</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get integer representation of this value.
-     </p>
-<A NAME="toDouble"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double &nbsp;<strong>toDouble</strong> (void)
-<br></td><td align="right"><h3><strong>toDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get double representation of this value.
-     </p>
-<A NAME="QString"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>operator &nbsp;<strong>QString</strong> ()
-<br></td><td align="right"><h3><strong>QString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Convert value to a string.
-     </p>
+<A NAME="toQuery"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a normal query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Arguments to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toQuery"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode,<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>mode</i></TD><TD align="left" valign="top">Mode to run query in.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Arguments to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toQuery"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>mode</i></TD><TD align="left" valign="top">Mode to run query in.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Arguments to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toQuery"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,queryMode mode=Normal)
+<br></td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><p> Create a query. Don't runn any SQL using it yet. Observe though that the <A HREF="toConnectionSub.html">toConnectionSub</A> object is assigned here so you know that all queries run using this
+ query object will run on the same actual connection to the database (Unless mode is All off
+ course).
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create query for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>mode</i></TD><TD align="left" valign="top">Mode to execute queries in.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toQuery"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toQuery</strong> ()
+<br></td><td align="right"><h3><strong>~toQuery</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destroy query.
+   </p>
+<A NAME="execute"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (<A HREF="toSQL.html">toSQL</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute an SQL statement using this query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute an SQL statement using this query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="connection"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Connection object of this object.
+   </p>
+<A NAME="connectionSub"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<strong>connectionSub</strong> (void)
+<br></td><td align="right"><h3><strong>connectionSub</strong></h3></td></tr></table><p></p><p> Actual database connection that this query is currently using.
+   </p>
+<A NAME="params"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;toQValue&gt; &amp;&nbsp;<strong>params</strong> (void)
+<br></td><td align="right"><h3><strong>params</strong></h3></td></tr></table><p></p><p> Parameters of the current query.
+   </p>
+<A NAME="sql"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>sql</strong> (void)
+<br></td><td align="right"><h3><strong>sql</strong></h3></td></tr></table><p></p><p> SQL to run. Observe that this string is in UTF8 format.
+   </p>
+<A NAME="readValue"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>toQValue &nbsp;<strong>readValue</strong> (void)
+<br></td><td align="right"><h3><strong>readValue</strong></h3></td></tr></table><p></p><p> Read a value from the query. Convert the value NULL to the string {null}.
+</p>
+<p><b>Returns</b>: Value read.
+   </p>
+<A NAME="readValueNull"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>toQValue &nbsp;<strong>readValueNull</strong> (void)
+<br></td><td align="right"><h3><strong>readValueNull</strong></h3></td></tr></table><p></p><p> Read a value from the query. Nulls are returned as empty toQValue.
+</p>
+<p><b>Returns</b>: Value read.
+   </p>
+<A NAME="eof"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
+<br></td><td align="right"><h3><strong>eof</strong></h3></td></tr></table><p></p><p> Check if end of query is reached.
+</p>
+<p><b>Returns</b>: True if end of query is reached.
+   </p>
+<A NAME="rowsProcessed"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>rowsProcessed</strong> (void)
+<br></td><td align="right"><h3><strong>rowsProcessed</strong></h3></td></tr></table><p></p><p> Get the number of rows processed by the query.
+   </p>
+<A NAME="describe"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;queryDescribe&gt; &nbsp;<strong>describe</strong> (void)
+<br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Get a list of descriptions for the columns. This function is relatively slow.
+   </p>
+<A NAME="columns"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>columns</strong> (void)
+<br></td><td align="right"><h3><strong>columns</strong></h3></td></tr></table><p></p><p> Get the number of columns in the resultset of the query.
+   </p>
+<A NAME="readQuery"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;toQValue&gt; &nbsp;<strong>readQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+				       <A HREF="toSQL.html">toSQL</A> &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>readQuery</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Execute a query and return all the values returned by it.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to run query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of toQValues:s read from the query.
+   </p>
+<A NAME="readQuery"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;toQValue&gt; &nbsp;<strong>readQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params)
+<br></td><td align="right"><h3><strong>readQuery</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Execute a query and return all the values returned by it.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to run query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of toQValues:s read from the query.
+   </p>
+<A NAME="readQuery"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;toQValue&gt; &nbsp;<strong>readQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toSQL.html">toSQL</A> &amp;sql,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>readQuery</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Execute a query and return all the values returned by it.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to run query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of toQValues:s read from the query.
+   </p>
+<A NAME="readQuery"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;toQValue&gt; &nbsp;<strong>readQuery</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>readQuery</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Execute a query and return all the values returned by it.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to run query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of toQValues:s read from the query.
+   </p>
 <HR>
 	<table>
 	</table>

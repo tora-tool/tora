@@ -37,6 +37,7 @@
 #include "toresultdepend.h"
 #include "tosql.h"
 #include "tomain.h"
+#include "toconnection.h"
 
 static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "SELECT DISTINCT\n"

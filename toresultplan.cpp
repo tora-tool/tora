@@ -45,12 +45,12 @@
 
 #include "tomain.h"
 #include "toresultplan.h"
+#include "toconnection.h"
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
 
 #include "toresultplan.moc"
-
 
 toResultPlan::toResultPlan(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)

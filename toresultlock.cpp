@@ -41,6 +41,7 @@
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 #include "toresultlock.moc"
 

@@ -38,6 +38,7 @@
 #define __TORESULTVIEW_H
 
 #include <qlistview.h>
+
 #include "toresult.h"
 #include "tomain.h"
 
@@ -48,6 +49,7 @@ class toListTip;
 class TOPrinter;
 class toSQL;
 class toResultCols;
+class toQuery;
 
 /** Baseclass for filters to apply to the @ref toResultView to filter out
  * rows that you don't want to add as items to the list.
@@ -458,8 +460,7 @@ public:
   /** Get the number of columns in query.
    * @return Columns in query.
    */
-  int queryColumns() const
-  { return Query?Query->columns():0; }
+  int queryColumns() const;
 
   /** Set a filter to this list.
    * @param filter The new filter or NULL if no filter is to be used.
