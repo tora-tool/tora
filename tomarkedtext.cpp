@@ -250,6 +250,10 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     setOverwriteMode(!isOverwriteMode());
     e->accept();
     return;
+  } else if(e->state()==ControlButton&&e->key()==Key_A) {
+    selectAll();
+    e->accept();
+    return;
   } else
     toMultiLineEdit::keyPressEvent(e);
 }

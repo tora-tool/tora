@@ -21,6 +21,7 @@
 2001-10-10: Removed all references to long sessions option.
 2001-10-10: Removed all comments from SQL in toExtract.
 2001-10-10: Fixed misspelling of autoallocate in storage.
+2001-10-10: Control A selected entire editor always.
 
 1.1.2: Released 2001-10-07
 
