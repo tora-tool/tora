@@ -379,11 +379,19 @@ void toAlert::add(void)
       i=toFind(Names,name);
       if (i==Names.end()) {
 	i=toFind(AddNames,name);
-	if (i==AddNames.end())
+	if (i==AddNames.end()) {
 	  AddNames.insert(AddNames.end(),name);
+	}
       }
     } else {
       DelNames.erase(i);
     }
   }
+
+  for (int i=0;i<Registered->count();i++)
+    if (Registered->text(i)==name)
+      return;
+
+  Registered->insertItem(name);
+  Name->setText(name);
 }

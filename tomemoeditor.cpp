@@ -47,6 +47,8 @@
 
 #include "tomemoeditor.moc"
 
+#include "icons/commit.xpm"
+#include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
 #include "icons/cut.xpm"
 #include "icons/copy.xpm"
@@ -92,6 +94,16 @@ public:
   }
 };
 
+void toMemoEditor::openFile(void)
+{
+  Editor->editOpen();
+}
+
+void toMemoEditor::saveFile(void)
+{
+  Editor->editSave(true);
+}
+
 toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 			   bool sql,bool modal)
   : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
@@ -116,11 +128,20 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 
   QToolButton *btn;
   if (row>=0&&col>=0) {
-    new QToolButton(QPixmap((const char **)filesave_xpm),
+    new QToolButton(QPixmap((const char **)commit_xpm),
 		    "Save changes",
 		    "Save changes",
 		    this,SLOT(store(void)),
 		    toolbar);
+    toolbar->addSeparator();
+    new QToolButton(QPixmap((const char **)fileopen_xpm),
+		    "Open file",
+		    "Open file",
+		    this,SLOT(openFile()),toolbar);
+    new QToolButton(QPixmap((const char **)filesave_xpm),
+		    "Save file",
+		    "Save file",
+		    this,SLOT(saveFile()),toolbar);
     toolbar->addSeparator();
     btn=new QToolButton(QPixmap((const char **)cut_xpm),
 			"Cut to clipboard",
@@ -129,6 +150,12 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
     connect(Editor,SIGNAL(copyAvailable(bool)),
 	    btn,SLOT(setEnabled(bool)));
     btn->setEnabled(false);
+  } else {
+    new QToolButton(QPixmap((const char **)filesave_xpm),
+		    "Save file",
+		    "Save file",
+		    this,SLOT(saveFile()),toolbar);
+    toolbar->addSeparator();
   }
   btn=new QToolButton(QPixmap((const char **)copy_xpm),
 			     "Copy to clipboard",

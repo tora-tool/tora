@@ -84,6 +84,9 @@ class toMemoEditor : public QDialog {
   /** Column of this field
    */
   int Col;
+private slots:
+  void openFile(void);
+  void saveFile(void); 
 public:
   /** Create this editor. If row and col is specified, editing is posible.
    * @param parent Parent widget.
