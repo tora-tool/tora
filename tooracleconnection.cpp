@@ -850,7 +850,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       conn->server_attach(connection().database().utf8());
     QCString user=connection().user().utf8();
     QCString pass=connection().password().utf8();
-    conn->session_begin(user.isEmpty()?"":user,pass.isEmpty()?"":pass,0,session_mode);
+    conn->session_begin(user.isEmpty()?"":(const char *)user,pass.isEmpty()?"":(const char *)pass,0,session_mode);
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())
