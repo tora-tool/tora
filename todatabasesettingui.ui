@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>518</width>
+            <width>514</width>
             <height>468</height>
         </rect>
     </property>
@@ -375,6 +375,7 @@
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
+    <tabstop>ObjectCache</tabstop>
     <tabstop>InitialFetch</tabstop>
     <tabstop>ReadAll</tabstop>
     <tabstop>MaxContent</tabstop>
@@ -385,5 +386,6 @@
     <tabstop>DontReread</tabstop>
     <tabstop>AutoLong</tabstop>
     <tabstop>MoveAfter</tabstop>
+    <tabstop>KeepAlive</tabstop>
 </tabstops>
 </UI>
