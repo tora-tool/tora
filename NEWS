@@ -1,6 +1,7 @@
 1.3.5: Released 2002-04-16
 
 2002-04-16: Added confirmation to change password tool.
+2002-04-16: Some fixes to the oci stub.
 2002-04-15: Fixed to rpm files.
 2002-04-15: Some minor Qt2 fixes.
 2002-04-15: Made use of result combos in all user lists where applicable.
