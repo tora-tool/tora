@@ -61,10 +61,11 @@ cp icons/tora.xpm $RPM_BUILD_ROOT%{_iconsdir}/tora.xpm
 strip plugins/*.tso tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
 cp plugins/*.tso $RPM_BUILD_ROOT%{_prefix}/lib/tora
 cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp help/* icons/*.xpm $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+cp help/*.* icons/*.xpm $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+cp help/api/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
 
 %post
 %{update_menus}

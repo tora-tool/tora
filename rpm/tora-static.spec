@@ -55,9 +55,10 @@ make
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 strip tora-static
 cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
 cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp help/* icons/*.xpm $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+cp help/*.* icons/*.xpm $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
+cp help/api/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
 
 %post
 
