@@ -171,7 +171,7 @@ static toSQL SQLComment("toResultCols:Comments",
 			"   AND Column_Name = :f3<char[31]>",
 			"Display column comments");
 
-QString toResultCols::query(const QString &sql,const list<QString> &param)
+void toResultCols::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
   QString Owner;
@@ -302,12 +302,9 @@ QString toResultCols::query(const QString &sql,const list<QString> &param)
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
     updateContents();
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
     updateContents();
-    return QString((const char *)exc.msg);
   }
   updateContents();
-  return "";
 }

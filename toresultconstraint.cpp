@@ -87,7 +87,7 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 			    " ORDER BY Constraint_Name",
 			    "List constraints on a table. Must have same column order");
 
-QString toResultConstraint::query(const QString &sql,const list<QString> &param)
+void toResultConstraint::query(const QString &sql,const list<QString> &param)
 {
   QString Owner;
   QString TableName;
@@ -181,12 +181,9 @@ QString toResultConstraint::query(const QString &sql,const list<QString> &param)
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
     updateContents();
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
     updateContents();
-    return QString((const char *)exc.msg);
   }
   updateContents();
-  return "";
 }

@@ -46,10 +46,10 @@ public:
   void setSQL(const QString &sql)
   { SQL=sql; }
 
-  virtual QString query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const list<QString> &param);
 
-  QString query(const QString &sql)
-  { list<QString> p; return query(sql,p); }
+  void query(const QString &sql)
+  { list<QString> p; query(sql,p); }
 public slots:
   virtual void refresh(void)
   { query(SQL); }

@@ -37,7 +37,7 @@ class otl_stream;
 class toResultCols : public toResultView {
 public:
   toResultCols(toConnection &conn,QWidget *parent,const char *name=NULL);
-  virtual QString query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const list<QString> &param);
   friend toResultColsItem;
 };
 

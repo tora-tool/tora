@@ -88,8 +88,8 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[31]> and aa.lmode != aa.request and aa.request != 0)",
 		     "List locks in a session");
 
-QString toResultLock::query(const QString &sql,
-			    const list<QString> &param)
+void toResultLock::query(const QString &sql,
+			 const list<QString> &param)
 {
   clear();
 
@@ -124,11 +124,8 @@ QString toResultLock::query(const QString &sql,
     }
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    return QString((const char *)exc.msg);
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    return str;
   }
   updateContents();
-  return "";
 }

@@ -35,6 +35,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "toconf.h"
 #include "tomain.h"
+#include "toresultstats.h"
 
 #undef TO_DEBUG
 #ifdef TO_DEBUG
@@ -51,7 +52,6 @@ void toNoBlockQuery::queryTask::run(void)
   TO_DEBUGOUT("Thread started\n");
   otl_stream Query;
   int Length;
-  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
   try {
     {
       Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
@@ -84,7 +84,7 @@ void toNoBlockQuery::queryTask::run(void)
       for (;;) {
 	for (int i=0;i<Length;i++) {
 	  TO_DEBUGOUT("Reading value\n");
-	  QString value(toReadValue(Parent.Description[i],Query,MaxColSize));
+	  QString value(toReadValue(Parent.Description[i],Query,Parent.MaxColSize));
 	  {
 	    TO_DEBUGOUT("Locking parent\n");
 	    toLocker lock(Parent.Lock);
@@ -110,27 +110,30 @@ void toNoBlockQuery::queryTask::run(void)
 	    }
 	  }
 	}
+	TO_DEBUGOUT("Locking to check size\n");
+	toLocker lock(Parent.Lock);
 	if (Query.eof())
 	  break;
 	else {
-	  TO_DEBUGOUT("Locking to check size\n");
-	  toLocker lock(Parent.Lock);
 	  if (Parent.ReadingValues.size()>PREFETCH_SIZE) {
-	    TO_DEBUGOUT("Waiting for next\n");
 	    try {
 	      Parent.Lock.unlock();
 	    } catch(...) {
 	      throw;
 	    }
+	    TO_DEBUGOUT("Waiting for next\n");
 	    Parent.Continue.down();
+	    TO_DEBUGOUT("Done waiting\n");
+	    signaled=false;
 	    try {
 	      Parent.Lock.lock();
 	    } catch(...) {
 	      throw;
 	    }
-	    signaled=false;
 	  }
 	}
+	if (Parent.Quit)
+	  break;
       }
     }
     TO_DEBUGOUT("EOQ\n");
@@ -173,17 +176,22 @@ QString toNoBlockQuery::readValue()
 
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
-			       const list<QString> &param)
-  : Connection(conn),SQL(sql),Param(param)
+			       const list<QString> &param,toResultStats *stats)
+  : Connection(conn),SQL(sql),Param(param),Statistics(stats)
 {
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Description=NULL;
   DescriptionLength=0;
-  EOQ=false;
+  Quit=EOQ=false;
   Processed=0;
+  MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+  toLocker lock(Lock);
   try {
     LongConn=Connection.longOperation();
+    if (Statistics)
+      Statistics->changeSession(*LongConn);
+
     Thread=new toThread(new queryTask(*this));
     TO_DEBUGOUT("Created thread\n");
     Thread->start();
@@ -232,14 +240,25 @@ toNoBlockQuery::~toNoBlockQuery()
       // This is how it works
       kill(getpid(),SIGINT);
 #endif
+      Quit=true;
     }
   }
   do {
+    TO_DEBUGOUT("Waiting for client\n");
     Running.down();
+    {
+      TO_DEBUGOUT("Locking clear values\n");
+      toLocker lock(Lock);
+      ReadingValues.clear();
+    }
     Continue.up();
-    TO_DEBUGOUT("Locking eof on delete\n");
+    TO_DEBUGOUT("Locking delete EOQ\n");
     toLocker lock(Lock);
   } while(!EOQ);
+  if (Statistics) {
+    TO_DEBUGOUT("Get statistics\n");
+    Statistics->refreshStats(false);
+  }
   Connection.longOperationFree(LongConn);
   TO_DEBUGOUT("Done deleting\n");
 }

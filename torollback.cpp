@@ -393,9 +393,9 @@ public:
   {
     setSQL(SQLRollback(conn));
   }
-  virtual QString query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const list<QString> &param)
   {
-    QString ret=toResultView::query(sql,param);
+    toResultView::query(sql,param);
     try {
       otl_stream trx(1,
 		     SQLStartExt(Connection),
@@ -409,7 +409,6 @@ public:
 	}
       }
     } TOCATCH
-    return ret;
   }
 };
 
@@ -502,7 +501,7 @@ public:
     setSorting(0);
     NumExtents=0;
   }
-  virtual QString query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const list<QString> &param)
   {
     try {
       clear();
@@ -600,8 +599,6 @@ public:
 	}
       }
     } TOCATCH
-
-    return "";
   }
 };
 

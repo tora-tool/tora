@@ -143,7 +143,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Vertical,this);
   Sessions=new toResultView(false,false,connection,splitter);
   ResultTab=new QTabWidget(splitter);
-  SessionStatistics=new toResultStats(0,Connection,ResultTab);
+  SessionStatistics=new toResultStats(false,0,Connection,ResultTab);
   ResultTab->addTab(SessionStatistics,"Statistics");
   ConnectInfo=new toResultView(true,false,Connection,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo(Connection));
@@ -223,7 +223,6 @@ void toSession::refresh(void)
       Sessions->setSelected(CurrentItem,true);
       break;
     }
-  changeTab(CurrentTab);
 }
 
 void toSession::enableStatistics(bool enable)

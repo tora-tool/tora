@@ -95,7 +95,7 @@ static toSQL SQLDependencies("toResultReferences:Dependencies",
  ORDER BY owner,type,name",
 			     "List the dependencies from other objects to this object, must return same number of columns");
 
-QString toResultReferences::query(const QString &sql,const list<QString> &param)
+void toResultReferences::query(const QString &sql,const list<QString> &param)
 {
   QString Owner;
   QString TableName;
@@ -182,13 +182,8 @@ QString toResultReferences::query(const QString &sql,const list<QString> &param)
     }
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    updateContents();
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    updateContents();
-    return QString((const char *)exc.msg);
   }
   updateContents();
-  return "";
 }

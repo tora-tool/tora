@@ -60,8 +60,8 @@ static toSQL SQLViewPlan("toResultPlan:ViewPlan",
 			 "  FROM %s WHERE Statement_ID = 'Tora %d' ORDER BY NVL(Parent_ID,0),ID",
 			 "Get the contents of a plan table. Observe the %s and %s which must be present and in the same order. Must return same columns");
 
-QString toResultPlan::query(const QString &sql,
-			    const list<QString> &param)
+void toResultPlan::query(const QString &sql,
+			 const list<QString> &param)
 {
   clear();
 
@@ -134,11 +134,8 @@ QString toResultPlan::query(const QString &sql,
 
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    return QString((const char *)exc.msg);
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    return str;
   }
   updateContents();
-  return "";
 }

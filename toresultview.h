@@ -94,13 +94,13 @@ protected:
   void setup(bool readable,bool dispCol);
 
   virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
+  virtual bool eof(void)
+  { return !Query||Query->eof(); }
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);
   ~toResultView()
   { delete Query; }
-
-  void addItem(void);
 
   void setReadAll(bool all)
   { ReadAll=all;}
@@ -112,9 +112,9 @@ public:
 
   void setSQL(const QString &sql)
     { SQL=sql; }
-  virtual QString query(const QString &sql,const list<QString> &param);
-  QString query(const QString &sql)
-  { list<QString> p; return query(sql,p); }
+  virtual void query(const QString &sql,const list<QString> &param);
+  void query(const QString &sql)
+  { list<QString> p; query(sql,p); }
 public slots:
   virtual void refresh(void)
   { query(SQL); }
@@ -124,6 +124,7 @@ public slots:
   { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  virtual void addItem(void);
 };
 
 #endif

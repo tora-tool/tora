@@ -32,6 +32,8 @@
 #include "toconnection.h"
 #include "tothread.h"
 
+class toResultStats;
+
 class toNoBlockQuery {
 private:
   class queryTask : public toTask {
@@ -46,11 +48,13 @@ private:
 
   toSemaphore Running;
   toSemaphore Continue;
+  int MaxColSize;
   toLock Lock;
   list<QString>::iterator CurrentValue;
   list<QString> ReadingValues;
   list<QString> Values;
   bool EOQ;
+  bool Quit;
   otl_connect *LongConn;
   toConnection &Connection;
   QString SQL;
@@ -60,13 +64,15 @@ private:
   otl_column_desc *Description;
   list<QString> Param;
   toThread *Thread;
+  toResultStats *Statistics;
 
   void checkError()
   { if (!Error.isNull()) throw Error; }
 public:
   toNoBlockQuery(toConnection &conn,
 		 const QString &sql,
-		 const list<QString> &param);
+		 const list<QString> &param,
+		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
   bool poll(void)

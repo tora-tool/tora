@@ -59,6 +59,8 @@ TO_NAMESPACE;
 #include "tohighlightedtext.h"
 #include "toparamget.h"
 #include "toresultlong.h"
+#include "toresultstats.h"
+#include "toconf.h"
 
 #include "toworksheet.moc"
 
@@ -70,6 +72,11 @@ TO_NAMESPACE;
 #include "icons/commit.xpm"
 #include "icons/rollback.xpm"
 #include "icons/eraselog.xpm"
+#include "icons/stop.xpm"
+#include "icons/clock.xpm"
+
+#define TO_ID_STATISTICS		(TO_TOOL_MENU_ID+ 0)
+#define TO_ID_STOP			(TO_TOOL_MENU_ID+ 1)
 
 #define CONF_AUTO_COMMIT "AutoCommit"
 #define CONF_AUTO_SAVE   "AutoSave"
@@ -235,6 +242,8 @@ static QPixmap *toExecuteStepPixmap;
 static QPixmap *toCommitPixmap;
 static QPixmap *toRollbackPixmap;
 static QPixmap *toEraseLogPixmap;
+static QPixmap *toStopPixmap;
+static QPixmap *toStatisticPixmap;
 
 void toWorksheet::viewResources(void)
 {
@@ -262,6 +271,10 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
     toRollbackPixmap=new QPixmap((const char **)rollback_xpm);
   if (!toEraseLogPixmap)
     toEraseLogPixmap=new QPixmap((const char **)eraselog_xpm);
+  if (!toStopPixmap)
+    toStopPixmap=new QPixmap((const char **)stop_xpm);
+  if (!toStatisticPixmap)
+    toStatisticPixmap=new QPixmap((const char **)clock_xpm);
 
   QToolBar *toolbar=new QToolBar("SQL Worksheet",toMainWidget(),this);
   new QToolButton(*toExecutePixmap,
@@ -296,35 +309,23 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  "Rollback work",
 		  this,SLOT(rollbackButton(void)),
 		  toolbar);
-  toolbar->addSeparator();
-  new QToolButton(*toEraseLogPixmap,
-		  "Clear execution log",
-		  "Clear execution log",
-		  this,SLOT(eraseLogButton(void)),
-		  toolbar);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
-  
-  Accelerators=new QAccel(this);
-  Accelerators->connectItem(Accelerators->insertItem(Key_F9),
-			    this,
-			    SLOT(executeAll(void)));
-  Accelerators->connectItem(Accelerators->insertItem(Key_F8),
-			    this,
-			    SLOT(executeStep(void)));
-  Accelerators->connectItem(Accelerators->insertItem(CTRL+Key_Return),
-			    this,
-			    SLOT(execute(void)));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
 
   Editor=new toHighlightedText(splitter);
   ResultTab=new QTabWidget(splitter);
   Result=new toResultLong(connection,ResultTab);
+  connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
+  connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
+	  this,SLOT(addLog(const QString &,const QString &)));
   ResultTab->addTab(Result,"Data");
   Plan=new toResultPlan(connection,ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
   Resources=new toResultResources(connection,ResultTab);
   ResultTab->addTab(Resources,"Information");
+  Statistics=new toResultStats(true,connection,ResultTab);
+  ResultTab->addTab(Statistics,"Statistics");
+  ResultTab->setTabEnabled(Statistics,false);
 
   Logging=new toResultView(true,false,connection,ResultTab);
   ResultTab->addTab(Logging,"Logging");
@@ -333,6 +334,27 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   Logging->addColumn("Timestamp");
   LastLogItem=NULL;
 
+  toolbar->addSeparator();
+  StatisticButton=new QToolButton(toolbar);
+  StatisticButton->setToggleButton(true);
+  StatisticButton->setIconSet(QIconSet(*toStatisticPixmap));
+  connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
+  QToolTip::add(StatisticButton,"Gather session statistic of execution");
+
+  StopButton=new QToolButton(*toStopPixmap,
+			     "Stop execution",
+			     "Stop execution",
+			     Result,SLOT(stop(void)),
+			     toolbar);
+  StopButton->setEnabled(false);
+  toolbar->addSeparator();
+  new QToolButton(*toEraseLogPixmap,
+		  "Clear execution log",
+		  "Clear execution log",
+		  this,SLOT(eraseLogButton(void)),
+		  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  
   Connection.addWidget(this);
 
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
@@ -381,9 +403,17 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(*toRollbackPixmap,"&Rollback",this,SLOT(rollbackButton(void)),
 			   CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem("&Enable statistics",this,SLOT(toggleStatistic(void)),
+			   0,TO_ID_STATISTICS);
+      ToolMenu->insertItem(*toStopPixmap,"&Stop execution",Result,SLOT(stop(void)),
+			   0,TO_ID_STOP);
+      ToolMenu->insertSeparator();
       ToolMenu->insertItem(*toEraseLogPixmap,"Erase &Log",this,SLOT(eraseLogButton(void)));
 
       toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,TO_TOOL_MENU_INDEX);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
+      toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,
+						StatisticButton->isOn());
     }
   } else {
     delete ToolMenu;
@@ -456,6 +486,8 @@ void toWorksheet::changeResult(QWidget *widget)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
       viewResources();
+    else if (CurrentTab==Statistics&&Result->running())
+      Statistics->refreshStats(false);
   }
 }
 
@@ -463,6 +495,8 @@ void toWorksheet::refresh(void)
 {
   if (!QueryString.isEmpty()) {
     Result->query(QueryString);
+    StopButton->setEnabled(true);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
@@ -474,37 +508,40 @@ void toWorksheet::query(const QString &str)
 {
 
   try {
-    QString now=toNow(Connection);
     QString execSql=str;
     list<QString> param=toParamGet::getParam(this,execSql);
-    QString res=Result->query(execSql,param);
-
-    toResultViewItem *item;
-    if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
-      if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-	item=new toResultViewItem(Logging,NULL);
-      else
-	item=new toResultViewItem(Logging,LastLogItem);
-    } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-      item=new toResultViewMLine(Logging,NULL);
-    else
-      item=new toResultViewMLine(Logging,LastLogItem);
-    item->setText(0,str);
-
-    LastLogItem=item;
-    item->setText(1,res);
-    {
-      item->setText(2,now);
-    }
-    Logging->setCurrentItem(item);
-    Logging->ensureItemVisible(item);
-    if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
-      Connection.connection().commit();
-    else
-      Connection.setNeedCommit();
+    Result->query(execSql,param);
+    StopButton->setEnabled(true);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
   } catch (const QString &str) {
     toStatusMessage(str);
   }
+}
+
+void toWorksheet::addLog(const QString &sql,const QString &result)
+{
+  QString now=toNow(Connection);
+  toResultViewItem *item;
+  if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
+    if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+      item=new toResultViewItem(Logging,NULL);
+    else
+      item=new toResultViewItem(Logging,LastLogItem);
+  } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+    item=new toResultViewMLine(Logging,NULL);
+  else
+    item=new toResultViewMLine(Logging,LastLogItem);
+  item->setText(0,sql);
+  
+  LastLogItem=item;
+  item->setText(1,result);
+  item->setText(2,now);
+  Logging->setCurrentItem(item);
+  Logging->ensureItemVisible(item);
+  if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
+    Connection.connection().commit();
+  else
+    Connection.setNeedCommit();
 }
 
 void NewStatement(void)
@@ -663,6 +700,7 @@ void toWorksheet::execute(bool all,bool step)
 		if (Editor->hasMarkedText()) {
 		  QueryString=Editor->markedText();
 		  query(QueryString);
+		  Result->readAll();
 		  NewStatement();
 		  code=false;
 		}
@@ -720,4 +758,30 @@ void toWorksheet::eraseLogButton()
 {
   Logging->clear();
   LastLogItem=NULL;
+}
+
+void toWorksheet::queryDone(void)
+{
+  StopButton->setEnabled(false);
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+}
+
+void toWorksheet::enableStatistic(bool ena)
+{
+  if (ena) {
+    if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
+      QMessageBox::warning(this,
+			   "Enable statistics",
+			   "Enabling statistics without enabling the long sessions option\n"
+			   "is unreliable at bests.",
+			   "Ok");
+    Result->setStatistics(Statistics);
+    ResultTab->setTabEnabled(Statistics,true);
+    toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);
+    Statistics->clear();
+  } else {
+    Result->setStatistics(NULL);
+    ResultTab->setTabEnabled(Statistics,false);
+    toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
+  }
 }

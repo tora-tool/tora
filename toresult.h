@@ -41,7 +41,7 @@ public:
   { }
 
   virtual void refresh(void) = NULL;
-  virtual QString query(const QString &sql,const list<QString> &params) = NULL;
+  virtual void query(const QString &sql,const list<QString> &params) = NULL;
   virtual void changeParams(const QString &Param1) = NULL;
   virtual void changeParams(const QString &Param1,const QString &Param2) = NULL;
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = NULL;

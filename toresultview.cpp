@@ -105,7 +105,7 @@ int toResultViewItem::width(const QFontMetrics &fm, const QListView *top, int co
 void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
 {
   QListViewItem::paintCell(p,cg,column,width,align);
-  if (itemBelow()==NULL) {
+  if (itemBelow()==NULL||itemBelow()->itemBelow()==NULL) {
     toResultView *view=(toResultView *)listView();
     view->addItem();
   }
@@ -220,7 +220,7 @@ void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   
 }
 
-QString toResultView::query(const QString &sql,const list<QString> &param)
+void toResultView::query(const QString &sql,const list<QString> &param)
 {
   delete Query;
   SQL=sql;
@@ -276,7 +276,7 @@ QString toResultView::query(const QString &sql,const list<QString> &param)
 	if (hidden)
 	  throw QString("Can only hide last column in query");
 	if (name[0]=='-') {
-	  addColumn(name.right(name.length()));
+	  addColumn(name.right(name.length()-1));
 	  setColumnAlignment(columns()-1,AlignRight);
 	} else
 	  addColumn(name);
@@ -294,20 +294,16 @@ QString toResultView::query(const QString &sql,const list<QString> &param)
     else
       sprintf(buffer,"Query executed");
     toStatusMessage(buffer);
-    updateContents();
-    return QString(buffer);
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    updateContents();
-    return QString((const char *)exc.msg);
   }
+  updateContents();
 }
 
 void toResultView::readAll(void)
 {
-  while(Query&&!Query->eof())
+  while(!eof())
     addItem();
 }

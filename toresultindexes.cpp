@@ -80,7 +80,7 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  " ORDER BY Index_Name",
 			  "List the indexes available on a table");
 
-QString toResultIndexes::query(const QString &sql,const list<QString> &param)
+void toResultIndexes::query(const QString &sql,const list<QString> &param)
 {
   QString Owner;
   QString TableName;
@@ -125,13 +125,9 @@ QString toResultIndexes::query(const QString &sql,const list<QString> &param)
     }
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    updateContents();
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    updateContents();
-    return QString((const char *)exc.msg);
   }
   updateContents();
-  return "";
+  return;
 }

@@ -39,6 +39,7 @@ class QListViewItem;
 class toresultlong;
 class toResultTip;
 class toNoBlockQuery;
+class toResultStats;
 
 class toResultLong : public toResultView {
   Q_OBJECT
@@ -47,17 +48,32 @@ protected:
   toNoBlockQuery *Query;
   QTimer Timer;
   bool HasHeaders;
+  bool First;
+  toResultStats *Statistics;
 
+  virtual bool eof(void);
 public:
   toResultLong(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultLong(toConnection &conn,QWidget *parent,const char *name=NULL);
   ~toResultLong();
 
-  virtual QString query(const QString &sql,const list<QString> &param);
-  QString query(const QString &sql)
-  { list<QString> p; return query(sql,p); }
+  void setStatistics(toResultStats *stats)
+  { Statistics=stats; }
+
+  bool running(void)
+  { return Query; }
+
+  virtual void query(const QString &sql,const list<QString> &param);
+  void query(const QString &sql)
+  { list<QString> p; query(sql,p); }
+
+signals:
+  void done(void);
+  void firstResult(const QString &sql,const QString &res);
+
 public slots:
-  void addItem(void);
+  void stop(void);
+  virtual void addItem(void);
 };
 
 #endif

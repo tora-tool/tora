@@ -140,7 +140,7 @@ void toResultItem::done(void)
       Widgets[i]->hide();
 }
 
-QString toResultItem::query(const QString &sql,const list<QString> &param)
+void toResultItem::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
 
@@ -189,15 +189,12 @@ QString toResultItem::query(const QString &sql,const list<QString> &param)
       addItem(name,toReadValue(Description[i],Query,MaxColSize));
     }
     done();
-    return "";
   } catch (const QString &str) {
     done();
     toStatusMessage((const char *)str);
-    return str;
   } catch (const otl_exception &exc) {
     done();
     toStatusMessage((const char *)exc.msg);
-    return QString((const char *)exc.msg);
   }
 }
 

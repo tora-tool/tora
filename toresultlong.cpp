@@ -44,6 +44,7 @@ toResultLong::toResultLong(bool readable,bool dispCol,toConnection &conn,QWidget
   : toResultView(readable,dispCol,conn,parent,name)
 {
   Query=NULL;
+  Statistics=NULL;
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
@@ -51,16 +52,18 @@ toResultLong::toResultLong(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(conn,parent,name)
 {
   Query=NULL;
+  Statistics=NULL;
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
-QString toResultLong::query(const QString &sql,const list<QString> &param)
+void toResultLong::query(const QString &sql,const list<QString> &param)
 {
   delete Query;
   SQL=sql;
   Query=NULL;
   LastItem=NULL;
   RowNumber=0;
+  First=true;
 
   clear();
   while(columns()>1) {
@@ -72,26 +75,17 @@ QString toResultLong::query(const QString &sql,const list<QString> &param)
     removeColumn(0);
 
   try {
-    Query=new toNoBlockQuery(Connection,sql,param);
+    Query=new toNoBlockQuery(Connection,sql,param,Statistics);
 
     addItem();
 
-    char buffer[100];
-    if (Query->getProcessed()>0)
-      sprintf(buffer,"%d rows processed",(int)Query->getProcessed());
-    else
-      sprintf(buffer,"Query executed");
-    toStatusMessage(buffer);
-    updateContents();
-    return QString(buffer);
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
     updateContents();
-    return QString((const char *)exc.msg);
   }
+  updateContents();
 }
 
 #define TO_POLL_CHECK 500
@@ -99,9 +93,17 @@ QString toResultLong::query(const QString &sql,const list<QString> &param)
 void toResultLong::addItem(void)
 {
   if (Query) {
-    printf("Checking data\n");
     if (Query->poll()) {
       try {
+	if (First) {
+	  char buffer[100];
+	  if (Query->getProcessed()>0)
+	    sprintf(buffer,"%d rows processed",(int)Query->getProcessed());
+	  else
+	    sprintf(buffer,"Query executed");
+	  emit firstResult(SQL,buffer);
+	  First=false;
+	}
 	if (!HasHeaders) {
 	  Description=Query->describe(DescriptionLen);
 	  if (Description) {
@@ -129,7 +131,7 @@ void toResultLong::addItem(void)
 		if (hidden)
 		  throw QString("Can only hide last column in query");
 		if (name[0]=='-') {
-		  addColumn(name.right(name.length()));
+		  addColumn(name.right(name.length()-1));
 		  setColumnAlignment(columns()-1,AlignRight);
 		} else
 		  addColumn(name);
@@ -154,16 +156,28 @@ void toResultLong::addItem(void)
 	if (Query->eof()) {
 	  delete Query;
 	  Query=NULL;
+	  emit done();
 	  return;
 	}
-      } TOCATCH
-      if (RowNumber>childCount())
-	addItem();
+      } catch (const otl_exception &exc) {
+	if (First) {
+	  emit firstResult(SQL,(const char *)exc.msg);
+	  First=false;
+	}
+	toStatusMessage((const char *)exc.msg);
+      } catch (const QString &str) {
+	if (First) {
+	  emit firstResult(SQL,str);
+	  First=false;
+	}
+	toStatusMessage((const char *)str);
+      }
     } else if (Query->eof()) {
       delete Query;
       Query=NULL;
+      emit done();
       return;
-    } else
+    } else if (!Timer.isActive())
       Timer.start(TO_POLL_CHECK,true);
   }
 }
@@ -171,4 +185,18 @@ void toResultLong::addItem(void)
 toResultLong::~toResultLong()
 {
   delete Query;
+}
+
+bool toResultLong::eof(void)
+{
+  return !Query||Query->eof();
+}
+
+void toResultLong::stop(void)
+{
+  if (Query) {
+    delete Query;
+    Query=NULL;
+    emit done();
+  }
 }

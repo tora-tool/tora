@@ -46,11 +46,11 @@ class toResultPlan;
 class toMarkedText;
 class QGroupBox;
 class QPushButton;
+class QToolButton;
 class QLineEdit;
 class QCheckBox;
 class QLabel;
 class toTool;
-class QAccel;
 
 class toWorksheetPrefs : public QFrame, public toSettingTab
 { 
@@ -78,7 +78,6 @@ public slots:
 class toWorksheet : public QVBox {
   Q_OBJECT
 
-  QAccel *Accelerators;
   toMarkedText *Editor;
   QTabWidget *ResultTab;
   toResultLong *Result;
@@ -90,6 +89,8 @@ class toWorksheet : public QVBox {
   toResultStats *Statistics;
   toResultView *Logging;
   QListViewItem *LastLogItem;
+  QToolButton *StopButton;
+  QToolButton *StatisticButton;
 
   QPopupMenu *ToolMenu;
 
@@ -123,6 +124,12 @@ public slots:
   void eraseLogButton();
   void changeResult(QWidget *widget);
   void windowActivated(QWidget *w);
+  void queryDone(void);
+  void enableStatistic(bool);
+  void toggleStatistic(void)
+  { StatisticButton->setOn(!StatisticButton->isOn()); }
+
+  void addLog(const QString &sql,const QString &result);
 };
 
 #endif

@@ -32,20 +32,23 @@
 #include "toresultview.h"
 
 #define TO_STAT_MAX 500
+#define TO_STAT_BLOCKS 10
 
 class toResultStats : public toResultView {
   Q_OBJECT
   int SessionID;
-  double LastValues[TO_STAT_MAX];
+  bool OnlyChanged;
+  double LastValues[TO_STAT_MAX+TO_STAT_BLOCKS];
   void setup();
 public:
-  toResultStats(int ses,toConnection &conn,QWidget *parent,const char *name=NULL);
-  toResultStats(toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultStats(bool OnlyChanged,int ses,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultStats(bool OnlyChanged,toConnection &conn,QWidget *parent,const char *name=NULL);
 
   void resetStats(void);
+  void changeSession(otl_connect &conn);
   void changeSession(int ses);
 public slots:
-  void refreshStats(void);
+  void refreshStats(bool reset=true);
 };
 
 #endif

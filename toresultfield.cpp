@@ -43,7 +43,7 @@ toResultField::toResultField(toConnection &conn,QWidget *parent,const char *name
   setReadOnly(true);
 }
 
-QString toResultField::query(const QString &sql,const list<QString> &param)
+void toResultField::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
 
@@ -74,12 +74,9 @@ QString toResultField::query(const QString &sql,const list<QString> &param)
       col%=DescriptionLen;
     }
     setText(text);
-    return "";
   } catch (const QString &str) {
     toStatusMessage((const char *)str);
-    return str;
   } catch (const otl_exception &exc) {
     toStatusMessage((const char *)exc.msg);
-    return QString((const char *)exc.msg);
   }
 }

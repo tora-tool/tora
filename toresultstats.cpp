@@ -33,9 +33,9 @@ TO_NAMESPACE;
 
 #include "toresultstats.moc"
 
-toResultStats::toResultStats(int ses,toConnection &conn,QWidget *parent,
+toResultStats::toResultStats(bool onlyChanged,int ses,toConnection &conn,QWidget *parent,
 			     const char *name=NULL)
-  : toResultView(false,false,conn,parent,name)
+  : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
 {
   SessionID=ses;
   setup();
@@ -45,9 +45,9 @@ static toSQL SQLSession("toResultStats:Session",
 			"SELECT MIN(SID) FROM V$MYSTAT",
 			"Get session id of current session");
 
-toResultStats::toResultStats(toConnection &conn,QWidget *parent,
+toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent,
 			     const char *name=NULL)
-  : toResultView(false,false,conn,parent,name)
+  : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
 {
   try {
     otl_stream str(1,
@@ -66,8 +66,10 @@ void toResultStats::setup(void)
     LastValues[i]=0;
 
   addColumn("Name");
-  addColumn("Value");
+  if (!OnlyChanged)
+    addColumn("Value");
   addColumn("Delta");
+  setSorting(0);
 
   setColumnAlignment(1,AlignRight);
   setColumnAlignment(2,AlignRight);
@@ -76,6 +78,14 @@ void toResultStats::setup(void)
 static toSQL SQLStatistics("toResultStats:Statistics",
 			   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
 			   "Get statistics for session, must have same number of columns");
+static toSQL SQLSessionIO("toResultStats:SessionIO",
+			  "
+SELECT Block_Gets \"block gets\",
+       Block_Changes \"block changes\",
+       Consistent_Changes \"consistent changes\"
+  FROM v$sess_io
+ WHERE SID = :f1<int>",
+			  "Get session IO, must have same binds");
 
 void toResultStats::resetStats(void)
 {
@@ -89,11 +99,36 @@ void toResultStats::resetStats(void)
       double value;
       str>>id;
       str>>value;
-      if (id<TO_STAT_MAX)
+      id+=TO_STAT_BLOCKS;
+      if (id<TO_STAT_MAX+TO_STAT_BLOCKS)
 	LastValues[id]=value;
+    }
+    otl_stream sesio(1,
+		     SQLSessionIO(Connection),
+		     Connection.connection());
+    sesio<<SessionID;
+    int id=0;
+    while(!sesio.eof()) {
+      double value;
+      sesio>>value;
+      LastValues[id]=value;
+      id++;
     }
   } catch (otl_exc &exc) {
     toStatusMessage((const char *)exc.msg);
+  }
+}
+
+void toResultStats::changeSession(otl_connect &conn)
+{
+  try {
+    otl_stream str(1,
+		   SQLSession(Connection),
+		   conn);
+    str>>SessionID;
+    resetStats();
+    refreshStats(true);
+  } catch (otl_exc &exc) {
   }
 }
 
@@ -102,8 +137,8 @@ void toResultStats::changeSession(int ses)
   if (SessionID!=ses) {
     SessionID=ses;
     resetStats();
-    refreshStats();
   }
+  refreshStats();
 }
 
 static toSQL SQLStatisticName("toResultStats:StatisticName",
@@ -113,35 +148,59 @@ static toSQL SQLStatisticName("toResultStats:StatisticName",
 			      " ORDER BY UPPER(b.Name) Desc",
 			      "Get statistics and their names for session, must have same number of columns");
 
-void toResultStats::refreshStats(void)
+void toResultStats::refreshStats(bool reset)
 {
   try {
     clear();
     otl_stream str(1,
 		   SQLStatisticName(Connection),
 		   Connection.connection());
+    otl_stream sesio(1,
+		     SQLSessionIO(Connection),
+		     Connection.connection());
+    sesio<<SessionID;
+
     str<<SessionID;
-    while(!str.eof()) {
+    int SesID=0;
+    while(!str.eof()||!sesio.eof()) {
       int id;
       double value;
       char buffer[65];
-      str>>buffer;
-      str>>id;
-      str>>value;
+      if (!sesio.eof()) {
+	int len;
+	otl_column_desc *description=sesio.describe_select(len);
+	strcpy(buffer,description[SesID%len].name);
+	id=SesID;
+	SesID++;
+	sesio>>value;
+      } else {
+	str>>buffer;
+	str>>id;
+	id+=TO_STAT_BLOCKS;
+	str>>value;
+      }
       QString delta;
       QString absVal;
       toResultViewItem *last=NULL;
       if (value!=0) {
-	if (id<TO_STAT_MAX)
-	  delta.sprintf("%li",long(value-LastValues[id]));
-	absVal.sprintf("%li",long(value));
-	if (id<TO_STAT_MAX)
-	  LastValues[id]=value;
-	toResultViewItem *item=new toResultViewItem(this,last);
-	item->setText(0,buffer);
-	item->setText(1,absVal);
-	item->setText(2,delta);
-	last=item;
+	absVal.sprintf("%g",value);
+	if (id<TO_STAT_MAX+TO_STAT_BLOCKS) {
+	  delta.sprintf("%g",value-LastValues[id]);
+	  toResultViewItem *item;
+	  if (value!=LastValues[id]||!OnlyChanged) {
+	    item=new toResultViewItem(this,last);
+	    if (reset)
+	      LastValues[id]=value;
+	    item->setText(0,buffer);
+	    if (OnlyChanged)
+	      item->setText(1,delta);
+	    else {
+	      item->setText(1,absVal);
+	      item->setText(2,delta);
+	    }
+	    last=item;
+	  }
+	}
       }
     }
   } catch (const QString &str) {

@@ -36,7 +36,7 @@ class toResultConstraint : public toResultView {
   QString constraintCols(const QString &conOwner,const QString &conName);
 public:
   toResultConstraint(toConnection &conn,QWidget *parent,const char *name=NULL);
-  virtual QString query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const list<QString> &param);
 };
 
 #endif

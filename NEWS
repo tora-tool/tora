@@ -2,7 +2,9 @@
 
 2001-02-27: Mixed up precision/scale in column definition.
 2001-03-01: Added support for separate session in worksheet.
-2001-03-01: Added context menu for worksheet.
+2001-03-01: Added tool menu for worksheet.
+2001-03-02: toResult no longer returns result in string.
+2001-03-02: Added statistics and stop button in worksheet.
 
 0.6: Released 2001-02-23
 
