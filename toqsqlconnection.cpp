@@ -1564,7 +1564,7 @@ public:
     return ret;
   }
 
-  static qSqlSub *toQSqlProvider::createConnection(toConnection &conn);
+  static qSqlSub* createConnection(toConnection &conn);
 };
 
 static toQSqlProvider QSqlProvider;
