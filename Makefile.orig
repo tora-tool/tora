@@ -55,6 +55,8 @@ SOURCES=\
 	toresultstorage.cpp	\
 	toresultview.cpp	\
 	torollback.cpp		\
+	toscript.cpp		\
+	toscriptui.cpp		\
 	tosession.cpp		\
 	tosecurity.cpp		\
 	tosecurityquotaui.cpp	\
@@ -70,7 +72,7 @@ SOURCES=\
 	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
-	utils.cpp		\
+	utils.cpp
 
 TARGET=tora-plugin
 
@@ -100,6 +102,9 @@ plugins/toresultreferences.tso:objs/toresultreferences.o
 plugins/toresultstats.tso:objs/toresultstats.o
 plugins/toresultstorage.tso:objs/toresultstorage.o
 plugins/torollback.tso:objs/torollback.o
+plugins/toscript.tso:\
+	objs/toscript.o \
+	objs/toscriptui.o
 plugins/tosession.tso:objs/tosession.o
 plugins/tosecurity.tso:\
 	objs/tosecurity.o \
@@ -149,6 +154,7 @@ tora-plugin: \
 	plugins/toresultstats.tso \
 	plugins/toresultstorage.tso \
 	plugins/torollback.tso \
+	plugins/toscript.tso \
 	plugins/tosession.tso \
 	plugins/tosecurity.tso \
 	plugins/tosgastatement.tso \

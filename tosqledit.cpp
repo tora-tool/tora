@@ -57,8 +57,11 @@ TO_NAMESPACE;
 #include "icons/filesave.xpm"
 #include "icons/trash.xpm"
 #include "icons/commit.xpm"
+#include "icons/tosqledit.xpm"
 
 #include <stdio.h>
+
+static QPixmap *toSQLEditPixmap;
 
 class toSQLEditTool : public toTool {
 protected:
@@ -72,8 +75,12 @@ public:
   {
     if (Window)
       Window->setFocus();
-    else
+    else {
       Window=new toSQLEdit(parent,connection);
+      if (!toSQLEditPixmap)
+	toSQLEditPixmap=new QPixmap((const char **)tosqledit_xpm);
+      Window->setIcon(*toSQLEditPixmap);
+    }
     return Window;
   }
   virtual void customSetup(int toolid)
