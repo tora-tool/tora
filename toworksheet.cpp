@@ -71,6 +71,7 @@ TO_NAMESPACE;
 #include "toparamget.h"
 #include "toresultlong.h"
 #include "toresultstats.h"
+#include "toresultcols.h"
 #include "toconf.h"
 
 #include "toworksheet.moc"
@@ -345,6 +346,9 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
 	  this,SLOT(addLog(const QString &,const QString &)));
   ResultTab->addTab(Result,"Data");
+  Columns=new toResultCols(connection,ResultTab);
+  ResultTab->addTab(Result,"Describe");
+  ResultTab->setTabEnabled(Columns,false);
   Plan=new toResultPlan(connection,ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
   Resources=new toResultResources(connection,ResultTab);
@@ -538,16 +542,57 @@ void toWorksheet::refresh(void)
   }
 }
 
+static QString unQuote(const QString &str)
+{
+  if (str[0]=='\"'&&str[str.length()-1]=='\"')
+    return str.left(str.length()-1).right(str.length()-2);
+  return str.upper();
+}
+
+bool toWorksheet::describe(const QString &query)
+{
+  QRegExp white("[ \r\n\t.]+");
+  QStringList part=QStringList::split(query);
+  if (part[0].upper()=="DESC"||
+      part[0].upper()=="DESCRIBE") {
+    QString user;
+    QString object;
+    if (part.count()==2) {
+      user=Connection.user();
+      object=unQuote(part[1]);
+    } else if (part.count()==3) {
+      user=unQuote(part[1]);
+      object=unQuote(part[2]);
+    } else
+      throw QString("Wrong number of parameters for describe");
+    Columns->changeParams(user,object);
+    QWidget *curr=ResultTab->currentPage();
+    ResultTab->setTabEnabled(Columns,true);
+    ResultTab->setTabEnabled(Result,false);
+    if (curr==Result)
+      ResultTab->showPage(Columns);
+  } else {
+    QWidget *curr=ResultTab->currentPage();
+    ResultTab->setTabEnabled(Columns,false);
+    ResultTab->setTabEnabled(Result,true);
+    if (curr==Columns)
+      ResultTab->showPage(Result);
+    return false;
+  }
+}
+
 void toWorksheet::query(const QString &str)
 {
 
   try {
-    QString execSql=str;
-    list<QString> param=toParamGet::getParam(this,execSql);
-    Result->query(execSql,param);
-    Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
-    StopButton->setEnabled(true);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+    if (!describe(str)) {
+      QString execSql=str;
+      list<QString> param=toParamGet::getParam(this,execSql);
+      Result->query(execSql,param);
+      Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
+      StopButton->setEnabled(true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+    }
   } catch (const QString &str) {
     toStatusMessage(str);
   }
@@ -755,15 +800,27 @@ void toWorksheet::execute(bool all,bool step)
 		if (Editor->hasMarkedText()) {
 		  QueryString=Editor->markedText();
 		  try {
-		    otl_stream str(1,
-				   QueryString.utf8(),
-				   Connection.connection());
-		    char buffer[100];
-		    if (str.get_rpc()>0)
-		      sprintf(buffer,"%d rows processed",(int)str.get_rpc());
-		    else
-		      sprintf(buffer,"Query executed");
-		    addLog(QueryString,buffer);
+		    if (!describe(QueryString)) {
+		      otl_stream str(1,
+				     QueryString.utf8(),
+				     Connection.connection());
+		      list<QString> param=toParamGet::getParam(this,QueryString);
+		      {
+			otl_null null;
+			for (list<QString>::iterator i=param.begin();i!=param.end();i++) {
+			  if ((*i).isNull())
+			    str<<null;
+			  else
+			    str<<(*i).utf8();
+			}
+		      }
+		      char buffer[100];
+		      if (str.get_rpc()>0)
+			sprintf(buffer,"%d rows processed",(int)str.get_rpc());
+		      else
+			sprintf(buffer,"Query executed");
+		      addLog(QueryString,buffer);
+		    }
 		  } catch (const otl_exception &exc) {
 		    addLog(QueryString,QString::fromUtf8((const char *)exc.msg));
 		  } 

@@ -46,6 +46,7 @@ class toResultView;
 class toListTip;
 class QPrinter;
 class toSQL;
+class toResultCols;
 
 class toResultViewItem : public QListViewItem {
 public:
@@ -175,6 +176,7 @@ protected:
   int DescriptionLen;
   otl_column_desc *Description;
   QListViewItem *LastItem;
+  toResultCols *Columns;
 
   int RowNumber;
   bool ReadableColumns;
