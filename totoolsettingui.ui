@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>592</width>
             <height>480</height>
         </rect>
     </property>
@@ -19,10 +19,13 @@
         <name>caption</name>
         <string>Form1</string>
     </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
     <grid>
         <property stdset="1">
             <name>margin</name>
-            <number>11</number>
+            <number>0</number>
         </property>
         <property stdset="1">
             <name>spacing</name>

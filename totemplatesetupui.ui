@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>530</width>
+            <width>526</width>
             <height>448</height>
         </rect>
     </property>
@@ -22,7 +22,7 @@
     <grid>
         <property stdset="1">
             <name>margin</name>
-            <number>11</number>
+            <number>0</number>
         </property>
         <property stdset="1">
             <name>spacing</name>
