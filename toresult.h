@@ -77,8 +77,12 @@ class toResult {
   bool Handled;
   QTabWidget *Tabs;
 
+  int TabIndex; 
+  QString TabLabel;
+  QWidget *TabWidget;
+
   QString SQL;
-  bool ParametersSet;
+  bool QueryReady;
   toQList Params;
   bool FromSQL;
   QString Name;
@@ -86,7 +90,7 @@ protected:
   /** Set parameters of last query.
    */
   void setParams(const toQList &par)
-  { Params=par; ParametersSet=true; }
+  { Params=par; QueryReady=true; }
   /** Set SQL and parameters and return false if query shouldn't be reexecuted.
    */
   bool setSQLParams(const QString &sql,const toQList &par);
@@ -107,11 +111,10 @@ public:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { Params.clear(); }
+  { Params.clear(); QueryReady=false; }
   /** Re execute last query
    */
-  virtual void refresh(void)
-  { QString t=SQL; SQL="refresh"; query((const QString &)t,(const toQList &)Params); }
+  virtual void refresh(void);
   /** Perform a query.
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.

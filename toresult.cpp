@@ -43,29 +43,60 @@
 
 #include "toresult.moc"
 
+
 toResult::toResult()
   : Slots(this)
 {
   QTimer::singleShot(1,&Slots,SLOT(setup()));
   Handled=true;
   Tabs=NULL;
-  ParametersSet=FromSQL=false;
+  TabIndex=-1;
+  QueryReady=FromSQL=false;
+  TabWidget=NULL;
 }
+
+#define HIDETABS
 
 void toResult::changeHandle(void)
 {
   QWidget *widget=dynamic_cast<QWidget *>(this);
   if (widget) {
     widget->setEnabled(handled());
-    QWidget *par=widget->parentWidget();
-    while(par&&(par->isA("QVBox")||par->isA("QWidgetStack")||(Tabs&&Tabs!=par))) {
-      if (!par->isA("QWidgetStack"))
-	widget=par;
-      par=par->parentWidget();
-    }
-    if (par&&par->isA("QTabWidget")) {
-      QTabWidget *tab=(QTabWidget *)par;
-      tab->setTabEnabled(widget,handled());
+    if (handled()) {
+      if (TabWidget&&Tabs&&handled()) {
+#ifdef HIDETABS
+	Tabs->insertTab(TabWidget,TabLabel,TabIndex);
+	TabIndex=-1;
+	TabWidget=NULL;
+#else
+	Tabs->setTabEnabled(TabWidget,true);
+	TabWidget=NULL;
+#endif
+      }
+    } else {
+      QWidget *par=widget->parentWidget();
+      QWidget *widgetInStack=widget;
+      while(par&&(par->isA("QVBox")||par->isA("QWidgetStack")||(Tabs&&Tabs!=par))) {
+	if (!par->isA("QWidgetStack")) {
+	  widgetInStack=par;
+	}
+	par=par->parentWidget();
+      }
+      if (par&&par->isA("QTabWidget")) {
+	if (!Tabs)
+	  Tabs=(QTabWidget *)par;
+#ifdef HIDETABS
+	TabIndex=Tabs->indexOf(widgetInStack);
+	if (TabIndex>=0) {
+	  TabLabel=Tabs->label(TabIndex);
+	  Tabs->removePage(widgetInStack);
+	  TabWidget=widgetInStack;
+	}
+#else
+	Tabs->setTabEnabled(widgetInStack,false);
+	TabWidget=widgetInStack;
+#endif
+      }
     }
   }
 }
@@ -89,8 +120,10 @@ void toResult::connectionChanged(void)
 {
   if(FromSQL) {
     try {
-      if (ParametersSet)
+      if (QueryReady)
 	query(toSQL::string(sqlName().latin1(),connection()),(const toQList)Params);
+      else if (FromSQL)
+	SQL=toSQL::string(sqlName().latin1(),connection());
       setHandle(true);
     } catch(...) {
       setHandle(false);
@@ -219,5 +252,13 @@ bool toResult::setSQLParams(const QString &sql,const toQList &par)
   }
   SQL=sql;
   Params=par;
+  QueryReady=true;
   return true;
+}
+
+void toResult::refresh()
+{
+  QString t=SQL;
+  SQL="refresh";
+  query((const QString &)t,(const toQList &)Params);
 }

@@ -875,9 +875,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
   Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
-  if (connection.provider()=="MySQL")
+  if (toIsMySQL(connection))
     Schema->setSelected(connection.database());
-  else if (connection.provider()=="Oracle"||connection.provider()=="SapDB")
+  else if (toIsOracle(connection)||toIsSapDB(connection))
     Schema->setSelected(connection.user().upper());
   else
     Schema->setSelected(connection.user());
