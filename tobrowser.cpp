@@ -122,7 +122,7 @@ public:
     return new toBrowser(parent,connection);
   }
   virtual bool canHandle(toConnection &conn)
-  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL" || conn.provider()=="SapDB"; }
+  { return toIsOracle(conn)||toIsMySQL(conn)||toIsPostgreSQL(conn) || toIsSapDB(conn); }
 };
 
 static toBrowserTool BrowserTool;
@@ -1435,7 +1435,7 @@ void toBrowser::defineFilter(void)
 
 bool toBrowser::canHandle(toConnection &conn)
 {
-  return conn.provider()=="Oracle"||conn.provider()=="MySQL"||conn.provider()=="SapDB";
+  return toIsOracle(conn)||toIsMySQL(conn)||toIsSapDB(conn);
 }
 
 void toBrowser::modifyTable(void)
@@ -1669,7 +1669,7 @@ public:
       QPixmap image((const char **)table_xpm);
       setPixmap(0,image);
       new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Indexes"));
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Constraints"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","References"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
@@ -1677,14 +1677,14 @@ public:
       }
       new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Data"));
       new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Extents"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
       }
     } else if (typ==qApp->translate("toBrowser","Views")) {
       QPixmap image((const char **)view_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","SQL"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Data"));
@@ -1694,14 +1694,14 @@ public:
     } else if (typ==qApp->translate("toBrowser","Sequences")) {
       QPixmap image((const char **)sequence_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
       }
     } else if (typ==qApp->translate("toBrowser","Code")) {
       QPixmap image((const char **)function_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Dependencies"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
@@ -1709,7 +1709,7 @@ public:
     } else if (typ==qApp->translate("toBrowser","Triggers")) {
       QPixmap image((const char **)function_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Columns"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
@@ -1719,7 +1719,7 @@ public:
     } else if (typ==qApp->translate("toBrowser","Indexes")) {
       QPixmap image((const char **)index_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Extents"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
@@ -1727,7 +1727,7 @@ public:
     } else if (typ==qApp->translate("toBrowser","Synonyms")) {
       QPixmap image((const char **)synonym_xpm);
       setPixmap(0,image);
-      if (conn.provider()=="Oracle") {
+      if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Grants"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
       }

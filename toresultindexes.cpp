@@ -44,7 +44,7 @@
 
 bool toResultIndexes::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn)||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL"|| conn.provider()=="SapDB";
+  return toIsOracle(conn)||toIsMySQL(conn)||toIsPostgreSQL(conn)|| toIsSapDB(conn);
 }
 
 toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
@@ -190,13 +190,13 @@ void toResultIndexes::query(const QString &,const toQList &param)
 
   try {
     toConnection &conn=connection();
-    if(conn.provider()=="Oracle")
+    if(toIsOracle(conn))
       Type=Oracle;
-    else if (conn.provider()=="MySQL")
+    else if (toIsMySQL(conn))
       Type=MySQL;
-    else if (conn.provider()=="PostgreSQL")
+    else if (toIsPostgreSQL(conn))
       Type=PostgreSQL;
-    else if (conn.provider()=="SapDB")
+    else if (toIsSapDB(conn))
       Type=SapDB;
     else
       return;

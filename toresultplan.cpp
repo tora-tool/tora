@@ -66,7 +66,7 @@ static toSQL SQLViewPlan("toResultPlan:ViewPlan",
 
 bool toResultPlan::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn)||conn.provider()=="MySQL";
+  return toIsOracle(conn)||toIsMySQL(conn);
 }
 
 toResultPlan::~toResultPlan()

@@ -530,7 +530,7 @@ void toTool::globalSetConfig(const QCString &tag,const QString &value)
 
 bool toTool::canHandle(toConnection &conn)
 {
-  return (conn.provider()=="Oracle");
+  return (toIsOracle(conn));
 }
 
 void toTool::customSetup(int)

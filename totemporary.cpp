@@ -120,7 +120,7 @@ public:
   }
   virtual bool canHandle(toConnection &conn)
   {
-    if (conn.provider()!="Oracle")
+    if (!toIsOracle(conn))
       return false;
     if (conn.version()<"8.0")
       return false;

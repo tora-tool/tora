@@ -1,5 +1,6 @@
 1.3.11:
 
+2003-07-28: Use new utility function to check DB type. (Thanx Oliver Jehle)
 2003-07-27: Added mandrake RPM build to release scripts.
 2003-07-27: Fixed problem with background not display correctly initially.
 2003-07-27: Fixed maximized state detection when saving and restoring session.

@@ -220,7 +220,7 @@ public:
     toResultCols::resultCols *view=dynamic_cast<toResultCols::resultCols *>(listView());
     try {
       toConnection &conn=toCurrentConnection(view);
-      if (conn.provider()!="Oracle")
+      if (!toIsOracle(conn))
 	return QString::null;
       toQList resLst=toQuery::readQueryNull(conn,SQLInfo,
 					    text(10),text(11),text(1));
@@ -494,7 +494,7 @@ void toResultCols::resultCols::query(const QString &object,
     QString table;
 
     QString sql=QString::fromLatin1("SELECT * FROM ");
-    if(conn.provider() == "PostgreSQL")
+    if(toIsPostgreSQL(conn))
       table=name;
     else
       table=object;
@@ -507,7 +507,7 @@ void toResultCols::resultCols::query(const QString &object,
     toQuery query(conn,sql);
     toQDescList desc=query.describe();
 
-    if (conn.provider()=="Oracle") {
+    if (toIsOracle(conn)) {
       try {
 	toQuery query(conn,SQLComment,owner,name);
 	while(!query.eof()) {
