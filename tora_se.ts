@@ -4633,11 +4633,11 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>Do you want TOra to automatically check
-http://www.globecom.se/tora for updates on startup?
+http://tora.sourceforge.net for updates on startup?
 During this check no information about your computer
 including TOra version is transmitted to the site</source>
         <translation>Vill du att TOra automatiskt skall kontrollera
-http://www.globecom.se/tora för uppdateringar vid start
+http://tora.sourceforge.net för uppdateringar vid start
 av programmet. Under denna kontroll skickas ingen information
 om din dator inklusive version eller platform av TOra till
 Quest Software, Inc</translation>
@@ -4711,10 +4711,10 @@ Starta om TOra för att börja visa igen. Du har troligtvis en för hög uppdate
     <message>
         <source>A new version of TOra (%1) is available from
 
-http://www.globecom.se/tora</source>
+http://tora.sourceforge.net</source>
         <translation>A ny version av TOra (%1) finns att hämta från
 
-http://www.globecom.se/tora</translation>
+http://tora.sourceforge.net</translation>
     </message>
     <message>
         <source>Cancel</source>

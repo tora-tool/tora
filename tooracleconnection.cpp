@@ -1070,7 +1070,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
 		      "BEGIN\n"
 		      "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME
 #ifndef OAS
-		      " (http://www.globecom.se/tora)"
+		      " (http://tora.sourceforge.net)"
 #endif
 		      "');\n"
 		      "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"

@@ -4468,7 +4468,7 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>Do you want TOra to automatically check
-http://www.globecom.se/tora for updates on startup?
+http://tora.sourceforge.net for updates on startup?
 During this check no information about your computer
 including TOra version is transmitted to the site</source>
         <translation type="unfinished"></translation>
@@ -4540,7 +4540,7 @@ including TOra version is transmitted to the site</source>
     <message>
         <source>A new version of TOra (%1) is available from
 
-http://www.globecom.se/tora</source>
+http://tora.sourceforge.net</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -4565,11 +4565,11 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>Do you want TOra to automatically check
-http://www.globecom.se/tora for updates on startup?
+http://tora.sourceforge.net for updates on startup?
 During this check no information about your computer
 including TOra version is transmitted to the site</source>
         <translation>Vuoi che TOra verifichi automaticamente all&apos;avvio
-http://www.globecom.se/tora per aggiornamenti?
+http://tora.sourceforge.net per aggiornamenti?
 Durante la verifica non verranno inviate informazioni
 riguardanti il computer o la versione di TOra</translation>
     </message>
@@ -4646,10 +4646,10 @@ Riavvia TORa per riattivarli. Probabilmente hai un intervallo di aggiornamento t
     <message>
         <source>A new version of TOra (%1) is available from
 
-http://www.globecom.se/tora</source>
+http://tora.sourceforge.net</source>
         <translation>Una nuova versione di TOra (%1) è disponibile presso
 
-http://www.globecom.se/tora</translation>
+http://tora.sourceforge.net</translation>
     </message>
     <message>
         <source>Message flood, temporary disabling of message box error reporting from now on.
