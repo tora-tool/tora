@@ -65,6 +65,7 @@
 #include "toresultline.h"
 #include "toresultpie.h"
 #include "toconf.h"
+#include "toresultitem.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
@@ -133,6 +134,16 @@ static toSQL SQLServerQueue("toTuning:Indicators:MTS contention:3ServerQueue",
 static toSQL SQLParameters("toTuning:Parameters",
 			   "select name,value,description from v$parameter",
 			   "Display parameters of Oracle server");
+
+static toSQL SQLOptions("toTuning:Options",
+			"select parameter \"Parameter\",\n"
+			"       decode(value,'TRUE','Enabled','Disabled') \"Enabled\"\n"
+			"  from v$option order by parameter",
+			"Display options available in database");
+
+static toSQL SQLLicense("toTuning:License",
+			"select * from v$license",
+			"Display licenses available for database");
 
 static toSQL SQLChartsPhysical("toTuning:Charts:1BBPhysical I/O",
 			       "select SYSDATE,\n"
@@ -734,6 +745,14 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Parameters->setSQL(SQLParameters);
   Tabs->addTab(Parameters,"&Parameters");
 
+  Options=new toResultView(true,false,Tabs);
+  Options->setSQL(SQLOptions);
+  Tabs->addTab(Options,"&Options");
+
+  Licenses=new toResultItem(2,true,Tabs);
+  Licenses->setSQL(SQLLicense);
+  Tabs->addTab(Licenses,"&Licenses");
+
   Tabs->setCurrentPage(0);
 
   connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(refresh()));
@@ -799,6 +818,10 @@ void toTuning::refresh(void)
     Statistics->refreshStats();
   else if (current==Parameters)
     Parameters->refresh();
+  else if (current==Options)
+    Options->refresh();
+  else if (current==Licenses)
+    Licenses->refresh();
 }
 
 static toSQL SQLFileIO("toTuning:FileIO",

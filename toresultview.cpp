@@ -410,6 +410,8 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   double mwidth=metrics.width()/scale;
   double mheight=metrics.height()/scale;
   double x=0;
+  if (scale<0.001)
+    scale=1;
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);

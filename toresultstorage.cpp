@@ -93,6 +93,7 @@ toResultStorage::toResultStorage(QWidget *parent,const char *name)
   addColumn(QString("Free (%1)").arg(Unit));
   addColumn("Available");
   addColumn("Coalesced");
+  addColumn(QString("Max free (%1)").arg(Unit));
   addColumn("Free fragments");
   setSQLName("toResultStorage");
 
@@ -115,11 +116,12 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 			      "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 			      "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
 			      "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			      " '-',\n"
 			      "	TO_CHAR(f.total_extents)\n"
 			      "  FROM  sys.dba_tablespaces d,\n"
 			      "	(select tablespace_name, sum(bytes) bytes, sum(user_bytes) user_bytes from dba_data_files group by tablespace_name) a,\n"
 			      "	(select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from dba_free_space_coalesced) f,\n"
-			      "       (select :unit<int> unit from dual) b\n"
+			      "       (select :unt<int> unit from dual) b\n"
 			      " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 			      "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 			      "   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
@@ -134,17 +136,18 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 			      "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
 			      "	TO_CHAR(ROUND((NVL(a.bytes,0) - NVL(f.bytes, 0)) / a.bytes * 100, 2))||'%',\n"
 			      "	'-',\n"
+			      "	TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
 			      "	TO_CHAR(f.total_extents)\n"
 			      "  FROM  sys.dba_tablespaces d,\n"
 			      "	(select tablespace_name, sum(bytes) bytes, sum(user_bytes) user_bytes from dba_temp_files group by tablespace_name) a,\n"
-			      "	(select tablespace_name, sum(bytes_cached) bytes, count(1) total_extents from v$temp_extent_pool group by tablespace_name) f,\n"
-			      "       (select :unit<int> unit from dual) b\n"
+			      "	(select tablespace_name, sum(bytes_cached) bytes, count(1) total_extents,max(bytes_cached) maxbytes from v$temp_extent_pool group by tablespace_name) f,\n"
+			      "       (select :unt<int> unit from dual) b\n"
 			      " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 			      "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 			      "   AND  d.extent_management = 'LOCAL'\n"
 			      "   AND  d.contents = 'TEMPORARY'",
 			      "Display storage usage of database. This includes the coalesced columns which may make the query sluggish on some DB:s. "
-			      "All columns must be present in output (Should be 11)",
+			      "All columns must be present in output (Should be 12)",
 			      "8.1");
 
 static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
@@ -152,17 +155,18 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
 			       "	d.status,\n"
 			       "	' ',\n"
 			       "	d.contents,\n"
-			       "       d.logging,\n"
+			       "        d.logging,\n"
 			       "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
 			       "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
 			       "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 			       "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
-			       "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			       "        TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			       "        '-',\n"
 			       "	TO_CHAR(f.total_extents)\n"
 			       "  FROM  sys.dba_tablespaces d,\n"
 			       "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 			       "	(select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from dba_free_space_coalesced) f,\n"
-			       "       (select :unit<int> unit from dual) b\n"
+			       "       (select :unt<int> unit from dual) b\n"
 			       " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 			       "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 			       " ORDER  BY d.tablespace_name",
@@ -179,12 +183,13 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
 			       "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
 			       "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 			       "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
-			       "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			       "        TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
+			       "        '-',\n"
 			       "	TO_CHAR(f.total_extents)\n"
 			       "  FROM  sys.dba_tablespaces d,\n"
 			       "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 			       "	(select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from dba_free_space_coalesced) f,\n"
-			       "       (select :unit<int> unit from dual) b\n"
+			       "       (select :unt<int> unit from dual) b\n"
 			       " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 			       "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 			       " ORDER  BY d.tablespace_name",
@@ -201,12 +206,13 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 				"	TO_CHAR(ROUND(NVL(a.user_bytes / b.unit, 0),2)),\n"
 				"	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 				"	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
-				"	'-',\n"
+				"       '-',\n"
+				"	TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
 				"	TO_CHAR(f.total_extents)\n"
 				"  FROM  sys.dba_tablespaces d,\n"
 				"	(select tablespace_name, sum(bytes) bytes, sum(user_bytes) user_bytes from dba_data_files group by tablespace_name) a,\n"
-				"	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
-				"       (select :unit<int> unit from dual) b\n"
+				"	(select tablespace_name, sum(bytes) bytes, count(1) total_extents, max(bytes) maxbytes from dba_free_space group by tablespace_name) f,\n"
+				"       (select :unt<int> unit from dual) b\n"
 				" WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				"   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				"   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
@@ -220,18 +226,19 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 				"	TO_CHAR(ROUND(NVL(a.user_bytes / b.unit, 0),2)),\n"
 				"	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
 				"	TO_CHAR(ROUND((NVL(a.bytes,0) - NVL(f.bytes, 0)) / a.bytes * 100, 2))||'%',\n"
-				"	'-',\n"
+				"       '-',\n"
+				"	TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
 				"	TO_CHAR(f.total_extents)\n"
 				"  FROM  sys.dba_tablespaces d,\n"
 				"	(select tablespace_name, sum(bytes) bytes, sum(user_bytes) user_bytes from dba_temp_files group by tablespace_name) a,\n"
-				"	(select tablespace_name, sum(bytes_cached) bytes, count(1) total_extents from v$temp_extent_pool group by tablespace_name) f,\n"
+				"	(select tablespace_name, sum(bytes_cached) bytes, count(1) total_extents, max(bytes_cached) maxbytes from v$temp_extent_pool group by tablespace_name) f,\n"
 				"       (select :unt<int> unit from dual) b\n"
 				" WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				"   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				"   AND  d.extent_management = 'LOCAL'\n"
 				"   AND  d.contents = 'TEMPORARY'",
 				"Display storage usage of database. This does not include the coalesced columns which may make the query sluggish on some DB:s. "
-				"All columns must be present in output (Should be 11)",
+				"All columns must be present in output (Should be 12)",
 				"8.1");
 
 static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
@@ -244,11 +251,12 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
 				 "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 				 "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
-				 "	'-',\n"
+				 "      '-',\n"
+				 "	TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
 				 "	TO_CHAR(f.total_extents)\n"
 				 "  FROM  sys.dba_tablespaces d,\n"
 				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
-				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
+				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents, max(bytes) maxbytes from dba_free_space group by tablespace_name) f,\n"
 				 "       (select :unt<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
@@ -266,11 +274,12 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
 				 "	TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
 				 "	TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
 				 "	TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'%',\n"
-				 "	'-',\n"
+				 "      '-',\n"
+				 "	TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
 				 "	TO_CHAR(f.total_extents)\n"
 				 "  FROM  sys.dba_tablespaces d,\n"
 				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
-				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
+				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents, max(bytes) maxbytes from dba_free_space group by tablespace_name) f,\n"
 				 "       (select :unt<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
@@ -279,63 +288,66 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
 				 "7.3");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
-			 "SELECT  d.tablespace_name,\n"
-			 "	v.name,\n"
-			 "	v.status,\n"
-			 "	v.enabled,\n"
-			 "	' ',\n"
-			 "	' ',\n"
-			 "        to_char(round(d.bytes/b.unit,2)),\n"
-			 "        to_char(round(d.user_bytes/b.unit,2)),\n"
-			 "        to_char(round(s.bytes/b.unit,2)),\n"
-			 "        to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
-			 "	' ',\n"
-			 "	to_char(s.num)\n"
-			 "  FROM  sys.dba_data_files d,\n"
-			 "	v$datafile v,\n"
-			 "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
-			 "        (select :unt<int> unit from dual) b\n"
-			 " WHERE  (s.file_id (+)= d.file_id)\n"
-			 "   AND  (d.file_name = v.name)\n"
-			 " UNION  ALL\n"
-			 "SELECT  d.tablespace_name,\n"
-			 "      v.name,\n"
-			 "	v.status,\n"
-			 "	v.enabled,\n"
-			 "	' ',\n"
-			 "	' ',\n"
-			 "        to_char(round(d.bytes/b.unit,2)),\n"
-			 "        to_char(round(d.user_bytes/b.unit,2)),\n"
-			 "        to_char(round((d.user_bytes-t.bytes_cached)/b.unit,2)),\n"
-			 "        to_char(round((d.user_bytes-t.bytes_cached)*100/d.user_bytes,2))||'%',\n"
-			 "	' ',\n"
-			 "	'1'\n"
-			 "  FROM  sys.dba_temp_files d,\n"
-			 "	v$tempfile v,\n"
-			 "	v$temp_extent_pool t,\n"
-			 "        (select :unt<int> unit from dual) b\n"
-			 " WHERE  (t.file_id (+)= d.file_id)\n"
-			 "   AND  (d.file_name = v.file#)",
+			 "SELECT d.tablespace_name,\n"
+			 "       v.name,\n"
+			 "       v.status,\n"
+			 "       v.enabled,\n"
+			 "	 ' ',\n"
+			 "	 ' ',\n"
+			 "       to_char(round(d.bytes/b.unit,2)),\n"
+			 "       to_char(round(d.user_bytes/b.unit,2)),\n"
+			 "       to_char(round(s.bytes/b.unit,2)),\n"
+			 "       to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
+			 "       ' ',\n"
+			 "       to_char(round(s.maxbytes/b.unit,2)),\n"
+			 "       to_char(s.num)\n"
+			 "  FROM sys.dba_data_files d,\n"
+			 "       v$datafile v,\n"
+			 "       (SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num, NVL(MAX(bytes),0) maxbytes FROM sys.dba_free_space  GROUP BY file_id) s,\n"
+			 "       (select :unt<int> unit from dual) b\n"
+			 " WHERE (s.file_id (+)= d.file_id)\n"
+			 "   AND (d.file_name = v.name)\n"
+			 " UNION ALL\n"
+			 "SELECT d.tablespace_name,\n"
+			 "       v.name,\n"
+			 "       v.status,\n"
+			 "       v.enabled,\n"
+			 "       ' ',\n"
+			 "       ' ',\n"
+			 "       to_char(round(d.bytes/b.unit,2)),\n"
+			 "       to_char(round(d.user_bytes/b.unit,2)),\n"
+			 "       to_char(round((d.user_bytes-t.bytes_cached)/b.unit,2)),\n"
+			 "       to_char(round((d.user_bytes-t.bytes_cached)*100/d.user_bytes,2))||'%',\n"
+			 "       ' ',\n"
+			 "       ' ',\n"
+			 "       '1'\n"
+			 "  FROM sys.dba_temp_files d,\n"
+			 "       v$tempfile v,\n"
+			 "       v$temp_extent_pool t,\n"
+			 "       (select :unt<int> unit from dual) b\n"
+			 " WHERE (t.file_id (+)= d.file_id)\n"
+			 "   AND (d.file_name = v.file#)",
 			 "Display information about a datafile in a tablespace. "
 			 "All columns must be present in the output (Should be 12)",
 			 "8.1");
 
 static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "SELECT  d.tablespace_name,\n"
-			  "	v.name,\n"
-			  "	v.status,\n"
-			  "	v.enabled,\n"
-			  "	' ',\n"
-			  "	' ',\n"
+			  "	   v.name,\n"
+			  "	   v.status,\n"
+			  "	   v.enabled,\n"
+			  "	   ' ',\n"
+			  "	   ' ',\n"
 			  "        to_char(round(d.bytes/b.unit,2)),\n"
 			  "        to_char(round(d.bytes/b.unit,2)),\n"
 			  "        to_char(round(s.bytes/b.unit,2)),\n"
 			  "        to_char(round(s.bytes*100/d.bytes,2))||'%',\n"
-			  "	' ',\n"
-			  "	to_char(s.num)\n"
+			  "	   ' ',\n"
+			  "        to_char(round(s.maxbytes/b.unit,2)),\n"
+			  "	   to_char(s.num)\n"
 			  "  FROM  sys.dba_data_files d,\n"
-			  "	v$datafile v,\n"
-			  "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
+			  "	   v$datafile v,\n"
+			  "	   (SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num,NVL(MAX(bytes),0) maxbytes FROM sys.dba_free_space  GROUP BY file_id) s,\n"
 			  "        (select :unt<int> unit from dual) b\n"
 			  " WHERE  (s.file_id (+)= d.file_id)\n"
 			  "   AND  (d.file_name = v.name)",
@@ -352,7 +364,7 @@ void toResultStorage::query(void)
   QString currentFile;
   if (item) {
     if (item->parent()) {
-      currentSpace=item->text(11);
+      currentSpace=item->text(12);
       currentFile=item->text(0);
     } else
       currentSpace=item->text(0);
@@ -369,7 +381,7 @@ void toResultStorage::query(void)
 
     while(!tblspc.eof()) {
       QListViewItem *tablespace=new toResultStorageItem(this,NULL);
-      for (int i=0;i<11;i++)
+      for (int i=0;i<12;i++)
 	tablespace->setText(i,tblspc.readValue());
 
       tablespace->setExpandable(true);
@@ -388,11 +400,11 @@ void toResultStorage::query(void)
       if (!tablespace)
 	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
       QListViewItem *file=new toResultStorageItem(tablespace,NULL);
-      for (int i=0;i<11;i++)
+      for (int i=0;i<12;i++)
 	file->setText(i,datfil.readValue());
 
-      file->setText(11,name);
-      if (currentSpace==file->text(11)&&
+      file->setText(12,name);
+      if (currentSpace==file->text(12)&&
 	  currentFile==file->text(0))
 	setSelected(file,true);
     }
@@ -407,7 +419,7 @@ QString toResultStorage::currentTablespace(void)
     throw QString("No tablespace selected");
   QString name;
   if (item->parent())
-    name=item->text(11);
+    name=item->text(12);
   else
     name=item->text(0);
   if (name.isEmpty())

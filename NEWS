@@ -12,6 +12,10 @@
 2001-09-25: Security manager now uses object cache.
 2001-09-26: Some Oracle8 fixes for tuning.
 2001-09-26: Changed version to 1.1.2.
+2001-09-27: Don't allow list scale < 0.001.
+2001-09-27: Added options and license tuning tabs.
+2001-09-27: Added max free extent column to storage manager.
+2001-09-27: Added hitrate to rollback manager.
 
 1.1.1: 2001-09-24
 

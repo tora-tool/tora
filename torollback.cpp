@@ -240,7 +240,7 @@ void toRollbackDialog::valueChanged(const QString &str)
 }
 
 #define MIN_HEIGHT 4
-#define TRANSCOL 16
+#define TRANSCOL 18
 
 static bool BarsAlignLeft=true;
 
@@ -308,6 +308,8 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       b.CurExt \"-Current\",\n"
 			 "       b.CurBlk \"-Block\",\n"
 			 "       c.Blocks \"-Blocks\",\n"
+			 "       b.gets \"-Reads\",\n"
+			 "       ROUND((b.gets-b.waits)*100/b.gets,2)||'%' \"-Hitrate\",\n"
 			 "       a.segment_id \" USN\"\n"
 			 "  from dba_rollback_segs a,\n"
 			 "       v$rollstat b,\n"

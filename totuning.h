@@ -53,6 +53,7 @@ class toListView;
 class toResultStats;
 class toResultView;
 class toResultChart;
+class toResultItem;
 class QLabel;
 class QGridLayout;
 class QGrid;
@@ -108,6 +109,8 @@ class toTuning : public toToolWidget {
   QTabWidget *Tabs;
   toListView *Indicators;
   toResultView *Parameters;
+  toResultView *Options;
+  toResultItem *Licenses;
   toResultStats *Statistics;
   QComboBox *Refresh;
   toTuningOverview *Overview;
