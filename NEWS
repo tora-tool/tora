@@ -11,6 +11,10 @@
 2001-10-09: Fixed problem with cut enabled/disabled for editors.
 2001-10-09: Started working on updating the documentation.
 2001-10-09: Updated version to 1.1.3.
+2001-10-09: Fixed problem with creating tablespace.
+2001-10-10: Fixed problem with comment syntax highlighting.
+2001-10-10: Fixed problem with zoom in last value charts.
+2001-10-10: Fixed problem with stop button not being disabled sometimes.
 
 1.1.2: Released 2001-10-07
 

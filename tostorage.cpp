@@ -571,7 +571,7 @@ std::list<QString> toStorageDialog::sql(void)
     break;
   case NewTablespace:
     {
-      QString start="ALTER TABLESPACE \"";
+      QString start="CREATE TABLESPACE \"";
       start+=Datafile->getName().upper();
       start+="\" DATAFILE ";
       std::list<QString> lst=Datafile->sql();

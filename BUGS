@@ -27,11 +27,11 @@ toMysqlConnection:
 toWorksheet:
 	Doesn't handle multiline comment /* */ correctly.
 
-toDebug:
-	Doesn't seem to close the debugging connection correctly in all situations.
-
 toConnection:
 	In windows canceling the object reading doesn't work for some reason.
 
 toStorage:
 	Create a new tablespace doesn't work (Does alter instead of create).
+
+toNoBlockQuery:
+	Seems to block sometimes when executing a query.

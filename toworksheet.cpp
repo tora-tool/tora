@@ -760,6 +760,8 @@ void toWorksheet::query(const QString &str,bool direct)
       }
     } else {
       Timer.start();
+      StopButton->setEnabled(true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
 	Result->query(QueryString,param);
@@ -772,8 +774,6 @@ void toWorksheet::query(const QString &str,bool direct)
       }
       Result->setSQLName(QueryString.simplifyWhiteSpace().left(40));
     }
-    StopButton->setEnabled(true);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
   }
 }
 

@@ -494,21 +494,25 @@ bool toQuery::eof(void)
     if (Query->eof()) {
       Connection.Lock.lock();
       bool found=false;
-      std::list<toConnectionSub *> &cons=Connection.connections();
-      for(std::list<toConnectionSub *>::iterator i=cons.begin();i!=cons.end();i++) {
-	if (*i==ConnectionSub) {
-	  i++;
-	  if (i!=cons.end()) {
-	    ConnectionSub=*i;
-            Connection.Lock.unlock();
-	    found=true;
-	    delete Query;
-	    Query=connection().Connection->createQuery(this,ConnectionSub);
+      try {
+	std::list<toConnectionSub *> &cons=Connection.connections();
+	for(std::list<toConnectionSub *>::iterator i=cons.begin();i!=cons.end();i++) {
+	  if (*i==ConnectionSub) {
+	    i++;
+	    if (i!=cons.end()) {
+	      ConnectionSub=*i;
+	      Connection.Lock.unlock();
+	      found=true;
+	      delete Query;
+	      Query=NULL;
+	      Query=connection().Connection->createQuery(this,ConnectionSub);
+	    }
+	    break;
 	  }
-	  break;
 	}
+      } catch(...) {
       }
-      if (!found)
+      if (found)
 	Connection.Lock.unlock();
     }
   }
@@ -716,8 +720,12 @@ toConnectionSub *toConnection::mainConnection()
 
 toConnectionSub *toConnection::longConnection()
 {
-  if (Connections.size()==1)
+  Lock.lock();
+  if (Connections.size()==1) {
+    Lock.unlock();
     addConnection();
+  } else
+    Lock.unlock();
   toLocker lock(Lock);
   std::list<toConnectionSub *>::iterator i=Connections.begin();
   i++;

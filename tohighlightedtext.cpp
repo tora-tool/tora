@@ -128,11 +128,11 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
       endString=str[i];
       search.clear();
       wasWord=false;
-    } else if (c=='-'&&c=='-') {
+    } else if (c=='-'&&nc=='-') {
       highs.insert(highs.end(),highlightInfo(i,Comment));
       highs.insert(highs.end(),highlightInfo(str.length()+1));
       return highs;
-    } else if (c=='/'&&c=='*') {
+    } else if (c=='/'&&nc=='*') {
       multiComment=i;
       search.clear();
       wasWord=false;

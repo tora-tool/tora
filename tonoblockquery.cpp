@@ -171,10 +171,10 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   Quit=EOQ=false;
   Processed=0;
 
-  toLocker lock(Lock);
   if (Statistics)
     Statistics->changeSession(Query);
 
+  toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
   Thread=new toThread(new queryTask(*this));
   TO_DEBUGOUT("Created thread\n");

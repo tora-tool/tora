@@ -211,7 +211,7 @@ void toLineChart::paintTitle(QPainter *p,QRect &rect)
       QRect bounds=fm.boundingRect(0,0,rect.width(),rect.height(),FONT_ALIGN,str);
       p->drawText(0,2,rect.width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
       p->translate(0,bounds.height());
-      rect.setTop(rect.top()+bounds.height()+2);
+      rect.setTop(rect.top()+bounds.height());
     }
   }
 }
