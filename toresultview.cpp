@@ -60,7 +60,9 @@
 #include "totool.h"
 #include "tomemoeditor.h"
 #include "toparamget.h"
+#include "toresultlistformatui.h"
 
+#include "toresultlistformatui.moc"
 #include "toresultview.moc"
 
 #ifdef TO_HAS_KPRINT
@@ -651,9 +653,16 @@ void toListView::editSearch(toSearchReplace *search)
 
 void toListView::editSave(bool ask)
 {
-  int type=TOMessageBox::information(this,"Export format",
-				     "Select format to use for exporting to file",
-				     "Text","Tab delimited","CSV");
+  toResultListFormatUI format(this,NULL,true);
+  format.Format->insertItem("Text");
+  format.Format->insertItem("Tab delimited");
+  format.Format->insertItem("CSV");
+  format.Format->insertItem("HTML");
+
+  if (!format.exec())
+    return;
+
+  int type=format.Format->currentItem();
 
   QString nam;
   switch(type) {
@@ -662,6 +671,9 @@ void toListView::editSave(bool ask)
     break;
   case 2:
     nam="*.csv";
+    break;
+  case 3:
+    nam="*.html";
     break;
   }
 
@@ -708,6 +720,8 @@ void toListView::editSave(bool ask)
     }
 
     QString output;
+    if (type==3)
+      output="<TABLE><TR>";
 
     QString indent;
 
@@ -722,9 +736,16 @@ void toListView::editSave(bool ask)
       case 2:
 	output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
 	break;
+      case 3:
+	output+="<TD BGCOLOR=#7f7f7f>";
+	output+=header()->label(j);
+	output+="</TD>";
+	break;
       }
     if (output.length()>0)
       output=output.left(output.length()-1);
+    if (type==3)
+      output+="</TR>";
     output+="\n";
     if (type==0) {
       for (int k=0;k<columns();k++) {
@@ -739,26 +760,43 @@ void toListView::editSave(bool ask)
     QListViewItem *next=NULL;
     for (QListViewItem *item=firstChild();item;item=next) {
 
-      QString line=indent;
+      QString line;
+      if (type==3)
+	line="<TR>";
 
       for (int i=0;i<columns();i++)
 	switch(type) {
 	case 0:
+	  line+=indent;
 	  line+=QString("%1 ").arg(item->text(i),(i==0?indent.length():0)-sizes[i]);
 	  break;
 	case 1:
+	  line+=indent;
 	  line+=QString("%1\t").arg(item->text(i));
 	  break;
 	case 2:
+	  line+=indent;
 	  line+=QString("\"%1\";").arg(QuoteString(item->text(i)));
 	  break;
+	case 3:
+	  line+="<TD>";
+	  line+=indent;
+	  line+=item->text(i);
+	  line+="</TD>";
+	  break;
 	}
-      line=line.left(line.length()-1);
+      if (type==3)
+	line+="</TR>";
+      else
+	line=line.left(line.length()-1);
       line+="\n";
       output+=line;
 
       if (item->firstChild()) {
-	indent+=" ";
+	if (type==3)
+	  indent+=" ";
+	else
+	  indent+="&nbsp;";
 	next=item->firstChild();
       } else if (item->nextSibling())
 	next=item->nextSibling();
@@ -766,12 +804,17 @@ void toListView::editSave(bool ask)
 	next=item;
 	do {
 	  next=next->parent();
-	  indent.truncate(indent.length()-1);
+	  if (type==3)
+	    indent.truncate(indent.length()-5);
+	  else
+	    indent.truncate(indent.length()-1);
 	} while(next&&!next->nextSibling());
 	if (next)
 	  next=next->nextSibling();
       }
     }
+    if (type==3)
+      output+="</TABLE>";
     toWriteFile(filename,output);
 
   } catch(...) {

@@ -101,6 +101,7 @@ SOURCES=\
 	toresultindexes.cpp	        \
 	toresultitem.cpp	        \
 	toresultline.cpp	        \
+	toresultlistformatui.cpp	\
 	toresultlock.cpp	        \
 	toresultlong.cpp	        \
 	toresultparam.cpp		\
@@ -368,6 +369,7 @@ tora: \
 	objs/toresult.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
+	objs/toresultlistformatui.o \
 	objs/toresultview.o \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \

@@ -7,31 +7,58 @@ which basically means that any derivatory work must be released under an open
 source license as well.
 
 Toolkit for Oracle is a program for Oracle developers and administrators. The
-features that are available so far is (As of version 1.0):
+features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
-* SQL worksheet with explain plan and statement statistics
-* PL/SQL syntax highlighting
-* PL/SQL parsing in SQL worksheet
+* Advanced SQL Worksheet
+	* Explain plan
+	* Statement statistics
+	* Error location indication
+	* SQL syntax highlighting
+	* Code completion
+	* Visualization of result
+	* PL/SQL block parsing
 * Schema browser
-* Storage manager
-* Session manager
-* SGA trace
-* Rollback manager
-* SQL Output viewer
-* Easily extendable
+	* Table & view editing
+	* References & dependencies
+	* Reverse engeneering of objects
+	* Tab & tree based browsing
+	* Object & data filtering
 * PL/SQL Editor/Debugger
-* Database/schema comparison
+	* Breakpoints
+	* Watches
+	* Line stepping
+	* SQL Output viewing
+	* Structure tree parsing
+* Server tuning
+	* Server overview
+	* Tuning charts
+	* I/O by tablespace & file
+	* Performance indicators
+	* Server statistics
+	* Parameter editor (P-file editor)
+* Security manager
+* Storage manager with object & extent viewer
+
+* Session manager
+* Rollback manager with snapshot too old detection
+* SGA and long operations trace
+* Current session information
+
+* Statistics manager
+* DBMS alert tool
+* Invalid object browser
+* SQL Output viewer
+* Database/schema comparison and search
 * Extract schema objects to SQL script
+
+* Easily extendable
 * Possible to add support for new or older Oracle versions without
         programming knowledge
-* Security manager
-* Server tuning information
-* Current session information
 * SQL template help
 * Full UNICODE support
-* Printing of any list or source
-* Cross platform support, known to work on Linux, Windows and Solaris.
+* Printing of any list, text or chart
+* Cross platform support. Known to work on Linux, Windows and Solaris.
 
 For installation instructions se the file INSTALL.
 

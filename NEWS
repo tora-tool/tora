@@ -37,6 +37,7 @@
 2001-10-16: Fixed problem when compiling with Qt 3.
 2001-10-16: Use Qt3.0 for static builds.
 2001-10-16: Added option to set different fonts for SQL and other text.
+2001-10-17: Added option to generate HTML of lists.
 
 1.1.2: Released 2001-10-07
 
