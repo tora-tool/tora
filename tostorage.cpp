@@ -533,7 +533,8 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
     QString temp=toShift(result);
 
     Datafile=new toStorageDatafile(dict!=QString::fromLatin1("DICTIONARY")&&
-				   temp!=QString::fromLatin1("PERMANENT"),true,DialogTab);
+				   temp!=QString::fromLatin1("PERMANENT")&&
+				   temp!=QString::fromLatin1("UNDO"),true,DialogTab);
     DialogTab->addTab(Datafile,tr("Datafile"));
     setCaption(tr("Modify datafile"));
     Tablespace=NULL;
