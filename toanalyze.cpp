@@ -114,7 +114,10 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "7.3");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",
-			  "SELECT DISTINCT statement_id,MAX(timestamp),MAX(remarks) FROM %1\n"
+			  "SELECT DISTINCT\n"
+			  "       statement_id \"Statement\",\n"
+			  "       MAX(timestamp) \"Timestamp\",\n"
+			  "       MAX(remarks) \"Remarks\" FROM %1\n"
 			  " GROUP BY statement_id",
 			  "Display available saved statements. Must have same first "
 			  "column and %1");
@@ -205,7 +208,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   box=new QVBox(Tabs);
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);
-  Plans=new toResultLong(true,false,toQuery::Background,splitter);
+  Plans=new toResultLong(false,false,toQuery::Background,splitter);
   Plans->query(toSQL::string(SQLListPlans,
 			     connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
 								  DEFAULT_PLAN_TABLE)));

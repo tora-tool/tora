@@ -1020,10 +1020,10 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 
   Tabs=new QTabWidget(this);
 
-  Overview=new toTuningOverview(this);
+  Overview=new toTuningOverview(this,"overview");
   Tabs->addTab(Overview,"&Overview");
 
-  Charts=new QGrid(2,Tabs);
+  Charts=new QGrid(2,Tabs,"charts");
 
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   toQList unit;
@@ -1086,32 +1086,32 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 
   Tabs->addTab(Charts,"&Charts");
 
-  FileIO=new toTuningFileIO(this);
+  FileIO=new toTuningFileIO(this,"fileio");
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
 
-  Waits=new toTuningWait(this);
+  Waits=new toTuningWait(this,"waits");
   Tabs->addTab(Waits,"Wait events");
 
   Tabs->addTab(FileIO,"&File I/O");
 
-  Indicators=new toListView(Tabs);
+  Indicators=new toListView(Tabs,"indicators");
   Indicators->setRootIsDecorated(true);
   Indicators->addColumn("Indicator");
   Indicators->addColumn("Value");
   Indicators->addColumn("Reference");
   Tabs->addTab(Indicators,"&Indicators");
 
-  Statistics=new toResultStats(Tabs);
+  Statistics=new toResultStats(Tabs,"stats");
   Tabs->addTab(Statistics,"&Statistics");
 
-  Parameters=new toResultParam(Tabs);
+  Parameters=new toResultParam(Tabs,"parameters");
   Tabs->addTab(Parameters,"&Parameters");
 
-  Options=new toResultLong(true,false,toQuery::Background,Tabs);
+  Options=new toResultLong(true,false,toQuery::Background,Tabs,"options");
   Options->setSQL(SQLOptions);
   Tabs->addTab(Options,"&Options");
 
-  Licenses=new toResultItem(2,true,Tabs);
+  Licenses=new toResultItem(2,true,Tabs,"licenses");
   Licenses->setSQL(SQLLicense);
   Tabs->addTab(Licenses,"&Licenses");
 
@@ -1297,6 +1297,31 @@ void toTuning::refresh(void)
     Options->refresh();
   else if (LastTab==Licenses)
     Licenses->refresh();
+}
+
+void toTuning::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  toToolWidget::exportData(data,prefix);
+  std::list<QString> ret=TabList();
+  for(std::list<QString>::iterator i=ret.begin();i!=ret.end();i++) {
+    QWidget *widget=tabWidget(*i);
+    if (widget) {
+      if (!Tabs->isTabEnabled(widget))
+	data[prefix+":"+*i]="Disabled";
+    }
+  }
+  data[prefix+":Current"]=Tabs->currentPage()->name();
+}
+
+void toTuning::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  toToolWidget::importData(data,prefix);
+  std::list<QString> ret=TabList();
+  for(std::list<QString>::iterator i=ret.begin();i!=ret.end();i++)
+    enableTab(*i,data[prefix+":"+(*i)].isEmpty());
+  QWidget *chld=(QWidget *)child(data[prefix+":Current"]);
+  if(chld)
+    Tabs->showPage(chld);
 }
 
 static toSQL SQLFileIO("toTuning:FileIO",
@@ -1596,8 +1621,8 @@ public:
   }
 };
 
-toTuningWait::toTuningWait(QWidget *parent)
-  : QFrame(parent)
+toTuningWait::toTuningWait(QWidget *parent,const char *name)
+  : QFrame(parent,name)
 {
   QGridLayout *layout=new QGridLayout(this);
 
@@ -1621,21 +1646,25 @@ toTuningWait::toTuningWait(QWidget *parent)
   Delta->setYPostfix(" ms/sec");
   layout->addMultiCellWidget(Delta,1,1,1,2);
 
-  Types=new toListView(this);
+  Types=new QListView(this);
   Types->addColumn("Color");
   Types->addColumn("Wait type");
+  Types->setAllColumnsShowFocus(true);
   Types->setSelectionMode(QListView::Multi);
   Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  QString str=toTool::globalConfig(CONF_LIST,"");
+  if (!str.isEmpty()) {
+    QFont font(toStringToFont(str));
+    Types->setFont(font);
+  }
   layout->addMultiCellWidget(Types,1,2,0,0);
 
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
   DeltaPie=new toPieChart(this);
-  DeltaPie->setTitle("Delta system wait events");
   DeltaPie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaPie->showLegend(false);
   layout->addWidget(DeltaPie,2,1);
   AbsolutePie=new toPieChart(this);
-  AbsolutePie->setTitle("Absolute system wait events");
   AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   AbsolutePie->showLegend(false);
   layout->addWidget(AbsolutePie,2,2);
@@ -1726,9 +1755,10 @@ void toTuningWait::changeSelection(void)
 	    }
 	  } else {
 	    current.insert(current.end(),0);
-	    relative.insert(relative.end(),0);
-	    if (k!=lastAbsolute.end())
+	    if (k!=lastAbsolute.end()) {
+	      relative.insert(relative.end(),0);
 	      k++;
+	    }
 	  }
 	}
 	typ++;
@@ -1743,8 +1773,19 @@ void toTuningWait::changeSelection(void)
 	ctime++;
       }
     }
+    double total=0;
+    for (std::list<double>::iterator i=lastAbsolute.begin();i!=lastAbsolute.end();i++)
+      total+=*i;
     AbsolutePie->setValues(lastAbsolute,used);
+    AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+" s");
+    total=0;
+    for (std::list<double>::iterator i=relative.begin();i!=relative.end();i++)
+      total+=*i;
     DeltaPie->setValues(relative,used);
+    if (total>0)
+      DeltaPie->setTitle("Delta system wait events\nTotal "+QString::number(total)+" ms");
+    else
+      DeltaPie->setTitle(QString::null);
   } TOCATCH
   delete enabled;
   delete included;

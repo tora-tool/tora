@@ -208,10 +208,12 @@ void toResultPlan::poll(void)
 	  Query=NULL;
 	  Poll.stop();
 	  QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
-	  if (toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty())
-	    connection().execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
-	  else
-	    toMainWidget()->setNeedCommit(connection());
+	  if (!sql().startsWith("SAVED:")) {
+	    if (toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty())
+	      connection().execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
+	    else
+	      toMainWidget()->setNeedCommit(connection());
+	  }
 	}
       }
     }

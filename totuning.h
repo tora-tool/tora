@@ -116,7 +116,7 @@ class toTuningWait : public QFrame {
   toBarChart *Delta;
   toPieChart *AbsolutePie;
   toPieChart *DeltaPie;
-  toListView *Types;
+  QListView *Types;
   toNoBlockQuery *Query;
   toBackground Poll;
 
@@ -133,7 +133,7 @@ class toTuningWait : public QFrame {
   std::map<int,int> LabelMap;
 
 public:
-  toTuningWait(QWidget *parent);
+  toTuningWait(QWidget *parent,const char *name);
 public slots:
   virtual void connectionChanged(void);
   virtual void changeSelection(void);
@@ -168,6 +168,9 @@ class toTuning : public toToolWidget {
 
   virtual void enableTab(const QString &name,bool enable);
   virtual QWidget *tabWidget(const QString &name);
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:
