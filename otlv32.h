@@ -666,7 +666,7 @@ const unsigned int otl_all_num2str=1;
 const unsigned int otl_all_date2str=2;
 
 const int otl_num_str_size=60;
-const int otl_date_str_size=40;
+const int otl_date_str_size=100;
 
 class otl_select_struct_override{
 public:

@@ -21,7 +21,10 @@
 2001-10-10: Removed all references to long sessions option.
 2001-10-10: Removed all comments from SQL in toExtract.
 2001-10-10: Fixed misspelling of autoallocate in storage.
-2001-10-10: Control A selected entire editor always.
+2001-10-11: Control A selected entire editor always.
+2001-10-11: Fixed a really ugly bug in syntax highlighter.
+2001-10-11: Fixed a weird multiline syntax highlighting bug in windows.
+2001-10-11: Change date size buffer in oracle extraction to 100 bytes.
 
 1.1.2: Released 2001-10-07
 

@@ -137,23 +137,22 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
       search.clear();
       wasWord=false;
     } else {
+      std::list<posibleHit> newHits;
       while (j!=search.end()) {
 	posibleHit &cur=(*j);
 	if (cur.Text[cur.Pos]==toupper(c)) {
 	  cur.Pos++;
 	  if (!cur.Text[cur.Pos]&&!nextSymbol) {
-	    search.clear();
+	    newHits.clear();
 	    highs.insert(highs.end(),highlightInfo(i-cur.Pos,Keyword));
 	    highs.insert(highs.end(),highlightInfo(i+1));
 	    break;
 	  }
-	  j++;
-	} else {
-	  std::list<posibleHit>::iterator k=j;
-	  j++;
-	  search.erase(k);
+	  newHits.insert(newHits.end(),cur);
 	}
+	j++;
       }
+      search=newHits;
       if (ISIDENT(c))
 	inWord=true;
       else
@@ -270,15 +269,22 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   std::list<toSyntaxAnalyzer::highlightInfo>::iterator highPos=highs.begin();
   if (lineIn(row+1)!=out) {
     int i=row+1;
+    painter->save();
     do {
       if (out==toSyntaxAnalyzer::Normal)
 	LineInput.erase(LineInput.find(i));
       else
 	LineInput[i]=out;
+      if (i<=lastRowVisible()) {
+	painter->translate(0,cellHeight(i-1));
+	painter->setClipping(false);
+        paintCell(painter,i,0);
+	break;
+      }
       Analyzer->analyzeLine(textLine(i),out,out);
-      updateCell(i,0,false);
       i++;
     } while(i<numLines()&&out!=lineIn(i));
+    painter->restore();
   }
 
   int posx=hMargin()-1;
