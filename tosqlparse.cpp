@@ -785,6 +785,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 	       first==("COLUMN")||
 	       first==("SPOOL")||
 	       first==("STORE")||
+	       first==("REMARK")||
 	       first==("REM")) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       int line=tokens.line();
