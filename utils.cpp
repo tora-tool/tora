@@ -409,7 +409,8 @@ QString toGetSessionType(void)
     return "Platinum";
   else if (style->isA("QWindowsStyle"))
     return "Windows";
-  throw QString("Failed to find style match");
+  toStatusMessage("Failed to find style match");
+  return DEFAULT_STYLE;
 }
 
 QStringList toGetSessionTypes(void)
@@ -451,8 +452,13 @@ void toSetSessionType(const QString &str)
 #  endif
 #endif
 
-QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
+QToolBar *toAllocBar(QWidget *parent,const QString &str)
 {
+  QString db;
+  try {
+    db=toCurrentConnection(parent).description(false);
+  } catch(...) {
+  }
   QString name=str;
   if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     name+=" ";
@@ -524,6 +530,9 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       pct=80;
       pos=KDockWidget::DockBottom;
       break;
+    default:
+      toStatusMessage("Unknown dock position");
+      // Intentionally left out break
     case QMainWindow::Left:
       pos=KDockWidget::DockLeft;
       break;
@@ -531,16 +540,16 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       pct=80;
       pos=KDockWidget::DockRight;
       break;
-    default:
-      throw QString("Unknown dock position");
     }
     KDockWidget *dw=(KDockWidget *)(dock);
     if (dw) {
       dw->setWidget(container);
       dw->manualDock(main->getMainDockWidget(),pos,pct);
     }
-  } else
-    throw QString("Main widget not KDockMainWindow");
+  } else {
+    toStatusMessage("Main widget not KDockMainWindow");
+    return;
+  }
 #else
 #  if QT_VERSION < 300
   if (!toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
@@ -729,7 +738,7 @@ QCString toReadFile(const QString &filename)
 bool toWriteFile(const QString &filename,const QCString &data)
 {
   QString expanded=toExpandFile(filename);
-#ifdef TO_KDE
+#ifndef TO_KDE
   KURL url(expanded);
   if (!url.isLocalFile()) {
     KTempFile file;
@@ -1055,8 +1064,11 @@ void toToolCaption(toToolWidget *widget,const QString &caption)
 {
   QString title;
   if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
-    title=widget->connection().description();
-    title+=" ";
+    try {
+      title=widget->connection().description();
+      title+=" ";
+    } catch(...) {
+    }
   }
   title+=caption;
 

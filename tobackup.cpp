@@ -346,7 +346,7 @@ static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
 toBackup::toBackup(QWidget *main,toConnection &connection)
   : toToolWidget(BackupTool,"backup.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Backup Manager",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Backup Manager");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update",
@@ -404,7 +404,9 @@ void toBackup::windowActivated(QWidget *widget)
 
 toBackup::~toBackup()
 {
-  BackupTool.closeWindow(connection());
+  try {
+    BackupTool.closeWindow(connection());
+  } TOCATCH
 }
 
 void toBackup::refresh()

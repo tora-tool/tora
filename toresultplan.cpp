@@ -198,31 +198,31 @@ void toResultPlan::query(const QString &sql,
   if (!handled())
     return;
 
-  if (!setSQLParams(sql,param))
-    return;
-
-  if (Query) {
-    delete Query;
-    Query=NULL;
-  }
-  if (connection().provider()=="MySQL") {
-    setRootIsDecorated(false);
-    setSorting(0);
-    toResultView::query("EXPLAIN "+toSQLStripBind(sql),param);
-    return;
-  }
-
-  toQList::iterator cp=((toQList &)param).begin();
-  if (cp!=((toQList &)param).end())
-    User=*cp;
-  else
-    User=QString::null;
-    
-  oracleSetup();
-
-  QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
-
   try {
+    if (!setSQLParams(sql,param))
+      return;
+
+    if (Query) {
+      delete Query;
+      Query=NULL;
+    }
+    if (connection().provider()=="MySQL") {
+      setRootIsDecorated(false);
+      setSorting(0);
+      toResultView::query("EXPLAIN "+toSQLStripBind(sql),param);
+      return;
+    }
+
+    toQList::iterator cp=((toQList &)param).begin();
+    if (cp!=((toQList &)param).end())
+      User=*cp;
+    else
+      User=QString::null;
+    
+    oracleSetup();
+
+    QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
+
     Statements.clear();
     if (sql.startsWith("SAVED:")) {
       Ident=sql.mid(6);

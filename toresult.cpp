@@ -73,10 +73,14 @@ void toResult::changeHandle(void)
 void toResult::setHandle(bool ena)
 {
   bool last=Handled;
-  if (!ena)
+  try {
+    if (!ena)
+      Handled=false;
+    else
+      Handled=canHandle(connection());
+  } catch(...) {
     Handled=false;
-  else
-    Handled=canHandle(connection());
+  }
   if (last!=Handled)
     changeHandle();
 }

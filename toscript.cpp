@@ -174,7 +174,7 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 toScript::toScript(QWidget *parent,toConnection &connection)
   : toToolWidget(ScriptTool,"script.html",parent,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"SQL worksheet");
 
   new QToolButton(QPixmap((const char **)execute_xpm),
 		  "Perform defined extraction",
@@ -969,14 +969,18 @@ void toScript::setupExtract(toExtract &extr)
 
 void toScript::expandSource(QListViewItem *item)
 {
-  if (item)
-    readOwnerObjects(ScriptUI->SourceObjects,item,
-		     toMainWidget()->connection(ScriptUI->SourceConnection->currentText()));
+  try {
+    if (item)
+      readOwnerObjects(ScriptUI->SourceObjects,item,
+		       toMainWidget()->connection(ScriptUI->SourceConnection->currentText()));
+  } TOCATCH
 }
 
 void toScript::expandDestination(QListViewItem *item)
 {
-  if (item)
-    readOwnerObjects(ScriptUI->DestinationObjects,item,
-		     toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
+  try {
+    if (item)
+      readOwnerObjects(ScriptUI->DestinationObjects,item,
+		       toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
+  } TOCATCH
 }

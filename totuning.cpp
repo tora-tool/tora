@@ -837,11 +837,13 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
   SharedUsed->setYPostfix("%");
   SharedUsed->showLast(true);
 
-  toQList val;
-  val.insert(val.end(),
-	     toQValue(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
-							DEFAULT_SIZE_UNIT))));
-  FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),(const toQList)val);
+  try {
+    toQList val;
+    val.insert(val.end(),
+	       toQValue(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
+							  DEFAULT_SIZE_UNIT))));
+    FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),(const toQList)val);
+  } TOCATCH
   FileUsed->showLegend(false);
 
   Done.up();
@@ -861,7 +863,9 @@ toTuningOverview::~toTuningOverview()
 
 void toTuningOverview::stop(void)
 {
-  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 
   ArchiveWrite->stop();
   BufferHit->stop();
@@ -883,7 +887,9 @@ void toTuningOverview::stop(void)
 
 void toTuningOverview::start(void)
 {
-  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 
   ArchiveWrite->start();
   BufferHit->start();
@@ -1296,7 +1302,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     toTool::saveConfig();
   }
 
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh",
@@ -1307,8 +1313,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   new QLabel("Refresh ",toolbar);
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
-  toRefreshParse(timer());
-
   toolbar->addSeparator();
   TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),
 		 	     "Enable and disable tuning tabs",
@@ -1325,8 +1329,12 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs=new QTabWidget(this);
 
   Overview=new toTuningOverview(this,"overview");
-  connect(timer(),SIGNAL(timeout()),Overview,SLOT(refresh()));
   Tabs->addTab(Overview,"&Overview");
+
+  try {
+    toRefreshParse(timer());
+    connect(timer(),SIGNAL(timeout()),Overview,SLOT(refresh()));
+  } TOCATCH
 
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   toQList unit;
@@ -1394,7 +1402,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	} else
 	  chart->query(toSQL::sql(*i));
       } else
-	throw QString("Wrong format of name on chart.");
+	toStatusMessage("Wrong format of name on chart ("+*i+").");
     }
   }
 
@@ -1582,7 +1590,9 @@ void toTuning::windowActivated(QWidget *widget)
 
 void toTuning::changeRefresh(const QString &str)
 {
-  toRefreshParse(timer(),str);
+  try {
+    toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 void toTuning::refresh(void)
@@ -1673,9 +1683,9 @@ static toSQL SQLFileIO("toTuning:FileIO",
 toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
   : QScrollView(parent,name,fl)
 {
-  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
-
   try {
+    connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+
     viewport()->setBackgroundColor(qApp->palette().active().background());
     
     QVBox *Box=new QVBox(this->viewport());
@@ -1952,10 +1962,14 @@ std::list<double> toTuningMiss::transform(std::list<double> &inp)
 
 void toTuningFileIO::stop(void)
 {
-  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 }
 
 void toTuningFileIO::start(void)
 {
-  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 }

@@ -94,10 +94,12 @@ void toResultField::poll(void)
 	delete Query;
 	Query=NULL;
 	Poll.stop();
-	if (!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty())
-	  setText(toSQLParse::indent(text()+Unapplied));
-	else
-	  append(Unapplied);
+	try {
+	  if (!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty())
+	    setText(toSQLParse::indent(text()+Unapplied));
+	  else
+	    append(Unapplied);
+	} TOCATCH
 	Unapplied=QString::null;
       }
     }

@@ -60,26 +60,26 @@ void toResultExtract::query(const QString &sql,const toQList &param)
   if (!setSQLParams(sql,param))
     return;
 
-  toQList::iterator i=params().begin();
-  QString owner;
-  QString name;
-  if (i!=params().end()) {
-    owner=*i;
-    i++;
-  }
-  toConnection &conn=toToolWidget::connection();
-  if (i==params().end()) {
-    name=owner;
-    if (toIsOracle(conn))
-      owner=conn.user().upper();
-    else
-      owner=conn.user();
-  } else {
-    name=*i;
-    i++;
-  }
-
   try {
+    toQList::iterator i=params().begin();
+    QString owner;
+    QString name;
+    if (i!=params().end()) {
+      owner=*i;
+      i++;
+    }
+    toConnection &conn=toToolWidget::connection();
+    if (i==params().end()) {
+      name=owner;
+      if (toIsOracle(conn))
+	owner=conn.user().upper();
+      else
+	owner=conn.user();
+    } else {
+      name=*i;
+      i++;
+    }
+
     QString type;
     if (i==params().end()) {
       toQuery query(conn,SQLObjectType,owner,name);

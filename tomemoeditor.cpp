@@ -114,7 +114,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 
   QBoxLayout *l=new QVBoxLayout(this);
 
-  Toolbar=toAllocBar(this,"Memo Editor",QString::null);
+  Toolbar=toAllocBar(this,"Memo Editor");
   l->addWidget(Toolbar);
 
   if (sql)

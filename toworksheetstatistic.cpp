@@ -60,7 +60,7 @@ toAnalyze *toWorksheetStatistic::Widget;
 toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   : QVBox(parent)
 {
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning","No connection");
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
 
   new QToolButton(QPixmap((const char **)fileopen_xpm),
 		  "Load statistics from file",
@@ -110,9 +110,11 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
   Dummy=new QWidget(Splitter);
 
-  Tool=dynamic_cast<toAnalyze *>(toCurrentTool(this));
-  if (!Widget)
-    Widget=Tool;
+  try {
+    Tool=dynamic_cast<toAnalyze *>(toCurrentTool(this));
+    if (!Widget)
+      Widget=Tool;
+  } TOCATCH
 }
 
 toWorksheetStatistic::~toWorksheetStatistic()

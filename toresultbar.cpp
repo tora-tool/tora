@@ -65,7 +65,9 @@ toResultBar::~toResultBar()
 void toResultBar::start(void)
 {
   if (!Started) {
-    connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    try {
+      connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    } TOCATCH
     Started=true;
   }
 }
@@ -73,7 +75,9 @@ void toResultBar::start(void)
 void toResultBar::stop(void)
 {
   if (Started) {
-    disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    try {
+      disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    } TOCATCH
     Started=false;
   }
 }

@@ -431,7 +431,7 @@ static toSQL SQLDebugInit("toDebug:Initialize",
 
 void toDebug::targetTask::run(void)
 {
-  {
+  try {
     toConnection Connection(Parent.connection());
     try {
       Connection.execute(SQLDebugEnable);
@@ -506,7 +506,7 @@ void toDebug::targetTask::run(void)
       Parent.ChildSemaphore.up();
     }
 
-  }
+  } TOCATCH
   toLocker lock(Parent.Lock);
   Parent.DebuggerStarted=false;
   Parent.TargetLog+="Closing debug session\n";
@@ -693,156 +693,156 @@ void toDebug::execute(void)
   }
 
   if (valid) {
-    QString token;
-    int level=0;
+    try {
+      QString token;
+      int level=0;
 
-    enum {
-      beginning,
-      waitingEnd,
-      returnType,
-      parType,
-      inOut,
-      name,
-      done
-    } state=beginning;
+      enum {
+	beginning,
+	waitingEnd,
+	returnType,
+	parType,
+	inOut,
+	name,
+	done
+      } state=beginning;
 
-    CurrentParams.clear();
-    std::list<debugParam>::iterator cp=CurrentParams.begin();
-    QString callName;
-    QString retType;
+      CurrentParams.clear();
+      std::list<debugParam>::iterator cp=CurrentParams.begin();
+      QString callName;
+      QString retType;
 
-    toSQLParse::editorTokenizer tokens(current,0,line);
+      toSQLParse::editorTokenizer tokens(current,0,line);
 
-    do {
-      token=tokens.getToken();
-    } while(token.upper()=="CREATE"||token.upper()=="OR"||token.upper()=="REPLACE");
+      do {
+	token=tokens.getToken();
+      } while(token.upper()=="CREATE"||token.upper()=="OR"||token.upper()=="REPLACE");
 
-    if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
-      toStatusMessage("Expected function or procedure, internal error");
-      return;
-    }
-    do {
-      token=tokens.getToken();
-      if (token.isEmpty()) {
-	toStatusMessage("Unexpected end of declaration.");
+      if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
+	toStatusMessage("Expected function or procedure, internal error");
 	return;
       }
-      if (state==returnType) {
-	if (retType.isEmpty()||retType.at(retType.length()-1)=='.'||token==".")
-	  retType+=token;
-	else
-	  state=done;
-      } else if (token.upper()=="RETURN"&&level==0) {
-	state=returnType;
-      } if (token=="(") {
-	level++;
-      } else if (token==")")
-	level--;
-      else if (level==1) {
-	switch(state) {
-	case name:
-	  {
-	    debugParam newPar;
-	    CurrentParams.insert(CurrentParams.end(),newPar);
-	    cp++;
-	    (*cp).Name=token;
-	    state=inOut;
-	    break;
-	  }
-	case inOut:
-	  if (token.upper()=="IN") {
-	    (*cp).In=true;
-	    break;
-	  } else if (token.upper()=="OUT") {
-	    (*cp).Out=true;
-	    break;
-	  } else if (token.upper()=="NOCOPY")
-	    break;
-	  if (!(*cp).In&&!(*cp).Out)
-	    (*cp).In=true;
-	  state=parType;
-	case parType:
-	  if (token==",") {
-	    state=name;
-	    break;
-	  } else if (token.upper()=="DEFAULT"||token==":=") {
-	    state=waitingEnd;
-	    break;
-	  } else {
-	    (*cp).Type+=token;
-	  }
-	  break;
-	case waitingEnd:
-	  if (token==",")
-	    state=name;
-	  else {
-	    if (token[0]=='\''&&token.length()>=2)
-	      token=token.mid(1,token.length()-2);
-	    if (token.upper()=="NULL")
-	      toParamGet::setDefault(connection(),(*cp).Name,QString::null);
-	    else
-	      toParamGet::setDefault(connection(),(*cp).Name,token);
-	  }
-	  break;
-	case done:
-	case returnType:
-	case beginning:
-	  break;
+      do {
+	token=tokens.getToken();
+	if (token.isEmpty()) {
+	  toStatusMessage("Unexpected end of declaration.");
+	  return;
 	}
-      } else if (state==beginning) {
-	callName=token;
-	state=name;
-      }
-    } while(state!=done&&token.upper()!="IS"&&token.upper()!="AS"&&token!=";");
+	if (state==returnType) {
+	  if (retType.isEmpty()||retType.at(retType.length()-1)=='.'||token==".")
+	    retType+=token;
+	  else
+	    state=done;
+	} else if (token.upper()=="RETURN"&&level==0) {
+	  state=returnType;
+	} if (token=="(") {
+	  level++;
+	} else if (token==")")
+	  level--;
+	else if (level==1) {
+	  switch(state) {
+	  case name:
+	    {
+	      debugParam newPar;
+	      CurrentParams.insert(CurrentParams.end(),newPar);
+	      cp++;
+	      (*cp).Name=token;
+	      state=inOut;
+	      break;
+	    }
+	  case inOut:
+	    if (token.upper()=="IN") {
+	      (*cp).In=true;
+	      break;
+	    } else if (token.upper()=="OUT") {
+	      (*cp).Out=true;
+	      break;
+	    } else if (token.upper()=="NOCOPY")
+	      break;
+	    if (!(*cp).In&&!(*cp).Out)
+	      (*cp).In=true;
+	    state=parType;
+	  case parType:
+	    if (token==",") {
+	      state=name;
+	      break;
+	    } else if (token.upper()=="DEFAULT"||token==":=") {
+	      state=waitingEnd;
+	      break;
+	    } else {
+	      (*cp).Type+=token;
+	    }
+	    break;
+	  case waitingEnd:
+	    if (token==",")
+	      state=name;
+	    else {
+	      if (token[0]=='\''&&token.length()>=2)
+		token=token.mid(1,token.length()-2);
+	      if (token.upper()=="NULL")
+		toParamGet::setDefault(connection(),(*cp).Name,QString::null);
+	      else
+		toParamGet::setDefault(connection(),(*cp).Name,token);
+	    }
+	    break;
+	  case done:
+	  case returnType:
+	  case beginning:
+	    break;
+	  }
+	} else if (state==beginning) {
+	  callName=token;
+	  state=name;
+	}
+      } while(state!=done&&token.upper()!="IS"&&token.upper()!="AS"&&token!=";");
 
-    QChar sep='(';
-    QString sql;
-    if (!retType.isEmpty())
-      sql+="DECLARE\n  ret VARCHAR2(4000);\n";
-    sql+="BEGIN\n  ";
-    if (!retType.isEmpty())
-      sql+="ret:=";
-    sql+=currentEditor()->schema();
-    sql+=".";
-    if (hasMembers(currentEditor()->type())) {
-      sql+=currentEditor()->object();
+      QChar sep='(';
+      QString sql;
+      if (!retType.isEmpty())
+	sql+="DECLARE\n  ret VARCHAR2(4000);\n";
+      sql+="BEGIN\n  ";
+      if (!retType.isEmpty())
+	sql+="ret:=";
+      sql+=currentEditor()->schema();
       sql+=".";
-    }
-    sql+=callName;
+      if (hasMembers(currentEditor()->type())) {
+	sql+=currentEditor()->object();
+	sql+=".";
+      }
+      sql+=callName;
 
-    Parameters->clear();
-    QListViewItem *head=new toResultViewItem(Parameters,NULL,"Input");
-    QListViewItem *last=NULL;
-    head->setOpen(true);
+      Parameters->clear();
+      QListViewItem *head=new toResultViewItem(Parameters,NULL,"Input");
+      QListViewItem *last=NULL;
+      head->setOpen(true);
 
-    for(std::list<debugParam>::iterator i=CurrentParams.begin();i!=CurrentParams.end();i++) {
-      if ((*i).In)
-	last=new toResultViewItem(head,last,(*i).Name);
-      sql+=sep;
-      sql+=":";
-      QString nam=(*i).Name;
-      nam.replace(QRegExp("[^a-zA-Z0-9]+"),"_");
-      sql+=nam;
-      sql+="<char[";
-      sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
-      sql+="],";
-      if ((*i).In)
-	sql+="in";
-      if ((*i).Out)
-	sql+="out";
-      sql+=">";
-      sep=',';
-    }
-    if (sep==',')
-      sql+=")";
-    if (!retType.isEmpty()) {
-      sql+=";\n  SELECT ret INTO :tora_int_return<char[";
-      sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
-      sql+="],out> FROM sys.DUAL";
-    }
-    sql+=";\nEND;\n";
+      for(std::list<debugParam>::iterator i=CurrentParams.begin();i!=CurrentParams.end();i++) {
+	if ((*i).In)
+	  last=new toResultViewItem(head,last,(*i).Name);
+	sql+=sep;
+	sql+=":";
+	QString nam=(*i).Name;
+	nam.replace(QRegExp("[^a-zA-Z0-9]+"),"_");
+	sql+=nam;
+	sql+="<char[";
+	sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
+	sql+="],";
+	if ((*i).In)
+	  sql+="in";
+	if ((*i).Out)
+	  sql+="out";
+	sql+=">";
+	sep=',';
+      }
+      if (sep==',')
+	sql+=")";
+      if (!retType.isEmpty()) {
+	sql+=";\n  SELECT ret INTO :tora_int_return<char[";
+	sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
+	sql+="],out> FROM sys.DUAL";
+      }
+      sql+=";\nEND;\n";
 
-    try {
       {
 	// Can't hold lock since refresh of output will try to lock
 	toQList input;
@@ -1439,50 +1439,55 @@ void toDebug::updateState(int reason)
 bool toDebug::viewSource(const QString &schema,const QString &name,const QString &type,
 			 int line,bool setCurrent)
 {
-  if (HeadEditor->schema()==schema&&
-      HeadEditor->object()==name&&
-      HeadEditor->type()==type) {
-    if (setCurrent)
-      HeadEditor->setCurrent(line-1);
-    else
-      HeadEditor->setCursorPosition(line-1,0);
-    HeadEditor->setFocus();
-    ShowButton->setOn(true);
-  } else if (BodyEditor->schema()==schema&&
-	     BodyEditor->object()==name&&
-	     BodyEditor->type()==type) {
-    if (setCurrent)
-      BodyEditor->setCurrent(line-1);
-    else
-      BodyEditor->setCursorPosition(line-1,0);
+  try {
+    if (HeadEditor->schema()==schema&&
+	HeadEditor->object()==name&&
+	HeadEditor->type()==type) {
+      if (setCurrent)
+	HeadEditor->setCurrent(line-1);
+      else
+	HeadEditor->setCursorPosition(line-1,0);
+      HeadEditor->setFocus();
+      ShowButton->setOn(true);
+    } else if (BodyEditor->schema()==schema&&
+	       BodyEditor->object()==name&&
+	       BodyEditor->type()==type) {
+      if (setCurrent)
+	BodyEditor->setCurrent(line-1);
+      else
+	BodyEditor->setCursorPosition(line-1,0);
 
-    BodyEditor->setFocus();
-    ShowButton->setOn(false);
-  } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
-    BodyEditor->setData(schema,type,name);
-    BodyEditor->readData(connection(),StackTrace);
-    BodyEditor->setCursorPosition(line-1,0);
-    BodyEditor->setFocus();
-    updateContent(true);
-    ShowButton->setOn(false);
-  } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
-    HeadEditor->setData(schema,type,name);
-    HeadEditor->readData(connection(),StackTrace);
-    HeadEditor->setCursorPosition(line-1,0);
-    HeadEditor->setFocus();
-    ShowButton->setEnabled(true);
-    if (ToolMenu)
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
-    ShowButton->setOn(true);
-    updateContent(false);
-  } else { 
-    if (setCurrent) {
-      HeadEditor->setCurrent(-1);
-      BodyEditor->setCurrent(-1);
+      BodyEditor->setFocus();
+      ShowButton->setOn(false);
+    } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
+      BodyEditor->setData(schema,type,name);
+      BodyEditor->readData(connection(),StackTrace);
+      BodyEditor->setCursorPosition(line-1,0);
+      BodyEditor->setFocus();
+      updateContent(true);
+      ShowButton->setOn(false);
+    } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
+      HeadEditor->setData(schema,type,name);
+      HeadEditor->readData(connection(),StackTrace);
+      HeadEditor->setCursorPosition(line-1,0);
+      HeadEditor->setFocus();
+      ShowButton->setEnabled(true);
+      if (ToolMenu)
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
+      ShowButton->setOn(true);
+      updateContent(false);
+    } else { 
+      if (setCurrent) {
+	HeadEditor->setCurrent(-1);
+	BodyEditor->setCurrent(-1);
+      }
+      return false;
     }
+    return true;
+  } catch(const QString &str) {
+    toStatusMessage(str);
     return false;
   }
-  return true;
 }
 
 void toDebug::setDeferedBreakpoints(void)
@@ -1570,7 +1575,7 @@ void toDebug::stop(void)
 toDebug::toDebug(QWidget *main,toConnection &connection)
   : toToolWidget(DebugTool,"debugger.html",main,connection),TargetThread()
 {
-  QToolBar *toolbar=toAllocBar(this,"Debugger",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Debugger");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update object list",
@@ -2001,36 +2006,38 @@ bool toDebug::close(bool del)
 
 void toDebug::updateCurrent()
 {
-  QString type=HeadEditor->type();
+  try {
+    QString type=HeadEditor->type();
 
-  if (type.isEmpty())
-    type=BodyEditor->type();
+    if (type.isEmpty())
+      type=BodyEditor->type();
 
-  QString bodyType=type;
-  bodyType+=" BODY";
-  BodyEditor->setType(bodyType);
-  if (!BodyEditor->readData(connection(),StackTrace)) {
-    BodyEditor->setType(type);
-    BodyEditor->readData(connection(),StackTrace);
-    HeadEditor->clear();
-    BodyEditor->show();
-    HeadEditor->hide();
-    setFocusProxy(BodyEditor);
-    ShowButton->setEnabled(false);
-    ShowButton->setOn(false);
-    if (ToolMenu)
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
-  } else {
-    HeadEditor->readData(connection(),StackTrace);
-    ShowButton->setEnabled(true);
-    if (ToolMenu)
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
-  }
+    QString bodyType=type;
+    bodyType+=" BODY";
+    BodyEditor->setType(bodyType);
+    if (!BodyEditor->readData(connection(),StackTrace)) {
+      BodyEditor->setType(type);
+      BodyEditor->readData(connection(),StackTrace);
+      HeadEditor->clear();
+      BodyEditor->show();
+      HeadEditor->hide();
+      setFocusProxy(BodyEditor);
+      ShowButton->setEnabled(false);
+      ShowButton->setOn(false);
+      if (ToolMenu)
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
+    } else {
+      HeadEditor->readData(connection(),StackTrace);
+      ShowButton->setEnabled(true);
+      if (ToolMenu)
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
+    }
 
-  currentEditor()->setFocus();
+    currentEditor()->setFocus();
 
-  updateContent(true);
-  updateContent(false);
+    updateContent(true);
+    updateContent(false);
+  } TOCATCH
 }
 
 void toDebug::changePackage(QListViewItem *item)
@@ -2214,7 +2221,9 @@ toDebug::~toDebug()
   } else
     Lock.unlock();
 
-  DebugTool.closeWindow(connection());
+  try {
+    DebugTool.closeWindow(connection());
+  } TOCATCH
 }
 
 void toDebug::prevError(void)

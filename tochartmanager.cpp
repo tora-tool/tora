@@ -248,7 +248,7 @@ toChartManager::toChartManager(QWidget *main)
   connect(toMainWidget(),SIGNAL(chartSetup(toLineChart *)),
 	  this,SLOT(setupChart(toLineChart *)));
 
-  QToolBar *toolbar=toAllocBar(this,"Chart Manager",QString::null);
+  QToolBar *toolbar=toAllocBar(this,"Chart Manager");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh list",
@@ -832,17 +832,19 @@ void toChartManager::setupChart(void)
 
 toChartReceiver *toChartManager::selectedChart(void)
 {
-  QListViewItem *item=List->selectedItem();
-  if (item) {
-    for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
-      toResult *result=(*i)->result();
-      if (result) {
-	if (item->text(0)==result->connection().description(false)&&
-	    item->text(2)==result->sqlName())
-	  return *i;
+  try {
+    QListViewItem *item=List->selectedItem();
+    if (item) {
+      for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
+	toResult *result=(*i)->result();
+	if (result) {
+	  if (item->text(0)==result->connection().description(false)&&
+	      item->text(2)==result->sqlName())
+	    return *i;
+	}
       }
     }
-  }
+  } TOCATCH
   return NULL;
 }
 
@@ -912,32 +914,34 @@ void toChartManager::setupChart(toLineChart *chart)
 
 void toChartManager::refresh(void)
 {
-  List->clear();
-  for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
-    toResult *result=(*i)->result();
-    if (result) {
-      toResultViewItem *item=new toResultViewMLine(List,
-						   NULL,
-						   result->connection().description(false));
-      item->setText(1,(*i)->chart()->title());
-      item->setText(2,result->sqlName());
-      QString name=(*i)->name();
-      if (!name.isNull()) {
-	std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(name);
-	if (fnda!=Alarms.end()) {
-	  QString t;
-	  for(std::list<chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();j++) {
-	    t+=(*j).toString();
-	    t+="\n";
+  try {
+    List->clear();
+    for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
+      toResult *result=(*i)->result();
+      if (result) {
+	toResultViewItem *item=new toResultViewMLine(List,
+						     NULL,
+						     result->connection().description(false));
+	item->setText(1,(*i)->chart()->title());
+	item->setText(2,result->sqlName());
+	QString name=(*i)->name();
+	if (!name.isNull()) {
+	  std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(name);
+	  if (fnda!=Alarms.end()) {
+	    QString t;
+	    for(std::list<chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();j++) {
+	      t+=(*j).toString();
+	      t+="\n";
+	    }
+	    if (t.length()>0)
+	      item->setText(4,t.mid(0,t.length()-1));
 	  }
-	  if (t.length()>0)
-	    item->setText(4,t.mid(0,t.length()-1));
-	}
 
-	std::map<QString,chartTrack>::iterator fndt=Files.find(name);
-	if (fndt!=Files.end())
-	  item->setText(3,(*fndt).second.File.name());
+	  std::map<QString,chartTrack>::iterator fndt=Files.find(name);
+	  if (fndt!=Files.end())
+	    item->setText(3,(*fndt).second.File.name());
+	}
       }
     }
-  }
+  } TOCATCH
 }

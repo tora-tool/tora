@@ -692,10 +692,14 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 
 QString toBrowser::schema(void)
 {
-  QString ret=Schema->selected();
-  if (ret=="No schemas")
-    return connection().database();
-  return ret;
+  try {
+    QString ret=Schema->selected();
+    if (ret=="No schemas")
+      return connection().database();
+    return ret;
+  } catch(...) {
+    return QString::null;
+  }
 }
 
 void toBrowser::setNewFilter(toBrowserFilter *filter)
@@ -716,7 +720,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 {
   Filter=NULL;
 
-  QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"DB Browser");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update from DB",
@@ -768,7 +772,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   QVBox *box=new QVBox(splitter);
   splitter->setResizeMode(box,QSplitter::Stretch);
 
-  toolbar=toAllocBar(box,"Table browser",connection.description());
+  toolbar=toAllocBar(box,"Table browser");
   new QToolButton(QPixmap((const char **)addtable_xpm),
 		  "Create new table",
 		  "Create new table",
@@ -1619,13 +1623,17 @@ public:
   { }
   virtual toTemplateItem *createChild(const QString &name)
   {
-    toBrowserFilter *filter=BrowseTemplate.filter();
-    toTemplateItem *item=new toTemplateSchemaItem(connection(),this,name);
-    if (filter&&!filter->check(item)) {
-      delete item;
+    try {
+      toBrowserFilter *filter=BrowseTemplate.filter();
+      toTemplateItem *item=new toTemplateSchemaItem(connection(),this,name);
+      if (filter&&!filter->check(item)) {
+	delete item;
+	return NULL;
+      }
+      return item;
+    } catch(...) {
       return NULL;
     }
-    return item;
   }
   virtual toQList parameters(void)
   {
@@ -1655,54 +1663,58 @@ public:
   }
   virtual toTemplateItem *createChild(const QString &name)
   {
-    toTemplateItem *item=new toTemplateItem(this,name);
-    QPixmap image(schema_xpm);
-    item->setPixmap(0,image);
-    QPixmap table((const char **)table_xpm);
-    QPixmap view((const char **)view_xpm);
-    QPixmap sequence((const char **)sequence_xpm);
-    QPixmap function((const char **)function_xpm);
-    QPixmap index((const char **)index_xpm);
-    QPixmap synonym((const char **)synonym_xpm);
+    try {
+      toTemplateItem *item=new toTemplateItem(this,name);
+      QPixmap image(schema_xpm);
+      item->setPixmap(0,image);
+      QPixmap table((const char **)table_xpm);
+      QPixmap view((const char **)view_xpm);
+      QPixmap sequence((const char **)sequence_xpm);
+      QPixmap function((const char **)function_xpm);
+      QPixmap index((const char **)index_xpm);
+      QPixmap synonym((const char **)synonym_xpm);
 
-    toBrowserFilter *filter=BrowseTemplate.filter();
-    if (filter&&filter->onlyOwnSchema()&&
-	name.upper()!=connection().user().upper()) {
-      delete item;
+      toBrowserFilter *filter=BrowseTemplate.filter();
+      if (filter&&filter->onlyOwnSchema()&&
+	  name.upper()!=connection().user().upper()) {
+	delete item;
+	return NULL;
+      }
+
+      (new toTemplateSchemaList(connection(),
+				item,
+				"Tables",
+				toSQL::string(SQLListTables,connection())))->setPixmap(0,table);
+      if (connection().provider()=="Oracle") {
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Views",
+				  toSQL::string(SQLListView,connection())))->setPixmap(0,view);
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Indexes",
+				  toSQL::string(SQLListIndex,connection())))->setPixmap(0,index);
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Sequences",
+				  toSQL::string(SQLListSequence,connection())))->setPixmap(0,sequence);
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Synonyms",
+				  toSQL::string(SQLListSynonym,connection())))->setPixmap(0,synonym);
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Code",
+				  toSQL::string(SQLListSQLShort,connection())))->setPixmap(0,function);
+	(new toTemplateSchemaList(connection(),
+				  item,
+				  "Triggers",
+				  toSQL::string(SQLListTrigger,connection())))->setPixmap(0,function);
+      }
+      return item;
+    } catch(...) {
       return NULL;
     }
-
-    (new toTemplateSchemaList(connection(),
-			      item,
-			      "Tables",
-			      toSQL::string(SQLListTables,connection())))->setPixmap(0,table);
-    if (connection().provider()=="Oracle") {
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Views",
-				toSQL::string(SQLListView,connection())))->setPixmap(0,view);
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Indexes",
-				toSQL::string(SQLListIndex,connection())))->setPixmap(0,index);
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Sequences",
-				toSQL::string(SQLListSequence,connection())))->setPixmap(0,sequence);
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Synonyms",
-				toSQL::string(SQLListSynonym,connection())))->setPixmap(0,synonym);
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Code",
-				toSQL::string(SQLListSQLShort,connection())))->setPixmap(0,function);
-      (new toTemplateSchemaList(connection(),
-				item,
-				"Triggers",
-				toSQL::string(SQLListTrigger,connection())))->setPixmap(0,function);
-    }
-    return item;
   }
 };
 
@@ -1747,8 +1759,10 @@ void toBrowseTemplate::insertItems(QListView *parent,QToolBar *toolbar)
 
 void toBrowseTemplate::addDatabase(const QString &name)
 {
-  for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
-    new toTemplateDBItem(toMainWidget()->connection(name),*i,name);
+  try {
+    for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+      new toTemplateDBItem(toMainWidget()->connection(name),*i,name);
+  } TOCATCH
 }
 
 void toBrowseTemplate::importData(std::map<QString,QString> &data,const QString &prefix)

@@ -97,7 +97,7 @@ void toWaitEvents::setup(int session)
 {
   Session=session;
 
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning",toCurrentConnection(this).description());
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
   new QLabel("Display ",toolbar);
   QComboBox *type=new QComboBox(toolbar);
   type->insertItem("Time");
@@ -126,10 +126,10 @@ void toWaitEvents::setup(int session)
     QFont font(toStringToFont(str));
     Types->setFont(font);
   }
-
+  
   QFrame *frame=new QFrame(splitter);
   QGridLayout *layout=new QGridLayout(frame);
-
+  
   Delta=new toResultBar(frame);
   Delta->setTitle("System wait events");
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -161,9 +161,11 @@ void toWaitEvents::setup(int session)
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
   start();
-  connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+  try {
+    connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+  } TOCATCH
 
-  QValueList<int> siz;
+      QValueList<int> siz;
   siz<<1<<2;
   splitter->setSizes(siz);
   LastTime=0;
@@ -210,12 +212,16 @@ void toWaitEvents::setSession(int session)
 
 void toWaitEvents::start(void)
 {
-  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 }
 
 void toWaitEvents::stop(void)
 {
-  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  try {
+    disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  } TOCATCH
 }
 
 void toWaitEvents::changeSelection(void)
@@ -517,20 +523,23 @@ static toSQL SQLWaitEvents("toWaitEvents:System",
 
 void toWaitEvents::refresh(void)
 {
-  if (Query||LastTime==time(NULL))
-    return;
-  toConnection &conn=toCurrentTool(this)->connection();
-  toQList par;
-  QString sql;
+  try {
+    if (Query||LastTime==time(NULL))
+      return;
 
-  if (Session>0) {
-    sql=toSQL::string(SQLSessionWaitEvents,conn);
-    par.insert(par.end(),toQValue(Session));
-  } else
-    sql=toSQL::string(SQLWaitEvents,conn);
-  Query=new toNoBlockQuery(conn,sql,par);
+    toConnection &conn=toCurrentTool(this)->connection();
+    toQList par;
+    QString sql;
 
-  Poll.start(100);
+    if (Session>0) {
+      sql=toSQL::string(SQLSessionWaitEvents,conn);
+      par.insert(par.end(),toQValue(Session));
+    } else
+      sql=toSQL::string(SQLWaitEvents,conn);
+    Query=new toNoBlockQuery(conn,sql,par);
+
+    Poll.start(100);
+  } TOCATCH
 }
 
 void toWaitEvents::importData(std::map<QString,QString> &data,const QString &prefix)

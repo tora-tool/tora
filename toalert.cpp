@@ -119,7 +119,7 @@ static toSQL SQLHost("toAlert:Hostname",
 toAlert::toAlert(QWidget *main,toConnection &connection)
   : toToolWidget(AlertTool,"alert.html",main,connection),Connection(connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Alert Messenger",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Alert Messenger");
 
   QString def;
   try {
@@ -223,15 +223,17 @@ void toAlert::windowActivated(QWidget *widget)
 
 toAlert::~toAlert()
 {
-  Lock.lock();
-  State=Quit;
-  do {
-    Lock.unlock();
-    Semaphore.down();
+  try {
     Lock.lock();
-  } while(State==Quit);
-  Lock.unlock();
-  AlertTool.closeWindow(connection());
+    State=Quit;
+    do {
+      Lock.unlock();
+      Semaphore.down();
+      Lock.lock();
+    } while(State==Quit);
+    Lock.unlock();
+    AlertTool.closeWindow(connection());
+  } TOCATCH
 }
 
 static toSQL SQLRegister("toAlert:Register",
@@ -337,18 +339,20 @@ void toAlert::pollTask::run(void)
 
 void toAlert::poll(void)
 {
-  toLocker lock(Lock);
-  std::list<QString>::iterator i=NewAlerts.begin();
-  std::list<QString>::iterator j=NewMessages.begin();
-  while(i!=NewAlerts.end()&&j!=NewMessages.end()) {
-    QListViewItem *item=new toResultViewMLine(Alerts,NULL,toNow(connection()));
-    item->setText(1,*i);
-    item->setText(2,*j);
-    i++;
-    j++;
-  }
-  NewAlerts.clear();
-  NewMessages.clear();
+  try {
+    toLocker lock(Lock);
+    std::list<QString>::iterator i=NewAlerts.begin();
+    std::list<QString>::iterator j=NewMessages.begin();
+    while(i!=NewAlerts.end()&&j!=NewMessages.end()) {
+      QListViewItem *item=new toResultViewMLine(Alerts,NULL,toNow(connection()));
+      item->setText(1,*i);
+      item->setText(2,*j);
+      i++;
+      j++;
+    }
+    NewAlerts.clear();
+    NewMessages.clear();
+  } TOCATCH
 }
 
 void toAlert::send(void)

@@ -141,7 +141,7 @@ void toSQLEdit::updateStatements(const QString &sel)
 toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   : toToolWidget(SQLEditTool,"sqledit.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL editor",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"SQL editor");
 
   new QToolButton(QPixmap((const char **)fileopen_xpm),
 		  "Load SQL dictionary file",
@@ -257,8 +257,11 @@ void toSQLEdit::deleteVersion(void)
       connectList(true);
     }
     newSQL();
-  } else
-    selectionChanged(connection().provider()+":"+connection().version());
+  } else {
+    try {
+      selectionChanged(connection().provider()+":"+connection().version());
+    } TOCATCH
+  }
 }
 
 bool toSQLEdit::close(bool del)
@@ -385,8 +388,10 @@ void toSQLEdit::changeVersion(const QString &ver)
 
 void toSQLEdit::selectionChanged(void)
 {
-  if (checkStore(false))
-    selectionChanged(connection().provider()+":"+connection().version());
+  try {
+    if (checkStore(false))
+      selectionChanged(connection().provider()+":"+connection().version());
+  } TOCATCH
 }
 
 void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
@@ -462,8 +467,10 @@ void toSQLEdit::selectionChanged(const QString &maxver)
 
 void toSQLEdit::editSQL(const QString &nam)
 {
-  if (checkStore(false))
-    changeSQL(nam,connection().provider()+":"+connection().version());
+  try {
+    if (checkStore(false))
+      changeSQL(nam,connection().provider()+":"+connection().version());
+  } TOCATCH
 }
 
 void toSQLEdit::newSQL(void)
@@ -475,6 +482,8 @@ void toSQLEdit::newSQL(void)
       name=QString::null;
     else
       name=name.mid(0,found+1);
-    changeSQL(name,connection().provider()+":Any");
+    try {
+      changeSQL(name,connection().provider()+":Any");
+    } TOCATCH
   }
 }

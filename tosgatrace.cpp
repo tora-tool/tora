@@ -123,7 +123,7 @@ static toSGATraceTool SGATraceTool;
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   : toToolWidget(SGATraceTool,"trace.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SGA trace",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"SGA trace");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Fetch statements in SGA",
@@ -179,13 +179,15 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   CurrentSchema=connection.user().upper();
   updateSchemas();
 
-  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  try {
+    connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+    toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  } TOCATCH
 
   setFocusProxy(Trace);
 }
@@ -215,7 +217,9 @@ void toSGATrace::windowActivated(QWidget *widget)
 
 void toSGATrace::changeRefresh(const QString &str)
 {
-  toRefreshParse(timer(),str);
+  try {
+    toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 #define LARGE_BUFFER 4096
@@ -284,67 +288,69 @@ static toSQL SQLLongOps("toSGATrace:LongOps",
 
 void toSGATrace::refresh(void)
 {
-  updateSchemas();
+  try {
+    updateSchemas();
 
-  QString select;
-  switch(Type->currentItem()) {
-  case 0:
-    select=toSQL::string(SQLSGATrace,connection());
-    break;
-  case 1:
-    select=toSQL::string(SQLLongOps,connection());
-    break;
-  default:
-    toStatusMessage("Unknown type of trace");
-    return;
-  }
-  if (!CurrentSchema.isEmpty())
-    select.append("\n   and b.username = :f1<char[101]>");
+    QString select;
+    switch(Type->currentItem()) {
+    case 0:
+      select=toSQL::string(SQLSGATrace,connection());
+      break;
+    case 1:
+      select=toSQL::string(SQLLongOps,connection());
+      break;
+    default:
+      toStatusMessage("Unknown type of trace");
+      return;
+    }
+    if (!CurrentSchema.isEmpty())
+      select.append("\n   and b.username = :f1<char[101]>");
 
-  QString order;
-  switch (Limit->currentItem()) {
-  case 0:
-    break;
-  case 1:
-    order="a.Executions";
-    break;
-  case 2:
-    order="a.Sorts";
-    break;
-  case 3:
-    order="a.Disk_Reads";
-    break;
-  case 4:
-    order="a.Buffer_Gets";
-    break;
-  case 5:
-    order="a.Rows_Processed";
-    break;
-  case 6:
-    order="DECODE(a.Executions,0,0,a.Sorts/a.Executions)";
-    break;
-  case 7:
-    order="DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)";
-    break;
-  case 8:
-    order="DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)";
-    break;
-  case 9:
-    order="DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)";
-    break;
-  }
+    QString order;
+    switch (Limit->currentItem()) {
+    case 0:
+      break;
+    case 1:
+      order="a.Executions";
+      break;
+    case 2:
+      order="a.Sorts";
+      break;
+    case 3:
+      order="a.Disk_Reads";
+      break;
+    case 4:
+      order="a.Buffer_Gets";
+      break;
+    case 5:
+      order="a.Rows_Processed";
+      break;
+    case 6:
+      order="DECODE(a.Executions,0,0,a.Sorts/a.Executions)";
+      break;
+    case 7:
+      order="DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)";
+      break;
+    case 8:
+      order="DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)";
+      break;
+    case 9:
+      order="DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)";
+      break;
+    }
 
-  if (!order.isEmpty())
-    select="SELECT * FROM (\n"+select+"\n ORDER BY "+order+" DESC)\n WHERE ROWNUM < 20";
+    if (!order.isEmpty())
+      select="SELECT * FROM (\n"+select+"\n ORDER BY "+order+" DESC)\n WHERE ROWNUM < 20";
 
-  if (!CurrentSchema.isEmpty()) {
-    toQList p;
-    p.insert(p.end(),CurrentSchema);
-    Trace->query(select,p);
-  } else
-    Trace->query(select);
+    if (!CurrentSchema.isEmpty()) {
+      toQList p;
+      p.insert(p.end(),CurrentSchema);
+      Trace->query(select,p);
+    } else
+      Trace->query(select);
 
-  Statement->refresh();
+    Statement->refresh();
+  } TOCATCH
 }
 
 void toSGATrace::updateSchemas(void)

@@ -1036,7 +1036,11 @@ bool toResultView::eof(void)
 
 QString toResultView::middleString()
 {
-  return connection().description();
+  try {
+    return connection().description();
+  } catch(...) {
+    return QString::null;
+  }
 }
 
 void toResultView::setup(bool readable,bool dispCol)

@@ -174,9 +174,7 @@ void toProjectTemplateItem::selected(void)
     return;
   try {
     toWorksheet::fileWorksheet(Filename);
-  } catch(const QString &exc) {
-    toStatusMessage(exc);
-  }
+  } TOCATCH
 }
 
 QWidget *toProjectTemplateItem::selectedWidget(QWidget *parent)
@@ -367,7 +365,7 @@ toProject::toProject(toProjectTemplateItem *top,QWidget *parent)
 {
   Root=top;
 
-  QToolBar *toolbar=toAllocBar(this,"SQL project",QString::null);
+  QToolBar *toolbar=toAllocBar(this,"SQL project");
   new QToolButton(QPixmap((const char **)addproject_xpm),
 		  "Add file to project",
 		  "Add file to project",

@@ -79,7 +79,9 @@ toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toCon
 
 void toToolWidget::parentConnection(void)
 {
-  setConnection(toCurrentConnection(parentWidget()));
+  try {
+    setConnection(toCurrentConnection(parentWidget()));
+  } TOCATCH
 }
 
 toToolWidget::~toToolWidget()
@@ -296,38 +298,40 @@ static char *toKeyValue(const QString &str)
 
 void toTool::saveConfig(void)
 {
+  try {
 #ifdef WIN32
-  CRegistry registry;
-  QRegExp re(":");
-  for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
-    QString path=(*i).first;
-    QString value=(*i).second;
-    path.prepend(APPLICATION_NAME);
-    path.replace(re,"\\");
-    if (value.isNull())
-      registry.SetStringValue(HKEY_CURRENT_USER,
-			      toKeyPath(path,registry),
-			      toKeyValue(path),
-			      "");
-    else {
-      char *t=strdup(value.utf8());
-      registry.SetStringValue(HKEY_CURRENT_USER,
-			      toKeyPath(path,registry),
-			      toKeyValue(path),
-			      t);
-      free(t);
+    CRegistry registry;
+    QRegExp re(":");
+    for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+      QString path=(*i).first;
+      QString value=(*i).second;
+      path.prepend(APPLICATION_NAME);
+      path.replace(re,"\\");
+      if (value.isNull())
+	registry.SetStringValue(HKEY_CURRENT_USER,
+				toKeyPath(path,registry),
+				toKeyValue(path),
+				"");
+      else {
+	char *t=strdup(value.utf8());
+	registry.SetStringValue(HKEY_CURRENT_USER,
+				toKeyPath(path,registry),
+				toKeyValue(path),
+				t);
+	free(t);
+      }
     }
-  }
 #else
-  if (!Configuration)
-    return;
-  QString conf;
-  if (getenv("HOME")) {
-    conf=getenv("HOME");
-  }
-  conf.append(CONFIG_FILE);
-  saveMap(conf,*Configuration);
+    if (!Configuration)
+      return;
+    QString conf;
+    if (getenv("HOME")) {
+      conf=getenv("HOME");
+    }
+    conf.append(CONFIG_FILE);
+    saveMap(conf,*Configuration);
 #endif
+  } TOCATCH
 }
 
 void toTool::loadConfig(void)

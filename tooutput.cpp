@@ -132,7 +132,7 @@ static toOutputTool OutputTool;
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   : toToolWidget(OutputTool,"output.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"SQL Output");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Poll for output now",
@@ -165,8 +165,10 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(timer(),OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
+  try {
+    connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+    toRefreshParse(timer(),OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
+  } TOCATCH
   if (enabled)
     disable(false);
 
@@ -237,8 +239,10 @@ void toOutput::disable(bool dis)
 
 toOutput::~toOutput()
 {
-  disable(true);
-  OutputTool.closeWindow(connection());
+  try {
+    disable(true);
+    OutputTool.closeWindow(connection());
+  } TOCATCH
 }
 
 static toSQL SQLLines("toOutput:Poll",
@@ -281,7 +285,9 @@ void toOutput::clear(void)
 
 void toOutput::changeRefresh(const QString &str)
 { 
-  toRefreshParse(timer(),str);
+  try {
+    toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 bool toOutput::enabled(void)

@@ -88,7 +88,8 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     TOMessageBox::information(this,
 			      "No connection provider",
 			      "No available connection provider, plugins probably missing");
-    throw QString("Coudln't make connection");
+    reject();
+    return;
   }
   Provider->setCurrentItem(sel);
   changeProvider();
@@ -202,7 +203,6 @@ void toNewConnection::changeHost(void)
 toConnection *toNewConnection::makeConnection(void)
 {
   try {
-
     toTool::globalSetConfig(CONF_PROVIDER,Provider->currentText());
     toTool::globalSetConfig(CONF_USER,Username->text());
     QString pass;

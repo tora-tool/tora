@@ -184,20 +184,27 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
     Param(param),
     Statistics(stats)
 {
+  CurrentValue=Values.end();
+  Quit=EOQ=false;
+  Processed=0;
+
   try {
     Query=NULL;
     Query=new toQuery(conn,toQuery::Long);
   } catch(...) {
     delete Query;
-    throw;
+    Query=NULL;
+    Error=QString("Couldn't open query");
+    return;
   }
   TO_DEBUGOUT("Created no block query\n");
-  CurrentValue=Values.end();
-  Quit=EOQ=false;
-  Processed=0;
 
-  if (Statistics)
-    Statistics->changeSession(*Query);
+  try {
+    if (Statistics)
+      Statistics->changeSession(*Query);
+  } catch(...) {
+    Statistics=NULL;
+  }
 
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
   if (val!=0)
@@ -234,15 +241,21 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
     Query=new toQuery(conn,mode);
   } catch(...) {
     delete Query;
-    throw;
+    Query=NULL;
+    Error=QString("Couldn't open query");
+    return;
   }
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Quit=EOQ=false;
   Processed=0;
 
-  if (Statistics)
-    Statistics->changeSession(*Query);
+  try {
+    if (Statistics)
+      Statistics->changeSession(*Query);
+  } catch(...) {
+    Statistics=NULL;
+  }
 
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
   if (val!=0)
@@ -347,30 +360,34 @@ bool toNoBlockQuery::poll(void)
   Lock.lock();
   if (Started>0&&Started<time(NULL)&&!Description.size()) {
     if (Query&&(Query->mode()==toQuery::Normal||Query->mode()==toQuery::Background)) {
-      toStatusMessage("Restarting query in own connection",false,false);
-      toConnection &conn=Query->connection();
-      Lock.unlock();
-      TO_DEBUGOUT("Stopping normal query\n");
-      stop();
-      toLocker lock(Lock);
-      while(Running.getValue()>0)
-	Running.down();
-      while(Continue.getValue()>0)
-	Continue.down();
-      Error=QString::null;
-      ReadingValues.clear();
-      Values.clear();
-      CurrentValue=Values.end();
-      Quit=EOQ=false;
-      Processed=0;
-
-      TO_DEBUGOUT("Creating new long query\n");
-      Query=new toQuery(conn,toQuery::Long);
-
-      if (Statistics)
-	Statistics->changeSession(*Query);
-
       try {
+	toStatusMessage("Restarting query in own connection",false,false);
+	toConnection &conn=Query->connection();
+	Lock.unlock();
+	TO_DEBUGOUT("Stopping normal query\n");
+	stop();
+	toLocker lock(Lock);
+	while(Running.getValue()>0)
+	  Running.down();
+	while(Continue.getValue()>0)
+	  Continue.down();
+	Error=QString::null;
+	ReadingValues.clear();
+	Values.clear();
+	CurrentValue=Values.end();
+	Quit=EOQ=false;
+	Processed=0;
+
+	TO_DEBUGOUT("Creating new long query\n");
+	Query=new toQuery(conn,toQuery::Long);
+
+	try {
+	  if (Statistics)
+	    Statistics->changeSession(*Query);
+	} catch(...) {
+	  Statistics=NULL;
+	}
+
 	toThread *thread=new toThread(new queryTask(*this));
 	TO_DEBUGOUT("Created thread\n");
 	thread->start();

@@ -151,7 +151,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   QVBox *box=new QVBox(Tabs);
   Tabs->addTab(box,"Analyze");
 
-  QToolBar *toolbar=toAllocBar(box,"Statistics Manager",connection.description());
+  QToolBar *toolbar=toAllocBar(box,"Statistics Manager");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh",
@@ -232,7 +232,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
   box=new QVBox(Tabs);
-  toolbar=toAllocBar(box,"Explain plans",connection.description());
+  toolbar=toAllocBar(box,"Explain plans");
 
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);
@@ -297,59 +297,63 @@ void toAnalyze::changeOperation(int op)
 
 void toAnalyze::refresh(void)
 {
-  Statistics->setSQL(QString::null);
-  toQList par;
-  QString sql;
-  if (Type->currentItem()==0)
-    sql=toSQL::string(SQLListTables,connection());
-  else
-    sql=toSQL::string(SQLListIndex,connection());
-  if (Schema->selected()!="All") {
-    par.insert(par.end(),Schema->selected());
-    sql+="\n   AND owner = :own<char[100]>";
-  }
-  switch (Analyzed->currentItem()) {
-  default:
-    break;
-  case 1:
-    sql+="\n  AND Last_Analyzed IS NULL";
-    break;
-  case 2:
-    sql+="\n  AND Last_Analyzed IS NOT NULL";
-    break;
-  }
+  try {
+    Statistics->setSQL(QString::null);
+    toQList par;
+    QString sql;
+    if (Type->currentItem()==0)
+      sql=toSQL::string(SQLListTables,connection());
+    else
+      sql=toSQL::string(SQLListIndex,connection());
+    if (Schema->selected()!="All") {
+      par.insert(par.end(),Schema->selected());
+      sql+="\n   AND owner = :own<char[100]>";
+    }
+    switch (Analyzed->currentItem()) {
+    default:
+      break;
+    case 1:
+      sql+="\n  AND Last_Analyzed IS NULL";
+      break;
+    case 2:
+      sql+="\n  AND Last_Analyzed IS NOT NULL";
+      break;
+    }
 
-  Statistics->query(sql,(const toQList)par);
+    Statistics->query(sql,(const toQList)par);
+  } TOCATCH
 }
 
 void toAnalyze::poll(void)
 {
-  int running=0;
-  for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++) {
-    bool eof=false;
-    try {
-      eof=(*i)->eof();
-    } catch(const QString &) {
-      eof=true;
-    }
-    if (eof) {
-      QString sql=toShift(Pending);
-      if (!sql.isEmpty()) {
-	delete (*i);
-	toQList par;
-	(*i)=new toNoBlockQuery(connection(),sql,par);
-	running++;
+  try {
+    int running=0;
+    for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++) {
+      bool eof=false;
+      try {
+	eof=(*i)->eof();
+      } catch(const QString &) {
+	eof=true;
       }
+      if (eof) {
+	QString sql=toShift(Pending);
+	if (!sql.isEmpty()) {
+	  delete (*i);
+	  toQList par;
+	  (*i)=new toNoBlockQuery(connection(),sql,par);
+	  running++;
+	}
+      } else
+	running++;
+    }
+    if (!running) {
+      Poll.stop();
+      refresh();
+      stop();
     } else
-      running++;
-  }
-  if (!running) {
-    Poll.stop();
-    refresh();
-    stop();
-  } else
-    Current->setText("Running "+QString::number(running)+
-		     " Pending "+QString::number(Pending.size()));
+      Current->setText("Running "+QString::number(running)+
+		       " Pending "+QString::number(Pending.size()));
+  } TOCATCH
 }
 
 void toAnalyze::execute(void)
@@ -399,15 +403,17 @@ void toAnalyze::execute(void)
     }
   }
 
-  toQList par;
-  for(int i=0;i<Parallel->value();i++) {
-    QString sql=toShift(Pending);
-    if (!sql.isEmpty())
-      toPush(Running,new toNoBlockQuery(connection(),sql,par));
-  }
-  Poll.start(100);
-  Stop->setEnabled(true);
-  poll();
+  try {
+    toQList par;
+    for(int i=0;i<Parallel->value();i++) {
+      QString sql=toShift(Pending);
+      if (!sql.isEmpty())
+	toPush(Running,new toNoBlockQuery(connection(),sql,par));
+    }
+    Poll.start(100);
+    Stop->setEnabled(true);
+    poll();
+  } TOCATCH
 }
 
 void toAnalyze::stop(void)

@@ -467,15 +467,15 @@ void toResultStorage::query(void)
   if (!handled()||Tablespaces||Files)
     return;
 
-  saveSelected();
-  clear();
-
-  toConnection &conn=connection();
-
-  toQList args;
-  toPush(args,toQValue(toSizeDecode(Unit)));
-
   try {
+    saveSelected();
+    clear();
+
+    toConnection &conn=connection();
+
+    toQList args;
+    toPush(args,toQValue(toSizeDecode(Unit)));
+
     TablespaceValues.clear();
     FileValues.clear();
 

@@ -207,31 +207,32 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
 
 void toResultCols::query(const QString &,const toQList &param)
 {
-  toQList subp;
-
-  toConnection &conn=connection();
-
   QString Owner;
   QString Name;
   QString object;
   
-  toQList::iterator cp=((toQList &)param).begin();
-  if (cp!=((toQList &)param).end()) {
-    object=conn.quote(*cp);
-    Owner=*cp;
-  }
-  cp++;
-  if (cp!=((toQList &)param).end()) {
-    object+=".";
-    object+=conn.quote(*cp);
-    Name=*cp;
-  } else {
-    Name=Owner;
-    Owner=connection().user().upper();
-  }
-
-  QString synonym;
   try {
+    toQList subp;
+
+    toConnection &conn=connection();
+
+    toQList::iterator cp=((toQList &)param).begin();
+    if (cp!=((toQList &)param).end()) {
+      object=conn.quote(*cp);
+      Owner=*cp;
+    }
+    cp++;
+    if (cp!=((toQList &)param).end()) {
+      object+=".";
+      object+=conn.quote(*cp);
+      Name=*cp;
+    } else {
+      Name=Owner;
+      Owner=connection().user().upper();
+    }
+
+    QString synonym;
+
     Columns->clear();
     const toConnection::objectName &name=conn.realName(object,synonym,false);
 

@@ -265,8 +265,7 @@ void toWorksheet::viewResources(void)
 
 void toWorksheet::setup(bool autoLoad)
 {
-  toConnection &connection=toWorksheet::connection();
-  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"SQL worksheet");
 
   new QToolButton(QPixmap((const char **)execute_xpm),
 		  "Execute current statement",
@@ -348,7 +347,7 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(Resources,"&Information");
     StatTab=new QVBox(ResultTab);
     {
-      QToolBar *stattool=toAllocBar(StatTab,"Worksheet Statistics",connection.description());
+      QToolBar *stattool=toAllocBar(StatTab,"Worksheet Statistics");
       new QToolButton(QPixmap((const char **)filesave_xpm),
 		      "Save statistics for later analysis",
 		      "Save statistics for later analysis",
@@ -465,14 +464,16 @@ void toWorksheet::setup(bool autoLoad)
     connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	    this,SLOT(windowActivated(QWidget *)));
 
-    if (connection.provider()=="Oracle") {
-      if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
-	show();
-	StatisticButton->setOn(true);
+    try {
+      if (connection().provider()=="Oracle") {
+	if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
+	  show();
+	  StatisticButton->setOn(true);
+	}
+      } else {
+	StatisticButton->setEnabled(false);
       }
-    } else {
-      StatisticButton->setEnabled(false);
-    }
+    } TOCATCH
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
@@ -494,8 +495,10 @@ toWorksheet::toWorksheet(QWidget *main,const char *name,toConnection &connection
 
 void toWorksheet::changeRefresh(const QString &str)
 {
-  if (!Light&&StopButton->isEnabled()&&StatisticButton->isOn())
-    toRefreshParse(timer(),str);
+  try {
+    if (!Light&&StopButton->isEnabled()&&StatisticButton->isOn())
+      toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 void toWorksheet::windowActivated(QWidget *widget)
@@ -569,11 +572,13 @@ void toWorksheet::windowActivated(QWidget *widget)
 
 void toWorksheet::connectionChanged(void)
 {
-  if (connection().provider()=="Oracle") {
-    StatisticButton->setEnabled(true);
-  } else {
-    StatisticButton->setEnabled(false);
-  }
+  try {
+    if (connection().provider()=="Oracle") {
+      StatisticButton->setEnabled(true);
+    } else {
+      StatisticButton->setEnabled(false);
+    }
+  } TOCATCH
 }
 
 bool toWorksheet::checkSave(bool input)
@@ -586,7 +591,11 @@ bool toWorksheet::checkSave(bool input)
       if (!WorksheetTool.config(CONF_CHECK_SAVE,"Yes").isEmpty()) {
 	if (input) {
 	  QString str("Save changes to worksheet for ");
-	  str.append(connection().description());
+	  try {
+	    str.append(connection().description());
+	  } catch(...) {
+	    str+="unknown connection";
+	  }
 	  int ret=TOMessageBox::information(this,
 					    "Save file",
 					    str,
@@ -668,40 +677,43 @@ static QString unQuote(const QString &str)
 
 bool toWorksheet::describe(const QString &query)
 {
-  QRegExp white("[ \r\n\t.]+");
-  QStringList part=QStringList::split(white,query);
-  if (part[0].upper()=="DESC"||
-      part[0].upper()=="DESCRIBE") {
-    if (Light)
+  try {
+    QRegExp white("[ \r\n\t.]+");
+    QStringList part=QStringList::split(white,query);
+    if (part[0].upper()=="DESC"||
+	part[0].upper()=="DESCRIBE") {
+      if (Light)
+	return true;
+      if (toIsOracle(connection())) {
+	if (part.count()==2) {
+	  Columns->changeParams(unQuote(part[1]));
+	} else if (part.count()==3) {
+	  Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
+	} else
+	  throw QString("Wrong number of parameters for describe");
+      } else if (connection().provider()=="MySQL") {
+	if (part.count()==2) {
+	  Columns->changeParams(part[1]);
+	} else
+	  throw QString("Wrong number of parameters for describe");
+      }
+      Current->hide();
+      Columns->show();
+      Current=Columns;
       return true;
-    if (toIsOracle(connection())) {
-      if (part.count()==2) {
-	Columns->changeParams(unQuote(part[1]));
-      } else if (part.count()==3) {
-	Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
-      } else
-	throw QString("Wrong number of parameters for describe");
-    } else if (connection().provider()=="MySQL") {
-      if (part.count()==2) {
-	Columns->changeParams(part[1]);
-      } else
-	throw QString("Wrong number of parameters for describe");
-    }
-    Current->hide();
-    Columns->show();
-    Current=Columns;
-    return true;
-  } else {
-    if (Light)
+    } else {
+      if (Light)
+	return false;
+      QWidget *curr=ResultTab->currentPage();
+      Current->hide();
+      Result->show();
+      Current=Result;
+      if (curr==Columns)
+	ResultTab->showPage(Result);
       return false;
-    QWidget *curr=ResultTab->currentPage();
-    Current->hide();
-    Result->show();
-    Current=Result;
-    if (curr==Columns)
-      ResultTab->showPage(Result);
-    return false;
-  }
+    }
+  } TOCATCH
+  return false;
 }
 
 void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
@@ -790,8 +802,10 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 	addLog(QueryString,exc,true);
       }
       if (!Light) {
-	if (StatisticButton->isOn())
-	  toRefreshParse(timer(),Refresh->currentText());
+	try {
+	  if (StatisticButton->isOn())
+	    toRefreshParse(timer(),Refresh->currentText());
+	} TOCATCH
       }
       Result->setSQLName(QueryString.simplifyWhiteSpace().left(40));
     }
@@ -842,7 +856,12 @@ QString toWorksheet::duration(int dur,bool hundreds)
 
 void toWorksheet::addLog(const QString &sql,const toConnection::exception &result,bool error)
 {
-  QString now=toNow(connection());
+  QString now;
+  try {
+    now=toNow(connection());
+  } catch(...) {
+    now="Unknown";
+  }
   toResultViewItem *item;
 
   LastID++;
@@ -916,12 +935,14 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     changeResult(CurrentTab);
 
   static QRegExp re("^[1-9]\\d* rows processed$");
-  if (result.contains(re)) {
-    if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
-      connection().commit();
-    else
-      toMainWidget()->setNeedCommit(connection());
-  }
+  try {
+    if (result.contains(re)) {
+      if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
+	connection().commit();
+      else
+	toMainWidget()->setNeedCommit(connection());
+    }
+  } TOCATCH
   saveDefaults();
 }
 
@@ -1073,7 +1094,9 @@ void toWorksheet::queryDone(void)
     addLog(QueryString,toConnection::exception("Aborted"),false);
   else
     emit executed();
-  timer()->stop();
+  try {
+    timer()->stop();
+  } TOCATCH
   StopButton->setEnabled(false);
   Poll.stop();
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
@@ -1093,7 +1116,9 @@ void toWorksheet::saveDefaults(void)
       else if (item)
 	str=item->text(i);
 
-      toParamGet::setDefault(connection(),head->label(i).lower(),toUnnull(str));
+      try {
+	toParamGet::setDefault(connection(),head->label(i).lower(),toUnnull(str));
+      } TOCATCH
     }
   }
 }
@@ -1114,7 +1139,10 @@ void toWorksheet::enableStatistic(bool ena)
       } TOCATCH
     }
   } else {
-    connection().delInit(ENABLETIMED);
+    try {
+      connection().delInit(ENABLETIMED);
+    } catch(...) {
+    }
     Result->setStatistics(NULL);
     ResultTab->setTabEnabled(StatTab,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
@@ -1343,12 +1371,14 @@ void toWorksheet::saveLast(void)
 				     "submenues are separated by a ':' character.",
 				     QLineEdit::Normal,QString::null,&ok,this);
   if (ok&&!name.isEmpty()) {
-    toSQL::updateSQL(TOWORKSHEET+name,
-		     QueryString,
-		     "Undescribed",
-		     "Any",
-		     connection().provider());
-    toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+    try {
+      toSQL::updateSQL(TOWORKSHEET+name,
+		       QueryString,
+		       "Undescribed",
+		       "Any",
+		       connection().provider());
+      toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+    } TOCATCH
   }
 }
 

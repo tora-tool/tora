@@ -326,7 +326,7 @@ toResultContentEditor::~toResultContentEditor()
 
 void toResultContentEditor::wrongUsage(void)
 {
-  throw QString("Can't use these on toResultContent");
+  toStatusMessage("Can't use these on toResultContent");
 }
 
 void toResultContentEditor::changeSort(int col)
@@ -681,39 +681,39 @@ void toResultContentEditor::deleteCurrent()
   }
   saveUnsaved();
   if (currentRow()<Row) {
-    QString sql="DELETE FROM ";
-    sql+=table();
-    sql+=" WHERE ";
-    
-    QHeader *head=horizontalHeader();
-    toQDescList::iterator di=Description.begin();
-    bool where=false;
-    toConnection &conn=connection();
-      
-    for(int i=0;i<numCols();i++) {
-      if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
-	if (where)
-	  sql+=" AND ";
-	else
-	  where=true;
-	sql+=conn.quote(head->label(i));
-	if (!text(currentRow(),i))
-	  sql+=" IS NULL";
-	else {
-	  sql+="= :c";
-	  sql+=QString::number(i);
-	  sql+="<char[4000]>";
-	}
-      }
-      di++;
-    }
-    if (!where) {
-      toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
-      return;
-    }
     try {
-      toQList args;
+      QString sql="DELETE FROM ";
+      sql+=table();
+      sql+=" WHERE ";
+    
+      QHeader *head=horizontalHeader();
       toQDescList::iterator di=Description.begin();
+      bool where=false;
+      toConnection &conn=connection();
+      
+      for(int i=0;i<numCols();i++) {
+	if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
+	  if (where)
+	    sql+=" AND ";
+	  else
+	    where=true;
+	  sql+=conn.quote(head->label(i));
+	  if (!text(currentRow(),i))
+	    sql+=" IS NULL";
+	  else {
+	    sql+="= :c";
+	    sql+=QString::number(i);
+	    sql+="<char[4000]>";
+	  }
+	}
+	di++;
+      }
+      if (!where) {
+	toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+	return;
+      }
+      toQList args;
+      di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
 	if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
@@ -763,134 +763,137 @@ void toResultContentEditor::saveUnsaved(void)
       return;
     }
 
-    toConnection &conn = connection();
+    bool oracle=false;
     QString rowid;
-    bool oracle=(connection().provider()=="Oracle"&&!NoUseReturning);
-    toStatusMessage("Saved row",false,false);
-    if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
-      QString sql="INSERT INTO ";
-      sql+=table();
-      sql+=" VALUES (";
-      for (int i=0;i<numCols();i++) {
-	sql+=":f";
-	sql+=QString::number(i);
-	sql+="<char[4000],in>";
-	if (i+1<numCols())
-	  sql+=",";
-      }
-      sql+=")";
-      if(oracle) 
-	sql+=" RETURNING ROWID INTO :r<char[101],out>";
-	
-      try {
-	toQList args;
-	toQValue null;
+    try {
+      toConnection &conn = connection();
+      oracle=(connection().provider()=="Oracle"&&!NoUseReturning);
+      toStatusMessage("Saved row",false,false);
+      if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
+	QString sql="INSERT INTO ";
+	sql+=table();
+	sql+=" VALUES (";
 	for (int i=0;i<numCols();i++) {
-	  QString str=text(CurrentRow,i);
-	  if (str.isNull())
-	    toPush(args,null);
-	  else
-	    toPush(args,toQValue(str));
+	  sql+=":f";
+	  sql+=QString::number(i);
+	  sql+="<char[4000],in>";
+	  if (i+1<numCols())
+	    sql+=",";
 	}
-	toQuery q(conn,sql,args);
-	if(oracle)
-	  rowid = q.readValueNull();
-	Row++;
-	setNumRows(Row+1);
-	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
-	  conn.commit();
-	else
-	  toMainWidget()->setNeedCommit(conn);
-      } catch (const QString &str) {
-	cancelEdit();
-	toStatusMessage(str);
-	oracle = false;
-      }
-    } else {
-      QString sql="UPDATE ";
-      sql+=table();
-      sql+=" SET ";
-      QHeader *head=horizontalHeader();
-      std::list<QString>::iterator k=OrigValues.begin();
-      bool first=false;
-      for(int i=0;i<numCols();i++,k++) {
-	QString fld=text(CurrentRow,i);
-	if (*k!=fld) {
-	  if (!first)
-	    first=true;
-	  else
-	    sql+=", ";
-	  sql+=conn.quote(head->label(i));
-	  if (fld.isNull())
-	    sql+=" = NULL";
-	  else {
-	    sql+="= :f";
-	    sql+=QString::number(i);
-	    sql+="<char[4000],in>";
-	  }
-	}
-      }
-      if (first) {
-	sql+=" WHERE ";
-	int col=0;
-	bool where=false;
-	toQDescList::iterator di=Description.begin();
-	for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	  if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
-	    if (where)
-	      sql+=" AND ";
-	    else
-	      where=true;
-	    sql+=conn.quote((*di).Name);
-	    if ((*j).isNull())
-	      sql+=" IS NULL";
-	    else {
-	      sql+="= :c";
-	      sql+=QString::number(col);
-	      sql+="<char[4000],in>";
-	    }
-	  }
-	  di++;
-	}
-	if (!where) {
-	  toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
-	  return;
-	}
-	if(oracle)
+	sql+=")";
+	if(oracle) 
 	  sql+=" RETURNING ROWID INTO :r<char[101],out>";
+	
 	try {
 	  toQList args;
-
-	  std::list<QString>::iterator k=OrigValues.begin();
-	  for (int i=0;i<numCols();i++,k++) {
+	  toQValue null;
+	  for (int i=0;i<numCols();i++) {
 	    QString str=text(CurrentRow,i);
-	    if (str!=*k&&!str.isNull())
+	    if (str.isNull())
+	      toPush(args,null);
+	    else
 	      toPush(args,toQValue(str));
-	  }
-
-	  toQDescList::iterator di=Description.begin();
-	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	    QString str=(*j);
-	    if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
-	      toPush(args,toQValue(str));
-	    di++;
 	  }
 	  toQuery q(conn,sql,args);
 	  if(oracle)
 	    rowid = q.readValueNull();
+	  Row++;
+	  setNumRows(Row+1);
 	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	    conn.commit();
 	  else
 	    toMainWidget()->setNeedCommit(conn);
 	} catch (const QString &str) {
-	  int col=0;
-	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
-	    setText(CurrentRow,col,*j);
+	  cancelEdit();
 	  toStatusMessage(str);
 	  oracle = false;
 	}
+      } else {
+	QString sql="UPDATE ";
+	sql+=table();
+	sql+=" SET ";
+	QHeader *head=horizontalHeader();
+	std::list<QString>::iterator k=OrigValues.begin();
+	bool first=false;
+	for(int i=0;i<numCols();i++,k++) {
+	  QString fld=text(CurrentRow,i);
+	  if (*k!=fld) {
+	    if (!first)
+	      first=true;
+	    else
+	      sql+=", ";
+	    sql+=conn.quote(head->label(i));
+	    if (fld.isNull())
+	      sql+=" = NULL";
+	    else {
+	      sql+="= :f";
+	      sql+=QString::number(i);
+	      sql+="<char[4000],in>";
+	    }
+	  }
+	}
+	if (first) {
+	  sql+=" WHERE ";
+	  int col=0;
+	  bool where=false;
+	  toQDescList::iterator di=Description.begin();
+	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	    if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
+	      if (where)
+		sql+=" AND ";
+	      else
+		where=true;
+	      sql+=conn.quote((*di).Name);
+	      if ((*j).isNull())
+		sql+=" IS NULL";
+	      else {
+		sql+="= :c";
+		sql+=QString::number(col);
+		sql+="<char[4000],in>";
+	      }
+	    }
+	    di++;
+	  }
+	  if (!where) {
+	    toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+	    return;
+	  }
+	  if(oracle)
+	    sql+=" RETURNING ROWID INTO :r<char[101],out>";
+	  try {
+	    toQList args;
+
+	    std::list<QString>::iterator k=OrigValues.begin();
+	    for (int i=0;i<numCols();i++,k++) {
+	      QString str=text(CurrentRow,i);
+	      if (str!=*k&&!str.isNull())
+		toPush(args,toQValue(str));
+	    }
+
+	    toQDescList::iterator di=Description.begin();
+	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	      QString str=(*j);
+	      if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
+		toPush(args,toQValue(str));
+	      di++;
+	    }
+	    toQuery q(conn,sql,args);
+	    if(oracle)
+	      rowid = q.readValueNull();
+	    if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
+	      conn.commit();
+	    else
+	      toMainWidget()->setNeedCommit(conn);
+	  } catch (const QString &str) {
+	    int col=0;
+	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
+	      setText(CurrentRow,col,*j);
+	    toStatusMessage(str);
+	    oracle = false;
+	  }
+	}
       }
-    }
+    } TOCATCH
     OrigValues.clear();
     if(oracle) {
       try {
@@ -1088,19 +1091,24 @@ void toResultContentEditor::menuCallback(int cmd)
 
 QString toResultContentEditor::table(void)
 {
-  QString sql;
-  if (connection().provider()!="PostgreSQL") {
-    sql=connection().quote(Owner);
-    sql+=".";
+  try {
+    QString sql;
+    if (connection().provider()!="PostgreSQL") {
+      sql=connection().quote(Owner);
+      sql+=".";
+    }
+    sql+=connection().quote(Table);
+    return sql;
+  } catch(const QString &str) {
+    toStatusMessage(str);
+    return Table;
   }
-  sql+=connection().quote(Table);
-  return sql;
 }
 
 toResultContent::toResultContent(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
-  QToolBar *toolbar=toAllocBar(this,"Content editor",connection().description());
+  QToolBar *toolbar=toAllocBar(this,"Content editor");
   Editor=new toResultContentEditor(this,name);
 
   new QToolButton(QPixmap((const char **)filter_xpm),
@@ -1193,9 +1201,11 @@ void toResultContentEditor::changeFilter(bool all,const QString &crit,const QStr
 
 void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
 {
-  toConnection &mycon=connection();
-  if (&mycon==&conn) // Is this same connection
-    saveUnsaved();
+  try {
+    toConnection &mycon=connection();
+    if (&mycon==&conn) // Is this same connection
+      saveUnsaved();
+  } TOCATCH
 }
 
 bool toResultContent::canHandle(toConnection &conn)

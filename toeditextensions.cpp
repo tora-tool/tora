@@ -157,21 +157,23 @@ void toEditExtensions::indentBlock(void)
 void toEditExtensions::autoIndentBlock(void)
 {
   if (Current) {
-    int line1,col1,line2,col2;
-    if (Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
-      QString t=Current->textLine(line1).mid(0,col1);
-      t+="a";
-      int chars=0;
-      QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
-      QString mrk=Current->markedText();
-      QString res=toSQLParse::indent(ind+mrk);
-      t=Current->textLine(line2);
-      unsigned int l=res.length()-ind.length();
-      if (col2==int(t.length())&&t.length()>0) // Strip last newline if on last col of line
-	l--;
-      res=res.mid(ind.length(),l); // Strip indent.
-      Current->insert(res,true);
-    }
+    try {
+      int line1,col1,line2,col2;
+      if (Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
+	QString t=Current->textLine(line1).mid(0,col1);
+	t+="a";
+	int chars=0;
+	QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
+	QString mrk=Current->markedText();
+	QString res=toSQLParse::indent(ind+mrk);
+	t=Current->textLine(line2);
+	unsigned int l=res.length()-ind.length();
+	if (col2==int(t.length())&&t.length()>0) // Strip last newline if on last col of line
+	  l--;
+	res=res.mid(ind.length(),l); // Strip indent.
+	Current->insert(res,true);
+      }
+    } TOCATCH
   }
 }
 
@@ -184,7 +186,9 @@ void toEditExtensions::autoIndentBuffer(void)
       pos++;
     }
     Current->selectAll();
-    Current->insert(toSQLParse::indent(text.mid(pos)));
+    try {
+      Current->insert(toSQLParse::indent(text.mid(pos)));
+    } TOCATCH
   }
 }
 
@@ -276,23 +280,25 @@ public:
     CommentColumn->setValue(Current.CommentColumn);
     AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty());
     Ok=false;
-    Example->setText(toSQLParse::indent("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
-					"AS\n"
-					"  vYear  CHAR(4);\n"
-					"BEGIN\n"
-					"select a.TskCod TskCod, -- A Comment\n"
-					"       count(1) Tot\n"
-					"  from (select * from EssTsk where PrsID >= '1940');\n"
-					"having count(a.TspActOprID) > 0;\n"
-					"    DECLARE\n"
-					"      oTrdStt NUMBER;\n"
-					"    BEGIN\n"
-					"      oTrdStt := 0;\n"
-					"    END;\n"
-					"    EXCEPTION\n"
-					"        WHEN VALUE_ERROR THEN\n"
-					"	    oRet := 3;\n"
-					"END;"));
+    try {
+      Example->setText(toSQLParse::indent("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+					  "AS\n"
+					  "  vYear  CHAR(4);\n"
+					  "BEGIN\n"
+					  "select a.TskCod TskCod, -- A Comment\n"
+					  "       count(1) Tot\n"
+					  "  from (select * from EssTsk where PrsID >= '1940');\n"
+					  "having count(a.TspActOprID) > 0;\n"
+					  "    DECLARE\n"
+					  "      oTrdStt NUMBER;\n"
+					  "    BEGIN\n"
+					  "      oTrdStt := 0;\n"
+					  "    END;\n"
+					  "    EXCEPTION\n"
+					  "        WHEN VALUE_ERROR THEN\n"
+					  "	    oRet := 3;\n"
+					  "END;"));
+    } TOCATCH
     Started=true;
   }
   virtual ~toEditExtensionSetup()
@@ -317,7 +323,9 @@ public:
   {
     if (Started) {
       saveCurrent();
-      Example->setText(toSQLParse::indent(Example->text()));
+      try {
+	Example->setText(toSQLParse::indent(Example->text()));
+      } TOCATCH
     }
   }
   virtual void saveSetting(void);

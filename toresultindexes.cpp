@@ -170,28 +170,28 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
     delete Query;
   Query=NULL;
 
-  toConnection &conn=connection();
-  if(conn.provider()=="Oracle")
-    Type=Oracle;
-  else if (conn.provider()=="MySQL")
-    Type=MySQL;
-  else if (conn.provider()=="PostgreSQL")
-    Type=PostgreSQL;
-  else
-    return;
-    
-  toQList::iterator cp=((toQList &)param).begin();
-  if (cp!=((toQList &)param).end())
-    Owner=*cp;
-  cp++;
-  if (cp!=((toQList &)param).end())
-    TableName=(*cp);
-
-  RowNumber=0;
-
-  clear();
-
   try {
+    toConnection &conn=connection();
+    if(conn.provider()=="Oracle")
+      Type=Oracle;
+    else if (conn.provider()=="MySQL")
+      Type=MySQL;
+    else if (conn.provider()=="PostgreSQL")
+      Type=PostgreSQL;
+    else
+      return;
+    
+    toQList::iterator cp=((toQList &)param).begin();
+    if (cp!=((toQList &)param).end())
+      Owner=*cp;
+    cp++;
+    if (cp!=((toQList &)param).end())
+      TableName=(*cp);
+
+    RowNumber=0;
+
+    clear();
+
     toQuery query(connection());
     toQList par;
     par.insert(par.end(),Owner);

@@ -32,12 +32,15 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
+#include "tomain.h"
+#include "tothread.h"
+
 #include <stdio.h>
 #include <errno.h>
 
 #include <qstring.h>
-
-#include "tothread.h"
 
 #ifndef WIN32
 
@@ -47,7 +50,7 @@ pthread_t toThread::MainThread=pthread_self();
 toThread *toThread::DeleteThread;
 toLock *toThread::Lock;
 
-#define SEM_ASSERT(x) if((x)!=0) { throw QString(\
+#define SEM_ASSERT(x) if((x)!=0) { toStatusMessage(\
 "Error in semaphore function \"" #x "\" didn't work"); }
 
 void toSemaphore::init(int ival)
@@ -88,7 +91,7 @@ int toSemaphore::getValue()
   return r;
 }
 
-#define MUTEX_ASSERT(x) if((x)!=0) throw QString(\
+#define MUTEX_ASSERT(x) if((x)!=0) toStatusMessage(\
 "The mutex function \"" #x "\" failed");
 
 toLock::toLock(void)
@@ -112,7 +115,7 @@ void toLock::unlock()
 }
 
 #define THREAD_ASSERT(x) if((x)!=0) { \
-  throw QString("Thread function \"" #x "\" failed."); }
+  toStatusMessage("Thread function \"" #x "\" failed."); }
 
 void toThread::initAttr()
 {

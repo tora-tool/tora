@@ -69,7 +69,7 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref694">toDeepCopy</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<b><A HREF="#ref695">toAllocBar</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db) 
+<LI><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<b><A HREF="#ref695">toAllocBar</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
 </LI>
 <LI><A HREF="TODock.html">TODock</A> *&nbsp;<b><A HREF="#ref696">toAllocDock</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,
 		    const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db,
@@ -289,15 +289,13 @@ T &nbsp;<b><A HREF="#ref736">min</A></b> (T a, T b)
 </TABLE></P>
 <p><b>Returns</b>: Copied string.
  </p>
-<A NAME="toAllocBar"></A><A NAME="ref695"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<strong>toAllocBar</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db)
+<A NAME="toAllocBar"></A><A NAME="ref695"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<strong>toAllocBar</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>toAllocBar</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Allocate a toolbar. This is needed since Qt and KDE use different toolbars.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of toolbar.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of toolbar.
-</TD></TR>
-<TR><TD align="left" valign="top"><i>db</i></TD><TD align="left" valign="top">Database name or empty if N/A.
 </TD></TR>
 </TABLE></P>
 <p><b>Returns</b>: A newly created toolbar.

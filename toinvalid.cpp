@@ -102,7 +102,7 @@ static toInvalidTool InvalidTool;
 toInvalid::toInvalid(QWidget *main,toConnection &connection)
   : toToolWidget(InvalidTool,"invalid.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Invalid Objects",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Invalid Objects");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh list",
@@ -182,17 +182,19 @@ void toInvalid::refresh(void)
 
 void toInvalid::changeSelection(void)
 {
-  QListViewItem *item=Objects->selectedItem();
-  if (item) {
-    Source->changeParams(item->text(0),item->text(1),item->text(2));
-    std::map<int,QString> Errors;
+  try {
+    QListViewItem *item=Objects->selectedItem();
+    if (item) {
+      Source->changeParams(item->text(0),item->text(1),item->text(2));
+      std::map<int,QString> Errors;
 
-    toQuery errors(connection(),SQLReadErrors,item->text(0),item->text(1),item->text(2));
-    while(!errors.eof()) {
-      int line=errors.readValue().toInt();
-      Errors[line]+=" ";
-      Errors[line]+=errors.readValue();
+      toQuery errors(connection(),SQLReadErrors,item->text(0),item->text(1),item->text(2));
+      while(!errors.eof()) {
+	int line=errors.readValue().toInt();
+	Errors[line]+=" ";
+	Errors[line]+=errors.readValue();
+      }
+      Source->editor()->setErrors(Errors);
     }
-    Source->editor()->setErrors(Errors);
-  }
+  } TOCATCH
 }

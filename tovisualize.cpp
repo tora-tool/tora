@@ -56,7 +56,7 @@
 toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   : QVBox(parent,name),Source(source)
 {
-  QToolBar *toolbar=toAllocBar(this,"Data visualization","");
+  QToolBar *toolbar=toAllocBar(this,"Data visualization");
   
   Type=new QComboBox(toolbar);
   Type->insertItem("Bar chart",0);

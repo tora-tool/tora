@@ -600,7 +600,7 @@ toSQL SQLTransactionUsers("toRollback:TransactionUsers",
 toRollback::toRollback(QWidget *main,toConnection &connection)
   : toToolWidget(RollbackTool,"rollback.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update segment list",
@@ -663,8 +663,10 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 	  this,SLOT(changeStatement(QListViewItem *)));
   CurrentStatement=new toSGAStatement(horsplit);
 
-  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  try {
+    connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+    toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  } TOCATCH
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -770,7 +772,9 @@ void toRollback::changeItem(QListViewItem *item)
 
 void toRollback::changeRefresh(const QString &str)
 {
-  toRefreshParse(timer(),str);
+  try {
+    toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 QString toRollback::currentSegment(void)
@@ -783,15 +787,15 @@ QString toRollback::currentSegment(void)
 
 void toRollback::addSegment(void)
 {
-  toRollbackDialog newSegment(connection(),this);
-  if (newSegment.exec()) {
-    try {
+  try {
+    toRollbackDialog newSegment(connection(),this);
+    if (newSegment.exec()) {
       std::list<QString> sql=newSegment.sql();
       for(std::list<QString>::iterator i=sql.begin();i!=sql.end();i++)
 	connection().execute(*i);
       refresh();
-    } TOCATCH
-  }
+    }
+  } TOCATCH
 }
 
 void toRollback::offline(void)

@@ -163,10 +163,9 @@ QString toDeepCopy(const QString &str);
 /** Allocate a toolbar. This is needed since Qt and KDE use different toolbars.
  * @param parent Parent of toolbar.
  * @param name Name of toolbar.
- * @param db Database name or empty if N/A.
  * @return A newly created toolbar.
  */
-QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
+QToolBar *toAllocBar(QWidget *parent,const QString &name);
 /** Allocate a new docked window. This is needed since Qt and KDE docks windows differently
  * (Qt 2.x doesn't even have support for docked windows). Observe that you must attach a
  * dock using @ref toAttachDock after allocating it.

@@ -137,42 +137,47 @@ class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
 public:
   virtual void updateFromMap(void)
   {
-    while(Templates->firstChild())
-      delete Templates->firstChild();
-    QListViewItem *last=NULL;
-    int lastLevel=0;
-    QStringList lstCtx;
-    for(std::map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
-      QStringList ctx=QStringList::split(":",(*i).first);
-      if (last) {
-	while(last&&lastLevel>=int(ctx.count())) {
-	  last=last->parent();
-	  lastLevel--;
+    try {
+      while(Templates->firstChild())
+	delete Templates->firstChild();
+      QListViewItem *last=NULL;
+      int lastLevel=0;
+      QStringList lstCtx;
+      for(std::map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
+	QStringList ctx=QStringList::split(":",(*i).first);
+	if (last) {
+	  while(last&&lastLevel>=int(ctx.count())) {
+	    last=last->parent();
+	    lastLevel--;
+	  }
+	  while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	    last=last->parent();
+	    lastLevel--;
+	  }
 	}
-	while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
-	  last=last->parent();
-	  lastLevel--;
+	if (lastLevel<0)
+	  throw QString("Internal error, lastLevel < 0");
+	while(lastLevel<int(ctx.count())-1) {
+	  if (last)
+	    last=new QListViewItem(last,ctx[lastLevel]);
+	  else
+	    last=new QListViewItem(Templates,ctx[lastLevel]);
+	  last->setOpen(true);
+	  lastLevel++;
 	}
-      }
-      if (lastLevel<0)
-	throw QString("Internal error, lastLevel < 0");
-      while(lastLevel<int(ctx.count())-1) {
 	if (last)
 	  last=new QListViewItem(last,ctx[lastLevel]);
 	else
 	  last=new QListViewItem(Templates,ctx[lastLevel]);
 	last->setOpen(true);
+	if (i==LastTemplate)
+	  last->setSelected(true);
+	lstCtx=ctx;
 	lastLevel++;
       }
-      if (last)
-	last=new QListViewItem(last,ctx[lastLevel]);
-      else
-	last=new QListViewItem(Templates,ctx[lastLevel]);
-      last->setOpen(true);
-      if (i==LastTemplate)
-	last->setSelected(true);
-      lstCtx=ctx;
-      lastLevel++;
+    } catch(const QString &str) {
+      toStatusMessage(str);
+      reject();
     }
   }
   toTemplateEdit(std::map<QString,QString> &pairs,QWidget *parent,const char *name=0)
@@ -413,7 +418,11 @@ static toTemplateTool TemplateTool;
 
 QWidget *toTemplate::parentWidget(QListViewItem *item)
 {
-  return templateWidget(item)->frame();
+  try {
+    return templateWidget(item)->frame();
+  } catch(...) {
+    return NULL;
+  }
 }
 
 toTemplate *toTemplate::templateWidget(QListView *obj)
@@ -446,7 +455,7 @@ public:
 toTemplate::toTemplate(QWidget *parent)
   : QVBox(parent),toHelpContext("template.html")
 {
-  Toolbar=toAllocBar(this,"Template Toolbar",QString::null);
+  Toolbar=toAllocBar(this,"Template Toolbar");
 
   List=new toListView(this);
   List->addColumn("Template");
@@ -532,12 +541,14 @@ void toTemplate::collapse(QListViewItem *item)
 
 void toTemplateItem::setSelected(bool sel)
 {
-  toTemplate *temp=toTemplate::templateWidget(this);
-  if (sel&&temp) {
-    QWidget *frame=toTemplate::parentWidget(this);
-    if (frame)
-      temp->setWidget(selectedWidget(frame));
-  }
+  try {
+    toTemplate *temp=toTemplate::templateWidget(this);
+    if (sel&&temp) {
+      QWidget *frame=toTemplate::parentWidget(this);
+      if (frame)
+	temp->setWidget(selectedWidget(frame));
+    }
+  } TOCATCH
   toResultViewItem::setSelected(sel);
 }
 

@@ -107,7 +107,7 @@ static toSQL SQLResourceLimit("toCurrent:ResourceLimit",
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
   : toToolWidget(CurrentTool,"current.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Current Session",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Current Session");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update",
@@ -167,7 +167,9 @@ void toCurrent::windowActivated(QWidget *widget)
 
 toCurrent::~toCurrent()
 {
-  CurrentTool.closeWindow(connection());
+  try {
+    CurrentTool.closeWindow(connection());
+  } TOCATCH
 }
 
 static toSQL SQLRoleTabPrivs("toCurrent:RoleTabPrivs",
@@ -196,52 +198,58 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 
 void toCurrent::addList(QListViewItem *parent,const QString &type,const toSQL &sql,const QString &role)
 {
-  toQList result=toQuery::readQuery(connection(),sql,role);
-  while(result.size()>0) {
-    QListViewItem *item;
-    if (parent)
-      item=new toResultViewItem(parent,NULL);
-    else
-      item=new toResultViewItem(Grants,NULL);
-    item->setText(0,toShift(result));
-    item->setText(1,type);
-    item->setText(2,toShift(result));
-  }
+  try {
+    toQList result=toQuery::readQuery(connection(),sql,role);
+    while(result.size()>0) {
+      QListViewItem *item;
+      if (parent)
+	item=new toResultViewItem(parent,NULL);
+      else
+	item=new toResultViewItem(Grants,NULL);
+      item->setText(0,toShift(result));
+      item->setText(1,type);
+      item->setText(2,toShift(result));
+    }
+  } TOCATCH
 }
 
 void toCurrent::addRole(QListViewItem *parent)
 {
-  addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
-  addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
-  toQList result=toQuery::readQuery(connection(),SQLRoleRolePrivs,parent->text(0));
-  while(result.size()>0) {
-    QListViewItem *item;
-    item=new toResultViewItem(parent,NULL);
-    item->setText(0,toShift(result));
-    item->setText(1,"Role");
-    item->setText(2,toShift(result));
-    addRole(item);
-  }
+  try {
+    addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
+    addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
+    toQList result=toQuery::readQuery(connection(),SQLRoleRolePrivs,parent->text(0));
+    while(result.size()>0) {
+      QListViewItem *item;
+      item=new toResultViewItem(parent,NULL);
+      item->setText(0,toShift(result));
+      item->setText(1,"Role");
+      item->setText(2,toShift(result));
+      addRole(item);
+    }
+  } TOCATCH
 }
 
 void toCurrent::refresh()
 {
-  Parameters->refresh();
-  Version->refresh();
-  Statistics->refreshStats();
-  Grants->clear();
-  ResourceLimit->refresh();
+  try {
+    Parameters->refresh();
+    Version->refresh();
+    Statistics->refreshStats();
+    Grants->clear();
+    ResourceLimit->refresh();
 
-  addList(NULL,"System",SQLUserSysPrivs);
-  addList(NULL,"Object",SQLUserTabPrivs);
+    addList(NULL,"System",SQLUserSysPrivs);
+    addList(NULL,"Object",SQLUserTabPrivs);
 
-  toQList result=toQuery::readQuery(connection(),SQLUserRolePrivs);
-  while(result.size()>0) {
-    QListViewItem *item;
-    item=new toResultViewItem(Grants,NULL);
-    item->setText(0,toShift(result));
-    item->setText(1,"Role");
-    item->setText(2,toShift(result));
-    addRole(item);
-  }
+    toQList result=toQuery::readQuery(connection(),SQLUserRolePrivs);
+    while(result.size()>0) {
+      QListViewItem *item;
+      item=new toResultViewItem(Grants,NULL);
+      item->setText(0,toShift(result));
+      item->setText(1,"Role");
+      item->setText(2,toShift(result));
+      addRole(item);
+    }
+  } TOCATCH
 }

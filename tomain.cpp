@@ -214,7 +214,7 @@ toMain::toMain()
 
   std::map<QString,toTool *> &tools=toTool::tools();
 
-  EditToolbar=toAllocBar(this,"Application",QString::null);
+  EditToolbar=toAllocBar(this,"Application");
 
   LoadButton=new QToolButton(QPixmap((const char **)fileopen_xpm),
 			     "Load file into editor",
@@ -267,7 +267,7 @@ toMain::toMain()
 
   ToolsMenu=new QPopupMenu(this);
 
-  QToolBar *toolbar=toAllocBar(this,"Tools",QString::null);
+  QToolBar *toolbar=toAllocBar(this,"Tools");
   if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
     moveToolBar(toolbar,Left);
 
@@ -356,7 +356,7 @@ toMain::toMain()
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 #endif
 
-  ConnectionToolbar=toAllocBar(this,"Connections",QString::null);
+  ConnectionToolbar=toAllocBar(this,"Connections");
   new QToolButton(QPixmap((const char **)connect_xpm),
 		  "Connect to database",
 		  "Connect to database",
@@ -535,16 +535,18 @@ void toMain::windowActivated(QWidget *widget)
     return;
   toToolWidget *tool=dynamic_cast<toToolWidget *>(widget);
   if (tool) {
-    toConnection &conn=tool->connection();
-    int pos=0;
-    for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-      if (&conn==*i) {
-	ConnectionSelection->setCurrentItem(pos);
-	changeConnection();
-	break;
+    try {
+      toConnection &conn=tool->connection();
+      int pos=0;
+      for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+	if (&conn==*i) {
+	  ConnectionSelection->setCurrentItem(pos);
+	  changeConnection();
+	  break;
+	}
+	pos++;
       }
-      pos++;
-    }
+    } TOCATCH
   }
 }
 
@@ -1223,27 +1225,29 @@ void toMain::statusMenu(void)
 
 void toMain::changeConnection(void)
 {
-  toConnection &conn=currentConnection();
-  for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
-       i!=NeedConnection.end();i++) {
-    toTool *tool=(*i).second;
-    if (!tool)
-      (*i).first->setEnabled(true);
-    else if (tool->canHandle(conn))
-      (*i).first->setEnabled(true);
-    else
-      (*i).first->setEnabled(false);
-  }  
-  for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
-    toTool *tool=(*j).second;
-    if (!tool)
-      menuBar()->setItemEnabled((*j).first,true);
-    else if (tool->canHandle(conn))
-      menuBar()->setItemEnabled((*j).first,true);
-    else
-      menuBar()->setItemEnabled((*j).first,false);
+  try {
+    toConnection &conn=currentConnection();
+    for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+	 i!=NeedConnection.end();i++) {
+      toTool *tool=(*i).second;
+      if (!tool)
+	(*i).first->setEnabled(true);
+      else if (tool->canHandle(conn))
+	(*i).first->setEnabled(true);
+      else
+	(*i).first->setEnabled(false);
+    }  
+    for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
+      toTool *tool=(*j).second;
+      if (!tool)
+	menuBar()->setItemEnabled((*j).first,true);
+      else if (tool->canHandle(conn))
+	menuBar()->setItemEnabled((*j).first,true);
+      else
+	menuBar()->setItemEnabled((*j).first,false);
 
-  }
+    }
+  } TOCATCH
 }
 
 void toMain::checkCaching(void)
@@ -1261,47 +1265,49 @@ void toMain::checkCaching(void)
 
 void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
 {
-  if (isMaximized())
-    data[prefix+":State"]="Maximized";
-  else if (isMinimized())
-    data[prefix+":State"]="Minimized";
-  else {
-    data[prefix+":X"]=QString::number(x());
-    data[prefix+":Y"]=QString::number(y());
-    data[prefix+":Width"]=QString::number(width());
-    data[prefix+":Height"]=QString::number(height());
-  }
-
-  int id=1;
-  std::map<toConnection *,int> connMap;
-  {
-    for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-      QString key=prefix+":Connection:"+QString::number(id);
-      if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
-	data[key+":Password"]=(*i)->password();
-      data[key+":User"]=(*i)->user();
-      data[key+":Host"]=(*i)->host();
-      data[key+":Mode"]=(*i)->mode();
-      data[key+":Database"]=(*i)->database();
-      data[key+":Provider"]=(*i)->provider();
-      connMap[*i]=id;
-      id++;
+  try {
+    if (isMaximized())
+      data[prefix+":State"]="Maximized";
+    else if (isMinimized())
+      data[prefix+":State"]="Minimized";
+    else {
+      data[prefix+":X"]=QString::number(x());
+      data[prefix+":Y"]=QString::number(y());
+      data[prefix+":Width"]=QString::number(width());
+      data[prefix+":Height"]=QString::number(height());
     }
-  }
 
-  id=1;
-  for (unsigned int i=0;i<workspace()->windowList().count();i++) {
-    toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
-    if (tool) {
-      QString key=prefix+":Tools:"+QString::number(id);
-      tool->exportData(data,key);
-      data[key+":Type"]=tool->tool().key();
-      data[key+":Connection"]=QString::number(connMap[&tool->connection()]);
-      id++;
+    int id=1;
+    std::map<toConnection *,int> connMap;
+    {
+      for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+	QString key=prefix+":Connection:"+QString::number(id);
+	if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
+	  data[key+":Password"]=(*i)->password();
+	data[key+":User"]=(*i)->user();
+	data[key+":Host"]=(*i)->host();
+	data[key+":Mode"]=(*i)->mode();
+	data[key+":Database"]=(*i)->database();
+	data[key+":Provider"]=(*i)->provider();
+	connMap[*i]=id;
+	id++;
+      }
     }
-  }
 
-  toTemplateProvider::exportAllData(data,prefix+":Templates");
+    id=1;
+    for (unsigned int i=0;i<workspace()->windowList().count();i++) {
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
+      if (tool) {
+	QString key=prefix+":Tools:"+QString::number(id);
+	tool->exportData(data,key);
+	data[key+":Type"]=tool->tool().key();
+	data[key+":Connection"]=QString::number(connMap[&tool->connection()]);
+	id++;
+      }
+    }
+
+    toTemplateProvider::exportAllData(data,prefix+":Templates");
+  } TOCATCH
 }
 
 void toMain::importData(std::map<QString,QString> &data,const QString &prefix)

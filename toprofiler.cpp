@@ -403,7 +403,7 @@ public:
 toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   : toToolWidget(ProfilerTool,"toprofiler.html",parent,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Invalid Objects",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Invalid Objects");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh list",
@@ -582,6 +582,8 @@ void toProfiler::changeObject(void)
     toPush(par,toQValue(item->allText(5)));
     toPush(par,toQValue(item->allText(6)));
     Lines->clearTotals();
-    Lines->query(toSQL::string(SQLListSource,connection()),par);
+    try {
+      Lines->query(toSQL::string(SQLListSource,connection()),par);
+    } TOCATCH
   }
 }

@@ -196,7 +196,7 @@ static toSQL SQLSessions("toSession:ListSession",
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget(SessionTool,"session.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Session manager",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Session manager");
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update sessionlist",
@@ -290,8 +290,10 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeTab(QWidget *)));
 
-  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refreshTabs(void)));
-  toRefreshParse(timer());
+  try {
+    connect(timer(),SIGNAL(timeout(void)),this,SLOT(refreshTabs(void)));
+    toRefreshParse(timer());
+  } TOCATCH
   CurrentTab=StatisticSplitter;
 
   ToolMenu=NULL;
@@ -330,24 +332,26 @@ void toSession::windowActivated(QWidget *widget)
 
 void toSession::refresh(void)
 {
-  QListViewItem *item=Sessions->selectedItem();
-  if (item) {
-    Session=item->text(0);
-    Serial=item->text(1);
-  } else
-    Session=Serial=QString::null;
-  QString sql=toSQL::string(SQLSessions,connection());
-  QString extra;
-  if (Select->currentItem()==0)
-    ; // Do nothing
-  else if (Select->currentItem()==1)
-    extra="   AND a.Type != 'BACKGROUND'\n";
-  else if (Select->currentItem()==2)
-    extra="   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
-  else
-    extra="   AND a.SchemaName = '"+Select->currentText()+"'\n";
-  Sessions->setSQL(sql.arg(extra));
-  Sessions->refresh();
+  try {
+    QListViewItem *item=Sessions->selectedItem();
+    if (item) {
+      Session=item->text(0);
+      Serial=item->text(1);
+    } else
+      Session=Serial=QString::null;
+    QString sql=toSQL::string(SQLSessions,connection());
+    QString extra;
+    if (Select->currentItem()==0)
+      ; // Do nothing
+    else if (Select->currentItem()==1)
+      extra="   AND a.Type != 'BACKGROUND'\n";
+    else if (Select->currentItem()==2)
+      extra="   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
+    else
+      extra="   AND a.SchemaName = '"+Select->currentText()+"'\n";
+    Sessions->setSQL(sql.arg(extra));
+    Sessions->refresh();
+  } TOCATCH
 }
 
 void toSession::done(void)
@@ -382,7 +386,9 @@ void toSession::changeTab(QWidget *tab)
     if (item) {
       if (CurrentTab==StatisticSplitter) {
 	int ses=item->text(0).toInt();
-	SessionStatistics->changeSession(ses);
+	try {
+	  SessionStatistics->changeSession(ses);
+	} TOCATCH
       } else if (CurrentTab==ConnectInfo)
 	ConnectInfo->changeParams(item->text(0));
       else if (CurrentTab==PendingLocks)
@@ -450,7 +456,9 @@ void toSession::disconnectSession(void)
 
 void toSession::changeRefresh(const QString &str)
 {
-  toRefreshParse(timer(),str);
+  try {
+    toRefreshParse(timer(),str);
+  } TOCATCH
 }
 
 void toSession::changeItem(QListViewItem *item)

@@ -88,23 +88,25 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
     List=toFontToString(font);
     ResultExample->setFont(font);
   }
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)]=Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)]=Analyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)]=Analyzer.getColor(toSyntaxAnalyzer::CurrentBkg);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::Keyword)]=Analyzer.getColor(toSyntaxAnalyzer::Keyword);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::Comment)]=Analyzer.getColor(toSyntaxAnalyzer::Comment);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::Normal)]=Analyzer.getColor(toSyntaxAnalyzer::Normal);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::String)]=Analyzer.getColor(toSyntaxAnalyzer::String);
-  Colors[Analyzer.typeString(toSyntaxAnalyzer::Error)]=Analyzer.getColor(toSyntaxAnalyzer::Error);
+  try {
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)]=Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)]=Analyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)]=Analyzer.getColor(toSyntaxAnalyzer::CurrentBkg);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::Keyword)]=Analyzer.getColor(toSyntaxAnalyzer::Keyword);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::Comment)]=Analyzer.getColor(toSyntaxAnalyzer::Comment);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::Normal)]=Analyzer.getColor(toSyntaxAnalyzer::Normal);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::String)]=Analyzer.getColor(toSyntaxAnalyzer::String);
+    Colors[Analyzer.typeString(toSyntaxAnalyzer::Error)]=Analyzer.getColor(toSyntaxAnalyzer::Error);
 
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::NormalBkg));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Comment));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Keyword));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Normal));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::String));
-  SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Error));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::NormalBkg));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Comment));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Keyword));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Normal));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::String));
+    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Error));
+  } TOCATCH
 
   Example->setAnalyzer(Analyzer);
   Example->setReadOnly(true);
@@ -187,15 +189,17 @@ QString toSyntaxAnalyzer::typeString(infoType typ)
 
 void toSyntaxAnalyzer::updateSettings(void)
 {
-  const QColorGroup &cg=qApp->palette().active();
-  readColor(cg.base(),NormalBkg);
-  readColor(Qt::darkRed,ErrorBkg);
-  readColor(Qt::darkGreen,CurrentBkg);
-  readColor(Qt::blue,Keyword);
-  readColor(cg.text(),Normal);
-  readColor(Qt::red,String);
-  readColor(Qt::red,Error);
-  readColor(Qt::green,Comment);
+  try {
+    const QColorGroup &cg=qApp->palette().active();
+    readColor(cg.base(),NormalBkg);
+    readColor(Qt::darkRed,ErrorBkg);
+    readColor(Qt::darkGreen,CurrentBkg);
+    readColor(Qt::blue,Keyword);
+    readColor(cg.text(),Normal);
+    readColor(Qt::red,String);
+    readColor(Qt::red,Error);
+    readColor(Qt::green,Comment);
+  } TOCATCH
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
@@ -264,15 +268,17 @@ void toSyntaxSetup::changeLine(QListBoxItem *item)
 
 void toSyntaxSetup::selectColor(void)
 {
-  if (Current) {
-    QColor col=QColorDialog::getColor(Colors[Current->text()]);
-    if (col.isValid()) {
-      Colors[Current->text()]=col;
-      ExampleColor->setBackgroundColor(col);
-      Example->analyzer().Colors[toSyntaxAnalyzer::typeString(Current->text())]=col;
-      Example->update();
+  try {
+    if (Current) {
+      QColor col=QColorDialog::getColor(Colors[Current->text()]);
+      if (col.isValid()) {
+	Colors[Current->text()]=col;
+	ExampleColor->setBackgroundColor(col);
+	Example->analyzer().Colors[toSyntaxAnalyzer::typeString(Current->text())]=col;
+	Example->update();
+      }
     }
-  }
+  } TOCATCH
 }
 
 void toSyntaxSetup::saveSetting(void)

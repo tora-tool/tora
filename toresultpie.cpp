@@ -54,7 +54,9 @@ toResultPie::toResultPie(QWidget *parent,const char *name)
 void toResultPie::start(void)
 {
   if (!Started) {
-    connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    try {
+      connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    } TOCATCH
     Started=true;
   }
 }
@@ -62,7 +64,9 @@ void toResultPie::start(void)
 void toResultPie::stop(void)
 {
   if (Started) {
-    disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    try {
+      disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    } TOCATCH
     Started=false;
   }
 }

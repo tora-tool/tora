@@ -32,16 +32,19 @@
  *
  ****************************************************************************/
 
-#include <qframe.h>
-#include <qlistbox.h>
-#include <qlayout.h>
+#include "utils.h"
 
-#include "topreferences.h"
-#include "toglobalsetting.h"
-#include "tosyntaxsetup.h"
-#include "tohelp.h"
-#include "topreferencesui.h"
 #include "toconnection.h"
+#include "toglobalsetting.h"
+#include "tohelp.h"
+#include "tomain.h"
+#include "topreferences.h"
+#include "topreferencesui.h"
+#include "tosyntaxsetup.h"
+
+#include <qframe.h>
+#include <qlayout.h>
+#include <qlistbox.h>
 
 #include "topreferences.moc"
 #include "topreferencesui.moc"
@@ -88,53 +91,55 @@ void toPreferences::saveSetting(void)
 toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
   : toPreferencesUI(parent,name,modal,fl),toHelpContext("preferences.html")
 {
-  toHelp::connectDialog(this);
-  Shown=NULL;
+  try {
+    toHelp::connectDialog(this);
+    Shown=NULL;
   
-  Layout=new QVBoxLayout(Parent);
+    Layout=new QVBoxLayout(Parent);
 
-  QListBoxText *item;
-  item=new QListBoxText(TabSelection,"Global Settings");
-  addWidget(item,new toGlobalSetting(Parent));
+    QListBoxText *item;
+    item=new QListBoxText(TabSelection,"Global Settings");
+    addWidget(item,new toGlobalSetting(Parent));
 
-  item=new QListBoxText(TabSelection,"Editor Settings");
-  addWidget(item,new toSyntaxSetup(Parent));
+    item=new QListBoxText(TabSelection,"Editor Settings");
+    addWidget(item,new toSyntaxSetup(Parent));
   
-  item=new QListBoxText(TabSelection,"Database Settings");
-  addWidget(item,new toDatabaseSetting(Parent));
+    item=new QListBoxText(TabSelection,"Database Settings");
+    addWidget(item,new toDatabaseSetting(Parent));
 
-  std::list<QString> prov=toConnectionProvider::providers();
-  for (std::list<QString>::iterator i=prov.begin();i!=prov.end();i++) {
-    QWidget *tab=toConnectionProvider::configurationTab(*i,Parent);
-    if (tab) {
-      QString str(" ");
-      str.append(*i);
-      addWidget(new QListBoxText(TabSelection,str),tab);
-    }
-  }
-
-  item=new QListBoxText(TabSelection,"Tools");
-  addWidget(item,new toToolSetting(Parent));
-
-  TabSelection->setCurrentItem(0);
-
-  std::map<QString,toTool *> tools=toTool::tools();
-  std::map<QString,toTool *> newSort;
-  {
-    for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
-      newSort[(*i).second->name()]=(*i).second;
-  }
-
-  {
-    for (std::map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
-      QWidget *tab=(*i).second->configurationTab(Parent);
+    std::list<QString> prov=toConnectionProvider::providers();
+    for (std::list<QString>::iterator i=prov.begin();i!=prov.end();i++) {
+      QWidget *tab=toConnectionProvider::configurationTab(*i,Parent);
       if (tab) {
 	QString str(" ");
-	str.append((*i).first);
+	str.append(*i);
 	addWidget(new QListBoxText(TabSelection,str),tab);
       }
     }
-  }
+
+    item=new QListBoxText(TabSelection,"Tools");
+    addWidget(item,new toToolSetting(Parent));
+
+    TabSelection->setCurrentItem(0);
+
+    std::map<QString,toTool *> tools=toTool::tools();
+    std::map<QString,toTool *> newSort;
+    {
+      for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
+	newSort[(*i).second->name()]=(*i).second;
+    }
+
+    {
+      for (std::map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
+	QWidget *tab=(*i).second->configurationTab(Parent);
+	if (tab) {
+	  QString str(" ");
+	  str.append((*i).first);
+	  addWidget(new QListBoxText(TabSelection,str),tab);
+	}
+      }
+    }
+  } TOCATCH
 }
 
 void toPreferences::help(void)

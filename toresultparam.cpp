@@ -88,7 +88,7 @@ bool toResultParam::canHandle(toConnection &conn)
 toResultParam::toResultParam(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
-  QToolBar *toolbar=toAllocBar(this,"Parameter editor",connection().description());
+  QToolBar *toolbar=toAllocBar(this,"Parameter editor");
   Hidden=new QToolButton(toolbar);
   Hidden->setToggleButton(true);
   Hidden->setIconSet(QIconSet(QPixmap((const char **)scansource_xpm)),false);
@@ -209,57 +209,61 @@ void toResultParam::generateFile(void)
 
 void toResultParam::applySession(void)
 {
-  saveChange();
-  toConnection &conn=connection();
-  for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
-    if (item->text(2)=="Changed") {
-      try {
-	if (item->text(7)!="FALSE") {
-	  QString str="ALTER SESSION SET ";
-	  str+=item->text(0);
-	  str+=" = ";
-	  if (item->text(5)=="2") {
-	    str+="'";
-	    str+=item->text(1);
-	    str+="'";
-	  } else
-	    str+=item->text(1);
-	  conn.allExecute(str);
-	  std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
-	  if (i!=NewValues.end())
-	    NewValues.erase(i);
+  try {
+    saveChange();
+    toConnection &conn=connection();
+    for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
+      if (item->text(2)=="Changed") {
+	try {
+	  if (item->text(7)!="FALSE") {
+	    QString str="ALTER SESSION SET ";
+	    str+=item->text(0);
+	    str+=" = ";
+	    if (item->text(5)=="2") {
+	      str+="'";
+	      str+=item->text(1);
+	      str+="'";
+	    } else
+	      str+=item->text(1);
+	    conn.allExecute(str);
+	    std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
+	    if (i!=NewValues.end())
+	      NewValues.erase(i);
+	  }
+	} TOCATCH
 	}
-      } TOCATCH
     }
-  }
+  } TOCATCH
   refresh();
 }
 
 void toResultParam::applySystem(void)
 {
-  saveChange();
-  toConnection &conn=connection();
-  for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
-    if (item->text(2)=="Changed") {
-      try {
-	if (item->text(8)!="FALSE") {
-	  QString str="ALTER SYSTEM SET ";
-	  str+=item->text(0);
-	  str+=" = ";
-	  if (item->text(5)=="2") {
-	    str+="'";
-	    str+=item->text(1);
-	    str+="'";
-	  } else
-	    str+=item->text(1);
-	  conn.execute(str);
-	  std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
-	  if (i!=NewValues.end())
-	    NewValues.erase(i);
-	}
-      } TOCATCH
+  try {
+    saveChange();
+    toConnection &conn=connection();
+    for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
+      if (item->text(2)=="Changed") {
+	try {
+	  if (item->text(8)!="FALSE") {
+	    QString str="ALTER SYSTEM SET ";
+	    str+=item->text(0);
+	    str+=" = ";
+	    if (item->text(5)=="2") {
+	      str+="'";
+	      str+=item->text(1);
+	      str+="'";
+	    } else
+	      str+=item->text(1);
+	    conn.execute(str);
+	    std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
+	    if (i!=NewValues.end())
+	      NewValues.erase(i);
+	  }
+	} TOCATCH
+      }
     }
-  }
+  } TOCATCH
   refresh();
 }
 

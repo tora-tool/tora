@@ -1263,7 +1263,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 {
   toBusy busy;
 
-  QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Security manager");
   toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
@@ -1390,14 +1390,20 @@ void toSecurity::displaySQL(void)
 std::list<QString> toSecurity::sql(void)
 {
   std::list<QString> ret;
-  QString tmp=General->sql();
-  if (!tmp.isEmpty())
-    ret.insert(ret.end(),tmp);
-  QString name=General->name();
-  if (!name.isEmpty()) {
-    SystemGrant->sql(name,ret);
-    ObjectGrant->sql(name,ret);
-    RoleGrant->sql(name,ret);
+  try {
+    QString tmp=General->sql();
+    if (!tmp.isEmpty())
+      ret.insert(ret.end(),tmp);
+    QString name=General->name();
+    if (!name.isEmpty()) {
+      SystemGrant->sql(name,ret);
+      ObjectGrant->sql(name,ret);
+      RoleGrant->sql(name,ret);
+    }
+  } catch(const QString &str) {
+    toStatusMessage(str);
+    std::list<QString> empty;
+    return empty;
   }
 
   return ret;

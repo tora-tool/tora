@@ -57,17 +57,19 @@ toChangeConnection::toChangeConnection(QToolBar *parent,const char *name)
 
 void toChangeConnection::popupMenu(void)
 {
-  popup()->clear();
-  toConnection &conn=toCurrentConnection(this);
-  std::list<QString> cons=toMainWidget()->connections();
-  int idx=0;
-  for (std::list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
-    if (toCurrentTool(this)->canHandle(toMainWidget()->connection(*i))) {
-      popup()->insertItem(*i,idx);
-      if (conn.description()==*i)
-	popup()->setItemChecked(idx,true);
+  try {
+    popup()->clear();
+    toConnection &conn=toCurrentConnection(this);
+    std::list<QString> cons=toMainWidget()->connections();
+    int idx=0;
+    for (std::list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
+      if (toCurrentTool(this)->canHandle(toMainWidget()->connection(*i))) {
+	popup()->insertItem(*i,idx);
+	if (conn.description()==*i)
+	  popup()->setItemChecked(idx,true);
+      }
     }
-  }
+  } TOCATCH
 }
 
 void toChangeConnection::changeConnection(int val)
@@ -80,18 +82,20 @@ void toChangeConnection::changeConnection(int val)
     i++;
     val--;
   }
-  if (i==cons.end())
-    throw QString("Couldn't find selected connection");
-  QWidget *cur=parentWidget();
-  while(cur) {
-    toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
-    if (tool) {
-      tool->setConnection(toMainWidget()->connection(*i));
-      toMainWidget()->windowActivated(tool);
-      toMainWidget()->changeConnection();
-      return;
+  try {
+    if (i==cons.end())
+      throw QString("Couldn't find selected connection");
+    QWidget *cur=parentWidget();
+    while(cur) {
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
+      if (tool) {
+	tool->setConnection(toMainWidget()->connection(*i));
+	toMainWidget()->windowActivated(tool);
+	toMainWidget()->changeConnection();
+	return;
+      }
+      cur=cur->parentWidget();
     }
-    cur=cur->parentWidget();
-  }
-  throw QString("Couldn't find parent connection. Internal error.");
+    throw QString("Couldn't find parent connection. Internal error.");
+  } TOCATCH
 }
