@@ -10,5 +10,10 @@
 2001-01-20: Figured out how to use Qt designer more intelligently, integrated uic in Makefile.
 2001-01-20: Added settings to configure syntax highlighting.
 2001-01-20: Added functionality to display error lines in toHighlightedText.
+2001-01-20: Separated body and declaration in toBrowser.
+2001-01-21: Fixed bug regarding tabs in toHighlightedText.
+2001-01-21: Added support for .ui files in configure script.
+2001-01-21: Added inital PL/SQL debugger tool.
+2001-01-21: Added thread support classes.
 
 0.3: Released 2001-01-17

@@ -209,7 +209,7 @@ int main(int argc,char **argv)
 #endif
     toDefaultAnalyzer().updateSettings();
 
-    otl_connect::otl_initialize(0);
+    otl_connect::otl_initialize(1);
 
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
       toAbout *about=new toAbout(NULL,"About TOra",true);

@@ -31,12 +31,12 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
     setCaption( tr( "Form1" ) );
 
     Options = new QGroupBox( this, "Options" );
-    Options->setGeometry( QRect( 220, 10, 170, 200 ) ); 
+    Options->setGeometry( QRect( 220, 10, 170, 220 ) ); 
     Options->setTitle( tr( "Options" ) );
 
     SyntaxHighlighting = new QCheckBox( Options, "SyntaxHighlighting" );
     SyntaxHighlighting->setGeometry( QRect( 10, 20, 150, 19 ) ); 
-    SyntaxHighlighting->setText( tr( "&Syntax Highlighting" ) );
+    SyntaxHighlighting->setText( tr( "S&yntax Highlighting" ) );
     QToolTip::add(  SyntaxHighlighting, tr( "Enable syntax highlighting, or use simple text editor" ) );
 
     KeywordUpper = new QCheckBox( Options, "KeywordUpper" );
@@ -54,25 +54,30 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
     QToolTip::add(  CodeExample, tr( "The font to display when editing SQL." ) );
 
     GroupBox2 = new QGroupBox( this, "GroupBox2" );
-    GroupBox2->setGeometry( QRect( 10, 10, 200, 200 ) ); 
-    GroupBox2->setTitle( tr( "&Syntax Components" ) );
+    GroupBox2->setGeometry( QRect( 10, 10, 200, 220 ) ); 
+    GroupBox2->setTitle( tr( "Sy&ntax Components" ) );
 
     SelectColor = new QPushButton( GroupBox2, "SelectColor" );
-    SelectColor->setGeometry( QRect( 100, 160, 90, 32 ) ); 
-    SelectColor->setText( tr( "&Select" ) );
+    SelectColor->setGeometry( QRect( 100, 180, 90, 32 ) ); 
+    SelectColor->setText( tr( "&Pick" ) );
 
     ExampleColor = new QLabel( GroupBox2, "ExampleColor" );
-    ExampleColor->setGeometry( QRect( 10, 170, 80, 16 ) ); 
+    ExampleColor->setGeometry( QRect( 10, 190, 80, 16 ) ); 
     ExampleColor->setText( tr( "" ) );
     QToolTip::add(  ExampleColor, tr( "Example of current color." ) );
 
     SyntaxComponent = new QListBox( GroupBox2, "SyntaxComponent" );
-    SyntaxComponent->setGeometry( QRect( 10, 20, 180, 130 ) ); 
+    SyntaxComponent->setGeometry( QRect( 10, 20, 180, 150 ) ); 
     QToolTip::add(  SyntaxComponent, tr( "Part of syntax to change color." ) );
+
+    Example = new toHighlightedText(this,"Example");
+    Example->setGeometry( QRect( 10, 240, 380, 150 ) );
 
     // signals and slots connections
     connect( PushButton1, SIGNAL( clicked() ), this, SLOT( selectFont(void) ) );
     connect( SelectColor, SIGNAL( clicked() ), this, SLOT( selectColor(void) ) );
+    connect( KeywordUpper, SIGNAL( toggled(bool) ), this, SLOT( changeUpper(bool) ) );
+    connect( SyntaxHighlighting, SIGNAL( toggled(bool) ), this, SLOT( changeHighlight(bool) ) );
     connect( SyntaxComponent, SIGNAL( selectionChanged(QListBoxItem*) ), this, SLOT( changeLine(QListBoxItem *) ) );
 
     // tab order
@@ -103,5 +108,15 @@ void toSyntaxSetupUI::selectColor(void)
 void toSyntaxSetupUI::selectFont(void)
 {
     qWarning( "toSyntaxSetupUI::selectFont(void): Not implemented yet!" );
+}
+
+void toSyntaxSetupUI::changeUpper(bool)
+{
+    qWarning( "toSyntaxSetupUI::changeUpper(void): Not implemented yet!" );
+}
+
+void toSyntaxSetupUI::changeHighlight(bool)
+{
+    qWarning( "toSyntaxSetupUI::changeHighlight(void): Not implemented yet!" );
 }
 

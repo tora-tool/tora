@@ -35,6 +35,7 @@
 #include "tomarkedtext.h"
 
 class QPainter;
+class toSyntaxSetup;
 
 class toSyntaxAnalyzer {
 public:
@@ -45,7 +46,8 @@ public:
     Error=3,
     Comment=4,
     ErrorBkg=5,
-    NormalBkg=6
+    NormalBkg=6,
+    CurrentBkg=7
   };
   struct highlightInfo {
     infoType Type;
@@ -54,7 +56,7 @@ public:
     { Start=start; Type=typ; }
   };
 private:
-  QColor Colors[7];
+  QColor Colors[8];
   struct posibleHit {
     posibleHit(const char *);
     int Pos;
@@ -65,7 +67,9 @@ protected:
   bool isSymbol(QChar c)
   { return (c.isLetterOrNumber()||c=='_'||c=='#'||c=='$'||c=='.'); }
 private:
-  void readColor(const QString &str,const QColor &def,int pos);
+  void readColor(const QColor &def,infoType pos);
+  static QString typeString(infoType typ);
+  static infoType typeString(const QString &str);
 public:
   toSyntaxAnalyzer(const char **keywords);
   virtual ~toSyntaxAnalyzer()
@@ -74,25 +78,61 @@ public:
   QColor getColor(infoType typ)
   { return Colors[typ]; }
   void updateSettings(void);
+
+  friend toSyntaxSetup;
 };
 
 toSyntaxAnalyzer &toDefaultAnalyzer(void);
 
 class toHighlightedText : public toMarkedText {
 private:
+  Q_OBJECT
+
   int LastCol;
   int LastRow;
+  int LastLength;
+  int Current;
+  int LeftIgnore;
   bool Highlight;
   bool KeywordUpper;
   map<int,QString> Errors;
+  toSyntaxAnalyzer *Analyzer;
+protected:
+  void setLeftIgnore(int ignore)
+  { LeftIgnore=ignore; }
 public:
+
+  static int convertLine(int line,int start,int diff);
 
   toHighlightedText(QWidget *parent,const char *name=NULL);
 
+  void clear(void)
+  { Errors.clear(); Current=-1; toMarkedText::clear(); }
+  void setText(const QString &str);
+
   void setErrors(const map<int,QString> &errors)
   { Errors=errors; repaint(); }
+  void setCurrent(int current)
+  { Current=current; repaint(); }
+  void setKeywordUpper(bool val)
+  { KeywordUpper=val; }
+  void setHighlight(bool val)
+  { Highlight=val; }
+  void setAnalyzer(toSyntaxAnalyzer &analyzer)
+  { Analyzer=&analyzer; repaint(); }
+  toSyntaxAnalyzer &analyzer(void)
+  { return *Analyzer; }
 
   virtual void paintCell (QPainter *painter,int row,int col);
+
+signals:
+  void insertedLines(int,int);
+protected slots:
+  void textChanged(void);
+
+public slots:
+  void nextError(void);
+  void previousError(void);
 };
 
 #endif

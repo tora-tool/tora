@@ -100,6 +100,7 @@ static QPixmap *toRefreshPixmap;
 #define TAB_SYNONYM_INFO	"SynonymInfo"
 #define TAB_PLSQL		"PLSQL"
 #define TAB_PLSQL_SOURCE	"PLSQLSource"
+#define TAB_PLSQL_BODY		"PLSQLBody"
 #define TAB_TRIGGER		"Trigger"
 #define TAB_TRIGGER_INFO	"TriggerInfo"
 #define TAB_TRIGGER_SOURCE	"TriggerSource"
@@ -317,8 +318,8 @@ toBrowser::toBrowser(toMain *main,toConnection &connection)
   Map[TAB_PLSQL]=resultView;
   resultView->setSQL("SELECT Object_Name,Object_Type Type FROM ALL_OBJECTS"
 		     " WHERE OWNER = :f1<char[31]>"
-		     "   AND Object_Type IN ('FUNCTION','PACKAGE BODY',"
-		     "                       'PROCEDURE','TYPE','TYPE BODY')"
+		     "   AND Object_Type IN ('FUNCTION','PACKAGE',"
+		     "                       'PROCEDURE','TYPE')"
 		     " ORDER BY Object_Name");
   resultView->resize(FIRST_WIDTH*2,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
@@ -330,10 +331,18 @@ toBrowser::toBrowser(toMain *main,toConnection &connection)
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_SOURCE);
   resultField->setSQL("SELECT Text FROM ALL_SOURCE "
-		      "WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>");
-  curr->addTab(resultField,"Code");
+		      "WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>"
+		      "AND Type NOT LIKE '% BODY'");
+  curr->addTab(resultField,"Declaration");
   SecondMap[TAB_PLSQL]=resultField;
   SecondMap[TAB_PLSQL_SOURCE]=resultField;
+
+  resultField=new toResultField(Connection,curr,TAB_PLSQL_BODY);
+  resultField->setSQL("SELECT Text FROM ALL_SOURCE "
+		      "WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]> "
+		      "AND Type LIKE '% BODY'");
+  curr->addTab(resultField,"Body");
+  SecondMap[TAB_PLSQL_BODY]=resultField;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
   TopTab->addTab(splitter,"Triggers");

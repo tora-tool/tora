@@ -104,7 +104,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   TabSelection->setCurrentItem(0);
   addWidget(item,new toGlobalSettings(this));
 
-  item=new QListBoxText(TabSelection,"Syntax highlighting");
+  item=new QListBoxText(TabSelection,"Syntax Highlighting");
   addWidget(item,new toSyntaxSetup(this));
   
   item=new QListBoxText(TabSelection,"Tools");

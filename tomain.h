@@ -117,4 +117,6 @@ void toRefreshParse(QTimer *timer,const QString &str);
       toStatusMessage((const char *)str);\
     }
 
+#define toIsIdent(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
+
 #endif

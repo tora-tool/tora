@@ -27,6 +27,7 @@
 
 
 #include <ctype.h>
+#include <stdio.h>
 
 #include <qpainter.h>
 #include <qpalette.h>
@@ -39,9 +40,9 @@
 #include "totool.h"
 #include "toconf.h"
 
-#define MARGIN 2
-
 #include "todefaultkeywords.h"
+
+#include "tohighlightedtext.moc"
 
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
@@ -141,11 +142,21 @@ toSyntaxAnalyzer &toDefaultAnalyzer(void)
 }
 
 toHighlightedText::toHighlightedText(QWidget *parent,const char *name=NULL)
-  : toMarkedText(parent,name)
+  : toMarkedText(parent,name),Analyzer(&DefaultAnalyzer)
 {
-  LastCol=LastRow=-1;
+  Current=LastCol=LastRow=-1;
   Highlight=!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty();
   KeywordUpper=!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty();
+  LeftIgnore=0;
+  connect(this,SIGNAL(textChanged(void)),this,SLOT(textChanged(void)));
+  LastLength=0;
+}
+
+void toHighlightedText::setText(const QString &str)
+{
+  Errors.clear();
+  Current=-1;
+  toMarkedText::setText(str);
 }
 
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
@@ -163,14 +174,16 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     col2=col1=-1;
   }
 
-  list<toSyntaxAnalyzer::highlightInfo> highs=DefaultAnalyzer.analyzeLine(str);
+  list<toSyntaxAnalyzer::highlightInfo> highs=Analyzer->analyzeLine(str);
   list<toSyntaxAnalyzer::highlightInfo>::iterator highPos=highs.begin();
 
-  int posx=MARGIN;
+  int posx=hMargin()-1;
   QRect rect;
 
-  if (this->width()!=cellWidth())
-    setCellWidth(this->width());
+  if (viewWidth()>cellWidth()) {
+    setCellWidth(viewWidth());
+    return;
+  }
 
   int height=cellHeight();
   int width=cellWidth();
@@ -178,16 +191,18 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
   painter->setBrush(cp.active().highlight());
 
-  QColor bkg=DefaultAnalyzer.getColor(toSyntaxAnalyzer::NormalBkg);
+  QColor bkg=Analyzer->getColor(toSyntaxAnalyzer::NormalBkg);
 
   map<int,QString>::iterator err=Errors.find(row);
   if (err!=Errors.end())
-    bkg=DefaultAnalyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
+    bkg=Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg);
+  if (Current==row)
+    bkg=Analyzer->getColor(toSyntaxAnalyzer::CurrentBkg);
 
   if (!str.isEmpty()) {
     bool marked;
-    QColor col=DefaultAnalyzer.getColor(toSyntaxAnalyzer::Normal);
-    bool upper;
+    QColor col=Analyzer->getColor(toSyntaxAnalyzer::Normal);
+    bool upper=false;
 
     bool wasMarked;
     QColor wasCol;
@@ -209,7 +224,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       }
 
       while (highPos!=highs.end()&&(*highPos).Start<=i) {
-	col=DefaultAnalyzer.getColor((*highPos).Type);
+	col=Analyzer->getColor((*highPos).Type);
 	if ((*highPos).Type==toSyntaxAnalyzer::Keyword&&KeywordUpper)
 	  upper=true;
 	else
@@ -228,33 +243,45 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	wasMarked=marked;
       }
 
-      if (wasMarked!=marked||col!=wasCol) {
-	QString nc=QString(c[c.length()-1]);
-	if (i<int(str.length()))
+      if (wasMarked!=marked||col!=wasCol||str[i]=='\t') {
+	QChar nc;
+	if (c.length()>0&&i<int(str.length())) {
+	  nc=c[c.length()-1];
 	  c.truncate(c.length()-1);
-
-	rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop|ExpandTabs,c);
-	int left=posx;
-	int cw=rect.right()+1;
-	if (i==int(str.length()))
-	  cw+=MARGIN;
-	if (i==int(c.length())) {
-	  cw+=left;
-	  left=0;
-	}
-	if (wasMarked) {
-	  painter->fillRect(left,0,cw,height,painter->brush());
-	  painter->setPen(cp.active().highlightedText());
-	} else {
-	  painter->setPen(wasCol);
-	  painter->fillRect(left,0,cw,height,bkg);
 	}
 
-	painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop|ExpandTabs,c,c.length(),&rect);
-	posx=rect.right()+1;
+	if (c.length()>0) {
+	  rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop|ExpandTabs,c);
+	  int left=posx;
+	  int cw=rect.right()+1;
+	  if (i==int(str.length()))
+	    cw+=hMargin()-1;
+	  if (i==int(c.length())) {
+	    cw+=left;
+	    left=LeftIgnore;
+	  }
+	  if (wasMarked) {
+	    painter->fillRect(left,0,cw,height,painter->brush());
+	    painter->setPen(cp.active().highlightedText());
+	  } else {
+	    painter->setPen(wasCol);
+	    painter->fillRect(left,0,cw,height,bkg);
+	  }
+
+	  painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop|ExpandTabs,c,c.length(),&rect);
+	  posx=rect.right()+1;
+	}
 	wasCol=col;
 	wasMarked=marked;
-	c=nc;
+	if (nc=='\t') {
+	  int tab=painter->fontMetrics().width("        ");;
+	  int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
+	  int left=(posx==hMargin()-1?LeftIgnore:posx);
+	  painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
+	  posx=nx;
+	  c="";
+	} else
+	  c=nc;
       }
     }
     if (posx<width)
@@ -269,17 +296,88 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     if (curline!=LastRow) {
       if (err!=Errors.end())
 	toStatusMessage((*err).second);
-      else
-	toStatusMessage("");
+      else {
+	err=Errors.find(LastRow);
+	if (err==Errors.end())
+	  toStatusMessage("");
+      }
     }
 
     if (row==curline&&(LastRow!=curline||LastCol!=curcol)) {
       LastRow=curline;
       LastCol=curcol;
-      QPoint pos=cursorPoint();
-      painter->drawLine(pos.x(),0,pos.x(),
-			painter->fontMetrics().ascent()+painter->fontMetrics().descent());
+      if (!isReadOnly()) {
+	QPoint pos=cursorPoint();
+	painter->drawLine(pos.x(),0,pos.x(),
+			  painter->fontMetrics().ascent()+painter->fontMetrics().descent());
+      }
     } else
       LastRow=LastCol=-1;
+  }
+}
+
+void toHighlightedText::textChanged(void)
+{
+  int curline,curcol,lines;
+  lines=numLines();
+  if (lines!=LastLength) {
+    if (LastLength>0) {
+      getCursorPosition (&curline,&curcol);
+      int diff=lines-LastLength;
+      map<int,QString> newErr;
+      for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+	int newLine=convertLine((*i).first,curline-diff,diff);
+	if (newLine>=0)
+	  newErr[newLine]=(*i).second;
+      }
+      if (Current>=0)
+	Current=convertLine(Current,curline-diff,diff);
+      Errors=newErr;
+      emit insertedLines(curline-diff,diff);
+      repaint();
+    }
+    LastLength=lines;
+  }
+}
+
+int toHighlightedText::convertLine(int line,int start,int diff)
+{
+  if (diff>0) {
+    if (line>start)
+      return line+diff;
+    else
+      return line;
+  } else if (line<start+diff)
+    return line;
+  else if (line>=start)
+    return line+diff;
+  return -1;
+}
+
+void toHighlightedText::nextError(void)
+{
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+    if ((*i).first>curline) {
+      setCursorPosition((*i).first,0);
+      break;
+    }
+  }
+}
+
+void toHighlightedText::previousError(void)
+{
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  curcol=-1;
+  for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+    if ((*i).first>=curline) {
+      if (curcol<0)
+	curcol=(*i).first;
+      setCursorPosition(curcol,0);
+      break;
+    }
+    curcol=(*i).first;
   }
 }

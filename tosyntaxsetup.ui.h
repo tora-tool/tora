@@ -20,6 +20,7 @@ class QLabel;
 class QListBox;
 class QListBoxItem;
 class QPushButton;
+class toHighlightedText;
 
 class toSyntaxSetupUI : public QWidget
 { 
@@ -38,11 +39,14 @@ public:
     QPushButton* SelectColor;
     QLabel* ExampleColor;
     QListBox* SyntaxComponent;
+    toHighlightedText* Example;
 
 public slots:
     virtual void changeLine(QListBoxItem *);
     virtual void selectColor(void);
     virtual void selectFont(void);
+    virtual void changeUpper(bool);
+    virtual void changeHighlight(bool);
 
 };
 

@@ -4,11 +4,13 @@
 #include <map>
 #include "totool.h"
 #include "tosyntaxsetup.ui.h"
+#include "tohighlightedtext.h"
 
 class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
   QString Text;
   QListBoxItem *Current;
   map<QString,QColor> Colors;
+  toSyntaxAnalyzer Analyzer;
 public:
   toSyntaxSetup(QWidget *parent=0,const char *name=0,WFlags fl=0);
   virtual void saveSetting(void);
@@ -17,6 +19,10 @@ public slots:
   virtual void changeLine(QListBoxItem *);
   virtual void selectColor(void);
   virtual void selectFont(void);
+  virtual void changeUpper(bool val)
+  { Example->setKeywordUpper(val); Example->repaint(); }
+  virtual void changeHighlight(bool val)
+  { Example->setHighlight(val); Example->repaint(); }
 };
 
 #endif

@@ -445,8 +445,6 @@ void NewStatement(void)
     Blocks[i].Pos=0;
 }
 
-#define isident(c) (isalnum(c)||(c)=='_')
-
 void toWorksheet::execute(bool all,bool step)
 {
   bool code=true; // Don't strip from done selection
@@ -505,10 +503,10 @@ void toWorksheet::execute(bool all,bool step)
 	    for (int j=0;Blocks[j].Start;j++) {
 	      int &pos=Blocks[j].Pos;
 	      if (tolower(c)==Blocks[j].Start[pos]) {
-		if (pos>0||!isident(lastChar)) {
+		if (pos>0||!toIsIdent(lastChar)) {
 		  pos++;
 		  if (!Blocks[j].Start[pos]) {
-		    if (!isident(nc)) {
+		    if (!toIsIdent(nc)) {
 		      if (Blocks[j].CloseBlock) {
 			BlockCount--;
 			if (BlockCount<=0)
@@ -555,10 +553,10 @@ void toWorksheet::execute(bool all,bool step)
 	      for (int j=0;Blocks[j].Start&&!br;j++) {
 		int &pos=Blocks[j].Pos;
 		if (tolower(c)==Blocks[j].Start[pos]) {
-		  if (pos>0||(!isident(lastChar))) {
+		  if (pos>0||(!toIsIdent(lastChar))) {
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
-		      if (!isident(nc)) {
+		      if (!toIsIdent(nc)) {
 			if (Blocks[j].CloseBlock) {
 			  toStatusMessage("Ending unstarted block");
 			  return;

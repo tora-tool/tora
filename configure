@@ -39,6 +39,15 @@ done
 sleep 1
 touch *.h
 
+for a in *.ui
+do
+    touch $a.h
+    touch $a.cpp
+    touch $a.moc
+done
+sleep 1
+touch *.ui
+
 if [ \! -f Makefile ]
 then
     mv Makefile.orig Makefile
