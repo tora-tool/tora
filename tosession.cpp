@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include <qworkspace.h>
 #include <qtoolbar.h>

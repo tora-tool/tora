@@ -50,7 +50,7 @@ my $InstallBin;
 my $InstallLib;
 my $Includes;
 my $CC;
-my $Libs="-lstdc++ -lcrypt -lclntsh -lm -lpthread";
+my $Libs="-lcrypt -lm -lpthread -ldl";
 my $MOC;
 my $QtDir;
 my $QtInclude;
@@ -58,6 +58,7 @@ my $QtLibDir;
 my $QtLib;
 my $QtLibShared;
 my $QtLibStatic;
+my $StdCppLibStatic;
 my $LFlags;
 my $Target="tora-mono";
 my $ForceTarget=0;
@@ -318,12 +319,30 @@ __TEMP__
 	    $QtLibStatic.="/libqt.a";
 	}
     }
-
     if (!-d $QtLib) {
 	print "Couldn't find library files for Qt, use --with-qt-libs to specify\n";
 	exit(2);
     }
     print "Qt library directory at $QtLib\n";
+
+    findFile("^libstdc\\+\\+.*\\.a",sub {
+	$StdCppLibStatic=$_[0];
+	return -f $_[0];
+    },
+	     $QtDir."/lib",
+	     "/usr/lib",
+	     "/usr/lib/qt2",
+	     "/usr/lib/qt2/lib",
+	     "/usr/lib/qt",
+	     "/ust/lib/qt/lib",
+	     "/usr/local/lib",
+	     "/usr/local/lib/qt2",
+	     "/usr/local/lib/qt2/lib",
+	     "/usr/local/lib/qt",
+	     "/ust/local/lib/qt/lib");
+    if (! -f $StdCppLibStatic) {
+	$StdCppLibStatic="";
+    }
     
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     if ($ORACLE_RELEASE =~ /^8.0/) {
@@ -380,6 +399,8 @@ __TEMP__
 	print MAKEFILE "INCLUDES=$Includes\n";
 	print MAKEFILE "CC=\"$CC\"\n";
 	print MAKEFILE "LIBS_GLOB=$Libs\n";
+	print MAKEFILE "STDCPP_SHARED=-lstdc++\n";
+	print MAKEFILE "STDCPP_STATIC=$StdCppLibStatic\n";
 	print MAKEFILE "QT_SHARED=$QtLibShared\n";
 	print MAKEFILE "QT_STATIC=$QtLibStatic\n";
 	print MAKEFILE "MOC=\"$MOC\"\n";

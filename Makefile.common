@@ -23,7 +23,12 @@ default: all
 
 include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 
+ORACLE_SHARED=-lclntsh
+ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
+
 DEFINES+=-DOTL_ORA8I -D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
+DEFINES+=-DTO_NAMESPACE="using namespace std"
+#DEFINES+=-DTO_NAMESPACE=""
 CPPFLAGS_GLOB=
 
 ARCH=$(shell uname)
@@ -41,7 +46,7 @@ DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d)) .depends/main.d
 
 vpath %.h $(INCLUDE)
 
-.PHONY: all clean fixmod install realinstall
+.PHONY: all clean fixmod install distclean
 
 all: $(TARGET)
 
@@ -89,7 +94,7 @@ install: $(TARGET)
 
 clean:
 	@echo Cleaning $(TITLE)
-	-rm -f $(OBJECTS) tora tora-static tora-mono 2>&1 >/dev/null
+	-rm -rf objs tora tora-static tora-mono 2>&1 >/dev/null
 	-rm -f *~ 2>&1 >/dev/null
 	-rm -f *~ */*~ 2>&1 >/dev/null
 	-rm -f *.bak 2>&1 >/dev/null
@@ -99,7 +104,6 @@ distclean: clean
 	-rm -rf .depends 2>&1 >/dev/null
 	-rm -rf .xvpics 2>&1 >/dev/null
 	-rm -rf icons/.xvpics 2>&1 >/dev/null
-	-rm -rf objs 2>&1 >/dev/null
 	-rm -f *.moc 2>&1 >/dev/null
 	-for a in *.ui ; \
              do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \

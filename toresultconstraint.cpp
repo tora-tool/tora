@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include "toresultconstraint.h"
 #include "tomain.h"

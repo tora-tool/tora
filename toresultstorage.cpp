@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include "toresultstorage.h"
 #include "tomain.h"

@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include "tomarkedtext.h"
 #include "tomain.h"

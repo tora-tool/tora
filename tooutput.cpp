@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include <qcombobox.h>
 #include <qgroupbox.h>

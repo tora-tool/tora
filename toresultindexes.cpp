@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
 #include "toresultindexes.h"
 #include "tomain.h"

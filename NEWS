@@ -1,3 +1,10 @@
+0.6:
+
+2001-02-13: Added support for building static RPM
+2001-02-13: Link StdC++ statically as well in tora-static
+2001-02-13: Added namespace support (Will work with Standard C++)
+2001-02-14: Link oracle libs statically as well in tora-static
+
 0.5: Released 2001-02-12
 
 2001-01-28: Fixed bug in explain plan.
