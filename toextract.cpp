@@ -25,20 +25,108 @@ static toSQL SQLSetSizing("toExtract:SetSizing",
 toExtract::toExtract(toConnection &conn)
   : Connection(conn)
 {
-  SQL=true;
   Heading=true;
   Resize=true;
   Heading=true;
   Prompt=true;
-
-  IsASnapIndex=false;
-  IsASnapTable=false;
 
   Schema="1";
 
   otl_stream inf(1,SQLSetSizing(Connection),Connection.connection());
   inf>>BlockSize;
   setSizes();
+}
+
+void toExtract::clearFlags(void)
+{
+  IsASnapIndex=false;
+  IsASnapTable=false;
+  Describe=false;
+}
+
+void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
+			  const QString &arg1=QString::null,const QString &arg2=QString::null,
+			  const QString &arg3=QString::null,const QString &arg4=QString::null,
+			  const QString &arg5=QString::null,const QString &arg6=QString::null,
+			  const QString &arg7=QString::null,const QString &arg8=QString::null,
+			  const QString &arg9=QString::null)
+{
+  int numArgs;
+  if (!arg9.isNull())
+    numArgs=9;
+  else if (!arg8.isNull())
+    numArgs=8;
+  else if (!arg7.isNull())
+    numArgs=7;
+  else if (!arg6.isNull())
+    numArgs=6;
+  else if (!arg5.isNull())
+    numArgs=5;
+  else if (!arg4.isNull())
+    numArgs=4;
+  else if (!arg3.isNull())
+    numArgs=3;
+  else if (!arg2.isNull())
+    numArgs=2;
+  else if (!arg1.isNull())
+    numArgs=1;
+  else
+    numArgs=0;
+
+  list<QString> args=ctx;
+  if (numArgs>0)
+    args.insert(args.end(),arg1);
+  if (numArgs>1)
+    args.insert(args.end(),arg2);
+  if (numArgs>2)
+    args.insert(args.end(),arg3);
+  if (numArgs>3)
+    args.insert(args.end(),arg4);
+  if (numArgs>4)
+    args.insert(args.end(),arg5);
+  if (numArgs>5)
+    args.insert(args.end(),arg6);
+  if (numArgs>6)
+    args.insert(args.end(),arg7);
+  if (numArgs>7)
+    args.insert(args.end(),arg8);
+  if (numArgs>8)
+    args.insert(args.end(),arg9);
+
+  QString str;
+  bool first=true;
+  for(list<QString>::iterator i=args.begin();i!=args.end();i++) {
+    if (first)
+      first=false;
+    else
+      str+="\01";
+    if (!(*i).isEmpty())
+      str+=*i;
+  }
+  ret.insert(ret.end(),str);
+}
+
+QString toExtract::reContext(list<QString> &ctx,int strip,const QString &str)
+{
+  QStringList lst=QStringList::split("\01",str);
+  QString ret;
+  QString sep="";
+  for(list<QString>::iterator i=ctx.begin();i!=ctx.end();i++) {
+    ret+=sep;
+    ret+=*i;
+    if (sep.isEmpty())
+      sep="\01";
+  }
+  for(QStringList::Iterator i=lst.begin();i!=lst.end();i++) {
+    if (strip>0) {
+      ret+=sep;
+      ret+=*i;
+    } else
+      strip--;
+    if (sep.isEmpty())
+      sep="\01";
+  }
+  return ret;
 }
 
 void toExtract::setSizes(void)
@@ -223,6 +311,29 @@ QString toExtract::createComments(const QString &schema,
     ret+=";\n\n";
   }
   return ret;
+}
+
+void toExtract::describeComments(list<QString> &lst,list<QString> &ctx,
+				 const QString &schema,const QString &owner,const QString &name)
+{
+  otl_stream str(1,
+		 SQLTableComments(Connection),
+		 Connection.connection());
+  while(!str.eof()) {
+    char buffer[10000];
+    str>>buffer;
+    addDescription(lst,ctx,"COMMENT",QString::fromUtf8(buffer));
+  }
+  otl_stream col(1,
+		 SQLColumnComments(Connection),
+		 Connection.connection());
+  while(!col.eof()) {
+    char buffer[10000];
+    str>>buffer;
+    QString col=QString::fromUtf8(buffer);
+    str>>buffer;
+    addDescription(lst,ctx,"COLUMN",col.lower(),"COMMENT",QString::fromUtf8(buffer));
+  }
 }
 
 QString toExtract::prepareDB(const QString &db)
@@ -445,7 +556,6 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
 
       if (delRule=="CASCADE")
 	ret+="ON DELETE CASCADE\n";
-      ret+=status;
     }
   }
   if (Connection.version()<"8")
@@ -459,6 +569,90 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
   }
   ret+=";\n\n";
   return ret;
+}
+
+void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
+				   const QString &owner,const QString &name)
+{
+  otl_stream inf(1,
+		 SQLListConstraint(Connection),
+		 Connection.connection());
+  char buffer[8193];
+  otl_long_string data(buffer,8192);
+  buffer[8192]=0;
+  inf<<owner.utf8();
+  inf<<name.utf8();
+  if (inf.eof())
+    throw QString("Constraint %1.%2 doesn't exist").arg(owner).arg(name);
+  inf>>buffer;
+  QString table(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString tchr(QString::fromUtf8(buffer));
+  inf>>data;
+  buffer[data.len()]=0;
+  QString search(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString rOwner(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString rName(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString delRule(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString status(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString defferable(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString deffered(QString::fromUtf8(buffer));
+  
+  QString type=
+    (tchr=="P")?"PRIMARY KEY":
+    (tchr=="U")?"UNIQUE":
+    (tchr=="R")?"FOREIGN KEY":
+    "CHECK";
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),table.lower());
+  ctx.insert(ctx.end(),"CONSTRAINT");
+  ctx.insert(ctx.end(),name.lower());
+
+  QString ret;
+  if (tchr=="C") {
+    ret+="CHECK (";
+    ret+=search;
+  } else {
+    ret+=constraintColumns(owner,name);
+
+    if (tchr=="R") {
+      otl_stream str(1,
+		     SQLConstraintTable(Connection),
+		     Connection.connection());
+      str<<rOwner.utf8();
+      str<<rName.utf8();
+      str>>buffer;
+      ret+="REFERENCES ";
+      ret+=schema;
+      ret+=QString::fromUtf8(buffer);
+      ret+=constraintColumns(rOwner,rName);
+
+      if (delRule=="CASCADE")
+	ret+="ON DELETE CASCADE";
+    }
+  }
+  addDescription(lst,ctx,ret);
+
+  ret="";
+  if (Connection.version()<"8")
+    ret+=status;
+  else {
+    ret+=defferable;
+    ret+="\nINITIALLY ";
+    ret+=deffered;
+    ret+="\n";
+    ret+=status;
+  }
+  addDescription(lst,ctx,ret);
 }
 
 static toSQL SQLDBLink("toExtract:ExtractDBLink",
@@ -502,6 +696,38 @@ QString toExtract::createDBLink(const QString &schema,const QString &owner,const
     arg(password.lower()).
     arg(prepareDB(host));
   return ret;
+}
+
+void toExtract::describeDBLink(list<QString> &lst,const QString &schema,const QString &owner,
+			       const QString &name)
+{
+  char buffer[100];
+  otl_stream inf(1,
+		 SQLDBLink(Connection),
+		 Connection.connection());
+  inf<<owner.utf8();
+  inf<<name.utf8();
+  if (inf.eof())
+    throw QString("DBLink %1.%2 doesn't exist").arg(owner).arg(name);
+  inf>>buffer;
+  QString user(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString password(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString host(QString::fromUtf8(buffer));
+  QString publ=(owner=="PUBLIC")?"PUBLIC":"";
+  QString sql=QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(name.lower());
+  QString ret;
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),"DATABASE LINK");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx,publ);
+  addDescription(lst,ctx,QString("%1 IDENTIFIED BY %2 USING '%3'").
+		 arg(user.lower()).
+		 arg(password.lower()).
+		 arg(prepareDB(host)));
 }
 
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
@@ -630,6 +856,53 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
   return ret;
 }
 
+void toExtract::describeExchangeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+				      const QString &name)
+{
+  QStringList str=QStringList::split(":",name);
+  if (str.count()!=2)
+    throw ("When calling createExchangeIndex name should contain :");
+  QString segment=str.first();
+  QString partition=str.last();
+
+  otl_stream inf(1,
+		 SQLPartitionSegmentType(Connection),
+		 Connection.connection());
+  inf<<segment.utf8()<<partition.utf8()<<owner.utf8();
+  if (inf.eof())
+    throw QString("Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
+  char buffer[100];
+  inf>>buffer;
+  QString type=QString::fromUtf8(buffer);
+  QString blocks=QString::fromUtf8(buffer);
+
+  QString sql=toSQL::string(SQLExchangeIndex,Connection);
+  sql.arg(type).arg(blocks);
+  list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
+  QString degree=toShift(result);
+  QString instances=toShift(result);
+  QString table=toShift(result);
+  QString unique=toShift(result);
+  QString bitmap=toShift(result);
+
+  toUnShift(result,"");
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),table);
+  ctx.insert(ctx.end(),"EXCHANGE INDEX");
+  ctx.insert(ctx.end(),segment);
+  ctx.insert(ctx.end(),partition);
+
+  describeIndexColumns(lst,ctx,owner,segment);
+  addDescription(lst,ctx,QString("%1%2").arg(unique).arg(bitmap));
+  addDescription(lst,ctx,QString("%1%2").arg(segment).arg(table));
+  addDescription(lst,ctx,"PARALLEL","DEGREE",degree);
+  addDescription(lst,ctx,"PARALLEL","INSTANCES",instances);
+  describeAttributes(lst,ctx,result);
+}
+
 static toSQL SQLIndexColumns("toExtract:IndexColumns",
 			     "SELECT column_name,
        descend
@@ -713,6 +986,45 @@ QString toExtract::indexColumns(const QString &indent,
   return ret;
 }
 
+void toExtract::describeIndexColumns(list<QString> &lst,list<QString> &ctx,
+				     const QString &owner,const QString &name)
+{
+  static QRegExp quote("\"");
+  static QRegExp func("^sys_nc[0-9]g");
+  otl_stream inf(1,
+		 SQLIndexColumns(Connection),
+		 Connection.connection());
+  inf<<name.utf8();
+  inf<<owner.utf8();
+  while(!inf.eof()) {
+    char buffer[1025];
+    inf>>buffer;
+    QString col=QString::fromUtf8(buffer).lower();
+    inf>>buffer;
+    QString asc=QString::fromUtf8(buffer);
+    QString row;
+    if (func.match(col)) {
+      otl_stream def(1,
+		     SQLIndexFunction(Connection),
+		     Connection.connection());
+      def<<col.utf8();
+      def<<name.utf8();
+      def<<owner.utf8();
+      otl_long_string data(buffer,1024);
+      def>>data;
+      buffer[data.len()]=0;
+      QString function(QString::fromUtf8(buffer));
+      function.replace(quote,"");
+      if (asc=="DESC")
+	row=QString("%1 DESC").arg(function.lower(),30);
+      else
+	row=function.lower();
+    } else
+      row=col;
+    addDescription(lst,ctx,"COLUMN",row);
+  }
+}
+
 static toSQL SQLExchangeTable("toExtract:ExchangeTable",
 			      "SELECT
         DECODE(
@@ -792,6 +1104,37 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
   return ret;
 }
 
+void toExtract::describeExchangeTable(list<QString> &lst,const QString &schema,const QString &owner,
+				      const QString &name)
+{
+  QStringList str=QStringList::split(":",name);
+  if (str.count()!=2)
+    throw ("When calling createExchangeTable name should contain :");
+  QString segment=str.first();
+  QString partition=str.last();
+
+  otl_stream inf(1,
+		 SQLPartitionSegmentType(Connection),
+		 Connection.connection());
+  inf<<segment.utf8()<<partition.utf8()<<owner.utf8();
+  if (inf.eof())
+    throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
+  char buffer[100];
+  inf>>buffer;
+  QString type=QString::fromUtf8(buffer);
+  QString blocks=QString::fromUtf8(buffer);
+
+  QString sql=toSQL::string(SQLExchangeTable,Connection);
+  sql.arg(type).arg(blocks);
+  list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"EXCHANGE TABLE");
+  ctx.insert(ctx.end(),segment);
+  ctx.insert(ctx.end(),partition);
+  describeTableText(lst,ctx,result,schema,owner,segment);
+}
+
 void toExtract::initialNext(const QString &blocks,QString &initial,QString &next)
 {
   list<QString>::iterator iinit=Initial.begin();
@@ -813,7 +1156,7 @@ void toExtract::initialNext(const QString &blocks,QString &initial,QString &next
 QString toExtract::segmentAttributes(list<QString> &result)
 {
   if (result.size()!=18)
-    throw QString("Internal error, result should be 17 in segment attributes");
+    throw QString("Internal error, result should be 18 in segment attributes");
 
   list<QString>::iterator i=result.begin();
 
@@ -849,10 +1192,11 @@ QString toExtract::segmentAttributes(list<QString> &result)
     if (!IsASnapIndex)
       ret+=QString("%1PCTFREE             %2\n").arg(indent).arg(pctUsed);
   }
-  if (!IsASnapIndex) {
+  if (!IsASnapIndex)
     ret+=QString("%1PCTFREE             %2\n").arg(indent).arg(pctFree);
+  if (!IsASnapTable)
     ret+=QString("%1INITRANS            %2\n").arg(indent).arg(iniTrans);
-  }
+
   ret+=QString("%1MAXTRANS            %2\n").arg(indent).arg(maxTrans);
   ret+=indent;
   ret+="STORAGE\n";
@@ -875,6 +1219,62 @@ QString toExtract::segmentAttributes(list<QString> &result)
   ret+=QString("%1TABLESPACE          %2\n").arg(indent).arg(tablespace.lower());
 
   return ret;
+}
+
+void toExtract::describeAttributes(list<QString> &dsp,list<QString> &ctx,list<QString> &result)
+{
+  if (result.size()!=18)
+    throw QString("Internal error, result should be 18 in segment attributes");
+
+  list<QString>::iterator i=result.begin();
+
+  QString indent         =*i; i++;
+  QString organization   =*i; i++;
+  QString cache          =*i; i++;
+  QString pctUsed        =*i; i++;
+  QString pctFree        =*i; i++;
+  QString iniTrans       =*i; i++;
+  QString maxTrans       =*i; i++;
+  QString initial        =*i; i++;
+  QString next           =*i; i++;
+  QString minExtents     =*i; i++;
+  QString maxExtents     =*i; i++;
+  QString pctIncrease    =*i; i++;
+  QString freelists      =*i; i++;
+  QString freelistGroups =*i; i++;
+  QString bufferPool     =*i; i++;
+  QString logging        =*i; i++;
+  QString tablespace     =*i; i++;
+  QString blocks         =*i; i++;
+
+  if (Resize)
+    initialNext(blocks,initial,next);
+
+  QString ret;
+  if (organization == "HEAP") {
+    if (cache!="N/A")
+      addDescription(dsp,ctx,cache);
+    if (!IsASnapIndex)
+      addDescription(dsp,ctx,QString("PCTFREE %1").arg(pctUsed));
+  }
+  if (!IsASnapIndex) {
+    addDescription(dsp,ctx,QString("PCTFREE %1").arg(pctFree));
+    addDescription(dsp,ctx,QString("INITRANS %1").arg(iniTrans));
+  }
+  addDescription(dsp,ctx,QString("MAXTRANS %1").arg(maxTrans));
+  addDescription(dsp,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
+  addDescription(dsp,ctx,"STORAGE",QString("NEXT %1").arg(next));
+  addDescription(dsp,ctx,"STORAGE",QString("MINEXTENTS %1").arg(minExtents));
+  addDescription(dsp,ctx,"STORAGE",QString("MAXEXTENTS %1").arg(maxExtents));
+  addDescription(dsp,ctx,"STORAGE",QString("PCTINCREASE %1").arg(pctIncrease));
+  addDescription(dsp,ctx,"STORAGE",QString("FREELISTS %1").arg(freelists));
+  addDescription(dsp,ctx,"STORAGE",QString("FREELIST GROUPS %1").arg(freelistGroups));
+  if (Connection.version()>="8.1") {
+    addDescription(dsp,ctx,"STORAGE",QString("BUFFER_POOL %1").arg(bufferPool));
+  }
+  if (Connection.version()>="8.0")
+    addDescription(dsp,ctx,QString("%1").arg(logging));
+  addDescription(dsp,ctx,QString("TABLESPACE %1").arg(tablespace.lower()));
 }
 
 static toSQL SQLPrimaryKey("toExtract:PrimaryKey",
@@ -931,6 +1331,31 @@ QString toExtract::createTableText(list<QString> &result,const QString &schema,
   ret+=segmentAttributes(result);
 
   return ret;
+}
+
+void toExtract::describeTableText(list<QString> &lst,list<QString> &ctx,list<QString> &result,
+				  const QString &schema,const QString &owner,const QString &name)
+{
+  QString monitoring     =toShift(result);
+  QString table          =toShift(result);
+  QString degree         =toShift(result);
+  QString instances      =toShift(result);
+  QString organization   =toShift(result);
+
+  QString ret;
+  addDescription(lst,ctx);
+  describeTableColumns(lst,ctx,owner,name);
+  if (Connection.version()>="8.0")
+    addDescription(lst,ctx,QString("ORGANIZATION %1").arg(organization));
+  if (Connection.version()>="8.1")
+    addDescription(lst,ctx,monitoring);
+  addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
+  addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
+
+  toUnShift(result,organization);
+  toUnShift(result,"");
+
+  describeAttributes(lst,ctx,result);
 }
 
 static toSQL SQLTableColumns("toExtract:TableColumns",
@@ -1141,6 +1566,21 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
   return ret;
 }
 
+void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
+				     const QString &owner,const QString &name)
+{
+  otl_stream inf(1,
+		 SQLTableColumns(Connection),
+		 Connection.connection());
+  inf<<name.utf8();
+  inf<<owner.utf8();
+  while(!inf.eof()) {
+    char buffer[1024];
+    inf>>buffer;
+    addDescription(lst,ctx,"COLUMN",QString::fromUtf8(buffer));
+  }
+}
+
 static toSQL SQLDisplaySource("toExtract:ListSource",
 			      "SELECT text
   FROM all_source
@@ -1163,31 +1603,51 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
     throw QString("Couldn't find source for of %1.%2").arg(owner).arg(name);
   
   QString ret;
-  if (Prompt)
+  if (Prompt&&!Describe)
     ret=QString("PROMPT CREATE OR REPLACE %1 %2%3\n\n").
       arg(type).
       arg(schema).
       arg(name.lower());
-  ret+="CREATE OR REPLACE ";
+  if (!Describe)
+    ret+="CREATE OR REPLACE ";
   bool first=true;
   while(!inf.eof()) {
     char buffer[1024];
     inf>>buffer;
     QString line=QString::fromUtf8(buffer);
-    if (first) {
+    if (first&&!Describe) {
       line.replace(StripType,"");
       line.prepend(QString("%1 %2%3").arg(type).arg(schema).arg(name.lower()));
       first=false;
     }
     ret+=line;
   }
-  ret+="\n/\n\n";
+  if (!Describe)
+    ret+="\n/\n\n";
   return ret;
+}
+
+void toExtract::describeSource(list<QString> &lst,
+			       const QString &schema,const QString &owner,
+			       const QString &name,const QString &type)
+{
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),name);
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,displaySource(schema,owner,name,type));
 }
 
 QString toExtract::createFunction(const QString &schema,const QString &owner,const QString &name)
 {
   return displaySource(schema,owner,name,"FUNCTION");
+}
+
+void toExtract::describeFunction(list<QString> &lst,const QString &schema,
+				 const QString &owner,const QString &name)
+{
+  return describeSource(lst,schema,owner,name,"FUNCTION");
 }
 
 static toSQL SQLIndexInfo7("toExtract:IndexInfo",
@@ -1456,6 +1916,62 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   return ret;
 }
 
+void toExtract::describeIndex(list<QString> &lst,const QString &schema,
+			      const QString &owner,const QString &name)
+{
+  list<QString> res=toReadQuery(Connection,SQLIndexInfo(Connection),name,owner);
+  if (res.size()!=9)
+    throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
+
+  QString partitioned=toShift(res);
+  QString table      =toShift(res);
+  QString tableOwner =toShift(res);
+  QString unique     =toShift(res);
+  QString bitmap     =toShift(res);
+  QString domain     =toShift(res);
+  QString domOwner   =toShift(res);
+  QString domName    =toShift(res);
+  QString domParam   =toShift(res);
+
+  list<QString> storage=toReadQuery(Connection,SQLIndexSegment(Connection),name,owner);
+  QString degree     =toShift(storage);
+  QString instances  =toShift(storage);
+  QString compressed =toShift(storage);
+
+  QString schema2=setSchema(tableOwner);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema2);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),table.lower());
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx);
+  describeIndexColumns(lst,ctx,owner,name);
+  if (domain=="DOMAIN") {
+    addDescription(lst,ctx,"DOMAIN",QString("DOMAINOWNER \"%1\".\"%2\"").
+		   arg(domOwner).
+		   arg(domName));
+    addDescription(lst,ctx,"DOMAIN",QString("PARAMETERS %1").arg(domParam));
+    return;
+  }
+  if (Connection.version()>="8.0") {
+    addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
+    addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
+  }
+  if (partitioned == "YES") {
+    describePartitionedIndex(lst,ctx,schema,owner,name);
+    return;
+  }
+
+  toUnShift(storage,"");
+  describeAttributes(lst,ctx,storage);
+  if (!compressed.isEmpty())
+    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+}
+
 static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"SELECT  -- 8.0 Indexes may partition only by RANGE
         i.partitioning_type
@@ -1705,6 +2221,33 @@ QString toExtract::createPartitionedIndex(const QString &schema,const QString &o
   return ret;
 }
 
+void toExtract::describePartitionedIndex(list<QString> &lst,list<QString> &ctx,
+					 const QString &schema,const QString &owner,
+					 const QString &name)
+{
+  list<QString> result=toReadQuery(Connection,SQLIndexPartition(Connection),
+				   QString::number(BlockSize),owner,name);
+  QString partitionType   =toShift(result);
+  QString subPartitionType=toShift(result);
+  QString locality        =toShift(result);
+  QString compressed      =toShift(result);
+  toUnShift(result,"");
+
+  describeAttributes(lst,ctx,result);
+
+  if (!compressed.isEmpty())
+    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+
+  if (locality=="GLOBAL") {
+    addDescription(lst,ctx,"GLOBAL PARTITION COLUMNS",partitionKeyColumns(owner,name,"INDEX"));
+    describePartitions(lst,ctx,owner,name,subPartitionType,"GLOBAL");
+  } else {
+    addDescription(lst,ctx,"LOCAL PARTITION");
+    if (partitionType=="RANGE")
+      describePartitions(lst,ctx,owner,name,subPartitionType,"LOCAL");
+  }
+}
+
 QString toExtract::partitionKeyColumns(const QString &owner,const QString &name,
 				       const QString &type)
 {
@@ -1853,7 +2396,7 @@ QString toExtract::rangePartitions(const QString &owner,const QString &name,
     ret+=comma;
     ret+="PARTITION ";
     ret+=partition.lower();
-    if (caller=="LOCAL")
+    if (caller!="LOCAL")
       ret+=QString(" VALUES LESS THAN\n"
 		   "      (\n"
 		   "       %1\n"
@@ -1894,6 +2437,52 @@ QString toExtract::rangePartitions(const QString &owner,const QString &name,
   return ret;
 }
 
+void toExtract::describePartitions(list<QString> &lst,list<QString> &ctx,
+				   const QString &owner,const QString &name,
+				   const QString &subPartitionType,const QString &caller)
+{
+  list<QString> result=toReadQuery(Connection,SQLRangePartitions(Connection),
+				   name,owner);
+  if (result.size()==0||result.size()%18)
+    throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
+
+  while(result.size()>0) {
+    QString partition=toShift(result);
+    QString highValue=toShift(result);
+
+    list<QString> storage;
+    toPush(storage,"      ");
+    toPush(storage,"INDEX");
+    for (int i=0;i<16;i++)
+      toPush(storage,toShift(result));
+
+    list<QString> cctx=ctx;
+    cctx.insert(cctx.end(),"PARTITION");
+    cctx.insert(cctx.end(),partition.lower());
+
+    addDescription(lst,cctx);
+    if (caller!="LOCAL")
+      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %1").arg(highValue));
+    describeAttributes(lst,cctx,storage);
+
+    if(subPartitionType=="HASH") {
+      otl_stream inf(1,
+		     SQLIndexSubPartitionName(Connection),
+		     Connection.connection());
+      inf<<name.utf8()<<partition.utf8()<<owner.utf8();
+      while(!inf.eof()) {
+	char buffer[100];
+	inf>>buffer;
+	QString sub(QString::fromUtf8(buffer));
+	inf>>buffer;
+	QString tablespace(QString::fromUtf8(buffer));
+	addDescription(lst,cctx,"HASH",sub.lower(),
+		       QString("TABLESPACE %1").arg(tablespace.lower()));
+      }
+    }
+  }
+}
+
 QString toExtract::createMaterializedView(const QString &schema,const QString &owner,
 					   const QString &name)
 {
@@ -1903,7 +2492,19 @@ QString toExtract::createMaterializedView(const QString &schema,const QString &o
 QString toExtract::createMaterializedViewLog(const QString &schema,const QString &owner,
 					     const QString &name)
 {
-  return createMViewLog(schema,owner,name,"MATERIALIZED VIEW LOG");
+  return createMViewLog(schema,owner,name,"MATERIALIZED VIEW");
+}
+
+void toExtract::describeMaterializedView(list<QString> &lst,const QString &schema,
+					 const QString &owner,const QString &name)
+{
+  describeMView(lst,schema,owner,name,"MATERIALIZED VIEW");
+}
+
+void toExtract::describeMaterializedViewLog(list<QString> &lst,const QString &schema,
+					    const QString &owner,const QString &name)
+{
+  describeMViewLog(lst,schema,owner,name,"MATERIALIZED VIEW LOG");
 }
 
 static toSQL SQLMViewInfo("toExtract:MaterializedViewInfo",
@@ -1969,6 +2570,8 @@ QString toExtract::createMView(const QString &schema,const QString &owner,
 			       const QString &name,const QString &type)
 {
   list<QString> result=toReadQuery(Connection,SQLMViewInfo(Connection),name,owner);
+  if (result.size()==0)
+    throw QString("Couldn't find materialised table %1.%2").arg(owner.lower()).arg(name.lower());
   QString table        =toShift(result);
   QString buildMode    =toShift(result);
   QString refreshMethod=toShift(result);
@@ -2027,6 +2630,57 @@ QString toExtract::createMView(const QString &schema,const QString &owner,
   return ret;
 }
 
+void toExtract::describeMView(list<QString> &lst,
+			      const QString &schema,const QString &owner,
+			      const QString &name,const QString &type)
+{
+  list<QString> result=toReadQuery(Connection,SQLMViewInfo(Connection),name,owner);
+  if (result.size()==0)
+    throw QString("Couldn't find materialised table %1.%2").arg(owner.lower()).arg(name.lower());
+  QString table        =toShift(result);
+  QString buildMode    =toShift(result);
+  QString refreshMethod=toShift(result);
+  QString refreshMode  =toShift(result);
+  QString startWith    =toShift(result);
+  QString next         =toShift(result);
+  QString usingPK      =toShift(result);
+  QString masterRBSeg  =toShift(result);
+  QString updatable    =toShift(result);
+  QString query        =toShift(result);
+
+  otl_stream inf(1,
+		 SQLIndexName(Connection),
+		 Connection.connection());
+  inf<<table.utf8()<<owner.utf8();
+  char buffer[100];
+  inf>>buffer;
+  QString index(QString::fromUtf8(buffer));
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),name.lower());
+
+  describeMViewTable(lst,ctx,schema,owner,table);
+  addDescription(lst,ctx,buildMode);
+  ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),index.lower());
+  describeMViewIndex(lst,ctx,schema,owner,index);
+
+  if (refreshMethod!="NEVER REFRESH") {
+    addDescription(lst,ctx,QString("START WITH %1").arg(startWith));
+    addDescription(lst,ctx,QString("NEXT %1").arg(next));
+    addDescription(lst,ctx,usingPK);
+    if (!masterRBSeg.isEmpty())
+      addDescription(lst,ctx,QString("USING MASTER ROLLBACK SEGMENT %1").
+	arg(masterRBSeg.lower()));
+  }
+
+  if (!updatable.isEmpty())
+    addDescription(lst,ctx,updatable);
+  addDescription(lst,ctx,QString("AS %1").arg(query));
+}
+
 QString toExtract::createMViewTable(const QString &schema,const QString &owner,
 				    const QString &name)
 {
@@ -2061,6 +2715,31 @@ QString toExtract::createMViewTable(const QString &schema,const QString &owner,
   return ret;
 }
 
+void toExtract::describeMViewTable(list<QString> &lst,list<QString> &ctx,
+				   const QString &schema,const QString &owner,const QString &name)
+{
+  IsASnapTable=true;
+  //                        Schema        Table         Name
+  static QRegExp parallel("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]PARALLEL");
+
+  bool started=false;
+  bool done=false;
+
+  list<QString> tbllst;
+  describeTable(tbllst,schema,owner,name);
+  QString ret;
+
+  for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+    if(parallel.match(*i))
+      started=true;
+    if (started)
+      lst.insert(lst.end(),reContext(ctx,3,*i));
+  }
+
+  IsASnapTable=false;
+}
+
+
 QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
 				    const QString &name)
 {
@@ -2072,7 +2751,7 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
   bool started=false;
   bool done=false;
 
-  QString initial=createTable(schema,owner,name);
+  QString initial=createIndex(schema,owner,name);
   QStringList linesIn=QStringList::split("\n",initial,true);
   QString ret;
 
@@ -2094,6 +2773,31 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
 
   IsASnapIndex=false;
   return ret;
+}
+
+void toExtract::describeMViewIndex(list<QString> &lst,list<QString> &ctx,
+				   const QString &schema,const QString &owner,const QString &name)
+{
+  IsASnapIndex=true;
+
+  static QRegExp start("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]INITTRANS");
+  static QRegExp ignore("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]LOGGING");
+
+  bool started=false;
+  bool done=false;
+
+  list<QString> tbllst;
+  describeIndex(tbllst,schema,owner,name);
+  QString ret;
+
+  for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+    if(start.match(*i))
+      started=true;
+    if (started)
+      lst.insert(lst.end(),reContext(ctx,3,*i));
+  }
+
+  IsASnapIndex=false;
 }
 
 static toSQL SQLSnapshotInfo("toExtract:SnapshotInfo",
@@ -2181,6 +2885,55 @@ QString toExtract::createMViewLog(const QString &schema,const QString &owner,
   }
   ret+=";\n\n";
   return ret;
+}
+
+void toExtract::describeMViewLog(list<QString> &lst,
+				 const QString &schema,const QString &owner,
+				 const QString &name,const QString &type)
+{
+  list<QString> result=toReadQuery(Connection,SQLSnapshotInfo(Connection),name,owner);
+  if (result.size()!=4)
+    throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
+
+  QString table        =toShift(result);
+  QString rowIds       =toShift(result);
+  QString primaryKey   =toShift(result);
+  QString filterColumns=toShift(result);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),type);
+  ctx.insert(ctx.end(),name.lower());
+
+  describeMViewTable(lst,ctx,schema,owner,table);
+
+
+  if (rowIds=="YES" && primaryKey=="YES")
+    ctx.insert(ctx.end(),"WITH PRIMARY KEY, ROWID");
+  else if (rowIds=="YES")
+    ctx.insert(ctx.end(),"WITH ROWID");
+  else if (primaryKey=="YES")
+    ctx.insert(ctx.end(),"WITH PRIMARY KEY");
+  addDescription(lst,ctx);
+
+  otl_stream inf(1,
+		 SQLSnapshotColumns(Connection),
+		 Connection.connection());
+  bool first=true;
+  if (!inf.eof()) {
+    QString col="(";
+    while(!inf.eof()) {
+      char buffer[100];
+      if (first)
+	first=false;
+      else
+	col+=",";
+      inf>>buffer;
+      col+=QString::fromUtf8(buffer).lower();
+    }
+    col+=")";
+    addDescription(lst,ctx,col);
+  }
 }
 
 static toSQL SQLTableType("toExtract:TableType",
@@ -2422,6 +3175,43 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
   return ret;
 }
 
+void toExtract::describeTable(list<QString> &lst,
+			       const QString &schema,const QString &owner,const QString &name)
+{
+  otl_stream inf(1,
+		 SQLTableType(Connection),
+		 Connection.connection());
+  inf<<name.utf8()<<owner.utf8();
+  if (inf.eof())
+    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+
+  char buffer[100];
+  inf>>buffer;
+  QString partitioned(QString::fromUtf8(buffer));
+  inf>>buffer;
+  QString iot_type(QString::fromUtf8(buffer));
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"TABLE");
+  ctx.insert(ctx.end(),name);
+
+  if (iot_type=="IOT") {
+    if (partitioned=="YES")
+      describePartitionedIOT(lst,ctx,schema,owner,name);
+    else
+      describeIOT(lst,ctx,schema,owner,name);
+    return;
+  } else if (partitioned=="YES") {
+    describePartitionedTable(lst,ctx,schema,owner,name);
+    return;
+  }
+
+  list<QString> result=toReadQuery(Connection,SQLTableInfo(Connection),name,owner);
+  describeTableText(lst,ctx,result,schema,owner,name);
+  describeComments(lst,ctx,schema,owner,name);
+}
+
 static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 				   "SELECT
         -- Table Properties
@@ -2606,7 +3396,6 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
   list<QString> result=toReadQuery(Connection,SQLPartitionedIOTInfo(Connection),
 				   QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
-  ret+=createComments(schema,owner,name);
   otl_stream inf(1,
 		 SQLIndexNames(Connection),
 		 Connection.connection());
@@ -2622,7 +3411,29 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
   ret+=partitionKeyColumns(owner,name,"TABLE");
   ret+="\n)\n";
   ret+=rangePartitions(owner,index,"NONE","IOT");
+  ret+=createComments(schema,owner,name);
   return ret;
+}
+
+void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
+				       const QString &schema,const QString &owner,
+				       const QString &name)
+{
+  list<QString> result=toReadQuery(Connection,SQLPartitionedIOTInfo(Connection),
+				   QString::number(BlockSize),name,owner);
+  describeTableText(lst,ctx,result,schema,owner,name);
+  otl_stream inf(1,
+		 SQLIndexNames(Connection),
+		 Connection.connection());
+  inf<<name.utf8()<<owner.utf8();
+  if (!inf.eof())
+    throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+  char buffer[100];
+  inf>>buffer;
+  QString index(QString::fromUtf8(buffer));
+  addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
+  describePartitions(lst,ctx,owner,index,"NONE","IOT");
+  describeComments(lst,ctx,schema,owner,name);
 }
 
 static toSQL SQLIOTInfo("toExtract:IOTInfo",
@@ -2703,6 +3514,15 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
   ret+=";\n\n";
   ret+=createComments(schema,owner,name);
   return ret;
+}
+
+void toExtract::describeIOT(list<QString> &lst,list<QString> &ctx,
+			    const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> storage=toReadQuery(Connection,SQLIOTInfo(Connection),name,owner);
+
+  describeTableText(lst,ctx,storage,schema,owner,name);
+  describeComments(lst,ctx,schema,owner,name);
 }
 
 static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
@@ -3098,9 +3918,92 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
   return ret;
 }
 
+void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
+					 const QString &schema,const QString &owner,
+					 const QString &name)
+{
+  list<QString> storage=toReadQuery(Connection,SQLPartitionTableInfo(Connection),
+				    QString::number(BlockSize),name,owner);
+
+  QString organization;
+  {
+    list<QString>::iterator i=storage.begin();
+    i++; i++; i++; i++;
+    organization=*i;
+  }
+
+  describeTableText(lst,ctx,storage,schema,owner,name);
+  list<QString> type=toReadQuery(Connection,SQLPartitionType(Connection),name,owner);
+  QString partitionType    (toShift(type));
+  QString partitionCount   (toShift(type));
+  QString subPartitionType (toShift(type));
+  QString subPartitionCount(toShift(type));
+
+  addDescription(lst,ctx,QString("PARTITION BY %1 (%2)").
+		 arg(partitionType).
+		 arg(partitionKeyColumns(owner,name,"TABLE")));
+
+  if (partitionType=="RANGE") {
+    if (subPartitionType=="HASH") {
+      addDescription(lst,ctx,QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
+		     arg(subPartitionKeyColumns(owner,name,"TABLE")).
+		     arg(subPartitionCount));
+    }
+
+    list<QString> segment=toReadQuery(Connection,SQLPartitionSegment(Connection),name,owner);
+
+    while(segment.size()>0) {
+      list<QString> storage;
+      QString partition=toShift(segment);
+      QString highValue=toShift(segment);
+      toPush(storage,"      ");
+      toPush(storage,organization);
+      for(int i=0;i<16;i++)
+	toPush(storage,toShift(segment));
+
+      list<QString> cctx=ctx;
+      cctx.insert(cctx.end(),"PARTITION");
+      cctx.insert(cctx.end(),partition.lower());
+      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
+		     arg(highValue.lower()));
+      describeAttributes(lst,cctx,storage);
+
+      if (subPartitionType=="HASH") {
+	list<QString> subs=toReadQuery(Connection,SQLSubPartitionName(Connection),
+				       name,partition,owner);
+	while(subs.size()>0) {
+	  QString subpart=toShift(subs).lower();
+	  QString tabspac=toShift(subs);
+	  addDescription(lst,cctx,"SUBPARTITION",subpart);
+	  addDescription(lst,cctx,"SUBPARTITION",subpart,
+			 QString("TABLESPACE %1").arg(tabspac));
+	}
+      }
+    }
+  } else {
+    list<QString> hash=toReadQuery(Connection,SQLSubPartitionName(Connection),
+				   name,owner);
+    while(hash.size()>0) {
+      QString partition=toShift(hash).lower();
+      QString tablespac=toShift(hash);
+      addDescription(lst,ctx,"PARTITION",partition);
+      addDescription(lst,ctx,"PARTITION",partition,
+		     QString("TABLESPACE %1").arg(tablespac));
+    }
+  }
+
+  describeComments(lst,ctx,schema,owner,name);
+}
+
 QString toExtract::createPackage(const QString &schema,const QString &owner,const QString &name)
 {
   return displaySource(schema,owner,name,"PACKAGE");
+}
+
+void toExtract::describePackage(list<QString> &lst,
+				const QString &schema,const QString &owner,const QString &name)
+{
+  describeSource(lst,schema,owner,name,"PACKAGE");
 }
 
 QString toExtract::createPackageBody(const QString &schema,const QString &owner,const QString &name)
@@ -3108,9 +4011,21 @@ QString toExtract::createPackageBody(const QString &schema,const QString &owner,
   return displaySource(schema,owner,name,"PACKAGE BODY");
 }
 
+void toExtract::describePackageBody(list<QString> &lst,const QString &schema,
+				    const QString &owner,const QString &name)
+{
+  describeSource(lst,schema,owner,name,"PACKAGE BODY");
+}
+
 QString toExtract::createProcedure(const QString &schema,const QString &owner,const QString &name)
 {
   return displaySource(schema,owner,name,"PROCEDURE");
+}
+
+void toExtract::describeProcedure(list<QString> &lst,
+				  const QString &schema,const QString &owner,const QString &name)
+{
+  describeSource(lst,schema,owner,name,"PROCEDURE");
 }
 
 QString toExtract::createSnapshot(const QString &schema,const QString &owner,const QString &name)
@@ -3121,6 +4036,18 @@ QString toExtract::createSnapshot(const QString &schema,const QString &owner,con
 QString toExtract::createSnapshotLog(const QString &schema,const QString &owner,const QString &name)
 {
   return createMViewLog(schema,owner,name,"SNAPSHOT");
+}
+
+void toExtract::describeSnapshot(list<QString> &lst,const QString &schema,
+				 const QString &owner,const QString &name)
+{
+  describeMView(lst,schema,owner,name,"SNAPSHOT");
+}
+
+void toExtract::describeSnapshotLog(list<QString> &lst,const QString &schema,
+				    const QString &owner,const QString &name)
+{
+  describeMViewLog(lst,schema,owner,name,"SNAPSHOT LOG");
 }
 
 static toSQL SQLProfileInfo("toExtract:ProfileInfo",
@@ -3167,6 +4094,24 @@ QString toExtract::createProfile(const QString &schema,const QString &owner,cons
   return ret;
 }
 
+void toExtract::describeProfile(list<QString> &lst,
+				const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLProfileInfo(Connection),
+				 name);
+  if (info.size()==0)
+    throw QString("Couldn't find profile %1").arg(name);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),"PROFILE");
+  ctx.insert(ctx.end(),name);
+  addDescription(lst,ctx);
+
+  while(info.size()!=0)
+    addDescription(lst,ctx,toShift(info));
+}
+
 static toSQL SQLRoleInfo("toExtract:RoleInfo",
 			 "SELECT
         DECODE(
@@ -3201,6 +4146,22 @@ QString toExtract::createRole(const QString &schema,const QString &owner,const Q
   ret+=QString("CREATE ROLE %1 %2;\n\n").arg(name.lower()).arg(toShift(info));
   ret+=grantedPrivs(name);
   return ret;
+}
+
+void toExtract::describeRole(list<QString> &lst,
+			     const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLRoleInfo(Connection),
+				 name);
+  if (info.size()==0)
+    throw QString("Couldn't find role %1").arg(name);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),"ROLE");
+  ctx.insert(ctx.end(),name);
+  addDescription(lst,ctx);
+  describePrivs(lst,ctx,name);
 }
 
 static toSQL SQLRolePrivs("toExtract:RolePrivs",
@@ -3299,6 +4260,33 @@ QString toExtract::grantedPrivs(const QString &name)
   return ret;
 }
 
+void toExtract::describePrivs(list<QString> &lst,list<QString> &ctx,const QString &name)
+{
+  list<QString> result=toReadQuery(Connection,SQLRolePrivs(Connection),name);
+  while(result.size()>0) {
+    QString role=toShift(result).lower();
+    addDescription(lst,ctx,"GRANT","ROLE",role,toShift(result));
+  }
+
+  result=toReadQuery(Connection,SQLSystemPrivs(Connection),name);
+  while(result.size()>0) {
+    QString priv=toShift(result).lower();
+    addDescription(lst,ctx,"GRANT",priv,toShift(result));
+  }
+
+  result=toReadQuery(Connection,SQLObjectPrivs(Connection),name);
+  while(result.size()>0) {
+    QString priv=toShift(result);
+    QString schema=setSchema(toShift(result));
+    QString res="ON ";
+    res+=schema;
+    if (!schema.isEmpty())
+      res+=".";
+    res+=toShift(result).lower();
+    addDescription(lst,ctx,"GRANT",priv.lower(),res,toShift(result));
+  }
+}
+
 static toSQL SQLRollbackSegment("toExtract:RollbackSegment",
 				"SELECT  DECODE(
                 r.owner
@@ -3345,6 +4333,32 @@ QString toExtract::createRollbackSegment(const QString &schema,const QString &ow
 	       "TABLESPACE     %5;\n\n").
     arg(initialExtent).arg(nextExtent).arg(minExtent).arg(maxExtent).arg(tablespaceName.lower());
   return ret;
+}
+
+void toExtract::describeRollbackSegment(list<QString> &lst,
+					const QString &schema,const QString &owner,
+					const QString &name)
+{
+  list<QString> result=toReadQuery(Connection,SQLRollbackSegment(Connection),name);
+  QString isPublic      = toShift(result);
+  QString tablespaceName= toShift(result);
+  QString initialExtent = toShift(result);
+  QString nextExtent    = toShift(result);
+  QString minExtent     = toShift(result);
+  QString maxExtent     = toShift(result);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),"ROLLBACK SEGMENT");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,QString("TABLESPACE %1").arg(tablespaceName.lower()));
+
+  ctx.insert(ctx.end(),"STORAGE");
+  addDescription(lst,ctx,QString("INITIAL %1").arg(initialExtent));
+  addDescription(lst,ctx,QString("NEXT %1").arg(nextExtent));
+  addDescription(lst,ctx,QString("MINEXTENTS %1").arg(minExtent));
+  addDescription(lst,ctx,QString("MAXEXTENTS %1").arg(maxExtent));
 }
 
 static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
@@ -3407,6 +4421,26 @@ QString toExtract::createSequence(const QString &schema,const QString &owner,con
   return ret; 
 }
 
+void toExtract::describeSequence(list<QString> &lst,
+				 const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLSequenceInfo(Connection),
+				 name,owner);
+  if (info.size()==0)
+    throw QString("Couldn't find sequence %1").arg(name);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema.lower());
+  ctx.insert(ctx.end(),"SEQUENCE");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx);
+
+  while(info.size()!=0)
+    addDescription(lst,ctx,toShift(info));
+}
+
 static toSQL SQLSynonymInfo("toExtract:SynonymInfo",
 			    "SELECT  table_owner
       , table_name
@@ -3451,6 +4485,32 @@ QString toExtract::createSynonym(const QString &schema,const QString &owner,cons
   return ret;
 }
 
+void toExtract::describeSynonym(list<QString> &lst,
+				const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLSynonymInfo(Connection),
+				 name,owner);
+  if (info.size()==0)
+    throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
+  
+  QString tableOwner = toShift(info);
+  QString tableName  = toShift(info);
+  QString dbLink     = toShift(info);
+  if (dbLink=="NULL")
+    dbLink="";
+  else
+    dbLink.prepend("@");
+  QString useSchema=(schema=="PUBLIC")?QString(""):schema;
+  QString tableSchema=setSchema(tableOwner);
+
+  list<QString> ctx;
+  if (owner=="PUBLIC")
+    ctx.insert(ctx.end(),owner);
+  addDescription(lst,ctx,"SYNONYM",QString("%1%2%3").
+		 arg(tableSchema).arg(tableName.lower()).arg(dbLink.lower()));
+}
+
 static toSQL SQLTableConstraints("toExtract:TableConstraints",
 				 "SELECT
         constraint_name
@@ -3493,6 +4553,21 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
   while(triggers.size()>0)
     ret+=createTrigger(schema,owner,toShift(triggers));
   return ret;
+}
+
+void toExtract::describeTableFamily(list<QString> &lst,
+				    const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> indexes=toReadQuery(Connection,SQLIndexNames(Connection),name,owner);
+  describeTable(lst,schema,owner,name);
+  while(indexes.size()>0)
+    describeIndex(lst,schema,owner,toShift(indexes));
+  list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
+  while(constraints.size()>0)
+    describeConstraint(lst,schema,owner,toShift(constraints));
+  list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
+  while(triggers.size()>0)
+    describeTrigger(lst,schema,owner,toShift(triggers));
 }
 
 static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
@@ -3608,6 +4683,80 @@ QString toExtract::createTrigger(const QString &schema,const QString &owner,cons
   ret+=body;
   ret+="\n/\n\n";
   return ret;
+}
+
+void toExtract::describeTrigger(list<QString> &lst,
+				const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> result=toReadQuery(Connection,SQLTriggerInfo(Connection),name,owner);
+  if (result.size()!=9)
+    throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
+  QString triggerType=toShift(result);
+  QString event      =toShift(result);
+  QString tableOwner =toShift(result);
+  QString table      =toShift(result);
+  QString baseType   =toShift(result);
+  QString refNames   =toShift(result);
+  QString description=toShift(result);
+  QString when       =toShift(result);
+  QString body       =toShift(result);
+
+  QString trgType;
+  if (triggerType.find("BEFORE")>=0)
+    trgType="BEFORE";
+  else if (triggerType.find("AFTER")>=0)
+    trgType="AFTER";
+  else if (triggerType.find("INSTEAD OF")>=0)
+    trgType="INSTEAD OF";
+
+  QString src=trgType;
+  src+=" ";
+  src+=event;
+  int pos=description.find(src);
+  QString columns;
+  if (pos>=0) {
+    pos+=src.length();
+    int endPos=description.find(" ON ",pos);
+    if (endPos>=0) {
+      columns=description.right(description.length()-pos);
+      columns.truncate(endPos-pos);
+    }
+  }
+  QString schema2=setSchema(tableOwner);
+  QString object;
+  if (baseType=="TABLE") {
+    object=schema2;
+    if (!schema2.isEmpty())
+      object+=".";
+    object+=table;
+  } else if (baseType=="SCHEMA") {
+    object=schema;
+    if (!schema.isEmpty())
+      object+=".";
+    object+="SCHEMA";
+  } else {
+    object=baseType;
+  }
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema.lower());
+  ctx.insert(ctx.end(),"TRIGGER");
+  ctx.insert(ctx.end(),name.lower());
+  addDescription(lst,ctx);
+  QString tmp=triggerType;
+  tmp+=event;
+  tmp+=columns;
+  addDescription(lst,ctx,tmp);
+  tmp="ON ";
+  tmp+=object;
+  if (!refNames.isEmpty()) {
+    tmp+=" ";
+    tmp+=refNames;
+  }
+  addDescription(lst,ctx,object);
+  if (!when.isEmpty())
+    addDescription(lst,ctx,when);
+  addDescription(lst,ctx,"BODY",body);
 }
 
 static toSQL SQLTablespaceInfo("toExtract:TablespaceInfo",
@@ -3848,9 +4997,97 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
   return ret;
 }
 
+void toExtract::describeTablespace(list<QString> &lst,
+				   const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLTablespaceInfo(Connection),
+				 QString::number(BlockSize),
+				 name);
+
+  if (info.size()!=10)
+    throw QString("Couldn't find tablespace %1").arg(name);
+
+  QString initial          =toShift(info);
+  QString next             =toShift(info);
+  QString minExtents       =toShift(info);
+  QString maxExtents       =toShift(info);
+  QString pctIncrease      =toShift(info);
+  QString minExtlen        =toShift(info);
+  QString contents         =toShift(info);
+  QString logging          =toShift(info);
+  QString extentManagement =toShift(info);
+  QString allocationType   =toShift(info);
+
+  list<QString> ctx;
+
+  if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
+    ctx.insert(ctx.end(),"TEMPORARY TABLESPACE");
+  else
+    ctx.insert(ctx.end(),"TABLESPACE");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx);
+
+  list<QString> files=toReadQuery(Connection,
+				  SQLDatafileInfo(Connection),
+				  QString::number(BlockSize),
+				  name);
+  while(files.size()>0) {
+    QString fileName       =toShift(files);
+    QString bytes          =toShift(files);
+    QString autoExtensible =toShift(files);
+    QString maxBytes       =toShift(files);
+    QString incrementBy    =toShift(files);
+
+    list<QString> cctx=ctx;
+    cctx.insert(cctx.end(),"DATAFILE");
+    cctx.insert(cctx.end(),prepareDB(fileName));
+
+    addDescription(lst,cctx);
+    addDescription(lst,cctx,QString("SIZE %3").arg(bytes));
+
+    if (Connection.version()>="8.0") {
+      QString ret="AUTOEXTEND ";
+      if (autoExtensible=="YES")
+	ret+=QString("ON NEXT %1 MAXSIZE %2\n").
+	  arg(incrementBy).
+	  arg(maxBytes);
+      else
+	ret+="OFF\n";
+      addDescription(lst,cctx,ret);
+    }
+  }
+
+  if (extentManagement=="LOCAL") {
+    QString ret="EXTENT MANAGEMENT LOCAL ";
+    if (allocationType=="SYSTEM")
+      ret+="AUTOALLOCATE";
+    else
+      ret+=QString("UNIFORM SIZE %1").arg(next);
+    addDescription(lst,ctx,ret);
+  } else {
+    addDescription(lst,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
+    addDescription(lst,ctx,"STORAGE",QString("NEXT %1").arg(next));
+    addDescription(lst,ctx,"STORAGE",QString("MINEXTENTS %1").arg(minExtents));
+    addDescription(lst,ctx,"STORAGE",QString("MAXEXTENTS %1").arg(maxExtents));
+    addDescription(lst,ctx,"STORAGE",QString("PCTINCREASE %1").arg(pctIncrease));
+    addDescription(lst,ctx,QString("MINIMUM EXTENT %1").arg(minExtlen));
+    addDescription(lst,ctx,"EXTENT MANAGEMENT DICTIONARY");
+  }
+  if (Connection.version()>="8.0"&&(contents!="TEMPORARY"||extentManagement!="LOCAL"))
+    addDescription(lst,ctx,logging);
+}
+
 QString toExtract::createType(const QString &schema,const QString &owner,const QString &name)
 {
   return displaySource(schema,owner,name,"TYPE");
+}
+
+void toExtract::describeType(list<QString> &lst,
+			     const QString &schema,const QString &owner,const QString &name)
+{
+  describeSource(lst,schema,owner,name,"TYPE");
 }
 
 static toSQL SQLUserInfo("toExtract:UserInfo",
@@ -3858,7 +5095,7 @@ static toSQL SQLUserInfo("toExtract:UserInfo",
         DECODE(
                 password
                ,'EXTERNAL','EXTERNALLY'
-               ,'BY VALUES ''' || password || ''''
+               ,'BY ''' || password || ''''
               )                         AS password
       , profile
       , default_tablespace
@@ -3924,6 +5161,42 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
   return ret;
 }
 
+void toExtract::describeUser(list<QString> &lst,
+			     const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> info=toReadQuery(Connection,
+				 SQLUserInfo(Connection),
+				 name);
+
+  if (info.size()!=4)
+    throw QString("Couldn't find user %1").arg(name);
+
+  QString password           =toShift(info);
+  QString profile            =toShift(info);
+  QString defaultTablespace  =toShift(info);
+  QString temporaryTablespace=toShift(info);
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),"ROLE");
+  ctx.insert(ctx.end(),name.lower());
+
+  addDescription(lst,ctx);
+  addDescription(lst,ctx,"IDENTIFIED",password);
+  addDescription(lst,ctx,QString("PROFILE %1").arg(profile.lower()));
+  addDescription(lst,ctx,QString("DEFAULT TABLESPACE %1").arg(defaultTablespace.lower()));
+  addDescription(lst,ctx,QString("TEMPORARY TABLESPACE %1").arg(temporaryTablespace.lower()));
+
+  list<QString> quota=toReadQuery(Connection,SQLUserQuotas(Connection),name);
+  while(quota.size()>0) {
+    QString siz=toShift(quota);
+    QString tab=toShift(quota);
+    addDescription(lst,ctx,"QUOTA",QString("%1 ON %2").
+		   arg(toShift(quota).lower()).
+		   arg(toShift(quota)));
+  }
+  describePrivs(lst,ctx,name);
+}
+
 static toSQL SQLViewSource("toExtract:ViewSource",
 			   "SELECT  text
  FROM
@@ -3954,6 +5227,25 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
   ret+=text;
   ret+=";\n\n";
   return ret;
+}
+
+void toExtract::describeView(list<QString> &lst,
+			     const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> source=toReadQuery(Connection,
+				   SQLViewSource(Connection),
+				   name,owner);
+  if (source.size()==0)
+    throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
+
+  list<QString> ctx;
+  ctx.insert(ctx.end(),schema);
+  ctx.insert(ctx.end(),"VIEW");
+  ctx.insert(ctx.end(),name);
+
+  addDescription(lst,ctx);
+  QString text=toShift(source);
+  addDescription(lst,ctx,"AS",text);
 }
 
 QString toExtract::dropConstraint(const QString &schema,const QString &owner,
@@ -4457,6 +5749,7 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
 
 QString toExtract::compile(const QString &type,list<QString> &objects)
 {
+  clearFlags();
   QString utype=type.upper();
   QString ret=generateHeading("COMPILE",utype,objects);
 
@@ -4485,6 +5778,7 @@ QString toExtract::compile(const QString &type,list<QString> &objects)
 
 QString toExtract::create(const QString &type,list<QString> &objects)
 {
+  clearFlags();
   QString utype=type.upper();
   QString ret=generateHeading("CREATE",utype,objects);
 
@@ -4554,8 +5848,87 @@ QString toExtract::create(const QString &type,list<QString> &objects)
   return ret;
 }
 
+list<QString> toExtract::describe(const QString &type,list<QString> &objects)
+{
+  clearFlags();
+  Describe=true;
+  QString utype=type.upper();
+
+  list<QString> ret;
+
+  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString owner;
+    QString name;
+    parseObject(*i,owner,name);
+    QString schema=setSchema(owner);
+
+    list<QString> cur;
+
+    if (utype=="CONSTRAINT")
+      describeConstraint(cur,schema,owner,name);
+    else if (utype=="DATABASE LINK")
+      describeDBLink(cur,schema,owner,name);
+    else if (utype=="EXCHANGE INDEX")
+      describeExchangeIndex(cur,schema,owner,name);
+    else if (utype=="EXCHANGE TABLE")
+      describeExchangeTable(cur,schema,owner,name);
+    else if (utype=="FUNCTION")
+      describeFunction(cur,schema,owner,name);
+    else if (utype=="INDEX")
+      describeIndex(cur,schema,owner,name);
+    else if (utype=="MATERIALIZED VIEW")
+      describeMaterializedView(cur,schema,owner,name);
+    else if (utype=="MATERIALIZED VIEW LOG")
+      describeMaterializedViewLog(cur,schema,owner,name);
+    else if (utype=="PACKAGE")
+      describePackage(cur,schema,owner,name);
+    else if (utype=="PACKAGE BODY")
+      describePackageBody(cur,schema,owner,name);
+    else if (utype=="PROCEDURE")
+      describeProcedure(cur,schema,owner,name);
+    else if (utype=="PROFILE")
+      describeProfile(cur,schema,owner,name);
+    else if (utype=="ROLE")
+      describeRole(cur,schema,owner,name);
+    else if (utype=="ROLLBACK SEGMENT")
+      describeRollbackSegment(cur,schema,owner,name);
+    else if (utype=="SEQUENCE")
+      describeSequence(cur,schema,owner,name);
+    else if (utype=="SNAPSHOT")
+      describeSnapshot(cur,schema,owner,name);
+    else if (utype=="SNAPSHOT LOG")
+      describeSnapshotLog(cur,schema,owner,name);
+    else if (utype=="SYNONYM")
+      describeSynonym(cur,schema,owner,name);
+    else if (utype=="TABLE")
+      describeTable(cur,schema,owner,name);
+    else if (utype=="TABLE FAMILY")
+      describeTableFamily(cur,schema,owner,name);
+    else if (utype=="TABLESPACE")
+      describeTablespace(cur,schema,owner,name);
+    else if (utype=="TRIGGER")
+      describeTrigger(cur,schema,owner,name);
+    else if (utype=="TYPE")
+      describeType(cur,schema,owner,name);
+    else if (utype=="USER")
+      describeUser(cur,schema,owner,name);
+    else if (utype=="VIEW")
+      describeView(cur,schema,owner,name);
+    else {
+      QString str="Invalid type ";
+      str+=type;
+      str+=" to describe";
+      throw str;
+    }
+    cur.sort();
+    ret.merge(cur);
+  }
+  return ret;
+}
+
 QString toExtract::drop(const QString &type,list<QString> &objects)
 {
+  clearFlags();
   QString utype=type.upper();
   QString ret=generateHeading("CREATE",utype,objects);
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
@@ -4622,6 +5995,7 @@ QString toExtract::drop(const QString &type,list<QString> &objects)
 
 QString toExtract::resize(const QString &type,list<QString> &objects)
 {
+  clearFlags();
   QString ret=generateHeading("CREATE",type,objects);
 
   QString utype=type.upper();

@@ -14,11 +14,11 @@ class toExtract {
   QString Resize;
   bool Prompt;
   bool Heading;
-  bool SQL;
 
   // Flags
   bool IsASnapIndex;
   bool IsASnapTable;
+  bool Describe;
 
   // Database info
   int BlockSize;
@@ -58,6 +58,58 @@ class toExtract {
   QString createType(const QString &schema,const QString &owner,const QString &name);
   QString createUser(const QString &schema,const QString &owner,const QString &name);
   QString createView(const QString &schema,const QString &owner,const QString &name);
+
+  // Description functions
+  void describeConstraint(list<QString> &lst,const QString &schema,const QString &owner,
+			  const QString &name);
+  void describeDBLink(list<QString> &lst,const QString &schema,const QString &owner,
+		      const QString &name);
+  void describeExchangeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+			     const QString &name);
+  void describeExchangeTable(list<QString> &lst,const QString &schema,const QString &owner,
+			     const QString &name);
+  void describeFunction(list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+		     const QString &name);
+  void describeMaterializedView(list<QString> &lst,const QString &schema,const QString &owner,
+				const QString &name);
+  void describeMaterializedViewLog(list<QString> &lst,const QString &schema,const QString &owner,
+				   const QString &name);
+  void describePackage(list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describePackageBody(list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeProcedure(list<QString> &lst,const QString &schema,const QString &owner,
+			 const QString &name);
+  void describeProfile(list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeRole(list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeRollbackSegment(list<QString> &lst,const QString &schema,const QString &owner,
+			       const QString &name);
+  void describeSequence(list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeSnapshot(list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeSnapshotLog(list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeSynonym(list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeTable(list<QString> &lst,const QString &schema,const QString &owner,
+		     const QString &name);
+  void describeTableFamily(list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeTablespace(list<QString> &lst,const QString &schema,const QString &owner,
+			  const QString &name);
+  void describeTrigger(list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeType(list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeUser(list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeView(list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
 
   // Drop functions
   QString dropConstraint(const QString &schema,const QString &name,const QString &type,
@@ -116,7 +168,47 @@ class toExtract {
   QString subPartitionKeyColumns(const QString &owner,const QString &name,const QString &type);
   QString tableColumns(const QString &owner,const QString &name);
 
+  // Misc describe functions
+  void describeAttributes(list<QString> &lst,list<QString> &ctx,list<QString> &result);
+  void describeComments(list<QString> &lst,list<QString> &ctx,
+			const QString &schema,const QString &owner,const QString &name);
+  void describePrivs(list<QString> &lst,list<QString> &ctx,const QString &name);
+  void describeIndexColumns(list<QString> &lst,list<QString> &ctx,
+			    const QString &owner,const QString &name);
+  void describeIOT(list<QString> &lst,list<QString> &ctx,
+		   const QString &schema,const QString &owner,const QString &name);
+  void describeMView(list<QString> &lst,const QString &schema,
+		     const QString &owner,const QString &name,const QString &type);
+  void describeMViewIndex(list<QString> &lst,list<QString> &ctx,const QString &schema,
+			  const QString &owner,const QString &name);
+  void describeMViewLog(list<QString> &lst,const QString &schema,
+			const QString &owner,const QString &name,const QString &type);
+  void describeMViewTable(list<QString> &lst,list<QString> &ctx,const QString &schema,
+			  const QString &owner,const QString &name);
+  void describePartitionedIndex(list<QString> &lst,list<QString> &ctx,
+				const QString &schema,const QString &owner,const QString &name);
+  void describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
+			      const QString &schema,const QString &owner,const QString &name);
+  void describePartitionedTable(list<QString> &lst,list<QString> &ctx,
+				const QString &schema,const QString &owner,const QString &name);
+  void describePartitions(list<QString> &lst,list<QString> &ctx,
+			  const QString &owner,const QString &name,
+			  const QString &subPartitionType,const QString &locality);
+  void describeTableText(list<QString> &lst,list<QString> &ctx,list<QString> &result,
+			 const QString &schema,const QString &owner,const QString &name);
+  void describeTableColumns(list<QString> &lst,list<QString> &ctx,
+			    const QString &owner,const QString &name);
+  void describeSource(list<QString> &lst,const QString &schema,const QString &owner,
+		      const QString &name,const QString &type);
+
   // Misc functions
+  void addDescription(list<QString> &ret,list<QString> &ctx,
+		      const QString &arg1=QString::null,const QString &arg2=QString::null,
+		      const QString &arg3=QString::null,const QString &arg4=QString::null,
+		      const QString &arg5=QString::null,const QString &arg6=QString::null,
+		      const QString &arg7=QString::null,const QString &arg8=QString::null,
+		      const QString &arg9=QString::null);
+  void clearFlags(void);
   QString generateHeading(const QString &action,
 			  const QString &type,
 			  list<QString> &list);
@@ -127,11 +219,13 @@ class toExtract {
   QString segmentAttributes(list<QString> &result);
   QString setSchema(const QString &owner);
   void setSizes(void);
+  QString reContext(list<QString> &ctx,int strip,const QString &str);
 public:
   toExtract(toConnection &conn);
 
   QString compile(const QString &type,list<QString> &object);
   QString create(const QString &type,list<QString> &object);
+  list<QString> describe(const QString &type,list<QString> &object);
   QString drop(const QString &type,list<QString> &object);
   QString resize(const QString &type,list<QString> &object);
 
@@ -145,8 +239,6 @@ public:
   { Prompt=prompt; }
   void setHeading(bool heading)
   { Heading=heading; }
-  void setSQL(bool sql)
-  { SQL=sql; }
 
   const QString &getSchema(void)
   { return Schema; }
@@ -156,8 +248,6 @@ public:
   { return Prompt; }
   bool getHeading(void)
   { return Heading; }
-  bool getSQL(void)
-  { return SQL; }
 };
 
 #endif
