@@ -1361,7 +1361,7 @@ __EOT__
         print MAKEFILE <<__EOT__;
 	main.cpp
 	\@echo Linking \$\@
-	\$(GCC) \$(LFLAGS) -Xlinker "--export-dynamic" \$(LFLAGS_GLOB) \\
+	\$(GCC) \$(CFLAGS) \$(LFLAGS) -Xlinker "--export-dynamic" \$(LFLAGS_GLOB) \\
 		-o \$\@ \$^ \$(LIBS_GLOB) \$(STDCPP_SHARED) \$(QT_SHARED)
 __EOT__
 

@@ -1201,3 +1201,25 @@ bool toFreeware(void)
 #include "license/tolicense.cpp"
 #include "license/tolicenseui.cpp"
 #endif
+
+void toCheckCommercial(const QString &reason)
+{
+  if (!toFreeware()) {
+    time_t t=toTool::globalConfig("FirstInstall","").toInt();
+    if (time(NULL)-t>31*24*3600) {
+      if (toCheckLicense(false).contains("Unregistered")) {
+	TOMessageBox::fatal(toMainWidget(),
+			    "Need registration",
+			    "You are probably not using this software in a non\n"
+			    "commercial setting since:\n\n"+reason+
+			    "\n\n"
+			    "If you do please contact tora@henrik.org and explain what you\n"
+			    "are using it for and I'll send you a non commercial license so\n"
+			    "you can continue using TOra. Otherwise you need to buy a license\n"
+			    "at http://www.globecom.se/tora/register",
+			    "Ok");
+	exit(2);
+      }
+    }
+  }
+}

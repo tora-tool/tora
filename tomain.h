@@ -733,6 +733,11 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
  * @return Selected filename.
  */
 QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
+/**
+ * Check if this is a registered TOra or freeware, otherwise quit.
+ */
+void toCheckCommercial(const QString &reason);
+
 /** Get index of menu to insert tool specific menu at.
  * @return Index of the tool menu entry.
  */
