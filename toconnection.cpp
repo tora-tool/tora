@@ -658,6 +658,7 @@ toConnection::toConnection(const QString &provider,
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
+  NeedCommit=false;
   if (cache)
     readObjects();
   else
@@ -731,6 +732,7 @@ void toConnection::commit(void)
     delete (*i);
     Connections.erase(i);
   }
+  setNeedCommit(false);
 }
 
 void toConnection::rollback(void)
@@ -744,6 +746,7 @@ void toConnection::rollback(void)
     delete (*i);
     Connections.erase(i);
   }
+  setNeedCommit(false);
 }
 
 void toConnection::delWidget(QWidget *widget)

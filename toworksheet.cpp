@@ -843,10 +843,8 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   if (!Light)
     changeResult(CurrentTab);
 
-  QString tmp=sql.mid(0,10).lower();
-
-  static QRegExp re("^\\d+ rows processed$");
-  if (result.startsWith("0")&&result.contains(re)) {
+  static QRegExp re("^[1-9]\\d* rows processed$");
+  if (result.contains(re)) {
     if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
       connection().commit();
     else
