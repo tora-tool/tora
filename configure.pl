@@ -1643,11 +1643,11 @@ install: \$(TARGET) install-common install-kde
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
 	cp \$(TARGET) \$(INSTALLBIN)/tora
-	if [ -f tora-plugin ] ; \
-	    then cp \$(TARGET) \$(INSTALLBIN)/tora ; \
-	    rm -f tora-plugin ; \
-	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \
-	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \
+	if [ -f tora-plugin ] ; \\
+	    then cp \$(TARGET) \$(INSTALLBIN)/tora ; \\
+	    rm -f tora-plugin ; \\
+	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \\
+	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \\
 	fi
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
