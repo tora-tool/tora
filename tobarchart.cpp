@@ -251,29 +251,52 @@ void toBarChart::paintEvent(QPaintEvent *e)
   }
   bool leftAxis=true;
   if (!Zooming) {
-    if (MinAuto||MaxAuto) {
+    if (MinAuto) {
       bool first=true;
-      for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      list<list<double> >::reverse_iterator i=Values.rbegin();
+      if (i!=Values.rend()) {
 	for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	  if (first) {
-	    zMinValue=*j;
-	    zMaxValue=*j;
-	    first=false;
-	  } else if (zMaxValue<*j)
-	    zMaxValue=*j;
-	  else if (zMinValue>*j)
-	    zMinValue=*j;
+	if (first) {
+	  first=false;
+	  zMinValue=*j;
+	} else if (zMinValue>*j)
+	  zMinValue=*j;
 	}
       }
-      if (zMaxValue==0&&zMinValue==0)
-	leftAxis=false;
-      zMaxValue=round(zMaxValue,true);
-      zMinValue=round(zMinValue,false);
     }
+    if (MaxAuto) {
+      bool first=true;
+      list<double> total;
+      for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+	list<double>::iterator k=total.begin();
+	for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	  if (k==total.end()) {
+	    total.insert(total.end(),*j);
+	    k=total.end();
+	  } else {
+	    *k+=*j;
+	    k++;
+	  }
+	}
+      }
+      for(list<double>::iterator i=total.begin();i!=total.end();i++) {
+	if (first) {
+	  first=false;
+	  zMaxValue=*i;
+	} else if (zMaxValue<*i)
+	  zMaxValue=*i;
+      }
+    }
+    if (zMaxValue==0&&zMinValue==0)
+      leftAxis=false;
     if(!MinAuto)
       zMinValue=MinValue;
+    else
+      zMinValue=round(zMinValue,false);
     if(!MaxAuto)
       zMaxValue=MaxValue;
+    else
+      zMaxValue=round(zMaxValue,true);
   }
 
   if (AxisText) {

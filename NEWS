@@ -38,6 +38,7 @@
 2001-08-12: Added zooming to linecharts.
 2001-08-13: Added zooming to barcharts.
 2001-08-13: Made it possible to get snapshot of chart by doubleclicking on it.
+2001-08-13: Fixed problem with automatic scaling in tobarchart.
 
 0.14: Released 2001-08-02
 
