@@ -122,8 +122,10 @@ my %plugins=(
 						     "toeditextensiongotoui",
 						     "toeditextensionsetupui" ],
 					"Any" => 1 },
-	     "toextract"           => { "Files" => [ "toextract",
+	     "toextract"           => { "Files" => [ "todatatype",
+						     "toextract",
 						     "toreport",
+						     "toresultconstraint",
 						     "toresultextract" ],
 					"Any" => 1 },
 	     "toinvalid"           => { "Files" => [ "toinvalid" ],
@@ -140,7 +142,6 @@ my %plugins=(
 					"Any" => 1 },
 	     "toresult"            => { "Files" => [ "toresultcols",
 						     "toresultcombo",
-						     "toresultconstraint",
 						     "toresultcontent",
 						     "toresultcontentfilterui",
 						     "toresultdepend",
@@ -191,7 +192,6 @@ my %plugins=(
 						     "totuningsettingui" ],
 					"Oracle" => 1 },
 	     "towidget"            => { "Files" => [ "tochangeconnection",
-						     "todatatype",
 						     "tofilesize",
 						     "tosgastatement",
 						     "totableselect",
@@ -209,13 +209,6 @@ my %plugins=(
 	\@echo Linking plugin \$\@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	\$(GCC) -shared \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) -o \$@ \$^ \$(ORACLE_SHARED)
-__EOMK__
-	     "tomysqlconnection"   => { "Files" => [ "tomysqlconnection" ],
-					"MySQL" => 1,
-					"Custom" => <<__EOMK__ } ,
-	\@echo Linking plugin \$\@
-	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
-	\$(GCC) -shared \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) \$(MYSQL_SHARED) -o \$@ \$^
 __EOMK__
 	     "tooraclepreload"     => { "Files" => [ "tooraclepreload" ],
 					"Oracle" => 1 },
@@ -299,11 +292,8 @@ my $TestDB;
 my $RPMGenerate=0;
 my $OptLevel="-O3";
 
-my $MySQLInclude;
 my $MySQLLib;
-my $MySQLShared="-lmysqlclient";
 my $MySQLStatic;
-my $MySQLFound=1;
 
 my $OnlyMake=0;
 my $NewCheck=1;
@@ -327,8 +317,6 @@ for (@ARGV) {
 	$LUpdate=$1;
     } elsif (/^--prefix=(.*)$/) {
 	$InstallPrefix=$1;
-    } elsif (/^--with-mysql-include=(.*)$/) {
-	$MySQLInclude=$1;
     } elsif (/^--with-mysql-libs=(.*)$/) {
 	$MySQLLib=$1;
     } elsif (/^--prefix-bin=(.*)$/) {
@@ -342,8 +330,6 @@ for (@ARGV) {
     } elsif (/^--with-mono$/) {
 	$Target="$ProgramName-mono";
 	$ForceTarget=1;
-    } elsif (/^--without-mysql$/) {
-	$MySQLFound=0;
     } elsif (/^--without-oracle$/) {
 	$OracleFound=0;
 	$OracleShared=""
@@ -404,10 +390,8 @@ Options can be any of the following:
 --without-kde        Dont compile as KDE application even though KDE available.
 --with-kde-include   Where to find KDE include files
 --with-kde-libs      Where to find KDE libraries
---with-mysql-include Where to find MySQL include files
 --with-mysql-libs    Where to find MySQL library files
 --without-oracle     Compile without Oracle support (Not enabled by default)
---without-mysql      Don't compile in MySQL support (MySQL enabled if detected)
 --without-rpath      Compile without rpath to Oracle libraries (Not enabled by default)
 --disable-new-check  Disable new version check globally in $ProgramName (Not enabled by default)
 --enable-opt-flag    Set the optimize flag to use for the compile (Default -O3)
@@ -471,18 +455,6 @@ void testOracle(void) // Not called
     int argc;
     QApplication app(argc,NULL);
     otl_connect *test=new otl_connect("Test",0);
-}
-__TEMP__
-    }
-    if ($MySQLFound) {
-	print TEMP <<__TEMP__;
-
-#include <mysql.h>
-void testMySQL(void) // Not called
-{
-    int argc;
-    QApplication app(argc,NULL);
-    mysql_free_result(NULL);
 }
 __TEMP__
     }
@@ -1002,11 +974,7 @@ __TEMP__
     }
 
     if ($QtVersion ge "3.0") {
-	$MySQLFound=0;
 	print "checking for MySQL support ... Available through QSql only with Qt >= 3.0.0\n";
-	undef $MySQLLib;
-	undef $MySQLStatic;
-	undef $MySQLInclude;
 	findFile("^libmysqlclient.*\\.a",sub {
 		                             $MySQLStatic=$_[0];
 					     return -f $_[0];
@@ -1023,87 +991,16 @@ __TEMP__
 	} else {
 	    $MySQLLib=$MySQLStatic;
 	}
-    } elsif ($MySQLFound) {
-	print "checking for MySQL include files ... ";
-
-	$MySQLInclude=findFile("^mysql\\.h\$",
-			       undef,
-			       $MySQLInclude,
-			       "/usr/include",
-			       "/usr/include/mysql",
-			       "/usr/lib/mysql/include",
-			       "/usr/local/include",
-			       "/usr/local/include/mysql",
-			       "/usr/local/lib/mysql/include");
-	
-	if (!-d $MySQLInclude) {
-	    print "no\n";
-	    $MySQLFound=0;
-	} else {
-	    print "$MySQLInclude\n";
-	    print "checking for MySQL library ... ";
-	    $MySQLLib=findFile("^libmysqlclient\\.(?:s[ol]|dylib)",sub {
-		                                          return -f $_[0] && ! -l $_[0];
-						      },
-			       $MySQLLib,
-			       "/usr/lib",
-			       "/usr/lib/mysql",
-			       "/usr/lib/mysql/lib",
-			       "/usr/local/lib",
-			       "/usr/local/lib/mysql",
-			       "/usr/local/lib/mysql/lib");
-	    
-	    if (-d $MySQLLib) {
-		$MySQLShared=" -lmysqlclient";
-	    }
-	    if (!-d $MySQLLib) {
-		print "no\n";
-		$MySQLFound=0;
-	    } else {
-		print "$MySQLLib\n";
-	    }
-	    
-	    print "checking for MySQL static library ...";
-	    
-	    findFile("^libmysqlclient.*\\.a",sub {
-		                                 $MySQLStatic=$_[0];
-						 return -f $_[0];
-					     },
-		     $MySQLLib,
-		     "/usr/lib",
-		     "/usr/lib/mysql",
-		     "/usr/lib/mysql/lib",
-		     "/usr/local/lib",
-		     "/usr/local/lib/mysql",
-		     "/usr/local/lib/mysql/lib");
-	    if (! -f $MySQLStatic) {
-		$MySQLStatic="";
-		print "no\n";
-	    } else {
-		print "$MySQLStatic\n";
-		if (!$MySQLFound) {
-		    $MySQLFound=1;
-		    $MySQLLib=$MySQLStatic;
-		}
-	    }
-	}
-
-	if ($MySQLFound) {
-	    $TestDB.=" -lmysqlclient";
-	}
     }
 	
     print "checking for any database ... ";
 
-    if (!$MySQLFound&&!$OracleFound&&$QtVersion lt "3") {
-	print "failed!\n\nNeed either MySQL, Oracle or Qt3. None were found.\n";
+    if (!$OracleFound&&$QtVersion lt "3") {
+	print "failed!\n\nNeed either Oracle or Qt3. None were found.\n";
 	exit(2);
     }
     if ($OracleFound) {
 	print "Oracle ";
-    }
-    if ($MySQLFound) {
-	print "MySQL ";
     }
     if ($QtVersion ge "3.0") {
 	print "QSql ";
@@ -1112,9 +1009,6 @@ __TEMP__
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     $LFlags.="\"-L".$QtLib."\" ";
-    if (defined $MySQLLib) {
-	$LFlags.="\"-L".$MySQLLib."\" ";
-    }
     if ($OracleRelease =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
         $LFlags.="\"-lcore4\" ";
@@ -1153,9 +1047,6 @@ __TEMP__
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
     $Includes=&addInclude($Includes,$QtInclude);
-    if (defined $MySQLInclude) {
-	$Includes=&addInclude($Includes,$MySQLInclude);
-    }
 
     if (!$ForceTarget) {
 	print "checking for plugin support ... ";
@@ -1346,14 +1237,6 @@ __EOT__
 	print MAKEFILE "TARGET=$Target\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# MySQL found\n";
-	print MAKEFILE "MYSQL_FOUND=$MySQLFound\n";
-	print MAKEFILE "\n";
-
-	print MAKEFILE "# MySQL library\n";
-	print MAKEFILE "MYSQL_SHARED=$MySQLShared\n";
-	print MAKEFILE "\n";
-
 	print MAKEFILE "# Static MySQL libraries\n";
 	print MAKEFILE "MYSQL_STATIC=$MySQLStatic\n";
 	print MAKEFILE "\n";
@@ -1485,7 +1368,6 @@ __EOT__
 	my @allsource=@source;
 	for my $t (keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
-		($plugins{$t}{MySQL}&&$MySQLFound)||
 		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		push(@allsource,@{$plugins{$t}{Files}});
@@ -1622,7 +1504,7 @@ distclean: clean
 	-rm -rf .xvpics >/dev/null 2>&1
 	-rm -rf icons/.xvpics >/dev/null 2>&1
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
-	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
+	-rm -f rpmcommon rpmoracle >/dev/null 2>&1 
 	-rm -f \\#*\\# >/dev/null 2>&1
 	-rm -f Makefile >/dev/null 2>&1
 	-rm -f LICENSE.h >/dev/null 2>&1
@@ -1641,7 +1523,6 @@ __EOT__
 
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
-		($plugins{$t}{MySQL}&&$MySQLFound)||
 		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE "plugins/$t.tso:\\\n\tobjs/".
@@ -1663,7 +1544,6 @@ __EOT__
         print MAKEFILE "\t$ProgramName";
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
-		($plugins{$t}{MySQL}&&$MySQLFound)||
 		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE " \\\n\tplugins/$t.tso";
@@ -1686,7 +1566,7 @@ tora_toad.qm: tora_toad.ts
 $ProgramName-mono: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
-		\$(LIBS_GLOB) \$(STDCPP_SHARED) \$(ORACLE_SHARED) \$(QT_SHARED) \$(MYSQL_SHARED)
+		\$(LIBS_GLOB) \$(STDCPP_SHARED) \$(ORACLE_SHARED) \$(QT_SHARED)
 
 # Static target, easier to distribute
 
@@ -1740,19 +1620,12 @@ __EOT__
 if ($RPMGenerate) {
     my @common;
     my @oracle;
-    my @mysql;
     for my $t (sort keys %plugins) {
-        if ($plugins{$t}{Oracle}&&!($plugins{$t}{MySQL}||
-				    $plugins{$t}{Qt3}||
+        if ($plugins{$t}{Oracle}&&!($plugins{$t}{Qt3}||
 				    $plugins{$t}{Any})) {
 	    push(@oracle,$RPMGenerate."/$ProgramName/$t.tso");
-	} elsif ($plugins{$t}{MySQL}&&!($plugins{$t}{Oracle}||
-					$plugins{$t}{Qt3}||
-					$plugins{$t}{Any})) {
-	    push(@mysql,$RPMGenerate."/$ProgramName/$t.tso");
 	} else {
-	    if ($QtVersion lt "3"&&$plugins{$t}{Qt3}&&!($plugins{$t}{MySQL}||
-							$plugins{$t}{Oracle}||
+	    if ($QtVersion lt "3"&&$plugins{$t}{Qt3}&&!($plugins{$t}{Oracle}||
 							$plugins{$t}{Any})) {
 		# Qt3 only without Qt3 support.
 	    } else {
@@ -1775,14 +1648,6 @@ if ($RPMGenerate) {
     }
     if (! -f "rpmoracle") {
         print "\nCouldn't open rpmoracle for writing\n";
-    }
-    print "creating rpmmysql\n";
-    if (open(FILE,">rpmmysql")) {
-        print FILE join("\n",@mysql)."\n";
-        close FILE;
-    }
-    if (! -f "rpmmysql") {
-        print "\nCouldn't open rpmmysql for writing\n";
     }
 }
 

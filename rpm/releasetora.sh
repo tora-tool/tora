@@ -17,11 +17,11 @@ cd release
 if [ "X$2" = "X" ]
 then
     echo Releasing head
-    cvs -d`cat ../tora/CVS/Root` co tora
+    cvs -d`cat ../tora-gpl/CVS/Root` co tora
     TYPE=-beta
 else
     echo Releasing branch $2
-    cvs -d`cat ../tora/CVS/Root` co tora
+    cvs -d`cat ../tora-gpl/CVS/Root` co tora
 fi
 if [ "X$3" != "X" ]
 then

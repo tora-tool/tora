@@ -894,7 +894,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       }
     }
   }
-  if (toCheckKeyEvent(e,QKeySequence("Ctrl+."))) {
+  if (toCheckKeyEvent(e,QKeySequence(tr("Ctrl+T")))) {
     try {
       toConnection &conn=toCurrentConnection(this);
       std::list<toConnection::objectName> &objects=conn.objects(false);
