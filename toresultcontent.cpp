@@ -173,6 +173,8 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
     setFont(font);
   }
 
+  installEventFilter(this);
+
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
@@ -279,6 +281,19 @@ void toResultContentEditor::poll(void)
   }
 }
 
+bool toResultContentEditor::eventFilter(QObject *o,QEvent *e)
+{
+  if (e&&o&&e->type()==QEvent::KeyPress) {
+    QKeyEvent *ke = (QKeyEvent*)e;
+    if ((ke->key()==Key_Tab&&ke->state()==0)||
+	(ke->key()==Key_Backtab&&ke->state()==ShiftButton)) {
+      keyPressEvent(ke);
+      return true;
+    }
+  }
+  return QTable::eventFilter(o,e);
+}
+
 void toResultContentEditor::keyPressEvent(QKeyEvent *e)
 {
   if (e->key()==Key_PageDown) {
@@ -300,22 +315,20 @@ void toResultContentEditor::keyPressEvent(QKeyEvent *e)
       e->accept();
       return;
     }
-  } else if (e->key()==Key_Tab) {
-    if (e->state()==0) {
-      if (currentColumn()<numCols()-1)
-	setCurrentCellFocus(currentRow(),currentColumn()+1);
-      else if (currentRow()<numRows()-1)
-	setCurrentCellFocus(currentRow()+1,0);
-      e->accept();
-      return;
-    } else if (e->state()==ShiftButton) {
-      if (currentColumn()>0)
-	setCurrentCellFocus(currentRow(),currentColumn()-1);
-      else if (currentRow()>0)
-	setCurrentCellFocus(currentRow()-1,numCols()-1);
-      e->accept();
-      return;
-    }
+  } else if (e->key()==Key_Tab&&e->state()==0) {
+    if (currentColumn()<numCols()-1)
+      setCurrentCellFocus(currentRow(),currentColumn()+1);
+    else if (currentRow()<numRows()-1)
+      setCurrentCellFocus(currentRow()+1,0);
+    e->accept();
+    return;
+  } else if (e->key()==Key_Backtab&&e->state()==ShiftButton) {
+    if (currentColumn()>0)
+      setCurrentCellFocus(currentRow(),currentColumn()-1);
+    else if (currentRow()>0)
+      setCurrentCellFocus(currentRow()-1,numCols()-1);
+    e->accept();
+    return;
   }
   QTable::keyPressEvent(e);
 }

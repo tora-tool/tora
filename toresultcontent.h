@@ -122,6 +122,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
   /** Reimplemented for internal reasons.
   */
+  virtual bool eventFilter(QObject *o,QEvent *e);
+  /** Reimplemented for internal reasons.
+  */
   virtual void keyPressEvent(QKeyEvent *e);
   /** Reimplemented for internal reasons.
    */

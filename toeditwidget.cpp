@@ -96,6 +96,9 @@ toEditWidget::~toEditWidget()
 
 void toEditWidget::lostFocus(void)
 {
+  for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
+    (*i)->lostFocus(dynamic_cast<QWidget *>(this));
+  }
 }
 
 void toEditWidget::receivedFocus(void)

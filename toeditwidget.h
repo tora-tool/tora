@@ -241,10 +241,10 @@ public:
   bool readAllEnabled(void)
   { return ReadAll; }
 
-  /** Call this when this widget has received the focus.
+  /** Call this when this widget has received the focus. Must be called by the implementor.
    */
-  void receivedFocus(void);
-  /** Called when this widget has lost the focus.
+  virtual void receivedFocus(void);
+  /** Called when this widget has lost the focus. Don't forget to call parent when reimplemented.
    */
   virtual void lostFocus(void);
 
