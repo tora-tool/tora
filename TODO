@@ -82,6 +82,7 @@ Extended functionality:
 * Plugin interface to alerttypes.
 * Handle AQ_ priviledges correctly in security manager (Using DBMS_AQADM package).
 * Easier to grant all priviledges to a user.
+* Save column order of open tools when saving/restoring session.
 
 New tools:
 
