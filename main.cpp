@@ -76,9 +76,7 @@ int main(int argc,char **argv)
 {
   otl_connect::otl_initialize(1);
 #ifdef ENABLE_QT_XFT
-#  ifndef WIN32
-  setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
-#  endif
+  toSetEnv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT));
 #endif
 #ifdef TO_KDE
   KApplication mainApp(argc,argv,"tora");
@@ -154,13 +152,7 @@ int main(int argc,char **argv)
 	  nls=nls.left(pos);
 	nls+=".UTF8";
       }
-#ifdef WIN32
-      QString str="NLS_LANG=";
-      str+=nls;
-      _putenv(str);
-#else
-      setenv("NLS_LANG",nls,true);
-#endif
+      toSetEnv("NLS_LANG",nls.latin1());
     }
 
 

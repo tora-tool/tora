@@ -46,7 +46,7 @@ grep -E "^(UIC)|(MOC)" Makefile.setup > configure.setup
 echo Compiling designer files
 for a in *.ui
 do
-    base=`echo $a | sed s/\.[^\.]*$//`
+    base=`echo $a | sed 's/\.[^\.]*$//'`
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
 done
@@ -77,8 +77,7 @@ then
     cp Makefile.orig Makefile
 fi
 
-echo -n "static char *LicenseText=" > LICENSE.h
-echo "\"<PRE>\\n\"" >> LICENSE.h
+echo "static char *LicenseText=\"<PRE>\\n\"" > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
 echo "\"</PRE>\\n\";" >> LICENSE.h
 

@@ -200,6 +200,8 @@ QString toFontToString(const QFont &fnt);
 QString toHelpPath(void);
 QString toReadFile(const QString &,bool local=true);
 bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len);
+void toSetEnv(const QCString &var,const QCString &val);
+void toUnSetEnv(const QCString &var);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20

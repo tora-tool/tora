@@ -34,6 +34,8 @@
 
 TO_NAMESPACE;
 
+#include <stdlib.h>
+
 #include <qapplication.h>
 #include <qstatusbar.h>
 #include <qcombobox.h>
@@ -652,3 +654,26 @@ bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
   return true;
 }
 
+void toSetEnv(const QCString &var,const QCString &val)
+{
+#ifndef TO_HAS_SETENV
+  // Has a memory leak, but just a minor one.
+
+  char *env=new char[var.length()+val.length()+2];
+  strcpy(env,var);
+  strcat(env,"=");
+  strcat(env,val);
+  putenv(env);
+#else
+  setenv(var,val,1);
+#endif
+}
+
+void toUnSetEnv(const QCString &var)
+{
+#ifndef TO_HAS_SETENV
+  toSetEnv(var,"");
+#else
+  unsetenv(var);
+#endif
+}

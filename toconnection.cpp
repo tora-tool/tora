@@ -50,13 +50,7 @@ otl_connect *toConnection::newConnection(void)
   QString oldSid;
   if (!SqlNet) {
     oldSid=getenv("ORACLE_SID");
-#ifdef WIN32
-    QString str="ORACLE_SID=";
-    str+=Host;
-    putenv(str);
-#else
-    setenv("ORACLE_SID",Host,1);
-#endif
+    toSetEnv("ORACLE_SID",Host.latin1());
   }
   otl_connect *conn;
   try {
@@ -68,35 +62,21 @@ otl_connect *toConnection::newConnection(void)
       dba=1;
     conn=new otl_connect((const char *)connectString(true),0,oper,dba);
   } catch (...) {
-#ifdef WIN32
-    QString str="ORACLE_SID=";
-    str+=oldSid;
-    if (!SqlNet)
-      putenv(str);
-#else
     if (!SqlNet) {
       if (oldSid.isNull())
-	unsetenv("ORACLE_SID");
+	toUnSetEnv("ORACLE_SID");
       else
-	setenv("ORACLE_SID",oldSid,1);
+	toSetEnv("ORACLE_SID",oldSid.latin1());
     }
-#endif
     throw;
   }
-#ifdef WIN32
-  QString envStr="ORACLE_SID=";
-  envStr+=oldSid;
-  if (!SqlNet)
-    putenv(envStr);
-#else
   if (!SqlNet) {
     if (oldSid.isNull())
-      unsetenv("ORACLE_SID");
+      toUnSetEnv("ORACLE_SID");
     else {
-      setenv("ORACLE_SID",oldSid,1);
+      toSetEnv("ORACLE_SID",oldSid.latin1());
     }
   }
-#endif
 
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
   str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
