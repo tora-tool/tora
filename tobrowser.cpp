@@ -984,7 +984,7 @@ static toSQL SQLMySQLUsers("toBrowser:MySQLUsers",
 			   "MySQL");
 
 static toSQL SQLTruncateTable("toBrowser:TruncateTable",
-			      "TRUNCATE %1.%2",
+			      "TRUNCATE TABLE %1.%2",
 			      "Truncate a table",
 			      "",
 			      "Any");
