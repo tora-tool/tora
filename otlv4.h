@@ -7285,7 +7285,7 @@ public:
    s.set_len(amt);
    break;
   case OCI_NEED_DATA:
-   s.set_len(amt<s.buf_size?amt:s.buf_size);
+   s.set_len(int(amt)<s.buf_size?int(amt):s.buf_size);
    break;
   case OCI_ERROR:
    s.set_len(0);

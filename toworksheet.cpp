@@ -1148,6 +1148,14 @@ void toWorksheet::execute(bool all,bool step)
 		}
 		if (br)
 		  break;
+		if (!toIsIdent(c)&&toIsIdent(nc)) {
+		  int j=i-2;
+		  while(j>=0&&toIsIdent(data[j]))
+		    j--;
+		  QString t=data.mid(j+1,i-j).upper();
+		  if (t!="OR"&&t!="REPLACE")
+		    beforeCode=false;
+		}
 	      }
 	      if (c==';')
 		ending=true;
