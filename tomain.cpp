@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qapplication.h>
 #include <qcombobox.h>
 #include <qevent.h>
