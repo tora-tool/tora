@@ -1389,7 +1389,8 @@ void toWorksheet::enableStatistic(bool ena)
   if (ena) {
     Result->setStatistics(Statistics);
     ResultTab->setTabEnabled(StatTab,true);
-    ToolMenu->setItemChecked(TO_ID_STATISTICS,true);
+    if (ToolMenu)
+      ToolMenu->setItemChecked(TO_ID_STATISTICS,true);
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
       try {
