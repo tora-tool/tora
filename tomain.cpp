@@ -195,10 +195,6 @@ toMain::toMain()
   qApp->setMainWidget(this);
   setDockMenuEnabled(true);
 
-  char buffer[100];
-  sprintf(buffer,DEFAULT_TITLE,TOVERSION);
-  setCaption(buffer);
-
   FileMenu=new QPopupMenu(this);
   FileMenu->insertItem(*toConnectPixmap,"&New Connection...",TO_NEW_CONNECTION);
   FileMenu->insertItem(*toDisconnectPixmap,"&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
@@ -388,8 +384,12 @@ toMain::toMain()
   HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
   menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
 
+  char buffer[100];
+  sprintf(buffer,DEFAULT_TITLE,TOVERSION);
+  setCaption(buffer);
+
 #ifdef TO_KDE
-  KDockWidget *mainDock=createDockWidget("TOra Workspace",*toTOraPixmap);
+  KDockWidget *mainDock=createDockWidget(buffer,*toTOraPixmap);
   Workspace=new QWorkspace(mainDock);
   mainDock->setWidget(Workspace);
   setView(mainDock);
