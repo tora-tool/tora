@@ -32,32 +32,34 @@
  *
  ****************************************************************************/
 
-#include <qcombobox.h>
-#include <qtoolbar.h>
-#include <qspinbox.h>
-#include <qtoolbutton.h>
-#include <qtabwidget.h>
-#include <qsplitter.h>
-#include <qmessagebox.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpainter.h>
+#include "utils.h"
 
+#include "tochangeconnection.h"
+#include "toconnection.h"
+#include "tohighlightedtext.h"
 #include "toprofiler.h"
+#include "toresultitem.h"
+#include "toresultlong.h"
 #include "tosql.h"
 #include "totool.h"
 #include "toworksheet.h"
-#include "tohighlightedtext.h"
-#include "toconnection.h"
-#include "toresultlong.h"
-#include "toresultitem.h"
-#include "tochangeconnection.h"
+
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qmessagebox.h>
+#include <qpainter.h>
+#include <qspinbox.h>
+#include <qsplitter.h>
+#include <qtabwidget.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
 
 #include "toprofiler.moc"
 
 #include "icons/clock.xpm"
-#include "icons/refresh.xpm"
 #include "icons/execute.xpm"
+#include "icons/refresh.xpm"
 #if 0
 #include "icons/background.xpm"
 #endif

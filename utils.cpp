@@ -53,6 +53,7 @@
 #include <kfiledialog.h>
 #include <kio/netaccess.h>
 #include <kmenubar.h>
+#include <kstatusbar.h>
 #include <ktempfile.h>
 #include <kurl.h>
 #endif
