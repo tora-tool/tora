@@ -50,7 +50,7 @@ toLegendChart::toLegendChart(int columns,QWidget *parent,const char *name,WFlags
 
 void toLegendChart::addLabel(const QString &label)
 {
-  Labels.insert(Labels.end());
+  Labels.insert(Labels.end(), label);
   sizeHint();
   update();
 }

@@ -275,7 +275,7 @@ void toAnalyze::refresh(void)
   Statistics->setSQL(QString::null);
   toQList par;
   par.insert(par.end(),Schema->currentText());
-  Statistics->query(toSQL::string(SQLListTables,connection()),par);
+  Statistics->query((const QString)toSQL::string(SQLListTables,connection()),(const toQList)par);
 }
 
 void toAnalyze::poll(void)

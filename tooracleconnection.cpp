@@ -490,17 +490,17 @@ public:
 	  toQuery member(connection(),SQLMembers,table.Owner,table.Name);
 	  while(!member.eof()) {
 	    QString name = member.readValue();
-	    QString overload = member.readValue();
+	    QString overld = member.readValue();
 	    QString arg = member.readValueNull();
 	    QString type = member.readValueNull();
-	    if (lastName!=name||overload!=lastOver) {
+	    if (lastName!=name||overld!=lastOver) {
 	      if (desc.Name.contains("("))
 		desc.Name+=")";
 	      if (!desc.Name.isEmpty())
 		ret.insert(ret.end(),desc);
 	      desc.Name=name;
 	      lastName=name;
-	      lastOver=overload;
+	      lastOver=overld;
 	      if (!arg.isEmpty())
 		desc.Name+=" (";
 	    } else

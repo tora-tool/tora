@@ -828,7 +828,7 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
   val.insert(val.end(),
 	     toQValue(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
 							DEFAULT_SIZE_UNIT))));
-  FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),val);
+  FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),(const toQList)val);
   FileUsed->showLegend(false);
 
   // Will be called later anyway
