@@ -429,6 +429,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
   else
     tool=new QToolBar(name,toMainWidget(),parent);
 #endif
+  tool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed));
   return tool;
 }
 

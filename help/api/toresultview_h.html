@@ -601,6 +601,12 @@ public:
    */
   void query(const toSQL &sql)
   { toResult::query(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(const toSQL &sql,toQList &par)
+  { toResult::query(sql,par); }
 #endif
 
   /** Reimplemented for internal reasons.

@@ -1072,8 +1072,10 @@ void toResultContentEditor::menuCallback(int cmd)
 QString toResultContentEditor::table(void)
 {
   QString sql;
-  sql=connection().quote(Owner);
-  sql+=".";
+  if (connection().provider()!="PostgreSQL") {
+    sql=connection().quote(Owner);
+    sql+=".";
+  }
   sql+=connection().quote(Table);
   return sql;
 }
@@ -1181,7 +1183,7 @@ void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
 
 bool toResultContent::canHandle(toConnection &conn)
 {
-  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
+  return true;
 }
 
 void toResultContent::removeFilter(void)

@@ -419,9 +419,11 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "3.0",
 			       "MySQL");
 static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
-                               "SELECT *\n"
-                               "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                               " WHERE c.relname = :f2",
+			       "SELECT c.* AS \"Table Name\"\n"
+			       "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+			       " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+			       "   AND c.relkind = 'r'\n"
+			       "   AND c.relname = :f2",
                                QString::null,
                                "7.1",
                                "PostgreSQL");

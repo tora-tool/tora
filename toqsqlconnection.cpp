@@ -503,8 +503,10 @@ public:
 
       try {
 	QString SQL="SELECT * FROM ";
-	SQL+=quote(table.Owner);
-	SQL+=".";
+	if (connection().provider()!="PostgreSQL") {
+	  SQL+=quote(table.Owner);
+	  SQL+=".";
+	}
 	SQL+=quote(table.Name);
 	SQL+=" WHERE NULL=NULL";
 	toQuery query(connection(),SQL);
@@ -543,20 +545,19 @@ public:
     virtual QString version(toConnectionSub *sub)
     {
       QString ret;
+      qSqlSub *conn=qSqlConv(sub);
+      conn->Lock.down();
       try {
-	qSqlSub *conn=qSqlConv(sub);
-
-	conn->Lock.down();
 	QSqlQuery query=conn->Connection->exec(toSQL::string(SQLVersion,connection()));
-	if (query.isValid()) {
-	  if (query.next()) {
+	if (query.next()) {
+	  if (query.isValid()) {
 	    QSqlRecord record=conn->Connection->record(query);
 	    ret=query.value(record.count()-1).toString();
 	  }
 	}
-	conn->Lock.up();
       } catch(...) {
       }
+      conn->Lock.up();
       return ret;
     }
 
