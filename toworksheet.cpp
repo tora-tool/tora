@@ -618,6 +618,7 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   else
     connection().setNeedCommit();
   saveDefaults();
+  changeResult(CurrentTab);
 }
 
 static void NewStatement(void)

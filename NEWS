@@ -1,3 +1,9 @@
+1.0:
+
+2001-07-12: Added check for Oracle Client in windows installer.
+2001-07-12: Removed the index.html file.
+2001-07-12: Fixed update problem with statistics in worksheet.
+
 0.13: Released 2001-07-11
 
 2001-07-02: Upgraded to 3.2.20 of OTL.
