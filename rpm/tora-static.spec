@@ -115,6 +115,6 @@ export QTDIR="%{_qt3dir}"
 
 %files
 %defattr(-,root,root)
-%doc BUGS INSTALL LICENSE NEWS README TODO
+%doc BUGS INSTALL.txt LICENSE NEWS README TODO
 %{_prefix}/bin/*
 %{_prefix}/lib/tora

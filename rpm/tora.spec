@@ -134,7 +134,7 @@ export QTDIR="%{_qt2dir}"
 
 %files -f rpmcommon
 %defattr(-,root,root)
-%doc BUGS INSTALL LICENSE NEWS README TODO
+%doc BUGS INSTALL.txt LICENSE NEWS README TODO
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
 %{_prefix}/lib/tora/help
