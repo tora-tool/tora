@@ -7940,7 +7940,11 @@ public:
    delete[] buf;
  }
 
+#if (defined(OTL_ORA8I)||defined(OTL_ORA9I))&&defined(OTL_ORA_TIMESTAMP)
+  int write_dt(void* trg, const void* src, const int)
+#else
   int write_dt(void* trg, const void* src, const int sz)
+#endif
   {
 #if (defined(OTL_ORA8I)||defined(OTL_ORA9I))&&defined(OTL_ORA_TIMESTAMP)
     OCIDateTime* trg_ptr=OTL_RCAST(OCIDateTime*,trg);

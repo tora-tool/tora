@@ -982,11 +982,17 @@ toConnection::~toConnection()
 toConnectionSub *toConnection::mainConnection()
 {
   toLocker lock(Lock);
-  return (*(Connections.begin()));
+  if (Connection->handleMultipleQueries()) {
+    return (*(Connections.begin()));
+  } else {
+    return longConnection();
+  }
 }
 
 toConnectionSub *toConnection::backgroundConnection()
 {
+  if (!Connection->handleMultipleQueries())
+    return longConnection();
   if (toTool::globalConfig(CONF_BKGND_CONNECT,"").isEmpty())
     return mainConnection();
   Lock.lock();
@@ -996,8 +1002,9 @@ toConnectionSub *toConnection::backgroundConnection()
     Lock.lock();
   
     BackgroundConnection=tmp;
-    BackgroundCount++;
+    BackgroundCount=0;
   }
+  BackgroundCount++;
   Lock.unlock();
   return BackgroundConnection;
 }
@@ -1005,14 +1012,17 @@ toConnectionSub *toConnection::backgroundConnection()
 toConnectionSub *toConnection::longConnection()
 {
   Lock.lock();
-  if (Connections.size()==1) {
+  bool multiple=Connection->handleMultipleQueries();
+  if ((multiple&&Connections.size()==1)||
+      (!multiple&&Connections.size()==0)) {
     Lock.unlock();
     addConnection();
   } else
     Lock.unlock();
   toLocker lock(Lock);
   std::list<toConnectionSub *>::iterator i=Connections.begin();
-  i++;
+  if (multiple)
+    i++;
   toConnectionSub *ret=(*i);
   Connections.erase(i);
   Running.insert(Running.end(),ret);

@@ -526,6 +526,12 @@ public:
      */
     virtual void rollback(toConnectionSub *) = 0;
 
+    /** If not true can never run more than one query per connection sub and TOra will
+     * work around this limitation by opening more connections if needed.
+     */
+    virtual bool handleMultipleQueries()
+    { return true; }
+
     /** Create a new connection to the database.
      */
     virtual toConnectionSub *createConnection(void) = 0;
