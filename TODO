@@ -80,7 +80,6 @@ Extended functionality:
 * Include status of code objects in browsertool.
 * Implement printing of text view.
 * Plugin interface to alerttypes.
-* Project manager.
 
 New tools:
 
@@ -96,3 +95,6 @@ New tools:
 	* Datafiles added within 30 days
 	* Objects added within 30 days
 	* Objects edited within 30 days
+* Project manager:
+	* A list of files or subprojects.
+	* Assemble into one file in the end.
