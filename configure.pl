@@ -293,7 +293,7 @@ for (@ARGV) {
 	$Target="tora-static";
 	$ForceTarget=1;
     } elsif (/^--with-static-oracle$/) {
-	$OracleShared="\$(STATIC_ORACLETTLIBS)";
+	$OracleShared="\$(ORACLE_STATIC)";
     } elsif (/^--with-kde(?:=(.*))?$/) {
 	$KDEApplication=1;
 	if (defined $1) {
@@ -1069,9 +1069,15 @@ __EOT__
 	print MAKEFILE "ORACLE_SHARED=$OracleShared\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# Static Oracle libraries\n";
-	print MAKEFILE "ORACLE_STATIC=\$(STATIC_ORACLETTLIBS)\n";
-	print MAKEFILE "\n";
+	if ($OracleRelease>9) {
+	    print MAKEFILE "# Static Oracle libraries\n";
+	    print MAKEFILE "ORACLE_STATIC=\$(STATIC_CLIENTLIBS)\n";
+	    print MAKEFILE "\n";
+	} else {
+	    print MAKEFILE "# Static Oracle libraries\n";
+	    print MAKEFILE "ORACLE_STATIC=\$(STATIC_ORACLETTLIBS)\n";
+	    print MAKEFILE "\n";
+	}
 
 	print MAKEFILE "# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version\n";
 	print MAKEFILE "TARGET=$Target\n";

@@ -163,6 +163,7 @@
 2001-12-13: Minor change of wording in configure output.
 2001-12-13: Don't log Abort Execution error in worksheet.
 2001-12-13: Don't forget to display linking in custom plugins in configure.
+2001-12-13: Fixed building static oracle on Oracle9.
 
 1.1.5: Released 2001-11-26
 
