@@ -38,7 +38,7 @@ Extended functionality:
 * Ability to generate into several script (One per object and type) in DB
 	extraction.
 * Full support for Oracle 9i
-* Port to Oracle C++ OCCI?
+* Port to Oracle C++ OCCI instead of OTL?
 
 Windows problems:
 
