@@ -299,6 +299,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption("Quotes");
     TextView->setText(QuoteText);
     TextView->setPaper(QColor(255,255,255));
+    CancelButton->hide();
     break;
   case 1:
     setCaption("GNU General Public License");
@@ -310,6 +311,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     QString buffer=QString(AboutText).arg(TOVERSION);
     TextView->setText(buffer);
     TextView->setPaper(QColor(227,184,54));
+    CancelButton->hide();
     break;
   }
 }

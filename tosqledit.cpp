@@ -185,6 +185,8 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Version=new QComboBox(hbox);
   Version->setEditable(true);
   Version->setDuplicatesEnabled(false);
+  LastVersion=connection.provider()+":Any";
+  Version->insertItem(LastVersion);
 
   QFrame *line = new QFrame(vbox);
   line->setFrameStyle(QFrame::HLine|QFrame::Sunken);

@@ -15,6 +15,9 @@
 2001-10-10: Fixed problem with comment syntax highlighting.
 2001-10-10: Fixed problem with zoom in last value charts.
 2001-10-10: Fixed problem with stop button not being disabled sometimes.
+2001-10-10: Fixed problem with aborting object caching on connection close.
+2001-10-10: Set default version in new sql editor.
+2001-10-10: Hide cancel button if not license about.
 
 1.1.2: Released 2001-10-07
 

@@ -622,6 +622,8 @@ toQList toQuery::readQueryNull(toConnection &conn,const QString &sql,
 toQValue toQuery::readValue(void)
 {
   toBusy busy;
+  if (Connection.Abort)
+    throw QString("Query aborted");
   if (Mode==All)
     eof();
   toQValue ret=Query->readValue();
@@ -633,6 +635,8 @@ toQValue toQuery::readValue(void)
 toQValue toQuery::readValueNull(void)
 {
   toBusy busy;
+  if (Connection.Abort)
+    throw QString("Query aborted");
   if (Mode==All)
     eof();
   return Query->readValue();
@@ -669,7 +673,7 @@ toConnection::toConnection(const QString &provider,
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
-  NeedCommit=false;
+  NeedCommit=Abort=false;
   if (cache)
     readObjects();
   else
@@ -688,6 +692,7 @@ toConnection::toConnection(const toConnection &conn)
   addConnection();
   Version=Connection->version(mainConnection());
   ReadingValues.up();
+  NeedCommit=Abort=false;
 }
 
 toConnection::~toConnection()
@@ -705,6 +710,7 @@ toConnection::~toConnection()
 	(*i)->cancel();
     }
   }
+  Abort=true;
   ReadingValues.down();
   for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     Connection->closeConnection(*i);

@@ -530,6 +530,7 @@ private:
   friend class cacheObjects;
 
   toSemaphore ReadingValues;
+  bool Abort;
   std::map<objectName,toQDescList> ColumnCache;
   std::list<objectName> ObjectNames;
   std::map<QString,objectName> SynonymMap;
