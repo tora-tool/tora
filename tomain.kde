@@ -51,10 +51,10 @@
 #else
 #  include <qtoolbar.h>
 #  define TOPrinter QPrinter
-#  define TODock QToolBar
+#  define TODock QWidget
 #  define TOFileDialog QFileDialog
 #endif
-#  define TOMessageBox QMessageBox
+#define TOMessageBox QMessageBox
 
 class QWorkspace;
 class QComboBox;

@@ -107,6 +107,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   StyleLabel->hide();
 #endif
 
+#ifdef TO_KDE
+  DockToolbar->hide();
+#endif
+  DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes"));
+
   if (toMonolithic()) {
     PluginLabel->hide();
     PluginDirectory->hide();
@@ -151,6 +156,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
+  toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #ifdef ENABLE_QT_XFT
   toTool::globalSetConfig(CONF_QT_XFT,AntialiaseFonts->isChecked()?"true":"false");
 #endif

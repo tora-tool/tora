@@ -40,6 +40,8 @@ TO_NAMESPACE;
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qtoolbar.h>
+#include <qworkspace.h>
+#include <qvbox.h>
 
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"
@@ -301,20 +303,26 @@ TODock *toAllocDock(const QString &name,
 		    const QString &db,
 		    const QPixmap &icon)
 {
+  QString str=name;
+  if (db.isEmpty()) {
+    str+=" ";
+    str+=db;
+  }
 #ifdef TO_KDE
   KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
-  if (main) {
-    QString str=name;
-    if (db.isEmpty()) {
-      str+=" ";
-      str+=db;
-    }
+  if (main)
     return main->createDockWidget(str,icon);
-  } else
+  else
     throw QString("Main widget not KDockMainWindow");
 #else
-  QToolBar *toolbar=toAllocBar(toMainWidget(),name,db);
-  return toolbar;
+  if (toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
+    QVBox *frm=new QVBox(toMainWidget()->workspace());
+    frm->setCaption(str);
+    return frm;
+  } else {
+    QToolBar *toolbar=toAllocBar(toMainWidget(),name,db);
+    return toolbar;
+  }
 #endif
 }
 
@@ -345,8 +353,11 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
   } else
     throw QString("Main widget not KDockMainWindow");
 #else
-  toMainWidget()->moveToolBar(dock,place);
-  dock->setStretchableWidget(container);
+  QToolBar *bar=dynamic_cast<QToolBar *>(dock);
+  if (bar) {
+    toMainWidget()->moveToolBar(bar,place);
+    bar->setStretchableWidget(container);
+  }
 #endif
 }
 

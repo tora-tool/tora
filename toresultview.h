@@ -156,6 +156,7 @@ public:
   { return QString::null; }
   virtual void addMenues(QPopupMenu *)
   { }
+  virtual void exportFile(void);
 public slots:
   virtual void displayMenu(QListViewItem *,const QPoint &,int);
   virtual void displayMemo(void);

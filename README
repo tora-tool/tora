@@ -28,6 +28,7 @@ The features that are available so far is (As of version 0.7.1):
 	from Oracle in different versions.
 * Syntax highlighting of SQL.
 * Print support.
+* SQL template tree.
 
 For installation instructions se the file INSTALL.
 

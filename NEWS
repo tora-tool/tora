@@ -32,7 +32,11 @@
 2001-05-17: Added start of text and db browser template.
 2001-05-17: Added loadMap/saveMap functions to toTool.
 2001-05-17: Fixed problem browsing function source.
-2001-05-17: Added editor for text templates.
+2001-05-18: Added editor for text templates.
+2001-05-18: Added option about how to emulate docks if not using KDE.
+2001-05-18: Added check for 2.2 version of KDE in configure.
+2001-05-18: Export functionality to toResultList.
+2001-05-18: Some more unicode fixes.
 
 0.8: Released 2001-05-07
 

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>393</width>
+            <width>389</width>
             <height>401</height>
         </rect>
     </property>
@@ -175,7 +175,7 @@
                 <x>10</x>
                 <y>115</y>
                 <width>381</width>
-                <height>175</height>
+                <height>220</height>
             </rect>
         </property>
         <property stdset="1">
@@ -371,30 +371,6 @@ Will leave the password unencryptet in the config file.</string>
             <class>QCheckBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>DesktopAware</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>105</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Desktop aware</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Colors get really weird in KDE if you select this.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
                 <cstring>LongSession</cstring>
             </property>
             <property stdset="1">
@@ -438,6 +414,54 @@ the interface from locking up when executing.</string>
             <property>
                 <name>toolTip</name>
                 <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DesktopAware</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Desktop aware</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Colors get really weird in KDE if you select this.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DockToolbar</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>180</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Docks use toolbars</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Check this if docks are to use toolbars instead of normal frames.</string>
             </property>
         </widget>
     </widget>

@@ -35,6 +35,7 @@
 TO_NAMESPACE;
 
 #ifdef TO_KDE
+#include <kmenubar.h>
 #include <kfiledialog.h>
 #endif
 
@@ -55,12 +56,6 @@ TO_NAMESPACE;
 #include <qworkspace.h>
 #include <qfileinfo.h>
 #include <qvbox.h>
-
-#ifdef TO_KDE
-#include <kmenubar.h>
-#endif
-
-#include <stdio.h>
 
 #include "toconf.h"
 #include "tomain.h"
@@ -599,7 +594,8 @@ void toMain::commandCallback(int cmd)
 	    return;
 	  }
 	  QString data=mark->text();
-	  file.writeBlock(data.local8Bit(),data.length());
+	  QCString str=data.local8Bit();
+	  file.writeBlock(str,str.length());
 	  mark->setFilename(filename);
 	  mark->setEdited(false);
 	  toStatusMessage("File saved successfully");

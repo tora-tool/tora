@@ -34,8 +34,9 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
-#include <ctype.h>
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
 
 #include <qclipboard.h>
 #include <qheader.h>
@@ -456,6 +457,7 @@ void toListView::print(void)
 #define TORESULT_MEMO     2
 #define TORESULT_SQL      3
 #define TORESULT_READ_ALL 4
+#define TORESULT_EXPORT   5
 
 void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
 {
@@ -464,6 +466,7 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
       Menu=new QPopupMenu(this);
       Menu->insertItem("&Copy",TORESULT_COPY);
       Menu->insertItem("Display in editor",TORESULT_MEMO);
+      Menu->insertItem("Export to file",TORESULT_EXPORT);
       if (!Name.isEmpty()) {
 	Menu->insertSeparator();
 	Menu->insertItem("Edit SQL",TORESULT_SQL);
@@ -499,6 +502,9 @@ void toListView::menuCallback(int cmd)
   case TORESULT_SQL:
     toMainWidget()->editSQL(Name);
     break;
+  case TORESULT_EXPORT:
+    exportFile();
+    break;
   }
 }
 
@@ -528,6 +534,99 @@ void toListView::focusOutEvent (QFocusEvent *e)
 {
   toMain::editDisable();
   QListView::focusOutEvent(e);
+}
+
+void toListView::exportFile(void)
+{
+  int *sizes=new int[columns()];
+  try {
+    int level=0;
+    for (int i=0;i<columns();i++)
+      sizes[i]=header()->label(i).length();
+
+    QListViewItem *next=NULL;
+    for (QListViewItem *item=firstChild();item;item=next) {
+
+      for (int i=0;i<columns();i++) {
+	int csiz=item->text(i).length();
+	if (i==0)
+	  csiz+=level;
+	if (sizes[i]<csiz)
+	  sizes[i]=csiz;
+      }
+
+      if (item->firstChild()) {
+	level++;
+	next=item->firstChild();
+      } else if (item->nextSibling())
+	next=item->nextSibling();
+      else {
+	next=item;
+	do {
+	  next=next->parent();
+	  level--;
+	} while(next&&!next->nextSibling());
+	if (next)
+	  next=next->nextSibling();
+      }
+    }
+
+    QString output;
+
+    QString indent;
+
+    for (int i=0;i<columns();i++)
+      output+=QString("%1 ").arg(header()->label(i),-sizes[i]);
+    output+="\n";
+    for (int i=0;i<columns();i++) {
+      for (int j=0;j<sizes[i];j++)
+	output+="=";
+      output+=" ";
+    }
+    output+="\n";
+
+    next=NULL;
+    for (QListViewItem *item=firstChild();item;item=next) {
+
+      QString line=indent;
+
+      for (int i=0;i<columns();i++)
+	line+=QString("%1 ").arg(item->text(i),(i==0?indent.length():0)-sizes[i]);
+      line+="\n";
+      output+=line;
+
+      if (item->firstChild()) {
+	indent+=" ";
+	next=item->firstChild();
+      } else if (item->nextSibling())
+	next=item->nextSibling();
+      else {
+	next=item;
+	do {
+	  next=next->parent();
+	  indent.truncate(indent.length()-1);
+	} while(next&&!next->nextSibling());
+	if (next)
+	  next=next->nextSibling();
+      }
+    }
+    QString filename=TOFileDialog::getSaveFileName(QString::null,"*.txt",this);
+    if (!filename.isEmpty()) {
+      QFile file(filename);
+      if (!file.open(IO_WriteOnly)) {
+	TOMessageBox::warning(this,"File error","Couldn't open file for writing");
+	return;
+      }
+      QCString str=output.local8Bit();
+      file.writeBlock(str,str.length());
+      toStatusMessage("File saved successfully");
+    }
+
+  } catch(...) {
+    delete sizes;
+    throw;
+  }
+  delete sizes;
 }
 
 void toResultView::setup(bool readable,bool dispCol)
@@ -713,6 +812,9 @@ void toResultView::menuCallback(int cmd)
 {
   if (cmd==TORESULT_READ_ALL)
     readAll();
-  else
+  else {
+    if (cmd==TORESULT_EXPORT)
+      readAll();
     toListView::menuCallback(cmd);
+  }
 }

@@ -174,6 +174,20 @@ int main(int argv,char **argc)
     return 0;
 }
 __TEMP__
+    if ($KDEApplication) {
+	print TEMP <<__TEMP__;
+
+#include <ktoolbar.h>
+
+void test2(void)
+{
+    QWidget *parent;
+    QMainWindow *main;
+    new KToolBar(main,parent);
+}
+
+__TEMP__
+    }
     close TEMP;
     if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -o$tmpName $tmpName.cpp")) {
 	if (!system($tmpName)) {

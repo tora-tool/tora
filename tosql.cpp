@@ -193,7 +193,8 @@ bool toSQL::saveSQL(const QString &filename,bool all)
       line+=def.Description;
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
-      file.writeBlock(line,line.length());
+      QCString str=line.latin1();
+      file.writeBlock(str,str.length());
       file.writeBlock("\n",1);
     }
     for (list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {

@@ -121,11 +121,12 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
       line.append("=");
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
-      file.writeBlock(line,line.length());
+      QCString str=line.latin1();
+      file.writeBlock(str,str.length());
       line=(*i).second;
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
-      QCString str=line.utf8();
+      str=line.utf8();
       file.writeBlock(str,str.length());
       file.writeBlock("\n",1);
     }

@@ -487,7 +487,7 @@ bool toWorksheet::checkSave(bool input)
       TOMessageBox::warning(this,"File error","Couldn't open file for writing");
       return false;
     }
-    QString data=Editor->text();
+    QCString data=Editor->text().local8Bit();
     if (file.writeBlock(data,data.length())==-1) {
       TOMessageBox::warning(this,"File error","Couldn't save data to file");
       return false;

@@ -73,8 +73,9 @@ static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
 class toTemplateEdit : public toTemplateEditUI {
   map<QString,QString> &TemplateMap;
   map<QString,QString>::iterator LastTemplate;
+  QTimer Timer;
 public:
-  void updateFromMap(void)
+  virtual void updateFromMap(void)
   {
     while(Templates->firstChild())
       delete Templates->firstChild();
@@ -113,12 +114,12 @@ public:
       lstCtx=ctx;
       lastLevel++;
     }
-    LastTemplate=TemplateMap.end();
   }
   toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
     : toTemplateEditUI(parent,name,true),TemplateMap(pairs)
   {
     LastTemplate=TemplateMap.end();
+    connect(&Timer,SIGNAL(timeout()),this,SLOT(updateFromMap()));
     updateFromMap();
   }
   virtual void remove(void)
@@ -132,6 +133,27 @@ public:
   virtual void preview(void)
   {
     Preview->setText(Description->text());
+  }
+  QString name(QListViewItem *item)
+  {
+    QString str=item->text(0);
+    for(item=item->parent();item;item=item->parent()) {
+      str.prepend(":");
+      str.prepend(item->text(0));
+    }
+    return str;
+  }
+  virtual void newTemplate(void)
+  {
+    LastTemplate=TemplateMap.end();
+    Description->setText("");
+    QListViewItem *item=Templates->selectedItem();
+    if (item)
+      item=item->parent();
+    QString str;
+    if (item)
+      str=name(item);
+    Name->setText(str);
   }
   virtual void changeSelection(void)
   {
@@ -149,29 +171,22 @@ public:
     }
     LastTemplate=TemplateMap.end();
 
-    QString name;
     QListViewItem *item=Templates->selectedItem();
     if (item) {
-      name=item->text(0);
-      for(item=item->parent();item;item=item->parent()) {
-	name.prepend(":");
-	name.prepend(item->text(0));
-      }
-      LastTemplate=TemplateMap.find(name);
+      QString str=name(item);
+      LastTemplate=TemplateMap.find(str);
       if (LastTemplate!=TemplateMap.end()) {
 	Name->setText((*LastTemplate).first);
 	Description->setText((*LastTemplate).second);
 	Preview->setText((*LastTemplate).second);
       } else {
 	Name->setText("");
-	printf("Didn't find %s\n",(const char *)name);
+	printf("Didn't find %s\n",(const char *)str);
       }
     } else
       LastTemplate=TemplateMap.end();
-    if (update) {
-      printf("Update\n");
-      updateFromMap();
-    }
+    if (update)
+      Timer.start(20,true);
   }
 };
 
@@ -245,8 +260,11 @@ public:
 	map<QString,QString> pairs;
 	if (toTool::loadMap(file,pairs)) {
 	  toTemplateEdit edit(pairs,this);
-	  if (edit.exec())
-	    toTool::saveMap(file,pairs);
+	  if (edit.exec()) {
+	    edit.changeSelection();
+	    if (!toTool::saveMap(file,pairs))
+	      throw QString("Couldn't write file");
+	  }
 	} else
 	  throw QString("Couldn't read file");
       } catch (const QString &str) {

@@ -73,6 +73,7 @@
 #define DEFAULT_STATUS_MESSAGE  "5"
 #define CONF_QT_XFT             "Xft"
 #define DEFAULT_QT_XFT          "false"
+#define CONF_DOCK_TOOLBAR	"DockToolbar"
 
 // Undefining this will leave out the style selection option stuff from the program
 #ifndef TO_KDE

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>671</width>
+            <width>659</width>
             <height>547</height>
         </rect>
     </property>
@@ -94,28 +94,6 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TrashButton</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                        </sizepolicy>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
-                        <name>pixmap</name>
-                        <pixmap>image0</pixmap>
-                    </property>
-                </widget>
                 <widget row="1"  column="0"  rowspan="1"  colspan="3" >
                     <class>QLineEdit</class>
                     <property stdset="1">
@@ -151,6 +129,10 @@
                         <name>buddy</name>
                         <cstring>Description</cstring>
                     </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Description text. Can be in HTML format.</string>
+                    </property>
                 </widget>
                 <widget row="5"  column="0"  rowspan="1"  colspan="3" >
                     <class>QTextView</class>
@@ -177,6 +159,84 @@
                         <string>&amp;Preview</string>
                     </property>
                 </widget>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>1</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Name</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Name</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Name of the template.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TrashButton</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>pixmap</name>
+                        <pixmap>image0</pixmap>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Remove the current template</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>NewButton</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>pixmap</name>
+                        <pixmap>image1</pixmap>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Add new template</string>
+                    </property>
+                </widget>
                 <widget row="4"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
@@ -198,27 +258,9 @@
                         <name>buddy</name>
                         <cstring>Preview</cstring>
                     </property>
-                </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>1</vsizetype>
-                        </sizepolicy>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Name</string>
-                    </property>
                     <property>
-                        <name>buddy</name>
-                        <cstring>Name</cstring>
+                        <name>toolTip</name>
+                        <string>Preview of the description. Press the button to update</string>
                     </property>
                 </widget>
             </grid>
@@ -285,7 +327,7 @@
             <hordata>5</hordata>
             <verdata>5</verdata>
         </sizepolicy>
-        <pixmap>image1</pixmap>
+        <pixmap>image2</pixmap>
     </customwidget>
 </customwidgets>
 <images>
@@ -295,6 +337,10 @@
     </image>
     <image>
         <name>image1</name>
+        <data format="XPM.GZ" length="424">789c8d8ec10ac2300c86ef7d8ad0dc8a740ec48bf8088a47413c24d5a28729e83c88f8ee36e9d8e644f1a387fc3f5fdb140ed6ab05b8c25c6baa8f01c2812ee076b7aaba6fb6f387b1e514d299406947c67a08b03c9ff632639a71ac48a41c63cc912546452fb660c2fbae938c848cfd8e99a563fcf012fa790365b463e5ddd3987b4adfface1b74a2a9aaeb0d3ddda07d4f5fec755f3dfec76bd41fde73665e4fc75efd</data>
+    </image>
+    <image>
+        <name>image2</name>
         <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
     </image>
 </images>
@@ -318,19 +364,27 @@
         <slot>preview()</slot>
     </connection>
     <connection>
-        <sender>Templates</sender>
-        <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>toTemplateEditUI</receiver>
-        <slot>changeSelection()</slot>
-    </connection>
-    <connection>
         <sender>TrashButton</sender>
         <signal>clicked()</signal>
         <receiver>toTemplateEditUI</receiver>
         <slot>remove()</slot>
     </connection>
+    <connection>
+        <sender>NewButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>newTemplate()</slot>
+    </connection>
+    <connection>
+        <sender>Templates</sender>
+        <signal>selectionChanged()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>changeSelection()</slot>
+    </connection>
+    <slot access="public">newTemplate()</slot>
     <slot access="public">changeSelection()</slot>
-    <slot access="public">remove()</slot>
     <slot access="public">preview()</slot>
+    <slot access="public">remove()</slot>
+    <slot access="public">updateFromMap()</slot>
 </connections>
 </UI>
