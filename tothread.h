@@ -48,6 +48,27 @@ public:
   virtual void run(void) = 0;
 };
 
+#ifndef QT_THREAD_SUPPORT
+#include <semaphore.h>
+
+class toSemaphore {
+private:
+  sem_t Semaphore;
+  void init(int val);
+
+  toSemaphore(const toSemaphore &);
+public:
+  toSemaphore();
+  toSemaphore(int val);
+  ~toSemaphore();
+
+  void up();
+  void down();
+  int getValue();
+};
+
+#else
+
 /** Encapsulation of pthread semaphores. A semaphore can be raise to any value
  * but will wait till raised above zero when lowered below 0. Can also be implemented
  * without pthreads using Qt multithreaded primitives. Observe that these function
@@ -85,6 +106,8 @@ public:
    */
   int getValue();
 };
+
+#endif
 
 #include <list>
 

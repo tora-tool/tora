@@ -670,7 +670,7 @@ __TEMP__
 	                                        my $file=$_[0];
 	                                        if (-f $file && (!-l $file || $file=~/dylib/ )) {
 						    my $lib;
-						    ($lib,$QtLibShared)=($file=~/^(.*)\/lib(qt-mt[23]?)[^\/]*$/);
+						    ($lib,$QtLibShared)=($file=~/^(.*)\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }
@@ -713,7 +713,7 @@ __TEMP__
     if (! -d $QtLib) {
 	$QtLib=findFile("^$QtSearch\\.(?:s[ol]|dylib)\\.[23]",sub {
 		                                     if (-f $_[0] && ! -l $_[0]) {
-							 ($QtLibShared)=($_[0]=~/\/lib(qt-mt[23]?)[^\/]*$/);
+							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt?)[23]?)[^\/]*$/);
 							 if (!defined $QtLibShared) {
 							     return 0;
 							 }
@@ -1380,7 +1380,10 @@ __EOT__
 	if (!$NewCheck) {
 	    print MAKEFILE "DEFINED+=-DTO_NO_NEW_CHECK\n";
 	}
-	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\" -DQT_THREAD_SUPPORT\n";
+	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
+	if ($QtLibShared=~/qt-mt/) {
+	    print MAKEFILE "DEFINES+=-DQT_THREAD_SUPPORT\n";
+	}
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
 	}

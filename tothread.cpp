@@ -43,6 +43,8 @@
 #include <qapplication.h>
 #include <qstring.h>
 
+#ifdef QT_THREAD_SUPPORT
+
 void toSemaphore::up(void)
 {
   Mutex.lock();
@@ -68,6 +70,51 @@ int toSemaphore::getValue(void)
   Mutex.unlock();
   return val;
 }
+
+#else
+
+#define SEM_ASSERT(x) if((x)!=0) toStatusMessage(\
+qApp->translate("toSemaphore","The semaphore function \"%1\" failed").arg(QString::fromLatin1( #x )));
+
+void toSemaphore::init(int ival)
+{
+  SEM_ASSERT(sem_init(&Semaphore,0,ival));
+}
+
+toSemaphore::toSemaphore() 
+{
+  init(0);
+}
+
+
+toSemaphore::toSemaphore(int i)
+{
+  init(i);
+}
+
+toSemaphore::~toSemaphore()
+{
+  SEM_ASSERT(sem_destroy(&Semaphore));
+}
+
+void toSemaphore::up()
+{
+  SEM_ASSERT(sem_post(&Semaphore));
+}
+
+void toSemaphore::down()
+{
+  SEM_ASSERT(sem_wait(&Semaphore));
+}
+
+int toSemaphore::getValue()
+{
+  int r;
+  SEM_ASSERT(sem_getvalue(&Semaphore, &r));
+  return r;
+}
+
+#endif
 
 #ifndef WIN32
 
