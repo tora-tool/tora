@@ -1,5 +1,6 @@
 1.3.10:
 
+2003-04-08: Fixed problems with '' in sql parser.
 2003-04-08: Fixed column resizing problem on numeric only values.
 2003-04-08: Removed some functionality when compiling for OAS (Proprietary project)
 2003-03-19: Make Enter work same as Return in syntax highlighting.

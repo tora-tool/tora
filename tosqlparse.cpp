@@ -579,8 +579,18 @@ QString toSQLParse::stringTokenizer::getToken(bool forward,bool comments)
 	  return token;
 	break;
       case string:
-	if (c==endString)
-	  return token;
+	if (c==endString) {
+	  if (nc==endString) {
+	    if (forward) {
+	      token+=nc;
+	      Offset++;
+	    } else {
+	      token.prepend(nc);
+	      Offset--;
+	    }
+	  } else
+	    return token;
+	}
 	break;
       }
     }
