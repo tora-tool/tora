@@ -57,29 +57,61 @@ static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
 			"7.1",
 			"PostgreSQL");
 
-static toSQL SQLListTables("toQSqlConnection:ListTables",
-			   "show tables",
-			   "Get the available tables for a mysql connection",
-			   "3.0",
-			   "MySQL");
+static toSQL SQLListObjects("toQSqlConnection:ListObjects",
+			    "show tables",
+			    "Get the available tables for a mysql connection",
+			    "3.0",
+			    "MySQL");
 
-static toSQL SQLListTablesPgSQL("toQSqlConnection:ListTables",
-				"SELECT c.relname AS \"Tablename\", u.usename AS \"Owner\"\n"
-				"  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-				" WHERE relkind = 'r'"
-				" ORDER BY \"Tablename\"",
-				QString::null,
-				"7.1",
-				"PostgreSQL");
+static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
+				 "SELECT c.relname AS \"Tablename\",\n"
+				 "       u.usename AS \"Owner\",\n"
+				 "       c.relkind AS \"Type\"\n"
+				 "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+				 " ORDER BY \"Tablename\"",
+				 QString::null,
+				 "7.1",
+				 "PostgreSQL");
 
 static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
 			     "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
 			     "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-			     " WHERE relkind = 'r'"
 			     " ORDER BY u.usename, c.relname",
 			     "Get synonym list, should have same columns",
 			     "7.1",
 			     "PostgreSQL");
+
+static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
+			       "select a.attname,b.description\n"
+			       "from\n"
+			       "  pg_attribute a,\n"
+			       "  pg_description b,\n"
+			       "  pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+			       "where\n"
+			       "  a.oid=b.objoid\n"
+			       "  and c.oid=a.attrelid\n"
+			       "  and (u.usename = :owner OR u.usesysid IS NULL)\n"
+			       "  and c.relname=:table",
+			       "Get the available comments on columns of a table, "
+			       "must have same binds and columns",
+			       "7.1",
+			       "PostgreSQL");
+
+static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
+				 "select a.attname,b.description\n"
+				 "from\n"
+				 "  pg_attribute a,\n"
+				 "  pg_description b,\n"
+				 "  pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+				 "where\n"
+				 "  a.attnum=b.objsubid\n"
+				 "  and b.objoid=a.attrelid\n"
+				 "  and c.oid=a.attrelid\n"
+				 "  and (u.usename = :owner OR u.usesysid IS NULL)\n"
+				 "  and c.relname=:table",
+				 QString::null,
+				 "7.2",
+				 "PostgreSQL");
 
 static QString QueryParam(const QString &in,toQList &params)
 {
@@ -485,7 +517,7 @@ public:
     {
       std::list<toConnection::objectName> ret;
 
-      toQuery tables(connection(),SQLListTables);
+      toQuery tables(connection(),SQLListObjects);
       toConnection::objectName cur;
       while(!tables.eof()) {
 	cur.Name=tables.readValueNull();
@@ -535,16 +567,14 @@ public:
       toBusy busy;
 
       std::map<QString,QString> comments;
-#if 0 // Uncomment as soon as there are some SQLComments to use
       try {
-	toQuery comment(connection(),SQLComment,table.Owner,table.Name);
+	toQuery comment(connection(),SQLColumnComments,table.Owner,table.Name);
 	while(!comment.eof()) {
 	  QString col=comment.readValue();
 	  comments[col]=comment.readValueNull();
 	}
       } catch (...) {
       }
-#endif
 
       try {
 	QString SQL="SELECT * FROM ";

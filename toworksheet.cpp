@@ -754,16 +754,12 @@ void toWorksheet::query(const QString &str,bool direct)
   QString chk=str.lower();
   chk.replace(strq," ");
   bool code=false;
-  int pos=chk.find("end",0);
-  while (pos>0) {  // Ignore position 0, since that isn't a block anyway
-    QChar c=chk[pos-1];
-    QChar ec=chk[pos+3];
-    if (!toIsIdent(c)&&!toIsIdent(ec)) {
-      code=true;
-      break;
-    }
-    pos=chk.find("end",pos+1);
-  }
+  static QRegExp codere("end\\s+[a-z0-9_-]*;$",true);
+  static QRegExp codere2("end;",true);
+
+  if (codere.match(chk)>=0||codere2.match(chk)>=0)
+    code=true;
+
   QueryString=str;
   if (!code&&QueryString.length()>0&&QueryString.at(QueryString.length()-1)==';')
     QueryString.truncate(QueryString.length()-1);

@@ -1,5 +1,13 @@
 1.3.2:
 
+2002-01-14: Cache all object types on postgresql connection.
+2002-01-14: Fixed bug with filename extension.
+2002-01-14: Changed the free bars in storage manager to also show auto extend.
+2002-01-14: Fixed problem with stripping ; when using case.
+2002-01-14: Added maxbytes to storage manager.
+2002-01-14: Removed user_bytes from storage manager.
+2002-01-14: Some Qt only fixes.
+2002-01-14: Column comment support in PostgreSQL (Thanx Stefan Rinkeskär).
 2002-01-14: Added transaction user tab in rollback.
 2002-01-14: Added last SQL column in sessions.
 2002-01-13: Don't update secondary tabs in worksheet if error occured.
@@ -10,14 +18,14 @@
 2002-01-13: Added stop all running queries button.
 2002-01-13: Changed font setup to editor setup.
 2002-01-13: Added option for extensions in editors.
-2002-01-13: Applied patch for improved PostgreSQL support. (Thanx Volker Goetz)
+2002-01-13: Applied patch for improved PostgreSQL support. (Thanx Volker Götz)
 2002-01-13: Added support for set without ending ; on line in worksheet.
 2002-01-13: Ignore worksheet lines starting with '@' character.
 2002-01-13: Fixed problem with next/previous memo editor buttons in lists.
 2002-01-13: Disable coalesced by default in storage manager.
 2002-01-13: Don't sort sga trace result in listview by default.
 2002-01-13: Changed name of Windows menu to Window menu.
-2002-01-13: Applied patch for fixing copy problem in X11. (Thanx Volkor Goetz)
+2002-01-13: Applied patch for fixing copy problem in X11. (Thanx Volkor Götz)
 2002-01-13: Fixed problem with no alphanumerical source packages.
 2002-01-13: Implemented describe in Oracle extractor.
 2002-01-12: Fixed bug in describe of snap tables.

@@ -433,11 +433,29 @@ static toSQL SQLListView("toBrowser:ListView",
 			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
 			 " ORDER BY View_Name",
 			 "List the available views in a schema");
+static toSQL SQLListViewPgSQL("toBrowser:ListView",
+                         "SELECT c.relname as View_Name\n"
+                         "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                         " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                         "   AND c.relkind = 'v'"
+                         " ORDER BY View_Name",
+                         QString::null,
+                         "7.1",
+                         "PostgreSQL");
+			 
 static toSQL SQLViewSQL("toBrowser:ViewSQL",	
 			"SELECT Text SQL\n"
 			"  FROM SYS.ALL_Views\n"
 			" WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
 			"Display SQL of a specified view");
+static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",	
+			"SELECT pg_get_viewdef(c.relname)\n"
+                        "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                        " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                        "   AND c.relkind = 'v' AND c.relname = :f2",
+                        QString::null,
+                        "7.1",
+                        "PostgreSQL");
 
 static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
@@ -531,6 +549,17 @@ static toSQL SQLListSQL("toBrowser:ListPL/SQL",
 			"   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
 			" ORDER BY Object_Name",
 			"List the available PL/SQL objects in a schema");
+static toSQL SQLListSQLPgSQL("toBrowser:ListPL/SQL",
+			     "SELECT p.proname AS Object_Name,\n"
+                             "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
+                             "       ELSE 'FUNCTION'\n"
+                             "   END AS Object_Type\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
+                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "ORDER BY Object_Name",
+			     QString::null,
+			     "7.1",
+                             "PostgreSQL");
 static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
 			     "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
 		 	     " WHERE OWNER = :f1<char[101]>\n"
@@ -538,6 +567,16 @@ static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
 			     "                       'PROCEDURE','TYPE')\n"
 			     " ORDER BY Object_Name",
 			     "List the available PL/SQL objects in a schema, one column version");
+static toSQL SQLListSQLShortPgSQL("toBrowser:ListPL/SQLShort",
+			     "SELECT p.proname AS Object_Name\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
+                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "ORDER BY Object_Name",
+			     QString::null,
+			     "7.1",
+                             "PostgreSQL");
+
+
 static toSQL SQLSQLTemplate("toBrowser:PL/SQLTemplate",
 			    "SELECT Text FROM SYS.ALL_SOURCE\n"
 			    " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
@@ -548,11 +587,31 @@ static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PACKAGE','TYPE')",
 			"Declaration of object");
+// PostgreSQL does not distinguish between Head and Body for Stored SQL
+// package code will be returnd for both Head and Body
+static toSQL SQLSQLHeadPgSQL("toBrowser:PL/SQLHead",
+			     "SELECT p.prosrc\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
+                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "  AND p.proname = :f2\n",
+			     QString::null,
+			     "7.1",
+                             "PostgreSQL");
+
 static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
 			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
+
+static toSQL SQLSQLBodyPgSQL("toBrowser:PL/SQLBody",
+			"SELECT p.prosrc\n"
+                        "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
+                        "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                        "  AND p.proname = :f2\n",
+			QString::null,
+			"7.1",
+                        "PostgreSQL");
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
 			    "SELECT Trigger_Name FROM SYS.ALL_TRIGGERS\n"
@@ -1015,7 +1074,10 @@ void toBrowser::refresh(void)
   try {
     QString selected=Schema->currentText();
     if (selected.isEmpty())
-      selected=connection().user().upper();
+      if(connection().provider()=="Oracle")
+        selected=connection().user().upper();
+      else
+        selected=connection().user();
 
     Schema->clear();
     toQList users=toQuery::readQuery(connection(),

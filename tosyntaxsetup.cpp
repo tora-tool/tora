@@ -51,6 +51,7 @@
 #include <qcolordialog.h>
 #include <qfont.h>
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qlistbox.h>
 #include <qlistview.h>
 

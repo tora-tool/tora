@@ -129,6 +129,11 @@ static toSQL SQLNowMySQL("Global:Now",
 			 QString::null,
 			 "3.0",
 			 "MySQL");
+static toSQL SQLNowPgSQL("Global:Now",
+			 "SELECT now()",
+			 QString::null,
+			 "7.1",
+			 "PostgreSQL");
 
 QString toNow(toConnection &conn)
 {
@@ -745,16 +750,16 @@ static QString GetExtensions(void)
 static QString AddExt(QString t,const QString &filter)
 {
   static QRegExp hasext("\\.[^\\/]*$");
+  if (t.isEmpty())
+    return t;
   if (!hasext.match(t)) {
-#if 0
-    static QRegExp findext("\.[^ \t\r\n]*");
+    static QRegExp findext("\\.[^ \t\r\n\\)\\|]*");
     int pos=0;
     int len=findext.match(filter,0,&pos);
     if (len>=0)
       t+=filter.mid(pos,len);
-#else
-    t+=".sql";
-#endif
+    else
+      t+=".sql";
   }
   return t;
 }
@@ -769,10 +774,10 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
-    return AddExt(url.path(),QString::null);
-  return AddExt(url.url(),QString::null);
+    return AddExt(url.path(),t);
+  return AddExt(url.url(),t);
 #else
-  return AddExt(TOFileDialog::getOpenFileName(filename,t,parent),QString::null);
+  return AddExt(TOFileDialog::getOpenFileName(filename,t,parent),t);
 #endif
 }
 
@@ -788,10 +793,10 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
-    return url.path();
-  return url.url();
+    return AddExt(url.path(),t);
+  return AddExt(url.url(),t);
 #else
-  return TOFileDialog::getSaveFileName(filename,t,parent);
+  return AddExt(TOFileDialog::getSaveFileName(filename,t,parent),t);
 #endif
 }
 

@@ -40,6 +40,8 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include <qregexp.h>
+
 // Some convenient defines
 
 #define ORACLE_NAME "Oracle"

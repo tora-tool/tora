@@ -182,6 +182,7 @@ toMain::toMain()
   FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit Connection",TO_FILE_COMMIT);
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
   FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
+  FileMenu->insertItem(QPixmap((const char **)stop_xpm),"Stop All Queries",TO_STOP_ALL);
   FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);

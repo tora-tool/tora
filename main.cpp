@@ -55,6 +55,7 @@
 #endif
 
 #include <qapplication.h>
+#include <qclipboard.h>
 #include <qmessagebox.h>
 #include <qtextcodec.h>
 
