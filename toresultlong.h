@@ -122,7 +122,7 @@ public:
   { toQList p; query(sql,p); }
   /** Reimplemented for internal reasons.
    */
-  virtual void readAll(void);
+  virtual void editReadAll(void);
 signals:
   /** Emitted when query is finnished.
    */

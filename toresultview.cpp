@@ -852,6 +852,7 @@ void toResultView::setup(bool readable,bool dispCol)
     addColumn("#");
   Filter=NULL;
   readAllEnabled(true);
+  ReadAll=false;
 }
 
 toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)

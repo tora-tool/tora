@@ -1227,6 +1227,7 @@ void toWorksheet::enableStatistic(bool ena)
 void toWorksheet::executeNewline(void)
 {
   int cline,epos;
+
   Editor->getCursorPosition(&cline,&epos);
 
   if (cline>0)
@@ -1240,14 +1241,22 @@ void toWorksheet::executeNewline(void)
     cline--;
   }
 
+  while(cline<Editor->numLines()) {
+    QString data=Editor->textLine(cline).simplifyWhiteSpace();
+    if (data.length()!=0&&data!=" ")
+      break;
+    cline++;
+  }
+
   int eline=cline;
+
   while(eline<Editor->numLines()) {
     QString data=Editor->textLine(eline).simplifyWhiteSpace();
     if (data.length()==0||data==" ") {
       eline--;
-      epos=Editor->textLine(eline).length();
       break;
     }
+    epos=Editor->textLine(eline).length();
     eline++;
   }
   Editor->setCursorPosition(cline,0,false);

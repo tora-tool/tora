@@ -114,10 +114,10 @@ void toResultLong::query(const QString &sql,const toQList &param)
 
 #define TO_POLL_CHECK 100
 
-void toResultLong::readAll(void)
+void toResultLong::editReadAll(void)
 {
   MaxNumber=-1;
-  addItem();
+  Timer.start(TO_POLL_CHECK);
 }
 
 void toResultLong::addItem(void)

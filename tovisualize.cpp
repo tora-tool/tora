@@ -95,6 +95,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
   Result=new QWidget(this);
+  Result->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 }
 
 void toVisualize::display(void)
@@ -175,6 +176,7 @@ void toVisualize::display(void)
   default:
     Result=new QWidget(this);
   }
+  Result->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Result->show();
   delete last;
 }
