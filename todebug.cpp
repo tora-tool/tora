@@ -1575,6 +1575,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Objects->setTreeStepSize(10);
   Objects->setSorting(0);
   Objects->setSelectionMode(QListView::Single);
+  Objects->setResizeMode(QListView::AllColumns);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
   Contents=new toListView(objSplitter);
@@ -1583,6 +1584,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Contents->setSorting(-1);
   Contents->setTreeStepSize(10);
   Contents->setSelectionMode(QListView::Single);
+  Contents->setResizeMode(QListView::AllColumns);
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
@@ -1596,6 +1598,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   StackTrace->setRootIsDecorated(true);
   StackTrace->setTreeStepSize(10);
   StackTrace->setAllColumnsShowFocus(true);
+  StackTrace->setResizeMode(QListView::AllColumns);
   DebugTabs->addTab(StackTrace,tr("&Stack Trace"));
   connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
@@ -1608,6 +1611,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Watch->setRootIsDecorated(true);
   Watch->setTreeStepSize(10);
   Watch->setAllColumnsShowFocus(true);
+  Watch->setResizeMode(QListView::AllColumns);
   DebugTabs->addTab(Watch,tr("W&atch"));
   Watch->setSelectionMode(QListView::Single);
   connect(Watch,SIGNAL(selectionChanged(void)),
@@ -1624,6 +1628,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Breakpoints->setColumnAlignment(1,AlignRight);
   Breakpoints->setSorting(-1);
   Breakpoints->setAllColumnsShowFocus(true);
+  Breakpoints->setResizeMode(QListView::AllColumns);
   DebugTabs->addTab(Breakpoints,tr("&Breakpoints"));
   connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
@@ -1635,6 +1640,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Parameters->setTreeStepSize(10);
   Parameters->setRootIsDecorated(true);
   Parameters->setAllColumnsShowFocus(true);
+  Parameters->setResizeMode(QListView::AllColumns);
   DebugTabs->addTab(Parameters,tr("&Parameters"));
 
   Output=new toDebugOutput(this,DebugTabs,connection);
@@ -1654,6 +1660,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   {
     QValueList<int> sizes=hsplitter->sizes();
+    sizes[1]=sizes[1]+sizes[0]-200;
     sizes[0]=200;
     hsplitter->setSizes(sizes);
     hsplitter->setResizeMode(objSplitter,QSplitter::KeepSize);
