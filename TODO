@@ -6,7 +6,7 @@ Beta todo list:
 * SQL Browser
 	Schema filter
 	Object search
-* Modify storage in storage manager.
+* Modify datafiles in storage manager.
 * Posibility to connect as SYS_DBA/SYS_OPER.
 
 Extended functionality:

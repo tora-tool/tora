@@ -44,6 +44,7 @@ class QLabel;
 class QSpinBox;
 class toFilesize;
 class QGroupBox;
+class toStorageDialog;
 
 class toStorageDefinition : public QWidget
 { 
@@ -71,6 +72,7 @@ public:
 
   QString getSQL(void);
 
+  friend class toStorageDialog;
 public slots:
   void optimalExtents(bool val);
   void unlimitedExtents(bool val);

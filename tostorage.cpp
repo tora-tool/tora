@@ -61,6 +61,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tomain.h"
 #include "tofilesize.h"
+#include "tosql.h"
 
 #include "tostorage.moc"
 
@@ -75,6 +76,7 @@ TO_NAMESPACE;
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
 #include "icons/modtablespace.xpm"
+#include "icons/modfile.xpm"
 #include "icons/readtablespace.xpm"
 #include "icons/writetablespace.xpm"
 
@@ -137,6 +139,7 @@ public:
 toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags fl)
   : QWidget(parent,name,fl)
 {	
+  Modify=false;
   if (!name)
     setName("toStorageTablespace");
   setCaption(tr("Form1"));
@@ -176,29 +179,29 @@ toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags
   QToolTip::add( DefaultStorage,tr("Allow specification of default storage (Separate tab)") );
   connect(DefaultStorage,SIGNAL(toggled(bool)),this,SLOT(allowDefault(bool)));
 
-  ButtonGroup2=new QButtonGroup(this,"ButtonGroup2");
-  ButtonGroup2->setGeometry(QRect(10,245,310,185)); 
-  ButtonGroup2->setTitle(tr("&Extent allocation"));
-  QToolTip::add( ButtonGroup2,tr("Specify how space allocation is managed in the tablespace."));
+  ExtentGroup=new QButtonGroup(this,"ExtentGroup");
+  ExtentGroup->setGeometry(QRect(10,245,310,185)); 
+  ExtentGroup->setTitle(tr("&Extent allocation"));
+  QToolTip::add( ExtentGroup,tr("Specify how space allocation is managed in the tablespace."));
   
-  Dictionary=new QRadioButton(ButtonGroup2,"Dictionary");
+  Dictionary=new QRadioButton(ExtentGroup,"Dictionary");
   Dictionary->setGeometry(QRect(10,25,140,19)); 
   Dictionary->setText(tr("&Dictionary"));
   Dictionary->setChecked(true);
   QToolTip::add( Dictionary,tr("Manage tablespace usiing dictionary tables."));
   connect(Dictionary,SIGNAL(toggled(bool)),this,SLOT(dictionaryToggle(bool)));
 
-  LocalAuto=new QRadioButton(ButtonGroup2,"LocalAuto");
+  LocalAuto=new QRadioButton(ExtentGroup,"LocalAuto");
   LocalAuto->setGeometry(QRect(10,55,140,19)); 
   LocalAuto->setText(tr("Local &Autoallocation"));
   
-  LocalSelect=new QRadioButton(ButtonGroup2,"LocalSelect");
+  LocalSelect=new QRadioButton(ExtentGroup,"LocalSelect");
   LocalSelect->setGeometry(QRect(10,85,100,19)); 
   LocalSelect->setText(tr("Local &Uniform"));
   QToolTip::add( LocalSelect,tr("The tablespace is locally managed with fixed extent sizes of specified size."));
   connect(LocalSelect,SIGNAL(toggled(bool)),this,SLOT(uniformToggle(bool)));
   
-  LocalUniform=new toFilesize("Extent &Size",ButtonGroup2,"LocalUniform");
+  LocalUniform=new toFilesize("Extent &Size",ExtentGroup,"LocalUniform");
   LocalUniform->setGeometry(QRect(10,110,291,61)); 
   LocalUniform->setEnabled(false);
   LocalUniform->setValue(1024);
@@ -236,35 +239,49 @@ void toStorageTablespace::uniformToggle(bool val)
   LocalUniform->setEnabled(val);
 }
 
-QString toStorageTablespace::getSQL()
+QStringList toStorageTablespace::getSQL()
 {
+  QStringList ret;
   QString str("MINIMUM EXTENT ");
   str.append(MinimumExtent->sizeString());
-  if (Logging->isChecked())
-    str.append(" LOGGING ");
-  else
-    str.append(" NOLOGGING ");
-  if (Online->isChecked())
-    str.append("ONLINE ");
-  else
-    str.append("OFFLINE ");
-  if (Permanent->isChecked())
-    str.append("PERMANENT ");
-  else
-    str.append("TEMPORARY ");
-  str.append("EXTENT MANAGEMENT ");
-  if (Dictionary->isChecked())
-    str.append("DICTIONARY");
-  else {
-    str.append("LOCAL ");
-    if (LocalAuto->isChecked())
-      str.append("AUTOALLOCATED");
-    else {
-      str.append("UNIFORM SIZE ");
-      str.append(LocalUniform->sizeString());
-    }
+  ret+=str;
+  if (Logging->isChecked()!=LoggingOrig||!Modify) {
+    if (Logging->isChecked())
+      str="LOGGING";
+    else
+      str="NOLOGGING";
+    ret+=str;
   }
-  return str;
+  if (Online->isChecked()!=OnlineOrig||!Modify) {
+    if (Online->isChecked())
+      str="ONLINE";
+    else
+      str="OFFLINE";
+    ret+=str;
+  }
+  if (Permanent->isChecked()!=PermanentOrig||!Modify) {
+    if (Permanent->isChecked())
+      str="PERMANENT";
+    else
+      str="TEMPORARY";
+    ret+=str;
+  }
+  if (ExtentGroup->isEnabled()) {
+    str="EXTENT MANAGEMENT ";
+    if (Dictionary->isChecked())
+      str.append("DICTIONARY");
+    else {
+      str.append("LOCAL ");
+      if (LocalAuto->isChecked())
+	str.append("AUTOALLOCATED");
+      else {
+	str.append("UNIFORM SIZE ");
+	str.append(LocalUniform->sizeString());
+      }
+    }
+    ret+=str;
+  }
+  return ret;
 }
 
 toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* name,WFlags fl)
@@ -441,6 +458,66 @@ toStorageDialog::toStorageDialog(bool datafile,QWidget *parent)
   connect(Datafile,SIGNAL(validContent(bool)),this,SLOT(validContent(bool)));
 }
 
+static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
+			       "SELECT min_extlen/1024,\n"
+			       "       extent_management,\n"
+			       "       contents,\n"
+			       "       logging,\n"
+			       "       status,\n"
+			       "       initial_extent/1024,\n"
+			       "       next_extent/1024,\n"
+			       "       min_extents,\n"
+			       "       max_extents,\n"
+			       "       pct_increase\n"
+			       "  FROM dba_tablespaces\n"
+			       " WHERE tablespace_name = :nam<char[70]>",
+			       "Get information about a tablespace for the create dialog, "
+			       "must have same columns and bindings");
+
+toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QWidget *parent)
+  : QDialog(parent,"Storage Dialog",true)
+{
+  Setup();
+  Datafile=NULL;
+  setCaption("Modify tablespace");
+  Tablespace=new toStorageTablespace(DialogTab);
+  DialogTab->addTab(Tablespace,"Tablespace");
+  Default=new toStorageDefinition(DialogTab);
+  DialogTab->addTab(Default,"Default Storage");
+  connect(Tablespace,SIGNAL(allowStorage(bool)),this,SLOT(allowStorage(bool)));
+
+  list<QString> result=toReadQuery(conn,SQLTablespaceInfo(conn),
+				   tablespace);
+  Tablespace->MinimumExtent->setValue(toShift(result).toInt());
+
+  Tablespace->Modify=true;
+  Default->setEnabled(false);
+  if (toShift(result)=="DICTIONARY")
+    Tablespace->Dictionary->setChecked(true);
+  else {
+    Tablespace->DefaultStorage->setEnabled(false);
+    Tablespace->LocalAuto->setChecked(true);
+  }
+  Tablespace->ExtentGroup->setEnabled(false);
+
+  Tablespace->Permanent->setChecked(toShift(result)=="PERMANENT");
+  Tablespace->Logging->setChecked(toShift(result)=="LOGGING");
+  Tablespace->Online->setChecked(toShift(result)=="ONLINE");
+  Tablespace->OnlineOrig=Tablespace->Online->isChecked();
+  Tablespace->PermanentOrig=Tablespace->Permanent->isChecked();
+  Tablespace->LoggingOrig=Tablespace->Logging->isChecked();
+
+  Default->InitialSize->setValue(toShift(result).toInt());
+  Default->NextSize->setValue(toShift(result).toInt());
+  Default->InitialExtent->setValue(toShift(result).toInt());
+  int num=toShift(result).toInt();
+  if (num==0)
+    Default->UnlimitedExtent->setChecked(true);
+  else
+    Default->MaximumExtent->setValue(num);
+  Default->PCTIncrease->setValue(toShift(result).toInt());
+}
+
 void toStorageDialog::validContent(bool val)
 {
   OkButton->setEnabled(val);
@@ -465,6 +542,7 @@ static QPixmap *toNewFilePixmap;
 static QPixmap *toModTablespacePixmap;
 static QPixmap *toReadTablespacePixmap;
 static QPixmap *toWriteTablespacePixmap;
+static QPixmap *toModFilePixmap;
 
 toStorage::toStorage(QWidget *main,toConnection &connection)
   : QVBox(main,NULL,WDestructiveClose),Connection(connection)
@@ -493,6 +571,8 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
     toReadTablespacePixmap=new QPixmap((const char **)readtablespace_xpm);
   if (!toWriteTablespacePixmap)
     toWriteTablespacePixmap=new QPixmap((const char **)writetablespace_xpm);
+  if (!toModFilePixmap)
+    toModFilePixmap=new QPixmap((const char **)modfile_xpm);
 
   QToolBar *toolbar=toAllocBar(this,"Storage manager",connection.connectString());
 
@@ -535,13 +615,17 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 				 this,SLOT(readOnly(void)),
 				 toolbar);
   toolbar->addSeparator(); 
-#if 0
   ModTablespaceButton=new QToolButton(*toModTablespacePixmap,
 				      "Modify tablespace",
 				      "Modify tablespace",
-				      this,SLOT(refresh(void)),
+				      this,SLOT(modifyTablespace(void)),
 				      toolbar);
-#endif
+  ModFileButton=new QToolButton(*toModFilePixmap,
+				"Modify file",
+				"Modify file",
+				this,SLOT(modifyTablespace(void)),
+				toolbar);
+  toolbar->addSeparator(); 
   new QToolButton(*toNewTablespacePixmap,
 		  "Create new tablespace",
 		  "Create new tablespace",
@@ -699,11 +783,10 @@ void toStorage::selectionChanged(void)
   CoalesceButton->setEnabled(false);
   LoggingButton->setEnabled(false);
   EraseLogButton->setEnabled(false);
-#if 0
   ModTablespaceButton->setEnabled(false);
-#endif
   NewFileButton->setEnabled(false);
   MoveFileButton->setEnabled(false);
+  ModFileButton->setEnabled(false);
   ReadOnlyButton->setEnabled(false);
   ReadWriteButton->setEnabled(false);
 
@@ -712,6 +795,7 @@ void toStorage::selectionChanged(void)
     if (item->parent()) {
       item=item->parent();
       MoveFileButton->setEnabled(true);
+      ModFileButton->setEnabled(true);
     }
     QListViewItem *child=item->firstChild();
     if (!child) {
@@ -738,9 +822,7 @@ void toStorage::selectionChanged(void)
     if (item->text(10)!="100%")
       CoalesceButton->setEnabled(true);
     NewFileButton->setEnabled(true);
-#if 0
     ModTablespaceButton->setEnabled(true);
-#endif
   }
 }
 
@@ -774,13 +856,44 @@ void toStorage::newTablespace(void)
       str.append("\" DATAFILE ");
       str.append(newSpace.Datafile->getSQL());
       str.append(" ");
-      str.append(newSpace.Tablespace->getSQL());
+      str.append(newSpace.Tablespace->getSQL().join(" "));
       if (newSpace.Tablespace->allowStorage()) {
 	str.append(" DEFAULT ");
 	str.append(newSpace.Default->getSQL());
       }
       otl_cursor::direct_exec(Connection.connection(),
 			      str.utf8());
+      refresh();
+    }
+  } TOCATCH
+}
+
+#include <stdio.h>
+
+void toStorage::modifyTablespace(void)
+{
+  try {
+    toStorageDialog modifySpace(Connection,Storage->currentTablespace(),this);
+
+    if (modifySpace.exec()) {
+      QString start;
+      start="ALTER TABLESPACE \"";
+      start.append(Storage->currentTablespace());
+      start.append("\" ");
+      QStringList opr=modifySpace.Tablespace->getSQL();
+      for (unsigned int i=0;i<opr.count();i++) {
+	QString str=start;
+	str+=opr[i];
+	otl_cursor::direct_exec(Connection.connection(),
+				str.utf8());
+      }
+      if (modifySpace.Tablespace->allowStorage()) {
+	QString str=start;
+	str.append("DEFAULT ");
+	str.append(modifySpace.Default->getSQL());
+	otl_cursor::direct_exec(Connection.connection(),
+				str.utf8());
+      }
       refresh();
     }
   } TOCATCH

@@ -51,13 +51,14 @@ class toStorageDefinition;
 class toConnection;
 class toResultStorage;
 class toFilesize;
+class toStorageDialog;
 
 class toStorageTablespace : public QWidget
 { 
   Q_OBJECT
 
   toFilesize *MinimumExtent;
-  QButtonGroup *ButtonGroup2;
+  QButtonGroup *ExtentGroup;
   toFilesize *LocalUniform;
   QRadioButton *Dictionary;
   QRadioButton *LocalAuto;
@@ -68,12 +69,18 @@ class toStorageTablespace : public QWidget
   QCheckBox *Permanent;
   QCheckBox *DefaultStorage;
 
+  bool Modify;
+  bool LoggingOrig;
+  bool OnlineOrig;
+  bool PermanentOrig;
+
 public:
   toStorageTablespace(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
-  QString getSQL(void);
+  QStringList getSQL(void);
   bool allowStorage(void);
 
+  friend class toStorageDialog;
 signals:
   void allowStorage(bool);
 
@@ -106,6 +113,7 @@ public:
   QString getName(void);
   QString getSQL(void);
 
+  friend class toStorageDialog;
 signals:
   void validContent(bool);
 
@@ -129,7 +137,9 @@ public:
   toStorageTablespace *Tablespace;
   toStorageDefinition *Default;
 
-  toStorageDialog(const QString &Tablespace,QWidget *parent);
+  toStorageDialog(toConnection &conn,const QString &Tablespace,QWidget *parent);
+  toStorageDialog(toConnection &conn,const QString &Tablespace,
+		  const QString &file,QWidget *parent);
   toStorageDialog(bool datafile,QWidget *parent);
 public slots:
   void validContent(bool val);
@@ -153,6 +163,7 @@ class toStorage : public QVBox {
   QToolButton *ReadWriteButton;
   QToolButton *NewFileButton;
   QToolButton *MoveFileButton;
+  QToolButton *ModFileButton;
 public:
   toStorage(QWidget *parent,toConnection &connection);
   ~toStorage();
@@ -173,6 +184,7 @@ public slots:
 
   void newDatafile(void);
   void newTablespace(void);
+  void modifyTablespace(void);
   void moveFile(void);
 
   void selectionChanged(void);
