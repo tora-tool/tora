@@ -1,0 +1,35 @@
+Using TOra on OS-X is unsupported, this file and the accompaning
+changes have been contributed by Rick Hall <rphall@sourceforge.net>.
+
+  This build assumes that you have Oracle 9.2.0 installed on the target Mac in
+the default installation directory (/Users/oracle/9iR2) and that you've
+installed Qt 3.2.1 for the Mac in the default directory (/usr/local/qt).
+Qt must be configured and built with the static and multi-threaded options
+(./configure -static -thread). You must set the QTDIR environment variable
+as described in the QT documentation.
+ 
+  To build for Mac OS-X:
+ 
+  1) Copy "Makefile.OSX" to "Makefile" and modify it for your environment
+(if necessary).
+
+  2) Run the configure script
+ 
+     ./configure --only-prepare
+ 
+  3) Run the Makefile
+ 
+     make
+ 
+  4) The Mac version of TOra will built in a "tora.app" directory. The
+directory is the application bundle. Copy it to some convenient location, like
+your desktop or /Applications folder.
+ 
+  5) Before you can run TOra, you must configure the ORACLE_HOME environment
+variable so that it is found when tora.app is doubled clicked from the Finder.
+It is not sufficient to set ORACLE_HOME in your $(HOME)/.bash_profile startup
+script. If one doesn't already exist, you must create a properties file located
+at $(HOME)/.MacOSX/environment.plist, and the file must contain the ORACLE_HOME
+key-value pair. See the documentation for property lists and the Property List
+Builder which is available from developer.apple.com, or just hack away at the
+example of environment.plist which is attached.

@@ -1,6 +1,6 @@
 //***************************************************************************
 /*
- * TOra - An Oracle Toolkit for DBA's and developers
+ * TOra - An Oracle Toolkit for DBA's and developers 
  * Copyright (C) 2000-2001,2001 Underscore AB
  * 
  * This program is free software; you can redistribute it and/or
@@ -81,6 +81,11 @@
 #ifdef WIN32
 #include "windows/cregistry.h"
 #endif
+
+#if defined(Q_OS_MACX)
+#include <sys/param.h>
+#include <CoreServices/CoreServices.h>
+#endif // Q_OS_MACX
 
 #define CHUNK_SIZE 31
 
@@ -671,9 +676,7 @@ int toSizeDecode(const QString &str)
 QString toPluginPath(void)
 {
   QString str;
-#ifndef WIN32
-  str=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
-#else
+#ifdef WIN32
   CRegistry registry;
   DWORD siz=1024;
   char buffer[1024];
@@ -691,6 +694,34 @@ QString toPluginPath(void)
     }
   } catch(...) {
   }
+#elif defined( Q_OS_MACX )
+  { // MacOS
+  char resourcePath[MAXPATHLEN];
+  memset( &resourcePath[0], 0, MAXPATHLEN );
+  CFBundleRef appBundle = ::CFBundleGetMainBundle();
+  if ( appBundle ) {
+    CFURLRef urlRef = CFBundleCopyResourcesDirectoryURL( appBundle );
+    if ( urlRef ) {
+      UInt8* _p = (UInt8*) &resourcePath[0];
+      bool isOK = CFURLGetFileSystemRepresentation(
+          urlRef, TRUE, _p, MAXPATHLEN );
+      if ( !isOK ) {
+        // QMessageBox::warning( 0, "File error",
+        //     QString( "Unexpected: no file system representation") );
+      }
+    } else {
+      // QMessageBox::warning( 0, "File error",
+      //     QString( "Unexpected: unable to get resource directory") );
+    }
+    CFRelease( urlRef );
+    str = &resourcePath[0];
+  } else {
+    // QMessageBox::warning( 0, "File error",
+    //     QString( "Unexpected: unable to get main bundle") );
+  }
+  } // MacOS
+#else
+  str=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
 #endif
   return str;
 }

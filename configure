@@ -71,10 +71,9 @@ fi
 echo " $PERL"
 
 $PERL configure.pl $*
-
 if [ $? != 0 ]
 then
-    exit 2
+   exit 2
 fi
 
 # Get the MOC/UIC stuff
