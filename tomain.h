@@ -671,6 +671,10 @@ QColor toChartColor(int index);
  * @return Reference toConnection object closest to the current.
  */
 toConnection &toCurrentConnection(QWidget *widget);
+/** Set if the thread is working or not. Will change the cursor to an hourgalass.
+ * @param busy Wether busy or not.
+ */
+void toBusy(bool busy=false);
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

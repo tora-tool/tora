@@ -51,6 +51,7 @@ TO_NAMESPACE;
 #endif
 
 #include <qapplication.h>
+#include <qcursor.h>
 #include <qfiledialog.h>
 #include <qstatusbar.h>
 #include <qcombobox.h>
@@ -71,6 +72,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tosql.h"
 #include "toresult.h"
+#include "tothread.h"
 
 #define CHUNK_SIZE 63
 
@@ -908,4 +910,14 @@ toConnection &toCurrentConnection(QWidget *cur)
 toConnection &toResult::connection(void)
 {
   return toCurrentConnection(dynamic_cast<QWidget *>(this));
+}
+
+void toBusy(bool busy)
+{
+  if (toThread::mainThread()) {
+    if (busy)
+      qApp->setOverrideCursor(Qt::waitCursor);
+    else
+      qApp->restoreOverrideCursor();
+  }
 }

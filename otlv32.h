@@ -14,6 +14,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+void toBusy(bool);
+
 //======================= CONFIGURATION #DEFINEs ===========================
 
 // Uncomment the following line in order to include the OTL for ODBC:
@@ -7415,12 +7417,13 @@ public:
    last_param_data_token=0;
    last_sql_param_data_status=0;
    sql_param_data_count=0;
-   
+   toBusy(true);
    status=SQLExecute(cda);
    if(status!=SQL_SUCCESS&&
       status!=SQL_SUCCESS_WITH_INFO&&
       status!=SQL_NO_DATA&&
       status!=SQL_NEED_DATA)return 0;
+   toBusy(false);
    if(status==SQL_NEED_DATA){
     _rpc=iters;
     return 1;
@@ -9713,7 +9716,9 @@ public:
 
  int exec(const int iters)
  {
+  toBusy(true);
   int rc=oexn(&cda,iters,0);
+  toBusy(false);
   return !rc;
  }
 
@@ -13241,6 +13246,7 @@ public:
    mode=OCI_COMMIT_ON_SUCCESS;
   else
    mode=OCI_DEFAULT;
+  toBusy(true);
   status=OCIStmtExecute
    (db->svchp,
     cda,
@@ -13250,6 +13256,7 @@ public:
     0,
     0,
     mode);
+  toBusy(false);
   if(status!=OCI_SUCCESS&&
      status!=OCI_SUCCESS_WITH_INFO)
    return 0;

@@ -104,6 +104,7 @@ private:
   }			Thread;
   static list<toThread *> *Threads;
   static toLock *Lock;
+  static HANDLE MainThread;
   toThread(const toThread &);
 public:
   toThread(toTask *);
@@ -111,6 +112,7 @@ public:
   
   void start(void);
   void startAsync(void);
+  static bool mainThread(void);
 };
 
 #else
@@ -205,6 +207,9 @@ private:
    * is passed as parameter.
    */
   friend void		*toThreadStartWrapper(void*);
+  /** Main thread id
+   */
+  static pthread_t MainThread;
   
   toThread(const toThread &);
 public:
@@ -226,6 +231,9 @@ public:
    * Qt Threads.
    */
   void kill(int signo);
+  /** Returns true if this is the main thread.
+   */
+  static bool mainThread(void);
 };
 
 #endif

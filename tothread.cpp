@@ -47,6 +47,8 @@ TO_NAMESPACE;
 
 #ifndef TO_QTHREAD
 
+pthread_t toThread::MainThread=pthread_self();
+
 #define SEM_ASSERT(x) if((x)!=0) { throw QString(\
 "Error in semaphore function \"" #x "\" didn't work"); }
 
@@ -192,10 +194,21 @@ void toThread::kill(int signo)
   THREAD_ASSERT(pthread_kill(Thread,signo));
 }
 
+bool toThread::mainThread(void)
+{
+  return pthread_equal(MainThread,pthread_self());
+}
+
 #else
 
 list<toThread *> *toThread::Threads;
 toLock *toThread::Lock;
+HANDLE toThread::MainThread=QThread::currentThread();
+
+bool toThread::mainThread(void)
+{
+  return MainThread==QThread::currentThread();
+}
 
 void toSemaphore::up(void)
 {
