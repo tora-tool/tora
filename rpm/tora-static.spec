@@ -121,7 +121,4 @@ export QTDIR="%{_qt3dir}"
 %dir %{_prefix}/lib/tora/help
 %dir %{_prefix}/lib/tora/help/api
 %dir %{_prefix}/lib/tora/help/images
-%{_prefix}/lib/tora/help/*
-%{_prefix}/lib/tora/help/api/*
-%{_prefix}/lib/tora/help/images/*
-%{_prefix}/lib/tora/*.tpl
+%{_prefix}/lib/tora
