@@ -253,11 +253,11 @@ public:
 	       e->key()==Key_F4) {
       Worksheet->describe();
       e->accept();
-    } else if (e->state()==ControlButton&&
+    } else if (e->state()==AltButton&&
 	       e->key()==Key_Up) {
       Worksheet->executePreviousLog();
       e->accept();
-    } else if (e->state()==ControlButton&&
+    } else if (e->state()==AltButton&&
 	       e->key()==Key_Down) {
       Worksheet->executeNextLog();
       e->accept();
@@ -550,9 +550,9 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Execute previous log entry",this,SLOT(executePreviousLog()),
-			   CTRL+Key_Up);
+			   ALT+Key_Up);
       ToolMenu->insertItem("Execute next log entry",this,SLOT(executeNextLog()),
-			   CTRL+Key_Down);
+			   ALT+Key_Down);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
 
