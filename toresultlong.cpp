@@ -109,9 +109,9 @@ void toResultLong::readAll(void)
 
 void toResultLong::addItem(void)
 {
-  if (Query) {
-    if (Query->poll()) {
-      try {
+  try {
+    if (Query) {
+      if (Query->poll()) {
 	bool em=false;
 	char buffer[100];
 	if (First) {
@@ -187,44 +187,28 @@ void toResultLong::addItem(void)
 	}
 	if (MaxNumber<0||MaxNumber>RowNumber)
 	  Timer.start(1,true); // Must use timer, would mean really long recursion otherwise
-      } catch (const otl_exception &exc) {
-	if (First) {
-	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
-	  First=false;
-	}
-	cleanup();
-	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
-      } catch (const QString &str) {
-	if (First) {
-	  emit firstResult(SQL,str);
-	  First=false;
-	}
-	cleanup();
-	toStatusMessage(str);
-      }
-    } else {
-      try {
+      } else {
 	if (Query->eof()) {
 	  cleanup();
 	  return;
 	} else if (!Timer.isActive())
 	  Timer.start(TO_POLL_CHECK,true);
-      } catch (const otl_exception &exc) {
-	if (First) {
-	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
-	  First=false;
-	}
-	cleanup();
-	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
-      } catch (const QString &str) {
-	if (First) {
-	  emit firstResult(SQL,str);
-	  First=false;
-	}
-	cleanup();
-	toStatusMessage(str);
       }
     }
+  } catch (const otl_exception &exc) {
+    if (First) {
+      emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
+      First=false;
+    }
+    cleanup();
+    toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+  } catch (const QString &str) {
+    if (First) {
+      emit firstResult(SQL,str);
+      First=false;
+    }
+    cleanup();
+    toStatusMessage(str);
   }
 }
 

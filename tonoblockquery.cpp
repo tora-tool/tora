@@ -272,7 +272,7 @@ bool toNoBlockQuery::poll(void)
     toLocker lock(Lock);
     count+=ReadingValues.size();
   }
-  if (count>=DescriptionLength&&DescriptionLength>0)
+  if ((count>=DescriptionLength&&DescriptionLength>0)||eof())
     return true;
   return false;
 }

@@ -23,6 +23,7 @@
 2001-07-24: Reenable style selection for Qt.
 2001-07-29: Maximize tool window if there is only one.
 2001-07-29: Only fix layout on maximized tool windows.
+2001-07-31: Fixed problem with queries that doesn't return any rows.
 
 0.13: Released 2001-07-11
 
