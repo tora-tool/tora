@@ -121,6 +121,7 @@
 2001-09-05: Added mysql connection provider.
 2001-09-05: Fall back to Oracle if sql not found in toSQL.
 2001-09-05: Add support for changing connections in toresultviews.
+2001-09-05: Some fixes in debugtext when changing data.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 
