@@ -700,6 +700,19 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	Completion->setBottomItem(CompleteItem);
       e->accept();
       return;
+    } else if (e->key()==Key_Right&&e->state()==0) {
+      int curline,curcol;
+      getCursorPosition(&curline,&curcol);
+      int line1,col1,line2,col2;
+      if (getMarkedRegion(&line1,&col1,&line2,&col2)&&
+	  line1==curline&&col1==curcol) {
+	e->accept();
+	KeepCompletion=true;
+	setCursorPosition(line1,col1);
+	setCursorPosition(line2,col2,true);
+	KeepCompletion=false;
+	return;
+      }
     } else if (e->key()==Key_Escape&&e->state()==0) {
       delete Completion;
       Completion=NULL;
@@ -745,7 +758,16 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       QString txt=e->text();
       if (txt.length()) {
 	if (toIsIdent(txt.at(0))) {
-	  QString mrk=markedText();
+	  QString mrk;
+	  {
+	    int curline,curcol;
+	    getCursorPosition(&curline,&curcol);
+	    int line1,col1,line2,col2;
+	    if (getMarkedRegion(&line1,&col1,&line2,&col2)&&
+		line2==curline&&col2==curcol)
+	      mrk=markedText();
+	  }
+	  
 	  mrk+=txt;
 	  Completion->clear();
 	  CompleteItem=-1;
