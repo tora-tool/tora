@@ -739,9 +739,10 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
       } while(cur.subTokens().begin()!=cur.subTokens().end()&&
 	      (*cur.subTokens().begin()).String.upper()!="END");
       return blk;
-    } else if ((upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION")&&!lst) {
+    } else if ((upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION"||upp=="ELSE")&&!lst) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       return ret;
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
     } else if (first=="ASSIGN"||first=="SET"||first=="PROMPT"||first=="SPOOL"||first=="STORE"||first=="REM") {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       int line=tokens.line();
@@ -984,7 +985,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if ((*i).subTokens().begin()!=(*i).subTokens().
 	  end())
 	  t=(*(*i).subTokens().begin()).String.upper();
-	if (t=="BEGIN"||t=="WHEN")
+	if (t=="BEGIN"||t=="WHEN"||t=="ELSE")
 	  add=0;
 	if ((*i).Type==statement::List)
 	  ret+=indentString(level+add+exc);
