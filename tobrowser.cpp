@@ -419,7 +419,7 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "3.0",
 			       "MySQL");
 static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
-			       "SELECT c.* AS \"Table Name\"\n"
+			       "SELECT c.*\n"
 			       "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
 			       " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
 			       "   AND c.relkind = 'r'\n"
