@@ -409,7 +409,7 @@ public:
   {
     setSQL(SQLRollback);
   }
-  virtual void query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const toQList &param)
   {
     QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
     

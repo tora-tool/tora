@@ -56,6 +56,7 @@
 2001-08-15: New Oracle DB access provider.
 2001-08-16: Fixed a lot of problem with new DB access.
 2001-08-16: Fixed problem with default value in changing watches.
+2001-08-17: Added documentation to the connection API.
 
 0.14: Released 2001-08-02
 

@@ -29,3 +29,6 @@ toResultContent:
 toResultStat:
 	Statistics for parallel servers will only show up as long as the parallel query is actually
 	running.
+
+Unknown:
+	Crashes when starting without any database providers.

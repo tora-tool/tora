@@ -12,7 +12,8 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class connectionImpl</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"></TD></TR>
+		<TD valign="top" align="right" colspan="1"> This class is an abstract baseclass to actually implement the comunication with the
+ database. <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
@@ -47,20 +48,60 @@
 </LI>
 <LI>virtual  toQuery::queryImpl *&nbsp;<b><i><A HREF="#ref11">createQuery</A></i></b> (<A HREF="#toQuery">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>) 
 </LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
-<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
-<br></td><td align="right"><h3><strong>connectionImpl</strong></h3></td></tr></table><p></p><A NAME="~connectionImpl"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~connectionImpl</strong> ()
-<br></td><td align="right"><h3><strong>~connectionImpl</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="commit"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>commit</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
-<br></td><td align="right"><h3><i><strong>commit</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="rollback"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>rollback</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
-<br></td><td align="right"><h3><i><strong>rollback</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="createConnection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<i><strong>createConnection</strong></i> (void)
-<br></td><td align="right"><h3><i><strong>createConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="closeConnection"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>closeConnection</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
-<br></td><td align="right"><h3><i><strong>closeConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="version"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<i><strong>version</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
-<br></td><td align="right"><h3><i><strong>version</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="clone"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> connectionImpl *&nbsp;<i><strong>clone</strong></i> (<A HREF="toConnection.html">toConnection</A> *newConn)
-<br></td><td align="right"><h3><i><strong>clone</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><A NAME="createQuery"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> toQuery::queryImpl *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="#toQuery">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
-<br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>)
-<br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><HR>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
+ database. 
+ (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
+   </p>
+<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the parent connection object of this connection.
+     </p>
+<A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
+<br></td><td align="right"><h3><strong>connectionImpl</strong></h3></td></tr></table><p></p><p> Create a new connection implementation for a connection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to implement.
+     </TD></TR>
+</TABLE></P>
+<A NAME="~connectionImpl"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~connectionImpl</strong> ()
+<br></td><td align="right"><h3><strong>~connectionImpl</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destructor.
+     </p>
+<A NAME="commit"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>commit</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>commit</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Commit the supplied actual database connection.
+     </p>
+<A NAME="rollback"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>rollback</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>rollback</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Rollback the supplied actual database connection.
+     </p>
+<A NAME="createConnection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<i><strong>createConnection</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>createConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new connection to the database.
+     </p>
+<A NAME="closeConnection"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>closeConnection</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>closeConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Close a connection to the database.
+     </p>
+<A NAME="version"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<i><strong>version</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>version</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get the version of the database connected to.
+     </p>
+<A NAME="clone"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> connectionImpl *&nbsp;<i><strong>clone</strong></i> (<A HREF="toConnection.html">toConnection</A> *newConn)
+<br></td><td align="right"><h3><i><strong>clone</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p> Create a copy of this implementation.
+     </p>
+<A NAME="createQuery"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> toQuery::queryImpl *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="#toQuery">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
+<br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new query implementation for this connection.
+</p>
+<p><b>Returns</b>: A query implementation, allocated with new.
+     </p>
+<A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>)
+<br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+     </TD></TR>
+</TABLE></P>
+<HR>
 	<table>
 	</table>
 </BODY>

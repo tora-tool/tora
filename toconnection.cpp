@@ -69,6 +69,8 @@ list<QString> toConnectionProvider::hosts(void)
 list<QString> toConnectionProvider::providers(void)
 {
   list<QString> ret;
+  if (!Providers)
+    return ret;
   for(map<QString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
     ret.insert(ret.end(),(*i).first);
   return ret;
