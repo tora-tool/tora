@@ -110,8 +110,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   Example->setReadOnly(true);
   Example->setText("create procedure CheckObvious as\n"
 		   "begin\n"
-		   "  GlobeCom:='Great'; -- This variable doesn't exist\n"
-		   "  if GlobeCom = 'Great' then\n"
+		   "  Underscore:='Great'; -- This variable doesn't exist\n"
+		   "  if Underscore = 'Great' then\n"
 		   "    Obvious(true);\n"
 		   "  end if;\n"
 		   "end;");

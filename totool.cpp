@@ -261,7 +261,8 @@ bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
 }
 
 #ifdef WIN32
-#  define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\\"
+#  define APPLICATION_NAME "SOFTWARE\\Underscore\\tosqel\\"
+#  define FALLBACK_NAME    "SOFTWARE\\GlobeCom\\tora\\"
 
 static char *toKeyPath(const QString &str,CRegistry &registry)
 {
@@ -449,7 +450,20 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
 	  QString ret=QString::fromUtf8(buffer);
 	  (*Configuration)[tag]=ret;
 	} else {
-	  (*Configuration)[tag]="";
+	  path=tag;
+	  path.prepend(FALLBACK_NAME);
+	  path.replace(re,"\\");
+	  if (registry.GetStringValue(HKEY_CURRENT_USER,
+				      toKeyPath(path,registry),
+				      toKeyValue(path),
+				      buffer,siz)) {
+	    if (siz>0) {
+	      QString ret=QString::fromUtf8(buffer);
+	      (*Configuration)[tag]=ret;
+	    } else {
+	      (*Configuration)[tag]="";
+	    }
+	  }
 	}
 	return (*Configuration)[tag];
       }

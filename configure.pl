@@ -132,6 +132,7 @@ my %plugins=(
 	     "toproject"           => { "Files" => [ "toproject" ],
 					"Any" => 1 },
 	     "toresult"            => { "Files" => [ "toresultcols",
+						     "toresultcombo",
 						     "toresultconstraint",
 						     "toresultcontent",
 						     "toresultcontentfilterui",
@@ -271,6 +272,8 @@ my $MySQLShared;
 my $MySQLStatic;
 my $MySQLFound=1;
 
+my $OnlyMake=0;
+
 $QtDir=$ENV{QTDIR};
 
 for (@ARGV) {
@@ -307,6 +310,8 @@ for (@ARGV) {
 	$OracleFound=0;
     } elsif (/^--without-kde$/) {
 	$NoKDE=1;
+    } elsif (/^--enable-onlymake$/) {
+	$OnlyMake=1;
     } elsif (/^--with-static$/) {
 	$Target="tora-static";
 	$ForceTarget=1;
@@ -1347,6 +1352,7 @@ API=	\\
 	toresult.h		\\
 	toresultbar.h		\\
 	toresultcols.h		\\
+	toresultcombo.h         \\
 	toresultconstraint.h	\\
 	toresultcontent.h	\\
 	toresultdepend.h	\\
@@ -1642,4 +1648,8 @@ if ($RPMGenerate) {
     if (! -f "rpmmysql") {
         print "\nCouldn't open rpmmysql for writing\n";
     }
+}
+
+if ($OnlyMake) {
+    exit(1);
 }

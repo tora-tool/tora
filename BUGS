@@ -4,7 +4,6 @@ OCI:
 
 Qt:
 	When using antialiased text doesn't draw left axis legend correctly in charts.
-	When using antialiased monospaced text isn't always monospaced.
 	Looses clipboard when application closes.
 
 KDE:
@@ -27,9 +26,6 @@ toThread:
 
 toWorksheet:
 	Errors when displaying query plan will display two error dialogs.
-
-toListView:
-	When sorting numerical columns always sort text after.
 
 toSGATrace:
 	Doesn't work with Oracle7

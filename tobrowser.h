@@ -47,6 +47,7 @@ class QTabWidget;
 class QToolBar;
 class toBrowserFilter;
 class toResult;
+class toResultCombo;
 class toResultContent;
 class toResultFilter;
 class toResultView;
@@ -54,7 +55,7 @@ class toResultView;
 class toBrowser : public toToolWidget {
   Q_OBJECT
 
-  QComboBox *Schema;
+  toResultCombo *Schema;
   QTabWidget *TopTab;
   QPopupMenu *ToolMenu;
 
@@ -84,8 +85,7 @@ public:
 public slots:
   void refresh(void);
   void updateTabs(void);
-  void changeSchema(int)
-  { SecondText=""; refresh(); }
+  void changeSchema(int);
   void changeTab(QWidget *tab);
   void changeSecond(void);
   void changeSecondTab(QWidget *tab);

@@ -39,6 +39,7 @@
 #include "tohelp.h"
 #include "tomain.h"
 #include "toresultcols.h"
+#include "toresultcombo.h"
 #include "toresultconstraint.h"
 #include "toresultcontent.h"
 #include "toresultcontent.h"
@@ -691,7 +692,7 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 
 QString toBrowser::schema(void)
 {
-  QString ret=Schema->currentText();
+  QString ret=Schema->selected();
   if (ret=="No schemas")
     return connection().database();
   return ret;
@@ -733,9 +734,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  "Remove any object filter",
 		  this,SLOT(clearFilter(void)),
 		  toolbar);
-  Schema=new QComboBox(toolbar);
+  Schema=new toResultCombo(toolbar);
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
+  Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
+  Schema->setSelected(connection.user().upper());
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
   
@@ -1103,6 +1106,12 @@ void toBrowser::windowActivated(QWidget *widget)
   }
 }
 
+void toBrowser::changeSchema(int)
+{
+  SecondText="";
+  refresh();
+}
+
 toBrowser::~toBrowser()
 {
   delete Filter;
@@ -1111,23 +1120,7 @@ toBrowser::~toBrowser()
 void toBrowser::refresh(void)
 {
   try {
-    QString selected=Schema->currentText();
-    if (selected.isEmpty())
-      if(connection().provider()=="Oracle")
-        selected=connection().user().upper();
-      else
-        selected=connection().user();
-
-    Schema->clear();
-    toQList users=toQuery::readQuery(connection(),
-				     toSQL::string(toSQL::TOSQL_USERLIST,connection()));
-    int j=0;
-    for(toQList::iterator i=users.begin();i!=users.end();i++) {
-      Schema->insertItem(*i);
-      if (selected==*i)
-	Schema->setCurrentItem(j);
-      j++;
-    }
+    Schema->refresh();
     if (FirstTab)
       FirstTab->clearParams();
     if (SecondTab)
@@ -1145,7 +1138,7 @@ void toBrowser::focusObject(void)
 void toBrowser::updateTabs(void)
 {
   try {
-    if (!Schema->currentText().isEmpty()&&FirstTab)
+    if (!Schema->selected().isEmpty()&&FirstTab)
       FirstTab->changeParams(schema(),Filter?Filter->wildCard():QString("%"));
     firstDone(); // In case it is ignored cause it is already done.
     if (SecondTab&&!SecondText.isEmpty())
@@ -1275,7 +1268,7 @@ void toBrowser::addTable(void)
 
 void toBrowser::exportData(std::map<QString,QString> &data,const QString &prefix)
 {
-  data[prefix+":Schema"]=Schema->currentText();
+  data[prefix+":Schema"]=Schema->selected();
   data[prefix+":FirstTab"]=TopTab->currentPage()->name();
   data[prefix+":SecondText"]=SecondText;
   for(std::map<QString,toResult *>::iterator i=SecondMap.begin();i!=SecondMap.end();i++) {
@@ -1312,8 +1305,10 @@ void toBrowser::importData(std::map<QString,QString> &data,const QString &prefix
   toToolWidget::importData(data,prefix);
   QString str=data[prefix+":Schema"];
   for(int i=0;i<Schema->count();i++)
-    if (Schema->text(i)==str)
+    if (Schema->text(i)==str) {
       Schema->setCurrentItem(i);
+      Schema->setSelected(Schema->text(i));
+    }
   str=data[prefix+":FirstTab"];
   QWidget *chld=(QWidget *)child(str);
   if(chld&&str.length()) {

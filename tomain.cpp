@@ -1312,10 +1312,16 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
     showMinimized();
   else {
     showNormal();
-    setGeometry(data[prefix+":X"].toInt(),
-		data[prefix+":Y"].toInt(),
-		data[prefix+":Width"].toInt(),
-		data[prefix+":Height"].toInt());
+    int width=data[prefix+":Width"].toInt();
+    if (width==0) {
+      TOMessageBox::warning(toMainWidget(),
+			    "Invalid session file","The session file is not valid, can't read it.");
+      return;
+    } else
+      setGeometry(data[prefix+":X"].toInt(),
+		  data[prefix+":Y"].toInt(),
+		  width,
+		  data[prefix+":Height"].toInt());
   }
 
   std::map<int,toConnection *> connMap;
