@@ -110,35 +110,36 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 			    "Display open cursors of this session");
 static toSQL SQLSessionWait(TO_SESSION_WAIT,
 			    "select sysdate,\n"
-			    "       QueueWait \"Dispatching\",\n"
-			    "       DBWriteWait \"DB File Write\",\n"
-			    "       WriteWait \"Write Complete\",\n"
-			    "       DBReadWait-DBReadSingleWait \"DB File Read\",\n"
-			    "       DBReadSingleWait \"DB File Single Read\",\n"
-			    "       CtrlWait \"Control File I/O\",\n"
-			    "       DirectWait \"Direct I/O\",\n"
-			    "       LogWait \"Log file I/O\",\n"
-			    "       SQLWait \"SQL*Net\"\n,"
-			    "       TotalWait-SQLWait-QueueWait-WriteWait-DBReadWait-DBWriteWait-CtrlWait-DirectWait-LogWait \"Other\"\n"
-			    "  from (select sum(time_waited) TotalWait from v$session_event where sid = :f1<char[101]>),\n"
-			    "       (select sum(time_waited) SQLWait from v$session_event where sid = :f1<char[101]> and event like 'SQL*Net%'),\n"
-			    "       (select sum(time_waited) QueueWait from v$session_event where sid = :f1<char[101]> and event like 'PX%' and event != 'PX Idle Wait'),\n"
-			    "       (select sum(time_waited) WriteWait from v$session_event where sid = :f1<char[101]> and event like 'write complete waits'),\n"
-			    "       (select sum(time_waited) DBReadWait from v$session_event where sid = :f1<char[101]> and event like 'db file % read'),\n"
-			    "       (select sum(time_waited) DBWriteWait from v$session_event where sid = :f1<char[101]> and event like 'db file % write'),\n"
-			    "       (select sum(time_waited) DBReadSingleWait from v$session_event where sid = :f1<char[101]> and event like 'db file scattered read'),\n"
-			    "       (select sum(time_waited) CtrlWait from v$session_event where sid = :f1<char[101]> and event like 'control file%'),\n"
-			    "       (select sum(time_waited) DirectWait from v$session_event where sid = :f1<char[101]> and event like 'direct path%'),\n"
-			    "       (select sum(time_waited) LogWait from v$session_event where sid = :f1<char[101]> and event like 'log file%' or event like 'LGRW%')",
+			    "       parallel \"Parallel execution\",\n"
+			    "       filewrite \"DB File Write\",\n"
+			    "       writecomplete \"Write Complete\",\n"
+			    "       fileread \"DB File Read\",\n"
+			    "       singleread \"DB Single File Read\",\n"
+			    "       control \"Control File I/O\",\n"
+			    "       direct \"Direct I/O\",\n"
+			    "       log \"Log file\",\n"
+			    "       net \"SQL*Net\",\n"
+			    "       total-parallel-filewrite-writecomplete-fileread-singleread-control-direct-log-net \"Other\"\n"
+			    "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
+			    "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
+			    "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
+			    "               SUM(DECODE(event,'db file parallel read',time_waited,'db file sequential read',time_waited,0)) fileread,\n"
+			    "               SUM(DECODE(event,'db file scattered read',time_waited,0)) singleread,\n"
+			    "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
+			    "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
+			    "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
+			    "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
+			    "		    SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
+			    "          from v$session_event where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid))\n",
 			    "Used to generate chart for session wait time.");
 static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "select sysdate,\n"
-			  "       block_gets \"Block gets\",\n"
-			  "       consistent_gets \"Consistent gets\",\n"
-			  "       physical_reads \"Physical reads\",\n"
-			  "       block_changes \"Block changes\",\n"
-			  "       consistent_changes \"Consistent changes\"\n"
-			  "  from v$sess_io where sid = :f1<char[101]>",
+			  "       sum(block_gets) \"Block gets\",\n"
+			  "       sum(consistent_gets) \"Consistent gets\",\n"
+			  "       sum(physical_reads) \"Physical reads\",\n"
+			  "       sum(block_changes) \"Block changes\",\n"
+			  "       sum(consistent_changes) \"Consistent changes\"\n"
+			  "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
 			  "Display chart of session generated I/O");
 
 toSession::toSession(QWidget *main,toConnection &connection)

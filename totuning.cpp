@@ -146,25 +146,27 @@ static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "select sysdate,\n"
-			   "       QueueWait \"Dispatching\",\n"
-			   "       DBWriteWait \"DB File Write\",\n"
-			   "       WriteWait \"Write Complete\",\n"
-			   "       DBReadWait-DBReadSingleWait \"DB File Read\",\n"
-			   "       DBReadSingleWait \"DB File Single Read\",\n"
-			   "       CtrlWait \"Control File I/O\",\n"
-			   "       DirectWait \"Direct I/O\",\n"
-			   "       LogWait \"Log file I/O\",\n"
-			   "       SQLWait \"SQL*Net\"\n"
-			   "  from (select sum(time_waited) TotalWait from v$system_event),\n"
-			   "       (select sum(time_waited) SQLWait from v$system_event where event like 'SQL*Net%'),\n"
-			   "       (select sum(time_waited) QueueWait from v$system_event where event like 'PX%' and event != 'PX Idle Wait'),\n"
-			   "       (select sum(time_waited) WriteWait from v$system_event where event like 'write complete waits'),\n"
-			   "       (select sum(time_waited) DBReadWait from v$system_event where event like 'db file % read'),\n"
-			   "       (select sum(time_waited) DBWriteWait from v$system_event where event like 'db file % write'),\n"
-			   "       (select sum(time_waited) DBReadSingleWait from v$system_event where event like 'db file scattered read'),\n"
-			   "       (select sum(time_waited) CtrlWait from v$system_event where event like 'control file%'),\n"
-			   "       (select sum(time_waited) DirectWait from v$system_event where event like 'direct path%'),\n"
-			   "       (select sum(time_waited) LogWait from v$system_event where event like 'log file%' or event like 'LGRW%')",
+			   "       parallel \"Parallel execution\",\n"
+			   "       filewrite \"DB File Write\",\n"
+			   "       writecomplete \"Write Complete\",\n"
+			   "       fileread \"DB File Read\",\n"
+			   "       singleread \"DB Single File Read\",\n"
+			   "       control \"Control File I/O\",\n"
+			   "       direct \"Direct I/O\",\n"
+			   "       log \"Log file\",\n"
+			   "       net \"SQL*Net\",\n"
+			   "       total-parallel-filewrite-writecomplete-fileread-singleread-control-direct-log-net \"Other\"\n"
+			   "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
+			   "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
+			   "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
+			   "               SUM(DECODE(event,'db file parallel read',time_waited,'db file sequential read',time_waited,0)) fileread,\n"
+			   "               SUM(DECODE(event,'db file scattered read',time_waited,0)) singleread,\n"
+			   "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
+			   "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
+			   "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
+			   "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
+			   "		   SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
+			   "          from v$system_event)\n",
 			   "Used to generate chart for system wait time.");
 
 static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
@@ -175,7 +177,7 @@ static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
 				"       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
 				"       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
 				"       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
-				"  from v$sysstat",
+				"  from v$sysstat where statistic# in (181,180,179,4,5,6)",
 				"Used to generate chart for execution statistics.");
 
 static toSQL SQLChartsExecutionPie("toTuning:Charts:5PNExecution Total",
@@ -200,7 +202,7 @@ static toSQL SQLChartsRedo("toTuning:Charts:8BSRedo log I/O",
 			   "select SYSDATE,\n"
 			   "       sum(decode(statistic#,101,value,0))/to_number(:unit<char[101]>) \"Redo size\",\n"
 			   "       sum(decode(statistic#,103,value,0))/to_number(:unit<char[101]>) \"Redo wastage\"\n"
-			   "  from v$sysstat",
+			   "  from v$sysstat where statistic# in (101,103)",
 			   "Used to generate chart for redo I/O statistics.");
 
 class toTuningTool : public toTool {
@@ -285,8 +287,8 @@ static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "select 1,\n"
-			       "       sum(decode(status,'ACTIVE',1,0)),\n"
-			       "       sum(decode(status,'INACTIVE',1,0))\n"
+			       "       sum(decode(status,'INACTIVE',1,0)),\n"
+			       "       sum(decode(status,'ACTIVE',1,0))\n"
 			       "  from v$session\n"
 			       " where type != 'BACKGROUND'",
 			       "Information about active/inactive clients");
@@ -381,7 +383,7 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
 				"select count(1),\n"
 				"       nvl(sum(blocks*block_size),0)/to_number(:f1<char[101]>)\n"
-				"  from v$archived_log",
+				"  from v$archived_log where deleted = 'NO'",
 				"Information about archive logs");
 
 static toSQL SQLOverviewLog("toTuning:Overview:Log",
@@ -411,9 +413,9 @@ static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
 				   "select count(1) from v$dispatcher",
 				   "Dispatcher processes");
 
-static toSQL SQLOverviewParallell("toTuning:Overview:Parallell",
+static toSQL SQLOverviewParallell("toTuning:Overview:Parallel",
 				  "select count(1) from v$px_process",
-				  "Parallell processes");
+				  "Parallel processes");
 
 static toSQL SQLOverviewShared("toTuning:Overview:Shared",
 			       "select count(1) from v$shared_server",

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>869</width>
+            <width>865</width>
             <height>501</height>
         </rect>
     </property>
@@ -1073,7 +1073,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Parallell</string>
+                                <string>Parallel</string>
                             </property>
                             <property stdset="1">
                                 <name>alignment</name>
