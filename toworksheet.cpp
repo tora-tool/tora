@@ -759,7 +759,7 @@ void toWorksheet::query(const QString &str,bool direct)
     if (direct) {
       try {
 	Timer.start();
-	toQuery query(connection(),QueryString,param);
+	toQuery query(connection(),toQuery::Long,QueryString,param);
 
 	char buffer[100];
 	if (query.rowsProcessed()>0)
