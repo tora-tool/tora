@@ -936,7 +936,7 @@ void toDebug::updateContent(bool body)
     space,
     firstWord,
     inString,
-  } state,beforeState;
+  } state,beforeState=normal;
 
   for (QListViewItem *item=Contents->firstChild();item;item=item->nextSibling()) {
     if (item->text(0)==topName) {
@@ -960,7 +960,7 @@ void toDebug::updateContent(bool body)
   QString type="";
   bool declaration=true;
   state=space;
-  int startFirst;
+  int startFirst=0;
   bool firstIgnore=true;
 
   QString is("IS");
