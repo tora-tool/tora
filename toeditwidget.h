@@ -101,8 +101,9 @@ public:
 	       bool selectAll,bool readAll);
 
   /** Perform an open on this widget. Default NOP.
+   * @param file The file to open, if not specified prompt for file.
    */
-  virtual bool editOpen(void)
+  virtual bool editOpen(QString file=QString::null)
   { return true; }
   /** Perform a save on this widget. Default NOP.
    * @param askfile Ask filename even if default filename is available.

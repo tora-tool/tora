@@ -294,7 +294,7 @@ void toDatabaseSetting::saveSetting(void)
       maxnum=num+1;
     if (maxnum!=MaxContent->text().toInt())
       TOMessageBox::information(this,"Invalid values",
-				"Doesn't make sence to have max content less than initial\n"
+				"Doesn't make sense to have max content less than initial\n"
 				"fetch size. Will adjust value to be higher.",
 				"&Ok");
     toTool::globalSetConfig(CONF_MAX_CONTENT,QString::number(maxnum));

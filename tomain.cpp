@@ -121,6 +121,10 @@ const int toMain::TO_TOOL_MENU_ID_END	= 2999;
 const int toMain::TO_TOOL_ABOUT_ID	= 3000;
 const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 
+const int toMain::TO_LAST_FILE_ID	= 5000;
+const int toMain::TO_LAST_FILE_ID_END	= 5999;
+
+
 #define TO_STATUS_ID		4000
 #define TO_STATUS_ID_END	4999
 #define TO_NEW_CONNECTION	100
@@ -180,39 +184,8 @@ toMain::toMain()
   Edit=NULL;
 
   FileMenu=new QPopupMenu(this);
-  FileMenu->insertItem(QPixmap((const char **)connect_xpm),
-		       "&New Connection...",TO_NEW_CONNECTION);
-  FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
-		       "&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
-  FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit Connection",TO_FILE_COMMIT);
-  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
-  FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
-  FileMenu->insertItem(QPixmap((const char **)stop_xpm),"Stop All Queries",TO_STOP_ALL);
-  FileMenu->insertItem(QPixmap((const char **)refresh_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
-  FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
-  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
-  FileMenu->insertItem("Save A&s...",TO_FILE_SAVE_AS);
-  FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"Open Session...",
-		       TO_FILE_OPEN_SESSION);
-  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
-		       TO_FILE_SAVE_SESSION);
-  FileMenu->insertItem("Restore Last Session",TO_FILE_LAST_SESSION);
-  FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
-  FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print...",TO_FILE_PRINT);
-  FileMenu->insertSeparator();
-  FileMenu->insertItem("&Quit",TO_FILE_QUIT);
-  menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
-  FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
-  FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
-  FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
-  FileMenu->setAccel(Key_L|CTRL,TO_FILE_COMMIT);
-  FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
-  FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
+  menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
 
   EditMenu=new QPopupMenu(this);
   EditMenu->insertItem(QPixmap((const char **)undo_xpm),"&Undo",TO_EDIT_UNDO);
@@ -585,11 +558,92 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
   menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,Edit&&Edit->selectAllEnabled());
   menuBar()->setItemEnabled(TO_EDIT_READ_ALL,Edit&&Edit->readAllEnabled());
   menuBar()->setItemEnabled(TO_EDIT_SEARCH,Edit&&Edit->searchEnabled());
+  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
+			    Search&&Search->searchNextAvailable());
+
+  FileMenu->clear();
+
+  FileMenu->insertItem(QPixmap((const char **)connect_xpm),
+		       "&New Connection...",TO_NEW_CONNECTION);
+  FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
+		       "&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit Connection",TO_FILE_COMMIT);
+  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
+  FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
+  FileMenu->insertItem(QPixmap((const char **)stop_xpm),"Stop All Queries",TO_STOP_ALL);
+  FileMenu->insertItem(QPixmap((const char **)refresh_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
+  FileMenu->insertItem("Save A&s...",TO_FILE_SAVE_AS);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"Open Session...",
+		       TO_FILE_OPEN_SESSION);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
+		       TO_FILE_SAVE_SESSION);
+  FileMenu->insertItem("Restore Last Session",TO_FILE_LAST_SESSION);
+  FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print...",TO_FILE_PRINT);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem("&Quit",TO_FILE_QUIT);
+
+  FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
+  FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
+  FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
+  FileMenu->setAccel(Key_L|CTRL,TO_FILE_COMMIT);
+  FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
+  FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
+
   menuBar()->setItemEnabled(TO_FILE_OPEN,Edit&&Edit->openEnabled());
   menuBar()->setItemEnabled(TO_FILE_SAVE,Edit&&Edit->saveEnabled());
   menuBar()->setItemEnabled(TO_FILE_SAVE_AS,Edit&&Edit->saveEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
-			    Search&&Search->searchNextAvailable());
+
+  bool hascon=(ConnectionSelection->count()>0);
+
+  menuBar()->setItemEnabled(TO_FILE_COMMIT,hascon);
+  menuBar()->setItemEnabled(TO_STOP_ALL,hascon);
+  menuBar()->setItemEnabled(TO_FILE_ROLLBACK,hascon);
+  menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,hascon);
+  menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,hascon);
+
+  int num=toTool::globalConfig(CONF_RECENT_FILES,"0").toInt();
+  if (num>0) {
+    FileMenu->insertSeparator();
+    for (int i=0;i<num;i++) {
+      QString file=toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(i),QString::null);
+      if (!file.isEmpty()) {
+	QFileInfo fi(file);
+	FileMenu->insertItem(fi.fileName(),TO_LAST_FILE_ID+i);
+      }
+      if (!Edit||!Edit->openEnabled())
+	menuBar()->setItemEnabled(TO_LAST_FILE_ID+i,false);
+    }
+  }
+}
+
+void toMain::addRecentFile(const QString &file)
+{
+  int num=toTool::globalConfig(CONF_RECENT_FILES,"0").toInt();
+  int maxnum=toTool::globalConfig(CONF_RECENT_MAX,DEFAULT_RECENT_MAX).toInt();
+  std::list<QString> files;
+  for (int j=0;j<num;j++) {
+    QString t=toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(j),QString::null);
+    if (t!=file)
+      toPush(files,t);
+  }
+  toUnShift(files,file);
+
+  num=0;
+  for (std::list<QString>::iterator i=files.begin();i!=files.end();i++) {
+    toTool::globalSetConfig(QString(CONF_RECENT_FILES)+":"+QString::number(num),*i);
+    num++;
+    if (num>=maxnum)
+      break;
+  }
+  toTool::globalSetConfig(CONF_RECENT_FILES,QString::number(num));
+  toTool::saveConfig();
 }
 
 void toMain::windowsMenu(void)
@@ -668,45 +722,49 @@ void toMain::commandCallback(int cmd)
       currWidget=currWidget->parentWidget();
     }
     if (edit) {
-      switch(cmd) {
-      case TO_EDIT_REDO:
-	edit->editRedo();
-	break;
-      case TO_EDIT_UNDO:
-	edit->editUndo();
-	break;
-      case TO_EDIT_COPY:
-	edit->editCopy();
-	break;
-      case TO_EDIT_PASTE:
-	edit->editPaste();
-	break;
-      case TO_EDIT_CUT:
-	edit->editCut();
-	break;
-      case TO_EDIT_SELECT_ALL:
-	edit->editSelectAll();;
-	break;
-      case TO_EDIT_READ_ALL:
-	edit->editReadAll();
-	break;
-      case TO_EDIT_SEARCH:
-	if (!Search)
-	  Search=new toSearchReplace(this);
-	edit->editSearch(Search);
-	break;
-      case TO_FILE_OPEN:
-	edit->editOpen();
-	break;
-      case TO_FILE_SAVE_AS:
-	edit->editSave(true);
-	break;
-      case TO_FILE_SAVE:
-	edit->editSave(false);
-	break;
-      case TO_FILE_PRINT:
-	edit->editPrint();
-	break;
+      if (cmd>=TO_LAST_FILE_ID&&cmd<=TO_LAST_FILE_ID_END) {
+	edit->editOpen(toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(cmd-TO_LAST_FILE_ID),QString::null));
+      } else {
+	switch(cmd) {
+	case TO_EDIT_REDO:
+	  edit->editRedo();
+	  break;
+	case TO_EDIT_UNDO:
+	  edit->editUndo();
+	  break;
+	case TO_EDIT_COPY:
+	  edit->editCopy();
+	  break;
+	case TO_EDIT_PASTE:
+	  edit->editPaste();
+	  break;
+	case TO_EDIT_CUT:
+	  edit->editCut();
+	  break;
+	case TO_EDIT_SELECT_ALL:
+	  edit->editSelectAll();;
+	  break;
+	case TO_EDIT_READ_ALL:
+	  edit->editReadAll();
+	  break;
+	case TO_EDIT_SEARCH:
+	  if (!Search)
+	    Search=new toSearchReplace(this);
+	  edit->editSearch(Search);
+	  break;
+	case TO_FILE_OPEN:
+	  edit->editOpen();
+	  break;
+	case TO_FILE_SAVE_AS:
+	  edit->editSave(true);
+	  break;
+	case TO_FILE_SAVE:
+	  edit->editSave(false);
+	  break;
+	case TO_FILE_PRINT:
+	  edit->editPrint();
+	  break;
+	}
       }
     }
     switch(cmd) {

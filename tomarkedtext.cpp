@@ -221,7 +221,7 @@ void toMarkedText::openFilename(const QString &file)
   toStatusMessage("File opened successfully",false,false);
 }
 
-bool toMarkedText::editOpen(void)
+bool toMarkedText::editOpen(QString suggestedFile)
 {
   if (edited()) {
     int ret=TOMessageBox::information(this,
@@ -236,11 +236,17 @@ bool toMarkedText::editOpen(void)
 	return false;
   }
 
-  QFileInfo file(filename());
-  QString filename=toOpenFilename(file.dirPath(),QString::null,this);
-  if (!filename.isEmpty()) {
+  QString fname;
+  if (suggestedFile!=QString::null)
+    fname=suggestedFile;
+  else {
+    QFileInfo file(filename());
+    fname=toOpenFilename(file.dirPath(),QString::null,this);
+  }
+  if (!fname.isEmpty()) {
     try {
-      openFilename(filename);
+      openFilename(fname);
+      toMainWidget()->addRecentFile(fname);
       return true;
     } TOCATCH
   }
@@ -256,6 +262,7 @@ bool toMarkedText::editSave(bool askfile)
   if (!fn.isEmpty()) {
     if (!toWriteFile(fn,text()))
       return false;
+    toMainWidget()->addRecentFile(fn);
     setFilename(fn);
     setEdited(false);
     return true;

@@ -244,6 +244,13 @@ public:
    */
   static const int TO_TOOL_MENU_ID_END;
 
+  /** First ID of the tool specific menu items.
+   */
+  static const int TO_LAST_FILE_ID;
+  /** Last ID of the tool specific menu items.
+   */
+  static const int TO_LAST_FILE_ID_END;
+
   /** First ID of the tool specific about menu items.
    */
   static const int TO_TOOL_ABOUT_ID;
@@ -391,6 +398,9 @@ public:
   /** Display status message in dialog.
    */
   void displayMessage(const QString &str);
+  /** Add recent file
+   */
+  void addRecentFile(const QString &filename);
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.

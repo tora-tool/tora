@@ -158,7 +158,7 @@ public:
   virtual void editPrint(void);
   /** Reimplemented for internal reasons.
    */
-  virtual bool editOpen(void);
+  virtual bool editOpen(QString file=QString::null);
   /** Reimplemented for internal reasons.
    */
   virtual bool editSave(bool ask);

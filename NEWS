@@ -1,5 +1,13 @@
 1.3.5:
 
+2002-04-09: Implemented the initial fetch of content editor for MySQL.
+2002-04-09: Fixed spelling error in a dialog window.
+2002-04-09: Fixed problem with not null columns in postgresql.
+2002-04-09: Added better datatype description in postgresql.
+2002-04-09: Added recent files to end of file menu.
+2002-04-09: Reserve range for last file in menues.
+2002-04-09: Support specified file in editors.
+2002-04-09: Added posibility to specify file to open in editwidgets.
 2002-04-09: Added posibility to use several chart tabs in tuning.
 2002-04-09: Added option to specify if synonym object cache is needed.
 2002-04-04: Fixed problem with multiline comments in worksheet.
