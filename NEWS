@@ -99,6 +99,7 @@
 2001-08-27: Fixed memory leak in toparamget.
 2001-08-28: Fixed uncaught exception from toparamget.
 2001-08-28: Improved file I/O statistics in tuning.
+2001-08-28: Changed license to QPL.
 
 0.14: Released 2001-08-02
 
