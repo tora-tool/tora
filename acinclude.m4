@@ -8,6 +8,24 @@ AC_DEFUN(mrj_SET_PREFIX,
     AC_PREFIX_DEFAULT(/usr/local/tora)
 ])
 
+AC_DEFUN(TORA_CHECK_PUTENV,
+[
+  AC_CHECK_HEADERS(stdlib.h)
+  AC_CACHE_CHECK([for putenv], tora_cv_sys_putenv,
+    [AC_TRY_COMPILE(
+      [
+#include <stdlib.h>
+      ],
+      [putenv("test=test");],
+      tora_cv_sys_putenv=yes,
+      tora_cv_sys_putenv=no)
+    ])
+
+  if test $tora_cv_sys_putenv = yes; then
+    AC_DEFINE(TO_HAS_SETENV, 1, [Define if you have putenv])
+  fi
+])
+
 #serial 3
 
 dnl From Jim Meyering
