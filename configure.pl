@@ -846,7 +846,8 @@ __TEMP__
     print "checking for Qt version ... $QtVersion\n";
     print "checking for library consistency ... ";
     if (defined $KDEVersion &&
-	substr($QtVersion,0,1) ne substr($KDEVersion,0,1) &&
+	(substr($QtVersion,0,1) ne substr($KDEVersion,0,1) ||
+	 (substr($QtVersion,0,1) eq "2" && substr($KDEVersion,0,3) eq "2.9")) &&
 	!(substr($QtVersion,0,1) eq "3" && substr($KDEVersion,0,3) eq "2.9")) {
 	print "failed!\n\nKDE ($KDEVersion) and Qt ($QtVersion) versions doesn't match!\n";
 	print "Try specifying using --with-qt and --with-kde switches to configure.\n";

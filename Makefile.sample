@@ -79,6 +79,9 @@ ORACLE_SHARED=-lclntsh
 # Static Oracle libraries
 ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
 
+# Oracle home path
+ORACLE_HOME=/opt/oracle/app/oracle/product/8.1.7
+
 # What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version
 TARGET=tora-mono
 
@@ -95,10 +98,10 @@ MYSQL_STATIC=/usr/lib/libmysqlclient.a
 KDE_BASE=/usr
 
 # Additional defines to use while compiling, except for the normal these are available
-#   OTL_ORA9I       - Compile for Oracle 9.x
-#   OTL_ORA8I       - Compile for Oracle 8.1.x
-#   OTL_ORA8        - Compile for Oracle 8.0.x
-#   TO_KDE          - Compile as KDE application
+#   OTL_ORA9I          - Compile for Oracle 9.x
+#   OTL_ORA8I          - Compile for Oracle 8.1.x
+#   OTL_ORA8           - Compile for Oracle 8.0.x
+#   TO_KDE             - Compile as KDE application
 DEFINES+=-DOTL_ORA8I
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 DEFINES+=-DTO_KDE
@@ -380,8 +383,8 @@ install-debug: tora-mono install-common
 install-kde:
 	cp -f icons/tora.xpm $(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
 	cp -f icons/toramini.xpm $(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
-	mkdir -p $(KDE_BASE)/share/apps/kappfinder/apps/Development
-	cp -f rpm/tora.desktop $(KDE_BASE)/share/apps/kappfinder/apps/Development
+	mkdir -p $(KDE_BASE)/share/applnk/Development
+	cp -f rpm/tora.desktop $(KDE_BASE)/share/applnk/Development
 
 uninstall:
 	@echo Uninstalling from $(INSTALLPREFIX)
@@ -577,8 +580,10 @@ tora-mono: $(OBJECTS) main.cpp
 tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) $(MYSQL_STATIC) \
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a
+		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) \
+		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a \
+		/usr/lib/mysql/libmysqlclient.a /usr/lib/libpq.a -ldl
+
 
 # The binary for the pluginbased tora
 
