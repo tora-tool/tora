@@ -182,11 +182,6 @@ void *toThreadStartWrapper(void *t)
   return NULL;
 }
 
-void toThread::kill(int signo)
-{
-  THREAD_ASSERT(pthread_kill(Thread,signo));
-}
-
 bool toThread::mainThread(void)
 {
   return pthread_equal(MainThread,pthread_self());

@@ -5,6 +5,7 @@
 2001-09-24: Read object cache in background instead of when needed.
 2001-09-24: toResultCols uses new object cache.
 2001-09-24: Made aborting queries correctly on windows work.
+2001-09-24: Removed thread kill since it is no long needed and cludgy.
 
 1.1.1: 2001-09-24
 
