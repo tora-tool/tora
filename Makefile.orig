@@ -146,7 +146,6 @@ SOURCES=\
 	tovisualize.cpp			\
 	toworksheet.cpp			\
 	toworksheetsetupui.cpp		\
-	tosimplequery.cpp		\
 	utils.cpp			\
 	$(MYSQL_CPP)
 
@@ -172,6 +171,7 @@ API=	\
 	tonoblockquery.h	\
 	toparamget.h		\
 	topiechart.h		\
+	toqvalue.h		\
 	toresult.h		\
 	toresultbar.h		\
 	toresultcols.h		\
@@ -280,8 +280,6 @@ plugins/toworksheet.tso:\
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
 
-plugins/tosimplequery.tso:objs/tosimplequery.o
-
 # Special plugins
 
 plugins/tooracleconnection.tso: \
@@ -341,7 +339,6 @@ tora-plugin: \
 	plugins/totuning.tso \
 	plugins/towidgets.tso \
 	plugins/toworksheet.tso \
-	plugins/tosimplequery.tso \
 	$(MYSQL_PLUGIN)
 
 # The binary for the pluginbased tora
