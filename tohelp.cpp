@@ -197,7 +197,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
   for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
       QString path=toHelp::path((*i).second);
-      QString filename=path;
+      QString filename=(*i).second;
       QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first,filename);
       toHtml file(toReadFile(filename));
       bool inA=false;
