@@ -1,4 +1,4 @@
-1.3.11:
+1.3.11: Released 2003-08-08
 
 2003-08-04: Some fixes to how tool window sizes are restored from sessions.
 2003-08-01: Added continue execution in debugger. (Thanx Francesco Dandrea)
