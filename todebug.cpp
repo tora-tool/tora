@@ -1109,12 +1109,12 @@ void toDebug::updateState(int reason)
       ToolMenu->setItemEnabled(TO_ID_STEP_OVER,false);
       ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,false);
     }
-    for(int i=0;i<Editors->count();i++) {
-      toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
-      editor->setCurrent(-1);
-    }
-    StackTrace->clear();
     {
+      for(int i=0;i<Editors->count();i++) {
+        toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+        editor->setCurrent(-1);
+      }
+      StackTrace->clear();
       toLocker lock(Lock);
       if (OutputData.begin()!=OutputData.end()) {
 	QListViewItem *head=Parameters->firstChild();
@@ -1127,21 +1127,21 @@ void toDebug::updateState(int reason)
 	  ;
 
 	QListViewItem *last=NULL;
-	for (toQList::iterator i=OutputData.begin();i!=OutputData.end();i++) {
-	  QString name;
-	  if (cp!=CurrentParams.end()) {
-	    name=(*cp).Name;
-	    for(cp++;cp!=CurrentParams.end()&&!(*cp).Out;cp++)
-	      ;
+	{
+	  for (toQList::iterator i=OutputData.begin();i!=OutputData.end();i++) {
+	    QString name;
+	    if (cp!=CurrentParams.end()) {
+	      name=(*cp).Name;
+	      for(cp++;cp!=CurrentParams.end()&&!(*cp).Out;cp++)
+	        ;
+	    }
+	    if (name.isEmpty())
+	      name=tr("Returning");
+	    last=new toResultViewItem(head,last,name);
+	    last->setText(1,toDeepCopy(*i)); // Deep copy just to be sure
 	  }
-	  if (name.isEmpty())
-	    name=tr("Returning");
-	  last=new toResultViewItem(head,last,name);
-	  last->setText(1,toDeepCopy(*i)); // Deep copy just to be sure
 	}
       }
-    }
-    {
       QListViewItem *next=NULL;
       for (QListViewItem *item=Watch->firstChild();item;item=next) {
 	item->setText(4,QString::fromLatin1("NOCHANGE"));
@@ -1895,8 +1895,8 @@ void toDebug::refresh(void)
 	  break;
       }
 
-      for(int i=0;i<Editors->count();i++) {
-	toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+      for(int j=0;j<Editors->count();j++) {
+	toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(j));
 	editor->setSchema(selected);
       }
     }
