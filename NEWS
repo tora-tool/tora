@@ -52,14 +52,14 @@
 2001-08-15: Fixed large LOB reading in OTL.
 2001-08-15: Read all of LOB when reading query.
 2001-08-15: Removed needing to pass description to read value.
-2001-08-15: Totally rewritten DB generic DB access interface (A nice 5000 line change).
+2001-08-15: Rewritten generic DB access interface (Nice 5000 line change).
 2001-08-15: New Oracle DB access provider.
 2001-08-16: Fixed a lot of problem with new DB access.
 2001-08-16: Fixed problem with default value in changing watches.
 2001-08-17: Added documentation to the connection API.
 2001-08-17: Fixed problem with large toResultItems.
 2001-08-17: Started implementing tool connection handling code.
-2001-08-17: As a proof of concept debugger doesn't support Oracle 7.x databases.
+2001-08-17: As a proof of concept debugger doesn't support Oracle 7 databases.
 2001-08-17: Added support for canHandle in changeConnection class.
 2001-08-17: Fixed a couple of utf8 bugs.
 2001-08-17: Changed operator () in toSQL to return QString.
