@@ -72,8 +72,9 @@ class toChartManager : public QVBox, public toHelpContext {
   Q_OBJECT
 
   enum action {
-    StatusMessage,
-    Ignore
+    StatusMessage = 0,
+    Email = 1,
+    Ignore = 2
   };
 
   struct alarmSignal {
@@ -81,9 +82,11 @@ class toChartManager : public QVBox, public toHelpContext {
     QString xValue;
     QString Chart;
     QString Alarm;
+    QString Extra;
     alarmSignal();
-    alarmSignal(action act,const QString &xvalue,const QString &chart,const QString &alarm)
-      : Action(act),xValue(xvalue),Chart(chart),Alarm(alarm)
+    alarmSignal(action act,const QString &xvalue,const QString &chart,const QString &alarm,
+		const QString &extra)
+      : Action(act),xValue(xvalue),Chart(chart),Alarm(alarm),Extra(extra)
     { }
   };
 
@@ -135,11 +138,12 @@ class toChartManager : public QVBox, public toHelpContext {
     std::list<int> Columns;
     bool Persistent;
     bool Signal;
+    QString Extra;
 
     chartAlarm();
     chartAlarm(const QString &,bool persistent);
     chartAlarm(operation oper,comparison comp,action act,
-	       double value,std::list<int> &cols,
+	       double value,std::list<int> &cols,const QString &extra,
 	       bool persistent);
     QString toString(void);
 

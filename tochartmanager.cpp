@@ -40,6 +40,7 @@
 #include "tolinechart.h"
 #include "tomain.h"
 #include "toresultview.h"
+#include "tosmtp.h"
 #include "totool.h"
 
 #include <ctype.h>
@@ -106,6 +107,22 @@ public:
 
 static toChartTool ChartTool;
 
+class toChartAlarm : public toChartAlarmUI {
+public:
+  toChartAlarm(QWidget *parent=0,const char *name=0,bool modal=FALSE,WFlags fl=0)
+    : toChartAlarmUI(parent,name,modal,fl)
+  { }
+  virtual void changeValue(int val)
+  { 
+    if (val==1)
+      ExtraLabel->setText("Email");
+    else
+      ExtraLabel->setText(QString::null);
+
+    Extra->setEnabled(val==1);
+  }
+};
+
 class toChartSetup : public toChartSetupUI {
   toLineChart *Chart;
 public:
@@ -122,17 +139,19 @@ public:
   virtual QString modifyAlarm(const QString &str,bool &persistent)
   {
     toChartManager::chartAlarm alarm(str,persistent);
-    toChartAlarmUI diag(this,NULL,true);
+    toChartAlarm diag(this,NULL,true);
     diag.Operation->setCurrentItem((int)alarm.Operation);
     diag.Comparison->setCurrentItem((int)alarm.Comparison);
     diag.Action->setCurrentItem((int)alarm.Action);
     diag.Value->setText(QString::number(alarm.Value));
+    diag.changeValue((int)alarm.Action);
     diag.Value->setValidator(new QDoubleValidator(diag.Value));
+    diag.Extra->setText(alarm.Extra);
     std::list<int>::iterator sel=alarm.Columns.begin();
-    std::list<QString>::iterator lab=Chart->labels().begin();
     diag.Charts->addColumn("Charts");
     diag.Charts->setSelectionMode(QListView::Multi);
     QListViewItem *item=NULL;
+    std::list<QString>::iterator lab=Chart->labels().begin();
     for(int i=0;lab!=Chart->labels().end();i++,lab++) {
       item=new QListViewItem(diag.Charts,item,*lab);
       if (sel!=alarm.Columns.end()&&*sel==i) {
@@ -154,6 +173,7 @@ public:
       alarm.Operation=(toChartManager::chartAlarm::operation)diag.Operation->currentItem();
       alarm.Comparison=(toChartManager::chartAlarm::comparison)diag.Comparison->currentItem();
       alarm.Value=diag.Value->text().toDouble();
+      alarm.Extra=diag.Extra->text();
       return alarm.toString();
     }
     return QString::null;
@@ -343,10 +363,13 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp,bool pers)
   char cols[10000];
   char comp[100];
   char act[100];
+  char extra[10000];
   Signal=false;
   Persistent=pers;
-  if (sscanf(inp,"%s %s %s %lf %s",
-	     oper,cols,comp,&Value,act)!=5) {
+
+  // The \01 is just one character unlikely to be in an email address
+  int ret=sscanf(inp.utf8(),"%s %s %s %lf %s %[^\01]",oper,cols,comp,&Value,act,extra);
+  if (ret!=5&&ret!=6) {
     Operation=Any;
     Value=0;
     Comparison=Equal;
@@ -368,7 +391,7 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp,bool pers)
   else
     Operation=Any;
 
-  t=cols;
+  t=QString::fromUtf8(cols);
   if (t.length()>2) {
     QStringList lst=QStringList::split(",",t.mid(1,t.length()-2));
     for(unsigned int i=0;i<lst.count();i++)
@@ -396,8 +419,12 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp,bool pers)
   t=act;
   if (t=="StatusMessage")
     Action=StatusMessage;
+  else if (t=="Email")
+    Action=Email;
   else
     Action=Ignore;
+  if (ret==6)
+    Extra=QString::fromUtf8(extra);
 }
 
 toChartManager::chartAlarm::chartAlarm()
@@ -411,7 +438,7 @@ toChartManager::chartAlarm::chartAlarm()
 }
 
 toChartManager::chartAlarm::chartAlarm(operation oper,comparison comp,action act,
-				       double value,std::list<int> &cols,
+				       double value,std::list<int> &cols,const QString &extra,
 				       bool persistent)
 {
   Signal=false;
@@ -421,6 +448,7 @@ toChartManager::chartAlarm::chartAlarm(operation oper,comparison comp,action act
   Value=value;
   Columns=cols;
   Persistent=persistent;
+  Extra=extra;
 }
 
 QString toChartManager::chartAlarm::toString(void)
@@ -481,9 +509,16 @@ QString toChartManager::chartAlarm::toString(void)
   case StatusMessage:
     t+=" StatusMessage";
     break;
+  case Email:
+    t+=" Email";
+    break;
   case Ignore:
     t+=" Ignore";
     break;
+  }
+  if (!Extra.isEmpty()) {
+    t+=" ";
+    t+=Extra;
   }
   return t;
 }
@@ -591,7 +626,7 @@ void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
     if (Signal)
       return;
     manager->SignalAlarms.insert(manager->SignalAlarms.end(),
-				 alarmSignal(Action,xValue,str,toString()));
+				 alarmSignal(Action,xValue,str,toString(),Extra));
     manager->Timer.start(1,true);
     Signal=true;
   } else
@@ -658,6 +693,14 @@ void toChartManager::alarm(void)
     alarmSignal signal=toShift(SignalAlarms);
     if (signal.Action==StatusMessage)
       toStatusMessage("ALARM:"+signal.Chart+": "+signal.Alarm+": "+signal.xValue);
+    else if (signal.Action==Email)
+      new toSMTP("Toolkit for Oracle <noreply@localhost>",
+		 signal.Extra,
+		 "TOra alert: "+signal.Chart,
+		 "A defined alert value was detected:\n\n"+
+		 signal.Alarm+
+		 "\n\nAt: "+
+		 signal.xValue);
   }
 }
 
