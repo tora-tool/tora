@@ -1,0 +1,56 @@
+<HTML><HEAD><TITLE>SQL Editor</TITLE></HEAD><BODY>
+<H1>SQL Editor</H1>
+When TOra needs to run an SQL statement to it will not actually use the SQL needed directly.
+It will fetch an SQL statement by addressing it with a string. The string is built up by a
+module name, followed by a colon and a unique name for the SQL (Example: toBrowser:ListIndex
+which will contain the SQL statement for getting all the indexes).<P>
+For each SQL name there may be a number of actual SQL strings that are available, each are
+associated with a version number. When TOra requests an SQL statement by a name it will
+receive the string with the statement with the highest version number lower than the current
+connection that will be used to run it. Each SQL name also has a description associated with it
+so you can understand what the SQL is supposed to do.<P>
+TOra has a default SQL name to statement map which can be redefined by the user to either
+add support for different versions than TOra originally supports, or change the default
+behaviour for TOra in some cases. The changes from the default map is saved in the file
+defined in the <A HREF=preferences.html#global>options</A> dialog. If you make changes to
+improve support for other versions of Oracle please send this file to
+<A HREF=mailto:tora@henrik.org>tora@henrik.org</A> and we will incorporate them in the future
+releases.<P>
+You start the SQL editor either by selecting <B>Edit|Edit SQL</B> or by selecting <B>Edit SQL</B>
+in the result list context editor. You are then presented with the following dialog.<P>
+<IMG SRC=images/sqledit.png><P>
+The window is divided into several parts. To the left is a list of SQL statements available
+divided into modules. When an item is selected in this list you can use the right part of the
+screen to modify the SQL associated by the selected name.<P>
+The right part of the window is divided into the name and version at the top. Each statement
+name can have several versions of an SQL. You can add a new version by simply entering a new
+text into the version combobox. You can also select any of the existing version by selecting
+them from the list.<P>
+Below the name and version is the description which is independent from the version. Below
+that is a <A HREF=worksheet.html>worksheet</A> which you can use to edit and testrun the
+SQL statement that should be associated with the given name and version.<P>
+There is also a toolbar with the current available commands.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Open</B></TD><TD VALIGN=top>
+Read in a file containing SQL descriptions saved before.</TD></TR>
+<TR><TD VALIGN=top><B>
+Save</B></TD><TD VALIGN=top>
+Save the changes made from the default to the SQL statements to a file. This
+file can be used to send updates and improvements of the internal SQL to incorporate in
+future versions.</TD></TR>
+<TR><TD VALIGN=top><B>
+Save this entry</B></TD><TD VALIGN=top>
+Save the changes made. If changes have been made and you select a new item you will be
+asked to save or discard the changes if you forget to save entry before.</TD></TR>
+<TR><TD VALIGN=top><B>
+Drop this entry</B></TD><TD VALIGN=top>
+Drop the current entry. If the last version of a statement is deleted the entire statement
+will be deleted. Observe that you can not delete default statements permanently, they will
+reapear when you restart TOra so you can't really screw up with this.</TD></TR>
+<TR><TD VALIGN=top><B>
+New SQL</B></TD><TD VALIGN=top>
+Start new SQL statement definitions.</TD></TR>
+</TABLE>
+</BODY>
+</HTML>

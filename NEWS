@@ -21,7 +21,7 @@
 2001-07-06: Added option to specify message history size.
 2001-07-06: Enable timed statistics in session when using statistics in
 	worksheet.
-2001-07-06: Collapsed Data and Description to one Result tab in worksheet.
+2001-07-06: Collapsed Data and Description to one Resuiolt tab in worksheet.
 2001-07-06: Fixed bug in prefetch for resultlong.
 2001-07-06: Don't hang when reading all in resultlong.
 2001-07-06: Last part of general documentation done, only the tools left.
@@ -71,6 +71,7 @@
 2001-07-11: Added messagebox to ask about starting new template help.
 2001-07-11: Added help context to template editor.
 2001-07-11: Changed Name to Context in helpcontext.
+2001-07-11: Fixed versions in specfiles.
 
 0.12: Released 2001-07-01
 

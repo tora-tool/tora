@@ -1,6 +1,6 @@
 %define name tora
 %define group Developement/Databases
-%define version 0.12
+%define version 0.13
 %define release 1static
 
 Name: %{name}
