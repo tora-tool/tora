@@ -647,6 +647,11 @@ protected slots:
   virtual void menuCallback(int);
 };
 
+/***
+ * Used internally by toListView.
+ * @internal
+ */
+
 class toResultListFormat : public toResultListFormatUI {
   Q_OBJECT
 public:

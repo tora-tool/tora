@@ -50,12 +50,12 @@ class toSecurityQuota;
 class toSecuritySystem : public toListView {
   Q_OBJECT
 
-  toConnection &Connection;
 public:
-  toSecuritySystem(toConnection &conn,QWidget *parent);
+  toSecuritySystem(QWidget *parent);
   void changeUser(const QString &);
   void eraseUser(bool all=true);
   void sql(const QString &user,std::list<QString> &sql);
+  void update(void);
 public slots:
   virtual void changed(QListViewItem *item);
 };
@@ -63,13 +63,13 @@ public slots:
 class toSecurityRoleGrant : public toListView {
   Q_OBJECT
 
-  toConnection &Connection;
   QCheckListItem *findChild(QListViewItem *parent,const QString &name);
 public:
-  toSecurityRoleGrant(toConnection &conn,QWidget *parent);
+  toSecurityRoleGrant(QWidget *parent);
   void changeUser(bool user,const QString &);
   void sql(const QString &user,std::list<QString> &sql);
   void eraseUser(bool user,bool all=true);
+  void update(void);
 public slots:
   virtual void changed(QListViewItem *item);
 };
@@ -77,12 +77,12 @@ public slots:
 class toSecurityObject : public toListView {
   Q_OBJECT
 
-  toConnection &Connection;
 public:
-  toSecurityObject(toConnection &conn,QWidget *parent);
+  toSecurityObject(QWidget *parent);
   void changeUser(const QString &);
   void sql(const QString &user,std::list<QString> &sql);
   void eraseUser(bool all=true);
+  void update(void);
 public slots:
   virtual void changed(QListViewItem *item);
 };

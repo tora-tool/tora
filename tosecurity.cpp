@@ -192,16 +192,16 @@ public:
 static toSecurityTool SecurityTool;
 
 class toSecurityQuota : public toSecurityQuotaUI {
-  toConnection &Connection;
   QListViewItem *CurrentItem;
   void clearItem(QListViewItem *item);
   virtual void changeTablespace(void);
   virtual void changeSize(void);
 public:
-  toSecurityQuota(toConnection &conn,QWidget *parent);
+  toSecurityQuota(QWidget *parent);
   void changeUser(const QString &);
   QString sql(void);
   void clear(void);
+  void update(void);
 };
 
 void toSecurityQuota::changeSize(void)
@@ -220,12 +220,18 @@ void toSecurityQuota::changeSize(void)
     SizeGroup->setEnabled(false);
 }
 
-toSecurityQuota::toSecurityQuota(toConnection &conn,QWidget *parent)
-  : toSecurityQuotaUI(parent),Connection(conn)
+toSecurityQuota::toSecurityQuota(QWidget *parent)
+  : toSecurityQuotaUI(parent)
 {
   CurrentItem=NULL;
+  update();
+}
+
+void toSecurityQuota::update(void)
+{
+  clear();
   try {
-    toQuery tablespaces(Connection,SQLTablespace);
+    toQuery tablespaces(toCurrentConnection(this),SQLTablespace);
     QListViewItem *item=NULL;
     while(!tablespaces.eof()) {
       item=new toResultViewItem(Tablespaces,item,tablespaces.readValue());
@@ -258,7 +264,7 @@ void toSecurityQuota::changeUser(const QString &user)
   QListViewItem *item=Tablespaces->firstChild();
   if (!user.isEmpty()) {
     try {
-      toQuery quota(Connection,SQLQuota,user);
+      toQuery quota(toCurrentConnection(this),SQLQuota,user);
       while(!quota.eof()) {
 	double maxQuota;
 	double usedQuota;
@@ -721,18 +727,27 @@ public:
   }
 };
 
-toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
-  : toListView(parent),Connection(conn)
+toSecurityObject::toSecurityObject(QWidget *parent)
+  : toListView(parent)
 {
   addColumn(tr("Object"));
   setRootIsDecorated(true);
+  update();
+  setSorting(0);
+  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
+}
+
+
+void toSecurityObject::update(void)
+{
+  clear();
   try {
     QString oType;
     QString oOwner;
     QString oName;
-    std::list<toConnection::objectName> &objectList=conn.objects(true);
+    std::list<toConnection::objectName> &objectList=toCurrentConnection(this).objects(true);
     std::map<QString,QStringList> TypeOptions;
-    toQuery typelst(Connection);
+    toQuery typelst(toCurrentConnection(this));
     QListViewItem *typeItem=NULL;
     QListViewItem *ownerItem=NULL;
     QListViewItem *nameItem=NULL;
@@ -780,7 +795,6 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
       }
     }
   } TOCATCH
-  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
 }
 
 void toSecurityObject::eraseUser(bool all)
@@ -815,7 +829,7 @@ void toSecurityObject::changeUser(const QString &user)
   bool open=true;
   eraseUser();
   try {
-    toQuery grant(Connection,SQLObjectGrant,user);
+    toQuery grant(toCurrentConnection(this),SQLObjectGrant,user);
     while(!grant.eof()) {
       QString owner(grant.readValue());
       QString object(grant.readValue());
@@ -951,21 +965,27 @@ void toSecurityObject::changed(QListViewItem *org)
   }
 }
 
-toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
-  : toListView(parent),Connection(conn)
+toSecuritySystem::toSecuritySystem(QWidget *parent)
+  : toListView(parent)
 {
   addColumn(tr("Privilege name"));
   setRootIsDecorated(true);
+  update();
+  setSorting(0);
+  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
+}
+
+void toSecuritySystem::update(void)
+{
+  clear();
   try {
-    toQuery priv(Connection,SQLListSystem);
+    toQuery priv(toCurrentConnection(this),SQLListSystem);
     while(!priv.eof()) {
       toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),
 						    QCheckListItem::CheckBox);
       new toResultViewCheck(item,tr("Admin"),QCheckListItem::CheckBox);
     }
-    setSorting(0);
   } TOCATCH
-  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
 }
 
 void toSecuritySystem::sql(const QString &user,std::list<QString> &sqlLst)
@@ -1051,7 +1071,7 @@ void toSecuritySystem::changeUser(const QString &user)
 {
   eraseUser();
   try {
-    toQuery query(Connection,SQLSystemGrant,user);
+    toQuery query(toCurrentConnection(this),SQLSystemGrant,user);
     while(!query.eof()) {
       QString str=query.readValue();
       QString admin=query.readValue();
@@ -1076,21 +1096,27 @@ void toSecuritySystem::changeUser(const QString &user)
   } TOCATCH
 }
 
-toSecurityRoleGrant::toSecurityRoleGrant(toConnection &conn,QWidget *parent)
-  : toListView(parent),Connection(conn)
+toSecurityRoleGrant::toSecurityRoleGrant(QWidget *parent)
+  : toListView(parent)
 {
   addColumn(tr("Role name"));
   setRootIsDecorated(true);
+  update();
+  setSorting(0);
+  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
+}
+
+void toSecurityRoleGrant::update(void)
+{
+  clear();
   try {
-    toQuery priv(Connection,SQLRoles);
+    toQuery priv(toCurrentConnection(this),SQLRoles);
     while(!priv.eof()) {
       toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),QCheckListItem::CheckBox);
       new toResultViewCheck(item,tr("Admin"),QCheckListItem::CheckBox);
       new toResultViewCheck(item,tr("Default"),QCheckListItem::CheckBox);
     }
-    setSorting(0);
   } TOCATCH
-  connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
 }
 
 QCheckListItem *toSecurityRoleGrant::findChild(QListViewItem *parent,const QString &name)
@@ -1240,7 +1266,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 {
   eraseUser(user);
   try {
-    toQuery query(Connection,SQLRoleGrant,username);
+    toQuery query(toCurrentConnection(this),SQLRoleGrant,username);
     while(!query.eof()) {
       QString str=query.readValue();
       QString admin=query.readValue();
@@ -1330,14 +1356,14 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   UserList->setRootIsDecorated(true);
   UserList->setSelectionMode(QListView::Single);
   Tabs=new QTabWidget(splitter);
-  Quota=new toSecurityQuota(connection,Tabs);
+  Quota=new toSecurityQuota(Tabs);
   General=new toSecurityPage(Quota,connection,Tabs);
   Tabs->addTab(General,tr("&General"));
-  RoleGrant=new toSecurityRoleGrant(connection,Tabs);
+  RoleGrant=new toSecurityRoleGrant(Tabs);
   Tabs->addTab(RoleGrant,tr("&Roles"));
-  SystemGrant=new toSecuritySystem(connection,Tabs);
+  SystemGrant=new toSecuritySystem(Tabs);
   Tabs->addTab(SystemGrant,tr("&System Privileges"));
-  ObjectGrant=new toSecurityObject(connection,Tabs);
+  ObjectGrant=new toSecurityObject(Tabs);
   Tabs->addTab(ObjectGrant,tr("&Object Privileges"));
   Tabs->addTab(Quota,tr("&Quota"));
   UserList->setSelectionMode(QListView::Single);
@@ -1478,6 +1504,10 @@ void toSecurity::refresh(void)
 {
   disconnect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	     this,SLOT(changeUser(QListViewItem *)));
+  SystemGrant->update();
+  RoleGrant->update();
+  ObjectGrant->update();
+  Quota->update();
   UserList->clear();
   try {
     QListViewItem *parent=new toResultViewItem(UserList,NULL,QString::fromLatin1("Users"));

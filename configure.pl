@@ -1446,7 +1446,15 @@ vpath \%.h \$(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-all: \$(TARGET) lrelease
+__EOT__
+    
+    if ($QtVersion ge "3") {
+	print MAKEFILE "all: \$(TARGET) lrelease\n";
+    } else {
+	print MAKEFILE "all: \$(TARGET)\n";
+    }
+
+print MAKEFILE <<__EOT__;
 
 #\$(OBJECTS): Makefile Makefile.common
 
@@ -1481,7 +1489,15 @@ objs/\%.o: \%.cpp
 \%.o : objs/\%.o
 	\@echo Faulty dependency, forgot the objs/ part
 
-install-common:
+__EOT__
+
+    if ($QtVersion ge "3") {
+	print MAKEFILE "install-common: lrelease\n";
+    } else {
+	print MAKEFILE "install-common:\n";
+    }
+
+print MAKEFILE <<__EOT__;
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	mkdir -p \$(INSTALLBIN)
 	mkdir -p \$(INSTALLLIB)/tora/help
@@ -1498,7 +1514,7 @@ install: \$(TARGET) install-common install-kde
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 
-install-debug: lrelease tora-mono install-common
+install-debug: tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
 	cp tora-mono \$(INSTALLBIN)/tora
 

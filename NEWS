@@ -1,5 +1,7 @@
 1.3.7: Released 2002-08-05
 
+2002-07-30: Set sorting of objects in security manager.
+2002-07-30: Fixed problem with changing connection in security manager.
 2002-07-30: Finished the swedish translation of TOra.
 2002-07-30: Some Qt2/non KDE fixes.
 2002-07-30: Fixed problem with CSV format separators.
