@@ -478,7 +478,7 @@ __TEMP__
 {
     if (!$NoKDE||$KDEApplication) {
 	print "checking for KDE include files ... ";
-	$KDEInclude=findFile("^kapp.*\\.h\$",sub {
+	$KDEInclude=findFile("^(?:kapp.*\\.h)|(?:kdeversion\\.h)\$",sub {
 	                                     if (open(KDE,"<$_[0]")) {
 						 while(<KDE>) {
 						     if (/#define\s+KDE_VERSION_STRING\s+\"([0-9\.]+)/) {

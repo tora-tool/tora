@@ -56,7 +56,7 @@
 
 #ifdef TO_LICENSE
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
-"Version %1\n"
+"Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
 "&copy; 2000-2001,2001 copyright of Underscore AB\n"
 "(<A HREF=http://www.underscore.se>http://www.underscore.se/</a>).<P>\n"

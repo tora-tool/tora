@@ -2171,7 +2171,6 @@ bool toDebugText::compile(void)
       no.Owner=Schema;
       no.Type=type;
       Debugger->connection().addIfNotExists(no);
-      Debugger->refresh();
     } catch (const QString &exc) {
       toStatusMessage(exc);
       ret=false;
