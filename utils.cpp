@@ -462,7 +462,7 @@ QString toGetSessionType(void)
       delete t;
       return name;
     }
-    delete name;
+    delete t;
   }
 
   // Weird should never get here.
