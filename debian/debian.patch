@@ -1,0 +1,73 @@
+diff --exclude debian -ruN configure.pl configure.pl
+--- configure.pl	2003-08-09 15:35:27.000000000 +0200
++++ configure.pl	2003-08-31 12:09:08.000000000 +0200
+@@ -269,7 +269,7 @@
+ my $QtLibOrig;
+ my $QtLibShared;
+ my $QtLibStatic;
+-my $QtSearch="libqt(?:-mt)?";
++my $QtSearch="libqt-mt";
+ my $StdCppLibStatic;
+ my $LFlags;
+ my $Target="tora-mono";
+@@ -626,7 +626,7 @@
+ 		   "/opt/kde",
+ 		   "/usr/local/lib",
+ 		   "/usr/local/lib/kde") {
+-	    if (-d "$a/share/apps/kwin" && -d "$a/share/icons/hicolor/32x32/apps" && -d "$a/share/icons/hicolor/16x16/apps") {
++	    if (-d "$a/share/apps/kdcop" && -d "$a/share/icons/hicolor/32x32/apps" && -d "$a/share/icons/hicolor/16x16/apps") {
+ 		$KDEBase=$a;
+ 		last;
+ 	    } else {
+diff --exclude debian -ruN toglobalsetting.cpp toglobalsetting.cpp
+--- toglobalsetting.cpp	2003-08-09 15:35:27.000000000 +0200
++++ toglobalsetting.cpp	2003-08-31 12:09:08.000000000 +0200
+@@ -81,7 +81,7 @@
+   HistorySize->setValue(toTool::globalConfig(CONF_STATUS_SAVE,
+ 					     DEFAULT_STATUS_SAVE).toInt());
+   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
+-  MaximizeMain->setChecked(!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty());
++  MaximizeMain->setChecked(!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"").isEmpty());
+   Statusbar->setChecked(!toTool::globalConfig(CONF_MESSAGE_STATUSBAR,"").isEmpty());
+   RestoreSession->setChecked(!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty());
+   HelpDirectory->setText(toHelpPath());
+diff --exclude debian -ruN tomain.cpp tomain.cpp
+--- tomain.cpp	2003-08-09 15:35:27.000000000 +0200
++++ tomain.cpp	2003-08-31 12:10:27.000000000 +0200
+@@ -506,7 +506,7 @@
+     } TOCATCH
+   }
+ 
+-  if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty()&&Connections.size()==0)
++  if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"").isEmpty()&&Connections.size()==0)
+     showMaximized();
+   else
+     show();
+diff --exclude debian -ruN rpm/tora.desktop rpm/tora.desktop
+--- rpm/tora.desktop
++++ rpm/tora.desktop
+@@ -1,10 +1,9 @@
+ [Desktop Entry]
+ Exec=tora
+-Name=Toolkit for Oracle
+-Comment=Toolkit for Oracle and other databases administration and development
++Name=TOra
++Comment=A graphical toolkit for database developers and administrators
+ X-KDE-StartupNotify=true
+ MimeType=application/x-tora
+ Icon=tora
+ Terminal=false
+ Type=Application
+-
+diff --exclude debian -ruN toqsqlconnection.cpp toqsqlconnection.cpp
+--- toqsqlconnection.cpp	2005-03-06 11:09:40.720239832 +0100
++++ toqsqlconnection.cpp	2005-03-06 11:10:04.160676344 +0100
+@@ -984,7 +984,7 @@
+     else if (driv=="SapDB")
+       return QString::fromLatin1("QSAPDB7");
+     else if (driv=="ODBC")
+-      return QString::fromLatin1("QODBC");
++      return QString::fromLatin1("QODBC3");
+     return QString::null;
+   }
+  

@@ -1,3 +1,142 @@
+tora (1.3.16-1) unstable; urgency=low
+
+  * New upstream version 
+
+ -- Michael Meskes <meskes@debian.org>  Sun,  6 Mar 2005 11:08:40 +0100
+ 
+tora (1.3.15-1) unstable; urgency=low
+
+  * New upstream version 
+  * Changed QODBC to QODBC3, closes #285510
+
+ -- Michael Meskes <meskes@debian.org>  Fri,  4 Mar 2005 11:26:34 +0100
+ 
+tora (1.3.14.1-3) unstable; urgency=low
+
+  * This time really add the build-depend on kdebase-bin
+
+ -- Michael Meskes <meskes@debian.org>  Mon,  5 Jul 2004 20:26:14 +0200
+
+tora (1.3.14.1-2) unstable; urgency=low
+
+  * Build-depend on kdebase-bin (closes: #253765)
+  * Changed configure.pl to check for kdcop instead of kwin.
+
+ -- Michael Meskes <meskes@debian.org>  Mon,  5 Jul 2004 12:47:34 +0200
+
+tora (1.3.14.1-1) unstable; urgency=low
+
+  * New upstream version.
+  * Made sure KDE files are installed (closes: #253765)
+
+ -- Michael Meskes <meskes@debian.org>  Sun,  4 Jul 2004 17:12:34 +0200
+
+tora (1.3.13-3) unstable; urgency=low
+
+  * Updated standards version.
+  * Added man page.
+  * Added symlink from /usr/share/doc/tora to help files.
+  * Make sure all built files are cleaned.
+  * Compile without "new check".
+  * Added kderemove="y" to menu entry.  Use icons already installed in
+    KDE structure; don't install twice.  Improved menu text.
+  * Updated copyright.
+
+ -- Michael Meskes <meskes@debian.org>  Wed, 24 Mar 2004 19:27:28 +0100
+
+tora (1.3.13-2) unstable; urgency=low
+
+  * Added icon, improved capitalization of menu entry.
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 01 Mar 2004 11:30:15 +0100
+
+tora (1.3.13-1) unstable; urgency=low
+
+  * New upstream version 
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 15 Feb 2004 10:47:47 +0100
+
+tora (1.3.12-1) unstable; urgency=low
+
+  * New upstream version 
+
+ -- Michael Meskes <meskes@debian.org>  Tue, 21 Oct 2003 19:13:32 +0200
+
+tora (1.3.11-1) unstable; urgency=low
+
+  * New upstream version 
+  * Moved help files from /usr/lib to /usr/share
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 31 Aug 2003 12:15:51 +0200
+
+tora (1.3.9.2-3) unstable; urgency=low
+
+  * Removed full screen opening (closes: #167590)
+  * Added patch from CVS so changed values are saved.
+  * Added my patches to doc/
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 15 Jun 2003 14:31:11 +0200
+
+tora (1.3.9.2-2) unstable; urgency=low
+
+  * Include qobjectlist.h instead of qobjcoll.h (closes: #181522)
+  * Include qt3-compat-headers in Build-Depends until kdelibs4-dev is fixed
+  * Made sure qt3-mt is used (closes: #183063)
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 24 Feb 2003 14:31:50 +0100
+
+tora (1.3.9.2-1) unstable; urgency=low
+
+  * New upstream version
+  * Compiled against new libqt3 (closes: #181091)
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 17 Feb 2003 00:56:12 +0100
+
+tora (1.3.8-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Michael Meskes <meskes@debian.org>  Fri, 11 Oct 2002 09:09:50 +0200
+
+tora (1.3.7-4) unstable; urgency=low
+
+  * Fixed dependancy to list -mt qt3 modules (closes: #154259)
+  * Added several fixes to compiler warnings from CVS.
+
+ -- Michael Meskes <meskes@debian.org>  Sun,  1 Sep 2002 11:44:46 +0200
+
+tora (1.3.7-3) unstable; urgency=low
+
+  * Added compiler optimization (closes: #159036).
+  
+ -- Michael Meskes <meskes@debian.org>  Sun,  1 Sep 2002 11:44:46 +0200
+tora (1.3.7-2) unstable; urgency=low
+
+  * Fixed Built-Depends to note that qt 3.0.5 or greater is needed
+    (closes: #156420).
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 12 Aug 2002 18:07:51 +0200
+ 
+tora (1.3.7-1) unstable; urgency=low
+
+  * New upstream version.
+  * Compiled against libqt3 3.0.5 which should fix missing connection provider
+    problem (closes: #154259).
+
+ -- Michael Meskes <meskes@debian.org>  Mon, 12 Aug 2002 13:57:08 +0200
+tora (1.3.6.1-2) unstable; urgency=low
+
+  * Changed Suggests to Depends as tora won't work without a database
+    connector. (closes: #152251)
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 14 Jul 2002 09:54:07 +0200
+
+tora (1.3.6.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Michael Meskes <meskes@debian.org>  Fri,  5 Jul 2002 12:29:52 +0200
+
 tora (1.3.6-1) unstable; urgency=low
 
   * New upstream version.
@@ -10,7 +149,6 @@ tora (1.3.5.1-1) unstable; urgency=low
   * New upstream version with several minor bugfixes
 
  -- Michael Meskes <meskes@debian.org>  Fri, 19 Apr 2002 10:32:16 +0200
-
 
 tora (1.3.5-1) unstable; urgency=low
 

@@ -1,2 +1,8 @@
-?package(tora):needs=X11 section=Apps/Databases\
-  title="tora" command="/usr/bin/tora" 
+?package(tora):\
+  needs="X11"\
+  section="Apps/Databases"\
+  title="TOra"\
+  command="/usr/bin/tora"\
+  kderemove="y"\
+  icon32x32="/usr/share/icons/hicolor/32x32/apps/tora.xpm"\
+  icon16x16="/usr/share/icons/hicolor/16x16/apps/tora.xpm"

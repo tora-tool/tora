@@ -8,11 +8,16 @@
 # This is the debhelper compatability version to use.
 export DH_COMPAT=3
 
+
+DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/manpages/docbook.xsl
+XP=xsltproc -''-nonet
+
+
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-oracle --without-mysql --without-rpath
+	./configure --prefix=/usr --without-oracle --without-rpath --disable-new-check --with-kde
 
 	touch configure-stamp
 
@@ -22,8 +27,8 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
-	#/usr/bin/docbook-to-man debian/tora.sgml > tora.1
+	$(MAKE) CFLAGS_GLOB="-O2 -W -g -fPIC -Wall -Wno-unused"
+	$(XP) $(DB2MAN) debian/tora.xml
 
 	touch build-stamp
 
@@ -34,6 +39,8 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
+	rm -f *.qm tora.pro license/tolicenseui.h license/tolicenseui.cpp license/tolicense.moc license/tolicenseui.moc
+	rm -f tora.1
 
 	dh_clean
 
@@ -47,8 +54,12 @@ install: build
 	$(MAKE) install ROOT=$(CURDIR)/debian/tora
 	-mkdir $(CURDIR)/debian/tora/usr/lib/tora/help/images
 	-install --owner root --group root --mode=644 help/images/* $(CURDIR)/debian/tora/usr/lib/tora/help/images
+	rm -f $(CURDIR)/debian/tora/usr/lib/tora/help/images/.cvsignore
 	-mv $(CURDIR)/debian/tora/usr/bin/tora $(CURDIR)/debian/tora/usr/lib/tora/tora.real
 	-install --owner root --group root --mode=755 debian/tora.wrapper $(CURDIR)/debian/tora/usr/bin/tora
+	-mv $(CURDIR)/debian/tora/usr/lib/tora/help $(CURDIR)/debian/tora/usr/share/tora
+	dh_link usr/share/tora/help usr/lib/tora/help
+	dh_link usr/share/tora/help usr/share/doc/tora/help
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -68,9 +79,8 @@ binary-arch: build install
 #	dh_installmime
 #	dh_installinit
 #	dh_installcron
-#	dh_installman
+	dh_installman tora.1
 	dh_installinfo
-	dh_undocumented tora.1
 	dh_installchangelogs 
 	dh_link
 	dh_strip
@@ -78,6 +88,7 @@ binary-arch: build install
 #	since the shared libs are named .tso we have to strip them manually
 #
 	strip --strip-unneeded --remove-section=.comment --remove-section=.note `pwd`/debian/tora/usr/lib/tora/*.tso
+	chmod 644 `pwd`/debian/tora/usr/lib/tora/*.tpl
 	dh_compress
 	dh_fixperms
 #	dh_makeshlibs
