@@ -34,7 +34,6 @@ Extended functionality:
 * Ability to generate into several script (One per object and type) in DB extraction.
 * Full support for Oracle 9i.
 * Install in KDE menu if KDE detected.
-* Statistics saving and comparison in worksheet.
 * Printing of toResultItems.
 * Never lock while executing in debugger.
 * Different highlighter depending on connection.

@@ -32,58 +32,53 @@
  *
  ****************************************************************************/
 
-#ifndef __TOANALYZE_H
-#define __TOANALYZE_H
+#ifndef __TOWORKSHEETSTATISTIC_H
+#define __TOWORKSHEETSTATISTIC_H
 
 #include <list>
 
-#include "totool.h"
-#include "tonoblockquery.h"
+#include <qvbox.h>
 
-class toResultView;
 class QPopupMenu;
-class QComboBox;
-class QSpinBox;
-class QTimer;
-class toResultPlan;
-class toWorksheetStatistic;
-class QTabWidget;
+class toAnalyze;
+class QSplitter;
+class QLabel;
+class toBarChart;
+class toListView;
 
-class toAnalyze : public toToolWidget {
+class toWorksheetStatistic : public QVBox {
   Q_OBJECT
 
-  QTabWidget *Tabs;
-  toResultView *Statistics;
-  QComboBox *Schema;
-  QComboBox *Operation;
-  QComboBox *For;
-  QSpinBox *Sample;
-  QSpinBox *Parallel;
-  QLabel *Current;
-  QToolButton *Stop;
-  toBackground Poll;
-  toResultView *Plans;
-  toResultPlan *CurrentPlan;
-  toWorksheetStatistic *Worksheet;
+  struct data {
+    QVBox *Top;
+    QLabel *Label;
+    toListView *Statistics;
+    toBarChart *Wait;
+    toBarChart *IO;
+  };
 
-  std::list<toNoBlockQuery *> Running;
-  std::list<QString> Pending;
+  std::list<data> Open;
 
-  QPopupMenu *ToolMenu;
+  QPopupMenu *SaveMenu;
+  QPopupMenu *RemoveMenu;
+
+  static toAnalyze *Widget;
+  toAnalyze *Tool;
+  QSplitter *Splitter;
+  QWidget *Dummy;
 public:
-  toAnalyze(QWidget *parent,toConnection &connection);
+  toWorksheetStatistic(QWidget *parent);
+  ~toWorksheetStatistic();
 
-  toWorksheetStatistic *worksheet(void);
+  static void saveStatistics(std::map<QString,QString> &stats);
 
-  static void createTool(void);
+  void addStatistics(std::map<QString,QString> &stats);
+
 public slots:
-  virtual void changeOperation(int);
-  virtual void execute(void);
-  virtual void poll(void);
-  virtual void stop(void);
-  virtual void refresh(void); 
-  virtual void windowActivated(QWidget *widget);
-  virtual void selectPlan(void);
+  virtual void save(int);
+  virtual void remove(int); 
+  virtual void load(void);
+  virtual void displayMenu(void);
 };
 
 #endif

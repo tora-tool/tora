@@ -875,6 +875,7 @@ void toListView::importData(std::map<QString,QString> &ret,const QString &prefix
   }
 
   setRootIsDecorated(ret.find(prefix+":Decorated")!=ret.end());
+  setSorting(0);
 
   std::map<int,QListViewItem *> itemMap;
 

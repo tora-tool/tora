@@ -15,6 +15,7 @@
 2001-11-19: Add oracle columns to explain plan in constructor.
 2001-11-19: Added functions to import/export data from linecharts.
 2001-11-19: Added functions to export a listview to file.
+2001-11-19: Added ability to save, load & compare worksheet statistics.
 
 1.1.5:
 

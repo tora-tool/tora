@@ -56,6 +56,7 @@
 #include "toresultlong.h"
 #include "toresultplan.h"
 #include "toconf.h"
+#include "toworksheetstatistic.h"
 
 #include "toanalyze.moc"
 
@@ -113,7 +114,8 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "7.3");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",
-			  "SELECT DISTINCT statement_id,timestamp,remarks FROM %1",
+			  "SELECT DISTINCT statement_id,MAX(timestamp),MAX(remarks) FROM %1\n"
+			  " GROUP BY statement_id",
 			  "Display available saved statements. Must have same first "
 			  "column and %1");
 
@@ -218,6 +220,9 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   CurrentPlan=new toResultPlan(splitter);
 
+  Worksheet=new toWorksheetStatistic(Tabs);
+  Tabs->addTab(Worksheet,"Worksheet statistics");
+
   refresh();
 }
 
@@ -242,6 +247,12 @@ void toAnalyze::windowActivated(QWidget *widget)
     delete ToolMenu;
     ToolMenu=NULL;
   }
+}
+
+toWorksheetStatistic *toAnalyze::worksheet(void)
+{
+  Tabs->showPage(Worksheet);
+  return Worksheet;
 }
 
 void toAnalyze::changeOperation(int op)
@@ -355,4 +366,9 @@ void toAnalyze::stop(void)
     if (!connection().needCommit())
       connection().rollback();
   } TOCATCH
+}
+
+void toAnalyze::createTool(void)
+{
+  AnalyzeTool.createWindow();
 }

@@ -79,6 +79,7 @@
 #include "tosession.h"
 #include "toresultbar.h"
 #include "tovisualize.h"
+#include "toworksheetstatistic.h"
 
 #include "toworksheet.moc"
 #include "toworksheetsetupui.moc"
@@ -94,6 +95,7 @@
 #include "icons/describe.xpm"
 #include "icons/compile.xpm"
 #include "icons/previous.xpm"
+#include "icons/filesave.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
@@ -337,11 +339,12 @@ void toWorksheet::setup(bool autoLoad)
     Logging=NULL;
     LastLogItem=NULL;
     StatisticButton=NULL;
-    StatSplitter=NULL;
+    StatTab=NULL;
     Columns=NULL;
     Refresh=NULL;
     ToolMenu=NULL;
     Visualize=NULL;
+    WaitChart=IOChart=NULL;
     toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)describe_xpm),
 		    "Describe under cursor",
@@ -379,33 +382,43 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(Plan,"E&xecution plan");
     Resources=new toResultResources(ResultTab);
     ResultTab->addTab(Resources,"&Information");
-    StatSplitter=new QSplitter(Horizontal,ResultTab);
-    Statistics=new toResultStats(true,StatSplitter);
+    StatTab=new QVBox(ResultTab);
+    {
+      QToolBar *stattool=toAllocBar(StatTab,"Worksheet Statistics",connection.description());
+      new QToolButton(QPixmap((const char **)filesave_xpm),
+		      "Save statistics for later analysis",
+		      "Save statistics for later analysis",
+		      this,SLOT(saveStatistics(void)),
+		      stattool);
+      stattool->setStretchableWidget(new QLabel(stattool));
+    }
+    splitter=new QSplitter(Horizontal,StatTab);
+    Statistics=new toResultStats(true,splitter);
     Statistics->setTabWidget(ResultTab);
-    toResultBar *bar=new toResultBar(StatSplitter);
+    WaitChart=new toResultBar(splitter);
     try {
       toSQL sql=toSQL::sql(TO_SESSION_WAIT);
-      bar->setSQL(sql);
+      WaitChart->setSQL(sql);
     } catch(...) {
     }
-    bar->setTitle("Wait states");
-    bar->setYPostfix("ms/s");
-    bar->setSamples(-1);
+    WaitChart->setTitle("Wait states");
+    WaitChart->setYPostfix("ms/s");
+    WaitChart->setSamples(-1);
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
-	    bar,SLOT(changeParams(const QString &)));
-    bar=new toResultBar(StatSplitter);
+	    WaitChart,SLOT(changeParams(const QString &)));
+    IOChart=new toResultBar(splitter);
     try {
       toSQL sql=toSQL::sql(TO_SESSION_IO);
-      bar->setSQL(sql);
+      IOChart->setSQL(sql);
     } catch(...) {
     }
-    bar->setTitle("I/O");
-    bar->setYPostfix("blocks/s");
-    bar->setSamples(-1);
+    IOChart->setTitle("I/O");
+    IOChart->setYPostfix("blocks/s");
+    IOChart->setSamples(-1);
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
-	    bar,SLOT(changeParams(const QString &)));
-    ResultTab->addTab(StatSplitter,"&Statistics");
-    ResultTab->setTabEnabled(StatSplitter,false);
+	    IOChart,SLOT(changeParams(const QString &)));
+    ResultTab->addTab(StatTab,"&Statistics");
+    ResultTab->setTabEnabled(StatTab,false);
 
     Logging=new toListView(ResultTab);
     ResultTab->addTab(Logging,"&Logging");
@@ -1239,7 +1252,7 @@ void toWorksheet::enableStatistic(bool ena)
 {
   if (ena) {
     Result->setStatistics(Statistics);
-    ResultTab->setTabEnabled(StatSplitter,true);
+    ResultTab->setTabEnabled(StatTab,true);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
@@ -1251,7 +1264,7 @@ void toWorksheet::enableStatistic(bool ena)
   } else {
     connection().delInit(ENABLETIMED);
     Result->setStatistics(NULL);
-    ResultTab->setTabEnabled(StatSplitter,false);
+    ResultTab->setTabEnabled(StatTab,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
   }
 }
@@ -1484,4 +1497,16 @@ void toWorksheet::saveLast(void)
 		     connection().provider());
     toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
   }
+}
+
+void toWorksheet::saveStatistics(void)
+{
+  std::map<QString,QString> stat;
+
+  Statistics->exportData(stat,"Stat");
+  IOChart->exportData(stat,"IO");
+  WaitChart->exportData(stat,"Wait");
+  stat["Description"]=QueryString;
+  
+  toWorksheetStatistic::saveStatistics(stat);
 }

@@ -66,6 +66,7 @@ class toTool;
 class QSplitter;
 class toVisualize;
 class toListView;
+class toResultBar;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT
@@ -79,12 +80,14 @@ class toWorksheet : public toToolWidget {
   QString QueryString;
   toResultItem *Resources;
   toResultStats *Statistics;
+  toResultBar *WaitChart;
+  toResultBar *IOChart;
   toListView *Logging;
   toVisualize *Visualize;
   QListViewItem *LastLogItem;
   QToolButton *StopButton;
   QToolButton *StatisticButton;
-  QSplitter *StatSplitter;
+  QWidget *StatTab;
   bool TryStrip;
   toResultCols *Columns;
   QComboBox *Refresh;
@@ -158,6 +161,7 @@ public slots:
   void addLog(const QString &sql,const toConnection::exception &result);
   void changeRefresh(const QString &);
   void saveLast(void);
+  void saveStatistics(void);
 private slots:
   void poll(void);
 };

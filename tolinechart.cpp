@@ -647,6 +647,7 @@ void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefi
     id++;
     ret[prefix+":XValues:"+QString::number(id)]=*i;
   }
+  id=0;
   for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
     QString value;
 
@@ -658,6 +659,7 @@ void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefi
     id++;
     ret[prefix+":Values:"+QString::number(id)]=value;
   }
+  ret[prefix+":Title"]=Title;
 }
 
 void toLineChart::importData(std::map<QString,QString> &ret,const QString &prefix)
@@ -691,5 +693,7 @@ void toLineChart::importData(std::map<QString,QString> &ret,const QString &prefi
     Values.insert(Values.end(),vals);
     id++;
   }
+  Samples=id-1;
+  Title=ret[prefix+":Title"];
   update();
 }

@@ -151,6 +151,7 @@ SOURCES=\
 	tovisualize.cpp			\
 	toworksheet.cpp			\
 	toworksheetsetupui.cpp		\
+	toworksheetstatistic.cpp	\
 	utils.cpp			\
 	$(MYSQL_CPP)
 
@@ -208,7 +209,9 @@ include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 include Makefile.common
 
 plugins/toalert.tso:objs/toalert.o
-plugins/toanalyze.tso:objs/toanalyze.o
+plugins/toanalyze.tso:\
+	objs/toanalyze.o \
+	objs/toworksheetstatistic.o
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserconstraintui.o \
