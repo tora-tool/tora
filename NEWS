@@ -4,8 +4,8 @@
 2001-11-06: Fixed a really ugly toThread bug in linux & windows.
 2001-11-06: Added drop changes from parameter editor and fixed update problem.
 2001-11-06: Fixed polling problem with session statistics.
-2001-11-06: Took up work on the migrate functionality of toExtract.
-2001-11-06: Much quicker startup of toScript tool.
+2001-11-09: Took up work on the migrate functionality of toExtract.
+2001-11-09: Much quicker startup of toScript tool.
 
 1.1.5:
 
