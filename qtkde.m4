@@ -65,6 +65,41 @@ AC_DEFUN(TORA_HAVE_KDE,
 ])
 
 
+dnl --------------------------------------------------
+dnl find out if we're running qt/mac native.
+dnl doesn't print "checking..." messages because it's included from AC_PATH_QT
+dnl --------------------------------------------------
+AC_DEFUN(TORA_CHECK_MAC_NATIVE,
+[
+
+  ac_cppflags_safe="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS -I$qt_incdir $all_includes $X_CFLAGS"
+
+  dnl only run the preprocessor, this will always fail if compiling
+  dnl without the proper qt/mac includes.
+  AC_PREPROC_IFELSE([
+#include <qapplication.h>
+
+#ifndef Q_OS_MACX
+# error no
+#endif
+  ],
+  have_qt_mac_native=yes,
+  have_qt_mac_native=no)
+
+  if test $have_qt_mac_native = no; then
+    echo "no mac native" >&AC_FD_CC
+  else
+    echo "using mac native" >&AC_FD_CC
+    dnl don't bother testing, these should always work on the mac.
+    dnl if these change in future OS releases, then we'll add some checks.
+    LIBS="$LIBS -bind_at_load -framework Carbon -framework QuickTime -lz -framework OpenGL -framework AGL"
+  fi
+
+  CPPFLAGS="$ac_cppflags_safe"
+])
+
+
 dnl ------------------------------------------------------------------------
 dnl Try to find the Qt headers and libraries.
 dnl $(QT_LDFLAGS) will be -Lqtliblocation (if needed)
@@ -184,9 +219,6 @@ AC_DEFUN(AC_PATH_QT,
   
   AC_MSG_CHECKING([for Qt])
   
-  if test "x$kde_use_qt_emb" != "xyes"; then
-    LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
-  fi
   ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
   qt_libraries=""
   qt_includes=""
@@ -226,6 +258,7 @@ AC_DEFUN(AC_PATH_QT,
               /usr/X11R6/include/X11/qt
               /usr/X11R6/include/qt
               /usr/X11R6/include/qt2
+              /Developer/qt/include
               /sw/include/qt
               $x_includes"
   if test "$ac_qt_includes" != "NO"; then
@@ -241,7 +274,14 @@ AC_DEFUN(AC_PATH_QT,
   AC_FIND_FILE($kde_qt_header, $qt_incdirs, qt_incdir)
   ac_qt_includes="$qt_incdir"
   
-  qt_libdirs="$QTLIB $qt_libdirs /sw/lib /usr/X11R6/lib /usr/lib /usr/local/qt/lib $x_libraries"
+  qt_libdirs="$QTLIB
+              $qt_libdirs
+              /Developer/qt/lib
+              /sw/lib
+              /usr/X11R6/lib
+              /usr/lib
+              /usr/local/qt/lib
+              $x_libraries"
   if test "$ac_qt_libraries" != "NO"; then
     qt_libdir=$ac_qt_libraries
   else
@@ -263,6 +303,20 @@ AC_DEFUN(AC_PATH_QT,
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
   
+  dnl before we try to compile, check for native qt on the mac.
+  dnl it requires additional flags.
+  dnl this check must be run after the above tests to find the qt dir,
+  dnl but before trying to compile because we have no other way to know
+  dnl if we're compiling against qt/x11 or qt/mac. if we need to add
+  dnl more platforms with custom libraries in this manner, i'll probably
+  dnl separate the qt tests into testing linking/compiling and finding QTDIR.
+  TORA_CHECK_MAC_NATIVE
+
+  if test $have_qt_mac_native != yes && test "x$kde_use_qt_emb" != "xyes"; then
+    dnl don't append this until we're sure we're not using a native qt.
+    LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
+  fi
+
   ac_cxxflags_safe="$CXXFLAGS"
   ac_ldflags_safe="$LDFLAGS"
   ac_libs_safe="$LIBS"
@@ -270,7 +324,7 @@ AC_DEFUN(AC_PATH_QT,
   CXXFLAGS="$CXXFLAGS -I$qt_incdir $all_includes $X_CFLAGS"
   LDFLAGS="$LDFLAGS -L$qt_libdir $all_libraries $USER_LDFLAGS $KDE_MT_LDFLAGS"
   LIBS="$LIBS $LIBQT $KDE_MT_LIBS $X_LIBS"
-  
+
   KDE_PRINT_QT_PROGRAM
   
   if AC_TRY_EVAL(ac_link) && test -s conftest; then
@@ -353,12 +407,14 @@ AC_DEFUN(AC_PATH_QT,
   
   dnl KDE_CHECK_QT_JPEG
   
-  if test "x$kde_use_qt_emb" != "xyes"; then
-  LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG) -lXext $(LIB_X11) $(LIBSM)'
-  else
-  LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG)'
+  if test $have_qt_mac_native != yes; then
+    if test "x$kde_use_qt_emb" != "xyes"; then
+      LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG) -lXext $(LIB_X11) $(LIBSM)'
+    else
+      LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG)'
+    fi
+    test -z "$KDE_MT_LIBS" || LIB_QT="$LIB_QT $KDE_MT_LIBS"
   fi
-  test -z "$KDE_MT_LIBS" || LIB_QT="$LIB_QT $KDE_MT_LIBS"
   
   AC_SUBST(LIB_QT)
   AC_SUBST(LIB_QPE)
