@@ -851,7 +851,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
 
   {
     QString str=result;
-    str+=" (Duration ";
+    str+="\n(Duration ";
     str+=buf;
     str+=")";
     toStatusMessage(str);
