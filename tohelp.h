@@ -202,7 +202,9 @@ public:
    * @param parent If NULL use modal dialog and main window.
    */
   static void displayHelp(QWidget *parent=NULL);
-  /** Connect the F1 key to display help for a dialog.
+  /** Connect the F1 key to display help for a modal dialog. Don't use this directly,
+   * instead call displayHelp directly and bind Key_F1 to that call. This is because the
+   * help in modal dialogs are cludgy at best and should be avoided if possible.
    * @param dialog Dialog to connect accelerator to.
    */
   static void connectDialog(QDialog *dialog);

@@ -134,7 +134,9 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="connectDialog"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>connectDialog</strong> (<A HREF="http://doc.trolltech.com/qdialog.html">QDialog</A> *dialog)
-<br></td><td align="right"><h3><strong>connectDialog</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Connect the F1 key to display help for a dialog.
+<br></td><td align="right"><h3><strong>connectDialog</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Connect the F1 key to display help for a modal dialog. Don't use this directly,
+ instead call displayHelp directly and bind Key_F1 to that call. This is because the
+ help in modal dialogs are cludgy at best and should be avoided if possible.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>dialog</i></TD><TD align="left" valign="top">Dialog to connect accelerator to.

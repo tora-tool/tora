@@ -38,12 +38,13 @@
 #define __TOSEARCHREPLACE_H
 
 #include "tosearchreplaceui.h"
+#include "tohelp.h"
 
 class toMarkedText;
 class toListView;
 class toResultContent;
 
-class toSearchReplace : public toSearchReplaceUI {
+class toSearchReplace : public toSearchReplaceUI, public toHelpContext {
   toMarkedText *Text;
   toListView *List;
   toResultContent *Content;
@@ -69,6 +70,7 @@ public slots:
   virtual void search();
   virtual void searchNext();
   virtual void searchChanged();
+  virtual void displayHelp();
 };
 
 #endif

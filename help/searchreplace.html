@@ -1,0 +1,26 @@
+<HTML><HEAD><TITLE>Search &amp; Replace</TITLE></HEAD><BODY>
+<H1>Search &amp; Replace</H1>
+TOra has an advanced search and replace function that allows you to search result list and editors. Replace is only
+available for editors though. You can invoke the search &amp; replace dialog by selecting the menu
+<B>Edit|Search &amp; Replace</B> or by pressing <B>CTRL+F</B>. The search always operates on the last editor or list
+that had the focus <B>when you invoked the dialog</B>. Not on the current widget of the next search etc. The dialog
+looks like this.<P>
+<IMG SRC=images/searchreplace.png><P>
+<H2>Specifying the search criteria</H2>
+You enter the text to search for, this can be either in the format of plain text or regular expressions as defined
+by the current version of Qt which TOra is compiled against (For more information check out
+<A HREF=http://doc.trolltech.com/qregexp.html>http://doc.trolltech.com/qregexp.html</A>, if you are using Qt 3.0
+or later you have a more advanced form of regular expressions).<P>
+You can also specify if the search expression must match a whole word or if the match is to be case sensetive.<p>
+After specifying you can execute your search by either pressing the <B>Search Top</B> button which will start the
+search from the top of the contents of the target for the search or <B>Search Next</B> which will continue
+searching for the next match from the current location.<P>
+<H2>Replacing</H2>
+In the replace text field you can specify the text with which to replace a matched find that has been found. Note
+that regardless of if the search is case sensetive or not the replacement is the same case as specified in the
+text field.<P>
+After finding the first occurance by pressing <B>Search Top</B> or <B>Search Next</B> you can either replace it
+with the current substitute by pressing <B>Replace</B>, or skip to the next by pressing <B>Search Next</B> button
+again. At any time the <B>Replace All</B> will replace all occuranced after the current location in the editor.
+</BODY>
+</HTML>

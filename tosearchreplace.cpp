@@ -41,21 +41,32 @@ TO_NAMESPACE;
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qmultilineedit.h>
+#include <qaccel.h>
 
 #include "tomarkedtext.h"
 #include "tosearchreplace.h"
 #include "tomain.h"
 #include "toresultview.h"
 #include "toresultcontent.h"
+#include "tohelp.h"
 
 #include "tosearchreplaceui.moc"
 
 toSearchReplace::toSearchReplace(QWidget *parent)
-  : toSearchReplaceUI(parent,"SearchReplace")
+  : toSearchReplaceUI(parent,"SearchReplace"),toHelpContext("searchreplace.html")
 {
+  QAccel *a=new QAccel(this);
+  a->connectItem(a->insertItem(Key_F1),
+		 this,
+		 SLOT(displayHelp()));
   Text=NULL;
   List=NULL;
   Content=NULL;
+}
+
+void toSearchReplace::displayHelp(void)
+{
+  toHelp::displayHelp();
 }
 
 void toSearchReplace::release(void)

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>578</width>
+            <width>574</width>
             <height>217</height>
         </rect>
     </property>
@@ -383,12 +383,6 @@
         <slot>searchNext()</slot>
     </connection>
     <connection>
-        <sender>Replace</sender>
-        <signal>clicked()</signal>
-        <receiver>toSearchReplaceUI</receiver>
-        <slot>replace()</slot>
-    </connection>
-    <connection>
         <sender>ReplaceAll</sender>
         <signal>clicked()</signal>
         <receiver>toSearchReplaceUI</receiver>
@@ -400,10 +394,10 @@
         <receiver>toSearchReplaceUI</receiver>
         <slot>searchChanged()</slot>
     </connection>
-    <slot access="public">searchChanged()</slot>
-    <slot access="public">replace()</slot>
+    <slot access="public">displayHelp()</slot>
     <slot access="public">replaceAll()</slot>
     <slot access="public">search()</slot>
+    <slot access="public">searchChanged()</slot>
     <slot access="public">searchNext()</slot>
 </connections>
 <tabstops>
