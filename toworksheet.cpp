@@ -129,6 +129,8 @@ static struct {
 	       { 0,"trigger",   false,false,false,false,false,true ,false},
 	       { 0,"end",	false,true ,true ,false,false,false,false},
 	       { 0,"rem",	false,false,false,true ,false,false,false},
+	       { 0,"store",	false,false,false,true ,false,false,false},
+	       { 0,"spool",	false,false,false,true ,false,false,false},
 	       { 0,"prompt",	false,false,false,true ,false,false,false},
 	       { 0,"set",	false,false,false,true ,false,false,false},
 	       { 0,NULL,	false,false,false,false,false,false,false}

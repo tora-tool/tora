@@ -43,21 +43,23 @@
 #include <qfiledialog.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qlineedit.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
+#include <qpopupmenu.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
 #include <qspinbox.h>
+#include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 #include <qworkspace.h>
-#include <qpopupmenu.h>
-#include <qlayout.h>
-#include <qmenubar.h>
+#include <qpainter.h>
 
 #include "tomemoeditor.h"
 #include "tochangeconnection.h"
@@ -680,9 +682,19 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
-  Storage=new toResultStorage(this);
+  QSplitter *splitter=new QSplitter(Vertical,this);
+  Storage=new toResultStorage(splitter);
+  splitter=new QSplitter(Horizontal,splitter);
+  Objects=new toListView(splitter);
+  Objects->addColumn("Owner");
+  Objects->addColumn("Object");
+  Objects->addColumn("Partition");
+  Objects->addColumn("Extents");
+  Objects->setColumnAlignment(3,AlignRight);
+  Extents=new toStorageExtent(splitter);
 
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+  connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -886,10 +898,22 @@ void toStorage::selectionChanged(void)
   QListViewItem *item=Storage->selectedItem();
   if (item) {
     if (item->parent()) {
+      Extents->setFile(item->text(13),item->text(12).toInt());
       item=item->parent();
       MoveFileButton->setEnabled(true);
       ModFileButton->setEnabled(true);
+    } else
+      Extents->setTablespace(item->text(0));
+    std::list<toStorageExtent::extentName> obj=Extents->objects();
+    QListViewItem *item=NULL;
+    Objects->clear();
+    for (std::list<toStorageExtent::extentName>::iterator i=obj.begin();i!=obj.end();i++) {
+      item=new toResultViewItem(Objects,item,(*i).Owner);
+      item->setText(1,(*i).Table);
+      item->setText(2,(*i).Partition);
+      item->setText(3,QString::number((*i).Size));
     }
+
     QListViewItem *child=item->firstChild();
     if (!child) {
       OnlineButton->setEnabled(true);
@@ -1013,4 +1037,280 @@ void toStorage::moveFile(void)
       refresh();
     }
   } TOCATCH
+}
+
+void toStorage::selectObject(void)
+{
+  QListViewItem *item=Objects->selectedItem();
+  if (item) {
+    toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
+    if (res)
+      Extents->highlight(res->allText(0),res->allText(1),res->allText(2));
+  }
+}
+
+toStorageExtent::extentName::extentName(const QString &owner,const QString &table,
+					const QString &partition,int size)
+  : Owner(owner),Table(table),Partition(partition)
+{
+  Size=size;
+}
+
+bool toStorageExtent::extentName::operator < (const toStorageExtent::extentName &ext)
+{
+  if (Owner<ext.Owner)
+    return true;
+  if (Owner>ext.Owner)
+    return false;
+  if (Table<ext.Table)
+    return true;
+  if (Table>ext.Table)
+    return false;
+  if (Partition<ext.Partition)
+    return true;
+  return false;
+}
+
+bool toStorageExtent::extentName::operator == (const toStorageExtent::extentName &ext)
+{
+  return Owner==ext.Owner&&Table==ext.Table&&Partition==ext.Partition;
+}
+
+toStorageExtent::extent::extent(const QString &owner,const QString &table,
+				const QString &partition,
+				int file,int block,int size)
+  : extentName(owner,table,partition,size)
+{
+  File=file;
+  Block=block;
+}
+
+bool toStorageExtent::extent::operator < (const toStorageExtent::extent &ext)
+{
+  if (File<ext.File)
+    return true;
+  if (File>ext.File)
+    return false;
+  if (Block<ext.Block)
+    return true;
+  return false;
+}
+
+bool toStorageExtent::extent::operator == (const toStorageExtent::extent &ext)
+{
+  return Owner==ext.Owner&&Table==ext.Table&&Partition==ext.Partition&&
+    File==ext.File&&Block==ext.Block&&Size==ext.Size;
+}
+
+toStorageExtent::toStorageExtent(QWidget *parent)
+  : QWidget(parent)
+{
+  setBackgroundColor(Qt::white);
+}
+
+void toStorageExtent::highlight(const QString &owner,const QString &table,
+				const QString &partition)
+{
+  Highlight.Owner=owner;
+  Highlight.Table=table;
+  Highlight.Partition=partition;
+  update();
+}
+
+static toSQL SQLObjectsFile("toStorage:ObjectsFile",
+			    "SELECT owner,\n"
+			    "       segment_name,\n"
+			    "       partition_name,\n"
+			    "       file_id,\n"
+			    "       block_id,\n"
+			    "       blocks\n"
+			    "  FROM dba_extents\n"
+			    " WHERE tablespace_name = :tab<char[101]>\n"
+			    "   AND file_id = :fil<int>",
+			    "Get objects in a datafile, must have same columns and binds",
+			    "8.0");
+
+static toSQL SQLObjectsFile7("toStorage:ObjectsFile",
+			     "SELECT owner,\n"
+			     "       segment_name,\n"
+			     "       NULL,\n"
+			     "       file_id,\n"
+			     "       block_id,\n"
+			     "       blocks\n"
+			     "  FROM dba_extents\n"
+			     " WHERE tablespace_name = :tab<char[101]>\n"
+			     "   AND file_id = :fil<int>",
+			     QString::null,
+			     "7.3");
+
+static toSQL SQLObjectsTablespace("toStorage:ObjectsTablespace",
+				  "SELECT owner,\n"
+				  "       segment_name,\n"
+				  "       partition_name,\n"
+				  "       file_id,\n"
+				  "       block_id,\n"
+				  "       blocks\n"
+				  "  FROM dba_extents WHERE tablespace_name = :tab<char[101]>",
+				  "Get objects in a tablespace, must have same columns and binds",
+				  "8.0");
+
+static toSQL SQLObjectsTablespace7("toStorage:ObjectsTablespace",
+				   "SELECT owner,\n"
+				   "       segment_name,\n"
+				   "       NULL,\n"
+				   "       file_id,\n"
+				   "       block_id,\n"
+				   "       blocks\n"
+				   "  FROM dba_extents WHERE tablespace_name = :tab<char[101]>",
+				   QString::null,
+				   "7.3");
+
+static toSQL SQLFileBlocks("toStorage:FileSize",
+			   "SELECT file_id,blocks FROM dba_data_files\n"
+			   " WHERE tablespace_name = :tab<char[101]>\n"
+			   "   AND file_id = :fil<int>\n"
+			   " ORDER BY file_id",
+			   "Get blocks for datafiles, must have same columns and binds");
+
+static toSQL SQLTablespaceBlocks("toStorage:TablespaceSize",
+				 "SELECT file_id,blocks FROM dba_data_files\n"
+				 " WHERE tablespace_name = :tab<char[101]>"
+				 " ORDER BY file_id",
+				 "Get blocks for tablespace datafiles, must have same columns and binds");
+
+void toStorageExtent::setTablespace(const QString &tablespace)
+{
+  try {
+    toBusy busy;
+    Extents.clear();
+    FileOffset.clear();
+    toQuery query(toCurrentConnection(this),SQLObjectsTablespace,tablespace);
+    extent cur;
+    while(!query.eof()) {
+      cur.Owner=query.readValueNull();
+      cur.Table=query.readValueNull();
+      cur.Partition=query.readValueNull();
+      cur.File=query.readValueNull().toInt();
+      cur.Block=query.readValueNull().toInt();
+      cur.Size=query.readValueNull().toInt();
+      toPush(Extents,cur);
+    }
+    toQuery blocks(toCurrentConnection(this),SQLTablespaceBlocks,tablespace);
+    Total=0;
+    while(!blocks.eof()) {
+      int id=blocks.readValueNull().toInt();
+      FileOffset[id]=Total;
+      Total+=blocks.readValueNull().toInt();
+    }
+  } TOCATCH
+  Extents.sort();
+  update();
+}
+
+void toStorageExtent::setFile(const QString &tablespace,int file)
+{
+  try {
+    toBusy busy;
+    Extents.clear();
+    FileOffset.clear();
+    toQuery query(toCurrentConnection(this),SQLObjectsFile,tablespace,QString::number(file));
+    extent cur;
+    while(!query.eof()) {
+      cur.Owner=query.readValueNull();
+      cur.Table=query.readValueNull();
+      cur.Partition=query.readValueNull();
+      cur.File=query.readValueNull().toInt();
+      cur.Block=query.readValueNull().toInt();
+      cur.Size=query.readValueNull().toInt();
+      toPush(Extents,cur);
+    }
+    toQuery blocks(toCurrentConnection(this),SQLFileBlocks,tablespace,QString::number(file));
+    Total=0;
+    while(!blocks.eof()) {
+      int id=blocks.readValueNull().toInt();
+      FileOffset[id]=Total;
+      Total+=blocks.readValueNull().toInt();
+    }
+  } TOCATCH
+  Extents.sort();
+  update();
+}
+
+void toStorageExtent::paintEvent(QPaintEvent *e)
+{
+  QPainter paint(this);
+  if (FileOffset.begin()==FileOffset.end())
+    return;
+  QFontMetrics fm=paint.fontMetrics();
+
+  int offset=2*fm.lineSpacing();
+  double lineblocks=Total/(height()-offset-FileOffset.size()+1);
+
+  paint.fillRect(0,0,width(),offset,colorGroup().background());
+  paint.drawText(0,0,width(),offset,AlignLeft|AlignTop,"Files: "+QString::number(FileOffset.size()));
+  paint.drawText(0,0,width(),offset,AlignRight|AlignTop,"Extents: "+QString::number(Extents.size()));
+  paint.drawText(0,0,width(),offset,AlignLeft|AlignBottom,"Blocks: "+QString::number(Total));
+  paint.drawText(0,0,width(),offset,AlignRight|AlignBottom,"Blocks/line: "+QString::number(int(lineblocks)));
+
+  for(std::list<extent>::iterator i=Extents.begin();i!=Extents.end();i++) {
+    QColor col=Qt::green;
+    if (extentName(*i)==Highlight)
+      col=Qt::red;
+    int fileo=0;
+    for (std::map<int,int>::iterator j=FileOffset.begin();j!=FileOffset.end();j++,fileo++)
+      if ((*j).first==(*i).File)
+	break;
+    int block=FileOffset[(*i).File]+(*i).Block;
+
+    int y1=int(block/lineblocks);
+    int x1=int((block/lineblocks-y1)*width());
+    block+=(*i).Size;
+    int y2=int(block/lineblocks);
+    int x2=int((block/lineblocks-y2)*width());
+    paint.setPen(col);
+    if (y1!=y2) {
+      paint.drawLine(x1,y1+offset+fileo,width(),y1+offset+fileo);
+      paint.drawLine(0,y2+offset+fileo,x2,y2+offset+fileo);
+      if (y1+1!=y2)
+	paint.fillRect(0,y1+1+offset+fileo,width(),y2-y1-1,col);
+    } else
+      paint.drawLine(x1,y1+offset+fileo,x2,y2+offset+fileo);
+  }
+  std::map<int,int>::iterator j=FileOffset.begin();
+  j++;
+  paint.setPen(Qt::black);
+  int fileo=offset;
+  while(j!=FileOffset.end()) {
+    int block=(*j).second;
+    int y1=int(block/lineblocks);
+    int x1=int((block/lineblocks-y1)*width());
+    paint.drawLine(x1,y1+fileo,width(),y1+fileo);
+    if (x1!=0)
+      paint.drawLine(0,y1+1+fileo,x1,y1+fileo+1);
+    j++;
+    fileo++;
+  }
+}
+
+
+std::list<toStorageExtent::extentName> toStorageExtent::objects(void)
+{
+  std::list<extentName> ret;
+
+  for(std::list<extent>::iterator i=Extents.begin();i!=Extents.end();i++) {
+    bool dup=false;
+    for (std::list<extentName>::iterator j=ret.begin();j!=ret.end();j++) {
+      if ((*j)==(*i)) {
+	(*j).Size++;
+	dup=true;
+	break;
+      }
+    }
+    if (!dup)
+      toPush(ret,extentName((*i).Owner,(*i).Table,(*i).Partition,1));
+  }
+
+  ret.sort();
+
+  return ret;
 }

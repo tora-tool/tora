@@ -300,7 +300,8 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "       to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
 			 "       ' ',\n"
 			 "       to_char(round(s.maxbytes/b.unit,2)),\n"
-			 "       to_char(s.num)\n"
+			 "       to_char(s.num),\n"
+			 "       v.file#\n"
 			 "  FROM sys.dba_data_files d,\n"
 			 "       v$datafile v,\n"
 			 "       (SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num, NVL(MAX(bytes),0) maxbytes FROM sys.dba_free_space  GROUP BY file_id) s,\n"
@@ -320,7 +321,8 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "       to_char(round((d.user_bytes-t.bytes_cached)*100/d.user_bytes,2))||'%',\n"
 			 "       ' ',\n"
 			 "       ' ',\n"
-			 "       '1'\n"
+			 "       '1',\n"
+			 "       v.file#\n" // Needed by toStorage to work
 			 "  FROM sys.dba_temp_files d,\n"
 			 "       v$tempfile v,\n"
 			 "       v$temp_extent_pool t,\n"
@@ -328,7 +330,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 " WHERE (t.file_id (+)= d.file_id)\n"
 			 "   AND (d.file_name = v.file#)",
 			 "Display information about a datafile in a tablespace. "
-			 "All columns must be present in the output (Should be 12)",
+			 "All columns must be present in the output (Should be 13)",
 			 "8.1");
 
 static toSQL SQLDatafile8("toResultStorage:Datafile",
@@ -344,7 +346,8 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "        to_char(round(s.bytes*100/d.bytes,2))||'%',\n"
 			  "	   ' ',\n"
 			  "        to_char(round(s.maxbytes/b.unit,2)),\n"
-			  "	   to_char(s.num)\n"
+			  "	   to_char(s.num),\n"
+			  "        v.file#\n"
 			  "  FROM  sys.dba_data_files d,\n"
 			  "	   v$datafile v,\n"
 			  "	   (SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num,NVL(MAX(bytes),0) maxbytes FROM sys.dba_free_space  GROUP BY file_id) s,\n"
@@ -364,7 +367,7 @@ void toResultStorage::query(void)
   QString currentFile;
   if (item) {
     if (item->parent()) {
-      currentSpace=item->text(12);
+      currentSpace=item->text(13);
       currentFile=item->text(0);
     } else
       currentSpace=item->text(0);
@@ -400,11 +403,11 @@ void toResultStorage::query(void)
       if (!tablespace)
 	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
       QListViewItem *file=new toResultStorageItem(tablespace,NULL);
-      for (int i=0;i<12;i++)
+      for (int i=0;i<13;i++)
 	file->setText(i,datfil.readValue());
 
-      file->setText(12,name);
-      if (currentSpace==file->text(12)&&
+      file->setText(13,name);
+      if (currentSpace==file->text(13)&&
 	  currentFile==file->text(0))
 	setSelected(file,true);
     }
@@ -419,7 +422,7 @@ QString toResultStorage::currentTablespace(void)
     throw QString("No tablespace selected");
   QString name;
   if (item->parent())
-    name=item->text(12);
+    name=item->text(13);
   else
     name=item->text(0);
   if (name.isEmpty())

@@ -968,6 +968,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs->addTab(grid,"&Charts");
 
   FileIO=new toTuningFileIO(this);
+  connect(this,SIGNAL(connectionChanged()),FileIO,SLOT(changeConnection()));
+
   Tabs->addTab(FileIO,"&File I/O");
 
   Indicators=new toListView(Tabs);
@@ -1286,6 +1288,20 @@ void toTuningFileIO::resizeEvent(QResizeEvent *e)
   FileTime->setFixedWidth(viewport()->width()-50);
   TablespaceReads->setFixedWidth(viewport()->width()-50);
   TablespaceTime->setFixedWidth(viewport()->width()-50);
+}
+
+void toTuningFileIO::changeConnection(void)
+{
+  for(std::map<QString,toBarChart *>::iterator i=ReadsCharts.begin();
+      i!=ReadsCharts.end();i++)
+    delete (*i).second;
+  ReadsCharts.clear();
+  for(std::map<QString,toLineChart *>::iterator i=TimeCharts.begin();
+      i!=TimeCharts.end();i++)
+    delete (*i).second;
+  TimeCharts.clear();
+  LastValues.clear();
+  refresh();
 }
 
 toTuningMiss::toTuningMiss(QWidget *parent,const char *name)

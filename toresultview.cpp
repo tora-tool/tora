@@ -487,6 +487,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
       if (i==0)
 	width-=curLevel;
       if (paint) {
+	item->setSelected(false);
 	item->paintCell(painter,qApp->palette().active(),i,int(width),columnAlignment(i));
 	painter->translate(width,0);
       }

@@ -73,6 +73,8 @@ void toChangeConnection::popupMenu(void)
 
 void toChangeConnection::changeConnection(int val)
 {
+  if (popup()->isItemChecked(val))
+    return;
   std::list<QString> cons=toMainWidget()->connections();
   std::list<QString>::iterator i=cons.begin();
   while (i!=cons.end()&&val>0) {

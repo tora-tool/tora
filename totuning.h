@@ -93,6 +93,7 @@ public:
 public slots:
   virtual void refresh(void);
   virtual void changeCharts(int val);
+  virtual void changeConnection(void);
 };
 
 class toTuningOverview : public toTuningOverviewUI {
