@@ -4,6 +4,8 @@
 2005-03-14: Fix crasher when displaying memo dialog from toparamget.cpp
 2005-03-19: Fix index extraction bug from 1109904
 2005-03-19: Fix minor bugs in todebug.cpp + bug 877682
+2005-03-20: Fix bug in char length in script for NCHAR/NVARCHAR (use char_length instead of data_length)
+2005-03-20: Added support for type TIMESTAMP in column listing in table browser
 
 1.3.16: 2005-03-04
 

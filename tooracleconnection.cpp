@@ -448,6 +448,9 @@ public:
           case 114:
             desc.Datatype=QString::fromLatin1("BLOB");
             break;
+          case 187:
+            desc.Datatype=QString::fromLatin1("TIMESTAMP");
+            break;
           default:
             desc.Datatype=QString::fromLatin1("UNKNOWN");
             break;
@@ -463,7 +466,14 @@ public:
               }
               desc.Datatype.append(QString::fromLatin1(")"));
             }
-          } else {
+          } else if (desc.Datatype==QString::fromLatin1("TIMESTAMP")) {
+		if (description[i].scale!=0) {
+                  desc.Datatype.append(QString::fromLatin1(" ("));
+                  desc.Datatype.append(QString::number(description[i].scale));
+                  desc.Datatype.append(QString::fromLatin1(")"));
+                }
+            }
+          else {
             desc.Datatype.append(QString::fromLatin1(" ("));
             desc.Datatype.append(QString::number(description[i].dbsize));
             desc.Datatype.append(QString::fromLatin1(")"));

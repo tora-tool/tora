@@ -702,6 +702,7 @@ static const char *DefaultKeywords[]={
   "THREAD",
   "THROUGH",
   "TIMEOUT",
+  "TIMESTAMP",
   "TIMEZONE_ABBR",
   "TIMEZONE_HOUR",
   "TIMEZONE_MINUTE",
