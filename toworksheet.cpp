@@ -555,17 +555,12 @@ bool toWorksheet::describe(const QString &query)
   QStringList part=QStringList::split(query);
   if (part[0].upper()=="DESC"||
       part[0].upper()=="DESCRIBE") {
-    QString user;
-    QString object;
     if (part.count()==2) {
-      user=Connection.user();
-      object=unQuote(part[1]);
+      Columns->changeParams(unQuote(part[1]));
     } else if (part.count()==3) {
-      user=unQuote(part[1]);
-      object=unQuote(part[2]);
+      Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
     } else
       throw QString("Wrong number of parameters for describe");
-    Columns->changeParams(user,object);
     QWidget *curr=ResultTab->currentPage();
     ResultTab->setTabEnabled(Columns,true);
     ResultTab->setTabEnabled(Result,false);

@@ -176,7 +176,6 @@ protected:
   int DescriptionLen;
   otl_column_desc *Description;
   QListViewItem *LastItem;
-  toResultCols *Columns;
 
   int RowNumber;
   bool ReadableColumns;

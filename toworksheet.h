@@ -100,6 +100,7 @@ class toWorksheet : public QVBox {
   QToolButton *StopButton;
   QToolButton *StatisticButton;
   bool TryStrip;
+  toResultCols *Columns;
 
   QPopupMenu *ToolMenu;
 
@@ -118,6 +119,7 @@ public:
 
   toMarkedText *editor(void)
   { return Editor; }
+  bool describe(const QString &query);
 
 public slots:
   void refresh();
