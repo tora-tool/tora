@@ -20,6 +20,7 @@
 **********************************************************************/
 
 #include <qwidget.h>
+#include <qapplication.h>
 
 #include "toconnection.h"
 #include "tosql.h"
