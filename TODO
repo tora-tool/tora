@@ -51,7 +51,6 @@ Extended functionality:
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
 * Information about controlfiles in tuning.
-* Make entire tuning polling in background.
 * Use object cache in browser if possible.
 * Add support to run profiling in background.
 * Track session statistics while profiling.

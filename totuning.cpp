@@ -859,6 +859,8 @@ toTuningOverview::~toTuningOverview()
 
 void toTuningOverview::stop(void)
 {
+  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+
   ArchiveWrite->stop();
   BufferHit->stop();
   ClientInput->stop();
@@ -879,6 +881,8 @@ void toTuningOverview::stop(void)
 
 void toTuningOverview::start(void)
 {
+  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+
   ArchiveWrite->start();
   BufferHit->start();
   ClientInput->start();
@@ -1300,7 +1304,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toRefreshParse(timer());
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 
   toolbar->addSeparator();
   TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),
@@ -1318,6 +1321,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs=new QTabWidget(this);
 
   Overview=new toTuningOverview(this,"overview");
+  connect(timer(),SIGNAL(timeout()),Overview,SLOT(refresh()));
   Tabs->addTab(Overview,"&Overview");
 
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
@@ -1687,13 +1691,21 @@ toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
     TablespaceReads=new QGrid(2,Box);
     TablespaceTime=new QGrid(2,Box);
 
-    refresh();
     FileReads->setFixedWidth(viewport()->width()-50);
     FileTime->setFixedWidth(viewport()->width()-50);
     TablespaceReads->setFixedWidth(viewport()->width()-50);
     TablespaceTime->setFixedWidth(viewport()->width()-50);
     changeCharts(0);
+    CurrentStamp=0;
+    connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+    Query=NULL;
+    refresh();
   } TOCATCH
+}
+
+toTuningFileIO::~toTuningFileIO()
+{
+  delete Query;
 }
 
 void toTuningFileIO::changeCharts(int val)
@@ -1742,6 +1754,7 @@ void toTuningFileIO::allocCharts(const QString &name,const QString &label)
   barchart->setYPostfix("blocks/s");
   barchart->setLabels(labels);
   barchart->setSQLName("toTuning:FileIO:Reads:"+name);
+  barchart->show();
 
   toResultLine *linechart;
   if (name.startsWith("tspc:"))
@@ -1754,6 +1767,7 @@ void toTuningFileIO::allocCharts(const QString &name,const QString &label)
   linechart->setYPostfix("ms");
   linechart->setLabels(labelTime);
   linechart->setSQLName("toTuning:FileIO:Time:"+name);
+  linechart->show();
 }
 
 void toTuningFileIO::saveSample(const QString &name,const QString &label,
@@ -1762,8 +1776,7 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
 				double avgTim,double minTim,
 				double maxRead,double maxWrite)
 {
-  time_t now=time(NULL);
-  if (now!=LastStamp) {
+  if (CurrentStamp!=LastStamp) {
 
     std::list<double> vals;
     vals.insert(vals.end(),reads);
@@ -1777,7 +1790,7 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
       std::list<double>::iterator i=vals.begin();
       std::list<double>::iterator j=last.begin();
       while(i!=vals.end()&&j!=last.end()) {
-	dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	dispVal.insert(dispVal.end(),(*i-*j)/(CurrentStamp-LastStamp));
 	i++;
 	j++;
       }
@@ -1805,69 +1818,84 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
 
 void toTuningFileIO::refresh(void)
 {
-  try {
-    toConnection &conn=toCurrentConnection(this);
-    if (conn.version()<"8.0")
-      return;
-    toQList Files=toQuery::readQuery(conn,SQLFileIO);
+  if (!Query) {
+    try {
+      toConnection &conn=toCurrentConnection(this);
+      if (conn.version()<"8.0")
+	return;
+      toQList par;
+      LastStamp=CurrentStamp;
+      CurrentStamp=time(NULL);
+      Query=new toNoBlockQuery(conn,toQuery::Background,toSQL::string(SQLFileIO,conn),par);
+      LastTablespace=QString::null;
 
-    QString lastTablespace;
-    double tblReads;
-    double tblWrites;
-    double tblReadBlk;
-    double tblWriteBlk;
-    double tblAvg;
-    double tblMin;
-    double tblMaxRead;
-    double tblMaxWrite;
-    for(;;) {
-      QString tablespace=toShift(Files);
-      QString datafile=toShift(Files);
-      QString timestr=toShift(Files);
-      if (tablespace!=lastTablespace) {
-	if (!lastTablespace.isNull()) {
-	  QString name="tspc:";
-	  name+=lastTablespace;
+      Poll.start(100);
+    } TOCATCH
+  }
+}
 
-	  saveSample(name,timestr,
-		     tblReads,tblWrites,tblReadBlk,tblWriteBlk,
-		     tblAvg,tblMin,tblMaxRead,tblMaxWrite);
+void toTuningFileIO::poll(void)
+{
+  if (Query&&Query->poll()) {
+    try {
+      QString tablespace;
+      QString datafile;
+      QString timestr;
+      while(Query->poll()) {
+	if (!Query->eof()) {
+	  tablespace=Query->readValueNull();
+	  datafile=Query->readValueNull();
+	  timestr=Query->readValueNull();
+	} else
+	  tablespace=QString::null;
+	if (tablespace!=LastTablespace) {
+	  if (!LastTablespace.isNull()) {
+	    QString name="tspc:";
+	    name+=LastTablespace;
+
+	    saveSample(name,timestr,
+		       TblReads,TblWrites,TblReadBlk,TblWriteBlk,
+		       TblAvg,TblMin,TblMaxRead,TblMaxWrite);
+	  }
+
+	  TblReads=TblWrites=TblReadBlk=TblWriteBlk=TblAvg=TblMin=TblMaxRead=TblMaxWrite=0;
+	  LastTablespace=tablespace;
 	}
+	if (Query->eof())
+	  break;
 
-	tblReads=tblWrites=tblReadBlk=tblWriteBlk=tblAvg=tblMin=tblMaxRead=tblMaxWrite=0;
-	lastTablespace=tablespace;
+	double reads=Query->readValueNull().toDouble();
+	double writes=Query->readValueNull().toDouble();
+	double readBlk=Query->readValueNull().toDouble();
+	double writeBlk=Query->readValueNull().toDouble();
+	double avgTim=Query->readValueNull().toDouble();
+	double minTim=Query->readValueNull().toDouble();
+	double maxRead=Query->readValueNull().toDouble();
+	double maxWrite=Query->readValueNull().toDouble();
+
+	TblReads+=reads;
+	TblWrites+=writes;
+	TblReadBlk+=readBlk;
+	TblWriteBlk+=writeBlk;
+	TblAvg+=avgTim;
+	TblMin+=minTim;
+	TblMaxRead+=maxRead;
+	TblMaxWrite+=maxWrite;
+
+	QString name="file:";
+	name+=datafile;
+
+	saveSample(name,timestr,
+		   reads,writes,readBlk,writeBlk,
+		   avgTim,minTim,maxRead,maxWrite);
       }
-      if (tablespace.isNull())
-	break;
-
-      double reads=toShift(Files).toDouble();
-      double writes=toShift(Files).toDouble();
-      double readBlk=toShift(Files).toDouble();
-      double writeBlk=toShift(Files).toDouble();
-      double avgTim=toShift(Files).toDouble();
-      double minTim=toShift(Files).toDouble();
-      double maxRead=toShift(Files).toDouble();
-      double maxWrite=toShift(Files).toDouble();
-
-      tblReads+=reads;
-      tblWrites+=writes;
-      tblReadBlk+=readBlk;
-      tblWriteBlk+=writeBlk;
-      tblAvg+=avgTim;
-      tblMin+=minTim;
-      tblMaxRead+=maxRead;
-      tblMaxWrite+=maxWrite;
-
-      QString name="file:";
-      name+=datafile;
-
-      saveSample(name,timestr,
-		 reads,writes,readBlk,writeBlk,
-		 avgTim,minTim,maxRead,maxWrite);
-
-    }
-    LastStamp=time(NULL);
-  } TOCATCH
+      if (Query->eof()) {
+	Poll.stop();
+	delete Query;
+	Query=NULL;
+      }
+    } TOCATCH
+  }
 }
 
 void toTuningFileIO::resizeEvent(QResizeEvent *e)

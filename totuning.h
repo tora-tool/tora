@@ -57,6 +57,7 @@ class toBarChart;
 class toConnection;
 class toLegendChart;
 class toListView;
+class toNoBlockQuery;
 class toPieChart;
 class toResultChart;
 class toResultItem;
@@ -78,6 +79,19 @@ class toTuningFileIO : public QScrollView {
   QGrid *TablespaceReads;
   QGrid *FileTime;
   QGrid *FileReads;
+
+  QString LastTablespace;
+  double TblReads;
+  double TblWrites;
+  double TblReadBlk;
+  double TblWriteBlk;
+  double TblAvg;
+  double TblMin;
+  double TblMaxRead;
+  double TblMaxWrite;
+  toNoBlockQuery *Query;
+
+  time_t CurrentStamp;
   time_t LastStamp;
   std::map<QString,toBarChart *> ReadsCharts;
   std::map<QString,toLineChart *> TimeCharts;
@@ -92,15 +106,18 @@ class toTuningFileIO : public QScrollView {
 
   void allocCharts(const QString &,const QString &);
 
+  toBackground Poll;
 public:
   toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0);
+  ~toTuningFileIO();
 
   void stop(void);
   void start(void);
 public slots:
-  virtual void refresh(void);
-  virtual void changeCharts(int val);
-  virtual void changeConnection(void);
+  void refresh(void);
+  void changeCharts(int val);
+  void changeConnection(void);
+  void poll(void);
 };
 
 class toTuningOverview : public toTuningOverviewUI {
@@ -130,11 +147,11 @@ class toTuningOverview : public toTuningOverviewUI {
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
   ~toTuningOverview();
-  void refresh(void);
   void stop(void);
   void start(void);
 
 public slots:
+  void refresh(void);
   void poll(void);
 };
 

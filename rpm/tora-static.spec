@@ -1,5 +1,5 @@
 %define _name		tora
-%define _version	1.3.5
+%define _version	1.3.6
 %define _release	1static
 %define _prefix		/usr/X11R6
 %define _qt3dir		/usr/local/qt3
@@ -8,7 +8,7 @@ Summary:			Toolkit for Oracle
 Name:				%{_name}
 Version:			%{_version}
 Release:			%{_release}
-Source:				%{_name}-%{_version}.tar.bz2
+Source:				%{_name}-%{_version}.tar.gz
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
