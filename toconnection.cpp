@@ -316,7 +316,7 @@ QCString toQValue::utf8Value(void) const
 	ret.setNum(Value.Double);
 	break;
       case 1:
-	sprintf(buf,"%g",Value.Double);
+	sprintf(buf,"%E",Value.Double);
 	ret=buf;
 	break;
       case 2:
@@ -376,7 +376,7 @@ QString toQValue::formatNumber(double number)
   case 1:
     {
       char buf[100];
-      sprintf(buf,"%g",number);
+      sprintf(buf,"%E",number);
       return buf;
     }
   case 2:
