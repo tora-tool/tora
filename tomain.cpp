@@ -1293,10 +1293,11 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
     else if (isMinimized())
       data[prefix+":State"]="Minimized";
     else {
-      data[prefix+":X"]=QString::number(x());
-      data[prefix+":Y"]=QString::number(y());
-      data[prefix+":Width"]=QString::number(width());
-      data[prefix+":Height"]=QString::number(height());
+      QRect rect=geometry();
+      data[prefix+":X"]=QString::number(rect.x());
+      data[prefix+":Y"]=QString::number(rect.y());
+      data[prefix+":Width"]=QString::number(rect.width());
+      data[prefix+":Height"]=QString::number(rect.height());
     }
 
     int id=1;
