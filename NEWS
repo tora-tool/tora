@@ -110,6 +110,7 @@
 2001-08-29: Added about stuff for tools.
 2001-08-30: Fixed problem in result statistic select.
 2001-08-30: Made preferences resizable.
+2001-08-30: Set list font in content editor.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 

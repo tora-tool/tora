@@ -28,7 +28,7 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
+<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref3">connectionImpl</A></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
@@ -48,13 +48,13 @@
 </LI>
 <LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref11">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &sql,toQList &params) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
  database. 
  (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
    </p>
-<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> (void)
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the parent connection object of this connection.
      </p>
 <A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
@@ -90,7 +90,7 @@
 </p>
 <p><b>Returns</b>: A query implementation, allocated with new.
      </p>
-<A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params)
+<A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &sql,toQList &params)
 <br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

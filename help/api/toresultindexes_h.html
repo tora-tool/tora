@@ -63,7 +63,7 @@ class toResultIndexes : public toResultView {
    * @param conName Name of index.
    * @return Columns separated by ','.
    */
-  QString indexCols(const QString &amp;conOwner,const QString &amp;conName);
+  QString indexCols(const QString &conOwner,const QString &conName);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -72,7 +72,7 @@ public:
   toResultIndexes(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const toQList &amp;param);
+  virtual void query(const QString &sql,const toQList &param);
 };
 
 #endif

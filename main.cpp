@@ -148,7 +148,7 @@ int main(int argc,char **argv)
 
 
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
-      toAbout *about=new toAbout(NULL,"About TOra",true);
+      toAbout *about=new toAbout(1,NULL,"About TOra",true);
       if (!about->exec()) {
 	exit (2);
       }

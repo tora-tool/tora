@@ -33,22 +33,22 @@
 </LI>
 <LI>virtual  void &nbsp;<b><i><A HREF="#ref5">refresh</A></i></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">query</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;params) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">query</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &params) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref7">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref7">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref8">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref8">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref1">connection</A></b> (void) 
+</ul><h4>Protected Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref1">connection</A></b> (void) 
 </LI>
 <LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref2">timer</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Abstract baseclass of widgets that can perform queries. Usefull because you can execute
  the query without knowing how it's UI is presented.
  </p>
-<A NAME="connection"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<A NAME="connection"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> (void)
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Get the current connection from the closest tool.
 </p>
 <p><b>Returns</b>: Reference to connection.
@@ -63,7 +63,7 @@
 <br></td><td align="right"><h3><strong>~toResult</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="refresh"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>refresh</strong></i> (void)
 <br></td><td align="right"><h3><i><strong>refresh</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Re execute last query
    </p>
-<A NAME="query"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>query</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;params)
+<A NAME="query"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>query</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &params)
 <br></td><td align="right"><h3><i><strong>query</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Perform a query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -72,14 +72,14 @@
 <TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters needed as input to execute statement.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeParams"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
+<A NAME="changeParams"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
 <br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">First parameter.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeParams"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
+<A NAME="changeParams"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
 <br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -88,7 +88,7 @@
 <TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">Second parameter.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeParams"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
+<A NAME="changeParams"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
 <br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

@@ -30,11 +30,11 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref30">toResultContentEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref31">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref31">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref32">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref32">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref33">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref33">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref34">readAll</A></b> (void) 
 </LI>
@@ -42,17 +42,17 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref36">exportFile</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeFilter</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;order) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">changeFilter</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &order) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref39">changeSort</A></b> (int col) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref40">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref41">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref41">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref42">changePosition</A></b> (int row,int col) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref43">displayMenu</A></b> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &amp;p) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref43">displayMenu</A></b> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &p) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref44">displayMemo</A></b> (void) 
 </LI>
@@ -63,7 +63,7 @@
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref38">toResultContent</A></b></LI>
 </ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref47">menuCallback</A></b> (int cmd) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref48">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref48">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget allows the user to browse the contents of a table and also edit
  the content. The table is specified by the first and second parameter in the query.
@@ -78,15 +78,15 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
+<A NAME="query"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
+<A NAME="changeParams"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
+<A NAME="changeParams"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
@@ -99,7 +99,7 @@
 <A NAME="exportFile"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportFile</strong> (void)
 <br></td><td align="right"><h3><strong>exportFile</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export contents to file.
    </p>
-<A NAME="changeFilter"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeFilter</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;order)
+<A NAME="changeFilter"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeFilter</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &criteria,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &order)
 <br></td><td align="right"><h3><strong>changeFilter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Change filter the filter setting. Pass empty strings to remove filter.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -120,7 +120,7 @@
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
+<A NAME="changeParams"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
@@ -133,7 +133,7 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">New column.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayMenu"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &amp;p)
+<A NAME="displayMenu"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &p)
 <br></td><td align="right"><h3><strong>displayMenu</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display popup menu
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -156,7 +156,7 @@
 <TR><TD align="left" valign="top"><i>cmd</i></TD><TD align="left" valign="top">Command ID.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeData"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
+<A NAME="changeData"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Change data at specified position.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

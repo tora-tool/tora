@@ -228,6 +228,13 @@ public:
    */
   static const int TO_TOOL_MENU_ID_END;
 
+  /** First ID of the tool specific about menu items.
+   */
+  static const int TO_TOOL_ABOUT_ID;
+  /** Last ID of the tool specific about menu items.
+   */
+  static const int TO_TOOL_ABOUT_ID_END;
+
   /**
    * Create main window. Always NULL as parent.
    */

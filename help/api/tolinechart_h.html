@@ -50,8 +50,8 @@
 #ifndef __TOLINECHART_H
 #define __TOLINECHART_H
 
-#include &lt;list&gt;
-#include &lt;qwidget.h&gt;
+#include <list>
+#include <qwidget.h>
 
 /** A widget that displays a linechart with optional background throbber (Not implemented yet).
  */
@@ -60,9 +60,9 @@ class toLineChart : public QWidget {
   Q_OBJECT
 
 protected:
-  std::list&lt;std::list&lt;double&gt; &gt; Values;
-  std::list&lt;QString&gt; XValues;
-  std::list&lt;QString&gt; Labels;
+  std::list<std::list<double> > Values;
+  std::list<QString> XValues;
+  std::list<QString> Labels;
   bool Legend;
   bool Throbber;
   bool Last;
@@ -134,12 +134,12 @@ public:
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
    */
-  void setTitle(const QString &amp;title=QString::null)
+  void setTitle(const QString &title=QString::null)
   { Title=title; update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
-  const QString &amp;title(void)
+  const QString &title(void)
   { return Title; }
 
   /** Specify if throbber should be displayed in the graph, default is off.
@@ -180,7 +180,7 @@ public:
   /** Set y postfix value. This will be appended to the values in the axis legend.
    * @param postfix The string to append.
    */
-  void setYPostfix(const QString &amp;postfix)
+  void setYPostfix(const QString &postfix)
   { YPostfix=postfix; update(); }
   /** Set max value on y-axis to auto.
    */
@@ -224,30 +224,30 @@ public:
   /** Set the labels on the chart lines.
    * @param labels Labels of the lines. Empty labels will not show up in the legend.
    */
-  void setLabels(const std::list&lt;QString&gt; &amp;labels)
+  void setLabels(const std::list<QString> &labels)
   { Labels=labels; update(); }
   /** Get the labels of the chart lines.
    * @return List of labels.
    */
-  std::list&lt;QString&gt; &amp;labels(void)
+  std::list<QString> &labels(void)
   { return Labels; }
 
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
    * @param label X-value on these values.
    */
-  virtual void addValues(std::list&lt;double&gt; &amp;value,const QString &amp;xValues);
+  virtual void addValues(std::list<double> &value,const QString &xValues);
 
   /** Get list of labels
    * @return List of labels
    */
-  std::list&lt;QString&gt; &amp;xValues(void)
+  std::list<QString> &xValues(void)
   { return XValues; }
 
   /** Get list of values.
    * @return Values in piechart.
    */
-  std::list&lt;std::list&lt;double&gt; &gt; &amp;values(void)
+  std::list<std::list<double> > &values(void)
   { return Values; }
 
 public slots:

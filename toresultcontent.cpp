@@ -123,6 +123,12 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   LastMove=QPoint(-1,-1);
   MenuColumn=MenuRow=-1;
   Menu=NULL;
+
+  QString str=toTool::globalConfig(CONF_LIST,"");
+  if (!str.isEmpty()) {
+    QFont font(toStringToFont(str));
+    setFont(font);
+  }
 }
 
 void toResultContentEditor::wrongUsage(void)
@@ -601,8 +607,8 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Delete current record from table",
 		  "Delete current record from table",
 		  Editor,SLOT(deleteCurrent()),toolbar);
-  connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool cmt)),
-	  this,SLOT(saveUnsaved(toConnection &conn,bool cmt)));
+  connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
+	  this,SLOT(saveUnsaved(toConnection &,bool)));
 }
 
 void toResultContent::changeFilter(void)

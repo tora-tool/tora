@@ -171,14 +171,15 @@ public:
   { return NULL; }
 
 
-  /** Get a descriptive string describing this plugin. The string
-   * will be displayed in the about dialog after the Quotes page
-   * in tool order. The text format should be rich text. Return
-   * empty if no about dialog should be displayed for this tool.
-   * @return String containing tool description.
+  /** Display an about dialog for this tool.
+   * @param parent The parent widget of the about dialog.
    */
-  virtual QString about(void)
-  { return QString::null; }
+  virtual void about(QWidget *parent)
+  { }
+  /** Indicate whether or not this tool has an about dialog.
+   */
+  virtual bool hasAbout(void)
+  { return false; }
 
   /**
    * Get access to the map of tools. Don't modify it. Observe that the index string is not

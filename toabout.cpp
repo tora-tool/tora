@@ -256,58 +256,31 @@ toSplash::toSplash(QWidget *parent,const char *name,WFlags f)
   move((d->width()-width())/2,(d->height()-height())/2);
 }
 
-toAbout::toAbout(QWidget* parent,const char* name,bool modal,WFlags fl)
+toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
   : toAboutUI(parent,name,modal,fl)
 {
   toAllocLogo();
 
-  if (!parent) {
-    Page=1;
-    changeView();
-  } else {
+  if (!parent)
     CancelButton->hide();
-    Page=-1;
-    changeView();
-  }
 
-  setCaption(QString(ABOUT_CAPTION).arg(TOVERSION));
-}
-
-void toAbout::changeView(void)
-{
-  switch (Page) {
-  case 0:
+  switch (page) {
+  case 2:
+    setCaption("Quotes");
     TextView->setText(QuoteText);
     TextView->setPaper(QColor(255,255,255));
-    Page++;
     break;
   case 1:
+    setCaption("Q Public License");
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
-    Page++;
     break;
   default:
-    int j=2;
-    if (Page>=2) {
-      for(std::map<QString,toTool *>::iterator i=toTool::tools().begin();
-	  i!=toTool::tools().end();
-	  i++) {
-	QString about=(*i).second->about();
-	if (!about.isNull()) {
-	  if (j==Page) {
-	    TextView->setText(about);
-	    TextView->setPaper(QColor(255,255,255));
-	    Page++;
-	    return;
-	  }
-	  j++;
-	}
-      }
-    }
+    setCaption(QString(ABOUT_CAPTION).arg(TOVERSION));
     QString buffer=QString(AboutText).arg(TOVERSION);
     TextView->setText(buffer);
     TextView->setPaper(QColor(227,184,54));
-    Page=0;
     break;
   }
+
 }

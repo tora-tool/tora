@@ -50,7 +50,7 @@
 #ifndef __TORESULTLINE_H
 #define __TORESULTLINE_H
 
-#include &lt;time.h&gt;
+#include <time.h>
 
 #include "toresult.h"
 #include "tolinechart.h"
@@ -72,14 +72,14 @@ class toResultLine : public toLineChart, public toResult {
   time_t LastStamp;
   /** Last read values.
    */
-  std::list&lt;double&gt; LastValues;
+  std::list<double> LastValues;
   /** Query to run.
    */
   QString SQL;
   /** Parameters to query
    */
   toQList Param;
-  void query(const QString &amp;sql,const toQList &amp;param,bool first);
+  void query(const QString &sql,const toQList &param,bool first);
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -101,24 +101,24 @@ public:
   /** Set SQL to query.
    * @param sql Query to run.
    */
-  void setSQL(const QString &amp;sql)
+  void setSQL(const QString &sql)
   { SQL=sql; }
   /** Set the SQL statement of this list.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &amp;sql);
+  void setSQL(toSQL &sql);
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const toQList &amp;param)
+  virtual void query(const QString &sql,const toQList &param)
   { query(sql,param,true); }
   /** Perform the specified query.
    * @param sql SQL containing statement.
    */
-  void query(toSQL &amp;sql);
+  void query(toSQL &sql);
   /** Reimplemented for internal reasons.
    */
-  void query(const QString &amp;sql)
+  void query(const QString &sql)
   { toQList p; query(sql,p); }
   /** Reimplemented for internal reasons.
    */
@@ -130,7 +130,7 @@ public:
    * @param input The untransformed valueset.
    * @return The valueset actually added to the chart.
    */
-  virtual std::list&lt;double&gt; transform(std::list&lt;double&gt; &amp;input);
+  virtual std::list<double> transform(std::list<double> &input);
 public slots:
   /** Read another value to the chart.
    */
@@ -138,15 +138,15 @@ public slots:
   { query(SQL,Param,false); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1)
+  virtual void changeParams(const QString &Param1)
   { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  virtual void changeParams(const QString &Param1,const QString &Param2)
   { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 

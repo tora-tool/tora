@@ -43,33 +43,35 @@
 </LI>
 <LI>virtual  const char *&nbsp;<b><A HREF="#ref15">toolbarTip</A></b> () 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref16">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref16">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref17">customSetup</A></b> (int toolid) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><i><A HREF="#ref18">toolWindow</A></i></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &amp;connection) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><i><A HREF="#ref18">toolWindow</A></i></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &connection) 
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref19">configurationTab</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref20">about</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">about</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref25">config</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref21">hasAbout</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref26">setConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value) 
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref26">config</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &def) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref29">createWindow</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref27">setConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &value) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="toTool.html">toTool</A> *&gt; &amp;&nbsp;<b><A HREF="#ref21">tools</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref30">createWindow</A></b> (void) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref22">saveConfig</A></b> (void) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="toTool.html">toTool</A> *> &&nbsp;<b><A HREF="#ref22">tools</A></b> (void) 
 </LI>
-<LI>static  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref23">globalConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def) 
+<LI>static  void &nbsp;<b><A HREF="#ref23">saveConfig</A></b> (void) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref24">globalSetConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value) 
+<LI>static  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref24">globalConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &def) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref27">loadMap</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;filename,std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;map) 
+<LI>static  void &nbsp;<b><A HREF="#ref25">globalSetConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &value) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref28">saveMap</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;filename,std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;map) 
+<LI>static  bool &nbsp;<b><A HREF="#ref28">loadMap</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &filename,std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &map) 
+</LI>
+<LI>static  bool &nbsp;<b><A HREF="#ref29">saveMap</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &filename,std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &map) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  char **&nbsp;<b><A HREF="#ref8">pictureXPM</A></b> (void) 
 </LI>
@@ -144,7 +146,7 @@
 <p></p>
 <p><b>Returns</b>: Toolbar tip string.
    </p>
-<A NAME="canHandle"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="canHandle"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Check if the tool can handle a specific connection. Default is to only handle
  connections from the provider Oracle.
 </p>
@@ -161,7 +163,7 @@
 <TR><TD align="left" valign="top"><i>toolid</i></TD><TD align="left" valign="top">The tool menu id that should be used if it inserts a custom menu entry.
    </TD></TR>
 </TABLE></P>
-<A NAME="toolWindow"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<i><strong>toolWindow</strong></i> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &amp;connection)
+<A NAME="toolWindow"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<i><strong>toolWindow</strong></i> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &connection)
 <br></td><td align="right"><h3><i><strong>toolWindow</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p>
  Create a new tool window.
 </p>
@@ -181,15 +183,17 @@
 <p><b>Returns</b>: A pointer to the widget containing the setup tab for this tool or NULL of
  no settings are available.
    </p>
-<A NAME="about"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>about</strong> (void)
-<br></td><td align="right"><h3><strong>about</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get a descriptive string describing this plugin. The string
- will be displayed in the about dialog after the Quotes page
- in tool order. The text format should be rich text. Return
- empty if no about dialog should be displayed for this tool.
+<A NAME="about"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>about</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
+<br></td><td align="right"><h3><strong>about</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Display an about dialog for this tool.
 </p>
-<p><b>Returns</b>: String containing tool description.
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">The parent widget of the about dialog.
+   </TD></TR>
+</TABLE></P>
+<A NAME="hasAbout"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>hasAbout</strong> (void)
+<br></td><td align="right"><h3><strong>hasAbout</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Indicate whether or not this tool has an about dialog.
    </p>
-<A NAME="tools"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="toTool.html">toTool</A> *&gt; &amp;&nbsp;<strong>tools</strong> (void)
+<A NAME="tools"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="toTool.html">toTool</A> *> &&nbsp;<strong>tools</strong> (void)
 <br></td><td align="right"><h3><strong>tools</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Get access to the map of tools. Don't modify it. Observe that the index string is not
  the name of the tool but an internal key used to get tools sorted in the correct
@@ -199,11 +203,11 @@
 <p><b>Returns</b>: A reference to the tool map.
    </p>
 <p><b>See also</b>: Tools</p>
-<A NAME="saveConfig"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveConfig</strong> (void)
+<A NAME="saveConfig"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveConfig</strong> (void)
 <br></td><td align="right"><h3><strong>saveConfig</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Save configuration to file.
    </p>
-<A NAME="globalConfig"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>globalConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def)
+<A NAME="globalConfig"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>globalConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &def)
 <br></td><td align="right"><h3><strong>globalConfig</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Get value of a setting.
 </p>
@@ -218,7 +222,7 @@
 <TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Default value of the setting, if it is not available.
    </TD></TR>
 </TABLE></P>
-<A NAME="globalSetConfig"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>globalSetConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value)
+<A NAME="globalSetConfig"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>globalSetConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &value)
 <br></td><td align="right"><h3><strong>globalSetConfig</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Change a setting. Depending on the implementation this can change the
  contents on disk or not.
@@ -234,7 +238,7 @@
 <TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Contents of this setting.
    </TD></TR>
 </TABLE></P>
-<A NAME="config"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>config</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def)
+<A NAME="config"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>config</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &def)
 <br></td><td align="right"><h3><strong>config</strong></h3></td></tr></table><p></p><p>
  Get tool specific settings.
 </p>
@@ -249,7 +253,7 @@
 <TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Contents of this setting.
    </TD></TR>
 </TABLE></P>
-<A NAME="setConfig"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value)
+<A NAME="setConfig"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &value)
 <br></td><td align="right"><h3><strong>setConfig</strong></h3></td></tr></table><p></p><p>
  Change toolspecific setting. Depending on the implementation this can change the
  contents on disk or not.
@@ -265,7 +269,7 @@
 <TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Default value of the setting, if it is not available.
    </TD></TR>
 </TABLE></P>
-<A NAME="loadMap"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>loadMap</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;filename,std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;map)
+<A NAME="loadMap"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>loadMap</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &filename,std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &map)
 <br></td><td align="right"><h3><strong>loadMap</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Load a string to string map from file saved by the <A HREF="toTool.html#saveMap">saveMap</A> function.
 </p>
@@ -275,7 +279,7 @@
 <TR><TD align="left" valign="top"><i>map</i></TD><TD align="left" valign="top">Reference to the map to fill with the new values.
    </TD></TR>
 </TABLE></P>
-<A NAME="saveMap"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>saveMap</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;filename,std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;map)
+<A NAME="saveMap"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>saveMap</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &filename,std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &map)
 <br></td><td align="right"><h3><strong>saveMap</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Save a string to string map to file.
 </p>
@@ -286,7 +290,7 @@
    </TD></TR>
 </TABLE></P>
 <p><b>See also</b>: loadMap</p>
-<A NAME="createWindow"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>createWindow</strong> (void)
+<A NAME="createWindow"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>createWindow</strong> (void)
 <br></td><td align="right"><h3><strong>createWindow</strong></h3></td></tr></table><p> <small>[slot]</small></p><p>
  Create a window of the current tool. This function sets up a toolwindow for
  this tool. It calls the <A HREF="toTool.html#toolWindow">toolWindow</A> function to get widget and sets it

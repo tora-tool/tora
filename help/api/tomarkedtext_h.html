@@ -50,19 +50,19 @@
 #ifndef __TOMARKEDTEXT_H
 #define __TOMARKEDTEXT_H
 
-#include &lt;qglobal.h&gt;
+#include <qglobal.h>
 
 #include "tomain.h"
 
-#if QT_VERSION &lt; 300
-#include &lt;qmultilineedit.h&gt;
+#if QT_VERSION < 300
+#include <qmultilineedit.h>
 #include "tomarkedtext.2.h"
 #else
 #include "qtlegacy/qttableview.h"
 #include "qtlegacy/qtmultilineedit.h"
 #include "tomarkedtext.3.h"
 #endif
-#include &lt;qstring.h&gt;
+#include <qstring.h>
 
 class TOPrinter;
 
@@ -91,7 +91,7 @@ class toMarkedText : public toMultiLineEdit {
    * @param pageNo Pagenumber.
    * @param paint Wether to paint or just test.
    */
-  virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &amp;offset,
+  virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
 			int pageNo,bool paint=true);
 public:
   /** Create an editor.
@@ -135,12 +135,12 @@ public:
   /** Get filename of current file in editor.
    * @return Filename of editor.
    */
-  virtual const QString &amp;filename(void) const
+  virtual const QString &filename(void) const
   { return Filename; }
   /** Set the current filename of the file in editor.
    * @param str String containing filename.
    */
-  virtual void setFilename(const QString &amp;str)
+  virtual void setFilename(const QString &str)
   { Filename=str; }
   /** Update user interface with availability of copy/paste etc.
    */

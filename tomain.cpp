@@ -87,6 +87,9 @@ const int toMain::TO_HELP_MENU		= 50;
 const int toMain::TO_TOOL_MENU_ID	= 2000;
 const int toMain::TO_TOOL_MENU_ID_END	= 2999;
 
+const int toMain::TO_TOOL_ABOUT_ID	= 3000;
+const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
+
 #define TO_NEW_CONNECTION	100
 #define TO_CLOSE_CONNECTION	101
 #define TO_FILE_OPEN		102
@@ -118,8 +121,11 @@ const int toMain::TO_TOOL_MENU_ID_END	= 2999;
 #define TO_HELP_CONTENTS	900
 #define TO_HELP_CONTEXT		901
 #define TO_HELP_ABOUT		902
+#define TO_HELP_LICENSE		903
+#define TO_HELP_QUOTES		904
 
 #define TO_TOOLS		1000
+#define TO_ABOUT_ID_OFFSET	(toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
 
 static QPixmap *toLoadPixmap;
 static QPixmap *toSavePixmap;
@@ -288,6 +294,17 @@ toMain::toMain()
   SQLEditor=-1;
   DefaultTool=toolID;
   QString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"");
+
+  HelpMenu=new QPopupMenu(this);
+  HelpMenu->insertItem("C&urrent Context",TO_HELP_CONTEXT);
+  HelpMenu->insertItem("&Contents",TO_HELP_CONTENTS);
+  HelpMenu->insertSeparator();
+  HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
+  HelpMenu->insertItem("&License",TO_HELP_LICENSE);
+  HelpMenu->insertItem("&Quotes",TO_HELP_QUOTES);
+  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
+  QPopupMenu *toolAbout=NULL;
+
   for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
@@ -332,6 +349,17 @@ toMain::toMain()
       ToolsMenu->setItemEnabled(toolID,false);
     }
 
+    if ((*i).second->hasAbout()&&menuName) {
+      if (!toolAbout) {
+	toolAbout=new QPopupMenu(this);
+	HelpMenu->insertItem("Tools",toolAbout);
+      }
+      if (pixmap)
+	toolAbout->insertItem(*pixmap,menuName,toolID+TO_ABOUT_ID_OFFSET);
+      else
+	toolAbout->insertItem(menuName,toolID+TO_ABOUT_ID_OFFSET);
+    }
+
     Tools[toolID]=(*i).second;
 
     toolID++;
@@ -373,12 +401,6 @@ toMain::toMain()
 
   menuBar()->insertSeparator();
 
-  HelpMenu=new QPopupMenu(this);
-  HelpMenu->insertItem("C&urrent Context",TO_HELP_CONTEXT);
-  HelpMenu->insertItem("&Contents",TO_HELP_CONTENTS);
-  HelpMenu->insertSeparator();
-  HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
-  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
   menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
 
   char buffer[100];
@@ -583,7 +605,10 @@ void toMain::commandCallback(int cmd)
 {
   if (Tools[cmd])
     Tools[cmd]->createWindow();
-  else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
+  else if (cmd>=TO_TOOL_ABOUT_ID&&cmd<=TO_TOOL_ABOUT_ID_END) {
+    if (Tools[cmd-TO_ABOUT_ID_OFFSET])
+      Tools[cmd-TO_ABOUT_ID_OFFSET]->about(this);
+  } else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
     if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count()))
       workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
   } else {
@@ -754,8 +779,10 @@ void toMain::commandCallback(int cmd)
       toHelp::displayHelp("toc.htm");
       break;
     case TO_HELP_ABOUT:
+    case TO_HELP_LICENSE:
+    case TO_HELP_QUOTES:
       {
-	toAbout *about=new toAbout(this,"About TOra",true);
+	toAbout *about=new toAbout(cmd-TO_HELP_ABOUT,this,"About TOra",true);
 	about->exec();
 	delete about;
       }

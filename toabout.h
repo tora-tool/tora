@@ -45,11 +45,8 @@ public:
 class toAbout : public toAboutUI {
   Q_OBJECT
 
-  int Page;
 public:
-  toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
-public slots:
-  void changeView(void);
+  toAbout(int page,QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
 };
 
 #endif

@@ -62,7 +62,7 @@ class toExtractProgress;
  */
 
 class toExtract {
-  toConnection &amp;Connection;
+  toConnection &Connection;
   QWidget *Parent;
 
   // Attributes
@@ -87,220 +87,220 @@ class toExtract {
 
   // Database info
   int BlockSize;
-  std::list&lt;QString&gt; Initial;
-  std::list&lt;QString&gt; Next;
-  std::list&lt;QString&gt; Limit;
+  std::list<QString> Initial;
+  std::list<QString> Next;
+  std::list<QString> Limit;
 
   // Compile functions
-  QString compile(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-		  const QString &amp;type);
-  QString compilePackage(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-			 const QString &amp;type);
+  QString compile(const QString &schema,const QString &owner,const QString &name,
+		  const QString &type);
+  QString compilePackage(const QString &schema,const QString &owner,const QString &name,
+			 const QString &type);
 
   // Create functions
-  QString createConstraint(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createDBLink(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createExchangeIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createExchangeTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createFunction(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createMaterializedView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createMaterializedViewLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createPackage(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createPackageBody(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createProcedure(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createProfile(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createRole(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createRollbackSegment(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createSequence(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createSnapshot(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createSnapshotLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createSynonym(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTableFamily(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTableContents(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTableReferences(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTablespace(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTrigger(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createType(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createUser(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createConstraint(const QString &schema,const QString &owner,const QString &name);
+  QString createDBLink(const QString &schema,const QString &owner,const QString &name);
+  QString createExchangeIndex(const QString &schema,const QString &owner,const QString &name);
+  QString createExchangeTable(const QString &schema,const QString &owner,const QString &name);
+  QString createFunction(const QString &schema,const QString &owner,const QString &name);
+  QString createIndex(const QString &schema,const QString &owner,const QString &name);
+  QString createMaterializedView(const QString &schema,const QString &owner,const QString &name);
+  QString createMaterializedViewLog(const QString &schema,const QString &owner,const QString &name);
+  QString createPackage(const QString &schema,const QString &owner,const QString &name);
+  QString createPackageBody(const QString &schema,const QString &owner,const QString &name);
+  QString createProcedure(const QString &schema,const QString &owner,const QString &name);
+  QString createProfile(const QString &schema,const QString &owner,const QString &name);
+  QString createRole(const QString &schema,const QString &owner,const QString &name);
+  QString createRollbackSegment(const QString &schema,const QString &owner,const QString &name);
+  QString createSequence(const QString &schema,const QString &owner,const QString &name);
+  QString createSnapshot(const QString &schema,const QString &owner,const QString &name);
+  QString createSnapshotLog(const QString &schema,const QString &owner,const QString &name);
+  QString createSynonym(const QString &schema,const QString &owner,const QString &name);
+  QString createTable(const QString &schema,const QString &owner,const QString &name);
+  QString createTableFamily(const QString &schema,const QString &owner,const QString &name);
+  QString createTableContents(const QString &schema,const QString &owner,const QString &name);
+  QString createTableReferences(const QString &schema,const QString &owner,const QString &name);
+  QString createTablespace(const QString &schema,const QString &owner,const QString &name);
+  QString createTrigger(const QString &schema,const QString &owner,const QString &name);
+  QString createType(const QString &schema,const QString &owner,const QString &name);
+  QString createUser(const QString &schema,const QString &owner,const QString &name);
+  QString createView(const QString &schema,const QString &owner,const QString &name);
 
   // Description functions
-  void describeConstraint(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			  const QString &amp;name);
-  void describeDBLink(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		      const QString &amp;name);
-  void describeExchangeIndex(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			     const QString &amp;name);
-  void describeExchangeTable(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			     const QString &amp;name);
-  void describeFunction(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			const QString &amp;name);
-  void describeIndex(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		     const QString &amp;name);
-  void describeMaterializedView(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-				const QString &amp;name);
-  void describeMaterializedViewLog(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-				   const QString &amp;name);
-  void describePackage(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		       const QString &amp;name);
-  void describePackageBody(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			   const QString &amp;name);
-  void describeProcedure(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			 const QString &amp;name);
-  void describeProfile(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		       const QString &amp;name);
-  void describeRole(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		    const QString &amp;name);
-  void describeRollbackSegment(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			       const QString &amp;name);
-  void describeSequence(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			const QString &amp;name);
-  void describeSnapshot(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			const QString &amp;name);
-  void describeSnapshotLog(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			   const QString &amp;name);
-  void describeSynonym(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		       const QString &amp;name);
-  void describeTable(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		     const QString &amp;name);
-  void describeTableFamily(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			   const QString &amp;name);
-  void describeTableReferences(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			       const QString &amp;name);
-  void describeTablespace(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-			  const QString &amp;name);
-  void describeTrigger(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		       const QString &amp;name);
-  void describeType(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		    const QString &amp;name);
-  void describeUser(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		    const QString &amp;name);
-  void describeView(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		    const QString &amp;name);
+  void describeConstraint(std::list<QString> &lst,const QString &schema,const QString &owner,
+			  const QString &name);
+  void describeDBLink(std::list<QString> &lst,const QString &schema,const QString &owner,
+		      const QString &name);
+  void describeExchangeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
+			     const QString &name);
+  void describeExchangeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
+			     const QString &name);
+  void describeFunction(std::list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
+		     const QString &name);
+  void describeMaterializedView(std::list<QString> &lst,const QString &schema,const QString &owner,
+				const QString &name);
+  void describeMaterializedViewLog(std::list<QString> &lst,const QString &schema,const QString &owner,
+				   const QString &name);
+  void describePackage(std::list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describePackageBody(std::list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeProcedure(std::list<QString> &lst,const QString &schema,const QString &owner,
+			 const QString &name);
+  void describeProfile(std::list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeRole(std::list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeRollbackSegment(std::list<QString> &lst,const QString &schema,const QString &owner,
+			       const QString &name);
+  void describeSequence(std::list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeSnapshot(std::list<QString> &lst,const QString &schema,const QString &owner,
+			const QString &name);
+  void describeSnapshotLog(std::list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeSynonym(std::list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
+		     const QString &name);
+  void describeTableFamily(std::list<QString> &lst,const QString &schema,const QString &owner,
+			   const QString &name);
+  void describeTableReferences(std::list<QString> &lst,const QString &schema,const QString &owner,
+			       const QString &name);
+  void describeTablespace(std::list<QString> &lst,const QString &schema,const QString &owner,
+			  const QString &name);
+  void describeTrigger(std::list<QString> &lst,const QString &schema,const QString &owner,
+		       const QString &name);
+  void describeType(std::list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeUser(std::list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
+  void describeView(std::list<QString> &lst,const QString &schema,const QString &owner,
+		    const QString &name);
 
   // Drop functions
-  QString dropConstraint(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-			 const QString &amp;owner);
-  QString dropDatabaseLink(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-			   const QString &amp;owner);
-  QString dropMViewLog(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		       const QString &amp;owner);
-  QString dropObject(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		     const QString &amp;owner);
-  QString dropProfile(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		      const QString &amp;owner);
-  QString dropSchemaObject(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-			   const QString &amp;owner);
-  QString dropSynonym(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		      const QString &amp;owner);
-  QString dropTable(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		    const QString &amp;owner);
-  QString dropTablespace(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-			 const QString &amp;owner);
-  QString dropUser(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
-		   const QString &amp;owner);
+  QString dropConstraint(const QString &schema,const QString &name,const QString &type,
+			 const QString &owner);
+  QString dropDatabaseLink(const QString &schema,const QString &name,const QString &type,
+			   const QString &owner);
+  QString dropMViewLog(const QString &schema,const QString &name,const QString &type,
+		       const QString &owner);
+  QString dropObject(const QString &schema,const QString &name,const QString &type,
+		     const QString &owner);
+  QString dropProfile(const QString &schema,const QString &name,const QString &type,
+		      const QString &owner);
+  QString dropSchemaObject(const QString &schema,const QString &name,const QString &type,
+			   const QString &owner);
+  QString dropSynonym(const QString &schema,const QString &name,const QString &type,
+		      const QString &owner);
+  QString dropTable(const QString &schema,const QString &name,const QString &type,
+		    const QString &owner);
+  QString dropTablespace(const QString &schema,const QString &name,const QString &type,
+			 const QString &owner);
+  QString dropUser(const QString &schema,const QString &name,const QString &type,
+		   const QString &owner);
 
   // Resize functions
-  QString resizeIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString resizeTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString resizeIndex(const QString &schema,const QString &owner,const QString &name);
+  QString resizeTable(const QString &schema,const QString &owner,const QString &name);
 
   // Misc extract functions
-  QString constraintColumns(const QString &amp;owner,const QString &amp;name);
-  QString createComments(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createIOT(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createMView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-		      const QString &amp;type);
-  QString createMViewIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createMViewLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-			 const QString &amp;type);
-  QString createMViewTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createPartitionedIOT(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createPartitionedIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-				 const QString &amp;soFar);
-  QString createPartitionedTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString createTableText(toQList &amp;result,const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString displaySource(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-			const QString &amp;type);
-  QString grantedPrivs(const QString &amp;schema,const QString &amp;name,int type=3);
-  QString indexColumns(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  QString keyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type,
-		     const QString &amp;table);
-  QString partitionKeyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
-  QString rangePartitions(const QString &amp;owner,const QString &amp;name,
-			  const QString &amp;subPartitionType,const QString &amp;locality);
-  QString resizeIndexPartition(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-			       const QString &amp;partition,const QString &amp;seqType);
-  QString resizeTablePartition(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
-			       const QString &amp;partition,const QString &amp;seqType);
-  QString subPartitionKeyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
-  QString tableColumns(const QString &amp;owner,const QString &amp;name);
+  QString constraintColumns(const QString &owner,const QString &name);
+  QString createComments(const QString &schema,const QString &owner,const QString &name);
+  QString createIOT(const QString &schema,const QString &owner,const QString &name);
+  QString createMView(const QString &schema,const QString &owner,const QString &name,
+		      const QString &type);
+  QString createMViewIndex(const QString &schema,const QString &owner,const QString &name);
+  QString createMViewLog(const QString &schema,const QString &owner,const QString &name,
+			 const QString &type);
+  QString createMViewTable(const QString &schema,const QString &owner,const QString &name);
+  QString createPartitionedIOT(const QString &schema,const QString &owner,const QString &name);
+  QString createPartitionedIndex(const QString &schema,const QString &owner,const QString &name,
+				 const QString &soFar);
+  QString createPartitionedTable(const QString &schema,const QString &owner,const QString &name);
+  QString createTableText(toQList &result,const QString &schema,const QString &owner,const QString &name);
+  QString displaySource(const QString &schema,const QString &owner,const QString &name,
+			const QString &type);
+  QString grantedPrivs(const QString &schema,const QString &name,int type=3);
+  QString indexColumns(const QString &schema,const QString &owner,const QString &name);
+  QString keyColumns(const QString &owner,const QString &name,const QString &type,
+		     const QString &table);
+  QString partitionKeyColumns(const QString &owner,const QString &name,const QString &type);
+  QString rangePartitions(const QString &owner,const QString &name,
+			  const QString &subPartitionType,const QString &locality);
+  QString resizeIndexPartition(const QString &schema,const QString &owner,const QString &name,
+			       const QString &partition,const QString &seqType);
+  QString resizeTablePartition(const QString &schema,const QString &owner,const QString &name,
+			       const QString &partition,const QString &seqType);
+  QString subPartitionKeyColumns(const QString &owner,const QString &name,const QString &type);
+  QString tableColumns(const QString &owner,const QString &name);
 
   // Misc describe functions
-  void describeAttributes(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,toQList &amp;result);
-  void describeComments(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-			const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describePrivs(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,const QString &amp;name);
-  void describeIndexColumns(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-			    const QString &amp;owner,const QString &amp;name);
-  void describeIOT(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-		   const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describeMView(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,
-		     const QString &amp;owner,const QString &amp;name,const QString &amp;type);
-  void describeMViewIndex(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,const QString &amp;schema,
-			  const QString &amp;owner,const QString &amp;name);
-  void describeMViewLog(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,
-			const QString &amp;owner,const QString &amp;name,const QString &amp;type);
-  void describeMViewTable(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,const QString &amp;schema,
-			  const QString &amp;owner,const QString &amp;name);
-  void describePartitionedIndex(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-				const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describePartitionedIOT(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-			      const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describePartitionedTable(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-				const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describePartitions(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-			  const QString &amp;owner,const QString &amp;name,
-			  const QString &amp;subPartitionType,const QString &amp;locality);
-  void describeTableText(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,toQList &amp;result,
-			 const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
-  void describeTableColumns(std::list&lt;QString&gt; &amp;lst,std::list&lt;QString&gt; &amp;ctx,
-			    const QString &amp;owner,const QString &amp;name);
-  void describeSource(std::list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
-		      const QString &amp;name,const QString &amp;type);
+  void describeAttributes(std::list<QString> &lst,std::list<QString> &ctx,toQList &result);
+  void describeComments(std::list<QString> &lst,std::list<QString> &ctx,
+			const QString &schema,const QString &owner,const QString &name);
+  void describePrivs(std::list<QString> &lst,std::list<QString> &ctx,const QString &name);
+  void describeIndexColumns(std::list<QString> &lst,std::list<QString> &ctx,
+			    const QString &owner,const QString &name);
+  void describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
+		   const QString &schema,const QString &owner,const QString &name);
+  void describeMView(std::list<QString> &lst,const QString &schema,
+		     const QString &owner,const QString &name,const QString &type);
+  void describeMViewIndex(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
+			  const QString &owner,const QString &name);
+  void describeMViewLog(std::list<QString> &lst,const QString &schema,
+			const QString &owner,const QString &name,const QString &type);
+  void describeMViewTable(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
+			  const QString &owner,const QString &name);
+  void describePartitionedIndex(std::list<QString> &lst,std::list<QString> &ctx,
+				const QString &schema,const QString &owner,const QString &name);
+  void describePartitionedIOT(std::list<QString> &lst,std::list<QString> &ctx,
+			      const QString &schema,const QString &owner,const QString &name);
+  void describePartitionedTable(std::list<QString> &lst,std::list<QString> &ctx,
+				const QString &schema,const QString &owner,const QString &name);
+  void describePartitions(std::list<QString> &lst,std::list<QString> &ctx,
+			  const QString &owner,const QString &name,
+			  const QString &subPartitionType,const QString &locality);
+  void describeTableText(std::list<QString> &lst,std::list<QString> &ctx,toQList &result,
+			 const QString &schema,const QString &owner,const QString &name);
+  void describeTableColumns(std::list<QString> &lst,std::list<QString> &ctx,
+			    const QString &owner,const QString &name);
+  void describeSource(std::list<QString> &lst,const QString &schema,const QString &owner,
+		      const QString &name,const QString &type);
 
   // Misc functions
-  void addDescription(std::list&lt;QString&gt; &amp;ret,std::list&lt;QString&gt; &amp;ctx,
-		      const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
-		      const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
-		      const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
-		      const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
-		      const QString &amp;arg9=QString::null);
+  void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
+		      const QString &arg1=QString::null,const QString &arg2=QString::null,
+		      const QString &arg3=QString::null,const QString &arg4=QString::null,
+		      const QString &arg5=QString::null,const QString &arg6=QString::null,
+		      const QString &arg7=QString::null,const QString &arg8=QString::null,
+		      const QString &arg9=QString::null);
   void clearFlags(void);
-  QString generateHeading(const QString &amp;action,std::list&lt;QString&gt; &amp;list);
-  void initialNext(const QString &amp;blocks,QString &amp;initial,QString &amp;next);
-  void objectExists(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
-  QString prepareDB(const QString &amp;data);
-  QString segmentAttributes(toQList &amp;result);
-  QString intSchema(const QString &amp;owner);
+  QString generateHeading(const QString &action,std::list<QString> &list);
+  void initialNext(const QString &blocks,QString &initial,QString &next);
+  void objectExists(const QString &owner,const QString &name,const QString &type);
+  QString prepareDB(const QString &data);
+  QString segmentAttributes(toQList &result);
+  QString intSchema(const QString &owner);
   void setSizes(void);
-  QString reContext(std::list&lt;QString&gt; &amp;ctx,int strip,const QString &amp;str);
-  void rethrow(const QString &amp;what,const QString &amp;object,const QString &amp;exc);
+  QString reContext(std::list<QString> &ctx,int strip,const QString &str);
+  void rethrow(const QString &what,const QString &object,const QString &exc);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.
    * @param parent Parent widget of progress indicator.
    */
 
-  toExtract(toConnection &amp;conn,QWidget *parent);
+  toExtract(toConnection &conn,QWidget *parent);
 
   /** Compile the following list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
    *               The type can be any of FUNCTION, PROCEDURE, TRIGGER, VIEW or PACKAGE.
    * @return A string containing a script to compile the specified objects.
    */
-  QString compile(std::list&lt;QString&gt; &amp;object);
+  QString compile(std::list<QString> &object);
 
   /** Create script to recreate list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -313,7 +313,7 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS.
    * @return A string containing a script to recreate the specified objects.
    */
-  QString create(std::list&lt;QString&gt; &amp;object);
+  QString create(std::list<QString> &object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -328,7 +328,7 @@ public:
    *         considered like a list of strings separated by the character '\001'.
    *         The later in each string the smaller item the change and it is hierachical.
    */
-  std::list&lt;QString&gt; describe(std::list&lt;QString&gt; &amp;object);
+  std::list<QString> describe(std::list<QString> &object);
 
   /** Create script to drop a list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -340,27 +340,27 @@ public:
    *               TRIGGER, TYPE, USER.
    * @return A string containing a script to drop the specified objects.
    */
-  QString drop(std::list&lt;QString&gt; &amp;object);
+  QString drop(std::list<QString> &object);
   /** Not implemented yet.
    */
-  QString resize(std::list&lt;QString&gt; &amp;object);
+  QString resize(std::list<QString> &object);
   /** Not implemented yet.
    */
-  QString migrate(std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst);
+  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst);
 
   /** Parse an object string to get owner and name of the object.
    * @param object Object string on the format {owner}.{name}.
    * @param owner Reference to string which will get the object owner.
    * @param name Reference to string which will get the object name.
    */
-  void parseObject(const QString &amp;object,QString &amp;owner,QString &amp;name);
+  void parseObject(const QString &object,QString &owner,QString &name);
 
   /** Set the schema of the extraction.
    * @param schema Specify the schema of the output script or description. If empty
    *               don't specify any object. If the string "1" use same object as input.
    *               Otherwise use the specified schema.
    */
-  void setSchema(const QString &amp;schema)
+  void setSchema(const QString &schema)
   { Schema=schema; }
   /** Set sizes to use for resize of object on extraction.
    * @param A list of sizes separated by ':'. Should be an even multiple of three where
@@ -368,7 +368,7 @@ public:
    *        value is the initial value to use, the last is the next increment value to
    *        use. As a special case the string "1" can be used to set up auto resize.
    */
-  void setResize(const QString &amp;resize)
+  void setResize(const QString &resize)
   { Resize=resize; setSizes(); }
   /** Set inclusion of prompts.
    * @param prompt If prompt generation should be generated.
@@ -430,7 +430,7 @@ public:
    * @return Schema specification.
    * @see setSchema
    */
-  const QString &amp;getSchema(void)
+  const QString &getSchema(void)
   { return Schema; }
   /** Get resize specification.
    * @return Resize specification.
