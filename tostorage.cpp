@@ -1061,19 +1061,21 @@ void toStorage::selectionChanged(void)
     NewFileButton->setEnabled(true);
     ModTablespaceButton->setEnabled(true);
   }
-  ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
-			   ModTablespaceButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
-			   ModFileButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
-  ToolMenu->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
+  if (ToolMenu) {
+    ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
+			     ModTablespaceButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
+			     ModFileButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
+    ToolMenu->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
+  }
 }
 
 void toStorage::newDatafile(void)

@@ -798,6 +798,8 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       }
     toStatusMessage(tr("Processing query"),true);
 
+    printf("%s\n",(const char *)QueryString);
+
     if (direct) {
       try {
 	First=false;
@@ -814,7 +816,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 
 	  try {
 	    query->query(QueryString,param);
-	    if (query->query()->rowsProcessed()>0)
+	    if (query->query()&&query->query()->rowsProcessed()>0)
 	      buffer=tr("%1 rows processed").arg((int)query->query()->rowsProcessed());
 	    else
 	      buffer=tr("Query executed");
@@ -1031,7 +1033,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
     else if (t.at(i).latin1()=='/'&&
 	     t.at(i+1).latin1()=='*')
       multiComment=true;
-    else if (!t.at(i).isSpace())
+    else if (!t.at(i).isSpace()&&t.at(i)!='/')
       break;
 
     if (t.at(i).latin1()=='\n') {

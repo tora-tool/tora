@@ -1,5 +1,9 @@
-1.3.9: Released 2003-02-08
+1.3.9: Released 2003-02-09
 
+2002-02-08: Fixed a newly introduced SIGSEGV in the storage manager.
+2002-02-08: Fixed a SIGSEGV in toResultViewCheck::setText.
+2002-02-08: Strip \r before executing anything for Oracle since it seems to choke on it.
+2002-02-08: Fixed ignoring of initial / again in worksheet.
 2002-02-08: Some fixes in generating static binaries.
 2002-02-07: Added default option to only show active sessions in sessionmanager.
 2002-02-07: Changed default pane in session to current statement.

@@ -198,8 +198,8 @@ void toResultViewItem::setText (int col,const QString &txt)
 void toResultViewCheck::setText (int col,const QString &txt)
 {
   if (txt!=text(col)) {
-    if (col>ColumnCount||!ColumnData) {
-      int ns=(col+ALLOC_SIZE-1)/ALLOC_SIZE*ALLOC_SIZE;
+    if (col>=ColumnCount||!ColumnData) {
+      int ns=(col+ALLOC_SIZE)/ALLOC_SIZE*ALLOC_SIZE;
       keyData *nd=new keyData[ns];
       int i;
       for(i=0;i<ColumnCount;i++)
@@ -222,7 +222,7 @@ void toResultViewCheck::setText (int col,const QString &txt)
       ColumnData[col].Type=keyData::String;
       ColumnData[col].KeyAsc="\xff";
       ColumnData[col].KeyDesc="\x00";
-    } else if(number.match(txt)) {
+    } else if(number.match(txt)>=0) {
       ColumnData[col].Type=keyData::Number;
 
       static char buf[100];
@@ -234,7 +234,6 @@ void toResultViewCheck::setText (int col,const QString &txt)
     }
     ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
   }
-
   QCheckListItem::setText(col,text(col));
 }
 

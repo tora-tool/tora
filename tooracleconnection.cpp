@@ -822,11 +822,14 @@ void toOracleProvider::oracleQuery::execute(void)
       throw QString::fromLatin1("Query aborted before started");
     Running=true;
     try {
+      static QRegExp stripnl("\r");
       Query=new otl_stream;
       Query->set_commit(0);
       Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+      QCString sql=query()->sql();
+      sql.replace(stripnl,"");
       Query->open(1,
-		  query()->sql(),
+		  sql,
 		  *(conn->Connection));
     } catch(...) {
       conn->Lock.up();
