@@ -66,6 +66,17 @@ from this address:
 
 http://www.mn-logistik.de/unsupported/sapdb/
 
+
+Support for PostgreSQL
+======================
+
+TOra supports PostgreSQL through QT's "Qsql" plugins.
+This means your version of QT needs to have been
+configured with the option "-plugin-sql-psql". If
+that's been done correctly, then TOra will
+automatically support PostgreSQL.
+
+
 Why I'm not using autoconf
 ==========================
 
