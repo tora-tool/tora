@@ -521,8 +521,12 @@ void toScript::execute(void)
       fillDifference(sourceDescription,DropList);
       fillDifference(destinationDescription,CreateList);
     }
+    if (mode==0)
+      ScriptUI->Tabs->showPage(ScriptUI->DifferenceTab);
+    else
+      ScriptUI->Tabs->showPage(ScriptUI->ResultTab);
   } TOCATCH
-      }
+}
 
 void toScript::fillDifference(std::list<QString> &objects,QListView *view)
 {

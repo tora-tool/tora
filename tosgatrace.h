@@ -48,6 +48,7 @@ class toSGAStatement;
 class toConnection;
 class toTool;
 class QListViewItem;
+class QPopupMenu;
 
 class toSGATrace : public toToolWidget {
   Q_OBJECT
@@ -56,6 +57,8 @@ class toSGATrace : public toToolWidget {
   QTabWidget *ResultTab;
   QComboBox *Schema;
   QComboBox *Type;
+  QComboBox *Refresh;
+  QPopupMenu *ToolMenu;
 
   toSGAStatement *Statement;
   QString CurrentSchema;
@@ -69,6 +72,7 @@ public slots:
   void changeItem(QListViewItem *item);
   void changeRefresh(const QString &str);
   void refresh(void);
+  void windowActivated(QWidget *widget);
 };
 
 #endif

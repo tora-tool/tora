@@ -38,6 +38,11 @@
 #include <qtabwidget.h>
 #include <qtoolbutton.h>
 #include <qlabel.h>
+#include <qpopupmenu.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "tomain.h"
@@ -124,7 +129,26 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Tabs->addTab(Parameters,"Parameters");
   Statistics=new toResultStats(false,Tabs);
   Tabs->addTab(Statistics,"Statistics");
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   refresh();
+}
+
+void toCurrent::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      toMainWidget()->menuBar()->insertItem("&Current Session",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 toCurrent::~toCurrent()

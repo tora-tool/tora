@@ -39,26 +39,31 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
-#include <qregexp.h>
+#include <qheader.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qlistview.h>
+#include <qmessagebox.h>
+#include <qpainter.h>
+#include <qpopupmenu.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtimer.h>
 #include <qtoolbar.h>
-#include <qpainter.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qvariant.h>
 #include <qwhatsthis.h>
 #include <qwidget.h>
 #include <qworkspace.h>
-#include <qheader.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "tomain.h"
@@ -615,7 +620,8 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   toolbar->addSeparator();
 
   new QLabel("Refresh",toolbar);
-  connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  connect(Refresh=toRefreshCreate(toolbar),
+	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
@@ -637,7 +643,47 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
 
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   refresh();
+}
+
+#define TO_ID_ONLINE		(toMain::TO_TOOL_MENU_ID+ 0)
+#define TO_ID_OFFLINE		(toMain::TO_TOOL_MENU_ID+ 1)
+#define TO_ID_CREATE		(toMain::TO_TOOL_MENU_ID+ 2)
+#define TO_ID_DROP		(toMain::TO_TOOL_MENU_ID+ 3)
+
+void toRollback::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)online_xpm),"Online",
+			   this,SLOT(online(void)),0,TO_ID_ONLINE);
+      ToolMenu->insertItem(QPixmap((const char **)offline_xpm),"Offline",
+			   this,SLOT(offline(void)),0,TO_ID_OFFLINE);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm),"Create segment",
+			   this,SLOT(addSegment(void)),0,TO_ID_CREATE);
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"Drop segment",
+			   this,SLOT(dropSegment(void)),0,TO_ID_DROP);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+			   Key_R+ALT);
+      toMainWidget()->menuBar()->insertItem("&Rollback",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toRollback::refresh(void)
@@ -682,18 +728,18 @@ void toRollback::changeItem(QListViewItem *item)
       OfflineButton->setEnabled(false);
     else
       OfflineButton->setEnabled(true);
-    if (item->text(3)=="ONLINE") {
+    if (item->text(3)=="ONLINE")
       OnlineButton->setEnabled(false);
-      DropButton->setEnabled(false);
-    } else {
+    else
       OnlineButton->setEnabled(true);
-      DropButton->setEnabled(true);
-    }
   } else {
     OnlineButton->setEnabled(false);
     OfflineButton->setEnabled(false);
   }
   DropButton->setEnabled(item);
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+  toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
 }
 
 void toRollback::changeRefresh(const QString &str)

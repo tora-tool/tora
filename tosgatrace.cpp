@@ -43,11 +43,16 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qmainwindow.h>
-#include <qworkspace.h>
 #include <qtimer.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
 #include <qtooltip.h>
+#include <qpopupmenu.h>
+#include <qworkspace.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "totool.h"
@@ -131,7 +136,8 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
-  connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  connect(Refresh=toRefreshCreate(toolbar),
+	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->addSeparator();
   new QLabel("Type",toolbar);
@@ -155,7 +161,35 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   updateSchemas();
 
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+}
+
+void toSGATrace::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Change &schema",
+			   Schema,SLOT(setFocus()),ALT+Key_S);
+      ToolMenu->insertItem("Change &Refresh",
+			   Refresh,SLOT(setFocus(void)),
+			   Key_R+ALT);
+      ToolMenu->insertItem("Change t&ype",
+			   Type,SLOT(setFocus()),ALT+Key_Y);
+      toMainWidget()->menuBar()->insertItem("&Session",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toSGATrace::changeRefresh(const QString &str)

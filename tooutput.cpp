@@ -43,6 +43,11 @@
 #include <qtoolbutton.h>
 #include <qtimer.h>
 #include <qstring.h>
+#include <qpopupmenu.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include <map>
 
@@ -149,16 +154,47 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
-  connect(toRefreshCreate(toolbar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
+  connect(Refresh=toRefreshCreate(toolbar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   Output=new toMarkedText(this);
 
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(timer(),OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
   if (enabled)
     disable(false);
+}
+
+#define TO_ID_TOGGLE		(toMain::TO_TOOL_MENU_ID+ 0)
+
+void toOutput::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Output enabled",
+			   this,SLOT(toggleMenu()),Key_F4,TO_ID_TOGGLE);
+      ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),"Clear output",
+			   this,SLOT(clear()),CTRL+Key_Backspace);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+			   Key_R+ALT);
+
+      toMainWidget()->menuBar()->insertItem("&Output",ToolMenu,-1,toToolMenuIndex());
+      ToolMenu->setItemChecked(TO_ID_TOGGLE,!DisableButton->isOn());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 static toSQL SQLEnable("toOutput:Enable",
@@ -172,6 +208,11 @@ static toSQL SQLDisable("toOutput:Disable",
 			"END;",
 			"Disable output collection");
 
+void toOutput::toggleMenu()
+{
+  DisableButton->setOn(!DisableButton->isOn());
+}
+
 void toOutput::disable(bool dis)
 {
   try {
@@ -184,6 +225,8 @@ void toOutput::disable(bool dis)
       connection().delInit(str);
     else
       connection().addInit(str);
+    if (ToolMenu)
+      ToolMenu->setItemChecked(TO_ID_TOGGLE,!DisableButton->isOn());
   } catch (...) {
     toStatusMessage("Couldn't enable/disable output for session");
   }
@@ -198,7 +241,7 @@ toOutput::~toOutput()
 static toSQL SQLLines("toOutput:Poll",
 		      "BEGIN\n"
 		      "    DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
-		      "                         :numlines<char[100],out>);\n"
+		      "                         :stat<int,out>);\n"
 		      "END;",
 		      "Get lines from SQL Output, must use same bindings");
 
@@ -213,13 +256,13 @@ void toOutput::poll()
       any=false;
       while(!query.eof()) {
 	QString line=query.readValueNull();
-	int status=QString(query.readValue()).toInt();
+	int status=query.readValueNull().toInt();
 	if (status==0) {
 	  any=true;
 	  insertLine(line);
 	}
       }
-    } while(!any);
+    } while(any);
   } TOCATCH
 }
 

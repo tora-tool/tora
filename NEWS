@@ -1,4 +1,4 @@
-1.1.1:
+1.1.1: 2001-09-23
 
 2001-09-10: Fixed bug with no graphs being drawn.
 2001-09-10: Fixed some problems with Qt3 support.
@@ -94,6 +94,9 @@
 2001-09-23: Fixed problem adding new versions to sql.
 2001-09-23: Use fontmetrics of list to check if tooltip necessary.
 2001-09-23: Added tool menu to storage, tuning and security tool.
+2001-09-23: Fixed problem with output polling.
+2001-09-23: Added tool menu to the rest of the tools.
+2001-09-23: Switch to result pane on extraction in toscript.
 
 1.1.0: Released 2001-09-09
 

@@ -47,6 +47,8 @@ class toResultItem;
 class toResultView;
 class toSGAStatement;
 class toStorageDefinition;
+class QPopupMenu;
+class QComboBox;
 
 class toRollbackDialog : public toRollbackDialogUI
 { 
@@ -79,6 +81,9 @@ class toRollback : public toToolWidget {
   QToolButton *OfflineButton;
   QToolButton *DropButton;
 
+  QPopupMenu *ToolMenu;
+  QComboBox *Refresh;
+
   QString currentSegment(void);
 
 public:
@@ -93,6 +98,7 @@ public slots:
   void offline(void);
   void addSegment(void);
   void dropSegment(void);
+  void windowActivated(QWidget *widget);
 };
 
 #endif

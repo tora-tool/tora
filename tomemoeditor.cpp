@@ -52,6 +52,46 @@
 #include "icons/copy.xpm"
 #include "icons/paste.xpm"
 
+class toMemoText : public toMarkedText {
+  toMemoEditor *MemoEditor;
+public:
+  toMemoText(toMemoEditor *edit,QWidget *parent,const char *name=NULL)
+    : toMarkedText(parent,name),MemoEditor(edit)
+  { }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e)
+  {
+    if (e->state()==ControlButton&&
+	e->key()==Key_Return) {
+      MemoEditor->store();
+      e->accept();
+    } else {
+      toMarkedText::keyPressEvent(e);
+    }
+  }
+};
+
+class toMemoSQL : public toHighlightedText {
+  toMemoEditor *MemoEditor;
+public:
+  toMemoSQL(toMemoEditor *edit,QWidget *parent,const char *name=NULL)
+    : toHighlightedText(parent,name),MemoEditor(edit)
+  { }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e)
+  {
+    if (e->state()==ControlButton&&
+	e->key()==Key_Return) {
+      MemoEditor->store();
+      e->accept();
+    } else {
+      toHighlightedText::keyPressEvent(e);
+    }
+  }
+};
+
 toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 			   bool sql,bool modal)
   : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
@@ -65,9 +105,9 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   l->addWidget(toolbar);
 
   if (sql)
-    Editor=new toHighlightedText(this);
+    Editor=new toMemoSQL(this,this);
   else
-    Editor=new toMarkedText(this);
+    Editor=new toMemoText(this,this);
   l->addWidget(Editor);
   Editor->setText(str);
   Editor->setReadOnly(row<0||col<0);
@@ -115,6 +155,8 @@ QString toMemoEditor::text(void)
 
 void toMemoEditor::store(void)
 {
+  if (Editor->isReadOnly())
+    return;
   emit changeData(Row,Col,Editor->text());
   accept();
 }

@@ -45,6 +45,7 @@
 class toListView;
 class QLineEdit;
 class QComboBox;
+class QPopupMenu;
 
 class toAlert : public toToolWidget {
   Q_OBJECT
@@ -65,6 +66,7 @@ class toAlert : public toToolWidget {
   QTimer Timer;
   toConnection Connection;
   toConnection *SendConnection;
+  QPopupMenu *ToolMenu;
 
   toLock Lock;
   toSemaphore Semaphore;
@@ -95,6 +97,7 @@ public slots:
   virtual void changeMessage(int,int,const QString &str);
   virtual void add(void);
   virtual void remove(void);
+  virtual void windowActivated(QWidget *widget);
 };
 
 #endif

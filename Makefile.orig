@@ -315,7 +315,6 @@ tora-plugin: \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \
-	plugins/topreferences.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \

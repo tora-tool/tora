@@ -42,6 +42,12 @@
 #include <qtimer.h>
 #include <qmessagebox.h>
 #include <qlabel.h>
+#include <qpopupmenu.h>
+#include <qworkspace.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "tochangeconnection.h"
 #include "tomain.h"
@@ -166,7 +172,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
-  connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  connect(Refresh=toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
@@ -216,7 +222,37 @@ toSession::toSession(QWidget *main,toConnection &connection)
   toRefreshParse(timer());
   CurrentTab=StatisticSplitter;
   CurrentItem=NULL;
+
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
   refresh();
+}
+
+void toSession::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)clock_xpm),"Enable timed statistics",
+			   this,SLOT(enableStatistics(void)));
+      ToolMenu->insertItem(QPixmap((const char **)noclock_xpm),"Disable timed statistics",
+			   this,SLOT(disableStatistics(void)));
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)disconnect_xpm),"Disconnect session",
+			   this,SLOT(disconnectSession(void)));
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+			   Key_R+ALT);
+      toMainWidget()->menuBar()->insertItem("&Session",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 static toSQL SQLSessions("toSession:ListSession",
@@ -238,8 +274,7 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "  FROM v$session\n"
 			 " ORDER BY Sid",
 			 "List sessions, must have same number of culumns and the last 2 must be "
-			 "the same");
-			 
+			 "the same");			 
 
 void toSession::refresh(void)
 {

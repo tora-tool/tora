@@ -42,12 +42,17 @@
 class toConnection;
 class toMarkedText;
 class QToolButton;
+class QPopupMenu;
+class QComboBox;
 
 class toOutput : public toToolWidget {
   Q_OBJECT
 
   toMarkedText *Output;
+  QPopupMenu *ToolMenu;
   QToolButton *DisableButton;
+  QComboBox *Refresh;
+
   void poll(void);
 public:
   toOutput(QWidget *parent,toConnection &connection,bool enabled=true);
@@ -60,6 +65,8 @@ public slots:
   virtual void refresh(void);
   virtual void disable(bool);
   void changeRefresh(const QString &str);
+  void windowActivated(QWidget *widget);
+  void toggleMenu();
 };
 
 #endif

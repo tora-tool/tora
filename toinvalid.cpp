@@ -38,6 +38,12 @@
 #include <qtoolbutton.h>
 #include <qlabel.h>
 #include <qsplitter.h>
+#include <qworkspace.h>
+#include <qpopupmenu.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "totool.h"
 #include "tohighlightedtext.h"
@@ -122,7 +128,27 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
     splitter->setResizeMode(Objects,QSplitter::KeepSize);
   }
 
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   refresh();
+}
+
+void toInvalid::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+			   this,SLOT(refresh(void)),Key_F5);
+
+      toMainWidget()->menuBar()->insertItem("&Invalid",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 void toInvalid::refresh(void)

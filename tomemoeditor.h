@@ -78,7 +78,7 @@ signals:
    * @param data New data to save.
    */
   void changeData(int row,int col,const QString &data);
-private slots:
+public slots:
   void store(void);
 };
 

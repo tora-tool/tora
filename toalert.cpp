@@ -40,6 +40,12 @@
 #include <qtoolbutton.h>
 #include <qlabel.h>
 #include <qcombobox.h>
+#include <qworkspace.h>
+#include <qpopupmenu.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "totool.h"
 #include "toresultview.h"
@@ -149,9 +155,37 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   Alerts->addColumn("Name");
   Alerts->addColumn("Message");
 
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+
   State=Started;
   toThread *thread=new toThread(new pollTask(*this));
   thread->start();
+}
+
+void toAlert::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem("&Add name",Registered,SLOT(setFocus()),ALT+Key_R);
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"&Remove name",
+			   this,SLOT(remove(void)),CTRL+Key_Backspace);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Edit &name",Name,SLOT(setFocus()),ALT+Key_N);
+      ToolMenu->insertItem("Edit &message",Message,SLOT(setFocus()),ALT+Key_M);
+      ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),"&Message in memo",
+			   this,SLOT(memo(void)),CTRL+Key_M);
+      ToolMenu->insertItem(QPixmap((const char **)return_xpm),"&Send alert",
+			   this,SLOT(send(void)),CTRL+Key_Return);
+
+      toMainWidget()->menuBar()->insertItem("&Alert",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 toAlert::~toAlert()

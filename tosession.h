@@ -48,6 +48,8 @@ class toMain;
 class toResultStats;
 class toResultLock;
 class toResultBar;
+class toPopupMenu;
+class QComboBox;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
@@ -74,6 +76,8 @@ class toSession : public toToolWidget {
   toSGAStatement *OpenStatement;
   toResultView *OpenCursors;
   QString LastSession;
+  QPopupMenu *ToolMenu;
+  QComboBox *Refresh;
 
   void updateSchemas(void);
   void enableStatistics(bool enable);
@@ -91,6 +95,7 @@ public slots:
   void disableStatistics(void)
   { enableStatistics(false); }
   void disconnectSession(void);
+  void windowActivated(QWidget *widget);
 };
 
 #endif

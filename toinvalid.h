@@ -43,18 +43,21 @@
 
 class toResultView;
 class toResultExtract;
+class QPopupMenu;
 
 class toInvalid : public toToolWidget {
   Q_OBJECT
 
   toResultView *Objects;
   toResultExtract *Source;
+  QPopupMenu *ToolMenu;
 public:
   toInvalid(QWidget *parent,toConnection &connection);
 
 public slots:
   virtual void changeSelection(void);
   virtual void refresh(void);
+  virtual void windowActivated(QWidget *widget);
 };
 
 #endif
