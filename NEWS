@@ -63,6 +63,7 @@
 2001-08-17: Added support for canHandle in changeConnection class.
 2001-08-17: Fixed a couple of utf8 bugs.
 2001-08-17: Changed operator () in toSQL to return QString.
+2001-08-18: Merged help from 1.0 version.
 
 0.14: Released 2001-08-02
 

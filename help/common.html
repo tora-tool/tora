@@ -5,17 +5,17 @@ These describe other elements that are used in several parts of the user interfa
 This element is used to describe an element in the SGA.<P>
 <IMG SRC=images/sgastatement.png><P>
 The SGA statement have three tabs. The first tab called <B>SQL</B> simply display all of the SQL of the statement.
-The second tab called <B>Execution plan</B> displays the execution plan of the statement. This is describe in more
+The second tab called <B>Execution plan</B> displays the execution plan of the statement. This is described in more
 detail later. The last tab called <B>Information</B> simply display the information available about the statement
 in the SGA.<P>
 <A NAME=explain><H2>Explain plan</H2>
 This element can be either part of an SGA statement or by itself in some cases. For more information about
 execution paths check the Oracle manual Designing and Tuning for Performance, chapter 5 in the 8i release.<P>
 A few notes here is that the execution plan displayed here is not necessarily the same as when run depending
-on one of these reasons<P>
+on one of these reasons.<P>
 <UL>
 <LI>It is run as a different user which doesn't access the same database objects as the user you are logged in as now.
-<LI>The session running the query can have changed some optimizer parameters.
+<LI>The session running the query can have changed some optimizer parameters compared to your session.
 </UL><P>
 What you see in this window is the execution you would get if you ran the statement like the one you are logged in
 as now and in your session.<P>
@@ -30,7 +30,7 @@ when running the following SQL in the worksheet.<P>
 select * from essprc where prcid > :prcid and begrdt > :begrdt;
 </pre></td></tr></table><P>
 <IMG SRC=images/getparam.png><P>
-As you can see the field name as specified after the : character is presented as a title. If the same fieldname is used at
+As you can see the field name as specified after the : character is presented as a title. If the same field name is used at
 several parts of the query you only get to specify it once. You specify the value in the editor line just to the right of the
 field name label. If you want to specify a NULL value check the <B>NULL</B> checkbox to the right of the editor.<P>
 The parameter editor will cache it's value so it will remember the last parameters you fed to it when you run the query again.

@@ -25,8 +25,8 @@ Extract grants for database objects.</TD></TR>
 Include storage specification</B></TD><TD VALIGN=top>
 Extract storage specifications for database objects.</TD></TR>
 <TR><TD VALIGN=top><B>
-Include parallell specification</B></TD><TD VALIGN=top>
-Extract parallell specification for tables.</TD></TR>
+Include parallel specification</B></TD><TD VALIGN=top>
+Extract parallel specification for tables.</TD></TR>
 <TR><TD VALIGN=top><B>
 Include partition specification</B></TD><TD VALIGN=top>
 Extract partition specification for tables.</TD></TR>
@@ -56,13 +56,13 @@ The next thing you need to do is to specify which objects you want to extract or
 extract you only need to specify the source, if comparing destination objects are also needed.<P>
 Selecting or deselecting an item in this list will select all it's child items.<P>
 If you specify the <B>extract</B> mode you can also indicate a way to resize generated
-storage specifications. This could be usefull to make a database have only a few standard
-storage specifications making less prone to fragmentation.<P>
+storage specifications. This could be useful to make a database have only a few standard
+storage specifications making the database less prone to fragmentation.<P>
 <IMG SRC=images/resize.png><P>
 You have three modes to specify how resizing should work. First there is <B>Don't resize</B>
 which means leave the same as the original. Then there is <B>Auto resize</B> which should
 work for pretty much everyone. In this a resize specification for each order of magnitude of
-size is given a specific storage specication. And last is the <B>Custom resize</B> mode in
+size is given a specific storage specification. And last is the <B>Custom resize</B> mode in
 which you specify how to transform the storage specifications to new values.<P>
 When you specify a custom resize you add items to the list with a <B>limit</B> size,
 <B>initial</B> size and <B>next</B> size. The sizes are used in the following way. When TOra

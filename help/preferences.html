@@ -14,7 +14,7 @@ To the left is a list containing the available option pages you can display.<P>
 The rest of the settings are tool specific and covered under corresponding tool in the 
 <A HREF=tools.html>tools section</A>.<P>
 Selecting a page does not discard the changes of another page, and no changes are saved
-until <B>Ok</B> is pressed. You can always discard any changes made by pressing the escape
+until <B>OK</B> is pressed. You can always discard any changes made by pressing the escape
 key or the <B>Cancel</B> button.<P>
 <A NAME=global><H2>Global Settings</H2>
 These may vary some depending on how your system was compiled and configured. Not all options
@@ -23,9 +23,9 @@ are displayed in the screenshot since that was made on a KDE version of TOra.<P>
 <TR><TD VALIGN=top>
 <B>Custom SQL</B></TD>
 <TD VALIGN=top>
-The file in which to store your custom SQL. For more information about custom SQL see
-the <A HREF=sqledit.html>SQL Editor tool</A>. The string <B>$HOME</B> will be
-replaced by your home directory on unix or documents directory in Windows.</TD></TR>
+The file in which to store your custom SQL. For more information about custom SQL and 
+the SQL dictionary see the <A HREF=sqledit.html>SQL Editor tool</A>. The string <B>$HOME</B>
+will be replaced by your home directory on UNIX or documents directory in Windows.</TD></TR>
 <TR><TD VALIGN=top>
 <B>Help directory</B></TD>
 <TD VALIGN=top>Should point to where the TOra help table of contents file is stored (toc.htm). This
@@ -46,16 +46,17 @@ don't change the window.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Save last password</B></TD>
-<TD VALIGN=top>Wether or not TOra should store the last password used to connect. <B>Be aware that the
-password is store in clear text in either the windows registry or a file on windows.</B>
+<TD VALIGN=top>Whether or not TOra should store the last password used to connect. <B>Be aware that the
+password is store in clear text in either the windows registry or a file.</B>
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Long sessions</B></TD>
 <TD VALIGN=top>This tells TOra that it can open new connections to the database when it thinks there
 may be a considerable delay in the response. If you don't check this TOra will hang if you
 execute a long running query in the SQL worksheet. It is disabled by default since this is
-the nice thing to do with regards to the database. In windows you can not abort running queries
-due to a limitation in its thread implementation.
+the nice thing to do with regards to the database. In windows aborted queries will still run until
+the first returned row due to a limitation in the thread implementation. In UNIX background queries
+are abort instantaneously.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Include DB in caption</B></TD>
@@ -67,25 +68,24 @@ database the window works on except for this.
 <B>Desktop Aware</B></TD>
 <TD VALIGN=top>Set this if Qt should try to figure out and interact nicely with the desktop environment.
 The reason for this switch is that in some versions of KDE TOra doesn't look nice if this is
-set. This switch is only available for Qt only applications.
+checked. This switch is only available for Qt only applications.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Antialias fonts</B></TD>
-<TD VALIGN=top>Check this if you wan't TOra to use antialiased fonts in X11 if available. This option
-may not be available (Regardless of if you have access to antialiased fonts or not), it
-is a compile time option.
+<TD VALIGN=top>Check this if you want TOra to use antialiased fonts in X11 if available. This option
+may not be available (Regardless of if you have access to antialiased fonts or not).
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Docks use toolbars</B></TD>
 <TD VALIGN=top>This option tells TOra how to emulate docked windows when they are not available. Docked
 windows are not available if you do not use KDE and have a Qt version less than 3 (If you
-run in windows you are it). If checked docks will be emulated with a toolbar, this has the
-drawback that you can't resive them. If unchecked docks appear in normal windows.
+run in windows you're it). If this is checked docks will be emulated with a toolbar, this has the
+drawback that you can't resize them. If unchecked docks appear in normal windows.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Table scale</B></TD>
 <TD VALIGN=top>This is the scale which to use when printing lists. Lists on paper can usually be a little
-smaller and still be readable. Given as a fraction where 0.5 means half as small on paper and 1.0
+smaller and still be readable. Given as a fraction where 0.5 means half the size on paper and 1.0
 the same size.
 </TD></TR>
 <TR><TD VALIGN=top>
@@ -100,11 +100,11 @@ the oldest are removed when new are added.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Size Unit</B></TD>
-<TD VALIGN=top>The unit to display sizes in TOra.
+<TD VALIGN=top>The unit to display sizes with in TOra.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Refresh</B></TD>
-<TD VALIGN=top>The default refresh time to use in TOra. Tools which autoupdate use this setting as the
+<TD VALIGN=top>The default refresh time to use in TOra. Tools which refresh automatically use this setting as the
 default. It can also be changed on a per tool basis.
 </TD></TR>
 <TR><TD VALIGN=top>

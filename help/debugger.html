@@ -1,11 +1,11 @@
 <HTML><HEAD><TITLE>PL/SQL Debugger</TITLE></HEAD><BODY>
 <H1>PL/SQL Debugger</H1>
-This tool provides you with an advanced editor and debugger for developing PL/SQL scripts.<P>
+This tool provides you with an advanced editor and debugger for developing PL/SQL objects.<P>
 <IMG SRC=images/debugger.png><P>
 <H2>Elements of the debugger window</H2>
 On the top of the screen is the <A HREF=debugger.html#toolbar>toolbar</A> for the debugger.<P>
-Below that to the right are two panes. The top one <B>Objects</B> contains the available objects
-in the selected schema. The schema is selectable through the <A HREF=debugger.html>schema</A>.
+Below that to the left are two panes. The top one <B>Objects</B> contains the available objects
+in the selected schema. The schema is selectable through the <A HREF=debugger.html#toolbar>toolbar</A>.
 Select the code object you want to debug or edit in this list or start a new object before
 starting to edit the code.<P>
 The lower pane <B>Contents</B> contains the structure of the selected object. Here you can
@@ -14,8 +14,8 @@ Selecting a line in this pane will move the cursor to where the element is in yo
 instance where a variable or method is declared.<P>
 To the right is a large editor area where you can edit the current object. The editor is
 describe more <A HREF=debugger.html#editor>later</A>.<P>
-The last part of the screen is not always visible which contain information about the
-currently currently running <A HREF=debugging.html#debugging>debugging</A> session.<P>
+The last part of the screen is not always visible and contain information about the
+currently running <A HREF=debugging.html#debugging>debugging</A> session.<P>
 <A NAME=toolbar><H2>Toolbar &amp; menu</H2>
 The toolbar and menu contain pretty much the same commands with a few exceptions.
 <TABLE>
@@ -87,7 +87,7 @@ The keyboard shortcut for this is <B>CTRL+P</B>.</TD></TR>
 <TR><TD VALIGN=top><B>
 Toggle breakpoint</B></TD><TD VALIGN=top>
 Add or remove a breakpoint on the current line of the editor. Breakpoints are indicated
-with a small stopsign to the right of the line in the <A HREF=debugger.html#editor>editor</A>.
+with a small stop sign to the right of the line in the <A HREF=debugger.html#editor>editor</A>.
 The keyboard shortcut for this is <B>CTRL+F5</B>.</TD></TR>
 <TR><TD VALIGN=top><B>
 Disable breakpoint</B></TD><TD VALIGN=top>
@@ -130,11 +130,11 @@ or <B>previous error</B> toolbar button/menu entries to step between the errors.
 Next thing to know about the debugger is breakpoints. You can set a breakpoint either by
 selecting the <B>toggle breakpoint</B> toolbar button or menu entry. This will add a breakpoint
 to the line you are currently on in the editor. To remove the breakpoint simply select
-<B>toggle breakpoint</B> again. Another way to add or remove breakpoints is to doubleclick in the
+<B>toggle breakpoint</B> again. Another way to add or remove breakpoints is to double-click in the
 left margin of the editor where you also see where the breakpoints are. They are indicated by a
 small stop sign in the margin. If you want to temporarily disable a breakpoint that you might
 need to enable again later you can also choose <B>disable breakpoint</B>, this is also a toggle
-so selecting the command again will reenable the breakpoint. For those of you who don't know
+so selecting the command again will re-enable the breakpoint. For those of you who don't know
 breakpoints means that when execution of the object comes to the line containing the breakpoint
 the debugger will stop and allow you to inspect the data.<P>
 Which brings us to the last special thing in this editor which is the current line of execution,
@@ -142,10 +142,10 @@ this is an indication of where the execution currently is at. This line is indic
 special background (Default is green, but that is configurable in the
 <A HREF=fonts.html>options</A>).<P>
 <A NAME=debugger.html><H2>Debugger information</H2>
-Information about the current state of execution is shown in the hidable pane at the bottom of
-the debugger window. You hide or show this by selecting the command <B>debug pane</B> command
-or by pressing the <B>F11</B> key. The debug pane consist of several tabs containing the following
-information.<P>
+Information about the current state of execution is shown in the pane at the bottom of
+the debugger window which you can be hidden. You hide or show this by selecting the command
+<B>debug pane</B> command or by pressing the <B>F11</B> key. The debug pane consist of
+several tabs containing the following information.<P>
 <TABLE>
 <TR><TD VALIGN=top><B>
 Stack trace</B></TD><TD VALIGN=top>
@@ -161,13 +161,13 @@ explained in more detail <A HREF=debugger.html#watches>later</A>.</TD></TR>
 Breakpoints</B></TD><TD VALIGN=top>
 A list of where you current have your breakpoints and their status. The status can be
 <B>enabled</B> or <B>disabled</B> which are pretty self explanatory. It can also be
-<B>defered</B> which means that some error have occured setting the breakpoint. Every time
-execution is restarted TOra tries to set any breakpoints that are <B>defered</B>.</TD></TR>
+<B>deferred</B> which means that some error have occurred setting the breakpoint. Every time
+execution is restarted TOra tries to set any breakpoints that are <B>deferred</B>.</TD></TR>
 <TR><TD VALIGN=top><B>
 Parameters</B></TD><TD VALIGN=top>
 This displays the input and output parameters that you passed to the
 original call that started the debugging. The output parameters are off course not available
-until the execution is finnished.</TD></TR>
+until the execution is finished.</TD></TR>
 <TR><TD VALIGN=top><B>
 Debug output</B></TD><TD VALIGN=top>
 Any DBMS_OUTPUT output from your debugging session will end up in this window. For more
@@ -175,7 +175,9 @@ information about using this see the <A HREF=output.html>output tool</A>.</TD></
 <TR><TD VALIGN=top><B>
 Runtime log</B></TD><TD VALIGN=top>
 This is simply a log displaying what is happening in the target debugging thread and
-probably not of much interest to anybody except TOra developers.</TD></TR>
+probably not of much interest to anybody except TOra developers. One exception is that
+if you somehow get an SQL error when you function or procedure of choice is executed those
+errors will end up here.</TD></TR>
 </TABLE><P>
 <A NAME=watches><H2>Watches</H2>
 Watches are a way to inspect the contents of variables in a running program. When you add
@@ -188,11 +190,11 @@ are usually also available in the <B>global</B> scope. When you declare a watch 
 except for <B>local</B> you should also indicate the object in which the variable is declared
 in the format <I>schema.object.variable</I>. The current object is prepended to the variable
 name when you select anything but the <B>local</B> scope.<P>
-Last you have to fill out the variable. If you have the cursor on a variable in the editor that
-is prefilled when you add the watch.<P>
+Finally you have to fill out the variable name. If you have the cursor on a variable in the editor that
+name is the default when you add the watch.<P>
 You can then see the contents of this variable in the <B>watch</B> pane of the
 <A HREF=debugger.html>debugger info</A>. The value will be updated every time execution stops
-while you are debugging. If the variable can not be found it will be <B>{Unavailable</B>. If
+while you are debugging. If the variable can not be found it will be <B>{Unavailable}</B>. If
 all variables are unavailable even though they shouldn't you have probably forgotten to compile
 the object with the debug option. You can remedy this by simply using the <B>compile</B>
 command. TOra will always compile programs using the debug option when in the PL/SQL debugger.<P>
@@ -205,7 +207,7 @@ You can also change the content of a watch. First you select the watch you want 
 the watch list, then you select the <B>change watch</B> command. You will be shown this
 dialog.<P>
 <IMG SRC=images/changewatch.png><P>
-If you had the selected the parent of an array watch you will be able to select the index you
+If you have selected the parent of an array watch you will be able to select the index you
 want to assign a new value with the <B>index</B> indicator to right. Then you enter the new value in
 the text field or check the <B>NULL</B> indicator to set the value to NULL.<P>
 </BODY>

@@ -15,30 +15,30 @@ The filling out of this dialog is pretty straight forward.
 manager. You can also configure TOra to remember your last used password in
 the <A HREF=preferences.html#global>options dialog</A>.</TD></TR>
 <TR><TD VALIGN=top><B>Use SQL*Net</B></TD>
-<TD VALIGN=top>This is perhaps the most difficult setting. This indicates wether
+<TD VALIGN=top>This is perhaps the most difficult setting. This indicates whether
 to connect locally to the database or use SQL*Net. If you check this box the
 connection is made through the Oracle listener, otherwise a local connection
 usually using shared memory or named pipes is made.
 </TD></TR>
 <TR><TD VALIGN=top><B>Database</B></TD>
-<TD VALIGN=top>What database to connect to, the listbox is prefilled with the
+<TD VALIGN=top>What database to connect to, the listbox is filled with the
 values available in your tnsnames.ora file.</TD></TR>
 <TR><TD VALIGN=top><B>Connection Mode</B></TD>
-<TD VALIGN=top>The type of connection to make, usually normally always suffices here.
-But sometimes using database administration SYS_DBA or SYS_OPER is needed. If you
+<TD VALIGN=top>The type of connection to make, usually <B>normal</B> always suffices here.
+But sometimes during database administration <B>SYS_DBA</B> or <B>SYS_OPER</B> is needed. If you
 don't know what these mean you probably shouldn't be using them.</TD></TR>
 </TABLE>
-Upon establishing a successfull connection all the settings of the dialog will be saved
-and remembered when the next connection is made with the exception of the password.<P>
-<A NAME=priv><H2>What priveledges do you need to run TOra</H2>
+Upon establishing a successful connection all the settings of the dialog will be saved
+and remembered when the next connection is made with the exception of the password.
+<A NAME=priv><H2>What priveleges do you need to run TOra</H2>
 TOra should be able to run as any user, although off course you can never do anything
 in TOra that aren't allowed from that Oracle account. You will be able to use pretty much
 any tool in TOra for read only purposes if you are granted the <B>SELECT_CATALOG_ROLE</B>,
 also some parts of TOra will have limited functionality if you do not have the
-<B>ALTER SESSION</B> priviledge.<P>
+<B>ALTER SESSION</B> privilege.<P>
 Also you need to be able to create the plan table if that is not done for you. The plan
 table (See <A HREF=database.html>options</A> for how to select plan table name) must
 also be available with <B>INSERT</B> and <B>SELECT</B> access. TOra will function without
-the plan table but off course you will not be able to display an execution plans.
+the plan table but off course you will not be able to display any execution plans.
 </body>
 </html>

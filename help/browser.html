@@ -1,11 +1,12 @@
 <HTML><HEAD><TITLE>Database Browser</TITLE></HEAD><BODY>
 <H1>Database Browser</H1>
-This tool provides you a simple broser for exploring database schema objects. Initially it can be said that the browser also
-provides a browser like functionallity for the <A HREF=template.html>template help</A> which is
-covered separately. This browser will provide you with more information and you will also in
-future versions of TOra be able to interact with schema objects (Droping or create tables etc),
-this is not posible in the template help version. The <A HREF=template.html>template help</A> on
-the other hand is tree based and some people consider it easier and faster to work with.<P>
+This tool provides you a simple browser for exploring database schema objects. Initially it can
+be said that the browser also provides a browser like functionality for the
+<A HREF=template.html>template help</A> which is covered separately. This browser will provide
+you with more information and you will also in future versions of TOra be able to interact with
+schema objects (Dropping or create tables etc.), this is not possible in the template help version.
+The <A HREF=template.html>template help</A> on the other hand is tree based and some people
+consider it easier and faster to work with.<P>
 <IMG SRC=images/browser.png><P>
 <H2>Using the browser</H2>
 The database browser has a very simple interface with a toolbar which contain the following
@@ -16,33 +17,33 @@ schema selection.<P>
 Refresh
 </B></TD><TD>
 Refresh the displayed data from the database. Also available on the
-key <B>F5</B>.
+<B>F5</B> key.
 </TD></TR>
 <TR><TD VALIGN=top><B>
 Define filter</B></TD><TD>
 Displays the <A HREF=browser.html#filter>define filter dialog</A>. This is used to specify which
 objects to show in the browser. The default filter is to show everything. Also available on the
-key <B>CTRL+SHIFT+G</B>.</TD></TR>
+<B>CTRL+SHIFT+G</B> key.</TD></TR>
 <TR><TD VALIGN=top><B>
 Clear filter</B></TD><TD>
 Remove the current filter and revert to the default of showing everything. Also available on the
-key <B>CTRL+SHIFT+H</B>.</TD></TR>
+<B>CTRL+SHIFT+H</B> key.</TD></TR>
 <TR><TD VALIGN=top><B>
 Schema</B></TD><TD>
 The last item on the toolbar is a combo box where you can select the schema to display
 objects for. It defaults the schema you are currently logged in as. Only schemas that are
 visible to the current user is selectable in the lost (Really, TOra does not contain the
-secret DBA password that will always let you access everything regardless of your priviledges)
+secret DBA password that will always let you access everything regardless of your privileges)
 .</TD></TR>
 </TABLE><P>
 The rest of the interface consists of two tabbed windows, one within the other. The first one
 you can use to select the object type you want to inspect. When you have selected a type you
-can see the visible objects of specified type available in the selected schema. The second
-tab indicate what kind of information you want to explore of the selected object and depends
+can see the visible objects of the specified type available in the selected schema. The second
+tab indicate what kind of information you want to explore about the selected object and depends
 on the object type (For more information about available information see
 <A HREF=browser.html#types>this</A>). When you select an object name in the left list you
 can inspect information about it to the right.<P>
-<H2>Available information</H2>
+<A NAME=types><H2>Available information</H2>
 This is the available information for the different object types.<P>
 <TABLE>
 <TR><TD><I>Object type</I></TD><TD><I>Name</I></TD><TD><I>Description</I></TD></TR>
@@ -61,7 +62,7 @@ Constraints</B></TD><TD VALIGN=top>
 Lists the constraints for this table.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 References</B></TD><TD VALIGN=top>
-Displays the forreign key constraints that references this table and the other objects that have
+Displays the foreign key constraints that references this table and the other objects that have
 dependencies on this table.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 Grants</B></TD><TD VALIGN=top>
@@ -94,7 +95,8 @@ The SQL that defines the view.</TD></TR>
 Data</B></TD><TD VALIGN=top>
 Displays the data in the view. This is the only part of the database browser that let you modify any data. For
 more information about how to use the content editor see <A HREF=browser.html#content>this</A>. You can not
-modify some views depending on how they are defined.
+modify some views depending on how they are defined. See the Oracle reference for more information about editing
+views.
 </TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 Grants</B></TD><TD VALIGN=top>
@@ -157,9 +159,12 @@ Dependencies of this object.</TD></TR>
 <A NAME=content><H2>Content editor</H2>
 The content let you edit the contents of a table or view. There are a few things to note about this.<P>
 First of all the content editor is designed to behave nicely to the database which means that it
-will only save the data when it thinks you are finnished editing a row. This happens when you the current row
-change row or commit the database. When there is unsaved data you can see it in the statusbar that there
+will only save the data when it thinks you are finished editing a row. This happens when you the current row
+change or you commit the database. When there is unsaved data you can see it in the status bar that there
 exists unsaved data.<P>
+Observe that the current <A HREF=browser.html#filter>filter</A> functionality only affect which objects that are
+displayed in the database browser and not the rows that are visible in the content editor. This is a much asked
+for feature already implemented for the next stable release 1.2.<P>
 <A NAME=filter><H2>Defining a filter</H2>
 Filtering is based on the object name and can be specified in a variety of ways. This
 is the dialog used to specify the filter.<P>
@@ -192,7 +197,7 @@ Ignore case</B></TD><TD>
 Ignore the case when matches. Since object names are pretty much always uppercase it is probably safest to leave this on.</TD></TR>
 <TR><TD VALIGN=top><B>
 Invert selection</B></TD><TD>
-If set, include all the objects that doesn't meet the specified criteria.</TD></TR>
+If set, include all the objects that does not meet the specified criteria instead of the ones which does.</TD></TR>
 </TABLE>
 </BODY>
 </HTML>

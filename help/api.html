@@ -1,8 +1,6 @@
 <HTML>
 <HEAD>
 <TITLE>TOra Tool Tutorial</TITLE>
-
-<META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
 <BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
 <H1>TOra Tool Tutorial</H1>
@@ -10,7 +8,7 @@ This tutorial will create a simple tool that can execute an SQL statement and di
 content in a list. This tutorial assumes you have knowledge of C++ and Qt programming.<p>
 
 First of all we create an include file which defines the tool widget. This is the window
-that will be displayed when the a toolwindow is created. How that happends comes later.<p>
+that will be displayed when the a tool window is created. How that happens comes later.<p>
 
 <table width=100% border=0><tr><td bgcolor="#BEEAE0">
 <pre>
@@ -37,7 +35,7 @@ public:
 #endif
 </pre></td></tr><tr><td align=right>tosimplequery.h</td></tr></table>
 
-If this file is put in the main tora source directory the configure script will generate the
+If this file is put in the main TOra source directory the configure script will generate the
 appropriate moc file which will be needed later. If you don't know what moc is, please go back
 to the Qt manual to read up on slots and signals.<p>
 The rest is pretty straight forward and will be much clearer after we start working our
@@ -92,9 +90,9 @@ public:
 static toSimpleQueryTool SimpleQueryTool;
 </pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table>
 
-The first thing that happens is that we include the headfile which defines the tool widget and
-the tool definition headerfiles. Even if this is included in the <code>tosimplequery.h</code> it
-is good practice not to assume any extra files are included by headerfiles.<p>
+The first thing that happens is that we include the header file which defines the tool widget and
+the tool definition header files. Even if this is included in the <code>tosimplequery.h</code> it
+is good practice not to assume any extra files are included by header files.<p>
 
 Next comes a definition of an xpm pixmap. Normally these are placed in the <code>icons</code>
 directory and then included into the file as you can see in the TOra source. This is placed
@@ -113,18 +111,19 @@ is also used for a tip for the toolbar icon by default.
 </td></tr>
 <tr><td valign=top><code>toolWindow</code></td>
 <td>This function will create a new tool widget and return a pointer to it. It doesn't need
-to create a widget. Some tools there might only be one per connection for instance.
+to create a widget, then it should then return NULL. Some tools there might only be one per
+connection for instance.
 </td></tr>
 </table><p>
 
 The number in the constructor is a priority indicator that denote where in the list of
 tools this tool should be inserted, between each 100 step a separator is inserted into
-the toolbar.<p>
+the toolbar and menubar.<p>
 
 And last a not so obvious line where the an instance of the tool descriptor is instantiated.
 This is a feature that is used a lot in TOra. This will ensure that all tools are registered
 when the application is started. It also works when using modules, if this is compiled as
-a module the tool will be instantiated on loaded without any hassle with functions with
+a module the tool will be instantiated on loading without any hassle with functions with
 predefined names and such stuff.<p>
 
 Lastly comes the implementation of the tool widget which is not much longer. I have divided
@@ -183,12 +182,11 @@ In this part the parent constructor is called and the toolbar is set up. Also no
 of the moc file which by convention is called tosimplequery.moc.
 
 One thing worth noticing here is the <code>toAllocBar</code> which is used to be able to
-transparently support either using KToolBar or QToolBar depending on wether this is a Qt or
-KDE application. This is very important since TOra will probably in the not so distant future
-be available on Windows to which only Qt is available.<p>
+transparently support either using KToolBar or QToolBar depending on whether this is a Qt or
+KDE application. This is very important since TOra also supports windows to which KDE is not available.<p>
 
 The second part is the <code>setStretchableWidget</code> call which is used to indicate that
-an empty label should be stretch instead of the toolbutton which just looks really weird.<p>
+an empty label should be stretch instead of the tool button which just looks really weird.<p>
 
 Also worth noting is that the <A HREF=api/toToolWidget.html>toToolWidget</A> class is derived
 from QVBox so any widgets constructed in this widget will be lined up vertically in the order
@@ -198,7 +196,7 @@ Next up is creating our widgets and connecting them.<p>
 <table width=100% border=0><tr><td bgcolor="#BEEAE0">
 <pre>
   Statement=new QLineEdit(this);
-  Result=new toResultView(connection,this);
+  Result=new <A HREF=api/toResultView.html>toResultView</A>(connection,this);
   connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
 }
 
@@ -210,7 +208,7 @@ the <code>execute</code> slot.<p>
 <table width=100% border=0><tr><td bgcolor="#BEEAE0">
 <pre>
   Statement=new QLineEdit(this);
-  Result=new toResultView(connection,this);
+  Result=new <A HREF=api/toResultView.html>toResultView</A>(connection,this);
   connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
 }
 
@@ -232,8 +230,8 @@ void toSimpleQuery::execute(void)
 
 </pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
 
-The toParamGet function is used to ask for bind values in the queried string. To understand
-what I mean try executing the query "select :hello from dual" when you try to run the query.
+The toParamGet::getParam function is used to ask for bind values in the query string. To understand
+what I mean try executing the query "select :hello from dual" when you try the result.
 
 Now finally to compile this module you need to add the <code>tosimplequery.cpp</code> file
 to <code>SOURCES</code> define in the file <code>Makefile</code>. To build a plugin you also
