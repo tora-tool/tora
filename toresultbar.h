@@ -37,6 +37,8 @@
 #ifndef __TORESULTBAR_H
 #define __TORESULTBAR_H
 
+#include <time.h>
+
 #include "toresult.h"
 #include "tobarchart.h"
 
@@ -49,9 +51,21 @@ class toSQL;
 
 class toResultBar : public toBarChart, public toResult {
   Q_OBJECT
+  /** Display flow in change per second instead of actual values.
+   */
+  bool Flow;
+  /** Timestamp of last fetch.
+   */
+  time_t LastStamp;
+  /** Last read values.
+   */
+  list<double> LastValues;
   /** Query to run.
    */
   QString SQL;
+  /** Parameters to query
+   */
+  list<QString> Param;
   void query(const QString &sql,const list<QString> &param,bool first);
 public:
   /** Create widget.
@@ -59,6 +73,17 @@ public:
    * @param name Name of widget.
    */
   toResultBar(QWidget *parent,const char *name=NULL);
+
+  /** Display actual values or flow/s.
+   * @param on Display flow or absolute values.
+   */
+  void setFlow(bool on)
+  { Flow=on; }
+  /** Return if flow is displayed.
+   * @return If flow is used.
+   */
+  bool flow(void)
+  { return Flow; }
 
   /** Set SQL to query.
    * @param sql Query to run.
@@ -74,15 +99,24 @@ public:
    */
   virtual void query(const QString &sql,const list<QString> &param)
   { query(sql,param,true); }
+  /** Perform the specified query.
+   * @param sql SQL containing statement.
+   */
+  void query(toSQL &sql);
   /** Reimplemented for internal reasons.
    */
   void query(const QString &sql)
   { list<QString> p; query(sql,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void clear(void)
+  { LastStamp=0; LastValues.clear(); toBarChart::clear(); }
+
 public slots:
   /** Read another value to the chart.
    */
   virtual void refresh(void)
-  { list<QString> p; query(SQL,p,false); }
+  { query(SQL,Param,false); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)

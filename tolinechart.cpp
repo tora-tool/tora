@@ -55,15 +55,15 @@ double toLineChart::round(double round,bool up)
     if (up) {
       if (base>=round)
 	return mult*base;
-      else if (base*2>=round)
-	return mult*base*2;
+      else if (base*2.5>=round)
+	return mult*base*2.5;
       else if (base*5>=round)
 	return mult*base*5;
     } else if (base>round) {
       if (base/2<=round)
 	return mult*base/2;
-      else if (base/5<=round)
-	return mult*base/5;
+      else if (base/4<=round)
+	return mult*base/4;
       else if (base/10<=round)
 	return mult*base/10;
       else
@@ -100,12 +100,12 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   MinValue=MaxValue=0;
   Legend=true;
   Throbber=false;
-  Grid=0;
-  AxisText=false;
+  Grid=5;
+  AxisText=true;
   
   setSamples();
 
-  setMinimumSize(100,100);
+  setMinimumSize(60,30);
 
   // Use list font
   QString str=toTool::globalConfig(CONF_LIST,"");
@@ -152,10 +152,15 @@ void toLineChart::paintEvent(QPaintEvent *e)
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
 
   if (!Title.isEmpty()) {
+    p.save();
+    QFont f=p.font();
+    f.setBold(true);
+    p.setFont(f);
     QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
     p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
-    p.translate(0,bounds.height());
-    bottom-=bounds.height();
+    p.restore();
+    p.translate(0,bounds.height()+2);
+    bottom-=bounds.height()+2;
   }
 
   if (Legend) {
@@ -234,8 +239,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
     QString maxXstr;
     QString minXstr;
     if (XValues.begin()!=XValues.end()) {
-      maxXstr=*(XValues.begin());
-      minXstr=*(XValues.rbegin());
+      minXstr=*(XValues.begin());
+      maxXstr=*(XValues.rbegin());
     }
     bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
     int xoffset=bounds.height();
@@ -269,17 +274,20 @@ void toLineChart::paintEvent(QPaintEvent *e)
   p.drawRect(2,2,right-4,bottom-4);
   p.restore();
   if (Grid>1) {
+    p.save();
+    p.setPen(gray);
     for (int i=1;i<Grid;i++) {
       int ypos=(bottom-4)*i/Grid+2;
       int xpos=(right-4)*i/Grid+2;
-      p.drawLine(2,ypos,right-4,ypos);
-      p.drawLine(xpos,2,xpos,bottom-4);
+      p.drawLine(3,ypos,right-4,ypos);
+      p.drawLine(xpos,3,xpos,bottom-4);
     }
+    p.restore();
   }
 
   int cp=0;
   const QWMatrix &mtx=p.worldMatrix();
-  p.setClipRect(mtx.dx()+2,mtx.dy()+2,right-4,bottom-4);
+  p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-6,bottom-6);
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
     p.save();
     p.setPen(toChartColor(cp++));

@@ -65,6 +65,8 @@
 #ifndef __TORESULTLINE_H
 #define __TORESULTLINE_H
 
+#include &lt;time.h&gt;
+
 #include "toresult.h"
 #include "tolinechart.h"
 
@@ -77,9 +79,21 @@ class toSQL;
 
 class toResultLine : public toLineChart, public toResult {
   Q_OBJECT
+  /** Display flow in change per second instead of actual values.
+   */
+  bool Flow;
+  /** Timestamp of last fetch.
+   */
+  time_t LastStamp;
+  /** Last read values.
+   */
+  list&lt;double&gt; LastValues;
   /** Query to run.
    */
   QString SQL;
+  /** Parameters to query
+   */
+  list&lt;QString&gt; Param;
   void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param,bool first);
 public:
   /** Create widget.
@@ -87,6 +101,17 @@ public:
    * @param name Name of widget.
    */
   toResultLine(QWidget *parent,const char *name=NULL);
+
+  /** Display actual values or flow/s.
+   * @param on Display flow or absolute values.
+   */
+  void setFlow(bool on)
+  { Flow=on; }
+  /** Return if flow is displayed.
+   * @return If flow is used.
+   */
+  bool flow(void)
+  { return Flow; }
 
   /** Set SQL to query.
    * @param sql Query to run.
@@ -102,15 +127,23 @@ public:
    */
   virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param)
   { query(sql,param,true); }
+  /** Perform the specified query.
+   * @param sql SQL containing statement.
+   */
+  void query(toSQL &amp;sql);
   /** Reimplemented for internal reasons.
    */
   void query(const QString &amp;sql)
   { list&lt;QString&gt; p; query(sql,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void clear(void)
+  { LastStamp=0; LastValues.clear(); toLineChart::clear(); }
 public slots:
   /** Read another value to the chart.
    */
   virtual void refresh(void)
-  { list&lt;QString&gt; p; query(SQL,p,false); }
+  { query(SQL,Param,false); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)

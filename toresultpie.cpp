@@ -44,10 +44,14 @@
 
 toResultPie::toResultPie(QWidget *parent,const char *name=NULL)
   : toPieChart(parent,name)
-{ }
+{
+  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
 
 void toResultPie::query(const QString &sql,const list<QString> &param)
 {
+  SQL=sql;
+  Param=param;
   try {
     otl_stream str;
     str.set_all_column_types(otl_all_num2str|otl_all_date2str);
@@ -87,5 +91,5 @@ void toResultPie::query(const QString &sql,const list<QString> &param)
 
 void toResultPie::setSQL(toSQL &sql)
 {
-  SQL=sql(connection());
+  SQL=toSQL::string(sql,connection());
 }

@@ -18,6 +18,10 @@
 2001-08-08: Added posibility to delete rows in content editor.
 2001-08-08: Added optional timer to tool widget.
 2001-08-08: Added filter on tablespace in database browser.
+2001-08-08: Added refresh to tuning tool.
+2001-08-08: Charts describing activity in tuning database.
+2001-08-08: Display file I/O in session.
+2001-08-08: Fixed cursor bug in highlighted text concerning tabs.
 
 0.14: Released 2001-08-02
 

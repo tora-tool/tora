@@ -46,10 +46,16 @@ toResultLine::toResultLine(QWidget *parent,const char *name=NULL)
   : toLineChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  connect(toCurrentTool(this),SIGNAL(connectionChange()),
+	  this,SLOT(clear()));
+  LastStamp=0;
+  Flow=true;
 }
 
 void toResultLine::query(const QString &sql,const list<QString> &param,bool first)
 {
+  SQL=sql;
+  Param=param;
   try {
     otl_stream str;
     str.set_all_column_types(otl_all_num2str|otl_all_date2str);
@@ -74,22 +80,40 @@ void toResultLine::query(const QString &sql,const list<QString> &param,bool firs
 
     if (first) {
       clear();
-      for(int i=0;i<len;i++)
-	labels.insert(labels.end(),QString::fromUtf8(desc->name));
+      for(int i=1;i<len;i++)
+	labels.insert(labels.end(),QString::fromUtf8(desc[i].name));
       setLabels(labels);
     }
 
-    int num=0;
     while(!str.eof()) {
-      QString lab=toReadValue(desc[num%len],str,MaxColSize);
+      int num=0;
+      QString lab=toReadValue(desc[num],str,MaxColSize);
       num++;
       list<double> vals;
       while(num<len) {
-	QString lab=toReadValue(desc[num%len],str,MaxColSize);
+	QString lab=toReadValue(desc[num],str,MaxColSize);
 	vals.insert(vals.end(),lab.toDouble());
 	num++;
       }
-      addValues(vals,lab);
+      if (Flow) {
+	time_t now=time(NULL);
+	if (now!=LastStamp) {
+	  if (LastValues.size()>0) {
+	    list<double> dispVal;
+	    list<double>::iterator i=vals.begin();
+	    list<double>::iterator j=LastValues.begin();
+	    while(i!=vals.end()&&j!=LastValues.end()) {
+	      dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	      i++;
+	      j++;
+	    }
+	    addValues(dispVal,lab);
+	  }
+	  LastValues=vals;
+	  LastStamp=now;
+	}
+      } else
+	addValues(vals,lab);
     }
   } TOCATCH
   update();
@@ -97,5 +121,10 @@ void toResultLine::query(const QString &sql,const list<QString> &param,bool firs
 
 void toResultLine::setSQL(toSQL &sql)
 {
-  SQL=sql(connection());
+  SQL=toSQL::string(sql,connection());
+}
+
+void toResultLine::query(toSQL &sql)
+{
+  query(toSQL::string(sql,connection()));
 }

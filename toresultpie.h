@@ -51,6 +51,7 @@ class toResultPie : public toPieChart, public toResult {
   /** Query to run.
    */
   QString SQL;
+  list<QString> Param;
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -79,7 +80,7 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { query(SQL); }
+  { query(SQL,Param); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)

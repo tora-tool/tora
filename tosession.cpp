@@ -56,6 +56,7 @@ TO_NAMESPACE;
 #include "toresultstats.h"
 #include "toresultlock.h"
 #include "toresultpie.h"
+#include "toresultbar.h"
 
 #include "tosession.moc"
 
@@ -112,6 +113,15 @@ static toSQL SQLSessionWait("toSession:WaitStatistic",
 			    "select decode(time_waited,0,total_waits,time_waited),event\n"
 			    "  from v$session_event where sid = :f1<char[101]> order by event",
 			    "Display statistics about what session have been waiting on.");
+static toSQL SQLSessionIO("toSession:SessionIO",
+			  "select sysdate,\n"
+			  "       block_gets \"Block gets\",\n"
+			  "       consistent_gets \"Consistent gets\",\n"
+			  "       physical_reads \"Physical reads\",\n"
+			  "       block_changes \"Block changes\",\n"
+			  "       consistent_changes \"Consistent changes\"\n"
+			  "  from v$sess_io where sid = :f1<char[101]>",
+			  "Display chart of session generated I/O");
 
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget("session.html",main,connection)
@@ -166,6 +176,10 @@ toSession::toSession(QWidget *main,toConnection &connection)
   WaitPie->setTitle("Session wait states");
   WaitPie->setDisplayPercent(true);
   WaitPie->setPostfix("%");
+  IOBar=new toResultBar(StatisticSplitter);
+  IOBar->setSQL(SQLSessionIO);
+  IOBar->setTitle("Session I/O");
+  IOBar->setYPostfix("blocks/s");
   ResultTab->addTab(StatisticSplitter,"Statistics");
 
   ConnectInfo=new toResultView(true,false,ResultTab);
@@ -263,7 +277,6 @@ void toSession::changeTab(QWidget *tab)
     if (CurrentTab==StatisticSplitter) {
       int ses=CurrentItem->text(0).toInt();
       SessionStatistics->changeSession(ses);
-      WaitPie->changeParams(QString::number(ses));
     } else if (CurrentTab==ConnectInfo)
       ConnectInfo->changeParams(CurrentItem->text(0));
     else if (CurrentTab==PendingLocks)
@@ -335,5 +348,12 @@ void toSession::changeRefresh(const QString &str)
 void toSession::changeItem(QListViewItem *item)
 {
   CurrentItem=item;
+  if (CurrentItem&&LastSession!=CurrentItem->text(0)) {
+    if (!CurrentItem->text(0).isEmpty()) {
+      WaitPie->changeParams(CurrentItem->text(0));
+      IOBar->changeParams(CurrentItem->text(0));
+    }
+    LastSession=CurrentItem->text(0);
+  }
   changeTab(CurrentTab);
 }

@@ -301,18 +301,19 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	}
 	wasCol=col;
 	wasMarked=marked;
-	if (nc=='\t') {
-	  int tab=painter->fontMetrics().width("xxxxxxxx");;
-	  int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
-	  int left=(posx==hMargin()-1?LeftIgnore:posx);
-	  painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
-	  posx=nx;
-	  c="";
-	} else
-	  c=nc;
+	c=nc;
       }
       if (curline==row&&curcol==i)
 	cursorx=posx;
+
+      if (c=="\t") {
+	int tab=painter->fontMetrics().width("xxxxxxxx");;
+	int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
+	int left=(posx==hMargin()-1?LeftIgnore:posx);
+	painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
+	posx=nx;
+	c="";
+      }
     }
     if (posx<width)
       painter->fillRect(posx,0,width-posx,height,bkg);

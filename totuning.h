@@ -39,6 +39,8 @@
 
 #include "totool.h"
 
+class QTabWidget;
+class QComboBox;
 class toConnection;
 class toListView;
 class toResultStats;
@@ -47,13 +49,16 @@ class toResultView;
 class toTuning : public toToolWidget {
   Q_OBJECT
 
+  QTabWidget *Tabs;
   toListView *Indicators;
   toResultView *Parameters;
   toResultStats *Statistics;
+  QComboBox *Schema;
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:
   virtual void refresh(void);
+  virtual void changeRefresh(const QString &str);
 };
 
 #endif

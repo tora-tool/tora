@@ -74,11 +74,11 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref39">addValues</A></b> (list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref40">clear</A></b> (void) 
+<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref40">xValues</A></b> (void) 
 </LI>
-<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref41">xValues</A></b> (void) 
+<LI>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref41">values</A></b> (void) 
 </LI>
-<LI>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref42">values</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref42">clear</A></b> (void) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref43">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
 </LI>
@@ -262,18 +262,18 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">X-value on these values.
    </TD></TR>
 </TABLE></P>
-<A NAME="clear"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>clear</strong> (void)
-<br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p></p><p> Clear the values from the chart.
-   </p>
-<A NAME="xValues"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>xValues</strong> (void)
+<A NAME="xValues"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>xValues</strong> (void)
 <br></td><td align="right"><h3><strong>xValues</strong></h3></td></tr></table><p></p><p> Get list of labels
 </p>
 <p><b>Returns</b>: List of labels
    </p>
-<A NAME="values"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
+<A NAME="values"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
 <br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
 </p>
 <p><b>Returns</b>: Values in piechart.
+   </p>
+<A NAME="clear"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>clear</strong> (void)
+<br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Clear the values from the chart.
    </p>
 <A NAME="paintEvent"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e)
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.

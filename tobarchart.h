@@ -161,11 +161,6 @@ public:
    */
   virtual void addValues(list<double> &value,const QString &xValues);
 
-  /** Clear the values from the chart.
-   */
-  void clear(void)
-  { Values.clear(); XValues.clear(); }
-
   /** Get list of labels
    * @return List of labels
    */
@@ -177,6 +172,12 @@ public:
    */
   list<list<double> > &values(void)
   { return Values; }
+
+public slots:
+  /** Clear the values from the chart.
+   */
+  virtual void clear(void)
+  { Values.clear(); XValues.clear(); }
 
 protected:
   /** Reimplemented for internal reasons.

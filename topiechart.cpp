@@ -50,7 +50,6 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f=0)
 {
   Legend=true;
   DisplayPercent=false;
-  setMinimumSize(100,100);
 
   // Use list font
   QString str=toTool::globalConfig(CONF_LIST,"");
@@ -77,10 +76,15 @@ void toPieChart::paintEvent(QPaintEvent *e)
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
 
   if (!Title.isEmpty()) {
+    p.save();
+    QFont f=p.font();
+    f.setBold(true);
+    p.setFont(f);
     QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
     p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
-    p.translate(0,bounds.height());
-    bottom-=bounds.height();
+    p.restore();
+    p.translate(0,bounds.height()+2);
+    bottom-=bounds.height()+2;
   }
 
   if (Legend) {

@@ -84,11 +84,11 @@ void toResultField::query(const QString &sql,const list<QString> &param)
 
 void toResultField::setSQL(toSQL &sql)
 {
-  SQL=sql(connection());
+  SQL=toSQL::string(sql,connection());
   setFilename(sql.name());
 }
 void toResultField::query(toSQL &sql)
 {
   setFilename(sql.name());
-  query(sql(connection()));
+  query(toSQL::string(sql,connection()));
 }

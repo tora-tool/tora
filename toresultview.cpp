@@ -923,13 +923,13 @@ void toResultView::keyPressEvent(QKeyEvent *e)
 void toResultView::setSQL(toSQL &sql)
 {
   setSQLName(sql.name());
-  SQL=sql(connection());
+  SQL=toSQL::string(sql,connection());
 }
 
 void toResultView::query(toSQL &sql)
 {
   setSQLName(sql.name());
-  query(sql(connection()));
+  query(toSQL::string(sql,connection()));
 }
 
 void toResultView::addMenues(QPopupMenu *menu)
