@@ -31,10 +31,6 @@
 2001-11-06: Added option for displaying errors in dialogs (For newbies).
 2001-11-06: Changed how to navigate in the content editor with keys.
 2001-11-06: Branched TORA12 for 1.2 release.
-2001-11-06: Fixed a really ugly toThread bug in linux & windows. (From 1.3.0)
-2001-11-06: Added drop changes from parameter editor and fixed update problem. (From 1.3.0)
-2001-11-06: Fixed polling problem with session statistics. (From 1.3.0)
-2001-11-06: Made describe work partly even if object cache not ready. (From 1.3.0)
 2001-11-06: Added option to limit LOB/LONG selects (Default to 30000 bytes).
 2001-11-06: Removed references to stream pooling.
 2001-11-06: Fixed help context of oracle settings.
