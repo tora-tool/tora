@@ -1,5 +1,5 @@
 // ==============================================================
-// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.68,
+// Oracle, ODBC and DB2/CLI Template Library, Version 4.0.70,
 // Copyright (C) Sergei Kuchin, 1996,2003
 // Author: Sergei Kuchin
 // This library is free software. Permission to use, copy,
@@ -11,7 +11,7 @@
 #ifndef __OTL_H__
 #define __OTL_H__
 
-#define OTL_VERSION_NUMBER (0x040044L)
+#define OTL_VERSION_NUMBER (0x040046L)
 
 #include <string.h>
 #include <ctype.h>
@@ -420,7 +420,7 @@
 #endif
 
 #if (defined(OTL_ORA7) || defined(OTL_ORA8) ||          \
-     defined(OTL_ORA8I) || defined(OTL_OAR9I) ) &&      \
+     defined(OTL_ORA8I) || defined(OTL_ORA9I) ) &&      \
      defined(OTL_BIGINT) &&                             \
      !(defined(OTL_ODBC) || defined(OTL_DB2_CLI)) 
 #error OTL_BIGINT is supported only for OTL_ODBC and OTL_DB2_CLI 
@@ -475,6 +475,8 @@ const int otl_select_binding=2;
 #define OTL_DCAST(_t,_e) dynamic_cast<_t >(_e)
 #define OTL_CCAST(_t,_e) const_cast<_t >(_e)
 
+#define OTL_CONST_EXCEPTION const
+
 #if defined OTL_FUNC_THROW_SPEC_ON
 #define OTL_THROWS_OTL_EXCEPTION throw(otl_exception)
 #define OTL_NO_THROW throw()
@@ -491,6 +493,7 @@ const int otl_select_binding=2;
 #define OTL_RCAST(_t,_e) ((_t)(_e))
 #define OTL_DCAST(_t,_e) ((_t)(_e))
 #define OTL_CCAST(_t,_e) ((_t)(_e))
+#define OTL_CONST_EXCEPTION
 #define OTL_THROWS_OTL_EXCEPTION
 #define OTL_NO_THROW
 #define OTL_TYPE_NAME class
@@ -3852,10 +3855,10 @@ public:
    cur.parse(sqlstm);
    cur.exec();
    return cur.cursor_struct.get_rpc();
-  }catch(otl_tmpl_exception
+  }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
           <TExceptionStruct,
            TConnectStruct,
-           TCursorStruct>){
+           TCursorStruct>&){
    if(exception_enabled){
     connect.throw_count++;
     throw;
@@ -4668,10 +4671,10 @@ public:
     rewind();
     null_fetched=0;
    }
-  }catch(otl_tmpl_exception
+  }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
          <TExceptionStruct,
          TConnectStruct,
-         TCursorStruct>){
+         TCursorStruct>&){
    cleanup();
    if(this->adb)this->adb->throw_count++;
    throw;
@@ -5848,10 +5851,10 @@ public:
        }
        bind(*(this->vl[i]));
      }
-   }catch(otl_tmpl_exception
+   }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
           <TExceptionStruct,
           TConnectStruct,
-          TCursorStruct>){
+          TCursorStruct>&){
      cleanup();
      if(this->adb)this->adb->throw_count++;
      throw;
@@ -7056,10 +7059,10 @@ public:
    for(j=0;j<iv_len;++j)
     this->bind(*in_vl[j]);
    rewind();
-  }catch(otl_tmpl_exception
+  }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
          <TExceptionStruct,
          TConnectStruct,
-         TCursorStruct>){
+         TCursorStruct>&){
    cleanup();
    if(this->adb)this->adb->throw_count++;
    throw;
@@ -9975,6 +9978,15 @@ public:
     }
   }
 
+private:
+
+  otl_connect& operator=(const otl_connect&)
+  {
+    return *this;
+  }
+
+  otl_connect(const otl_connect&){}
+
 };
 
 class otl_stream_shell: public otl_stream_shell_generic{
@@ -10610,7 +10622,7 @@ public:
     if((*io)!=0)
      (*io)->flush_flag2=true;
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    if(shell!=0){
     if((*io)!=0)
      (*io)->flush_flag2=true;
@@ -10790,7 +10802,7 @@ public:
      (*io)->flush_flag=shell->flush_flag;
     }
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    shell_pt.destroy();
    throw;
   }
@@ -10814,7 +10826,7 @@ public:
   if((*ss)){
    try{
     (*ss)->close();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     delete (*ss);
     (*ss)=0;
     throw;
@@ -10826,7 +10838,7 @@ public:
   if((*io)){
    try{
     (*io)->flush();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     clean(1);
     delete (*io);
     (*io)=0;
@@ -10858,7 +10870,7 @@ public:
    try{
     this->flush();
     this->clean(1);
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     this->clean(1);
     throw;
    }
@@ -11445,6 +11457,15 @@ public:
   return *this;
  }
 
+private:
+
+  otl_stream& operator=(const otl_stream&)
+  {
+    return *this;
+  }
+
+  otl_stream(const otl_stream&){}
+  
 };
 
 #if (defined(OTL_STL)||defined(OTL_VALUE_TEMPLATE_ON)) && defined(OTL_VALUE_TEMPLATE)
@@ -12470,6 +12491,15 @@ public:
   otl_ora7_connect::logoff();
  }
 
+private:
+
+  otl_connect& operator=(const otl_connect&)
+  {
+    return *this;
+  }
+
+  otl_connect(const otl_connect&){}
+
 };
 
 
@@ -12758,7 +12788,7 @@ public:
     rewind();
     null_fetched=0;
    }
-  }catch(otl_exception){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    cleanup();
    if(this->adb)this->adb->throw_count++;
    throw;
@@ -13839,7 +13869,7 @@ public:
     if((*io)!=0)
      (*io)->flush_flag2=true;
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    if(shell!=0){
     if((*io)!=0)
      (*io)->flush_flag2=true;
@@ -13956,7 +13986,7 @@ public:
   if((*ref_ss)){
    try{
     (*ref_ss)->close();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     delete (*ref_ss);
     (*ref_ss)=0;
     throw;
@@ -13968,7 +13998,7 @@ public:
   if((*ss)){
    try{
     (*ss)->close();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     delete (*ss);
     (*ss)=0;
     throw;
@@ -13980,7 +14010,7 @@ public:
   if((*io)){
    try{
     (*io)->flush();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     clean(1);
     delete (*io);
     (*io)=0;
@@ -14080,7 +14110,7 @@ public:
      (*io)=new otl_inout_stream(arr_size,sqlstm,db,false,sqlstm_label);
      (*io)->flush_flag=shell->flush_flag;
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    shell_pt.destroy();
    throw;
   }
@@ -14107,7 +14137,7 @@ public:
    try{
     this->flush();
     this->clean(1);
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     this->clean(1);
     throw;
    }
@@ -14750,6 +14780,15 @@ public:
   }
   return *this;
  }
+
+private:
+
+  otl_stream& operator=(const otl_stream&)
+  {
+    return *this;
+  }
+
+  otl_stream(const otl_stream&){}
 
 };
 
@@ -17612,6 +17651,15 @@ public:
   }
  }
 
+private:
+
+  otl_connect& operator=(const otl_connect&)
+  {
+    return *this;
+  }
+
+  otl_connect(const otl_connect&){}
+
 };
 
 typedef otl_tmpl_variable<otl_var> otl_generic_variable;
@@ -17809,7 +17857,7 @@ public:
   try{
    rewind();
    null_fetched=0;
-  }catch(otl_exception){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    cleanup();
    if(this->adb)this->adb->throw_count++;
    throw;
@@ -18414,6 +18462,14 @@ protected:
    for(i=0;i<sl_len;++i)bind_col(i+1,sl[i]);
  }
 
+private:
+
+  otl_refcur_stream& operator=(const otl_refcur_stream&)
+  {
+    return *this;
+  }
+
+  otl_refcur_stream(const otl_refcur_stream&){}
 };
 
 class otl_inout_stream: public otl_ora8_inout_stream{
@@ -19034,7 +19090,7 @@ public:
     rewind();
     null_fetched=0;
    }
-  }catch(otl_exception){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    cleanup();
    if(this->adb)this->adb->throw_count++;
    throw;
@@ -20671,7 +20727,7 @@ public:
     if((*io)!=0)
      (*io)->flush_flag2=true;
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    if(shell!=0){
    if((*io)!=0)
     (*io)->flush_flag2=true;
@@ -20854,7 +20910,7 @@ public:
     (*io)=new otl_inout_stream(arr_size,sqlstm,db,false,sqlstm_label);
     (*io)->flush_flag=shell->flush_flag;
    }
-  }catch(otl_exception&){
+  }catch(OTL_CONST_EXCEPTION otl_exception&){
    shell_pt.destroy();
    throw;
   }
@@ -20877,7 +20933,7 @@ public:
   if((*ref_ss)){
    try{
     (*ref_ss)->close();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     delete (*ref_ss);
     (*ref_ss)=0;
     throw;
@@ -20889,7 +20945,7 @@ public:
   if((*ss)){
    try{
     (*ss)->close();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     delete (*ss);
     (*ss)=0;
     throw;
@@ -20901,7 +20957,7 @@ public:
   if((*io)){
    try{
     (*io)->flush();
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     clean(1);
     delete (*io);
     (*io)=0;
@@ -20932,7 +20988,7 @@ public:
    try{
     this->flush();
     this->clean(1);
-   }catch(otl_exception&){
+   }catch(OTL_CONST_EXCEPTION otl_exception&){
     this->clean(1);
     throw;
    }
@@ -21618,6 +21674,15 @@ public:
   }
   return *this;
  }
+
+private:
+
+  otl_stream& operator=(const otl_stream&)
+  {
+    return *this;
+  }
+
+  otl_stream(const otl_stream&){}
 
 };
 

@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -88,6 +88,9 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="\n"
+    "insert into prova3 (prova)\n"
+    "values ('This insert contains a ''\n"
+    "and now it goes to new line');\n"
     "create or replace PROCEDURE prova1\n"
     "is\n"
     "v_tmp NUMBER(1);\n"
@@ -615,9 +618,9 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	    (ret.at(ret.length()-2)!='*'||
 	     ret.at(ret.length()-1)!='/')) {
 	  end=("*/");
-	} else if (ret.startsWith(("'"))&&(ret.length()<2||ret.at(ret.length()-1)!='\'')) {
+	} else if (ret.startsWith("'")&&((ret.contains("'")%2)!=0||ret.at(ret.length()-1)!='\'')) {
 	  end=("'");
-	} else if (ret.startsWith(("\""))&&(ret.length()<2||ret.at(ret.length()-1)!='\"')) {
+	} else if (ret.startsWith(("\""))&&((ret.contains("\"")%2)!=0||ret.at(ret.length()-1)!='\"')) {
 	  end=("\"");
 	}
 	if (!end.isNull()) {

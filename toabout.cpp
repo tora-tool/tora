@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -61,8 +61,8 @@
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
-"&copy; 2000-2001,2001 copyright of Underscore AB\n"
-"(<A HREF=http://www.underscore.se>http://www.underscore.se/</a>).<P>\n"
+"&copy; 2003 copyright of Quest Software, Inc\n"
+"(<A HREF=http://www.quest.com>http://www.quest.com/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
 "Webhosting by GlobeCom AB (<A HREF=http://www.globecom.se>www.globecom.se</A>).<P>\n"
 "This program is <B>NOT FREE SOFTWARE</B> although you are allowed to use it free of "
@@ -81,14 +81,10 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
-"&copy; 2000-2001,2001 copyright of Underscore AB\n"
-"(<A HREF=http://www.underscore.se>http://www.underscore.se/</a>).<P>\n"
+"&copy; 2003 copyright of Quest Software, Inc\n"
+"(<A HREF=http://www.quest.com>http://www.quest.com/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
 "Webhosting by GlobeCom AB (<A HREF=http://www.globecom.se>www.globecom.se</A>).<P>\n"
-"<b>If you find this program usefull please have a look at my Amazon wish list at\n"
-"<A HREF=http://www.globecom.se/tora/wish>"
-"http://www.globecom.se/tora/wish</A> if you feel like showing your appreciation for this\n"
-"program.</b><P>"
 "This program is available\n"
 "under the GNU General Public License.\n"
 "Uses the Qt library by TrollTech\n"

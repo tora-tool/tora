@@ -4106,7 +4106,8 @@ including TOra version is transmitted to the site</source>
         <translation>Vill du att TOra automatiskt skall kontrollera
 http://www.globecom.se/tora för uppdateringar vid start
 av programmet. Under denna kontroll skickas ingen information
-om din dator inklusive version eller platform av TOra tll Underscore AB</translation>
+om din dator inklusive version eller platform av TOra till
+Quest Software, Inc</translation>
     </message>
     <message>
         <source>&amp;Yes</source>

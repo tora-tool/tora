@@ -29,7 +29,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,8 +53,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -587,6 +587,12 @@ public:
      * @param params Parameters to pass to query.
      */
     virtual void execute(toConnectionSub *conn,const QCString &amp;sql,toQList &amp;params) = 0;
+    /** Parse a query on an actual connection and report any syntax problems encountered.
+     * Defaults to not implemented.
+     * @param conn Connection to execute on.
+     * @param sql SQL to parse
+     */
+    virtual void parse(toConnectionSub *conn,const QCString &amp;sql);
   };
 
 private:
@@ -702,6 +708,19 @@ public:
    * Rollback connection. This will also close all extra connections except one.
    */
   virtual void rollback(void);
+
+  /** Parse a query on an actual connection and report any syntax problems encountered.
+   * Defaults to not implemented.
+   * @param conn Connection to execute on.
+   * @param sql SQL to parse
+   */
+  void parse(const QString &amp;sql);
+  /** Parse a query on an actual connection and report any syntax problems encountered.
+   * Defaults to not implemented.
+   * @param conn Connection to execute on.
+   * @param sql SQL to parse
+   */
+  void parse(const toSQL &amp;sql);
 
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute

@@ -1,5 +1,13 @@
-1.3.13:
+1.3.13: Released 2004-01-12
 
+2004-01-11: Fixed uncought exceptions from enabling or disbling constraints in browser.
+2004-01-06: Changed copyright from Underscore to Quest Software.
+2003-12-24: Fixed parsing problem with ' at end of line in multiline strings.
+2003-12-23: Clear debugger object selection when current editor is closed. (Thanx Francesco Dandrea)
+2003-12-23: Fixed bug which changed schema for open debugger editors. (Thanx Francesco Dandrea)
+2003-12-23: Pass on option OTL_ANSI_CPP to OTL.
+2003-12-23: Upgraded OTL to 4.0.70.
+2003-12-16: Fixed problem in debugger with scaning source and disappearing contenttree.
 2003-11-21: Fixed bug with package code completion. (Thanx Francesco Dandrea)
 2003-11-21: Added close all editors to debugger. (Thanx Francesco Dandrea)
 2003-11-20: Changed order of libstdc++ paths in configure.

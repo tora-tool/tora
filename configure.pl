@@ -1,7 +1,7 @@
 ############################################################################
 #
 # TOra - An Oracle Toolkit for DBA's and developers
-# Copyright (C) 2000-2001,2001 Underscore AB
+# Copyright (C) 2003 Quest Software, Inc
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
 #      Specifically you are not permitted to link this program with the
 #      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
 #      And you are not permitted to distribute binaries compiled against
-#      these libraries without written consent from Underscore AB. Observe
-#      that this does not disallow linking to the Qt Free Edition.
+#      these libraries without written consent from Quest Software, Inc.
+#      Observe that this does not disallow linking to the Qt Free Edition.
 #
 # All trademarks belong to their respective owners.
 #
@@ -440,6 +440,7 @@ __TEMP__
 	} else {
 	    print TEMP "#define OTL_ORA8I\n";
 	}
+	print TEMP "#define OTL_ANSI_CPP\n";
 
 	print TEMP <<__TEMP__;
 
@@ -1222,7 +1223,7 @@ __EOT__
 ############################################################################
 #
 # TOra - An Oracle Toolkit for DBA's and developers
-# Copyright (C) 2000-2001,2001 Underscore AB
+# Copyright (C) 2003 Quest Software, Inc
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -1246,8 +1247,8 @@ __EOT__
 #      Specifically you are not permitted to link this program with the
 #      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
 #      And you are not permitted to distribute binaries compiled against
-#      these libraries without written consent from Underscore AB. Observe
-#      that this does not disallow linking to the Qt Free Edition.
+#      these libraries without written consent from Quest Software, Inc.
+#      Observe that this does not disallow linking to the Qt Free Edition.
 #
 # All trademarks belong to their respective owners.
 #
@@ -1362,11 +1363,11 @@ __EOT__
 	print MAKEFILE "#   TO_KDE             - Compile as KDE application\n";
 	
 	if ($OracleRelease =~ /^8.0/) {
-	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";
+	    print MAKEFILE "DEFINES+=-DOTL_ORA8 -DOTL_ANSI_CPP\n";
 	} elsif ($OracleRelease ge "9") {
-	    print MAKEFILE "DEFINES+=-DOTL_ORA9I -DOTL_ORA_TIMESTAMP\n";
+	    print MAKEFILE "DEFINES+=-DOTL_ORA9I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
 	} else {
-	    print MAKEFILE "DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP\n";
+	    print MAKEFILE "DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
 	}
 	if (!$NewCheck) {
 	    print MAKEFILE "DEFINED+=-DTO_NO_NEW_CHECK\n";

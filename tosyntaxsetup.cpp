@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -115,8 +115,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   Example->setReadOnly(true);
   Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
 				       "begin\n"
-				       "  Underscore:='Great'; -- This variable doesn't exist\n"
-				       "  if Underscore = 'Great' then\n"
+				       "  Quest:='Great'; -- This variable doesn't exist\n"
+				       "  if Quest = 'Great' then\n"
 				       "    Obvious(true);\n"
 				       "  end if;\n"
 				       "end;"));

@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -2032,59 +2032,62 @@ void toBrowseTemplate::exportData(std::map<QCString,QString> &data,const QCStrin
 
 void toBrowser::enableDisableConstraints(const QString &what)
 {
-  if (SecondTab) {
-    toResultView *lst=dynamic_cast<toResultConstraint *>(SecondTab);
-    toConnection &conn=connection();
-    std::list<QString> migrate;
-    if (lst) {
-      for(QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
-	if (item->isSelected()) {
-	  toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
-	  if (res) {
-	    toPush(migrate,
-		   conn.quote(schema())+":"+
-		   "TABLE:"+
-		   conn.quote(SecondText)+":"+
-		   "CONSTRAINT:"+
-		   conn.quote(res->allText(0))+":"+
-		   "DEFINITION:"+
-		   what);
-	  }
-	}
-      }
-    } else {
-      lst=dynamic_cast<toResultReferences *>(SecondTab);
+  try {
+    if (SecondTab) {
+      toResultView *lst=dynamic_cast<toResultConstraint *>(SecondTab);
+      toConnection &conn=connection();
+      std::list<QString> migrate;
       if (lst) {
 	for(QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
 	  if (item->isSelected()) {
 	    toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
 	    if (res) {
 	      toPush(migrate,
-		     conn.quote(res->allText(0))+":"+
+		     conn.quote(schema())+":"+
 		     "TABLE:"+
-		     conn.quote(res->allText(1))+":"+
+		     conn.quote(SecondText)+":"+
 		     "CONSTRAINT:"+
-		     conn.quote(res->allText(2))+":"+
+		     conn.quote(res->allText(0))+":"+
 		     "DEFINITION:"+
 		     what);
 	    }
 	  }
 	}
       } else {
-	lst=dynamic_cast<toResultView *>(SecondTab);
-	if (lst&&lst->sqlName()=="toBrowser:TableTrigger") {
+	lst=dynamic_cast<toResultReferences *>(SecondTab);
+	if (lst) {
+	  for(QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
+	    if (item->isSelected()) {
+	      toResultViewItem *res=dynamic_cast<toResultViewItem *>(item);
+	      if (res) {
+		toPush(migrate,
+		       conn.quote(res->allText(0))+":"+
+		       "TABLE:"+
+		       conn.quote(res->allText(1))+":"+
+		       "CONSTRAINT:"+
+		       conn.quote(res->allText(2))+":"+
+		       "DEFINITION:"+
+		       what);
+	      }
+	    }
+	  }
+	} else {
+	  lst=dynamic_cast<toResultView *>(SecondTab);
+	  if (lst&&lst->sqlName()=="toBrowser:TableTrigger") {
+	    // Need work
+	  }
 	}
       }
+      if (migrate.begin()!=migrate.end()) {
+	std::list<QString> drop;
+	toExtract extract(conn,this);
+	extract.setPrompt(false);
+	extract.setHeading(false);
+	QString sql=extract.migrate(drop,migrate);
+	conn.execute("BEGIN\n"+sql+"\nEND;");
+      }
     }
-    if (migrate.begin()!=migrate.end()) {
-      std::list<QString> drop;
-      toExtract extract(conn,this);
-      extract.setPrompt(false);
-      extract.setHeading(false);
-      QString sql=extract.migrate(drop,migrate);
-      conn.execute("BEGIN\n"+sql+"\nEND;");
-    }
-  }
+  } TOCATCH
 }
 
 void toBrowser::enableConstraints(void)

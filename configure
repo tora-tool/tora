@@ -2,7 +2,7 @@
 ############################################################################
 #
 # TOra - An Oracle Toolkit for DBA's and developers
-# Copyright (C) 2000-2001,2001 Underscore AB
+# Copyright (C) 2003 Quest Software, Inc
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -26,8 +26,8 @@
 #      Specifically you are not permitted to link this program with the
 #      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
 #      And you are not permitted to distribute binaries compiled against
-#      these libraries without written consent from Underscore AB. Observe
-#      that this does not disallow linking to the Qt Free Edition.
+#      these libraries without written consent from Quest Software, Inc.
+#      Observe that this does not disallow linking to the Qt Free Edition.
 #
 # All trademarks belong to their respective owners.
 #
@@ -125,13 +125,6 @@ echo 'static char *LicenseText="<PRE>"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE.txt >> LICENSE.h
 echo '"</PRE>";' >> LICENSE.h
 
-echo $ac_n "ordering CD from http://www.globecom.se/tora/wish .$ac_c"
-sleep 1
-echo $ac_n ".$ac_c"
-sleep 1
-echo $ac_n ".$ac_c"
-echo " just kidding ;)"
-
 echo
 echo "------------------------------------------------------------------------"
 echo
@@ -139,9 +132,6 @@ echo "You must use a GNU version of make to compile this program."
 echo
 echo "If you have any problems check the top of the Makefile for the settings."
 echo
-echo "       ... that wishlist mentioned above does really exist. So if"
-echo "you feel like showing your appreciation for TOra, this is the"
-echo "place to go. I just love CDs and DVDs"
-echo
 echo "                                                          Henrik Johnson"
+echo "                                                     Quest Software, Inc"
 echo "------------------------------------------------------------------------"

@@ -1,6 +1,6 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2000-2001,2001  Underscore AB (http://www.underscore.se)
+Copyright (C) 2003 Quest Software, Inc (http://www.quest.com/)
 
 For information about license see the LICENSE file. It is distributed under GPL
 which basically means that any derivatory work must be released under an open
@@ -72,7 +72,7 @@ features that are available so far is (As of version 1.2):
 
 For installation instructions se the file INSTALL.
 
-TOra is developed by Henrik Johnson of Underscore AB (http://www.underscore.se)
+TOra is developed by Henrik Johnson of Quest Software, Inc (http://www.quest.com/)
 and has the homepage http://www.globecom.se/tora. If you encounter problems you
 can find both mailinglists and bugtracking tools from this page.
 
@@ -88,7 +88,7 @@ conditions.
 
 1. The code given is public domain without any associated copyright.
 
-2. The copyright of the code given is assigned to Underscore AB.
+2. The copyright of the code given is assigned to Quest Software, Inc.
 
 3. The code is licensed under LGPL and part of a separate library.
 

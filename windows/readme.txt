@@ -1,6 +1,6 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2000-2001,2001 Underscore AB (http://www.underscore.se)
+Copyright (C) 2003 Quest Software, Inc (http://www.quest.com)
 
 This program is NOT FREE SOFTWARE although you are allowed to use it free of
 charge outside work. You are also allowed to evaluate the software at your work for

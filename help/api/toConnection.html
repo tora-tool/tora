@@ -68,85 +68,89 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref51">rollback</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref52">execute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-	       <A HREF="#toQList">toQList</A> &amp;params) 
+<LI>void &nbsp;<b><A HREF="#ref52">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref53">execute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
-	       <A HREF="#toQList">toQList</A> &amp;params) 
+<LI>void &nbsp;<b><A HREF="#ref53">parse</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref54">execute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
+	       <A HREF="#toQList">toQList</A> &amp;params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref55">execute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	       <A HREF="#toQList">toQList</A> &amp;params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref56">execute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref56">allExecute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-		  <A HREF="#toQList">toQList</A> &amp;params) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref57">allExecute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
-		  <A HREF="#toQList">toQList</A> &amp;params) 
+<LI>void &nbsp;<b><A HREF="#ref57">execute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref58">allExecute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
+		  <A HREF="#toQList">toQList</A> &amp;params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref59">allExecute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		  <A HREF="#toQList">toQList</A> &amp;params) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref60">allExecute</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref60">addWidget</A></b> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget) 
+<LI>void &nbsp;<b><A HREF="#ref61">allExecute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref61">delWidget</A></b> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget) 
+<LI>void &nbsp;<b><A HREF="#ref62">addWidget</A></b> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref62">addInit</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref63">delWidget</A></b> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref63">delInit</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref64">addInit</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref64">quote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<LI>void &nbsp;<b><A HREF="#ref65">delInit</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref65">unQuote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref66">quote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>std::list&lt;objectName&gt; &amp;&nbsp;<b><A HREF="#ref66">objects</A></b> (bool block) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref67">unQuote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref67">addIfNotExists</A></b> (objectName &amp;object) 
+<LI>std::list&lt;objectName&gt; &amp;&nbsp;<b><A HREF="#ref68">objects</A></b> (bool block) 
 </LI>
-<LI>std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &amp;&nbsp;<b><A HREF="#ref68">synonyms</A></b> (bool block) 
+<LI>void &nbsp;<b><A HREF="#ref69">addIfNotExists</A></b> (objectName &amp;object) 
 </LI>
-<LI><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<b><A HREF="#ref69">columns</A></b> (const objectName &amp;table,bool nocache=false) 
+<LI>std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &amp;&nbsp;<b><A HREF="#ref70">synonyms</A></b> (bool block) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref70">rereadCache</A></b> (void) 
+<LI><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<b><A HREF="#ref71">columns</A></b> (const objectName &amp;table,bool nocache=false) 
 </LI>
-<LI>const objectName &amp;&nbsp;<b><A HREF="#ref71">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,bool block) 
+<LI>void &nbsp;<b><A HREF="#ref72">rereadCache</A></b> (void) 
 </LI>
-<LI>const objectName &amp;&nbsp;<b><A HREF="#ref72">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;synonym,bool block) 
+<LI>const objectName &amp;&nbsp;<b><A HREF="#ref73">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,bool block) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref73">cacheAvailable</A></b> (bool synonyms,bool block=false,bool need=true) 
+<LI>const objectName &amp;&nbsp;<b><A HREF="#ref74">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;synonym,bool block) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref74">cancelAll</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref75">cacheAvailable</A></b> (bool synonyms,bool block=false,bool need=true) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref75">loadDiskCache</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref76">cancelAll</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref76">writeDiskCache</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref77">loadDiskCache</A></b> (void) 
 </LI>
-<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref77">running</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref78">writeDiskCache</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref78">logMessage</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> text) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref79">running</A></b> (void) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref79">toQuery</A></b></LI>
+<LI>void &nbsp;<b><A HREF="#ref80">logMessage</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> text) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref81">toQuery</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Represent a database connection in TOra. Observe that this can mean several actual
  connections to the database as queries that ae expected to run a long time are sometimes
  executed in their own connection to make sure the interface doesn't lock up for a long time.
@@ -243,41 +247,47 @@
 <br></td><td align="right"><h3><strong>rollback</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
  Rollback connection. This will also close all extra connections except one.
    </p>
-<A NAME="execute"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-	       <A HREF="#toQList">toQList</A> &amp;params)
-<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+<A NAME="parse"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p></p><p> Parse a query on an actual connection and report any syntax problems encountered.
+ Defaults to not implemented.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
 </TD></TR>
-<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to parse
    </TD></TR>
 </TABLE></P>
-<A NAME="execute"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
-	       <A HREF="#toQList">toQList</A> &amp;params)
-<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+<A NAME="parse"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parse</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p></p><p> Parse a query on an actual connection and report any syntax problems encountered.
+ Defaults to not implemented.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to execute on.
 </TD></TR>
-<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to parse
    </TD></TR>
 </TABLE></P>
 <A NAME="execute"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+	       <A HREF="#toQList">toQList</A> &amp;params)
 <br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
 </TD></TR>
-<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
    </TD></TR>
 </TABLE></P>
 <A NAME="execute"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	       <A HREF="#toQList">toQList</A> &amp;params)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="execute"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
@@ -291,41 +301,41 @@
 <TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
    </TD></TR>
 </TABLE></P>
-<A NAME="allExecute"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-		  <A HREF="#toQList">toQList</A> &amp;params)
-<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+<A NAME="execute"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
 </TD></TR>
-<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
-   </TD></TR>
-</TABLE></P>
-<A NAME="allExecute"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
-		  <A HREF="#toQList">toQList</A> &amp;params)
-<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
-</p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
-</TD></TR>
-<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
    </TD></TR>
 </TABLE></P>
 <A NAME="allExecute"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
-		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+		  <A HREF="#toQList">toQList</A> &amp;params)
 <br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
 </TD></TR>
-<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
    </TD></TR>
 </TABLE></P>
 <A NAME="allExecute"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		  <A HREF="#toQList">toQList</A> &amp;params)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="allExecute"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
@@ -339,7 +349,21 @@
 <TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
    </TD></TR>
 </TABLE></P>
-<A NAME="addWidget"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addWidget</strong> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget)
+<A NAME="allExecute"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg2=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg3=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg4=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg5=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg6=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg7=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg8=QString::null,
+		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;arg9=QString::null)
+<br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL to execute
+</TD></TR>
+<TR><TD align="left" valign="top"><i>arg1</i></TD><TD align="left" valign="top">Parameters to pass to query.
+   </TD></TR>
+</TABLE></P>
+<A NAME="addWidget"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addWidget</strong> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget)
 <br></td><td align="right"><h3><strong>addWidget</strong></h3></td></tr></table><p></p><p>
  Add a object that uses this connection. This is needed to ensure that all widgets
  that make use of a connection are destroyed when the connection is closed. Usually
@@ -350,7 +374,7 @@
 <TR><TD align="left" valign="top"><i>widget</i></TD><TD align="left" valign="top">The widget to add to the connection.
    </TD></TR>
 </TABLE></P>
-<A NAME="delWidget"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delWidget</strong> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget)
+<A NAME="delWidget"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delWidget</strong> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A> *widget)
 <br></td><td align="right"><h3><strong>delWidget</strong></h3></td></tr></table><p></p><p>
  Remove a widget from this connection. Should be called by the destructor of the
  widget that has called addWidget.
@@ -361,7 +385,7 @@
    </TD></TR>
 </TABLE></P>
 <p><b>See also</b>: addWidget</p>
-<A NAME="addInit"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addInit</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<A NAME="addInit"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addInit</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>addInit</strong></h3></td></tr></table><p></p><p>
  Add a statement to be run uppon making new connections.
 </p>
@@ -369,11 +393,11 @@
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Statement to run.
    </TD></TR>
 </TABLE></P>
-<A NAME="delInit"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delInit</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<A NAME="delInit"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>delInit</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>delInit</strong></h3></td></tr></table><p></p><p>
  Remove a statement that was added using <A HREF="toConnection.html#addInit">addInit</A>.
    </p>
-<A NAME="quote"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>quote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="quote"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>quote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>quote</strong></h3></td></tr></table><p></p><p> Return a string representation to address an object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -382,7 +406,7 @@
 </TABLE></P>
 <p><b>Returns</b>: String addressing table.
    </p>
-<A NAME="unQuote"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>unQuote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="unQuote"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>unQuote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>unQuote</strong></h3></td></tr></table><p></p><p> Perform the opposite of <A HREF="toConnection.html#quote">quote</A>.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -391,7 +415,7 @@
 </TABLE></P>
 <p><b>Returns</b>: String addressing table.
    </p>
-<A NAME="objects"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;objectName&gt; &amp;&nbsp;<strong>objects</strong> (bool block)
+<A NAME="objects"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;objectName&gt; &amp;&nbsp;<strong>objects</strong> (bool block)
 <br></td><td align="right"><h3><strong>objects</strong></h3></td></tr></table><p></p><p>
  Get the objects available for the current user. Do not modify the returned list.
 </p>
@@ -402,14 +426,14 @@
 <p><b>Returns</b>: A list of object available for the current user. The list is sorted in
          owner and name order.
    </p>
-<A NAME="addIfNotExists"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addIfNotExists</strong> (objectName &amp;object)
+<A NAME="addIfNotExists"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addIfNotExists</strong> (objectName &amp;object)
 <br></td><td align="right"><h3><strong>addIfNotExists</strong></h3></td></tr></table><p></p><p> Add a new object to the objectlist if it doesn't exist already.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">The object to add
    </TD></TR>
 </TABLE></P>
-<A NAME="synonyms"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &amp;&nbsp;<strong>synonyms</strong> (bool block)
+<A NAME="synonyms"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &amp;&nbsp;<strong>synonyms</strong> (bool block)
 <br></td><td align="right"><h3><strong>synonyms</strong></h3></td></tr></table><p></p><p>
  Get the synonyms available for objects. Do not modify the returned list.
 </p>
@@ -419,7 +443,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of synonyms to objects available for the current user.
    </p>
-<A NAME="columns"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<strong>columns</strong> (const objectName &amp;table,bool nocache=false)
+<A NAME="columns"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &amp;&nbsp;<strong>columns</strong> (const objectName &amp;table,bool nocache=false)
 <br></td><td align="right"><h3><strong>columns</strong></h3></td></tr></table><p></p><p>
  Get a list of the available columns for a table. This function caches the responses
  and should be fairly fast after the first call. Do not modify the returned list.
@@ -432,11 +456,11 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of the columns for a table.
    </p>
-<A NAME="rereadCache"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)
+<A NAME="rereadCache"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)
 <br></td><td align="right"><h3><strong>rereadCache</strong></h3></td></tr></table><p></p><p>
  Reread the object and column cache.
    </p>
-<A NAME="realName"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &amp;&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,bool block)
+<A NAME="realName"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &amp;&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,bool block)
 <br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
  Get the real object name of an object.
 </p>
@@ -446,7 +470,7 @@
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
    </TD></TR>
 </TABLE></P>
-<A NAME="realName"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &amp;&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;synonym,bool block)
+<A NAME="realName"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &amp;&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;synonym,bool block)
 <br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
  Get the real object name of a synonym.
 </p>
@@ -458,7 +482,7 @@
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
    </TD></TR>
 </TABLE></P>
-<A NAME="cacheAvailable"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool synonyms,bool block=false,bool need=true)
+<A NAME="cacheAvailable"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool synonyms,bool block=false,bool need=true)
 <br></td><td align="right"><h3><strong>cacheAvailable</strong></h3></td></tr></table><p></p><p> Check if cache is available or not.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -471,20 +495,20 @@
 </TABLE></P>
 <p><b>Returns</b>: True if cache is available.
    </p>
-<A NAME="cancelAll"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
+<A NAME="cancelAll"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
 <br></td><td align="right"><h3><strong>cancelAll</strong></h3></td></tr></table><p></p><p> Try to stop all running queries.
    </p>
-<A NAME="loadDiskCache"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>loadDiskCache</strong> (void)
+<A NAME="loadDiskCache"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>loadDiskCache</strong> (void)
 <br></td><td align="right"><h3><strong>loadDiskCache</strong></h3></td></tr></table><p></p><p> load disk cache
    </p>
-<A NAME="writeDiskCache"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>writeDiskCache</strong> (void)
+<A NAME="writeDiskCache"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>writeDiskCache</strong> (void)
 <br></td><td align="right"><h3><strong>writeDiskCache</strong></h3></td></tr></table><p></p><p> write disk cache
    </p>
-<A NAME="running"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>running</strong> (void)
+<A NAME="running"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>running</strong> (void)
 <br></td><td align="right"><h3><strong>running</strong></h3></td></tr></table><p></p><p> Get a list of currently running SQL.
    </p>
-<A NAME="logMessage"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>logMessage</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> text)
-<br></td><td align="right"><h3><strong>logMessage</strong></h3></td></tr></table><p></p><A NAME="toQuery"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
+<A NAME="logMessage"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>logMessage</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> text)
+<br></td><td align="right"><h3><strong>logMessage</strong></h3></td></tr></table><p></p><A NAME="toQuery"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
 </td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><HR>
 </BODY>
 </HTML>

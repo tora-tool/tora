@@ -29,7 +29,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,8 +53,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -280,16 +280,11 @@ public:
   ~toResultContentEditor();
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;,const toQList &amp;)
-  { wrongUsage(); }
+  virtual void query(const QString &amp;,const toQList &amp;);
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;)
-  { wrongUsage(); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &amp;,const QString &amp;,const QString &amp;)
-  { wrongUsage(); }
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { toQList pars; pars.insert(pars.end(),Param1); pars.insert(pars.end(),Param2); query(QString::null,pars); }
   
   /** Print this editor.
    */
@@ -342,13 +337,6 @@ public slots:
    * @param col Column selected to change as sorting.
    */
   virtual void changeSort(int col); 
-  /** Reimplemented for internal reasons.
-   */
-  virtual void refresh(void)
-  { QString t=Owner; Owner=QString::null; changeParams(t,Table); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
   /** Current cell changed.
    * @param row New row.
    * @param col New column.
@@ -371,6 +359,9 @@ public slots:
   /** Add a new record to the table.
    */
   virtual void addRecord(void);
+  /** Duplicate a new record for editing.
+   */
+  virtual void duplicateRecord(void);
   /** Discard the changes made to the table.
    */
   virtual void cancelEdit(void);
@@ -482,27 +473,27 @@ public slots:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { Editor-&gt;clearParams(); }
+  { toResult::clearParams(); Editor-&gt;clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { Editor-&gt;refresh(); }
+  { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &amp;sql,const toQList &amp;param)
-  { Editor-&gt;query(sql,param); }
+  { if (!setSQLParams(sql,param)) return; Editor-&gt;query(sql,param); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)
-  { Editor-&gt;changeParams(Param1); }
+  { toResult::changeParams(Param1); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { Editor-&gt;changeParams(Param1,Param2); }
+  { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { Editor-&gt;changeParams(Param1,Param2,Param3); }
+  { toResult::changeParams(Param1,Param2,Param3); }
   /** Save unsaved changes in the editor
    */
   virtual void saveUnsaved(void)

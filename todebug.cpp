@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 Underscore AB
+ * Copyright (C) 2003 Quest Software, Inc
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
  *      And you are not permitted to distribute binaries compiled against
- *      these libraries without written consent from Underscore AB. Observe
- *      that this does not disallow linking to the Qt Free Edition.
+ *      these libraries without written consent from Quest Software, Inc.
+ *      Observe that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -912,8 +912,10 @@ void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *par
     item=new toContentsItem(parent,name,line);
   else {
     for(item=Contents->firstChild();item;item=item->nextSibling())
-      if (item->text(0)==name&&item->text(1)==id)
+      if (item->text(0)==name&&item->text(1)==id) {
+	item->setText(2,QString::null);
 	break;
+      }
     if (!item)
       item=new toContentsItem(Contents,name,id,line);
     else {
@@ -1895,11 +1897,6 @@ void toDebug::refresh(void)
 	} else if (any)
 	  break;
       }
-
-      for(int j=0;j<Editors->count();j++) {
-	toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(j));
-	editor->setSchema(selected);
-      }
     }
   } TOCATCH
 }
@@ -2568,6 +2565,11 @@ void toDebug::closeEditor(toDebugText* &editor)
 	break;
       }
     }
+
+    if (Objects->selectedItem()&&
+	Objects->selectedItem()->text(0)==editor->object()&&
+	Schema->currentText()==editor->schema())
+      Objects->clearSelection();
 
     Editors->removePage(editor);
     delete editor;
