@@ -822,19 +822,21 @@ static struct TypeMapType {
   char *Type;
   char *Description;
   bool WantName;
-} TypeMap[] = { { "FUNCTION",  "Function",   true}, // Must be first in list
-		{ "PROCEDURE", "Procedure",  true},
-		{ "PACKAGE",   "Package",    true},
-		{ "TYPE",      "Type",       true},
-		{ "CURSOR",    "Cursor",     true},
-		{ "IF",        "Conditional",false},
-		{ "LOOP",      "Loop",       false},
-		{ "WHILE",     "Loop",       false},
-		{ "FOR",       "Loop",       false},
-		{ NULL,	       NULL,         false}
+  bool Declaration;
+} TypeMap[] = { { "FUNCTION",  "Function",   true ,true }, // Must be first in list
+		{ "PROCEDURE", "Procedure",  true ,true },
+		{ "PACKAGE",   "Package",    true ,true },
+		{ "DECLARE",   "Anonymous",  false,true },
+		{ "TYPE",      "Type",       true ,false},
+		{ "CURSOR",    "Cursor",     true ,false},
+		{ "IF",        "Conditional",false,false},
+		{ "LOOP",      "Loop",       false,false},
+		{ "WHILE",     "Loop",       false,false},
+		{ "FOR",       "Loop",       false,false},
+		{ NULL,	       NULL,         false,false}
 };
 
-static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,int &line,QString &name)
+static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,bool &declaration,int &line,QString &name)
 {
   if (statements.Type==toSQLParse::statement::Keyword||
       statements.Type==toSQLParse::statement::Token) {
@@ -850,6 +852,8 @@ static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,int &li
       else
 	name="Anonymous";
 
+      declaration=TypeMap[j].Declaration;
+
       if (onlyNames&&!TypeMap[j].WantName) {
 	name=QString::null;
 	return true;
@@ -862,36 +866,74 @@ static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,int &li
     }
   }
   for(std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();i!=statements.subTokens().end();i++) {
-    bool ret=FindKeyword(*i,onlyNames,line,name);
+    bool ret=FindKeyword(*i,onlyNames,declaration,line,name);
     if (ret)
       return ret;
   }
   return false;
 }
 
-void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *parent)
+void toDebug::updateArguments(toSQLParse::statement &statements,QListViewItem *parent)
+{
+  for(std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();i!=statements.subTokens().end();i++) {
+    if ((*i).Type==toSQLParse::statement::List) {
+      bool first=true;
+      for(std::list<toSQLParse::statement>::iterator j=(*i).subTokens().begin();j!=(*i).subTokens().end();j++) {
+	if ((*j).String==",")
+	  first=true;
+	else if (first) {
+	  new toContentsItem(parent,"Parameter "+(*j).String,(*j).Line);
+	  first=false;
+	}
+      }
+    }
+  }
+}
+
+void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *parent,bool createnew)
 {
   QListViewItem *item=NULL;
   int line;
   QString name;
-  if (!FindKeyword(statements,statements.Type==toSQLParse::statement::Statement,line,name)||name.isNull())
+  bool declaration;
+  if (!FindKeyword(statements,statements.Type==toSQLParse::statement::Statement,declaration,line,name)||name.isNull())
     return;
 
-  item=new toContentsItem(parent,name,line);
+  if (createnew)
+    item=new toContentsItem(parent,name,line);
+  else
+    item=parent;
 
   std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();
-  if (i!=statements.subTokens().end())
-    i++;
+  if (statements.Type==toSQLParse::statement::Block) {
+    if (i!=statements.subTokens().end()) {
+      updateArguments(*i,item);
+      i++;
+    }
+  } else {
+    updateArguments(statements,item);
+    if (i!=statements.subTokens().end())
+      i++;
+  }
   while(i!=statements.subTokens().end()) {
-    if ((*i).Type==toSQLParse::statement::Block||(*i).Type==toSQLParse::statement::Statement)
+    if ((*i).Type==toSQLParse::statement::Block||(*i).Type==toSQLParse::statement::Statement) {
+      if (declaration) {
+	std::list<toSQLParse::statement>::iterator j=(*i).subTokens().begin();
+	if (j!=(*i).subTokens().end())
+	  if ((*j).String.upper()=="BEGIN")
+	    declaration=false;
+	  else if ((*j).Type==toSQLParse::statement::Token&&(*j).String.upper()!="END")
+	    new toContentsItem(item,"Variable "+(*j).String,(*j).Line);
+      }
       updateContent(*i,item);
+    }
     i++;
   }
 }
 
 void toDebug::updateContent(bool body)
 {
-  toHighlightedText *current;
+  toDebugText *current;
   QString topName;
   if (body) {
     topName=tr("Body");
@@ -918,15 +960,8 @@ void toDebug::updateContent(bool body)
 
   parent->setOpen(true);
 
-  for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++) {
-    std::list<toSQLParse::statement>::iterator j=(*i).subTokens().begin();
-    if (j!=(*i).subTokens().end())
-      j++;
-    while(j!=(*i).subTokens().end()) {
-      updateContent(*j,parent);
-      j++;
-    }
-  }
+  for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++)
+    updateContent(*i,parent,false);
   
   if (!parent->firstChild())
     delete parent;
@@ -1640,9 +1675,9 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
     sizes[0]+=sizes[1]-200;
     sizes[1]=200;
     splitter->setSizes(sizes);
-    splitter->setResizeMode(DebugTabs,QSplitter::KeepSize);
   }
 #endif
+  splitter->setResizeMode(DebugTabs,QSplitter::KeepSize);
 
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 

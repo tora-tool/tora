@@ -136,12 +136,14 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 
   connect(Source,SIGNAL(executed()),this,SLOT(refresh()));
 
+#if 0
   {
     QValueList<int> sizes=splitter->sizes();
     sizes[0]=300;
     splitter->setSizes(sizes);
     splitter->setResizeMode(Objects,QSplitter::KeepSize);
   }
+#endif
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),

@@ -1,5 +1,8 @@
 1.3.11:
 
+2003-07-26: Added parameter name parsing in debugger.
+2003-07-26: Fixed problem parsing non packages in debugger.
+2003-07-26: Added variable names parsing in debugger again.
 2003-07-26: Don't signal error in debugger on userbreak.
 2003-07-26: Fixed problem in debugger in windows.
 2003-07-26: Fixed compile problems in legacy mysql connection provider.

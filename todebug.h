@@ -169,7 +169,8 @@ class toDebug : public toToolWidget {
   bool hasMembers(const QString &str);
   void readLog(void);
   void updateState(int reason);
-  void updateContent(toSQLParse::statement &statements,QListViewItem *parent);
+  void updateArguments(toSQLParse::statement &statements,QListViewItem *parent);
+  void updateContent(toSQLParse::statement &statements,QListViewItem *parent,bool createnew=true);
   void updateContent(bool body);
   void reorderContent(QListViewItem *item,int,int);
   bool viewSource(const QString &schema,const QString &name,const QString &type,
