@@ -108,20 +108,21 @@ static struct {
   bool WantSemi;
   bool CloseBlock;
   bool Comment;
-} Blocks[] = { { 0,"begin",	true ,false,false,false },
-	       { 0,"if",	true ,false,false,false },
-	       { 0,"loop",	true ,false,false,false },
-	       { 0,"while",	true ,false,false,false },
-	       { 0,"declare",	false,false,false,false },
-	       { 0,"package",	true ,false,false,false },
-	       { 0,"create",	false,false,false,false },
-	       { 0,"procedure",	false,false,false,false },
-	       { 0,"function",	false,false,false,false },
-	       { 0,"end",	false,true ,true ,false },
-	       { 0,"rem",	false,false,false,true  },
-	       { 0,"prompt",	false,false,false,true  },
-	       { 0,"set",	false,false,false,true  },
-	       { 0,NULL,	false,false,false,false }
+  bool StartCode;
+} Blocks[] = { { 0,"begin",	true ,false,false,false,true  },
+	       { 0,"if",	true ,false,false,false,false },
+	       { 0,"loop",	true ,false,false,false,false },
+	       { 0,"while",	true ,false,false,false,false },
+	       { 0,"declare",	false,false,false,false,true  },
+	       { 0,"package",	true ,false,false,false,false },
+	       { 0,"create",	false,false,false,false,true  },
+	       { 0,"procedure",	false,false,false,false,false },
+	       { 0,"function",	false,false,false,false,false },
+	       { 0,"end",	false,true ,true ,false,false },
+	       { 0,"rem",	false,false,false,true ,false },
+	       { 0,"prompt",	false,false,false,true ,false },
+	       { 0,"set",	false,false,false,true ,false },
+	       { 0,NULL,	false,false,false,false,false }
 };
 
 toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent,const char* name)
@@ -569,8 +570,8 @@ void toWorksheet::query(const QString &str,bool direct)
     QString chk=str.lower();
     chk.replace(strq," ");
     bool code=false;
-    int pos=chk.find("end",pos);
-    while (pos>0) {
+    int pos=chk.find("end",0);
+    while (pos>0) {  // Ignore position 0, since that isn't a block anyway
       QChar c=chk[pos-1];
       QChar ec=chk[pos+3];
       if (!toIsIdent(c)&&!toIsIdent(ec)) {
@@ -662,7 +663,7 @@ void toWorksheet::execute(bool all,bool step)
 {
   bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
   bool code=true; // Don't strip from done selection
-  bool create=false;
+  bool startCode=false;
   TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;
@@ -685,7 +686,7 @@ void toWorksheet::execute(bool all,bool step)
     lastState=state=beginning;
     NewStatement();
     int BlockCount=0;
-    create=code=TryStrip=false;
+    startCode=code=TryStrip=false;
     QChar lastChar;
     QChar c=' ';
     QChar nc;
@@ -775,7 +776,7 @@ void toWorksheet::execute(bool all,bool step)
 		state=done;
 		break;
 	      } else
-		create=code=false;
+		startCode=code=false;
 	      startLine=line;
 	      startPos=i;
 	      endLine=-1;
@@ -793,7 +794,12 @@ void toWorksheet::execute(bool all,bool step)
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
 		      if (!toIsIdent(nc)) {
-			if (create) {
+			if (Blocks[j].StartCode) {
+			  startCode=true;
+			  pos=0;
+			  br=true;
+			}
+			if (startCode) {
 			  if (Blocks[j].CloseBlock) {
 			    toStatusMessage("Ending unstarted block");
 			    return;
@@ -806,10 +812,6 @@ void toWorksheet::execute(bool all,bool step)
 			  else
 			    state=inCode;
 			  NewStatement();
-			  br=true;
-			} else if (!strcmp(Blocks[j].Start,"create")) {
-			  create=true;
-			  pos=0;
 			  br=true;
 			}
 		      } else
@@ -834,7 +836,7 @@ void toWorksheet::execute(bool all,bool step)
 		  query(Editor->markedText(),true);
 		  qApp->processEvents();
 		  NewStatement();
-		  create=code=false;
+		  startCode=code=false;
 		}
 	      } else if (step&&
 			 ((line==cline&&i>cpos)||(line>cline))) {

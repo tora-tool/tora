@@ -21,6 +21,7 @@
 2001-06-19: Fixed problem with saving data in update of toResultContents.
 2001-06-24: Cleanups and bugfixes in toResultCols.
 2001-06-26: Fixed problem with caption in main window for KDE.
+2001-06-26: Fixed a couple of parsing problems in worksheet (Neverending!)
 
 0.11: Released 2001-06-03
 
