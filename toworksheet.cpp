@@ -96,7 +96,6 @@ TO_NAMESPACE;
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
 
-#define CONF_AUTO_COMMIT "AutoCommit"
 #define CONF_AUTO_SAVE   "AutoSave"
 #define CONF_CHECK_SAVE  "CheckSave"
 #define CONF_AUTO_LOAD   "AutoLoad"
@@ -140,8 +139,6 @@ public:
   toWorksheetSetup(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : toWorksheetSetupUI(parent,name),toSettingTab("worksheet.html#preferences"),Tool(tool)
   {
-    if (!tool->config(CONF_AUTO_COMMIT,"").isEmpty())
-      AutoCommit->setChecked(true);
     if (!tool->config(CONF_AUTO_SAVE,"").isEmpty())
       AutoSave->setChecked(true);
     if (!tool->config(CONF_CHECK_SAVE,"Yes").isEmpty())
@@ -161,10 +158,6 @@ public:
   }
   virtual void saveSetting(void)
   {
-    if (AutoCommit->isChecked())
-      Tool->setConfig(CONF_AUTO_COMMIT,"Yes");
-    else
-      Tool->setConfig(CONF_AUTO_COMMIT,"");
     if (AutoSave->isChecked())
       Tool->setConfig(CONF_AUTO_SAVE,"Yes");
     else
@@ -609,7 +602,7 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   item->setText(2,now);
   Logging->setCurrentItem(item);
   Logging->ensureItemVisible(item);
-  if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
+  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
     connection().commit();
   else
     connection().setNeedCommit();

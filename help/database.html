@@ -23,6 +23,12 @@ is. This is so you can still see the rest of the columns even if one of the firs
 very large values. You can always resize the column by hand afterwards.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Autocommit changes</B></TD>
+<TD VALIGN=top>If this is set any changes made to the database will be automatically commited
+as soon as you make them. Use this with care, the transaction handling is there for a reason
+you know.
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Checkpoint name</B></TD>
 <TD VALIGN=top>This is a checkpoint TOra should use when it is making changes that need to be roll backed.
 One place where this is used is to perform explain plans without filling up the plan table. The

@@ -53,26 +53,114 @@ Tables</B></TD><TD></TD><TD VALIGN=top>
 Columns</B></TD><TD VALIGN=top>
 A description of the columns in the table. For more information about this information also see
 <A HREF=common.html#describe>object description</A>.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Indexes</B></TD><TD VALIGN=top>
+A list with the indexes that have been created for this table.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Constraints</B></TD><TD VALIGN=top>
+Lists the constraints for this table.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+References</B></TD><TD VALIGN=top>
+Displays the forreign key constraints that references this table and the other objects that have
+dependencies on this table.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this table.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Triggers</B></TD><TD VALIGN=top>
+Lists the triggers that exist for this table.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Data</B></TD><TD VALIGN=top>
+Displays the data in the table. This is the only part of the database browser that let you modify any data. For
+more information about how to use the content editor see <A HREF=browser.html#content>this</A>.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Information</B></TD><TD VALIGN=top>
+Contains information about the table available in the SGA including
+analyzed statistics etc.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Comment</B></TD><TD VALIGN=top>
+This tab displays the current tables comment if it exists.</TD></TR>
 <TR><TD VALIGN=top><B>
 Views</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Columns</B></TD><TD VALIGN=top>
+A description of the columns in the view. For more information about this information also see
+<A HREF=common.html#describe>object description</A>.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+SQL</B></TD><TD VALIGN=top>
+The SQL that defines the view.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Data</B></TD><TD VALIGN=top>
+Displays the data in the view. This is the only part of the database browser that let you modify any data. For
+more information about how to use the content editor see <A HREF=browser.html#content>this</A>. You can not
+modify some views depending on how they are defined.
+</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this view.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Dependencies</B></TD><TD VALIGN=top>
+The objects that depend on this view.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Comment</B></TD><TD VALIGN=top>
+This tab displays the current views comment if it exists.</TD></TR>
 <TR><TD VALIGN=top><B>
 Indexes</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Columns</B></TD><TD VALIGN=top>
+The columns that the index operate on.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Info</B></TD><TD VALIGN=top>
+Information in the SGA about an index. For instance analyzed statistics available for this index.</TD></TR>
 <TR><TD VALIGN=top><B>
 Sequences</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Info</B></TD><TD VALIGN=top>
+Information about the sequence.</TD></TR>
 <TR><TD VALIGN=top><B>
 Synonyms</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Info</B></TD><TD VALIGN=top>
+Information about the synonyms</TD></TR>
 <TR><TD VALIGN=top><B>
 PL/SQL</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Declaration</B></TD><TD VALIGN=top>
+The declaration of a package or type.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Body</B></TD><TD VALIGN=top>
+The implementation of a package, body, procedure or function.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Dependencies</B></TD><TD VALIGN=top>
+Dependencies this object has.</TD></TR>
 <TR><TD VALIGN=top><B>
 Triggers</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
-</TABLE>
-<H2>Defining a filter</H2>
+<TR><TD></TD><TD VALIGN=top><B>
+Info</B></TD><TD VALIGN=top>
+Information about the trigger.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Code</B></TD><TD VALIGN=top>
+The code that implement the trigger.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Columns</B></TD><TD VALIGN=top>
+The columns this trigger operates on.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Dependencies</B></TD><TD VALIGN=top>
+Dependencies of this object.</TD></TR>
+</TABLE><P>
+<A NAME=content><H2>Content editor</H2>
+The content let you edit the contents of a table or view. There are a few things to note about this.<P>
+First of all the content editor is designed to behave nicely to the database which means that it
+will only save the data when it thinks you are finnished editing a row. This happens when you the current row
+change row or commit the database. When there is unsaved data you can see it in the statusbar that there
+exists unsaved data.<P>
+<A NAME=filter><H2>Defining a filter</H2>
 Filtering is based on the object name and can be specified in a variety of ways. This
 is the dialog used to specify the filter.<P>
 <IMG SRC=images/browserfilter.png><P>

@@ -253,9 +253,9 @@ static bool nullString(const QString &str)
   return str=="{null}"||str.isNull();
 }
 
-void toResultContent::changePosition(int row,int col)
+void toResultContent::saveUnsaved()
 {
-  if (CurrentRow!=row&&OrigValues.size()>0) {
+  if (OrigValues.size()>0) {
     toStatusMessage("Saved row");
     if (CurrentRow>=Row) {
       QString sql="INSERT INTO \"";
@@ -286,7 +286,10 @@ void toResultContent::changePosition(int row,int col)
 	}
 	Row++;
 	setNumRows(Row+1);
-	Connection.setNeedCommit();
+	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
+	  Connection.commit();
+	else
+	  Connection.setNeedCommit();
       } TOCATCH
     } else {
       QString sql="UPDATE \"";
@@ -349,7 +352,10 @@ void toResultContent::changePosition(int row,int col)
 	    if (!nullString(str))
 	      exec<<str.utf8();
 	  }
-	  Connection.setNeedCommit();
+	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
+	    Connection.commit();
+	  else
+	    Connection.setNeedCommit();
 	} catch (const otl_exception &exc) {
 	  int col=0;
 	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
@@ -363,6 +369,12 @@ void toResultContent::changePosition(int row,int col)
     OrigValues.clear();
     CurrentRow=-1;
   }
+}
+
+void toResultContent::changePosition(int row,int col)
+{
+  if (CurrentRow!=row)
+    saveUnsaved();
 }
 
 void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
@@ -441,6 +453,7 @@ void toResultContent::focusInEvent (QFocusEvent *e)
 void toResultContent::focusOutEvent (QFocusEvent *e)
 {
   toMain::editDisable();
+  saveUnsaved();
   QTable::focusOutEvent(e);
 }
 

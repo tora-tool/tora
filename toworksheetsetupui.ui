@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>584</width>
+            <width>580</width>
             <height>480</height>
         </rect>
     </property>
@@ -51,21 +51,6 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>AutoCommit</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Auto commit</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Commit automatically after each executed statement.</string>
-                    </property>
-                </widget>
                 <widget row="1"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -233,7 +218,6 @@
     <slot access="public">chooseFile()</slot>
 </connections>
 <tabstops>
-    <tabstop>AutoCommit</tabstop>
     <tabstop>AutoSave</tabstop>
     <tabstop>CheckSave</tabstop>
     <tabstop>LogAtEnd</tabstop>

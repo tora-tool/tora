@@ -636,11 +636,17 @@ void toMain::commandCallback(int cmd)
     switch (cmd) {
     case TO_FILE_COMMIT:
       try {
+	toResultContent *cnt=toContent(qApp->focusWidget());
+	if(cnt)
+	  cnt->saveUnsaved();
 	currentConnection().commit();
       } TOCATCH
       break;
     case TO_FILE_ROLLBACK:
       try {
+	toResultContent *cnt=toContent(qApp->focusWidget());
+	if(cnt)
+	  cnt->saveUnsaved();
 	currentConnection().rollback();
       } TOCATCH
       break;

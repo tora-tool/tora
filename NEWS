@@ -41,6 +41,9 @@
 2001-07-07: Try finding g++ as well as gcc.
 2001-07-07: Fix for compiling for Solaris 2.6 in configure.
 2001-07-08: Changed bindings for filter in browser.
+2001-07-08: Tried to be more intelligent when to save data in contenteditor.
+2001-07-08: Moved auto commit from worksheet to database settings.
+2001-07-08: Check the autocommit in content as well.
 
 0.12: Released 2001-07-01
 
