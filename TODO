@@ -17,8 +17,6 @@ Extended functionality:
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
 * Editor improvements
-	Indent block
-	Deintent block
 	Pretty print
 	CVS support (Or whatever this is called in windows)
 	PL/SQL doc (Like JavaDoc)
@@ -51,6 +49,8 @@ Extended functionality:
 * Tooltips in content editor.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
+* Ability to turn of extent view in storage manager.
+* Add execution plan to saved statistics in worksheet.
 
 New tools:
 

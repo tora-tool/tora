@@ -53,6 +53,7 @@ class QSpinBox;
 class QRadioButton;
 class QTabWidget;
 class QPopupMenu;
+class QSplitter;
 
 class toStorageDefinition;
 class toConnection;
@@ -193,6 +194,7 @@ class toStorage : public toToolWidget {
 
   toListView *Objects;
   toStorageExtent *Extents;
+  QSplitter *ExtentParent;
 
   QPopupMenu *ToolMenu;
   QToolButton *OnlineButton;
@@ -206,6 +208,7 @@ class toStorage : public toToolWidget {
   QToolButton *NewFileButton;
   QToolButton *MoveFileButton;
   QToolButton *ModFileButton;
+  QToolButton *ExtentButton;
 public:
   toStorage(QWidget *parent,toConnection &connection);
 
@@ -229,6 +232,7 @@ public slots:
   void modifyDatafile(void);
   void moveFile(void);
 
+  void showExtent(bool);
   void selectionChanged(void);
   void selectObject(void);
   void windowActivated(QWidget *widget);

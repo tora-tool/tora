@@ -16,53 +16,57 @@ Toolkit for Oracle is a program for Oracle developers and administrators. The
 features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
-* Advanced SQL Worksheet
-	* Explain plan
-	* Statement statistics
-	* Error location indication
-	* SQL syntax highlighting
-	* Code completion
-	* Visualization of result
-	* PL/SQL block parsing
-* Schema browser
-	* Table & view editing
-	* References & dependencies
-	* Reverse engeneering of objects
-	* Tab & tree based browsing
-	* Object & data filtering
-* PL/SQL Editor/Debugger
-	* Breakpoints
-	* Watches
-	* Line stepping
-	* SQL Output viewing
-	* Structure tree parsing
-* Server tuning
-	* Server overview
-	* Tuning charts
-	* I/O by tablespace & file
-	* Performance indicators
-	* Server statistics
-	* Parameter editor (P-file editor)
-* Security manager
-* Storage manager with object & extent viewer
+* Asynchronus database communication. UI mostly responsive when accessing database.
+* Requires no installation on the database side to be fully functional.
 
-* Session manager
-* Rollback manager with snapshot too old detection
-* SGA and long operations trace
-* Current session information
+* Advanced SQL worksheet.
+	* Code completion.
+	* Explain execution plan.
+	* Execution statistics.
+	* SQL syntax highlighting.
+	* Quick menu for often used custom SQL.
+	* Parse error location indication.
+	* Chart visualization of result.
+	* PL/SQL block parsing.
+* Schema browser.
+	* Table & view editing.
+	* References & dependencies.
+	* Tab & tree based browsing.
+	* Object & data filtering.
+* PL/SQL editor & debugger.
+	* Breakpoints.
+	* Variable watches.
+	* Line by line stepping.
+	* Debugger SQL output viewing.
+	* Syntax structure tree parsing.
+* Server tuning.
+	* Server overview.
+	* Tuning charts.
+	* I/O by tablespace & file.
+	* Performance indicators.
+	* Raw server statistics.
+	* Parameter editor (P-file editor).
+* Security manager.
+* Storage manager with object & extent viewer.
 
-* Statistics manager
-* DBMS alert tool
-* Invalid object browser
-* SQL Output viewer
-* Database/schema comparison and search
-* Extract schema objects to SQL script
+* Session manager.
+* Rollback manager with snapshot too old detection.
+* SGA & long operations trace.
+* Current session information.
 
-* Easily extendable
-* Possible to add support for new or older Oracle versions without programming.
-* SQL template help
-* Full UNICODE support
-* Printing of any list, text or chart
+* Statistics manager with parallel analysis.
+* DBMS alert tool.
+* Invalid object browser.
+* SQL output viewer.
+* Database & schema comparison and server.
+* Extract schema objects to SQL scripts.
+
+* Easily extendible.
+	* Ability to add support for new or older Oracle versions without programming.
+	* Well documented plugin API (Only Linux version).
+* SQL template help with PL/SQL functions and optimizer hints.
+* Full UNICODE support.
+* Printing of any list, text or chart.
 * Cross platform support. Known to work on Linux, Windows and Solaris.
 
 For installation instructions se the file INSTALL.

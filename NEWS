@@ -78,6 +78,10 @@
 2001-12-01: Added some basic statistics to the session list.
 2001-12-01: Fixed refresh in session list.
 2001-12-01: Don't start charts until first query.
+2001-12-03: Always try to store last session under default name.
+2001-12-03: Added menu entry to restore last session.
+2001-12-03: Added option to hide extent view in storage manager.
+2001-12-03: Rewrote storage preferences using designer.
 
 1.1.5: Released 2001-11-26
 

@@ -70,11 +70,13 @@
 #include "tosql.h"
 #include "tohelp.h"
 #include "toconnection.h"
+#include "tostorageprefsui.h"
 
 #include "tostorage.moc"
 #include "tostoragetablespaceui.moc"
 #include "tostoragedialogui.moc"
 #include "tostoragedatafileui.moc"
+#include "tostorageprefsui.moc"
 
 #include "icons/refresh.xpm"
 #include "icons/tostorage.xpm"
@@ -90,12 +92,13 @@
 #include "icons/modfile.xpm"
 #include "icons/readtablespace.xpm"
 #include "icons/writetablespace.xpm"
+#include "icons/storageextents.xpm"
 
 #define CONF_DISP_COALESCED "DispCoalesced"
+#define CONF_DISP_EXTENTS "DispExtents"
 
-class toStoragePrefs : public QGroupBox, public toSettingTab
+class toStoragePrefs : public toStoragePrefsUI, public toSettingTab
 { 
-  QCheckBox *DispCoalesced;
   toTool *Tool;
 
 public:
@@ -104,21 +107,16 @@ public:
 };
 
 toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
-  : QGroupBox(1,Horizontal,parent,name),toSettingTab("storage.html"),Tool(tool)
+  : toStoragePrefsUI(parent,name),toSettingTab("storage.html"),Tool(tool)
 {
-  setTitle(tr("Storage Manager" ));
-  
-  DispCoalesced = new QCheckBox(this,"DispCoalesced");
-  DispCoalesced->setText(tr("&Display coalesced column"));
-  QToolTip::add(DispCoalesced,tr("Can degrade performance noticably on large databases."));
-  
-  if (!tool->config(CONF_DISP_COALESCED,"Yes").isEmpty())
-    DispCoalesced->setChecked(true);
+  DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED,"Yes").isEmpty());
+  DispExtents->setChecked(!tool->config(CONF_DISP_EXTENTS,"").isEmpty());
 }
 
 void toStoragePrefs::saveSetting(void)
 {
   Tool->setConfig(CONF_DISP_COALESCED,DispCoalesced->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_DISP_EXTENTS,DispExtents->isChecked()?"Yes":"");
 }
 
 class toStorageTool : public toTool {
@@ -611,6 +609,16 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
+  ExtentButton=new QToolButton(toolbar);
+  ExtentButton->setToggleButton(true);
+  ExtentButton->setIconSet(QIconSet(QPixmap((const char **)storageextents_xpm)));
+  bool extents=!StorageTool.config(CONF_DISP_EXTENTS,"").isEmpty();
+  if (extents)
+    ExtentButton->setOn(true);
+  connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
+  QToolTip::add(ExtentButton,"Show extent view.");
+  toolbar->addSeparator();
+
   OnlineButton=new QToolButton(QPixmap((const char **)online_xpm),
 			       "Take tablespace online",
 			       "Take tablespace online",
@@ -682,17 +690,21 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Storage=new toResultStorage(splitter);
-  splitter=new QSplitter(Horizontal,splitter);
-  Objects=new toListView(splitter);
+  ExtentParent=new QSplitter(Horizontal,splitter);
+  Objects=new toListView(ExtentParent);
   Objects->addColumn("Owner");
   Objects->addColumn("Object");
   Objects->addColumn("Partition");
   Objects->addColumn("Extents");
   Objects->setColumnAlignment(3,AlignRight);
-  Extents=new toStorageExtent(splitter);
 
+  Extents=new toStorageExtent(ExtentParent);
+  if (extents) {
+    connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
+  } else
+    ExtentParent->hide();
   connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
-  connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
+
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -1312,4 +1324,16 @@ std::list<toStorageExtent::extentName> toStorageExtent::objects(void)
   ret.sort();
 
   return ret;
+}
+
+void toStorage::showExtent(bool ena)
+{
+  if (ena) {
+    connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+    ExtentParent->show();
+    selectionChanged();
+  } else {
+    disconnect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
+    ExtentParent->hide();
+  }
 }

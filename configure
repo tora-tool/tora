@@ -35,8 +35,6 @@
 
 echo Trying to configure TOra
 
-echo Trying to configure TOra
-
 if (perl -v | grep -i "v[^0-9]*5") > /dev/null 2>/dev/null
 then
     PERL=perl
@@ -104,13 +102,19 @@ echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
 echo '"</PRE>\n";' >> LICENSE.h
 
+echo -n "Ordering CD from http://www.globecom.se/tora/wish ..."
+sleep 1
+echo " just kidding ;)"
+
+echo
+echo "-------------------------------------------------------------------"
 echo
 echo "You must use a GNU version of make to compile this program."
 echo
 echo "If you have any problems check the Makefile.setup for the settings."
 echo
-echo "Connecting to Amazon and ordering CDs....... just kidding, but if you like"
-echo "this program, please have a look at my wish list:"
+echo "       ... that wishlist mentioned above does really exist. So if"
+echo "you feel like showing your appreciation for TOra, this is the"
+echo "place to go. I just love CDs and DVDs"
 echo
-echo "http://www.amazon.com/exec/obidos/wishlist/XM1IL20F70XP/ref=wl_em_to?add-fav=1"
-echo
+echo "-------------------------------------------------------------------"

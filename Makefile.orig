@@ -138,6 +138,7 @@ SOURCES=\
 	tostoragedefinition.cpp	        \
 	tostoragedefinitionui.cpp       \
 	tostoragedialogui.cpp		\
+	tostorageprefsui.cpp		\
 	tostoragetablespaceui.cpp	\
 	tosyntaxsetup.cpp	        \
 	tosyntaxsetupui.cpp		\
@@ -279,6 +280,7 @@ plugins/tostorage.tso:\
 	objs/tostorage.o \
 	objs/tostoragedatafileui.o \
 	objs/tostoragedialogui.o \
+	objs/tostorageprefsui.o \
 	objs/tostoragetablespaceui.o
 plugins/tostoragedefinition.tso:\
 	objs/tostoragedefinition.o \

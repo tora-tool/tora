@@ -122,6 +122,7 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_FILE_OPEN_SESSION	111
 #define TO_FILE_SAVE_SESSION	112
 #define TO_FILE_CLOSE_SESSION	113
+#define TO_FILE_LAST_SESSION	114
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -181,6 +182,7 @@ toMain::toMain()
 		       TO_FILE_OPEN_SESSION);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
 		       TO_FILE_SAVE_SESSION);
+  FileMenu->insertItem("Restore last session",TO_FILE_LAST_SESSION);
   FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
@@ -718,6 +720,13 @@ void toMain::commandCallback(int cmd)
     case TO_FILE_SAVE_SESSION:
       saveSession();
       break;
+    case TO_FILE_LAST_SESSION:
+      try {
+	std::map<QString,QString> session;
+	if (toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session))
+	  importData(session,"TOra");
+      } TOCATCH
+      break;
     case TO_FILE_CLOSE_SESSION:
       closeSession();
       break;
@@ -997,19 +1006,19 @@ void toMain::registerSQLEditor(int tool)
 
 bool toMain::close(bool del)
 {
-  if (!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty()) {
-    std::map<QString,QString> session;
-    exportData(session,"TOra");
-    try {
-      toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
-					   DEFAULT_SESSION),
-		      session);
-    } TOCATCH
-  }
+  std::map<QString,QString> session;
+  exportData(session,"TOra");
+  try {
+    toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
+					 DEFAULT_SESSION),
+		    session);
+  } TOCATCH
+
   // Workaround in bug in Qt 3.0.0
   while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
     if (workspace()->windowList().at(0)&&
        !workspace()->windowList().at(0)->close(true))
+      return false;
   while (Connections.end()!=Connections.begin()) {
     if (!delConnection())
       return false;
@@ -1235,8 +1244,18 @@ void toMain::loadSession(void)
 
 void toMain::closeSession(void)
 {
-  while (workspace()->windowList().count()>0)
-    if (!workspace()->windowList().at(0)->close(true))
+  std::map<QString,QString> session;
+  exportData(session,"TOra");
+  try {
+    toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
+					 DEFAULT_SESSION),
+		    session);
+  } TOCATCH
+
+  // Workaround in bug in Qt 3.0.0
+  while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
+    if (workspace()->windowList().at(0)&&
+	!workspace()->windowList().at(0)->close(true))
       return;
   while (Connections.end()!=Connections.begin()) {
     if (!delConnection())
