@@ -950,7 +950,7 @@ QBrush toChartBrush(int index)
   QBrush::BrushStyle rets;
 
   switch(style) {
-  case 4:
+  default:
     rets=QBrush::SolidPattern;
     break;
   case 3:

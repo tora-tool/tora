@@ -116,16 +116,18 @@ void toLock::unlock()
 }
 
 #define THREAD_ASSERT(x) if((x)!=0) { \
-  toStatusMessage(qApp->translate("toThread","Thread function \"%1\" failed.").arg(QString::fromLatin1( #x ))); }
+  throw (qApp->translate("toThread","Thread function \"%1\" failed.").arg(QString::fromLatin1( #x ))); }
 
 void toThread::initAttr()
 {
   //create the thread detached, so everything is cleaned up
   //after it's finished.
-  THREAD_ASSERT(pthread_attr_init(&ThreadAttr));
-  THREAD_ASSERT(pthread_attr_setdetachstate(&ThreadAttr,
-					    PTHREAD_CREATE_DETACHED));
-}	
+  try {
+    THREAD_ASSERT(pthread_attr_init(&ThreadAttr));
+    THREAD_ASSERT(pthread_attr_setdetachstate(&ThreadAttr,
+					      PTHREAD_CREATE_DETACHED));
+  } TOCATCH
+}
 
 toThread::toThread(toTask *t)
   :Task(t)
@@ -143,11 +145,13 @@ toThread::~toThread()
 
 void toThread::start()
 {
-  THREAD_ASSERT(pthread_create(&(Thread),
-			       &(ThreadAttr),
-			       toThreadStartWrapper,
-			       (void *)this));
-  StartSemaphore.down();
+  if (pthread_create(&(Thread),
+		     &(ThreadAttr),
+		     toThreadStartWrapper,
+		     (void *)this)==0)
+    StartSemaphore.down();
+  else
+    throw qApp->translate("toThread","Thread function \"%1\" failed.").arg("toThread::start()");
 }
 
 void toThread::startAsync()

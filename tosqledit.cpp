@@ -421,7 +421,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
     Description->setEdited(false);
 
     std::list<toSQL::version>::iterator j=ver.end();
-    int ind;
+    int ind=0;
     for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
       QString str=(*i).Provider;
       str+=QString::fromLatin1(":");

@@ -50,6 +50,8 @@
 #include <windows.h>
 #endif
 
+#include <algorithm>
+
 #include <stdio.h>
 
 #include <qcombobox.h>
@@ -279,7 +281,9 @@ void toAlert::pollTask::run(void)
 	for(std::list<QString>::iterator i=Parent.DelNames.begin();
 	    i!=Parent.DelNames.end();
 	    i++) {
-	  std::list<QString>::iterator j=toFind(Parent.Names,*i);
+	  std::list<QString>::iterator j=std::find(Parent.Names.begin(),
+						   Parent.Names.end(),
+						   *i);
 	  if (j!=Parent.Names.end()) {
 	    Parent.Names.erase(j);
 	    Parent.Connection.execute(SQLRemove,*i);
@@ -385,12 +389,12 @@ void toAlert::remove(void)
   toLocker lock(Lock);
   QString name=Registered->currentText();
   if (!name.isEmpty()) {
-    std::list<QString>::iterator i=toFind(AddNames,name);
+    std::list<QString>::iterator i=std::find(AddNames.begin(),AddNames.end(),name);
     if (i!=AddNames.end())
       AddNames.erase(i);
-    i=toFind(Names,name);
+    i=std::find(Names.begin(),Names.end(),name);
     if (i!=Names.end()) {
-      if (toFind(DelNames,name)==DelNames.end())
+      if (std::find(DelNames.begin(),DelNames.end(),name)==DelNames.end())
 	DelNames.insert(DelNames.end(),name);
     }
   }
@@ -406,11 +410,11 @@ void toAlert::add(void)
   Registered->lineEdit()->selectAll();
   QString name=Registered->currentText();
   if (!name.isEmpty()) {
-    std::list<QString>::iterator i=toFind(DelNames,name);
+    std::list<QString>::iterator i=std::find(DelNames.begin(),DelNames.end(),name);
     if(i==DelNames.end()) {
-      i=toFind(Names,name);
+      i=std::find(Names.begin(),Names.end(),name);
       if (i==Names.end()) {
-	i=toFind(AddNames,name);
+	i=std::find(AddNames.begin(),AddNames.end(),name);
 	if (i==AddNames.end()) {
 	  AddNames.insert(AddNames.end(),name);
 	}

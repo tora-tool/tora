@@ -235,7 +235,7 @@ QString toExtract::create(std::list<QString> &objects)
   QString ret=generateHeading(qApp->translate("toExtract","CREATE"),objects);
 
   QProgressDialog *progress=NULL;
-  QLabel *label;
+  QLabel *label=NULL;
   if (Parent) {
     progress=new QProgressDialog(qApp->translate("toExtract","Creating create script"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
@@ -300,7 +300,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
   std::list<QString> ret;
 
   QProgressDialog *progress=NULL;
-  QLabel *label;
+  QLabel *label=NULL;
   if (Parent) {
     progress=new QProgressDialog(qApp->translate("toExtract","Creating description"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
@@ -370,7 +370,7 @@ QString toExtract::drop(std::list<QString> &objects)
   QString ret=generateHeading(qApp->translate("toExtract","DROP"),objects);
 
   QProgressDialog *progress=NULL;
-  QLabel *label;
+  QLabel *label=NULL;
   if (Parent) {
     progress=new QProgressDialog(qApp->translate("toExtract","Creating drop script"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
@@ -454,7 +454,7 @@ QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst
   QString ret=generateHeading(qApp->translate("toExtract","MIGRATE"),t);
 
   QProgressDialog *progress=NULL;
-  QLabel *label;
+  QLabel *label=NULL;
 
   std::map<QString,std::list<QString> > objDrp;
   std::map<QString,std::list<QString> > objCrt;

@@ -596,7 +596,7 @@ void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
   case Max:
     {
       bool first=true;
-      double val;
+      double val=0;
       for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++) {
 	if (first) {
 	  first=false;
@@ -610,7 +610,7 @@ void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
   case Min:
     {
       bool first=true;
-      double val;
+      double val=0;
       for(std::list<double>::iterator i=vals.begin();i!=vals.end();i++) {
 	if (first) {
 	  first=false;
@@ -800,7 +800,7 @@ void toChartManager::openChart(void)
 	chart=new toLineChart(toMainWidget()->workspace(),NULL,
 			      WDestructiveClose);
 	break;
-      case 2:
+      default:
 	return;
       }
       chart->show();

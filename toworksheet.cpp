@@ -898,7 +898,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   } catch(...) {
     now=QString::fromLatin1("Unknown");
   }
-  toResultViewItem *item;
+  toResultViewItem *item=NULL;
 
   LastID++;
 

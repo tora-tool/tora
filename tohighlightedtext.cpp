@@ -453,7 +453,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     }
 
     if (row==curline) {
-      bool check;
+      bool check=false;
       if (LastRow!=curline||LastCol!=curcol) {
 	Cursor=0;
 	if (Completion&&!KeepCompletion) {

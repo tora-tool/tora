@@ -250,7 +250,7 @@ bool toHtml::search(const QCString &all,const QString &str)
     inWord
   } lastState=beginning,state=beginning;
   unsigned int pos=0;
-  char endString;
+  char endString=0;
   for (size_t i=0;i<all.length();i++) {
     char c=tolower(all.at(i));
     if (c=='\''||c=='\"') {

@@ -61,7 +61,7 @@
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
-  int Length;
+  int Length=0;
   try {
     TO_DEBUGOUT("Open query\n");
     if (Parent.Query)
