@@ -86,8 +86,10 @@ void printStatement(toSQLParse::statement &stat,int level)
     printStatement(*i,level+1);
 }
 
-int main(int,char **) {
+int main(int argc,char **argv) {
   QString res="\n"
+    "comment on column prova1.prova1 is 'This comment is\n"
+    "on more than one line';\n"
     "PACKAGE oasSIMActivation AS\n"
     "	FUNCTION ParseCommand(Command VARCHAR2,inICC VARCHAR2,Param VARCHAR2) RETURN VARCHAR2;\n"
     "\n"
@@ -316,95 +318,30 @@ int main(int,char **) {
 
 #endif
     ;
-#if 0
 
   QApplication test(argc,argv);
   toMarkedText text(NULL);
   text.setText(res);
 
-  int pos;
-  int line;
+  {
+    toSQLParse::editorTokenizer tokens(&text);
 
-  printf("\nForward string without comments\n");
-  pos=0;
-  for (QString ret=toSQLParse::getToken(res,pos,true,false);
-       !ret.isNull();
-       ret=toSQLParse::getToken(res,pos,true,false)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
+    std::list<toSQLParse::statement> stat=toSQLParse::parse(tokens);
 
-  printf("\nForward editor without comments\n");
-  line=0;
-  pos=0;
-  for (QString ret=toSQLParse::getToken(&text,line,pos,true,false);
-       !ret.isNull();
-       ret=toSQLParse::getToken(&text,line,pos,true,false)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nForward string with comments\n");
-  pos=0;
-  for (QString ret=toSQLParse::getToken(res,pos,true,true);
-       !ret.isNull();
-       ret=toSQLParse::getToken(res,pos,true,true)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nForward editor with comments\n");
-  line=0;
-  pos=0;
-  for (QString ret=toSQLParse::getToken(&text,line,pos,true,true);
-       !ret.isNull();
-       ret=toSQLParse::getToken(&text,line,pos,true,true)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nBackward string without comments (Shouldn't work with --)\n");
-  pos=res.length();
-  for (QString ret=toSQLParse::getToken(res,pos,false,false);
-       !ret.isNull();
-       ret=toSQLParse::getToken(res,pos,false,false)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nBackward editor without comments\n");
-  line=text.numLines()-1;
-  pos=text.textLine(line).length();
-  for (QString ret=toSQLParse::getToken(&text,line,pos,false,false);
-       !ret.isNull();
-       ret=toSQLParse::getToken(&text,line,pos,false,false)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nBackward string with comments (Shouldn't work with --)\n");
-  pos=res.length();
-  for (QString ret=toSQLParse::getToken(res,pos,false,true);
-       !ret.isNull();
-       ret=toSQLParse::getToken(res,pos,false,true)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-  printf("\nBackward editor with comments\n");
-  line=text.numLines()-1;
-  pos=text.textLine(line).length();
-  for (QString ret=toSQLParse::getToken(&text,line,pos,false,true);
-       !ret.isNull();
-       ret=toSQLParse::getToken(&text,line,pos,false,true)) {
-    printf("Token:%s\n",(const char *)ret);
-  }
-
-#endif
-
-  std::list<toSQLParse::statement> stat=toSQLParse::parse(res);
-
-  for(std::list<toSQLParse::statement>::iterator i=stat.begin();i!=stat.end();i++) {
-    printStatement(*i,1);
+    for(std::list<toSQLParse::statement>::iterator i=stat.begin();i!=stat.end();i++) {
+      printStatement(*i,1);
+    }
   }
 
   QString firstparse=toSQLParse::indent(res);
   QString secondparse=toSQLParse::indent(firstparse);
-  printf("%s\n\n",(const char *)firstparse);
-  printf("matches?\n\n%s\n",(const char *)secondparse);
+
+  printf("First\n\n%s\n",(const char *)firstparse);
+
+  if (firstparse!=secondparse) {
+    printf("Reparse doesn't match\n");
+    printf("Second\n\n%s\n",(const char *)secondparse);
+  }
 
   return 0;
 }
@@ -669,8 +606,8 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	       Line++)
 	    ret+=("\n")+Editor->textLine(Line);
 	  if (Line<int(Editor->numLines())) {
-	    ret+=("\n")+Editor->textLine(Line).mid(0,Offset+2);
-	    Offset+=2;
+	    ret+=("\n")+Editor->textLine(Line).mid(0,Offset+end.length());
+	    Offset+=end.length();
 	  }
 	}
       } else {
