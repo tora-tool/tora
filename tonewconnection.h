@@ -49,6 +49,7 @@ public slots:
   virtual void historySelection(void);
   virtual void changeProvider(void); 
   virtual void changeHost(void); 
+  virtual void historyConnect(void);
 };
 
 #endif // TONEWCONNECTION_H

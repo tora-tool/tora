@@ -45,6 +45,7 @@
 #include <qcheckbox.h>
 #include <qtooltip.h>
 #include <qlistview.h>
+#include <qinputdialog.h>
 
 #include "totool.h"
 #include "toconf.h"
@@ -164,12 +165,12 @@ void toNewConnection::changeProvider(void)
 
 void toNewConnection::changeHost(void)
 {
-  QString host;
-  if (SqlNet->isHidden())
-    host=Host->currentText();
-  else
-    host=(SqlNet->isChecked()?QString("SQL*Net"):QString::null);
   try {
+    QString host;
+    if (SqlNet->isHidden())
+      host=Host->currentText();
+    else
+      host=(SqlNet->isChecked()?QString("SQL*Net"):QString::null);
     std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
 								 host,
 								 Username->text(),
@@ -307,4 +308,19 @@ void toNewConnection::historySelection(void)
     if(item->text(4)!=DEFAULT_PASSWORD)
       Password->setText(item->text(4));
   }
+}
+
+void toNewConnection::historyConnect(void)
+{
+  bool ok=true;
+  if(Password->text()==DEFAULT_PASSWORD) {
+    ok=false;
+    QString name=QInputDialog::getText("Enter password",
+				       "Enter password to use for connection.",
+				       QLineEdit::Password,QString::null,&ok,this);
+    if (ok)
+      Password->setText(name);
+  }
+  if (ok)
+    accept();
 }

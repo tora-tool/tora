@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>662</width>
+            <width>658</width>
             <height>412</height>
         </rect>
     </property>
@@ -460,12 +460,6 @@
         <slot>reject()</slot>
     </connection>
     <connection>
-        <sender>Previous</sender>
-        <signal>clicked(QListViewItem*)</signal>
-        <receiver>toNewConnectionUI</receiver>
-        <slot>historySelection()</slot>
-    </connection>
-    <connection>
         <sender>SqlNet</sender>
         <signal>toggled(bool)</signal>
         <receiver>toNewConnectionUI</receiver>
@@ -483,9 +477,22 @@
         <receiver>toNewConnectionUI</receiver>
         <slot>changeHost()</slot>
     </connection>
+    <connection>
+        <sender>Previous</sender>
+        <signal>doubleClicked(QListViewItem*)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>historyConnect()</slot>
+    </connection>
+    <connection>
+        <sender>Previous</sender>
+        <signal>clicked(QListViewItem*)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>historySelection()</slot>
+    </connection>
+    <slot access="public">changeHost()</slot>
     <slot access="public">changeProvider()</slot>
     <slot access="public">historySelection()</slot>
-    <slot access="public">changeHost()</slot>
+    <slot access="public">historyConnect()</slot>
 </connections>
 <tabstops>
     <tabstop>Previous</tabstop>
