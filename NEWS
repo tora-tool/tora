@@ -18,6 +18,10 @@
 2001-11-19: Added ability to save, load & compare worksheet statistics.
 2001-11-20: Fixed focus in worksheet to be on editor on startup.
 2001-11-20: Started writing functions to save state of application to file.
+2001-11-21: Added open, save, close session menu items.
+2001-11-21: Added session support to worksheet.
+2001-11-21: Added options to automatically save and restore sessions on startup.
+2001-11-21: Added toExpandFile to the API.
 
 1.1.5:
 

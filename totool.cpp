@@ -112,30 +112,35 @@ toTimer *toToolWidget::timer(void)
 
 void toToolWidget::exportData(std::map<QString,QString> &data,const QString &prefix)
 {
-  if (isMaximized())
+  QWidget *par=parentWidget();
+  if (!par)
+    par=this;
+  if (par->isMaximized())
     data[prefix+":State"]="Maximized";
-  else if (isMinimized())
+  else if (par->isMinimized())
     data[prefix+":State"]="Minimized";
-
-  data[prefix+":X"]=QString::number(x());
-  data[prefix+":Y"]=QString::number(y());
-  data[prefix+":Width"]=QString::number(width());
-  data[prefix+":Height"]=QString::number(height());
+  else {
+    data[prefix+":X"]=QString::number(par->x());
+    data[prefix+":Y"]=QString::number(par->y());
+    data[prefix+":Width"]=QString::number(par->width());
+    data[prefix+":Height"]=QString::number(par->height());
+  }
 }
 
 void toToolWidget::importData(std::map<QString,QString> &data,const QString &prefix)
 {
+  QWidget *par=parentWidget();
+  if (!par)
+    par=this;
   if (data[prefix+":State"]=="Maximized")
-    showMaximized();
+    par->showMaximized();
   else if (data[prefix+":State"]=="Minimized")
-    showMinimized();
+    par->showMinimized();
   else
-    showNormal();
-
-  setGeometry(data[prefix+":X"].toInt(),
-	      data[prefix+":Y"].toInt(),
-	      data[prefix+":Width"].toInt(),
-	      data[prefix+":Height"].toInt());
+    par->setGeometry(data[prefix+":X"].toInt(),
+		     data[prefix+":Y"].toInt(),
+		     data[prefix+":Width"].toInt(),
+		     data[prefix+":Height"].toInt());
 }
 
 std::map<QString,toTool *> *toTool::Tools;
@@ -222,7 +227,7 @@ void toTool::createWindow(void)
 bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
 {
   QCString data;
-  QString newfile(file);
+  QString newfile(toExpandFile(file));
 
   newfile.append(".new");
   {

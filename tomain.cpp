@@ -55,6 +55,7 @@
 #include <qfileinfo.h>
 #include <qvbox.h>
 #include <qregexp.h>
+#include <qinputdialog.h>
 
 #include "toconf.h"
 #include "tomain.h"
@@ -118,6 +119,9 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_FILE_CLEARCACHE	108
 #define TO_FILE_PRINT		109
 #define TO_FILE_QUIT		110
+#define TO_FILE_OPEN_SESSION	111
+#define TO_FILE_SAVE_SESSION	112
+#define TO_FILE_CLOSE_SESSION	113
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -172,6 +176,12 @@ toMain::toMain()
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
   FileMenu->insertItem("Save A&s..",TO_FILE_SAVE_AS);
+  FileMenu->insertSeparator();
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"Open Session...",
+		       TO_FILE_OPEN_SESSION);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
+		       TO_FILE_SAVE_SESSION);
+  FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
   FileMenu->insertSeparator();
@@ -453,26 +463,35 @@ toMain::toMain()
   toStatusMessage(welcome,true);
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(checkCaching()));
-
-  try {
-    toNewConnection newConnection(this,"First connection",true);
-    
-    toConnection *conn;
-    
-    do {
-      conn=NULL;
-      if (newConnection.exec()) {
-	conn=newConnection.makeConnection();
-      } else {
-	break;
-      }
-    } while(!conn);
-    
-    if (conn)
-      addConnection(conn);
-  } TOCATCH
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
+
+  if (!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty()) {
+    try {
+      std::map<QString,QString> session;
+      if (toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session))
+	importData(session,"TOra");
+    } TOCATCH
+  }
+  if (Connections.size()==0) {
+    try {
+      toNewConnection newConnection(this,"First connection",true);
+    
+      toConnection *conn;
+    
+      do {
+	conn=NULL;
+	if (newConnection.exec()) {
+	  conn=newConnection.makeConnection();
+	} else {
+	  break;
+	}
+      } while(!conn);
+    
+      if (conn)
+	addConnection(conn);
+    } TOCATCH
+  }
 }
 
 void toMain::windowActivated(QWidget *widget)
@@ -687,9 +706,20 @@ void toMain::commandCallback(int cmd)
 	delete workspace()->windowList().at(0);
       break;
     case TO_WINDOWS_CLOSE:
-      QWidget *widget=workspace()->activeWindow();
-      if (widget)
-	delete widget;
+      {
+	QWidget *widget=workspace()->activeWindow();
+	if (widget)
+	  delete widget;
+	break;
+      }
+    case TO_FILE_OPEN_SESSION:
+      loadSession();
+      break;
+    case TO_FILE_SAVE_SESSION:
+      saveSession();
+      break;
+    case TO_FILE_CLOSE_SESSION:
+      closeSession();
       break;
     }
   }
@@ -720,14 +750,15 @@ toConnection &toMain::currentConnection()
   throw QString("Can't find active connection");
 }
 
-void toMain::addConnection(toConnection *conn)
+toConnection *toMain::addConnection(toConnection *conn,bool def)
 {
   int j=0;
   for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++,j++) {
     if ((*i)->description()==conn->description()) {
       ConnectionSelection->setCurrentItem(j);
-      createDefault();
-      return;
+      if (def)
+	createDefault();
+      return *i;
     }
   }
 
@@ -747,7 +778,11 @@ void toMain::addConnection(toConnection *conn)
 
   changeConnection();
   emit addedConnection(conn->description());
-  createDefault();
+
+  if (def)
+    createDefault();
+
+  return conn;
 }
 
 void toMain::setNeedCommit(toConnection &conn,bool needCommit)
@@ -962,6 +997,15 @@ void toMain::registerSQLEditor(int tool)
 
 bool toMain::close(bool del)
 {
+  if (!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty()) {
+    std::map<QString,QString> session;
+    exportData(session,"TOra");
+    try {
+      toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
+					   DEFAULT_SESSION),
+		      session);
+    } TOCATCH
+  }
   while (workspace()->windowList().count()>0)
     if (!workspace()->windowList().at(0)->close(true))
       return false;
@@ -1055,11 +1099,12 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
     data[prefix+":State"]="Maximized";
   else if (isMinimized())
     data[prefix+":State"]="Minimized";
-
-  data[prefix+":X"]=QString::number(x());
-  data[prefix+":Y"]=QString::number(y());
-  data[prefix+":Width"]=QString::number(width());
-  data[prefix+":Height"]=QString::number(height());
+  else {
+    data[prefix+":X"]=QString::number(x());
+    data[prefix+":Y"]=QString::number(y());
+    data[prefix+":Width"]=QString::number(width());
+    data[prefix+":Height"]=QString::number(height());
+  }
 
   int id=1;
   std::map<toConnection *,int> connMap;
@@ -1069,6 +1114,7 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
       data[key+":Password"]=(*i)->password();
     data[key+":User"]=(*i)->user();
     data[key+":Host"]=(*i)->host();
+    data[key+":Mode"]=(*i)->mode();
     data[key+":Database"]=(*i)->database();
     data[key+":Provider"]=(*i)->provider();
     connMap[*i]=id;
@@ -1082,7 +1128,7 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
       QString key=prefix+":Tools:"+QString::number(id);
       tool->exportData(data,key);
       data[key+":Type"]=tool->tool().key();
-      data[key+":Connection"]=connMap[&tool->connection()];
+      data[key+":Connection"]=QString::number(connMap[&tool->connection()]);
     }
     id++;
   }
@@ -1094,10 +1140,104 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
     showMaximized();
   else if (data[prefix+":State"]=="Minimized")
     showMinimized();
-  else
-    showNormal();
-  setGeometry(data[prefix+":X"].toInt(),
-	      data[prefix+":Y"].toInt(),
-	      data[prefix+":Width"].toInt(),
-	      data[prefix+":Height"].toInt());
+  else {
+    setGeometry(data[prefix+":X"].toInt(),
+		data[prefix+":Y"].toInt(),
+		data[prefix+":Width"].toInt(),
+		data[prefix+":Height"].toInt());
+  }
+
+  std::map<int,toConnection *> connMap;
+
+  int id=1;
+  std::map<QString,QString>::iterator i;
+  while((i=data.find(prefix+":Connection:"+QString::number(id)+":Database"))!=data.end()) {
+    QString key=prefix+":Connection:"+QString::number(id);
+    QString database=(*i).second;
+    QString user=data[key+":User"];
+    QString host=data[key+":Host"];
+    QString mode=data[key+":Mode"];
+    QString password=data[key+":Password"];
+    QString provider=data[key+":Provider"];
+    bool ok=true;
+    if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)==password) {
+      password=QInputDialog::getText("Input password",
+				     "Enter password for "+database,
+				     QLineEdit::Password,
+				     DEFAULT_SAVE_PWD,
+				     &ok,
+				     this);
+    }
+    if (ok) {
+      try {
+	toConnection *conn=new toConnection(provider,user,password,host,database,mode);
+	if (conn) {
+	  conn=addConnection(conn,false);
+	  connMap[id]=conn;
+	}
+      } TOCATCH
+    }
+    id++;
+  }
+
+  id=1;
+  while((i=data.find(prefix+":Tools:"+QString::number(id)+":Type"))!=data.end()) {
+    QString key=(*i).second;
+    int connid=data[prefix+":Tools:"+QString::number(id)+":Connection"].toInt();
+    std::map<int,toConnection *>::iterator j=connMap.find(connid);
+    if (j!=connMap.end()) {
+      toTool *tool=toTool::tool(key);
+      if (tool) {
+	QWidget *widget=tool->toolWindow(workspace(),*((*j).second));
+	const QPixmap *icon=tool->toolbarImage();
+	if (icon)
+	  widget->setIcon(*icon);
+	widget->show();
+	if (widget) {
+	  toToolWidget *tw=dynamic_cast<toToolWidget *>(widget);
+	  if (tw) {
+	    toToolCaption(tw,name());
+	    tw->importData(data,prefix+":Tools:"+QString::number(id));
+	  }
+	}
+      }
+    }
+    id++;
+  }
+  windowsMenu();
+}
+
+void toMain::saveSession(void)
+{
+  QString fn=toSaveFilename(QString::null,"*.tse",this);
+  if (!fn.isEmpty()) {
+    std::map<QString,QString> session;
+    exportData(session,"TOra");
+    try {
+      toTool::saveMap(fn,session);
+    } TOCATCH
+  }
+}
+
+void toMain::loadSession(void)
+{
+  QString filename=toOpenFilename(QString::null,"*.tse",this);
+  if (!filename.isEmpty()) {
+    try {
+      std::map<QString,QString> session;
+      if (toTool::loadMap(filename,session))
+	importData(session,"TOra");
+    } TOCATCH
+  }
+}
+
+void toMain::closeSession(void)
+{
+  while (workspace()->windowList().count()>0)
+    if (!workspace()->windowList().at(0)->close(true))
+      return;
+  while (Connections.end()!=Connections.begin()) {
+    if (!delConnection())
+      return;
+  }
 }

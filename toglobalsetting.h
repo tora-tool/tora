@@ -50,6 +50,7 @@ public:
   virtual void pluginBrowse(void);
   virtual void sqlBrowse(void);
   virtual void helpBrowse(void);
+  virtual void sessionBrowse(void);
 };
 
 class toDatabaseSetting : public toDatabaseSettingUI, public toSettingTab {

@@ -261,3 +261,21 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
   } else
     toMultiLineEdit::keyPressEvent(e);
 }
+
+void toMarkedText::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  data[prefix+":Filename"]=Filename;
+  data[prefix+":Text"]=text();
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  data[prefix+":Column"]=QString::number(curcol);
+  data[prefix+":Line"]=QString::number(curline);
+}
+
+void toMarkedText::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  setText(data[prefix+":Text"]);
+  Filename=data[prefix+":Filename"];
+  setCursorPosition(data[prefix+":Line"].toInt(),data[prefix+":Column"].toInt());
+}
+

@@ -132,6 +132,8 @@ public:
   virtual bool canHandle(toConnection &conn)
   { return true; }
 
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 signals:
   void executed(void);
 public slots:

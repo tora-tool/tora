@@ -154,8 +154,9 @@ private:
   QComboBox *ConnectionSelection;
   /**
    * Add a new connection. The connection itself must already be created.
+   * Returns the connection or it's duplicate already opened connection.
    */
-  void addConnection(toConnection *conn);
+  toConnection *addConnection(toConnection *conn,bool def=true);
   /**
    * A map from menu ID:s to tools.
    */
@@ -447,6 +448,15 @@ public slots:
   /** Check if object caching is done.
    */
   void checkCaching(void);
+  /** Save the current TOra session
+   */
+  void saveSession(void);
+  /** Load a session (Merge with current)
+   */
+  void loadSession(void);
+  /** Close all windows and connections.
+   */
+  void closeSession(void);
 private slots:
   /** Add a connection
    */
@@ -773,6 +783,9 @@ QString toSQLStripSpecifier(const QString &sql);
  * @return Return a string containing the same statement without binds.
  */
 QString toSQLStripBind(const QString &sql);
+/** Expand filename with $HOME to be replaced with home directory or my documents.
+ */
+QString toExpandFile(const QString &file);
 
 /** Find an item in a listview.
  * @param list The list to search for the item.

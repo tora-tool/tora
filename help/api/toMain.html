@@ -73,6 +73,12 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref69">checkCaching</A></b> (void) 
 </LI>
+<LI>void &nbsp;<b><A HREF="#ref70">saveSession</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref71">loadSession</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref72">closeSession</A></b> (void) 
+</LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref60">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref61">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
@@ -288,6 +294,15 @@
    </p>
 <A NAME="checkCaching"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>checkCaching</strong> (void)
 <br></td><td align="right"><h3><strong>checkCaching</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Check if object caching is done.
+   </p>
+<A NAME="saveSession"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>saveSession</strong> (void)
+<br></td><td align="right"><h3><strong>saveSession</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Save the current TOra session
+   </p>
+<A NAME="loadSession"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>loadSession</strong> (void)
+<br></td><td align="right"><h3><strong>loadSession</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Load a session (Merge with current)
+   </p>
+<A NAME="closeSession"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>closeSession</strong> (void)
+<br></td><td align="right"><h3><strong>closeSession</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Close all windows and connections.
    </p>
 <HR>
 	<table>

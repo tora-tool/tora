@@ -615,7 +615,7 @@ QString toHelpPath(void)
   return str;
 }
 
-static QString toExpandFile(const QString &file)
+QString toExpandFile(const QString &file)
 {
   QString ret(file);
   QString home;

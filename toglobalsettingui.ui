@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>433</width>
-            <height>396</height>
+            <width>548</width>
+            <height>499</height>
         </rect>
     </property>
     <property stdset="1">
@@ -25,7 +25,7 @@
     <grid>
         <property stdset="1">
             <name>margin</name>
-            <number>0</number>
+            <number>11</number>
         </property>
         <property stdset="1">
             <name>spacing</name>
@@ -83,7 +83,25 @@
                         <cstring>CustomSQL</cstring>
                     </property>
                 </widget>
-                <widget row="2"  column="0" >
+                <widget row="3"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginDirectory</cstring>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -100,31 +118,6 @@
                     <property>
                         <name>toolTip</name>
                         <string>Directory where to find plugins when starting tora.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>PluginBrowse</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Browse</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>PluginDirectory</cstring>
-                    </property>
-                </widget>
-                <widget row="1"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>HelpDirectory</cstring>
                     </property>
                 </widget>
                 <widget row="1"  column="0" >
@@ -146,11 +139,55 @@
                         <string>Directory where to find plugins when starting tora.</string>
                     </property>
                 </widget>
+                <widget row="1"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HelpDirectory</cstring>
+                    </property>
+                </widget>
                 <widget row="1"  column="2" >
                     <class>QPushButton</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>HelpBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginLabel_2_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Default session</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>DefaultSession</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>What session to use by TOra when saving session.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultSession</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HelpBrowse_2</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
@@ -178,7 +215,7 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="3" >
+                <widget row="0"  column="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -186,14 +223,14 @@
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Display alerts in statusbar only.</string>
+                        <string>Display alerts in statusbar only</string>
                     </property>
                     <property>
                         <name>toolTip</name>
                         <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="1"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -209,14 +246,14 @@
 Will leave the password unencryptet in the config file.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="3" >
+                <widget row="2"  column="2" >
                     <class>QLineEdit</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>ListScale</cstring>
                     </property>
                 </widget>
-                <widget row="3"  column="3" >
+                <widget row="3"  column="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -227,7 +264,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string> seconds</string>
                     </property>
                 </widget>
-                <widget row="1"  column="3" >
+                <widget row="1"  column="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -242,7 +279,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="2"  column="2" >
+                <widget row="2"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -261,7 +298,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Scale with which to print lists and tables.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
+                <widget row="1"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -280,7 +317,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of connections to save in history.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="2" >
+                <widget row="3"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -299,7 +336,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="2" >
+                <widget row="6"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -318,14 +355,14 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Define the unit sizes should be displayed in tora.</string>
                     </property>
                 </widget>
-                <widget row="7"  column="3" >
+                <widget row="7"  column="2" >
                     <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>Refresh</cstring>
                     </property>
                 </widget>
-                <widget row="6"  column="3" >
+                <widget row="6"  column="2" >
                     <class>QComboBox</class>
                     <item>
                         <property>
@@ -350,7 +387,7 @@ Will leave the password unencryptet in the config file.</string>
                         <cstring>SizeUnit</cstring>
                     </property>
                 </widget>
-                <widget row="7"  column="2" >
+                <widget row="7"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -369,7 +406,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Default refreshtime in tools.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="2" >
+                <widget row="4"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -388,7 +425,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of status messages to save in the message history.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="3" >
+                <widget row="4"  column="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -403,7 +440,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="5"  column="3" >
+                <widget row="5"  column="2" >
                     <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -418,7 +455,7 @@ Will leave the password unencryptet in the config file.</string>
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="5"  column="2" >
+                <widget row="5"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -437,18 +474,37 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="2"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>MaximizeMain</cstring>
+                        <cstring>IncludeDB</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Maximize window on start</string>
+                        <string>Include DB in caption</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Include database connection in window captions</string>
                     </property>
                 </widget>
-                <widget row="7"  column="0" >
+                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ChangeConnection</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Change current connection with active window</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Change currently select connection to the connection of the new active window</string>
+                    </property>
+                </widget>
+                <widget row="8"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -467,37 +523,14 @@ Will leave the password unencryptet in the config file.</string>
                         <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
+                <widget row="8"  column="2" >
+                    <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>AntialiaseFonts</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Antialiase fonts</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+                        <cstring>Style</cstring>
                     </property>
                 </widget>
-                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>IncludeDB</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Include DB in caption</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Include database connection in window captions</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="5"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -512,14 +545,22 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Colors get really weird in KDE if you select this.</string>
                     </property>
                 </widget>
-                <widget row="7"  column="1" >
-                    <class>QComboBox</class>
+                <widget row="6"  column="0" >
+                    <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Style</cstring>
+                        <cstring>AntialiaseFonts</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Antialiase fonts</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0"  rowspan="1"  colspan="2" >
+                <widget row="7"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -534,19 +575,26 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="3"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>ChangeConnection</cstring>
+                        <cstring>MaximizeMain</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Change current connection with active window</string>
+                        <string>Maximize window on start</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Change currently select connection to the connection of the new active window</string>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>RestoreSession</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Restore session on startup</string>
                     </property>
                 </widget>
             </grid>
@@ -578,7 +626,14 @@ Will leave the password unencryptet in the config file.</string>
         <receiver>toGlobalSettingUI</receiver>
         <slot>helpBrowse()</slot>
     </connection>
+    <connection>
+        <sender>HelpBrowse_2</sender>
+        <signal>clicked()</signal>
+        <receiver>toGlobalSettingUI</receiver>
+        <slot>sessionBrowse()</slot>
+    </connection>
     <slot access="public">helpBrowse()</slot>
+    <slot access="public">sessionBrowse()</slot>
     <slot access="public">pluginBrowse()</slot>
     <slot access="public">sqlBrowse()</slot>
 </connections>
@@ -587,15 +642,19 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>SQLBrowse</tabstop>
     <tabstop>HelpDirectory</tabstop>
     <tabstop>HelpBrowse</tabstop>
+    <tabstop>DefaultSession</tabstop>
+    <tabstop>HelpBrowse_2</tabstop>
     <tabstop>PluginDirectory</tabstop>
     <tabstop>PluginBrowse</tabstop>
     <tabstop>ChangeConnection</tabstop>
     <tabstop>SavePassword</tabstop>
     <tabstop>IncludeDB</tabstop>
     <tabstop>MaximizeMain</tabstop>
+    <tabstop>RestoreSession</tabstop>
     <tabstop>DesktopAware</tabstop>
     <tabstop>AntialiaseFonts</tabstop>
     <tabstop>DockToolbar</tabstop>
+    <tabstop>Statusbar</tabstop>
     <tabstop>ConnectHistory</tabstop>
     <tabstop>ListScale</tabstop>
     <tabstop>Status</tabstop>

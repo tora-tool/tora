@@ -71,6 +71,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
   toRefreshCreate(OptionGroup,NULL,NULL,Refresh);
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
+  DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
   HistorySize->setValue(toTool::globalConfig(CONF_STATUS_SAVE,
@@ -78,6 +79,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
   MaximizeMain->setChecked(!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty());
   Statusbar->setChecked(!toTool::globalConfig(CONF_MESSAGE_STATUSBAR,"").isEmpty());
+  RestoreSession->setChecked(!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty());
   HelpDirectory->setText(toHelpPath());
   ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
   ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt());
@@ -159,6 +161,13 @@ void toGlobalSetting::sqlBrowse(void)
     CustomSQL->setText(str);
 }
 
+void toGlobalSetting::sessionBrowse(void)
+{
+  QString str=toOpenFilename(DefaultSession->text(),"*.tse",this);
+  if (!str.isEmpty())
+    DefaultSession->setText(str);
+}
+
 void toGlobalSetting::helpBrowse(void)
 {
   QString str=toOpenFilename(HelpDirectory->text(),"toc.htm*",this);
@@ -171,6 +180,7 @@ void toGlobalSetting::saveSetting(void)
   if (!toMonolithic())
     toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
+  toTool::globalSetConfig(CONF_DEFAULT_SESSION,DefaultSession->text());
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
   toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());
   toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
@@ -181,6 +191,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_CONNECT_SIZE,QString::number(ConnectHistory->value()));
   toTool::globalSetConfig(CONF_MAXIMIZE_MAIN,MaximizeMain->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,Statusbar->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_RESTORE_SESSION,RestoreSession->isChecked()?"Yes":"");
 #if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif

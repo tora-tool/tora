@@ -1507,3 +1507,30 @@ void toWorksheet::saveStatistics(void)
   
   toWorksheetStatistic::saveStatistics(stat);
 }
+
+void toWorksheet::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  Editor->exportData(data,prefix+":Edit");
+  if (StatisticButton->isOn())
+    data[prefix+":Stats"]=Refresh->currentText();
+  toToolWidget::exportData(data,prefix);
+}
+
+void toWorksheet::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  Editor->importData(data,prefix+":Edit");
+  QString stat=data[prefix+":Stats"];
+  if (stat) {
+    for (int i=0;i<Refresh->count();i++) {
+      if (Refresh->text(i)==stat) {
+	Refresh->setCurrentItem(i);
+	break;
+      }
+    }
+    StatisticButton->setOn(true);
+  } else
+    StatisticButton->setOn(false);
+
+  toToolWidget::importData(data,prefix);
+}
+
