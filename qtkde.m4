@@ -724,6 +724,29 @@ configure.
 ])
 ])
 
+AC_DEFUN(KDE_LRELEASE_ERROR_MESSAGE,
+[
+    AC_MSG_WARN([No lrelease found!
+Please check whether you installed Qt correctly.
+You need to have a running lrelease binary.
+configure tried to run $ac_cv_path_lrelease and the test didn't
+succeed. If configure shouldn't have tried this one, set
+the environment variable LRELEASE to the right one before running
+configure.
+])
+])
+
+AC_DEFUN(KDE_LUPDATE_ERROR_MESSAGE,
+[
+    AC_MSG_WARN([No lupdate found!
+Please check whether you installed Qt correctly.
+You need to have a running lupdate binary.
+configure tried to run $ac_cv_path_lupdate and the test didn't
+succeed. If configure shouldn't have tried this one, set
+the environment variable LUPDATE to the right one before running
+configure.
+])
+])
 
 AC_DEFUN(KDE_CHECK_UIC_FLAG,
 [
@@ -754,8 +777,8 @@ EOT
     fi
 ])
 
-
 dnl ------------------------------------------------------------------------
+dnl mrj: hacked to find lrelease and lupdate, too
 dnl Find the meta object compiler and the ui compiler in the PATH,
 dnl in $QTDIR/bin, and some more usual places
 dnl ------------------------------------------------------------------------
@@ -770,6 +793,9 @@ AC_DEFUN(AC_PATH_QT_MOC_UIC,
    if test ! "$ac_qt_bindir" = "NO"; then
       qt_bindirs="$ac_qt_bindir $qt_bindirs"
    fi
+
+   KDE_FIND_PATH(lrelease, LRELEASE, [$qt_bindirs], [KDE_LRELEASE_ERROR_MESSAGE])
+   KDE_FIND_PATH(lupdate, LUPDATE, [$qt_bindirs], [KDE_LUPDATE_ERROR_MESSAGE])
 
    KDE_FIND_PATH(moc, MOC, [$qt_bindirs], [KDE_MOC_ERROR_MESSAGE])
    if test -z "$UIC_NOT_NEEDED"; then
@@ -793,6 +819,8 @@ AC_DEFUN(AC_PATH_QT_MOC_UIC,
      UIC="echo uic not available: "
    fi
 
+   AC_SUBST(LRELEASE)
+   AC_SUBST(LUPDATE)
    AC_SUBST(MOC)
    AC_SUBST(UIC)
 

@@ -6,6 +6,11 @@ bin_PROGRAMS=tora
 
 METASOURCES = AUTO
 
+TRANSLATIONS= \
+	tora_se.ts \
+	tora_fr.ts \
+	tora_it.ts
+
 INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
 CPPFLAGS  = $(PCRE_CFLAGS) -DDEFAULT_PLUGIN_DIR=\"$(libdir)\" $(ORACLE_CXXFLAGS)
 LDFLAGS = $(PCRE_LIBS) \
@@ -411,7 +416,10 @@ BUILT_SOURCES = \
 	totoolsettingui.cpp \
 	totuningoverviewui.cpp \
 	totuningsettingui.cpp \
-	toworksheetsetupui.cpp
+	toworksheetsetupui.cpp \
+	tora_toad.h \
+	tora_toad.qm \
+	$(filter %.qm,$(TRANSLATIONS:%.ts=%.qm))
 
 # have_oracle conditional. these libraries are not built if oracle is
 # not present.
@@ -622,9 +630,29 @@ libtoworksheet_la_SOURCES = toworksheet.cpp toworksheet.h \
 %.moc: %.h
 	@MOC@ -o $@ $<
 
+%.qm: %.ts
+	@LRELEASE@ $<
+
 clean:
 	rm -f *.moc
 	for file in `ls *.ui`; do \
 		rm -f `echo $$file | sed 's/\.ui/\.cpp/g'`; \
 		rm -f `echo $$file | sed 's/\.ui/\.h/g'`; \
 	done
+
+tora_toad.h: tora_toad.qm
+	perl chex.pl < $< > $@
+
+tora.pro: Makefile.am
+	echo "# Not indended to be used for anything except lupdate" > tora.pro
+	echo 'SOURCES=	\ ' >> tora.pro
+	echo '	main.cpp \ ' >> tora.pro
+	echo '	toextratranslations.cpp \ ' >> tora.pro
+	echo "	$(tora_SOURCES)" >> tora.pro
+	echo 'TRANSLATIONS=$(TRANSLATIONS)' >> tora.pro
+
+lupdate: tora.pro
+	@LUPDATE@ tora.pro
+
+lrelease: tora.pro $(TRANSLATIONS)
+	@LRELEASE@ tora.pro
