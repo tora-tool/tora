@@ -231,6 +231,10 @@
     </message>
     <message>
         <source>Running %1 Pending %1</source>
+        <translation type="obsolete">Aktiva %1 Väntande %2</translation>
+    </message>
+    <message>
+        <source>Running %1 Pending %2</source>
         <translation>Aktiva %1 Väntande %2</translation>
     </message>
 </context>
@@ -264,511 +268,511 @@
     <name>toBackup</name>
     <message>
         <source>Backup Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup Hanterare</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Logswitches per day and hour</source>
-        <translation type="unfinished"></translation>
+        <translation>Logbyten per dag och timme</translation>
     </message>
     <message>
         <source>Redo Switches</source>
-        <translation type="unfinished"></translation>
+        <translation>Redo Byten</translation>
     </message>
     <message>
         <source>Archived Logs</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkivloggar</translation>
     </message>
     <message>
         <source>Last Backup</source>
-        <translation type="unfinished"></translation>
+        <translation>Sinaste Backup</translation>
     </message>
     <message>
         <source>Backup Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup Bearbetning</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Backup Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Backup Hanterare</translation>
     </message>
     <message>
         <source>This appears to be a cold backup database</source>
-        <translation type="unfinished"></translation>
+        <translation>Ser ut att vara en kall backup</translation>
     </message>
     <message>
         <source>This appears to be a hot backup database</source>
-        <translation type="unfinished"></translation>
+        <translation>Ser ut att vara en hot backup</translation>
     </message>
 </context>
 <context>
     <name>toBackup:CurrentBackup</name>
     <message>
         <source>Sid</source>
-        <translation type="unfinished"></translation>
+        <translation>SID</translation>
     </message>
     <message>
         <source>Serial#</source>
-        <translation type="unfinished"></translation>
+        <translation>Serie#</translation>
     </message>
     <message>
         <source>Context</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontext</translation>
     </message>
     <message>
         <source>So Far</source>
-        <translation type="unfinished"></translation>
+        <translation>Hittintills</translation>
     </message>
     <message>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation>Totalt</translation>
     </message>
     <message>
         <source>% Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>% Klart</translation>
     </message>
 </context>
 <context>
     <name>toBackup:LastBackup</name>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Filnamn</translation>
     </message>
     <message>
         <source>Completion Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidpunkt klar</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>File Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Filstorlek</translation>
     </message>
     <message>
         <source>Bytes Written</source>
-        <translation type="unfinished"></translation>
+        <translation>Bytes Skrivna</translation>
     </message>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivå</translation>
     </message>
     <message>
         <source>Ckpt Change#</source>
-        <translation type="unfinished"></translation>
+        <translation>Ckpt Byte#</translation>
     </message>
     <message>
         <source>Checkpoint Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Checkpoint Tid</translation>
     </message>
     <message>
         <source>Mrkd Crpt</source>
-        <translation type="unfinished"></translation>
+        <translation>Mrkd Crpt</translation>
     </message>
     <message>
         <source>Media Crpt</source>
-        <translation type="unfinished"></translation>
+        <translation>Media Crpt</translation>
     </message>
     <message>
         <source>Logically Corrupt</source>
-        <translation type="unfinished"></translation>
+        <translation>Logiskt Fel</translation>
     </message>
 </context>
 <context>
     <name>toBackup:LogHistory</name>
     <message>
         <source>Thread#</source>
-        <translation type="unfinished"></translation>
+        <translation>Tråd#</translation>
     </message>
     <message>
         <source>Sequence#</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekvens#</translation>
     </message>
     <message>
         <source>Time Of First Entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidpunkt Första Post</translation>
     </message>
     <message>
         <source>Lowest  Scn</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägsta Scn</translation>
     </message>
     <message>
         <source>Highest Scn</source>
-        <translation type="unfinished"></translation>
+        <translation>Högsta Scn</translation>
     </message>
     <message>
         <source>Controlfile Recid</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrolfil Recid</translation>
     </message>
     <message>
         <source>Controlfile Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrolfil Tid</translation>
     </message>
 </context>
 <context>
     <name>toBackup:LogSwitches</name>
     <message>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <source>00</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>01</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>02</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>03</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>04</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>05</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>06</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>07</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>08</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>09</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>10</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>11</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>12</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>13</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>14</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>15</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>16</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>17</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>18</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>19</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>20</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>21</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>22</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>23</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toBarChart</name>
     <message>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toBrowser</name>
     <message>
         <source>No schemas</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga Scheman</translation>
     </message>
     <message>
         <source>DB Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>DB Utforskare</translation>
     </message>
     <message>
         <source>Update from DB</source>
-        <translation type="unfinished"></translation>
+        <translation>Updatera från DB</translation>
     </message>
     <message>
         <source>Define the object filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Definiera objektfilter</translation>
     </message>
     <message>
         <source>Remove any object filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort alla objekt filter</translation>
     </message>
     <message>
         <source>T&amp;ables</source>
-        <translation type="unfinished"></translation>
+        <translation>T&amp;abeller</translation>
     </message>
     <message>
         <source>Table browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel utforskare</translation>
     </message>
     <message>
         <source>Create new table</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa ny tabell</translation>
     </message>
     <message>
         <source>Modify table columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra tabellkolumn</translation>
     </message>
     <message>
         <source>Modify constraints</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra constraints</translation>
     </message>
     <message>
         <source>Modify indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra index</translation>
     </message>
     <message>
         <source>&amp;Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kolumner</translation>
     </message>
     <message>
         <source>&amp;Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Index</translation>
     </message>
     <message>
         <source>C&amp;onstraints</source>
-        <translation type="unfinished"></translation>
+        <translation>C&amp;onstraints</translation>
     </message>
     <message>
         <source>&amp;References</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Referenser</translation>
     </message>
     <message>
         <source>&amp;Grants</source>
-        <translation type="unfinished"></translation>
+        <translation>Rätti&amp;gheter</translation>
     </message>
     <message>
         <source>Triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Triggers</translation>
     </message>
     <message>
         <source>&amp;Data</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Data</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source>Script</source>
-        <translation type="unfinished"></translation>
+        <translation>Script</translation>
     </message>
     <message>
         <source>&amp;Views</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vyer</translation>
     </message>
     <message>
         <source>SQL</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL</translation>
     </message>
     <message>
         <source>De&amp;pendencies</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Beroenden</translation>
     </message>
     <message>
         <source>Inde&amp;xes</source>
-        <translation type="unfinished"></translation>
+        <translation>Inde&amp;x</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Se&amp;quences</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekvense&amp;r</translation>
     </message>
     <message>
         <source>S&amp;ynonyms</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;ynonymer</translation>
     </message>
     <message>
         <source>Cod&amp;e</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kod</translation>
     </message>
     <message>
         <source>&amp;Declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Deklaration</translation>
     </message>
     <message>
         <source>B&amp;ody</source>
-        <translation type="unfinished"></translation>
+        <translation>Implementati&amp;on</translation>
     </message>
     <message>
         <source>Tri&amp;ggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Tri&amp;ggers</translation>
     </message>
     <message>
         <source>C&amp;ode</source>
-        <translation type="unfinished"></translation>
+        <translation>K&amp;od</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Change Schema</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ändra Schema</translation>
     </message>
     <message>
         <source>Change &amp;Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra &amp;Objekt</translation>
     </message>
     <message>
         <source>&amp;Define filter...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Definiera filter...</translation>
     </message>
     <message>
         <source>&amp;Clear filter</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Radera filter</translation>
     </message>
     <message>
         <source>&amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Utforskare</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <source>Constraints</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Tables</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabeller</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <source>References</source>
-        <translation type="unfinished"></translation>
+        <translation>Referenser</translation>
     </message>
     <message>
         <source>Grants</source>
-        <translation type="unfinished"></translation>
+        <translation>Rättigheter</translation>
     </message>
     <message>
         <source>Dependencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Beroenden</translation>
     </message>
     <message>
         <source>Views</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyer</translation>
     </message>
     <message>
         <source>Sequences</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekvenser</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Kod</translation>
     </message>
     <message>
         <source>Synonyms</source>
-        <translation type="unfinished"></translation>
+        <translation>Synonymer</translation>
     </message>
     <message>
         <source>Define the object filter for database browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Definiera objektfilter för databas utforskare</translation>
     </message>
     <message>
         <source>Remove any object filter for database browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera objektfilter för databas utforskare</translation>
     </message>
 </context>
 <context>
     <name>toBrowser:AnyGrants</name>
     <message>
         <source>Privilege</source>
-        <translation type="unfinished"></translation>
+        <translation>Rättighet</translation>
     </message>
     <message>
         <source>Grantee</source>
-        <translation type="unfinished"></translation>
+        <translation>Ägare</translation>
     </message>
     <message>
         <source>Grantor</source>
-        <translation type="unfinished"></translation>
+        <translation>Mottagare</translation>
     </message>
     <message>
         <source>Grantable</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidare</translation>
     </message>
 </context>
 <context>
     <name>toBrowser:IndexCols</name>
     <message>
         <source>Table Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelnamn</translation>
     </message>
     <message>
         <source>Column Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumnnamn</translation>
     </message>
     <message>
         <source>Column Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumnlängd</translation>
     </message>
     <message>
         <source>Descend</source>
-        <translation type="unfinished"></translation>
+        <translation>Avtagande</translation>
     </message>
 </context>
 <context>
@@ -1655,7 +1659,7 @@
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Sum</source>
@@ -1798,7 +1802,7 @@
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Chart Manager</source>
@@ -2029,7 +2033,7 @@ database objects empty.</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Current Session</source>
@@ -3125,7 +3129,7 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Default refreshtime in tools.</source>
@@ -3157,7 +3161,7 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Display all available samples</source>
@@ -3355,7 +3359,7 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Invalid</source>
@@ -3501,7 +3505,7 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Maximum number of samples to display</source>
@@ -4373,7 +4377,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Output enabled</source>
@@ -5621,7 +5625,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Online</source>
@@ -5921,7 +5925,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Unfinished</source>
@@ -5965,7 +5969,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Change &amp;schema</source>
@@ -6241,7 +6245,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Replacing existing size with new</source>
@@ -6276,7 +6280,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Objects</source>
@@ -6601,7 +6605,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Save changes</source>
@@ -6946,7 +6950,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>No background</source>
@@ -7018,7 +7022,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Disconnect session</source>
@@ -7277,7 +7281,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Tablespace online</source>
@@ -8023,7 +8027,7 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Statistics Manager</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statestik Hanterare</translation>
     </message>
     <message>
         <source>Storage Manager</source>
@@ -8089,7 +8093,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Refresh </source>
@@ -8137,7 +8141,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>&amp;Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Statestik</translation>
     </message>
     <message>
         <source>&amp;Parameters</source>
@@ -8165,7 +8169,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Change Refresh</source>
@@ -8738,7 +8742,7 @@ Total %1%2</source>
     </message>
     <message>
         <source>&amp;Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Statestik</translation>
     </message>
     <message>
         <source>&amp;Logging</source>

@@ -1446,7 +1446,7 @@ vpath \%.h \$(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-all: \$(TARGET)
+all: \$(TARGET) lrelease
 
 #\$(OBJECTS): Makefile Makefile.common
 
@@ -1489,7 +1489,7 @@ install-common:
 	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
 	-cp  *.qm \$(INSTALLLIB)/tora >/dev/null 2>&1
 
-install: lrelease \$(TARGET) install-common install-kde
+install: \$(TARGET) install-common install-kde
 	\@echo Install \$(TARGET) to \$(INSTALLBIN)
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
@@ -1625,7 +1625,7 @@ tora.pro: Makefile
 lupdate: tora.pro
 	lupdate tora.pro
 
-lrelease: tora.pro
+lrelease: tora.pro \$(TRANSLATIONS)
 	lrelease tora.pro
 
 tora:\\

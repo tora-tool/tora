@@ -94,10 +94,15 @@ int main(int argc,char **argv)
 #  endif
   new QApplication(argc,argv);
 #endif
+
   try {
 
     if (getenv("LANG"))
       qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
+
+    QTranslator torats(0);
+    torats.load(QString("tora_")+toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()),".");
+    qApp->installTranslator(&torats);
 
 #ifdef ENABLE_STYLE
     QString style=toTool::globalConfig(CONF_STYLE,"");
