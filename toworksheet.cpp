@@ -415,11 +415,9 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
 void toWorksheet::windowActivated(QWidget *widget)
 {
-  QObject *w=this;
-  while(w&&w!=widget&&w!=toMainWidget()) {
-    w=w->parent();
-    if (!w->inherits("QWidget"))
-      w=NULL;
+  QWidget *w=this;
+  while(w&&w!=widget) {
+    w=w->parentWidget();
   }
 
   if (widget==w) {

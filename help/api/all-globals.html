@@ -103,7 +103,7 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref635">toWriteFile</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;filename,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref636">toCompareLists</A></b> (QStringList &amp;lst1,QStringList &amp;lst2,unsigned int len) 
+<LI>bool &nbsp;<b><A HREF="#ref636">toCompareLists</A></b> (QStringList &amp;l1,QStringList &amp;l2,unsigned int len) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref637">toSetEnv</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;var,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;val) 
 </LI>
@@ -117,33 +117,11 @@
 </LI>
 <LI>bool inline &nbsp;<b><A HREF="#ref642">toIsIdent</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
 </LI>
-<LI>struct <A HREF="toPointerInfo.html">toPointerInfo</A> &nbsp;<b><A HREF="#ref644">toGetPointerInfo</A></b> (int ind) 
-</LI>
-<LI>struct <A HREF="toPointerInfo.html">toPointerInfo</A> &nbsp;<b><A HREF="#ref645">toGetPointerInfo</A></b> (void *p) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref646">toInitPointers</A></b> (void) 
-</LI>
-<LI>size_t &nbsp;<b><A HREF="#ref647">toGetAllocNum</A></b> (void) 
-</LI>
-<LI>size_t &nbsp;<b><A HREF="#ref648">toCurrentIndex</A></b> (void) 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref649">toDisplayMemLost</A></b> (void) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref650">toPointerExpectLost</A></b> (int) 
-</LI>
-<LI>void *&nbsp;<b><A HREF="#ref651">operator new</A></b> (size_t l) 
-</LI>
-<LI>void *&nbsp;<b><A HREF="#ref652">operator new[]</A></b> (size_t l) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref653">operator delete[]</A></b> (void *p) 
-</LI>
-<LI>void operator &nbsp;<b><A HREF="#ref654">delete</A></b> (void *p) 
+<LI>template &lt;class T&gt;
+T &nbsp;<b><A HREF="#ref643">max</A></b> (T a, T b) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref655">max</A></b> (T a, T b) 
-</LI>
-<LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref656">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref644">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -464,13 +442,13 @@ T &nbsp;<b><A HREF="#ref656">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to write to file.
  </TD></TR>
 </TABLE></P>
-<A NAME="toCompareLists"></A><A NAME="ref636"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>toCompareLists</strong> (QStringList &amp;lst1,QStringList &amp;lst2,unsigned int len)
+<A NAME="toCompareLists"></A><A NAME="ref636"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>toCompareLists</strong> (QStringList &amp;l1,QStringList &amp;l2,unsigned int len)
 <br></td><td align="right"><h3><strong>toCompareLists</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Compare two string lists.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>lst1</i></TD><TD align="left" valign="top">First list to compare.
+<TR><TD align="left" valign="top"><i>l1</i></TD><TD align="left" valign="top">First list to compare.
 </TD></TR>
-<TR><TD align="left" valign="top"><i>lst2</i></TD><TD align="left" valign="top">Second list to compare.
+<TR><TD align="left" valign="top"><i>l2</i></TD><TD align="left" valign="top">Second list to compare.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>len</i></TD><TD align="left" valign="top">Length of lists to compare.
 </TD></TR>
@@ -533,56 +511,12 @@ T &nbsp;<b><A HREF="#ref656">min</A></b> (T a, T b)
 </TABLE></P>
 <p><b>Returns</b>: True if it is a valid Oracle identifier.
  </p>
-<A NAME="toGetPointerInfo"></A><A NAME="ref644"></A><table width="100%"><tr bgcolor="#eeeeee"><td>struct <A HREF="toPointerInfo.html">toPointerInfo</A> &nbsp;<strong>toGetPointerInfo</strong> (int ind)
-<br></td><td align="right"><h3><strong>toGetPointerInfo</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toGetPointerInfo"></A><A NAME="ref645"></A><table width="100%"><tr bgcolor="#eeeeee"><td>struct <A HREF="toPointerInfo.html">toPointerInfo</A> &nbsp;<strong>toGetPointerInfo</strong> (void *p)
-<br></td><td align="right"><h3><strong>toGetPointerInfo</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toInitPointers"></A><A NAME="ref646"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toInitPointers</strong> (void)
-<br></td><td align="right"><h3><strong>toInitPointers</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toGetAllocNum"></A><A NAME="ref647"></A><table width="100%"><tr bgcolor="#eeeeee"><td>size_t &nbsp;<strong>toGetAllocNum</strong> (void)
-<br></td><td align="right"><h3><strong>toGetAllocNum</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toCurrentIndex"></A><A NAME="ref648"></A><table width="100%"><tr bgcolor="#eeeeee"><td>size_t &nbsp;<strong>toCurrentIndex</strong> (void)
-<br></td><td align="right"><h3><strong>toCurrentIndex</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toDisplayMemLost"></A><A NAME="ref649"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>toDisplayMemLost</strong> (void)
-<br></td><td align="right"><h3><strong>toDisplayMemLost</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="toPointerExpectLost"></A><A NAME="ref650"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toPointerExpectLost</strong> (int)
-<br></td><td align="right"><h3><strong>toPointerExpectLost</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="operator%20new"></A><A NAME="ref651"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void *&nbsp;<strong>operator new</strong> (size_t l)
-<br></td><td align="right"><h3><strong>operator new</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="operator%20new[]"></A><A NAME="ref652"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void *&nbsp;<strong>operator new[]</strong> (size_t l)
-<br></td><td align="right"><h3><strong>operator new[]</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="operator%20delete[]"></A><A NAME="ref653"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>operator delete[]</strong> (void *p)
-<br></td><td align="right"><h3><strong>operator delete[]</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="delete"></A><A NAME="ref654"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void operator &nbsp;<strong>delete</strong> (void *p)
-<br></td><td align="right"><h3><strong>delete</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
- Only for TO_DEBUG_MEMORY
- </p>
-<A NAME="max"></A><A NAME="ref655"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="max"></A><A NAME="ref643"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref656"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref644"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

@@ -27,6 +27,7 @@
 2001-06-27: Removed memory debugging stuff (Useless).
 2001-06-27: Don't do dynamic casting on objects in Qt since Qt might not have
 	RTTI information.
+2001-06-27: Fixed bug in semaphores if using QThread.
 
 0.11: Released 2001-06-03
 

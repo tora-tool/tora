@@ -152,9 +152,11 @@ static QPixmap *toTOraPixmap;
 static toResultContent *toContent(QWidget *widget)
 {
   while(widget) {
-    toResultContent *ret=dynamic_cast<toResultContent *>(widget);
-    if (ret)
-      return ret;
+    if (widget->inherits("toResultContent")) {
+      toResultContent *ret=dynamic_cast<toResultContent *>(widget);
+      if (ret)
+        return ret;
+    }
     widget=widget->parentWidget();
   }
   return NULL;

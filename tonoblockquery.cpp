@@ -46,7 +46,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toresultstats.h"
 
-#undef TO_DEBUG
+#define TO_DEBUG
 #ifdef TO_DEBUG
 #include <stdio.h>
 #define TO_DEBUGOUT(x) printf(x);
@@ -99,18 +99,10 @@ void toNoBlockQuery::queryTask::run(void)
 	    Parent.ReadingValues.insert(Parent.ReadingValues.end(),value);
 	    if (Parent.ReadingValues.size()==1) {
 	      if (signaled) {
-		try { // Writing threadsafe is a bitch!
-		  Parent.Lock.unlock();
-		} catch(...) {
-		  throw;
-		}
+		Parent.Lock.unlock();
 		TO_DEBUGOUT("Pulling down continue\n");
 		Parent.Continue.down();
-		try {
-		  Parent.Lock.lock();
-		} catch(...) {
-		  throw;
-		}
+		Parent.Lock.lock();
 	      }
 	      TO_DEBUGOUT("Running up\n");
 	      Parent.Running.up();
@@ -124,20 +116,12 @@ void toNoBlockQuery::queryTask::run(void)
 	  break;
 	else {
 	  if (Parent.ReadingValues.size()>PREFETCH_SIZE) {
-	    try {
-	      Parent.Lock.unlock();
-	    } catch(...) {
-	      throw;
-	    }
+	    Parent.Lock.unlock();
 	    TO_DEBUGOUT("Waiting for next\n");
 	    Parent.Continue.down();
 	    TO_DEBUGOUT("Done waiting\n");
 	    signaled=false;
-	    try {
-	      Parent.Lock.lock();
-	    } catch(...) {
-	      throw;
-	    }
+	    Parent.Lock.lock();
 	  }
 	}
 	if (Parent.Quit)

@@ -212,7 +212,7 @@ void toSemaphore::down(void)
     Condition.wait();
     Mutex.lock();
   }
-  Value++;
+  Value--;
   Mutex.unlock();
 }
 
