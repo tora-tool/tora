@@ -176,6 +176,7 @@
 2001-12-14: Don't find compiler named kgcc.
 2001-12-14: Fixed cleaning plugin directory on install.
 2001-12-14: Detect KDE version used by KDE in configure.
+2001-12-14: Added Qt version detection to configure and Qt3 plugin type.
 
 1.1.5: Released 2001-11-26
 

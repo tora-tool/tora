@@ -226,6 +226,7 @@ my $UIC;
 my $QtDir;
 my $QtInclude;
 my $QtLibDir;
+my $QtVersion;
 my $QtLib;
 my $QtLibOrig;
 my $QtLibShared;
@@ -827,6 +828,24 @@ __TEMP__
 
     print "checking for Qt include files ... ";
     $QtInclude=findFile("^qglobal\\.h\$",sub {
+	                                     if (open(QT,"<$_[0]")) {
+						 while(<QT>) {
+						     if (/#define\s+QT_VERSION_STR\s+\"([0-9\.]+)\"/) {
+							 $QtVersion=$1;
+							 if ($QtVersion ge "2.2") {
+							     last;
+							 }
+						     }
+						 }
+						 close QT;
+						 if ($QtVersion ge "2.2") {
+						     return 1;
+						 } else {
+						     return 0;
+						 }
+					     } else {
+						 return 0;
+					     }
 	                                     return !system("egrep \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
 			$QtInclude,
@@ -854,6 +873,7 @@ __TEMP__
     }
     print "$QtInclude\n";
 
+    print "checking Qt version ... $QtVersion\n";
     print "checking for static Qt library ... ";
 
     findFile("^libqt(-mt)?[23]\\.a",sub {
@@ -1218,6 +1238,7 @@ __EOT__
 	for my $t (keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
+		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
 		$plugins{$t}{Any}) {
 		push(@allsource,@{$plugins{$t}{Files}});
 	    }
@@ -1340,6 +1361,7 @@ __EOT__
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
+		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE "plugins/$t.tso:\\\n\tobjs/".
 		    join(".o \\\n\tobjs/",
@@ -1361,6 +1383,7 @@ __EOT__
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
+		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE " \\\n\tplugins/$t.tso";
 	    }
