@@ -13,6 +13,7 @@
 2001-06-13: Lots of api documentation writing.
 2001-06-13: Fixed toc.htm of help to contain API references.
 2001-06-14: Added tutorial for writing tools for TOra to API help.
+2001-06-14: Fixed problem with torollback tool.
 
 0.11: Released 2001-06-03
 

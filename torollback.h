@@ -97,7 +97,6 @@ class toRollback : public toToolWidget {
 
 public:
   toRollback(QWidget *parent,toConnection &connection);
-  ~toRollback();
 public slots:
   void changeStatement(QListViewItem *item);
   void changeItem(QListViewItem *item);
