@@ -36,6 +36,7 @@
 #define TOEDITEXTENSIONS_H
 
 #include "toeditwidget.h"
+#include "toeditextensiongotoui.h"
 
 class toMarkedText;
 
@@ -67,6 +68,17 @@ public slots:
 
   void upperCase(void);
   void lowerCase(void);
+
+  void gotoLine(void);
+};
+
+class toEditExtensionGoto : public toEditExtensionGotoUI {
+  Q_OBJECT
+
+  toMarkedText *Editor;
+public:
+  toEditExtensionGoto(toMarkedText *editor);
+  void gotoLine();
 };
 
 #endif

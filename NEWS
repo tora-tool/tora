@@ -1,6 +1,6 @@
 1.3.13:
 
-2003-10-21: Added goto line functionality to debugger. (Thanx Francesco Dandrea)
+2003-10-21: Added goto line functionality to edit extension. (Thanx Francesco Dandrea)
 2003-10-21: Made poping up a selection dialog select the search text. (Thanx Francesco Dandrea)
 2003-10-21: Merged Mac OS-X build patch into man source. (Thanx Rick Hall)
 

@@ -53,6 +53,7 @@
 
 #include "toeditextensions.moc"
 #include "toeditextensionsetupui.moc"
+#include "toeditextensiongotoui.moc"
 
 #include "icons/deindent.xpm"
 #include "icons/indent.xpm"
@@ -67,6 +68,7 @@ static int ReverseSearch;
 static int IncrementalSearch;
 static int UpperCase;
 static int LowerCase;
+static int GotoLine;
 
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_COMMA_BEFORE	"CommaBefore"
@@ -102,6 +104,8 @@ void toEditExtensions::receivedFocus(toEditWidget *widget)
   toMainWidget()->editMenu()->setItemEnabled(ReverseSearch,Current);
   toMainWidget()->editMenu()->setItemEnabled(UpperCase,Current);
   toMainWidget()->editMenu()->setItemEnabled(LowerCase,Current);
+  toMainWidget()->editMenu()->setItemEnabled(GotoLine,Current);
+
   if(IndentButton)
     IndentButton->setEnabled(enable);
   if(DeindentButton)
@@ -438,6 +442,9 @@ public:
 							 qApp->translate("toEditExtensionTool","De-indent Block"),&EditExtensions,
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
+    GotoLine=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
+						    qApp->translate("toEditExtensionTool","Goto Line"),&EditExtensions,
+						    SLOT(gotoLine()));
 
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
 				 qApp->translate("toEditExtensionTool","Indent block in editor"),
@@ -475,3 +482,21 @@ void toEditExtensionSetup::saveSetting(void)
 }
 
 static toEditExtensionTool EditExtensionTool;
+
+toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
+  :toEditExtensionGotoUI(editor,"GotoLine",true),Editor(editor)
+{
+  toHelp::connectDialog(this);
+  Line->setMaxValue(Editor->numLines());
+  Line->setMinValue(1);
+  {
+    int curline,curcol;
+    Editor->getCursorPosition(&curline,&curcol);
+    Line->setValue(curline);
+  }
+}
+
+void toEditExtensionGoto::gotoLine()
+{
+  Editor->setCursorPosition(Line->value()-1,0,false);
+}
