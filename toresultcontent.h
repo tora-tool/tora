@@ -162,10 +162,10 @@ class toResultContentEditor : public QTable,public toEditWidget {
   bool AllFilter;
   /** Filter selection criteria
    */
-  std::map<QCString,QString> Criteria;
+  static std::map<QCString,QString> Criteria;
   /** Filter retrieve order
    */
-  std::map<QCString,QString> Order;
+  static std::map<QCString,QString> Order;
   /** Current filter name in map
    */
   QString FilterName;

@@ -78,6 +78,9 @@
 #include "icons/single.xpm"
 #include "icons/trash.xpm"
 
+std::map<QCString,QString> toResultContentEditor::Criteria;
+std::map<QCString,QString> toResultContentEditor::Order;
+
 toResultContentEditor *toResultContentMemo::contentEditor()
 {
   return dynamic_cast<toResultContentEditor *>(parent());
