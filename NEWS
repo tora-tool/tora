@@ -1,5 +1,6 @@
 1.3.7: Released 2002-08-05
 
+2002-08-01: Fixed problem with shortcuts for file/edit stuff not being available until menu was shown.
 2002-07-31: Fixed problem with qApp not being initialized when translations were used.
 2002-07-31: Added initial support for BSD in configure.
 2002-07-31: Fixed problem with worksheet when session plugin not loaded.

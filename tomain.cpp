@@ -602,22 +602,8 @@ void toMain::windowActivated(QWidget *widget)
   }
 }
 
-void toMain::editFileMenu(void)
+void toMain::showFileMenu(void)
 {
-  menuBar()->setItemEnabled(TO_EDIT_UNDO,Edit&&Edit->undoEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_REDO,Edit&&Edit->redoEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_CUT,Edit&&Edit->cutEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_COPY,Edit&&Edit->copyEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_PASTE,Edit&&Edit->pasteEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,Edit&&Edit->selectAllEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_READ_ALL,Edit&&Edit->readAllEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_SEARCH,Edit&&Edit->searchEnabled());
-  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
-
-  menuBar()->setItemEnabled(TO_FILE_OPEN,Edit&&Edit->openEnabled());
-  menuBar()->setItemEnabled(TO_FILE_SAVE,Edit&&Edit->saveEnabled());
-  menuBar()->setItemEnabled(TO_FILE_SAVE_AS,Edit&&Edit->saveEnabled());
-
   bool hascon=(ConnectionSelection->count()>0);
 
   menuBar()->setItemEnabled(TO_FILE_COMMIT,hascon);
@@ -1109,7 +1095,6 @@ void toMain::setEditWidget(toEditWidget *edit)
     main->RowLabel->hide();
     main->ColumnLabel->hide();
     main->editEnable(edit);
-    main->editFileMenu();
   }
 }
 
@@ -1147,7 +1132,6 @@ void toMain::editDisable(toEditWidget *edit)
       main->editEnable(edit,false,false,false,false,false,false,false,false,false,false,false);
       main->Edit->lostFocus();
       main->Edit=NULL;
-      main->editFileMenu();
     }
   }
 }
@@ -1166,7 +1150,7 @@ toEditWidget *toMain::findEdit(QWidget *widget)
 void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
 			bool undo,bool redo,
 			bool cut,bool copy,bool paste,
-			bool search,bool,bool)
+			bool search,bool selectAll,bool readAll)
 {
   if (edit&&edit==Edit) {
     LoadButton->setEnabled(open);
@@ -1180,6 +1164,20 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     CopyButton->setEnabled(copy);
     PasteButton->setEnabled(paste);
     SearchButton->setEnabled(search);
+
+    menuBar()->setItemEnabled(TO_EDIT_UNDO,undo);
+    menuBar()->setItemEnabled(TO_EDIT_REDO,redo);
+    menuBar()->setItemEnabled(TO_EDIT_CUT,cut);
+    menuBar()->setItemEnabled(TO_EDIT_COPY,copy);
+    menuBar()->setItemEnabled(TO_EDIT_PASTE,paste);
+    menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,selectAll);
+    menuBar()->setItemEnabled(TO_EDIT_READ_ALL,edit->readAllEnabled());
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH,search);
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
+
+    menuBar()->setItemEnabled(TO_FILE_OPEN,open);
+    menuBar()->setItemEnabled(TO_FILE_SAVE,save);
+    menuBar()->setItemEnabled(TO_FILE_SAVE_AS,save);
   }
 }
 

@@ -1179,7 +1179,7 @@ __TEMP__
 				 return -f $_[0];
 			     },
 	         "/usr/include");
-	if (-f $dlfcn && `uname`=~/linux|bsd/i ) {
+	if (-f $dlfcn && `uname`=~/linux/i ) {
 	    print "yes\n";
 	    $Target="tora-plugin";
 	} else {
