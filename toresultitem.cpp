@@ -188,9 +188,6 @@ void toResultItem::addItem(const QString &title,const QString &value)
 
   widget->show();
   WidgetPos++;
-  QLayout *l=layout();
-  if (l)
-    l->invalidate();
 }
 
 void toResultItem::done(void)
@@ -198,6 +195,9 @@ void toResultItem::done(void)
   for (int i=WidgetPos;i<NumWidgets;i++)
     if (Widgets[i])
       Widgets[i]->hide();
+  QLayout *l=layout();
+  if (l)
+    l->invalidate();
 }
 
 void toResultItem::query(const QString &sql,const toQList &param)
