@@ -64,6 +64,7 @@ class QToolButton;
 class toOutput;
 class toDebugText;
 class QComboBox;
+class toConnection;
 
 class toDebug : public QVBox {
   Q_OBJECT

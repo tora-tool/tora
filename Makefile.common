@@ -61,10 +61,10 @@ include $(DEPENDS)
 	@echo Metacompiling $<
 	$(MOC) -o $@ $<
 
-%.ui.h: %.ui
-	echo Generating $@ & $(<:%.ui=%.ui.cpp)
-	$(UIC) -i $(<:%.ui=%.ui.h) -o $(<:%.ui=%.ui.cpp) $<
-	$(UIC) -o $@ $<
+%.cpp %.h: %.ui
+	echo Generating $@ \& $(<:%.ui=%.h)
+	$(UIC) -o $(<:%.ui=%.h) $<
+	$(UIC) -i $(<:%.ui=%.h) -o $@ $<
 
 objs/%.o: %.cpp
 	@echo Compiling $<
@@ -95,7 +95,9 @@ distclean: clean
 	-rm -rf icons/.xvpics 2>&1 >/dev/null
 	-rm -rf objs 2>&1 >/dev/null
 	-rm -f *.moc 2>&1 >/dev/null
-	-for a in *.ui ; do rm $$a.h $$a.cpp ; done
+	-for a in *.ui ; \
+             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
+         done
 	-rm \#*\# 2>&1 >/dev/null
 	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null
 	-mv Makefile Makefile.orig 2>&1 >/dev/null

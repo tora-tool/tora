@@ -29,53 +29,55 @@
 #include <ctype.h>
 #include <stack>
 
-#include <qsizepolicy.h>
-#include <qmessagebox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qtooltip.h>
-#include <qworkspace.h>
+#include <qmessagebox.h>
+#include <qnamespace.h>
+#include <qsizepolicy.h>
+#include <qsplitter.h>
+#include <qstring.h>
+#include <qtabwidget.h>
+#include <qtimer.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qtimer.h>
-#include <qstring.h>
-#include <qsplitter.h>
-#include <qtabwidget.h>
-#include <qnamespace.h>
+#include <qtooltip.h>
+#include <qworkspace.h>
 
-#include "toparamget.h"
-#include "totool.h"
-#include "tomarkedtext.h"
-#include "tomain.h"
-#include "todebug.h"
-#include "tohighlightedtext.h"
-#include "toresultview.h"
 #include "toconf.h"
-#include "tooutput.h"
+#include "todebug.h"
 #include "todebugtext.h"
+#include "todebugwatch.h"
+#include "tohighlightedtext.h"
+#include "tomain.h"
+#include "tomarkedtext.h"
+#include "tooutput.h"
+#include "toparamget.h"
+#include "toresultview.h"
+#include "totool.h"
 
 #include "todebug.moc"
+#include "todebugwatch.moc"
 
-#include "icons/todebug.xpm"
+#include "icons/addwatch.xpm"
 #include "icons/compile.xpm"
-#include "icons/refresh.xpm"
+#include "icons/delwatch.xpm"
+#include "icons/enablebreak.xpm"
 #include "icons/execute.xpm"
-#include "icons/stop.xpm"
-#include "icons/stepover.xpm"
-#include "icons/stepinto.xpm"
-#include "icons/returnfrom.xpm"
-#include "icons/showhead.xpm"
-#include "icons/showbody.xpm"
 #include "icons/nextbug.xpm"
 #include "icons/prevbug.xpm"
-#include "icons/showdebug.xpm"
+#include "icons/refresh.xpm"
+#include "icons/returnfrom.xpm"
 #include "icons/scansource.xpm"
-#include "icons/toworksheet.xpm"
+#include "icons/showbody.xpm"
+#include "icons/showdebug.xpm"
+#include "icons/showhead.xpm"
+#include "icons/stepinto.xpm"
+#include "icons/stepover.xpm"
+#include "icons/stop.xpm"
+#include "icons/todebug.xpm"
 #include "icons/togglebreak.xpm"
-#include "icons/enablebreak.xpm"
-#include "icons/addwatch.xpm"
-#include "icons/delwatch.xpm"
+#include "icons/toworksheet.xpm"
 
 class toDebugTool : public toTool {
   map<toConnection *,QWidget *> Windows;
@@ -112,6 +114,17 @@ public:
 static toDebugTool DebugTool;
 
 #include <stdio.h>
+
+class toDebugWatch : public toDebugWatchUI {
+public:
+  toDebugWatch(toDebug *parent);
+};
+
+toDebugWatch::toDebugWatch(toDebug *parent)
+  : toDebugWatchUI(parent,"AddWatch",true)
+{
+  
+}
 
 class toDebugOutput : public toOutput {
   toDebug *Debugger;

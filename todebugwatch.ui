@@ -1,10 +1,10 @@
 <!DOCTYPE UI><UI>
-<class>toDebugWatch</class>
+<class>toDebugWatchUI</class>
 <widget>
     <class>QDialog</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>toDebugWatch</cstring>
+        <cstring>toDebugWatchUI</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
@@ -226,13 +226,13 @@
     <connection>
         <sender>PushButton1</sender>
         <signal>clicked()</signal>
-        <receiver>toDebugWatch</receiver>
+        <receiver>toDebugWatchUI</receiver>
         <slot>accept()</slot>
     </connection>
     <connection>
         <sender>PushButton1_2</sender>
         <signal>clicked()</signal>
-        <receiver>toDebugWatch</receiver>
+        <receiver>toDebugWatchUI</receiver>
         <slot>reject()</slot>
     </connection>
 </connections>

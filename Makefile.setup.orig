@@ -32,3 +32,4 @@ CC="/usr/bin/cc"
 LIBS_GLOB=-lstdc++ -lcrypt -lqt -lclntsh -lm
 MOC="/usr/bin/moc2"
 LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/rdbms/lib" "-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/opt/oracle/app/oracle/product/8.1.7/precomp/lib" "-L/usr/lib/qt2/lib"
+PERL=perl

@@ -29,11 +29,15 @@ then
 	echo PERL Required for installation
 fi
 
+$PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
+echo PERL=$PERL >> Makefile.setup
+
 for a in *.ui
 do
-    touch $a.h
-    echo "#include \"$a.h\"" >$a.cpp
-    touch $a.moc
+    base=`echo $a | sed s/\.[^\.]*$//`
+    touch $base.h
+    echo "#include \"$base.h\"" >$base.cpp
+    touch $base.moc
 done
 for a in *.h
 do
@@ -58,4 +62,3 @@ $PERL -e 'while(<>) { s/\\/\\\\/; s/\"/\\\"/g; print; }' < LICENSE >> LICENSE.h
 echo "</PRE>" >> LICENSE.h
 echo "\";" >> LICENSE.h
 
-$PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
