@@ -1,4 +1,4 @@
-1.0:
+0.12:
 
 2001-06-06: Fixed problem with explain plan in toWorksheet.
 2001-06-07: Fixed problem with toConnection::longOperationFree.

@@ -91,6 +91,6 @@
 #define TOMONOLITHIC
 #define DEFAULT_PLUGIN_DIR ""
 #endif
-#define TOVERSION               "0.11"
+#define TOVERSION               "0.12"
 
 #endif
