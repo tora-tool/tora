@@ -60,13 +60,21 @@ class toWaitEvents;
 class toSessionList : public toResultLong {
 public:
   class sessionFilter : public toResultFilter {
-    std::list<int> Serials;
+    struct sessionID {
+      int Session;
+      int Serial;
+      sessionID(int session,int serial)
+      { Session=session; Serial=serial; }
+      bool operator == (const sessionID &ses) const
+      { return Session==ses.Session&&Serial==ses.Serial; }
+    };
+    std::list<sessionID> Serials;
     bool Show;
   public:
 
     sessionFilter()
     { Show=true; }
-    sessionFilter(const std::list<int> &serials,bool show)
+    sessionFilter(const std::list<sessionID> &serials,bool show)
     { Serials=serials; Show=show; }
     virtual bool check(const QListViewItem *item);
     virtual toResultFilter *clone(void)

@@ -1,5 +1,6 @@
 1.3.10:
 
+2003-04-23: Made session filter look at both serial and session id.
 2003-04-23: Made columns in left pane of schema browser and template help fill entire listview.
 2003-04-23: Added new filter functionality for sessions view.
 2003-04-23: Remember sortorder when refreshing resultlists when refreshing.

@@ -384,9 +384,9 @@ void toSessionList::updateFilter()
 
 bool toSessionList::sessionFilter::check(const QListViewItem *item)
 {
-  int serial=item->text(1).toInt();
+  sessionID serial(item->text(0).toInt(),item->text(1).toInt());
   bool checked=false;
-  for(std::list<int>::iterator i=Serials.begin();i!=Serials.end();i++)
+  for(std::list<sessionID>::iterator i=Serials.begin();i!=Serials.end();i++)
     if ((*i)==serial) {
       checked=true;
       break;
@@ -410,7 +410,7 @@ void toSessionList::sessionFilter::updateList(toResultLong *lst)
 	first=false;
       }
       if (chk->isOn())
-	Serials.insert(Serials.end(),chk->text(1).toInt());
+	Serials.insert(Serials.end(),sessionID(item->text(0).toInt(),item->text(1).toInt()));
     }
   }
 }
