@@ -1,6 +1,7 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2003 Quest Software, Inc (http://www.quest.com/)
+Copyright (C) 2003-2005 Quest Software, Inc (http://www.quest.com/)
+Copyright (C) 2005 numerous Open Source contributors
 
 For information about license see the LICENSE file. It is distributed under GPL
 which basically means that any derivatory work must be released under an open
@@ -10,7 +11,7 @@ TOra is supported for running with an Oracle 8.1.7 client installation. It also
 probably works with any 8.x and 9.x client installation, but this is unsupported.
 It can access any Oracle version from 7.x and upwards. The only supported server
 versions are 7.3.x and 8.1.x though. Oracle 8.0.x and 9.x is NOT supported
-although they probably work.
+although they probably work. (10g has been verified to work fine on Linux)
 
 Toolkit for Oracle is a program for Oracle developers and administrators. The
 features that are available so far is (As of version 1.2):
@@ -72,9 +73,12 @@ features that are available so far is (As of version 1.2):
 
 For installation instructions se the file INSTALL.
 
-TOra is developed by Henrik Johnson of Quest Software, Inc (http://www.quest.com/)
-and has the homepage http://www.globecom.se/tora. If you encounter problems you
-can find both mailinglists and bugtracking tools from this page.
+TOra is developed by a community of Open Source developers. The original 
+(pre 1.3.15) development was done by Henrik Johnson of Quest Software, Inc.
+
+The homepage for the TOra project is http://tora.sourceforge.net. If you 
+encounter problems you can find both mailinglists and bugtracking tools 
+from this page.
 
 Oracle is copyright of Oracle Corporation.
 
@@ -97,3 +101,8 @@ which have an assigned copyright at the top of the files if nothing
 else is specified the second alternative is assumed (Because the files
 in question does have a copyright at the top of them and nobody
 bothered changing them).
+
+This policy will be changing as soon as the product is ported to a
+GPL'd version of Qt for Windows, at which time contributors will 
+retain copyright to their own contributions to the project, guaranteeing
+that it will remain free.
