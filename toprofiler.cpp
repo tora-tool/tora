@@ -403,7 +403,7 @@ public:
 toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   : toToolWidget(ProfilerTool,"toprofiler.html",parent,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,tr("Invalid Objects"));
+  QToolBar *toolbar=toAllocBar(this,tr("PL/SQL Profiler"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  tr("Refresh list"),
@@ -476,8 +476,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
     int ret=TOMessageBox::warning(this,
 				  tr("Profiler tables doesn't exist"),
 				  tr("Profiler tables doesn't exist. Should TOra\n"
-				     "try to create them in the current schema.\n"
-				     "Should TOra try to create it?"),
+				     "try to create them in the current schema?"),
 				  tr("&Yes"),tr("&No"),QString::null,0,1);
     if (ret==0) {
       try {

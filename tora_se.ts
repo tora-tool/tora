@@ -3302,587 +3302,590 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <name>toHelpSetupUI</name>
     <message>
         <source>Form1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Add manuals from an Oracle index page.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till manualer från Oracle indexsida.</translation>
     </message>
     <message>
         <source>Add manuals from an Oracle index page. This is the index page that links to the actual manuals. Not the master index page that links to different categories of manuals.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till manualer från Oracle index sida. Detta är den sidan som har länkarna till själva manualerna. Inte förstasidan som länkar till de olika kategorierna av manualer.</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished">Titel</translation>
+        <translation>Titel</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished">Filnamn</translation>
+        <translation>Filnamn</translation>
     </message>
     <message>
         <source>&amp;Add Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lägg Till Manual</translation>
     </message>
     <message>
         <source>&amp;Remove Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ta Bort Manual</translation>
     </message>
     <message>
         <source>&amp;Oracle Manuals</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oracle Manualer</translation>
     </message>
 </context>
 <context>
     <name>toHtml</name>
     <message>
         <source>Invalidly went beyond end of file</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortsatte felaktigt bortom slut på fil</translation>
     </message>
     <message>
         <source>Reading HTML after eof</source>
-        <translation type="unfinished"></translation>
+        <translation>Läser HTML fil efter slut på filen</translation>
     </message>
     <message>
         <source>Lone &lt; at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Ensamt &lt; på slutet</translation>
     </message>
     <message>
         <source>Unended tag at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavslutad tag på slutet</translation>
     </message>
     <message>
         <source>Unended tag qualifier at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavslutat tag attribut på slutet</translation>
     </message>
     <message>
         <source>Unended tag qualifier data at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavslutat tag attributdata på slutet</translation>
     </message>
     <message>
         <source>Unended quoted string at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavslutat sträng på slutet</translation>
     </message>
     <message>
         <source>Unended qualifier data at end</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavslutat attribut på slutet</translation>
     </message>
     <message>
         <source>Exceded qualifier max in toHtml</source>
-        <translation type="unfinished"></translation>
+        <translation>Attribut överskred max i toHtml</translation>
     </message>
     <message>
         <source>Tried to access string out of bounds in mid (start=%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Försökte komma åt sträng utanför dess gränser i mid (start=%1)</translation>
     </message>
     <message>
         <source>Tried to access string out of bounds in mid (size=%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Försökte komma åt sträng utanför dess gränser (storlek=%1)</translation>
     </message>
     <message>
         <source>Tried to access string out of bounds in mid (total=%1+%2&gt;%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Försökte komma åt sträng utanför dess gränser (total=%1+%2&gt;%3)</translation>
     </message>
 </context>
 <context>
     <name>toInvalid</name>
     <message>
         <source>Invalid Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogiltiga Objekt</translation>
     </message>
     <message>
         <source>Refresh list</source>
-        <translation type="unfinished">Uppdatera lista</translation>
+        <translation>Uppdatera lista</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished">&amp;Uppdatera</translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ogiltig</translation>
     </message>
 </context>
 <context>
     <name>toInvalid:ListInvalid</name>
     <message>
         <source>Owner</source>
-        <translation type="unfinished">Ägare</translation>
+        <translation>Ägare</translation>
     </message>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
 </context>
 <context>
     <name>toKeyPath</name>
     <message>
         <source>Couldn&apos;t find \ in path</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta \ i sökväg</translation>
     </message>
 </context>
 <context>
     <name>toKeyValue</name>
     <message>
         <source>Couldn&apos;t find \ in path</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta \ i sökväg</translation>
     </message>
 </context>
 <context>
     <name>toLicenseUI</name>
     <message>
         <source>This version of TOra is unregistered.</source>
-        <translation type="unfinished"></translation>
+        <translation>Denna version av TOra är ej registrerad.</translation>
     </message>
     <message>
         <source>3</source>
-        <translation type="unfinished"></translation>
+        <translation>3</translation>
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <source>2</source>
-        <translation type="unfinished"></translation>
+        <translation>2</translation>
     </message>
     <message>
         <source>&amp;Registration key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Registrera nyckel</translation>
     </message>
     <message>
         <source>&amp;Name</source>
-        <translation type="unfinished">&amp;Namn</translation>
+        <translation>&amp;Namn</translation>
     </message>
 </context>
 <context>
     <name>toLineChart</name>
     <message>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Skriv ut...</translation>
     </message>
     <message>
         <source>&amp;Open in new window</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öppna i nytt fönster</translation>
     </message>
     <message>
         <source>&amp;Chart Manager...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Diagramhanterare...</translation>
     </message>
     <message>
         <source>&amp;Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Egenskaper...</translation>
     </message>
     <message>
         <source>Clear Chart</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa diagram</translation>
     </message>
     <message>
         <source>Enabled charts</source>
-        <translation type="unfinished"></translation>
+        <translation>Slå på diagram</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation type="unfinished"></translation>
+        <translation>TOra</translation>
     </message>
 </context>
 <context>
     <name>toLineChartSetupUI</name>
     <message>
         <source>Chart setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Diagram inställningar</translation>
     </message>
     <message>
         <source>Number of samples to keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal mätvärden som skall behållas</translation>
     </message>
     <message>
         <source>Y-axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Y-axel</translation>
     </message>
     <message>
         <source>Max value</source>
-        <translation type="unfinished"></translation>
+        <translation>Maxvärde</translation>
     </message>
     <message>
         <source>Min value</source>
-        <translation type="unfinished"></translation>
+        <translation>Minvärde</translation>
     </message>
     <message>
         <source>Auto detect</source>
-        <translation type="unfinished"></translation>
+        <translation>Autodetektera</translation>
     </message>
     <message>
         <source>Show last value</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa sista värde</translation>
     </message>
     <message>
         <source>Show axis legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa axlars titlar</translation>
     </message>
     <message>
         <source>Show chart legend</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa mätvärdestitlar</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Uppdatera</translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Maximum number of samples to display</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximalt antal mätvärden som visas</translation>
     </message>
     <message>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Obegränsat</translation>
     </message>
     <message>
         <source>Divide chart in grids?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dela in diagram i rutnät?</translation>
     </message>
 </context>
 <context>
     <name>toListView</name>
     <message>
         <source>Page: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sida: %1</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Printing page %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriver ut sida %1</translation>
     </message>
     <message>
         <source>Done printing</source>
-        <translation type="unfinished"></translation>
+        <translation>Utskrift klar</translation>
     </message>
     <message>
         <source>Display in editor...</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa i editor...</translation>
     </message>
     <message>
         <source>&amp;Copy field</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Koperira fält</translation>
     </message>
     <message>
         <source>Copy selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopier urval</translation>
     </message>
     <message>
         <source>Copy selection with header</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera urval med huvud</translation>
     </message>
     <message>
         <source>Copy transposed</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier transposerad</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj alla</translation>
     </message>
     <message>
         <source>Export to file...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportera till fil...</translation>
     </message>
     <message>
         <source>Edit SQL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera SQL...</translation>
     </message>
 </context>
 <context>
     <name>toLock</name>
     <message>
         <source>The mutex function &quot;%1&quot; failed</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toMain</name>
     <message>
         <source>&amp;New Connection...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ny anslutning...</translation>
     </message>
     <message>
         <source>&amp;Close Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>St&amp;äng Anslutning</translation>
     </message>
     <message>
         <source>&amp;Commit Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutning &amp;Commit</translation>
     </message>
     <message>
         <source>&amp;Rollback Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutning &amp;Rollback</translation>
     </message>
     <message>
         <source>C&amp;urrent Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>N&amp;uvarande Anslutning</translation>
     </message>
     <message>
         <source>Stop All Queries</source>
-        <translation type="unfinished"></translation>
+        <translation>Stanna Alla Frågor</translation>
     </message>
     <message>
         <source>Reread Object Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs Om Objekt Cache</translation>
     </message>
     <message>
         <source>&amp;Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öppna Fil...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Spara</translation>
+        <translation>&amp;Spara</translation>
     </message>
     <message>
         <source>Save A&amp;s...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara &amp;Som...</translation>
     </message>
     <message>
         <source>Open Session...</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna Session...</translation>
     </message>
     <message>
         <source>Save Session...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara Session...</translation>
     </message>
     <message>
         <source>Restore Last Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Återställ Senaste Session</translation>
     </message>
     <message>
         <source>Close Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng Session</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriv &amp;Ut...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Avsluta</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fil</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ångra</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>G&amp;ör Om</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>Klipp U&amp;t</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopiera</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>K&amp;listra In</translation>
     </message>
     <message>
         <source>&amp;Search &amp;&amp; Replace...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sök &amp;&amp; Ersätt...</translation>
     </message>
     <message>
         <source>Search &amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök &amp;Nästa</translation>
     </message>
     <message>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Markera &amp;Allt</translation>
     </message>
     <message>
         <source>Read All &amp;Items</source>
-        <translation type="unfinished"></translation>
+        <translation>L&amp;äs Alla Poster</translation>
     </message>
     <message>
         <source>&amp;Options...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Inställningar...</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Redigera</translation>
     </message>
     <message>
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>Applikation</translation>
     </message>
     <message>
         <source>Load file into editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs in fil i editor</translation>
     </message>
     <message>
         <source>Save file from editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara fil till editor</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrit ut</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Ångra</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Gör Om</translation>
     </message>
     <message>
         <source>Cut to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Klipp Ut</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera</translation>
     </message>
     <message>
         <source>Paste from clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Klistra In</translation>
     </message>
     <message>
         <source>Search &amp; replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök &amp; Ersätt</translation>
     </message>
     <message>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Verktyg</translation>
     </message>
     <message>
         <source>C&amp;urrent Context...</source>
-        <translation type="unfinished"></translation>
+        <translation>N&amp;uvarande Kontext...</translation>
     </message>
     <message>
         <source>&amp;Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Innehåll...</translation>
     </message>
     <message>
         <source>&amp;About TOra...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Om TOra...</translation>
     </message>
     <message>
         <source>&amp;License...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Licens...</translation>
     </message>
     <message>
         <source>&amp;Quotes...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Citat...</translation>
     </message>
     <message>
         <source>&amp;Register...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Registrera...</translation>
     </message>
     <message>
         <source>Connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutningar</translation>
     </message>
     <message>
         <source>Connect to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslut Till Databas</translation>
     </message>
     <message>
         <source>Disconnect current connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng Nuvarande Anslutning</translation>
     </message>
     <message>
         <source>Commit connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutning Commit</translation>
     </message>
     <message>
         <source>Rollback connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutning Rollback</translation>
     </message>
     <message>
         <source>Stop all running queries on connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Stanna alla aktiva frågor på anslutning</translation>
     </message>
     <message>
         <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Verktyg</translation>
     </message>
     <message>
         <source>C&amp;lose</source>
-        <translation type="unfinished"></translation>
+        <translation>St&amp;äng</translation>
     </message>
     <message>
         <source>Close &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Stäng &amp;Alla</translation>
     </message>
     <message>
         <source>&amp;Cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kaskad</translation>
     </message>
     <message>
         <source>&amp;Tile</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;tapla</translation>
     </message>
     <message>
         <source>&amp;Window</source>
-        <translation type="unfinished"></translation>
+        <translation>F&amp;önster</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hjälp</translation>
     </message>
     <message>
         <source>Check for upgrades?</source>
-        <translation type="unfinished"></translation>
+        <translation>Titta efter uppdateringar?</translation>
     </message>
     <message>
         <source>Do you want TOra to automatically check
 http://www.globecom.se/tora for updates on startup?
 During this check no information about your computer
 including TOra version is transmitted to the site</source>
-        <translation type="unfinished"></translation>
+        <translation>Vill du att TOra automatiskt skall kontrollera
+http://www.globecom.se/tora för uppdateringar vid start
+av programmet. Under denna kontroll skickas ingen information
+om din dator inklusive version eller platform av TOra tll Underscore AB</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nej</translation>
     </message>
     <message>
         <source>First connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Första anslutning</translation>
     </message>
     <message>
         <source>Can&apos;t find active connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte hitta aktiv anslutning</translation>
     </message>
     <message>
         <source>Commit work in session to %1  before closing it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar på session %1 innan den stängs?</translation>
     </message>
     <message>
         <source>Commit work?</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara arbete?</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -3890,94 +3893,97 @@ including TOra version is transmitted to the site</source>
     </message>
     <message>
         <source>Couldn&apos;t find specified connectionts (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta angiven anslutning (%1)</translation>
     </message>
     <message>
         <source>Row: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rad:</translation>
     </message>
     <message>
         <source>Col:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolumn:</translation>
     </message>
     <message>
         <source>Invalid session file</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktig sessionsfil</translation>
     </message>
     <message>
         <source>The session file is not valid, can&apos;t read it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessionsfilen är inte giltig. Kan inte läsa den.</translation>
     </message>
     <message>
         <source>Input password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange lösenord</translation>
     </message>
     <message>
         <source>Enter password for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange lösenord för %1</translation>
     </message>
     <message>
         <source>Message flood, temporary disabling of message box error reporting from now on.
 Restart TOra to reenable. You probably have a too high refreshrate in some tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Meddelande överbelastning. Stänger tillfälligt av meddelanden i dialogruta från och med nu.
+Starta om TOra för att börja visa igen. Du har troligtvis en för hög uppdateringshastighet i något verktyg.</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished">Information</translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source>You can enable this through the Global Settings in the Options (Edit menu)</source>
-        <translation type="unfinished"></translation>
+        <translation>Du kan sätta på detta genom Globala Inställningar i Inställningar (Redigeringsmenyn)</translation>
     </message>
     <message>
         <source>A new version of TOra (%1) is available from
 
 http://www.globecom.se/tora</source>
-        <translation type="unfinished"></translation>
+        <translation>A ny version av TOra (%1) finns att hämta från
+
+http://www.globecom.se/tora</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toMarkedText</name>
     <message>
         <source>TOra</source>
-        <translation type="unfinished"></translation>
+        <translation>TOra</translation>
     </message>
     <message>
         <source>Printing page %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Skriver ut sida %1</translation>
     </message>
     <message>
         <source>Done printing</source>
-        <translation type="unfinished"></translation>
+        <translation>Utskrift klar</translation>
     </message>
     <message>
         <source>Page: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sida: %1</translation>
     </message>
     <message>
         <source>File opened successfully</source>
-        <translation type="unfinished"></translation>
+        <translation>Filen öppnad</translation>
     </message>
     <message>
         <source>Save changes?</source>
-        <translation type="unfinished">Spara ändringar?</translation>
+        <translation>Spara ändringar?</translation>
     </message>
     <message>
         <source>The editor has been changed, do you want to save them
 before opening a new file?</source>
-        <translation type="unfinished"></translation>
+        <translation>Editorn har ändrats, vill du spara dem innan du öppnar en ny fil?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nej</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -3985,136 +3991,137 @@ before opening a new file?</source>
     </message>
     <message>
         <source>Incremental search</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkrementell sökning</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toMemoEditor</name>
     <message>
         <source>Memo Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Memo Editor</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar</translation>
     </message>
     <message>
         <source>Open file</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna fil</translation>
     </message>
     <message>
         <source>Save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara fil</translation>
     </message>
     <message>
         <source>Cut to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Klipp ut</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera</translation>
     </message>
     <message>
         <source>Paste from clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara</translation>
     </message>
     <message>
         <source>First column</source>
-        <translation type="unfinished"></translation>
+        <translation>Första kolumnen</translation>
     </message>
     <message>
         <source>Previous column</source>
-        <translation type="unfinished"></translation>
+        <translation>Föregående kolumn</translation>
     </message>
     <message>
         <source>Next column</source>
-        <translation type="unfinished"></translation>
+        <translation>Nästa kolumn</translation>
     </message>
     <message>
         <source>Last column</source>
-        <translation type="unfinished"></translation>
+        <translation>Sista kolumnen</translation>
     </message>
     <message>
         <source>NULL</source>
-        <translation type="unfinished"></translation>
+        <translation>NULL</translation>
     </message>
 </context>
 <context>
     <name>toMessageUI</name>
     <message>
         <source>TOra warning message</source>
-        <translation type="unfinished"></translation>
+        <translation>TOra varningsmeddelande</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Display alerts in statusbar only.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa meddelanden endast i statusraden.</translation>
     </message>
     <message>
         <source>Display alerts in messagebar instead of poping up a dialog with a warning.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa meddelanden endast i meddelanderaden i stället för att öppna en dialogruta med varningen.</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished">Meddelande</translation>
+        <translation>Meddelande</translation>
     </message>
 </context>
 <context>
     <name>toNewConnection</name>
     <message>
         <source>Provider</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Värddator</translation>
     </message>
     <message>
         <source>Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Databas</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Användarnamn</translation>
     </message>
     <message>
         <source>No connection provider</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen databastyp</translation>
     </message>
     <message>
         <source>No available connection provider, plugins probably missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen tillgänglig databastyp, troligtvis saknas plugin</translation>
     </message>
     <message>
         <source>Unable to connect to the database.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte ansluta till databas.
+</translation>
     </message>
     <message>
         <source>Unable to connect to the database</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte ansluta till databasen</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange lösenord</translation>
     </message>
     <message>
         <source>Enter password to use for connection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange lösenord för anslutningen.</translation>
     </message>
 </context>
 <context>
     <name>toNewConnectionUI</name>
     <message>
         <source>New connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny anslutning</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -4122,108 +4129,108 @@ before opening a new file?</source>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Previous connections</source>
-        <translation type="unfinished"></translation>
+        <translation>F&amp;öregående anslutningar</translation>
     </message>
     <message>
         <source>A list of previous connections. Select to bring over to the left.</source>
-        <translation type="unfinished"></translation>
+        <translation>En lista över föregående anslutningar. Välj en post för över information till höger.</translation>
     </message>
     <message>
         <source>&amp;Username</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Användarnamn</translation>
     </message>
     <message>
         <source>Username to connect with</source>
-        <translation type="unfinished"></translation>
+        <translation>Användar namn att ansluta med</translation>
     </message>
     <message>
         <source>&amp;Password</source>
-        <translation type="unfinished"></translation>
+        <translation>L&amp;ösenord</translation>
     </message>
     <message>
         <source>Password to connect with.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösenord att ansluta med.</translation>
     </message>
     <message>
         <source>Connection provider</source>
-        <translation type="unfinished"></translation>
+        <translation>Databastyp</translation>
     </message>
     <message>
         <source>Use &amp;SQL*Net</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd &amp;SQL*Net</translation>
     </message>
     <message>
         <source>Wether or not connect using the listener or directly to a local database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Om man skall ansluta via lyssnaren eller direkt till en lokal databas.</translation>
     </message>
     <message>
         <source>&amp;Connection Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Anslutningsmod</translation>
     </message>
     <message>
         <source>Mode of the connection. If you don&apos;t understand select normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anslutningsmod. Om du inte förstår det, välj normal.</translation>
     </message>
     <message>
         <source>&amp;Database</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Databas</translation>
     </message>
     <message>
         <source>Select the database ID to connect to.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj eller ange det databas ID som du vill ansluta till.</translation>
     </message>
     <message>
         <source>&amp;Host</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Värddator</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toNoBlockQuery</name>
     <message>
         <source>Unknown exception</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Reading past end of query</source>
-        <translation type="unfinished"></translation>
+        <translation>Läste efter slutet på frågan</translation>
     </message>
     <message>
         <source>Couldn&apos;t open query</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte öppna frågan</translation>
     </message>
     <message>
         <source>Failed to start background query thread</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte start backgrundsfrågans tråd</translation>
     </message>
     <message>
         <source>Restarting query in own connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Återstartar fråga i egen anslutning</translation>
     </message>
 </context>
 <context>
     <name>toNow</name>
     <message>
         <source>Unexpected error</source>
-        <translation type="unfinished"></translation>
+        <translation>Oväntat fel</translation>
     </message>
 </context>
 <context>
     <name>toOracleExtract</name>
     <message>
         <source>Couldn&apos;t find source for of %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta källa för %1.%2</translation>
     </message>
     <message>
         <source>Displaying source of wrong type for %1. Got %2 expected 0.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visar källkod av fel typ för %1. Fick %2, förväntade 0.</translation>
     </message>
     <message>
         <source>-- Context indexes can be quite complicated depending upon the
@@ -4232,239 +4239,243 @@ before opening a new file?</source>
 -- strongly recommended.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>-- Kontext index kan vara ganska komplexa beroende på om de
+-- använda parametrarna. Följande är ett försök att återskapa detta
+-- kontext index. Men nogram kontroll är starkt rekommenderad.
+
+</translation>
     </message>
     <message>
         <source>Couldn&apos;t find primary key of %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta primär nyckel %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find materialised table %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta materialiserad tabell %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find log %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta logg %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find index partitions for %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta index partitioner för %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find partition range %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta partitions del %1.%2</translation>
     </message>
     <message>
         <source>Internal error, result should be 18 in segment attributes (Was %1)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Internal error, result should be 18 in segment attributes</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Constraint %1.%2 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint %1.%2 finns ej</translation>
     </message>
     <message>
         <source>DBLink %1.%2 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>DBLink %1.%2 finns inte</translation>
     </message>
     <message>
         <source>Exchange index %1.%2 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Utbytesindex %1.%2 finns ej</translation>
     </message>
     <message>
         <source>Exchange table %1.%2 doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Utbytesindex %1.%2 finns ej</translation>
     </message>
     <message>
         <source>Couldn&apos;t find index %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta index %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find profile %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta profil %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t find role %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta rollen %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t find sequence %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta sekvensen %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t find synonym %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta synonymen %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find table %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta tabellen %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find tablespace %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte tablespace %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t find trigger %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta trigger %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find user %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta användare %1</translation>
     </message>
     <message>
         <source>Couldn&apos;t find user %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta vy %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find constraint %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta constraint %1.%2</translation>
     </message>
     <message>
         <source>Missing ON description item on index</source>
-        <translation type="unfinished"></translation>
+        <translation>Saknar ON beskrivnings post i index</translation>
     </message>
     <message>
         <source>Couldn&apos;t find any COLUMN on index</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta någon COLUMN på index</translation>
     </message>
     <message>
         <source>Invalid type %1 to create</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktig typ %1 för återskapande</translation>
     </message>
     <message>
         <source>Invalid type %1 to describe</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktig typ %1 för beskrivning</translation>
     </message>
     <message>
         <source>Invalid type %1 to drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktig typ %1 för borttagning</translation>
     </message>
 </context>
 <context>
     <name>toOracleSettingUI</name>
     <message>
         <source>Form1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>&amp;Default date format</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard &amp;datum format</translation>
     </message>
     <message>
         <source>The default dateformat to use when querying the database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard format för datom som används när data läses till eller från databasen.</translation>
     </message>
     <message>
         <source>&amp;Checkpoint name</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Checkpoint namn</translation>
     </message>
     <message>
         <source>The name of the checkpoint used when needed to rollback work.</source>
-        <translation type="unfinished"></translation>
+        <translation>Namnet på en checkpoint som kan användas när TOra behöver göra rollback på ändringar.</translation>
     </message>
     <message>
         <source>&amp;Max long and LOB data length</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Max long och LOB data storlek</translation>
     </message>
     <message>
         <source>Max length to read from LOB or LONG data fields. LONG:s can not be specified unlimited but will be defaulted to 33000 if unlimited.</source>
-        <translation type="unfinished"></translation>
+        <translation>Max längd som läses från LOB eller LONG data fält. LONG kan inte anges som obegränsad utan kommer bli 33000 om obegränsad är vald.</translation>
     </message>
     <message>
         <source>Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Obegränsad</translation>
     </message>
     <message>
         <source>Create Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa Tabell</translation>
     </message>
     <message>
         <source>&amp;Explain plan table</source>
-        <translation type="unfinished"></translation>
+        <translation>F&amp;örklara plan tabell</translation>
     </message>
     <message>
         <source>Name of the table to put explain plan output in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Namn på tabellen som planförklaringar skall läggas i.</translation>
     </message>
     <message>
         <source>&amp;Keep plans</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;para planer</translation>
     </message>
     <message>
         <source>Keep records for the plan explanations in the plan table.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara förklarade planer i plan tabellen.</translation>
     </message>
     <message>
         <source>Maximum cursors to keep open</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximala andel öppna frågor som kan hållas öppna</translation>
     </message>
 </context>
 <context>
     <name>toOutput</name>
     <message>
         <source>SQL Output</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Utdata</translation>
     </message>
     <message>
         <source>Poll for output now</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollera om ny data finns nu</translation>
     </message>
     <message>
         <source>Enable or disable getting SQL output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Slå av eller på SQL utdata kontroller.</translation>
     </message>
     <message>
         <source>Clear output</source>
-        <translation type="unfinished"></translation>
+        <translation>Rensa utdata</translation>
     </message>
     <message>
         <source>Refresh </source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished">&amp;Uppdatera</translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Output enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Utdata påslagen</translation>
     </message>
     <message>
         <source>&amp;Change Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ändra Uppdatering</translation>
     </message>
     <message>
         <source>&amp;Output</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Utdata</translation>
     </message>
     <message>
         <source>Couldn&apos;t enable/disable output for session</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte slå av eller på utdata för sessionen</translation>
     </message>
 </context>
 <context>
     <name>toOutputPrefs</name>
     <message>
         <source>SQL Output</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Utdata</translation>
     </message>
     <message>
         <source>&amp;Polling timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Updatera</translation>
     </message>
     <message>
         <source>Time between trying to poll for output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tid mellan varje kontrol om ny data finns tillgänglig.</translation>
     </message>
 </context>
 <context>
     <name>toParamGet</name>
     <message>
         <source>Define binding variables</source>
-        <translation type="unfinished"></translation>
+        <translation>Definiera bundna variabler</translation>
     </message>
     <message>
         <source>&amp;OK</source>
@@ -4472,223 +4483,224 @@ before opening a new file?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>Missing field name</source>
-        <translation type="unfinished"></translation>
+        <translation>Saknar fältnamn</translation>
     </message>
     <message>
         <source>NULL</source>
-        <translation type="unfinished"></translation>
+        <translation>NULL</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera</translation>
     </message>
     <message>
         <source>Aborted execution</source>
-        <translation type="unfinished"></translation>
+        <translation>Avbruten exekvering</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
 </context>
 <context>
     <name>toPasswordTool</name>
     <message>
         <source>Enter new password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange nytt lösenord</translation>
     </message>
     <message>
         <source>Enter new password again for confirmation</source>
-        <translation type="unfinished"></translation>
+        <translation>Ange nytt lösenord igen för konfirmation</translation>
     </message>
     <message>
         <source>Passwords doesn&apos;t match</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösenord stämmer inte överens</translation>
     </message>
     <message>
         <source>The two givens passwords doesn&apos;t match, please try again</source>
-        <translation type="unfinished"></translation>
+        <translation>De två angivna lösenorden stämmer ej överens, försök igen</translation>
     </message>
 </context>
 <context>
     <name>toPieChart</name>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Skriv ut...</translation>
     </message>
     <message>
         <source>&amp;Open in new window</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öppna i nytt fönster</translation>
     </message>
     <message>
         <source>All values are 0 in this chart</source>
-        <translation type="unfinished"></translation>
+        <translation>Alla värden är 0 i detta diagram</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation type="unfinished"></translation>
+        <translation>TOra</translation>
     </message>
 </context>
 <context>
     <name>toPreferences</name>
     <message>
         <source>Global Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Globala Inställningarna</translation>
     </message>
     <message>
         <source>Editor Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Editor Inställningar</translation>
     </message>
     <message>
         <source>Database Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Databas Inställningar</translation>
     </message>
     <message>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Verktyg</translation>
     </message>
 </context>
 <context>
     <name>toPreferencesUI</name>
     <message>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Inställlningar</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hjälp</translation>
     </message>
 </context>
 <context>
     <name>toProfiler</name>
     <message>
         <source>Invalid Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktiga Objekt</translation>
     </message>
     <message>
         <source>Refresh list</source>
-        <translation type="unfinished">Uppdatera lista</translation>
+        <translation>Uppdatera lista</translation>
     </message>
     <message>
         <source>Repeat run </source>
-        <translation type="unfinished"></translation>
+        <translation>Kör om</translation>
     </message>
     <message>
         <source>Comment </source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänd</translation>
     </message>
     <message>
         <source>Run profiling in background</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör profiling i backgrunden</translation>
     </message>
     <message>
         <source>Execute current profiling</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör nuvarande profiling</translation>
     </message>
     <message>
         <source>Script</source>
-        <translation type="unfinished">Script</translation>
+        <translation>Skript</translation>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultat</translation>
     </message>
     <message>
         <source>Profiler tables doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Profiltabeller saknas</translation>
     </message>
     <message>
         <source>Profiler tables doesn&apos;t exist. Should TOra
 try to create them in the current schema.
 Should TOra try to create it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Profiltabellerna finns inte. Skall TOra
+försöka skapa om dem i nuvarande schema?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nej</translation>
     </message>
     <message>
         <source>Select run</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj körning</translation>
     </message>
     <message>
         <source>%1 runs</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 körningar</translation>
     </message>
     <message>
         <source>Something went wrong collecting statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Någonting gick fel när statestik hämtades</translation>
     </message>
 </context>
 <context>
     <name>toProject</name>
     <message>
         <source>SQL Project</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Projekt</translation>
     </message>
     <message>
         <source>Add file to project</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till fil till projekt</translation>
     </message>
     <message>
         <source>Remove file from project</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort fil från projekt</translation>
     </message>
     <message>
         <source>SQL project</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL projekt</translation>
     </message>
     <message>
         <source>Save project</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara projekt</translation>
     </message>
     <message>
         <source>Add new subproject</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till nytt underprojekt</translation>
     </message>
     <message>
         <source>Generate SQL for this project</source>
-        <translation type="unfinished"></translation>
+        <translation>Generera SQL för detta projekt</translation>
     </message>
     <message>
         <source>Move up in project</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta upp i projekt</translation>
     </message>
     <message>
         <source>Move down in project</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytta ner i projekt</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fil</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Storlek</translation>
     </message>
     <message>
         <source>untitled.tpr</source>
-        <translation type="unfinished"></translation>
+        <translation>okänd.tpr</translation>
     </message>
     <message>
         <source>
@@ -4696,7 +4708,11 @@ Should TOra try to create it?</source>
 -- Start of project %1
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+-- Start av projekt %1
+
+</translation>
     </message>
     <message>
         <source>
@@ -4704,78 +4720,82 @@ Should TOra try to create it?</source>
 -- Start of file %1
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+-- Start av fil %1
+
+</translation>
     </message>
 </context>
 <context>
     <name>toQValue</name>
     <message>
         <source>Unknown type of query value</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänd typ av frågeresultat</translation>
     </message>
 </context>
 <context>
     <name>toQuery</name>
     <message>
         <source>Query aborted</source>
-        <translation type="unfinished"></translation>
+        <translation>Frågan avbruten</translation>
     </message>
 </context>
 <context>
     <name>toReadFile</name>
     <message>
         <source>Couldn&apos;t open file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte öppna fil %1.</translation>
     </message>
     <message>
         <source>Encountered problems read configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppstod problem med att läsa konfigurationsfil</translation>
     </message>
     <message>
         <source>Couldn&apos;t download file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte ladda ner fil</translation>
     </message>
 </context>
 <context>
     <name>toRefreshCreate</name>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen</translation>
     </message>
     <message>
         <source>2 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>2 sekunder</translation>
     </message>
     <message>
         <source>5 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>5 sekunder</translation>
     </message>
     <message>
         <source>10 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>10 sekunder</translation>
     </message>
     <message>
         <source>30 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>30 sekunder</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"></translation>
+        <translation>1 min</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"></translation>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>10 min</source>
-        <translation type="unfinished"></translation>
+        <translation>10 min</translation>
     </message>
 </context>
 <context>
     <name>toRefreshParse</name>
     <message>
         <source>Unknown timer value</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt tidtagarvärde</translation>
     </message>
 </context>
 <context>
@@ -4783,15 +4803,16 @@ Should TOra try to create it?</source>
     <message>
         <source>&lt;H4&gt;COLUMNS&lt;/H4&gt;
 &lt;TABLE WIDTH=100% BORDER=0&gt;&lt;TR&gt;&lt;TH ALIGN=left WIDTH=25%&gt;Name&lt;/TH&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;H4&gt;COLUMNER&lt;/H4&gt;
+&lt;TABLE WIDTH=100% BORDER=0&gt;&lt;TR&gt;&lt;TH ALIGN=left WIDTH=25%&gt;Namn&lt;/TH&gt;</translation>
     </message>
     <message>
         <source>&lt;TH ALIGN=left WIDTH=25%&gt;Definition&lt;/TH&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;TH ALIGN=left WIDTH=25%&gt;Definition&lt;/TH&gt;</translation>
     </message>
     <message>
         <source>&lt;TH ALIGN=left WIDTH=50%&gt;Description&lt;/TH&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;TH ALIGN=left WIDTH=50%&gt;Beskrivning&lt;/TH&gt;</translation>
     </message>
     <message>
         <source>&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Report on database %7&lt;/TITLE&gt;&lt;/HEAD&gt;
@@ -4803,196 +4824,205 @@ Should TOra try to create it?</source>
 &lt;TR&gt;&lt;TD VALIGN=top&gt;On:&lt;/TD&gt;&lt;TD VALIGN=top&gt;%6&lt;/TD&gt;&lt;/TR&gt;
 &lt;/TABLE&gt;
 </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;Rapport på databas %7&lt;/TITLE&gt;&lt;/HEAD&gt;
+&lt;BODY&gt;&lt;H1&gt;Rapport på databas %8&lt;/H1&gt;
+&lt;TABLE BORDER=0&gt;
+&lt;TR&gt;&lt;TD VALIGN=top&gt;Genererad av:&lt;/TD&gt;&lt;TD VALIGN=top&gt;TOra, Version %1&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD VALIGN=top&gt;Tid:&lt;/TD&gt;&lt;TD VALIGN=top&gt;%2&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD VALIGN=top&gt;Från:&lt;/TD&gt;&lt;TD VALIGN=top&gt;%3, en %4 %5 databas&lt;/TD&gt;&lt;/TR&gt;
+&lt;TR&gt;&lt;TD VALIGN=top&gt;På:&lt;/TD&gt;&lt;TD VALIGN=top&gt;%6&lt;/TD&gt;&lt;/TR&gt;
+&lt;/TABLE&gt;</translation>
     </message>
     <message>
         <source>&lt;H1&gt;Global Objects&lt;/H1&gt;
 </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;H1&gt;Globala Objekt&lt;/H1&gt;
+</translation>
     </message>
     <message>
         <source>&lt;H1&gt;Public&lt;/H1&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;H1&gt;Publika&lt;/H1&gt;</translation>
     </message>
     <message>
         <source>&lt;H1&gt;Schema %1&lt;/H1&gt;
 </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;H1&gt;Schema %1&lt;/H1&gt;
+</translation>
     </message>
 </context>
 <context>
     <name>toResultBar</name>
     <message>
         <source>Edit SQL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera SQL...</translation>
     </message>
 </context>
 <context>
     <name>toResultCols</name>
     <message>
         <source>Default value: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard värde: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Distinct values: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Distinkta värden: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Low value: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägsta värde: &lt;B&gt;</translation>
     </message>
     <message>
         <source>High value: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Högsta värde: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Density: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Täthet: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Number of nulls: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal nullvärden: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Number of histogram buckets: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal histogram hinkar: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Last analyzed: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Senast analyserad: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Sample size: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Urvalsstorlek: &lt;B&gt;</translation>
     </message>
     <message>
         <source>Average column size: &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Medelkolumnstorlek: &lt;B&gt;</translation>
     </message>
     <message>
         <source>&lt;/B&gt; synonym for &lt;B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;/B&gt; synonym för &lt;B&gt;</translation>
     </message>
     <message>
         <source> (Object cache not ready)</source>
-        <translation type="unfinished"></translation>
+        <translation>(Objekt cache ej redo)</translation>
     </message>
 </context>
 <context>
     <name>toResultCols::resultCols</name>
     <message>
         <source>Column Name</source>
-        <translation type="unfinished">Kolumnnamn</translation>
+        <translation>Kolumnnamn</translation>
     </message>
     <message>
         <source>Data Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Datatyp</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <source>Description of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Beskrivning av %1</translation>
     </message>
     <message>
         <source>Failed to describe %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte beskriva %1</translation>
     </message>
     <message>
         <source>Description of %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Beskrivning av %1.%2</translation>
     </message>
 </context>
 <context>
     <name>toResultConstraint</name>
     <message>
         <source>Constraint Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Constraint Namn</translation>
     </message>
     <message>
         <source>Condition</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilkor</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Påslaget</translation>
     </message>
     <message>
         <source>Delete Rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Borttagningsregel</translation>
     </message>
     <message>
         <source>Generated</source>
-        <translation type="unfinished">Genererad</translation>
+        <translation>Genererad</translation>
     </message>
 </context>
 <context>
     <name>toResultContent</name>
     <message>
         <source>Content editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Innehållseditor</translation>
     </message>
     <message>
         <source>Define filter for editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Definiera filter för editor</translation>
     </message>
     <message>
         <source>Remove any filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort alla filter</translation>
     </message>
     <message>
         <source>Add a new record</source>
-        <translation type="unfinished"></translation>
+        <translation>Lägg till ny post</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar</translation>
     </message>
     <message>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort ändringar</translation>
     </message>
     <message>
         <source>Delete current record from table</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort nuvarande post från tabellen</translation>
     </message>
     <message>
         <source>Go to first row</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå till första raden</translation>
     </message>
     <message>
         <source>Go to previous row</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå till föregående rad</translation>
     </message>
     <message>
         <source>Go to next row</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå till nästa rad</translation>
     </message>
     <message>
         <source>Go to last row</source>
-        <translation type="unfinished"></translation>
+        <translation>Gå till sista rad</translation>
     </message>
     <message>
         <source>Toggle between table or single record editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Växla mellan tabell eller enkel post editering</translation>
     </message>
     <message>
         <source>Remove filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort filter</translation>
     </message>
     <message>
         <source>Remove the filter for this table only or for all tables.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort filter för denna tabell enbart eller alla tabeller.</translation>
     </message>
     <message>
         <source>&amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alla</translation>
     </message>
     <message>
         <source>&amp;This</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Denna</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -5000,1211 +5030,1216 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toResultContentEditor</name>
     <message>
         <source>&amp;Display in editor...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Visa i editor...</translation>
     </message>
     <message>
         <source>&amp;Copy field</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopiera fält</translation>
     </message>
     <message>
         <source>&amp;Paste field</source>
-        <translation type="unfinished"></translation>
+        <translation>K&amp;listra in fält</translation>
     </message>
     <message>
         <source>Copy selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera urval</translation>
     </message>
     <message>
         <source>Copy selection with header</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera urval med huvud</translation>
     </message>
     <message>
         <source>Copy transposed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiera transposerad</translation>
     </message>
     <message>
         <source>&amp;Delete record</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ta bort post</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj alla</translation>
     </message>
     <message>
         <source>Export to file...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportera till fil...</translation>
     </message>
     <message>
         <source>Read all</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs alla</translation>
     </message>
     <message>
         <source>Can&apos;t use these on toResultContent</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte använda dessa på toResultContent</translation>
     </message>
     <message>
         <source>Unsaved data in contents, select other row to store</source>
-        <translation type="unfinished"></translation>
+        <translation>Ej sparad data finns, välj annan rad för att spara</translation>
     </message>
     <message>
         <source>Reading all values, moving cursor to end when done</source>
-        <translation type="unfinished"></translation>
+        <translation>Läser alla värden, flyttar markör till slutet när inläsning är klar</translation>
     </message>
     <message>
         <source>Edit cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Editering avbruten</translation>
     </message>
     <message>
         <source>This table contains only LOB/LONG columns and can not be edited</source>
-        <translation type="unfinished"></translation>
+        <translation>Denna tabell innehåller enbart LOG/LONG kolumner och kan inte bli editerad</translation>
     </message>
     <message>
         <source>No changes made</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga ändringar gjorda</translation>
     </message>
     <message>
         <source>Saved row</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparade rad</translation>
     </message>
     <message>
         <source>Content of %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Innehåll av %1.%2</translation>
     </message>
 </context>
 <context>
     <name>toResultContentFilterUI</name>
     <message>
         <source>Content editor filter settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Filterinställningar för innehållseditor</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>Selection &amp;criteria</source>
-        <translation type="unfinished"></translation>
+        <translation>Urvals &amp;kriterium</translation>
     </message>
     <message>
         <source>Selection criteria to use getting items to edit. Same as after where in a select clause.</source>
-        <translation type="unfinished"></translation>
+        <translation>Val av kriterium att använda för att ange vilka poster som skall editeras. Samma format som efter &quot;where&quot; i en &quot;select&quot;-sats.</translation>
     </message>
     <message>
         <source>Sort &amp;order. Separate columns with comma.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorterings &amp;ordning. Separera kolumner med komma.</translation>
     </message>
     <message>
         <source>The sort order to use when retreiving data from the database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorteringsordning att använda när poster läses från databasen.</translation>
     </message>
     <message>
         <source>Table &amp;columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabell &amp;kolumner</translation>
     </message>
     <message>
         <source>Available column names in table.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillgängliga kolumner i tabellen.</translation>
     </message>
     <message>
         <source>Use for all tables</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd för samtliga tabeller</translation>
     </message>
 </context>
 <context>
     <name>toResultContentSingle</name>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera</translation>
     </message>
     <message>
         <source>Internal error, save different row than current in content editor</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toResultDepend</name>
     <message>
         <source>Owner</source>
-        <translation type="unfinished">Ägare</translation>
+        <translation>Ägare</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Dependency</source>
-        <translation type="unfinished"></translation>
+        <translation>Beroende</translation>
     </message>
 </context>
 <context>
     <name>toResultExtract</name>
     <message>
         <source>Object not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Objektet finns ej</translation>
     </message>
 </context>
 <context>
     <name>toResultIndexes</name>
     <message>
         <source>Index Name</source>
-        <translation type="unfinished">Indexnamn</translation>
+        <translation>Indexnamn</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished">Kolumner</translation>
+        <translation>Kolumner</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Unique</source>
-        <translation type="unfinished">Unik</translation>
+        <translation>Unik</translation>
     </message>
 </context>
 <context>
     <name>toResultLine</name>
     <message>
         <source>Edit SQL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera SQL...</translation>
     </message>
 </context>
 <context>
     <name>toResultListFormat</name>
     <message>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text</translation>
     </message>
     <message>
         <source>Tab delimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabseparerad</translation>
     </message>
     <message>
         <source>CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV</translation>
     </message>
     <message>
         <source>HTML</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML</translation>
     </message>
 </context>
 <context>
     <name>toResultListFormatUI</name>
     <message>
         <source>Choose format</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj format</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>&amp;Choose format of exported file.</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Välj format för exporterad fil.</translation>
     </message>
     <message>
         <source>Separator</source>
-        <translation type="unfinished"></translation>
+        <translation>Separator</translation>
     </message>
     <message>
         <source>Delimiter</source>
-        <translation type="unfinished"></translation>
+        <translation>Avskiljare</translation>
     </message>
 </context>
 <context>
     <name>toResultLock</name>
     <message>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Session</translation>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <source>Osuser</source>
-        <translation type="unfinished"></translation>
+        <translation>OS användare</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"></translation>
+        <translation>Program</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod</translation>
     </message>
     <message>
         <source>Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Förfrågan</translation>
     </message>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <source>Grabbed</source>
-        <translation type="unfinished"></translation>
+        <translation>Tagen</translation>
     </message>
     <message>
         <source>Requested</source>
-        <translation type="unfinished"></translation>
+        <translation>Efterfrågad</translation>
     </message>
 </context>
 <context>
     <name>toResultLong</name>
     <message>
         <source>Will not reexecute same query</source>
-        <translation type="unfinished"></translation>
+        <translation>Kör inte om samma fråga</translation>
     </message>
     <message>
         <source>%1 rows processed</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 rader bearbetade</translation>
     </message>
     <message>
         <source>Query executed</source>
-        <translation type="unfinished"></translation>
+        <translation>Fråga exekverad</translation>
     </message>
     <message>
         <source>Statement executed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sats exekverad</translation>
     </message>
     <message>
         <source>Can only hide last column in query</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan bara gömma sista kolumnen i frågan</translation>
     </message>
 </context>
 <context>
     <name>toResultObject</name>
     <message>
         <source>Internal error, toResult is not a descendant of toResult</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toResultParam</name>
     <message>
         <source>Parameter editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter editor</translation>
     </message>
     <message>
         <source>Display hidden parameters. This will only word if you are logged in as the sys user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa gömda parametrar. Detta kommer endast fungera om du är inloggad som användaren sys.</translation>
     </message>
     <message>
         <source>Generate pfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Generera pfil</translation>
     </message>
     <message>
         <source>Apply changes to system</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar till systemet</translation>
     </message>
     <message>
         <source>Apply changes to session</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringarna till sessionen</translation>
     </message>
     <message>
         <source>Drop current changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera nuvarande ändringar</translation>
     </message>
     <message>
         <source>Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändrad</translation>
     </message>
     <message>
         <source># Generated by TOra version %1
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation># Genererad av TOra version %1
+
+</translation>
     </message>
 </context>
 <context>
     <name>toResultParam:ListParam</name>
     <message>
         <source>Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished">Värde</translation>
+        <translation>Värde</translation>
     </message>
     <message>
         <source>Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändrad</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Beskrivning</translation>
+        <translation>Beskrivning</translation>
     </message>
 </context>
 <context>
     <name>toResultPlan</name>
     <message>
         <source>Operation</source>
-        <translation type="unfinished">Operation</translation>
+        <translation>Operation</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Inställningar</translation>
     </message>
     <message>
         <source>Object name</source>
-        <translation type="unfinished"></translation>
+        <translation>Objektnamn</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod</translation>
     </message>
     <message>
         <source>Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Kostnad</translation>
     </message>
     <message>
         <source>Bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Bytes</translation>
     </message>
     <message>
         <source>Cardinality</source>
-        <translation type="unfinished"></translation>
+        <translation>Kardinalitet</translation>
     </message>
     <message>
         <source>Plan table doesn&apos;t exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Plan tabellen finns inte</translation>
     </message>
     <message>
         <source>Specified plan table %1 didn&apos;t exist.
 Should TOra try to create it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Angivna plan tabellen %1 fanns ine
+Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nej</translation>
     </message>
 </context>
 <context>
     <name>toResultReferences</name>
     <message>
         <source>Owner</source>
-        <translation type="unfinished">Ägare</translation>
+        <translation>Ägare</translation>
     </message>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <source>Constraint</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Condition</source>
-        <translation type="unfinished"></translation>
+        <translation>Vilkor</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Påslaget</translation>
     </message>
     <message>
         <source>Delete Rule</source>
-        <translation type="unfinished"></translation>
+        <translation>Raderingsregel</translation>
     </message>
     <message>
         <source>foreign key (%1) references %2.%3(%4)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DEPENDENCY</source>
-        <translation type="unfinished"></translation>
+        <translation>Beroende</translation>
     </message>
 </context>
 <context>
     <name>toResultResources:Information</name>
     <message>
         <source>Sorts</source>
-        <translation type="unfinished"></translation>
+        <translation>Sorteringar</translation>
     </message>
     <message>
         <source>Parse</source>
-        <translation type="unfinished"></translation>
+        <translation>Parse</translation>
     </message>
     <message>
         <source>Disk Reads</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk läsningar</translation>
     </message>
     <message>
         <source>Buffer Gets</source>
-        <translation type="unfinished"></translation>
+        <translation>Bugger Hämtningar</translation>
     </message>
     <message>
         <source>Rows Processed</source>
-        <translation type="unfinished"></translation>
+        <translation>Rader Bearbetade</translation>
     </message>
     <message>
         <source>Executions</source>
-        <translation type="unfinished"></translation>
+        <translation>Exekveringar</translation>
     </message>
     <message>
         <source>Loads</source>
-        <translation type="unfinished"></translation>
+        <translation>Laddningar</translation>
     </message>
     <message>
         <source>First Load Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Första Inläsningstid</translation>
     </message>
     <message>
         <source>Parsing User Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbetande Användar ID</translation>
     </message>
     <message>
         <source>Parsing Schema Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbetande Schema ID</translation>
     </message>
     <message>
         <source>Users Executing</source>
-        <translation type="unfinished"></translation>
+        <translation>Användare Som Kört</translation>
     </message>
     <message>
         <source>Users Opening</source>
-        <translation type="unfinished"></translation>
+        <translation>Användare Som Öppnat</translation>
     </message>
     <message>
         <source>Open Versions</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna Versioner</translation>
     </message>
     <message>
         <source>Sharable Mem</source>
-        <translation type="unfinished"></translation>
+        <translation>Delat Minne</translation>
     </message>
     <message>
         <source>Kept Versions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sparade Versioner</translation>
     </message>
     <message>
         <source>Persistent Mem</source>
-        <translation type="unfinished"></translation>
+        <translation>Behållt Minne</translation>
     </message>
     <message>
         <source>Optimizer Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimeringsmod</translation>
     </message>
     <message>
         <source>Loaded Versions</source>
-        <translation type="unfinished"></translation>
+        <translation>Laddade Versioner</translation>
     </message>
     <message>
         <source>Runtime Mem</source>
-        <translation type="unfinished"></translation>
+        <translation>Körnings Minne</translation>
     </message>
     <message>
         <source>Serializable Aborts</source>
-        <translation type="unfinished"></translation>
+        <translation>Serielagda Avbrott</translation>
     </message>
     <message>
         <source>Invalidations</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalideringar</translation>
     </message>
 </context>
 <context>
     <name>toResultStats</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation type="unfinished">Värde</translation>
+        <translation>Värde</translation>
     </message>
     <message>
         <source>Delta</source>
-        <translation type="unfinished"></translation>
+        <translation>Delta</translation>
     </message>
     <message>
         <source>Can&apos;t change session on system statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan inte ändra session på systemstatestik</translation>
     </message>
 </context>
 <context>
     <name>toResultStorage</name>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished">Information</translation>
+        <translation>Information</translation>
     </message>
     <message>
         <source>Contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Innehåll</translation>
     </message>
     <message>
         <source>Logging</source>
-        <translation type="unfinished">Loggning</translation>
+        <translation>Loggning</translation>
     </message>
     <message>
         <source>Size (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Storlek (%1)</translation>
     </message>
     <message>
         <source>Free (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fritt (%1)</translation>
     </message>
     <message>
         <source>Autoextend (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Autoutökning (%1)</translation>
     </message>
     <message>
         <source>Used/Free/Autoextend</source>
-        <translation type="unfinished"></translation>
+        <translation>Använt/Fritt/Autoutökning</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Tillgängligt</translation>
     </message>
     <message>
         <source>Coalesced</source>
-        <translation type="unfinished"></translation>
+        <translation>Sammanslaget</translation>
     </message>
     <message>
         <source>Max free (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Max fritt (%1)</translation>
     </message>
     <message>
         <source>Free fragments</source>
-        <translation type="unfinished"></translation>
+        <translation>Fria Fragment</translation>
     </message>
     <message>
         <source>toResultStorage</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Couldn&apos;t find tablespace parent %1 for datafile</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>No tablespace selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget tablespace valt</translation>
     </message>
     <message>
         <source>Weird, empty tablespace name</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>No file selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen fil vald</translation>
     </message>
     <message>
         <source>Tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toResultView</name>
     <message>
         <source>Can only hide last column in query</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan bara gömma sista kolumnen i fråga</translation>
     </message>
     <message>
         <source>Reading all entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Läser alla poster</translation>
     </message>
     <message>
         <source>Read All</source>
-        <translation type="unfinished"></translation>
+        <translation>Läs Alla</translation>
     </message>
 </context>
 <context>
     <name>toRollback</name>
     <message>
         <source>Rollback analyzer</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollback Hanterare</translation>
     </message>
     <message>
         <source>Update segment list</source>
-        <translation type="unfinished"></translation>
+        <translation>Updatera Segmentlista</translation>
     </message>
     <message>
         <source>Take segment online</source>
-        <translation type="unfinished"></translation>
+        <translation>Slå på segment</translation>
     </message>
     <message>
         <source>Take segment offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Slå av segment</translation>
     </message>
     <message>
         <source>Create new rollback segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa nytt rollback segment</translation>
     </message>
     <message>
         <source>Drop segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort segment</translation>
     </message>
     <message>
         <source>Refresh </source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Open Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation>Öppna Frågor</translation>
     </message>
     <message>
         <source>Transaction Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Transkationsanvändare</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished">&amp;Uppdatera</translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Påslagen</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Avslagen</translation>
     </message>
     <message>
         <source>Create segment...</source>
-        <translation type="unfinished"></translation>
+        <translation>Skapa segment...</translation>
     </message>
     <message>
         <source>&amp;Change Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ändra uppdatering</translation>
     </message>
     <message>
         <source>&amp;Rollback</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rollback</translation>
     </message>
     <message>
         <source>No segment selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Inget segment valt</translation>
     </message>
     <message>
         <source>Drop rollback segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort rollback segment</translation>
     </message>
     <message>
         <source>Are you sure you want to drop the segment %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Är du säker på att du vill ta bort segmentet %1.</translation>
     </message>
     <message>
         <source>&amp;Drop</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ta bort</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toRollback:Information</name>
     <message>
         <source>Segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Segment</translation>
     </message>
     <message>
         <source>Owner</source>
-        <translation type="unfinished">Ägare</translation>
+        <translation>Ägare</translation>
     </message>
     <message>
         <source>Tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>Transaktioner</translation>
     </message>
     <message>
         <source>Initial (MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Initial (MB)</translation>
     </message>
     <message>
         <source>Next (MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nästa (MB)</translation>
     </message>
     <message>
         <source>PCT Increase</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Current (MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuvarande (MB)</translation>
     </message>
     <message>
         <source>Optimal (MB)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Used (MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Använd (MB)</translation>
     </message>
     <message>
         <source>Extents</source>
-        <translation type="unfinished"></translation>
+        <translation>Antal Extent</translation>
     </message>
     <message>
         <source>Current</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuvarande</translation>
     </message>
     <message>
         <source>Block</source>
-        <translation type="unfinished"></translation>
+        <translation>Block</translation>
     </message>
     <message>
         <source>Blocks</source>
-        <translation type="unfinished">Block</translation>
+        <translation>Block</translation>
     </message>
     <message>
         <source>Reads</source>
-        <translation type="unfinished"></translation>
+        <translation>Läsningar</translation>
     </message>
     <message>
         <source>Hitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Träffratio</translation>
     </message>
 </context>
 <context>
     <name>toRollback:TransactionUsers</name>
     <message>
         <source>Rollback Seg</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollback Seg</translation>
     </message>
     <message>
         <source>Session ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessions ID</translation>
     </message>
     <message>
         <source>Os User</source>
-        <translation type="unfinished"></translation>
+        <translation>OS Användare</translation>
     </message>
     <message>
         <source>Oracle User</source>
-        <translation type="unfinished"></translation>
+        <translation>Oracle Användare</translation>
     </message>
 </context>
 <context>
     <name>toRollbackDialog</name>
     <message>
         <source>Storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Lagring</translation>
     </message>
     <message>
         <source>No changes made</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga ändringar gjorda</translation>
     </message>
 </context>
 <context>
     <name>toRollbackDialogUI</name>
     <message>
         <source>Modify tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation>Andra tablespace</translation>
     </message>
     <message>
         <source>Display the SQL used to generate the specified object</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa SQL för att generera det angivna objektet</translation>
     </message>
     <message>
         <source>&amp;Public</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Publik</translation>
     </message>
     <message>
         <source>If this should be a publicly available rollback segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Om denna skall vara ett publikt rollback segment</translation>
     </message>
     <message>
         <source>&amp;Name</source>
-        <translation type="unfinished">&amp;Namn</translation>
+        <translation>&amp;Namn</translation>
     </message>
     <message>
         <source>&amp;Tablespace</source>
-        <translation type="unfinished">&amp;Tablespace</translation>
+        <translation>&amp;Tablespace</translation>
     </message>
     <message>
         <source>Rollback Segment</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollback Segment</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toRollbackOpen</name>
     <message>
         <source>Started</source>
-        <translation type="unfinished"></translation>
+        <translation>Startad</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Användare</translation>
     </message>
     <message>
         <source>Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Snapshot</translation>
     </message>
     <message>
         <source>SQL</source>
-        <translation type="unfinished">SQL</translation>
+        <translation>SQL</translation>
     </message>
 </context>
 <context>
     <name>toRollbackPrefs</name>
     <message>
         <source>Rollback Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollback Verktyg</translation>
     </message>
     <message>
         <source>&amp;Restart reexecuted statements</source>
-        <translation type="unfinished"></translation>
+        <translation>Sta&amp;rta om omexekverade satser</translation>
     </message>
     <message>
         <source>Start statements again that have been reexecuted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta om satser som blivit exekverade igen.</translation>
     </message>
     <message>
         <source>&amp;Must read buffers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Måste lästa buffrar</translation>
     </message>
     <message>
         <source>Don&apos;t display statements that have not read buffers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa inte satser som inte läser buffrar.</translation>
     </message>
     <message>
         <source>&amp;Exclude first appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Exkludera första visningen</translation>
     </message>
     <message>
         <source>A statement must be visible at least two consecutive polls to be displayed.</source>
-        <translation type="unfinished"></translation>
+        <translation>En sats måste synas åtminstånde två konsekutiva uppdateringar innan det visas.</translation>
     </message>
     <message>
         <source>&amp;Disregard start extent.</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bortse från start extent.</translation>
     </message>
     <message>
         <source>Always start from the left border when displaying extent usage.</source>
-        <translation type="unfinished"></translation>
+        <translation>Visa alltid från början av vänstra kanten när användandet av extent visas.</translation>
     </message>
 </context>
 <context>
     <name>toSGAStatement</name>
     <message>
         <source>Couldn&apos;t find SQL statement in SGA</source>
-        <translation type="unfinished"></translation>
+        <translation>Kunde inte hitta SQL sats i SGA</translation>
     </message>
     <message>
         <source>SQL</source>
-        <translation type="unfinished">SQL</translation>
+        <translation>SQL</translation>
     </message>
     <message>
         <source>Execution plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Exekverings plan</translation>
     </message>
     <message>
         <source>Information</source>
-        <translation type="unfinished">Information</translation>
+        <translation>Information</translation>
     </message>
 </context>
 <context>
     <name>toSGATrace</name>
     <message>
         <source>SGA trace</source>
-        <translation type="unfinished"></translation>
+        <translation>SGA spårning</translation>
     </message>
     <message>
         <source>Fetch statements in SGA</source>
-        <translation type="unfinished"></translation>
+        <translation>Hämta satser från SGA</translation>
     </message>
     <message>
         <source>Schema </source>
-        <translation type="unfinished"></translation>
+        <translation>Schema</translation>
     </message>
     <message>
         <source>Any</source>
-        <translation type="unfinished">Valfri</translation>
+        <translation>Valfri</translation>
     </message>
     <message>
         <source>Refresh </source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Type </source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>SGA</source>
-        <translation type="unfinished"></translation>
+        <translation>SGA</translation>
     </message>
     <message>
         <source>Long operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Långa operationer</translation>
     </message>
     <message>
         <source>Selection </source>
-        <translation type="unfinished"></translation>
+        <translation>Urval</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Uppdatera</translation>
+        <translation>Alla</translation>
     </message>
     <message>
         <source>Unfinished</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavklarade</translation>
     </message>
     <message>
         <source>Top executions</source>
-        <translation type="unfinished"></translation>
+        <translation>Top exekveringar</translation>
     </message>
     <message>
         <source>Top sorts</source>
-        <translation type="unfinished"></translation>
+        <translation>Top sorteringar</translation>
     </message>
     <message>
         <source>Top diskreads</source>
-        <translation type="unfinished"></translation>
+        <translation>Top diskläsningar</translation>
     </message>
     <message>
         <source>Top buffergets</source>
-        <translation type="unfinished"></translation>
+        <translation>Top bufferhämtningar</translation>
     </message>
     <message>
         <source>Top rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Top rader</translation>
     </message>
     <message>
         <source>Top sorts/exec</source>
-        <translation type="unfinished"></translation>
+        <translation>Top sortering/exekvering</translation>
     </message>
     <message>
         <source>Top diskreads/exec</source>
-        <translation type="unfinished"></translation>
+        <translation>Top diskläsning/exekvering</translation>
     </message>
     <message>
         <source>Top buffergets/exec</source>
-        <translation type="unfinished"></translation>
+        <translation>Top bufferhämtning/exekvering</translation>
     </message>
     <message>
         <source>Top rows/exec</source>
-        <translation type="unfinished"></translation>
+        <translation>Top rad/exekvering</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished">&amp;Uppdatera</translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>Change &amp;schema</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra &amp;schema</translation>
     </message>
     <message>
         <source>Change &amp;refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra &amp;uppdatering</translation>
     </message>
     <message>
         <source>Change t&amp;ype</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändra t&amp;yp</translation>
     </message>
     <message>
         <source>&amp;SGA Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;SGA Spårning</translation>
     </message>
     <message>
         <source>Unknown type of trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänd typ av spårning</translation>
     </message>
     <message>
         <source>Unfinished is only available for long operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Oavklarade är endast tillgänglig för långa operationer</translation>
     </message>
     <message>
         <source>Unknown selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt urval</translation>
     </message>
 </context>
 <context>
     <name>toSGATracePrefs</name>
     <message>
         <source>SGA Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>SGA Spårning</translation>
     </message>
     <message>
         <source>&amp;Auto update</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Auto updatera</translation>
     </message>
     <message>
         <source>Update automatically after change of schema.</source>
-        <translation type="unfinished"></translation>
+        <translation>Updatera automatiskt efter ändring av schema.</translation>
     </message>
 </context>
 <context>
     <name>toSMTP</name>
     <message>
         <source>Connecting to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansluter till %1</translation>
     </message>
     <message>
         <source>Connected to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansluten till %1</translation>
     </message>
     <message>
         <source>Message sent</source>
-        <translation type="unfinished"></translation>
+        <translation>Meddelande sänt</translation>
     </message>
     <message>
         <source>Unexpected reply from SMTP server:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Oväntat svar från SMTP server:
+
+</translation>
     </message>
 </context>
 <context>
     <name>toSQL</name>
     <message>
         <source>Tried to get unknown SQL (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Försökte hämta okänt SQL (%1)</translation>
     </message>
     <message>
         <source>Malformed tag in config file. Missing = on row.</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktigt formaterad tag i konfigurationsfil. Saknar = på rad.</translation>
     </message>
     <message>
         <source>Malformed line in SQL dictionary file. Two &apos;[&apos; before &apos;=&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Felaktig rad i SQL ordboksfil. Två &apos;[&apos; innan &apos;=&apos;</translation>
     </message>
     <message>
         <source>Unknown escape character in string (Only \\ and \n recognised)</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänt tecken efter \. Endast \\ och \n tillåtna</translation>
     </message>
     <message>
         <source>SQL Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL Ordbok</translation>
     </message>
 </context>
 <context>
     <name>toSQLEdit</name>
     <message>
         <source>SQL editor</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL editor</translation>
     </message>
     <message>
         <source>Load SQL dictionary file</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladda SQL ordboks fil</translation>
     </message>
     <message>
         <source>Save modified SQL to dictionary file</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara modifierad SQL tillbaka till ordboksfil</translation>
     </message>
     <message>
         <source>Save this entry in the dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara denna post i ordboken</translation>
     </message>
     <message>
         <source>Delete this version from the SQL dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort denna version från SQL ordboken</translation>
     </message>
     <message>
         <source>Start new SQL definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Starta en ny SQL definition</translation>
     </message>
     <message>
         <source>Text Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Text Namn</translation>
     </message>
     <message>
         <source>Name </source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <source> Database </source>
-        <translation type="unfinished"></translation>
+        <translation>Databas</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Beskrivning</translation>
+        <translation>Beskrivning</translation>
     </message>
     <message>
         <source>Wrong format of version</source>
-        <translation type="unfinished"></translation>
+        <translation>Fel format för version</translation>
     </message>
     <message>
         <source>Should be database provider:version.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skulle vara databastyp:version.</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;Ok</translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <source>Should be database provider:version. Can&apos;t start with :.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skulle vara databastyp:version. Kan inte börja med :.</translation>
     </message>
     <message>
         <source>Should be database provider:version. Can&apos;t end with the first :.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skulle vara databastyp:version. Kan inte sluta med det första :.</translation>
     </message>
     <message>
         <source>Missing description</source>
-        <translation type="unfinished"></translation>
+        <translation>Saknar beskrivning</translation>
     </message>
     <message>
         <source>No description filled in. This is necessary to save SQL. Adding undescribed as description.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingen beskrivning ifylld. Detta är nödvändigt för att spara SQL. Lägger till obeskrivd som beskrivning.</translation>
     </message>
     <message>
         <source>Undescribed</source>
-        <translation type="unfinished"></translation>
+        <translation>Obeskrivd</translation>
     </message>
     <message>
         <source>Modified SQL dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändrade SQL ordboken</translation>
     </message>
     <message>
         <source>Save changes into the SQL dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Spara ändringar i SQL ordboken</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nej</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -6212,50 +6247,50 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Avbryt</translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
     <name>toSQLEditTool</name>
     <message>
         <source>&amp;Edit SQL...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editera SQL...</translation>
     </message>
 </context>
 <context>
     <name>toSQLString</name>
     <message>
         <source>SQL Address not found in SGA</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL adress ej funnen i SGA</translation>
     </message>
 </context>
 <context>
     <name>toSQLToAddress</name>
     <message>
         <source>SQL Query not found in SGA</source>
-        <translation type="unfinished"></translation>
+        <translation>SQL fråga ej funnen i SGA</translation>
     </message>
 </context>
 <context>
     <name>toSQLparse</name>
     <message>
         <source>Unbalanced parenthesis (Too many &apos;)&apos;)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obalanserade paranteser (För många &apos;)&apos;)</translation>
     </message>
     <message>
         <source>Unbalanced parenthesis (Too many &apos;(&apos;)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obalanserade paranteser (För många &apos;)&apos;)</translation>
     </message>
     <message>
         <source>Internal error in toSQLParse, should never get here</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>toSaveFilename</name>
     <message>
         <source>File open password</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösenord för att öppna fil</translation>
     </message>
 </context>
 <context>

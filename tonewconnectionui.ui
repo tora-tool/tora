@@ -126,7 +126,7 @@
             </property>
             <property>
                 <name>toolTip</name>
-                <string>A list of previous connections. Select to bring over to the left.</string>
+                <string>A list of previous connections. Select to bring over to the right.</string>
             </property>
         </widget>
         <widget row="5"  column="1"  rowspan="1"  colspan="3" >
