@@ -12,7 +12,12 @@ fi
 rm -rf t
 mkdir -p t
 cd t
-cvs -z3 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co tora
+if [ "X$2" = "X" ]
+then
+    cvs -z3 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co tora
+else
+    cvs -z3 -r$2 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co tora
+fi
 rm -rf `find tora -name CVS`
 touch tora/* tora/*/*
 mv tora tora-$1
