@@ -229,7 +229,8 @@ bool toSQL::loadSQL(const QString &filename)
 	endtag=pos;
 	buf[wpos]=0;
 	wpos=pos;
-      }
+      } else
+	buf[wpos]=buf[pos];
       break;
     case '[':
       if (endtag==-1) {
@@ -238,13 +239,15 @@ bool toSQL::loadSQL(const QString &filename)
 	vertag=pos;
 	buf[wpos]=0;
 	wpos=pos;
-      }
+      } else
+	buf[wpos]=buf[pos];
       break;
     case ']':
       if (endtag==-1) {
 	buf[wpos]=0;
 	wpos=pos;
-      }
+      } else
+	buf[wpos]=buf[pos];
       break;
     case '\\':
       pos++;

@@ -186,7 +186,8 @@ void toTool::loadConfig(void)
 	endtag=pos;
 	buf[wpos]=0;
 	wpos=pos;
-      }
+      } else
+	buf[wpos]=buf[pos];
       break;
     case '\\':
       pos++;

@@ -49,6 +49,7 @@ TO_NAMESPACE;
 #include "toresultindexes.h"
 #include "toresultcontent.h"
 #include "toresultcontent.h"
+#include "toresultdepend.h"
 #include "tosql.h"
 
 #include "tobrowser.moc"
@@ -152,16 +153,6 @@ static toSQL SQLViewGrants("toBrowser:ViewGrants",
 			   " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>\n"
 			   " ORDER BY Privilege,Grantee",
 			   "Display grants on a view");
-static toSQL SQLViewDepend("toBrowser:ViewDepend",
-			   "SELECT referenced_owner \"Owner\",\n"
-			   "       referenced_type \"Type\",\n"
-			   "       referenced_name \"Name\",\n"
-			   "       dependency_type \"Dependency Type\"\n"
-			   "  FROM dba_dependencies\n"
-			   " WHERE owner = :owner<char[31]>\n"
-			   "   AND name = :name<char[31]>\n"
-			   " ORDER BY referenced_owner,referenced_type,referenced_name",
-			   "Display dependencies on a view");
 static toSQL SQLViewComment("toBrowser:ViewComment",
 			    "SELECT Comments FROM ALL_TAB_COMMENTS\n"
 			    " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>",
@@ -222,16 +213,6 @@ static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
 			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
 			"   AND Type IN ('PACKAGE','PROCEDURE','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
-static toSQL SQLSQLDepend("toBrowser:PL/SQLDepend",
-			  "SELECT referenced_owner \"Owner\",\n"
-			  "       referenced_type \"Type\",\n"
-			  "       referenced_name \"Name\",\n"
-			  "       dependency_type \"Dependency Type\"\n"
-			  "  FROM dba_dependencies\n"
-			  " WHERE owner = :owner<char[31]>\n"
-			  "   AND name = :name<char[31]>\n"
-			  " ORDER BY referenced_owner,referenced_type,referenced_name",
-			  "Display dependencies on a PL/SQL object");
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
 			    "SELECT Trigger_Name FROM ALL_TRIGGERS\n"
@@ -256,16 +237,6 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    "  FROM ALL_TRIGGER_COLS\n"
 			    " WHERE Trigger_Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>",
 			    "Columns used by trigger");
-static toSQL SQLTriggerDepend("toBrowser:TriggerDepend",
-			      "SELECT referenced_owner \"Owner\",\n"
-			      "       referenced_type \"Type\",\n"
-			      "       referenced_name \"Name\",\n"
-			      "       dependency_type \"Dependency Type\"\n"
-			      "  FROM dba_dependencies\n"
-			      " WHERE owner = :owner<char[31]>\n"
-			      "   AND name = :name<char[31]>\n"
-			      " ORDER BY referenced_owner,referenced_type,referenced_name",
-			      "Display dependencies on a trigger");
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
@@ -382,11 +353,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
-  resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_DEPEND);
-  resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLViewDepend,Connection));
-  curr->addTab(resultView,"Dependencies");
-  SecondMap[TAB_VIEW_DEPEND]=resultView;
+  toResultDepend *resultDepend=new toResultDepend(Connection,curr,TAB_VIEW_DEPEND);
+  curr->addTab(resultDepend,"Dependencies");
+  SecondMap[TAB_VIEW_DEPEND]=resultDepend;
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
@@ -482,11 +451,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"Body");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
-  resultView=new toResultView(true,false,Connection,curr,TAB_PLSQL_DEPEND);
-  resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLSQLDepend,Connection));
-  curr->addTab(resultView,"Dependencies");
-  SecondMap[TAB_PLSQL_DEPEND]=resultView;
+  resultDepend=new toResultDepend(Connection,curr,TAB_PLSQL_DEPEND);
+  curr->addTab(resultDepend,"Dependencies");
+  SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
   TopTab->addTab(splitter,"Triggers");
@@ -518,11 +485,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
-  resultView=new toResultView(true,false,Connection,curr,TAB_TRIGGER_DEPEND);
-  resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLTriggerDepend,Connection));
-  curr->addTab(resultView,"Dependencies");
-  SecondMap[TAB_TRIGGER_DEPEND]=resultView;
+  resultDepend=new toResultDepend(Connection,curr,TAB_TRIGGER_DEPEND);
+  curr->addTab(resultDepend,"Dependencies");
+  SecondMap[TAB_TRIGGER_DEPEND]=resultDepend;
 
   refresh();
 

@@ -135,19 +135,19 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
   
   LogMulti = new QCheckBox( GroupBox1, "LogMulti" );
   LogMulti->setGeometry( QRect( 20, 190, 340, 20 ) ); 
-  LogMulti->setText( tr( "&Multiple lines in log."  ) );
+  LogMulti->setText( tr( "&Multiple lines in log"  ) );
   QToolTip::add(  LogMulti, tr( "Display multiple lines in logging SQL column.") );
   
   PLSQLParse = new QCheckBox( GroupBox1, "PLSQLParse" );
   PLSQLParse->setGeometry( QRect( 20, 230, 340, 20 ) ); 
-  PLSQLParse->setText( tr( "&Parse PL/SQL blocks."  ) );
+  PLSQLParse->setText( tr( "&Parse PL/SQL blocks"  ) );
   QToolTip::add(PLSQLParse, tr( "Parse PL/SQL blocks in worksheet. You usually need this\n"
 				"but it if you forget one end the rest of the editor will\n"
 				"be one block.") );
 
   Statistics = new QCheckBox( GroupBox1, "Statistics" );
-  Statistics->setGeometry( QRect( 20, 230, 340, 20 ) ); 
-  Statistics->setText( tr( "&Enable Statistics."  ) );
+  Statistics->setGeometry( QRect( 20, 270, 340, 20 ) ); 
+  Statistics->setText( tr( "&Enable Statistics"  ) );
   QToolTip::add(Statistics, tr( "Enable statistic collection per default.") );
 
   FileChoose = new QPushButton( GroupBox1, "FileChoose" );
