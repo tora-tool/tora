@@ -44,13 +44,12 @@ Extended functionality:
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
 * Information about controlfiles in tuning.
-* Postgress support.
 * Make entire tuning polling in background.
 * Use object cache in browser if possible.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
 * Proxy connection provider.
-* QSql connection provider.
+* QSql connection provider. (PostgreSQL support)
 * Store worksheet statistic on save session.
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
@@ -65,6 +64,23 @@ Extended functionality:
 * Scrollable charts with longer history.
 * Don't refresh non charts tabs automatically in tuning.
 * Use QTable to display the result in the worksheet.
+* Improved visualisation of any list and any columns.
+* Session:Accessed objects(v$access)
+* Session:Long operations(v$session_longops)
+* Session:Current statement in list
+* Log switch graph:(v$log_history)
+	* Archive log
+* Tuning:Library cache info(v$librarycache)
+* System:Resource limits(v$resource_limit)
+* System:Control file(v$controlfile_record_section)
+* Recent events:
+	* Number of redo switches
+	* Users added withing 30 days
+	* Roles added withing 30 days
+	* Datafiles added within 30 days
+	* Objects added within 30 days
+	* Objects edited within 30 days
+* Rollback:Shrink rollback segment(ALTER ROLLBACK SEGMENT TO {value})
 
 New tools:
 

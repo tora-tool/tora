@@ -91,7 +91,7 @@ static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "List users in the database");
 
 static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
-			       "SELECT 'No schemas'",
+			       "SHOW DATABASES",
 			       QString::null,
 			       "3.0",
 			       "MySQL");

@@ -659,7 +659,6 @@ void toResultContentEditor::deleteCurrent()
     cancelEdit();
     return;
   }
-  bool mysql=(connection().provider()=="MySQL");
   saveUnsaved();
   if (currentRow()<Row) {
     QString sql="DELETE FROM ";
@@ -669,17 +668,15 @@ void toResultContentEditor::deleteCurrent()
     QHeader *head=horizontalHeader();
     toQDescList::iterator di=Description.begin();
     bool where=false;
+    toConnection &conn=connection();
+      
     for(int i=0;i<numCols();i++) {
       if (!(*di).Datatype.startsWith("LONG")) {
 	if (where)
 	  sql+=" AND ";
 	else
 	  where=true;
-	if (!mysql)
-	  sql+="\"";
-	sql+=head->label(i);
-	if (!mysql)
-	  sql+="\" ";
+	sql+=conn.quote(head->label(i));
 	if (!text(currentRow(),i))
 	  sql+=" IS NULL";
 	else {
@@ -691,8 +688,6 @@ void toResultContentEditor::deleteCurrent()
       di++;
     }
     try {
-      toConnection &conn=connection();
-      
       toQList args;
       toQDescList::iterator di=Description.begin();
       for(int i=0;i<numCols();i++) {
@@ -744,8 +739,8 @@ void toResultContentEditor::saveUnsaved(void)
       return;
     }
 
+    toConnection &conn = connection();
     QString rowid;
-    bool mysql=(connection().provider()=="MySQL");
     bool oracle=(connection().provider()=="Oracle");
     toStatusMessage("Saved row",false,false);
     if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
@@ -764,7 +759,6 @@ void toResultContentEditor::saveUnsaved(void)
 	sql+=" RETURNING ROWID INTO :r<char[101],out>";
 	
       try {
-	toConnection &conn = connection();
 	toQList args;
 	toQValue null;
 	for (int i=0;i<numCols();i++) {
@@ -802,11 +796,7 @@ void toResultContentEditor::saveUnsaved(void)
 	    first=true;
 	  else
 	    sql+=", ";
-	  if (!mysql)
-	    sql+="\"";
-	  sql+=head->label(i);
-	  if (!mysql)
-	    sql+="\" ";
+	  sql+=conn.quote(head->label(i));
 	  if (fld.isNull())
 	    sql+=" = NULL";
 	  else {
@@ -827,11 +817,7 @@ void toResultContentEditor::saveUnsaved(void)
 	      sql+=" AND ";
 	    else
 	      where=true;
-	    if (!mysql)
-	      sql+="\"";
-	    sql+=head->label(col);
-	    if (!mysql)
-	      sql+="\" ";
+	    sql+=conn.quote((*di).Name);
 	    if ((*j).isNull())
 	      sql+=" IS NULL";
 	    else {
@@ -845,7 +831,6 @@ void toResultContentEditor::saveUnsaved(void)
 	if(oracle)
 	  sql+=" RETURNING ROWID INTO :r<char[101],out>";
 	try {
-	  toConnection &conn = connection();
 	  toQList args;
 
 	  std::list<QString>::iterator k=OrigValues.begin();
@@ -1076,16 +1061,10 @@ void toResultContentEditor::menuCallback(int cmd)
 QString toResultContentEditor::table(void)
 {
   QString sql;
-  if (connection().provider()=="MySQL")
-    return Table;
-  else {
-    sql="\"";
-    sql+=Owner;
-    sql+="\".\"";
-    sql+=Table;
-    sql+="\"";
-    return sql;
-  }
+  sql=connection().quote(Owner);
+  sql+=".";
+  sql+=connection().quote(Table);
+  return sql;
 }
 
 toResultContent::toResultContent(QWidget *parent,const char *name)

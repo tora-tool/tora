@@ -128,7 +128,7 @@ static toSQL SQLListIndex7("toResultIndexes:ListIndex",
 			   "7.3");
 
 static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
-			       "SHOW INDEX FROM :tab<noquote>",
+			       "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
 			       QString::null,
 			       "3.0",
 			       "MySQL");
@@ -164,9 +164,9 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
   try {
     toQuery query(connection());
     toQList par;
-    if (Type==Oracle)
-      par.insert(par.end(),Owner);
+    par.insert(par.end(),Owner);
     par.insert(par.end(),TableName);
+    Last=NULL;
 
     Query=new toNoBlockQuery(connection(),toQuery::Background,
 			     toSQL::string(SQLListIndex,conn),par);

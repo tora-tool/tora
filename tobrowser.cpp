@@ -361,7 +361,7 @@ static toSQL SQLListTables7("toBrowser:ListTables",
 			    QString::null,
 			    "7.3");
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
-				"SHOW TABLES",
+				"SHOW TABLES FROM :f1<noquote>",
 				QString::null,
 				"3.0",
 				"MySQL");
@@ -1303,16 +1303,18 @@ public:
     if (typ=="Tables") {
       QPixmap image((const char **)table_xpm);
       setPixmap(0,image);
+      new toTemplateTableItem(conn,this,"Indexes");
       if (conn.provider()=="Oracle") {
-	new toTemplateTableItem(conn,this,"Indexes");
 	new toTemplateTableItem(conn,this,"Constraints");
 	new toTemplateTableItem(conn,this,"References");
 	new toTemplateTableItem(conn,this,"Grants");
 	new toTemplateTableItem(conn,this,"Triggers");
-	new toTemplateTableItem(conn,this,"Information");
-	new toTemplateTableItem(conn,this,"Script");
       }
       new toTemplateTableItem(conn,this,"Data");
+      new toTemplateTableItem(conn,this,"Information");
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Script");
+      }
     } else if (typ=="Views") {
       QPixmap image((const char **)view_xpm);
       setPixmap(0,image);
