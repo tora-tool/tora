@@ -1,5 +1,6 @@
 1.3.5:
 
+2002-04-15: Removed empty HTML table from API documentation.
 2002-04-15: Fixed problem with ORA-24344 not being correctly reported.
 2002-04-15: Don't log errors from OCI_SUCCESS_WITH_INFO returns.
 2002-04-15: Don't display status messages from other threads than main thread (Can crash).

@@ -144,44 +144,102 @@ public:
     ~statement();
   };
 
-  /** Get next SQL token from an editor.
-   * @param text Editor to get token from
-   * @param curLine Current line when parsing, modified when calling.
-   * @param pos Current position when parsing, modified when calling.
-   * @param forward If true go forward from current position, otherwise backward.
-   * @param comment Include comments as tokens.
-   * @return String with next token in editor
+  /** Abstract class to define a source of tokens for the parser.
    */
-  static QString getToken(toMarkedText *text,int &curLine,int &pos,bool forward=true,
-			  bool comment=false);
+  class tokenizer {
+  protected:
+    int Offset;
+    int Line;
+  public:
+    /** Create a tokenizer. Optionally specify which line and offset to start at.
+     */
+    tokenizer(int offset=0,int line=0)
+    { Line=line; Offset=offset; }
+    virtual ~tokenizer()
+    { }
+    /** Get a token from the string.
+     * @param forward Go forward or backwards to get next token.
+     * @param comment Include comments as tokens.
+     */
+    virtual QString getToken(bool forward=true,bool comment=false) = 0;
+    /** Get the current line of the tokenizer. A line is defined by a \n character
+     */
+    virtual int line(void)
+    { return Line; }
+    /** Current offset of the tokenizer (Should point to the character after the last token in the specified direction)
+     */
+    virtual int offset(void)
+    { return Offset; }
+    /** Set a new offset of tokenzer.
+     */
+    virtual void setOffset(int offset)
+    { Offset=offset; }
+    /** Set new current line of tokenizer.
+     * This will not affect the current position of the tokenizer.
+     */
+    virtual void setLine(int line)
+    { Line=line; }
+    /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
+     */
+    virtual QString remaining(bool eol) = 0;
+  };
 
-  /** Get next SQL token from a string.
-   * @param str String to get token from
-   * @param line The line the current position is on. This is not needed, but only valid
-   *             if a correct value is passed into the function.
-   * @param pos Current position when parsing, modified when calling.
-   * @param forward If true go forward from current position, otherwise backward.
-   * @param comment Include comments as tokens.
-   * @return String with next token in editor
+  /** Tokenizer class which gets tokens from a string.
    */
-  static QString getToken(const QString &sql,int &line,int &pos,bool forward=true,
-			  bool comment=false);
-  /** Get next SQL token from a string.
-   * @param str String to get token from
-   * @param pos Current position when parsing, modified when calling.
-   * @param forward If true go forward from current position, otherwise backward.
-   * @param comment Include comments as tokens.
-   * @return String with next token in editor
-   */
-  static QString getToken(const QString &sql,int &pos,bool forward=true,
-			  bool comment=false)
-  { int t; return getToken(sql,t,pos,forward,comment); }
+  class stringTokenizer : public tokenizer {
+    QString String;
+  public:
+    stringTokenizer(const QString &str,int offset=0,int line=0)
+      : tokenizer(offset,line)
+    { String=str; }
+    /** Get a token from the string.
+     * @param forward Go forward or backwards to get next token.
+     * @param comment Include comments as tokens.
+     */
+    virtual QString getToken(bool forward=true,bool comment=false);
+    /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
+     */
+    virtual QString remaining(bool eol);
+  };
 
+  /** Tokenizer class which gets tokens from an editor.
+   */
+  class editorTokenizer : public tokenizer {
+    toMarkedText *Editor;
+  public:
+    editorTokenizer(toMarkedText *editor,int offset=0,int line=0)
+      : tokenizer(offset,line)
+    { Editor=editor; }
+    /** Get a token from the string.
+     * @param forward Go forward or backwards to get next token.
+     * @param comment Include comments as tokens.
+     */
+    virtual QString getToken(bool forward=true,bool comment=false);
+    /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
+     */
+    virtual QString remaining(bool eol);
+  };
+
+  /** Parse a string.
+   * @param tokens Tokenizer provider to generate parsed tree from.
+   * @return Parsed statement tree.
+   */
+  static std::list<statement> parse(tokenizer &tokens);
+  /** Parse a string.
+   * @param tokens Tokenizer provider to generate parsed tree from.
+   * @return Parsed statement tree.
+   */
+  static std::list<statement> parse(tokenizer &tokens,toConnection &conn)
+  { return parse(tokens); }
   /** Parse a string.
    * @param str String to parse.
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(const QString &str);
+  static std::list<statement> parse(const QString &str)
+  { stringTokenizer tokens(str); return parse(tokens); }
   /** Parse a string.
    * @param str String to parse.
    * @param conn Connection to determine SQL dialect. (For future use)
@@ -189,6 +247,30 @@ public:
    */
   static std::list<statement> parse(const QString &str,toConnection &conn)
   { return parse(str); }
+
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param tokens Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static statement parseStatement(tokenizer &tokens);
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param str Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static statement parseStatement(const QString &str)
+  { stringTokenizer tokens(str); return parseStatement(tokens); }
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param tokens Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static statement parseStatement(tokenizer &tokens,toConnection &conn)
+  { return parseStatement(tokens); }
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param str Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static statement parseStatement(const QString &str,toConnection &conn)
+  { stringTokenizer tokens(str); return parseStatement(tokens,conn); }
 
   /** Indent a string.
    * @param str String to indent.
@@ -220,10 +302,8 @@ public:
   static int countIndent(const QString &str,int &chars);
 private:
   static settings Settings;
-  static statement parseStatement(const QString &str,
-				  int &cline,
-				  int &pos,
-				  bool declare);
+  static statement parseStatement(tokenizer &tokens,
+				  bool declare,bool lst);
 public:
   /** Get current settings.
    */
@@ -237,8 +317,5 @@ public:
 
 #endif
 </pre>
-<HR>
-	<table>
-	</table>
 </BODY>
 </HTML>

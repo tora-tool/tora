@@ -519,15 +519,23 @@ public:
    */
   static std::list<QString> splitDescribe(const QString &str);
 
+  /** Get the part of a description indicated by the level
+   * @param str Description string
+   * @param level The level to get (0 is the first level)
+   */
   static QString partDescribe(const QString &str,int level);
+
+  /** Get the context of a given level.
+   * @param str Description string
+   * @param level The level to get the context for (1 is the first to not return empty string.
+   * @return The context, if not enough parts are available null is returned.
+   */
+  static QString contextDescribe(const QString &str,int level);
 
   friend class extractor;
 };
 
 #endif
 </pre>
-<HR>
-	<table>
-	</table>
 </BODY>
 </HTML>

@@ -121,7 +121,9 @@
 </LI>
 <LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref76">partDescribe</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int level) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref77">extractor</A></b></LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref77">contextDescribe</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int level) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref78">extractor</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  This class can be used to reverse engineered database objects.
  </p>
@@ -471,9 +473,25 @@
 <p><b>Returns</b>: The list of components.
    </p>
 <A NAME="partDescribe"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>partDescribe</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int level)
-<br></td><td align="right"><h3><strong>partDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="extractor"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>extractor</strong>
-</td><td align="right"><h3><strong>extractor</strong></h3></td></tr></table><p></p><HR>
-	<table>
-	</table>
-</BODY>
+<br></td><td align="right"><h3><strong>partDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the part of a description indicated by the level
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Description string
+</TD></TR>
+<TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">The level to get (0 is the first level)
+   </TD></TR>
+</TABLE></P>
+<A NAME="contextDescribe"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>contextDescribe</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int level)
+<br></td><td align="right"><h3><strong>contextDescribe</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the context of a given level.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Description string
+</TD></TR>
+<TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">The level to get the context for (1 is the first to not return empty string.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: The context, if not enough parts are available null is returned.
+   </p>
+<A NAME="extractor"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>extractor</strong>
+</td><td align="right"><h3><strong>extractor</strong></h3></td></tr></table><p></p></BODY>
 </HTML>

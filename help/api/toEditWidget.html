@@ -46,7 +46,7 @@
 	       bool search,
 	       bool selectAll,bool readAll) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref19">editOpen</A></b> (void) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref19">editOpen</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref20">editSave</A></b> (bool askfile) 
 </LI>
@@ -144,9 +144,13 @@
 	       bool selectAll,bool readAll)
 <br></td><td align="right"><h3><strong>setEdit</strong></h3></td></tr></table><p></p><p> Specify new enabled functions.
    </p>
-<A NAME="editOpen"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (void)
+<A NAME="editOpen"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null)
 <br></td><td align="right"><h3><strong>editOpen</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform an open on this widget. Default NOP.
-   </p>
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>file</i></TD><TD align="left" valign="top">The file to open, if not specified prompt for file.
+   </TD></TR>
+</TABLE></P>
 <A NAME="editSave"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editSave</strong> (bool askfile)
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform a save on this widget. Default NOP.
 </p>
@@ -263,8 +267,5 @@
 <A NAME="delHandler"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>delHandler</strong> (editHandler *handler)
 <br></td><td align="right"><h3><strong>delHandler</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Removed a hook from being called every time focus changes.
    </p>
-<HR>
-	<table>
-	</table>
 </BODY>
 </HTML>

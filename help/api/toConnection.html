@@ -132,7 +132,7 @@
 </LI>
 <LI>const objectName &&nbsp;<b><A HREF="#ref71">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &synonym,bool block) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref72">cacheAvailable</A></b> (bool block=false,bool need=true) 
+<LI>bool &nbsp;<b><A HREF="#ref72">cacheAvailable</A></b> (bool synonyms,bool block=false,bool need=true) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref73">cancelAll</A></b> (void) 
 </LI>
@@ -445,10 +445,12 @@
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
    </TD></TR>
 </TABLE></P>
-<A NAME="cacheAvailable"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool block=false,bool need=true)
+<A NAME="cacheAvailable"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool synonyms,bool block=false,bool need=true)
 <br></td><td align="right"><h3><strong>cacheAvailable</strong></h3></td></tr></table><p></p><p> Check if cache is available or not.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>synonyms</i></TD><TD align="left" valign="top">If synonyms are needed or not.
+</TD></TR>
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block until cache is done.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>true</i></TD><TD align="left" valign="top">True if you need the cache, or just checking.
@@ -460,8 +462,5 @@
 <br></td><td align="right"><h3><strong>cancelAll</strong></h3></td></tr></table><p></p><p> Try to stop all running queries.
    </p>
 <A NAME="toQuery"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
-</td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><HR>
-	<table>
-	</table>
-</BODY>
+</td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p></BODY>
 </HTML>

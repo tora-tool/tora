@@ -830,11 +830,12 @@ public:
    */
   const objectName &realName(const QString &object,QString &synonym,bool block);
   /** Check if cache is available or not.
+   * @param synonyms If synonyms are needed or not.
    * @param block Block until cache is done.
    * @param true True if you need the cache, or just checking.
    * @return True if cache is available.
    */
-  bool cacheAvailable(bool block=false,bool need=true);
+  bool cacheAvailable(bool synonyms,bool block=false,bool need=true);
 
   /** Try to stop all running queries.
    */
@@ -971,8 +972,5 @@ public:
 
 #endif
 </pre>
-<HR>
-	<table>
-	</table>
 </BODY>
 </HTML>
