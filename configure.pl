@@ -726,7 +726,7 @@ __TEMP__
     if (! -d $QtLib) {
 	$QtLib=findFile("^$QtSearch\\.(?:s[ol]|dylib)\\.[23]",sub {
 		                                     if (-f $_[0] && ! -l $_[0]) {
-							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt?)[23]?)[^\/]*$/);
+							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 							 if (!defined $QtLibShared) {
 							     return 0;
 							 }

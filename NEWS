@@ -1,5 +1,6 @@
 1.3.9:
 
+2002-10-29: Fix configure problem with qt-mt.
 2002-10-23: Use msleep if QT_THREAD_SUPPORT to help fink users.
 2002-10-23: Added column with server PID to session view.
 2002-10-23: Fixed problem with translated chartlabels.
