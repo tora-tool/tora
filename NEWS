@@ -22,6 +22,8 @@
 2001-02-22: Added SQL dictionary editor tool.
 2001-02-22: Made : be separator in configurationfiles instead of \\, backwards
 		compatible though.
+2001-02-22: Made configure quit if configure.pl failed. Also removed check that
+		prefix dirs exist. (Thanx Robert Cheramy)
 
 0.5: Released 2001-02-12
 

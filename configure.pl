@@ -370,20 +370,22 @@ __TEMP__
     }
     print "Using compiler $CC\n";
 
-    if (!-d $InstallPrefix) {
-	print "Directory $InstallPrefix not found or not directory\n";
-	exit(2);
+    if (0) {
+	if (!-d $InstallPrefix) {
+	    print "Directory $InstallPrefix not found or not directory\n";
+	    exit(2);
+	}
+	if (!-d $InstallBin) {
+	    print "Directory $InstallBin not found or not directory\n";
+	    exit(2);
+	}
+	print "Installing binaries to $InstallBin\n";
+	if (!-d $InstallLib) {
+	    print "Directory $InstallLib not found or not directory\n";
+	    exit(2);
+	}
+	print "Installing binaries to $InstallLib\n";
     }
-    if (!-d $InstallBin) {
-	print "Directory $InstallBin not found or not directory\n";
-	exit(2);
-    }
-    print "Installing binaries to $InstallBin\n";
-    if (!-d $InstallLib) {
-	print "Directory $InstallLib not found or not directory\n";
-	exit(2);
-    }
-    print "Installing binaries to $InstallLib\n";
 
     if (!$ForceTarget) {
 	if (`uname`=~/linux/i) {

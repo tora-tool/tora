@@ -30,6 +30,13 @@ then
 fi
 
 $PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
+
+if [ $? != 0 ]
+then
+    echo configure.pl failed. Exiting.
+    exit 2
+fi
+
 echo PERL=$PERL >> Makefile.setup
 
 # Get the MOC stuff
