@@ -60,6 +60,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "totool.h"
 #include "tomemoeditor.h"
+#include "toparamget.h"
 
 #include "toresultview.moc"
 
@@ -337,7 +338,21 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
     clip->setText(chkItem->allText(col));
   else if (item)
     clip->setText(item->text(col));
-  
+
+  QHeader *head=header();
+  for (int i=0;i<columns();i++) {
+    QString str;
+    if (resItem)
+      str=resItem->allText(i);
+    else if (chkItem)
+      str=chkItem->allText(col);
+    else if (item)
+      str=item->text(i);
+
+    if (str=="{null}")
+      str=QString::null;
+    toParamGet::setDefault(head->label(i).lower(),str);
+  }
 }
 
 void toListView::contentsMouseMoveEvent (QMouseEvent *e)

@@ -39,7 +39,6 @@ Extended functionality:
 * Ability to select default tool in options.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
-* Doubleclicking on a listview should set param defaults to that line.
 
 New tools:
 

@@ -10,6 +10,7 @@
 2001-08-07: Added posibility to change connection in tool (Not debug yet).
 2001-08-07: New connection dialog with connection history.
 2001-08-07: Display wait cursor when query is executed.
+2001-08-07: Set default parameters when doubleclicking on line.
 
 0.14: Released 2001-08-02
 

@@ -158,7 +158,6 @@ plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
-plugins/toparamget.tso:objs/toparamget.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
@@ -223,7 +222,6 @@ tora-plugin: \
 	plugins/tofilesize.tso \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
-	plugins/toparamget.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \
@@ -256,6 +254,7 @@ tora: \
 	objs/tomemoeditor.o \
 	objs/tonewconnection.o \
 	objs/tonewconnectionui.o \
+	objs/toparamget.o \
 	objs/topreferences.o \
 	objs/toresultcontent.o \
 	objs/toresultfield.o \
