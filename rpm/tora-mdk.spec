@@ -33,11 +33,11 @@ cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
 mkdir -p $RPM_BUILD_ROOT%{_iconsdir}
 cp icons/tora.xpm $RPM_BUILD_ROOT%{_iconsdir}/tora.xpm
 
-strip plugins/*.so tora
+strip plugins/*.tso tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp plugins/*.so $RPM_BUILD_ROOT%{_prefix}/lib/tora
+cp plugins/*.tso $RPM_BUILD_ROOT%{_prefix}/lib/tora
 
 %post
 %{update_menus}
