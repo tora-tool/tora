@@ -13,11 +13,35 @@ BuildRoot: %{_tmppath}/tora-root
 Group: %{group}
 
 %Description
-Tool for Oracle (Tora) is a tool for DBAs and database software developers.
-It is inspired by TOAD for Windows. It features a schema browser, SQL
-worksheet, PL/SQL editor & debugger, storage manager, rollback segment
-monitor, instance manager, SQL output viewer, SQL template tree and
-schema extraction and compare. This version doesn't have KDE support.
+TOra is a Toolkit for Oracle which aims to help the DBA or developer of
+database application.
+
+In the current release it has the following features:
+
+Handles multiple connections
+SQL worksheet with explain plan and statement statistics
+PL/SQL syntax highlighting
+PL/SQL parsing in SQL worksheet
+Schema browser
+Storage manager
+Session manager
+SGA trace
+Rollback manager
+SQL Output viewer
+Easily extendable
+PL/SQL Editor/Debugger
+Database/schema comparison
+Extract schema objects to SQL script
+Possible to add support for new or older Oracle versions without
+        programming knowledge
+Security manager
+Server tuning information
+Current session information
+SQL template help
+Full UNICODE support
+Printing of any list or source
+
+This build does not have KDE support.
 
 %prep
 %setup -q

@@ -49,6 +49,7 @@
 	are made.
 2001-05-25: Pressing toTemplate tool again when open closes it.
 2001-05-25: Fixed pesky coredump in toBrowserTemplate.
+2001-05-25: Updated rpm and README to be more up2date with featurelist.
 
 0.9.1: Released 2001-05-20
 

@@ -13,23 +13,28 @@ documentation which is pretty much non existant.
 
 The features that are available so far is (As of version 0.10):
 
-* PL/SQL Editor and Debugger.
-* SQL Worksheet with statistics and explain plan functiontionality.
-* Rollback segment analyzer.
-* SQL Output viewer.
-* Security manager for handling users and roles.
-* Instance manager for handling connections to the DB.
-* Storage manager to handle tablespaces and datafiles.
-* Schema browser with editable content browser.
-* SGA Trace tool.
-* Handles multiple connections to Oracle from different versions of Oracle.
-* Easily extendable and customizable including SQL used to get information
-	from Oracle in different versions.
-* Syntax highlighting of SQL.
-* Print support.
-* SQL template tree.
-* Server tuning.
-* Current session info.
+* Handles multiple connections
+* SQL worksheet with explain plan and statement statistics
+* PL/SQL syntax highlighting
+* PL/SQL parsing in SQL worksheet
+* Schema browser
+* Storage manager
+* Session manager
+* SGA trace
+* Rollback manager
+* SQL Output viewer
+* Easily extendable
+* PL/SQL Editor/Debugger
+* Database/schema comparison
+* Extract schema objects to SQL script
+* Possible to add support for new or older Oracle versions without
+        programming knowledge
+* Security manager
+* Server tuning information
+* Current session information
+* SQL template help
+* Full UNICODE support
+* Printing of any list or source
 
 For installation instructions se the file INSTALL.
 
