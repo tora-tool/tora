@@ -82,6 +82,7 @@ class toSession : public toToolWidget {
   QString LastSession;
   QPopupMenu *ToolMenu;
   QComboBox *Refresh;
+  QLabel *Total;
 
   QString Session;
   QString Serial;

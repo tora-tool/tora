@@ -237,7 +237,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
   new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
-  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  toolbar->setStretchableWidget(Total=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  Total->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
   new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
@@ -359,12 +360,19 @@ void toSession::refresh(void)
 
 void toSession::done(void)
 {
-  for (QListViewItem *item=Sessions->firstChild();item;item=item->nextSibling())
+  int system=0,total=0,active=0;
+  for (QListViewItem *item=Sessions->firstChild();item;item=item->nextSibling()) {
     if (item->text(0)==Session&&
 	item->text(1)==Serial) {
       Sessions->setSelected(item,true);
-      break;
     }
+    total++;
+    if (item->text(8)!="USER")
+      system++;
+    else if (item->text(3)=="ACTIVE")
+      active++;
+  }
+  Total->setText(QString("Total <B>%1</B> (Active <B>%3</B>, System <B>%2</B>)").arg(total).arg(system).arg(active));
 }
 
 void toSession::enableStatistics(bool enable)
