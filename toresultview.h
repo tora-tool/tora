@@ -78,6 +78,45 @@ public:
   virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
 };
 
+class toResultViewCheck : public QCheckListItem {
+public:
+  toResultViewCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,QString::null,type)
+  { if (!text.isNull()) setText(0,text); }
+  toResultViewCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,QString::null,type)
+  { if (!text.isNull()) setText(0,text); }
+  virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
+  virtual QString text(int col) const;
+  virtual QString key(int col,bool) const;
+  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual QString allText(int col) const
+  { return QCheckListItem::text(col); }
+  virtual QString tooltip(int col) const
+  { return allText(col); }
+};
+
+class toResultViewMLCheck : public toResultViewCheck {
+private:
+  int Lines;
+public:
+  toResultViewMLCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
+    : toResultViewCheck(parent,QString::null,type)
+  { Lines=1; if (!text.isNull()) setText(0,text); }
+  toResultViewMLCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
+    : toResultViewCheck(parent,QString::null,type)
+  { Lines=1; if (!text.isNull()) setText(0,text); }
+  virtual void setup(void);
+  virtual void setText (int,const QString &);
+  virtual QString text(int col) const
+  { return QListViewItem::text(col); }
+  virtual QString allText(int col) const
+  { return QListViewItem::text(col); }
+  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
+
+  virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
+};
+
 class toResultView : public QListView, public toResult {
   Q_OBJECT
 

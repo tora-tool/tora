@@ -670,7 +670,7 @@ void toWorksheet::execute(bool all,bool step)
 	      QString rest=data.right(data.length()-i).lower();
 	      for (int j=0;Blocks[j].Start;j++) {
 		unsigned int len=strlen(Blocks[j].Start);
-		if (rest.startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest[len]))) {
+		if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest[len]))) {
 		  lastState=state;
 		  state=comment;
 		  break;
@@ -679,11 +679,11 @@ void toWorksheet::execute(bool all,bool step)
 	      if (state==comment)
 		break;
 	    }
-	    if ((c=='-'&&nc=='-')||(c=='/'&&data.length()==1)) {
+	    if (c=='-'&&nc=='-') {
 	      lastState=state;
 	      state=comment;
 	      break;
-	    } else if (!c.isSpace()) {
+	    } else if (!c.isSpace()&&(c!='/'||data.length()!=1)) {
 	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step&&startLine>=0&&startPos>=0) {
 		state=done;
 		break;

@@ -15,17 +15,16 @@ Extended functionality:
 * Add context menues to all tools, like in debugger.
 * Add consumer group settings to security manager.
 * Expand admin/default in security for all privtypes.
-* Copy/Paste in toResultContent.
 * Edit memo in toResultContent.
+* Display memo in toResultView.
 * Make it possible to compile as KDE application.
 * Make it possible to reorder columns in toResultContent.
 * Add function to create plan table from TOra.
 * Extract grants from objects.
 * Implement migrate functionality in toExtract.
 * Implement extract of temporary tables.
+* Implement migration and resize in toScript.
 
 New tools:
 * Info about current session.
-* Schema comparison.
 * Server statistics and tuning information.
-* Dump of schema to create script (Including content).

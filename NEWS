@@ -70,6 +70,7 @@
 2001-05-02: Made toExtract extract content of tables.
 2001-05-02: Fixed problem loading large files.
 2001-05-03: Final changes to make extract actually work (Whoopeee!)
+2001-05-03: Added check buttons to toResultView.
 
 0.7: Released 2001-03-24
 

@@ -676,7 +676,7 @@ void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
       ret+=search;
       ret+=")";
     } else {
-      ret+=constraintColumns(owner,name);
+      ret+=constraintColumns(owner,name).simplifyWhiteSpace();
 
       if (tchr=="R") {
 	otl_stream str(1,
@@ -1645,7 +1645,8 @@ void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
       line+=" DEFAULT ";
       line+=def;
     }
-    addDescription(lst,ctx,"COLUMN",line);
+    line+=toShift(cols);
+    addDescription(lst,ctx,"COLUMN",line.simplifyWhiteSpace());
   }
 }
 
@@ -1665,7 +1666,7 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
   if (!Code)
     return "";
 
-  static QRegExp StripType("^[a-zA-Z]+[ \t]+[^ \t\\(]+");
+  static QRegExp StripType("^[^ \t]+[ \t]+");
   otl_stream inf(1,
 		 SQLDisplaySource(Connection),
 		 Connection.connection());
@@ -1687,8 +1688,17 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
     inf>>buffer;
     QString line=QString::fromUtf8(buffer);
     if (first&&!Describe) {
-      line.replace(StripType,"");
-      line.prepend(QString("%1 %2%3").arg(type).arg(schema).arg(name.lower()));
+      unsigned int i=0;
+      for (i=0;i<line.length();i++) {
+	if (line[i].isSpace())
+	  break;
+	ret+=line[i];
+      }
+      while(i<line.length()&&line[i].isSpace())
+	i++;
+      line=line.right(line.length()-i);
+      ret+=" ";
+      ret+=schema;
       first=false;
     }
     ret+=line;
@@ -1708,9 +1718,9 @@ void toExtract::describeSource(list<QString> &lst,
   list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),type);
-  ctx.insert(ctx.end(),name);
+  ctx.insert(ctx.end(),name.lower());
   addDescription(lst,ctx);
-  addDescription(lst,ctx,displaySource(schema,owner,name,type));
+  addDescription(lst,ctx,displaySource(schema,owner,name,type).simplifyWhiteSpace());
 }
 
 QString toExtract::createFunction(const QString &schema,const QString &owner,const QString &name)
@@ -3294,7 +3304,7 @@ void toExtract::describeTable(list<QString> &lst,
   list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"TABLE");
-  ctx.insert(ctx.end(),name);
+  ctx.insert(ctx.end(),name.lower());
 
   if (iot_type=="IOT"&&Indexes) {
     if (partitioned=="YES"&&Partition)
@@ -4297,7 +4307,7 @@ void toExtract::describeProfile(list<QString> &lst,
 
   list<QString> ctx;
   ctx.insert(ctx.end(),"PROFILE");
-  ctx.insert(ctx.end(),name);
+  ctx.insert(ctx.end(),name.lower());
   addDescription(lst,ctx);
 
   while(info.size()!=0)
@@ -4351,7 +4361,7 @@ void toExtract::describeRole(list<QString> &lst,
 
   list<QString> ctx;
   ctx.insert(ctx.end(),"ROLE");
-  ctx.insert(ctx.end(),name);
+  ctx.insert(ctx.end(),name.lower());
   addDescription(lst,ctx);
   describePrivs(lst,ctx,name);
 }
@@ -4571,7 +4581,7 @@ void toExtract::describeRollbackSegment(list<QString> &lst,
 
 static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
 			     "SELECT  'START WITH       '
-         || LTRIM(TO_CHAR(last_number + cache_size,'fm999999999'))
+         || LTRIM(TO_CHAR(last_number,'fm999999999'))
                                          AS start_with
       , 'INCREMENT BY     '
          || LTRIM(TO_CHAR(increment_by,'fm999999999')) AS imcrement_by
@@ -5571,11 +5581,15 @@ void toExtract::describeUser(list<QString> &lst,
   QString temporaryTablespace=toShift(info);
 
   list<QString> ctx;
-  ctx.insert(ctx.end(),"ROLE");
-  ctx.insert(ctx.end(),name.lower());
+  ctx.insert(ctx.end(),"USER");
+  QString nam;
+  if (Schema!="1"&&!Schema.isEmpty())
+    nam=Schema.lower();
+  else
+    nam=name.lower();
+  ctx.insert(ctx.end(),nam);
 
   addDescription(lst,ctx);
-  addDescription(lst,ctx,"IDENTIFIED",password);
   addDescription(lst,ctx,QString("PROFILE %1").arg(profile.lower()));
   addDescription(lst,ctx,QString("DEFAULT TABLESPACE %1").arg(defaultTablespace.lower()));
   addDescription(lst,ctx,QString("TEMPORARY TABLESPACE %1").arg(temporaryTablespace.lower()));
@@ -5641,11 +5655,11 @@ void toExtract::describeView(list<QString> &lst,
   list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"VIEW");
-  ctx.insert(ctx.end(),name);
+  ctx.insert(ctx.end(),name.lower());
 
   addDescription(lst,ctx);
   QString text=toShift(source);
-  addDescription(lst,ctx,"AS",text);
+  addDescription(lst,ctx,"AS",text.simplifyWhiteSpace());
 }
 
 QString toExtract::dropConstraint(const QString &schema,const QString &owner,
@@ -6384,7 +6398,7 @@ list<QString> toExtract::describe(list<QString> &objects)
       else if (utype=="ROLE")
 	describeRole(cur,schema,owner,name);
       else if (utype=="ROLE GRANTS") {
-	// A nop, everything is done in describe rolw
+	// A nop, everything is done in describe role
       } else if (utype=="ROLLBACK SEGMENT")
 	describeRollbackSegment(cur,schema,owner,name);
       else if (utype=="SEQUENCE")
@@ -6401,7 +6415,9 @@ list<QString> toExtract::describe(list<QString> &objects)
 	describeTableFamily(cur,schema,owner,name);
       else if (utype=="TABLE REFERENCES")
 	describeTableReferences(cur,schema,owner,name);
-      else if (utype=="TABLESPACE")
+      else if (utype=="TABLE CONTENTS") {
+	// A nop, nothing is described of contents
+      } else if (utype=="TABLESPACE")
 	describeTablespace(cur,schema,owner,name);
       else if (utype=="TRIGGER")
 	describeTrigger(cur,schema,owner,name);
@@ -6520,11 +6536,12 @@ QString toExtract::drop(list<QString> &objects)
 
 QString toExtract::resize(list<QString> &objects)
 {
+  throw QString("Migration not implemented yet");
   clearFlags();
-  QString ret=generateHeading("CREATE",objects);
+  QString ret=generateHeading("RESIZE",objects);
 
-  QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
-  progress.setCaption("Creating script");
+  QProgressDialog progress("Resize script","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Resize script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 

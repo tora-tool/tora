@@ -57,6 +57,7 @@ SOURCES=\
 	torollback.cpp		\
 	toscript.cpp		\
 	toscriptui.cpp		\
+	tosearchreplaceui.cpp	\
 	tosession.cpp		\
 	tosecurity.cpp		\
 	tosecurityquotaui.cpp	\
@@ -189,6 +190,7 @@ tora: \
 	objs/toresultplan.o \
 	objs/toresultview.o \
 	objs/tosql.o \
+	objs/tosearchreplaceui.o \
 	objs/tosyntaxsetup.o \
 	objs/tothread.o \
 	objs/totool.o \

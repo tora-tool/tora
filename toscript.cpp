@@ -173,9 +173,13 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   QSplitter *hsplitter=new QSplitter(Horizontal,DifferenceTab);
   Worksheet=new toWorksheet(ResultTab,Connection);
   DropList=new toResultView(false,false,Connection,hsplitter);
-  CreateList=new toResultView(false,false,Connection,hsplitter);
   DropList->addColumn("Dropped");
+  DropList->setRootIsDecorated(true);
+  DropList->setSorting(0);
+  CreateList=new toResultView(false,false,Connection,hsplitter);
   CreateList->addColumn("Created");
+  CreateList->setRootIsDecorated(true);
+  CreateList->setSorting(0);
   Tabs->setTabEnabled(ResultTab,false);
   Tabs->setTabEnabled(DifferenceTab,false);
 
@@ -374,22 +378,18 @@ void toScript::execute(void)
     list<QString> destinationDescription;
     QString script;
 
-    try {
-      toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
-      setupExtract(source);
-      switch(mode) {
-      case 1:
-	script+=source.create(sourceObjects);
-	break;
-      case 0:
-      case 2:
-	sourceDescription=source.describe(sourceObjects);
-	break;
-      case 3:
-	break;
-      }
-    } catch (const QString &str) {
-      toStatusMessage(str);
+    toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
+    setupExtract(source);
+    switch(mode) {
+    case 1:
+      script+=source.create(sourceObjects);
+      break;
+    case 0:
+    case 2:
+      sourceDescription=source.describe(sourceObjects);
+      break;
+    case 3:
+      break;
     }
 
     if (Destination->isEnabled()) {
@@ -428,7 +428,60 @@ void toScript::execute(void)
       Worksheet->editor()->setFilename(QString::null);
       Worksheet->editor()->setEdited(true);
     }
+    fillDifference(sourceDescription,DropList);
+    fillDifference(destinationDescription,CreateList);
   } TOCATCH
+}
+
+static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
+{
+  if (lst1.count()<len||lst2.count()<len)
+    return false;
+  for (unsigned int i=0;i<len;i++)
+    if (lst1[i]!=lst2[i])
+      return false;
+  return true;
+}
+
+void toScript::fillDifference(list<QString> &objects,QListView *view)
+{
+  view->clear();
+  QListViewItem *last=NULL;
+  int lastLevel=0;
+  QStringList lstCtx;
+  for(list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    //    printf("Adding %s\n",(const char *)*i);
+    QStringList ctx=QStringList::split("\01",*i);
+    if (last) {
+      while(last&&lastLevel>=int(ctx.count())) {
+	last=last->parent();
+	lastLevel--;
+      }
+      while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	last=last->parent();
+	lastLevel--;
+      }
+    }
+    if (lastLevel<0)
+      throw QString("Internal error, lastLevel < 0");
+    while(lastLevel<int(ctx.count())-1) {
+      if (last)
+	last=new toResultViewMLine(last,NULL,ctx[lastLevel]);
+      else
+	last=new toResultViewMLine(view,NULL,ctx[lastLevel]);
+      lastLevel++;
+    }
+    QCheckListItem *item;
+    if (last)
+      item=new toResultViewMLCheck(last,ctx[lastLevel],QCheckListItem::CheckBox);
+    else
+      item=new toResultViewMLCheck(view,ctx[lastLevel],QCheckListItem::CheckBox);
+    last=item;
+    item->setOn(true);
+    item->setEnabled(false);
+    lstCtx=ctx;
+    lastLevel++;
+  }
 }
 
 void toScript::changeConnection(int,bool source)

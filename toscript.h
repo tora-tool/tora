@@ -29,6 +29,7 @@
 #define __TOSCRIPT_H
 
 #include "toscriptui.h"
+#include <list>
 
 class toWorksheet;
 class toConnection;

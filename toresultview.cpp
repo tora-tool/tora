@@ -109,7 +109,6 @@ int toResultViewItem::width(const QFontMetrics &fm, const QListView *top, int co
   return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
 }
 
-
 void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
 {
   QListViewItem::paintCell(p,cg,column,width,align);
@@ -143,6 +142,84 @@ QString toResultViewItem::key(int col,bool asc) const
   return val;
 }
 
+void toResultViewMLCheck::setText (int col,const QString &text)
+{
+  QCheckListItem::setText(col,text);
+  int pos=0;
+  int lines=0;
+  do {
+    pos=text.find("\n",pos);
+    lines++;
+    pos++;
+  } while(pos>0);
+  if (lines>Lines)
+    Lines=lines;
+}
+
+void toResultViewMLCheck::setup(void)
+{
+  QCheckListItem::setup();
+  int margin=listView()->itemMargin()*2+1;
+  setHeight((height()-margin)*Lines+margin);
+}
+
+void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
+				   int column,int width,int alignment)
+{
+  toResultViewCheck::paintCell(pnt,cg,column,
+			      max(QCheckListItem::width(pnt->fontMetrics(),listView(),column),width),
+			      alignment);
+}
+
+int toResultViewMLCheck::width(const QFontMetrics &fm, const QListView *top, int column) const
+{
+  if (!MaxColDisp)
+    MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+  return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
+}
+
+int toResultViewCheck::width(const QFontMetrics &fm, const QListView *top, int column) const
+{
+  if (!MaxColDisp)
+    MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+  QRect bounds=fm.boundingRect(text(column));
+  return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
+}
+
+
+void toResultViewCheck::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
+{
+  QCheckListItem::paintCell(p,cg,column,width,align);
+  if (itemBelow()==NULL||itemBelow()->itemBelow()==NULL) {
+    toResultView *view=(toResultView *)listView();
+    view->addItem();
+  }
+}
+
+QString toResultViewCheck::text(int col) const
+{
+  QString text=QCheckListItem::text(col);
+  int pos=text.find('\n');
+  if (pos!=-1) {
+    text.remove(pos,text.length());
+    text.append("...");
+  }
+  
+  return text;
+}
+
+QString toResultViewCheck::key(int col,bool asc) const
+{
+  static QRegExp number("^\\d*\\.?\\d+$");
+  QString val=text(col);
+  if (number.match(val)>=0) {
+    static char buf[100];
+    sprintf(buf,"%015f",text(col).toFloat());
+    return buf;
+  }
+  return val;
+}
+
 class toResultTip : public QToolTip {
 private:
   toResultView *Result;
@@ -157,6 +234,7 @@ public:
   {
     QListViewItem *item=Result->itemAt(p);
     toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
     if (item) {
       int col=Result->header()->sectionAt(Result->viewportToContents(p).x());
       QPoint t(Result->header()->sectionPos(col),0);
@@ -167,6 +245,8 @@ public:
       QString text=item->text(col);
       if (resItem)
 	key=resItem->tooltip(col);
+      else if (chkItem)
+	key=chkItem->tooltip(col);
       else
 	key=text;
       int textWidth=TextWidth(qApp->fontMetrics(),text)+Result->itemMargin()*2+2;
@@ -233,10 +313,13 @@ void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   int col=header()->sectionAt(p.x());
   QListViewItem *item=itemAt(contentsToViewport(p));
   toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
   QString str;
   QClipboard *clip=qApp->clipboard();
   if (resItem)
     clip->setText(resItem->allText(col));
+  else if (chkItem)
+    clip->setText(chkItem->allText(col));
   else if (item)
     clip->setText(item->text(col));
   
