@@ -60,6 +60,10 @@
 2001-10-05: Implemented multiline aware syntax highlighter.
 2001-10-05: Implemented C-style comment highlighting.
 2001-10-05: Fixed problem in storage manager. (Thanx Martin)
+2001-10-05: Changed size of new connection window.
+2001-10-05: Reorganization of drawing linechart class.
+2001-10-05: Made barchart be descendant of linechart.
+2001-10-06: Made it possible to set up line & barcharts.
 
 1.1.1: Released 2001-09-24
 

@@ -1,0 +1,299 @@
+<!DOCTYPE UI><UI>
+<class>toLineChartSetupUI</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toLineChartSetupUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>434</width>
+            <height>426</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Chart setup</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox1</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Y-axis</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Max value</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Min value</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="0" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MinValue</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MaxValue</cstring>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoMax</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Auto detect</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoMin</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Auto detect</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ShowAxis</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Show axis legend</string>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ShowLast</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Show last value</string>
+            </property>
+        </widget>
+        <spacer row="7"  column="0"  rowspan="1"  colspan="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="0"  column="2"  rowspan="7"  colspan="3" >
+            <class>QListView</class>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Enabled charts</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>EnabledCharts</cstring>
+            </property>
+            <property stdset="1">
+                <name>selectionMode</name>
+                <enum>Extended</enum>
+            </property>
+        </widget>
+        <widget row="4"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ShowLegend</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Show chart legend</string>
+            </property>
+        </widget>
+        <widget row="7"  column="4" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CancelButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <widget row="7"  column="3" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>OkButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="5"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Divide chart in grids?</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Grids</cstring>
+            </property>
+        </widget>
+        <widget row="5"  column="1" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Grids</cstring>
+            </property>
+        </widget>
+        <spacer row="6"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>AutoMax</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>MaxValue</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>AutoMin</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>MinValue</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>OkButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toLineChartSetupUI</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>CancelButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toLineChartSetupUI</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>AutoMax</tabstop>
+    <tabstop>MaxValue</tabstop>
+    <tabstop>AutoMin</tabstop>
+    <tabstop>MinValue</tabstop>
+    <tabstop>ShowLast</tabstop>
+    <tabstop>ShowAxis</tabstop>
+    <tabstop>ShowLegend</tabstop>
+    <tabstop>Grids</tabstop>
+    <tabstop>EnabledCharts</tabstop>
+    <tabstop>OkButton</tabstop>
+    <tabstop>CancelButton</tabstop>
+</tabstops>
+</UI>

@@ -40,11 +40,15 @@
 #include <list>
 #include <qwidget.h>
 
+class QPopupMenu;
+
 /** A widget that displays a linechart with optional background throbber (Not implemented yet).
  */
 
 class toLineChart : public QWidget {
   Q_OBJECT
+
+  QPopupMenu *Menu;
 
 protected:
   std::list<std::list<double> > Values;
@@ -232,8 +236,15 @@ public slots:
   /** Clear the values from the chart.
    */
   virtual void clear(void)
-  { Values.clear(); XValues.clear(); }
+  { Values.clear(); XValues.clear(); update(); }
 
+  /** Setup values of charts.
+   */
+  virtual void setup(void);
+
+  /** Print the chart.
+   */
+  virtual void editPrint(void);
 protected:
   /** Reimplemented for internal reasons.
    */

@@ -32,8 +32,7 @@ Extended functionality:
 * Statistics saving and comparison in worksheet.
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
-* Printing of charts and toResultItems.
-* Show only one bar in barchart/linechart.
+* Printing of toResultItems.
 * Never lock while executing in debugger.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.

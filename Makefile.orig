@@ -74,6 +74,7 @@ SOURCES=\
 	tohtml.cpp		        \
 	toinvalid.cpp			\
 	tolinechart.cpp		        \
+	tolinechartsetupui.cpp		\
 	tomain.cpp		        \
 	tomarkedtext.cpp	        \
 	tomemoeditor.cpp	        \
@@ -207,6 +208,7 @@ plugins/tobrowser.tso:\
 plugins/tocharts.tso:\
 	objs/tobarchart.o \
 	objs/tolinechart.o \
+	objs/tolinechartsetupui.o \
 	objs/topiechart.o \
 	objs/toresultbar.o \
 	objs/toresultline.o \

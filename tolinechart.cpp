@@ -36,13 +36,25 @@
 
 #include <qpainter.h>
 #include <qworkspace.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qspinbox.h>
+#include <qvalidator.h>
+#include <qprinter.h>
+#include <qpaintdevicemetrics.h>
 
 #include "tolinechart.h"
 #include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tolinechartsetupui.h"
+
+#ifdef TO_HAS_KPRINT
+#include <kprinter.h>
+#endif
 
 #include "tolinechart.moc"
+#include "tolinechartsetupui.moc"
 
 double toLineChart::round(double round,bool up)
 {
@@ -92,6 +104,7 @@ void toLineChart::setSamples(int samples)
 toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
+  Menu=NULL;
   MinAuto=MaxAuto=true;
   MinValue=MaxValue=0;
   Legend=true;
@@ -228,6 +241,7 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
     p->setBrush(white);
     p->drawRect(lx,ly,lwidth,lheight);
     p->restore();
+    rect.setRight(lx);
     lx+=12;
     ly+=2;
     int cp=0;
@@ -242,7 +256,6 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
 	ly+=bounds.height();
       }
     }
-    rect.setRight(lx);
   }
 }
 
@@ -449,8 +462,10 @@ void toLineChart::mouseReleaseEvent(QMouseEvent *e)
     }
     MousePoint[1]=MousePoint[0]=QPoint(-1,-1);
   } else if (e->button()==RightButton) {
-    clearZoom();
-    update();
+    if (Chart.contains(e->pos())) {
+      clearZoom();
+      update();
+    }
   }
 }
 
@@ -469,6 +484,58 @@ void toLineChart::mousePressEvent(QMouseEvent *e)
 {
   if (e->button()==LeftButton)
     MousePoint[0]=e->pos();
+  else if (e->button()==RightButton) {
+    if (!Chart.contains(e->pos())||!Zooming) {
+      if (!Menu) {
+	Menu=new QPopupMenu(this);
+	Menu->insertItem("&Setup",this,SLOT(setup()));
+	Menu->insertItem("&Print",this,SLOT(editPrint()));
+      }
+      Menu->popup(e->globalPos());
+    }
+  }
+}
+
+void toLineChart::setup(void)
+{
+  toLineChartSetupUI setup(this,NULL,true);
+  setup.MinValue->setText(QString::number(MinValue));
+  setup.MaxValue->setText(QString::number(MaxValue));
+  setup.AutoMax->setChecked(MaxAuto);
+  setup.AutoMin->setChecked(MinAuto);
+  setup.ShowAxis->setChecked(AxisText);
+  setup.ShowLast->setChecked(Last);
+  setup.ShowLegend->setChecked(Legend);
+  setup.Grids->setValue(Grid);
+
+  setup.MaxValue->setValidator(new QDoubleValidator(setup.MaxValue));
+  setup.MinValue->setValidator(new QDoubleValidator(setup.MinValue));
+
+  if (setup.exec()) {
+    MinValue=setup.MinValue->text().toDouble();
+    MaxValue=setup.MaxValue->text().toDouble();
+    MaxAuto=setup.AutoMax->isChecked();
+    MinAuto=setup.AutoMin->isChecked();
+    AxisText=setup.ShowAxis->isChecked();
+    Last=setup.ShowLast->isChecked();
+    Legend=setup.ShowLegend->isChecked();
+
+    Grid=setup.Grids->value();
+    update();
+  }
+}
+
+void toLineChart::editPrint(void)
+{
+  TOPrinter printer;
+  printer.setMinMax(1,1);
+  if (printer.setup()) {
+    printer.setCreator("TOra");
+    QPainter painter(&printer);
+    QPaintDeviceMetrics metrics(&printer);
+    QRect rect(0,0,metrics.width(),metrics.height());
+    paintChart(&painter,rect);
+  }
 }
 
 void toLineChart::clearZoom(void)
@@ -524,6 +591,7 @@ void toLineChart::mouseDoubleClickEvent(QMouseEvent *e)
 toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
+  Menu=NULL;
   Values=chart->Values;
   XValues=chart->XValues;
   Labels=chart->Labels;

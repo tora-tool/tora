@@ -38,47 +38,16 @@
 #define __TOBARCHART_H
 
 #include <list>
-#include <qwidget.h>
+#include "tolinechart.h"
 
 /** A widget that displays a barchart. Each line is added onto the next one.
  */
 
-class toBarChart : public QWidget {
+class toBarChart : public toLineChart {
   Q_OBJECT
 
 protected:
-  std::list<std::list<double> > Values;
-  std::list<QString> XValues;
-  std::list<QString> Labels;
-  bool Legend;
-  bool Last;
-  int Grid;
-  bool AxisText;
-  double MinValue;
-  bool MinAuto;
-  double MaxValue;
-  bool MaxAuto;
-  QString YPostfix;
-  int Samples;
-  QString Title;
-
-  QRect Chart;
-  QPoint MousePoint[2];
-  int SkipSamples;
-  int UseSamples;
-  bool Zooming;
-  double zMinValue;
-  double zMaxValue;
-
-  static double round(double round,bool up);
-  QRect fixRect(QPoint p1,QPoint p2);
-  virtual void mouseReleaseEvent(QMouseEvent *e);
-  virtual void mousePressEvent(QMouseEvent *e);
-  virtual void mouseMoveEvent(QMouseEvent *e);
-  virtual void mouseDoubleClickEvent(QMouseEvent *e);
-
-  int countSamples(void);
-  void clearZoom(void);
+  virtual void paintChart(QPainter *p,QRect &rect);
 public:
   /** Create a new barchart.
    * @param parent Parent widget.
@@ -94,144 +63,6 @@ public:
    * @param f Widget flags.
    */
   toBarChart(toBarChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
-
-  /** Specify if legend should be displayed to the right of the graph, default is on.
-   * @param on Whether to display legend or not.
-   */
-  void showLegend(bool on)
-  { Legend=on; update(); }
-  /** Check if legend is displayed or not.
-   * @return If legend is displayed or not.
-   */
-  bool legend(void) const
-  { return Legend; }
-
-  /** Show most recent value on top of graph
-   * @param on Whether to display or not.
-   */
-  void showLast(bool on)
-  { Last=on; update(); }
-  /** Check if last value is displayed or not.
-   * @return If value is displayed or not.
-   */
-  bool last(void) const
-  { return Last; }
-
-  /** Set title of the chart. Set to empty string to not display title.
-   * @param title Title of chart.
-   */
-  void setTitle(const QString &title=QString::null)
-  { Title=title; update(); }
-  /** Get title of chart.
-   * @return Title of chart.
-   */
-  const QString &title(void)
-  { return Title; }
-
-  /** Specify if a grid should be displayed in the graph, default is on.
-   * @param div Number of parts to divide grid into.
-   */
-  void showGrid(int div=0)
-  { Grid=div; update(); }
-  /** Check if grid is displayed or not.
-   * @return Number of parts to divide grid into.
-   */
-  int grid(void) const
-  { return Grid; }
-
-  /** Specify if a y-axis legend should be displayed in the graph, default is on.
-   * @param on Whether to display legend or not.
-   */
-  void showAxisLegend(bool on)
-  { AxisText=on; update(); }
-  /** Check if y-axis legend is displayed or not.
-   * @return If legend is displayed or not.
-   */
-  bool axisLegend(void) const
-  { return AxisText; }
-
-  /** Set y postfix value. This will be appended to the values in the axis legend.
-   * @param postfix The string to append.
-   */
-  void setYPostfix(const QString &postfix)
-  { YPostfix=postfix; update(); }
-  /** Set max value on y-axis to auto.
-   */
-  void setMaxValueAuto(void)
-  { MaxAuto=true; update(); }
-  /** Set min value on y-axis to auto.
-   */
-  void setMinValueAuto(void)
-  { MinAuto=true; update(); }
-  /** Set max value on y-axis to auto.
-   */
-  void setMaxValue(double maxVal)
-  { MaxAuto=false; MaxValue=maxVal; update(); }
-  /** Get maximum value on y-axis. Will not return the automatically determinned maximum value.
-   * @return Maximum value on y-axis.
-   */
-  double maxValue(void) const
-  { return MaxValue; }
-  /** Set min value on y-axis.
-   * @param val Min value on y-axis.
-   */
-  void setMinValue(double minVal)
-  { MinAuto=false; MinValue=minVal; update(); }
-  /** Get minimum value on y-axis. Will not return the automatically determinned minimum value.
-   * @return Minimum value on y-axis.
-   */
-  double minValue(void) const
-  { return MinValue; }
-
-  /** Set the number of samples on the x-axis. Setting samples to -1 will keep all entries.
-   * @param samples Number of samples.
-   */
-  void setSamples(int samples=-1);
-  /** Get the maximum number of samples on the x-axis.
-   * @return Max number of samples.
-   */
-  int samples(void) const
-  { return Samples; }
-
-  /** Set the labels on the chart lines.
-   * @param labels Labels of the lines. Empty labels will not show up in the legend.
-   */
-  void setLabels(const std::list<QString> &labels)
-  { Labels=labels; update(); }
-  /** Get the labels of the chart lines.
-   * @return List of labels.
-   */
-  std::list<QString> &labels(void)
-  { return Labels; }
-
-  /** Add a new value set to the chart.
-   * @param value New values for charts (One for each line).
-   * @param label X-value on these values.
-   */
-  virtual void addValues(std::list<double> &value,const QString &xValues);
-
-  /** Get list of labels
-   * @return List of labels
-   */
-  std::list<QString> &xValues(void)
-  { return XValues; }
-
-  /** Get list of values.
-   * @return Values in piechart.
-   */
-  std::list<std::list<double> > &values(void)
-  { return Values; }
-
-public slots:
-  /** Clear the values from the chart.
-   */
-  virtual void clear(void)
-  { Values.clear(); XValues.clear(); }
-
-protected:
-  /** Reimplemented for internal reasons.
-   */
-  virtual void paintEvent(QPaintEvent *e);
 };
 
 #endif
