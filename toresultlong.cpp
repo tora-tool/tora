@@ -64,7 +64,7 @@ toResultLong::toResultLong(QWidget *parent,const char *name)
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
-void toResultLong::query(const QString &sql,const list<QString> &param)
+void toResultLong::query(const QString &sql,const toQList &param)
 {
   stop();
   SQL=sql;
@@ -87,10 +87,6 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
 
     MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
-  } catch (const otl_exception &exc) {
-    emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
-    emit done();
-    throw;
   } catch (const QString &str) {
     emit firstResult(SQL,str);
     emit done();
@@ -115,54 +111,38 @@ void toResultLong::addItem(void)
 	bool em=false;
 	char buffer[100];
 	if (First) {
-	  if (Query->getProcessed()>0)
-	    sprintf(buffer,"%d rows processed",(int)Query->getProcessed());
+	  if (Query->rowsProcessed()>0)
+	    sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
 	  else
 	    sprintf(buffer,"Query executed");
 	  toStatusMessage(buffer);
 	  em=true;
 	}
 	if (!HasHeaders) {
-	  Description=Query->describe(DescriptionLen);
-	  if (Description) {
-	    bool hidden=false;
+	  toQDescList Description=Query->describe();
+	  bool hidden=false;
 
-	    for (int i=0;i<DescriptionLen;i++) {
-	      QString name=QString::fromUtf8(Description[i].name);
-	      if (ReadableColumns) {
-		bool inWord=false;
-		for (unsigned int j=0;j<name.length();j++) {
-		  if (name.at(j)=='_')
-		    name.ref(j)=' ';
-		  if (name.at(j).isSpace())
-		    inWord=false;
-		  else if (name.at(j).isLetter()) {
-		    if (inWord)
-		      name.ref(j)=name.at(j).lower();
-		    else
-		      name.ref(j)=name.at(j).upper();
-		    inWord=true;
-		  }
-		}
-	      }
-	      if (name.length()>0&&name[0]!=' ') {
-		if (hidden)
-		  throw QString("Can only hide last column in query");
-		if (name[0]=='-') {
-		  addColumn(name.right(name.length()-1));
-		  setColumnAlignment(columns()-1,AlignRight);
-		} else
-		  addColumn(name);
+	  for (toQDescList::iterator i=Description.begin();i!=Description.end();i++) {
+	    QString name=(*i).Name;
+	    if (ReadableColumns)
+	      toReadableColumn(name);
+	    if (name.length()>0&&name[0]!=' ') {
+	      if (hidden)
+		throw QString("Can only hide last column in query");
+	      if (name[0]=='-') {
+		addColumn(name.right(name.length()-1));
+		setColumnAlignment(columns()-1,AlignRight);
 	      } else
-		hidden=true;
-	    }
-	    HasHeaders=true;
+		addColumn(name);
+	    } else
+	      hidden=true;
 	  }
-	  setQueryColumns(DescriptionLen);
+	  HasHeaders=true;
+
 	  if (NumberColumn)
 	    setSorting(0);
 	  else
-	    setSorting(DescriptionLen);
+	    setSorting(Description.size());
 	}
 
 	if (!Query->eof()) {
@@ -173,8 +153,8 @@ void toResultLong::addItem(void)
 	    LastItem->setText(0,QString::number(RowNumber));
 	    disp=1;
 	  } else
-	    LastItem->setText(DescriptionLen,QString::number(RowNumber));
-	  for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
+	    LastItem->setText(Description.size(),QString::number(RowNumber));
+	  for (unsigned int j=0;(j<Description.size()||j==0)&&!Query->eof();j++)
 	    LastItem->setText(j+disp,Query->readValue());
 	}
 	if (em) {
@@ -195,13 +175,6 @@ void toResultLong::addItem(void)
 	  Timer.start(TO_POLL_CHECK,true);
       }
     }
-  } catch (const otl_exception &exc) {
-    if (First) {
-      emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
-      First=false;
-    }
-    cleanup();
-    toStatusMessage(QString::fromUtf8((const char *)exc.msg));
   } catch (const QString &str) {
     if (First) {
       emit firstResult(SQL,str);

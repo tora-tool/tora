@@ -29,13 +29,13 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref3">toTemplateSQL</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql) 
+		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>) 
 </LI>
 <LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref4">connection</A></b> () 
 </LI>
 <LI>virtual  <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<b><A HREF="#ref5">createChild</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref6">parameters</A></b> (void) 
+<LI>virtual  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref6">parameters</A></b> (void) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref7">expand</A></b> (void) 
 </LI>
@@ -43,7 +43,7 @@
  and create child items which are the result of the query.
  </p>
 <A NAME="toTemplateSQL"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateSQL</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql)
+		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>)
 <br></td><td align="right"><h3><strong>toTemplateSQL</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -71,7 +71,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A newly created item.
    </p>
-<A NAME="parameters"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>parameters</strong> (void)
+<A NAME="parameters"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQList">toQList</A> &nbsp;<strong>parameters</strong> (void)
 <br></td><td align="right"><h3><strong>parameters</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get parameters to pass to query.
 </p>
 <p><b>Returns</b>: List of strings to pass as input parameters to query

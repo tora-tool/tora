@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<TITLE>class connectionImpl</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class connectionImpl</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Full name</TH><TD><code><A HREF="toConnection.html">toConnection</A>::connectionImpl</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toConnection__connectionImpl.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref2">connection</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref3">connectionImpl</A></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref4">~connectionImpl</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref5">commit</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">rollback</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<b><i><A HREF="#ref7">createConnection</A></i></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref8">closeConnection</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><i><A HREF="#ref9">version</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *) 
+</LI>
+<LI>virtual  connectionImpl *&nbsp;<b><i><A HREF="#ref10">clone</A></i></b> (<A HREF="toConnection.html">toConnection</A> *newConn)  const
+</LI>
+<LI>virtual  toQuery::queryImpl *&nbsp;<b><i><A HREF="#ref11">createQuery</A></i></b> (<A HREF="#toQuery">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="connection"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (void)
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><A NAME="connectionImpl"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>connectionImpl</strong> (<A HREF="toConnection.html">toConnection</A> *conn)
+<br></td><td align="right"><h3><strong>connectionImpl</strong></h3></td></tr></table><p></p><A NAME="~connectionImpl"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~connectionImpl</strong> ()
+<br></td><td align="right"><h3><strong>~connectionImpl</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="commit"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>commit</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>commit</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="rollback"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>rollback</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>rollback</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="createConnection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnectionSub.html">toConnectionSub</A> *&nbsp;<i><strong>createConnection</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>createConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="closeConnection"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>closeConnection</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>closeConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="version"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<i><strong>version</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *)
+<br></td><td align="right"><h3><i><strong>version</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="clone"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> connectionImpl *&nbsp;<i><strong>clone</strong></i> (<A HREF="toConnection.html">toConnection</A> *newConn)
+<br></td><td align="right"><h3><i><strong>clone</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><A NAME="createQuery"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> toQuery::queryImpl *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="#toQuery">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
+<br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;<A HREF="#sql">sql</A>,<A HREF="#toQList">toQList</A> &amp;<A HREF="#params">params</A>)
+<br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><HR>
+	<table>
+	</table>
+</BODY>
+</HTML>

@@ -719,25 +719,25 @@ bool toResultView::eof(void)
 
 QString toResultView::middleString()
 {
-  return connection().connectString();
+  return connection().description();
 }
 
 void toResultView::query(const QString &sql)
 {
-  list<QString> p;
+  toQList p;
   query(sql,p);
 }
 
 void toResultView::changeParams(const QString &Param1)
 {
-  list<QString> p;
+  toQList p;
   p.insert(p.end(),Param1);
   query(SQL,p);
 }
 
 void toResultView::changeParams(const QString &Param1,const QString &Param2)
 {
-  list<QString> p;
+  toQList p;
   p.insert(p.end(),Param1);
   p.insert(p.end(),Param2);
   query(SQL,p);
@@ -745,7 +745,7 @@ void toResultView::changeParams(const QString &Param1,const QString &Param2)
 
 void toResultView::changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
 {
-  list<QString> p;
+  toQList p;
   p.insert(p.end(),Param1);
   p.insert(p.end(),Param2);
   p.insert(p.end(),Param3);
@@ -789,8 +789,8 @@ void toResultView::addItem(void)
 	disp=1;
       } else
 	LastItem->setText(columns(),QString::number(RowNumber));
-      for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
-	LastItem->setText(j+disp,toReadValue(*Query));
+      for (int j=0;(j<Query->columns()||j==0)&&!Query->eof();j++)
+	LastItem->setText(j+disp,Query->readValue());
       if (Filter&&!Filter->check(LastItem)) {
 	delete LastItem;
 	LastItem=last;
@@ -800,7 +800,7 @@ void toResultView::addItem(void)
   } TOCATCH
 }
 
-void toResultView::query(const QString &sql,const list<QString> &param)
+void toResultView::query(const QString &sql,const toQList &param)
 {
   delete Query;
   SQL=sql;
@@ -816,44 +816,17 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     addColumn("#");
 
   try {
-    Query=new otl_stream;
-    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-    Query->open(1,
-		sql.utf8(),
-		otlConnection());
+    Query=new toQuery(connection(),sql,param);
 
-    {
-      otl_null null;
-      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
-	if ((*i).isNull())
-	  (*Query)<<null;
-        else
-    	  (*Query)<<(*i).utf8();
-      }
-    }
-
-    Description=Query->describe_select(DescriptionLen);
+    toQDescList description=Query->describe();
 
     bool hidden=false;
 
-    for (int i=0;i<DescriptionLen;i++) {
-      QString name(QString::fromUtf8(Description[i].name));
-      if (ReadableColumns) {
-	bool inWord=false;
-	for (unsigned int j=0;j<name.length();j++) {
-	  if (name.at(j)=='_')
-	    name.ref(j)=' ';
-	  if (name.at(j).isSpace())
-	    inWord=false;
-	  else if (name.at(j).isLetter()) {
-	    if (inWord)
-	      name.ref(j)=name.at(j).lower();
-	    else
-	      name.ref(j)=name.at(j).upper();
-	    inWord=true;
-	  }
-	}
-      }
+    for (toQDescList::iterator i=description.begin();i!=description.end();i++) {
+      QString name=(*i).Name;
+      if (ReadableColumns)
+	toReadableColumn(name);
+
       if (name.length()>0&&name.at(0)!=' ') {
 	if (hidden)
 	  throw QString("Can only hide last column in query");
@@ -869,7 +842,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     if (NumberColumn)
       setSorting(0);
     else
-      setSorting(DescriptionLen);
+      setSorting(Query->columns());
 
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     for (int j=0;j<MaxNumber&&!Query->eof();j++)
@@ -878,8 +851,8 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       readAll();
 
     char buffer[100];
-    if (Query->get_rpc()>0)
-      sprintf(buffer,"%d rows processed",(int)Query->get_rpc());
+    if (Query->rowsProcessed()>0)
+      sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
     else
       sprintf(buffer,"Query executed");
   } TOCATCH

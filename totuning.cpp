@@ -246,12 +246,12 @@ static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
 				  "Buffer hitrate");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
-				    "select sysdate,value/to_number(:f1<char[101]>)\n"
+				    "select sysdate,value/:f1<int>\n"
 				    "  from v$sysstat where statistic# = 182",
 				    "Bytes sent to client");
 
 static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
-				     "select sysdate,value/to_number(:f1<char[101]>)\n"
+				     "select sysdate,value/:f1<int>\n"
 				     "  from v$sysstat where statistic# = 183",
 				     "Bytes sent from client");
 
@@ -314,10 +314,10 @@ static toSQL SQLOverviewTimescale("toTuning:Overview:Timescale",
 				  "Get timescale of other graphs");
 
 static toSQL SQLOverviewFilespace("toTuning:Overview:Filespace",
-				  "select sum(bytes)/to_number(:f1<char[101]>),'Free'\n"
+				  "select sum(bytes)/:f1<int>,'Free'\n"
 				  "  from dba_free_space\n"
 				  "union\n"
-				  "select (total-free)/to_number(:f1<char[101]>),'Used'\n"
+				  "select (total-free)/:f1<int>,'Used'\n"
 				  "  from (select sum(bytes) free from dba_free_space),\n"
 				  "       (select sum(bytes) total from dba_data_files)",
 				  "Filespace used");
@@ -330,7 +330,7 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
   chart->showAxisLegend(false);
   chart->setTitle(title);
   chart->showLast(true);
-  list<QString> val;
+  toQList val;
   if (postfix=="b/s") {
     QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
     val.insert(val.end(),QString::number(toSizeDecode(unitStr)));
@@ -379,7 +379,7 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
   SharedUsed->setYPostfix("%");
   SharedUsed->showLast(true);
 
-  list<QString> val;
+  toQList val;
   val.insert(val.end(),
 	     QString::number(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
 							       DEFAULT_SIZE_UNIT))));
@@ -392,15 +392,15 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
 
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
 				"select count(1),\n"
-				"       nvl(sum(blocks*block_size),0)/to_number(:f1<char[101]>)\n"
+				"       nvl(sum(blocks*block_size),0)/:f1<int>\n"
 				"  from v$archived_log where deleted = 'NO'",
 				"Information about archive logs");
 
 static toSQL SQLOverviewLog("toTuning:Overview:Log",
 			    "select count(1),\n"
 			    "       max(decode(status,'CURRENT',group#,0)),\n"
-			    "       sum(decode(status,'CURRENT',bytes,0))/to_number(:f1<char[101]>),\n"
-			    "       sum(bytes)/to_number(:f1<char[101]>) from v$log\n",
+			    "       sum(decode(status,'CURRENT',bytes,0))/:f1<int>,\n"
+			    "       sum(bytes)/:f1<int> from v$log\n",
 			    "Information about redo logs");
 
 static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
@@ -408,7 +408,7 @@ static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
 				    "Number of tablespaces");
 
 static toSQL SQLOverviewSGA("toTuning:Overview:SGA",
-			    "select name,value/to_number(:f1<char[101]>) from v$sga",
+			    "select name,value/:f1<int> from v$sga",
 			    "Information about SGA");
 
 static toSQL SQLOverviewBackground("toTuning:Overview:Background",
@@ -454,11 +454,11 @@ void toTuningOverview::refresh(void)
   try {
     toConnection &conn=toCurrentConnection(this);
 
-    list<QString> val;
+    toQList val;
     QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
-    val.insert(val.end(),QString::number(toSizeDecode(unitStr)));
+    val.insert(val.end(),toQValue(toSizeDecode(unitStr)));
 
-    list<QString> res=toReadQuery(conn,SQLOverviewArchive(conn),val);
+    toQList res=toQuery::readQuery(conn,SQLOverviewArchive,val);
     QString tmp=toShift(res);
     tmp+="/";
     tmp+=toShift(res);
@@ -467,7 +467,7 @@ void toTuningOverview::refresh(void)
 
     list<QLabel *>::iterator labIt=Backgrounds.begin();
 
-    res=toReadQuery(conn,SQLOverviewRound(conn));
+    res=toQuery::readQuery(conn,SQLOverviewRound);
     tmp=toShift(res);
     tmp+=" ms";
     SendFromClient->setText(tmp);
@@ -475,34 +475,34 @@ void toTuningOverview::refresh(void)
     tmp+=" ms";
     SendToClient->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewClientTotal(conn));
+    res=toQuery::readQuery(conn,SQLOverviewClientTotal);
     tmp=toShift(res);
     TotalClient->setText(tmp);
     tmp=toShift(res);
     ActiveClient->setText(tmp);
 
     int totJob=0;
-    res=toReadQuery(conn,SQLOverviewDedicated(conn));
+    res=toQuery::readQuery(conn,SQLOverviewDedicated);
     tmp=toShift(res);
     totJob+=tmp.toInt();
     DedicatedServer->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewDispatcher(conn));
+    res=toQuery::readQuery(conn,SQLOverviewDispatcher);
     tmp=toShift(res);
     totJob+=tmp.toInt();
     DispatcherServer->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewShared(conn));
+    res=toQuery::readQuery(conn,SQLOverviewShared);
     tmp=toShift(res);
     totJob+=tmp.toInt();
     SharedServer->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewParallell(conn));
+    res=toQuery::readQuery(conn,SQLOverviewParallell);
     tmp=toShift(res);
     totJob+=tmp.toInt();
     ParallellServer->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewBackground(conn));
+    res=toQuery::readQuery(conn,SQLOverviewBackground);
     while(res.size()>0) {
       tmp=toShift(res);
       QLabel *label;
@@ -554,7 +554,7 @@ void toTuningOverview::refresh(void)
 
     double tot=0;
     double sql=0;
-    res=toReadQuery(conn,SQLOverviewSGA(conn),val);
+    res=toQuery::readQuery(conn,SQLOverviewSGA,val);
     while(res.size()>0) {
       QLabel *widget=NULL;
       QString nam=toShift(res);
@@ -578,7 +578,7 @@ void toTuningOverview::refresh(void)
     tmp+=unitStr;
     SharedSize->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewLog(conn),val);
+    res=toQuery::readQuery(conn,SQLOverviewLog,val);
     RedoFiles->setText(toShift(res));
     ActiveRedo->setText(toShift(res));
     tmp=toShift(res);
@@ -602,10 +602,10 @@ void toTuningOverview::refresh(void)
     tmp+=unitStr;
     Filesize->setText(tmp);
 
-    res=toReadQuery(conn,SQLOverviewTablespaces(conn));
+    res=toQuery::readQuery(conn,SQLOverviewTablespaces);
     Tablespaces->setText(toShift(res));
 
-    res=toReadQuery(conn,SQLOverviewDatafiles(conn));
+    res=toQuery::readQuery(conn,SQLOverviewDatafiles);
     Files->setText(toShift(res));
   } TOCATCH
 }
@@ -616,7 +616,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Refresh",
@@ -638,8 +638,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   QGrid *grid=new QGrid(2,Tabs);
 
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
-  list<QString> unit;
-  unit.insert(unit.end(),QString::number(toSizeDecode(unitStr)));
+  toQList unit;
+  unit.insert(unit.end(),toQValue(toSizeDecode(unitStr)));
   {
     list<QString> val=toSQL::range("toTuning:Charts");
     for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
@@ -647,7 +647,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
       if (parts[2].mid(1,1)=="B") {
 	toResultBar *chart=new toResultBar(grid);
 	chart->setTitle(parts[2].mid(3));
-	list<QString> par;
+	toQList par;
 	if (parts[2].mid(2,1)=="B")
 	  chart->setYPostfix(" blocks/s");
 	else if (parts[2].mid(2,1)=="M")
@@ -661,7 +661,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setFlow(false);
 	else
 	  chart->setYPostfix("/s");
-	chart->query(toSQL::sql(*i,connection),par);
+	chart->query(toSQL::string(*i,connection),par);
       } else if (parts[2].mid(1,1)=="L"||parts[2].mid(1,1)=="C") {
 	toResultLine *chart;
 	if (parts[2].mid(1,1)=="C")
@@ -669,7 +669,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	else
 	  chart=new toResultLine(grid);
 	chart->setTitle(parts[2].mid(3));
-	list<QString> par;
+	toQList par;
 	if (parts[2].mid(2,1)=="B")
 	  chart->setYPostfix(" blocks/s");
 	else if (parts[2].mid(2,1)=="S") {
@@ -682,15 +682,15 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setMinValue(0);
         } else
 	  chart->setYPostfix("/s");
-	chart->query(toSQL::sql(*i,connection),par);
+	chart->query(toSQL::string(*i,connection),par);
       } else if (parts[2].mid(1,1)=="P") {
 	toResultPie *chart=new toResultPie(grid);
 	chart->setTitle(parts[2].mid(3));
 	if (parts[2].mid(2,1)=="S") {
-	  chart->query(toSQL::sql(*i,connection),unit);
+	  chart->query(toSQL::string(*i,connection),unit);
 	  chart->setPostfix(unitStr);
 	} else
-	  chart->query(toSQL::sql(*i,connection));
+	  chart->query(toSQL::string(*i,connection));
       } else
 	throw QString("Wrong format of name on chart.");
     }
@@ -740,7 +740,7 @@ void toTuning::refresh(void)
     QListViewItem *last=NULL;
     for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
       try {
-	list<QString> val=toReadQuery(connection(),toSQL::sql(*i,connection()));
+	toQList val=toQuery::readQuery(connection(),toSQL::string(*i,connection()));
 	QStringList parts=QStringList::split(":",*i);
 	if (!parent||parent->text(0)!=parts[2]) {
 	  parent=new toResultViewItem(Indicators,NULL,parts[2]);
@@ -779,7 +779,7 @@ toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
 
   try {
     toConnection &conn=toCurrentConnection(this);
-    list<QString> Files=toReadQuery(conn,SQLListFiles(conn));
+    toQList Files=toQuery::readQuery(conn,SQLListFiles);
     viewport()->setBackgroundColor(qApp->palette().active().background());
     
     list<QString> labels;
@@ -811,7 +811,7 @@ void toTuningFileIO::refresh(void)
     toConnection &conn=toCurrentConnection(this);
     time_t now=time(NULL);
     if (now!=LastStamp) {
-      list<QString> FileInfo=toReadQuery(conn,SQLFileIO(conn));
+      toQList FileInfo=toQuery::readQuery(conn,SQLFileIO);
       while(FileInfo.size()>0) {
 	QString file=toShift(FileInfo);
 	QString label=toShift(FileInfo);

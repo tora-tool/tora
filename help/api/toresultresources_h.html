@@ -83,7 +83,7 @@ public:
    */
   toResultResources(QWidget *parent,const char *name=NULL)
     : toResultItem(3,true,parent,name)
-  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,connection())); }
+  { setSQL(toSQL::string(TOSQL_RESULTRESOURCE,connection())); }
 };
 
 #endif

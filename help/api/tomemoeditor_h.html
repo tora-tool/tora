@@ -91,8 +91,14 @@ public:
    * @param row Optional location specifier, pass on in @ref changeData call.
    * @param col Optional location specifier, pass on in @ref changeData call.
    * @param sql Use SQL syntax highlighting of widget.
+   * @param modal Display in modal dialog
    */
-  toMemoEditor(QWidget *parent,const QString &amp;data,int row=-1,int col=-1,bool sql=false);
+  toMemoEditor(QWidget *parent,const QString &amp;data,int row=-1,int col=-1,
+	       bool sql=false,bool modal=false);
+  /** Get editor text.
+   * @return String of editor.
+   */
+  QString text(void);
 signals:
   /** Emitted when data is to be stored back to the creator
    * @param row Pass on from creation.

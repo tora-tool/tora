@@ -65,10 +65,7 @@ class toResultContentEditor : public QTable,public toResult {
   list<QString> OrigValues;
   /** Stream to read data from.
    */
-  otl_stream *Query;
-  /** Description of data stream.
-   */
-  otl_column_desc *Description;
+  toQuery *Query;
   /** Number of rows read from stream.
    */
   int Row;
@@ -159,7 +156,7 @@ public:
   toResultContentEditor(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const toQList &param)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
@@ -275,7 +272,7 @@ public slots:
   { Editor->refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const toQList &param)
   { Editor->query(sql,param); }
   /** Reimplemented for internal reasons.
    */

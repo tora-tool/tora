@@ -67,7 +67,7 @@ void toChangeConnection::popupMenu(void)
   int idx=0;
   for (list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
     popup()->insertItem(*i,idx);
-    if (conn.connectString()==*i)
+    if (conn.description()==*i)
       popup()->setItemChecked(idx,true);
   }
 }

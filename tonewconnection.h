@@ -49,6 +49,8 @@ public:
   toConnection *makeConnection();
 public slots:
   virtual void historySelection(void);
+  virtual void changeProvider(void); 
+  virtual void changeHost(void); 
 };
 
 #endif // TONEWCONNECTION_H

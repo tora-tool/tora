@@ -207,7 +207,7 @@ class toExtract {
   QString createPartitionedIndex(const QString &schema,const QString &owner,const QString &name,
 				 const QString &soFar);
   QString createPartitionedTable(const QString &schema,const QString &owner,const QString &name);
-  QString createTableText(list<QString> &result,const QString &schema,const QString &owner,const QString &name);
+  QString createTableText(toQList &result,const QString &schema,const QString &owner,const QString &name);
   QString displaySource(const QString &schema,const QString &owner,const QString &name,
 			const QString &type);
   QString grantedPrivs(const QString &schema,const QString &name,int type=3);
@@ -225,7 +225,7 @@ class toExtract {
   QString tableColumns(const QString &owner,const QString &name);
 
   // Misc describe functions
-  void describeAttributes(list<QString> &lst,list<QString> &ctx,list<QString> &result);
+  void describeAttributes(list<QString> &lst,list<QString> &ctx,toQList &result);
   void describeComments(list<QString> &lst,list<QString> &ctx,
 			const QString &schema,const QString &owner,const QString &name);
   void describePrivs(list<QString> &lst,list<QString> &ctx,const QString &name);
@@ -250,7 +250,7 @@ class toExtract {
   void describePartitions(list<QString> &lst,list<QString> &ctx,
 			  const QString &owner,const QString &name,
 			  const QString &subPartitionType,const QString &locality);
-  void describeTableText(list<QString> &lst,list<QString> &ctx,list<QString> &result,
+  void describeTableText(list<QString> &lst,list<QString> &ctx,toQList &result,
 			 const QString &schema,const QString &owner,const QString &name);
   void describeTableColumns(list<QString> &lst,list<QString> &ctx,
 			    const QString &owner,const QString &name);
@@ -269,11 +269,11 @@ class toExtract {
   void initialNext(const QString &blocks,QString &initial,QString &next);
   void objectExists(const QString &owner,const QString &name,const QString &type);
   QString prepareDB(const QString &data);
-  QString segmentAttributes(list<QString> &result);
+  QString segmentAttributes(toQList &result);
   QString intSchema(const QString &owner);
   void setSizes(void);
   QString reContext(list<QString> &ctx,int strip,const QString &str);
-  void rethrow(const QString &what,const QString &object,const otl_exception &exc);
+  void rethrow(const QString &what,const QString &object,const QString &exc);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.

@@ -98,22 +98,19 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "List locks in a session");
 
 void toResultLock::query(const QString &sql,
-			 const list<QString> &param)
+			 const toQList &param)
 {
   clear();
 
+  toQuery *query=NULL;
   try {
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
-    otl_stream query(1,
-		     SQLLock(connection()),
-		     otlConnection());
+    query=new toQuery(connection(),SQLLock,sql);
 
     {
       toResultViewItem *lastItem=NULL;
-      QString session=sql;
-      query<<session.utf8();
-      while(!query.eof()) {
+      while(!query->eof()) {
 	toResultViewItem *item;
 	if (!lastItem)
 	  item=new toResultViewItem(this,NULL);
@@ -122,15 +119,16 @@ void toResultLock::query(const QString &sql,
 	  setOpen(lastItem,true);
 	}
 	lastItem=item;
-	for (int pos=0;!query.eof();pos++) {
-	  char buffer[1024];
-	  query>>buffer;
-	  item->setText(pos,QString::fromUtf8(buffer));
-	}
-	session=item->text(0);
-	query<<session.utf8();
+	for (int pos=0;!query->eof();pos++)
+	  item->setText(pos,query->readValue());
+	QString session=item->text(0);
+	delete query;
+	query=new toQuery(connection(),SQLLock,session);
       }
     }
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete query;
+    toStatusMessage(exc);
+  }
   updateContents();
 }

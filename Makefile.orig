@@ -49,6 +49,7 @@ SOURCES=\
 	tonewconnectionui.cpp	\
 	tonoblockquery.cpp	\
 	tooutput.cpp		\
+	tooracleconnection.cpp	\
 	toparamget.cpp		\
 	topiechart.cpp		\
 	topreferences.cpp	\
@@ -167,6 +168,7 @@ plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
+plugins/tooracleconnection.tso:objs/tooracleconnection.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
 	objs/toresultconstraint.o \
@@ -233,6 +235,7 @@ tora-plugin: \
 	plugins/tofilesize.tso \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
+	plugins/tooracleconnection.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \

@@ -61,20 +61,13 @@ static toSQL SQLColumns("toResultIndexes:Columns",
 
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
-  otl_stream Query(1,
-		   SQLColumns(connection()),
-		   otlConnection());
-
-  Query<<indOwner.utf8();
-  Query<<indName.utf8();
+  toQuery query(connection(),SQLColumns,indOwner,indName);
 
   QString ret;
-  while(!Query.eof()) {
-    char buffer[101];
-    Query>>buffer;
+  while(!query.eof()) {
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(QString::fromUtf8(buffer));
+    ret.append(query.readValue());
   }
   return ret;
 }
@@ -90,48 +83,34 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  " ORDER BY Index_Name",
 			  "List the indexes available on a table");
 
-void toResultIndexes::query(const QString &sql,const list<QString> &param)
+void toResultIndexes::query(const QString &sql,const toQList &param)
 {
   QString Owner;
   QString TableName;
-  list<QString>::iterator cp=((list<QString> &)param).begin();
-  if (cp!=((list<QString> &)param).end())
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end())
     Owner=*cp;
   cp++;
-  if (cp!=((list<QString> &)param).end())
+  if (cp!=((toQList &)param).end())
     TableName=(*cp);
 
-  LastItem=NULL;
   RowNumber=0;
 
   clear();
 
   try {
-    otl_stream Query(1,
-		     SQLListIndex(connection()),
-		     otlConnection());
+    toQuery query(connection(),SQLListIndex,Owner,TableName);
 
-    Description=Query.describe_select(DescriptionLen);
+    QListViewItem *item=NULL;
+    while(!query.eof()) {
+      item=new QListViewItem(this,item,NULL);
 
-    Query<<Owner.utf8();
-    Query<<TableName.utf8();
-
-    QListViewItem *item;
-    while(!Query.eof()) {
-      item=new QListViewItem(this,LastItem,NULL);
-      LastItem=item;
-
-      char buffer[101];
-      buffer[100]=0;
-      Query>>buffer;
-      QString indexOwner(QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(0,QString::fromUtf8(buffer));
-      item->setText(1,indexCols(indexOwner,QString::fromUtf8(buffer)));
-      Query>>buffer;
-      item->setText(2,QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(3,QString::fromUtf8(buffer));
+      QString indexOwner(query.readValue());
+      QString indexName(query.readValue());
+      item->setText(0,indexName);
+      item->setText(1,indexCols(indexOwner,indexName));
+      item->setText(2,query.readValue());
+      item->setText(3,query.readValue());
     }
   } TOCATCH
   updateContents();

@@ -48,8 +48,6 @@ class toListTip;
 class TOPrinter;
 class toSQL;
 class toResultCols;
-class otl_stream;
-class otl_column_desc;
 
 /** Baseclass for filters to apply to the @ref toResultView to filter out
  * rows that you don't want to add as items to the list.
@@ -399,13 +397,7 @@ protected:
   QString SQL;
   /** Connection to execute statement on.
    */
-  otl_stream *Query;
-  /** Length of described query.
-   */
-  int DescriptionLen;
-  /** Description of query.
-   */
-  otl_column_desc *Description;
+  toQuery *Query;
   /** Last added item.
    */
   QListViewItem *LastItem;
@@ -467,7 +459,7 @@ public:
    * @return Columns in query.
    */
   int queryColumns() const
-  { return DescriptionLen; }
+  { return Query?Query->columns():0; }
 
   /** Set a filter to this list.
    * @param filter The new filter or NULL if no filter is to be used.
@@ -524,7 +516,7 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const toQList &param);
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
@@ -568,12 +560,6 @@ protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void menuCallback(int);
-protected:
-  /** Set the number of columns in query.
-   * @param col Columns.
-   */
-  void setQueryColumns(int col)
-  { DescriptionLen=col; }
 };
 
 #endif

@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<TITLE>class toQuery</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toQuery</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toQuery.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>enum <A HREF="#ref1">queryMode</A> {    Normal,
+    Long,
+    All
+  }
+</LI>
+<LI>struct <A HREF="toQuery__queryDescribe.html">queryDescribe</A>
+</LI>
+<LI>class <A HREF="toQuery__queryValue.html">queryValue</A>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">queryValue</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref5">queryValue</A></b> (int i) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref6">queryValue</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref7">queryValue</A></b> (double d) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">queryValue</A></b> (const queryValue &amp;copy) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref9">~queryValue</A></b> () 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref10">isInt</A></b> (void)  const
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref11">isDouble</A></b> (void)  const
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref12">isString</A></b> (void)  const
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref13">isNull</A></b> (void)  const
+</LI>
+<LI><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref14">utf8Value</A></b> (void)  const
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref15">toInt</A></b> (void)  const
+</LI>
+<LI>double &nbsp;<b><A HREF="#ref16">toDouble</A></b> (void)  const
+</LI>
+<LI>operator &nbsp;<b><A HREF="#ref17">QString</A></b> ()  const
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="queryMode"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>queryMode</strong> {    Normal,
+    Long,
+    All
+  }
+</td><td align="right"><h3><strong>queryMode</strong></h3></td></tr></table><p></p><A NAME="toQuery__queryDescribe.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>queryDescribe</strong> <small>(struct)</small></td><td align="right"><h3><strong>queryDescribe</strong></h3></td></tr></table><p></p><A NAME="toQuery__queryValue.html"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>queryValue</strong> <small>(class)</small></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="queryValue"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (void)
+<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="queryValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (int i)
+<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="queryValue"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="queryValue"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (double d)
+<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="queryValue"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>queryValue</strong> (const queryValue &amp;copy)
+<br></td><td align="right"><h3><strong>queryValue</strong></h3></td></tr></table><p></p><A NAME="~queryValue"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~queryValue</strong> ()
+<br></td><td align="right"><h3><strong>~queryValue</strong></h3></td></tr></table><p></p><A NAME="isInt"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isInt</strong> (void)
+<br></td><td align="right"><h3><strong>isInt</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="isDouble"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isDouble</strong> (void)
+<br></td><td align="right"><h3><strong>isDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="isString"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isString</strong> (void)
+<br></td><td align="right"><h3><strong>isString</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="isNull"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isNull</strong> (void)
+<br></td><td align="right"><h3><strong>isNull</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="utf8Value"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>utf8Value</strong> (void)
+<br></td><td align="right"><h3><strong>utf8Value</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="toInt"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>toInt</strong> (void)
+<br></td><td align="right"><h3><strong>toInt</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="toDouble"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double &nbsp;<strong>toDouble</strong> (void)
+<br></td><td align="right"><h3><strong>toDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="QString"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>operator &nbsp;<strong>QString</strong> ()
+<br></td><td align="right"><h3><strong>QString</strong></h3></td></tr></table><p> <small>[const]</small></p><HR>
+	<table>
+	</table>
+</BODY>
+</HTML>

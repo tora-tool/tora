@@ -145,7 +145,7 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   if (!toOfflinePixmap)
     toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",
@@ -191,26 +191,14 @@ static toSQL SQLDisable("toOutput:Disable",
 			"END;",
 			"Disable output collection");
 
-
 void toOutput::disable(bool dis)
 {
   try {
     if (dis)
-      otl_cursor::direct_exec(otlConnect(),
-			      SQLDisable(connection()));
+      connection().allExecute(SQLDisable);
     else
-      otl_cursor::direct_exec(otlConnect(),
-			      SQLEnable(connection()));
-    list<otl_connect *> &other=connection().otherSessions();
-    for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++) {
-      if (dis)
-	otl_cursor::direct_exec(*(*i),
-				SQLDisable(connection()));
-      else
-	otl_cursor::direct_exec(*(*i),
-				SQLEnable(connection()));
-    }
-    QString str=QString::fromUtf8(SQLEnable(connection()));
+      connection().allExecute(SQLEnable);
+    QString str=toSQL::string(SQLEnable,connection());
     if (dis)
       connection().delInit(str);
     else
@@ -228,35 +216,35 @@ toOutput::~toOutput()
 
 static toSQL SQLLines("toOutput:Poll",
 		      "BEGIN\n"
-		      "    DBMS_OUTPUT.GET_LINES(:lines<char[256],out[255]>,\n"
-		      "                          :numlines<int,inout>);\n"
+		      "    DBMS_OUTPUT.GET_LINE(:lines<char[1000],out>,\n"
+		      "                         :numlines<char[100],out>);\n"
 		      "END;",
 		      "Get lines from SQL Output, must use same bindings");
 
-void toOutput::poll(otl_connect &conn)
+void toOutput::poll()
 {
   try {
-    int numlines;
+    bool any;
     do {
-      otl_stream query(1,
-		       SQLLines(connection()),
-		       conn);
-      query<<254;
-      otl_cstr_tab<257,255> lines;
-      query>>lines;
-      query>>numlines;
-      for (int i=0;i<numlines;i++)
-	insertLine(QString::fromUtf8((const char *)lines.v[i]));
-    } while(numlines>=254);
+      toQList params;
+      toQuery query(connection(),toQuery::All,SQLLines,params);
+
+      any=false;
+      while(!query.eof()) {
+	QString line=query.readValue();
+	int status=QString(query.readValue()).toInt();
+	if (status==0) {
+	  any=true;
+	  insertLine(line);
+	}
+      }
+    } while(!any);
   } TOCATCH
 }
 
 void toOutput::refresh(void)
 {
-  poll(otlConnect());
-  list<otl_connect *> &other=connection().otherSessions();
-  for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++)
-    poll(*(*i));
+  poll();
 }
 
 void toOutput::clear(void)

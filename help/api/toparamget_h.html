@@ -69,16 +69,33 @@
 #include &lt;map&gt;
 
 #include &lt;qdialog.h&gt;
+#include &lt;qpushbutton.h&gt;
+
+#include "toconnection.h"
 
 class QLineEdit;
 class QGrid;
+
+class toParamGetButton : public QPushButton {
+  Q_OBJECT
+  int Row;
+public:
+  toParamGetButton(int row,QWidget *parent=0,const char *name=0)
+    : QPushButton(parent,name),Row(row)
+  { connect(this,SIGNAL(clicked()),this,SLOT(internalClicked())); }
+private slots:
+  void internalClicked(void)
+  { emit clicked(Row); }
+signals:
+  void clicked(int);
+};
 
 /** A help class to parse SQL for input/output bindings and if available also pop up a 
  * dialog and ask for values. Also maintains an internal cache of old values.
  */
 
 class toParamGet : public QDialog {
-private:
+  Q_OBJECT
   /** Default values cache
    */
   static map&lt;QString,QString&gt; DefaultCache;
@@ -88,7 +105,7 @@ private:
 
   QGrid *Container;
 
-  list&lt;QWidget *&gt; Value;
+  list&lt;QLineEdit *&gt; Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   /** Get parameters for specified SQL string.
@@ -97,13 +114,16 @@ public:
    *            declare the binds.
    * @return Returns a list of values to feed into the query.
    */
-  static list&lt;QString&gt; getParam(QWidget *parent,QString &amp;str);
+  static toQList getParam(QWidget *parent,QString &amp;str);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
    * @param name Name of the bind variable.
    * @param val Value of the bind variable.
    */
   static void setDefault(const QString &amp;name,const QString &amp;val);
+private slots:
+
+  virtual void showMemo(int row);
 };
 
 #endif

@@ -39,10 +39,9 @@
 
 #include <list>
 
-class QString;
-class toConnection;
+#include "toconnection.h"
+
 class toTimer;
-class otl_connect;
 
 /** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
  * the query without knowing how it's UI is presented.
@@ -54,10 +53,6 @@ protected:
    * @return Reference to connection.
    */
   toConnection &connection(void);
-  /** Get the otl_connect structure of the current connection from the closest tool.
-   * @return Reference to otl_connect object.
-   */
-  otl_connect &otlConnection(void);
   /** Get the timer associated with the closest tool.
    * @return Pointer to tool timer.
    */
@@ -75,7 +70,7 @@ public:
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.
    */
-  virtual void query(const QString &sql,const list<QString> &params) = 0;
+  virtual void query(const QString &sql,const toQList &params) = 0;
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    */

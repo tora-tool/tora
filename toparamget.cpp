@@ -99,7 +99,7 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
 }
 
-list<QString> toParamGet::getParam(QWidget *parent,QString &str)
+toQList toParamGet::getParam(QWidget *parent,QString &str)
 {
   map<QString,bool> parameters;
   list<QString> names;
@@ -237,7 +237,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
       res+=c;
   }
 
-  list<QString> ret;
+  toQList ret;
   if (widget) {
     (*widget->Value.begin())->setFocus();
     if (widget->exec()) {

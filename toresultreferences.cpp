@@ -63,20 +63,14 @@ static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
 
 QString toResultReferences::constraintCols(const QString &conOwner,const QString &conName)
 {
-  otl_stream Query(1,
-		   SQLConsColumns(connection()),
-		   otlConnection());
-
-  Query<<conOwner.utf8();
-  Query<<conName.utf8();
+  toQuery query(connection(),SQLConsColumns,conOwner,conName);
 
   QString ret;
-  while(!Query.eof()) {
-    char buffer[101];
-    Query>>buffer;
+  while(!query.eof()) {
+    QString value=query.readValue();
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(QString::fromUtf8(buffer));
+    ret.append(value);
   }
   return ret;
 }
@@ -105,15 +99,15 @@ static toSQL SQLDependencies("toResultReferences:Dependencies",
 			     " ORDER BY owner,type,name",
 			     "List the dependencies from other objects to this object, must return same number of columns");
 
-void toResultReferences::query(const QString &sql,const list<QString> &param)
+void toResultReferences::query(const QString &sql,const toQList &param)
 {
   QString Owner;
   QString TableName;
-  list<QString>::iterator cp=((list<QString> &)param).begin();
-  if (cp!=((list<QString> &)param).end())
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end())
     Owner=*cp;
   cp++;
-  if (cp!=((list<QString> &)param).end())
+  if (cp!=((toQList &)param).end())
     TableName=(*cp);
 
   Query=NULL;
@@ -122,78 +116,47 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
   clear();
 
   try {
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-
-    otl_stream Query(1,
-		     SQLConstraints(connection()),
-		     otlConnection());
-
-    Description=Query.describe_select(DescriptionLen);
-
-    Query<<Owner.utf8();
-    Query<<TableName.utf8();
+    toQuery query(connection(),SQLConstraints,Owner,TableName);
 
     QListViewItem *item=NULL;
-    char *buffer=new char[MaxColSize+1];
-    buffer[MaxColSize]=0;
-    try {
-      while(!Query.eof()) {
-        item=new QListViewItem(this,item,NULL);
+    while(!query.eof()) {
+      item=new QListViewItem(this,item,NULL);
 
-        Query>>buffer;
-        QString consOwner(QString::fromUtf8(buffer));
-        Query>>buffer;
-        item->setText(1,QString::fromUtf8(buffer));
-        Query>>buffer;
-        QString consName(QString::fromUtf8(buffer));
-        QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
-        item->setText(0,consOwner);
-        item->setText(2,consName);
-        Query>>buffer;
-        QString rConsOwner(QString::fromUtf8(buffer));
-        Query>>buffer;
-        QString rConsName(QString::fromUtf8(buffer));
-        Query>>buffer;
-        item->setText(4,QString::fromUtf8(buffer));
-        QString Condition;
+      QString consOwner(query.readValue());
+      item->setText(1,query.readValue());
+      QString consName(query.readValue());
+      QString colNames(query.readValue());
+      item->setText(0,consOwner);
+      item->setText(2,consName);
+      QString rConsOwner(query.readValue());
+      QString rConsName(query.readValue());
+      item->setText(4,query.readValue());
+      QString Condition;
 
-        Condition="foreign key (";
-        Condition.append(colNames);
-        Condition.append(") references ");
-        Condition.append(rConsOwner);
-        Condition.append(".");
-        QString cols(constraintCols(rConsOwner,rConsName));
+      Condition="foreign key (";
+      Condition.append(colNames);
+      Condition.append(") references ");
+      Condition.append(rConsOwner);
+      Condition.append(".");
+      QString cols(constraintCols(rConsOwner,rConsName));
+      
+      Condition.append(TableName);
+      Condition.append("(");
+      Condition.append(cols);
+      Condition.append(")");
 
-        Condition.append(TableName);
-        Condition.append("(");
-        Condition.append(cols);
-        Condition.append(")");
-
-        item->setText(3,Condition);
-        Query>>buffer;
-        item->setText(5,QString::fromUtf8(buffer));
-      }
-
-      otl_stream Deps(1,
-	  	      SQLDependencies(connection()),
-		      otlConnection());
-      Deps<<Owner.utf8();
-      Deps<<TableName.utf8();
-      while(!Deps.eof()) {
-        item=new QListViewItem(this,item,NULL);
-        Deps>>buffer;
-        item->setText(0,QString::fromUtf8(buffer));
-        Deps>>buffer;
-        item->setText(1,QString::fromUtf8(buffer));
-        Deps>>buffer;
-        item->setText(3,QString::fromUtf8(buffer));
-        item->setText(4,"DEPENDENCY");
-      }
-    } catch (...) {
-      delete buffer;
-      throw;
+      item->setText(3,Condition);
+      item->setText(5,query.readValue());
     }
-    delete buffer;
+    
+    toQuery deps(connection(),SQLDependencies,Owner,TableName);
+    while(!deps.eof()) {
+      item=new QListViewItem(this,item,NULL);
+      item->setText(0,deps.readValue());
+      item->setText(1,deps.readValue());
+      item->setText(3,deps.readValue());
+      item->setText(4,"DEPENDENCY");
+    }
   } TOCATCH
   updateContents();
 }

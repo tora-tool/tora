@@ -316,7 +316,7 @@ public:
 	return NULL;
       }
     }
-    Dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
+    Dock=toAllocDock("Template",connection.description(),*toolbarImage());
     QWidget *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);
     return Dock;
@@ -489,12 +489,9 @@ void toTemplateSQL::expand(void)
   while(firstChild())
     delete firstChild();
   try {
-    otl_stream inf(1,
-		   SQL,
-		   Connection.connection());
-    list<QString> par=parameters();
-    list<QString> val=toReadQuery(inf,par);
-    for (list<QString>::iterator i=val.begin();i!=val.end();i++)
+    toQList par=parameters();
+    toQList val=toQuery::readQuery(connection(),SQL,par);
+    for (toQList::iterator i=val.begin();i!=val.end();i++)
       createChild(*i);
   } TOCATCH
 }

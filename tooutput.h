@@ -48,7 +48,7 @@ class toOutput : public toToolWidget {
 
   toMarkedText *Output;
   QToolButton *DisableButton;
-  void poll(otl_connect &conn);
+  void poll(void);
 public:
   toOutput(QWidget *parent,toConnection &connection,bool enabled=true);
   virtual ~toOutput();

@@ -34,13 +34,11 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref5">~toToolWidget</A></b> () 
 </LI>
-<LI><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<b><A HREF="#ref6">otlConnect</A></b> () 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref6">connection</A></b> () 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref7">connection</A></b> () 
+<LI>void &nbsp;<b><A HREF="#ref7">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref8">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
-</LI>
-<LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref9">timer</A></b> (void) 
+<LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref8">timer</A></b> (void) 
 </LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref3">connectionChange</A></b> (void) 
 </LI>
@@ -67,20 +65,15 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toToolWidget"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toToolWidget</strong> ()
-<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="otlConnect"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<strong>otlConnect</strong> ()
-<br></td><td align="right"><h3><strong>otlConnect</strong></h3></td></tr></table><p></p><p> Get the otl_connect structure of the current connection.
-</p>
-<p><b>Returns</b>: Reference to otl_connect object.
-   </p>
-<A NAME="connection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
+<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="connection"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the current connection.
 </p>
 <p><b>Returns</b>: Reference to connection.
    </p>
-<A NAME="setConnection"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="setConnection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
 <br></td><td align="right"><h3><strong>setConnection</strong></h3></td></tr></table><p></p><p> Change connection of tool.
    </p>
-<A NAME="timer"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTimer.html">toTimer</A> *&nbsp;<strong>timer</strong> (void)
+<A NAME="timer"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTimer.html">toTimer</A> *&nbsp;<strong>timer</strong> (void)
 <br></td><td align="right"><h3><strong>timer</strong></h3></td></tr></table><p></p><p> Get timer of tool. Used by some results to get update time.
 </p>
 <p><b>Returns</b>: Pointer to a timer object.

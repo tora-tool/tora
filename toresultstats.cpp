@@ -61,11 +61,9 @@ toResultStats::toResultStats(bool onlyChanged,QWidget *parent,
   : toResultView(false,false,parent,name),OnlyChanged(onlyChanged)
 {
   try {
-    otl_stream str(1,
-		   SQLSession(connection()),
-		   otlConnection());
-    str>>SessionID;
-  } catch (otl_exc &) {
+    toQuery query(connection(),SQLSession);
+    SessionID=query.readValue().toInt();
+  } catch (...) {
     SessionID=-1;
   }
   System=false;
@@ -112,36 +110,26 @@ static toSQL SQLSystemStatistics("toResultStats:SystemStatistics",
 void toResultStats::resetStats(void)
 {
   try {
-    otl_stream str;
     toConnection &conn=connection();
-    if (System)
-      str.open(1,
-	       SQLSystemStatistics(conn),
-	       conn.connection());
-    else {
-      str.open(1,
-	       SQLStatistics(conn),
-	       conn.connection());
-      str<<SessionID;
-    }
-    while(!str.eof()) {
+    toQList args;
+    if (!System)
+      args.insert(args.end(),SessionID);
+    toQuery query(conn,System?SQLSystemStatistics:SQLStatistics,args);
+    while(!query.eof()) {
       int id;
       double value;
-      str>>id;
-      str>>value;
+      id=query.readValue().toInt();
+      value=query.readValue().toDouble();
       id+=TO_STAT_BLOCKS;
       if (id<TO_STAT_MAX+TO_STAT_BLOCKS)
 	LastValues[id]=value;
     }
     if (!System) {
-      otl_stream sesio(1,
-		       SQLSessionIO(conn),
-		       conn.connection());
-      sesio<<SessionID;
+      toQuery queryio(conn,SQLSessionIO,args);
       int id=0;
-      while(!sesio.eof()) {
+      while(!queryio.eof()) {
 	double value;
-	sesio>>value;
+	value=queryio.readValue().toDouble();
 	LastValues[id]=value;
 	id++;
       }
@@ -149,15 +137,14 @@ void toResultStats::resetStats(void)
   } TOCATCH
 }
 
-void toResultStats::changeSession(otl_connect &conn)
+void toResultStats::changeSession(toQuery &query)
 {
   if (System)
     throw QString("Can't change session on system statistics");
   try {
-    otl_stream str(1,
-		   SQLSession(connection()),
-		   otlConnection());
-    str>>SessionID;
+    toQList args;
+    query.execute(SQLSession,args);
+    SessionID=query.readValue().toInt();
     emit sessionChanged(SessionID);
     emit sessionChanged(QString::number(SessionID));
     resetStats();
@@ -189,69 +176,61 @@ static toSQL SQLSystemStatisticName("toResultStats:SystemStatisticName",
 				    "  FROM v$sysstat\n",
 				    "Get statistics and their names for system statistics, must have same number of columns");
 
+void toResultStats::addValue(bool reset,int id,const QString &name,double value)
+{
+  QString delta;
+  QString absVal;
+
+  if (value!=0) {
+    absVal.sprintf("%.15g",value);
+    if (id<TO_STAT_MAX+TO_STAT_BLOCKS) {
+      delta.sprintf("%.15g",value-LastValues[id]);
+      if (value!=LastValues[id]||!OnlyChanged) {
+	toResultViewItem *item=new toResultViewItem(this,NULL);
+	if (reset)
+	  LastValues[id]=value;
+	item->setText(0,name);
+	if (OnlyChanged)
+	  item->setText(1,delta);
+	else {
+	  item->setText(1,absVal);
+	  item->setText(2,delta);
+	}
+	item->setText(3,QString::number(++Row));
+      }
+    }
+  }
+}
+
 void toResultStats::refreshStats(bool reset)
 {
   try {
     clear();
-    otl_stream str;
-    otl_stream sesio;
+    Row=0;
     toConnection &conn=connection();
-    if (System)
-      str.open(1,
-	       SQLSystemStatisticName(conn),
-	       conn.connection());
-    else {
-      str.open(1,
-	       SQLStatisticName(conn),
-	       conn.connection());
-      sesio.open(1,
-		 SQLSessionIO(conn),
-		 conn.connection());
-      sesio<<SessionID;
-      str<<SessionID;
+    toQList args;
+    if (!System)
+      args.insert(args.end(),SessionID);
+    toQuery query(conn,System?SQLSystemStatisticName:SQLStatisticName,args);
+    while(!query.eof()) {
+      QString name=query.readValue();
+      int id=query.readValue().toInt();
+      double value=query.readValue().toInt();
+      addValue(reset,id,name,value);
     }
-    int SesID=0;
-    int Row=0;
-    while(!str.eof()||(!System&&!sesio.eof())) {
-      int id;
-      double value;
-      char buffer[65];
-      if (!System&&!sesio.eof()) {
-	int len;
-	otl_column_desc *description=sesio.describe_select(len);
-	strcpy(buffer,description[SesID%len].name);
-	id=SesID;
-	SesID++;
-	sesio>>value;
-      } else {
-	str>>buffer;
-	str>>id;
-	id+=TO_STAT_BLOCKS;
-	str>>value;
-      }
-      QString delta;
-      QString absVal;
-      setQueryColumns(3);
 
-      if (value!=0) {
-	absVal.sprintf("%.15g",value);
-	if (id<TO_STAT_MAX+TO_STAT_BLOCKS) {
-	  delta.sprintf("%.15g",value-LastValues[id]);
-	  toResultViewItem *item;
-	  if (value!=LastValues[id]||!OnlyChanged) {
-	    item=new toResultViewItem(this,NULL);
-	    if (reset)
-	      LastValues[id]=value;
-	    item->setText(0,QString::fromUtf8(buffer));
-	    if (OnlyChanged)
-	      item->setText(1,delta);
-	    else {
-	      item->setText(1,absVal);
-	      item->setText(2,delta);
-	    }
-	    item->setText(3,QString::number(++Row));
-	  }
-	}
+    if (!System) {
+      int id=0;
+      toQuery query(conn,SQLSessionIO,args);
+      toQDescList description=query.describe();
+      toQDescList::iterator i=description.begin();
+      while(!query.eof()) {
+	addValue(reset,id,(*i).Name,query.readValue().toDouble());
+	id++;
+	if (i==description.end())
+	  i=description.begin();
+	else
+	  i++;
       }
     }
   } TOCATCH

@@ -27,13 +27,17 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toMemoEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data,int row=-1,int col=-1,bool sql=false) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toMemoEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data,int row=-1,int col=-1,
+	       bool <A HREF="#sql">sql</A>=false,bool modal=false) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref5">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref5">text</A></b> (void) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref6">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Displays an text in a widget which can optionally be modified and saved back.
  </p>
-<A NAME="toMemoEditor"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMemoEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data,int row=-1,int col=-1,bool sql=false)
+<A NAME="toMemoEditor"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMemoEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data,int row=-1,int col=-1,
+	       bool <A HREF="#sql">sql</A>=false,bool modal=false)
 <br></td><td align="right"><h3><strong>toMemoEditor</strong></h3></td></tr></table><p></p><p> Create this editor. If row and col is specified, editing is posible.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -46,9 +50,16 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Optional location specifier, pass on in <A HREF="toMemoEditor.html#changeData">changeData</A> call.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Use SQL syntax highlighting of widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>modal</i></TD><TD align="left" valign="top">Display in modal dialog
    </TD></TR>
 </TABLE></P>
-<A NAME="changeData"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
+<A NAME="text"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>text</strong> (void)
+<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p></p><p> Get editor text.
+</p>
+<p><b>Returns</b>: String of editor.
+   </p>
+<A NAME="changeData"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when data is to be stored back to the creator
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

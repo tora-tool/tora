@@ -436,7 +436,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
     NoFilterPixmap=new QPixmap((const char **)nofilter_xpm);
   Filter=NULL;
 
-  QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.description());
 
   new QToolButton(*RefreshPixmap,
 		  "Update from DB",
@@ -735,15 +735,14 @@ void toBrowser::refresh(void)
       selected=connection().user().upper();
 
     Schema->clear();
-    otl_stream users(1,
-		     toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
-		     otlConnect());
-    for(int i=0;!users.eof();i++) {
-      char buffer[100];
-      users>>buffer;
-      Schema->insertItem(QString::fromUtf8(buffer));
-      if (selected==QString::fromUtf8(buffer))
-	Schema->setCurrentItem(i);
+    toQList users=toQuery::readQuery(connection(),
+				     toSQL::string(toSQL::TOSQL_USERLIST,connection()));
+    int j=0;
+    for(toQList::iterator i=users.begin();i!=users.end();i++) {
+      Schema->insertItem(*i);
+      if (selected==*i)
+	Schema->setCurrentItem(j);
+      j++;
     }
     if (!Schema->currentText().isEmpty()&&FirstTab) {
       QListViewItem *item=FirstTab->currentItem();
@@ -987,16 +986,16 @@ public:
 class toTemplateSchemaList : public toTemplateSQL {
 public:
   toTemplateSchemaList(toConnection &conn,toTemplateItem *parent,
-		       const QString &name,const QCString &sql)
+		       const QString &name,const QString &sql)
     : toTemplateSQL(conn,parent,name,sql)
   { }
   virtual toTemplateItem *createChild(const QString &name)
   {
     return new toTemplateSchemaItem(connection(),this,name);
   }
-  virtual list<QString> parameters(void)
+  virtual toQList parameters(void)
   {
-    list<QString> ret;
+    toQList ret;
     ret.insert(ret.end(),parent()->text(0));
     return ret;
   }
@@ -1006,7 +1005,7 @@ class toTemplateDBItem : public toTemplateSQL {
 public:
   toTemplateDBItem(toConnection &conn,toTemplateItem *parent,
 		   const QString &name)
-    : toTemplateSQL(conn,parent,name,toSQL::sql(toSQL::TOSQL_USERLIST,conn))
+    : toTemplateSQL(conn,parent,name,toSQL::string(toSQL::TOSQL_USERLIST,conn))
   {
   }
   virtual ~toTemplateDBItem()
@@ -1030,31 +1029,31 @@ public:
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Tables",
-			      SQLListTables(connection())))->setPixmap(0,table);
+			      toSQL::string(SQLListTables,connection())))->setPixmap(0,table);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Views",
-			      SQLListView(connection())))->setPixmap(0,view);
+			      toSQL::string(SQLListView,connection())))->setPixmap(0,view);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Indexes",
-			      SQLListIndex(connection())))->setPixmap(0,index);
+			      toSQL::string(SQLListIndex,connection())))->setPixmap(0,index);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Sequences",
-			      SQLListSequence(connection())))->setPixmap(0,sequence);
+			      toSQL::string(SQLListSequence,connection())))->setPixmap(0,sequence);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Synonyms",
-			      SQLListSynonym(connection())))->setPixmap(0,synonym);
+			      toSQL::string(SQLListSynonym,connection())))->setPixmap(0,synonym);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Code",
-			      SQLListSQLShort(connection())))->setPixmap(0,function);
+			      toSQL::string(SQLListSQLShort,connection())))->setPixmap(0,function);
     (new toTemplateSchemaList(connection(),
 			      item,
 			      "Triggers",
-			      SQLListTrigger(connection())))->setPixmap(0,function);
+			      toSQL::string(SQLListTrigger,connection())))->setPixmap(0,function);
     return item;
   }
 };

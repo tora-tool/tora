@@ -225,14 +225,10 @@ toSecurityQuota::toSecurityQuota(toConnection &conn,QWidget *parent)
 {
   CurrentItem=NULL;
   try {
-    otl_stream tablespaces(1,
-			   SQLTablespace(Connection),
-			   Connection.connection());
+    toQuery tablespaces(Connection,SQLTablespace);
     QListViewItem *item=NULL;
     while(!tablespaces.eof()) {
-      char buf[100];
-      tablespaces>>buf;
-      item=new toResultViewItem(Tablespaces,item,QString::fromUtf8(buf));
+      item=new toResultViewItem(Tablespaces,item,tablespaces.readValue());
       item->setText(1,"None");
       item->setText(3,"None");
     }
@@ -262,20 +258,17 @@ void toSecurityQuota::changeUser(const QString &user)
   QListViewItem *item=Tablespaces->firstChild();
   if (!user.isEmpty()) {
     try {
-      otl_stream quota(1,
-		       SQLQuota(Connection),
-		       Connection.connection());
-      quota<<user.utf8();
+      toQuery quota(Connection,SQLQuota,user);
       while(!quota.eof()) {
-	char buffer[200];
 	double maxQuota;
 	double usedQuota;
-	quota>>buffer>>usedQuota>>maxQuota;
-	QString tbl(QString::fromUtf8(buffer));
+	QString tbl(quota.readValue());
 	while(item&&item->text(0)!=tbl) {
 	  clearItem(item);
 	  item=item->nextSibling();
 	}
+	usedQuota=quota.readValue().toDouble();
+	maxQuota=quota.readValue().toDouble();
 	if (item) {
 	  QString usedStr;
 	  QString maxStr;
@@ -455,23 +448,16 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota,toConnection &conn,QWidget
 {
   Name->setValidator(new toSecurityUpper(Name));
   try {
-    otl_stream profiles(1,
-			SQLProfiles(Connection),
-			Connection.connection());
-    while(!profiles.eof()) {
-      char buf[100];
-      profiles>>buf;
-      Profile->insertItem(QString::fromUtf8(buf));
-    }
+    toQuery profiles(Connection,SQLProfiles);
+    while(!profiles.eof())
+      Profile->insertItem(profiles.readValue());
 
-    otl_stream tablespaces(1,
-			   SQLTablespace(Connection),
-			   Connection.connection());
+    toQuery tablespaces(Connection,
+			SQLTablespace);
     while(!tablespaces.eof()) {
-      char buf[100];
-      tablespaces>>buf;
-      DefaultSpace->insertItem(QString::fromUtf8(buf));
-      TempSpace->insertItem(QString::fromUtf8(buf));
+      QString buf=tablespaces.readValue();
+      DefaultSpace->insertItem(buf);
+      TempSpace->insertItem(buf);
     }
   } TOCATCH
 }
@@ -502,17 +488,12 @@ void toSecurityUser::changeUser(const QString &user)
 {
   clear();
   try {
-    otl_stream query(1,
-		     SQLUserInfo(Connection),
-		     Connection.connection());
-    query<<user.utf8();
+    toQuery query(Connection,SQLUserInfo,user);
     if (!query.eof()) {
       Name->setEnabled(false);
       Name->setText(user);
 
-      char buffer[100];
-      query>>buffer;
-      QString str(QString::fromUtf8(buffer));
+      QString str(query.readValue());
       if (str.startsWith("EXPIRED")) {
 	ExpirePassword->setChecked(true);
 	ExpirePassword->setEnabled(false);
@@ -522,13 +503,12 @@ void toSecurityUser::changeUser(const QString &user)
 	OrgLocked=true;
       }
 
-      query>>buffer;
-      OrgPassword=QString::fromUtf8(buffer);
-      query>>buffer;
+      OrgPassword=query.readValue();
+      QString pass=query.readValue();
       if (OrgPassword=="GLOBAL") {
 	OrgPassword=QString::null;
 	Authentication->showPage(GlobalTab);
-	OrgGlobal=QString::fromUtf8(buffer);
+	OrgGlobal=pass;
 	GlobalName->setText(OrgGlobal);
 	AuthType=global;
       } else if (OrgPassword=="EXTERNAL") {
@@ -542,8 +522,7 @@ void toSecurityUser::changeUser(const QString &user)
       }
 
       {
-        query>>buffer;
-        str=QString::fromUtf8(buffer);
+        str=query.readValue();
         for (int i=0;i<Profile->count();i++) {
   	  if (Profile->text(i)==str) {
 	    Profile->setCurrentItem(i);
@@ -554,8 +533,7 @@ void toSecurityUser::changeUser(const QString &user)
       }
 
       {
-	query>>buffer;
-	str=QString::fromUtf8(buffer);
+	str=query.readValue();
 	for (int i=0;i<DefaultSpace->count();i++) {
 	  if (DefaultSpace->text(i)==str) {
 	    DefaultSpace->setCurrentItem(i);
@@ -566,8 +544,7 @@ void toSecurityUser::changeUser(const QString &user)
       }
 
       {
-	query>>buffer;
-	str=QString::fromUtf8(buffer);
+	str=query.readValue();
 	for (int i=0;i<TempSpace->count();i++) {
 	  if (TempSpace->text(i)==str) {
 	    TempSpace->setCurrentItem(i);
@@ -653,19 +630,14 @@ void toSecurityRole::clear(void)
 void toSecurityRole::changeRole(const QString &role)
 {
   try {
-    otl_stream query(1,
-		     SQLRoleInfo(Connection),
-		     Connection.connection());
-    query<<role.utf8();
+    toQuery query(Connection,SQLRoleInfo,role);
     Password->setText("");
     Password2->setText("");
     if (!query.eof()) {
       Name->setText(role);
       Name->setEnabled(false);
 
-      char buffer[100];
-      query>>buffer;
-      QString str(QString::fromUtf8(buffer));
+      QString str(query.readValue());
       if (str=="YES") {
 	AuthType=password;
 	Authentication->showPage(PasswordTab);
@@ -746,12 +718,8 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
   addColumn("Object");
   setRootIsDecorated(true);
   try {
-    otl_stream object(1,
-		      SQLObjectList(Connection),
-		      Connection.connection());
-    otl_stream typelst(1,
-		       SQLObjectPrivs(Connection),
-		       Connection.connection());
+    toQuery object(Connection,SQLObjectList);
+    toQuery typelst(Connection);
     QString oType;
     QString oOwner;
     QString oName;
@@ -760,13 +728,9 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
     QListViewItem *nameItem=NULL;
     QStringList Options;
     while(!object.eof()) {
-      char buffer[100];
-      object>>buffer;
-      QString type(QString::fromUtf8(buffer));
-      object>>buffer;
-      QString owner(QString::fromUtf8(buffer));
-      object>>buffer;
-      QString name(QString::fromUtf8(buffer));
+      QString type(object.readValue());
+      QString owner(object.readValue());
+      QString name(object.readValue());
       if (owner!=oOwner) {
 	oType=oName=QString::null;
 	typeItem=nameItem=NULL;
@@ -778,9 +742,10 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
 	nameItem=NULL;
 	oType=type;
 	typeItem=new toResultViewItem(ownerItem,typeItem,type);
-	typelst<<type.utf8();
-	typelst>>buffer;
-	Options=QStringList::split(",",QString::fromUtf8(buffer));
+	toQList args;
+	toPush(args,toQValue(type));
+	typelst.execute(SQLObjectPrivs,args);
+	Options=QStringList::split(",",typelst.readValue());
       }
       nameItem=new toResultViewItem(typeItem,nameItem,name);
       for (QStringList::Iterator i=Options.begin();i!=Options.end();i++) {
@@ -826,20 +791,12 @@ void toSecurityObject::changeUser(const QString &user)
   bool open=true;
   eraseUser();
   try {
-    otl_stream grant(1,
-		     SQLObjectGrant(Connection),
-		     Connection.connection());
-    grant<<user.utf8();
+    toQuery grant(Connection,SQLObjectGrant,user);
     while(!grant.eof()) {
-      char buffer[200];
-      grant>>buffer;
-      QString owner(QString::fromUtf8(buffer));
-      grant>>buffer;
-      QString object(QString::fromUtf8(buffer));
-      grant>>buffer;
-      QString priv(QString::fromUtf8(buffer));
-      grant>>buffer;
-      QString admin(QString::fromUtf8(buffer));
+      QString owner(grant.readValue());
+      QString object(grant.readValue());
+      QString priv(grant.readValue());
+      QString admin(grant.readValue());
 
       for (QListViewItem *ownerItem=firstChild();ownerItem;ownerItem=ownerItem->nextSibling()) {
 	if (ownerItem->text(0)==owner) {
@@ -976,13 +933,10 @@ toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
   addColumn("Privilege name");
   setRootIsDecorated(true);
   try {
-    otl_stream priv(1,
-		    SQLListSystem(Connection),
-		    Connection.connection());
-    char buffer[100];
+    toQuery priv(Connection,SQLListSystem);
     while(!priv.eof()) {
-      priv>>buffer;
-      toResultViewCheck *item=new toResultViewCheck(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
+      toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),
+						    QCheckListItem::CheckBox);
       new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
     }
     setSorting(0);
@@ -1073,16 +1027,10 @@ void toSecuritySystem::changeUser(const QString &user)
 {
   eraseUser();
   try {
-    otl_stream query(1,
-		     SQLSystemGrant(Connection),
-		     Connection.connection());
-    query<<user.utf8();
+    toQuery query(Connection,SQLSystemGrant,user);
     while(!query.eof()) {
-      char buffer[1024];
-      query>>buffer;
-      QString str=QString::fromUtf8(buffer);
-      query>>buffer;
-      QString admin=QString::fromUtf8(buffer);
+      QString str=query.readValue();
+      QString admin=query.readValue();
       for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==str) {
 	  toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
@@ -1110,13 +1058,9 @@ toSecurityRoleGrant::toSecurityRoleGrant(toConnection &conn,QWidget *parent)
   addColumn("Role name");
   setRootIsDecorated(true);
   try {
-    otl_stream priv(1,
-		    SQLRoles(Connection),
-		    Connection.connection());
-    char buffer[100];
+    toQuery priv(Connection,SQLRoles);
     while(!priv.eof()) {
-      priv>>buffer;
-      toResultViewCheck *item=new toResultViewCheck(this,QString::fromUtf8(buffer),QCheckListItem::CheckBox);
+      toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),QCheckListItem::CheckBox);
       new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
       new toResultViewCheck(item,"Default",QCheckListItem::CheckBox);
     }
@@ -1272,18 +1216,11 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 {
   eraseUser(user);
   try {
-    otl_stream query(1,
-		     SQLRoleGrant(Connection),
-		     Connection.connection());
-    query<<username.utf8();
+    toQuery query(Connection,SQLRoleGrant,username);
     while(!query.eof()) {
-      char buffer[1024];
-      query>>buffer;
-      QString str=QString::fromUtf8(buffer);
-      query>>buffer;
-      QString admin=QString::fromUtf8(buffer);
-      query>>buffer;
-      QString def=QString::fromUtf8(buffer);
+      QString str=query.readValue();
+      QString admin=query.readValue();
+      QString def=query.readValue();
       for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==str) {
 	  QCheckListItem *chk=dynamic_cast<toResultViewCheck *>(item);
@@ -1327,7 +1264,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   if (!toCopyUserPixmap)
     toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"Security manager",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",
@@ -1466,16 +1403,13 @@ void toSecurity::refresh(void)
     parent->setText(1,"USER:");
     parent->setOpen(true);
     parent->setSelectable(false);
-    otl_stream user(1,
-		    toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
-		    otlConnect());
+    toQuery user(connection(),toSQL::string(toSQL::TOSQL_USERLIST,connection()));
     QListViewItem *item=NULL;
     while(!user.eof()) {
-      char buffer[1024];
-      user>>buffer;
+      QString tmp=user.readValue();
       QString id="USER:";
-      id+=QString::fromUtf8(buffer);
-      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      id+=tmp;
+      item=new toResultViewItem(parent,item,tmp);
       item->setText(1,id);
       if (id==UserID)
 	UserList->setSelected(item,true);
@@ -1484,16 +1418,13 @@ void toSecurity::refresh(void)
     parent->setText(1,"ROLE:");
     parent->setOpen(true);
     parent->setSelectable(false);
-    otl_stream roles(1,
-		    SQLRoles(connection()),
-		    otlConnect());
+    toQuery roles(connection(),SQLRoles);
     item=NULL;
     while(!roles.eof()) {
-      char buffer[1024];
-      roles>>buffer;
+      QString tmp=user.readValue();
       QString id="ROLE:";
-      id+=QString::fromUtf8(buffer);
-      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      id+=tmp;
+      item=new toResultViewItem(parent,item,tmp);
       item->setText(1,id);
       if (id==UserID)
 	UserList->setSelected(item,true);
@@ -1508,7 +1439,7 @@ void toSecurity::saveChanges()
   list<QString> sqlList=sql();
   for (list<QString>::iterator i=sqlList.begin();i!=sqlList.end();i++) {
     try {
-      otl_cursor::direct_exec(otlConnect(),(*i).utf8());
+      connection().execute(*i);
     } TOCATCH
   }
   if (General->user())
@@ -1532,7 +1463,7 @@ void toSecurity::drop()
     str+=UserID.right(UserID.length()-5);
     str+="\"";
     try {
-      otl_cursor::direct_exec(otlConnect(),str.utf8());
+      connection().execute(str);
       refresh();
       changeUser(false);
     } catch(...) {
@@ -1543,7 +1474,7 @@ void toSecurity::drop()
       case 0:
 	str+=" CASCADE";
 	try {
-	  otl_cursor::direct_exec(otlConnect(),str.utf8());
+	  connection().execute(str);
 	  refresh();
 	  changeUser(false);
 	} TOCATCH

@@ -179,20 +179,17 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       sql+=" ORDER BY ";
       sql+=Order;
     }
-    Query=new otl_stream;
-    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-    Query->open(1,
-		sql.utf8(),
-		otlConnection());
+    Query=new toQuery(connection(),sql);
 
-    int descriptionLen;
-    Description=Query->describe_select(descriptionLen);
+    toQDescList desc=Query->describe();
 
-    setNumCols(descriptionLen);
+    setNumCols(Query->columns());
+
     QHeader *head=horizontalHeader();
-    for (int i=0;i<descriptionLen;i++) {
-      QString name(QString::fromUtf8(Description[i].name));
-      head->setLabel(i,name);
+    int col=0;
+    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+      head->setLabel(col,(*i).Name);
+      col++;
     }
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     Row=0;
@@ -219,7 +216,7 @@ void toResultContentEditor::addRow(void)
 	setNumRows(Row+3);
       verticalHeader()->setLabel(Row,QString::number(Row+1));
       for (int j=0;j<numCols()&&!Query->eof();j++)
-	setText(Row,j,toReadValue(*Query));
+	setText(Row,j,Query->readValueNull());
       Row++;
     }
   } TOCATCH
@@ -264,11 +261,6 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
   return QTable::beginEdit(row,col,replace);
 }
 
-static bool nullString(const QString &str)
-{
-  return str=="{null}"||str.isNull();
-}
-
 void toResultContentEditor::deleteCurrent()
 {
   saveUnsaved();
@@ -284,7 +276,7 @@ void toResultContentEditor::deleteCurrent()
       sql+="\"";
       sql+=head->label(i);
       sql+="\" ";
-      if (nullString(text(currentRow(),i)))
+      if (text(currentRow(),i))
 	sql+=" IS NULL";
       else {
 	sql+="= :c";
@@ -296,16 +288,14 @@ void toResultContentEditor::deleteCurrent()
     }
     try {
       toConnection &conn=connection();
-      otl_stream exec(1,
-		      sql.utf8(),
-		      conn.connection());
       
-      otl_null null;
+      toQList args;
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!nullString(str))
-	  exec<<str.utf8();
+	if (!str.isNull())
+	  toPush(args,toQValue(str));
       }
+      conn.execute(sql,args);
       if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	conn.commit();
       else
@@ -341,18 +331,16 @@ void toResultContentEditor::saveUnsaved()
       sql+=")";
       try {
 	toConnection &conn=connection();
-	otl_stream exec(1,
-			sql.utf8(),
-			conn.connection());
-	otl_null null;
+	toQList args;
+	toQValue null;
 	for (int i=0;i<numCols();i++) {
 	  QString str=text(CurrentRow,i);
-	  otl_null null;
-	  if (nullString(str))
-	    exec<<null;
+	  if (str.isNull())
+	    toPush(args,null);
 	  else
-	    exec<<str.utf8();
+	    toPush(args,toQValue(str));
 	}
+	toQuery exec(conn,sql,args);
 	Row++;
 	setNumRows(Row+1);
 	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
@@ -378,7 +366,7 @@ void toResultContentEditor::saveUnsaved()
 	  sql+="\"";
 	  sql+=head->label(i);
 	  sql+="\" ";
-	  if (nullString(text(CurrentRow,i)))
+	  if (text(CurrentRow,i).isNull())
 	    sql+=" = NULL";
 	  else {
 	    sql+="= :f";
@@ -394,7 +382,7 @@ void toResultContentEditor::saveUnsaved()
 	  sql+="\"";
 	  sql+=head->label(col);
 	  sql+="\" ";
-	  if (nullString(*j))
+	  if ((*j).isNull())
 	    sql+=" IS NULL";
 	  else {
 	    sql+="= :c";
@@ -406,32 +394,29 @@ void toResultContentEditor::saveUnsaved()
 	}
 	try {
 	  toConnection &conn=connection();
-	  otl_stream exec(1,
-			  sql.utf8(),
-			  conn.connection());
-      
-	  otl_null null;
+	  toQList args;
+
 	  list<QString>::iterator k=OrigValues.begin();
 	  for (int i=0;i<numCols();i++,k++) {
 	    QString str=text(CurrentRow,i);
-	    if (str!=*k&&!nullString(str))
-	      exec<<str.utf8();
+	    if (str!=*k&&!str.isNull())
+	      toPush(args,toQValue(str));
 	  }
 	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	    QString str=(*j);
-	    if (!nullString(str))
-	      exec<<str.utf8();
+	    if (!str.isNull())
+	      toPush(args,toQValue(str));
 	  }
+	  toQuery exec(conn,sql,args);
+
 	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	    conn.commit();
 	  else
 	    conn.setNeedCommit();
-	} catch (const otl_exception &exc) {
+	} catch (const QString &str) {
 	  int col=0;
 	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
 	    setText(CurrentRow,col,*j);
-	  toStatusMessage(QString::fromUtf8((const char *)exc.msg));
-	} catch (const QString &str) {
 	  toStatusMessage(str);
 	}
       }
@@ -614,7 +599,7 @@ void toResultContentEditor::menuCallback(int cmd)
 toResultContent::toResultContent(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
-  QToolBar *toolbar=toAllocBar(this,"Content editor",connection().connectString());
+  QToolBar *toolbar=toAllocBar(this,"Content editor",connection().description());
   Editor=new toResultContentEditor(this,name);
 
   new QToolButton(QPixmap((const char **)filter_xpm),

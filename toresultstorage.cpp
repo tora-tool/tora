@@ -317,25 +317,18 @@ void toResultStorage::query(void)
   clear();
 
   try {
-    char buffer[1000];
-
-    QCString sql;
-
     toConnection &conn=connection();
-    if (ShowCoalesced)
-      sql=toSQL::sql(SQLShowCoalesced,conn);
-    else
-      sql=toSQL::sql(SQLNoShowCoalesced,conn);
 
-    otl_stream tblspc(1,sql,conn.connection());
-    tblspc<<toSizeDecode(Unit);
+    toQList args;
+    toPush(args,toQValue(toSizeDecode(Unit)));
+
+    toQuery tblspc(conn,ShowCoalesced?SQLShowCoalesced:SQLNoShowCoalesced,args);
 
     while(!tblspc.eof()) {
       QListViewItem *tablespace=new toResultStorageItem(this,NULL);
-      for (int i=0;i<11;i++) {
-	tblspc>>buffer;
-	tablespace->setText(i,QString::fromUtf8(buffer));
-      }
+      for (int i=0;i<11;i++)
+	tablespace->setText(i,tblspc.readValue());
+
       tablespace->setExpandable(true);
       if (currentSpace==tablespace->text(0)) {
 	if (currentFile.isEmpty())
@@ -343,23 +336,18 @@ void toResultStorage::query(void)
       }
     }
 
-    otl_stream datfil(1,
-		      SQLDatafile(conn),
-		      conn.connection());
-    datfil<<toSizeDecode(Unit);
+    toQuery datfil(conn,SQLDatafile,args);
     while(!datfil.eof()) {
-      datfil>>buffer;
-      QString name=QString::fromUtf8(buffer);
+      QString name=datfil.readValue();
       QListViewItem *tablespace;
       for (tablespace=firstChild();tablespace&&tablespace->text(0)!=name;tablespace=tablespace->nextSibling())
 	;
       if (!tablespace)
 	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
       QListViewItem *file=new toResultStorageItem(tablespace,NULL);
-      for (int i=0;i<11;i++) {
-	datfil>>buffer;
-	file->setText(i,QString::fromUtf8(buffer));
-      }
+      for (int i=0;i<11;i++)
+	file->setText(i,datfil.readValue());
+
       file->setText(11,name);
       if (currentSpace==file->text(11)&&
 	  currentFile==file->text(0))

@@ -93,8 +93,8 @@ class toResultLine : public toLineChart, public toResult {
   QString SQL;
   /** Parameters to query
    */
-  list&lt;QString&gt; Param;
-  void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param,bool first);
+  toQList Param;
+  void query(const QString &amp;sql,const toQList &amp;param,bool first);
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -125,7 +125,7 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param)
+  virtual void query(const QString &amp;sql,const toQList &amp;param)
   { query(sql,param,true); }
   /** Perform the specified query.
    * @param sql SQL containing statement.
@@ -134,11 +134,18 @@ public:
   /** Reimplemented for internal reasons.
    */
   void query(const QString &amp;sql)
-  { list&lt;QString&gt; p; query(sql,p); }
+  { toQList p; query(sql,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void clear(void)
   { LastStamp=0; LastValues.clear(); toLineChart::clear(); }
+  /** Transform valueset. Make it possible to perform more complex transformation.
+   * called directly before adding the valueset to the chart. After flow transformation.
+   * Default is passthrough.
+   * @param input The untransformed valueset.
+   * @return The valueset actually added to the chart.
+   */
+  virtual list&lt;double&gt; transform(list&lt;double&gt; &amp;input);
 public slots:
   /** Read another value to the chart.
    */
@@ -147,15 +154,15 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

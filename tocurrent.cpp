@@ -105,7 +105,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update",
@@ -165,7 +165,7 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 
 void toCurrent::addList(QListViewItem *parent,const QString &type,toSQL &sql,const QString &role)
 {
-  list<QString> result=toReadQuery(connection(),sql(connection()),role);
+  toQList result=toQuery::readQuery(connection(),sql,role);
   while(result.size()>0) {
     QListViewItem *item;
     if (parent)
@@ -182,7 +182,7 @@ void toCurrent::addRole(QListViewItem *parent)
 {
   addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
   addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
-  list<QString> result=toReadQuery(connection(),SQLRoleRolePrivs(connection()),parent->text(0));
+  toQList result=toQuery::readQuery(connection(),SQLRoleRolePrivs,parent->text(0));
   while(result.size()>0) {
     QListViewItem *item;
     item=new toResultViewItem(parent,NULL);
@@ -204,7 +204,7 @@ void toCurrent::refresh()
   addList(NULL,"System",SQLUserSysPrivs);
   addList(NULL,"Object",SQLUserTabPrivs);
 
-  list<QString> result=toReadQuery(connection(),SQLUserRolePrivs(connection()));
+  toQList result=toQuery::readQuery(connection(),SQLUserRolePrivs);
   while(result.size()>0) {
     QListViewItem *item;
     item=new toResultViewItem(Grants,NULL);

@@ -164,58 +164,27 @@ void toResultItem::done(void)
       Widgets[i]->hide();
 }
 
-void toResultItem::query(const QString &sql,const list<QString> &param)
+void toResultItem::query(const QString &sql,const toQList &param)
 {
   SQL=sql;
 
   start();
 
   try {
-    int DescriptionLen;
-    otl_column_desc *Description;
-    otl_stream Query;
+    toQuery query(connection(),sql,param);
+    toQDescList desc=query.describe();
 
-    Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
+    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+      QString name=(*i).Name;
+      if (ReadableColumns)
+	toReadableColumn((*i).Name);
 
-    Query.open(1,
-	       sql.utf8(),
-	       otlConnection());
-
-    {
-      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
-	Query<<(*i).utf8();
-    }
-
-    Description=Query.describe_select(DescriptionLen);
-
-    for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
-      QString name=QString::fromUtf8(Description[i].name);
-      if (ReadableColumns) {
-	bool inWord=false;
-	for (unsigned int j=0;j<name.length();j++) {
-	  if (name.at(j)=='_')
-	    name.ref(j)=' ';
-	  if (name.at(j).isSpace())
-	    inWord=false;
-	  else if (name.at(j).isLetter()) {
-	    if (inWord)
-	      name.ref(j)=name.at(j).lower();
-	    else
-	      name.ref(j)=name.at(j).upper();
-	    inWord=true;
-	  }
-	}
-      }
-
-      addItem(name,toReadValue(Query));
+      addItem(name,query.readValue());
     }
     done();
   } catch (const QString &str) {
     done();
     toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    done();
-    toStatusMessage(QString::fromUtf8((const char *)exc.msg));
   }
 }
 

@@ -50,6 +50,9 @@ class toResultStats : public toResultView {
   /** Session ID to get statistics for.
    */
   int SessionID;
+  /** Number of rows of statistics
+   */
+  int Row;
   /** Get information about if only changed items are to be displayed.
    */
   bool OnlyChanged;
@@ -62,6 +65,9 @@ class toResultStats : public toResultView {
   /** Setup widget.
    */
   void setup();
+  /** Add value
+   */
+  void addValue(bool reset,int id,const QString &name,double value);
 public:
   /** Create statistics widget for session statistics.
    * @param OnlyChanged Only display changed items.
@@ -85,10 +91,10 @@ public:
   /** Reset statistics. Read in last values without updating widget data.
    */
   void resetStats(void);
-  /** Change the session to the current session.
-   * @param conn Connection to change session id to.
+  /** Change the session that the current query will run on.
+   * @param query Query to check connection for.
    */
-  void changeSession(otl_connect &conn);
+  void changeSession(toQuery &conn);
   /** Change session to specified id.
    * @param ses Session ID to change to.
    */

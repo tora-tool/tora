@@ -56,7 +56,7 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
-  setSQL(SQLResultDepend(connection()));
+  setSQL(toSQL::string(SQLResultDepend,connection()));
   setRootIsDecorated(true);
   setReadAll(true);
   setSQLName("toResultDepend");
@@ -65,21 +65,17 @@ toResultDepend::toResultDepend(QWidget *parent,const char *name)
 void toResultDepend::addChilds(QListViewItem *item)
 {
   try {
-    otl_stream query(1,
-		     SQL.utf8(),
-		     otlConnection());
-    query<<item->text(0).utf8();
-    query<<item->text(1).utf8();
+    toQuery query(connection(),SQL,item->text(0),item->text(1));
     QListViewItem *last=NULL;
     while(!query.eof()) {
-      QString owner=toReadValue(query);
-      QString name=toReadValue(query);
+      QString owner=query.readValue();
+      QString name=query.readValue();
       bool old=exists(owner,name);
       last=new QListViewItem(item,last);
       last->setText(0,owner);
       last->setText(1,name);
-      for (int i=2;i<DescriptionLen;i++)
-	last->setText(i,toReadValue(query));
+      for (int i=2;i<query.columns();i++)
+	last->setText(i,query.readValue());
       if (!old)
 	addChilds(last);
     }
@@ -107,8 +103,7 @@ bool toResultDepend::exists(const QString &owner,const QString &name)
   return false;
 }
 
-void toResultDepend::query(const QString &sql,
-			   const list<QString> &param)
+void toResultDepend::query(const QString &sql,const toQList &param)
 {
   toResultView::query(sql,param);
 

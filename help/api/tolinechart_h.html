@@ -89,10 +89,25 @@ protected:
   bool MaxAuto;
   QString YPostfix;
   int Samples;
-  bool AutoSamples;
   QString Title;
 
+  QRect Chart;
+  QPoint MousePoint[2];
+  int SkipSamples;
+  int UseSamples;
+  bool Zooming;
+  double zMinValue;
+  double zMaxValue;
+
   static double round(double round,bool up);
+  QRect fixRect(QPoint p1,QPoint p2);
+  virtual void mouseReleaseEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
+  virtual void mouseMoveEvent(QMouseEvent *e);
+  virtual void mouseDoubleClickEvent(QMouseEvent *e);
+
+  int countSamples(void);
+  void clearZoom(void);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.
@@ -100,6 +115,14 @@ public:
    * @param f Widget flags.
    */
   toLineChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  /** Create a new chart by copying all the data from another chart.
+   * @param chart Chart to copy data from.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   * @param f Widget flags.
+   */
+  toLineChart(toLineChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.
@@ -203,9 +226,7 @@ public:
   double maxValue(void) const
   { return MaxValue; }
 
-  /** Set the number of samples on the x-axis. Setting samples to -1 will keep enough samples
-   * to display one for each pixel of the screen. More samples than that will never be used
-   * regardless of this setting.
+  /** Set the number of samples on the x-axis. Setting samples to -1 will keep all entries.
    * @param samples Number of samples.
    */
   void setSamples(int samples=-1);

@@ -263,7 +263,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   if (!toStatisticPixmap)
     toStatisticPixmap=new QPixmap((const char **)clock_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
 
   new QToolButton(*toExecutePixmap,
 		  "Execute current statement",
@@ -457,7 +457,7 @@ bool toWorksheet::checkSave(bool input)
       if (!WorksheetTool.config(CONF_CHECK_SAVE,"Yes").isEmpty()) {
 	if (input) {
 	  QString str("Save changes to worksheet for ");
-	  str.append(connection().connectString());
+	  str.append(connection().description());
 	  int ret=TOMessageBox::information(this,
 					    "Save file",
 					    str,
@@ -594,34 +594,25 @@ void toWorksheet::query(const QString &str,bool direct)
       nobinds=true;
 
     if (!describe(execSql)) {
-      list<QString> param;
+      toQList param;
       if (!nobinds)
 	param=toParamGet::getParam(this,execSql);
       toStatusMessage("Processing query",true);
       if (direct) {
 	try {
 	  time(&Started);
-	  otl_stream inf(1,
-			 execSql.utf8(),
-			 otlConnect());
-	  {
-	    otl_null null;
-	    for (list<QString>::iterator i=param.begin();i!=param.end();i++) {
-	      if ((*i).isNull())
-		inf<<null;
-	      else
-		inf<<(*i).utf8();
-	    }
-	  }
+
+	  toQuery query(connection(),execSql,param);
+
 	  char buffer[100];
-	  if (inf.get_rpc()>0)
-	    sprintf(buffer,"%d rows processed",(int)inf.get_rpc());
+	  if (query.rowsProcessed()>0)
+	    sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
 	  else
 	    sprintf(buffer,"Query executed");
 	  addLog(execSql,buffer);
-	} catch (const otl_exception &exc) {
-	  addLog(execSql,QString::fromUtf8((const char *)exc.msg));
-	  toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+	} catch (const QString &exc) {
+	  addLog(execSql,exc);
+	  toStatusMessage(exc);
 	}
       } else {
 	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
@@ -974,16 +965,12 @@ void toWorksheet::enableStatistic(bool ena)
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
       try {
-	otl_cursor::direct_exec(otlConnect(),SQLTimedStatistics(connection()));
-	list<otl_connect *> &other=connection().otherSessions();
-	for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++) {
-	  otl_cursor::direct_exec(*(*i),
-				  SQLTimedStatistics(connection()));
-	}
-	connection().addInit(QString::fromUtf8(SQLTimedStatistics(connection())));
+	connection().allExecute(SQLTimedStatistics);
+	connection().addInit(SQLTimedStatistics(connection()));
       } TOCATCH
     }
   } else {
+    connection().delInit(SQLTimedStatistics(connection()));
     Result->setStatistics(NULL);
     ResultTab->setTabEnabled(StatSplitter,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);

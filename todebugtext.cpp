@@ -104,19 +104,15 @@ void toBreakpointItem::setBreakpoint(void)
   try {
     clearBreakpoint();
     toConnection &conn=toCurrentConnection(listView());
-    otl_stream str(1,
-		   SQLBreakpoint(conn),
-		   conn.connection());
-    str<<Namespace;
-    str<<text(0).utf8();
-    str<<text(2).utf8();
-    str<<Line+1;
-    int ret;
-    str>>ret;
+    toQList args;
+    toPush(args,toQValue(Namespace));
+    toPush(args,toQValue(text(0)));
+    toPush(args,toQValue(text(2)));
+    toPush(args,toQValue(Line+1));
+    toQuery query(conn,SQLBreakpoint);
+    int ret=query.readValue().toInt();
     if (ret==TO_SUCCESS) {
-      int bnum;
-      str>>bnum;
-      setText(TO_BREAK_COL,QString::number(bnum));
+      setText(TO_BREAK_COL,query.readValue());
       setText(4,"ENABLED");
       ok=true;
     } else if (ret==TO_ERROR_ILLEGAL_LINE) {
@@ -145,12 +141,11 @@ void toBreakpointItem::clearBreakpoint()
   if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
     try {
       toConnection &conn=toCurrentConnection(listView());
-      otl_stream str(1,
-		     SQLClearBreakpoint(conn),
-		     conn.connection());
-      str<<text(TO_BREAK_COL).toInt();
-      int res;
-      str>>res;
+      toQList args;
+      toPush(args,toQValue(text(TO_BREAK_COL).toInt()));
+      toQuery query(conn,SQLBreakpoint);
+      int res=query.readValue().toInt();
+      
       if (res!=TO_SUCCESS) {
 	QString str("Failed to remove breakpoint (Reason ");
 	str+=QString::number(res);
@@ -186,19 +181,13 @@ static toSQL SQLReadErrors("toDebug:ReadErrors",
 bool toDebugText::readErrors(toConnection &conn)
 {
   try {
-    otl_stream errors(1,SQLReadErrors(conn),conn.connection());
+    toQuery errors(conn,SQLReadErrors,Schema,Object,Type);
     map<int,QString> Errors;
 
-    errors<<Schema.utf8();
-    errors<<Object.utf8();
-    errors<<Type.utf8();
     while(!errors.eof()) {
-      char buffer[4001];
-      int line;
-      errors>>line;
-      errors>>buffer;
+      int line=errors.readValue().toInt();
       Errors[line]+=" ";
-      Errors[line]+=QString::fromUtf8(buffer);
+      Errors[line]+=errors.readValue();
     }
     setErrors(Errors);
     return true;
@@ -212,22 +201,11 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
     for(item=Stack->firstChild();item->firstChild();item=item->firstChild())
       ;
   try {
-    otl_stream lines(1,
-		     SQLReadSource(conn),
-		     conn.connection());
-    otl_stream errors(1,
-		      SQLReadErrors(conn),
-		      conn.connection());
+    toQuery lines(conn,SQLReadSource,Schema,Object,Type);
 
-    lines<<Schema.utf8();
-    lines<<Object.utf8();
-    lines<<Type.utf8();
     QString str;
-    while(!lines.eof()) {
-      char buffer[4001];
-      lines>>buffer;
-      str+=QString::fromUtf8(buffer);
-    }
+    while(!lines.eof())
+      str+=lines.readValue();
     setText(str);
     setEdited(false);
     setCurrent(-1);

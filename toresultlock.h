@@ -44,10 +44,10 @@ class toResultLock : public toResultView {
 public:
   toResultLock(QWidget *parent,const char *name=NULL);
 
-  virtual void query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const toQList &param);
   // Why is this needed?
   void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
+  { toQList p; query(sql,p); }
 };
 
 #endif

@@ -813,7 +813,7 @@ void toMain::addConnection(void)
 toConnection &toMain::currentConnection()
 {
   for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if ((*i)->connectString()==ConnectionSelection->currentText()) {
+    if ((*i)->description()==ConnectionSelection->currentText()) {
       return *(*i);
     }
   }
@@ -824,7 +824,7 @@ void toMain::addConnection(toConnection *conn)
 {
   int j=0;
   for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++,j++) {
-    if ((*i)->connectString()==conn->connectString()) {
+    if ((*i)->description()==conn->description()) {
       ConnectionSelection->setCurrentItem(j);
       createDefault();
       return;
@@ -832,7 +832,7 @@ void toMain::addConnection(toConnection *conn)
   }
 
   Connections.insert(Connections.end(),conn);
-  ConnectionSelection->insertItem(conn->connectString());
+  ConnectionSelection->insertItem(conn->description());
   ConnectionSelection->setCurrentItem(ConnectionSelection->count()-1);
 
   if (ConnectionSelection->count()==1) {
@@ -846,7 +846,7 @@ void toMain::addConnection(toConnection *conn)
       menuBar()->setItemEnabled((*j).first,true);
   }
 
-  emit addedConnection(conn->connectString());
+  emit addedConnection(conn->description());
   createDefault();
 }
 
@@ -855,11 +855,11 @@ bool toMain::delConnection(void)
   toConnection *conn=NULL;
   int pos=0;
   for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if ((*i)->connectString()==ConnectionSelection->currentText()) {
+    if ((*i)->description()==ConnectionSelection->currentText()) {
       conn=(*i);
       if (conn->needCommit()) {
 	QString str("Commit work in session to ");
-	str.append(conn->connectString());
+	str.append(conn->description());
 	str.append(" before closing it?");
 	switch(TOMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
 	case 0:
@@ -878,7 +878,7 @@ bool toMain::delConnection(void)
       ConnectionSelection->removeItem(pos);
       if (ConnectionSelection->count())
 	ConnectionSelection->setCurrentItem(max(pos-1,0));
-      emit removedConnection(conn->connectString());
+      emit removedConnection(conn->description());
       delete conn;
       break;
     }
@@ -901,14 +901,14 @@ list<QString> toMain::connections(void)
 {
   list<QString> ret;
   for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
-    toPush(ret,(*i)->connectString());
+    toPush(ret,(*i)->description());
   return ret;
 }
 
 toConnection &toMain::connection(const QString &str)
 {
   for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
-    if ((*i)->connectString()==str)
+    if ((*i)->description()==str)
       return *(*i);
   throw QString("Couldn't find specified connectionts (%1)").arg(str);
 }

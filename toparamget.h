@@ -43,6 +43,8 @@
 #include <qdialog.h>
 #include <qpushbutton.h>
 
+#include "toconnection.h"
+
 class QLineEdit;
 class QGrid;
 
@@ -84,7 +86,7 @@ public:
    *            declare the binds.
    * @return Returns a list of values to feed into the query.
    */
-  static list<QString> getParam(QWidget *parent,QString &str);
+  static toQList getParam(QWidget *parent,QString &str);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
    * @param name Name of the bind variable.

@@ -75,12 +75,8 @@ public:
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {
-      otl_stream ColInfo;
-      ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      ColInfo.open(1,
-		   SQLInfo(view->connection()),
-		   view->otlConnection());
-      list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(1));
+      toQList resLst=toQuery::readQuery(view->connection(),SQLInfo,
+					text(10),text(11),text(1));
       QString result("<B>");
       result+=(text(1));
       result+=("</B><BR><BR>");
@@ -165,8 +161,8 @@ public:
       if (!any)
 	return text(col);
       return result;
-    } catch (const otl_exception &exc) {
-      toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+    } catch (const QString  &exc) {
+      toStatusMessage(exc);
       return text(col);
     }
   }
@@ -190,20 +186,20 @@ static toSQL SQLComment("toResultCols:Comments",
 			"   AND Column_Name = :f3<char[100]>",
 			"Display column comments");
 
-void toResultCols::query(const QString &sql,const list<QString> &param)
+void toResultCols::query(const QString &sql,const toQList &param)
 {
   SQL=sql;
   QString Owner;
   QString TableName;
-  list<QString>::iterator cp=((list<QString> &)param).begin();
-  if (cp!=((list<QString> &)param).end()) {
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end()) {
     SQL="\"";
     SQL+=*cp;
     Owner=*cp;
     SQL+="\"";
   }
   cp++;
-  if (cp!=((list<QString> &)param).end()) {
+  if (cp!=((toQList &)param).end()) {
     SQL.append(".\"");
     SQL.append(*cp);
     TableName=(*cp);
@@ -216,107 +212,32 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
   setSorting(0);
 
   try {
-    otl_stream ColComment(1,
-			  SQLComment(connection()),
-			  otlConnection());
-
-    Query=new otl_stream;
-
     QString str("SELECT * FROM ");
     str.append(SQL);
     str.append(" WHERE NULL = NULL");
 
-    otl_stream Query(1,
-		     str.utf8(),
-		     otlConnection());
+    toQuery Query(connection(),
+		  str.utf8());
 
-    Description=Query.describe_select(DescriptionLen);
+    toQDescList desc=Query.describe();
 
-    toResultViewMLine *item;
-    for (int i=0;i<DescriptionLen;i++) {
-      item=new toResultColsItem(this,LastItem,NULL);
-      LastItem=item;
+    int col=1;
+    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+      LastItem=new toResultColsItem(this,LastItem,NULL);
 
-      item->setText(10,Owner);
-      item->setText(11,TableName);
-      item->setText(1,QString::fromUtf8(Description[i].name));
-      item->setText(0,QString::number(i+1));
+      LastItem->setText(10,Owner);
+      LastItem->setText(11,TableName);
+      LastItem->setText(1,(*i).Name);
+      LastItem->setText(0,QString::number(col++));
 
-      QString datatype;
-      switch(Description[i].dbtype) {
-      case 1:
-      case 5:
-      case 9:
-      case 155:
-	datatype="VARCHAR2";
-	break;
-      case 2:
-      case 3:
-      case 4:
-      case 6:
-      case 68:
-	datatype="NUMBER";
-	break;
-      case 8:
-      case 94:
-      case 95:
-	datatype="LONG";
-	break;
-      case 11:
-      case 104:
-	datatype="ROWID";
-	break;
-      case 12:
-      case 156:
-	datatype="DATE";
-	break;
-      case 15:
-      case 23:
-      case 24:
-	datatype="RAW";
-	break;
-      case 96:
-      case 97:
-	datatype="CHAR";
-	break;
-      case 108:
-	datatype="NAMED DATA TYPE";
-	break;
-      case 110:
-	datatype="REF";
-	break;
-      case 112:
-	datatype="CLOB";
-	break;
-      case 113:
-      case 114:
-	datatype="BLOB";
-	break;
-      }
-      if (datatype=="NUMBER") {
-	if (Description[i].prec) {
-	  datatype.append(" (");
-	  datatype.append(QString::number(Description[i].prec));
-	  if (Description[i].scale!=0) {
-	    datatype.append(",");
-	    datatype.append(QString::number(Description[i].scale));
-	  }
-	  datatype.append(")");
-	}
-      } else {
-	datatype.append(" (");
-	datatype.append(QString::number(Description[i].dbsize));
-	datatype.append(")");
-      }
-      item->setText(2,datatype);
-      if (Description[i].nullok)
-	item->setText(3,"NULL");
+      LastItem->setText(2,(*i).Datatype);
+      if ((*i).Null)
+	LastItem->setText(3,"NULL");
       else
-	item->setText(3,"NOT NULL");
+	LastItem->setText(3,"NOT NULL");
 
-      list<QString> comLst=toReadQuery(ColComment,Owner,TableName,
-				       QString::fromUtf8(Description[i].name));
-      item->setText(4,toShift(comLst));
+      toQList comLst=toQuery::readQuery(connection(),SQLComment,Owner,TableName,(*i).Name);
+      LastItem->setText(4,toShift(comLst));
     }
   } TOCATCH
   updateContents();

@@ -64,11 +64,11 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const list<QString> &param);
+  virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.
    */
   void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
+  { toQList p; query(sql,p); }
 };
 
 #endif

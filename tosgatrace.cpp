@@ -127,7 +127,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SGA trace",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"SGA trace",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Fetch statements in SGA",
@@ -210,7 +210,7 @@ void toSGATrace::refresh(void)
   if (!CurrentSchema.isEmpty())
     select.append("   and b.username = :f1<char[101]>");
   if (!CurrentSchema.isEmpty()) {
-    list<QString> p;
+    toQList p;
     p.insert(p.end(),CurrentSchema);
     Trace->query(select,p);
   } else
@@ -223,15 +223,13 @@ void toSGATrace::updateSchemas(void)
 {
   try {
     Schema->clear();
-    otl_stream users(1,
-		     toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
-		     otlConnect());
+    toQuery users(connection(),
+		  toSQL::string(toSQL::TOSQL_USERLIST,connection()));
     Schema->insertItem("Any");
     for(int i=0;!users.eof();i++) {
-      char buffer[101];
-      users>>buffer;
-      Schema->insertItem(QString::fromUtf8(buffer));
-      if (CurrentSchema==QString::fromUtf8(buffer))
+      QString user=users.readValue();
+      Schema->insertItem(user);
+      if (CurrentSchema==user)
 	Schema->setCurrentItem(i+1);
     }
   } TOCATCH

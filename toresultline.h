@@ -65,8 +65,8 @@ class toResultLine : public toLineChart, public toResult {
   QString SQL;
   /** Parameters to query
    */
-  list<QString> Param;
-  void query(const QString &sql,const list<QString> &param,bool first);
+  toQList Param;
+  void query(const QString &sql,const toQList &param,bool first);
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -97,7 +97,7 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,const toQList &param)
   { query(sql,param,true); }
   /** Perform the specified query.
    * @param sql SQL containing statement.
@@ -106,7 +106,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
+  { toQList p; query(sql,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void clear(void)
@@ -126,15 +126,15 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)
-  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

@@ -157,7 +157,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   if (!toAddPixmap)
     toAddPixmap=new QPixmap((const char **)add_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"SQL editor",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"SQL editor",connection.description());
 
   new QToolButton(*toLoadPixmap,
 		  "Load SQL dictionary file",

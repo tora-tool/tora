@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<TITLE>class toConnectionProvider</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toConnectionProvider</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toconnection_h.html">toconnection.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toConnectionProvider.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref3">toConnectionProvider</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref4">~toConnectionProvider</A></b> () 
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref5">provider</A></b> (void)  const
+</LI>
+<LI>virtual  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><i><A HREF="#ref6">connection</A></i></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
+</LI>
+<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref7">modes</A></b> (void) 
+</LI>
+<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref8">hosts</A></b> (void) 
+</LI>
+<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><i><A HREF="#ref9">databases</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toConnectionProvider.html">toConnectionProvider</A> &amp;&nbsp;<b><A HREF="#ref10">fetchProvider</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+</LI>
+<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref11">providers</A></b> () 
+</LI>
+<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref12">modes</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+</LI>
+<LI>static  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><A HREF="#ref13">connection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,<A HREF="toConnection.html">toConnection</A> *conn) 
+</LI>
+<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref14">hosts</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+</LI>
+<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref15">databases</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="toConnectionProvider"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnectionProvider</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<br></td><td align="right"><h3><strong>toConnectionProvider</strong></h3></td></tr></table><p></p><A NAME="~toConnectionProvider"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toConnectionProvider</strong> ()
+<br></td><td align="right"><h3><strong>~toConnectionProvider</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="provider"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>provider</strong> (void)
+<br></td><td align="right"><h3><strong>provider</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="connection"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<i><strong>connection</strong></i> (<A HREF="toConnection.html">toConnection</A> *conn)
+<br></td><td align="right"><h3><i><strong>connection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="modes"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (void)
+<br></td><td align="right"><h3><strong>modes</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="hosts"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (void)
+<br></td><td align="right"><h3><strong>hosts</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="databases"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<i><strong>databases</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
+<br></td><td align="right"><h3><i><strong>databases</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><A NAME="fetchProvider"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnectionProvider.html">toConnectionProvider</A> &amp;&nbsp;<strong>fetchProvider</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<br></td><td align="right"><h3><strong>fetchProvider</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="providers"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>providers</strong> ()
+<br></td><td align="right"><h3><strong>providers</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="modes"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<br></td><td align="right"><h3><strong>modes</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="connection"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<strong>connection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,<A HREF="toConnection.html">toConnection</A> *conn)
+<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="hosts"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<br></td><td align="right"><h3><strong>hosts</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="databases"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>databases</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
+<br></td><td align="right"><h3><strong>databases</strong></h3></td></tr></table><p> <small>[static]</small></p><HR>
+	<table>
+	</table>
+</BODY>
+</HTML>

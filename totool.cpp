@@ -79,7 +79,7 @@ toToolWidget::~toToolWidget()
 void toToolWidget::setConnection(toConnection &conn)
 {
   bool connCap=false;
-  QString name=Connection->connectString();
+  QString name=Connection->description();
   QString capt=caption();
   if (capt.startsWith(name)) {
     connCap=true;
@@ -89,7 +89,7 @@ void toToolWidget::setConnection(toConnection &conn)
   Connection=&conn;
   Connection->addWidget(this);
   if (connCap) {
-    capt.prepend(Connection->connectString());
+    capt.prepend(Connection->description());
     setCaption(capt);
   }
   emit connectionChange();
@@ -100,11 +100,6 @@ toTimer *toToolWidget::timer(void)
   if (!Timer)
     Timer=new toTimer(this);
   return Timer;
-}
-
-otl_connect &toToolWidget::otlConnect()
-{
-  return Connection->connection();
 }
 
 map<QString,toTool *> *toTool::Tools;
@@ -153,7 +148,7 @@ void toTool::createWindow(void)
     if (newWin) {
       QString title;
       if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
-	title=main->currentConnection().connectString();
+	title=main->currentConnection().description();
 	title.append(" ");
       }
       title.append(name());

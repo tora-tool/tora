@@ -154,7 +154,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   if (!toDisconnectPixmap)
     toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"Session manager",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Session manager",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update sessionlist",
@@ -280,9 +280,7 @@ void toSession::enableStatistics(bool enable)
   else
     sql="ALTER SYSTEM SET TIMED_STATISTICS = FALSE";
   try {
-    otl_stream str(1,
-		   sql.utf8(),
-		   otlConnect());
+    connection().execute(sql);
   } catch (...) {
     toStatusMessage("No access to timed statistics flags");
   }
@@ -351,9 +349,7 @@ void toSession::disconnectSession(void)
       return;
     }
     try {
-      otl_stream str(1,
-		     sql.utf8(),
-		     otlConnect());
+      connection().execute(sql);
     } TOCATCH
   }
 }

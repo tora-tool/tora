@@ -100,13 +100,13 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
 
   /** Run this query without parameters.
    * @param sql Query.
    */
   void query(const QString &amp;sql)
-  { list&lt;QString&gt; p; query(sql,p); }
+  { toQList p; query(sql,p); }
   /** Run this query without parameters.
    * @param sql Query.
    */
@@ -119,15 +119,15 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

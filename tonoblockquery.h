@@ -72,50 +72,43 @@ private:
   toLock Lock;
   /** Current location that values are being read.
    */
-  list<QString>::iterator CurrentValue;
+  toQList::iterator CurrentValue;
   /** Values read by the task. This can be changed without holding @ref Lock.
    */
-  list<QString> ReadingValues;
+  toQList ReadingValues;
   /** Values ready to be read by client.
    */
-  list<QString> Values;
+  toQList Values;
   /** Indicator if at end of query.
    */
   bool EOQ;
   /** Indicator if to quit reading from query.
    */
   bool Quit;
-  /** Long connection to execute query on.
-   */
-  otl_connect *LongConn;
-  /** Connection to get long connection from.
-   */
-  toConnection &Connection;
   /** SQL to execute.
    */
   QString SQL;
   /** Error string if error occurs.
    */
   QString Error;
-  /** Length of description of result columns.
-   */
-  int DescriptionLength;
   /** Number of rows processed.
    */
   int Processed;
-  /** Description of result columns.
-   */
-  otl_column_desc *Description;
   /** Parameters to pass to query before execution.
    */
-  list<QString> Param;
+  toQList Param;
   /** Child thread.
    */
   toThread *Thread;
   /** Statistics to be used if any.
    */
   toResultStats *Statistics;
-
+  /** Description of result
+   */
+  toQDescList Description;
+  /** Query used to run query
+   */
+  toQuery Query;
   /** Throw error if any.
    */
   void checkError();
@@ -128,7 +121,7 @@ public:
    */
   toNoBlockQuery(toConnection &conn,
 		 const QString &sql,
-		 const list<QString> &param,
+		 const toQList &param,
 		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
@@ -138,10 +131,9 @@ public:
   bool poll(void);
 
   /** Get description of columns.
-   * @param length Number of columns.
-   * @return Description of columns array.
+   * @return Description of columns list. Don't modify this list.
    */
-  otl_column_desc *describe(int &length);
+  toQDescList &describe(void);
 
   /** Read the next value from the query.
    * @return The next available value.
@@ -151,7 +143,7 @@ public:
   /** Get the number of rows processed.
    * @return Number of rows processed.
    */
-  int getProcessed(void);
+  int rowsProcessed(void);
 
   /** Check if at end of query.
    * @return True if query is done.

@@ -270,10 +270,8 @@ void toDatabaseSetting::createPlanTable(void)
 {
   try {
     toConnection &conn=toMainWidget()->currentConnection();
-    otl_cursor::direct_exec(conn.connection(),
-			    toSQL::string(SQLCreatePlanTable,conn).
-			    arg(ExplainPlan->text()).
-			    utf8());
+    conn.execute(toSQL::string(SQLCreatePlanTable,conn).
+		 arg(ExplainPlan->text()));
   } TOCATCH
 }
 

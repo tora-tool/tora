@@ -52,45 +52,31 @@ toResultBar::toResultBar(QWidget *parent,const char *name=NULL)
   Flow=true;
 }
 
-void toResultBar::query(const QString &sql,const list<QString> &param,bool first)
+void toResultBar::query(const QString &sql,const toQList &param,bool first)
 {
   SQL=sql;
   Param=param;
   try {
-    otl_stream str;
-    str.set_all_column_types(otl_all_num2str|otl_all_date2str);
-    str.open(1,
-	     sql.utf8(),
-	     otlConnection());
-    {
-      otl_null null;
-      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
-	if ((*i).isNull())
-	  str<<null;
-        else
-    	  str<<(*i).utf8();
-      }
-    }
+    toQuery query(connection(),sql,param);
 
-    list<QString> labels;
-    int len;
-    otl_column_desc *desc=str.describe_select(len);
+    toQDescList desc=query.describe();
 
     if (first) {
       clear();
-      for(int i=1;i<len;i++)
-	labels.insert(labels.end(),QString::fromUtf8(desc[i].name));
+      list<QString> labels;
+      for(toQDescList::iterator i=desc.begin();i!=desc.end();i++)
+	if (i!=desc.begin())
+	  labels.insert(labels.end(),(*i).Name);
       setLabels(labels);
     }
 
-    while(!str.eof()) {
+    while(!query.eof()) {
       int num=0;
-      QString lab=toReadValue(str);
+      QString lab=query.readValue();
       num++;
       list<double> vals;
-      while(num<len) {
-	QString lab=toReadValue(str);
-	vals.insert(vals.end(),lab.toDouble());
+      while(num<query.columns()) {
+	vals.insert(vals.end(),query.readValue().toDouble());
 	num++;
       }
       if (Flow) {

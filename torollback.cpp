@@ -207,14 +207,9 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
   DialogTabs->addTab(RollbackInfo,tr("Rollback Segment"));
 
   try {
-    otl_stream q(1,
-		 SQLTablespace(Connection),
-		 Connection.connection());
-    char buf[100];
-    while(!q.eof()) {
-      q>>buf;
-      Tablespace->insertItem(QString::fromUtf8(buf));
-    }
+    toQuery q(Connection,SQLTablespace);
+    while(!q.eof())
+      Tablespace->insertItem(q.readValue());
   } catch (...) {
 
   }
@@ -418,7 +413,7 @@ public:
   {
     QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
     
-    list<QString> par;
+    toQList par;
     par.insert(par.end(),QString::number(toSizeDecode(unit)));
     toResultView::query(sql,par);
     QRegExp repl("(MB)");
@@ -431,16 +426,13 @@ public:
       header()->setLabel(i,str);
     }
     try {
-      otl_stream trx(1,
-		     SQLStartExt(connection()),
-		     otlConnection());
+      toQuery trx(connection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
-	trx<<i->text(TRANSCOL-1).utf8();
-	for (int j=TRANSCOL;!trx.eof();j++) {
-	  char buffer[50];
-	  trx>>buffer;
-	  i->setText(j,QString::fromUtf8(buffer));
-	}
+	toQList args;
+	toPush(args,toQValue(QString(i->text(TRANSCOL-1))));
+	trx.execute(SQLStartExt,args);
+	for (int j=TRANSCOL;!trx.eof();j++)
+	  i->setText(j,trx.readValue());
       }
     } TOCATCH
   }
@@ -536,47 +528,33 @@ public:
     NumExtents=0;
     setSQLName("toRollbackOpen");
   }
-  virtual void query(const QString &sql,const list<QString> &param)
+  virtual void query(const QString &sql,toQList &param)
   {
     try {
       clear();
       toConnection &conn=connection();
-      otl_stream sql(1,
-		     SQLStatementInfo(conn),
-		     conn.connection());
+      toQuery sql(conn,SQLStatementInfo);
       QListViewItem *last=NULL;
       while(!sql.eof()) {
-	char buffer[1024];
 	QListViewItem *item=createItem(last,NULL);
 	last=item;
-	sql>>buffer;
-	item->setText(0,QString::fromUtf8(buffer));
-	sql>>buffer;
-	item->setText(1,QString::fromUtf8(buffer));
-	sql>>buffer;
-	item->setText(3,QString::fromUtf8(buffer));
-	sql>>buffer;
-	item->setText(4,QString::fromUtf8(buffer));
-	sql>>buffer;
-	item->setText(5,QString::fromUtf8(buffer));
-	sql>>buffer;
-	item->setText(6,QString::fromUtf8(buffer));
+	item->setText(0,sql.readValue());
+	item->setText(1,sql.readValue());
+	item->setText(3,sql.readValue());
+	item->setText(4,sql.readValue());
+	item->setText(5,sql.readValue());
+	item->setText(6,sql.readValue());
       }
 
-      otl_stream rlb(1,
-		     SQLCurrentExtent(conn),
-		     conn.connection());
+      toQuery rlb(conn,SQLCurrentExtent);
 
       CurExt.clear();
       MaxExt.clear();
 
       int num=0;
       while(!rlb.eof()) {
-	double ext;
-	rlb>>ext;
-	MaxExt.insert(MaxExt.end(),ext);
-	rlb>>ext;
-	CurExt.insert(CurExt.end(),ext);
+	MaxExt.insert(MaxExt.end(),rlb.readValue().toDouble());
+	CurExt.insert(CurExt.end(),rlb.readValue().toDouble());
 	num++;
       }
       statementData data;
@@ -658,7 +636,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   if (!toOfflinePixmap)
     toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update segment list",
@@ -794,8 +772,7 @@ void toRollback::addSegment(void)
   toRollbackDialog newSegment(connection(),this);
   if (newSegment.exec()) {
     try {
-      otl_cursor::direct_exec(otlConnect(),
-			      newSegment.getSQL().utf8());
+      connection().execute(newSegment.getSQL());
       refresh();
     } TOCATCH
   }
@@ -808,8 +785,7 @@ void toRollback::offline(void)
     str="ALTER ROLLBACK SEGMENT \"";
     str.append(currentSegment());
     str.append("\" OFFLINE");
-    otl_cursor::direct_exec(otlConnect(),
-			    str.utf8());
+    connection().execute(str);
     refresh();
   } TOCATCH
 }
@@ -826,8 +802,7 @@ void toRollback::dropSegment(void)
       str="DROP ROLLBACK SEGMENT \"";
       str.append(currentSegment());
       str.append("\"");
-      otl_cursor::direct_exec(otlConnect(),
-			      str.utf8());
+      connection().execute(str);
       refresh();
     }
   } TOCATCH
@@ -840,8 +815,7 @@ void toRollback::online(void)
     str="ALTER ROLLBACK SEGMENT \"";
     str.append(currentSegment());
     str.append("\" ONLINE");
-    otl_cursor::direct_exec(otlConnect(),
-			    str.utf8());
+    connection().execute(str);
     refresh();
   } TOCATCH
 }

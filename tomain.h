@@ -437,7 +437,6 @@ toMain *toMainWidget(void);
  * @param sql Statement to get address for.
  * @return String with address in.
  * @exception QString if address not found.
- * @exception otl_exception on error on connection.
  */
 QString toSQLToAddress(toConnection &conn,const QString &sql);
 /** Get the full SQL of an address (See @ref toSQLToAddress) from the
@@ -446,13 +445,15 @@ QString toSQLToAddress(toConnection &conn,const QString &sql);
  * @param sql Address of SQL.
  * @return String with SQL of statement.
  * @exception QString if address not found.
- * @exception otl_exception on error on connection.
  */
 QString toSQLString(toConnection &conn,const QString &address);
+/** Make a column name more readable.
+ * @param col Name of column name, will be modified.
+ */
+void toReadableColumn(QString &col);
 /** Get the current database time in the current sessions dateformat.
  * @param conn Connection to get address from.
  * @return String with the current date and time.
- * @exception otl_exception on error on connection.
  */
 QString toNow(toConnection &conn);
 /** Set the current session type (Style)
@@ -478,14 +479,6 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &
  * @param str String from currentText of combobox. If empty, set to default.
  */
 void toRefreshParse(toTimer *timer,const QString &str=QString::null);
-/** Read a value from a query. (Warning, this function will change when OTL 3.2.20 is
- * integrated in TOra)
- * @param q OTL Stream to read data from.
- * @return Read value from query.
- * @exception otl_exception on error in input stream.
- * @exception QString other internal errors.
- */
-QString toReadValue(otl_stream &q);
 /** Get information about wether this TOra has plugin support or not.
  * @return True if plugin support is enabled.
  */
@@ -525,64 +518,54 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
  */
 int toSizeDecode(const QString &str);
 
-/** Read all available data from a query.
- * @param str Stream to read data from.
- * @param args Input arguments of query.
- * @return List of read values.
- */
-list<QString> toReadQuery(otl_stream &str,list<QString> &args);
-/** Read all available data from a query.
- * @param str Stream to read data from.
- * @param arg1 Input arguments of query.
- * @return List of read values.
- */
-list<QString> toReadQuery(otl_stream &str,
-			  const QString &arg1=QString::null,const QString &arg2=QString::null,
-			  const QString &arg3=QString::null,const QString &arg4=QString::null,
-			  const QString &arg5=QString::null,const QString &arg6=QString::null,
-			  const QString &arg7=QString::null,const QString &arg8=QString::null,
-			  const QString &arg9=QString::null);
-/** Read all available data from a query.
- * @param conn Connection to execute query on.
- * @param query Query to execute, observe that this is in QCString to utf8 should be used
- *              if passing a QString object.
- * @param args Input arguments of query.
- * @return List of read values.
- */
-list<QString> toReadQuery(toConnection &conn,const QCString &query,list<QString> &args);
-/** Read all available data from a query.
- * @param conn Connection to execute query on.
- * @param query Query to execute, observe that this is in QCString to utf8 should be used
- *              if passing a QString object.
- * @param arg1 Input arguments of query.
- * @return List of read values.
- */
-list<QString> toReadQuery(toConnection &conn,const QCString &query,
-			  const QString &arg1=QString::null,const QString &arg2=QString::null,
-			  const QString &arg3=QString::null,const QString &arg4=QString::null,
-			  const QString &arg5=QString::null,const QString &arg6=QString::null,
-			  const QString &arg7=QString::null,const QString &arg8=QString::null,
-			  const QString &arg9=QString::null);
-/** Shift the first value out of a string list.
+/** Shift the first value out of a list.
  * @param lst List to shift value from (Also modified).
- * @return The first value in the list of strings.
+ * @return The first value in the list.
  */
-QString toShift(list<QString> &lst);
-/** Push a string to the beginning of a list.
+template <class T> T toShift(list<T> &lst)
+{
+  if (lst.begin()==lst.end()) {
+    T ret;
+    return ret;
+  }
+  T ret=(*lst.begin());
+  lst.erase(lst.begin());
+  return ret;
+}
+
+/** Push an object to the beginning of a list.
  * @param lst List to push value in from of.
- * @param str String to push.
+ * @param str Object to push.
  */
-void toUnShift(list<QString> &lst,const QString &str);
-/** Pop the last value out of a string list.
+template <class T> void toUnShift(list<T> &lst,const T &str)
+{
+  lst.insert(lst.begin(),str);
+}
+
+/** Pop the last value out of a list.
  * @param lst List to pop value from (Also modified).
- * @return The value in the list of strings.
+ * @return The value in the list of objects.
  */
-QString toPop(list<QString> &lst);
-/** Push a string to the end of a list.
+template <class T> T toPop(list<T> &lst)
+{
+  if (lst.begin()==lst.end()) {
+    T ret;
+    return ret;
+  }
+  T ret=(*lst.rbegin());
+  lst.pop_back();
+  return ret;
+}
+
+/** Push an object to the end of a list.
  * @param lst List to push value in from of.
- * @param str String to push.
+ * @param str Object to push.
  */
-void toPush(list<QString> &lst,const QString &);
+template <class T> void toPush(list<T> &lst,const T &str)
+{
+  lst.push_back(str);
+}
+
 /** Convert a string representation to a font structure.
  * @param str String representing the font.
  * @return Font structure represented by the string.
@@ -677,10 +660,16 @@ toConnection &toCurrentConnection(QWidget *widget);
  * @return Pointer to tool widget.
  */
 toToolWidget *toCurrentTool(QWidget *widget);
-/** Set if the thread is working or not. Will change the cursor to an hourgalass.
- * @param busy Wether busy or not.
+/** Whenever this class is instantiated the window will display a busy cursor. You
+ * can instantiate this function as many time as you want, only when all of them are
+ * destructed the curser will revert back to normal.
  */
-void toBusy(bool busy=false);
+class toBusy {
+  static unsigned int Count;
+public:
+  toBusy();
+  ~toBusy();
+};
 
 /** A timer descendant which also keep track of the last timer setting sent to it.
  */
@@ -713,9 +702,7 @@ public:
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */
 #define TOCATCH \
-    catch (const otl_exception &exc) {\
-      toStatusMessage(QString::fromUtf8((const char *)exc.msg));\
-    } catch (const QString &str) {\
+    catch (const QString &str) {\
       toStatusMessage(str);\
     }
 

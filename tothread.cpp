@@ -41,8 +41,6 @@ TO_NAMESPACE;
 
 #include <qstring.h>
 
-#include "otlv32.h"
-
 #include "tothread.h"
 
 #ifndef TO_QTHREAD
@@ -176,9 +174,6 @@ void *toThreadStartWrapper(void *t)
   try {
     thread->StartSemaphore.up();
     thread->Task->run();
-  } catch (const otl_exception &exc) {
-    printf("Unhandled exception in thread:\n%s\n",
-	   (const char *)QString::fromUtf8((const char *)exc.msg));
   } catch(const QString &exc) {
     printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {
@@ -301,9 +296,6 @@ void toThread::taskRunner::run(void)
   try {
     StartSemaphore.up();
     Task->run();
-  } catch (const otl_exception &exc) {
-    printf("Unhandled exception in thread:\n%s\n",
-	   (const char *)QString::fromUtf8((const char *)exc.msg));
   } catch(const QString &exc) {
     printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {

@@ -376,15 +376,11 @@ public:
       try {
 	int ret = -1;
 	do {
-	  otl_stream poll(1,
-			  SQLDebugOutputPoll(connection()),
-			  otlConnect());
-	  poll>>ret;
-	  char buffer[101];
-          buffer[0] = 0;
-	  poll>>buffer;
-	  if (ret==0||strlen(buffer))
-	    insertLine(QString::fromUtf8(buffer));
+	  toQuery poll(connection(),SQLDebugOutputPoll);
+	  ret=poll.readValue().toInt();
+	  QString str=poll.readValue();
+	  if (ret==0||str.length())
+	    insertLine(str);
 	} while(ret==0);
       } TOCATCH
     }    
@@ -394,11 +390,9 @@ public:
     if (Debugger->isRunning()) {
       try {
 	if (dis)
-	  otl_cursor::direct_exec(otlConnect(),
-				  SQLDebugOutputDisable(connection()));
+	  connection().execute(SQLDebugOutputDisable);
 	else
-	  otl_cursor::direct_exec(otlConnect(),
-				  SQLDebugOutputEnable(connection()));
+	  connection().execute(SQLDebugOutputEnable);
       } catch (...) {
 	toStatusMessage("Couldn't enable/disable output for session");
       }
@@ -432,31 +426,24 @@ void toDebug::targetTask::run(void)
   {
     toConnection Connection(Parent.connection());
     try {
-      otl_cursor::direct_exec(Connection.connection(),
-			      SQLDebugEnable(Connection));
+      Connection.execute(SQLDebugEnable);
     } catch (...) {
       toLocker lock(Parent.Lock);
       Parent.TargetLog+="Couldn't enable debugging for target session\n";
     }
     try {
-      otl_stream init(1,
-		      SQLDebugInit(Connection),
-		      Connection.connection());
+      toQuery init(Connection,SQLDebugInit);
 
       Parent.DebuggerStarted=true;
-      char buffer[201];
-      buffer[0]=0;
       toLocker lock(Parent.Lock);
-      init>>buffer;
-      Parent.TargetID=QString::fromUtf8(buffer);
-      init>>buffer;
-      Parent.TargetSession=QString::fromUtf8(buffer);
+      Parent.TargetID=init.readValue();
+      Parent.TargetSession=init.readValue();
       Parent.ChildSemaphore.up();
       Parent.TargetLog+="Debug session connected\n";
-    } catch (const otl_exception &exc) {
+    } catch (const QString &exc) {
       toLocker lock(Parent.Lock);
       Parent.TargetLog+="Couldn't start debugging:";
-      Parent.TargetLog+=QString::fromUtf8((const char *)exc.msg);
+      Parent.TargetLog+=exc;
       Parent.DebuggerStarted=false;
       Parent.ChildSemaphore.up();
       return;
@@ -471,8 +458,8 @@ void toDebug::targetTask::run(void)
       Parent.TargetSemaphore.down();
 
       QString sql;
-      list<QString> inParams;
-      list<QString> *outParams=NULL;
+      toQList inParams;
+      toQList outParams;
       {
 	toLocker lock(Parent.Lock);
 	Parent.RunningTarget=true;
@@ -491,44 +478,12 @@ void toDebug::targetTask::run(void)
 	Parent.TargetLog+="Executing SQL\n";
 	Parent.Lock.unlock();
 
-	otl_stream q(1,
-		     sql.utf8(),
-		     Connection.connection());
-
-	otl_null null;
-	for(list<QString>::iterator i=inParams.begin();i!=inParams.end();i++) {
-	  if ((*i).isNull())
-	    q<<null;
-	  else
-	    q<<(*i).utf8();
-	}
-
-	outParams=new list<QString>;
-
-	char *buffer=new char[colSize];
-	while(!q.eof()) {
-	  try {
-	    q>>buffer;
-	  } catch (...) {
-	    delete buffer;
-	    throw;
-	  }
-	  if (q.is_null())
-	    outParams->insert(outParams->end(),"{null}");
-	  else
-	    outParams->insert(outParams->end(),QString::fromUtf8(buffer));
-	}
-	delete buffer;
+	outParams=toQuery::readQuery(Connection,sql,inParams);
       } catch (const QString &str) {
 	Parent.Lock.lock();
 	Parent.TargetLog+="Encountered error: ";
 	Parent.TargetLog+=str;
 	Parent.TargetLog+="\n";
-	Parent.Lock.unlock();
-      } catch (const otl_exception &exc) {
-	Parent.Lock.lock();
-	Parent.TargetLog+="SQL Error Encountered:";
-	Parent.TargetLog+=QString::fromUtf8((const char *)exc.msg);
 	Parent.Lock.unlock();
       } catch (...) {
 	Parent.Lock.lock();
@@ -538,10 +493,7 @@ void toDebug::targetTask::run(void)
 
       {
 	toLocker lock(Parent.Lock);
-	if (outParams) {
-	  Parent.OutputData=(*outParams);
-	  delete outParams;
-	}
+	Parent.OutputData=outParams;
 	Parent.TargetLog+="Execution ended\n";
       }
       Parent.ChildSemaphore.up();
@@ -939,12 +891,12 @@ void toDebug::execute(void)
     try {
       {
 	// Can't hold lock since refresh of output will try to lock
-	list<QString> input=toParamGet::getParam(this,sql);
+	toQList input=toParamGet::getParam(this,sql);
 	toLocker lock(Lock);
 	InputData=input;
 	last=head->firstChild();
 	if (InputData.begin()!=InputData.end())
-	  for(list<QString>::iterator i=InputData.begin();
+	  for(toQList::iterator i=InputData.begin();
 	      last&&i!=InputData.end();
 	      i++,last=last->nextSibling()) {
 	    // Is there a smarter way to make a deep copy
@@ -981,14 +933,15 @@ static toSQL SQLSync("toDebug:Sync",
 int toDebug::sync(void)
 {
   try {
-    otl_stream sync(1,
-		    SQLSync(connection()),
-		    otlConnect());
+    toQList args;
+    toPush(args,toQValue(0));
     int ret;
     int reason;
     do {
-      sync<<0;
-      sync>>ret>>reason;
+      toQuery sync(connection(),SQLSync,args);
+
+      ret=sync.readValue().toInt();
+      reason=sync.readValue().toInt();
       {
 	toLocker lock(Lock);
 	TargetLog+="Syncing debug session\n";
@@ -1353,7 +1306,7 @@ void toDebug::updateState(int reason)
 	  ;
 
 	QListViewItem *last=NULL;
-	for (list<QString>::iterator i=OutputData.begin();i!=OutputData.end();i++) {
+	for (toQList::iterator i=OutputData.begin();i!=OutputData.end();i++) {
 	  QString name;
 	  if (cp!=CurrentParams.end()) {
 	    name=(*cp).Name;
@@ -1399,12 +1352,10 @@ void toDebug::updateState(int reason)
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,true);
     }
     try {
-      otl_stream info(1,
-		      SQLRuntimeInfo(connection()),
-		      otlConnect());
+      toQuery info(connection(),SQLRuntimeInfo);
       int ret,depth;
-      info>>ret;
-      info>>depth;
+      ret=info.readValue().toInt();
+      depth=info.readValue().toInt();
       if (ret!=TO_SUCCESS) {
 	QString str("Failed to get runtime info (Reason ");
 	str+=QString::number(ret);
@@ -1412,30 +1363,28 @@ void toDebug::updateState(int reason)
 	toStatusMessage(str);
 	return;
       }
-      otl_stream stack(1,
-		       SQLStackTrace(connection()),
-		       otlConnect());
-      char name[101];
-      char schema[101];
-      int line;
-      char type[101];
+
       QListViewItem *item=NULL;
       StackTrace->clear();
+      QString name;
+      QString schema;
+      QString line;
+      QString type;
+	
       for (int num=2;num<=depth;num++) {
-        name[0] = 0;
-        schema[0] = 0;
-        line = 0;
-        type[0] = 0;
-	stack<<num;
-	stack>>name;
-	stack>>schema;
-	stack>>line;
-	stack>>type;
+	toQList args;
+	toPush(args,toQValue(num));
+	toQuery stack(connection(),SQLStackTrace,args);
+
+	name=stack.readValue();
+	schema=stack.readValue();
+	line=stack.readValue();
+	type=stack.readValue();
 	
 	if (!item)
-	  item=new QListViewItem(StackTrace,QString::fromUtf8(name),QString::number(line),QString::fromUtf8(schema),QString::fromUtf8(type));
+	  item=new QListViewItem(StackTrace,name,line,schema,type);
 	else
-	  item=new QListViewItem(item,QString::fromUtf8(name),QString::number(line),QString::fromUtf8(schema),QString::fromUtf8(type));
+	  item=new QListViewItem(item,name,line,schema,type);
 	item->setOpen(true);
       }
       Output->refresh();
@@ -1446,40 +1395,26 @@ void toDebug::updateState(int reason)
 	      delete item->firstChild();
 	  }
 	}
-	otl_stream local(1,
-			 SQLLocalWatch(connection()),
-			 otlConnect());
-	otl_stream global(1,
-			  SQLGlobalWatch(connection()),
-			  otlConnect());
-	otl_stream index(1,
-			 SQLLocalIndex(connection()),
-			 otlConnect());
-	otl_stream globind(1,
-			   SQLGlobalIndex(connection()),
-			   otlConnect());
-  
+
 	QListViewItem *next=NULL;
 	for (QListViewItem *item=Watch->firstChild();item;item=next) {
 	  int ret = -1;
 	  int space;
-	  char buffer[4001];
-          buffer[0] = 0;
+	  QString value;
 	  if (item->text(0).isEmpty()) {
-	    local<<item->text(2).utf8();
-	    local>>ret;
-	    local>>buffer;
+	    toQuery query(connection(),SQLLocalWatch,item->text(2));
+	    ret=query.readValue().toInt();
+	    value=query.readValue();
 	  } else {
-	    global<<item->text(1).utf8();
-	    global<<item->text(0).utf8();
-	    global<<item->text(2).utf8();
-	    global>>ret;
-	    global>>buffer;
-	    global>>space;
+	    toQuery query(connection(),SQLGlobalWatch,
+			  item->text(1),item->text(0),item->text(2));
+	    ret=query.readValue().toInt();
+	    value=query.readValue();
+	    space=query.readValue().toInt();
 	  }
 	  item->setText(4,"");
 	  if (ret==TO_SUCCESS)
-	    item->setText(3,QString::fromUtf8(buffer));
+	    item->setText(3,value);
 	  else if (ret==TO_ERROR_NULLVALUE) {
 	    item->setText(3,"{null}");
 	    item->setText(5,"NULL");
@@ -1487,30 +1422,29 @@ void toDebug::updateState(int reason)
 	    item->setText(3,"[Count 0]");
 	    item->setText(5,"LIST");
 	  } else if (ret==TO_ERROR_INDEX_TABLE) {
-	    char buffer[4001];
-            buffer[0] = 0;
 	    if (item->text(0).isEmpty()) {
-	      index<<item->text(2).utf8();
-	      index>>buffer;
+	      toQuery query(connection(),SQLLocalIndex,item->text(2));
+	      value=query.readValue();
 	    } else {
-	      globind<<space;
-	      globind<<item->text(1).utf8();
-	      globind<<item->text(0).utf8();
-	      globind<<item->text(2).utf8();
-	      globind>>buffer;
+	      toQList args;
+	      toPush(args,toQValue(space));
+	      toPush(args,toQValue(item->text(1)));
+	      toPush(args,toQValue(item->text(0)));
+	      toPush(args,toQValue(item->text(2)));
+	      toQuery query(connection(),SQLGlobalIndex,args);
+	      value=query.readValue();
 	    }
-	    char *start=buffer;
-	    char *end;
+	    unsigned int start=0;
+	    unsigned int end;
 	    QListViewItem *last=NULL;
 	    int num=0;
-	    for (end=start;*end;end++) {
-	      if (*end==',') {
-		*end=0;
+	    for (end=start;end<value.length();end++) {
+	      if (value[end]==',') {
 		if (start<end) {
 		  QString name=item->text(2);
 		  name+="(";
 		  // Why do I have to add 1 here for it to work?
-		  name+=QString::number(atoi(start)+1);
+		  name+=QString::number(value.mid(start,end-start).toInt()+1);
 		  name+=")";
 		  last=new toResultViewItem(item,last);
 		  last->setText(0,item->text(0));
@@ -1518,7 +1452,7 @@ void toDebug::updateState(int reason)
 		  last->setText(2,name);
 		  last->setText(3,"");
 		  last->setText(4,"NOCHANGE");
-		  last->setText(5,QString::fromUtf8(start));
+		  last->setText(5,value.mid(start,end-start));
 		  num++;
 		}
 		start=end+1;
@@ -1548,7 +1482,7 @@ void toDebug::updateState(int reason)
 	}
       } TOCATCH
       if (depth>=2) {
-	viewSource(QString::fromUtf8(schema),QString::fromUtf8(name),QString::fromUtf8(type),line,true);
+	viewSource(schema,name,type,line.toInt(),true);
       } else {
 	continueExecution(TO_BREAK_NEXT_LINE);
 	return;
@@ -1643,11 +1577,11 @@ int toDebug::continueExecution(int stopon)
     try {
       int ret,reason;
       setDeferedBreakpoints();
-      otl_stream cont(1,
-		      SQLContinue(connection()),
-		      otlConnect());
-      cont<<stopon;
-      cont>>ret>>reason;
+      toQList args;
+      toPush(args,toQValue(stopon));
+      toQuery cont(connection(),SQLContinue,args);
+      ret=cont.readValue().toInt();
+      reason=cont.readValue().toInt();
       if (reason==TO_REASON_TIMEOUT||ret==TO_ERROR_TIMEOUT) {
 	reason=sync();
 	if (reason<0)
@@ -1670,7 +1604,7 @@ int toDebug::continueExecution(int stopon)
   return -1;
 }
 
-void toDebug::executeInTarget(const QString &str,list<QString> &params)
+void toDebug::executeInTarget(const QString &str,toQList &params)
 {
   {
     toLocker lock(Lock);
@@ -1733,7 +1667,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   if (!toDelWatchPixmap)
     toDelWatchPixmap=new QPixmap((const char **)delwatch_xpm);
 
-  QToolBar *toolbar=toAllocBar(this,"Debugger",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Debugger",connection.description());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update object list",
@@ -1993,10 +1927,7 @@ void toDebug::startTarget(void)
     return;
   }
   try {
-    otl_stream attach(1,
-		      SQLAttach(connection()),
-		      otlConnect());
-    attach<<TargetID.utf8();
+    connection().execute(SQLAttach,TargetID);
   } TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
   readLog();
 }
@@ -2030,14 +1961,10 @@ void toDebug::refresh(void)
     if (selected.isEmpty()) {
       selected=connection().user().upper();
       Schema->clear();
-      otl_stream users(1,
-		       toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
-		       otlConnect());
-      for(int i=0;!users.eof();i++) {
-	char buffer[101];
-	users>>buffer;
-	Schema->insertItem(QString::fromUtf8(buffer));
-      }
+      toQList users=toQuery::readQuery(connection(),
+				       toSQL::string(toSQL::TOSQL_USERLIST,connection()));
+      for(toQList::iterator i=users.begin();i!=users.end();i++)
+	Schema->insertItem(*i);
     }
     if (!selected.isEmpty()) {
       for (int i=0;i<Schema->count();i++)
@@ -2046,18 +1973,13 @@ void toDebug::refresh(void)
 	  break;
 	}
       Objects->clear();
-      otl_stream code(1,
-		      SQLListObjects(connection()),
-		      otlConnect());
-      code<<selected.utf8();
+      toQuery code(connection(),SQLListObjects,selected);
+
       QListViewItem *typeItem=NULL;
       QListViewItem *last=NULL;
       while(!code.eof()) {
-	char nameStr[100];
-	char typeStr[100];
-	code>>typeStr>>nameStr;
-	QString name=QString::fromUtf8(nameStr);
-	QString type=QString::fromUtf8(typeStr);
+	QString type=code.readValue();
+	QString name=code.readValue();
 	if (!typeItem||typeItem->text(0)!=type) {
 	  typeItem=new QListViewItem(Objects,typeItem,type);
 #ifndef AUTOEXPAND
@@ -2305,7 +2227,7 @@ bool toDebugText::compile(void)
     sql.append(str.right(str.length()-begin[word]));
 
     try {
-      list<QString> nopar;
+      toQList nopar;
       Debugger->executeInTarget(sql,nopar);
       readErrors(Debugger->connection());
       Schema=schema.upper();
@@ -2314,8 +2236,8 @@ bool toDebugText::compile(void)
       if (body)
 	Type+=" BODY";
       setEdited(false);
-    } catch (const otl_exception &exc) {
-      toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+    } catch (const QString &exc) {
+      toStatusMessage(exc);
       ret=false;
     }
   }
@@ -2655,22 +2577,14 @@ void toDebug::changeWatch(QListViewItem *item)
       assign+=";";
       try {
 	if (item->text(0).isEmpty()) {
-	  otl_stream local(1,
-			   SQLChangeLocal(connection()),
-			   otlConnect());
-	  local<<assign;
-	  local>>ret;
+	  toQuery local(connection(),SQLChangeLocal,assign);
+	  ret=local.readValue().toInt();
 	} else {
-	  otl_stream global(1,
-			    SQLChangeGlobal(connection()),
-			    otlConnect());
-	  if (item->text(1).isEmpty())
-	    global<<"";
-	  else
-	    global<<item->text(1).utf8();
-	  global<<item->text(0).utf8();
-	  global<<assign.utf8();
-	  global>>ret;
+	  QString tmp=item->text(1);
+	  if (tmp.isEmpty())
+	    tmp="";
+	  toQuery local(connection(),SQLChangeGlobal,tmp,item->text(0),assign);
+	  ret=local.readValue().toInt();
 	}
 	if (ret==TO_ERROR_UNIMPLEMENTED) {
 	  toStatusMessage("Unimplemented in PL/SQL debug interface");

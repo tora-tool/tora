@@ -137,8 +137,8 @@ class toDebug : public toToolWidget {
   toThread *TargetThread;
   QString TargetSQL;
   QString TargetLog;
-  list<QString> InputData;
-  list<QString> OutputData;
+  toQList InputData;
+  toQList OutputData;
   int ColumnSize;
   bool RunningTarget;
   bool DebuggerStarted;
@@ -194,7 +194,7 @@ public:
   { return BodyEditor; }
   QString currentSchema(void);
 
-  void executeInTarget(const QString &,list<QString> &params);
+  void executeInTarget(const QString &,toQList &params);
 public slots:
   void stop(void);
   void compile(void);

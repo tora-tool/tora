@@ -72,6 +72,8 @@
 class QGrid;
 
 /** Display the first row of a query with each column with a separate label.
+ * If the label of the item is a single '-' character the data is treated as
+ * a horizontal label (Not bold or sunken), and the label is not printed.
  */
 
 class toResultItem : public QScrollView, public toResult {
@@ -162,11 +164,11 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
   /** Reimplemented for internal reasons.
    */
   void query(const QString &amp;sql)
-  { list&lt;QString&gt; p; query(sql,p); }
+  { toQList p; query(sql,p); }
 public slots:
   /** Reimplemented for internal reasons.
    */
@@ -175,15 +177,15 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

@@ -48,34 +48,21 @@ toResultPie::toResultPie(QWidget *parent,const char *name=NULL)
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
-void toResultPie::query(const QString &sql,const list<QString> &param)
+void toResultPie::query(const QString &sql,const toQList &param)
 {
   SQL=sql;
   Param=param;
   try {
-    otl_stream str;
-    str.set_all_column_types(otl_all_num2str|otl_all_date2str);
-    str.open(1,
-	     sql.utf8(),
-	     otlConnection());
-    {
-      otl_null null;
-      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
-	if ((*i).isNull())
-	  str<<null;
-        else
-    	  str<<(*i).utf8();
-      }
-    }
+    toQuery query(connection(),sql,param);
 
     list<QString> labels;
     list<double> values;
     int len;
-    while(!str.eof()) {
-      QString val=toReadValue(str);
+    while(!query.eof()) {
+      QString val=query.readValue();
       values.insert(values.end(),val.toDouble());
       if (len>1) {
-	QString lab=toReadValue(str);
+	QString lab=query.readValue();
 	labels.insert(labels.end(),lab);
       }
     }

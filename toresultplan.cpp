@@ -73,113 +73,87 @@ toResultPlan::toResultPlan(QWidget *parent,const char *name)
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
 			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
-			 "  FROM %s WHERE Statement_ID = 'Tora %d' ORDER BY NVL(Parent_ID,0),ID",
-			 "Get the contents of a plan table. Observe the %s and %s which must be present and in the same order. Must return same columns");
+			 "  FROM %1 WHERE Statement_ID = 'Tora %2' ORDER BY NVL(Parent_ID,0),ID",
+			 "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
 
 void toResultPlan::query(const QString &sql,
-			 const list<QString> &param)
+			 const toQList &param)
 {
   clear();
 
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
   try {
-    char buffer[1000];
-
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
     toConnection &conn=connection();
 
-    sprintf(buffer,"SAVEPOINT %s",(const char *)chkPoint.utf8());
-    otl_cursor::direct_exec(conn.connection(),buffer);
+    conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
 
     int ident=(int)time(NULL);
 
-    sprintf(buffer,"EXPLAIN PLAN SET STATEMENT_ID = 'Tora %d' INTO %s FOR ",
-	    ident,(const char *)planTable.utf8());
-    QString explain=QString::fromUtf8(buffer);
-    explain.append(sql);
-    otl_cursor::direct_exec (conn.connection(),explain.utf8());
-
-    sprintf(buffer,SQLViewPlan(conn),
-	    (const char *)planTable.utf8(),ident);
+    QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = 'Tora %1' INTO %2 FOR %3").
+      arg(ident).arg(planTable).arg(sql);
+    conn.execute(explain);
 
     {
       map <QString,QListViewItem *> parents;
       map <QString,QListViewItem *> last;
       QListViewItem *lastTop=NULL;
-      otl_stream query;
-      query.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      query.open(1,
-		 buffer,
-		 conn.connection());
+      toQuery query(conn,toSQL::string(SQLViewPlan,conn).arg(planTable).arg(ident));
       while(!query.eof()) {
-	char id[50];
-	char parentid[50];
-	char operation[101];
-	char options[101];
-	char object[101];
-	char optimizer[256];
-	char cost[50];
-	char bytes[50];
-	char cardinality[50];
-	query>>id;
-	query>>parentid;
-	query>>operation;
-	query>>options;
-	query>>object;
-	query>>optimizer;
-	query>>cost;
-	query>>bytes;
-	query>>cardinality;
+	QString id=query.readValue();
+	QString parentid=query.readValue();
+	QString operation=query.readValue();
+	QString options=query.readValue();
+	QString object=query.readValue();
+	QString optimizer=query.readValue();
+	QString cost=query.readValue();
+	QString bytes=query.readValue();
+	QString cardinality=query.readValue();
 
 	QListViewItem *item;
 	if (parentid&&parents[parentid]) {
 	  item=new QListViewItem(parents[parentid],last[parentid],
-				 QString::fromUtf8(id),
-				 QString::fromUtf8(operation),
-				 QString::fromUtf8(options),
-				 QString::fromUtf8(object),
-				 QString::fromUtf8(optimizer),
-				 QString::fromUtf8(cost),
-				 QString::fromUtf8(bytes),
-				 QString::fromUtf8(cardinality));
+				 id,
+				 operation,
+				 options,
+				 object,
+				 optimizer,
+				 cost,
+				 bytes,
+				 cardinality);
 	  setOpen(parents[parentid],true);
 	  parents[id]=item;
 	  last[parentid]=item;
 	} else {
 	  item=new QListViewItem(this,lastTop,
-				 QString::fromUtf8(id),
-				 QString::fromUtf8(operation),
-				 QString::fromUtf8(options),
-				 QString::fromUtf8(object),
-				 QString::fromUtf8(optimizer),
-				 QString::fromUtf8(cost),
-				 QString::fromUtf8(bytes),
-				 QString::fromUtf8(cardinality));
+				 id,
+				 operation,
+				 options,
+				 object,
+				 optimizer,
+				 cost,
+				 bytes,
+				 cardinality);
 	  parents[id]=item;
 	  lastTop=item;
 	}
       }
     }
 
-    sprintf(buffer,"ROLLBACK TO SAVEPOINT %s",(const char *)chkPoint.utf8());
-    otl_cursor::direct_exec(conn.connection(),buffer);
-
+    conn.execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
   } catch (const QString &str) {
-    toStatusMessage(str);
-  } catch (const otl_exception &exc) {
     try {
-      if (exc.code==2404) {
+      if (str.contains("2404")) {
 	int ret=TOMessageBox::warning(this,
 				      "Plan table doesn't exist",
 				      QString("Specified plan table %1 didn't exist.\n"
 					      "Should TOra try to create it?").arg(planTable),
 				      "&Yes","&No",0,1);
 	if (ret==0) {
-	  otl_cursor::direct_exec(otlConnection(),
-				  toSQL::string(toSQL::TOSQL_CREATEPLAN,
-						connection()).arg(planTable).utf8());
+	  connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
+					     connection()).arg(planTable).utf8());
 	  query(sql,param);
 	}
       } else

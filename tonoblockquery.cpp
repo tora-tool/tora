@@ -61,41 +61,23 @@ TO_NAMESPACE;
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
-  otl_stream Query;
   int Length;
   try {
+    TO_DEBUGOUT("Open query\n");
+    Parent.Query.execute(Parent.SQL,Parent.Param);
+
     {
-      Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      Query.set_commit(0);
-      TO_DEBUGOUT("Open query\n");
-
-      Query.open(1,
-		 Parent.SQL.utf8(),
-		 *Parent.LongConn);
-
-      TO_DEBUGOUT("Supplying parameters\n");
-      otl_null null;
-      for (list<QString>::iterator i=((list<QString> &)Parent.Param).begin();
-	   i!=((list<QString> &)Parent.Param).end();
-	   i++) {
-	if ((*i).isNull())
-	  Query<<null;
-	else
-	  Query<<(*i).utf8();
-      }
       TO_DEBUGOUT("Locking description\n");
       toLocker lock(Parent.Lock);
-      otl_column_desc *desc=Query.describe_select(Parent.DescriptionLength);
-      Length=Parent.DescriptionLength;
-      Parent.Description=new otl_column_desc[Length];
-      memcpy(Parent.Description,desc,sizeof(otl_column_desc)*Length);
+      Parent.Description=Parent.Query.describe();
+      Length=Parent.Query.columns();
     }
-    if (!Query.eof()) {
+    if (!Parent.Query.eof()) {
       bool signaled=false;
       for (;;) {
 	for (int i=0;i<Length;i++) {
 	  TO_DEBUGOUT("Reading value\n");
-	  QString value(toReadValue(Query));
+	  toQValue value(Parent.Query.readValue());
 	  {
 	    TO_DEBUGOUT("Locking parent\n");
 	    toLocker lock(Parent.Lock);
@@ -115,7 +97,7 @@ void toNoBlockQuery::queryTask::run(void)
 	}
 	TO_DEBUGOUT("Locking to check size\n");
 	toLocker lock(Parent.Lock);
-	if (Query.eof())
+	if (Parent.Query.eof())
 	  break;
 	else {
 	  if (Parent.ReadingValues.size()>PREFETCH_SIZE) {
@@ -132,11 +114,7 @@ void toNoBlockQuery::queryTask::run(void)
       }
     }
     TO_DEBUGOUT("EOQ\n");
-    Parent.Processed=Query.get_rpc();
-  } catch (const otl_exception &exc) {
-    TO_DEBUGOUT("Locking exception\n");
-    toLocker lock(Parent.Lock);
-    Parent.Error=QString::fromUtf8((const char *)exc.msg);
+    Parent.Processed=Parent.Query.rowsProcessed();
   } catch (const QString &str) {
     TO_DEBUGOUT("Locking exception string\n");
     toLocker lock(Parent.Lock);
@@ -180,38 +158,33 @@ QString toNoBlockQuery::readValue()
 
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
-			       const list<QString> &param,toResultStats *stats)
-  : Connection(conn),SQL(sql),Param(param),Statistics(stats)
+			       const toQList &param,toResultStats *stats)
+  : SQL(sql),
+    Param(param),
+    Statistics(stats),
+    Query(conn,toQuery::Long)
 {
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
-  Description=NULL;
-  DescriptionLength=0;
   Quit=EOQ=false;
   Processed=0;
 
   toLocker lock(Lock);
-  try {
-    LongConn=Connection.longOperation();
-    if (Statistics)
-      Statistics->changeSession(*LongConn);
+  if (Statistics)
+    Statistics->changeSession(Query);
 
-    TO_DEBUGOUT("Creating thread\n");
-    Thread=new toThread(new queryTask(*this));
-    TO_DEBUGOUT("Created thread\n");
-    Thread->start();
-    TO_DEBUGOUT("Started thread\n");
-  } catch(...) {
-    Connection.longOperationFree(LongConn);
-  }
+  TO_DEBUGOUT("Creating thread\n");
+  Thread=new toThread(new queryTask(*this));
+  TO_DEBUGOUT("Created thread\n");
+  Thread->start();
+  TO_DEBUGOUT("Started thread\n");
 }
 
-otl_column_desc *toNoBlockQuery::describe(int &length)
+toQDescList &toNoBlockQuery::describe(void)
 {
   TO_DEBUGOUT("Locking describe\n");
   toLocker lock(Lock);
   checkError();
-  length=DescriptionLength;
   return Description;
 }
 
@@ -223,7 +196,7 @@ bool toNoBlockQuery::eof(void)
   return EOQ&&CurrentValue==Values.end()&&!ReadingValues.size();
 }
 
-int toNoBlockQuery::getProcessed(void)
+int toNoBlockQuery::rowsProcessed(void)
 {
   TO_DEBUGOUT("Locking processed\n");
   toLocker lock(Lock);
@@ -263,20 +236,19 @@ toNoBlockQuery::~toNoBlockQuery()
     TO_DEBUGOUT("Get statistics\n");
     Statistics->refreshStats(false);
   }
-  Connection.longOperationFree(LongConn);
   TO_DEBUGOUT("Done deleting\n");
 }
 
 bool toNoBlockQuery::poll(void)
 {
-  int count=0;
-  for(list<QString>::iterator i=CurrentValue;i!=Values.end();i++)
+  unsigned int count=0;
+  for(toQList::iterator i=CurrentValue;i!=Values.end();i++)
     count++;
   if (Running.getValue()>0) {
     toLocker lock(Lock);
     count+=ReadingValues.size();
   }
-  if ((count>=DescriptionLength&&DescriptionLength>0)||eof())
+  if ((count>=Description.size()&&Description.size()>0)||eof())
     return true;
   return false;
 }

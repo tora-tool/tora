@@ -76,7 +76,6 @@ bool toMonolithic(void)
 
 int main(int argc,char **argv)
 {
-  otl_connect::otl_initialize(1);
 #ifdef ENABLE_QT_XFT
   toSetEnv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT).latin1());
 #endif
@@ -195,13 +194,6 @@ int main(int argc,char **argv)
 
     int ret=qApp->exec();
     return ret;
-  } catch (const otl_exception &exc) {
-    printf("Unhandled exception:\n\n%s\n",
-	   (const char *)QString::fromUtf8((const char *)exc.msg));
-    TOMessageBox::critical(NULL,
-                           "Unhandled exception",
-                           QString(QString::fromUtf8((const char *)exc.msg)),
-                           "Exit");
   } catch (const QString &str) {
     printf("Unhandled exception:\n\n%s\n",
 	   (const char *)str);

@@ -43,7 +43,6 @@
 #include <qvbox.h>
 
 class toConnection;
-class otl_connect;
 class toTimer;
 
 /**
@@ -312,10 +311,6 @@ public:
 	       toConnection &conn,
 	       const char *name=NULL);
   ~toToolWidget();
-  /** Get the otl_connect structure of the current connection.
-   * @return Reference to otl_connect object.
-   */
-  otl_connect &otlConnect();
   /** Get the current connection.
    * @return Reference to connection.
    */

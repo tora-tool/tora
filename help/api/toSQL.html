@@ -39,12 +39,12 @@
 <LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref24">name</A></b> (void) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref25">toSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1") 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref10">updateSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
 			bool modified=true) 
@@ -58,7 +58,7 @@
 </LI>
 <LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">description</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref15">description</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref15">description</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;<A HREF="#sql">sql</A>) 
 </LI>
 <LI>static  <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref16">sql</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
@@ -103,7 +103,7 @@
 <A NAME="TOSQL_USERLIST"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>static const char * const  <strong>TOSQL_USERLIST</strong>
 </td><td align="right"><h3><strong>TOSQL_USERLIST</strong></h3></td></tr></table><p></p><A NAME="TOSQL_CREATEPLAN"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>static const char * const  <strong>TOSQL_CREATEPLAN</strong>
 </td><td align="right"><h3><strong>TOSQL_CREATEPLAN</strong></h3></td></tr></table><p></p><A NAME="updateSQL"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>updateSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
 			bool modified=true)
@@ -170,7 +170,7 @@
 <p><b>Returns</b>: String containing description.
 </p>
 <p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
-<A NAME="description"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>description</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql)
+<A NAME="description"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>description</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;<A HREF="#sql">sql</A>)
 <br></td><td align="right"><h3><strong>description</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get description of an SQL.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -262,7 +262,7 @@
 <p><b>Returns</b>: Name.
    </p>
 <A NAME="toSQL"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1")
 <br></td><td align="right"><h3><strong>toSQL</strong></h3></td></tr></table><p></p><p> Create a new SQL. Observe that the only thing this does is insert the supplied

@@ -37,6 +37,8 @@
 #ifndef __TOCONF_H
 #define __TOCONF_H
 
+#define CONF_PROVIDER		"Provider"
+#define DEFAULT_PROVIDER	"Oracle"
 #define CONF_SAVE_PWD		"SavePassword"
 #define DEFAULT_SAVE_PWD	""
 #define CONF_PASSWORD		"DefaultPassword"
@@ -45,7 +47,8 @@
 #define DEFAULT_DATABASE	""
 #define CONF_USER		"DefaultUser"
 #define DEFAULT_USER		"system"
-#define CONF_SQLNET		"SqlNet"
+#define CONF_HOST		"Host"
+#define DEFAULT_HOST		"SQL*Net"
 #define CONF_MAX_NUMBER		"MaxNumber"
 #define DEFAULT_MAX_NUMBER	"50"
 #define CONF_MAX_COL_SIZE	"MaxColSize"

@@ -82,7 +82,7 @@ public:
 
     if (!ExecutePixmap)
       ExecutePixmap=new QPixmap((const char **)execute_xpm);
-    QToolBar *toolbar=toAllocBar(window,"SQL worksheet",connection.connectString());
+    QToolBar *toolbar=toAllocBar(window,"SQL worksheet",connection.description());
     toScript *script=new toScript(window,connection);
 
     new QToolButton(*ExecutePixmap,
@@ -216,7 +216,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   int i=0;
   while(cons.size()>0) {
     QString str=toShift(cons);
-    if(str==Connection.connectString()&&def==0)
+    if(str==Connection.description()&&def==0)
       def=i;
     i++;
     SourceConnection->insertItem(str);
@@ -563,13 +563,13 @@ void toScript::changeConnection(int,bool source)
     (source?SourceSchema:DestinationSchema)->insertItem("All");
     toConnection &conn=toMainWidget()->connection((source?SourceConnection:DestinationConnection)
 						  ->currentText());
-    list<QString> object;
+    toQList object;
     try {
-      object=toReadQuery(conn,SQLObjectList(conn));
+      object=toQuery::readQuery(conn,SQLObjectList);
     } catch(...) {
-      object=toReadQuery(conn,SQLUserObjectList(conn));
+      object=toQuery::readQuery(conn,SQLUserObjectList);
     }
-    list<QString> schema=toReadQuery(conn,SQLSchemas(conn));
+    toQList schema=toQuery::readQuery(conn,SQLSchemas);
     while(schema.size()>0) {
       QString str=toShift(schema);
       (source?SourceSchema:DestinationSchema)->insertItem(str);
@@ -600,7 +600,7 @@ void toScript::changeConnection(int,bool source)
       }
     }
   } TOCATCH
-      }
+}
 
 void toScript::changeMode(int mode)
 {

@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>587</width>
-            <height>393</height>
+            <width>530</width>
+            <height>408</height>
         </rect>
     </property>
     <property stdset="1">
@@ -28,202 +28,7 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget row="3"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Password</cstring>
-            </property>
-            <property stdset="1">
-                <name>echoMode</name>
-                <enum>Password</enum>
-            </property>
-        </widget>
-        <widget row="6"  column="1"  rowspan="1"  colspan="3" >
-            <class>QComboBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Database</cstring>
-            </property>
-            <property stdset="1">
-                <name>editable</name>
-                <bool>true</bool>
-            </property>
-            <property stdset="1">
-                <name>autoCompletion</name>
-                <bool>true</bool>
-            </property>
-            <property stdset="1">
-                <name>duplicatesEnabled</name>
-                <bool>false</bool>
-            </property>
-        </widget>
-        <widget row="0"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel1</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Username</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Username</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Username to connect with</string>
-            </property>
-        </widget>
-        <widget row="5"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Database</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Database</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Select the database ID to connect to.</string>
-            </property>
-        </widget>
-        <widget row="2"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>1</vsizetype>
-                </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Password</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Password</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Password to connect with.</string>
-            </property>
-        </widget>
-        <widget row="8"  column="1"  rowspan="1"  colspan="3" >
-            <class>QComboBox</class>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Normal</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>SYS_DBA</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>SYS_OPER</string>
-                </property>
-            </item>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Mode</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget row="4"  column="1"  rowspan="1"  colspan="3" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SqlNet</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Use &amp;SQL*Net</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Wether or not connect using the listener or directly to a local database.</string>
-            </property>
-        </widget>
-        <spacer row="9"  column="1" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer3</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="7"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel3_2</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Connection Mode</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Database</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Mode of the connection. If you don't understand select normal.</string>
-            </property>
-        </widget>
-        <widget row="1"  column="1"  rowspan="1"  colspan="3" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Username</cstring>
-            </property>
-        </widget>
-        <widget row="10"  column="3" >
+        <widget row="14"  column="3" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -241,7 +46,7 @@
                 <string>&amp;Cancel</string>
             </property>
         </widget>
-        <widget row="10"  column="2" >
+        <widget row="14"  column="2" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -263,7 +68,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <spacer row="10"  column="0"  rowspan="1"  colspan="2" >
+        <spacer row="14"  column="0"  rowspan="1"  colspan="2" >
             <property>
                 <name>name</name>
                 <cstring>Spacer1</cstring>
@@ -284,8 +89,36 @@
                 </size>
             </property>
         </spacer>
-        <widget row="1"  column="0"  rowspan="9"  colspan="1" >
+        <widget row="1"  column="0"  rowspan="13"  colspan="1" >
             <class>QListView</class>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Provider</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Host</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
             <column>
                 <property>
                     <name>text</name>
@@ -304,20 +137,6 @@
                 <property>
                     <name>text</name>
                     <string>Username</string>
-                </property>
-                <property>
-                    <name>clickable</name>
-                    <bool>true</bool>
-                </property>
-                <property>
-                    <name>resizeable</name>
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property>
-                    <name>text</name>
-                    <string>SQL*Net</string>
                 </property>
                 <property>
                     <name>clickable</name>
@@ -370,6 +189,261 @@
                 <string>A list of previous connections. Select to bring over to the left.</string>
             </property>
         </widget>
+        <widget row="5"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Password</cstring>
+            </property>
+            <property stdset="1">
+                <name>echoMode</name>
+                <enum>Password</enum>
+            </property>
+        </widget>
+        <widget row="2"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Username</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Username</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Username to connect with</string>
+            </property>
+        </widget>
+        <widget row="4"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>1</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Password</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Password</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Password to connect with.</string>
+            </property>
+        </widget>
+        <widget row="3"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Username</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Connection provider</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Provider</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="1"  rowspan="1"  colspan="3" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Provider</cstring>
+            </property>
+        </widget>
+        <spacer row="13"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer3</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="8"  column="1"  rowspan="1"  colspan="3" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SqlNet</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Use &amp;SQL*Net</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Wether or not connect using the listener or directly to a local database.</string>
+            </property>
+        </widget>
+        <widget row="11"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel3_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Connection Mode</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Database</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Mode of the connection. If you don't understand select normal.</string>
+            </property>
+        </widget>
+        <widget row="12"  column="1"  rowspan="1"  colspan="3" >
+            <class>QComboBox</class>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Normal</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>SYS_DBA</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>SYS_OPER</string>
+                </property>
+            </item>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Mode</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget row="10"  column="1"  rowspan="1"  colspan="3" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Database</cstring>
+            </property>
+            <property stdset="1">
+                <name>editable</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>autoCompletion</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>duplicatesEnabled</name>
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget row="9"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Database</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Database</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Select the database ID to connect to.</string>
+            </property>
+        </widget>
+        <widget row="6"  column="1"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>HostLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Host</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Host</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Select the database ID to connect to.</string>
+            </property>
+        </widget>
+        <widget row="7"  column="1"  rowspan="1"  colspan="3" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Host</cstring>
+            </property>
+            <property stdset="1">
+                <name>editable</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>autoCompletion</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>duplicatesEnabled</name>
+                <bool>false</bool>
+            </property>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -391,7 +465,27 @@
         <receiver>toNewConnectionUI</receiver>
         <slot>historySelection()</slot>
     </connection>
+    <connection>
+        <sender>Provider</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>changeProvider()</slot>
+    </connection>
+    <connection>
+        <sender>Host</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>changeHost()</slot>
+    </connection>
+    <connection>
+        <sender>SqlNet</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>changeHost()</slot>
+    </connection>
+    <slot access="public">changeProvider()</slot>
     <slot access="public">historySelection()</slot>
+    <slot access="public">changeHost()</slot>
 </connections>
 <tabstops>
     <tabstop>Previous</tabstop>

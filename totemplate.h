@@ -184,7 +184,7 @@ class toTemplateSQL : public toTemplateItem {
   toConnection &Connection;
   /** Statement to run.
    */
-  QCString SQL;
+  QString SQL;
 public:
   /** Create an item.
    * @param conn Connection to query.
@@ -194,7 +194,7 @@ public:
    *            should use utf8 if converting from QString.
    */
   toTemplateSQL(toConnection &conn,toTemplateItem *parent,
-		const QString &name,const QCString &sql)
+		const QString &name,const QString &sql)
     : toTemplateItem(parent,name),Connection(conn),SQL(sql)
   { setExpandable(true); }
   /** Get connection of this item.
@@ -211,8 +211,8 @@ public:
   /** Get parameters to pass to query.
    * @return List of strings to pass as input parameters to query
    */
-  virtual list<QString> parameters(void)
-  { list<QString> ret; return ret; }
+  virtual toQList parameters(void)
+  { toQList ret; return ret; }
   /** Reimplemented for internal reasons.
    */
   virtual void expand(void);

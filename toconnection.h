@@ -37,237 +37,310 @@
 #ifndef __TOCONNECTION_H
 #define __TOCONNECTION_H
 
-#include <qstring.h>
-#include "otlv32.h"
 #include <list>
+#include <map>
+
+#include <qstring.h>
 
 class QWidget;
+class toConnection;
+class toConnectionProvider;
+class toSQL;
 
-/**
- * This class defines a connection to a database.
- *
- * Actually it can represent several connections since it has the ability to
- * clone the connection if for some reason or other you need another connection
- * to the database.
- *
- * The actuall interface to the database is the excellent OTL library which
- * reference is beyond the scope of this documentation but it is available online
- * at this location http://www.geocities.com/skuchin/otl/home.htm.
- *
- * Connections can be made in two modes, using SQL*Net or not. When connecting using
- * SQL*Net a connection is made in OTL using the connectstring user/password@db. If
- * not using SQL*Net the ORACLE_SID environment variable is temporarily changed to
- * the db and then the connection is made using user/password.
- *
- * All connections to Oracle in TOra are made using UTF-8 encoding. This means that
- * whenever you convert a QString to pass it to or from Oracle you should use the
- * fromUtf8 or utf8 functions and NOT just convert it to const char * which will
- * convert it to latin1 which will not work.
- */
+class toConnectionSub {
+public:
+  toConnectionSub()
+  { }
+  virtual ~toConnectionSub()
+  { }
+};
+
+class toQuery {
+public:
+  enum queryMode {
+    Normal,
+    Long,
+    All
+  };
+
+  struct queryDescribe {
+    QString Name;
+    QString Datatype;
+    bool Null;
+  };
+  class queryValue {
+    enum {
+      intType,
+      doubleType,
+      stringType,
+      nullType
+    } Type;
+    union {
+      int Int;
+      double Double;
+      QString *String;
+    } Value;
+  public:
+    queryValue(void);
+    queryValue(int i);
+    queryValue(const QString &str);
+    queryValue(double d);
+    queryValue(const queryValue &copy);
+    ~queryValue();
+
+    bool isInt(void) const;
+    bool isDouble(void) const;
+    bool isString(void) const;
+    bool isNull(void) const;
+
+    QCString utf8Value(void) const;
+    int toInt(void) const;
+    double toDouble(void) const;
+
+    operator QString() const;
+  };
+  class queryImpl {
+    toQuery *Query;
+  public:
+    toQuery *query()
+    { return Query; }
+    
+    queryImpl(toQuery *query)
+      : Query(query)
+    { }
+    virtual ~queryImpl()
+    { }
+    virtual void execute(void) = 0;
+    virtual queryValue readValue(void) = 0;
+    virtual bool eof(void) = 0;
+    virtual int rowsProcessed(void) = 0;
+    virtual list<queryDescribe> describe(void) = 0;
+    virtual int columns(void) = 0;
+  };
+
+private:
+  toConnection &Connection;
+  toConnectionSub *ConnectionSub;
+  list<queryValue> Params;
+  QCString SQL;
+  queryMode Mode;
+
+  queryImpl *Query;
+  toQuery(const toQuery &);
+public:
+  toQuery(toConnection &conn,toSQL &sql,const list<queryValue> &params);
+  toQuery(toConnection &conn,const QString &sql,const list<queryValue> &params);
+  toQuery(toConnection &conn,toSQL &sql,
+	  const QString &arg1=QString::null,const QString &arg2=QString::null,
+	  const QString &arg3=QString::null,const QString &arg4=QString::null,
+	  const QString &arg5=QString::null,const QString &arg6=QString::null,
+	  const QString &arg7=QString::null,const QString &arg8=QString::null,
+	  const QString &arg9=QString::null);
+  toQuery(toConnection &conn,const QString &sql,
+	  const QString &arg1=QString::null,const QString &arg2=QString::null,
+	  const QString &arg3=QString::null,const QString &arg4=QString::null,
+	  const QString &arg5=QString::null,const QString &arg6=QString::null,
+	  const QString &arg7=QString::null,const QString &arg8=QString::null,
+	  const QString &arg9=QString::null);
+
+  toQuery(toConnection &conn,queryMode mode,toSQL &sql,const list<queryValue> &params);
+  toQuery(toConnection &conn,queryMode mode,const QString &sql,const list<queryValue> &params);
+  toQuery(toConnection &conn,queryMode mode=Normal);
+
+  virtual ~toQuery();
+
+  void execute(toSQL &sql,const list<queryValue> &params);
+  void execute(const QString &sql,const list<queryValue> &params);
+
+  toConnection &connection(void)
+  { return Connection; }
+  toConnectionSub *connectionSub(void)
+  { return ConnectionSub; }
+  list<queryValue> &params(void)
+  { return Params; }
+  QCString sql(void)
+  { return SQL; }
+
+  queryValue readValue(void);
+  queryValue readValueNull(void);
+  bool eof(void);
+
+  int rowsProcessed(void)
+  { return Query->rowsProcessed(); }
+  list<queryDescribe> describe(void)
+  { return Query->describe(); }
+  int columns(void)
+  { return Query->columns(); }
+
+  static list<queryValue> readQuery(toConnection &conn,
+				    toSQL &sql,
+				    list<queryValue> &params);
+  static list<queryValue> readQuery(toConnection &conn,
+				    const QString &sql,
+				    list<queryValue> &params);
+  static list<queryValue> readQuery(toConnection &conn,toSQL &sql,
+				    const QString &arg1=QString::null,const QString &arg2=QString::null,
+				    const QString &arg3=QString::null,const QString &arg4=QString::null,
+				    const QString &arg5=QString::null,const QString &arg6=QString::null,
+				    const QString &arg7=QString::null,const QString &arg8=QString::null,
+				    const QString &arg9=QString::null);
+  static list<queryValue> readQuery(toConnection &conn,const QString &sql,
+				    const QString &arg1=QString::null,const QString &arg2=QString::null,
+				    const QString &arg3=QString::null,const QString &arg4=QString::null,
+				    const QString &arg5=QString::null,const QString &arg6=QString::null,
+				    const QString &arg7=QString::null,const QString &arg8=QString::null,
+				    const QString &arg9=QString::null);
+};
+
+typedef toQuery::queryValue toQValue;
+typedef list<toQValue> toQList;
+typedef toQuery::queryDescribe toQDescribe;
+typedef list<toQDescribe> toQDescList;
 
 class toConnection {
-  /**
-   * The actual connection to the database.
-   */
-  otl_connect *Connection;
-  /**
-   * Wether to use SQL*Net or not for this connection.
-   */
-  bool SqlNet;
-  /**
-   * Username of this connection.
-   */
+  toConnectionProvider &Provider;
   QString User;
-  /**
-   * Password of this connection.
-   */
   QString Password;
-  /**
-   * Host or database if you like for this connection.
-   */
   QString Host;
-  /**
-   * The version detected of this database.
-   */
-  QString Version;
-  /**
-   * The mode of this connection.
-   */
+  QString Database;
   QString Mode;
-  /**
-   * The current opened widgets that use this connection. This is not handled 
-   * automatically and cause really ugly bugs if the widget doesn't register
-   * itself.
-   */
+  QString Version;
   list<QWidget *> Widgets;
-  /**
-   * Indicate if commit is needed on this connection.
-   */
+  list<QCString> InitStrings;
+  list<toConnectionSub *> Connections;
   bool NeedCommit;
-  /**
-   * Make a new connection for this connection.
-   *
-   * @return A pointer to the new connection, must be freed.
-   */
-  otl_connect *newConnection(void);
-  /**
-   * This string contains statements that are to be run when a new connection
-   * is made.
-   */
-  list<QString> InitStrings;
-  /**
-   * Setup the connection object.
-   */
-  void setup(void);
-  /**
-   * List of unused extra connections.
-   */
-  list<otl_connect *> FreeConnect;
+
 public:
-  /**
-   * Create a new connection.
-   *
-   * @param sqlNet Indicate if SQL*Net is to be used for this connection.
-   * @param iuser User to connect with.
-   * @param ipassword Password to connect with.
-   * @param ihost Host or database to connect to.
-   * @param mode Mode of connection, can be empty, SYS_OPER or SYS_DBA to indicate
-   *             which options to use when connecting.
-   */
-  toConnection(bool sqlNet,
-	       const QString &iuser,const QString &ipassword,const QString &ihost,
-	       const QString &mode=QString::null);
-  /**
-   * Create a copy of a connection
-   */
+
+  class connectionImpl {
+    toConnection *Connection;
+  public:
+    toConnection &connection(void)
+    { return *Connection; }
+    connectionImpl(toConnection *conn)
+    { Connection=conn; };
+    virtual ~connectionImpl()
+    { }
+
+    virtual void commit(toConnectionSub *) = 0;
+    virtual void rollback(toConnectionSub *) = 0;
+
+    virtual toConnectionSub *createConnection(void) = 0;
+    virtual void closeConnection(toConnectionSub *) = 0;
+
+    virtual QString version(toConnectionSub *) = 0;
+    virtual connectionImpl *clone(toConnection *newConn) const = 0;
+
+    virtual toQuery::queryImpl *createQuery(toQuery *query,toConnectionSub *conn) = 0;
+    virtual void execute(toConnectionSub *,const QCString &sql,toQList &params) = 0;
+  };
+
+private:
+
+  void addConnection(void);
+  list<toConnectionSub *> &connections(void)
+  { return Connections; }
+
+  connectionImpl *Connection;
+
+public:
+  toConnection(const QString &provider,const QString &user,const QString &password,
+	       const QString &host,const QString &database,const QString &mode=QString::null);
   toConnection(const toConnection &conn);
-  ~toConnection();
-  /**
-   * Close the widgets that are using this connection.
-   * @return Returns true if all widgets agreed to close, otherwise false is returned.
-   */
+  virtual ~toConnection();
+
   bool closeWidgets(void);
-  /**
-   * Get user.
-   *
-   * @return User of connection.
-   */
   const QString &user() const
   { return User; }
-  /**
-   * Get password.
-   *
-   * @return Password of connection.
-   */
   const QString &password() const
   { return Password; }
-  /**
-   * Get host.
-   *
-   * @return Host of connection.
-   */
   const QString &host() const
   { return Host; }
-  /**
-   * Get mode.
-   *
-   * @return Mode of connection.
-   */
+  const QString &database() const
+  { return Database; }
   const QString &mode() const
   { return Mode; }
-  /**
-   * Get version.
-   *
-   * @return Version of connection.
-   */
   const QString &version() const
   { return Version; }
-  /**
-   * Get information about if the connection has uncommited data.
-   *
-   * @return Wether uncommited data is available.
-   */
-  bool needCommit(void) const
-  { return NeedCommit; }
-  /**
-   * Commit connection. This will also close all extra connections except one.
-   */
-  void commit(void);
-  /**
-   * Rollback connection. This will also close all extra connections except one.
-   */
-  void rollback(void);
-  /**
-   * Set if commit is needed.
-   *
-   * @param needCommit Wether commit is needed.
-   */
+  const QString &provider() const;
+
+  toConnectionSub *mainConnection(void);
+  toConnectionSub *longConnection(void);
+  void freeConnection(toConnectionSub *);
+
+  virtual QString description(void) const;
+
   void setNeedCommit(bool needCommit=true)
   { NeedCommit=needCommit; }
-  /**
-   * Get a connectstring for this connection.
-   *
-   * @return pw If this is true a connectstring that can be used with otl_connect is
-   *            returned, otherwise a descriptive string of the connection without
-   *            the password is returned.
-   */
-  QString connectString(bool pw=false) const;
-  /**
-   * Get the main connection of this connection.
-   *
-   * @return A reference to the connection.
-   */
-  otl_connect &connection();
-  /**
-   * Add a widget that uses this connection. This is needed to ensure that all widgets
-   * that make use of a connection are destroyed when the connection is closed. Usually
-   * tool windows need to call this function.
-   *
-   * @param widget The widget to add to the connection.
-   */
+  bool needCommit(void) const
+  { return NeedCommit; }
+  virtual void commit(void);
+  virtual void rollback(void);
+
+  void execute(toSQL &sql,
+	       toQList &params);
+  void execute(const QString &sql,
+	       toQList &params);
+  void execute(toSQL &sql,
+	       const QString &arg1=QString::null,const QString &arg2=QString::null,
+	       const QString &arg3=QString::null,const QString &arg4=QString::null,
+	       const QString &arg5=QString::null,const QString &arg6=QString::null,
+	       const QString &arg7=QString::null,const QString &arg8=QString::null,
+	       const QString &arg9=QString::null);
+  void execute(const QString &sql,
+	       const QString &arg1=QString::null,const QString &arg2=QString::null,
+	       const QString &arg3=QString::null,const QString &arg4=QString::null,
+	       const QString &arg5=QString::null,const QString &arg6=QString::null,
+	       const QString &arg7=QString::null,const QString &arg8=QString::null,
+	       const QString &arg9=QString::null);
+
+  void allExecute(toSQL &sql,
+		  toQList &params);
+  void allExecute(const QString &sql,
+		  toQList &params);
+  void allExecute(toSQL &sql,
+		  const QString &arg1=QString::null,const QString &arg2=QString::null,
+		  const QString &arg3=QString::null,const QString &arg4=QString::null,
+		  const QString &arg5=QString::null,const QString &arg6=QString::null,
+		  const QString &arg7=QString::null,const QString &arg8=QString::null,
+		  const QString &arg9=QString::null);
+  void allExecute(const QString &sql,
+		  const QString &arg1=QString::null,const QString &arg2=QString::null,
+		  const QString &arg3=QString::null,const QString &arg4=QString::null,
+		  const QString &arg5=QString::null,const QString &arg6=QString::null,
+		  const QString &arg7=QString::null,const QString &arg8=QString::null,
+		  const QString &arg9=QString::null);
+
   void addWidget(QWidget *widget)
   { Widgets.insert(Widgets.end(),widget); }
-  /**
-   * Remove a widget from this connection. Should be called by the destructor of the
-   * widget that has called addWidget.
-   *
-   * @see addWidget
-   * @param widget Widget to remove from the widget list.
-   */
   void delWidget(QWidget *widget);
 
-  /**
-   * Add a statement to be run uppon making new connections.
-   * @param sql Statement to run.
-   */
   void addInit(const QString &sql);
-  /**
-   * Remove a statement that was added using @ref addInit.
-   */
   void delInit(const QString &sql);
 
-  /**
-   * Get a longrunning connection. Will create a new connection or return a free
-   * connection already available. It can also return the main connection if TOra
-   * is configured to not create new connections for long running queries. The
-   * connection should be returned using the @ref longOperationFree function.
-   *
-   * @return A pointer to a connection.
-   */
-  otl_connect *longOperation(void);
-  /**
-   * Return a connection that is no longer needed. This can be reused or discarded
-   * when no longer needed. It will not be removed until either commit or rollback
-   * is issued.
-   * @param conn Connection to return.
-   */
-  void longOperationFree(otl_connect *conn);
-  /**
-   * Get a list of the other sessions that this connection has made and not closed
-   * yet.
-   */
-  list<otl_connect *> &otherSessions(void)
-  { return FreeConnect; }
+  friend toQuery;
+};
+
+class toConnectionProvider {
+  static map<QString,toConnectionProvider *> *Providers;
+  QString Provider;
+public:
+  toConnectionProvider(const QString &provider);
+  virtual ~toConnectionProvider();
+  const QString &provider(void) const
+  { return Provider; }
+
+  virtual toConnection::connectionImpl *connection(toConnection *conn)=0;
+  virtual list<QString> modes(void);
+  virtual list<QString> hosts(void);
+  virtual list<QString> databases(const QString &host)=0;
+
+  static toConnectionProvider &fetchProvider(const QString &provider);
+  static list<QString> providers();
+  static list<QString> modes(const QString &provider);
+  static toConnection::connectionImpl *connection(const QString &provider,toConnection *conn);
+  static list<QString> hosts(const QString &provider);
+  static list<QString> databases(const QString &provider,const QString &host);
 };
 
 #endif

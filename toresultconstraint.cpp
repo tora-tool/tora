@@ -62,22 +62,15 @@ static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
 
 QString toResultConstraint::constraintCols(const QString &conOwner,const QString &conName)
 {
-  otl_stream Query(1,
-		   SQLConsColumns(connection()),
-		   otlConnection());
-
-  Query<<conOwner.utf8();
-  Query<<conName.utf8();
+  toQuery query(connection(),SQLConsColumns,conOwner,conName);
 
   QString ret;
-  while(!Query.eof()) {
-    char buffer[101];
-    Query>>buffer;
+  while(!query.eof()) {
+    QString value=query.readValue();
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(QString::fromUtf8(buffer));
-    Query>>buffer;
-    LastTable=QString::fromUtf8(buffer);
+    ret.append(value);
+    LastTable=query.readValue();
   }
   return ret;
 }
@@ -97,102 +90,72 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 			    " ORDER BY Constraint_Name",
 			    "List constraints on a table. Must have same column order");
 
-void toResultConstraint::query(const QString &sql,const list<QString> &param)
+void toResultConstraint::query(const QString &sql,const toQList &param)
 {
   QString Owner;
   QString TableName;
-  list<QString>::iterator cp=((list<QString> &)param).begin();
-  if (cp!=((list<QString> &)param).end())
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end())
     Owner=*cp;
   cp++;
-  if (cp!=((list<QString> &)param).end())
+  if (cp!=((toQList &)param).end())
     TableName=(*cp);
-
-  Query=NULL;
-  LastItem=NULL;
-  RowNumber=0;
 
   clear();
 
   try {
-    otl_stream Query;
+    QListViewItem *item=NULL;
 
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+    toQuery query(connection(),SQLConstraints,Owner,TableName);
 
-    Query.set_column_type(2,otl_var_char,MaxColSize);
-    Query.open(1,
-	       SQLConstraints(connection()),
-	       otlConnection());
+    while(!query.eof()) {
+      item=new QListViewItem(this,item,NULL);
 
-    Description=Query.describe_select(DescriptionLen);
-
-    Query<<Owner.utf8();
-    Query<<TableName.utf8();
-
-    QListViewItem *item;
-    while(!Query.eof()) {
-      item=new QListViewItem(this,LastItem,NULL);
-      LastItem=item;
-
-      char *buffer=new char[MaxColSize+1];
-      try {
-        buffer[MaxColSize]=0;
-        Query>>buffer;
-        QString consName(QString::fromUtf8(buffer));
-        QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
-        item->setText(0,consName);
-        Query>>buffer;
-        QString Check(QString::fromUtf8(buffer));
-        Query>>buffer;
-        QString rConsOwner(QString::fromUtf8(buffer));
-        Query>>buffer;
-        QString rConsName(QString::fromUtf8(buffer));
-        Query>>buffer;
-        item->setText(2,QString::fromUtf8(buffer));
-        Query>>buffer;
-        QString Condition;
-        switch(buffer[0]) {
-        case 'U':
-	  Condition="unique (";
-	  Condition.append(colNames);
-	  Condition.append(")");
-	  break;
-        case 'P':
-	  Condition="primary key (";
-	  Condition.append(colNames);
-	  Condition.append(")");
-	  break;
-        case 'C':
-        case 'V':
-        case 'O':
-	  Condition="check (";
-	  Condition.append(Check);
-	  Condition.append(")");
-	  break;
-        case 'R':
-	  Condition="foreign key (";
-	  Condition.append(colNames);
-	  Condition.append(") references ");
-	  Condition.append(rConsOwner);
-	  Condition.append(".");
-	  QString cols(constraintCols(rConsOwner,rConsName));
-
-	  Condition.append(LastTable);
-	  Condition.append("(");
-	  Condition.append(cols);
-	  Condition.append(")");
-	  break;
-	}
-        item->setText(1,Condition);
-        Query>>buffer;
-        item->setText(3,QString::fromUtf8(buffer));
-        Query>>buffer;
-        item->setText(4,QString::fromUtf8(buffer));
-      } catch (...) {
-	delete buffer;
-	throw;
+      QString consName=query.readValue();
+      QString colNames=constraintCols(Owner,consName);
+      QString check=query.readValue();
+      item->setText(0,consName);
+      QString rConsOwner=query.readValue();
+      QString rConsName=query.readValue();
+      item->setText(2,query.readValue());
+      QString type=query.readValue();
+      QString Condition;
+      char t=((const char *)type)[0];
+      switch(t) {
+      case 'U':
+	Condition="unique (";
+	Condition.append(colNames);
+	Condition.append(")");
+	break;
+      case 'P':
+	Condition="primary key (";
+	Condition.append(colNames);
+	Condition.append(")");
+	break;
+      case 'C':
+      case 'V':
+      case 'O':
+	Condition="check (";
+	Condition.append(check);
+	Condition.append(")");
+	break;
+      case 'R':
+	Condition="foreign key (";
+	Condition.append(colNames);
+	Condition.append(") references ");
+	Condition.append(rConsOwner);
+	Condition.append(".");
+	QString cols(constraintCols(rConsOwner,rConsName));
+	
+	Condition.append(LastTable);
+	Condition.append("(");
+	Condition.append(cols);
+	Condition.append(")");
+	break;
       }
-      delete buffer;
+      item->setText(1,Condition);
+      item->setText(3,query.readValue());
+      item->setText(4,query.readValue());
     }
   } TOCATCH
   updateContents();

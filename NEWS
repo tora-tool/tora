@@ -52,6 +52,8 @@
 2001-08-15: Fixed large LOB reading in OTL.
 2001-08-15: Read all of LOB when reading query.
 2001-08-15: Removed needing to pass description to read value.
+2001-08-15: Totally rewritten DB generic DB access interface (A nice 5000 line change).
+2001-08-15: New Oracle DB access provider.
 
 0.14: Released 2001-08-02
 

@@ -73,71 +73,13 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "toresult.h"
 #include "tothread.h"
+#include "toconnection.h"
 
 #define CHUNK_SIZE 63
 
 static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
-
-QString toReadValue(otl_stream &q)
-{
-  char *buffer;
-  otl_var_desc *dsc=q.describe_next_out_var();
-  if (!dsc)
-    throw QString("Couldn't get description of next column to read");
-
-  try {
-    switch (dsc->ftype) {
-    default:  // Try using char if all else fails
-      {
-	// The *2 is for raw columns, also dates and numbers are a bit tricky
-	// but if someone specifies a dateformat longer than 100 bytes he
-	// deserves everything he gets!
-	buffer=new char[max(dsc->elem_size*2+1,100)];
-	buffer[0]=0;
-	q>>buffer;
-	if (q.is_null()) {
-	  delete buffer;
-	  return "{null}";
-	}
-	QString buf(QString::fromUtf8(buffer));
-	delete buffer;
-        return buf;
-      }
-      break;
-    case otl_var_varchar_long:
-    case otl_var_raw_long:
-    case otl_var_clob:
-    case otl_var_blob:
-      {
-	otl_lob_stream lob;
-	q>>lob;
-	if (lob.len()==0)
-	  return "{null}";
-	buffer=new char[lob.len()+1];
-	buffer[0]=0;
-	otl_long_string data(buffer,lob.len());
-	lob>>data;
-	if (!lob.eof()) {
-	  otl_long_string sink(10000);
-	  while(!lob.eof()) {
-	    lob>>sink;
-	  }
-	  toStatusMessage("Weird data exists past length of LOB");
-	}
-	buffer[data.len()]=0; // Not sure if this is needed
-	QString buf(QString::fromUtf8(buffer));
-	delete buffer;
-	return buf;
-      }
-      break;
-    }
-  } catch (...) {
-    delete buffer;
-    throw;
-  }
-}
 
 static toSQL SQLTextPiece("Global:SQLText",
 			  "SELECT SQL_Text\n"
@@ -149,16 +91,11 @@ static toSQL SQLTextPiece("Global:SQLText",
 QString toSQLString(toConnection &conn,const QString &address)
 {
   QString sql;
-  otl_stream q(1,
-	       SQLTextPiece(conn),
-	       conn.connection());
 
-  q<<address.utf8();
+  toQList vals=toQuery::readQuery(conn,SQLTextPiece,address);
 
-  while(!q.eof()) {
-    char buffer[100];
-    q>>buffer;
-    sql.append(QString::fromUtf8(buffer));
+  for(toQList::iterator i=vals.begin();i!=vals.end();i++) {
+    sql.append(*i);
   }
   if (sql.isEmpty())
     throw QString("SQL Address not found in SGA");
@@ -171,13 +108,8 @@ static toSQL SQLNow("Global:Now",
 
 QString toNow(toConnection &conn)
 {
-  otl_stream q(1,
-	       SQLNow(conn),
-	       conn.connection());
-  char buffer[1024];
-  buffer[0] = 0;
-  q>>buffer;
-  return QString::fromUtf8(buffer);
+  toQList vals=toQuery::readQuery(conn,SQLNow);
+  return toPop(vals);
 }
 
 static toSQL SQLAddress("Global:Address",
@@ -190,15 +122,11 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
 {
   QString search;
 
-  otl_stream q(1,SQLAddress(conn),conn.connection());
+  toQList vals=toQuery::readQuery(conn,SQLAddress,sql.left(CHUNK_SIZE));
 
-  q<<sql.left(CHUNK_SIZE).utf8();
-
-  while(!q.eof()) {
-    char buf[100];
-    q>>buf;
-    if (sql==toSQLString(conn,QString::fromUtf8(buf)))
-      return QString::fromUtf8(buf);
+  for(toQList::iterator i=vals.begin();i!=vals.end();i++) {
+    if (sql==toSQLString(conn,*i))
+      return *i;
   }
   throw QString("SQL Query not found in SGA");
 }
@@ -455,168 +383,6 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
   }
 #  endif
 #endif
-}
-
-list<QString> toReadQuery(otl_stream &str,list<QString> &args)
-{
-  otl_null null;
-  for (list<QString>::iterator i=((list<QString> &)args).begin();i!=((list<QString> &)args).end();i++) {
-    if ((*i).isNull())
-      str<<null;
-    else
-      str<<(*i).utf8();
-  }
-
-  list<QString> ret;
-  while(!str.eof()) {
-    QString dat=toReadValue(str);
-    if (dat=="{null}")
-      dat=QString::null;
-    ret.insert(ret.end(),dat);
-  }
-  return ret;
-}
-
-list<QString> toReadQuery(otl_stream &str,
-			  const QString &arg1,const QString &arg2,
-			  const QString &arg3,const QString &arg4,
-			  const QString &arg5,const QString &arg6,
-			  const QString &arg7,const QString &arg8,
-			  const QString &arg9)
-{
-  int numArgs;
-  if (!arg9.isNull())
-    numArgs=9;
-  else if (!arg8.isNull())
-    numArgs=8;
-  else if (!arg7.isNull())
-    numArgs=7;
-  else if (!arg6.isNull())
-    numArgs=6;
-  else if (!arg5.isNull())
-    numArgs=5;
-  else if (!arg4.isNull())
-    numArgs=4;
-  else if (!arg3.isNull())
-    numArgs=3;
-  else if (!arg2.isNull())
-    numArgs=2;
-  else if (!arg1.isNull())
-    numArgs=1;
-  else
-    numArgs=0;
-
-  list<QString> args;
-  if (numArgs>0)
-    args.insert(args.end(),arg1);
-  if (numArgs>1)
-    args.insert(args.end(),arg2);
-  if (numArgs>2)
-    args.insert(args.end(),arg3);
-  if (numArgs>3)
-    args.insert(args.end(),arg4);
-  if (numArgs>4)
-    args.insert(args.end(),arg5);
-  if (numArgs>5)
-    args.insert(args.end(),arg6);
-  if (numArgs>6)
-    args.insert(args.end(),arg7);
-  if (numArgs>7)
-    args.insert(args.end(),arg8);
-  if (numArgs>8)
-    args.insert(args.end(),arg9);
-
-  return toReadQuery(str,args);
-}
-
-list<QString> toReadQuery(toConnection &conn,const QCString &query,list<QString> &args)
-{
-  otl_stream str;
-  str.set_all_column_types(otl_all_num2str|otl_all_date2str);
-  str.open(1,
-	   query,
-	   conn.connection());
-  return toReadQuery(str,args);
-}
-
-list<QString> toReadQuery(toConnection &conn,const QCString &query,
-			  const QString &arg1,const QString &arg2,
-			  const QString &arg3,const QString &arg4,
-			  const QString &arg5,const QString &arg6,
-			  const QString &arg7,const QString &arg8,
-			  const QString &arg9)
-{
-  int numArgs;
-  if (!arg9.isNull())
-    numArgs=9;
-  else if (!arg8.isNull())
-    numArgs=8;
-  else if (!arg7.isNull())
-    numArgs=7;
-  else if (!arg6.isNull())
-    numArgs=6;
-  else if (!arg5.isNull())
-    numArgs=5;
-  else if (!arg4.isNull())
-    numArgs=4;
-  else if (!arg3.isNull())
-    numArgs=3;
-  else if (!arg2.isNull())
-    numArgs=2;
-  else if (!arg1.isNull())
-    numArgs=1;
-  else
-    numArgs=0;
-
-  list<QString> args;
-  if (numArgs>0)
-    args.insert(args.end(),arg1);
-  if (numArgs>1)
-    args.insert(args.end(),arg2);
-  if (numArgs>2)
-    args.insert(args.end(),arg3);
-  if (numArgs>3)
-    args.insert(args.end(),arg4);
-  if (numArgs>4)
-    args.insert(args.end(),arg5);
-  if (numArgs>5)
-    args.insert(args.end(),arg6);
-  if (numArgs>6)
-    args.insert(args.end(),arg7);
-  if (numArgs>7)
-    args.insert(args.end(),arg8);
-  if (numArgs>8)
-    args.insert(args.end(),arg9);
-
-  return toReadQuery(conn,query,args);
-}
-
-QString toShift(list<QString> &lst)
-{
-  if (lst.begin()==lst.end())
-    return QString::null;
-  QString ret=(*lst.begin());
-  lst.erase(lst.begin());
-  return ret;
-}
-
-void toUnShift(list<QString> &lst,const QString &str)
-{
-  lst.insert(lst.begin(),str);
-}
-
-QString toPop(list<QString> &lst)
-{
-  if (lst.begin()==lst.end())
-    return QString::null;
-  QString ret=(*lst.rbegin());
-  lst.pop_back();
-  return ret;
-}
-
-void toPush(list<QString> &lst,const QString &str)
-{
-  lst.push_back(str);
 }
 
 QString toFontToString(const QFont &fnt)
@@ -939,22 +705,42 @@ toConnection &toResult::connection(void)
   return toCurrentConnection(dynamic_cast<QWidget *>(this));
 }
 
-void toBusy(bool busy)
+unsigned int toBusy::Count=0;
+
+toBusy::toBusy()
 {
-  if (toThread::mainThread()) {
-    if (busy)
-      qApp->setOverrideCursor(Qt::waitCursor);
-    else
-      qApp->restoreOverrideCursor();
-  }
+  if (!Count&&toThread::mainThread())
+    qApp->setOverrideCursor(Qt::waitCursor);
+  Count++;
 }
 
-otl_connect &toResult::otlConnection(void)
+toBusy::~toBusy()
 {
-  return connection().connection();
+  Count--;
+  if (!Count&&toThread::mainThread())
+    qApp->restoreOverrideCursor();
 }
 
 toTimer *toResult::timer(void)
 {
   return toCurrentTool(dynamic_cast<QWidget *>(this))->timer();
+}
+
+void toReadableColumn(QString &name)
+{
+  bool inWord=false;
+  for(unsigned int i=0;i<name.length();i++) {
+    if (name.at(i)=='_') {
+      name.ref(i)=' ';
+      inWord=false;
+    } else if (name.at(i).isSpace()) {
+      inWord=false;
+    } else if (name.at(i).isLetter()) {
+      if (inWord)
+	name.ref(i)=name.at(i).lower();
+      else
+	name.ref(i)=name.at(i).upper();
+      inWord=true;
+    }
+  }
 }
