@@ -58,6 +58,54 @@ in the next version.
 Then copy the file Makefile.sample to Makefile and edit it to
 fill out the correct values in it.
 
+
+
+Support for Oracle Instant Client Build
+=======================================
+How to compile and install TOra using Oracle instant client.
+
+Documented steps tested on Debian linux (testing). It should
+work on other Linux distributions, but some (system) filenames
+may differ.
+
+1) Oracle instant client
+Download client (http://www.oracle.com/technology/software/tech/oci/instantclient/index.html)
+choose your platform (linux x86) and then you download "Instant Client Package - Basic",
+"Instant Client Package - SQL*Plus", "Instant Client Package - SDK".
+Because Debian does not use rpm packages, I used zip archives. After
+unzip in apropriate directory (/usr/local/oracle/instantclient10_1)
+you need this step to do (some as root, some as oracle user):
+a) edit /etc/ld.so.conf (add /usr/local/oracle/instantclient10_1)
+b) in /usr/local/oracle/instantclient10_1 create symbolic link:
+   ln -s libclntsh.so.10.1 libclntsh.so
+c) run ldconfig
+d) provide tnsnames.ora
+e) create dir bin (/usr/local/oracle/instantclient10_1/bin) and 
+   symbolic link to sqlplus in bin: (ln -s ../sqlplus)
+
+Apart Oracle's documentation, you do not need to set LD_LIBRARY_PATH.
+
+Test connection using sqlplus. When succesfull, set environment
+variables for users, who will compile tora and use tora:
+
+ORACLE_HOME=/usr/local/oracle/instantclient10_1
+TNS_ADMIN=<path_to_dir_where_is_tnsnames.ora>
+
+2) Compiling TOra
+Prerequisite: steps in 1)
+
+only what you need is to modify configure.pl. Changes I did concerns
+library path. All libraries (.so files) are in client home directory
+(/usr/local/oracle/instantclient10_1), header files are in sdk/include.
+My configure.pl is enclosed.
+
+And next steps are usual:
+make
+make install (as root)
+
+then enjoy!
+
+
 SAP support
 ===========
 
