@@ -39,12 +39,15 @@
 
 #include <qheader.h>
 #include <qtooltip.h>
+
 #include "toresultitem.h"
 #include "toresultresources.h"
-#include "toresultitem.moc"
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "toconnection.h"
+
+#include "toresultitem.moc"
 
 static toSQL SQLResource(TOSQL_RESULTRESOURCE,
 			 "SELECT 'Total' \"-\",         'per Execution' \"-\",                                                   'per Row processed' \"-\",\n"

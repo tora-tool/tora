@@ -84,6 +84,9 @@
 2001-08-22: Remade storage manager dialogs in designer.
 2001-08-22: Display SQL to be used by modifying objects in storage manager.
 2001-08-23: Fixed bug in rollback.
+2001-08-23: Renamed toQuery::queryValue to toQValue.
+2001-08-23: Did some include file dependency cleanups.
+2001-08-23: Fixed problem with public rollback. (Thanx Joachim Zetzsche)
 
 0.14: Released 2001-08-02
 

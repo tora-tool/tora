@@ -37,6 +37,7 @@
 #include "toresultcols.h"
 #include "tomain.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 static toSQL SQLInfo("toResultCols:Info",
 		     "SELECT Data_Default,\n"

@@ -65,6 +65,7 @@
 #include "tofilesize.h"
 #include "tosql.h"
 #include "tohelp.h"
+#include "toconnection.h"
 
 #include "tostorage.moc"
 #include "tostoragetablespaceui.moc"
