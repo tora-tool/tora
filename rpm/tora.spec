@@ -136,7 +136,11 @@ export QTDIR="%{_qt2dir}"
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
 %dir %{_prefix}/lib/tora/help
-%{_prefix}/lib/tora/help
+%dir %{_prefix}/lib/tora/help/api
+%dir %{_prefix}/lib/tora/help/images
+%{_prefix}/lib/tora/help/*
+%{_prefix}/lib/tora/help/api/*
+%{_prefix}/lib/tora/help/images/*
 %{_prefix}/lib/tora/*.tpl
 
 %files mysql -f rpmmysql
