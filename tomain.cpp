@@ -99,11 +99,11 @@
 #include "icons/paste.xpm"
 #include "icons/print.xpm"
 #include "icons/redo.xpm"
+#include "icons/refresh.xpm"
 #include "icons/rollback.xpm"
 #include "icons/search.xpm"
 #include "icons/stop.xpm"
 #include "icons/toramini.xpm"
-#include "icons/trash.xpm"
 #include "icons/undo.xpm"
 #include "icons/up.xpm"
 
@@ -189,7 +189,7 @@ toMain::toMain()
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
   FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
   FileMenu->insertItem(QPixmap((const char **)stop_xpm),"Stop All Queries",TO_STOP_ALL);
-  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
+  FileMenu->insertItem(QPixmap((const char **)refresh_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);

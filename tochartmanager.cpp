@@ -95,7 +95,7 @@ public:
     Window=new toChartManager(toMainWidget()->workspace());
     Window->setCaption("Chart Manager");
     Window->setIcon(QPixmap((const char **)grid_xpm));
-    Window->hide();
+    Window->close();
   }
   void closeWindow(void)
   {

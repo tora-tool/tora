@@ -214,7 +214,8 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
     TO_DEBUGOUT("Started thread\n");
   } catch(...) {
     Error=QString("Failed to start background query thread");
-    Running=false;
+    while(Running.getValue())
+      Running.down();
     Quit=EOQ=true;
     delete Query;
     Query=NULL;
@@ -258,7 +259,8 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
     TO_DEBUGOUT("Started thread\n");
   } catch(...) {
     Error=QString("Failed to start background query thread");
-    Running=false;
+    while(Running.getValue())
+      Running.down();
     Quit=EOQ=true;
     delete Query;
     Query=NULL;
@@ -375,7 +377,8 @@ bool toNoBlockQuery::poll(void)
 	TO_DEBUGOUT("Started thread\n");
       } catch(...) {
 	Error=QString("Failed to start background query thread");
-	Running=false;
+	while(Running.getValue())
+	  Running.down();
 	Quit=EOQ=true;
 	delete Query;
 	Query=NULL;

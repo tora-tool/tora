@@ -90,12 +90,10 @@
 #include "icons/table.xpm"
 #include "icons/tobrowser.xpm"
 #include "icons/view.xpm"
-#if 0
 #include "icons/addtable.xpm"
 #include "icons/modconstraint.xpm"
 #include "icons/modindex.xpm"
 #include "icons/modtable.xpm"
-#endif
 
 class toBrowserTool : public toTool {
 protected:
@@ -514,7 +512,7 @@ static toSQL SQLIndexCols8("toBrowser:IndexCols",
 			   QString::null,
 			   "8.0");
 static toSQL SQLIndexCols7("toBrowser:IndexCols",
-			   "SELECT Table_Name,Column_Name,Column_Length,' '\n"
+			   "SELECT Table_Name,Column_Name,Column_Length\n"
 			   "  FROM SYS.ALL_IND_COLUMNS\n"
 			   " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			   " ORDER BY Column_Position",
@@ -762,7 +760,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   QVBox *box=new QVBox(splitter);
   splitter->setResizeMode(box,QSplitter::Stretch);
 
-#if 0
   toolbar=toAllocBar(box,"Table browser",connection.description());
   new QToolButton(QPixmap((const char **)addtable_xpm),
 		  "Create new table",
@@ -786,7 +783,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  this,SLOT(modifyTable()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
-#endif
 
   QTabWidget *curr=new QTabWidget(box);
   toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);
@@ -1346,7 +1342,7 @@ void toBrowser::fixIndexCols(void)
   toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
   if (tmp)
     for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
-      if (!item->text(4).isEmpty()) {
+      if (!toUnnull(item->text(4)).isEmpty()) {
 	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
 	if (resItem)
 	  resItem->setText(1,item->text(4));
