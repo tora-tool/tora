@@ -124,6 +124,17 @@ static void ThrowException(const otl_exception &exc)
 
 class toOracleProvider : public toConnectionProvider {
 public:
+  class connectionDeleter : public toTask {
+    otl_connect *Connection;
+  public:
+    connectionDeleter(otl_connect *connect)
+      : Connection(connect)
+    { }
+    virtual void run(void)
+    {
+      delete Connection;
+    }
+  };
   class oracleSub : public toConnectionSub {
   public:
     toSemaphore Lock;
@@ -132,7 +143,7 @@ public:
       : Lock(1)
     { Connection=conn; }
     ~oracleSub()
-    { delete Connection; }
+    { toThread *thread=new toThread(new connectionDeleter(Connection)); thread->start(); }
     virtual void cancel(void)
     { Connection->cancel(); }
   };
