@@ -39,6 +39,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
+#include <stdio.h>
 
 #include "tonoblockquery.h"
 #include "totool.h"
@@ -62,18 +63,24 @@ void toNoBlockQuery::queryTask::run(void)
   int Length;
   try {
     TO_DEBUGOUT("Open query\n");
-    Parent.Query->execute(Parent.SQL,Parent.Param);
+    if (Parent.Query)
+      Parent.Query->execute(Parent.SQL,Parent.Param);
 
+    bool eof=true;
     {
       TO_DEBUGOUT("Locking description\n");
       toLocker lock(Parent.Lock);
-      Parent.Description=Parent.Query->describe();
-      Length=Parent.Query->columns();
+      if (Parent.Query) {
+	Parent.Description=Parent.Query->describe();
+	Length=Parent.Query->columns();
+	eof=Parent.Query->eof();
+      }
     }
-    if (!Parent.Query->eof()) {
+    
+    if (!eof) {
       bool signaled=false;
       for (;;) {
-	for (int i=0;i<Length;i++) {
+	for (int i=0;i<Length&&Parent.Query;i++) {
 	  TO_DEBUGOUT("Reading value\n");
 	  toQValue value(Parent.Query->readValueNull());
 	  {
@@ -95,7 +102,7 @@ void toNoBlockQuery::queryTask::run(void)
 	}
 	TO_DEBUGOUT("Locking to check size\n");
 	toLocker lock(Parent.Lock);
-	if (Parent.Query->eof())
+	if (!Parent.Query||Parent.Query->eof())
 	  break;
 	else {
 	  if (Parent.ReadingValues.size()>PREFETCH_SIZE) {
@@ -112,7 +119,10 @@ void toNoBlockQuery::queryTask::run(void)
       }
     }
     TO_DEBUGOUT("EOQ\n");
-    Parent.Processed=Parent.Query->rowsProcessed();
+    if (Parent.Query)
+      Parent.Processed=Parent.Query->rowsProcessed();
+    else
+      Parent.Processed=0;
   } catch (const toConnection::exception &str) {
     TO_DEBUGOUT("Locking exception string\n");
     toLocker lock(Parent.Lock);
@@ -273,11 +283,11 @@ void toNoBlockQuery::stop(void)
     TO_DEBUGOUT("Locking for delete\n");
     Lock.lock();
     if (!EOQ) {
-      TO_DEBUGOUT("Sending INT\n");
+      TO_DEBUGOUT("Sending user abort\n");
       do {
+	TO_DEBUGOUT("Query cancel\n");
 	if (Query)
 	  Query->cancel();
-	TO_DEBUGOUT("Sleeping and retrying cancel\n");
 	Lock.unlock();
 	toThread::msleep(100);
 	Lock.lock();
@@ -301,6 +311,10 @@ void toNoBlockQuery::stop(void)
     TO_DEBUGOUT("Get statistics\n");
     Statistics->refreshStats(false);
   }
+  while(Query) {
+    printf("Internal error, query not deleted after stopping it.\n");
+    toThread::msleep(100);
+  }
   TO_DEBUGOUT("Done deleting\n");
 }
 
@@ -322,7 +336,6 @@ bool toNoBlockQuery::poll(void)
   if ((count>=Description.size()&&Description.size()>0)||eof())
     return true;
 
-#if 0
   Lock.lock();
   if (Started>0&&Started<time(NULL)&&!Description.size()) {
     if (Query&&Query->mode()==toQuery::Normal) {
@@ -358,7 +371,6 @@ bool toNoBlockQuery::poll(void)
       Lock.unlock();
   } else
     Lock.unlock();
-#endif
 
   return false;
 }
