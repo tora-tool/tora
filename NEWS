@@ -6,5 +6,6 @@
 2001-01-17: Fixed a moc bug in configure.pl (Thanx P. Laux).
 2001-01-17: Include block if possible in rollback monitor (Not in transaction start).
 2001-01-20: Removed any reference to FALSE or TRUE (Use true/false instead).
+2001-01-20: Fixed bug parsing PL/SQL in toWorksheet.
 
 0.3: Released 2001-01-17

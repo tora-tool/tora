@@ -3,6 +3,3 @@ OCI:
 
 tohighlightedtext:
 	Won't work with fonts that have different widths when in bold. Mayby should just use colors for highlighting?
-
-toWorksheet:
-	Seems to parse PL/SQL procedures wrong when create and begin are not separated with ;

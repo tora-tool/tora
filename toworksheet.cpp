@@ -479,6 +479,7 @@ void toWorksheet::execute(bool all,bool step)
     for (int line=0;line<Editor->numLines()&&state!=done;line++) {
       QString data=Editor->textLine(line);
       const char *str=data;
+      c='\n'; // Set correct previous character
       for (int i=0;i<(int)data.length()&&state!=done;i++) {
 	lastChar=c;
 	c=str[i];
