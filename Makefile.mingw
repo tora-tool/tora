@@ -32,20 +32,15 @@
 #
 ############################################################################
 
-# location of the perl - needed for key transalations generation
+# Perl executable - needed for key transalations generation
 PERL=/c/Perl/bin/perl
 
-# Where to install tora
-INSTALLPREFIX=/c/TOra
+# Where to create installation bundle
+INSTALLDIR=/c/TOra
 
-# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version
-TARGET=tora-mono
-
-# Where to install tora binary
-INSTALLBIN=$(INSTALLPREFIX)/bin
-
-# Where to install tora plugins
-INSTALLLIB=$(INSTALLPREFIX)/lib
+# What to compile, can be tora for tora-mono for monolithic, tora-static for static version
+# (for Windows build these targets seems to have no difference so they better left default)
+TARGET=tora
 
 # Additional includes needed to compile program
 INCLUDES="-I$(ORACLE_HOME)/oci/include" \
@@ -110,7 +105,7 @@ MYSQL_STATIC=
 #   OTL_ORA_TIMESTAMP  - Include support for timestamps
 #   TO_NEW_CHECK       - Disable new version check globally
 DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP
-DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
+DEFINES+=-D_REENTRANT
 DEFINES+=-DQT_THREAD_SUPPORT
 DEFINES+=-DTOMONOLITHIC
 DEFINES+=-DWIN32 -D_WIN32
@@ -125,7 +120,7 @@ CPPFLAGS_GLOB=
 LFLAGS_GLOB=-O3
 
 # Additional flags set when compiling.
-CFLAGS_GLOB=-O3 -W -Wall -c -mthreads -w -fno-rtti
+CFLAGS_GLOB=-O3 -W -Wall -c -mthreads -w
 
 ############################################################################
 #
@@ -350,7 +345,7 @@ vpath %.h $(INCLUDE)
 
 .PHONY: all clean fixmod install distclean oraclelib
 
-all: $(TARGET) lrelease
+all: $(TARGET)
 
 %.moc: %.h
 	@echo Metacompiling $<
@@ -394,37 +389,26 @@ windows/%.o:
 	@echo Making $<
 	$(MAKE) -C windows
 	
-install-common: lrelease
+install-common: 
 	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
-	mkdir -p $(INSTALLBIN)
-	mkdir -p $(INSTALLLIB)/tora/help
-	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp -r help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
-	-cp  *.qm $(INSTALLLIB)/tora >/dev/null 2>&1
+	mkdir -p $(INSTALLDIR)
+	mkdir -p $(INSTALLDIR)/help
+	-cp templates/*.tpl $(INSTALLDIR) >/dev/null 2>&1
+	-cp -r help/* $(INSTALLDIR)/help >/dev/null 2>&1
+	-cp  *.qm $(INSTALLDIR) >/dev/null 2>&1
 
 install: $(TARGET) install-common
-	@echo Install $(TARGET) to $(INSTALLBIN)
-	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
-	-strip $(TARGET) plugins/* >/dev/null 2>&1
-	cp $(TARGET) $(INSTALLBIN)/tora
-	if [ -f tora-plugin ] ; \
-	    then cp $(TARGET) $(INSTALLBIN)/tora ; \
-	    rm -f tora-plugin ; \
-	else cp $(TARGET) $(INSTALLBIN)/tora.real ; \
-	    cp rpm/tora.sh $(INSTALLBIN)/tora ; \
-	fi
-	rm -f $(INSTALLLIB)/tora/*.tso
-	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
+	@echo Install $(TARGET) to $(INSTALLDIR)
+	cp $(TARGET).exe $(INSTALLDIR)
+	-strip -s $(INSTALLDIR)/$(TARGET).exe >/dev/null 2>&1
 
-install-debug: tora-mono install-common
-	@echo Install tora with debugging symbols to $(INSTALLBIN)
-	cp tora-mono $(INSTALLBIN)/tora
+install-debug: tora install-common
+	@echo Install tora with debugging symbols to $(INSTALLDIR)
+	cp tora.exe $(INSTALLDIR)
 
 uninstall:
-	@echo Uninstalling from $(INSTALLPREFIX)
-	-rm -f $(INSTALLBIN)/tora
-	-rm -f $(INSTALLBIN)/tora.real
-	-rm -rf $(INSTALLLIB)/tora
+	@echo Uninstalling from $(INSTALLDIR)
+	-rm -rf $(INSTALLDIR)
 
 clean:
 	@echo Cleaning $(TITLE)
@@ -433,6 +417,7 @@ clean:
 	-rm -f *~ */*~ >/dev/null 2>&1
 	-rm -f *.bak >/dev/null 2>&1
 	-rm -rf plugins >/dev/null 2>&1
+	-rm -rf lib >/dev/null 2>&1
 	-for a in *.ui ; \
             do rm -f `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
          done
@@ -455,178 +440,6 @@ LICENSE.h: LICENSE.txt
 	$(PERL) -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE.txt >> LICENSE.h
 	@echo '"</PRE>";' >> LICENSE.h
 
-# This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
-# configure won't try to detect those. It's up to you.
-
-apidoc: $(API)
-	mkdir -p help/api
-	kdoc -n TOra -d help/api $^ -lqt -lkdeui -lkhtml
-
-# Plugin definitions
-
-plugins/toalert.tso:\
-	objs/toalert.o
-plugins/toanalyze.tso:\
-	objs/toanalyze.o \
-	objs/toworksheetstatistic.o
-plugins/tobackup.tso:\
-	objs/tobackup.o
-plugins/tobrowser.tso:\
-	objs/tobrowser.o \
-	objs/tobrowserconstraint.o \
-	objs/tobrowserconstraintui.o \
-	objs/tobrowserfilterui.o \
-	objs/tobrowserindex.o \
-	objs/tobrowserindexui.o \
-	objs/tobrowsertable.o \
-	objs/tobrowsertableui.o
-plugins/tochart.tso:\
-	objs/tobarchart.o \
-	objs/tochartalarmui.o \
-	objs/tochartmanager.o \
-	objs/tochartsetupui.o \
-	objs/tolegendchart.o \
-	objs/tolinechart.o \
-	objs/tolinechartsetupui.o \
-	objs/topiechart.o \
-	objs/toresultbar.o \
-	objs/toresultline.o \
-	objs/toresultpie.o
-plugins/tocurrent.tso:\
-	objs/tocurrent.o
-plugins/todebug.tso:\
-	objs/todebug.o \
-	objs/todebugwatch.o \
-	objs/todebugtext.o \
-	objs/todebugchangeui.o
-plugins/toeditextensions.tso:\
-	objs/toeditextensions.o \
-	objs/toeditextensiongotoui.o \
-	objs/toeditextensionsetupui.o
-plugins/toextract.tso:\
-	objs/toextract.o \
-	objs/toreport.o \
-	objs/toresultextract.o
-plugins/toinvalid.tso:\
-	objs/toinvalid.o
-plugins/tooracleconnection.tso:\
-	objs/tooracleconnection.o \
-	objs/tooracleextract.o \
-	objs/tooraclesettingui.o
-	@echo Linking plugin $@
-	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
-	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(ORACLE_SHARED)
-plugins/tooraclepreload.tso:\
-	objs/tooraclepreload.o
-plugins/tooutput.tso:\
-	objs/tooutput.o
-plugins/topassword.tso:\
-	objs/topassword.o
-plugins/toprofiler.tso:\
-	objs/toprofiler.o
-plugins/toproject.tso:\
-	objs/toproject.o
-plugins/toqsqlconnection.tso:\
-	objs/toqsqlconnection.o
-plugins/toresult.tso:\
-	objs/toresultcols.o \
-	objs/toresultcombo.o \
-	objs/toresultconstraint.o \
-	objs/toresultcontent.o \
-	objs/toresultcontentfilterui.o \
-	objs/toresultdepend.o \
-	objs/toresultindexes.o \
-	objs/toresultlabel.o \
-	objs/toresultlock.o \
-	objs/toresultlong.o \
-	objs/toresultplan.o \
-	objs/toresultparam.o \
-	objs/toresultreferences.o \
-	objs/toresultstorage.o
-plugins/torollback.tso:\
-	objs/torollback.o \
-	objs/torollbackdialogui.o
-plugins/toscript.tso:\
-	objs/toscript.o \
-	objs/toscriptui.o
-plugins/tosecurity.tso:\
-	objs/tosecurity.o \
-	objs/tosecurityquotaui.o \
-	objs/tosecurityroleui.o \
-	objs/tosecurityuserui.o
-plugins/tosession.tso:\
-	objs/tosession.o
-plugins/tosgatrace.tso:\
-	objs/tosgatrace.o
-plugins/tosqledit.tso:\
-	objs/tosqledit.o
-plugins/tostorage.tso:\
-	objs/tostorage.o \
-	objs/tostoragedatafileui.o \
-	objs/tostoragedialogui.o \
-	objs/tostorageprefsui.o \
-	objs/tostoragetablespaceui.o
-plugins/tostoragedefinition.tso:\
-	objs/tostoragedefinition.o \
-	objs/tostoragedefinitionui.o
-plugins/totemplate.tso:\
-	objs/totemplate.o \
-	objs/totemplateaddfileui.o \
-	objs/totemplateeditui.o \
-	objs/totemplatesetupui.o
-plugins/totemporary.tso:\
-	objs/totemporary.o
-plugins/totuning.tso:\
-	objs/totuning.o \
-	objs/totuningoverviewui.o \
-	objs/totuningsettingui.o
-plugins/towidget.tso:\
-	objs/tochangeconnection.o \
-	objs/todatatype.o \
-	objs/tofilesize.o \
-	objs/tosgastatement.o \
-	objs/totableselect.o \
-	objs/tovisualize.o \
-	objs/towaitevents.o
-plugins/toworksheet.tso:\
-	objs/toworksheet.o \
-	objs/toworksheetsetupui.o
-
-# Plugin based binary and its plugins
-
-tora-plugin:\
-	tora \
-	plugins/toalert.tso \
-	plugins/toanalyze.tso \
-	plugins/tobackup.tso \
-	plugins/tobrowser.tso \
-	plugins/tochart.tso \
-	plugins/tocurrent.tso \
-	plugins/todebug.tso \
-	plugins/toeditextensions.tso \
-	plugins/toextract.tso \
-	plugins/toinvalid.tso \
-	plugins/tooracleconnection.tso \
-	plugins/tooraclepreload.tso \
-	plugins/tooutput.tso \
-	plugins/topassword.tso \
-	plugins/toprofiler.tso \
-	plugins/toproject.tso \
-	plugins/toqsqlconnection.tso \
-	plugins/toresult.tso \
-	plugins/torollback.tso \
-	plugins/toscript.tso \
-	plugins/tosecurity.tso \
-	plugins/tosession.tso \
-	plugins/tosgatrace.tso \
-	plugins/tosqledit.tso \
-	plugins/tostorage.tso \
-	plugins/tostoragedefinition.tso \
-	plugins/totemplate.tso \
-	plugins/totemporary.tso \
-	plugins/totuning.tso \
-	plugins/towidget.tso \
-	plugins/toworksheet.tso
 # Keyboard shortcuts
 
 main.cpp: tora_toad.h
@@ -637,40 +450,18 @@ tora_toad.h: tora_toad.qm
 tora_toad.qm: tora_toad.ts
 	$(LRELEASE) $<
 
-# Monolithic target, for non ELF platforms
 
-tora-mono: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o 
-	@echo Linking $@
-	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -DTOMONOLITHIC -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
-		$(LIBS_GLOB) $(STDCPP_SHARED) $(ORACLE_SHARED) $(QT_SHARED) $(MYSQL_SHARED)
-		
-
-# Static target, easier to distribute
+# Static target, easier to distribute (oracle is always shared on Windows)
 
 tora-static: $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 	@echo Linking $@
-	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
-		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_SHARED) $(LIBS_GLOB) \
-		$(MYSQL_STATIC) -mwindows
+	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
+		$(LIBS_GLOB) $(QT_STATIC) $(ORACLE_SHARED) $(STDCPP_STATIC) $(MYSQL_STATIC) 
 
-# The binary for the pluginbased tora
 
-tora.pro: Makefile
-	echo "# Not indended to be used for anything except lupdate" > tora.pro
-	echo 'SOURCES=	\' >> tora.pro
-	echo '	main.cpp\' >> tora.pro
-	echo '	toextratranslations.cpp\' >> tora.pro
-	echo "	$(SOURCES)" >> tora.pro
-	echo 'TRANSLATIONS=$(TRANSLATIONS)' >> tora.pro
-
-lupdate: tora.pro
-	$(LUPDATE) tora.pro
-
-lrelease: tora.pro $(TRANSLATIONS)
-	$(LRELEASE) tora.pro
+# The binary for the tora
 
 tora:   $(OCI_LIB) $(OBJECTS) windows/tora.o windows/cregistry.o
 	@echo Linking $@
-	$(GCC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
-		-o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
-		$(LIBS_GLOB) $(ORACLE_SHARED) $(STDCPP_SHARED) $(QT_SHARED) -mwindows
+	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) -mwindows -o $@ $(OBJECTS) windows/tora.o windows/cregistry.o \
+		$(LIBS_GLOB) $(QT_SHARED) $(ORACLE_SHARED) $(STDCPP_SHARED) 
