@@ -142,6 +142,7 @@
 2001-12-11: Don't use ExpandTabs in toHighlightedText (Qt bug in >= 3.0.0).
 2001-12-11: Align # column right as well.
 2001-12-11: Implemented better support for multiline text in toResultContent.
+2001-12-11: Popup memo editor automatically if editing multiline in content editor.
 2001-12-11: Honor alignment from query in content editor.
 2001-12-11: Added functionality to add handle NULL in memo editors.
 2001-12-11: Fixed problems with rowid in IOT and content editor.
@@ -150,6 +151,8 @@
 2001-12-11: Split templates in two docked windows.
 2001-12-11: Added content editor to view and tables.
 2001-12-11: Made single selection in template list.
+2001-12-12: Added all tabs in schema browser to template schema browser.
+2001-12-12: Fixed synonym handling in template browser.
 
 1.1.5: Released 2001-11-26
 

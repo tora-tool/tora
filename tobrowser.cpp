@@ -1218,50 +1218,75 @@ public:
   }
   virtual QWidget *selectedWidget(QWidget *par)
   {
+    QString ptyp=parent()->parent()->text(0);
     QString object=parent()->text(0);
     QString typ=text(0);
     QString schema=parent()->parent()->parent()->text(0);
+    if (ptyp=="Synonyms") {
+      int pos=object.find(".");
+      if (pos>=0) {
+	schema=object.mid(0,pos);
+	object=object.mid(pos+1);
+      } else {
+	schema="PUBLIC";
+      }
+    }
+
     if (schema=="No schemas")
       schema=Connection.database();
 
     toResultView *res;
 
-    toToolWidget *tool;
+    toToolWidget *tool=new toToolWidget(BrowserTool,
+					QString::null,
+					par,
+					Connection);
     if (typ=="Data") {
-      tool=new toToolWidget(BrowserTool,
-			    QString::null,
-			    par,
-			    Connection);
       toResultContent *cnt=new toResultContent(tool);
       cnt->changeParams(schema,object);
       return tool;
+    } else if (typ=="Indexes") {
+      res=new toResultIndexes(tool);
     } else if (typ=="Constraints") {
-      tool=new toToolWidget(BrowserTool,
-			    QString::null,
-			    par,
-			    Connection);
       res=new toResultConstraint(tool);
+    } else if (typ=="Triggers") {
+      res=new toResultLong(true,false,toQuery::Background,tool);
+      res->setReadAll(true);
+      res->setSQL(SQLTableTrigger);
+    } else if (typ=="SQL") {
+      toResultField *sql=new toResultField(tool);
+      sql->setSQL(SQLViewSQL);
+      sql->changeParams(schema,object);
+      return tool;
+    } else if (typ=="Script") {
+      toResultExtract *ext=new toResultExtract(true,tool);
+      ext->changeParams(schema,object);
+      return tool;
+    } else if (typ=="Information") {
+      toResultItem *inf=new toResultItem(2,true,tool);
+      if (ptyp=="Tables") {
+	inf->setSQL(SQLTableInfo);
+      } else if (ptyp=="Triggers") {
+	inf->setSQL(SQLTriggerInfo);
+      } else if (ptyp=="Indexes") {
+	inf->setSQL(SQLIndexInfo);
+      }
+      inf->changeParams(schema,object);
+      return tool;
+    } else if (typ=="Columns") {
+      res=new toResultLong(true,false,toQuery::Background,tool);
+      res->setSQL(SQLTriggerCols);
     } else if (typ=="References") {
-      tool=new toToolWidget(BrowserTool,
-			    QString::null,
-			    par,
-			    Connection);
       res=new toResultReferences(tool);
     } else if (typ=="Grants") {
-      tool=new toToolWidget(BrowserTool,
-			    QString::null,
-			    par,
-			    Connection);
       res=new toResultLong(true,false,toQuery::Background,tool);
       res->setSQL(SQLAnyGrants);
     } else if (typ=="Dependencies") {
-      tool=new toToolWidget(BrowserTool,
-			    QString::null,
-			    par,
-			    Connection);
       res=new toResultDepend(tool);
-    } else
+    } else {
+      delete tool;
       return NULL;
+    }
     res->changeParams(schema,object);
     return tool;
   }
@@ -1279,40 +1304,63 @@ public:
       QPixmap image((const char **)table_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Indexes");
 	new toTemplateTableItem(conn,this,"Constraints");
 	new toTemplateTableItem(conn,this,"References");
 	new toTemplateTableItem(conn,this,"Grants");
-	new toTemplateTableItem(conn,this,"Data");
+	new toTemplateTableItem(conn,this,"Triggers");
+	new toTemplateTableItem(conn,this,"Information");
+	new toTemplateTableItem(conn,this,"Script");
       }
+      new toTemplateTableItem(conn,this,"Data");
     } else if (typ=="Views") {
       QPixmap image((const char **)view_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
-	new toTemplateTableItem(conn,this,"Dependencies");
+	new toTemplateTableItem(conn,this,"SQL");
 	new toTemplateTableItem(conn,this,"Grants");
 	new toTemplateTableItem(conn,this,"Data");
+	new toTemplateTableItem(conn,this,"Dependencies");
+	new toTemplateTableItem(conn,this,"Script");
       }
     } else if (typ=="Sequences") {
       QPixmap image((const char **)sequence_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
 	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Script");
       }
-    } else if (typ=="Code" || typ =="Triggers") {
+    } else if (typ=="Code") {
       QPixmap image((const char **)function_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
-	new toTemplateTableItem(conn,this,"Dependencies");
 	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Dependencies");
+	new toTemplateTableItem(conn,this,"Script");
+      }
+    } else if (typ =="Triggers") {
+      QPixmap image((const char **)function_xpm);
+      setPixmap(0,image);
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Information");
+	new toTemplateTableItem(conn,this,"Columns");
+	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Dependencies");
+	new toTemplateTableItem(conn,this,"Script");
       }
     } else if (typ=="Indexes") {
       QPixmap image((const char **)index_xpm);
       setPixmap(0,image);
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Information");
+	new toTemplateTableItem(conn,this,"Script");
+      }
     } else if (typ=="Synonyms") {
       QPixmap image((const char **)synonym_xpm);
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
 	new toTemplateTableItem(conn,this,"Grants");
+	new toTemplateTableItem(conn,this,"Script");
       }
     }
   }
@@ -1333,11 +1381,11 @@ public:
     if (schema=="No schemas")
       schema=Connection.database();
 
+    toToolWidget *tool=new toToolWidget(BrowserTool,
+					QString::null,
+					par,
+					Connection);
     if (typ=="Code"||typ=="Triggers") {
-      toToolWidget *tool=new toToolWidget(BrowserTool,
-					  QString::null,
-					  par,
-					  Connection);
       toResultField *fld=new toResultField(tool);
       if(typ=="Code")
 	fld->setSQL(SQLSQLTemplate);
@@ -1346,36 +1394,33 @@ public:
       fld->changeParams(schema,object);
       return tool;
     } else if (typ=="Tables"||typ=="Views") {
-      toToolWidget *tool=new toToolWidget(BrowserTool,
-					  QString::null,
-					  par,
-					  Connection);
       toResultCols *cols=new toResultCols(tool);
       cols->changeParams(schema,object);
       return tool;
     } else if (typ=="Indexes") {
-      toToolWidget *tool=new toToolWidget(BrowserTool,
-					  QString::null,
-					  par,
-					  Connection);
       toResultView *resultView=new toResultLong(true,false,toQuery::Background,tool);
       resultView->setSQL(SQLIndexCols);
       resultView->changeParams(schema,object);
       return tool;
     } else if (typ=="Synonyms"||typ=="Sequences") {
-      toToolWidget *tool=new toToolWidget(BrowserTool,
-					  QString::null,
-					  par,
-					  Connection);
-      toResultItem *resultItem=new toResultItem(1,true,tool);
-      if (typ=="Synonyms")
-	resultItem->setSQL(SQLSynonymInfo(Connection));
-      else
-	resultItem->setSQL(SQLSequenceInfo(Connection));
+      toResultItem *resultItem=new toResultItem(2,true,tool);
+      if (typ=="Synonyms") {
+	resultItem->setSQL(SQLSynonymInfo);
+	int pos=object.find(".");
+	if (pos>=0) {
+	  schema=object.mid(0,pos);
+	  object=object.mid(pos+1);
+	} else {
+	  schema="PUBLIC";
+	}
+      } else
+	resultItem->setSQL(SQLSequenceInfo);
       resultItem->changeParams(schema,object);
       return tool;
-    } else
+    } else {
+      delete tool;
       return NULL;
+    }
   }
 };
 
