@@ -348,10 +348,13 @@ public:
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
     AutoIndentBlock=menu->insertItem("Selection",
 				     &EditExtensions,
-				     SLOT(autoIndentBlock()));
+				     SLOT(autoIndentBlock()),
+				     ALT+CTRL+Key_I);
     AutoIndentBuffer=menu->insertItem("Editor",
 				      &EditExtensions,
-				      SLOT(autoIndentBuffer()));
+				      SLOT(autoIndentBuffer()),
+				      ALT+CTRL+SHIFT+Key_I);
+    menu->insertSeparator();
     ObfuscateBlock=menu->insertItem("Obfuscate selection",
 				    &EditExtensions,
 				    SLOT(obfuscateBlock()));

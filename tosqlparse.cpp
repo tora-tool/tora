@@ -83,6 +83,7 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+GROUP BY a.TskCod HAVING COUNT(a.TspActOprID)>0;
 SELECT a.Sid \"-Id\",
        a.Serial# \"-Serial#\",
        a.SchemaName \"Schema\",
@@ -544,8 +545,7 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
       }
     } else {
       ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
-      if (token==".")
-	nokey=true;
+      nokey=(token==".");
     }
   }
   return ret;
@@ -687,7 +687,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  add=0;
 	ret+=indentStatement(*i,level+add+exc);
 	if (t=="EXCEPTION")
-	  exc=Settings.IndentLevel;
+	  exc=Settings.IndentLevel*2;
       }
       if (Settings.EndBlockNewline)
 	ret+="\n";
@@ -696,10 +696,12 @@ QString toSQLParse::indentStatement(statement &stat,int level)
   case statement::List:
   case statement::Statement:
     int maxlev=0;
+    int maxlevorig=0;
     bool any=true;
     int current;
     bool first;
     bool noKeyBreak=false;
+    bool lineList=false;
     QString comment;
     if (stat.Type==statement::Statement) {
       ret=IndentComment(level,0,stat.Comment,false);
@@ -724,6 +726,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       }
       if (count<=1)
 	maxlev--;
+      maxlevorig=maxlev;
       first=true;
       current=0;
       any=true;
@@ -742,6 +745,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	i++) {
       comment=AddComment(comment,(*i).Comment);
       QString upp=(*i).String.upper();
+#ifdef TOPARSE_DEBUG
+      printf("%s\n",(const char*)(*i).String);
+#endif
       if ((*i).Type==statement::List) {
 	if (Settings.OperatorSpace) {
 	  ret+=" ";
@@ -764,6 +770,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	current=level+maxlev;
 	any=false;
 	first=true;
+	lineList=true;
       } else if (upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS") {
 	if (!Settings.BlockOpenLine) {
 	  if (ret.length()>0) {
@@ -798,16 +805,21 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	    ret+=" ";
 	    current++;
 	  }
+	maxlev=maxlevorig;
 	QString word=Settings.KeywordUpper?(*i).String.upper():(*i).String;
 	ret+=QString("%1").arg(word,
 			       Settings.RightSeparator?maxlev-1:1-maxlev);
 	current=level+max(int(word.length()),maxlev-1);
 	any=false;
+	lineList=false;
       } else {
 	QString t=(*i).String;
+	bool add=false;
 	if ((*i).Type==statement::Keyword) {
 	  if (Settings.KeywordUpper)
 	    t=upp;
+	  if (!lineList&&!any&&(*i).Type==statement::Keyword&&!noKeyBreak)
+	    add=true;
 	} else {
 	  any=true;
 	}
@@ -850,6 +862,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	}
 	ret+=t;
 	current+=t.length();
+
+	if (add)
+	  maxlev+=t.length()+1;
       }
     }
     if (stat.Type==statement::Statement) {
