@@ -248,8 +248,35 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(expandDestination(QListViewItem *)));
 
+  connect(toMainWidget(),SIGNAL(addedConnection(const QString &)),
+	  this,SLOT(addConnection(const QString &)));
+  connect(toMainWidget(),SIGNAL(removedConnection(const QString &)),
+	  this,SLOT(delConnection(const QString &)));
+
   ScriptUI->Schema->setCurrentItem(0);
   setFocusProxy(ScriptUI->Tabs);
+}
+
+void toScript::delConnection(const QString &name)
+{
+  for(int i=0;i<ScriptUI->SourceConnection->count();i++) {
+    if (ScriptUI->SourceConnection->text(i)==name) {
+      ScriptUI->SourceConnection->removeItem(i);
+      break;
+    }
+  }
+  for(int j=0;j<ScriptUI->DestinationConnection->count();j++) {
+    if (ScriptUI->DestinationConnection->text(j)==name) {
+      ScriptUI->DestinationConnection->removeItem(j);
+      break;
+    }
+  }
+}
+
+void toScript::addConnection(const QString &name)
+{
+  ScriptUI->SourceConnection->insertItem(name);
+  ScriptUI->DestinationConnection->insertItem(name);
 }
 
 toScript::~toScript()

@@ -725,7 +725,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if (t=="EXCEPTION")
 	  exc=Settings.IndentLevel*2;
       }
-      if (Settings.EndBlockNewline)
+      if (Settings.EndBlockNewline&&level!=0)
 	ret+="\n";
     }
     break;
@@ -918,7 +918,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     if (stat.Type==statement::Statement) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
       comment=QString::null;
-      if (Settings.EndBlockNewline&&level==0)
+      if (Settings.EndBlockNewline&&
+	  level==0&&
+	  stat.SubTokens->begin()!=stat.SubTokens->end()&&
+	  (*stat.SubTokens->rbegin()).String==";")
 	ret+="\n";
     } else if (!comment.isEmpty()) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);

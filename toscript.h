@@ -83,6 +83,8 @@ public slots:
 
   void expandSource(QListViewItem *item);
   void expandDestination(QListViewItem *item);
+  void addConnection(const QString &name);
+  void delConnection(const QString &name);
 };
 
 #endif
