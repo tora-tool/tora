@@ -34,6 +34,18 @@
 #define TO_ORACLE_LONG_SIZE 33000 
 #endif
 
+static void ThrowException(const otl_exception &exc)
+{
+  QString ret=QString::fromUtf8((const char *)exc.msg);
+#if 1
+  if (strlen(exc.stm_text)) {
+    ret+="\n";
+    ret+=QString::fromUtf8((const char *)exc.stm_text);
+  }
+#endif
+  throw ret;
+}
+
 class toOracleProvider : public toConnectionProvider {
 public:
   class oracleSub : public toConnectionSub {
@@ -144,13 +156,15 @@ public:
 	  }
 	  break;
 	}
-      } catch (otl_exception &exc) {
+      } catch (const otl_exception &exc) {
 	delete buffer;
-	throw QString::fromUtf8((const char *)exc.msg);
+	ThrowException(exc);
       } catch (...) {
 	delete buffer;
 	throw;
       }
+      // Never get here
+      return QString::null;
     }
     virtual bool eof(void)
     {
@@ -285,8 +299,8 @@ public:
       oracleSub *conn=oracleConv(sub);
       try {
 	conn->Connection->commit();
-      } catch (otl_exception &exc) {
-	throw QString::fromUtf8((const char *)exc.msg);
+      } catch (const otl_exception &exc) {
+	ThrowException(exc);
       }
     }
     virtual void rollback(toConnectionSub *sub)
@@ -294,8 +308,8 @@ public:
       oracleSub *conn=oracleConv(sub);
       try {
 	conn->Connection->rollback();
-      } catch (otl_exception &exc) {
-	throw QString::fromUtf8((const char *)exc.msg);
+      } catch (const otl_exception &exc) {
+	ThrowException(exc);
       }
     }
 
@@ -317,14 +331,14 @@ public:
 	else if (mode=="SYS_DBA")
 	  dba=1;
 	conn=new otl_connect(connectString(),0,oper,dba);
-      } catch (otl_exception &exc) {
+      } catch (const otl_exception &exc) {
 	if (!sqlNet) {
 	  if (oldSid.isNull())
 	    toUnSetEnv("ORACLE_SID");
 	  else
 	    toSetEnv("ORACLE_SID",oldSid.latin1());
 	}
-	throw QString::fromUtf8((const char *)exc.msg);
+	ThrowException(exc);
       }
       if (!sqlNet) {
 	if (oldSid.isNull())
@@ -387,8 +401,8 @@ public:
       if (params.size()==0) {
 	try {
 	  otl_cursor::direct_exec(*(conn->Connection),sql);
-	} catch (otl_exception &exc) {
-	  throw QString::fromUtf8((const char *)exc.msg);
+	} catch (const otl_exception &exc) {
+	  ThrowException(exc);
 	}
       } else
 	toQuery query(connection(),sql,params);
@@ -418,7 +432,7 @@ public:
     ret.insert(ret.end(),"SQL*Net");
     return ret;
   }
-  virtual std::list<QString> databases(const QString &host)
+  virtual std::list<QString> databases(const QString &host,const QString &,const QString &)
   {
     QString str;
 #ifdef WIN32
@@ -539,7 +553,7 @@ void toOracleProvider::oracleQuery::execute(void)
       else
 	throw QString("Unknown input argument type");
     }
-  } catch (otl_exception &exc) {
-    throw QString::fromUtf8((const char *)exc.msg);
+  } catch (const otl_exception &exc) {
+    ThrowException(exc);
   }
 }

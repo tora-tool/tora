@@ -44,6 +44,7 @@ Extended functionality:
 * Never lock while executing in debugger.
 * Database provider setup tabs.
 * Tool menu in all tools.
+* Different highlighter depending on connection.
 
 New tools:
 

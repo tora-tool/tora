@@ -72,7 +72,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   changeProvider();
 
   SqlNet->setChecked(!toTool::globalConfig(CONF_HOST,DEFAULT_HOST).isEmpty());
-  changeHost();
+  Host->lineEdit()->setText(toTool::globalConfig(CONF_HOST,DEFAULT_HOST));
 
   Username->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
   Username->setFocus();
@@ -147,7 +147,9 @@ void toNewConnection::changeProvider(void)
 void toNewConnection::changeHost(void)
 {
   std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
-							       Host->currentText());
+							       Host->currentText(),
+							       Username->text(),
+							       Password->text());
   QString current=Database->currentText();
 
   Database->clear();
@@ -250,6 +252,7 @@ void toNewConnection::historySelection(void)
 	Provider->setCurrentItem(i);
 	break;
       }
+    changeProvider();
     if (SqlNet->isHidden())
       Host->lineEdit()->setText(item->text(1));
     else

@@ -54,6 +54,7 @@ public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
 
+  virtual bool canHandle(toConnection &conn);
 public slots:
   void refresh(void);
   void changeSchema(int)

@@ -98,9 +98,10 @@ std::list<QString> toConnectionProvider::hosts(const QString &provider)
   return fetchProvider(provider).hosts();
 }
 
-std::list<QString> toConnectionProvider::databases(const QString &provider,const QString &host)
+std::list<QString> toConnectionProvider::databases(const QString &provider,const QString &host,
+						   const QString &user,const QString &pwd)
 {
-  return fetchProvider(provider).databases(host);
+  return fetchProvider(provider).databases(host,user,pwd);
 }
 
 // Query value implementation

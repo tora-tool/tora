@@ -86,7 +86,11 @@ public:
   { return Editor; }
   bool describe(const QString &query);
 
+  virtual bool canHandle(toConnection &conn)
+  { return true; }
+
 public slots:
+  void connectionChanged(void);
   void refresh();
   void execute()
   { execute(false); }

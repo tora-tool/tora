@@ -64,6 +64,12 @@ static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
 
+static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
+			       "SELECT 'No schemas'",
+			       QString::null,
+			       "3.0",
+			       "MySQL");
+
 static toSQL SQLTextPiece("Global:SQLText",
 			  "SELECT SQL_Text\n"
 			  "  FROM V$SQLText_With_Newlines\n"
@@ -89,10 +95,20 @@ static toSQL SQLNow("Global:Now",
 		    "SELECT TO_CHAR(SYSDATE) FROM DUAL",
 		    "Get current date/time from database");
 
+static toSQL SQLNowMySQL("Global:Now",
+			 "SELECT now()",
+			 QString::null,
+			 "3.0",
+			 "MySQL");
+
 QString toNow(toConnection &conn)
 {
-  toQList vals=toQuery::readQuery(conn,SQLNow);
-  return toPop(vals);
+  try {
+    toQList vals=toQuery::readQuery(conn,SQLNow);
+    return toPop(vals);
+  } catch(...) {
+    return "Unexpected error";
+  }
 }
 
 static toSQL SQLAddress("Global:Address",

@@ -59,6 +59,8 @@
 
 #include "tobrowser.moc"
 #include "tobrowserfilterui.moc"
+#include "tobrowserindexui.moc"
+#include "tobrowserconstraintui.moc"
 
 #include "icons/tobrowser.xpm"
 #include "icons/refresh.xpm"
@@ -88,6 +90,8 @@ public:
     window->setIcon(*toolbarImage());
     return window;
   }
+  virtual bool canHandle(toConnection &conn)
+  { return conn.provider()=="Oracle"||conn.provider()=="MySQL"; }
 };
 
 static toBrowserTool BrowserTool;
@@ -269,6 +273,11 @@ static toSQL SQLListTables("toBrowser:ListTables",
 			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.");
+static toSQL SQLListTablesMysql("toBrowser:ListTables",
+				"SHOW TABLES",
+				QString::null,
+				"3.0",
+				"MySQL");
 static toSQL SQLTableGrants("toBrowser:TableGrants",
 			    "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
 			    " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
@@ -333,12 +342,14 @@ static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
 
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "SELECT Synonym_Name FROM ALL_SYNONYMS\n"
-			    " WHERE Table_Owner = :f1<char[101]>"
+			    " WHERE Table_Owner = :f1<char[101]>\n"
+			    "   AND Owner = :f1<char[101]>\n"
 			    " ORDER BY Synonym_Name",
 			    "List the available synonyms in a schema");
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
 			    "SELECT * FROM ALL_SYNONYMS\n"
-			    " WHERE Table_Owner = :f1<char[101]> AND Synonym_Name = :f2<char[101]>",
+			    " WHERE (Table_Owner = :f1<char[101]> OR Owner = :f1<char[101]>)\n"
+			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
 
 static toSQL SQLListSQL("toBrowser:ListPL/SQL",
@@ -1081,6 +1092,11 @@ void toBrowseTemplate::insertItems(QListView *parent)
     new toTemplateDBItem(conn,dbitem,*i);
   }
   Parents.insert(Parents.end(),dbitem);
+}
+
+bool toBrowser::canHandle(toConnection &conn)
+{
+  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
 }
 
 static toBrowseTemplate BrowseTemplate;

@@ -25,3 +25,9 @@ toResultContent:
 
 toTemplate:
 	Doesn't seem to remember more than one template file.
+
+toMysqlProvider:
+	Doesn't handle binds very well.
+
+toResult:
+	Changing connection for tools with different version wont update saved toSQL:s.

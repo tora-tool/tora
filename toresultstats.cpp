@@ -30,6 +30,8 @@ toResultStats::toResultStats(bool onlyChanged,int ses,QWidget *parent,
 			     const char *name)
   : toResultView(false,false,parent,name),OnlyChanged(onlyChanged)
 {
+  if (!canHandle(connection()))
+    setEnabled(false);
   SessionID=ses;
   setSQLName("toResultStats");
   System=false;
@@ -44,19 +46,24 @@ toResultStats::toResultStats(bool onlyChanged,QWidget *parent,
 			     const char *name)
   : toResultView(false,false,parent,name),OnlyChanged(onlyChanged)
 {
-  try {
-    toQuery query(connection(),SQLSession);
-    SessionID=query.readValue().toInt();
-  } catch (...) {
-    SessionID=-1;
-  }
-  System=false;
+  if (canHandle(connection())) {
+    try {
+      toQuery query(connection(),SQLSession);
+      SessionID=query.readValue().toInt();
+    } catch (...) {
+      SessionID=-1;
+    }
+    System=false;
+  } else
+    setEnabled(false);
   setup();
 }
 
 toResultStats::toResultStats(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name),OnlyChanged(false)
 {
+  if (!canHandle(connection()))
+    setEnabled(false);
   System=true;
   setup();
 }
@@ -93,6 +100,8 @@ static toSQL SQLSystemStatistics("toResultStats:SystemStatistics",
 
 void toResultStats::resetStats(void)
 {
+  if (!canHandle(connection()))
+    return;
   toBusy busy;
   try {
     toConnection &conn=connection();
@@ -124,6 +133,8 @@ void toResultStats::resetStats(void)
 
 void toResultStats::changeSession(toQuery &query)
 {
+  if (!canHandle(connection()))
+    return;
   if (System)
     throw QString("Can't change session on system statistics");
   try {
@@ -139,6 +150,8 @@ void toResultStats::changeSession(toQuery &query)
 
 void toResultStats::changeSession(int ses)
 {
+  if (!canHandle(connection()))
+    return;
   if (System)
     throw QString("Can't change session on system statistics");
   if (SessionID!=ses) {
@@ -189,6 +202,8 @@ void toResultStats::addValue(bool reset,int id,const QString &name,double value)
 
 void toResultStats::refreshStats(bool reset)
 {
+  if (!canHandle(connection()))
+    return;
   toBusy busy;
   try {
     clear();
@@ -221,4 +236,9 @@ void toResultStats::refreshStats(bool reset)
     }
   } TOCATCH
   updateContents();
+}
+
+bool toResultStats::canHandle(const toConnection &conn)
+{
+  return conn.provider()=="Oracle";
 }

@@ -687,9 +687,13 @@ public:
   virtual std::list<QString> hosts(void);
   /** List the available databases this provider knows about for a given host.
    * @param host Host to return connections for.
+   * @param user That might be needed.
+   * @param password That might be needed.
    * @return A list of databases available for a given host.
    */
-  virtual std::list<QString> databases(const QString &host)=0;
+  virtual std::list<QString> databases(const QString &host,
+				       const QString &user,
+				       const QString &pwd)=0;
 
   /** Get the provider object for a given provider name.
    * @param provider Name of provider.
@@ -713,9 +717,12 @@ public:
   /** Get a list of databases for a given provider and host.
    * @param provider Provider to fetch databases for.
    * @param host Host to fetch databases for.
+   * @param user That might be needed.
+   * @param password That might be needed.
    * @return List of known databases.
    */
-  static std::list<QString> databases(const QString &provider,const QString &host);
+  static std::list<QString> databases(const QString &provider,const QString &host,
+				      const QString &user,const QString &pwd);
 };
 
 #endif

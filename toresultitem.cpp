@@ -51,6 +51,12 @@ static toSQL SQLResource(TOSQL_RESULTRESOURCE,
 			 " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>",
 			 "Display information about an SQL statement");
 
+static toSQL SQLResourceMySQL(TOSQL_RESULTRESOURCE,
+			      "SELECT 'Not available' \"-\"",
+			      QString::null,
+			      "3.0",
+			      "MySQL");
+
 void toResultItem::setup(int num,bool readable)
 {
   enableClipper(true);

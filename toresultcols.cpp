@@ -59,6 +59,8 @@ public:
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {
+      if (view->connection().provider()!="Oracle")
+	return QString::null;
       toQList resLst=toQuery::readQuery(view->connection(),SQLInfo,
 					text(10),text(11),text(1));
       QString result("<B>");
@@ -172,30 +174,52 @@ static toSQL SQLComment("toResultCols:Comments",
 
 void toResultCols::query(const QString &sql,const toQList &param)
 {
+  toConnection &conn=connection();
+  enum {
+    Oracle,
+    MySQL
+  } type;
+
+  if(conn.provider()=="Oracle")
+    type=Oracle;
+  else if (conn.provider()=="MySQL")
+    type=MySQL;
+  else
+    return;
+    
+
   SQL=sql;
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end()) {
-    SQL="\"";
-    SQL+=*cp;
+    if (type==Oracle) {
+      SQL="\"";
+      SQL+=*cp;
+      SQL+="\"";
+    } else
+      SQL="";
     Owner=*cp;
-    SQL+="\"";
   }
   cp++;
   if (cp!=((toQList &)param).end()) {
-    SQL.append(".\"");
+    if (type==Oracle)
+      SQL.append(".\"");
     SQL.append(*cp);
+    if (type==Oracle)
+      SQL+="\"";
     TableName=(*cp);
-    SQL+="\"";
   } else {
     try {
       const toConnection::tableName &name=connection().realName(Owner);
-      SQL="\"";
-      SQL+=name.Owner;
-      SQL+="\".\"";
-      SQL+=name.Name;
-      SQL+="\"";
+      if (type==Oracle) {
+	SQL="\"";
+	SQL+=name.Owner;
+	SQL+="\".\"";
+	SQL+=name.Name;
+	SQL+="\"";
+      } else
+	SQL=name.Name;
       Owner=name.Owner;
       TableName=name.Name;
     } catch(...) {
@@ -212,8 +236,8 @@ void toResultCols::query(const QString &sql,const toQList &param)
     str.append(SQL);
     str.append(" WHERE NULL = NULL");
 
-    toQuery Query(connection(),str);
-    toQuery Comment(connection());
+    toQuery Query(conn,str);
+    toQuery Comment(conn);
 
     toQDescList desc=Query.describe();
 
@@ -236,9 +260,18 @@ void toResultCols::query(const QString &sql,const toQList &param)
       toPush(lst,toQValue(Owner));
       toPush(lst,toQValue(TableName));
       toPush(lst,toQValue((*i).Name));
-      Comment.execute(SQLComment,lst);
-      LastItem->setText(4,Comment.readValueNull());
+      if(type==Oracle) {
+	Comment.execute(SQLComment,lst);
+	LastItem->setText(4,Comment.readValueNull());
+      }
     }
   } TOCATCH
   updateContents();
+}
+
+bool toResultCols::canHandle(const toConnection &conn)
+{
+  if (conn.provider()=="Oracle"||conn.provider()=="MySQL")
+    return true;
+  return false;
 }

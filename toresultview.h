@@ -525,6 +525,10 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void addMenues(QPopupMenu *);
+  /** Reimplemented for internal reasons.
+   */
+  virtual bool canHandle(const toConnection &)
+  { return true; }
 public slots:
   /** Reimplemented for internal reasons.
    */
@@ -546,6 +550,9 @@ protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void menuCallback(int);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void connectionChanged(void);
 };
 
 #endif

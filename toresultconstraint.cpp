@@ -76,6 +76,8 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 
 void toResultConstraint::query(const QString &sql,const toQList &param)
 {
+  if (!canHandle(connection()))
+    return;
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
@@ -143,4 +145,9 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
     }
   } TOCATCH
   updateContents();
+}
+
+bool toResultConstraint::canHandle(const toConnection &conn)
+{
+  return conn.provider()=="Oracle";
 }

@@ -73,6 +73,12 @@ my $KDEInclude;
 my $KDELibs;
 my $NoRPath;
 
+my $MySQLInclude;
+my $MySQLLib;
+my $MySQLShared;
+my $MySQLStatic;
+my $MySQLFound=1;
+
 $QtDir=$ENV{QTDIR};
 
 for (@ARGV) {
@@ -88,6 +94,10 @@ for (@ARGV) {
 	$UIC=$1;
     } elsif (/^--prefix=(.*)$/) {
 	$InstallPrefix=$1;
+    } elsif (/^--with-mysql-include=(.*)$/) {
+	$MySQLInclude=$1;
+    } elsif (/^--with-mysql-libs=(.*)$/) {
+	$MySQLLib=$1;
     } elsif (/^--prefix-bin=(.*)$/) {
 	$InstallBin=$1;
     } elsif (/^--prefix-lib=(.*)$/) {
@@ -124,23 +134,25 @@ configure [options...]
 
 Options can be any of the following:
 
---prefix           Specify base directory of install
---prefix-bin       Binary directory of install
---prefix-lib       Library directory of install
---with-qt          Specify Qt base directory
---with-qt-moc      Specify moc command to use
---with-qt-uic      Specify uic command to use
---with-qt-include  Specify Qt include directory
---with-qt-libs     Specify Qt library directory
---with-gcc         Specify which GCC compiler to use
---with-mono        Force monolithic compilation
---with-lib         Add extra library to include (Include -l as well)
---with-static      Force static binary compilation
---with-kde         Compile as KDE application (Requires KDE 2.2 or later)
---without-kde      Don't compile as KDE application even though KDE available.
---with-kde-include Where to find KDE include files
---with-kde-libs    Where to find KDE libraries
---without-rpath    Compile without rpath to Oracle libraries
+--prefix             Specify base directory of install
+--prefix-bin         Binary directory of install
+--prefix-lib         Library directory of install
+--with-qt            Specify Qt base directory
+--with-qt-moc        Specify moc command to use
+--with-qt-uic        Specify uic command to use
+--with-qt-include    Specify Qt include directory
+--with-qt-libs       Specify Qt library directory
+--with-gcc           Specify which GCC compiler to use
+--with-mono          Force monolithic compilation
+--with-lib           Add extra library to include (Include -l as well)
+--with-static        Force static binary compilation
+--with-kde           Compile as KDE application (Requires KDE 2.2 or later)
+--without-kde        Dont compile as KDE application even though KDE available.
+--with-kde-include   Where to find KDE include files
+--with-kde-libs      Where to find KDE libraries
+--with-mysql-include Where to find MySQL include files
+--with-mysql-libs    Where to find MySQL library files
+--without-rpath      Compile without rpath to Oracle libraries
 
 __USAGE__
         exit(2);
@@ -511,7 +523,63 @@ __TEMP__
 	$StdCppLibStatic="";
     }
 
+    $MySQLInclude=findFile("^mysql\\.h\$",
+			   undef,
+			   $MySQLInclude,
+			   "/usr/include",
+			   "/usr/include/mysql",
+			   "/usr/lib/mysql/include",
+			   "/usr/local/include",
+			   "/usr/local/include/mysql",
+			   "/ust/local/lib/mysql/include");
+
+    if (!-d $MySQLInclude) {
+	print "Couldn't find include files for MySQL.\n";
+	$MySQLFound=0;
+    }
+    print "MySQL includefiles at $MySQLInclude\n";
+
+    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
+	                                          return -f $_[0] && ! -l $_[0];
+					      },
+		       $MySQLLib,
+		       "/usr/lib",
+		       "/usr/lib/mysql",
+		       "/usr/lib/mysql/lib",
+		       "/usr/local/lib",
+		       "/usr/local/lib/mysql",
+		       "/usr/local/lib/mysql/lib");
+    
+    if (-d $MySQLLib) {
+	$MySQLShared=" -lmysqlclient";
+    }
+    if (!-d $MySQLLib) {
+	print "Couldn't find library files for MySQL.\n";
+	$MySQLFound=0;
+    }
+    print "MySQL library directory at $MySQLLib\n";
+
+    findFile("^libmysqlclient.*\\.a",sub {
+	                                $MySQLStatic=$_[0];
+					return -f $_[0];
+				    },
+	     $MySQLLib,
+	     "/usr/lib",
+	     "/usr/lib/mysql",
+	     "/usr/lib/mysql/lib",
+	     "/usr/local/lib",
+	     "/usr/local/lib/mysql",
+	     "/usr/local/lib/mysql/lib");
+    if (! -f $MySQLStatic) {
+	$MySQLStatic="";
+    } else {
+	print "Found static MySQL at $MySQLStatic\n";
+    }
+
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
+    if (defined $MySQLLib) {
+	$LFlags.="\"-L".$MySQLLib."\" ";
+    }
     if ($ORACLE_RELEASE =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
         $LFlags.="\"-lcore4\" ";
@@ -541,6 +609,9 @@ __TEMP__
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
     $Includes.="\"-I".$QtInclude."\"";
+    if (defined $MySQLInclude) {
+	$Includes.=" \"-I".$MySQLInclude."\"";
+    }
 
     if (!$NoKDE) {
 	$KDEInclude=findFile("^kglobal\\.h\$",sub {
@@ -750,6 +821,18 @@ __EOT__
 
 	print MAKEFILE "# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version\n";
 	print MAKEFILE "TARGET=$Target\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# MySQL found\n";
+	print MAKEFILE "MYSQL_FOUND=$MySQLFound\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# MySQL library\n";
+	print MAKEFILE "MYSQL_SHARED=$MySQLShared\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Static MySQL libraries\n";
+	print MAKEFILE "MYSQL_STATIC=$MySQLStatic\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";

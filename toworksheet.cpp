@@ -199,6 +199,8 @@ public:
   {
     return new toWorksheetSetup(this,parent);
   }
+  virtual bool canHandle(toConnection &conn)
+  { return true; }
 };
 
 static toWorksheetTool WorksheetTool;
@@ -378,6 +380,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
     show();
     StatisticButton->setOn(true);
   }
+  connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
 }
 
 void toWorksheet::changeRefresh(const QString &str)
@@ -428,6 +431,11 @@ void toWorksheet::windowActivated(QWidget *widget)
     delete ToolMenu;
     ToolMenu=NULL;
   }
+}
+
+void toWorksheet::connectionChanged(void)
+{
+  
 }
 
 bool toWorksheet::checkSave(bool input)

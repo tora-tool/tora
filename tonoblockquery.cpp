@@ -34,7 +34,7 @@
 #undef TO_DEBUG
 #ifdef TO_DEBUG
 #include <stdio.h>
-#define TO_DEBUGOUT(x) printf(x);
+#define TO_DEBUGOUT(x) printf((const char *)x);
 #else
 #define TO_DEBUGOUT(x)
 #endif

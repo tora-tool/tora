@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>530</width>
+            <width>522</width>
             <height>408</height>
         </rect>
     </property>
@@ -466,20 +466,20 @@
         <slot>historySelection()</slot>
     </connection>
     <connection>
+        <sender>SqlNet</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>changeHost()</slot>
+    </connection>
+    <connection>
         <sender>Provider</sender>
-        <signal>textChanged(const QString&amp;)</signal>
+        <signal>activated(int)</signal>
         <receiver>toNewConnectionUI</receiver>
         <slot>changeProvider()</slot>
     </connection>
     <connection>
         <sender>Host</sender>
         <signal>textChanged(const QString&amp;)</signal>
-        <receiver>toNewConnectionUI</receiver>
-        <slot>changeHost()</slot>
-    </connection>
-    <connection>
-        <sender>SqlNet</sender>
-        <signal>toggled(bool)</signal>
         <receiver>toNewConnectionUI</receiver>
         <slot>changeHost()</slot>
     </connection>

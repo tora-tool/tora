@@ -19,6 +19,13 @@
 #
 ############################################################################
 
+include Makefile.setup
+
+ifeq ($(MYSQL_FOUND),1)
+MYSQL_CPP=tomysqlconnection.cpp
+MYSQL_PLUGIN=plugins/tomysqlconnection.tso
+endif
+
 TITLE=TOra
 SUBDIRS=
 SOURCES=\
@@ -26,7 +33,9 @@ SOURCES=\
 	toaboutui.cpp			\
 	tobarchart.cpp		        \
 	tobrowser.cpp		        \
+	tobrowserconstraintui.cpp	\
 	tobrowserfilterui.cpp	        \
+	tobrowserindexui.cpp	        \
 	toconnection.cpp	        \
 	tocurrent.cpp		        \
 	tochangeconnection.cpp	        \
@@ -110,7 +119,8 @@ SOURCES=\
 	totuningoverviewui.cpp		\
 	toworksheet.cpp			\
 	toworksheetsetupui.cpp		\
-	utils.cpp
+	utils.cpp			\
+	$(MYSQL_CPP)
 
 API=	\
 	tochangeconnection.h	\
@@ -158,12 +168,13 @@ API=	\
 
 TARGET=tora-plugin
 
-include Makefile.setup
 include Makefile.common
 
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
-	objs/tobrowserfilterui.o
+	objs/tobrowserconstraintui.o \
+	objs/tobrowserfilterui.o \
+	objs/tobrowserindexui.o
 plugins/tocharts.tso:\
 	objs/tobarchart.o \
 	objs/tolinechart.o \
@@ -180,7 +191,6 @@ plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
-plugins/tooracleconnection.tso:objs/tooracleconnection.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
 	objs/toresultconstraint.o \
@@ -226,19 +236,31 @@ plugins/toworksheet.tso: \
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
 
+# Special plugins
+
+plugins/tooracleconnection.tso:objs/tooracleconnection.o
+	@echo Linking plugin $@
+	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
+	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(ORACLE_SHARED) -o $@ $^
+
+plugins/tomysqlconnection.tso:objs/tomysqlconnection.o
+	@echo Linking plugin $@
+	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
+	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(MYSQL_SHARED) -o $@ $^
+
 # Monolithic target, for non ELF platforms
 
 tora-mono: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(GCC) $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(LIBS_GLOB) $(STDCPP_SHARED) $(ORACLE_SHARED) $(QT_SHARED)
+		$(LIBS_GLOB) $(STDCPP_SHARED) $(ORACLE_SHARED) $(QT_SHARED) $(MYSQL_SHARED)
 
 # Static target, easier to distribute
 
 tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) \
+		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) $(MYSQL_STATIC) \
 		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libXft.a /usr/X11R6/lib/libXrender.a \
 		/usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a\
 		/usr/lib/libmng.a -lz -ljpeg
@@ -268,7 +290,8 @@ tora-plugin: \
 	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
 	plugins/totuning.tso \
-	plugins/toworksheet.tso
+	plugins/toworksheet.tso \
+	$(MYSQL_PLUGIN)
 
 # The binary for the pluginbased tora
 
@@ -313,7 +336,7 @@ tora: \
 	objs/utils.o
 	@echo Linking $@
 	$(GCC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
-		-o $@ $^ $(LIBS_GLOB) $(ORACLE_SHARED) $(STDCPP_SHARED) $(QT_SHARED)
+		-o $@ $^ $(LIBS_GLOB) $(STDCPP_SHARED) $(QT_SHARED)
 
 # This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
 # configure won't try to detect those. It's up to you.

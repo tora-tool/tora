@@ -784,6 +784,7 @@ void toResultView::setup(bool readable,bool dispCol)
   if (NumberColumn)
     addColumn("#");
   Filter=NULL;
+  connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
 }
 
 toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
@@ -948,4 +949,16 @@ void toResultView::menuCallback(int cmd)
 int toResultView::queryColumns(void) const
 {
   return Query?Query->columns():0;
+}
+
+void toResultView::connectionChanged(void)
+{
+  setEnabled(canHandle(connection()));
+  if (!sqlName().isEmpty()) {
+    try {
+      QString sql=toSQL::string(sqlName(),connection());
+      SQL=sql;
+    } catch(...) {
+    }
+  }
 }
