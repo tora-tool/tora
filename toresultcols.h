@@ -93,7 +93,7 @@ class toResultCols : public QVBox, public toResult {
     friend class resultCols;
   };
   class resultCols : public toListView {
-    toResultCols::resultColsEdit *Edit;
+    resultColsEdit *Edit;
     QString Owner;
     QString Name;
   public:

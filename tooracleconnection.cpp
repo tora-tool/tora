@@ -496,7 +496,7 @@ public:
     {
       bool ok=true;
       for(unsigned int i=0;i<name.length();i++) {
-	if (name[i].upper()!=name[i]||!toIsIdent(name[i]))
+	if (name.at(i).upper()!=name.at(i)||!toIsIdent(name.at(i)))
 	  ok=false;
       }
       if (ok)

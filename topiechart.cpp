@@ -318,6 +318,10 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
   }
 }
 
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
 QString toPieChart::findLabel(QPoint p)
 {
   if (ChartRect.contains(p)) {
@@ -338,7 +342,7 @@ QString toPieChart::findLabel(QPoint p)
 
     std::list<int>::iterator i=Angels.begin();
     std::list<QString>::iterator j=Labels.begin();
-    while(i!=Labels.end()&&j!=Angels.end()) {
+    while(i!=Angels.end()&&j!=Labels.end())  {
       if ((*i)>iang)
 	return *j;
       i++;
