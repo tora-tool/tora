@@ -295,8 +295,9 @@ public:
 	    lob>>data;
 	    if (!lob.eof()) {
 	      otl_long_string sink(10000);
-	      while(!lob.eof())
+	      do {
 		lob>>sink;
+	      } while(!lob.eof()&&sink.len()>0);
 	      if (toThread::mainThread())
 		toStatusMessage(QString::fromLatin1("Data exists past length of LOB"));
 	      else

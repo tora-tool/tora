@@ -1204,9 +1204,9 @@ __EOT__
 	                                    $StdCppLibStatic=$_[0];
 				  	    return -f $_[0];
 					},
+		 $path,
 		 "/usr/lib",
-		 "/usr/local/lib",
-		 $path);
+		 "/usr/local/lib");
 	if (! -f $StdCppLibStatic) {
 	    print "failed!\n";
 	    exit(2);
