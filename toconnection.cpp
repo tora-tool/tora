@@ -1043,20 +1043,23 @@ static toSQL SQLListObjects("toConnection:ListObjects",
 
 void toConnection::readObjects(void)
 {
-  if (TableNames.size()==0) {
-    toBusy busy;
-    toStatusMessage("Reading available objects",true);
-    qApp->processEvents();
-    toQuery tables(*this,SQLListObjects,user());
-    while(!tables.eof()) {
-      tableName cur;
-      cur.Name=tables.readValueNull();
-      cur.Owner=tables.readValueNull();
-      cur.Synonym=tables.readValueNull();
-      TableNames.insert(TableNames.end(),cur);
+  try {
+    if (TableNames.size()==0) {
+      toBusy busy;
+      toStatusMessage("Reading available objects",true);
+      qApp->processEvents();
+      toQuery tables(*this,SQLListObjects,user());
+      while(!tables.eof()) {
+	tableName cur;
+	cur.Name=tables.readValueNull();
+	cur.Owner=tables.readValueNull();
+	cur.Synonym=tables.readValueNull();
+	TableNames.insert(TableNames.end(),cur);
+      }
+      TableNames.sort();
+      toStatusMessage("");
     }
-    TableNames.sort();
-    toStatusMessage("");
+  } catch (...) {
   }
 }
 

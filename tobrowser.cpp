@@ -305,7 +305,14 @@ static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
 			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
 			   " ORDER BY Table_Name",
-			   "List the available tables in a schema.");
+			   "List the available tables in a schema.",
+			   "8.0");
+static toSQL SQLListTables7("toBrowser:ListTables",
+			    "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
+			    "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
+			    " ORDER BY Table_Name",
+			    QString::null,
+			    "7.3");
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				"SHOW TABLES",
 				QString::null,
@@ -359,7 +366,15 @@ static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "  FROM ALL_IND_COLUMNS\n"
 			  " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			  " ORDER BY Column_Position",
-			  "Display columns on which an index is built");
+			  "Display columns on which an index is built",
+			  "8.0");
+static toSQL SQLIndexCols7("toBrowser:IndexCols",
+			   "SELECT Table_Name,Column_Name,Column_Length,' '\n"
+			   "  FROM ALL_IND_COLUMNS\n"
+			   " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
+			   " ORDER BY Column_Position",
+			   QString::null,
+			   "7.3");
 static toSQL SQLIndexInfo("toBrowser:IndexInformation",
 			  "SELECT * FROM ALL_INDEXES\n"
 			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",

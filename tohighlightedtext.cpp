@@ -41,8 +41,10 @@
 #include <qsimplerichtext.h>
 #include <qstylesheet.h>
 #include <qapplication.h>
+#include <qlistbox.h>
 
 #include "tohighlightedtext.h"
+#include "toconnection.h"
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
@@ -59,6 +61,8 @@ toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
   }
   ColorsUpdated=false;
 }
+
+#include <stdio.h>
 
 toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)
 {
@@ -156,6 +160,8 @@ toSyntaxAnalyzer &toDefaultAnalyzer(void)
 toHighlightedText::toHighlightedText(QWidget *parent,const char *name)
   : toMarkedText(parent,name),Analyzer(&DefaultAnalyzer)
 {
+  Completion=NULL;
+  NoCompletion=KeepCompletion=false;
   Current=LastCol=LastRow=-1;
   Highlight=!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty();
   KeywordUpper=!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty();
@@ -318,7 +324,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     if (posx<width)
       painter->fillRect(posx,0,width-posx,height,bkg);
   } else
-      painter->fillRect(LeftIgnore,0,width-LeftIgnore,height,bkg);
+    painter->fillRect(LeftIgnore,0,width-LeftIgnore,height,bkg);
   painter->setPen(cp.active().text());
 
   if (hasFocus()) {
@@ -333,18 +339,35 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     }
 
     if (row==curline) {
-      if (LastRow!=curline||LastCol!=curcol)
+      bool check;
+      if (LastRow!=curline||LastCol!=curcol) {
 	Cursor=0;
+	if (Completion&&!KeepCompletion) {
+	  delete Completion;
+	  Completion=NULL;
+	}
+	check=!Completion;
+      }
       if (Cursor<2) {
-	LastRow=curline;
-	LastCol=curcol;
 	if (!isReadOnly()) {
 	  painter->drawLine(cursorx-1,0,cursorx-1,
 			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
 	}
+	if (Completion) {
+	  int x=cursorPoint().x()-xOffset();
+	  QString mrk=markedText();
+	  if (!mrk.isEmpty()&&(line1!=curline||col1!=curcol))
+	    x-=painter->fontMetrics().width(mrk);
+	  Completion->move(x,
+			   cursorPoint().y()+cellHeight()-yOffset());
+	}
 	Cursor++;
       } else
 	Cursor=0;
+      LastRow=curline;
+      LastCol=curcol;
+      if (check)
+	checkComplete();
     }
   }
 }
@@ -407,54 +430,198 @@ void toHighlightedText::nextError(void)
   }
 }
 
-#if 0
-void toHighlightedText::keyPressEvent(QKeyEvent *e)
+static QString UpperIdent(const QString &str)
 {
-  int origPos,origLine;
-  getCursorPosition(&origLine,&origPos);
-  pos=origPos;
-  line=origLine;
+  if (str.length()>0&&str[0]=='\"')
+    return str;
+  else
+    return str.upper();
+}
 
-  {
-    char inString=0;
-    QString str=textLine(line);
-    for(;;) {
-      char p=str[pos];
-      if (isString) {
-	if (p==inString)
-	  inString=0;
-      } else if (p==';') {
-	pos++;
-	if (pos>str.length()) {
-	  pos=0;
-	  line++;
+void toHighlightedText::checkComplete(void)
+{
+  if (Completion||NoCompletion)
+    return;
+
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+
+  QString line=textLine(curline);
+
+  if (!isReadOnly()&&curcol>0&&line[curcol-1]=='.') {
+    if (toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty())
+      return;
+    int mrklen=0;
+    while(curcol+mrklen<int(line.length())&&toIsIdent(line[curcol+mrklen]))
+      mrklen++;
+
+    QString name=UpperIdent(toGetToken(this,curline,curcol,false));
+    QString owner;
+    if (name==".")
+      name=UpperIdent(toGetToken(this,curline,curcol,false));
+
+    QString token=UpperIdent(toGetToken(this,curline,curcol,false));
+    if (token==".")
+      owner=UpperIdent(toGetToken(this,curline,curcol,false));
+    else {
+      while (token!=name&&token!=";"&&!token.isEmpty())
+	token=UpperIdent(toGetToken(this,curline,curcol,false));
+      if (token==";"||token.isEmpty()) {
+	getCursorPosition (&curline,&curcol);
+	token=UpperIdent(toGetToken(this,curline,curcol));
+	while (token!=name&&token!=";"&&!token.isEmpty())
+	  token=UpperIdent(toGetToken(this,curline,curcol));
+	UpperIdent(toGetToken(this,curline,curcol,false));
+      }
+      if (token!=";"&&!token.isEmpty()) {
+	token=UpperIdent(toGetToken(this,curline,curcol,false));
+	if (token!="TABLE"&&
+	    token!="UPDATE"&&
+	    token!="FROM"&&
+	    token!="INTO"&&
+	    token[0].isLetterOrNumber()) {
+	  name=token;
+	  token=toGetToken(this,curline,curcol,false);
+	  if (token==".")
+	    owner=UpperIdent(toGetToken(this,curline,curcol,false));
+	} else if (token==")") {
+	  return;
 	}
-	break;
-      } else if (p=='\"'||p=='\'')
-	inString=str[pos];
+      }
+    }
+    if (!owner.isEmpty()) {
+      name=owner+"."+name;
+    }
+    if (!name.isEmpty()) {
+      try {
+	toConnection &conn=toCurrentConnection(this);
+	AllComplete=conn.columns(conn.realName(name));
+	Completion=new QListBox(this);
+	CompleteItem=-1;
+	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
+	  Completion->insertItem(*i);
+	}
+	Completion->move(cursorPoint().x()-xOffset(),cursorPoint().y()+cellHeight()-yOffset());
+	Completion->setFixedHeight(cellHeight()*min(int(AllComplete.size()),8));
+	Completion->show();
+	connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
 
-      if (pos>0)
-	pos--;
-      else if (line>0) {
-	line--;
-	str=textLine(line);
-	pos=str.length();
-      } else {
-	pos=0;
-	line=0;
-	break;
+	getCursorPosition(&curline,&curcol);
+	KeepCompletion=true;
+	if (mrklen>0) {
+	  setCursorPosition(curline,curcol+mrklen,false);
+	  setCursorPosition(curline,curcol,true);
+	}
+	KeepCompletion=false;
+      } catch(...) {
       }
     }
   }
+}
 
-  {
-    
+void toHighlightedText::keyPressEvent(QKeyEvent *e)
+{
+  if (Completion&&Completion->isHidden()) {
+    delete Completion;
+    Completion=NULL;
   }
 
-  std::map<int,QString> tables;
+  NoCompletion=true;
+
+  if (Completion) {
+    if (e->key()==Key_Down||e->key()==Key_Tab||e->key()==Key_Up) {
+      if (e->key()==Key_Up) {
+	CompleteItem--;
+	if (CompleteItem<0)
+	  CompleteItem=0;
+      } else {
+	CompleteItem++;
+	if (CompleteItem>=int(Completion->count()))
+	  CompleteItem=Completion->count()-1;
+      }
+      Completion->setSelected(CompleteItem,true);
+      if (CompleteItem<Completion->topItem())
+	Completion->setTopItem(CompleteItem);
+      else if (CompleteItem-Completion->numItemsVisible()+1>=Completion->topItem())
+	Completion->setBottomItem(CompleteItem);
+      e->accept();
+      return;
+    } else if (e->key()==Key_Escape) {
+      delete Completion;
+      Completion=NULL;
+      e->accept();
+      return;
+    } else if (e->key()==Key_Backspace) {
+      QString mrk=markedText();
+      if (mrk.length()) {
+	mrk=mrk.left(mrk.length()-1);
+
+	Completion->clear();
+	CompleteItem=-1;
+	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
+	  if ((*i)==mrk.upper()) {
+	    insert(mrk,false);
+	    return;
+	  } else if ((*i).startsWith(mrk.upper()))
+	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
+	}
+
+	KeepCompletion=true;
+	insert(mrk,true);
+	KeepCompletion=false;
+	e->accept();
+	return;
+      }
+    } else if (e->key()==Key_Return&&CompleteItem>=0) {
+      if (CompleteItem>=0)
+	insert(Completion->text(CompleteItem),false);
+      else {
+	QString mrk=markedText();
+	insert(mrk,false);
+      }
+      e->accept();
+      return;
+    } else {
+      QString txt=e->text();
+      if (txt.length()&&txt.at(0).isLetterOrNumber()) {
+	QString mrk=markedText();
+	mrk+=txt;
+	Completion->clear();
+	CompleteItem=-1;
+	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
+	  if ((*i)==mrk.upper()) {
+	    insert(mrk,false);
+	    return;
+	  } else if ((*i).startsWith(mrk.upper()))
+	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
+	}
+
+	KeepCompletion=true;
+	insert(mrk,true);
+	KeepCompletion=false;
+	e->accept();
+	return;
+      }
+    }
+  }
   toMarkedText::keyPressEvent(e);
+  NoCompletion=false;
+  checkComplete();
 }
-#endif
+
+void toHighlightedText::selectComplete(void)
+{
+  if (Completion) {
+    QString tmp=Completion->currentText();
+    if (!tmp.isEmpty()) {
+      KeepCompletion=true;
+      insert(tmp,false);
+      KeepCompletion=false;
+    }
+  }
+  Completion->hide();
+  setFocus();
+}
 
 void toHighlightedText::previousError(void)
 {

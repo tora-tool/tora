@@ -42,6 +42,8 @@
 2001-09-16: Added alert tool.
 2001-09-17: Renumbered tools a bit.
 2001-09-17: Added option to maximize main window on startup.
+2001-09-17: Added code completion to toHighlightedText.
+2001-09-17: Removed timer from results.
 
 1.1.0: Released 2001-09-09
 

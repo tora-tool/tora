@@ -45,9 +45,7 @@
 toResult::toResult()
   : Slots(this)
 {
-  Setup=new QTimer;
-  QObject::connect(Setup,SIGNAL(timeout()),&Slots,SLOT(setup()));
-  Setup->start(1,true);
+  QTimer::singleShot(1,&Slots,SLOT(setup()));
   Handled=true;
   Tabs=NULL;
   ParametersSet=FromSQL=false;
@@ -173,6 +171,4 @@ void toResultObject::setup(void)
     Result->Handled=Result->canHandle(Result->connection());
   if (!Result->Handled)
     Result->changeHandle();
-  delete Result->Setup;
-  Result->Setup=NULL;
 }

@@ -12,9 +12,6 @@ Qt:
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
 	There are some redraw problems with QListItems that don't draw left justified text.
 
-gcc-2.96:
-	Seems really bad at handling exceptions, won't work with TOra.
-
 toMain:
 	Traversing the menues using keys will disable some file/edit entries that should be
 	enabled.
@@ -27,5 +24,8 @@ toResultContent:
 toTemplate:
 	Doesn't seem to remember more than one template file.
 
-utils:
-	Can't find SQL in SGA if using OTL specifiers for binds.
+toGetToken:
+	Doesn't handle comments when going backwards.
+
+toMysqlConnection:
+	Doesn't handle other locales than latin1 correctly.

@@ -76,7 +76,6 @@ public slots:
 class toResult {
   toResultObject Slots;
   bool Handled;
-  QTimer *Setup;
   QTabWidget *Tabs;
 
   QString SQL;

@@ -44,6 +44,7 @@
 
 class QPainter;
 class toSyntaxSetup;
+class QListBox;
 
 /** This class implements a syntax parser to provide information to
  * a syntax highlighted editor.
@@ -201,11 +202,21 @@ private:
   /** The syntax analyzer to use.
    */
   toSyntaxAnalyzer *Analyzer;
+
+  bool NoCompletion;
+  bool KeepCompletion;
+  QListBox *Completion;
+  int CompleteItem;
+  std::list<QString> AllComplete;
 protected:
   /** Set how much of the left margin to ignore painting.
    */
   void setLeftIgnore(int ignore)
   { LeftIgnore=ignore; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e);
+  virtual void checkComplete(void);
 public:
   /** Convert a linenumber after a change of the buffer to another linenumber. Can be
    * used to convert a specific linenumber after receiving a @ref insertedLines call.
@@ -283,6 +294,8 @@ public slots:
   /** Go to previous error.
    */
   void previousError(void);
+private slots:
+  void selectComplete(void);
 };
 
 #endif
