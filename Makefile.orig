@@ -23,6 +23,7 @@ TITLE=TOra
 SUBDIRS=
 SOURCES=\
 	toabout.cpp 		        \
+	toaboutui.cpp			\
 	tobarchart.cpp		        \
 	tobrowser.cpp		        \
 	tobrowserfilterui.cpp	        \
@@ -273,6 +274,7 @@ tora-plugin: \
 tora: \
 	objs/main.o \
 	objs/toabout.o \
+	objs/toaboutui.o \
 	objs/tochangeconnection.o \
 	objs/toconnection.o \
 	objs/todatabasesettingui.o \

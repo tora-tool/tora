@@ -198,6 +198,16 @@ public:
   virtual QWidget *configurationTab(QWidget *parent)
   { return NULL; }
 
+
+  /** Get a descriptive string describing this plugin. The string
+   * will be displayed in the about dialog after the Quotes page
+   * in tool order. The text format should be rich text. Return
+   * empty if no about dialog should be displayed for this tool.
+   * @return String containing tool description.
+   */
+  virtual QString about(void)
+  { return QString::null; }
+
   /**
    * Get access to the map of tools. Don't modify it. Observe that the index string is not
    * the name of the tool but an internal key used to get tools sorted in the correct

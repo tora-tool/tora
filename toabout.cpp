@@ -21,6 +21,8 @@
 
 #include <stdio.h>
 
+#include <map>
+
 #include <qtextview.h>
 #include <qpushbutton.h>
 #include <qsizepolicy.h>
@@ -30,15 +32,17 @@
 
 #include "toabout.h"
 #include "toconf.h"
+#include "totool.h"
 
 #include "toabout.moc"
+#include "toaboutui.moc"
 
 #include "LICENSE.h"
 
 #include "icons/largelogo.xpm"
 
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
-"Version %s\n"
+"Version %1\n"
 "<P>\n"
 "&copy; 2000 copyright of GlobeCom AB\n"
 "(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
@@ -223,7 +227,7 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<DIV ALIGN=LEFT>";
 
 
-#define ABOUT_CAPTION "TOra %s"
+#define ABOUT_CAPTION "TOra %1"
 
 static QPixmap *toLogoPixmap=NULL;
 
@@ -253,74 +257,56 @@ toSplash::toSplash(QWidget *parent,const char *name,WFlags f)
 }
 
 toAbout::toAbout(QWidget* parent,const char* name,bool modal,WFlags fl)
-  : QDialog(parent,name,modal,fl)
+  : toAboutUI(parent,name,modal,fl)
 {
   toAllocLogo();
-
-  TextView=new QTextView(this);
-  TextView->setTextFormat(RichText);
-  TextView->setPaper(QBrush(QColor(0xFA,0xFA,0xFE)));
-  resize(640,340);
-  setMinimumSize(640,340);
-  setMaximumSize(640,340);
-  TextView->setGeometry(QRect(10,10,620,280));
-  TextView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-  
-  ChangeButton=new QPushButton(this,"ChangeButton");
-  ChangeButton->setGeometry(QRect(144,300,104,32)); 
-
-  QPushButton *OkButton=new QPushButton(this,"OkButton");
-  OkButton->setGeometry(QRect(392,300,104,32)); 
-  OkButton->setText(tr("&Ok"));
-  OkButton->setDefault(true);
 
   if (!parent) {
     Page=1;
     changeView();
-    QPushButton *CancelButton=new QPushButton(this,"CanceButton");
-    CancelButton->setGeometry(QRect(506,300,104,32)); 
-    CancelButton->setText(tr("&Cancel"));
-    connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
   } else {
-    char buffer[10000];
-    sprintf(buffer,ABOUT_CAPTION,TOVERSION);
-    setCaption(buffer);
-    sprintf(buffer,AboutText,TOVERSION);
-    TextView->setText(buffer);
-    TextView->setPaper(QColor(227,184,54));
-    ChangeButton->setText(tr("&Quotes"));
-    Page=0;
+    CancelButton->hide();
+    Page=-1;
+    changeView();
   }
 
-  connect(ChangeButton,SIGNAL(clicked()),SLOT(changeView()));
-  connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
+  setCaption(QString(ABOUT_CAPTION).arg(TOVERSION));
 }
 
 void toAbout::changeView(void)
 {
   switch (Page) {
   case 0:
-    ChangeButton->setText(tr("&License"));
     TextView->setText(QuoteText);
-    setCaption("Favourite Quotes");
     TextView->setPaper(QColor(255,255,255));
     Page++;
     break;
   case 1:
-    ChangeButton->setText(tr("&About"));
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
-    setCaption("License");
     Page++;
     break;
   default:
-    char buffer[10000];
-    sprintf(buffer,ABOUT_CAPTION,TOVERSION);
-    setCaption(buffer);
-    sprintf(buffer,AboutText,TOVERSION);
+    int j=2;
+    if (Page>=2) {
+      for(std::map<QString,toTool *>::iterator i=toTool::tools().begin();
+	  i!=toTool::tools().end();
+	  i++) {
+	QString about=(*i).second->about();
+	if (!about.isNull()) {
+	  if (j==Page) {
+	    TextView->setText(about);
+	    TextView->setPaper(QColor(255,255,255));
+	    Page++;
+	    return;
+	  }
+	  j++;
+	}
+      }
+    }
+    QString buffer=QString(AboutText).arg(TOVERSION);
     TextView->setText(buffer);
     TextView->setPaper(QColor(227,184,54));
-    ChangeButton->setText(tr("&Quotes"));
     Page=0;
     break;
   }

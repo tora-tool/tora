@@ -22,8 +22,9 @@
 #ifndef __TOABOUT_H
 #define __TOABOUT_H
 
-#include <qdialog.h>
 #include <qvbox.h>
+
+#include "toaboutui.h"
 
 class QPushButton;
 class QTextView;
@@ -41,11 +42,9 @@ public:
   { return Progress; }
 };
 
-class toAbout : public QDialog {
+class toAbout : public toAboutUI {
   Q_OBJECT
 
-  QPushButton *ChangeButton;
-  QTextView *TextView;
   int Page;
 public:
   toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);

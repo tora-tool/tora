@@ -106,6 +106,8 @@
 2001-08-29: Force uppercase to tablespace names on creation.
 	(Thanx Massimiliano Ziccardi)
 2001-08-29: Choose export file format when exporting lists.
+2001-08-29: Remade about dialog in designer.
+2001-08-29: Added about stuff for tools.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 
