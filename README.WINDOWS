@@ -1,0 +1,14 @@
+Build notes for how TOra has been getting built with the Commercial 
+release of Qt for Windows.
+
+    1. Unpack the source in Linux (On a drive accessible from Windows).
+    2. Run  configure  from  Linux.  This  will  run  all the uic and moc
+       commands  that  are  needed  (It  is  vital  that you use the same
+       version  of  Qt  on  Windows  and Linux in this step since the moc
+       output can differ between Qt versions).
+    3. Build it in Windows using Visual Studio where I simply include all
+       the files needed (Everything except the old mysql provider and the
+       Oracle preload file I think). Up until yesterday I have been using
+       Visual  Studio  6.0,  but  I compiled TOra sourcecode using Visual
+       Studio .Net 2003 too so that works great also.
+
