@@ -74,51 +74,6 @@ class toConnection;
 class otl_connect;
 
 /**
- * Abstract baseclass for widgets defining tool settings.
- */
-
-class toSettingTab {
-public:
-  /**
-   * Default constructor
-   */
-  toSettingTab()
-  { }
-  /**
-   * This function is called to save the contents of the widget when
-   * a user has pressed the ok button of the dialog. It should simply
-   * save the values in the dialog to the appropriate configuration
-   * entry using the @ref toTool::setConfig function.
-   */
-  virtual void saveSetting(void) = 0;
-};
-
-/** Simple baseclass for widgets defining the main tool widget. It is in
- * no way mandatory and all it does is register the widget in the connetion.
- */
-class toToolWidget : public QVBox {
-  Q_OBJECT
-  toConnection *Connection;
-public:
-  /** Create widget.
-   * @param parent Parent widget.
-   * @param conn Connection of widget.
-   * @param name Name of widget.
-   */
-  toToolWidget(QWidget *parent,toConnection &amp;conn,const char *name=NULL);
-  ~toToolWidget();
-  /** Get the otl_connect structure of the current connection.
-   * @return Reference to otl_connect object.
-   */
-  otl_connect &amp;otlConnect();
-  /** Get the current connection.
-   * @return Reference to connection.
-   */
-  toConnection &amp;connection()
-  { return *Connection; }
-};
-
-/**
  * Abstract baseclass for tools.
  *
  * This class is the baseclass of all classes defining tools. It
@@ -335,6 +290,59 @@ public slots:
    * up properly.
    */
   void createWindow(void);
+};
+
+#include "tohelp.h"
+
+/**
+ * Abstract baseclass for widgets defining tool settings.
+ */
+
+class toSettingTab : public toHelpContext {
+public:
+  /**
+   * Default constructor.
+   * @param ctx Help context for this setting tab.
+   */
+  toSettingTab(const QString &amp;ctx)
+    : toHelpContext(ctx)
+  { }
+  /**
+   * This function is called to save the contents of the widget when
+   * a user has pressed the ok button of the dialog. It should simply
+   * save the values in the dialog to the appropriate configuration
+   * entry using the @ref toTool::setConfig function.
+   */
+  virtual void saveSetting(void) = 0;
+};
+
+/** Simple baseclass for widgets defining the main tool widget. It is in
+ * no way mandatory and all it does is register the widget in the connetion.
+ */
+class toToolWidget : public QVBox, public toHelpContext {
+  Q_OBJECT
+  toConnection *Connection;
+public:
+  /** Create widget.
+   * @param ctx Help context for this tool.
+   * @param parent Parent widget.
+   * @param conn Connection of widget.
+   * @param name Name of widget.
+   */
+  toToolWidget(const QString &amp;ctx,
+	       QWidget *parent,
+	       toConnection &amp;conn,
+	       const char *name=NULL);
+  ~toToolWidget();
+  /** Get the otl_connect structure of the current connection.
+   * @return Reference to otl_connect object.
+   */
+  otl_connect &amp;otlConnect();
+  /** Get the current connection.
+   * @return Reference to connection.
+   */
+  toConnection &amp;connection()
+  { return *Connection; }
 };
 
 #endif

@@ -54,9 +54,11 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref42">displayMemo</A></b> (void) 
 </LI>
-</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref43">menuCallback</A></b> (int cmd) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref43">saveUnsaved</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref44">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
+</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref44">menuCallback</A></b> (int cmd) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref45">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget allows the user to browse the contents of a table and also edit
  the content. The table is specified by the first and second parameter in the query.
@@ -128,14 +130,17 @@
 <A NAME="displayMemo"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMemo</strong> (void)
 <br></td><td align="right"><h3><strong>displayMemo</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display editable memo viewer at current position.
    </p>
-<A NAME="menuCallback"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int cmd)
+<A NAME="saveUnsaved"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>saveUnsaved</strong> (void)
+<br></td><td align="right"><h3><strong>saveUnsaved</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Save unsaved changes in the editor
+   </p>
+<A NAME="menuCallback"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int cmd)
 <br></td><td align="right"><h3><strong>menuCallback</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Callback from popup menu.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>cmd</i></TD><TD align="left" valign="top">Command ID.
    </TD></TR>
 </TABLE></P>
-<A NAME="changeData"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
+<A NAME="changeData"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Change data at specified position.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

@@ -46,6 +46,7 @@ SOURCES=\
 	tonoblockquery.cpp	\
 	tooutput.cpp		\
 	toparamget.cpp		\
+	topiechart.cpp		\
 	topreferences.cpp	\
 	toresultcols.cpp	\
 	toresultconstraint.cpp	\
@@ -107,6 +108,7 @@ API=	\
 	tomemoeditor.h		\
 	tonoblockquery.h	\
 	toparamget.h		\
+	topiechart.h		\
 	toresultcols.h		\
 	toresultconstraint.h	\
 	toresultcontent.h	\
@@ -136,6 +138,8 @@ include Makefile.common
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserfilterui.o
+plugins/tocharts.tso:\
+	objs/topiechart.o
 plugins/todebug.tso:\
 	objs/todebug.o \
 	objs/todebugwatch.o \
@@ -204,6 +208,7 @@ tora-static: $(OBJECTS) main.cpp
 tora-plugin: \
 	tora \
 	plugins/tobrowser.tso \
+	plugins/tocharts.tso \
 	plugins/todebug.tso \
 	plugins/tocurrent.tso \
 	plugins/toextract.tso \

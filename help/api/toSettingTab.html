@@ -18,6 +18,7 @@
 	<HR>
 	<TABLE BORDER="0">
 		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totool_h.html">totool.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="toHelpContext.html">toHelpContext</A> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toSettingTab.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -27,17 +28,21 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toSettingTab</A></b> () 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toSettingTab</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx) 
 </LI>
 <LI>virtual  void &nbsp;<b><i><A HREF="#ref2">saveSetting</A></i></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  Abstract baseclass for widgets defining tool settings.
  </p>
-<A NAME="toSettingTab"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSettingTab</strong> ()
+<A NAME="toSettingTab"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSettingTab</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx)
 <br></td><td align="right"><h3><strong>toSettingTab</strong></h3></td></tr></table><p></p><p>
- Default constructor
-   </p>
+ Default constructor.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>ctx</i></TD><TD align="left" valign="top">Help context for this setting tab.
+   </TD></TR>
+</TABLE></P>
 <A NAME="saveSetting"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>saveSetting</strong></i> (void)
 <br></td><td align="right"><h3><i><strong>saveSetting</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p>
  This function is called to save the contents of the widget when

@@ -868,3 +868,22 @@ int toToolMenuIndex(void)
   return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
 }
 
+static QColor ChartColors[]={
+  Qt::red,
+  Qt::green,
+  Qt::blue,
+  Qt::cyan,
+  Qt::magenta,
+  Qt::yellow,
+  Qt::darkRed,
+  Qt::darkGreen,
+  Qt::darkBlue,
+  Qt::darkCyan,
+  Qt::darkMagenta,
+  Qt::darkYellow
+};
+
+QColor toChartColor(int index)
+{
+  return ChartColors[index%(sizeof(ChartColors)/sizeof(QColor))];
+}

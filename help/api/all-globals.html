@@ -121,11 +121,13 @@
 </LI>
 <LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref646">toStatusMessages</A></b> (void) 
 </LI>
-<LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref647">max</A></b> (T a, T b) 
+<LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref647">toChartColor</A></b> (int index) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref648">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref648">max</A></b> (T a, T b) 
+</LI>
+<LI>template &lt;class T&gt;
+T &nbsp;<b><A HREF="#ref649">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -524,12 +526,19 @@ T &nbsp;<b><A HREF="#ref648">min</A></b> (T a, T b)
 <A NAME="toStatusMessages"></A><A NAME="ref646"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>toStatusMessages</strong> (void)
 <br></td><td align="right"><h3><strong>toStatusMessages</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Get a list of the latest status messages that have been shown.
  </p>
-<A NAME="max"></A><A NAME="ref647"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="toChartColor"></A><A NAME="ref647"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<strong>toChartColor</strong> (int index)
+<br></td><td align="right"><h3><strong>toChartColor</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Get a color for a chart item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>index</i></TD><TD align="left" valign="top">Indicating which chart item to get color for.
+ </TD></TR>
+</TABLE></P>
+<A NAME="max"></A><A NAME="ref648"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref648"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref649"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

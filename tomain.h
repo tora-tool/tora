@@ -662,6 +662,10 @@ QString toPluginPath(void);
 /** Get a list of the latest status messages that have been shown.
  */
 list<QString> toStatusMessages(void);
+/** Get a color for a chart item.
+ * @param index Indicating which chart item to get color for.
+ */
+QColor toChartColor(int index);
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

@@ -225,6 +225,9 @@ public slots:
   /** Display editable memo viewer at current position.
    */
   virtual void displayMemo(void);
+  /** Save unsaved changes in the editor
+   */
+  virtual void saveUnsaved(void);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: toresultlong.h</TITLE>
+<TITLE>Source: topiechart.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: toresultlong.h</h1>
+		<h1>Source: topiechart.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,105 +62,79 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTLONG_H
-#define __TORESULTLONG_H
+#ifndef __TOPIECHART_H
+#define __TOPIECHART_H
 
-#include &lt;qtimer.h&gt;
-#include "toresultview.h"
+#include &lt;list&gt;
+#include &lt;qwidget.h&gt;
 
-class QListViewItem;
-class toresultlong;
-class toResultTip;
-class toNoBlockQuery;
-class toResultStats;
-
-/** A widget which contains the result of a query run in the background.
+/** A widget that displays a piechart.
  */
-class toResultLong : public toResultView {
-  Q_OBJECT
 
-  /** No blocking query object.
-   */
-  toNoBlockQuery *Query;
-  /** Timer to poll for new data.
-   */
-  QTimer Timer;
-  /** Indicator if headers have been parsed yet.
-   */
-  bool HasHeaders;
-  /** Indicator if first row has been read yet.
-   */
-  bool First;
-  /** Widget to store query statistics to.
-   */
-  toResultStats *Statistics;
-  /** Number of rows to fetch when starting. (-1 for all)
-   */
-  int MaxNumber;
-
-  /** Check if at eof.
-   */
-  virtual bool eof(void);
-  /** Clean up when query is done
-   */
-  void cleanup(void);
+class toPieChart : public QWidget {
+  list&lt;double&gt; Values;
+  list&lt;QString&gt; Labels;
+  QString Postfix;
+  bool Legend;
 public:
-  /** Create widget.
-   * @param readable Indicate if columns are to be made more readable. This means that the
-   * descriptions are capitalised and '_' are converted to ' '.
-   * @param numCol If number column is to be displayed.
-   * @param conn Connection to issue query on.
-   * @param parent Parent of list.
+  /** Create a new piechart.
+   * @param parent Parent widget.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultLong(bool readable,bool numCol,toConnection &amp;conn,QWidget *parent,const char *name=NULL);
-  /** Create widget. The columns are not readable and the number column is displayed.
-   * @param conn Connection to issue query on.
-   * @param parent Parent of list.
-   * @param name Name of widget.
-   */
-  toResultLong(toConnection &amp;conn,QWidget *parent,const char *name=NULL);
-  ~toResultLong();
+  toPieChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
-  /** Set statistics widget.
-   * @param stats Statistics widget.
+  /** Set the postfix text to append the current values when they are displayed in the
+   * pie.
+   * @param post Postfix string, no space will be added after the value before the string
+   *             so if you want the space you need to specify it first in this string.
    */
-  void setStatistics(toResultStats *stats)
-  { Statistics=stats; }
-
-  /** Check if query is still running.
-   * @return True if query is still running.
+  void setPostfix(const QString &amp;post)
+  { Postfix=post; update(); }
+  /** Get the postfix string.
+   * @return Current postfix string.
    */
-  bool running(void)
-  { return Query; }
+  const QString &amp;postfix(void) const
+  { return Postfix; }
 
+  /** Specify if legend should be displayed to the right of the graph, default is on.
+   * @param on Whether to display graph or not.
+   */
+  void showLegend(bool on)
+  { Legend=on; update(); }
+  /** Check if legend is displayed or not.
+   * @return If legend is displayed or not.
+   */
+  bool legend(void) const
+  { return Legend; }
+
+  /** Set value list of piechart.
+   * @param values List of values to display.
+   * @param labels List of labels, if label is empty it will not appear in legend.
+   */
+  void setValues(list&lt;double&gt; &amp;values,list&lt;QString&gt; &amp;labels)
+  { Values=values; Labels=labels; update(); }
+  /** Add a value to the piechart.
+   * @param value New value to add.
+   * @param label Label of this new value.
+   */
+  void addValue(double value,const QString &amp;label)
+  { Values.insert(Values.end(),value); Labels.insert(Labels.end(),label); update(); }
+  /** Get list of values.
+   * @return Values in piechart.
+   */
+  list&lt;double&gt; &amp;values(void)
+  { return Values; }
+  /** Get labels of piechart.
+   * @return List of labels.
+   */
+  list&lt;QString&gt; &amp;labels(void)
+  { return Labels; }
+
+protected:
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param);
-  /** Reimplemented for internal reasons.
-   */
-  void query(const QString &amp;sql)
-  { list&lt;QString&gt; p; query(sql,p); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void readAll(void);
-signals:
-  /** Emitted when query is finnished.
-   */
-  void done(void);
-  /** Emitted when the first result is available.
-   * @param sql SQL that was run.
-   * @param res String describing result.
-   */
-  void firstResult(const QString &amp;sql,const QString &amp;res);
-
-public slots:
-  /** Stop running query.
-   */
-  void stop(void);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void addItem(void);
+  virtual void paintEvent(QPaintEvent *e);
 };
 
 #endif

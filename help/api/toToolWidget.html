@@ -17,7 +17,7 @@
 	<HR>
 	<TABLE BORDER="0">
 		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totool_h.html">totool.h</A>&gt;</code></TD></TR>
-<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qvbox.html">QVBox</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qvbox.html">QVBox</A> <small>(qt)</small> <small>[public ]</small>, <A HREF="toHelpContext.html">toHelpContext</A> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toToolWidget.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -27,7 +27,10 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toToolWidget</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &amp;conn,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toToolWidget</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
+	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
+	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
+	       const char *name=NULL) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref3">~toToolWidget</A></b> () 
 </LI>
@@ -38,10 +41,15 @@
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Simple baseclass for widgets defining the main tool widget. It is in
  no way mandatory and all it does is register the widget in the connetion.
  </p>
-<A NAME="toToolWidget"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="toConnection.html">toConnection</A> &amp;conn,const char *name=NULL)
+<A NAME="toToolWidget"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
+	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
+	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
+	       const char *name=NULL)
 <br></td><td align="right"><h3><strong>toToolWidget</strong></h3></td></tr></table><p></p><p> Create widget.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>ctx</i></TD><TD align="left" valign="top">Help context for this tool.
+</TD></TR>
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection of widget.
