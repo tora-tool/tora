@@ -135,7 +135,7 @@ public:
   /** Re execute last query
    */
   virtual void refresh(void)
-  { query(SQL,Params); }
+  { QString t=SQL; SQL=QString::null; query(t,Params); }
   /** Perform a query.
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.

@@ -37,6 +37,8 @@
 #ifndef __TONOBLOCKQUERY_H
 #define __TONOBLOCKQUERY_H
 
+#include <time.h>
+
 #include "toconnection.h"
 #include "tothread.h"
 
@@ -108,10 +110,16 @@ private:
   toQDescList Description;
   /** Query used to run query
    */
-  toQuery Query;
+  toQuery *Query;
+  /** When query is executed
+   */
+  time_t Started;
   /** Throw error if any.
    */
   void checkError();
+  /** Stop reading query
+   */
+  void stop();
 public:
   /** Create a new query.
    * @param conn Connection to run on.

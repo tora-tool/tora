@@ -259,6 +259,10 @@ public:
    */
   QCString sql(void)
   { return SQL; }
+  /** Get the mode this query is executed in.
+   */
+  toQuery::queryMode mode(void) const
+  { return Mode; }
 
   /** Read a value from the query. Convert the value NULL to the string {null}.
    * @return Value read.

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>360</width>
+            <width>352</width>
             <height>401</height>
         </rect>
     </property>
@@ -46,7 +46,7 @@
                 <string>Specify if changes should be automatically commited.</string>
             </property>
         </widget>
-        <widget row="2"  column="0" >
+        <widget row="1"  column="0" >
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -142,21 +142,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>DontReread</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Don't reread data if query is exactly same.</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.</string>
-            </property>
-        </widget>
         <spacer row="3"  column="0" >
             <property>
                 <name>name</name>
@@ -178,6 +163,83 @@
                 </size>
             </property>
         </spacer>
+        <widget row="2"  column="0" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox2</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>UI feedback settings</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DontReread</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Don't reread data if query is exactly same.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoLong</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Abort long running queries and reexecute in own connection.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Reexecute a query taking more than 30 seconds in its own connection to prevent blocking other database access.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Move to own connection after</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MoveAfter</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string> seconds</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -187,11 +249,20 @@
         <receiver>InitialFetch</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>AutoLong</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>MoveAfter</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
     <tabstop>InitialFetch</tabstop>
     <tabstop>ReadAll</tabstop>
     <tabstop>MaxColDisp</tabstop>
+    <tabstop>DontReread</tabstop>
+    <tabstop>AutoLong</tabstop>
+    <tabstop>MoveAfter</tabstop>
 </tabstops>
 </UI>

@@ -206,7 +206,7 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { changeParams(Owner,Table); }
+  { QString t=Owner; Owner=QString::null; changeParams(t,Table); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2);

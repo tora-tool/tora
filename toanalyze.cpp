@@ -176,7 +176,6 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Stop->setEnabled(false);
 
   Statistics=new toResultLong(true,false,toQuery::Normal,this);
-  Statistics->setSQL(SQLListTables);
   Statistics->setSelectionMode(QListView::Extended);
   Statistics->setReadAll(true);
 
@@ -216,7 +215,10 @@ void toAnalyze::changeOperation(int op)
 
 void toAnalyze::refresh(void)
 {
-  Statistics->changeParams(Schema->currentText());
+  Statistics->setSQL(QString::null);
+  toQList par;
+  par.insert(par.end(),Schema->currentText());
+  Statistics->query(toSQL::string(SQLListTables,connection()),par);
 }
 
 void toAnalyze::poll(void)

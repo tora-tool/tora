@@ -1,0 +1,179 @@
+<!DOCTYPE UI><UI>
+<class>toLicenseUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toLicenseUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>507</width>
+            <height>487</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>This version of TOra is unregistered.</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <spacer row="5"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer3</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="5"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer4</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="5"  column="4" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Button3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>3</string>
+            </property>
+        </widget>
+        <widget row="5"  column="0" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Button1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>1</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget row="5"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Button2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>2</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>false</bool>
+            </property>
+        </widget>
+        <widget row="0"  column="0"  rowspan="1"  colspan="5" >
+            <class>QTextView</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextView</cstring>
+            </property>
+            <property stdset="1">
+                <name>textFormat</name>
+                <enum>RichText</enum>
+            </property>
+        </widget>
+        <widget row="4"  column="0"  rowspan="1"  colspan="5" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>License</cstring>
+            </property>
+        </widget>
+        <widget row="3"  column="0"  rowspan="1"  colspan="5" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Registration key</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>License</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="5" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="0"  rowspan="1"  colspan="5" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<tabstops>
+    <tabstop>TextView</tabstop>
+    <tabstop>Name</tabstop>
+    <tabstop>License</tabstop>
+    <tabstop>Button1</tabstop>
+    <tabstop>Button2</tabstop>
+    <tabstop>Button3</tabstop>
+</tabstops>
+</UI>

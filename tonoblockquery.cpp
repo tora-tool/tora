@@ -56,26 +56,28 @@
 
 #define PREFETCH_SIZE 1000
 
+#define TO_LONG_FORCE 3
+
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
   int Length;
   try {
     TO_DEBUGOUT("Open query\n");
-    Parent.Query.execute(Parent.SQL,Parent.Param);
+    Parent.Query->execute(Parent.SQL,Parent.Param);
 
     {
       TO_DEBUGOUT("Locking description\n");
       toLocker lock(Parent.Lock);
-      Parent.Description=Parent.Query.describe();
-      Length=Parent.Query.columns();
+      Parent.Description=Parent.Query->describe();
+      Length=Parent.Query->columns();
     }
-    if (!Parent.Query.eof()) {
+    if (!Parent.Query->eof()) {
       bool signaled=false;
       for (;;) {
 	for (int i=0;i<Length;i++) {
 	  TO_DEBUGOUT("Reading value\n");
-	  toQValue value(Parent.Query.readValueNull());
+	  toQValue value(Parent.Query->readValueNull());
 	  {
 	    TO_DEBUGOUT("Locking parent\n");
 	    toLocker lock(Parent.Lock);
@@ -95,7 +97,7 @@ void toNoBlockQuery::queryTask::run(void)
 	}
 	TO_DEBUGOUT("Locking to check size\n");
 	toLocker lock(Parent.Lock);
-	if (Parent.Query.eof())
+	if (Parent.Query->eof())
 	  break;
 	else {
 	  if (Parent.ReadingValues.size()>PREFETCH_SIZE) {
@@ -112,7 +114,7 @@ void toNoBlockQuery::queryTask::run(void)
       }
     }
     TO_DEBUGOUT("EOQ\n");
-    Parent.Processed=Parent.Query.rowsProcessed();
+    Parent.Processed=Parent.Query->rowsProcessed();
   } catch (const toConnection::exception &str) {
     TO_DEBUGOUT("Locking exception string\n");
     toLocker lock(Parent.Lock);
@@ -129,6 +131,9 @@ void toNoBlockQuery::queryTask::run(void)
 
   TO_DEBUGOUT("Locking EOQ\n");
   toLocker lock(Parent.Lock);
+  TO_DEBUGOUT("Deleting query\n");
+  delete Parent.Query;
+  Parent.Query=NULL;
   TO_DEBUGOUT("Running up\n");
   Parent.Running.up();
   Parent.EOQ=true;
@@ -173,16 +178,22 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   : SQL(sql),
     Error(QString::null),
     Param(param),
-    Statistics(stats),
-    Query(conn,toQuery::Long)
+    Statistics(stats)
 {
+  Query=new toQuery(conn,toQuery::Long);
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Quit=EOQ=false;
   Processed=0;
 
   if (Statistics)
-    Statistics->changeSession(Query);
+    Statistics->changeSession(*Query);
+
+  int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
+  if (val!=0)
+    Started=time(NULL)+val;
+  else
+    Started=0;
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
@@ -197,16 +208,22 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
   : SQL(sql),
     Error(QString::null),
     Param(param),
-    Statistics(stats),
-    Query(conn,mode)
+    Statistics(stats)
 {
+  Query=new toQuery(conn,mode);
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Quit=EOQ=false;
   Processed=0;
 
   if (Statistics)
-    Statistics->changeSession(Query);
+    Statistics->changeSession(*Query);
+
+  int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
+  if (val!=0)
+    Started=time(NULL)+val;
+  else
+    Started=0;
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
@@ -240,7 +257,7 @@ int toNoBlockQuery::rowsProcessed(void)
   return Processed;
 }
 
-toNoBlockQuery::~toNoBlockQuery()
+void toNoBlockQuery::stop(void)
 {
   {
     TO_DEBUGOUT("Locking for delete\n");
@@ -254,7 +271,8 @@ toNoBlockQuery::~toNoBlockQuery()
 	  toThread::msleep(100);
 	  Lock.lock();
 	}
-	Query.cancel();
+	if (Query)
+	  Query->cancel();
 	Quit=true;
       } while(Running.getValue()==0);
     }
@@ -279,6 +297,11 @@ toNoBlockQuery::~toNoBlockQuery()
   TO_DEBUGOUT("Done deleting\n");
 }
 
+toNoBlockQuery::~toNoBlockQuery()
+{
+  stop();
+}
+
 bool toNoBlockQuery::poll(void)
 {
   unsigned int count=0;
@@ -288,8 +311,46 @@ bool toNoBlockQuery::poll(void)
     toLocker lock(Lock);
     count+=ReadingValues.size();
   }
+
   if ((count>=Description.size()&&Description.size()>0)||eof())
     return true;
+
+  Lock.lock();
+  if (Started>0&&Started<time(NULL)&&!Description.size()) {
+    if (Query&&Query->mode()==toQuery::Normal) {
+      Lock.unlock();
+      toStatusMessage("Restarting query in own connection");
+      toConnection &conn=Query->connection();
+      TO_DEBUGOUT("Stopping normal query\n");
+      stop();
+      while(Running.getValue()>0)
+	Running.down();
+      while(Continue.getValue()>0)
+	Continue.down();
+      Error=QString::null;
+      ReadingValues.clear();
+      Values.clear();
+      CurrentValue=Values.end();
+      Quit=EOQ=false;
+      Processed=0;
+
+      TO_DEBUGOUT("Creating new long query\n");
+      Query=new toQuery(conn,toQuery::Long);
+
+      if (Statistics)
+	Statistics->changeSession(*Query);
+
+      toLocker lock(Lock);
+      TO_DEBUGOUT("Creating thread\n");
+      Thread=new toThread(new queryTask(*this));
+      TO_DEBUGOUT("Created thread\n");
+      Thread->start();
+      TO_DEBUGOUT("Started thread\n");
+    } else
+      Lock.unlock();
+  } else
+    Lock.unlock();
+
   return false;
 }
 

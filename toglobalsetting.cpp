@@ -212,6 +212,9 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
   DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty());
+  int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();
+  AutoLong->setChecked(val);
+  MoveAfter->setValue(val);
 }
 
 void toDatabaseSetting::saveSetting(void)
@@ -223,6 +226,8 @@ void toDatabaseSetting::saveSetting(void)
     toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
   toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DONT_REREAD,DontReread->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_AUTO_LONG,
+			  AutoLong->isChecked()?MoveAfter->cleanText():"0");
 }
 
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)

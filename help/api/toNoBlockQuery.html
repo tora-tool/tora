@@ -27,35 +27,35 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref20">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref22">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
 		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref21">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
+<LI>&nbsp;<b><A HREF="#ref23">toNoBlockQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 <A HREF="toQuery.html#queryMode">toQuery::queryMode</A> mode,
 		 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
 		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL) 
 </LI>
-<LI>virtual  &nbsp;<b><A HREF="#ref22">~toNoBlockQuery</A></b> () 
+<LI>virtual  &nbsp;<b><A HREF="#ref24">~toNoBlockQuery</A></b> () 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref23">poll</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref25">poll</A></b> (void) 
 </LI>
-<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref24">describe</A></b> (void) 
+<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref26">describe</A></b> (void) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref25">readValue</A></b> (void) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref27">readValue</A></b> (void) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref26">readValueNull</A></b> (void) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref28">readValueNull</A></b> (void) 
 </LI>
-<LI>int &nbsp;<b><A HREF="#ref27">rowsProcessed</A></b> (void) 
+<LI>int &nbsp;<b><A HREF="#ref29">rowsProcessed</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref28">eof</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref30">eof</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is class to be able to run a query in the background without
  blocking until a response is available from OCI.
  </p>
-<A NAME="toNoBlockQuery"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
+<A NAME="toNoBlockQuery"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
 		 const <A HREF="#toQList">toQList</A> &param,
 		 <A HREF="toResultStats.html">toResultStats</A> *statistics=NULL)
@@ -71,7 +71,7 @@
 <TR><TD align="left" valign="top"><i>statistics</i></TD><TD align="left" valign="top">Optional statistics widget to update with values from query.
    </TD></TR>
 </TABLE></P>
-<A NAME="toNoBlockQuery"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
+<A NAME="toNoBlockQuery"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toNoBlockQuery</strong> (<A HREF="toConnection.html">toConnection</A> &conn,
 		 <A HREF="toQuery.html#queryMode">toQuery::queryMode</A> mode,
 		 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
 		 const <A HREF="#toQList">toQList</A> &param,
@@ -90,33 +90,33 @@
 <TR><TD align="left" valign="top"><i>statistics</i></TD><TD align="left" valign="top">Optional statistics widget to update with values from query.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toNoBlockQuery"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toNoBlockQuery</strong> ()
-<br></td><td align="right"><h3><strong>~toNoBlockQuery</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="poll"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>poll</strong> (void)
+<A NAME="~toNoBlockQuery"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toNoBlockQuery</strong> ()
+<br></td><td align="right"><h3><strong>~toNoBlockQuery</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="poll"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>poll</strong> (void)
 <br></td><td align="right"><h3><strong>poll</strong></h3></td></tr></table><p></p><p> Poll if any result is available.
 </p>
 <p><b>Returns</b>: True if at least one row is available.
    </p>
-<A NAME="describe"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>describe</strong> (void)
+<A NAME="describe"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>describe</strong> (void)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Get description of columns.
 </p>
 <p><b>Returns</b>: Description of columns list. Don't modify this list.
    </p>
-<A NAME="readValue"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>readValue</strong> (void)
+<A NAME="readValue"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>readValue</strong> (void)
 <br></td><td align="right"><h3><strong>readValue</strong></h3></td></tr></table><p></p><p> Read the next value from the query.
 </p>
 <p><b>Returns</b>: The next available value.
    </p>
-<A NAME="readValueNull"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>readValueNull</strong> (void)
+<A NAME="readValueNull"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>readValueNull</strong> (void)
 <br></td><td align="right"><h3><strong>readValueNull</strong></h3></td></tr></table><p></p><p> Read the next value from the query. Don't send NULL as string.
 </p>
 <p><b>Returns</b>: The next available value.
    </p>
-<A NAME="rowsProcessed"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>rowsProcessed</strong> (void)
+<A NAME="rowsProcessed"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>rowsProcessed</strong> (void)
 <br></td><td align="right"><h3><strong>rowsProcessed</strong></h3></td></tr></table><p></p><p> Get the number of rows processed.
 </p>
 <p><b>Returns</b>: Number of rows processed.
    </p>
-<A NAME="eof"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
+<A NAME="eof"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
 <br></td><td align="right"><h3><strong>eof</strong></h3></td></tr></table><p></p><p> Check if at end of query.
 </p>
 <p><b>Returns</b>: True if query is done.

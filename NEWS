@@ -1,3 +1,14 @@
+1.1.5:
+
+2001-11-02: Fixed problems with linecharts.
+2001-11-02: Fixed problems with analyze not updating.
+2001-11-02: Added auto long option (Off by default).
+2001-11-02: Always reread a query on refresh.
+2001-11-02: Fixed problem in describe table family.
+2001-11-02: Fixed problem with about dialog.
+2001-11-02: Fixed problem with export long values to text files.
+2001-11-02: Added registration stuff for non freeware version.
+
 1.1.4: Released 2001-11-02
 
 2001-10-22: Address sys tablespace, don't assume synonyms are right.

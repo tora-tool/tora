@@ -65,8 +65,7 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
   if (!handled()||Query)
     return;
 
-  if (!setSQLParams(sql,param))
-    return;
+  setSQLParams(sql,param);
 
   try {
     First=first;

@@ -4244,7 +4244,7 @@ static toSQL SQLSystemPrivs("toExtract:SystemPrivs",
 
 static toSQL SQLObjectPrivs("toExtract:ObjectPrivs",
 			    "SELECT  privilege\n"
-			    "      , owner\n"
+			    "      , table_schema\n"
 			    "      , table_name\n"
 			    "      , DECODE(\n"
 			    "                grantable\n"
@@ -4819,6 +4819,7 @@ void toExtract::describeTableFamily(std::list<QString> &lst,
       describeConstraint(lst,schema,owner,toShift(constraints));
     else
       toShift(constraints);
+    toShift(constraints);
   }
 
   toQList triggers=toQuery::readQueryNull(Connection,SQLTableTriggers,name,owner);

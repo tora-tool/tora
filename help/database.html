@@ -18,15 +18,28 @@ or not at all while reading many lines. It will also keep the entire result in m
 the <B>All</B> box and reading a really large table could bring your machine to it's knees.
 </TD></TR>
 <TR><TD VALIGN=top>
-<B>Don't reread data if query is exactly same.</B>
-</TR></TD>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.
-This is mainly usefull in the schema browser when you have a slow connection and need to switch between
-tabs a lot.
-<TR><TD VALIGN=top>
 <B>Maximum size display</B></TD>
 <TD VALIGN=top>The maximum width a list column will get automatically regardless of how large the content
 is. This is so you can still see the rest of the columns even if one of the first can contain
 very large values. You can always resize the column by hand afterwards.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Don't reread data if query is exactly same.</B>
+</TR></TD>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.
+This is mainly usefull in the schema browser when you have a slow connection and need to switch between
+tabs a lot.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Abort long running queries and reexecute in own connection.</B>
+</TR></TD>If checked TOra will abort any queries running in the main connection of the database
+<B>in the background</B> and reexecute them in their own connection to make you able to continue
+to work in other parts of TOra until the query gives a reply. Only queries that have not given
+any response at all will be aborted and moved.
+</TD></TR>
+<TR><TD>
+<B>Move to own connection after</B>
+</TD><TD>The number of seconds to wait before moving the query from the main connection (See
+<B>Abort long running queries and reexecute in own connection</B> above for more info).
 </TD></TR>
 </TABLE>
 There may also be pages under this for each individual database provider. Currently onlye Oracle uses

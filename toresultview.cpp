@@ -693,9 +693,27 @@ void toListView::editSave(bool ask)
       {
 	QListViewItem *next=NULL;
 	for (QListViewItem *item=firstChild();item;item=next) {
+	  toResultViewItem *resItem;
+	  try {
+	    resItem=dynamic_cast<toResultViewItem *>(item);
+	  } catch(...) {
+	    resItem=NULL;
+	  }
+	  toResultViewCheck *chkItem;
+	  try {
+	    chkItem=dynamic_cast<toResultViewCheck *>(item);
+	  } catch(...) {
+	    chkItem=NULL;
+	  }
 
 	  for (int i=0;i<columns();i++) {
-	    int csiz=item->text(i).length();
+	    int csiz;
+	    if (resItem)
+	      csiz=resItem->text(i).length();
+	    else if (chkItem)
+	      csiz=chkItem->text(i).length();
+	    else
+	      csiz=item->text(i).length();
 	    if (i==0)
 	      csiz+=level;
 	    if (sizes[i]<csiz)
@@ -764,35 +782,58 @@ void toListView::editSave(bool ask)
     QString bgcolor="notnull";
     for (QListViewItem *item=firstChild();item;item=next) {
 
+      toResultViewItem *resItem;
+      try {
+	resItem=dynamic_cast<toResultViewItem *>(item);
+      } catch(...) {
+	resItem=NULL;
+      }
+      toResultViewCheck *chkItem;
+      try {
+	chkItem=dynamic_cast<toResultViewCheck *>(item);
+      } catch(...) {
+	chkItem=NULL;
+      }
+
       if (bgcolor.isEmpty())
 	bgcolor=" BGCOLOR=#cfcfff";
       else
 	bgcolor="";
       QString line;
       if (type==3)
-	line=QString("<TR%1>").arg(bgcolor);
+	line=QString("<TR%1>").arg(bgcolor);      
 
-      for (int i=0;i<columns();i++)
+      for (int i=0;i<columns();i++) {
+	QString text;
+
+	if (resItem)
+	  text=resItem->text(i);
+	else if (chkItem)
+	  text=chkItem->text(i);
+	else
+	  text=item->text(i);
+
 	switch(type) {
 	case 0:
 	  line+=indent;
-	  line+=QString("%1 ").arg(item->text(i),(i==0?indent.length():0)-sizes[i]);
+	  line+=QString("%1 ").arg(text,(i==0?indent.length():0)-sizes[i]);
 	  break;
 	case 1:
 	  line+=indent;
-	  line+=QString("%1\t").arg(item->text(i));
+	  line+=QString("%1\t").arg(text);
 	  break;
 	case 2:
 	  line+=indent;
-	  line+=QString("\"%1\";").arg(QuoteString(item->text(i)));
+	  line+=QString("\"%1\";").arg(QuoteString(text));
 	  break;
 	case 3:
 	  line+=QString("<TD%1>").arg(bgcolor);
 	  line+=indent;
-	  line+=item->text(i);
+	  line+=text;
 	  line+="</TD>";
 	  break;
 	}
+      }
       if (type==3)
 	line+="</TR>";
       else
