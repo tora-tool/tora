@@ -24,6 +24,7 @@
 2001-08-08: Fixed cursor bug in highlighted text concerning tabs.
 2001-08-09: Added more choices to refresh time.
 2001-08-09: Improved statistics in worksheet.
+2001-08-09: New server overview in server tuning.
 
 0.14: Released 2001-08-02
 

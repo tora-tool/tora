@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qgrid.h>
+#include <qcombobox.h>
 
 #include "tochangeconnection.h"
 #include "toconnection.h"

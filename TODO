@@ -26,7 +26,6 @@ Extended functionality:
 * Segments view in storage view.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
-* Information about SGA memory in DB tuning.
 * Ability to generate into several script (One per object and type) in DB extraction.
 * Full support for Oracle 9i
 * Completion on column & function names in editor.
