@@ -4088,7 +4088,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -4926,7 +4926,7 @@ try to create them in the current schema?</source>
     </message>
     <message>
         <source>Description of %1.%2</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -5465,10 +5465,6 @@ Should TOra try to create it?</source>
 <context>
     <name>toResultResources:Information</name>
     <message>
-        <source> </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Buffer Gets</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5550,6 +5546,10 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Users Opening</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7020,6 +7020,10 @@ Should TOra try to create it?</source>
     <name>toSemaphore</name>
     <message>
         <source>Error in semaphore function &quot;%1&quot; didn&apos;t work</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>The semaphore function &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

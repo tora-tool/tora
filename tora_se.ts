@@ -4115,7 +4115,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>Message</source>
-        <translation>Meddelande</translation>
+        <translation type="obsolete">Meddelande</translation>
     </message>
 </context>
 <context>
@@ -4977,7 +4977,7 @@ försöka skapa om dem i nuvarande schema?</translation>
     </message>
     <message>
         <source>Description of %1.%2</source>
-        <translation>Beskrivning av %1.%2</translation>
+        <translation type="obsolete">Beskrivning av %1.%2</translation>
     </message>
 </context>
 <context>
@@ -7076,7 +7076,11 @@ Skall TOra försöka skapa den?</translation>
     <name>toSemaphore</name>
     <message>
         <source>Error in semaphore function &quot;%1&quot; didn&apos;t work</source>
-        <translation></translation>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>The semaphore function &quot;%1&quot; failed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

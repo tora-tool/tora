@@ -79,7 +79,7 @@ my @source=(
 	    "totoolsettingui",
 	    "utils" );
 
-my @translations=("tora_se","tora_fr");
+my @translations=("tora_se","tora_fr","tora_empty");
 
 my %plugins=(
 	     "toalert"             => { "Files" => [ "toalert" ],
@@ -256,6 +256,7 @@ my $Libs="-lm -lpthread";
 my $MOC;
 my $UIC;
 my $LRelease;
+my $LUpdate;
 my $QtDir;
 my $QtInclude;
 my $QtVersion;
@@ -307,6 +308,8 @@ for (@ARGV) {
 	$UIC=$1;
     } elsif (/^--with-qt-lrelease=(.*)$/) {
 	$LRelease=$1;
+    } elsif (/^--with-qt-lupdate=(.*)$/) {
+	$LUpdate=$1;
     } elsif (/^--prefix=(.*)$/) {
 	$InstallPrefix=$1;
     } elsif (/^--with-mysql-include=(.*)$/) {
@@ -370,6 +373,7 @@ Options can be any of the following:
 --with-qt-moc        Specify moc command to use
 --with-qt-uic        Specify uic command to use
 --with-qt-lrelease   Specify lrelease command to use
+--with-qt-lupdate    Specify lupdate command to use
 --with-qt-include    Specify Qt include directory
 --with-qt-libs       Specify Qt library directory
 --with-gcc           Specify which GCC compiler to use
@@ -880,6 +884,35 @@ __TEMP__
     }
     print "$LRelease\n";
 
+    print "checking for lupdate ... ";
+    if (!defined $LUpdate || ! -x $LUpdate) {
+	$LUpdate=findFile("lupdate",sub { return -x $_[0]; },
+		      $QtDir."/bin",
+		      "/usr/lib/qt2",
+		      "/usr/lib/qt2/bin",
+		      "/usr/lib/qt3",
+		      "/usr/lib/qt3/bin",
+		      "/usr/local/lib/qt2",
+		      "/usr/local/lib/qt2/bin",
+		      "/usr/local/lib/qt3",
+		      "/usr/local/lib/qt3/bin",
+		      "/usr/local/qt2",
+		      "/usr/local/qt2/bin",
+		      "/usr/local/qt3",
+		      "/usr/local/qt3/bin",
+		      "/usr/lib/qt",
+		      "/usr/bin",
+		      "/usr/local/bin",
+		      "/usr/local/lib/qt");
+	if (defined $LUpdate && -d $LUpdate) {
+	    $LUpdate.="/lupdate";
+	}
+    }
+    if (!-x $LUpdate) {
+	$LUpdate="true";
+    }
+    print "$LUpdate\n";
+
     print "checking for Qt include files ... ";
     $QtInclude=findFile("^qglobal\\.h\$",sub {
 	                                     if (open(QT,"<$_[0]")) {
@@ -1336,6 +1369,10 @@ __EOT__
 	print MAKEFILE "LRELEASE=\"$LRelease\"\n";
 	print MAKEFILE "\n";
 
+	print MAKEFILE "# Path to Qt translation update\n";
+	print MAKEFILE "LUPDATE=\"$LUpdate\"\n";
+	print MAKEFILE "\n";
+
 	print MAKEFILE "# Additional paths to find libraries\n";
 	print MAKEFILE "LFLAGS=$LFlags\n";
 	print MAKEFILE "\n";
@@ -1699,7 +1736,7 @@ tora.pro: Makefile
 	echo 'TRANSLATIONS=\$(TRANSLATIONS)' >> tora.pro
 
 lupdate: tora.pro
-	lupdate tora.pro
+	\$(LUPDATE) tora.pro
 
 lrelease: tora.pro \$(TRANSLATIONS)
 	\$(LRELEASE) tora.pro
