@@ -303,15 +303,18 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   ResultTab->addTab(Resources,"Information");
   StatSplitter=new QSplitter(Horizontal,ResultTab);
   Statistics=new toResultStats(true,StatSplitter);
+  Statistics->setTabWidget(ResultTab);
   toResultBar *bar=new toResultBar(StatSplitter);
-  bar->setSQL(toSQL::string(TO_SESSION_WAIT,connection));
+  toSQL sql=toSQL::sql(TO_SESSION_WAIT);
+  bar->setSQL(sql);
   bar->setTitle("Wait states");
   bar->setYPostfix("ms/s");
   bar->setSamples(-1);
   connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	  bar,SLOT(changeParams(const QString &)));
   bar=new toResultBar(StatSplitter);
-  bar->setSQL(toSQL::string(TO_SESSION_IO,connection));
+  sql=toSQL::sql(TO_SESSION_IO);
+  bar->setSQL(sql);
   bar->setTitle("I/O");
   bar->setYPostfix("blocks/s");
   bar->setSamples(-1);
@@ -376,9 +379,13 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
-    show();
-    StatisticButton->setOn(true);
+  if (connection.provider()=="Oracle") {
+    if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
+      show();
+      StatisticButton->setOn(true);
+    }
+  } else {
+    StatisticButton->setEnabled(false);
   }
   connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
 }
@@ -435,7 +442,11 @@ void toWorksheet::windowActivated(QWidget *widget)
 
 void toWorksheet::connectionChanged(void)
 {
-  
+  if (connection().provider()=="Oracle") {
+    StatisticButton->setEnabled(true);
+  } else {
+    StatisticButton->setEnabled(false);
+  }
 }
 
 bool toWorksheet::checkSave(bool input)
@@ -527,12 +538,19 @@ bool toWorksheet::describe(const QString &query)
   QStringList part=QStringList::split(white,query);
   if (part[0].upper()=="DESC"||
       part[0].upper()=="DESCRIBE") {
-    if (part.count()==2) {
-      Columns->changeParams(unQuote(part[1]));
-    } else if (part.count()==3) {
-      Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
-    } else
-      throw QString("Wrong number of parameters for describe");
+    if (toIsOracle(connection())) {
+      if (part.count()==2) {
+	Columns->changeParams(unQuote(part[1]));
+      } else if (part.count()==3) {
+	Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
+      } else
+	throw QString("Wrong number of parameters for describe");
+    } else if (connection().provider()=="MySQL") {
+      if (part.count()==2) {
+	Columns->changeParams(part[1]);
+      } else
+	throw QString("Wrong number of parameters for describe");
+    }
     QWidget *curr=ResultTab->currentPage();
     Columns->show();
     Result->hide();
@@ -685,9 +703,13 @@ static void NewStatement(void)
 
 void toWorksheet::execute(bool all,bool step)
 {
-  bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
+  bool sqlparse;
   bool code=true;
   bool beforeCode=false;
+  if(connection().provider()=="Oracle")
+    sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
+  else
+    sqlparse=false;
   TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;

@@ -213,9 +213,8 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
   Schema=schema;
   Type=type;
   Object=object;
-  FirstItem=CurrentItem=NULL;
+  CurrentItem=FirstItem=NULL;
   NoBreakpoints=false;
-  toHighlightedText::clear();
   update();
 }
 

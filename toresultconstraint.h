@@ -50,7 +50,8 @@ public:
   virtual void query(const QString &sql,const toQList &param);
   /** Support Oracle
    */
-  virtual bool canHandle(const toConnection &conn);
+  virtual bool canHandle(toConnection &conn)
+  { return toIsOracle(conn); }
 };
 
 #endif

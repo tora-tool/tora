@@ -43,7 +43,7 @@ public:
   virtual void query(const QString &sql,const toQList &param);
   /** Support Oracle & MySQL
    */
-  virtual bool canHandle(const toConnection &);
+  virtual bool canHandle(toConnection &);
   friend class toResultColsItem;
 };
 

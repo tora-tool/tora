@@ -288,6 +288,9 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 
 void toResultStorage::query(void)
 {
+  if (!handled())
+    return;
+
   QListViewItem *item=selectedItem();
   QString currentSpace;
   QString currentFile;

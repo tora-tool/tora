@@ -76,7 +76,7 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 
 void toResultConstraint::query(const QString &sql,const toQList &param)
 {
-  if (!canHandle(connection()))
+  if (!handled())
     return;
   QString Owner;
   QString TableName;
@@ -147,7 +147,3 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
   updateContents();
 }
 
-bool toResultConstraint::canHandle(const toConnection &conn)
-{
-  return conn.provider()=="Oracle";
-}

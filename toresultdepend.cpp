@@ -40,7 +40,7 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
-  setSQL(toSQL::string(SQLResultDepend,connection()));
+  setSQL(SQLResultDepend);
   setRootIsDecorated(true);
   setReadAll(true);
   setSQLName("toResultDepend");
@@ -49,7 +49,7 @@ toResultDepend::toResultDepend(QWidget *parent,const char *name)
 void toResultDepend::addChilds(QListViewItem *item)
 {
   try {
-    toQuery query(connection(),SQL,item->text(0),item->text(1));
+    toQuery query(connection(),sql(),item->text(0),item->text(1));
     QListViewItem *last=NULL;
     while(!query.eof()) {
       QString owner=query.readValue();
@@ -89,6 +89,9 @@ bool toResultDepend::exists(const QString &owner,const QString &name)
 
 void toResultDepend::query(const QString &sql,const toQList &param)
 {
+  if (!handled())
+    return;
+
   toResultView::query(sql,param);
 
   for(QListViewItem *item=firstChild();item;item=item->nextSibling())

@@ -293,6 +293,11 @@ static toSQL SQLTableInfo("toBrowser:TableInformation",
 			  "  FROM ALL_TABLES\n"
 			  " WHERE OWNER = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			  "Display information about a table");
+static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
+			       "show table status from :own<noquote> like :tab",
+			       QString::null,
+			       "3.0",
+			       "MySQL");
 static toSQL SQLTableComment("toBrowser:TableComment",
 			     "SELECT Comments FROM ALL_TAB_COMMENTS\n"
 			     " WHERE Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
@@ -410,6 +415,14 @@ static QPixmap *RefreshPixmap;
 static QPixmap *FilterPixmap;
 static QPixmap *NoFilterPixmap;
 
+QString toBrowser::schema(void)
+{
+  QString ret=Schema->currentText();
+  if (ret=="No schemas")
+    return connection().database();
+  return ret;
+}
+
 void toBrowser::setNewFilter(toResultFilter *filter)
 {
   if (filter)
@@ -464,6 +477,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   FirstTab=resultView;
   Map[TAB_TABLES]=resultView;
+  resultView->setTabWidget(TopTab);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
 
@@ -471,7 +485,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultView=new toResultCols(curr,TAB_TABLE_COLUMNS);
   curr->addTab(resultView,"&Columns");
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondTab=resultView;
   SecondMap[TAB_TABLES]=resultView;
   SecondMap[TAB_TABLE_COLUMNS]=resultView;
@@ -505,21 +518,24 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TABLE_DATA]=content;
 
   toResultItem *resultItem=new toResultItem(2,true,curr,TAB_TABLE_INFO);
-  resultItem->setSQL(SQLTableInfo(connection));
+  resultItem->setSQL(SQLTableInfo);
   curr->addTab(resultItem,"Information");
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
   resultItem=new toResultItem(1,true,curr,TAB_TABLE_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL(SQLTableComment(connection));
+  resultItem->setSQL(SQLTableComment);
   curr->addTab(resultItem,"Co&mment");
   SecondMap[TAB_TABLE_COMMENT]=resultItem;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_VIEWS);
   TopTab->addTab(splitter,"&Views");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_VIEWS]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListView);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
@@ -535,7 +551,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   toResultField *resultField=new toResultField(curr,TAB_VIEW_SQL);
   resultField->setSQL(SQLViewSQL);
   curr->addTab(resultField,"SQL");
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondMap[TAB_VIEW_SQL]=resultField;
 
   content=new toResultContent(curr,TAB_VIEW_DATA);
@@ -554,22 +569,24 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultItem=new toResultItem(1,true,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL(SQLViewComment(connection));
+  resultItem->setSQL(SQLViewComment);
   curr->addTab(resultItem,"Co&mment");
   SecondMap[TAB_VIEW_COMMENT]=resultItem;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
   TopTab->addTab(splitter,"Inde&xes");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_INDEX]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListIndex);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultView=new toResultView(true,false,curr,TAB_INDEX_COLS);
@@ -579,60 +596,66 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_INDEX_COLS]=resultView;
 
   resultItem=new toResultItem(2,true,curr,TAB_INDEX_INFO);
-  resultItem->setSQL(SQLIndexInfo(connection));
+  resultItem->setSQL(SQLIndexInfo);
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_INDEX_INFO]=resultItem;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
   TopTab->addTab(splitter,"&Sequences");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSequence);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,curr,TAB_SEQUENCES_INFO);
-  resultItem->setSQL(SQLSequenceInfo(connection));
+  resultItem->setSQL(SQLSequenceInfo);
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SYNONYM);
   TopTab->addTab(splitter,"S&ynonyms");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_SYNONYM]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSynonym);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,curr,TAB_SYNONYM_INFO);
-  resultItem->setSQL(SQLSynonymInfo(connection));
+  resultItem->setSQL(SQLSynonymInfo);
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_PLSQL);
   TopTab->addTab(splitter,"&PL/SQL");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_PLSQL]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSQL);
   resultView->resize(FIRST_WIDTH*2,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultField=new toResultField(curr,TAB_PLSQL_SOURCE);
@@ -650,22 +673,24 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
 
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
+
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
   TopTab->addTab(splitter,"Tri&ggers");
   resultView=new toResultView(true,false,splitter);
   resultView->setReadAll(true);
   Map[TAB_TRIGGER]=resultView;
+  resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListTrigger);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
-  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultItem=new toResultItem(2,true,curr,TAB_TRIGGER_INFO);
-  resultItem->setSQL(SQLTriggerInfo(connection));
+  resultItem->setSQL(SQLTriggerInfo);
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_TRIGGER]=resultItem;
   SecondMap[TAB_TRIGGER_INFO]=resultItem;
@@ -684,6 +709,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_TRIGGER_DEPEND]=resultDepend;
 
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
+
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -691,6 +718,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   refresh();
 
   connect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
+  connect(this,SIGNAL(connectionChange()),this,SLOT(refresh()));
   Schema->setFocus();
 }
 
@@ -743,7 +771,7 @@ void toBrowser::refresh(void)
       QString str;
       if (item)
 	str=item->text(0);
-      FirstTab->changeParams(Schema->currentText());
+      FirstTab->changeParams(schema());
       if (!str.isEmpty()) {
 	for (item=FirstTab->firstChild();item;item=item->nextSibling()) {
 	  if (item->text(0)==str) {
@@ -754,7 +782,7 @@ void toBrowser::refresh(void)
       }
     }
     if (SecondTab&&!SecondText.isEmpty())
-      SecondTab->changeParams(Schema->currentText(),SecondText);
+      SecondTab->changeParams(schema(),SecondText);
   } TOCATCH
 }
 
@@ -763,13 +791,17 @@ void toBrowser::changeItem(QListViewItem *item)
   if (item) {
     SecondText=item->text(0);
     if (SecondTab&&!SecondText.isEmpty())
-      SecondTab->changeParams(Schema->currentText(),
+      SecondTab->changeParams(schema(),
 			      SecondText);
   }
 }
 
 void toBrowser::changeSecondTab(QWidget *tab)
 {
+  for (QWidget *t=tab->parentWidget();t!=TopTab->currentPage();t=t->parentWidget())
+    if (!t)
+      return;
+
   if (tab) {
     toResult *newtab=SecondMap[tab->name()];
     if (newtab==SecondTab)
@@ -777,19 +809,7 @@ void toBrowser::changeSecondTab(QWidget *tab)
     SecondTab=newtab;
     SecondMap[TopTab->currentPage()->name()]=SecondTab;
     if (SecondTab&&!SecondText.isEmpty()) {
-#if 0
-      try {
-	for(QWidget *widget=dynamic_cast<QWidget *>(SecondTab)->parentWidget();
-	    widget;
-	    widget=widget->parentWidget())
-	  if (widget->isA("QTabWidget")) {
-	    widget->setFocus();
-	    break;
-	  }
-      } catch(...) {
-      }
-#endif
-      SecondTab->changeParams(Schema->currentText(),
+      SecondTab->changeParams(schema(),
 			      SecondText);
     }
   }
@@ -802,7 +822,6 @@ void toBrowser::changeTab(QWidget *tab)
     if (newtab==FirstTab)
       return;
     FirstTab=newtab;
-    FirstTab=Map[tab->name()];
     SecondTab=SecondMap[tab->name()];
     SecondText="";
     TopTab->setFocus();

@@ -33,6 +33,10 @@ public:
   // Why is this needed?
   void query(const QString &sql)
   { toQList p; query(sql,p); }
+  /** Support Oracle
+   */
+  virtual bool canHandle(toConnection &conn)
+  { return toIsOracle(conn); }
 };
 
 #endif

@@ -85,6 +85,9 @@ static toSQL SQLDependencies("toResultReferences:Dependencies",
 
 void toResultReferences::query(const QString &sql,const toQList &param)
 {
+  if (!handled())
+    return;
+
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();

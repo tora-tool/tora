@@ -158,11 +158,8 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 
   try {
     QString sql;
-    sql="SELECT * FROM \"";
-    sql+=Owner;
-    sql+="\".\"";
-    sql+=Table;
-    sql+="\"";
+    sql="SELECT * FROM ";
+    sql+=table();
     if (!Criteria.isEmpty()) {
       sql+=" WHERE ";
       sql+=Criteria;
@@ -255,19 +252,20 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 
 void toResultContentEditor::deleteCurrent()
 {
+  bool mysql=(connection().provider()=="MySQL");
   saveUnsaved();
   if (currentRow()<Row) {
-    QString sql="DELETE FROM \"";
-    sql+=Owner;
-    sql+="\".\"";
-    sql+=Table;
-    sql+="\" WHERE ";
+    QString sql="DELETE FROM ";
+    sql+=table();
+    sql+=" WHERE ";
     
     QHeader *head=horizontalHeader();
     for(int i=0;i<numCols();i++) {
-      sql+="\"";
+      if (!mysql)
+	sql+="\"";
       sql+=head->label(i);
-      sql+="\" ";
+      if (!mysql)
+	sql+="\" ";
       if (text(currentRow(),i))
 	sql+=" IS NULL";
       else {
@@ -306,13 +304,12 @@ void toResultContentEditor::deleteCurrent()
 void toResultContentEditor::saveUnsaved()
 {
   if (OrigValues.size()>0) {
+    bool mysql=(connection().provider()=="MySQL");
     toStatusMessage("Saved row");
     if (CurrentRow>=Row) {
-      QString sql="INSERT INTO \"";
-      sql+=Owner;
-      sql+="\".\"";
-      sql+=Table;
-      sql+="\" VALUES (";
+      QString sql="INSERT INTO ";
+      sql+=table();
+      sql+=" VALUES (";
       for (int i=0;i<numCols();i++) {
 	sql+=":f";
 	sql+=QString::number(i);
@@ -341,11 +338,9 @@ void toResultContentEditor::saveUnsaved()
 	  conn.setNeedCommit();
       } TOCATCH
     } else {
-      QString sql="UPDATE \"";
-      sql+=Owner;
-      sql+="\".\"";
-      sql+=Table;
-      sql+="\" SET ";
+      QString sql="UPDATE ";
+      sql+=table();
+      sql+=" SET ";
       QHeader *head=horizontalHeader();
       std::list<QString>::iterator k=OrigValues.begin();
       bool first=false;
@@ -355,9 +350,11 @@ void toResultContentEditor::saveUnsaved()
 	    first=true;
 	  else
 	    sql+=", ";
-	  sql+="\"";
+	  if (!mysql)
+	    sql+="\"";
 	  sql+=head->label(i);
-	  sql+="\" ";
+	  if (!mysql)
+	    sql+="\" ";
 	  if (text(CurrentRow,i).isNull())
 	    sql+=" = NULL";
 	  else {
@@ -371,9 +368,11 @@ void toResultContentEditor::saveUnsaved()
 	sql+=" WHERE ";
 	int col=0;
 	for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	  sql+="\"";
+	  if (!mysql)
+	    sql+="\"";
 	  sql+=head->label(col);
-	  sql+="\" ";
+	  if (!mysql)
+	    sql+="\" ";
 	  if ((*j).isNull())
 	    sql+=" IS NULL";
 	  else {
@@ -450,11 +449,8 @@ void toResultContentEditor::print(void)
   name+=".";
   name+=Table;
   print.setSQLName(name);
-  QString sql="SELECT * FROM \"";
-  sql+=Owner;
-  sql+="\".\"";
-  sql+=Table;
-  sql+="\"";
+  QString sql="SELECT * FROM ";
+  sql+=table();
   print.query(sql);
   print.print();
 }
@@ -468,11 +464,8 @@ void toResultContentEditor::exportFile(void)
   name+=".";
   name+=Table;
   list.setSQLName(name);
-  QString sql="SELECT * FROM \"";
-  sql+=Owner;
-  sql+="\".\"";
-  sql+=Table;
-  sql+="\"";
+  QString sql="SELECT * FROM ";
+  sql+=table();
   list.query(sql);
   list.readAll();
   list.exportFile();
@@ -588,6 +581,21 @@ void toResultContentEditor::menuCallback(int cmd)
   }
 }
 
+QString toResultContentEditor::table(void)
+{
+  QString sql;
+  if (connection().provider()=="MySQL")
+    return Table;
+  else {
+    sql="\"";
+    sql+=Owner;
+    sql+="\".\"";
+    sql+=Table;
+    sql+="\"";
+    return sql;
+  }
+}
+
 toResultContent::toResultContent(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
@@ -634,4 +642,9 @@ void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
   toConnection &mycon=connection();
   if (&mycon==&conn) // Is this same connection
     saveUnsaved();
+}
+
+bool toResultContent::canHandle(toConnection &conn)
+{
+  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
 }

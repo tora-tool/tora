@@ -746,36 +746,6 @@ QString toResultView::middleString()
   return connection().description();
 }
 
-void toResultView::query(const QString &sql)
-{
-  toQList p;
-  query(sql,p);
-}
-
-void toResultView::changeParams(const QString &Param1)
-{
-  toQList p;
-  p.insert(p.end(),Param1);
-  query(SQL,p);
-}
-
-void toResultView::changeParams(const QString &Param1,const QString &Param2)
-{
-  toQList p;
-  p.insert(p.end(),Param1);
-  p.insert(p.end(),Param2);
-  query(SQL,p);
-}
-
-void toResultView::changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-{
-  toQList p;
-  p.insert(p.end(),Param1);
-  p.insert(p.end(),Param2);
-  p.insert(p.end(),Param3);
-  query(SQL,p);
-}
-
 void toResultView::setup(bool readable,bool dispCol)
 {
   Query=NULL;
@@ -784,7 +754,6 @@ void toResultView::setup(bool readable,bool dispCol)
   if (NumberColumn)
     addColumn("#");
   Filter=NULL;
-  connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
 }
 
 toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
@@ -827,8 +796,12 @@ void toResultView::addItem(void)
 
 void toResultView::query(const QString &sql,const toQList &param)
 {
+  if (!handled())
+    return;
+
   delete Query;
-  SQL=sql;
+  setSQL(sql);
+  setParams(param);
   Query=NULL;
   LastItem=NULL;
   RowNumber=0;
@@ -917,18 +890,6 @@ void toResultView::keyPressEvent(QKeyEvent *e)
   QListView::keyPressEvent(e);
 }
 
-void toResultView::setSQL(toSQL &sql)
-{
-  setSQLName(sql.name());
-  SQL=toSQL::string(sql,connection());
-}
-
-void toResultView::query(toSQL &sql)
-{
-  setSQLName(sql.name());
-  query(toSQL::string(sql,connection()));
-}
-
 void toResultView::addMenues(QPopupMenu *menu)
 {
   menu->insertSeparator();
@@ -949,16 +910,4 @@ void toResultView::menuCallback(int cmd)
 int toResultView::queryColumns(void) const
 {
   return Query?Query->columns():0;
-}
-
-void toResultView::connectionChanged(void)
-{
-  setEnabled(canHandle(connection()));
-  if (!sqlName().isEmpty()) {
-    try {
-      QString sql=toSQL::string(sqlName(),connection());
-      SQL=sql;
-    } catch(...) {
-    }
-  }
 }

@@ -36,7 +36,8 @@ toResultField::toResultField(QWidget *parent,const char *name)
 
 void toResultField::query(const QString &sql,const toQList &param)
 {
-  SQL=sql;
+  setSQL(sql);
+  setParams(param);
 
   try {
     toQuery query(connection(),sql,param);
@@ -49,13 +50,3 @@ void toResultField::query(const QString &sql,const toQList &param)
   } TOCATCH
 }
 
-void toResultField::setSQL(toSQL &sql)
-{
-  SQL=toSQL::string(sql,connection());
-  setFilename(sql.name());
-}
-void toResultField::query(toSQL &sql)
-{
-  setFilename(sql.name());
-  query(toSQL::string(sql,connection()));
-}

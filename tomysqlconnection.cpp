@@ -35,15 +35,8 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
   QString ret;
   bool inString=false;
   toQList::iterator cpar=params.begin();
-  bool quotes=true;
 
   map<QString,QString> binds;
-
-  {
-    QString t=query.upper();
-    if (t.startsWith("SHOW")||t.startsWith("CONNECT"))
-      quotes=false;
-  }
 
   for(unsigned int i=0;i<query.length();i++) {
     QChar c=query[i];
@@ -65,11 +58,15 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
 	    break;
 	  nam+=c;
 	}
+	QString in;
 	if (c=='<') {
 	  for (i++;i<query.length();i++) {
 	    c=query[i];
-	    if (c!='>')
+	    if (c=='>') {
+	      i++;
 	      break;
+	    }
+	    in+=c;
 	  }
 	}
 	i--;
@@ -89,7 +86,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
 	} else if ((*cpar).isInt()||(*cpar).isDouble()) {
 	  str=QString(*cpar);
 	} else {
-	  if (quotes)
+	  if (in!="noquote")
 	    str+="'";
 	  QString tmp=(*cpar);
 	  for(unsigned int j=0;j<tmp.length();j++) {
@@ -120,7 +117,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
 	      str+=d;
 	    }
 	  }
-	  if (quotes)
+	  if (in!="noquote")
 	    str+="'";
 	}
 	binds[nam]=str;
@@ -133,6 +130,7 @@ static QCString QueryParam(const QString &query,toQList &params,const QString &c
     }
   }
   // More complex conversion here later
+  //  printf("Parsed: %s\n",(const char *)ret);
   return ret.latin1();
 }
 
@@ -303,12 +301,18 @@ public:
       // Doesn't support transactions
     }
 
-    void throwError(void)
+    void throwError(const QString &sql=QString::null)
     {
       char *str=mysql_error(Connection);
-      if (str)
-	throw QString(str);
-      else
+      if (str) {
+	if (!sql.isEmpty()) {
+	  QString err=str;
+	  err+="\n";
+	  err+=sql;
+	  throw QString(err);
+	} else
+	  throw QString(str);
+      } else
 	throw QString("Unknown error has occured in MySQL connection");
     }
     MYSQL *mysql(void)
@@ -390,7 +394,7 @@ void toMysqlProvider::mysqlQuery::execute(void)
   if(mysql_real_query(mysql()->mysql(),
 		      sql,
 		      sql.length())!=0)
-    mysql()->throwError();
+    mysql()->throwError(sql);
   Result=mysql_store_result(mysql()->mysql());
   if (Result) {
     Columns=mysql_num_fields(Result);
@@ -403,7 +407,7 @@ void toMysqlProvider::mysqlQuery::execute(void)
     Fields=NULL;
     Columns=0;
   } else
-    mysql()->throwError();
+    mysql()->throwError(sql);
 }
 
 toMysqlProvider::mysqlConnection *toMysqlProvider::mysqlQuery::mysql(void)

@@ -84,9 +84,10 @@ public:
    * @param ses Session ID to change to.
    */
   void changeSession(int ses);
-  /** Only work for Oracle.
+  /** Support Oracle
    */
-  virtual bool canHandle(const toConnection &conn);
+  virtual bool canHandle(toConnection &conn)
+  { return toIsOracle(conn); }
 signals:
   /** Emitted when session is changed.
    * @param ses New session ID.

@@ -45,6 +45,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
+  /** Support Oracle & MySQL
+   */
+  virtual bool canHandle(toConnection &conn);
 };
 
 #endif

@@ -367,6 +367,9 @@ public slots:
   /** Display context help. 
    */
   void contextHelp(void);
+  /** Called when active window is changed.
+   */
+  void windowActivated(QWidget *);
 private slots:
   /** Used to enable/disable entries in the edit & file menu
    */
@@ -417,9 +420,6 @@ private slots:
   /** Paste button pressed
    */
   void pasteButton(void);
-  /** Called when active window is changed.
-   */
-  void windowActivated(QWidget *);
 };
 
 
@@ -685,11 +685,14 @@ QColor toChartColor(int index);
  * only stored in toToolWidgets.
  * @return Reference toConnection object closest to the current.
  */
-toConnection &toCurrentConnection(QWidget *widget);
+toConnection &toCurrentConnection(QObject *widget);
 /** Return the tool widget most closely associated with a widget.
  * @return Pointer to tool widget.
  */
-toToolWidget *toCurrentTool(QWidget *widget);
+toToolWidget *toCurrentTool(QObject *widget);
+/** Check if this connection is an oracle connection.
+ */
+bool toIsOracle(const toConnection &);
 /** Whenever this class is instantiated the window will display a busy cursor. You
  * can instantiate this function as many time as you want, only when all of them are
  * destructed the curser will revert back to normal.

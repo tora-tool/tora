@@ -84,6 +84,9 @@ static toSQL SQLLock("toResultLock:Locks",
 void toResultLock::query(const QString &sql,
 			 const toQList &param)
 {
+  if (!handled())
+    return;
+
   clear();
 
   toQuery *query=NULL;

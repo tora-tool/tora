@@ -32,16 +32,17 @@ toResultLine::toResultLine(QWidget *parent,const char *name=NULL)
   : toLineChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
-  connect(toCurrentTool(this),SIGNAL(connectionChange()),
-	  this,SLOT(clear()));
   LastStamp=0;
   Flow=true;
 }
 
 void toResultLine::query(const QString &sql,const toQList &param,bool first)
 {
-  SQL=sql;
-  Param=param;
+  if (!handled())
+    return;
+
+  setSQL(sql);
+  setParams(param);
   try {
     toQuery query(connection(),sql,param);
 
@@ -97,12 +98,8 @@ std::list<double> toResultLine::transform(std::list<double> &input)
   return input;
 }
 
-void toResultLine::setSQL(toSQL &sql)
+void toResultLine::connectionChanged(void)
 {
-  SQL=toSQL::string(sql,connection());
-}
-
-void toResultLine::query(toSQL &sql)
-{
-  query(toSQL::string(sql,connection()));
+  toResult::connectionChanged();
+  clear();
 }

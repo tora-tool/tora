@@ -36,6 +36,10 @@ public:
   QString currentTablespace(void);
   QString currentFilename(void);
   virtual void query(void);
+  /** Support Oracle
+   */
+  virtual bool canHandle(toConnection &conn)
+  { return toIsOracle(conn); }
 };
 
 #endif

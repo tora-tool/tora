@@ -62,10 +62,6 @@ class toSQL;
 class toResultField : public toHighlightedText, public toResult {
   Q_OBJECT
 
-  /** SQL to run.
-   */
-  QString SQL;
-
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -73,46 +69,57 @@ public:
    */
   toResultField(QWidget *parent,const char *name=NULL);
 
-  /** Set the SQL to run.
-   * @param sql Query.
-   */
-  void setSQL(const QString &amp;sql)
-  { SQL=sql; }
-  /** Set the SQL to run.
-   * @param sql Query.
-   */
-  void setSQL(toSQL &amp;sql);
-
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &amp;sql,const toQList &amp;param);
 
-  /** Run this query without parameters.
-   * @param sql Query.
+  /** Handle any connection by default
+   */
+  virtual bool canHandle(toConnection &amp;)
+  { return true; }
+
+  // Why are these needed?
+#if 1
+  /** Set the SQL statement of this list
+   * @param sql String containing statement.
+   */
+  void setSQL(const QString &amp;sql)
+  { toResult::setSQL(sql); }
+  /** Set the SQL statement of this list. This will also affect @ref Name.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &amp;sql)
+  { toResult::setSQL(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
    */
   void query(const QString &amp;sql)
-  { toQList p; query(sql,p); }
-  /** Run this query without parameters.
-   * @param sql Query.
+  { toResult::query(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
    */
-  void query(toSQL &amp;sql);
+  void query(toSQL &amp;sql)
+  { toResult::query(sql); }
+#endif
 public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { query(SQL); }
+  { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1)
-  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
-  /** Reimplemented for internal reasons.
+  { toResult::changeParams(Param1); }
+  /** Reimplemented For internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toResult::changeParams(Param1,Param2,Param3); }
 };
 
 #endif

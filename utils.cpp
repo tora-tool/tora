@@ -679,7 +679,7 @@ QColor toChartColor(int index)
   return ChartColors[index%(sizeof(ChartColors)/sizeof(QColor))];
 }
 
-toToolWidget *toCurrentTool(QWidget *cur)
+toToolWidget *toCurrentTool(QObject *cur)
 {
   while(cur) {
     try {
@@ -689,19 +689,14 @@ toToolWidget *toCurrentTool(QWidget *cur)
     } catch(...) {
       // Catch problems with Visual C++ missing RTTI
     }
-    cur=cur->parentWidget();
+    cur=cur->parent();
   }
   throw QString("Couldn't find parent connection. Internal error.");
 }
 
-toConnection &toCurrentConnection(QWidget *cur)
+toConnection &toCurrentConnection(QObject *cur)
 {
   return toCurrentTool(cur)->connection();
-}
-
-toConnection &toResult::connection(void)
-{
-  return toCurrentConnection(dynamic_cast<QWidget *>(this));
 }
 
 unsigned int toBusy::Count=0;
@@ -718,11 +713,6 @@ toBusy::~toBusy()
   Count--;
   if (!Count&&toThread::mainThread())
     qApp->restoreOverrideCursor();
-}
-
-toTimer *toResult::timer(void)
-{
-  return toCurrentTool(dynamic_cast<QWidget *>(this))->timer();
 }
 
 void toReadableColumn(QString &name)
@@ -742,6 +732,11 @@ void toReadableColumn(QString &name)
       inWord=true;
     }
   }
+}
+
+bool toIsOracle(const toConnection &conn)
+{
+  return conn.provider()=="Oracle";
 }
 
 #ifndef TO_LICENSE

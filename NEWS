@@ -119,9 +119,10 @@
 2001-09-03: Added some DBA layouts for browser.
 2001-09-03: Display synonyms owned by user or pointing to objects owned by user.
 2001-09-05: Added mysql connection provider.
-2001-09-05: Fall back to Oracle if sql not found in toSQL.
 2001-09-05: Add support for changing connections in toresultviews.
 2001-09-05: Some fixes in debugtext when changing data.
+2001-09-06: Some rather extensive toResult changes in the API.
+2001-09-07: Finnished MySQL support in browser and worksheet.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 

@@ -36,7 +36,7 @@ class toResultContent;
  * The sql is not used in the query.
  */
 
-class toResultContentEditor : public QTable,public toResult {
+class toResultContentEditor : public QTable {
   Q_OBJECT
 
   /** Owner of table.
@@ -133,6 +133,11 @@ class toResultContentEditor : public QTable,public toResult {
    */
   virtual void contentsMouseMoveEvent (QMouseEvent *e);
   
+  QString table(void);
+
+  toConnection &connection()
+  { return toCurrentConnection(this); }
+
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -280,6 +285,10 @@ public slots:
    * @param cmt If commit or rollback
    */
   virtual void saveUnsaved(toConnection &conn,bool cmt);
+
+  /** Handle Oracle & MySQL
+   */
+  virtual bool canHandle(toConnection &);
 };
 
 #endif

@@ -148,30 +148,23 @@ QString toSQL::string(const QString &name,
   allocCheck();
   QString ver=conn.version();
   QString prov=conn.provider();
-  bool fail=false;
-  do {
-    if (fail) {
-      prov="Oracle";
-      ver="8.1";
-    }
-    sqlMap::iterator i=Definitions->find(name);
-    if (i!=Definitions->end()) {
-      QString *sql=NULL;
-      std::list<version> &cl=(*i).second.Versions;
-      for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
-	if ((*j).Provider==prov) {
-	  if ((*j).Version<=ver||!sql) {
-	    sql=&(*j).SQL;
-	  }
-	  if ((*j).Version>=ver)
-	    return *sql;
+
+  sqlMap::iterator i=Definitions->find(name);
+  if (i!=Definitions->end()) {
+    QString *sql=NULL;
+    std::list<version> &cl=(*i).second.Versions;
+    for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+      if ((*j).Provider==prov) {
+	if ((*j).Version<=ver||!sql) {
+	  sql=&(*j).SQL;
 	}
+	if ((*j).Version>=ver)
+	  return *sql;
       }
-      if (sql)
-	return *sql;
     }
-    fail=true;
-  } while(prov!="Oracle");
+    if (sql)
+      return *sql;
+  }
 
   QString str="Tried to get unknown SQL (";
   str+=name;

@@ -32,16 +32,17 @@ toResultBar::toResultBar(QWidget *parent,const char *name=NULL)
   : toBarChart(parent,name)
 {
   connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
-  connect(toCurrentTool(this),SIGNAL(connectionChange()),
-	  this,SLOT(clear()));
   LastStamp=0;
   Flow=true;
 }
 
 void toResultBar::query(const QString &sql,const toQList &param,bool first)
 {
-  SQL=sql;
-  Param=param;
+  if (!handled())
+    return;
+
+  setSQL(sql);
+  setParams(param);
   try {
     toQuery query(connection(),sql,param);
 
@@ -97,12 +98,8 @@ std::list<double> toResultBar::transform(std::list<double> &input)
   return input;
 }
 
-void toResultBar::setSQL(toSQL &sql)
+void toResultBar::connectionChanged(void)
 {
-  SQL=toSQL::string(sql,connection());
-}
-
-void toResultBar::query(toSQL &sql)
-{
-  query(toSQL::string(sql,connection()));
+  toResult::connectionChanged();
+  clear();
 }

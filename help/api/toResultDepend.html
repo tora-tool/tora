@@ -34,6 +34,8 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref5">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
+<LI>virtual  bool &nbsp;<b><A HREF="#ref6">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget displays information about the dependencies of an object
  specified by the first and second parameter in the query. The sql is not
  used in the query. It will also recurs through all dependencies of the
@@ -56,6 +58,10 @@
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
+<A NAME="canHandle"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Support Oracle
+   </p>
+<p>Reimplemented from <A HREF="toResultView.html#canHandle">toResultView</A>.</p>
 <HR>
 	<table>
 	</table>

@@ -172,8 +172,12 @@ static toSQL SQLComment("toResultCols:Comments",
 			"   AND Column_Name = :f3<char[100]>",
 			"Display column comments");
 
-void toResultCols::query(const QString &sql,const toQList &param)
+void toResultCols::query(const QString &,const toQList &param)
 {
+  setParams(param);
+  if (!handled())
+    return;
+
   toConnection &conn=connection();
   enum {
     Oracle,
@@ -186,42 +190,44 @@ void toResultCols::query(const QString &sql,const toQList &param)
     type=MySQL;
   else
     return;
-    
 
-  SQL=sql;
+  QString sql;
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end()) {
     if (type==Oracle) {
-      SQL="\"";
-      SQL+=*cp;
-      SQL+="\"";
+      sql="\"";
+      sql+=*cp;
+      sql+="\"";
     } else
-      SQL="";
+      sql="";
     Owner=*cp;
   }
   cp++;
   if (cp!=((toQList &)param).end()) {
     if (type==Oracle)
-      SQL.append(".\"");
-    SQL.append(*cp);
+      sql.append(".\"");
+    sql.append(*cp);
     if (type==Oracle)
-      SQL+="\"";
+      sql+="\"";
     TableName=(*cp);
   } else {
     try {
-      const toConnection::tableName &name=connection().realName(Owner);
       if (type==Oracle) {
-	SQL="\"";
-	SQL+=name.Owner;
-	SQL+="\".\"";
-	SQL+=name.Name;
-	SQL+="\"";
-      } else
-	SQL=name.Name;
-      Owner=name.Owner;
-      TableName=name.Name;
+	const toConnection::tableName &name=connection().realName(Owner);
+	sql="\"";
+	sql+=name.Owner;
+	sql+="\".\"";
+	sql+=name.Name;
+	sql+="\"";
+	Owner=name.Owner;
+	TableName=name.Name;
+      } else {
+	sql=Owner;
+	TableName=Owner;
+	Owner="";
+      }
     } catch(...) {
     }
   }
@@ -233,7 +239,7 @@ void toResultCols::query(const QString &sql,const toQList &param)
 
   try {
     QString str("SELECT * FROM ");
-    str.append(SQL);
+    str.append(sql);
     str.append(" WHERE NULL = NULL");
 
     toQuery Query(conn,str);
@@ -269,7 +275,7 @@ void toResultCols::query(const QString &sql,const toQList &param)
   updateContents();
 }
 
-bool toResultCols::canHandle(const toConnection &conn)
+bool toResultCols::canHandle(toConnection &conn)
 {
   if (conn.provider()=="Oracle"||conn.provider()=="MySQL")
     return true;

@@ -62,6 +62,9 @@ static toSQL SQLViewPlan("toResultPlan:ViewPlan",
 void toResultPlan::query(const QString &sql,
 			 const toQList &param)
 {
+  if (!handled())
+    return;
+
   clear();
 
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);

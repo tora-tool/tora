@@ -73,6 +73,10 @@ public:
    */
   void query(const QString &amp;sql)
   { toQList p; query(sql,p); }
+  /** Support Oracle
+   */
+  virtual bool canHandle(toConnection &amp;conn)
+  { return toIsOracle(conn); }
 };
 
 #endif

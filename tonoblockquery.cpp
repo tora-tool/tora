@@ -195,8 +195,8 @@ toNoBlockQuery::~toNoBlockQuery()
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
 #ifndef TO_QTHREAD
-      // This is how I would like it to work
-      Thread->kill(SIGINT);
+      if (Query.connection().provider()=="Oracle")
+	Thread->kill(SIGINT);
 #else
       // Can't kill it, so well just leave it alone till it's done
 #endif

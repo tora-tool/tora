@@ -26,6 +26,11 @@
 #include "tosql.h"
 #include "toconnection.h"
 
+bool toResultIndexes::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn)||conn.provider()=="MySQL";
+}
+
 toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
@@ -67,8 +72,30 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  " ORDER BY Index_Name",
 			  "List the indexes available on a table");
 
+static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
+			       "SHOW INDEX FROM :tab<noquote>",
+			       QString::null,
+			       "3.0",
+			       "MySQL");
+
 void toResultIndexes::query(const QString &sql,const toQList &param)
 {
+  if (!handled())
+    return;
+
+  enum {
+    Oracle,
+    MySQL
+  } type;
+
+  toConnection &conn=connection();
+  if(conn.provider()=="Oracle")
+    type=Oracle;
+  else if (conn.provider()=="MySQL")
+    type=MySQL;
+  else
+    return;
+    
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
@@ -83,18 +110,45 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
   clear();
 
   try {
-    toQuery query(connection(),SQLListIndex,Owner,TableName);
+    toQuery query(connection());
+    toQList par;
+    if (type==Oracle)
+      par.insert(par.end(),Owner);
+    par.insert(par.end(),TableName);
+    query.execute(SQLListIndex(conn),par);
 
     QListViewItem *item=NULL;
     while(!query.eof()) {
-      item=new QListViewItem(this,item,NULL);
+      if (type==Oracle) {
+	item=new QListViewItem(this,item,NULL);
 
-      QString indexOwner(query.readValue());
-      QString indexName(query.readValue());
-      item->setText(0,indexName);
-      item->setText(1,indexCols(indexOwner,indexName));
-      item->setText(2,query.readValue());
-      item->setText(3,query.readValue());
+	QString indexOwner(query.readValue());
+	QString indexName(query.readValue());
+	item->setText(0,indexName);
+	item->setText(1,indexCols(indexOwner,indexName));
+	item->setText(2,query.readValue());
+	item->setText(3,query.readValue());
+      } else {
+	query.readValue(); // Tablename
+	int unique=query.readValue().toInt();
+	QString name=query.readValue();
+	query.readValue(); // SeqID
+	QString col=query.readValue();
+	query.readValue();
+	query.readValue();
+	query.readValue();
+	query.readValue();
+	query.readValue();
+	if (item&&item->text(0)==name)
+	  item->setText(1,item->text(1)+","+col);
+	else {
+	  item=new QListViewItem(this,item,NULL);
+	  item->setText(0,name);
+	  item->setText(1,col);
+	  item->setText(2,(name=="PRIMARY")?"PRIMARY":"INDEX");
+	  item->setText(3,unique?"UNIQUE":"NONUNIQUE");
+	}
+      }
     }
   } TOCATCH
   updateContents();

@@ -45,6 +45,10 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
+  /** Support Oracle
+   */
+  virtual bool canHandle(toConnection &conn)
+  { return toIsOracle(conn); }
 };
 
 #endif

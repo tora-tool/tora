@@ -77,6 +77,7 @@ void toChangeConnection::changeConnection(int val)
       toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
       if (tool) {
 	tool->setConnection(toMainWidget()->connection(*i));
+	toMainWidget()->windowActivated(tool);
 	return;
       }
     } catch(...) {

@@ -35,8 +35,11 @@ toResultPie::toResultPie(QWidget *parent,const char *name=NULL)
 
 void toResultPie::query(const QString &sql,const toQList &param)
 {
-  SQL=sql;
-  Param=param;
+  if (!handled())
+    return;
+
+  setSQL(sql);
+  setParams(param);
   try {
     toQuery query(connection(),sql,param);
 
@@ -54,9 +57,4 @@ void toResultPie::query(const QString &sql,const toQList &param)
     setValues(values,labels);
   } TOCATCH
   update();
-}
-
-void toResultPie::setSQL(toSQL &sql)
-{
-  SQL=toSQL::string(sql,connection());
 }

@@ -31,6 +31,7 @@
 #include "totool.h"
 #include "toconf.h"
 #include "toconnection.h"
+#include "tosql.h"
 
 #include "toresultitem.moc"
 
@@ -50,12 +51,6 @@ static toSQL SQLResource(TOSQL_RESULTRESOURCE,
 			 "       Runtime_Mem,           Serializable_Aborts,                                                Invalidations\n"
 			 " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>",
 			 "Display information about an SQL statement");
-
-static toSQL SQLResourceMySQL(TOSQL_RESULTRESOURCE,
-			      "SELECT 'Not available' \"-\"",
-			      QString::null,
-			      "3.0",
-			      "MySQL");
 
 void toResultItem::setup(int num,bool readable)
 {
@@ -159,9 +154,14 @@ void toResultItem::done(void)
 
 void toResultItem::query(const QString &sql,const toQList &param)
 {
-  SQL=sql;
+  setSQL(sql);
+  setParams(param);
 
   start();
+  if (!handled()) {
+    done();
+    return;
+  }
 
   try {
     toQuery query(connection(),sql,param);
@@ -180,4 +180,3 @@ void toResultItem::query(const QString &sql,const toQList &param)
     toStatusMessage((const char *)str);
   }
 }
-

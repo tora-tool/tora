@@ -45,12 +45,6 @@ class toResultBar : public toBarChart, public toResult {
   /** Last read values.
    */
   std::list<double> LastValues;
-  /** Query to run.
-   */
-  QString SQL;
-  /** Parameters to query
-   */
-  toQList Param;
   void query(const QString &sql,const toQList &param,bool first);
 public:
   /** Create widget.
@@ -70,28 +64,10 @@ public:
   bool flow(void)
   { return Flow; }
 
-  /** Set SQL to query.
-   * @param sql Query to run.
-   */
-  void setSQL(const QString &sql)
-  { SQL=sql; }
-  /** Set the SQL statement of this list.
-   * @param sql SQL containing statement.
-   */
-  void setSQL(toSQL &sql);
-
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param)
   { query(sql,param,true); }
-  /** Perform the specified query.
-   * @param sql SQL containing statement.
-   */
-  void query(toSQL &sql);
-  /** Reimplemented for internal reasons.
-   */
-  void query(const QString &sql)
-  { toQList p; query(sql,p); }
   /** Reimplemented for internal reasons.
    */
   virtual void clear(void)
@@ -103,23 +79,57 @@ public:
    * @return The valueset actually added to the chart.
    */
   virtual std::list<double> transform(std::list<double> &input);
+  /** Handle any connection
+   */
+  virtual bool canHandle(toConnection &)
+  { return true; }
+
+  // Why are these needed?
+#if 1
+  /** Set the SQL statement of this list
+   * @param sql String containing statement.
+   */
+  void setSQL(const QString &sql)
+  { toResult::setSQL(sql); }
+  /** Set the SQL statement of this list. This will also affect @ref Name.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &sql)
+  { toResult::setSQL(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(const QString &sql)
+  { toResult::query(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(toSQL &sql)
+  { toResult::query(sql); }
+#endif
 public slots:
-  /** Read another value to the chart.
+  /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { query(SQL,Param,false); }
+  { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)
-  { toQList p; p.insert(p.end(),Param1); query(SQL,p); }
-  /** Reimplemented for internal reasons.
+  { toResult::changeParams(Param1); }
+  /** Reimplemented For internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2)
-  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { toQList p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  { toResult::changeParams(Param1,Param2,Param3); }
+protected slots:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void connectionChanged(void);
 };
 
 #endif

@@ -50,7 +50,7 @@ toResultLong::toResultLong(QWidget *parent,const char *name)
 void toResultLong::query(const QString &sql,const toQList &param)
 {
   stop();
-  SQL=sql;
+  setSQL(sql);
   Query=NULL;
   LastItem=NULL;
   RowNumber=0;
@@ -71,7 +71,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
     MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
   } catch (const QString &str) {
-    emit firstResult(SQL,str);
+    emit firstResult(toResult::sql(),str);
     emit done();
     throw;
   }
@@ -143,7 +143,7 @@ void toResultLong::addItem(void)
 	}
 	if (em) {
 	  First=false;
-	  emit firstResult(SQL,buffer);
+	  emit firstResult(sql(),buffer);
 	}	  
 	if (Query->eof()) {
 	  cleanup();
@@ -161,7 +161,7 @@ void toResultLong::addItem(void)
     }
   } catch (const QString &str) {
     if (First) {
-      emit firstResult(SQL,str);
+      emit firstResult(sql(),str);
       First=false;
     }
     cleanup();

@@ -66,6 +66,7 @@ SOURCES=\
 	topiechart.cpp		        \
 	topreferences.cpp	        \
 	topreferencesui.cpp	        \
+	toresult.cpp			\
 	toresultbar.cpp		        \
 	toresultcols.cpp	        \
 	toresultconstraint.cpp	        \
@@ -317,6 +318,7 @@ tora: \
 	objs/toparamget.o \
 	objs/topreferences.o \
 	objs/topreferencesui.o \
+	objs/toresult.o \
 	objs/toresultcols.o \
 	objs/toresultcontent.o \
 	objs/toresultcontentfilterui.o \

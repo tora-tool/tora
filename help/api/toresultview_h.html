@@ -343,11 +343,11 @@ public:
 
   /** Get SQL name of list.
    */
-  QString sqlName(void)
+  virtual QString sqlName(void)
   { return Name; }
   /** Set SQL name of list.
    */
-  void setSQLName(const QString &amp;name)
+  virtual void setSQLName(const QString &amp;name)
   { Name=name; }
   /** Get the whole text for the item and column selected when menu was poped up.
    */
@@ -407,9 +407,6 @@ class toResultView : public toListView, public toResult {
    */
   virtual void keyPressEvent (QKeyEvent * e);
 protected:
-  /** SQL statement to execute.
-   */
-  QString SQL;
   /** Connection to execute statement on.
    */
   toQuery *Query;
@@ -518,29 +515,44 @@ public:
   virtual QListViewItem *createItem(QListViewItem *last,const QString &amp;str)
   { return new toResultViewItem(this,last,str); }
 
+  /** Reimplemented for internal reasons.
+   */
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
+
+  /** Get SQL name of list.
+   */
+  virtual QString sqlName(void)
+  { return toListView::sqlName(); }
+  /** Set SQL name of list.
+   */
+  virtual void setSQLName(const QString &amp;name)
+  { toListView::setSQLName(name); }
+
+  // Why are these needed?
+#if 1
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
   void setSQL(const QString &amp;sql)
-  { SQL=sql; }
+  { toResult::setSQL(sql); }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &amp;sql);
-
-  /** Reimplemented for internal reasons.
-   */
-  virtual void query(const QString &amp;sql,const toQList &amp;param);
+  void setSQL(toSQL &amp;sql)
+  { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &amp;sql);
+  void query(const QString &amp;sql)
+  { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &amp;sql);
+  void query(toSQL &amp;sql)
+  { toResult::query(sql); }
+#endif
 
   /** Reimplemented for internal reasons.
    */
@@ -553,34 +565,34 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void addMenues(QPopupMenu *);
-  /** Reimplemented for internal reasons.
-   */
-  virtual bool canHandle(const toConnection &amp;)
-  { return true; }
 public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { query(SQL); }
+  { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1);
+  virtual void changeParams(const QString &amp;Param1)
+  { toResult::changeParams(Param1); }
+  /** Reimplemented For internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3);
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { toResult::changeParams(Param1,Param2,Param3); }
   /** Try to add an item to the list if available.
    */
   virtual void addItem(void);
+  /** Handle any connection by default
+   */
+  virtual bool canHandle(toConnection &amp;)
+  { return true; }
 protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void menuCallback(int);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void connectionChanged(void);
 };
 
 #endif
