@@ -41,15 +41,14 @@
 #include <qvbox.h>
 #include "toresultview.h"
 
-class toListView;
-class QMultiLineEdit;
-class toConnection;
-class QSplitter;
-class toTemplateProvider;
-class QListViewItem;
-class toMarkedText;
 class QListView;
+class QListViewItem;
+class QSplitter;
+class QTextView;
+class toConnection;
+class toListView;
 class toTemplateItem;
+class toTemplateProvider;
 
 class toTemplate : public QVBox {
   Q_OBJECT
@@ -57,9 +56,13 @@ class toTemplate : public QVBox {
   QSplitter *Splitter;
   toListView *List;
   map<toTemplateItem *,toTemplateProvider *> Providers;
+  QWidget *Info;
 public:
   toTemplate(QWidget *parent);
   virtual ~toTemplate();
+  void setWidget(QWidget *widget);
+  QWidget *widget(void)
+  { return Info; }
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -74,6 +77,9 @@ public:
 
   virtual toTemplateItem *insertItem(QListView *parent)=0;
   virtual void removeItem(toTemplateItem *item)=0;
+
+  static QWidget *parentWidget(QListViewItem *item);
+  static toTemplate *templateWidget(QListViewItem *item);
 
   friend class toTemplate;
 };
@@ -93,8 +99,15 @@ public:
   { }
   virtual void collapse(void)
   { }
-  virtual void setSelected(bool)
+};
+
+class toTemplateText : public toTemplateItem {
+  const QString Note;
+public:
+  toTemplateText(toTemplateItem *parent,const QString &name,const QString &note)
+    : toTemplateItem(parent,name), Note(note)
   { }
+  virtual void setSelected(bool);
 };
 
 #endif

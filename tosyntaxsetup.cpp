@@ -190,7 +190,7 @@ void toSyntaxSetup::selectFont(void)
 {
 #ifdef TO_KDE
   QFont font=toStringToFont(Text);
-  bool ok=KFontDialog::getFont(font,true,this);
+  bool ok=KFontDialog::getFont(font,false,this);
 #else
   bool ok=true;
   QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);

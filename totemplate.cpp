@@ -32,9 +32,11 @@
  *
  ****************************************************************************/
 
-#include <qsplitter.h>
+TO_NAMESPACE;
 
-#include "tomarkedtext.h"
+#include <qsplitter.h>
+#include <qtextview.h>
+
 #include "toresultview.h"
 #include "totool.h"
 #include "totemplate.h"
@@ -85,7 +87,7 @@ toTemplateProvider::toTemplateProvider()
 toTemplate::toTemplate(QWidget *parent)
   : QVBox(parent)
 {
-  Splitter=new QSplitter(this);
+  Splitter=new QSplitter(Vertical,this);
   List=new toListView(Splitter);
   List->addColumn("Template");
   List->setRootIsDecorated(true);
@@ -100,6 +102,8 @@ toTemplate::toTemplate(QWidget *parent)
       toTemplateItem *item=(*i)->insertItem(List);
       Providers[item]=(*i);
     }
+
+  Info=NULL;
 }
 
 toTemplate::~toTemplate()
@@ -126,3 +130,105 @@ void toTemplate::collapse(QListViewItem *item)
   if (ti)
     ti->collapse();
 }
+
+QWidget *toTemplateProvider::parentWidget(QListViewItem *item)
+{
+  QListView *list=item->listView();
+  return dynamic_cast<QWidget *>(list->parent());
+}
+
+toTemplate *toTemplateProvider::templateWidget(QListViewItem *item)
+{
+  QObject *lst=item->listView();
+  while(lst) {
+    if (dynamic_cast<toTemplate *>(lst))
+      return dynamic_cast<toTemplate *>(lst);
+    lst=lst->parent();
+  }
+  throw("Not a toTemplate parent");
+}
+
+void toTemplateText::setSelected(bool sel)
+{
+  toTemplate *temp=provider().templateWidget(this);
+  QTextView *view=dynamic_cast<QTextView *>(temp->widget());
+  if (sel) {
+    if (view) {
+      if (!Note.isEmpty())
+	view->setText(Note);
+      else
+	temp->setWidget(NULL);
+    } else if (!Note.isEmpty())
+      temp->setWidget(new QTextView(Note,QString::null,provider().parentWidget(this)));
+    else
+      temp->setWidget(NULL);
+  }
+  toTemplateItem::setSelected(sel);
+}
+
+void toTemplate::setWidget(QWidget *widget)
+{
+  delete Info;
+  Info=widget;
+  if (Info)
+    Info->show();
+}
+
+class toTextTemplate : toTemplateProvider {
+public:
+  toTextTemplate()
+  { }
+  virtual toTemplateItem *insertItem(QListView *parent);
+  virtual void removeItem(toTemplateItem *item);
+};
+
+static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
+{
+  if (lst1.count()<len||lst2.count()<len)
+    return false;
+  for (unsigned int i=0;i<len;i++)
+    if (lst1[i]!=lst2[i])
+      return false;
+  return true;
+}
+
+toTemplateItem *toTextTemplate::insertItem(QListView *parent)
+{
+  map<QString,QString> pairs;
+  toTool::loadMap("/home/hpj/sqlfunctions.txt",pairs);
+  toTemplateItem *last=new toTemplateItem(*this,parent,"PL/SQL Templates");
+  toTemplateItem *top=last;
+  int lastLevel=0;
+  QStringList lstCtx;
+  for(map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+    //    printf("Adding %s\n",(const char *)*i);
+    QStringList ctx=QStringList::split(":",(*i).first);
+    if (last) {
+      while(last&&lastLevel>=int(ctx.count())) {
+	last=dynamic_cast<toTemplateItem *>(last->parent());
+	lastLevel--;
+      }
+      while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	last=dynamic_cast<toTemplateItem *>(last->parent());
+	lastLevel--;
+      }
+    }
+    if (lastLevel<0)
+      throw QString("Internal error, lastLevel < 0");
+    while(lastLevel<int(ctx.count())-1) {
+      last=new toTemplateItem(last,ctx[lastLevel]);
+      lastLevel++;
+    }
+    last=new toTemplateText(last,ctx[lastLevel],(*i).second);
+    lstCtx=ctx;
+    lastLevel++;
+  }
+  return top;
+}
+
+void toTextTemplate::removeItem(toTemplateItem *item)
+{
+  delete item;
+}
+
+static toTextTemplate TextTemplate;

@@ -27,8 +27,10 @@
 2001-05-14: Fixed argument parsing again.
 2001-05-15: Add first row of query as default binding variables in lowercase.
 2001-05-16: Split toResultView into a toListView which doesn't have toResult.
-2001-05-16: Added template window. (No content yet though)
-2001-05-16: Improved KDE integration.
+2001-05-16: Added template window. (No content yet though).
+2001-05-16: Use KDE standard dialogs if KDE application.
+2001-05-17: Added start of text and db browser template.
+2001-05-17: Added loadMap/saveMap functions to toTool.
 
 0.8: Released 2001-05-07
 

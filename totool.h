@@ -97,6 +97,8 @@ public:
   const QString &config(const QString &tag,const QString &def);
   void setConfig(const QString &tag,const QString &value);
   
+  static bool loadMap(const QString &filename,map<QString,QString> &map);
+  static bool saveMap(const QString &filename,map<QString,QString> &map);
 public slots:
   void createWindow(void);
 };

@@ -105,26 +105,18 @@ void toTool::createWindow(void)
   } TOCATCH
 }
 
-void toTool::saveConfig(void)
+bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
 {
-#ifndef WIN32
-  if (!Configuration)
-    return;
-  QString conf;
-  if (getenv("HOME")) {
-    conf=getenv("HOME");
-  }
-  conf.append(CONFIG_FILE);
-  QString newconf(conf);
-  newconf.append(".new");
+  QString newfile(file);
+  newfile.append(".new");
   {
-    QFile file(newconf);
+    QFile file(newfile);
     if (!file.open(IO_WriteOnly))
-      return;
+      return false;
 
     QRegExp newline("\n");
     QRegExp backslash("\\");
-    for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+    for (map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
       QString line=(*i).first;
       line.append("=");
       line.replace(backslash,"\\\\");
@@ -139,16 +131,35 @@ void toTool::saveConfig(void)
     }
     if (file.status()!=IO_Ok) {
       file.close();
-      unlink(newconf);
+      unlink(newfile);
+      return false;
     }
   }
-  QString oldconf=(conf);
-  oldconf.append(".old");
-  unlink(oldconf);
-  if (!link(conf,oldconf))
-    unlink(conf);
-  link(newconf,conf);
-  unlink(newconf);
+  QString oldfile=(file);
+  oldfile.append(".old");
+  unlink(oldfile);
+  if (!link(file,oldfile)) {
+    unlink(file);
+    link(newfile,file);
+    unlink(newfile);
+    return true;
+  } else {
+    unlink(newfile);
+    return false;
+  }
+}
+
+void toTool::saveConfig(void)
+{
+#ifndef WIN32
+  if (!Configuration)
+    return;
+  QString conf;
+  if (getenv("HOME")) {
+    conf=getenv("HOME");
+  }
+  conf.append(CONFIG_FILE);
+  saveMap(conf,*Configuration);
 #endif
 }
 
@@ -163,18 +174,22 @@ void toTool::loadConfig(void)
     conf=getenv("HOME");
   }
   conf.append(CONFIG_FILE);
-  QFile file(conf);
-  if (!file.open(IO_ReadOnly)) {
-    file.setName(DEF_CONFIG_FILE);
-    if (!file.open(IO_ReadOnly))
-      return;
-  }
+  if (!loadMap(conf,*Configuration))
+    loadMap(DEF_CONFIG_FILE,*Configuration);
+#endif
+}
+
+bool toTool::loadMap(const QString &filename,map<QString,QString> &pairs)
+{
+  QFile file(filename);
+  if (!file.open(IO_ReadOnly))
+    return false;
 
   int size=file.size();
   
   char buf[size+1];
   if (file.readBlock(buf,size)==-1) {
-    throw QString("Encountered problems read configuration");
+    throw QString("Encountered problems reading map");
   }
   buf[size]=0;
   int pos=0;
@@ -185,12 +200,13 @@ void toTool::loadConfig(void)
     switch(buf[pos]) {
     case '\n':
       if (endtag==-1)
-	throw QString("Malformed tag in config file. Missing = on row.");
+	throw QString("Malformed tag in config file. Missing = on row. (%1)").
+	  arg(buf+bol);
       buf[wpos]=0;
       {
 	QString tag=buf+bol;
 	QString val=buf+endtag+1;
-	(*Configuration)[tag]=QString::fromUtf8(val);
+	pairs[tag]=QString::fromUtf8(val);
       }
       bol=pos+1;
       endtag=-1;
@@ -226,7 +242,7 @@ void toTool::loadConfig(void)
     wpos++;
     pos++;
   }
-#endif
+  return true;
 }
 
 const QString &toTool::config(const QString &tag,const QString &def)
