@@ -140,7 +140,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
   QString t=text(column);
   if (t.isNull())
     t=txt;
-  return min(TextWidth(fm,t),MaxColDisp)+top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing();;
+  return min(TextWidth(fm,t),MaxColDisp)+top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing()+1;
 }
 
 QString toResultViewItem::firstText(int col) const
@@ -173,7 +173,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, in
   if (t.isNull())
     t=txt;
   QRect bounds=fm.boundingRect(t);
-  return min(bounds.width(),MaxColDisp)+top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing();
+  return min(bounds.width(),MaxColDisp)+top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing()+1;
 }
 
 void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
@@ -372,7 +372,7 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
   QString t=text(column);
   if (t.isNull())
     t=txt;
-  int wx=top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing();
+  int wx=top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing()+1;
   if (column==0)
 #if QT_VERSION >= 0x030100
     wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
@@ -392,7 +392,7 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
   if (t.isNull())
     t=txt;
   QRect bounds=fm.boundingRect(t);
-  int wx=top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing();;
+  int wx=top->itemMargin()*2-fm.minLeftBearing()-fm.minRightBearing()+1;
   if (column==0)
 #if QT_VERSION >= 0x030100
     wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
@@ -461,7 +461,7 @@ public:
       else
 	key=text;
       int textWidth=TextWidth(List->fontMetrics(),text)+List->itemMargin()*2-
-	List->fontMetrics().minLeftBearing()-List->fontMetrics().minRightBearing();;
+	List->fontMetrics().minLeftBearing()-List->fontMetrics().minRightBearing()+1;
       if (key!=text||
 	  width<textWidth) {
 	QRect itemRect=List->itemRect(item);
