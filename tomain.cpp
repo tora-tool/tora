@@ -186,6 +186,7 @@ toMain::toMain()
   FileMenu=new QPopupMenu(this);
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
   menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
+  connect(FileMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   EditMenu=new QPopupMenu(this);
   EditMenu->insertItem(QPixmap((const char **)undo_xpm),"&Undo",TO_EDIT_UNDO);
@@ -211,6 +212,7 @@ toMain::toMain()
   EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
   connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
   menuBar()->insertItem("&Edit",EditMenu,TO_EDIT_MENU);
+  connect(EditMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   std::map<QString,toTool *> &tools=toTool::tools();
 
@@ -387,15 +389,18 @@ toMain::toMain()
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   menuBar()->insertItem("&Tools",ToolsMenu,TO_TOOLS_MENU);
+  connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   WindowsMenu=new QPopupMenu(this);
   WindowsMenu->setCheckable(true);
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
   menuBar()->insertItem("&Window",WindowsMenu,TO_WINDOWS_MENU);
+  connect(WindowsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   menuBar()->insertSeparator();
 
   menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
+  connect(HelpMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
@@ -425,8 +430,6 @@ toMain::toMain()
   for (std::map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
        j!=NeedConnection.end();j++)
     (*j).first->setEnabled(false);
-
-  connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
@@ -752,7 +755,7 @@ void toMain::commandCallback(int cmd)
 	case TO_EDIT_SEARCH:
 	  if (!Search)
 	    Search=new toSearchReplace(this);
-	  edit->editSearch(Search);
+	  Search->show();
 	  break;
 	case TO_FILE_OPEN:
 	  edit->editOpen();

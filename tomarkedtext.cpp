@@ -270,11 +270,6 @@ bool toMarkedText::editSave(bool askfile)
   return false;
 }
 
-void toMarkedText::editSearch(toSearchReplace *search)
-{
-  search->setTarget(this);
-}
-
 void toMarkedText::newLine(void)
 {
   toMultiLineEdit::newLine();
@@ -446,3 +441,70 @@ void toMarkedText::importData(std::map<QString,QString> &data,const QString &pre
   setCursorPosition(data[prefix+":Line"].toInt(),data[prefix+":Column"].toInt());
 }
 
+static int FindIndex(const QString &str,int line,int col)
+{
+  int pos=0;
+  for (int i=0;i<line;i++) {
+    pos=str.find("\n",pos);
+    if (pos<0)
+      return pos;
+    pos++;
+  }
+  return pos+col;
+}
+
+void toMarkedText::findPosition(const QString &str,int index,int &line,int &col)
+{
+  int pos=0;
+  for (int i=0;i<numLines();i++) {
+    QString str=textLine(i);
+    if (str.length()+pos>=(unsigned int)index) {
+      line=i;
+      col=index-pos;
+      return;
+    }
+    pos+=str.length()+1;
+  }
+  col=-1;
+  line=-1;
+  return ;
+}
+
+bool toMarkedText::searchNext(toSearchReplace *search)
+{
+  QString text=toMarkedText::text();
+
+  int col;
+  int line;
+  cursorPosition(&line,&col);
+  int pos=FindIndex(text,line,col);
+
+  int endPos;
+  if (search->findString(text,pos,endPos)) {
+    int endCol;
+    int endLine;
+    findPosition(text,pos,line,col);
+    findPosition(text,endPos,endLine,endCol);
+    setCursorPosition(line,col,false);
+    setCursorPosition(endLine,endCol,true);
+    
+    return true;
+  }
+
+  return false;
+}
+
+void toMarkedText::searchReplace(const QString &newData)
+{
+  if (!isReadOnly())
+    insert(newData);
+}
+
+bool toMarkedText::searchCanReplace(bool all)
+{
+  if (isReadOnly())
+    return false;
+  if (all||hasMarkedText())
+    return true;
+  return false;
+}

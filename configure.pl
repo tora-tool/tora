@@ -344,7 +344,7 @@ configure [options...]
 
 Options can be any of the following:
 
---prefix             Specify base directory of install
+--prefix             Specify base directory of install (Default: /usr/local)
 --prefix-bin         Binary directory of install
 --prefix-lib         Library directory of install
 --with-qt            Specify Qt base directory
@@ -353,19 +353,19 @@ Options can be any of the following:
 --with-qt-include    Specify Qt include directory
 --with-qt-libs       Specify Qt library directory
 --with-gcc           Specify which GCC compiler to use
---with-mono          Force monolithic compilation
+--with-mono          Force monolithic compilation (Default: No for linux, otherwise yes)
 --with-lib           Add extra library to include (Include -l as well)
---with-static-oracle Force use of static Oracle libraries only
---with-kde           Compile as KDE application (Requires KDE 2.2 or later)
+--with-static-oracle Force use of static Oracle libraries only (Default: No)
+--with-kde           Compile as KDE application (Requires KDE 2.2 or later) (Default: Yes, if detected)
 --without-kde        Dont compile as KDE application even though KDE available.
 --with-kde-include   Where to find KDE include files
 --with-kde-libs      Where to find KDE libraries
 --with-mysql-include Where to find MySQL include files
 --with-mysql-libs    Where to find MySQL library files
---without-oracle     Compile without Oracle support
---without-mysql      Don't compile in MySQL support
---without-rpath      Compile without rpath to Oracle libraries
---disable-new-check  Disable new version check globally in TOra.
+--without-oracle     Compile without Oracle support (Default: No)
+--without-mysql      Don't compile in MySQL support (Default: No, if detected)
+--without-rpath      Compile without rpath to Oracle libraries (Default: no)
+--disable-new-check  Disable new version check globally in TOra (Default: no)
 __USAGE__
         exit(2);
     }

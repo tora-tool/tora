@@ -1,5 +1,11 @@
 1.3.6:
 
+2002-06-06: Implemented replace in content editor.
+2002-06-06: Added default values to configure help output.
+2002-06-06: Fixed problem with searching on text not shown in listviews.
+2002-06-06: New edit widget framework to fascilitate search & replace.
+2002-06-06: Fixed problem with not being able to select from menues.
+2002-06-05: Change worksheet caption on save to reflect new filename.
 2002-06-04: Added option to open file in new worksheet.
 2002-06-04: Fixed problem with docks when not compiling with KDE support.
 2002-06-04: Fixed problem with writing file without KDE support.

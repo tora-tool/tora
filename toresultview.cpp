@@ -300,6 +300,7 @@ toListView::toListView(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,false,false)
 {
+  FirstSearch=false;
   setTreeStepSize(15);
   setSelectionMode(Extended);
   setAllColumnsShowFocus(true);
@@ -653,9 +654,52 @@ static QString QuoteString(const QString &str)
   return t;
 }
 
-void toListView::editSearch(toSearchReplace *search)
+bool toListView::searchNext(toSearchReplace *search)
 {
-  search->setTarget(this);
+  QListViewItem *item=currentItem();
+
+  bool first=FirstSearch;
+  FirstSearch=false;
+
+  for (QListViewItem *next=NULL;item;item=next) {
+    if (!first)
+      first=true;
+    else {
+      for (int i=0;i<columns();i++) {
+	int pos=0;
+	int endPos=0;
+
+	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+	toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+	QString txt;
+	if (resItem)
+	  txt=resItem->allText(i);
+	else if (chkItem)
+	  txt=chkItem->allText(i);
+	else if (item)
+	  txt=item->text(i);
+	
+	if (search->findString(item->text(0),pos,endPos)) {
+	  setCurrentItem(item);
+	  return true;
+	}
+      }
+    }
+
+    if (item->firstChild())
+      next=item->firstChild();
+    else if (item->nextSibling())
+      next=item->nextSibling();
+    else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+  }
+  return false;
 }
 
 toListView *toListView::copyTransposed(void)

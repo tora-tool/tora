@@ -37,35 +37,30 @@
 
 #include "tosearchreplaceui.h"
 #include "tohelp.h"
+#include "toeditwidget.h"
 
 class toListView;
 class toMarkedText;
 class toResultContentEditor;
 
-class toSearchReplace : public toSearchReplaceUI, public toHelpContext {
-  toMarkedText *Text;
-  toListView *List;
-  toResultContentEditor *Content;
-  bool FromTop;
-
-  int findIndex(const QString &str,int line,int col);
-  void findPosition(const QString &str,int index,int &line,int &col);
-  bool findString(const QString &str,int &startPos,int &endPos);
-  void release(void);
-
+class toSearchReplace : public toSearchReplaceUI, public toHelpContext, public toEditWidget::editHandler {
+  toEditWidget *Target;
 public:
   toSearchReplace(QWidget *parent);
+  ~toSearchReplace()
+  { toEditWidget::delHandler(this); }
 
-  void setTarget(toMarkedText *parent);
-  void setTarget(toListView *parent);
-  void setTarget(toResultContentEditor *parent);
-  bool searchNextAvailable();
+  bool findString(const QString &text,int &pos,int &endPos);
+  void receivedFocus(toEditWidget *widget);
+  void lostFocus(toEditWidget *widget)
+  { receivedFocus(NULL); }
+  bool searchNextAvailable(void);
 public slots:
-  virtual void destroyed();
+  virtual void searchNext();
+private slots:
   virtual void replaceAll();
   virtual void replace();
   virtual void search();
-  virtual void searchNext();
   virtual void searchChanged();
   virtual void displayHelp();
 };

@@ -184,6 +184,8 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Reimplemented for internal reasons.
    */
   virtual QWidget *beginEdit(int row,int col,bool replace);
+  virtual void endEdit(int row,int col,bool accept,bool replace);
+
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
@@ -224,6 +226,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   QString table(void);
 
   toConnection &connection();
+  QLineEdit *CurrentEditor;
+  int SearchStart;
+  int SearchEnd;
 
   class contentItem : public QTableItem {
   public:
@@ -264,9 +269,6 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual bool editSave(bool ask);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void editSearch(toSearchReplace *search);
   /** Reimplemented for internal reasons.
    */
   virtual void editReadAll(void);
@@ -359,6 +361,22 @@ public slots:
   /** Display single record form.
    */
   virtual void singleRecordForm(bool display);
+
+  /** Move to top of data
+   */
+  virtual void searchTop(void)
+  { setCurrentCell(0,0); }
+  /** Search for next entry
+   * @return True if found, should select the found text.
+   */
+  virtual bool searchNext(toSearchReplace *search);
+  /** Replace entry with new data
+   */
+  virtual void searchReplace(const QString &newData);
+  /** Check if data can be modified by search
+   * @param all If true can replace all, otherwise can replace right now.
+   */
+  virtual bool searchCanReplace(bool all);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.

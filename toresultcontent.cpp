@@ -186,11 +186,6 @@ void toResultContentEditor::setText(int row,int col,const QString &text)
     setItem(row,col,new contentItem(this,text));
 }
 
-void toResultContentEditor::editSearch(toSearchReplace *search)
-{
-  search->setTarget(this);
-}
-
 void toResultContentEditor::setCurrentCellFocus(int row, int col)
 {
   QTable::setCurrentCell(row,col);
@@ -275,6 +270,8 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,true,true)
 {
+  CurrentEditor=NULL;
+  SearchStart=SearchEnd=0;
   NoUseReturning=false;
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   Query=NULL;
@@ -573,6 +570,7 @@ void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &c
 
 QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 {
+  SearchStart=SearchEnd=0;
   if (CurrentRow!=row)
     toStatusMessage("Unsaved data in contents, select other row to store",true);
   saveRow(row);
@@ -584,7 +582,16 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 	    this,SLOT(changeData(int,int,const QString &)));
   }
 
-  return QTable::beginEdit(row,col,replace);
+  QWidget *ret=QTable::beginEdit(row,col,replace);
+  if (ret->isA("QLineEdit"))
+    CurrentEditor=(QLineEdit *)ret;
+  return ret;
+}
+
+void toResultContentEditor::endEdit(int row,int col,bool accept,bool replace)
+{
+  CurrentEditor=NULL;
+  QTable::endEdit(row,col,accept,replace);
 }
 
 void toResultContentEditor::gotoLastRecord()
@@ -913,6 +920,7 @@ void toResultContentEditor::saveUnsaved(void)
 
 void toResultContentEditor::changePosition(int row,int col)
 {
+  SearchStart=SearchEnd=0;
   if (CurrentRow!=row&&CurrentRow>=0)
     saveUnsaved();
 
@@ -1103,6 +1111,55 @@ QString toResultContentEditor::table(void)
     toStatusMessage(str);
     return Table;
   }
+}
+
+bool toResultContentEditor::searchNext(toSearchReplace *search)
+{
+  int row=currentRow();
+  int col=currentColumn();
+  while(row<numRows()) {
+    int pos=SearchEnd;
+    int endPos;
+
+    if (search->findString(text(row,col),pos,endPos)) {
+      setCurrentCell(row,col);
+      editCell(row,col);
+      if (CurrentEditor)
+	CurrentEditor->setSelection(pos,endPos-pos);
+      SearchEnd=endPos;
+      SearchStart=pos;
+      return true;
+    }
+    col++;
+    if (col>=numCols()) {
+      row++;
+      col=0;
+    }
+    SearchEnd=0;
+  }
+  return false;
+}
+
+void toResultContentEditor::searchReplace(const QString &newData)
+{
+  if (SearchEnd>0) {
+    int row=currentRow();
+    int col=currentColumn();
+    QTableItem *itm=item(row,col);
+    if (itm) {
+      QString txt=itm->text();
+      txt.replace(SearchStart,SearchEnd-SearchStart,newData);
+      saveRow(row);
+      itm->setText(txt);
+    }
+  }
+}
+
+bool toResultContentEditor::searchCanReplace(bool all)
+{
+  if (all||(SearchEnd>0))
+    return true;
+  return false;
 }
 
 toResultContent::toResultContent(QWidget *parent,const char *name)

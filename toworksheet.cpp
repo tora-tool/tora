@@ -243,6 +243,12 @@ public:
       toHighlightedText::keyPressEvent(e);
     }
   }
+  virtual bool editSave(bool askfile)
+  {
+    bool ret=toHighlightedText::editSave(askfile);
+    Worksheet->setCaption();
+    return ret;
+  }
   virtual bool editOpen(QString suggestedFile)
   {
     int ret=1;

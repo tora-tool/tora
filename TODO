@@ -20,7 +20,6 @@ Extended functionality:
 	Partitions
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
-	Add replace to toResultContent.
 	Add tooltips like in result lists.
 * Editor improvements
 	CVS support (Or whatever this is called in windows).

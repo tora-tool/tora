@@ -293,6 +293,10 @@ public:
    * is cleared.
    */
   static void editDisable(toEditWidget *edit);
+  /** Get current edit widget
+   */
+  toEditWidget *editWidget()
+  { return Edit; }
 
   /**
    * Close window
