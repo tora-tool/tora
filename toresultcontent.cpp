@@ -76,6 +76,12 @@ void toResultContentEditor::editSearch(toSearchReplace *search)
   search->setTarget(this);
 }
 
+void toResultContentEditor::setCurrentCellFocus(int row, int col)
+{
+  QTable::setCurrentCell(row,col);
+  viewport()->setFocus();
+}
+
 void toResultContentEditor::contentsMouseMoveEvent (QMouseEvent *e)
 {
   if (e->state()==LeftButton&&
@@ -291,30 +297,34 @@ void toResultContentEditor::gotoLastRecord()
 {
   editReadAll();
   setNumRows(Row+1);
-  setCurrentCell(Row-1,currentColumn());
+  setCurrentCellFocus(Row-1,currentColumn());
 }
   
 void toResultContentEditor::gotoFirstRecord()
 {
-  setCurrentCell(0,currentColumn());
+  setCurrentCellFocus(0,currentColumn());
 }
   
 void toResultContentEditor::gotoPreviousRecord()
 {
-  setCurrentCell(max(0,currentRow()-1),currentColumn());
+  setCurrentCellFocus(max(0,currentRow()-1),currentColumn());
 }
   
 void toResultContentEditor::gotoNextRecord()
 {
-  setCurrentCell(min(numRows()-1,currentRow()+1),currentColumn());
+  setCurrentCellFocus(min(numRows()-1,currentRow()+1),currentColumn());
 }
-
+  
 void toResultContentEditor::addRecord()
 {
+  if(CurrentRow>0 || NewRecordRow>0) {
+    return;
+  }
+
   saveUnsaved();
   
-  if(currentRow() > numRows()-3) {
-    setCurrentCell(numRows()-1,0);
+  if(currentRow() > numRows()-2) {
+    setCurrentCellFocus(numRows()-1,0);
   } else {
     setNumRows(numRows()+1);
     int crow=currentRow();
@@ -328,39 +338,45 @@ void toResultContentEditor::addRecord()
 
     NewRecordRow = crow;
     setNumRows(numRows());
-    setCurrentCell(crow,0);
+    setCurrentCellFocus(crow,0);
   }
 }
 
 void toResultContentEditor::cancelEdit()
 {
 
-  if(CurrentRow < 0 && NewRecordRow < 0)
+  if(CurrentRow < 0 && NewRecordRow < 0) {
+    setCurrentCellFocus(currentRow(),currentColumn());
     return;
+  }
 
   int crow=CurrentRow;
-  int col=0;
-  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
-    setText(CurrentRow,col,*j);
-  CurrentRow=-1;
-  OrigValues.clear();
-
   endEdit(currentRow(),currentColumn(),false,false);
 
   if(NewRecordRow > -1) {
+    crow=NewRecordRow;
     NewRecordRow = -1;
-    crow=currentRow();
     for (int row=crow+1;row<numRows();row++)
       swapRows(row-1,row);
+  } else {
+    int col=0;
+    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
+      setText(CurrentRow,col,*j);
   }
+  CurrentRow=-1;
+  OrigValues.clear();
     
   setNumRows(Row+1);
-  setCurrentCell(crow,0);
+  setCurrentCellFocus(crow,0);
   toStatusMessage("Edit cancelled",true);
 }
 
 void toResultContentEditor::deleteCurrent()
 {
+  if(currentRow()==NewRecordRow) {
+    cancelEdit();
+    return;
+  }
   bool mysql=(connection().provider()=="MySQL");
   saveUnsaved();
   if (currentRow()<Row) {
@@ -410,29 +426,34 @@ void toResultContentEditor::deleteCurrent()
     setNumRows(Row);
 
   setNumRows(Row+1);
-  setCurrentCell(crow,0);
+  setCurrentCellFocus(crow,0);
 }
 
 void toResultContentEditor::saveUnsaved()
 {
+  endEdit(currentRow(),currentColumn(),true,true);
   if (OrigValues.size()>0) {
+    QString rowid = "";
     bool mysql=(connection().provider()=="MySQL");
+    bool oracle=(connection().provider()=="Oracle");
     toStatusMessage("Saved row");
-    if (CurrentRow>=Row || CurrentRow == NewRecordRow) {
-      NewRecordRow = -1;
+    if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
       QString sql="INSERT INTO ";
       sql+=table();
       sql+=" VALUES (";
       for (int i=0;i<numCols();i++) {
 	sql+=":f";
 	sql+=QString::number(i);
-	sql+="<char[4000]>";
+	sql+="<char[4000],in>";
 	if (i+1<numCols())
 	  sql+=",";
       }
       sql+=")";
+      if(oracle) 
+	sql+=" RETURNING ROWID INTO :r<char[32],out>";
+	
       try {
-	toConnection &conn=connection();
+	toConnection &conn = connection();
 	toQList args;
 	toQValue null;
 	for (int i=0;i<numCols();i++) {
@@ -442,14 +463,20 @@ void toResultContentEditor::saveUnsaved()
 	  else
 	    toPush(args,toQValue(str));
 	}
-	toQuery exec(conn,sql,args);
+	toQuery q(conn,sql,args);
+	if(oracle)
+	  rowid = q.readValueNull();
 	Row++;
 	setNumRows(Row+1);
 	if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	  conn.commit();
 	else
 	  toMainWidget()->setNeedCommit(conn);
-      } TOCATCH
+      } catch (const QString &str) {
+	cancelEdit();
+	toStatusMessage(str);
+	oracle = false;
+      }
     } else {
       QString sql="UPDATE ";
       sql+=table();
@@ -473,7 +500,7 @@ void toResultContentEditor::saveUnsaved()
 	  else {
 	    sql+="= :f";
 	    sql+=QString::number(i);
-	    sql+="<char[4000]>";
+	    sql+="<char[4000],in>";
 	  }
 	}
       }
@@ -491,13 +518,15 @@ void toResultContentEditor::saveUnsaved()
 	  else {
 	    sql+="= :c";
 	    sql+=QString::number(col);
-	    sql+="<char[4000]>";
+	    sql+="<char[4000],in>";
 	  }
 	  if (col+1<numCols())
 	    sql+=" AND ";
 	}
+	if(oracle)
+	  sql+=" RETURNING ROWID INTO :r<char[32],out>";
 	try {
-	  toConnection &conn=connection();
+	  toConnection &conn = connection();
 	  toQList args;
 
 	  std::list<QString>::iterator k=OrigValues.begin();
@@ -511,8 +540,9 @@ void toResultContentEditor::saveUnsaved()
 	    if (!str.isNull())
 	      toPush(args,toQValue(str));
 	  }
-	  toQuery exec(conn,sql,args);
-
+	  toQuery q(conn,sql,args);
+	  if(oracle)
+	    rowid = q.readValueNull();
 	  if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	    conn.commit();
 	  else
@@ -522,11 +552,24 @@ void toResultContentEditor::saveUnsaved()
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
 	    setText(CurrentRow,col,*j);
 	  toStatusMessage(str);
+	  oracle = false;
 	}
       }
     }
     OrigValues.clear();
+    if(oracle) {
+      try {
+	QString sql;
+	sql="SELECT * FROM ";
+	sql+=table();
+	sql+=" WHERE rowid = :r<char[32]>";
+	toQuery q(connection(),sql,rowid);
+	for (int j=0;j<numCols()&&!q.eof();j++)
+	  setText(CurrentRow,j,q.readValueNull());
+      } TOCATCH
+    }
     CurrentRow=-1;
+    NewRecordRow=-1;
   }
 }
 
@@ -534,6 +577,10 @@ void toResultContentEditor::changePosition(int row,int col)
 {
   if (CurrentRow!=row)
     saveUnsaved();
+  if (NewRecordRow>0 && NewRecordRow!=row) {
+    cancelEdit();
+    setCurrentCell(row,col);
+  }
 }
 
 void toResultContentEditor::drawContents(QPainter * p,int cx,int cy,int cw,int ch)

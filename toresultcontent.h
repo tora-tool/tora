@@ -149,6 +149,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Reimplemented for internal reasons.
    */
   virtual void focusInEvent (QFocusEvent *e);
+  /** A setCurrentCell() replacement; makes sure that we have focus.
+   */
+  virtual void setCurrentCellFocus(int row, int col);
 
   QString table(void);
 
