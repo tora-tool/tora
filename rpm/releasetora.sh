@@ -37,6 +37,7 @@ echo Packing tora-$1-bin.tar.gz
 tar czf $SRCPWD/../tora-$1-bin.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
     tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
+
 cd $SRCPWD
 rpm -ba tora-$1/rpm/tora-static.spec
 cd /usr/src/RPM/BUILD

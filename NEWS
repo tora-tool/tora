@@ -42,6 +42,7 @@
 	PL/SQL documentation.
 2001-06-03: Done with the rest of PL/SQL documentation.
 2001-06-03: Enable KDE if available by default.
+2001-06-04: Fixed packaging problems with static and qt packages.
 
 0.10: Released 2001-05-25
 
