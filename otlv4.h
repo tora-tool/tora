@@ -2615,7 +2615,7 @@ public:
 
  virtual ~otl_tmpl_connect()
  {
-  logoff();
+  try { logoff(); } catch (...) { }
  }
 
  static int otl_initialize(const int threaded_mode=0)
@@ -2991,7 +2991,7 @@ public:
  virtual ~otl_tmpl_cursor()
  {
   in_destructor=1;
-  close();
+  try { close(); } catch(...) { }
   delete[] stm_text;
   stm_text=0;
  }
@@ -4913,13 +4913,15 @@ public:
  }
 
  virtual ~otl_tmpl_out_stream()
- {in_destruct_flag=1;
-  this->in_destructor=1;
-  if(dirty&&!in_exception_flag&&
-     flush_flag&&flush_flag2)
-   flush();
-  cleanup();
-  in_destruct_flag=0;
+ {try {
+   in_destruct_flag=1;
+   this->in_destructor=1;
+   if(dirty&&!in_exception_flag&&
+      flush_flag&&flush_flag2)
+    flush();
+   cleanup();
+   in_destruct_flag=0;
+  } catch(...) { }
  }
 
  virtual void flush(void)
@@ -5914,10 +5916,12 @@ public:
  }
 
  virtual ~otl_tmpl_inout_stream()
- {this->in_destructor=1;
-  if(!this->in_exception_flag)
-   flush();
-  cleanup();
+ {try {
+   this->in_destructor=1;
+   if(!this->in_exception_flag)
+    flush();
+   cleanup();
+  } catch(...) { }
  }
 
  int eof(void)
@@ -8168,7 +8172,7 @@ public:
 
  virtual ~otl_tmpl_lob_stream()
  {in_destructor=1;
-  close();
+  try { close(); } catch (...) { }
  }
 
  otl_lob_stream_generic& operator<<(const otl_long_string& s)
@@ -8803,8 +8807,10 @@ public:
 
  virtual ~otl_refcur_stream()
  {
-  cleanup();
-  close();
+  try {
+   cleanup();
+   close();
+  } catch(...) { }
  }
 
  void rewind(void)
@@ -9850,8 +9856,10 @@ public:
 
  virtual ~otl_ref_select_stream()
  {
-  cleanup();
-  close();
+  try {
+   cleanup();
+   close();
+  } catch(...) { }
  }
 
  void rewind(void)
@@ -11326,7 +11334,6 @@ public:
 #else
    shell_pt.destroy();
 #endif
-   throw;
   }
 #if defined(OTL_STL) && defined(OTL_STREAM_POOLING_ON)
   if((*adb) && (*adb)->throw_count>0
@@ -11337,7 +11344,7 @@ public:
    //
   }
 #else
-   shell_pt.destroy();
+  try { shell_pt.destroy(); } catch(...) { }
 #endif
  }
 

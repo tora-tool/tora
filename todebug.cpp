@@ -2208,18 +2208,20 @@ void toDebug::compile(void)
 
 toDebug::~toDebug()
 {
-  Lock.lock();
-  if (DebuggerStarted) {
-    Lock.unlock();
-    stop();
-    {
-      toLocker lock(Lock);
-      TargetSQL="";
-      TargetSemaphore.up();
-    }
-    ChildSemaphore.down();
-  } else
-    Lock.unlock();
+  try {
+    Lock.lock();
+    if (DebuggerStarted) {
+      Lock.unlock();
+      stop();
+      {
+	toLocker lock(Lock);
+	TargetSQL="";
+	TargetSemaphore.up();
+      }
+      ChildSemaphore.down();
+    } else
+      Lock.unlock();
+  } TOCATCH
 
   try {
     DebugTool.closeWindow(connection());

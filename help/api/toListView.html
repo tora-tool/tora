@@ -29,17 +29,15 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref13">toListView</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref14">toListView</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">sqlName</A></b> (void) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref15">sqlName</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">setSQLName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref16">setSQLName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">menuText</A></b> (void) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref17">menuText</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref17">editPrint</A></b> (void) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref18">editSearch</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">editPrint</A></b> (void) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref19">focusInEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
 </LI>
@@ -51,17 +49,23 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref23">editSave</A></b> (bool ask) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref24">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">searchTop</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref25">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref25">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  <A HREF="toListView.html">toListView</A> *&nbsp;<b><A HREF="#ref26">copyTransposed</A></b> (void) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref26">searchCanReplace</A></b> (bool all) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref27">displayMenu</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref27">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref28">displayMemo</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref28">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref29">menuCallback</A></b> (int id) 
+<LI>virtual  <A HREF="toListView.html">toListView</A> *&nbsp;<b><A HREF="#ref29">copyTransposed</A></b> (void) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref30">displayMenu</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref31">displayMemo</A></b> (void) 
+</LI>
+</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref32">menuCallback</A></b> (int id) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  The TOra implementation of a listview which offers a few extra goodies to the baseclass.
@@ -69,7 +73,7 @@
  integration into toMain with Edit menu etc, drag & drop, export as file, display item
  as memo and context menu.
  </p>
-<A NAME="toListView"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toListView</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toListView"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toListView</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toListView</strong></h3></td></tr></table><p></p><p> Create new list view.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -78,23 +82,19 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of list.
    </TD></TR>
 </TABLE></P>
-<A NAME="sqlName"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>sqlName</strong> (void)
+<A NAME="sqlName"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>sqlName</strong> (void)
 <br></td><td align="right"><h3><strong>sqlName</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get SQL name of list.
    </p>
-<A NAME="setSQLName"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSQLName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
+<A NAME="setSQLName"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSQLName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>setSQLName</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set SQL name of list.
    </p>
-<A NAME="menuText"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>menuText</strong> (void)
+<A NAME="menuText"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>menuText</strong> (void)
 <br></td><td align="right"><h3><strong>menuText</strong></h3></td></tr></table><p></p><p> Get the whole text for the item and column selected when menu was poped up.
    </p>
-<A NAME="editPrint"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<A NAME="editPrint"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Print this list
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editPrint">toEditWidget</A>.</p>
-<A NAME="editSearch"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSearch</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *)
-<br></td><td align="right"><h3><strong>editSearch</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
-   </p>
-<p>Reimplemented from <A HREF="toEditWidget.html#editSearch">toEditWidget</A>.</p>
 <A NAME="focusInEvent"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
 <br></td><td align="right"><h3><strong>focusInEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
@@ -126,7 +126,25 @@
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export list as file.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
-<A NAME="exportData"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="searchTop"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchTop</strong> (void)
+<br></td><td align="right"><h3><strong>searchTop</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Move to top of data
+   </p>
+<p>Reimplemented from <A HREF="toEditWidget.html#searchTop">toEditWidget</A>.</p>
+<A NAME="searchNext"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchNext</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
+<br></td><td align="right"><h3><strong>searchNext</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Search for next entry
+</p>
+<p><b>Returns</b>: True if found, should select the found text.
+   </p>
+<p>Reimplemented from <A HREF="toEditWidget.html#searchNext">toEditWidget</A>.</p>
+<A NAME="searchCanReplace"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchCanReplace</strong> (bool all)
+<br></td><td align="right"><h3><strong>searchCanReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Check if data can be modified by search
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>all</i></TD><TD align="left" valign="top">If true can replace all, otherwise can replace right now.
+   </TD></TR>
+</TABLE></P>
+<p>Reimplemented from <A HREF="toEditWidget.html#searchCanReplace">toEditWidget</A>.</p>
+<A NAME="exportData"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -135,7 +153,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="importData"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -144,12 +162,12 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
-<A NAME="copyTransposed"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toListView.html">toListView</A> *&nbsp;<strong>copyTransposed</strong> (void)
+<A NAME="copyTransposed"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toListView.html">toListView</A> *&nbsp;<strong>copyTransposed</strong> (void)
 <br></td><td align="right"><h3><strong>copyTransposed</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Create transposed copy of list
 </p>
 <p><b>Returns</b>: Pointer to newly allocated transposed listview.
    </p>
-<A NAME="displayMenu"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col)
+<A NAME="displayMenu"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col)
 <br></td><td align="right"><h3><strong>displayMenu</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display the menu at the given point and column.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -160,10 +178,10 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column to display menu for.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayMemo"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMemo</strong> (void)
+<A NAME="displayMemo"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMemo</strong> (void)
 <br></td><td align="right"><h3><strong>displayMemo</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display memo of selected menu column
    </p>
-<A NAME="menuCallback"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int id)
+<A NAME="menuCallback"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int id)
 <br></td><td align="right"><h3><strong>menuCallback</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Callback when menu is selected. If you override this make sure you
  call the parents function when you have parsed your entries.
 </p>

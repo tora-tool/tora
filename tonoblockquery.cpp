@@ -341,7 +341,9 @@ void toNoBlockQuery::stop(void)
 
 toNoBlockQuery::~toNoBlockQuery()
 {
-  stop();
+  try {
+    stop();
+  } TOCATCH
 }
 
 bool toNoBlockQuery::poll(void)

@@ -316,6 +316,8 @@ public:
 class toListView : public QListView,public toEditWidget {
   Q_OBJECT
 
+  bool FirstSearch;
+
   /** Name of this list, used primarily when printing. Also used to be able to edit
    * SQL displayed in @ref toResultView.
    */
@@ -386,9 +388,6 @@ public:
   virtual void editPrint(void);
   /** Reimplemented for internal reasons.
    */
-  virtual void editSearch(toSearchReplace *);
-  /** Reimplemented for internal reasons.
-   */
   virtual void focusInEvent (QFocusEvent *e);
   /** The string to be displayed in the middle of the footer when printing.
    * @return String to be placed in middle.
@@ -409,6 +408,20 @@ public:
   /** Export list as file.
    */
   virtual bool editSave(bool ask);
+
+  /** Move to top of data
+   */
+  virtual void searchTop(void)
+  { if (firstChild()) setCurrentItem(firstChild()); FirstSearch=true; }
+  /** Search for next entry
+   * @return True if found, should select the found text.
+   */
+  virtual bool searchNext(toSearchReplace *search);
+  /** Check if data can be modified by search
+   * @param all If true can replace all, otherwise can replace right now.
+   */
+  virtual bool searchCanReplace(bool all)
+  { return false; }
 
   /** Export data to a map.
    * @param data A map that can be used to recreate the data of a chart.

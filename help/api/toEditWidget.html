@@ -62,63 +62,69 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref26">editPaste</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref27">editSearch</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref27">editSelectAll</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref28">editSelectAll</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref28">editReadAll</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref29">editReadAll</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref29">openEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref30">openEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref30">saveEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref31">saveEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref31">printEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref32">printEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref32">undoEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref33">undoEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref33">redoEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref34">redoEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref34">cutEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref35">cutEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref35">copyEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref36">copyEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref36">pasteEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref37">pasteEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref37">searchEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref38">searchEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref38">selectAllEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref39">selectAllEnabled</A></b> (bool val) 
+<LI>void &nbsp;<b><A HREF="#ref39">readAllEnabled</A></b> (bool val) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref40">readAllEnabled</A></b> (bool val) 
+<LI>bool &nbsp;<b><A HREF="#ref40">openEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref41">openEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref41">saveEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref42">saveEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref42">printEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref43">printEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref43">undoEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref44">undoEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref44">redoEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref45">redoEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref45">cutEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref46">cutEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref46">copyEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref47">copyEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref47">pasteEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref48">pasteEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref48">searchEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref49">searchEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref49">selectAllEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref50">selectAllEnabled</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref50">readAllEnabled</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref51">readAllEnabled</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref51">searchTop</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref52">receivedFocus</A></b> (void) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref52">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref53">lostFocus</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref53">searchReplace</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &newData) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref54">addHandler</A></b> (editHandler *handler) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref54">searchCanReplace</A></b> (bool all) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref55">delHandler</A></b> (editHandler *handler) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref55">receivedFocus</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref56">lostFocus</A></b> (void) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref57">addHandler</A></b> (editHandler *handler) 
+</LI>
+<LI>static  void &nbsp;<b><A HREF="#ref58">delHandler</A></b> (editHandler *handler) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is an abstract base class for any widget (Not included in object) that wants to
  access copy, cut, paste, open, save commands of the user interface.
@@ -176,95 +182,106 @@
 <A NAME="editPaste"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPaste</strong> (void)
 <br></td><td align="right"><h3><strong>editPaste</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform paste. Default NOP.
    </p>
-<A NAME="editSearch"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSearch</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
-<br></td><td align="right"><h3><strong>editSearch</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform search. Default NOP.
-</p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>search</i></TD><TD align="left" valign="top">Search dialog.
-   </TD></TR>
-</TABLE></P>
-<A NAME="editSelectAll"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSelectAll</strong> (void)
+<A NAME="editSelectAll"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSelectAll</strong> (void)
 <br></td><td align="right"><h3><strong>editSelectAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Select all contents. Default NOP.
    </p>
-<A NAME="editReadAll"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editReadAll</strong> (void)
+<A NAME="editReadAll"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editReadAll</strong> (void)
 <br></td><td align="right"><h3><strong>editReadAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Read all available data. Default NOP.
    </p>
-<A NAME="openEnabled"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>openEnabled</strong> (bool val)
+<A NAME="openEnabled"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>openEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>openEnabled</strong></h3></td></tr></table><p></p><p> Set if open is enabled.
    </p>
-<A NAME="saveEnabled"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>saveEnabled</strong> (bool val)
+<A NAME="saveEnabled"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>saveEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>saveEnabled</strong></h3></td></tr></table><p></p><p> Set if save is enabled.
    </p>
-<A NAME="printEnabled"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>printEnabled</strong> (bool val)
+<A NAME="printEnabled"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>printEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>printEnabled</strong></h3></td></tr></table><p></p><p> Set if print is enabled.
    </p>
-<A NAME="undoEnabled"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>undoEnabled</strong> (bool val)
+<A NAME="undoEnabled"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>undoEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>undoEnabled</strong></h3></td></tr></table><p></p><p> Set if undo is enabled.
    </p>
-<A NAME="redoEnabled"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>redoEnabled</strong> (bool val)
+<A NAME="redoEnabled"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>redoEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>redoEnabled</strong></h3></td></tr></table><p></p><p> Set if redo is enabled.
    </p>
-<A NAME="cutEnabled"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cutEnabled</strong> (bool val)
+<A NAME="cutEnabled"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cutEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>cutEnabled</strong></h3></td></tr></table><p></p><p> Set if cut is enabled.
    </p>
-<A NAME="copyEnabled"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>copyEnabled</strong> (bool val)
+<A NAME="copyEnabled"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>copyEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>copyEnabled</strong></h3></td></tr></table><p></p><p> Set if copy is enabled.
    </p>
-<A NAME="pasteEnabled"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>pasteEnabled</strong> (bool val)
+<A NAME="pasteEnabled"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>pasteEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>pasteEnabled</strong></h3></td></tr></table><p></p><p> Set if paste is enabled.
    </p>
-<A NAME="searchEnabled"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>searchEnabled</strong> (bool val)
+<A NAME="searchEnabled"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>searchEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>searchEnabled</strong></h3></td></tr></table><p></p><p> Set if search is enabled.
    </p>
-<A NAME="selectAllEnabled"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>selectAllEnabled</strong> (bool val)
+<A NAME="selectAllEnabled"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>selectAllEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>selectAllEnabled</strong></h3></td></tr></table><p></p><p> Set if select all is enabled.
    </p>
-<A NAME="readAllEnabled"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>readAllEnabled</strong> (bool val)
+<A NAME="readAllEnabled"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>readAllEnabled</strong> (bool val)
 <br></td><td align="right"><h3><strong>readAllEnabled</strong></h3></td></tr></table><p></p><p> Set if read all is enabled.
    </p>
-<A NAME="openEnabled"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>openEnabled</strong> (void)
+<A NAME="openEnabled"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>openEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>openEnabled</strong></h3></td></tr></table><p></p><p> Check if open is enabled.
    </p>
-<A NAME="saveEnabled"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>saveEnabled</strong> (void)
+<A NAME="saveEnabled"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>saveEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>saveEnabled</strong></h3></td></tr></table><p></p><p> Check if save is enabled.
    </p>
-<A NAME="printEnabled"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>printEnabled</strong> (void)
+<A NAME="printEnabled"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>printEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>printEnabled</strong></h3></td></tr></table><p></p><p> Check if print is enabled.
    </p>
-<A NAME="undoEnabled"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>undoEnabled</strong> (void)
+<A NAME="undoEnabled"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>undoEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>undoEnabled</strong></h3></td></tr></table><p></p><p> Check if undo is enabled.
    </p>
-<A NAME="redoEnabled"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>redoEnabled</strong> (void)
+<A NAME="redoEnabled"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>redoEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>redoEnabled</strong></h3></td></tr></table><p></p><p> Check if redo is enabled.
    </p>
-<A NAME="cutEnabled"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cutEnabled</strong> (void)
+<A NAME="cutEnabled"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cutEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>cutEnabled</strong></h3></td></tr></table><p></p><p> Check if cut is enabled.
    </p>
-<A NAME="copyEnabled"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>copyEnabled</strong> (void)
+<A NAME="copyEnabled"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>copyEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>copyEnabled</strong></h3></td></tr></table><p></p><p> Check if copy is enabled.
    </p>
-<A NAME="pasteEnabled"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>pasteEnabled</strong> (void)
+<A NAME="pasteEnabled"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>pasteEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>pasteEnabled</strong></h3></td></tr></table><p></p><p> Check if paste is enabled.
    </p>
-<A NAME="searchEnabled"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>searchEnabled</strong> (void)
+<A NAME="searchEnabled"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>searchEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>searchEnabled</strong></h3></td></tr></table><p></p><p> Check if search is enabled.
    </p>
-<A NAME="selectAllEnabled"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>selectAllEnabled</strong> (void)
+<A NAME="selectAllEnabled"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>selectAllEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>selectAllEnabled</strong></h3></td></tr></table><p></p><p> Check if select all is enabled.
    </p>
-<A NAME="readAllEnabled"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>readAllEnabled</strong> (void)
+<A NAME="readAllEnabled"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>readAllEnabled</strong> (void)
 <br></td><td align="right"><h3><strong>readAllEnabled</strong></h3></td></tr></table><p></p><p> Check if read all is enabled.
    </p>
-<A NAME="receivedFocus"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>receivedFocus</strong> (void)
+<A NAME="searchTop"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchTop</strong> (void)
+<br></td><td align="right"><h3><strong>searchTop</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Move to top of data
+   </p>
+<A NAME="searchNext"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchNext</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
+<br></td><td align="right"><h3><strong>searchNext</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Search for next entry
+</p>
+<p><b>Returns</b>: True if found, should select the found text.
+   </p>
+<A NAME="searchReplace"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &newData)
+<br></td><td align="right"><h3><strong>searchReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Replace entry with new data
+   </p>
+<A NAME="searchCanReplace"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchCanReplace</strong> (bool all)
+<br></td><td align="right"><h3><strong>searchCanReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Check if data can be modified by search
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>all</i></TD><TD align="left" valign="top">If true can replace all, otherwise can replace right now.
+   </TD></TR>
+</TABLE></P>
+<A NAME="receivedFocus"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>receivedFocus</strong> (void)
 <br></td><td align="right"><h3><strong>receivedFocus</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Call this when this widget has received the focus. Must be called by the implementor.
    </p>
-<A NAME="lostFocus"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>lostFocus</strong> (void)
+<A NAME="lostFocus"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>lostFocus</strong> (void)
 <br></td><td align="right"><h3><strong>lostFocus</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Called when this widget has lost the focus. Don't forget to call parent when reimplemented.
    </p>
-<A NAME="addHandler"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addHandler</strong> (editHandler *handler)
+<A NAME="addHandler"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addHandler</strong> (editHandler *handler)
 <br></td><td align="right"><h3><strong>addHandler</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Add a hook to be called every time focus changes.
    </p>
-<A NAME="delHandler"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>delHandler</strong> (editHandler *handler)
+<A NAME="delHandler"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>delHandler</strong> (editHandler *handler)
 <br></td><td align="right"><h3><strong>delHandler</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Removed a hook from being called every time focus changes.
    </p>
 </BODY>

@@ -162,11 +162,6 @@ public:
    */
   virtual void editPaste(void)
   { }
-  /** Perform search. Default NOP.
-   * @param search Search dialog.
-   */
-  virtual void editSearch(toSearchReplace *search)
-  { }
   /** Select all contents. Default NOP.
    */
   virtual void editSelectAll(void)
@@ -265,6 +260,25 @@ public:
    */
   bool readAllEnabled(void)
   { return ReadAll; }
+
+  /** Move to top of data
+   */
+  virtual void searchTop(void)
+  { }
+  /** Search for next entry
+   * @return True if found, should select the found text.
+   */
+  virtual bool searchNext(toSearchReplace *search)
+  { return false; }
+  /** Replace entry with new data
+   */
+  virtual void searchReplace(const QString &newData)
+  { }
+  /** Check if data can be modified by search
+   * @param all If true can replace all, otherwise can replace right now.
+   */
+  virtual bool searchCanReplace(bool all)
+  { return false; }
 
   /** Call this when this widget has received the focus. Must be called by the implementor.
    */

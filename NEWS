@@ -1,5 +1,8 @@
 1.3.6:
 
+2002-06-27: Be aware of exceptions in destructors.
+2002-06-27: Fixed problem with code completion on all but first occurance.
+2002-06-27: Fixed problem with statements ending in "...end".
 2002-06-19: Worked over so that makefiles actually work when $ROOT is set.
 2002-06-19: Fixed problem with unhandled exception in server tuning.
 2002-06-19: Clear filename of resultfields when restating query.

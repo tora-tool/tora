@@ -762,8 +762,8 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
   QString chk=str.lower();
   chk.replace(strq," ");
   bool code=false;
-  static QRegExp codere("end\\s+[a-z0-9_-]*;$",true);
-  static QRegExp codere2("end;",true);
+  static QRegExp codere("[^a-z0-9]end\\s+[a-z0-9_-]*;$",true);
+  static QRegExp codere2("[^a-z0-9]end;",true);
 
   if (codere.match(chk)>=0||codere2.match(chk)>=0)
     code=true;

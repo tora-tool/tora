@@ -110,6 +110,7 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
 
   void searchFound(int line,int col);
   void incrementalSearch(bool forward,bool next);
+  void findPosition(const QString &str,int index,int &line,int &col);
 protected:
   /** Reimplemented for internal reasons.
    */
@@ -212,11 +213,24 @@ public:
   { paste(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void editSearch(toSearchReplace *search);
-  /** Reimplemented for internal reasons.
-   */
   virtual void editSelectAll(void)
   { selectAll(); }
+
+  /** Move to top of data
+   */
+  virtual void searchTop(void)
+  { setCursorPosition(0,0,false); }
+  /** Search for next entry
+   * @return True if found, should select the found text.
+   */
+  virtual bool searchNext(toSearchReplace *search);
+  /** Replace entry with new data
+   */
+  virtual void searchReplace(const QString &newData);
+  /** Check if data can be modified by search
+   * @param all If true can replace all, otherwise can replace right now.
+   */
+  virtual bool searchCanReplace(bool all);
 
   /** Start incremental search mode, or search next if started.
    */

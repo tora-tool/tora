@@ -82,9 +82,12 @@ toConnectionProvider::~toConnectionProvider()
 {
   if (!Provider.isEmpty())
     removeProvider(Provider);
-  std::map<QString,toConnectionProvider *>::iterator i=Types->find(Provider);
-  if (i!=Types->end())
-    Types->erase(i);
+  try {
+    std::map<QString,toConnectionProvider *>::iterator i=Types->find(Provider);
+    if (i!=Types->end())
+      Types->erase(i);
+  } catch(...) {
+  }
 }
 
 std::list<QString> toConnectionProvider::providedHosts(const QString &)
@@ -613,7 +616,10 @@ toQuery::~toQuery()
 {
   toBusy busy;
   delete Query;
-  Connection.freeConnection(ConnectionSub);
+  try {
+    Connection.freeConnection(ConnectionSub);
+  } catch(...) {
+  }
 }
 
 bool toQuery::eof(void)
@@ -841,6 +847,7 @@ void toConnection::cancelAll(void)
 toConnection::~toConnection()
 {
   toBusy busy;
+
   {
     toLocker lock(Lock);
     {
@@ -850,15 +857,21 @@ toConnection::~toConnection()
     }
     {
       for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++)
-	(*i)->cancel();
+	try {
+	  (*i)->cancel();
+	} catch (...) {
+	}
     }
   }
   Abort=true;
   if (ReadingCache) {
     ReadingValues.down();
     ReadingValues.down();
-    for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  }
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+    try {
       Connection->closeConnection(*i);
+    } catch (...) {
     }
   }
   delete Connection;

@@ -653,17 +653,20 @@ void toHighlightedText::checkComplete(void)
       owner=tokens.getToken(false);
     else {
       QString cmp=UpperIdent(name);
-      while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp)&&
+      QString lastToken;
+      while ((invalidToken(curline,curcol+token.length())||(UpperIdent(token)!=cmp&&lastToken!="."))&&
 	     token!=";"&&!token.isEmpty()) {
+	lastToken=token;
 	token=tokens.getToken(false);
       }
 
       if (token==";"||token.isEmpty()) {
 	getCursorPosition (&curline,&curcol);
 	token=tokens.getToken();
-	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp)&&
+	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp&&lastToken!=".")&&
 	       token!=";"&&!token.isEmpty())
 	  token=tokens.getToken(curcol);
+	lastToken=token;
 	tokens.getToken(false);
       }
       if (token!=";"&&!token.isEmpty()) {
