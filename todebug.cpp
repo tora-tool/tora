@@ -2154,6 +2154,7 @@ void toDebug::newSheet(void)
   connect(text,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
   Editors->addTab(text,tr("Unknown"));
+  Editors->showPage(text);
 }
 
 void toDebug::showSource(QListViewItem *item)

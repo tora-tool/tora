@@ -88,6 +88,27 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="\n"
+    "create or replace PROCEDURE prova1\n"
+    "is\n"
+    "v_tmp NUMBER(1);\n"
+    "begin\n"
+    "begin\n"
+    "select 0 into v_tmp from dual;\n"
+    "exception\n"
+    "when 1 = 1 then\n"
+    "    v_tmp := 'Dadum';\n"
+    "when others then\n"
+    "if sqlcode=0 then\n"
+    "null;\n"
+    "else\n"
+    "null;\n"
+    "end if;\n"
+    "end;\n"
+    "\n"
+    "if v_tmp=0 then\n"
+    "null;\n"
+    "end if;\n"
+    "end;"
     "comment on column prova1.prova1 is 'This comment is\n"
     "on more than one line';\n"
     "PACKAGE oasSIMActivation AS\n"
@@ -188,8 +209,6 @@ int main(int argc,char **argv) {
     "	\n"
     "END;\n"
     "END TEST_SPR;\n"
-
-#if 1
     "\n"
     "SELECT owner,\n"
     "       OBJECT,\n"
@@ -315,6 +334,7 @@ int main(int argc,char **argv) {
     "        WHEN VALUE_ERROR THEN\n"
     "	    oRet := 3;\n"
     "END;"
+#if 0
 
 #endif
     ;
@@ -716,6 +736,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 	      (*cur.subTokens().begin()).String.upper()!=("END"));
       return blk;
     } else if (((first=="IF"&&upp=="THEN")||
+		(first=="WHEN"&&upp=="THEN")||
 		upp==("BEGIN")||
 		upp==("EXCEPTION")||
 		first==("ELSE"))&&!lst) {

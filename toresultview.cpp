@@ -357,7 +357,11 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
     t=txt;
   int wx=top->itemMargin()*2+2;
   if (column==0)
+#if QT_VERSION >= 0x030100
     wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
+#else
+    wx+=20;
+#endif
   return min(TextWidth(fm,t),MaxColDisp)+wx;
 }
 
@@ -371,7 +375,11 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
   QRect bounds=fm.boundingRect(t);
   int wx=top->itemMargin()*2+2;
   if (column==0)
+#if QT_VERSION >= 0x030100
     wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
+#else
+    wx+=20;
+#endif
   return min(bounds.width(),MaxColDisp)+wx;
 }
 
@@ -1148,9 +1156,15 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	    line+=QString::fromLatin1("<TD%1>").arg(bgcolor);
 	    if (i==0)
 	      line+=indent;
+#if QT_VERSION >= 0x030100
 	    text.replace('&',"&amp;");
 	    text.replace('<',"&lt;");
 	    text.replace('>',"&gt");
+#else
+	    text.replace(QRegExp("&"),"&amp;");
+	    text.replace(QRegExp("<"),"&lt;");
+	    text.replace(QRegExp(">"),"&gt");
+#endif
 	    line+=text;
 	    line+=QString::fromLatin1("</TD>");
 	    break;
