@@ -18,6 +18,7 @@ toResultContent:
 
 toGetToken:
 	Doesn't handle comments when going backwards.
+	Doesn't handle multiline comments.
 
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.

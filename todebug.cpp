@@ -72,6 +72,7 @@
 #include "tosql.h"
 #include "tohelp.h"
 #include "todebugchangeui.h"
+#include "tosqlparse.h"
 
 #include "todebug.moc"
 #include "todebugchangeui.moc"
@@ -710,13 +711,13 @@ void toDebug::execute(void)
     QString callName;
     QString retType;
 
-    token=toGetToken(current,line,pos);
+    token=toSQLParse::getToken(current,line,pos);
     if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
       toStatusMessage("Expected function or procedure, internal error");
       return;
     }
     do {
-      token=toGetToken(current,line,pos);
+      token=toSQLParse::getToken(current,line,pos);
       if (token.isEmpty()) {
 	toStatusMessage("Unexpected end of declaration.");
 	return;

@@ -92,6 +92,7 @@ my @source=(
 	    "tosearchreplace",
 	    "tosearchreplaceui",
 	    "tosql",
+	    "tosqlparse",
 	    "tosyntaxsetup",
 	    "tosyntaxsetupui",
 	    "totemplateprovider",
@@ -1174,6 +1175,7 @@ API=	\\
 	toresultview.h		\\
 	tosgastatement.h	\\
 	tosql.h			\\
+	tosqlparse.h		\\
 	totemplate.h		\\
 	tothread.h		\\
 	totool.h		\\

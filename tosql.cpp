@@ -162,21 +162,28 @@ QString toSQL::string(const QString &name,
   QString ver=conn.version();
   QString prov=conn.provider();
 
+  bool quit=false;
+
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end()) {
-    QString *sql=NULL;
-    std::list<version> &cl=(*i).second.Versions;
-    for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Provider==prov) {
-	if ((*j).Version<=ver||!sql) {
-	  sql=&(*j).SQL;
+    do {
+      if (prov=="Any")
+	quit=true;
+      QString *sql=NULL;
+      std::list<version> &cl=(*i).second.Versions;
+      for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+	if ((*j).Provider==prov) {
+	  if ((*j).Version<=ver||!sql) {
+	    sql=&(*j).SQL;
+	  }
+	  if ((*j).Version>=ver)
+	    return *sql;
 	}
-	if ((*j).Version>=ver)
-	  return *sql;
       }
-    }
-    if (sql)
-      return *sql;
+      if (sql)
+	return *sql;
+      prov="Any";
+    } while(!quit);
   }
 
   QString str="Tried to get unknown SQL (";

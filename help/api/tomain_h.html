@@ -683,23 +683,6 @@ template <class T> std::list<T>::iterator toFind(std::list<T> &lst,const T &str)
   return lst.end();
 }
 
-/** Get next SQL token from an editor.
- * @param text Editor to get token from
- * @param curLine Current line when parsing, modified when calling.
- * @param pos Current position when parsing, modified when calling.
- * @param forward If true go forward from current position, otherwise backward.
- * @return String with next token in editor
- */
-QString toGetToken(toMarkedText *text,int &curLine,int &pos,bool forward=true);
-
-/** Get next SQL token from a string.
- * @param str String to get token from
- * @param pos Current position when parsing, modified when calling.
- * @param forward If true go forward from current position, otherwise backward.
- * @return String with next token in editor
- */
-QString toGetToken(const QString &sql,int &pos,bool forward=true);
-
 /** Convert a string representation to a font structure.
  * @param str String representing the font.
  * @return Font structure represented by the string.

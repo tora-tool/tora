@@ -168,6 +168,7 @@ API=	\
 	toresultview.h		\
 	tosgastatement.h	\
 	tosql.h			\
+	tosqlparse.h		\
 	totemplate.h		\
 	tothread.h		\
 	totool.h		\
@@ -264,6 +265,7 @@ SOURCES=\
 	tosgatrace.cpp \
 	tosql.cpp \
 	tosqledit.cpp \
+	tosqlparse.cpp \
 	tostorage.cpp \
 	tostoragedatafileui.cpp \
 	tostoragedefinition.cpp \
@@ -586,6 +588,7 @@ tora:\
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
 	objs/tosql.o \
+	objs/tosqlparse.o \
 	objs/tosyntaxsetup.o \
 	objs/tosyntaxsetupui.o \
 	objs/totemplateprovider.o \

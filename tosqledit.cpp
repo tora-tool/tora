@@ -437,7 +437,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
     CommitButton->setEnabled(true);
   }
   if (LastVersion.isEmpty()) {
-    LastVersion=connection().provider()+":Any";
+    LastVersion="Any:Any";
     Version->insertItem(LastVersion);
   }
   Editor->editor()->setEdited(false);

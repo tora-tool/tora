@@ -115,6 +115,12 @@
 2001-12-06: Export charts also save open state of items.
 2001-12-06: Changed name of todebugchange.ui to todebugchangeui.ui
 2001-12-07: Fixed missplaced toolbar for explain plan browser.
+2001-12-07: Fixed samples in charts after importing data.
+2001-12-07: Try finding SQL for "Any" if none found for provider.
+2001-12-07: Changed default version in SQL editor to Any:Any.
+2001-12-08: Started toSQLParse.
+2001-12-09: Moved toGetToken to toSQLParse.
+2001-12-09: Fixed lots of problems with getToken.
 
 1.1.5: Released 2001-11-26
 

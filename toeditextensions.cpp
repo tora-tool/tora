@@ -45,6 +45,7 @@
 #include "toeditextensions.h"
 #include "tohighlightedtext.h"
 #include "toeditextensionsetupui.h"
+#include "tosqlparse.h"
 
 #include "toeditextensions.moc"
 #include "toeditextensionsetupui.moc"
@@ -257,7 +258,9 @@ static void IndentBlock(const QString &sql,int &pos,QString &token,
   if (upp=="AS"||upp=="IS"||upp=="DECLARE") 
     pre=true;
 
-  for (token=toGetToken(sql,pos);!token.isNull();token=toGetToken(sql,pos)) {
+  for (token=toSQLParse::getToken(sql,pos);
+       !token.isNull();
+       token=toSQLParse::getToken(sql,pos)) {
     upp=token.upper();
     if (upp="END") {
       eol=true;
@@ -278,7 +281,9 @@ static void IndentBlock(const QString &sql,int &pos,QString &token,
   if (!token.isNull()) {
     ret+=Indent(level,eol);
     ret+=token;
-    for (token=toGetToken(sql,pos);!token.isNull()&&token!=";";token=toGetToken(sql,pos)) {
+    for (token=toSQLParse::getToken(sql,pos);
+	 !token.isNull()&&token!=";";
+	 token=toSQLParse::getToken(sql,pos)) {
       ret+=" ";
       ret+=token;
     }
@@ -308,7 +313,9 @@ QString toIndentSQL(const QString &sql,bool start)
   bool any=false;
   bool eol=false;
   QString ret;
-  for (QString token=toGetToken(sql,pos);!token.isNull();token=toGetToken(sql,pos)) {
+  for (QString token=toSQLParse::getToken(sql,pos);
+       !token.isNull();
+       token=toSQLParse::getToken(sql,pos)) {
     QString upp=token.lower();
     if (upp=="BEGIN"||upp=="THEN"||upp=="LOOP") {
       if (pre)

@@ -47,6 +47,7 @@
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosqlparse.h"
 
 #include "todefaultkeywords.h"
 
@@ -619,40 +620,40 @@ void toHighlightedText::checkComplete(void)
     if (toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty())
       return;
 
-    QString name=toGetToken(this,curline,curcol,false);
+    QString name=toSQLParse::getToken(this,curline,curcol,false);
     QString owner;
     if (name==".")
-      name=toGetToken(this,curline,curcol,false);
+      name=toSQLParse::getToken(this,curline,curcol,false);
 
-    QString token=toGetToken(this,curline,curcol,false);
+    QString token=toSQLParse::getToken(this,curline,curcol,false);
     if (token==".")
-      owner=toGetToken(this,curline,curcol,false);
+      owner=toSQLParse::getToken(this,curline,curcol,false);
     else {
       QString cmp=UpperIdent(name);
       while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp)&&
 	     token!=";"&&!token.isEmpty()) {
-	token=toGetToken(this,curline,curcol,false);
+	token=toSQLParse::getToken(this,curline,curcol,false);
       }
 
       if (token==";"||token.isEmpty()) {
 	getCursorPosition (&curline,&curcol);
-	token=toGetToken(this,curline,curcol);
+	token=toSQLParse::getToken(this,curline,curcol);
 	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp)&&
 	       token!=";"&&!token.isEmpty())
-	  token=toGetToken(this,curline,curcol);
-	toGetToken(this,curline,curcol,false);
+	  token=toSQLParse::getToken(this,curline,curcol);
+	toSQLParse::getToken(this,curline,curcol,false);
       }
       if (token!=";"&&!token.isEmpty()) {
-	token=toGetToken(this,curline,curcol,false);
+	token=toSQLParse::getToken(this,curline,curcol,false);
 	if (token!="TABLE"&&
 	    token!="UPDATE"&&
 	    token!="FROM"&&
 	    token!="INTO"&&
 	    (toIsIdent(token[0])||token[0]=='\"')) {
 	  name=token;
-	  token=toGetToken(this,curline,curcol,false);
+	  token=toSQLParse::getToken(this,curline,curcol,false);
 	  if (token==".")
-	    owner=toGetToken(this,curline,curcol,false);
+	    owner=toSQLParse::getToken(this,curline,curcol,false);
 	} else if (token==")") {
 	  return;
 	}
@@ -945,29 +946,29 @@ void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
 
     QString token=textLine(curline);
     if (curcol>0&&toIsIdent(token[curcol-1]))
-      token=toGetToken(this,curline,curcol,false);
+      token=toSQLParse::getToken(this,curline,curcol,false);
     else
       token=QString::null;
 
     int lastline=curline;
     int lastcol=curcol;
 
-    token=toGetToken(this,curline,curcol,false);
+    token=toSQLParse::getToken(this,curline,curcol,false);
     if (token==".") {
       lastline=curline;
       lastcol=curcol;
-      owner=conn.unQuote(toGetToken(this,curline,curcol,false));
-      toGetToken(this,lastline,lastcol,true);
-      table+=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+      owner=conn.unQuote(toSQLParse::getToken(this,curline,curcol,false));
+      toSQLParse::getToken(this,lastline,lastcol,true);
+      table+=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
     } else {
       curline=lastline;
       curcol=lastcol;
-      owner=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+      owner=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
       int tmplastline=lastline;
       int tmplastcol=lastcol;
-      token=toGetToken(this,lastline,lastcol,true);
+      token=toSQLParse::getToken(this,lastline,lastcol,true);
       if (token==".")
-	table=conn.unQuote(toGetToken(this,lastline,lastcol,true));
+	table=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
       else {
 	lastline=tmplastline;
 	lastcol=tmplastcol;
