@@ -1358,6 +1358,7 @@ API=	\\
 	tosql.h			\\
 	tosqlparse.h		\\
 	totemplate.h		\\
+	totextview.h            \\
 	tothread.h		\\
 	totool.h		\\
 	tovisualize.h		\\
