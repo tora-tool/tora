@@ -85,6 +85,10 @@ void toResultLong::query(const QString &sql,const toQList &param)
 
     MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
+  } catch (const toConnection::exception &str) {
+    emit firstResult(toResult::sql(),str);
+    emit done();
+    throw;
   } catch (const QString &str) {
     emit firstResult(toResult::sql(),str);
     emit done();
@@ -160,7 +164,7 @@ void toResultLong::addItem(void)
 	}
 	if (em) {
 	  First=false;
-	  emit firstResult(sql(),buffer);
+	  emit firstResult(sql(),toConnection::exception(QString(buffer)));
 	}
 	if (Query->eof()) {
 	  cleanup();
@@ -176,6 +180,13 @@ void toResultLong::addItem(void)
 	  Timer.start(TO_POLL_CHECK,true);
       }
     }
+  } catch (const toConnection::exception &str) {
+    if (First) {
+      emit firstResult(sql(),str);
+      First=false;
+    } else
+      toStatusMessage(str);
+    cleanup();
   } catch (const QString &str) {
     if (First) {
       emit firstResult(sql(),str);

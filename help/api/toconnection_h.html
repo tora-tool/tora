@@ -431,6 +431,28 @@ class toConnection {
 
 public:
 
+  /** Class that could be used to throw exceptions in connection errors. Must use if you
+   * want to indicate error offset.
+   */
+
+  class exception : public QString {
+    int Offset;
+  public:
+    /** Create an exception with a string description.
+     */
+    exception(const QString &str,int offset=-1)
+      : QString(str)
+      { Offset=offset; }
+    /** Get the offset of the error of the current statement.
+     */
+    int offset(void) const
+    { return Offset; }
+    /** Set the offset of the error of the error.
+     */
+    void setOffset(int offset)
+    { Offset=offset; }
+  };
+
   /** Contain information about a tablename.
    */
   struct objectName {

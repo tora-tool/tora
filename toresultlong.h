@@ -126,7 +126,7 @@ signals:
    * @param sql SQL that was run.
    * @param res String describing result.
    */
-  void firstResult(const QString &sql,const QString &res);
+  void firstResult(const QString &sql,const toConnection::exception &res);
 
 public slots:
   /** Stop running query.

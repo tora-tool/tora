@@ -90,7 +90,7 @@ private:
   QString SQL;
   /** Error string if error occurs.
    */
-  QString Error;
+  toConnection::exception Error;
   /** Number of rows processed.
    */
   int Processed;

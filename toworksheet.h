@@ -43,6 +43,7 @@
 #include <qdatetime.h>
 
 #include "totool.h"
+#include "toconnection.h"
 
 class QTabWidget;
 class toResultLong;
@@ -87,6 +88,9 @@ class toWorksheet : public toToolWidget {
   QComboBox *Refresh;
   QComboBox *SavedSQL;
   QTime Timer;
+
+  int LastLine;
+  int LastOffset;
 
   QPopupMenu *ToolMenu;
 
@@ -136,7 +140,7 @@ public slots:
   void selectSaved(void);
   void executePreviousLog(void);
   void executeNextLog(void);
-  void addLog(const QString &sql,const QString &result);
+  void addLog(const QString &sql,const toConnection::exception &result);
   void changeRefresh(const QString &);
 };
 

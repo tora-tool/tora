@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>576</width>
+            <width>572</width>
             <height>480</height>
         </rect>
     </property>
@@ -54,7 +54,7 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -65,7 +65,7 @@
                         <string>Auto &amp;save</string>
                     </property>
                 </widget>
-                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -80,7 +80,7 @@
                         <string>Ask about saving changes when closing worksheet.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -95,7 +95,7 @@
                         <string>Add newly executed queries at end of log instead of top. Changing this will mess up the log in the windows that are opened.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -110,7 +110,7 @@
                         <string>Display multiple lines in the SQL column of the logging.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -123,6 +123,36 @@
                     <property>
                         <name>toolTip</name>
                         <string>Parse PL/SQL blocks in worksheet. You usually need this but it if you forget one end the rest of the editor will be one block.</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Statistics</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Enable statistics</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Enable statistic collection per default.</string>
+                    </property>
+                </widget>
+                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TimedStatistics</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Enable &amp;timed statistics</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Enable timed statistics as well when collecting normal statistics.</string>
                     </property>
                 </widget>
                 <widget row="9"  column="0" >
@@ -144,6 +174,13 @@
                         <string>File to automatically open in a new worksheet.</string>
                     </property>
                 </widget>
+                <widget row="9"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                </widget>
                 <widget row="9"  column="2" >
                     <class>QPushButton</class>
                     <property stdset="1">
@@ -155,29 +192,7 @@
                         <string>&amp;Browse</string>
                     </property>
                 </widget>
-                <widget row="9"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                </widget>
-                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Statistics</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Enable statistics</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Enable statistic collection per default.</string>
-                    </property>
-                </widget>
-                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -192,21 +207,42 @@
                         <string>Add a numbering column to the left of the result.</string>
                     </property>
                 </widget>
-                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
+                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>TimedStatistics</cstring>
+                        <cstring>MoveToError</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Enable &amp;timed statistics</string>
+                        <string>Move &amp;cursor to error</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Enable timed statistics as well when collecting normal statistics.</string>
+                        <string>Move the cursor to an error if the error occurs.</string>
                     </property>
                 </widget>
+                <spacer row="10"  column="1" >
+                    <property>
+                        <name>name</name>
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>orientation</name>
+                        <enum>Vertical</enum>
+                    </property>
+                    <property stdset="1">
+                        <name>sizeType</name>
+                        <enum>Expanding</enum>
+                    </property>
+                    <property>
+                        <name>sizeHint</name>
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
             </grid>
         </widget>
     </grid>

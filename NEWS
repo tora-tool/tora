@@ -25,6 +25,10 @@
 2001-10-11: Fixed a really ugly bug in syntax highlighter.
 2001-10-11: Fixed a weird multiline syntax highlighting bug in windows.
 2001-10-11: Change date size buffer in oracle extraction to 100 bytes.
+2001-10-11: Removed some debug information.
+2001-10-11: Added parse error offset information to oracle.
+2001-10-11: Strip non oracle stuff from otl.h.
+2001-10-11: Added option to move to error in worksheet.
 
 1.1.2: Released 2001-10-07
 

@@ -93,11 +93,17 @@ static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
 
 static void ThrowException(const otl_exception &exc)
 {
-  QString ret=QString::fromUtf8((const char *)exc.msg);
+  toConnection::exception ret=QString::fromUtf8((const char *)exc.msg);
 #if 1
   if (strlen(exc.stm_text)) {
     ret+="\n";
-    ret+=QString::fromUtf8((const char *)exc.stm_text);
+    QString sql=QString::fromUtf8((const char *)exc.stm_text);
+    if (exc.errorofs>=0) {
+      QString t=QString::fromUtf8((const char *)exc.stm_text,exc.errorofs);
+      ret.setOffset(t.length());
+      sql.insert(t.length(),"<ERROR>");
+    }
+    ret+=sql;
   }
 #endif
   throw ret;

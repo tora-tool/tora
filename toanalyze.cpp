@@ -218,8 +218,6 @@ void toAnalyze::refresh(void)
   Statistics->changeParams(Schema->currentText());
 }
 
-#include <stdio.h>
-
 void toAnalyze::poll(void)
 {
   int running=0;
@@ -228,7 +226,6 @@ void toAnalyze::poll(void)
     try {
       eof=(*i)->eof();
     } catch(const QString &str) {
-      printf("Exception: %s\n",(const char *)str);
       eof=true;
     }
     if (eof) {

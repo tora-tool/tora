@@ -106,6 +106,7 @@
 #define CONF_STATISTICS	 "Statistics"
 #define CONF_TIMED_STATS "TimedStats"
 #define CONF_NUMBER	 "Number"
+#define CONF_MOVE_TO_ERR "MoveToError"
 
 static struct {
   int Pos;
@@ -154,6 +155,7 @@ public:
       LogMulti->setChecked(true);
     if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
       PLSQLParse->setChecked(true);
+    MoveToError->setChecked(!tool->config(CONF_MOVE_TO_ERR,"Yes").isEmpty());
     if (!tool->config(CONF_STATISTICS,"").isEmpty())
       Statistics->setChecked(true);
     TimedStatistics->setChecked(!tool->config(CONF_TIMED_STATS,"Yes").isEmpty());
@@ -183,6 +185,7 @@ public:
       Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
     else
       Tool->setConfig(CONF_PLSQL_PARSE,"");
+    Tool->setConfig(CONF_MOVE_TO_ERR,MoveToError->isChecked()?"Yes":"");
     Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_TIMED_STATS,TimedStatistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_NUMBER,DisplayNumber->isChecked()?"Yes":"");
@@ -307,13 +310,15 @@ void toWorksheet::setup(bool autoLoad)
 		  this,SLOT(refresh(void)),
 		  toolbar);
 
+  LastLine=LastOffset=-1;
+
   if (Light) {
     Editor=new toWorksheetText(this,this);
     Result=new toResultLong(this);
     Result->hide();
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
-	    this,SLOT(addLog(const QString &,const QString &)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
     ResultTab=NULL;
     Plan=NULL;
     CurrentTab=NULL;
@@ -350,8 +355,8 @@ void toWorksheet::setup(bool autoLoad)
 
     Result=new toResultLong(box);
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
-	    this,SLOT(addLog(const QString &,const QString &)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
 
     Columns=new toResultCols(box);
     Columns->hide();
@@ -754,7 +759,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
 	else
 	  sprintf(buffer,"Query executed");
-	addLog(QueryString,buffer);
+	addLog(QueryString,toConnection::exception(QString(buffer)));
       } catch (const QString &exc) {
 	addLog(QueryString,exc);
       }
@@ -765,6 +770,8 @@ void toWorksheet::query(const QString &str,bool direct)
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
 	Result->query(QueryString,param);
+      } catch (const toConnection::exception &exc) {
+	addLog(QueryString,exc);
       } catch (const QString &exc) {
 	addLog(QueryString,exc);
       }
@@ -777,7 +784,7 @@ void toWorksheet::query(const QString &str,bool direct)
   }
 }
 
-void toWorksheet::addLog(const QString &sql,const QString &result)
+void toWorksheet::addLog(const QString &sql,const toConnection::exception &result)
 {
   QString now=toNow(connection());
   toResultViewItem *item;
@@ -804,6 +811,22 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     LastLogItem=item;
     item->setText(1,result);
     item->setText(2,now);
+  }
+
+  if (result.offset()>=0&&LastLine>=0&&LastOffset>=0&&
+      !WorksheetTool.config(CONF_MOVE_TO_ERR,"Yes").isEmpty()) {
+    QChar cmp='\n';
+    int lastnl=0;
+    int lines=0;
+    for (int i=0;i<result.offset();i++) {
+      if (sql.at(i)==cmp) {
+	LastOffset=0;
+	lastnl=i+1;
+	lines++;
+      }
+    }
+    Editor->setCursorPosition(LastLine+lines,LastOffset+result.offset()-lastnl,false);
+    LastLine=LastOffset=-1;
   }
 
   char buf[100];
@@ -1031,6 +1054,7 @@ void toWorksheet::execute(bool all,bool step)
 	      if (all) {
 		Editor->setCursorPosition(startLine,startPos,false);
 		Editor->setCursorPosition(endLine,endPos,true);
+		LastLine=LastOffset=-1;
 		if (Editor->hasMarkedText()) {
 		  query(Editor->markedText(),true);
 		  qApp->processEvents();
@@ -1059,6 +1083,8 @@ void toWorksheet::execute(bool all,bool step)
       endLine=Editor->numLines()-1;
       endPos=Editor->textLine(endLine).length();
       if (all&&endLine) {
+	LastLine=startLine;
+	LastOffset=startPos;
 	Editor->setCursorPosition(startLine,startPos,false);
 	Editor->setCursorPosition(endLine,endPos,true);
 	if (Editor->hasMarkedText()) {
@@ -1070,6 +1096,8 @@ void toWorksheet::execute(bool all,bool step)
       Editor->setCursorPosition(0,0,false);
       Editor->setCursorPosition(endLine,endPos,true);
     } else {
+      LastLine=startLine;
+      LastOffset=startPos;
       Editor->setCursorPosition(startLine,startPos,false);
       Editor->setCursorPosition(endLine,endPos,true);
     }
@@ -1096,7 +1124,7 @@ void toWorksheet::eraseLogButton()
 void toWorksheet::queryDone(void)
 {
   if (!Timer.isNull()&&!QueryString.isEmpty())
-    addLog(QueryString,"Aborted");
+    addLog(QueryString,toConnection::exception("Aborted"));
   else
     emit executed();
   timer()->stop();
@@ -1176,6 +1204,8 @@ void toWorksheet::executeNewline(void)
   }
   Editor->setCursorPosition(cline,0,false);
   Editor->setCursorPosition(eline,epos,true);
+  LastLine=cline;
+  LastOffset=0;
   if (Editor->hasMarkedText())
     query(Editor->markedText(),false);
 }
@@ -1200,6 +1230,8 @@ void toWorksheet::executeSaved(void)
 {
   if (Light)
     return;
+
+  LastLine=LastOffset=-1;
 
   QString sql=SavedSQL->currentText();
   if (sql.length()>0) {
@@ -1228,6 +1260,9 @@ void toWorksheet::executePreviousLog(void)
 {
   if (Light)
     return;
+
+  LastLine=LastOffset=-1;
+
   QListViewItem *item=Logging->currentItem();
   if (item) {
     QListViewItem *prev=Logging->firstChild();
@@ -1245,6 +1280,9 @@ void toWorksheet::executeNextLog(void)
 {
   if (Light)
     return;
+
+  LastLine=LastOffset=-1;
+
   QListViewItem *item=Logging->currentItem();
   if (item&&item->nextSibling()) {
     toResultViewItem *next=dynamic_cast<toResultViewItem *>(item->nextSibling());
