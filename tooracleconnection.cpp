@@ -224,6 +224,8 @@ public:
 	      return null;
 	    }
 	    int len=lob.len();
+	    if (dsc->ftype==otl_var_clob)
+	      len*=5;
 	    if (toMaxLong>=0&&len>toMaxLong)
 	      len=toMaxLong;
 	    buffer=new char[len+1];
@@ -239,7 +241,7 @@ public:
 	      else
 		printf("Data exists past length of LOB in thread\n");
 	    }
-	    buffer[len]=0; // Not sure if this is needed
+	    buffer[data.len()]=0;
 	    QString buf(QString::fromUtf8(buffer));
 	    delete buffer;
 	    Running=false;

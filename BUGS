@@ -33,3 +33,6 @@ toListView:
 
 toSGATrace:
 	Doesn't work with Oracle7
+
+toDebug:
+	Creating a procedure should also add it to the object cache.

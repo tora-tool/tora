@@ -80,6 +80,7 @@ Extended functionality:
 * Include status of code objects in browsertool.
 * Implement printing of text view.
 * Plugin interface to alerttypes.
+* Project manager.
 
 New tools:
 
