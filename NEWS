@@ -1,5 +1,8 @@
 1.3.6.1: Released 2002-07-05
 
+2002-07-04: Fixed problem with modifying tempfiles in storagemanager.
+2002-07-04: Added units to long ops in SGA trace.
+2002-07-04: Added unfinished long operations to SGA trace.
 2002-07-04: Applied patch to sync debian distribution (Thanx Michael Meskes).
 2002-07-04: Increased readahead in backgroundqueries.
 2002-07-04: A large speedup in contenteditor.

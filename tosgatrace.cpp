@@ -149,6 +149,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Type=new QComboBox(toolbar);
   Type->insertItem("SGA");
   Type->insertItem("Long operations");
+  Type->insertItem("Unfinished long");
 
   toolbar->addSeparator();
   new QLabel("Selection ",toolbar);
@@ -262,7 +263,8 @@ static toSQL SQLLongOps("toSGATrace:LongOps",
 			"SELECT b.opname \"Type\",\n"
 			"       a.SQL_Text \"SQL Text\",\n"
 			"       b.start_time \"Start Time\",\n"
-			"       b.elapsed_seconds||'/'||(b.elapsed_seconds+b.time_remaining) \"Remaining/Total Time\",\n"
+			"       b.sofar||'/'||b.totalwork \"Completed/Total\",\n"
+			"       b.elapsed_seconds||'/'||(b.elapsed_seconds+b.time_remaining) \"Completed/Total Time\",\n"
 			"       b.username \"Parsing Schema\",\n"
 			"       a.Parse_Calls \"Parse Calls\",\n"
 			"       a.Executions \"Executions\",\n"
@@ -286,6 +288,36 @@ static toSQL SQLLongOps("toSGATrace:LongOps",
 			"Display the contents of long the long operations list. Must have a hidden column "
 			"with SGA address at the end and a table name 'b' with a column username.");
 
+static toSQL SQLLongOpsUnfinished("toSGATrace:LongOpsUnfinished",
+				  "SELECT b.opname \"Type\",\n"
+				  "       a.SQL_Text \"SQL Text\",\n"
+				  "       b.start_time \"Start Time\",\n"
+				  "       b.sofar||'/'||b.totalwork \"Completed/Total\",\n"
+				  "       b.elapsed_seconds||'/'||(b.elapsed_seconds+b.time_remaining) \"Completed/Total Time\",\n"
+				  "       b.username \"Parsing Schema\",\n"
+				  "       a.Parse_Calls \"Parse Calls\",\n"
+				  "       a.Executions \"Executions\",\n"
+				  "       a.Sorts \"Sorts\",\n"
+				  "       a.Disk_Reads \"Disk Reads\",\n"
+				  "       a.Buffer_Gets \"Buffer Gets\",\n"
+				  "       a.Rows_Processed \"Rows\",\n"
+				  "       DECODE(a.Executions,0,'N/A',ROUND(a.Sorts/a.Executions,3)) \"Sorts/Exec\",\n"
+				  "       DECODE(a.Executions,0,'N/A',ROUND(a.Disk_Reads/a.Executions,3)) \"Disk/Exec\",\n"
+				  "       DECODE(a.Executions,0,'N/A',ROUND(a.Buffer_Gets/a.Executions,3)) \"Buffers/Exec\",\n"
+				  "       DECODE(a.Executions,0,'N/A',ROUND(a.Rows_Processed/a.Executions,3)) \"Rows/Exec\",\n"
+				  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Sorts/a.Rows_Processed,3)) \"Sorts/Rows\",\n"
+				  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Disk_Reads/a.Rows_Processed,3)) \"Disk/Rows\",\n"
+				  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
+				  "       b.SQL_Address||':'||b.SQL_Hash_Value \" \"\n"
+				  "  from v$sqlarea a,\n"
+				  "       v$session_longops b\n"
+				  " where b.sql_address = a.address(+)\n"
+				  "   and b.sql_hash_value = a.hash_value(+)\n"
+				  "   and b.opname is not null\n"
+				  "   and b.sofar != b.totalwork",
+				  "Display the contents of the long operations list with unfinished work left. Must have a hidden column "
+				  "with SGA address at the end and a table name 'b' with a column username.");
+
 void toSGATrace::refresh(void)
 {
   try {
@@ -298,6 +330,9 @@ void toSGATrace::refresh(void)
       break;
     case 1:
       select=toSQL::string(SQLLongOps,connection());
+      break;
+    case 2:
+      select=toSQL::string(SQLLongOpsUnfinished,connection());
       break;
     default:
       toStatusMessage("Unknown type of trace");

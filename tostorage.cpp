@@ -491,11 +491,23 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
 			     "       autoextensible,\n"
 			     "       bytes/blocks*increment_by/1024,\n"
 			     "       maxbytes/1024\n"
-			     "  FROM sys.dba_data_files\n"
+			     "  FROM (SELECT * FROM sys.dba_data_files UNION SELECT * FROM sys.dba_temp_files)\n"
 			     " WHERE tablespace_name = :nam<char[70]>"
 			     "   AND file_name = :fil<char[1500]>",
 			     "Get information about a datafile for the modify dialog, "
-			     "must have same columns and bindings");
+			     "must have same columns and bindings",
+			     "8.1");
+
+static toSQL SQLDatafileInfo8("toStorage:DatafileInfo",
+			      "SELECT bytes/1024,\n"
+			      "       autoextensible,\n"
+			      "       bytes/blocks*increment_by/1024,\n"
+			      "       maxbytes/1024\n"
+			      "  FROM SELECT * sys.dba_data_files\n"
+			      " WHERE tablespace_name = :nam<char[70]>"
+			      "   AND file_name = :fil<char[1500]>",
+			      QString::null,
+			      "8.0");
 
 toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
 				 const QString &filename,QWidget *parent)
@@ -524,7 +536,8 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
     result=toQuery::readQuery(conn,SQLDatafileInfo,tablespace,filename);
 
     if (result.size()!=4)
-      throw QString("Invalid response from query (Wanted 4, got %1 entries").arg(result.size());
+      throw QString("Invalid response from query (Wanted 4, got %1 entries) for %2.%3").
+	arg(result.size()).arg(tablespace).arg(filename);
     Datafile->Name->setText(tablespace);
     Datafile->Name->setEnabled(false);
     Datafile->Modify=true;

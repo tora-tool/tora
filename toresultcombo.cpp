@@ -102,6 +102,7 @@ void toResultCombo::poll(void)
 	Query=NULL;
 	Poll.stop();
 	setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
+	updateGeometry();
       }
     }
   } catch(const QString &exc) {
