@@ -75,6 +75,17 @@ class toConnection;
 
 class toSQLParse {
 public:
+  struct settings {
+    bool ExpandSpaces;
+    bool CommaBefore;
+    bool BlockOpenLine;
+    bool OperatorSpace;
+    bool KeywordUpper;
+    bool RightSeparator;
+    bool EndBlockNewline;
+    int IndentLevel;
+  };
+
   /** Structure the statement is parsed into.
    */
   class statement {
@@ -172,13 +183,25 @@ public:
   static QString indentString(int level);
   /** Count indentation level of a string.
    * @param str String to check.
+   * @param chars Position in string.
    */
-  static int countIndent(const QString &str);
+  static int countIndent(const QString &str,int &chars);
+
 private:
+  static settings Settings;
   static statement parseStatement(const QString &str,
 				  int &pos,
 				  bool declare);
   static QString indentStatement(statement &stat,int level);
+public:
+  /** Get current settings.
+   */
+  static settings getSetting(void)
+  { return Settings; }
+  /** Get current settings.
+   */
+  static void setSetting(const settings &setting)
+  { Settings=setting; }
 };
 
 #endif

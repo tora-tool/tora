@@ -35,9 +35,9 @@
 #include "tosqlparse.h"
 #include "tohighlightedtext.h"
 
-#include <stdio.h>
-
 #ifdef TOPARSE_DEBUG
+
+#include <stdio.h>
 
 bool toMonolithic(void)
 {
@@ -711,6 +711,5 @@ QString toSQLParse::indent(const QString &str)
     if (Settings.EndBlockNewline&&(*i).Type!=statement::Block)
       ret+="\n";
   }
-  printf("Indentation:\n\n%s\n\n",(const char *)ret);
   return ret;
 }

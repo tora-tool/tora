@@ -122,6 +122,8 @@
 2001-12-09: Moved toGetToken to toSQLParse.
 2001-12-09: Fixed lots of problems with getToken.
 2001-12-09: Added function to parse PL/SQL into a token tree to toSQLParse.
+2001-12-09: Added PL/SQL indent functions to toSQLParse.
+2001-12-09: Modified toEditWidget settings to include indent settings.
 
 1.1.5: Released 2001-11-26
 
