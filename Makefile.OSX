@@ -227,6 +227,7 @@ SOURCES=\
 	todebugchangeui.cpp \
 	todebugtext.cpp \
 	todebugwatch.cpp \
+	toeditextensiongotoui.cpp \
 	toeditextensions.cpp \
 	toeditextensionsetupui.cpp \
 	toeditwidget.cpp \
