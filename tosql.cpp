@@ -37,6 +37,7 @@
 #include "toconnection.h"
 #include "tosql.h"
 
+#include <qapplication.h>
 #include <qfile.h>
 #include <qregexp.h>
 

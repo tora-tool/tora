@@ -45,6 +45,8 @@
 #include "totool.h"
 #include "tosql.h"
 
+#include <qapplication.h>
+
 #define BUF_SIZE 102400
 
 static toSQL SQLListTables("toMysqlConnection:ListTables",
@@ -406,7 +408,7 @@ public:
       delete conn;
     }
 
-    virtual QString version(toConnectionSub *sub)
+    virtual QCString version(toConnectionSub *sub)
     {
       char *version=mysql_get_server_info(Connection);
       if (!version)
@@ -430,15 +432,15 @@ public:
   {
   }
 
-  virtual toConnection::connectionImpl *provideConnection(const QString &,toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
   { return new mysqlConnection(conn); }
-  virtual std::list<QString> providedHosts(const QString &)
+  virtual std::list<QString> providedHosts(const QCString &)
   {
     std::list<QString> ret;
     ret.insert(ret.end(),"localhost");
     return ret;
   }
-  virtual std::list<QString> providedDatabases(const QString &,const QString &host,
+  virtual std::list<QString> providedDatabases(const QCString &,const QString &host,
 					       const QString &user,const QString &pwd)
   {
     std::list<QString> ret;

@@ -46,6 +46,7 @@
 #include <winsock.h>
 #endif
 
+#include <qapplication.h>
 #include <qdatetime.h>
 
 static bool SameContext(const QString &str,const QString &str2)

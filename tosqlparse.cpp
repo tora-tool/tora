@@ -37,6 +37,7 @@
 #include "tohighlightedtext.h"
 #include "tosqlparse.h"
 
+#include <qapplication.h>
 #include <qstringlist.h>
 
 #ifdef TOPARSE_DEBUG

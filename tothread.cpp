@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <qapplication.h>
 #include <qstring.h>
 
 #ifndef WIN32

@@ -40,6 +40,7 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include <qapplication.h>
 #include <qregexp.h>
 
 // Some convenient defines

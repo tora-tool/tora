@@ -39,6 +39,7 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include <qapplication.h>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 

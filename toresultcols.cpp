@@ -40,6 +40,7 @@
 
 #include <map>
 
+#include <qapplication.h>
 #include <qlabel.h>
 
 static toSQL SQLInfo("toResultCols:Info",
