@@ -308,12 +308,14 @@ void toAnalyze::execute(void)
 
 void toAnalyze::stop(void)
 {
-  for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++)
-    delete (*i);
-  Running.clear();
-  Pending.clear();
-  Stop->setEnabled(false);
-  Current->setText(QString::null);
-  if (!connection().needCommit())
-    connection().commit();
+  try {
+    for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++)
+      delete (*i);
+    Running.clear();
+    Pending.clear();
+    Stop->setEnabled(false);
+    Current->setText(QString::null);
+    if (!connection().needCommit())
+      connection().rollback();
+  } TOCATCH
 }

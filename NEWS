@@ -10,6 +10,9 @@
 2001-11-02: Added registration stuff for non freeware version.
 2001-11-02: Fixed problem with add tablespace/datafile dialog.
 2001-11-02: Fixed problem with exception in constructor of queries.
+2001-11-03: Made animation speed vary depending on how many tasks running.
+2001-11-03: Made animation longer in twirl logo.
+2001-11-03: Fixed problem with crashing toanalyze on stop.
 
 1.1.4: Released 2001-11-02
 

@@ -227,7 +227,7 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DONT_REREAD,DontReread->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_AUTO_LONG,
-			  AutoLong->isChecked()?MoveAfter->cleanText():"0");
+			  AutoLong->isChecked()?MoveAfter->cleanText():QString("0"));
 }
 
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
