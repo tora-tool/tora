@@ -275,6 +275,7 @@ public:
 #define TAB_VIEW_EXTRACT	"ViewExtract"
 
 #define TAB_SEQUENCES		"Sequences"
+#define TAB_SEQUENCES_GRANTS	"SequencesGrants"
 #define TAB_SEQUENCES_INFO	"SequencesInfo"
 #define TAB_SEQUENCES_EXTRACT	"SequencesExtract"
 
@@ -284,18 +285,21 @@ public:
 #define TAB_INDEX_EXTRACT	"IndexExtract"
 
 #define TAB_SYNONYM		"Synonym"
+#define TAB_SYNONYM_GRANTS	"SynonymGrants"
 #define TAB_SYNONYM_INFO	"SynonymInfo"
 #define TAB_SYNONYM_EXTRACT	"SynonymExtract"
 
 #define TAB_PLSQL		"PLSQL"
 #define TAB_PLSQL_SOURCE	"PLSQLSource"
 #define TAB_PLSQL_BODY		"PLSQLBody"
+#define TAB_PLSQL_GRANTS	"PLSQLGrants"
 #define TAB_PLSQL_DEPEND	"PLSQLDepend"
 #define TAB_PLSQL_EXTRACT	"PLSQLExtract"
 
 #define TAB_TRIGGER		"Trigger"
 #define TAB_TRIGGER_INFO	"TriggerInfo"
 #define TAB_TRIGGER_SOURCE	"TriggerSource"
+#define TAB_TRIGGER_GRANTS	"TriggerGrants"
 #define TAB_TRIGGER_COLS	"TriggerCols"
 #define TAB_TRIGGER_DEPEND	"TriggerDepend"
 #define TAB_TRIGGER_EXTRACT	"TriggerExtract"
@@ -317,11 +321,11 @@ static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				QString::null,
 				"3.0",
 				"MySQL");
-static toSQL SQLTableGrants("toBrowser:TableGrants",
-			    "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
-			    " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
-			    " ORDER BY Privilege,Grantee",
-			    "Display the grants on a table");
+static toSQL SQLAnyGrants("toBrowser:AnyGrants",
+			  "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
+			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
+			  " ORDER BY Privilege,Grantee",
+			  "Display the grants on an object");
 static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
 			     "  FROM ALL_TRIGGERS\n"
@@ -575,7 +579,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL(SQLTableGrants);
+  resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
@@ -594,7 +598,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Information");
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
-  toResultExtract *resultExtract=new toResultExtract(this,TAB_TABLE_EXTRACT);
+  toResultExtract *resultExtract=new toResultExtract(true,this,TAB_TABLE_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_TABLE_EXTRACT]=resultExtract;
 
@@ -629,7 +633,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL(SQLTableGrants);
+  resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
@@ -637,7 +641,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_VIEW_DEPEND]=resultDepend;
 
-  resultExtract=new toResultExtract(this,TAB_VIEW_EXTRACT);
+  resultExtract=new toResultExtract(true,this,TAB_VIEW_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_VIEW_EXTRACT]=resultExtract;
 
@@ -668,7 +672,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_INDEX_INFO]=resultItem;
 
-  resultExtract=new toResultExtract(this,TAB_INDEX_EXTRACT);
+  resultExtract=new toResultExtract(true,this,TAB_INDEX_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_INDEX_EXTRACT]=resultExtract;
 
@@ -693,7 +697,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
 
-  resultExtract=new toResultExtract(this,TAB_SEQUENCES_EXTRACT);
+  resultView=new toResultView(true,false,curr,TAB_SEQUENCES_GRANTS);
+  resultView->setReadAll(true);
+  resultView->setSQL(SQLAnyGrants);
+  curr->addTab(resultView,"&Grants");
+  SecondMap[TAB_SEQUENCES_GRANTS]=resultView;
+
+  resultExtract=new toResultExtract(true,this,TAB_SEQUENCES_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_SEQUENCES_EXTRACT]=resultExtract;
 
@@ -718,7 +728,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
 
-  resultExtract=new toResultExtract(this,TAB_SYNONYM_EXTRACT);
+  resultView=new toResultView(true,false,curr,TAB_SYNONYM_GRANTS);
+  resultView->setReadAll(true);
+  resultView->setSQL(SQLAnyGrants);
+  curr->addTab(resultView,"&Grants");
+  SecondMap[TAB_SYNONYM_GRANTS]=resultView;
+
+  resultExtract=new toResultExtract(true,this,TAB_SYNONYM_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_SYNONYM_EXTRACT]=resultExtract;
 
@@ -749,11 +765,17 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"B&ody");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
+  resultView=new toResultView(true,false,curr,TAB_PLSQL_GRANTS);
+  resultView->setReadAll(true);
+  resultView->setSQL(SQLAnyGrants);
+  curr->addTab(resultView,"&Grants");
+  SecondMap[TAB_PLSQL_GRANTS]=resultView;
+
   resultDepend=new toResultDepend(curr,TAB_PLSQL_DEPEND);
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
 
-  resultExtract=new toResultExtract(this,TAB_PLSQL_EXTRACT);
+  resultExtract=new toResultExtract(true,this,TAB_PLSQL_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_PLSQL_EXTRACT]=resultExtract;
 
@@ -789,11 +811,17 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,"&Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
+  resultView=new toResultView(true,false,curr,TAB_TRIGGER_GRANTS);
+  resultView->setReadAll(true);
+  resultView->setSQL(SQLAnyGrants);
+  curr->addTab(resultView,"&Grants");
+  SecondMap[TAB_TRIGGER_GRANTS]=resultView;
+
   resultDepend=new toResultDepend(curr,TAB_TRIGGER_DEPEND);
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_TRIGGER_DEPEND]=resultDepend;
 
-  resultExtract=new toResultExtract(this,TAB_TRIGGER_EXTRACT);
+  resultExtract=new toResultExtract(true,this,TAB_TRIGGER_EXTRACT);
   curr->addTab(resultExtract,"Script");
   SecondMap[TAB_TRIGGER_EXTRACT]=resultExtract;
 
@@ -1007,7 +1035,7 @@ public:
 			    par,
 			    Connection);
       res=new toResultView(true,false,tool);
-      res->setSQL(SQLTableGrants);
+      res->setSQL(SQLAnyGrants);
     } else
       return NULL;
     res->changeParams(schema,object);
@@ -1038,15 +1066,24 @@ public:
     } else if (typ=="Sequences") {
       QPixmap image((const char **)sequence_xpm);
       setPixmap(0,image);
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Grants");
+      }
     } else if (typ=="Code" || typ =="Triggers") {
       QPixmap image((const char **)function_xpm);
       setPixmap(0,image);
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Grants");
+      }
     } else if (typ=="Indexes") {
       QPixmap image((const char **)index_xpm);
       setPixmap(0,image);
     } else if (typ=="Synonyms") {
       QPixmap image((const char **)synonym_xpm);
       setPixmap(0,image);
+      if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,"Grants");
+      }
     }
   }
 

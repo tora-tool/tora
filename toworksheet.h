@@ -108,6 +108,8 @@ public:
   virtual bool canHandle(toConnection &conn)
   { return true; }
 
+signals:
+  void executed(void);
 public slots:
   void connectionChanged(void);
   void refresh();

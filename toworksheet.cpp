@@ -1049,7 +1049,8 @@ void toWorksheet::queryDone(void)
 {
   if (!Timer.isNull()&&!QueryString.isEmpty())
     addLog(QueryString,"Aborted");
-
+  else
+    emit executed();
   timer()->stop();
   StopButton->setEnabled(false);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);

@@ -34,54 +34,27 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTEXTRACT_H
-#define __TORESULTEXTRACT_H
+#ifndef __TOINVALID_H
+#define __TOINVALID_H
 
-#include "toworksheet.h"
-#include "toresult.h"
+#include <list>
 
-class toSQL;
+#include "totool.h"
 
-/** This widget displays the SQL used to recreate an object. It uses the
- * @ref toExtract class to do this.
- */
+class toResultView;
+class toResultExtract;
 
-class toResultExtract : public toWorksheet, public toResult {
+class toInvalid : public toToolWidget {
   Q_OBJECT
 
-  bool Prompt;
-
+  toResultView *Objects;
+  toResultExtract *Source;
 public:
-  /** Create the widget.
-   * @param parent Parent widget.
-   * @param name Name of widget.
-   */
-  toResultExtract(bool prompt,QWidget *parent,const char *name=NULL);
+  toInvalid(QWidget *parent,toConnection &connection);
 
-  /** Ignores sql and extect object name and owner as parameters.
-   */
-  virtual void query(const QString &sql,const toQList &param);
-
-  /** Support Oracle
-   */
-  virtual bool canHandle(toConnection &conn);
 public slots:
-  /** Reimplemented for internal reasons.
-   */
-  virtual void refresh(void)
-  { toResult::refresh(); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &Param1)
-  { toResult::changeParams(Param1); }
-  /** Reimplemented For internal reasons.
-   */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { toResult::changeParams(Param1,Param2); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { toResult::changeParams(Param1,Param2,Param3); }
+  virtual void changeSelection(void);
+  virtual void refresh(void);
 };
 
 #endif

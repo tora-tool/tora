@@ -113,7 +113,6 @@ void toResultLong::addItem(void)
 	    sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
 	  else
 	    sprintf(buffer,"Query executed");
-	  toStatusMessage(buffer);
 	  em=true;
 	}
 	if (!HasHeaders) {

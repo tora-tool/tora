@@ -70,6 +70,7 @@ SOURCES=\
 	tohelpsetupui.cpp	        \
 	tohighlightedtext.cpp	        \
 	tohtml.cpp		        \
+	toinvalid.cpp			\
 	tolinechart.cpp		        \
 	tomain.cpp		        \
 	tomarkedtext.cpp	        \
@@ -210,6 +211,7 @@ plugins/todebug.tso:\
 plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
+plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
@@ -299,6 +301,7 @@ tora-plugin: \
 	plugins/tocurrent.tso \
 	plugins/toextract.tso \
 	plugins/tofilesize.tso \
+	plugins/toinvalid.tso \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \

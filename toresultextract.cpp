@@ -45,9 +45,10 @@
 
 #include "toresultextract.moc"
 
-toResultExtract::toResultExtract(QWidget *parent,const char *name)
+toResultExtract::toResultExtract(bool prompt,QWidget *parent,const char *name)
   : toWorksheet(parent,name,toCurrentConnection(parent))
 {
+  Prompt=prompt;
 }
 
 static toSQL SQLObjectType("toResultExtract:ObjectType",
@@ -70,29 +71,35 @@ void toResultExtract::query(const QString &sql,const toQList &param)
     owner=toToolWidget::connection().user().upper();
   } else {
     name=*i;
+    i++;
   }
 
   try {
-    toQuery query(toToolWidget::connection(),SQLObjectType,owner,name);
+    QString type;
+    if (i==params().end()) {
+      toQuery query(toToolWidget::connection(),SQLObjectType,owner,name);
 
-    if(query.eof())
-      throw QString("Object not found");
+      if(query.eof())
+	throw QString("Object not found");
     
-    QString type=query.readValue();
+      type=query.readValue();
+    } else
+      type=*i;
 
     std::list<QString> objects;
 
     if (type=="TABLE") {
       objects.insert(objects.end(),"TABLE FAMILY:"+owner+"."+name);
       objects.insert(objects.end(),"TABLE REFERENCES:"+owner+"."+name);
-    } else if (type.startsWith("PACKAGE")) {
+    } else if (type.startsWith("PACKAGE")&&Prompt) {
       objects.insert(objects.end(),"PACKAGE:"+owner+"."+name);
       objects.insert(objects.end(),"PACKAGE BODY:"+owner+"."+name);
     } else
       objects.insert(objects.end(),type+":"+owner+"."+name);
 
-    toExtract extract(toToolWidget::connection(),this);
+    toExtract extract(toToolWidget::connection(),NULL);
     extract.setHeading(false);
+    extract.setPrompt(Prompt);
     editor()->setText(extract.create(objects));
   } TOCATCH
 }
