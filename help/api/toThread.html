@@ -34,21 +34,21 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref10">startAsync</A></b> (void) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref22">toThread</A></b> (<A HREF="toTask.html">toTask</A> *task) 
+<LI>&nbsp;<b><A HREF="#ref24">toThread</A></b> (<A HREF="toTask.html">toTask</A> *task) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref23">~toThread</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref25">~toThread</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref24">start</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref26">start</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref25">startAsync</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref27">startAsync</A></b> (void) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref11">msleep</A></b> (int msec) 
 </LI>
 <LI>static  bool &nbsp;<b><A HREF="#ref12">mainThread</A></b> (void) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref26">msleep</A></b> (int msec) 
+<LI>static  void &nbsp;<b><A HREF="#ref28">msleep</A></b> (int msec) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref27">mainThread</A></b> (void) 
+<LI>static  bool &nbsp;<b><A HREF="#ref29">mainThread</A></b> (void) 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref13">taskRunner</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Used to create new threads of execution. When a thread exits it will delete the
@@ -61,25 +61,25 @@
 <br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><A NAME="msleep"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>msleep</strong> (int msec)
 <br></td><td align="right"><h3><strong>msleep</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="mainThread"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
 <br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="taskRunner"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>taskRunner</strong>
-</td><td align="right"><h3><strong>taskRunner</strong></h3></td></tr></table><p></p><A NAME="toThread"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *task)
+</td><td align="right"><h3><strong>taskRunner</strong></h3></td></tr></table><p></p><A NAME="toThread"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *task)
 <br></td><td align="right"><h3><strong>toThread</strong></h3></td></tr></table><p></p><p> Create thread.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>task</i></TD><TD align="left" valign="top">Task to run.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toThread"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
-<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
+<A NAME="~toThread"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
+<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
 <br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p></p><p> Start thread and wait for other thread to start running.
    </p>
-<A NAME="startAsync"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
+<A NAME="startAsync"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
 <br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><p> Start thread and continue executing this thread until normal scheduling
  handles over execution to child thread.
    </p>
-<A NAME="msleep"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>msleep</strong> (int msec)
+<A NAME="msleep"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>msleep</strong> (int msec)
 <br></td><td align="right"><h3><strong>msleep</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Sleep in milliseconds.
    </p>
-<A NAME="mainThread"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
+<A NAME="mainThread"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
 <br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Returns true if this is the main thread.
    </p>
 <HR>

@@ -48,9 +48,10 @@ public:
   virtual void run(void) = 0;
 };
 
+#include <list>
+
 #ifdef WIN32
 #include <qthread.h>
-#include <list>
 
 class toSemaphore {
 private:
@@ -191,7 +192,9 @@ public:
 
 class toThread {
 private:
-  /** PThread identifier.
+  static std::list<toThread *> *Threads;
+  static toLock *Lock; 
+ /** PThread identifier.
    */
   pthread_t		Thread;
   /** Thread attributes.

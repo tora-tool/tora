@@ -46,6 +46,8 @@
 #include <time.h>
 
 pthread_t toThread::MainThread=pthread_self();
+std::list<toThread *> *toThread::Threads;
+toLock *toThread::Lock;
 
 #define SEM_ASSERT(x) if((x)!=0) { throw QString(\
 "Error in semaphore function \"" #x "\" didn't work"); }
@@ -126,6 +128,19 @@ void toThread::initAttr()
 toThread::toThread(toTask *t)
   :Task(t)
 {
+  if (!Threads)
+    Threads=new std::list<toThread *>;
+  if (!Lock)
+    Lock=new toLock;
+
+  // This is a cludge to clean up finnished threads, there won't be many hanging at least
+
+  Lock->lock();
+  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++)
+    delete *i;
+  Threads->clear();
+  Lock->unlock();
+
   initAttr();
 }
 
@@ -180,7 +195,9 @@ void *toThreadStartWrapper(void *t)
     printf("Unhandled exception in thread:\nUnknown type\n");
   }
   delete thread->Task;
-  delete thread;
+  toThread::Lock->lock();
+  toThread::Threads->insert(toThread::Threads->end(),thread);
+  toThread::Lock->unlock();
   return NULL;
 }
 
