@@ -1,6 +1,10 @@
 1.1.1:
 
 2001-09-10: Fixed bug with no graphs being drawn.
+2001-09-10: Fixed some problems with Qt3 support.
+2001-09-10: Fixed problem with non QToolBar dock in Qt.
+2001-09-10: Fixed problem with database name in tool toolbars.
+2001-09-10: Dont use QSettings for Qt 3.0, stick with the old working one.
 
 1.1.0: Released 2001-09-09
 

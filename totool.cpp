@@ -39,10 +39,6 @@
 #ifdef WIN32
 #  include "windows/cregistry.h"
 #  include "windows/cregistry.cpp"
-#else
-#  if QT_VERSION >= 300
-#    include <qsettings.h>
-#  endif
 #endif
 
 #include "totool.moc"
@@ -230,10 +226,6 @@ static char *toKeyValue(const QString &str)
   return buf;
 }
 
-#else
-#  if QT_VERSION >= 300
-#    define APPLICATION_NAME "/tora/"
-#  endif
 #endif
 
 void toTool::saveConfig(void)
@@ -261,7 +253,6 @@ void toTool::saveConfig(void)
     }
   }
 #else
-#  if QT_VERSION < 300
   if (!Configuration)
     return;
   QString conf;
@@ -270,46 +261,8 @@ void toTool::saveConfig(void)
   }
   conf.append(CONFIG_FILE);
   saveMap(conf,*Configuration);
-#  else
-  QSettings settings;
-  QRegExp re(":");
-  for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
-    QString path=(*i).first;
-    QString value=(*i).second;
-    path.prepend(APPLICATION_NAME);
-    path.replace(re,"/");
-    if (value.isNull())
-      settings.writeEntry(path,"");
-    else
-      settings.writeEntry(path,value);
-  }
-#  endif
 #endif
 }
-
-#if QT_VERSION >= 300
-
-static void ReadConfig(QSettings &settings,const QString &path,std::map<QString,QString> &conf)
-{
-  QStringList lst=settings.entryList(path);
-  for(unsigned int i=0;i<lst.count();i++) {
-    QString fullpath=path;
-    fullpath+=lst[i];
-    QString confname=fullpath;
-    confname.replace(QRegExp("/"),":");
-    confname=confname.right(confname.length()-strlen(APPLICATION_NAME));
-    conf[confname]=settings.readEntry(fullpath);
-  }
-  lst=settings.subkeyList(path);
-  for (unsigned int j=0;j<lst.count();j++) {
-    QString fullpath=path;
-    fullpath+=lst[j];
-    fullpath+="/";
-    ReadConfig(settings,fullpath,conf);
-  }
-}
-
-#endif
 
 void toTool::loadConfig(void)
 {
@@ -318,7 +271,6 @@ void toTool::loadConfig(void)
   Configuration=new std::map<QString,QString>;
 
 #ifndef WIN32
-#  if QT_VERSION < 300
   QString conf;
   if (getenv("HOME")) {
     conf=getenv("HOME");
@@ -326,10 +278,6 @@ void toTool::loadConfig(void)
   conf.append(CONFIG_FILE);
   if (!loadMap(conf,*Configuration))
     loadMap(DEF_CONFIG_FILE,*Configuration);
-#  else
-  QSettings settings;
-  ReadConfig(settings,APPLICATION_NAME,*Configuration);
-#  endif
 #endif
 }
 

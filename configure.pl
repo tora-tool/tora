@@ -418,7 +418,6 @@ __TEMP__
     if (! -d $QtLib) {
 	$QtLib=findFile("^libqt(?:-mt)?\\.so\\.[23]",sub {
 	                                                 if (-f $_[0] && ! -l $_[0]) {
-							     print "Checking $_[0]\n";
 							     ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 							     if (!defined $QtLibShared) {
 								 return 0;

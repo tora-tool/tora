@@ -96,6 +96,7 @@ int main(int argc,char **argv)
       std::list<QString> failed;
       QString dirPath=toPluginPath();
       QDir d(dirPath,"*.tso",QDir::Name,QDir::Files);
+      printf("%s\n",(const char *)dirPath);
       for (unsigned int i=0;i<d.count();i++) {
 	failed.insert(failed.end(),d.filePath(d[i]));
       }

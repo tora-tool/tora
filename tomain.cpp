@@ -41,6 +41,7 @@
 #include <qworkspace.h>
 #include <qfileinfo.h>
 #include <qvbox.h>
+#include <qregexp.h>
 
 #include "toconf.h"
 #include "tomain.h"

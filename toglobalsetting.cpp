@@ -44,6 +44,7 @@
 #include "toglobalsetting.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "toresultview.h"
 
 #include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
@@ -108,7 +109,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   DockToolbar->hide();
   DesktopAware->hide();
 #endif
+#if QT_VERSION < 300
   DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes"));
+#else
+  DockToolbar->hide();
+#endif
 
   if (toMonolithic()) {
     PluginLabel->hide();
@@ -160,7 +165,9 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));
   toTool::globalSetConfig(CONF_CHART_SAMPLES,QString::number(ChartSamples->value()));
   toTool::globalSetConfig(CONF_CONNECT_SIZE,QString::number(ConnectHistory->value()));
+#if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
+#endif
   toTool::globalSetConfig(CONF_CHANGE_CONNECTION,ChangeConnection->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_SIZE_UNIT,SizeUnit->currentText());

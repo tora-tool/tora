@@ -7,31 +7,8 @@
 **
 ** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
 **
-** This file is part of the widgets module of the Qt GUI Toolkit.
-**
-** This file may be distributed under the terms of the Q Public License
-** as defined by Trolltech AS of Norway and appearing in the file
-** LICENSE.QPL included in the packaging of this file.
-**
-** This file may be distributed and/or modified under the terms of the
-** GNU General Public License version 2 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.
-**
-** Licensees holding valid Qt Enterprise Edition or Qt Professional Edition
-** licenses may use this file in accordance with the Qt Commercial License
-** Agreement provided with the Software.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.trolltech.com/pricing.html or email sales@trolltech.com for
-**   information about Qt Commercial License Agreements.
-** See http://www.trolltech.com/qpl/ for QPL licensing information.
-** See http://www.trolltech.com/gpl/ for GPL licensing information.
-**
-** Contact info@trolltech.com if any conditions of this licensing are
-** not clear to you.
+** This file contains a class moved out of the Qt GUI Toolkit API. It
+** may be used, distributed and modified without limitation.
 **
 **********************************************************************/
 
@@ -136,13 +113,12 @@ public:
 };
 
 
-// NOT REVISED
 /*!
   \class QtMultiLineEdit qtmultilineedit.h
 
   \brief The QtMultiLineEdit widget is a simple editor for inputting text.
 
-  \ingroup advanced
+  \obsolete
 
   The QtMultiLineEdit widget provides multiple line text input and display.
   It is intended for moderate amounts of text. There are no arbitrary
@@ -154,12 +130,177 @@ public:
   dynamic wrapping according to the visible width or a fixed number of
   character or pixels is supported.
 
-  The widget can be used to display text by calling setReadOnly(TRUE)
+  The widget can be used to display text by calling setReadOnly(TRUE).
 
   The default key bindings are described in keyPressEvent(); they cannot
   be customized except by inheriting the class.
 
   <img src=qmlined-m.png> <img src=qmlined-w.png>
+*/
+
+/*!
+    \property QtMultiLineEdit::numLines
+    \brief the number of lines in the multi-line edit
+
+  numLines() returns the number of lines in the editor. The count
+  includes any empty lines at top and bottom, so for an empty editor
+  this method will return 1.
+*/
+/*!
+    \property QtMultiLineEdit::atBeginning
+    \brief whether the cursor is at the beginning
+  
+    atBeginning() returns TRUE if the cursor is placed at the
+    beginning of the text.
+*/
+/*!
+    \property QtMultiLineEdit::atEnd
+    \brief whether the cursor is at the end
+
+  atEnd() returns TRUE if the cursor is placed at the end of the text.
+*/
+/*!
+    \property QtMultiLineEdit::maxLineWidth
+    \brief the maximum line width in pixels
+  Returns the width in pixels of the longest text line in this editor.
+*/
+/*!
+    \property QtMultiLineEdit::alignment
+    \brief the alignment
+    
+    Possible values are \c AlignLeft, \c Align(H)Center and \c
+    AlignRight.
+  \sa Qt::AlignmentFlags
+*/
+/*!
+    \property QtMultiLineEdit::edited
+    \brief whether the text had been edited
+
+edited() returns the edited flag of the line edit.  If this returns FALSE,
+the contents has not been changed since the construction of the
+QtMultiLineEdit (or the last call to setEdited( FALSE ), if any).  If
+it returns TRUE, the contents have been edited, or setEdited( TRUE )
+has been called.
+
+setEdited() sets the edited flag of this line edit to \e e.  The
+edited flag is never read by QtMultiLineEdit, but is changed to TRUE
+whenever the user changes its contents.
+
+This is useful e.g. for things that need to provide a default value,
+but cannot find the default at once.  Just open the widget without the
+best default and when the default is known, check the edited() return
+value and set the line edit's contents if the user has not started
+editing the line edit.  Another example is to detect whether the
+contents need saving.
+
+*/
+/*!
+    \property QtMultiLineEdit::echoMode
+    \brief the echo mode
+*/
+/*!
+    \property QtMultiLineEdit::maxLength
+    \brief the maximum length of the text
+
+  The currently set text length limit, or -1 if there is
+  no limit (this is the default).
+
+*/
+/*!
+    \property QtMultiLineEdit::maxLines
+    \brief the maximum number of lines
+  The currently set line limit, or -1 if there is
+  no limit (the default).
+
+  Note that excess lines are deleted from the \e bottom of the
+  lines. If you want teletype behaviour with lines disappearing
+  from the \e top as the limit is exceed, you probably just want
+  to use removeLine(0) prior to adding an excess line.
+
+*/
+/*!
+    \property QtMultiLineEdit::hMargin
+    \brief the horizontal margin
+  The horizontal margin current set.  The default is 3.
+*/
+/*!
+    \property QtMultiLineEdit::wordWrap
+    \brief the word wrap mode
+
+  By default, wrapping keeps words intact. To allow breaking within
+  words, set the wrap policy to \c Anywhere (see setWrapPolicy() ).
+
+  The default wrap mode is \c NoWrap.
+
+  \sa wordWrap(), setWrapColumnOrWidth(), setWrapPolicy()
+*/
+/*!
+    \property QtMultiLineEdit::wrapColumnOrWidth
+    \brief the wrap width in columns or pixels
+  The wrap column or wrap width, depending on the word wrap
+  mode.
+  \sa setWordWrap(), setWrapColumnOrWidth()
+*/
+/*!
+    \property QtMultiLineEdit::wrapPolicy
+    \brief the wrap policy mode
+   The default is \c AtWhiteSpace.
+
+*/
+/*!
+    \property QtMultiLineEdit::autoUpdate
+    \brief whether auto update is enabled
+
+  autoUpdate() returns TRUE if the view updates itself automatically
+  whenever it is changed in some way.
+
+  If autoUpdate() is TRUE (this is the default) then the editor updates
+  itself automatically whenever it has changed in some way (generally,
+  when text has been inserted or deleted).
+
+  If autoUpdate() is FALSE, the view does NOT repaint itself, or update
+  its internal state variables itself when it is changed.  This can be
+  useful to avoid flicker during large changes, and is singularly
+  useless otherwise: Disable auto-update, do the changes, re-enable
+  auto-update, and call repaint().
+
+  \warning Do not leave the view in this state for a long time
+  (i.e. between events ). If, for example, the user interacts with the
+  view when auto-update is off, strange things can happen.
+
+  Setting auto-update to TRUE does not repaint the view, you must call
+  repaint() to do this (preferable repaint(FALSE) to avoid flicker).
+
+  \sa autoUpdate() repaint()
+
+*/
+/*!
+    \property QtMultiLineEdit::undoEnabled
+    \brief whether undo is enabled
+*/
+/*!
+    \property QtMultiLineEdit::undoDepth
+    \brief the undo depth
+
+  The maximum number of operations that can be stored on the undo stack.
+
+  \sa setUndoDepth()
+*/
+/*!
+    \property QtMultiLineEdit::readOnly
+    \brief whether the multi-line edit is read-only
+*/
+/*!
+    \property QtMultiLineEdit::overWriteMode
+    \brief the overwrite mode
+*/
+/*!
+    \property QtMultiLineEdit::text
+    \brief the multi-line edit's text
+*/
+/*!
+    \property QtMultiLineEdit::length
+    \brief the length of the text
 */
 
 static const char * const arrow_xpm[] = {
@@ -241,8 +382,8 @@ struct QtMultiLineData
     bool dnd_primed; // If TRUE, user has pressed
     bool dnd_forcecursor; // If TRUE show cursor for DND feedback,
     // even if !hasFocus()
-    QList<QtMultiLineEditCommand> undoList;
-    QList<QtMultiLineEditCommand> redoList;
+    QPtrList<QtMultiLineEditCommand> undoList;
+    QPtrList<QtMultiLineEditCommand> redoList;
     bool undo;
     int undodepth;
     short chartable[256];
@@ -416,18 +557,19 @@ static int xPosToCursorPos( const QString &s, const QFontMetrics &fm,
 }
 
 /*!
-  Constructs a new, empty, QtMultiLineEdit.
+  Constructs a new, empty, QtMultiLineEdit with parent \a parent and
+  called \a name.
 */
 
 QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
-    :QtTableView( parent, name, WNorthWestGravity | WRepaintNoErase )
+    :QtTableView( parent, name, WStaticContents | WRepaintNoErase )
 {
     d = new QtMultiLineData;
     QFontMetrics fm( font() );
     setCellHeight( fm.lineSpacing() );
     setNumCols( 1 );
 
-    contents = new QList<QtMultiLineEditRow>;
+    contents = new QPtrList<QtMultiLineEditRow>;
     contents->setAutoDelete( TRUE );
 
     cursorX = 0; cursorY = 0;
@@ -486,24 +628,6 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
     }
 }
 
-/*! \fn int QtMultiLineEdit::numLines() const
-
-  Returns the number of lines in the editor. The count includes any
-  empty lines at top and bottom, so for an empty editor this method
-  will return 1.
-*/
-
-/*! \fn bool QtMultiLineEdit::atEnd() const
-
-  Returns TRUE if the cursor is placed at the end of the text.
-*/
-
-/*! \fn bool QtMultiLineEdit::atBeginning() const
-
-  Returns TRUE if the cursor is placed at the beginning of the text.
-*/
-
-
 /*!
   \fn int QtMultiLineEdit::lineLength( int line ) const
   Returns the number of characters at line number \a line.
@@ -555,35 +679,8 @@ QtMultiLineEdit::QtMultiLineEdit( QWidget *parent , const char *name )
   copyAvailable( FALSE ) is next emitted.
 */
 
-/*! \fn bool QtMultiLineEdit::isReadOnly() const
 
-  Returns FALSE if this multi line edit accepts text input.
-  Scrolling and cursor movements are accepted in any case.
-
-  \sa setReadOnly() QWidget::isEnabled()
-*/
-
-/*! \fn bool QtMultiLineEdit::isOverwriteMode() const
-
-  Returns TRUE if this multi line edit is in overwrite mode, i.e.
-  if characters typed replace characters in the editor.
-
-  \sa setOverwriteMode()
-*/
-
-
-/*! \fn void QtMultiLineEdit::setOverwriteMode( bool on )
-
-  Sets overwrite mode if \a on is TRUE. Overwrite mode means
-  that characters typed replace characters in the editor.
-
-  \sa isOverwriteMode()
-*/
-
-
-
-
-/*!
+/*
   If \a on is FALSE, this multi line edit accepts text input.
   Scrolling and cursor movements are accepted in any case.
 
@@ -600,8 +697,7 @@ void QtMultiLineEdit::setReadOnly( bool on )
     }
 }
 
-/*!
-  Returns the width in pixels of the longest text line in this editor.
+/*
 */
 int QtMultiLineEdit::maxLineWidth() const
 {
@@ -639,7 +735,8 @@ static QPixmap *getCacheBuffer( QSize sz )
 }
 
 /*!
-  Implements the basic drawing logic.
+  Implements the basic drawing logic. Paints the line at row \a row
+  using painter \a painter. The \a col parameter is ignored.
 */
 void QtMultiLineEdit::paintCell( QPainter *painter, int row, int )
 {
@@ -762,6 +859,7 @@ void QtMultiLineEdit::paintCell( QPainter *painter, int row, int )
 
 
 /*!
+    \overload
   Returns the width in pixels of the string \a s.
   NOTE: only appropriate for whole lines.
 */
@@ -959,7 +1057,7 @@ QString QtMultiLineEdit::textLine( int line ) const
 }
 
 
-/*!
+/*
   Returns a copy of the whole text. If the multi line edit contains no
   text, a
   \link QString::operator!() null string\endlink
@@ -1006,7 +1104,7 @@ void QtMultiLineEdit::deselect()
 }
 
 
-/*!
+/*
   Sets the text to \a s, removing old text, if any.
 */
 
@@ -1052,62 +1150,62 @@ void QtMultiLineEdit::wheelEvent( QWheelEvent *e ){
 
 
 /*!
-  The key press event handler converts a key press to some line editor
-  action.
+  The key press event handler converts a key press in event \a e to
+  some line editor action.
 
   Here are the default key bindings when isReadOnly() is FALSE:
-  <ul>
-  <li><i> Left Arrow </i> Move the cursor one character leftwards
-  <li><i> Right Arrow </i> Move the cursor one character rightwards
-  <li><i> Up Arrow </i> Move the cursor one line upwards
-  <li><i> Down Arrow </i> Move the cursor one line downwards
-  <li><i> Page Up </i> Move the cursor one page upwards
-  <li><i> Page Down </i> Move the cursor one page downwards
-  <li><i> Backspace </i> Delete the character to the left of the cursor
-  <li><i> Home </i> Move the cursor to the beginning of the line
-  <li><i> End </i> Move the cursor to the end of the line
-  <li><i> Delete </i> Delete the character to the right of the cursor
-  <li><i> Shift - Left Arrow </i> Mark text one character leftwards
-  <li><i> Shift - Right Arrow </i> Mark text one character rightwards
-  <li><i> Control-A </i> Move the cursor to the beginning of the line
-  <li><i> Control-B </i> Move the cursor one character leftwards
-  <li><i> Control-C </i> Copy the marked text to the clipboard
-  <li><i> Control-D </i> Delete the character to the right of the cursor
-  <li><i> Control-E </i> Move the cursor to the end of the line
-  <li><i> Control-F </i> Move the cursor one character rightwards
-  <li><i> Control-H </i> Delete the character to the left of the cursor
-  <li><i> Control-K </i> Delete to end of line
-  <li><i> Control-N </i> Move the cursor one line downwards
-  <li><i> Control-P </i> Move the cursor one line upwards
-  <li><i> Control-V </i> Paste the clipboard text into line edit
-  <li><i> Control-X </i> Cut the marked text, copy to clipboard
-  <li><i> Control-Z </i> Undo the last operation
-  <li><i> Control-Y </i> Redo the last operation
-  <li><i> Control - Left Arrow </i> Move the cursor one word leftwards
-  <li><i> Control - Right Arrow </i> Move the cursor one word rightwards
-  <li><i> Control - Up Arrow </i> Move the cursor one word upwards
-  <li><i> Control - Down Arrow </i> Move the cursor one word downwards
-  <li><i> Control - Home Arrow </i> Move the cursor to the beginning of the text
-  <li><i> Control - End Arrow </i> Move the cursor to the end of the text
-  </ul>
+  \list
+  \i <i> Left Arrow </i> Move the cursor one character leftwards
+  \i <i> Right Arrow </i> Move the cursor one character rightwards
+  \i <i> Up Arrow </i> Move the cursor one line upwards
+  \i <i> Down Arrow </i> Move the cursor one line downwards
+  \i <i> Page Up </i> Move the cursor one page upwards
+  \i <i> Page Down </i> Move the cursor one page downwards
+  \i <i> Backspace </i> Delete the character to the left of the cursor
+  \i <i> Home </i> Move the cursor to the beginning of the line
+  \i <i> End </i> Move the cursor to the end of the line
+  \i <i> Delete </i> Delete the character to the right of the cursor
+  \i <i> Shift - Left Arrow </i> Mark text one character leftwards
+  \i <i> Shift - Right Arrow </i> Mark text one character rightwards
+  \i <i> Control-A </i> Move the cursor to the beginning of the line
+  \i <i> Control-B </i> Move the cursor one character leftwards
+  \i <i> Control-C </i> Copy the marked text to the clipboard
+  \i <i> Control-D </i> Delete the character to the right of the cursor
+  \i <i> Control-E </i> Move the cursor to the end of the line
+  \i <i> Control-F </i> Move the cursor one character rightwards
+  \i <i> Control-H </i> Delete the character to the left of the cursor
+  \i <i> Control-K </i> Delete to end of line
+  \i <i> Control-N </i> Move the cursor one line downwards
+  \i <i> Control-P </i> Move the cursor one line upwards
+  \i <i> Control-V </i> Paste the clipboard text into line edit
+  \i <i> Control-X </i> Cut the marked text, copy to clipboard
+  \i <i> Control-Z </i> Undo the last operation
+  \i <i> Control-Y </i> Redo the last operation
+  \i <i> Control - Left Arrow </i> Move the cursor one word leftwards
+  \i <i> Control - Right Arrow </i> Move the cursor one word rightwards
+  \i <i> Control - Up Arrow </i> Move the cursor one word upwards
+  \i <i> Control - Down Arrow </i> Move the cursor one word downwards
+  \i <i> Control - Home Arrow </i> Move the cursor to the beginning of the text
+  \i <i> Control - End Arrow </i> Move the cursor to the end of the text
+  \endlist
   In addition, the following key bindings are used on Windows:
-  <ul>
-  <li><i> Shift - Delete </i> Cut the marked text, copy to clipboard
-  <li><i> Shift - Insert </i> Paste the clipboard text into line edit
-  <li><i> Control - Insert </i> Copy the marked text to the clipboard
-  </ul>
+  \list
+  \i <i> Shift - Delete </i> Cut the marked text, copy to clipboard
+  \i <i> Shift - Insert </i> Paste the clipboard text into line edit
+  \i <i> Control - Insert </i> Copy the marked text to the clipboard
+  \endlist
   All other keys with valid ASCII codes insert themselves into the line.
 
   Here are the default key bindings when isReadOnly() is TRUE:
-  <ul>
-  <li><i> Left Arrow </i> Scrolls the table rightwards
-  <li><i> Right Arrow </i> Scrolls the table rightwards
-  <li><i> Up Arrow </i> Scrolls the table one line downwards
-  <li><i> Down Arrow </i> Scrolls the table one line upwards
-  <li><i> Page Up </i> Scrolls the table one page downwards
-  <li><i> Page Down </i> Scrolls the table one page upwards
-  <li><i> Control-C </i> Copy the marked text to the clipboard
-  </ul>
+  \list
+  \i <i> Left Arrow </i> Scrolls the table rightwards
+  \i <i> Right Arrow </i> Scrolls the table rightwards
+  \i <i> Up Arrow </i> Scrolls the table one line downwards
+  \i <i> Down Arrow </i> Scrolls the table one line upwards
+  \i <i> Page Up </i> Scrolls the table one page downwards
+  \i <i> Page Down </i> Scrolls the table one page upwards
+  \i <i> Control-C </i> Copy the marked text to the clipboard
+  \endlist
 
 */
 
@@ -1590,7 +1688,9 @@ void QtMultiLineEdit::insertChar( QChar c )
 }
 
 /*!
-  Inserts \a c at the current cursor position.
+    \overload
+  Inserts string \a str at the current cursor position. If \a mark is
+  TRUE the string is marked.
 */
 
 void QtMultiLineEdit::insert( const QString& str, bool mark )
@@ -1986,7 +2086,7 @@ void QtMultiLineEdit::home( bool mark )
 }
 
 /*!
-  Moves the text cursor to the right end of the line. If mark is TRUE
+  Moves the text cursor to the right end of the line. If \a mark is TRUE
   text is marked towards the last position.  If it is FALSE and the
   cursor is moved, all marked text is unmarked.
 
@@ -2284,8 +2384,12 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 #if defined(_WS_X11_)
 	paste();		// Will repaint the cursor line.
 #else
+#  if 0
+#    ifndef QT_NO_COMPAT
 	if ( style() == MotifStyle )
 	    paste();
+#    endif	    
+#  endif
 #endif
     }
 #endif
@@ -2913,10 +3017,7 @@ void QtMultiLineEdit::getCursorPosition( int *line, int *col ) const
 }
 
 
-/*!
-  Returns TRUE if the view updates itself automatically whenever it
-  is changed in some way.
-
+/*
   \sa setAutoUpdate()
 */
 
@@ -2926,27 +3027,9 @@ bool QtMultiLineEdit::autoUpdate() const
 }
 
 
-/*!
-  Sets the auto-update option of multi-line editor to \e enable.
+/*
+  Sets the auto-update option of multi-line editor to \a enable.
 
-  If \e enable is TRUE (this is the default) then the editor updates
-  itself automatically whenever it has changed in some way (generally,
-  when text has been inserted or deleted).
-
-  If \e enable is FALSE, the view does NOT repaint itself, or update
-  its internal state variables itself when it is changed.  This can be
-  useful to avoid flicker during large changes, and is singularly
-  useless otherwise: Disable auto-update, do the changes, re-enable
-  auto-update, and call repaint().
-
-  \warning Do not leave the view in this state for a long time
-  (i.e. between events ). If, for example, the user interacts with the
-  view when auto-update is off, strange things can happen.
-
-  Setting auto-update to TRUE does not repaint the view, you must call
-  repaint() to do this (preferable repaint(FALSE) to avoid flicker).
-
-  \sa autoUpdate() repaint()
 */
 
 void QtMultiLineEdit::setAutoUpdate( bool enable )
@@ -2955,7 +3038,7 @@ void QtMultiLineEdit::setAutoUpdate( bool enable )
 }
 
 /*!
-  Sets the fixed height of the QtMultiLineEdit so that \e lines text lines
+  Sets the fixed height of the QtMultiLineEdit so that \a lines text lines
   are visible given the current font.
 
   \sa setMaxLines(), setFixedHeight()
@@ -3068,9 +3151,9 @@ void QtMultiLineEdit::resizeEvent( QResizeEvent *e )
 	deselect();
 }
 
-/*!
-  Sets the alignment. Possible values are \c AlignLeft, \c Align(H)Center
-  and \c AlignRight.
+/*
+  Sets the alignment to \a flags. Possible values are \c AlignLeft, \c
+  Align(H)Center and \c AlignRight.
 
   \sa alignment(), Qt::AlignmentFlags
 */
@@ -3082,10 +3165,9 @@ void QtMultiLineEdit::setAlignment( int flags )
     }
 }
 
-/*!
+/*
   Returns the alignment.
 
-  \sa setAlignment(), Qt::AlignmentFlags.
 */
 int QtMultiLineEdit::alignment() const
 {
@@ -3095,6 +3177,7 @@ int QtMultiLineEdit::alignment() const
 
 /*!
   Not supported at this time.
+  \a v is the validator to set.
 */
 void QtMultiLineEdit::setValidator( const QValidator *v )
 {
@@ -3110,31 +3193,14 @@ const QValidator * QtMultiLineEdit::validator() const
     return d->val;
 }
 
-/*!  Sets the edited flag of this line edit to \a e.  The edited flag
-is never read by QtMultiLineEdit, but is changed to TRUE whenever the user
-changes its contents.
-
-This is useful e.g. for things that need to provide a default value,
-but cannot find the default at once.  Just open the widget without the
-best default and when the default is known, check the edited() return
-value and set the line edit's contents if the user has not started
-editing the line edit.  Another example is to detect whether the
-contents need saving.
-
-\sa edited()
+/*  \sa edited()
 */
 void QtMultiLineEdit::setEdited( bool e )
 {
     d->edited = e;
 }
 
-/*!  Returns the edited flag of the line edit.  If this returns FALSE,
-the contents has not been changed since the construction of the
-QtMultiLineEdit (or the last call to setEdited( FALSE ), if any).  If
-it returns TRUE, the contents have been edited, or setEdited( TRUE )
-has been called.
-
-\sa setEdited()
+/*  \sa setEdited()
 */
 bool QtMultiLineEdit::edited() const
 {
@@ -3144,23 +3210,23 @@ bool QtMultiLineEdit::edited() const
 /*! \enum QtMultiLineEdit::EchoMode
 
   This enum type describes the ways in which QLineEdit can display its
-  contents.  The currently defined values are: <ul>
+  contents.  The currently defined values are: \list
 
-  <li> \c Normal - display characters as they are entered.  This is
+  \i Normal - display characters as they are entered.  This is
   the default.
 
-  <li> \c NoEcho - do not display anything.
+  \i NoEcho - do not display anything.
 
-  <li> \c Password - display asterisks instead of the characters
+  \i Password - display asterisks instead of the characters
   actually entered.
 
-  </ul>
+  \endlist
 
   \sa setEchoMode() echoMode() QLineEdit::EchoMode
 */
 
 
-/*!
+/*
   Sets the echo mode to \a em.  The default is \c Normal.
 
   The display is updated according.
@@ -3176,7 +3242,7 @@ void QtMultiLineEdit::setEchoMode( EchoMode em )
     }
 }
 
-/*!
+/*
   Returns the currently set echo mode.
 
   \sa setEchoMode()
@@ -3213,9 +3279,7 @@ QString QtMultiLineEdit::stringShown(int row) const
     return QString::fromLatin1("");
 }
 
-/*!
-  Sets the maximum text length  to \a m.  Use -1 for unlimited
-  (the default).  Existing overlong text  will be truncated.
+/*
 
   \sa maxLength()
 */
@@ -3224,10 +3288,7 @@ void QtMultiLineEdit::setMaxLength(int m)
     d->maxlen = m;
 }
 
-/*!
-  Returns the currently set text length limit, or -1 if there is
-  no limit (this is the default).
-
+/*
   \sa setMaxLength()
 */
 int QtMultiLineEdit::maxLength() const
@@ -3236,7 +3297,7 @@ int QtMultiLineEdit::maxLength() const
 }
 
 
-/*!
+/*
   Returns the length of the current text.
 
   \sa setMaxLength()
@@ -3288,14 +3349,9 @@ int QtMultiLineEdit::maxLineLength() const
     return d->maxlinelen;
 }
 
-/*!
+/*
   Sets the maximum number of lines to \a m.  Use -1 for unlimited
   (the default).  Existing excess lines will be deleted.
-
-  Note that excess lines are deleted from the \e bottom of the
-  lines. If you want teletype behaviour with lines disappearing
-  from the \e top as the limit is exceed, you probably just want
-  to use removeLine(0) prior to adding an excess line.
 
   \sa maxLines(), numLines()
 */
@@ -3315,10 +3371,7 @@ void QtMultiLineEdit::setMaxLines(int m)
     }
 }
 
-/*!
-  Returns the currently set line limit, or -1 if there is
-  no limit (the default).
-
+/*
   \sa setMaxLines()
 */
 int QtMultiLineEdit::maxLines() const
@@ -3326,8 +3379,8 @@ int QtMultiLineEdit::maxLines() const
     return d->maxlines;
 }
 
-/*!
-  Sets the horizontal margin.
+/*
+  Sets the horizontal margin to \a m.
 
   \sa hMargin()
 */
@@ -3340,8 +3393,7 @@ void QtMultiLineEdit::setHMargin(int m)
     }
 }
 
-/*!
-  Returns the horizontal margin current set.  The default is 3.
+/*
 
   \sa setHMargin()
 */
@@ -3352,7 +3404,7 @@ int QtMultiLineEdit::hMargin() const
 
 /*!
   Marks the text starting at \a row_from, \a col_from and ending
-  at row_to, col_to.
+  at \a row_to, \a col_to.
 */
 void QtMultiLineEdit::setSelection( int row_from, int col_from,
 				   int row_to, int col_to )
@@ -3623,31 +3675,25 @@ void QtMultiLineEdit::rebreakAll()
   This enum describes the multiline edit's word wrap mode.
 
   The following values are valid:
-    <ul>
-    <li> \c NoWrap - no word wrap at all.
-    <li> \c WidgetWidth - word wrap depending on the current
+    \list
+    \i NoWrap - no word wrap at all.
+    \i WidgetWidth - word wrap depending on the current
      width of the editor widget
-    <li> \c FixedPixelWidth - wrap according to a fix amount
+    \i FixedPixelWidth - wrap according to a fix amount
      of pixels ( see wrapColumnOrWidth() )
-    <li> \c FixedColumnWidth - wrap according to a fix character
+    \i FixedColumnWidth - wrap according to a fix character
      column. This is useful whenever you need formatted text that
      can also be displayed gracefully on devices with monospaced
      fonts, for example a standard VT100 terminal. In that case
      wrapColumnOrWidth() should typically be set to 80.
-  </ul>
+  \endlist
 
  \sa setWordWrap()
 */
 
-/*!
-  Sets the word wrap mode.
+/*
+  Sets the word wrap mode to \a mode.
 
-  Per default, wrapping keeps words intact. To allow breaking within
-  words, set the wrap policy to \c Anywhere (see setWrapPolicy() ).
-
-  The default wrap mode is \c NoWrap.
-
-  \sa wordWrap(), setWrapColumnOrWidth(), setWrapPolicy()
  */
 void QtMultiLineEdit::setWordWrap( WordWrap mode )
 {
@@ -3670,7 +3716,7 @@ void QtMultiLineEdit::setWordWrap( WordWrap mode )
         setText( text() );
 }
 
-/*!
+/*
   Returns the current word wrap mode.
 
   \sa setWordWrap()
@@ -3680,8 +3726,9 @@ QtMultiLineEdit::WordWrap QtMultiLineEdit::wordWrap() const
     return d->wordwrap;
 }
 
-/*!
-  Sets the wrap column or wrap width, depending on the word wrap mode.
+/*
+  Sets the wrap column or wrap width to \a value, depending on the
+  word wrap mode.
 
   \sa setWordWrap()
  */
@@ -3694,11 +3741,7 @@ void QtMultiLineEdit::setWrapColumnOrWidth( int value )
 	setText( text() );
 }
 
-/*!
-  Returns the wrap column or wrap width, depending on the word wrap
-  mode.
-
-  \sa setWordWrap(), setWrapColumnOrWidth()
+/*
  */
 int QtMultiLineEdit::wrapColumnOrWidth() const
 {
@@ -3711,18 +3754,17 @@ int QtMultiLineEdit::wrapColumnOrWidth() const
   Defines where text can be wrapped in word wrap mode.
 
   The following values are valid:
-  <ul>
-  <li> \c AtWhiteSpace - break only after whitespace
-  <li> \c Anywhere - break anywhere
-   </ul>
+  \list
+  \i AtWhiteSpace - break only after whitespace
+  \i Anywhere - break anywhere
+   \endlist
 
    \sa setWrapPolicy()
 */
 
-/*!
-  Defines where text can be wrapped in word wrap mode.
-
-   The default is \c AtWhiteSpace.
+/*
+  Sets the wrap \a policy, i.e. where text can be wrapped in word wrap
+  mode.
 
   \sa setWordWrap(), wrapPolicy()
  */
@@ -3738,7 +3780,7 @@ void QtMultiLineEdit::setWrapPolicy( WrapPolicy policy )
     }
 }
 
-/*!
+/*
 
   Returns the current word wrap policy.
 
@@ -3920,6 +3962,7 @@ void QtMultiLineEdit::redo()
   Inserts \a s at line number \a line, after character number \a col
   in the line.
   If \a s contains newline characters, new lines are inserted.
+  If \a mark is TRUE the inserted text is selected.
 
   The cursor position is adjusted. If the insertion position is equal to
   the cursor position, the cursor is placed after the end of the new text.
@@ -4031,7 +4074,7 @@ void QtMultiLineEdit::del()
 	delAux();
 }
 
-/*!
+/*
   Sets undo enabled to \a enable.
 
   \sa isUndoEnabled()
@@ -4047,7 +4090,7 @@ void QtMultiLineEdit::setUndoEnabled( bool enable )
 }
 
 
-/*!
+/*
   Returns whether the multilineedit is currently undo enabled or not.
 
   \sa setUndoEnabled()
@@ -4058,8 +4101,9 @@ bool QtMultiLineEdit::isUndoEnabled() const
 }
 
 
-/*!
-  Sets the maximum number of operations that can be stored on the undo stack.
+/*
+  Sets the maximum number of operations that can be stored on the undo
+  stack to \a depth.
 
   \sa undoDepth()
  */
@@ -4069,10 +4113,7 @@ void QtMultiLineEdit::setUndoDepth( int depth )
 }
 
 
-/*!
-  Returns the maximum number of operations that can be stored on the undo stack.
-
-  \sa setUndoDepth()
+/*
  */
 int QtMultiLineEdit::undoDepth() const
 {

@@ -31,6 +31,7 @@
 #endif
 
 #include <qapplication.h>
+#include <qlayout.h>
 #include <qcursor.h>
 #include <qfiledialog.h>
 #include <qstatusbar.h>
@@ -283,7 +284,7 @@ QString toGetSessionType(void)
 QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
 {
   QString name=str;
-  if (db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
+  if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     name+=" ";
     name+=db;
   }
@@ -312,7 +313,7 @@ TODock *toAllocDock(const QString &name,
 		    const QPixmap &icon)
 {
   QString str=name;
-  if (db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
+  if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     str+=" ";
     str+=db;
   }
@@ -369,17 +370,20 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     throw QString("Main widget not KDockMainWindow");
 #else
 #  if QT_VERSION < 300
-  QToolBar *bar=(QToolBar *)dock;
-  if (bar) {
-    toMainWidget()->moveToolBar(bar,place);
-    bar->setStretchableWidget(container);
+  if (!toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
+    QToolBar *bar=(QToolBar *)dock;
+    if (bar) {
+      toMainWidget()->moveToolBar(bar,place);
+      bar->setStretchableWidget(container);
+    }
   }
 #  else
   QDockWindow *d=(QDockWindow *)dock;
   if (d) {
+    toMainWidget()->moveDockWindow(d,place);
     d->setResizeEnabled(true);
     d->setWidget(container);
-    toMainWidget()->moveDockWindow(d,place);
+    container->show();
   }
 #  endif
 #endif
