@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>311</width>
-            <height>118</height>
+            <width>356</width>
+            <height>199</height>
         </rect>
     </property>
     <property stdset="1">
@@ -71,7 +71,7 @@
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
-                    <vsizetype>7</vsizetype>
+                    <vsizetype>0</vsizetype>
                 </sizepolicy>
             </property>
             <property stdset="1">
@@ -83,54 +83,61 @@
                 <cstring>Format</cstring>
             </property>
         </widget>
-        <widget row="3" column="0">
-	    <class>QLineEdit</class>
-            <property>
-		<name>name</name>
+        <widget row="3"  column="0" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Separator</cstring>
             </property>
         </widget>
-        <widget row="2" column="0">
-	    <class>QLabel</class>
-            <property>
-		<name>name</name>
+        <widget row="2"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel1_2</cstring>
             </property>
-            <property>
-		<name>text</name>
+            <property stdset="1">
+                <name>text</name>
                 <string>Separator</string>
             </property>
         </widget>
-        <widget row="2" column="1" rowspan="1" colspan="2">
-	    <class>QLabel</class>
-            <property>
-		<name>name</name>
+        <widget row="2"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel2</cstring>
             </property>
-            <property>
-		<name>text</name>
+            <property stdset="1">
+                <name>text</name>
                 <string>Delimiter</string>
             </property>
         </widget>
-        <widget row="3" column="1" rowspan="1" colspan="2">
-	    <class>QLineEdit</class>
-            <property>
-		<name>name</name>
+        <widget row="3"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Delimiter</cstring>
             </property>
         </widget>
-        <spacer row="4" column="0">
+        <spacer row="4"  column="0" >
             <property>
-		<name>name</name>
+                <name>name</name>
                 <cstring>Spacer2</cstring>
             </property>
-            <property>
-		<name>orientation</name>
+            <property stdset="1">
+                <name>orientation</name>
                 <enum>Vertical</enum>
             </property>
-            <property>
-		<name>sizeType</name>
+            <property stdset="1">
+                <name>sizeType</name>
                 <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
             </property>
         </spacer>
         <spacer row="5"  column="0" >
@@ -169,6 +176,13 @@
         <receiver>toResultListFormatUI</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>Format</sender>
+        <signal>activated(int)</signal>
+        <receiver>toResultListFormatUI</receiver>
+        <slot>formatChanged(int)</slot>
+    </connection>
+    <slot access="public">formatChanged(int)</slot>
 </connections>
 <tabstops>
     <tabstop>Format</tabstop>
