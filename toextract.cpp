@@ -6548,7 +6548,7 @@ QString toExtract::drop(list<QString> &objects)
 
 QString toExtract::resize(list<QString> &objects)
 {
-  throw QString("Migration not implemented yet");
+  throw QString("Resize not implemented yet");
   clearFlags();
   QString ret=generateHeading("RESIZE",objects);
 

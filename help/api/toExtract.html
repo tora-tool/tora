@@ -12,7 +12,8 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class toExtract</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"></TD></TR>
+		<TD valign="top" align="right" colspan="1">
+ This class can be used to reverse engineered database objects. <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
@@ -94,41 +95,258 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref171">getCode</A></b> (void) 
 </LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="toExtract"></A><A NAME="ref138"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toExtract</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
-<br></td><td align="right"><h3><strong>toExtract</strong></h3></td></tr></table><p></p><A NAME="compile"></A><A NAME="ref139"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>compile</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
-<br></td><td align="right"><h3><strong>compile</strong></h3></td></tr></table><p></p><A NAME="create"></A><A NAME="ref140"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>create</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
-<br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p></p><A NAME="describe"></A><A NAME="ref141"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>describe</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
-<br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><A NAME="drop"></A><A NAME="ref142"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>drop</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
-<br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p></p><A NAME="resize"></A><A NAME="ref143"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>resize</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
-<br></td><td align="right"><h3><strong>resize</strong></h3></td></tr></table><p></p><A NAME="migrate"></A><A NAME="ref144"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>migrate</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst)
-<br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p></p><A NAME="parseObject"></A><A NAME="ref145"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parseObject</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
-<br></td><td align="right"><h3><strong>parseObject</strong></h3></td></tr></table><p></p><A NAME="setSchema"></A><A NAME="ref146"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSchema</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema)
-<br></td><td align="right"><h3><strong>setSchema</strong></h3></td></tr></table><p></p><A NAME="setResize"></A><A NAME="ref147"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setResize</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;resize)
-<br></td><td align="right"><h3><strong>setResize</strong></h3></td></tr></table><p></p><A NAME="setPrompt"></A><A NAME="ref148"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPrompt</strong> (bool prompt)
-<br></td><td align="right"><h3><strong>setPrompt</strong></h3></td></tr></table><p></p><A NAME="setHeading"></A><A NAME="ref149"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setHeading</strong> (bool heading)
-<br></td><td align="right"><h3><strong>setHeading</strong></h3></td></tr></table><p></p><A NAME="setConstraints"></A><A NAME="ref150"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConstraints</strong> (bool constraints)
-<br></td><td align="right"><h3><strong>setConstraints</strong></h3></td></tr></table><p></p><A NAME="setIndexes"></A><A NAME="ref151"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setIndexes</strong> (bool indexes)
-<br></td><td align="right"><h3><strong>setIndexes</strong></h3></td></tr></table><p></p><A NAME="setGrants"></A><A NAME="ref152"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setGrants</strong> (bool val)
-<br></td><td align="right"><h3><strong>setGrants</strong></h3></td></tr></table><p></p><A NAME="setStorage"></A><A NAME="ref153"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setStorage</strong> (bool val)
-<br></td><td align="right"><h3><strong>setStorage</strong></h3></td></tr></table><p></p><A NAME="setParallel"></A><A NAME="ref154"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setParallel</strong> (bool val)
-<br></td><td align="right"><h3><strong>setParallel</strong></h3></td></tr></table><p></p><A NAME="setPartition"></A><A NAME="ref155"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPartition</strong> (bool val)
-<br></td><td align="right"><h3><strong>setPartition</strong></h3></td></tr></table><p></p><A NAME="setContents"></A><A NAME="ref156"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setContents</strong> (bool val)
-<br></td><td align="right"><h3><strong>setContents</strong></h3></td></tr></table><p></p><A NAME="setComments"></A><A NAME="ref157"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setComments</strong> (bool val)
-<br></td><td align="right"><h3><strong>setComments</strong></h3></td></tr></table><p></p><A NAME="setCode"></A><A NAME="ref158"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setCode</strong> (bool val)
-<br></td><td align="right"><h3><strong>setCode</strong></h3></td></tr></table><p></p><A NAME="getSchema"></A><A NAME="ref159"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>getSchema</strong> (void)
-<br></td><td align="right"><h3><strong>getSchema</strong></h3></td></tr></table><p></p><A NAME="getResize"></A><A NAME="ref160"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getResize</strong> (void)
-<br></td><td align="right"><h3><strong>getResize</strong></h3></td></tr></table><p></p><A NAME="getPrompt"></A><A NAME="ref161"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getPrompt</strong> (void)
-<br></td><td align="right"><h3><strong>getPrompt</strong></h3></td></tr></table><p></p><A NAME="getHeading"></A><A NAME="ref162"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getHeading</strong> (void)
-<br></td><td align="right"><h3><strong>getHeading</strong></h3></td></tr></table><p></p><A NAME="getConstraints"></A><A NAME="ref163"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getConstraints</strong> (void)
-<br></td><td align="right"><h3><strong>getConstraints</strong></h3></td></tr></table><p></p><A NAME="getIndexes"></A><A NAME="ref164"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getIndexes</strong> (void)
-<br></td><td align="right"><h3><strong>getIndexes</strong></h3></td></tr></table><p></p><A NAME="getGrants"></A><A NAME="ref165"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getGrants</strong> (void)
-<br></td><td align="right"><h3><strong>getGrants</strong></h3></td></tr></table><p></p><A NAME="getStorage"></A><A NAME="ref166"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getStorage</strong> (void)
-<br></td><td align="right"><h3><strong>getStorage</strong></h3></td></tr></table><p></p><A NAME="getParallel"></A><A NAME="ref167"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getParallel</strong> (void)
-<br></td><td align="right"><h3><strong>getParallel</strong></h3></td></tr></table><p></p><A NAME="getPartition"></A><A NAME="ref168"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getPartition</strong> (void)
-<br></td><td align="right"><h3><strong>getPartition</strong></h3></td></tr></table><p></p><A NAME="getContents"></A><A NAME="ref169"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getContents</strong> (void)
-<br></td><td align="right"><h3><strong>getContents</strong></h3></td></tr></table><p></p><A NAME="getComments"></A><A NAME="ref170"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getComments</strong> (void)
-<br></td><td align="right"><h3><strong>getComments</strong></h3></td></tr></table><p></p><A NAME="getCode"></A><A NAME="ref171"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getCode</strong> (void)
-<br></td><td align="right"><h3><strong>getCode</strong></h3></td></tr></table><p></p><HR>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+ This class can be used to reverse engineered database objects.
+ </p>
+<A NAME="toExtract"></A><A NAME="ref138"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toExtract</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
+<br></td><td align="right"><h3><strong>toExtract</strong></h3></td></tr></table><p></p><p> Create a new extractor.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to extract from.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget of progress indicator.
+   </TD></TR>
+</TABLE></P>
+<A NAME="compile"></A><A NAME="ref139"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>compile</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<br></td><td align="right"><h3><strong>compile</strong></h3></td></tr></table><p></p><p> Compile the following list of objects.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">List of object. This has the format {type}:{schema}.{object}.
+               The type can be any of FUNCTION, PROCEDURE, TRIGGER, VIEW or PACKAGE.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A string containing a script to compile the specified objects.
+   </p>
+<A NAME="create"></A><A NAME="ref140"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>create</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p></p><p> Create script to recreate list of objects.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">List of object. This has the format {type}:{schema}.{object}.
+               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+               TRIGGER, TYPE, USER, USER GRANTS.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A string containing a script to recreate the specified objects.
+   </p>
+<A NAME="describe"></A><A NAME="ref141"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>describe</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Create a description of objects.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">List of object. This has the format {type}:{schema}.{object}.
+               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+               TRIGGER, TYPE, USER, USER GRANTS.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of strings describing the objects. Each string should be
+         considered like a list of strings separated by the character '\001'.
+         The later in each string the smaller item the change and it is hierachical.
+   </p>
+<A NAME="drop"></A><A NAME="ref142"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>drop</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p></p><p> Create script to drop a list of objects.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">List of object. This has the format {type}:{schema}.{object}.
+               The type can be any of CONSTRAINT, DATABASE LINK, DIMENSION
+               DIRECTORY, FUNCTION, INDEX, MATERIALIZED VIEW,
+               MATERIALIZED VIEW LOG, PACKAGE, PROCEDURE,
+               PROFILE, ROLE, ROLLBACK SEGMENT, SEQUENCE,
+               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLESPACE,
+               TRIGGER, TYPE, USER.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A string containing a script to drop the specified objects.
+   </p>
+<A NAME="resize"></A><A NAME="ref143"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>resize</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<br></td><td align="right"><h3><strong>resize</strong></h3></td></tr></table><p></p><p> Not implemented yet.
+   </p>
+<A NAME="migrate"></A><A NAME="ref144"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>migrate</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst)
+<br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p></p><p> Not implemented yet.
+   </p>
+<A NAME="parseObject"></A><A NAME="ref145"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parseObject</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<br></td><td align="right"><h3><strong>parseObject</strong></h3></td></tr></table><p></p><p> Parse an object string to get owner and name of the object.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">Object string on the format {owner}.{name}.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>owner</i></TD><TD align="left" valign="top">Reference to string which will get the object owner.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Reference to string which will get the object name.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setSchema"></A><A NAME="ref146"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSchema</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema)
+<br></td><td align="right"><h3><strong>setSchema</strong></h3></td></tr></table><p></p><p> Set the schema of the extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>schema</i></TD><TD align="left" valign="top">Specify the schema of the output script or description. If empty
+               don't specify any object. If the string "1" use same object as input.
+               Otherwise use the specified schema.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setResize"></A><A NAME="ref147"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setResize</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;resize)
+<br></td><td align="right"><h3><strong>setResize</strong></h3></td></tr></table><p></p><p> Set sizes to use for resize of object on extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>A</i></TD><TD align="left" valign="top">list of sizes separated by ':'. Should be an even multiple of three where
+        the first value is the largest current size to use these values. The next
+        value is the initial value to use, the last is the next increment value to
+        use. As a special case the string "1" can be used to set up auto resize.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setPrompt"></A><A NAME="ref148"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPrompt</strong> (bool prompt)
+<br></td><td align="right"><h3><strong>setPrompt</strong></h3></td></tr></table><p></p><p> Set inclusion of prompts.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>prompt</i></TD><TD align="left" valign="top">If prompt generation should be generated.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setHeading"></A><A NAME="ref149"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setHeading</strong> (bool heading)
+<br></td><td align="right"><h3><strong>setHeading</strong></h3></td></tr></table><p></p><p> Include heading in scripts.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>heading</i></TD><TD align="left" valign="top">Include heading in scripts.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setConstraints"></A><A NAME="ref150"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConstraints</strong> (bool constraints)
+<br></td><td align="right"><h3><strong>setConstraints</strong></h3></td></tr></table><p></p><p> Include constraints in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>constraints</i></TD><TD align="left" valign="top">Include constraints.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setIndexes"></A><A NAME="ref151"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setIndexes</strong> (bool indexes)
+<br></td><td align="right"><h3><strong>setIndexes</strong></h3></td></tr></table><p></p><p> Include indexes in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>indexes</i></TD><TD align="left" valign="top">Include indexes.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setGrants"></A><A NAME="ref152"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setGrants</strong> (bool val)
+<br></td><td align="right"><h3><strong>setGrants</strong></h3></td></tr></table><p></p><p> Include grants in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include grants.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setStorage"></A><A NAME="ref153"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setStorage</strong> (bool val)
+<br></td><td align="right"><h3><strong>setStorage</strong></h3></td></tr></table><p></p><p> Include storage specification in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include storage specification.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setParallel"></A><A NAME="ref154"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setParallel</strong> (bool val)
+<br></td><td align="right"><h3><strong>setParallel</strong></h3></td></tr></table><p></p><p> Include parallel specification in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include parallel specification.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setPartition"></A><A NAME="ref155"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPartition</strong> (bool val)
+<br></td><td align="right"><h3><strong>setPartition</strong></h3></td></tr></table><p></p><p> Include partition specification in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include partition specification.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setContents"></A><A NAME="ref156"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setContents</strong> (bool val)
+<br></td><td align="right"><h3><strong>setContents</strong></h3></td></tr></table><p></p><p> Include contents of tables in scripts.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include contents of tables.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setComments"></A><A NAME="ref157"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setComments</strong> (bool val)
+<br></td><td align="right"><h3><strong>setComments</strong></h3></td></tr></table><p></p><p> Include comments in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include indexes.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setCode"></A><A NAME="ref158"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setCode</strong> (bool val)
+<br></td><td align="right"><h3><strong>setCode</strong></h3></td></tr></table><p></p><p> Include code in extraction.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Include code.
+   </TD></TR>
+</TABLE></P>
+<A NAME="getSchema"></A><A NAME="ref159"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>getSchema</strong> (void)
+<br></td><td align="right"><h3><strong>getSchema</strong></h3></td></tr></table><p></p><p> Get schema specification.
+</p>
+<p><b>Returns</b>: Schema specification.
+</p>
+<p><b>See also</b>: setSchema</p>
+<A NAME="getResize"></A><A NAME="ref160"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getResize</strong> (void)
+<br></td><td align="right"><h3><strong>getResize</strong></h3></td></tr></table><p></p><p> Get resize specification.
+</p>
+<p><b>Returns</b>: Resize specification.
+</p>
+<p><b>See also</b>: setResize</p>
+<A NAME="getPrompt"></A><A NAME="ref161"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getPrompt</strong> (void)
+<br></td><td align="right"><h3><strong>getPrompt</strong></h3></td></tr></table><p></p><p> Check if prompt are generated.
+</p>
+<p><b>Returns</b>: If prompts are generated.
+   </p>
+<A NAME="getHeading"></A><A NAME="ref162"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getHeading</strong> (void)
+<br></td><td align="right"><h3><strong>getHeading</strong></h3></td></tr></table><p></p><p> Check if headings are generated.
+</p>
+<p><b>Returns</b>: If headings are generated.
+   </p>
+<A NAME="getConstraints"></A><A NAME="ref163"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getConstraints</strong> (void)
+<br></td><td align="right"><h3><strong>getConstraints</strong></h3></td></tr></table><p></p><p> Check if constraints are generated.
+</p>
+<p><b>Returns</b>: If constraints are generated.
+   </p>
+<A NAME="getIndexes"></A><A NAME="ref164"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getIndexes</strong> (void)
+<br></td><td align="right"><h3><strong>getIndexes</strong></h3></td></tr></table><p></p><p> Check if indexes are generated.
+</p>
+<p><b>Returns</b>: If indexes are generated.
+   </p>
+<A NAME="getGrants"></A><A NAME="ref165"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getGrants</strong> (void)
+<br></td><td align="right"><h3><strong>getGrants</strong></h3></td></tr></table><p></p><p> Check if grants are generated.
+</p>
+<p><b>Returns</b>: If grants are generated.
+   </p>
+<A NAME="getStorage"></A><A NAME="ref166"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getStorage</strong> (void)
+<br></td><td align="right"><h3><strong>getStorage</strong></h3></td></tr></table><p></p><p> Check if storage specification are generated.
+</p>
+<p><b>Returns</b>: If storage specification are generated.
+   </p>
+<A NAME="getParallel"></A><A NAME="ref167"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getParallel</strong> (void)
+<br></td><td align="right"><h3><strong>getParallel</strong></h3></td></tr></table><p></p><p> Check if parallell specification are generated.
+</p>
+<p><b>Returns</b>: If parallell specification are generated.
+   </p>
+<A NAME="getPartition"></A><A NAME="ref168"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getPartition</strong> (void)
+<br></td><td align="right"><h3><strong>getPartition</strong></h3></td></tr></table><p></p><p> Check if partition specification are generated.
+</p>
+<p><b>Returns</b>: If partition specification  are generated.
+   </p>
+<A NAME="getContents"></A><A NAME="ref169"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getContents</strong> (void)
+<br></td><td align="right"><h3><strong>getContents</strong></h3></td></tr></table><p></p><p> Check if contents of tables are generated.
+</p>
+<p><b>Returns</b>: If content is generated.
+   </p>
+<A NAME="getComments"></A><A NAME="ref170"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getComments</strong> (void)
+<br></td><td align="right"><h3><strong>getComments</strong></h3></td></tr></table><p></p><p> Check if comments are generated.
+</p>
+<p><b>Returns</b>: If comments are generated.
+   </p>
+<A NAME="getCode"></A><A NAME="ref171"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getCode</strong> (void)
+<br></td><td align="right"><h3><strong>getCode</strong></h3></td></tr></table><p></p><p> Check if code is generated.
+</p>
+<p><b>Returns</b>: If code is generated.
+   </p>
+<HR>
 	<table>
 	</table>
 </BODY>

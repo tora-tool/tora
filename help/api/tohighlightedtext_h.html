@@ -118,6 +118,10 @@ public:
     { Start=start; Type=typ; }
   };
 private:
+  /** Indicate if colors are updated, can't do this in constructor since QApplication
+   * isn't initialized yet.
+   */
+  bool ColorsUpdated;
   /** Colors allocated for the different @ref infoType values.
    */
   QColor Colors[8];

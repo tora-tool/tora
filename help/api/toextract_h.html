@@ -70,6 +70,10 @@
 
 class toExtractProgress;
 
+/**
+ * This class can be used to reverse engineered database objects.
+ */
+
 class toExtract {
   toConnection &amp;Connection;
   QWidget *Parent;
@@ -297,68 +301,209 @@ class toExtract {
   QString reContext(list&lt;QString&gt; &amp;ctx,int strip,const QString &amp;str);
   void rethrow(const QString &amp;what,const QString &amp;object,const otl_exception &amp;exc);
 public:
+  /** Create a new extractor.
+   * @param conn Connection to extract from.
+   * @param parent Parent widget of progress indicator.
+   */
+
   toExtract(toConnection &amp;conn,QWidget *parent);
 
+  /** Compile the following list of objects.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type can be any of FUNCTION, PROCEDURE, TRIGGER, VIEW or PACKAGE.
+   * @return A string containing a script to compile the specified objects.
+   */
   QString compile(list&lt;QString&gt; &amp;object);
+
+  /** Create script to recreate list of objects.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS.
+   * @return A string containing a script to recreate the specified objects.
+   */
   QString create(list&lt;QString&gt; &amp;object);
+
+  /** Create a description of objects.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS.
+   * @return A list of strings describing the objects. Each string should be
+   *         considered like a list of strings separated by the character '\001'.
+   *         The later in each string the smaller item the change and it is hierachical.
+   */
   list&lt;QString&gt; describe(list&lt;QString&gt; &amp;object);
+
+  /** Create script to drop a list of objects.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type can be any of CONSTRAINT, DATABASE LINK, DIMENSION
+   *               DIRECTORY, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PROCEDURE,
+   *               PROFILE, ROLE, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLESPACE,
+   *               TRIGGER, TYPE, USER.
+   * @return A string containing a script to drop the specified objects.
+   */
   QString drop(list&lt;QString&gt; &amp;object);
+  /** Not implemented yet.
+   */
   QString resize(list&lt;QString&gt; &amp;object);
+  /** Not implemented yet.
+   */
   QString migrate(list&lt;QString&gt; &amp;drpLst,list&lt;QString&gt; &amp;crtLst);
 
+  /** Parse an object string to get owner and name of the object.
+   * @param object Object string on the format {owner}.{name}.
+   * @param owner Reference to string which will get the object owner.
+   * @param name Reference to string which will get the object name.
+   */
   void parseObject(const QString &amp;object,QString &amp;owner,QString &amp;name);
 
+  /** Set the schema of the extraction.
+   * @param schema Specify the schema of the output script or description. If empty
+   *               don't specify any object. If the string "1" use same object as input.
+   *               Otherwise use the specified schema.
+   */
   void setSchema(const QString &amp;schema)
   { Schema=schema; }
+  /** Set sizes to use for resize of object on extraction.
+   * @param A list of sizes separated by ':'. Should be an even multiple of three where
+   *        the first value is the largest current size to use these values. The next
+   *        value is the initial value to use, the last is the next increment value to
+   *        use. As a special case the string "1" can be used to set up auto resize.
+   */
   void setResize(const QString &amp;resize)
   { Resize=resize; setSizes(); }
+  /** Set inclusion of prompts.
+   * @param prompt If prompt generation should be generated.
+   */
   void setPrompt(bool prompt)
   { Prompt=prompt; }
+  /** Include heading in scripts.
+   * @param heading Include heading in scripts.
+   */
   void setHeading(bool heading)
   { Heading=heading; }
+  /** Include constraints in extraction.
+   * @param constraints Include constraints.
+   */
   void setConstraints(bool constraints)
   { Constraints=constraints; }
+  /** Include indexes in extraction.
+   * @param indexes Include indexes.
+   */
   void setIndexes(bool indexes)
   { Indexes=indexes; }
+  /** Include grants in extraction.
+   * @param val Include grants.
+   */
   void setGrants(bool val)
   { Grants=val; }
+  /** Include storage specification in extraction.
+   * @param val Include storage specification.
+   */
   void setStorage(bool val)
   { Storage=val; }
+  /** Include parallel specification in extraction.
+   * @param val Include parallel specification.
+   */
   void setParallel(bool val)
   { Parallel=val; }
+  /** Include partition specification in extraction.
+   * @param val Include partition specification.
+   */
   void setPartition(bool val)
   { Partition=val; }
+  /** Include contents of tables in scripts.
+   * @param val Include contents of tables.
+   */
   void setContents(bool val)
   { Contents=val; }
+  /** Include comments in extraction.
+   * @param val Include indexes.
+   */
   void setComments(bool val)
   { Comments=val; }
+  /** Include code in extraction.
+   * @param val Include code.
+   */
   void setCode(bool val)
   { Code=val; }
 
+  /** Get schema specification.
+   * @return Schema specification.
+   * @see setSchema
+   */
   const QString &amp;getSchema(void)
   { return Schema; }
+  /** Get resize specification.
+   * @return Resize specification.
+   * @see setResize
+   */
   bool getResize(void)
   { return Resize; }
+  /** Check if prompt are generated.
+   * @return If prompts are generated.
+   */
   bool getPrompt(void)
   { return Prompt; }
+  /** Check if headings are generated.
+   * @return If headings are generated.
+   */
   bool getHeading(void)
   { return Heading; }
+  /** Check if constraints are generated.
+   * @return If constraints are generated.
+   */
   bool getConstraints(void)
   { return Constraints; }
+  /** Check if indexes are generated.
+   * @return If indexes are generated.
+   */
   bool getIndexes(void)
   { return Indexes; }
+  /** Check if grants are generated.
+   * @return If grants are generated.
+   */
   bool getGrants(void)
   { return Grants; }
+  /** Check if storage specification are generated.
+   * @return If storage specification are generated.
+   */
   bool getStorage(void)
   { return Storage; }
+  /** Check if parallell specification are generated.
+   * @return If parallell specification are generated.
+   */
   bool getParallel(void)
   { return Parallel; }
+  /** Check if partition specification are generated.
+   * @return If partition specification  are generated.
+   */
   bool getPartition(void)
   { return Partition; }
+  /** Check if contents of tables are generated.
+   * @return If content is generated.
+   */
   bool getContents(void)
   { return Contents; }
+  /** Check if comments are generated.
+   * @return If comments are generated.
+   */
   bool getComments(void)
   { return Comments; }
+  /** Check if code is generated.
+   * @return If code is generated.
+   */
   bool getCode(void)
   { return Code; }
 };
