@@ -61,6 +61,8 @@
 2001-07-10: Added help context to extract module.
 2001-07-10: Fixed some spelling in extract.
 2001-07-10: Fixed Qt compile problem in browser.
+2001-07-10: Added warning when dropping rollback segment.
+2001-07-10: Removed sort order from sga trace.
 
 0.12: Released 2001-07-01
 

@@ -59,7 +59,6 @@ class toSGATrace : public toToolWidget {
 
   toSGAStatement *Statement;
   QString CurrentSchema;
-  QString CurrentSort;
   QTimer *Timer;
 
   void updateSchemas(void);
@@ -68,7 +67,6 @@ public:
   toSGATrace(QWidget *parent,toConnection &connection);
 public slots:
   void changeSchema(const QString &str);
-  void changeSort(const QString &str);
   void changeItem(QListViewItem *item);
   void changeRefresh(const QString &str);
   void refresh(void);

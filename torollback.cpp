@@ -59,6 +59,7 @@ TO_NAMESPACE;
 #include <qwidget.h>
 #include <qworkspace.h>
 #include <qheader.h>
+#include <qmessagebox.h>
 
 #include "tomain.h"
 #include "totool.h"
@@ -814,13 +815,19 @@ void toRollback::offline(void)
 void toRollback::dropSegment(void)
 {
   try {
-    QString str;
-    str="DROP ROLLBACK SEGMENT \"";
-    str.append(currentSegment());
-    str.append("\"");
-    otl_cursor::direct_exec(otlConnect(),
-			    str.utf8());
-    refresh();
+    if (TOMessageBox::warning(this,
+			      "Drop rollback segment",
+			      QString("Are you sure you want to drop the segment %1.").arg(currentSegment()),
+			      "&Drop",
+			      "Cancel")==0) {
+      QString str;
+      str="DROP ROLLBACK SEGMENT \"";
+      str.append(currentSegment());
+      str.append("\"");
+      otl_cursor::direct_exec(otlConnect(),
+			      str.utf8());
+      refresh();
+    }
   } TOCATCH
 }
 

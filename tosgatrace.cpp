@@ -65,20 +65,16 @@ TO_NAMESPACE;
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
 
-static QComboBox *CreateSort(QWidget *parent,const char *name=NULL);
-
 #define CONF_AUTO_UPDATE    "AutoUpdate"
-#define CONF_DEFAULT_SORT   "DefaultSort"
 
 class toSGATracePrefs : public QFrame, public toSettingTab
 { 
   QCheckBox* AutoUpdate;
-  QComboBox* DefaultSort;
   toTool *Tool;
 
 public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),toSettingTab("sgatrace.html"),Tool(tool)
+    : QFrame(parent,name),toSettingTab("trace.html"),Tool(tool)
   {
     QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
@@ -89,20 +85,10 @@ public:
     AutoUpdate->setText( tr( "&Auto update"  ) );
     if (!Tool->config(CONF_AUTO_UPDATE,"Yes").isEmpty())
       AutoUpdate->setChecked(true);
-    QToolTip::add(  AutoUpdate, tr( "Update automatically after change\n"
-				    "on sort order or schema." ) );
-  
-    QLabel *label=new QLabel("&Default Sort Order",GroupBox1);
-    label->setGeometry(QRect(20,70,100,20));
-    QToolTip::add(label,tr("Default sort order on SGA trace."));
-
-    DefaultSort=CreateSort(GroupBox1);
-    DefaultSort->setGeometry( QRect( 130,70,220,20));
-    label->setBuddy(DefaultSort);
+    QToolTip::add(  AutoUpdate, tr( "Update automatically after change of schema." ) );
   }
   virtual void saveSetting(void)
   {
-    Tool->setConfig(CONF_DEFAULT_SORT,DefaultSort->currentText());
     if (AutoUpdate->isChecked())
       Tool->setConfig(CONF_AUTO_UPDATE,"Yes");
     else
@@ -134,37 +120,8 @@ static toSGATraceTool SGATraceTool;
 
 static QPixmap *toRefreshPixmap;
 
-static QComboBox *CreateSort(QWidget *parent,const char *name)
-{
-  QComboBox *sort=new QComboBox(false,parent,name);
-  sort->insertItem("SQL Text");
-  sort->insertItem("First Load Time");
-  sort->insertItem("Parsing Schema");
-  sort->insertItem("Parse Calls");
-  sort->insertItem("Executions");
-  sort->insertItem("Sorts");
-  sort->insertItem("Disk Reads");
-  sort->insertItem("Buffer Gets");
-  QString str=SGATraceTool.config(CONF_DEFAULT_SORT,"SQL Text");
-  if (str=="First Load Time")
-    sort->setCurrentItem(1);
-  else if (str=="Parsing Schema")
-    sort->setCurrentItem(2);
-  else if (str=="Parse Calls")
-    sort->setCurrentItem(3);
-  else if (str=="Executions")
-    sort->setCurrentItem(4);
-  else if (str=="Sorts")
-    sort->setCurrentItem(5);
-  else if (str=="Disk Reads")
-    sort->setCurrentItem(6);
-  else if (str=="Buffer Gets")
-    sort->setCurrentItem(7);
-  return sort;
-}
-
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
-  : toToolWidget("sgatrace.html",main,connection)
+  : toToolWidget("trace.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -180,11 +137,6 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   new QLabel("Schema",toolbar);
   Schema=new QComboBox(false,toolbar);
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
-  toolbar->addSeparator();
-
-  new QLabel("Sort on",toolbar);
-  QComboBox *sort=CreateSort(toolbar);
-  connect(sort,SIGNAL(activated(const QString &)),this,SLOT(changeSort(const QString &)));
 
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
@@ -195,6 +147,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Vertical,this);
 
   Trace=new toResultView(false,false,connection,splitter);
+  Trace->setSorting(0);
   Statement=new toSGAStatement(splitter,connection);
 
   connect(Trace,SIGNAL(selectionChanged(QListViewItem *)),
@@ -205,13 +158,6 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
-}
-
-void toSGATrace::changeSort(const QString &str)
-{
-  CurrentSort=str;
-  if (!SGATraceTool.config(CONF_AUTO_UPDATE,"Yes").isEmpty())
-    refresh();
 }
 
 void toSGATrace::changeRefresh(const QString &str)
@@ -250,15 +196,6 @@ void toSGATrace::refresh(void)
     " where a.parsing_user_id = b.user_id";
   if (!CurrentSchema.isEmpty())
     select.append("   and b.username = :f1<char[31]>");
-  if (!CurrentSort.isEmpty()) {
-    select.append(" ORDER BY \"");
-    select.append(CurrentSort);
-    select.append("\"");
-    if (CurrentSort != "SQL Text" &&
-	CurrentSort != "Parsing Schema" &&
-	CurrentSort != "First Load Time")
-      select.append(" DESC");
-  }
   if (!CurrentSchema.isEmpty()) {
     list<QString> p;
     p.insert(p.end(),CurrentSchema);
