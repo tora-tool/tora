@@ -61,9 +61,14 @@ void toSemaphore::down(void)
 {
   Mutex.lock();
   while(Value<=0) {
+// temporarily hack to make it work with QT Free port for WINDOWS
+#ifdef WIN32
     Mutex.unlock();
+#endif
     Condition.wait(&Mutex);
+#ifdef WIN32
     Mutex.lock();
+#endif
   }
   Value--;
   Mutex.unlock();
