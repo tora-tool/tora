@@ -97,6 +97,7 @@ void toResultLong::addItem(void)
 	  else
 	    sprintf(buffer,"Query executed");
 	  emit firstResult(SQL,buffer);
+	  toStatusMessage(buffer);
 	  First=false;
 	}
 	if (!HasHeaders) {

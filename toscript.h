@@ -28,19 +28,34 @@
 #ifndef __TOSCRIPT_H
 #define __TOSCRIPT_H
 
-#include <qvbox.h>
+#include "toscriptui.h"
 
 class toWorksheet;
 class toConnection;
+class toScriptUI;
+class toResultView;
 
-class toScript : public QVBox {
+class toScript : public toScriptUI {
   Q_OBJECT
 
-protected:
+  toScriptUI *ScriptUI;
+  toWorksheet *Worksheet;
+  toResultView *DropList;
+  toResultView *CreateList;
   toConnection &Connection;
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();
+
+public slots:
+  void execute(void);
+  void changeMode(int);
+  void changeSource(int);
+  void changeDestination(int);
+  void objectClicked(QListViewItem *item);
+  void changeSourceSchema(int);
+  void newSize(void);
+  void removeSize(void);
 };
 
 #endif

@@ -92,16 +92,19 @@ static struct {
   bool WantEnd;
   bool WantSemi;
   bool CloseBlock;
-} Blocks[] = { { 0,"begin",	true ,false,false },
-	       { 0,"if",	true ,false,false },
-	       { 0,"loop",	true ,false,false },
-	       { 0,"while",	true ,false,false },
-	       { 0,"declare",	false,false,false },
-	       { 0,"package",	true ,false,false },
-	       { 0,"procedure",	false,false,false },
-	       { 0,"function",	false,false,false },
-	       { 0,"end",	false,true ,true  },
-	       { 0,NULL,	false,false }
+  bool Comment;
+} Blocks[] = { { 0,"begin",	true ,false,false,false },
+	       { 0,"if",	true ,false,false,false },
+	       { 0,"loop",	true ,false,false,false },
+	       { 0,"while",	true ,false,false,false },
+	       { 0,"declare",	false,false,false,false },
+	       { 0,"package",	true ,false,false,false },
+	       { 0,"procedure",	false,false,false,false },
+	       { 0,"function",	false,false,false,false },
+	       { 0,"end",	false,true ,true ,false },
+	       { 0,"prompt",	false,false,false,true  },
+	       { 0,"set",	false,false,false,true  },
+	       { 0,NULL,	false,false,false,false }
 };
 
 toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
@@ -401,7 +404,11 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
 void toWorksheet::windowActivated(QWidget *widget)
 {
-  if (widget==this) {
+  QWidget *w=this;
+  while(w&&w!=widget)
+    w=dynamic_cast<QWidget *>(w->parent());
+
+  if (widget==w) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(*toExecutePixmap,"&Execute Current",this,SLOT(execute(void)),
@@ -570,6 +577,7 @@ void toWorksheet::execute(bool all,bool step)
 {
   bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
   bool code=true; // Don't strip from done selection
+  TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;
     if (!Editor->getMarkedRegion(&cbline,&cbpos,&cline,&cpos)) {
@@ -591,20 +599,19 @@ void toWorksheet::execute(bool all,bool step)
     lastState=state=beginning;
     NewStatement();
     int BlockCount=0;
-    code=false;
-    char lastChar;
-    char c=' ';
-    char nc;
+    code=TryStrip=false;
+    QChar lastChar;
+    QChar c=' ';
+    QChar nc;
 
     for (int line=0;line<Editor->numLines()&&state!=done;line++) {
       QString data=Editor->textLine(line);
-      const char *str=data;
       c='\n'; // Set correct previous character
       for (int i=0;i<(int)data.length()&&state!=done;i++) {
 	lastChar=c;
-	c=str[i];
+	c=data[i];
 	if (i+1<int(data.length()))
-	  nc=str[i+1];
+	  nc=data[i+1];
 	else
 	  nc=' ';
 	if (state==comment) {
@@ -656,7 +663,7 @@ void toWorksheet::execute(bool all,bool step)
 	    if (c=='-'&&nc=='-') {
 	      state=comment;
 	      break;
-	    } else if (!isspace(c)) {
+	    } else if (!c.isSpace()) {
 	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step) {
 		state=done;
 		break;
@@ -679,7 +686,10 @@ void toWorksheet::execute(bool all,bool step)
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
 		      if (!toIsIdent(nc)) {
-			if (Blocks[j].CloseBlock) {
+			if (Blocks[j].Comment=true) {
+			  state=comment;
+			  
+			} else if (Blocks[j].CloseBlock) {
 			  toStatusMessage("Ending unstarted block");
 			  return;
 			} else if (Blocks[j].WantEnd)

@@ -31,6 +31,7 @@
 #include <qvbox.h>
 #include <qmultilineedit.h>
 #include <qframe.h>
+#include <qtoolbutton.h>
 
 #include "tomain.h"
 #include "totool.h"
@@ -91,6 +92,7 @@ class toWorksheet : public QVBox {
   QListViewItem *LastLogItem;
   QToolButton *StopButton;
   QToolButton *StatisticButton;
+  bool TryStrip;
 
   QPopupMenu *ToolMenu;
 

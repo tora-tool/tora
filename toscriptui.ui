@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>646</width>
+            <width>610</width>
             <height>585</height>
         </rect>
     </property>
@@ -67,7 +67,7 @@
                         <class>QButtonGroup</class>
                         <property stdset="1">
                             <name>name</name>
-                            <cstring>ButtonGroup2</cstring>
+                            <cstring>ModeGroup</cstring>
                         </property>
                         <property stdset="1">
                             <name>title</name>
@@ -82,28 +82,7 @@
                                 <name>spacing</name>
                                 <number>6</number>
                             </property>
-                            <spacer row="12"  column="2" >
-                                <property>
-                                    <name>name</name>
-                                    <cstring>Spacer9_2</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>orientation</name>
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property stdset="1">
-                                    <name>sizeType</name>
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property>
-                                    <name>sizeHint</name>
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget row="3"  column="0" >
+                            <widget row="3"  column="0"  rowspan="2"  colspan="1" >
                                 <class>QRadioButton</class>
                                 <property stdset="1">
                                     <name>name</name>
@@ -199,7 +178,7 @@
                                     <string>Create database scripts to convert schema or database from source to destination</string>
                                 </property>
                             </widget>
-                            <spacer row="4"  column="0"  rowspan="9"  colspan="1" >
+                            <spacer row="5"  column="0"  rowspan="10"  colspan="1" >
                                 <property>
                                     <name>name</name>
                                     <cstring>Spacer10_2</cstring>
@@ -220,82 +199,39 @@
                                     </size>
                                 </property>
                             </spacer>
-                            <widget row="3"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
+                            <widget row="0"  column="1"  rowspan="15"  colspan="1" >
+                                <class>Line</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>IncludeStorage</cstring>
+                                    <cstring>Line3</cstring>
                                 </property>
                                 <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include storage specification</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
+                                    <name>orientation</name>
+                                    <enum>Vertical</enum>
                                 </property>
                             </widget>
-                            <widget row="2"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
+                            <spacer row="14"  column="2" >
+                                <property>
                                     <name>name</name>
-                                    <cstring>IncludeGrants</cstring>
+                                    <cstring>Spacer9_2</cstring>
                                 </property>
                                 <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include grants</string>
+                                    <name>orientation</name>
+                                    <enum>Vertical</enum>
                                 </property>
                                 <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="11"  column="2" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>TextLabel3</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Generated schema</string>
+                                    <name>sizeType</name>
+                                    <enum>Expanding</enum>
                                 </property>
                                 <property>
-                                    <name>toolTip</name>
-                                    <string>Select the schema to generate in script</string>
+                                    <name>sizeHint</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
                                 </property>
-                            </widget>
-                            <widget row="4"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeParallell</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include parallel specification</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="0"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeConstraints</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include constraints</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="6"  column="2"  rowspan="1"  colspan="2" >
+                            </spacer>
+                            <widget row="8"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
                                 <property stdset="1">
                                     <name>name</name>
@@ -310,7 +246,75 @@
                                     <bool>true</bool>
                                 </property>
                             </widget>
-                            <widget row="11"  column="3" >
+                            <widget row="4"  column="2"  rowspan="2"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeStorage</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include storage specification</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>15</number>
+                                </property>
+                            </widget>
+                            <widget row="10"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeContent</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include content of tables</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="6"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeParallell</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include parallel specification</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="7"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludePartition</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include partition specification</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="13"  column="3" >
                                 <class>QComboBox</class>
                                 <item>
                                     <property>
@@ -337,30 +341,37 @@
                                     <bool>false</bool>
                                 </property>
                             </widget>
-                            <widget row="10"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
+                            <widget row="13"  column="2" >
+                                <class>QLabel</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>IncludeHeader</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
+                                    <cstring>TextLabel3</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
-                                    <string>Generate header</string>
+                                    <string>Generated schema</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Select the schema to generate in script</string>
+                                </property>
+                            </widget>
+                            <widget row="2"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeIndexes</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include indexes</string>
                                 </property>
                                 <property stdset="1">
                                     <name>checked</name>
                                     <bool>true</bool>
                                 </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>Generate header at the top of the script</string>
-                                </property>
                             </widget>
-                            <widget row="9"  column="2"  rowspan="1"  colspan="2" >
+                            <widget row="11"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
                                 <property stdset="1">
                                     <name>name</name>
@@ -383,56 +394,7 @@
                                     <string>Generate prompts to display progress in SQLPlus</string>
                                 </property>
                             </widget>
-                            <widget row="1"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeIndexes</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include indexes</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="5"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludePartition</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include partition specification</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="8"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeContent</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include content of tables</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <widget row="7"  column="2"  rowspan="1"  colspan="2" >
+                            <widget row="9"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
                                 <property stdset="1">
                                     <name>name</name>
@@ -451,15 +413,80 @@
                                     <bool>true</bool>
                                 </property>
                             </widget>
-                            <widget row="0"  column="1"  rowspan="13"  colspan="1" >
-                                <class>Line</class>
+                            <widget row="12"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>Line3</cstring>
+                                    <cstring>IncludeHeader</cstring>
                                 </property>
                                 <property stdset="1">
-                                    <name>orientation</name>
-                                    <enum>Vertical</enum>
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Generate header</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Generate header at the top of the script</string>
+                                </property>
+                            </widget>
+                            <widget row="3"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeGrants</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include grants</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="1"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeConstraints</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include constraints</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                            <widget row="0"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeDDL</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include DDL</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>4</number>
                                 </property>
                             </widget>
                         </grid>
@@ -527,12 +554,16 @@
                                 <vsizetype>1</vsizetype>
                             </sizepolicy>
                         </property>
+                        <property stdset="1">
+                            <name>rootIsDecorated</name>
+                            <bool>true</bool>
+                        </property>
                     </widget>
                     <widget row="0"  column="1"  rowspan="2"  colspan="1" >
                         <class>QGroupBox</class>
                         <property stdset="1">
                             <name>name</name>
-                            <cstring>GroupBox2_2</cstring>
+                            <cstring>Destination</cstring>
                         </property>
                         <property stdset="1">
                             <name>sizePolicy</name>
@@ -905,6 +936,10 @@
                                     <name>text</name>
                                     <string>&amp;Add</string>
                                 </property>
+                                <property stdset="1">
+                                    <name>default</name>
+                                    <bool>true</bool>
+                                </property>
                             </widget>
                             <widget row="4"  column="3" >
                                 <class>QPushButton</class>
@@ -981,6 +1016,17 @@
                     <string>Result</string>
                 </attribute>
             </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>DifferenceTab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>Difference</string>
+                </attribute>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -1009,27 +1055,9 @@
 </images>
 <connections>
     <connection>
-        <sender>Extract</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>IncludeContent</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
         <sender>CustomResize</sender>
         <signal>toggled(bool)</signal>
         <receiver>Frame4</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>Extract</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>IncludePrompt</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>Extract</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>IncludeHeader</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
@@ -1081,19 +1109,21 @@
         <slot>setDisabled(bool)</slot>
     </connection>
     <connection>
-        <sender>Compare</sender>
-        <signal>toggled(bool)</signal>
+        <sender>AddButton</sender>
+        <signal>clicked()</signal>
         <receiver>toScriptUI</receiver>
-        <slot>disableResize(bool)</slot>
+        <slot>newSize(void)</slot>
     </connection>
     <connection>
-        <sender>ButtonGroup2</sender>
-        <signal>clicked(int)</signal>
+        <sender>Remove</sender>
+        <signal>clicked()</signal>
         <receiver>toScriptUI</receiver>
-        <slot>changeOption(int)</slot>
+        <slot>removeSize(void)</slot>
     </connection>
     <slot access="public">changeOption(int)</slot>
     <slot access="public">disableResize(bool)</slot>
+    <slot access="public">newSize(void)</slot>
+    <slot access="public">removeSize(void)</slot>
 </connections>
 <tabstops>
     <tabstop>Tabs</tabstop>

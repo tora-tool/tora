@@ -1599,7 +1599,7 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 QString toExtract::tableColumns(const QString &owner,const QString &name)
 {
   list<QString> cols=toReadQuery(Connection,
-				 SQLTableColumns(Columns),
+				 SQLTableColumns(Connection),
 				 name,owner);
   bool first=true;
   QString ret;
@@ -1609,10 +1609,10 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
     else
       ret+="\n  , ";
     ret+=toShift(cols);
-    QString default=toShift(cols);
-    if (!default.isEmpty()) {
+    QString def=toShift(cols);
+    if (!def.isEmpty()) {
       ret+=" DEFAULT ";
-      ret+=default;
+      ret+=def;
     }
   }
   return ret;
@@ -1622,19 +1622,14 @@ void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
 				     const QString &owner,const QString &name)
 {
   list<QString> cols=toReadQuery(Connection,
-				 SQLTableColumns(Columns),
+				 SQLTableColumns(Connection),
 				 name,owner);
-  bool first=true;
   while(cols.size()>0) {
-    if (first)
-      first=false;
-    else
-      ret+="\n  , ";
-    QString line+=toShift(cols);
-    QString default=toShift(cols);
-    if (!default.isEmpty()) {
+    QString line=toShift(cols);
+    QString def=toShift(cols);
+    if (!def.isEmpty()) {
       line+=" DEFAULT ";
-      line+=default;
+      line+=def;
     }
     addDescription(lst,ctx,"COLUMN",line);
   }

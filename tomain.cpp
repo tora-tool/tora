@@ -713,6 +713,22 @@ bool toMain::delConnection(void)
   return true;
 }
 
+list<QString> toMain::connections(void)
+{
+  list<QString> ret;
+  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
+    toPush(ret,(*i)->connectString());
+  return ret;
+}
+
+toConnection &toMain::connection(const QString &str)
+{
+  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
+    if ((*i)->connectString()==str)
+      return *(*i);
+  throw QString("Couldn't find specified connectionts (%1)").arg(str);
+}
+
 void toMain::loadButton(void)
 {
   commandCallback(TO_FILE_OPEN);

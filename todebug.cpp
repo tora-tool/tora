@@ -161,15 +161,13 @@ toDebugWatch::toDebugWatch(toDebug *parent)
     int curline,curcol;
     Debugger->currentEditor()->getCursorPosition (&curline,&curcol);
     Default=Debugger->currentEditor()->textLine(curline);
-    const char *line=Default;
-    while(curcol>0&&toIsIdent(line[curcol-1]))
+    while(curcol>0&&toIsIdent(Default[curcol-1]))
       curcol--;
-    while(curcol<int(Default.length())&&!toIsIdent(line[curcol]))
+    while(curcol<int(Default.length())&&!toIsIdent(Default[curcol]))
       curcol++;
     Default.replace(0,curcol,"");
-    line=Default;
     curcol=1;
-    while(curcol<int(Default.length())&&toIsIdent(line[curcol]))
+    while(curcol<int(Default.length())&&toIsIdent(Default[curcol]))
       curcol++;
     Default=Default.left(curcol);
   }
