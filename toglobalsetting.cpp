@@ -342,7 +342,7 @@ void toToolSetting::changeEnable(void)
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
       DefaultTool->insertItem(item->text(0),id);
-      if (item->text(0)==str)
+      if (item->text(2)==str)
 	sel=id;
       id++;
     }
@@ -356,6 +356,8 @@ void toToolSetting::saveSetting(void)
     QCString str=item->text(2).latin1();
     str+=CONF_TOOL_ENABLE;
     toTool::globalSetConfig(str,item->isSelected()?"Yes":"");
+
+    if (DefaultTool->currentText()==item->text(0))
+      toTool::globalSetConfig(CONF_DEFAULT_TOOL,item->text(2));
   }
-  toTool::globalSetConfig(CONF_DEFAULT_TOOL,DefaultTool->currentText());
 }

@@ -3,6 +3,7 @@
 2002-08-08: Fixed problem with edit file menu not being updated correctly.
 2002-08-08: Fixed compile problem on windows.
 2002-08-08: Fixed quote.
+2002-08-08: Fixed problem with disabling tools and locales and the default tool.
 
 1.3.7: Released 2002-08-05
 

@@ -335,7 +335,7 @@ toMain::toMain()
     const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
 
-    QCString tmp=(*i).second->name();
+    QCString tmp=(*i).first;
     tmp+=CONF_TOOL_ENABLE;
     if (toTool::globalConfig(tmp,"Yes").isEmpty())
       continue;
