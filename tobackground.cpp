@@ -72,7 +72,9 @@ public:
 	  }
 	}
 	toMainWidget()->displayMessage(str);
+#if QT_VERSION >= 300
 	e->accept();
+#endif
       } else
 	QLabel::mouseReleaseEvent(e);
     } TOCATCH

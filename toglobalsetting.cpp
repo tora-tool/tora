@@ -350,15 +350,13 @@ toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
       item->setSelected(true);
   }
 
+  DefaultTool->setCurrentText(toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool.latin1()));
   changeEnable();
 }
 
 void toToolSetting::changeEnable(void)
 {
   QString str=DefaultTool->currentText();
-  if (str.isEmpty()) {
-    str=toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool.latin1());
-  }
 
   DefaultTool->clear();
   int id=0;

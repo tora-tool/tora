@@ -184,7 +184,11 @@ void toResultViewItem::setText (int col,const QString &txt)
       ColumnData[col].Type=keyData::Number;
 
       static char buf[100];
-      sprintf(buf,"%015.5f",txt.toFloat());
+      double val=txt.toFloat();
+      if(val<0)
+	sprintf(buf,"\x01%015.5f",val);
+      else
+	sprintf(buf,"%015.5f",val);
       ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=QString::fromLatin1(buf);
     } else {
       ColumnData[col].Type=keyData::String;
@@ -226,7 +230,11 @@ void toResultViewCheck::setText (int col,const QString &txt)
       ColumnData[col].Type=keyData::Number;
 
       static char buf[100];
-      sprintf(buf,"%015.5f",txt.toFloat());
+      double val=txt.toFloat();
+      if(val<0)
+	sprintf(buf,"\x01%015.5f",val);
+      else
+	sprintf(buf,"%015.5f",val);
       ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=QString::fromLatin1(buf);
     } else {
       ColumnData[col].Type=keyData::String;

@@ -798,8 +798,6 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       }
     toStatusMessage(tr("Processing query"),true);
 
-    printf("%s\n",(const char *)QueryString);
-
     if (direct) {
       try {
 	First=false;

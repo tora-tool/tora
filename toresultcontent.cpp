@@ -168,13 +168,17 @@ QString toResultContentEditor::contentItem::key(void) const
 {
   static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
-  QString val=text();
-  if (number.match(val)>=0) {
+  QString txt=text();
+  if (number.match(txt)>=0) {
     QString ret;
-    ret.sprintf("%015.5f",text().toFloat());
+    double val=txt.toFloat();
+    if(val<0)
+      ret.sprintf("\x01%015.5f",val);
+    else
+      ret.sprintf("%015.5f",val);
     return ret;
   }
-  return val;
+  return txt;
 }
 
 void toResultContentEditor::setText(int row,int col,const QString &text)
