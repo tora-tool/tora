@@ -37,6 +37,7 @@ Extended functionality:
 * Ability to disable tools from options.
 * Ability to select default tool in options.
 * Option to change current connection to the connection of the current tool.
+* Parameter file editor in server tuning.
 
 Windows problems:
 
