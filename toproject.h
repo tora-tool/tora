@@ -74,6 +74,7 @@ public:
   toProject(toProjectTemplateItem *top,QWidget *parent);
   ~toProject();
 
+  void selectItem(toProjectTemplateItem *);
 public slots:
   void update(void);
   void addFile(void);
@@ -107,7 +108,7 @@ public:
   virtual void insertItems(QListView *parent,QToolBar *toolbar);
   virtual void removeItems(QListViewItem *item);
 
-  virtual QWidget *selectedWidget(QWidget *parent);
+  virtual toProject *selectedWidget(QWidget *parent);
 
   virtual toProjectTemplateItem *root(void)
   { return Root; }

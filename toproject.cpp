@@ -179,14 +179,14 @@ void toProjectTemplateItem::selected(void)
   }
 }
 
-
-
 QWidget *toProjectTemplateItem::selectedWidget(QWidget *parent)
 {
-  return ProjectTemplate.selectedWidget(parent);
+  toProject *proj=ProjectTemplate.selectedWidget(parent);
+  proj->selectItem(this);
+  return proj;
 }
 
-QWidget *toProjectTemplate::selectedWidget(QWidget *parent)
+toProject *toProjectTemplate::selectedWidget(QWidget *parent)
 {
   if (!Details)
     Details=new toProject(ProjectTemplate.root(),parent);
@@ -274,7 +274,7 @@ void toProjectTemplate::insertItems(QListView *parent,QToolBar *toolbar)
     id++;
   }
 
-  connect(parent,SIGNAL(currentChanged(QListViewItem *)),this,SLOT(changeItem(QListViewItem *)));
+  connect(parent,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(changeItem(QListViewItem *)));
   AddFile=new QToolButton(QPixmap((const char **)addproject_xpm),
 			  "Add file to project",
 			  "Add file to project",
@@ -564,4 +564,20 @@ toProject::~toProject()
 {
   if (ProjectTemplate.Details==this)
     ProjectTemplate.Details=NULL;
+}
+
+void toProject::selectItem(toProjectTemplateItem *item)
+{
+  for(std::map<QListViewItem *,toProjectTemplateItem *>::iterator i=ItemMap.begin();
+      i!=ItemMap.end();
+      i++) {
+    if ((*i).second==item) {
+      disconnect(Project,SIGNAL(selectionChanged()),
+		 this,SLOT(selectionChanged()));
+      Project->setSelected((*i).first,true);
+      connect(Project,SIGNAL(selectionChanged()),
+	      this,SLOT(selectionChanged()));
+      break;
+    }
+  }
 }

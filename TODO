@@ -44,7 +44,6 @@ Extended functionality:
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
 * Full support for Oracle 9i.
-* Install in KDE menu if KDE detected.
 * Printing of toResultItems.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.

@@ -1,5 +1,6 @@
 1.3.5:
 
+2002-03-07: Simplified project management by making both lists select synchonized.
 2002-03-07: Consistently use item selection in security manager (Fixes crash).
 2002-03-06: Fixed bug in debugger.
 2002-03-06: Added URL to TOra homepage in about dialog.
