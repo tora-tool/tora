@@ -4614,7 +4614,7 @@ static toSQL SQLTableConstraints("toExtract:TableConstraints",
         all_constraints cn
  WHERE      table_name       = :nam<char[100]>
         AND owner            = :own<char[100]>
-        AND constraint_type IN('P','U','R','C')
+        AND constraint_type IN('P','U','C')
         AND generated        != 'GENERATED NAME'
  ORDER
     BY
@@ -4622,11 +4622,29 @@ static toSQL SQLTableConstraints("toExtract:TableConstraints",
                constraint_type
               ,'P',1
               ,'U',2
-              ,'R',3
               ,'C',4
              )
      , constraint_name",
-				 "Get constraints tied to a table, same binds and columns");
+				 "Get constraints tied to a table except referential, same binds and columns");
+
+static toSQL SQLTableReferences("toExtract:TableReferences",
+				"SELECT
+        constraint_type,
+        constraint_name
+ FROM
+        all_constraints cn
+ WHERE      table_name       = :nam<char[100]>
+        AND owner            = :own<char[100]>
+        AND constraint_type IN('R')
+        AND generated        != 'GENERATED NAME'
+ ORDER
+    BY
+       DECODE(
+               constraint_type
+              ,'R',1
+             )
+     , constraint_name",
+				 "Get foreign constraints from a table, same binds and columns");
 
 static toSQL SQLTableTriggers("toExtract:TableTriggers",
 			      "SELECT  trigger_name
@@ -4710,6 +4728,23 @@ void toExtract::describeTableFamily(list<QString> &lst,
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
   while(triggers.size()>0)
     describeTrigger(lst,schema,owner,toShift(triggers));
+}
+
+QString toExtract::createTableReferences(const QString &schema,const QString &owner,const QString &name)
+{
+  QString ret;
+  list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
+  while(constraints.size()>0)
+    ret+=createConstraint(schema,owner,toShift(constraints));
+  return ret;
+}
+
+void toExtract::describeTableReferences(list<QString> &lst,
+					const QString &schema,const QString &owner,const QString &name)
+{
+  list<QString> constraints=toReadQuery(Connection,SQLTableReferences(Connection),name,owner);
+  while(constraints.size()>0)
+    describeConstraint(lst,schema,owner,toShift(constraints));
 }
 
 static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
@@ -5987,6 +6022,8 @@ QString toExtract::create(const QString &type,list<QString> &objects)
       ret+=createTable(schema,owner,name);
     else if (utype=="TABLE FAMILY")
       ret+=createTableFamily(schema,owner,name);
+    else if (utype=="TABLE REFERENCES")
+      ret+=createTableReferences(schema,owner,name);
     else if (utype=="TABLESPACE")
       ret+=createTablespace(schema,owner,name);
     else if (utype=="TRIGGER")
@@ -6063,6 +6100,8 @@ list<QString> toExtract::describe(const QString &type,list<QString> &objects)
       describeTable(cur,schema,owner,name);
     else if (utype=="TABLE FAMILY")
       describeTableFamily(cur,schema,owner,name);
+    else if (utype=="TABLE REFERENCES")
+      describeTableReferences(cur,schema,owner,name);
     else if (utype=="TABLESPACE")
       describeTablespace(cur,schema,owner,name);
     else if (utype=="TRIGGER")

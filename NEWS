@@ -43,6 +43,7 @@
 2001-04-03: Added tooltip virtual function so you can copy different content
 	than the tooltip.
 2001-04-03: Fixed copying of the toResultCols.
+2001-04-04: Create foreign constraints separately from table in toExtract.
 
 0.7: Released 2001-03-24
 

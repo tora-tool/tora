@@ -89,6 +89,7 @@ class toExtract {
   QString createSynonym(const QString &schema,const QString &owner,const QString &name);
   QString createTable(const QString &schema,const QString &owner,const QString &name);
   QString createTableFamily(const QString &schema,const QString &owner,const QString &name);
+  QString createTableReferences(const QString &schema,const QString &owner,const QString &name);
   QString createTablespace(const QString &schema,const QString &owner,const QString &name);
   QString createTrigger(const QString &schema,const QString &owner,const QString &name);
   QString createType(const QString &schema,const QString &owner,const QString &name);
@@ -136,6 +137,8 @@ class toExtract {
 		     const QString &name);
   void describeTableFamily(list<QString> &lst,const QString &schema,const QString &owner,
 			   const QString &name);
+  void describeTableReferences(list<QString> &lst,const QString &schema,const QString &owner,
+			       const QString &name);
   void describeTablespace(list<QString> &lst,const QString &schema,const QString &owner,
 			  const QString &name);
   void describeTrigger(list<QString> &lst,const QString &schema,const QString &owner,
