@@ -137,6 +137,8 @@ public slots:
   void enableConstraints(void);
   void disableConstraints(void);
 
+  void testDBLink(void);
+  
   void displayIndexMenu(QPopupMenu *menu);
   void displayTableMenu(QPopupMenu *menu);
 

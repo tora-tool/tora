@@ -973,6 +973,27 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    "  FROM SYS.ALL_TRIGGER_COLS\n"
 			    " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Columns used by trigger");
+#if DBLINK
+static toSQL SQLListDBLink("toBrowser:ListDBLink",
+			   "SELECT Db_Link, Owner FROM SYS.ALL_DB_LINKS\n"
+			   " WHERE (Owner = :f1<char[101]> or Owner='PUBLIC') and\n"
+			   " UPPER(DB_Link) like :f2<char[101]>",
+			   "List database links");
+static toSQL SQLListDBLinkDBA("toBrowser:ListDBLinkDBA",
+			      "SELECT Owner, Db_Link, Username, Host, Created\n"
+			      " FROM SYS.DBA_DB_LINK\n",
+			      "List database links as DBA");
+static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
+			    "SELECT * FROM Sys.all_db_links a\n"
+			    " WHERE Owner = :f1<char[101]>\n"
+			    "   AND DB_LINK = :f2<char[101]>",
+			    "Display information about database link");
+static toSQL SQLDBLinkSynonyms("toBrowser:DBLinkSynonyms",
+			       "SELECT * FROM Sys.all_synonyms a\n"
+			       " WHERE Owner = :f1<char[101]>\n"
+			       "   AND DB_LINK = :f2<char[101]>",
+			       "Display foreign synonyms");
+#endif
 
 static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
 			    "SHOW TABLES FROM mysql",
@@ -1268,7 +1289,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setResizeMode(QListView::AllColumns);
   connect(resultView,SIGNAL(selectionChanged()),
 	  this,SLOT(changeItem()));
-  connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayIndexMenu(QPopupMenu *)));
+  connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayIndexMenu(QPopupMenu *))); 
 
   box->resize(FIRST_WIDTH,resultView->height());
   splitter->setResizeMode(box,QSplitter::KeepSize);
@@ -1444,7 +1465,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,tr("&Columns"));
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
-
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TRIGGER_GRANTS);
   resultView->setSQL(SQLAnyGrants);
   resultView->setReadAll(true);
@@ -1460,7 +1480,50 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TRIGGER_EXTRACT]=resultExtract;
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
+
+#ifdef DBLINK
+  splitter=new QSplitter(Horizontal,TopTab,TAB_DBLINK);
+  TopTab->addTab(splitter,tr("DBLinks"));
+  box=new QVBox(splitter);
+  toolbar=toAllocBar(box,tr("Database browser"));
+  new toBrowseButton(QPixmap((const char **)modconstraint_xpm),
+		     tr("Test DBLink"),
+		     tr("Test DBLink"),
+		     this,SLOT(testDBLink()),
+		     toolbar);
+  toolbar->addSeparator();
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   
+  resultView=new toResultLong(true,false,toQuery::Background,box);
+  resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
+  Map[TAB_DBLINK]=resultView;
+  resultView->setTabWidget(TopTab);
+  resultView->setSQL(SQLListDBLink);
+  resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setResizeMode(QListView::AllColumns);
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
+  connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayIndexMenu(QPopupMenu *)));
+  box->resize(FIRST_WIDTH,resultView->height());
+  splitter->setResizeMode(box,QSplitter::KeepSize);
+  curr=new toTabWidget(splitter);
+  splitter->setResizeMode(curr,QSplitter::Stretch);
+
+  toResultItem *resultDBLink=new toResultItem(2,true,curr,TAB_DBLINK_INFO);
+  resultDBLink->setSQL(SQLDBLinkInfo);
+  curr->addTab(resultDBLink,tr("Info"));
+  SecondMap[TAB_DBLINK]=resultDBLink;
+  SecondMap[TAB_DBLINK_INFO]=resultDBLink;
+
+  resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_DBLINK_SYNONYMS);
+  resultView->setSQL(SQLDBLinkSynonyms);
+  curr->addTab(resultView,tr("&Synonyms"));
+  SecondMap[TAB_DBLINK_SYNONYMS]=resultView;
+
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
+#endif
+
   splitter=new QSplitter(Horizontal,TopTab,TAB_ACCESS);
   TopTab->addTab(splitter,tr("Access"));
 #ifdef TOEXTENDED_MYSQL
@@ -1525,7 +1588,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(AccessContent,SIGNAL(changesSaved()),this,SLOT(flushPrivs()));
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
-
+  
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -2691,4 +2754,19 @@ void toBrowser::enableConstraints(void)
 void toBrowser::disableConstraints(void)
 {
   enableDisableConstraints("DISABLE");
+}
+
+void toBrowser::testDBLink(void)
+{
+  if(SecondText.isEmpty()) return;
+  toQList resultset;
+  try {
+    resultset=toQuery::readQueryNull(toCurrentConnection(this),
+				     "SELECT * FROM dual@"+SecondText);
+  } TOCATCH;
+//   } catch (...) {
+//     TOMessageBox::information(this, "Database link", SecondText);
+//   }
+  if(!resultset.empty())
+    TOMessageBox::information(this, "Database link", SecondText);
 }
