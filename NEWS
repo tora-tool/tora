@@ -5,6 +5,8 @@
 2001-07-12: Fixed update problem with statistics in worksheet.
 2001-07-12: Added 3 more quotes (Only really criticall fixes now, eh?).
 2001-07-12: Fixed a workaround for the Qt layout bug on maximized windows.
+2001-07-12: Fixed rpm packaging problem.
+2001-07-12: Fixed spell error in rpm category.
 
 0.13: Released 2001-07-11
 
