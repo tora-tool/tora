@@ -2,7 +2,7 @@
 
 %define name tora
 %define group Development/Databases
-%define version 1.1.3
+%define version 1.1.4
 %define release 1qt
 
 Name: %{name}
@@ -15,33 +15,57 @@ BuildRoot: %{_tmppath}/tora-root
 Group: %{group}
 
 %Description
-TOra is a Toolkit for Oracle which aims to help the DBA or developer of
-database application.
+Toolkit for Oracle is a program for Oracle developers and administrators. The
+features that are available so far is (As of version 1.2):
 
-In the current release it has the following features:
+* Handles multiple connections
+* Advanced SQL Worksheet
+	* Explain plan
+	* Statement statistics
+	* Error location indication
+	* SQL syntax highlighting
+	* Code completion
+	* Visualization of result
+	* PL/SQL block parsing
+* Schema browser
+	* Table & view editing
+	* References & dependencies
+	* Reverse engeneering of objects
+	* Tab & tree based browsing
+	* Object & data filtering
+* PL/SQL Editor/Debugger
+	* Breakpoints
+	* Watches
+	* Line stepping
+	* SQL Output viewing
+	* Structure tree parsing
+* Server tuning
+	* Server overview
+	* Tuning charts
+	* I/O by tablespace & file
+	* Performance indicators
+	* Server statistics
+	* Parameter editor (P-file editor)
+* Security manager
+* Storage manager with object & extent viewer
 
-Handles multiple connections
-SQL worksheet with explain plan and statement statistics
-PL/SQL syntax highlighting
-PL/SQL parsing in SQL worksheet
-Schema browser
-Storage manager
-Session manager
-SGA trace
-Rollback manager
-SQL Output viewer
-Easily extendable
-PL/SQL Editor/Debugger
-Database/schema comparison
-Extract schema objects to SQL script
-Possible to add support for new or older Oracle versions without
-        programming knowledge
-Security manager
-Server tuning information
-Current session information
-SQL template help
-Full UNICODE support
-Printing of any list or source
+* Session manager
+* Rollback manager with snapshot too old detection
+* SGA and long operations trace
+* Current session information
+
+* Statistics manager
+* DBMS alert tool
+* Invalid object browser
+* SQL Output viewer
+* Database/schema comparison and search
+* Extract schema objects to SQL script
+
+* Easily extendable
+* Possible to add support for new or older Oracle versions without programming.
+* SQL template help
+* Full UNICODE support
+* Printing of any list, text or chart
 
 This build does not have KDE support.
 
