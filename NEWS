@@ -26,6 +26,8 @@
 2001-03-31: Fixed bug in toAllocBar.
 2001-04-01: Default version of sql change to 8.1.
 2001-04-01: Added Oracle 8.0 support in toResultStorage.
+2001-04-01: Fixed sql in Global:Address.
+2001-04-01: Added all option in saveSQL to toSQL.
 
 0.7: Released 2001-03-24
 

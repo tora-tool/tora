@@ -125,7 +125,7 @@ QString toNow(toConnection &conn)
 static toSQL SQLAddress("Global:Address",
 			"SELECT Address||':'||Hash_Value\n"
 			"  FROM V$SQLText_With_Newlines\n"
-			" WHERE SQL_Text LIKE :f1<char[150]>||'%%'",
+			" WHERE SQL_Text LIKE :f1<char[150]>||'%'",
 			"Get address of an SQL statement");
 
 QString toSQLToAddress(toConnection &conn,const QString &sql)

@@ -87,7 +87,7 @@ public:
 
   static toSQL sql(const QString &name);
 
-  static bool saveSQL(const QString &file);
+  static bool saveSQL(const QString &file,bool all=false);
   static bool loadSQL(const QString &file);
 
   static const sqlMap &definitions(void)

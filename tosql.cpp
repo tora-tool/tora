@@ -153,7 +153,7 @@ QString toSQL::string(const QString &name,
   throw str;
 }
 
-bool toSQL::saveSQL(const QString &filename)
+bool toSQL::saveSQL(const QString &filename,bool all)
 {
   allocCheck();
   QFile file(expandFile(filename));
@@ -165,7 +165,7 @@ bool toSQL::saveSQL(const QString &filename)
   for (sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
     definition &def=(*i).second;
     QString name=(*i).first;
-    if (def.Modified) {
+    if (def.Modified||all) {
       QString line=name;
       line+="=";
       line+=def.Description;
@@ -176,7 +176,7 @@ bool toSQL::saveSQL(const QString &filename)
     }
     for (list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
       version &ver=(*j);
-      if (ver.Modified) {
+      if (ver.Modified||all) {
 	QString line=name;
 	line+="[";
 	line+=ver.Version;
