@@ -179,6 +179,8 @@ my %plugins=(
 						     "totemplateeditui",
 						     "totemplatesetupui" ],
 					"Any" => 1 },
+ 	     "totemporary"         => { "Files" => [ "totemporary" ],
+					"Oracle" => 1 },
 	     "totuning"            => { "Files" => [ "totuning",
 						     "totuningoverviewui",
 						     "totuningsettingui" ],
