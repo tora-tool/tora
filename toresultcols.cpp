@@ -232,7 +232,7 @@ void toResultCols::query(const QString &,const toQList &param)
       label+="</B> synonym for <B>";
     }
     label+=conn.quote(name.Owner);
-    if (!label.isEmpty())
+    if (label!="<B>")
       label+=".";
     label+=conn.quote(name.Name);
     

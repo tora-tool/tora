@@ -112,8 +112,10 @@ void toResultLong::addItem(void)
 	  QString tmp=sql().simplifyWhiteSpace().mid(0,10).lower();
 	  if (tmp.startsWith("update")||tmp.startsWith("delete")||tmp.startsWith("insert"))
 	    sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
-	  else
+	  else if (tmp.startsWith("select"))
 	    sprintf(buffer,"Query executed");
+	  else
+	    sprintf(buffer,"Statement executed");
 	  em=true;
 	}
 	if (!HasHeaders) {

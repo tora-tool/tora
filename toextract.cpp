@@ -79,12 +79,23 @@ toExtract::toExtract(toConnection &conn,QWidget *parent)
   Contents=true;
   Comments=true;
   Partition=true;
+  try {
+    toQuery(conn,"select * from dba_segments where null=null");
+    DbaSegments="dba_segments";
+  } catch(...) {
+    DbaSegments=QString("(select '%1' owner,user_segments.* from user_segments)").arg(conn.user().upper());
+  }
 
   Schema="1";
 
   toQList ret=toQuery::readQueryNull(Connection,SQLSetSizing);
   BlockSize=toShift(ret).toInt();
   setSizes();
+}
+
+QString toExtract::dbaSegment(toSQL &sql)
+{
+  return toSQL::string(sql,Connection).arg(DbaSegments);
 }
 
 void toExtract::clearFlags(void)
@@ -772,7 +783,7 @@ void toExtract::describeDBLink(std::list<QString> &lst,const QString &schema,con
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
 				     "SELECT SUBSTR(segment_type,7),\n"
 				     "       TO_CHAR(blocks)\n"
-				     "  FROM dba_segments\n"
+				     "  FROM %1\n"
 				     " WHERE segment_name = :nam<char[100]>\n"
 				     "   AND partition_name = :prt<char[100]>\n"
 				     "   AND owner = :own<char[100]>",
@@ -832,8 +843,8 @@ static toSQL SQLExchangeIndex("toExtract:ExchangeIndex",
 			      "      , LOWER(p.tablespace_name)      AS tablespace_name\n"
 			      "      , %2                            AS blocks\n"
 			      " FROM\n"
-			      "        dba_indexes  i\n"
-			      "      , dba_ind_%1s  p\n"
+			      "        all_indexes  i\n"
+			      "      , all_ind_%1s  p\n"
 			      " WHERE\n"
 			      "            p.index_name   = :nam<char[100]>\n"
 			      "        AND p.%1_name      = :typ<char[100]>\n"
@@ -852,7 +863,7 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
   QString segment=str.first();
   QString partition=str.last();
 
-  toQuery inf(Connection,SQLPartitionSegmentType,segment,partition,owner);
+  toQuery inf(Connection,dbaSegment(SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
     throw QString("Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
@@ -901,7 +912,7 @@ void toExtract::describeExchangeIndex(std::list<QString> &lst,const QString &sch
   QString segment=str.first();
   QString partition=str.last();
 
-  toQuery inf(Connection,SQLPartitionSegmentType,segment,partition,owner);
+  toQuery inf(Connection,dbaSegment(SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
     throw QString("Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
@@ -1068,8 +1079,8 @@ static toSQL SQLExchangeTable("toExtract:ExchangeTable",
 			      "      , LOWER(p.tablespace_name)             AS tablespace_name\n"
 			      "      , %2 - NVL(p.empty_blocks,0)           AS blocks\n"
 			      " FROM\n"
-			      "        dba_tables        t\n"
-			      "      , dba_tab_%1s       p\n"
+			      "        all_tables        t\n"
+			      "      , all_tab_%1s       p\n"
 			      " WHERE\n"
 			      "            p.table_name   = :nam<char[100]>\n"
 			      "        AND p.%1_name      = :sgm<char[100]>\n"
@@ -1088,7 +1099,7 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
   QString segment=str.first();
   QString partition=str.last();
 
-  toQuery inf(Connection,SQLPartitionSegmentType,segment,partition,owner);
+  toQuery inf(Connection,dbaSegment(SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
     throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
@@ -1110,7 +1121,7 @@ void toExtract::describeExchangeTable(std::list<QString> &lst,const QString &sch
   QString segment=str.first();
   QString partition=str.last();
 
-  toQuery inf(Connection,SQLPartitionSegmentType,segment,partition,owner);
+  toQuery inf(Connection,dbaSegment(SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
     throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
@@ -1759,7 +1770,7 @@ static toSQL SQLIndexSegment("toExtract:IndexSegment",
 			     "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			     "      , s.blocks\n"
 			     "  FROM  all_indexes   i\n"
-			     "      , dba_segments  s\n"
+			     "      , %1  s\n"
 			     " WHERE  i.index_name   = :nam<char[100]>\n"
 			     "   AND  s.segment_name = i.index_name\n"
 			     "   AND  i.owner        = :own<char[100]>\n"
@@ -1810,7 +1821,7 @@ static toSQL SQLIndexSegment8("toExtract:IndexSegment",
 			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			      "      , s.blocks\n"
 			      "  FROM  all_indexes   i\n"
-			      "      , dba_segments  s\n"
+			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
 			      "   AND  s.segment_name = i.index_name\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
@@ -1857,7 +1868,7 @@ static toSQL SQLIndexSegment7("toExtract:IndexSegment",
 			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
 			      "      , s.blocks\n"
 			      "  FROM  all_indexes   i\n"
-			      "      , dba_segments  s\n"
+			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
 			      "   AND  s.segment_name = i.index_name\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
@@ -1884,7 +1895,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   QString domName    =toShift(res);
   QString domParam   =toShift(res);
 
-  toQList storage=toQuery::readQueryNull(Connection,SQLIndexSegment,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,dbaSegment(SQLIndexSegment),name,owner);
   QString degree     =toShift(storage);
   QString instances  =toShift(storage);
   QString compressed =toShift(storage);
@@ -1954,7 +1965,7 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
   QString domName    =toShift(res);
   QString domParam   =toShift(res);
 
-  toQList storage=toQuery::readQueryNull(Connection,SQLIndexSegment,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,dbaSegment(SQLIndexSegment),name,owner);
   QString degree     =toShift(storage);
   QString instances  =toShift(storage);
   QString compressed =toShift(storage);
@@ -3018,7 +3029,7 @@ static toSQL SQLTableInfo("toExtract:TableInfo",
 			  "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			  " FROM\n"
 			  "        all_tables    t\n"
-			  "      , dba_segments  s\n"
+			  "      , %1  s\n"
 			  " WHERE\n"
 			  "            t.table_name   = :nam<char[100]>\n"
 			  "        AND t.table_name   = s.segment_name\n"
@@ -3083,7 +3094,7 @@ static toSQL SQLTableInfo8("toExtract:TableInfo",
 			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			   " FROM\n"
 			   "        all_tables    t\n"
-			   "      , dba_segments  s\n"
+			   "      , %1  s\n"
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
 			   "        AND t.table_name   = s.segment_name\n"
@@ -3140,7 +3151,7 @@ static toSQL SQLTableInfo7("toExtract:TableInfo",
 			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			   " FROM\n"
 			   "        all_tables    t\n"
-			   "      , dba_segments  s\n"
+			   "      , %1  s\n"
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
 			   "        AND t.table_name   = s.segment_name\n"
@@ -3166,7 +3177,7 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
   } else if (partitioned=="YES")
     return createPartitionedTable(schema,owner,name);
 
-  toQList result=toQuery::readQueryNull(Connection,SQLTableInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,dbaSegment(SQLTableInfo),name,owner);
   QString ret=createTableText(result,schema,owner,name);
   ret+=";\n\n";
   ret+=createComments(schema,owner,name);
@@ -3199,7 +3210,7 @@ void toExtract::describeTable(std::list<QString> &lst,
     return;
   }
 
-  toQList result=toQuery::readQueryNull(Connection,SQLTableInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,dbaSegment(SQLTableInfo),name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
   describeComments(lst,ctx,schema,owner,name);
 }
@@ -3250,7 +3261,7 @@ static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
 			     "      , s.blocks - NVL(t.empty_blocks,0)\n"
 			     " FROM\n"
 			     "        all_tables    t\n"
-			     "      , dba_segments  s\n"
+			     "      , %1  s\n"
 			     " WHERE\n"
 			     "            t.iot_name     = :nam<char[100]>\n"
 			     "        AND t.table_name   = s.segment_name\n"
@@ -3444,7 +3455,7 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
 					QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,dbaSegment(SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
       ret+="OVERFLOW\n";
       ret+=segmentAttributes(overflow);
@@ -3484,7 +3495,7 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
   }
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,dbaSegment(SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
       ctx.insert(ctx.end(),"OVERFLOW");
       describeAttributes(lst,ctx,overflow);
@@ -3570,7 +3581,7 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
 
   QString ret=createTableText(storage,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,dbaSegment(SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
       ret+="OVERFLOW\n";
       ret+=segmentAttributes(overflow);
@@ -3589,7 +3600,7 @@ void toExtract::describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
   describeTableText(lst,ctx,storage,schema,owner,name);
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,dbaSegment(SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
       ctx.insert(ctx.end(),"OVERFLOW");
       describeAttributes(lst,ctx,overflow);
@@ -3986,9 +3997,10 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
 	  arg(QString(toShift(hash)).lower());
       }
     }
+    ret+=")\n";
   }
 
-  ret+=")\n;\n\n";
+  ret+=";\n\n";
   ret+=createComments(schema,owner,name);
   return ret;
 }
@@ -4282,7 +4294,7 @@ static toSQL SQLObjectPrivs("toExtract:ObjectPrivs",
 			    "               ,'YES','WITH GRANT OPTION'\n"
 			    "               ,null\n"
 			    "              )                         AS grantable\n"
-			    "  FROM  dba_tab_privs\n"
+			    "  FROM  all_tab_privs\n"
 			    " WHERE  grantee = :nam<char[100]>\n"
 			    " ORDER  BY table_name,privilege",
 			    "Get object priveleges granted, must have same columns and binds");
@@ -4399,7 +4411,7 @@ static toSQL SQLRollbackSegment("toExtract:RollbackSegment",
 				"               ,           r.max_extents\n"
 				"              )                                  AS max_extents\n"
 				"  FROM  dba_rollback_segs    r\n"
-				"      , all_tablespaces  t\n"
+				"      , dba_tablespaces  t\n"
 				" WHERE\n"
 				"            r.segment_name    = :nam<char[100]>\n"
 				"        AND t.tablespace_name = r.tablespace_name",
@@ -5774,7 +5786,7 @@ static toSQL SQLSegmentInfo("toExtract:SegmentInfo",
 			    "     , s.initial_extent\n"
 			    "     , s.next_extent\n"
 			    "FROM\n"
-			    "       dba_segments s\n"
+			    "       %1 s\n"
 			    "     , all_tables   t\n"
 			    "WHERE\n"
 			    "           s.segment_name = :nam<char[100]>\n"
@@ -5800,7 +5812,7 @@ static toSQL SQLIndexSegmentInfo("toExtract:IndexSegmentInfo",
 				 "        , s.initial_extent\n"
 				 "        , s.next_extent\n"
 				 "   FROM\n"
-				 "          all_segments s\n"
+				 "          %1 s\n"
 				 "   WHERE\n"
 				 "              s.segment_name = :nam<char[100]>\n"
 				 "          AND s.segment_type = 'INDEX'\n"
@@ -5819,7 +5831,7 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
     partition=str.last();
 
   if (!partition.isEmpty()) {
-    toQList result=toQuery::readQueryNull(Connection,SQLPartitionSegmentType,
+    toQList result=toQuery::readQueryNull(Connection,dbaSegment(SQLPartitionSegmentType),
 					  index,partition);
 
     if (result.size()!=2)
@@ -5832,7 +5844,7 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
     throw QString("Index %1.%2 not found").arg(owner).arg(name);
   QString partitioned=toShift(result);
   if (partitioned=="NO") {
-    toQList segment=toQuery::readQueryNull(Connection,SQLIndexSegmentInfo,
+    toQList segment=toQuery::readQueryNull(Connection,dbaSegment(SQLIndexSegmentInfo),
 					   name,"INDEX",owner);
     QString blocks =toShift(segment);
     QString initial=toShift(segment);
@@ -5874,7 +5886,7 @@ static toSQL SQLIndexPartitionSegment("toExtract:IndexPartitionSegment",
 				      "     , s.next_extent\n"
 				      "     , p.partitioning_type\n"
 				      "FROM\n"
-				      "       dba_segments      s\n"
+				      "       %1      s\n"
 				      "     , all_part_indexes  p\n"
 				      "WHERE\n"
 				      "           s.segment_name   = :nam<char[100]>\n"
@@ -5889,7 +5901,7 @@ QString toExtract::resizeIndexPartition(const QString &schema,const QString &own
 					const QString &name,const QString &partition,
 					const QString &seqType)
 {
-  toQList result=toQuery::readQueryNull(Connection,SQLIndexPartitionSegment,
+  toQList result=toQuery::readQueryNull(Connection,dbaSegment(SQLIndexPartitionSegment),
 					name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);
@@ -5934,7 +5946,7 @@ static toSQL SQLTablePartIndexes("toExtract:TablePartIndexes",
 				 "       owner\n"
 				 "     , index_name\n"
 				 "FROM\n"
-				 "       dba_part_indexes\n"
+				 "       all_part_indexes\n"
 				 "WHERE\n"
 				 "           table_name = :nam<char[100]>\n"
 				 "       AND owner      = :own<char[100]>",
@@ -5946,7 +5958,7 @@ static toSQL SQLTablePartIndex("toExtract:TablePartIndex",
 			       "       owner\n"
 			       "     , index_name\n"
 			       "FROM\n"
-			       "       dba_part_indexes\n"
+			       "       all_part_indexes\n"
 			       "WHERE\n"
 			       "           table_name = :nam<char[100]>\n"
 			       "       AND owner      = :own<char[100]>\n"
@@ -5965,7 +5977,7 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     partition=str.last();
 
   if (!partition.isEmpty()) {
-    toQList result=toQuery::readQueryNull(Connection,SQLPartitionSegmentType,
+    toQList result=toQuery::readQueryNull(Connection,dbaSegment(SQLPartitionSegmentType),
 					  table,partition);
 
     if (result.size()!=2)
@@ -5989,7 +6001,8 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     throw QString("Table %1.%2 not found").arg(owner).arg(name);
   QString partitioned=toShift(result);
   if (partitioned=="NO") {
-    toQList segment=toQuery::readQueryNull(Connection,SQLSegmentInfo,name,"TABLE",owner);
+    toQList segment=toQuery::readQueryNull(Connection,dbaSegment(SQLSegmentInfo),
+					   name,"TABLE",owner);
     QString blocks =toShift(segment);
     QString initial=toShift(segment);
     QString next   =toShift(segment);
@@ -6036,8 +6049,8 @@ static toSQL SQLTablePartitionSegment("toExtract:TablePartitionSegment",
 				      "            , s.next_extent\n"
 				      "            , p.partitioning_type\n"
 				      "       FROM\n"
-				      "              dba_segments          s\n"
-				      "            , all_tab_%1s  t\n"
+				      "              %1          s\n"
+				      "            , all_tab_%2s  t\n"
 				      "            , all_part_tables       p\n"
 				      "       WHERE\n"
 				      "                  s.segment_name   = :nam<char[100]>\n"
@@ -6056,7 +6069,7 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
 					const QString &seqType)
 {
   toQList result=toQuery::readQueryNull(Connection,
-					toSQL::string(SQLTablePartitionSegment,Connection).arg(seqType),
+					dbaSegment(SQLTablePartitionSegment).arg(seqType),
 					name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);

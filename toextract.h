@@ -66,6 +66,7 @@ class toExtract {
   bool Partition;
   bool Prompt;
   bool Storage;
+  QString DbaSegments;
 
   // Flags
   bool IsASnapIndex;
@@ -278,6 +279,7 @@ class toExtract {
   void setSizes(void);
   QString reContext(std::list<QString> &ctx,int strip,const QString &str);
   void rethrow(const QString &what,const QString &object,const QString &exc);
+  QString dbaSegment(toSQL &);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.

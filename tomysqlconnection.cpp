@@ -331,6 +331,7 @@ public:
 	cur.Type="TABLE";
 	while(!tables.eof()) {
 	  cur.Name=tables.readValueNull();
+	  cur.Owner=connection().database();
 	  ret.insert(ret.end(),cur);
 	}
       } catch (...) {

@@ -12,6 +12,7 @@ Qt:
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
 	There are some redraw problems with QListItems that don't draw left justified text.
 	Looses titlebar on resulution change, seems to be a Qt bug.
+	When using antialiased text doesn't draw left axis legend correctly in charts.
 
 toResultContent:
 	Doesn't display multiline data correctly.
@@ -28,4 +29,3 @@ toBrowser:
 
 toHighlightedText:
 	Handle multiline strings correctly.
-

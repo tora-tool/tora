@@ -375,7 +375,7 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
 {
   BackgroundGroup->setColumnLayout(1,Horizontal);
 
-  setupChart(ArchiveWrite,"Archive write >"," blocks/s",SQLOverviewArchiveWrite);
+  setupChart(ArchiveWrite,"< Archive write"," blocks/s",SQLOverviewArchiveWrite);
   setupChart(BufferHit,"Hitrate","%",SQLOverviewBufferHit);
   BufferHit->setMaxValue(100);
   BufferHit->setFlow(false);

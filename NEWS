@@ -34,8 +34,10 @@
 2001-10-01: Set default value in param get in debugger.
 2001-10-01: Use toListView in sql editor.
 2001-10-01: Fixed some partition issues in toExtract.
+2001-10-01: Fix for mysql and column browser and table information.
+2001-10-02: Made toExtract much less dependent on dba views.
 
-1.1.1: 2001-09-24
+1.1.1: Released 2001-09-24
 
 2001-09-10: Fixed bug with no graphs being drawn.
 2001-09-10: Fixed some problems with Qt3 support.

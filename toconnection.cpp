@@ -1169,7 +1169,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
   for(std::list<objectName>::iterator i=ObjectNames.begin();i!=ObjectNames.end();i++) {
     if (owner.isEmpty()) {
       if (((*i).Name==un||(*i).Name==name)&&
-	  ((*i).Owner==user().upper()||(*i).Owner.isNull()))
+	  ((*i).Owner==user().upper()||(*i).Owner==database()))
 	return *i;
     } else if (((*i).Name==un||(*i).Name==name)&&
 	       ((*i).Owner==uo||(*i).Owner==owner))
