@@ -1984,11 +1984,29 @@ void toTuningWait::poll(void)
     if (Query&&Query->poll()) {
       while(Query->poll()&&!Query->eof()) {
 	QString cur=Query->readValueNull();
-	if (First)
-	  Labels.insert(Labels.end(),cur);
 	Now=Query->readValueNull();
-	Current.insert(Current.end(),Query->readValueNull().toDouble());
-	CurrentTimes.insert(CurrentTimes.end(),Query->readValueNull().toDouble());
+	if (First) {
+	  Labels.insert(Labels.end(),cur);
+	  Current.insert(Current.end(),Query->readValueNull().toDouble());
+	  CurrentTimes.insert(CurrentTimes.end(),Query->readValueNull().toDouble());
+	} else {
+	  double val=Query->readValueNull().toDouble();
+	  double tim=Query->readValueNull().toDouble();
+	  std::list<double>::iterator i=Current.begin();
+	  std::list<double>::iterator j=CurrentTimes.begin();
+	  std::list<QString>::iterator k=Labels.begin();
+	  while(i!=Current.end()&&j!=CurrentTimes.end()&&k!=Labels.end()) {
+	    if (*k==cur) {
+	      *i=val;
+	      *j=tim;
+	      break;
+	    }
+	    i++;
+	    j++;
+	    k++;
+	  }
+	}
+	Query->readValueNull().toDouble();
       }
       if (Query->eof()) {
 	QListViewItem *item=NULL;
@@ -2047,10 +2065,38 @@ void toTuningWait::poll(void)
 }
 
 static toSQL SQLWaitEvents("toTuning:WaitEvents",
-			   "select b.name,sysdate,a.time_waited*10,a.total_waits\n"
-			   "  from v$system_event a,v$event_name b\n"
-			   " where b.name=a.event(+)\n"
-			   " order by b.name",
+			   "SELECT b.name,\n"
+			   "       SYSDATE,\n"
+			   "       a.time_waited,\n"
+			   "       a.total_waits,\n"
+			   "       a.time_waited\n"
+			   "  FROM v$system_event a,\n"
+			   "       v$event_name b\n"
+			   " WHERE b.name=a.event(+)\n"
+			   "   AND b.name NOT LIKE'%timer%'\n"
+			   "   AND b.name NOT IN('rdbms ipc message',\n"
+			   "                     'SQL*Net message from client')\n"
+			   "   AND a.time_waited IS NOT NULL\n"
+			   " UNION ALL SELECT b.name,\n"
+			   "       SYSDATE,\n"
+			   "       a.time_waited,\n"
+			   "       a.total_waits,\n"
+			   "       1\n"
+			   "  FROM v$system_event a,\n"
+			   "       v$event_name b\n"
+			   " WHERE b.name=a.event(+)\n"
+			   "   AND (b.name LIKE'%timer%'OR b.name IN('rdbms ipc message',\n"
+			   "                                         'SQL*Net message from client'))\n"
+			   "   AND a.time_waited IS NOT NULL\n"
+			   " UNION ALL SELECT s.name,\n"
+			   "       SYSDATE,\n"
+			   "       s.VALUE,\n"
+			   "       0,\n"
+			   "       s.VALUE\n"
+			   "  FROM v$sysstat s\n"
+			   " WHERE s.name='CPU used by this session'\n"
+			   " ORDER BY 5 DESC,\n"
+			   "          3 DESC",
 			   "Get all available system wait events");
 
 void toTuningWait::refresh(void)
@@ -2059,8 +2105,6 @@ void toTuningWait::refresh(void)
     return;
   toConnection &conn=toCurrentTool(this)->connection();
   toQList par;
-  Current.clear();
-  CurrentTimes.clear();
   Query=new toNoBlockQuery(conn,toSQL::string(SQLWaitEvents,conn),par);
   Poll.start(100);
 }

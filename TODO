@@ -54,6 +54,7 @@ Extended functionality:
 * Store worksheet statistic on save session.
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
+* Scrolling in charts.
 
 New tools:
 
