@@ -21,3 +21,6 @@ toNoBlockQuery:
 
 toWorksheet:
 	Doesn't seem to detect end of query all the time.
+
+toTemplate:
+	TOra coredumps on close if template is opened more than once.

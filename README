@@ -36,3 +36,11 @@ TOra is developed by Henrik Johnson (tora@henrik.org) of GlobeCom AB
 (http://www.globecom.se) and has the homepage http://www.globecom.net/tora.
 
 Oracle is copyright of Oracle Corporation.
+
+Help wanted! No programming knowledge required!
+===============================================
+Please write templates and send them to me so I can include them in the
+distribution. To write templates go to "Edit|Options|SQL Templates|Edit".
+Check the AVG function for an example of what I had in mind would be
+usefull. Remember you can't just copy the Oracle documentation (Although
+you can base it on that) since that is copyrighted by Oracle.
