@@ -49,6 +49,7 @@
 #include "tosession.h"
 #include "tosgatrace.h"
 #include "totool.h"
+#include "totabwidget.h"
 #include "tovisualize.h"
 #include "toworksheet.h"
 #include "toworksheetsetupui.h"
@@ -382,7 +383,7 @@ void toWorksheet::setup(bool autoLoad)
     QSplitter *splitter=new QSplitter(Vertical,this);
 
     Editor=new toWorksheetText(this,splitter);
-    ResultTab=new QTabWidget(splitter);
+    ResultTab=new toTabWidget(splitter);
     QVBox *box=new QVBox(ResultTab);
     ResultTab->addTab(box,tr("&Result"));
 

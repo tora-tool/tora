@@ -36,6 +36,7 @@
 
 #include "toconf.h"
 #include "toresult.h"
+#include "totabwidget.h"
 #include "totool.h"
 
 #include <qtabwidget.h>
@@ -55,8 +56,6 @@ toResult::toResult()
   TabWidget=NULL;
 }
 
-#define HIDETABS
-
 void toResult::changeHandle(void)
 {
   QWidget *widget=dynamic_cast<QWidget *>(this);
@@ -64,39 +63,31 @@ void toResult::changeHandle(void)
     widget->setEnabled(handled());
     if (handled()) {
       if (TabWidget&&Tabs&&handled()) {
-#ifdef HIDETABS
-	Tabs->insertTab(TabWidget,TabLabel,TabIndex);
+	toTabWidget *tab=dynamic_cast<toTabWidget *>(Tabs);
+	if (tab)
+	  tab->showTab(TabWidget);
+	else
+	  Tabs->setTabEnabled(TabWidget,true);
 	TabWidget=NULL;
-#else
-	Tabs->setTabEnabled(TabWidget,true);
-	TabWidget=NULL;
-#endif
       }
     } else {
       QWidget *par=widget->parentWidget();
       QWidget *widgetInStack=widget;
-      while(par&&(par->isA("QVBox")||par->isA("QWidgetStack")||(Tabs&&Tabs!=par))) {
+      while(par&&(par->inherits("QVBox")||par->isA("QWidgetStack")||(Tabs&&Tabs!=par))) {
 	if (!par->isA("QWidgetStack")) {
 	  widgetInStack=par;
 	}
 	par=par->parentWidget();
       }
-      if (par&&par->isA("QTabWidget")) {
+      if (par&&par->inherits("QTabWidget")) {
 	if (!Tabs)
 	  Tabs=(QTabWidget *)par;
-#ifdef HIDETABS
-	if (TabIndex<0) {
-	  TabIndex=Tabs->indexOf(widgetInStack);
-	  TabLabel=Tabs->label(TabIndex);
-	}
-	if (TabIndex>=0) {
-	  Tabs->removePage(widgetInStack);
-	  TabWidget=widgetInStack;
-	}
-#else
-	Tabs->setTabEnabled(widgetInStack,false);
+	toTabWidget *tab=dynamic_cast<toTabWidget *>(Tabs);
+	if (tab)
+	  tab->hideTab(widgetInStack);
+	else
+	  Tabs->setTabEnabled(widgetInStack,false);
 	TabWidget=widgetInStack;
-#endif
       }
     }
   }

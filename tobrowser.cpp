@@ -56,6 +56,7 @@
 #include "toresultstorage.h"
 #include "toresultview.h"
 #include "tosql.h"
+#include "totabwidget.h"
 #include "totool.h"
 
 #ifdef TO_KDE
@@ -675,7 +676,7 @@ static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
 			       "7.1",
                                "PostgreSQL");
 static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
-                            "SELECT tablename,columnno,columnname,len \"Length\",DataType,Sort \n"
+                            "SELECT tablename,columnname,len \"Length\",DataType,Sort \n"
                             " FROM indexcolumns \n"
                             " WHERE  owner = upper(:f1<char[101]>) and indexname = upper(:f2<char[101]>)\n"
                             " ORDER BY indexname,columnno",
@@ -909,7 +910,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
   
-  TopTab=new QTabWidget(this);
+  TopTab=new toTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
   TopTab->addTab(splitter,tr("T&ables"));
   CurrentTop=splitter;
@@ -966,7 +967,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		     toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
-  QTabWidget *curr=new QTabWidget(box);
+  QTabWidget *curr=new toTabWidget(box);
   toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);
   curr->addTab(resultCols,tr("&Columns"));
   SecondTab=resultCols;
@@ -1036,7 +1037,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultCols=new toResultCols(curr,TAB_VIEW_COLUMNS);
   curr->addTab(resultCols,tr("&Columns"));
@@ -1082,7 +1083,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_INDEX_COLS);
@@ -1128,7 +1129,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   toResultItem *resultSequences=new toResultItem(2,true,curr,TAB_SEQUENCES_INFO);
@@ -1162,7 +1163,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   toResultItem *resultSynonym=new toResultItem(2,true,curr,TAB_SYNONYM_INFO);
@@ -1197,7 +1198,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultField=new toResultField(curr,TAB_PLSQL_SOURCE);
@@ -1239,7 +1240,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  curr=new QTabWidget(splitter);
+  curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   toResultItem *resultTrigger=new toResultItem(2,true,curr,TAB_TRIGGER_INFO);
@@ -1550,13 +1551,15 @@ void toBrowser::importData(std::map<QCString,QString> &data,const QCString &pref
 
 void toBrowser::fixIndexCols(void)
 {
+  if (!toIsOracle(connection()))
+    return;
   toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
   if (tmp)
     for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
       if (!toUnnull(item->text(4)).isNull()) {
 	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
 	if (resItem)
-	  resItem->setText(1,item->text(4));
+	  resItem->setText(1,resItem->allText(4));
       }
     }
 }

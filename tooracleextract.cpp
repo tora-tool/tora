@@ -5551,7 +5551,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
-  ctx.insert(ctx.end(),QString("%1%2 INDEX").arg(unique).arg(bitmap));
+  ctx.insert(ctx.end(),QString("%1%2 INDEX").arg(unique).arg(bitmap).mid(1));
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx,"ON",schema2+QUOTE(table));
 
