@@ -79,6 +79,8 @@ my @source=(
 	    "totoolsettingui",
 	    "utils" );
 
+my @translations=("tora_se");
+
 my %plugins=(
 	     "toalert"             => { "Files" => [ "toalert" ],
 					"Oracle" => 1 },
@@ -1425,12 +1427,18 @@ __EOT__
 	    print MAKEFILE "include \$(ORACLE_HOME)/rdbms/lib/env_rdbms.mk\n";
 	}
 
+	print MAKEFILE "\nTRANSLATIONS=\\\n";
+	for my $t (@translations) {
+	    print MAKEFILE "\t$t.ts\\\n";
+	}
+
 	print MAKEFILE <<__EOT__;
 
 CPPFLAGS=\$(CPPFLAGS_GLOB) \$(DEFINES) \$(INCLUDES)
 CFLAGS=\$(CFLAGS_GLOB) \$(INCLUDES) \$(DEFINES)
 
 OBJECTS=\$(filter \%.o,\$(SOURCES:\%.cpp=objs/\%.o))
+TRANSOBJ=\$(filter \%.qm,\$(TRANSLATIONS:\%.ts=\%.qm))
 
 DEPENDS=\$(filter \%.d,\$(SOURCES:\%.cpp=.depends/\%.d)) .depends/main.d
 
@@ -1479,8 +1487,9 @@ install-common:
 	mkdir -p \$(INSTALLLIB)/tora/help
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp  *.qm \$(INSTALLLIB)/tora >/dev/null 2>&1
 
-install: \$(TARGET) install-common install-kde
+install: lrelease \$(TARGET) install-common install-kde
 	\@echo Install \$(TARGET) to \$(INSTALLBIN)
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
@@ -1489,7 +1498,7 @@ install: \$(TARGET) install-common install-kde
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 
-install-debug: tora-mono install-common
+install-debug: lrelease tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
 	cp tora-mono \$(INSTALLBIN)/tora
 
@@ -1604,15 +1613,20 @@ tora-static: \$(OBJECTS) main.cpp
 
 # The binary for the pluginbased tora
 
-lupdate:
+tora.pro: Makefile
 	echo "# Not indended to be used for anything except lupdate" > tora.pro
 	echo 'SOURCES=	license/tolicense.cpp\\' >> tora.pro
 	echo '	license/tolicenseui.cpp\\' >> tora.pro
 	echo '	main.cpp\\' >> tora.pro
 	echo '	toextratranslations.cpp\\' >> tora.pro
 	echo "	\$(SOURCES)" >> tora.pro
-	echo 'TRANSLATIONS=tora_se.ts' >> tora.pro
+	echo 'TRANSLATIONS=\$(TRANSLATIONS)' >> tora.pro
+
+lupdate: tora.pro
 	lupdate tora.pro
+
+lrelease: tora.pro
+	lrelease tora.pro
 
 tora:\\
 __EOT__

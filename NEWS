@@ -1,5 +1,6 @@
 1.3.7:
 
+2002-07-18: Better support for translations in Makefile.
 2002-07-17: Made error reporting to stdout go to stderr.
 2002-07-17: Some fixes to classes which used tr but didn't have a Q_OBJECT.
 2002-07-17: Added lupdate support for Makefile.

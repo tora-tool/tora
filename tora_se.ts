@@ -131,133 +131,133 @@
     <name>toAnalyze</name>
     <message>
         <source>Analyze</source>
-        <translation type="unfinished"></translation>
+        <translation>Analysera</translation>
     </message>
     <message>
         <source>Statistics Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Statestik Hanterare</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Not analyzed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ej analyserad</translation>
     </message>
     <message>
         <source>Analyzed</source>
-        <translation type="unfinished"></translation>
+        <translation>Analyserad</translation>
     </message>
     <message>
         <source>Tables</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabeller</translation>
     </message>
     <message>
         <source>Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Index</translation>
     </message>
     <message>
         <source>Compute statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Beräkna statestik</translation>
     </message>
     <message>
         <source>Estimate statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Uppskatta statestik</translation>
     </message>
     <message>
         <source>Delete statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Radera statestik</translation>
     </message>
     <message>
         <source>Validate references</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontrollera referenser</translation>
     </message>
     <message>
         <source> for </source>
-        <translation type="unfinished"></translation>
+        <translation>för</translation>
     </message>
     <message>
         <source>Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabel</translation>
     </message>
     <message>
         <source>Indexed columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Indexerad kolumner</translation>
     </message>
     <message>
         <source>Local indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Lokala index</translation>
     </message>
     <message>
         <source>Sample </source>
-        <translation type="unfinished"></translation>
+        <translation>Urval</translation>
     </message>
     <message>
         <source> %</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <source>Parallel </source>
-        <translation type="unfinished"></translation>
+        <translation>Parallell</translation>
     </message>
     <message>
         <source>Start analyzing</source>
-        <translation type="unfinished"></translation>
+        <translation>Börja analysera</translation>
     </message>
     <message>
         <source>Stop current run</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppa aktiv körning</translation>
     </message>
     <message>
         <source>Explain plans</source>
-        <translation type="unfinished"></translation>
+        <translation>Körplaner</translation>
     </message>
     <message>
         <source>Worksheet statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Arbetsblad statestik</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uppdatera</translation>
     </message>
     <message>
         <source>&amp;Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Statestik</translation>
     </message>
     <message>
         <source>Running %1 Pending %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiva %1 Väntande %2</translation>
     </message>
 </context>
 <context>
     <name>toAttachDock</name>
     <message>
         <source>Unknown dock position</source>
-        <translation type="unfinished"></translation>
+        <translation>Okänd dockningsposition</translation>
     </message>
     <message>
         <source>Main widget not KDockMainWindow</source>
-        <translation type="unfinished"></translation>
+        <translation>Huvudfönster inte av KDockMainWindow klass</translation>
     </message>
 </context>
 <context>
     <name>toBackground</name>
     <message>
         <source>%1 queries running in background.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 frågor aktiva i bakgrunden.</translation>
     </message>
     <message>
         <source>One query running in background.</source>
-        <translation type="unfinished"></translation>
+        <translation>En fråga aktiv i bakgrunden.</translation>
     </message>
     <message>
         <source>No background queries.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inga frågor i bakgrunden.</translation>
     </message>
 </context>
 <context>
@@ -5467,10 +5467,6 @@ Should TOra try to create it?</source>
         <source>Invalidations</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source> </source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>toResultStats</name>
@@ -9073,7 +9069,7 @@ submenues are separated by a &apos;:&apos; character.</source>
         <source>The editor has been changed. Do you want to save them,
 discard changes or open file in new worksheet?</source>
         <translation>Editorn har ändrats. Vill du spara, kasta bort änringarna eller
-öppna fil i nytt worksheet?</translation>
+öppna fil i nytt arbetsblad?</translation>
     </message>
     <message>
         <source>&amp;Save</source>

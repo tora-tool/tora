@@ -355,7 +355,7 @@ void toAnalyze::poll(void)
       refresh();
       stop();
     } else
-      Current->setText(tr("Running %1 Pending %1").arg(running).arg(Pending.size()));
+      Current->setText(tr("Running %1 Pending %2").arg(running).arg(Pending.size()));
   } TOCATCH
 }
 
