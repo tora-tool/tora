@@ -1,0 +1,19 @@
+Release Procedures:
+===================
+
+Source tarball:
+---------------
+Check out the tora module from CVS
+find tora -name CVS -exec rm -rf {} \;
+mv tora tora-$VERSION
+gtar -czvf tora-$VERSION.tar.gz tora-$VERSION
+Upload to sourceforge
+Add new release to the 'tora' package
+
+RPM binaries:
+-------------
+
+Static binary tarball:
+----------------------
+
+
