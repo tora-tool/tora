@@ -192,7 +192,7 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
 			 "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
 			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
-			 "   AND a.paddr = e.addr\n"
+			 "   AND a.paddr = e.addr(+)\n"
 			 "%1 ORDER BY a.Sid",
 			 "List sessions, must have same number of culumns and the first and last 2 must be "
 			 "the same");
