@@ -39,6 +39,11 @@
 2001-08-13: Added zooming to barcharts.
 2001-08-13: Made it possible to get snapshot of chart by doubleclicking on it.
 2001-08-13: Fixed problem with automatic scaling in tobarchart.
+2001-08-13: Start timer automatically in tuner.
+2001-08-13: Improved SGA trace.
+2001-08-13: Mechanism to have horizontal headers in toResultItem.
+2001-08-13: Improved SGA information.
+2001-08-13: Removed parallel query sessions from client count in tuning.
 
 0.14: Released 2001-08-02
 

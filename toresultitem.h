@@ -44,6 +44,8 @@
 class QGrid;
 
 /** Display the first row of a query with each column with a separate label.
+ * If the label of the item is a single '-' character the data is treated as
+ * a horizontal label (Not bold or sunken), and the label is not printed.
  */
 
 class toResultItem : public QScrollView, public toResult {

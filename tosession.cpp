@@ -227,7 +227,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 	  this,SLOT(changeTab(QWidget *)));
 
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  toRefreshParse(timer());
   CurrentTab=StatisticSplitter;
   CurrentItem=NULL;
   refresh();

@@ -475,9 +475,9 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &
 			   QComboBox *item=NULL);
 /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
  * @param timer Timer to set timeout in.
- * @param str String from currentText of combobox.
+ * @param str String from currentText of combobox. If empty, set to default.
  */
-void toRefreshParse(toTimer *timer,const QString &str);
+void toRefreshParse(toTimer *timer,const QString &str=QString::null);
 /** Read a value from a query. (Warning, this function will change when OTL 3.2.20 is
  * integrated in TOra)
  * @param dsc Description of query to read values from.

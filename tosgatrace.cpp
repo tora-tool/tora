@@ -178,23 +178,35 @@ void toSGATrace::changeSchema(const QString &str)
     refresh();
 }
 
+toSQL SQLSGATrace("toSGATrace:SGATrace",
+		  "SELECT a.SQL_Text \"SQL Text\",\n"
+		  "       a.First_Load_Time \"First Load Time\",\n"
+		  "       b.username \"Parsing Schema\",\n"
+		  "       a.Parse_Calls \"Parse Calls\",\n"
+		  "       a.Executions \"Executions\",\n"
+		  "       a.Sorts \"Sorts\",\n"
+		  "       a.Disk_Reads \"Disk Reads\",\n"
+		  "       a.Buffer_Gets \"Buffer Gets\",\n"
+		  "       a.Rows_Processed \"Rows\",\n"
+		  "       DECODE(a.Executions,0,'N/A',ROUND(a.Sorts/a.Executions,3)) \"Sorts/Exec\",\n"
+		  "       DECODE(a.Executions,0,'N/A',ROUND(a.Disk_Reads/a.Executions,3)) \"Disk/Exec\",\n"
+		  "       DECODE(a.Executions,0,'N/A',ROUND(a.Buffer_Gets/a.Executions,3)) \"Buffers/Exec\",\n"
+		  "       DECODE(a.Executions,0,'N/A',ROUND(a.Rows_Processed/a.Executions,3)) \"Rows/Exec\",\n"
+		  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Sorts/a.Rows_Processed,3)) \"Sorts/Rows\",\n"
+		  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Disk_Reads/a.Rows_Processed,3)) \"Disk/Rows\",\n"
+		  "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
+		  "       a.Address||':'||a.Hash_Value \" \"\n"
+		  "  from v$sqlarea a,\n"
+		  "       all_users b\n"
+		  " where a.parsing_user_id = b.user_id",
+		  "Display the contents of the SGA stack. Must have one hidden column "
+		  "with SGA address at the end and a table name 'b' with a column username.");
+
 void toSGATrace::refresh(void)
 {
   updateSchemas();
 
-  QString select=
-    "SELECT a.SQL_Text \"SQL Text\","
-    "       a.First_Load_Time \"First Load Time\","
-    "       b.username \"Parsing Schema\","
-    "       a.Parse_Calls \"Parse Calls\","
-    "       a.Executions \"Executions\","
-    "       a.Sorts \"Sorts\","
-    "       a.Disk_Reads \"Disk Reads\","
-    "       a.Buffer_Gets \"Buffer Gets\","
-    "       a.Address||':'||a.Hash_Value \" \""
-    "  from v$sqlarea a,"
-    "       all_users b"
-    " where a.parsing_user_id = b.user_id";
+  QString select=toSQL::string(SQLSGATrace,connection());
   if (!CurrentSchema.isEmpty())
     select.append("   and b.username = :f1<char[101]>");
   if (!CurrentSchema.isEmpty()) {
@@ -228,5 +240,5 @@ void toSGATrace::updateSchemas(void)
 void toSGATrace::changeItem(QListViewItem *item)
 {
   if (item)
-    Statement->changeAddress(item->text(8));
+    Statement->changeAddress(item->text(Trace->columns()));
 }

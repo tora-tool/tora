@@ -25,3 +25,7 @@ toResultCols:
 toResultContent:
 	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
+
+toResultStat:
+	Statistics for parallel servers will only show up as long as the parallel query is actually
+	running.

@@ -49,13 +49,19 @@ TO_NAMESPACE;
 #include "toconf.h"
 
 static toSQL SQLResource(TOSQL_RESULTRESOURCE,
-			 "SELECT Loads,           Sorts,               First_Load_Time,\n"
-			 "       Parse_Calls,     Disk_Reads,          Parsing_User_Id,\n"
-			 "       Executions,      Buffer_Gets,         Parsing_Schema_Id,\n"
-			 "       Users_Executing, Users_Opening,       Open_Versions,\n"
-			 "       Sharable_Mem,    Rows_Processed,      Kept_Versions,\n"
-			 "       Persistent_Mem,  Optimizer_Mode,      Loaded_Versions,\n"
-			 "       Runtime_Mem,     Serializable_Aborts, Invalidations\n"
+			 "SELECT 'Total' \"-\",         'per Execution' \"-\",                                                   'per Row processed' \"-\",\n"
+			 "       Sorts,                 DECODE(Executions,0,'N/A',ROUND(Sorts/Executions,3)) \" \",         DECODE(Rows_Processed,0,'N/A',ROUND(Sorts/Rows_Processed,3)) \" \",\n"
+                         "       Parse_Calls \"Parse\", DECODE(Executions,0,'N/A',ROUND(Parse_Calls/Executions,3)) \" \",   DECODE(Rows_Processed,0,'N/A',ROUND(Parse_Calls/Rows_Processed,3)) \" \",\n"
+			 "       Disk_Reads,            DECODE(Executions,0,'N/A',ROUND(Disk_Reads/Executions,3)) \" \",    DECODE(Rows_Processed,0,'N/A',ROUND(Disk_Reads/Rows_Processed,3)) \" \",\n"
+			 "       Buffer_Gets,           DECODE(Executions,0,'N/A',ROUND(Buffer_Gets/Executions,3)) \" \",   DECODE(Rows_Processed,0,'N/A',ROUND(Buffer_Gets/Rows_Processed,3)) \" \",\n"
+			 "       Rows_Processed,        DECODE(Executions,0,'N/A',ROUND(Rows_Processed/Executions,3)) \" \",' ' \"-\",\n"
+			 "       Executions,            ' ' \"-\",                                                          ' ' \"-\",\n"
+			 "       ' ' \"-\",             ' ' \"-\",                                                          ' ' \"-\",\n"
+                         "       Loads,                 First_Load_Time,                                                    Parsing_User_Id,\n"
+			 "       Parsing_Schema_Id,     Users_Executing,                                                    Users_Opening,\n"
+			 "       Open_Versions,         Sharable_Mem,                                                       Kept_Versions,\n"
+			 "       Persistent_Mem,        Optimizer_Mode,                                                     Loaded_Versions,\n"
+			 "       Runtime_Mem,           Serializable_Aborts,                                                Invalidations\n"
 			 " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>",
 			 "Display information about an SQL statement");
 
@@ -106,16 +112,19 @@ void toResultItem::addItem(const QString &title,const QString &value)
     for (int j=WidgetPos;j<NumWidgets;j++)
       Widgets[j]=NULL;
   }
+  QString t;
+  if (title!="-")
+    t=title;
   QLabel *widget;
   if (!Widgets[WidgetPos]) {
-    widget=new QLabel(title,Result);
+    widget=new QLabel(t,Result);
     widget->setAlignment(AlignRight|AlignTop|ExpandTabs|WordBreak);
     if (ShowTitle)
       widget->show();
     Widgets[WidgetPos]=widget;
   } else {
     widget=((QLabel *)Widgets[WidgetPos]);
-    widget->setText(title);
+    widget->setText(t);
     if (ShowTitle)
       widget->show();
     else
@@ -124,8 +133,10 @@ void toResultItem::addItem(const QString &title,const QString &value)
   WidgetPos++;
   if (!Widgets[WidgetPos]) {
     widget=new QLabel(value,Result);
-    widget->setFont(DataFont);
-    widget->setFrameStyle(StyledPanel|Sunken);
+    if (title!="-") {
+      widget->setFont(DataFont);
+      widget->setFrameStyle(StyledPanel|Sunken);
+    }
     if (AlignRight)
       widget->setAlignment(AlignRight|AlignTop|ExpandTabs|WordBreak);
     else
@@ -133,6 +144,13 @@ void toResultItem::addItem(const QString &title,const QString &value)
     Widgets[WidgetPos]=widget;
   } else {
     widget=((QLabel *)Widgets[WidgetPos]);
+    if (title!="-") {
+      widget->setFrameStyle(StyledPanel|Sunken);
+      widget->setFont(DataFont);
+    } else {
+      widget->setFrameStyle(NoFrame);
+      widget->setFont(qApp->font());
+    }
     widget->setText(value);
   }
   widget->show();

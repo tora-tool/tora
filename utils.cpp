@@ -267,21 +267,25 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
 
 void toRefreshParse(toTimer *timer,const QString &str)
 {
-  if (str=="None")
+  QString t=str;
+  if (t.isEmpty())
+    t=toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH);
+
+  if (t=="None")
     timer->stop();
-  else if (str=="2 seconds")
+  else if (t=="2 seconds")
     timer->start(2*1000);
-  else if (str=="5 seconds")
+  else if (t=="5 seconds")
     timer->start(5*1000);
-  else if (str=="10 seconds")
+  else if (t=="10 seconds")
     timer->start(10*1000);
-  else if (str=="30 seconds")
+  else if (t=="30 seconds")
     timer->start(30*1000);
-  else if (str=="1 min")
+  else if (t=="1 min")
     timer->start(60*1000);
-  else if (str=="5 min")
+  else if (t=="5 min")
     timer->start(300*1000);
-  else if (str=="10 min")
+  else if (t=="10 min")
     timer->start(600*1000);
   else
     throw QString("Unknown timer value");

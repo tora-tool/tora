@@ -189,7 +189,7 @@ static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
 			      "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
 			      "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
 			      "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
-			      "  from v$session",
+			      "  from v$session where sid not in (select sid from v$px_process)",
 			      "Chart displaying connected clients");
 
 static toSQL SQLChartsSGA("toTuning:Charts:7PSSGA",
@@ -288,7 +288,7 @@ static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "       sum(decode(status,'INACTIVE',1,0)),\n"
 			       "       sum(decode(status,'ACTIVE',1,0))\n"
 			       "  from v$session\n"
-			       " where type != 'BACKGROUND'",
+			       " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
 			       "Information about active/inactive clients");
 
 static toSQL SQLOverviewSGAUsed("toTuning:Overview:SGAUsed",
@@ -405,7 +405,7 @@ static toSQL SQLOverviewBackground("toTuning:Overview:Background",
 				   "Background processes");
 
 static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
-				  "select count(1) from v$session where type = 'USER' and server = 'DEDICATED'",
+				  "select count(1) from v$session where type = 'USER' and server = 'DEDICATED' and sid not in (select sid from v$px_process)",
 				  "Dedicated server process");
 
 static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
@@ -430,7 +430,7 @@ static toSQL SQLOverviewClientTotal("toTuning:Overview:ClientTotal",
 				    "select count(1),\n"
 				    "       sum(decode(status,'ACTIVE',1,0))\n"
 				    "  from v$session\n"
-				    " where type != 'BACKGROUND'",
+				    " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
 				    "Information about total and active clients");
 
 static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
@@ -614,6 +614,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   toolbar->addSeparator();
   new QLabel("Refresh",toolbar);
   connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  toRefreshParse(timer());
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
