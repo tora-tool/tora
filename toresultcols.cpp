@@ -262,6 +262,10 @@ void toResultCols::resultCols::query(const toConnection::objectName &name)
     clear();
     toConnection &conn=toCurrentConnection(this);
 
+    setSQLName(QString("Description of %1.%2").
+	       arg(conn.quote(name.Name)).
+	       arg(conn.quote(name.Owner)));
+
     toQDescList desc=conn.columns(name);
 
     int col=1;

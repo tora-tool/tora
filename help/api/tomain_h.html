@@ -813,6 +813,13 @@ public:
   ~toBusy();
 };
 /**
+ * Set or change title of a tool window.
+ * @param tool Widget of tool.
+ * @param caption Caption to set to the tool.
+ */
+void toToolCaption(toToolWidget *tool,const QString &caption);
+
+/**
  * Get maximum number of a and b.
  */
 template <class T>

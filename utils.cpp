@@ -987,6 +987,19 @@ QListViewItem *toFindItem(QListView *lst,const QString &str)
   return FindItem(lst,lst->firstChild(),str);
 }
 
+void toToolCaption(toToolWidget *widget,const QString &caption)
+{
+  QString title;
+  if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
+    title=widget->connection().description();
+    title+=" ";
+  }
+  title+=caption;
+
+  widget->setCaption(title);
+  toMainWidget()->windowsMenu();
+}
+
 #ifndef TO_LICENSE
 
 QString toCheckLicense(bool)

@@ -62,6 +62,7 @@
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 #include <qheader.h>
+#include <qfileinfo.h>
 
 #include "totool.h"
 #include "toresultplan.h"
@@ -269,6 +270,12 @@ public:
     } else {
       toHighlightedText::keyPressEvent(e);
     }
+  }
+  virtual void editOpen(void)
+  {
+    toHighlightedText::editOpen();
+    QFileInfo file(filename());
+    toToolCaption(Worksheet,WorksheetTool.name()+" "+file.fileName());
   }
 };
 

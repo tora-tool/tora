@@ -173,3 +173,30 @@ toBarChart::toBarChart (toBarChart *chart,QWidget *parent,const char *name,WFlag
   : toLineChart(chart,parent,name,f)
 {
 }
+
+void toBarChart::openCopy(void)
+{
+  QWidget *newWin=new toBarChart(this,toMainWidget()->workspace());
+  newWin->show();
+  toMainWidget()->windowsMenu();
+
+#if 1
+  // This is a really ugly workaround for a Qt layout bug
+  QWidget *tmp=NULL;
+  QWidget *tmp2=NULL;
+  for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+    QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+    if (newWin!=widget)
+      tmp2=widget;
+    else
+      tmp=newWin;
+    if (tmp2&&tmp)
+      break;
+  }
+  if(tmp2&&tmp) {
+    tmp2->setFocus();
+    tmp->setFocus();
+  }
+#endif
+}
+

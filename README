@@ -53,8 +53,7 @@ features that are available so far is (As of version 1.2):
 * Extract schema objects to SQL script
 
 * Easily extendable
-* Possible to add support for new or older Oracle versions without
-        programming knowledge
+* Possible to add support for new or older Oracle versions without programming.
 * SQL template help
 * Full UNICODE support
 * Printing of any list, text or chart

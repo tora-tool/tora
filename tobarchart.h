@@ -63,6 +63,11 @@ public:
    * @param f Widget flags.
    */
   toBarChart(toBarChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+public slots:
+  /** Open chart in new window.
+   */
+  virtual void openCopy(void);
 };
 
 #endif

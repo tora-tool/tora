@@ -159,15 +159,15 @@ void toTool::createWindow(void)
       const QPixmap *icon=toolbarImage();
       if (icon)
 	newWin->setIcon(*icon);
-      QString title;
-      if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
-	title=main->currentConnection().description();
-	title.append(" ");
+      toToolWidget *tool;
+      try {
+	tool=dynamic_cast<toToolWidget *>(newWin);
+      } catch(...) {
+	tool=NULL;
       }
-      title.append(name());
-      newWin->setCaption(title);
+      if (tool)
+	toToolCaption(tool,name());
       newWin->show();
-      main->windowsMenu(); // Update accellerators
 
       // Maximize window if only window
       if (toMainWidget()->workspace()->windowList().count()==1&&

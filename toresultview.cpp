@@ -720,8 +720,10 @@ void toListView::editSave(bool ask)
     }
 
     QString output;
-    if (type==3)
-      output="<TABLE><TR>";
+    if (type==3) {
+      output=QString("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0><TR BGCOLOR=#7f7f7f>").
+	arg(sqlName());
+    }
 
     QString indent;
 
@@ -737,9 +739,9 @@ void toListView::editSave(bool ask)
 	output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
 	break;
       case 3:
-	output+="<TD BGCOLOR=#7f7f7f>";
+	output+="<TH ALIGN=LEFT BGCOLOR=#cfcfcf>";
 	output+=header()->label(j);
-	output+="</TD>";
+	output+="</TH>";
 	break;
       }
     if (output.length()>0)
@@ -758,11 +760,16 @@ void toListView::editSave(bool ask)
     }
 
     QListViewItem *next=NULL;
+    QString bgcolor="notnull";
     for (QListViewItem *item=firstChild();item;item=next) {
 
+      if (bgcolor.isEmpty())
+	bgcolor=" BGCOLOR=#cfcfff";
+      else
+	bgcolor="";
       QString line;
       if (type==3)
-	line="<TR>";
+	line=QString("<TR%1>").arg(bgcolor);
 
       for (int i=0;i<columns();i++)
 	switch(type) {
@@ -779,7 +786,7 @@ void toListView::editSave(bool ask)
 	  line+=QString("\"%1\";").arg(QuoteString(item->text(i)));
 	  break;
 	case 3:
-	  line+="<TD>";
+	  line+=QString("<TD%1>").arg(bgcolor);
 	  line+=indent;
 	  line+=item->text(i);
 	  line+="</TD>";
@@ -814,7 +821,7 @@ void toListView::editSave(bool ask)
       }
     }
     if (type==3)
-      output+="</TABLE>";
+      output+="</TABLE></BODY></HTML>";
     toWriteFile(filename,output);
 
   } catch(...) {

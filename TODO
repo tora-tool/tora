@@ -41,8 +41,6 @@ Extended functionality:
 * Tabbed source windows in debugger.
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
-* Export lists as HTML tables.
-* Show filename in editors somewhere.
 * Cache results in worksheet.
 * Option to specify SQL output font.
 
