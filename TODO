@@ -77,6 +77,7 @@ Extended functionality:
 * Don't display statements not in the SGA in the SGA trace.
 * Include public objects in script tool.
 * Option wether tool button open new window or an already open tool.
+* Include status of code objects in browsertool.
 
 New tools:
 

@@ -195,7 +195,7 @@ public:
   virtual bool check(const QListViewItem *item)
   {
     QString str=item->text(0);
-    QString tablespace=item->text(2);
+    QString tablespace=item->text(3);
     if (!tablespace.isEmpty()) {
       switch(TablespaceType) {
       case 0:
@@ -363,14 +363,14 @@ public:
 #define TAB_TRIGGER_EXTRACT	"TriggerExtract"
 
 static toSQL SQLListTables("toBrowser:ListTables",
-			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
+			   "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			   "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
 			   "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.",
 			   "8.0");
 static toSQL SQLListTables7("toBrowser:ListTables",
-			    "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
+			    "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			    "  FROM SYS.ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			    "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
 			    " ORDER BY Table_Name",
@@ -458,7 +458,7 @@ static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
                         "PostgreSQL");
 
 static toSQL SQLListIndex("toBrowser:ListIndex",
-			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
+			  "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			  "  FROM SYS.ALL_INDEXES\n"
 			  " WHERE OWNER = :f1<char[101]>\n"
 			  "   AND UPPER(INDEX_NAME) LIKE :f2<char[101]>\n"
@@ -541,15 +541,15 @@ static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
 			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
 
-static toSQL SQLListSQL("toBrowser:ListPL/SQL",
-			"SELECT Object_Name,Object_Type Type FROM SYS.ALL_OBJECTS\n"
+static toSQL SQLListSQL("toBrowser:ListCode",
+			"SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
 			" WHERE OWNER = :f1<char[101]>\n"
 			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			"                       'PROCEDURE','TYPE')\n"
 			"   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
 			" ORDER BY Object_Name",
-			"List the available PL/SQL objects in a schema");
-static toSQL SQLListSQLPgSQL("toBrowser:ListPL/SQL",
+			"List the available Code objects in a schema");
+static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
 			     "SELECT p.proname AS Object_Name,\n"
                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
                              "       ELSE 'FUNCTION'\n"
@@ -560,14 +560,14 @@ static toSQL SQLListSQLPgSQL("toBrowser:ListPL/SQL",
 			     QString::null,
 			     "7.1",
                              "PostgreSQL");
-static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
+static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
 			     "SELECT Object_Name Type FROM SYS.ALL_OBJECTS\n"
 		 	     " WHERE OWNER = :f1<char[101]>\n"
 			     "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			     "                       'PROCEDURE','TYPE')\n"
 			     " ORDER BY Object_Name",
-			     "List the available PL/SQL objects in a schema, one column version");
-static toSQL SQLListSQLShortPgSQL("toBrowser:ListPL/SQLShort",
+			     "List the available Code objects in a schema, one column version");
+static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
 			     "SELECT p.proname AS Object_Name\n"
                              "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                              "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
@@ -577,19 +577,19 @@ static toSQL SQLListSQLShortPgSQL("toBrowser:ListPL/SQLShort",
                              "PostgreSQL");
 
 
-static toSQL SQLSQLTemplate("toBrowser:PL/SQLTemplate",
+static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
 			    "SELECT Text FROM SYS.ALL_SOURCE\n"
 			    " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			    "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
 			    "Declaration of object displayed in template window");
-static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
+static toSQL SQLSQLHead("toBrowser:CodeHead",
 			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PACKAGE','TYPE')",
 			"Declaration of object");
 // PostgreSQL does not distinguish between Head and Body for Stored SQL
 // package code will be returnd for both Head and Body
-static toSQL SQLSQLHeadPgSQL("toBrowser:PL/SQLHead",
+static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
 			     "SELECT p.prosrc\n"
                              "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                              "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
@@ -598,13 +598,13 @@ static toSQL SQLSQLHeadPgSQL("toBrowser:PL/SQLHead",
 			     "7.1",
                              "PostgreSQL");
 
-static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
+static toSQL SQLSQLBody("toBrowser:CodeBody",
 			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
 
-static toSQL SQLSQLBodyPgSQL("toBrowser:PL/SQLBody",
+static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
 			"SELECT p.prosrc\n"
                         "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                         "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
@@ -938,7 +938,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_PLSQL);
-  TopTab->addTab(splitter,"&PL/SQL");
+  TopTab->addTab(splitter,"Cod&e");
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
