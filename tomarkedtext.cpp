@@ -111,6 +111,7 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
 {
   if (Search) {
     Search=false;
+    LastSearch=SearchString;
     toStatusMessage(QString::null);
   }
   toMultiLineEdit::focusOutEvent(e);
@@ -263,6 +264,7 @@ void toMarkedText::searchFound(int line,int col)
 {
   setCursorPosition(line,col+SearchString.length(),false);
   setCursorPosition(line,col,true);
+  toStatusMessage("Incremental search:"+SearchString,false,false);
 }
 
 void toMarkedText::incrementalSearch(bool forward,bool next)
@@ -282,6 +284,7 @@ void toMarkedText::incrementalSearch(bool forward,bool next)
       curcol=line.length();
       next=false;
     }
+    SearchFailed=false;
   } else
     line=textLine(curline);
   if (forward) {
@@ -327,6 +330,7 @@ void toMarkedText::mousePressEvent(QMouseEvent *e)
 {
   if (Search) {
     Search=false;
+    LastSearch=SearchString;
     toStatusMessage(QString::null);
   }
   toMultiLineEdit::mousePressEvent(e);
@@ -343,14 +347,17 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     e->accept();
     return;
   } else if(e->state()==ControlButton&&(e->key()==Key_S||e->key()==Key_R)) {
-    SearchForward=e->key()==Key_I;
+    SearchForward=e->key()==Key_S;
     if (!Search) {
       Search=true;
       SearchFailed=false;
       SearchString=QString::null;
       toStatusMessage("Incremental search:",false,false);
-    } else if (Search&&SearchString.length())
+    } else if (Search) {
+      if (!LastSearch.length())
+	SearchString=LastSearch;
       incrementalSearch(SearchForward,true);
+    }
     e->accept();
     return;
   } else if (Search) {
@@ -374,12 +381,12 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     }
     
     if (ok) {
-      toStatusMessage("Incremental search:"+SearchString,false,false);
       incrementalSearch(SearchForward,false);
       e->accept();
       return;
     } else {
       Search=false;
+      LastSearch=SearchString;
       toStatusMessage(QString::null);
     }
   }

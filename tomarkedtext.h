@@ -67,6 +67,7 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
   bool SearchFailed;
   bool SearchForward;
   QString SearchString;
+  QString LastSearch;
 
   /** Print one page to printer.
    * @param printer Printer to print to.
