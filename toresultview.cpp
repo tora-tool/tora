@@ -161,6 +161,11 @@ QString toResultViewItem::key(int col,bool asc) const
     static char buf[100];
     sprintf(buf,"%015.5f",text(col).toFloat());
     return buf;
+  } else if (val=="N/A") {
+    if (asc)
+      return "\xff";
+    else
+      return "\001";
   }
   return val;
 }
@@ -238,6 +243,11 @@ QString toResultViewCheck::key(int col,bool asc) const
     static char buf[100];
     sprintf(buf,"%015f",text(col).toFloat());
     return buf;
+  } else if (val=="N/A") {
+    if (asc)
+      return "\xff";
+    else
+      return "\001";
   }
   return val;
 }
