@@ -1012,12 +1012,13 @@ __TEMP__
 	print "QSql ";
     }
     print "\n";
-
+    if ($OracleFound) {
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib32\" ";
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."\" ";
+    }
     $LFlags.="\"-L".$QtLib."\" ";
-    if ($OracleRelease =~ /^8.0/) {
+    if ($OracleFound && $OracleRelease =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
         $LFlags.="\"-lcore4\" ";
         $LFlags.="\"-lnlsrtl3\" ";
@@ -1047,17 +1048,21 @@ __TEMP__
     print "$extra\n";
 
     if (!$NoRPath) {
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib32\" ";
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."\" ";
+	if ($OracleFound) {
+	    $LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib32\" ";
+	    $LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
+	    $LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."\" ";
+	}
 	$LFlags.="-Xlinker \"--rpath\=$QtLib\" ";
     }
 
-    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/demo");
-    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/plsql/public");
-    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
-    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
-    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/sdk/include");
+    if ($OracleFound) {
+	$Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/demo");
+	$Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/plsql/public");
+	$Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
+	$Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
+	$Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/sdk/include");
+    }
     if ( $ENV{C_INCLUDE_PATH} ) {
       $Includes=&addInclude($Includes,$ENV{C_INCLUDE_PATH});
     }
