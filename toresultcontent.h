@@ -169,6 +169,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Current filter name in map
    */
   QString FilterName;
+  /** Never use returning.
+   */
+  bool NoUseReturning;
 
   /** Throw an exception about wrong usage.
    */
@@ -230,6 +233,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
 
   toListView *copySelection(bool);
 public:
+  /** Indicate that editor should never use returning clauses even if this is oracle.
+   */
+  void useNoReturning(bool use);
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
@@ -414,6 +420,10 @@ public:
    */
   virtual void importData(std::map<QString,QString> &data,const QString &prefix)
   { Editor->importData(data,prefix); }
+  /** Indicate that editor should never use returning clauses even if this is oracle.
+   */
+  void useNoReturning(bool use)
+  { Editor->useNoReturning(use); }
 private slots:
   void changeFilter(void);
   void removeFilter(void);

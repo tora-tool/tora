@@ -860,6 +860,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_SQL]=resultField;
 
   ViewContent=new toResultContent(curr,TAB_VIEW_DATA);
+  ViewContent->useNoReturning(true);
   curr->addTab(ViewContent,"&Data");
   SecondMap[TAB_VIEW_DATA]=ViewContent;
 

@@ -275,6 +275,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,true,true)
 {
+  NoUseReturning=false;
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   Query=NULL;
   SingleEdit=NULL;
@@ -764,7 +765,7 @@ void toResultContentEditor::saveUnsaved(void)
 
     toConnection &conn = connection();
     QString rowid;
-    bool oracle=(connection().provider()=="Oracle");
+    bool oracle=(connection().provider()=="Oracle"&&!NoUseReturning);
     toStatusMessage("Saved row",false,false);
     if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
       QString sql="INSERT INTO ";

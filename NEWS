@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-02-27: Fixed using returning clause in content editor on views.
 2002-02-27: Don't give error when setting filter in browser and not having access to tablespaces.
 2002-02-25: Fixed problem with column statistics on Oracle7.
 2002-02-23: Added a doubleclick option to a template item.
