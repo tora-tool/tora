@@ -1420,6 +1420,7 @@ void toWorksheet::showSaved(void)
 	QString subname=exs.join(":");
 	for (unsigned int i=exs.count();i<spl.count();i++) {
 	  QPopupMenu *next=new QPopupMenu(this);
+	  connect(next,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
 	  if (i!=0)
 	    subname+=":";
 	  subname+=spl[i];
