@@ -1,18 +1,23 @@
-%define name tora
-%define group Development/Databases
-%define version 1.3.0
-%define release 1gc
+%define _name		tora
+%define _version	1.3.1
+%define _release	1gc
+%define _prefix		/usr/X11R6
+%define _qt2dir		/usr/lib/qt2
 
-Name: %{name}
-Version: %{version}
-Release: %{release}
-Summary: Toolkit for Oracle
-Source0: %{name}-%{version}.tar.bz2
-Copyright: GPL
-BuildRoot: %{_tmppath}/tora-root
-Group: %{group}
+Summary:			Toolkit for Oracle
+Name:				%{_name}
+Version:			%{_version}
+Release:			%{_release}
+Source:				%{_name}-%{_version}.tar.gz
+URL:				http://www.globecom.se/tora
+Group:				Development/Databases
+Packager:			Henrik Johnson <tora@underscore.se>
+Distribution:			Mandrake Linux 8.2
+Copyright:			GPL
+BuildRoot:			%{_tmppath}/tora-root
+Prefix:				%{_prefix}
 
-%Description
+%description
 Toolkit for Oracle is a program for Oracle developers and administrators. The
 features that are available so far is (As of version 1.2):
 
@@ -67,42 +72,69 @@ features that are available so far is (As of version 1.2):
 
 This build is compiled with KDE support.
 
+%package mysql
+Summary:			MySQL specific plugins for %{_name}
+Group:			Development/Databases
+Requires:		%{_name} = %{_version}
+Requires:		mysql-shared
+%description mysql
+MySQL specific plugins for %{_name}.
+
+%package oracle
+Summary:			Oracle specific plugins for %{_name}
+Group:			Development/Databases
+Requires:		%{_name} = %{_version}
+%description oracle
+Oracle specific plugins for %{_name}.
+
+%changelog
+* Tue Doc 18 2001 Henrik Johnson <tora@underscore.se>
+- created from SuSE specfile by Pascal Bleser
+
 %prep
 %setup -q
+export QTDIR="%{_qt2dir}"
+CFLAGS="$RPM_OPT_FLAGS" \
+CXXFLAGS="$RPM_OPT_FLAGS" \
+./configure \
+	 --prefix="%{_prefix}" \
+	 --prefix-bin="%{_prefix}/bin" \
+	 --prefix-lib="%{_prefix}/lib" \
+	 --with-qt="%{_qt2dir}" \
+	 --with-kde \
+         --without-rpath \
+         --with-static-oracle \
+         --with-rpm-contents
+
 %build
-./configure --prefix=/usr --without-rpath --with-kde --with-static-oracle
-make
+export QTDIR="%{_qt2dir}"
+%{__make}
+%{__strip} \
+	 plugins/*.tso \
+	 tora
 
 %install
-
-strip plugins/*.tso tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
-cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/images
-cp plugins/*.tso $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp help/*.* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
-cp help/api/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
-cp help/images/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/images
-
-%post
-
-%postun
+%{__rm} -rf "${RPM_BUILD_ROOT}"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/bin"
+%{__mkdir_p} "${RPM_BUILD_ROOT}%{_prefix}/lib"
+%{__make} \
+	ROOT="${RPM_BUILD_ROOT}" \
+	install
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+%{__rm} -rf "${RPM_BUILD_ROOT}"
 
-%files
+%files -f rpmcommon
+%defattr(-,root,root)
+%doc BUGS INSTALL LICENSE NEWS README TODO
+%{_prefix}/bin/*
+%dir %{_prefix}/lib/tora
+%dir %{_prefix}/lib/tora/help
+%doc %{_prefix}/lib/tora/help/*
+%{_prefix}/lib/tora/*.tpl
 
-%defattr(-,root,root,0755)
+%files mysql -f rpmmysql
+%defattr(-,root,root)
 
-%doc BUGS
-%doc TODO
-%doc INSTALL
-%doc README
-%doc NEWS
-
-%{_prefix}/X11R6/bin/tora
-%{_prefix}/lib/tora
-%define name tora
+%files oracle -f rpmoracle
+%defattr(-,root,root)
