@@ -43,6 +43,11 @@ After that you should be able to compile by just issuing "make" followed
 by "make install". Observe that you probably need a GNU version of make
 since TOra uses GNU extensions in the makefile.
 
+On some linux installations (SuSE specifically) you can exprience the
+problem of no oracle connection showing up. Passing the --with-oracle-static
+to the configure script usually fixes this problem. The problem seems to be
+with the dynamic linker or some other part of binary utilities.
+
 If you experience problems with configure
 -----------------------------------------
 
