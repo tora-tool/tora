@@ -422,6 +422,8 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
 #if QT_VERSION == 0x030200 && defined (WIN32)
 	  rect.setWidth(rect.width()-1);
+#endif
+#if QT_VERSION >= 0x030200 && defined (WIN32)
 	  rect.setHeight(rect.height()-1);
 #endif
 	  if (rect.height()<=height)
