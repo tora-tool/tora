@@ -40,7 +40,8 @@
 #if QT_VERSION < 300
 #include <qmultilineedit.h>
 
-class toMultLineEdit : public QMultiLineEdit {
+class toMultiLineEdit : public QMultiLineEdit {
+public:
   toMultiLineEdit(QWidget *parent,const char *name)
     : QMultiLineEdit(parent,name)
   { }

@@ -86,9 +86,6 @@ clean:
 	-rm -f *~ */*~ >/dev/null 2>&1
 	-rm -f *.bak >/dev/null 2>&1
 	-rm -rf plugins >/dev/null 2>&1
-	-for a in *.kde ; \
-             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n";' $$a`; \
-         done
 	-for a in *.ui ; \
              do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
          done
@@ -97,7 +94,7 @@ distclean: clean
 	-rm -rf .depends >/dev/null 2>&1
 	-rm -rf .xvpics >/dev/null 2>&1
 	-rm -rf icons/.xvpics >/dev/null 2>&1
-	-rm -f *.moc >/dev/null 2>&1 
+	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
 	-rm \#*\# >/dev/null 2>&1
 	-cp Makefile.setup.orig Makefile.setup >/dev/null 2>&1
 	-mv Makefile Makefile.orig >/dev/null 2>&1
