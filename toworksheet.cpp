@@ -108,43 +108,11 @@
 #define CONF_AUTO_LOAD   "AutoLoad"
 #define CONF_LOG_AT_END  "LogAtEnd"
 #define CONF_LOG_MULTI   "LogMulti"
-#define CONF_PLSQL_PARSE "PLSQLParse"
 #define CONF_STATISTICS	 "Statistics"
 #define CONF_TIMED_STATS "TimedStats"
 #define CONF_NUMBER	 "Number"
 #define CONF_MOVE_TO_ERR "MoveToError"
 #define CONF_HISTORY	 "History"
-
-static struct {
-  int Pos;
-  char *Start;
-  bool WantEnd;
-  bool WantSemi;
-  bool CloseBlock;
-  bool Comment;
-  bool BeforeCode;
-  bool StartCode;
-  bool NoBinds;
-  bool SingleLine;
-} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true ,false,false},
-	       { 0,"if",	true ,false,false,false,false,false,false,false},
-	       { 0,"loop",	true ,false,false,false,false,false,false,false},
-	       { 0,"while",	true ,false,false,false,false,false,false,false},
-	       { 0,"declare",	false,false,false,false,true ,true ,false,false},
-	       { 0,"create",	false,false,false,false,true ,false,false,false},
-	       { 0,"package",	true ,false,false,false,false,true ,false,false},
-	       { 0,"procedure",	false,false,false,false,false,true ,false,false},
-	       { 0,"function",	false,false,false,false,false,true ,false,false},
-	       { 0,"trigger",   false,false,false,false,false,true ,false,false},
-	       { 0,"end",	false,true ,true ,false,false,false,false,false},
-	       { 0,"rem",	false,false,false,true ,false,false,false,false},
-	       { 0,"store",	false,false,false,true ,false,false,false,false},
-	       { 0,"spool",	false,false,false,true ,false,false,false,false},
-	       { 0,"prompt",	false,false,false,true ,false,false,false,false},
-	       { 0,"set",	false,false,false,false,false,false,false,true },
-	       { 0,"assign",	false,false,false,true ,false,false,false,false},
-	       { 0,NULL,	false,false,false,false,false,false,false,false}
-};
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
 { 
@@ -162,8 +130,6 @@ public:
       LogAtEnd->setChecked(true);
     if (!tool->config(CONF_LOG_MULTI,"Yes").isEmpty())
       LogMulti->setChecked(true);
-    if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
-      PLSQLParse->setChecked(true);
     MoveToError->setChecked(!tool->config(CONF_MOVE_TO_ERR,"Yes").isEmpty());
     if (!tool->config(CONF_STATISTICS,"").isEmpty())
       Statistics->setChecked(true);
@@ -191,10 +157,6 @@ public:
       Tool->setConfig(CONF_LOG_MULTI,"Yes");
     else
       Tool->setConfig(CONF_LOG_MULTI,"");
-    if (PLSQLParse->isChecked())
-      Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
-    else
-      Tool->setConfig(CONF_PLSQL_PARSE,"");
     Tool->setConfig(CONF_MOVE_TO_ERR,MoveToError->isChecked()?"Yes":"");
     Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_HISTORY,History->isChecked()?"Yes":"");
@@ -767,6 +729,20 @@ void toWorksheet::query(const QString &str,bool direct)
     nobinds=true;
   
   if (!describe(QueryString)) {
+
+    toSQLParse::stringTokenizer tokens(str);
+    QString first=tokens.getToken(true).upper();
+    if (first=="REM"||
+	first=="ASSIGN"||
+	first=="PROMPT"||
+	first=="SPOOL"||
+	first=="STORE") {
+      QString t="Ignoring SQL*Plus command";
+      addLog(QueryString,toConnection::exception(t),false);
+      toStatusMessage(t,true);
+      return;
+    }
+
     toQList param;
     if (!nobinds)
       try {
@@ -775,6 +751,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	return;
       }
     toStatusMessage("Processing query",true);
+
     if (direct) {
       try {
 	First=false;
@@ -943,297 +920,107 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   saveDefaults();
 }
 
-static void NewStatement(void)
+void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct)
 {
-  for (int i=0;Blocks[i].Start;i++)
-    Blocks[i].Pos=0;
-}
+  Editor->setCursorPosition(line,pos,false);
+  Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
+  QString t=Editor->markedText();
 
-static QString StripComment(const QString)
-{
+  bool comment=false;
+  bool multiComment=false;
+  int oline=line;
+  int opos=pos;
+  unsigned int i;
 
-}
+  for(i=0;i<t.length()-1;i++) {
+    if (comment) {
+      if (t.at(i)=='\n')
+	comment=false;
+    } else if (multiComment) {
+      if (t.at(i)=='*'&&
+	  t.at(i+1)=='/')
+	multiComment=false;
+    } else if (t.at(i)=='-'&&
+	       t.at(i+1)=='-')
+      comment=true;
+    else if (t.at(i)=='/'&&
+	     t.at(i+1)=='*')
+      multiComment=true;
+    else if (!t.at(i).isSpace())
+      break;
 
-void toWorksheet::execute(bool all,bool step)
-{
-  
-
-  bool sqlparse;
-  bool code=true;
-  bool beforeCode=false;
-  if(connection().provider()=="Oracle")
-    sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
-  else
-    sqlparse=false;
-  TryStrip=true;
-  if (!Editor->hasMarkedText()||all||step) {
-    int cpos,cline,cbpos,cbline;
-    if (!Editor->getMarkedRegion(&cbline,&cbpos,&cline,&cpos)) {
-      Editor->getCursorPosition(&cline,&cpos);
-      step=false;
-    }
-    enum {
-      beginning,
-      comment,
-      multiComment,
-      inStatement,
-      inString,
-      inCode,
-      endCode,
-      done
-    } state,lastState;
-
-    int startLine=-1,startPos=-1;
-    int endLine=-1,endPos=-1;
-    lastState=state=beginning;
-    NewStatement();
-    int BlockCount=0;
-    beforeCode=code=TryStrip=false;
-    QChar lastChar;
-    QChar c=' ';
-    QChar nc;
-
-    for (int line=0;line<Editor->numLines()&&state!=done;line++) {
-      QString data=Editor->textLine(line);
-      c='\n'; // Set correct previous character
-      for (int i=0;i<(int)data.length()&&state!=done;i++) {
-	lastChar=c;
-	c=data[i];
-	if (i+1<int(data.length()))
-	  nc=data[i+1];
-	else
-	  nc=' ';
-	if (state==comment) {
-	  state=lastState;
-	  break;
-	} else if (state==multiComment) {
-	  if (c=='*'&&nc=='/') {
-	    state=lastState;
-	    i++;
-	  }
-	} else if (state!=inString&&c=='\'') {
-	  lastState=state;
-	  state=inString;
-	} else {
-	  switch(state) {
-	  case comment:
-	  case multiComment:
-	    throw QString("Internal error, comment shouldn't have gotten here.");
-	  case endCode:
-	    if (c==';')
-	      state=inCode;
-	    break;
-	  case inCode:
-	    if (c=='-'&&nc=='-') {
-	      lastState=state;
-	      state=comment;
-	    } else if (c=='/'&&nc=='*') {
-	      lastState=state;
-	      state=multiComment;
-	    } else {
-	      for (int j=0;Blocks[j].Start;j++) {
-		int &pos=Blocks[j].Pos;
-		if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
-		  if (pos>0||!toIsIdent(lastChar)) {
-		    pos++;
-		    if (!Blocks[j].Start[pos]) {
-		      if (!toIsIdent(nc)) {
-			if (Blocks[j].CloseBlock) {
-			  BlockCount--;
-			  if (BlockCount<=0)
-			    state=inStatement;
-			} else if (Blocks[j].WantEnd)
-			  BlockCount++;
-			NewStatement();
-			if (state==inCode) {
-			  if (Blocks[j].WantSemi)
-			    state=endCode;
-			  else
-			    state=inCode;
-			}
-			break;
-		      } else
-			pos=0;
-		    }
-		  } else
-		    pos=0;
-		} else
-		  pos=0;
-	      }
-	    }
-	    break;
-	  case beginning:
-	    if (c=='@') {
-	      lastState=state;
-	      state=comment;
-	      break;
-	    } else if (c=='-'&&nc=='-') {
-	      lastState=state;
-	      state=comment;
-	      break;
-	    } else if (c=='/'&&nc=='*') {
-	      lastState=state;
-	      state=multiComment;
-	      break;
-	    } else if (!c.isSpace()&&(c!='/'||data.length()!=1)) {
-	      QString rest=data.right(data.length()-i).lower();
-	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step&&startLine>=0&&startPos>=0) {
-		state=done;
-		break;
-	      } else {
-		for (int j=0;Blocks[j].Start;j++) {
-		  if (Blocks[j].Comment) {
-		    unsigned int len=strlen(Blocks[j].Start);
-		    if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
-		      lastState=state;
-		      state=comment;
-		      break;
-		    }
-		  }
-		}
-		if (state==comment)
-		  break;
-		beforeCode=code=false;
-	      }
-	      startLine=line;
-	      startPos=i;
-	      endLine=-1;
-	      endPos=-1;
-	      state=inStatement;
-	      for (int j=0;Blocks[j].Start;j++) {
-		if (Blocks[j].SingleLine) {
-		  unsigned int len=strlen(Blocks[j].Start);
-		  if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
-		    endLine=line;
-		    i=data.length()-1;
-		    endPos=i+1;
-
-		    state=beginning;
-		    break;
-		  }
-		}
-	      }
-	    } else
-	      break;
-	  case inStatement:
-	    {
-	      if (!code&&sqlparse) {
-		bool br=false;
-		for (int j=0;Blocks[j].Start&&!br;j++) {
-		  int &pos=Blocks[j].Pos;
-		  if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
-		    if (pos>0||(!toIsIdent(lastChar))) {
-		      pos++;
-		      if (!Blocks[j].Start[pos]) {
-			if (!toIsIdent(nc)) {
-			  if (Blocks[j].BeforeCode) {
-			    beforeCode=true;
-			    pos=0;
-			    br=true;
-			  }
-			  if (beforeCode) {
-			    if (Blocks[j].CloseBlock) {
-			      toStatusMessage("Ending unstarted block");
-			      return;
-			    } else if (Blocks[j].StartCode) {
-			      if (Blocks[j].WantEnd)
-				BlockCount++;
-
-			      code=true;
-			      if (Blocks[j].WantSemi)
-				state=endCode;
-			      else
-				state=inCode;
-			      NewStatement();
-			      br=true;
-			    }
-			  }
-			} else
-			  pos=0;
-		      } 
-		    } else
-		      pos=0;
-		  } else
-		    pos=0;
-		}
-		if (br)
-		  break;
-		if (!toIsIdent(c)&&toIsIdent(nc)) {
-		  int j=i-2;
-		  while(j>=0&&toIsIdent(data[j]))
-		    j--;
-		  QString t=data.mid(j+1,i-j).upper();
-		  if (t!="OR"&&t!="REPLACE")
-		    beforeCode=false;
-		}
-	      }
-	      if (c==';') {
-		endLine=line;
-		endPos=i+1;
-		state=beginning;
-		if (all) {
-		  Editor->setCursorPosition(startLine,startPos,false);
-		  Editor->setCursorPosition(endLine,endPos,true);
-		  LastLine=LastOffset=-1;
-		  if (Editor->hasMarkedText()) {
-		    query(Editor->markedText(),true);
-		    qApp->processEvents();
-		    NewStatement();
-		    beforeCode=code=false;
-		  }
-		} else if (step&&
-			   ((line==cline&&i>cpos)||(line>cline))) {
-		  state=done;
-		  break;
-		}
-	      }
-	    }
-	    break;
-	  case inString:
-	    if (c=='\'') {
-	      state=lastState;
-	    }
-	    break;
-	  case done:
-	    break;
-	  }
-	}
-      }
-    }
-    if (endLine==-1) {
-      endLine=Editor->numLines()-1;
-      endPos=Editor->textLine(endLine).length();
-      if (all&&endLine) {
-	LastLine=startLine;
-	LastOffset=startPos;
-	Editor->setCursorPosition(startLine,startPos,false);
-	Editor->setCursorPosition(endLine,endPos,true);
-	if (Editor->hasMarkedText()) {
-	  query(Editor->markedText(),false);
-	}
-      }
-    }
-    if (all) {
-      Editor->setCursorPosition(0,0,false);
-      Editor->setCursorPosition(endLine,endPos,true);
-    } else {
-      LastLine=startLine;
-      LastOffset=startPos;
-      Editor->setCursorPosition(startLine,startPos,false);
-      Editor->setCursorPosition(endLine,endPos,true);
-    }
+    if (t.at(i)=='\n') {
+      line++;
+      pos=0;
+    } else
+      pos++;
   }
-  if (Editor->hasMarkedText()&&!all) {
+
+  if (line!=oline||
+      pos!=opos) {
+    Editor->setCursorPosition(line,pos,false);
+    Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
+    t=t.mid(i);
+  }
+  query(t,direct);
+}
+
+void toWorksheet::execute()
+{
+  if (Editor->hasMarkedText())
     query(Editor->markedText(),false);
-    if (Light)
-      return;
-    else if (CurrentTab==Visualize)
-      Visualize->display();
-    else if (CurrentTab==Plan)
-      Plan->query(QueryString);
-    else if (CurrentTab==Resources)
-      viewResources();
-  }
+
+  toSQLParse::editorTokenizer tokens(Editor);
+
+  int cpos,cline;
+  Editor->getCursorPosition(&cline,&cpos);
+
+  int line;
+  int pos;
+  do {
+    line=tokens.line();
+    pos=tokens.offset();
+    toSQLParse::parseStatement(tokens);
+  } while(tokens.line()<cline||
+	  (tokens.line()==cline&&tokens.offset()<cpos));
+
+  execute(tokens,line,pos,false);
+}
+
+void toWorksheet::executeStep()
+{
+  toSQLParse::editorTokenizer tokens(Editor);
+
+  int cpos,cline;
+  Editor->getCursorPosition(&cline,&cpos);
+
+  int line;
+  int pos;
+  do {
+    line=tokens.line();
+    pos=tokens.offset();
+    toSQLParse::parseStatement(tokens);
+  } while(tokens.line()<cline||
+	  (tokens.line()==cline&&tokens.offset()<=cpos));
+
+  execute(tokens,line,pos,false);
+}
+
+void toWorksheet::executeAll()
+{
+  toSQLParse::editorTokenizer tokens(Editor);
+
+  int cpos,cline;
+  Editor->getCursorPosition(&cline,&cpos);
+
+  int line;
+  int pos;
+  do {
+    line=tokens.line();
+    pos=tokens.offset();
+    toSQLParse::parseStatement(tokens);
+    execute(tokens,line,pos,true);
+  } while(tokens.line()<Editor->numLines());
 }
 
 void toWorksheet::eraseLogButton()

@@ -36,6 +36,7 @@
 #define TOWORKSHEET_H
 
 #include "toconnection.h"
+#include "tosqlparse.h"
 #include "totool.h"
 
 #include <map>
@@ -116,14 +117,14 @@ class toWorksheet : public toToolWidget {
   bool checkSave(bool input);
   void saveDefaults(void);
   void setup(bool autoLoad);
+
+  void execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
   toWorksheet(QWidget *parent,const char *name,toConnection &connection);
   virtual ~toWorksheet();
 
   virtual bool close(bool del);
-
-  void execute(bool all,bool step=false);
 
   toHighlightedText *editor(void)
   { return Editor; }
@@ -141,12 +142,9 @@ signals:
 public slots:
   void connectionChanged(void);
   void refresh();
-  void execute()
-  { execute(false); }
-  void executeAll()
-  { execute(true); }
-  void executeStep()
-  { execute(false,true); }
+  void execute();
+  void executeAll();
+  void executeStep();
   void executeNewline();
   void describe();
   void eraseLogButton();

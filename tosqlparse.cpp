@@ -87,6 +87,25 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+select count(case when dummy = 'Y' then dummy
+             else null end) as tot_str
+from dual;
+
+DECLARE
+grade CHAR(1);
+appraisal VARCHAR2(20);
+BEGIN
+appraisal := 
+CASE grade
+WHEN 'A' THEN 'Excellent'
+WHEN 'B' THEN 'Very Good'
+WHEN 'C' THEN 'Good'
+WHEN 'D' THEN 'Fair'
+WHEN 'F' THEN 'Poor'
+ELSE 'No such grade'
+END;
+END;
+
 SET TRANSACTION READ ONLY
 
 PROMPT Hello
@@ -145,20 +164,6 @@ SELECT owner,
  ORDER BY owner,
 	  OBJECT,
 	  TYPE;
-DECLARE
-grade CHAR(1);
-appraisal VARCHAR2(20);
-BEGIN
-appraisal := 
-CASE grade
-WHEN 'A' THEN 'Excellent'
-WHEN 'B' THEN 'Very Good'
-WHEN 'C' THEN 'Good'
-WHEN 'D' THEN 'Fair'
-WHEN 'F' THEN 'Poor'
-ELSE 'No such grade'
-END;
-END;
 
 CREATE TABLE ess.EssCalLog (
         CalID		CHAR(5) NOT NULL,		-- Calender type
@@ -678,7 +683,7 @@ QString toSQLParse::editorTokenizer::remaining(bool eol)
   }
 }
 
-toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare)
+toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,bool lst)
 {
   statement ret(statement::Statement);
 
@@ -712,7 +717,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare)
       statement cur(statement::Statement);
       bool dcl=(upp=="DECLARE"||upp=="IS"||upp=="AS");
       do {
-	cur=parseStatement(tokens,dcl);
+	cur=parseStatement(tokens,dcl,false);
 	if (cur.Type==statement::List)
 	  toStatusMessage("Unbalanced parenthesis (Too many ')')");
 	blk.subTokens().insert(blk.subTokens().end(),cur);
@@ -722,7 +727,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare)
       } while(cur.subTokens().begin()!=cur.subTokens().end()&&
 	      (*cur.subTokens().begin()).String.upper()!="END");
       return blk;
-    } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
+    } else if ((upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION")&&!lst) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       return ret;
     } else if (first=="ASSIGN"||first=="SET"||first=="PROMPT"||first=="SPOOL"||first=="STORE"||first=="REM") {
@@ -740,13 +745,13 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare)
       nokey=false;
     } else if (upp=="(") {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,tokens.line()));
-      statement lst=parseStatement(tokens,false);
+      statement lst=parseStatement(tokens,false,true);
       statement t=toPop(lst.subTokens());
       if (lst.Type!=statement::List)
 	toStatusMessage("Unbalanced parenthesis (Too many '(')");
       nokey=false;
       if (first=="CREATE"&&!block) {
-	statement end=parseStatement(tokens,false);
+	statement end=parseStatement(tokens,false,true);
 	statement blk(statement::Block);
 	blk.subTokens().insert(blk.subTokens().end(),ret);
 	blk.subTokens().insert(blk.subTokens().end(),lst);
@@ -797,9 +802,9 @@ std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens)
 {
   std::list<toSQLParse::statement> ret;
   statement cur(statement::Statement);
-  for(cur=parseStatement(tokens,false);
+  for(cur=parseStatement(tokens,false,false);
       cur.subTokens().begin()!=cur.subTokens().end();
-      cur=parseStatement(tokens,false)) {
+      cur=parseStatement(tokens,false,false)) {
     if (cur.Type==statement::List)
       toStatusMessage("Unbalanced parenthesis (Too many ')')");
     ret.insert(ret.end(),cur);
@@ -809,6 +814,15 @@ std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens)
     ret.insert(ret.end(),statement(statement::Raw,
 				   str,tokens.line()));
   return ret;
+}
+
+toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens)
+{
+  statement cur(statement::Statement);
+  cur=parseStatement(tokens,false,false);
+  if (cur.Type==statement::List)
+    toStatusMessage("Unbalanced parenthesis (Too many ')')");
+  return cur;
 }
 
 #define TABSTOP 8

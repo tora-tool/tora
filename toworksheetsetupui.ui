@@ -110,21 +110,6 @@
                         <string>Display multiple lines in the SQL column of the logging.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>PLSQLParse</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Parse PL/SQL blocks</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Parse PL/SQL blocks in worksheet. You usually need this but it if you forget one end the rest of the editor will be one block.</string>
-                    </property>
-                </widget>
                 <widget row="5"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -276,7 +261,6 @@
     <tabstop>CheckSave</tabstop>
     <tabstop>LogAtEnd</tabstop>
     <tabstop>LogMulti</tabstop>
-    <tabstop>PLSQLParse</tabstop>
     <tabstop>Statistics</tabstop>
     <tabstop>TimedStatistics</tabstop>
     <tabstop>DisplayNumber</tabstop>

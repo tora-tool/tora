@@ -224,24 +224,24 @@ public:
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static std::list<statement> parseStatement(tokenizer &tokens);
+  static statement parseStatement(tokenizer &tokens);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static std::list<statement> parseStatement(const QString &str)
+  static statement parseStatement(const QString &str)
   { stringTokenizer tokens(str); return parseStatement(tokens); }
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static std::list<statement> parseStatement(tokenizer &tokens,toConnection &conn)
+  static statement parseStatement(tokenizer &tokens,toConnection &conn)
   { return parseStatement(tokens); }
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static std::list<statement> parseStatement(const QString &str,toConnection &conn)
+  static statement parseStatement(const QString &str,toConnection &conn)
   { stringTokenizer tokens(str); return parseStatement(tokens,conn); }
 
   /** Indent a string.
@@ -275,7 +275,7 @@ public:
 private:
   static settings Settings;
   static statement parseStatement(tokenizer &tokens,
-				  bool declare);
+				  bool declare,bool lst);
 public:
   /** Get current settings.
    */
