@@ -1,10 +1,10 @@
-# This specfile is no longer in use
+# This specfile is Mandrake Linux specific
 
 %define _name		tora
 %define _version	1.3.9.2
 %define _release	1gc
 %define _prefix		/usr/X11R6
-%define _qt2dir		/usr/lib/qt2
+%define _qtdir		/usr/lib/qt3
 
 Summary:			Toolkit for Oracle
 Name:				%{_name}
@@ -14,7 +14,7 @@ Source:				%{_name}-%{_version}.tar.gz
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 9.0
+Distribution:			Mandrake Linux 9.1
 Copyright:			GPL
 BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
@@ -24,7 +24,7 @@ Toolkit for Oracle is a program for database developers and administrators. The
 features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
-* Support Oracle & MySQL
+* Support Oracle, MySQL & PostgreSQL
 * Advanced SQL Worksheet
 	* Explain plan
 	* PL/SQL auto indentation
@@ -78,15 +78,7 @@ features that are available so far is (As of version 1.2):
 * Full UNICODE support
 * Printing of any list, text or chart
 
-This build is compiled with KDE support.
-
-%package mysql
-Summary:			MySQL specific plugins for %{_name}
-Group:			Development/Databases
-Requires:		%{_name} = %{_version}
-Requires:		mysql-shared
-%description mysql
-MySQL specific plugins for %{_name}.
+This build is compiled with KDE and Mandrake Menu support.
 
 %package oracle
 Summary:			Oracle specific plugins for %{_name}
@@ -101,21 +93,21 @@ Oracle specific plugins for %{_name}.
 
 %prep
 %setup -q
-export QTDIR="%{_qt2dir}"
+export QTDIR="%{_qtdir}"
 CFLAGS="$RPM_OPT_FLAGS" \
 CXXFLAGS="$RPM_OPT_FLAGS" \
 ./configure \
 	 --prefix="%{_prefix}" \
 	 --prefix-bin="%{_prefix}/bin" \
 	 --prefix-lib="%{_prefix}/lib" \
-	 --with-qt="%{_qt2dir}" \
+	 --with-qt="%{_qtdir}" \
 	 --with-kde \
          --without-rpath \
-         --with-static-oracle \
+         --with-oracle \
          --with-rpm-contents="%{_prefix}/lib"
 
 %build
-export QTDIR="%{_qt2dir}"
+export QTDIR="%{_qtdir}"
 %{__make}
 %{__strip} \
 	 plugins/*.tso \
@@ -129,6 +121,15 @@ export QTDIR="%{_qt2dir}"
 	ROOT="${RPM_BUILD_ROOT}" \
 	install
 
+mkdir -p $RPM_BUILD_ROOT%{_menudir}
+cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
+
+%post
+%{update_menus}
+
+%postun
+%{clean_menus}
+
 %clean
 %{__rm} -rf "${RPM_BUILD_ROOT}"
 
@@ -138,9 +139,6 @@ export QTDIR="%{_qt2dir}"
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
 %{_prefix}/lib/tora/help
-
-%files mysql -f rpmmysql
-%defattr(-,root,root)
 
 %files oracle -f rpmoracle
 %defattr(-,root,root)

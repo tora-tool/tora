@@ -66,7 +66,11 @@
 #include <qlayout.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
-#include <qobjcoll.h>
+#if QT_VERSION > 300
+#  include <qobjectlist.h>
+#else
+#  include <qobjcoll.h>
+#endif
 #include <qpainter.h>
 #include <qscrollview.h>
 #include <qsplitter.h>
