@@ -72,6 +72,8 @@
 2001-09-19: Fixed duplicate entry in status history on error in worksheet.
 2001-09-19: Added invalid object browser tool.
 2001-09-19: Made it possible to use toExtract without progress indication.
+2001-09-19: Fixed tooltip problem in toResultCols.
+2001-09-19: Fixed problem with triggers in Oracle8.
 
 1.1.0: Released 2001-09-09
 

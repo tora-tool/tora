@@ -92,7 +92,7 @@ public:
   }
   virtual QString tooltip(int col) const
   {
-    toResultCols *view=dynamic_cast<toResultCols *>(listView());
+    toResultCols::resultCols *view=dynamic_cast<toResultCols::resultCols *>(listView());
     try {
       if (view->connection().provider()!="Oracle")
 	return QString::null;

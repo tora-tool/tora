@@ -59,6 +59,7 @@ class toResultCols : public QVBox, public toResult {
     /** Reimplemented for internal reasons.
      */
     virtual void query(const QString &sql,const toQList &param);
+    friend class toResultColsItem;
   };
   QLabel *Title;
   resultCols *Columns;
