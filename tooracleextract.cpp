@@ -2948,7 +2948,7 @@ void toOracleExtract::describeMView(toExtract &ext,std::list<QString> &lst,
   describeMViewTable(ext,lst,ctx,schema,owner,table);
   addDescription(lst,ctx,buildMode);
   ctx.insert(ctx.end(),"INDEX");
-  ctx.insert(ctx.end(),index.lower());
+  ctx.insert(ctx.end(),QUOTE(index));
   describeMViewIndex(ext,lst,ctx,schema,owner,index);
 
   if (refreshMethod!="NEVER REFRESH") {
@@ -3060,7 +3060,7 @@ void toOracleExtract::describeMViewLog(toExtract &ext,
 	first=false;
       else
 	col+=",";
-      col+=QString(inf.readValue()).lower();
+      col+=QUOTE(inf.readValue());
     }
     col+=")";
     addDescription(lst,ctx,col);
@@ -3135,7 +3135,7 @@ void toOracleExtract::describePartitions(toExtract &ext,
       while(!inf.eof()) {
 	QString sub(inf.readValue());
 	QString tablespace(inf.readValue());
-	addDescription(lst,cctx,"HASH",sub.lower(),
+	addDescription(lst,cctx,"HASH",QUOTE(sub),
 		       QString("TABLESPACE %1").arg(QUOTE(tablespace)));
       }
     }
@@ -3311,7 +3311,7 @@ void toOracleExtract::describeSource(toExtract &ext,
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),type);
-  ctx.insert(ctx.end(),name.lower());
+  ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
   addDescription(lst,ctx,displaySource(ext,schema,owner,name,type,true).simplifyWhiteSpace());
 }
@@ -5353,7 +5353,7 @@ void toOracleExtract::describeDBLink(toExtract &ext,
   QString password(inf.readValue());
   QString host(inf.readValue());
   QString publ=(owner=="PUBLIC")?"PUBLIC":"";
-  QString sql=QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(name.lower());
+  QString sql=QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(QUOTE(name));
   QString ret;
 
   std::list<QString> ctx;
