@@ -778,6 +778,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       if (txt.length()) {
 	if (toIsIdent(txt.at(0))) {
 	  QString mrk;
+	  bool passon=false;
 	  {
 	    int curline,curcol;
 	    getCursorPosition(&curline,&curcol);
@@ -785,24 +786,30 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	    if (getMarkedRegion(&line1,&col1,&line2,&col2)&&
 		line2==curline&&col2==curcol)
 	      mrk=markedText();
+	    else {
+	      setCursorPosition(curline,curcol);
+	      passon=true;
+	    }
 	  }
 	  
-	  mrk+=txt;
-	  Completion->clear();
-	  CompleteItem=-1;
-	  for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	    if ((*i).upper().startsWith(mrk.upper()))
-	      Completion->insertItem(mrk+(*i).mid(mrk.length()));
-	  }
-	  QSize size=Completion->sizeHint();
-	  size.setWidth(size.width()+20);
-	  Completion->resize(size);
+	  if (!passon) {
+	    mrk+=txt;
+	    Completion->clear();
+	    CompleteItem=-1;
+	    for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
+	      if ((*i).upper().startsWith(mrk.upper()))
+		Completion->insertItem(mrk+(*i).mid(mrk.length()));
+	    }
+	    QSize size=Completion->sizeHint();
+	    size.setWidth(size.width()+20);
+	    Completion->resize(size);
 
-	  KeepCompletion=true;
-	  insert(mrk,true);
-	  KeepCompletion=false;
-	  e->accept();
-	  return;
+	    KeepCompletion=true;
+	    insert(mrk,true);
+	    KeepCompletion=false;
+	    e->accept();
+	    return;
+	  }
 	} else {
 	  int curline,curcol;
 	  getCursorPosition(&curline,&curcol);

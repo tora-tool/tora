@@ -29,7 +29,7 @@ the other command will execute the previous statement. The keyboard shortcut is 
 Execute Newline Separated</B></TD>
 <TD VALIGN=top>Execute a statement that is separated by two newlines instead of the normal
 ';' character. Could be useful for people who are familiar with some other Oracle tools.
-The keyboard shortcut is <B>SHIFT+F9</B>.
+The keyboard shortcut is <B>SHIFT+F9</B>. Only available in the menu, not in the toolbar.
 </TD></TR>
 <TR><TD VALIGN=top><B>
 Refresh</B></TD>
@@ -37,19 +37,15 @@ Refresh</B></TD>
 keyboard shortcut is <B>F5</B>.
 </TD></TR>
 <TR><TD VALIGN=top><B>
-Commit</B></TD>
-<TD VALIGN=top>Commit the changes of the database connection that this worksheet is working on. The
-keyboard shortcut is <B>F2</B>.
-</TD></TR>
-<TR><TD VALIGN=top><B>
-Rollback</B></TD>
-<TD VALIGN=top>Rollback the changes of the database connection that this worksheet is working on. The
-keyboard shortcut is <B>CTRL+Backspace</B>.
+Describe under cursor</B></TD>
+<TD VALIGN=top>Describe the table currently under the cursor. The keyboard shortcut is <B>F4</B>.
 </TD></TR>
 <TR><TD VALIGN=top><B>
 Enable Statistics</B></TD>
 <TD VALIGN=top>Enable or disable collecting statistics when running the statements. This will cause
-TOra to execute at least two extra queries for every statement executed when enabled.
+TOra to execute at least two extra queries for every statement executed when enabled. Next to this
+button in the toolbar is a combo box in which you can choose the refreshtime for the charts in the
+statistics pane.
 </TD></TR>
 <TR><TD VALIGN=top><B>
 Stop execution</B></TD>
@@ -57,6 +53,36 @@ Stop execution</B></TD>
 the query will keep running in the background until the first row of the query is returned and consume
 server resources before it is aborted. When you execute a new statement the current execution will be
 aborted.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Execute Saved SQL</B></TD>
+<TD VALIGN=top>Execute the latest selected saved SQL. For more information see
+<A HREF=worksheet.html#saved>saved SQL</A>. Keyboard shortcut is <B>F7</B>. This is not available in
+the toolbar.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Select Saved SQL</B></TD>
+<TD VALIGN=top>Popup menu containing saved SQL. For more information see
+<A HREF=worksheet.html#saved>saved SQL</A>. Keyboard shortcut is <B>CTRL+SHIFT+S</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Edit Saved SQL</B></TD>
+<TD VALIGN=top>Open the SQL editor to edit saved SQL. For more information see
+<A HREF=worksheet.html#saved>saved SQL</A>. Only available in menu, not in toolbar.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Previous Log Entry</B></TD>
+<TD VALIGN=top>Display the result of the previous entry in the log. If result caching is on
+in the <A HREF=worksheet.html#preferences>settings</A> the previous result is displayed, if it
+isn't the statement is reexecuted to generate the result. Keyboard shortcut is <B>ALT+Up</B>.
+Only available in menu, not in toolbar.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Next Log Entry</B></TD>
+<TD VALIGN=top>Display the result of the next entry in the log. If result caching is on
+in the <A HREF=worksheet.html#preferences>settings</A> the next result is displayed, if it
+isn't the statement is reexecuted to generate the result. Keyboard shortcut is <B>ALT+Down</B>.
+Only available in menu, not in toolbar.
 </TD></TR>
 <TR><TD VALIGN=top><B>
 Erase Log</B></TD>
@@ -100,6 +126,36 @@ This contains the actual result of the query or describe. For some notes about d
 see <A HREF=common.html#describe>this note</A>.
 </TD></TR>
 <TR><TD VALIGN=top><B>
+Visualize</B></TD><TD>
+Can be used to visualize the current content of the result. The first column is assumes to
+contain labels and the rest contain the data.<P>
+<IMG SRC=images/visualize.png><P>
+The toolbar available contains the following controls.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Chart type</B></TD><TD>
+What kind of chart to generate. Available types are <B>Bar Chart</B>, <B>Line Chart</B> and
+<B>Pie Chart</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Display Legend</B></TD><TD>
+Display chart legend on the right of the generated chart.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Display Grid</B></TD><TD>
+Display a grid in the generated chart.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Display Axis Legend</B></TD><TD>
+Display legends of the axises of the generated chart.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Update chart</B></TD><TD>
+Generate a chart of the current data in the result tab and the current settings.
+</TD></TR>
+</TABLE>
+</TD></TR>
+<TR><TD VALIGN=top><B>
 Execution plan</B></TD><TD>
 The <A HREF=common.html#explain>execution plan</A> of the current statement.</TD></TR>
 <TR><TD VALIGN=top><B>Information
@@ -108,7 +164,8 @@ The <A HREF=common.html#explain>execution plan</A> of the current statement.</TD
 <TR><TD VALIGN=top><B>Statistics
 </B></TD><TD>The statistics collected when this statement was run. You need to <B>enable
 statistics</B> for this to be enabled. To update the statistic view simply change to another tab and change back
-to statistics.
+to statistics. Chart are updated at the interval specified in the toolbar regardless of
+if you refresh statistics or not.
 </TD></TR>
 <TR><TD VALIGN=top><B>Logging
 </B></TD><TD>This pane will display the history of the statements you have executed and
@@ -155,9 +212,21 @@ for the current session though.</TD></TR>
 Display number column</B></TD><TD>
 Indicate whether or not to display the number column as the first column of the result or suppress it.</TD></TR>
 <TR><TD VALIGN=top><B>
+Move cursor to error</B></TD><TD>
+Move the cursor to the location of an error in an execute statement.
+<TR><TD VALIGN=top><B>
+Save previous result</B></TD><TD>
+Save the results of all previous statements. This can consume a lot of memory, but will increase time to navigate
+history results. You can still clear this cache by erasing the log.
+<TR><TD VALIGN=top><B>
 Default file</B></TD><TD>
 A filename to open automatically when you start a new worksheet. Choose the <B>Browse</B> button to select
 the file in a file dialog.</TD></TR>
 </TABLE>
+<A NAME=saved><H2>Saved SQL</H2>
+This is a feature you can use to quickly access SQL you often use. This is a popupmenu accessible in the toolbar
+of a worksheet. This popup will display all the SQL under "toWorksheet:" in the <A HREF=sqledit.html>SQL dictionary</A>.
+You can create submenues by adding a ":" character in the SQL name. The name of the SQL dictionary is what is used to
+generate the menu and not the description. You can still use placebinders in saved SQL. By default this list is empty.
 </BODY>
 </HTML>

@@ -545,12 +545,12 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   Key_F5);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
-			   "&Describe under cursor",this,SLOT(describe(void)),
+			   "&Describe Under Cursor",this,SLOT(describe(void)),
 			   Key_F4);
-      ToolMenu->insertItem("&Enable statistics",this,SLOT(toggleStatistic(void)),
+      ToolMenu->insertItem("&Enable Statistics",this,SLOT(toggleStatistic(void)),
 			   0,TO_ID_STATISTICS);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
-			   "&Stop execution",Result,SLOT(stop(void)),
+			   "&Stop Execution",Result,SLOT(stop(void)),
 			   0,TO_ID_STOP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Execute Saved SQL",
@@ -559,12 +559,12 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Select Saved SQL",
 			   this,SLOT(selectSaved()),
 			   CTRL+SHIFT+Key_S);
-      ToolMenu->insertItem("Edit saved SQL",
+      ToolMenu->insertItem("Edit Saved SQL",
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Previous log entry",this,SLOT(executePreviousLog()),
+      ToolMenu->insertItem("Previous Log Entry",this,SLOT(executePreviousLog()),
 			   ALT+Key_Up);
-      ToolMenu->insertItem("Next log entry",this,SLOT(executeNextLog()),
+      ToolMenu->insertItem("Next Log Entry",this,SLOT(executeNextLog()),
 			   ALT+Key_Down);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
