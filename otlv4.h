@@ -8,6 +8,8 @@
 // in all copies.
 // ==============================================================
 
+// Extended by Henrik Johnson for TOra use. Not interchangeable with other stock OTL releases.
+
 #ifndef __OTL_H__
 #define __OTL_H__
 
@@ -8459,7 +8461,7 @@ public:
    delete[] buf;
  }
 
-  int write_dt(void* trg, const void* src, const int)
+  int write_dt(void* trg, const void* src, const int sz)
   {
 #if (defined(OTL_ORA8I)||defined(OTL_ORA9I))&&defined(OTL_ORA_TIMESTAMP)
     OCIDateTime* trg_ptr=OTL_RCAST(OCIDateTime*,trg);
