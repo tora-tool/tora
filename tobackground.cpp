@@ -548,16 +548,22 @@ public:
     arr.assign(data,data_length);
     Animation=new QMovie(arr);
     setMovie(*Animation);
+#if 0
+    Animation->pause();
+#endif
     TimerID=startTimer(500);
   }
 
   virtual void timerEvent(QTimerEvent *time)
   {
-    if (TimerID==time->timerId())
+    if (TimerID==time->timerId()) {
       killTimer(TimerID);
-    if (Running==0)
-      Animation->pause();
+      TimerID=-1;
+      if (Running==0)
+	Animation->pause();
+    }
   }
+
   virtual void mouseReleaseEvent(QMouseEvent *e)
   {
     try {
@@ -636,7 +642,7 @@ void toBackground::stop(void)
 void toBackground::init(void)
 {
   toMain *main=toMainWidget();
-  if (!main)
+  if (!main||Label)
     return;
 
   Label=new toBackgroundLabel(main->statusBar());

@@ -571,6 +571,8 @@ toMain::toMain()
   }
 #endif
 
+  toBackground::init();
+
   if (Connections.size()==0) {
     try {
       toNewConnection newConnection(this,tr("First connection"),true);

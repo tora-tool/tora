@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-02-15: Fixed SIGSEGV problem in listviews.
+2003-02-15: Fixed twirl not showing initially... again.
 2003-02-15: Don't expand filenames if the file exist without extension.
 2003-02-15: Made charts obey number formatting as well.
 2003-02-14: Change password when it has expired.

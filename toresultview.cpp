@@ -133,6 +133,8 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
 
 QString toResultViewItem::firstText(int col) const
 {
+  if (col>=ColumnCount)
+    return QString::null;
   QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)
@@ -344,6 +346,8 @@ QString toResultViewCheck::text(int col) const
 
 QString toResultViewCheck::firstText(int col) const
 {
+  if (col>=ColumnCount)
+    return QString::null;
   QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)
