@@ -1,0 +1,110 @@
+<HTML><HEAD><TITLE>Database Browser</TITLE></HEAD><BODY>
+<H1>Database Browser</H1>
+This tool provides you a simple broser for exploring database schema objects. Initially it can be said that the browser also
+provides a browser like functionallity for the <A HREF=template.html>template help</A> which is
+covered separately. This browser will provide you with more information and you will also in
+future versions of TOra be able to interact with schema objects (Droping or create tables etc),
+this is not posible in the template help version. The <A HREF=template.html>template help</A> on
+the other hand is tree based and some people consider it easier and faster to work with.<P>
+<IMG SRC=images/browser.png><P>
+<H2>Using the browser</H2>
+The database browser has a very simple interface with a toolbar which contain the following
+functions. All of these are also available in the <B>Browser</B> menu item except for the
+schema selection.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Refresh
+</B></TD><TD>
+Refresh the displayed data from the database. Also available on the
+key <B>F5</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Define filter</B></TD><TD>
+Displays the <A HREF=browser.html#filter>define filter dialog</A>. This is used to specify which
+objects to show in the browser. The default filter is to show everything. Also available on the
+key <B>CTRL+SHIFT+G</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Clear filter</B></TD><TD>
+Remove the current filter and revert to the default of showing everything. Also available on the
+key <B>CTRL+SHIFT+H</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Schema</B></TD><TD>
+The last item on the toolbar is a combo box where you can select the schema to display
+objects for. It defaults the schema you are currently logged in as. Only schemas that are
+visible to the current user is selectable in the lost (Really, TOra does not contain the
+secret DBA password that will always let you access everything regardless of your priviledges)
+.</TD></TR>
+</TABLE><P>
+The rest of the interface consists of two tabbed windows, one within the other. The first one
+you can use to select the object type you want to inspect. When you have selected a type you
+can see the visible objects of specified type available in the selected schema. The second
+tab indicate what kind of information you want to explore of the selected object and depends
+on the object type (For more information about available information see
+<A HREF=browser.html#types>this</A>). When you select an object name in the left list you
+can inspect information about it to the right.<P>
+<H2>Available information</H2>
+This is the available information for the different object types.<P>
+<TABLE>
+<TR><TD><I>Object type</I></TD><TD><I>Name</I></TD><TD><I>Description</I></TD></TR>
+<TR><TD VALIGN=top><B>
+Tables</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Columns</B></TD><TD VALIGN=top>
+A description of the columns in the table. For more information about this information also see
+<A HREF=common.html#describe>object description</A>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Views</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Indexes</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Sequences</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Synonyms</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+PL/SQL</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Triggers</B></TD><TD></TD><TD VALIGN=top>
+</TD></TR>
+</TABLE>
+<H2>Defining a filter</H2>
+Filtering is based on the object name and can be specified in a variety of ways. This
+is the dialog used to specify the filter.<P>
+<IMG SRC=images/browserfilter.png><P>
+The most important part of this dialog is the editor which let you specify the string
+to apply the criteria to. This is not available for <B>No filter</B> setting.
+The different available types and options are.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+No filter</B></TD><TD>
+No filter specified, display all objects.</TD></TR>
+<TR><TD VALIGN=top><B>
+Start with</B></TD><TD>
+Only include objects which name starts with the specified string.</TD></TR>
+<TR><TD VALIGN=top><B>
+End with</B></TD><TD>
+Only include objects which name ends with the specified string.</TD></TR>
+<TR><TD VALIGN=top><B>
+Contains</B></TD><TD>
+Only include objects which name contain the specified string.</TD></TR>
+<TR><TD VALIGN=top><B>
+RegExp</B></TD><TD>
+Only include objects which name matches the regular expression specified in the editor. The dialect of RegExp:s
+is the ones in the version of Qt that TOra is compiled against.
+For more information on regular expressions check out
+<A HREF=http://doc.trolltech.com/qregexp.html>http://doc.trolltech.com/qregexp.html</A>, if you are using Qt 3.0
+or later you have a more advanced form of regular expressions.</TD></TR>
+<TR><TD VALIGN=top><B>
+Ignore case</B></TD><TD>
+Ignore the case when matches. Since object names are pretty much always uppercase it is probably safest to leave this on.</TD></TR>
+<TR><TD VALIGN=top><B>
+Invert selection</B></TD><TD>
+If set, include all the objects that doesn't meet the specified criteria.</TD></TR>
+</TABLE>
+</BODY>
+</HTML>

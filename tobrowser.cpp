@@ -647,9 +647,9 @@ void toBrowser::windowActivated(QWidget *widget)
 			   Key_S+ALT);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(*FilterPixmap,"&Define filter",this,SLOT(defineFilter(void)),
-			   CTRL+Key_F);
+			   CTRL+SHIFT+Key_G);
       ToolMenu->insertItem(*NoFilterPixmap,"&Clear filter",this,SLOT(clearFilter(void)),
-			   CTRL+SHIFT+Key_F);
+			   CTRL+SHIFT+Key_H);
       toMainWidget()->menuBar()->insertItem("&Browser",ToolMenu,-1,toToolMenuIndex());
     }
   } else {

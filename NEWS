@@ -40,6 +40,7 @@
 2001-07-07: Fixed problem with browser grabbing focus.
 2001-07-07: Try finding g++ as well as gcc.
 2001-07-07: Fix for compiling for Solaris 2.6 in configure.
+2001-07-08: Changed bindings for filter in browser.
 
 0.12: Released 2001-07-01
 
