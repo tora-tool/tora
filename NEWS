@@ -1,5 +1,7 @@
 1.3.12:
 
+2003-09-12: Added parse all function to worksheet.
+2003-09-12: Added parse functionality to connection 
 2003-08-26: Fixed problem with X11 style pasting in editor. (Thanx again Volker Goetz)
 2003-08-21: Fixed indenting on EXCEPTION keyword and complex statements.
 2003-08-21: Fixed compile of toresultview.cpp in Qt earlier than 3.1.

@@ -559,6 +559,12 @@ public:
      * @param params Parameters to pass to query.
      */
     virtual void execute(toConnectionSub *conn,const QCString &sql,toQList &params) = 0;
+    /** Parse a query on an actual connection and report any syntax problems encountered.
+     * Defaults to not implemented.
+     * @param conn Connection to execute on.
+     * @param sql SQL to parse
+     */
+    virtual void parse(toConnectionSub *conn,const QCString &sql);
   };
 
 private:
@@ -674,6 +680,19 @@ public:
    * Rollback connection. This will also close all extra connections except one.
    */
   virtual void rollback(void);
+
+  /** Parse a query on an actual connection and report any syntax problems encountered.
+   * Defaults to not implemented.
+   * @param conn Connection to execute on.
+   * @param sql SQL to parse
+   */
+  void parse(const QString &sql);
+  /** Parse a query on an actual connection and report any syntax problems encountered.
+   * Defaults to not implemented.
+   * @param conn Connection to execute on.
+   * @param sql SQL to parse
+   */
+  void parse(const toSQL &sql);
 
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute

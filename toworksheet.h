@@ -113,17 +113,24 @@ class toWorksheet : public toToolWidget {
   int LastLine;
   int LastOffset;
 
+  enum execType {
+    Normal,
+    Direct,
+    Parse,
+    OnlyPlan
+  };
+
   QPopupMenu *ToolMenu;
 
   QString duration(int,bool hundreds=true);
   void saveHistory(void);
   void viewResources(void);
-  void query(const QString &str,bool direct,bool onlyPlan=false);
+  void query(const QString &str,execType type);
   bool checkSave(bool input);
   void saveDefaults(void);
   void setup(bool autoLoad);
 
-  void execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan=false);
+  void execute(toSQLParse::tokenizer &tokens,int line,int pos,execType type);
 
   void insertStatement(const QString &);
 public:
@@ -151,6 +158,7 @@ public slots:
   void connectionChanged(void);
   void refresh();
   void execute();
+  void parseAll();
   void executeAll();
   void executeStep();
   void executeNewline();

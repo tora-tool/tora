@@ -606,6 +606,8 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
 			   tr("&Reexecute Last Statement"),this,SLOT(refresh(void)),
 			   Key_F5);
+      ToolMenu->insertItem(tr("Check syntax of buffer"),
+			   this,SLOT(parseAll()));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
 			   tr("&Describe Under Cursor"),this,SLOT(describe(void)),
@@ -734,7 +736,7 @@ void toWorksheet::changeResult(QWidget *widget)
 void toWorksheet::refresh(void)
 {
   if (!QueryString.isEmpty())
-    query(QueryString,false);
+    query(QueryString,Normal);
   if (RefreshSeconds>0)
     RefreshTimer.start(RefreshSeconds*1000,true);
 }
@@ -787,7 +789,7 @@ bool toWorksheet::describe(const QString &query)
   return false;
 }
 
-void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
+void toWorksheet::query(const QString &str,execType type)
 {
   Result->stop();
   RefreshTimer.stop();
@@ -814,7 +816,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
   if(chk.startsWith(QString::fromLatin1("create trigger ")))
     nobinds=true;
   
-  if (onlyPlan) {
+  if (type==OnlyPlan) {
     ResultTab->showPage(Plan);
     Plan->query(str);
   } else if (!describe(QueryString)) {
@@ -842,7 +844,15 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       }
     toStatusMessage(tr("Processing query"),true);
 
-    if (direct) {
+    if (type==Parse) {
+      try {
+	First=false;
+	Timer.start();
+	connection().parse(QueryString);
+      } catch (const QString &exc) {
+	addLog(QueryString,exc,true);
+      }
+    } else if (type==Direct) {
       try {
 	First=false;
 	Timer.start();
@@ -1047,7 +1057,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   saveDefaults();
 }
 
-void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan)
+void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,execType type)
 {
   LastLine=line;
   LastOffset=pos;
@@ -1096,13 +1106,13 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
     t=t.mid(i);
   }
   if (t.length())
-    query(t,direct,onlyPlan);
+    query(t,type);
 }
 
 void toWorksheet::execute()
 {
   if (Editor->hasMarkedText()) {
-    query(Editor->markedText(),false);
+    query(Editor->markedText(),Normal);
     return;
   }
 
@@ -1120,13 +1130,13 @@ void toWorksheet::execute()
   } while(tokens.line()<cline||
 	  (tokens.line()==cline&&tokens.offset()<cpos));
 
-  execute(tokens,line,pos,false);
+  execute(tokens,line,pos,Normal);
 }
 
 void toWorksheet::explainPlan()
 {
   if (Editor->hasMarkedText()) {
-    query(Editor->markedText(),false,true);
+    query(Editor->markedText(),OnlyPlan);
     return;
   }
 
@@ -1144,7 +1154,7 @@ void toWorksheet::explainPlan()
   } while(tokens.line()<cline||
 	  (tokens.line()==cline&&tokens.offset()<cpos));
 
-  execute(tokens,line,pos,false,true);
+  execute(tokens,line,pos,OnlyPlan);
 }
 
 void toWorksheet::executeStep()
@@ -1163,7 +1173,7 @@ void toWorksheet::executeStep()
   } while(tokens.line()<cline||
 	  (tokens.line()==cline&&tokens.offset()<=cpos));
 
-  execute(tokens,line,pos,false);
+  execute(tokens,line,pos,Normal);
 }
 
 void toWorksheet::executeAll()
@@ -1200,7 +1210,55 @@ void toWorksheet::executeAll()
     }
 
     if (tokens.line()<Editor->numLines()&&!ignore) {
-      execute(tokens,line,pos,true);
+      execute(tokens,line,pos,Direct);
+      if (Current) {
+	toResultView *last=dynamic_cast<toResultView *>(Current);
+	if (!WorksheetTool.config(CONF_HISTORY,"").isEmpty()&&
+	    last&&last->firstChild())
+	  History[LastID]=last;
+      }
+    }
+  } while(tokens.line()<Editor->numLines());
+
+  Editor->setCursorPosition(cline,cpos,false);
+  Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
+}
+
+void toWorksheet::parseAll()
+{
+  toSQLParse::editorTokenizer tokens(Editor);
+
+  int cpos,cline;
+  Editor->getCursorPosition(&cline,&cpos);
+
+  QProgressDialog dialog(tr("Parsing all statements"),
+			 tr("Cancel"),
+			 Editor->numLines(),
+			 this,
+			 "Progress",
+			 true);
+  int line;
+  int pos;
+  bool ignore=true;
+  do {
+    line=tokens.line();
+    pos=tokens.offset();
+    dialog.setProgress(line);
+    qApp->processEvents();
+    if (dialog.wasCancelled())
+      break;
+    toSQLParse::parseStatement(tokens);
+
+    if (ignore&&(tokens.line()>cline||
+		 (tokens.line()==cline&&
+		  tokens.offset()>=cpos))) {
+      ignore=false;
+      cline=line;
+      cpos=pos;
+    }
+
+    if (tokens.line()<Editor->numLines()&&!ignore) {
+      execute(tokens,line,pos,Parse);
       if (Current) {
 	toResultView *last=dynamic_cast<toResultView *>(Current);
 	if (!WorksheetTool.config(CONF_HISTORY,"").isEmpty()&&
@@ -1328,7 +1386,7 @@ void toWorksheet::executeNewline(void)
   LastLine=cline;
   LastOffset=0;
   if (Editor->hasMarkedText())
-    query(Editor->markedText(),false);
+    query(Editor->markedText(),Normal);
 }
 
 void toWorksheet::describe(void)
@@ -1357,7 +1415,7 @@ void toWorksheet::executeSaved(void)
 
   if (SavedLast.length()>0) {
     try {
-      query(toSQL::string(SavedLast,connection()),false);
+      query(toSQL::string(SavedLast,connection()),Normal);
     } TOCATCH
   }
 }
@@ -1497,7 +1555,7 @@ void toWorksheet::executeLog(void)
     
     if (item->text(4).isEmpty()) {
       if (!WorksheetTool.config(CONF_EXEC_LOG,"").isEmpty())
-	query(item->allText(0),false);
+	query(item->allText(0),Normal);
     } else {
       std::map<int,QWidget *>::iterator i=History.find(item->text(4).toInt());
       QueryString=item->allText(0);

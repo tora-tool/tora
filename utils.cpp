@@ -679,7 +679,11 @@ QString toPluginPath(void)
   char buffer[1024];
   try {
     if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+#ifdef OAS
+				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\oas.exe",
+#else
 				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\tora.exe",
+#endif
 				"Path",
 				buffer,siz)) {
       if (siz>0)

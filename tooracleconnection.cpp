@@ -718,6 +718,15 @@ public:
       } else
 	toQuery query(connection(),QString::fromUtf8(sql),params);
     }
+    virtual void parse(toConnectionSub *sub,const QCString &sql)
+    {
+      oracleSub *conn=oracleConv(sub);
+      try {
+	otl_cursor::parse(*(conn->Connection),sql);
+      } catch (const otl_exception &exc) {
+	ThrowException(exc);
+      }
+    }
   };
 
   toOracleProvider(void)

@@ -1150,6 +1150,18 @@ void toConnection::delInit(const QString &sql)
   }
 }
 
+void toConnection::parse(const QString &sql)
+{
+  toBusy busy;
+  Connection->parse(mainConnection(),sql.utf8());
+}
+
+void toConnection::parse(const toSQL &sql)
+{
+  toBusy busy;
+  Connection->parse(mainConnection(),toSQL::sql(sql,*this));
+}
+
 void toConnection::execute(const toSQL &sql,toQList &params)
 {
   toBusy busy;
@@ -1813,4 +1825,9 @@ toQDescList toConnection::connectionImpl::columnDesc(const objectName &)
 {
   toQDescList ret;
   return ret;
+}
+
+void toConnection::connectionImpl::parse(toConnectionSub *,const QCString &)
+{
+  throw qApp->translate("toConnection","Parse only not implemented for this type of connection");
 }

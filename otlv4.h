@@ -3508,6 +3508,27 @@ public:
      TCursorStruct>(cursor_struct,stm_text);
  }
 
+ void check_syntax()
+ {
+  typedef otl_tmpl_exception
+    <TExceptionStruct,
+     TConnectStruct,
+     TCursorStruct> otl_exception;
+
+  if(!connected)return;
+  retcode=cursor_struct.check_syntax();
+  if(retcode)return;
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+  if(STD_NAMESPACE_PREFIX uncaught_exception())return; 
+#endif
+  throw otl_tmpl_exception
+    <TExceptionStruct,
+     TConnectStruct,
+     TCursorStruct>(cursor_struct,stm_text);
+ }
+
   virtual bool valid_binding
   (const otl_tmpl_variable<TVariableStruct>& v,
    const int binding_type)
@@ -3652,6 +3673,35 @@ public:
    }
   }
   return -1;
+ }
+
+ static long parse
+ (otl_tmpl_connect
+   <TExceptionStruct,
+    TConnectStruct,
+    TCursorStruct>& connect,
+  const char* sqlstm,
+  const int exception_enabled=1)
+ {
+  connect.reset_throw_count();
+  try{
+   otl_tmpl_cursor
+   <TExceptionStruct,TConnectStruct,
+    TCursorStruct,TVariableStruct> cur(connect);
+   cur.cursor_struct.set_direct_exec(1);
+   cur.parse(sqlstm);
+   cur.check_syntax();
+   return 1;
+  }catch(otl_tmpl_exception
+          <TExceptionStruct,
+           TConnectStruct,
+           TCursorStruct>){
+   if(exception_enabled){
+    connect.throw_count++;
+    throw;
+   }
+  }
+  return 0;
  }
 
  virtual int eof(void){return eof_data;}
@@ -8801,6 +8851,22 @@ public:
     errhp,
     OTL_SCAST(ub4,iters),
     OTL_SCAST(ub4,rowoff),
+    0,
+    0,
+    mode);
+  if(status!=OCI_SUCCESS)
+   return 0;
+  return 1;
+ }
+
+ int check_syntax(void)
+ {ub4 mode=OCI_PARSE_ONLY;
+  status=OCIStmtExecute
+   (db->svchp,
+    cda,
+    errhp,
+    OTL_SCAST(ub4,0),
+    OTL_SCAST(ub4,0),
     0,
     0,
     mode);
