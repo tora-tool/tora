@@ -10,6 +10,7 @@ To the left is a list containing the available option pages you can display.<P>
 <DD><A HREF=database.html>Database Settings</A> - Global database settings.
 <DD><A HREF=fonts.html>Font Settings</A> - Font and color settings.
 <DD><A HREF=additionalhelp.html>Additional Help</A> - Additional manuals in help browser.
+<DD><A HREF=toolsetting.html>Tools</A> - Settings regarding enabled tools.</A>
 </DL><P>
 The rest of the settings are tool specific and covered under corresponding tool in the 
 <A HREF=tools.html>tools section</A>.<P>
@@ -50,19 +51,14 @@ don't change the window.
 password is store in clear text in either the windows registry or a file.</B>
 </TD></TR>
 <TR><TD VALIGN=top>
-<B>Long sessions</B></TD>
-<TD VALIGN=top>This tells TOra that it can open new connections to the database when it thinks there
-may be a considerable delay in the response. If you don't check this TOra will hang if you
-execute a long running query in the SQL worksheet. It is disabled by default since this is
-the nice thing to do with regards to the database. In windows aborted queries will still run until
-the first returned row due to a limitation in the thread implementation. In UNIX background queries
-are abort instantaneously.
-</TD></TR>
-<TR><TD VALIGN=top>
 <B>Include DB in caption</B></TD>
 <TD VALIGN=top>If this is set the database name will be included in the caption of all your tool
 windows after the tool name. Observe that there often is no other way of knowing which
 database the window works on except for this.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Maximize window on start</B></TD>
+<TD VALIGN=top>If this is checked the TOra main window will open maximized on startup.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Desktop Aware</B></TD>
@@ -83,6 +79,14 @@ run in windows you're it). If this is checked docks will be emulated with a tool
 drawback that you can't resize them. If unchecked docks appear in normal windows.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Style</B></TD>
+<TD VALIGN=top>The GUI style to use for the TOra application. This switch is only available for Qt only applications.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Connect history</B></TD>
+<TD VALIGN=top>How many connection entries to save in the new connection history list.
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Table scale</B></TD>
 <TD VALIGN=top>This is the scale which to use when printing lists. Lists on paper can usually be a little
 smaller and still be readable. Given as a fraction where 0.5 means half the size on paper and 1.0
@@ -99,6 +103,10 @@ they are kept until the next message is displayed.
 the oldest are removed when new are added.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Chart samples</B></TD>
+<TD VALIGN=top>Number of samples to save by default in charts.
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Size Unit</B></TD>
 <TD VALIGN=top>The unit to display sizes with in TOra.
 </TD></TR>
@@ -106,11 +114,6 @@ the oldest are removed when new are added.
 <B>Refresh</B></TD>
 <TD VALIGN=top>The default refresh time to use in TOra. Tools which refresh automatically use this setting as the
 default. It can also be changed on a per tool basis.
-</TD></TR>
-<TR><TD VALIGN=top>
-<B>Style</B></TD>
-<TD VALIGN=top>The style which the TOra GUI should use. This is only available as a compile time option
-for Qt only based TOra.
 </TD></TR>
 </TABLE>
 </BODY>

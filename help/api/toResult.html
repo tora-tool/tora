@@ -33,7 +33,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref14">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref15">query</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &params) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref15">query</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &params) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref16">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
 </LI>
@@ -43,7 +43,7 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref19">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &) 
 </LI>
-<LI>toQList &&nbsp;<b><A HREF="#ref20">params</A></b> (void) 
+<LI><A HREF="#toQList">toQList</A> &&nbsp;<b><A HREF="#ref20">params</A></b> (void) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref21">handled</A></b> (void) 
 </LI>
@@ -70,7 +70,7 @@
 </LI>
 <LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref10">timer</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref11">setParams</A></b> (const toQList &par) 
+<LI>void &nbsp;<b><A HREF="#ref11">setParams</A></b> (const <A HREF="#toQList">toQList</A> &par) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref32">connectionChanged</A></b> (void) 
 </LI>
@@ -87,7 +87,7 @@
 </p>
 <p><b>Returns</b>: Pointer to tool timer.
    </p>
-<A NAME="setParams"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setParams</strong> (const toQList &par)
+<A NAME="setParams"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setParams</strong> (const <A HREF="#toQList">toQList</A> &par)
 <br></td><td align="right"><h3><strong>setParams</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Set parameters of last query.
    </p>
 <A NAME="toResult"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResult</strong> (void)
@@ -95,7 +95,7 @@
 <br></td><td align="right"><h3><strong>~toResult</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="refresh"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Re execute last query
    </p>
-<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>query</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &params)
+<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>query</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><i><strong>query</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Perform a query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -134,7 +134,7 @@
 <A NAME="canHandle"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="params"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>toQList &&nbsp;<strong>params</strong> (void)
+<A NAME="params"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQList">toQList</A> &&nbsp;<strong>params</strong> (void)
 <br></td><td align="right"><h3><strong>params</strong></h3></td></tr></table><p></p><p> Get last parameters used.
 </p>
 <p><b>Returns</b>: Don't modify the list returned.

@@ -185,12 +185,12 @@ QRect toLineChart::fixRect(QPoint p1,QPoint p2)
 
 void toLineChart::paintTitle(QPainter *p,QRect &rect)
 {
-  QFontMetrics fm=p->fontMetrics();
   if (!Title.isEmpty()) {
     p->save();
     QFont f=p->font();
     f.setBold(true);
     p->setFont(f);
+    QFontMetrics fm=p->fontMetrics();
     QRect bounds=fm.boundingRect(0,0,rect.width(),rect.width(),FONT_ALIGN,Title);
     p->drawText(0,2,rect.width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
     p->restore();
@@ -208,6 +208,7 @@ void toLineChart::paintTitle(QPainter *p,QRect &rect)
       }
     }
     if (!str.isEmpty()) {
+      QFontMetrics fm=p->fontMetrics();
       QRect bounds=fm.boundingRect(0,0,rect.width(),rect.height(),FONT_ALIGN,str);
       p->drawText(0,2,rect.width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
       p->translate(0,bounds.height());
@@ -278,7 +279,9 @@ void toLineChart::paintAxis(QPainter *p,QRect &rect)
     if (leftAxis) {
       minstr=QString::number(zMinValue);
       maxstr=QString::number(zMaxValue);
+#if 0
       minstr+=YPostfix;
+#endif
       maxstr+=YPostfix;
       QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
       yoffset=bounds.height();
@@ -434,6 +437,7 @@ void toLineChart::paintChart(QPainter *p,QRect &rect)
 void toLineChart::paintEvent(QPaintEvent *e)
 {
   QPainter p(this);
+  p.setFont(font());
   QRect rect(0,0,width(),height());
   paintChart(&p,rect);
   MousePoint[1]=QPoint(-1,-1);

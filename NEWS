@@ -31,6 +31,9 @@
 2001-10-11: Added option to move to error in worksheet.
 2001-10-11: Added support for reverse indexes in extract.
 2001-10-11: Removed charts list in chart setup.
+2001-10-14: Fixed problem with px_process stuff in tuning.
+2001-10-14: Fixed min value in bar chart.
+2001-10-14: Fixed problem with edit menu without having edited anything.
 
 1.1.2: Released 2001-10-07
 

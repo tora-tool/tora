@@ -67,10 +67,10 @@
 <LI>virtual  void &nbsp;<b><A HREF="#ref47">rollback</A></b> (void) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref48">execute</A></b> (<A HREF="toSQL.html">toSQL</A> &sql,
-	       toQList &params) 
+	       <A HREF="#toQList">toQList</A> &params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref49">execute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
-	       toQList &params) 
+	       <A HREF="#toQList">toQList</A> &params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref50">execute</A></b> (<A HREF="toSQL.html">toSQL</A> &sql,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &arg2=QString::null,
@@ -87,10 +87,10 @@
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &arg9=QString::null) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref52">allExecute</A></b> (<A HREF="toSQL.html">toSQL</A> &sql,
-		  toQList &params) 
+		  <A HREF="#toQList">toQList</A> &params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref53">allExecute</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
-		  toQList &params) 
+		  <A HREF="#toQList">toQList</A> &params) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref54">allExecute</A></b> (<A HREF="toSQL.html">toSQL</A> &sql,
 		  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &arg1=QString::null,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &arg2=QString::null,
@@ -225,7 +225,7 @@
  Rollback connection. This will also close all extra connections except one.
    </p>
 <A NAME="execute"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (<A HREF="toSQL.html">toSQL</A> &sql,
-	       toQList &params)
+	       <A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -235,7 +235,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="execute"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>execute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
-	       toQList &params)
+	       <A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><strong>execute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -273,7 +273,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="allExecute"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (<A HREF="toSQL.html">toSQL</A> &sql,
-		  toQList &params)
+		  <A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -283,7 +283,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="allExecute"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>allExecute</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
-		  toQList &params)
+		  <A HREF="#toQList">toQList</A> &params)
 <br></td><td align="right"><h3><strong>allExecute</strong></h3></td></tr></table><p></p><p> Execute a statement without caring about the result on all open database connections.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

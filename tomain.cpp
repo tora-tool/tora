@@ -157,6 +157,8 @@ toMain::toMain()
   qApp->setMainWidget(this);
   setDockMenuEnabled(true);
 
+  Edit=NULL;
+
   FileMenu=new QPopupMenu(this);
   FileMenu->insertItem(QPixmap((const char **)connect_xpm),
 		       "&New Connection...",TO_NEW_CONNECTION);

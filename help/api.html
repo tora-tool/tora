@@ -140,6 +140,7 @@ this into several parts to simplify explaining them<p>
 #include "tosimplequery.h"
 #include "toresultview.h"
 #include "toparamget.h"
+#include "tochangeconnection.h"
 
 #include "tosimplequery.moc"
 
@@ -166,9 +167,9 @@ static char * execute_xpm[] = {
 "                "};
 
 toSimpleQuery::toSimpleQuery(QWidget *main,<A HREF=api/toConnection.html>toConnection</A> &connection)
-  : <A HREF=api/toConnection.html>toToolWidget</A>(main,connection)
+  : <A HREF=api/toConnection.html>toToolWidget</A>(SimpleQueryTool,"simplequery.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.description());
   QPixmap executePixmap((const char **)execute_xpm);
   new QToolButton(executePixmap,
                   "Execute current statement",
@@ -176,6 +177,7 @@ toSimpleQuery::toSimpleQuery(QWidget *main,<A HREF=api/toConnection.html>toConne
 		  this,SLOT(execute()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new <A HREF=api/toChangeConnection.html>toChangeConnection</A>(toolbar);
 </pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
 
 In this part the parent constructor is called and the toolbar is set up. Also note the inclusion
@@ -196,25 +198,17 @@ Next up is creating our widgets and connecting them.<p>
 <table width=100% border=0><tr><td bgcolor="#BEEAE0">
 <pre>
   Statement=new QLineEdit(this);
-  Result=new <A HREF=api/toResultView.html>toResultView</A>(connection,this);
+  Result=new <A HREF=api/toResultView.html>toResultView</A>(this);
   connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
 }
 
 </pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
 
 This just adds two additional widgets and connect the <code>returnPressed</code> signal to
-the <code>execute</code> slot.<p>
-
-<table width=100% border=0><tr><td bgcolor="#BEEAE0">
-<pre>
-  Statement=new QLineEdit(this);
-  Result=new <A HREF=api/toResultView.html>toResultView</A>(connection,this);
-  connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
-}
-
-</pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
-
-And now the last thing to do is implement the execute method.<p>
+the <code>execute</code> slot. One thing to realise here is that all the toResult children
+will use the connection of the closest parent of type
+<A HREF=api/toToolWidget.html>toToolWidget</A> in the widget hierarchy. And now the last
+thing to do is implement the execute method.<p>
 
 <table width=100% border=0><tr><td bgcolor="#BEEAE0">
 <pre>
@@ -223,7 +217,7 @@ void toSimpleQuery::execute(void)
 {
   try {
     QString sql=Statement->text();
-    list<QString> params=<A HREF=api/toParamGet.html>toParamGet</A>::getParam(this,sql);
+    toQList params=<A HREF=api/toParamGet.html>toParamGet</A>::getParam(this,sql);
     Result->query(sql,params);
   } TOCATCH
 }
@@ -231,7 +225,9 @@ void toSimpleQuery::execute(void)
 </pre></td></tr><tr><td align=right>tosimplequery.cpp</td></tr></table><p>
 
 The toParamGet::getParam function is used to ask for bind values in the query string. To understand
-what I mean try executing the query "select :hello from dual" when you try the result.
+what I mean try executing the query "select :hello from dual" when you try the result. The toQList
+is simple a list of <A HREF=api/toQValue.html>toQValue</A> which can hold different datatypes and
+converting between them transparently.<P>
 
 Now finally to compile this module you need to add the <code>tosimplequery.cpp</code> file
 to <code>SOURCES</code> define in the file <code>Makefile</code>. To build a plugin you also

@@ -9,6 +9,7 @@
 #include "tosimplequery.h"
 #include "toresultview.h"
 #include "toparamget.h"
+#include "tochangeconnection.h"
 
 #include "tosimplequery.moc"
 
@@ -75,9 +76,9 @@ public:
 static toSimpleQueryTool SimpleQueryTool;
 
 toSimpleQuery::toSimpleQuery(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget(SimpleQueryTool,"simplequery.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.connectString());
+  QToolBar *toolbar=toAllocBar(this,"Simple Query",connection.description());
   QPixmap executePixmap((const char **)execute_xpm);
   new QToolButton(executePixmap,
                   "Execute current statement",
@@ -85,9 +86,10 @@ toSimpleQuery::toSimpleQuery(QWidget *main,toConnection &connection)
 		  this,SLOT(execute()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   Statement=new QLineEdit(this);
-  Result=new toResultView(connection,this);
+  Result=new toResultView(this);
   connect(Statement,SIGNAL(returnPressed()),this,SLOT(execute()));
 }
 
@@ -95,7 +97,7 @@ void toSimpleQuery::execute(void)
 {
   try {
     QString sql=Statement->text();
-    list<QString> params=toParamGet::getParam(this,sql);
+    toQList params=toParamGet::getParam(this,sql);
     Result->query(sql,params);
   } TOCATCH
 }

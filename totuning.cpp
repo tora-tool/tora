@@ -293,7 +293,7 @@ static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
 			      "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
 			      "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
 			      "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
-			      "  from v$session where sid not in (select sid from v$px_process)",
+			      "  from v$session where sid not in (select nvl(sid,0) from v$px_process)",
 			      "Chart displaying connected clients");
 
 static toSQL SQLChartsClients8("toTuning:Charts:4BAClients",
@@ -513,7 +513,7 @@ static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "       sum(decode(status,'INACTIVE',1,0)),\n"
 			       "       sum(decode(status,'ACTIVE',1,0))\n"
 			       "  from v$session\n"
-			       " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
+			       " where type != 'BACKGROUND' and sid not in (select nvl(sid,0) from v$px_process)",
 			       "Information about active/inactive clients");
 
 static toSQL SQLOverviewClient8("toTuning:Overview:Client",
@@ -661,7 +661,9 @@ static toSQL SQLOverviewBackground("toTuning:Overview:Background",
 				   "Background processes");
 
 static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
-				  "select count(1) from v$session where type = 'USER' and server = 'DEDICATED' and sid not in (select sid from v$px_process)",
+				  "select count(1) from v$session\n"
+				  " where type = 'USER' and server = 'DEDICATED'\n"
+				  "   and sid not in (select nvl(sid,0) from v$px_process)",
 				  "Dedicated server process",
 				  "8.1");
 
@@ -698,7 +700,7 @@ static toSQL SQLOverviewClientTotal("toTuning:Overview:ClientTotal",
 				    "select count(1),\n"
 				    "       sum(decode(status,'ACTIVE',1,0))\n"
 				    "  from v$session\n"
-				    " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
+				    " where type != 'BACKGROUND' and sid not in (select nvl(sid,0) from v$px_process)",
 				    "Information about total and active clients",
 				    "8.1");
 
