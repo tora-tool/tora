@@ -202,12 +202,14 @@ my %plugins=(
 						     "tooraclesettingui" ],
 					"Oracle" => 1,
 					"Custom" => <<__EOMK__ } ,
+	\@echo Linking plugin \$\@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	\$(GCC) -shared \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) -o \$@ \$^ \$(ORACLE_SHARED)
 __EOMK__
 	     "tomysqlconnection"   => { "Files" => [ "tomysqlconnection" ],
 					"MySQL" => 1,
 					"Custom" => <<__EOMK__ } ,
+	\@echo Linking plugin \$\@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	\$(GCC) -shared \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) \$(MYSQL_SHARED) -o \$@ \$^
 __EOMK__

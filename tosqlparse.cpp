@@ -854,7 +854,11 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if ((*i).Type==statement::Keyword) {
 	  if (Settings.KeywordUpper)
 	    t=upp;
-	  if (!lineList&&!any&&(*i).Type==statement::Keyword&&!noKeyBreak)
+	  if (!lineList&&
+	      !any&&
+	      (*i).Type==statement::Keyword&&
+	      !noKeyBreak
+	      upp=="BY")
 	    add=true;
 	} else {
 	  any=true;

@@ -784,7 +784,7 @@ void toWorksheet::query(const QString &str,bool direct)
       try {
 	param=toParamGet::getParam(this,QueryString);
       } catch (const QString &str) {
-	toStatusMessage(str);
+	toStatusMessage(str,false,false);
 	return;
       }
     toStatusMessage("Processing query",true);

@@ -161,6 +161,8 @@
 2001-12-13: Some last minute tweaking of the PL/SQL indenter.
 2001-12-13: Some changes to the commercial about text.
 2001-12-13: Minor change of wording in configure output.
+2001-12-13: Don't log Abort Execution error in worksheet.
+2001-12-13: Don't forget to display linking in custom plugins in configure.
 
 1.1.5: Released 2001-11-26
 
