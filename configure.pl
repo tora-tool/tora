@@ -89,6 +89,8 @@ for (@ARGV) {
 	$InstallLib=$1;
     } elsif (/^--with-gcc=(.*)$/) {
 	$CC=$1;
+    } elsif (/^--with-lib=(.*)$/) {
+	$Libs.=" $1";
     } elsif (/^--with-mono$/) {
 	$Target="tora-mono";
 	$ForceTarget=1;
@@ -116,6 +118,7 @@ Options can be any of the following:
 --with-qt-libs     Specify Qt library directory
 --with-gcc         Specify which GCC compiler to use
 --with-mono        Force monolithic compilation
+--with-lib         Add extra library to include (Include -l as well)
 --with-static      Force static binary compilation
 --with-kde         Compile as KDE application (Requires KDE 2.2 or later)
 --with-kde-include Where to find KDE include files
