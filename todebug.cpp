@@ -30,16 +30,17 @@
 #include <stack>
 
 #include <qbuttongroup.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qinputdialog.h>
 #include <qmenubar.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
 #include <qsizepolicy.h>
+#include <qspinbox.h>
 #include <qsplitter.h>
 #include <qstring.h>
 #include <qtabwidget.h>
@@ -61,6 +62,7 @@
 #include "totool.h"
 
 #include "todebug.moc"
+#include "todebugchange.moc"
 #include "todebugwatch.moc"
 
 #include "icons/addwatch.xpm"
@@ -228,7 +230,15 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   QString str;
   switch(Scope->id(Scope->selected())) {
   case 1:
-    return new QListViewItem(watches,"","",Name->currentText());
+    {
+      toResultViewItem *item=new toResultViewItem(watches,NULL);
+      item->setText(0,"");
+      item->setText(1,"");
+      item->setText(2,Name->currentText());
+      item->setText(3,"");
+      item->setText(4,"NOCHANGE");
+      return item;
+    }
   case 2:
     str=Debugger->headEditor()->schema();
     str+=".";
@@ -263,7 +273,13 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
     object=str.left(pos);
     str.remove(0,pos+1);
   }
-  return new QListViewItem(watches,schema,object,str,"","NOCHANGE");
+  toResultViewItem *item=new toResultViewItem(watches,NULL);
+  item->setText(0,schema);
+  item->setText(1,object);
+  item->setText(2,str);
+  item->setText(3,"");
+  item->setText(4,"NOCHANGE");
+  return item;
 }
 
 class toDebugOutput : public toOutput {
@@ -1364,11 +1380,13 @@ END;",
 	  item->setText(4,"");
 	  if (ret==TO_SUCCESS)
 	    item->setText(3,buffer);
-	  else if (ret==TO_ERROR_NULLVALUE)
+	  else if (ret==TO_ERROR_NULLVALUE) {
 	    item->setText(3,"{null}");
-	  else if (ret==TO_ERROR_NULLCOLLECTION)
-	    item->setText(3,"{null}");
-	  else if (ret==TO_ERROR_INDEX_TABLE) {
+	    item->setText(5,"NULL");
+	  } else if (ret==TO_ERROR_NULLCOLLECTION) {
+	    item->setText(3,"[Count 0]");
+	    item->setText(5,"LIST");
+	  } else if (ret==TO_ERROR_INDEX_TABLE) {
 	    char buffer[4001];
 	    if (item->text(0).isEmpty()) {
 	      index<<item->text(2);
@@ -1392,7 +1410,13 @@ END;",
 		  name+="(";
 		  name+=start;
 		  name+=")";
-		  last=new QListViewItem(item,last,item->text(0),item->text(1),name,"","NOCHANGE");
+		  last=new toResultViewItem(item,last);
+		  last->setText(0,item->text(0));
+		  last->setText(1,item->text(1));
+		  last->setText(2,name);
+		  last->setText(3,"");
+		  last->setText(4,"NOCHANGE");
+		  last->setText(5,start);
 		  num++;
 		}
 		start=end+1;
@@ -1402,7 +1426,7 @@ END;",
 	    str+=QString::number(num);
 	    str+="]";
 	    item->setText(3,str);
-	    item->setText(4,"NOCHANGE");
+	    item->setText(5,"LIST");
 	  } else {
 	    item->setText(3,"{Unavailable}");
 	    item->setText(4,"NOCHANGE");
@@ -2357,8 +2381,13 @@ void toDebug::selectedWatch()
 {
   QListViewItem *item=Watch->selectedItem();
   if (item) {
-    DelWatchButton->setEnabled(true);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,true);
+    if (item->text(5).isEmpty()||item->text(5)!="LIST") {
+      DelWatchButton->setEnabled(false);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
+    } else {
+      DelWatchButton->setEnabled(true);
+      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,true);
+    }
     if (item->text(4).isEmpty()) {
       ChangeWatchButton->setEnabled(true);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,true);
@@ -2392,21 +2421,46 @@ void toDebug::changeWatch(void)
 void toDebug::changeWatch(QListViewItem *item)
 {
   if (item&&item->text(4).isEmpty()) {
-    bool ok=false;
     QString description="Enter new value to the watch ";
     description+=item->text(2);
     QString data=item->text(3);
-    data=QInputDialog::getText("Change value of watch",
-			       description,
-			       data,&ok,this);
-    if (ok) {
+
+    toDebugChangeUI dialog(this,"WatchChange",true);
+    dialog.HeadLabel->setText(description);
+    QString index=item->text(5);
+    if (!index.isEmpty()&&index!="LIST")
+      dialog.Index->setValue(item->text(5).toInt());
+    if (index!="LIST") {
+      dialog.Index->setEnabled(false);
+      dialog.Value->setText(data);
+    }
+    if (item->text(4)=="NULL")
+      dialog.NullValue->setChecked(true);
+
+    if (dialog.exec()) {
       int ret=-1;
-      QString escdata=data;
-      escdata.replace(QRegExp("'"),"''");
-      QString assign=item->text(2);
-      assign+=":='";
+      QString data;
+      QString escdata;
+      QString assign;
+      if (dialog.NullValue->isChecked()) {
+	data="{null}";
+	escdata="NULL";
+      } else {
+	escdata=data=dialog.Value->text();
+	escdata.replace(QRegExp("'"),"''");
+	escdata.prepend("'");
+	escdata+="'";
+      }
+      assign=item->text(2);
+      if (index=="LIST") {
+	assign+="(";
+	assign+=dialog.Index->text();
+	assign+=")";
+      }
+      
+      assign+=":=";
       assign+=escdata;
-      assign+="';";
+      assign+=";";
       try {
 	if (item->text(0).isEmpty()) {
 	  otl_stream local(1,
@@ -2458,7 +2512,7 @@ END;",
 	  str+=")";
 	  toStatusMessage(str);
 	} else
-	  item->setText(3,data);
+	  updateState(TO_REASON_WHATEVER);
       } TOCATCH
     }
   }

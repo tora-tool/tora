@@ -5,6 +5,7 @@
 2001-01-28: Created TOra icon.
 2001-01-28: Fixed bug regarding variable fonts and upper case keywords option.
 2001-01-28: Added option to disable PL/SQL parsing of worksheet content.
+2001-01-28: Fixed a new change watch dialog.
 
 0.4: Released 2001-01-27
 
