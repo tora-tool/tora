@@ -1099,7 +1099,7 @@ __TEMP__
 				 return -f $_[0];
 			     },
 	         "/usr/include");
-	if (-f $dlfcn) {
+	if (-f $dlfcn && `uname`=~/linux/i ) {
 	    $Libs.=" -ldl";
 	    print "yes\n";
 	    $Target="tora-plugin";
