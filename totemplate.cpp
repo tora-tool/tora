@@ -218,7 +218,7 @@ class toTemplatePrefs : public toTemplateSetupUI, public toSettingTab
   toTool *Tool;
 public:
   toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
-    : toTemplateSetupUI(parent,name),toSettingTab("unknown.html"),Tool(tool)
+    : toTemplateSetupUI(parent,name),toSettingTab("templatesetup.html"),Tool(tool)
   {
     int tot=Tool->config("Number",QString::number(-1)).toInt();
     if(tot!=-1) {

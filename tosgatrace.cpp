@@ -78,7 +78,7 @@ class toSGATracePrefs : public QFrame, public toSettingTab
 
 public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),toSettingTab("unknown.html"),Tool(tool)
+    : QFrame(parent,name),toSettingTab("sgatrace.html"),Tool(tool)
   {
     QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 

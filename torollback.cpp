@@ -100,7 +100,7 @@ public:
 };
 
 toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent,const char* name)
-  : QFrame(parent,name),toSettingTab("unknown.html"),Tool(tool)
+  : QFrame(parent,name),toSettingTab("rollback.html#options"),Tool(tool)
 {
   GroupBox1=new QGroupBox(this,"GroupBox1");
   GroupBox1->setGeometry(QRect(10,10,380,380)); 
