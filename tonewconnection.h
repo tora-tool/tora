@@ -40,6 +40,7 @@
 
 #define TONEWCONNECTION_DELETE 1
 
+#include "config.h"
 #include "tonewconnectionui.h"
 #include "tohelp.h"
 

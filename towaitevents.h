@@ -38,6 +38,7 @@
 #ifndef TOWAITEVENTS_H
 #define TOWAITEVENTS_H
 
+#include "config.h"
 #include "tobackground.h"
 
 #include <list>

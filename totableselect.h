@@ -1,6 +1,7 @@
 #ifndef TOTABLESELECT_H
 #define TOTABLESELECT_H
 
+#include "config.h"
 #include "totool.h"
 
 #include <qgroupbox.h>

@@ -38,6 +38,7 @@
 #ifndef TORESULTRESOURCES_H
 #define TORESULTRESOURCES_H
 
+#include "config.h"
 #include "toresultitem.h"
 #include "tosql.h"
 

@@ -38,6 +38,8 @@
 #ifndef TOHELP_H
 #define TOHELP_H
 
+#include "config.h"
+
 #include <qdialog.h>
 
 #include <map>

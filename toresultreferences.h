@@ -38,6 +38,7 @@
 #ifndef TORESULTREFERENCES_H
 #define TORESULTREFERENCES_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toresultview.h"
 

@@ -38,6 +38,7 @@
 #ifndef TORESULTEXTRACT_H
 #define TORESULTEXTRACT_H
 
+#include "config.h"
 #include "toresult.h"
 #include "toworksheet.h"
 

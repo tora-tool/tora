@@ -38,6 +38,8 @@
 #ifndef TOMARKEDTEXT_2_H
 #define TOMARKEDTEXT_2_H
 
+#include "config.h"
+
 #include <qmultilineedit.h>
 
 /**

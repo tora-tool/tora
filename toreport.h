@@ -38,6 +38,8 @@
 #ifndef TOREPORT_H
 #define TOREPORT_H
 
+#include "config.h"
+
 #include <list>
 
 #include <qstring.h>

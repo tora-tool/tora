@@ -38,6 +38,7 @@
 #ifndef TOBARCHART_H
 #define TOBARCHART_H
 
+#include "config.h"
 #include "tolinechart.h"
 
 #include <list>

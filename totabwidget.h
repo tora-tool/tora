@@ -38,6 +38,8 @@
 #ifndef TOTABWIDGET_H
 #define TOTABWIDGET_H
 
+#include "config.h"
+
 #include <qtabbar.h>
 #include <qtabwidget.h>
 #include <list>

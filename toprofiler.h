@@ -38,6 +38,7 @@
 #ifndef TOPROFILER_H
 #define TOPROFILER_H
 
+#include "config.h"
 #include "totool.h"
 
 class QComboBox;

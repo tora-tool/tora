@@ -38,6 +38,7 @@
 #ifndef TORESULTCOMBO_H
 #define TORESULTCOMBO_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toresult.h"
 

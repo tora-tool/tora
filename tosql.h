@@ -38,6 +38,8 @@
 #ifndef TOSQL_H
 #define TOSQL_H
 
+#include "config.h"
+
 #include <map>
 #include <list>
 

@@ -38,6 +38,8 @@
 #ifndef TOHTML_H
 #define TOHTML_H
 
+#include "config.h"
+
 #include <map>
 
 #include <qstring.h>

@@ -38,6 +38,8 @@
 #ifndef TOHELPBROWSER_H
 #define TOHELPBROWSER_H
 
+#include "config.h"
+
 #include <list>
 #include <khtml_part.h>
 

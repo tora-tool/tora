@@ -38,6 +38,7 @@
 #ifndef TORESULTCONSTRAINT_H
 #define TORESULTCONSTRAINT_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toresultview.h"
 

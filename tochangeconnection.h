@@ -38,6 +38,7 @@
 #ifndef TOCHANGECONNECTION_H
 #define TOCHANGECONNECTION_H
 
+#include "config.h"
 #include "utils.h"
 
 /**

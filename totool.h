@@ -38,6 +38,8 @@
 #ifndef TOTOOL_H
 #define TOTOOL_H
 
+#include "config.h"
+
 #include <map>
 
 #include <qobject.h>

@@ -38,6 +38,7 @@
 #ifndef TODEBUG_H
 #define TODEBUG_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toconnection.h"
 #include "todebugwatch.h"

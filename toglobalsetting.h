@@ -38,6 +38,7 @@
 #ifndef TOGLOBALSETTING_H
 #define TOGLOBALSETTING_H
 
+#include "config.h"
 #include "todatabasesettingui.h"
 #include "toglobalsettingui.h"
 #include "tohelp.h"

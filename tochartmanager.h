@@ -38,6 +38,7 @@
 #ifndef TOCHARTMANAGER_H
 #define TOCHARTMANAGER_H
 
+#include "config.h"
 #include "tohelp.h"
 
 #include <qvbox.h>

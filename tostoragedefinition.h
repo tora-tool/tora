@@ -38,6 +38,7 @@
 #ifndef TOSTORAGEDEFINITION_H
 #define TOSTORAGEDEFINITION_H
 
+#include "config.h"
 #include "tostoragedefinitionui.h"
 
 #include <list>

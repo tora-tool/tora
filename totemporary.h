@@ -38,6 +38,7 @@
 #ifndef TOTEMPORARY_H
 #define TOTEMPORARY_H
 
+#include "config.h"
 #include "totool.h"
 #include <list>
 

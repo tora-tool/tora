@@ -38,6 +38,7 @@
 #ifndef TOSECURITY_H
 #define TOSECURITY_H
 
+#include "config.h"
 #include "totool.h"
 
 #include <list>

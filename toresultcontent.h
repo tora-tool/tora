@@ -38,6 +38,7 @@
 #ifndef TORESULTCONTENT_H
 #define TORESULTCONTENT_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toconnection.h"
 #include "toeditwidget.h"

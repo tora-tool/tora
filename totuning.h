@@ -38,6 +38,7 @@
 #ifndef TOTUNING_H
 #define TOTUNING_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toresultline.h"
 #include "tothread.h"

@@ -38,6 +38,7 @@
 #ifndef TONOBLOCKQUERY_H
 #define TONOBLOCKQUERY_H
 
+#include "config.h"
 #include "toconnection.h"
 #include "tothread.h"
 

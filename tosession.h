@@ -38,6 +38,7 @@
 #ifndef TOSESSION_H
 #define TOSESSION_H
 
+#include "config.h"
 #include "totool.h"
 #include "toresultlong.h"
 

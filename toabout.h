@@ -38,6 +38,7 @@
 #ifndef TOABOUT_H
 #define TOABOUT_H
 
+#include "config.h"
 #include "toaboutui.h"
 
 #include <qvbox.h>

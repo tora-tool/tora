@@ -38,6 +38,7 @@
 #ifndef TORESULTPIE_H
 #define TORESULTPIE_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "topiechart.h"
 #include "toresult.h"

@@ -38,6 +38,8 @@
 #ifndef TOMAINWINDOW_H
 #define TOMAINWINDOW_H
 
+#include "config.h"
+
 #include <qmainwindow.h>
 
 class toMainWindow : public QMainWindow {

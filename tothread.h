@@ -38,6 +38,8 @@
 #ifndef TOTHREAD_H
 #define TOTHREAD_H
 
+#include "config.h"
+
 #include <qthread.h>
 
 /** This is an abstract class that defines something that is to be performed by a

@@ -38,6 +38,8 @@
 #ifndef TOMEMOEDITOR_H
 #define TOMEMOEDITOR_H
 
+#include "config.h"
+
 #include <qdialog.h>
 
 class QCheckBox;

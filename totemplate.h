@@ -38,6 +38,7 @@
 #ifndef TOTEMPLATE_H
 #define TOTEMPLATE_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "tohelp.h"
 #include "toresultview.h"

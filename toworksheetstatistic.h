@@ -38,6 +38,8 @@
 #ifndef TOWORKSHEETSTATISTIC_H
 #define TOWORKSHEETSTATISTIC_H
 
+#include "config.h"
+
 #include <list>
 #include <map>
 

@@ -38,6 +38,7 @@
 #ifndef TOSGATRACE_H
 #define TOSGATRACE_H
 
+#include "config.h"
 #include "torollbackdialogui.h"
 #include "totool.h"
 

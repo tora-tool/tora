@@ -38,6 +38,7 @@
 #ifndef TOMARKEDTEXT_H
 #define TOMARKEDTEXT_H
 
+#include "config.h"
 #include "toeditwidget.h"
 
 #if QT_VERSION < 0x030000

@@ -38,6 +38,7 @@
 #ifndef TORESULTPARAM_H
 #define TORESULTPARAM_H
 
+#include "config.h"
 #include "toresult.h"
 
 #include <map>

@@ -38,6 +38,8 @@
 #ifndef TOPREFERENCES_H
 #define TOPREFERENCES_H
 
+#include "config.h"
+
 #include <qvariant.h>
 #include <qdialog.h>
 #include <map>

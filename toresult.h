@@ -38,6 +38,7 @@
 #ifndef TORESULT_H
 #define TORESULT_H
 
+#include "config.h"
 #include "toqvalue.h"
 #include "tosql.h"
 

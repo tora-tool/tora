@@ -38,6 +38,7 @@
 #ifndef TORESULTLONG_H
 #define TORESULTLONG_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toconnection.h"
 #include "toresultview.h"

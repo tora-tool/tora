@@ -38,6 +38,7 @@
 #ifndef TORESULTLINE_H
 #define TORESULTLINE_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "tolinechart.h"
 #include "toresult.h"

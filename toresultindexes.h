@@ -38,6 +38,7 @@
 #ifndef TORESULTINDEXES_H
 #define TORESULTINDEXES_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "toresultview.h"
 

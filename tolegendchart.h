@@ -38,6 +38,8 @@
 #ifndef TOLEGENDCHART_H
 #define TOLEGENDCHART_H
 
+#include "config.h"
+
 #include <list>
 
 #include <qwidget.h>

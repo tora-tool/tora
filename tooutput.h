@@ -38,6 +38,7 @@
 #ifndef TOOUTPUT_H
 #define TOOUTPUT_H
 
+#include "config.h"
 #include "totool.h"
 
 class QComboBox;

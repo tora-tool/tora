@@ -38,6 +38,8 @@
 #ifndef TOVISUALIZE_H
 #define TOVISUALIZE_H
 
+#include "config.h"
+
 #include <qvbox.h>
 
 class QComboBox;

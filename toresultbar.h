@@ -38,6 +38,7 @@
 #ifndef TORESULTBAR_H
 #define TORESULTBAR_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "tobarchart.h"
 #include "toresult.h"

@@ -38,6 +38,7 @@
 #ifndef TOCURRENT_H
 #define TOCURRENT_H
 
+#include "config.h"
 #include "totool.h"
 #include "tosql.h"
 #include "tobackground.h"

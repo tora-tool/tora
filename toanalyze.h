@@ -38,6 +38,7 @@
 #ifndef TOANALYZE_H
 #define TOANALYZE_H
 
+#include "config.h"
 #include "tobackground.h"
 #include "tonoblockquery.h"
 #include "totool.h"

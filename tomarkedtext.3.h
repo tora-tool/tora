@@ -38,6 +38,8 @@
 #ifndef TOMARKEDTEXT_3_H
 #define TOMARKEDTEXT_3_H
 
+#include "config.h"
+
 class toMultiLineEdit : public QtMultiLineEdit {
   Q_OBJECT
 public:

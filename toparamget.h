@@ -38,6 +38,7 @@
 #ifndef TOPARAMGET_H
 #define TOPARAMGET_H
 
+#include "config.h"
 #include "toconnection.h"
 #include "tohelp.h"
 

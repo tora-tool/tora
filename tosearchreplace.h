@@ -38,6 +38,7 @@
 #ifndef TOSEARCHREPLACE_H
 #define TOSEARCHREPLACE_H
 
+#include "config.h"
 #include "tosearchreplaceui.h"
 #include "tohelp.h"
 #include "toeditwidget.h"

@@ -38,6 +38,7 @@
 #ifndef TOMAIN_H
 #define TOMAIN_H
 
+#include "config.h"
 #include "tobackground.h"
 
 #ifdef TO_KDE

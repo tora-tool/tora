@@ -38,6 +38,7 @@
 #ifndef TOBROWSERTABLE_H
 #define TOBROWSERTABLE_H
 
+#include "config.h"
 #include "tobrowsertableui.h"
 #include "toextract.h"
 #include "totool.h"

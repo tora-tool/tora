@@ -38,6 +38,8 @@
 #ifndef TO_EXTRACT
 #define TO_EXTRACT
 
+#include "config.h"
+
 #include <list>
 #include <map>
 

@@ -38,6 +38,7 @@
 #ifndef TOBROWSER_H
 #define TOBROWSER_H
 
+#include "config.h"
 #include "totemplate.h"
 #include "totool.h"
 

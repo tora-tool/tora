@@ -38,8 +38,9 @@
 #ifndef TOSQLPARSE_H
 #define TOSQLPARSE_H
 
-#include <list>
+#include "config.h"
 
+#include <list>
 #include <qstring.h>
 
 class toConnection;

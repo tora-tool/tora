@@ -38,6 +38,7 @@
 #ifndef TOSTORAGE_H
 #define TOSTORAGE_H
 
+#include "config.h"
 #include "tostoragedatafileui.h"
 #include "tostoragedialogui.h"
 #include "tostoragetablespaceui.h"

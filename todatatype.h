@@ -38,6 +38,8 @@
 #ifndef TO_DATATYPE
 #define TO_DATATYPE
 
+#include "config.h"
+
 #include <list>
 
 #include <qhbox.h>
