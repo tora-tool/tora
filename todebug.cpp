@@ -2143,12 +2143,12 @@ bool toDebugText::compile(void)
     try {
       toQList nopar;
       Debugger->executeInTarget(sql,nopar);
-      readErrors(Debugger->connection());
       Schema=schema.upper();
       Object=object.upper();
       Type=type.upper();
       if (body)
 	Type+=" BODY";
+      readErrors(Debugger->connection());
       setEdited(false);
     } catch (const QString &exc) {
       toStatusMessage(exc);

@@ -71,6 +71,8 @@
 2001-12-01: Show about dialog on new version instead of license.
 2001-12-01: Fixed problem with remembering object name when changing schema.
 2001-12-01: Wait a small amount of time before updating right on browser.
+2001-12-01: Added keyboard shortcut ALT+N to move focus to browser object list.
+2001-12-01: Fixed problem with reading errors in debugger.
 
 1.1.5: Released 2001-11-26
 

@@ -920,6 +920,8 @@ void toBrowser::windowActivated(QWidget *widget)
 			   Key_F5);
       ToolMenu->insertItem("&Change Schema",Schema,SLOT(setFocus(void)),
 			   Key_S+ALT);
+      ToolMenu->insertItem("Change &Object",this,SLOT(focusObject(void)),
+			   Key_N+ALT);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)filter_xpm),"&Define filter",this,SLOT(defineFilter(void)),
 			   CTRL+SHIFT+Key_G);
@@ -963,6 +965,11 @@ void toBrowser::refresh(void)
   } TOCATCH
 }
 
+void toBrowser::focusObject(void)
+{
+  if (FirstTab)
+    FirstTab->setFocus();
+}
 
 void toBrowser::updateTabs(void)
 {
@@ -1046,7 +1053,7 @@ void toBrowser::changeTab(QWidget *tab)
     FirstTab=newtab;
     SecondTab=SecondMap[tab->name()];
     SecondText="";
-    TopTab->setFocus();
+    
     if (FirstTab&&SecondTab)
       updateTabs();
   }

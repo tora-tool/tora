@@ -91,6 +91,7 @@ public slots:
   void defineFilter(void);
   void windowActivated(QWidget *widget);
   void firstDone(void);
+  void focusObject(void);
 
   void modifyTable(void);
   void addTable(void);

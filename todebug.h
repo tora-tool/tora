@@ -136,6 +136,7 @@ class toDebug : public toToolWidget {
   toThread *TargetThread;
   QString TargetSQL;
   QString TargetLog;
+  QString TargetException;
   toQList InputData;
   toQList OutputData;
   int ColumnSize;
