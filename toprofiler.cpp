@@ -225,7 +225,7 @@ class toProfilerTool : public toTool {
   { return clock_xpm; }
 public:
   toProfilerTool()
-    : toTool(101,"PL/SQL Profiler")
+    : toTool(120,"PL/SQL Profiler")
   { }
   virtual const char *menuItem()
   { return "PL/SQL Profiler"; }

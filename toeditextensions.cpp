@@ -81,7 +81,7 @@ static int IncrementalSearch;
 static QToolButton *IndentButton;
 static QToolButton *DeindentButton;
 
-void toEditExtensions::receivedFocus(QWidget *widget)
+void toEditExtensions::receivedFocus(toEditWidget *widget)
 {
   if (widget)
     Current=dynamic_cast<toMarkedText *>(widget);
@@ -104,10 +104,13 @@ void toEditExtensions::receivedFocus(QWidget *widget)
     DeindentButton->setEnabled(enable);
 }
 
-void toEditExtensions::lostFocus(QWidget *widget)
+void toEditExtensions::lostFocus(toEditWidget *widget)
 {
-  if (Current==widget)
-    receivedFocus(NULL);
+  if (widget) {
+    toMarkedText *current=dynamic_cast<toMarkedText *>(widget);
+    if (current&&Current==current)
+      receivedFocus(NULL);
+  }
 }
 
 void toEditExtensions::intIndent(int delta)
@@ -162,7 +165,11 @@ void toEditExtensions::autoIndentBlock(void)
       QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
       QString mrk=Current->markedText();
       QString res=toSQLParse::indent(ind+mrk);
-      res=res.mid(ind.length()); // Strip indent.
+      t=Current->textLine(line2);
+      unsigned int l=res.length()-ind.length();
+      if (col2==int(t.length())&&t.length()>0) // Strip last newline if on last col of line
+	l--;
+      res=res.mid(ind.length(),l); // Strip indent.
       Current->insert(res,true);
     }
   }
@@ -206,8 +213,8 @@ static void ObfuscateStat(toSQLParse::statement &stat,QString &ret)
     ret+=stat.Comment;
     ret+="\n";
   }
-  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-      i!=stat.SubTokens->end();
+  for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+      i!=stat.subTokens().end();
       i++) {
     ObfuscateStat(*i,ret);
   }
@@ -219,7 +226,7 @@ void toEditExtensions::obfuscateBlock(void)
     QString str=Current->markedText();
     if (!str.isEmpty()) {
       toSQLParse::statement stat;
-      *stat.SubTokens=toSQLParse::parse(str);
+      stat.subTokens()=toSQLParse::parse(str);
       QString res;
       ObfuscateStat(stat,res);
       Current->insert(res,true);
@@ -233,7 +240,7 @@ void toEditExtensions::obfuscateBuffer(void)
     QString str=Current->text();
     if (!str.isEmpty()) {
       toSQLParse::statement stat;
-      *stat.SubTokens=toSQLParse::parse(str);
+      stat.subTokens()=toSQLParse::parse(str);
       Current->selectAll();
       QString res;
       ObfuscateStat(stat,res);
@@ -333,7 +340,7 @@ void toEditExtensions::searchBackward(void)
 class toEditExtensionTool : public toTool {
 public:
   toEditExtensionTool()
-    : toTool(400,"Editor")
+    : toTool(910,"Editor")
   {
     toSQLParse::settings cur;
     cur.ExpandSpaces=!config(CONF_EXPAND_SPACES,"Yes").isEmpty();
@@ -361,8 +368,8 @@ public:
     
     IncrementalSearch=menu->insertItem("Forward",&EditExtensions,SLOT(searchForward()),
 				       CTRL+Key_S);
-    IncrementalSearch=menu->insertItem("Backward",&EditExtensions,SLOT(searchBackward()),
-				       CTRL+Key_R);
+    ReverseSearch=menu->insertItem("Backward",&EditExtensions,SLOT(searchBackward()),
+				   CTRL+Key_R);
 
     toMainWidget()->editMenu()->insertItem("Incremental Search",menu,-1,(idx>=0?idx+1:0));
     
@@ -393,7 +400,6 @@ public:
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
 
-    toMainWidget()->editToolbar()->addSeparator();
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
 				 "Indent block in editor",
 				 "Indent block in editor",

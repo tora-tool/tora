@@ -92,7 +92,7 @@ toExtract::toExtract(toConnection &conn,QWidget *parent)
   setSizes();
 }
 
-QString toExtract::dbaSegment(toSQL &sql)
+QString toExtract::dbaSegment(const toSQL &sql)
 {
   return toSQL::string(sql,Connection).arg(DbaSegments);
 }

@@ -105,7 +105,7 @@ protected:
   { return tosgatrace_xpm; }
 public:
   toSGATraceTool()
-    : toTool(202,"SGA Trace")
+    : toTool(230,"SGA Trace")
   { }
   virtual const char *menuItem()
   { return "SGA Trace"; }

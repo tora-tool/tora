@@ -161,7 +161,7 @@ public slots:
   void selectSaved(void);
   void executePreviousLog(void);
   void executeNextLog(void);
-  void addLog(const QString &sql,const toConnection::exception &result);
+  void addLog(const QString &sql,const toConnection::exception &result,bool error);
   void changeRefresh(const QString &);
   void saveLast(void);
   void saveStatistics(void);

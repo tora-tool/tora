@@ -81,7 +81,7 @@ protected:
   { return toalert_xpm; }
 public:
   toAlertTool()
-    : toTool(302,"Alert Messenger")
+    : toTool(330,"Alert Messenger")
   { }
   virtual const char *menuItem()
   { return "Alert Messenger"; }
@@ -109,19 +109,37 @@ static toAlertTool AlertTool;
 
 #define TIMEOUT 1
 
+static toSQL SQLHost("toAlert:Hostname",
+		     "SELECT machine\n"
+		     "  FROM v$session\n"
+		     " WHERE sid=(SELECT MIN(sid)\n"
+		     "	      FROM v$mystat)",
+		     "Get hostname of current connection");
+
 toAlert::toAlert(QWidget *main,toConnection &connection)
   : toToolWidget(AlertTool,"alert.html",main,connection),Connection(connection)
 {
   QToolBar *toolbar=toAllocBar(this,"Alert Messenger",connection.description());
 
+  QString def;
+  try {
+    toQList lst=toQuery::readQuery(connection,SQLHost);
+    def+=toShift(lst);
+    if (!def.isEmpty())
+      def+=":";
+  } catch(...) {
+  }
+  def+=connection.user();
+
   new QLabel("Registered ",toolbar);
   Registered=new QComboBox(toolbar);
-  Registered->insertItem("TOra");
+  Registered->insertItem(def);
   Registered->setEditable(true);
   Registered->setDuplicatesEnabled(false);
   Registered->setCurrentItem(0);
   connect(Registered,SIGNAL(activated(int)),this,SLOT(add()));
-  AddNames.insert(AddNames.end(),"TOra");
+
+  AddNames.insert(AddNames.end(),def);
 
   new QToolButton(QPixmap((const char **)commit_xpm),
 		  "Register current",
@@ -139,7 +157,7 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
 
   new QLabel("Name ",toolbar);
   Name=new QLineEdit(toolbar);
-  Name->setText("TOra");
+  Name->setText(def);
   connect(Name,SIGNAL(returnPressed()),this,SLOT(send()));
   new QLabel("Message ",toolbar);
   Message=new QLineEdit(toolbar);
@@ -169,8 +187,12 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   State=Started;
-  toThread *thread=new toThread(new pollTask(*this));
-  thread->start();
+  try {
+    toThread *thread=new toThread(new pollTask(*this));
+    thread->start();
+  } catch(...) {
+    toStatusMessage("Failed to start polling thread, try closing some other tools and restart Alert Messenger");
+  }
 
   setFocusProxy(Message);
 }
@@ -186,7 +208,7 @@ void toAlert::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Edit &name",Name,SLOT(setFocus()),ALT+Key_N);
       ToolMenu->insertItem("Edit &message",Message,SLOT(setFocus()),ALT+Key_M);
-      ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),"&Message in memo",
+      ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),"&Message in memo...",
 			   this,SLOT(memo(void)),CTRL+Key_M);
       ToolMenu->insertItem(QPixmap((const char **)return_xpm),"&Send alert",
 			   this,SLOT(send(void)),CTRL+Key_Return);

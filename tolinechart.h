@@ -41,6 +41,7 @@
 #include <qwidget.h>
 
 class QPopupMenu;
+class QScrollBar;
 
 /** A widget that displays a linechart with optional background throbber (Not implemented yet).
  */
@@ -50,10 +51,14 @@ class toLineChart : public QWidget {
 
   QPopupMenu *Menu;
 
+  QScrollBar *Horizontal;
+  QScrollBar *Vertical;
+
 protected:
   std::list<std::list<double> > Values;
   std::list<QString> XValues;
   std::list<QString> Labels;
+  std::list<bool> Enabled;
   bool Legend;
   bool Last;
   int Grid;
@@ -70,6 +75,7 @@ protected:
   QPoint MousePoint[2];
   int SkipSamples;
   int UseSamples;
+  int DisplaySamples;
   bool Zooming;
   double zMinValue;
   double zMaxValue;
@@ -104,6 +110,10 @@ public:
    */
   toLineChart(toLineChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
+  /** Destroy chart
+   */
+  ~toLineChart();
+
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.
    */
@@ -130,7 +140,7 @@ public:
    * @param title Title of chart.
    */
   void setTitle(const QString &title=QString::null)
-  { Title=title; update(); }
+  { Title=title; setCaption(title); update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
@@ -242,6 +252,19 @@ public:
    * @param prefix Prefix to read data from.
    */
   virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+
+  /** Get enabled datavalues. Values in this list with false are not drawn in the chart.
+   * Could be an empty list if everything is enabled.
+   */
+  std::list<bool> enabledCharts(void)
+  { return Enabled; }
+  /** Set enabled datavalues. Values in this list with false are not drawn in the chart.
+   */
+  void setEnabledCharts(std::list<bool> &enabled)
+  { Enabled=enabled; update(); }
+  /** Open chart in new window.
+   */
+  virtual toLineChart *openCopy(QWidget *parent);
 signals:
   /** A new value set was added to the chart.
    * @param value New values for charts (One for each line).
@@ -262,13 +285,20 @@ public slots:
    */
   virtual void editPrint(void);
 
-  /** Open chart in new window.
-   */
-  virtual void openCopy(void);
+  void openCopy(void)
+  { openCopy(NULL); }
 protected:
   /** Reimplemented for internal reasons.
    */
   virtual void paintEvent(QPaintEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void addMenues(QPopupMenu *)
+  { }
+private slots:
+  void horizontalChange(int);
+  void verticalChange(int);
+  void chartSetup(void);
 };
 
 #endif

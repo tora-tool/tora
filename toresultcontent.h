@@ -126,6 +126,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
   toBackground Poll;
   int MaxNumber;
   int SkipNumber;
+  bool GotoEnd;
   /** Number of rows read from stream.
    */
   int Row;

@@ -207,10 +207,18 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
-  toThread *thread=new toThread(new queryTask(*this));
-  TO_DEBUGOUT("Created thread\n");
-  thread->start();
-  TO_DEBUGOUT("Started thread\n");
+  try {
+    toThread *thread=new toThread(new queryTask(*this));
+    TO_DEBUGOUT("Created thread\n");
+    thread->start();
+    TO_DEBUGOUT("Started thread\n");
+  } catch(...) {
+    Error=QString("Failed to start background query thread");
+    Running=false;
+    Quit=EOQ=true;
+    delete Query;
+    Query=NULL;
+  }
 }
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
@@ -243,10 +251,18 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
-  toThread *thread=new toThread(new queryTask(*this));
-  TO_DEBUGOUT("Created thread\n");
-  thread->start();
-  TO_DEBUGOUT("Started thread\n");
+  try {
+    toThread *thread=new toThread(new queryTask(*this));
+    TO_DEBUGOUT("Created thread\n");
+    thread->start();
+    TO_DEBUGOUT("Started thread\n");
+  } catch(...) {
+    Error=QString("Failed to start background query thread");
+    Running=false;
+    Quit=EOQ=true;
+    delete Query;
+    Query=NULL;
+  }
 }
 
 toQDescList &toNoBlockQuery::describe(void)
@@ -352,11 +368,18 @@ bool toNoBlockQuery::poll(void)
       if (Statistics)
 	Statistics->changeSession(*Query);
 
-      TO_DEBUGOUT("Creating thread\n");
-      toThread *thread=new toThread(new queryTask(*this));
-      TO_DEBUGOUT("Created thread\n");
-      thread->start();
-      TO_DEBUGOUT("Started thread\n");
+      try {
+	toThread *thread=new toThread(new queryTask(*this));
+	TO_DEBUGOUT("Created thread\n");
+	thread->start();
+	TO_DEBUGOUT("Started thread\n");
+      } catch(...) {
+	Error=QString("Failed to start background query thread");
+	Running=false;
+	Quit=EOQ=true;
+	delete Query;
+	Query=NULL;
+      }
     } else
       Lock.unlock();
   } else

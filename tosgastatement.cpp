@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconnection.h"
 #include "toconf.h"
 #include "toresultfield.h"
 #include "toresultplan.h"
@@ -55,6 +56,14 @@ void toSGAStatement::viewResources(void)
     toStatusMessage("Couldn't find SQL statement in SGA",false,false);
   }
 }
+
+static toSQL SQLParsingSchema("toSGAStatement:ParsingSchema",
+			      "SELECT username\n"
+			      "  FROM v$sql a,\n"
+			      "       all_users b\n"
+			      " WHERE b.user_id = a.parsing_schema_id\n"
+			      "   AND a.address || ':' || a.hash_value = :f1<char[101]> AND a.child_number = 0",
+			      "Get the schema that parsed a statement");
 
 toSGAStatement::toSGAStatement(QWidget *parent)
   : QTabWidget(parent)
@@ -81,9 +90,11 @@ void toSGAStatement::changeTab(QWidget *widget)
 							  Address)));
 	else
 	  SQLText->setText(toSQLString(toCurrentConnection(this),Address));
-      } else if (CurrentTab==Plan)
-	Plan->query(toSQLString(toCurrentConnection(this),Address));
-      else if (CurrentTab==Resources)
+      } else if (CurrentTab==Plan) {
+	Plan->query(toSQLString(toCurrentConnection(this),Address),
+		    toQuery::readQuery(toCurrentConnection(this),
+				       SQLParsingSchema,Address));
+      } else if (CurrentTab==Resources)
 	viewResources();
     }
   } TOCATCH

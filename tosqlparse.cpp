@@ -77,14 +77,21 @@ void printStatement(toSQLParse::statement &stat,int level)
       printf(" ");
     printf("Comment:%s\n",(const char *)stat.Comment);
   }
-  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-      i!=stat.SubTokens->end();
+  for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+      i!=stat.subTokens().end();
       i++)
     printStatement(*i,level+1);
 }
 
 int main(int argc,char **argv) {
   QString res="
+SELECT owner,
+       OBJECT,
+       TYPE FROM v$access
+ WHERE sid=:f1<char[101]>
+ ORDER BY owner,
+	  OBJECT,
+	  TYPE;
 DECLARE
 grade CHAR(1);
 appraisal VARCHAR2(20);
@@ -309,10 +316,17 @@ END;";
 
 #endif
 
-toSQLParse::statement::statement(type ntype,const QString &token)
- : Type(ntype),String(token)
+toSQLParse::statement::statement(type ntype,const QString &token,int cline=-1)
+  : Type(ntype),String(token),Line(cline)
 {
-  SubTokens=new std::list<statement>;
+  SubTokens=NULL;
+}
+
+std::list<toSQLParse::statement> &toSQLParse::statement::subTokens(void)
+{
+  if (!SubTokens)
+    SubTokens=new std::list<statement>;
+  return *SubTokens;
 }
 
 toSQLParse::statement::~statement()
@@ -325,8 +339,11 @@ toSQLParse::statement::statement(const statement &stat)
   Type=stat.Type;
   String=stat.String;
   Comment=stat.Comment;
-  SubTokens=new std::list<statement>;
-  (*SubTokens)=(*stat.SubTokens);
+  if (stat.SubTokens) {
+    SubTokens=new std::list<statement>;
+    (*SubTokens)=(*stat.SubTokens);
+  } else
+    SubTokens=NULL;
 }
 
 const toSQLParse::statement &toSQLParse::statement::operator = (const statement &stat)
@@ -334,8 +351,12 @@ const toSQLParse::statement &toSQLParse::statement::operator = (const statement 
   Type=stat.Type;
   String=stat.String;
   Comment=stat.Comment;
-  SubTokens=new std::list<statement>;
-  (*SubTokens)=(*stat.SubTokens);
+  delete SubTokens;
+  if (stat.SubTokens) {
+    SubTokens=new std::list<statement>;
+    (*SubTokens)=(*stat.SubTokens);
+  } else
+    SubTokens=NULL;
   return *this;
 }
 
@@ -354,7 +375,7 @@ static char *Operators[]={":=",
 			  ">=",
 			  NULL};
 
-QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comments)
+QString toSQLParse::getToken(const QString &line,int &cline,int &pos,bool forward,bool comments)
 {
   QChar c;
   QChar nc;
@@ -366,7 +387,9 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
     identifier,
     string,
     comment,
-    label
+    label,
+    bindOpen,
+    bindClose
   } state=space;
 
   QString token;
@@ -377,6 +400,8 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
     if (!forward)
       pos--;
     c=line[pos];
+    if (c=='\n')
+      cline++;
     if ((forward&&pos<int(line.length()-1))||(!forward&&pos>0))
       nc=line[pos+inc];
     else
@@ -437,8 +462,22 @@ QString toSQLParse::getToken(const QString &line,int &pos,bool forward,bool comm
 	break;
       case space:
 	break;
+      case bindOpen:
+	if(!toIsIdent(nc)) {
+	  if (nc=='<')
+	    state=bindClose;
+	  else
+	    return token;
+	}
+	break;
+      case bindClose:
+	if (c=='>')
+	  return token;
+	break;
       case any:
-	if (toIsIdent(c)) {
+	if (c==':'&&toIsIdent(nc)) {
+	  state=bindOpen;
+	} else if (toIsIdent(c)) {
 	  if (!toIsIdent(nc))
 	    return token;
 	  state=identifier;
@@ -547,7 +586,8 @@ QString toSQLParse::getToken(toMarkedText *text,int &curLine,int &pos,bool forwa
   return QString::null;
 }
 
-toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,bool declare)
+toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &cline,
+						 int &pos,bool declare)
 {
   statement ret(statement::Statement);
 
@@ -556,9 +596,9 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
   QString first;
   bool nokey=false;
   bool block=false;
-  for (QString token=getToken(str,pos,true,true);
+  for (QString token=getToken(str,cline,pos,true,true);
        !token.isNull();
-       token=getToken(str,pos,true,true)) {
+       token=getToken(str,cline,pos,true,true)) {
     QString upp=token.upper();
 #ifdef TOPARSE_DEBUG
     printf("%s\n",(const char*)token);
@@ -576,71 +616,71 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
 	(block&&upp=="IS")||
 	(!declare&&upp=="BEGIN")) {
       statement blk(statement::Block);
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
-      blk.SubTokens->insert(blk.SubTokens->end(),ret);
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,cline));
+      blk.subTokens().insert(blk.subTokens().end(),ret);
       statement cur(statement::Statement);
       bool dcl=(upp=="DECLARE"||upp=="IS"||upp=="AS");
       do {
-	cur=parseStatement(str,pos,dcl);
+	cur=parseStatement(str,cline,pos,dcl);
 	if (cur.Type==statement::List)
 	  toStatusMessage("Unbalanced parenthesis (Too many ')')");
-	blk.SubTokens->insert(blk.SubTokens->end(),cur);
-      } while(cur.SubTokens->begin()!=cur.SubTokens->end()&&
-	      (*cur.SubTokens->begin()).String.upper()!="END");
+	blk.subTokens().insert(blk.subTokens().end(),cur);
+      } while(cur.subTokens().begin()!=cur.subTokens().end()&&
+	      (*cur.subTokens().begin()).String.upper()!="END");
       return blk;
     } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,cline));
       return ret;
     } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT"&&upp!="IS"&&upp!="LIKE"&&upp!="IN"&&upp!="BETWEEN"&&upp!="ASC"&&upp!="DESC"&&upp!="NULL")&&!nokey) {
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,cline));
       nokey=false;
     } else if (upp=="(") {
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,token));
-      statement lst=parseStatement(str,pos,false);
-      statement t=toPop(*lst.SubTokens);
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,cline));
+      statement lst=parseStatement(str,cline,pos,false);
+      statement t=toPop(lst.subTokens());
       if (lst.Type!=statement::List)
 	toStatusMessage("Unbalanced parenthesis (Too many '(')");
       nokey=false;
       if (first=="CREATE"&&!block) {
-	statement end=parseStatement(str,pos,false);
+	statement end=parseStatement(str,cline,pos,false);
 	statement blk(statement::Block);
-	blk.SubTokens->insert(blk.SubTokens->end(),ret);
-	blk.SubTokens->insert(blk.SubTokens->end(),lst);
-	end.SubTokens->insert(end.SubTokens->begin(),t);
-	blk.SubTokens->insert(blk.SubTokens->end(),end);
+	blk.subTokens().insert(blk.subTokens().end(),ret);
+	blk.subTokens().insert(blk.subTokens().end(),lst);
+	end.subTokens().insert(end.subTokens().begin(),t);
+	blk.subTokens().insert(blk.subTokens().end(),end);
 	return blk;
       } else {
-	ret.SubTokens->insert(ret.SubTokens->end(),lst);
-	ret.SubTokens->insert(ret.SubTokens->end(),t);
+	ret.subTokens().insert(ret.subTokens().end(),lst);
+	ret.subTokens().insert(ret.subTokens().end(),t);
       }
     } else if (upp==")") {
       ret.Type=statement::List;
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,token));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,cline));
       return ret;
     } else if (upp==";") {
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,token));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,cline));
       return ret;
     } else if (upp.startsWith("/*+")||upp.startsWith("--+")) {
       QString com=token;
       if (com.startsWith("--+"))
 	com="/*+ "+com.mid(3)+" */";
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,
-							   com.simplifyWhiteSpace()));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,
+							   com.simplifyWhiteSpace(),cline));
     } else if (upp.startsWith("/*")||upp.startsWith("--")) {
-      if (ret.SubTokens->begin()==ret.SubTokens->end()) {
+      if (ret.subTokens().begin()==ret.subTokens().end()) {
 	if (ret.Comment.isNull())
 	  ret.Comment=token;
 	else
 	  ret.Comment+="\n"+token;
       } else {
-	QString &com=(*ret.SubTokens->rbegin()).Comment;
+	QString &com=(*ret.subTokens().rbegin()).Comment;
 	if (com.isEmpty())
 	  com=token;
 	else
 	  com+="\n"+token;
       }
     } else {
-      ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Token,token));
+      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,cline));
       nokey=(token==".");
     }
     if (upp=="AS"||upp=="IS")
@@ -654,16 +694,17 @@ std::list<toSQLParse::statement> toSQLParse::parse(const QString &str)
   int pos=0;
   std::list<toSQLParse::statement> ret;
   statement cur(statement::Statement);
-  for(cur=parseStatement(str,pos,false);
-      cur.SubTokens->begin()!=cur.SubTokens->end();
-      cur=parseStatement(str,pos,false)) {
+  int cline=0;
+  for(cur=parseStatement(str,cline,pos,false);
+      cur.subTokens().begin()!=cur.subTokens().end();
+      cur=parseStatement(str,cline,pos,false)) {
     if (cur.Type==statement::List)
       toStatusMessage("Unbalanced parenthesis (Too many ')')");
     ret.insert(ret.end(),cur);
   }
   if (pos<int(str.length()))
     ret.insert(ret.end(),statement(statement::Raw,
-				   str.mid(pos,str.length()-pos)));
+				   str.mid(pos,str.length()-pos),cline));
   return ret;
 }
 
@@ -796,22 +837,22 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     {
       ret=IndentComment(level,0,stat.Comment,false);
       int exc=0;
-      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-	  i!=stat.SubTokens->end();
+      for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+	  i!=stat.subTokens().end();
 	  i++) {
 	int add=0;
 	std::list<toSQLParse::statement>::iterator j=i;
 	j++;
-	if (i!=stat.SubTokens->begin()&&
-	    j!=stat.SubTokens->end())
+	if (i!=stat.subTokens().begin()&&
+	    j!=stat.subTokens().end())
 	  add=Settings.IndentLevel;
 	else
 	  exc=0;
 
 	QString t;
-	if ((*i).SubTokens->begin()!=(*i).SubTokens->
+	if ((*i).subTokens().begin()!=(*i).subTokens().
 	  end())
-	  t=(*(*i).SubTokens->begin()).String.upper();
+	  t=(*(*i).subTokens().begin()).String.upper();
 	if (t=="BEGIN"||t=="WHEN")
 	  add=0;
 	if ((*i).Type==statement::List)
@@ -849,8 +890,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       first=true;
       current=0;
     } else {
-      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-	  i!=stat.SubTokens->end();) {
+      for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+	  i!=stat.subTokens().end();) {
 	if ((*i).Type!=statement::Keyword)
 	  noKeyBreak=true;
 	else
@@ -862,8 +903,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     }
     if (useMaxLev) {
       int count=0;
-      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-	  i!=stat.SubTokens->end();
+      for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+	  i!=stat.subTokens().end();
 	  i++) {
 	if (any) {
 	  if ((*i).Type==statement::Keyword) {
@@ -871,7 +912,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	      maxlev=(*i).String.length()+1;
 	    count++;
 	    any=false;
-	  } else if (i==stat.SubTokens->begin()) {
+	  } else if (i==stat.subTokens().begin()) {
 	    noKeyBreak=true;
 	    break;
 	  }
@@ -886,8 +927,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       any=true;
     }
 
-    for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-	i!=stat.SubTokens->end();
+    for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
+	i!=stat.subTokens().end();
 	i++) {
       comment=AddComment(comment,(*i).Comment);
       QString upp=(*i).String.upper();
@@ -966,7 +1007,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  current=level+max(int(word.length()),maxlev-1);
 	} else {
 	  ret+=word;
-	  current=level;
+	  current=level+word.length();
 	}
 	any=false;
 	lineList=false;
@@ -1041,8 +1082,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       comment=QString::null;
       if (Settings.EndBlockNewline&&
 	  level==0&&
-	  stat.SubTokens->begin()!=stat.SubTokens->end()&&
-	  (*stat.SubTokens->rbegin()).String==";")
+	  stat.subTokens().begin()!=stat.subTokens().end()&&
+	  (*stat.subTokens().rbegin()).String==";")
 	ret+="\n";
     } else if (!comment.isEmpty()) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
@@ -1066,5 +1107,9 @@ QString toSQLParse::indent(const QString &str)
       i++) {
     ret+=indentStatement(*i,level);
   }
-  return ret;
+  pos=ret.length();
+  while(pos>0&&ret[pos-1].isSpace()) {
+    pos--;
+  }
+  return ret.mid(0,pos)+"\n";
 }

@@ -214,7 +214,7 @@ protected:
   { return toworksheet_xpm; }
 public:
   toWorksheetTool()
-    : toTool(1,"SQL Worksheet")
+    : toTool(10,"SQL Worksheet")
   { }
   virtual const char *menuItem()
   { return "SQL Worksheet"; }
@@ -333,8 +333,8 @@ void toWorksheet::setup(bool autoLoad)
     Current=Result=new toResultLong(this);
     Result->hide();
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
-	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,bool)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &,bool)));
     ResultTab=NULL;
     Plan=NULL;
     CurrentTab=NULL;
@@ -350,11 +350,6 @@ void toWorksheet::setup(bool autoLoad)
     Visualize=NULL;
     WaitChart=IOChart=NULL;
     toolbar->addSeparator();
-    new QToolButton(QPixmap((const char **)describe_xpm),
-		    "Describe under cursor",
-		    "Describe under cursor",
-		    this,SLOT(describe(void)),
-		    toolbar);
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       "Stop execution",
 			       "Stop execution",
@@ -373,8 +368,8 @@ void toWorksheet::setup(bool autoLoad)
 
     Current=Result=new toResultLong(box);
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
-	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,bool)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &,bool)));
 
     Columns=new toResultCols(box);
     Columns->hide();
@@ -592,7 +587,7 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)previous_xpm),
 			   "Save last SQL",
 			   this,SLOT(saveLast()));
-      ToolMenu->insertItem("Edit Saved SQL",
+      ToolMenu->insertItem("Edit Saved SQL...",
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Previous Log Entry",this,SLOT(executePreviousLog()),
@@ -802,13 +797,11 @@ void toWorksheet::query(const QString &str,bool direct)
 	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
 	else
 	  sprintf(buffer,"Query executed");
-	addLog(QueryString,toConnection::exception(QString(buffer)));
+	addLog(QueryString,toConnection::exception(QString(buffer)),false);
       } catch (const QString &exc) {
-	addLog(QueryString,exc);
+	addLog(QueryString,exc,true);
       }
     } else {
-      Plan->clear();
-      Result->stop();
       First=false;
       Timer.start();
       StopButton->setEnabled(true);
@@ -821,9 +814,9 @@ void toWorksheet::query(const QString &str,bool direct)
 	Result->setSQL(QString::null);
 	Result->query(QueryString,param);
       } catch (const toConnection::exception &exc) {
-	addLog(QueryString,exc);
+	addLog(QueryString,exc,true);
       } catch (const QString &exc) {
-	addLog(QueryString,exc);
+	addLog(QueryString,exc,true);
       }
       if (!Light) {
 	if (StatisticButton->isOn())
@@ -843,8 +836,8 @@ void toWorksheet::saveHistory(void)
     Result->hide();
     Result->stop();
     disconnect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
-	       this,SLOT(addLog(const QString &,const toConnection::exception &)));
+    disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,true)),
+	       this,SLOT(addLog(const QString &,const toConnection::exception &,true)));
     disconnect(StopButton,SIGNAL(clicked(void)),Result,SLOT(stop(void)));
 
     Result=new toResultLong(Result->parentWidget());
@@ -854,8 +847,8 @@ void toWorksheet::saveHistory(void)
     Current=Result;
     connect(StopButton,SIGNAL(clicked(void)),Result,SLOT(stop(void)));
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
-	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
+    connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,bool)),
+	    this,SLOT(addLog(const QString &,const toConnection::exception &,bool)));
   }
 }
 
@@ -876,7 +869,7 @@ QString toWorksheet::duration(int dur,bool hundreds)
   return buf;
 }
 
-void toWorksheet::addLog(const QString &sql,const toConnection::exception &result)
+void toWorksheet::addLog(const QString &sql,const toConnection::exception &result,bool error)
 {
   QString now=toNow(connection());
   toResultViewItem *item;
@@ -943,7 +936,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     str+="\n(Duration ";
     str+=buf;
     str+=")";
-    if (str.contains("ORA-"))
+    if (error)
       toStatusMessage(str);
     else
       toStatusMessage(str,false,false);
@@ -1233,7 +1226,7 @@ void toWorksheet::eraseLogButton()
 void toWorksheet::queryDone(void)
 {
   if (!First&&!QueryString.isEmpty())
-    addLog(QueryString,toConnection::exception("Aborted"));
+    addLog(QueryString,toConnection::exception("Aborted"),false);
   else
     emit executed();
   timer()->stop();

@@ -153,7 +153,7 @@ protected:
   { return torollback_xpm; }
 public:
   toRollbackTool()
-    : toTool(202,"Rollback Segments")
+    : toTool(220,"Rollback Segments")
   { }
   virtual const char *menuItem()
   { return "Rollback Segments"; }
@@ -410,10 +410,11 @@ static toSQL SQLStatementInfo("toRollback:StatementInfo",
 			      "       a.User_Name,\n"
 			      "       a.SQL_Text,\n"
 			      "       a.Address||':'||a.Hash_Value,\n"
-			      "       TO_CHAR(b.Executions),\n"
-			      "       TO_CHAR(b.Buffer_Gets)\n"
+			      "       TO_CHAR(SUM(b.Executions)),\n"
+			      "       TO_CHAR(SUM(b.Buffer_Gets))\n"
 			      "  FROM v$open_cursor a,v$sql b\n"
-			      " WHERE a.Address = b.Address AND a.Hash_Value = b.Hash_Value",	
+			      " WHERE a.Address = b.Address AND a.Hash_Value = b.Hash_Value\n"
+			      " GROUP BY TO_CHAR(SYSDATE),a.user_name,a.sql_text,a.address||':'||a.hash_value",
 			      "Get information about statements in SGA. All columns must "
 			      "be in exactly the same order.");
 static toSQL SQLCurrentExtent("toRollback:CurrentExtent",
@@ -676,7 +677,7 @@ void toRollback::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)offline_xpm),"Offline",
 			   this,SLOT(offline(void)),0,TO_ID_OFFLINE);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm),"Create segment",
+      ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm),"Create segment...",
 			   this,SLOT(addSegment(void)),0,TO_ID_CREATE);
       ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"Drop segment",
 			   this,SLOT(dropSegment(void)),0,TO_ID_DROP);

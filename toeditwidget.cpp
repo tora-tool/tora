@@ -122,7 +122,7 @@ void toEditWidget::lostFocus(void)
   for(std::list<editHandler *>::iterator i=(*Handlers).begin();
       i!=(*Handlers).end();
       i++) {
-    (*i)->lostFocus((QWidget *)(this));
+    (*i)->lostFocus(this);
   }
 }
 
@@ -135,7 +135,7 @@ void toEditWidget::receivedFocus(void)
   for(std::list<editHandler *>::iterator i=(*Handlers).begin();
       i!=(*Handlers).end();
       i++) {
-    (*i)->receivedFocus(dynamic_cast<QWidget *>(this));
+    (*i)->receivedFocus(this);
   }
 }
 

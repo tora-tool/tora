@@ -91,10 +91,9 @@ public:
    */
   toBarChart(toBarChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
-public slots:
   /** Open chart in new window.
    */
-  virtual void openCopy(void);
+  virtual toLineChart *openCopy(QWidget *parent);
 };
 
 #endif

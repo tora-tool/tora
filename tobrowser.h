@@ -48,6 +48,7 @@ class toResult;
 class toResultContent;
 class toResultFilter;
 class toResultView;
+class toBrowserFilter;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
@@ -59,7 +60,7 @@ class toBrowser : public toToolWidget {
   QString SecondText;
   toResultView *FirstTab;
   toResult *SecondTab;
-  toResultFilter *Filter;
+  toBrowserFilter *Filter;
   QWidget *CurrentTop;
 
   toResultContent *ViewContent;
@@ -67,7 +68,7 @@ class toBrowser : public toToolWidget {
 
   std::map<QString,toResultView *> Map;
   std::map<QString,toResult *> SecondMap;
-  void setNewFilter(toResultFilter *filter);
+  void setNewFilter(toBrowserFilter *filter);
   QTimer Poll;
 
   QString schema(void);

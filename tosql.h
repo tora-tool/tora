@@ -247,13 +247,13 @@ public:
    * @param conn Connection to get version from.
    * @return String containing the statement.
    */
-  const QString operator () (const toConnection &conn)
+  const QString operator () (const toConnection &conn) const
   { return string(Name,conn); }
 
   /** Get name of this SQL.
    * @return Name.
    */
-  const QString &name(void)
+  const QString &name(void) const
   { return Name; }
 
   /** Create a new SQL. Observe that the only thing this does is insert the supplied

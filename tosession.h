@@ -67,6 +67,7 @@ class toSession : public toToolWidget {
   toResultLong *ConnectInfo;
   toResultLong *LockedObjects;
   toResultLock *PendingLocks;
+  toResultLong *AccessedObjects;
   toResultBar *WaitBar;
   toResultBar *IOBar;
   QSplitter *OpenSplitter;

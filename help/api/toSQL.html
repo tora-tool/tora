@@ -34,9 +34,9 @@
 </LI>
 <LI>typedef std::map<QString,definition>  <A HREF="#ref3">sqlMap</A>
 </LI>
-</ul><h4>Public Methods</h4><ul><LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref23">operator ()</A></b> (const <A HREF="toConnection.html">toConnection</A> &conn) 
+</ul><h4>Public Methods</h4><ul><LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref23">operator ()</A></b> (const <A HREF="toConnection.html">toConnection</A> &conn)  const
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref24">name</A></b> (void) 
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref24">name</A></b> (void)  const
 </LI>
 <LI>&nbsp;<b><A HREF="#ref25">toSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,
@@ -260,7 +260,7 @@
 <p><b>Returns</b>: A reference to the map of definitions.
    </p>
 <A NAME="operator%20()"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>operator ()</strong> (const <A HREF="toConnection.html">toConnection</A> &conn)
-<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p> Get the statement of an SQL.
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the statement of an SQL.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
@@ -269,7 +269,7 @@
 <p><b>Returns</b>: String containing the statement.
    </p>
 <A NAME="name"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>name</strong> (void)
-<br></td><td align="right"><h3><strong>name</strong></h3></td></tr></table><p></p><p> Get name of this SQL.
+<br></td><td align="right"><h3><strong>name</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get name of this SQL.
 </p>
 <p><b>Returns</b>: Name.
    </p>

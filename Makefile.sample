@@ -44,13 +44,13 @@ INSTALLBIN=$(ROOT)/usr/local/bin
 INSTALLLIB=$(ROOT)/usr/local/lib
 
 # Additional includes needed to compile program
-INCLUDES="-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/include/qt2" "-I/usr/include/mysql" "-I/usr/include"
+INCLUDES="-I/usr/include" "-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/include/qt2" "-I/usr/include/mysql"
 
 # C++ Compiler to use
 GCC="/usr//bin/cc"
 
 # Additional libraries to link with
-LIBS_GLOB=-lcrypt -lm -lpthread -ldl -lkdeprint -lkdecore -lkdeui -lDCOP -lkfile -lkhtml
+LIBS_GLOB=-lcrypt -lm -lpthread -lkdeprint -lkdecore -lkdeui -lDCOP -lkfile -lkhtml
 
 # Standard C++ library
 STDCPP_SHARED=-lstdc++
@@ -59,7 +59,7 @@ STDCPP_SHARED=-lstdc++
 STDCPP_STATIC=/usr/lib/libstdc++-3-libc6.2-2-2.10.0.a
 
 # Qt library
-QT_SHARED= -lqt-mt
+QT_SHARED= -lqt
 
 # Static Qt library
 QT_STATIC=/usr/lib/libqt.a
@@ -71,7 +71,7 @@ MOC="/usr/lib/qt2/bin/moc"
 UIC="/usr/lib/qt2/bin/uic"
 
 # Additional paths to find libraries
-LFLAGS="-L$(ORACLE_HOME)/lib" "-L/usr/lib" -Xlinker "--rpath=$(ORACLE_HOME)/lib" "-L/usr/lib" "-L/usr/lib" -Xlinker "--rpath=/usr/lib"
+LFLAGS="-L/usr/lib" -Xlinker "--rpath=/usr/lib" "-L$(ORACLE_HOME)/lib" "-L/usr/lib" "-L/usr/lib" -Xlinker "--rpath=$(ORACLE_HOME)/lib" -Xlinker "--rpath=/usr/lib" 
 
 # Oracle library
 ORACLE_SHARED=-lclntsh
@@ -80,7 +80,7 @@ ORACLE_SHARED=-lclntsh
 ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
 
 # What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version
-TARGET=tora-plugin
+TARGET=tora-mono
 
 # MySQL found
 MYSQL_FOUND=1
@@ -91,12 +91,14 @@ MYSQL_SHARED= -lmysqlclient
 # Static MySQL libraries
 MYSQL_STATIC=/usr/lib/libmysqlclient.a
 
+# Base directory of KDE installation
+KDE_BASE=/usr
+
 # Additional defines to use while compiling, except for the normal these are available
+#   OTL_ORA9I       - Compile for Oracle 9.x
 #   OTL_ORA8I       - Compile for Oracle 8.1.x
 #   OTL_ORA8        - Compile for Oracle 8.0.x
 #   TO_KDE          - Compile as KDE application
-#   TO_NAMESPACE    - Any namespaces that should be used
-#   TO_DEBUG_MEMORY - Enable memory debugging framework (SLOW)
 DEFINES+=-DOTL_ORA8I
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 DEFINES+=-DTO_KDE
@@ -173,15 +175,16 @@ API=	\
 	totemplate.h		\
 	tothread.h		\
 	totool.h		\
-	tovisualize.h
+	tovisualize.h		\
+	utils.h
 
 SOURCES=\
-	main.cpp \
 	toabout.cpp \
 	toaboutui.cpp \
 	toalert.cpp \
 	toanalyze.cpp \
 	tobackground.cpp \
+	tobackup.cpp \
 	tobarchart.cpp \
 	tobrowser.cpp \
 	tobrowserconstraintui.cpp \
@@ -189,6 +192,9 @@ SOURCES=\
 	tobrowserindexui.cpp \
 	tobrowsertableui.cpp \
 	tochangeconnection.cpp \
+	tochartalarmui.cpp \
+	tochartmanager.cpp \
+	tochartsetupui.cpp \
 	toconnection.cpp \
 	tocurrent.cpp \
 	todatabasesettingui.cpp \
@@ -348,7 +354,7 @@ install-common:
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
 
-install: $(TARGET) install-common
+install: $(TARGET) install-common install-kde
 	@echo Install $(TARGET) to $(INSTALLBIN)
 	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
 	-strip $(TARGET) plugins/* >/dev/null 2>&1
@@ -363,6 +369,12 @@ install: $(TARGET) install-common
 install-debug: tora-mono install-common
 	@echo Install tora with debugging symbols to $(INSTALLBIN)
 	cp tora-mono $(INSTALLBIN)/tora
+
+install-kde:
+	cp -f icons/tora.xpm $(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
+	cp -f icons/toramini.xpm $(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
+	mkdir -p $(KDE_BASE)/share/apps/kappfinder/apps/Development
+	cp -f rpm/tora.desktop $(KDE_BASE)/share/apps/kappfinder/apps/Development
 
 uninstall:
 	@echo Uninstalling from $(INSTALLPREFIX)
@@ -385,6 +397,7 @@ distclean: clean
 	-rm -rf .xvpics >/dev/null 2>&1
 	-rm -rf icons/.xvpics >/dev/null 2>&1
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
+	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
 	-rm \#*\# >/dev/null 2>&1
 	-rm Makefile.setup >/dev/null 2>&1
 	-mv Makefile >/dev/null 2>&1
@@ -405,6 +418,8 @@ plugins/toalert.tso:\
 plugins/toanalyze.tso:\
 	objs/toanalyze.o \
 	objs/toworksheetstatistic.o
+plugins/tobackup.tso:\
+	objs/tobackup.o
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserconstraintui.o \
@@ -413,6 +428,9 @@ plugins/tobrowser.tso:\
 	objs/tobrowsertableui.o
 plugins/tochart.tso:\
 	objs/tobarchart.o \
+	objs/tochartalarmui.o \
+	objs/tochartmanager.o \
+	objs/tochartsetupui.o \
 	objs/tolegendchart.o \
 	objs/tolinechart.o \
 	objs/tolinechartsetupui.o \
@@ -437,11 +455,13 @@ plugins/toinvalid.tso:\
 	objs/toinvalid.o
 plugins/tomysqlconnection.tso:\
 	objs/tomysqlconnection.o
+	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(MYSQL_SHARED) -o $@ $^
 plugins/tooracleconnection.tso:\
 	objs/tooracleconnection.o \
 	objs/tooraclesettingui.o
+	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(ORACLE_SHARED)
 plugins/tooutput.tso:\
@@ -512,6 +532,7 @@ tora-plugin:\
 	tora \
 	plugins/toalert.tso \
 	plugins/toanalyze.tso \
+	plugins/tobackup.tso \
 	plugins/tobrowser.tso \
 	plugins/tochart.tso \
 	plugins/tocurrent.tso \
@@ -549,14 +570,11 @@ tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(GCC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
 		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) $(MYSQL_STATIC) \
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libXft.a /usr/X11R6/lib/libXrender.a \
-		/usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a\
-		/usr/X11R6/lib/libXinerama.a /usr/X11R6/lib/libGL.a /usr/lib/libmng.a -lz -ljpeg
+		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a
 
 # The binary for the pluginbased tora
 
 tora:\
-	objs/main.o \
 	objs/toabout.o \
 	objs/toaboutui.o \
 	objs/tobackground.o \
@@ -596,7 +614,8 @@ tora:\
 	objs/tothread.o \
 	objs/totool.o \
 	objs/totoolsettingui.o \
-	objs/utils.o
+	objs/utils.o\
+	main.cpp
 	@echo Linking $@
-	$(GCC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
+	$(GCC) $(CFLAGS) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
 		-o $@ $^ $(LIBS_GLOB) $(STDCPP_SHARED) $(QT_SHARED)

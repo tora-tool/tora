@@ -111,7 +111,7 @@ void toResult::query(const QString &sql)
   query(sql,params);
 }
 
-void toResult::query(toSQL &sql)
+void toResult::query(const toSQL &sql)
 {
   setSQLName(sql.name());
   FromSQL=true;
@@ -124,7 +124,19 @@ void toResult::query(toSQL &sql)
   }
 }
 
-void toResult::setSQL(toSQL &sql)
+void toResult::query(const toSQL &sql,toQList &par)
+{
+  setSQLName(sql.name());
+  FromSQL=true;
+  try {
+    query(toSQL::string(sql,connection()),par);
+    setHandle(true);
+  } catch(...) {
+    setHandle(false);
+  }
+}
+
+void toResult::setSQL(const toSQL &sql)
 {
   setSQLName(sql.name());
   FromSQL=true;

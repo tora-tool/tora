@@ -126,7 +126,7 @@ protected:
   { return totuning_xpm; }
 public:
   toTuningTool()
-    : toTool(10,"Server Tuning")
+    : toTool(30,"Server Tuning")
   { }
   virtual const char *menuItem()
   { return "Server Tuning"; }
@@ -146,9 +146,9 @@ static toSQL SQLDictionaryMiss("toTuning:Indicators:Important ratios:1Dictionary
 			       "select to_char(round(sum(getmisses)/sum(gets)*100,2))||' %' from v$rowcache",
 			       "Data dictionary row cache miss ratio (%). < 10%-15%");
 
-static toSQL SQLLibraryCache("toTuning:Indicators:Important ratios:2LibraryCache",
-			     "select to_char(round(sum(reloads)/sum(pins)*100,2))||' %' from v$librarycache",
-			     "Library cache (Shared SQL) miss ratio (%). < 1%");
+static toSQL SQLImportantLibraryCache("toTuning:Indicators:Important ratios:2LibraryCache",
+				      "select to_char(round(sum(reloads)/sum(pins)*100,2))||' %' from v$librarycache",
+				      "Library cache (Shared SQL) miss ratio (%). < 1%");
 
 static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
 			  "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,2))||' %'\n"
@@ -767,7 +767,7 @@ static toSQL SQLOverviewFilespace("toTuning:Overview:Filespace",
 				  "       (select sum(bytes) total from sys.dba_data_files)",
 				  "Filespace used");
 
-void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const QString &postfix,toSQL &sql)
+void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const QString &postfix,const toSQL &sql)
 {
   chart->setMinValue(0);
   chart->showGrid(0);
@@ -783,7 +783,7 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
     chart->setYPostfix(unitStr);
   } else
     chart->setYPostfix(postfix);
-  chart->query(toSQL::string(sql,toCurrentConnection(this)),val);
+  chart->query(sql,val);
 }
 
 toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
@@ -1138,6 +1138,40 @@ void toTuningOverview::refresh(void)
   } TOCATCH
 }
 
+static toSQL SQLLibraryCache("toTuning:LibraryCache",
+			     "SELECT namespace,\n"
+			     "       gets \"Gets\",\n"
+			     "       gethits \"Get Hits\",\n"
+			     "       to_char(trunc(gethitratio*100,\n"
+			     "		     1))||'%' \"-Ratio\",\n"
+			     "       pins \"Pins\",\n"
+			     "       pinhits \"Pin Hits\",\n"
+			     "       to_char(trunc(pinhitratio*100,\n"
+			     "		     1))||'%' \"-Ratio\"\n"
+			     "  FROM v$librarycache",
+			     "Library cache view");
+
+static toSQL SQLControlFiles("toTuning:ControlFileRecords",
+			     "SELECT type \"Type\",\n"
+			     "       record_size \"Size\",\n"
+			     "       records_total \"Total Records\",\n"
+			     "       records_used \"Used Records\",\n"
+			     "       round(record_size*records_total/:unt<int>,1)||' '||:unitstr<char[101]> \"-Allocated\",\n"
+			     "       to_char(round(records_used/records_total*100,1))||'%' \"-Used\",\n"
+			     "       type \" Sort\"\n"
+			     "  FROM v$controlfile_record_section\n"
+			     "UNION\n"
+			     "SELECT 'TOTAL',\n"
+			     "        round(avg(record_size),1),\n"
+			     "        sum(records_total),\n"
+			     "        sum(records_used),\n"
+			     "        round(sum(record_size*records_total/:unt<int>),1)||' '||:unitstr<char[101]>,\n"
+			     "        to_char(round(sum(record_size*records_used)/sum(record_size*records_total)*100,1))||'%' \"-Used\",\n"
+			     "        'ZZZZZZZZZZZZZ'\n"
+			     "  FROM v$controlfile_record_section\n"
+			     "ORDER BY 7",
+			     "Control file record info");
+
 toTuning::toTuning(QWidget *main,toConnection &connection)
   : toToolWidget(TuningTool,"tuning.html",main,connection)
 {
@@ -1216,7 +1250,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setFlow(false);
 	else
 	  chart->setYPostfix("/s");
-	chart->query(toSQL::string(*i,connection),par);
+	chart->query(toSQL::sql(*i),par);
       } else if (parts[2].mid(1,1)=="L"||parts[2].mid(1,1)=="C") {
 	toResultLine *chart;
 	if (parts[2].mid(1,1)=="C")
@@ -1237,15 +1271,15 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setMinValue(0);
         } else
 	  chart->setYPostfix("/s");
-	chart->query(toSQL::string(*i,connection),par);
+	chart->query(toSQL::sql(*i),par);
       } else if (parts[2].mid(1,1)=="P") {
 	toResultPie *chart=new toResultPie(Charts);
 	chart->setTitle(parts[2].mid(3));
 	if (parts[2].mid(2,1)=="S") {
-	  chart->query(toSQL::string(*i,connection),unit);
+	  chart->query(toSQL::sql(*i),unit);
 	  chart->setPostfix(unitStr);
 	} else
-	  chart->query(toSQL::string(*i,connection));
+	  chart->query(toSQL::sql(*i));
       } else
 	throw QString("Wrong format of name on chart.");
     }
@@ -1277,6 +1311,14 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   BlockingLocks=new toResultLock(Tabs,"locks");
   Tabs->addTab(BlockingLocks,"&Blocking locks");
 
+  LibraryCache=new toResultLong(true,false,toQuery::Background,Tabs,"cache");
+  LibraryCache->setSQL(SQLLibraryCache);
+  Tabs->addTab(LibraryCache,"Library C&ache");
+
+  ControlFiles=new toResultLong(true,false,toQuery::Background,Tabs,"control");
+  ControlFiles->setSQL(SQLControlFiles);
+  Tabs->addTab(ControlFiles,"Control Files");
+
   Options=new toResultLong(true,false,toQuery::Background,Tabs,"options");
   Options->setSQL(SQLOptions);
   Tabs->addTab(Options,"Optio&ns");
@@ -1290,7 +1332,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   LastTab=NULL;
 
   connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
-  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -1465,7 +1506,12 @@ void toTuning::refresh(void)
     Parameters->refresh();
   else if (LastTab==BlockingLocks)
     BlockingLocks->refresh();
-  else if (LastTab==Options)
+  else if (LastTab==LibraryCache)
+    LibraryCache->refresh();
+  else if (LastTab==ControlFiles) {
+    QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
+    ControlFiles->changeParams(QString::number(toSizeDecode(unit)),unit);
+  } else if (LastTab==Options)
     Options->refresh();
   else if (LastTab==Licenses)
     Licenses->refresh();
@@ -1578,27 +1624,29 @@ void toTuningFileIO::allocCharts(const QString &name,const QString &label)
   labelTime.insert(labelTime.end(),"Maximum Read");
   labelTime.insert(labelTime.end(),"Maximum Write");
 
-  toBarChart *barchart;
+  toResultBar *barchart;
   if (name.startsWith("tspc:"))
-    barchart=new toBarChart(TablespaceReads);
+    barchart=new toResultBar(TablespaceReads);
   else
-    barchart=new toBarChart(FileReads);
+    barchart=new toResultBar(FileReads);
   ReadsCharts[name]=barchart;
   barchart->setTitle(name.mid(5));
   barchart->setMinimumSize(200,170);
   barchart->setYPostfix("blocks/s");
   barchart->setLabels(labels);
+  barchart->setSQLName("toTuning:FileIO:Reads:"+name);
 
-  toLineChart *linechart;
+  toResultLine *linechart;
   if (name.startsWith("tspc:"))
-    linechart=new toLineChart(TablespaceTime);
+    linechart=new toResultLine(TablespaceTime);
   else
-    linechart=new toLineChart(FileTime);
+    linechart=new toResultLine(FileTime);
   TimeCharts[name]=linechart;
   linechart->setTitle(name.mid(5));
   linechart->setMinimumSize(200,170);
   linechart->setYPostfix("ms");
   linechart->setLabels(labelTime);
+  linechart->setSQLName("toTuning:FileIO:Time:"+name);
 }
 
 void toTuningFileIO::saveSample(const QString &name,const QString &label,
@@ -1778,7 +1826,14 @@ class toTuningWaitItem : public toResultViewItem {
 public:
   toTuningWaitItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
     : toResultViewItem(parent,after,QString::null)
-  { Color=0; setText(1,buf); }
+  {
+    Color=0;
+    setText(1,buf);
+    int num=1;
+    if (after)
+      num=after->text(0).toInt()+1;
+    setText(0,QString::number(num));
+  }
   void setColor(int color)
   { Color=color; }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
@@ -1832,12 +1887,24 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
   QFrame *frame=new QFrame(splitter);
   QGridLayout *layout=new QGridLayout(frame);
 
-  Delta=new toBarChart(frame);
+  Delta=new toResultBar(frame);
   Delta->setTitle("System wait events");
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Delta->showLegend(false);
   Delta->setYPostfix(" ms/sec");
+  Delta->setYPostfix(" ms/sec");
+  Delta->setSQLName("toTuning:WaitEvents");
   layout->addMultiCellWidget(Delta,0,0,0,1);
+
+  DeltaTimes=new toResultBar(frame);
+  DeltaTimes->setTitle("System wait events count");
+  DeltaTimes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  DeltaTimes->showLegend(false);
+  DeltaTimes->setYPostfix(" ms/sec");
+  DeltaTimes->hide();
+  DeltaTimes->setYPostfix(" waits/sec");
+  DeltaTimes->setSQLName("toTuning:WaitEventsCount");
+  layout->addMultiCellWidget(DeltaTimes,0,0,0,1);
 
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
   DeltaPie=new toPieChart(frame);
@@ -1856,6 +1923,7 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
   QValueList<int> siz;
   siz<<1<<2;
   splitter->setSizes(siz);
+  LastTime=0;
 
   First=true;
   ShowTimes=false;
@@ -1864,11 +1932,14 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
 void toTuningWait::changeType(int item)
 {
   ShowTimes=item;
-  if (ShowTimes)
-    Delta->setYPostfix(" waits/sec");
-  else
-    Delta->setYPostfix(" ms/sec");
-    
+  if (ShowTimes) {
+    DeltaTimes->show();
+    Delta->hide();
+  } else {
+    DeltaTimes->hide();
+    Delta->show();
+  }
+
   changeSelection();
 }
 
@@ -1904,65 +1975,57 @@ void toTuningWait::changeSelection(void)
     if (item->isSelected())
       enabled[usedMap[txt]]=true;
   }
-      
+
   try {
-    Delta->clear();
-
-    std::list<double> lastAbsolute;
-    std::list<double> relative;
-    std::list<QString>::iterator xval=XValues.begin();
-    time_t last;
-    std::list<time_t>::iterator ctime=TimeStamp.begin();
-
-    std::list<std::list<double> > &cur=(ShowTimes?Times:Values);
-
+    Enabled.clear();
+    int ind=0;
     {
-      for(std::list<std::list<double> >::iterator i=cur.begin();
-  	  i!=cur.end();i++) {
-	typ=0;
-	relative.clear();
-	std::list<double> current;
-	std::list<double>::iterator k=lastAbsolute.begin();
-	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	  if (enabled[typ]) {
-	    current.insert(current.end(),*j);
-	    if (k!=lastAbsolute.end()) {
-	      relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
-	      k++;
-	    }
-	  } else {
-	    current.insert(current.end(),0);
-	    if (k!=lastAbsolute.end()) {
-	      relative.insert(relative.end(),0);
-	      k++;
-	    }
-	  }
-	  typ++;
-	}
-	if (relative.size()>0&&xval!=XValues.end()) {
-	  Delta->addValues(relative,*xval);
-	  xval++;
-	}
-	lastAbsolute=current;
-	if (ctime!=TimeStamp.end()) {
-	  last=*ctime;
-	  ctime++;
-	}
+      for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+	Enabled.insert(Enabled.end(),enabled[ind]);
+	ind++;
       }
     }
+
+    Delta->setEnabledCharts(Enabled);
+    DeltaTimes->setEnabledCharts(Enabled);
+
+    std::list<double>::iterator i=(ShowTimes?LastTimes:LastCurrent).begin();
+    std::list<double>::iterator j=(ShowTimes?RelativeTimes:Relative).begin();
+    std::list<bool>::iterator k=Enabled.begin();
+    std::list<double> absolute;
+    std::list<double> relative;
+    while(i!=(ShowTimes?LastTimes:LastCurrent).end()&&k!=Enabled.end()) {
+      if (*k) {
+	if (j!=(ShowTimes?RelativeTimes:Relative).end())
+	  relative.insert(relative.end(),*j);
+	absolute.insert(absolute.end(),*i);
+      } else {
+	if (j!=(ShowTimes?RelativeTimes:Relative).end())
+	  relative.insert(relative.end(),0);
+	absolute.insert(absolute.end(),0);
+      }
+      i++;
+      if (j!=(ShowTimes?RelativeTimes:Relative).end())
+        j++;
+      k++;
+    }
+
     double total=0;
     {
-      for (std::list<double>::iterator i=lastAbsolute.begin();i!=lastAbsolute.end();i++)
+      for (std::list<double>::iterator i=absolute.begin();i!=absolute.end();i++)
 	total+=*i;
     }
-    AbsolutePie->setValues(lastAbsolute,Labels);
-    AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+" s");
+    AbsolutePie->setValues(absolute,Labels);
+    AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+
+			  (ShowTimes?"":" s"));
     total=0;
     for (std::list<double>::iterator i=relative.begin();i!=relative.end();i++)
       total+=*i;
     DeltaPie->setValues(relative,Labels);
     if (total>0)
-      DeltaPie->setTitle("Delta system wait events\nTotal "+QString::number(total)+" ms");
+      DeltaPie->setTitle("Delta system wait events\nTotal "+QString::number(total)+
+			 (ShowTimes?"/s":" ms/s"));
+
     else
       DeltaPie->setTitle(QString::null);
   } TOCATCH
@@ -1971,9 +2034,19 @@ void toTuningWait::changeSelection(void)
 
 void toTuningWait::connectionChanged(void)
 {
-  Values.clear();
+  LastCurrent.clear();
+  LastTimes.clear();
   Labels.clear();
+
+  Relative.clear();
+  RelativeTimes.clear();
+
+  delete Query;
+  Query=NULL;
+  LastTime=0;
+
   First=true;
+  refresh();
 }
 
 void toTuningWait::poll(void)
@@ -2018,18 +2091,22 @@ void toTuningWait::poll(void)
 	  }
 	}
 
-	std::list<double>::iterator j=CurrentTimes.begin();
-	for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++,j++) {
-	  if ((*j)!=0&&types.find(*i)==types.end()) {
-	    item=new toTuningWaitItem(Types,item,*i);
-	    item->setSelected(First&&HideMap.find(*i)==HideMap.end());
-	    types[*i]=true;
+	{
+	  std::list<double>::iterator j=CurrentTimes.begin();
+	  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++,j++) {
+	    if ((*j)!=0&&types.find(*i)==types.end()) {
+	      item=new toTuningWaitItem(Types,item,*i);
+	      item->setSelected(First&&HideMap.find(*i)==HideMap.end());
+	      types[*i]=true;
+	    }
 	  }
 	}
-	if (First)
+	if (First) {
+	  Delta->setLabels(Labels);
+	  DeltaTimes->setLabels(Labels);
 	  First=false;
-	else
-	  XValues.insert(XValues.end(),Now);
+	}
+
 	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
 	  toTuningWaitItem *item=dynamic_cast<toTuningWaitItem *>(ci);
 	  if (item) {
@@ -2053,16 +2130,38 @@ void toTuningWait::poll(void)
 	    }
 	  }
 	}
-	TimeStamp.insert(TimeStamp.end(),time(NULL));
-	Values.insert(Values.end(),Current);
-	Times.insert(Times.end(),CurrentTimes);
-	if (int(Values.size())>Delta->samples()+1) {
-	  Values.erase(Values.begin());
-	  Times.erase(Times.begin());
-	  XValues.erase(XValues.begin());
-	  TimeStamp.erase(TimeStamp.begin());
+
+	time_t now=time(NULL);
+	Relative.clear();
+	RelativeTimes.clear();
+
+	std::list<double>::iterator j=LastCurrent.begin();
+	std::list<double>::iterator i=Current.begin();
+	while(i!=Current.end()&&j!=LastCurrent.end()) {
+	  Relative.insert(Relative.end(),((*i)-(*j))/min(int(now-LastTime),1));
+	  i++;
+	  j++;
 	}
+
+	j=LastTimes.begin();
+	i=CurrentTimes.begin();
+	while(i!=CurrentTimes.end()&&j!=LastTimes.end()) {
+	  RelativeTimes.insert(RelativeTimes.end(),((*i)-(*j))/min(int(now-LastTime),1));
+	  i++;
+	  j++;
+	}
+
+	LastTime=now;
+	LastTimes=CurrentTimes;
+	LastCurrent=Current;
+
+	if (Relative.begin()!=Relative.end()) {
+	  Delta->addValues(Relative,Now);
+	  DeltaTimes->addValues(RelativeTimes,Now);
+	}
+
 	changeSelection();
+
 	delete Query;
 	Query=NULL;
 	Poll.stop();
@@ -2106,12 +2205,13 @@ static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   "  FROM v$sysstat s\n"
 			   " WHERE s.name='CPU used by this session'\n"
 			   " ORDER BY 5 DESC,\n"
-			   "          3 DESC",
+			   "          3 DESC,\n"
+			   "          4 DESC",
 			   "Get all available system wait events");
 
 void toTuningWait::refresh(void)
 {
-  if (Query||(TimeStamp.begin()!=TimeStamp.end()&&(*TimeStamp.rbegin())==time(NULL)))
+  if (Query||LastTime==time(NULL))
     return;
   toConnection &conn=toCurrentTool(this)->connection();
   toQList par;

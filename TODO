@@ -24,7 +24,7 @@ Extended functionality:
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
-* Implement migration, resize and report in toExtract.
+* Implement migratghhgggion, resize and report in toExtract.
 * Lots of more template texts including SQL syntax.
 * DB Links in DB browser.
 * Ability to change/move redofiles.
@@ -48,38 +48,19 @@ Extended functionality:
 * Use object cache in browser if possible.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
+* Track session statistics while profiling.
 * Proxy connection provider.
-* QSql connection provider. (PostgreSQL support)
 * Store worksheet statistic on save session.
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
-* Change default listened to name in alert log.
 * Statistics manager.
 	* Index only analyzing.
 	* Display only analyzed/not analyzed.
 	* All schemas option.
-* Use the "alter user set current_schema = xxx" in explain plans.
-* Analyze parts of anonymous SQL blocks which are analyzable.
-* Track data in charts to a file.
-* Scrollable charts with longer history.
-* Don't refresh non charts tabs automatically in tuning.
 * Use QTable to display the result in the worksheet.
 * Improved visualisation of any list and any columns.
-* Session:Accessed objects(v$access)
 * Session:Long operations(v$session_longops)
-* Session:Current statement in list
-* Log switch graph:(v$log_history)
-	* Archive log
-* Tuning:Library cache info(v$librarycache)
-* System:Resource limits(v$resource_limit)
-* System:Control file(v$controlfile_record_section)
-* Recent events:
-	* Number of redo switches
-	* Users added withing 30 days
-	* Roles added withing 30 days
-	* Datafiles added within 30 days
-	* Objects added within 30 days
-	* Objects edited within 30 days
+* Archive log info
 * Rollback:Shrink rollback segment(ALTER ROLLBACK SEGMENT TO {value})
 
 New tools:
@@ -89,3 +70,10 @@ New tools:
 * Change impact analyzing tool.
 * Alert log viewer.
 * RMAN and backup information.
+* Recent events:
+	* Number of redo switches
+	* Users added withing 30 days
+	* Roles added withing 30 days
+	* Datafiles added within 30 days
+	* Objects added within 30 days
+	* Objects edited within 30 days

@@ -125,7 +125,7 @@ protected:
   { return tostorage_xpm; }
 public:
   toStorageTool()
-    : toTool(20,"Storage Manager")
+    : toTool(50,"Storage Manager")
   { }
   virtual const char *menuItem()
   { return "Storage Manager"; }
@@ -799,19 +799,19 @@ void toStorage::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)readtablespace_xpm),"Read only access",
 			   this,SLOT(readOnly()),0,TO_ID_READ_ONLY);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)modtablespace_xpm),"Modify tablespace",
+      ToolMenu->insertItem(QPixmap((const char **)modtablespace_xpm),"Modify tablespace...",
 			   this,SLOT(modifyTablespace()),0,TO_ID_MODIFY_TABLESPACE);
-      ToolMenu->insertItem(QPixmap((const char **)modfile_xpm),"Modify datafile",
+      ToolMenu->insertItem(QPixmap((const char **)modfile_xpm),"Modify datafile...",
 			   this,SLOT(modifyDatafile()),0,TO_ID_MODIFY_DATAFILE);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)addtablespace_xpm),"New tablespace",
+      ToolMenu->insertItem(QPixmap((const char **)addtablespace_xpm),"New tablespace...",
 			   this,SLOT(newTablespace()),0,TO_ID_NEW_TABLESPACE);
-      ToolMenu->insertItem(QPixmap((const char **)addfile_xpm),"Add datafile",
+      ToolMenu->insertItem(QPixmap((const char **)addfile_xpm),"Add datafile...",
 			   this,SLOT(newDatafile()),0,TO_ID_ADD_DATAFILE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)coalesce_xpm),"Coalesce tablespace",
 			   this,SLOT(coalesce()),0,TO_ID_COALESCE);
-      ToolMenu->insertItem(QPixmap((const char **)movefile_xpm),"Move datafile",
+      ToolMenu->insertItem(QPixmap((const char **)movefile_xpm),"Move datafile...",
 			   this,SLOT(moveFile()),0,TO_ID_MOVE_FILE);
 
       toMainWidget()->menuBar()->insertItem("&Storage",ToolMenu,-1,toToolMenuIndex());

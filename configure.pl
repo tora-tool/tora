@@ -83,6 +83,8 @@ my %plugins=(
 	     "toanalyze"           => { "Files" => [ "toanalyze",
 						     "toworksheetstatistic" ],
 					"Oracle" => 1 },
+	     "tobackup"            => { "Files" => [ "tobackup" ],
+					"Oracle" => 1 },
 	     "tobrowser"           => { "Files" => [ "tobrowser",
 						     "tobrowserconstraintui",
 						     "tobrowserfilterui",
@@ -90,6 +92,9 @@ my %plugins=(
 						     "tobrowsertableui" ],
 					"Any" => 1 },
 	     "tochart"             => { "Files" => [ "tobarchart",
+						     "tochartalarmui",
+						     "tochartmanager",
+						     "tochartsetupui",
 						     "tolegendchart",
 						     "tolinechart",
 						     "tolinechartsetupui",
@@ -115,6 +120,8 @@ my %plugins=(
 					"Oracle" => 1 },
 	     "tooutput"            => { "Files" => [ "tooutput" ],
 					"Oracle" => 1 },
+	     "toqsqlconnection"    => { "Files" => [ "toqsqlconnection" ],
+					"Qt3" => 1 },
 	     "toprofiler"          => { "Files" => [ "toprofiler" ],
 					"Oracle" => 1 },
 	     "toresult"            => { "Files" => [ "toresultcols",
@@ -241,6 +248,7 @@ my $KDEApplication;
 my $NoKDE;
 my $KDEInclude;
 my $KDELibs;
+my $KDEBase;
 my $KDEVersion;
 my $NoRPath;
 my $OracleFound=1;
@@ -301,6 +309,7 @@ for (@ARGV) {
 	if (defined $1) {
 	    $KDEInclude="$1/include";
 	    $KDELibs="$1/lib";
+	    $KDEBase=$1;
 	}
     } elsif (/^--with-rpm-contents(?:=(.*))$/) {
 	$RPMGenerate=$1;
@@ -366,7 +375,7 @@ __TEMP__
     if ($OracleFound) {
 	print TEMP <<__TEMP__;
 #define OTL_ORA8I
-#include "otlv32.h"
+#include "otlv4.h"
 
 void test(void) // Not called
 {
@@ -449,123 +458,6 @@ __TEMP__
 }
 
 {
-    if ($OracleFound) {
-	print "checking for Oracle ... ";
-        if (!$ENV{ORACLE_HOME}) {
-	    print "failed!\n\n";
-	    print "ORACLE_HOME environment not set. To compile without Oracle use --without-oracle.\n";
-	    exit(2);
-	}
-	print $ENV{ORACLE_HOME}."\n";
-
-	print "checking Oracle version ... ";
-	# try to find out the Oracle client release
-	open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus '-?' |") || do {
-	    print "failed!\n\nCannot execute sqlplus: $!\n";
-	    exit(2);
-	};
-	while (<ORA>) {
-	    if (/Release\s(\S+)/) {
-		$OracleRelease = $1;
-		last;
-	    }
-	}
-	close(ORA);
-	unless ($OracleRelease) {
-	    print "failed!\n\nCould not find out your Oracle client release\n";
-	    exit(2);
-	}
-	else {
-	    print "$OracleRelease\n";
-	}
-    } else {
-	$TestDB="-lmysqlclient";
-    }
-
-    findFile("^libstdc\\+\\+.*\\.a",sub {
-	                                $StdCppLibStatic=$_[0];
-					return -f $_[0];
-				    },
-	     "/usr/lib",
-	     "/usr/local/lib");
-    if (! -f $StdCppLibStatic) {
-	$StdCppLibStatic="";
-    }
-
-    if ($MySQLFound) {
-	print "checking for MySQL include files ... ";
-
-	$MySQLInclude=findFile("^mysql\\.h\$",
-			       undef,
-			       $MySQLInclude,
-			       "/usr/include",
-			       "/usr/include/mysql",
-			       "/usr/lib/mysql/include",
-			       "/usr/local/include",
-			       "/usr/local/include/mysql",
-			       "/usr/local/lib/mysql/include");
-	
-	if (!-d $MySQLInclude) {
-	    print "no\n";
-	    $MySQLFound=0;
-	} else {
-	    print "$MySQLInclude\n";
-	    print "checking for MySQL library ... ";
-	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
-		                                          return -f $_[0] && ! -l $_[0];
-						      },
-			       $MySQLLib,
-			       "/usr/lib",
-			       "/usr/lib/mysql",
-			       "/usr/lib/mysql/lib",
-			       "/usr/local/lib",
-			       "/usr/local/lib/mysql",
-			       "/usr/local/lib/mysql/lib");
-	    
-	    if (-d $MySQLLib) {
-		$MySQLShared=" -lmysqlclient";
-	    }
-	    if (!-d $MySQLLib) {
-		print "no\n";
-		$MySQLFound=0;
-	    } else {
-		print "$MySQLLib\n";
-	    }
-	    
-	    print "checking for MySQL static library ...";
-	    
-	    findFile("^libmysqlclient.*\\.a",sub {
-		                                 $MySQLStatic=$_[0];
-						 return -f $_[0];
-					     },
-		     $MySQLLib,
-		     "/usr/lib",
-		     "/usr/lib/mysql",
-		     "/usr/lib/mysql/lib",
-		     "/usr/local/lib",
-		     "/usr/local/lib/mysql",
-		     "/usr/local/lib/mysql/lib");
-	    if (! -f $MySQLStatic) {
-		$MySQLStatic="";
-		print "no\n";
-	    } else {
-		print "$MySQLStatic\n";
-		if (!$MySQLFound) {
-		    $MySQLFound=1;
-		    $MySQLLib=$MySQLStatic;
-		}
-	    }
-	}
-    }
-	
-    print "checking consistency ... ";
-
-    if (!$MySQLFound&&!$OracleFound) {
-	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
-	exit(2);
-    }
-    print "ok\n";
-
     if (!$NoKDE||$KDEApplication) {
 	print "checking for KDE include files ... ";
 	$KDEInclude=findFile("^kapp.*\\.h\$",sub {
@@ -593,13 +485,17 @@ __TEMP__
 			     "/usr/include",
 			     "/usr/include/kde",
 			     "/usr/include/kde2",
+			     "/usr/include/kde3",
 			     "/usr/local/kde/include",
 			     "/usr/local/kde2/include",
+			     "/usr/local/kde3/include",
 			     "/opt/kde/include",
 			     "/opt/kde2/include",
+			     "/opt/kde3/include",
 			     "/usr/local/include",
 			     "/usr/local/include/kde",
-			     "/usr/local/include/kde2"
+			     "/usr/local/include/kde2",
+			     "/usr/local/include/kde3"
 			     );
 
 	if (-d $KDEInclude) {
@@ -608,7 +504,7 @@ __TEMP__
 	} else {
 	    print "no\n";
 	}
-	print "checking KDE version ... $KDEVersion\n";
+	print "checking for KDE version ... $KDEVersion\n";
     }
     if ($KDEApplication) {
 	print "checking for KDE print support ... ";
@@ -637,13 +533,16 @@ __TEMP__
 			     "/usr/lib",
 			     "/usr/lib/kde",
 			     "/usr/lib/kde2",
+			     "/usr/lib/kde3",
 			     "/usr/local/kde/lib",
 			     "/usr/local/kde2/lib",
 			     "/opt/kde/lib",
 			     "/opt/kde2/lib",
+			     "/opt/kde3/lib",
 			     "/usr/local/lib",
 			     "/usr/local/lib/kde",
-			     "/usr/local/lib/kde2"
+			     "/usr/local/lib/kde2",
+			     "/usr/local/lib/kde3"
 			     );
 
 	if (!-d $KDELibs) {
@@ -651,6 +550,38 @@ __TEMP__
 	    exit(2);
 	} else {
 	    print "$KDELibs\n";
+	}
+
+	print "checking for KDE base ... ";
+	for my $a ($KDEBase,$ENV{KDEDIR},
+		   "/usr",
+		   "/usr/kde",
+		   "/usr/kde2",
+		   "/usr/kde3",
+		   "/usr/lib/kde",
+		   "/usr/lib/kde2",
+		   "/usr/lib/kde3",
+		   "/usr/local/kde",
+		   "/usr/local/kde2",
+		   "/usr/local/kde3",
+		   "/opt/kde",
+		   "/opt/kde2",
+		   "/opt/kde3",
+		   "/usr/local/lib",
+		   "/usr/local/lib/kde",
+		   "/usr/local/lib/kde2",
+		   "/usr/local/lib/kde3") {
+	    if (-d "$a/share/apps/kappfinder" && -d "$a/share/icons/hicolor/32x32/apps" && -d "$a/share/icons/hicolor/16x16/apps") {
+		$KDEBase=$a;
+		last;
+	    } else {
+		$KDEBase=undef;
+	    }
+	}
+	if (defined $KDEBase) {
+	    print "$KDEBase\n";
+	} else {
+	    print "no\n";
 	}
 
 	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile -lkhtml";
@@ -892,7 +823,16 @@ __TEMP__
     }
     print "$QtInclude\n";
 
-    print "checking Qt version ... $QtVersion\n";
+    print "checking for Qt version ... $QtVersion\n";
+    print "checking for library consistency ... ";
+    if (defined $KDEVersion &&
+	substr($QtVersion,0,1) ne substr($KDEVersion,0,1) &&
+	!(substr($QtVersion,0,1) eq "3" && substr($KDEVersion,0,3) eq "2.9")) {
+	print "failed!\n\nKDE ($KDEVersion) and Qt ($QtVersion) versions doesn't match!\n";
+	print "Try specifying using --with-qt and --with-kde switches to configure.\n";
+	exit(1);
+    }
+    print "yes\n";
     print "checking for static Qt library ... ";
 
     findFile("^libqt(-mt)?[23]\\.a",sub {
@@ -956,6 +896,137 @@ __TEMP__
 	    print "no\n";
 	}
     }
+
+    if ($OracleFound) {
+	print "checking for Oracle ... ";
+        if (!$ENV{ORACLE_HOME}) {
+	    print "failed!\n\n";
+	    print "ORACLE_HOME environment not set. To compile without Oracle use --without-oracle.\n";
+	    exit(2);
+	}
+	print $ENV{ORACLE_HOME}."\n";
+
+	print "checking for Oracle version ... ";
+	# try to find out the Oracle client release
+	open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus '-?' |") || do {
+	    print "failed!\n\nCannot execute sqlplus: $!\n";
+	    exit(2);
+	};
+	while (<ORA>) {
+	    if (/Release\s(\S+)/) {
+		$OracleRelease = $1;
+		last;
+	    }
+	}
+	close(ORA);
+	unless ($OracleRelease) {
+	    print "failed!\n\nCould not find out your Oracle client release\n";
+	    exit(2);
+	} else {
+	    print "$OracleRelease\n";
+	}
+    } else {
+	$TestDB="-lmysqlclient";
+    }
+
+    findFile("^libstdc\\+\\+.*\\.a",sub {
+	                                $StdCppLibStatic=$_[0];
+					return -f $_[0];
+				    },
+	     "/usr/lib",
+	     "/usr/local/lib");
+    if (! -f $StdCppLibStatic) {
+	$StdCppLibStatic="";
+    }
+
+    if ($QtVersion ge "3.0") {
+	$MySQLFound=0;
+	print "checking for MySQL support ... Available through QSql only with Qt >= 3.0.0\n";
+	undef $MySQLLib;
+	undef $MySQLStatic;
+	undef $MySQLInclude;
+    } elsif ($MySQLFound) {
+	print "checking for MySQL include files ... ";
+
+	$MySQLInclude=findFile("^mysql\\.h\$",
+			       undef,
+			       $MySQLInclude,
+			       "/usr/include",
+			       "/usr/include/mysql",
+			       "/usr/lib/mysql/include",
+			       "/usr/local/include",
+			       "/usr/local/include/mysql",
+			       "/usr/local/lib/mysql/include");
+	
+	if (!-d $MySQLInclude) {
+	    print "no\n";
+	    $MySQLFound=0;
+	} else {
+	    print "$MySQLInclude\n";
+	    print "checking for MySQL library ... ";
+	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
+		                                          return -f $_[0] && ! -l $_[0];
+						      },
+			       $MySQLLib,
+			       "/usr/lib",
+			       "/usr/lib/mysql",
+			       "/usr/lib/mysql/lib",
+			       "/usr/local/lib",
+			       "/usr/local/lib/mysql",
+			       "/usr/local/lib/mysql/lib");
+	    
+	    if (-d $MySQLLib) {
+		$MySQLShared=" -lmysqlclient";
+	    }
+	    if (!-d $MySQLLib) {
+		print "no\n";
+		$MySQLFound=0;
+	    } else {
+		print "$MySQLLib\n";
+	    }
+	    
+	    print "checking for MySQL static library ...";
+	    
+	    findFile("^libmysqlclient.*\\.a",sub {
+		                                 $MySQLStatic=$_[0];
+						 return -f $_[0];
+					     },
+		     $MySQLLib,
+		     "/usr/lib",
+		     "/usr/lib/mysql",
+		     "/usr/lib/mysql/lib",
+		     "/usr/local/lib",
+		     "/usr/local/lib/mysql",
+		     "/usr/local/lib/mysql/lib");
+	    if (! -f $MySQLStatic) {
+		$MySQLStatic="";
+		print "no\n";
+	    } else {
+		print "$MySQLStatic\n";
+		if (!$MySQLFound) {
+		    $MySQLFound=1;
+		    $MySQLLib=$MySQLStatic;
+		}
+	    }
+	}
+    }
+	
+    print "checking for any database ... ";
+
+    if (!$MySQLFound&&!$OracleFound) {
+	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
+	exit(2);
+    }
+    if ($OracleFound) {
+	print "Oracle ";
+    }
+    if ($MySQLFound) {
+	print "MySQL ";
+    }
+    if ($QtVersion ge "3.0") {
+	print "QSql ";
+    }
+    print "\n";
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     $LFlags.="\"-L".$QtLib."\" ";
@@ -1164,12 +1235,15 @@ __EOT__
 	print MAKEFILE "MYSQL_STATIC=$MySQLStatic\n";
 	print MAKEFILE "\n";
 
+	print MAKEFILE "# Base directory of KDE installation\n";
+	print MAKEFILE "KDE_BASE=$KDEBase\n";
+	print MAKEFILE "\n";
+
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
-	print MAKEFILE "#   OTL_ORA8I       - Compile for Oracle 8.1.x\n";
-	print MAKEFILE "#   OTL_ORA8        - Compile for Oracle 8.0.x\n";
-	print MAKEFILE "#   TO_KDE          - Compile as KDE application\n";
-	print MAKEFILE "#   TO_NAMESPACE    - Any namespaces that should be used\n";
-	print MAKEFILE "#   TO_DEBUG_MEMORY - Enable memory debugging framework (SLOW)\n";
+	print MAKEFILE "#   OTL_ORA9I          - Compile for Oracle 9.x\n";
+	print MAKEFILE "#   OTL_ORA8I          - Compile for Oracle 8.1.x\n";
+	print MAKEFILE "#   OTL_ORA8           - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   TO_KDE             - Compile as KDE application\n";
 	
 	if ($OracleRelease =~ /^8.0/) {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";
@@ -1335,7 +1409,7 @@ install-common:
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
 
-install: \$(TARGET) install-common
+install: \$(TARGET) install-common install-kde
 	\@echo Install \$(TARGET) to \$(INSTALLBIN)
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
@@ -1351,6 +1425,27 @@ install-debug: tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
 	cp tora-mono \$(INSTALLBIN)/tora
 
+__EOT__
+
+        if (defined $KDEBase) {
+	    print MAKEFILE <<__EOT__;
+install-kde:
+	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
+	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
+	mkdir -p \$(KDE_BASE)/share/apps/kappfinder/apps/Development
+	cp -f rpm/tora.desktop \$(KDE_BASE)/share/apps/kappfinder/apps/Development
+
+__EOT__
+	} else {
+	    print MAKEFILE <<__EOT__;
+install-kde:
+	true # Nop
+
+__EOT__
+
+	}
+
+        print MAKEFILE <<__EOT__;
 uninstall:
 	\@echo Uninstalling from \$(INSTALLPREFIX)
 	rm \$(INSTALLBIN)/tora

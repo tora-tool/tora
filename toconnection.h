@@ -182,7 +182,7 @@ public:
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  toQuery(toConnection &conn,toSQL &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &conn,const toSQL &sql,const std::list<toQValue> &params);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
@@ -194,7 +194,7 @@ public:
    * @param sql SQL to run.
    * @param arg1 Arguments to pass to query.
    */
-  toQuery(toConnection &conn,toSQL &sql,
+  toQuery(toConnection &conn,const toSQL &sql,
 	  const QString &arg1=QString::null,const QString &arg2=QString::null,
 	  const QString &arg3=QString::null,const QString &arg4=QString::null,
 	  const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -218,7 +218,7 @@ public:
    * @param sql SQL to run.
    * @param params Arguments to pass to query.
    */
-  toQuery(toConnection &conn,queryMode mode,toSQL &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &conn,queryMode mode,const toSQL &sql,const std::list<toQValue> &params);
   /** Create a query.
    * @param conn Connection to create query on.
    * @param mode Mode to run query in.
@@ -242,7 +242,7 @@ public:
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  void execute(toSQL &sql,const std::list<toQValue> &params);
+  void execute(const toSQL &sql,const std::list<toQValue> &params);
   /** Execute an SQL statement using this query.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
@@ -303,7 +303,7 @@ public:
    * @return A list of @ref toQValues:s read from the query.
    */
   static std::list<toQValue> readQuery(toConnection &conn,
-				       toSQL &sql,
+				       const toSQL &sql,
 				       std::list<toQValue> &params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
@@ -320,7 +320,7 @@ public:
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQuery(toConnection &conn,toSQL &sql,
+  static std::list<toQValue> readQuery(toConnection &conn,const toSQL &sql,
 				       const QString &arg1=QString::null,const QString &arg2=QString::null,
 				       const QString &arg3=QString::null,const QString &arg4=QString::null,
 				       const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -345,7 +345,7 @@ public:
    * @return A list of @ref toQValues:s read from the query.
    */
   static std::list<toQValue> readQueryNull(toConnection &conn,
-					   toSQL &sql,
+					   const toSQL &sql,
 					   std::list<toQValue> &params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
@@ -362,7 +362,7 @@ public:
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQueryNull(toConnection &conn,toSQL &sql,
+  static std::list<toQValue> readQueryNull(toConnection &conn,const toSQL &sql,
 					   const QString &arg1=QString::null,const QString &arg2=QString::null,
 					   const QString &arg3=QString::null,const QString &arg4=QString::null,
 					   const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -495,9 +495,6 @@ public:
     /** Get the version of the database connected to.
      */
     virtual QString version(toConnectionSub *) = 0;
-    /** Create a copy of this implementation.
-     */
-    virtual connectionImpl *clone(toConnection *newConn) const = 0;
 
     /** Return a string representation to address an object.
      * @param name The name to be quoted.
@@ -631,8 +628,9 @@ public:
   const QString &provider() const;
 
   /** Get a description of this connection.
+   * @version Include version in returned string.
    */
-  virtual QString description(void) const;
+  virtual QString description(bool version=true) const;
 
   /** Set if this connection needs to be commited.
    */
@@ -658,7 +656,7 @@ public:
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void execute(toSQL &sql,
+  void execute(const toSQL &sql,
 	       toQList &params);
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute
@@ -670,7 +668,7 @@ public:
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void execute(toSQL &sql,
+  void execute(const toSQL &sql,
 	       const QString &arg1=QString::null,const QString &arg2=QString::null,
 	       const QString &arg3=QString::null,const QString &arg4=QString::null,
 	       const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -691,7 +689,7 @@ public:
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void allExecute(toSQL &sql,
+  void allExecute(const toSQL &sql,
 		  toQList &params);
   /** Execute a statement without caring about the result on all open database connections.
    * @param sql SQL to execute
@@ -703,7 +701,7 @@ public:
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void allExecute(toSQL &sql,
+  void allExecute(const toSQL &sql,
 		  const QString &arg1=QString::null,const QString &arg2=QString::null,
 		  const QString &arg3=QString::null,const QString &arg4=QString::null,
 		  const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -813,6 +811,7 @@ public:
 
 class toConnectionProvider {
   static std::map<QString,toConnectionProvider *> *Providers;
+  static std::map<QString,toConnectionProvider *> *Types;
   QString Provider;
   static void checkAlloc(void);
 
@@ -860,6 +859,11 @@ public:
 					       const QString &host,
 					       const QString &user,
 					       const QString &pwd)=0;
+  /** Will be called after program has been started and before connections have been opened.
+   *  Use for initialization.
+   */
+  virtual void initialize(void)
+  { }
 
   /**
    * Create and return configuration tab for this connectiontype. The returned widget should also
@@ -922,6 +926,10 @@ public:
    * @param def Default value of the setting, if it is not available.
    */
   void setConfig(const QString &tag,const QString &value);
+
+  /** Call all initializers
+   */
+  static void initializeAll(void);
 };
 
 #endif

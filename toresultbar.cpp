@@ -36,10 +36,13 @@
 
 #include "toconf.h"
 #include "toconnection.h"
+#include "tomain.h"
 #include "tonoblockquery.h"
 #include "toresultbar.h"
 #include "tosql.h"
 #include "totool.h"
+
+#include <qpopupmenu.h>
 
 #include "toresultbar.moc"
 
@@ -169,4 +172,18 @@ void toResultBar::connectionChanged(void)
 {
   toResult::connectionChanged();
   clear();
+}
+
+void toResultBar::addMenues(QPopupMenu *popup)
+{
+  if (sqlName().length()) {
+    popup->insertSeparator();
+    popup->insertItem("Edit SQL...",
+		      this,SLOT(editSQL()));
+  }
+}
+
+void toResultBar::editSQL(void)
+{
+  toMainWidget()->editSQL(sqlName());
 }

@@ -46,6 +46,7 @@
 // Connection provider implementation
 
 std::map<QString,toConnectionProvider *> *toConnectionProvider::Providers;
+std::map<QString,toConnectionProvider *> *toConnectionProvider::Types;
 
 void toConnectionProvider::checkAlloc(void)
 {
@@ -64,6 +65,9 @@ toConnectionProvider::toConnectionProvider(const QString &provider,bool add)
   Provider=provider;
   if (add)
     addProvider(provider);
+  if (!Types)
+    Types=new std::map<QString,toConnectionProvider *>;
+  (*Types)[provider]=this;
 }
 
 void toConnectionProvider::removeProvider(const QString &provider)
@@ -77,6 +81,9 @@ toConnectionProvider::~toConnectionProvider()
 {
   if (!Provider.isEmpty())
     removeProvider(Provider);
+  std::map<QString,toConnectionProvider *>::iterator i=Types->find(Provider);
+  if (i!=Types->end())
+    Types->erase(i);
 }
 
 std::list<QString> toConnectionProvider::providedHosts(const QString &)
@@ -93,6 +100,14 @@ std::list<QString> toConnectionProvider::providers()
   for(std::map<QString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
     ret.insert(ret.end(),(*i).first);
   return ret;
+}
+
+void toConnectionProvider::initializeAll(void)
+{
+  if (Types)
+    for(std::map<QString,toConnectionProvider *>::iterator i=Types->begin();
+	i!=Types->end();i++)
+      (*i).second->initialize();
 }
 
 std::list<QString> toConnectionProvider::providedModes(const QString &)
@@ -322,7 +337,7 @@ toQValue::operator QString() const
 
 // toQuery implementation
 
-toQuery::toQuery(toConnection &conn,toSQL &sql,
+toQuery::toQuery(toConnection &conn,const toSQL &sql,
 		 const QString &arg1,const QString &arg2,
 		 const QString &arg3,const QString &arg4,
 		 const QString &arg5,const QString &arg6,
@@ -448,7 +463,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,
   }
 }
 
-toQuery::toQuery(toConnection &conn,toSQL &sql,const toQList &params)
+toQuery::toQuery(toConnection &conn,const toSQL &sql,const toQList &params)
   : Connection(conn),ConnectionSub(conn.mainConnection()),Params(params),SQL(sql(conn))
 {  
   Mode=Normal;
@@ -482,7 +497,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
   }
 }
 
-toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const toQList &params)
+toQuery::toQuery(toConnection &conn,queryMode mode,const toSQL &sql,const toQList &params)
   : Connection(conn),
     Params(params),
     SQL(sql(conn))
@@ -577,7 +592,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
   }
 }
 
-void toQuery::execute(toSQL &sql,const toQList &params)
+void toQuery::execute(const toSQL &sql,const toQList &params)
 {
   toBusy busy;
   SQL=sql(Connection);
@@ -632,7 +647,7 @@ bool toQuery::eof(void)
   return Query->eof();
 }
 
-toQList toQuery::readQuery(toConnection &conn,toSQL &sql,toQList &params)
+toQList toQuery::readQuery(toConnection &conn,const toSQL &sql,toQList &params)
 {
   toBusy busy;
   toQuery query(conn,sql,params);
@@ -652,7 +667,7 @@ toQList toQuery::readQuery(toConnection &conn,const QString &sql,toQList &params
   return ret;
 }
 
-toQList toQuery::readQuery(toConnection &conn,toSQL &sql,
+toQList toQuery::readQuery(toConnection &conn,const toSQL &sql,
 			   const QString &arg1,const QString &arg2,
 			   const QString &arg3,const QString &arg4,
 			   const QString &arg5,const QString &arg6,
@@ -682,7 +697,7 @@ toQList toQuery::readQuery(toConnection &conn,const QString &sql,
   return ret;
 }
 
-toQList toQuery::readQueryNull(toConnection &conn,toSQL &sql,toQList &params)
+toQList toQuery::readQueryNull(toConnection &conn,const toSQL &sql,toQList &params)
 {
   toBusy busy;
   toQuery query(conn,sql,params);
@@ -702,7 +717,7 @@ toQList toQuery::readQueryNull(toConnection &conn,const QString &sql,toQList &pa
   return ret;
 }
 
-toQList toQuery::readQueryNull(toConnection &conn,toSQL &sql,
+toQList toQuery::readQueryNull(toConnection &conn,const toSQL &sql,
 			       const QString &arg1,const QString &arg2,
 			       const QString &arg3,const QString &arg4,
 			       const QString &arg5,const QString &arg6,
@@ -954,7 +969,7 @@ bool toConnection::closeWidgets(void)
   return true;
 }
 
-QString toConnection::description(void) const
+QString toConnection::description(bool version) const
 {
   QString ret(User);
   ret+="@";
@@ -964,10 +979,12 @@ QString toConnection::description(void) const
     ret+=Host;
   }
 
-  if (!Version.isEmpty()) {
-    ret+=" [";
-    ret+=Version;
-    ret+="]";
+  if (version) {
+    if (!Version.isEmpty()) {
+      ret+=" [";
+      ret+=Version;
+      ret+="]";
+    }
   }
   return ret;
 }
@@ -991,7 +1008,7 @@ void toConnection::delInit(const QString &sql)
   }
 }
 
-void toConnection::execute(toSQL &sql,toQList &params)
+void toConnection::execute(const toSQL &sql,toQList &params)
 {
   toBusy busy;
   Connection->execute(mainConnection(),toSQL::sql(sql,*this),params);
@@ -1003,7 +1020,7 @@ void toConnection::execute(const QString &sql,toQList &params)
   Connection->execute(mainConnection(),sql.utf8(),params);
 }
 
-void toConnection::execute(toSQL &sql,
+void toConnection::execute(const toSQL &sql,
 			   const QString &arg1,const QString &arg2,
 			   const QString &arg3,const QString &arg4,
 			   const QString &arg5,const QString &arg6,
@@ -1109,7 +1126,7 @@ void toConnection::execute(const QString &sql,
   Connection->execute(mainConnection(),sql.utf8(),args);
 }
 
-void toConnection::allExecute(toSQL &sql,toQList &params)
+void toConnection::allExecute(const toSQL &sql,toQList &params)
 {
   toBusy busy;
   toLocker lock(Lock);
@@ -1131,7 +1148,7 @@ void toConnection::allExecute(const QString &sql,toQList &params)
   }
 }
 
-void toConnection::allExecute(toSQL &sql,
+void toConnection::allExecute(const toSQL &sql,
 			      const QString &arg1,const QString &arg2,
 			      const QString &arg3,const QString &arg4,
 			      const QString &arg5,const QString &arg6,
@@ -1269,7 +1286,11 @@ void toConnection::readObjects(void)
 {
   if (!ReadingCache) {
     ReadingCache=true;
-    (new toThread(new cacheObjects(*this)))->start();
+    try {
+      (new toThread(new cacheObjects(*this)))->start();
+    } catch(...) {
+      ReadingCache=false;
+    }
   }
 }
 

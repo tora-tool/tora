@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>246</width>
-            <height>370</height>
+            <width>596</width>
+            <height>483</height>
         </rect>
     </property>
     <property stdset="1">
@@ -28,6 +28,28 @@
             <name>spacing</name>
             <number>6</number>
         </property>
+        <widget row="5"  column="1" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Samples</cstring>
+            </property>
+            <property stdset="1">
+                <name>maxValue</name>
+                <number>1000</number>
+            </property>
+        </widget>
+        <widget row="5"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Number of samples to keep</string>
+            </property>
+        </widget>
         <widget row="0"  column="0"  rowspan="1"  colspan="3" >
             <class>QGroupBox</class>
             <property stdset="1">
@@ -107,54 +129,7 @@
                 </widget>
             </grid>
         </widget>
-        <spacer row="6"  column="0" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Horizontal</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="6"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CancelButton</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Cancel</string>
-            </property>
-        </widget>
-        <widget row="6"  column="1" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>OkButton</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Ok</string>
-            </property>
-            <property stdset="1">
-                <name>default</name>
-                <bool>true</bool>
-            </property>
-        </widget>
-        <spacer row="5"  column="0" >
+        <spacer row="7"  column="1" >
             <property>
                 <name>name</name>
                 <cstring>Spacer2</cstring>
@@ -208,54 +183,157 @@
                 <string>Show chart legend</string>
             </property>
         </widget>
-        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
-            <class>QLayoutWidget</class>
+        <widget row="8"  column="3" >
+            <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>Layout1</cstring>
+                <cstring>OkButton</cstring>
             </property>
-            <hbox>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>0</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget>
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel5</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>1</vsizetype>
-                        </sizepolicy>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Divide chart in grids?</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>Grids</cstring>
-                    </property>
-                </widget>
-                <widget>
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Grids</cstring>
-                    </property>
-                </widget>
-            </hbox>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="8"  column="4" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CancelButton</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <spacer row="8"  column="0"  rowspan="1"  colspan="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="0"  column="3"  rowspan="8"  colspan="2" >
+            <class>toListView</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Enabled</cstring>
+            </property>
+        </widget>
+        <widget row="6"  column="1" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DisplaySamples</cstring>
+            </property>
+            <property stdset="1">
+                <name>maxValue</name>
+                <number>1000</number>
+            </property>
+        </widget>
+        <widget row="6"  column="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AllSamples</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>All</string>
+            </property>
+        </widget>
+        <widget row="6"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Maximum number of samples to display</string>
+            </property>
+        </widget>
+        <widget row="5"  column="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>UnlimitedSamples</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Unlimited</string>
+            </property>
+        </widget>
+        <widget row="4"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel5</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>1</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Divide chart in grids?</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Grids</cstring>
+            </property>
+        </widget>
+        <widget row="4"  column="1" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Grids</cstring>
+            </property>
         </widget>
     </grid>
 </widget>
+<customwidgets>
+    <customwidget>
+        <class>toListView</class>
+        <header location="local">toresultview.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
 <connections>
     <connection>
         <sender>AutoMax</sender>
@@ -281,6 +359,18 @@
         <receiver>toLineChartSetupUI</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>UnlimitedSamples</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>Samples</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>AllSamples</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>DisplaySamples</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>AutoMax</tabstop>
@@ -291,6 +381,10 @@
     <tabstop>ShowAxis</tabstop>
     <tabstop>ShowLegend</tabstop>
     <tabstop>Grids</tabstop>
+    <tabstop>Samples</tabstop>
+    <tabstop>UnlimitedSamples</tabstop>
+    <tabstop>DisplaySamples</tabstop>
+    <tabstop>AllSamples</tabstop>
     <tabstop>OkButton</tabstop>
     <tabstop>CancelButton</tabstop>
 </tabstops>

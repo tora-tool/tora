@@ -295,7 +295,7 @@ class toExtract {
   void setSizes(void);
   QString reContext(std::list<QString> &ctx,int strip,const QString &str);
   void rethrow(const QString &what,const QString &object,const QString &exc);
-  QString dbaSegment(toSQL &);
+  QString dbaSegment(const toSQL &);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.

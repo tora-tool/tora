@@ -6799,14 +6799,13 @@ public:
 
  }
 
- void cancel(void)
- {
-  if(attached){
-    OCIBreak(srvhp,errhp);
-#if 0 // Doesn't work with Oracle 8.0
-    OCIReset(srvhp,errhp);
-#endif
-  }
+ int cancel(void)
+ {int status;
+  status=OCIBreak(srvhp,errhp);
+  if(status)
+   return 0;
+  else
+   return 1;
  }
 
  int server_detach(void)
@@ -7187,7 +7186,7 @@ public:
   const int buf_size,
   int& len)
  {
-  ub4 amt=elem_size;
+  ub4 amt=buf_size;
   ub4 offset=1;
   int rc;
   memset(OTL_RCAST(void*,abuf),0,OTL_SCAST(size_t,buf_size));
@@ -8496,7 +8495,16 @@ public:
 
  void cancel(void)
  {
-   connect_struct.cancel();
+  if(!connected)return;
+  retcode=connect_struct.cancel();
+  if(!retcode){
+   throw_count++;
+   if(throw_count>1)return;
+#if defined(OTL_STL) && defined(OTL_UNCAUGHT_EXCEPTION_ON)
+   if(STD_NAMESPACE_PREFIX uncaught_exception())return; 
+#endif
+   throw otl_exception(connect_struct);
+  }
  }
 
  void server_attach(const char* tnsname=0)

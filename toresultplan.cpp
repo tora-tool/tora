@@ -92,10 +92,103 @@ void toResultPlan::oracleSetup(void)
   addColumn("Cost");
   addColumn("Bytes");
   addColumn("Cardinality");
-  setColumnAlignment(0,AlignRight);
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);
   setColumnAlignment(7,AlignRight);
+}
+
+void toResultPlan::oracleNext(void)
+{
+  LastTop=NULL;
+  Parents.clear();
+  Last.clear();
+
+  QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
+  
+  toConnection &conn=connection();
+  
+  conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
+  
+  Ident="TOra "+QString::number((int)time(NULL)+rand());
+  
+  QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
+  
+  QString sql=toShift(Statements);
+  if (sql.isNull()) {
+    Poll.stop();
+    return;
+  }
+  if (sql.length()>0&&sql.at(sql.length()-1)==';')
+    sql=sql.mid(0,sql.length()-1);
+
+  QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+    arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
+  if (!User.isNull()&&User!=conn.user().upper()) {
+    try {
+      conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(User));
+    } catch(...) {
+    }
+    try {
+      conn.execute(explain);
+    } catch(...) {
+      try {
+	conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+      } catch(...) {
+      }
+      throw;
+    }
+    conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+    toQList par;
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     toSQL::string(SQLViewPlan,connection()).
+			     arg(toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE)).
+			     arg(Ident),par);
+    Reading=true;
+  } else {
+    Reading=false;
+    toQList par;
+    Query=new toNoBlockQuery(conn,toQuery::Normal,explain,par);
+  }
+  TopItem=new toResultViewItem(this,TopItem,"DML");
+  TopItem->setText(1,sql);
+  Poll.start(100);
+}
+
+static void StripInto(std::list<toSQLParse::statement> &stats)
+{
+  std::list<toSQLParse::statement> res;
+  bool into=false;
+  bool add=true;
+  for(std::list<toSQLParse::statement>::iterator i=stats.begin();i!=stats.end();i++) {
+    if(into) {
+      if(!add&&(*i).String.upper()=="FROM")
+	add=true;
+    } else if ((*i).String.upper()=="INTO") {
+      add=false;
+      into=true;
+    }
+    if (add)
+      res.insert(res.end(),*i);
+  }
+  stats=res;
+}
+
+void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
+{
+  for(std::list<toSQLParse::statement>::iterator i=stats.begin();i!=stats.end();i++) {
+    if ((*i).Type==toSQLParse::statement::Block)
+      addStatements((*i).subTokens());
+    else if ((*i).Type==toSQLParse::statement::Statement) {
+      if ((*i).subTokens().begin()!=(*i).subTokens().end()) {
+	QString t=(*((*i).subTokens().begin())).String.upper();
+	StripInto((*i).subTokens());
+
+	if (t=="SELECT"||t=="INSERT"||t=="UPDATE"||t=="DELETE")
+	  Statements.insert(Statements.end(),
+			    toSQLParse::indentStatement(*i).stripWhiteSpace());
+      }
+    }
+  }
 }
 
 void toResultPlan::query(const QString &sql,
@@ -118,11 +211,18 @@ void toResultPlan::query(const QString &sql,
     return;
   }
 
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end())
+    User=*cp;
+  else
+    User=QString::null;
+    
   oracleSetup();
 
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
   try {
+    Statements.clear();
     if (sql.startsWith("SAVED:")) {
       Ident=sql.mid(6);
       toQList par;
@@ -131,26 +231,17 @@ void toResultPlan::query(const QString &sql,
 			       arg(planTable).arg(Ident),
 			       par);
       Reading=true;
+      LastTop=NULL;
+      Parents.clear();
+      Last.clear();
+      TopItem=new toResultViewItem(this,NULL,"DML");
+      TopItem->setText(1,"Saved plan");
     } else {
-      QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
-
-      toConnection &conn=connection();
-
-      conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
-
-      Ident="TOra "+QString::number((int)time(NULL));
-
-      QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
-	arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
-      Reading=false;
-      toQList par;
-      Query=new toNoBlockQuery(conn,toQuery::Background,explain,par);
+      TopItem=NULL;
+      std::list<toSQLParse::statement> ret=toSQLParse::parse(sql);
+      addStatements(ret);
+      oracleNext();
     }
-    Parents.clear();
-    Last.clear();
-    Poll.start(100);
-
-    LastTop=NULL;
   } catch (const QString &str) {
     checkException(str);
   }
@@ -166,7 +257,7 @@ void toResultPlan::poll(void)
 	toQList par;
 	delete Query;
 	Query=NULL;
-	Query=new toNoBlockQuery(connection(),toQuery::Background,
+	Query=new toNoBlockQuery(connection(),toQuery::Normal,
 				 toSQL::string(SQLViewPlan,connection()).
 				 arg(toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE)).
 				 arg(Ident),par);
@@ -198,7 +289,7 @@ void toResultPlan::poll(void)
 	    Parents[id]=item;
 	    Last[parentid]=item;
 	  } else {
-	    item=new QListViewItem(this,LastTop,
+	    item=new QListViewItem(TopItem,LastTop,
 				   id,
 				   operation,
 				   options,
@@ -214,7 +305,6 @@ void toResultPlan::poll(void)
 	if (Query->eof()) {
 	  delete Query;
 	  Query=NULL;
-	  Poll.stop();
 	  QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 	  if (!sql().startsWith("SAVED:")) {
 	    if (toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty())
@@ -222,6 +312,7 @@ void toResultPlan::poll(void)
 	    else
 	      toMainWidget()->setNeedCommit(connection());
 	  }
+	  oracleNext();
 	}
       }
     }

@@ -92,7 +92,7 @@ public:
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &sql)
+  void setSQL(const toSQL &sql)
   { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
@@ -104,8 +104,14 @@ public:
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &sql)
+  void query(const toSQL &sql)
   { toResult::query(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(const toSQL &sql,toQList &par)
+  { toResult::query(sql,par); }
 #endif
 
   friend class toResultColsItem;

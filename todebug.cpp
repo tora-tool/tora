@@ -120,7 +120,7 @@ class toDebugTool : public toTool {
   { return todebug_xpm; }
 public:
   toDebugTool()
-    : toTool(101,"PL/SQL Debugger")
+    : toTool(110,"PL/SQL Debugger")
   { }
   virtual const char *menuItem()
   { return "PL/SQL Debugger"; }
@@ -1808,10 +1808,13 @@ static toSQL SQLAttach("toDebug:Attach",
 
 void toDebug::startTarget(void)
 {
-  {
+  try {
     toLocker lock(Lock);
     TargetThread=new toThread(new targetTask(*this));
     TargetThread->start();
+  } catch(...) {
+    toStatusMessage("Failed to start target task thread, close some other tools and try again");
+    return;
   }
 
   ChildSemaphore.down();
@@ -2345,13 +2348,13 @@ void toDebug::windowActivated(QWidget *widget)
 			   CTRL+Key_F6);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)addwatch_xpm),
-			   "&Add Watch",this,SLOT(addWatch(void)),
+			   "&Add Watch...",this,SLOT(addWatch(void)),
 			   Key_F4);
       ToolMenu->insertItem(QPixmap((const char **)delwatch_xpm),
 			   "Delete &Watch",this,SLOT(deleteWatch(void)),
 			   CTRL+Key_Delete,TO_ID_DEL_WATCH);
       ToolMenu->insertItem(QPixmap((const char **)changewatch_xpm),
-			   "Chan&ge Watch",this,SLOT(changeWatch(void)),
+			   "Chan&ge Watch...",this,SLOT(changeWatch(void)),
 			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("Refresh Object List",this,SLOT(refresh()),

@@ -128,8 +128,9 @@ signals:
   /** Emitted when the first result is available.
    * @param sql SQL that was run.
    * @param res String describing result.
+   * @param error Error has occurred.
    */
-  void firstResult(const QString &sql,const toConnection::exception &res);
+  void firstResult(const QString &sql,const toConnection::exception &res,bool error);
 
 public slots:
   /** Stop running query.

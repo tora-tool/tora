@@ -36,9 +36,11 @@
 #define TORESULTPLAN_H
 
 #include "tobackground.h"
+#include "tosqlparse.h"
 #include "toresultview.h"
 
 #include <map>
+#include <stdio.h>
 
 class toNoBlockQuery;
 
@@ -53,12 +55,18 @@ class toResultPlan : public toResultView {
   QString Ident;
   std::map <QString,QListViewItem *> Parents;
   std::map <QString,QListViewItem *> Last;
+  std::list<QString> Statements;
+  QListViewItem *TopItem;
   QListViewItem *LastTop;
   bool Reading;
   toNoBlockQuery *Query;
   toBackground Poll;
+  QString User;
   void checkException(const QString &);
   void oracleSetup(void);
+
+  void oracleNext(void);
+  void addStatements(std::list<toSQLParse::statement> &stats);
 public:
   /** Create the widget.
    * @param parent Parent widget.

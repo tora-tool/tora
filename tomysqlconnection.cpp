@@ -300,7 +300,7 @@ public:
 	  break;
 	}
 	cur.Datatype=type;
-	cur.Null=!(Fields[i].type&NOT_NULL_FLAG);
+	cur.Null=!(Fields[i].flags&NOT_NULL_FLAG);
 	ret.insert(ret.end(),cur);
       }
       return ret;
@@ -318,12 +318,19 @@ public:
       Connection=mysql_init(NULL);
       if (!Connection)
 	throw QString("Can't initialize MySQL connection");
+      QString db=conn->database();
+      int port=0;
+      int pos=db.find(":");
+      if (pos>=0) {
+	port=db.mid(pos+1).toInt();
+	db=db.mid(0,pos);
+      }
       Connection=mysql_real_connect(Connection,
 				    conn->host(),
 				    conn->user(),
 				    conn->password(),
-				    conn->database()==QString::null?NULL:(const char *)conn->database(),
-				    0,NULL,0);
+				    db==QString::null?NULL:(const char *)db,
+				    port,NULL,0);
       if (!Connection)
 	throw QString("Couldn't open MySQL connection");
     }
@@ -405,8 +412,6 @@ public:
 	return "Unknown";
       return version;
     }
-    virtual toConnection::connectionImpl *clone(toConnection *newConn) const
-    { return new mysqlConnection(newConn); }
 
     virtual toQuery::queryImpl *createQuery(toQuery *query,toConnectionSub *sub)
     { return new mysqlQuery(query,sub); }

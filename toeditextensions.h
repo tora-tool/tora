@@ -49,8 +49,8 @@ public:
   toEditExtensions()
     : toEditWidget::editHandler()
   { }
-  virtual void receivedFocus(QWidget *widget);
-  virtual void lostFocus(QWidget *widget);
+  virtual void receivedFocus(toEditWidget *widget);
+  virtual void lostFocus(toEditWidget *widget);
 
 public slots:
   void indentBlock(void);

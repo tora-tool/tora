@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>658</width>
+            <width>654</width>
             <height>412</height>
         </rect>
     </property>
@@ -90,63 +90,7 @@
             </property>
         </spacer>
         <widget row="1"  column="0"  rowspan="13"  colspan="1" >
-            <class>QListView</class>
-            <column>
-                <property>
-                    <name>text</name>
-                    <string>Provider</string>
-                </property>
-                <property>
-                    <name>clickable</name>
-                    <bool>true</bool>
-                </property>
-                <property>
-                    <name>resizeable</name>
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property>
-                    <name>text</name>
-                    <string>Host</string>
-                </property>
-                <property>
-                    <name>clickable</name>
-                    <bool>true</bool>
-                </property>
-                <property>
-                    <name>resizeable</name>
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property>
-                    <name>text</name>
-                    <string>Database</string>
-                </property>
-                <property>
-                    <name>clickable</name>
-                    <bool>true</bool>
-                </property>
-                <property>
-                    <name>resizeable</name>
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property>
-                    <name>text</name>
-                    <string>Username</string>
-                </property>
-                <property>
-                    <name>clickable</name>
-                    <bool>true</bool>
-                </property>
-                <property>
-                    <name>resizeable</name>
-                    <bool>true</bool>
-                </property>
-            </column>
+            <class>toListView</class>
             <property stdset="1">
                 <name>name</name>
                 <cstring>Previous</cstring>
@@ -157,10 +101,6 @@
                     <hsizetype>7</hsizetype>
                     <vsizetype>7</vsizetype>
                 </sizepolicy>
-            </property>
-            <property stdset="1">
-                <name>allColumnsShowFocus</name>
-                <bool>true</bool>
             </property>
         </widget>
         <widget row="0"  column="0" >
@@ -446,6 +386,28 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+    <customwidget>
+        <class>toListView</class>
+        <header location="local">toresultview.h</header>
+        <sizehint>
+            <width>-1</width>
+            <height>-1</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
 <connections>
     <connection>
         <sender>OkButton</sender>
@@ -476,18 +438,6 @@
         <signal>textChanged(const QString&amp;)</signal>
         <receiver>toNewConnectionUI</receiver>
         <slot>changeHost()</slot>
-    </connection>
-    <connection>
-        <sender>Previous</sender>
-        <signal>doubleClicked(QListViewItem*)</signal>
-        <receiver>toNewConnectionUI</receiver>
-        <slot>historyConnect()</slot>
-    </connection>
-    <connection>
-        <sender>Previous</sender>
-        <signal>clicked(QListViewItem*)</signal>
-        <receiver>toNewConnectionUI</receiver>
-        <slot>historySelection()</slot>
     </connection>
     <slot access="public">changeHost()</slot>
     <slot access="public">changeProvider()</slot>

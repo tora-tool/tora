@@ -36,6 +36,7 @@
 
 #include "toabout.h"
 #include "toconf.h"
+#include "toconnection.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tosql.h"
@@ -146,6 +147,7 @@ int main(int argc,char **argv)
 #endif
 
     toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+    toConnectionProvider::initializeAll();
 
     {
       QString nls=getenv("NLS_LANG");

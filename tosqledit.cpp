@@ -49,7 +49,6 @@
 #endif
 
 #include <qcombobox.h>
-#include <qcombobox.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
 #include <qlabel.h>
@@ -79,7 +78,7 @@ protected:
 
 public:
   toSQLEditTool()
-    : toTool(401,"SQL Dictionary Editor")
+    : toTool(999,"SQL Dictionary Editor")
   { Window=NULL; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
@@ -101,6 +100,8 @@ public:
   {
     Window=NULL;
   }
+  virtual bool canHandle(toConnection &conn)
+  { return true; }
 };
 
 static toSQLEditTool SQLEditTool;

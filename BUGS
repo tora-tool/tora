@@ -2,15 +2,9 @@ OCI:
 	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an
 	Oracle bug since other programs have the same problem)
 
-Toolbars:
-	When in KDE and using a gradient style (Like KDE highcolor for instance) backgrounds of
-	toolbuttons and labels in the toolbar doesn't have the correct background. This is due
-	to a KDE bug I think. Other people on the KDE mailinglist seem to have experienced similar
-	difficulties.
-
 Qt:
-	Looses titlebar on resulution change, seems to be a Qt bug.
 	When using antialiased text doesn't draw left axis legend correctly in charts.
+	When using antialiased monospaced text isn't always monospaced.
 
 KDE:
 	When destructing several docked windows sometimes make weird slot disconnect.
@@ -27,5 +21,5 @@ otl:
 toSQLParse:
 	Doesn't handle case statements very well.
 
-toResultContent:
-	Goto last record doesn't work.
+toThread:
+	Leaves defunct processes when running under gdb.

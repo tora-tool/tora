@@ -83,14 +83,6 @@ class toResult {
   bool FromSQL;
   QString Name;
 protected:
-  /** Get the current connection from the closest tool.
-   * @return Reference to connection.
-   */
-  toConnection &connection(void);
-  /** Get the timer associated with the closest tool.
-   * @return Pointer to tool timer.
-   */
-  toTimer *timer(void);
   /** Set parameters of last query.
    */
   void setParams(const toQList &par)
@@ -99,6 +91,15 @@ protected:
    */
   bool setSQLParams(const QString &sql,const toQList &par);
 public:
+  /** Get the current connection from the closest tool.
+   * @return Reference to connection.
+   */
+  toConnection &connection(void);
+  /** Get the timer associated with the closest tool.
+   * @return Pointer to tool timer.
+   */
+  toTimer *timer(void);
+
   toResult(void);
   virtual ~toResult()
   { }
@@ -161,7 +162,7 @@ public:
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &sql);
+  void setSQL(const toSQL &sql);
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
@@ -171,7 +172,12 @@ public:
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &sql);
+  void query(const toSQL &sql);
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(const toSQL &sql,toQList &par);
   /** Get SQL to execute
    */
   QString sql(void)

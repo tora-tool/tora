@@ -103,7 +103,7 @@ public slots:
 
 class toTuningOverview : public toTuningOverviewUI {
   std::list<QLabel *> Backgrounds;
-  void setupChart(toResultLine *chart,const QString &,const QString &,toSQL &sql);
+  void setupChart(toResultLine *chart,const QString &,const QString &,const toSQL &sql);
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
   void refresh(void);
@@ -114,7 +114,8 @@ public:
 class toTuningWait : public QVBox {
   Q_OBJECT
 
-  toBarChart *Delta;
+  toResultBar *Delta;
+  toResultBar *DeltaTimes;
   toPieChart *AbsolutePie;
   toPieChart *DeltaPie;
   QListView *Types;
@@ -125,13 +126,14 @@ class toTuningWait : public QVBox {
   bool ShowTimes;
   QString Now;
   std::list<QString> Labels;
-  std::list<QString> XValues;
-  std::list<time_t> TimeStamp;
-  std::list<std::list<double> > Values;
-  std::list<std::list<double> > Times;
+  time_t LastTime;
+  std::list<double> LastCurrent;
+  std::list<double> LastTimes;
   std::list<double> Current;
   std::list<double> CurrentTimes;
-  std::map<int,int> LabelMap;
+  std::list<double> Relative;
+  std::list<double> RelativeTimes;
+  std::list<bool> Enabled;
 
   std::map<QString,bool> HideMap;
 public:
@@ -163,6 +165,8 @@ class toTuning : public toToolWidget {
   toResultLock *BlockingLocks;
   toResultItem *Licenses;
   toResultStats *Statistics;
+  toResultLong *LibraryCache;
+  toResultLong *ControlFiles;
   toTuningWait *Waits;
 
   QGrid *Charts;

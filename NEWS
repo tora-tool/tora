@@ -1,5 +1,78 @@
 1.3.1:
 
+2001-12-28: Fixed problem with going to last record in content editor.
+2001-12-28: Added protection against statusmessage flooding.
+2001-12-28: Handle failure to create threads more gracefully.
+2001-12-28: Very preliminary PostrgreSQL, Microsoft SQL and ODBC support.
+2001-12-28: Renumbered tools again, order unchanged.
+2001-12-28: Added port specification (: after hostname) to MySQL and QSql drivers.
+2001-12-27: Fixed problem with loosing all passwords if using empty password.
+2001-12-27: Fixed problem with MySQL and new browser optimisation (Don't optimize).
+2001-12-27: Fixed not null indication in native MySQL provider.
+2001-12-27: Direct MySQL support disabled when Qt3 is used.
+2001-12-27: Removed pesky QSqlDatabase warning from query implementation.
+2001-12-27: Added error indication to firstResult signal of result long.
+2001-12-27: Fixed small bug with read all on eof result long.
+2001-12-27: Fixed problems with windows menu and hidden windows.
+2001-12-27: Added a QSql connection provider.
+2001-12-27: Use simplifyWhiteSpace when displaying errors in statusbar.
+2001-12-27: Added initialize function to toConnectionProvider.
+2001-12-27: Use toListView in new connection dialog.
+2001-12-27: Fallback on stringfont (Backward compatibility).
+2001-12-27: Removed clone call from connection implementation (Not used).
+2001-12-27: Some fixes for Qt only compile.
+2001-12-27: Workaround false windows compiler warning in toHtml.
+2001-12-27: Fixed bug regarding colon at end of line in blocks and executionplans.
+2001-12-27: Fixed bug regarding newlines at end of statement and indenting.
+2001-12-26: Never return extra newlines at end of indented PL/SQL.
+2001-12-26: Handle child items in v$sql correctly.
+2001-12-26: Fixed some problems with dialog box message alerting.
+2001-12-26: Improved performance when using filter in schema browser.
+2001-12-25: Set icon on charts.
+2001-12-25: Added ability to open chart track file.
+2001-12-25: Save persistent chart manager settings in config file.
+2001-12-25: Fixed problem with incremental search.
+2001-12-25: Added chart tracking to file in chart manager.
+2001-12-25: Added chart alarms in chart manager.
+2001-12-24: Can copy chart with other parent than the workspace.
+2001-12-24: Added search icon and toolbutton.
+2001-12-24: Went through menues to add ... where window pops up.
+2001-12-23: Created TOra .desktop file.
+2001-12-23: Detect KDE base to install icons and desktop file in configure.
+2001-12-23: Detect kde3 better in configure.
+2001-12-23: Worked over toSQL and made sure it is always passed as const.
+2001-12-23: Added query with toSQL and parameteres to toResult.
+2001-12-23: Made connection and timer public in toResult.
+2001-12-23: Added chart manager tool.
+2001-12-23: Added chart handling hooks to main window.
+2001-12-23: Added options to set default display and chart samples (Including unlimited)
+2001-12-23: Make charts able to store more values than displayed.
+2001-12-23: Added scrollbars to line and barcharts.
+2001-12-23: Added line numbers in statement structure list.
+2001-12-23: Removed a lot of overhead in statement structure list.
+2001-12-23: Added info about control file records to tuning screen.
+2001-12-23: Changed default name in alert.
+2001-12-23: Added new backup manager tool (Will house rman stuff later).
+2001-12-23: Fixed configure to use otlv4.
+2001-12-23: Added resource limits tab to current.
+2001-12-23: Changed tree step size to 15 for a listviews.
+2001-12-23: Fixed rounding problem in piechart.
+2001-12-23: Display original sort order with first column in wait event analyzer.
+2001-12-23: Use new disable stuff in charts in wait event analyzer.
+2001-12-23: No describe under cursor in lite worksheet.
+2001-12-23: Added option to disable charts in line and barcharts.
+2001-12-22: Don't clear plan on execute in worksheet.
+2001-12-22: Explain plan now works on SQL within on anonymous PL/SQL blocks.
+2001-12-22: Don't explain plan anything that isn't a DML.
+2001-12-22: Improved unique ident generator for plans.
+2001-12-22: Added library cache view to tuning.
+2001-12-22: Don't update non chart tabs automatically in tuning.
+2001-12-22: Changed SGAStatement to use new explain plan functionality.
+2001-12-22: Always read plans on normal connection instead of background.
+2001-12-22: Added functionality to explain plans in other schemas.
+2001-12-22: Some more of the endless indentation tweaking.
+2001-12-22: Made getToken return binds as one token.
+2001-12-22: Added accessed objects to session.
 2001-12-21: Fixed SIGSEGV bug for MySQL in table indexes.
 2001-12-21: Improved MySQL support in database browser.
 2001-12-21: Fixed bug when using the Windows close menu item.

@@ -27,41 +27,46 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Types</h4><ul><LI>enum <A HREF="#ref1">type</A> {      Block,
+<h4>Public Types</h4><ul><LI>enum <A HREF="#ref2">type</A> {      Block,
       /** Start of statement.
 }
 </LI>
-</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">statement</A></b> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null) 
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">statement</A></b> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null,int cline=-1) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref6">statement</A></b> (const statement &) 
+<LI>std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>> &&nbsp;<b><A HREF="#ref7">subTokens</A></b> () 
 </LI>
-<LI>const statement &&nbsp;<b><A HREF="#ref7">operator = </A></b> (const statement &) 
+<LI>&nbsp;<b><A HREF="#ref8">statement</A></b> (const statement &) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref8">~statement</A></b> () 
+<LI>const statement &&nbsp;<b><A HREF="#ref9">operator = </A></b> (const statement &) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>QString <b><A HREF="#ref2">Comment</A></b></LI>
-<LI>QString <b><A HREF="#ref3">String</A></b></LI>
-<LI>std::list<statement> *<b><A HREF="#ref4">SubTokens</A></b></LI>
+<LI>&nbsp;<b><A HREF="#ref10">~statement</A></b> () 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>QString <b><A HREF="#ref3">Comment</A></b></LI>
+<LI>QString <b><A HREF="#ref4">String</A></b></LI>
+<LI>int <b><A HREF="#ref5">Line</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Structure the statement is parsed into.
    </p>
-<A NAME="type"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>type</strong> {      Block,
+<A NAME="type"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>type</strong> {      Block,
       /** Start of statement.
 }
 </td><td align="right"><h3><strong>type</strong></h3></td></tr></table><p></p><p> Start of block.
        </p>
-<A NAME="Comment"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>Comment</strong>
-</td><td align="right"><h3><strong>Comment</strong></h3></td></tr></table><p></p><A NAME="String"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>String</strong>
-</td><td align="right"><h3><strong>String</strong></h3></td></tr></table><p></p><A NAME="SubTokens"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<statement> * <strong>SubTokens</strong>
-</td><td align="right"><h3><strong>SubTokens</strong></h3></td></tr></table><p></p><A NAME="statement"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null)
+<A NAME="Comment"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>Comment</strong>
+</td><td align="right"><h3><strong>Comment</strong></h3></td></tr></table><p></p><A NAME="String"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>String</strong>
+</td><td align="right"><h3><strong>String</strong></h3></td></tr></table><p></p><A NAME="Line"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Line</strong>
+</td><td align="right"><h3><strong>Line</strong></h3></td></tr></table><p></p><A NAME="statement"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null,int cline=-1)
 <br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Create statement
      </p>
-<A NAME="statement"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (const statement &)
+<A NAME="subTokens"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="toSQLParse__statement.html">toSQLParse::statement</A>> &&nbsp;<strong>subTokens</strong> ()
+<br></td><td align="right"><h3><strong>subTokens</strong></h3></td></tr></table><p></p><p> Allocate subtokens if not available and return reference to subtokens
+     </p>
+<A NAME="statement"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (const statement &)
 <br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Copy constructor
      </p>
-<A NAME="operator%20=%20"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const statement &&nbsp;<strong>operator = </strong> (const statement &)
+<A NAME="operator%20=%20"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const statement &&nbsp;<strong>operator = </strong> (const statement &)
 <br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Copy operator
      </p>
-<A NAME="~statement"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~statement</strong> ()
+<A NAME="~statement"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~statement</strong> ()
 <br></td><td align="right"><h3><strong>~statement</strong></h3></td></tr></table><p></p><p> Destroy statement
      </p>
 <HR>

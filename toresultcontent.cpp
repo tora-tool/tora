@@ -288,7 +288,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   MenuColumn=MenuRow=-1;
 
   Menu=new QPopupMenu(this);
-  Menu->insertItem("&Display in editor",TORESULT_MEMO);
+  Menu->insertItem("&Display in editor...",TORESULT_MEMO);
   Menu->insertSeparator();
   Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
   Menu->insertItem("&Paste field",TORESULT_PASTE);
@@ -302,7 +302,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   Menu->insertItem("Select all",TORESULT_SELECT_ALL);
   Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
   Menu->insertSeparator();
-  Menu->insertItem("Export to file",TORESULT_EXPORT);
+  Menu->insertItem("Export to file...",TORESULT_EXPORT);
   Menu->insertItem("Read all",TORESULT_READ_ALL);
   connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
 
@@ -359,6 +359,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 
   delete Query;
   Query=NULL;
+  GotoEnd=false;
 
   try {
     bool where=false;
@@ -458,8 +459,11 @@ void toResultContentEditor::poll(void)
 	if (SkipNumber>0&&Row==SkipNumber) {
 	  toQList par;
 	  Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);
-	} else
+	} else {
 	  Poll.stop();
+	  if (GotoEnd)
+	    setCurrentCellFocus(Row-1,currentColumn());
+	}
       } else if (Row>=MaxNumber&&MaxNumber>=0)
 	Poll.stop();
     }
@@ -467,6 +471,8 @@ void toResultContentEditor::poll(void)
     delete Query;
     Query=NULL;
     Poll.stop();
+    if (GotoEnd)
+      setCurrentCellFocus(Row-1,currentColumn());
     toStatusMessage(str);
   }
 }
@@ -575,8 +581,13 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 void toResultContentEditor::gotoLastRecord()
 {
   editReadAll();
-  setNumRows(Row+1);
-  setCurrentCellFocus(Row-1,currentColumn());
+  if (!Query||Query->eof()) {
+    setNumRows(Row+1);
+    setCurrentCellFocus(Row-1,currentColumn());
+  } else {
+    toStatusMessage("Reading all values, moving cursor to end when done",false,false);
+    GotoEnd=true;
+  }
 }
   
 void toResultContentEditor::gotoFirstRecord()

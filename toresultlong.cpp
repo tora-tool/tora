@@ -70,7 +70,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
 {
   if (!setSQLParams(sql,param)) {
     emit firstResult(toResult::sql(),
-		     toConnection::exception("Will not reexecute same query"));
+		     toConnection::exception("Will not reexecute same query"),false);
     emit done();
     return;
   }
@@ -100,13 +100,13 @@ void toResultLong::query(const QString &sql,const toQList &param)
     addItem();
   } catch (const toConnection::exception &str) {
     First=false;
-    emit firstResult(toResult::sql(),str);
+    emit firstResult(toResult::sql(),str,true);
     emit done();
     if (Mode!=toQuery::Long)
       toStatusMessage(str);
   } catch (const QString &str) {
     First=false;
-    emit firstResult(toResult::sql(),str);
+    emit firstResult(toResult::sql(),str,true);
     emit done();
     if (Mode!=toQuery::Long)
       toStatusMessage(str);
@@ -118,8 +118,10 @@ void toResultLong::query(const QString &sql,const toQList &param)
 
 void toResultLong::editReadAll(void)
 {
-  MaxNumber=-1;
-  Timer.start(TO_POLL_CHECK);
+  if (Query&&!Query->eof()) {
+    MaxNumber=-1;
+    Timer.start(TO_POLL_CHECK);
+  }
 }
 
 void toResultLong::addItem(void)
@@ -195,7 +197,7 @@ void toResultLong::addItem(void)
 	}
 	if (em) {
 	  First=false;
-	  emit firstResult(sql(),toConnection::exception(QString(buffer)));
+	  emit firstResult(sql(),toConnection::exception(QString(buffer)),false);
 	}
 	if (Query->eof()) {
 	  cleanup();
@@ -219,7 +221,7 @@ void toResultLong::addItem(void)
   } catch (const toConnection::exception &str) {
     if (First) {
       First=false;
-      emit firstResult(sql(),str);
+      emit firstResult(sql(),str,true);
       if (Mode!=toQuery::Long)
 	toStatusMessage(str);
     } else
@@ -228,7 +230,7 @@ void toResultLong::addItem(void)
   } catch (const QString &str) {
     if (First) {
       First=false;
-      emit firstResult(sql(),str);
+      emit firstResult(sql(),str,true);
       if (Mode!=toQuery::Long)
 	toStatusMessage(str);
     } else

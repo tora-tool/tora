@@ -69,7 +69,7 @@ protected:
   { return tocurrent_xpm; }
 public:
   toCurrentInfoTool()
-    : toTool(203,"Current Session")
+    : toTool(240,"Current Session")
   { }
   virtual const char *menuItem()
   { return "Current Session"; }
@@ -99,10 +99,14 @@ static toSQL SQLVersion("toCurrent:Version",
 			"select banner \"Version\" from v$version",
 			"Display version of Oracle");
 
+static toSQL SQLResourceLimit("toCurrent:ResourceLimit",
+			      "SELECT * FROM v$resource_limit ORDER BY resource_name",
+			      "List resource limits");
+
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
   : toToolWidget(CurrentTool,"current.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Current Session",connection.description());
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update",
@@ -113,6 +117,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   new toChangeConnection(toolbar);
 
   Tabs=new QTabWidget(this);
+
   Grants=new toListView(Tabs);
   Grants->setSorting(0);
   Grants->addColumn("Privilege");
@@ -120,13 +125,21 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Grants->addColumn("Grantable");
   Grants->setRootIsDecorated(true);
   Tabs->addTab(Grants,"Privileges");
+
   Version=new toResultLong(true,false,toQuery::Background,Tabs);
   Version->setSQL(SQLVersion);
   Tabs->addTab(Version,"Version");
+
   Parameters=new toResultParam(Tabs);
   Tabs->addTab(Parameters,"Parameters");
+
   Statistics=new toResultStats(false,Tabs);
   Tabs->addTab(Statistics,"Statistics");
+
+  ResourceLimit=new toResultLong(true,false,toQuery::Background,Tabs,"resource");
+  ResourceLimit->setSQL(SQLResourceLimit);
+  Tabs->addTab(ResourceLimit,"Resource Limits");
+
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
@@ -180,7 +193,7 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 			      "select granted_role,admin_option from user_role_privs",
 			      "Get information about roles granted to a user, must have same columns");
 
-void toCurrent::addList(QListViewItem *parent,const QString &type,toSQL &sql,const QString &role)
+void toCurrent::addList(QListViewItem *parent,const QString &type,const toSQL &sql,const QString &role)
 {
   toQList result=toQuery::readQuery(connection(),sql,role);
   while(result.size()>0) {
@@ -216,6 +229,7 @@ void toCurrent::refresh()
   Version->refresh();
   Statistics->refreshStats();
   Grants->clear();
+  ResourceLimit->refresh();
 
   addList(NULL,"System",SQLUserSysPrivs);
   addList(NULL,"Object",SQLUserTabPrivs);

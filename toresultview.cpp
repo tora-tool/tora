@@ -288,6 +288,7 @@ toListView::toListView(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,false,false)
 {
+  setTreeStepSize(15);
   setSelectionMode(Extended);
   setAllColumnsShowFocus(true);
   AllTip=new toListTip(this);
@@ -534,7 +535,7 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
   if (item) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
-      Menu->insertItem("Display in editor",TORESULT_MEMO);
+      Menu->insertItem("Display in editor...",TORESULT_MEMO);
       Menu->insertSeparator();
       Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
       if (selectionMode()==Multi||selectionMode()==Extended) {
@@ -548,10 +549,10 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
 	Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
       }
       Menu->insertSeparator();
-      Menu->insertItem("Export to file",TORESULT_EXPORT);
+      Menu->insertItem("Export to file...",TORESULT_EXPORT);
       if (!Name.isEmpty()) {
 	Menu->insertSeparator();
-	Menu->insertItem("Edit SQL",TORESULT_SQL);
+	Menu->insertItem("Edit SQL...",TORESULT_SQL);
       }
       connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
       addMenues(Menu);

@@ -38,6 +38,7 @@
 #include "toconnection.h"
 #include "tonewconnection.h"
 #include "tomain.h"
+#include "toresultview.h"
 #include "totool.h"
 
 #include <qcheckbox.h>
@@ -68,6 +69,13 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   toHelp::connectDialog(this);
 
   Database->insertItem(toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE));
+  Previous->addColumn("Provider");
+  Previous->addColumn("Host");
+  Previous->addColumn("Database");
+  Previous->addColumn("Username");
+  Previous->setSelectionMode(QListView::Single);
+  connect(Previous,SIGNAL(selectionChanged(QListViewItem *)),
+	  this,SLOT(historySelection()));
 
   std::list<QString> lst=toConnectionProvider::providers();
   int sel=0,cur=0;
@@ -93,7 +101,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   Username->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
   Username->setFocus();
 
-  bool pass=toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD).isEmpty();
+  bool pass=toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD).isEmpty();
   if (pass)
     Password->setText(DEFAULT_PASSWORD);
   else

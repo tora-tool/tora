@@ -85,7 +85,18 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   HelpDirectory->setText(toHelpPath());
   ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
   ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt());
-  ChartSamples->setValue(toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt());
+  int samples=toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt();
+  if (samples<0) {
+    UnlimitedSamples->setChecked(true);
+    ChartSamples->setValue(QString(DEFAULT_CHART_SAMPLES).toInt());
+  } else
+    ChartSamples->setValue(samples);
+  samples=toTool::globalConfig(CONF_DISPLAY_SAMPLES,DEFAULT_DISPLAY_SAMPLES).toInt();
+  if (samples<0) {
+    AllSamples->setChecked(true);
+    DisplaySamples->setValue(ChartSamples->value());
+  } else
+    DisplaySamples->setValue(samples);
   DefaultFormat->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
@@ -212,6 +223,14 @@ void toGlobalSetting::saveSetting(void)
 #ifdef ENABLE_QT_XFT
   toTool::globalSetConfig(CONF_QT_XFT,AntialiaseFonts->isChecked()?"true":"false");
 #endif
+  if (AllSamples->isChecked())
+    toTool::globalSetConfig(CONF_DISPLAY_SAMPLES,"-1");
+  else
+    toTool::globalSetConfig(CONF_DISPLAY_SAMPLES,QString::number(DisplaySamples->value()));
+  if (UnlimitedSamples->isChecked())
+    toTool::globalSetConfig(CONF_CHART_SAMPLES,"-1");
+  else
+    toTool::globalSetConfig(CONF_CHART_SAMPLES,QString::number(ChartSamples->value()));
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)

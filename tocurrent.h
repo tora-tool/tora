@@ -42,6 +42,7 @@ class QTabWidget;
 class toResultParam;
 class toResultStats;
 class toResultView;
+class toResultLong;
 
 class toCurrent : public toToolWidget {
   Q_OBJECT
@@ -49,11 +50,12 @@ class toCurrent : public toToolWidget {
   QTabWidget *Tabs;
   toResultView *Version;
   toListView *Grants;
+  toResultLong *ResourceLimit;
   toResultParam *Parameters;
   toResultStats *Statistics;
   QPopupMenu *ToolMenu;
   virtual void addRole(QListViewItem *parent);
-  virtual void addList(QListViewItem *parent,const QString &typ,toSQL &sql,const QString &role=QString::null);
+  virtual void addList(QListViewItem *parent,const QString &typ,const toSQL &sql,const QString &role=QString::null);
 public:
   toCurrent(QWidget *parent,toConnection &connection);
   virtual ~toCurrent();

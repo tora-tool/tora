@@ -90,6 +90,9 @@ public:
   /** Structure the statement is parsed into.
    */
   class statement {
+    /** Subtokens to this token.
+     */
+    std::list<statement> *SubTokens;
   public:
     /** Type of this token.
      */
@@ -121,12 +124,15 @@ public:
     /** The actual token.
      */
     QString String;
-    /** Subtokens to this token.
+    /** The original line of the token (0 is first line)
      */
-    std::list<statement> *SubTokens;
+    int Line;
     /** Create statement
      */
-    statement(type ntype=Token,const QString &token=QString::null);
+    statement(type ntype=Token,const QString &token=QString::null,int cline=-1);
+    /** Allocate subtokens if not available and return reference to subtokens
+     */
+    std::list<toSQLParse::statement> &subTokens();
     /** Copy constructor
      */
     statement(const statement &);
@@ -151,13 +157,25 @@ public:
 
   /** Get next SQL token from a string.
    * @param str String to get token from
+   * @param line The line the current position is on. This is not needed, but only valid
+   *             if a correct value is passed into the function.
+   * @param pos Current position when parsing, modified when calling.
+   * @param forward If true go forward from current position, otherwise backward.
+   * @param comment Include comments as tokens.
+   * @return String with next token in editor
+   */
+  static QString getToken(const QString &sql,int &line,int &pos,bool forward=true,
+			  bool comment=false);
+  /** Get next SQL token from a string.
+   * @param str String to get token from
    * @param pos Current position when parsing, modified when calling.
    * @param forward If true go forward from current position, otherwise backward.
    * @param comment Include comments as tokens.
    * @return String with next token in editor
    */
   static QString getToken(const QString &sql,int &pos,bool forward=true,
-			  bool comment=false);
+			  bool comment=false)
+  { int t; return getToken(sql,t,pos,forward,comment); }
 
   /** Parse a string.
    * @param str String to parse.
@@ -177,6 +195,12 @@ public:
    * @return An indented string.
    */
   static QString indent(const QString &str);
+  /** Indent a parse statement structure into a string.
+   * @param stat Statement to indent.
+   * @param level Initial indentation level to use.
+   * @return A string with the indented statement.
+   */
+  static QString indentStatement(statement &stat,int level=0);
   /** Indent a string.
    * @param str String to indent.
    * @param conn Connection to determine SQL dialect. (For future use)
@@ -194,13 +218,12 @@ public:
    * @param chars Position in string.
    */
   static int countIndent(const QString &str,int &chars);
-
 private:
   static settings Settings;
   static statement parseStatement(const QString &str,
+				  int &cline,
 				  int &pos,
 				  bool declare);
-  static QString indentStatement(statement &stat,int level);
 public:
   /** Get current settings.
    */

@@ -38,8 +38,6 @@
 #include "tobackground.h"
 
 #if TO_KDE
-#  include <kapp.h>
-#  include <kdockwidget.h>
 #  include "tomainwindow.kde.h"
 #else
 #  include "tomainwindow.h"
@@ -48,7 +46,6 @@
 #include <list>
 #include <map>
 
-#include <qmainwindow.h>
 #include <qtimer.h>
 
 #define TOMessageBox QMessageBox
@@ -63,6 +60,7 @@ class QToolButton;
 class QWorkspace;
 class toConnection;
 class toEditWidget;
+class toLineChart;
 class toMarkedText;
 class toSearchReplace;
 class toTool;
@@ -106,6 +104,10 @@ private:
    */
   int SQLEditor;
 
+  /** Status messages to display
+   */
+  std::list<QString> StatusMessages;
+
   /**
    * Disconnect connection button.
    */
@@ -142,6 +144,10 @@ private:
    * Paste button.
    */
   QToolButton *PasteButton;
+  /**
+   * Paste button.
+   */
+  QToolButton *SearchButton;
 
   /**
    * Edit buttons toolbar.
@@ -346,7 +352,7 @@ public:
   void registerSQLEditor(int toolid);
 
   /** Export data to a map.
-   * @param data A map that can be used to recreate the data of a chart.
+   * @param data A map that can be used to recreate the session.
    * @param prefix Prefix to add to the map.
    */
   virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
@@ -363,11 +369,32 @@ public:
    */
   QToolBar *connectionToolbar()
   { return ConnectionToolbar; }
+  /** Added chart.
+   */
+  void addChart(toLineChart *chart);
+  /** Removed chart.
+   */
+  void removeChart(toLineChart *chart);
+  /** Setup chart.
+   */
+  void setupChart(toLineChart *chart);
+  /** Display status message in dialog.
+   */
+  void displayMessage(const QString &str);
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.
    */
   void sqlEditor(const QString &str);
+  /** Invoked when a new chart is created.
+   */
+  void chartAdded(toLineChart *chart);
+  /** Invoked before a chart is destroyed.
+   */
+  void chartSetup(toLineChart *chart);
+  /** Invoked before a chart is destroyed.
+   */
+  void chartRemoved(toLineChart *chart);
   /** Invoked when a connection is added.
    * @param str Connection identifier.
    */
@@ -456,6 +483,12 @@ private slots:
   /** Paste button pressed
    */
   void pasteButton(void);
+  /** Paste button pressed
+   */
+  void searchButton(void);
+  /** Display status message
+   */
+  void displayMessage(void);
 };
 
 /** Get a pointer to the main window

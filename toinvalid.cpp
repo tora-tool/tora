@@ -87,7 +87,7 @@ class toInvalidTool : public toTool {
   { return toinvalid_xpm; }
 public:
   toInvalidTool()
-    : toTool(102,"Invalid Objects")
+    : toTool(130,"Invalid Objects")
   { }
   virtual const char *menuItem()
   { return "Invalid Objects"; }

@@ -192,7 +192,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   Toolbar->addSeparator();
   Null=new QCheckBox("NULL",Toolbar);
   connect(Null,SIGNAL(toggled(bool)),this,SLOT(null(bool)));
-  Null->setEnabled(Editor->isEnabled());
+  Null->setEnabled(!Editor->isReadOnly());
   Null->setFocusPolicy(StrongFocus);
 
   setText(str);

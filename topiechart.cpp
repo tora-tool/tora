@@ -54,6 +54,7 @@
 
 #include "topiechart.moc"
 
+#include "icons/grid.xpm"
 #include "icons/print.xpm"
 
 toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
@@ -62,6 +63,7 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
   Legend=true;
   DisplayPercent=false;
 
+  setIcon(QPixmap((const char **)grid_xpm));
   setMinimumSize(60,60);
   Menu=NULL;
 
@@ -127,6 +129,7 @@ toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name,WFlags f
     DisplayPercent(pie->DisplayPercent),
     Title(pie->Title)
 {
+  setIcon(QPixmap((const char **)grid_xpm));
   Menu=NULL;
 
   setMinimumSize(60,60);
@@ -143,7 +146,7 @@ void toPieChart::mousePressEvent(QMouseEvent *e)
   if (e->button()==RightButton) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
-      Menu->insertItem(QPixmap((const char *)print_xpm),"&Print",this,SLOT(editPrint()));
+      Menu->insertItem(QPixmap((const char *)print_xpm),"&Print...",this,SLOT(editPrint()));
       Menu->insertItem("&Open in new window",this,SLOT(openCopy()));
     }
     Menu->popup(e->globalPos());
@@ -269,20 +272,22 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
   for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++) {
     count++;
     int size=int(*i*5760/tot);
-    if (size<=0)
-      size=1;
     if (count==Values.size())
       size=5760-pos;
-    p->save();
-    QBrush brush(toChartBrush(cp++));
-    p->setBrush(brush.color());
-    p->drawPie(2,2,right-4,bottom-4,pos,size);
-    if (brush.style()!=QBrush::SolidPattern) {
-      p->setBrush(QBrush(Qt::white,brush.style()));
+
+    if (size>0) {
+      p->save();
+      QBrush brush(toChartBrush(cp));
+      p->setBrush(brush.color());
       p->drawPie(2,2,right-4,bottom-4,pos,size);
+      if (brush.style()!=QBrush::SolidPattern) {
+	p->setBrush(QBrush(Qt::white,brush.style()));
+	p->drawPie(2,2,right-4,bottom-4,pos,size);
+      }
+      p->restore();
+      pos+=size;
     }
-    p->restore();
-    pos+=size;
+    cp++;
   }
 }
 

@@ -594,8 +594,6 @@ public:
       }
       return QString::null;
     }
-    virtual toConnection::connectionImpl *clone(toConnection *newConn) const
-    { return new oracleConnection(newConn); }
 
     virtual toQuery::queryImpl *createQuery(toQuery *query,toConnectionSub *sub)
     { return new oracleQuery(query,oracleConv(sub)); }

@@ -167,7 +167,7 @@ protected:
   { return tosecurity_xpm; }
 public:
   toSecurityTool()
-    : toTool(13,"Security Manager")
+    : toTool(40,"Security Manager")
   { }
   virtual const char *menuItem()
   { return "Security Manager"; }
@@ -1360,7 +1360,7 @@ void toSecurity::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm),"&Copy current",
 			   this,SLOT(copy()),CTRL+Key_O,TO_ID_COPY);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)sql_xpm),"Display SQL",
+      ToolMenu->insertItem(QPixmap((const char **)sql_xpm),"Display SQL...",
 			   this,SLOT(displaySQL()),Key_F4);
       toMainWidget()->menuBar()->insertItem("&Security",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());

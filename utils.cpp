@@ -39,7 +39,6 @@
 #include "toconnection.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
-#include "tomessageui.h"
 #include "tonewconnection.h"
 #include "toresult.h"
 #include "tosql.h"
@@ -59,7 +58,6 @@
 #endif
 
 #include <qapplication.h>
-#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qcursor.h>
 #include <qfile.h>
@@ -77,7 +75,6 @@
 #include <qvbox.h>
 #include <qworkspace.h>
 
-#include "tomessageui.moc"
 #include "utils.moc"
 
 #ifdef WIN32
@@ -257,45 +254,22 @@ static std::list<QString> LastMessages;
 
 void toStatusMessage(const QString &str,bool save,bool log)
 {
-  static bool recursive=false;
-
-  if (recursive) {
-    printf("Recursive call to statusmessage with %s\n",(const char *)str);
-    return;
-  }
-
-  try {
-    recursive=true;
-    toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
-    if (main) {
-      int sec=toTool::globalConfig(CONF_STATUS_MESSAGE,DEFAULT_STATUS_MESSAGE).toInt();
-      if (save||sec==0)
-	main->statusBar()->message(str);
-      else
-	main->statusBar()->message(str,sec*1000);
-      if (!save&&!str.isEmpty()&&log) {
-	if (toTool::globalConfig(CONF_MESSAGE_STATUSBAR,"").isEmpty()) {
-	  toMessageUI dialog(toMainWidget(),NULL,true);
-	  dialog.Message->setText(str);
-	  dialog.exec();
-	  if (dialog.Statusbar->isChecked()) {
-	    toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,"Yes");
-	    TOMessageBox::information(toMainWidget(),
-				      "Information","You can enable this through the Global Settings in the Options (Edit menu)");
-	    toTool::saveConfig();
-	  }
-	}
-	toPush(LastMessages,str);
-	if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
-							  DEFAULT_STATUS_SAVE).toInt())
-	  toShift(LastMessages);
-      }
-      QToolTip::add(main->statusBar(),str);
+  toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
+  if (main) {
+    int sec=toTool::globalConfig(CONF_STATUS_MESSAGE,DEFAULT_STATUS_MESSAGE).toInt();
+    if (save||sec==0)
+      main->statusBar()->message(str.simplifyWhiteSpace());
+    else
+      main->statusBar()->message(str.simplifyWhiteSpace(),sec*1000);
+    if (!save&&!str.isEmpty()&&log) {
+      if (toTool::globalConfig(CONF_MESSAGE_STATUSBAR,"").isEmpty())
+	main->displayMessage(str);
+      toPush(LastMessages,str);
+      if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
+							DEFAULT_STATUS_SAVE).toInt())
+	toShift(LastMessages);
     }
-    recursive=false;
-  } catch(...) {
-    recursive=false;
-    throw;
+    QToolTip::add(main->statusBar(),str);
   }
 }
 
@@ -560,21 +534,23 @@ QFont toStringToFont(const QString &str)
     return QFont("Courier",12);
 #if QT_VERSION >= 300
   QFont fnt;
-  fnt.fromString(str);
-  return fnt;
-#else
-#  ifdef TO_FONT_RAW_NAME
+  if (fnt.fromString(str))
+    return fnt;
+#endif
+#ifdef TO_FONT_RAW_NAME
   QFont fnt;
   fnt.setRawName(str);
   return fnt;
-#  else
+#else
   QStringList lst=QStringList::split("/",str);
   if (lst.count()!=5)
     return QFont("Courier",12);
-  QFont font(lst[0],lst[1].toInt(),lst[2].toInt(),
-	     bool(lst[3].toInt()),QFont::CharSet(lst[4].toInt()));
-  return font;
+  return QFont(lst[0],lst[1].toInt(),lst[2].toInt(),
+	       bool(lst[3].toInt())
+#  if QT_VERSION < 300
+	       ,QFont::CharSet(lst[4].toInt())
 #  endif
+	       );
 #endif
 }
 

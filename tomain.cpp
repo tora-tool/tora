@@ -41,6 +41,7 @@
 #include "tohelp.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
+#include "tomessageui.h"
 #include "tonewconnection.h"
 #include "topreferences.h"
 #include "tosearchreplace.h"
@@ -53,6 +54,7 @@
 #endif
 
 #include <qapplication.h>
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qevent.h>
 #include <qfile.h>
@@ -73,6 +75,7 @@
 #include <qworkspace.h>
 
 #include "tomain.moc"
+#include "tomessageui.moc"
 #ifdef TO_KDE
 #include "tomainwindow.kde.moc"
 #else
@@ -90,6 +93,7 @@
 #include "icons/print.xpm"
 #include "icons/redo.xpm"
 #include "icons/rollback.xpm"
+#include "icons/search.xpm"
 #include "icons/toramini.xpm"
 #include "icons/trash.xpm"
 #include "icons/undo.xpm"
@@ -188,7 +192,7 @@ toMain::toMain()
   FileMenu->insertItem("Restore Last Session",TO_FILE_LAST_SESSION);
   FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
+  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print...",TO_FILE_PRINT);
   FileMenu->insertSeparator();
   FileMenu->insertItem("&Quit",TO_FILE_QUIT);
   menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
@@ -208,7 +212,8 @@ toMain::toMain()
   EditMenu->insertItem(QPixmap((const char **)copy_xpm),"&Copy",TO_EDIT_COPY);
   EditMenu->insertItem(QPixmap((const char **)paste_xpm),"&Paste",TO_EDIT_PASTE);
   EditMenu->insertSeparator();
-  EditMenu->insertItem("&Search && Replace",TO_EDIT_SEARCH);
+  EditMenu->insertItem(QPixmap((const char **)search_xpm),"&Search && Replace...",
+		       TO_EDIT_SEARCH);
   EditMenu->insertItem("Search &Next",TO_EDIT_SEARCH_NEXT);
   EditMenu->insertItem("Select &All",TO_EDIT_SELECT_ALL);
   EditMenu->insertItem("Read All &Items",TO_EDIT_READ_ALL);
@@ -264,11 +269,18 @@ toMain::toMain()
 			      "Paste from clipboard",
 			      "Paste from clipboard",
 			      this,SLOT(pasteButton()),EditToolbar);
+  EditToolbar->addSeparator();
+  SearchButton=new QToolButton(QPixmap((const char **)search_xpm),
+			       "Search & replace",
+			       "Search & replace",
+			       this,SLOT(searchButton()),EditToolbar);
+
   UndoButton->setEnabled(false);
   RedoButton->setEnabled(false);
   CutButton->setEnabled(false);
   CopyButton->setEnabled(false);
   PasteButton->setEnabled(false);
+  SearchButton->setEnabled(false);
 
   ToolsMenu=new QPopupMenu(this);
 
@@ -284,16 +296,16 @@ toMain::toMain()
   QString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"");
 
   HelpMenu=new QPopupMenu(this);
-  HelpMenu->insertItem("C&urrent Context",TO_HELP_CONTEXT);
-  HelpMenu->insertItem("&Contents",TO_HELP_CONTENTS);
+  HelpMenu->insertItem("C&urrent Context...",TO_HELP_CONTEXT);
+  HelpMenu->insertItem("&Contents...",TO_HELP_CONTENTS);
   HelpMenu->insertSeparator();
-  HelpMenu->insertItem("&About TOra",TO_HELP_ABOUT);
-  HelpMenu->insertItem("&License",TO_HELP_LICENSE);
-  HelpMenu->insertItem("&Quotes",TO_HELP_QUOTES);
+  HelpMenu->insertItem("&About TOra...",TO_HELP_ABOUT);
+  HelpMenu->insertItem("&License...",TO_HELP_LICENSE);
+  HelpMenu->insertItem("&Quotes...",TO_HELP_QUOTES);
   HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
   if (!toFreeware()) {
     HelpMenu->insertSeparator();
-    HelpMenu->insertItem("&Register",TO_HELP_REGISTER);
+    HelpMenu->insertItem("&Register...",TO_HELP_REGISTER);
   }
   QPopupMenu *toolAbout=NULL;
 
@@ -545,27 +557,35 @@ void toMain::windowsMenu(void)
   WindowsMenu->insertSeparator();
   WindowsMenu->insertItem("&Cascade",TO_WINDOWS_CASCADE);
   WindowsMenu->insertItem("&Tile",TO_WINDOWS_TILE);
-  if (workspace()->windowList().isEmpty()) {
-    WindowsMenu->setItemEnabled(TO_WINDOWS_CASCADE,false);
-    WindowsMenu->setItemEnabled(TO_WINDOWS_TILE,false);
-    WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE_ALL,false);
-  } else {
-    WindowsMenu->insertSeparator();
-    QRegExp strip(" <[0-9]+>$");
-    for (unsigned int i=0;i<workspace()->windowList().count();i++) {
-      QWidget *widget=workspace()->windowList().at(i);
+
+  bool first=true;
+  QRegExp strip(" <[0-9]+>$");
+  int id=0;
+  for (unsigned int i=0;i<workspace()->windowList().count();i++) {
+    QWidget *widget=workspace()->windowList().at(i);
+    if (widget&&!widget->isHidden()) {
+      if (first) {
+	first=false;
+	WindowsMenu->insertSeparator();
+      }
       QString caption=widget->caption();
       caption.replace(strip,"");
       WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
       WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,workspace()->activeWindow()==workspace()->windowList().at(i));
       if (i<9) {
-	WindowsMenu->setAccel(Key_1+i|CTRL,TO_WINDOWS_WINDOWS+i);
+	WindowsMenu->setAccel(Key_1+id|CTRL,TO_WINDOWS_WINDOWS+i);
 	caption+=" <";
-	caption+=QString::number(i+1);
+	caption+=QString::number(++id);
 	caption+=">";
       }
       widget->setCaption(caption);
     }
+  }
+
+  if (first) {
+    WindowsMenu->setItemEnabled(TO_WINDOWS_CASCADE,false);
+    WindowsMenu->setItemEnabled(TO_WINDOWS_TILE,false);
+    WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE_ALL,false);
   }
 }
 
@@ -919,6 +939,11 @@ void toMain::cutButton(void)
   commandCallback(TO_EDIT_CUT);
 }
 
+void toMain::searchButton(void)
+{
+  commandCallback(TO_EDIT_SEARCH);
+}
+
 void toMain::pasteButton(void)
 {
   commandCallback(TO_EDIT_PASTE);
@@ -987,7 +1012,7 @@ toEditWidget *toMain::findEdit(QWidget *widget)
 void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
 			bool undo,bool redo,
 			bool cut,bool copy,bool paste,
-			bool,bool,bool)
+			bool search,bool,bool)
 {
   if (edit&&edit==Edit) {
     LoadButton->setEnabled(open);
@@ -1000,6 +1025,7 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     CutButton->setEnabled(cut);
     CopyButton->setEnabled(copy);
     PasteButton->setEnabled(paste);
+    SearchButton->setEnabled(search);
   }
 }
 
@@ -1268,4 +1294,60 @@ void toMain::closeSession(void)
     if (!delConnection())
       return;
   }
+}
+
+void toMain::addChart(toLineChart *chart)
+{
+  emit chartAdded(chart);
+}
+
+void toMain::setupChart(toLineChart *chart)
+{
+  emit chartSetup(chart);
+}
+
+void toMain::removeChart(toLineChart *chart)
+{
+  emit chartRemoved(chart);
+}
+
+void toMain::displayMessage(void)
+{
+  static bool recursive=false;
+  static bool disabled=false;
+  if (disabled) {
+    while(StatusMessages.size()>1) // Clear everything but the first one.
+      toPop(StatusMessages);
+    return;
+  }
+
+  if (StatusMessages.size()>=50) {
+    disabled=true;
+    toUnShift(StatusMessages,
+	      QString("Message flood, temporary disabling of message box error reporting from now on.\n"
+		      "Restart TOra to reenable. You probably have a too high refreshrate in some tool."));
+  }
+
+  if (recursive)
+    return;
+  recursive=true;
+
+  for(QString str=toShift(StatusMessages);!str.isEmpty();str=toShift(StatusMessages)) {
+    toMessageUI dialog(toMainWidget(),NULL,true);
+    dialog.Message->setText(str);
+    dialog.exec();
+    if (dialog.Statusbar->isChecked()) {
+      toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,"Yes");
+      TOMessageBox::information(toMainWidget(),
+				"Information","You can enable this through the Global Settings in the Options (Edit menu)");
+      toTool::saveConfig();
+    }
+  }
+  recursive=false;
+}
+
+void toMain::displayMessage(const QString &str)
+{
+  toPush(StatusMessages,str);
+  QTimer::singleShot(1,this,SLOT(displayMessage()));
 }

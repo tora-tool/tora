@@ -103,7 +103,7 @@ protected:
   { return tobrowser_xpm; }
 public:
   toBrowserTool()
-    : toTool(2,"Schema Browser")
+    : toTool(20,"Schema Browser")
   { }
   virtual const char *menuItem()
   { return "Schema Browser"; }
@@ -122,136 +122,150 @@ static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
 				" ORDER BY Tablespace_Name",
 				"List the available tablespaces in a database.");
 
-class toBrowserFilter : public toBrowserFilterUI {
+class toBrowserFilter : public toResultFilter {
+  int Type;
+  bool IgnoreCase;
+  bool Invert;
+  QString Text;
+  int TablespaceType;
+  std::list<QString> Tablespaces;
+  QRegExp Match;
 public:
-  class setting : public toResultFilter {
-    int Type;
-    bool IgnoreCase;
-    bool Invert;
-    QString Text;
-    int TablespaceType;
-    std::list<QString> Tablespaces;
-    QRegExp Match;
-  public:
-    setting(int type,bool cas,bool invert,
-	    const QString &str,int tablespace,
-	    const std::list<QString> &tablespaces)
-      : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str),
-	TablespaceType(tablespace),Tablespaces(tablespaces)
-    {
-      if (!str.isEmpty()) {
-	Match.setPattern(str);
-	Match.setCaseSensitive(cas);
-      }
+  toBrowserFilter(int type,bool cas,bool invert,
+		  const QString &str,int tablespace,
+		  const std::list<QString> &tablespaces)
+    : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str),
+      TablespaceType(tablespace),Tablespaces(tablespaces)
+  {
+    if (!str.isEmpty()) {
+      Match.setPattern(str);
+      Match.setCaseSensitive(cas);
     }
-    setting(void)
-      : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
-    {
+  }
+  toBrowserFilter(void)
+    : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
+  {
+  }
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  {
+    data[prefix+":Type"]=QString::number(Type);
+    if (IgnoreCase)
+      data[prefix+":Ignore"]="Yes";
+    if (Invert)
+      data[prefix+":Invert"]="Yes";
+    data[prefix+":SpaceType"]=QString::number(TablespaceType);
+    data[prefix+":Text"]=Text;
+    int id=1;
+    for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++,id++)
+      data[prefix+":Space:"+QString::number(id)]=*i;
+  }
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  {
+    Type=data[prefix+":Type"].toInt();
+    TablespaceType=data[prefix+":SpaceType"].toInt();
+    IgnoreCase=!data[prefix+":Ignore"].isEmpty();
+    Invert=!data[prefix+":Invert"].isEmpty();
+    Text=data[prefix+":Text"];
+    if (!Text.isEmpty()) {
+      Match.setPattern(Text);
+      Match.setCaseSensitive(IgnoreCase);
     }
-    virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
-    {
-      data[prefix+":Type"]=QString::number(Type);
-      if (IgnoreCase)
-	data[prefix+":Ignore"]="Yes";
-      if (Invert)
-	data[prefix+":Invert"]="Yes";
-      data[prefix+":SpaceType"]=QString::number(TablespaceType);
-      data[prefix+":Text"]=Text;
-      int id=1;
-      for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++,id++)
-	data[prefix+":Space:"+QString::number(id)]=*i;
+    int id=1;
+    std::map<QString,QString>::iterator i;
+    Tablespaces.clear();
+    while((i=data.find(prefix+":Space:"+QString::number(id)))!=data.end()) {
+      Tablespaces.insert(Tablespaces.end(),(*i).second);
+      i++;
+      id++;
     }
-    virtual void importData(std::map<QString,QString> &data,const QString &prefix)
-    {
-      Type=data[prefix+":Type"].toInt();
-      TablespaceType=data[prefix+":SpaceType"].toInt();
-      IgnoreCase=!data[prefix+":Ignore"].isEmpty();
-      Invert=!data[prefix+":Invert"].isEmpty();
-      Text=data[prefix+":Text"];
-      if (!Text.isEmpty()) {
-	Match.setPattern(Text);
-	Match.setCaseSensitive(IgnoreCase);
-      }
-      int id=1;
-      std::map<QString,QString>::iterator i;
-      Tablespaces.clear();
-      while((i=data.find(prefix+":Space:"+QString::number(id)))!=data.end()) {
-	Tablespaces.insert(Tablespaces.end(),(*i).second);
-	i++;
-	id++;
-      }
+  }
+  virtual QString wildCard(void)
+  {
+    switch(Type) {
+    default:
+      return "%";
+    case 1:
+      return Text.upper()+"%";
+    case 2:
+      return "%"+Text.upper();
+    case 3:
+      return "%"+Text.upper()+"%";
     }
-    virtual bool check(const QListViewItem *item)
-    {
-      QString str=item->text(0);
-      QString tablespace=item->text(2);
-      if (!tablespace.isEmpty()) {
-	switch(TablespaceType) {
-	case 0:
-	  break;
-	case 1:
-	  {
-	    bool ok=false;
-	    for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++) {
-	      if (*i==tablespace) {
-		ok=true;
-		break;
-	      }
-	    }
-	    if (!ok)
-	      return false;
-	  }
-	  break;
-	case 2:
-	  for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++)
-	    if (*i==tablespace)
-	      return false;
-	  break;
-	}
-      }
-      switch(Type) {
+  }
+  virtual bool check(const QListViewItem *item)
+  {
+    QString str=item->text(0);
+    QString tablespace=item->text(2);
+    if (!tablespace.isEmpty()) {
+      switch(TablespaceType) {
       case 0:
-	return true;
+	break;
       case 1:
-	if (IgnoreCase) {
-	  if (str.upper().startsWith(Text))
-	    return !Invert;
-	} else if (str.startsWith(Text))
-	  return !Invert;
+	{
+	  bool ok=false;
+	  for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++) {
+	    if (*i==tablespace) {
+	      ok=true;
+	      break;
+	    }
+	  }
+	  if (!ok)
+	    return false;
+	}
 	break;
       case 2:
-	if (IgnoreCase) {
-	  if (str.right(Text.length()).upper()==Text)
-	    return !Invert;
-	} else if (str.right(Text.length())==Text)
-	  return !Invert;
-	break;
-      case 3:
-	if (str.contains(Text,!IgnoreCase))
-	  return !Invert;
-	break;
-      case 4:
-	{
-	  QStringList lst=QStringList::split(QRegExp("\\s*,\\s*"),Text);
-	  for(unsigned int i=0;i<lst.count();i++)
-	    if (IgnoreCase) {
-	      if (str.upper()==lst[i])
-		return !Invert;
-	    } else if (str==lst[i])
-	      return !Invert;
-	}
-	break;
-      case 5:
-	if (Match.match(str)>=0)
-	  return !Invert;
+	for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++)
+	  if (*i==tablespace)
+	    return false;
 	break;
       }
-      return Invert;
     }
-    virtual toResultFilter *clone(void)
-    { return new setting(*this); }
-    friend class toBrowserFilter;
-  };
+    switch(Type) {
+    case 0:
+      return true;
+    case 1:
+      if (IgnoreCase) {
+	if (str.upper().startsWith(Text))
+	  return !Invert;
+      } else if (str.startsWith(Text))
+	return !Invert;
+      break;
+    case 2:
+      if (IgnoreCase) {
+	if (str.right(Text.length()).upper()==Text)
+	  return !Invert;
+      } else if (str.right(Text.length())==Text)
+	return !Invert;
+      break;
+    case 3:
+      if (str.contains(Text,!IgnoreCase))
+	return !Invert;
+      break;
+    case 4:
+      {
+	QStringList lst=QStringList::split(QRegExp("\\s*,\\s*"),Text);
+	for(unsigned int i=0;i<lst.count();i++)
+	  if (IgnoreCase) {
+	    if (str.upper()==lst[i])
+	      return !Invert;
+	  } else if (str==lst[i])
+	    return !Invert;
+      }
+      break;
+    case 5:
+      if (Match.match(str)>=0)
+	return !Invert;
+      break;
+    }
+    return Invert;
+  }
+  virtual toResultFilter *clone(void)
+  { return new toBrowserFilter(*this); }
+  friend class toBrowserFilterSetup;
+};
+
+class toBrowserFilterSetup : public toBrowserFilterUI {
+public:
   void setup(void)
   {
     toHelp::connectDialog(this);
@@ -260,12 +274,12 @@ public:
     Tablespaces->query(SQLListTablespaces);
     Tablespaces->setSelectionMode(QListView::Multi);
   }
-  toBrowserFilter(QWidget *parent)
+  toBrowserFilterSetup(QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
     setup();
   }
-  toBrowserFilter(setting &cur,QWidget *parent)
+  toBrowserFilterSetup(toBrowserFilter &cur,QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
     setup();
@@ -282,18 +296,18 @@ public:
     Invert->setChecked(cur.Invert);
     IgnoreCase->setChecked(cur.IgnoreCase);
   }
-  setting *getSetting(void)
+  toBrowserFilter *getSetting(void)
   {
     std::list<QString> tablespaces;
     for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
       if (item->isSelected())
 	tablespaces.insert(tablespaces.end(),item->text(0));
-    return new setting(Buttons->id(Buttons->selected()),
-		       IgnoreCase->isChecked(),
-		       Invert->isChecked(),
-		       String->text(),
-		       TablespaceType->id(TablespaceType->selected()),
-		       tablespaces);
+    return new toBrowserFilter(Buttons->id(Buttons->selected()),
+			       IgnoreCase->isChecked(),
+			       Invert->isChecked(),
+			       String->text(),
+			       TablespaceType->id(TablespaceType->selected()),
+			       tablespaces);
   }
 };
 
@@ -351,12 +365,14 @@ public:
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
 			   "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
+			   "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.",
 			   "8.0");
 static toSQL SQLListTables7("toBrowser:ListTables",
 			    "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
 			    "  FROM SYS.ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
+			    "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
 			    " ORDER BY Table_Name",
 			    QString::null,
 			    "7.3");
@@ -395,6 +411,7 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
+			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
 			 " ORDER BY View_Name",
 			 "List the available views in a schema");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",	
@@ -407,6 +424,7 @@ static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
 			  "  FROM SYS.ALL_INDEXES\n"
 			  " WHERE OWNER = :f1<char[101]>\n"
+			  "   AND UPPER(INDEX_NAME) LIKE :f2<char[101]>\n"
 			  " ORDER BY Index_Name\n",
 			  "List the available indexes in a schema");
 
@@ -442,6 +460,7 @@ static toSQL SQLIndexInfo("toBrowser:IndexInformation",
 static toSQL SQLListSequence("toBrowser:ListSequence",
 			     "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
 			     " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
+			     "   AND UPPER(SEQUENCE_NAME) LIKE :f2<char[101]>\n"
 			     " ORDER BY Sequence_Name",
 			     "List the available sequences in a schema");
 static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
@@ -455,6 +474,7 @@ static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "  FROM Sys.All_Synonyms\n"
 			    " WHERE Table_Owner = :f1<char[101]>\n"
 			    "    OR Owner = :f1<char[101]>\n"
+			    "   AND UPPER(Synonym_Name) LIKE :f2<char[101]>\n"
 			    " ORDER BY Synonym_Name",
 			    "List the available synonyms in a schema");
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
@@ -468,6 +488,7 @@ static toSQL SQLListSQL("toBrowser:ListPL/SQL",
 			" WHERE OWNER = :f1<char[101]>\n"
 			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			"                       'PROCEDURE','TYPE')\n"
+			"   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
 			" ORDER BY Object_Name",
 			"List the available PL/SQL objects in a schema");
 static toSQL SQLListSQLShort("toBrowser:ListPL/SQLShort",
@@ -496,6 +517,7 @@ static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
 			    "SELECT Trigger_Name FROM SYS.ALL_TRIGGERS\n"
 			    " WHERE OWNER = :f1<char[101]>\n"
+			    "   AND UPPER(TRIGGER_NAME) LIKE :f2<char[101]>\n"
 			    " ORDER BY Trigger_Name",
 			    "List the available triggers in a schema");
 static toSQL SQLTriggerInfo("toBrowser:TriggerInfo",
@@ -536,7 +558,7 @@ QString toBrowser::schema(void)
   return ret;
 }
 
-void toBrowser::setNewFilter(toResultFilter *filter)
+void toBrowser::setNewFilter(toBrowserFilter *filter)
 {
   if (Filter) {
     delete Filter;
@@ -931,8 +953,8 @@ void toBrowser::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Change &Object",this,SLOT(focusObject(void)),
 			   Key_N+ALT);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)filter_xpm),"&Define filter",this,SLOT(defineFilter(void)),
-			   CTRL+SHIFT+Key_G);
+      ToolMenu->insertItem(QPixmap((const char **)filter_xpm),"&Define filter...",
+			   this,SLOT(defineFilter(void)),CTRL+SHIFT+Key_G);
       ToolMenu->insertItem(QPixmap((const char **)nofilter_xpm),"&Clear filter",this,SLOT(clearFilter(void)),
 			   CTRL+SHIFT+Key_H);
       toMainWidget()->menuBar()->insertItem("&Browser",ToolMenu,-1,toToolMenuIndex());
@@ -983,7 +1005,7 @@ void toBrowser::updateTabs(void)
 {
   try {
     if (!Schema->currentText().isEmpty()&&FirstTab)
-      FirstTab->changeParams(schema());
+      FirstTab->changeParams(schema(),Filter?Filter->wildCard():QString("%"));
     firstDone(); // In case it is ignored cause it is already done.
     if (SecondTab&&!SecondText.isEmpty())
       changeSecond();
@@ -1084,13 +1106,12 @@ void toBrowser::clearFilter(void)
 
 void toBrowser::defineFilter(void)
 {
-  toBrowserFilter::setting *setting=dynamic_cast<toBrowserFilter::setting *>(Filter);
-  if (setting) {
-    toBrowserFilter filt(*setting,this);
+  if (Filter) {
+    toBrowserFilterSetup filt(*Filter,this);
     if (filt.exec())
       setNewFilter(filt.getSetting());
   } else {
-    toBrowserFilter filt(this);
+    toBrowserFilterSetup filt(this);
     if (filt.exec())
       setNewFilter(filt.getSetting());
   }
@@ -1141,7 +1162,7 @@ void toBrowser::importData(std::map<QString,QString> &data,const QString &prefix
   TableContent->importData(data,prefix+":Table");
 
   if (data.find(prefix+":Filter:Type")!=data.end()) {
-    toResultFilter *filter=new toBrowserFilter::setting();
+    toBrowserFilter *filter=new toBrowserFilter;
     filter->importData(data,prefix+":Filter");
     setNewFilter(filter);
   } else
@@ -1440,6 +1461,7 @@ public:
   {
     toQList ret;
     ret.insert(ret.end(),parent()->text(0));
+    ret.insert(ret.end(),toQValue("%"));
     return ret;
   }
 };

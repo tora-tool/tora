@@ -241,7 +241,7 @@ bool toHtml::search(const QCString &all,const QString &str)
     inTag,
     inString,
     inWord
-  } lastState,state=beginning;
+  } lastState=beginning,state=beginning;
   unsigned int pos=0;
   char endString;
   for (size_t i=0;i<all.length();i++) {

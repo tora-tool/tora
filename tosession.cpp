@@ -78,7 +78,7 @@ protected:
   { return tosession_xpm; }
 public:
   toSessionTool()
-    : toTool(201,"Sessions")
+    : toTool(210,"Sessions")
   { }
   virtual const char *menuItem()
   { return "Sessions"; }
@@ -145,6 +145,16 @@ static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
 			  "Display chart of session generated I/O");
 
+static toSQL SQLAccessedObjects("toSession:AccessedObjects",
+				"SELECT owner,\n"
+				"       OBJECT,\n"
+				"       TYPE FROM v$access\n"
+				" WHERE sid=:f1<CHAR [101]>\n"
+				" ORDER BY owner,\n"
+				"	  OBJECT,\n"
+				"	  TYPE",
+				"Which objects are accessed by the current session");
+
 static toSQL SQLSessions("toSession:ListSession",
 			 "SELECT a.Sid \"-Id\",\n"
 			 "       a.Serial# \"-Serial#\",\n"
@@ -165,13 +175,17 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "       b.Consistent_Changes \"-Consistent Changes\",\n"
 			 "       c.Value*10 \"-CPU (ms)\",\n"
 			 "       a.Process \"-Process\",\n"
+			 "       d.sql_text \"Current statement\",\n"
 			 "       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
 			 "       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
 			 "  FROM v$session a,\n"
 			 "       v$sess_io b,\n"
-			 "       v$sesstat c\n"
+			 "       v$sesstat c,\n"
+			 "       v$sql d\n"
 			 " WHERE a.sid = b.sid(+)\n"
 			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+			 "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
+			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
 			 " ORDER BY a.Sid",
 			 "List sessions, must have same number of culumns and the first and last 2 must be "
 			 "the same");
@@ -239,6 +253,10 @@ toSession::toSession(QWidget *main,toConnection &connection)
   LockedObjects->setSQL(SQLLockedObject);
   CurrentStatement=new toSGAStatement(ResultTab);
   ResultTab->addTab(CurrentStatement,"Current Statement");
+  AccessedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
+  AccessedObjects->setSQL(SQLAccessedObjects);
+  ResultTab->addTab(AccessedObjects,"Accessing");
+
   PreviousStatement=new toSGAStatement(ResultTab);
   ResultTab->addTab(PreviousStatement,"Previous Statement");
 
@@ -358,6 +376,8 @@ void toSession::changeTab(QWidget *tab)
 	    }
       } else if (CurrentTab==CurrentStatement)
 	CurrentStatement->changeAddress(item->text(Sessions->columns()+0));
+      else if (CurrentTab==AccessedObjects)
+        AccessedObjects->changeParams(item->text(0));
       else if (CurrentTab==LockedObjects)
 	LockedObjects->changeParams(item->text(0));
       else if (CurrentTab==PreviousStatement)

@@ -33,24 +33,29 @@
 </ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref3">getToken</A></b> (<A HREF="toMarkedText.html">toMarkedText</A> *text,int &curLine,int &pos,bool forward=true,
 			  bool comment=false) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref4">getToken</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &pos,bool forward=true,
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref4">getToken</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &line,int &pos,bool forward=true,
 			  bool comment=false) 
 </LI>
-<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref5">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref5">getToken</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &pos,bool forward=true,
+			  bool comment=false) 
 </LI>
-<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref6">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref6">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref7">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref7">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref8">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref8">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref9">indentString</A></b> (int level) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref9">indentStatement</A></b> (statement &stat,int level=0) 
 </LI>
-<LI>static  int &nbsp;<b><A HREF="#ref10">countIndent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int &chars) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref10">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>static  settings &nbsp;<b><A HREF="#ref14">getSetting</A></b> (void) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref11">indentString</A></b> (int level) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref15">setSetting</A></b> (const settings &setting) 
+<LI>static  int &nbsp;<b><A HREF="#ref12">countIndent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int &chars) 
+</LI>
+<LI>static  settings &nbsp;<b><A HREF="#ref15">getSetting</A></b> (void) 
+</LI>
+<LI>static  void &nbsp;<b><A HREF="#ref16">setSetting</A></b> (const settings &setting) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A bunch of functions to parse and indent SQL text.
  </p>
@@ -74,7 +79,26 @@
 </TABLE></P>
 <p><b>Returns</b>: String with next token in editor
    </p>
-<A NAME="getToken"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>getToken</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &pos,bool forward=true,
+<A NAME="getToken"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>getToken</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &line,int &pos,bool forward=true,
+			  bool comment=false)
+<br></td><td align="right"><h3><strong>getToken</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get next SQL token from a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to get token from
+</TD></TR>
+<TR><TD align="left" valign="top"><i>line</i></TD><TD align="left" valign="top">The line the current position is on. This is not needed, but only valid
+             if a correct value is passed into the function.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>pos</i></TD><TD align="left" valign="top">Current position when parsing, modified when calling.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>forward</i></TD><TD align="left" valign="top">If true go forward from current position, otherwise backward.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>comment</i></TD><TD align="left" valign="top">Include comments as tokens.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String with next token in editor
+   </p>
+<A NAME="getToken"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>getToken</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &pos,bool forward=true,
 			  bool comment=false)
 <br></td><td align="right"><h3><strong>getToken</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get next SQL token from a string.
 </p>
@@ -90,7 +114,7 @@
 </TABLE></P>
 <p><b>Returns</b>: String with next token in editor
    </p>
-<A NAME="parse"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="parse"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -99,7 +123,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
-<A NAME="parse"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
+<A NAME="parse"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -110,7 +134,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
-<A NAME="indent"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="indent"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -119,7 +143,18 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="indent"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
+<A NAME="indentStatement"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indentStatement</strong> (statement &stat,int level=0)
+<br></td><td align="right"><h3><strong>indentStatement</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a parse statement structure into a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>stat</i></TD><TD align="left" valign="top">Statement to indent.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">Initial indentation level to use.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A string with the indented statement.
+   </p>
+<A NAME="indent"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
 <br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -130,14 +165,14 @@
 </TABLE></P>
 <p><b>Returns</b>: An indented string.
    </p>
-<A NAME="indentString"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indentString</strong> (int level)
+<A NAME="indentString"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indentString</strong> (int level)
 <br></td><td align="right"><h3><strong>indentString</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create an indentation string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">Number of characters to indent.
    </TD></TR>
 </TABLE></P>
-<A NAME="countIndent"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>countIndent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int &chars)
+<A NAME="countIndent"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>countIndent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,int &chars)
 <br></td><td align="right"><h3><strong>countIndent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Count indentation level of a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -146,10 +181,10 @@
 <TR><TD align="left" valign="top"><i>chars</i></TD><TD align="left" valign="top">Position in string.
    </TD></TR>
 </TABLE></P>
-<A NAME="getSetting"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> settings &nbsp;<strong>getSetting</strong> (void)
+<A NAME="getSetting"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> settings &nbsp;<strong>getSetting</strong> (void)
 <br></td><td align="right"><h3><strong>getSetting</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get current settings.
    </p>
-<A NAME="setSetting"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSetting</strong> (const settings &setting)
+<A NAME="setSetting"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSetting</strong> (const settings &setting)
 <br></td><td align="right"><h3><strong>setSetting</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get current settings.
    </p>
 <HR>

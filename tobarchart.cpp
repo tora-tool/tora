@@ -62,29 +62,34 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
       std::list<std::list<double> >::reverse_iterator i=Values.rbegin();
       if (i!=Values.rend()) {
 	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	if (first) {
-	  first=false;
-	  zMinValue=*j;
-	} else if (zMinValue>*j)
-	  zMinValue=*j;
+	  if (first) {
+	    first=false;
+	    zMinValue=*j;
+	  } else if (zMinValue>*j)
+	    zMinValue=*j;
 	}
       }
     }
     if (MaxAuto) {
       bool first=true;
       std::list<double> total;
+      std::list<bool>::iterator e=Enabled.begin();
       {
 	for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
 	  std::list<double>::iterator k=total.begin();
-	  for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	    if (k==total.end()) {
-	      total.insert(total.end(),*j);
-	      k=total.end();
-	    } else {
-	      *k+=*j;
-	      k++;
+	  if(e==Enabled.end()||*e) {
+	    for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	      if (k==total.end()) {
+		total.insert(total.end(),*j);
+		k=total.end();
+	      } else {
+		*k+=*j;
+		k++;
+	      }
 	    }
 	  }
+	  if (e!=Enabled.end())
+	    e++;
 	}
       }
       for(std::list<double>::iterator i=total.begin();i!=total.end();i++) {
@@ -97,12 +102,16 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
     }
     if(!MinAuto)
       zMinValue=MinValue;
-    else
+    else {
       zMinValue=round(zMinValue,false);
+      MinValue=zMinValue;
+    }
     if(!MaxAuto)
       zMaxValue=MaxValue;
-    else
+    else {
       zMaxValue=round(zMaxValue,true);
+      MaxValue=zMaxValue;
+    }
   }
 
   paintTitle(p,rect);
@@ -119,32 +128,46 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
     if (Zooming)
       p->drawText(2,2,rect.width()-4,rect.height()-4,
 		  AlignLeft|AlignTop,"Zoom");
+    std::list<bool>::reverse_iterator e=Enabled.rbegin();
     for(std::list<std::list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
-      std::list<double> &val=*i;
-      int count=0;
-      int skip=SkipSamples;
-      QPointArray a(samples+10);
-      int x=rect.width()-2;
-      for(std::list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
-	if (skip>0)
-	  skip--;
-	else {
-	  int val=int(rect.height()-2-((*j-zMinValue)/(zMaxValue-zMinValue)*(rect.height()-4)));
-	  x=rect.width()-2-count*(rect.width()-4)/(samples-1);
-	  a.setPoint(count,x,val);
-	  count++;
-	  if (count>=samples)
-	    break;
+      if(e==Enabled.rend()||*e) {
+	std::list<double> &val=*i;
+	int count=0;
+	int skip=SkipSamples;
+	QPointArray a(samples+10);
+	int x=rect.width()-2;
+	for(std::list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
+	  if (skip>0)
+	    skip--;
+	  else {
+	    int val=int(rect.height()-2-((*j-zMinValue)/(zMaxValue-zMinValue)*(rect.height()-4)));
+	    x=rect.width()-2-count*(rect.width()-4)/(samples-1);
+	    a.setPoint(count,x,val);
+	    count++;
+	    if (count>=samples)
+	      break;
+	  }
 	}
+	a.resize(count*2);
+	Points.insert(Points.end(),a);
       }
-      a.resize(count*2);
-      Points.insert(Points.end(),a);
       cp++;
+      if (e!=Enabled.rend())
+        e++;
     }
   }
 
   std::map<int,int> Bottom;
-  for(std::list<QPointArray>::iterator i=Points.begin();i!=Points.end();i++) {
+  std::list<bool>::reverse_iterator e=Enabled.rbegin();
+  for(std::list<QPointArray>::iterator i=Points.begin();i!=Points.end();) {
+    while(e!=Enabled.rend()&&!*e) {
+      cp--;
+      e++;
+    }
+    if (e!=Enabled.rend())
+      e++;
+    cp--;
+
     QPointArray a=*i;
     int lx=0;
     int lb=0;
@@ -163,7 +186,7 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
     }
 
     p->save();
-    QBrush brush(toChartBrush(--cp));
+    QBrush brush(toChartBrush(cp));
     p->setBrush(brush.color());
     p->drawPolygon(a);
     if (brush.style()!=QBrush::SolidPattern) {
@@ -171,6 +194,7 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
       p->drawPolygon(a);
     }
     p->restore();
+    i++;
   }
 }
 
@@ -179,29 +203,34 @@ toBarChart::toBarChart (toBarChart *chart,QWidget *parent,const char *name,WFlag
 {
 }
 
-void toBarChart::openCopy(void)
+toLineChart *toBarChart::openCopy(QWidget *parent)
 {
-  QWidget *newWin=new toBarChart(this,toMainWidget()->workspace(),NULL,WDestructiveClose);
-  newWin->show();
-  toMainWidget()->windowsMenu();
+  toBarChart *newWin=new toBarChart(this,
+				    parent?parent:toMainWidget()->workspace(),
+				    NULL,parent?0:WDestructiveClose);
+  if (!parent) {
+    newWin->show();
+    toMainWidget()->windowsMenu();
 
 #if 1
-  // This is a really ugly workaround for a Qt layout bug
-  QWidget *tmp=NULL;
-  QWidget *tmp2=NULL;
-  for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-    QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
-    if (newWin!=widget)
-      tmp2=widget;
-    else
-      tmp=newWin;
-    if (tmp2&&tmp)
-      break;
-  }
-  if(tmp2&&tmp) {
-    tmp2->setFocus();
-    tmp->setFocus();
-  }
+    // This is a really ugly workaround for a Qt layout bug
+    QWidget *tmp=NULL;
+    QWidget *tmp2=NULL;
+    for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+      QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+      if (newWin!=widget)
+	tmp2=widget;
+      else
+	tmp=newWin;
+      if (tmp2&&tmp)
+	break;
+    }
+    if(tmp2&&tmp) {
+      tmp2->setFocus();
+      tmp->setFocus();
+    }
 #endif
+  }
+  return newWin;
 }
 
