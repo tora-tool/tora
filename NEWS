@@ -1,5 +1,6 @@
 1.3.5.1: Released 2002-04-18
 
+2002-05-18: Try to find static mysql library even though linking with Qt3.
 2002-05-18: Changed version to 1.3.5.1 and release immediately.
 2002-05-18: Fixed problem with mysql only getting first 100 rows.
 2002-05-18: Fixed spelling error in help.

@@ -465,7 +465,6 @@ void toResultContentEditor::poll(void)
 	delete Query;
 	Query=NULL;
 
-	printf("%d==%d?\n",SkipNumber,Row);
 	if (SkipNumber>0&&Row==SkipNumber) {
 	  toQList par;
 	  Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);

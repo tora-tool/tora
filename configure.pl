@@ -979,6 +979,22 @@ __TEMP__
 	undef $MySQLLib;
 	undef $MySQLStatic;
 	undef $MySQLInclude;
+	findFile("^libmysqlclient.*\\.a",sub {
+		                             $MySQLStatic=$_[0];
+					     return -f $_[0];
+					 },
+		 $MySQLLib,
+		 "/usr/lib",
+		 "/usr/lib/mysql",
+		 "/usr/lib/mysql/lib",
+		 "/usr/local/lib",
+		 "/usr/local/lib/mysql",
+		 "/usr/local/lib/mysql/lib");
+	if (! -f $MySQLStatic) {
+	    $MySQLStatic="";
+	} else {
+	    $MySQLLib=$MySQLStatic;
+	}
     } elsif ($MySQLFound) {
 	print "checking for MySQL include files ... ";
 
@@ -1573,9 +1589,8 @@ tora-static: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_STATIC) \$(LIBS_GLOB) \\
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a \\
-		/usr/lib/mysql/libmysqlclient.a /usr/lib/libpq.a -ldl
-
+		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a \\
+		\$(MYSQL_STATIC) /usr/lib/libpq.a
 
 # The binary for the pluginbased tora
 
