@@ -113,7 +113,7 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { toResult::refresh(); }
+  { query(sql(),params(),false); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)

@@ -1,4 +1,8 @@
-1.1.0:
+1.1.1:
+
+2001-09-10: Fixed bug with no graphs being drawn.
+
+1.1.0: Released 2001-09-09
 
 2001-08-01: Added pie chart class.
 2001-08-02: Fixed release script to grab correct tag if specified.

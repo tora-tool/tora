@@ -22,9 +22,7 @@ toMain:
 toResultContent:
 	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
+	Deleting rows doesn't seem to work.
 
 toTemplate:
 	Doesn't seem to remember more than one template file.
-
-toResult:
-	Changing connection doesn't seem to work.
