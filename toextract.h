@@ -252,7 +252,6 @@ class toExtract {
 			  const QString &type,
 			  list<QString> &list);
   void initialNext(const QString &blocks,QString &initial,QString &next);
-  void parseObject(const QString &object,QString &owner,QString &name);
   void objectExists(const QString &owner,const QString &name,const QString &type);
   QString prepareDB(const QString &data);
   QString segmentAttributes(list<QString> &result);
@@ -268,6 +267,8 @@ public:
   QString drop(const QString &type,list<QString> &object);
   QString resize(const QString &type,list<QString> &object);
   QString migrate(list<QString> &drpLst,list<QString> &crtLst);
+
+  void parseObject(const QString &object,QString &owner,QString &name);
 
   void setSchema(const QString &schema)
   { Schema=schema; }

@@ -57,6 +57,7 @@ SOURCES=\
 	torollback.cpp		\
 	toscript.cpp		\
 	toscriptui.cpp		\
+	toscriptprogressui.cpp	\
 	tosession.cpp		\
 	tosecurity.cpp		\
 	tosecurityquotaui.cpp	\

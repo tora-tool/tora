@@ -133,17 +133,14 @@ QString toResultViewItem::text(int col) const
 
 QString toResultViewItem::key(int col,bool asc) const
 {
-  toResultView *list=dynamic_cast<toResultView *>(listView());
-  if (list) {
-    bool numCol=list->numberColumn();
-    if ((col==0&&numCol)||
-	(col==list->queryColumns()&&!numCol)) {
-      static char buf[50];
-      sprintf(buf,"%010d",text(col).toInt());
-      return buf;
-    }
+  static QRegExp number("^\\d*\\.?\\d+$");
+  QString val=text(col);
+  if (number.match(val)>=0) {
+    static char buf[100];
+    sprintf(buf,"%015f",text(col).toFloat());
+    return buf;
   }
-  return QListViewItem::key(col,asc);
+  return val;
 }
 
 class toResultTip : public QToolTip {

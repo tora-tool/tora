@@ -43,10 +43,12 @@ TO_NAMESPACE;
 #include "toscriptui.h"
 #include "totool.h"
 #include "toworksheet.h"
+#include "toextract.h"
 #include "tosql.h"
 
 #include "toscript.moc"
 #include "toscriptui.moc"
+#include "toscriptprogressui.moc"
 
 #include "icons/toscript.xpm"
 #include "icons/execute.xpm"
@@ -96,7 +98,7 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 	SELECT 'ROLE',role,NULL
 	  FROM dba_roles
 	UNION
-	SELECT 'SYNONYM','PUBLIC',synonym_name
+	SELECT 'PUBLIC','SYNONYM',synonym_name
 	  FROM all_synonyms WHERE owner = 'PUBLIC'
 	UNION
 	SELECT owner,'DATABASE LINK',db_link
@@ -180,6 +182,8 @@ toScript::~toScript()
   Connection.delWidget(this);
 }
 
+#include <stdio.h>
+
 void toScript::execute(void)
 {
   int mode;
@@ -197,6 +201,135 @@ void toScript::execute(void)
   }
   Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
   Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
+
+  list<QString> tableSpace;
+  list<QString> profiles;
+  list<QString> otherGlobal;
+
+  list<QString> tables;
+
+  list<QString> userViews;
+  list<QString> userOther;
+
+  QListViewItem *next=NULL;
+  for (QListViewItem *item=Objects->firstChild();item;item=next) {
+    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+
+    if (chk&&chk->isEnabled()) {
+      QString name=chk->text(0);
+      QString type=chk->text(1);
+      QString user=chk->text(2);
+      if (!user.isEmpty()) {
+	if (chk->isOn()&&chk->isEnabled()) {
+	  QString line;
+	  if (type=="TABLE") {
+	    line=user;
+	    line+=".";
+	    line+=name;
+	    toPush(tables,line);
+	  } else {
+	    line=type;
+	    line+=":";
+	    line+=user;
+	    line+=".";
+	    line+=name;
+	    if (type=="VIEW")
+	      toPush(userViews,line);
+	    else
+	      toPush(userOther,line);
+	  }
+	}
+      } else if (!type.isEmpty()) {
+	if (chk->isOn()&&chk->isEnabled()) {
+	  QString line=type;
+	  line+=":";
+	  line+=name;
+	  if (type=="TABLESPACE")
+	    toPush(tableSpace,line);
+	  else if (type=="PROFILE")
+	    toPush(profiles,line);
+	  else
+	    toPush(otherGlobal,line);
+	}
+      }
+    }
+
+    if (item->firstChild()&&chk&&chk->isEnabled())
+      next=item->firstChild();
+    else if (item->nextSibling())
+      next=item->nextSibling();
+    else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+  }
+
+  list<QString> sourceObjects;
+  for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+    toPush(sourceObjects,*i);
+  for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+    toPush(sourceObjects,*i);
+  for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+    toPush(sourceObjects,*i);
+  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+    QString line="TABLE FAMILY";
+    line+=":";
+    line+=*i;
+    toPush(sourceObjects,line);
+  }
+  for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+    toPush(sourceObjects,*i);
+  for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+    toPush(sourceObjects,*i);
+  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+    QString line="TABLE REFERENCES";
+    line+=":";
+    line+=*i;
+    toPush(sourceObjects,line);
+  }
+
+  list<QString> sourceDescription;
+  QString sourceScript;
+  {
+    displayProgress("Initialising extractor",0,sourceObjects.size());
+    toExtract source(toMainWidget()->connection(SourceConnection->name()));
+    setupExtract(source);
+    int num=1;
+    for(list<QString>::iterator i=sourceObjects.begin();i!=sourceObjects.end();i++) {
+      displayProgress(*i,num,sourceObjects.size());
+      QString type=*i;
+      int pos=type.find(":");
+      if (pos<0)
+	throw QString("Internal error, missing : in operationlist");
+      list<QString> object;
+      toPush(object,type.right(type.length()-pos-1));
+      type.truncate(pos);
+      switch(mode) {
+      case 1:
+	sourceScript+=source.create(type,object);
+	break;
+      case 0:
+      case 2:
+	{
+	  list<QString> dsc=source.describe(type,object);
+	  dsc.sort();
+	  sourceDescription.merge(dsc);
+	}
+	break;
+      case 3:
+	break;
+      }
+      num++;
+    }
+  }
+
+  list<QString> destinationObjects;
+  if (Destination->isEnabled()) {
+  }
 }
 
 void toScript::changeSource(int)
@@ -228,10 +361,16 @@ void toScript::changeSource(int)
 	lastFirst=NULL;
 	lastTop=new QCheckListItem(Objects,top,QCheckListItem::CheckBox);
       }
-      if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty())
+      if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
 	lastFirst=new QCheckListItem(lastTop,first,QCheckListItem::CheckBox);
-      if (!second.isEmpty())
-	new QCheckListItem(lastFirst,second,QCheckListItem::CheckBox);
+	if (second.isEmpty())
+	  lastFirst->setText(1,top);
+      }
+      if (!second.isEmpty()) {
+	QListViewItem *item=new QCheckListItem(lastFirst,second,QCheckListItem::CheckBox);
+	item->setText(1,first);
+	item->setText(2,top);
+      }
     }
   } TOCATCH
 }

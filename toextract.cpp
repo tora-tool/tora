@@ -4658,13 +4658,8 @@ static toSQL SQLIndexNames("toExtract:IndexNames",
 			   "SELECT a.index_name
   FROM all_indexes a
  WHERE a.table_name = :nam<char[100]>
-   AND a.table_owner = :own<char[100]>
-   AND (a.owner,a.index_name) NOT IN (SELECT b.owner,b.constraint_name
-                                        FROM all_constraints b
-                                       WHERE b.table_name = a.table_name
-                                         AND b.owner = a.table_owner)",
-			   "Get all indexes not created by constraints, "
-			   "same binds and columns");
+   AND a.table_owner = :own<char[100]>",
+			   "Get all indexes, same binds and columns");
 
 QString toExtract::createTableFamily(const QString &schema,const QString &owner,const QString &name)
 {

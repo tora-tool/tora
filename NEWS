@@ -44,6 +44,7 @@
 	than the tooltip.
 2001-04-03: Fixed copying of the toResultCols.
 2001-04-04: Create foreign constraints separately from table in toExtract.
+2001-04-04: If toResultItem contains numeric value sort numerically.
 
 0.7: Released 2001-03-24
 
