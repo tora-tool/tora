@@ -2060,7 +2060,7 @@ bool toDebugText::compile(void)
     int curWord=0;
     QString words[10];
     bool body=false;
-    int begin[6];
+    int begin[10];
 
     for (unsigned int i=0;i<str.length();i++) {
       if (str.at(i).isSpace()) {

@@ -34,6 +34,8 @@
 
 #include <qmenubar.h>
 #include <qtoolbutton.h>
+#include <qspinbox.h>
+#include <qcheckbox.h>
 
 #ifdef TO_KDE
 #include <kmenubar.h>
@@ -42,8 +44,10 @@
 #include "totool.h"
 #include "toeditextensions.h"
 #include "tohighlightedtext.h"
+#include "toeditextensionsetupui.h"
 
 #include "toeditextensions.moc"
+#include "toeditextensionsetupui.moc"
 
 #include "icons/indent.xpm"
 #include "icons/deindent.xpm"
@@ -51,8 +55,51 @@
 static int IndentIndex;
 static int DeindentIndex;
 
+#define TABSTOP 8
+
+#define CONF_EXPAND_SPACES	"ExpandSpaces"
+#define CONF_INDENT_LEVEL	"IndentLevel"
+#define DEFAULT_INDENT_LEVEL	"4"
+
+static bool ExpandSpaces;
+static int IndentLevel;
+
 QToolButton *IndentButton;
 QToolButton *DeindentButton;
+
+static int CountIndent(const QString &txt,int &chars)
+{
+  int level=0;
+  chars=0;
+  while(txt[chars].isSpace()&&chars<int(txt.length())) {
+    char c=txt[chars];
+    if (c=='\n')
+      level=0;
+    else if (c==' ')
+      level++;
+    else if (c=='\t')
+      level=(level/TABSTOP+1)*TABSTOP;
+    chars++;
+  }
+  return level;
+}
+
+static QString IndentString(int level,bool &eol)
+{
+  if (eol) {
+    QString ret="\n";
+    if (ExpandSpaces) {
+      for(int i=0;i<level/8;i++)
+	ret+="\t";
+      for(int j=0;j<level%8;j++)
+	ret+=" ";
+    } else
+      for(int j=0;j<level;j++)
+	ret+=" ";
+    return ret;
+  } else
+    return " ";
+}
 
 void toEditExtensions::receivedFocus(QWidget *widget)
 {
@@ -75,23 +122,80 @@ void toEditExtensions::lostFocus(QWidget *widget)
     receivedFocus(NULL);
 }
 
-void toEditExtensions::indentBlock(void)
+void toEditExtensions::intIndent(int delta)
 {
+  bool eol;
 
+  int line1,col1,line2,col2;
+
+  if (!Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
+    Current->getCursorPosition (&line1,&col1);
+    line2=line1;
+  } else if (col2==0) {
+    line2--;
+  }
+
+  QString res;
+  for(int i=line1;i<=line2;i++) {
+    QString t=Current->textLine(i);
+    int chars;
+    int level=CountIndent(t,chars);
+    eol=true;
+    res+=IndentString(max(0,level+delta),eol);
+    res+=t.mid(chars);
+  }
+
+  Current->setCursorPosition(line1,0,false);
+  Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
+
+  Current->insert(res.mid(1));
+
+  Current->setCursorPosition(line1,0,false);
+  Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
 }
 
 void toEditExtensions::deindentBlock(void)
 {
+  intIndent(-IndentLevel);
+}
 
+void toEditExtensions::indentBlock(void)
+{
+  intIndent(IndentLevel);
 }
 
 static toEditExtensions EditExtensions;
 
+class toEditExtensionTool;
+
+class toEditExtensionSetup : public toEditExtensionSetupUI, public toSettingTab
+{
+  toEditExtensionTool *Tool;
+
+public:
+  toEditExtensionSetup(toEditExtensionTool *tool,QWidget *parent,const char *name=NULL)
+    : toEditExtensionSetupUI(parent,name),toSettingTab("editextension.html"),Tool(tool)
+  {
+    IndentLevel->setValue(::IndentLevel);
+    ExpandSpaces->setChecked(::ExpandSpaces);
+  }
+  virtual void saveSetting(void);
+};
+
 class toEditExtensionTool : public toTool {
 public:
+  void cacheConfig(void)
+  {
+    ExpandSpaces=!config(CONF_EXPAND_SPACES,"Yes").isEmpty();
+    IndentLevel=config(CONF_INDENT_LEVEL,DEFAULT_INDENT_LEVEL).toInt();
+    if (!IndentLevel)
+      IndentLevel=4;
+  }
   toEditExtensionTool()
     : toTool(300,"Editor")
-  { }
+  {
+    cacheConfig();
+  }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     return NULL; // Has no tool window
@@ -119,13 +223,22 @@ public:
 				   toMainWidget()->editToolbar());
     EditExtensions.receivedFocus(NULL);
   }
+  virtual QWidget *configurationTab(QWidget *parent)
+  {
+    return new toEditExtensionSetup(this,parent);
+  }
 };
+
+void toEditExtensionSetup::saveSetting(void)
+{
+  Tool->setConfig(CONF_INDENT_LEVEL,QString::number(IndentLevel->value()));
+  Tool->setConfig(CONF_EXPAND_SPACES,ExpandSpaces->isChecked()?"Yes":"");
+  Tool->cacheConfig();
+}
 
 static toEditExtensionTool EditExtensionTool;
 
 #if 0 // Unfinished stuff for pretty print
-
-#define TABSTOP 8
 
 static QString Indent(int level,bool &eol);
 static int indent=4;

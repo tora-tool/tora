@@ -43,6 +43,8 @@ class toEditExtensions : public QObject, public toEditWidget::editHandler {
   Q_OBJECT
 
   toMarkedText *Current;
+
+  void intIndent(int level);
 public:
   toEditExtensions()
     : toEditWidget::editHandler()

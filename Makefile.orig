@@ -66,6 +66,7 @@ SOURCES=\
 	todebugwatch.cpp	        \
 	toeditwidget.cpp		\
 	toeditextensions.cpp		\
+	toeditextensionsetupui.cpp	\
 	toextract.cpp		        \
 	tofilesize.cpp		        \
 	toglobalsetting.cpp             \
@@ -236,7 +237,9 @@ plugins/todebug.tso:\
 	objs/todebugtext.o \
 	objs/todebugchange.o
 plugins/tocurrent.tso:objs/tocurrent.o
-plugins/toeditextensions.tso:objs/toeditextensions.o
+plugins/toeditextensions.tso:\
+	objs/toeditextensions.o \
+	objs/toeditextensionsetupui.o
 plugins/toextract.tso:\
 	objs/toextract.o \
 	objs/toresultextract.o

@@ -46,6 +46,9 @@
 2001-11-24: Separated tool and edit toolbar in main window.
 2001-11-24: Some minor changes to the toEditWidget interface.
 2001-11-24: Added start of editor extensions.
+2001-11-26: Fixed problem with compiling in debugger.
+2001-11-26: Implemented block indent in editor.
+2001-11-26: Added editor settings tab under tools.
 
 1.1.5:
 
