@@ -86,7 +86,7 @@ static toSQL SQLColumns8("toResultIndexes:Columns",
 			 QString::null,
 			 "8.0");
 static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
-                         "SELECT a.attname, a.attname\n"
+                         "SELECT a.attname, a.attname as x\n"
                          "  FROM pg_class c, pg_attribute a, pg_user u\n"
                          " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
                          "   AND a.attrelid = c.oid AND c.relname = :f2\n"

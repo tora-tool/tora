@@ -501,15 +501,20 @@ static toSQL SQLIndexCols7("toBrowser:IndexCols",
 			   "7.3");
 // The following one for PostgreSQL needs verification
 static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
-                           "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n"
-                           "       a.attnotnull, a.atthasdef, a.attnum\n"
-                           "FROM pg_class c, pg_attribute a\n"
-                           "WHERE c.relname = :f2\n"
-                           "AND a.attnum > 0 AND a.attrelid = c.oid\n"
-                           "ORDER BY a.attnum",
-			   QString::null,
-			   "7.1",
-                           "PostgreSQL");
+                               "SELECT a.attname,\n"
+                               "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
+                               "       a.attnotnull,\n"
+                               "       a.atthasdef\n"
+                               "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid,\n"
+                               "       pg_attribute a\n"
+                               " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                               "   AND a.attrelid = c.oid AND c.relname = :f2\n"
+                               "   AND a.attnum > 0\n"
+                               " ORDER BY a.attnum\n",
+			       QString::null,
+			       "7.1",
+                               "PostgreSQL");
+
 static toSQL SQLIndexInfo("toBrowser:IndexInformation",
 			  "SELECT * FROM SYS.ALL_INDEXES\n"
 			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
@@ -526,6 +531,22 @@ static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
 			     " WHERE Sequence_Owner = :f1<char[101]>\n"
 			     "   AND Sequence_Name = :f2<char[101]>",
 			     "Display information about a sequence");
+
+static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
+                                  "SELECT c.relname AS \"Sequence Name\"\n"
+                                  "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                                  " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                                  "   AND c.relkind = 'S'\n"
+                                  " ORDER BY \"Sequence Name\"",
+			          QString::null,
+			          "7.1",
+                                  "PostgreSQL");
+
+static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
+                                  "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
+			          QString::null,
+			          "7.1",
+                                  "PostgreSQL");
 
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "SELECT DECODE(Owner,'PUBLIC','',Owner||'.')||Synonym_Name \"Synonym Name\"\n"
