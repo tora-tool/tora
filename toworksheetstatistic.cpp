@@ -106,6 +106,8 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   ShowPlans->setOn(true);
   connect(ShowPlans,SIGNAL(toggled(bool)),this,SLOT(showPlans(bool)));
 
+  toolbar->setStretchableWidget(new QLabel(toolbar));
+
   Dummy=new QWidget(Splitter);
 
   Tool=dynamic_cast<toAnalyze *>(toCurrentTool(this));
@@ -132,6 +134,7 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
   data cur;
   cur.Top=new QVBox(Splitter);
   QHBox *box=new QHBox(cur.Top);
+  box->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
   cur.Label=new QLabel(stats["Description"],box);
   cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
   QCheckBox *check=new QCheckBox("Hide",box);

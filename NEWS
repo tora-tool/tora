@@ -168,6 +168,10 @@
 2001-12-13: A bunch of Qt 3.0 fixes.
 2001-12-13: Add new connections to dropdown list in toScript.
 2001-12-13: Removed closed connections from dropdown list in toScript.
+2001-12-14: Some more Qt3 fixes and Qt only fixes.
+2001-12-14: Fixed windows icons in executable.
+2001-12-14: Added MySQL support to windows version.
+2001-12-14: Don't show sort indicators in lists.
 
 1.1.5: Released 2001-11-26
 

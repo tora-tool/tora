@@ -181,7 +181,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   Current=new QLabel(toolbar);
   Current->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
-  toolbar->setStretchableWidget(Current);  
+  toolbar->setStretchableWidget(Current);
 
   Stop=new QToolButton(QPixmap((const char **)stop_xpm),
 		       "Stop current run",
@@ -205,6 +205,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   box=new QVBox(Tabs);
   toolbar=toAllocBar(box,"Explain plans",connection.description());
+  toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);
@@ -221,6 +222,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  "Refresh",
 		  Plans,SLOT(refresh()),
 		  toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar));
 
   CurrentPlan=new toResultPlan(splitter);
 

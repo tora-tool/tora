@@ -390,6 +390,7 @@ void toWorksheet::setup(bool autoLoad)
 		      "Save statistics for later analysis",
 		      this,SLOT(saveStatistics(void)),
 		      stattool);
+      stattool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed));
       stattool->setStretchableWidget(new QLabel(stattool));
     }
     splitter=new QSplitter(Horizontal,StatTab);

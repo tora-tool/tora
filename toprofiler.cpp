@@ -430,9 +430,9 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   Background->setToggleButton(true);
   Background->setIconSet(QIconSet(QPixmap((const char **)background_xpm)));
   QToolTip::add(Background,"Run profiling in background");
-#endif
 
   toolbar->addSeparator();
+#endif
 
   new QToolButton(QPixmap((const char **)execute_xpm),
 		  "Execute current profiling",

@@ -293,7 +293,9 @@ toListView::toListView(QWidget *parent,const char *name)
   setSelectionMode(Extended);
   setAllColumnsShowFocus(true);
   AllTip=new toListTip(this);
+#if 0
   setShowSortIndicator(true);
+#endif
   setSorting(-1);
   Menu=NULL;
   connect(this,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),

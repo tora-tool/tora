@@ -1155,6 +1155,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     std::list<QString> tabs=TabList();
     for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++)
       TuningTool.setConfig(*i,def);
+    toTool::saveConfig();
   }
 
   QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.description());
@@ -1819,6 +1820,7 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
   Types=new QListView(this);
   Types->addColumn("Color");
   Types->addColumn("Wait type");
+  Types->setSorting(-1);
   Types->setAllColumnsShowFocus(true);
   Types->setSelectionMode(QListView::Multi);
   Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -2007,7 +2009,6 @@ void toTuningWait::poll(void)
 	    item->setSelected(First);
 	    types[*i]=typ;
 	    typ++;
-	    Types->setSorting(1);
 	  }
 	  j++;
 	}
