@@ -212,6 +212,10 @@ private:
    * Search & replace dialog if available.
    */
   toSearchReplace *Search;
+  /**
+   * Default tool id
+   */
+  int DefaultTool;
 public:
 
   /** ID of the file menu

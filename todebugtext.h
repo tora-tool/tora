@@ -46,9 +46,8 @@ class toDebug;
 class toBreakpointItem : public QListViewItem {
   int Line;
   int Namespace;
-  toConnection &Connection;
 public:
-  toBreakpointItem(QListView *parent,QListViewItem *after,toConnection &conn,
+  toBreakpointItem(QListView *parent,QListViewItem *after,
 		   const QString &schema,const QString &type,const QString &object,int line);
   void setBreakpoint(void);
   void clearBreakpoint(void);
@@ -62,7 +61,6 @@ class toDebugText : public toHighlightedText {
   QString Schema;
   QString Object;
   QString Type;
-  toConnection &Connection;
   int LastX;
   toDebug *Debugger;
 
@@ -75,7 +73,6 @@ class toDebugText : public toHighlightedText {
   bool hasBreakpoint(int row);
 public:
   toDebugText(QListView *breakpoints,
-	      toConnection &connection,
 	      QWidget *parent,
 	      toDebug *debugger,
 	      const char *name=NULL);

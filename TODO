@@ -35,8 +35,6 @@ Extended functionality:
 * Full support for Oracle 9i
 * Port to Oracle C++ OCCI instead of OTL?
 * Completion on column & function names in editor.
-* Ability to disable tools from options.
-* Ability to select default tool in options.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
 

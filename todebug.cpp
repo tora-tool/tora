@@ -1939,8 +1939,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   RuntimeLog=new toMarkedText(DebugTabs);
   DebugTabs->addTab(RuntimeLog,"&Runtime Log");
 
-  HeadEditor=new toDebugText(Breakpoints,connection,hsplitter,this);
-  BodyEditor=new toDebugText(Breakpoints,connection,hsplitter,this);
+  HeadEditor=new toDebugText(Breakpoints,hsplitter,this);
+  BodyEditor=new toDebugText(Breakpoints,hsplitter,this);
   HeadEditor->hide();
   connect(HeadEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));

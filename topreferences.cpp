@@ -122,7 +122,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   addWidget(item,new toSyntaxSetup(this));
   
   item=new QListBoxText(TabSelection,"Tools");
-  item->setSelectable(false);
+  addWidget(item,new toToolSetting(this));
 
   TabSelection->setCurrentItem(0);
 

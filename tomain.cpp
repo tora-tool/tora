@@ -303,10 +303,20 @@ toMain::toMain()
   int lastPriorityPix=0;
   int lastPriorityMenu=0;
   SQLEditor=-1;
+  DefaultTool=toolID;
+  QString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"");
   for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
+
+    QString tmp=(*i).second->name();
+    tmp+="Enabled";
+    if (toTool::globalConfig(tmp,"Yes").isEmpty())
+      continue;
+
+    if (defName==menuName)
+      DefaultTool=toolID;
 
     int priority=(*i).second->priority();
     if (priority/100!=lastPriorityPix/100&&
@@ -1016,7 +1026,7 @@ bool toMain::close(bool del)
 
 void toMain::createDefault(void)
 {
-  commandCallback(TO_TOOLS);
+  commandCallback(DefaultTool);
 }
 
 void toMain::setCoordinates(int line,int col)

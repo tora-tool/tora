@@ -89,6 +89,7 @@
 #define CONF_CONNECT_SIZE	"ConnectSize"
 #define CONF_CONNECT_CURRENT	"ConnectCurrent"
 #define DEFAULT_CONNECT_SIZE	"20"
+#define CONF_DEFAULT_TOOL	"DefaultTool"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

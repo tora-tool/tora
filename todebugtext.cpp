@@ -51,10 +51,10 @@ TO_NAMESPACE;
 
 #define TO_BREAK_COL 5
 
-toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConnection &conn,
+toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,
 				   const QString &schema,const QString &type,
 				   const QString &object,int line)
-: QListViewItem(parent,after),Connection(conn)
+: QListViewItem(parent,after)
 {
   if (schema.isNull())
     setText(2,"");
@@ -103,9 +103,10 @@ void toBreakpointItem::setBreakpoint(void)
   bool ok=false;
   try {
     clearBreakpoint();
+    toConnection &conn=toCurrentConnection(listView());
     otl_stream str(1,
-		   SQLBreakpoint(Connection),
-		   Connection.connection());
+		   SQLBreakpoint(conn),
+		   conn.connection());
     str<<Namespace;
     str<<text(0).utf8();
     str<<text(2).utf8();
@@ -143,9 +144,10 @@ void toBreakpointItem::clearBreakpoint()
 {
   if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
     try {
+      toConnection &conn=toCurrentConnection(listView());
       otl_stream str(1,
-		     SQLClearBreakpoint(Connection),
-		     Connection.connection());
+		     SQLClearBreakpoint(conn),
+		     conn.connection());
       str<<text(TO_BREAK_COL).toInt();
       int res;
       str>>res;
@@ -184,7 +186,7 @@ static toSQL SQLReadErrors("toDebug:ReadErrors",
 bool toDebugText::readErrors(toConnection &conn)
 {
   try {
-    otl_stream errors(1,SQLReadErrors(Connection),conn.connection());
+    otl_stream errors(1,SQLReadErrors(conn),conn.connection());
     map<int,QString> Errors;
 
     errors<<Schema.utf8();
@@ -211,10 +213,10 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
       ;
   try {
     otl_stream lines(1,
-		     SQLReadSource(Connection),
+		     SQLReadSource(conn),
 		     conn.connection());
     otl_stream errors(1,
-		      SQLReadErrors(Connection),
+		      SQLReadErrors(conn),
 		      conn.connection());
 
     lines<<Schema.utf8();
@@ -256,12 +258,10 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
 }
 
 toDebugText::toDebugText(QListView *breakpoints,
-			 toConnection &connection,
 			 QWidget *parent,
 			 toDebug *debugger,
 			 const char *name)
   : toHighlightedText(parent,name),
-    Connection(connection),
     Debugger(debugger),
     Breakpoints(breakpoints)
 {
@@ -419,10 +419,10 @@ void toDebugText::toggleBreakpoint(int row,bool enable)
       }
     } else if (!enable) {
       if (CurrentItem&&CurrentItem->line()>row)
-	new toBreakpointItem(Breakpoints,NULL,Connection,
+	new toBreakpointItem(Breakpoints,NULL,
 			     Schema,Type,Object,row);
       else
-	new toBreakpointItem(Breakpoints,CurrentItem,Connection,
+	new toBreakpointItem(Breakpoints,CurrentItem,
 			     Schema,Type,Object,row);
       FirstItem=CurrentItem=NULL;
       NoBreakpoints=false;

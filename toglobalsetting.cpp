@@ -62,9 +62,11 @@ TO_NAMESPACE;
 
 #include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
+#include "totoolsettingui.moc"
 
 #include "toglobalsettingui.cpp"
 #include "todatabasesettingui.cpp"
+#include "totoolsettingui.cpp"
 
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   : toGlobalSettingUI(parent,name,fl), toSettingTab("preferences.html#global")
@@ -275,4 +277,59 @@ void toDatabaseSetting::createPlanTable(void)
 			    arg(ExplainPlan->text()).
 			    utf8());
   } TOCATCH
+}
+
+toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
+  : toToolSettingUI(parent,name,fl),toSettingTab("toolsetting.html")
+{
+  map<QString,toTool *> &tools=toTool::tools();
+
+  Enabled->setSorting(0);
+  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+    const char *menuName=(*i).second->menuItem();
+    if(FirstTool.isEmpty())
+      FirstTool=menuName;
+
+    if (menuName)
+      new QListViewItem(Enabled,menuName,(*i).second->name());
+  }
+
+  for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
+    QString tmp=item->text(1);
+    tmp+="Enabled";
+    if(!toTool::globalConfig(tmp,"Yes").isEmpty())
+      item->setSelected(true);
+  }
+
+  changeEnable();
+}
+
+void toToolSetting::changeEnable(void)
+{
+  QString str=DefaultTool->currentText();
+  if (str.isEmpty()) {
+    str=toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool);
+  }
+
+  int id=0;
+  int sel=0;
+  for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      DefaultTool->insertItem(item->text(0),id);
+      if (item->text(0)==str)
+	sel=id;
+      id++;
+    }
+  }
+  DefaultTool->setCurrentItem(sel);
+}
+
+void toToolSetting::saveSetting(void)
+{
+  for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
+    QString str=item->text(1);
+    str+="Enabled";
+    toTool::globalSetConfig(str,item->isSelected()?"Yes":"");
+  }
+  toTool::globalSetConfig(CONF_DEFAULT_TOOL,DefaultTool->currentText());
 }

@@ -11,6 +11,8 @@
 2001-08-07: New connection dialog with connection history.
 2001-08-07: Display wait cursor when query is executed.
 2001-08-07: Set default parameters when doubleclicking on line.
+2001-08-08: Ability to disable tools in options.
+2001-08-08: Ability to select default tool to pop up on new connection.
 
 0.14: Released 2001-08-02
 

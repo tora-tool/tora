@@ -40,6 +40,7 @@
 #include "totool.h"
 #include "toglobalsettingui.h"
 #include "todatabasesettingui.h"
+#include "totoolsettingui.h"
 #include "tohelp.h"
 
 class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
@@ -59,6 +60,15 @@ public:
 
   virtual void saveSetting(void);
   virtual void createPlanTable(void);
+};
+
+class toToolSetting : public toToolSettingUI, public toSettingTab {
+  QString FirstTool;
+public:
+  toToolSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
+
+  virtual void saveSetting(void);
+  virtual void changeEnable(void);
 };
 
 #endif
