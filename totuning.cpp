@@ -1867,9 +1867,9 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
   Types=new QListView(splitter);
   Types->addColumn("Color");
   Types->addColumn("Wait type");
-  Types->addColumn("Delta (ms)");
+  Types->addColumn("Delta (ms/s)");
   Types->addColumn("Total (ms)");
-  Types->addColumn("Delta");
+  Types->addColumn("Delta (1/s)");
   Types->addColumn("Total");
   Types->setColumnAlignment(2,AlignRight);
   Types->setColumnAlignment(3,AlignRight);
@@ -2109,6 +2109,8 @@ void toTuningWait::poll(void)
 	  First=false;
 	}
 
+	time_t now=time(NULL);
+
 	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
 	  toTuningWaitItem *item=dynamic_cast<toTuningWaitItem *>(ci);
 	  if (item) {
@@ -2119,9 +2121,9 @@ void toTuningWait::poll(void)
 	    while(i!=Current.end()&&j!=CurrentTimes.end()&&k!=Labels.end()) {
 	      if (item->text(1)==*k) {
 		item->setColor(col);
-		item->setText(2,QString::number(*i-item->text(3).toDouble()));
+		item->setText(2,QString::number((*i-item->text(3).toDouble())/max(int(now-LastTime),1)));
 		item->setText(3,QString::number(*i));
-		item->setText(4,QString::number(*j-item->text(5).toDouble()));
+		item->setText(4,QString::number((*j-item->text(5).toDouble())/max(int(now-LastTime),1)));
 		item->setText(5,QString::number(*j));
 		break;
 	      }
@@ -2133,14 +2135,13 @@ void toTuningWait::poll(void)
 	  }
 	}
 
-	time_t now=time(NULL);
 	Relative.clear();
 	RelativeTimes.clear();
 
 	std::list<double>::iterator j=LastCurrent.begin();
 	std::list<double>::iterator i=Current.begin();
 	while(i!=Current.end()&&j!=LastCurrent.end()) {
-	  Relative.insert(Relative.end(),((*i)-(*j))/min(int(now-LastTime),1));
+	  Relative.insert(Relative.end(),((*i)-(*j))/max(int(now-LastTime),1));
 	  i++;
 	  j++;
 	}
@@ -2148,7 +2149,7 @@ void toTuningWait::poll(void)
 	j=LastTimes.begin();
 	i=CurrentTimes.begin();
 	while(i!=CurrentTimes.end()&&j!=LastTimes.end()) {
-	  RelativeTimes.insert(RelativeTimes.end(),((*i)-(*j))/min(int(now-LastTime),1));
+	  RelativeTimes.insert(RelativeTimes.end(),((*i)-(*j))/max(int(now-LastTime),1));
 	  i++;
 	  j++;
 	}
@@ -2180,7 +2181,7 @@ void toTuningWait::poll(void)
 static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   "SELECT b.name,\n"
 			   "       SYSDATE,\n"
-			   "       NVL(a.time_waited,0),\n"
+			   "       NVL(a.time_waited,0)*10,\n"
 			   "       NVL(a.total_waits,0),\n"
 			   "       NVL(a.time_waited,0)\n"
 			   "  FROM v$system_event a,\n"
@@ -2191,7 +2192,7 @@ static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   "                     'SQL*Net message from client')\n"
 			   " UNION ALL SELECT b.name,\n"
 			   "       SYSDATE,\n"
-			   "       NVL(a.time_waited,0),\n"
+			   "       NVL(a.time_waited,0)*10,\n"
 			   "       NVL(a.total_waits,0),\n"
 			   "       1\n"
 			   "  FROM v$system_event a,\n"
@@ -2201,7 +2202,7 @@ static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   "                                         'SQL*Net message from client'))\n"
 			   " UNION ALL SELECT s.name,\n"
 			   "       SYSDATE,\n"
-			   "       NVL(s.VALUE,0),\n"
+			   "       NVL(s.VALUE,0)*10,\n"
 			   "       1,\n"
 			   "       NVL(s.VALUE,0)\n"
 			   "  FROM v$sysstat s\n"
