@@ -1296,6 +1296,9 @@ distclean: clean
 	-mv Makefile >/dev/null 2>&1
 	-rm LICENSE.h >/dev/null 2>&1
 	-rm configure.setup >/dev/null 2>&1
+
+# Plugin definitions
+
 __EOT__
 
 	for my $t (sort keys %plugins) {
@@ -1316,7 +1319,7 @@ __EOT__
 
 # Plugin based binary and its plugins
 
-tora-plugin: \
+tora-plugin:\\
 __EOT__
         print MAKEFILE "\ttora";
 	for my $t (sort keys %plugins) {
@@ -1347,7 +1350,7 @@ tora-static: \$(OBJECTS) main.cpp
 
 # The binary for the pluginbased tora
 
-tora: \\
+tora:\\
 __EOT__
 	print MAKEFILE "\tobjs/".join(".o \\\n\tobjs/",sort @source).
 	    ".o\n";
