@@ -499,7 +499,7 @@ void toHighlightedText::checkComplete(void)
 	    token!="UPDATE"&&
 	    token!="FROM"&&
 	    token!="INTO"&&
-	    token[0].isLetterOrNumber()) {
+	    toIsIdent(token[0])) {
 	  name=token;
 	  token=toGetToken(this,curline,curcol,false);
 	  if (token==".")
@@ -609,7 +609,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       return;
     } else {
       QString txt=e->text();
-      if (txt.length()&&txt.at(0).isLetterOrNumber()) {
+      if (txt.length()&&toIsIdent(txt.at(0))) {
 	QString mrk=markedText();
 	mrk+=txt;
 	Completion->clear();

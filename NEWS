@@ -47,6 +47,7 @@
 2001-09-17: Made it possible to use shortkeys in sub worksheets.
 2001-09-17: Added describe under cursor to worksheet.
 2001-09-17: Lots of Oracle 7 improvements.
+2001-09-17: Optimized toResultCols.
 
 1.1.0: Released 2001-09-09
 

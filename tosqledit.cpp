@@ -92,7 +92,8 @@ public:
   }
   virtual void customSetup(int toolid)
   {
-    toMainWidget()->editMenu()->insertItem("&Edit SQL",toolid);
+    toMainWidget()->editMenu()->insertItem(QPixmap((const char **)tosqledit_xpm),
+					   "&Edit SQL",toolid);
     toMainWidget()->registerSQLEditor(toolid);
   }
   void closeWindow(void)

@@ -34,6 +34,8 @@
  *
  ****************************************************************************/
 
+#include <map>
+
 #include "toresultcols.h"
 #include "tomain.h"
 #include "tosql.h"
@@ -76,8 +78,8 @@ public:
     try {
       if (view->connection().provider()!="Oracle")
 	return QString::null;
-      toQList resLst=toQuery::readQuery(view->connection(),SQLInfo,
-					text(10),text(11),text(1));
+      toQList resLst=toQuery::readQueryNull(view->connection(),SQLInfo,
+					    text(10),text(11),text(1));
       QString result("<B>");
       result+=(text(1));
       result+=("</B><BR><BR>");
@@ -181,10 +183,9 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
 }
 
 static toSQL SQLComment("toResultCols:Comments",
-			"SELECT Comments FROM All_Col_Comments\n"
+			"SELECT Column_name,Comments FROM All_Col_Comments\n"
 			" WHERE Owner = :f1<char[100]>\n"
-			"   AND Table_Name = :f2<char[100]>\n"
-			"   AND Column_Name = :f3<char[100]>",
+			"   AND Table_Name = :f2<char[100]>",
 			"Display column comments");
 
 void toResultCols::query(const QString &,const toQList &param)
@@ -258,7 +259,14 @@ void toResultCols::query(const QString &,const toQList &param)
     str.append(" WHERE NULL = NULL");
 
     toQuery Query(conn,str);
-    toQuery Comment(conn);
+    std::map<QString,QString> comments;
+    if (type==Oracle) {
+      toQuery comment(conn,SQLComment,Owner,TableName);
+      while(!comment.eof()) {
+	QString col=comment.readValue();
+	comments[col]=comment.readValue();
+      }
+    }
 
     toQDescList desc=Query.describe();
 
@@ -281,10 +289,7 @@ void toResultCols::query(const QString &,const toQList &param)
       toPush(lst,toQValue(Owner));
       toPush(lst,toQValue(TableName));
       toPush(lst,toQValue((*i).Name));
-      if(type==Oracle) {
-	Comment.execute(SQLComment,lst);
-	LastItem->setText(4,Comment.readValueNull());
-      }
+      LastItem->setText(4,comments[(*i).Name]);
     }
   } TOCATCH
   updateContents();

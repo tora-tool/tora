@@ -1160,7 +1160,7 @@ void toWorksheet::describe(void)
   QString owner;
   QString table;
   QString token=Editor->textLine(curline);
-  if (curcol>0&&token[curcol-1].isLetterOrNumber())
+  if (curcol>0&&toIsIdent(token[curcol-1]))
     token=toGetToken(Editor,curline,curcol,false);
   else
     token=QString::null;
