@@ -31,6 +31,12 @@ Extended functionality:
 * Segments view in storage view.
 * Drag & drop from/to toResultContents.
 
+Windows problems:
+* New window coredump
+* Saving of settings
+* Locating tnsnames.ora without ORACLE_HOME
+* Can't abort queries when using QThreads
+
 New tools:
 * Info about current session.
       Display parameters (v$param...)

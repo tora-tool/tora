@@ -56,6 +56,7 @@ my $QtDir;
 my $QtInclude;
 my $QtLibDir;
 my $QtLib;
+my $QtLibOrig;
 my $QtLibShared;
 my $QtLibStatic;
 my $StdCppLibStatic;
@@ -65,6 +66,9 @@ my $ForceTarget=0;
 my $Perl=`which perl`;
 chomp $Perl;
 my $Linux;
+my $KDEApplication;
+my $KDEInclude;
+my $KDELibs;
 
 $QtDir=$ENV{QTDIR};
 
@@ -74,7 +78,7 @@ for (@ARGV) {
     } elsif (/^--with-qt-include=(.*)$/) {
 	$QtInclude=$1;
     } elsif (/^--with-qt-libs=(.*)$/) {
-	$QtLib=$1;
+	$QtLibOrig=$1;
     } elsif (/^--with-qt-moc=(.*)$/) {
 	$MOC=$1;
     } elsif (/^--prefix=(.*)$/) {
@@ -91,22 +95,31 @@ for (@ARGV) {
     } elsif (/^--with-static$/) {
 	$Target="tora-static";
 	$ForceTarget=1;
+    } elsif (/^--with-kde$/) {
+	$KDEApplication=1;
+    } elsif (/^--with-kde-include=(.*)$/) {
+	$KDEInclude=$1;
+    } elsif (/^--with-kde-libs=(.*)$/) {
+	$KDELibs=$1;
     } else {
 	print <<__USAGE__;
 configure [options...]
 
 Options can be any of the following:
 
---prefix          Specify base directory of install
---prefix-bin      Binary directory of install
---prefix-lib      Library directory of install
---with-qt         Specify Qt base directory
---with-qt-moc     Specify moc command to use
---with-qt-include Specify Qt include directory
---with-qt-libs    Specify Qt library directory
---with-gcc        Specify which GCC compiler to use
---with-mono       Force monolithic compilation
---with-static     Force static binary compilation
+--prefix           Specify base directory of install
+--prefix-bin       Binary directory of install
+--prefix-lib       Library directory of install
+--with-qt          Specify Qt base directory
+--with-qt-moc      Specify moc command to use
+--with-qt-include  Specify Qt include directory
+--with-qt-libs     Specify Qt library directory
+--with-gcc         Specify which GCC compiler to use
+--with-mono        Force monolithic compilation
+--with-static      Force static binary compilation
+--with-kde         Compile as KDE application (Requires KDE 2.2 or later)
+--with-kde-include Where to find KDE include files
+--with-kde-libs    Where to find KDE libraries
 
 __USAGE__
         exit(2);
@@ -240,6 +253,7 @@ __TEMP__
     $QtInclude=findFile("^qglobal\\.h\$",sub {
 	                                     return !system("grep -E \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
+			$QtInclude,
 			$QtDir."/include",
 			"/usr/include",
 			"/usr/include/qt2",
@@ -261,6 +275,7 @@ __TEMP__
     $QtLib=findFile("^libqt2\\.so",sub {
 	                                   return -f $_[0] && ! -l $_[0];
 				       },
+		    $QtLibOrig,
 		    $QtDir."/lib",
 		    "/usr/lib",
 		    "/usr/lib/qt2",
@@ -279,6 +294,7 @@ __TEMP__
 	$QtLib=findFile("^libqt\\.so\\.2",sub {
 	                                      return -f $_[0] && ! -l $_[0];
 					  },
+			$QtLibOrig,
 			$QtDir."/lib",
 			"/usr/lib",
 			"/usr/lib/qt2",
@@ -353,8 +369,6 @@ __TEMP__
 	$StdCppLibStatic="";
     }
 
-    
-
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     if ($ORACLE_RELEASE =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
@@ -374,6 +388,63 @@ __TEMP__
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
     $Includes.="\"-I".$QtInclude."\"";
+
+    if ($KDEApplication) {
+	$KDEInclude=findFile("^kglobal\\.h\$",sub {
+	                                          return -f $_[0] && ! -l $_[0];
+					      },
+			     $KDEInclude,
+			     $ENV{KDEDIR}."/include",
+			     "/usr/include",
+			     "/usr/include/kde",
+			     "/usr/include/kde2",
+			     "/usr/local/kde/include",
+			     "/usr/local/kde2/include",
+			     "/opt/kde/include",
+			     "/opt/kde2/include",
+			     "/usr/local/include",
+			     "/usr/local/include/kde",
+			     "/usr/local/include/kde2"
+			     );
+
+	if (!-d $KDEInclude) {
+	    print "Couldn't find include files for KDE, use --with-kde-include to specify\n";
+	    exit(2);
+	}
+	print "KDE includefiles at $KDEInclude\n";
+
+	$Includes.=" \"-I".$KDEInclude."\"";
+
+	$KDELibs=findFile("^libDCOP.so",sub {
+                                   	    return -f $_[0];
+					},
+			     $KDELibs,
+			     $ENV{KDEDIR}."/lib",
+			     "/usr/lib",
+			     "/usr/lib/kde",
+			     "/usr/lib/kde2",
+			     "/usr/local/kde/lib",
+			     "/usr/local/kde2/lib",
+			     "/opt/kde/lib",
+			     "/opt/kde2/lib",
+			     "/usr/local/lib",
+			     "/usr/local/lib/kde",
+			     "/usr/local/lib/kde2"
+			     );
+
+	if (!-d $KDELibs) {
+	    print "Couldn't find libraries files for KDE, use --with-kde-libs to specify\n";
+	    exit(2);
+	}
+	print "KDE libraries at $KDELibs\n";
+
+	$Libs.=" -lkdecore -lkdeui -lDCOP";
+	$LFlags.=" \"-L".$KDELibs."\"";
+	if ($Linux) {
+	    $LFlags.=" -Xlinker \"--rpath=$KDELibs\"";
+	}
+	print "Generating KDE application\n";
+    }
 
     if (!-f $CC) {
 	findFile("^(gcc|cc|kgcc)\$",\&finalTest,
@@ -532,14 +603,21 @@ __EOT__
 	}
 	print MAKEFILE "DEFINES+=-DTO_NAMESPACE=\"using namespace std\"\n";
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
-	print MAKEFILE "\n";
-
-	print MAKEFILE "# How to generate kde files, either \$PERL fixkde.pl (If TO_KDE is set) or cat\n";
-	print MAKEFILE "FIXKDE=cat\n";
+	if ($KDEApplication) {
+	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
+	}
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Where to find perl on your system\n";
 	print MAKEFILE "PERL=$Perl\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# How to generate kde files, either \$PERL fixkde.pl (If TO_KDE is set) or cat\n";
+	if ($KDEApplication) {
+	    print MAKEFILE "FIXKDE=fixkde.pl\n";
+	} else {
+	    print MAKEFILE "FIXKDE=cat\n";
+	}
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Comment out this line if you want more output from compile\n";
