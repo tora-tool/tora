@@ -1002,8 +1002,13 @@ static toSQL SQLOverviewClientTotal8("toTuning:Overview:ClientTotal",
 				     "8.0");
 
 static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
-				  "select count(1) from v$datafile",
+				  "select (select count(1) from v$datafile)+(select count(1) from v$tempfile) from dual",
 				  "Number of datafiles",
+				  "8.0");
+
+static toSQL SQLOverviewDatafiles8("toTuning:Overview:Datafiles",
+				  "select count(1) from v$datafile",
+				  QString::null,
 				  "8.0");
 
 static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
@@ -1676,9 +1681,25 @@ static toSQL SQLFileIO("toTuning:FileIO",
 		       "       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"
 		       "  from v$tablespace a,v$datafile b,v$filestat c\n"
 		       " where a.ts# = b.ts# and b.file# = c.file#\n"
-		       " order by a.name",
+		       "union\n",
+		       "select a.name,b.name,sysdate,\n"
+		       "       c.phyrds,c.phywrts,c.phyblkrd,c.phyblkwrt,\n"
+		       "       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"
+		       "  from v$tablespace a,v$tempfile b,v$tempstat c\n"
+		       " where a.ts# = b.ts# and b.file# = c.file#\n"
+		       " order by 1,2",
 		       "Get file for files and tablespaces. Must have same columns.",
-		       "8.0");
+		       "8.1");
+
+static toSQL SQLFileIO8("toTuning:FileIO",
+			"select a.name,b.name,sysdate,\n"
+			"       c.phyrds,c.phywrts,c.phyblkrd,c.phyblkwrt,\n"
+			"       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"
+			"  from v$tablespace a,v$datafile b,v$filestat c\n"
+			" where a.ts# = b.ts# and b.file# = c.file#\n"
+			" order by a.name",
+			QString::null,
+			"8.0");
 
 toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
   : QScrollView(parent,name,fl)
