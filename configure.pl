@@ -187,6 +187,7 @@ int main(int argv,char **argc)
 	printf ("Requires Qt version >= 2.2 (Found %s)\n",QT_VERSION_STR);
 	exit(2);
     }
+#if 0
     if (GCCVersion==2&&GCCVersionMinor==96) {
 	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\n"
 	       "has problems with exception handling and RTTI. This means you can not compile\n"
@@ -194,6 +195,7 @@ int main(int argv,char **argc)
 	       "Mandrake 8.1, but it still has issues.\n");
 	return 0;
     }
+#endif
     return 0;
 }
 __TEMP__
