@@ -770,6 +770,11 @@ void toDebug::execute(void)
 	case waitingEnd:
 	  if (token==",")
 	    state=name;
+	  else {
+	    if (token[0]=='\''&&token.length()>=2)
+	      token=token.mid(1,token.length()-2);
+	    toParamGet::setDefault((*cp).Name,token);
+	  }
 	  break;
 	case done:
 	case returnType:

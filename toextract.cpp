@@ -78,6 +78,7 @@ toExtract::toExtract(toConnection &conn,QWidget *parent)
   Parallel=true;
   Contents=true;
   Comments=true;
+  Partition=true;
 
   Schema="1";
 
@@ -1919,7 +1920,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
       arg(degree).
       arg(instances);
   }
-  if (partitioned == "YES"&&Partition)
+  if (partitioned == "YES")
     return createPartitionedIndex(schema,owner,name,ret);
 
   toUnShift(storage,toQValue(""));
@@ -1981,7 +1982,7 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
     addDescription(lst,ctx,"PARALLEL",QString("DEGREE %1").arg(degree));
     addDescription(lst,ctx,"PARALLEL",QString("INSTANCES %1").arg(instances));
   }
-  if (partitioned == "YES"&&Partition) {
+  if (partitioned == "YES") {
     describePartitionedIndex(lst,ctx,schema,owner,name);
     return;
   }
@@ -2299,7 +2300,7 @@ QString toExtract::keyColumns(const QString &owner,const QString &name,
 			      const QString &type,const QString &table)
 {
   toQuery inf(Connection,toSQL::string(SQLKeyColumns,Connection).arg(table),
-	      owner,name,type.upper());
+	      name,owner,type.upper());
   QString ret;
   bool first=true;
   while(!inf.eof()) {
@@ -3158,11 +3159,11 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
   QString iot_type(inf.readValue());
 
   if (iot_type=="IOT") {
-    if (partitioned=="YES"&&Partition)
+    if (partitioned=="YES")
       return createPartitionedIOT(schema,owner,name);
     else
       return createIOT(schema,owner,name);
-  } else if (partitioned=="YES"&&Partition)
+  } else if (partitioned=="YES")
     return createPartitionedTable(schema,owner,name);
 
   toQList result=toQuery::readQueryNull(Connection,SQLTableInfo,name,owner);
@@ -3188,12 +3189,12 @@ void toExtract::describeTable(std::list<QString> &lst,
   ctx.insert(ctx.end(),name.lower());
 
   if (iot_type=="IOT"&&Indexes) {
-    if (partitioned=="YES"&&Partition)
+    if (partitioned=="YES")
       describePartitionedIOT(lst,ctx,schema,owner,name);
     else
       describeIOT(lst,ctx,schema,owner,name);
     return;
-  } else if (partitioned=="YES"&&Partition) {
+  } else if (partitioned=="YES") {
     describePartitionedTable(lst,ctx,schema,owner,name);
     return;
   }
@@ -3450,16 +3451,18 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
     }
   }
 
-  toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
-  if (!inf.eof())
-    throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
-  QString index(inf.readValue());
-  ret+=
-    "PARTITION BY RANGE\n"
-    "(\n    ";
-  ret+=partitionKeyColumns(owner,name,"TABLE");
-  ret+="\n)\n";
-  ret+=rangePartitions(owner,index,"NONE","IOT");
+  if (Partition) {
+    toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
+    if (!inf.eof())
+      throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+    QString index(inf.readValue());
+    ret+=
+      "PARTITION BY RANGE\n"
+      "(\n    ";
+    ret+=partitionKeyColumns(owner,name,"TABLE");
+    ret+="\n)\n";
+    ret+=rangePartitions(owner,index,"NONE","IOT");
+  }
   ret+=createComments(schema,owner,name);
   return ret;
 }
@@ -3471,13 +3474,14 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
   toQList result=toQuery::readQueryNull(Connection,SQLPartitionedIOTInfo,
 					QString::number(BlockSize),name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
-  toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
-  if (!inf.eof())
-    throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
-  QString index(inf.readValue());
-  addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
-  describePartitions(lst,ctx,owner,index,"NONE","IOT");
-  describeComments(lst,ctx,schema,owner,name);
+  if (Partition) {
+    toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
+    if (!inf.eof())
+      throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+    QString index(inf.readValue());
+    addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
+    describePartitions(lst,ctx,owner,index,"NONE","IOT");
+  }
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
     toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
@@ -3908,80 +3912,83 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
   }
 
   QString ret=createTableText(storage,schema,owner,name);
-  toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
-  QString partitionType    (toShift(type));
-  QString partitionCount   (toShift(type));
-  QString subPartitionType (toShift(type));
-  QString subPartitionCount(toShift(type));
 
-  ret+=QString("PARTITION BY %1\n(\n    ").arg(partitionType);
-  ret+=partitionKeyColumns(owner,name,"TABLE");
-  ret+="\n)\n";
+  if (Partition) {
+    toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
+    QString partitionType    (toShift(type));
+    QString partitionCount   (toShift(type));
+    QString subPartitionType (toShift(type));
+    QString subPartitionCount(toShift(type));
 
-  if (partitionType=="RANGE") {
-    if (subPartitionType=="HASH") {
-      ret+="SUBPARTITIONED BY HASH\n(\n    ";
-      ret+=subPartitionKeyColumns(owner,name,"TABLE");
-      ret+="\n)\nSUBPARTITIONS ";
-      ret+=subPartitionCount;
-      ret+="\n";
-    }
-    ret+="(\n";
+    ret+=QString("PARTITION BY %1\n(\n    ").arg(partitionType);
+    ret+=partitionKeyColumns(owner,name,"TABLE");
+    ret+="\n)\n";
 
-    toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
-
-    QString comma="    ";
-    while(segment.size()>0) {
-      toQList storage;
-      QString partition=toShift(segment);
-      QString highValue=toShift(segment);
-      toPush(storage,toQValue("      "));
-      toPush(storage,toQValue(organization));
-      for(int i=0;i<16;i++)
-	toPush(storage,toShift(segment));
-
-      ret+=comma;
-      ret+=QString("PARTITION %1 VALUES LESS THAN\n"
-		   "      (\n"
-		   "        %2\n"
-		   "      )\n").arg(partition.lower()).arg(highValue.lower());
-      ret+=segmentAttributes(storage);
-      comma="  , ";
-
+    if (partitionType=="RANGE") {
       if (subPartitionType=="HASH") {
-	toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
-					    name,partition,owner);
-	bool first=true;
-	ret+="        (\n            ";
-	while(subs.size()>0) {
-	  if (first)
-	    first=false;
-	  else
-	    ret+="\n          , ";
-	  ret+=QString("SUBPARTITION %2 TABLESPACE %1").
-	    arg(QString(toShift(subs)).lower()).
-	    arg(QString(toShift(subs)).lower());
-	}
-	ret+="\n        )\n";
+	ret+="SUBPARTITIONED BY HASH\n(\n    ";
+	ret+=subPartitionKeyColumns(owner,name,"TABLE");
+	ret+="\n)\nSUBPARTITIONS ";
+	ret+=subPartitionCount;
+	ret+="\n";
       }
-    }
-  } else {
-    toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
-					name,owner);
-    bool first=true;
-    ret+="(\n    ";
-    while(hash.size()>0) {
-      if (first)
-	first=false;
-      else
-	ret+="\n  , ";
-      ret+=QString("PARTITION %2 TABLESPACE %1").
-	arg(QString(toShift(hash)).lower()).
-	arg(QString(toShift(hash)).lower());
+      ret+="(\n";
+
+      toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
+
+      QString comma="    ";
+      while(segment.size()>0) {
+	toQList storage;
+	QString partition=toShift(segment);
+	QString highValue=toShift(segment);
+	toPush(storage,toQValue("      "));
+	toPush(storage,toQValue(organization));
+	for(int i=0;i<16;i++)
+	  toPush(storage,toShift(segment));
+
+	ret+=comma;
+	ret+=QString("PARTITION %1 VALUES LESS THAN\n"
+		     "      (\n"
+		     "        %2\n"
+		     "      )\n").arg(partition.lower()).arg(highValue.lower());
+	ret+=segmentAttributes(storage);
+	comma="  , ";
+
+	if (subPartitionType=="HASH") {
+	  toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					      name,partition,owner);
+	  bool first=true;
+	  ret+="        (\n            ";
+	  while(subs.size()>0) {
+	    if (first)
+	      first=false;
+	    else
+	      ret+="\n          , ";
+	    ret+=QString("SUBPARTITION %2 TABLESPACE %1").
+	      arg(QString(toShift(subs)).lower()).
+	      arg(QString(toShift(subs)).lower());
+	  }
+	  ret+="\n        )\n";
+	}
+      }
+    } else {
+      toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					  name,owner);
+      bool first=true;
+      ret+="(\n    ";
+      while(hash.size()>0) {
+	if (first)
+	  first=false;
+	else
+	  ret+="\n  , ";
+	ret+=QString("PARTITION %2 TABLESPACE %1").
+	  arg(QString(toShift(hash)).lower()).
+	  arg(QString(toShift(hash)).lower());
+      }
     }
   }
 
-  ret+=";\n\n";
+  ret+=")\n;\n\n";
   ret+=createComments(schema,owner,name);
   return ret;
 }
@@ -4001,62 +4008,65 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
   }
 
   describeTableText(lst,ctx,storage,schema,owner,name);
-  toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
-  QString partitionType    (toShift(type));
-  QString partitionCount   (toShift(type));
-  QString subPartitionType (toShift(type));
-  QString subPartitionCount(toShift(type));
 
-  addDescription(lst,ctx,QString("PARTITION BY %1 (%2)").
-		 arg(partitionType).
-		 arg(partitionKeyColumns(owner,name,"TABLE")));
+  if (Partition) {
+    toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
+    QString partitionType    (toShift(type));
+    QString partitionCount   (toShift(type));
+    QString subPartitionType (toShift(type));
+    QString subPartitionCount(toShift(type));
 
-  if (partitionType=="RANGE") {
-    if (subPartitionType=="HASH") {
-      addDescription(lst,ctx,QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
-		     arg(subPartitionKeyColumns(owner,name,"TABLE")).
-		     arg(subPartitionCount));
-    }
+    addDescription(lst,ctx,QString("PARTITION BY %1 (%2)").
+		   arg(partitionType).
+		   arg(partitionKeyColumns(owner,name,"TABLE")));
 
-    toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
-
-    while(segment.size()>0) {
-      toQList storage;
-      QString partition=toShift(segment);
-      QString highValue=toShift(segment);
-      toPush(storage,toQValue("      "));
-      toPush(storage,toQValue(organization));
-      for(int i=0;i<16;i++)
-	toPush(storage,toShift(segment));
-
-      std::list<QString> cctx=ctx;
-      cctx.insert(cctx.end(),"PARTITION");
-      cctx.insert(cctx.end(),partition.lower());
-      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
-		     arg(highValue.lower()));
-      describeAttributes(lst,cctx,storage);
-
+    if (partitionType=="RANGE") {
       if (subPartitionType=="HASH") {
-	toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
-					    name,partition,owner);
-	while(subs.size()>0) {
-	  QString subpart=QString(toShift(subs)).lower();
-	  QString tabspac=toShift(subs);
-	  addDescription(lst,cctx,"SUBPARTITION",subpart);
-	  addDescription(lst,cctx,"SUBPARTITION",subpart,
-			 QString("TABLESPACE %1").arg(tabspac));
+	addDescription(lst,ctx,QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
+		       arg(subPartitionKeyColumns(owner,name,"TABLE")).
+		       arg(subPartitionCount));
+      }
+
+      toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
+
+      while(segment.size()>0) {
+	toQList storage;
+	QString partition=toShift(segment);
+	QString highValue=toShift(segment);
+	toPush(storage,toQValue("      "));
+	toPush(storage,toQValue(organization));
+	for(int i=0;i<16;i++)
+	  toPush(storage,toShift(segment));
+
+	std::list<QString> cctx=ctx;
+	cctx.insert(cctx.end(),"PARTITION");
+	cctx.insert(cctx.end(),partition.lower());
+	addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
+		       arg(highValue.lower()));
+	describeAttributes(lst,cctx,storage);
+
+	if (subPartitionType=="HASH") {
+	  toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					      name,partition,owner);
+	  while(subs.size()>0) {
+	    QString subpart=QString(toShift(subs)).lower();
+	    QString tabspac=toShift(subs);
+	    addDescription(lst,cctx,"SUBPARTITION",subpart);
+	    addDescription(lst,cctx,"SUBPARTITION",subpart,
+			   QString("TABLESPACE %1").arg(tabspac));
+	  }
 	}
       }
-    }
-  } else {
-    toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
-					name,owner);
-    while(hash.size()>0) {
-      QString partition=QString(toShift(hash)).lower();
-      QString tablespac=toShift(hash);
-      addDescription(lst,ctx,"PARTITION",partition);
-      addDescription(lst,ctx,"PARTITION",partition,
-		     QString("TABLESPACE %1").arg(tablespac));
+    } else {
+      toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					  name,owner);
+      while(hash.size()>0) {
+	QString partition=QString(toShift(hash)).lower();
+	QString tablespac=toShift(hash);
+	addDescription(lst,ctx,"PARTITION",partition);
+	addDescription(lst,ctx,"PARTITION",partition,
+		       QString("TABLESPACE %1").arg(tablespac));
+      }
     }
   }
 

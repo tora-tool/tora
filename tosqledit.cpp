@@ -62,6 +62,7 @@
 #include "toworksheet.h"
 #include "tosqledit.h"
 #include "toconnection.h"
+#include "toresultview.h"
 
 #include "tosqledit.moc"
 
@@ -171,7 +172,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
-  Statements=new QListView(splitter);
+  Statements=new toListView(splitter);
   Statements->setRootIsDecorated(true);
   Statements->addColumn("Text Name");
   Statements->setSorting(0);

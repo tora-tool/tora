@@ -88,7 +88,7 @@ void toResultExtract::query(const QString &sql,const toQList &param)
 
     std::list<QString> objects;
 
-    if (type=="TABLE") {
+    if (type=="TABLE"||type=="TABLE PARTITION") {
       objects.insert(objects.end(),"TABLE FAMILY:"+owner+"."+name);
       objects.insert(objects.end(),"TABLE REFERENCES:"+owner+"."+name);
     } else if (type.startsWith("PACKAGE")&&Prompt) {

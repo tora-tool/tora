@@ -31,6 +31,9 @@
 2001-09-30: Fixed problem with need commit flag not being cleared.
 2001-10-01: Fixed problem with default parameters in debugger.
 2001-10-01: List synonyms owner or pointing to objects owner by user.
+2001-10-01: Set default value in param get in debugger.
+2001-10-01: Use toListView in sql editor.
+2001-10-01: Fixed some partition issues in toExtract.
 
 1.1.1: 2001-09-24
 
