@@ -514,67 +514,6 @@ void toDebug::targetTask::run(void)
   Parent.ChildSemaphore.up();
 }
 
-static struct toBlock {
-  int Pos;
-  char *Start;
-  bool WantEnd;
-  bool WantSemi;
-  bool CloseBlock;
-  bool ChangeDecl;
-  bool Declaration;
-  bool SeparateType;
-  char *TypeName;
-} Blocks[] = { { 0,"FUNCTION",  false,false,false,true ,true ,true , "Function"  }, // Must be first in list
-	       { 0,"BEGIN",	true ,false,false,true ,false,false, NULL        },
-	       { 0,"IF",	true ,false,false,false,false,false, NULL        },
-	       { 0,"LOOP",	true ,false,false,false,false,false, NULL        },
-	       { 0,"WHILE",	true ,false,false,false,false,false, NULL        },
-	       { 0,"DECLARE",	true ,false,false,true ,true ,false, NULL        },
-	       { 0,"PROCEDURE", false,false,false,true ,true ,true , "Procedure" },
-	       { 0,"AS",	true ,false,false,true ,true ,false, NULL        },
-	       { 0,"IS",	true ,false,false,true ,true ,false, NULL        },
-	       { 0,"PACKAGE",   true ,false,false,true ,true ,true , "Package"   },
-	       { 0,"TYPE",      false,false,false,false,false,true , "Type"      },
-	       { 0,"CURSOR",    false,false,false,false,false,true , "Cursor"    },
-	       { 0,"END",	false,true ,true ,false,false,false, NULL        },
-	       { 0,NULL,	false,false,false,false,false,false, NULL        }
-};
-
-static void toClearBlocks(void)
-{
-  for(int i=0;Blocks[i].Start;i++)
-    Blocks[i].Pos=0;
-}
-
-static QListViewItem *toFindType(QListViewItem *parent,const QString &type)
-{
-  QString dsc;
-  if (type.isEmpty())
-    dsc=qApp->translate("toDebug","Misc");
-  else
-    dsc=type;
-
-  {
-    for(QListViewItem *item=parent->firstChild();item;item=item->nextSibling())
-      if (item->text(0)==dsc)
-        return item;
-  }
-
-  QListViewItem *lastItem=NULL;
-  {
-    for(QListViewItem *item=parent->firstChild();item;item=item->nextSibling()) {
-      if (dsc<item->text(0))
-        break;
-      lastItem=item;
-    }
-  }
-  QListViewItem *item=new QListViewItem(parent,lastItem,dsc);
-#ifndef AUTOEXPAND
-  item->setSelectable(false);
-#endif
-  return item;
-}
-
 static QListViewItem *toLastItem(QListViewItem *parent) {
   QListViewItem *lastItem=NULL;
   for (QListViewItem *item=parent->firstChild();item;item=item->nextSibling())
@@ -923,6 +862,74 @@ int toDebug::sync(void)
   return -1;
 }
 
+static struct TypeMapType {
+  char *Type;
+  char *Description;
+  bool WantName;
+} TypeMap[] = { { "FUNCTION",  "Function",   true}, // Must be first in list
+		{ "PROCEDURE", "Procedure",  true},
+		{ "PACKAGE",   "Package",    true},
+		{ "TYPE",      "Type",       true},
+		{ "CURSOR",    "Cursor",     true},
+		{ "IF",        "Conditional",false},
+		{ "LOOP",      "Loop",       false},
+		{ "WHILE",     "Loop",       false},
+		{ "FOR",       "Loop",       false},
+		{ NULL,	       NULL,         false}
+};
+
+static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,int &line,QString &name)
+{
+  if (statements.Type==toSQLParse::statement::Keyword||
+      statements.Type==toSQLParse::statement::Token) {
+    line=statements.Line;
+    if (name.isEmpty()) {
+      name=statements.String.upper();
+
+      int j;
+      for(j=0;TypeMap[j].Type&&TypeMap[j].Type!=name;j++)
+	;
+      if(TypeMap[j].Type)
+	name=TypeMap[j].Description;
+      else
+	name="Anonymous";
+
+      if (onlyNames&&!TypeMap[j].WantName) {
+	name=QString::null;
+	return true;
+      }
+
+      return !TypeMap[j].WantName;
+    } else if (statements.String.upper()!="BODY") {
+      name+=" "+statements.String;
+      return true;
+    }
+  }
+  for(std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();i!=statements.subTokens().end();i++) {
+    bool ret=FindKeyword(*i,onlyNames,line,name);
+    if (ret)
+      return ret;
+  }
+  return false;
+}
+
+void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *parent)
+{
+  QListViewItem *item=NULL;
+  int line;
+  QString name;
+  if (!FindKeyword(statements,statements.Type==toSQLParse::statement::Statement,line,name)||name.isNull())
+    return;
+
+  item=new toContentsItem(parent,name,line);
+
+  std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();
+  for(i++;i!=statements.subTokens().end();i++) {
+    if ((*i).Type==toSQLParse::statement::Block||(*i).Type==toSQLParse::statement::Statement)
+      updateContent(*i,item);
+  }
+}
+
 void toDebug::updateContent(bool body)
 {
   toHighlightedText *current;
@@ -934,172 +941,16 @@ void toDebug::updateContent(bool body)
     topName=tr("Head");
     current=HeadEditor;
   }
-  
-  enum {
-    normal,
-    endOfStatement,
-    space,
-    firstWord,
-    inString,
-  } state,beforeState=normal;
 
-  {
-    for (QListViewItem *item=Contents->firstChild();item;item=item->nextSibling()) {
-      if (item->text(0)==topName) {
-        delete item;
-        break;
-      }
-    }
-  }
-  QListViewItem *parent;
-  parent=new QListViewItem(Contents,NULL);
+  toSQLParse::editorTokenizer tokenizer(current);
+  std::list<toSQLParse::statement> statements=toSQLParse::parse(tokenizer);
+
+  QListViewItem *parent=new QListViewItem(Contents,NULL);
   parent->setText(0,topName);
-#ifndef AUTOEXPAND
-  parent->setSelectable(false);
-#endif
-  parent->setOpen(true);
-  QListViewItem *item=NULL;
 
-  QChar stringEnd;
-  std::stack<QString> parentType;
-  std::stack<bool> parentDecl;
-  std::stack<QListViewItem *> parentItem;
-  QString type;
-  bool declaration=true;
-  state=space;
-  int startFirst=0;
-  bool firstIgnore=true;
-
-  QString is(QString::fromLatin1("IS"));
-  for(int cline=0;cline<current->numLines();cline++) {
-    QString line=current->textLine(cline);
-    QChar lc='\n';
-    toClearBlocks();
-    for (unsigned int i=0;i<line.length();i++) {
-      QChar c=line.at(i);
-      QChar nc;
-      if (i==line.length()-1)
-	nc='\n';
-      else
-	nc=line.at(i+1);
-      if (state!=inString&&c=='-'&&nc=='-') {
-	i=line.length();
-      } else {
-	switch(state) {
-	case space:
-	  if (c.isSpace())
-	    break;
-	  startFirst=i;
-	  state=firstWord;
-	case firstWord:
-	  if (!toIsIdent(c))
-	    state=normal;
-	case normal:
-	  switch(c.latin1()) {
-	  case '\'':
-	  case '\"':
-	    beforeState=state;
-	    state=inString;
-	    stringEnd=c;
-	    break;
-	  case ';':
-	    state=space;
-	    type="";
-	    break;
-	  default:
-	    for(int j=0;Blocks[j].Start;j++) {
-	      toBlock &cb=Blocks[j];
-	      if ((cb.Pos>0||!toIsIdent(lc))&&cb.Start[cb.Pos]==c.upper()) {
-		cb.Pos++;
-		if (!cb.Start[cb.Pos]) {
-		  if (!toIsIdent(nc)&&(is!=QString::fromLatin1(cb.Start)||
-				       type==QString::fromLatin1("Procedure")||
-				       type==QString::fromLatin1("Function"))) { // IS is a special case, only calid after procedure or function
-		    if (cb.WantEnd&&(!declaration||cb.Declaration)) { // Ignore begin after declare
-		      parentDecl.push(declaration);
-		      parentType.push(type);
-		      parentItem.push(parent);
-		      if (!declaration) {
-			QListViewItem *tp=toFindType(parent,tr("Anonymous"));
-			item=new toContentsItem(tp,QString::fromLatin1(cb.Start),cline);
-		      }
-		      if (item) {
-			parent=item;
-			item=NULL;
-		      }
-		    }
-
-		    if (cb.CloseBlock) {
-		      if (parentType.size()>0) {
-			type=parentType.top();
-			declaration=parentDecl.top();
-			parent=parentItem.top();
-			parentDecl.pop();
-			parentType.pop();
-			parentItem.pop();
-		      } else {
-			type="";
-			declaration=true;
-		      }
-		    }
-		    if (cb.ChangeDecl)
-		      declaration=cb.Declaration;
-		    if (cb.WantSemi) {
-		      state=endOfStatement;
-		      break;
-		    }
-		    if (cb.SeparateType)
-		      type=cb.TypeName;
-		    else
-		      type=QString::null;
-		    state=space;
-		  } else
-		    cb.Pos=0;
-		}
-	      } else
-		cb.Pos=0;
-	    }
-	    if(!toIsIdent(nc)&&state==firstWord&&declaration) {
-	      if (firstIgnore) // Usually procude/package definition, don't want that one.
-		firstIgnore=false;
-	      else {
-		QString str=line;
-		str=str.left(i+1);
-		str=str.right(i+1-startFirst);
-		if (str.upper()!=QString::fromLatin1("PRAGMA")) {
-		  QListViewItem *tp=toFindType(parent,type);
-		  item=new toContentsItem(tp,str,cline);
-		}
-	      }
-	    }
-	    break;
-	  }
-	  break;
-	case inString:
-	  if (c==stringEnd)
-	    state=beforeState;
-	  break;
-	case endOfStatement:
-	  switch(char(c.latin1())) {
-	  case '\'':
-	  case '\"':
-	    beforeState=state;
-	    state=inString;
-	    stringEnd=c;
-	    break;
-	  case ';':
-	    state=space;
-	    type=QString::null;
-	    break;
-	  default:
-	    break;
-	  }
-	  break;
-	}
-      }
-      lc=c;
-    }
-  }
+  for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++)
+    updateContent(*i,parent);
+  
   if (!parent->firstChild())
     delete parent;
 }

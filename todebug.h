@@ -39,6 +39,7 @@
 #include "toconnection.h"
 #include "todebugwatch.h"
 #include "tohighlightedtext.h"
+#include "tosqlparse.h"
 #include "tothread.h"
 #include "totool.h"
 
@@ -168,6 +169,7 @@ class toDebug : public toToolWidget {
   bool hasMembers(const QString &str);
   void readLog(void);
   void updateState(int reason);
+  void updateContent(toSQLParse::statement &statements,QListViewItem *parent);
   void updateContent(bool body);
   void reorderContent(QListViewItem *item,int,int);
   bool viewSource(const QString &schema,const QString &name,const QString &type,

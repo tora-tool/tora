@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-07-22: Updated debugger to use new SQL parse framework.
+2003-07-21: Fixed problem with lineno not being copied in parsed statements.
 2003-07-21: Added temporary object tool. (Thanx Oliver Jehle)
 2003-07-21: Fixed bug in trigger extraction. (Thanx Daniel Vérité)
 2003-07-21: Fixed memory corruption bug in toGetSessionType. (Thanx Daniel Vérité)

@@ -74,7 +74,7 @@ void printStatement(toSQLParse::statement &stat,int level)
     printf("Raw:");
     break;
   }
-  printf("%s\n",(const char *)stat.String);
+  printf("%s (%d)\n",(const char *)stat.String,stat.Line);
   if (!stat.Comment.isNull()) {
     for (int i=0;i<level;i++)
       printf(" ");
@@ -414,6 +414,7 @@ toSQLParse::statement::statement(const statement &stat)
   Type=stat.Type;
   String=stat.String;
   Comment=stat.Comment;
+  Line=stat.Line;
   if (stat.SubTokens) {
     SubTokens=new std::list<statement>;
     (*SubTokens)=(*stat.SubTokens);
@@ -426,6 +427,7 @@ const toSQLParse::statement &toSQLParse::statement::operator = (const statement 
   Type=stat.Type;
   String=stat.String;
   Comment=stat.Comment;
+  Line=stat.Line;
   delete SubTokens;
   if (stat.SubTokens) {
     SubTokens=new std::list<statement>;
@@ -724,7 +726,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
        token=tokens.getToken(true,true)) {
     QString upp=token.upper();
 #ifdef TOPARSE_DEBUG
-    printf("%s\n",(const char*)token);
+    printf("%s (%d)\n",(const char*)token,tokens.line());
 #endif
     if (first.isNull()&&!token.startsWith(("/*"))&&!token.startsWith(("--")))
       realfirst=first=upp;
