@@ -40,6 +40,7 @@
 #include "totool.h"
 
 #include <qinputdialog.h>
+#include <qmessagebox.h>
 
 static toSQL SQLChangePassword("toPassword:ChangePassword",
 			       "ALTER USER %1 IDENTIFIED BY \"%2\"",
