@@ -81,8 +81,7 @@ install: $(TARGET)
 	mkdir -p $(INSTALLLIB)/tora/help
 	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp help/* $(INSTALLIB)/tora/help >/dev/null 2>&1
-	-cp icons/* $(INSTALLIB)/tora/help >/dev/null 2>&1
+	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 clean:
 	@echo Cleaning $(TITLE)
