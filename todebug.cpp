@@ -713,7 +713,10 @@ void toDebug::execute(void)
     QString callName;
     QString retType;
 
-    token=toSQLParse::getToken(current,line,pos);
+    do {
+      token=toSQLParse::getToken(current,line,pos);
+    } while(token=="CREATE"||token=="OR"||token=="REPLACE");
+
     if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
       toStatusMessage("Expected function or procedure, internal error");
       return;
