@@ -1418,6 +1418,11 @@ bool toConnection::loadDiskCache()
 
    if (!QFile::exists(filename.stripWhiteSpace())) 
      return false;
+
+   QFileInfo fi(file);
+   QDateTime today;
+   if (fi.lastModified().addDays(toTool::globalConfig(CONF_CACHE_TIMEOUT,DEFAULT_CACHE_TIMEOUT).toInt())<today)
+     return false;
   
    /** read in all data
     */
@@ -1751,8 +1756,9 @@ const toConnection::objectName &toConnection::realName(const QString &object,boo
 toQDescList &toConnection::columns(const objectName &object,bool nocache)
 {
   std::map<objectName,toQDescList>::iterator i=ColumnCache.find(object);
-  if (i==ColumnCache.end()||nocache)
+  if (i==ColumnCache.end()||nocache) {
     ColumnCache[object]=Connection->columnDesc(object);
+  }
 
   return ColumnCache[object];
 }

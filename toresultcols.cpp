@@ -334,12 +334,16 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
   Columns=new resultCols(this);
 }
 
-void toResultCols::query(const QString &,const toQList &param)
+void toResultCols::query(const QString &sql,const toQList &param,bool nocache)
 {
   QString Owner;
   QString Name;
   QString object;
-  
+
+  // Intentionally ignore returncode.
+  if (!setSQLParams(sql,param)&&!nocache)
+    return;
+
   try {
     toQList subp;
 
@@ -392,7 +396,7 @@ void toResultCols::query(const QString &,const toQList &param)
       Edit->setEnabled(false);
     }
 
-    Columns->query(name);
+    Columns->query(name,nocache);
     Title->setText(label);
   } catch(const QString &) {
     try {
@@ -525,7 +529,7 @@ void toResultCols::resultCols::query(const QString &object,
   }
 }
 
-void toResultCols::resultCols::query(const toConnection::objectName &name)
+void toResultCols::resultCols::query(const toConnection::objectName &name,bool nocache)
 {
   try {
     clear();
@@ -539,7 +543,7 @@ void toResultCols::resultCols::query(const toConnection::objectName &name)
     setSQLName(tr("Description of %1").
 	       arg(wholename));
 
-    toQDescList &desc=conn.columns(name,false);
+    toQDescList &desc=conn.columns(name,nocache);
 
     describe(desc);
     Edit->describe(desc,wholename,true);

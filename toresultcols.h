@@ -95,7 +95,7 @@ class toResultCols : public QVBox, public toResult {
     resultCols(QWidget *parent,const char *name=NULL);
     void editComment(bool val);
     void describe(toQDescList &desc);
-    void query(const toConnection::objectName &);
+    void query(const toConnection::objectName &,bool);
     void query(const QString &table,const QString &owner,const QString &name);
     friend class toResultColsItem;
   };
@@ -107,6 +107,7 @@ class toResultCols : public QVBox, public toResult {
   resultCols *Columns;
 
   friend class resultCols;
+  virtual void query(const QString &sql,const toQList &param,bool nocache);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -115,7 +116,8 @@ public:
   toResultCols(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &sql,const toQList &param)
+  { query(sql,param,false); }
   /** Handle any connection by default
    */
   virtual bool canHandle(toConnection &)
@@ -162,7 +164,7 @@ public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { toResult::refresh(); }
+  { query(sql(),params(),true); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)

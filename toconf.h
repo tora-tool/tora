@@ -133,6 +133,8 @@
 #define DEFAULT_NUMBER_FORMAT	"0"
 #define CONF_NUMBER_DECIMALS	"NumberDecimals"
 #define DEFAULT_NUMBER_DECIMALS	"2"
+#define CONF_CACHE_TIMEOUT	"CacheTimeout"
+#define DEFAULT_CACHE_TIMEOUT	"7"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"

@@ -595,12 +595,22 @@ public:
       }
 
       try {
+	toQuery query(connection());
+#ifdef OTL_STREAM_POOLING_ON
+	// Need to clear the stream cache first.
+	oracleSub *sub=dynamic_cast<oracleSub *>(query.connectionSub());
+	sub->Lock.down();
+	sub->Connection->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
+								       DEFAULT_OPEN_CURSORS).toInt(),1));
+	sub->Lock.up();
+#endif
 	QString SQL=QString::fromLatin1("SELECT * FROM \"");
 	SQL+=table.Owner;
 	SQL+=QString::fromLatin1("\".\"");
 	SQL+=table.Name;
 	SQL+=QString::fromLatin1("\" WHERE NULL=NULL");
-	toQuery query(connection(),SQL);
+	toQList par;
+	query.execute(SQL,par);
 	toQDescList desc=query.describe();
 	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++)
 	  (*j).Comment=comments[(*j).Name];
@@ -918,8 +928,10 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       session_mode=OCI_SYSDBA;
     do {
       conn=new otl_connect;
+#ifdef OTL_STREAM_POOLING_ON
       conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
 							  DEFAULT_OPEN_CURSORS).toInt(),1));
+#endif
       if(!sqlNet)
 	conn->server_attach();
       else

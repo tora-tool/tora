@@ -1194,11 +1194,22 @@ void toBrowser::refresh(void)
 {
   try {
     Schema->refresh();
-    if (FirstTab)
-      FirstTab->clearParams();
-    if (SecondTab)
-      SecondTab->clearParams();
-    updateTabs();
+    if (FirstTab) {
+      toQList pars=FirstTab->params();
+      if (pars.begin()==pars.end()) {
+	updateTabs();
+	return;
+      }
+      FirstTab->refresh();
+    }
+    if (SecondTab) {
+      toQList pars=SecondTab->params();
+      if (pars.begin()==pars.end()) {
+	updateTabs();
+	return;
+      }
+      SecondTab->refresh();
+    }
   } TOCATCH
 }
 

@@ -690,6 +690,7 @@ static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecor
 }
 
 class toQSqlProvider : public toConnectionProvider {
+  QStringList Drivers;
 public:
   static QCString fromQSqlName(const QString &driv)
   {
@@ -974,9 +975,9 @@ public:
 
   virtual void initialize(void)
   {
-    QStringList lst=QSqlDatabase::drivers();
-    for(unsigned int i=0;i<lst.count();i++) {
-      QCString t=fromQSqlName(lst[i]);
+    Drivers=QSqlDatabase::drivers();
+    for(unsigned int i=0;i<Drivers.count();i++) {
+      QCString t=fromQSqlName(Drivers[i]);
       if (!t.isEmpty())
 	addProvider(t);
     }
@@ -984,9 +985,8 @@ public:
 
   ~toQSqlProvider()
   {
-    QStringList lst=QSqlDatabase::drivers();
-    for(unsigned int i=0;i<lst.count();i++) {
-      QCString t=fromQSqlName(lst[i]);
+    for(unsigned int i=0;i<Drivers.count();i++) {
+      QCString t=fromQSqlName(Drivers[i]);
       if (!t.isEmpty())
 	removeProvider(t);
     }
