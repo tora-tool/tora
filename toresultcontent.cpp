@@ -1123,9 +1123,13 @@ bool toResultContentEditor::searchNext(toSearchReplace *search)
 
     if (search->findString(text(row,col),pos,endPos)) {
       setCurrentCell(row,col);
+
+#if QT_VERSION >= 300
       editCell(row,col);
       if (CurrentEditor)
 	CurrentEditor->setSelection(pos,endPos-pos);
+#endif
+
       SearchEnd=endPos;
       SearchStart=pos;
       return true;
