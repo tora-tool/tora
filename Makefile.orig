@@ -27,6 +27,7 @@ SOURCES=\
 	tobrowser.cpp		\
 	toconnection.cpp	\
 	todebug.cpp		\
+	todebugtext.cpp		\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
 	tohighlightedtext.cpp	\
@@ -57,7 +58,6 @@ SOURCES=\
 	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
-
 
 TARGET =tora
 TOVERSION=-DTOVERSION=\"v0.4\"

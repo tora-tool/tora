@@ -2,6 +2,7 @@
 
 #include <qfontdialog.h>
 #include <qcolordialog.h>
+#include <qapplication.h>
 
 #include "tohighlightedtext.h"
 #include "tosyntaxsetup.h"

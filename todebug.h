@@ -61,50 +61,9 @@ class QTabWidget;
 class QListView;
 class QListViewItem;
 class QToolButton;
-class toHighlightedText;
-class toWorksheet;
 class toOutput;
-class toBreakpointItem;
-
-class toDebugText : public toHighlightedText {
-  QString Schema;
-  QString Object;
-  QString Type;
-  toConnection &Connection;
-  int LastX;
-
-  QListView *Breakpoints;
-  bool NoBreakpoints;
-  toBreakpointItem *FirstItem;
-  toBreakpointItem *CurrentItem;
-
-  bool checkItem(toBreakpointItem *item);
-  bool hasBreakpoint(int row);
-public:
-  toDebugText(QListView *breakpoints,
-	      toConnection &connection,
-	      QWidget *parent,
-	      const char *name=NULL);
-
-  void setData(const QString &schema,const QString &type,const QString &data);
-  const QString &schema(void) const
-  { return Schema; }
-  const QString &object(void) const
-  { return Object; }
-  void setType(const QString &type)
-  { Type=type; }
-  const QString &type(void) const
-  { return Type; }
-  void clear(void);
-
-  bool readData(toConnection &connection);
-  bool compile(void);
-protected:
-  virtual void paintCell(QPainter *painter,int row,int col);
-  virtual void paintEvent(QPaintEvent *pe);
-  virtual void mouseDoubleClickEvent (QMouseEvent *me);
-  virtual void mouseMoveEvent (QMouseEvent *me);
-};
+class toDebugText;
+class QComboBox;
 
 class toDebug : public QVBox {
   Q_OBJECT
@@ -142,7 +101,6 @@ class toDebug : public QVBox {
   QListView *Watch;
   QListView *Parameters;
   toOutput *Output;
-  toWorksheet *Worksheet;
 
   toDebugText *HeadEditor;
   toDebugText *BodyEditor;
