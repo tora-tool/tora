@@ -18,6 +18,8 @@
 2001-05-21: Added drag from toResultContent.
 2001-05-21: Added drop to toResultContent.
 2001-05-21: Include schema when dragging schema objects in templates.
+2001-05-21: Restore original if there are problems storing toResultContent.
+2001-05-21: Fixed to drag in toListView.
 
 0.9.1: Released 2001-05-20
 

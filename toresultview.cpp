@@ -285,6 +285,7 @@ toListView::toListView(QWidget *parent,const char *name)
     QFont font(toStringToFont(str));
     setFont(font);
   }
+  LastMove=QPoint(-1,-1);
 }
 
 toListView::~toListView()
@@ -313,7 +314,9 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
 void toListView::contentsMouseMoveEvent (QMouseEvent *e)
 {
   if (e->state()==LeftButton&&
-      e->stateAfter()==LeftButton) {
+      e->stateAfter()==LeftButton&&
+      LastMove.x()>0&&
+      LastMove!=e->pos()) {
     QPoint p=e->pos();
     int col=header()->sectionAt(p.x());
     QListViewItem *item=itemAt(contentsToViewport(p));
@@ -330,8 +333,22 @@ void toListView::contentsMouseMoveEvent (QMouseEvent *e)
       QDragObject *d=new QTextDrag(str,this);
       d->dragCopy();
     }
-  } else
+  } else {
+    LastMove=e->pos();
     QListView::contentsMouseMoveEvent(e);
+  }
+}
+
+void toListView::contentsMousePressEvent(QMouseEvent *e)
+{
+  LastMove=QPoint(-1,-1);
+  QListView::contentsMousePressEvent(e);
+}
+
+void toListView::contentsMouseReleaseEvent(QMouseEvent *e)
+{
+  LastMove=QPoint(-1,-1);
+  QListView::contentsMouseReleaseEvent(e);
 }
 
 QListViewItem *toListView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)

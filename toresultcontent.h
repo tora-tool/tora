@@ -52,6 +52,7 @@ class toResultContent : public QTable,public toResult {
   int Row;
   int CurrentRow;
   bool AddRow;
+  QPoint LastMove;
 
   int SortRow;
   bool SortRowAsc;
@@ -67,9 +68,11 @@ class toResultContent : public QTable,public toResult {
   virtual void focusOutEvent (QFocusEvent *e); 
   virtual void activateNextCell();
 
-  virtual void contentsMouseMoveEvent (QMouseEvent *e);
   virtual void dragEnterEvent(QDragEnterEvent *event);
   virtual void dropEvent(QDropEvent *event);
+  virtual void contentsMousePressEvent(QMouseEvent *e);
+  virtual void contentsMouseReleaseEvent(QMouseEvent *e);
+  virtual void contentsMouseMoveEvent (QMouseEvent *e);
   
 public:
   toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL);

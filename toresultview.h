@@ -134,8 +134,11 @@ class toListView : public QListView {
   QListViewItem *MenuItem;
   int MenuColumn;
   QPopupMenu *Menu;
+  QPoint LastMove;
 
   virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
+  virtual void contentsMousePressEvent(QMouseEvent *e);
+  virtual void contentsMouseReleaseEvent(QMouseEvent *e);
   virtual void contentsMouseMoveEvent (QMouseEvent *e);
 
   virtual QListViewItem *printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,

@@ -46,20 +46,40 @@ TO_NAMESPACE;
 
 #define INC_SIZE 50
 
+#include <stdio.h>
+
 void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
 {
   if (e->state()==LeftButton&&
-      e->stateAfter()==LeftButton) {
+      e->stateAfter()==LeftButton&&
+      LastMove.x()>0&&
+      LastMove!=e->pos()) {
+
     QPoint p=e->pos();
     int col=columnAt(p.x());
     int row=rowAt(p.y());
     QString str=text(row,col);
+
     if (str.length()) {
       QDragObject *d=new QTextDrag(str,this);
       d->dragCopy();
     }
-  } else
+  } else {
+    LastMove=e->pos();
     QTable::contentsMouseMoveEvent(e);
+  }
+}
+
+void toResultContent::contentsMousePressEvent(QMouseEvent *e)
+{
+  LastMove=QPoint(-1,-1);
+  QTable::contentsMousePressEvent(e);
+}
+
+void toResultContent::contentsMouseReleaseEvent(QMouseEvent *e)
+{
+  LastMove=QPoint(-1,-1);
+  QTable::contentsMouseReleaseEvent(e);
 }
 
 void toResultContent::dragEnterEvent(QDragEnterEvent *e)
@@ -69,7 +89,8 @@ void toResultContent::dragEnterEvent(QDragEnterEvent *e)
 
 void toResultContent::dropEvent(QDropEvent *e)
 {
-  QPoint p=e->pos();
+  QPoint p(e->pos().x()+contentsX()-verticalHeader()->width(),
+	   e->pos().y()+contentsY()-horizontalHeader()->height());
   int col=columnAt(p.x());
   int row=rowAt(p.y());
 
@@ -82,8 +103,10 @@ void toResultContent::dropEvent(QDropEvent *e)
     CurrentRow=row;
   }
   QString text;
-  if ( QTextDrag::decode(e,text))
+  if ( QTextDrag::decode(e,text)) {
     setText(row,col,text);
+    setCurrentCell(row,col);
+  }
 }
 
 toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name)
@@ -97,6 +120,7 @@ toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *
   connect(horizontalHeader(),SIGNAL(clicked(int)),this,SLOT(changeSort(int)));
   SortRow=-1;
   setAcceptDrops(true);
+  LastMove=QPoint(-1,-1);
 }
 
 void toResultContent::wrongUsage(void)
@@ -317,7 +341,14 @@ void toResultContent::changePosition(int row,int col)
 	      exec<<str.utf8();
 	  }
 	  Connection.setNeedCommit();
-	} TOCATCH
+	} catch (const otl_exception &exc) {
+	  int col=0;
+	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
+	    setText(CurrentRow,col,*j);
+	  toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+	} catch (const QString &str) {
+	  toStatusMessage(str);
+	}
       }
     }
     OrigValues.clear();
