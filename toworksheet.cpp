@@ -585,6 +585,7 @@ void toWorksheet::query(const QString &str,bool direct)
     QString execSql=str;
     if (!code&&execSql.length()>0&&execSql[execSql.length()-1]==';')
       execSql.truncate(execSql.length()-1);
+    QueryString=execSql;
 
     if (!describe(execSql)) {
       list<QString> param=toParamGet::getParam(this,execSql);
@@ -833,8 +834,7 @@ void toWorksheet::execute(bool all,bool step)
 		Editor->setCursorPosition(startLine,startPos,false);
 		Editor->setCursorPosition(endLine,endPos,true);
 		if (Editor->hasMarkedText()) {
-		  QueryString=Editor->markedText();
-		  query(QueryString,true);
+		  query(Editor->markedText(),true);
 		  qApp->processEvents();
 		  NewStatement();
 		  create=code=false;
@@ -864,8 +864,7 @@ void toWorksheet::execute(bool all,bool step)
 	Editor->setCursorPosition(startLine,startPos,false);
 	Editor->setCursorPosition(endLine,endPos,true);
 	if (Editor->hasMarkedText()) {
-	  QueryString=Editor->markedText();
-	  query(QueryString,false);
+	  query(Editor->markedText(),false);
 	}
       }
     }
@@ -878,8 +877,7 @@ void toWorksheet::execute(bool all,bool step)
     }
   }
   if (Editor->hasMarkedText()&&!all) {
-    QueryString=Editor->markedText();
-    query(QueryString,false);
+    query(Editor->markedText(),false);
     if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
