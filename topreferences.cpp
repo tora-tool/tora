@@ -98,7 +98,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   item=new QListBoxText(TabSelection,"Global Settings");
   addWidget(item,new toGlobalSetting(Parent));
 
-  item=new QListBoxText(TabSelection,"Font Settings");
+  item=new QListBoxText(TabSelection,"Editor Settings");
   addWidget(item,new toSyntaxSetup(Parent));
   
   item=new QListBoxText(TabSelection,"Database Settings");

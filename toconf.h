@@ -113,6 +113,12 @@
 #define CONF_DEFAULT_FORMAT	"DefaultFormat"
 #define CONF_AUTO_INDENT_RO	"AutoIndent"
 #define CONF_INDICATE_EMPTY	"IndicateEmpty"
+#define CONF_EXTENSIONS  	"Extensions"
+#ifdef TO_KDE
+#define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files,*.txt|Text files,*|All files"
+#else
+#define DEFAULT_EXTENSIONS	"SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"
+#endif
 
 #ifndef TO_KDE
 #  ifndef WIN32

@@ -204,7 +204,7 @@ public:
 public slots:
   void chooseFile(void)
   {
-    QString str=toOpenFilename(DefaultFile->text(),"*.sql\n*.txt",this);
+    QString str=toOpenFilename(DefaultFile->text(),QString::null,this);
     if (!str.isEmpty())
       DefaultFile->setText(str);
   }
@@ -642,8 +642,7 @@ bool toWorksheet::checkSave(bool input)
       } else
 	return true;
       if (Editor->filename().isEmpty()&&input)
-	Editor->setFilename(toSaveFilename(Editor->filename(),
-					   "*.sql\n*.txt",this));
+	Editor->setFilename(toSaveFilename(Editor->filename(),QString::null,this));
       if (Editor->filename().isEmpty())
 	return false;	
     }

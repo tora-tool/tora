@@ -734,24 +734,38 @@ bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
   return true;
 }
 
+static QString GetExtensions(void)
+{
+  static QRegExp repl("\\s*,\\s*");
+  QString t=toTool::globalConfig(CONF_EXTENSIONS,DEFAULT_EXTENSIONS);
+  t.replace(repl,"\n");
+  return t;
+}
+
 QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent)
 {
+  QString t=filter;
+  if (t.isEmpty())
+    t=GetExtensions();
 #ifdef TO_KDE
-  KURL url=TOFileDialog::getOpenURL(filename,filter,parent);
+  KURL url=TOFileDialog::getOpenURL(filename,t,parent);
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
     return url.path();
   return url.url();
 #else
-  return TOFileDialog::getOpenFileName(filename,filter,parent);
+  return TOFileDialog::getOpenFileName(filename,t,parent);
 #endif
 }
 
 QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent)
 {
+  QString t=filter;
+  if (t.isEmpty())
+    t=GetExtensions();
 #ifdef TO_KDE
-  KURL url=TOFileDialog::getSaveURL(filename,filter,parent);
+  KURL url=TOFileDialog::getSaveURL(filename,t,parent);
   if (url.hasPass())
     TOMessageBox::warning(toMainWidget(),"File open password",url.pass());
   if (url.isEmpty())
@@ -760,7 +774,7 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
     return url.path();
   return url.url();
 #else
-  return TOFileDialog::getSaveFileName(filename,filter,parent);
+  return TOFileDialog::getSaveFileName(filename,t,parent);
 #endif
 }
 

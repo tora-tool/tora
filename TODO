@@ -17,6 +17,7 @@ Extended functionality:
 	DB Links
 	Libraries
 	Materialized Views
+	Dimensions
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.

@@ -65,6 +65,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   CodeCompletion->setChecked(!toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty());
   CompletionSort->setChecked(!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty());
   AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT,"Yes").isEmpty());
+  Extensions->setText(toTool::globalConfig(CONF_EXTENSIONS,DEFAULT_EXTENSIONS));
 
   {
     QFont font(toStringToFont(toTool::globalConfig(CONF_CODE,"")));
@@ -296,4 +297,5 @@ void toSyntaxSetup::saveSetting(void)
     toTool::globalSetConfig(str,res);
   }
   toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
+  toTool::globalSetConfig(CONF_EXTENSIONS,Extensions->text());
 }

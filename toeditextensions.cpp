@@ -340,7 +340,7 @@ void toEditExtensions::searchBackward(void)
 class toEditExtensionTool : public toTool {
 public:
   toEditExtensionTool()
-    : toTool(910,"Editor")
+    : toTool(910,"Editor Extensions")
   {
     toSQLParse::settings cur;
     cur.ExpandSpaces=!config(CONF_EXPAND_SPACES,"Yes").isEmpty();

@@ -228,7 +228,7 @@ bool toMarkedText::editOpen(void)
   }
 
   QFileInfo file(filename());
-  QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
+  QString filename=toOpenFilename(file.dirPath(),QString::null,this);
   if (!filename.isEmpty()) {
     try {
       QCString data=toReadFile(filename);
@@ -246,7 +246,7 @@ bool toMarkedText::editSave(bool askfile)
   QFileInfo file(filename());
   QString fn=filename();
   if (askfile||fn.isEmpty())
-    fn=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
+    fn=toSaveFilename(file.dirPath(),QString::null,this);
   if (!fn.isEmpty()) {
     if (!toWriteFile(fn,text()))
       return false;
