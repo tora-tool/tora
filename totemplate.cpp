@@ -49,6 +49,7 @@
 
 #include <qfiledialog.h>
 #include <qfileinfo.h>
+#include <qheader.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
