@@ -258,8 +258,12 @@ QString toRollbackDialog::getSQL(void)
   str.append(Name->text());
   str.append("\" TABLESPACE \"");
   str.append(Tablespace->currentText());
-  str.append("\" ");
-  str.append(Storage->getSQL());
+  str.append("\"");
+  std::list<QString> lst=Storage->sql();
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+    str+=" ";
+    str+=*i;
+  }
   return str;
 }
 

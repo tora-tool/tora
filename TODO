@@ -37,8 +37,8 @@ Extended functionality:
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
 * Printing of charts and toResultItems.
-* Display SQL of storage modifications.
-* Make .ui files to storage modification dialogs.
+* Remake new rollback dialog in designer
+* Make it possible to see sql in rollback dialog.
 
 New tools:
 

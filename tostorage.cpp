@@ -55,6 +55,7 @@
 #include <qwhatsthis.h>
 #include <qworkspace.h>
 
+#include "tomemoeditor.h"
 #include "tochangeconnection.h"
 #include "tostorage.h"
 #include "tostoragedefinition.h"
@@ -66,6 +67,9 @@
 #include "tohelp.h"
 
 #include "tostorage.moc"
+#include "tostoragetablespaceui.moc"
+#include "tostoragedialogui.moc"
+#include "tostoragedatafileui.moc"
 
 #include "icons/refresh.xpm"
 #include "icons/tostorage.xpm"
@@ -139,73 +143,13 @@ public:
 };
 
 toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags fl)
-  : QWidget(parent,name,fl)
-{	
+  : toStorageTablespaceUI(parent,name,fl)
+{
   Modify=false;
   if (!name)
     setName("toStorageTablespace");
-  setCaption(tr("Form1"));
-  QToolTip::add( this,tr("Specify a system manage tablespace. User can not specify extent allocation."));
-  
-  MinimumExtent=new toFilesize("&Minimum Extent",this,"MinimumExtent");
-  MinimumExtent->setGeometry(QRect(10,10,310,60)); 
-  MinimumExtent->setValue(50);
-  
-  GroupBox3=new QGroupBox(this,"GroupBox3");
-  GroupBox3->setGeometry(QRect(10,80,310,145)); 
-  GroupBox3->setTitle(tr("&Options"));
-  
-  Logging=new QCheckBox(GroupBox3,"Logging");
-  Logging->setGeometry(QRect(10,25,290,19)); 
-  Logging->setText(tr("&Logging"));
-  Logging->setChecked(true);
-  QToolTip::add( Logging,tr("Should objects created in the tablespace be logging by default."));
-  
-  Permanent=new QCheckBox(GroupBox3,"Permanent");
-  Permanent->setGeometry(QRect(10,55,290,19)); 
-  Permanent->setText(tr("&Permanent"));
-  Permanent->setChecked(true);
-  QToolTip::add( Permanent,tr("Should the contents of the tablespace be permanent after the end of a session."));
-  connect(Permanent,SIGNAL(toggled(bool)),this,SLOT(permanentToggle(bool)));
-
-  Online=new QCheckBox(GroupBox3,"Online");
-  Online->setGeometry(QRect(10,85,290,19)); 
-  Online->setText(tr("&Online"));
-  Online->setChecked(true);
-  QToolTip::add( Online,tr("Should the contents of the tablespace be permanent after the end of a session."));
-
-  DefaultStorage=new QCheckBox(GroupBox3,"DefaultStorage");
-  DefaultStorage->setGeometry(QRect(10,115,290,19));
-  DefaultStorage->setText("&Specify Default Storage");
-  DefaultStorage->setChecked(false);
-  QToolTip::add( DefaultStorage,tr("Allow specification of default storage (Separate tab)") );
-  connect(DefaultStorage,SIGNAL(toggled(bool)),this,SLOT(allowDefault(bool)));
-
-  ExtentGroup=new QButtonGroup(this,"ExtentGroup");
-  ExtentGroup->setGeometry(QRect(10,245,310,185)); 
-  ExtentGroup->setTitle(tr("&Extent allocation"));
-  QToolTip::add( ExtentGroup,tr("Specify how space allocation is managed in the tablespace."));
-  
-  Dictionary=new QRadioButton(ExtentGroup,"Dictionary");
-  Dictionary->setGeometry(QRect(10,25,140,19)); 
-  Dictionary->setText(tr("&Dictionary"));
-  Dictionary->setChecked(true);
-  QToolTip::add( Dictionary,tr("Manage tablespace usiing dictionary tables."));
-  connect(Dictionary,SIGNAL(toggled(bool)),this,SLOT(dictionaryToggle(bool)));
-
-  LocalAuto=new QRadioButton(ExtentGroup,"LocalAuto");
-  LocalAuto->setGeometry(QRect(10,55,140,19)); 
-  LocalAuto->setText(tr("Local &Autoallocation"));
-  
-  LocalSelect=new QRadioButton(ExtentGroup,"LocalSelect");
-  LocalSelect->setGeometry(QRect(10,85,100,19)); 
-  LocalSelect->setText(tr("Local &Uniform"));
-  QToolTip::add( LocalSelect,tr("The tablespace is locally managed with fixed extent sizes of specified size."));
-  connect(LocalSelect,SIGNAL(toggled(bool)),this,SLOT(uniformToggle(bool)));
-  
-  LocalUniform=new toFilesize("Extent &Size",ExtentGroup,"LocalUniform");
-  LocalUniform->setGeometry(QRect(10,110,291,61)); 
-  LocalUniform->setEnabled(false);
+  MinimumExtent->setTitle("&Minimum Extent");
+  LocalUniform->setTitle("Extent &Size");
   LocalUniform->setValue(1024);
 }
 
@@ -241,32 +185,32 @@ void toStorageTablespace::uniformToggle(bool val)
   LocalUniform->setEnabled(val);
 }
 
-QStringList toStorageTablespace::getSQL()
+std::list<QString> toStorageTablespace::sql()
 {
-  QStringList ret;
+  std::list<QString> ret;
   QString str("MINIMUM EXTENT ");
   str.append(MinimumExtent->sizeString());
-  ret+=str;
+  toPush(ret,str);
   if (Logging->isChecked()!=LoggingOrig||!Modify) {
     if (Logging->isChecked())
       str="LOGGING";
     else
       str="NOLOGGING";
-    ret+=str;
+    toPush(ret,str);
   }
   if (Online->isChecked()!=OnlineOrig||!Modify) {
     if (Online->isChecked())
       str="ONLINE";
     else
       str="OFFLINE";
-    ret+=str;
+    toPush(ret,str);
   }
   if (Permanent->isChecked()!=PermanentOrig||!Modify) {
     if (Permanent->isChecked())
       str="PERMANENT";
     else
       str="TEMPORARY";
-    ret+=str;
+    toPush(ret,str);
   }
   if (ExtentGroup->isEnabled()) {
     str="EXTENT MANAGEMENT ";
@@ -281,83 +225,36 @@ QStringList toStorageTablespace::getSQL()
 	str.append(LocalUniform->sizeString());
       }
     }
-    ret+=str;
+    toPush(ret,str);
   }
   return ret;
 }
 
 toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* name,WFlags fl)
-  : QWidget(parent,name,fl)
+  : toStorageDatafileUI(parent,name,fl)
 {
   Modify=false;
+  InitialSizeOrig=NextSizeOrig=MaximumSizeOrig=0;
+
   if (!name)
     setName("DataFile");
   setCaption(tr("Create datafile"));
 
-  int indent=0;
-
-  if (dispName) {
-    Name=new QLineEdit(this,"Name");
-    Name->setGeometry(QRect(10,30,310,23)); 
+  if (!dispName) {
+    Name->hide();
+    NameLabel->hide();
     Name->setFocus();
-    connect(Name,SIGNAL(textChanged(const QString &)),this,SLOT(valueChanged(const QString &)));
-
-    TextLabel2=new QLabel(this,"TextLabel2");
-    TextLabel2->setGeometry(QRect(10,10,310,15)); 
-    TextLabel2->setText(tr("&Tablespace Name"));
-    TextLabel2->setBuddy(Name);
-    indent=60;
-  } else
-    Name=NULL;
-
-  Filename=new QLineEdit(this,"Filename");
-  Filename->setGeometry(QRect(10,30+indent,210,23)); 
-  if (!dispName)
+  } else 
     Filename->setFocus();
-  connect(Filename,SIGNAL(textChanged(const QString &)),this,SLOT(valueChanged(const QString &)));
 
-  TextLabel1=new QLabel(this,"TextLabel1");
-  TextLabel1->setGeometry(QRect(10,10+indent,61,15)); 
-  TextLabel1->setText(tr("&Filename"));
-  TextLabel1->setBuddy(Filename);
-
-  BrowseFile=new QPushButton(this,"BrowseFile");
-  BrowseFile->setGeometry(QRect(240,25+indent,80,32)); 
-  BrowseFile->setText(tr("&Browse"));
-  
-  InitialSize=new toFilesize("&Size",this,"InitialSize");
-  InitialSize->setGeometry(QRect(10,70+indent,310,60)); 
-  
-  GroupBox1=new QGroupBox(this,"GroupBox1");
-  GroupBox1->setGeometry(QRect(10,140+indent,311,230)); 
-  GroupBox1->setTitle(tr("&Auto extend"));
-
-  AutoExtend=new QCheckBox(GroupBox1,"Autoextend");
-  AutoExtend->setGeometry(QRect(10,25,290,19)); 
-  AutoExtend->setText(tr("Auto&extend datafile"));
-  connect(AutoExtend,SIGNAL(toggled(bool)),this,SLOT(autoExtend(bool)));
-
-  NextSize=new toFilesize("&Next",GroupBox1,"NextSize");
-  NextSize->setGeometry(QRect(10,55,291,60)); 
-  NextSize->setEnabled(false);
-
-  UnlimitedMax=new QCheckBox(GroupBox1,"UnlimitedMax");
-  UnlimitedMax->setGeometry(QRect(10,125,290,19)); 
-  UnlimitedMax->setText(tr("&Unlimited max size"));
-  UnlimitedMax->setEnabled(false);
-  connect(UnlimitedMax,SIGNAL(toggled(bool)),this,SLOT(maximumSize(bool)));
-  
-  MaximumSize=new toFilesize("&Maximum size",GroupBox1,"MaximumSize");
-  MaximumSize->setGeometry(QRect(10,155,291,60)); 
-  MaximumSize->setEnabled(false);
-  
-  connect(BrowseFile,SIGNAL(clicked(void)),this,SLOT(browseFile(void)));
-  
+  InitialSize->setTitle("&Size");
+  NextSize->setTitle("&Next");
+  MaximumSize->setTitle("&Maximum size");
 }
 
-QStringList toStorageDatafile::getSQL(void)
+std::list<QString> toStorageDatafile::sql(void)
 {
-  QStringList ret;
+  std::list<QString> ret;
   if (!Modify) {
     QString str("'");
     QString filename(Filename->text());
@@ -377,7 +274,7 @@ QStringList toStorageDatafile::getSQL(void)
       }
     } else
       str.append("OFF");
-    ret+=str;
+    toPush(ret,str);
   } else {
     QString str;
     if (Filename->text()!=FilenameOrig) {
@@ -385,14 +282,14 @@ QStringList toStorageDatafile::getSQL(void)
       str+=FilenameOrig;
       str+="' TO '";
       str+=Filename->text();
-      ret+=str;
+      toPush(ret,str);
     }
     if (InitialSize->value()!=InitialSizeOrig) {
       str="DATAFILE '";
       str+=Filename->text();
       str+="' RESIZE ";
       str+=InitialSize->sizeString();
-      ret+=str;
+      toPush(ret,str);
     }
     str="DATAFILE '";
     str+=Filename->text();
@@ -408,7 +305,7 @@ QStringList toStorageDatafile::getSQL(void)
       }
     } else
       str.append("OFF");
-    ret+=str;
+    toPush(ret,str);
   }
   return ret;
 }
@@ -450,40 +347,26 @@ void toStorageDatafile::valueChanged(const QString &str)
 
 void toStorageDialog::Setup(void)
 {
-  resize(470,500);
-  setMinimumSize(QSize(470,500));
-  setMaximumSize(QSize(470,500));
-  DialogTab=new QTabWidget(this);
-  DialogTab->setGeometry(10,10,330,480);
-
-  OkButton = new QPushButton(this,"OkButton");
-  OkButton->move(350,40); 
-  OkButton->setText(tr("&OK"));
-  OkButton->setDefault(true);
-
-  QPushButton *CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(350,90); 
-  CancelButton->setText(tr("Cancel"));
-  CancelButton->setDefault(false);
-  
-  connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
-  connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
+  DialogTab->removePage(DefaultPage);
   toHelp::connectDialog(this);
 }
 
-toStorageDialog::toStorageDialog(bool datafile,QWidget *parent)
-  : QDialog(parent,"Storage Dialog",true)
+toStorageDialog::toStorageDialog(const QString &tablespace,QWidget *parent)
+  : toStorageDialogUI(parent,"Storage Dialog",true)
 {
   Setup();
   OkButton->setEnabled(false);
 
-  if (datafile) {
+  if (!tablespace.isNull()) {
+    Mode=NewDatafile;
+    TablespaceOrig=tablespace;
     setCaption("Add datafile");
     Tablespace=NULL;
     Default=NULL;
     Datafile=new toStorageDatafile(false,DialogTab);
     DialogTab->addTab(Datafile,"Datafile");
   } else {
+    Mode=NewTablespace;
     setCaption("Add tablespace");
     Datafile=new toStorageDatafile(true,DialogTab);
     DialogTab->addTab(Datafile,"Datafile");
@@ -514,11 +397,11 @@ static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
 			       "must have same columns and bindings");
 
 toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QWidget *parent)
-  : QDialog(parent,"Storage Dialog",true)
+  : toStorageDialogUI(parent,"Storage Dialog",true)
 {
   Setup();
+  Mode=ModifyTablespace;
   Datafile=NULL;
-  setCaption("Modify tablespace");
   Tablespace=new toStorageTablespace(DialogTab);
   DialogTab->addTab(Tablespace,"Tablespace");
   Default=new toStorageDefinition(DialogTab);
@@ -530,6 +413,7 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QW
     throw QString("Invalid response from query");
   Tablespace->MinimumExtent->setValue(toShift(result).toInt());
 
+  TablespaceOrig=tablespace;
   Tablespace->Modify=true;
   Default->setEnabled(false);
   if (toShift(result)=="DICTIONARY")
@@ -571,9 +455,10 @@ static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
 
 toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
 				 const QString &filename,QWidget *parent)
-  : QDialog(parent,"Storage Dialog",true)
+  : toStorageDialogUI(parent,"Storage Dialog",true)
 {
   Setup();
+  Mode=ModifyDatafile;
   Datafile=new toStorageDatafile(true,DialogTab);
   DialogTab->addTab(Datafile,"Datafile");
   setCaption("Modify datafile");
@@ -616,6 +501,100 @@ void toStorageDialog::validContent(bool val)
 void toStorageDialog::allowStorage(bool val)
 {
   Default->setEnabled(val);
+}
+
+void toStorageDialog::displaySQL(void)
+{
+  std::list<QString> lines=sql();
+  QString res;
+  for(std::list<QString>::iterator i=lines.begin();i!=lines.end();i++) {
+    res+=*i;
+    res+=";\n";
+  }
+  if (res.length()>0) {
+    toMemoEditor memo(this,res,-1,-1,true,true);
+    memo.exec();
+  } else
+    toStatusMessage("No changes made");
+}
+
+std::list<QString> toStorageDialog::sql(void)
+{
+  std::list<QString> ret;
+  switch(Mode) {
+  case ModifyDatafile:
+    {
+      QString start="ALTER DATABASE ";
+      std::list<QString> lst=Datafile->sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	QString t=start;
+	t+=*i;
+	toPush(ret,t);
+      }
+    }
+    break;
+  case ModifyTablespace:
+    {
+      QString start="ALTER TABLESPACE \"";
+      start+=TablespaceOrig;
+      start+="\" ";
+      std::list<QString> lst=Tablespace->sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	QString t=start;
+	t+=*i;
+	toPush(ret,t);
+      }
+      if (Tablespace->allowStorage()) {
+	start+="DEFAULT ";
+	std::list<QString> lst=Default->sql();
+	for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	  QString t=start;
+	  t+=*i;
+	  toPush(ret,t);
+	}
+      }
+    }
+    break;
+  case NewDatafile:
+    {
+      QString start="ALTER TABLESPACE \"";
+      start+=TablespaceOrig;
+      start+="\" ADD DATAFILE";
+      std::list<QString> lst=Datafile->sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	start+=" ";
+	start+=*i;
+      }
+      toPush(ret,start);
+    }
+    break;
+  case NewTablespace:
+    {
+      QString start="ALTER TABLESPACE \"";
+      start+=Datafile->getName();
+      start+="\" DATAFILE ";
+      std::list<QString> lst=Datafile->sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	start+=" ";
+	start+=*i;
+      }
+      lst=Tablespace->sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	start+=" ";
+	start+=*i;
+      }
+      if (Tablespace->allowStorage()) {
+	start+=" DEFAULT";
+	lst=Default->sql();
+	for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+	  start+=" ";
+	  start+=*i;
+	}
+      }
+      toPush(ret,start);
+    }
+  }
+  return ret;
 }
 
 static toStorageTool StorageTool;
@@ -907,15 +886,13 @@ void toStorage::selectionChanged(void)
 void toStorage::newDatafile(void)
 {
   try {
-    toStorageDialog newFile(true,this);
+    toStorageDialog newFile(Storage->currentTablespace(),this);
 
     if (newFile.exec()) {
-      QString str;
-      str="ALTER TABLESPACE \"";
-      str.append(Storage->currentTablespace());
-      str.append("\" ADD DATAFILE ");
-      str.append(newFile.Datafile->getSQL().join(" "));
-      connection().execute(str);
+      std::list<QString> lst=newFile.sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+	connection().execute(*i);
+
       refresh();
     }
   } TOCATCH
@@ -924,21 +901,13 @@ void toStorage::newDatafile(void)
 void toStorage::newTablespace(void)
 {
   try {
-    toStorageDialog newSpace(false,this);
+    toStorageDialog newSpace(QString::null,this);
 
     if (newSpace.exec()) {
-      QString str;
-      str="CREATE TABLESPACE \"";
-      str.append(newSpace.Datafile->getName());
-      str.append("\" DATAFILE ");
-      str.append(newSpace.Datafile->getSQL().join(" "));
-      str.append(" ");
-      str.append(newSpace.Tablespace->getSQL().join(" "));
-      if (newSpace.Tablespace->allowStorage()) {
-	str.append(" DEFAULT ");
-	str.append(newSpace.Default->getSQL());
-      }
-      connection().execute(str);
+      std::list<QString> lst=newSpace.sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+	connection().execute(*i);
+
       refresh();
     }
   } TOCATCH
@@ -950,22 +919,10 @@ void toStorage::modifyTablespace(void)
     toStorageDialog modifySpace(connection(),Storage->currentTablespace(),this);
 
     if (modifySpace.exec()) {
-      QString start;
-      start="ALTER TABLESPACE \"";
-      start.append(Storage->currentTablespace());
-      start.append("\" ");
-      QStringList opr=modifySpace.Tablespace->getSQL();
-      for (unsigned int i=0;i<opr.count();i++) {
-	QString str=start;
-	str+=opr[i];
-	connection().execute(str);
-      }
-      if (modifySpace.Tablespace->allowStorage()) {
-	QString str=start;
-	str.append("DEFAULT ");
-	str.append(modifySpace.Default->getSQL());
-	connection().execute(str);
-      }
+      std::list<QString> lst=modifySpace.sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+	connection().execute(*i);
+
       refresh();
     }
   } TOCATCH
@@ -978,13 +935,10 @@ void toStorage::modifyDatafile(void)
 				Storage->currentFilename(),this);
 
     if (modifySpace.exec()) {
-      QString start="ALTER DATABASE ";
-      QStringList opr=modifySpace.Datafile->getSQL();
-      for (unsigned int i=0;i<opr.count();i++) {
-	QString str=start;
-	str+=opr[i];
-	connection().execute(str);
-      }
+      std::list<QString> lst=modifySpace.sql();
+      for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+	connection().execute(*i);
+
       refresh();
     }
   } TOCATCH

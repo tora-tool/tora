@@ -29,3 +29,6 @@ toResultStat:
 
 Unknown:
 	Crashes when starting without any database providers.
+
+toRollback:
+	Some kind of SQL error when refreshing.

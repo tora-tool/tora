@@ -1,0 +1,292 @@
+<!DOCTYPE UI><UI>
+<class>toStorageTablespaceUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toStorageTablespaceUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>596</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>toFilesize</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>MinimumExtent</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="0" >
+            <class>QButtonGroup</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ButtonGroup1</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>&amp;Options</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Logging</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Logging</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Should objects created in this tablespace be logging by default</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Permanent</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Online</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Should tablespace be online at the time of creation</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Online</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Permanent</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Should objects in this tablespace be permanent after the end of the session</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultStorage</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Default storage</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Specify default storage clause (In separate tab)</string>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget row="2"  column="0" >
+            <class>QButtonGroup</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExtentGroup</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>&amp;Extent allocation</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Dictionary</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Dictionary</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Manage tablespace extents using dictionary tables</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalAuto</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Local &amp;autoallocation</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Specify how space is allocated in the tablespace</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalSelect</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>true</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Local &amp;uniform</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The tablespace is locally managed with fixed extent sizes of specified size</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>toFilesize</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalUniform</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer row="3"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>toFilesize</class>
+        <header location="local">tofilesize.h</header>
+        <sizehint>
+            <width>200</width>
+            <height>40</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>1</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>valueChanged(void)</signal>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>DefaultStorage</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageTablespaceUI</receiver>
+        <slot>allowDefault(bool)</slot>
+    </connection>
+    <connection>
+        <sender>Online</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageTablespaceUI</receiver>
+        <slot>permanentToggle(bool)</slot>
+    </connection>
+    <connection>
+        <sender>Dictionary</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageTablespaceUI</receiver>
+        <slot>dictionaryToggle(bool)</slot>
+    </connection>
+    <connection>
+        <sender>LocalSelect</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageTablespaceUI</receiver>
+        <slot>uniformToggle(bool)</slot>
+    </connection>
+    <slot access="public">permanentToggle(bool)</slot>
+    <slot access="public">dictionaryToggle(bool)</slot>
+    <slot access="public">uniformToggle(bool)</slot>
+    <slot access="public">allowDefault(bool)</slot>
+</connections>
+</UI>

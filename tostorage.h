@@ -37,9 +37,14 @@
 #ifndef __TOSTORAGE_H
 #define __TOSTORAGE_H
 
+#include <list>
+
 #include <qdialog.h>
 
 #include "totool.h"
+#include "tostoragetablespaceui.h"
+#include "tostoragedialogui.h"
+#include "tostoragedatafileui.h"
 
 class QCheckBox;
 class QGroupBox;
@@ -56,21 +61,9 @@ class toResultStorage;
 class toFilesize;
 class toStorageDialog;
 
-class toStorageTablespace : public QWidget
+class toStorageTablespace : public toStorageTablespaceUI
 { 
   Q_OBJECT
-
-  toFilesize *MinimumExtent;
-  QButtonGroup *ExtentGroup;
-  toFilesize *LocalUniform;
-  QRadioButton *Dictionary;
-  QRadioButton *LocalAuto;
-  QRadioButton *LocalSelect;
-  QGroupBox *GroupBox3;
-  QCheckBox *Logging;
-  QCheckBox *Online;
-  QCheckBox *Permanent;
-  QCheckBox *DefaultStorage;
 
   bool Modify;
   bool LoggingOrig;
@@ -80,7 +73,7 @@ class toStorageTablespace : public QWidget
 public:
   toStorageTablespace(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
-  QStringList getSQL(void);
+  std::list<QString> sql(void);
   bool allowStorage(void);
 
   friend class toStorageDialog;
@@ -88,27 +81,15 @@ signals:
   void allowStorage(bool);
 
 public slots:
-  void permanentToggle(bool);
-  void dictionaryToggle(bool); 
-  void uniformToggle(bool);
-  void allowDefault(bool);
+  virtual void permanentToggle(bool);
+  virtual void dictionaryToggle(bool); 
+  virtual void uniformToggle(bool);
+  virtual void allowDefault(bool);
 };
 
-class toStorageDatafile : public QWidget
+class toStorageDatafile : public toStorageDatafileUI
 { 
   Q_OBJECT
-
-  QLabel *TextLabel1;
-  QLabel *TextLabel2;
-  QGroupBox *GroupBox1;
-  QCheckBox *AutoExtend;
-  toFilesize *NextSize;
-  QCheckBox *UnlimitedMax;
-  toFilesize *MaximumSize;
-  QPushButton *BrowseFile;
-  QLineEdit *Filename;
-  QLineEdit *Name;
-  toFilesize *InitialSize;
 
   bool Modify;
   int InitialSizeOrig;
@@ -120,27 +101,29 @@ public:
   toStorageDatafile(bool dispName,QWidget *parent = 0,const char *name=0,WFlags fl=0);
 
   QString getName(void);
-  QStringList getSQL(void);
+  std::list<QString> sql(void);
 
   friend class toStorageDialog;
 signals:
   void validContent(bool);
 
 public slots:
-  void browseFile(void);
-  void autoExtend(bool);
-  void maximumSize(bool);
-  void valueChanged(const QString &);
+  virtual void browseFile(void);
+  virtual void autoExtend(bool);
+  virtual void maximumSize(bool);
+  virtual void valueChanged(const QString &);
 };
 
-class toStorageDialog : public QDialog {
+class toStorageDialog : public toStorageDialogUI {
   Q_OBJECT
-  
-  QPushButton *OkButton;
-
+  enum {
+    NewTablespace,
+    NewDatafile,
+    ModifyTablespace,
+    ModifyDatafile
+  } Mode;
+  QString TablespaceOrig;
   void Setup(void);
-
-  QTabWidget *DialogTab;
 public:
   toStorageDatafile *Datafile;
   toStorageTablespace *Tablespace;
@@ -149,10 +132,13 @@ public:
   toStorageDialog(toConnection &conn,const QString &Tablespace,QWidget *parent);
   toStorageDialog(toConnection &conn,const QString &Tablespace,
 		  const QString &file,QWidget *parent);
-  toStorageDialog(bool datafile,QWidget *parent);
+  toStorageDialog(const QString &tablespace,QWidget *parent);
+
+  std::list<QString> sql(void);
 public slots:
   void validContent(bool val);
   void allowStorage(bool val);
+  virtual void displaySQL(void);
 };
 
 class toStorage : public toToolWidget {

@@ -37,7 +37,11 @@
 #ifndef __TOSTORAGEDEFINITION_H
 #define __TOSTORAGEDEFINITION_H
 
+#include <list>
+
 #include <qwidget.h>
+
+#include "tostoragedefinitionui.h"
 
 class QGroupBox;
 class QFrame;
@@ -48,36 +52,16 @@ class toFilesize;
 class QGroupBox;
 class toStorageDialog;
 
-class toStorageDefinition : public QWidget
+class toStorageDefinition : public toStorageDefinitionUI
 { 
-  Q_OBJECT
-
-  QGroupBox *GroupBox1;
-  QFrame *Line1;
-  QCheckBox *UnlimitedExtent;
-  QLabel *TextLabel1_2;
-  QSpinBox *MaximumExtent;
-  QSpinBox *InitialExtent;
-  QLabel *TextLabel1;
-  toFilesize *NextSize;
-  toFilesize *InitialSize;
-  QGroupBox *Optimal;
-  toFilesize *OptimalSize;
-  QCheckBox *OptimalNull;
-  QSpinBox *PCTIncrease;
-  QLabel *TextLabel2;
-
 public:
   toStorageDefinition(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
   void forRollback(bool val);
 
-  QString getSQL(void);
+  std::list<QString> sql(void);
 
   friend class toStorageDialog;
-public slots:
-  void optimalExtents(bool val);
-  void unlimitedExtents(bool val);
 };
 
 #endif

@@ -1,0 +1,238 @@
+<!DOCTYPE UI><UI>
+<class>toStorageDatafileUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toStorageDatafileUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>592</width>
+            <height>480</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>NameLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Tablespace name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Filename</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Name</cstring>
+            </property>
+        </widget>
+        <widget row="3"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Browse</string>
+            </property>
+        </widget>
+        <widget row="3"  column="0" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Filename</cstring>
+            </property>
+        </widget>
+        <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AutoExtendGroup</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>Auto extend</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AutoExtend</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Auto extend datafile</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>UnlimitedMax</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Unlimited max size</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>toFilesize</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MaximumSize</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>toFilesize</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>NextSize</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+            <class>toFilesize</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>InitialSize</cstring>
+            </property>
+        </widget>
+        <spacer row="6"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>toFilesize</class>
+        <header location="local">tofilesize.h</header>
+        <sizehint>
+            <width>200</width>
+            <height>40</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>1</verdata>
+        </sizepolicy>
+        <pixmap>image0</pixmap>
+        <signal>valueChanged(void)</signal>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>Filename</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>toStorageDatafileUI</receiver>
+        <slot>valueChanged(const QString &amp;)</slot>
+    </connection>
+    <connection>
+        <sender>AutoExtend</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageDatafileUI</receiver>
+        <slot>autoExtend(bool)</slot>
+    </connection>
+    <connection>
+        <sender>UnlimitedMax</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>toStorageDatafileUI</receiver>
+        <slot>maximumSize(bool)</slot>
+    </connection>
+    <connection>
+        <sender>PushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>toStorageDatafileUI</receiver>
+        <slot>browseFile()</slot>
+    </connection>
+    <slot access="public">browseFile()</slot>
+    <slot access="public">autoExtend(bool)</slot>
+    <slot access="public">maximumSize(bool)</slot>
+    <slot access="public">valueChanged(const QString &amp;)</slot>
+</connections>
+</UI>

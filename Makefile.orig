@@ -88,7 +88,11 @@ SOURCES=\
 	tosql.cpp		        \
 	tosqledit.cpp		        \
 	tostorage.cpp		        \
+	tostoragedatafileui.cpp	        \
 	tostoragedefinition.cpp	        \
+	tostoragedefinitionui.cpp       \
+	tostoragedialogui.cpp		\
+	tostoragetablespaceui.cpp	\
 	tosyntaxsetup.cpp	        \
 	tosyntaxsetupui.cpp		\
 	totemplate.cpp		        \
@@ -197,8 +201,14 @@ plugins/tosecurity.tso:\
 plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
-plugins/tostorage.tso:objs/tostorage.o
-plugins/tostoragedefinition.tso:objs/tostoragedefinition.o
+plugins/tostorage.tso:\
+	objs/tostorage.o \
+	objs/tostoragedatafileui.o \
+	objs/tostoragedialogui.o \
+	objs/tostoragetablespaceui.o
+plugins/tostoragedefinition.tso:\
+	objs/tostoragedefinition.o \
+	objs/tostoragedefinitionui.o
 plugins/totemplate.tso:\
 	objs/totemplate.o \
 	objs/totemplateaddfileui.o \

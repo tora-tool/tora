@@ -45,96 +45,22 @@
 #include "tofilesize.h"
 #include "tostoragedefinition.h"
 
-#include "tostoragedefinition.moc"
+#include "tostoragedefinitionui.moc"
 
 toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags fl)
-  : QWidget(parent,name,fl)
+  : toStorageDefinitionUI(parent,name,fl)
 {
-  if (!name)
-    setName("toStorageDefinition");
-  setCaption(tr("Form1"));
-
-  InitialSize=new toFilesize("&Initial size",this,"InitialSize");
-  InitialSize->setGeometry(QRect(10,10,310,60)); 
+  InitialSize->setTitle("&Initial size");
   InitialSize->setValue(50);
 
-  NextSize=new toFilesize("&Next size",this,"NextSize");
-  NextSize->setGeometry(QRect(10,80,310,60)); 
+  NextSize->setTitle("&Next size");
   NextSize->setValue(50);
 
-  GroupBox1=new QGroupBox(this,"GroupBox1");
-  GroupBox1->setGeometry(QRect(10,150,310,115)); 
-  GroupBox1->setTitle(tr("&Extents"));
-
-  Line1=new QFrame(GroupBox1,"Line1");
-  Line1->setGeometry(QRect(145,16,20,90)); 
-  Line1->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-
-  InitialExtent=new QSpinBox(GroupBox1,"InitialExtent");
-  InitialExtent->setGeometry(QRect(10,80,130,23)); 
-  InitialExtent->setMinValue(1);
-  InitialExtent->setValue(1);
-  InitialExtent->setMaxValue(2147483647);
-
-  UnlimitedExtent=new QCheckBox(GroupBox1,"UnlimitedExtent");
-  UnlimitedExtent->setGeometry(QRect(170,25,130,19)); 
-  UnlimitedExtent->setText(tr("&Unlimited Extents"));
-  UnlimitedExtent->setChecked(true);
-  QToolTip::add( UnlimitedExtent,tr("No limit on the number of allocated extents.\nCan caused decreased performance due to fragmentation."));
-  connect(UnlimitedExtent,SIGNAL(toggled(bool)),this,SLOT(unlimitedExtents(bool)));
-
-  TextLabel1_2=new QLabel(GroupBox1,"TextLabel1_2");
-  TextLabel1_2->setGeometry(QRect(170,55,110,16));
-  TextLabel1_2->setText(tr("&Maximum Extents"));
-  QToolTip::add( TextLabel1_2,tr("Maximum number of extents to allocate."));
-
-  MaximumExtent=new QSpinBox(GroupBox1,"MaximumExtent");
-  MaximumExtent->setGeometry(QRect(170,80,130,23)); 
-  MaximumExtent->setMinValue(1);
-  MaximumExtent->setValue(1);
-  MaximumExtent->setMaxValue(2147483647);
-  MaximumExtent->setEnabled(false);
-
-  TextLabel1=new QLabel(GroupBox1,"TextLabel1");
-  TextLabel1->setGeometry(QRect(10,55,110,16)); 
-  TextLabel1->setText(tr("Initial &Extents"));
-  QToolTip::add( TextLabel1,tr("Number of extents to initially allocated."));
-
-  Optimal=new QGroupBox(this,"Optimal");
-  Optimal->setGeometry(QRect(10,275,310,130)); 
-  Optimal->setTitle(tr("&Optimal Size"));
-  QToolTip::add( Optimal,tr("Optimal allocation of extents. Will free unused extents down to specified value."));
-  Optimal->setEnabled(false);
-
-  OptimalNull=new QCheckBox(Optimal,"OptimalNull");
-  OptimalNull->setGeometry(QRect(10,25,130,19)); 
-  OptimalNull->setText(tr("&No Optimal Size"));
-  OptimalNull->setChecked(true);
-  QToolTip::add( OptimalNull,tr("Don't deallocated unused extents"));
-  connect(OptimalNull,SIGNAL(toggled(bool)),this,SLOT(optimalExtents(bool)));
-
-  OptimalSize=new toFilesize("&Size",Optimal,"OptimalSize");
-  OptimalSize->setGeometry(QRect(10,55,290,60)); 
+  OptimalSize->setTitle("&Size");
   OptimalSize->setEnabled(false);
-
-  PCTIncrease=new QSpinBox(this,"PCTIncrease");
-  PCTIncrease->setGeometry(QRect(170,415,150,23)); 
-  PCTIncrease->setValue(0);
-  PCTIncrease->setMaxValue(1000);
-  PCTIncrease->setLineStep(10);
-
-  TextLabel2=new QLabel(this,"TextLabel2");
-  TextLabel2->setGeometry(QRect(10,420,119,15)); 
-  TextLabel2->setText(tr("&Default PCT Increase"));
-  QToolTip::add( TextLabel2,tr("Default increase in size of next allocated extent.\nA size of 0 will prevent background coalesce of free space."));
-
-  // buddies
-  TextLabel1_2->setBuddy(MaximumExtent);
-  TextLabel1->setBuddy(InitialExtent);
-  TextLabel2->setBuddy(PCTIncrease);
 }
 
-QString toStorageDefinition::getSQL(void)
+std::list<QString> toStorageDefinition::sql(void)
 {
   QString str("STORAGE (INITIAL ");
   str.append(InitialSize->sizeString());
@@ -157,12 +83,9 @@ QString toStorageDefinition::getSQL(void)
     str.append(OptimalSize->sizeString());
   }
   str.append(")");
-  return str;
-}
-
-void toStorageDefinition::optimalExtents(bool val)
-{
-  OptimalSize->setEnabled(!val);
+  list<QString> ret;
+  ret.insert(ret.end(),str);
+  return ret;
 }
 
 void toStorageDefinition::forRollback(bool val)
@@ -171,9 +94,4 @@ void toStorageDefinition::forRollback(bool val)
   PCTIncrease->setEnabled(!val);
   InitialExtent->setMinValue(2);
   InitialExtent->setValue(4);
-}
-
-void toStorageDefinition::unlimitedExtents(bool val)
-{
-  MaximumExtent->setEnabled(!val);
 }
