@@ -735,17 +735,21 @@ void toOracleProvider::oracleQuery::execute(void)
     conn->Lock.down();
     if (Cancel)
       throw QString("Query aborted before started");
-    Query=new otl_stream;
-    Query->set_commit(0);
-    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-    Running=true;
-    Query->open(1,
-		query()->sql(),
-		*(conn->Connection));
+    try {
+      Query=new otl_stream;
+      Query->set_commit(0);
+      Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+      Running=true;
+      Query->open(1,
+		  query()->sql(),
+		  *(conn->Connection));
+    } catch(...) {
+      conn->Lock.up();
+      throw;
+    }
     Running=false;
   } catch (const otl_exception &exc) {
     Running=false;
-    conn->Lock.up();
     ThrowException(exc);
   }
   try {

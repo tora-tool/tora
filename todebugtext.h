@@ -93,6 +93,9 @@ public:
   bool readData(toConnection &connection,QListView *);
   bool readErrors(toConnection &connection);
   bool compile(void);
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 protected:
   virtual void paintCell(QPainter *painter,int row,int col);
   virtual void paintEvent(QPaintEvent *pe);

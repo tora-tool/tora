@@ -194,6 +194,9 @@ public:
   QString currentSchema(void);
 
   void executeInTarget(const QString &,toQList &params);
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 public slots:
   void stop(void);
   void compile(void);

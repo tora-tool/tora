@@ -414,3 +414,20 @@ void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
     toggleBreakpoint(row);
   }
 }
+
+void toDebugText::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  toHighlightedText::exportData(data,prefix);
+  data[prefix+":Schema"]=Schema;
+  data[prefix+":Object"]=Object;
+  data[prefix+":Type"]=Type;
+}
+
+void toDebugText::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  toHighlightedText::importData(data,prefix);
+  Schema=data[prefix+":Schema"];
+  Object=data[prefix+":Object"];
+  Type=data[prefix+":Type"];
+  NoBreakpoints=false;
+}

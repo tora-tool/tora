@@ -274,7 +274,9 @@ void toMarkedText::exportData(std::map<QString,QString> &data,const QString &pre
 
 void toMarkedText::importData(std::map<QString,QString> &data,const QString &prefix)
 {
-  setText(data[prefix+":Text"]);
+  QString txt=data[prefix+":Text"];
+  if (txt!=text())
+    setText(txt);
   Filename=data[prefix+":Filename"];
   setCursorPosition(data[prefix+":Line"].toInt(),data[prefix+":Column"].toInt());
 }

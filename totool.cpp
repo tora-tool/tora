@@ -115,7 +115,7 @@ void toToolWidget::exportData(std::map<QString,QString> &data,const QString &pre
   QWidget *par=parentWidget();
   if (!par)
     par=this;
-  if (par->isMaximized())
+  if (par->isMaximized()||par->width()>toMainWidget()->workspace()->width())
     data[prefix+":State"]="Maximized";
   else if (par->isMinimized())
     data[prefix+":State"]="Minimized";

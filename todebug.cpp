@@ -2527,3 +2527,92 @@ void toDebug::changeWatch(QListViewItem *item)
     }
   }
 }
+
+void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  HeadEditor->exportData(data,prefix+":Head");
+  BodyEditor->exportData(data,prefix+":Body");
+  data[prefix+":Schema"]=Schema->currentText();
+
+  int id=1;
+  for(QListViewItem *item=Breakpoints->firstChild();item;item=item->nextSibling()) {
+    toBreakpointItem *point=dynamic_cast<toBreakpointItem *>(item);
+
+    if (point) {
+      QString key=prefix+":Breaks:"+QString::number(id);
+
+      data[key+":Schema"]=point->text(2);
+      data[key+":Object"]=point->text(0);
+      data[key+":Type"]=point->text(3);
+      data[key+":Line"]=QString::number(point->line());
+      if (point->text(4)=="DISABLED")
+	data[key+":Status"]="DISABLED";
+    }
+
+    id++;
+  }
+  id=1;
+  for(QListViewItem *qitem=Watch->firstChild();qitem;qitem=qitem->nextSibling()) {
+    toResultViewItem *item=dynamic_cast<toResultViewItem *>(qitem);
+    if (item) {
+      QString key=prefix+":Watch:"+QString::number(id);
+      data[key+":Schema"]=item->allText(0);
+      data[key+":Object"]=item->allText(1);
+      data[key+":Item"]=item->allText(2);
+    }
+    id++;
+  }
+  if (DebugButton->isOn())
+    data[prefix+":Debug"]="Show";
+  if (ShowButton->isOn())
+    data[prefix+":Head"]="Show";
+
+  toToolWidget::exportData(data,prefix);
+}
+
+void toDebug::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  QString str=data[prefix+":Schema"];
+  for(int i=0;i<Schema->count();i++)
+    if (Schema->text(i)==str) {
+      Schema->setCurrentItem(i);
+      changeSchema(i);
+      break;
+    }
+
+  HeadEditor->importData(data,prefix+":Head");
+  BodyEditor->importData(data,prefix+":Body");
+
+  int id=1;
+  std::map<QString,QString>::iterator i;
+  toBreakpointItem *debug=NULL;
+  while((i=data.find(prefix+":Breaks:"+QString::number(id)+":Line"))!=data.end()) {
+    QString key=prefix+":Breaks:"+QString::number(id);
+    int line=(*i).second.toInt();
+    debug=new toBreakpointItem(Breakpoints,debug,
+			       data[key+":Schema"],
+			       data[key+":Type"],
+			       data[key+":Object"],
+			       line);
+    if (data[key+":Status"]=="DISABLED")
+      debug->setText(4,"DISABLED");
+    id++;
+  }
+  id=1;
+  toResultViewItem *item=NULL;
+  while((i=data.find(prefix+":Watch:"+QString::number(id)+":Item"))!=data.end()) {
+    QString key=prefix+":Watch:"+QString::number(id);
+    item=new toResultViewItem(Watch,NULL,data[key+":Schema"]);
+    item->setText(1,data[key+":Object"]);
+    item->setText(2,data[key+":Item"]);
+    item->setText(3,"");
+    item->setText(4,"NOCHANGE");
+    id++;
+  }
+  scanSource();
+
+  DebugButton->setOn(data[prefix+":Debug"]=="Show");
+  ShowButton->setOn(data[prefix+":Head"]=="Show");
+
+  toToolWidget::importData(data,prefix);
+}

@@ -22,6 +22,8 @@
 2001-11-21: Added session support to worksheet.
 2001-11-21: Added options to automatically save and restore sessions on startup.
 2001-11-21: Added toExpandFile to the API.
+2001-11-21: Fixed semaphore problem in cancel of oracle query.
+2001-11-21: Added session support to PL/SQL debugger.
 
 1.1.5:
 
