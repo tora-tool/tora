@@ -51,7 +51,6 @@
 #include "tosql.h"
 #include "toconnection.h"
 #include "toanalyze.h"
-#include "toextract.h"
 #include "toresultlong.h"
 
 #include "toanalyze.moc"
@@ -173,7 +172,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		       toolbar);
   Stop->setEnabled(false);
 
-  Statistics=new toResultLong(true,false,toQuery::Normal,this);
+  Statistics=new toResultLong(true,false,toQuery::Background,this);
   Statistics->setSelectionMode(QListView::Extended);
   Statistics->setReadAll(true);
 

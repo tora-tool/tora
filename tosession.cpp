@@ -178,7 +178,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Sessions=new toResultLong(false,false,toQuery::Normal,splitter);
+  Sessions=new toResultLong(false,false,toQuery::Background,splitter);
   Sessions->setReadAll(true);
   connect(Sessions,SIGNAL(done()),this,SLOT(done()));
 
@@ -195,12 +195,12 @@ toSession::toSession(QWidget *main,toConnection &connection)
   IOBar->setYPostfix("blocks/s");
   ResultTab->addTab(StatisticSplitter,"Statistics");
 
-  ConnectInfo=new toResultLong(true,false,toQuery::Normal,ResultTab);
+  ConnectInfo=new toResultLong(true,false,toQuery::Background,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
   PendingLocks=new toResultLock(ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
-  LockedObjects=new toResultLong(false,false,toQuery::Normal,ResultTab);
+  LockedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
   LockedObjects->setSQL(SQLLockedObject);
   CurrentStatement=new toSGAStatement(ResultTab);
@@ -210,7 +210,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
-  OpenCursors=new toResultLong(false,true,toQuery::Normal,OpenSplitter);
+  OpenCursors=new toResultLong(false,true,toQuery::Background,OpenSplitter);
   OpenCursors->setSQL(SQLOpenCursors);
   OpenStatement=new toSGAStatement(OpenSplitter);
 

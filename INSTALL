@@ -42,8 +42,9 @@ since TOra uses GNU extensions in the makefile.
 If you experience problems with configure
 -----------------------------------------
 
-First contact me and let me know what isn't working so I can fix it in the
-next version (Henrik Johnson <tora@henrik.org>).
+First send a mail to (TOra <tora-develop@lists.sourceforge.net>), the TOra
+development mailing list and let me know what isn't working so I can fix it
+in the next version.
 
 Then copy the file Makefile.setup.orig to Makefile.setup and edit it to
 fill out the correct values in it.

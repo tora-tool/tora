@@ -433,6 +433,9 @@ toMain::toMain()
 	  this,SLOT(statusMenu()));
   connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
+  // Display twirl
+  Poll.start(200);
+
   toolID=TO_TOOLS;
   for (std::map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
     (*k).second->customSetup(toolID);
@@ -632,7 +635,7 @@ void toMain::commandCallback(int cmd)
       try {
 	currentConnection().rereadCache();
       } TOCATCH
-      checkCaching();
+      toMainWidget()->checkCaching();
       break;
     case TO_FILE_ROLLBACK:
       try {
@@ -743,10 +746,11 @@ void toMain::addConnection(toConnection *conn)
     DisconnectButton->setEnabled(true);
   }
 
+  checkCaching();
+
   changeConnection();
   emit addedConnection(conn->description());
   createDefault();
-  checkCaching();
 }
 
 void toMain::setNeedCommit(toConnection &conn,bool needCommit)
@@ -1039,7 +1043,7 @@ void toMain::checkCaching(void)
 {
   int num=0;
   for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    if (!(*i)->cacheAvailable())
+    if (!(*i)->cacheAvailable(false,false))
       num++;
   }
   if (num==0)

@@ -90,7 +90,7 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
 		  this,SLOT(dropChanges()),toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
-  Params=new toResultLong(false,false,toQuery::Normal,this);
+  Params=new toResultLong(false,false,toQuery::Background,this);
   Params->setSQL(SQLParams);
   Params->setReadAll(true);
   connect(Params,SIGNAL(selectionChanged()),this,SLOT(changeItem()));

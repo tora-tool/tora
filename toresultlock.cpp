@@ -121,7 +121,7 @@ void toResultLock::query(const QString &sql,
   try {
     toQList par;
     par.insert(par.end(),sql);
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+    Query=new toNoBlockQuery(connection(),toQuery::Background,
 			     toSQL::string(SQLLock,connection()),par);
     Poll.start(100);
   } TOCATCH
@@ -144,7 +144,7 @@ void toResultLock::poll(void)
 
 	toQList par;
 	par.insert(par.end(),LastItem->text(0));
-	Query=new toNoBlockQuery(connection(),toQuery::Normal,
+	Query=new toNoBlockQuery(connection(),toQuery::Background,
 				 toSQL::string(SQLLock,connection()),par);
       } else {
 	delete Query;

@@ -139,7 +139,7 @@ void toResultReferences::query(const QString &sql,const toQList &param)
     toQList par;
     par.insert(par.end(),Owner);
     par.insert(par.end(),TableName);
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+    Query=new toNoBlockQuery(connection(),toQuery::Background,
 			     toSQL::string(SQLConstraints,connection()),par);
     Dependencies=false;
     LastItem=NULL;
@@ -187,7 +187,7 @@ void toResultReferences::poll(void)
 	  toQList par;
 	  par.insert(par.end(),Owner);
 	  par.insert(par.end(),TableName);
-	  Query=new toNoBlockQuery(connection(),toQuery::Normal,
+	  Query=new toNoBlockQuery(connection(),toQuery::Background,
 				   toSQL::string(SQLDependencies,connection()),
 				   par);
 	  Dependencies=true;

@@ -37,6 +37,7 @@
 #endif
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <qmessagebox.h>
 #include <qapplication.h>
@@ -152,7 +153,7 @@ int main(int argc,char **argv)
       toSetEnv("NLS_LANG",nls.latin1());
     }
 
-
+#ifndef TO_LICENSE
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
       toAbout *about=new toAbout(1,NULL,"About TOra",true);
       if (!about->exec()) {
@@ -160,6 +161,13 @@ int main(int argc,char **argv)
       }
       delete about;
       toTool::globalSetConfig("LastVersion",TOVERSION);
+    }
+#endif
+
+    if (toTool::globalConfig("FirstInstall","").isEmpty()) {
+      time_t t;
+      time(&t);
+      toTool::globalSetConfig("FirstInstall",ctime(&t));
     }
 
     if (qApp->argc()>2||(qApp->argc()==2&&qApp->argv()[1][0]=='-')) {

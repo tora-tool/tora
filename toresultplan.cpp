@@ -123,7 +123,7 @@ void toResultPlan::query(const QString &sql,
       arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
     Reading=false;
     toQList par;
-    Query=new toNoBlockQuery(conn,toQuery::Normal,explain,par);
+    Query=new toNoBlockQuery(conn,toQuery::Background,explain,par);
     Parents.clear();
     Last.clear();
     Poll.start(100);
@@ -144,7 +144,7 @@ void toResultPlan::poll(void)
 	toQList par;
 	delete Query;
 	Query=NULL;
-	Query=new toNoBlockQuery(connection(),toQuery::Normal,
+	Query=new toNoBlockQuery(connection(),toQuery::Background,
 				 toSQL::string(SQLViewPlan,connection()).
 				 arg(toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE)).
 				 arg(Ident),par);

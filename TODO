@@ -48,6 +48,7 @@ Extended functionality:
 * Ability to drop tablespaces.
 * Information about controlfiles in tuning.
 * Postgress support.
+* Make entire tuning polling in background.
 
 New tools:
 

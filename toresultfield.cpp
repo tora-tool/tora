@@ -68,7 +68,7 @@ void toResultField::query(const QString &sql,const toQList &param)
       Query=NULL;
     }
 
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,param);
+    Query=new toNoBlockQuery(connection(),toQuery::Background,sql,param);
     Poll.start(100);
   } TOCATCH
 }

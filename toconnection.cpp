@@ -468,7 +468,20 @@ toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const toQList &par
     SQL(sql(conn))
 {
   Mode=mode;
-  ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
+
+  switch(Mode) {
+  case Normal:
+  case All:
+    ConnectionSub=conn.mainConnection();
+    break;
+  case Background:
+    ConnectionSub=conn.backgroundConnection();
+    break;
+  case Long:
+    ConnectionSub=conn.longConnection();
+    break;
+  }
+
   toBusy busy;
   try {
     Query=NULL;
@@ -488,7 +501,20 @@ toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQL
     SQL(sql.utf8())
 {
   Mode=mode;
-  ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
+
+  switch(Mode) {
+  case Normal:
+  case All:
+    ConnectionSub=conn.mainConnection();
+    break;
+  case Background:
+    ConnectionSub=conn.backgroundConnection();
+    break;
+  case Long:
+    ConnectionSub=conn.longConnection();
+    break;
+  }
+
   toBusy busy;
   try {
     Query=NULL;
@@ -506,7 +532,20 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
   : Connection(conn)
 {
   Mode=mode;
-  ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
+
+  switch(Mode) {
+  case Normal:
+  case All:
+    ConnectionSub=conn.mainConnection();
+    break;
+  case Background:
+    ConnectionSub=conn.backgroundConnection();
+    break;
+  case Long:
+    ConnectionSub=conn.longConnection();
+    break;
+  }
+
   toBusy busy;
   try {
     Query=NULL;
@@ -724,13 +763,17 @@ toConnection::toConnection(const QString &provider,
   : Provider(toConnectionProvider::fetchProvider(provider)),
     User(user),Password(password),Host(host),Database(database),Mode(mode)
 {
+  BackgroundConnection=NULL;
+  BackgroundCount=0;
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
   NeedCommit=Abort=false;
-  if (cache)
-    readObjects();
-  else
+  ReadingCache=false;
+  if (cache) {
+    if (!toTool::globalConfig(CONF_CACHE_CONNECT,"").isEmpty())
+      readObjects();
+  } else
     ReadingValues.up();
 }
 
@@ -742,10 +785,13 @@ toConnection::toConnection(const toConnection &conn)
     Database(conn.Database),
     Mode(conn.Database)
 {
+  BackgroundConnection=NULL;
+  BackgroundCount=0;
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
   ReadingValues.up();
+  ReadingCache=false;
   NeedCommit=Abort=false;
 }
 
@@ -765,9 +811,11 @@ toConnection::~toConnection()
     }
   }
   Abort=true;
-  ReadingValues.down();
-  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    Connection->closeConnection(*i);
+  if (ReadingCache) {
+    ReadingValues.down();
+    for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+      Connection->closeConnection(*i);
+    }
   }
   delete Connection;
 }
@@ -776,6 +824,23 @@ toConnectionSub *toConnection::mainConnection()
 {
   toLocker lock(Lock);
   return (*(Connections.begin()));
+}
+
+toConnectionSub *toConnection::backgroundConnection()
+{
+  if (toTool::globalConfig(CONF_BKGND_CONNECT,"").isEmpty())
+    return mainConnection();
+  Lock.lock();
+  if (!BackgroundConnection) {
+    Lock.unlock();
+    toConnectionSub *tmp=longConnection();
+    Lock.lock();
+  
+    BackgroundConnection=tmp;
+    BackgroundCount++;
+  }
+  Lock.unlock();
+  return BackgroundConnection;
 }
 
 toConnectionSub *toConnection::longConnection()
@@ -798,6 +863,12 @@ toConnectionSub *toConnection::longConnection()
 void toConnection::freeConnection(toConnectionSub *sub)
 {
   toLocker lock(Lock);
+  if (sub==BackgroundConnection) {
+    BackgroundCount--;
+    if (BackgroundCount>0)
+      return;
+    BackgroundConnection=NULL;
+  }
   {
     for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++) {
       if (*i==sub) {
@@ -1179,7 +1250,10 @@ void toConnection::cacheObjects::run()
 
 void toConnection::readObjects(void)
 {
-  (new toThread(new cacheObjects(*this)))->start();
+  if (!ReadingCache) {
+    ReadingCache=true;
+    (new toThread(new cacheObjects(*this)))->start();
+  }
 }
 
 void toConnection::rereadCache(void)
@@ -1188,6 +1262,7 @@ void toConnection::rereadCache(void)
     toStatusMessage("Not done caching objects, can not clear unread cache");
     return;
   }
+  ReadingCache=false;
   while(ReadingValues.getValue()>0)
     ReadingValues.down();
   ObjectNames.clear();
@@ -1206,8 +1281,14 @@ QString toConnection::unQuote(const QString &name)
   return Connection->unQuote(name);
 }
 
-bool toConnection::cacheAvailable(bool block)
+bool toConnection::cacheAvailable(bool block,bool need)
 {
+  if (!ReadingCache) {
+    if (!need)
+      return true;
+    readObjects();
+    toMainWidget()->checkCaching();
+  }
   if (ReadingValues.getValue()==0) {
     if (block) {
       toBusy busy;

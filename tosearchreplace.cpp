@@ -137,7 +137,7 @@ void toSearchReplace::findPosition(const QString &str,int index,int &line,int &c
   int pos=0;
   for (int i=0;i<Text->numLines();i++) {
     QString str=Text->textLine(i);
-    if (str.length()+pos>(unsigned int)index) {
+    if (str.length()+pos>=(unsigned int)index) {
       line=i;
       col=index-pos;
       return;

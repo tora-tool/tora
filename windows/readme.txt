@@ -2,9 +2,16 @@ TOra - Toolkit for Oracle
 =========================
 Copyright (C) 2000-2001,2001 Underscore AB (http://www.underscore.se)
 
-For information about license see the LICENSE file. It is distributed under QPL
-which basically means that any derivatory work must be released under an open
-source license as well.
+TOra for Windows is NOT free software. You are allowed to use it free of charge
+in a non commercial setting. For more information about the license see the
+Help|License in the program. It is also displayed on the first startup and
+during the installation of the program.
+
+TOra is supported for running with an Oracle 8.1.7 client installation. It also
+probably works with any 8.x and 9.x client installation, but this is unsupported.
+It can access any Oracle version from 7.x and upwards. The only supported server
+versions are 7.3.x and 8.1.x though. Oracle 8.0.x and 9.x is NOT supported
+although they probably work.
 
 Toolkit for Oracle is a program for Oracle developers and administrators. The
 features that are available so far is (As of version 1.2):
@@ -60,8 +67,9 @@ features that are available so far is (As of version 1.2):
 * Printing of any list, text or chart
 * Cross platform support. Known to work on Linux, Windows and Solaris.
 
-TOra is developed by Henrik Johnson (tora@globecom.se) of GlobeCom AB
-(http://www.globecom.se) and has the homepage http://www.globecom.net/tora.
+TOra is developed by Henrik Johnson of Underscore AB (http://www.underscore.se)
+and has the homepage http://www.globecom.se/tora. If you encounter problems you
+can find both mailinglists and bugtracking tools from this page.
 
 Oracle is copyright of Oracle Corporation.
 

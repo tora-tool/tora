@@ -405,6 +405,9 @@ public slots:
   /** Used to enable/disable entries in the edit & file menu
    */
   void editFileMenu(void);
+  /** Check if object caching is done.
+   */
+  void checkCaching(void);
 private slots:
   /** Add a connection
    */
@@ -452,9 +455,6 @@ private slots:
   /** Paste button pressed
    */
   void pasteButton(void);
-  /** Check if object caching is done.
-   */
-  void checkCaching(void);
 };
 
 

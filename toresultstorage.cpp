@@ -392,10 +392,10 @@ void toResultStorage::query(void)
   toPush(args,toQValue(toSizeDecode(Unit)));
 
   try {
-    Tablespaces=new toNoBlockQuery(conn,toQuery::Normal,
+    Tablespaces=new toNoBlockQuery(conn,toQuery::Background,
 				   toSQL::string(ShowCoalesced?SQLShowCoalesced:SQLNoShowCoalesced,connection()),args);
     Files=NULL;
-    Files=new toNoBlockQuery(conn,toQuery::Normal,
+    Files=new toNoBlockQuery(conn,toQuery::Background,
 			     toSQL::string(SQLDatafile,connection()),args);
   
     Poll.start(100);

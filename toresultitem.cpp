@@ -190,7 +190,7 @@ void toResultItem::query(const QString &sql,const toQList &param)
       delete Query;
       Query=NULL;
     }
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+    Query=new toNoBlockQuery(connection(),toQuery::Background,
 			     sql,param);
     Poll.start(100);
 

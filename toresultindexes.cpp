@@ -149,7 +149,7 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
       par.insert(par.end(),Owner);
     par.insert(par.end(),TableName);
 
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+    Query=new toNoBlockQuery(connection(),toQuery::Background,
 			     toSQL::string(SQLListIndex,conn),par);
     Poll.start(100);
   } TOCATCH

@@ -43,18 +43,31 @@
 2001-11-08: Removed lots of workarounds for Visual C++ since Qt with RTTI availble.
 2001-11-08: Removed cursor flickering in template DB browser.
 2001-11-08: Fixed some problems with stopping a background query.
-2001-11-09: Much quicker startup of toScript tool. (From 1.3.0)
 2001-11-10: Don't repaint window on show in tuning.
-2001-11-11: Fixed some syncing problems with threads in windows.
-2001-11-11: Fixed newly introduced problem with noblockquery (After 1.1.4).
-2001-11-11: A fix on how old threads are deleted in unix.
-2001-11-12: Don't run content editor in long thread.
-2001-11-12: Don't update on change tab unless tab actually changed in session.
-2001-11-12: Improved problem with loosing open cursors in otl on cancel.
-2001-11-12: Added OCIReset after OCIBreak (As per the OCI manual).
-2001-11-12: Assume OTL isn't threadsafe except per connection.
-2001-11-12: Fixed SIGSEGV in session manager.
-2001-11-12: Flicker fix for content editor.
+2001-11-10: Fixed some syncing problems with threads in windows.
+2001-11-10: Fixed newly introduced problem with noblockquery (After 1.1.4).
+2001-11-10: A fix on how old threads are deleted in unix.
+2001-11-11: Don't run content editor in long thread.
+2001-11-11: Don't update on change tab unless tab actually changed in session.
+2001-11-11: Improved problem with loosing open cursors in otl on cancel.
+2001-11-11: Added OCIReset after OCIBreak (As per the OCI manual).
+2001-11-11: Assume OTL isn't threadsafe except per connection.
+2001-11-11: Fixed SIGSEGV in session manager.
+2001-11-11: Flicker fix for content editor.
+2001-11-11: Applied patch to extract intermedia text indexes. (From Selcuk Ozturk)
+2001-11-11: Added indication of installtime.
+2001-11-11: Fixed problem with initial license not showing cancel button.
+2001-11-11: Don't bother with license on startup if not free version.
+2001-11-12: Patch to fix extracting intermedia text indexes. (From Selcuk Ozturk)
+2001-11-12: Made it possible to run configure without which command.
+2001-11-12: Made configure.pl search for gcc in $PATH.
+2001-11-12: Check KDE version in configure.pl (Above 2.1).
+2001-11-13: Fixed search and replace match at end of last line.
+2001-11-13: Made configure work if perl is in the path.
+2001-11-13: Removed --with-static option from configure since it only works for me.
+2001-11-13: Fixed code completion problem.
+2001-11-13: Added option to read object cache on first use (On by default).
+2001-11-13: Added option to run background queries on separate connection (Off by default).
 
 1.1.4: Released 2001-11-02
 

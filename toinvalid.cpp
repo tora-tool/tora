@@ -111,7 +111,7 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
 
-  Objects=new toResultLong(false,false,toQuery::Normal,splitter);
+  Objects=new toResultLong(false,false,toQuery::Background,splitter);
   Objects->setSQL(SQLListInvalid);
 
   connect(Objects,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));

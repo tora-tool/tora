@@ -40,6 +40,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
+#include <qmessagebox.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -233,7 +234,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       sql+=Order[FilterName];
     }
     toQList par;
-    Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,par);
+    Query=new toNoBlockQuery(connection(),toQuery::Background,sql,par);
     Poll.start(100);
     OrigValues.clear();
     CurrentRow=-1;
@@ -916,3 +917,22 @@ bool toResultContent::canHandle(toConnection &conn)
   return conn.provider()=="Oracle"||conn.provider()=="MySQL";
 }
 
+void toResultContent::removeFilter(void)
+{
+  if (!Editor->allFilter()) {
+    switch(TOMessageBox::information(this,"Remove filter",
+				     "Remove the filter for this table only or for all tables.",
+				     "&All","&This","&Cancel",0)) {
+    case 0:
+      Editor->Criteria.clear();
+      Editor->Order.clear();
+      // Intentionally no break
+    case 1:
+      Editor->changeFilter(false,QString::null,QString::null);
+      break;
+    case 2:
+      return;
+    }
+  } else
+    Editor->changeFilter(Editor->allFilter(),QString::null,QString::null);
+}

@@ -90,6 +90,7 @@ class toExtract {
   QString createExchangeTable(const QString &schema,const QString &owner,const QString &name);
   QString createFunction(const QString &schema,const QString &owner,const QString &name);
   QString createIndex(const QString &schema,const QString &owner,const QString &name);
+  QString createContextPrefs(const QString &schema,const QString &owner,const QString &name, const QString &sql);
   QString createMaterializedView(const QString &schema,const QString &owner,const QString &name);
   QString createMaterializedViewLog(const QString &schema,const QString &owner,const QString &name);
   QString createPackage(const QString &schema,const QString &owner,const QString &name);

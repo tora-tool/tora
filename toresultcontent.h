@@ -309,8 +309,7 @@ public:
   { Editor->editSave(ask); }
 private slots:
   void changeFilter(void);
-  void removeFilter(void)
-  { Editor->changeFilter(Editor->allFilter(),QString::null,QString::null); }
+  void removeFilter(void);
 public slots:
   /** Reimplemented for internal reasons.
    */

@@ -82,6 +82,11 @@ public:
     /** Run the query normally on the main connection of the @ref toConnection object.
      */
     Normal,
+    /** Run the query normally on the main backgrround connection of the
+     * @ref toConnection object. This can be the same as the main connection depending
+     * on settings.
+     */
+    Background,
     /** Run the query in a separate connection for long running queries.
      */
     Long,
@@ -401,6 +406,8 @@ class toConnection {
   toLock Lock;
   std::list<toConnectionSub *> Connections;
   std::list<toConnectionSub *> Running;
+  int BackgroundCount;
+  toConnectionSub *BackgroundConnection;
   bool NeedCommit;
 
 public:
@@ -553,6 +560,7 @@ private:
   };
   friend class cacheObjects;
 
+  bool ReadingCache;
   toSemaphore ReadingValues;
   bool Abort;
   std::map<objectName,toQDescList> ColumnCache;
@@ -561,6 +569,7 @@ private:
 
   toConnectionSub *mainConnection(void);
   toConnectionSub *longConnection(void);
+  toConnectionSub *backgroundConnection(void);
   void freeConnection(toConnectionSub *);
   void readObjects(void);
 public:
@@ -786,9 +795,10 @@ public:
   const objectName &realName(const QString &object,QString &synonym,bool block);
   /** Check if cache is available or not.
    * @param block Block until cache is done.
+   * @param true True if you need the cache, or just checking.
    * @return True if cache is available.
    */
-  bool cacheAvailable(bool block=false);
+  bool cacheAvailable(bool block=false,bool need=true);
 
   friend class toQuery;
 };

@@ -290,9 +290,6 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
 {
   toAllocLogo();
 
-  if (!parent)
-    CancelButton->hide();
-
   switch (page) {
   case 2:
     setCaption("Quotes");
@@ -304,6 +301,8 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption("GNU General Public License");
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
+    if (parent)
+      CancelButton->hide();
     break;
   default:
     setCaption(QString(ABOUT_CAPTION).arg(TOVERSION));

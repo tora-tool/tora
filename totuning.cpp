@@ -986,7 +986,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Parameters=new toResultParam(Tabs);
   Tabs->addTab(Parameters,"&Parameters");
 
-  Options=new toResultLong(true,false,toQuery::Normal,Tabs);
+  Options=new toResultLong(true,false,toQuery::Background,Tabs);
   Options->setSQL(SQLOptions);
   Tabs->addTab(Options,"&Options");
 

@@ -125,7 +125,7 @@ void toResultDepend::query(const QString &sql,const toQList &param)
 
   try {
     Query=new toNoBlockQuery(connection(),
-			     toQuery::Normal,
+			     toQuery::Background,
 			     toSQL::string(SQLResultDepend,connection()),
 			     param);
     Poll.start(100);
@@ -175,7 +175,7 @@ void toResultDepend::poll(void)
 	  param.insert(param.end(),Current->text(0));
 	  param.insert(param.end(),Current->text(1));
 	  Query=new toNoBlockQuery(connection(),
-				   toQuery::Normal,
+				   toQuery::Background,
 				   toSQL::string(SQLResultDepend,connection()),
 				   param);
 	} else

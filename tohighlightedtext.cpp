@@ -782,12 +782,13 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	    int curline,curcol;
 	    getCursorPosition(&curline,&curcol);
 	    int line1,col1,line2,col2;
-	    if (getMarkedRegion(&line1,&col1,&line2,&col2)&&
-		line2==curline&&col2==curcol)
-	      mrk=markedText();
-	    else {
-	      setCursorPosition(curline,curcol);
-	      passon=true;
+	    if (getMarkedRegion(&line1,&col1,&line2,&col2)) {
+	      if (line2==curline&&col2==curcol)
+		mrk=markedText();
+	      else {
+		setCursorPosition(curline,curcol);
+		passon=true;
+	      }
 	    }
 	  }
 	  

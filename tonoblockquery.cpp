@@ -333,7 +333,7 @@ bool toNoBlockQuery::poll(void)
 
   Lock.lock();
   if (Started>0&&Started<time(NULL)&&!Description.size()) {
-    if (Query&&Query->mode()==toQuery::Normal) {
+    if (Query&&(Query->mode()==toQuery::Normal||Query->mode()==toQuery::Background)) {
       toStatusMessage("Restarting query in own connection",false,false);
       toConnection &conn=Query->connection();
       Lock.unlock();

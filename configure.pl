@@ -169,7 +169,6 @@ Options can be any of the following:
 --with-gcc           Specify which GCC compiler to use
 --with-mono          Force monolithic compilation
 --with-lib           Add extra library to include (Include -l as well)
---with-static        Force static binary compilation
 --with-static-oracle Force use of static Oracle libraries only
 --with-kde           Compile as KDE application (Requires KDE 2.2 or later)
 --without-kde        Dont compile as KDE application even though KDE available.
@@ -667,9 +666,9 @@ __TEMP__
     }
 
     if (!$NoKDE) {
-	$KDEInclude=findFile("^kglobal\\.h\$",sub {
-	                                          return -f $_[0] && ! -l $_[0];
-					      },
+	$KDEInclude=findFile("^kapp\\.h\$",sub {
+	                                       return !system("egrep \"#define[ \t]+KDE_VERSION[ \t]+((2[12345678])|(3))\" '".$_[0]."' >/dev/null");
+					   },
 			     $KDEInclude,
 			     $ENV{KDEDIR}."/include",
 			     "/usr/include",
@@ -739,9 +738,7 @@ __TEMP__
     }
 
     if (!-f $CC) {
-	findFile("^(g\\+\\+|gcc|cc|kgcc)\$",\&finalTest,
-		 "/usr/bin",
-		 "/usr/local/bin");
+	findFile("^(g\\+\\+|gcc|cc|kgcc)\$",\&finalTest,split(/:/,$ENV{PATH}));
     } elsif (!&finalTest($CC)) {
 	printf("Invalid compiler specified\n");
 	exit(2);

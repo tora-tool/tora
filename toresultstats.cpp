@@ -240,12 +240,12 @@ void toResultStats::refreshStats(bool reset)
     if (!System)
       args.insert(args.end(),SessionID);
     Query=new toNoBlockQuery(conn,
-			     toQuery::Normal,
+			     toQuery::Background,
 			     toSQL::string(System?SQLSystemStatisticName:SQLStatisticName,
 					   connection()),
 			     args);
     if (!System)
-      SessionIO=new toNoBlockQuery(conn,toQuery::Normal,
+      SessionIO=new toNoBlockQuery(conn,toQuery::Background,
 				   toSQL::string(SQLSessionIO,connection()),
 				   args);
     Poll.start(100);
