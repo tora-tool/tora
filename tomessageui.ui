@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>480</width>
+            <width>476</width>
             <height>277</height>
         </rect>
     </property>
@@ -119,6 +119,13 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>Icon</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
             </property>
             <property stdset="1">
                 <name>pixmap</name>
