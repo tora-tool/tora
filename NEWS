@@ -1,5 +1,8 @@
 1.3.5:
 
+2002-04-15: Fixed problem with ORA-24344 not being correctly reported.
+2002-04-15: Don't log errors from OCI_SUCCESS_WITH_INFO returns.
+2002-04-15: Don't display status messages from other threads than main thread (Can crash).
 2002-04-15: Temporary ignore SQL*Plus scripting commands until framework complete in worksheet.
 2002-04-15: Fixed parsing of case within other statements in sql parser.
 2002-04-15: Made worksheet use new SQL parser to get statements.

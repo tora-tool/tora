@@ -265,6 +265,8 @@ static std::list<QString> LastMessages;
 
 void toStatusMessage(const QString &str,bool save,bool log)
 {
+  if (!toThread::mainThread())
+    return;
   toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
   if (main) {
     int sec=toTool::globalConfig(CONF_STATUS_MESSAGE,DEFAULT_STATUS_MESSAGE).toInt();

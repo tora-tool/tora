@@ -106,20 +106,22 @@ static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
 
 static void ThrowException(const otl_exception &exc)
 {
-  toConnection::exception ret=QString::fromUtf8((const char *)exc.msg);
-#if 1
-  if (exc.stm_text&&strlen(exc.stm_text)) {
-    ret+="\n";
-    QString sql=QString::fromUtf8((const char *)exc.stm_text);
-    if (exc.errorofs>=0) {
-      QString t=QString::fromUtf8((const char *)exc.stm_text,exc.errorofs);
-      ret.setOffset(t.length());
-      sql.insert(t.length(),"<ERROR>");
+  if (exc.code==24344)
+    throw toConnection::exception("ORA-24344 success with compilation error");
+  else {
+    toConnection::exception ret(QString::fromUtf8((const char *)exc.msg));
+    if (exc.stm_text&&strlen(exc.stm_text)) {
+      ret+="\n";
+      QString sql=QString::fromUtf8((const char *)exc.stm_text);
+      if (exc.errorofs>=0) {
+	QString t=QString::fromUtf8((const char *)exc.stm_text,exc.errorofs);
+	ret.setOffset(t.length());
+	sql.insert(t.length(),"<ERROR>");
+      }
+      ret+=sql;
     }
-    ret+=sql;
+    throw ret;
   }
-#endif
-  throw ret;
 }
 
 class toOracleProvider : public toConnectionProvider {

@@ -962,7 +962,8 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
     Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
     t=t.mid(i);
   }
-  query(t,direct);
+  if (t.length())
+    query(t,direct);
 }
 
 void toWorksheet::execute()
@@ -1021,6 +1022,7 @@ void toWorksheet::executeAll()
     toSQLParse::parseStatement(tokens);
     execute(tokens,line,pos,true);
   } while(tokens.line()<Editor->numLines());
+  Editor->selectAll();
 }
 
 void toWorksheet::eraseLogButton()
