@@ -53,6 +53,7 @@
 #include "toresultcols.h"
 #include "toconnection.h"
 #include "tosearchreplace.h"
+#include "tonoblockquery.h"
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"
@@ -171,6 +172,14 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
     QFont font(toStringToFont(str));
     setFont(font);
   }
+
+  MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultContentEditor::~toResultContentEditor()
+{
+  delete Query;
 }
 
 void toResultContentEditor::wrongUsage(void)
@@ -211,32 +220,52 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       sql+=" ORDER BY ";
       sql+=Order;
     }
-    Query=new toQuery(connection(),sql);
-
-    toQDescList desc=Query->describe();
-
-    setNumCols(Query->columns());
-
-    QHeader *head=horizontalHeader();
-    int col=0;
-    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
-      head->setLabel(col,(*i).Name);
-      col++;
-    }
-    int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
-    Row=0;
-    setNumRows(INC_SIZE);
-    for (int j=0;j<MaxNumber&&!Query->eof();j++) {
-      if (Row+2>=numRows())
-	setNumRows(numRows()+INC_SIZE);
-      addRow();
-    }
-    if (MaxNumber<0)
-      editReadAll();
-    setNumRows(Row+1);
+    toQList par;
+    Query=new toNoBlockQuery(connection(),sql,par);
+    Poll.start(100);
+    OrigValues.clear();
+    CurrentRow=-1;
   } TOCATCH
-  OrigValues.clear();
-  CurrentRow=-1;
+}
+
+void toResultContentEditor::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      Poll.stop();
+      if (numRows()==0) {
+	toQDescList desc=Query->describe();
+	setNumCols(desc.size());
+
+	QHeader *head=horizontalHeader();
+	int col=0;
+	for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+	  head->setLabel(col,(*i).Name);
+	  col++;
+	}
+	Row=0;
+	setNumRows(INC_SIZE);
+      }
+      
+      for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
+	if (Row+2>=numRows())
+	  setNumRows(numRows()+INC_SIZE);
+	addRow();
+      }
+      setNumRows(Row+1);
+
+      if (Query->eof()) {
+	delete Query;
+	Query=NULL;
+	Poll.stop();
+      }
+    }
+  } catch(const QString &str) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(str);
+  }
 }
 
 void toResultContentEditor::addRow(void)
@@ -592,12 +621,10 @@ void toResultContentEditor::drawContents(QPainter * p,int cx,int cy,int cw,int c
 
 void toResultContentEditor::editReadAll(void)
 {
-  while (Query&&!Query->eof()) {
-    if (Row+2>=numRows())
-      setNumRows(numRows()+INC_SIZE);
-    addRow();
+  if (Query) {
+    MaxNumber=-1;
+    Poll.start(100);
   }
-  setNumRows(Row+1);
 }
 
 void toResultContentEditor::editPrint(void)

@@ -38,11 +38,19 @@
 #define __TORESULTLOCK_H
 
 #include "toresultview.h"
+#include "tobackground.h"
+
+class toNoBlockQuery;
 
 class toResultLock : public toResultView {
   Q_OBJECT
+
+  toBackground Poll;
+  toNoBlockQuery *Query;
+  QListViewItem *LastItem;
 public:
   toResultLock(QWidget *parent,const char *name=NULL);
+  ~toResultLock();
 
   virtual void query(const QString &sql,const toQList &param);
   // Why is this needed?
@@ -52,6 +60,8 @@ public:
    */
   virtual bool canHandle(toConnection &conn)
   { return toIsOracle(conn); }
+private slots:
+  void poll(void);
 };
 
 #endif

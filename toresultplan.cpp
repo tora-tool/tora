@@ -201,6 +201,9 @@ void toResultPlan::poll(void)
       }
     }
   } catch (const QString &str) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
     checkException(str);
   }
 }

@@ -96,5 +96,10 @@ void toResultField::poll(void)
 	Unapplied=QString::null;
       }
     }
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }

@@ -415,6 +415,16 @@ toMain::toMain()
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
+  RowLabel=new QLabel(statusBar());
+  statusBar()->addWidget(RowLabel,0,true);
+  RowLabel->setMinimumWidth(60);
+  RowLabel->hide();
+
+  ColumnLabel=new QLabel(statusBar());
+  statusBar()->addWidget(ColumnLabel,0,true);
+  ColumnLabel->setMinimumWidth(60);
+  ColumnLabel->hide();
+
   QToolButton *dispStatus=new QToolButton(statusBar());
   dispStatus->setIconSet(QPixmap((const char **)up_xpm));
   statusBar()->addWidget(dispStatus,0,true);
@@ -424,16 +434,6 @@ toMain::toMain()
   connect(StatusMenu,SIGNAL(aboutToShow()),
 	  this,SLOT(statusMenu()));
   connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
-
-  RowLabel=new QLabel(statusBar());
-  statusBar()->addWidget(RowLabel,0,true);
-  RowLabel->setMinimumWidth(60);
-  RowLabel->show();
-
-  ColumnLabel=new QLabel(statusBar());
-  statusBar()->addWidget(ColumnLabel,0,true);
-  ColumnLabel->setMinimumWidth(60);
-  ColumnLabel->show();
 
   toolID=TO_TOOLS;
   for (std::map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {

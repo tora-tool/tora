@@ -45,6 +45,10 @@
 2001-10-31: Added an option to not refresh results if exactly same query.
 2001-10-31: Fixed problem with toResultDepend.
 2001-11-01: Added background activity indicator in the status bar.
+2001-11-01: Changed order of statusbar items.
+2001-11-01: Finnished moving last toResults to noblockquery.
+2001-11-01: Handle errors in background results better.
+2001-11-01: Added a toResultLabel class.
 
 1.1.3: Released 2001-10-19
 

@@ -38,6 +38,9 @@
 #define __TORESULTREFERENCES_H
 
 #include "toresultview.h"
+#include "tobackground.h"
+
+class toNoBlockQuery;
 
 /** This widget displays information about other tables that references this one.
  * The table is specified by the first and second parameter in the query. The sql is not
@@ -45,6 +48,15 @@
  */
 
 class toResultReferences : public toResultView {
+  Q_OBJECT
+
+  QString Owner;
+  QString TableName;
+  bool Dependencies;
+  toBackground Poll;
+  toNoBlockQuery *Query;
+  QListViewItem *LastItem;
+
   /** Get columns for a constraints.
    * @param conOwner Owner of constraint.
    * @param conName Name of constraint.
@@ -57,6 +69,9 @@ public:
    * @param name Name of widget.
    */
   toResultReferences(QWidget *parent,const char *name=NULL);
+  /** Destruct object
+   */
+  ~toResultReferences();
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
@@ -64,6 +79,8 @@ public:
    */
   virtual bool canHandle(toConnection &conn)
   { return toIsOracle(conn); }
+private slots:
+  void poll(void);
 };
 
 #endif

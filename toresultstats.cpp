@@ -296,5 +296,12 @@ void toResultStats::poll(void)
 
     if (done)
       Poll.stop();
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    delete SessionIO;
+    SessionIO=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }

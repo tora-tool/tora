@@ -40,6 +40,9 @@
 #include "toconf.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
+
+#include "toresultreferences.moc"
 
 toResultReferences::toResultReferences(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
@@ -52,6 +55,14 @@ toResultReferences::toResultReferences(QWidget *parent,const char *name)
   addColumn("Enabled");
   addColumn("Delete Rule");
   setSQLName("toResultReferences");
+
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultReferences::~toResultReferences()
+{
+  delete Query;
 }
 
 static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
@@ -112,8 +123,6 @@ void toResultReferences::query(const QString &sql,const toQList &param)
   if (!handled())
     return;
 
-  QString Owner;
-  QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end())
     Owner=*cp;
@@ -121,53 +130,89 @@ void toResultReferences::query(const QString &sql,const toQList &param)
   if (cp!=((toQList &)param).end())
     TableName=(*cp);
 
-  Query=NULL;
-  RowNumber=0;
+  if (Query) {
+    delete Query;
+    Query=NULL;
+  }
 
   clear();
 
   try {
-    toQuery query(connection(),SQLConstraints,Owner,TableName);
-
-    QListViewItem *item=NULL;
-    while(!query.eof()) {
-      item=new QListViewItem(this,item,NULL);
-
-      QString consOwner(query.readValue());
-      item->setText(1,query.readValue());
-      QString consName(query.readValue());
-      QString colNames(constraintCols(Owner,consName));
-      item->setText(0,consOwner);
-      item->setText(2,consName);
-      QString rConsOwner(query.readValue());
-      QString rConsName(query.readValue());
-      item->setText(4,query.readValue());
-      QString Condition;
-
-      Condition="foreign key (";
-      Condition.append(colNames);
-      Condition.append(") references ");
-      Condition.append(rConsOwner);
-      Condition.append(".");
-      QString cols(constraintCols(rConsOwner,rConsName));
-      
-      Condition.append(TableName);
-      Condition.append("(");
-      Condition.append(cols);
-      Condition.append(")");
-
-      item->setText(3,Condition);
-      item->setText(5,query.readValue());
-    }
-    
-    toQuery deps(connection(),SQLDependencies,Owner,TableName);
-    while(!deps.eof()) {
-      item=new QListViewItem(this,item,NULL);
-      item->setText(0,deps.readValue());
-      item->setText(1,deps.readValue());
-      item->setText(3,deps.readValue());
-      item->setText(4,"DEPENDENCY");
-    }
+    toQList par;
+    par.insert(par.end(),Owner);
+    par.insert(par.end(),TableName);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     toSQL::string(SQLConstraints,connection()),par);
+    Dependencies=false;
+    LastItem=NULL;
+    Poll.start(100);
   } TOCATCH
-  updateContents();
+}
+
+void toResultReferences::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      if (!Dependencies) {
+	while(Query->poll()&&!Query->eof()) {
+	  LastItem=new toResultViewItem(this,LastItem,NULL);
+	
+	  QString consOwner(Query->readValue());
+	  LastItem->setText(1,Query->readValue());
+	  QString consName(Query->readValue());
+	  QString colNames(constraintCols(Owner,consName));
+	  LastItem->setText(0,consOwner);
+	  LastItem->setText(2,consName);
+	  QString rConsOwner(Query->readValue());
+	  QString rConsName(Query->readValue());
+	  LastItem->setText(4,Query->readValue());
+	  QString Condition;
+
+	  Condition="foreign key (";
+	  Condition.append(colNames);
+	  Condition.append(") references ");
+	  Condition.append(rConsOwner);
+	  Condition.append(".");
+	  QString cols(constraintCols(rConsOwner,rConsName));
+      
+	  Condition.append(TableName);
+	  Condition.append("(");
+	  Condition.append(cols);
+	  Condition.append(")");
+
+	  LastItem->setText(3,Condition);
+	  LastItem->setText(5,Query->readValue());
+	}
+	if (Query->eof()) {
+	  delete Query;
+	  Query=NULL;
+	  toQList par;
+	  par.insert(par.end(),Owner);
+	  par.insert(par.end(),TableName);
+	  Query=new toNoBlockQuery(connection(),toQuery::Normal,
+				   toSQL::string(SQLDependencies,connection()),
+				   par);
+	  Dependencies=true;
+	}
+      } else {
+	while(Query->poll()&&!Query->eof()) {
+	  LastItem=new QListViewItem(this,LastItem,NULL);
+	  LastItem->setText(0,Query->readValue());
+	  LastItem->setText(1,Query->readValue());
+	  LastItem->setText(3,Query->readValue());
+	  LastItem->setText(4,"DEPENDENCY");
+	}
+	if (Query->eof()) {
+	  delete Query;
+	  Query=NULL;
+	  Poll.stop();
+	}
+      }
+    }
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: toresultreferences.h</TITLE>
+<TITLE>Source: toresultlabel.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: toresultreferences.h</h1>
+		<h1>Source: toresultlabel.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,51 +62,99 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTREFERENCES_H
-#define __TORESULTREFERENCES_H
+#ifndef __TORESULTLABEL_H
+#define __TORESULTLABEL_H
 
-#include "toresultview.h"
+#include <qlabel.h>
+
 #include "tobackground.h"
+#include "toresult.h"
 
+class toSQL;
 class toNoBlockQuery;
 
-/** This widget displays information about other tables that references this one.
- * The table is specified by the first and second parameter in the query. The sql is not
- * used in the query.
+/** This widget displays the result of a query where each item in the stream
+ * is added to a label separated by an optional string.
  */
 
-class toResultReferences : public toResultView {
+class toResultLabel : public QLabel, public toResult {
   Q_OBJECT
 
-  QString Owner;
-  QString TableName;
-  bool Dependencies;
-  toBackground Poll;
   toNoBlockQuery *Query;
-  QListViewItem *LastItem;
+  toBackground Poll;
 
-  /** Get columns for a constraints.
-   * @param conOwner Owner of constraint.
-   * @param conName Name of constraint.
-   * @return String with column names separated by a ',' character.
-   */  
-  QString constraintCols(const QString &conOwner,const QString &conName);
+  QString Separator;
+
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultReferences(QWidget *parent,const char *name=NULL);
+  toResultLabel(QWidget *parent,const char *name=NULL);
   /** Destruct object
    */
-  ~toResultReferences();
+  ~toResultLabel();
+
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
-  /** Support Oracle
+
+  /** Handle any connection by default
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &)
+  { return true; }
+
+  /** Get separator string to use between result.
+   */
+  const QString &separator(void) const
+  { return Separator; }
+  /** Set separator string to use between result.
+   */
+  void setSeparator(const QString &sep)
+  { Separator=sep; }
+
+  // Why are these needed?
+#if 1
+  /** Set the SQL statement of this list
+   * @param sql String containing statement.
+   */
+  void setSQL(const QString &sql)
+  { toResult::setSQL(sql); }
+  /** Set the SQL statement of this list. This will also affect @ref Name.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &sql)
+  { toResult::setSQL(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(const QString &sql)
+  { toResult::query(sql); }
+  /** Set new SQL and run query.
+   * @param sql New sql.
+   * @see setSQL
+   */
+  void query(toSQL &sql)
+  { toResult::query(sql); }
+#endif
+public slots:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void refresh(void)
+  { toResult::refresh(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1)
+  { toResult::changeParams(Param1); }
+  /** Reimplemented For internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2)
+  { toResult::changeParams(Param1,Param2); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  { toResult::changeParams(Param1,Param2,Param3); }
 private slots:
   void poll(void);
 };

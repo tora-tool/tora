@@ -31,11 +31,13 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toBackground</A></b> (<A HREF="http://doc.trolltech.com/qobject.html">QObject</A>* parent=0,const char* name=0) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref5">start</A></b> (int msec) 
+<LI>&nbsp;<b><A HREF="#ref5">~toBackground</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref6">stop</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref6">start</A></b> (int msec) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref7">init</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref7">stop</A></b> (void) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref8">init</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  A descendant of timer which will indicate in the statusbar of the
@@ -52,7 +54,8 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="start"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (int msec)
+<A NAME="~toBackground"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toBackground</strong> ()
+<br></td><td align="right"><h3><strong>~toBackground</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (int msec)
 <br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p></p><p> Start repeating timer with msec interval.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -60,11 +63,11 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toTimer.html#start">toTimer</A>.</p>
-<A NAME="stop"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>stop</strong> (void)
+<A NAME="stop"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>stop</strong> (void)
 <br></td><td align="right"><h3><strong>stop</strong></h3></td></tr></table><p></p><p> Stop timer
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qtimer.html#c25cc0">QTimer</A>.</p>
-<A NAME="init"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>init</strong> (void)
+<A NAME="init"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>init</strong> (void)
 <br></td><td align="right"><h3><strong>init</strong></h3></td></tr></table><p> <small>[static]</small></p><HR>
 	<table>
 	</table>

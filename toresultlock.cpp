@@ -42,6 +42,7 @@
 #include "totool.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
 
 #include "toresultlock.moc"
 
@@ -64,6 +65,14 @@ toResultLock::toResultLock(QWidget *parent,const char *name)
   addColumn("Grabbed");
   addColumn("Requested");
   setSQLName("toResultLock");
+
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultLock::~toResultLock()
+{
+  delete Query;
 }
 
 static toSQL SQLLock("toResultLock:Locks",
@@ -102,34 +111,53 @@ void toResultLock::query(const QString &sql,
   if (!handled())
     return;
 
+  if (!setSQLParams(sql,param))
+    return;
+
+  if (Query) {
+    delete Query;
+    Query=NULL;
+  }
   clear();
 
-  toQuery *query=NULL;
   try {
-    QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
+    toQList par;
+    par.insert(par.end(),sql);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     toSQL::string(SQLLock,connection()),par);
+    Poll.start(100);
+  } TOCATCH
+}
 
-    query=new toQuery(connection(),SQLLock,sql);
+void toResultLock::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      if (!Query->eof()) {
+	if (!LastItem)
+	  LastItem=new toResultViewItem(this,NULL);
+	else
+	  LastItem=new toResultViewItem(LastItem,NULL);
+	for (int pos=0;!Query->eof();pos++)
+	  LastItem->setText(pos,Query->readValue());
 
-    toResultViewItem *lastItem=NULL;
-    while(!query->eof()) {
-      toResultViewItem *item;
-      if (!lastItem)
-	item=new toResultViewItem(this,NULL);
-      else {
-	item=new toResultViewItem(lastItem,NULL);
-	setOpen(lastItem,true);
+	delete Query;
+	Query=NULL;
+
+	toQList par;
+	par.insert(par.end(),LastItem->text(0));
+	Query=new toNoBlockQuery(connection(),toQuery::Normal,
+				 toSQL::string(SQLLock,connection()),par);
+      } else {
+	delete Query;
+	Query=NULL;
+	Poll.stop();
       }
-      lastItem=item;
-      for (int pos=0;!query->eof();pos++)
-	item->setText(pos,query->readValue());
-      QString session=item->text(0);
-      delete query;
-      query=NULL;
-      query=new toQuery(connection(),SQLLock,session);
     }
   } catch(const QString &exc) {
-    delete query;
+    delete Query;
+    Query=NULL;
+    Poll.stop();
     toStatusMessage(exc);
   }
-  updateContents();
 }

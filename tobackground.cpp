@@ -152,3 +152,8 @@ void toBackground::init(void)
   Label->show();
   toMainWidget()->statusBar()->addWidget(Label,0,true);
 }
+
+toBackground::~toBackground()
+{
+  stop();
+}

@@ -40,6 +40,9 @@
 #include "toconf.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
+
+#include "toresultconstraint.moc"
 
 toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
@@ -51,6 +54,11 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
   addColumn("Delete Rule");
   addColumn("Generated");
   setSQLName("toResultConstraint");
+
+  setSorting(0);
+
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
@@ -109,8 +117,11 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
 {
   if (!handled())
     return;
-  QString Owner;
-  QString TableName;
+
+  if (Query)
+    delete Query;
+  Query=NULL;
+
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end())
     Owner=*cp;
@@ -121,60 +132,84 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
   clear();
 
   try {
-    QListViewItem *item=NULL;
-
-    toQuery query(connection(),SQLConstraints,Owner,TableName);
-
-    while(!query.eof()) {
-      item=new QListViewItem(this,item,NULL);
-
-      QString consName=query.readValue();
-      QString check=query.readValue();
-      QString colNames=constraintCols(Owner,consName);
-      item->setText(0,consName);
-      QString rConsOwner=query.readValue();
-      QString rConsName=query.readValue();
-      item->setText(2,query.readValue());
-      QString type=query.readValue();
-      QString Condition;
-      char t=((const char *)type)[0];
-      switch(t) {
-      case 'U':
-	Condition="unique (";
-	Condition.append(colNames);
-	Condition.append(")");
-	break;
-      case 'P':
-	Condition="primary key (";
-	Condition.append(colNames);
-	Condition.append(")");
-	break;
-      case 'C':
-      case 'V':
-      case 'O':
-	Condition="check (";
-	Condition.append(check);
-	Condition.append(")");
-	break;
-      case 'R':
-	Condition="foreign key (";
-	Condition.append(colNames);
-	Condition.append(") references ");
-	Condition.append(rConsOwner);
-	Condition.append(".");
-	QString cols(constraintCols(rConsOwner,rConsName));
-	
-	Condition.append(LastTable);
-	Condition.append("(");
-	Condition.append(cols);
-	Condition.append(")");
-	break;
-      }
-      item->setText(1,Condition);
-      item->setText(3,query.readValueNull());
-      item->setText(4,query.readValue());
-    }
+    toQList par;
+    par.insert(par.end(),Owner);
+    par.insert(par.end(),TableName);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     toSQL::string(SQLConstraints,connection()),
+			     par);
+    Poll.start(100);
   } TOCATCH
-  updateContents();
 }
 
+toResultConstraint::~toResultConstraint()
+{
+  delete Query;
+}
+
+void toResultConstraint::poll()
+{
+  try {
+    if (Query&&Query->poll()) {
+      while(Query->poll()&&!Query->eof()) {
+	QListViewItem *item=new toResultViewItem(this,NULL);
+      
+	QString consName=Query->readValue();
+	QString check=Query->readValue();
+	QString colNames=constraintCols(Owner,consName);
+	item->setText(0,consName);
+	QString rConsOwner=Query->readValue();
+	QString rConsName=Query->readValue();
+	item->setText(2,Query->readValue());
+	QString type=Query->readValue();
+	QString Condition;
+	char t=((const char *)type)[0];
+	switch(t) {
+	case 'U':
+	  Condition="unique (";
+	  Condition.append(colNames);
+	  Condition.append(")");
+	  break;
+	case 'P':
+	  Condition="primary key (";
+	  Condition.append(colNames);
+	  Condition.append(")");
+	  break;
+	case 'C':
+	case 'V':
+	case 'O':
+	  Condition="check (";
+	  Condition.append(check);
+	  Condition.append(")");
+	  break;
+	case 'R':
+	  Condition="foreign key (";
+	  Condition.append(colNames);
+	  Condition.append(") references ");
+	  Condition.append(rConsOwner);
+	  Condition.append(".");
+	  QString cols(constraintCols(rConsOwner,rConsName));
+	
+	  Condition.append(LastTable);
+	  Condition.append("(");
+	  Condition.append(cols);
+	  Condition.append(")");
+	  break;
+	}
+	item->setText(1,Condition);
+	item->setText(3,Query->readValueNull());
+	item->setText(4,Query->readValue());
+      }
+      if (Query->eof()) {
+	delete Query;
+	Query=NULL;
+	Poll.stop();
+      }
+    }
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
+}

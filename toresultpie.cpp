@@ -90,5 +90,10 @@ void toResultPie::poll(void)
 	Poll.stop();
       }
     }
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }

@@ -101,6 +101,7 @@ SOURCES=\
 	toresultfield.cpp	        \
 	toresultindexes.cpp	        \
 	toresultitem.cpp	        \
+	toresultlabel.cpp		\
 	toresultline.cpp	        \
 	toresultlistformatui.cpp	\
 	toresultlock.cpp	        \
@@ -184,6 +185,7 @@ API=	\
 	toresultfield.h		\
 	toresultindexes.h	\
 	toresultitem.h		\
+	toresultlabel.h		\
 	toresultline.h		\
 	toresultlong.h		\
 	toresultpie.h		\
@@ -237,6 +239,7 @@ plugins/toresult.tso:\
 	objs/toresultcontentfilterui.o \
 	objs/toresultdepend.o \
 	objs/toresultindexes.o \
+	objs/toresultlabel.o \
 	objs/toresultlock.o \
 	objs/toresultlong.o \
 	objs/toresultplan.o \

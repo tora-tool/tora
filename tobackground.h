@@ -85,6 +85,7 @@ public:
   toBackground(QObject* parent=0,const char* name=0)
     : toTimer(parent,name)
   { }
+  ~toBackground();
   /** Start repeating timer with msec interval.
    * @param msec Millsecond repeat interval.
    */

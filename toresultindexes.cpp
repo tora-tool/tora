@@ -40,6 +40,9 @@
 #include "toconf.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
+
+#include "toresultindexes.moc"
 
 bool toResultIndexes::canHandle(toConnection &conn)
 {
@@ -55,6 +58,14 @@ toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
   addColumn("Type");
   addColumn("Unique");
   setSQLName("toResultIndexes");
+
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultIndexes::~toResultIndexes()
+{
+  delete Query;
 }
 
 static toSQL SQLColumns("toResultIndexes:Columns",
@@ -110,21 +121,18 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
   if (!handled())
     return;
 
-  enum {
-    Oracle,
-    MySQL
-  } type;
+  if (Query)
+    delete Query;
+  Query=NULL;
 
   toConnection &conn=connection();
   if(conn.provider()=="Oracle")
-    type=Oracle;
+    Type=Oracle;
   else if (conn.provider()=="MySQL")
-    type=MySQL;
+    Type=MySQL;
   else
     return;
     
-  QString Owner;
-  QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end())
     Owner=*cp;
@@ -139,45 +147,62 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
   try {
     toQuery query(connection());
     toQList par;
-    if (type==Oracle)
+    if (Type==Oracle)
       par.insert(par.end(),Owner);
     par.insert(par.end(),TableName);
-    query.execute(SQLListIndex(conn),par);
 
-    QListViewItem *item=NULL;
-    while(!query.eof()) {
-      if (type==Oracle) {
-	item=new QListViewItem(this,item,NULL);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     toSQL::string(SQLListIndex,conn),par);
+    Poll.start(100);
+  } TOCATCH
+}
 
-	QString indexOwner(query.readValue());
-	QString indexName(query.readValue());
-	item->setText(0,indexName);
-	item->setText(1,indexCols(indexOwner,indexName));
-	item->setText(2,query.readValue());
-	item->setText(3,query.readValue());
-      } else {
-	query.readValue(); // Tablename
-	int unique=query.readValue().toInt();
-	QString name=query.readValue();
-	query.readValue(); // SeqID
-	QString col=query.readValue();
-	query.readValue();
-	query.readValue();
-	query.readValue();
-	query.readValue();
-	query.readValue();
-	if (item&&item->text(0)==name)
-	  item->setText(1,item->text(1)+","+col);
-	else {
-	  item=new QListViewItem(this,item,NULL);
-	  item->setText(0,name);
-	  item->setText(1,col);
-	  item->setText(2,(name=="PRIMARY")?"PRIMARY":"INDEX");
-	  item->setText(3,unique?"UNIQUE":"NONUNIQUE");
+void toResultIndexes::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      while(Query->poll()&&!Query->eof()) {
+	if (Type==Oracle) {
+	  Last=new toResultViewItem(this,NULL);
+	  
+	  QString indexOwner(Query->readValue());
+	  QString indexName(Query->readValue());
+	  Last->setText(0,indexName);
+	  Last->setText(1,indexCols(indexOwner,indexName));
+	  Last->setText(2,Query->readValue());
+	  Last->setText(3,Query->readValue());
+	} else {
+	  Query->readValue(); // Tablename
+	  int unique=Query->readValue().toInt();
+	  QString name=Query->readValue();
+	  Query->readValue(); // SeqID
+	  QString col=Query->readValue();
+	  Query->readValue();
+	  Query->readValue();
+	  Query->readValue();
+	  Query->readValue();
+	  Query->readValue();
+	  if (Last&&Last->text(0)==name)
+	    Last->setText(1,Last->text(1)+","+col);
+	  else {
+	    Last=new toResultViewItem(this,NULL);
+	    Last->setText(0,name);
+	    Last->setText(1,col);
+	    Last->setText(2,(name=="PRIMARY")?"PRIMARY":"INDEX");
+	    Last->setText(3,unique?"UNIQUE":"NONUNIQUE");
+	  }
 	}
       }
+      if (Query->eof()) {
+	delete Query;
+	Query=NULL;
+	Poll.stop();
+      }
     }
-  } TOCATCH
-  updateContents();
-  return;
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }

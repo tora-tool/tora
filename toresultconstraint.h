@@ -38,6 +38,9 @@
 #define __TORESULTCONSTRAINT_H
 
 #include "toresultview.h"
+#include "tobackground.h"
+
+class toNoBlockQuery;
 
 /** This widget displays information about the constraints of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -45,6 +48,8 @@
  */
 
 class toResultConstraint : public toResultView {
+  Q_OBJECT
+
   /** The last table queried.
    */
   QString LastTable;
@@ -54,12 +59,21 @@ class toResultConstraint : public toResultView {
    * @return String with column names separated by a ',' character.
    */
   QString constraintCols(const QString &conOwner,const QString &conName);
+
+  QString Owner;
+  QString TableName;
+
+  toNoBlockQuery *Query;
+  toBackground Poll;
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
   toResultConstraint(QWidget *parent,const char *name=NULL);
+  /** Destroy object
+   */
+  ~toResultConstraint();
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
@@ -67,6 +81,8 @@ public:
    */
   virtual bool canHandle(toConnection &conn)
   { return toIsOracle(conn); }
+private slots:
+  void poll(void);
 };
 
 #endif

@@ -463,7 +463,14 @@ void toResultStorage::poll(void)
       }
       Poll.stop();
     }
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete Tablespaces;
+    Tablespaces=NULL;
+    delete Files;
+    Files=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }
 
 QString toResultStorage::currentTablespace(void)

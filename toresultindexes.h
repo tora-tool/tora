@@ -38,6 +38,9 @@
 #define __TORESULTINDEXES_H
 
 #include "toresultview.h"
+#include "tobackground.h"
+
+class toNoBlockQuery;
 
 /** This widget displays information about indexes of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -45,24 +48,43 @@
  */
 
 class toResultIndexes : public toResultView {
+  Q_OBJECT
+
   /** Get columns of index.
    * @param conOwner Owner of object.
    * @param conName Name of index.
    * @return Columns separated by ','.
    */
   QString indexCols(const QString &conOwner,const QString &conName);
+
+  QString Owner;
+  QString TableName;
+
+  enum {
+    Oracle,
+    MySQL
+  } Type;
+
+  toNoBlockQuery *Query;
+  toBackground Poll;
+  QListViewItem *Last;
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
   toResultIndexes(QWidget *parent,const char *name=NULL);
+  /** Destroy object
+   */
+  ~toResultIndexes();
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
   /** Support Oracle & MySQL
    */
   virtual bool canHandle(toConnection &conn);
+private slots:
+  void poll(void);
 };
 
 #endif

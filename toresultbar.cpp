@@ -136,7 +136,12 @@ void toResultBar::poll(void)
 	update();
       }
     }
-  } TOCATCH
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
 }
 
 std::list<double> toResultBar::transform(std::list<double> &input)

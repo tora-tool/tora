@@ -73,7 +73,7 @@
 #include "toeditwidget.h"
 
 class toResultContent;
-class toQuery;
+class toNoBlockQuery;
 class toSearchReplace;
 
 /** This widget allows the user to browse the contents of a table and also edit
@@ -95,7 +95,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   std::list<QString> OrigValues;
   /** Stream to read data from.
    */
-  toQuery *Query;
+  toNoBlockQuery *Query;
+  toBackground Poll;
+  int MaxNumber;
   /** Number of rows read from stream.
    */
   int Row;
@@ -192,6 +194,9 @@ public:
    * @param name Name of widget.
    */
   toResultContentEditor(QWidget *parent,const char *name=NULL);
+  /** Destruct object
+   */
+  ~toResultContentEditor();
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param)
@@ -281,6 +286,8 @@ protected slots:
    * @param data New contents of data.
    */ 
   virtual void changeData(int row,int col,const QString &data); 
+private slots:
+  virtual void poll(void);
 };
 
 /** This widget allows the user to browse the contents of a table and also edit
