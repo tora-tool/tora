@@ -172,14 +172,14 @@ toMain::toMain()
   FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
 		       "&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit connection",TO_FILE_COMMIT);
-  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
-  FileMenu->insertItem("C&urrent connection",TO_FILE_CURRENT);
-  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread object cache",TO_FILE_CLEARCACHE);
+  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit Connection",TO_FILE_COMMIT);
+  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
+  FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
+  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
-  FileMenu->insertItem("Save A&s..",TO_FILE_SAVE_AS);
+  FileMenu->insertItem("Save A&s...",TO_FILE_SAVE_AS);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"Open Session...",
 		       TO_FILE_OPEN_SESSION);
@@ -213,7 +213,7 @@ toMain::toMain()
   EditMenu->insertItem("Select &All",TO_EDIT_SELECT_ALL);
   EditMenu->insertItem("Read All &Items",TO_EDIT_READ_ALL);
   EditMenu->insertSeparator();
-  EditMenu->insertItem("&Options",TO_EDIT_OPTIONS);
+  EditMenu->insertItem("&Options...",TO_EDIT_OPTIONS);
   EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
   EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
   EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);

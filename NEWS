@@ -10,6 +10,9 @@
 2001-11-16: Fixes to configure if Qt is not in a standard place.
 2001-11-16: Fixes to configure if KDE3 is used.
 2001-11-16: Last fixes to be able to compile in KDE3.
+2001-11-17: Some more fiddling with the analyzer.
+2001-11-17: Fixed paths with /ust.
+2001-11-17: Fixed some capital letters in menues.
 
 1.3.0: Released 2001-12-17
 

@@ -503,7 +503,7 @@ __TEMP__
 			       "/usr/lib/mysql/include",
 			       "/usr/local/include",
 			       "/usr/local/include/mysql",
-			       "/ust/local/lib/mysql/include");
+			       "/usr/local/lib/mysql/include");
 	
 	if (!-d $MySQLInclude) {
 	    print "no\n";
@@ -702,14 +702,14 @@ __TEMP__
 		    "/usr/lib/qt3",
 		    "/usr/lib/qt3/lib",
 		    "/usr/lib/qt",
-		    "/ust/lib/qt/lib",
+		    "/usr/lib/qt/lib",
 		    "/usr/local/lib",
 		    "/usr/local/lib/qt2",
 		    "/usr/local/lib/qt2/lib",
 		    "/usr/local/lib/qt3",
 		    "/usr/local/lib/qt3/lib",
 		    "/usr/local/lib/qt",
-		    "/ust/local/lib/qt/lib",
+		    "/usr/local/lib/qt/lib",
 		    "/usr/local/qt2",
 		    "/usr/local/qt2/lib",
 		    "/usr/local/qt3",
@@ -739,20 +739,20 @@ __TEMP__
 			"/usr/lib/qt3",
 			"/usr/lib/qt3/lib",
 			"/usr/lib/qt",
-			"/ust/lib/qt/lib",
+			"/usr/lib/qt/lib",
 			"/usr/local/lib",
 			"/usr/local/lib/qt2",
 			"/usr/local/lib/qt2/lib",
 			"/usr/local/lib/qt3",
 			"/usr/local/lib/qt3/lib",
 			"/usr/local/lib/qt",
-			"/ust/local/lib/qt/lib",
+			"/usr/local/lib/qt/lib",
 			"/usr/local/qt2",
 			"/usr/local/qt2/lib",
 			"/usr/local/qt3",
 			"/usr/local/qt3/lib",
 			"/usr/local/qt",
-			"/ust/local/qt/lib"
+			"/usr/local/qt/lib"
 			);
     }
     
@@ -875,16 +875,16 @@ __TEMP__
 			"/usr/lib/qt2/include",
 			"/usr/lib/qt3/include",
 			"/usr/include/qt",
-			"/ust/lib/qt/include",
+			"/usr/lib/qt/include",
 			"/usr/local/include",
 			"/usr/local/include/qt2",
 			"/usr/local/include/qt3",
 			"/usr/local/lib/qt2/include",
 			"/usr/local/lib/qt3/include",
 			"/usr/local/include/qt",
-			"/ust/local/qt/include",
-			"/ust/local/qt2/include",
-			"/ust/local/qt3/include");
+			"/usr/local/qt/include",
+			"/usr/local/qt2/include",
+			"/usr/local/qt3/include");
 
     if (!-d $QtInclude) {
 	print "failed!\n\nCouldn't find include files for Qt, use --with-qt-include to specify\n";
@@ -907,20 +907,20 @@ __TEMP__
 	     "/usr/lib/qt3",
 	     "/usr/lib/qt3/lib",
 	     "/usr/lib/qt",
-	     "/ust/lib/qt/lib",
+	     "/usr/lib/qt/lib",
 	     "/usr/local/lib",
 	     "/usr/local/lib/qt2",
 	     "/usr/local/lib/qt2/lib",
 	     "/usr/local/lib/qt3",
 	     "/usr/local/lib/qt3/lib",
 	     "/usr/local/lib/qt",
-	     "/ust/local/lib/qt/lib",
+	     "/usr/local/lib/qt/lib",
 	     "/usr/local/qt2",
 	     "/usr/local/qt2/lib",
 	     "/usr/local/qt3",
 	     "/usr/local/qt3/lib",
 	     "/usr/local/qt",
-	     "/ust/local/qt/lib"
+	     "/usr/local/qt/lib"
 	     );
     if (!defined $QtLibStatic) {
 	findFile("^libqt(-mt)?\\.a",sub {
@@ -935,20 +935,20 @@ __TEMP__
 		 "/usr/lib/qt3",
 		 "/usr/lib/qt3/lib",
 		 "/usr/lib/qt",
-		 "/ust/lib/qt/lib",
+		 "/usr/lib/qt/lib",
 		 "/usr/local/lib",
 		 "/usr/local/lib/qt2",
 		 "/usr/local/lib/qt2/lib",
 		 "/usr/local/lib/qt3",
 		 "/usr/local/lib/qt3/lib",
 		 "/usr/local/lib/qt",
-		 "/ust/local/lib/qt/lib",
+		 "/usr/local/lib/qt/lib",
 		 "/usr/local/qt2",
 		 "/usr/local/qt2/lib",
 		 "/usr/local/qt3",
 		 "/usr/local/qt3/lib",
 		 "/usr/local/qt",
-		 "/ust/local/qt/lib"
+		 "/usr/local/qt/lib"
 		 );
 	if (-f $QtLibStatic) {
 	    print $QtLibStatic."\n";
