@@ -51,6 +51,7 @@ Extended functionality:
 * Add support to run profiling in background.
 * Proxy connection provider.
 * QSql connection provider.
+* Store worksheet statistic on save session.
 
 New tools:
 
