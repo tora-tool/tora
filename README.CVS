@@ -1,0 +1,15 @@
+General Policies about CVS Commits:
+-----------------------------------
+
+If it's controversial or sigificant, please discuss on tora-develop first.
+
+Don't break stuff. Let's try and make sure to test a compile at least on a
+few standard platforms first.
+
+Mandrake
+Fedora Core
+
+Work on windows support is primarily directed at getting functional with the
+QT/Free for windows port, with eventual move to the QT/4 GPL release. For now
+Henrik may be able to do some binary builds for us when he has time with
+the existing QT/Windows commercial release.
