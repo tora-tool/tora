@@ -382,13 +382,14 @@ static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				"3.0",
 				"MySQL");
 static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
-				"SELECT c.*\n"
-                                "  FROM pg_class c, pg_user u\n"
-                                " WHERE u.usesysid=c.relowner and u.usename = :f1\n"
-                                "   AND c.relkind = 'r'",
-				QString::null,
-				"7.1",
-				"PostgreSQL");
+                                "SELECT c.relname AS \"Table Name\"\n"
+                                "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                                " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                                "   AND c.relkind = 'r'"
+                                " ORDER BY \"Table Name\"",
+                                QString::null,
+                                "7.1",
+                                "PostgreSQL");
 
 static toSQL SQLAnyGrants("toBrowser:AnyGrants",
 			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
@@ -418,12 +419,12 @@ static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "3.0",
 			       "MySQL");
 static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
-			       "SELECT *\n"
-                               "  FROM pg_class c, pg_user u\n"
-                               " WHERE u.usesysid=c.relowner and c.relname = :f2",
-			       QString::null,
-			       "7.1",
-			       "PostgreSQL");
+                               "SELECT *\n"
+                               "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                               " WHERE c.relname = :f2",
+                               QString::null,
+                               "7.1",
+                               "PostgreSQL");
 
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"

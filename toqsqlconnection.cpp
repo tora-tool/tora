@@ -62,14 +62,15 @@ static toSQL SQLListTables("toQSqlConnection:ListTables",
 			   "Get the available tables for a mysql connection",
 			   "3.0",
 			   "MySQL");
+
 static toSQL SQLListTablesPgSQL("toQSqlConnection:ListTables",
-			   "SELECT c.relname AS Name\n"
-                           "  FROM pg_class c\n"
-                           " WHERE relname !~ '^pg_' and relname !~ '^pga_'\n"
-                           "   AND relkind = 'r'",
-			   QString::null,
-			   "7.1",
-			   "PostgreSQL");
+				"SELECT c.relname AS \"Tablename\", u.usename AS \"Owner\"\n"
+				"  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+				" WHERE relkind = 'r'"
+				" ORDER BY \"Tablename\"",
+				QString::null,
+				"7.1",
+				"PostgreSQL");
 
 static QString QueryParam(const QString &in,toQList &params)
 {
