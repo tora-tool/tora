@@ -908,6 +908,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
   connect(this,SIGNAL(connectionChange()),this,SLOT(refresh()));
   Schema->setFocus();
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(changeSecond()));
 }
 
 void toBrowser::windowActivated(QWidget *widget)
@@ -994,7 +995,7 @@ void toBrowser::changeItem(QListViewItem *item)
   if (item) {
     SecondText=item->text(0);
     if (SecondTab&&!SecondText.isEmpty())
-      changeSecond();
+      Poll.start(250,true);
   }
 }
 

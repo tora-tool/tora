@@ -67,8 +67,9 @@ class toBrowser : public toToolWidget {
   std::map<QString,toResultView *> Map;
   std::map<QString,toResult *> SecondMap;
   void setNewFilter(toResultFilter *filter);
+  QTimer Poll;
+
   QString schema(void);
-  void changeSecond(void);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -83,6 +84,7 @@ public slots:
   void changeSchema(int)
   { SecondText=""; refresh(); }
   void changeTab(QWidget *tab);
+  void changeSecond(void);
   void changeSecondTab(QWidget *tab);
   void changeItem(QListViewItem *item);
   void clearFilter(void);
