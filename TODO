@@ -35,6 +35,7 @@ Extended functionality:
 * Display execution type of statements (Until first response if not next option).
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
+* Add replace to toResultContent.
 
 Windows problems:
 
