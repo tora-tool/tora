@@ -92,6 +92,23 @@ toEditWidget::~toEditWidget()
   toMain::editDisable(this);
 }
 
+void toEditWidget::addHandler(toEditWidget::editHandler *handler)
+{
+  for(std::list<toEditWidget::editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++)
+    if (*i==handler)
+      return;
+  Handlers.insert(Handlers.end(),handler);
+}
+
+void toEditWidget::delHandler(toEditWidget::editHandler *handler)
+{
+  for(std::list<toEditWidget::editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++)
+    if (*i==handler) {
+      Handlers.erase(i);
+      break;
+    }
+}
+
 void toEditWidget::lostFocus(void)
 {
   for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
@@ -105,4 +122,14 @@ void toEditWidget::receivedFocus(void)
   for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
     (*i)->receivedFocus(dynamic_cast<QWidget *>(this));
   }
+}
+
+toEditWidget::editHandler::editHandler()
+{
+  toEditWidget::addHandler(this);
+}
+
+toEditWidget::editHandler::~editHandler()
+{
+  toEditWidget::delHandler(this);
 }

@@ -221,44 +221,44 @@ toMain::toMain()
 
   std::map<QString,toTool *> &tools=toTool::tools();
 
-  QToolBar *toolbar=toAllocBar(this,"Application",QString::null);
+  EditToolbar=toAllocBar(this,"Application",QString::null);
 
   LoadButton=new QToolButton(QPixmap((const char **)fileopen_xpm),
 			     "Load file into editor",
 			     "Load file into editor",
-			     this,SLOT(loadButton()),toolbar);
+			     this,SLOT(loadButton()),EditToolbar);
   SaveButton=new QToolButton(QPixmap((const char **)filesave_xpm),
 			     "Save file from editor",
 			     "Save file from editor",
-			     this,SLOT(saveButton()),toolbar);
+			     this,SLOT(saveButton()),EditToolbar);
   PrintButton=new QToolButton(QPixmap((const char **)print_xpm),
 			     "Print",
 			     "Print",
-			     this,SLOT(printButton()),toolbar);
+			     this,SLOT(printButton()),EditToolbar);
   PrintButton->setEnabled(false);
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
-  toolbar->addSeparator();
+  EditToolbar->addSeparator();
   UndoButton=new QToolButton(QPixmap((const char **)undo_xpm),
 			     "Undo",
 			     "Undo",
-			     this,SLOT(undoButton()),toolbar);
+			     this,SLOT(undoButton()),EditToolbar);
   RedoButton=new QToolButton(QPixmap((const char **)redo_xpm),
 			     "Redo",
 			     "Redo",
-			     this,SLOT(redoButton()),toolbar);
+			     this,SLOT(redoButton()),EditToolbar);
   CutButton=new QToolButton(QPixmap((const char **)cut_xpm),
 			     "Cut to clipboard",
 			     "Cut to clipboard",
-			     this,SLOT(cutButton()),toolbar);
+			     this,SLOT(cutButton()),EditToolbar);
   CopyButton=new QToolButton(QPixmap((const char **)copy_xpm),
 			     "Copy to clipboard",
 			     "Copy to clipboard",
-			     this,SLOT(copyButton()),toolbar);
+			     this,SLOT(copyButton()),EditToolbar);
   PasteButton=new QToolButton(QPixmap((const char **)paste_xpm),
 			      "Paste from clipboard",
 			      "Paste from clipboard",
-			      this,SLOT(pasteButton()),toolbar);
+			      this,SLOT(pasteButton()),EditToolbar);
   UndoButton->setEnabled(false);
   RedoButton->setEnabled(false);
   CutButton->setEnabled(false);
@@ -267,11 +267,7 @@ toMain::toMain()
 
   ToolsMenu=new QPopupMenu(this);
 
-#ifdef TOOL_TOOLBAR
-  toolbar=new toAllocBar(this,"Tools",QString::null);
-#else
-  toolbar->addSeparator();
-#endif
+  QToolBar *toolbar=toAllocBar(this,"Tools",QString::null);
 
   int toolID=TO_TOOLS;
   int lastPriorityPix=0;

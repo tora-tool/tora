@@ -170,6 +170,22 @@ class toExtract {
   // Migrate functions
   QString migrateConstraint(std::list<QString> &src,std::list<QString> &dst);
   QString migrateDBLink(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateIndex(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateFunction(std::list<QString> &src,std::list<QString> &dst);
+  QString migratePackage(std::list<QString> &src,std::list<QString> &dst);
+  QString migratePackageBody(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateProcedure(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateProfile(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateRole(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateSequence(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateSynonym(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateTable(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateTableFamily(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateTableReferences(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateTrigger(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateType(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateUser(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateView(std::list<QString> &src,std::list<QString> &dst);
 
   // Drop functions
   QString dropConstraint(const QString &schema,const QString &name,const QString &type,

@@ -43,6 +43,9 @@
 2001-11-22: Fixed problem stoping query in worksheet.
 2001-11-23: Fixed problem with deleting last statistic in worksheet statistics.
 2001-11-23: Made visualize able to handle more than 1 title column.
+2001-11-24: Separated tool and edit toolbar in main window.
+2001-11-24: Some minor changes to the toEditWidget interface.
+2001-11-24: Added start of editor extensions.
 
 1.1.5:
 

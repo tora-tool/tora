@@ -853,6 +853,11 @@ QString toExtract::migrateDBLink(std::list<QString> &source,std::list<QString> &
   return ret;
 }
 
+QString toExtract::migrateIndex(std::list<QString> &source,std::list<QString> &destin)
+{
+  return QString::null;
+}
+
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
 				     "SELECT SUBSTR(segment_type,7),\n"
 				     "       TO_CHAR(blocks)\n"

@@ -53,28 +53,19 @@ tar czf $SRCPWD/../tora$TYPE-$1-bin-$GLIBC.tar.gz tora-$1/tora tora-$1/README to
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
     tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
-cd $SRCPWD
-rpm -bb tora-$1/rpm/tora-static.spec
-cd /usr/src/RPM/BUILD/tora-$1
-strip tora-static
-mv tora-static tora
-cd ..
-echo Packing tora$TYPE-$1-static.tar.gz
-tar czf $SRCPWD/../tora$TYPE-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
-    tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
-    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
-
-#cd $SRCPWD
-#rpm -bb tora-$1/rpm/tora-qt.spec
-#cd /usr/src/RPM/BUILD/tora-$1
-#make tora-mono
-#strip tora-mono
-#mv tora-mono tora
-#cd ..
-#echo Packing tora-$1-qt.tar.gz
-#tar czf $SRCPWD/../tora-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
-#    tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
-#    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
+if [ "X$GLIBC" = "Xglibc21" ]
+then
+    cd $SRCPWD
+    rpm -bb tora-$1/rpm/tora-static.spec
+    cd /usr/src/RPM/BUILD/tora-$1
+    strip tora-static
+    mv tora-static tora
+    cd ..
+    echo Packing tora$TYPE-$1-static.tar.gz
+    tar czf $SRCPWD/../tora$TYPE-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
+	tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
+	tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
+fi
 
 cd $SRCPWD/..
 rm -rf release

@@ -90,6 +90,7 @@ public:
   }
   virtual void customSetup(int toolid)
   {
+    toMainWidget()->editMenu()->insertSeparator();
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)tosqledit_xpm),
 					   "&Edit SQL",toolid);
     toMainWidget()->registerSQLEditor(toolid);
