@@ -74,15 +74,41 @@
 class toResultContent;
 class toNoBlockQuery;
 class toSearchReplace;
+class QChecBox;
+class QLineEdit;
+class QGrid;
+
+/** This widget is used for single record view in the content editor. Only for internal use.
+ */
+
+class toResultContentSingle : public QScrollView {
+  Q_OBJECT
+
+  int Row;
+  QGrid *Container;
+  std::list<QCheckBox *> Null;
+  std::list<QLineEdit *> Value;
+public:
+  toResultContentSingle(QWidget *parent);
+
+  void changeSource(QTable *table);
+  void changeRow(QTable *table,int row);
+  void saveRow(QTable *table,int row);
+private slots:
+  virtual void showMemo(int row);
+};
 
 /** This widget allows the user to browse the contents of a table and also edit
  * the content. The table is specified by the first and second parameter in the query.
- * The sql is not used in the query.
+ * The sql is not used in the query. Only for internal use.
  */
 
 class toResultContentEditor : public QTable,public toEditWidget {
   Q_OBJECT
 
+  /** Single record form.
+   */
+  toResultContentSingle *SingleEdit;
   /** Owner of table.
    */
   QString Owner;
@@ -150,6 +176,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
    */
   void wrongUsage(void);
   
+  void saveRow(int);
   /** Reimplemented for internal reasons.
    */
   virtual void drawContents(QPainter * p,int cx,int cy,int cw,int ch);
@@ -297,6 +324,9 @@ public slots:
   /** Goto the next record in the table.
    */
   virtual void gotoNextRecord(void);
+  /** Display single record form.
+   */
+  virtual void singleRecordForm(bool display);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.
