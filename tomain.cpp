@@ -766,9 +766,8 @@ void toMain::commandCallback(int cmd)
     case TO_HELP_LICENSE:
     case TO_HELP_QUOTES:
       {
-	toAbout *about=new toAbout(cmd-TO_HELP_ABOUT,this,"About TOra",true);
-	about->exec();
-	delete about;
+	toAbout about(cmd-TO_HELP_ABOUT,this,"About TOra",true);
+	about.exec();
       }
       break;
     case TO_HELP_REGISTER:

@@ -2031,7 +2031,7 @@ void toTuningWait::changeSelection(void)
     else
       DeltaPie->setTitle(QString::null);
   } TOCATCH
-  delete enabled;
+  delete[] enabled;
 }
 
 void toTuningWait::connectionChanged(void)

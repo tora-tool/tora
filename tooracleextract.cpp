@@ -2639,7 +2639,7 @@ static toSQL SQLTableColumns("toOracleExtract:TableColumns",
 			     "                        )\n"
 			     "             ,32\n"
 			     "            )\n"
-			     "     , RTRIM(data_default,CHR(10))\n"
+			     "     , data_default\n"
 			     "     , DECODE(\n"
 			     "                nullable\n"
 			     "               ,'N','NOT NULL'\n"
@@ -2734,7 +2734,7 @@ static toSQL SQLTableColumns7("toOracleExtract:TableColumns",
 			      "                        )\n"
 			      "             ,33\n"
 			      "            )\n"
-			      "     , RTRIM(data_default,CHR(10))\n"
+			      "     , data_default\n"
 			      "     , DECODE(\n"
 			      "                nullable\n"
 			      "               ,'N','NOT NULL'\n"
@@ -2766,7 +2766,7 @@ QString toOracleExtract::tableColumns(toExtract &ext,
     QString notNull=toShift(cols);
     if (!def.isEmpty()) {
       ret+="DEFAULT ";
-      ret+=def;
+      ret+=def.stripWhiteSpace();
       ret+=" ";
     }
     ret+=notNull;
@@ -4767,10 +4767,10 @@ QString toOracleExtract::createTableContents(toExtract &ext,
 	ret+=line;
       }
     } catch (...) {
-      delete dates;
+      delete[] dates;
       throw;
     }
-    delete dates;
+    delete[] dates;
     ret+="COMMIT;\n\n";
   }
 

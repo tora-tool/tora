@@ -221,7 +221,7 @@ public:
 	    if (!str.len())
 	      return null;
 	    QString buf(QString::fromUtf8(buffer));
-	    delete buffer;
+	    delete[] buffer;
 	    return buf;
 	  }
 	case otl_var_clob:
@@ -256,7 +256,7 @@ public:
 	    }
 	    buffer[data.len()]=0;
 	    QString buf(QString::fromUtf8(buffer));
-	    delete buffer;
+	    delete[] buffer;
 	    Running=false;
 	    conn->Lock.up();
 	    return buf;
@@ -273,11 +273,11 @@ public:
 	    Running=false;
 	    conn->Lock.up();
 	    if (Query->is_null()) {
-	      delete buffer;
+	      delete[] buffer;
 	      return null;
 	    }
 	    QString buf(QString::fromUtf8(buffer));
-	    delete buffer;
+	    delete[] buffer;
 	    return buf;
 	  }
 	  break;
@@ -285,12 +285,12 @@ public:
       } catch (const otl_exception &exc) {
 	Running=false;
 	conn->Lock.up();
-	delete buffer;
+	delete[] buffer;
 	ThrowException(exc);
       } catch (...) {
 	Running=false;
 	conn->Lock.up();
-	delete buffer;
+	delete[] buffer;
 	throw;
       }
       // Never get here

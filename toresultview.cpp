@@ -933,10 +933,10 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
     }
     if (type==3)
       output+="</TABLE></BODY></HTML>";
-    delete sizes;
+    delete[] sizes;
     return output;
   } catch(...) {
-    delete sizes;
+    delete[] sizes;
     throw;
   }
 }

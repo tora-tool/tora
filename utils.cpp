@@ -655,13 +655,13 @@ QCString toReadFile(const QString &filename)
 
       char *buf=new char[size+1];
       if (file.readBlock(buf,size)==-1) {
-	delete buf;
+	delete[] buf;
 	KIO::NetAccess::removeTempFile(tmpFile);
 	throw QString("Encountered problems read configuration");
       }
       buf[size]=0;
       QCString ret(buf,size+1);
-      delete buf;
+      delete[] buf;
       KIO::NetAccess::removeTempFile(tmpFile);
       return ret;
     }
@@ -676,7 +676,7 @@ QCString toReadFile(const QString &filename)
   
   char *buf=new char[size+1];
   if (file.readBlock(buf,size)==-1) {
-    delete buf;
+    delete[] buf;
     throw QString("Encountered problems read configuration");
   }
   buf[size]=0;

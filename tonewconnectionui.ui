@@ -416,6 +416,18 @@
         <slot>changeProvider()</slot>
     </connection>
     <connection>
+        <sender>Previous</sender>
+        <signal>doubleClicked(QListViewItem*)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>historyConnect()</slot>
+    </connection>
+    <connection>
+        <sender>Previous</sender>
+        <signal>clicked(QListViewItem*)</signal>
+        <receiver>toNewConnectionUI</receiver>
+        <slot>historySelection()</slot>
+    </connection>
+    <connection>
         <sender>Host</sender>
         <signal>textChanged(const QString&amp;)</signal>
         <receiver>toNewConnectionUI</receiver>

@@ -69,10 +69,9 @@ void toPreferences::selectTab(QListBoxItem *item)
 
 void toPreferences::displayPreferences(QWidget *parent)
 {
-  toPreferences *dialog=new toPreferences(parent,"Options",true);
-  if (dialog->exec())
-    dialog->saveSetting();
-  delete dialog;
+  toPreferences dialog(parent,"Options",true);
+  if (dialog.exec())
+    dialog.saveSetting();
 }
 
 void toPreferences::saveSetting(void)

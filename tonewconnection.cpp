@@ -74,8 +74,6 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   Previous->addColumn("Database");
   Previous->addColumn("Username");
   Previous->setSelectionMode(QListView::Single);
-  connect(Previous,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(historySelection()));
 
   std::list<QString> lst=toConnectionProvider::providers();
   int sel=0,cur=0;

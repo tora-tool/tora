@@ -50,7 +50,7 @@ toHtml::toHtml(const QCString &data)
 
 toHtml::~toHtml()
 {
-  delete Data;
+  delete[] Data;
 }
 
 void toHtml::skipSpace(void)
