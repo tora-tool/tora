@@ -251,7 +251,7 @@ static toHelpTool HelpTool;
 toHelp::toHelp(QWidget *parent,const char *name,bool modal)
   : QDialog(parent,name,modal,modal?0:WDestructiveClose),Modal(modal)
 {
-  if (modal)
+  if (!modal)
     Window=this;
   QBoxLayout *l=new QVBoxLayout(this);
   QToolBar *toolbar=toAllocBar(this,"Help Navigation",QString::null);
@@ -406,7 +406,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
 
 toHelp::~toHelp()
 {
-  if (Modal)
+  if (!Modal)
     Window=NULL;
 }
 
@@ -447,7 +447,7 @@ void toHelp::displayHelp(const QString &context,QWidget *parent)
 void toHelp::changeContent(QListViewItem *item)
 {
 #ifdef TO_KDE
-  Window->Help->openURL(item->text(2));
+  Help->openURL(item->text(2));
 #else
   disconnect(Help,SIGNAL(textChanged(void)),
 	     this,SLOT(removeSelection(void)));
