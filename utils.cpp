@@ -296,7 +296,7 @@ void toStatusMessage(const QString &str,bool save,bool log) {
                 main->displayMessage(str);
             toPush(LastMessages,str);
             if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
-                    DEFAULT_STATUS_SAVE).toInt())
+                                                              DEFAULT_STATUS_SAVE).toInt())
                 toShift(LastMessages);
         }
         QToolTip::add
@@ -436,10 +436,10 @@ QStringList toGetSessionTypes(void) {
 }
 
 #  else
-    #    include <qstylefactory.h>
-    #    include <qstyle.h>
+#    include <qstylefactory.h>
+#    include <qstyle.h>
 
-    QStringList toGetSessionTypes(void) {
+QStringList toGetSessionTypes(void) {
     return QStyleFactory::keys();
 }
 
@@ -487,25 +487,25 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str) {
         name+=db;
     }
     QToolBar *tool;
-    #ifdef TO_KDE
+#ifdef TO_KDE
 
     if (parent==toMainWidget())
         tool=new KToolBar(toMainWidget(),QMainWindow::Top);
     else {
-        #if KDE_VERSION < 220
+#if KDE_VERSION < 220
         tool=new QToolBar(name,toMainWidget(),parent);
-        #else
+#else
 
         tool=new KToolBar(toMainWidget(),parent);
-        #endif
+#endif
 
     }
-    #else
+#else
     if (parent==toMainWidget())
         tool=new QToolBar(name,toMainWidget());
     else
         tool=new QToolBar(name,toMainWidget(),parent);
-    #endif
+#endif
 
     tool->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed));
     return tool;
@@ -513,42 +513,42 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str) {
 
 TODock *toAllocDock(const QString &name,
                     const QString &db,
-                    #ifdef TO_KDE
+#ifdef TO_KDE
                     const QPixmap &icon
-                    #else
+#else
                     const QPixmap &
-                    #endif
-                   ) {
+#endif
+    ) {
     QString str=name;
     if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
         str+=QString::fromLatin1(" ");
         str+=db;
     }
-    #ifdef TO_KDE
+#ifdef TO_KDE
     KDockMainWindow *main=(KDockMainWindow *)toMainWidget();
     return main->createDockWidget(str,icon);
-    #else
-    #  if QT_VERSION < 0x030000
+#else
+#  if QT_VERSION < 0x030000
 
     if (toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
-            QVBox *frm=new QVBox(toMainWidget()->workspace());
-            frm->setCaption(str);
-            return frm;
-        } else {
-            QToolBar *toolbar=toAllocBar(toMainWidget(),name);
-            return toolbar;
-        }
-    #  else
-        QDockWindow *dock=new QDockWindow(QDockWindow::InDock,toMainWidget());
+        QVBox *frm=new QVBox(toMainWidget()->workspace());
+        frm->setCaption(str);
+        return frm;
+    } else {
+        QToolBar *toolbar=toAllocBar(toMainWidget(),name);
+        return toolbar;
+    }
+#  else
+    QDockWindow *dock=new QDockWindow(QDockWindow::InDock,toMainWidget());
     dock->setNewLine(true);
     dock->setCloseMode(QDockWindow::Always);
     return dock;
-    #  endif
-    #endif
+#  endif
+#endif
 }
 
 void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place) {
-    #ifdef TO_KDE
+#ifdef TO_KDE
     KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
     if (main) {
         KDockWidget::DockPosition pos=KDockWidget::DockLeft;
@@ -584,73 +584,73 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
         toStatusMessage(qApp->translate("toAttachDock","Main widget not KDockMainWindow"));
         return;
     }
-    #else
-    #  if QT_VERSION < 0x030000
+#else
+#  if QT_VERSION < 0x030000
     if (!toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
-            QToolBar *bar=(QToolBar *)dock;
-            if (bar) {
-                toMainWidget()->moveToolBar(bar,place);
-                bar->setStretchableWidget(container);
-            }
+        QToolBar *bar=(QToolBar *)dock;
+        if (bar) {
+            toMainWidget()->moveToolBar(bar,place);
+            bar->setStretchableWidget(container);
         }
-        #  else
-            QDockWindow *d=(QDockWindow *)dock;
+    }
+#  else
+    QDockWindow *d=(QDockWindow *)dock;
     if (d) {
         toMainWidget()->moveDockWindow(d,place);
         d->setResizeEnabled(true);
         d->setWidget(container);
         container->show();
     }
-    #  endif
-    #endif
+#  endif
+#endif
 }
 
 QString toFontToString(const QFont &fnt) {
-    #if QT_VERSION >= 0x030000
+#if QT_VERSION >= 0x030000
     return fnt.toString();
-    #else
-    #  ifdef TO_FONT_RAW_NAME
+#else
+#  ifdef TO_FONT_RAW_NAME
 
     return fnt.rawName();
-    #  else
+#  else
 
-        QStringList lst;
+    QStringList lst;
     lst.insert(lst.end(),fnt.family());
     lst.insert(lst.end(),QString::number(fnt.pointSize()));
     lst.insert(lst.end(),QString::number(int(fnt.weight())));
     lst.insert(lst.end(),QString::number(int(fnt.italic())));
     lst.insert(lst.end(),QString::number(int(fnt.charSet())));
     return lst.join("/");
-    #  endif
-    #endif
+#  endif
+#endif
 }
 
 QFont toStringToFont(const QString &str) {
     if (str.isEmpty())
         return QFont(QString::fromLatin1("Courier"),12);
-    #if QT_VERSION >= 0x030000
+#if QT_VERSION >= 0x030000
 
     QFont fnt;
     if (fnt.fromString(str))
         return fnt;
-    #endif
-    #ifdef TO_FONT_RAW_NAME
+#endif
+#ifdef TO_FONT_RAW_NAME
 
     QFont fnt;
     fnt.setRawName(str);
     return fnt;
-    #else
+#else
 
     QStringList lst=QStringList::split(QString::fromLatin1("/"),str);
     if (lst.count()!=5)
         return QFont(QString::fromLatin1("Courier"),12);
     return QFont(lst[0],lst[1].toInt(),lst[2].toInt(),
                  bool(lst[3].toInt())
-                 #  if QT_VERSION < 0x030000
+#  if QT_VERSION < 0x030000
                  ,QFont::CharSet(lst[4].toInt())
-                 #  endif
-                );
-    #endif
+#  endif
+        );
+#endif
 }
 
 int toSizeDecode(const QString &str) {
@@ -663,32 +663,32 @@ int toSizeDecode(const QString &str) {
 
 QString toPluginPath(void) {
     QString str;
-    #ifdef WIN32
+#ifdef WIN32
 
     CRegistry registry;
     DWORD siz=1024;
     char buffer[1024];
     try {
         if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-                                    #  ifdef TOAD
+#  ifdef TOAD
                                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOAD for MySQL",
-                                    #  else
-                                        "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
-                                        #  endif
-                                        "UninstallString",
-                                        buffer,siz)) {
-                if (siz>0) {
-                    str=buffer;
-                    static QRegExp findQuotes("\"([^\"]*)\"");
-                    if (findQuotes.search(str)>=0)
-                        str=findQuotes.cap(1);
-                    int ind=str.findRev('\\');
-                    if(ind>=0)
-                        str=str.mid(0,ind);
-                }
+#  else
+                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
+#  endif
+                                    "UninstallString",
+                                    buffer,siz)) {
+            if (siz>0) {
+                str=buffer;
+                static QRegExp findQuotes("\"([^\"]*)\"");
+                if (findQuotes.search(str)>=0)
+                    str=findQuotes.cap(1);
+                int ind=str.findRev('\\');
+                if(ind>=0)
+                    str=str.mid(0,ind);
             }
+        }
     } catch(...) {}
-    #elif defined( Q_OS_MACX )
+#elif defined( Q_OS_MACX )
 
     { // MacOS
         char resourcePath[MAXPATHLEN];
@@ -699,7 +699,7 @@ QString toPluginPath(void) {
             if ( urlRef ) {
                 UInt8* _p = (UInt8*) &resourcePath[0];
                 bool isOK = CFURLGetFileSystemRepresentation(
-                                urlRef, TRUE, _p, MAXPATHLEN );
+                    urlRef, TRUE, _p, MAXPATHLEN );
                 if ( !isOK ) {
                     // QMessageBox::warning( 0, "File error",
                     //     QString( "Unexpected: no file system representation") );
@@ -715,9 +715,9 @@ QString toPluginPath(void) {
             //     QString( "Unexpected: unable to get main bundle") );
         }
     } // MacOS
-    #else
+#else
     str=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
-    #endif
+#endif
 
     return str;
 }
@@ -734,7 +734,7 @@ QString toHelpPath(void) {
 QString toExpandFile(const QString &file) {
     QString ret(file);
     QString home;
-    #ifdef WIN32
+#ifdef WIN32
 
     CRegistry registry;
     DWORD siz=1024;
@@ -748,14 +748,14 @@ QString toExpandFile(const QString &file) {
                 home=buffer;
         }
     } catch(...) {}
-    #else
+#else
 
     const char *homet=getenv("HOME");
     if (!homet)
         home="";
     else
         home=homet;
-    #endif
+#endif
 
     ret.replace(QRegExp(QString::fromLatin1("\\$HOME")),home);
     return ret;
@@ -763,16 +763,16 @@ QString toExpandFile(const QString &file) {
 
 QCString toReadFile(const QString &filename) {
     QString expanded=toExpandFile(filename);
-    #ifdef TO_KDE
+#ifdef TO_KDE
 
     KURL url(expanded);
     if (!url.isLocalFile()) {
         QString tmpFile;
         if(KIO::NetAccess::download(url,tmpFile
-                                    #if KDE_VERSION >= 0x30200
+#if KDE_VERSION >= 0x30200
                                     ,toMainWidget()
-                                    #endif
-                                   )) {
+#endif
+               )) {
             QFile file(tmpFile);
             if (!file.open(IO_ReadOnly)) {
                 KIO::NetAccess::removeTempFile(tmpFile);
@@ -795,7 +795,7 @@ QCString toReadFile(const QString &filename) {
         }
         throw QT_TRANSLATE_NOOP("toReadFile","Couldn't download file");
     }
-    #endif
+#endif
     QFile file(expanded);
     if (!file.open(IO_ReadOnly))
         throw QT_TRANSLATE_NOOP("toReadFile","Couldn't open file %1.").arg(filename);
@@ -815,7 +815,7 @@ QCString toReadFile(const QString &filename) {
 
 bool toWriteFile(const QString &filename,const QCString &data) {
     QString expanded=toExpandFile(filename);
-    #ifdef TO_KDE
+#ifdef TO_KDE
 
     KURL url(expanded);
     if (!url.isLocalFile()) {
@@ -829,10 +829,10 @@ bool toWriteFile(const QString &filename,const QCString &data) {
         }
         file.close();
         if (!KIO::NetAccess::upload(file.name(),url
-                                    #if KDE_VERSION >= 0x30200
+#if KDE_VERSION >= 0x30200
                                     ,toMainWidget()
-                                    #endif
-                                   )) {
+#endif
+                )) {
             file.unlink();
             TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
                                   QT_TRANSLATE_NOOP("toWriteFile","Couldn't upload data to URL"));
@@ -842,7 +842,7 @@ bool toWriteFile(const QString &filename,const QCString &data) {
         toStatusMessage(QT_TRANSLATE_NOOP("toWriteFile","File saved successfully"),false,false);
         return true;
     }
-    #endif
+#endif
 
     QFile file(expanded);
     if (!file.open(IO_WriteOnly)) {
@@ -911,7 +911,7 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
     if (dir.isNull())
         dir=toTool::globalConfig(CONF_LAST_DIR,"");
 
-    #ifdef TO_KDE
+#ifdef TO_KDE
 
     KURL url=TOFileDialog::getOpenURL(dir,t,parent);
     if (url.isEmpty())
@@ -919,10 +919,10 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
     if (url.isLocalFile())
         return AddExt(url.path(),t);
     return AddExt(url.url(),t);
-    #else
+#else
 
     return AddExt(TOFileDialog::getOpenFileName(dir,t,parent),t);
-    #endif
+#endif
 }
 
 QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent) {
@@ -934,7 +934,7 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
     if (dir.isNull())
         dir=toTool::globalConfig(CONF_LAST_DIR,"");
 
-    #ifdef TO_KDE
+#ifdef TO_KDE
 
     KURL url=TOFileDialog::getSaveURL(dir,t,parent);
     if (url.hasPass())
@@ -944,14 +944,14 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
     if (url.isLocalFile())
         return AddExt(url.path(),t);
     return AddExt(url.url(),t);
-    #else
+#else
 
     return AddExt(TOFileDialog::getSaveFileName(dir,t,parent),t);
-    #endif
+#endif
 }
 
 void toSetEnv(const QCString &var,const QCString &val) {
-    #ifndef TO_HAS_SETENV
+#ifndef TO_HAS_SETENV
     // Has a memory leak, but just a minor one.
 
     char *env=new char[var.length()+val.length()+2];
@@ -959,19 +959,19 @@ void toSetEnv(const QCString &var,const QCString &val) {
     strcat(env,"=");
     strcat(env,val);
     putenv(env);
-    #else
+#else
 
     setenv(var,val,1);
-    #endif
+#endif
 }
 
 void toUnSetEnv(const QCString &var) {
-    #ifndef TO_HAS_SETENV
+#ifndef TO_HAS_SETENV
     toSetEnv(var,"");
-    #else
+#else
 
     unsetenv(var);
-    #endif
+#endif
 }
 
 int toToolMenuIndex(void) {
@@ -1195,10 +1195,10 @@ void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
             i++;
         }
     }
-    #if 0
+#if 0
     for(std::map<QCString,QString>::iterator j=dst.begin();j!=dst.end();j++)
         printf("%s=%s\n",(const char *)((*j).first),(const char *)((*j).second));
-    #endif
+#endif
 }
 
 bool toCheckModal(QWidget *widget) {
@@ -1241,7 +1241,7 @@ toQValue toUnnull(const toQValue &str) {
 QString toTranslateMayby(const QString &ctx,const QString &text) {
     if (ctx.contains(QString::fromLatin1(" "))||ctx.latin1()!=ctx.utf8()||text.latin1()!=text.utf8()||ctx.isEmpty()||text.isEmpty())
         return text;
-    #ifdef TODEBUG_TRANSLATION
+#ifdef TODEBUG_TRANSLATION
 
     static std::map<QString,QString> Context;
     QString t=ctx+QString::fromLatin1(" ")+text;
@@ -1249,48 +1249,48 @@ QString toTranslateMayby(const QString &ctx,const QString &text) {
         Context[t]=text;
         printf("QT_TRANSLATE_NOOP(\"%s\",\"%s\"),\n",(const char *)ctx.latin1(),(const char *)text.latin1());
     }
-    #endif
+#endif
     return QT_TRANSLATE_NOOP(ctx.latin1(),text.latin1());
 }
 
 toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
                              const QString &grouptext,QToolBar *parent,const char *name)
-: QToolButton(iconSet,textLabel,grouptext,NULL,NULL,parent,name) {
-    #if QT_VERSION >= 0x030000
+    : QToolButton(iconSet,textLabel,grouptext,NULL,NULL,parent,name) {
+#if QT_VERSION >= 0x030000
     connect(this,SIGNAL(clicked()),this,SLOT(click()));
-    #endif
+#endif
 
     setPopupDelay(0);
 }
 
 toPopupButton::toPopupButton(QWidget *parent,const char *name)
-: QToolButton(parent,name) {
-    #if QT_VERSION >= 0x030000
+    : QToolButton(parent,name) {
+#if QT_VERSION >= 0x030000
     connect(this,SIGNAL(clicked()),this,SLOT(click()));
-    #endif
+#endif
 
     setPopupDelay(0);
 }
 
 void toPopupButton::click(void) {
-    #if QT_VERSION >= 0x030000
+#if QT_VERSION >= 0x030000
     openPopup();
-    #endif
+#endif
 }
 
 QString toObfuscate(const QString &str) {
     if (str.isEmpty())
         return str;
 
-    #if QT_VERSION >= 0x030100
+#if QT_VERSION >= 0x030100
 
     QByteArray arr=qCompress(str.utf8());
     QString ret="\002";
-    #else
+#else
 
     QByteArray arr=str.utf8();
     QString ret="\001";
-    #endif
+#endif
 
     char buf[100]; // Just to be on the safe side
     for(unsigned int i=0;i<arr.size();i++) {
@@ -1311,15 +1311,15 @@ QString toUnobfuscate(const QString &str) {
     for(unsigned int i=1;i<str.length();i+=2)
         arr.at(i/2)=str.mid(i,2).toInt(0,16);
     if (str.at(0)=='\002') {
-        #if QT_VERSION >= 0x030100
+#if QT_VERSION >= 0x030100
         QByteArray ret=qUncompress(arr);
         return QString::fromUtf8(ret);
-        #else
+#else
 
         toStatusMessage("Tried to unobfuscate obfuscated text from a Qt of version 3.1\n"
                         "from one with Qt version 3.0.x which won't work");
         return QString::null;
-        #endif
+#endif
 
     } else
         return QString::fromUtf8(arr);
