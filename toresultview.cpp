@@ -1149,7 +1149,7 @@ toResultView::toResultView(QWidget *parent,const char *name)
   setup(false,true);
 }
 
-#define STOP_RESIZE_ROW 200
+#define STOP_RESIZE_ROW 500
 
 QListViewItem *toResultView::createItem(QListViewItem *last,const QString &str)
 {
