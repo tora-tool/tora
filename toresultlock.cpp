@@ -167,6 +167,8 @@ void toResultLock::query(const QString &sql,
 void toResultLock::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       if (!Query->eof()) {
 	do {

@@ -111,7 +111,7 @@ public:
   void start(void);
 };
 
-class toTuningWait : public QFrame {
+class toTuningWait : public QVBox {
   Q_OBJECT
 
   toBarChart *Delta;
@@ -133,8 +133,12 @@ class toTuningWait : public QFrame {
   std::list<double> CurrentTimes;
   std::map<int,int> LabelMap;
 
+  std::map<QString,bool> HideMap;
 public:
   toTuningWait(QWidget *parent,const char *name);
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 public slots:
   virtual void connectionChanged(void);
   virtual void changeSelection(void);

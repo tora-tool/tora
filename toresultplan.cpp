@@ -159,6 +159,8 @@ void toResultPlan::query(const QString &sql,
 void toResultPlan::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       if (!Reading) {
 	toQList par;

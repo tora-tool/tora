@@ -80,6 +80,8 @@ void toResultField::query(const QString &sql,const toQList &param)
 void toResultField::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       while(Query->poll()&&!Query->eof()) {
 	Unapplied+=Query->readValue();

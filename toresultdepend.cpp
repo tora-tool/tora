@@ -141,6 +141,8 @@ void toResultDepend::query(const QString &sql,const toQList &param)
 void toResultDepend::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       int cols=Query->describe().size();
       while(Query->poll()&&!Query->eof()) {

@@ -77,6 +77,8 @@ void toResultLabel::query(const QString &sql,const toQList &param)
 void toResultLabel::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       QStringList res;
       while (!Query->eof()) {

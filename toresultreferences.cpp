@@ -151,6 +151,8 @@ void toResultReferences::query(const QString &sql,const toQList &param)
 void toResultReferences::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       if (!Dependencies) {
 	while(Query->poll()&&!Query->eof()) {

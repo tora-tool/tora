@@ -133,21 +133,23 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref724">toNull</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref725">toMapExport</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
+<LI>bool &nbsp;<b><A HREF="#ref725">toCheckModal</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref726">toMapExport</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
 		 std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &src) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref726">toMapImport</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
+<LI>void &nbsp;<b><A HREF="#ref727">toMapImport</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
 		 std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &dst) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<b><A HREF="#ref727">toFindItem</A></b> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *list,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI><A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<b><A HREF="#ref728">toFindItem</A></b> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *list,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref729">toToolCaption</A></b> (<A HREF="toToolWidget.html">toToolWidget</A> *tool,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &caption) 
-</LI>
-<LI>template <class T>
-T &nbsp;<b><A HREF="#ref730">max</A></b> (T a, T b) 
+<LI>void &nbsp;<b><A HREF="#ref730">toToolCaption</A></b> (<A HREF="toToolWidget.html">toToolWidget</A> *tool,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &caption) 
 </LI>
 <LI>template <class T>
-T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref731">max</A></b> (T a, T b) 
+</LI>
+<LI>template <class T>
+T &nbsp;<b><A HREF="#ref732">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -543,7 +545,10 @@ T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b)
 <A NAME="toNull"></A><A NAME="ref724"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>toNull</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>toNull</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Convert string read by readValueNull to value to be read by readValue.
  </p>
-<A NAME="toMapExport"></A><A NAME="ref725"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toMapExport</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
+<A NAME="toCheckModal"></A><A NAME="ref725"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>toCheckModal</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget)
+<br></td><td align="right"><h3><strong>toCheckModal</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Check if the current widget is within the active modal widget (Or no modal widget exists)
+ </p>
+<A NAME="toMapExport"></A><A NAME="ref726"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toMapExport</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
 		 std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &src)
 <br></td><td align="right"><h3><strong>toMapExport</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Export the contents of a map into another map.
 </p>
@@ -555,7 +560,7 @@ T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>src</i></TD><TD align="left" valign="top">The map to save.
  </TD></TR>
 </TABLE></P>
-<A NAME="toMapImport"></A><A NAME="ref726"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toMapImport</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
+<A NAME="toMapImport"></A><A NAME="ref727"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toMapImport</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix,
 		 std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &dst)
 <br></td><td align="right"><h3><strong>toMapImport</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Import the contents of a map from another map.
 </p>
@@ -567,7 +572,7 @@ T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>dst</i></TD><TD align="left" valign="top">The map to save into.
  </TD></TR>
 </TABLE></P>
-<A NAME="toFindItem"></A><A NAME="ref727"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<strong>toFindItem</strong> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *list,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="toFindItem"></A><A NAME="ref728"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *&nbsp;<strong>toFindItem</strong> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *list,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>toFindItem</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p> Find an item in a listview.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -576,7 +581,7 @@ T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">The string to search for. You can specify parent/child with : in the string.
  </TD></TR>
 </TABLE></P>
-<A NAME="toToolCaption"></A><A NAME="ref729"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toToolCaption</strong> (<A HREF="toToolWidget.html">toToolWidget</A> *tool,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &caption)
+<A NAME="toToolCaption"></A><A NAME="ref730"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toToolCaption</strong> (<A HREF="toToolWidget.html">toToolWidget</A> *tool,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &caption)
 <br></td><td align="right"><h3><strong>toToolCaption</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p>
  Set or change title of a tool window.
 </p>
@@ -586,12 +591,12 @@ T &nbsp;<b><A HREF="#ref731">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>caption</i></TD><TD align="left" valign="top">Caption to set to the tool.
  </TD></TR>
 </TABLE></P>
-<A NAME="max"></A><A NAME="ref730"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class T>
+<A NAME="max"></A><A NAME="ref731"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class T>
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p>
  Get maximum number of a and b.
  </p>
-<A NAME="min"></A><A NAME="ref731"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class T>
+<A NAME="min"></A><A NAME="ref732"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class T>
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="utils_h.html">utils.h</A>&gt;</code></small></p><p>
  Get minimum number of a and b.

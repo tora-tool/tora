@@ -125,6 +125,8 @@ void toResultLong::editReadAll(void)
 void toResultLong::addItem(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query) {
       if (Query->poll()) {
 	bool em=false;

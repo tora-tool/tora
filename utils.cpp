@@ -1023,6 +1023,18 @@ void toMapImport(std::map<QString,QString> &data,const QString &prefix,
   }
 }
 
+bool toCheckModal(QWidget *widget)
+{
+  QWidget *parent=QApplication::activeModalWidget();
+  if (!parent)
+    return true;
+  while(widget&&widget!=parent)
+    widget=widget->parentWidget();
+  if (widget==parent)
+    return true;
+  return false;
+}
+
 static bool IndicateEmpty=false;
 
 void toUpdateIndicateEmpty(void)

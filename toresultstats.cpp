@@ -263,6 +263,8 @@ void toResultStats::refreshStats(bool reset)
 void toResultStats::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     bool done=true;
 
     if (Query&&Query->poll()) {

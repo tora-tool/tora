@@ -67,6 +67,7 @@
 #include <qobjcoll.h>
 #include <qpainter.h>
 #include <qscrollview.h>
+#include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
@@ -1482,6 +1483,8 @@ void toTuning::exportData(std::map<QString,QString> &data,const QString &prefix)
     }
   }
   data[prefix+":Current"]=Tabs->currentPage()->name();
+
+  Waits->exportData(data,prefix+":Waits");
 }
 
 void toTuning::importData(std::map<QString,QString> &data,const QString &prefix)
@@ -1493,6 +1496,7 @@ void toTuning::importData(std::map<QString,QString> &data,const QString &prefix)
   QWidget *chld=(QWidget *)child(data[prefix+":Current"]);
   if(chld)
     Tabs->showPage(chld);
+  Waits->importData(data,prefix+":Waits");
 }
 
 static toSQL SQLFileIO("toTuning:FileIO",
@@ -1769,12 +1773,12 @@ void toTuningFileIO::start(void)
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
-class toTuningWaitItem : public QListViewItem {
+class toTuningWaitItem : public toResultViewItem {
   int Color;
 public:
   toTuningWaitItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
-    : QListViewItem(parent,after,QString::null,buf)
-  { Color=0; }
+    : toResultViewItem(parent,after,QString::null)
+  { Color=0; setText(1,buf); }
   void setColor(int color)
   { Color=color; }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
@@ -1793,12 +1797,9 @@ public:
 };
 
 toTuningWait::toTuningWait(QWidget *parent,const char *name)
-  : QFrame(parent,name)
+  : QVBox(parent,name)
 {
-  QGridLayout *layout=new QGridLayout(this);
-
   QToolBar *toolbar=toAllocBar(this,"Server Tuning",toCurrentConnection(this).description());
-  layout->addMultiCellWidget(toolbar,0,0,0,2);
   new QLabel("Display ",toolbar);
   QComboBox *type=new QComboBox(toolbar);
   type->insertItem("Time");
@@ -1806,21 +1807,19 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
   connect(type,SIGNAL(activated(int)),this,SLOT(changeType(int)));
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  layout->setColStretch(0,1);
-  layout->setColStretch(1,2);
-  layout->setColStretch(2,2);
+  QSplitter *splitter=new QSplitter(Horizontal,this);
 
-  Delta=new toBarChart(this);
-  Delta->setTitle("System wait events");
-  Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-  Delta->showLegend(false);
-  Delta->setYPostfix(" ms/sec");
-  layout->addMultiCellWidget(Delta,1,1,1,2);
-
-  Types=new QListView(this);
+  Types=new QListView(splitter);
   Types->addColumn("Color");
   Types->addColumn("Wait type");
-  Types->setSorting(-1);
+  Types->addColumn("Delta (ms)");
+  Types->addColumn("Total (ms)");
+  Types->addColumn("Delta");
+  Types->addColumn("Total");
+  Types->setColumnAlignment(2,AlignRight);
+  Types->setColumnAlignment(3,AlignRight);
+  Types->setColumnAlignment(4,AlignRight);
+  Types->setColumnAlignment(5,AlignRight);
   Types->setAllColumnsShowFocus(true);
   Types->setSelectionMode(QListView::Multi);
   Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -1829,21 +1828,35 @@ toTuningWait::toTuningWait(QWidget *parent,const char *name)
     QFont font(toStringToFont(str));
     Types->setFont(font);
   }
-  layout->addMultiCellWidget(Types,1,2,0,0);
+
+  QFrame *frame=new QFrame(splitter);
+  QGridLayout *layout=new QGridLayout(frame);
+
+  Delta=new toBarChart(frame);
+  Delta->setTitle("System wait events");
+  Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  Delta->showLegend(false);
+  Delta->setYPostfix(" ms/sec");
+  layout->addMultiCellWidget(Delta,0,0,0,1);
 
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
-  DeltaPie=new toPieChart(this);
+  DeltaPie=new toPieChart(frame);
   DeltaPie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaPie->showLegend(false);
-  layout->addWidget(DeltaPie,2,1);
-  AbsolutePie=new toPieChart(this);
+  layout->addWidget(DeltaPie,1,0);
+  AbsolutePie=new toPieChart(frame);
   AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   AbsolutePie->showLegend(false);
-  layout->addWidget(AbsolutePie,2,2);
+  layout->addWidget(AbsolutePie,1,1);
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
   start();
   connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+
+  QValueList<int> siz;
+  siz<<1<<2;
+  splitter->setSizes(siz);
+
   First=true;
   ShowTimes=false;
 }
@@ -1875,15 +1888,12 @@ void toTuningWait::changeSelection(void)
   int count=int(Labels.size());
 
   bool *enabled=new bool[count];
-  bool *included=new bool[count];
   int typ=0;
-  std::list<QString> used;
   std::map<QString,int> usedMap;
   {
     for (std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       usedMap[*i]=typ;
       enabled[typ]=false;
-      included[typ]=false;
       typ++;
     }
   }
@@ -1893,15 +1903,6 @@ void toTuningWait::changeSelection(void)
       toStatusMessage("Internal error, can't find ("+txt+") in usedMap");
     if (item->isSelected())
       enabled[usedMap[txt]]=true;
-    used.insert(used.end(),txt);
-    included[usedMap[txt]]=true;
-  }
-  used.sort();
-  {
-    for(std::list<QString>::iterator i=used.begin();i!=used.end();i++) {
-      if (!enabled[usedMap[*i]])
-	*i=QString::null;
-    }
   }
       
   try {
@@ -1923,19 +1924,17 @@ void toTuningWait::changeSelection(void)
 	std::list<double> current;
 	std::list<double>::iterator k=lastAbsolute.begin();
 	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	  if (included[typ]) {
-	    if (enabled[typ]) {
-	      current.insert(current.end(),*j);
-	      if (k!=lastAbsolute.end()) {
-		relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
-		k++;
-	      }
-	    } else {
-	      current.insert(current.end(),0);
-	      if (k!=lastAbsolute.end()) {
-		relative.insert(relative.end(),0);
-		k++;
-	      }
+	  if (enabled[typ]) {
+	    current.insert(current.end(),*j);
+	    if (k!=lastAbsolute.end()) {
+	      relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
+	      k++;
+	    }
+	  } else {
+	    current.insert(current.end(),0);
+	    if (k!=lastAbsolute.end()) {
+	      relative.insert(relative.end(),0);
+	      k++;
 	    }
 	  }
 	  typ++;
@@ -1956,19 +1955,18 @@ void toTuningWait::changeSelection(void)
       for (std::list<double>::iterator i=lastAbsolute.begin();i!=lastAbsolute.end();i++)
 	total+=*i;
     }
-    AbsolutePie->setValues(lastAbsolute,used);
+    AbsolutePie->setValues(lastAbsolute,Labels);
     AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+" s");
     total=0;
     for (std::list<double>::iterator i=relative.begin();i!=relative.end();i++)
       total+=*i;
-    DeltaPie->setValues(relative,used);
+    DeltaPie->setValues(relative,Labels);
     if (total>0)
       DeltaPie->setTitle("Delta system wait events\nTotal "+QString::number(total)+" ms");
     else
       DeltaPie->setTitle(QString::null);
   } TOCATCH
   delete enabled;
-  delete included;
 }
 
 void toTuningWait::connectionChanged(void)
@@ -1981,6 +1979,8 @@ void toTuningWait::connectionChanged(void)
 void toTuningWait::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       while(Query->poll()&&!Query->eof()) {
 	QString cur=Query->readValueNull();
@@ -2009,37 +2009,49 @@ void toTuningWait::poll(void)
 	Query->readValueNull().toDouble();
       }
       if (Query->eof()) {
-	QListViewItem *item=NULL;
 	std::map<QString,bool> types;
-	int typ=0;
+	QListViewItem *item=NULL;
 	{
 	  for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
 	    types[ci->text(1)]=true;
 	    item=ci;
-	    typ++;
 	  }
 	}
 
 	std::list<double>::iterator j=CurrentTimes.begin();
-	for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-	  if ((*j)!=0&&!types[*i]) {
+	for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++,j++) {
+	  if ((*j)!=0&&types.find(*i)==types.end()) {
 	    item=new toTuningWaitItem(Types,item,*i);
-	    item->setSelected(First);
-	    types[*i]=typ;
-	    typ++;
+	    item->setSelected(First&&HideMap.find(*i)==HideMap.end());
+	    types[*i]=true;
 	  }
-	  j++;
 	}
 	if (First)
 	  First=false;
 	else
 	  XValues.insert(XValues.end(),Now);
-	int col=0;
 	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
 	  toTuningWaitItem *item=dynamic_cast<toTuningWaitItem *>(ci);
-	  if (item)
-	    item->setColor(col);
-	  col++;
+	  if (item) {
+	    int col=0;
+	    std::list<double>::iterator i=Current.begin();
+	    std::list<double>::iterator j=CurrentTimes.begin();
+	    std::list<QString>::iterator k=Labels.begin();
+	    while(i!=Current.end()&&j!=CurrentTimes.end()&&k!=Labels.end()) {
+	      if (item->text(1)==*k) {
+		item->setColor(col);
+		item->setText(2,QString::number(*i-item->text(3).toDouble()));
+		item->setText(3,QString::number(*i));
+		item->setText(4,QString::number(*j-item->text(5).toDouble()));
+		item->setText(5,QString::number(*j));
+		break;
+	      }
+	      col++;
+	      i++;
+	      j++;
+	      k++;
+	    }
+	  }
 	}
 	TimeStamp.insert(TimeStamp.end(),time(NULL));
 	Values.insert(Values.end(),Current);
@@ -2067,32 +2079,30 @@ void toTuningWait::poll(void)
 static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   "SELECT b.name,\n"
 			   "       SYSDATE,\n"
-			   "       a.time_waited,\n"
-			   "       a.total_waits,\n"
-			   "       a.time_waited\n"
+			   "       NVL(a.time_waited,0),\n"
+			   "       NVL(a.total_waits,0),\n"
+			   "       NVL(a.time_waited,0)\n"
 			   "  FROM v$system_event a,\n"
 			   "       v$event_name b\n"
 			   " WHERE b.name=a.event(+)\n"
 			   "   AND b.name NOT LIKE'%timer%'\n"
 			   "   AND b.name NOT IN('rdbms ipc message',\n"
 			   "                     'SQL*Net message from client')\n"
-			   "   AND a.time_waited IS NOT NULL\n"
 			   " UNION ALL SELECT b.name,\n"
 			   "       SYSDATE,\n"
-			   "       a.time_waited,\n"
-			   "       a.total_waits,\n"
+			   "       NVL(a.time_waited,0),\n"
+			   "       NVL(a.total_waits,0),\n"
 			   "       1\n"
 			   "  FROM v$system_event a,\n"
 			   "       v$event_name b\n"
 			   " WHERE b.name=a.event(+)\n"
 			   "   AND (b.name LIKE'%timer%'OR b.name IN('rdbms ipc message',\n"
 			   "                                         'SQL*Net message from client'))\n"
-			   "   AND a.time_waited IS NOT NULL\n"
 			   " UNION ALL SELECT s.name,\n"
 			   "       SYSDATE,\n"
-			   "       s.VALUE,\n"
+			   "       NVL(s.VALUE,0),\n"
 			   "       0,\n"
-			   "       s.VALUE\n"
+			   "       NVL(s.VALUE,0)\n"
 			   "  FROM v$sysstat s\n"
 			   " WHERE s.name='CPU used by this session'\n"
 			   " ORDER BY 5 DESC,\n"
@@ -2107,4 +2117,26 @@ void toTuningWait::refresh(void)
   toQList par;
   Query=new toNoBlockQuery(conn,toSQL::string(SQLWaitEvents,conn),par);
   Poll.start(100);
+}
+
+void toTuningWait::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  std::map<QString,QString>::iterator i;
+  int id=1;
+  while((i=data.find(prefix+":"+QString::number(id)))!=data.end()) {
+    HideMap[(*i).second]=true;
+    id++;
+  }
+}
+
+void toTuningWait::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  int id=1;
+  for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
+    toTuningWaitItem *item=dynamic_cast<toTuningWaitItem *>(ci);
+    if (!item->isSelected()) {
+      data[prefix+":"+QString::number(id)]=item->allText(1);
+      id++;
+    }
+  }
 }

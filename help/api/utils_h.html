@@ -398,6 +398,9 @@ QString toUnnull(const QString &str);
 /** Convert string read by readValueNull to value to be read by readValue.
  */
 QString toNull(const QString &str);
+/** Check if the current widget is within the active modal widget (Or no modal widget exists)
+ */
+bool toCheckModal(QWidget *widget);
 
 /** Export the contents of a map into another map.
  * @param data The destination map.

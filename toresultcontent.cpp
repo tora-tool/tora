@@ -405,6 +405,8 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 void toResultContentEditor::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       bool first=false;
       if (numRows()==0) {

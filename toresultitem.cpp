@@ -203,6 +203,8 @@ void toResultItem::query(const QString &sql,const toQList &param)
 void toResultItem::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Query&&Query->poll()) {
       toQDescList desc=Query->describe();
 

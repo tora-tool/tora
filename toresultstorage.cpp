@@ -411,6 +411,8 @@ void toResultStorage::query(void)
 void toResultStorage::poll(void)
 {
   try {
+    if (!toCheckModal(this))
+      return;
     if (Tablespaces&&Tablespaces->poll()) {
       int cols=Tablespaces->describe().size();
       while(Tablespaces->poll()&&!Tablespaces->eof()) {

@@ -632,6 +632,8 @@ void toTemplateSQLObject::expand(void)
 void toTemplateSQLObject::poll(void)
 {
   try {
+    if (QApplication::activeModalWidget()) // Template is never in widget
+      return;
     if (Query&&Query->poll()) {
       toQDescList desc=Query->describe();
       while(Query->poll()&&!Query->eof()) {
