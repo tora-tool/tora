@@ -500,6 +500,12 @@ toListView::toListView(QWidget *parent,const char *name,WFlags f)
   LastMove=QPoint(-1,-1);
 }
 
+toListView::~toListView()
+{
+  delete AllTip;
+  AllTip = 0;
+}
+
 void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
 {
   QPoint p=e->pos();

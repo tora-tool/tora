@@ -407,6 +407,7 @@ public:
    * @param f Widget flags.
    */
   toListView(QWidget *parent,const char *name=NULL,WFlags f=0);
+  virtual ~toListView();
 
   /** Get SQL name of list.
    */

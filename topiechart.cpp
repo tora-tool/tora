@@ -96,7 +96,13 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
     QFont font(toStringToFont(str));
     setFont(font);
   }
-  new toPieTip(this);
+  AllTip = new toPieTip(this);
+}
+
+toPieChart::~toPieChart()
+{
+  delete AllTip;
+  AllTip = 0;
 }
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs

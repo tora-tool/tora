@@ -40,6 +40,7 @@
 
 class QPopupMenu;
 class toLineChart;
+class toPieTip;
 
 /** A widget that displays a piechart.
  */
@@ -58,6 +59,8 @@ class toPieChart : public QWidget {
   QRect ChartRect;
   std::list<int> Angels;
 
+  toPieTip* AllTip;
+
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *e);
   virtual void mousePressEvent(QMouseEvent *e);
@@ -68,6 +71,8 @@ public:
    * @param f Widget flags.
    */
   toPieChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  virtual ~toPieChart();
 
   /** Create a copy of a piechart.
    * @param pie Pie chart to copy.
