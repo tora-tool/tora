@@ -408,7 +408,7 @@ void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
     wpos++;
     pos++;
   }
-  return true;
+  return;
 }
 
 const QString &toTool::config(const QString &tag,const QString &def)
