@@ -37,7 +37,7 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref13">~toSyntaxAnalyzer</A></b> () 
 </LI>
-<LI>virtual  std::list<highlightInfo> &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>virtual  std::list<highlightInfo> &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,infoType in,infoType &out) 
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref15">getColor</A></b> (infoType typ) 
 </LI>
@@ -67,11 +67,15 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toSyntaxAnalyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
-<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<highlightInfo> &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<highlightInfo> &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,infoType in,infoType &out)
 <br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Line to analyze.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>in</i></TD><TD align="left" valign="top">Type at start of line.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>out</i></TD><TD align="left" valign="top">Type at start of next line.
 </TD></TR>
 </TABLE></P>
 <p><b>Returns</b>: A list of where highlighting should change. Start as normal.

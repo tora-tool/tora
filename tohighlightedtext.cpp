@@ -77,21 +77,37 @@ QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::infoType typ)
   return Colors[typ];
 }
 
-std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str)
+std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str,
+									 toSyntaxAnalyzer::infoType in,
+									 toSyntaxAnalyzer::infoType &out)
 {
   std::list<highlightInfo> highs;
   std::list<posibleHit> search;
 
   bool inWord;
   bool wasWord=false;
+  int multiComment=-1;
   int inString=-1;
   QChar endString;
+
+  if (in==String) {
+    inString=0;
+    endString='\'';
+  } else if (in==Comment) {
+    multiComment=0;
+  }
 
   for (int i=0;i<int(str.length());i++) {
     std::list<posibleHit>::iterator j=search.begin();
 
     bool nextSymbol=((int(str.length())!=i+1)&&isSymbol(str[i+1]));
-    if (inString>=0) {
+    if (multiComment>=0) {
+      if (str[i]=='*'&&str[i+1]=='/') {
+	highs.insert(highs.end(),highlightInfo(multiComment,Comment));
+	highs.insert(highs.end(),highlightInfo(i+2));
+	multiComment=-1;
+      }
+    } else if (inString>=0) {
       if (str[i]==endString) {
 	highs.insert(highs.end(),highlightInfo(inString,String));
 	highs.insert(highs.end(),highlightInfo(i+1));
@@ -106,6 +122,10 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
       highs.insert(highs.end(),highlightInfo(i,Comment));
       highs.insert(highs.end(),highlightInfo(str.length()+1));
       return highs;
+    } else if (str[i]=='/'&&str[i+1]=='*') {
+      multiComment=i;
+      search.clear();
+      wasWord=false;
     } else {
       while (j!=search.end()) {
 	posibleHit &cur=(*j);
@@ -146,9 +166,20 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
     }
   }
   if (inString>=0) {
-    highs.insert(highs.end(),highlightInfo(inString,Error));
+    if (endString=='\'') {
+      out=String;
+      highs.insert(highs.end(),highlightInfo(inString,String));
+    } else {
+      out=Normal;
+      highs.insert(highs.end(),highlightInfo(inString,Error));
+    }
     highs.insert(highs.end(),highlightInfo(str.length()+1));
-  }
+  } else if (multiComment>=0) {
+    highs.insert(highs.end(),highlightInfo(multiComment,Comment));
+    highs.insert(highs.end(),highlightInfo(str.length()+1));
+    out=Comment;
+  } else
+    out=Normal;
 
   return highs;
 }
@@ -177,7 +208,16 @@ void toHighlightedText::setText(const QString &str)
 {
   Errors.clear();
   Current=-1;
+  LineInput.clear();
   toMarkedText::setText(str);
+
+  toSyntaxAnalyzer::infoType typ=toSyntaxAnalyzer::Normal;
+  for(int i=0;i<numLines();i++) {
+    Analyzer->analyzeLine(str,typ,typ);
+    i++;
+    if (typ!=toSyntaxAnalyzer::Normal)
+      LineInput[i]=typ;
+  }
 }
 
 void toHighlightedText::setCurrent(int line)
@@ -190,6 +230,15 @@ void toHighlightedText::setCurrent(int line)
     setCursorPosition(line,0);
     updateCell(line,0,false);
   }
+}
+
+toSyntaxAnalyzer::infoType toHighlightedText::lineIn(int line)
+{
+  std::map<int,toSyntaxAnalyzer::infoType>::iterator i=LineInput.find(line);
+  if (i==LineInput.end())
+    return toSyntaxAnalyzer::Normal;
+  else
+    return (*i).second;
 }
 
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
@@ -207,8 +256,21 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     col2=col1=-1;
   }
 
-  std::list<toSyntaxAnalyzer::highlightInfo> highs=Analyzer->analyzeLine(str);
+  toSyntaxAnalyzer::infoType out;
+  std::list<toSyntaxAnalyzer::highlightInfo> highs=Analyzer->analyzeLine(str,lineIn(row),out);
   std::list<toSyntaxAnalyzer::highlightInfo>::iterator highPos=highs.begin();
+  if (lineIn(row+1)!=out) {
+    int i=row+1;
+    do {
+      if (out==toSyntaxAnalyzer::Normal)
+	LineInput.erase(LineInput.find(i));
+      else
+	LineInput[i]=out;
+      Analyzer->analyzeLine(textLine(i),out,out);
+      updateCell(i,0,false);
+      i++;
+    } while(i<numLines()&&out!=lineIn(i));
+  }
 
   int posx=hMargin()-1;
   QRect rect;

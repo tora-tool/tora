@@ -175,9 +175,11 @@ public:
   { }
   /** Analyze a line. There is no guarantee that lines will be called in any kind of order.
    * @param str Line to analyze.
+   * @param in Type at start of line.
+   * @param out Type at start of next line.
    * @return A list of where highlighting should change. Start as normal.
    */
-  virtual std::list<highlightInfo> analyzeLine(const QString &str);
+  virtual std::list<highlightInfo> analyzeLine(const QString &str,infoType in,infoType &out);
   /** Get a colordefinition for a @ref infoType value.
    * @param typ @ref infoType to get color for.
    * @return Color of that type.
@@ -225,6 +227,9 @@ private:
   /** Map of rows with errors and their error message.
    */
   std::map<int,QString> Errors;
+  /** Map of infoType that are NOT Normal
+   */
+  std::map<int,toSyntaxAnalyzer::infoType> LineInput;
   /** The syntax analyzer to use.
    */
   toSyntaxAnalyzer *Analyzer;
@@ -236,6 +241,8 @@ private:
   std::list<QString> AllComplete;
 
   bool invalidToken(int line,int col);
+
+  toSyntaxAnalyzer::infoType lineIn(int line);
 protected:
   /** Set how much of the left margin to ignore painting.
    */
@@ -277,7 +284,7 @@ public:
   /** Clear the editor.
    */
   void clear(void)
-  { Errors.clear(); Current=-1; toMarkedText::clear(); }
+  { Errors.clear(); LineInput.clear(); Current=-1; toMarkedText::clear(); }
   /** Set the text of this editor.
    */
   void setText(const QString &str);
