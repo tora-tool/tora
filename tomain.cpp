@@ -812,8 +812,11 @@ toConnection &toMain::currentConnection()
 
 void toMain::addConnection(toConnection *conn)
 {
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  int j=0;
+  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++,j++) {
     if ((*i)->connectString()==conn->connectString()) {
+      ConnectionSelection->setCurrentItem(j);
+      createDefault();
       return;
     }
   }

@@ -224,6 +224,9 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     bkg=Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg);
   if (Current==row)
     bkg=Analyzer->getColor(toSyntaxAnalyzer::CurrentBkg);
+  int cursorx=posx;
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
 
   if (!str.isEmpty()) {
     bool marked;
@@ -236,7 +239,6 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     QString c;
 
     for (int i=0;i<=int(str.length())&&posx<width;i++) {
-
       if (i==int(str.length())) {
 	marked=!wasMarked;
       } else {
@@ -269,7 +271,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	wasMarked=marked;
       }
 
-      if (wasMarked!=marked||col!=wasCol||str[i]=='\t') {
+      if (wasMarked!=marked||col!=wasCol||str[i]=='\t'||(curline==row&&curcol==i)) {
 	QChar nc;
 	if (c.length()>0&&i<int(str.length())) {
 	  nc=c.at(c.length()-1);
@@ -309,6 +311,8 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	} else
 	  c=nc;
       }
+      if (curline==row&&curcol==i)
+	cursorx=posx;
     }
     if (posx<width)
       painter->fillRect(posx,0,width-posx,height,bkg);
@@ -317,8 +321,6 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   painter->setPen(cp.active().text());
 
   if (hasFocus()) {
-    int curline,curcol;
-    getCursorPosition (&curline,&curcol);
     if (row==curline) {
       if (err!=Errors.end())
 	toStatusMessage((*err).second,true);
@@ -336,8 +338,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	LastRow=curline;
 	LastCol=curcol;
 	if (!isReadOnly()) {
-	  QPoint pos=cursorPoint();
-	  painter->drawLine(pos.x(),0,pos.x(),
+	  painter->drawLine(cursorx-1,0,cursorx-1,
 			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
 	}
 	Cursor=false;

@@ -154,7 +154,11 @@ QString toNoBlockQuery::readValue()
 {
   if (CurrentValue==Values.end()) {
     TO_DEBUGOUT("Waiting for running\n");
-    Running.down();
+    Lock.lock();
+    bool eoq=EOQ;
+    Lock.unlock();
+    if (!eoq)
+      Running.down();
     TO_DEBUGOUT("Locking reading\n");
     toLocker lock(Lock);
     Values=ReadingValues;
@@ -257,4 +261,18 @@ toNoBlockQuery::~toNoBlockQuery()
   }
   Connection.longOperationFree(LongConn);
   TO_DEBUGOUT("Done deleting\n");
+}
+
+bool toNoBlockQuery::poll(void)
+{
+  int count=0;
+  for(list<QString>::iterator i=CurrentValue;i!=Values.end();i++)
+    count++;
+  if (Running.getValue()>0) {
+    toLocker lock(Lock);
+    count+=ReadingValues.size();
+  }
+  if (count>=DescriptionLength&&DescriptionLength>0)
+    return true;
+  return false;
 }

@@ -66,7 +66,7 @@ toResultLong::toResultLong(toConnection &conn,QWidget *parent,const char *name)
 
 void toResultLong::query(const QString &sql,const list<QString> &param)
 {
-  delete Query;
+  stop();
   SQL=sql;
   Query=NULL;
   LastItem=NULL;
@@ -216,7 +216,7 @@ void toResultLong::addItem(void)
 
 toResultLong::~toResultLong()
 {
-  delete Query;
+  stop();
 }
 
 bool toResultLong::eof(void)
@@ -224,10 +224,27 @@ bool toResultLong::eof(void)
   return !Query||Query->eof();
 }
 
+#ifdef TO_QTHREAD
+class toDeleteQuery : public toTask {
+  toNoBlockQuery *RIP;
+public:
+  toDeleteQuery(toNoBlockQuery *rip)
+  { RIP=rip; }
+  virtual void run(void)
+  { delete rip; }
+};
+
+#endif
+
 void toResultLong::stop(void)
 {
   if (Query) {
+#ifdef TO_QTHREAD
+    toThread *thread=new toThread(new toDeleteQuery(Query));
+    thread->startAsync();
+#else
     delete Query;
+#endif
     Query=NULL;
     emit done();
   }

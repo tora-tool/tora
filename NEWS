@@ -9,6 +9,10 @@
 2001-07-12: Fixed spell error in rpm category.
 2001-07-12: Added msvcrt.dll to windows installation.
 2001-07-12: Fixed some bugs in extract (From DDL::Oracle).
+2001-07-18: Popup new worksheet if opening new connection to same DB.
+2001-07-18: Fixed cursor position in highlighted text.
+2001-07-18: Fixed a really nasty deadlock in tononblockquery.
+2001-07-18: Allow cancel in Windows (Will still run till first row in background).
 
 0.13: Released 2001-07-11
 

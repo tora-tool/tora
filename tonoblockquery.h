@@ -137,10 +137,9 @@ public:
   virtual ~toNoBlockQuery();
 
   /** Poll if any result is available.
-   * @return True if new values are available.
+   * @return True if at least one row is available.
    */
-  bool poll(void)
-  { return Running.getValue()||CurrentValue!=Values.end(); }
+  bool poll(void);
 
   /** Get description of columns.
    * @param length Number of columns.
