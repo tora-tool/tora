@@ -988,14 +988,14 @@ QListViewItem *toFindItem(QListView *lst,const QString &str)
 
 #ifndef TO_LICENSE
 
-bool toCheckLicense(void)
+QString toCheckLicense(bool)
 {
-  return true;
+  return "Welcome to TOra";
 }
 
-void toEnterLicense(void)
+bool toFreeware(void)
 {
-  throw QString("Should never need to ask for default license");
+  return true;
 }
 
 #else

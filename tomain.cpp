@@ -142,10 +142,14 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_HELP_CONTEXT		901
 #define TO_HELP_ABOUT		902
 #define TO_HELP_LICENSE		903
-#define TO_HELP_QUOTES		904
+#define TO_HELP_REGISTER	904
+#define TO_HELP_QUOTES		905
 
 #define TO_TOOLS		1000
 #define TO_ABOUT_ID_OFFSET	(toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
+
+QString toCheckLicense(bool);
+bool toFreeware(void);
 
 toMain::toMain()
   : toMainWindow()
@@ -269,6 +273,10 @@ toMain::toMain()
   HelpMenu->insertItem("&License",TO_HELP_LICENSE);
   HelpMenu->insertItem("&Quotes",TO_HELP_QUOTES);
   HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
+  if (!toFreeware()) {
+    HelpMenu->insertSeparator();
+    HelpMenu->insertItem("&Register",TO_HELP_REGISTER);
+  }
   QPopupMenu *toolAbout=NULL;
 
   for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
@@ -429,6 +437,15 @@ toMain::toMain()
   if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty())
     showMaximized();
   show();
+
+  QString welcome;
+
+  do {
+    welcome=toCheckLicense(false);
+  } while(welcome.isNull());
+
+  toStatusMessage(welcome,true);
+
   try {
     toNewConnection newConnection(this,"First connection",true);
     
@@ -450,8 +467,6 @@ toMain::toMain()
   } TOCATCH
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
-
-  toStatusMessage("Welcome to Tora",true);
 }
 
 void toMain::windowActivated(QWidget *widget)
@@ -657,6 +672,9 @@ void toMain::commandCallback(int cmd)
 	about->exec();
 	delete about;
       }
+      break;
+    case TO_HELP_REGISTER:
+      toCheckLicense(true);
       break;
     case TO_EDIT_OPTIONS:
       toPreferences::displayPreferences(this);
