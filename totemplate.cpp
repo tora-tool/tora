@@ -64,7 +64,9 @@ TO_NAMESPACE;
 
 #include "icons/totemplate.xpm"
 
-class toTemplateEdit : public toTemplateEditUI {
+#include <stdio.h>
+
+class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   map<QString,QString> &TemplateMap;
   map<QString,QString>::iterator LastTemplate;
   QTimer Timer;
@@ -110,7 +112,9 @@ public:
     }
   }
   toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
-    : toTemplateEditUI(parent,name,true,WStyle_Maximize),TemplateMap(pairs)
+    : toTemplateEditUI(parent,name,true,WStyle_Maximize),
+      toHelpContext("template.html#editor"),
+      TemplateMap(pairs)
   {
     toHelp::connectDialog(this);
     LastTemplate=TemplateMap.end();
@@ -143,6 +147,7 @@ public:
   }
   virtual void newTemplate(void)
   {
+    changeSelection();
     LastTemplate=TemplateMap.end();
     Description->setText("");
     QListViewItem *item=Templates->selectedItem();
@@ -174,6 +179,7 @@ public:
     QListViewItem *item=Templates->selectedItem();
     if (item) {
       QString str=name(item);
+      printf("%s\n",(const char *)str);
       LastTemplate=TemplateMap.find(str);
       if (LastTemplate!=TemplateMap.end()) {
 	Name->setText((*LastTemplate).first);
@@ -218,7 +224,7 @@ class toTemplatePrefs : public toTemplateSetupUI, public toSettingTab
   toTool *Tool;
 public:
   toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
-    : toTemplateSetupUI(parent,name),toSettingTab("templatesetup.html"),Tool(tool)
+    : toTemplateSetupUI(parent,name),toSettingTab("template.html#setup"),Tool(tool)
   {
     int tot=Tool->config("Number",QString::number(-1)).toInt();
     if(tot!=-1) {
@@ -260,15 +266,20 @@ public:
       try {
 	QString file=item->text(1);
 	map<QString,QString> pairs;
-	if (toTool::loadMap(file,pairs)) {
-	  toTemplateEdit edit(pairs,this);
-	  if (edit.exec()) {
-	    edit.changeSelection();
-	    if (!toTool::saveMap(file,pairs))
-	      throw QString("Couldn't write file");
-	  }
-	} else
-	  throw QString("Couldn't read file");
+	if (!toTool::loadMap(file,pairs)) {
+	  if (TOMessageBox::warning(this,
+				    "Couldn't open file.",
+				    "Couldn't open file. Start on new file?",
+				    "&Ok",
+				    "Cancel")==1)
+	    return;
+	}
+	toTemplateEdit edit(pairs,this);
+	if (edit.exec()) {
+	  edit.changeSelection();
+	  if (!toTool::saveMap(file,pairs))
+	    throw QString("Couldn't write file");
+	}
       } catch (const QString &str) {
 	TOMessageBox::warning(this,
 			      "Couldn't open file",

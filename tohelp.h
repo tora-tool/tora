@@ -61,13 +61,13 @@ class toHelpContext {
   /**
    * The current context.
    */
-  QString Name;
+  QString Context;
 public:
   /** Create a context.
    * @param file File in the help directory that describes the current context.
    */
   toHelpContext(const QString &file)
-    : Name(file)
+    : Context(file)
   { }
   virtual ~toHelpContext()
   { }
@@ -76,7 +76,7 @@ public:
    * @return The location of a file that describes the current context.
    */
   virtual const QString &context(void) const
-  { return Name; }
+  { return Context; }
 };
 
 #include "totool.h"

@@ -68,6 +68,9 @@
 2001-07-11: Added help context to template help.
 2001-07-11: Fixed problem creating triggers in worksheet.
 2001-07-11: Fixed problem with duplicate getting params in worksheet.
+2001-07-11: Added messagebox to ask about starting new template help.
+2001-07-11: Added help context to template editor.
+2001-07-11: Changed Name to Context in helpcontext.
 
 0.12: Released 2001-07-01
 

@@ -13,7 +13,60 @@ The top pane is in the default distribution divided into two parts as well. The
 databases through a tree structure. The second part is a plain tree list of available text
 documentation. By default only one manual is supplied which contain PL/SQL functions, but
 an <A HREF=template.html#editor>editor</A> is supplied to write more help.<P>
+Items in the second part is simply items with a descriptive text associated with them. Selecting
+the item will bring up the desciption of it in the information.<P>
 <A NAME=browser><H2>DB Browser</H2>
+The database browser allows you to browse the schema objects in the open databases. All the
+open databases will have an item under which the following information is available. Under
+each table is a list of the visible schemas for the database. Under the schema the following
+items are available.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Code</B></TD><TD VALIGN=top>
+Under this item all the code objects are displayed. The information in the child objects
+will bring up the source of the object.</TD></TR>
+<TR><TD VALIGN=top><B>
+Indexes</B></TD><TD VALIGN=top>
+Contains all the indexes of the schema. The information in the child objects will bring up
+the columns on which the index is defined.</TD></TR>
+<TR><TD VALIGN=top><B>
+Sequences</B></TD><TD VALIGN=top>
+The sequences of the schema. The information in the child objects will bring up information
+about the sequence.</TD></TR>
+<TR><TD VALIGN=top><B>
+Synonyms</B></TD><TD VALIGN=top>
+The synonyms of the schema. The information in the child objects will bring up information
+about the sequence.</TD></TR>
+<TR><TD VALIGN=top><B>
+Tables</B></TD><TD VALIGN=top>
+The tables available in the schema. Selecting the table will bring up the columns of the
+table. There are also three child items to this they contain information about
+<B>constraints</B>, <B>grants</B> and <B>references</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Triggers</B></TD><TD VALIGN=top>
+Triggers in the schema. Selecting the item will bring up the source for the trigger.</TD></TR>
+<TR><TD VALIGN=top><B>
+Views</B></TD><TD VALIGN=top>
+The views available in the schema. Selecting the view name will bring up the columns of the
+table. There are also a child item to this that contain information about
+<B>grants</B>.</TD></TR>
+</TABLE><P>
+Don't forget that more database browsing functionality is available in the
+<A HREF=browser.html>database browser tool</A>.<P>
+<A NAME=setup><H2>Setup help templates</H2>
+You set up additional help files by selecting the SQL Template page in the
+<A HREF=preferences.html>options</A> dialog.<P>
+<IMG SRC=images/templatesetup.png><P>
+To add an existing or start a new template help collection select the <B>add file</B> button
+and enter the filename under which to stora the help collection and the name of the root
+item under which the collection should be displayed in the help.<P>
+To edit a collection select the collection in the list and press the <B>edit file</B> button to
+bring up the <A HREF=template.html#editor>template editor</A>. If the name doesn't exist you
+are asked to start a new file or cancel.<P>
+To remove a template press the <B>remove file</B>, this will not remove the actual file.<P>
+<A NAME=editor><H2>Template editor</H2>
+The template editor is used to edit and create new text template help collections.<P>
+<IMG SRC=images/templateeditor.png><P>
 
 </BODY>
 </HTML>
