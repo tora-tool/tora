@@ -45,6 +45,7 @@ class toConnection {
   list<QWidget *> Widgets;
   bool NeedCommit;
   otl_connect *newConnection(void);
+  list<QString> InitStrings;
   void setup(void);
   list<otl_connect *> FreeConnect;
 public:
@@ -72,8 +73,13 @@ public:
   { Widgets.insert(Widgets.end(),widget); }
   void delWidget(QWidget *widget);
 
+  void addInit(const QString &sql);
+  void delInit(const QString &sql);
+
   otl_connect *longOperation(void);
   void longOperationFree(otl_connect *conn);
+  list<otl_connect *> &otherSessions(void)
+  { return FreeConnect; }
 };
 
 #endif

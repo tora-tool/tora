@@ -186,6 +186,7 @@ void toResultContent::changePosition(int row,int col)
 	}
 	Row++;
 	setNumRows(Row+1);
+	Connection.setNeedCommit();
       } TOCATCH
     } else {
       QString sql="UPDATE \"";
@@ -240,6 +241,7 @@ void toResultContent::changePosition(int row,int col)
 	  if (!nullString(str))
 	    exec<<str.utf8();
 	}
+	Connection.setNeedCommit();
       } TOCATCH
     }
     OrigValues.clear();

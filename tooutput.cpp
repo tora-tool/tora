@@ -194,6 +194,20 @@ void toOutput::disable(bool dis)
     else
       otl_cursor::direct_exec(Connection.connection(),
 			      SQLEnable(Connection));
+    list<otl_connect *> &other=Connection.otherSessions();
+    for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++) {
+      if (dis)
+	otl_cursor::direct_exec(*(*i),
+				SQLDisable(Connection));
+      else
+	otl_cursor::direct_exec(*(*i),
+				SQLEnable(Connection));
+    }
+    QString str=QString::fromUtf8(SQLEnable(Connection));
+    if (dis)
+      Connection.delInit(str);
+    else
+      Connection.addInit(str);
   } catch (...) {
     toStatusMessage("Couldn't enable/disable output for session");
   }
@@ -213,14 +227,14 @@ static toSQL SQLLines("toOutput:Poll",
 		      "END;",
 		      "Get lines from SQL Output, must use same bindings");
 
-void toOutput::refresh(void)
+void toOutput::poll(otl_connect &conn)
 {
   try {
     int numlines;
     do {
       otl_stream query(1,
 		       SQLLines(Connection),
-		       Connection.connection());
+		       conn);
       query<<254;
       otl_cstr_tab<257,255> lines;
       query>>lines;
@@ -229,6 +243,14 @@ void toOutput::refresh(void)
 	insertLine(QString::fromUtf8((const char *)lines.v[i]));
     } while(numlines>=254);
   } TOCATCH
+}
+
+void toOutput::refresh(void)
+{
+  poll(Connection.connection());
+  list<otl_connect *> &other=Connection.otherSessions();
+  for(list<otl_connect *>::iterator i=other.begin();i!=other.end();i++)
+    poll(*(*i));
 }
 
 void toOutput::clear(void)

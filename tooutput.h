@@ -42,7 +42,7 @@ class toOutput : public QVBox {
   toMarkedText *Output;
   QToolButton *DisableButton;
   QTimer *Timer;
-
+  void poll(otl_connect &conn);
 protected:
   toConnection &Connection;
 public:

@@ -112,7 +112,7 @@ especially since I rule.</H3>
 <DIV ALIGN=RIGHT>Franklin P. Jones
 <DIV ALIGN=LEFT>
 <H3>I might disagree with what you have to say,
-but I'll defend your right to say it to the death.</A>
+but I'll defend your right to say it to the death.</H3>
 <DIV ALIGN=RIGHT>Voltaire
 <DIV ALIGN=LEFT>
 <H3>Life is a sexually transmittable desease with terminal outcome.</H3>
@@ -127,7 +127,7 @@ but I'll defend your right to say it to the death.</A>
 <H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
-<H3>Accepptance testing: An unsuccessfull attampt to find bugs.</H3>
+<H3>Accepptance testing: An unsuccessfull attempt to find bugs.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
 <H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>
@@ -164,7 +164,7 @@ Resten slösade jag bort.</H3>
 	there's no end to what you can't do.<P>
 <LI>Never underestimate the power of stupid people in large groups.<P>
 <LI>The downside of being better than everyone else is that people tend to assume you're pretentious.<P>
-<LI>In the battle between you cand the world, bet on the world.<P>
+<LI>In the battle between you and the world, bet on the world.<P>
 <LI>You'll always miss 100% of the shots you don't take, and, statistically speaking, 99% of the shots you do.<P>
 <LI>The secret to success is knowing who to blame for your failures.<P>
 <LI>When birds fly in the right formation, they need only exert half the effort.

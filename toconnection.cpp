@@ -35,6 +35,8 @@ TO_NAMESPACE;
 #include "toconnection.h"
 #include "tomain.h"
 
+#include <stdio.h>
+
 otl_connect *toConnection::newConnection(void)
 {
   QString oldSid;
@@ -66,6 +68,14 @@ otl_connect *toConnection::newConnection(void)
   str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
   str+="'";
   otl_stream date(1,str.utf8(),*conn);
+  for (list<QString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
+    try {
+      printf("%s\n",(const char *)(*i));
+      otl_cursor::direct_exec(*conn,(*i).utf8());
+    } catch (const otl_exception &exc) {
+      toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+    }
+  }
   return conn;
 }
 
@@ -216,4 +226,22 @@ void toConnection::rollback(void)
   FreeConnect.clear();
   if (tmp)
     FreeConnect.insert(FreeConnect.end(),tmp);
+}
+
+void toConnection::addInit(const QString &sql)
+{
+  delInit(sql);
+  InitStrings.insert(InitStrings.end(),sql);
+}
+
+void toConnection::delInit(const QString &sql)
+{
+  list<QString>::iterator i=InitStrings.begin();
+  while (i!=InitStrings.end()) {
+    if ((*i)==sql) {
+      InitStrings.erase(i);
+      i=InitStrings.begin();
+    } else
+      i++;
+  }
 }
