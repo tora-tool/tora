@@ -803,6 +803,10 @@ public:
    */
   bool cacheAvailable(bool block=false,bool need=true);
 
+  /** Try to stop all running queries.
+   */
+  void cancelAll(void);
+
   friend class toQuery;
 };
 

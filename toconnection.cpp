@@ -826,6 +826,14 @@ toConnection::toConnection(const toConnection &conn)
   NeedCommit=Abort=false;
 }
 
+void toConnection::cancelAll(void)
+{
+  toBusy busy;
+  toLocker lock(Lock);
+  for(std::list<toConnectionSub *>::iterator i=Running.begin();i!=Running.end();i++)
+    (*i)->cancel();
+}
+
 toConnection::~toConnection()
 {
   toBusy busy;

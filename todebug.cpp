@@ -848,8 +848,7 @@ void toDebug::execute(void)
 	toQList input;
 	try {
 	  input=toParamGet::getParam(this,sql);
-	} catch(const QString &str) {
-	  toStatusMessage(str,false,false);
+	} catch(...) {
 	  return;
 	}
 	toLocker lock(Lock);

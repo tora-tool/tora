@@ -742,6 +742,23 @@ static QString GetExtensions(void)
   return t;
 }
 
+static QString AddExt(QString t,const QString &filter)
+{
+  static QRegExp hasext("\\.[^\\/]*$");
+  if (!hasext.match(t)) {
+#if 0
+    static QRegExp findext("\.[^ \t\r\n]*");
+    int pos=0;
+    int len=findext.match(filter,0,&pos);
+    if (len>=0)
+      t+=filter.mid(pos,len);
+#else
+    t+=".sql";
+#endif
+  }
+  return t;
+}
+
 QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent)
 {
   QString t=filter;
@@ -752,10 +769,10 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
-    return url.path();
-  return url.url();
+    return AddExt(url.path(),QString::null);
+  return AddExt(url.url(),QString::null);
 #else
-  return TOFileDialog::getOpenFileName(filename,t,parent);
+  return AddExt(TOFileDialog::getOpenFileName(filename,t,parent),QString::null);
 #endif
 }
 

@@ -377,11 +377,11 @@ void toWorksheet::setup(bool autoLoad)
     Columns->hide();
 
     ResultTab->setTabEnabled(Columns,false);
-    Visualize=new toVisualize(Result,ResultTab);
-    ResultTab->addTab(Visualize,"&Visualize");
     Plan=new toResultPlan(ResultTab);
     ResultTab->addTab(Plan,"E&xecution plan");
     Resources=new toResultResources(ResultTab);
+    Visualize=new toVisualize(Result,ResultTab);
+    ResultTab->addTab(Visualize,"&Visualize");
     ResultTab->addTab(Resources,"&Information");
     StatTab=new QVBox(ResultTab);
     {
@@ -781,8 +781,7 @@ void toWorksheet::query(const QString &str,bool direct)
     if (!nobinds)
       try {
 	param=toParamGet::getParam(this,QueryString);
-      } catch (const QString &str) {
-	toStatusMessage(str,false,false);
+      } catch (...) {
 	return;
       }
     toStatusMessage("Processing query",true);
@@ -941,7 +940,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     else
       toStatusMessage(str,false,false);
   }
-  if (!Light)
+  if (!Light&&!error)
     changeResult(CurrentTab);
 
   static QRegExp re("^[1-9]\\d* rows processed$");

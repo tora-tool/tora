@@ -32,23 +32,25 @@
  *
  ****************************************************************************/
 
-#include <qregexp.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qgrid.h>
-#include <qscrollview.h>
-#include <qpushbutton.h>
-#include <qapplication.h>
-#include <qpalette.h>
-#include <qlayout.h>
-#include <qsizepolicy.h>
+#include "utils.h"
 
-#include "toparamget.h"
-#include "totool.h"
 #include "toconf.h"
 #include "tohelp.h"
 #include "tomemoeditor.h"
+#include "toparamget.h"
+#include "totool.h"
+
+#include <qapplication.h>
+#include <qcheckbox.h>
+#include <qgrid.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlineedit.h>
+#include <qpalette.h>
+#include <qpushbutton.h>
+#include <qregexp.h>
+#include <qscrollview.h>
+#include <qsizepolicy.h>
 
 #include "toparamget.moc"
 
@@ -182,8 +184,10 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	  fname+=c;
 	  break;
 	}
-	if (fname.isEmpty())
+	if (fname.isEmpty()) {
+	  toStatusMessage("Missing field name");
 	  throw QString("Missing field name");
+	}
 	state=afterName;
       case afterName:
 	if (c=='<')
@@ -271,6 +275,7 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
       delete widget;
     } else {
       delete widget;
+      toStatusMessage("Aborted execution",false,false);
       throw QString("Aborted execution");
     }
   }

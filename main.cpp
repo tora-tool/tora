@@ -105,6 +105,13 @@ int main(int argc,char **argv)
       toSetSessionType(style);
 #endif
 
+#if QT_VERSION >= 300
+    // Set Selection Mode on X11
+    QClipboard *clip=qApp->clipboard();
+    if(clip->supportsSelection())
+      clip->setSelectionMode(true);
+#endif
+
 #ifndef TOMONOLITHIC
     {
       toSplash splash(NULL,"About TOra",false);

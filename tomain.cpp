@@ -95,6 +95,7 @@
 #include "icons/redo.xpm"
 #include "icons/rollback.xpm"
 #include "icons/search.xpm"
+#include "icons/stop.xpm"
 #include "icons/toramini.xpm"
 #include "icons/trash.xpm"
 #include "icons/undo.xpm"
@@ -118,19 +119,20 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_STATUS_ID_END	4999
 #define TO_NEW_CONNECTION	100
 #define TO_CLOSE_CONNECTION	101
-#define TO_FILE_OPEN		102
-#define TO_FILE_SAVE		103
-#define TO_FILE_SAVE_AS		104
-#define TO_FILE_COMMIT		105
-#define TO_FILE_ROLLBACK	106
-#define TO_FILE_CURRENT         107
-#define TO_FILE_CLEARCACHE	108
-#define TO_FILE_PRINT		109
-#define TO_FILE_QUIT		110
-#define TO_FILE_OPEN_SESSION	111
-#define TO_FILE_SAVE_SESSION	112
-#define TO_FILE_CLOSE_SESSION	113
-#define TO_FILE_LAST_SESSION	114
+#define TO_STOP_ALL		102
+#define TO_FILE_OPEN		103
+#define TO_FILE_SAVE		104
+#define TO_FILE_SAVE_AS		105
+#define TO_FILE_COMMIT		106
+#define TO_FILE_ROLLBACK	107
+#define TO_FILE_CURRENT         108
+#define TO_FILE_CLEARCACHE	109
+#define TO_FILE_PRINT		110
+#define TO_FILE_QUIT		111
+#define TO_FILE_OPEN_SESSION	112
+#define TO_FILE_SAVE_SESSION	113
+#define TO_FILE_CLOSE_SESSION	114
+#define TO_FILE_LAST_SESSION	115
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -394,6 +396,11 @@ toMain::toMain()
 				 "Rollback connection",
 				 "Rollback connection",
 				 this,SLOT(rollbackButton()),ConnectionToolbar)]=NULL;
+  ConnectionToolbar->addSeparator();
+  NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
+				 "Stop all running queries on connection",
+				 "Stop all running queries on connection",
+				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar);
   ConnectionSelection->setFixedWidth(200);
@@ -673,6 +680,12 @@ void toMain::commandCallback(int cmd)
 	setNeedCommit(conn,false);
       } TOCATCH
       break;
+    case TO_STOP_ALL:
+      try {
+	toConnection &conn=currentConnection();
+	conn.cancelAll();
+      } TOCATCH
+      break;
     case TO_FILE_CLEARCACHE:
       try {
 	currentConnection().rereadCache();
@@ -912,6 +925,11 @@ void toMain::commitButton(void)
   commandCallback(TO_FILE_COMMIT);
 }
 
+void toMain::stopButton(void)
+{
+  commandCallback(TO_STOP_ALL);
+}
+
 void toMain::rollbackButton(void)
 {
   commandCallback(TO_FILE_ROLLBACK);
@@ -986,13 +1004,6 @@ void toMain::editEnable(toEditWidget *edit)
 		     edit->searchEnabled(),
 		     edit->selectAllEnabled(),
 		     edit->readAllEnabled());
-
-#if QT_VERSION >= 300
-  // Set Selection Mode on X11
-  QClipboard *clip=qApp->clipboard();
-  if(clip->supportsSelection())
-    clip->setSelectionMode(true);
-#endif
 }
 
 void toMain::editDisable(toEditWidget *edit)

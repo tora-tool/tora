@@ -72,6 +72,8 @@ Extended functionality:
 * Add warning when changing to Default Storage when disabled in modify tablespace in storage.
 * Enable copy in main window on lists.
 * Explain plan without execute in worksheet.
+* Option to select newline format on saved text.
+* Make legacy CTRL+Shift etc keyboard bindings available.
 
 New tools:
 

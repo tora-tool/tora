@@ -5,6 +5,7 @@ OCI:
 Qt:
 	When using antialiased text doesn't draw left axis legend correctly in charts.
 	When using antialiased monospaced text isn't always monospaced.
+	Looses clipboard when application closes.
 
 KDE:
 	When destructing several docked windows sometimes make weird slot disconnect.
@@ -23,3 +24,6 @@ toSQLParse:
 
 toThread:
 	Leaves defunct processes when running under gdb.
+
+toWorksheet:
+	Errors when displaying query plan will display two error dialogs.
