@@ -41,7 +41,7 @@ MYSQL_CPP=tomysqlconnection.cpp
 MYSQL_PLUGIN=plugins/tomysqlconnection.tso
 endif
 
-MAKEFILE_ORIG=Makefile.oracle
+MAKEFILE_ORIG=Makefile.orig
 TITLE=TOra
 SUBDIRS=
 SOURCES=\
@@ -62,6 +62,7 @@ SOURCES=\
 	todebugchange.cpp	        \
 	todebugtext.cpp		        \
 	todebugwatch.cpp	        \
+	toeditwidget.cpp		\
 	toextract.cpp		        \
 	tofilesize.cpp		        \
 	toglobalsetting.cpp             \
@@ -150,6 +151,7 @@ API=	\
 	toconf.h		\
 	toconnection.h		\
 	todefaultkeywords.h	\
+	toeditwidget.h		\
 	toextract.h		\
 	tofilesize.h		\
 	tohelp.h		\
@@ -213,17 +215,20 @@ plugins/todebug.tso:\
 	objs/todebugchange.o
 plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
-plugins/tofilesize.tso:objs/tofilesize.o
 plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
+	objs/toresultcols.o \
 	objs/toresultconstraint.o \
+	objs/toresultcontent.o \
+	objs/toresultcontentfilterui.o \
 	objs/toresultdepend.o \
 	objs/toresultextract.o \
 	objs/toresultindexes.o \
 	objs/toresultlock.o \
 	objs/toresultlong.o \
+	objs/toresultplan.o \
 	objs/toresultreferences.o \
 	objs/toresultstats.o \
 	objs/toresultstorage.o
@@ -239,7 +244,6 @@ plugins/tosecurity.tso:\
 	objs/tosecurityquotaui.o \
 	objs/tosecurityroleui.o \
 	objs/tosecurityuserui.o
-plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
 plugins/tostorage.tso:\
@@ -258,7 +262,11 @@ plugins/totemplate.tso:\
 plugins/totuning.tso:\
 	objs/totuning.o \
 	objs/totuningoverviewui.o
-plugins/toworksheet.tso: \
+plugins/towidgets.tso:\
+	objs/tochangeconnection.o \
+	objs/tofilesize.o \
+	objs/tosgastatement.o
+plugins/toworksheet.tso:\
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o
 
@@ -303,23 +311,23 @@ tora-plugin: \
 	plugins/todebug.tso \
 	plugins/tocurrent.tso \
 	plugins/toextract.tso \
-	plugins/tofilesize.tso \
 	plugins/toinvalid.tso \
 	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \
+	plugins/topreferences.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \
 	plugins/tosession.tso \
 	plugins/tosecurity.tso \
-	plugins/tosgastatement.tso \
 	plugins/tosgatrace.tso \
 	plugins/tosqledit.tso \
 	plugins/tostorage.tso \
 	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
 	plugins/totuning.tso \
+	plugins/towidgets.tso \
 	plugins/toworksheet.tso \
 	$(MYSQL_PLUGIN)
 
@@ -329,9 +337,9 @@ tora: \
 	objs/main.o \
 	objs/toabout.o \
 	objs/toaboutui.o \
-	objs/tochangeconnection.o \
 	objs/toconnection.o \
 	objs/todatabasesettingui.o \
+	objs/toeditwidget.o \
 	objs/toglobalsetting.o \
 	objs/toglobalsettingui.o \
 	objs/tohelp.o \
@@ -348,16 +356,12 @@ tora: \
 	objs/topreferences.o \
 	objs/topreferencesui.o \
 	objs/toresult.o \
-	objs/toresultcols.o \
-	objs/toresultcontent.o \
-	objs/toresultcontentfilterui.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
-	objs/toresultplan.o \
 	objs/toresultview.o \
-	objs/tosql.o \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
+	objs/tosql.o \
 	objs/tosyntaxsetup.o \
 	objs/tosyntaxsetupui.o \
 	objs/totemplateprovider.o \
