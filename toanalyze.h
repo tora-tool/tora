@@ -55,7 +55,9 @@ class toAnalyze : public toToolWidget {
 
   QTabWidget *Tabs;
   toResultView *Statistics;
+  QComboBox *Analyzed;
   QComboBox *Schema;
+  QComboBox *Type;
   QComboBox *Operation;
   QComboBox *For;
   QSpinBox *Sample;

@@ -24,6 +24,7 @@ Extended functionality:
 * Editor improvements
 	CVS support (Or whatever this is called in windows).
 	PL/SQL doc (Like JavaDoc).
+	Synchonize editors that edit the same file.
 * Debugger
 	Don't lock during execution.
 	Support for Oracle 7
@@ -31,10 +32,6 @@ Extended functionality:
 	Use toSQLParse
 	Attaching to remote debugging session
 	Support for one referential cursor output variable
-* Statistics manager.
-	Index only analyzing.
-	Display only analyzed/not analyzed.
-	All schemas option.
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
@@ -84,7 +81,6 @@ Extended functionality:
 * Easier to grant all priviledges to a user.
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
-* Synchonize worksheets that edit the same file.
 * Use style factory if Qt3 when selecting styles.
 * SQL*Loader controlfile generator.
 * Support for undo tablespaces in Oracle 9.

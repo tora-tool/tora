@@ -86,7 +86,8 @@ public:
 static toAnalyzeTool AnalyzeTool;
 
 static toSQL SQLListTables("toAnalyze:ListTables",
-			   "select owner,\n"
+			   "select 'TABLE' \"Type\",\n"	
+			   "       owner,\n"
 			   "       table_name,\n"
 			   "       num_rows,\n"
 			   "       blocks,\n"
@@ -97,11 +98,12 @@ static toSQL SQLListTables("toAnalyze:ListTables",
 			   "       sample_size,\n"
 			   "       last_analyzed\n"
 			   "  from sys.all_all_tables\n"
-			   " where owner = :own<char[101]> and iot_name is null",
-			   "Get table statistics, first two columns and binds must be same",
+			   " where iot_name is null",
+			   "Get table statistics, first three columns and binds must be same",
 			   "8.0");
 static toSQL SQLListTables7("toAnalyze:ListTables",
-			    "select owner,\n"
+			    "select 'TABLE' \"Type\",\n"
+			    "       owner,\n"
 			    "       table_name,\n"
 			    "       num_rows,\n"
 			    "       blocks,\n"
@@ -112,9 +114,25 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "       sample_size,\n"
 			    "       last_analyzed\n"
 			    "  from sys.all_tables\n"
-			    " where owner = :own<char[101]>",
+			    " WHERE 1 = 1",
 			    QString::null,
 			    "7.3");
+
+static toSQL SQLListIndex("toAnalyze:ListIndex",
+			  "SELECT 'INDEX' \"Type\",\n"
+			  "       Owner,\n"
+			  "       Index_Name,\n"
+			  "       Num_rows,\n"
+			  "       Distinct_Keys,\n"
+			  "       Leaf_Blocks,\n"
+			  "       Avg_Leaf_Blocks_Per_Key,\n"
+			  "       Avg_Data_Blocks_Per_Key,\n"
+			  "       Clustering_Factor,\n"
+			  "       Sample_Size,\n"
+			  "       Last_Analyzed\n"
+			  "  FROM SYS.ALL_INDEXES\n"
+			  " WHERE 1 = 1",
+			  "List the available indexes, first three column and binds must be same");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",
 			  "SELECT DISTINCT\n"
@@ -141,15 +159,26 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  toolbar);
 
   toolbar->addSeparator();
+  Analyzed=new QComboBox(toolbar);
+  Analyzed->insertItem("All");
+  Analyzed->insertItem("Not analyzed");
+  Analyzed->insertItem("Analyzed");
+
   Schema=new QComboBox(toolbar);
   toQList users=toQuery::readQuery(connection,
 				   toSQL::string(toSQL::TOSQL_USERLIST,connection));
   int j=0;
+  Schema->insertItem("All");
+
   for(toQList::iterator i=users.begin();i!=users.end();i++,j++) {
     Schema->insertItem(*i);
     if ((*i)==connection.user().upper())
       Schema->setCurrentItem(j);
   }
+  Type=new QComboBox(toolbar);
+  Type->insertItem("Tables");
+  Type->insertItem("Indexes");
+
   toolbar->addSeparator();
   Operation=new QComboBox(toolbar);
   Operation->insertItem("Compute statistics");
@@ -197,8 +226,9 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Statistics->setSelectionMode(QListView::Extended);
   Statistics->setReadAll(true);
 
-  connect(Schema,SIGNAL(activated(int)),
-	  this,SLOT(refresh()));
+  connect(Analyzed,SIGNAL(activated(int)),this,SLOT(refresh()));
+  connect(Schema,SIGNAL(activated(int)),this,SLOT(refresh()));
+  connect(Type,SIGNAL(activated(int)),this,SLOT(refresh()));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -274,8 +304,27 @@ void toAnalyze::refresh(void)
 {
   Statistics->setSQL(QString::null);
   toQList par;
-  par.insert(par.end(),Schema->currentText());
-  Statistics->query((const QString)toSQL::string(SQLListTables,connection()),(const toQList)par);
+  QString sql;
+  if (Type->currentItem()==0)
+    sql=toSQL::string(SQLListTables,connection());
+  else
+    sql=toSQL::string(SQLListIndex,connection());
+  if (Schema->currentItem()!=0) {
+    par.insert(par.end(),Schema->currentText());
+    sql+="\n   AND owner = :own<char[100]>";
+  }
+  switch (Analyzed->currentItem()) {
+  default:
+    break;
+  case 1:
+    sql+="\n  AND Last_Analyzed IS NULL";
+    break;
+  case 2:
+    sql+="\n  AND Last_Analyzed IS NOT NULL";
+    break;
+  }
+
+  Statistics->query(sql,(const toQList)par);
 }
 
 void toAnalyze::poll(void)
@@ -312,44 +361,47 @@ void toAnalyze::execute(void)
 {
   stop();
 
-  QString sql="ANALYZE TABLE %1.%2 ";
-  QString forc;
-  switch(For->currentItem()) {
-  case 0:
-    forc="";
-    break;
-  case 1:
-    forc=" FOR TABLE";
-    break;
-  case 2:
-    forc=" FOR ALL INDEXED COLUMNS";
-    break;
-  case 3:
-    forc=" FOR ALL LOCAL INDEXES";
-    break;
-  }
-
-  switch(Operation->currentItem()) {
-  case 0:
-    sql+="COMPUTE STATISTICS";
-    sql+=forc;
-    break;
-  case 1:
-    sql+="ESTIMATE STATISTICS";
-    sql+=forc;
-    sql+=" SAMPLE "+QString::number(Sample->value())+" PERCENT";
-    break;
-  case 2:
-    sql+="DELETE STATISTICS";
-    break;
-  case 3:
-    sql+="VALIDATE REF UPDATE";
-    break;
-  }
-
   for(QListViewItem *item=Statistics->firstChild();item;item=item->nextSibling()) {
-    if (item->isSelected())
-      toPush(Pending,sql.arg(item->text(0)).arg(item->text(1)));
+    if (item->isSelected()) {
+      QString sql="ANALYZE %3 %1.%2 ";
+      QString forc;
+      if (item->text(0)=="TABLE") {
+	switch(For->currentItem()) {
+	case 0:
+	  forc="";
+	  break;
+	case 1:
+	  forc=" FOR TABLE";
+	  break;
+	case 2:
+	  forc=" FOR ALL INDEXED COLUMNS";
+	  break;
+	case 3:
+	  forc=" FOR ALL LOCAL INDEXES";
+	  break;
+	}
+      }
+
+      switch(Operation->currentItem()) {
+      case 0:
+	sql+="COMPUTE STATISTICS";
+	sql+=forc;
+	break;
+      case 1:
+	sql+="ESTIMATE STATISTICS";
+	sql+=forc;
+	sql+=" SAMPLE "+QString::number(Sample->value())+" PERCENT";
+	break;
+      case 2:
+	sql+="DELETE STATISTICS";
+	break;
+      case 3:
+	sql+="VALIDATE REF UPDATE";
+	break;
+      }
+
+      toPush(Pending,sql.arg(item->text(1)).arg(item->text(2)).arg(item->text(0)));
+    }
   }
 
   toQList par;
