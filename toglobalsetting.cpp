@@ -46,234 +46,119 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toglobalsetting.h"
 
-#include "toglobalsetting.moc"
+#include "toglobalsettingui.moc"
+#include "todatabasesettingui.moc"
 
-toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool modal, WFlags fl )
-  : QFrame( parent, name, modal, fl )
+#include "toglobalsettingui.cpp"
+#include "todatabasesettingui.cpp"
+
+toGlobalSetting::toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)
+  : toGlobalSettingUI(parent,name,fl)
 {
-  if (!name)
-    setName( "toGlobalSettings" );
-  setCaption( tr( "Global settings"  ) );
-
-  GroupBox5 = new QGroupBox( this, "GroupBox5" );
-  GroupBox5->setGeometry( QRect( 10, 265, 380, 135 ) ); 
-  GroupBox5->setTitle( tr( "Database settings"  ) );
-
-  TextLabel1_3 = new QLabel( GroupBox5, "TextLabel1_3" );
-  TextLabel1_3->setGeometry( QRect( 10, 20, 140, 20 ) ); 
-  TextLabel1_3->setText( tr( "&Explain plan table"  ) );
-  QToolTip::add(  TextLabel1_3, tr( "What table to use as the destination for the EXPLAIN TABLE command" ) );
-
-  TextLabel1_3_2 = new QLabel( GroupBox5, "TextLabel1_3_2" );
-  TextLabel1_3_2->setGeometry( QRect( 10, 60, 140, 20 ) ); 
-  TextLabel1_3_2->setText( tr( "C&heckpoint name"  ) );
-  QToolTip::add(  TextLabel1_3_2, tr( "Checkpoint name to use when TOra needs to make temporary changes to the database (Explain plan is one example)" ) );
-
-  TextLabel7 = new QLabel( GroupBox5, "TextLabel7" );
-  TextLabel7->setGeometry( QRect( 10, 100, 140, 20 ) ); 
-  TextLabel7->setText( tr( "&Default date format"  ) );
-  QToolTip::add(  TextLabel7, tr( "Set this dateformat after connection to the database." ) );
-
-  PlanCheckpoint = new QLineEdit( GroupBox5, "PlanCheckpoint" );
-  PlanCheckpoint->setGeometry( QRect( 170, 60, 200, 23 ) ); 
-  PlanCheckpoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
-					       DEFAULT_PLAN_CHECKPOINT));
-
-  DefaultDate = new QLineEdit( GroupBox5, "DefaultDate" );
-  DefaultDate->setGeometry( QRect( 170, 100, 200, 23 ) ); 
-  DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
-					    DEFAULT_DATE_FORMAT));
-
-  PlanTable = new QLineEdit( GroupBox5, "PlanTable" );
-  PlanTable->setGeometry( QRect( 170, 20, 200, 23 ) ); 
-  PlanTable->setText(toTool::globalConfig(CONF_PLAN_TABLE,
-					  DEFAULT_PLAN_TABLE));
-
-  GroupBox1 = new QGroupBox( this, "GroupBox1" );
-  GroupBox1->setGeometry( QRect( 10, 10, 210, 175 ) ); 
-  GroupBox1->setTitle( tr( "Query settings"  ) );
-
-  TextLabel1_2_3 = new QLabel( GroupBox1, "TextLabel1_2_3" );
-  TextLabel1_2_3->setGeometry( QRect( 9, 140, 120, 20 ) ); 
-  TextLabel1_2_3->setText( tr( "&Number of columns"  ) );
-  QToolTip::add(  TextLabel1_2_3, tr( "Maximum number of columns in the result of a query" ) );
-
-  TextLabel1_2_2 = new QLabel( GroupBox1, "TextLabel1_2_2" );
-  TextLabel1_2_2->setGeometry( QRect( 10, 60, 120, 20 ) ); 
-  TextLabel1_2_2->setText( tr( "&Max column size"  ) );
-  QToolTip::add(  TextLabel1_2_2, tr( "Max length of data fetched in one column" ) );
-
-  TextLabel1_2 = new QLabel( GroupBox1, "TextLabel1_2" );
-  TextLabel1_2->setGeometry( QRect( 10, 100, 120, 20 ) ); 
-  TextLabel1_2->setText( tr( "&Column size display"  ) );
-  QToolTip::add(  TextLabel1_2, tr( "Max width of a column in the result table from a query" ) );
-
-  TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
-  TextLabel1->setGeometry( QRect( 10, 20, 120, 20 ) ); 
-  TextLabel1->setText( tr( "&Initial fetch"  ) );
-  QToolTip::add(  TextLabel1, tr( "Number of rows to initially fetch when executing a query" ) );
-
-  MaxNumber = new QLineEdit( GroupBox1, "MaxNumber" );
-  MaxNumber->setGeometry( QRect( 140, 20, 60, 23 ) ); 
-  MaxNumber->setText(toTool::globalConfig(CONF_MAX_NUMBER,
-					  DEFAULT_MAX_NUMBER));
-  MaxNumber->setAlignment( int( QLineEdit::AlignRight ) );
-  QIntValidator *valid=new QIntValidator(MaxNumber);
-  MaxNumber->setValidator(valid);
-
-  MaxColSize = new QLineEdit( GroupBox1, "MaxColSize" );
-  MaxColSize->setGeometry( QRect( 140, 60, 60, 23 ) ); 
-  MaxColSize->setText(toTool::globalConfig(CONF_MAX_COL_SIZE,
-					   DEFAULT_MAX_COL_SIZE));
-  MaxColSize->setAlignment( int( QLineEdit::AlignRight ) );
-  valid=new QIntValidator(MaxColSize);
-  MaxColSize->setValidator(valid);
-
-  MaxColDisp = new QLineEdit( GroupBox1, "MaxColDisp" );
-  MaxColDisp->setGeometry( QRect( 140, 100, 60, 23 ) ); 
-  MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
-					   DEFAULT_MAX_COL_DISP));
-  MaxColDisp->setAlignment( int( QLineEdit::AlignRight ) );
-  valid=new QIntValidator(MaxColDisp);
-  MaxColDisp->setValidator(valid);
-
-  MaxColNum = new QLineEdit( GroupBox1, "MaxColNum" );
-  MaxColNum->setGeometry( QRect( 140, 140, 60, 23 ) ); 
-  MaxColNum->setText(toTool::globalConfig(CONF_MAX_COL_NUM,
-					  DEFAULT_MAX_COL_NUM));
-  MaxColNum->setAlignment( int( QLineEdit::AlignRight ) );
-  valid=new QIntValidator(MaxColNum);
-  MaxColNum->setValidator(valid);
-
-  GroupBox6 = new QGroupBox( this, "GroupBox6" );
-  GroupBox6->setGeometry( QRect( 230, 10, 160, 175 ) ); 
-  GroupBox6->setTitle( tr( "Options"  ) );
-
-  SavePassword = new QCheckBox( GroupBox6, "SavePassword" );
-  SavePassword->setGeometry( QRect( 10, 20, 130, 20 ) ); 
-  SavePassword->setText( tr( "&Save last password"  ) );
-  QToolTip::add(  SavePassword, tr( "Save the last password used when connecting" ) );
-  if (!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty())
-    SavePassword->setChecked(true);
-
-  LongSession = new QCheckBox( GroupBox6, "LongSession" );
-  LongSession->setGeometry( QRect( 10, 60, 130, 20 ) ); 
-  LongSession->setText( tr( "&Long sessions"  ) );
-  QToolTip::add(  LongSession, tr( "Create separate session for queries that could take a long time to not block application" ) );
-  if (!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
-    LongSession->setChecked(true);
-
-  QLabel *label=new QLabel(tr("&Refresh"),GroupBox6);
-  label->setGeometry(QRect(10,100,45,20));
-  QToolTip::add(label,tr("Default refresh time"));
-
-  RefreshList = toRefreshCreate(GroupBox6);
-  RefreshList->setGeometry(QRect(60,100,90,20));
-  label->setBuddy(RefreshList);
+  LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
+  SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
+  DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty());
+  Refresh=toRefreshCreate(OptionGroup);
+  Refresh->setGeometry(QRect(280,100,88,22));
+  RefreshLabel->setBuddy(Refresh);
+  ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
 
 #ifdef ENABLE_STYLE
-  label=new QLabel(tr("S&tyle"),GroupBox6);
-  label->setGeometry(QRect(10,140,45,20));
-  QToolTip::add(label,tr("Select the theme for the controls of the window"));
-
-  StyleList = new QComboBox(GroupBox6);
-  StyleList->setGeometry(QRect(60,140,90,20));
-  StyleList->insertItem("CDE");
-  StyleList->insertItem("Motif");
-  StyleList->insertItem("Motif Plus");
-  StyleList->insertItem("Platinum");
-  StyleList->insertItem("SGI");
-  StyleList->insertItem("Windows");
+  Style->insertItem("CDE");
+  Style->insertItem("Motif");
+  Style->insertItem("Motif Plus");
+  Style->insertItem("Platinum");
+  Style->insertItem("SGI");
+  Style->insertItem("Windows");
   QString str=toGetSessionType();
   if (str=="CDE")
-    StyleList->setCurrentItem(0);
+    Style->setCurrentItem(0);
   else if (str=="Motif")
-    StyleList->setCurrentItem(1);
+    Style->setCurrentItem(1);
   else if (str=="Motif Plus")
-    StyleList->setCurrentItem(2);
+    Style->setCurrentItem(2);
   else if (str=="Platinum")
-    StyleList->setCurrentItem(3);
+    Style->setCurrentItem(3);
   else if (str=="SGI")
-    StyleList->setCurrentItem(4);
+    Style->setCurrentItem(4);
   else if (str=="Windows")
-    StyleList->setCurrentItem(5);
-  label->setBuddy(StyleList);
+    Style->setCurrentItem(5);
+#else
+  Style->hide();
+  StyleLabel->hide();
 #endif
 
-  if (!toMonolithic()) {
-    GroupBox7 = new QGroupBox( this, "GroupBox5" );
-    GroupBox7->setGeometry( QRect( 10, 195, 380, 60 ) ); 
-    GroupBox7->setTitle( tr( "Plugin directory"  ) );
-
-    PluginDirectory = new QLineEdit( GroupBox7, "PluginDirectory" );
-    PluginDirectory->setGeometry( QRect( 10, 20, 270, 23 ) ); 
+  if (toMonolithic()) {
+    PluginLabel->hide();
+    PluginDirectory->hide();
+    PluginBrowse->hide();
+  } else {
     PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
 						  DEFAULT_PLUGIN_DIR));
-
-    SelectDir = new QPushButton( GroupBox7, "FileChoose" );
-    SelectDir->setGeometry( QRect( 290, 14, 80, 32 ) ); 
-    SelectDir->setText( tr( "&Browse"  ) );
-    connect(SelectDir,SIGNAL(clicked(void)),this,SLOT(chooseFile(void)));
   }
 
-  // tab order
-  setTabOrder( MaxNumber, MaxColSize );
-  setTabOrder( MaxColSize, MaxColDisp );
-  setTabOrder( MaxColDisp, MaxColNum );
-  if (toMonolithic())
-    setTabOrder( MaxColNum, PlanTable );
-  else {
-    setTabOrder( MaxColNum, PluginDirectory );
-    setTabOrder( PluginDirectory, SelectDir );
-    setTabOrder( SelectDir, PlanTable );
-  }
-  setTabOrder( PlanTable, PlanCheckpoint );
-  setTabOrder( PlanCheckpoint, DefaultDate );
-  setTabOrder( DefaultDate, SavePassword );
-  setTabOrder( SavePassword,  LongSession );
-  setTabOrder( LongSession,  RefreshList );
-#ifdef ENABLE_STYLE
-  setTabOrder( RefreshList, StyleList );
-#endif
+  CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
+					  DEFAULT_SQL_FILE));
 
-  // buddies
-  TextLabel1_3->setBuddy( PlanTable );
-  TextLabel1_3_2->setBuddy( PlanCheckpoint );
-  TextLabel1_2_3->setBuddy( MaxColNum );
-  TextLabel1_2_2->setBuddy( MaxColSize );
-  TextLabel1_2->setBuddy( MaxColDisp );
-  TextLabel1->setBuddy( MaxNumber );
-  TextLabel7->setBuddy( DefaultDate );
+  ListScale->setValidator(new QDoubleValidator(ListScale));
 }
 
-void toGlobalSettings::saveSetting(void)
-{
-  toTool::globalSetConfig(CONF_MAX_NUMBER,MaxNumber->text());
-  toTool::globalSetConfig(CONF_MAX_COL_SIZE,MaxColSize->text());
-  toTool::globalSetConfig(CONF_MAX_COL_DISP,MaxColDisp->text());
-  toTool::globalSetConfig(CONF_MAX_COL_NUM,MaxColNum->text());
-  toTool::globalSetConfig(CONF_PLAN_TABLE,PlanTable->text());
-  toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,PlanCheckpoint->text());
-  toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
-  toTool::globalSetConfig(CONF_REFRESH,RefreshList->currentText());
-#ifdef ENABLE_STYLE
-  toTool::globalSetConfig(CONF_STYLE,StyleList->currentText());
-  toSetSessionType(StyleList->currentText());
-#endif
-  if (!toMonolithic()) {
-    toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
-  }
-
-  if (SavePassword->isChecked())
-    toTool::globalSetConfig(CONF_SAVE_PWD,"Yes");
-  else
-    toTool::globalSetConfig(CONF_SAVE_PWD,"");
-  toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
-}
-
-void toGlobalSettings::chooseFile(void)
+void toGlobalSetting::pluginBrowse(void)
 {
   QString str=QFileDialog::getExistingDirectory(PluginDirectory->text(),this);
   if (!str.isEmpty())
     PluginDirectory->setText(str);
+}
+
+void toGlobalSetting::sqlBrowse(void)
+{
+  QString str=QFileDialog::getOpenFileName(CustomSQL->text(),"*.sql",this);
+  if (!str.isEmpty())
+    CustomSQL->setText(str);
+}
+
+void toGlobalSetting::saveSetting(void)
+{
+  toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
+  toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
+  toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
+  toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());
+#ifdef ENABLE_STYLE
+  toTool::globalSetConfig(CONF_STYLE,Style->currentText());
+  toSetSessionType(Style->currentText());
+#endif
+  toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
+}
+
+toDatabaseSetting::toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)
+  : toDatabaseSettingUI(parent,name,fl)
+{
+  MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
+					   DEFAULT_MAX_COL_DISP));
+  MaxColSize->setText(toTool::globalConfig(CONF_MAX_COL_SIZE,
+					   DEFAULT_MAX_COL_SIZE));
+  InitialFetch->setText(toTool::globalConfig(CONF_MAX_NUMBER,
+					     DEFAULT_MAX_NUMBER));
+  DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
+					    DEFAULT_DATE_FORMAT));
+  CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
+					   DEFAULT_PLAN_CHECKPOINT));
+  ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
+					    DEFAULT_PLAN_TABLE));
+  
+  MaxColSize->setValidator(new QIntValidator(MaxColSize));
+  MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
+  InitialFetch->setValidator(new QIntValidator(InitialFetch));
+}
+
+void toDatabaseSetting::saveSetting(void)
+{
+  toTool::globalSetConfig(CONF_MAX_COL_DISP,MaxColDisp->text());
+  toTool::globalSetConfig(CONF_MAX_COL_SIZE,MaxColSize->text());
+  toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
+  toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
+  toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
+  toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
 }

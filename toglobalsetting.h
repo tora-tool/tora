@@ -26,60 +26,29 @@
  ****************************************************************************/
 
 
-#ifndef __TOGLOBALSETTINGS_H
-#define __TOGLOBALSETTINGS_H
-
-#include <qvariant.h>
-#include <qframe.h>
+#ifndef __TOGLOBALSETTING_H
+#define __TOGLOBALSETTING_H
 
 #include "totool.h"
+#include "toglobalsettingui.h"
+#include "todatabasesettingui.h"
 
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QCheckBox;
-class QGroupBox;
-class QComboBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-
-class toGlobalSettings : public QFrame, public toSettingTab {
-  Q_OBJECT
-
-  QGroupBox *GroupBox5;
-  QLabel *TextLabel1_3;
-  QLabel *TextLabel1_3_2;
-  QGroupBox *GroupBox1;
-  QLabel *TextLabel1_2_3;
-  QLabel *TextLabel1_2_2;
-  QLabel *TextLabel1_2;
-  QLabel *TextLabel1;
-  QLabel *TextLabel7;
-  QGroupBox *GroupBox6;
-  QGroupBox *GroupBox7;
-
-  QLineEdit *PlanCheckpoint;
-  QLineEdit *PlanTable;
-  QLineEdit *MaxNumber;
-  QLineEdit *MaxColSize;
-  QLineEdit *MaxColDisp;
-  QLineEdit *MaxColNum;
-  QLineEdit *DefaultDate;
-  QLineEdit *PluginDirectory;
-  QCheckBox *SavePassword;
-  QCheckBox *LongSession;
-  QComboBox *StyleList;
-  QComboBox *RefreshList;
-  QPushButton *SelectDir;
-
+class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
+  QComboBox *Refresh;
 public:
-  toGlobalSettings(QWidget *parent=0,const char *name=0,bool modal=false,WFlags fl=0);
+  toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
   virtual void saveSetting(void);
 
-public slots:
-  void chooseFile(void);
+  virtual void pluginBrowse(void);
+  virtual void sqlBrowse(void);
+};
+
+class toDatabaseSetting : public toDatabaseSettingUI, public toSettingTab {
+public:
+  toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
+
+  virtual void saveSetting(void);
 };
 
 #endif

@@ -1,0 +1,335 @@
+<!DOCTYPE UI><UI>
+<class>toDatabaseSettingUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toDatabaseSettingUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>400</width>
+            <height>401</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string></string>
+    </property>
+    <widget>
+        <class>QGroupBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>QueryGroup</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>380</width>
+                <height>135</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>frameShadow</name>
+            <enum>Sunken</enum>
+        </property>
+        <property stdset="1">
+            <name>frameShape</name>
+            <enum>Box</enum>
+        </property>
+        <property stdset="1">
+            <name>title</name>
+            <string>Query settings</string>
+        </property>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>25</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Initial rows to fetch in query</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>InitialFetch</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The number of rows to always fetch when executing a query.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>MaxColDisp</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>100</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>MaxColSize</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>60</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>InitialFetch</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>20</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Maximum column size</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>InitialFetch</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The maximum column size to fetch from the database.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Maximum size &amp;display</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>MaxColDisp</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The largest default size of a column in query results.</string>
+            </property>
+        </widget>
+    </widget>
+    <widget>
+        <class>QGroupBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>QueryGroup_2</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>155</y>
+                <width>380</width>
+                <height>135</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>title</name>
+            <string>Database settings</string>
+        </property>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Checkpoint name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>InitialFetch</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The name of the checkpoint used when needed to rollback work.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>100</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CheckPoint</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>60</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>210</x>
+                    <y>20</y>
+                    <width>160</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>25</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Explain plan table</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Name of the table to put explain plan output in.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>190</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Default date &amp;format</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The default dateformat to use when querying the database.</string>
+            </property>
+        </widget>
+    </widget>
+</widget>
+</UI>

@@ -334,20 +334,10 @@ toResultView::~toResultView()
 QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
 {
   QPaintDeviceMetrics metrics(printer);
-  int y=0;
-  int x=0;
-  for (int i=column;i<columns();i++) {
-    int width=columnWidth(i);
-    if (width+x>=metrics.width()) {
-      if (i==column)
-	width=metrics.width()-x-1;
-      else
-	break;
-    }
-    if (paint)
-      painter->drawText(x,0,width,header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
-    x+=width;
-  }
+  double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();
+  double mwidth=metrics.width()/scale;
+  double mheight=metrics.height()/scale;
+  double x=0;
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);
@@ -363,25 +353,40 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
 		      header()->height(),
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
-    painter->drawLine(0,header()->height()-1,metrics.width(),header()->height()-1);
-    painter->translate(0,header()->height());
+    painter->scale(scale,scale);
+    painter->drawLine(0,header()->height()-1,mwidth,header()->height()-1);
   }
-  y+=header()->height()*2;
+  for (int i=column;i<columns();i++) {
+    double width=columnWidth(i);
+    if (width+x>=mwidth) {
+      if (i==column)
+	width=mwidth-x-1;
+      else
+	break;
+    }
+    if (paint)
+      painter->drawText(x,0,width,header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+    x+=width;
+  }
+  if (paint)
+    painter->translate(0,header()->height());
+
+  double y=(header()->height()-1)/scale+header()->height();
   int curLevel=level;
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;
   QListViewItem *item=top;
-  while(item&&(y+item->height()<metrics.height()||item==top)) {
+  while(item&&(y<mheight||item==top)) {
     if (column==0)
       x=curLevel;
     else
       x=0;
     painter->translate(x,0);
     for (int i=column;i<columns();i++) {
-      int width=columnWidth(i);
-      if (width+x>=metrics.width()) {
+      double width=columnWidth(i);
+      if (width+x>=mwidth) {
 	if (i==column)
-	  width=metrics.width()-x-1;
+	  width=mwidth-x-1;
 	else {
 	  newCol=i;
 	  break;
@@ -413,7 +418,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
     }
   }
   if (paint)
-    painter->drawLine(0,0,metrics.width(),0);
+    painter->drawLine(0,0,mwidth,0);
   if (newCol>=0) {
     column=newCol;
     return top;

@@ -44,8 +44,6 @@
 #define DEFAULT_MAX_COL_SIZE	"30000"
 #define CONF_MAX_COL_DISP	"MaxColDisp"
 #define DEFAULT_MAX_COL_DISP	"300"
-#define CONF_MAX_COL_NUM	"MaxColNum"
-#define DEFAULT_MAX_COL_NUM	"200"
 #define CONF_PLAN_TABLE		"PlanTable"
 #define DEFAULT_PLAN_TABLE	"PLAN_TABLE"
 #define CONF_PLAN_CHECKPOINT	"PlanCheckpoint"
@@ -62,6 +60,9 @@
 #define CONF_SQL_FILE		"SQLDictionary"
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
 #define CONF_LONG_SESSION	"LongSeparate"
+#define CONF_LIST_SCALE		"ListScale"
+#define DEFAULT_LIST_SCALE	"0.5"
+#define CONF_DESKTOP_AWARE	"DesktopAware"
 
 // Undefining this will leave out the style selection option stuff from the program
 #define ENABLE_STYLE

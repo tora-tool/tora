@@ -60,6 +60,8 @@ bool toMonolithic(void)
 int main(int argc,char **argv)
 {
   try {
+    if (toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty())
+      QApplication::setDesktopSettingsAware(false);
     QApplication mainApp(argc,argv);
 
 #ifdef ENABLE_STYLE
@@ -124,6 +126,7 @@ int main(int argc,char **argv)
       toTool::globalSetConfig("LastVersion",TOVERSION);
     }
 
+#if 0
     if (argc>2||(argc==2&&argv[1][0]=='-')) {
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
       exit(2);
@@ -149,6 +152,7 @@ int main(int argc,char **argv)
       if (!user.isEmpty())
 	toTool::globalSetConfig(CONF_USER,user);
     }
+#endif
 
     toMain *mainWidget=new toMain;
 

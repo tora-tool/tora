@@ -1,4 +1,4 @@
-0.7:
+0.7: Released 2001-03-04
 
 2001-02-27: Mixed up precision/scale in column definition.
 2001-03-01: Added support for separate session in worksheet.
@@ -13,6 +13,9 @@
 2001-03-03: Fixed file path bug when opening/saving (again).
 2001-03-03: Made readAll a little bit more responsive in result view.
 2001-03-04: Added name to toResultView, mainly for printing.
+2001-03-05: Split and rewrote global settings widget.
+2001-03-05: Added option to ignore desktop settings (Don't work with
+	KDE for me).
 
 0.6: Released 2001-02-23
 

@@ -65,10 +65,10 @@ include $(DEPENDS)
 	@echo Metacompiling $<
 	$(MOC) -o $@ $<
 
-%.cpp %.h: %.ui
-	echo Generating $@ \& $(<:%.ui=%.h)
+%.cpp %h: %.ui
+	echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
 	$(UIC) -o $(<:%.ui=%.h) $<
-	$(UIC) -i $(<:%.ui=%.h) -o $@ $<
+	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
 
 plugins/%.so:
 	@echo Linking plugin $@
