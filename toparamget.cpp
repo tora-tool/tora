@@ -121,6 +121,8 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 
   QString def="<char[4000]>";
 
+  int colon=1;
+
   int num=0;
   for(unsigned int i=0;i<str.length()+1;i++) {
     QChar c;
@@ -159,6 +161,15 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	    state=name;
 	  direction="";
 	  fname="";
+	  break;
+	case '?':
+	  fname="q";
+	  fname+=QString::number(colon);
+	  colon++;
+	  res+=":";
+	  res+=fname;
+	  res+=def.mid(0,def.length()-1);
+	  c=def.at(def.length()-1);
 	  break;
 	}
 	break;
