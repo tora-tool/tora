@@ -34,27 +34,28 @@
  *
  ****************************************************************************/
 
+#include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
 
-#include "tohighlightedtext.h"
+#include "toextract.h"
 #include "tofilesize.h"
+#include "tohighlightedtext.h"
 #include "toresultview.h"
 #include "toscript.h"
 #include "toscriptui.h"
+#include "tosql.h"
 #include "totool.h"
 #include "toworksheet.h"
-#include "toextract.h"
-#include "tosql.h"
 
 #include "toscript.moc"
 #include "toscriptui.moc"

@@ -36,9 +36,11 @@
 
 #include <stdio.h>
 
+#include <qregexp.h>
 #include <qclipboard.h>
 #include <qheader.h>
 #include <qtooltip.h>
+
 #include "toresultlong.h"
 #include "toresultlong.moc"
 #include "tomain.h"

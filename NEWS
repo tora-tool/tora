@@ -34,6 +34,8 @@
 2001-10-14: Fixed problem with px_process stuff in tuning.
 2001-10-14: Fixed min value in bar chart.
 2001-10-14: Fixed problem with edit menu without having edited anything.
+2001-10-16: Fixed problem when compiling with Qt 3.
+2001-10-16: Use Qt3.0 for static builds.
 
 1.1.2: Released 2001-10-07
 

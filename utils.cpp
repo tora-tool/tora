@@ -60,6 +60,7 @@
 #include <qmessagebox.h>
 #include <qregexp.h>
 #include <qmenubar.h>
+#include <qlistview.h>
 
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"

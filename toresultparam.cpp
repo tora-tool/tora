@@ -37,6 +37,7 @@
 #include <qlineedit.h>
 #include <qtoolbutton.h>
 #include <qlabel.h>
+#include <qregexp.h>
 
 #include "toconf.h"
 #include "tomain.h"

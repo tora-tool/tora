@@ -47,7 +47,7 @@ you still need an Oracle client installation to be able to use it.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --with-static --without-rpath --without-kde
+./configure --prefix=/usr --with-static --without-rpath --without-kde --with-qt=/usr/local/qt3
 make
 
 %install
