@@ -696,11 +696,9 @@ void toMain::windowsMenu(void)
     i++;
   }
 
-  if (first) {
-    WindowsMenu->setItemEnabled(TO_WINDOWS_CASCADE,false);
-    WindowsMenu->setItemEnabled(TO_WINDOWS_TILE,false);
-    WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE_ALL,false);
-  }
+  WindowsMenu->setItemEnabled(TO_WINDOWS_CASCADE,!first);
+  WindowsMenu->setItemEnabled(TO_WINDOWS_TILE,!first);
+  WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE_ALL,!first);
 }
 
 void toMain::commandCallback(int cmd)
