@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-02-17; Fixed problem with compile under gcc-3.0.
 2002-02-15: Improved postgresql support for index and sequence (Thanx Volker Götz).
 2002-02-13: Don't show chartmanager menu if window hidden.
 2002-02-13: Delete oracle connections in separate threads to work around OCI bug.
