@@ -60,6 +60,7 @@
 #define CONF_PLAN_CHECKPOINT	"PlanCheckpoint"
 #define DEFAULT_PLAN_CHECKPOINT	"TORA_CHECKPOINT"
 #define CONF_TEXT		"ConfText"
+#define CONF_CODE		"ConfCode"
 #define CONF_LIST		"ListText"
 #define CONF_DATE_FORMAT	"ConfDateFormat"
 #define DEFAULT_DATE_FORMAT	"YYYY-MM-DD HH24:MI:SS"

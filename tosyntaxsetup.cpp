@@ -66,11 +66,13 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT,"Yes").isEmpty());
 
   {
-    QFont font(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
-    Text=toFontToString(font);
+    QFont font(toStringToFont(toTool::globalConfig(CONF_CODE,"")));
     checkFixedWidth(font);
     CodeExample->setFont(font);
   }
+
+  TextExample->setFont(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
+
   {
     QString str=toTool::globalConfig(CONF_LIST,"");
     QFont font;
@@ -207,18 +209,30 @@ void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 void toSyntaxSetup::selectFont(void)
 {
 #ifdef TO_KDE
-  QFont font=toStringToFont(Text);
+  QFont font=CodeExample->font();
   bool ok=KFontDialog::getFont(font,false,this);
 #else
   bool ok=true;
-  QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);
+  QFont font=QFontDialog::getFont (&ok,CodeExample->font(),this);
 #endif
   if (ok) {
-    Text=toFontToString(font);
     CodeExample->setFont(font);
     Example->setFont(font);
     checkFixedWidth(font);
   }
+}
+
+void toSyntaxSetup::selectText(void)
+{
+#ifdef TO_KDE
+  QFont font=TextExample->font();
+  bool ok=KFontDialog::getFont(font,false,this);
+#else
+  bool ok=true;
+  QFont font=QFontDialog::getFont (&ok,TextExample->font(),this);
+#endif
+  if (ok)
+    TextExample->setFont(font);
 }
 
 void toSyntaxSetup::selectResultFont(void)
@@ -260,7 +274,8 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-  toTool::globalSetConfig(CONF_TEXT,Text);
+  toTool::globalSetConfig(CONF_TEXT,toFontToString(CodeExample->font()));
+  toTool::globalSetConfig(CONF_CODE,toFontToString(TextExample->font()));
   toTool::globalSetConfig(CONF_LIST,List);
   bool highlight=SyntaxHighlighting->isChecked();
   toTool::globalSetConfig(CONF_HIGHLIGHT,highlight?"Yes":"");

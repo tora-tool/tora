@@ -203,6 +203,7 @@ toSyntaxAnalyzer &toSyntaxAnalyzer::defaultAnalyzer(void)
 toHighlightedText::toHighlightedText(QWidget *parent,const char *name)
   : toMarkedText(parent,name),Analyzer(&DefaultAnalyzer)
 {
+  setFont(toStringToFont(toTool::globalConfig(CONF_CODE,"")));
   Completion=NULL;
   NoCompletion=KeepCompletion=false;
   Current=LastCol=LastRow=-1;
