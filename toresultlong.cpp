@@ -171,10 +171,8 @@ void toResultLong::addItem(void)
 	    disp=1;
 	  } else
 	    LastItem->setText(DescriptionLen,QString::number(RowNumber));
-	  for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++) {
-	    QString txt=Query->readValue();
-	    LastItem->setText(j+disp,txt);
-	  }
+	  for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
+	    LastItem->setText(j+disp,Query->readValue());
 	}
 	if (Query->eof()) {
 	  delete Query;
