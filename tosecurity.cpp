@@ -1514,7 +1514,6 @@ void toSecurity::refresh(void)
     QListViewItem *parent=new toResultViewItem(UserList,NULL,QString::fromLatin1("Users"));
     parent->setText(1,QString::fromLatin1("USER:"));
     parent->setOpen(true);
-    parent->setSelectable(false);
     toQuery user(connection(),toSQL::string(toSQL::TOSQL_USERLIST,connection()));
     QListViewItem *item=NULL;
     while(!user.eof()) {
@@ -1529,7 +1528,6 @@ void toSecurity::refresh(void)
     parent=new toResultViewItem(UserList,parent,tr("Roles"));
     parent->setText(1,QString::fromLatin1("ROLE:"));
     parent->setOpen(true);
-    parent->setSelectable(false);
     toQuery roles(connection(),SQLRoles);
     item=NULL;
     while(!roles.eof()) {
