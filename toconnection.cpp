@@ -1380,6 +1380,20 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
   return ObjectNames;
 }
 
+void toConnection::addIfNotExists(toConnection::objectName &obj)
+{
+  if (!cacheAvailable(false)) {
+    toStatusMessage("Not done caching objects",false,false);
+    return;
+  }
+  std::list<toConnection::objectName>::iterator i=ObjectNames.begin();
+  while(i!=ObjectNames.end()&&(*i)<obj)
+    i++;
+  if (i!=ObjectNames.end()&&*i==obj) // Already exists, don't add
+    return;
+  ObjectNames.insert(i,obj);
+}
+
 std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
 {
   if (!cacheAvailable(block)) {

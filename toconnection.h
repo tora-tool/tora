@@ -765,6 +765,11 @@ public:
    */
   std::list<objectName> &objects(bool block);
 
+  /** Add a new object to the objectlist if it doesn't exist already.
+   * @param object The object to add
+   */
+  void addIfNotExists(objectName &object);
+
   /**
    * Get the synonyms available for objects. Do not modify the returned list.
    * @param block Indicate wether or not to block until cached objects are available.

@@ -2106,11 +2106,8 @@ bool toDebugText::compile(void)
 	word+=2;
     }
 
-    int typeInd=word;
-    if (words[word].upper()!="PROCEDURE"&&
-	words[word].upper()!="TYPE"&&
-	words[word].upper()!="FUNCTION"&&
-	words[word].upper()!="PACKAGE") {
+    QString type=words[word].upper();
+    if (type!="PROCEDURE"&&type!="TYPE"&&type!="FUNCTION"&&type!="PACKAGE") {
       toStatusMessage("Invalid start of code");
       return false;
     }
@@ -2135,7 +2132,6 @@ bool toDebugText::compile(void)
       return false;
     }
 
-    QString type=words[typeInd];
     QString schema;
     QString object;
 
@@ -2170,6 +2166,12 @@ bool toDebugText::compile(void)
 	Type+=" BODY";
       readErrors(Debugger->connection());
       setEdited(false);
+      toConnection::objectName no;
+      no.Name=Object;
+      no.Owner=Schema;
+      no.Type=type;
+      Debugger->connection().addIfNotExists(no);
+      Debugger->refresh();
     } catch (const QString &exc) {
       toStatusMessage(exc);
       ret=false;

@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-02-23: Add new objects in debugger to objectcache.
 2002-02-22: Fixed minor problem with exception reporting in oracle connection.
 2002-02-22: Fixed problem with table extracting in 7.3 oracle.
 2002-02-22: Fixed a potential problem with errors in long statements.
