@@ -41,7 +41,7 @@ all: $(TARGET)
 .depends/%.d: %.cpp
 	@echo Making dependences for $<
 	if [ ! -d .depends ] ; then mkdir .depends ; fi
-	$(CC) -M $(CPPFLAGS) $< > $@.tmp && \
+	$(CC) -MM $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
 		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
 
