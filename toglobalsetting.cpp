@@ -69,8 +69,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 {
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
+  ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty());
   toRefreshCreate(OptionGroup,NULL,NULL,Refresh);
-  ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
   DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
@@ -126,6 +126,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   DockToolbar->hide();
   DesktopAware->hide();
 #endif
+#ifdef WIN32
+  DesktopAware->hide();
+#endif
 #if QT_VERSION < 300
   DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes"));
 #else
@@ -143,8 +146,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 
   CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
 					  DEFAULT_SQL_FILE));
-
-  ListScale->setValidator(new QDoubleValidator(ListScale));
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -182,7 +183,6 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
   toTool::globalSetConfig(CONF_DEFAULT_SESSION,DefaultSession->text());
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
-  toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());
   toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
@@ -192,6 +192,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_MAXIMIZE_MAIN,MaximizeMain->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,Statusbar->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_RESTORE_SESSION,RestoreSession->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_TOOLS_LEFT,ToolsLeft->isChecked()?"Yes":"");
 #if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif

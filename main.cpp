@@ -82,8 +82,10 @@ int main(int argc,char **argv)
 #ifdef TO_KDE
   new KApplication(argc,argv,"tora");
 #else
+#  ifndef WIN32
   if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())
     QApplication::setDesktopSettingsAware(false);
+#  endif
   new QApplication(argc,argv);
 #endif
   try {
@@ -155,14 +157,14 @@ int main(int argc,char **argv)
 
 #ifndef TO_LICENSE
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
-      toAbout *about=new toAbout(1,NULL,"About TOra",true);
+      toAbout *about=new toAbout(0,NULL,"About TOra",true);
       if (!about->exec()) {
 	exit (2);
       }
       delete about;
-      toTool::globalSetConfig("LastVersion",TOVERSION);
     }
 #endif
+    toTool::globalSetConfig("LastVersion",TOVERSION);
 
     if (toTool::globalConfig("FirstInstall","").isEmpty()) {
       time_t t;

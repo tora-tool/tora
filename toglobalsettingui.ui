@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>548</width>
+            <width>544</width>
             <height>499</height>
         </rect>
     </property>
@@ -215,21 +215,6 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Statusbar</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Display alerts in statusbar only</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
-                    </property>
-                </widget>
                 <widget row="1"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -244,234 +229,6 @@
                         <name>toolTip</name>
                         <string>Remember the last password you used to connect.
 Will leave the password unencryptet in the config file.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="2" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>ListScale</cstring>
-                    </property>
-                </widget>
-                <widget row="3"  column="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Status</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>suffix</name>
-                        <string> seconds</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>ConnectHistory</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>suffix</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
-                        <number>1000</number>
-                    </property>
-                </widget>
-                <widget row="2"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel3</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Table scale</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>ListScale</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Scale with which to print lists and tables.</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel3_2_2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Connect history</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>ConnectHistory</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Number of connections to save in history.</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>StatusLabel</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Status &amp;message</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>Status</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
-                    </property>
-                </widget>
-                <widget row="6"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>SizeLabel</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Size Unit</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>SizeUnite</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Define the unit sizes should be displayed in tora.</string>
-                    </property>
-                </widget>
-                <widget row="7"  column="2" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Refresh</cstring>
-                    </property>
-                </widget>
-                <widget row="6"  column="2" >
-                    <class>QComboBox</class>
-                    <item>
-                        <property>
-                            <name>text</name>
-                            <string>Bytes</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property>
-                            <name>text</name>
-                            <string>KB</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property>
-                            <name>text</name>
-                            <string>MB</string>
-                        </property>
-                    </item>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>SizeUnit</cstring>
-                    </property>
-                </widget>
-                <widget row="7"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>RefreshLabel</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Refresh</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>Refresh</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Default refreshtime in tools.</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel3_2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Message history</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>HistorySize</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Number of status messages to save in the message history.</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>HistorySize</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>suffix</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
-                        <number>1000</number>
-                    </property>
-                </widget>
-                <widget row="5"  column="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>ChartSamples</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>suffix</name>
-                        <string></string>
-                    </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
-                        <number>1000</number>
-                    </property>
-                </widget>
-                <widget row="5"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel3_2_3</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Chart samples</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>HistorySize</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
                 <widget row="2"  column="0" >
@@ -504,7 +261,190 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Change currently select connection to the connection of the new active window</string>
                     </property>
                 </widget>
-                <widget row="8"  column="1" >
+                <widget row="0"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3_2_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Connect history</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>ConnectHistory</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of connections to save in history.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="3" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ConnectHistory</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>1000</number>
+                    </property>
+                </widget>
+                <widget row="4"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SizeLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Size Unit</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>SizeUnite</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Define the unit sizes should be displayed in tora.</string>
+                    </property>
+                </widget>
+                <widget row="6"  column="3" >
+                    <class>QComboBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Style</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="3" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HistorySize</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>1000</number>
+                    </property>
+                </widget>
+                <widget row="2"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Message history</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>HistorySize</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of status messages to save in the message history.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="3" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ChartSamples</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>1000</number>
+                    </property>
+                </widget>
+                <widget row="3"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3_2_3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Chart samples</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>HistorySize</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of samples to keep in line and barcharts by default.</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="3" >
+                    <class>QComboBox</class>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Bytes</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>KB</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>MB</string>
+                        </property>
+                    </item>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SizeUnit</cstring>
+                    </property>
+                </widget>
+                <widget row="1"  column="3" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Status</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string> seconds</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>StatusLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Status &amp;message</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Status</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
+                    </property>
+                </widget>
+                <widget row="6"  column="2" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
@@ -523,14 +463,85 @@ Will leave the password unencryptet in the config file.</string>
                         <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="2" >
+                <widget row="5"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>RefreshLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Refresh</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Refresh</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Default refreshtime in tools.</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="3" >
                     <class>QComboBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Style</cstring>
+                        <cstring>Refresh</cstring>
                     </property>
                 </widget>
-                <widget row="5"  column="0" >
+                <widget row="1"  column="1" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Statusbar</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Display alerts in statusbar only</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="1" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ToolsLeft</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Tools toolbar on left</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Start using the tools toolbar on the left of the main window instead of at the top.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MaximizeMain</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Maximize window on start</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>RestoreSession</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Restore session on startup</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -545,7 +556,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Colors get really weird in KDE if you select this.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0" >
+                <widget row="5"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -560,7 +571,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
                     </property>
                 </widget>
-                <widget row="7"  column="0" >
+                <widget row="6"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
@@ -573,28 +584,6 @@ Will leave the password unencryptet in the config file.</string>
                     <property>
                         <name>toolTip</name>
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>MaximizeMain</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Maximize window on start</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>RestoreSession</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Restore session on startup</string>
                     </property>
                 </widget>
             </grid>
@@ -656,7 +645,6 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>DockToolbar</tabstop>
     <tabstop>Statusbar</tabstop>
     <tabstop>ConnectHistory</tabstop>
-    <tabstop>ListScale</tabstop>
     <tabstop>Status</tabstop>
     <tabstop>HistorySize</tabstop>
     <tabstop>ChartSamples</tabstop>

@@ -81,7 +81,7 @@ public slots:
   void refresh(void);
   void updateTabs(void);
   void changeSchema(int)
-  { refresh(); }
+  { SecondText=""; refresh(); }
   void changeTab(QWidget *tab);
   void changeSecondTab(QWidget *tab);
   void changeItem(QListViewItem *item);

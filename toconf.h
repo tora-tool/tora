@@ -70,8 +70,6 @@
 #define CONF_PLUGIN_DIR		"PluginDir"
 #define CONF_SQL_FILE		"SQLDictionary"
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
-#define CONF_LIST_SCALE		"ListScale"
-#define DEFAULT_LIST_SCALE	"0.8"
 #define CONF_DESKTOP_AWARE	"DesktopAware"
 #define CONF_STATUS_MESSAGE     "StatusMessage"
 #define DEFAULT_STATUS_MESSAGE  "5"
@@ -109,6 +107,7 @@
 #define CONF_RESTORE_SESSION	"RestoreSession"
 #define CONF_DEFAULT_SESSION	"DefaultSession"
 #define DEFAULT_SESSION		"$HOME/.tora.tse"
+#define CONF_TOOLS_LEFT		"ToolsLeft"
 
 #ifndef TO_KDE
 #  ifndef WIN32

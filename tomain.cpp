@@ -268,6 +268,8 @@ toMain::toMain()
   ToolsMenu=new QPopupMenu(this);
 
   QToolBar *toolbar=toAllocBar(this,"Tools",QString::null);
+  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
+    moveToolBar(toolbar,Left);
 
   int toolID=TO_TOOLS;
   int lastPriorityPix=0;
@@ -354,26 +356,28 @@ toMain::toMain()
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 #endif
 
+
+  ConnectionToolbar=toAllocBar(this,"Connections",QString::null);
   new QToolButton(QPixmap((const char **)connect_xpm),
 		  "Connect to database",
 		  "Connect to database",
-		  this,SLOT(addConnection()),toolbar);
+		  this,SLOT(addConnection()),ConnectionToolbar);
   DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
 				   "Disconnect current connection",
 				   "Disconnect current connection",
-				   this,SLOT(delConnection()),toolbar);
+				   this,SLOT(delConnection()),ConnectionToolbar);
   DisconnectButton->setEnabled(false);
-  toolbar->addSeparator();
+  ConnectionToolbar->addSeparator();
   NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
 				 "Commit connection",
 				 "Commit connection",
-				 this,SLOT(commitButton()),toolbar)]=NULL;
+				 this,SLOT(commitButton()),ConnectionToolbar)]=NULL;
   NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
 				 "Rollback connection",
 				 "Rollback connection",
-				 this,SLOT(rollbackButton()),toolbar)]=NULL;
-  toolbar->addSeparator();
-  ConnectionSelection=new QComboBox(toolbar);
+				 this,SLOT(rollbackButton()),ConnectionToolbar)]=NULL;
+  ConnectionToolbar->addSeparator();
+  ConnectionSelection=new QComboBox(ConnectionToolbar);
   ConnectionSelection->setFixedWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));

@@ -985,7 +985,8 @@ void toBrowser::firstDone(void)
 	break;
       }
     }
-  }
+  } else if (FirstTab->selectedItem())
+    SecondText=FirstTab->selectedItem()->text(0);
 }
 
 void toBrowser::changeItem(QListViewItem *item)

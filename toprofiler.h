@@ -46,6 +46,8 @@ class QToolButton;
 class toProfilerUnits;
 class toProfilerSource;
 class QLineEdit;
+class QSplitter;
+class QTabWidget;
 
 class toProfiler : public toToolWidget {
   Q_OBJECT
@@ -56,6 +58,8 @@ class toProfiler : public toToolWidget {
   QToolButton *Background;
   QSpinBox *Repeat;
   QLineEdit *Comment;
+  QTabWidget *Tabs;
+  QSplitter *Result;
 
   QComboBox *Run;
   toResultItem *Info;

@@ -185,6 +185,10 @@ private:
    * Edit buttons toolbar.
    */
   QToolBar *EditToolbar;
+  /**
+   * Connection buttons toolbar.
+   */
+  QToolBar *ConnectionToolbar;
 
   /**
    * File menu.
@@ -393,6 +397,10 @@ public:
    */
   QToolBar *editToolbar()
   { return EditToolbar; }
+  /** Get connection toolbar pointer.
+   */
+  QToolBar *connectionToolbar()
+  { return ConnectionToolbar; }
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.

@@ -108,3 +108,9 @@ echo
 echo "You must use a GNU version of make to compile this program."
 echo
 echo "If you have any problems check the Makefile.setup for the settings."
+echo
+echo "Connecting to Amazon and ordering CDs....... just kidding, but if you like"
+echo "this program, please have a look at my wish list:"
+echo
+echo "http://www.amazon.com/exec/obidos/wishlist/XM1IL20F70XP/ref=wl_em_to?add-fav=1"
+echo

@@ -63,6 +63,13 @@
 2001-11-29: Added datatype to function completion.
 2001-11-30: Completed PL/SQL profiler.
 2001-12-01: Reordered tools.
+2001-12-01: Separated connection toolbar from tools.
+2001-12-01: Remove list print scale option.
+2001-12-01: Added option to move tools toolbar to left.
+2001-12-01: Removed desktop aware option in windows.
+2001-12-01: Show result tab in profiler after run.
+2001-12-01: Show about dialog on new version instead of license.
+2001-12-01: Fixed problem with remembering object name when changing schema.
 
 1.1.5: Released 2001-11-26
 
@@ -278,8 +285,7 @@
 2001-09-27: Don't exit in toExtract on exception (Skip object instead).
 2001-09-27: Added keyboard shortcuts to change tabs in worksheet.
 2001-09-27: Fixed drawing of background outside edit area in editors.
-2001-09-28: Speedup of drawing background fix, also set background on normal
-	editor.
+2001-09-28: Speedup of drawing background fix, also set background on normal editor.
 2001-09-28: Fixed alignment of column name in extract.
 2001-09-29: Done parameter editor.
 2001-09-30: Added auto indent to editors.

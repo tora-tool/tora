@@ -49,13 +49,16 @@
 #include "toconnection.h"
 #include "toresultlong.h"
 #include "toresultitem.h"
+#include "tochangeconnection.h"
 
 #include "toprofiler.moc"
 
 #include "icons/clock.xpm"
 #include "icons/refresh.xpm"
-#include "icons/background.xpm"
 #include "icons/execute.xpm"
+#if 0
+#include "icons/background.xpm"
+#endif
 
 static toSQL SQLProfilerRuns("toProfiler:ProfilerRuns",
 			     "create table plsql_profiler_runs\n"
@@ -437,14 +440,16 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
-  QTabWidget *tabs=new QTabWidget(this);
-  Script=new toWorksheet(tabs,NULL,connection);
-  tabs->addTab(Script,"Script");
+  new toChangeConnection(toolbar);
 
-  QSplitter *splitter=new QSplitter(tabs);
-  tabs->addTab(splitter,"Result");
+  Tabs=new QTabWidget(this);
+  Script=new toWorksheet(Tabs,NULL,connection);
+  Tabs->addTab(Script,"Script");
 
-  QVBox *box=new QVBox(splitter);
+  Result=new QSplitter(Tabs);
+  Tabs->addTab(Result,"Result");
+
+  QVBox *box=new QVBox(Result);
   Run=new QComboBox(box);
   QSplitter *vsplit=new QSplitter(Vertical,box);
   Info=new toResultItem(2,vsplit);
@@ -453,7 +458,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   Units=new toProfilerUnits(vsplit);
   Units->setReadAll(true);
   connect(Units,SIGNAL(selectionChanged()),this,SLOT(changeObject()));
-  Lines=new toProfilerSource(splitter);
+  Lines=new toProfilerSource(Result);
   Lines->setReadAll(true);
   connect(Lines,SIGNAL(done()),this,SLOT(calcTotals()));
 
@@ -468,7 +473,7 @@ void toProfiler::refresh(void)
   Run->insertItem("Select run");
   try {
     toQuery query(connection(),SQLListRuns);
-    int id=0;
+    int id=1;
     while(!query.eof()) {
       QString runid=query.readValueNull();
       QString owner=query.readValueNull();
@@ -480,7 +485,7 @@ void toProfiler::refresh(void)
       Run->insertItem(runid+owner+": "+comment+timstr);
       if (runid.toInt()==CurrentRun) {
 	Run->setCurrentItem(id);
-	changeRun();
+        changeRun();
       }
       id++;
     }
@@ -520,9 +525,10 @@ void toProfiler::execute(void)
 		  Comment->text(),
 		  QString::number(Repeat->value())+" runs");
     CurrentRun=query.readValue().toInt();
-    if (CurrentRun>0)
+    if (CurrentRun>0) {
+      Tabs->showPage(Result);
       refresh();
-    else
+    } else
       toStatusMessage("Something went wrong collecting statistics");
   } TOCATCH
 }

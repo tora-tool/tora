@@ -378,9 +378,6 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 {
   QPaintDeviceMetrics wmetr(this);
   QPaintDeviceMetrics metrics(printer);
-  double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();
-  if (scale<0.001)
-    scale=1;
 
   double wpscalex=(double(metrics.width())*wmetr.widthMM()/metrics.widthMM()/wmetr.width());
   double wpscaley=(double(metrics.height())*wmetr.heightMM()/metrics.heightMM()/wmetr.height());
@@ -392,8 +389,8 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 
   painter->scale(wpscalex,wpscaley);
 
-  double mwidth=metrics.width()/scale/wpscalex;
-  double mheight=metrics.height()/scale/wpscaley;
+  double mwidth=metrics.width()/wpscalex;
+  double mheight=metrics.height()/wpscaley;
   double x=0;
   if (paint) {
     QString numPage("Page: ");
@@ -410,7 +407,6 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 		      header()->height(),
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
-    painter->scale(scale,scale);
     painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
   }
   font=toListView::font();
@@ -434,7 +430,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   if (paint)
     painter->translate(0,header()->height());
 
-  double y=(header()->height()+1)/scale+header()->height();
+  double y=(header()->height()+1)+header()->height();
   int curLevel=level;
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;
