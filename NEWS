@@ -1,5 +1,7 @@
 1.3.9: Released 2003-02-09
 
+2002-02-09: Made extract to directory generate a tora project file.
+2002-02-09: Fixed problem with detecting Oracle versions on Personal Oracle servers.
 2002-02-08: Fixed a newly introduced SIGSEGV in the storage manager.
 2002-02-08: Fixed a SIGSEGV in toResultViewCheck::setText.
 2002-02-08: Strip \r before executing anything for Oracle since it seems to choke on it.

@@ -636,7 +636,7 @@ public:
 			   "SELECT banner FROM v$version",
 			   *(conn->Connection));
 	QRegExp verre(QString::fromLatin1("[0-9]\\.[0-9\\.]+[0-9]"));
-	QRegExp orare(QString::fromLatin1("^oracle"),false);
+	QRegExp orare(QString::fromLatin1("^(\\S+ )?oracle"),false);
 	while(!version.eof()) {
 	  char buffer[1024];
 	  version>>buffer;

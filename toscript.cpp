@@ -511,8 +511,18 @@ void toScript::execute(void)
 	  throw QString(tr("Couldn't open file %1")).arg(file.name());
 
 	QTextStream stream(&file);
+
 	stream<<tr("rem Master script for DDL reverse engineering by TOra\n"
 		   "\n");
+
+	QFile pfile(ScriptUI->Filename->text()+QDir::separator()+"script.tpr");
+	pfile.open(IO_WriteOnly);
+
+	if (pfile.status()!=IO_Ok)
+	  throw QString(tr("Couldn't open file %1")).arg(pfile.name());
+
+	QTextStream pstream(&pfile);
+
 	QRegExp repl("\\W+");
 	for(std::list<QString>::iterator i=sourceObjects.begin();i!=sourceObjects.end();i++) {
 	  std::list<QString> t;
@@ -524,6 +534,7 @@ void toScript::execute(void)
 
 	  QFile tf(ScriptUI->Filename->text()+QDir::separator()+fn);
 	  tf.open(IO_WriteOnly);
+	  pstream<<tf.name()<<"\n";
 
 	  if (tf.status()!=IO_Ok)
 	    throw QString(tr("Couldn't open file %1")).arg(tf.name());
@@ -540,6 +551,8 @@ void toScript::execute(void)
 
 	if (file.status()!=IO_Ok)
 	  throw QString(tr("Error writing to file %1")).arg(file.name());
+	if (pfile.status()!=IO_Ok)
+	  throw QString(tr("Error writing to file %1")).arg(pfile.name());
       }
       break;
     case 0:
