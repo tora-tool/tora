@@ -474,6 +474,7 @@ toTemplate::toTemplate(TODock *parent)
   List->setShowSortIndicator(false);
   List->setTreeStepSize(10);
   List->setSelectionMode(QListView::Single);
+  List->header()->setStretchEnabled(true);
   TODock *dock;
   dock=Result=toAllocDock(tr("Template result"),
 			  QString::null,
