@@ -119,7 +119,7 @@ int main(int argc,char **argv)
     {
       QString nls=getenv("NLS_LANG");
       if (nls.isEmpty())
-	nls="NLS_LANG=american_america.UTF8";
+	nls="american_america.UTF8";
       else {
 	int pos=nls.findRev('.');
 	if (pos>0)

@@ -60,6 +60,14 @@ do
 	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
 done
+echo Generating empty dependfiles
+mkdir .depends
+for a in *.cpp
+do
+    b=.depends/`echo $a | sed 's/\.cpp$/\.d/'`
+    true > $b
+    touch --date 1973-12-21 $b
+done
 
 if [ \! -f Makefile ]
 then

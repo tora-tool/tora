@@ -46,7 +46,7 @@ class toConnection {
   bool NeedCommit;
   otl_connect *newConnection(void);
   void setup(void);
-  otl_connect *FreeLong;
+  list<otl_connect *> FreeConnect;
 public:
   toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost);
   toConnection(const toConnection &conn);
@@ -62,10 +62,8 @@ public:
   { return Version; }
   bool needCommit(void) const
   { return NeedCommit; }
-  void commit(void)
-  { NeedCommit=false; connection().commit(); }
-  void rollback(void)
-  { NeedCommit=false; connection().rollback(); }
+  void commit(void);
+  void rollback(void);
   void setNeedCommit(bool needCommit=true)
   { NeedCommit=needCommit; }
   QString connectString(bool pw=false) const;

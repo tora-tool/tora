@@ -72,7 +72,6 @@ otl_connect *toConnection::newConnection(void)
 void toConnection::setup(void)
 {
   Connection=newConnection();
-  FreeLong=NULL;
   NeedCommit=false;
 
   try {
@@ -130,7 +129,8 @@ toConnection::~toConnection()
     delete (*i);
   }
   delete Connection;
-  delete FreeLong;
+  for (list<otl_connect *>::iterator i=FreeConnect.begin();i!=FreeConnect.end();i++)
+    delete (*i);
 }
 
 QString toConnection::connectString(bool pw=false) const
@@ -173,20 +173,47 @@ otl_connect *toConnection::longOperation(void)
 {
   if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
     return Connection;
-  if (FreeLong) {
-    otl_connect *ret=FreeLong;
-    FreeLong=NULL;
+  if (FreeConnect.begin()!=FreeConnect.end()) {
+    otl_connect *ret=*(FreeConnect.begin());
+    FreeConnect.erase(FreeConnect.begin());
     return ret;
-  }
-  return newConnection();
+  } else
+    return newConnection();
 }
 
 void toConnection::longOperationFree(otl_connect *conn)
 {
-  if (conn==Connection)
-    return;
-  if (FreeLong)
-    delete conn;
-  else
-    FreeLong=conn;
+  FreeConnect.insert(FreeConnect.end(),conn);
+}
+
+void toConnection::commit(void)
+{
+  NeedCommit=false;
+  connection().commit();
+  otl_connect *tmp=NULL;
+  for (list<otl_connect *>::iterator i=FreeConnect.begin();i!=FreeConnect.end();i++) {
+    (*i)->rollback();
+    if (tmp)
+      delete tmp;
+    tmp=(*i);
+  }
+  FreeConnect.clear();
+  if (tmp)
+    FreeConnect.insert(FreeConnect.end(),tmp);
+}
+
+void toConnection::rollback(void)
+{
+  NeedCommit=false;
+  connection().rollback();
+  otl_connect *tmp=NULL;
+  for (list<otl_connect *>::iterator i=FreeConnect.begin();i!=FreeConnect.end();i++) {
+    (*i)->rollback();
+    if (tmp)
+      delete tmp;
+    tmp=(*i);
+  }
+  FreeConnect.clear();
+  if (tmp)
+    FreeConnect.insert(FreeConnect.end(),tmp);
 }

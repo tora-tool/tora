@@ -30,12 +30,15 @@ TO_NAMESPACE;
 #include <qlabel.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qsplitter.h>
+#include <qtabwidget.h>
 
 #include "toconnection.h"
 #include "tosecurity.h"
 #include "tosql.h"
 #include "totool.h"
 #include "tomain.h"
+#include "toresultview.h"
 
 #include "tosecurity.moc"
 
@@ -54,7 +57,9 @@ public:
   { return "Security Manager"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    return new toSecurity(parent,connection);
+    QWidget *widget=new toSecurity(parent,connection);
+    widget->setIcon(*toolbarImage());
+    return widget;
   }
 };
 
@@ -77,6 +82,16 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   Connection.addWidget(this);
+
+  QSplitter *splitter=new QSplitter(Horizontal,this);
+  UserList=new toResultView(false,false,Connection,splitter);
+  UserList->addColumn("Users/Roles");
+  UserList->setSQLName("toSecurity:Users/Roles");
+  UserList->setRootIsDecorated(true);
+  Tabs=new QTabWidget(splitter);
+  ObjectGrant=new toResultView(false,false,Connection,Tabs);
+  Tabs->addTab(ObjectGrant,"Objects");
+  refresh();
 }
 
 toSecurity::~toSecurity()
@@ -84,6 +99,43 @@ toSecurity::~toSecurity()
   Connection.delWidget(this);
 }
 
+static toSQL SQLRoles("toSecurity:Roles",
+		      "SELECT Role FROM Dba_Roles ORDER BY Role",
+		      "Get roles available in DB, should return one entry");
+
 void toSecurity::refresh(void)
 {
+  UserList->clear();
+  try {
+    QListViewItem *parent=new toResultViewItem(UserList,NULL,"Users");
+    parent->setOpen(true);
+    parent->setSelectable(false);
+    otl_stream user(1,
+		    toSQL::sql(TOSQL_USERLIST,Connection),
+		    Connection.connection());
+    QListViewItem *item=NULL;
+    while(!user.eof()) {
+      char buffer[1024];
+      user>>buffer;
+      QString id="USER:";
+      id+=QString::fromUtf8(buffer);
+      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      item->setText(1,id);
+    }
+    parent=new toResultViewItem(UserList,parent,"Roles");
+    parent->setOpen(true);
+    parent->setSelectable(false);
+    otl_stream roles(1,
+		    SQLRoles(Connection),
+		    Connection.connection());
+    item=NULL;
+    while(!roles.eof()) {
+      char buffer[1024];
+      roles>>buffer;
+      QString id="ROLE:";
+      id+=QString::fromUtf8(buffer);
+      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      item->setText(1,id);
+    }
+  } TOCATCH
 }

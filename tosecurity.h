@@ -32,12 +32,29 @@
 #include <qvbox.h>
 
 class toConnection;
+class toResultView;
+class QTabWidget;
 
 class toSecurity : public QVBox {
   Q_OBJECT
 
-protected:
+  struct privilege {
+    QString Owner;
+    QString Object;
+    QString Access;
+    QString Value;
+    bool Admin;
+    privilege(const QString &owner,const QString &object,const QString &access,
+	      const QString &value,bool admin)
+      : Owner(owner),Object(object),Access(access),Value(value),Admin(admin)
+    { }
+  };
+
   toConnection &Connection;
+
+  toResultView *UserList;
+  toResultView *ObjectGrant;
+  QTabWidget *Tabs;
 public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual ~toSecurity();
