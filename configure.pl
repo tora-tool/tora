@@ -21,8 +21,7 @@
 
 use strict;
 
-my $tmpName=`mktemp /tmp/config.XXXXXX`;
-chomp($tmpName);
+my $tmpName="/tmp/toraconfig.$$";
 
 sub findFile {
     my ($files)=shift(@_);
@@ -172,6 +171,11 @@ void test(void) // Not called
     otl_connect *test=new otl_connect("Test",0);
 }
 
+void toBusy(bool)
+{
+
+}
+
 int main(int argv,char **argc)
 {
     QApplication app(argv,argc);
@@ -219,8 +223,8 @@ __TEMP__
 	}
     }
 
-    unlink("$tmpName.cpp");
     if ($CC) {
+        unlink("$tmpName.cpp");
 	return 1;
     }
     return 0;
@@ -629,7 +633,7 @@ this test will fail.
 The command tried was the following (\$CC is replaced with whatever C
 compiler used):
 
-\$CC $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -otemp temp.cc
+\$CC $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -otemp $tmpName.cpp
 
 __EOT__
 	exit(2);
