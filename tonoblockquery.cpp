@@ -59,7 +59,7 @@ void toNoBlockQuery::queryTask::run(void)
 
       // These are all read only parameters
       Query.open(1,
-		 Parent.SQL,
+		 Parent.SQL.utf8(),
 		 *Parent.LongConn);
 
       TO_DEBUGOUT("Supplying parameters\n");

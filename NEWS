@@ -8,6 +8,7 @@
 2001-03-24: Separated settings and the rest into Makefile.setup better.
 2001-03-24: Added a README and INSTALL file.
 2001-03-25: Added doc files to rpms.
+2001-03-26: Fixed NLS bug in toNoBlockQuery (Worksheet).
 
 0.7: Released 2001-03-24
 
