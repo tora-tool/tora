@@ -119,7 +119,6 @@ class toTuningWait : public QFrame {
   toListView *Types;
   toNoBlockQuery *Query;
   toBackground Poll;
-  toLegendChart *Legend;
 
   bool First;
   bool ShowTimes;

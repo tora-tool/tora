@@ -255,11 +255,17 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
       if (!(*i).isEmpty()&&*i!=" ") {
 	p->drawText(bounds,FONT_ALIGN,*i);
 	p->save();
-	p->setBrush(toChartColor(cp++));
+	QBrush brush(toChartBrush(cp));
+	p->setBrush(brush.color());
 	p->drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+	if (brush.style()!=QBrush::SolidPattern) {
+	  p->setBrush(QBrush(Qt::white,brush.style()));
+	  p->drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+	}
 	p->restore();
 	ly+=bounds.height();
       }
+      cp++;
     }
   }
 }
@@ -405,7 +411,25 @@ void toLineChart::paintChart(QPainter *p,QRect &rect)
 		  AlignLeft|AlignTop,"Zoom");
     for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
       p->save();
-      p->setPen(toChartColor(cp++));
+      QBrush brush(toChartBrush(cp++));
+      Qt::PenStyle pens;
+      switch (brush.style()) {
+      case QBrush::BDiagPattern:
+	pens=DashLine;
+	break;
+      case QBrush::FDiagPattern:
+	pens=DotLine;
+	break;
+      case QBrush::DiagCrossPattern:
+	pens=DashDotLine;
+	break;
+      case QBrush::CrossPattern:
+	pens=DashDotDotLine;
+	break;
+      default:
+	pens=SolidLine;
+      }
+      p->setPen(QPen(brush.color(),pens));
       std::list<double> &val=*i;
       int count=0;
       bool first=true;

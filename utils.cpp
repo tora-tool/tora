@@ -805,64 +805,72 @@ int toToolMenuIndex(void)
   return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
 }
 
-#define COLORS 3
+#define COLORS 2
 
-#define TYPES 10
+#define TYPES 7
 
-QColor toChartColor(int index)
+#define STYLES 5
+
+QBrush toChartBrush(int index)
 {
-  index%=(COLORS*TYPES);
-  index=COLORS*TYPES-1-index;
+  index%=(COLORS*TYPES*STYLES);
+  index=COLORS*TYPES*STYLES-1-index;
   int type=index%TYPES;
-  index/=TYPES;
+  int color=(index/TYPES)%COLORS;
+  int style=(index/TYPES/COLORS);
   int r=0,g=0,b=0;
   int offset=1;
-  int divoffset=0;
   switch(type) {
-  case 9:
+  case 6:
     r=1;
     break;
-  case 8:
+  case 5:
     g=1;
     break;
-  case 7:
+  case 4:
     b=1;
     break;
-  case 6:
+  case 3:
     r=g=1;
     break;
-  case 5:
+  case 2:
     r=b=1;
     break;
-  case 4:
+  case 1:
     b=g=1;
     break;
-  case 3:
+  case 0:
     r=b=g=1;
     offset=0;
     break;
+  }
+
+  QBrush::BrushStyle rets;
+
+  switch(style) {
+  case 4:
+    rets=QBrush::SolidPattern;
+    break;
+  case 3:
+    rets=QBrush::BDiagPattern;
+    break;
   case 2:
-    r=g=1;
-    b=COLORS;
-    divoffset=1;
+    rets=QBrush::FDiagPattern;
     break;
   case 1:
-    r=b=1;
-    g=COLORS;
-    divoffset=1;
+    rets=QBrush::DiagCrossPattern;
     break;
   case 0:
-    b=g=1;
-    r=COLORS;
-    divoffset=1;
+    rets=QBrush::CrossPattern;
     break;
   }
 
-  index+=offset;
+  color+=offset;
 
-  return QColor(min(255,r*index*256/(COLORS+divoffset)),
-		min(255,g*index*256/(COLORS+divoffset)),
-		min(255,b*index*256/(COLORS+divoffset)));
+  return QBrush(QColor(min(255,r*color*256/(COLORS)),
+		       min(255,g*color*256/(COLORS)),
+		       min(255,b*color*256/(COLORS))),
+		rets);
 }
 
 toToolWidget *toCurrentTool(QObject *cur)

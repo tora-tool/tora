@@ -70,7 +70,6 @@
 #include "toresultlong.h"
 #include "totuningsettingui.h"
 #include "tonoblockquery.h"
-#include "tolegendchart.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
@@ -107,7 +106,7 @@ public:
       if (!tool->config(*i,"").isEmpty())
 	item->setSelected(true);
     }
-    EnabledTabs->setSorting(-1);
+    EnabledTabs->setSorting(0);
   }
   virtual void saveSetting(void)
   {
@@ -1574,13 +1573,36 @@ void toTuningFileIO::start(void)
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 }
 
+class toTuningWaitItem : public QListViewItem {
+  int Color;
+public:
+  toTuningWaitItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+    : QListViewItem(parent,after,QString::null,buf)
+  { Color=0; }
+  void setColor(int color)
+  { Color=color; }
+  virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
+  {
+    if (column==0) {
+      QString ct=text(column);
+
+      QBrush brush(isSelected()?toChartBrush(Color):QBrush(cg.base()));
+
+      p->fillRect(0,0,width,height(),QBrush(brush.color()));
+      if (brush.style()!=QBrush::SolidPattern)
+	p->fillRect(0,0,width,height(),QBrush(Qt::white,brush.style()));
+    } else
+      QListViewItem::paintCell(p,cg,column,width,align);
+  }
+};
+
 toTuningWait::toTuningWait(QWidget *parent)
   : QFrame(parent)
 {
   QGridLayout *layout=new QGridLayout(this);
 
   QToolBar *toolbar=toAllocBar(this,"Server Tuning",toCurrentConnection(this).description());
-  layout->addMultiCellWidget(toolbar,0,0,0,3);
+  layout->addMultiCellWidget(toolbar,0,0,0,2);
   new QLabel("Display ",toolbar);
   QComboBox *type=new QComboBox(toolbar);
   type->insertItem("Time");
@@ -1588,36 +1610,35 @@ toTuningWait::toTuningWait(QWidget *parent)
   connect(type,SIGNAL(activated(int)),this,SLOT(changeType(int)));
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  layout->setColStretch(1,1);
+  layout->setColStretch(0,1);
+  layout->setColStretch(1,2);
   layout->setColStretch(2,2);
-  layout->setColStretch(3,2);
 
   Delta=new toBarChart(this);
   Delta->setTitle("System wait events");
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Delta->showLegend(false);
   Delta->setYPostfix(" ms/sec");
-  layout->addMultiCellWidget(Delta,1,1,2,3);
+  layout->addMultiCellWidget(Delta,1,1,1,2);
+
   Types=new toListView(this);
+  Types->addColumn("Color");
   Types->addColumn("Wait type");
   Types->setSelectionMode(QListView::Multi);
   Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-  Types->setSorting(-1);
-  layout->addMultiCellWidget(Types,1,2,1,1);
+  layout->addMultiCellWidget(Types,1,2,0,0);
+
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
   DeltaPie=new toPieChart(this);
   DeltaPie->setTitle("Delta system wait events");
   DeltaPie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaPie->showLegend(false);
-  layout->addWidget(DeltaPie,2,2);
+  layout->addWidget(DeltaPie,2,1);
   AbsolutePie=new toPieChart(this);
   AbsolutePie->setTitle("Absolute system wait events");
   AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   AbsolutePie->showLegend(false);
-  layout->addWidget(AbsolutePie,2,3);
-  Legend=new toLegendChart(2,this);
-  Legend->setTitle("Legend");
-  layout->addMultiCellWidget(Legend,1,2,0,0);
+  layout->addWidget(AbsolutePie,2,2);
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
   start();
@@ -1664,7 +1685,7 @@ void toTuningWait::changeSelection(void)
     typ++;
   }
   for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
-    QString txt=item->text(0);
+    QString txt=item->text(1);
     if (usedMap.find(txt)==usedMap.end())
       toStatusMessage("Internal error, can't find ("+txt+") in usedMap");
     if (item->isSelected())
@@ -1680,7 +1701,6 @@ void toTuningWait::changeSelection(void)
       
   try {
     Delta->clear();
-    Legend->setLabels(used);
 
     std::list<double> lastAbsolute;
     std::list<double> relative;
@@ -1754,17 +1774,19 @@ void toTuningWait::poll(void)
 	std::map<QString,bool> types;
 	int typ=0;
 	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
-	  types[ci->text(0)]=true;
+	  types[ci->text(1)]=true;
 	  item=ci;
 	  typ++;
 	}
+
 	std::list<double>::iterator j=CurrentTimes.begin();
 	for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
 	  if ((*j)!=0&&!types[*i]) {
-	    item=new QListViewItem(Types,item,*i);
+	    item=new toTuningWaitItem(Types,item,*i);
 	    item->setSelected(First);
 	    types[*i]=typ;
 	    typ++;
+	    Types->setSorting(1);
 	  }
 	  j++;
 	}
@@ -1772,6 +1794,13 @@ void toTuningWait::poll(void)
 	  First=false;
 	else
 	  XValues.insert(XValues.end(),Now);
+	int col=0;
+	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
+	  toTuningWaitItem *item=dynamic_cast<toTuningWaitItem *>(ci);
+	  if (item)
+	    item->setColor(col);
+	  col++;
+	}
 	TimeStamp.insert(TimeStamp.end(),time(NULL));
 	Values.insert(Values.end(),Current);
 	Times.insert(Times.end(),CurrentTimes);

@@ -161,8 +161,13 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
     }
 
     p->save();
-    p->setBrush(toChartColor(--cp));
+    QBrush brush(toChartBrush(--cp));
+    p->setBrush(brush.color());
     p->drawPolygon(a);
+    if (brush.style()!=QBrush::SolidPattern) {
+      p->setBrush(QBrush(Qt::white,brush.style()));
+      p->drawPolygon(a);
+    }
     p->restore();
   }
 }

@@ -176,8 +176,13 @@ void toLegendChart::paintEvent(QPaintEvent *e)
       QRect bounds=fm.boundingRect(cx+12,cy,100000,100000,FONT_ALIGN,*i);
       p.drawText(bounds,FONT_ALIGN,*i);
       p.save();
-      p.setBrush(toChartColor(cp));
+      QBrush brush(toChartBrush(cp));
+      p.setBrush(brush.color());
       p.drawRect(cx+2,cy+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+      if (brush.style()!=QBrush::SolidPattern) {
+	p.setBrush(QBrush(Qt::white,brush.style()));
+	p.drawRect(cx+2,cy+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+      }
       p.restore();
       cy+=bounds.height();
       cur++;

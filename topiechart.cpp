@@ -238,11 +238,17 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,str);
 	p->drawText(bounds,FONT_ALIGN,str);
 	p->save();
-	p->setBrush(toChartColor(cp++));
+	QBrush brush(toChartBrush(cp));
+	p->setBrush(brush.color());
 	p->drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+	if (brush.style()!=QBrush::SolidPattern) {
+	  p->setBrush(QBrush(Qt::white,brush.style()));
+	  p->drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+	}
 	p->restore();
 	ly+=bounds.height();
       }
+      cp++;
 
       if (j!=Values.end())
 	j++;
@@ -266,8 +272,13 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
     if (count==Values.size())
       size=5760-pos;
     p->save();
-    p->setBrush(toChartColor(cp++));
+    QBrush brush(toChartBrush(cp++));
+    p->setBrush(brush.color());
     p->drawPie(2,2,right-4,bottom-4,pos,size);
+    if (brush.style()!=QBrush::SolidPattern) {
+      p->setBrush(QBrush(Qt::white,brush.style()));
+      p->drawPie(2,2,right-4,bottom-4,pos,size);
+    }
     p->restore();
     pos+=size;
   }

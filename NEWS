@@ -37,6 +37,7 @@
 2001-11-22: Removed a memory leak in filter buffers.
 2001-11-22: Added columns to legend chart.
 2001-11-22: Made some improvements and bugfixes to tuning waits.
+2001-11-22: Use non solid brushes for chart colors.
 
 1.1.5:
 

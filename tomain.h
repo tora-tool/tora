@@ -727,10 +727,10 @@ QString toPluginPath(void);
 /** Get a list of the latest status messages that have been shown.
  */
 std::list<QString> toStatusMessages(void);
-/** Get a color for a chart item.
+/** Get a brush for a chart item.
  * @param index Indicating which chart item to get color for.
  */
-QColor toChartColor(int index);
+QBrush toChartBrush(int index);
 /** Return the connection most closely associated with a widget. Currently connections are
  * only stored in toToolWidgets.
  * @return Reference toConnection object closest to the current.

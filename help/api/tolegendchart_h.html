@@ -72,16 +72,19 @@
 class toLegendChart : public QWidget {
   Q_OBJECT
 
+  int Columns;
   QString Title;
 
   std::list<QString> Labels;
+  std::list<int> sizeHint(int &height,int &items);
 public:
   /** Create a new legend.
+   * @param columns Columns.
    * @param parent Parent widget.
    * @param name Name of widget.
    * @param f Widget flags.
    */
-  toLegendChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+  toLegendChart(int columns,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
