@@ -311,17 +311,19 @@ void toTool::saveConfig(void)
       QString value=(*i).second;
       path.prepend(APPLICATION_NAME);
       path.replace(re,"\\");
-      if (value.isNull())
-	registry.SetStringValue(HKEY_CURRENT_USER,
-				toKeyPath(path,registry),
-				toKeyValue(path),
-				"");
+      if (value.isEmpty())
+	if (!registry.SetStringValue(HKEY_CURRENT_USER,
+				     toKeyPath(path,registry),
+				     toKeyValue(path),
+				     ""))
+	  toStatusMessage(QT_TRANSLATE_NOOP("toTool","Couldn't save empty value at key %1").arg(path));
       else {
 	char *t=strdup(value.utf8());
-	registry.SetStringValue(HKEY_CURRENT_USER,
-				toKeyPath(path,registry),
-				toKeyValue(path),
-				t);
+	if (!registry.SetStringValue(HKEY_CURRENT_USER,
+				     toKeyPath(path,registry),
+				     toKeyValue(path),
+				     t))
+	  toStatusMessage(QT_TRANSLATE_NOOP("toTool","Couldn't save %1 value at key %2").arg(value).arg(path));
 	free(t);
       }
     }

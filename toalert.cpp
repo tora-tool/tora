@@ -228,12 +228,11 @@ toAlert::~toAlert()
 {
   try {
     Lock.lock();
-    State=Quit;
-    do {
+    while(State!=Done) {
       Lock.unlock();
       Semaphore.down();
       Lock.lock();
-    } while(State==Quit);
+    }
     Lock.unlock();
     AlertTool.closeWindow(connection());
   } TOCATCH
@@ -328,9 +327,15 @@ void toAlert::pollTask::run(void)
 #endif
       }
     } catch(const QString &str) {
-      fprintf(stderr,"Exception in alert polling:\n%s\n",(const char *)str.latin1());
+      Parent.Lock.lock();
+      Parent.Error.sprintf("Exception in alert polling:\n%s",(const char *)str.latin1());
+      fprintf(stderr,"%s\n",(const char *)Parent.Error);
+      Parent.Lock.unlock();
     } catch(...) {
-      fprintf(stderr,"Unexpected alert in polling.\n");
+      Parent.Lock.lock();
+      Parent.Error.sprintf("Unexpected exception in alert in polling.");
+      fprintf(stderr,"%s\n",(const char *)Parent.Error);
+      Parent.Lock.unlock();
     }
 
     Parent.Lock.lock();
@@ -349,6 +354,10 @@ void toAlert::poll(void)
 {
   try {
     toLocker lock(Lock);
+    if (Error) {
+      toStatusMessage(Error);
+      Error=QString::null;
+    }
     std::list<QString>::iterator i=NewAlerts.begin();
     std::list<QString>::iterator j=NewMessages.begin();
     while(i!=NewAlerts.end()&&j!=NewMessages.end()) {

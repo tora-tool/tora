@@ -126,7 +126,9 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
 
 QString toResultViewItem::text(int col) const
 {
-  QString txt=allText(col);
+  if (col>=ColumnCount)
+    return QString::null;
+  QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)
     return txt.mid(0,pos)+"...";
@@ -291,7 +293,9 @@ void toResultViewCheck::paintCell(QPainter * p,const QColorGroup & cg,int column
 
 QString toResultViewCheck::text(int col) const
 {
-  QString txt=allText(col);
+  if (col>=ColumnCount)
+    return QString::null;
+  QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)
     return txt.mid(0,pos)+"...";

@@ -1417,6 +1417,8 @@ void toWorksheet::executePreviousLog(void)
   if (Light)
     return;
 
+  Result->stop();
+
   LastLine=LastOffset=-1;
   saveHistory();
 
@@ -1449,6 +1451,8 @@ void toWorksheet::executeNextLog(void)
 {
   if (Light)
     return;
+
+  Result->stop();
 
   LastLine=LastOffset=-1;
   saveHistory();

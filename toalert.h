@@ -74,6 +74,7 @@ class toAlert : public toToolWidget {
   std::list<QString> AddNames;
   std::list<QString> DelNames;
   std::list<QString> Names;
+  QString Error;
 
   std::list<QString> NewAlerts;
   std::list<QString> NewMessages;

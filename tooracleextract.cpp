@@ -5063,7 +5063,7 @@ QString toOracleExtract::createTablespace(toExtract &ext,
   return ret;
 }
 
-static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
+static toSQL SQLTriggerInfo("toOracleExtract:TriggerInfo",
 			    "SELECT  trigger_type\n"
 			    "      , RTRIM(triggering_event)\n"
 			    "      , table_owner\n"
@@ -5085,7 +5085,7 @@ static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
 			    "Get information about triggers, must have same binds and columns",
 			    "8.1");
 
-static toSQL SQLTriggerInfo8("toExtract:TriggerInfo",
+static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
 			     "SELECT\n"
 			     "        trigger_type\n"
 			     "      , RTRIM(triggering_event)\n"
@@ -5136,14 +5136,12 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   else if (triggerType.find("INSTEAD OF")>=0)
     trgType="INSTEAD OF";
 
-  QString src=trgType;
-  src+=" ";
-  src+=event;
+  QRegExp src("\\s"+trgType+"\\s",false);
   int pos=description.find(src);
   QString columns;
   if (pos>=0) {
-    pos+=src.length();
-    int endPos=description.find(" ON ",pos);
+    pos+=trgType.length()+2;
+    int endPos=description.find(" ON ",pos,false);
     if (endPos>=0) {
       columns=description.right(description.length()-pos);
       columns.truncate(endPos-pos);

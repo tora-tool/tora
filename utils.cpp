@@ -1225,9 +1225,9 @@ QString toObfuscate(const QString &str)
   QByteArray arr=str.utf8();
   QString ret="\001";
 #endif
-  char buf[3];
+  char buf[100]; // Just to be on the safe side
   for(unsigned int i=0;i<arr.size();i++) {
-    sprintf(buf,"%02x",arr.at(i)%0xff);
+    sprintf(buf,"%02x",((unsigned int)arr.at(i))%0xff);
     ret+=buf;
   }
   return ret;
@@ -1241,7 +1241,7 @@ QString toUnobfuscate(const QString &str)
   if (str.at(0)!='\001'&&str.at(0)!='\002')
     return str;
 
-  QByteArray arr(int((str.length()+1)/2));
+  QByteArray arr(int(str.length()/2));
   for(unsigned int i=1;i<str.length();i+=2)
     arr[i/2]=str.mid(i,2).toInt(0,16);
   if (str.at(0)=='\002') {

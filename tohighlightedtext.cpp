@@ -303,12 +303,14 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	LineInput.erase(LineInput.find(i));
       else
 	LineInput[i]=out;
+#if 0
       if (i<=lastRowVisible()) {
 	painter->translate(0,cellHeight(i-1));
 	painter->setClipping(false);
         paintCell(painter,i,0);
 	break;
       }
+#endif
       Analyzer->analyzeLine(textLine(i),out,out);
       i++;
     }
