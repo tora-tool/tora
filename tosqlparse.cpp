@@ -438,7 +438,7 @@ bool toSQLParse::statement::operator == (const statement &stat) const
   return true;
 }
 
-static char *Operators[]={":=",
+static const char *Operators[]={":=",
 			  "=>",
 			  "||",
 			  "**",
