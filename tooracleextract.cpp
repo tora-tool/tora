@@ -2163,7 +2163,7 @@ QString toOracleExtract::createPartitionedTable(toExtract &ext,
 	}
       }
     } else {
-      toQList hash=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,name,owner);
+      toQList hash=toQuery::readQueryNull(CONNECTION,SQLPartitionName,name,owner);
       bool first=true;
       ret+="(\n    ";
       while(!hash.empty()) {
@@ -3331,7 +3331,7 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
 	}
       }
     } else {
-      toQList hash=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,
+      toQList hash=toQuery::readQueryNull(CONNECTION,SQLPartitionName,
 					  name,owner);
       while(!hash.empty()) {
 	QString partition=QUOTE(toShift(hash));
