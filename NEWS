@@ -1,3 +1,7 @@
+1.3.7:
+
+2002-07-05: Fixed problem with column extraction and datascale in extractor.
+
 1.3.6.1: Released 2002-07-05
 
 2002-07-04: Fixed a bug in restore the size & position of the main window from sessions.
