@@ -257,7 +257,7 @@ void toHighlightedText::setStatusMessage(void)
   getCursorPosition (&curline,&curcol);
   std::map<int,QString>::iterator err=Errors.find(curline);
   if (err==Errors.end())
-    toStatusMessage("");
+    toStatusMessage(QString::null);
   else
     toStatusMessage((*err).second,true);
 }

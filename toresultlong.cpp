@@ -99,11 +99,13 @@ void toResultLong::query(const QString &sql,const toQList &param)
       MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
   } catch (const toConnection::exception &str) {
+    First=false;
     emit firstResult(toResult::sql(),str);
     emit done();
     if (Mode!=toQuery::Long)
       toStatusMessage(str);
   } catch (const QString &str) {
+    First=false;
     emit firstResult(toResult::sql(),str);
     emit done();
     if (Mode!=toQuery::Long)
@@ -206,8 +208,8 @@ void toResultLong::addItem(void)
     }
   } catch (const toConnection::exception &str) {
     if (First) {
-      emit firstResult(sql(),str);
       First=false;
+      emit firstResult(sql(),str);
       if (Mode!=toQuery::Long)
 	toStatusMessage(str);
     } else
@@ -215,8 +217,8 @@ void toResultLong::addItem(void)
     cleanup();
   } catch (const QString &str) {
     if (First) {
-      emit firstResult(sql(),str);
       First=false;
+      emit firstResult(sql(),str);
       if (Mode!=toQuery::Long)
 	toStatusMessage(str);
     } else

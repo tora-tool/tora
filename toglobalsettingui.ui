@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>577</width>
-            <height>589</height>
+            <width>433</width>
+            <height>396</height>
         </rect>
     </property>
     <property stdset="1">
@@ -178,6 +178,21 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
+                <widget row="0"  column="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Statusbar</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Display alerts in statusbar only.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
+                    </property>
+                </widget>
                 <widget row="1"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -422,21 +437,6 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="4" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>ChangeConnection</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Change current connection with active window</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Change currently select connection to the connection of the new active window</string>
-                    </property>
-                </widget>
                 <widget row="3"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -532,6 +532,21 @@ Will leave the password unencryptet in the config file.</string>
                     <property>
                         <name>toolTip</name>
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ChangeConnection</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Change current connection with active window</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Change currently select connection to the connection of the new active window</string>
                     </property>
                 </widget>
             </grid>

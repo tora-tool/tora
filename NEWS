@@ -18,6 +18,7 @@
 2001-11-05: Removed moving to long temporarily.
 2001-11-05: A lot of checks added to nonblocking query.
 2001-11-05: Added duration indication in worksheet of running query.
+2001-11-06: Added option for displaying errors in dialogs (For newbies).
 
 1.1.4: Released 2001-11-02
 

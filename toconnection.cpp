@@ -1224,7 +1224,7 @@ bool toConnection::cacheAvailable(bool block)
 std::list<toConnection::objectName> &toConnection::objects(bool block)
 {
   if (!cacheAvailable(block)) {
-    toStatusMessage("Not done caching objects");
+    toStatusMessage("Not done caching objects",false,false);
     static std::list<objectName> ret;
     return ret;
   }
@@ -1235,7 +1235,7 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
 std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
 {
   if (!cacheAvailable(block)) {
-    toStatusMessage("Not done caching objects");
+    toStatusMessage("Not done caching objects",false,false);
     static std::map<QString,objectName> ret;
     return ret;
   }

@@ -915,7 +915,10 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     str+="\n(Duration ";
     str+=buf;
     str+=")";
-    toStatusMessage(str);
+    if (str.contains("ORA-"))
+      toStatusMessage(str);
+    else
+      toStatusMessage(str,false,false);
   }
   if (!Light)
     changeResult(CurrentTab);

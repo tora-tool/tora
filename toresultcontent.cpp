@@ -394,7 +394,7 @@ void toResultContentEditor::cancelEdit()
     
   setNumRows(Row+1);
   setCurrentCellFocus(crow,0);
-  toStatusMessage("Edit cancelled",true);
+  toStatusMessage("Edit cancelled",false,false);
 }
 
 void toResultContentEditor::deleteCurrent()
@@ -462,7 +462,7 @@ void toResultContentEditor::saveUnsaved()
     QString rowid = "";
     bool mysql=(connection().provider()=="MySQL");
     bool oracle=(connection().provider()=="Oracle");
-    toStatusMessage("Saved row");
+    toStatusMessage("Saved row",false,false);
     if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
       QString sql="INSERT INTO ";
       sql+=table();

@@ -102,6 +102,7 @@
 #define CONF_AUTO_INDENT	"AutoIndent"
 #define CONF_DONT_REREAD	"DontReread"
 #define CONF_AUTO_LONG		"AutoLong"
+#define CONF_MESSAGE_STATUSBAR	"MessageStatusbar"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

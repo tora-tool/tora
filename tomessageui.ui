@@ -1,0 +1,103 @@
+<!DOCTYPE UI><UI>
+<class>toMessageUI</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toMessageUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>328</width>
+            <height>76</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>TOra warning message</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <spacer row="1"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="1"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="1"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Statusbar</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Display alerts in statusbar only.</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
+            </property>
+        </widget>
+        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Message</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Message</string>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>PushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>toMessageUI</receiver>
+        <slot>accept()</slot>
+    </connection>
+</connections>
+</UI>

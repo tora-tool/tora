@@ -550,7 +550,7 @@ void toListView::editPrint(void)
       toStatusMessage(str,false,false);
     }
     painter.end();
-    toStatusMessage("Done printing");
+    toStatusMessage("Done printing",false,false);
   }
 }
 

@@ -52,7 +52,7 @@ void toSGAStatement::viewResources(void)
   try {
     Resources->changeParams(Address);
   } catch (...) {
-    toStatusMessage("Couldn't find SQL statement in SGA");
+    toStatusMessage("Couldn't find SQL statement in SGA",false,false);
   }
 }
 

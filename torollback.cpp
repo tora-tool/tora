@@ -227,7 +227,7 @@ void toRollbackDialog::displaySQL(void)
     toMemoEditor memo(this,res,-1,-1,true,true);
     memo.exec();
   } else
-    toStatusMessage("No changes made");
+    toStatusMessage("No changes made",false,false);
 }
 
 void toRollbackDialog::valueChanged(const QString &str)

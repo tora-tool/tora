@@ -80,6 +80,7 @@ SOURCES=\
 	tomain.cpp		        \
 	tomarkedtext.cpp	        \
 	tomemoeditor.cpp	        \
+	tomessageui.cpp			\
 	tonewconnection.cpp	        \
 	tonewconnectionui.cpp	        \
 	tonoblockquery.cpp	        \
@@ -364,6 +365,7 @@ tora: \
 	objs/tohtml.o \
 	objs/tomain.o \
 	objs/tomarkedtext.o \
+	objs/tomessageui.o \
 	objs/tomemoeditor.o \
 	objs/tonewconnection.o \
 	objs/tonewconnectionui.o \

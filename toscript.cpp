@@ -791,7 +791,7 @@ void toScript::newSize(void)
 
   for (QListViewItem *item=ScriptUI->Sizes->firstChild();item;item=item->nextSibling())
     if (max==item->text(0)) {
-      toStatusMessage("Replacing existing size with new");
+      toStatusMessage("Replacing existing size with new",false,false);
       delete item;
       break;
     }
