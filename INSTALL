@@ -96,15 +96,10 @@ There is a configure script available that is made to try to mimic the
 behaviour of autoconf generated configure scripts. There is no need to nag
 about me starting to use autoconf (See at the end for explanation).
 
-Just issue the command "configure" and it should probably point out if
-you need to issue any commands specifying locations of Qt for instance.
-To find out about the options type "configure --help".
-
-If you are using KDE 2.1 I strongly recommend using the --with-kde option
-which will give you a KDE application instead of a Qt application. The
-main advantage of using KDE is that you get docked windows which are
-really neat for the template window. If you use KDE 2.1 you will get some
-style problems with toolbars in tool windows, these are fixed in KDE 2.2
+Just issue the command "configure" and it should probably point out if you
+need to issue any commands specifying locations of Qt for instance.To find
+out about the options type "configure --help". TOra will compile as an KDE
+application if KDE is detected by the configure script.
 
 This will generate a Makefile.setup file that you can check if you have
 troubles. It will also copy the file Makefile.orig to Makefile so you

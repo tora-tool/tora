@@ -46,7 +46,7 @@ This build does not have KDE support.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --without-rpath
+./configure --prefix=/usr --without-rpath --without-kde
 make
 
 %install

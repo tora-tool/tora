@@ -69,6 +69,7 @@ my $Perl=`which perl`;
 chomp $Perl;
 my $Linux;
 my $KDEApplication;
+my $NoKDE;
 my $KDEInclude;
 my $KDELibs;
 my $NoRPath;
@@ -99,6 +100,8 @@ for (@ARGV) {
     } elsif (/^--with-mono$/) {
 	$Target="tora-mono";
 	$ForceTarget=1;
+    } elsif (/^--without-kde$/) {
+	$NoKDE=1;
     } elsif (/^--with-static$/) {
 	$Target="tora-static";
 	$ForceTarget=1;
@@ -135,6 +138,7 @@ Options can be any of the following:
 --with-lib         Add extra library to include (Include -l as well)
 --with-static      Force static binary compilation
 --with-kde         Compile as KDE application (Requires KDE 2.2 or later)
+--without-kde      Don't compile as KDE application even though KDE available.
 --with-kde-include Where to find KDE include files
 --with-kde-libs    Where to find KDE libraries
 --without-rpath    Compile without rpath to Oracle libraries
@@ -531,7 +535,7 @@ __TEMP__
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
     $Includes.="\"-I".$QtInclude."\"";
 
-    if ($KDEApplication) {
+    if (!$NoKDE) {
 	$KDEInclude=findFile("^kglobal\\.h\$",sub {
 	                                          return -f $_[0] && ! -l $_[0];
 					      },
@@ -549,6 +553,11 @@ __TEMP__
 			     "/usr/local/include/kde2"
 			     );
 
+	if (-d $KDEInclude) {
+	    $KDEApplication=1;
+	}
+    }
+    if ($KDEApplication) {
 	if (!-d $KDEInclude) {
 	    print "Couldn't find include files for KDE, use --with-kde-include to specify\n";
 	    exit(2);

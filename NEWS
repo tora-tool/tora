@@ -41,6 +41,7 @@
 2001-06-02: Done with analytic,char to char and char to number functions in
 	PL/SQL documentation.
 2001-06-03: Done with the rest of PL/SQL documentation.
+2001-06-03: Enable KDE if available by default.
 
 0.10: Released 2001-05-25
 
