@@ -296,7 +296,7 @@ toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
 
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
     QString tmp=item->text(1);
-    tmp+=CONF_TOOL_ENABLED;
+    tmp+=CONF_TOOL_ENABLE;
     if(!toTool::globalConfig(tmp,"Yes").isEmpty())
       item->setSelected(true);
   }
@@ -328,7 +328,7 @@ void toToolSetting::saveSetting(void)
 {
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
     QString str=item->text(1);
-    str+=CONF_TOOL_ENABLED;
+    str+=CONF_TOOL_ENABLE;
     toTool::globalSetConfig(str,item->isSelected()?"Yes":"");
   }
   toTool::globalSetConfig(CONF_DEFAULT_TOOL,DefaultTool->currentText());
