@@ -164,12 +164,12 @@ public:
   }
 };
 
-class toHelpPrefs : public toHelpSetupUI, public toSettingTab
+class toHelpPrefs : public toHelpSetupUI, public toSettingTab, public toHelpContext
 {
   toTool *Tool;
 public:
   toHelpPrefs(toTool *tool,QWidget *parent,const char *name=0)
-    : toHelpSetupUI(parent,name),Tool(tool)
+    : toHelpSetupUI(parent,name),toHelpContext("additionalhelp.html"),Tool(tool)
   {
     int tot=Tool->config("Number",QString::number(-1)).toInt();
     if(tot!=-1) {

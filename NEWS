@@ -1,4 +1,4 @@
-1.0:
+0.13:
 
 2001-07-02: Upgraded to 3.2.20 of OTL.
 2001-07-02: Rewrote tns_names finding on Windows.
@@ -18,6 +18,8 @@
 2001-07-05: Added help quick key to dialogs.
 2001-07-05: Made help a dialog again.
 2001-07-06: Ask to create plan table if it doesn't exist when explaining plan.
+2001-07-06: Updated documentation to the 1.0 release so I don't forget it.
+2001-07-06: Added option to specify message history size.
 
 0.12: Released 2001-07-01
 

@@ -76,6 +76,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
+  HistorySize->setValue(toTool::globalConfig(CONF_STATUS_SAVE,
+					     DEFAULT_STATUS_SAVE).toInt());
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
   HelpDirectory->setText(toHelpPath());
 
@@ -169,6 +171,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
+  toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_SIZE_UNIT,SizeUnit->currentText());

@@ -11,7 +11,7 @@ is in beta testing and should be feature complete for version 1.0 except for
 some more testing and documentation. The main lacking as you will find is in
 documentation which is pretty much non existant.
 
-The features that are available so far is (As of version 0.10):
+The features that are available so far is (As of version 1.0):
 
 * Handles multiple connections
 * SQL worksheet with explain plan and statement statistics
@@ -35,6 +35,7 @@ The features that are available so far is (As of version 0.10):
 * SQL template help
 * Full UNICODE support
 * Printing of any list or source
+* Cross platform support, known to work on Linux, Windows, Solaris and HP-UX.
 
 For installation instructions se the file INSTALL.
 
@@ -42,11 +43,3 @@ TOra is developed by Henrik Johnson (tora@henrik.org) of GlobeCom AB
 (http://www.globecom.se) and has the homepage http://www.globecom.net/tora.
 
 Oracle is copyright of Oracle Corporation.
-
-Help wanted! No programming knowledge required!
-===============================================
-Please write templates and send them to me so I can include them in the
-distribution. To write templates go to "Edit|Options|SQL Templates|Edit".
-Check the AVG function for an example of what I had in mind would be
-usefull. Remember you can't just copy the Oracle documentation (Although
-you can base it on that) since that is copyrighted by Oracle.
