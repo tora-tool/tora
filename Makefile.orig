@@ -46,6 +46,7 @@ SUBDIRS=
 SOURCES=\
 	toabout.cpp 		        \
 	toaboutui.cpp			\
+	toalert.cpp			\
 	tobarchart.cpp		        \
 	tobrowser.cpp		        \
 	tobrowserconstraintui.cpp	\
@@ -186,6 +187,7 @@ API=	\
 
 include Makefile.common
 
+plugins/toalert.tso:objs/toalert.o
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserconstraintui.o \
@@ -287,6 +289,7 @@ tora-static: $(OBJECTS) main.cpp
 
 tora-plugin: \
 	tora \
+	plugins/toalert.tso \
 	plugins/tobrowser.tso \
 	plugins/tocharts.tso \
 	plugins/todebug.tso \
