@@ -229,8 +229,8 @@ plugins/toextract.tso:\
 plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:\
-	objs/toresultlong.o \
-	objs/tonoblockquery.o
+	objs/tonoblockquery.o \
+	objs/toresultlong.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
