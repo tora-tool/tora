@@ -1,5 +1,7 @@
 1.3.8:
 
+2002-09-30: Fixed analyze stats in columnview with Oracle 8.
+2002-09-30: Made configure work on Mandrake 9.
 2002-09-24: Applied some Os X changes to configure (Thanx Olof Jönsson).
 2002-09-24: Require multithread version of Qt.
 2002-09-24: Use Qt implementation of semaphores always.

@@ -407,6 +407,17 @@ __TEMP__
 	}
 
 	print TEMP <<__TEMP__;
+template <class T>
+T max(T a, T b)
+{
+    return a > b ? a : b ;
+}
+
+T min(T a, T b)
+{
+    return a < b ? a : b ;
+}
+
 #include "otlv4.h"
 
 void testOracle(void) // Not called

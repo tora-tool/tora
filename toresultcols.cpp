@@ -59,7 +59,24 @@ static toSQL SQLInfo("toResultCols:Info",
 		     "   AND Table_Name = :f2<char[100]>\n"
 		     "   AND Column_Name = :f3<char[100]>",
 		     "Display analyze statistics about a column",
-		     "8.0");
+		     "8.1");
+static toSQL SQLInfo8("toResultCols:Info",
+		      "SELECT Data_Default,\n"
+		      "       Num_Distinct,\n"
+		      "       Low_Value,\n"
+		      "       High_Value,\n"
+		      "       Density,\n"
+		      "       Num_Nulls,\n"
+		      "       Num_Buckets,\n"
+		      "       Last_Analyzed,\n"
+		      "       Sample_Size,\n"
+		      "       NULL\n"
+		      "  FROM sys.All_Tab_Columns\n"
+		      " WHERE Owner = :f1<char[100]>\n"
+		      "   AND Table_Name = :f2<char[100]>\n"
+		      "   AND Column_Name = :f3<char[100]>",
+		      QString::null,
+		      "8.0");
 static toSQL SQLInfo7("toResultCols:Info",
 		      "SELECT Data_Default,\n"
 		      "       Num_Distinct,\n"
