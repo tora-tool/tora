@@ -635,12 +635,17 @@ __TEMP__
 
     $QtLib=findFile("^".$QtSearch."[23]\\.so",sub {
 	                                        if (-f $_[0] && ! -l $_[0]) {
-						    ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+						    my $lib;
+						    ($lib,$QtLibShared)=($_[0]=~/^(.*)\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }
-						    $QtLibShared=" -l$QtLibShared";
-						    return 1;
+						    if (-f "$lib/lib$QtLibShared.so") {
+							$QtLibShared=" -l$QtLibShared";
+							return 1;
+						    }
+						    undef $QtLibShared;
+						    return 0;
 						} else {
 						    return 0;
 						}

@@ -33,7 +33,19 @@
 #
 ############################################################################
 
-echo -n checking for perl...
+if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
+  # Stardent Vistra SVR4 grep lacks -e, says ghazi@caip.rutgers.edu.
+  if (echo -n testing; echo 1,2,3) | sed s/-n/xn/ | grep xn >/dev/null; then
+    ac_n= ac_c='
+' ac_t='	'
+  else
+    ac_n=-n ac_c= ac_t=
+  fi
+else
+  ac_n= ac_c='\c' ac_t=
+fi
+
+echo $ac_n "checking for perl...$ac_c"
 
 if (perl -v | grep -i "v[^0-9]*5") > /dev/null 2>/dev/null
 then
@@ -72,17 +84,17 @@ egrep "^(UIC|MOC)" Makefile > configure.setup
 . ./configure.setup
 rm -f configure.setup
 
-echo -n "creating designer files "
+echo $ac_n "creating designer files $ac_c"
 for a in *.ui license/*ui
 do
     base=`echo $a | sed 's/\.[^\.]*$//'`
-    echo -n .
+    echo $ac_n ".$ac_c"
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
 done
 echo " done"
 
-echo -n "creating moc files ... "
+echo $ac_n "creating moc files ... $ac_c"
 for a in *.h qtlegacy/*.h license/*.h
 do
     if grep -i Q_OBJECT $a >/dev/null
@@ -92,7 +104,7 @@ do
 done
 echo done
 
-echo -n "creating empty dependfiles ... "
+echo $ac_n "creating empty dependfiles ... $ac_c"
 if [ \! -d .depends ]
 then
     mkdir .depends
@@ -110,11 +122,11 @@ echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
 echo '"</PRE>\n";' >> LICENSE.h
 
-echo -n "ordering CD from http://www.globecom.se/tora/wish ."
+echo $ac_n "ordering CD from http://www.globecom.se/tora/wish .$ac_c"
 sleep 1
-echo -n "."
+echo $ac_n ".$ac_c"
 sleep 1
-echo -n "."
+echo $ac_n ".$ac_c"
 echo " just kidding ;)"
 
 echo
