@@ -97,6 +97,7 @@
 2001-09-23: Fixed problem with output polling.
 2001-09-23: Added tool menu to the rest of the tools.
 2001-09-23: Switch to result pane on extraction in toscript.
+2001-09-23: Made it possible to save changes in memo editor by CTRL+Return.
 
 1.1.0: Released 2001-09-09
 
