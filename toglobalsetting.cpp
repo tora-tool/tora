@@ -84,6 +84,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
   ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt());
   ChartSamples->setValue(toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt());
+  DefaultFormat->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   if (typ=="KB")
@@ -193,6 +194,8 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,Statusbar->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_RESTORE_SESSION,RestoreSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_TOOLS_LEFT,ToolsLeft->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_DEFAULT_FORMAT,
+			  QString::number(DefaultFormat->currentItem()));
 #if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif

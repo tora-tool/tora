@@ -1212,7 +1212,11 @@ toListView *toResultContentEditor::copySelection(bool header)
 		      text(row,col));
       }
     }
-    lst->setSQLName("Contents");
+    QString name="Content of ";
+    name+=Owner;
+    name+=".";
+    name+=Table;
+    lst->setSQLName(name);
     return lst;
   }
   return NULL;

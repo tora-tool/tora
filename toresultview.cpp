@@ -719,6 +719,7 @@ int toListView::exportType(void)
   format.Format->insertItem("Tab delimited");
   format.Format->insertItem("CSV");
   format.Format->insertItem("HTML");
+  format.Format->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt());
 
   if (!format.exec())
     return -1;

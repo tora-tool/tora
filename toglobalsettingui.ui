@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>544</width>
-            <height>499</height>
+            <width>540</width>
+            <height>502</height>
         </rect>
     </property>
     <property stdset="1">
@@ -314,13 +314,6 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Define the unit sizes should be displayed in tora.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="3" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Style</cstring>
-                    </property>
-                </widget>
                 <widget row="2"  column="3" >
                     <class>QSpinBox</class>
                     <property stdset="1">
@@ -442,25 +435,6 @@ Will leave the password unencryptet in the config file.</string>
                     <property>
                         <name>toolTip</name>
                         <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
-                    </property>
-                </widget>
-                <widget row="6"  column="2" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>StyleLabel</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Style</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>Style</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
                 <widget row="5"  column="2" >
@@ -586,6 +560,74 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
                     </property>
                 </widget>
+                <widget row="6"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Default list format</string>
+                    </property>
+                </widget>
+                <widget row="6"  column="3" >
+                    <class>QComboBox</class>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Text</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Tab delimited</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>CSV</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>HTML</string>
+                        </property>
+                    </item>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DefaultFormat</cstring>
+                    </property>
+                </widget>
+                <widget row="7"  column="3" >
+                    <class>QComboBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Style</cstring>
+                    </property>
+                </widget>
+                <widget row="7"  column="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>StyleLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Style</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Style</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The style to use for the user interface.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -638,18 +680,20 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>ChangeConnection</tabstop>
     <tabstop>SavePassword</tabstop>
     <tabstop>IncludeDB</tabstop>
-    <tabstop>MaximizeMain</tabstop>
     <tabstop>RestoreSession</tabstop>
     <tabstop>DesktopAware</tabstop>
     <tabstop>AntialiaseFonts</tabstop>
     <tabstop>DockToolbar</tabstop>
     <tabstop>Statusbar</tabstop>
+    <tabstop>MaximizeMain</tabstop>
+    <tabstop>ToolsLeft</tabstop>
     <tabstop>ConnectHistory</tabstop>
     <tabstop>Status</tabstop>
     <tabstop>HistorySize</tabstop>
     <tabstop>ChartSamples</tabstop>
     <tabstop>SizeUnit</tabstop>
     <tabstop>Refresh</tabstop>
+    <tabstop>DefaultFormat</tabstop>
     <tabstop>Style</tabstop>
 </tabstops>
 </UI>

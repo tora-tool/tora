@@ -108,6 +108,7 @@
 #define CONF_DEFAULT_SESSION	"DefaultSession"
 #define DEFAULT_SESSION		"$HOME/.tora.tse"
 #define CONF_TOOLS_LEFT		"ToolsLeft"
+#define CONF_DEFAULT_FORMAT	"DefaultFormat"
 
 #ifndef TO_KDE
 #  ifndef WIN32

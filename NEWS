@@ -103,6 +103,7 @@
 2001-12-06: Fixed problem with rownumber in resultlong.
 2001-12-06: Fixed a memory leak on copying charts.
 2001-12-06: Added new selection stuff to content editor as well.
+2001-12-06: Added new option with default format of exported lists.
 
 1.1.5: Released 2001-11-26
 
