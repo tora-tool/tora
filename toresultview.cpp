@@ -48,6 +48,7 @@ TO_NAMESPACE;
 #include <qpalette.h>
 #include <qpaintdevicemetrics.h>
 #include <qdragobject.h>
+#include <qfiledialog.h>
 
 #include "toresultview.h"
 #include "toresultview.moc"
