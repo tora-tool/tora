@@ -1494,6 +1494,16 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   StackTrace->setTreeStepSize(10);
   DebugTabs->addTab(StackTrace,"Stack Trace");
 
+  Watch=new toResultView(DebugTabs);
+  Watch->addColumn("Schema");
+  Watch->addColumn("Type");
+  Watch->addColumn("Object");
+  Watch->addColumn("Data");
+  Watch->setSorting(-1);
+  Watch->setRootIsDecorated(true);
+  Watch->setTreeStepSize(10);
+  DebugTabs->addTab(StackTrace,"Watch");
+
   Output=new toDebugOutput(DebugTabs,Connection);
   DebugTabs->addTab(Output,"Debug Output");
 

@@ -26,6 +26,7 @@ SOURCES=\
 	toabout.cpp 		\
 	tobrowser.cpp		\
 	toconnection.cpp	\
+	todebug.cpp		\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
 	tohighlightedtext.cpp	\
@@ -33,6 +34,7 @@ SOURCES=\
 	tomarkedtext.cpp	\
 	tonewconnection.cpp	\
 	tooutput.cpp		\
+	toparamget.cpp		\
 	topreferences.cpp	\
 	torollback.cpp		\
 	toresultcols.cpp	\
@@ -51,6 +53,8 @@ SOURCES=\
 	tosgastatement.cpp	\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
+	tosyntaxsetup.cpp	\
+	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
 
