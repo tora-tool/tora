@@ -11,260 +11,199 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>200</width>
-            <height>270</height>
+            <width>188</width>
+            <height>230</height>
         </rect>
-    </property>
-    <property stdset="1">
-        <name>minimumSize</name>
-        <size>
-            <width>200</width>
-            <height>270</height>
-        </size>
-    </property>
-    <property stdset="1">
-        <name>maximumSize</name>
-        <size>
-            <width>200</width>
-            <height>270</height>
-        </size>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>Add variable watch</string>
     </property>
-    <widget>
-        <class>QPushButton</class>
+    <grid>
         <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton1_2</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>110</x>
-                <y>225</y>
-                <width>80</width>
-                <height>32</height>
-            </rect>
+            <name>margin</name>
+            <number>11</number>
         </property>
         <property stdset="1">
-            <name>text</name>
-            <string>Cancel</string>
+            <name>spacing</name>
+            <number>6</number>
         </property>
-    </widget>
-    <widget>
-        <class>QPushButton</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>PushButton1</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>225</y>
-                <width>80</width>
-                <height>32</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>&amp;Ok</string>
-        </property>
-        <property stdset="1">
-            <name>default</name>
-            <bool>true</bool>
-        </property>
-    </widget>
-    <widget>
-        <class>QComboBox</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>Name</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>185</y>
-                <width>180</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>editable</name>
-            <bool>true</bool>
-        </property>
-        <property stdset="1">
-            <name>duplicatesEnabled</name>
-            <bool>false</bool>
-        </property>
-    </widget>
-    <widget>
-        <class>QLabel</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>TextLabel1</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>160</y>
-                <width>180</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>&amp;Variable name</string>
-        </property>
-        <property>
-            <name>buddy</name>
-            <cstring>Name</cstring>
-        </property>
-        <property>
-            <name>toolTip</name>
-            <string>Variable name to watch.</string>
-        </property>
-    </widget>
-    <widget>
-        <class>QButtonGroup</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>Scope</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>5</y>
-                <width>180</width>
-                <height>145</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>title</name>
-            <string>&amp;Scope</string>
-        </property>
-        <widget>
-            <class>QRadioButton</class>
+        <widget row="3"  column="1" >
+            <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>LocalScope</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>25</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
+                <cstring>PushButton1_2</cstring>
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Local</string>
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <widget row="3"  column="0" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton1</cstring>
             </property>
             <property stdset="1">
-                <name>checked</name>
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Name</cstring>
+            </property>
+            <property stdset="1">
+                <name>editable</name>
                 <bool>true</bool>
             </property>
             <property stdset="1">
-                <name>buttonGroupId</name>
-                <number>1</number>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Currently running scope.</string>
+                <name>duplicatesEnabled</name>
+                <bool>false</bool>
             </property>
         </widget>
-        <widget>
-            <class>QRadioButton</class>
+        <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>BodyScope</cstring>
+                <cstring>TextLabel1</cstring>
             </property>
             <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>85</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                </sizepolicy>
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Body Scope</string>
+                <string>&amp;Variable name</string>
             </property>
-            <property stdset="1">
-                <name>buttonGroupId</name>
-                <number>3</number>
+            <property>
+                <name>buddy</name>
+                <cstring>Name</cstring>
             </property>
             <property>
                 <name>toolTip</name>
-                <string>The scope of the file in the body editor.</string>
+                <string>Variable name to watch.</string>
             </property>
         </widget>
-        <widget>
-            <class>QRadioButton</class>
+        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+            <class>QButtonGroup</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>HeadScope</cstring>
+                <cstring>Scope</cstring>
             </property>
             <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>55</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                </sizepolicy>
             </property>
             <property stdset="1">
-                <name>text</name>
-                <string>&amp;Head Scope</string>
+                <name>title</name>
+                <string>&amp;Scope</string>
             </property>
-            <property stdset="1">
-                <name>buttonGroupId</name>
-                <number>2</number>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Currently package or type scope.</string>
-            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalScope</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Local</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>1</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Currently running scope.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>BodyScope</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Body Scope</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>3</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The scope of the file in the body editor.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HeadScope</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Head Scope</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>2</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Currently package or type scope.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>GlobalScope</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Global</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>4</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Global scope of variable.</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget>
-            <class>QRadioButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>GlobalScope</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>115</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Global</string>
-            </property>
-            <property stdset="1">
-                <name>buttonGroupId</name>
-                <number>4</number>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Global scope of variable.</string>
-            </property>
-        </widget>
-    </widget>
+    </grid>
 </widget>
 <connections>
     <connection>

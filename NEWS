@@ -53,6 +53,7 @@
 2001-07-09: Fixed bug with NULL and changing watch.
 2001-07-09: Fixed a few bugs with handling arrays in watches.
 2001-07-09: Hide unimplemented buttons in extraction.
+2001-07-09: Allow resizing of add watch and change watch.
 
 0.12: Released 2001-07-01
 
