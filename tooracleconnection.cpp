@@ -660,14 +660,24 @@ void toOracleProvider::oracleQuery::execute(void)
     for(toQList::iterator i=query()->params().begin();i!=query()->params().end();i++) {
       if ((*i).isNull())
 	(*Query)<<null;
-      else if ((*i).isString())
-	(*Query)<<QString(*i).utf8();
-      else if ((*i).isInt())
-	(*Query)<<(*i).toInt();
-      else if ((*i).isDouble())
-	(*Query)<<(*i).toDouble();
-      else
-	throw QString("Unknown input argument type");
+      else {
+	otl_var_desc *next=Query->describe_next_in_var();
+	switch(next->ftype) {
+	case otl_var_double:
+	case otl_var_float:
+	  (*Query)<<(*i).toDouble();
+	  break;
+	case otl_var_int:
+	case otl_var_unsigned_int:
+	case otl_var_short:
+	case otl_var_long_int:
+	  (*Query)<<(*i).toInt();
+	  break;
+	default:
+	  (*Query)<<QString(*i).utf8();
+	  break;
+	}
+      }
     }
   } catch (const otl_exception &exc) {
     ThrowException(exc);

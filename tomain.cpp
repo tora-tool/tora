@@ -768,11 +768,11 @@ bool toMain::delConnection(void)
       }
       if (!conn->closeWidgets())
 	return false;
+      emit removedConnection(conn->description());
       Connections.erase(i);
       ConnectionSelection->removeItem(pos);
       if (ConnectionSelection->count())
 	ConnectionSelection->setCurrentItem(max(pos-1,0));
-      emit removedConnection(conn->description());
       delete conn;
       break;
     }

@@ -47,6 +47,9 @@
 2001-10-03: Removed commit/rollback from worksheet.
 2001-10-03: Made the connectionlist indicate wether commit is needed.
 2001-10-03: Fixed toolbar in light worksheet.
+2001-10-03: Don't delete connection before emitting it will be removed.
+2001-10-03: Added support for Oracle7 in tuning tool.
+2001-10-03: Allow non string parameters in worksheet for oracle.
 
 1.1.1: Released 2001-09-24
 

@@ -86,35 +86,81 @@ static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
 			  "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,2))||' %'\n"
 			  "  FROM v$sysstat\n"
 			  " WHERE statistic# IN (38,39,40)",
-			  "Data buffer cache hit ratio (%). > 60% - 70%");
+			  "Data buffer cache hit ratio (%). > 60% - 70%",
+			  "8.0");
+
+static toSQL SQLDataCache7("toTuning:Indicators:Important ratios:3DataCache",
+			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,2))||' %'\n"
+			   "  FROM v$sysstat\n"
+			   " WHERE statistic# IN (37,38,39)",
+			   QString::null,
+			   "7.3");
 
 static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
 			"select value from v$sysstat where statistic# = 108",
-			"Redo log space requests. Close to 0");
+			"Redo log space requests. Close to 0",
+			"8.0");
+
+static toSQL SQLLogRedo7("toTuning:Indicators:Redo log contention:1LogSpace",
+			 "select value from v$sysstat where statistic# = 94",
+			 QString::null,
+			 "7.3");
 
 static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUndo",
 			       "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			       "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 			       "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-			       "System undo header waits (%). < 1%");
+			       "System undo header waits (%). < 1%",
+			       "8.0");
+
+static toSQL SQLSystemHeadUndo7("toTuning:Indicators:RBS contention:1SystemHeadUndo",
+				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
+				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+				QString::null,
+				"7.3");
 
 static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlockUndo",
 				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-				"System undo block waits (%). < 1%");
+				"System undo block waits (%). < 1%",
+				"8.0");
+
+static toSQL SQLSystemBlockUndo7("toTuning:Indicators:RBS contention:2SystemBlockUndo",
+				 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+				 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
+				 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
 			 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-			 "Undo head waits (%). < 1%");
+			 "Undo head waits (%). < 1%",
+			 "8.0");
+
+static toSQL SQLHeadUndo7("toTuning:Indicators:RBS contention:3HeadUndo",
+			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
+			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+			  QString::null,
+			  "7.3");
 
 static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
 			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
-			  "Undo block waits (%). < 1%");
+			  "Undo block waits (%). < 1%",
+			  "8.0");
+
+static toSQL SQLBlockUndo7("toTuning:Indicators:RBS contention:4BlockUndo",
+			   "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
+			   "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
+			   "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
+			   QString::null,
+			   "7.3");
 
 static toSQL SQLTotalWaits("toTuning:Indicators:RBS contention:5TotalWaits",
 			  "select to_char(round(sum(waits)/sum(gets)*100,2))||' %' from v$rollstat",
@@ -148,16 +194,37 @@ static toSQL SQLChartsPhysical("toTuning:Charts:1BBPhysical I/O",
 			       "       sum(decode(statistic#,44,value,0)) \"Physical writes\",\n"
 			       "       sum(decode(statistic#,105,value,0)) \"Redo writes\"\n"
 			       "  from v$sysstat where statistic# in (40,44,105)",
-			       "Generate chart of physical I/O of database.");
+			       "Generate chart of physical I/O of database.",
+			       "8.0");
+
+static toSQL SQLChartsPhysical7("toTuning:Charts:1BBPhysical I/O",
+				"select SYSDATE,\n"
+				"       sum(decode(statistic#,39,value,0)) \"Physical reads\",\n"
+				"       sum(decode(statistic#,40,value,0)) \"Physical writes\",\n"
+				"       sum(decode(statistic#,91,value,0)) \"Redo writes\"\n"
+				"  from v$sysstat where statistic# in (39,40,91)",
+				QString::null,
+				"7.3");
 
 static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
+			      "select SYSDATE,\n"
+			      "       sum(decode(statistic#,38,value,0)) \"Block gets\",\n"
+			      "       sum(decode(statistic#,39,value,0)) \"Consistent gets\",\n"
+			      "       sum(decode(statistic#,41,value,0)) \"Block changes\",\n"
+			      "       sum(decode(statistic#,42,value,0)) \"Consistent changes\"\n"
+			      "  from v$sysstat where statistic# in (38,39,41,42)",
+			      "Generate chart of physical I/O of database.",
+			      "8.0");
+
+static toSQL SQLChartsLogical7("toTuning:Charts:2BBLogical I/O",
 			       "select SYSDATE,\n"
-			       "       sum(decode(statistic#,38,value,0)) \"Block gets\",\n"
-			       "       sum(decode(statistic#,39,value,0)) \"Consistent gets\",\n"
-			       "       sum(decode(statistic#,41,value,0)) \"Block changes\",\n"
-			       "       sum(decode(statistic#,42,value,0)) \"Consistent changes\"\n"
-			       "  from v$sysstat where statistic# in (38,39,41,42)",
-			       "Generate chart of physical I/O of database.");
+			       "       sum(decode(statistic#,37,value,0)) \"Block gets\",\n"
+			       "       sum(decode(statistic#,38,value,0)) \"Consistent gets\",\n"
+			       "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
+			       "       sum(decode(statistic#,45,value,0)) \"Consistent changes\"\n"
+			       "  from v$sysstat where statistic# in (37,38,43,45)",
+			       QString::null,
+			       "7.3");
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "select sysdate,\n"
@@ -193,13 +260,33 @@ static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
 				"       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
 				"       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
 				"  from v$sysstat where statistic# in (181,180,179,4,5,6)",
-				"Used to generate chart for execution statistics.");
+				"Used to generate chart for execution statistics.",
+				"8.0");
+
+static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
+				 "select SYSDATE,\n"
+				 "       sum(decode(statistic#,132,value,0)) \"Execute\",\n"
+				 "       sum(decode(statistic#,131,value,0)) \"Parse\",\n"
+				 "       sum(decode(statistic#,6,value,0)) \"Calls\",\n"
+				 "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
+				 "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
+				 "  from v$sysstat where statistic# in (132,131,4,5,6)",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLChartsExecutionPie("toTuning:Charts:8PNExecution Total",
 				   "select value,decode(statistic#,181,'Execute',180,'Hard parse',179,'Parse',\n"
 				   "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
 				   "  from v$sysstat where statistic# in (180,179,181,6,4,5) order by name",
-				   "Used to generate pie chart for execution statistics.");
+				   "Used to generate pie chart for execution statistics.",
+				   "8.0");
+
+static toSQL SQLChartsExecutionPie7("toTuning:Charts:8PNExecution Total",
+				    "select value,decode(statistic#,132,'Execute',131,'Parse',\n"
+				    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
+				    "  from v$sysstat where statistic# in (132,131,6,4,5) order by name",
+				    QString::null,
+				    "7.3");
 
 static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
 			      "select sysdate,\n"
@@ -228,14 +315,36 @@ static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
 				  "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
 				  "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
 				  "Chart display memory allocation. This is really weird to change, especially since the column names "
-				  "don't correspond exactly to the column data in the chart. Each group of two are divided with each other before drawn.");
+				  "don't correspond exactly to the column data in the chart. Each group of two are divided with each other before drawn.",
+				  "8.0");
+
+static toSQL SQLChartsCacheMisses7("toTuning:Charts:5CPCache misses",
+				   "select sysdate,\n"
+				   "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
+				   "       getmiss \"Library cache\",gets \" \",\n"
+				   "       reloads \" \",pins \" \"\n"
+				   "  from (select 100*SUM(DECODE(statistic#,39,value,0)) pread,SUM(DECODE(statistic#,37,value,38,value,0)) read\n"
+				   "          from v$sysstat where statistic# IN (37,38,39)) \"Data buffer cache\",\n"
+				   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
+				   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
+				   QString::null,
+				   "7.3");
 
 static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
 			   "select SYSDATE,\n"
 			   "       sum(decode(statistic#,101,value,0))/:unit<int> \"Redo size\",\n"
 			   "       sum(decode(statistic#,103,value,0))/:unit<int> \"Redo wastage\"\n"
 			   "  from v$sysstat where statistic# in (101,103)",
-			   "Used to generate chart for redo I/O statistics.");
+			   "Used to generate chart for redo I/O statistics.",
+			   "8.0");
+
+static toSQL SQLChartsRedo7("toTuning:Charts:7BSRedo log I/O",
+			    "select SYSDATE,\n"
+			    "       sum(decode(statistic#,85,value,0))/:unit<int> \"Redo size\",\n"
+			    "       sum(decode(statistic#,89,value,0))/:unit<int> \"Redo wastage\"\n"
+			    "  from v$sysstat where statistic# in (85,89)",
+			    QString::null,
+			    "7.3");
 
 class toTuningTool : public toTool {
 protected:
@@ -257,63 +366,147 @@ static toTuningTool TuningTool;
 
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 				     "select sysdate,sum(blocks) from v$archived_log",
-				     "Archive log write");
+				     "Archive log write",
+				     "8.0");
+
+static toSQL SQLOverviewArchiveWrite7("toTuning:Overview:ArchiveWrite",
+				      "select sysdate,0 from dual",
+				      QString::null,
+				      "7.3");
 
 static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
 				  "SELECT SYSDATE,(1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100\n"
 				  "  FROM v$sysstat\n"
 				  " WHERE statistic# IN (38,39,40)",
-				  "Buffer hitrate");
+				  "Buffer hitrate",
+				  "8.0");
+
+static toSQL SQLOverviewBufferHit7("toTuning:Overview:BufferHit",
+				   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100\n"
+				   "  FROM v$sysstat\n"
+				   " WHERE statistic# IN (37,38,39)",
+				   QString::null,
+				   "7.3");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
 				    "select sysdate,value/:f1<int>\n"
 				    "  from v$sysstat where statistic# = 182",
-				    "Bytes sent to client");
+				    "Bytes sent to client",
+				    "8.0");
+
+static toSQL SQLOverviewClientInput7("toTuning:Overview:ClientInput",
+				     "select sysdate,value/:f1<int>\n"
+				     "  from v$sysstat where statistic# = 134",
+				     QString::null,
+				     "7.3");
 
 static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
 				     "select sysdate,value/:f1<int>\n"
 				     "  from v$sysstat where statistic# = 183",
-				     "Bytes sent from client");
+				     "Bytes sent from client",
+				     "8.0");
+
+static toSQL SQLOverviewClientOutput7("toTuning:Overview:ClientOutput",
+				      "select sysdate,value/:f1<int>\n"
+				      "  from v$sysstat where statistic# = 133",
+				      QString::null,
+				      "7.3");
 
 static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
 				"select sysdate,value\n"
 				"  from v$sysstat where statistic# = 181",
-				"Execute count");
+				"Execute count",
+				"8.0");
+
+static toSQL SQLOverviewExecute7("toTuning:Overview:Execute",
+				 "select sysdate,value\n"
+				 "  from v$sysstat where statistic# = 132",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLOverviewParse("toTuning:Overview:Parse",
 			      "select sysdate,value\n"
 			      "  from v$sysstat where statistic# = 179",
-			      "Parse count");
+			      "Parse count",
+			      "8.0");
+
+static toSQL SQLOverviewParse7("toTuning:Overview:Parse",
+			       "select sysdate,value\n"
+			       "  from v$sysstat where statistic# = 131",
+			       QString::null,
+			       "7.3");
 
 static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
 				    "select sysdate,value\n"
 				    "  from v$sysstat where statistic# = 100",
-				    "Redo entries");
+				    "Redo entries",
+				    "8.0");
+
+static toSQL SQLOverviewRedoEntries7("toTuning:Overview:RedoEntries",
+				     "select sysdate,value\n"
+				     "  from v$sysstat where statistic# = 84",
+				     QString::null,
+				     "7.3");
 
 static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
 				   "select sysdate,value\n"
 				   "  from v$sysstat where statistic# = 106",
-				   "Redo blocks written");
+				   "Redo blocks written",
+				   "8.0");
+
+static toSQL SQLOverviewRedoBlocks7("toTuning:Overview:RedoBlocks",
+				    "select sysdate,value\n"
+				    "  from v$sysstat where statistic# = 92",
+				    QString::null,
+				    "7.3");
 
 static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
 				    "select sysdate,sum(value)\n"
 				    "  from v$sysstat where statistic# in (38,39)",
-				    "Blocks read");
+				    "Blocks read",
+				    "8.0");
+
+static toSQL SQLOverviewLogicalRead7("toTuning:Overview:LogicalRead",
+				     "select sysdate,sum(value)\n"
+				     "  from v$sysstat where statistic# in (37,38)",
+				     QString::null,
+				     "7.3");
 
 static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
 				     "select sysdate,sum(value)\n"
 				     "  from v$sysstat where statistic# in (41,42)",
-				     "Blocks written");
+				     "Blocks written",
+				     "8.0");
+
+static toSQL SQLOverviewLogicalWrite7("toTuning:Overview:LogicalWrite",
+				      "select sysdate,sum(value)\n"
+				      "  from v$sysstat where statistic# in (43,45)",
+				      QString::null,
+				      "7.3");
 
 static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
 				     "select sysdate,value\n"
 				     "  from v$sysstat where statistic# = 40",
-				     "Blocks physically read");
+				     "Blocks physically read",
+				     "8.0");
+
+static toSQL SQLOverviewPhysicalRead7("toTuning:Overview:PhysicalRead",
+				      "select sysdate,value\n"
+				      "  from v$sysstat where statistic# = 39",
+				      QString::null,
+				      "7.3");
 
 static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
 				      "select sysdate,value\n"
 				      "  from v$sysstat where statistic# = 44",
-				      "Blocks physically written");
+				      "Blocks physically written",
+				      "8.0");
+
+static toSQL SQLOverviewPhysicalWrite7("toTuning:Overview:PhysicalWrite",
+				       "select sysdate,value\n"
+				       "  from v$sysstat where statistic# = 40",
+				       QString::null,
+				       "7.3");
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "select sysdate,\n"
@@ -336,7 +529,15 @@ static toSQL SQLOverviewSGAUsed("toTuning:Overview:SGAUsed",
 				"select sysdate,100*(total-free)/total\n"
 				"  from (select sum(value) total from v$sga where name in ('Fixed Size','Variable Size')),\n"
 				"       (select bytes free from v$sgastat where pool = 'shared pool' and name = 'free memory')",
-				"SGA used");
+				"SGA used",
+				"8.0");
+
+static toSQL SQLOverviewSGAUsed7("toTuning:Overview:SGAUsed",
+				 "select sysdate,100*(total-free)/total\n"
+				 "  from (select sum(value) total from v$sga where name in ('Fixed Size','Variable Size')),\n"
+				 "       (select bytes free from v$sgastat where name = 'free memory')",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLOverviewTimescale("toTuning:Overview:Timescale",
 				  "select sysdate,0 from dual",
@@ -423,7 +624,15 @@ static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
 				"select count(1),\n"
 				"       nvl(sum(blocks*block_size),0)/:f1<int>\n"
 				"  from v$archived_log where deleted = 'NO'",
-				"Information about archive logs");
+				"Information about archive logs",
+				"8.0");
+
+static toSQL SQLOverviewArchive7("toTuning:Overview:Archive",
+				 "select 'N/A',\n"
+				 "       'N/A'\n"
+				 "  from dual where 0 != :f1<int>",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLOverviewLog("toTuning:Overview:Log",
 			    "select count(1),\n"
@@ -434,7 +643,13 @@ static toSQL SQLOverviewLog("toTuning:Overview:Log",
 
 static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
 				    "select count(1) from v$tablespace",
-				    "Number of tablespaces");
+				    "Number of tablespaces",
+				    "8.0");
+
+static toSQL SQLOverviewTablespaces7("toTuning:Overview:Tablespaces",
+				    "select count(1) from dba_tablespaces",
+				    QString::null,
+				     "7.3");
 
 static toSQL SQLOverviewSGA("toTuning:Overview:SGA",
 			    "select name,value/:f1<int> from v$sga",
@@ -447,7 +662,13 @@ static toSQL SQLOverviewBackground("toTuning:Overview:Background",
 
 static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
 				  "select count(1) from v$session where type = 'USER' and server = 'DEDICATED' and sid not in (select sid from v$px_process)",
-				  "Dedicated server process");
+				  "Dedicated server process",
+				  "8.1");
+
+static toSQL SQLOverviewDedicated7("toTuning:Overview:Dedicated",
+				   "select count(1) from v$session where type = 'USER' and server = 'DEDICATED'",
+				   QString::null,
+				   "8.0");
 
 static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
 				   "select count(1) from v$dispatcher",
@@ -455,7 +676,13 @@ static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
 
 static toSQL SQLOverviewParallell("toTuning:Overview:Parallel",
 				  "select count(1) from v$px_process",
-				  "Parallel processes");
+				  "Parallel processes",
+				  "8.1");
+
+static toSQL SQLOverviewParallell8("toTuning:Overview:Parallel",
+				   "select 'N/A' from dual",
+				   QString::null,
+				   "8.0");
 
 static toSQL SQLOverviewShared("toTuning:Overview:Shared",
 			       "select count(1) from v$shared_server",
@@ -472,11 +699,26 @@ static toSQL SQLOverviewClientTotal("toTuning:Overview:ClientTotal",
 				    "       sum(decode(status,'ACTIVE',1,0))\n"
 				    "  from v$session\n"
 				    " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
-				    "Information about total and active clients");
+				    "Information about total and active clients",
+				    "8.1");
+
+static toSQL SQLOverviewClientTotal8("toTuning:Overview:ClientTotal",
+				     "select count(1),\n"
+				     "       sum(decode(status,'ACTIVE',1,0))\n"
+				     "  from v$session\n"
+				     " where type != 'BACKGROUND'",
+				     QString::null,
+				     "8.0");
 
 static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
 				  "select count(1) from v$datafile",
-				  "Number of datafiles");
+				  "Number of datafiles",
+				  "8.0");
+
+static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
+				   "select count(1) from dba_tablespaces",
+				   QString::null,
+				   "7.3");
 
 void toTuningOverview::refresh(void)
 {
@@ -827,7 +1069,8 @@ static toSQL SQLFileIO("toTuning:FileIO",
 		       "  from v$tablespace a,v$datafile b,v$filestat c\n"
 		       " where a.ts# = b.ts# and b.file# = c.file#\n"
 		       " order by a.name",
-		       "Get file for files and tablespaces. Must have same columns.");
+		       "Get file for files and tablespaces. Must have same columns.",
+		       "8.0");
 
 toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
   : QScrollView(parent,name,fl)
@@ -843,8 +1086,10 @@ toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
     QComboBox *combo=new QComboBox(Box);
     combo->insertItem("File I/O");
     combo->insertItem("File timing");
-    combo->insertItem("Tablespace I/O");
-    combo->insertItem("Tablespace timing");
+    if (toCurrentConnection(this).version()>="8.0") {
+      combo->insertItem("Tablespace I/O");
+      combo->insertItem("Tablespace timing");
+    }
     connect(combo,SIGNAL(activated(int)),this,SLOT(changeCharts(int)));
 
     FileReads=new QGrid(2,Box);
@@ -970,6 +1215,8 @@ void toTuningFileIO::refresh(void)
 {
   try {
     toConnection &conn=toCurrentConnection(this);
+    if (conn.version()<"8.0")
+      return;
     toQList Files=toQuery::readQuery(conn,SQLFileIO);
 
     QString lastTablespace;

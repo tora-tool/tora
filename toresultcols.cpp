@@ -224,6 +224,7 @@ void toResultCols::query(const QString &,const toQList &param)
 
   QString synonym;
   try {
+    Columns->clear();
     const toConnection::objectName &name=conn.realName(object,synonym,false);
 
     QString label="<B>";
