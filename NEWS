@@ -75,6 +75,7 @@
 2001-08-20: Time executing using hundreds of a second.
 2001-08-20: Time duration using hundreds of seconds in worksheet.
 2001-08-20: Display duration in statusmessage in worksheet.
+2001-08-21: Added code completion option to syntax setup (Not implemented yet).
 
 0.14: Released 2001-08-02
 

@@ -470,6 +470,17 @@ public:
     virtual void execute(toConnectionSub *conn,const QCString &sql,toQList &params) = 0;
   };
 
+  /** Contain information about a tablename.
+   */
+  struct tableName {
+    /** The tablename
+     */
+    QString Tablename;
+    /** The schema that owns it, can be empty if this is a public synonym.
+     */
+    QString Owner;
+  };
+
 private:
 
   void addConnection(void);
@@ -477,6 +488,8 @@ private:
   { return Connections; }
 
   connectionImpl *Connection;
+
+  map<tableName,list<QString> > TableCache;
 
   toConnectionSub *mainConnection(void);
   toConnectionSub *longConnection(void);
@@ -650,6 +663,21 @@ public:
    * Remove a statement that was added using @ref addInit.
    */
   void delInit(const QString &sql);
+
+  /**
+   * Get the tables available for the current user. This function caches the responses
+   * and should be fairly fast after the first call. Do not modify the returned list.
+   * @return A list of tables available for the current user, including psynonyms and
+   *         views.
+   */
+  list<tableName> &tables(void);
+
+  /**
+   * Get a list of the available columns for a table. This function caches the responses
+   * and should be fairly fast after the first call. Do not modify the returned list.
+   * @return A list of the columns for a table.
+   */
+  list<QString> &columns(const tableName &table);
 
   friend class toQuery;
 };
