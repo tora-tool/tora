@@ -66,7 +66,6 @@ void toResult::changeHandle(void)
       if (TabWidget&&Tabs&&handled()) {
 #ifdef HIDETABS
 	Tabs->insertTab(TabWidget,TabLabel,TabIndex);
-	TabIndex=-1;
 	TabWidget=NULL;
 #else
 	Tabs->setTabEnabled(TabWidget,true);
@@ -86,9 +85,11 @@ void toResult::changeHandle(void)
 	if (!Tabs)
 	  Tabs=(QTabWidget *)par;
 #ifdef HIDETABS
-	TabIndex=Tabs->indexOf(widgetInStack);
-	if (TabIndex>=0) {
+	if (TabIndex<0) {
+	  TabIndex=Tabs->indexOf(widgetInStack);
 	  TabLabel=Tabs->label(TabIndex);
+	}
+	if (TabIndex>=0) {
 	  Tabs->removePage(widgetInStack);
 	  TabWidget=widgetInStack;
 	}

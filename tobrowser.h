@@ -124,4 +124,18 @@ public slots:
   void clearFilter(void);
 };
 
+class toBrowseButton : public QToolButton {
+  Q_OBJECT
+public:
+  toBrowseButton(const QIconSet &iconSet,
+		 const QString &textLabel,
+		 const QString & grouptext,
+		 QObject * receiver,
+		 const char * slot,
+		 QToolBar * parent,
+		 const char * name=0);
+private slots:
+  void connectionChanged(void);
+};
+
 #endif

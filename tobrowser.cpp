@@ -39,6 +39,7 @@
 #include "tochangeconnection.h"
 #include "toconf.h"
 #include "toconnection.h"
+#include "toextract.h"
 #include "tohelp.h"
 #include "tomain.h"
 #include "toresultcols.h"
@@ -372,6 +373,28 @@ public:
 			       OnlyOwnSchema->isChecked());
   }
 };
+
+toBrowseButton::toBrowseButton(const QIconSet &iconSet,
+			       const QString &textLabel,
+			       const QString & grouptext,
+			       QObject * receiver,
+			       const char * slot,
+			       QToolBar * parent,
+			       const char * name)
+  : QToolButton(iconSet,textLabel,grouptext,receiver,slot,parent,name)
+{
+  try {
+    connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+  } TOCATCH
+  connectionChanged();
+}
+
+void toBrowseButton::connectionChanged()
+{
+  try {
+    setEnabled(toExtract::canHandle(toCurrentConnection(this)));
+  } TOCATCH
+}
 
 #define FIRST_WIDTH 150
 
@@ -907,27 +930,27 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(box,QSplitter::Stretch);
 
   toolbar=toAllocBar(box,tr("Table browser"));
-  new QToolButton(QPixmap((const char **)addtable_xpm),
-		  tr("Create new table"),
-		  tr("Create new table"),
-		  this,SLOT(addTable()),
-		  toolbar);
+  new toBrowseButton(QPixmap((const char **)addtable_xpm),
+		     tr("Create new table"),
+		     tr("Create new table"),
+		     this,SLOT(addTable()),
+		     toolbar);
   toolbar->addSeparator();
-  new QToolButton(QPixmap((const char **)modtable_xpm),
-		  tr("Modify table columns"),
-		  tr("Modify table columns"),
-		  this,SLOT(modifyTable()),
-		  toolbar);
-  new QToolButton(QPixmap((const char **)modconstraint_xpm),
-		  tr("Modify constraints"),
-		  tr("Modify constraints"),
-		  this,SLOT(modifyTable()),
-		  toolbar);
-  new QToolButton(QPixmap((const char **)modindex_xpm),
-		  tr("Modify indexes"),
-		  tr("Modify indexes"),
-		  this,SLOT(modifyTable()),
-		  toolbar);
+  new toBrowseButton(QPixmap((const char **)modtable_xpm),
+		     tr("Modify table columns"),
+		     tr("Modify table columns"),
+		     this,SLOT(modifyTable()),
+		     toolbar);
+  new toBrowseButton(QPixmap((const char **)modconstraint_xpm),
+		     tr("Modify constraints"),
+		     tr("Modify constraints"),
+		     this,SLOT(modifyTable()),
+		     toolbar);
+  new toBrowseButton(QPixmap((const char **)modindex_xpm),
+		     tr("Modify indexes"),
+		     tr("Modify indexes"),
+		     this,SLOT(modifyTable()),
+		     toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   QTabWidget *curr=new QTabWidget(box);
