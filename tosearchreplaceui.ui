@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>598</width>
+            <width>578</width>
             <height>217</height>
         </rect>
     </property>
@@ -47,7 +47,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Search</string>
+                <string>&amp;Search Top</string>
             </property>
         </widget>
         <spacer row="5"  column="2" >
@@ -92,6 +92,10 @@
                 <name>text</name>
                 <string>Search &amp;Next</string>
             </property>
+            <property stdset="1">
+                <name>accel</name>
+                <number>4146</number>
+            </property>
         </widget>
         <widget row="2"  column="2" >
             <class>QPushButton</class>
@@ -113,6 +117,10 @@
             <property stdset="1">
                 <name>text</name>
                 <string>&amp;Replace</string>
+            </property>
+            <property stdset="1">
+                <name>accel</name>
+                <number>272629842</number>
             </property>
         </widget>
         <widget row="3"  column="2" >
@@ -222,7 +230,7 @@
                             <name>spacing</name>
                             <number>6</number>
                         </property>
-                        <widget row="0"  column="0"  rowspan="1"  colspan="5" >
+                        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
                             <class>QMultiLineEdit</class>
                             <property stdset="1">
                                 <name>name</name>
@@ -248,21 +256,6 @@
                                 <string>Match text exactly as written</string>
                             </property>
                         </widget>
-                        <widget row="1"  column="1" >
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>Wildcard</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Wildcard</string>
-                            </property>
-                            <property>
-                                <name>toolTip</name>
-                                <string>Use wildcard semantics for matching</string>
-                            </property>
-                        </widget>
                         <widget row="2"  column="0" >
                             <class>QCheckBox</class>
                             <property stdset="1">
@@ -278,7 +271,7 @@
                                 <string>Only match whole words</string>
                             </property>
                         </widget>
-                        <widget row="2"  column="1"  rowspan="1"  colspan="2" >
+                        <widget row="2"  column="1" >
                             <class>QCheckBox</class>
                             <property stdset="1">
                                 <name>name</name>
@@ -293,7 +286,7 @@
                                 <string>Only match whole words</string>
                             </property>
                         </widget>
-                        <widget row="1"  column="2"  rowspan="1"  colspan="2" >
+                        <widget row="1"  column="1" >
                             <class>QRadioButton</class>
                             <property stdset="1">
                                 <name>name</name>
@@ -308,31 +301,10 @@
                                 <string>Use RegExp semantics for matching (See Qt documentation)</string>
                             </property>
                         </widget>
-                        <spacer row="1"  column="4" >
+                        <spacer row="1"  column="2" >
                             <property>
                                 <name>name</name>
                                 <cstring>Spacer2</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>orientation</name>
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
-                                <enum>Expanding</enum>
-                            </property>
-                            <property>
-                                <name>sizeHint</name>
-                                <size>
-                                    <width>20</width>
-                                    <height>20</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <spacer row="2"  column="3"  rowspan="1"  colspan="2" >
-                            <property>
-                                <name>name</name>
-                                <cstring>Spacer3</cstring>
                             </property>
                             <property stdset="1">
                                 <name>orientation</name>
@@ -398,5 +370,53 @@
         <receiver>toSearchReplaceUI</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>Search</sender>
+        <signal>clicked()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>search()</slot>
+    </connection>
+    <connection>
+        <sender>SearchNext</sender>
+        <signal>clicked()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>searchNext()</slot>
+    </connection>
+    <connection>
+        <sender>Replace</sender>
+        <signal>clicked()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>replace()</slot>
+    </connection>
+    <connection>
+        <sender>ReplaceAll</sender>
+        <signal>clicked()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>replaceAll()</slot>
+    </connection>
+    <connection>
+        <sender>SearchText</sender>
+        <signal>textChanged()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>searchChanged()</slot>
+    </connection>
+    <slot access="public">searchChanged()</slot>
+    <slot access="public">replace()</slot>
+    <slot access="public">replaceAll()</slot>
+    <slot access="public">search()</slot>
+    <slot access="public">searchNext()</slot>
 </connections>
+<tabstops>
+    <tabstop>SearchText</tabstop>
+    <tabstop>Exact</tabstop>
+    <tabstop>RegExp</tabstop>
+    <tabstop>WholeWord</tabstop>
+    <tabstop>IgnoreCase</tabstop>
+    <tabstop>ReplaceText</tabstop>
+    <tabstop>Search</tabstop>
+    <tabstop>SearchNext</tabstop>
+    <tabstop>Replace</tabstop>
+    <tabstop>ReplaceAll</tabstop>
+    <tabstop>Close</tabstop>
+</tabstops>
 </UI>

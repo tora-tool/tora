@@ -37,6 +37,7 @@ TO_NAMESPACE;
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qpopupmenu.h>
+#include <qpushbutton.h>
 #include <qstatusbar.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
@@ -58,6 +59,7 @@ TO_NAMESPACE;
 #include "topreferences.h"
 #include "toresultview.h"
 #include "toresultcontent.h"
+#include "tosearchreplace.h"
 
 #include "tomain.moc"
 
@@ -94,6 +96,8 @@ TO_NAMESPACE;
 #define TO_EDIT_SELECT_ALL	205
 #define TO_EDIT_OPTIONS		206
 #define TO_EDIT_READ_ALL	207
+#define TO_EDIT_SEARCH		208
+#define TO_EDIT_SEARCH_NEXT	209
 
 #define TO_WINDOWS_TILE		300
 #define TO_WINDOWS_CASCADE	301
@@ -196,7 +200,9 @@ toMain::toMain()
   EditMenu->insertItem(*toCopyPixmap,"&Copy",TO_EDIT_COPY);
   EditMenu->insertItem(*toPastePixmap,"&Paste",TO_EDIT_PASTE);
   EditMenu->insertSeparator();
-  EditMenu->insertItem("&Select All",TO_EDIT_SELECT_ALL);
+  EditMenu->insertItem("&Search && Replace",TO_EDIT_SEARCH);
+  EditMenu->insertItem("Search &Next",TO_EDIT_SEARCH_NEXT);
+  EditMenu->insertItem("Select &All",TO_EDIT_SELECT_ALL);
   EditMenu->insertItem("Read All &Items",TO_EDIT_READ_ALL);
   EditMenu->insertSeparator();
   EditMenu->insertItem("&Options",TO_EDIT_OPTIONS);
@@ -205,6 +211,8 @@ toMain::toMain()
   EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
   EditMenu->setAccel(Key_C|CTRL,TO_EDIT_COPY);
   EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
+  EditMenu->setAccel(Key_F|CTRL,TO_EDIT_SEARCH);
+  EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
   connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
   menuBar()->insertItem("&Edit",EditMenu,TO_EDIT_MENU);
 
@@ -398,6 +406,7 @@ toMain::toMain()
     (*i).second->customSetup(toolID);
     toolID++;
   }
+  Search=NULL;
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
@@ -422,6 +431,9 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,true);
     menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
     menuBar()->setItemEnabled(TO_FILE_PRINT,true);
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
+			      Search&&Search->searchNextAvailable());
   } else {
     menuBar()->setItemEnabled(TO_EDIT_UNDO,false);
     menuBar()->setItemEnabled(TO_EDIT_REDO,false);
@@ -432,6 +444,8 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH,false);
+    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,false);
     if (dynamic_cast<toResultView *>(currWidget)||
 	toContent(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
@@ -504,6 +518,15 @@ void toMain::commandCallback(int cmd)
 	break;
       case TO_EDIT_SELECT_ALL:
 	mark->selectAll();
+	break;
+      case TO_EDIT_SEARCH:
+	if (!Search)
+	  Search=new toSearchReplace(this);
+	Search->setTarget(mark);
+	break;
+      case TO_EDIT_SEARCH_NEXT:
+	if (Search)
+	  Search->searchNext();
 	break;
       case TO_FILE_OPEN:
 	if (!readOnly) {
@@ -783,7 +806,8 @@ void toMain::printButton(void)
 
 void toMain::editEnable(bool open,bool save,bool print,
 			bool undo,bool redo,
-			bool cut,bool copy,bool paste)
+			bool cut,bool copy,bool paste,
+			bool search)
 {
   toMain *main=(toMain *)qApp->mainWidget();
   if (main) {

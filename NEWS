@@ -1,4 +1,4 @@
-0.8:
+0.8: Released 2001-05-07
 
 2001-03-24: Fixed bug in quotes.
 2001-03-24: Set need commit when editing toResultContent.
@@ -71,6 +71,9 @@
 2001-05-02: Fixed problem loading large files.
 2001-05-03: Final changes to make extract actually work (Whoopeee!)
 2001-05-03: Added check buttons to toResultView.
+2001-05-07: Added search & replace.
+2001-05-07: Fixed saving settings on color keywords.
+2001-05-07: Fixed typo in SQL edit menu.
 
 0.7: Released 2001-03-24
 

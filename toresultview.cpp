@@ -574,7 +574,7 @@ void toResultView::focusInEvent (QFocusEvent *e)
 {
   toMain::editEnable(false,false,true,
 		     false,false,
-		     false,false,false);
+		     false,false,false,true);
   QListView::focusInEvent(e);
 }
 

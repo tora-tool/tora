@@ -85,7 +85,7 @@ public:
   }
   virtual void customSetup(int toolid)
   {
-    toMainWidget()->editMenu()->insertItem("&Edt SQL",toolid);
+    toMainWidget()->editMenu()->insertItem("&Edit SQL",toolid);
   }
   void closeWindow(void)
   {

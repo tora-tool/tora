@@ -12565,7 +12565,7 @@ public:
   case inCLOB:     return extCLOB;
   case inBLOB:     return extBLOB;
   default:
-   return -1;
+   return extCChar;
   }
  }
 

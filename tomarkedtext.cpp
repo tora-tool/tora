@@ -57,11 +57,11 @@ void toMarkedText::setEdit(void)
   if (isReadOnly()) {
     toMain::editEnable(false,true,true,
 		       false,false,
-		       hasMarkedText(),hasMarkedText(),false);
+		       hasMarkedText(),hasMarkedText(),false,true);
   } else {
     toMain::editEnable(true,true,true,
 		       getUndoAvailable(),getRedoAvailable(),
-		       hasMarkedText(),hasMarkedText(),true);
+		       hasMarkedText(),hasMarkedText(),true,true);
   }
 }
 

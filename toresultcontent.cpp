@@ -312,7 +312,7 @@ void toResultContent::focusInEvent (QFocusEvent *e)
 {
   toMain::editEnable(false,false,true,
 		     false,false,
-		     false,false,false);
+		     false,false,false,true);
   QTable::focusInEvent(e);
 }
 

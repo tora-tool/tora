@@ -96,7 +96,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
   QString res;
 
   QString def="<char[";
-  def+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
+  def+=QString::number(min(toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt(),3999));
   def+="]>";
 
   for(unsigned int i=0;i<str.length()+1;i++) {

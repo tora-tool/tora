@@ -50,6 +50,7 @@ class QToolButton;
 class QPopupMenu;
 class QTimer;
 class QLabel;
+class toSearchReplace;
 
 #include "toconnection.h"
 #include "totool.h"
@@ -81,6 +82,7 @@ private:
   QPopupMenu *HelpMenu;
   QLabel *ColumnLabel;
   QLabel *RowLabel;
+  toSearchReplace *Search;
 public:
   toMain();
 
@@ -91,9 +93,10 @@ public:
 
   static void editEnable(bool open,bool save,bool print,
 			 bool undo,bool redo,
-			 bool cut,bool copy,bool paste);
+			 bool cut,bool copy,bool paste,
+			 bool search);
   static void editDisable(void)
-  { editEnable(false,false,false,false,false,false,false,false); }
+  { editEnable(false,false,false,false,false,false,false,false,false); }
 
   virtual bool close(bool del);
   void createDefault(void);

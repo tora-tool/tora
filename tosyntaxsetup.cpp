@@ -94,7 +94,7 @@ void toSyntaxAnalyzer::readColor(const QColor &def,infoType typ)
 {
   QString str=typeString(typ);
   QString conf(CONF_COLOR);
-  conf+="\\";
+  conf+=":";
   conf+=str;
   QString res=toTool::globalConfig(conf,"");
   if (res.isEmpty())
@@ -217,7 +217,7 @@ void toSyntaxSetup::saveSetting(void)
   toTool::globalSetConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
   for (map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
     QString str(CONF_COLOR);
-    str+="\\";
+    str+=":";
     str+=(*i).first;
     QString res;
     res.sprintf("%d,%d,%d",

@@ -64,6 +64,7 @@ my $Target="tora-mono";
 my $ForceTarget=0;
 my $Perl=`which perl`;
 chomp $Perl;
+my $Linux;
 
 $QtDir=$ENV{QTDIR};
 
@@ -351,12 +352,19 @@ __TEMP__
     if (! -f $StdCppLibStatic) {
 	$StdCppLibStatic="";
     }
+
     
+
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     if ($ORACLE_RELEASE =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
         $LFlags.="\"-lcore4\" ";
         $LFlags.="\"-lnlsrtl3\" ";
+    }
+
+    if (`uname`=~/linux/i) {
+	$LFlags.=" -Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\"";
+	$Linux=1;
     }
 
     $LFlags.="\"-L".$QtLib."\"";
@@ -410,7 +418,7 @@ __EOT__
     }
 
     if (!$ForceTarget) {
-	if (`uname`=~/linux/i) {
+	if ($Linux) {
 	    print "Compiling for linux. Generate pluginbased tora.\n";
 	    $Target="tora-plugin";
 	}
