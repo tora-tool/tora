@@ -44,7 +44,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
 "This program is available\n"
-"under the GNU Public License.<P>\n"
+"under the Q Public License.<P>\n"
 "Uses the Qt library version 2.2 by TrollTech\n"
 "(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>\n"
 "\n"
@@ -52,7 +52,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"GNU General Public License for more details.";
+"Q General Public License for more details.";
 
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
