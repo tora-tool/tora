@@ -561,10 +561,12 @@ void toMain::commandCallback(int cmd)
 	  QFileInfo file(mark->filename());
 	  QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
-	    QCString data=toReadFile(filename);
-	    mark->setText(QString::fromLocal8Bit(data));
-	    mark->setFilename(filename);
-	    toStatusMessage("File opened successfully");
+	    try {
+	      QCString data=toReadFile(filename);
+	      mark->setText(QString::fromLocal8Bit(data));
+	      mark->setFilename(filename);
+	      toStatusMessage("File opened successfully");
+	    } TOCATCH
 	  }
 	}
 	break;

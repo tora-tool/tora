@@ -41,8 +41,8 @@
 #include <qmainwindow.h>
 
 #ifdef TO_KDE
-#  include <kdockwidget.h>
 #  include <kapp.h>
+#  include <kdockwidget.h>
 #  if KDE_VERSION < 220
 #    define TOPrinter QPrinter
 #  else
