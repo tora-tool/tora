@@ -242,6 +242,7 @@ my $CC;
 my $Libs="-lcrypt -lm -lpthread";
 my $MOC;
 my $UIC;
+my $LRelease;
 my $QtDir;
 my $QtInclude;
 my $QtVersion;
@@ -291,6 +292,8 @@ for (@ARGV) {
 	$MOC=$1;
     } elsif (/^--with-qt-uic=(.*)$/) {
 	$UIC=$1;
+    } elsif (/^--with-qt-lrelease=(.*)$/) {
+	$LRelease=$1;
     } elsif (/^--prefix=(.*)$/) {
 	$InstallPrefix=$1;
     } elsif (/^--with-mysql-include=(.*)$/) {
@@ -352,6 +355,7 @@ Options can be any of the following:
 --with-qt            Specify Qt base directory
 --with-qt-moc        Specify moc command to use
 --with-qt-uic        Specify uic command to use
+--with-qt-lrelease   Specify lrelease command to use
 --with-qt-include    Specify Qt include directory
 --with-qt-libs       Specify Qt library directory
 --with-gcc           Specify which GCC compiler to use
@@ -817,6 +821,35 @@ __TEMP__
     }
     print "$UIC\n";
 
+    print "checking for lrelease ... ";
+    if (!defined $LRelease || ! -x $LRelease) {
+	$LRelease=findFile("lrelease",sub { return -x $_[0]; },
+		      $QtDir."/bin",
+		      "/usr/lib/qt2",
+		      "/usr/lib/qt2/bin",
+		      "/usr/lib/qt3",
+		      "/usr/lib/qt3/bin",
+		      "/usr/local/lib/qt2",
+		      "/usr/local/lib/qt2/bin",
+		      "/usr/local/lib/qt3",
+		      "/usr/local/lib/qt3/bin",
+		      "/usr/local/qt2",
+		      "/usr/local/qt2/bin",
+		      "/usr/local/qt3",
+		      "/usr/local/qt3/bin",
+		      "/usr/lib/qt",
+		      "/usr/bin",
+		      "/usr/local/bin",
+		      "/usr/local/lib/qt");
+	if (defined $LRelease && -d $LRelease) {
+	    $LRelease.="/lrelease";
+	}
+    }
+    if (!-x $LRelease) {
+	$LRelease="true";
+    }
+    print "$LRelease\n";
+
     print "checking for Qt include files ... ";
     $QtInclude=findFile("^qglobal\\.h\$",sub {
 	                                     if (open(QT,"<$_[0]")) {
@@ -1263,6 +1296,10 @@ __EOT__
 	print MAKEFILE "UIC=\"$UIC\"\n";
 	print MAKEFILE "\n";
 
+	print MAKEFILE "# Path to Qt translation compiler\n";
+	print MAKEFILE "LRELEASE=\"$LRelease\"\n";
+	print MAKEFILE "\n";
+
 	print MAKEFILE "# Additional paths to find libraries\n";
 	print MAKEFILE "LFLAGS=$LFlags\n";
 	print MAKEFILE "\n";
@@ -1446,15 +1483,7 @@ vpath \%.h \$(INCLUDE)
 
 .PHONY: all clean fixmod install distclean
 
-__EOT__
-    
-    if ($QtVersion ge "3") {
-	print MAKEFILE "all: \$(TARGET) lrelease\n";
-    } else {
-	print MAKEFILE "all: \$(TARGET)\n";
-    }
-
-print MAKEFILE <<__EOT__;
+all: \$(TARGET) lrelease
 
 #\$(OBJECTS): Makefile Makefile.common
 
@@ -1489,15 +1518,7 @@ objs/\%.o: \%.cpp
 \%.o : objs/\%.o
 	\@echo Faulty dependency, forgot the objs/ part
 
-__EOT__
-
-    if ($QtVersion ge "3") {
-	print MAKEFILE "install-common: lrelease\n";
-    } else {
-	print MAKEFILE "install-common:\n";
-    }
-
-print MAKEFILE <<__EOT__;
+install-common: lrelease
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	mkdir -p \$(INSTALLBIN)
 	mkdir -p \$(INSTALLLIB)/tora/help
@@ -1642,7 +1663,7 @@ lupdate: tora.pro
 	lupdate tora.pro
 
 lrelease: tora.pro \$(TRANSLATIONS)
-	lrelease tora.pro
+	\$(LRELEASE) tora.pro
 
 tora:\\
 __EOT__
