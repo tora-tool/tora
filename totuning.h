@@ -37,7 +37,10 @@
 #ifndef __TOTUNING_H
 #define __TOTUNING_H
 
+#include <list>
+
 #include "totool.h"
+#include "totuningoverviewui.h"
 
 class QTabWidget;
 class QComboBox;
@@ -45,6 +48,16 @@ class toConnection;
 class toListView;
 class toResultStats;
 class toResultView;
+class toResultChart;
+class QLabel;
+
+class toTuningOverview : public toTuningOverviewUI {
+  list<QLabel *> Backgrounds;
+  void setupChart(toResultLine *chart,const QString &,const QString &,toSQL &sql);
+public:
+  toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
+  void refresh(void);
+};
 
 class toTuning : public toToolWidget {
   Q_OBJECT
@@ -54,6 +67,7 @@ class toTuning : public toToolWidget {
   toResultView *Parameters;
   toResultStats *Statistics;
   QComboBox *Schema;
+  toTuningOverview *Overview;
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:

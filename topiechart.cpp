@@ -51,6 +51,8 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f=0)
   Legend=true;
   DisplayPercent=false;
 
+  setMinimumSize(60,60);
+
   // Use list font
   QString str=toTool::globalConfig(CONF_LIST,"");
   if (!str.isEmpty()) {

@@ -94,6 +94,7 @@ SOURCES=\
 	tothread.cpp		\
 	totool.cpp		\
 	totuning.cpp		\
+	totuningoverviewui.cpp	\
 	toworksheet.cpp		\
 	toworksheetsetupui.cpp	\
 	utils.cpp
@@ -196,7 +197,9 @@ plugins/totemplate.tso:\
 	objs/totemplateaddfileui.o \
 	objs/totemplateeditui.o \
 	objs/totemplatesetupui.o
-plugins/totuning.tso:objs/totuning.o
+plugins/totuning.tso:\
+	objs/totuning.o \
+	objs/totuningoverviewui.o
 plugins/toworksheet.tso: \
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o

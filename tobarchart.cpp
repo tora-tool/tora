@@ -100,10 +100,11 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   Legend=true;
   Grid=5;
   AxisText=true;
-  
+  Last=false;
+
   setSamples();
 
-  setMinimumSize(60,30);
+  setMinimumSize(80,50);
 
   // Use list font
   QString str=toTool::globalConfig(CONF_LIST,"");
@@ -159,6 +160,23 @@ void toBarChart::paintEvent(QPaintEvent *e)
     p.restore();
     p.translate(0,bounds.height()+2);
     bottom-=bounds.height()+2;
+  }
+  if (Last) {
+    QString str;
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      if ((*i).begin()!=(*i).end()) {
+	if (!str.isEmpty())
+	  str+="\n";
+	str+=QString::number(*(*i).rbegin());
+	str+=YPostfix;
+      }
+    }
+    if (!str.isEmpty()) {
+      QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,str);
+      p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
+      p.translate(0,bounds.height());
+      bottom-=bounds.height();
+    }
   }
 
   if (Legend) {

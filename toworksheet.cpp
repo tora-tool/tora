@@ -398,7 +398,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
 void toWorksheet::changeRefresh(const QString &str)
 {
-  if (StopButton->isEnabled())
+  if (StopButton->isEnabled()&&StatisticButton->isOn())
     toRefreshParse(timer(),str);
 }
 
@@ -624,7 +624,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
 	Result->query(execSql,param);
 	time(&Started);
-	if (StatisticButton->isEnabled())
+	if (StatisticButton->isOn())
 	  toRefreshParse(timer(),Refresh->currentText());
 	  
 	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));

@@ -51,6 +51,7 @@ protected:
   list<QString> XValues;
   list<QString> Labels;
   bool Legend;
+  bool Last;
   int Grid;
   bool AxisText;
   double MaxValue;
@@ -79,6 +80,17 @@ public:
    */
   bool legend(void) const
   { return Legend; }
+
+  /** Show most recent value on top of graph
+   * @param on Whether to display or not.
+   */
+  void showLast(bool on)
+  { Last=on; update(); }
+  /** Check if last value is displayed or not.
+   * @return If value is displayed or not.
+   */
+  bool last(void) const
+  { return Last; }
 
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
