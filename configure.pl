@@ -471,7 +471,7 @@ __TEMP__
 						     }
 						 }
 						 close KDE;
-						 if ($KDEVersion ge "2.2") {
+						 if ($KDEVersion ge "2.1") {
 						     return 1;
 						 } else {
 						     return 0;
