@@ -46,6 +46,7 @@
 #include <qtimer.h>
 
 #define TO_SUCCESS		0
+#define TO_ERROR_NO_DEBUG_INFO  2
 #define TO_ERROR_ILLEGAL_LINE	12
 #define TO_ERROR_BAD_HANDLE	16
 #define TO_ERROR_UNIMPLEMENTED	17
@@ -102,7 +103,6 @@ class toDebug : public toToolWidget {
 
   // Toolbar
   QComboBox *Schema;
-  QToolButton *ShowButton;
   QToolButton *StopButton;
   QToolButton *StepOverButton;
   QToolButton *StepIntoButton;
@@ -128,8 +128,7 @@ class toDebug : public toToolWidget {
   toMarkedText *RuntimeLog;
 
   // Editors
-  toDebugText *HeadEditor;
-  toDebugText *BodyEditor;
+  QTabWidget *Editors;
 
   // Must hold lock before reading or writing to these
   toLock Lock;
@@ -165,14 +164,18 @@ class toDebug : public toToolWidget {
 
   bool checkCompile(void);
   void updateCurrent(void);
+  QString editorName(const QString &schema,const QString &object,const QString &type);
+  QString editorName(toDebugText *text);
   QString currentName(void);
   int sync(void);
   bool hasMembers(const QString &str);
   void readLog(void);
   void updateState(int reason);
   void updateArguments(toSQLParse::statement &statements,QListViewItem *parent);
-  void updateContent(toSQLParse::statement &statements,QListViewItem *parent,bool createnew=true);
-  void updateContent(bool body);
+  void updateContent(toSQLParse::statement &statements,QListViewItem *parent,const QString &id=QString::null);
+  void updateContent(toDebugText *editor);
+  void updateContent(void)
+  { updateContent(currentEditor()); }
   void reorderContent(QListViewItem *item,int,int);
   bool viewSource(const QString &schema,const QString &name,const QString &type,
 		  int line,bool current=false);
@@ -192,10 +195,6 @@ public:
 
   QListViewItem *contents(void);
   toDebugText *currentEditor(void);
-  toDebugText *headEditor(void)
-  { return HeadEditor; }
-  toDebugText *bodyEditor(void)
-  { return BodyEditor; }
   QString currentSchema(void);
 
   void executeInTarget(const QString &,toQList &params);
@@ -210,7 +209,6 @@ public slots:
   void refresh(void);
   void changeSchema(int);
   void changePackage(QListViewItem *);
-  void changeView(bool);
   void showDebug(bool);
   void prevError(void);
   void nextError(void);
@@ -230,7 +228,6 @@ public slots:
   void returnFrom(void)
   { continueExecution(TO_BREAK_ANY_RETURN); }
   void windowActivated(QWidget *w);
-  void toggleHead(void);
   void toggleDebug(void);
   void selectedWatch(void);
   void deleteWatch(void);

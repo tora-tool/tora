@@ -48,6 +48,8 @@
 
 #define TO_BREAK_COL 5
 
+int toDebugText::ID=0;
+
 toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,
 				   const QString &schema,const QString &type,
 				   const QString &object,int line)
@@ -235,9 +237,8 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
 
 toDebugText::toDebugText(QListView *breakpoints,
 			 QWidget *parent,
-			 toDebug *debugger,
-			 const char *name)
-  : toHighlightedText(parent,name),
+			 toDebug *debugger)
+  : toHighlightedText(parent,QString::number(++ID).latin1()),
     Debugger(debugger),
     Breakpoints(breakpoints)
 {

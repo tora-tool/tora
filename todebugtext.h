@@ -70,11 +70,12 @@ class toDebugText : public toHighlightedText {
 
   bool checkItem(toBreakpointItem *item);
   bool hasBreakpoint(int row);
+
+  static int ID;
 public:
   toDebugText(QListView *breakpoints,
 	      QWidget *parent,
-	      toDebug *debugger,
-	      const char *name=NULL);
+	      toDebug *debugger);
 
   void toggleBreakpoint(int row=-1,bool enable=false);
 

@@ -125,44 +125,6 @@
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>BodyScope</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Body Scope</string>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>3</number>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>The scope of the file in the body editor.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>HeadScope</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Head Scope</string>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>2</number>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Currently package or type scope.</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
                         <cstring>GlobalScope</cstring>
                     </property>
                     <property stdset="1">
@@ -224,6 +186,25 @@
                         <string>Currently running scope.</string>
                     </property>
                 </widget>
+                <widget row="2"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Package</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Package</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>3</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The scope of the file in the body editor.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -248,8 +229,7 @@
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton1_2</tabstop>
     <tabstop>LocalScope</tabstop>
-    <tabstop>HeadScope</tabstop>
-    <tabstop>BodyScope</tabstop>
+    <tabstop>Package</tabstop>
     <tabstop>GlobalScope</tabstop>
 </tabstops>
 </UI>

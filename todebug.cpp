@@ -91,8 +91,6 @@
 #include "icons/refresh.xpm"
 #include "icons/returnfrom.xpm"
 #include "icons/scansource.xpm"
-#include "icons/showbody.xpm"
-#include "icons/showhead.xpm"
 #include "icons/stepinto.xpm"
 #include "icons/stepover.xpm"
 #include "icons/stop.xpm"
@@ -220,17 +218,10 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
       item->setText(6,Scope->id(Scope->selected())==5?"AUTO":"");
       return item;
     }
-  case 2:
-    str=Debugger->headEditor()->schema();
-    str+=QString::fromLatin1(".");
-    str+=Debugger->headEditor()->object();
-    str+=QString::fromLatin1(".");
-    str+=Name->currentText();
-    break;
   case 3:
-    str=Debugger->bodyEditor()->schema();
+    str=Debugger->currentEditor()->schema();
     str+=QString::fromLatin1(".");
-    str+=Debugger->bodyEditor()->object();
+    str+=Debugger->currentEditor()->object();
     str+=QString::fromLatin1(".");
     str+=Name->currentText();
     break;
@@ -486,6 +477,11 @@ public:
   toContentsItem(QListViewItem *parent,const QString &name,int line)
     : QListViewItem(parent,toLastItem(parent),name)
   { Line=line; }
+  toContentsItem(QListView *parent,const QString &name,const QString &id,int line)
+    : QListViewItem(parent,name,id)
+  {
+    Line=line;
+  }
 };
 
 void toDebug::reorderContent(QListViewItem *parent,int start,int diff)
@@ -509,12 +505,23 @@ void toDebug::reorderContent(QListViewItem *parent,int start,int diff)
   }
 }
 
+QString toDebug::editorName(const QString &schema,const QString &object,const QString &type)
+{
+  QString ret=connection().quote(schema)+"."+connection().quote(object);
+  if (type.contains("BODY"))
+    ret+=tr(" body");
+  return ret;
+
+}
+
+QString toDebug::editorName(toDebugText *text)
+{
+  return editorName(text->schema(),text->object(),text->type());
+}
+
 QString toDebug::currentName(void)
 {
-  if (BodyEditor->isHidden())
-    return tr("Head");
-  else
-    return tr("Body");
+  return editorName(currentEditor());
 }
 
 QString toDebug::currentSchema(void)
@@ -865,7 +872,8 @@ static bool FindKeyword(toSQLParse::statement &statements,bool onlyNames,bool &d
     } else if (statements.String.upper()!="BODY") {
       name+=" "+statements.String;
       return true;
-    }
+    } else
+      name+=" body";
   }
   for(std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();i!=statements.subTokens().end();i++) {
     bool ret=FindKeyword(*i,onlyNames,declaration,line,name);
@@ -892,7 +900,7 @@ void toDebug::updateArguments(toSQLParse::statement &statements,QListViewItem *p
   }
 }
 
-void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *parent,bool createnew)
+void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *parent,const QString &id)
 {
   QListViewItem *item=NULL;
   int line;
@@ -901,10 +909,23 @@ void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *par
   if (!FindKeyword(statements,statements.Type==toSQLParse::statement::Statement,declaration,line,name)||name.isNull())
     return;
 
-  if (createnew)
+  if (parent)
     item=new toContentsItem(parent,name,line);
-  else
-    item=parent;
+  else {
+    for(item=Contents->firstChild();item;item=item->nextSibling())
+      if (item->text(0)==name&&item->text(1)==id)
+	break;
+    if (!item)
+      item=new toContentsItem(Contents,name,id,line);
+    else {
+      while(item->firstChild())
+	delete item->firstChild();
+      toContentsItem *ci=dynamic_cast<toContentsItem *>(item);
+      if (ci)
+	ci->Line=line;
+    }
+    item->setOpen(true);
+  }
 
   std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();
   if (statements.Type==toSQLParse::statement::Block) {
@@ -931,42 +952,30 @@ void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *par
     }
     i++;
   }
+  if (!parent&&!item->firstChild())
+    delete item;
 }
 
-void toDebug::updateContent(bool body)
+void toDebug::updateContent(toDebugText *current)
 {
-  toDebugText *current;
-  QString topName;
-  if (body) {
-    topName=tr("Body");
-    current=BodyEditor;
-  } else {
-    topName=tr("Head");
-    current=HeadEditor;
-  }
-
   toSQLParse::editorTokenizer tokenizer(current);
   std::list<toSQLParse::statement> statements=toSQLParse::parse(tokenizer);
 
-  QListViewItem *parent=NULL;
-  for(parent=Contents->firstChild();parent;parent=parent->nextSibling())
-    if (parent->text(0)==topName)
-      break;
-  if (!parent) {
-    parent=new QListViewItem(Contents,NULL);
-    parent->setText(0,topName);
-  } else {
-    while(parent->firstChild())
-      delete parent->firstChild();
-  }
+  QListViewItem *item;
 
-  parent->setOpen(true);
+  for(item=Contents->firstChild();item;item=item->nextSibling())
+    if (item->text(1)==current->name())
+      item->setText(2,"DELETE");
 
   for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++)
-    updateContent(*i,parent,false);
-  
-  if (!parent->firstChild())
-    delete parent;
+    updateContent(*i,NULL,current->name());
+
+  QListViewItem *ni;
+  for(item=Contents->firstChild();item;item=ni) {
+    ni=item->nextSibling();
+    if (item->text(2)=="DELETE")
+      delete item;
+  }
 }
 
 void toDebug::readLog(void)
@@ -1102,8 +1111,10 @@ void toDebug::updateState(int reason)
       ToolMenu->setItemEnabled(TO_ID_STEP_OVER,false);
       ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,false);
     }
-    HeadEditor->setCurrent(-1);
-    BodyEditor->setCurrent(-1);
+    for(int i=0;i<Editors->count();i++) {
+      toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+      editor->setCurrent(-1);
+    }
     StackTrace->clear();
     {
       toLocker lock(Lock);
@@ -1302,7 +1313,7 @@ void toDebug::updateState(int reason)
 	    item->setText(3,str);
 	    item->setText(5,QString::fromLatin1("LIST"));
 	  } else {
-	    item->setText(3,tr("{Unavailable}"));
+	    item->setText(3,ret==TO_ERROR_NO_DEBUG_INFO?tr("{No debug info}"):tr("{Unavailable}"));
 	    item->setText(4,QString::fromLatin1("NOCHANGE"));
 	  }
 	  if (item->firstChild())
@@ -1403,49 +1414,35 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
 			 int line,bool setCurrent)
 {
   try {
-    if (HeadEditor->schema()==schema&&
-	HeadEditor->object()==name&&
-	HeadEditor->type()==type) {
-      if (setCurrent)
-	HeadEditor->setCurrent(line-1);
-      else
-	HeadEditor->setCursorPosition(line-1,0);
-      HeadEditor->setFocus();
-      ShowButton->setOn(true);
-    } else if (BodyEditor->schema()==schema&&
-	       BodyEditor->object()==name&&
-	       BodyEditor->type()==type) {
-      if (setCurrent)
-	BodyEditor->setCurrent(line-1);
-      else
-	BodyEditor->setCursorPosition(line-1,0);
-
-      BodyEditor->setFocus();
-      ShowButton->setOn(false);
-    } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
-      BodyEditor->setData(schema,type,name);
-      BodyEditor->readData(connection(),StackTrace);
-      BodyEditor->setCursorPosition(line-1,0);
-      BodyEditor->setFocus();
-      updateContent(true);
-      ShowButton->setOn(false);
-    } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
-      HeadEditor->setData(schema,type,name);
-      HeadEditor->readData(connection(),StackTrace);
-      HeadEditor->setCursorPosition(line-1,0);
-      HeadEditor->setFocus();
-      ShowButton->setEnabled(true);
-      if (ToolMenu)
-	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
-      ShowButton->setOn(true);
-      updateContent(false);
-    } else { 
-      if (setCurrent) {
-	HeadEditor->setCurrent(-1);
-	BodyEditor->setCurrent(-1);
+    toDebugText *editor=NULL;
+    for(int i=0;i<Editors->count();i++) {
+      QString tabname=editorName(schema,name,type);
+      toDebugText *te=dynamic_cast<toDebugText *>(Editors->page(i));
+      if (Editors->tabLabel(te)==tabname) {
+	editor=te;
+	break;
       }
-      return false;
+      if (Editors->tabLabel(te)==tr("Unknown")&&!te->edited())
+	editor=te;
     }
+    if (!editor) {
+      editor=new toDebugText(Breakpoints,Editors,this);
+      connect(editor,SIGNAL(insertedLines(int,int)),
+	      this,SLOT(reorderContent(int,int)));
+      Editors->addTab(editor,editorName(editor));
+    }
+    if (editor->numLines()<=1) {
+      editor->setData(schema,type,name);
+      editor->readData(connection(),StackTrace);
+      updateContent(editor);
+      Editors->changeTab(editor,editorName(editor));
+    }
+    Editors->showPage(editor);
+    if (setCurrent)
+      editor->setCurrent(line-1);
+    else
+      editor->setCursorPosition(line-1,0);
+    editor->setFocus();
     return true;
   } catch(const QString &str) {
     toStatusMessage(str);
@@ -1597,21 +1594,6 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   ReturnButton->setEnabled(false);
 
   toolbar->addSeparator();
-  ShowButton=new QToolButton(toolbar);
-  ShowButton->setToggleButton(true);
-
-#if QT_VERSION >= 300
-  QIconSet iconset;
-  iconset.setPixmap(QPixmap((const char **)showbody_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::Off);
-  iconset.setPixmap(QPixmap((const char **)showhead_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::On);
-  ShowButton->setIconSet(iconset);
-#else
-  ShowButton->setIconSet(QIconSet(QPixmap((const char **)showhead_xpm)),true);
-  ShowButton->setIconSet(QIconSet(QPixmap((const char **)showbody_xpm)),false);
-#endif
-
-  connect(ShowButton,SIGNAL(toggled(bool)),this,SLOT(changeView(bool)));
-  QToolTip::add(ShowButton,tr("Show head or body of packages and procedures."));
 
   DebugButton=new QToolButton(toolbar);
   DebugButton->setToggleButton(true);
@@ -1763,14 +1745,10 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   RuntimeLog=new toMarkedText(DebugTabs);
   DebugTabs->addTab(RuntimeLog,tr("&Runtime Log"));
 
-  HeadEditor=new toDebugText(Breakpoints,hsplitter,this);
-  BodyEditor=new toDebugText(Breakpoints,hsplitter,this);
-  HeadEditor->hide();
-  setFocusProxy(BodyEditor);
-  connect(HeadEditor,SIGNAL(insertedLines(int,int)),
-	  this,SLOT(reorderContent(int,int)));
-  connect(BodyEditor,SIGNAL(insertedLines(int,int)),
-	  this,SLOT(reorderContent(int,int)));
+  Editors=new QTabWidget(hsplitter);
+  Editors->setTabPosition(QTabWidget::Bottom);
+  setFocusProxy(Editors);
+  newSheet();
 
 #if 0
   {
@@ -1830,10 +1808,7 @@ void toDebug::startTarget(void)
 
 toDebugText *toDebug::currentEditor(void)
 {
-  if (HeadEditor->isHidden())
-    return BodyEditor;
-  else
-    return HeadEditor;
+  return dynamic_cast<toDebugText *>(Editors->currentPage());
 }
 
 void toDebug::changeSchema(int)
@@ -1912,10 +1887,10 @@ void toDebug::refresh(void)
 	  break;
       }
 
-      if (HeadEditor->length()==0)
-	HeadEditor->setSchema(selected);
-      if (BodyEditor->length()==0)
-	BodyEditor->setSchema(selected);
+      for(int i=0;i<Editors->count();i++) {
+	toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+	editor->setSchema(selected);
+      }
     }
   } TOCATCH
 }
@@ -1937,44 +1912,27 @@ bool toDebug::checkStop(void)
 
 bool toDebug::checkCompile(void)
 {
-  if (HeadEditor->edited()) {
-    switch (TOMessageBox::warning(this,
-				  tr("Header changed"),
-				  tr("Header changed. Continuing will discard uncompiled or saved changes"),
-				  tr("&Compile"),
-				  tr("&Discard changes"),
-				  tr("Cancel"))) {
-    case 0:
-      if (!checkStop())
+  for(int i=0;i<Editors->count();i++) {
+    toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+    if (editor->edited()) {
+      switch (TOMessageBox::warning(this,
+				    tr("%1 changed").arg(editorName(editor)),
+				    tr("%1 changed. Continuing will discard uncompiled or saved changes").arg(editorName(editor)),
+				    tr("&Compile"),
+				    tr("&Discard changes"),
+				    tr("Cancel"))) {
+      case 0:
+	if (!checkStop())
+	  return false;
+	if (!editor->compile())
+	  return false;
+	break;
+      case 1:
+	editor->setEdited(false);
+	break;
+      case 2:
 	return false;
-      if (!HeadEditor->compile())
-	return false;
-      break;
-    case 1:
-      HeadEditor->setEdited(false);
-      break;
-    case 2:
-      return false;
-    }
-  }
-  if (BodyEditor->edited()) {
-    switch (TOMessageBox::warning(this,
-				  tr("Body changed"),
-				  tr("Body changed. Continuing will discard uncompiled or saved changes"),
-				  tr("&Compile"),
-				  tr("&Discard changes"),
-				  tr("Cancel"))) {
-    case 0:
-      if (!checkStop())
-	return false;
-      if (!BodyEditor->compile())
-	return false;
-      break;
-    case 1:
-      BodyEditor->setEdited(false);
-      break;
-    case 2:
-      return false;
+      }
     }
   }
   return true;
@@ -1990,45 +1948,21 @@ bool toDebug::close(bool del)
 void toDebug::updateCurrent()
 {
   try {
-    QString type=HeadEditor->type();
+    toDebugText *editor=currentEditor();
 
-    if (type.isEmpty())
-      type=BodyEditor->type();
+    editor->readData(connection(),StackTrace);
+    editor->setFocus();
 
-    QString bodyType=type;
-    bodyType+=QString::fromLatin1(" BODY");
-    BodyEditor->setType(bodyType);
-    if (!BodyEditor->readData(connection(),StackTrace)) {
-      BodyEditor->setType(type);
-      BodyEditor->readData(connection(),StackTrace);
-      HeadEditor->clear();
-      BodyEditor->show();
-      HeadEditor->hide();
-      setFocusProxy(BodyEditor);
-      ShowButton->setEnabled(false);
-      ShowButton->setOn(false);
-      if (ToolMenu)
-	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
-    } else {
-      HeadEditor->readData(connection(),StackTrace);
-      ShowButton->setEnabled(true);
-      if (ToolMenu)
-	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
-    }
-
-    currentEditor()->setFocus();
-
-    updateContent(true);
-    updateContent(false);
+    updateContent();
   } TOCATCH
 }
 
 void toDebug::changePackage(QListViewItem *item)
 {
   if (item&&item->parent()&&checkCompile()) {
-    BodyEditor->setData(Schema->currentText(),item->text(1),item->text(0));
-    HeadEditor->setData(Schema->currentText(),item->text(1),item->text(0));
-    updateCurrent();
+    viewSource(Schema->currentText(),item->text(0),item->text(1),0);
+    if (item->text(1)=="PACKAGE"||item->text(1)=="TYPE")
+      viewSource(Schema->currentText(),item->text(0),item->text(1)+" BODY",0);
   }
 #ifdef AUTOEXPAND
   else if (item&&!item->parent())
@@ -2044,22 +1978,6 @@ void toDebug::showDebug(bool show)
     DebugTabs->hide();
   if (ToolMenu)
     ToolMenu->setItemChecked(TO_ID_DEBUG_PANE,show);
-}
-
-void toDebug::changeView(bool head)
-{
-  if (head) {
-    HeadEditor->show();
-    BodyEditor->hide();    
-    setFocusProxy(HeadEditor);
-  } else {
-    BodyEditor->show();
-    HeadEditor->hide();
-    setFocusProxy(BodyEditor);
-  }
-  if (ToolMenu)
-    ToolMenu->setItemChecked(TO_ID_HEAD_TOGGLE,head);
-  currentEditor()->setFocus();
 }
 
 bool toDebugText::compile(void)
@@ -2148,17 +2066,23 @@ void toDebug::compile(void)
     return;
 
   QString lastSchema=currentEditor()->schema();
-  if (HeadEditor->compile()&&
-      BodyEditor->compile()) {
-    if (lastSchema!=currentEditor()->schema()) {
-      for (int i=0;i<Schema->count();i++)
-	if (Schema->text(i)==lastSchema) {
-	  Schema->setCurrentItem(i);
-	  break;
-	}
-    }
-    refresh();
+  for(int i=0;i<Editors->count();i++) {
+    toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
+    if (editor->compile()) {
+      if (editor==currentEditor()&&
+	  lastSchema!=currentEditor()->schema()) {
+	for (int i=0;i<Schema->count();i++)
+	  if (Schema->text(i)==lastSchema) {
+	    Schema->setCurrentItem(i);
+	    break;
+	  }
+      }
+      Editors->changeTab(editor,editorName(editor));
+    } else
+      return;
+
   }
+  refresh();
 }
 
 toDebug::~toDebug()
@@ -2199,16 +2123,19 @@ void toDebug::changeContent(QListViewItem *ci)
   if (item) {
     while(ci->parent())
       ci=ci->parent();
-    toHighlightedText *current;
-    if (ci->text(0)=="Head") {
-      current=HeadEditor;
-      ShowButton->setOn(true);
-    } else {
-      current=BodyEditor;
-      ShowButton->setOn(false);
+    toHighlightedText *current=NULL;
+
+    for(int i=0;i<Editors->count();i++) {
+      if (Editors->page(i)->name()==ci->text(1)) {
+	current=dynamic_cast<toDebugText *>(Editors->page(i));
+	break;
+      }
     }
-    current->setCursorPosition(item->Line,0);
-    current->setFocus();
+    if (current) {
+      current->setCursorPosition(item->Line,0);
+      Editors->showPage(current);
+      current->setFocus();
+    }
   }
 #ifdef AUTOEXPAND
   else
@@ -2218,34 +2145,21 @@ void toDebug::changeContent(QListViewItem *ci)
 
 void toDebug::scanSource(void)
 {
-  updateContent(true);
-  updateContent(false);
+  updateContent();
 }
 
 void toDebug::newSheet(void)
 {
-  if (checkCompile()) {
-    HeadEditor->clear();
-    BodyEditor->clear();
-    HeadEditor->setSchema(Schema->currentText());
-    BodyEditor->setSchema(Schema->currentText());
-    scanSource();
-    if (ToolMenu)
-      ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
-    ShowButton->setEnabled(true);
-  }
+  toDebugText *text=new toDebugText(Breakpoints,Editors,this);
+  connect(text,SIGNAL(insertedLines(int,int)),
+	  this,SLOT(reorderContent(int,int)));
+  Editors->addTab(text,tr("Unknown"));
 }
 
 void toDebug::showSource(QListViewItem *item)
 {
-  if (item) {
-    if (!viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false)) {
-      if (checkCompile()) {
-	BodyEditor->setEdited(false); // Write over this editor
-	viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false);
-      }
-    }
-  }
+  if (item)
+    viewSource(item->text(2),item->text(0),item->text(3),item->text(1).toInt(),false);
 }
 
 void toDebug::toggleBreak(void)
@@ -2302,8 +2216,6 @@ void toDebug::windowActivated(QWidget *widget)
 			   tr("&Return From"),this,SLOT(returnFrom(void)),
 			   Key_F6,TO_ID_RETURN_FROM);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(tr("&Head Editor"),this,SLOT(toggleHead(void)),
-			   CTRL+Key_Space,TO_ID_HEAD_TOGGLE);
       ToolMenu->insertItem(tr("&Debug Pane"),this,SLOT(toggleDebug(void)),
 			   Key_F11,TO_ID_DEBUG_PANE);
       ToolMenu->insertSeparator();
@@ -2346,10 +2258,6 @@ void toDebug::windowActivated(QWidget *widget)
 	ToolMenu->setItemEnabled(TO_ID_STEP_OVER,false);
 	ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,false);
       }
-      if (currentEditor()==HeadEditor)
-	ToolMenu->setItemChecked(TO_ID_HEAD_TOGGLE,true);
-      if (!ShowButton->isEnabled())
-	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
       if (!DebugTabs->isHidden())
 	ToolMenu->setItemChecked(TO_ID_DEBUG_PANE,true);
 
@@ -2362,11 +2270,6 @@ void toDebug::windowActivated(QWidget *widget)
     delete ToolMenu;
     ToolMenu=NULL;
   }
-}
-
-void toDebug::toggleHead(void)
-{
-  ShowButton->setOn(!ShowButton->isOn());
 }
 
 void toDebug::toggleDebug(void)
@@ -2513,8 +2416,13 @@ void toDebug::changeWatch(QListViewItem *item)
 
 void toDebug::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
-  HeadEditor->exportData(data,prefix+":Head");
-  BodyEditor->exportData(data,prefix+":Body");
+  data[prefix+":Editors"]=Editors->count();
+  for(int i=0;i<Editors->count();i++) {
+    toHighlightedText *editor=dynamic_cast<toHighlightedText *>(Editors->page(i));
+    QCString num;
+    num.setNum(i);
+    editor->exportData(data,prefix+":Editor:"+num);
+  }
   data[prefix+":Schema"]=Schema->currentText();
 
   int id=1;
@@ -2548,8 +2456,6 @@ void toDebug::exportData(std::map<QCString,QString> &data,const QCString &prefix
   }
   if (DebugButton->isOn())
     data[prefix+":Debug"]=QString::fromLatin1("Show");
-  if (ShowButton->isOn())
-    data[prefix+":Head"]=QString::fromLatin1("Show");
 
   toToolWidget::exportData(data,prefix);
 }
@@ -2566,8 +2472,16 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
       }
   }
 
-  HeadEditor->importData(data,prefix+":Head");
-  BodyEditor->importData(data,prefix+":Body");
+  int count=data[prefix+":Editors"].toInt();
+  for(int j=0;j<count;j++) {
+    toDebugText *text=new toDebugText(Breakpoints,Editors,this);
+    connect(text,SIGNAL(insertedLines(int,int)),
+	    this,SLOT(reorderContent(int,int)));
+    QCString num;
+    num.setNum(j);
+    text->importData(data,prefix+":Editor:"+num);
+    Editors->addTab(text,editorName(text));
+  }
 
   int id=1;
   std::map<QCString,QString>::iterator i;
@@ -2599,7 +2513,6 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
   scanSource();
 
   DebugButton->setOn(data[prefix+":Debug"]==QString::fromLatin1("Show"));
-  ShowButton->setOn(data[prefix+":Head"]==QString::fromLatin1("Show"));
 
   toToolWidget::importData(data,prefix);
 }
