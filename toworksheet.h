@@ -79,6 +79,7 @@ class toWorksheet : public toToolWidget {
   QToolButton *StatisticButton;
   bool TryStrip;
   toResultCols *Columns;
+  time_t Started;
 
   QPopupMenu *ToolMenu;
 
@@ -106,6 +107,7 @@ public slots:
   { execute(true); }
   void executeStep()
   { execute(false,true); }
+  void executeNewline();
   void commitButton()
   { connection().commit(); }
   void rollbackButton()

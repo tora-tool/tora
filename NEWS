@@ -12,7 +12,11 @@
 2001-07-18: Popup new worksheet if opening new connection to same DB.
 2001-07-18: Fixed cursor position in highlighted text.
 2001-07-18: Fixed a really nasty deadlock in tononblockquery.
-2001-07-18: Allow cancel in Windows (Will still run till first row in background).
+2001-07-18: Allow cancel in Windows (Will still run till first row in
+	background).
+2001-07-18: Added cancel entries in log for worksheet.
+2001-07-18: Added duration entries in log for worksheet.
+2001-07-18: Fixed another pesky bug with long running queries.
 
 0.13: Released 2001-07-11
 

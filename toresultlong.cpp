@@ -182,9 +182,7 @@ void toResultLong::addItem(void)
 	  emit firstResult(SQL,buffer);
 	}	  
 	if (Query->eof()) {
-	  delete Query;
-	  Query=NULL;
-	  emit done();
+	  cleanup();
 	  return;
 	}
 	if (MaxNumber<0||MaxNumber>RowNumber)
@@ -194,29 +192,47 @@ void toResultLong::addItem(void)
 	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
 	  First=false;
 	}
-	emit done();
+	cleanup();
 	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
       } catch (const QString &str) {
 	if (First) {
 	  emit firstResult(SQL,str);
 	  First=false;
 	}
-	emit done();
+	cleanup();
 	toStatusMessage(str);
       }
-    } else if (Query->eof()) {
-      delete Query;
-      Query=NULL;
-      emit done();
-      return;
-    } else if (!Timer.isActive())
-      Timer.start(TO_POLL_CHECK,true);
+    } else {
+      try {
+	if (Query->eof()) {
+	  cleanup();
+	  return;
+	} else if (!Timer.isActive())
+	  Timer.start(TO_POLL_CHECK,true);
+      } catch (const otl_exception &exc) {
+	if (First) {
+	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
+	  First=false;
+	}
+	cleanup();
+	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+      } catch (const QString &str) {
+	if (First) {
+	  emit firstResult(SQL,str);
+	  First=false;
+	}
+	cleanup();
+	toStatusMessage(str);
+      }
+    }
   }
 }
 
-toResultLong::~toResultLong()
+void toResultLong::cleanup(void)
 {
-  stop();
+  delete Query;
+  Query=NULL;
+  emit done();  
 }
 
 bool toResultLong::eof(void)
@@ -249,3 +265,17 @@ void toResultLong::stop(void)
     emit done();
   }
 }
+
+toResultLong::~toResultLong()
+{
+  if (Query) {
+#ifdef TO_QTHREAD
+    toThread *thread=new toThread(new toDeleteQuery(Query));
+    thread->startAsync();
+#else
+    delete Query;
+#endif
+    Query=NULL;
+  }
+}
+

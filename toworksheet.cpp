@@ -323,6 +323,8 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   Logging->addColumn("SQL");
   Logging->addColumn("Result");
   Logging->addColumn("Timestamp");
+  Logging->addColumn("Duration");
+  Logging->setColumnAlignment(3,AlignRight);
   LastLogItem=NULL;
 
   toolbar->addSeparator();
@@ -386,6 +388,8 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   Key_F8);
       ToolMenu->insertItem(*toExecuteStepPixmap,"Execute &Next",this,SLOT(executeStep(void)),
 			   Key_F9);
+      ToolMenu->insertItem("Execute &Newline Separated",this,
+			   SLOT(executeNewline(void)),SHIFT+Key_F9);
       ToolMenu->insertItem(*toRefreshPixmap,"&Refresh",this,SLOT(refresh(void)),
 			   Key_F5);
       ToolMenu->insertSeparator();
@@ -448,8 +452,10 @@ bool toWorksheet::checkSave(bool input)
 
 bool toWorksheet::close(bool del)
 {
-  if (checkSave(true))
+  if (checkSave(true)) {
+    Result->stop();
     return QVBox::close(del);
+  }
   return false;
 }
 
@@ -523,6 +529,9 @@ bool toWorksheet::describe(const QString &query)
 
 void toWorksheet::query(const QString &str,bool direct)
 {
+  if (Started>0&&!QueryString.isEmpty())
+    addLog(QueryString,"Aborted");
+
   QRegExp strq("'[^']*'");
   try {
     QString chk=str.lower();
@@ -555,8 +564,10 @@ void toWorksheet::query(const QString &str,bool direct)
       list<QString> param;
       if (!nobinds)
 	param=toParamGet::getParam(this,execSql);
+      toStatusMessage("Processing query",true);
       if (direct) {
 	try {
+	  time(&Started);
 	  otl_stream inf(1,
 			 execSql.utf8(),
 			 otlConnect());
@@ -582,6 +593,7 @@ void toWorksheet::query(const QString &str,bool direct)
       } else {
 	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
 	Result->query(execSql,param);
+	time(&Started);
 	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
       }
       StopButton->setEnabled(true);
@@ -597,6 +609,13 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   QString now=toNow(connection());
   toResultViewItem *item;
 
+  time_t dur=0;
+  if (Started>0) {
+    time(&dur);
+    dur-=Started;
+    Started=0;
+  }
+
   if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
     if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
       item=new toResultViewItem(Logging,NULL);
@@ -611,8 +630,17 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   LastLogItem=item;
   item->setText(1,result);
   item->setText(2,now);
+  char buf[100];
+  if (dur>=3600) {
+    sprintf(buf,"%d:%02d:%02d",int(dur/3600),int(dur/60)%60,int(dur%60));
+  } else {
+    sprintf(buf,"%d:%02d",int(dur/60),int(dur%60));
+  }
+  item->setText(3,buf);
+
   Logging->setCurrentItem(item);
   Logging->ensureItemVisible(item);
+
   if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
     connection().commit();
   else
@@ -862,6 +890,9 @@ void toWorksheet::eraseLogButton()
 
 void toWorksheet::queryDone(void)
 {
+  if (Started>0&&!QueryString.isEmpty())
+    addLog(QueryString,"Aborted");
+
   StopButton->setEnabled(false);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
   saveDefaults();
@@ -920,4 +951,36 @@ void toWorksheet::enableStatistic(bool ena)
     ResultTab->setTabEnabled(Statistics,false);
     toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
   }
+}
+
+void toWorksheet::executeNewline(void)
+{
+  int cline,epos;
+  Editor->getCursorPosition(&cline,&epos);
+
+  if (cline>0)
+    cline--;
+  while(cline>0) {
+    QString data=Editor->textLine(cline).simplifyWhiteSpace();
+    if (data.length()==0||data==" ") {
+      cline++;
+      break;
+    }
+    cline--;
+  }
+
+  int eline=cline;
+  while(eline<Editor->numLines()) {
+    QString data=Editor->textLine(eline).simplifyWhiteSpace();
+    if (data.length()==0||data==" ") {
+      eline--;
+      epos=Editor->textLine(eline).length();
+      break;
+    }
+    eline++;
+  }
+  Editor->setCursorPosition(cline,0,false);
+  Editor->setCursorPosition(eline,epos,true);
+  if (Editor->hasMarkedText())
+    query(Editor->markedText(),false);
 }

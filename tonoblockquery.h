@@ -121,8 +121,7 @@ private:
 
   /** Throw error if any.
    */
-  void checkError()
-  { if (!Error.isNull()) throw Error; }
+  void checkError();
 public:
   /** Create a new query.
    * @param conn Connection to run on.

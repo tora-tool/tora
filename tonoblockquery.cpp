@@ -276,3 +276,11 @@ bool toNoBlockQuery::poll(void)
     return true;
   return false;
 }
+
+void toNoBlockQuery::checkError()
+{
+  if (!Error.isNull()) {
+    TO_DEBUGOUT("Throwing exception\n");
+    throw Error;
+  }
+}

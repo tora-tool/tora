@@ -73,6 +73,9 @@ class toResultLong : public toResultView {
   /** Check if at eof.
    */
   virtual bool eof(void);
+  /** Clean up when query is done
+   */
+  void cleanup(void);
 public:
   /** Create widget.
    * @param readable Indicate if columns are to be made more readable. This means that the
