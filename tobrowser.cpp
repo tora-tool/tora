@@ -245,7 +245,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
   Connection.addWidget(this);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update from DB",

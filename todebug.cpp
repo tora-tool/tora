@@ -1654,7 +1654,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   if (!toDelWatchPixmap)
     toDelWatchPixmap=new QPixmap((const char **)delwatch_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"Debugger",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update code list",

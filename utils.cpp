@@ -32,6 +32,7 @@ TO_NAMESPACE;
 #include <qcombobox.h>
 #include <qtimer.h>
 #include <qtooltip.h>
+#include <qtoolbar.h>
 
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"
@@ -252,3 +253,192 @@ QString toGetSessionType(void)
   throw QString("Failed to find style match");
 }
 #endif
+
+QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
+{
+  QString name=str;
+  if (db.isEmpty()) {
+    name+=" ";
+    name+=db;
+  }
+  QToolBar *tool;
+#if 0 // Awaiting patched KToolBar from KDE
+  if (parent==toMainWidget())
+    tool=new KToolBar(name,toMainWidget());
+  else
+    tool=new KToolBar(name,toMainWidget(),parent);
+#else
+  if (parent==toMainWidget())
+    tool=new QToolBar(name,toMainWidget());
+  else
+    tool=new QToolBar(name,toMainWidget(),parent);
+#endif
+  return tool;
+}
+
+list<QString> toReadQuery(otl_stream &str,list<QString> &args)
+{
+  otl_null null;
+  for (list<QString>::iterator i=((list<QString> &)args).begin();i!=((list<QString> &)args).end();i++) {
+    if ((*i).isNull())
+      str<<null;
+    else
+      str<<(*i).utf8();
+  }
+
+  int len;
+  otl_column_desc *dsc=str.describe_select(len);
+  list<QString> ret;
+  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+  for (int col=0;!str.eof();col++) {
+    if (col==len)
+      col=0;
+    QString dat=toReadValue(dsc[col],str,MaxColSize);
+    if (dat=="{null}")
+      dat=QString::null;
+    ret.insert(ret.end(),dat);
+  }
+  return ret;
+}
+
+list<QString> toReadQuery(otl_stream &str,
+			  const QString &arg1=QString::null,const QString &arg2=QString::null,
+			  const QString &arg3=QString::null,const QString &arg4=QString::null,
+			  const QString &arg5=QString::null,const QString &arg6=QString::null,
+			  const QString &arg7=QString::null,const QString &arg8=QString::null,
+			  const QString &arg9=QString::null)
+{
+  int numArgs;
+  if (!arg9.isNull())
+    numArgs=9;
+  else if (!arg8.isNull())
+    numArgs=8;
+  else if (!arg7.isNull())
+    numArgs=7;
+  else if (!arg6.isNull())
+    numArgs=6;
+  else if (!arg5.isNull())
+    numArgs=5;
+  else if (!arg4.isNull())
+    numArgs=4;
+  else if (!arg3.isNull())
+    numArgs=3;
+  else if (!arg2.isNull())
+    numArgs=2;
+  else if (!arg1.isNull())
+    numArgs=1;
+  else
+    numArgs=0;
+
+  list<QString> args;
+  if (numArgs>0)
+    args.insert(args.end(),arg1);
+  if (numArgs>1)
+    args.insert(args.end(),arg2);
+  if (numArgs>2)
+    args.insert(args.end(),arg3);
+  if (numArgs>3)
+    args.insert(args.end(),arg4);
+  if (numArgs>4)
+    args.insert(args.end(),arg5);
+  if (numArgs>5)
+    args.insert(args.end(),arg6);
+  if (numArgs>6)
+    args.insert(args.end(),arg7);
+  if (numArgs>7)
+    args.insert(args.end(),arg8);
+  if (numArgs>8)
+    args.insert(args.end(),arg9);
+
+  return toReadQuery(str,args);
+}
+
+list<QString> toReadQuery(toConnection &conn,const QCString &query,list<QString> &args)
+{
+  otl_stream str;
+  str.set_all_column_types(otl_all_num2str|otl_all_date2str);
+  str.open(1,
+	   query,
+	   conn.connection());
+  return toReadQuery(str,args);
+}
+
+list<QString> toReadQuery(toConnection &conn,const QCString &query,
+			  const QString &arg1=QString::null,const QString &arg2=QString::null,
+			  const QString &arg3=QString::null,const QString &arg4=QString::null,
+			  const QString &arg5=QString::null,const QString &arg6=QString::null,
+			  const QString &arg7=QString::null,const QString &arg8=QString::null,
+			  const QString &arg9=QString::null)
+{
+  int numArgs;
+  if (!arg9.isNull())
+    numArgs=9;
+  else if (!arg8.isNull())
+    numArgs=8;
+  else if (!arg7.isNull())
+    numArgs=7;
+  else if (!arg6.isNull())
+    numArgs=6;
+  else if (!arg5.isNull())
+    numArgs=5;
+  else if (!arg4.isNull())
+    numArgs=4;
+  else if (!arg3.isNull())
+    numArgs=3;
+  else if (!arg2.isNull())
+    numArgs=2;
+  else if (!arg1.isNull())
+    numArgs=1;
+  else
+    numArgs=0;
+
+  list<QString> args;
+  if (numArgs>0)
+    args.insert(args.end(),arg1);
+  if (numArgs>1)
+    args.insert(args.end(),arg2);
+  if (numArgs>2)
+    args.insert(args.end(),arg3);
+  if (numArgs>3)
+    args.insert(args.end(),arg4);
+  if (numArgs>4)
+    args.insert(args.end(),arg5);
+  if (numArgs>5)
+    args.insert(args.end(),arg6);
+  if (numArgs>6)
+    args.insert(args.end(),arg7);
+  if (numArgs>7)
+    args.insert(args.end(),arg8);
+  if (numArgs>8)
+    args.insert(args.end(),arg9);
+
+  return toReadQuery(conn,query,args);
+}
+
+QString toShift(list<QString> &lst)
+{
+  if (lst.begin()==lst.end())
+    return QString::null;
+  QString ret=(*lst.begin());
+  lst.erase(lst.begin());
+  return ret;
+}
+
+void toUnShift(list<QString> &lst,const QString &str)
+{
+  lst.insert(lst.begin(),str);
+}
+
+QString toPop(list<QString> &lst)
+{
+  if (lst.begin()==lst.end())
+    return QString::null;
+  QString ret=(*lst.rbegin());
+  lst.pop_back();
+  return ret;
+}
+
+void toPush(list<QString> &lst,const QString &str)
+{
+  lst.push_back(str);
+}

@@ -111,7 +111,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   if (!toDisconnectPixmap)
     toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"Session manager",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update sessionlist",

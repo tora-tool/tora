@@ -627,7 +627,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   if (!toOfflinePixmap)
     toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update segment list",

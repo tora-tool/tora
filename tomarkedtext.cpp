@@ -101,7 +101,7 @@ void toMarkedText::paintEvent(QPaintEvent *pe)
 
 void toMarkedText::print(void)
 {
-  QPrinter printer;
+  TOPrinter printer;
   printer.setMinMax(1,1000);
   if (printer.setup()) {
     printer.setCreator("TOra");

@@ -137,6 +137,7 @@ toMain::toMain()
 #endif
 {
   qApp->setMainWidget(this);
+  setDockMenuEnabled(true);
 
   if (!toConnectPixmap)
     toConnectPixmap=new QPixmap((const char **)connect_xpm);
@@ -209,8 +210,7 @@ toMain::toMain()
 
   map<QString,toTool *> &tools=toTool::tools();
 
-  QToolBar *toolbar=toAllocBar(this);
-  addToolBar(toolbar,tr("Main toolbar"),Top,false);
+  QToolBar *toolbar=toAllocBar(this,"Application",QString::null);
 
   LoadButton=new QToolButton(*toLoadPixmap,
 			     "Load file into editor",
@@ -257,8 +257,7 @@ toMain::toMain()
   ToolsMenu=new QPopupMenu(this);
 
 #ifdef TOOL_TOOLBAR
-  toolbar=new toAllocBar(this);
-  addToolBar(toolbar,tr("Tools toolbar"),Top,false);
+  toolbar=new toAllocBar(this,"Tools",QString::null);
 #else
   toolbar->addSeparator();
 #endif
@@ -309,8 +308,7 @@ toMain::toMain()
   }
 
 #ifndef TOOL_TOOLBAR
-  QLabel *label=new QLabel("",toolbar);
-  toolbar->setStretchableWidget(label);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
 #endif
 
   new QToolButton(*toConnectPixmap,

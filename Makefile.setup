@@ -24,8 +24,7 @@
 #
 ############################################################################
 
-# If you have problems with the configure script copy this file to
-# Makefile.setup and modify it to satisfy your need.
+# WARNING!!! This file will be overwritten by the configure script.
 
 # Where to install tora
 INSTALLPREFIX=/usr/local
@@ -102,5 +101,3 @@ LFLAGS_GLOB=-g
 # Additional flags set when compiling.
 CFLAGS_GLOB=-g -fPIC -Wall
 
-# Where to install tora
-INSTALLPREFIX=/usr/local

@@ -1303,7 +1303,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   if (!toCopyUserPixmap)
     toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"Security manager",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",

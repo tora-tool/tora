@@ -285,7 +285,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   if (!toStatisticPixmap)
     toStatisticPixmap=new QPixmap((const char **)clock_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.connectString());
 
   new QToolButton(*toExecutePixmap,
 		  "Execute current statement",
@@ -364,7 +364,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  this,SLOT(eraseLogButton(void)),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
-  
+
   Connection.addWidget(this);
 
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),

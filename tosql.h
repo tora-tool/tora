@@ -76,7 +76,12 @@ public:
   static bool deleteSQL(const QString &name,
 		        const QString &ver);
 
-  static QCString sql(const QString &name,const toConnection &conn);
+  static QString string(const QString &name,const toConnection &conn);
+  static QString string(const toSQL &sqldef,const toConnection &conn)
+  { return string(sqldef.Name,conn); }
+
+  static QCString sql(const QString &name,const toConnection &conn)
+  { return string(name,conn).utf8(); }
   static QCString sql(const toSQL &sqldef,const toConnection &conn)
   { return sql(sqldef.Name,conn); }
 

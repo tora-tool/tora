@@ -36,6 +36,12 @@
 
 #ifdef TO_KDE
 #  include <kmainwindow.h>
+#  include <ktoolbar.h>
+#  include <kmenubar.h>
+// In preparation of KPrinter landing
+#  define TOPrinter QPrinter
+#else
+#  define TOPrinter QPrinter
 #endif
 
 class QWorkspace;
@@ -136,6 +142,25 @@ void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 bool toMonolithic(void);
 QString toDeepCopy(const QString &);
+QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
+list<QString> toReadQuery(otl_stream &,list<QString> &args);
+list<QString> toReadQuery(otl_stream &,
+			  const QString &arg1=QString::null,const QString &arg2=QString::null,
+			  const QString &arg3=QString::null,const QString &arg4=QString::null,
+			  const QString &arg5=QString::null,const QString &arg6=QString::null,
+			  const QString &arg7=QString::null,const QString &arg8=QString::null,
+			  const QString &arg9=QString::null);
+list<QString> toReadQuery(toConnection &conn,const QCString &query,list<QString> &args);
+list<QString> toReadQuery(toConnection &conn,const QCString &query,
+			  const QString &arg1=QString::null,const QString &arg2=QString::null,
+			  const QString &arg3=QString::null,const QString &arg4=QString::null,
+			  const QString &arg5=QString::null,const QString &arg6=QString::null,
+			  const QString &arg7=QString::null,const QString &arg8=QString::null,
+			  const QString &arg9=QString::null);
+QString toShift(list<QString> &lst);
+void toUnShift(list<QString> &lst,const QString &);
+QString toPop(list<QString> &lst);
+void toPush(list<QString> &lst,const QString &);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20
@@ -157,23 +182,5 @@ QString toDeepCopy(const QString &);
     }
 
 #define toIsIdent(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
-
-#ifdef TO_KDE
-#  include <ktoolbar.h>
-#  include <kmenubar.h>
-
-#  if 0
-inline QToolBar *toAllocBar(QWidget *parent)
-{ return new KToolBar(toMainWidget(),parent); }
-#  else
-// This needs patch to kdelibs to work (I'll try to get them to accept it till 2.2)
-inline QToolBar *toAllocBar(QWidget *parent)
-{ return new QToolBar("Toolbar",toMainWidget(),parent); }
-#  endif
-#else
-#  include <qtoolbar.h>
-inline QToolBar *toAllocBar(QWidget *parent)
-{ return new QToolBar("Toolbar",toMainWidget(),parent); }
-#endif
 
 #endif

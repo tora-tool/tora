@@ -128,8 +128,8 @@ toSQL toSQL::sql(const QString &name)
   throw str;
 }
 
-QCString toSQL::sql(const QString &name,
-		    const toConnection &conn)
+QString toSQL::string(const QString &name,
+		      const toConnection &conn)
 {
   allocCheck();
   const QString &ver=conn.version();
@@ -142,10 +142,10 @@ QCString toSQL::sql(const QString &name,
 	sql=&(*j).SQL;
       }
       if ((*j).Version>=ver)
-	return sql->utf8();
+	return *sql;
     }
     if (sql)
-      return sql->utf8();
+      return *sql;
   }
   QString str="Tried to get unknown SQL (";
   str+=name;

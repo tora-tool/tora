@@ -449,7 +449,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
 void toResultView::print(void)
 {
   readAll();
-  QPrinter printer;
+  TOPrinter printer;
   printer.setMinMax(1,1000);
   if (printer.setup()) {
     printer.setCreator("TOra");

@@ -21,6 +21,9 @@
 2001-03-28: Modified regexp to verify Qt version in configure.
 2001-03-28: Minor modification of how dependency files are generated.
 2001-03-28: Moved around a bit between clean/distclean in Makefile.common.
+2001-03-29: Made it possible to get toSQL as QString.
+2001-03-31: Added toExtract plugin, no tool uses this yet.
+2001-03-31: Fixed bug in toAllocBar.
 
 0.7: Released 2001-03-24
 

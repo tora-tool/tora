@@ -483,7 +483,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   if (!toWriteTablespacePixmap)
     toWriteTablespacePixmap=new QPixmap((const char **)writetablespace_xpm);
 
-  QToolBar *toolbar=toAllocBar(this);
+  QToolBar *toolbar=toAllocBar(this,"Storage manager",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
 		  "Update",
@@ -554,7 +554,6 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 				 toolbar);
  
   toolbar->setStretchableWidget(new QLabel("",toolbar));
-
 
   Storage=new toResultStorage(Connection,this);
 
