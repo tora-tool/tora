@@ -35,6 +35,8 @@
 #ifndef __TORESULTLOCK_H
 #define __TORESULTLOCK_H
 
+#include <map>
+
 #include "toresultview.h"
 #include "tobackground.h"
 
@@ -46,6 +48,7 @@ class toResultLock : public toResultView {
   toBackground Poll;
   toNoBlockQuery *Query;
   QListViewItem *LastItem;
+  map<int,bool> Checked;
 public:
   toResultLock(QWidget *parent,const char *name=NULL);
   ~toResultLock();

@@ -97,6 +97,7 @@
 2001-12-06: Fixed some really tricky multiple query cancel problems.
 2001-12-06: Added fallback on query lock wrong value.
 2001-12-06: Added blocking locks to tuning window.
+2001-12-06: Changed shortcut of options tab in tuning.
 
 1.1.5: Released 2001-11-26
 

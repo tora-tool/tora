@@ -1278,7 +1278,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 
   Options=new toResultLong(true,false,toQuery::Background,Tabs,"options");
   Options->setSQL(SQLOptions);
-  Tabs->addTab(Options,"&Options");
+  Tabs->addTab(Options,"Optio&ns");
 
   Licenses=new toResultItem(2,true,Tabs,"licenses");
   Licenses->setSQL(SQLLicense);

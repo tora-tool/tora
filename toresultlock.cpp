@@ -83,6 +83,14 @@ static toSQL SQLBlockingLock("toResultLock:BlockingLocks",
 			     "  from v$lock a,v$session b,v$locked_object c,sys.all_objects d\n"
 			     " where a.sid = b.sid\n"
 			     "   and c.session_id = a.sid\n"
+			     "   and exists (select 'X'\n"
+			     "                 from v$locked_object bb,\n"
+			     "                      v$lock cc\n"
+			     "                where bb.session_id = cc.sid\n"
+			     "                  and cc.sid != a.sid\n"
+			     "                  and cc.id1 = a.id1\n"
+			     "                  and cc.id2 = a.id2\n"
+			     "                  and bb.object_id = c.object_id)\n"
 			     "   and d.object_id = c.object_id\n"
 			     "   and a.request != 0",
 			     "List session blocked by a lock");
@@ -104,7 +112,7 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "   and c.session_id = a.sid\n"
 		     "   and c.object_id = d.object_id\n"
 		     "   and exists (select 'X'\n"
-		     "                 from v$locked_object bb,\n\n"
+		     "                 from v$locked_object bb,\n"
 		     "                      v$lock cc\n"
 		     "                where bb.session_id = cc.sid\n"
 		     "                  and cc.sid != a.sid\n"
@@ -132,6 +140,7 @@ void toResultLock::query(const QString &sql,
     Query=NULL;
   }
   clear();
+  Checked.clear();
 
   try {
     LastItem=NULL;
@@ -173,14 +182,43 @@ void toResultLock::poll(void)
       LastItem=NULL;
       QListViewItem *next=NULL;
       for (QListViewItem *item=firstChild();item;item=next) {
+	int sid=item->text(0).toInt();
 	if (item->text(MARK_COL).isEmpty()) {
-	  LastItem=item;
 	  item->setText(MARK_COL,"Yes");
 	  item->setOpen(true);
-	  toQList par;
-	  par.insert(par.end(),LastItem->text(0));
-	  Query=new toNoBlockQuery(connection(),toQuery::Background,
-				   toSQL::string(SQLLock,connection()),par);
+	  if (!Checked[sid]) {
+	    Checked[sid]=true;
+	    LastItem=item;
+	    toQList par;
+	    par.insert(par.end(),LastItem->text(0));
+	    Query=new toNoBlockQuery(connection(),toQuery::Background,
+				     toSQL::string(SQLLock,connection()),par);
+	  } else {
+	    QListViewItem *cn=NULL;
+	    for (QListViewItem *ci=firstChild();ci;ci=cn) {
+	      if (ci!=item&&ci->text(0)==item->text(0)) {
+		if (ci->firstChild()) {
+		  ci=ci->firstChild();
+		  cn=new toResultViewItem(item,NULL);
+		  for(int i=0;i<columns();i++)
+		    cn->setText(i,ci->text(i));
+		}
+		break;
+	      }
+	      if (ci->firstChild()) {
+		cn=ci->firstChild();
+	      } else if (ci->nextSibling())
+		cn=ci->nextSibling();
+	      else {
+		cn=ci;
+		do {
+		  cn=cn->parent();
+		} while(cn&&!cn->nextSibling());
+		if (cn)
+		  cn=cn->nextSibling();
+	      }
+	    }
+	  }
 	  break;
 	}
 	if (item->firstChild()) {
