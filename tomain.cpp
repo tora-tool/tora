@@ -220,7 +220,7 @@ toMain::toMain()
 
   updateRecent();
 
-  connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
+  connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT(showFileMenu()));
   menuBar()->insertItem(tr("&File"),FileMenu,TO_FILE_MENU);
   connect(FileMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
@@ -246,7 +246,6 @@ toMain::toMain()
   EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
   EditMenu->setAccel(Key_F|CTRL,TO_EDIT_SEARCH);
   EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
-  connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT(editFileMenu()));
   menuBar()->insertItem(tr("&Edit"),EditMenu,TO_EDIT_MENU);
   connect(EditMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
