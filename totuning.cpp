@@ -1615,7 +1615,7 @@ toTuningWait::toTuningWait(QWidget *parent)
   AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   AbsolutePie->showLegend(false);
   layout->addWidget(AbsolutePie,2,3);
-  Legend=new toLegendChart(this);
+  Legend=new toLegendChart(2,this);
   Legend->setTitle("Legend");
   layout->addMultiCellWidget(Legend,1,2,0,0);
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
@@ -1653,20 +1653,29 @@ void toTuningWait::changeSelection(void)
   int count=int(Labels.size());
 
   bool *enabled=new bool[count];
+  bool *included=new bool[count];
   int typ=0;
   std::list<QString> used;
   std::map<QString,int> usedMap;
   for (std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
     usedMap[*i]=typ;
     enabled[typ]=false;
+    included[typ]=false;
     typ++;
   }
   for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
-    if (enabled[typ]=item->isSelected()) {
-      QString txt=item->text(0);
-      used.insert(used.end(),txt);
+    QString txt=item->text(0);
+    if (usedMap.find(txt)==usedMap.end())
+      toStatusMessage("Internal error, can't find ("+txt+") in usedMap");
+    if (item->isSelected())
       enabled[usedMap[txt]]=true;
-    }
+    used.insert(used.end(),txt);
+    included[usedMap[txt]]=true;
+  }
+  used.sort();
+  for(std::list<QString>::iterator i=used.begin();i!=used.end();i++) {
+    if (!enabled[usedMap[*i]])
+      *i=QString::null;
   }
       
   try {
@@ -1688,11 +1697,18 @@ void toTuningWait::changeSelection(void)
       std::list<double> current;
       std::list<double>::iterator k=lastAbsolute.begin();
       for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	if (enabled[typ]) {
-	  current.insert(current.end(),*j);
-	  if (k!=lastAbsolute.end()) {
-	    relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
-	    k++;
+	if (included[typ]) {
+	  if (enabled[typ]) {
+	    current.insert(current.end(),*j);
+	    if (k!=lastAbsolute.end()) {
+	      relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
+	      k++;
+	    }
+	  } else {
+	    current.insert(current.end(),0);
+	    relative.insert(relative.end(),0);
+	    if (k!=lastAbsolute.end())
+	      k++;
 	  }
 	}
 	typ++;
@@ -1711,6 +1727,7 @@ void toTuningWait::changeSelection(void)
     DeltaPie->setValues(relative,used);
   } TOCATCH
   delete enabled;
+  delete included;
 }
 
 void toTuningWait::connectionChanged(void)

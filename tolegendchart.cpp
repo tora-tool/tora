@@ -40,9 +40,10 @@
 
 #include "tolegendchart.moc"
 
-toLegendChart::toLegendChart(QWidget *parent,const char *name,WFlags f)
+toLegendChart::toLegendChart(int columns,QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
+  Columns=columns<1?1:columns;
   setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred));
 }
 
@@ -62,76 +63,125 @@ void toLegendChart::setLabels(std::list<QString> &labels)
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
 
+std::list<int> toLegendChart::sizeHint(int &height,int &items)
+{
+  QFontMetrics fm=fontMetrics();
+
+  int count=0;
+  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++)
+    if (!(*i).isEmpty()&&*i!=" ")
+      count++;
+
+  items=(count+Columns-1)/Columns;
+
+  height=0;
+  int width=0;
+  int cheight=0;
+  int cur=0;
+  std::list<int> ret;
+
+  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    if (!(*i).isEmpty()&&*i!=" ") {
+      if (cur==items) {
+	ret.insert(ret.end(),width);
+
+	if (cheight>height)
+	  height=cheight;
+	cheight=0;
+	width=0;
+	cur=0;
+      }
+      QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
+      if (width<bounds.width())
+	width=bounds.width();
+      cheight+=bounds.height();
+      cur++;
+    }
+  }
+  if (width>0) {
+    ret.insert(ret.end(),width);
+  }
+  if (cheight>height)
+    height=cheight;
+  return ret;
+}
+
 QSize toLegendChart::sizeHint(void)
 {
   QFontMetrics fm=fontMetrics();
-  int lwidth=0;
-  int lheight=0;
 
-  {
-    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      if (!(*i).isEmpty()&&*i!=" ") {
-	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
-	if (lwidth<bounds.width())
-	  lwidth=bounds.width();
-	lheight+=bounds.height();
-      }
-    }
-  }
-  if (lheight>0) {
-    lheight+=8;
-    lwidth+=18;
-  }
-  setFixedWidth(lwidth);
+  int height,items;
+
+  std::list<int> widths=sizeHint(height,items);
+
+  height+=8;
+  int width=8;
+  for(std::list<int>::iterator i=widths.begin();i!=widths.end();i++)
+    width+=(*i)+12;
+
+  setFixedWidth(width);
 
   if (!Title.isEmpty()) {
-    QRect bounds=fm.boundingRect(0,0,lwidth,10000,FONT_ALIGN,Title);
-    lheight+=bounds.height()+2;
+    QRect bounds=fm.boundingRect(0,0,width,10000,FONT_ALIGN,Title);
+    height+=bounds.height()+2;
   }
 
-  return QSize(lwidth,lheight);
+  return QSize(width,height);
 }
 
 void toLegendChart::paintEvent(QPaintEvent *e)
 {
-  QSize size=sizeHint();
-  int lwidth=size.width()-4;
-  int lheight=size.height()-4;
+  int height,items;
+  std::list<int> widths=sizeHint(height,items);
+
+  int width=4;
+  for(std::list<int>::iterator i=widths.begin();i!=widths.end();i++)
+    width+=(*i)+12;
 
   QPainter p(this);
   QFontMetrics fm=fontMetrics();
-
-  int lx=2;
 
   if (!Title.isEmpty()) {
     p.save();
     QFont f=p.font();
     f.setBold(true);
     p.setFont(f);
-    QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
-    p.drawText(0,2,width(),height(),AlignHCenter|AlignTop|ExpandTabs,Title);
+    QRect bounds=fm.boundingRect(0,0,
+				 toLegendChart::width(),
+				 toLegendChart::height(),FONT_ALIGN,Title);
+    p.drawText(0,2,
+	       toLegendChart::width()-4,
+	       toLegendChart::height(),AlignHCenter|AlignTop|ExpandTabs,Title);
     p.restore();
     p.translate(0,bounds.height()+2);
-    lheight-=bounds.height()+2;
   }
 
-  int ly=2;
+  int cx=2;
+  int cy=4;
   p.save();
   p.setBrush(white);
-  p.drawRect(lx,ly,lwidth,lheight);
+  p.drawRect(2,2,width,height+4);
   p.restore();
-  lx+=12;
-  ly+=2;
+  int cur=0;
+  std::list<int>::iterator j=widths.begin();
   int cp=0;
   for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-    QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
     if (!(*i).isEmpty()&&*i!=" ") {
+      if (cur==items) {
+	cx+=*j+12;
+	cy=4;
+	cur=0;
+	j++;
+      }
+      QRect bounds=fm.boundingRect(cx+12,cy,100000,100000,FONT_ALIGN,*i);
       p.drawText(bounds,FONT_ALIGN,*i);
       p.save();
-      p.setBrush(toChartColor(cp++));
-      p.drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+      p.setBrush(toChartColor(cp));
+      p.drawRect(cx+2,cy+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
       p.restore();
-      ly+=bounds.height();
+      cy+=bounds.height();
+      cur++;
     }
+    cp++;
   }
 }
