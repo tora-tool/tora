@@ -1475,9 +1475,10 @@ objs/\%.o: \%.cpp
 
 install-common:
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
+	mkdir -p \$(INSTALLBIN)
 	mkdir -p \$(INSTALLLIB)/tora/help
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 install: \$(TARGET) install-common install-kde
 	\@echo Install \$(TARGET) to \$(INSTALLBIN)
@@ -1485,11 +1486,9 @@ install: \$(TARGET) install-common install-kde
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
 	cp \$(TARGET) \$(INSTALLBIN)/tora
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
-	mkdir -p \$(INSTALLLIB)/tora/help
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 install-debug: tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
@@ -1502,9 +1501,9 @@ __EOT__
 install-kde:
 	mkdir -p \$(KDE_BASE)/share/icons/hicolor/32x32/apps
 	mkdir -p \$(KDE_BASE)/share/icons/hicolor/16x16/apps 
+	mkdir -p \$(KDE_BASE)/share/applnk/Development
 	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
 	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
-	mkdir -p \$(KDE_BASE)/share/applnk/Development
 	cp -f rpm/tora.desktop \$(KDE_BASE)/share/applnk/Development
 
 __EOT__

@@ -433,7 +433,7 @@ void toSession::disconnectSession(void)
     sess.append(",");
     sess.append(item->text(1));
     sess.append("'");
-    QString str("Let current transaction finnish before disconnecting session?");
+    QString str("Let current transaction finish before disconnecting session?");
     QString sql;
     switch(TOMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
     case 0:
