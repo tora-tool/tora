@@ -44,6 +44,9 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include <ctype.h>
+#include <string.h>
+
 #include <qapplication.h>
 #include <qcheckbox.h>
 #include <qgroupbox.h>
