@@ -23,6 +23,7 @@ TITLE=TOra
 SUBDIRS=
 SOURCES=\
 	toabout.cpp 		\
+	tobarchart.cpp		\
 	tobrowser.cpp		\
 	tobrowserfilterui.cpp	\
 	toconnection.cpp	\
@@ -97,6 +98,7 @@ SOURCES=\
 
 API=	\
 	tochangeconnection.h	\
+	tobarchart.h		\
 	toconf.h		\
 	toconnection.h		\
 	todefaultkeywords.h	\
@@ -145,6 +147,7 @@ plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserfilterui.o
 plugins/tocharts.tso:\
+	objs/tobarchart.o \
 	objs/tolinechart.o \
 	objs/topiechart.o \
 	objs/toresultpie.o

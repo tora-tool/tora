@@ -77,15 +77,50 @@
 </LI>
 <LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref42">labels</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref43">addValues</A></b> (list&lt;double&gt; &amp;value) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref43">addValues</A></b> (list&lt;double&gt; &amp;value) 
 </LI>
 <LI>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref44">values</A></b> (void) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref45">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
 </LI>
+</ul><h4>Protected Static Methods</h4><ul><LI>static  double &nbsp;<b><A HREF="#ref17">round</A></b> (double round,bool up) 
+</LI>
+</ul><h4>Protected Members</h4><ul><LI>list&lt;list&lt;double&gt; &gt; <b><A HREF="#ref1">Values</A></b></LI>
+<LI>list&lt;QString&gt; <b><A HREF="#ref2">Labels</A></b></LI>
+<LI>bool <b><A HREF="#ref3">Legend</A></b></LI>
+<LI>bool <b><A HREF="#ref4">Throbber</A></b></LI>
+<LI>int <b><A HREF="#ref5">Grid</A></b></LI>
+<LI>bool <b><A HREF="#ref6">AxisText</A></b></LI>
+<LI>double <b><A HREF="#ref7">MinValue</A></b></LI>
+<LI>bool <b><A HREF="#ref8">MinAuto</A></b></LI>
+<LI>double <b><A HREF="#ref9">MaxValue</A></b></LI>
+<LI>bool <b><A HREF="#ref10">MaxAuto</A></b></LI>
+<LI>QString <b><A HREF="#ref11">MinAxis</A></b></LI>
+<LI>QString <b><A HREF="#ref12">MaxAxis</A></b></LI>
+<LI>QString <b><A HREF="#ref13">YPostfix</A></b></LI>
+<LI>int <b><A HREF="#ref14">Samples</A></b></LI>
+<LI>bool <b><A HREF="#ref15">AutoSamples</A></b></LI>
+<LI>QString <b><A HREF="#ref16">Title</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget that displays a linechart with optional background throbber (Not implemented yet).
  </p>
-<A NAME="toLineChart"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toLineChart</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0)
+<A NAME="Values"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt;  <strong>Values</strong>
+</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>Labels</strong>
+</td><td align="right"><h3><strong>Labels</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Legend"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Legend</strong>
+</td><td align="right"><h3><strong>Legend</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Throbber"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Throbber</strong>
+</td><td align="right"><h3><strong>Throbber</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Grid"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Grid</strong>
+</td><td align="right"><h3><strong>Grid</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="AxisText"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>AxisText</strong>
+</td><td align="right"><h3><strong>AxisText</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MinValue"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double  <strong>MinValue</strong>
+</td><td align="right"><h3><strong>MinValue</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MinAuto"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>MinAuto</strong>
+</td><td align="right"><h3><strong>MinAuto</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxValue"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double  <strong>MaxValue</strong>
+</td><td align="right"><h3><strong>MaxValue</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxAuto"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>MaxAuto</strong>
+</td><td align="right"><h3><strong>MaxAuto</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MinAxis"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>MinAxis</strong>
+</td><td align="right"><h3><strong>MinAxis</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxAxis"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>MaxAxis</strong>
+</td><td align="right"><h3><strong>MaxAxis</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="YPostfix"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>YPostfix</strong>
+</td><td align="right"><h3><strong>YPostfix</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Samples"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Samples</strong>
+</td><td align="right"><h3><strong>Samples</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="AutoSamples"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>AutoSamples</strong>
+</td><td align="right"><h3><strong>AutoSamples</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Title"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>Title</strong>
+</td><td align="right"><h3><strong>Title</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="round"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> double &nbsp;<strong>round</strong> (double round,bool up)
+<br></td><td align="right"><h3><strong>round</strong></h3></td></tr></table><p> <small>[protected static]</small></p><A NAME="toLineChart"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toLineChart</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0)
 <br></td><td align="right"><h3><strong>toLineChart</strong></h3></td></tr></table><p></p><p> Create a new linechart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -241,8 +276,8 @@
 </p>
 <p><b>Returns</b>: List of labels.
    </p>
-<A NAME="addValues"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addValues</strong> (list&lt;double&gt; &amp;value)
-<br></td><td align="right"><h3><strong>addValues</strong></h3></td></tr></table><p></p><p> Add a new value set to the chart.
+<A NAME="addValues"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (list&lt;double&gt; &amp;value)
+<br></td><td align="right"><h3><strong>addValues</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Add a new value set to the chart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>value</i></TD><TD align="left" valign="top">New values for charts (One for each line).

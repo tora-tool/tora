@@ -46,6 +46,7 @@
 class toLineChart : public QWidget {
   Q_OBJECT
 
+protected:
   list<list<double> > Values;
   list<QString> Labels;
   bool Legend;
@@ -207,7 +208,7 @@ public:
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
    */
-  void addValues(list<double> &value);
+  virtual void addValues(list<double> &value);
 
   /** Get list of values.
    * @return Values in piechart.

@@ -1,31 +1,3 @@
-<HTML>
-<HEAD>
-<TITLE>Source: tolinechart.h</TITLE>
-
-<META NAME="Generator" CONTENT="KDOC ">
-</HEAD>
-<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
-<TABLE WIDTH="100%" BORDER="0">
-<TR>
-<TD>
-	<TABLE BORDER="0">
-		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: tolinechart.h</h1>
-		</TD>
-		<TD valign="top" align="right" colspan="1"></TD></TR>
-	</TABLE>
-	<HR>
-	<TABLE BORDER="0">
-		
-	</TABLE>
-	</TD>
-<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
-<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
-<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
-<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
-<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
-</TABLE></TD></TR></TABLE>
-<pre>
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -62,27 +34,24 @@
  *
  ****************************************************************************/
 
-#ifndef __TOLINECHART_H
-#define __TOLINECHART_H
+#ifndef __TOBARCHART_H
+#define __TOBARCHART_H
 
-#include &lt;list&gt;
-#include &lt;qwidget.h&gt;
+#include <list>
+#include <qwidget.h>
 
-/** A widget that displays a linechart with optional background throbber (Not implemented yet).
+/** A widget that displays a barchart. Each line is added onto the next one.
  */
 
-class toLineChart : public QWidget {
+class toBarChart : public QWidget {
   Q_OBJECT
 
 protected:
-  list&lt;list&lt;double&gt; &gt; Values;
-  list&lt;QString&gt; Labels;
+  list<list<double> > Values;
+  list<QString> Labels;
   bool Legend;
-  bool Throbber;
   int Grid;
   bool AxisText;
-  double MinValue;
-  bool MinAuto;
   double MaxValue;
   bool MaxAuto;
   QString MinAxis;
@@ -94,12 +63,12 @@ protected:
 
   static double round(double round,bool up);
 public:
-  /** Create a new linechart.
+  /** Create a new barchart.
    * @param parent Parent widget.
    * @param name Name of widget.
    * @param f Widget flags.
    */
-  toLineChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+  toBarChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.
@@ -115,26 +84,13 @@ public:
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
    */
-  void setTitle(const QString &amp;title=QString::null)
+  void setTitle(const QString &title=QString::null)
   { Title=title; update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
-  const QString &amp;title(void)
+  const QString &title(void)
   { return Title; }
-
-  /** Specify if throbber should be displayed in the graph, default is off.
-   * The throbber is a large bar in the background showing the most recent value more
-   * pominently than the historical values.
-   * @param on Whether to display throbber or not.
-   */
-  void showThrobber(bool on)
-  { Throbber=on; update(); }
-  /** Check if throbber is displayed or not.
-   * @return If throbber is displayed or not.
-   */
-  bool throbber(void) const
-  { return Throbber; }
 
   /** Specify if a grid should be displayed in the graph, default is on.
    * @param div Number of parts to divide grid into.
@@ -161,31 +117,16 @@ public:
   /** Set y postfix value. This will be appended to the values in the axis legend.
    * @param postfix The string to append.
    */
-  void setYPostfix(const QString &amp;postfix)
+  void setYPostfix(const QString &postfix)
   { YPostfix=postfix; update(); }
   /** Set max value on y-axis to auto.
    */
   void setMaxValueAuto(void)
   { MaxAuto=true; update(); }
-  /** Set min value on y-axis to auto.
-   */
-  void setMinValueAuto(void)
-  { MinAuto=true; update(); }
-  /** Set max value on y-axis.
-   * @param val Max value on y-axis.
+  /** Set max value on y-axis to auto.
    */
   void setMaxValue(double maxVal)
   { MaxAuto=false; MaxValue=maxVal; update(); }
-  /** Set min value on y-axis.
-   * @param val Min value on y-axis.
-   */
-  void setMinValue(double minVal)
-  { MinAuto=false; MinValue=minVal; update(); }
-  /** Get minimum value on y-axis. Will not return the automatically determinned minimum value.
-   * @return Minimum value on y-axis.
-   */
-  double minValue(void) const
-  { return MinValue; }
   /** Get maximum value on y-axis. Will not return the automatically determinned maximum value.
    * @return Maximum value on y-axis.
    */
@@ -197,7 +138,7 @@ public:
    * @param minAxis Left legend on axis.
    * @param maxAxis Right legend on axis.
    */
-  void setAxisLegend(const QString &amp;minAxis,const QString &amp;maxAxis)
+  void setAxisLegend(const QString &minAxis,const QString &maxAxis)
   { MaxAxis=maxAxis; MinAxis=minAxis; update(); }
   /** Get the legend of the left of the x-axis.
    * @return Legend of oldest x-axis value.
@@ -225,23 +166,23 @@ public:
   /** Set the labels on the chart lines.
    * @param labels Labels of the lines. Empty labels will not show up in the legend.
    */
-  void setLabels(const list&lt;QString&gt; &amp;labels)
+  void setLabels(const list<QString> &labels)
   { Labels=labels; update(); }
   /** Get the labels of the chart lines.
    * @return List of labels.
    */
-  list&lt;QString&gt; &amp;labels(void)
+  list<QString> &labels(void)
   { return Labels; }
 
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
    */
-  virtual void addValues(list&lt;double&gt; &amp;value);
+  virtual void addValues(list<double> &value);
 
   /** Get list of values.
    * @return Values in piechart.
    */
-  list&lt;list&lt;double&gt; &gt; &amp;values(void)
+  list<list<double> > &values(void)
   { return Values; }
 
 protected:
@@ -251,9 +192,3 @@ protected:
 };
 
 #endif
-</pre>
-<HR>
-	<table>
-	</table>
-</BODY>
-</HTML>

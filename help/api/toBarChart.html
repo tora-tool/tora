@@ -1,0 +1,250 @@
+<HTML>
+<HEAD>
+<TITLE>class toBarChart</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toBarChart</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> A widget that displays a barchart. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tobarchart_h.html">tobarchart.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toBarChart.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref15">toBarChart</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref16">showLegend</A></b> (bool on) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref17">legend</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref18">setTitle</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null) 
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref19">title</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref20">showGrid</A></b> (int div=0) 
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref21">grid</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref22">showAxisLegend</A></b> (bool on) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref23">axisLegend</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref24">setYPostfix</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;postfix) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref25">setMaxValueAuto</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref26">setMaxValue</A></b> (double maxVal) 
+</LI>
+<LI>double &nbsp;<b><A HREF="#ref27">maxValue</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref28">setAxisLegend</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;minAxis,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;maxAxis) 
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref29">minAxis</A></b> (void)  const
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref30">maxAxis</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref31">setSamples</A></b> (int samples=-1) 
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref32">samples</A></b> (void)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref33">setLabels</A></b> (const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
+</LI>
+<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref34">labels</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">addValues</A></b> (list&lt;double&gt; &amp;value) 
+</LI>
+<LI>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref36">values</A></b> (void) 
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref37">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
+</LI>
+</ul><h4>Protected Static Methods</h4><ul><LI>static  double &nbsp;<b><A HREF="#ref14">round</A></b> (double round,bool up) 
+</LI>
+</ul><h4>Protected Members</h4><ul><LI>list&lt;list&lt;double&gt; &gt; <b><A HREF="#ref1">Values</A></b></LI>
+<LI>list&lt;QString&gt; <b><A HREF="#ref2">Labels</A></b></LI>
+<LI>bool <b><A HREF="#ref3">Legend</A></b></LI>
+<LI>int <b><A HREF="#ref4">Grid</A></b></LI>
+<LI>bool <b><A HREF="#ref5">AxisText</A></b></LI>
+<LI>double <b><A HREF="#ref6">MaxValue</A></b></LI>
+<LI>bool <b><A HREF="#ref7">MaxAuto</A></b></LI>
+<LI>QString <b><A HREF="#ref8">MinAxis</A></b></LI>
+<LI>QString <b><A HREF="#ref9">MaxAxis</A></b></LI>
+<LI>QString <b><A HREF="#ref10">YPostfix</A></b></LI>
+<LI>int <b><A HREF="#ref11">Samples</A></b></LI>
+<LI>bool <b><A HREF="#ref12">AutoSamples</A></b></LI>
+<LI>QString <b><A HREF="#ref13">Title</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget that displays a barchart. Each line is added onto the next one.
+ </p>
+<A NAME="Values"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt;  <strong>Values</strong>
+</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>Labels</strong>
+</td><td align="right"><h3><strong>Labels</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Legend"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Legend</strong>
+</td><td align="right"><h3><strong>Legend</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Grid"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Grid</strong>
+</td><td align="right"><h3><strong>Grid</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="AxisText"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>AxisText</strong>
+</td><td align="right"><h3><strong>AxisText</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxValue"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double  <strong>MaxValue</strong>
+</td><td align="right"><h3><strong>MaxValue</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxAuto"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>MaxAuto</strong>
+</td><td align="right"><h3><strong>MaxAuto</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MinAxis"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>MinAxis</strong>
+</td><td align="right"><h3><strong>MinAxis</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="MaxAxis"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>MaxAxis</strong>
+</td><td align="right"><h3><strong>MaxAxis</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="YPostfix"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>YPostfix</strong>
+</td><td align="right"><h3><strong>YPostfix</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Samples"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Samples</strong>
+</td><td align="right"><h3><strong>Samples</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="AutoSamples"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>AutoSamples</strong>
+</td><td align="right"><h3><strong>AutoSamples</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Title"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>Title</strong>
+</td><td align="right"><h3><strong>Title</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="round"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> double &nbsp;<strong>round</strong> (double round,bool up)
+<br></td><td align="right"><h3><strong>round</strong></h3></td></tr></table><p> <small>[protected static]</small></p><A NAME="toBarChart"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toBarChart</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0)
+<br></td><td align="right"><h3><strong>toBarChart</strong></h3></td></tr></table><p></p><p> Create a new barchart.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>f</i></TD><TD align="left" valign="top">Widget flags.
+   </TD></TR>
+</TABLE></P>
+<A NAME="showLegend"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>showLegend</strong> (bool on)
+<br></td><td align="right"><h3><strong>showLegend</strong></h3></td></tr></table><p></p><p> Specify if legend should be displayed to the right of the graph, default is on.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>on</i></TD><TD align="left" valign="top">Whether to display legend or not.
+   </TD></TR>
+</TABLE></P>
+<A NAME="legend"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>legend</strong> (void)
+<br></td><td align="right"><h3><strong>legend</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if legend is displayed or not.
+</p>
+<p><b>Returns</b>: If legend is displayed or not.
+   </p>
+<A NAME="setTitle"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setTitle</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null)
+<br></td><td align="right"><h3><strong>setTitle</strong></h3></td></tr></table><p></p><p> Set title of the chart. Set to empty string to not display title.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>title</i></TD><TD align="left" valign="top">Title of chart.
+   </TD></TR>
+</TABLE></P>
+<A NAME="title"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>title</strong> (void)
+<br></td><td align="right"><h3><strong>title</strong></h3></td></tr></table><p></p><p> Get title of chart.
+</p>
+<p><b>Returns</b>: Title of chart.
+   </p>
+<A NAME="showGrid"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>showGrid</strong> (int div=0)
+<br></td><td align="right"><h3><strong>showGrid</strong></h3></td></tr></table><p></p><p> Specify if a grid should be displayed in the graph, default is on.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>div</i></TD><TD align="left" valign="top">Number of parts to divide grid into.
+   </TD></TR>
+</TABLE></P>
+<A NAME="grid"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>grid</strong> (void)
+<br></td><td align="right"><h3><strong>grid</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if grid is displayed or not.
+</p>
+<p><b>Returns</b>: Number of parts to divide grid into.
+   </p>
+<A NAME="showAxisLegend"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>showAxisLegend</strong> (bool on)
+<br></td><td align="right"><h3><strong>showAxisLegend</strong></h3></td></tr></table><p></p><p> Specify if a y-axis legend should be displayed in the graph, default is on.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>on</i></TD><TD align="left" valign="top">Whether to display legend or not.
+   </TD></TR>
+</TABLE></P>
+<A NAME="axisLegend"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>axisLegend</strong> (void)
+<br></td><td align="right"><h3><strong>axisLegend</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if y-axis legend is displayed or not.
+</p>
+<p><b>Returns</b>: If legend is displayed or not.
+   </p>
+<A NAME="setYPostfix"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setYPostfix</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;postfix)
+<br></td><td align="right"><h3><strong>setYPostfix</strong></h3></td></tr></table><p></p><p> Set y postfix value. This will be appended to the values in the axis legend.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>postfix</i></TD><TD align="left" valign="top">The string to append.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setMaxValueAuto"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setMaxValueAuto</strong> (void)
+<br></td><td align="right"><h3><strong>setMaxValueAuto</strong></h3></td></tr></table><p></p><p> Set max value on y-axis to auto.
+   </p>
+<A NAME="setMaxValue"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setMaxValue</strong> (double maxVal)
+<br></td><td align="right"><h3><strong>setMaxValue</strong></h3></td></tr></table><p></p><p> Set max value on y-axis to auto.
+   </p>
+<A NAME="maxValue"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double &nbsp;<strong>maxValue</strong> (void)
+<br></td><td align="right"><h3><strong>maxValue</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get maximum value on y-axis. Will not return the automatically determinned maximum value.
+</p>
+<p><b>Returns</b>: Maximum value on y-axis.
+   </p>
+<A NAME="setAxisLegend"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAxisLegend</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;minAxis,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;maxAxis)
+<br></td><td align="right"><h3><strong>setAxisLegend</strong></h3></td></tr></table><p></p><p> Set the oldest and newest legend on the x-axis. Leave empty to not display any text
+ on the axises.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>minAxis</i></TD><TD align="left" valign="top">Left legend on axis.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>maxAxis</i></TD><TD align="left" valign="top">Right legend on axis.
+   </TD></TR>
+</TABLE></P>
+<A NAME="minAxis"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>minAxis</strong> (void)
+<br></td><td align="right"><h3><strong>minAxis</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the legend of the left of the x-axis.
+</p>
+<p><b>Returns</b>: Legend of oldest x-axis value.
+   </p>
+<A NAME="maxAxis"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>maxAxis</strong> (void)
+<br></td><td align="right"><h3><strong>maxAxis</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the legend of the right of the x-axis.
+</p>
+<p><b>Returns</b>: Legend of the most recent x-axis value.
+   </p>
+<A NAME="setSamples"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSamples</strong> (int samples=-1)
+<br></td><td align="right"><h3><strong>setSamples</strong></h3></td></tr></table><p></p><p> Set the number of samples on the x-axis. Setting samples to -1 will keep enough samples
+ to display one for each pixel of the screen. More samples than that will never be used
+ regardless of this setting.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>samples</i></TD><TD align="left" valign="top">Number of samples.
+   </TD></TR>
+</TABLE></P>
+<A NAME="samples"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>samples</strong> (void)
+<br></td><td align="right"><h3><strong>samples</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the maximum number of samples on the x-axis.
+</p>
+<p><b>Returns</b>: Max number of samples.
+   </p>
+<A NAME="setLabels"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLabels</strong> (const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
+<br></td><td align="right"><h3><strong>setLabels</strong></h3></td></tr></table><p></p><p> Set the labels on the chart lines.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>labels</i></TD><TD align="left" valign="top">Labels of the lines. Empty labels will not show up in the legend.
+   </TD></TR>
+</TABLE></P>
+<A NAME="labels"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
+<br></td><td align="right"><h3><strong>labels</strong></h3></td></tr></table><p></p><p> Get the labels of the chart lines.
+</p>
+<p><b>Returns</b>: List of labels.
+   </p>
+<A NAME="addValues"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (list&lt;double&gt; &amp;value)
+<br></td><td align="right"><h3><strong>addValues</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Add a new value set to the chart.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>value</i></TD><TD align="left" valign="top">New values for charts (One for each line).
+   </TD></TR>
+</TABLE></P>
+<A NAME="values"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
+<br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
+</p>
+<p><b>Returns</b>: Values in piechart.
+   </p>
+<A NAME="paintEvent"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e)
+<br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qwidget.html#ef2069">QWidget</A>.</p>
+<HR>
+	<table>
+	</table>
+</BODY>
+</HTML>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: tolinechart.h</TITLE>
+<TITLE>Source: tobarchart.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: tolinechart.h</h1>
+		<h1>Source: tobarchart.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,27 +62,24 @@
  *
  ****************************************************************************/
 
-#ifndef __TOLINECHART_H
-#define __TOLINECHART_H
+#ifndef __TOBARCHART_H
+#define __TOBARCHART_H
 
 #include &lt;list&gt;
 #include &lt;qwidget.h&gt;
 
-/** A widget that displays a linechart with optional background throbber (Not implemented yet).
+/** A widget that displays a barchart. Each line is added onto the next one.
  */
 
-class toLineChart : public QWidget {
+class toBarChart : public QWidget {
   Q_OBJECT
 
 protected:
   list&lt;list&lt;double&gt; &gt; Values;
   list&lt;QString&gt; Labels;
   bool Legend;
-  bool Throbber;
   int Grid;
   bool AxisText;
-  double MinValue;
-  bool MinAuto;
   double MaxValue;
   bool MaxAuto;
   QString MinAxis;
@@ -94,12 +91,12 @@ protected:
 
   static double round(double round,bool up);
 public:
-  /** Create a new linechart.
+  /** Create a new barchart.
    * @param parent Parent widget.
    * @param name Name of widget.
    * @param f Widget flags.
    */
-  toLineChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+  toBarChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.
@@ -122,19 +119,6 @@ public:
    */
   const QString &amp;title(void)
   { return Title; }
-
-  /** Specify if throbber should be displayed in the graph, default is off.
-   * The throbber is a large bar in the background showing the most recent value more
-   * pominently than the historical values.
-   * @param on Whether to display throbber or not.
-   */
-  void showThrobber(bool on)
-  { Throbber=on; update(); }
-  /** Check if throbber is displayed or not.
-   * @return If throbber is displayed or not.
-   */
-  bool throbber(void) const
-  { return Throbber; }
 
   /** Specify if a grid should be displayed in the graph, default is on.
    * @param div Number of parts to divide grid into.
@@ -167,25 +151,10 @@ public:
    */
   void setMaxValueAuto(void)
   { MaxAuto=true; update(); }
-  /** Set min value on y-axis to auto.
-   */
-  void setMinValueAuto(void)
-  { MinAuto=true; update(); }
-  /** Set max value on y-axis.
-   * @param val Max value on y-axis.
+  /** Set max value on y-axis to auto.
    */
   void setMaxValue(double maxVal)
   { MaxAuto=false; MaxValue=maxVal; update(); }
-  /** Set min value on y-axis.
-   * @param val Min value on y-axis.
-   */
-  void setMinValue(double minVal)
-  { MinAuto=false; MinValue=minVal; update(); }
-  /** Get minimum value on y-axis. Will not return the automatically determinned minimum value.
-   * @return Minimum value on y-axis.
-   */
-  double minValue(void) const
-  { return MinValue; }
   /** Get maximum value on y-axis. Will not return the automatically determinned maximum value.
    * @return Maximum value on y-axis.
    */

@@ -36,13 +36,13 @@
 
 #include <qpainter.h>
 
-#include "tolinechart.h"
+#include "tobarchart.h"
 #include "tomain.h"
 #include "toconf.h"
 
-#include "tolinechart.moc"
+#include "tobarchart.moc"
 
-double toLineChart::round(double round,bool up)
+double toBarChart::round(double round,bool up)
 {
   double base=1;
   double mult=1;
@@ -72,7 +72,7 @@ double toLineChart::round(double round,bool up)
   }
 }
 
-void toLineChart::setSamples(int samples)
+void toBarChart::setSamples(int samples)
 {
   if (samples<=0) {
     QWidget *d=QApplication::desktop();
@@ -88,13 +88,12 @@ void toLineChart::setSamples(int samples)
   update();
 }
 
-toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
+toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
-  MinAuto=MaxAuto=true;
-  MinValue=MaxValue=0;
+  MaxAuto=true;
+  MaxValue=0;
   Legend=true;
-  Throbber=false;
   Grid=0;
   AxisText=false;
   
@@ -110,7 +109,7 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   }
 }
 
-void toLineChart::addValues(list<double> &value)
+void toBarChart::addValues(list<double> &value)
 {
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
     if (int((*i).size())==Samples)
@@ -131,7 +130,9 @@ void toLineChart::addValues(list<double> &value)
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
 
-void toLineChart::paintEvent(QPaintEvent *e)
+#include <stdio.h>
+
+void toBarChart::paintEvent(QPaintEvent *e)
 {
   QPainter p(this);
   QFontMetrics fm=p.fontMetrics();
@@ -188,25 +189,30 @@ void toLineChart::paintEvent(QPaintEvent *e)
     }
   }
   double minval=0,maxval=0;
-  if (MinAuto||MaxAuto) {
-    bool first=true;
+  if (MaxAuto) {
+    bool firstMax=true;
+    list<double> total;
     for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      list<double>::iterator k=total.begin();
       for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	if (first) {
-	  minval=*j;
-	  maxval=*j;
-	  first=false;
-	} else if (maxval<*j)
-	  maxval=*j;
-	else if (minval>*j)
-	  minval=*j;
+	if (k==total.end()) {
+	  total.insert(total.end(),*j);
+	  k=total.end();
+	} else {
+	  *k+=*j;
+	  k++;
+	}
       }
     }
+    for(list<double>::iterator k=total.begin();k!=total.end();k++) {
+      if (firstMax) {
+	maxval=*k;
+	firstMax=false;
+      } else if (maxval<*k)
+	maxval=*k;
+    }
     maxval=round(maxval,true);
-    minval=round(minval,false);
   }
-  if(!MinAuto)
-    minval=MinValue;
   if(!MaxAuto)
     maxval=MaxValue;
 
@@ -260,32 +266,47 @@ void toLineChart::paintEvent(QPaintEvent *e)
     }
   }
 
-  int cp=0;
   const QWMatrix &mtx=p.worldMatrix();
   p.setClipRect(mtx.dx()+2,mtx.dy()+2,right-4,bottom-4);
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-    p.save();
-    p.setPen(toChartColor(cp++));
-    list<double> &val=*i;
-    int count=0;
-    bool first=true;
-    int lval=0;
-    int lx=right-2;
-    for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&lx>=2;j++) {
-      int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
-      if (!first) {
-	int x=lx;
+  list<QPointArray> Points;
+  {
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      list<double> &val=*i;
+      int count=0;
+      QPointArray a(Samples+10);
+      int x=right-2;
+      for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
+	int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
 	if (AutoSamples)
 	  x--;
 	else
 	  x=right-4-count*(right-4)/Samples;
-	p.drawLine(x,val,lx,lval);
-	lx=x;
-      } else
-	first=false;
-      lval=val;
-      count++;
+	a.setPoint(count,x,val);
+	count++;
+      }
+      a.resize(count*2);
+      Points.insert(Points.end(),a);
     }
+  }
+
+  int cp=0;
+  map<int,int> Bottom;
+  for(list<QPointArray>::iterator i=Points.begin();i!=Points.end();i++) {
+    QPointArray a=*i;
+    for(unsigned int j=0;j<a.size()/2;j++) {
+      int x,y;
+      a.point(j,&x,&y);
+      if(Bottom.find(x)==Bottom.end())
+	Bottom[x]=0;
+      a.setPoint(a.size()-1-j,x,bottom-2-Bottom[x]);
+      y-=Bottom[x];
+      a.setPoint(j,x,y);
+      Bottom[x]=bottom-2-y;
+    }
+
+    p.save();
+    p.setBrush(toChartColor(cp++));
+    p.drawPolygon(a);
     p.restore();
   }
 }
