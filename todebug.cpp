@@ -82,6 +82,7 @@
 
 #include "icons/addwatch.xpm"
 #include "icons/changewatch.xpm"
+#include "icons/close.xpm"
 #include "icons/compile.xpm"
 #include "icons/delwatch.xpm"
 #include "icons/enablebreak.xpm"
@@ -110,6 +111,7 @@
 #define TO_ID_DEBUG_PANE	(toMain::TO_TOOL_MENU_ID+ 9)
 #define TO_ID_DEL_WATCH		(toMain::TO_TOOL_MENU_ID+10)
 #define TO_ID_CHANGE_WATCH	(toMain::TO_TOOL_MENU_ID+11)
+#define TO_ID_CLOSE_EDITOR	(toMain::TO_TOOL_MENU_ID+12)
 
 class toDebugTool : public toTool {
   std::map<toConnection *,QWidget *> Windows;
@@ -519,11 +521,6 @@ QString toDebug::editorName(toDebugText *text)
   return editorName(text->schema(),text->object(),text->type());
 }
 
-QString toDebug::currentName(void)
-{
-  return editorName(currentEditor());
-}
-
 QString toDebug::currentSchema(void)
 {
   return Schema->currentText();
@@ -536,9 +533,9 @@ QListViewItem *toDebug::contents(void)
 
 void toDebug::reorderContent(int start,int diff)
 {
-  QString name=currentName();
+  QString name=currentEditor()->name();
   for (QListViewItem *item=Contents->firstChild();item;item=item->nextSibling()) {
-    if (item->text(0)==name)
+    if (item->text(1)==name)
       reorderContent(item,start,diff);
   }
 }
@@ -562,7 +559,7 @@ void toDebug::execute(void)
   if (!checkCompile())
     return;
 
-  QString curName=currentName();
+  QString curName=currentEditor()->name();
   toHighlightedText *current=currentEditor();
   int curline,curcol;
   current->getCursorPosition (&curline,&curcol);
@@ -571,7 +568,8 @@ void toDebug::execute(void)
   int line=-1;
   if (hasMembers(currentEditor()->type())) {
     for (QListViewItem *parent=Contents->firstChild();parent;parent=parent->nextSibling()) {
-      if (parent->text(0)==curName) {
+      printf("%s\n",(const char *)parent->text(1));
+      if (parent->text(1)==curName) {
 	for (parent=parent->firstChild();parent;parent=parent->nextSibling()) {
 	  toContentsItem *cont=dynamic_cast<toContentsItem *>(parent);
 	  if (cont) {
@@ -1747,6 +1745,16 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   Editors=new QTabWidget(hsplitter);
   Editors->setTabPosition(QTabWidget::Bottom);
+
+#if QT_VERSION >= 0x030200
+  QToolButton *closeButton=new toPopupButton(Editors);
+  closeButton->setIconSet(QPixmap((const char **)close_xpm));
+  closeButton->setFixedSize(20,18);
+
+  connect(closeButton,SIGNAL(clicked()),this,SLOT(closeEditor()));
+  Editors->setCornerWidget(closeButton);
+#endif
+
   setFocusProxy(Editors);
   newSheet();
 
@@ -1910,30 +1918,37 @@ bool toDebug::checkStop(void)
   return true;
 }
 
+bool toDebug::checkCompile(toDebugText *editor)
+{
+  if (editor->edited()) {
+    switch (TOMessageBox::warning(this,
+				  tr("%1 changed").arg(editorName(editor)),
+				  tr("%1 changed. Continuing will discard uncompiled or saved changes").arg(editorName(editor)),
+				  tr("&Compile"),
+				  tr("&Discard changes"),
+				  tr("Cancel"))) {
+    case 0:
+      if (!checkStop())
+	return false;
+      if (!editor->compile())
+	return false;
+      break;
+    case 1:
+      editor->setEdited(false);
+      break;
+    case 2:
+      return false;
+    }
+  }
+  return true;
+}
+
 bool toDebug::checkCompile(void)
 {
   for(int i=0;i<Editors->count();i++) {
     toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(i));
-    if (editor->edited()) {
-      switch (TOMessageBox::warning(this,
-				    tr("%1 changed").arg(editorName(editor)),
-				    tr("%1 changed. Continuing will discard uncompiled or saved changes").arg(editorName(editor)),
-				    tr("&Compile"),
-				    tr("&Discard changes"),
-				    tr("Cancel"))) {
-      case 0:
-	if (!checkStop())
-	  return false;
-	if (!editor->compile())
-	  return false;
-	break;
-      case 1:
-	editor->setEdited(false);
-	break;
-      case 2:
-	return false;
-      }
-    }
+    if (!checkCompile(editor))
+      return false;
   }
   return true;
 }
@@ -2199,6 +2214,9 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)compile_xpm),
 			   tr("&Compile"),this,SLOT(compile(void)),
 			   Key_F9,TO_ID_COMPILE);
+      ToolMenu->insertItem(QPixmap((const char **)close_xpm),
+			   tr("Close"),this,SLOT(closeEditor(void)),
+			   0,TO_ID_CLOSE_EDITOR);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
 			   tr("&Execute or continue"),this,SLOT(execute(void)),
@@ -2516,4 +2534,22 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
   DebugButton->setOn(data[prefix+":Debug"]==QString::fromLatin1("Show"));
 
   toToolWidget::importData(data,prefix);
+}
+
+void toDebug::closeEditor()
+{
+
+  toDebugText *editor=currentEditor();
+  if (editor&&checkCompile(editor)) {
+    QString name=editor->name();
+    for (QListViewItem *item=Contents->firstChild();item;item=item->nextSibling()) {
+      if (item->text(1)==name) {
+	delete item;
+	break;
+      }
+    }
+
+    Editors->removePage(editor);
+    delete editor;
+  }
 }

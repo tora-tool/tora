@@ -998,6 +998,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     item->setText(2,now);
     if (!WorksheetTool.config(CONF_HISTORY,"").isEmpty())
       item->setText(4,QString::number(LastID));
+    item->setText(5,QString::number(result.offset()));
   }
 
   if (result.offset()>=0&&LastLine>=0&&LastOffset>=0&&

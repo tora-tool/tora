@@ -162,11 +162,11 @@ class toDebug : public toToolWidget {
 
   int continueExecution(int stopon);
 
+  bool checkCompile(toDebugText *edit);
   bool checkCompile(void);
   void updateCurrent(void);
   QString editorName(const QString &schema,const QString &object,const QString &type);
   QString editorName(toDebugText *text);
-  QString currentName(void);
   int sync(void);
   bool hasMembers(const QString &str);
   void readLog(void);
@@ -234,6 +234,7 @@ public slots:
   void clearLog(void);
   void changeWatch(void);
   void changeWatch(QListViewItem *item);
+  void closeEditor(void);
 };
 
 class toDebugWatch : public toDebugWatchUI {

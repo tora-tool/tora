@@ -80,10 +80,8 @@ void toUpdateIndicateEmpty(void);
 
 int main(int argc,char **argv)
 {
-#if 0
-#  ifdef ENABLE_QT_XFT
+#ifdef ENABLE_QT_XFT
   toSetEnv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT).latin1());
-#  endif
 #endif
 
 #ifdef TO_KDE
