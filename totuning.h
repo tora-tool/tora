@@ -44,6 +44,7 @@
 
 #include "totool.h"
 #include "totuningoverviewui.h"
+#include "toresultline.h"
 
 class QTabWidget;
 class QComboBox;
@@ -54,13 +55,19 @@ class toResultView;
 class toResultChart;
 class QLabel;
 class QGridLayout;
-class QVBox;
+class QGrid;
 class toBarChart;
+
+class toTuningMiss : public toResultLine {
+public:
+  toTuningMiss(QWidget *parent=0,const char *name=0);
+  virtual list<double> transform(list<double> &trans);
+};
 
 class toTuningFileIO : public QScrollView {
   Q_OBJECT
 
-  QVBox *Box;
+  QGrid *Box;
   map<QString,toBarChart *> Charts;
   time_t LastStamp;
   map<QString,list<double> > LastValues;

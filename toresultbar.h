@@ -111,7 +111,13 @@ public:
    */
   virtual void clear(void)
   { LastStamp=0; LastValues.clear(); toBarChart::clear(); }
-
+  /** Transform valueset. Make it possible to perform more complex transformation.
+   * called directly before adding the valueset to the chart. After flow transformation.
+   * Default is passthrough.
+   * @param input The untransformed valueset.
+   * @return The valueset actually added to the chart.
+   */
+  virtual list<double> transform(list<double> &input);
 public slots:
   /** Read another value to the chart.
    */

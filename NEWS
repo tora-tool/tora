@@ -46,6 +46,7 @@
 2001-08-14: Removed parallel query sessions from client count in tuning.
 2001-08-14: File I/O statistics.
 2001-08-14: Fixed some SQL for the tuning.
+2001-08-14: Added hitrates moment values to tuning.
 
 0.14: Released 2001-08-02
 

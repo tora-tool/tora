@@ -106,16 +106,24 @@ void toResultBar::query(const QString &sql,const list<QString> &param,bool first
 	      i++;
 	      j++;
 	    }
-	    addValues(dispVal,lab);
+	    list<double> tmp=transform(dispVal);
+	    addValues(tmp,lab);
 	  }
 	  LastValues=vals;
 	  LastStamp=now;
 	}
-      } else
-	addValues(vals,lab);
+      } else {
+	list<double> tmp=transform(vals);
+	addValues(tmp,lab);
+      }
     }
   } TOCATCH
   update();
+}
+
+list<double> toResultBar::transform(list<double> &input)
+{
+  return input;
 }
 
 void toResultBar::setSQL(toSQL &sql)

@@ -180,7 +180,7 @@ static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",
 				"  from v$sysstat where statistic# in (181,180,179,4,5,6)",
 				"Used to generate chart for execution statistics.");
 
-static toSQL SQLChartsExecutionPie("toTuning:Charts:5PNExecution Total",
+static toSQL SQLChartsExecutionPie("toTuning:Charts:8PNExecution Total",
 				   "select value,decode(statistic#,181,'Execute',180,'Hard parse',179,'Parse',\n"
 				   "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
 				   "  from v$sysstat where statistic# in (180,179,181,6,4,5) order by name",
@@ -194,11 +194,19 @@ static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
 			      "  from v$session where sid not in (select sid from v$px_process)",
 			      "Chart displaying connected clients");
 
-static toSQL SQLChartsSGA("toTuning:Charts:7PSSGA",
-			  "select value/to_number(:unit<char[101]>),name from v$sga",
-			  "Chart display memory allocation");
+static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
+				  "select sysdate,\n"
+				  "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
+				  "       getmiss \"Library cache\",gets \" \",\n"
+				  "       reloads \" \",pins \" \"\n"
+				  "  from (select 100*SUM(DECODE(statistic#,40,value,0)) pread,SUM(DECODE(statistic#,38,value,39,value,0)) read\n"
+				  "          from v$sysstat where statistic# IN (38,39,40)) \"Data buffer cache\",\n"
+				  "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
+				  "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
+				  "Chart display memory allocation. This is really weird to change, especially since the column names "
+				  "don't correspond exactly to the column data in the chart. Each group of two are divided with each other before drawn.");
 
-static toSQL SQLChartsRedo("toTuning:Charts:8BSRedo log I/O",
+static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
 			   "select SYSDATE,\n"
 			   "       sum(decode(statistic#,101,value,0))/to_number(:unit<char[101]>) \"Redo size\",\n"
 			   "       sum(decode(statistic#,103,value,0))/to_number(:unit<char[101]>) \"Redo wastage\"\n"
@@ -654,8 +662,12 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	else
 	  chart->setYPostfix("/s");
 	chart->query(toSQL::sql(*i,connection),par);
-      } else if (parts[2].mid(1,1)=="L") {
-	toResultLine *chart=new toResultLine(grid);
+      } else if (parts[2].mid(1,1)=="L"||parts[2].mid(1,1)=="C") {
+	toResultLine *chart;
+	if (parts[2].mid(1,1)=="C")
+	  chart=new toTuningMiss(grid);
+	else
+	  chart=new toResultLine(grid);
 	chart->setTitle(parts[2].mid(3));
 	list<QString> par;
 	if (parts[2].mid(2,1)=="B")
@@ -665,7 +677,10 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  QString t=unitStr;
 	  t+="/s";
 	  chart->setYPostfix(t);
-	} else
+	} else if (parts[2].mid(2,1)=="P") {
+	  chart->setYPostfix(" %");
+	  chart->setMinValue(0);
+        } else
 	  chart->setYPostfix("/s");
 	chart->query(toSQL::sql(*i,connection),par);
       } else if (parts[2].mid(1,1)=="P") {
@@ -771,14 +786,14 @@ toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
   labels.insert(labels.end(),"Blocks Read");
   labels.insert(labels.end(),"Writes");
   labels.insert(labels.end(),"Blocks Written");
-  Box=new QVBox(this->viewport());
+  Box=new QGrid(2,this->viewport());
   addChild(Box);
   while(Files.size()>0) {
     list<QString> val;
     toBarChart *chart=new toBarChart(Box);
     Charts[toShift(Files)]=chart;
     chart->setTitle(toShift(Files));
-    chart->setMinimumSize(200,150);
+    chart->setMinimumSize(200,170);
     chart->setYPostfix("blocks/s");
     chart->setLabels(labels);
   }
@@ -831,4 +846,26 @@ void toTuningFileIO::resizeEvent(QResizeEvent *e)
   QScrollView::resizeEvent(e);
   if (Box)
     Box->setFixedWidth(viewport()->width());
+}
+
+toTuningMiss::toTuningMiss(QWidget *parent=0,const char *name=0)
+  : toResultLine(parent,name)
+{
+}
+
+list<double> toTuningMiss::transform(list<double> &inp)
+{
+  list<double> ret;
+  for(list<double>::iterator i=inp.begin();i!=inp.end();i++) {
+    double first=*i;
+    i++;
+    if (i!=inp.end()) {
+      double second=*i;
+      if (second==0)
+	ret.insert(ret.end(),0);
+      else
+	ret.insert(ret.end(),first/second);
+    }
+  }
+  return ret;
 }

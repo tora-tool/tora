@@ -214,7 +214,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     int lwidth=0;
     int lheight=0;
     for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      if (!(*i).isEmpty()) {
+      if (!(*i).isEmpty()&&*i!=" ") {
 	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
 	if (lwidth<bounds.width())
 	  lwidth=bounds.width();
@@ -238,7 +238,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     ly+=2;
     int cp=0;
     for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      if (!(*i).isEmpty()) {
+      if (!(*i).isEmpty()&&*i!=" ") {
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
 	p.drawText(bounds,FONT_ALIGN,*i);
 	p.save();
