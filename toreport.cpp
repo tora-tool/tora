@@ -54,7 +54,7 @@ static bool SameContext(const QString &str,const QString &str2)
     if (str.length()==str2.length())
       return true;
     if (str.length()>str2.length()&&
-	str[str2.length()]==QChar('\001'))
+	str.at(str2.length())==QChar('\001'))
       return true;
   }
   return false;
