@@ -113,6 +113,7 @@ static struct {
 	       { 0,"while",	true ,false,false,false },
 	       { 0,"declare",	false,false,false,false },
 	       { 0,"package",	true ,false,false,false },
+	       { 0,"create",	false,false,false,false },
 	       { 0,"procedure",	false,false,false,false },
 	       { 0,"function",	false,false,false,false },
 	       { 0,"end",	false,true ,true ,false },
@@ -533,7 +534,7 @@ void toWorksheet::changeResult(QWidget *widget)
 void toWorksheet::refresh(void)
 {
   if (!QueryString.isEmpty()) {
-    query(QueryString);
+    query(QueryString,false);
     StopButton->setEnabled(true);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     if (CurrentTab==Plan)
@@ -578,15 +579,58 @@ bool toWorksheet::describe(const QString &query)
   }
 }
 
-void toWorksheet::query(const QString &str)
+void toWorksheet::query(const QString &str,bool direct)
 {
-
+  QRegExp strq("'[^']*'");
   try {
-    if (!describe(str)) {
-      QString execSql=str;
+    QString chk=str.lower();
+    chk.replace(strq," ");
+    bool code=false;
+    int pos=chk.find("end",pos);
+    while (pos>0) {
+      QChar c=chk[pos-1];
+      QChar ec=chk[pos+3];
+      if (!toIsIdent(c)&&!toIsIdent(ec)) {
+	code=true;
+	break;
+      }
+      pos=chk.find("end",pos+1);
+    }
+    QString execSql=str;
+    if (!code&&execSql.length()>0&&execSql[execSql.length()-1]==';')
+      execSql.truncate(execSql.length()-1);
+
+    if (!describe(execSql)) {
       list<QString> param=toParamGet::getParam(this,execSql);
-      Result->query(execSql,param);
-      Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
+      if (direct) {
+	try {
+	  otl_stream inf(1,
+			 execSql.utf8(),
+			 Connection.connection());
+	  list<QString> param=toParamGet::getParam(this,execSql);
+	  {
+	    otl_null null;
+	    for (list<QString>::iterator i=param.begin();i!=param.end();i++) {
+	      if ((*i).isNull())
+		inf<<null;
+	      else
+		inf<<(*i).utf8();
+	    }
+	  }
+	  char buffer[100];
+	  if (inf.get_rpc()>0)
+	    sprintf(buffer,"%d rows processed",(int)inf.get_rpc());
+	  else
+	    sprintf(buffer,"Query executed");
+	  addLog(execSql,buffer);
+	} catch (const otl_exception &exc) {
+	  addLog(execSql,QString::fromUtf8((const char *)exc.msg));
+	  toStatusMessage(QString::fromUtf8((const char *)exc.msg));
+	}
+      } else {
+	Result->query(execSql,param);
+	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
+      }
       StopButton->setEnabled(true);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     }
@@ -628,10 +672,13 @@ void NewStatement(void)
     Blocks[i].Pos=0;
 }
 
+#include <stdio.h>
+
 void toWorksheet::execute(bool all,bool step)
 {
   bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
   bool code=true; // Don't strip from done selection
+  bool create=false;
   TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;
@@ -654,7 +701,7 @@ void toWorksheet::execute(bool all,bool step)
     lastState=state=beginning;
     NewStatement();
     int BlockCount=0;
-    code=TryStrip=false;
+    create=code=TryStrip=false;
     QChar lastChar;
     QChar c=' ';
     QChar nc;
@@ -723,11 +770,13 @@ void toWorksheet::execute(bool all,bool step)
 	    {
 	      QString rest=data.right(data.length()-i).lower();
 	      for (int j=0;Blocks[j].Start;j++) {
-		unsigned int len=strlen(Blocks[j].Start);
-		if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
-		  lastState=state;
-		  state=comment;
-		  break;
+		if (Blocks[j].Comment) {
+		  unsigned int len=strlen(Blocks[j].Start);
+		  if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
+		    lastState=state;
+		    state=comment;
+		    break;
+		  }
 		}
 	      }
 	      if (state==comment)
@@ -742,7 +791,7 @@ void toWorksheet::execute(bool all,bool step)
 		state=done;
 		break;
 	      } else
-		code=false;
+		create=code=false;
 	      startLine=line;
 	      startPos=i;
 	      endLine=-1;
@@ -760,22 +809,28 @@ void toWorksheet::execute(bool all,bool step)
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
 		      if (!toIsIdent(nc)) {
-			if (Blocks[j].CloseBlock) {
-			  toStatusMessage("Ending unstarted block");
-			  return;
-			} else if (Blocks[j].WantEnd)
-			  BlockCount++;
+			if (create) {
+			  if (Blocks[j].CloseBlock) {
+			    toStatusMessage("Ending unstarted block");
+			    return;
+			  } else if (Blocks[j].WantEnd)
+			    BlockCount++;
 
-			code=true;
-			if (Blocks[j].WantSemi)
-			  state=endCode;
-			else
-			  state=inCode;
-			NewStatement();
-			br=true;
+			  code=true;
+			  if (Blocks[j].WantSemi)
+			    state=endCode;
+			  else
+			    state=inCode;
+			  NewStatement();
+			  br=true;
+			} else if (!strcmp(Blocks[j].Start,"create")) {
+			  create=true;
+			  pos=0;
+			  br=true;
+			}
 		      } else
 			pos=0;
-		    }
+		    } 
 		  } else
 		    pos=0;
 		} else
@@ -790,40 +845,13 @@ void toWorksheet::execute(bool all,bool step)
 	      state=beginning;
 	      if (all) {
 		Editor->setCursorPosition(startLine,startPos,false);
-		if (!code)
-		  Editor->setCursorPosition(endLine,endPos-1,true);
-		else
-		  Editor->setCursorPosition(endLine,endPos,true);
+		Editor->setCursorPosition(endLine,endPos,true);
 		if (Editor->hasMarkedText()) {
 		  QueryString=Editor->markedText();
-		  try {
-		    if (!describe(QueryString)) {
-		      otl_stream str(1,
-				     QueryString.utf8(),
-				     Connection.connection());
-		      list<QString> param=toParamGet::getParam(this,QueryString);
-		      {
-			otl_null null;
-			for (list<QString>::iterator i=param.begin();i!=param.end();i++) {
-			  if ((*i).isNull())
-			    str<<null;
-			  else
-			    str<<(*i).utf8();
-			}
-		      }
-		      char buffer[100];
-		      if (str.get_rpc()>0)
-			sprintf(buffer,"%d rows processed",(int)str.get_rpc());
-		      else
-			sprintf(buffer,"Query executed");
-		      addLog(QueryString,buffer);
-		    }
-		  } catch (const otl_exception &exc) {
-		    addLog(QueryString,QString::fromUtf8((const char *)exc.msg));
-		  } 
+		  query(QueryString,true);
 		  qApp->processEvents();
 		  NewStatement();
-		  code=false;
+		  create=code=false;
 		}
 	      } else if (step&&
 			 ((line==cline&&i>cpos)||(line>cline))) {
@@ -851,7 +879,7 @@ void toWorksheet::execute(bool all,bool step)
 	Editor->setCursorPosition(endLine,endPos,true);
 	if (Editor->hasMarkedText()) {
 	  QueryString=Editor->markedText();
-	  query(QueryString);
+	  query(QueryString,false);
 	}
       }
     }
@@ -865,9 +893,7 @@ void toWorksheet::execute(bool all,bool step)
   }
   if (Editor->hasMarkedText()&&!all) {
     QueryString=Editor->markedText();
-    if (!code&&QueryString.at(QueryString.length()-1)==';')
-      QueryString.remove(QueryString.length()-1,1);
-    query(QueryString);
+    query(QueryString,false);
     if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)

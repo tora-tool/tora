@@ -1,3 +1,7 @@
+1.0 fixes:
+
+* Compile objects in target thread in toDebug.
+
 Extended functionality:
 
 * SQL Browser
