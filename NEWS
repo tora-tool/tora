@@ -18,6 +18,7 @@
 2001-03-27: Started trying to make it possible to compile TOra as a KDE
 	application.
 2001-03-27: Use local8bit when reading in toWorksheet.
+2001-03-28: Modified regexp to verify Qt version in configure.
 
 0.7: Released 2001-03-24
 

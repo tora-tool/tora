@@ -231,7 +231,7 @@ __TEMP__
     print "Using metacompiler $MOC\n";
 
     $QtInclude=findFile("^qglobal\\.h\$",sub {
-	                                     return !system("grep -E \"QT_VERSION.*[ \t]((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
+	                                     return !system("grep -E \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
 			$QtDir."/include",
 			"/usr/include",
@@ -506,7 +506,7 @@ __EOT__
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat\n";
+	print MAKEFILE "# How to generate kde files, either \$PERL fixkde.pl (If TO_KDE is set) or cat\n";
 	print MAKEFILE "FIXKDE=cat\n";
 	print MAKEFILE "\n";
 

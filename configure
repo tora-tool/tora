@@ -37,12 +37,9 @@ then
     exit 2
 fi
 
-echo "# Where to find perl on your system" >> Makefile.setup
-echo PERL=$PERL >> Makefile.setup
-
 # Get the MOC stuff
 
-grep -E "^(UIC)|(MOC)|(TO_KDE)" Makefile.setup > configure.setup
+grep -E "^(UIC)|(MOC)|(FIXKDE)" Makefile.setup > configure.setup
 
 . ./configure.setup
 
@@ -53,6 +50,14 @@ do
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
 done
+
+for a in *.kde
+do
+    b=`echo $a | sed 's/\.kde$/\.h/'`
+    echo Generating $b from $a
+    $FIXKDE < $a > $b
+done
+
 for a in *.h
 do
     if grep -i Q_OBJECT $a >/dev/null
@@ -60,12 +65,6 @@ do
         echo Metacompiling $a
 	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
-done
-for a in *.kde
-do
-    b=`echo $a | sed 's/\.kde$/\.h/'`
-    echo Generating $b from $a
-    $FIXKDE < $a > $b
 done
 
 echo Generating empty dependfiles and .h from .kde
