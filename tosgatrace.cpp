@@ -52,25 +52,23 @@
 
 #define CONF_AUTO_UPDATE    "AutoUpdate"
 
-class toSGATracePrefs : public QFrame, public toSettingTab
+class toSGATracePrefs : public QGroupBox, public toSettingTab
 { 
   QCheckBox* AutoUpdate;
   toTool *Tool;
 
 public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),toSettingTab("trace.html"),Tool(tool)
+    : QGroupBox(1,Horizontal,parent,name),toSettingTab("trace.html"),Tool(tool)
   {
-    QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
-    GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
-    GroupBox1->setTitle( tr( "SGA Trace"  ) );
-    
-    AutoUpdate = new QCheckBox( GroupBox1, "AutoRefresh" );
-    AutoUpdate->setGeometry( QRect( 20, 30, 340, 20 ) ); 
-    AutoUpdate->setText( tr( "&Auto update"  ) );
+    setTitle("SGA Trace");
+
+    AutoUpdate = new QCheckBox(this,"AutoRefresh");
+    AutoUpdate->setText(tr("&Auto update"));
+    QToolTip::add(AutoUpdate,tr("Update automatically after change of schema."));
+
     if (!Tool->config(CONF_AUTO_UPDATE,"Yes").isEmpty())
       AutoUpdate->setChecked(true);
-    QToolTip::add(  AutoUpdate, tr( "Update automatically after change of schema." ) );
   }
   virtual void saveSetting(void)
   {

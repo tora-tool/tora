@@ -39,6 +39,7 @@
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 #include <qworkspace.h>
+#include <qlayout.h>
 
 #include "tomemoeditor.h"
 #include "tochangeconnection.h"
@@ -74,9 +75,8 @@
 
 #define CONF_DISP_COALESCED "DispCoalesced"
 
-class toStoragePrefs : public QFrame, public toSettingTab
+class toStoragePrefs : public QGroupBox, public toSettingTab
 { 
-  QGroupBox *GroupBox1;
   QCheckBox *DispCoalesced;
   toTool *Tool;
 
@@ -86,16 +86,13 @@ public:
 };
 
 toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
-  : QFrame(parent,name),toSettingTab("storage.html"),Tool(tool)
+  : QGroupBox(1,Horizontal,parent,name),toSettingTab("storage.html"),Tool(tool)
 {
-  GroupBox1 = new QGroupBox( this, "GroupBox1" );
-  GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
-  GroupBox1->setTitle( tr( "Storage Tool"  ) );
+  setTitle(tr("Storage Manager" ));
   
-  DispCoalesced = new QCheckBox( GroupBox1, "DispCoalesced" );
-  DispCoalesced->setGeometry( QRect( 20, 30, 340, 20 ) ); 
-  DispCoalesced->setText( tr( "&Display coalesced column"  ) );
-  QToolTip::add( DispCoalesced, tr( "Can degrade performance noticably on large databases." ) );
+  DispCoalesced = new QCheckBox(this,"DispCoalesced");
+  DispCoalesced->setText(tr("&Display coalesced column"));
+  QToolTip::add(DispCoalesced,tr("Can degrade performance noticably on large databases."));
   
   if (!tool->config(CONF_DISP_COALESCED,"Yes").isEmpty())
     DispCoalesced->setChecked(true);

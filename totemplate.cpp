@@ -161,7 +161,6 @@ public:
     QListViewItem *item=Templates->selectedItem();
     if (item) {
       QString str=name(item);
-      printf("%s\n",(const char *)str);
       LastTemplate=TemplateMap.find(str);
       if (LastTemplate!=TemplateMap.end()) {
 	Name->setText((*LastTemplate).first);

@@ -27,28 +27,20 @@
 #include <map>
 
 #include "tohelp.h"
+#include "topreferencesui.h"
 
-class QVBoxLayout; 
 class QHBoxLayout; 
-class QGridLayout; 
-class QFrame;
-class QListBox;
-class QListBoxItem;
-class QPushButton;
 
-class toPreferences : public QDialog, public toHelpContext
+class toPreferences : public toPreferencesUI, public toHelpContext
 { 
   Q_OBJECT
 
   QWidget *Shown;
+  QVBoxLayout *Layout;
 
   std::map<QListBoxItem *,QWidget *> Tabs;
 
   void addWidget(QListBoxItem *,QWidget *);
-
-  QListBox* TabSelection;
-  QPushButton* CancelButton;
-  QPushButton* OkButton;
 public:
   toPreferences(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
 

@@ -48,25 +48,22 @@
 #define CONF_POLLING    "Refresh"
 #define DEFAULT_POLLING	"10 seconds"
 
-class toOutputPrefs : public QFrame, public toSettingTab
+class toOutputPrefs : public QGroupBox, public toSettingTab
 { 
   QComboBox* AutoPolling;
   toTool *Tool;
 
 public:
   toOutputPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),toSettingTab("output.html"),Tool(tool)
+    : QGroupBox(1,Horizontal,parent,name),toSettingTab("output.html"),Tool(tool)
   {
-    QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
-    GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
-    GroupBox1->setTitle( tr( "SQL Output"  ) );
-    
-    QLabel *label=new QLabel("&Polling timeout",GroupBox1);
-    label->setGeometry(QRect(20,30,100,20));
-    QToolTip::add( label, tr( "Time between trying to poll for output." ) );
+    setTitle("SQL Output");
 
-    AutoPolling=toRefreshCreate(GroupBox1,NULL,Tool->config(CONF_POLLING,DEFAULT_POLLING));
-    AutoPolling->setGeometry( QRect( 130,30,220,20));
+    QLabel *label=new QLabel("&Polling timeout",this);
+    label->setGeometry(QRect(20,30,100,20));
+    QToolTip::add(label,tr("Time between trying to poll for output."));
+
+    AutoPolling=toRefreshCreate(this,NULL,Tool->config(CONF_POLLING,DEFAULT_POLLING));
     label->setBuddy(AutoPolling);
   }
   virtual void saveSetting(void)

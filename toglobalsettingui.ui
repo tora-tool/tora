@@ -11,16 +11,9 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
-            <height>401</height>
+            <width>470</width>
+            <height>483</height>
         </rect>
-    </property>
-    <property stdset="1">
-        <name>minimumSize</name>
-        <size>
-            <width>400</width>
-            <height>400</height>
-        </size>
     </property>
     <property stdset="1">
         <name>caption</name>

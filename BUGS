@@ -22,3 +22,6 @@ toMain:
 toResultContent:
 	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
+
+toTemplate:
+	Doesn't seem to remember more than one template file.

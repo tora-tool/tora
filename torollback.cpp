@@ -43,6 +43,7 @@
 #include <qworkspace.h>
 #include <qheader.h>
 #include <qmessagebox.h>
+#include <qlayout.h>
 
 #include "tochangeconnection.h"
 #include "tomain.h"
@@ -73,9 +74,8 @@
 #define CONF_NEED_TWO   "NeedTwo"
 #define CONF_ALIGN_LEFT "AlignLeft"
 
-class toRollbackPrefs : public QFrame,public toSettingTab
+class toRollbackPrefs : public QGroupBox,public toSettingTab
 { 
-  QGroupBox *GroupBox1;
   QCheckBox *NoExec;
   QCheckBox *NeedRead;
   QCheckBox *NeedTwo;
@@ -88,29 +88,23 @@ public:
 };
 
 toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent,const char* name)
-  : QFrame(parent,name),toSettingTab("rollback.html#options"),Tool(tool)
+  : QGroupBox(1,Horizontal,parent,name),toSettingTab("rollback.html#options"),Tool(tool)
 {
-  GroupBox1=new QGroupBox(this,"GroupBox1");
-  GroupBox1->setGeometry(QRect(10,10,380,380)); 
-  GroupBox1->setTitle(tr("Rollback Tool" ));
-  
-  NoExec=new QCheckBox(GroupBox1,"NoCopy");
-  NoExec->setGeometry(QRect(20,30,340,20)); 
+  setTitle(tr("Rollback Tool" ));
+
+  NoExec=new QCheckBox(this,"NoCopy");
   NoExec->setText(tr("&Restart reexecuted statements" ));
   QToolTip::add(NoExec,tr("Start statements again that have been reexecuted."));
   
-  NeedRead=new QCheckBox(GroupBox1,"Needread");
-  NeedRead->setGeometry(QRect(20,70,340,20)); 
+  NeedRead=new QCheckBox(this,"Needread");
   NeedRead->setText(tr("&Must read buffers" ));
   QToolTip::add(NeedRead,tr("Don't display statements that have not read buffers."));
   
-  NeedTwo=new QCheckBox(GroupBox1,"NeedTwo");
-  NeedTwo->setGeometry(QRect(20,110,340,20)); 
+  NeedTwo=new QCheckBox(this,"NeedTwo");
   NeedTwo->setText(tr("&Exclude first appearance" ));
   QToolTip::add(NeedTwo,tr("A statement must be visible at least two consecutive polls to be displayed."));
   
-  AlignLeft=new QCheckBox(GroupBox1,"AlignLeft");
-  AlignLeft->setGeometry(QRect(20,150,340,20)); 
+  AlignLeft=new QCheckBox(this,"AlignLeft");
   AlignLeft->setText(tr("&Disregard start extent." ));
   QToolTip::add(AlignLeft,tr("Always start from the left border when displaying extent usage."));
   

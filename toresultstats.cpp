@@ -153,7 +153,7 @@ void toResultStats::changeSession(int ses)
 static toSQL SQLStatisticName("toResultStats:StatisticName",
 			      "SELECT b.Name,a.Statistic#,SUM(a.Value)\n"
 			      "  FROM V$SesStat a,V$StatName b\n"
-			      " WHERE a.SID = :f1<int>\n"
+			      " WHERE a.SID = :f1<int> AND a.statistic# = b.statistic#\n"
 			      " GROUP BY b.name,a.Statistic#",
 			      "Get statistics and their names for session, must have same number of columns");
 static toSQL SQLSystemStatisticName("toResultStats:SystemStatisticName",

@@ -21,27 +21,20 @@
 
 #include <qframe.h>
 #include <qlistbox.h>
-#include <qpushbutton.h>
 #include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
 
 #include "topreferences.h"
 #include "toglobalsetting.h"
 #include "tosyntaxsetup.h"
 #include "tohelp.h"
+#include "topreferencesui.h"
 
 #include "topreferences.moc"
-
-#define TAB_PLACE_X 170
-#define TAB_PLACE_Y 10
-#define TAB_WIDTH 400
-#define TAB_HEIGHT 400
+#include "topreferencesui.moc"
 
 void toPreferences::addWidget(QListBoxItem *item,QWidget *widget)
 {
-  widget->setGeometry(TAB_PLACE_X,TAB_PLACE_Y,TAB_WIDTH,TAB_HEIGHT);
+  Layout->addWidget(widget);
   Tabs[item]=widget;
   if (!Shown)
     Shown=widget;
@@ -80,32 +73,25 @@ void toPreferences::saveSetting(void)
 }
 
 toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
-  : QDialog(parent,name,modal,fl),toHelpContext("preferences.html")
+  : toPreferencesUI(parent,name,modal,fl),toHelpContext("preferences.html")
 {
   toHelp::connectDialog(this);
   Shown=NULL;
-  if (!name)
-    setName("toPreferences");
-  resize(580,470); 
-  setCaption(tr("Settings" ));
-  setMinimumSize(QSize(580,470));
-  setMaximumSize(QSize(580,470));
   
-  TabSelection = new QListBox(this,"TabSelection");
-  TabSelection->setGeometry(QRect(10,10,141,401)); 
-  
+  Layout=new QVBoxLayout(Parent);
+
   QListBoxText *item;
   item=new QListBoxText(TabSelection,"Global Settings");
-  addWidget(item,new toGlobalSetting(this));
+  addWidget(item,new toGlobalSetting(Parent));
 
   item=new QListBoxText(TabSelection,"Database Settings");
-  addWidget(item,new toDatabaseSetting(this));
+  addWidget(item,new toDatabaseSetting(Parent));
 
   item=new QListBoxText(TabSelection,"Font Settings");
-  addWidget(item,new toSyntaxSetup(this));
+  addWidget(item,new toSyntaxSetup(Parent));
   
   item=new QListBoxText(TabSelection,"Tools");
-  addWidget(item,new toToolSetting(this));
+  addWidget(item,new toToolSetting(Parent));
 
   TabSelection->setCurrentItem(0);
 
@@ -118,7 +104,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
 
   {
     for (std::map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
-      QWidget *tab=(*i).second->configurationTab(this);
+      QWidget *tab=(*i).second->configurationTab(Parent);
       if (tab) {
 	QString str(" ");
 	str.append((*i).first);
@@ -126,22 +112,4 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
       }
     }
   }
-
-  CancelButton = new QPushButton(this,"CancelButton");
-  CancelButton->move(460,430); 
-  CancelButton->setText(tr("Cancel" ));
-  CancelButton->setDefault(false);
-  
-  OkButton = new QPushButton(this,"OkButton");
-  OkButton->move(330,430); 
-  OkButton->setText(tr("&OK" ));
-  OkButton->setDefault(true);
-  
-  // tab order
-  setTabOrder(TabSelection,OkButton);
-  setTabOrder(OkButton,CancelButton);
-  
-  connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
-  connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
-  connect(TabSelection,SIGNAL(currentChanged(QListBoxItem *)),this,SLOT(selectTab(QListBoxItem *)));
 }

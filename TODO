@@ -23,13 +23,13 @@ Extended functionality:
 * Implement migration, resize and report in toScript.
 * Lots of more template texts including hints and SQL syntax.
 * DB Links in DB browser.
-* Display execution type of statements (Until first response if not next option).
+* Display execution type of statements.
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
-* Full support for Oracle 9i
+* Full support for Oracle 9i.
 * Completion on column & function names in editor.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
