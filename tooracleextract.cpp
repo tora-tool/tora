@@ -5481,11 +5481,11 @@ void toOracleExtract::describeIndex(toExtract &ext,
   QString schema2=ext.intSchema(tableOwner,true);
 
   std::list<QString> ctx;
-  ctx.insert(ctx.end(),schema2);
-  ctx.insert(ctx.end(),"TABLE");
-  ctx.insert(ctx.end(),QUOTE(table));
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),QUOTE(table));
+  ctx.insert(ctx.end(),schema2);
+  ctx.insert(ctx.end(),"TABLE");
   ctx.insert(ctx.end(),QUOTE(name));
 
   addDescription(lst,ctx);
