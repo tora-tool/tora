@@ -419,6 +419,7 @@ toProject::toProject(toProjectTemplateItem *top,QWidget *parent)
 
 void toProject::update(void)
 {
+  ItemMap.clear();
   Project->clear();
   update(Root,NULL);
 }

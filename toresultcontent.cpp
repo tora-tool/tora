@@ -369,6 +369,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
     if (!Criteria[FilterName].isEmpty()) {
       SQL+=" WHERE (";
       SQL+=Criteria[FilterName];
+      SQL+=")";
     }
 
     SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();

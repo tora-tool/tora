@@ -1,5 +1,7 @@
 1.3.5:
 
+2002-03-07: Fixed content editor filter.
+2002-03-07: Improved error reporting of QSql provider.
 2002-03-07: Simplified project management by making both lists select synchonized.
 2002-03-07: Consistently use item selection in security manager (Fixes crash).
 2002-03-06: Fixed bug in debugger.

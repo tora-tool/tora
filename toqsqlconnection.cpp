@@ -216,7 +216,7 @@ static QString QueryParam(const QString &in,toQList &params)
   return ret;
 }
 
-static QString ErrorString(const QSqlError &err)
+static QString ErrorString(const QSqlError &err,const QString &sql=QString::null)
 {
   QString ret;
   if (err.databaseText().isEmpty()) {
@@ -226,6 +226,8 @@ static QString ErrorString(const QSqlError &err)
       ret=err.driverText();
   } else
     ret=err.databaseText();
+  if (!sql.isEmpty())
+    ret+="\n\n"+sql;
   return ret;
 }
 
@@ -267,8 +269,8 @@ public:
     { }
     ~qSqlSub()
     { QSqlDatabase::removeDatabase(name); }
-    void throwError(void)
-    { throw ErrorString(Connection->lastError()); }
+    void throwError(const QCString &sql)
+    { throw ErrorString(Connection->lastError(),QString::fromUtf8(sql)); }
   };
 
   class qSqlQuery : public toQuery::queryImpl {
@@ -301,7 +303,7 @@ public:
       QVariant val=Query->value(Column);
       if (!val.isValid()) {
 	Connection->Lock.up();
-	Connection->throwError();
+	Connection->throwError(query()->sql());
       }
       Column++;
       if (Column==Record.count()) {
@@ -601,13 +603,13 @@ public:
     {
       qSqlSub *conn=qSqlConv(sub);
       if (!conn->Connection->commit())
-	conn->throwError();
+	conn->throwError("COMMIT");
     }
     virtual void rollback(toConnectionSub *sub)
     {
       qSqlSub *conn=qSqlConv(sub);
       if (!conn->Connection->rollback())
-	conn->throwError();
+	conn->throwError("ROLLBACK");
     }
 
     virtual toConnectionSub *createConnection(void);
@@ -662,7 +664,7 @@ public:
       QSqlQuery Query(conn->Connection->exec(QueryParam(sql,params)));
       if (!Query.isActive()) {
 	conn->Lock.up();
-	conn->throwError();
+	conn->throwError(sql);
       }
 
       conn->Lock.up();
@@ -724,7 +726,7 @@ void toQSqlProvider::qSqlQuery::execute(void)
   Query=new QSqlQuery(Connection->Connection->exec(QueryParam(query()->sql(),query()->params())));
   if (!Query->isActive()) {
     Connection->Lock.up();
-    Connection->throwError();
+    Connection->throwError(query()->sql());
   }
   
   if (Query->isSelect()) {
