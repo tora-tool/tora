@@ -56,7 +56,25 @@ static toSQL SQLInfo("toResultCols:Info",
 		     " WHERE Owner = :f1<char[100]>\n"
 		     "   AND Table_Name = :f2<char[100]>\n"
 		     "   AND Column_Name = :f3<char[100]>",
-		     "Display analyze statistics about a column");
+		     "Display analyze statistics about a column",
+		     "8.0");
+static toSQL SQLInfo7("toResultCols:Info",
+		      "SELECT Data_Default,\n"
+		      "       Num_Distinct,\n"
+		      "       Low_Value,\n"
+		      "       High_Value,\n"
+		      "       Density,\n"
+		      "       NULL,\n"
+		      "       NULL,\n"
+		      "       NULL,\n"
+		      "       NULL,\n"
+		      "       NULL,\n"
+		      "  FROM All_Tab_Columns\n"
+		      " WHERE Owner = :f1<char[100]>\n"
+		      "   AND Table_Name = :f2<char[100]>\n"
+		      "   AND Column_Name = :f3<char[100]>",
+		      QString::null,
+		      "7.3");
 
 class toResultColsItem : public toResultViewMLine {
 public:
