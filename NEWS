@@ -1,6 +1,7 @@
 0.10:
 
 2001-05-20: Added missing addtemplate.xpm
+2001-05-20: Fixed the --without-rpath option to work.
 
 0.9.1: Released 2001-05-20
 

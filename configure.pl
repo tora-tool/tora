@@ -423,8 +423,9 @@ __TEMP__
     }
 
     if (`uname`=~/linux/i) {
-	$NoRPath=1;
 	$Linux=1;
+    } else {
+	$NoRPath=1;
     }
     if (!$NoRPath) {
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
