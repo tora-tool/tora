@@ -26,8 +26,6 @@ make
 
 %install
 
-#install menu
-
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 strip tora-static
 cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
@@ -44,4 +42,4 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,0755)
 
 %{_prefix}/X11R6/bin/tora
-
+%define name tora

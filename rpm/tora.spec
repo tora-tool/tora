@@ -26,10 +26,6 @@ make
 
 %install
 
-#install menu
-mkdir -p $RPM_BUILD_ROOT%{_menudir}
-cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
-
 strip plugins/*.so tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
@@ -49,4 +45,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %{_prefix}/X11R6/bin/tora
 %{_prefix}/lib/tora
-
+%define name tora
