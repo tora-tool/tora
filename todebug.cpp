@@ -1193,6 +1193,8 @@ void toDebug::updateState(int reason)
 	      ret=q2.readValue().toInt();
 	      value=q2.readValue();
 	      space=q2.readValue().toInt();
+	      item->setText(0,schema);
+	      item->setText(1,object);
 	    }
 	  } else if (item->text(0).isEmpty()) {
 	    toQuery query(connection(),SQLLocalWatch,item->text(2));
@@ -1250,9 +1252,8 @@ void toDebug::updateState(int reason)
 		  last->setText(0,schema);
 		  last->setText(1,object);
 		  last->setText(2,name);
-		  last->setText(3,QString::null);
+		  last->setText(3,value.mid(start,end-start));
 		  last->setText(4,QString::fromLatin1("NOCHANGE"));
-		  last->setText(5,value.mid(start,end-start));
 		  num++;
 		}
 		start=end+1;
@@ -1291,6 +1292,73 @@ void toDebug::updateState(int reason)
   selectedWatch();
   readLog();
 }
+
+#if 0 // Not used yet
+QString toDebug::checkWatch(const QString &name)
+{
+  int ret=-1;
+  int space=0;
+
+  bool local;
+  QString object;
+  QString schema;
+  QString value;
+  local=true;
+  toQuery query(connection(),SQLLocalWatch,name);
+  ret=query.readValue().toInt();
+  value=query.readValue();
+  if (ret!=TO_SUCCESS&&
+      ret!=TO_ERROR_NULLVALUE&&
+      ret!=TO_ERROR_INDEX_TABLE&&
+      ret!=TO_ERROR_NULLCOLLECTION) {
+    object=currentEditor()->object();
+    schema=currentEditor()->schema();
+    local=false;
+    toQuery q2(connection(),SQLGlobalWatch,
+	       object,
+	       schema,
+	       name);
+    ret=q2.readValue().toInt();
+    value=q2.readValue();
+    space=q2.readValue().toInt();
+  }
+  if (ret==TO_SUCCESS)
+    return value;
+  else if (ret==TO_ERROR_NULLVALUE)
+    return "{null}";
+  else if (ret==TO_ERROR_NULLCOLLECTION)
+    return tr("[Count %1]").arg(0);
+  else if (ret==TO_ERROR_INDEX_TABLE) {
+    if (local) {
+      toQuery query(connection(),SQLLocalIndex,name);
+      value=query.readValue();
+    } else {
+      toQList args;
+      toPush(args,toQValue(space));
+      toPush(args,toQValue(object));
+      toPush(args,toQValue(schema));
+      toPush(args,toQValue(name));
+      toQuery query(connection(),SQLGlobalIndex,args);
+      value=query.readValue();
+    }
+    unsigned int start=0;
+    unsigned int end;
+    int num=0;
+    QString ret;
+    for (end=start;end<value.length();end++) {
+      if (value.at(end)==',') {
+	if (start<end) {
+	  ret+="\n"+value.mid(start,end-start);
+	  num++;
+	}
+	start=end+1;
+      }
+    }
+    return tr("[Count %1]").arg(num)+ret;
+  }
+  return QString::null;
+}
+#endif
 
 bool toDebug::viewSource(const QString &schema,const QString &name,const QString &type,
 			 int line,bool setCurrent)
@@ -2480,7 +2548,6 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
     item=new toResultViewItem(Watch,NULL,data[key+":Schema"]);
     item->setText(1,data[key+":Object"]);
     item->setText(2,data[key+":Item"]);
-    item->setText(3,QString::fromLatin1(""));
     item->setText(4,QString::fromLatin1("NOCHANGE"));
     if (!data[key+":Auto"].isEmpty())
       item->setText(6,"AUTO");

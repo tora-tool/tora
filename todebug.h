@@ -198,6 +198,8 @@ public:
 
   void executeInTarget(const QString &,toQList &params);
 
+  QString checkWatch(const QString &name);
+
   virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public slots:
