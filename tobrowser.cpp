@@ -1066,9 +1066,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setResizeMode(QListView::AllColumns);
   resultView->setReadAll(true);
   curr->addTab(resultView,tr("&Statistic"));
-  SecondMap[TAB_INDEX]=resultView;
-  SecondMap[TAB_INDEX_COLS]=resultView;
-
+  SecondMap[TAB_INDEX_STATISTIC]=resultView;
 
   resultExtent=new toResultExtent(curr,TAB_INDEX_EXTENT);
   curr->addTab(resultExtent,tr("Extents"));
@@ -1719,6 +1717,9 @@ public:
     } else if (typ==qApp->translate("toBrowser","Indexes")) {
       QPixmap image((const char **)index_xpm);
       setPixmap(0,image);
+      if (toIsOracle(conn) || toIsSapDB(conn)) {
+	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
+      }
       if (toIsOracle(conn)) {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Extents"));
@@ -1863,7 +1864,8 @@ public:
 				item,
 				qApp->translate("toBrowser","Tables"),
 				toSQL::string(SQLListTables,connection())))->setPixmap(0,table);
-      if (connection().provider()=="Oracle") {
+
+      if (toIsOracle(connection()) || toIsSapDB(connection())) {
 	(new toTemplateSchemaList(connection(),
 				  item,
 				  qApp->translate("toBrowser","Views"),
@@ -1872,6 +1874,9 @@ public:
 				  item,
 				  qApp->translate("toBrowser","Indexes"),
 				  toSQL::string(SQLListIndex,connection())))->setPixmap(0,index);
+      }
+
+      if (toIsOracle(connection())) {
 	(new toTemplateSchemaList(connection(),
 				  item,
 				  qApp->translate("toBrowser","Sequences"),
