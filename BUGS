@@ -6,23 +6,11 @@ Qt:
 	When using antialiased text doesn't draw left axis legend correctly in charts.
 	Looses clipboard when application closes.
 
-KDE:
-	When destructing several docked windows sometimes make weird slot disconnect.
-
 toGetToken:
 	Doesn't handle comments when going backwards.
 
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.
-
-otl:
-	Sometimes looses open cursors when cancelling and multiple queries are running.
-
-toThread:
-	Leaves defunct processes when running under gdb.
-
-toScript:
-	Seems to not update enable/disable status when changing to report mode.
 
 toWaitEvents:
 	Doesn't clear when changinging session.

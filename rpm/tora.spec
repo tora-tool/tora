@@ -1,7 +1,7 @@
 # This specfile is no longer in use
 
 %define _name		tora
-%define _version	1.3.9.1
+%define _version	1.3.9.2
 %define _release	1gc
 %define _prefix		/usr/X11R6
 %define _qt2dir		/usr/lib/qt2
