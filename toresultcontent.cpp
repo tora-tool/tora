@@ -39,6 +39,8 @@ TO_NAMESPACE;
 #include <qdragobject.h>
 #include <qclipboard.h>
 #include <qpopupmenu.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -47,10 +49,17 @@ TO_NAMESPACE;
 #include "toresultview.h"
 
 #include "toresultcontent.moc"
+#include "toresultcontentfilterui.moc"
+
+#include "icons/filter.xpm"
+#include "icons/nofilter.xpm"
+#include "icons/trash.xpm"
+
+#include "toresultcontentfilterui.cpp"
 
 #define INC_SIZE 50
 
-void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
+void toResultContentEditor::contentsMouseMoveEvent (QMouseEvent *e)
 {
   if (e->state()==LeftButton&&
       e->stateAfter()==LeftButton&&
@@ -72,7 +81,7 @@ void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
   }
 }
 
-void toResultContent::contentsMousePressEvent(QMouseEvent *e)
+void toResultContentEditor::contentsMousePressEvent(QMouseEvent *e)
 {
   LastMove=QPoint(-1,-1);
   if (e->button()==RightButton)
@@ -81,18 +90,18 @@ void toResultContent::contentsMousePressEvent(QMouseEvent *e)
     QTable::contentsMousePressEvent(e);
 }
 
-void toResultContent::contentsMouseReleaseEvent(QMouseEvent *e)
+void toResultContentEditor::contentsMouseReleaseEvent(QMouseEvent *e)
 {
   LastMove=QPoint(-1,-1);
   QTable::contentsMouseReleaseEvent(e);
 }
 
-void toResultContent::dragEnterEvent(QDragEnterEvent *e)
+void toResultContentEditor::dragEnterEvent(QDragEnterEvent *e)
 {
   e->accept(QTextDrag::canDecode(e));
 }
 
-void toResultContent::dropEvent(QDropEvent *e)
+void toResultContentEditor::dropEvent(QDropEvent *e)
 {
   QPoint p(e->pos().x()+contentsX()-verticalHeader()->width(),
 	   e->pos().y()+contentsY()-horizontalHeader()->height());
@@ -114,7 +123,7 @@ void toResultContent::dropEvent(QDropEvent *e)
   }
 }
 
-toResultContent::toResultContent(QWidget *parent,const char *name)
+toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   : QTable(parent,name)
 {
   Query=NULL;
@@ -130,12 +139,12 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   Menu=NULL;
 }
 
-void toResultContent::wrongUsage(void)
+void toResultContentEditor::wrongUsage(void)
 {
   throw QString("Can't use these on toResultContent");
 }
 
-void toResultContent::changeSort(int col)
+void toResultContentEditor::changeSort(int col)
 {
   if (col!=SortRow) {
     SortRow=col;
@@ -145,7 +154,7 @@ void toResultContent::changeSort(int col)
   sortColumn(SortRow,SortRowAsc,true);
 }
 
-void toResultContent::changeParams(const QString &Param1,const QString &Param2)
+void toResultContentEditor::changeParams(const QString &Param1,const QString &Param2)
 {
   Owner=Param1;
   Table=Param2;
@@ -162,6 +171,14 @@ void toResultContent::changeParams(const QString &Param1,const QString &Param2)
     sql+="\".\"";
     sql+=Table;
     sql+="\"";
+    if (!Criteria.isEmpty()) {
+      sql+=" WHERE ";
+      sql+=Criteria;
+    }
+    if (!Order.isEmpty()) {
+      sql+=" ORDER BY ";
+      sql+=Order;
+    }
     Query=new otl_stream;
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
@@ -193,7 +210,7 @@ void toResultContent::changeParams(const QString &Param1,const QString &Param2)
   CurrentRow=-1;
 }
 
-void toResultContent::addRow(void)
+void toResultContentEditor::addRow(void)
 {
   AddRow=false;
   int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
@@ -209,7 +226,7 @@ void toResultContent::addRow(void)
   } TOCATCH
 }
 
-void toResultContent::keyPressEvent(QKeyEvent *e)
+void toResultContentEditor::keyPressEvent(QKeyEvent *e)
 {
   if (e->key()==Key_PageDown) {
     int height=verticalHeader()->sectionSize(0);
@@ -228,14 +245,14 @@ void toResultContent::keyPressEvent(QKeyEvent *e)
   QTable::keyPressEvent(e);
 }
 
-void toResultContent::paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected)
+void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected)
 {
   if (row+1>=Row)
     AddRow=true;
   QTable::paintCell(p,row,col,cr,selected);
 }
 
-QWidget *toResultContent::beginEdit(int row,int col,bool replace)
+QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 {
   if (CurrentRow!=row) {
     OrigValues.clear();
@@ -253,7 +270,59 @@ static bool nullString(const QString &str)
   return str=="{null}"||str.isNull();
 }
 
-void toResultContent::saveUnsaved()
+void toResultContentEditor::deleteCurrent()
+{
+  saveUnsaved();
+  if (currentRow()<Row) {
+    QString sql="DELETE FROM \"";
+    sql+=Owner;
+    sql+="\".\"";
+    sql+=Table;
+    sql+="\" WHERE ";
+    
+    QHeader *head=horizontalHeader();
+    for(int i=0;i<numCols();i++) {
+      sql+="\"";
+      sql+=head->label(i);
+      sql+="\" ";
+      if (nullString(text(currentRow(),i)))
+	sql+=" IS NULL";
+      else {
+	sql+="= :c";
+	sql+=QString::number(i);
+	sql+="<char[4000]>";
+      }
+      if (i+1<numCols())
+	sql+=" AND ";
+    }
+    try {
+      toConnection &conn=connection();
+      otl_stream exec(1,
+		      sql.utf8(),
+		      conn.connection());
+      
+      otl_null null;
+      for(int i=0;i<numCols();i++) {
+	QString str=text(currentRow(),i);
+	if (!nullString(str))
+	  exec<<str.utf8();
+      }
+      if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
+	conn.commit();
+      else
+	conn.setNeedCommit();
+    } TOCATCH
+  }
+  for (int row=currentRow()+1;row<numRows();row++)
+    swapRows(row-1,row);
+  if (currentRow()<Row)
+    Row--;
+  else
+    setNumRows(Row);
+  setNumRows(Row+1);
+}
+
+void toResultContentEditor::saveUnsaved()
 {
   if (OrigValues.size()>0) {
     toStatusMessage("Saved row");
@@ -373,20 +442,20 @@ void toResultContent::saveUnsaved()
   }
 }
 
-void toResultContent::changePosition(int row,int col)
+void toResultContentEditor::changePosition(int row,int col)
 {
   if (CurrentRow!=row)
     saveUnsaved();
 }
 
-void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
+void toResultContentEditor::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
 {
   QTable::drawContents(p,cx,cy,cw,ch);
   if (AddRow)
     addRow();
 }
 
-void toResultContent::readAll(void)
+void toResultContentEditor::readAll(void)
 {
   while (Query&&!Query->eof()) {
     if (Row+2>=numRows())
@@ -396,7 +465,7 @@ void toResultContent::readAll(void)
   setNumRows(Row+1);
 }
 
-void toResultContent::print(void)
+void toResultContentEditor::print(void)
 {
   toResultView print(false,true,this);
   print.hide();
@@ -414,7 +483,7 @@ void toResultContent::print(void)
   print.print();
 }
 
-void toResultContent::exportFile(void)
+void toResultContentEditor::exportFile(void)
 {
   toResultView list(false,true,this);
   list.hide();
@@ -433,7 +502,7 @@ void toResultContent::exportFile(void)
   list.exportFile();
 }
 
-void toResultContent::activateNextCell()
+void toResultContentEditor::activateNextCell()
 {
   if (currentColumn()+1<numCols())
     setCurrentCell(currentRow(),currentColumn()+1);
@@ -444,7 +513,7 @@ void toResultContent::activateNextCell()
   }
 }
 
-void toResultContent::focusInEvent (QFocusEvent *e)
+void toResultContentEditor::focusInEvent (QFocusEvent *e)
 {
   toMain::editEnable(false,true,true,
 		     false,false,
@@ -452,7 +521,7 @@ void toResultContent::focusInEvent (QFocusEvent *e)
   QTable::focusInEvent(e);
 }
 
-void toResultContent::focusOutEvent (QFocusEvent *e)
+void toResultContentEditor::focusOutEvent (QFocusEvent *e)
 {
   toMain::editDisable();
   saveUnsaved();
@@ -465,7 +534,7 @@ void toResultContent::focusOutEvent (QFocusEvent *e)
 #define TORESULT_READ_ALL 4
 #define TORESULT_EXPORT   5
 
-void toResultContent::displayMenu(const QPoint &p)
+void toResultContentEditor::displayMenu(const QPoint &p)
 {
   QPoint lp=mapFromGlobal(p);
   lp=QPoint(lp.x()+contentsX()-verticalHeader()->width(),
@@ -490,14 +559,14 @@ void toResultContent::displayMenu(const QPoint &p)
   }
 }
 
-void toResultContent::displayMemo(void)
+void toResultContentEditor::displayMemo(void)
 {
   toMemoEditor *edit=new toMemoEditor(this,text(MenuRow,MenuColumn),MenuRow,MenuColumn);
   connect(edit,SIGNAL(changeData(int,int,const QString &)),
 	  this,SLOT(changeData(int,int,const QString &)));
 }
 
-void toResultContent::changeData(int row,int col,const QString &str)
+void toResultContentEditor::changeData(int row,int col,const QString &str)
 {
   changePosition(col,row);
   if (CurrentRow!=row) {
@@ -510,7 +579,7 @@ void toResultContent::changeData(int row,int col,const QString &str)
   setCurrentCell(row,col);
 }
 
-void toResultContent::menuCallback(int cmd)
+void toResultContentEditor::menuCallback(int cmd)
 {
   switch(cmd) {
   case TORESULT_COPY:
@@ -541,4 +610,43 @@ void toResultContent::menuCallback(int cmd)
     exportFile();
     break;
   }
+}
+
+toResultContent::toResultContent(QWidget *parent,const char *name)
+  : QVBox(parent,name)
+{
+  QToolBar *toolbar=toAllocBar(this,"Content editor",connection().connectString());
+  Editor=new toResultContentEditor(this,name);
+
+  new QToolButton(QPixmap((const char **)filter_xpm),
+		  "Define filter for editor",
+		  "Define filter for editor",
+		  this,SLOT(changeFilter()),toolbar);
+  new QToolButton(QPixmap((const char **)nofilter_xpm),
+		  "Remove any filter",
+		  "Remove any filter",
+		  this,SLOT(removeFilter()),toolbar);
+  toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)trash_xpm),
+		  "Delete current record from table",
+		  "Delete current record from table",
+		  Editor,SLOT(deleteCurrent()),toolbar);
+}
+
+void toResultContent::changeFilter(void)
+{
+  toResultContentFilterUI filter(this,"FilterSetup",true);
+  filter.Order->setText(Editor->Order);
+  filter.Criteria->setText(Editor->Criteria);
+  filter.Columns->changeParams(Editor->Owner,Editor->Table);
+  if(filter.exec())
+    Editor->changeFilter(filter.Criteria->text(),filter.Order->text());
+}
+
+void toResultContentEditor::changeFilter(const QString &crit,const QString &ord)
+{
+  Criteria=crit;
+  Order=ord;
+  saveUnsaved();
+  changeParams(Owner,Table);
 }

@@ -266,22 +266,22 @@ void toSearchReplace::searchNext(void)
     if (FromTop)
       FromTop=false;
     else {
-      row=Content->currentRow();
-      col=Content->currentColumn()+1;
-      if (col>=Content->numCols()) {
+      row=Content->editor()->currentRow();
+      col=Content->editor()->currentColumn()+1;
+      if (col>=Content->editor()->numCols()) {
 	row++;
 	col=0;
       }
-      while(row<Content->numRows()) {
+      while(row<Content->editor()->numRows()) {
 	int pos=0;
 	int endPos;
-	if (findString(Content->text(row,col),pos,endPos)) {
-	  Content->setCurrentCell(row,col);
+	if (findString(Content->editor()->text(row,col),pos,endPos)) {
+	  Content->editor()->setCurrentCell(row,col);
 	  SearchNext->setDefault(true);
 	  return;
 	}
 	col++;
-	if (col>=Content->numCols()) {
+	if (col>=Content->editor()->numCols()) {
 	  row++;
 	  col=0;
 	}

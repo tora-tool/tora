@@ -39,15 +39,19 @@
 
 #include <list>
 #include <qtable.h>
+#include <qvbox.h>
+
 #include "toresult.h"
 #include "toconnection.h"
+
+class toResultContent;
 
 /** This widget allows the user to browse the contents of a table and also edit
  * the content. The table is specified by the first and second parameter in the query.
  * The sql is not used in the query.
  */
 
-class toResultContent : public QTable,public toResult {
+class toResultContentEditor : public QTable,public toResult {
   Q_OBJECT
 
   /** Owner of table.
@@ -77,7 +81,7 @@ class toResultContent : public QTable,public toResult {
   /** Used to detect drag.
    */
   QPoint LastMove;
-
+  
   /** Popup menu if available.
    */
   QPopupMenu *Menu;
@@ -87,13 +91,20 @@ class toResultContent : public QTable,public toResult {
   /** Row of item selected when popup menu displayed.
    */
   int MenuRow;
-
+  
   /** Current sorting row.
    */
   int SortRow;
   /** Indicate if sorting ascending or descending.
    */
   bool SortRowAsc;
+  
+  /** Filter selection criteria
+   */
+  QString Criteria;
+  /** Filter retrieve order
+   */
+  QString Order;
 
   /** Add another row to the contents.
    */
@@ -101,7 +112,7 @@ class toResultContent : public QTable,public toResult {
   /** Throw an exception about wrong usage.
    */
   void wrongUsage(void);
-
+  
   /** Reimplemented for internal reasons.
    */
   virtual void drawContents(QPainter * p,int cx,int cy,int cw,int ch);
@@ -123,7 +134,7 @@ class toResultContent : public QTable,public toResult {
   /** Reimplemented for internal reasons.
    */
   virtual void activateNextCell();
-
+  
   /** Reimplemented for internal reasons.
    */
   virtual void dragEnterEvent(QDragEnterEvent *event);
@@ -145,7 +156,7 @@ public:
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultContent(QWidget *parent,const char *name=NULL);
+  toResultContentEditor(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const list<QString> &param)
@@ -158,7 +169,7 @@ public:
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { wrongUsage(); }
-
+  
   /** Read all rows from the table.
    */
   void readAll(void);
@@ -168,6 +179,13 @@ public:
   /** Export contents to file.
    */
   virtual void exportFile(void);
+  /** Change filter the filter setting. Pass empty strings to remove filter.
+   * @param criteria Selection criteria.
+   * @param order Sort order of retreive.
+   */
+  virtual void changeFilter(const QString &criteria,const QString &order);
+
+  friend toResultContent;
 public slots:
   /** Change sorting column
    * @param col Column selected to change as sorting.
@@ -185,7 +203,7 @@ public slots:
    * @param col New column.
    */
   void changePosition(int row,int col);
-
+  
   /** Display popup menu
    * @param p Point to display popup at.
    */
@@ -196,6 +214,9 @@ public slots:
   /** Save unsaved changes in the editor
    */
   virtual void saveUnsaved(void);
+  /** Delete the current row from the table.
+   */
+  virtual void deleteCurrent(void);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.
@@ -207,6 +228,71 @@ protected slots:
    * @param data New contents of data.
    */ 
   virtual void changeData(int row,int col,const QString &data); 
+};
+
+/** This widget allows the user to browse the contents of a table and also edit
+ * the content. The table is specified by the first and second parameter in the query.
+ * The sql is not used in the query.
+ */
+
+class toResultContent : public QVBox, public toResult {
+  Q_OBJECT
+
+  toResultContentEditor *Editor;
+public:
+  /** Create the widget.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
+  toResultContent(QWidget *parent,const char *name=NULL);
+
+  /** Get content editor table widget
+   * @return Pointer to editor.
+   */
+  toResultContentEditor *editor(void)
+  { return Editor; }
+
+  /** Read all rows from the table.
+   */
+  void readAll(void)
+  { Editor->readAll(); }
+  /** Print the contents.
+   */
+  void print(void)
+  { Editor->print(); }
+  /** Export contents to file.
+   */
+  virtual void exportFile(void)
+  { Editor->exportFile(); }
+private slots:
+  void changeFilter(void);
+  void removeFilter(void)
+  { Editor->changeFilter(QString::null,QString::null); }
+public slots:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void refresh(void)
+  { Editor->refresh(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void query(const QString &sql,const list<QString> &param)
+  { Editor->query(sql,param); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1)
+  { Editor->changeParams(Param1); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2)
+  { Editor->changeParams(Param1,Param2); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  { Editor->changeParams(Param1,Param2,Param3); }
+  /** Save unsaved changes in the editor
+   */
+  virtual void saveUnsaved(void)
+  { Editor->saveUnsaved(); }
 };
 
 #endif

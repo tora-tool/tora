@@ -14,6 +14,8 @@
 2001-08-08: Ability to disable tools in options.
 2001-08-08: Ability to select default tool to pop up on new connection.
 2001-08-08: Added barchart class.
+2001-08-08: Added filter to content editor.
+2001-08-08: Added posibility to delete rows in content editor.
 
 0.14: Released 2001-08-02
 

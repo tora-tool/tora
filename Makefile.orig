@@ -162,7 +162,6 @@ plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
 plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
-	objs/toresultcols.o \
 	objs/toresultconstraint.o \
 	objs/toresultdepend.o \
 	objs/toresultindexes.o \
@@ -259,6 +258,7 @@ tora: \
 	objs/tonewconnectionui.o \
 	objs/toparamget.o \
 	objs/topreferences.o \
+	objs/toresultcols.o \
 	objs/toresultcontent.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \

@@ -15,8 +15,6 @@ Extended functionality:
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
-	Posibility to delete records in toResultContent.
-	Filter of rows in toResultContent.
 * Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
 * Extract grants from objects.
