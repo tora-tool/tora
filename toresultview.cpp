@@ -1295,7 +1295,7 @@ toResultView::toResultView(QWidget *parent,const char *name)
 
 QListViewItem *toResultView::createItem(QListViewItem *last,const QString &str)
 {
-  if (childCount()==STOP_RESIZE_ROW&&!header()->isStretchEnabled())
+  if (childCount()==STOP_RESIZE_ROW&&resizeMode()==QListView::NoColumn)
     for (int i=0;i<columns();i++)
       setColumnWidthMode(i,Manual);
 

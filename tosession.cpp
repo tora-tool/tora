@@ -509,17 +509,21 @@ void toSession::changeTab(QWidget *tab)
 	try {
 	  SessionStatistics->changeSession(ses);
 	} TOCATCH
-      } else if (CurrentTab==ConnectInfo)
+      } else if (CurrentTab==ConnectInfo) {
+	ConnectInfo->clearParams();
 	ConnectInfo->changeParams(item->text(0));
-      else if (CurrentTab==LongOps)
+      } else if (CurrentTab==LongOps) {
+	LongOps->clearParams();
 	LongOps->changeParams(item->text(0),item->text(1));
-      else if (CurrentTab==PendingLocks)
+      } else if (CurrentTab==PendingLocks) {
+	PendingLocks->clearParams();
 	PendingLocks->query(item->text(0));
-      else if (CurrentTab==OpenSplitter) {
+      } else if (CurrentTab==OpenSplitter) {
 	QListViewItem *openitem=OpenCursors->currentItem();
 	QString address;
 	if (openitem)
 	  address=openitem->text(2);
+	OpenCursors->clearParams();
 	OpenCursors->changeParams(item->text(0));
 	if (!address.isEmpty())
 	  for (openitem=OpenCursors->firstChild();
@@ -528,14 +532,19 @@ void toSession::changeTab(QWidget *tab)
 	      OpenCursors->setSelected(item,true);
 	      break;
 	    }
-      } else if (CurrentTab==CurrentStatement)
+      } else if (CurrentTab==CurrentStatement) {
+	CurrentStatement->clearParams();
 	CurrentStatement->changeAddress(item->text(Sessions->columns()+0));
-      else if (CurrentTab==AccessedObjects)
+      } else if (CurrentTab==AccessedObjects) {
+	AccessedObejcts->clearParams();
         AccessedObjects->changeParams(item->text(0));
-      else if (CurrentTab==LockedObjects)
+      } else if (CurrentTab==LockedObjects) {
+	LockedObjects->clearParams();
 	LockedObjects->changeParams(item->text(0));
-      else if (CurrentTab==PreviousStatement)
+      } else if (CurrentTab==PreviousStatement) {
+	PreviousStatement->clearParams();
 	PreviousStatement->changeAddress(item->text(Sessions->columns()+1));
+      }
     }
   }
 }
