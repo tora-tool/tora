@@ -550,7 +550,7 @@ void toMain::windowActivated(QWidget *widget)
   }
 }
 
-void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
+void toMain::editFileMenu(void)
 {
   menuBar()->setItemEnabled(TO_EDIT_UNDO,Edit&&Edit->undoEnabled());
   menuBar()->setItemEnabled(TO_EDIT_REDO,Edit&&Edit->redoEnabled());
@@ -1154,6 +1154,7 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     PasteButton->setEnabled(paste);
     SearchButton->setEnabled(search);
   }
+  editFileMenu();
 }
 
 void toMain::registerSQLEditor(int tool)
