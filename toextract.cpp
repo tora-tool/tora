@@ -1679,6 +1679,7 @@ static toSQL SQLIndexInfo7("toExtract:IndexInfo",
 			   "SELECT  'N/A'                           AS partitioned\n"
 			   "      , table_name\n"
 			   "      , table_owner\n"
+			   "      , NULL\n"
 			   "      , DECODE(\n"
 			   "                uniqueness\n"
 			   "               ,'UNIQUE',' UNIQUE'\n"
@@ -1698,6 +1699,7 @@ static toSQL SQLIndexInfo("toExtract:IndexInfo",
 			  "SELECT partitioned\n"
 			  "      , table_name\n"
 			  "      , table_owner\n"
+			  "      , DECODE(index_type,'NORMAL/REV','REVERSE',NULL)\n"
 			  "      , DECODE(\n"
 			  "                uniqueness\n"
 			  "               ,'UNIQUE',' UNIQUE'\n"
@@ -1872,12 +1874,13 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
     return "";
 
   toQList res=toQuery::readQueryNull(Connection,SQLIndexInfo,name,owner);
-  if (res.size()!=9)
+  if (res.size()!=10)
     throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
 
   QString partitioned=toShift(res);
   QString table      =toShift(res);
   QString tableOwner =toShift(res);
+  QString reverse    =toShift(res);
   QString unique     =toShift(res);
   QString bitmap     =toShift(res);
   QString domain     =toShift(res);
@@ -1931,6 +1934,10 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
     ret+=compressed;
     ret+="\n";
   }
+  if (!reverse.isEmpty()) {
+    ret+=reverse;
+    ret+="\n";
+  }
   ret+=";\n\n";
   return ret;
 }
@@ -1942,12 +1949,13 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
     return;
 
   toQList res=toQuery::readQueryNull(Connection,SQLIndexInfo,name,owner);
-  if (res.size()!=9)
+  if (res.size()!=10)
     throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
 
   QString partitioned=toShift(res);
   QString table      =toShift(res);
   QString tableOwner =toShift(res);
+  QString reverse    =toShift(res);
   QString unique     =toShift(res);
   QString bitmap     =toShift(res);
   QString domain     =toShift(res);
@@ -1971,6 +1979,8 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
   ctx.insert(ctx.end(),name.lower());
 
   addDescription(lst,ctx);
+  if (!reverse.isEmpty())
+    addDescription(lst,ctx,reverse);
   describeIndexColumns(lst,ctx,owner,name);
   if (domain=="DOMAIN") {
     addDescription(lst,ctx,"DOMAIN",QString("DOMAINOWNER \"%1\".\"%2\"").
