@@ -228,7 +228,7 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
       item->setText(10,Owner);
       item->setText(11,TableName);
       item->setText(1,QString::fromUtf8(Description[i].name));
-      item->setText(0,QString::number(i));
+      item->setText(0,QString::number(i+1));
 
       QString datatype;
       switch(Description[i].dbtype) {

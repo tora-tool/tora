@@ -9,6 +9,11 @@
 2001-03-24: Added a README and INSTALL file.
 2001-03-25: Added doc files to rpms.
 2001-03-26: Fixed NLS bug in toNoBlockQuery (Worksheet).
+2001-03-26: Added select sorting on toResultView.
+2001-03-26: Removed bugs regarding double \\ in some tooltips (Thanx
+	Christopher R. Redinger for pointing it out).
+2001-03-26: Fixed numbering bug if column view.
+2001-03-26: Enabled sorting of content.
 
 0.7: Released 2001-03-24
 

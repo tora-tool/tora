@@ -131,6 +131,21 @@ QString toResultViewItem::text(int col) const
   return text;
 }
 
+QString toResultViewItem::key(int col,bool asc) const
+{
+  toResultView *list=dynamic_cast<toResultView *>(listView());
+  if (list) {
+    bool numCol=list->numberColumn();
+    if ((col==0&&numCol)||
+	(col==list->queryColumns()&&!numCol)) {
+      static char buf[50];
+      sprintf(buf,"%010d",text(col).toInt());
+      return buf;
+    }
+  }
+  return QListViewItem::key(col,asc);
+}
+
 class toResultTip : public QToolTip {
 private:
   toResultView *Result;
@@ -174,11 +189,12 @@ void toResultView::setup(bool readable,bool dispCol)
   Query=NULL;
   ReadableColumns=readable;
   setAllColumnsShowFocus(true);
-  setSorting(-1);
   NumberColumn=dispCol;
   if (NumberColumn)
     addColumn("#");
   AllResult=new toResultTip(this);
+  setShowSortIndicator(true);
+  setSorting(-1);
 }
 
 toResultView::toResultView(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
@@ -206,7 +222,8 @@ void toResultView::addItem(void)
       if (NumberColumn) {
 	LastItem->setText(0,QString::number(RowNumber));
 	disp=1;
-      }
+      } else
+	LastItem->setText(columns(),QString::number(RowNumber));
       for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
 	LastItem->setText(j+disp,toReadValue(Description[j],*Query,MaxColSize));
     }
@@ -291,6 +308,11 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       } else
 	hidden=true;
     }
+
+    if (NumberColumn)
+      setSorting(0);
+    else
+      setSorting(DescriptionLen);
 
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     for (int i=0;i<MaxNumber&&!Query->eof();i++)

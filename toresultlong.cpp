@@ -135,6 +135,11 @@ void toResultLong::addItem(void)
 	    }
 	    HasHeaders=true;
 	  }
+	  setQueryColumns(DescriptionLen);
+	  if (NumberColumn)
+	    setSorting(0);
+	  else
+	    setSorting(DescriptionLen);
 	}
 
 	if (!Query->eof()) {
@@ -144,7 +149,8 @@ void toResultLong::addItem(void)
 	  if (NumberColumn) {
 	    LastItem->setText(0,QString::number(RowNumber));
 	    disp=1;
-	  }
+	  } else
+	    LastItem->setText(DescriptionLen,QString::number(RowNumber));
 	  for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
 	    LastItem->setText(j+disp,Query->readValue());
 	}

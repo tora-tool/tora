@@ -160,6 +160,7 @@ void toResultStats::refreshStats(bool reset)
 
     str<<SessionID;
     int SesID=0;
+    int Row=0;
     while(!str.eof()||!sesio.eof()) {
       int id;
       double value;
@@ -180,6 +181,8 @@ void toResultStats::refreshStats(bool reset)
       QString delta;
       QString absVal;
       toResultViewItem *last=NULL;
+      setQueryColumns(3);
+
       if (value!=0) {
 	absVal.sprintf("%g",value);
 	if (id<TO_STAT_MAX+TO_STAT_BLOCKS) {
@@ -196,6 +199,7 @@ void toResultStats::refreshStats(bool reset)
 	      item->setText(1,absVal);
 	      item->setText(2,delta);
 	    }
+	    item->setText(3,QString::number(++Row));
 	    last=item;
 	  }
 	}

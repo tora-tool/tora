@@ -29,7 +29,6 @@ TO_NAMESPACE;
 
 #include <time.h>
 
-#include <qaccel.h>
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qmultilineedit.h>
@@ -120,7 +119,8 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
   AutoSave = new QCheckBox( GroupBox1, "AutoSave" );
   AutoSave->setGeometry( QRect( 20, 70, 340, 20 ) ); 
   AutoSave->setText( tr( "Auto &Save"  ) );
-  QToolTip::add(  AutoSave, tr( "Auto save file when closing worksheet." ) );
+  QToolTip::add(  AutoSave, tr( "Auto save file when closing worksheet\n"
+				"(Without asking questions)." ) );
   
   CheckSave = new QCheckBox( GroupBox1, "CheckSave" );
   CheckSave->setGeometry( QRect( 20, 110, 340, 20 ) ); 

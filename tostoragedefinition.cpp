@@ -73,7 +73,7 @@ toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags
   UnlimitedExtent->setGeometry(QRect(170,25,130,19)); 
   UnlimitedExtent->setText(tr("&Unlimited Extents"));
   UnlimitedExtent->setChecked(true);
-  QToolTip::add( UnlimitedExtent,tr("No limit on the number of allocated extents.\\nCan caused decreased performance due to fragmentation."));
+  QToolTip::add( UnlimitedExtent,tr("No limit on the number of allocated extents.\nCan caused decreased performance due to fragmentation."));
   connect(UnlimitedExtent,SIGNAL(toggled(bool)),this,SLOT(unlimitedExtents(bool)));
 
   TextLabel1_2=new QLabel(GroupBox1,"TextLabel1_2");
@@ -119,7 +119,7 @@ toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags
   TextLabel2=new QLabel(this,"TextLabel2");
   TextLabel2->setGeometry(QRect(10,420,119,15)); 
   TextLabel2->setText(tr("&Default PCT Increase"));
-  QToolTip::add( TextLabel2,tr("Default increase in size of next allocated extent.\\nA size of 0 will prevent background coalesce of free space."));
+  QToolTip::add( TextLabel2,tr("Default increase in size of next allocated extent.\nA size of 0 will prevent background coalesce of free space."));
 
   // buddies
   TextLabel1_2->setBuddy(MaximumExtent);

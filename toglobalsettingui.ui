@@ -203,7 +203,8 @@
             </property>
             <property>
                 <name>toolTip</name>
-                <string>Open new connections to the database to prevent\nthe interface from locking up when executing.</string>
+                <string>Open new connections to the database to prevent
+the interface from locking up when executing.</string>
             </property>
         </widget>
         <widget>
@@ -363,7 +364,8 @@
             </property>
             <property>
                 <name>toolTip</name>
-                <string>Remember the last password you used to connect.\nWill leave the password unencryptet in the config file.</string>
+                <string>Remember the last password you used to connect.
+Will leave the password unencryptet in the config file.</string>
             </property>
         </widget>
     </widget>

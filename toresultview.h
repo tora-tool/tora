@@ -50,6 +50,7 @@ public:
   { if (buffer) setText(0,buffer); }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
   virtual QString text(int col) const;
+  virtual QString key(int col,bool) const;
   virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
   virtual QString allText(int col) const
   { return QListViewItem::text(col); }
@@ -113,6 +114,14 @@ public:
   { ReadAll=all;}
 
   void readAll(void);
+
+  int queryColumns() const
+  { return DescriptionLen; }
+  void setQueryColumns(int col)
+  { DescriptionLen=col; }
+
+  bool numberColumn() const
+  { return NumberColumn; }
 
   QString sqlName(void)
   { return Name; }

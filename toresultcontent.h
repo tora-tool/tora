@@ -47,6 +47,9 @@ class toResultContent : public QTable,public toResult {
   int CurrentRow;
   bool AddRow;
 
+  int SortRow;
+  bool SortRowAsc;
+
   void addRow(void);
   void wrongUsage(void);
 
@@ -69,6 +72,7 @@ public:
   void readAll(void);
   void print(void);
 public slots:
+  virtual void changeSort(int);
   virtual void refresh(void)
   { changeParams(Owner,Table); }
   virtual void changeParams(const QString &Param1,const QString &Param2);

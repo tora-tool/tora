@@ -45,11 +45,24 @@ toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
   CurrentRow=-1;
   setFocusPolicy(StrongFocus);
+  setSelectionMode(NoSelection);
+  connect(horizontalHeader(),SIGNAL(clicked(int)),this,SLOT(changeSort(int)));
+  SortRow=-1;
 }
 
 void toResultContent::wrongUsage(void)
 {
   throw QString("Can't use these on toResultContent");
+}
+
+void toResultContent::changeSort(int col)
+{
+  if (col!=SortRow) {
+    SortRow=col;
+    SortRowAsc=true;
+  } else
+    SortRowAsc=!SortRowAsc;
+  sortColumn(SortRow,SortRowAsc,true);
 }
 
 void toResultContent::changeParams(const QString &Param1,const QString &Param2)
