@@ -995,9 +995,32 @@ public:
       : toConnection::connectionImpl(conn)
     { 
 	if (conn->provider() == "SapDB")
-		multiple=false;
+	  multiple=false;
 	else 
-		multiple=true;
+	  multiple=true;
+    }
+
+    virtual QString quote(const QString &name)
+    {
+      if (connection().provider() == "PostgreSQL") {
+	bool ok=true;
+	for(unsigned int i=0;i<name.length();i++) {
+	  if (name.at(i).lower()!=name.at(i)||!toIsIdent(name.at(i)))
+	    ok=false;
+	}
+	if (!ok)
+	  return QString::fromLatin1("\"")+name+QString::fromLatin1("\"");
+      }
+      return name;
+    }
+
+    virtual QString unQuote(const QString &name)
+    {
+      if (connection().provider() == "PostgreSQL") {
+	if (name.at(0).latin1()=='\"'&&name.at(name.length()-1).latin1()=='\"')
+	  return name.left(name.length()-1).right(name.length()-2);
+      }
+      return name;
     }
 
     virtual std::list<toConnection::objectName> objectNames(void)
