@@ -83,8 +83,28 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
-SELECT 1,2
-  FROM dual;
+-- Another comment
+
+CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
+					     oNumSwt                     OUT  NUMBER)
+IS
+  vYear  CHAR(4);
+BEGIN
+
+    DECLARE
+      oTrdStt NUMBER;
+    BEGIN
+      oTrdStt := 0;
+    END;
+
+    EXCEPTION
+        WHEN VALUE_ERROR THEN
+	    oRet := 3;
+	WHEN NO_DATA_FOUND THEN
+	    oRet := 2;
+	WHEN OTHERS THEN
+	    oRet := 1;
+END;
 SELECT a.Sid \"-Id\",
        a.Serial# \"-Serial#\",
        a.SchemaName \"Schema\",
@@ -136,28 +156,6 @@ NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
    AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
  GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
 HAVING COUNT(a.TspActOprID) > 0;
--- Another comment
-
-CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
-					     oNumSwt                     OUT  NUMBER)
-IS
-  vYear  CHAR(4);
-BEGIN
-
-    DECLARE
-      oTrdStt NUMBER;
-    BEGIN
-      oTrdStt := 0;
-    END;
-
-    EXCEPTION
-        WHEN VALUE_ERROR THEN
-	    oRet := 3;
-	WHEN NO_DATA_FOUND THEN
-	    oRet := 2;
-	WHEN OTHERS THEN
-	    oRet := 1;
-END;
 
 CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)
 AS
@@ -174,6 +172,7 @@ BEGIN
 END;";
 
 #if 0
+
   QApplication test(argc,argv);
   toMarkedText text(NULL);
   text.setText(res);
@@ -734,6 +733,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
   case statement::Statement:
     int maxlev=0;
     int maxlevorig=0;
+    bool useMaxLev=false;
     bool any=true;
     int current;
     bool first;
@@ -742,6 +742,22 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     QString comment;
     if (stat.Type==statement::Statement) {
       ret=IndentComment(level,0,stat.Comment,false);
+      useMaxLev=true;
+      first=true;
+      current=0;
+    } else {
+      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
+	  i!=stat.SubTokens->end();) {
+	if ((*i).Type!=statement::Keyword)
+	  noKeyBreak=true;
+	else
+	  useMaxLev=true;
+	break;
+      }
+      current=level;
+      first=true;
+    }
+    if (useMaxLev) {
       int count=0;
       for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
 	  i!=stat.SubTokens->end();
@@ -764,19 +780,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       if (count<=1)
 	maxlev--;
       maxlevorig=maxlev;
-      first=true;
-      current=0;
       any=true;
-    } else {
-      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
-	  i!=stat.SubTokens->end();) {
-	if ((*i).Type!=statement::Keyword)
-	  noKeyBreak=true;
-	break;
-      }
-      current=level;
-      first=true;
     }
+
     for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
 	i!=stat.SubTokens->end();
 	i++) {
@@ -857,7 +863,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  if (!lineList&&
 	      !any&&
 	      (*i).Type==statement::Keyword&&
-	      !noKeyBreak
+	      !noKeyBreak&&
 	      upp=="BY")
 	    add=true;
 	} else {
