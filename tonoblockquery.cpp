@@ -55,8 +55,6 @@
 
 #define PREFETCH_SIZE 1000
 
-static int QueriesRunning=0;
-
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
@@ -215,8 +213,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   TO_DEBUGOUT("Created thread\n");
   thread->start();
   TO_DEBUGOUT("Started thread\n");
-
-  QueriesRunning++;
 }
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
@@ -253,8 +249,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
   TO_DEBUGOUT("Created thread\n");
   thread->start();
   TO_DEBUGOUT("Started thread\n");
-
-  QueriesRunning++;
 }
 
 toQDescList &toNoBlockQuery::describe(void)
@@ -322,7 +316,6 @@ void toNoBlockQuery::stop(void)
 toNoBlockQuery::~toNoBlockQuery()
 {
   stop();
-  QueriesRunning--;
 }
 
 bool toNoBlockQuery::poll(void)

@@ -57,6 +57,7 @@
 2001-11-12: Added OCIReset after OCIBreak (As per the OCI manual).
 2001-11-12: Assume OTL isn't threadsafe except per connection.
 2001-11-12: Fixed SIGSEGV in session manager.
+2001-11-12: Flicker fix for content editor.
 
 1.1.4: Released 2001-11-02
 

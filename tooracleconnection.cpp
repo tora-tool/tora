@@ -689,6 +689,9 @@ void toOracleProvider::oracleQuery::execute(void)
     delete Query;
     Query=NULL;
 
+    if (conn->Lock.getValue()>1)
+      throw QString("Too high value on connection lock semaphore");
+
     conn->Lock.down();
     if (Cancel)
       throw QString("Query aborted before started");
@@ -735,18 +738,14 @@ void toOracleProvider::oracleQuery::execute(void)
   }
 }
 
-#include <stdio.h>
-
 void toOracleProvider::oracleQuery::cancel(void)
 {
   oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
   if (!conn)
     throw QString("Internal error, not oracle sub connection");
-  if (Running) {
-    printf("Cancelled running query\n");
+  if (Running)
     conn->Connection->cancel();
-  } else {
-    printf("Cancelled pending query\n");
+  else {
     Cancel=true;
     conn->Lock.up();
   }

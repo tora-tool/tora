@@ -246,7 +246,6 @@ void toResultContentEditor::poll(void)
 	  col++;
 	}
 	Row=0;
-	setNumRows(INC_SIZE);
       }
       
       std::list<QString> data;
