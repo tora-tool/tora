@@ -449,6 +449,23 @@ QStringList toGetSessionTypes(void)
 QString toGetSessionType(void)
 {
   QStyle *style=&qApp->style();
+
+  // This is probably really slow, but who cares.
+
+  QStringList keys=QStyleFactory::keys();
+  for(unsigned int i=0;i<keys.size();i++) {
+    QString name=keys[i];
+    QStyle *t=QStyleFactory::create(name);
+    if (!t)
+      continue;
+    if (t->className()==style->className()) {
+      delete t;
+      return name;
+    }
+    delete name;
+  }
+
+  // Weird should never get here.
   return style->className();
 }
 
