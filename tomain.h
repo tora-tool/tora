@@ -642,7 +642,11 @@ bool inline toIsIdent(QChar c)
 {
   return c.isLetterOrNumber()||c=='_'||c=='%'||c=='$'||c=='#';
 }
-
+/** Get installation directory of application (Plugin directory on unix, installation
+ * target on windows).
+ * @return String containing directory
+ */
+QString toPluginPath(void);
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

@@ -222,7 +222,7 @@ public:
 	new QListViewItem(FileList,root,file);
       }
     } else {
-      QString file=DEFAULT_PLUGIN_DIR;
+      QString file=toPluginPath();
       file+="/sqlfunctions.tpl";
       new QListViewItem(FileList,"PL/SQL Functions",file);
     }
@@ -428,7 +428,7 @@ void toTextTemplate::insertItems(QListView *parent)
       addFile(parent,root,file);
     }
   } else {
-    QString file=DEFAULT_PLUGIN_DIR;
+    QString file=toPluginPath();
     file+="/sqlfunctions.tpl";
     addFile(parent,"PL/SQL Functions",file);
   }

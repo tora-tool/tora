@@ -117,11 +117,13 @@
 </LI>
 <LI>bool inline &nbsp;<b><A HREF="#ref642">toIsIdent</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
 </LI>
-<LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref643">max</A></b> (T a, T b) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref643">toPluginPath</A></b> (void) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref644">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref644">max</A></b> (T a, T b) 
+</LI>
+<LI>template &lt;class T&gt;
+T &nbsp;<b><A HREF="#ref645">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -511,12 +513,18 @@ T &nbsp;<b><A HREF="#ref644">min</A></b> (T a, T b)
 </TABLE></P>
 <p><b>Returns</b>: True if it is a valid Oracle identifier.
  </p>
-<A NAME="max"></A><A NAME="ref643"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="toPluginPath"></A><A NAME="ref643"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>toPluginPath</strong> (void)
+<br></td><td align="right"><h3><strong>toPluginPath</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Get installation directory of application (Plugin directory on unix, installation
+ target on windows).
+</p>
+<p><b>Returns</b>: String containing directory
+ </p>
+<A NAME="max"></A><A NAME="ref644"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref644"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref645"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

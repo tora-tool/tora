@@ -44,6 +44,9 @@ TO_NAMESPACE;
 #include <kmenubar.h>
 #include <kapp.h>
 #endif
+#ifdef WIN32
+#include "windows/cregistry.h"
+#endif
 
 #include <qapplication.h>
 #include <qfiledialog.h>
@@ -627,11 +630,34 @@ int toSizeDecode(const QString &str)
   return 1;
 }
 
+QString toPluginPath(void)
+{
+  QString str;
+#ifndef WIN32
+  str=toTool::globalConfig(CONF_PLUGIN_DIR,DEFAULT_PLUGIN_DIR);
+#else
+  CRegistry registry;
+  DWORD siz=1024;
+  char buffer[1024];
+  try {
+    if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\tora.exe",
+				"Path",
+				buffer,siz)) {
+      if (siz>0)
+	str=buffer;
+    }
+  } catch(...) {
+  }
+#endif
+  return str;
+}
+
 QString toHelpPath(void)
 {
   QString str=toTool::globalConfig(CONF_HELP_PATH,"");
   if (str.isEmpty()) {
-    str=DEFAULT_PLUGIN_DIR;
+    str=toPluginPath();
     str+="/help";
   }
   return str;
@@ -640,9 +666,28 @@ QString toHelpPath(void)
 static QString toExpandFile(const QString &file)
 {
   QString ret(file);
-  const char *home=getenv("HOME");
-  if (!home)
+  QString home;
+#ifdef WIN32
+  CRegistry registry;
+  DWORD siz=1024;
+  char buffer[1024];
+  try {
+    if (registry.GetStringValue(HKEY_CURRENT_USER,
+				"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+				"Personal",
+				buffer,siz)) {
+      if (siz>0)
+	home=buffer;
+    }
+  } catch(...) {
+  }
+#else
+  const char *homet=getenv("HOME");
+  if (!homet)
     home="";
+  else
+    home=homet;
+#endif
   ret.replace(QRegExp("\\$HOME"),home);
   return ret;
 }

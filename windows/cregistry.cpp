@@ -274,7 +274,7 @@ bool CRegistry::SetStringValue(HKEY hKeyRoot, LPCTSTR pszSubKey, LPCTSTR pszValu
     }   
 	
     lRes = RegSetValueEx(hKey, pszValue, 0, REG_SZ,
-			 reinterpret_cast<BYTE*>(pszString), dwSize);
+			 (BYTE*)(pszString), dwSize);
 	
     RegCloseKey(hKey);
 

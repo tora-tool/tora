@@ -44,8 +44,13 @@ TO_NAMESPACE;
 #include <qworkspace.h>
 #include <qfile.h>
 #include <qregexp.h>
-#if QT_VERSION >= 300
-#  include <qsettings.h>
+#ifdef WIN32
+#  include "windows/cregistry.h"
+#  include "windows/cregistry.cpp"
+#else
+#  if QT_VERSION >= 300
+#    include <qsettings.h>
+#  endif
 #endif
 
 #include "totool.h"
@@ -163,13 +168,8 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
   return toWriteFile(file,data);
 }
 
-#if QT_VERSION >= 300
-#  define APPLICATION_NAME "/tora/"
-#else
-#  if WIN32
-#    define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\\"
-
-#    include "windows/cregistry.cpp"
+#ifdef WIN32
+#  define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\\"
 
 static char *toKeyPath(const QString &str,CRegistry &registry)
 {
@@ -199,35 +199,15 @@ static char *toKeyValue(const QString &str)
   return buf;
 }
 
+#else
+#  if QT_VERSION >= 300
+#    define APPLICATION_NAME "/tora/"
 #  endif
 #endif
 
 void toTool::saveConfig(void)
 {
-#if ! defined(WIN32) && QT_VERSION < 300
-  if (!Configuration)
-    return;
-  QString conf;
-  if (getenv("HOME")) {
-    conf=getenv("HOME");
-  }
-  conf.append(CONFIG_FILE);
-  saveMap(conf,*Configuration);
-#else
-#  if QT_VERSION >= 300
-  QSettings settings;
-  QRegExp re(":");
-  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
-    QString path=(*i).first;
-    QString value=(*i).second;
-    path.prepend(APPLICATION_NAME);
-    path.replace(re,"/");
-    if (value.isNull())
-      settings.writeEntry(path,"");
-    else
-      settings.writeEntry(path,value);
-  }
-#  else
+#ifdef WIN32
   CRegistry registry;
   QRegExp re(":");
   for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
@@ -248,6 +228,29 @@ void toTool::saveConfig(void)
 			      t);
       free(t);
     }
+  }
+#else
+#  if QT_VERSION < 300
+  if (!Configuration)
+    return;
+  QString conf;
+  if (getenv("HOME")) {
+    conf=getenv("HOME");
+  }
+  conf.append(CONFIG_FILE);
+  saveMap(conf,*Configuration);
+#  else
+  QSettings settings;
+  QRegExp re(":");
+  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+    QString path=(*i).first;
+    QString value=(*i).second;
+    path.prepend(APPLICATION_NAME);
+    path.replace(re,"/");
+    if (value.isNull())
+      settings.writeEntry(path,"");
+    else
+      settings.writeEntry(path,value);
   }
 #  endif
 #endif
@@ -283,7 +286,8 @@ void toTool::loadConfig(void)
     delete Configuration;
   Configuration=new map<QString,QString>;
 
-#if ! defined(WIN32) && QT_VERSION < 300
+#ifndef WIN32
+#  if QT_VERSION < 300
   QString conf;
   if (getenv("HOME")) {
     conf=getenv("HOME");
@@ -291,8 +295,7 @@ void toTool::loadConfig(void)
   conf.append(CONFIG_FILE);
   if (!loadMap(conf,*Configuration))
     loadMap(DEF_CONFIG_FILE,*Configuration);
-#else
-#  if QT_VERSION >= 300
+#  else
   QSettings settings;
   ReadConfig(settings,APPLICATION_NAME,*Configuration);
 #  endif
@@ -385,7 +388,7 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
 
   map<QString,QString>::iterator i=Configuration->find(tag);
   if (i==Configuration->end()) {
-#if defined(WIN32) && QT_VERSION < 300
+#if defined(WIN32)
     CRegistry registry;
     QRegExp re(":");
     QString path=tag;

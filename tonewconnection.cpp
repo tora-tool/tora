@@ -34,6 +34,10 @@
 
 TO_NAMESPACE;
 
+#ifdef WIN32
+#  include "windows/cregistry.h"
+#endif
+
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qmessagebox.h>
@@ -125,20 +129,46 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
 
+  QString str;
 #ifdef WIN32
+  CRegistry registry;
+  DWORD siz=1024;
+  char buffer[1024];
+  try {
+    if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+				"SOFTWARE\\ORACLE\\ALL_HOMES",
+				"LAST_HOME",
+				buffer,siz)) {
+      QString key="SOFTWARE\\ORACLE\\ALL_HOMES\\ID";
+      if (siz>0) {
+	key+=buffer;
+	siz=1024;
+	if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+    			  	    key,
+				    "PATH",
+				    buffer,siz)) {
+	  if (siz>0) {
+	    str=buffer;
+	    str+="\\network\\admin";
+	  }
+	}
+      }
+    }
+  } catch(...) {
+  }
+
 #else
   if (!getenv("ORACLE_HOME"))
     throw QString("ORACLE_HOME environment variable not set");
-#endif
-
-  QString str;
   if (getenv("TNS_ADMIN")) {
     str=getenv("TNS_ADMIN");
   } else {
     str=getenv("ORACLE_HOME");
     str.append("/network/admin");
   }
+#endif
   str.append("/tnsnames.ora");
+
 
   QFile file(str);
   if (!file.open(IO_ReadOnly)) {
