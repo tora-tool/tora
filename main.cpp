@@ -126,6 +126,18 @@ int main(int argc,char **argv)
       std::list<QString> failed;
       QString dirPath=toPluginPath();
       QDir d(dirPath,QString::fromLatin1("*.tso"),QDir::Name,QDir::Files);
+      if(!d.exists()) {
+        fprintf(stderr,
+                "Couldn't find PluginDir, falling back to default: %s\n",
+                DEFAULT_PLUGIN_DIR);
+        dirPath = DEFAULT_PLUGIN_DIR;
+        d.cd(dirPath);
+        if(d.exists())
+          toTool::globalSetConfig(CONF_PLUGIN_DIR, dirPath);
+        else
+          fprintf(stderr, "Invalid PluginDir.\n");
+      }
+
       for (unsigned int i=0;i<d.count();i++) {
 	failed.insert(failed.end(),d.filePath(d[i]));
       }
