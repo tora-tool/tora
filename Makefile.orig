@@ -75,6 +75,7 @@ SOURCES=\
 	tohighlightedtext.cpp	        \
 	tohtml.cpp		        \
 	toinvalid.cpp			\
+	tolegendchart.cpp		\
 	tolinechart.cpp		        \
 	tolinechartsetupui.cpp		\
 	tomain.cpp		        \
@@ -220,6 +221,7 @@ plugins/tobrowser.tso:\
 	objs/tobrowsertableui.o
 plugins/tocharts.tso:\
 	objs/tobarchart.o \
+	objs/tolegendchart.o \
 	objs/tolinechart.o \
 	objs/tolinechartsetupui.o \
 	objs/topiechart.o \

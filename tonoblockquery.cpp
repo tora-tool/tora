@@ -279,7 +279,7 @@ void toNoBlockQuery::stop(void)
 {
   Lock.lock();
   int sleep=100;
-  do {
+  while(!EOQ) {
     TO_DEBUGOUT("Locking clear values\n");
     Quit=true;
     ReadingValues.clear();
@@ -296,7 +296,7 @@ void toNoBlockQuery::stop(void)
 	sleep+=100;
       }
     }
-  } while(!EOQ);
+  }
   Lock.unlock();
 
   if (Statistics) {

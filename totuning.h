@@ -39,6 +39,7 @@
 #include <map>
 
 #include <qscrollview.h>
+#include <qgrid.h>
 
 #include "totool.h"
 #include "totuningoverviewui.h"
@@ -53,11 +54,13 @@ class toResultParam;
 class toResultLong;
 class toResultChart;
 class toResultItem;
+class toPieChart;
 class QLabel;
 class QGridLayout;
 class QGrid;
 class toBarChart;
 class QPopupMenu;
+class toLegendChart;
 
 class toTuningMiss : public toResultLine {
 public:
@@ -107,6 +110,37 @@ public:
   void start(void);
 };
 
+class toTuningWait : public QFrame {
+  Q_OBJECT
+
+  toBarChart *Delta;
+  toPieChart *AbsolutePie;
+  toPieChart *DeltaPie;
+  toListView *Types;
+  toNoBlockQuery *Query;
+  toBackground Poll;
+  toLegendChart *Legend;
+
+  bool First;
+  bool ShowTimes;
+  QString Now;
+  std::list<QString> Labels;
+  std::list<QString> XValues;
+  std::list<std::list<double> > Values;
+  std::list<std::list<double> > Times;
+  std::list<double> Current;
+  std::list<double> CurrentTimes;
+public:
+  toTuningWait(QWidget *parent);
+public slots:
+  virtual void connectionChanged(void);
+  virtual void changeSelection(void);
+  virtual void poll(void);
+  virtual void refresh(void);
+  virtual void start(void);
+  virtual void stop(void);
+};
+
 class toTuning : public toToolWidget {
   Q_OBJECT
 
@@ -120,6 +154,7 @@ class toTuning : public toToolWidget {
   toResultLong *Options;
   toResultItem *Licenses;
   toResultStats *Statistics;
+  toTuningWait *Waits;
 
   QGrid *Charts;
 

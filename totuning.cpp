@@ -69,6 +69,8 @@
 #include "toresultitem.h"
 #include "toresultlong.h"
 #include "totuningsettingui.h"
+#include "tonoblockquery.h"
+#include "tolegendchart.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
@@ -81,6 +83,7 @@
 #define CONF_OVERVIEW "Overview"
 #define CONF_FILEIO   "File I/O"
 #define CONF_CHARTS   "Charts"
+#define CONF_WAITS    "Wait events"
 
 static std::list<QString> TabList(void)
 {
@@ -88,6 +91,7 @@ static std::list<QString> TabList(void)
   ret.insert(ret.end(),CONF_OVERVIEW);
   ret.insert(ret.end(),CONF_CHARTS);
   ret.insert(ret.end(),CONF_FILEIO);
+  ret.insert(ret.end(),CONF_WAITS);
   return ret;
 }
 
@@ -1086,6 +1090,9 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   FileIO=new toTuningFileIO(this);
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
 
+  Waits=new toTuningWait(this);
+  Tabs->addTab(Waits,"Wait events");
+
   Tabs->addTab(FileIO,"&File I/O");
 
   Indicators=new toListView(Tabs);
@@ -1137,6 +1144,8 @@ QWidget *toTuning::tabWidget(const QString &name)
     widget=Charts;
   } else if (name==CONF_FILEIO) {
     widget=FileIO;
+  } else if (name==CONF_WAITS) {
+    widget=Waits;
   }
   return widget;
 }
@@ -1205,6 +1214,12 @@ void toTuning::enableTab(const QString &name,bool enable)
       }
     }
     widget=Charts;
+  } else if (name==CONF_WAITS) {
+    if (enable)
+      Waits->start();
+    else
+      Waits->stop();
+    widget=Waits;
   } else if (name==CONF_FILEIO) {
     if (enable)
       FileIO->start();
@@ -1273,7 +1288,9 @@ void toTuning::refresh(void)
 	  last->setText(2,dsc[1]);
       } TOCATCH
     }
-  } else if (LastTab==Statistics)
+  } else if (LastTab==Waits)
+    Waits->refresh();
+  else if (LastTab==Statistics)
     Statistics->refreshStats();
   else if (LastTab==Parameters)
     Parameters->refresh();
@@ -1555,4 +1572,180 @@ void toTuningFileIO::stop(void)
 void toTuningFileIO::start(void)
 {
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+toTuningWait::toTuningWait(QWidget *parent)
+  : QFrame(parent)
+{
+  QGridLayout *layout=new QGridLayout(this);
+
+  Delta=new toBarChart(this);
+  Delta->setTitle("System wait events");
+  Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  Delta->showLegend(false);
+  layout->addWidget(Delta,0,1);
+  Types=new toListView(this);
+  Types->addColumn("Wait type");
+  Types->setSelectionMode(QListView::Multi);
+  Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  Types->setSorting(-1);
+  layout->addWidget(Types,0,2);
+  connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
+  DeltaPie=new toPieChart(this);
+  DeltaPie->setTitle("Delta system wait events");
+  DeltaPie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  DeltaPie->showLegend(false);
+  layout->addWidget(DeltaPie,1,1);
+  AbsolutePie=new toPieChart(this);
+  AbsolutePie->setTitle("Absolute system wait events");
+  AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  AbsolutePie->showLegend(false);
+  layout->addWidget(AbsolutePie,1,2);
+  Legend=new toLegendChart(this);
+  layout->addMultiCellWidget(Legend,0,1,0,0);
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+  Query=NULL;
+  start();
+  connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+  First=true;
+  ShowTimes=false;
+}
+
+void toTuningWait::start(void)
+{
+  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toTuningWait::stop(void)
+{
+  disconnect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+}
+
+void toTuningWait::changeSelection(void)
+{
+
+  int count=0;
+  {
+    for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling())
+      count++;
+  }
+
+  bool *enabled=new bool[count];
+  int typ=0;
+  std::list<QString> used;
+  for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
+    if (enabled[typ]=item->isSelected()) {
+      toResultViewItem *ri=dynamic_cast<toResultViewItem *>(item);
+      if (ri)
+	used.insert(used.end(),ri->allText(0));
+      else
+	used.insert(used.end(),item->text(0));
+    }
+    typ++;
+  }
+      
+  try {
+    Delta->clear();
+    Legend->setLabels(used);
+
+    std::list<double> lastAbsolute;
+    std::list<double> relative;
+    std::list<QString>::iterator xval=XValues.begin();
+
+    std::list<std::list<double> > &cur=(ShowTimes?Times:Values);
+
+    for(std::list<std::list<double> >::iterator i=cur.begin();
+	i!=cur.end();i++) {
+      typ=0;
+      relative.clear();
+      std::list<double> current;
+      std::list<double>::iterator k=lastAbsolute.begin();
+      for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	if (enabled[typ]) {
+	  current.insert(current.end(),*j);
+	  if (k!=lastAbsolute.end()) {
+	    relative.insert(relative.end(),(*j)-(*k));
+	    k++;
+	  }
+	}
+	typ++;
+      }
+      if (relative.size()>0&&xval!=XValues.end()) {
+	Delta->addValues(relative,*xval);
+	xval++;
+      }
+      lastAbsolute=current;
+    }
+    AbsolutePie->setValues(lastAbsolute,used);
+    DeltaPie->setValues(relative,used);
+  } TOCATCH
+  delete enabled;
+  refresh();
+}
+
+void toTuningWait::connectionChanged(void)
+{
+  Values.clear();
+  Labels.clear();
+  First=true;
+}
+
+void toTuningWait::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      while(Query->poll()&&!Query->eof()) {
+	QString cur=Query->readValueNull();
+	if (First)
+	  Labels.insert(Labels.end(),cur);
+	Now=Query->readValueNull();
+	Current.insert(Current.end(),Query->readValueNull().toDouble());
+	CurrentTimes.insert(CurrentTimes.end(),Query->readValueNull().toDouble());
+      }
+      if (Query->eof()) {
+	if (First) {
+	  QListViewItem *item=NULL;
+	  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+	    item=new toResultViewItem(Types,item,*i);
+	    item->setSelected(true);
+	  }
+	  First=false;
+	} else
+	  XValues.insert(XValues.end(),Now);
+	Values.insert(Values.end(),Current);
+	Times.insert(Times.end(),CurrentTimes);
+	if (int(Values.size())>Delta->samples()+1) {
+	  Values.erase(Values.begin());
+	  Times.erase(Times.end());
+	  XValues.erase(XValues.begin());
+	}
+	changeSelection();
+	Poll.stop();
+	delete Query;
+	Query=NULL;
+      }
+    }
+  } catch(const QString &exc) {
+    delete Query;
+    Query=NULL;
+    Poll.stop();
+    toStatusMessage(exc);
+  }
+}
+
+static toSQL SQLWaitEvents("toTuning:WaitEvents",
+			   "select event,sysdate,time_waited/100,total_waits\n"
+			   "  from v$system_event order by event",
+			   "Get all available system wait events");
+
+void toTuningWait::refresh(void)
+{
+  if (Query)
+    return;
+  toConnection &conn=toCurrentTool(this)->connection();
+  toQList par;
+  Current.clear();
+  CurrentTimes.clear();
+  Query=new toNoBlockQuery(conn,toSQL::string(SQLWaitEvents,conn),par);
+  Poll.start(100);
 }
