@@ -280,7 +280,12 @@ public:
       OnlyOwnSchema->hide();
       Tablespaces->setNumberColumn(false);
       Tablespaces->setReadableColumns(true);
-      Tablespaces->query(SQLListTablespaces);
+      try {
+	toConnection &conn=toCurrentConnection(this);
+	toQuery query(conn,toSQL::string(SQLListTablespaces,conn));
+	Tablespaces->query(SQLListTablespaces);
+      } catch(...) {
+      }
       Tablespaces->setSelectionMode(QListView::Multi);
     } else {
       TablespaceType->hide();

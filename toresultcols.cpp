@@ -69,7 +69,7 @@ static toSQL SQLInfo7("toResultCols:Info",
 		      "       NULL,\n"
 		      "       NULL,\n"
 		      "       NULL,\n"
-		      "       NULL,\n"
+		      "       NULL\n"
 		      "  FROM sys.All_Tab_Columns\n"
 		      " WHERE Owner = :f1<char[100]>\n"
 		      "   AND Table_Name = :f2<char[100]>\n"

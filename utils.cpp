@@ -681,7 +681,7 @@ QCString toReadFile(const QString &filename)
   }
   buf[size]=0;
   QCString ret(buf,size+1);
-  delete buf;
+  delete[] buf;
   return ret;
 }
 
