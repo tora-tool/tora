@@ -92,7 +92,8 @@ public slots:
 
 /**
  * This is the base class of a provider of template items. Usually it is created with
- * a static object just like the tools.
+ * a static object just like the tools. It can also be assumed that a maximum of one
+ * template window will be opened.
  */
 
 class toTemplateProvider {

@@ -712,7 +712,7 @@ public:
 	    
     char *buf=new char[size+1];
     if (file.readBlock(buf,size)==-1) {
-      delete buf[];
+      delete[] buf;
       return ret;
     }
 
@@ -750,7 +750,7 @@ public:
       }
       pos++;
     }
-    delete buf[];
+    delete[] buf;
     return ret;
   }
   virtual QWidget *providerConfigurationTab(const QString &provider,QWidget *parent);

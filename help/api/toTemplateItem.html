@@ -36,11 +36,13 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref5">expand</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref6">collapse</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref6">doubleClick</A></b> (void) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref7">selectedWidget</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref7">collapse</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref8">setSelected</A></b> (bool sel) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref8">selectedWidget</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref9">setSelected</A></b> (bool sel) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is an item that is contained in a template. It is different in the expand and
  collapse methods that are called when this item is expanded or collapsed from the
@@ -75,15 +77,18 @@
 <br></td><td align="right"><h3><strong>expand</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function is called when the item is expanded and can be used to fill up the
  list when needed.
    </p>
-<A NAME="collapse"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>collapse</strong> (void)
+<A NAME="doubleClick"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>doubleClick</strong> (void)
+<br></td><td align="right"><h3><strong>doubleClick</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function is called when the item is doubleclicked.
+   </p>
+<A NAME="collapse"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>collapse</strong> (void)
 <br></td><td align="right"><h3><strong>collapse</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function is called when the item is collapsed.
    </p>
-<A NAME="selectedWidget"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<strong>selectedWidget</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
+<A NAME="selectedWidget"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<strong>selectedWidget</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>selectedWidget</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function can be used to return a widget that is displays extra information for
  this item. Return NULL if no widget is to be displayed. The widget will be deleted
  when this item is no longer shown.
    </p>
-<A NAME="setSelected"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSelected</strong> (bool sel)
+<A NAME="setSelected"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSelected</strong> (bool sel)
 <br></td><td align="right"><h3><strong>setSelected</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qlistviewitem.html#84b0c2">QListViewItem</A>.</p>

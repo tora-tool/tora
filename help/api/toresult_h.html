@@ -139,7 +139,7 @@ public:
   /** Re execute last query
    */
   virtual void refresh(void)
-  { QString t=SQL; SQL="refresh"; query(t,Params); }
+  { QString t=SQL; SQL="refresh"; query((const QString &)t,Params); }
   /** Perform a query.
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.

@@ -76,6 +76,7 @@ class QListView;
 class QListViewItem;
 class QSplitter;
 class QTextView;
+class QToolBar;
 class toConnection;
 class toListView;
 class toTemplateItem;
@@ -89,7 +90,7 @@ class toNoBlockQuery;
 class toTemplate : public QVBox, public toHelpContext {
   Q_OBJECT
 
-  QSplitter *Splitter;
+  QToolBar *Toolbar;
   toListView *List;
   QWidget *WidgetExtra;
   QWidget *Result;
@@ -114,26 +115,58 @@ public:
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
+  void doubleClick(QListViewItem *item);
 };
 
 /**
  * This is the base class of a provider of template items. Usually it is created with
- * a static object just like the tools.
+ * a static object just like the tools. It can also be assumed that a maximum of one
+ * template window will be opened.
  */
 
 class toTemplateProvider {
   /** List of currently available template providers.
    */
   static std::list<toTemplateProvider *> *Providers;
+  QString Name;
 public:
-  toTemplateProvider();
+  toTemplateProvider(const QString &name);
   virtual ~toTemplateProvider()
   { }
 
+  /** Get name of this template provider.
+   */
+  const QString name()
+  { return Name; }
+
   /** Insert a parent item for this template provider into a list view.
    * @param parent The list into which to insert the item.
+   * @param toolbar The template toolbar if any buttons are to be added on it.
    */
-  virtual void insertItems(QListView *parent)=0;
+  virtual void insertItems(QListView *parent,QToolBar *toolbar)=0;
+
+  /** Save settings for this template provider.
+   * @param data Map of data.
+   * @param prefix Prefix of where to save info.
+   */
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  { }
+  /** Save settings for all template providers.
+   * @param data Map of data.
+   * @param prefix Prefix of where to save info.
+   */
+  static void exportAllData(std::map<QString,QString> &data,const QString &prefix);
+  /** Import data
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  { }
+  /** Import data for all template providers.
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  static void importAllData(std::map<QString,QString> &data,const QString &prefix);
 
   friend class toTemplate;
 };
@@ -171,6 +204,10 @@ public:
    * list when needed.
    */
   virtual void expand(void)
+  { }
+  /** This function is called when the item is doubleclicked.
+   */
+  virtual void doubleClick(void)
   { }
   /** This function is called when the item is collapsed.
    */

@@ -120,21 +120,23 @@
 </LI>
 <LI>std::list<objectName> &&nbsp;<b><A HREF="#ref65">objects</A></b> (bool block) 
 </LI>
-<LI>std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &&nbsp;<b><A HREF="#ref66">synonyms</A></b> (bool block) 
+<LI>void &nbsp;<b><A HREF="#ref66">addIfNotExists</A></b> (objectName &object) 
 </LI>
-<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref67">columns</A></b> (const objectName &table,bool nocache=false) 
+<LI>std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &&nbsp;<b><A HREF="#ref67">synonyms</A></b> (bool block) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref68">rereadCache</A></b> (void) 
+<LI><A HREF="#toQDescList">toQDescList</A> &&nbsp;<b><A HREF="#ref68">columns</A></b> (const objectName &table,bool nocache=false) 
 </LI>
-<LI>const objectName &&nbsp;<b><A HREF="#ref69">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,bool block) 
+<LI>void &nbsp;<b><A HREF="#ref69">rereadCache</A></b> (void) 
 </LI>
-<LI>const objectName &&nbsp;<b><A HREF="#ref70">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &synonym,bool block) 
+<LI>const objectName &&nbsp;<b><A HREF="#ref70">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,bool block) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref71">cacheAvailable</A></b> (bool block=false,bool need=true) 
+<LI>const objectName &&nbsp;<b><A HREF="#ref71">realName</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &synonym,bool block) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref72">cancelAll</A></b> (void) 
+<LI>bool &nbsp;<b><A HREF="#ref72">cacheAvailable</A></b> (bool block=false,bool need=true) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref73">toQuery</A></b></LI>
+<LI>void &nbsp;<b><A HREF="#ref73">cancelAll</A></b> (void) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref74">toQuery</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Represent a database connection in TOra. Observe that this can mean several actual
  connections to the database as queries that ae expected to run a long time are sometimes
  executed in their own connection to make sure the interface doesn't lock up for a long time.
@@ -387,7 +389,14 @@
 <p><b>Returns</b>: A list of object available for the current user. The list is sorted in
          owner and name order.
    </p>
-<A NAME="synonyms"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &&nbsp;<strong>synonyms</strong> (bool block)
+<A NAME="addIfNotExists"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addIfNotExists</strong> (objectName &object)
+<br></td><td align="right"><h3><strong>addIfNotExists</strong></h3></td></tr></table><p></p><p> Add a new object to the objectlist if it doesn't exist already.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>object</i></TD><TD align="left" valign="top">The object to add
+   </TD></TR>
+</TABLE></P>
+<A NAME="synonyms"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName> &&nbsp;<strong>synonyms</strong> (bool block)
 <br></td><td align="right"><h3><strong>synonyms</strong></h3></td></tr></table><p></p><p>
  Get the synonyms available for objects. Do not modify the returned list.
 </p>
@@ -397,7 +406,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of synonyms to objects available for the current user.
    </p>
-<A NAME="columns"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>columns</strong> (const objectName &table,bool nocache=false)
+<A NAME="columns"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#toQDescList">toQDescList</A> &&nbsp;<strong>columns</strong> (const objectName &table,bool nocache=false)
 <br></td><td align="right"><h3><strong>columns</strong></h3></td></tr></table><p></p><p>
  Get a list of the available columns for a table. This function caches the responses
  and should be fairly fast after the first call. Do not modify the returned list.
@@ -410,11 +419,11 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of the columns for a table.
    </p>
-<A NAME="rereadCache"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)
+<A NAME="rereadCache"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>rereadCache</strong> (void)
 <br></td><td align="right"><h3><strong>rereadCache</strong></h3></td></tr></table><p></p><p>
  Reread the object and column cache.
    </p>
-<A NAME="realName"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,bool block)
+<A NAME="realName"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,bool block)
 <br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
  Get the real object name of an object.
 </p>
@@ -424,7 +433,7 @@
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
    </TD></TR>
 </TABLE></P>
-<A NAME="realName"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &synonym,bool block)
+<A NAME="realName"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const objectName &&nbsp;<strong>realName</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &synonym,bool block)
 <br></td><td align="right"><h3><strong>realName</strong></h3></td></tr></table><p></p><p>
  Get the real object name of a synonym.
 </p>
@@ -436,7 +445,7 @@
 <TR><TD align="left" valign="top"><i>block</i></TD><TD align="left" valign="top">Block if not done caching object.
    </TD></TR>
 </TABLE></P>
-<A NAME="cacheAvailable"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool block=false,bool need=true)
+<A NAME="cacheAvailable"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>cacheAvailable</strong> (bool block=false,bool need=true)
 <br></td><td align="right"><h3><strong>cacheAvailable</strong></h3></td></tr></table><p></p><p> Check if cache is available or not.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -447,10 +456,10 @@
 </TABLE></P>
 <p><b>Returns</b>: True if cache is available.
    </p>
-<A NAME="cancelAll"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
+<A NAME="cancelAll"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
 <br></td><td align="right"><h3><strong>cancelAll</strong></h3></td></tr></table><p></p><p> Try to stop all running queries.
    </p>
-<A NAME="toQuery"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
+<A NAME="toQuery"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
 </td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><HR>
 	<table>
 	</table>

@@ -97,10 +97,10 @@ class toParamGet : public QDialog, public toHelpContext {
   Q_OBJECT
   /** Default values cache
    */
-  static std::map<QString,QString> DefaultCache;
+  static std::map<QString,std::map<QString,QString> > DefaultCache;
   /** Specified values cache
    */
-  static std::map<QString,QString> Cache;
+  static std::map<QString,std::map<QString,QString> > Cache;
 
   QGrid *Container;
 
@@ -108,18 +108,20 @@ class toParamGet : public QDialog, public toHelpContext {
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   /** Get parameters for specified SQL string.
+   * @param conn Connection to get binds for.
    * @param parent Parent widget if dialog is needed.
    * @param str SQL to parse for bindings. Observe that this string can be changed to further
    *            declare the binds.
    * @return Returns a list of values to feed into the query.
    */
-  static toQList getParam(QWidget *parent,QString &str);
+  static toQList getParam(toConnection &conn,QWidget *parent,QString &str);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
+   * @param conn Connection to get binds for.
    * @param name Name of the bind variable.
    * @param val Value of the bind variable.
    */
-  static void setDefault(const QString &name,const QString &val);
+  static void setDefault(toConnection &conn,const QString &name,const QString &val);
 private slots:
 
   virtual void showMemo(int row);

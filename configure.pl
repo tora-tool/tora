@@ -129,6 +129,8 @@ my %plugins=(
 					"Oracle" => 1 },
 	     "toprofiler"          => { "Files" => [ "toprofiler" ],
 					"Oracle" => 1 },
+	     "toproject"           => { "Files" => [ "toproject" ],
+					"Any" => 1 },
 	     "toresult"            => { "Files" => [ "toresultcols",
 						     "toresultconstraint",
 						     "toresultcontent",

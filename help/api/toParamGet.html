@@ -28,17 +28,19 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Static Methods</h4><ul><LI>static  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref6">getParam</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<h4>Public Static Methods</h4><ul><LI>static  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref6">getParam</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref7">setDefault</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &val) 
+<LI>static  void &nbsp;<b><A HREF="#ref7">setDefault</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &val) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A help class to parse SQL for input/output bindings and if available also pop up a 
  dialog and ask for values. Also maintains an internal cache of old values.
  </p>
-<A NAME="getParam"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQList">toQList</A> &nbsp;<strong>getParam</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="getParam"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQList">toQList</A> &nbsp;<strong>getParam</strong> (<A HREF="toConnection.html">toConnection</A> &conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>getParam</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get parameters for specified SQL string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get binds for.
+</TD></TR>
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget if dialog is needed.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">SQL to parse for bindings. Observe that this string can be changed to further
@@ -47,11 +49,13 @@
 </TABLE></P>
 <p><b>Returns</b>: Returns a list of values to feed into the query.
    </p>
-<A NAME="setDefault"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setDefault</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &val)
+<A NAME="setDefault"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setDefault</strong> (<A HREF="toConnection.html">toConnection</A> &conn,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &val)
 <br></td><td align="right"><h3><strong>setDefault</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Specify a default value for the cache. This can not overwrite a manually
  specified value by the user.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get binds for.
+</TD></TR>
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of the bind variable.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Value of the bind variable.
