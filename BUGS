@@ -21,3 +21,6 @@ toGetToken:
 
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.
+
+otl:
+	Sometimes looses open cursors when cancelling and multiple queries are running.

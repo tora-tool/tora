@@ -83,15 +83,11 @@ void toChangeConnection::changeConnection(int val)
     throw QString("Couldn't find selected connection");
   QWidget *cur=parentWidget();
   while(cur) {
-    try {
-      toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
-      if (tool) {
-	tool->setConnection(toMainWidget()->connection(*i));
-	toMainWidget()->windowActivated(tool);
-	return;
-      }
-    } catch(...) {
-      // Catch problems with Visual C++ missing RTTI
+    toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
+    if (tool) {
+      tool->setConnection(toMainWidget()->connection(*i));
+      toMainWidget()->windowActivated(tool);
+      return;
     }
     cur=cur->parentWidget();
   }

@@ -224,7 +224,6 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(timer());
   CurrentTab=StatisticSplitter;
-  CurrentItem=NULL;
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -281,22 +280,22 @@ static toSQL SQLSessions("toSession:ListSession",
 
 void toSession::refresh(void)
 {
-  if (CurrentItem) {
-    Session=CurrentItem->text(0);
-    Serial=CurrentItem->text(1);
-  } else {
+  QListViewItem *item=Sessions->selectedItem();
+  if (item) {
+    Session=item->text(0);
+    Serial=item->text(1);
+  } else
     Session=Serial=QString::null;
-  }
   toQList par;
   Sessions->query(toSQL::string(SQLSessions,connection()),par);
 }
 
 void toSession::done(void)
 {
-  for (CurrentItem=Sessions->firstChild();CurrentItem;CurrentItem=CurrentItem->nextSibling())
-    if (CurrentItem->text(0)==Session&&
-	CurrentItem->text(1)==Serial) {
-      Sessions->setSelected(CurrentItem,true);
+  for (QListViewItem *item=Sessions->firstChild();item;item=item->nextSibling())
+    if (item->text(0)==Session&&
+	item->text(1)==Serial) {
+      Sessions->setSelected(item,true);
       break;
     }
 }
@@ -317,34 +316,37 @@ void toSession::enableStatistics(bool enable)
 
 void toSession::changeTab(QWidget *tab)
 {
-  CurrentTab=tab;
-  if (CurrentItem) {
-    if (CurrentTab==StatisticSplitter) {
-      int ses=CurrentItem->text(0).toInt();
-      SessionStatistics->changeSession(ses);
-    } else if (CurrentTab==ConnectInfo)
-      ConnectInfo->changeParams(CurrentItem->text(0));
-    else if (CurrentTab==PendingLocks)
-      PendingLocks->query(CurrentItem->text(0));
-    else if (CurrentTab==OpenSplitter) {
-      QListViewItem *item=OpenCursors->currentItem();
-      QString address;
-      if (item)
-	address=item->text(2);
-      OpenCursors->changeParams(CurrentItem->text(0));
-      if (!address.isEmpty())
-	for (QListViewItem *item=OpenCursors->firstChild();
-	     item;item=item->nextSibling())
-	  if (address==item->text(2)) {
-	    OpenCursors->setSelected(item,true);
-	    break;
-	  }
-    } else if (CurrentTab==CurrentStatement)
-      CurrentStatement->changeAddress(CurrentItem->text(13));
-    else if (CurrentTab==LockedObjects)
-      LockedObjects->changeParams(CurrentItem->text(0));
-    else if (CurrentTab==PreviousStatement)
-      PreviousStatement->changeAddress(CurrentItem->text(14));
+  if (tab!=CurrentTab) {
+    CurrentTab=tab;
+    QListViewItem *item=Sessions->selectedItem();
+    if (item) {
+      if (CurrentTab==StatisticSplitter) {
+	int ses=item->text(0).toInt();
+	SessionStatistics->changeSession(ses);
+      } else if (CurrentTab==ConnectInfo)
+	ConnectInfo->changeParams(item->text(0));
+      else if (CurrentTab==PendingLocks)
+	PendingLocks->query(item->text(0));
+      else if (CurrentTab==OpenSplitter) {
+	QListViewItem *openitem=OpenCursors->currentItem();
+	QString address;
+	if (openitem)
+	  address=openitem->text(2);
+	OpenCursors->changeParams(item->text(0));
+	if (!address.isEmpty())
+	  for (openitem=OpenCursors->firstChild();
+	       openitem;openitem=openitem->nextSibling())
+	    if (address==openitem->text(2)) {
+	      OpenCursors->setSelected(item,true);
+	      break;
+	    }
+      } else if (CurrentTab==CurrentStatement)
+	CurrentStatement->changeAddress(item->text(13));
+      else if (CurrentTab==LockedObjects)
+	LockedObjects->changeParams(item->text(0));
+      else if (CurrentTab==PreviousStatement)
+	PreviousStatement->changeAddress(item->text(14));
+    }
   }
 }
 
@@ -356,11 +358,12 @@ void toSession::changeCursor(QListViewItem *item)
 
 void toSession::disconnectSession(void)
 {
-  if (CurrentItem) {
+  QListViewItem *item=Sessions->selectedItem();
+  if (item) {
     QString sess="'";
-    sess.append(CurrentItem->text(0));
+    sess.append(item->text(0));
     sess.append(",");
-    sess.append(CurrentItem->text(1));
+    sess.append(item->text(1));
     sess.append("'");
     QString str("Let current transaction finnish before disconnecting session?");
     QString sql;
@@ -390,13 +393,14 @@ void toSession::changeRefresh(const QString &str)
 
 void toSession::changeItem(QListViewItem *item)
 {
-  CurrentItem=item;
-  if (CurrentItem&&LastSession!=CurrentItem->text(0)) {
-    if (!CurrentItem->text(0).isEmpty()) {
-      WaitBar->changeParams(CurrentItem->text(0));
-      IOBar->changeParams(CurrentItem->text(0));
+  if (item&&LastSession!=item->text(0)) {
+    if (!item->text(0).isEmpty()) {
+      WaitBar->changeParams(item->text(0));
+      IOBar->changeParams(item->text(0));
     }
-    LastSession=CurrentItem->text(0);
+    LastSession=item->text(0);
   }
-  changeTab(CurrentTab);
+  QWidget *t=CurrentTab;
+  CurrentTab=NULL;
+  changeTab(t);
 }

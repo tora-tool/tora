@@ -996,12 +996,21 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 
   Tabs->setCurrentPage(0);
 
-  connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(refresh()));
+  LastTab=NULL;
+
+  connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
+  refresh();
+}
+
+void toTuning::changeTab(QWidget *widget)
+{
+  if(LastTab==widget)
+    return;
   refresh();
 }
 
@@ -1029,10 +1038,10 @@ void toTuning::changeRefresh(const QString &str)
 
 void toTuning::refresh(void)
 {
-  QWidget *current=Tabs->currentPage();
-  if (current==Overview) {
+  LastTab=Tabs->currentPage();
+  if (LastTab==Overview) {
     Overview->refresh();
-  } else if (current==Indicators) {
+  } else if (LastTab==Indicators) {
     Indicators->clear();
     std::list<QString> val=toSQL::range("toTuning:Indicators");
     QListViewItem *parent=NULL;
@@ -1055,13 +1064,13 @@ void toTuning::refresh(void)
 	  last->setText(2,dsc[1]);
       } TOCATCH
     }
-  } else if (current==Statistics)
+  } else if (LastTab==Statistics)
     Statistics->refreshStats();
-  else if (current==Parameters)
+  else if (LastTab==Parameters)
     Parameters->refresh();
-  else if (current==Options)
+  else if (LastTab==Options)
     Options->refresh();
-  else if (current==Licenses)
+  else if (LastTab==Licenses)
     Licenses->refresh();
 }
 

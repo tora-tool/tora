@@ -245,14 +245,10 @@ void toHelpTool::displayHelp(void)
 {
   QWidget *cur=qApp->focusWidget();
   while(cur) {
-    try {
-      QDialog *dlg=dynamic_cast<QDialog *>(cur);
-      if (dlg) {
-        toHelp::displayHelp(dlg);
-        return;
-      }
-    } catch(...) {
-      // Catch problems with Visual C++ missing RTTI
+    QDialog *dlg=dynamic_cast<QDialog *>(cur);
+    if (dlg) {
+      toHelp::displayHelp(dlg);
+      return;
     }
     cur=cur->parentWidget();
   }
@@ -468,14 +464,10 @@ void toHelp::displayHelp(QWidget *parent)
 {
   QWidget *cur=qApp->focusWidget();
   while(cur) {
-    try {
-      toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
-      if (ctx&&!ctx->context().isEmpty()) {
-        toHelp::displayHelp(ctx->context(),parent);
-        return;
-      }
-    } catch(...) {
-      // Catch problems with Visual C++ missing RTTI
+    toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
+    if (ctx&&!ctx->context().isEmpty()) {
+      toHelp::displayHelp(ctx->context(),parent);
+      return;
     }
     cur=cur->parentWidget();
   }

@@ -190,7 +190,7 @@ public:
 
 class toThread {
 private:
-  static std::list<toThread *> *Threads;
+  static toThread *DeleteThread;
   static toLock *Lock; 
  /** PThread identifier.
    */

@@ -115,10 +115,12 @@ class toTuning : public toToolWidget {
   QComboBox *Refresh;
   toTuningOverview *Overview;
   toTuningFileIO *FileIO;
+  QWidget *LastTab;
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:
   virtual void refresh(void);
+  virtual void changeTab(QWidget *widget); 
   virtual void changeRefresh(const QString &str);
   virtual void windowActivated(QWidget *widget);
 };

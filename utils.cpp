@@ -828,13 +828,9 @@ QColor toChartColor(int index)
 toToolWidget *toCurrentTool(QObject *cur)
 {
   while(cur) {
-    try {
-      toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
-      if (tool)
-	return tool;
-    } catch(...) {
-      // Catch problems with Visual C++ missing RTTI
-    }
+    toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
+    if (tool)
+      return tool;
     cur=cur->parent();
   }
   throw QString("Couldn't find parent connection. Internal error.");

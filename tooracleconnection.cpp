@@ -109,8 +109,10 @@ class toOracleProvider : public toConnectionProvider {
 public:
   class oracleSub : public toConnectionSub {
   public:
+    toSemaphore Lock;
     otl_connect *Connection;
     oracleSub(otl_connect *conn)
+      : Lock(1)
     { Connection=conn; }
     ~oracleSub()
     { delete Connection; }
@@ -119,11 +121,14 @@ public:
   };
 
   class oracleQuery : public toQuery::queryImpl {
+    bool Cancel;
+    bool Running;
     otl_stream *Query;
   public:
     oracleQuery(toQuery *query,oracleSub *conn)
       : toQuery::queryImpl(query)
     {
+      Running=Cancel=false;
       Query=NULL;
     }
     virtual ~oracleQuery()
@@ -137,6 +142,13 @@ public:
       if (!dsc)
 	throw QString("Couldn't get description of next column to read");
 
+      oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
+      if (!conn)
+	throw QString("Internal error, not oracle sub connection");
+      conn->Lock.down();
+      if (Cancel)
+	throw QString("Cancelled while waiting to read value");
+      Running=true;
       try {
 	toQValue null;
 	switch (dsc->ftype) {
@@ -145,6 +157,8 @@ public:
 	  {
 	    double d;
 	    (*Query)>>d;
+	    Running=false;
+	    conn->Lock.up();
 	    if (Query->is_null())
 	      return null;
 	    return toQValue(d);
@@ -157,6 +171,8 @@ public:
 	  {
 	    int i;
 	    (*Query)>>i;
+	    Running=false;
+	    conn->Lock.up();
 	    if (Query->is_null())
 	      return null;
 	    return toQValue(i);
@@ -172,6 +188,8 @@ public:
 	    buffer[len]=0;
 	    otl_long_string str(buffer,len);
 	    (*Query)>>str;
+	    Running=false;
+	    conn->Lock.up();
 	    if (!str.len())
 	      return null;
 	    QString buf(QString::fromUtf8(buffer));
@@ -183,8 +201,11 @@ public:
 	  {
 	    otl_lob_stream lob;
 	    (*Query)>>lob;
-	    if (lob.len()==0)
+	    if (lob.len()==0) {
+	      Running=false;
+	      conn->Lock.up();
 	      return null;
+	    }
 	    int len=toMaxLong;
 	    if (toMaxLong<0)
 	      len=lob.len();
@@ -201,6 +222,8 @@ public:
 	    buffer[len]=0; // Not sure if this is needed
 	    QString buf(QString::fromUtf8(buffer));
 	    delete buffer;
+	    Running=false;
+	    conn->Lock.up();
 	    return buf;
 	  }
 	  break;
@@ -212,6 +235,8 @@ public:
 	    buffer=new char[max(dsc->elem_size*2+1,100)];
 	    buffer[0]=0;
 	    (*Query)>>buffer;
+	    Running=false;
+	    conn->Lock.up();
 	    if (Query->is_null()) {
 	      delete buffer;
 	      return null;
@@ -223,9 +248,13 @@ public:
 	  break;
 	}
       } catch (const otl_exception &exc) {
+	Running=false;
+	conn->Lock.up();
 	delete buffer;
 	ThrowException(exc);
       } catch (...) {
+	Running=false;
+	conn->Lock.up();
 	delete buffer;
 	throw;
       }
@@ -658,14 +687,26 @@ void toOracleProvider::oracleQuery::execute(void)
     throw QString("Internal error, not oracle sub connection");
   try {
     delete Query;
+    Query=NULL;
 
+    conn->Lock.down();
+    if (Cancel)
+      throw QString("Query aborted before started");
     Query=new otl_stream;
     Query->set_commit(0);
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+    Running=true;
     Query->open(1,
 		query()->sql(),
 		*(conn->Connection));
-
+    Running=false;
+  } catch (const otl_exception &exc) {
+    Running=false;
+    conn->Lock.up();
+    ThrowException(exc);
+  }
+  try {
+    conn->Lock.up();
     otl_null null;
     for(toQList::iterator i=query()->params().begin();i!=query()->params().end();i++) {
       if ((*i).isNull())
@@ -694,12 +735,21 @@ void toOracleProvider::oracleQuery::execute(void)
   }
 }
 
+#include <stdio.h>
+
 void toOracleProvider::oracleQuery::cancel(void)
 {
   oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
   if (!conn)
     throw QString("Internal error, not oracle sub connection");
-  conn->Connection->cancel();
+  if (Running) {
+    printf("Cancelled running query\n");
+    conn->Connection->cancel();
+  } else {
+    printf("Cancelled pending query\n");
+    Cancel=true;
+    conn->Lock.up();
+  }
 }
 
 toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)

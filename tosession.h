@@ -59,7 +59,6 @@ class toSession : public toToolWidget {
   QTabWidget *ResultTab;
 
   QWidget *CurrentTab;
-  QListViewItem *CurrentItem;
 
   toSGAStatement *CurrentStatement;
   toSGAStatement *PreviousStatement;

@@ -42,7 +42,21 @@
 2001-11-07: Some minor fixes to configure (Thanx Roman Stepanov).
 2001-11-07: Fixed crash when changing objects in debugger and compiling.
 2001-11-07: Fixed problem with unitialized variable in -- comments.
-2001-11-07: Changed copyright and license. Windows version is now no longer free.
+2001-11-08: Changed copyright and license. Windows version is now no longer free.
+2001-11-08: Removed lots of workarounds for Visual C++ since Qt with RTTI availble.
+2001-11-08: Removed cursor flickering in template DB browser.
+2001-11-08: Fixed some problems with stopping a background query.
+2001-11-09: Much quicker startup of toScript tool. (From 1.3.0)
+2001-11-10: Don't repaint window on show in tuning.
+2001-11-11: Fixed some syncing problems with threads in windows.
+2001-11-11: Fixed newly introduced problem with noblockquery (After 1.1.4).
+2001-11-11: A fix on how old threads are deleted in unix.
+2001-11-12: Don't run content editor in long thread.
+2001-11-12: Don't update on change tab unless tab actually changed in session.
+2001-11-12: Improved problem with loosing open cursors in otl on cancel.
+2001-11-12: Added OCIReset after OCIBreak (As per the OCI manual).
+2001-11-12: Assume OTL isn't threadsafe except per connection.
+2001-11-12: Fixed SIGSEGV in session manager.
 
 1.1.4: Released 2001-11-02
 

@@ -479,21 +479,17 @@ void toMain::windowActivated(QWidget *widget)
 {
   if (toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty())
     return;
-  try {
-    toToolWidget *tool=dynamic_cast<toToolWidget *>(widget);
-    if (tool) {
-      toConnection &conn=tool->connection();
-      int pos=0;
-      for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-	if (&conn==*i) {
-	  ConnectionSelection->setCurrentItem(pos);
-	  break;
-	}
-	pos++;
+  toToolWidget *tool=dynamic_cast<toToolWidget *>(widget);
+  if (tool) {
+    toConnection &conn=tool->connection();
+    int pos=0;
+    for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+      if (&conn==*i) {
+	ConnectionSelection->setCurrentItem(pos);
+	break;
       }
+      pos++;
     }
-  } catch(...) {
-
   }
 }
 
@@ -578,10 +574,7 @@ void toMain::commandCallback(int cmd)
     QWidget *currWidget=qApp->focusWidget();
     toEditWidget *edit=NULL;
     while(currWidget&&!edit) {
-      try {
-	edit=dynamic_cast<toEditWidget *>(currWidget);
-      } catch(...) {
-      }
+      edit=dynamic_cast<toEditWidget *>(currWidget);
       currWidget=currWidget->parentWidget();
     }
     if (edit) {
@@ -934,12 +927,9 @@ void toMain::editDisable(toEditWidget *edit)
 toEditWidget *toMain::findEdit(QWidget *widget)
 {
   while(widget) {
-    try {
-      toEditWidget *edit=dynamic_cast<toEditWidget *>(widget);
-      if (edit)
-	return edit;
-    } catch(...) {
-    }
+    toEditWidget *edit=dynamic_cast<toEditWidget *>(widget);
+    if (edit)
+      return edit;
     widget=widget->parentWidget();
   }
   return NULL;

@@ -157,12 +157,7 @@ void toTool::createWindow(void)
       const QPixmap *icon=toolbarImage();
       if (icon)
 	newWin->setIcon(*icon);
-      toToolWidget *tool;
-      try {
-	tool=dynamic_cast<toToolWidget *>(newWin);
-      } catch(...) {
-	tool=NULL;
-      }
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(newWin);
       if (tool)
 	toToolCaption(tool,name());
 

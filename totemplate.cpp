@@ -412,11 +412,9 @@ toTemplate *toTemplate::templateWidget(QListView *obj)
 {
   QObject *lst=obj;
   while(lst) {
-    try {
-      if (dynamic_cast<toTemplate *>(lst))
-        return dynamic_cast<toTemplate *>(lst);
-    } catch (...) {
-    }
+    toTemplate *tpl=dynamic_cast<toTemplate *>(lst);
+    if (tpl)
+      return tpl;
     lst=lst->parent();
   }
   throw("Not a toTemplate parent");
@@ -468,12 +466,9 @@ void toTemplate::expand(QListViewItem *item)
 
 void toTemplate::collapse(QListViewItem *item)
 {
-  try {
-    toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
-    if (ti)
-      ti->collapse();
-  } catch (...) {
-  }
+  toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
+  if (ti)
+    ti->collapse();
 }
 
 void toTemplateItem::setSelected(bool sel)
@@ -565,6 +560,7 @@ void toTemplateSQL::expand(void)
   while(firstChild())
     delete firstChild();
   try {
+    toBusy busy;
     toQuery query(connection(),SQL,parameters());
     while(!query.eof()) {
       createChild(query.readValue());

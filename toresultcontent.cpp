@@ -224,7 +224,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       sql+=Order;
     }
     toQList par;
-    Query=new toNoBlockQuery(connection(),sql,par);
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,par);
     Poll.start(100);
     OrigValues.clear();
     CurrentRow=-1;

@@ -44,7 +44,7 @@
 #include <time.h>
 
 pthread_t toThread::MainThread=pthread_self();
-std::list<toThread *> *toThread::Threads;
+toThread *toThread::DeleteThread;
 toLock *toThread::Lock;
 
 #define SEM_ASSERT(x) if((x)!=0) { throw QString(\
@@ -126,18 +126,8 @@ void toThread::initAttr()
 toThread::toThread(toTask *t)
   :Task(t)
 {
-  if (!Threads)
-    Threads=new std::list<toThread *>;
   if (!Lock)
     Lock=new toLock;
-
-  // This is a cludge to clean up finnished threads, there won't be many hanging at least
-
-  Lock->lock();
-  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++)
-    delete *i;
-  Threads->clear();
-  Lock->unlock();
 
   initAttr();
 }
@@ -194,7 +184,9 @@ void *toThreadStartWrapper(void *t)
   }
   delete thread->Task;
   toThread::Lock->lock();
-  toThread::Threads->insert(toThread::Threads->end(),thread);
+  if (toThread::DeleteThread)
+    delete toThread::DeleteThread;
+  toThread::DeleteThread=thread;
   toThread::Lock->unlock();
   return NULL;
 }
@@ -237,11 +229,8 @@ void toSemaphore::up(void)
 void toSemaphore::down(void)
 {
   Mutex.lock();
-  while(Value<=0) {
-    Mutex.unlock();
-    Condition.wait();
-    Mutex.lock();
-  }
+  while(Value<=0)
+    Condition.wait(&Mutex);
   Value--;
   Mutex.unlock();
 }
@@ -261,19 +250,6 @@ toThread::toThread(toTask *task)
     Threads=new std::list<toThread *>;
   if (!Lock)
     Lock=new toLock;
-
-  // This is a cludge to clean up finnished threads, there won't be many hanging at least
-
-  Lock->lock();
-  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();) {
-    if ((*i)->Thread.finished()&&(*i)!=this) {
-      delete (*i);
-      Threads->erase(i);
-      i=Threads->begin();
-    } else
-      i++;
-  }
-  Lock->unlock();
 }
 
 toThread::~toThread()
@@ -316,11 +292,30 @@ void toThread::taskRunner::run(void)
     toThread::ThreadID=LastID;
     Lock->unlock();
     Task->run();
+    Lock->lock();
+    delete Task;
+    Task=NULL;
+    Lock->unlock();
   } catch(const QString &exc) {
     printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {
     printf("Unhandled exception in thread:\nUnknown type\n");
   }
+
+
+  // This is a cludge to clean up finnished threads, there won't be many hanging at least
+
+  Lock->lock();
+  for (std::list<toThread *>::iterator i=toThread::Threads->begin();
+       i!=toThread::Threads->end();) {
+    if ((*i)->Thread.finished()) {
+      delete (*i);
+      Threads->erase(i);
+      i=Threads->begin();
+    } else
+      i++;
+  }
+  Lock->unlock();
 }
 
 #endif

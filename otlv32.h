@@ -9604,7 +9604,8 @@ public:
  void cancel(void)
  {
   if(attached){
-    OCIBreak(srvhp,errhp);
+    OCIBreak(svchp,errhp);
+    OCIReset(svchp,errhp);
   }
  }
 

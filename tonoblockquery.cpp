@@ -55,6 +55,8 @@
 
 #define PREFETCH_SIZE 1000
 
+static int QueriesRunning=0;
+
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
@@ -213,6 +215,8 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   TO_DEBUGOUT("Created thread\n");
   thread->start();
   TO_DEBUGOUT("Started thread\n");
+
+  QueriesRunning++;
 }
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
@@ -224,7 +228,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
 {
   try {
     Query=NULL;
-    Query=new toQuery(conn,toQuery::Long);
+    Query=new toQuery(conn,mode);
   } catch(...) {
     delete Query;
     throw;
@@ -249,6 +253,8 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
   TO_DEBUGOUT("Created thread\n");
   thread->start();
   TO_DEBUGOUT("Started thread\n");
+
+  QueriesRunning++;
 }
 
 toQDescList &toNoBlockQuery::describe(void)
@@ -275,36 +281,33 @@ int toNoBlockQuery::rowsProcessed(void)
   return Processed;
 }
 
+#include <stdio.h>
+
 void toNoBlockQuery::stop(void)
 {
-  {
-    TO_DEBUGOUT("Locking for delete\n");
-    Lock.lock();
-    if (!EOQ) {
-      TO_DEBUGOUT("Sending user abort\n");
-      do {
-	TO_DEBUGOUT("Query cancel\n");
-	if (Query)
-	  Query->cancel();
-	Lock.unlock();
-	toThread::msleep(100);
-	Lock.lock();
-      } while(Running.getValue()==0);
-    }
-    Lock.unlock();
-  }
+  Lock.lock();
+  int sleep=100;
   do {
-    TO_DEBUGOUT("Waiting for client\n");
-    Running.down();
-    {
-      TO_DEBUGOUT("Locking clear values\n");
-      toLocker lock(Lock);
-      ReadingValues.clear();
-    }
+    TO_DEBUGOUT("Locking clear values\n");
+    Quit=true;
+    ReadingValues.clear();
     Continue.up();
-    TO_DEBUGOUT("Locking delete EOQ\n");
-    toLocker lock(Lock);
+    Lock.unlock();
+
+    toThread::msleep(sleep);
+
+    Lock.lock();
+    if (Running.getValue()==0) {
+      TO_DEBUGOUT("Query cancel\n");
+      if (Query) {
+	printf("Calling cancel on %s\n",(const char *)SQL);
+	Query->cancel();
+	sleep*=2;
+      }
+    }
   } while(!EOQ);
+  Lock.unlock();
+
   if (Statistics) {
     TO_DEBUGOUT("Get statistics\n");
     Statistics->refreshStats(false);
@@ -319,6 +322,7 @@ void toNoBlockQuery::stop(void)
 toNoBlockQuery::~toNoBlockQuery()
 {
   stop();
+  QueriesRunning--;
 }
 
 bool toNoBlockQuery::poll(void)
