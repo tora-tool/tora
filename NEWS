@@ -1,4 +1,4 @@
-1.1.1: Released 2001-09-21
+1.1.1:
 
 2001-09-10: Fixed bug with no graphs being drawn.
 2001-09-10: Fixed some problems with Qt3 support.
@@ -78,6 +78,7 @@
 2001-09-21: Made it possible to compile without Oracle (MySQL only).
 2001-09-21: Added copy, cut and paste to memo editor.
 2001-09-21: More Oracle 7 fixes (In toExtract this time).
+2001-09-21: Some windows fixes.
 
 1.1.0: Released 2001-09-09
 

@@ -36,6 +36,8 @@
 
 #include <map>
 
+#include <qlabel.h>
+
 #include "toresultcols.h"
 #include "tomain.h"
 #include "tosql.h"

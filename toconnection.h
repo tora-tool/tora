@@ -406,7 +406,7 @@ public:
 
   /** Contain information about a column in a table.
    */
-  struct columnDesc {
+  struct columnDescription {
     /** Column name
      */
     QString Name;
@@ -472,7 +472,7 @@ public:
      * @param table Table to get column for.
      * @return List of columns for table.
      */
-    virtual std::list<toConnection::columnDesc> columnDesc(const tableName &table);
+    virtual std::list<columnDescription> columnDesc(const tableName &table);
 
     /** Create a new query implementation for this connection.
      * @return A query implementation, allocated with new.
@@ -495,7 +495,7 @@ private:
   connectionImpl *Connection;
 
   bool ReadTables;
-  std::map<tableName,std::list<columnDesc> > ColumnCache;
+  std::map<tableName,std::list<columnDescription> > ColumnCache;
   std::list<tableName> TableNames;
 
   toConnectionSub *mainConnection(void);
@@ -690,7 +690,7 @@ public:
    * and should be fairly fast after the first call. Do not modify the returned list.
    * @return A list of the columns for a table.
    */
-  std::list<columnDesc> &columns(const tableName &table);
+  std::list<columnDescription> &columns(const tableName &table);
   /**
    * Clear the object and column cache.
    */

@@ -35,9 +35,6 @@
  ****************************************************************************/
 
 #include <stdio.h>
-#ifndef WIN32
-#include <unistd.h>
-#endif
 
 #include <qlineedit.h>
 #include <qtoolbutton.h>
@@ -55,6 +52,12 @@
 #include "tomemoeditor.h"
 
 #include "toalert.moc"
+
+#ifndef WIN32
+#include <unistd.h>
+#else
+#include <windows.h>
+#endif
 
 #include "icons/toalert.xpm"
 #include "icons/toworksheet.xpm"
@@ -194,11 +197,13 @@ void toAlert::pollTask::run(void)
     try {
       {
 	toLocker lock(Parent.Lock);
-	for(std::list<QString>::iterator i=Parent.AddNames.begin();
-	    i!=Parent.AddNames.end();
-	    i++) {
-	  Parent.Names.insert(Parent.Names.end(),*i);
-	  Parent.Connection.execute(SQLRegister,*i);
+	{
+	  for(std::list<QString>::iterator i=Parent.AddNames.begin();
+	      i!=Parent.AddNames.end();
+	      i++) {
+	    Parent.Names.insert(Parent.Names.end(),*i);
+	    Parent.Connection.execute(SQLRegister,*i);
+	  }
 	}
 	Parent.AddNames.clear();
 	for(std::list<QString>::iterator i=Parent.DelNames.begin();
@@ -240,7 +245,11 @@ void toAlert::pollTask::run(void)
 	}
       } else {
 	Parent.Lock.unlock();
+#ifndef WIN32
 	sleep(TIMEOUT);
+#else
+	Sleep(TIMEOUT*1000);
+#endif
       }
     } catch(const QString &str) {
       printf("Exception in alert polling:\n%s\n",(const char *)str);

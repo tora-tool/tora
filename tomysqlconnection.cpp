@@ -332,9 +332,9 @@ public:
       }
       return ret;
     }
-    virtual std::list<toConnection::columnDesc> columnDesc(const toConnection::tableName &table)
+    virtual std::list<toConnection::columnDescription> columnDesc(const toConnection::tableName &table)
     {
-      std::list<toConnection::columnDesc> ret;
+      std::list<toConnection::columnDescription> ret;
 
       try {
 	QString SQL="SELECT * FROM ";
@@ -342,7 +342,7 @@ public:
 	SQL+=" WHERE NULL=NULL";
 	toQuery query(connection(),SQL);
 	toQDescList desc=query.describe();
-	toConnection::columnDesc cur;
+	toConnection::columnDescription cur;
 	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
 	  cur.Name=(*j).Name;
 	  ret.insert(ret.end(),cur);

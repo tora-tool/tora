@@ -577,9 +577,9 @@ void toHighlightedText::checkComplete(void)
     if (!name.isEmpty()) {
       try {
 	toConnection &conn=toCurrentConnection(this);
-	std::list<toConnection::columnDesc> &desc=conn.columns(conn.realName(name));
+	std::list<toConnection::columnDescription> &desc=conn.columns(conn.realName(name));
 	std::list<QString> complete;
-	for (std::list<toConnection::columnDesc>::iterator i=desc.begin();
+	for (std::list<toConnection::columnDescription>::iterator i=desc.begin();
 	     i!=desc.end();i++) {
 	  QString t=conn.quote((*i).Name);
 	  if (!(*i).Comment.isEmpty()) {
@@ -653,7 +653,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       if (CompleteItem>=0) {
 	QString tmp=Completion->text(CompleteItem);
 	unsigned int pos=0;
-	while(pos<tmp.length()&&toIsIdent(tmp[pos]))
+	while(pos<tmp.length()&&toIsIdent(tmp.at(pos)))
 	  pos++;
 	tmp=tmp.left(pos);
 	insert(tmp,false);
@@ -741,7 +741,7 @@ void toHighlightedText::selectComplete(void)
   if (Completion) {
     QString tmp=Completion->currentText();
     unsigned int pos=0;
-    while(pos<tmp.length()&&toIsIdent(tmp[pos]))
+    while(pos<tmp.length()&&toIsIdent(tmp.at(pos)))
       pos++;
     tmp=tmp.left(pos);
     if (!tmp.isEmpty()) {

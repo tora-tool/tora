@@ -372,9 +372,9 @@ public:
       }
       return ret;
     }
-    virtual std::list<toConnection::columnDesc> columnDesc(const toConnection::tableName &table)
+    virtual std::list<toConnection::columnDescription> columnDesc(const toConnection::tableName &table)
     {
-      std::list<toConnection::columnDesc> ret;
+      std::list<toConnection::columnDescription> ret;
       std::map<QString,QString> comments;
       try {
 	toQuery comment(connection(),SQLComment,table.Owner,table.Name);
@@ -393,7 +393,7 @@ public:
 	SQL+="\" WHERE NULL=NULL";
 	toQuery query(connection(),SQL);
 	toQDescList desc=query.describe();
-	toConnection::columnDesc cur;
+	toConnection::columnDescription cur;
 	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
 	  QString name=(*j).Name;
 	  cur.Comment=comments[name];

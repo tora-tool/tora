@@ -1092,14 +1092,14 @@ const toConnection::tableName &toConnection::realName(const QString &object)
 
   bool quote=false;
   for (unsigned int pos=0;pos<object.length();pos++) {
-    if (object[pos]=="\"") {
+    if (object.at(pos)=="\"") {
       quote=!quote;
     } else {
-      if (!quote&&object[pos]=='.') {
+      if (!quote&&object.at(pos)=='.') {
 	owner=name;
 	name="";
       } else
-	name+=object[pos];
+	name+=object.at(pos);
     }
   }
 
@@ -1122,9 +1122,9 @@ const toConnection::tableName &toConnection::realName(const QString &object)
   throw QString("Object %1 not available for %2").arg(object).arg(user());
 }
 
-std::list<toConnection::columnDesc> &toConnection::columns(const tableName &table)
+std::list<toConnection::columnDescription> &toConnection::columns(const tableName &table)
 {
-  std::map<tableName,std::list<columnDesc> >::iterator i=ColumnCache.find(table);
+  std::map<tableName,std::list<columnDescription> >::iterator i=ColumnCache.find(table);
   if (i==ColumnCache.end())
     ColumnCache[table]=Connection->columnDesc(table);
 
@@ -1157,8 +1157,8 @@ std::list<toConnection::tableName> toConnection::connectionImpl::tableNames(void
   return ret;
 }
 
-std::list<toConnection::columnDesc> toConnection::connectionImpl::columnDesc(const tableName &)
+std::list<toConnection::columnDescription> toConnection::connectionImpl::columnDesc(const tableName &)
 {
-  std::list<toConnection::columnDesc> ret;
+  std::list<toConnection::columnDescription> ret;
   return ret;
 }
