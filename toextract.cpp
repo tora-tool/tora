@@ -748,3 +748,19 @@ QString toExtract::partDescribe(const QString &str,int level)
     return QString::null;
   return ctx[level];
 }
+
+QString toExtract::contextDescribe(const QString &str,int level)
+{
+  int pos=-1;
+  do {
+    level--;
+    str.find("\01",pos+1);
+  } while (pos>=0&&level>0);
+
+  if (pos<0)
+    pos=str.length();
+
+  if (level==0)
+    return str.mid(0,pos);
+  return QString::null;
+}

@@ -140,6 +140,20 @@ class toOracleExtract : public toExtract::extractor {
 			 toQList &result,const QString &schema,const QString &owner,
 			 const QString &name) const;
 
+  // Migrate utility functions
+
+  QString migrateAttributes(std::list<QString> &desc,
+			    std::list<QString>::iterator i,
+			    int level,
+			    const QString &indent) const;
+  QString migratePartitions(std::list<QString> &desc,
+			    std::list<QString>::iterator &i,
+			    int level,
+			    const QString &indent) const;
+  QString migrateIndexColumns(std::list<QString> &destin,
+			      std::list<QString>::iterator i,
+			      const QString &context) const;
+
   // Create functions
 
   QString createConstraint(toExtract &ext,const QString &schema,const QString &owner,
@@ -273,6 +287,7 @@ class toOracleExtract : public toExtract::extractor {
   QString dropUser(toExtract &ext,const QString &schema,const QString &owner,
 		   const QString &type,const QString &name) const;
 
+  // Migrate functions
   QString migrateConstraint(toExtract &ext,std::list<QString> &source,
 			    std::list<QString> &destin) const;
   QString migrateDBLink(toExtract &ext,std::list<QString> &source,
@@ -2309,9 +2324,13 @@ QString toOracleExtract::indexColumns(toExtract &ext,
 	  row=QString("%1 DESC").arg(function,30);
 	else
 	  row=function;
-      } else
+      } else if (asc=="DESC")
+	row=QString("%1 DESC").arg(QUOTE(col));
+      else
 	row=QUOTE(col);
-    } else
+    } else if (asc=="DESC")
+      row=QString("%1 DESC").arg(QUOTE(col));
+    else
       row=QUOTE(col);
     ret+=indent;
     if(first) {
@@ -2437,10 +2456,7 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
     ret+="PARTITION ";
     ret+=QUOTE(partition);
     if (caller!="LOCAL")
-      ret+=QString(" VALUES LESS THAN\n"
-		   "      (\n"
-		   "       %1\n"
-		   "      )\n").arg(highValue);
+      ret+=QString(" VALUES LESS THAN (%1)\n").arg(highValue);
     else
       ret+="\n";
     ret+=segmentAttributes(ext,storage);
@@ -2919,7 +2935,9 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
 	row=QString("%1 DESC").arg(function,30);
       else
 	row=function;
-    } else
+    } else if (asc=="DESC")
+      row=QString("%1 DESC").arg(QUOTE(col));
+    else
       row=QUOTE(col);
     addDescription(lst,ctx,"COLUMN",row);
     addDescription(lst,ctx,"COLUMN",row,"ORDER",QString::number(num));
@@ -3136,7 +3154,7 @@ void toOracleExtract::describePartitions(toExtract &ext,
 
     addDescription(lst,cctx);
     if (caller!="LOCAL")
-      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %1").arg(highValue));
+      addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN (%1)").arg(highValue));
     describeAttributes(ext,lst,cctx,storage);
 
     if(subPartitionType=="HASH") {
@@ -3144,8 +3162,7 @@ void toOracleExtract::describePartitions(toExtract &ext,
       while(!inf.eof()) {
 	QString sub(inf.readValue());
 	QString tablespace(inf.readValue());
-	addDescription(lst,cctx,"HASH",QUOTE(sub),
-		       QString("TABLESPACE %1").arg(QUOTE(tablespace)));
+	addDescription(lst,cctx,"HASH",QString("%1 TABLESPACE %2").arg(QUOTE(sub)).arg(QUOTE(tablespace)));
       }
     }
   }
@@ -3203,7 +3220,7 @@ void toOracleExtract::describePartitionedIndex(toExtract &ext,
   describeAttributes(ext,lst,ctx,result);
 
   if (!compressed.isEmpty())
-    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+    addDescription(lst,ctx,"COMPRESS",compressed);
 
   if (locality=="GLOBAL") {
     std::list<QString> cctx=ctx;
@@ -3976,8 +3993,8 @@ QString toOracleExtract::createIndex(toExtract &ext,
       ret=createContextPrefs(ext,schema,owner,name,ret);
       return ret;
     }
-    ret+=QString("INDEXTYPE IS \"%1\".\"%2\"\nPARAMETERS ('%3');\n\n").
-      arg(domOwner).arg(domName).arg(prepareDB(domParam));
+    ret+=QString("INDEXTYPE IS %1.%2\nPARAMETERS ('%3');\n\n").
+      arg(QUOTE(domOwner)).arg(QUOTE(domName)).arg(prepareDB(domParam));
     return ret;
   }
   if (CONNECTION.version()>="8.0"&&ext.getParallel()) {
@@ -5499,18 +5516,18 @@ void toOracleExtract::describeIndex(toExtract &ext,
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
-  ctx.insert(ctx.end(),"INDEX");
+  ctx.insert(ctx.end(),QString("%1%2 INDEX").arg(unique).arg(bitmap));
   ctx.insert(ctx.end(),QUOTE(name));
-  addDescription(lst,ctx,"ON "+schema2+QUOTE(table));
+  addDescription(lst,ctx,"ON",schema2+QUOTE(table));
 
   addDescription(lst,ctx);
   if (!reverse.isEmpty())
     addDescription(lst,ctx,reverse);
   describeIndexColumns(ext,lst,ctx,owner,name);
   if (domain=="DOMAIN") {
-    addDescription(lst,ctx,"DOMAIN",QString("DOMAINOWNER \"%1\".\"%2\"").
-		   arg(domOwner).
-		   arg(domName));
+    addDescription(lst,ctx,"DOMAIN",QString("INDEXTYPE IS DOMAINOWNER %1.%2").
+		   arg(QUOTE(domOwner)).
+		   arg(QUOTE(domName)));
     addDescription(lst,ctx,"DOMAIN",QString("PARAMETERS %1").arg(domParam));
     return;
   }
@@ -5526,7 +5543,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
   toUnShift(storage,toQValue(""));
   describeAttributes(ext,lst,ctx,storage);
   if (!compressed.isEmpty()&&compressed!="0"&&ext.getStorage())
-    addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
+    addDescription(lst,ctx,"COMPRESS",compressed);
 }
 
 void toOracleExtract::describeMaterializedView(toExtract &ext,
@@ -6264,6 +6281,44 @@ QString toOracleExtract::dropUser(toExtract &ext,
   return ret;
 }
 
+// Internal utility migration functions
+
+static bool SameContext(const QString &str,const QString &str2)
+{
+  if (str.startsWith(str2)) {
+    if (str.length()==str2.length())
+      return true;
+    if (str.length()>str2.length()&&
+	str.at(str2.length())==QChar('\001'))
+      return true;
+  }
+  return false;
+}
+
+static std::list<QString>::iterator FindItem(std::list<QString> &desc,
+					     std::list<QString>::iterator i,
+					     const QString &context,
+					     int level=-1,
+					     const QString &search=QString::null)
+{
+  if (search.isNull()||level<0) {
+    while(i!=desc.end()&&*i<context)
+      i++;
+    if (i==desc.end()||!SameContext(*i,context))
+      return desc.end();
+    return i;
+  } else {
+    while(i!=desc.end()) {
+      if (!SameContext(*i,context)&&!context.isEmpty())
+	return desc.end();
+      if (toExtract::partDescribe(*i,level)==search)
+	return i;
+      i++;
+    }
+    return desc.end();
+  }
+}
+
 // Implementation of migration functions
 
 QString toOracleExtract::migrateConstraint(toExtract &ext,
@@ -6406,6 +6461,133 @@ QString toOracleExtract::migrateDBLink(toExtract &ext,
   return ret;
 }
 
+QString toOracleExtract::migratePartitions(std::list<QString> &desc,
+					   std::list<QString>::iterator &i,
+					   int level,
+					   const QString &indent) const
+{
+  QString ret;
+
+  QString context=toExtract::contextDescribe(*i,level);
+  if (context.isNull())
+    return QString::null;
+
+  while(i!=desc.end()) {
+    if (!SameContext(*i,context))
+      break;
+    QString partition=toExtract::partDescribe(*i,level);
+    QString cc=toExtract::contextDescribe(*i,level+1);
+    ret+=indent+"PARTITION "+partition;
+    std::list<QString>::iterator t=FindItem(desc,i,cc,level+1,"RANGE");
+    if (t!=desc.end())
+      ret+=toExtract::partDescribe(*t,level+2);
+    ret+="\n";
+    ret+=migrateAttributes(desc,i,level+1,indent+"  ");
+    t=FindItem(desc,i,cc,level+1,"HASH");
+
+    if (t!=desc.end()) {
+      ret+=indent+"  (\n";
+      QString ind=indent+"    ";
+      while(t!=desc.end()) {
+	if (!SameContext(*t,cc)) {
+	  i=t;
+	  break;
+	}
+	if (toExtract::partDescribe(*t,level+1)!="HASH")
+	  break;
+	ret+=ind+toExtract::partDescribe(*t,level+2);
+	ind=indent+"  , ";
+	t++;
+      }
+      ret+=indent+"  )\n";
+    }
+
+    while(i!=desc.end()) {
+      if (!SameContext(*i,cc))
+	break;
+      i++;
+    }
+  }
+  return ret;
+}
+
+QString toOracleExtract::migrateAttributes(std::list<QString> &desc,
+					   std::list<QString>::iterator i,
+					   int level,
+					   const QString &indent) const
+{
+  QString after;
+  QString storage;
+  QString parallel;
+  QString ret;
+  QString partition;
+
+  QString context=toExtract::contextDescribe(*i,level);
+  if (context.isNull())
+    return QString::null;
+
+  while(i!=desc.end()) {
+    if(!SameContext(*i,context))
+      break;
+    QString type=toExtract::partDescribe(*i,level);
+    QString par=toExtract::partDescribe(*i,level+1);
+    if (type=="PARAMETER") {
+      if (par.startsWith("TABLESPACE"))
+	after+=indent+par+"\n";
+      else
+	ret+=indent+par+"\n";
+    } else if (type=="STORAGE")
+      storage+=indent+"  "+par+"\n";
+    else if (type=="PARALLEL")
+      parallel+=indent+"  "+par+"\n";
+    else if (type=="LOCAL PARTITION") {
+      if (partition.isEmpty()) {
+	partition+=indent+"LOCAL\n";
+	partition+=migratePartitions(desc,i,level+2,indent+"  ");
+      }
+    } else if (type=="GLOBAL PARTITION COLUMNS"||
+	       type.startsWith("PARTITION BY ")) {
+    }
+    i++;
+  }
+
+  if (!parallel.isEmpty())
+    ret.prepend(indent+"PARALLEL\n"+indent+"(\n"+parallel+indent+")\n");
+
+  if (!storage.isEmpty())
+    ret+=indent+"STORAGE\n"+indent+"(\n"+storage+indent+")\n";
+
+  ret+=after;
+  return ret;
+}
+
+QString toOracleExtract::migrateIndexColumns(std::list<QString> &destin,
+					     std::list<QString>::iterator i,
+					     const QString &context) const
+{
+  std::map<int,QString> cols;
+  QString ret;
+  do {
+    if (!SameContext(*i,context))
+      break;
+    QString col=toExtract::partDescribe(*i,4);
+    QString ord=toExtract::partDescribe(*i,5);
+    if (!col.isNull()&&!col.isNull())
+      cols[ord.toInt()]=col;
+    i++;
+  } while(i!=destin.end());
+  ret+="(\n";
+  for (int j=1;!cols[j].isNull();j++) {
+    if (j==1)
+      ret+="    ";
+    else
+      ret+="  , ";
+    ret+=cols[j]+"\n";
+  }
+  ret+=")\n";
+  return ret;
+}
+
 QString toOracleExtract::migrateIndex(toExtract &ext,
 				      std::list<QString> &source,
 				      std::list<QString> &destin) const
@@ -6413,21 +6595,85 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
   std::list<QString> drop;
   std::list<QString> create;
 
+  QString ret;
+
   toExtract::srcDst2DropCreate(source,destin,drop,create);
+  QString lastOwner;
+  QString lastName;
+
   {
     for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
       std::list<QString> ctx=toExtract::splitDescribe(*i);
       QString owner=toShift(ctx);
-      if (toShift(ctx)!="INDEX")
+      QString type=toShift(ctx);
+      if (type!="INDEX"&&type!="UNIQUE INDEX"&&type!="BITMAP INDEX")
 	continue;
+      QString name=toShift(ctx);
       
+      if (lastOwner!=owner||name!=lastName) {
+	QString sql="DROP INDEX "+owner+"."+name;
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+	lastOwner=owner;
+	lastName=name;
+      }
    }
   }
+  lastOwner=lastName=QString::null;
+
+  std::list<QString>::iterator j=destin.begin();
   for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
     std::list<QString> ctx=toExtract::splitDescribe(*i);
+    
+    QString owner=toShift(ctx);
+    QString type=toShift(ctx);
+    if (type!="INDEX"&&type!="UNIQUE INDEX"&&type!="BITMAP INDEX")
+      continue;
+    QString name=toShift(ctx);
+    
+    if (lastOwner!=owner||name!=lastName) {
+      QString context=toExtract::contextDescribe(*i,3);
+      j=FindItem(destin,j,context);
+      if (j!=destin.end()) {
+	std::list<QString>::iterator k=FindItem(destin,j,context,3,"ON");
+	if (k==destin.end())
+	  throw QString("Missing ON description item on index");
+	QString on=toExtract::partDescribe(*k,4);
+	QString sql="CREATE "+type+" "+owner+"."+name+" ON "+on;
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+"\n";
+	k=FindItem(destin,j,context,3,"COLUMN");
+	if (k==destin.end())
+	  throw QString("Couldn't find any COLUMN on index");
+	ret+=migrateIndexColumns(destin,k,toExtract::contextDescribe(*k,4));
+	k=FindItem(destin,j,context,3,"DOMAIN");
+	if (k!=destin.end()) {
+	  while (k!=destin.end()&&toExtract::partDescribe(*k,3)=="DOMAIN") {
+	    ret+="\n"+toExtract::partDescribe(*k,4);
+	    k++;
+	  }
+	  ret+=";\n";
+	  break;
+	} else
+	  ret+="\n";
+	k=FindItem(destin,j,context,3,"COMPRESS");
+	if (k!=destin.end())
+	  ret+="COMPRESS "+toExtract::partDescribe(*k,4)+"\n";
+	ret+=migrateAttributes(destin,j,3,"");
+	k=FindItem(destin,j,context,3,"REVERSE");
+	if (k!=destin.end())
+	  ret+="REVERSE\n";
+	ret+";\n\n";
+      }
+      lastOwner=owner;
+      lastName=name;
+	
+    }
   }
 
-  return QString::null;
+  return ret;
 }
 
 // Implementation public interface
