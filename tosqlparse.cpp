@@ -104,6 +104,9 @@ end loop;
 	
 END;
 END TEST_SPR;
+"
+#if 1
+"
 
 
 SELECT owner,
@@ -243,8 +246,9 @@ BEGIN
     EXCEPTION
         WHEN VALUE_ERROR THEN
 	    oRet := 3;
-END;";
-
+END;"
+#endif
+  ;
 #if 0
 
   QApplication test(argc,argv);
@@ -630,12 +634,12 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &cline,
     if (upp=="PROCEDURE"||upp=="FUNCTION"||upp=="PACKAGE")
       block=true;
 
-    if ((first=="IF"&&upp=="THEN")||
-	upp=="LOOP"||
-	upp=="DECLARE"||
-	(block&&upp=="AS")||
-	(block&&upp=="IS")||
-	(!declare&&upp=="BEGIN")) {
+    if (first!="END"&&((first=="IF"&&upp=="THEN")||
+		       upp=="LOOP"||
+		       upp=="DECLARE"||
+		       (block&&upp=="AS")||
+		       (block&&upp=="IS")||
+		       (!declare&&upp=="BEGIN"))) {
       statement blk(statement::Block);
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,cline));
       blk.subTokens().insert(blk.subTokens().end(),ret);
@@ -646,6 +650,9 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &cline,
 	if (cur.Type==statement::List)
 	  toStatusMessage("Unbalanced parenthesis (Too many ')')");
 	blk.subTokens().insert(blk.subTokens().end(),cur);
+	if (cur.subTokens().begin()!=cur.subTokens().end()&&
+	    (*(cur.subTokens().begin())).String.upper()=="BEGIN")
+	  dcl=false;
       } while(cur.subTokens().begin()!=cur.subTokens().end()&&
 	      (*cur.subTokens().begin()).String.upper()!="END");
       return blk;
@@ -928,7 +935,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  i!=stat.subTokens().end();
 	  i++) {
 	if (any) {
-	  if ((*i).Type==statement::Keyword) {
+	  QString upp=(*i).String.upper();
+	  if ((*i).Type==statement::Keyword&&upp!="LOOP"&&upp!="THEN"&&upp!="AS"&&upp!="IS") {
 	    if (int((*i).String.length())+1>maxlev)
 	      maxlev=(*i).String.length()+1;
 	    count++;
