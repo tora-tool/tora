@@ -81,6 +81,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
   HelpDirectory->setText(toHelpPath());
   ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
+  ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   if (typ=="KB")
@@ -173,6 +174,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
   toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));
+  toTool::globalSetConfig(CONF_CONNECT_SIZE,QString::number(ConnectHistory->value()));
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_CHANGE_CONNECTION,ChangeConnection->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");

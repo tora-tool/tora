@@ -37,40 +37,18 @@
 #ifndef __TONEWCONNECTION_H
 #define __TONEWCONNECTION_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include "toconnection.h"
+#include "tonewconnectionui.h"
 #include "tohelp.h"
 
-class QVBoxLayout; 
-class QHBoxLayout; 
-class QGridLayout; 
-class QComboBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QCheckBox;
-
-class toNewConnection : public QDialog, public toHelpContext
-{ 
-    Q_OBJECT
-
-    QLabel* TextLabel1;
-    QLabel* TextLabel2;
-    QLabel* TextLabel3;
-    QLabel* TextLabel4;
-    QPushButton* OkButton;
-    QPushButton* CancelButton;
-    QComboBox* Database;
-    QComboBox* Mode;
-    QLineEdit* Password;
-    QLineEdit* User;
-    QCheckBox* SqlNet;
+class toNewConnection : public toNewConnectionUI, public toHelpContext
+{
+  Q_OBJECT
 public:
-    toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
-    ~toNewConnection();
+  toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
 
-    toConnection *makeConnection();
+  toConnection *makeConnection();
+public slots:
+  virtual void historySelection(void);
 };
 
 #endif // TONEWCONNECTION_H

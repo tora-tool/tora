@@ -52,84 +52,64 @@ TO_NAMESPACE;
 #include <qwhatsthis.h>
 #include <qcheckbox.h>
 #include <qtooltip.h>
+#include <qlistview.h>
 
-#include "tonewconnection.moc"
 #include "totool.h"
 #include "toconf.h"
 #include "tonewconnection.h"
 #include "tomain.h"
 
+#include "tonewconnection.moc"
+#include "tonewconnectionui.moc"
+
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
-  : QDialog(parent,name,modal,fl),toHelpContext("newconnection.html")
+  : toNewConnectionUI(parent,name,modal,fl),toHelpContext("newconnection.html")
 {
   toHelp::connectDialog(this);
-  if (!name)
-    setName("toNewConnection");
-  resize(240,300); 
-  setMinimumSize(240,300);
-  setMaximumSize(240,300);
-  setCaption(tr("New database connection"));
 
-  TextLabel1=new QLabel(this,"TextLabel1");
-  TextLabel1->setGeometry(QRect(10,0,61,20)); 
-  TextLabel1->setText(tr("Username"));
+  Username->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
+  Username->setFocus();
 
-  TextLabel2=new QLabel(this,"TextLabel2");
-  TextLabel2->setGeometry(QRect(10,50,61,20)); 
-  TextLabel2->setText(tr("Password"));
-
-  TextLabel3=new QLabel(this,"TextLabel3");
-  TextLabel3->setGeometry(QRect(10,140,220,20)); 
-  TextLabel3->setText(tr("Database"));
-
-  TextLabel4=new QLabel(this,"TextLabel3");
-  TextLabel4->setGeometry(QRect(10,200,220,20)); 
-  TextLabel4->setText(tr("Connection Mode"));
-
-  User=new QLineEdit(this,"User");
-  User->setGeometry(QRect(10,20,220,23)); 
-  User->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
-  User->setFocus();
-
-  Password=new QLineEdit(this,"Password");
-  Password->setGeometry(QRect(10,70,220,23)); 
-  Password->setAutoMask(false);
-  if (toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD).isEmpty())
+  bool pass=toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD).isEmpty();
+  if (pass)
     Password->setText(DEFAULT_PASSWORD);
   else
     Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
-  Password->setEchoMode(QLineEdit::Password);
 
-  SqlNet=new QCheckBox("Use SQL*Net",this);
-  SqlNet->setGeometry(QRect(10,110,220,20));
   SqlNet->setChecked(!toTool::globalConfig(CONF_SQLNET,"Yes").isEmpty());
-  QToolTip::add(SqlNet,"Use SQL*Net to connect (Requires listener) instead of shared memory");
 
-  Database=new QComboBox(false,this,"Database");
-  Database->setGeometry(QRect(10,160,220,27)); 
   QString defdb=toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE);
   Database->setEditable(true);
-  Database->setAutoCompletion(true);
   if (!defdb.isEmpty())
     Database->insertItem(defdb);
 
-  Mode=new QComboBox(false,this,"Mode");
-  Mode->setGeometry(QRect(10,220,220,27));
-  Mode->insertItem("Normal");
-  Mode->insertItem("SYS_DBA");
-  Mode->insertItem("SYS_OPER");
+  {
+    int maxHist=toTool::globalConfig(CONF_CONNECT_CURRENT,0).toInt();
+    Previous->setSorting(-1);
+    for (int i=0;i<maxHist;i++) {
+      QString path=CONF_CONNECT_HISTORY;
+      path+=":";
+      path+=QString::number(i);
+      QString tmp=path;
+      tmp+=CONF_USER;
+      QString user=toTool::globalConfig(tmp,QString::null);
 
-  OkButton=new QPushButton(this,"OkButton");
-  OkButton->move(10,260); 
-  OkButton->setText(tr("&Connect"));
-  OkButton->setDefault(true);
+      tmp=path;
+      tmp+=CONF_PASSWORD;
+      QString passstr=(pass?QString(DEFAULT_PASSWORD):
+		       (toTool::globalConfig(tmp,DEFAULT_PASSWORD)));
 
-  CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(130,260); 
-  CancelButton->setText(tr("Cancel"));
+      tmp=path;
+      tmp+=CONF_SQLNET;
+      QString check=toTool::globalConfig(tmp,"SQL*Net");
 
-  connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
-  connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
+      tmp=path;
+      tmp+=CONF_DATABASE;
+      QString database=toTool::globalConfig(tmp,DEFAULT_DATABASE);
+
+      new QListViewItem(Previous,database,user,check,passstr);
+    }
+  }
 
   QString str;
 #ifdef WIN32
@@ -220,25 +200,66 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   delete buf;
 }
 
-toNewConnection::~toNewConnection()
-{
-}
-
 toConnection *toNewConnection::makeConnection(void)
 {
   try {
-    toTool::globalSetConfig(CONF_USER,User->text());
+    toTool::globalSetConfig(CONF_USER,Username->text());
+    QString pass;
     if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
-      toTool::globalSetConfig(CONF_PASSWORD,Password->text());
+      pass=Password->text();
     else
-      toTool::globalSetConfig(CONF_PASSWORD,DEFAULT_SAVE_PWD);
+      pass=DEFAULT_SAVE_PWD;
+    toTool::globalSetConfig(CONF_PASSWORD,pass);
     toTool::globalSetConfig(CONF_DATABASE,Database->currentText());
     toTool::globalSetConfig(CONF_SQLNET,SqlNet->isChecked()?"Yes":"");
     toConnection *retCon=new toConnection(SqlNet->isChecked(),
-					  User->text(),
+					  Username->text(),
 					  Password->text(),
 					  Database->currentText(),
 					  Mode->currentText());
+    {
+      for(QListViewItem *item=Previous->firstChild();item;item=item->nextSibling()) {
+	if (item->text(0)==Database->currentText()&&
+	    item->text(1)==Username->text()&&
+	    !item->text(2).isEmpty()==SqlNet->isChecked()) {
+	  delete item;
+	  break;
+	}
+      }
+    }
+    new QListViewItem(Previous,
+		      Database->currentText(),
+		      Username->text(),
+		      SqlNet->isChecked()?"SQL*Net":"",
+		      pass);
+    {
+      int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
+      int i=0;
+      for(QListViewItem *item=Previous->firstChild();item&&i<siz;item=item->nextSibling()) {
+	QString path=CONF_CONNECT_HISTORY;
+	path+=":";
+	path+=QString::number(i);
+	QString tmp=path;
+	tmp+=CONF_USER;
+	toTool::globalSetConfig(tmp,item->text(1));
+
+	tmp=path;
+	tmp+=CONF_PASSWORD;
+	toTool::globalSetConfig(tmp,item->text(3));
+
+	tmp=path;
+	tmp+=CONF_SQLNET;
+	toTool::globalSetConfig(tmp,item->text(2));
+
+	tmp=path;
+	tmp+=CONF_DATABASE;
+	toTool::globalSetConfig(tmp,item->text(0));
+	
+	i++;
+      }
+      toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(i));
+    }
+
     return retCon;
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");
@@ -250,3 +271,14 @@ toConnection *toNewConnection::makeConnection(void)
   }
 }
 
+void toNewConnection::historySelection(void)
+{
+  QListViewItem *item=Previous->selectedItem();
+  if (item) {
+    Username->setText(item->text(1));
+    if(item->text(3)!=DEFAULT_PASSWORD)
+      Password->setText(item->text(3));
+    Database->lineEdit()->setText(item->text(0));
+    SqlNet->setChecked(!item->text(2).isEmpty());
+  }
+}

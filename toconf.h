@@ -85,6 +85,10 @@
 #define DEFAULT_STATUS_SAVE	"10"
 #define CONF_AUTO_COMMIT	"AutoCommit"
 #define CONF_CHANGE_CONNECTION	"ChangeConnection"
+#define CONF_CONNECT_HISTORY	"ConnectHistory"
+#define CONF_CONNECT_SIZE	"ConnectSize"
+#define CONF_CONNECT_CURRENT	"ConnectCurrent"
+#define DEFAULT_CONNECT_SIZE	"20"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

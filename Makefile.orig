@@ -45,6 +45,7 @@ SOURCES=\
 	tomarkedtext.cpp	\
 	tomemoeditor.cpp	\
 	tonewconnection.cpp	\
+	tonewconnectionui.cpp	\
 	tonoblockquery.cpp	\
 	tooutput.cpp		\
 	toparamget.cpp		\
@@ -254,6 +255,7 @@ tora: \
 	objs/tomarkedtext.o \
 	objs/tomemoeditor.o \
 	objs/tonewconnection.o \
+	objs/tonewconnectionui.o \
 	objs/topreferences.o \
 	objs/toresultcontent.o \
 	objs/toresultfield.o \

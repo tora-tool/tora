@@ -8,6 +8,7 @@
 2001-08-07: Get connection from toToolWidget in toResult classes.
 2001-08-07: Added piechart of waitstates in session.
 2001-08-07: Added posibility to change connection in tool (Not debug yet).
+2001-08-07: New connection dialog with connection history.
 
 0.14: Released 2001-08-02
 
