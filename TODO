@@ -21,6 +21,7 @@ Extended functionality:
 * Make it possible to reorder columns in toResultContent.
 * Add function to create plan table from TOra.
 * Extract grants from objects.
+* Implement migrate functionality in toExtract.
 
 New tools:
 * Info about current session.

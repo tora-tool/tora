@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>716</width>
-            <height>615</height>
+            <width>646</width>
+            <height>585</height>
         </rect>
     </property>
     <property stdset="1">
@@ -110,16 +110,20 @@
                                     <cstring>Resize</cstring>
                                 </property>
                                 <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property stdset="1">
                                     <name>text</name>
                                     <string>Resize</string>
                                 </property>
                                 <property stdset="1">
                                     <name>checked</name>
                                     <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>3</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Resize extents of table or index to optimum sizes</string>
                                 </property>
                             </widget>
                             <widget row="0"  column="0" >
@@ -136,6 +140,14 @@
                                     <name>checked</name>
                                     <bool>true</bool>
                                 </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>0</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Compare two databases or schemas</string>
+                                </property>
                             </widget>
                             <widget row="1"  column="0" >
                                 <class>QRadioButton</class>
@@ -151,6 +163,14 @@
                                     <name>checked</name>
                                     <bool>false</bool>
                                 </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>1</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Extract script to recreate database objects.</string>
+                                </property>
                             </widget>
                             <widget row="2"  column="0" >
                                 <class>QRadioButton</class>
@@ -160,7 +180,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>enabled</name>
-                                    <bool>false</bool>
+                                    <bool>true</bool>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
@@ -169,6 +189,14 @@
                                 <property stdset="1">
                                     <name>checked</name>
                                     <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>2</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Create database scripts to convert schema or database from source to destination</string>
                                 </property>
                             </widget>
                             <spacer row="4"  column="0"  rowspan="9"  colspan="1" >
@@ -231,6 +259,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>Generated schema</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Select the schema to generate in script</string>
                                 </property>
                             </widget>
                             <widget row="4"  column="2"  rowspan="1"  colspan="2" >
@@ -296,6 +328,14 @@
                                     <name>name</name>
                                     <cstring>Schema</cstring>
                                 </property>
+                                <property stdset="1">
+                                    <name>editable</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>duplicatesEnabled</name>
+                                    <bool>false</bool>
+                                </property>
                             </widget>
                             <widget row="10"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
@@ -311,6 +351,14 @@
                                     <name>text</name>
                                     <string>Generate header</string>
                                 </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Generate header at the top of the script</string>
+                                </property>
                             </widget>
                             <widget row="9"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
@@ -325,6 +373,14 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>Generate prompts</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Generate prompts to display progress in SQLPlus</string>
                                 </property>
                             </widget>
                             <widget row="1"  column="2"  rowspan="1"  colspan="2" >
@@ -370,6 +426,10 @@
                                 <property stdset="1">
                                     <name>text</name>
                                     <string>Include content of tables</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
                                 </property>
                             </widget>
                             <widget row="7"  column="2"  rowspan="1"  colspan="2" >
@@ -788,7 +848,7 @@
                                 </column>
                                 <property stdset="1">
                                     <name>name</name>
-                                    <cstring>ListView2</cstring>
+                                    <cstring>Sizes</cstring>
                                 </property>
                                 <property stdset="1">
                                     <name>allColumnsShowFocus</name>
@@ -1026,6 +1086,13 @@
         <receiver>toScriptUI</receiver>
         <slot>disableResize(bool)</slot>
     </connection>
+    <connection>
+        <sender>ButtonGroup2</sender>
+        <signal>clicked(int)</signal>
+        <receiver>toScriptUI</receiver>
+        <slot>changeOption(int)</slot>
+    </connection>
+    <slot access="public">changeOption(int)</slot>
     <slot access="public">disableResize(bool)</slot>
 </connections>
 <tabstops>
@@ -1037,12 +1104,15 @@
     <tabstop>Compare</tabstop>
     <tabstop>Extract</tabstop>
     <tabstop>Migrate</tabstop>
+    <tabstop>Resize</tabstop>
     <tabstop>IncludeConstraints</tabstop>
     <tabstop>IncludeIndexes</tabstop>
     <tabstop>IncludeGrants</tabstop>
     <tabstop>IncludeStorage</tabstop>
     <tabstop>IncludeParallell</tabstop>
     <tabstop>IncludePartition</tabstop>
+    <tabstop>IncludeCode</tabstop>
+    <tabstop>IncludeComment</tabstop>
     <tabstop>IncludeContent</tabstop>
     <tabstop>IncludePrompt</tabstop>
     <tabstop>IncludeHeader</tabstop>
@@ -1054,6 +1124,8 @@
     <tabstop>Limit</tabstop>
     <tabstop>Initial</tabstop>
     <tabstop>Next</tabstop>
-    <tabstop>ListView2</tabstop>
+    <tabstop>AddButton</tabstop>
+    <tabstop>Sizes</tabstop>
+    <tabstop>Remove</tabstop>
 </tabstops>
 </UI>

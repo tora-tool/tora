@@ -3468,14 +3468,14 @@ static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 				    QString::null,
 				    "8.0");
 
-static toSQL SQLIndexNames("toExtract:IndexNames",
-			   "SELECT index_name
+static toSQL SQLPartitionIndexNames("toExtract:PartitionIndexNames",
+				    "SELECT index_name
   FROM all_part_indexes
  WHERE table_name = :nam<char[100]>
    AND owner      = :own<char[100]>
  ORDER BY index_name",
-			   "Index names of table, "
-			   "must have same binds and columns");
+				    "Index names of partition table, "
+				    "must have same binds and columns");
 
 QString toExtract::createPartitionedIOT(const QString &schema,const QString &owner,
 					const QString &name)
@@ -3484,7 +3484,7 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
 				   QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
   otl_stream inf(1,
-		 SQLIndexNames(Connection),
+		 SQLPartitionIndexNames(Connection),
 		 Connection.connection());
   inf<<name.utf8()<<owner.utf8();
   if (!inf.eof())
@@ -3510,7 +3510,7 @@ void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
 				   QString::number(BlockSize),name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
   otl_stream inf(1,
-		 SQLIndexNames(Connection),
+		 SQLPartitionIndexNames(Connection),
 		 Connection.connection());
   inf<<name.utf8()<<owner.utf8();
   if (!inf.eof())
@@ -4609,6 +4609,7 @@ void toExtract::describeSynonym(list<QString> &lst,
 
 static toSQL SQLTableConstraints("toExtract:TableConstraints",
 				 "SELECT
+        constraint_type,
         constraint_name
  FROM
         all_constraints cn
@@ -4636,15 +4637,44 @@ static toSQL SQLTableTriggers("toExtract:TableTriggers",
  ORDER  BY  trigger_name",
 			      "Get triggers for a table, must have same columns and binds");
 
+static toSQL SQLIndexNames("toExtract:IndexNames",
+			   "SELECT a.index_name
+  FROM all_indexes a
+ WHERE a.table_name = :nam<char[100]>
+   AND a.table_owner = :own<char[100]>
+   AND (a.owner,a.index_name) NOT IN (SELECT b.owner,b.constraint_name
+                                        FROM all_constraints b
+                                       WHERE b.table_name = a.table_name
+                                         AND b.owner = a.table_owner)",
+			   "Get all indexes not created by constraints, "
+			   "same binds and columns");
+
 QString toExtract::createTableFamily(const QString &schema,const QString &owner,const QString &name)
 {
   QString ret=createTable(schema,owner,name);
+
   list<QString> indexes=toReadQuery(Connection,SQLIndexNames(Connection),name,owner);
   while(indexes.size()>0)
     ret+=createIndex(schema,owner,toShift(indexes));
+
+  otl_stream inf(1,
+		 SQLTableType(Connection),
+		 Connection.connection());
+  inf<<name.utf8()<<owner.utf8();
+  if (inf.eof())
+    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+
+  char buffer[100];
+  inf>>buffer;
+  inf>>buffer;
+  QString iotType(QString::fromUtf8(buffer));
+
   list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
-  while(constraints.size()>0)
-    ret+=createConstraint(schema,owner,toShift(constraints));
+  while(constraints.size()>0) {
+    if (iotType!="IOT"||toShift(constraints)!="P")
+      ret+=createConstraint(schema,owner,toShift(constraints));
+  }
+
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
   while(triggers.size()>0)
     ret+=createTrigger(schema,owner,toShift(triggers));
@@ -4655,12 +4685,29 @@ void toExtract::describeTableFamily(list<QString> &lst,
 				    const QString &schema,const QString &owner,const QString &name)
 {
   describeTable(lst,schema,owner,name);
+
   list<QString> indexes=toReadQuery(Connection,SQLIndexNames(Connection),name,owner);
   while(indexes.size()>0)
     describeIndex(lst,schema,owner,toShift(indexes));
+
+  otl_stream inf(1,
+		 SQLTableType(Connection),
+		 Connection.connection());
+  inf<<name.utf8()<<owner.utf8();
+  if (inf.eof())
+    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+
+  char buffer[100];
+  inf>>buffer;
+  inf>>buffer;
+  QString iotType(QString::fromUtf8(buffer));
+
   list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
-  while(constraints.size()>0)
-    describeConstraint(lst,schema,owner,toShift(constraints));
+  while(constraints.size()>0) {
+    if (iotType!="IOT"||toShift(constraints)!="P")
+      describeConstraint(lst,schema,owner,toShift(constraints));
+  }
+
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
   while(triggers.size()>0)
     describeTrigger(lst,schema,owner,toShift(triggers));
@@ -6130,4 +6177,9 @@ QString toExtract::resize(const QString &type,list<QString> &objects)
     }    
   }
   return ret;
+}
+
+QString toExtract::migrate(list<QString> &drpLst,list<QString> &crtLst)
+{
+  throw QString("Migration not implemented yet");
 }

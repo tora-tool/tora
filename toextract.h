@@ -264,6 +264,7 @@ public:
   list<QString> describe(const QString &type,list<QString> &object);
   QString drop(const QString &type,list<QString> &object);
   QString resize(const QString &type,list<QString> &object);
+  QString migrate(list<QString> &drpLst,list<QString> &crtLst);
 
   void setSchema(const QString &schema)
   { Schema=schema; }
