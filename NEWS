@@ -1,5 +1,6 @@
 1.3.10:
 
+2002-02-10: Fixed compile problem with Qt2 in toBackground.
 2002-02-10: Fixed problem sorting negative numbers.
 2002-02-10: Removed debug printf from worksheet.
 2002-02-10: Fixed problem with styles not being presented right.
