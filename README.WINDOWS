@@ -11,4 +11,44 @@ release of Qt for Windows.
        Oracle preload file I think). Up until yesterday I have been using
        Visual  Studio  6.0,  but  I compiled TOra sourcecode using Visual
        Studio .Net 2003 too so that works great also.
+       
 
+Building with MINGW.
+
+    At the moment this only works with QT3/Windows Free Edition port 
+    (http://kde-cygwin.sourceforge.net/qt3-win32/index.php).
+
+    The makefiles were only tested in Mingw MSYS environment so it is 
+    advised that you obtain and install full MINGW and MSYS packages
+    from http://www.mingw.org. It is also necessary to have Perl 
+    installed (ActiveState perl package will do).
+    
+    This requires compiling QT with mingw as well because no binaries
+    for QT3/Windows Free Edition port have yet been made available.
+    
+    1. Get QT3/Windows Free Edition from CVS as specified 
+         http://kde-cygwin.sourceforge.net/qt3-win32/compile-mingw.php
+       
+    2. Follow QT build instruction for MINGW here 
+         http://kde-cygwin.sourceforge.net/qt3-win32/compile-mingw.php
+         
+    3. Obtain TOra sources from CVS
+    
+    4. Rename Makefile.migw to Makefile in your TOra directory
+    
+    5. Edit Makefile and change path for PERL (and optionally for 
+       INSTALLPREFIX). Optionally edit the TARGET to set the desirable 
+       executable. Also check the CFLAGS_GLOB and LFLAGS_GLOB for the 
+       debug option (-g) depending on whether you want debug executable
+       or not.
+    
+    6. Ensure that your environment has QTLIB and ORACLE_HOME variables 
+       setup properly.
+       
+    7. Run 'make' in MSYS environment from TOra directory.
+
+
+This build is still in development and although executable builds fine - 
+it throws an exception (null pointer dereferencing) after displaying 
+about window on a start.
+    
