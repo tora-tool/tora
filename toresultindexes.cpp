@@ -238,7 +238,7 @@ void toResultIndexes::poll(void)
 	    Last->setText(0,name);
 	    Last->setText(1,col);
 	    Last->setText(2,(name=="PRIMARY")?"PRIMARY":"INDEX");
-	    Last->setText(3,unique?"UNIQUE":"NONUNIQUE");
+	    Last->setText(3,unique?"NONUNIQUE":"UNIQUE");
 	  }
 	}
       }
