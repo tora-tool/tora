@@ -336,7 +336,7 @@ static toSQL SQLRollback("toRollback:Information",
 			 "	       2 ) || '%' \"-Hitrate\",\n"
 			 "       a.segment_id \" USN\"\n"
 			 "  FROM sys.dba_rollback_segs a,\n"
-			 "       v$rollstat b,\n"
+			 "       v$rollstat b\n"
 			 " WHERE a.segment_id = b.usn ( + )\n"
 			 " ORDER BY a.segment_name",
 			 "Get information about rollback segments.");

@@ -65,6 +65,7 @@
 #include <qpopupmenu.h>
 #include <qprinter.h>
 #include <qregexp.h>
+#include <qstyle.h>
 #include <qtooltip.h>
 #include <qworkspace.h>
 
@@ -324,7 +325,10 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
   QString t=text(column);
   if (t.isNull())
     t=txt;
-  return min(TextWidth(fm,t),MaxColDisp)+top->itemMargin()*2+2;
+  int wx=top->itemMargin()*2+2;
+  if (column==0)
+    wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
+  return min(TextWidth(fm,t),MaxColDisp)+wx;
 }
 
 int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
@@ -335,7 +339,10 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, i
   if (t.isNull())
     t=txt;
   QRect bounds=fm.boundingRect(t);
-  return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
+  int wx=top->itemMargin()*2+2;
+  if (column==0)
+    wx+=top->style().pixelMetric(QStyle::PM_CheckListButtonSize)+4+top->itemMargin();
+  return min(bounds.width(),MaxColDisp)+wx;
 }
 
 

@@ -6,8 +6,8 @@
 
 
 %define _name		tora
-%define _version	1.3.10pre
-%define _release	2mdk
+%define _version	1.3.11
+%define _release	1mdk
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 

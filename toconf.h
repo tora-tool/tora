@@ -162,7 +162,7 @@
 #  define TOAPPNAME		"TOra"
 #endif
 #ifndef TOVERSION
-#  define TOVERSION               "1.3.10"
+#  define TOVERSION               "1.3.11"
 #endif
 // Stable or development version of TOra
 #define TOTYPE			"DEVELOP"

@@ -118,6 +118,14 @@ public:
   {
     return new toTemporary(parent,connection);
   }
+  virtual bool canHandle(toConnection &conn)
+  {
+    if (conn.provider()!="Oracle")
+      return false;
+    if (conn.version()<"8.0")
+      return false;
+    return true;
+  }
 };
 
 static toTemporaryTool TemporaryTool;

@@ -1,3 +1,11 @@
+1.3.11:
+
+2003-07-25: Added check for temporary tool to only be enabled for 8.0 or later.
+2003-07-25: Updated version to 1.3.11.
+2003-07-25: Switched twirl back to GIF version since MNG works so poorly.
+2003-07-25: Reserve size for check in checklist items.
+2003-07-25: Fixed SQL in rollback tool.
+
 1.3.10: Released 2003-07-25
 
 2003-07-24: Fixed problem with all column expand on refresh of resultviews.
