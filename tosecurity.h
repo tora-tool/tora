@@ -129,6 +129,7 @@ public slots:
   virtual void addRole(void);
   virtual void drop(void);
   virtual void copy(void);
+  virtual void displaySQL(void);
 };
 
 #endif

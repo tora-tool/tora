@@ -473,12 +473,19 @@ public:
   /** Contain information about a tablename.
    */
   struct tableName {
-    /** The tablename
+    /** The object name
      */
-    QString Tablename;
-    /** The schema that owns it, can be empty if this is a public synonym.
+    QString Name;
+    /** The schema that owns it
      */
     QString Owner;
+    /** Synonym name, only available if this is a synonym. The tablename & owner will
+     * point to what it is a synonym for.
+     */
+    QString Synonym;
+
+    bool operator < (const tableName &) const;
+    bool operator == (const tableName &) const;
   };
 
 private:
@@ -489,11 +496,13 @@ private:
 
   connectionImpl *Connection;
 
-  map<tableName,list<QString> > TableCache;
+  std::map<tableName,list<QString> > ColumnCache;
+  std::list<tableName> TableNames;
 
   toConnectionSub *mainConnection(void);
   toConnectionSub *longConnection(void);
   void freeConnection(toConnectionSub *);
+  void readObjects(void);
 public:
   /** Create a new connection.
    * @param provider Which database provider to use for this connection.
@@ -670,14 +679,21 @@ public:
    * @return A list of tables available for the current user, including psynonyms and
    *         views.
    */
-  list<tableName> &tables(void);
-
+  std::list<tableName> &tables(void);
   /**
    * Get a list of the available columns for a table. This function caches the responses
    * and should be fairly fast after the first call. Do not modify the returned list.
    * @return A list of the columns for a table.
    */
-  list<QString> &columns(const tableName &table);
+  std::list<QString> &columns(const tableName &table);
+  /**
+   * Clear the object and column cache.
+   */
+  void clearCache(void);
+  /**
+   * Get the real object name of a synonym.
+   */
+  const tableName &realName(const QString &object);
 
   friend class toQuery;
 };

@@ -73,6 +73,9 @@ bool toMonolithic(void)
 #endif
 }
 
+bool toCheckLicense(void);
+void toEnterLicense(void);
+
 int main(int argc,char **argv)
 {
 #if 0
@@ -97,6 +100,9 @@ int main(int argc,char **argv)
     if (!style.isEmpty())
       toSetSessionType(style);
 #endif
+
+    while (!toCheckLicense())
+      toEnterLicense();
 
 #ifndef TOMONOLITHIC
     {

@@ -742,3 +742,17 @@ void toReadableColumn(QString &name)
     }
   }
 }
+
+#ifndef TO_LICENSE
+
+bool toCheckLicense(void)
+{
+  return true;
+}
+
+void toEnterLicense(void)
+{
+  throw QString("Should never need to ask for default license");
+}
+
+#endif

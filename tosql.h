@@ -58,6 +58,9 @@ class toConnection;
  * To determine which SQL to use the statement with the highest
  * version not above the current connection is used. If no statements below or
  * equal to the current version is available the lowest available is used.
+ *
+ * All strings are specific for a given database provider. No attempt to use
+ * strings from other providers will be made.
  */
 
 class toSQL {
@@ -66,6 +69,10 @@ public:
    * Contains a statement with it's version.
    */
   struct version {
+    /**
+     * The provider this version is made for.
+     */
+    QString Provider;
     /**
      * Version string
      */
@@ -79,12 +86,13 @@ public:
      */
     bool Modified;
     /** Create a new version
+     * @param provider Provider
      * @param ver Version
      * @param sql Statement
      * @param modified Wether it is modified or not.
      */
-    version(const QString &ver,const QString &sql,bool modified=false)
-      : Version(ver),SQL(sql),Modified(modified)
+    version(const QString &provider,const QString &ver,const QString &sql,bool modified=false)
+      : Provider(provider),Version(ver),SQL(sql),Modified(modified)
     { }
   };
 
@@ -108,7 +116,7 @@ public:
    */
   typedef std::map<QString,definition> sqlMap;
 private:
-  /** Map of statement names to statement definitions.
+  /** Map of statement names to statement definitions for each provider.
    */
   static sqlMap *Definitions;
 
@@ -136,6 +144,7 @@ public:
    * @param sql Statement to execute for this SQL.
    * @param description Description of this SQL.
    * @param ver Version of database this statement is meant for.
+   * @param provider Database provider this string is used for.
    * @param modified Wether this is a modification or an addition to the map.
    * @return True if a new statement was saved, otherwise false.
    */
@@ -143,16 +152,19 @@ public:
 		        const QString &sql,
 		        const QString &description,
 		        const QString &ver="8.1",
+			const QString &provider="Oracle",
 			bool modified=true);
 
   /** Remove an SQL statement from a map. If the last version is removed
    * from a statement it's definition is also removed.
    * @param name Name to remove.
    * @param ver Version to remove.
+   * @param provider Provider to delete.
    * @return True if a version was found to be removed.
    */
   static bool deleteSQL(const QString &name,
-		        const QString &ver);
+		        const QString &ver,
+			const QString &provider="Oracle");
 
   /** Get the statement of an SQL.
    * @param name Name of statement.
@@ -252,11 +264,13 @@ public:
    * @param sql Statement of this SQL.
    * @param description Description of statement.
    * @param ver Version this statement applies to.
+   * @param provider Provider this string is for.
    */
   toSQL(const QString &name,
 	const QString &sql,
 	const QString &description="",
-	const QString &ver="8.1");
+	const QString &ver="8.1",
+	const QString &provider="Oracle");
 };
 
 #endif

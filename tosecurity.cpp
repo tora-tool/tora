@@ -54,6 +54,7 @@
 #include "toresultview.h"
 #include "tosecurity.h"
 #include "tosql.h"
+#include "tomemoeditor.h"
 #include "totool.h"
 
 #include "tosecurity.moc"
@@ -68,6 +69,7 @@
 #include "icons/addrole.xpm"
 #include "icons/adduser.xpm"
 #include "icons/copyuser.xpm"
+#include "icons/sql.xpm"
 
 static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 "SELECT Account_Status,\n"
@@ -188,6 +190,7 @@ static QPixmap *toTrashPixmap;
 static QPixmap *toAddRolePixmap;
 static QPixmap *toAddUserPixmap;
 static QPixmap *toCopyUserPixmap;
+static QPixmap *toSqlPixmap;
 
 class toSecurityQuota : public toSecurityQuotaUI {
   toConnection &Connection;
@@ -1262,6 +1265,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
     toAddUserPixmap=new QPixmap((const char **)adduser_xpm);
   if (!toCopyUserPixmap)
     toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
+  if (!toSqlPixmap)
+    toSqlPixmap=new QPixmap((const char **)sql_xpm);
 
   QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
 
@@ -1299,6 +1304,12 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 			     this,SLOT(copy(void)),
 			     toolbar);
   CopyButton->setEnabled(false);
+  toolbar->addSeparator();
+  new QToolButton(*toSqlPixmap,
+		  "Display SQL needed to make current changes",
+		  "Display SQL needed to make current changes",
+		  this,SLOT(displaySQL(void)),
+		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
 
@@ -1321,6 +1332,22 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
   refresh();
+  connect(this,SIGNAL(connectionChange()),
+	  this,SLOT(refresh()));
+}
+
+void toSecurity::displaySQL(void)
+{
+  std::list<QString> lines=sql();
+  QString res;
+  for(std::list<QString>::iterator i=lines.begin();i!=lines.end();i++) {
+    res+=*i;
+    res+=";\n";
+  }
+  if (res.length()>0)
+    new toMemoEditor(this,res,-1,-1,true);
+  else
+    toStatusMessage("No changes made");
 }
 
 std::list<QString> toSecurity::sql(void)

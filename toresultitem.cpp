@@ -75,7 +75,7 @@ void toResultItem::setup(int num,bool readable)
   addChild(Result);
   Result->setSpacing(3);
   ShowTitle=true;
-  AlignRight=true;
+  Right=true;
   DataFont.setBold(true);
 }
 
@@ -117,7 +117,7 @@ void toResultItem::addItem(const QString &title,const QString &value)
   QLabel *widget;
   if (!Widgets[WidgetPos]) {
     widget=new QLabel(t,Result);
-    widget->setAlignment(AlignRight|AlignTop|ExpandTabs|WordBreak);
+    widget->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
     if (ShowTitle)
       widget->show();
     Widgets[WidgetPos]=widget;
@@ -136,10 +136,10 @@ void toResultItem::addItem(const QString &title,const QString &value)
       widget->setFont(DataFont);
       widget->setFrameStyle(StyledPanel|Sunken);
     }
-    if (AlignRight)
-      widget->setAlignment(AlignRight|AlignTop|ExpandTabs|WordBreak);
+    if (Right)
+      widget->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
     else
-      widget->setAlignment(AlignLeft|AlignTop|ExpandTabs|WordBreak);
+      widget->setAlignment(AlignLeft|AlignVCenter|ExpandTabs|WordBreak);
     Widgets[WidgetPos]=widget;
   } else {
     widget=((QLabel *)Widgets[WidgetPos]);

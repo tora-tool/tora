@@ -202,6 +202,18 @@ void toResultCols::query(const QString &sql,const toQList &param)
     SQL.append(*cp);
     TableName=(*cp);
     SQL+="\"";
+  } else {
+    try {
+      const toConnection::tableName &name=connection().realName(Owner);
+      SQL="\"";
+      SQL+=name.Owner;
+      SQL+="\".\"";
+      SQL+=name.Name;
+      SQL+="\"";
+      Owner=name.Owner;
+      TableName=name.Name;
+    } catch(...) {
+    }
   }
   LastItem=NULL;
   RowNumber=0;
@@ -215,6 +227,7 @@ void toResultCols::query(const QString &sql,const toQList &param)
     str.append(" WHERE NULL = NULL");
 
     toQuery Query(connection(),str);
+    toQuery Comment(connection());
 
     toQDescList desc=Query.describe();
 
@@ -233,8 +246,12 @@ void toResultCols::query(const QString &sql,const toQList &param)
       else
 	LastItem->setText(3,"NOT NULL");
 
-      toQList comLst=toQuery::readQuery(connection(),SQLComment,Owner,TableName,(*i).Name);
-      LastItem->setText(4,toShift(comLst));
+      toQList lst;
+      toPush(lst,toQValue(Owner));
+      toPush(lst,toQValue(TableName));
+      toPush(lst,toQValue((*i).Name));
+      Comment.execute(SQLComment,lst);
+      LastItem->setText(4,Comment.readValueNull());
     }
   } TOCATCH
   updateContents();

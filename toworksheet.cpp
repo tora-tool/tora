@@ -654,9 +654,9 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   item->setText(2,now);
   char buf[100];
   if (dur>=3600000) {
-    sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%1000);
+    sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%100);
   } else {
-    sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%1000);
+    sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%100);
   }
   item->setText(3,buf);
 

@@ -8,6 +8,7 @@ Extended functionality:
 		Deallocate Unused Space
 			ALTER TABLE ... DEALLOCATE UNUSED
 		Add columns
+		Remove columns
 	Rename table
 		ALTER TABLE ... RENAME TO ...
 	Editing triggers
@@ -33,10 +34,11 @@ Extended functionality:
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
 * Statistics saving and comparison in worksheet.
-* File I/O statistics in storage or tuning.
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
 * Printing of charts and toResultItems.
+* Display SQL of storage modifications.
+* Make .ui files to storage modification dialogs.
 
 New tools:
 

@@ -76,7 +76,7 @@ class toResultItem : public QScrollView, public toResult {
   bool ShowTitle;
   /** Align widgets to the right.
    */
-  bool AlignRight;
+  bool Right;
   /** Font to display data with.
    */
   QFont DataFont;
@@ -128,7 +128,7 @@ public:
    * @param val If labels are to be aligned right.
    */
   void alignRight(bool val)
-  { AlignRight=val; }
+  { Right=val; }
   /** Set the font to display data with.
    */
   void dataFont(const QFont &val)

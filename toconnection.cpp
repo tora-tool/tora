@@ -969,3 +969,86 @@ const QString &toConnection::provider(void) const
 {
   return Provider.provider();
 }
+
+static toSQL SQLListObjects("toConnection:ListObjects",
+			    "select table_name,owner,null from all_tables\n"
+			    "union\n"
+			    "select view_name,owner,null from all_views\n"
+			    "union\n"
+			    "select table_name,table_owner,synonym_name\n"
+			    "  from all_synonyms where owner in ('PUBLIC',:owner<char[101]>)",
+			    "List the objects to cache for a connection, should have same "
+			    "columns and binds");
+
+void toConnection::readObjects(void)
+{
+  if (TableNames.size()==0) {
+    toBusy busy;
+    toStatusMessage("Reading available objects",true);
+    qApp->processEvents();
+    toQuery tables(*this,SQLListObjects,user());
+    while(!tables.eof()) {
+      tableName cur;
+      cur.Name=tables.readValueNull();
+      cur.Owner=tables.readValueNull();
+      cur.Synonym=tables.readValueNull();
+      TableNames.insert(TableNames.end(),cur);
+    }
+    TableNames.sort();
+    toStatusMessage("");
+  }
+}
+
+std::list<toConnection::tableName> &toConnection::tables(void)
+{
+  readObjects();
+  return TableNames;
+}
+
+const toConnection::tableName &toConnection::realName(const QString &object)
+{
+  QString uo=object.upper();
+  readObjects();
+  for(list<tableName>::iterator i=TableNames.begin();i!=TableNames.end();i++) {
+    if ((*i).Synonym==uo)
+      return *i;
+    if ((*i).Name==uo&&(*i).Owner==user())
+      return *i;
+  }
+  throw QString("Object %1 not available for %2").arg(object).arg(user());
+}
+
+std::list<QString> &toConnection::columns(const tableName &table)
+{
+  std::map<tableName,list<QString> >::iterator i=ColumnCache.find(table);
+  if (i==ColumnCache.end()) {
+    list<QString> cols;
+    QString SQL="SELECT * FROM \"";
+    SQL+=table.Owner;
+    SQL+="\".\"";
+    SQL+=table.Name;
+    SQL+="\" WHERE NULL=NULL";
+    toQuery query(*this,SQL);
+    toQDescList desc=query.describe();
+    for(toQDescList::iterator j=desc.begin();j!=desc.end();j++)
+      toPush(cols,(*j).Name);
+    ColumnCache[table]=cols;
+  }
+  return ColumnCache[table];
+}
+
+bool toConnection::tableName::operator < (const tableName &nam) const
+{
+  if (Owner<nam.Owner)
+    return true;
+  if (Owner>nam.Owner)
+    return false;
+  if (Name<nam.Name)
+    return true;
+  return false;
+}
+
+bool toConnection::tableName::operator == (const tableName &nam) const
+{
+  return Owner==nam.Owner&&Name==nam.Name;
+}

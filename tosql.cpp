@@ -48,10 +48,11 @@ const char * const toSQL::TOSQL_CREATEPLAN= "Global:CreatePlan";
 toSQL::toSQL(const QString &name,
 	     const QString &sql,
 	     const QString &description,
-	     const QString &ver)
+	     const QString &ver,
+	     const QString &provider)
   : Name(name)
 {
-  updateSQL(name,sql,description,ver,false);
+  updateSQL(name,sql,description,ver,provider,false);
 }
 
 toSQL::toSQL(const QString &name)
@@ -68,9 +69,10 @@ bool toSQL::updateSQL(const QString &name,
 		      const QString &sql,
 		      const QString &description,
 		      const QString &ver,
+		      const QString &provider,
 		      bool modified)
 {
-  version def(ver,sql,modified);
+  version def(provider,ver,sql,modified);
 
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
@@ -99,17 +101,17 @@ bool toSQL::updateSQL(const QString &name,
     }
     std::list<version> &cl=(*i).second.Versions;
     for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version==ver) {
+      if ((*j).Provider==provider&&(*j).Version==ver) {
 	if (!sql.isNull()) {
 	  (*j)=def;
 	  if (def.SQL!=(*j).SQL)
 	    (*j).Modified=modified;
 	}
 	return false;
-      } else if ((*j).Version>ver) {
-	if (!sql.isNull()) {
+      } else if ((*j).Provider>provider||
+		 ((*j).Provider==provider&&(*j).Version>ver)) {
+	if (!sql.isNull())
 	  cl.insert(j,def);
-	}
 	return true;
       }
     }
@@ -119,7 +121,8 @@ bool toSQL::updateSQL(const QString &name,
 }
 
 bool toSQL::deleteSQL(const QString &name,
-		      const QString &ver)
+		      const QString &ver,
+		      const QString &provider)
 {
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
@@ -128,12 +131,13 @@ bool toSQL::deleteSQL(const QString &name,
   } else {
     std::list<version> &cl=(*i).second.Versions;
     for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version==ver) {
+      if ((*j).Version==ver&&(*j).Provider==provider) {
 	cl.erase(j);
 	if (cl.begin()==cl.end())
 	  Definitions->erase(i);
 	return true;
-      } else if ((*j).Version>ver) {
+      } else if ((*j).Provider>provider||
+		 ((*j).Provider==provider&&(*j).Version>ver)) {
 	return false;
       }
     }
@@ -158,16 +162,19 @@ QString toSQL::string(const QString &name,
 {
   allocCheck();
   const QString &ver=conn.version();
+  const QString &prov=conn.provider();
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end()) {
     QString *sql=NULL;
     std::list<version> &cl=(*i).second.Versions;
     for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version<=ver||!sql) {
-	sql=&(*j).SQL;
+      if ((*j).Provider==prov) {
+	if ((*j).Version<=ver||!sql) {
+	  sql=&(*j).SQL;
+	}
+	if ((*j).Version>=ver)
+	  return *sql;
       }
-      if ((*j).Version>=ver)
-	return *sql;
     }
     if (sql)
       return *sql;
@@ -204,6 +211,8 @@ bool toSQL::saveSQL(const QString &filename,bool all)
 	QString line=name;
 	line+="[";
 	line+=ver.Version;
+	line+="][";
+	line+=ver.Provider;
 	line+="]=";
 	line.replace(backslash,"\\\\");
 	line.replace(newline,"\\n");
@@ -234,6 +243,7 @@ void toSQL::loadSQL(const QString &filename)
   int pos=0;
   int bol=0;
   int endtag=-1;
+  int provtag=-1;
   int vertag=-1;
   int wpos=0;
   while(pos<size) {
@@ -245,13 +255,18 @@ void toSQL::loadSQL(const QString &filename)
       {
 	QString nam=((const char *)data)+bol;
 	QString val(QString::fromUtf8(((const char *)data)+endtag+1));
-	if (vertag==-1)
-	  updateSQL(nam,QString::null,val,QString::null,true);
-	else
-	  updateSQL(nam,val,QString::null,QString::fromUtf8(((const char *)data)+vertag+1),true);
+	QString ver;
+	QString prov;
+	if (vertag>=0) {
+	  ver=QString::fromUtf8(((const char *)data)+vertag+1);
+	  if (provtag>=0)
+	    prov=QString::fromUtf8(((const char *)data)+provtag+1);
+	  updateSQL(nam,val,QString::null,ver,prov,true);
+	} else
+	  updateSQL(nam,QString::null,val,QString::null,QString::null,true);
       }
       bol=pos+1;
-      vertag=endtag=-1;
+      provtag=vertag=endtag=-1;
       wpos=pos;
       break;
     case '=':
@@ -264,9 +279,12 @@ void toSQL::loadSQL(const QString &filename)
       break;
     case '[':
       if (endtag==-1) {
-	if (vertag>=0)
-	  throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
-	vertag=pos;
+	if (vertag>=0) {
+	  if (provtag>=0)
+	    throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
+	  provtag=pos;
+	} else
+	  vertag=pos;
 	data[wpos]=0;
 	wpos=pos;
       } else

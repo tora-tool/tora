@@ -41,16 +41,19 @@
 <LI>&nbsp;<b><A HREF="#ref25">toSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
-	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1") 
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle") 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref10">updateSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle",
 			bool modified=true) 
 </LI>
 <LI>static  bool &nbsp;<b><A HREF="#ref11">deleteSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver) 
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle") 
 </LI>
 <LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref12">string</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
@@ -91,6 +94,9 @@
 <p> To determine which SQL to use the statement with the highest
  version not above the current connection is used. If no statements below or
  equal to the current version is available the lowest available is used.
+</p>
+<p> All strings are specific for a given database provider. No attempt to use
+ strings from other providers will be made.
  </p>
 <A NAME="toSQL__version.html"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>version</strong> <small>(struct)</small></td><td align="right"><h3><strong>version</strong></h3></td></tr></table><p></p><p>
  Contains a statement with it's version.
@@ -106,6 +112,7 @@
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
 		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle",
 			bool modified=true)
 <br></td><td align="right"><h3><strong>updateSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Update the map with new information.
 </p>
@@ -118,13 +125,16 @@
 </TD></TR>
 <TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version of database this statement is meant for.
 </TD></TR>
+<TR><TD align="left" valign="top"><i>provider</i></TD><TD align="left" valign="top">Database provider this string is used for.
+</TD></TR>
 <TR><TD align="left" valign="top"><i>modified</i></TD><TD align="left" valign="top">Wether this is a modification or an addition to the map.
 </TD></TR>
 </TABLE></P>
 <p><b>Returns</b>: True if a new statement was saved, otherwise false.
    </p>
 <A NAME="deleteSQL"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>deleteSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
-		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver)
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle")
 <br></td><td align="right"><h3><strong>deleteSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Remove an SQL statement from a map. If the last version is removed
  from a statement it's definition is also removed.
 </p>
@@ -132,6 +142,8 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name to remove.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version to remove.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>provider</i></TD><TD align="left" valign="top">Provider to delete.
 </TD></TR>
 </TABLE></P>
 <p><b>Returns</b>: True if a version was found to be removed.
@@ -264,7 +276,8 @@
 <A NAME="toSQL"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;<A HREF="#sql">sql</A>,
 	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
-	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1")
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider="Oracle")
 <br></td><td align="right"><h3><strong>toSQL</strong></h3></td></tr></table><p></p><p> Create a new SQL. Observe that the only thing this does is insert the supplied
  information into the definition map, deleting the SQL will not the information from
  the defitinion map. Only one description can be made for each statement name.
@@ -277,6 +290,8 @@
 <TR><TD align="left" valign="top"><i>description</i></TD><TD align="left" valign="top">Description of statement.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version this statement applies to.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>provider</i></TD><TD align="left" valign="top">Provider this string is for.
    </TD></TR>
 </TABLE></P>
 <HR>

@@ -19,9 +19,6 @@ toMain:
 	Traversing the menues using keys will disable some file/edit entries that should be
 	enabled.
 
-toResultCols:
-	Doesn't follow synonyms for comments and statistics.
-
 toResultContent:
 	Doesn't display multiline data correctly.
 	Doesn't sort numbers numerically.
