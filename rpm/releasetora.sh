@@ -43,7 +43,7 @@ export QTDIR
 echo Building Mandrake RPM
 rpm -bb tora-$1/rpm/tora.spec
 cp /usr/src/RPM/RPMS/*/tora-$1-1mdk.*.rpm $SRCPWD/tora$TYPE-$1-1mdk.i686.rpm 
-cp /usr/src/RPM/RPMS/*/tora-oracle-$1-1mdk.*.rpm $SRCPWD/tora$TYPE-oracle-$1-1mdk.i686.rpm 
+cp /usr/src/RPM/RPMS/*/tora-oracle-$1-1mdk.*.rpm $SRCPWD/tora-oracle$TYPE-$1-1mdk.i686.rpm 
 
 echo Building generic RPM
 rpm -bb tora-$1/rpm/tora-static.spec
