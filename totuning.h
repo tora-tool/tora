@@ -140,7 +140,7 @@ class toTuningOverview : public toTuningOverviewUI {
     void setValue(const QCString &name,const QString &val);
   };
 
-  friend class overviewQuery;
+  friend struct overviewQuery;
 
   toBackground Poll;
 

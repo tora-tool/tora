@@ -1,5 +1,7 @@
 1.3.8: Released 2002-10-05
 
+2002-10-05: Fixed some windows specific problems.
+2002-10-05: Made the stub OCI work again under windows.
 2002-10-05: Fixed specfiles for release.
 2002-10-04: Made it posible to use non thread support Qt version.
 2002-10-02: Another fix for OSX.

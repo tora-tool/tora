@@ -152,7 +152,7 @@ public:
    * @param title The title of the new widget pair.
    * @param value Vaue of new title widget.
    */
-  virtual void setTitle(QWidget *widget,const QString &title,const QString &title);
+  virtual void setTitle(QWidget *widget,const QString &title,const QString &value);
   /** Set value of value widget.
    * @param widget Widget to use for value.
    * @param title The title of the new widget pair.
