@@ -518,6 +518,7 @@ __TEMP__
     }
     close TEMP;
     if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o $tmpName $tmpName.cpp")) {
+        $ENV{"LD_LIBRARY_PATH"}=$ENV{"LD_LIBRARY_PATH"}.":".$ENV{"ORACLE_HOME"}."/lib";
 	if (!system($tmpName)) {
 	    $CC=$gcc;
 	}
@@ -1641,7 +1642,14 @@ install: \$(TARGET) install-common install-kde
 	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
 	cp \$(TARGET) \$(INSTALLBIN)/tora
-	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
+	if [ -f tora-plugin ]
+	then
+		cp \$(TARGET) \$(INSTALLBIN)/tora
+		rm -f tora-plugin
+	else
+		cp \$(TARGET) \$(INSTALLBIN)/tora.real
+		cp rpm/tora.sh \$(INSTALLBIN)/tora
+	fi
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 
@@ -1674,8 +1682,9 @@ __EOT__
         print MAKEFILE <<__EOT__;
 uninstall:
 	\@echo Uninstalling from \$(INSTALLPREFIX)
-	rm \$(INSTALLBIN)/tora
-	rm -rf \$(INSTALLLIB)/tora
+	-rm -f \$(INSTALLBIN)/tora
+	-rm -f \$(INSTALLBIN)/tora.real
+	-rm -rf \$(INSTALLLIB)/tora
 
 clean:
 	\@echo Cleaning \$(TITLE)
@@ -1685,7 +1694,7 @@ clean:
 	-rm -f *.bak >/dev/null 2>&1
 	-rm -rf plugins >/dev/null 2>&1
 	-for a in *.ui ; \\
-             do rm `\$(PERL) -e '\$\$_=shift(\@ARGV); s/\\.[^\\.]*\$\$//; print "\$\$_.h\\n\$\$_.cpp";' \$\$a`; \\
+             do rm -f `\$(PERL) -e '\$\$_=shift(\@ARGV); s/\\.[^\\.]*\$\$//; print "\$\$_.h\\n\$\$_.cpp";' \$\$a`; \\
          done
 
 distclean: clean
@@ -1694,10 +1703,10 @@ distclean: clean
 	-rm -rf icons/.xvpics >/dev/null 2>&1
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
 	-rm -f rpmcommon rpmoracle rpmmysql >/dev/null 2>&1 
-	-rm \\#*\\# >/dev/null 2>&1
-	-rm Makefile >/dev/null 2>&1
-	-rm LICENSE.h >/dev/null 2>&1
-	-rm configure.setup >/dev/null 2>&1
+	-rm -f \\#*\\# >/dev/null 2>&1
+	-rm -f Makefile >/dev/null 2>&1
+	-rm -f LICENSE.h >/dev/null 2>&1
+	-rm -f configure.setup >/dev/null 2>&1
 
 # This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
 # configure won't try to detect those. It's up to you.
@@ -1754,7 +1763,7 @@ tora-mono: \$(OBJECTS) main.cpp
 tora-static: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
-		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_STATIC) \$(LIBS_GLOB) \\
+		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_SHARED) \$(LIBS_GLOB) \\
 		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a \\
 		\$(MYSQL_STATIC) /usr/lib/libpq.a
 

@@ -76,7 +76,7 @@ features that are available so far is (As of version 1.2):
 * Full UNICODE support
 * Printing of any list, text or chart
 
-This build is compiled with KDE support.
+This build is compiled without KDE support.
 
 %changelog
 * Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
