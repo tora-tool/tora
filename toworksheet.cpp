@@ -105,6 +105,7 @@
 #include "icons/executestep.xpm"
 #include "icons/explainplan.xpm"
 #include "icons/filesave.xpm"
+#include "icons/insertsaved.xpm"
 #include "icons/previous.xpm"
 #include "icons/refresh.xpm"
 #include "icons/stop.xpm"
@@ -246,6 +247,9 @@ public:
       e->accept();
     } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F7", "Worksheet|Execute saved SQL")))) {
       Worksheet->executeSaved();
+      e->accept();
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","Shift+F7", "Worksheet|Insert saved SQL")))) {
+      Worksheet->insertSaved();
       e->accept();
     } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F4", "Worksheet|Describe under cursor")))) {
       Worksheet->describe();
@@ -525,6 +529,15 @@ void toWorksheet::setup(bool autoLoad)
 		    toolbar);
     toolbar->addSeparator();
 
+    InsertSavedButton=new toPopupButton(QPixmap((const char **)insertsaved_xpm),
+                                  tr("Insert current saved SQL"),
+                                  tr("Insert current saved SQL"),
+                                  toolbar);
+    InsertSavedMenu=new QPopupMenu(InsertSavedButton);
+    InsertSavedButton->setPopup(InsertSavedMenu);
+    connect(InsertSavedMenu,SIGNAL(aboutToShow()),this,SLOT(showInsertSaved()));
+    connect(InsertSavedMenu,SIGNAL(activated(int)),this,SLOT(insertSaved(int)));
+
     SavedButton=new toPopupButton(QPixmap((const char **)recall_xpm),
 				  tr("Run current saved SQL"),
 				  tr("Run current saved SQL"),
@@ -533,6 +546,7 @@ void toWorksheet::setup(bool autoLoad)
     SavedButton->setPopup(SavedMenu);
     connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
     connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
+
     new QToolButton(QPixmap((const char **)previous_xpm),
 		    tr("Save last SQL"),
 		    tr("Save last SQL"),
@@ -1470,6 +1484,20 @@ void toWorksheet::executeSaved(void)
   }
 }
 
+void toWorksheet::insertSaved(void)
+{
+  if (Light)
+    return;
+
+  LastLine=LastOffset=-1;
+
+  if (InsertSavedLast.length()>0) {
+    try {
+      Editor->setText(toSQL::string(InsertSavedLast,connection()));
+    } TOCATCH
+  }
+}
+
 void toWorksheet::executeSaved(int id)
 {
   std::list<QCString> def=toSQL::range(TOWORKSHEET);
@@ -1478,6 +1506,19 @@ void toWorksheet::executeSaved(int id)
     if (id==0) {
       SavedLast=*i;
       executeSaved();
+      break;
+    }
+  }
+}
+
+void toWorksheet::insertSaved(int id)
+{
+  std::list<QCString> def=toSQL::range(TOWORKSHEET);
+  for(std::list<QCString>::iterator i=def.begin();i!=def.end();i++) {
+    id--;
+    if (id==0) {
+      InsertSavedLast=*i;
+      insertSaved();
       break;
     }
   }
@@ -1528,6 +1569,53 @@ void toWorksheet::showSaved(void)
     }
   }
 }
+
+void toWorksheet::showInsertSaved(void)
+{
+  static QRegExp colon(QString::fromLatin1(":"));
+  std::list<QCString> def=toSQL::range(TOWORKSHEET);
+  InsertSavedMenu->clear();
+  std::map<QString,QPopupMenu *> menues;
+  int id=0;
+  for(std::list<QCString>::iterator sql=def.begin();sql!=def.end();sql++) {
+
+    id++;
+
+    QStringList spl=QStringList::split(colon,QString::fromLatin1(*sql));
+    spl.remove(spl.begin());
+
+    if (spl.count()>0) {
+      QString name=spl.last();
+      spl.remove(spl.fromLast());
+
+      QPopupMenu *menu;
+      if (spl.count()==0)
+	menu=InsertSavedMenu;
+      else {
+	QStringList exs=spl;
+	while (exs.count()>0&&menues.find(exs.join(QString::fromLatin1(":")))==menues.end())
+	  exs.remove(exs.fromLast());
+	if (exs.count()==0)
+	  menu=InsertSavedMenu;
+	else
+	  menu=menues[exs.join(QString::fromLatin1(":"))];
+	QString subname=exs.join(QString::fromLatin1(":"));
+	for (unsigned int i=exs.count();i<spl.count();i++) {
+	  QPopupMenu *next=new QPopupMenu(this);
+	  connect(next,SIGNAL(activated(int)),this,SLOT(insertSaved(int)));
+	  if (i!=0)
+	    subname+=QString::fromLatin1(":");
+	  subname+=spl[i];
+	  menu->insertItem(spl[i],next);
+	  menu=next;
+	  menues[subname]=menu;
+	}
+      }
+      menu->insertItem(name,id);
+    }
+  }
+}
+
 
 void toWorksheet::editSaved(void)
 {
@@ -1796,6 +1884,9 @@ void toWorksheet::displayMenu(QPopupMenu *menu)
     menu->insertItem(tr("Execute Saved SQL"),
 		     this,SLOT(executeSaved()),
 		     toKeySequence(tr("F7", "Worksheet|Execute saved SQL")));
+    menu->insertItem(tr("Insert Saved SQL"),
+		     this,SLOT(insertSaved()),
+		     toKeySequence(tr("Shift+F7", "Worksheet|Insert saved SQL")));
     menu->insertItem(tr("Select Saved SQL"),
 		     this,SLOT(selectSaved()),
 		     toKeySequence(tr("Ctrl+Shift+S", "Worksheet|Select saved SQL")));

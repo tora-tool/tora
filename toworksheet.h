@@ -109,6 +109,11 @@ class toWorksheet : public toToolWidget {
   QPopupMenu *SavedMenu;
   QToolButton *SavedButton;
   QCString SavedLast;
+
+  QPopupMenu *InsertSavedMenu;
+  QToolButton *InsertSavedButton;
+  QCString InsertSavedLast;
+
   bool First;
   QTime Timer;
   QTimer Poll;
@@ -179,7 +184,10 @@ public slots:
   void explainPlan(void);
   void toggleStatistic(void)
   { StatisticButton->setOn(!StatisticButton->isOn()); }
+  void showInsertSaved(void);
   void showSaved(void);
+  void insertSaved(int index);
+  void insertSaved(void);
   void executeSaved(int index);
   void executeSaved(void);
   void editSaved(void);
