@@ -195,8 +195,6 @@ public slots:
   }
 };
 
-#include "tobarchart.h"
-
 class toWorksheetTool : public toTool {
 protected:
   virtual char **pictureXPM(void)
@@ -209,49 +207,6 @@ public:
   { return "SQL Worksheet"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
-#if 1
-    toBarChart *chart=new toBarChart(main);
-    list<QString> labels;
-    labels.insert(labels.end(),"Hello");
-    labels.insert(labels.end(),"There");
-    labels.insert(labels.end(),"Howsit");
-    labels.insert(labels.end(),"Going");
-
-    list<double> value;
-    value.insert(value.end(),1);
-    value.insert(value.end(),2);
-    value.insert(value.end(),3);
-    value.insert(value.end(),4);
-    chart->addValues(value);
-
-    value.clear();
-    value.insert(value.end(),2);
-    value.insert(value.end(),4);
-    value.insert(value.end(),6);
-    value.insert(value.end(),8);
-    chart->addValues(value);
-
-    value.clear();
-    value.insert(value.end(),1);
-    value.insert(value.end(),2);
-    chart->addValues(value);
-
-    value.clear();
-    value.insert(value.end(),2);
-    value.insert(value.end(),4);
-    value.insert(value.end(),6);
-    chart->addValues(value);
-
-    chart->setLabels(labels);
-    chart->showGrid(4);
-    chart->showAxisLegend(true);
-    chart->setMaxValueAuto();
-    chart->setYPostfix("%");
-    chart->setAxisLegend("Left","Right");
-    chart->show();
-    chart->setSamples(10);
-#endif
-
     QWidget *window=new toWorksheet(main,connection);
     window->setIcon(*toolbarImage());
     return window;

@@ -13,6 +13,7 @@
 2001-08-07: Set default parameters when doubleclicking on line.
 2001-08-08: Ability to disable tools in options.
 2001-08-08: Ability to select default tool to pop up on new connection.
+2001-08-08: Added barchart class.
 
 0.14: Released 2001-08-02
 
