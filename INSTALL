@@ -79,11 +79,11 @@ Just issue the command "configure" and it should probably point out if
 you need to issue any commands specifying locations of Qt for instance.
 To find out about the options type "configure --help".
 
-If you are using KDE 2.2 (Alpha2 or later) I strongly recommend using the
---with-kde option which will give you a KDE application instead of a Qt
-application. The main advantage of using KDE is that you get docked windows
-which are really neat for the template window. Even if you are using KDE
-2.1, use the --with-kde-21 option to enable legacy KDE support.
+If you are using KDE 2.1 I strongly recommend using the --with-kde option
+which will give you a KDE application instead of a Qt application. The
+main advantage of using KDE is that you get docked windows which are
+really neat for the template window. If you use KDE 2.1 you will get some
+style problems with toolbars in tool windows, these are fixed in KDE 2.2
 
 This will generate a Makefile.setup file that you can check if you have
 troubles. It will also copy the file Makefile.orig to Makefile so you

@@ -3,7 +3,6 @@ Beta todo list:
 * Server statistics and tuning information.
 * SQL Browser
 	Schema filter
-	Object search
 
 Extended functionality:
 
@@ -41,6 +40,7 @@ Windows problems:
 New tools:
 
 * SQL Builder?
+* Object search
 * Display invalid objects.
 * Links into Oracle HTML help?
 * PL/SQL Profiler.

@@ -43,6 +43,10 @@ TO_NAMESPACE;
 #include <qworkspace.h>
 #include <qvbox.h>
 
+#ifdef TO_KDE
+#include <kapp.h>
+#endif
+
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"
 #include "tomain.h"
@@ -295,7 +299,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
   if (parent==toMainWidget())
     tool=new KToolBar(toMainWidget(),QMainWindow::Top);
   else {
-#ifdef TO_KDE_21
+#if KDE_VERSION < 220
     tool=new QToolBar(name,toMainWidget(),parent);
 #else
     tool=new KToolBar(toMainWidget(),parent);

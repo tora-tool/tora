@@ -33,6 +33,7 @@
 	time on	my test DB with coalesced disabled).
 2001-05-22: Added functionality to modify datafiles.
 2001-05-22: Added tool to get information about current session.
+2001-05-22: Autodetect KDE version.
 
 0.9.1: Released 2001-05-20
 

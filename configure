@@ -72,9 +72,9 @@ do
     touch --date 1973-12-21 $b
 done
 
-if [ \! -f Makefile ]
+if [ -f Makefile.orig ]
 then
-    mv Makefile.orig Makefile
+    cp Makefile.orig Makefile
 fi
 
 echo -n "static char *LicenseText=" > LICENSE.h
