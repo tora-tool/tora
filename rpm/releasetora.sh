@@ -21,6 +21,11 @@ else
     echo Releasing branch $2
     cvs -z3 -d:pserver:anonymous@cvs.tora.sourceforge.net:/cvsroot/tora co -r$2 tora
 fi
+if [ "X$3" != "X" ]
+then
+    TYPE=-$3
+fi
+
 if rpm -qa | grep 'glibc-2\.2' > /dev/null
 then
     GLIBC=glibc22
