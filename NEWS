@@ -1,5 +1,7 @@
 1.3.7:
 
+2002-07-17: Added a file with a bunch of extra translations needed.
+2002-07-17: Fixed a bug in toTranslateMayby function.
 2002-07-17: Improved error reporting for Oracle 7 dataases.
 2002-07-17: Fixed problem with setting cursor position to error in worksheet.
 2002-07-15: Made result content only disregard LONG and LOBs when connected to Oracle database.

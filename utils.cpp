@@ -1161,14 +1161,14 @@ QString toUnnull(const QString &str)
 
 QString toTranslateMayby(const QString &ctx,const QString &text)
 {
-  if (ctx.contains(QString::fromLatin1(" "))||ctx.latin1()!=ctx.utf8()||text.latin1()||ctx.utf8()||ctx.isEmpty()||text.isEmpty())
+  if (ctx.contains(QString::fromLatin1(" "))||ctx.latin1()!=ctx.utf8()||text.latin1()!=text.utf8()||ctx.isEmpty()||text.isEmpty())
     return text;
 #ifdef TODEBUG_TRANSLATION
   static std::map<QString,QString> Context;
   QString t=ctx+QString::fromLatin1(" ")+text;
   if (Context[t].isEmpty()) {
     Context[t]=text;
-    printf("QT_NOOP_TRANSLATE(\"%s\",\"%s\"),\n",(const char *)ctx.latin1(),(const char *)text.latin1());
+    printf("QT_TRANSLATE_NOOP(\"%s\",\"%s\"),\n",(const char *)ctx.latin1(),(const char *)text.latin1());
   }
 #endif
   return qApp->translate(ctx.latin1(),text.latin1());

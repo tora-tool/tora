@@ -123,7 +123,7 @@ void toResultItem::addItem(const QString &title,const QString &value)
   }
   QString t;
   if (title!="-")
-    t=title;
+    t=toTranslateMayby(sqlName(),title);
   QLabel *widget;
   if (!Widgets[WidgetPos]) {
     widget=new QLabel(t,Result);
