@@ -8,6 +8,8 @@
 2001-05-26: Minor fix on the logo to work better on other backgrounds.
 2001-05-26: Added some util function for reading files and comparing lists.
 2001-05-26: A bunch of Solaris fixes from Norbert Kiesel (Thanx).
+2001-05-26: Added privilege type to tocurrent privlist.
+2001-05-26: Install all *.xpm to help dir on install.
 
 0.10: Released 2001-05-25
 

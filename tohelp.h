@@ -51,6 +51,9 @@ class toHelp : public QDialog {
   static toHelp *Window;
   static map<QString,QString> *Files;
 
+  bool Searching;
+  bool Quit;
+
   toListView *Sections;
   toListView *Result;
   QLineEdit *SearchLine;

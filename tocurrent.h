@@ -49,7 +49,7 @@ class toCurrent : public QVBox {
   toResultView *Parameters;
   toConnection &Connection;
   virtual void addRole(QListViewItem *parent);
-  virtual void addList(QListViewItem *parent,toSQL &sql,const QString &role=QString::null);
+  virtual void addList(QListViewItem *parent,const QString &typ,toSQL &sql,const QString &role=QString::null);
 public:
   toCurrent(QWidget *parent,toConnection &connection);
   virtual ~toCurrent();

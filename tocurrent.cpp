@@ -112,6 +112,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Grants=new toListView(Tabs);
   Grants->setSorting(0);
   Grants->addColumn("Privilege");
+  Grants->addColumn("Type");
   Grants->addColumn("Grantable");
   Grants->setRootIsDecorated(true);
   Tabs->addTab(Grants,"Grants");
@@ -155,7 +156,7 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 			      "select granted_role,admin_option from user_role_privs",
 			      "Get information about roles granted to a user, must have same columns");
 
-void toCurrent::addList(QListViewItem *parent,toSQL &sql,const QString &role)
+void toCurrent::addList(QListViewItem *parent,const QString &type,toSQL &sql,const QString &role)
 {
   list<QString> result=toReadQuery(Connection,sql(Connection),role);
   while(result.size()>0) {
@@ -165,20 +166,22 @@ void toCurrent::addList(QListViewItem *parent,toSQL &sql,const QString &role)
     else
       item=new toResultViewItem(Grants,NULL);
     item->setText(0,toShift(result));
-    item->setText(1,toShift(result));
+    item->setText(1,type);
+    item->setText(2,toShift(result));
   }
 }
 
 void toCurrent::addRole(QListViewItem *parent)
 {
-  addList(parent,SQLRoleSysPrivs,parent->text(0));
-  addList(parent,SQLRoleTabPrivs,parent->text(0));
+  addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
+  addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
   list<QString> result=toReadQuery(Connection,SQLRoleRolePrivs(Connection),parent->text(0));
   while(result.size()>0) {
     QListViewItem *item;
     item=new toResultViewItem(parent,NULL);
     item->setText(0,toShift(result));
-    item->setText(1,toShift(result));
+    item->setText(1,"Role");
+    item->setText(2,toShift(result));
     addRole(item);
   }
 }
@@ -189,8 +192,8 @@ void toCurrent::refresh()
   Parameters->setSorting(0);
   Version->refresh();
 
-  addList(NULL,SQLUserSysPrivs);
-  addList(NULL,SQLUserTabPrivs);
+  addList(NULL,"System",SQLUserSysPrivs);
+  addList(NULL,"Object",SQLUserTabPrivs);
 
   list<QString> result=toReadQuery(Connection,SQLUserRolePrivs(Connection));
   while(result.size()>0) {

@@ -50,9 +50,9 @@ TO_NAMESPACE;
 
 #include "LICENSE.h"
 
-#include "help/largelogo.xpm"
+#include "icons/largelogo.xpm"
 
-static const char *AboutText="<IMG SRC=largelogo.xpm BORDER=1><BR>\n"
+static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %s\n"
 "<P>\n"
 "&copy; 2000 copyright of GlobeCom AB\n"

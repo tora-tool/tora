@@ -142,10 +142,16 @@ toHelp::toHelp(QWidget *parent,const char *name)
 
   Progress=new QProgressBar(box);
   Progress->setTotalSteps(Files->size());
+  Progress->hide();
+
+  Searching=false;
 }
 
 toHelp::~toHelp()
 {
+  Quit=true;
+  while (Searching)
+    qApp->processEvents();
   Window=NULL;
 }
 
@@ -164,12 +170,18 @@ void toHelp::changeContent(QListViewItem *item)
 
 void toHelp::search(void)
 {
+  Quit=true;
+  while (Searching)
+    qApp->processEvents();
+  Searching=true;
+  Quit=false;
   QRegExp white("\\s+");
   QStringList words=QStringList::split(white,SearchLine->text());
   QRegExp re("<[^>]*>");
   Result->clear();
   int count=1;
-  for (map<QString,QString>::iterator i=Files->begin();i!=Files->end();i++) {
+  Progress->show();
+  for (map<QString,QString>::iterator i=Files->begin();i!=Files->end()&&!Quit;i++) {
     try {
       QString file=toReadFile((*i).second);
       file.replace(re," ");
@@ -188,7 +200,10 @@ void toHelp::search(void)
       }
     } TOCATCH
     Progress->setProgress(count++);
+    qApp->processEvents();
   }
+  Progress->hide();
+  Searching=false;
   if (!Result->firstChild())
     new toResultViewItem(Result,NULL,"No hits");
 }
