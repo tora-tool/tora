@@ -67,6 +67,7 @@
 2001-09-19: Make sure synonyms are after actual tables in tablename list.
 2001-09-19: Remove duplicates in table completion.
 2001-09-19: Fixed some problems with logged in user case.
+2001-09-19: Added option to clear object cache for connection.
 
 1.1.0: Released 2001-09-09
 

@@ -494,6 +494,7 @@ private:
 
   connectionImpl *Connection;
 
+  bool ReadTables;
   std::map<tableName,std::list<columnDesc> > ColumnCache;
   std::list<tableName> TableNames;
 

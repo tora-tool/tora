@@ -91,6 +91,7 @@
 #include "icons/paste.xpm"
 #include "icons/toramini.xpm"
 #include "icons/up.xpm"
+#include "icons/trash.xpm"
 
 #define DEFAULT_TITLE "TOra %s"
 
@@ -113,8 +114,9 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_FILE_SAVE_AS		104
 #define TO_FILE_COMMIT		105
 #define TO_FILE_ROLLBACK	106
-#define TO_FILE_PRINT		107
-#define TO_FILE_QUIT		108
+#define TO_FILE_CLEARCACHE	107
+#define TO_FILE_PRINT		108
+#define TO_FILE_QUIT		109
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -170,6 +172,7 @@ toMain::toMain()
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit connection",TO_FILE_COMMIT);
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
+  FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Clear connection cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
@@ -398,6 +401,7 @@ toMain::toMain()
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
   menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
   menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
+  menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
   DisconnectButton->setEnabled(false);
 
   for (std::map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
@@ -655,14 +659,19 @@ void toMain::commandCallback(int cmd)
       try {
 	toConnection &conn=currentConnection();
 	emit willCommit(conn,true);
-	currentConnection().commit();
+	conn.commit();
+      } TOCATCH
+      break;
+    case TO_FILE_CLEARCACHE:
+      try {
+	currentConnection().clearCache();
       } TOCATCH
       break;
     case TO_FILE_ROLLBACK:
       try {
 	toConnection &conn=currentConnection();
 	emit willCommit(conn,false);
-	currentConnection().rollback();
+	conn.rollback();
       } TOCATCH
       break;
     case TO_EDIT_READ_ALL:
@@ -823,6 +832,7 @@ void toMain::addConnection(toConnection *conn)
   if (ConnectionSelection->count()==1) {
     menuBar()->setItemEnabled(TO_FILE_COMMIT,true);
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,true);
+    menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,true);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,true);
     DisconnectButton->setEnabled(true);
   }
@@ -869,6 +879,7 @@ bool toMain::delConnection(void)
   if (ConnectionSelection->count()==0) {
     menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
+    menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
     DisconnectButton->setEnabled(false);
     for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();

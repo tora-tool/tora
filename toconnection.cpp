@@ -653,6 +653,7 @@ toConnection::toConnection(const QString &provider,
   Connection=Provider.connection(this);
   addConnection();
   Version=Connection->version(mainConnection());
+  ReadTables=false;
 }
 
 toConnection::toConnection(const toConnection &conn)
@@ -1053,7 +1054,8 @@ const QString &toConnection::provider(void) const
 void toConnection::readObjects(void)
 {
   try {
-    if (TableNames.size()==0) {
+    if (!ReadTables) {
+      ReadTables=true;
       toBusy busy;
       toStatusMessage("Reading available objects",true);
       qApp->processEvents();
@@ -1063,6 +1065,13 @@ void toConnection::readObjects(void)
     }
   } catch (...) {
   }
+}
+
+void toConnection::clearCache(void)
+{
+  ReadTables=false;
+  TableNames.clear();
+  ColumnCache.clear();
 }
 
 QString toConnection::quote(const QString &name)
