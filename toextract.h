@@ -33,6 +33,8 @@
 // Liberally ported from DDL::Oracle 1.06
 // Copyright (c) 2000, 2001 Richard Sutherland - United States of America
 
+class toExtractProgress;
+
 class toExtract {
   toConnection &Connection;
   QWidget *Parent;
@@ -40,17 +42,17 @@ class toExtract {
   // Attributes
   QString Schema;
   QString Resize;
-  bool Prompt;
-  bool Heading;
+  bool Code;
+  bool Comments;
   bool Constraints;
-  bool Indexes;
+  bool Contents;
   bool Grants;
-  bool Storage;
+  bool Heading;
+  bool Indexes;
   bool Parallel;
   bool Partition;
-  bool Contents;
-  bool Comments;
-  bool Code;
+  bool Prompt;
+  bool Storage;
 
   // Flags
   bool IsASnapIndex;

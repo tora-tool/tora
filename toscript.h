@@ -45,8 +45,7 @@ class toScript : public toScriptUI {
   toResultView *CreateList;
   toConnection &Connection;
 
-  void setupExtract(toExtract &)
-  { }
+  void setupExtract(toExtract &);
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();

@@ -27,14 +27,15 @@
 
 #include <unistd.h>
 
-#include <qregexp.h>
+#include <qapplication.h>
 #include <qdatetime.h>
+#include <qprogressdialog.h>
+#include <qregexp.h>
 #include <qstringlist.h>
 
 #include "toextract.h"
 #include "tosql.h"
 #include "tomain.h"
-#include "toextractprogressui.moc"
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size
@@ -53,8 +54,6 @@ static toSQL SQLSetSizing("toExtract:SetSizing",
 toExtract::toExtract(toConnection &conn,QWidget *parent)
   : Connection(conn),Parent(parent)
 {
-  Heading=true;
-  Resize=true;
   Heading=true;
   Prompt=true;
   Constraints=true;
@@ -5939,7 +5938,16 @@ QString toExtract::compile(list<QString> &objects)
   clearFlags();
   QString ret=generateHeading("COMPILE",objects);
 
+  QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+
+  int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    progress.setProgress(num);
+    qApp->processEvents();
+    if (progress.wasCancelled())
+      throw QString("Creating script was cancelled");
+    num++;
+
     QString type=*i;
     QString owner;
     QString name;
@@ -5973,7 +5981,16 @@ QString toExtract::create(list<QString> &objects)
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
 
+  QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+
+  int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    progress.setProgress(num);
+    qApp->processEvents();
+    if (progress.wasCancelled())
+      throw QString("Creating script was cancelled");
+    num++;
+
     QString type=*i;
     QString owner;
     QString name;
@@ -6054,7 +6071,16 @@ list<QString> toExtract::describe(list<QString> &objects)
 
   list<QString> ret;
 
+  QProgressDialog progress("Creating description","&Cancel",objects.size(),Parent,"progress",true);
+
+  int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    progress.setProgress(num);
+    qApp->processEvents();
+    if (progress.wasCancelled())
+      throw QString("Creating script was cancelled");
+    num++;
+
     QString type=*i;
     QString owner;
     QString name;
@@ -6136,7 +6162,17 @@ QString toExtract::drop(list<QString> &objects)
 {
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
+
+  QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+
+  int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    progress.setProgress(num);
+    qApp->processEvents();
+    if (progress.wasCancelled())
+      throw QString("Creating script was cancelled");
+    num++;
+
     QString type=*i;
     QString owner;
     QString name;
@@ -6209,7 +6245,16 @@ QString toExtract::resize(list<QString> &objects)
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
 
+  QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+
+  int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    progress.setProgress(num);
+    qApp->processEvents();
+    if (progress.wasCancelled())
+      throw QString("Creating script was cancelled");
+    num++;
+
     QString type=*i;
     QString owner;
     QString name;

@@ -185,133 +185,135 @@ toScript::~toScript()
 
 void toScript::execute(void)
 {
-  int mode;
-  if (Compare->isChecked())
-    mode=0;
-  else if (Extract->isChecked())
-    mode=1;
-  else if (Migrate->isChecked())
-    mode=2;
-  else if (Resize->isChecked())
-    mode=3;
-  else {
-    toStatusMessage("No mode selected");
-    return;
-  }
-  Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
-  Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
+  try {
+    int mode;
+    if (Compare->isChecked())
+      mode=0;
+    else if (Extract->isChecked())
+      mode=1;
+    else if (Migrate->isChecked())
+      mode=2;
+    else if (Resize->isChecked())
+      mode=3;
+    else {
+      toStatusMessage("No mode selected");
+      return;
+    }
+    Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
+    Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
 
-  list<QString> tableSpace;
-  list<QString> profiles;
-  list<QString> otherGlobal;
+    list<QString> tableSpace;
+    list<QString> profiles;
+    list<QString> otherGlobal;
 
-  list<QString> tables;
+    list<QString> tables;
 
-  list<QString> userViews;
-  list<QString> userOther;
+    list<QString> userViews;
+    list<QString> userOther;
 
-  QListViewItem *next=NULL;
-  for (QListViewItem *item=Objects->firstChild();item;item=next) {
-    QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
+    QListViewItem *next=NULL;
+    for (QListViewItem *item=Objects->firstChild();item;item=next) {
+      QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
 
-    if (chk&&chk->isEnabled()) {
-      QString name=chk->text(0);
-      QString type=chk->text(1);
-      QString user=chk->text(2);
-      if (!user.isEmpty()) {
-	if (chk->isOn()&&chk->isEnabled()) {
-	  QString line;
-	  if (type=="TABLE") {
-	    line=user;
-	    line+=".";
-	    line+=name;
-	    toPush(tables,line);
-	  } else {
-	    line=type;
+      if (chk&&chk->isEnabled()) {
+	QString name=chk->text(0);
+	QString type=chk->text(1);
+	QString user=chk->text(2);
+	if (!user.isEmpty()) {
+	  if (chk->isOn()&&chk->isEnabled()) {
+	    QString line;
+	    if (type=="TABLE") {
+	      line=user;
+	      line+=".";
+	      line+=name;
+	      toPush(tables,line);
+	    } else {
+	      line=type;
+	      line+=":";
+	      line+=user;
+	      line+=".";
+	      line+=name;
+	      if (type=="VIEW")
+		toPush(userViews,line);
+	      else
+		toPush(userOther,line);
+	    }
+	  }
+	} else if (!type.isEmpty()) {
+	  if (chk->isOn()&&chk->isEnabled()) {
+	    QString line=type;
 	    line+=":";
-	    line+=user;
-	    line+=".";
 	    line+=name;
-	    if (type=="VIEW")
-	      toPush(userViews,line);
+	    if (type=="TABLESPACE")
+	      toPush(tableSpace,line);
+	    else if (type=="PROFILE")
+	      toPush(profiles,line);
 	    else
-	      toPush(userOther,line);
+	      toPush(otherGlobal,line);
 	  }
 	}
-      } else if (!type.isEmpty()) {
-	if (chk->isOn()&&chk->isEnabled()) {
-	  QString line=type;
-	  line+=":";
-	  line+=name;
-	  if (type=="TABLESPACE")
-	    toPush(tableSpace,line);
-	  else if (type=="PROFILE")
-	    toPush(profiles,line);
-	  else
-	    toPush(otherGlobal,line);
-	}
+      }
+
+      if (item->firstChild()&&chk&&chk->isEnabled())
+	next=item->firstChild();
+      else if (item->nextSibling())
+	next=item->nextSibling();
+      else {
+	next=item;
+	do {
+	  next=next->parent();
+	} while(next&&!next->nextSibling());
+	if (next)
+	  next=next->nextSibling();
       }
     }
 
-    if (item->firstChild()&&chk&&chk->isEnabled())
-      next=item->firstChild();
-    else if (item->nextSibling())
-      next=item->nextSibling();
-    else {
-      next=item;
-      do {
-	next=next->parent();
-      } while(next&&!next->nextSibling());
-      if (next)
-	next=next->nextSibling();
+    list<QString> sourceObjects;
+    for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+      toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+      toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+      toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      QString line="TABLE FAMILY";
+      line+=":";
+      line+=*i;
+      toPush(sourceObjects,line);
     }
-  }
-
-  list<QString> sourceObjects;
-  for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
-    toPush(sourceObjects,*i);
-  for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
-    toPush(sourceObjects,*i);
-  for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
-    toPush(sourceObjects,*i);
-  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-    QString line="TABLE FAMILY";
-    line+=":";
-    line+=*i;
-    toPush(sourceObjects,line);
-  }
-  for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
-    toPush(sourceObjects,*i);
-  for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
-    toPush(sourceObjects,*i);
-  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-    QString line="TABLE REFERENCES";
-    line+=":";
-    line+=*i;
-    toPush(sourceObjects,line);
-  }
-
-  list<QString> sourceDescription;
-  QString script;
-  {
-    toExtract source(toMainWidget()->connection(SourceConnection->name()));
-    setupExtract(source);
-    switch(mode) {
-    case 1:
-      script+=source.create(sourceObjects);
-      break;
-    case 0:
-    case 2:
-      sourceDescription=source.describe(sourceObjects);
-      break;
-    case 3:
-      break;
+    for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+      toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+      toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      QString line="TABLE REFERENCES";
+      line+=":";
+      line+=*i;
+      toPush(sourceObjects,line);
     }
-  }
 
-  list<QString> destinationObjects;
-  if (Destination->isEnabled()) {
-  }
+    list<QString> sourceDescription;
+    QString script;
+    {
+      toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
+      setupExtract(source);
+      switch(mode) {
+      case 1:
+	script+=source.create(sourceObjects);
+	break;
+      case 0:
+      case 2:
+	sourceDescription=source.describe(sourceObjects);
+	break;
+      case 3:
+	break;
+      }
+    }
+
+    list<QString> destinationObjects;
+    if (Destination->isEnabled()) {
+    }
+  } TOCATCH
 }
 
 void toScript::changeSource(int)
@@ -498,4 +500,44 @@ void toScript::removeSize(void)
   QListViewItem *item=Sizes->selectedItem();
   if (item)
     delete item;
+}
+
+void toScript::setupExtract(toExtract &extr)
+{
+  extr.setCode       (IncludeCode->isEnabled()       &&IncludeCode->isChecked()       );
+  extr.setComments   (IncludeComment->isEnabled()    &&IncludeComment->isChecked()    );
+  extr.setConstraints(IncludeConstraints->isEnabled()&&IncludeConstraints->isChecked());
+  extr.setContents   (IncludeContent->isEnabled()    &&IncludeContent->isChecked()    );
+  extr.setGrants     (IncludeGrants->isEnabled()     &&IncludeGrants->isChecked()     );
+  extr.setHeading    (IncludeHeader->isEnabled()     &&IncludeHeader->isChecked()     );
+  extr.setIndexes    (IncludeIndexes->isEnabled()    &&IncludeIndexes->isChecked()    );
+  extr.setParallel   (IncludeParallell->isEnabled()  &&IncludeParallell->isChecked()  );
+  extr.setPartition  (IncludePartition->isEnabled()  &&IncludePartition->isChecked()  );
+  extr.setPrompt     (IncludePrompt->isEnabled()     &&IncludePrompt->isChecked()     );
+  extr.setStorage    (IncludeStorage->isEnabled()    &&IncludeStorage->isChecked()    );
+
+  if (Schema->currentText()=="Same")
+    extr.setSchema("1");
+  if (Schema->currentText()=="None")
+    extr.setSchema(QString::null);
+  else
+    extr.setSchema(Schema->currentText());
+
+  if (DontResize->isChecked())
+    extr.setResize(QString::null);
+  else if (AutoResize->isChecked())
+    extr.setResize("1");
+  else {
+    QString siz;
+    for (QListViewItem *item=Sizes->firstChild();item;item=item->nextSibling()) {
+      siz+=item->text(0);
+      siz+=":";
+      siz+=item->text(1);
+      siz+=":";
+      siz+=item->text(2);
+      if (item->nextSibling())
+	siz+=":";
+    }
+    extr.setResize(siz);
+  }
 }
