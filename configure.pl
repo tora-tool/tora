@@ -79,7 +79,7 @@ my @source=(
 	    "totoolsettingui",
 	    "utils" );
 
-my @translations=("tora_se","tora_fr","tora_empty");
+my @translations=("tora_se","tora_fr");
 
 my %plugins=(
 	     "toalert"             => { "Files" => [ "toalert" ],
