@@ -56,7 +56,7 @@ class toResultLong : public toResultView {
   toNoBlockQuery *Query;
   /** Timer to poll for new data.
    */
-  QTimer Timer;
+  toTimer Timer;
   /** Indicator if headers have been parsed yet.
    */
   bool HasHeaders;

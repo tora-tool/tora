@@ -109,6 +109,11 @@ public:
 
 static toBrowserTool BrowserTool;
 
+static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
+			   "SELECT Tablespace_Name FROM DBA_TABLESPACES\n"
+			   " ORDER BY Tablespace_Name",
+			   "List the available tablespaces in a database.");
+
 class toBrowserFilter : public toBrowserFilterUI {
 public:
   class setting : public toResultFilter {
@@ -116,19 +121,53 @@ public:
     bool IgnoreCase;
     bool Invert;
     QString Text;
+    int TablespaceType;
+    list<QString> Tablespaces;
     QRegExp Match;
   public:
-    setting(int type=0,bool cas=false,bool invert=false,const QString &str=QString::null)
-      : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str)
+    setting(int type,bool cas,bool invert,
+	    const QString &str,int tablespace,
+	    const list<QString> &tablespaces)
+      : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str),
+	TablespaceType(tablespace),Tablespaces(tablespaces)
     {
       if (!str.isEmpty()) {
 	Match.setPattern(str);
 	Match.setCaseSensitive(cas);
       }
     }
+    setting(void)
+      : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
+    {
+    }
     virtual bool check(const QListViewItem *item)
     {
       QString str=item->text(0);
+      QString tablespace=item->text(2);
+      if (!tablespace.isEmpty()) {
+	switch(TablespaceType) {
+	case 0:
+	  break;
+	case 1:
+	  {
+	    bool ok=false;
+	    for(list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++) {
+	      if (*i==tablespace) {
+		ok=true;
+		break;
+	      }
+	    }
+	    if (!ok)
+	      return false;
+	  }
+	  break;
+	case 2:
+	  for(list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++)
+	    if (*i==tablespace)
+	      return false;
+	  break;
+	}
+      }
       switch(Type) {
       case 0:
 	return true;
@@ -161,25 +200,48 @@ public:
     { return new setting(*this); }
     friend class toBrowserFilter;
   };
+  void setup(void)
+  {
+    toHelp::connectDialog(this);
+    Tablespaces->setNumberColumn(false);
+    Tablespaces->setReadableColumns(true);
+    Tablespaces->query(SQLListTablespaces);
+    Tablespaces->setSelectionMode(QListView::Multi);
+  }
   toBrowserFilter(QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
-    toHelp::connectDialog(this);
+    setup();
   }
-  toBrowserFilter(const setting &cur,QWidget *parent)
+  toBrowserFilter(setting &cur,QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
+    setup();
+    TablespaceType->setButton(cur.TablespaceType);
     Buttons->setButton(cur.Type);
+    for(list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
+      for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
+	if (item->text(0)==*i) {
+	  item->setSelected(true);
+	  break;
+	}
+    }
     String->setText(cur.Text);
     Invert->setChecked(cur.Invert);
     IgnoreCase->setChecked(cur.IgnoreCase);
   }
   setting *getSetting(void)
   {
+    list<QString> tablespaces;
+    for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
+      if (item->isSelected())
+	tablespaces.insert(tablespaces.end(),item->text(0));
     return new setting(Buttons->id(Buttons->selected()),
 		       IgnoreCase->isChecked(),
 		       Invert->isChecked(),
-		       String->text());
+		       String->text(),
+		       TablespaceType->id(TablespaceType->selected()),
+		       tablespaces);
   }
 };
 
@@ -220,7 +282,8 @@ public:
 #define TAB_TRIGGER_DEPEND	"TriggerDepend"
 
 static toSQL SQLListTables("toBrowser:ListTables",
-			   "SELECT Table_Name FROM ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
+			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
+			   "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.");
 static toSQL SQLTableGrants("toBrowser:TableGrants",
@@ -258,7 +321,7 @@ static toSQL SQLViewComment("toBrowser:ViewComment",
 			    "Display comment on a view");
 
 static toSQL SQLListIndex("toBrowser:ListIndex",
-			  "SELECT Index_Name\n"
+			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
 			  "  FROM ALL_INDEXES\n"
 			  " WHERE OWNER = :f1<char[101]>\n"
 			  " ORDER BY Index_Name\n",

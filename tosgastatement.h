@@ -45,7 +45,6 @@ class toResultField;
 class QComboBox;
 class toResultPlan;
 class toResultItem;
-class QTimer;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
  * address use the @ref toSQLToAddress function.

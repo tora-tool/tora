@@ -41,7 +41,7 @@
 
 class QString;
 class toConnection;
-class QTimer;
+class toTimer;
 class otl_connect;
 
 /** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
@@ -61,7 +61,7 @@ protected:
   /** Get the timer associated with the closest tool.
    * @return Pointer to tool timer.
    */
-  QTimer *timer(void);
+  toTimer *timer(void);
 public:
   toResult(void)
   { }

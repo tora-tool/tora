@@ -44,7 +44,7 @@
 
 class toConnection;
 class otl_connect;
-class QTimer;
+class toTimer;
 
 /**
  * Abstract baseclass for tools.
@@ -295,7 +295,7 @@ public:
 class toToolWidget : public QVBox, public toHelpContext {
   Q_OBJECT
   toConnection *Connection;
-  QTimer *Timer;
+  toTimer *Timer;
 signals:
   /** Emitted when the connection is changed.
    */
@@ -327,7 +327,7 @@ public:
   /** Get timer of tool. Used by some results to get update time.
    * @return Pointer to a timer object.
    */
-  QTimer *timer(void);
+  toTimer *timer(void);
 };
 
 #endif

@@ -146,7 +146,7 @@ class toDebug : public toToolWidget {
   QString TargetID;
   QString TargetSession;
   // End of lock stuff
-  QTimer StartTimer;
+  toTimer StartTimer;
 
   class targetTask : public toTask {
     toDebug &Parent;

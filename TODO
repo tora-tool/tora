@@ -10,7 +10,6 @@ Extended functionality:
 		Add columns
 	Rename table
 		ALTER TABLE ... RENAME TO ...
-	Filter on tablespace
 	Editing triggers
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
@@ -21,7 +20,6 @@ Extended functionality:
 * Implement extract of temporary tables.
 * Implement migration, resize and report in toScript.
 * Lots of more template texts including hints and SQL syntax.
-* Datafiles & tablespaces in DB browser.
 * DB Links in DB browser.
 * Display execution type of statements (Until first response if not next option).
 * Display objects in tablespace storage manager.

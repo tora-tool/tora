@@ -46,7 +46,6 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QTabWidget;
-class QTimer;
 class QToolButton;
 
 class toConnection;

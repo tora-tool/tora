@@ -69,7 +69,7 @@ TO_NAMESPACE;
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   map<QString,QString> &TemplateMap;
   map<QString,QString>::iterator LastTemplate;
-  QTimer Timer;
+  toTimer Timer;
 public:
   virtual void updateFromMap(void)
   {

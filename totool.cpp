@@ -95,10 +95,10 @@ void toToolWidget::setConnection(toConnection &conn)
   emit connectionChange();
 }
 
-QTimer *toToolWidget::timer(void)
+toTimer *toToolWidget::timer(void)
 {
   if (!Timer)
-    Timer=new QTimer(this);
+    Timer=new toTimer(this);
   return Timer;
 }
 

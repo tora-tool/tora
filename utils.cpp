@@ -256,7 +256,7 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
   return refresh;
 }
 
-void toRefreshParse(QTimer *timer,const QString &str)
+void toRefreshParse(toTimer *timer,const QString &str)
 {
   if (str=="None")
     timer->stop();
@@ -931,7 +931,7 @@ otl_connect &toResult::otlConnection(void)
   return connection().connection();
 }
 
-QTimer *toResult::timer(void)
+toTimer *toResult::timer(void)
 {
   return toCurrentTool(dynamic_cast<QWidget *>(this))->timer();
 }

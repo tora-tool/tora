@@ -493,6 +493,16 @@ public:
   void setNumberColumn(bool val)
   { NumberColumn=val; }
 
+  /** Get readable column flag.
+   * @return Wether or not the readable column names.
+   */
+  bool readableColumn() const
+  { return ReadableColumns; }
+  /** Set readable column flag.
+   */
+  void setReadableColumns(bool val)
+  { ReadableColumns=val; }
+
   /** Create a new item in this list. Can be used if a special kind of item is wanted
    * in the list. The rest of the columns will be filled with setText.
    * @param last Where to insert the item.
