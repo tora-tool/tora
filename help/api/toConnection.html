@@ -132,7 +132,9 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref71">cacheAvailable</A></b> (bool block=false,bool need=true) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref72">toQuery</A></b></LI>
+<LI>void &nbsp;<b><A HREF="#ref72">cancelAll</A></b> (void) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref73">toQuery</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Represent a database connection in TOra. Observe that this can mean several actual
  connections to the database as queries that ae expected to run a long time are sometimes
  executed in their own connection to make sure the interface doesn't lock up for a long time.
@@ -445,7 +447,10 @@
 </TABLE></P>
 <p><b>Returns</b>: True if cache is available.
    </p>
-<A NAME="toQuery"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
+<A NAME="cancelAll"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancelAll</strong> (void)
+<br></td><td align="right"><h3><strong>cancelAll</strong></h3></td></tr></table><p></p><p> Try to stop all running queries.
+   </p>
+<A NAME="toQuery"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toQuery</strong>
 </td><td align="right"><h3><strong>toQuery</strong></h3></td></tr></table><p></p><HR>
 	<table>
 	</table>
