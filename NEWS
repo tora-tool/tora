@@ -3,6 +3,7 @@
 2001-11-06: Some minor API changes to the editwidget interface.
 2001-11-06: Fixed a really ugly toThread bug in linux & windows.
 2001-11-06: Added drop changes from parameter editor and fixed update problem.
+2001-11-06: Fixed polling problem with session statistics.
 
 1.1.5: Branched TORA12 for 1.2 release
 
@@ -224,8 +225,7 @@
 2001-09-10: Made template db browser handle mysql better.
 2001-09-10: Fixed problems with extra info in template browser.
 2001-09-10: Fixed problem with changing connection in workspace.
-2001-09-10: After a bit discussion about licensing with Daniel Pearson changed
-	back to GPL.
+2001-09-10: After a bit discussion about licensing with Daniel Pearson changed back to GPL.
 2001-09-12: Handle pixmap to xpm conversion better.
 2001-09-12: Fixed problem with schema extractor.
 2001-09-12: Set client info when opening connection.
@@ -419,8 +419,7 @@
 2001-08-28: Fixed bug with empty list in toBrowser.
 2001-08-28: Show non relational tables in tobrowser. (Thanx Naprstek)
 2001-08-28: Fixed problem with negative coordinates in chart zoom.
-2001-08-29: Force uppercase to tablespace names on creation.
-	(Thanx Massimiliano Ziccardi)
+2001-08-29: Force uppercase to tablespace names on creation. (Thanx Massimiliano Ziccardi)
 2001-08-29: Choose export file format when exporting lists.
 2001-08-29: Remade about dialog in designer.
 2001-08-29: Added about stuff for tools.
@@ -455,8 +454,7 @@
 2001-07-18: Popup new worksheet if opening new connection to same DB.
 2001-07-18: Fixed cursor position in highlighted text.
 2001-07-18: Fixed a really nasty deadlock in tononblockquery.
-2001-07-18: Allow cancel in Windows (Will still run till first row in
-	background).
+2001-07-18: Allow cancel in Windows (Will still run till first row in background).
 2001-07-18: Added cancel entries in log for worksheet.
 2001-07-18: Added duration entries in log for worksheet.
 2001-07-18: Fixed another pesky bug with long running queries.
@@ -497,8 +495,7 @@
 2001-07-06: Ask to create plan table if it doesn't exist when explaining plan.
 2001-07-06: Updated documentation to the 1.0 release so I don't forget it.
 2001-07-06: Added option to specify message history size.
-2001-07-06: Enable timed statistics in session when using statistics in
-	worksheet.
+2001-07-06: Enable timed statistics in session when using statistics in worksheet.
 2001-07-06: Collapsed Data and Description to one Resuiolt tab in worksheet.
 2001-07-06: Fixed bug in prefetch for resultlong.
 2001-07-06: Don't hang when reading all in resultlong.
@@ -522,8 +519,7 @@
 2001-07-08: Tried to be more intelligent when to save data in contenteditor.
 2001-07-08: Moved auto commit from worksheet to database settings.
 2001-07-08: Check the autocommit in content as well.
-2001-07-08: Added an option to change the connection to that of the
-	current window when changing window.
+2001-07-08: Added an option to change the connection to that of the current window when changing window.
 2001-07-08: Added key binding to select schema in debugger.
 2001-07-08: Shuffled around some keybindings in debugger to.
 2001-07-08: Fixed enabled on some items in debugger menu.
@@ -581,11 +577,9 @@
 2001-06-27: Fixed a program with toSGAStatement and changing tabs.
 2001-06-27: Some windows fixes.
 2001-06-27: Removed memory debugging stuff (Useless).
-2001-06-27: Don't do dynamic casting on objects in Qt since Qt might not have
-	RTTI information.
+2001-06-27: Don't do dynamic casting on objects in Qt since Qt might not have RTTI information.
 2001-06-27: Fixed bug in semaphores if using QThread.
-2001-06-27: Added makefile for windows. Observe that no version of Qt for
-	Windows is linkable without violating the GPL license.
+2001-06-27: Added makefile for windows.
 2001-06-29: Support for Oracle 9 manuals in help.
 2001-06-29: Saving settings in Windows registry.
 2001-06-30: Set icon on main window.
@@ -636,8 +630,7 @@
 2001-05-31: Use KPrinter if available.
 2001-05-31: Fixed problem with missing .torasql.
 2001-06-01: Done with aggregate functions in PL/SQL documentation.
-2001-06-02: Done with analytic,char to char and char to number functions in
-	PL/SQL documentation.
+2001-06-02: Done with analytic,char to char and char to number functions in PL/SQL documentation.
 2001-06-03: Done with the rest of PL/SQL documentation.
 2001-06-03: Enable KDE if available by default.
 2001-06-04: Fixed packaging problems with static and qt packages.
@@ -673,8 +666,7 @@
 2001-05-22: Added functionality to OTL for connecting as SYS_DBA/SYS_OPER.
 2001-05-22: Changed back to printfs in main.
 2001-05-22: Added functionality to connect as SYS_DBA/SYS_OPER in toConnection.
-2001-05-22: Rewrote SQL in toResultStorage (From 51 min to 20 seconds execution
-	time on	my test DB with coalesced disabled).
+2001-05-22: Rewrote SQL in toResultStorage.
 2001-05-22: Added functionality to modify datafiles.
 2001-05-22: Added tool to get information about current session.
 2001-05-22: Autodetect KDE version.
@@ -689,8 +681,7 @@
 2001-05-25: Added server tuning tool.
 2001-05-25: Added server statistics to toResultStats.
 2001-05-25: Fixed precision in toResultStats to 15 digits.
-2001-05-25: Added the releasetora.sh script to document how builds
-	are made.
+2001-05-25: Added the releasetora.sh script to document how builds are made.
 2001-05-25: Pressing toTemplate tool again when open closes it.
 2001-05-25: Fixed pesky coredump in toBrowserTemplate.
 2001-05-25: Updated rpm and README to be more up2date with featurelist.
@@ -759,13 +750,11 @@
 2001-03-25: Added doc files to rpms.
 2001-03-26: Fixed NLS bug in toNoBlockQuery (Worksheet).
 2001-03-26: Added select sorting on toResultView.
-2001-03-26: Removed bugs regarding double \\ in some tooltips (Thanx
-	Christopher R. Redinger for pointing it out).
+2001-03-26: Removed bugs regarding double \\ in some tooltips (Thanx Christopher R. Redinger)
 2001-03-26: Fixed numbering bug if column view.
 2001-03-26: Enabled sorting of content.
 2001-03-26: Set local8bit codec from LANG environment variable.
-2001-03-27: Started trying to make it possible to compile TOra as a KDE
-	application.
+2001-03-27: Started trying to make it possible to compile TOra as a KDE application.
 2001-03-27: Use local8bit when reading in toWorksheet.
 2001-03-28: Modified regexp to verify Qt version in configure.
 2001-03-28: Minor modification of how dependency files are generated.
@@ -789,8 +778,7 @@
 2001-04-03: toIsIdent takes QChar instead of char.
 2001-04-03: Minor Unicode fix in toDebug.
 2001-04-03: View correct results of long running query in statusbar also.
-2001-04-03: Added tooltip virtual function so you can copy different content
-	than the tooltip.
+2001-04-03: Added tooltip virtual function so you can copy different content than the tooltip.
 2001-04-03: Fixed copying of the toResultCols.
 2001-04-04: Create foreign constraints separately from table in toExtract.
 2001-04-04: If toResultItem contains numeric value sort numerically.
@@ -843,17 +831,12 @@
 2001-03-03: Made readAll a little bit more responsive in result view.
 2001-03-04: Added name to toResultView, mainly for printing.
 2001-03-05: Split and rewrote global settings widget.
-2001-03-05: Added option to ignore desktop settings (Don't work with
-	KDE for me).
+2001-03-05: Added option to ignore desktop settings (Don't work with KDE for me).
 2001-03-07: There now are 3 spec files for mdk, others and static (RedHat)
 2001-03-07: Removed build reqs part (libqt2-devel/qt2-devel controversy)
-2001-03-07: Changed name of plugins to tso not to be misinterpreted as shared
-	libraries.
+2001-03-07: Changed name of plugins to tso not to be misinterpreted as shared libraries.
 2001-03-09: Fixed bug regarding missing config file.
-2001-03-13: Added Unicode UTF8 support. Huge boring change, almost everything
-	touched. For some more details, files are saved in the local 8bit
-	format (Gotten from LANG). Config values and sql strings are stored
-	in UTF8, the rest of the files are in Latin1.
+2001-03-13: Added Unicode UTF8 support.
 2001-03-13: Don't erase plugin dir from settings if running monolithic.
 2001-03-13: Went over toResultViews so names are set correctly (Mostly)
 2001-03-13: Added another quote.
@@ -884,15 +867,12 @@
 2001-02-22: Added customSetup function to tools, called when toMain is setup.
 2001-02-22: Don't hide row/column labels since it doesn't seem to work.
 2001-02-22: Fixed bug in toParamGet that added \n to end of all statements.
-2001-02-22: Added autoLoad parameter to toWorksheet widget to be able to use
-		it in sql editor.
+2001-02-22: Added autoLoad parameter to toWorksheet widget to be able to use it in sql editor.
 2001-02-22: Added SQL dictionary editor tool.
-2001-02-22: Made : be separator in configurationfiles instead of \\, backwards
-		compatible though.
-2001-02-22: Made configure quit if configure.pl failed. Also removed check that
-		prefix dirs exist. (Thanx Robert Cheramy)
-2001-02-23: Added index/access to all menues so tools can add themselves
-		anywhere in the menus. Move SQL editor to edit menu.
+2001-02-22: Made : be separator in configurationfiles instead of \\, backwards compatible though.
+2001-02-22: Made configure quit if configure.pl failed. (Thanx Robert Cheramy)
+2001-02-23: Added index/access to all menues so tools can add themselves anywhere in the menus.
+2001-02-23: Move SQL editor to edit menu.
 
 0.5: Released 2001-02-12
 
@@ -903,21 +883,17 @@
 2001-01-28: Added option to disable PL/SQL parsing of worksheet content.
 2001-01-28: Fixed a new change watch dialog.
 2001-01-28: Changed to OTL v3.2.12.
-2001-01-28: Fixed bug in debugger if neither IN or OUT is specified for
-		parameter.
+2001-01-28: Fixed bug in debugger if neither IN or OUT is specified for parameter.
 2001-01-28: Fixed to use toResultViewItem in Parameters in toDebug.
-2001-01-29: Changed configure to run uic and moc where needed (Got rid of those
-		sleep thingies).
+2001-01-29: Changed configure to run uic and moc where needed (Got rid of those sleep thingies).
 2001-01-29: Added ability to specify NULL as parameters in toParamGet.
 2001-01-31: Display tooltip of content of statusbar.
 2001-01-31: Added -lpthread to configure.pl script, needed on some distibutions.
 2001-02-02: Added plugin functionality.
 2001-02-02: Included an unmodified version of the GPL (Had removed the appendix).
 2001-02-02: Minor change in largelogo.xpm.
-2001-02-02: Added static compile option (Not in configure, no one will
-		probably need this except me).
-2001-02-06: Installed new otl which makes patch unnecessary (Some fixes required
-		though)
+2001-02-02: Added static compile option.
+2001-02-06: Installed new otl which makes patch unnecessary (Some fixes required though)
 2001-02-06: Created splash screen while loading plugins.
 2001-02-06: Fixed bug in toResultItem regarding eof queries.
 2001-02-09: Added support for TNS_ADMIN in finding tnsnames.ora. (Petr Sindylek)
@@ -930,12 +906,10 @@
 2001-01-17: Divide CurBlk by 1000000 instead of 1000 in rollback display.
 2001-01-17: Added connection add/delWidget calls toRollback and toStorage.
 2001-01-17: Fixed a moc bug in configure.pl (Thanx P. Laux).
-2001-01-17: Include block if possible in rollback monitor (Not in
-		transaction start).
+2001-01-17: Include block if possible in rollback monitor (Not in transaction start).
 2001-01-20: Removed any reference to FALSE or TRUE (Use true/false instead).
 2001-01-20: Fixed bug parsing PL/SQL in toWorksheet.
-2001-01-20: Figured out how to use Qt designer more intelligently,
-		integrated uic in Makefile.
+2001-01-20: Figured out how to use Qt designer more intelligently, integrated uic in Makefile.
 2001-01-20: Added settings to configure syntax highlighting.
 2001-01-20: Added functionality to display error lines in toHighlightedText.
 2001-01-20: Separated body and declaration in toBrowser.
@@ -947,17 +921,14 @@
 2001-01-22: Changed to use list of strings for queries (Big change).
 2001-01-23: Fixed bug in toResultCols.
 2001-01-23: Fixed bug in PL/SQL parsing of worksheet.
-2001-01-23: Make toTool::toolWindow take QWidget as first parameter
-		(Tools can be empedded in other tools now).
+2001-01-23: Make toTool::toolWindow take QWidget as first parameter.
 2001-01-23: Added support for bind variables in worksheet.
 2001-01-24: Stop forcing char when querying.
-2001-01-24: Changed otl so it forces char on number and date columns unless
-		explicitly forced.
+2001-01-24: Changed otl so it forces char on number and date columns unless explicitly forced.
 2001-01-24: Added support for CLOB/BLOB column types.
 2001-01-25: Added enable/disable to SQL output.
 2001-01-26: Added location of editor to statusbar.
 2001-01-27: Finnished first working version of PL/SQL debugger.
-2001-01-27: Modified configure script to find moc better and work with
-		Oracle 8.0 better (Thanx Uwe Schneider)
+2001-01-27: Configure script find moc better and work with Oracle 8.0 (Thanx Uwe Schneider).
 
 0.3: Released 2001-01-17

@@ -291,7 +291,7 @@ void toResultStats::poll(void)
       }
       delete SessionIO;
       SessionIO=NULL;
-    } else
+    } else if (SessionIO)
       done=false;
 
     if (done)
