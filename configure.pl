@@ -52,6 +52,7 @@ my $Includes;
 my $CC;
 my $Libs="-lcrypt -lm -lpthread -ldl";
 my $MOC;
+my $UIC;
 my $QtDir;
 my $QtInclude;
 my $QtLibDir;
@@ -82,6 +83,8 @@ for (@ARGV) {
 	$QtLibOrig=$1;
     } elsif (/^--with-qt-moc=(.*)$/) {
 	$MOC=$1;
+    } elsif (/^--with-qt-uic=(.*)$/) {
+	$UIC=$1;
     } elsif (/^--prefix=(.*)$/) {
 	$InstallPrefix=$1;
     } elsif (/^--prefix-bin=(.*)$/) {
@@ -117,6 +120,7 @@ Options can be any of the following:
 --prefix-lib       Library directory of install
 --with-qt          Specify Qt base directory
 --with-qt-moc      Specify moc command to use
+--with-qt-uic      Specify uic command to use
 --with-qt-include  Specify Qt include directory
 --with-qt-libs     Specify Qt library directory
 --with-gcc         Specify which GCC compiler to use
@@ -270,6 +274,27 @@ __TEMP__
 	exit(2);
     }
     print "Using metacompiler $MOC\n";
+
+    if (!defined $UIC || ! -x $UIC) {
+	$UIC=findFile("uic",sub { return -x $_[0]; },
+		      $QtDir."/bin",
+		      "/usr/lib/qt2",
+		      "/usr/lib/qt2/bin",
+		      "/usr/local/lib/qt2",
+		      "/usr/local/lib/qt2/bin",
+		      "/usr/lib/qt",
+		      "/usr/bin",
+		      "/usr/local/bin",
+		      "/usr/local/lib/qt");
+	if (defined $UIC && -d $UIC) {
+	    $UIC.="/uic";
+	}
+    }
+    if (!-x $UIC) {
+	print "Couldn't find user interfance compiler for Qt\n";
+	exit(2);
+    }
+    print "Using usere interface compiler $UIC\n";
 
     $QtInclude=findFile("^qglobal\\.h\$",sub {
 	                                     return !system("grep -E \"#define[ \t]+QT_VERSION[ \t]+((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
@@ -592,6 +617,10 @@ __EOT__
 
 	print MAKEFILE "# Path to Qt meta compiler\n";
 	print MAKEFILE "MOC=\"$MOC\"\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Path to Qt interface compiler\n";
+	print MAKEFILE "UIC=\"$UIC\"\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional paths to find libraries\n";
