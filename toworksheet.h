@@ -62,6 +62,7 @@ class QLineEdit;
 class QCheckBox;
 class QLabel;
 class QComboBox;
+class QPopupMenu;
 class toTool;
 class QSplitter;
 class toVisualize;
@@ -88,7 +89,10 @@ class toWorksheet : public toToolWidget {
   bool TryStrip;
   toResultCols *Columns;
   QComboBox *Refresh;
-  QComboBox *SavedSQL;
+
+  QPopupMenu *SavedMenu;
+  QToolButton *SavedButton;
+  QString SavedLast;
   QTime Timer;
 
   QWidget *Current;
@@ -142,6 +146,8 @@ public slots:
   void enableStatistic(bool);
   void toggleStatistic(void)
   { StatisticButton->setOn(!StatisticButton->isOn()); }
+  void showSaved(void);
+  void executeSaved(int index);
   void executeSaved(void);
   void editSaved(void);
   void selectSaved(void);

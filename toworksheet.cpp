@@ -448,24 +448,19 @@ void toWorksheet::setup(bool autoLoad)
     Refresh->setEnabled(false);
 
     toolbar->addSeparator();
-    SavedSQL=new QComboBox(toolbar);
-    connect(SavedSQL,SIGNAL(activated(int)),this,SLOT(executeSaved()));
-    toolbar->setStretchableWidget(SavedSQL);
-    
-    const toSQL::sqlMap &def=toSQL::definitions();
-    for(toSQL::sqlMap::iterator i=((toSQL::sqlMap &)def).begin();
-	i!=((toSQL::sqlMap &)def).end();i++) {
-      if ((*i).first.startsWith(TOWORKSHEET))
-	SavedSQL->insertItem((*i).first.mid(strlen(TOWORKSHEET)));
-    }
 
-    new QToolButton(QPixmap((const char **)compile_xpm),
-		    "Run current saved SQL",
-		    "Run current saved SQL",
-		    this,SLOT(executeSaved(void)),
-		    toolbar);
-    toolbar->addSeparator();
+    SavedButton=new QToolButton(QPixmap((const char **)compile_xpm),
+				"Run current saved SQL",
+				"Run current saved SQL",
+				this,SLOT(executeSaved(void)),
+				toolbar);
+    SavedMenu=new QPopupMenu(SavedButton);
+    SavedButton->setPopup(SavedMenu);
+    SavedButton->setPopupDelay(0);
+    connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
+    connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
 
+    toolbar->setStretchableWidget(new QLabel("",toolbar));
     new toChangeConnection(toolbar);
 
     connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
@@ -494,8 +489,7 @@ void toWorksheet::setup(bool autoLoad)
     } else {
       StatisticButton->setEnabled(false);
     }
-    setTabOrder(Refresh,SavedSQL);
-    setTabOrder(SavedSQL,Editor);
+    setTabOrder(Refresh,Editor);
     setTabOrder(Editor,Result);
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
@@ -568,9 +562,9 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Edit saved SQL",
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Execute previous log entry",this,SLOT(executePreviousLog()),
+      ToolMenu->insertItem("Previous log entry",this,SLOT(executePreviousLog()),
 			   ALT+Key_Up);
-      ToolMenu->insertItem("Execute next log entry",this,SLOT(executeNextLog()),
+      ToolMenu->insertItem("Next log entry",this,SLOT(executeNextLog()),
 			   ALT+Key_Down);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
@@ -1280,27 +1274,81 @@ void toWorksheet::executeSaved(void)
 
   LastLine=LastOffset=-1;
 
-  QString sql=SavedSQL->currentText();
-  if (sql.length()>0) {
-    sql.prepend(TOWORKSHEET);
+  if (SavedLast.length()>0) {
     try {
-      query(toSQL::string(sql,connection()),false);
+      query(toSQL::string(SavedLast,connection()),false);
     } TOCATCH
+  }
+}
+
+void toWorksheet::executeSaved(int id)
+{
+  std::list<QString> def=toSQL::range(TOWORKSHEET);
+  for(std::list<QString>::iterator i=def.begin();i!=def.end();i++) {
+    id--;
+    if (id==0) {
+      SavedLast=(*i);
+      executeSaved();
+      break;
+    }
+  }
+}
+
+void toWorksheet::showSaved(void)
+{
+  static QRegExp colon(":");
+  std::list<QString> def=toSQL::range(TOWORKSHEET);
+  SavedMenu->clear();
+  std::map<QString,QPopupMenu *> menues;
+  int id=0;
+  for(std::list<QString>::iterator sql=def.begin();sql!=def.end();sql++) {
+
+    id++;
+
+    QStringList spl=QStringList::split(colon,*sql);
+    spl.remove(spl.begin());
+
+    if (spl.count()>0) {
+      QString name=spl.last();
+      spl.remove(spl.fromLast());
+
+      QPopupMenu *menu;
+      if (spl.count()==0)
+	menu=SavedMenu;
+      else {
+	QStringList exs=spl;
+	while (exs.count()>0&&menues.find(exs.join(":"))==menues.end())
+	  exs.remove(exs.fromLast());
+	if (exs.count()==0)
+	  menu=SavedMenu;
+	else
+	  menu=menues[exs.join(":")];
+	QString subname=exs.join(":");
+	for (unsigned int i=exs.count();i<spl.count();i++) {
+	  QPopupMenu *next=new QPopupMenu(this);
+	  if (i!=0)
+	    subname+=":";
+	  subname+=spl[i];
+	  menu->insertItem(spl[i],next);
+	  menu=next;
+	  menues[subname]=menu;
+	}
+      }
+      menu->insertItem(name,id);
+    }
   }
 }
 
 void toWorksheet::editSaved(void)
 {
-  QString sql=SavedSQL->currentText();
-  if (sql.isEmpty())
-    sql="Untitled";
-  sql.prepend(TOWORKSHEET);
+  QString sql=TOWORKSHEET;
+  sql+="Untitled";
   toMainWidget()->editSQL(sql);
 }
 
 void toWorksheet::selectSaved()
 {
-  SavedSQL->setFocus();
+  SavedMenu->popup(SavedButton->mapToGlobal(QPoint(0,SavedButton->height())));
 }
 
 void toWorksheet::executePreviousLog(void)
