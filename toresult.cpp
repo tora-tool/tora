@@ -51,9 +51,9 @@ toResult::toResult()
   QTimer::singleShot(1,&Slots,SLOT(setup()));
   Handled=true;
   Tabs=NULL;
-  TabIndex=-1;
   QueryReady=FromSQL=false;
   TabWidget=NULL;
+  ForceRefresh=false;
 }
 
 void toResult::changeHandle(void)
@@ -110,6 +110,7 @@ void toResult::setHandle(bool ena)
 
 void toResult::connectionChanged(void)
 {
+  ForceRefresh=true;
   if(FromSQL) {
     try {
       if (QueryReady)
@@ -122,6 +123,7 @@ void toResult::connectionChanged(void)
     }
   } else
     setHandle(true);
+  
 }
 
 toTimer *toResult::timer(void)
@@ -217,6 +219,9 @@ void toResultObject::setup(void)
   }
   try {
     QObject::connect(toCurrentTool(obj),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+  } catch(...) {
+  }
+  try {
     if (Result->Handled)
       Result->Handled=Result->canHandle(Result->connection());
   } catch(...) {
@@ -228,6 +233,8 @@ void toResultObject::setup(void)
 
 bool toResult::setSQLParams(const QString &sql,const toQList &par)
 {
+  bool force=ForceRefresh;
+  ForceRefresh=false;
   if (!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty()) {
     if (SQL==sql&&par.size()==Params.size()) {
       toQList::iterator i=((toQList &)par).begin();
@@ -239,7 +246,7 @@ bool toResult::setSQLParams(const QString &sql,const toQList &par)
 	j++;
       }
       if (i==((toQList &)par).end()&&j==Params.end())
-	return false;
+	return force;
     }
   }
   SQL=sql;
@@ -250,7 +257,6 @@ bool toResult::setSQLParams(const QString &sql,const toQList &par)
 
 void toResult::refresh()
 {
-  QString t=SQL;
-  SQL="refresh";
-  query((const QString &)t,(const toQList &)Params);
+  ForceRefresh=true;
+  query((const QString &)SQL,(const toQList &)Params);
 }

@@ -77,11 +77,10 @@ class toResult {
   bool Handled;
   QTabWidget *Tabs;
 
-  int TabIndex; 
-  QString TabLabel;
   QWidget *TabWidget;
 
   QString SQL;
+  bool ForceRefresh;
   bool QueryReady;
   toQList Params;
   bool FromSQL;
@@ -91,7 +90,9 @@ protected:
    */
   void setParams(const toQList &par)
   { Params=par; QueryReady=true; }
-  /** Set SQL and parameters and return false if query shouldn't be reexecuted.
+  /** Set SQL and parameters and return false if query shouldn't be reexecuted. It is
+   * important that all descendants call this function in the beginning of the implementation
+   * of the query function to determine if the query should be reexecuted or not.
    */
   bool setSQLParams(const QString &sql,const toQList &par);
 public:

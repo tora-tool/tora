@@ -39,8 +39,9 @@
 
 #include <qstring.h>
 
-class toMarkedText;
 class toConnection;
+class toMarkedText;
+class toSyntaxAnalyzer;
 
 /** A bunch of functions to parse and indent SQL text.
  */
@@ -111,6 +112,13 @@ public:
     /** Copy operator
      */
     const statement &operator = (const statement &);
+    /** Equality operator. Does not include the line for comparison.
+     */
+    bool operator == (const statement &) const;
+    /** Non rquality operator. Does not include the line for comparison.
+     */
+    bool operator != (const statement &stat) const
+      { return !((*this)==stat); }
     /** Destroy statement
      */
     ~statement();
@@ -119,6 +127,8 @@ public:
   /** Abstract class to define a source of tokens for the parser.
    */
   class tokenizer {
+  private:
+    toSyntaxAnalyzer *Analyzer;
   protected:
     int Offset;
     int Line;
@@ -126,7 +136,11 @@ public:
     /** Create a tokenizer. Optionally specify which line and offset to start at.
      */
     tokenizer(int offset=0,int line=0)
-    { Line=line; Offset=offset; }
+    { Line=line; Offset=offset; Analyzer=NULL; }
+    /** Create a tokenizer. Optionally specify which line and offset to start at.
+     */
+    tokenizer(toSyntaxAnalyzer &analyzer,int offset=0,int line=0)
+    { Line=line; Offset=offset; Analyzer=&analyzer; }
     virtual ~tokenizer()
     { }
     /** Get a token from the string.
@@ -134,6 +148,12 @@ public:
      * @param comment Include comments as tokens.
      */
     virtual QString getToken(bool forward=true,bool comment=false) = 0;
+    /** Specify the syntax analyzer to use for the tokanizer
+     * @param analyzer
+     */
+    virtual void setAnalyzer(toSyntaxAnalyzer &analyzer)
+    { Analyzer=&analyzer; }
+    virtual toSyntaxAnalyzer &analyzer();
     /** Get the current line of the tokenizer. A line is defined by a \n character
      */
     virtual int line(void)
@@ -165,6 +185,9 @@ public:
     stringTokenizer(const QString &str,int offset=0,int line=0)
       : tokenizer(offset,line)
     { String=str; }
+    stringTokenizer(const QString &str,toSyntaxAnalyzer &analyzer,int offset=0,int line=0)
+      : tokenizer(analyzer,offset,line)
+    { String=str; }
     /** Get a token from the string.
      * @param forward Go forward or backwards to get next token.
      * @param comment Include comments as tokens.
@@ -181,9 +204,12 @@ public:
   class editorTokenizer : public tokenizer {
     toMarkedText *Editor;
   public:
-    editorTokenizer(toMarkedText *editor,int offset=0,int line=0)
-      : tokenizer(offset,line)
-    { Editor=editor; }
+    /** Create a tokenizer which takes its input from an editor.
+     * @param editor The editor to read from. Observe that if this
+     * is a syntax highlighted editor the syntax analyzer is used
+     * that is used for the editor.
+     */
+    editorTokenizer(toMarkedText *editor,int offset=0,int line=0);
     /** Get a token from the string.
      * @param forward Go forward or backwards to get next token.
      * @param comment Include comments as tokens.
@@ -200,11 +226,6 @@ public:
    * @return Parsed statement tree.
    */
   static std::list<statement> parse(tokenizer &tokens);
-  /** Parse a string.
-   * @param tokens Tokenizer provider to generate parsed tree from.
-   * @return Parsed statement tree.
-   */
-  static std::list<statement> parse(tokenizer &tokens,toConnection &conn);
   /** Parse a string.
    * @param str String to parse.
    * @return Parsed statement tree.
@@ -249,6 +270,13 @@ public:
   /** Indent a parse statement structure into a string.
    * @param stat Statement to indent.
    * @param level Initial indentation level to use.
+   * @param syntax The syntax analyzer to use.
+   * @return A string with the indented statement.
+   */
+  static QString indentStatement(statement &stat,toConnection &conn,int level=0);
+  /** Indent a parse statement structure into a string.
+   * @param stat Statement to indent.
+   * @param level Initial indentation level to use.
    * @return A string with the indented statement.
    */
   static QString indentStatement(statement &stat,int level=0);
@@ -263,15 +291,47 @@ public:
    * @param level Number of characters to indent.
    */
   static QString indentString(int level);
+
+  /** Indent a string.
+   * @param str List of statements
+   * @param conn Connection to determine SQL dialect. (For future use)
+   * @return An indented string.
+   */
+  static QString indent(std::list<statement> &stat,toConnection &conn);
+  /** Indent a string.
+   * @param stat List of statements
+   * @return An indented string.
+   */
+  static QString indent(std::list<statement> &stat);
+
   /** Count indentation level of a string.
    * @param str String to check.
    * @param chars Position in string.
    */
   static int countIndent(const QString &str,int &chars);
+  /** Indent a string.
+   * @param str String to indent.
+   * @param syntax Syntax analyzer to determine SQL dialect. (For future use)
+   * @return An indented string.
+   */
+  static QString indent(const QString &str,toSyntaxAnalyzer &syntax);
+  /** Indent a string.
+   * @param stat List of statements
+   * @param syntax Syntax analyzer to determine SQL dialect. (For future use)
+   * @return An indented string.
+   */
+  static QString indent(std::list<statement> &stat,toSyntaxAnalyzer &syntax);
 private:
   static settings Settings;
   static statement parseStatement(tokenizer &tokens,
 				  bool declare,bool lst);
+  /** Indent a parse statement structure into a string.
+   * @param stat Statement to indent.
+   * @param level Initial indentation level to use.
+   * @param syntax The syntax analyzer to use.
+   * @return A string with the indented statement.
+   */
+  static QString indentStatement(statement &stat,int level,toSyntaxAnalyzer &conn);
 public:
   /** Get current settings.
    */

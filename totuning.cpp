@@ -1585,9 +1585,9 @@ void toTuning::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),this,SLOT(refresh(void)),
-			   Key_F5);
+			   toKeySequence(tr("F5", "Tuning|Refresh")));
       ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
-			   Key_R+ALT);
+			   toKeySequence(tr("Alt+R", "Tuning|Change refresh")));
       toMainWidget()->menuBar()->insertItem(tr("&Tuning"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
@@ -1732,10 +1732,10 @@ toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
     TablespaceReads=new QGrid(2,Box);
     TablespaceTime=new QGrid(2,Box);
 
-    FileReads->setFixedWidth(viewport()->width()-50);
-    FileTime->setFixedWidth(viewport()->width()-50);
-    TablespaceReads->setFixedWidth(viewport()->width()-50);
-    TablespaceTime->setFixedWidth(viewport()->width()-50);
+    FileReads->setFixedWidth(viewport()->width()-30);
+    FileTime->setFixedWidth(viewport()->width()-30);
+    TablespaceReads->setFixedWidth(viewport()->width()-30);
+    TablespaceTime->setFixedWidth(viewport()->width()-30);
     changeCharts(0);
     CurrentStamp=0;
     connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
@@ -1943,10 +1943,10 @@ void toTuningFileIO::resizeEvent(QResizeEvent *e)
 {
   QScrollView::resizeEvent(e);
 
-  FileReads->setFixedWidth(viewport()->width()-50);
-  FileTime->setFixedWidth(viewport()->width()-50);
-  TablespaceReads->setFixedWidth(viewport()->width()-50);
-  TablespaceTime->setFixedWidth(viewport()->width()-50);
+  FileReads->setFixedWidth(viewport()->width()-30);
+  FileTime->setFixedWidth(viewport()->width()-30);
+  TablespaceReads->setFixedWidth(viewport()->width()-30);
+  TablespaceTime->setFixedWidth(viewport()->width()-30);
 }
 
 void toTuningFileIO::changeConnection(void)

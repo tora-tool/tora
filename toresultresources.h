@@ -38,7 +38,7 @@
 #include "toresultitem.h"
 #include "tosql.h"
 
-#define TOSQL_RESULTRESOURCE "toResultResources:Information"
+#define TOSQL_RESULTRESOURCE 
 
 /** This widget displays information about resources of a query. The statement
  * is identified by the first parameter which should be the address as gotten
@@ -51,9 +51,7 @@ public:
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultResources(QWidget *parent,const char *name=NULL)
-    : toResultItem(3,true,parent,name)
-  { toSQL sql(toSQL::sql(TOSQL_RESULTRESOURCE)); setSQL(sql); }
+  toResultResources(QWidget *parent,const char *name=NULL); // Implemented in toresultitem.cpp
 };
 
 #endif

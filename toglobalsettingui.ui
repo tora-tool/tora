@@ -1,13 +1,10 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>toGlobalSettingUI</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>toGlobalSettingUI</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -15,786 +12,626 @@
             <height>480</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>toGlobalSettingUI</string>
     </property>
-    <property>
-        <name>layoutSpacing</name>
+    <property name="layoutSpacing" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0">
+            <property name="name">
                 <cstring>GroupBox2</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Paths</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
                         <cstring>TextLabel5</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Custom SQL</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>CustomSQL</cstring>
                     </property>
                 </widget>
-                <widget row="0"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="0" column="2">
+                    <property name="name">
                         <cstring>SQLBrowse</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Browse</string>
                     </property>
                 </widget>
-                <widget row="0"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
                         <cstring>CustomSQL</cstring>
                     </property>
+                    <property name="frameShape">
+                        <enum>LineEditPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
                 </widget>
-                <widget row="3"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="3" column="2">
+                    <property name="name">
                         <cstring>PluginBrowse</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Browse</string>
                     </property>
                 </widget>
-                <widget row="3"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="3" column="1">
+                    <property name="name">
                         <cstring>PluginDirectory</cstring>
                     </property>
                 </widget>
-                <widget row="3"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
                         <cstring>PluginLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Plugin directory</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>PluginDirectory</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Directory where to find plugins when starting.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="4" column="2">
+                    <property name="name">
                         <cstring>CacheBrowse</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Browse</string>
                     </property>
                 </widget>
-                <widget row="4"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="4" column="1">
+                    <property name="name">
                         <cstring>CacheDirectory</cstring>
                     </property>
                 </widget>
-                <widget row="4"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="4" column="0">
+                    <property name="name">
                         <cstring>CacheLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Cache directory</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>CacheDirectory</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Directory where to place cached dataaseinformation.</string>
                     </property>
                 </widget>
-
-                <widget row="1"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
                         <cstring>PluginLabel_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Help directory</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>HelpDirectory</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Directory where to find help files.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
                         <cstring>HelpDirectory</cstring>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="1" column="2">
+                    <property name="name">
                         <cstring>HelpBrowse</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Browse</string>
                     </property>
                 </widget>
-                <widget row="2"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
                         <cstring>PluginLabel_2_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Default session</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>DefaultSession</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Default session to use when saving a session.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="2" column="1">
+                    <property name="name">
                         <cstring>DefaultSession</cstring>
                     </property>
                 </widget>
-                <widget row="2"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="2" column="2">
+                    <property name="name">
                         <cstring>HelpBrowse_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Browse</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="1" column="0">
+            <property name="name">
                 <cstring>OptionGroup</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Options</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="1"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
                         <cstring>SavePassword</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Save passwords</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="accel">
+                        <string>Alt+S</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
                         <string>Remember the last password you used to connect.
 Will leave the password unencryptet in the config file.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
                         <cstring>IncludeDB</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Include DB in caption</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Include database connection in window captions</string>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>ChangeConnection</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Change current connection with active window</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Change currently select connection to the connection of the new active window</string>
                     </property>
                 </widget>
-                <widget row="0"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="0" column="3">
+                    <property name="name">
                         <cstring>TextLabel3_2_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Connect history</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>ConnectHistory</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of connections to save in history.</string>
                     </property>
                 </widget>
-                <widget row="0"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="0" column="4" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>ConnectHistory</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string></string>
                     </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
+                    <property name="maxValue">
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="2"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="2" column="4" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>HistorySize</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string></string>
                     </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
+                    <property name="maxValue">
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="2"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="2" column="3">
+                    <property name="name">
                         <cstring>TextLabel3_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Message history</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>HistorySize</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of status messages to save in the message history.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="1" column="4" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>Status</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string> seconds</string>
                     </property>
                 </widget>
-                <widget row="1"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="1" column="3">
+                    <property name="name">
                         <cstring>StatusLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Status &amp;message</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>Status</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="1" column="1" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>Statusbar</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Display alerts in statusbar only</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="3" column="1" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>ToolsLeft</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Tools toolbar on left</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Start using the tools toolbar on the left of the main window instead of at the top.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="2" column="1" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>MaximizeMain</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Maximize window on start</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="3" column="0">
+                    <property name="name">
                         <cstring>RestoreSession</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Restore session on startup</string>
                     </property>
                 </widget>
-                <widget row="4"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="4" column="0">
+                    <property name="name">
                         <cstring>DesktopAware</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Desktop aware</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Colors get really weird in KDE if you select this.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="5" column="0">
+                    <property name="name">
                         <cstring>AntialiaseFonts</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Antialiase fonts</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="6" column="0">
+                    <property name="name">
                         <cstring>DockToolbar</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Docks use toolbars</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Check this if docks are to use toolbars instead of normal frames.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="8" column="3">
+                    <property name="name">
                         <cstring>StyleLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Style</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>Style</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>The style to use for the user interface.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="5" column="3">
+                    <property name="name">
                         <cstring>SizeLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Size Unit</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>SizeUnite</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Define the unit sizes should be displayed.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QComboBox" row="6" column="4" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>Refresh</cstring>
                     </property>
                 </widget>
-                <widget row="5"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QComboBox</class>
+                <widget class="QComboBox" row="5" column="4" rowspan="1" colspan="2">
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Bytes</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>KB</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>MB</string>
                         </property>
                     </item>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>SizeUnit</cstring>
                     </property>
                 </widget>
-                <widget row="7"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QComboBox</class>
+                <widget class="QComboBox" row="7" column="4" rowspan="1" colspan="2">
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Text</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Tab delimited</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>CSV</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>HTML</string>
                         </property>
                     </item>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>DefaultFormat</cstring>
                     </property>
                 </widget>
-                <widget row="7"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="7" column="3">
+                    <property name="name">
                         <cstring>TextLabel2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Default list format</string>
                     </property>
                 </widget>
-                <widget row="6"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="6" column="3">
+                    <property name="name">
                         <cstring>RefreshLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Refresh</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>Refresh</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Default refreshtime in tools.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="4"  rowspan="1"  colspan="2" >
-                    <class>QComboBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QComboBox" row="8" column="4" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>Style</cstring>
                     </property>
                 </widget>
-                <widget row="3"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="3" column="3">
+                    <property name="name">
                         <cstring>TextLabel3_2_3</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Chart samples</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>HistorySize</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of samples to keep in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="4" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="3" column="4">
+                    <property name="name">
                         <cstring>ChartSamples</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string></string>
                     </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
+                    <property name="maxValue">
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="3"  column="5" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="3" column="5">
+                    <property name="name">
                         <cstring>UnlimitedSamples</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Unlimited</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Save unlimited number of samples. Can large amounts of consume memory.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="3" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="4" column="3">
+                    <property name="name">
                         <cstring>TextLabel3_2_3_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Display samples</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>HistorySize</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of samples to display in line and barcharts by default.</string>
                     </property>
                 </widget>
-                <widget row="4"  column="4" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="4" column="4">
+                    <property name="name">
                         <cstring>DisplaySamples</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string></string>
                     </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
+                    <property name="maxValue">
                         <number>1000</number>
                     </property>
                 </widget>
-                <widget row="4"  column="5" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="4" column="5">
+                    <property name="name">
                         <cstring>AllSamples</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>All</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Display all available samples</string>
                     </property>
                 </widget>
-                <widget row="4"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="4" column="1" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>DiskCaching</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Use Disk Caching</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Use Disk Caching of ObjectLists and Synonyms</string>
                     </property>
                 </widget>
-                <widget row="5"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>UpgradeCheck</cstring>
+                <widget class="QLabel" row="8" column="1">
+                    <property name="name">
+                        <cstring>LocaleLabel</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Check for upgrades on startup</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Check the TOra webpage for upgrades to the program. Does not send any information about the users computer or TOra installation.</string>
-                    </property>
-                </widget>
-
-                <widget row="8"  column="1" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>7</hsizetype>
                             <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Translation</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Which translation locale to use for this program. Must restart to have effect.</string>
                     </property>
                 </widget>
-                <widget row="8"  column="2" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="8" column="2">
+                    <property name="name">
                         <cstring>Locale</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>4</hsizetype>
                             <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="5" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>UpgradeCheck</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Check for upgrades on startup</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Check the homepage for upgrades to the program. Does not send any information about the users computer or installation.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>DisplayGrid</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Display gridlines in results</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use TOAD keybindings instead of classic TOra.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>ToadBindings</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Prefer TOAD key bindings</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Use TOAD keybindings instead of classic TOra.</string>
                     </property>
                 </widget>
             </grid>
@@ -844,10 +681,6 @@ Will leave the password unencryptet in the config file.</string>
         <receiver>DisplaySamples</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
-    <slot access="public">helpBrowse()</slot>
-    <slot access="public">sessionBrowse()</slot>
-    <slot access="public">pluginBrowse()</slot>
-    <slot access="public">sqlBrowse()</slot>
 </connections>
 <tabstops>
     <tabstop>CustomSQL</tabstop>
@@ -882,4 +715,11 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>DefaultFormat</tabstop>
     <tabstop>Style</tabstop>
 </tabstops>
+<slots>
+    <slot>helpBrowse()</slot>
+    <slot>sessionBrowse()</slot>
+    <slot>pluginBrowse()</slot>
+    <slot>sqlBrowse()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -2546,7 +2546,7 @@ QString toOracleExtract::segmentAttributes(toExtract &ext,toQList &result) const
 	ret+=cache;
 	ret+="\n";
       }
-      if (!ext.state("IsASnapIndex").toBool())
+      if (!ext.state("IsASnapIndex").toBool()&&!pctUsed.isEmpty())
 	ret+=QString("%1PCTUSED             %2\n").arg(indent).arg(pctUsed);
     }
     if (!ext.state("IsASnapIndex").toBool())
@@ -2838,7 +2838,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
   if (organization == "HEAP") {
     if (cache!="N/A")
       addDescription(dsp,ctx,"PARAMETERS",cache);
-    if (!ext.state("IsASnapIndex").toBool())
+    if (!ext.state("IsASnapIndex").toBool()&&!pctUsed.isEmpty())
       addDescription(dsp,ctx,"PARAMETERS",QString("PCTUSED %1").arg(pctUsed));
   }
   if (!ext.state("IsASnapIndex").toBool())
@@ -3372,14 +3372,15 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
   while(cols.size()>0) {
     QString col=QUOTE(toShift(cols));
     QString line=toShift(cols);
-    QString def=toShift(cols);
-    if (!def.isEmpty()) {
+    QString extra=toShift(cols);
+    if (!extra.isEmpty()) {
       line+=" DEFAULT ";
-      line+=def;
+      line+=extra;
     }
-    line+=toShift(cols);
+    extra+=toShift(cols);
     addDescription(lst,ctx,"COLUMN",col);
     addDescription(lst,ctx,"COLUMN",col,line);
+    addDescription(lst,ctx,"COLUMN",col,"EXTRA",extra);
     addDescription(lst,ctx,"COLUMN",col,"ORDER",QString::number(num));
     num++;
   }
@@ -5553,9 +5554,10 @@ void toOracleExtract::describeIndex(toExtract &ext,
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
-  ctx.insert(ctx.end(),QString("%1%2 INDEX").arg(unique).arg(bitmap).mid(1));
+  ctx.insert(ctx.end(),QString("INDEX"));
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx,"ON",schema2+QUOTE(table));
+  addDescription(lst,ctx,QString("%1%2 INDEX").arg(unique).arg(bitmap).mid(1));
 
   addDescription(lst,ctx);
   if (!reverse.isEmpty())

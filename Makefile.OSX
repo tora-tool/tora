@@ -361,7 +361,7 @@ all: $(MAC_TARGET) lrelease
 #$(OBJECTS): Makefile Makefile.common
 
 .depends/%.d: %.cpp
-	@echo Making dependences for $<
+	@echo Making dependencies for $<
 	if [ ! -d .depends ] ; then mkdir -p .depends ; fi
 	$(GCC) -MM $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
@@ -435,6 +435,16 @@ distclean: clean
 	-rm -f \#*\# >/dev/null 2>&1
 	-rm -f LICENSE.h >/dev/null 2>&1
 	-rm -f configure.setup >/dev/null 2>&1
+
+# Keyboard shortcuts
+
+main.cpp: tora_toad.h
+
+tora_toad.h: tora_toad.qm
+	$(PERL) chex.pl < $< > $@
+
+tora_toad.qm: tora_toad.ts
+	$(LRELEASE) $<
 
 # Static target, easier to distribute
 

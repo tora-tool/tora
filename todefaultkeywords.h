@@ -32,7 +32,7 @@
  *
  ****************************************************************************/
 
-static char *DefaultKeywords[]={
+static const char *DefaultKeywords[]={
   "ABORT",
   "ACCESS",
   "ACCESSED",
@@ -89,6 +89,7 @@ static char *DefaultKeywords[]={
   "BLOCK_RANGE",
   "BODY",
   "BOTH",
+  "BOOLEAN",
   "BOUND",
   "BROADCAST",
   "BUFFER_POOL",

@@ -1017,7 +1017,7 @@ static toSQL SQLStackTrace("toDebug:StackTrace",
 			   "                                                                 SYS.DBMS_DEBUG.LibunitType_procedure,'PROCEDURE',\n"
 			   "                                                                 SYS.DBMS_DEBUG.LibunitType_package,'PACKAGE',\n"
 			   "                                                                 SYS.DBMS_DEBUG.LibunitType_package_body,'PACKAGE BODY',\n"
-			   "                                                                 SYS.DBMS_DEBUG.LibunitType_trigger,'TRIGGEER',\n"
+			   "                                                                 SYS.DBMS_DEBUG.LibunitType_trigger,'TRIGGER',\n"
 			   "                                                                 'UNKNOWN')\n"
 			   "    INTO :name<char[101],out>,:owner<char[101],out>,:line<int,out>,:type<char[101],out> FROM sys.DUAL;\n"
 			   "END;",
@@ -1437,6 +1437,10 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
       editor->readData(connection(),StackTrace);
       updateContent(editor);
       Editors->changeTab(editor,editorName(editor));
+      if (editor->hasErrors())
+        Editors->setTabIconSet(editor,QIconSet(QPixmap((const char **)nextbug_xpm)));
+      else
+        Editors->setTabIconSet(editor,QIconSet());
     }
     Editors->showPage(editor);
     if (setCurrent)
@@ -1548,8 +1552,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)toworksheet_xpm),
-		  tr("Clean sheet"),
-		  tr("Clean sheet"),
+		  tr("New sheet"),
+		  tr("New sheet"),
 		  this,SLOT(newSheet(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)scansource_xpm),
@@ -2054,7 +2058,7 @@ bool toDebugText::compile(void)
       toQList nopar;
       Debugger->executeInTarget(sql,nopar);
       Schema=schema.upper();
-      Object=object.upper();
+      Object=Debugger->connection().unQuote(object.upper());
       Type=type.upper();
       if (body)
 	Type+=QString::fromLatin1(" BODY");
@@ -2090,6 +2094,10 @@ void toDebug::compile(void)
 	    break;
 	  }
       }
+      if (editor->hasErrors())
+ 	Editors->setTabIconSet(editor,QIconSet(QPixmap((const char **)nextbug_xpm)));
+      else
+ 	Editors->setTabIconSet(editor,QIconSet());
       Editors->changeTab(editor,editorName(editor));
     } else
       return;
@@ -2208,10 +2216,10 @@ void toDebug::windowActivated(QWidget *widget)
 			   0,TO_ID_NEW_SHEET);
       ToolMenu->insertItem(QPixmap((const char **)scansource_xpm),
 			   tr("S&can Source"),this,SLOT(scanSource(void)),
-			   CTRL+Key_F9,TO_ID_SCAN_SOURCE);
+			   toKeySequence(tr("Ctrl+F9", "Debug|Scan source")),TO_ID_SCAN_SOURCE);
       ToolMenu->insertItem(QPixmap((const char **)compile_xpm),
 			   tr("&Compile"),this,SLOT(compile(void)),
-			   Key_F9,TO_ID_COMPILE);
+			   toKeySequence(tr("F9", "Debug|Compile")),TO_ID_COMPILE);
       ToolMenu->insertItem(QPixmap((const char **)close_xpm),
 			   tr("Close"),this,SLOT(closeEditor(void)),
 			   0,TO_ID_CLOSE_EDITOR);
@@ -2220,53 +2228,53 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
 			   tr("&Execute or continue"),this,SLOT(execute(void)),
-			   CTRL+Key_Return,TO_ID_EXECUTE);
+			   toKeySequence(tr("Ctrl+Return", "Debug|Execute")),TO_ID_EXECUTE);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
 			   tr("&Stop"),this,SLOT(stop(void)),
-			   Key_F12,TO_ID_STOP);
+			   toKeySequence(tr("F12", "Debug|Stop")),TO_ID_STOP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)stepinto_xpm),
 			   tr("Step &Into"),this,SLOT(stepInto(void)),
-			   Key_F7,TO_ID_STEP_INTO);
+			   toKeySequence(tr("F7", "Debug|Step into")),TO_ID_STEP_INTO);
       ToolMenu->insertItem(QPixmap((const char **)stepover_xpm),
 			   tr("&Next Line"),this,SLOT(stepOver(void)),
-			   Key_F8,TO_ID_STEP_OVER);
+			   toKeySequence(tr("F8", "Debug|Stop over")),TO_ID_STEP_OVER);
       ToolMenu->insertItem(QPixmap((const char **)returnfrom_xpm),
 			   tr("&Return From"),this,SLOT(returnFrom(void)),
-			   Key_F6,TO_ID_RETURN_FROM);
+			   toKeySequence(tr("F6", "Debug|Return from")),TO_ID_RETURN_FROM);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("&Debug Pane"),this,SLOT(toggleDebug(void)),
-			   Key_F11,TO_ID_DEBUG_PANE);
+			   toKeySequence(tr("F11", "Debug|Debug pane")),TO_ID_DEBUG_PANE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)nextbug_xpm),
 			   tr("Next &Error"),this,SLOT(nextError(void)),
-			   CTRL+Key_N);
+			   toKeySequence(tr("Ctrl+N", "Debug|Next error")));
       ToolMenu->insertItem(QPixmap((const char **)prevbug_xpm),
 			   tr("Pre&vious Error"),this,SLOT(prevError(void)),
-			   CTRL+Key_P);
+			   toKeySequence(tr("Ctrl+P", "Debug|Previous error")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)togglebreak_xpm),
 			   tr("&Toggle Breakpoint"),this,SLOT(toggleBreak(void)),
-			   CTRL+Key_F5);
+			   toKeySequence(tr("Ctrl+F5", "Debug|Toggle breakpoint")));
       ToolMenu->insertItem(QPixmap((const char **)enablebreak_xpm),
 			   tr("D&isable Breakpoint"),
 			   this,SLOT(toggleEnable(void)),
-			   CTRL+Key_F6);
+			   toKeySequence(tr("Ctrl+F6", "Debug|Disable breakpoint")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)addwatch_xpm),
 			   tr("&Add Watch..."),this,SLOT(addWatch(void)),
-			   Key_F4);
+			   toKeySequence(tr("F4", "Debug|Add watch")));
       ToolMenu->insertItem(QPixmap((const char **)delwatch_xpm),
 			   tr("Delete &Watch"),this,SLOT(deleteWatch(void)),
-			   CTRL+Key_Delete,TO_ID_DEL_WATCH);
+			   toKeySequence(tr("Ctrl+Delete", "Debug|Delete watch")),TO_ID_DEL_WATCH);
       ToolMenu->insertItem(QPixmap((const char **)changewatch_xpm),
 			   tr("Chan&ge Watch..."),this,SLOT(changeWatch(void)),
-			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
+			   toKeySequence(tr("Ctrl+F4", "Debug|Change watch")),TO_ID_CHANGE_WATCH);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Refresh Object List"),this,SLOT(refresh()),
-			   Key_F5);
+			   toKeySequence(tr("F5", "Debug|Refresh objectlist")));
       ToolMenu->insertItem(tr("Select Schema"),Schema,SLOT(setFocus(void)),
-			   ALT+Key_S);
+			   toKeySequence(tr("Alt+S", "Debug|Select schema")));
       ToolMenu->insertItem(tr("Erase Runtime &Log"),this,SLOT(clearLog(void)));
 
       toMainWidget()->menuBar()->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());

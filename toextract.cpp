@@ -119,6 +119,12 @@ void toExtract::extractor::drop(toExtract &,
 {
 }
 
+std::list<toExtract::datatype> toExtract::extractor::datatypes() const
+{
+  std::list<toExtract::datatype> ret;
+  return ret;
+}
+
 toExtract::extractor::extractor()
 {
 }
@@ -211,6 +217,9 @@ void toExtract::srcDst2DropCreate(std::list<QString> &source,std::list<QString> 
 	create.insert(create.end(),*j);
 	j++;
       }
+    } else {
+      i++;
+      j++;
     }
   }
   while(i!=source.end()) {
@@ -238,7 +247,7 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
       int pos=object.find('.');
       if (pos<0)
 	pos=object.length();
-      owner=object.left(pos).upper();
+      owner=object.left(pos);
       search=pos;
     }
     if (search>=object.length()) {
@@ -257,7 +266,7 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
       if (search<object.length())
 	throw 4;
     } else {
-      name=object.right(object.length()-search).upper();
+      name=object.right(object.length()-search);
     }
   } catch(int i) {
     throw qApp->translate("toExtract","Failed to extract owner and name from (%1), internal error %2").arg(object).arg(i);
@@ -267,6 +276,18 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
 bool toExtract::canHandle(toConnection &conn)
 {
   return bool(findExtractor(conn,QString::null,QString::null));
+}
+
+std::list<toExtract::datatype> toExtract::datatypes()
+{
+  std::list<toExtract::datatype> ret;
+  try {
+    extractor *ext=findExtractor(connection(),QString::null,QString::null);
+    if (ext)
+      ret=ext->datatypes();
+    ret.sort();
+  } TOCATCH
+  return ret;
 }
 
 void toExtract::create(QTextStream &ret,std::list<QString> &objects)
@@ -285,6 +306,7 @@ void toExtract::create(QTextStream &ret,std::list<QString> &objects)
   initialize();
 
   try {
+    toBusy busy;
     int num=1;
     for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
       if (progress) {
@@ -348,6 +370,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
   initialize();
 
   try {
+    toBusy busy;
     int num=1;
     for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
       if (progress) {
@@ -418,6 +441,7 @@ void toExtract::drop(QTextStream &ret,std::list<QString> &objects)
   initialize();
 
   try {
+    toBusy busy;
     int num=1;
     for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
       progress->setProgress(num);
@@ -474,9 +498,9 @@ std::map<QString,std::list<QString> > toExtract::migrateGroup(std::list<QString>
       toStatusMessage(qApp->translate("toExtract","Invalid describe context (<3 parts) \"%1\")").arg(*i));
     else {
       QString t=toShift(ctx);
-      t+=QString::fromLatin1(":");
+      t+=QString::fromLatin1("\01");
       t+=toShift(ctx);
-      t+=QString::fromLatin1(".");
+      t+=QString::fromLatin1("\01");
       t+=toShift(ctx);
       toPush(ret[t],*i);
     }
@@ -512,17 +536,20 @@ void toExtract::migrate(QTextStream &ret,std::list<QString> &drpLst,std::list<QS
   initialize();
 
   try {
+    toBusy busy;
     int num=1;
 
     for (std::map<QString,std::list<QString> >::iterator i=objDrp.begin();i!=objDrp.end();i++) {
       QString t=(*i).first;
 
-      progress->setProgress(num);
-      qApp->processEvents();
-      if (progress->wasCancelled())
-	throw qApp->translate("toExtract","Creating drop script was cancelled");
+      if (progress) {
+	progress->setProgress(num);
+	label->setText(t);
+	qApp->processEvents();
+	if (progress->wasCancelled())
+	  throw qApp->translate("toExtract","Creating drop script was cancelled");
+      }
       num++;
-      label->setText(t);
 
       std::list<QString> &crt=objCrt[t];
       std::list<QString> &drp=objDrp[t];
@@ -575,14 +602,14 @@ QString toExtract::generateHeading(const QString &action,
     db=QString::null;
   db+=Connection.database();
 
-  QString str=qApp->translate("toExtract","REM This DDL was reverse engineered by\n"
-			      "REM TOra, Version %1\n"
-			      "REM\n"
-			      "REM at:   %2\n"
-			      "REM from: %3, an %4 %5 database\n"
-			      "REM\n"
-			      "REM on:   %6\n"
-			      "REM\n").
+  QString str=qApp->translate("toExtract","-- This DDL was reverse engineered by\n"
+			      "-- " TOAPPNAME ", Version %1\n"
+			      "--\n"
+			      "-- at:   %2\n"
+			      "-- from: %3, an %4 %5 database\n"
+			      "--\n"
+			      "-- on:   %6\n"
+			      "--\n").
     arg(QString::fromLatin1(TOVERSION)).
     arg(QString::fromLatin1(host)).
     arg(db).
@@ -590,13 +617,13 @@ QString toExtract::generateHeading(const QString &action,
     arg(Connection.version()).
     arg(QDateTime::currentDateTime().toString());
   if (action==QString::fromLatin1("FREE SPACE"))
-    str+=qApp->translate("toExtract","REM Generating free space report for:\nREM");
+    str+=qApp->translate("toExtract","-- Generating free space report for:\n--");
   else {
-    str+=qApp->translate("toExtract","REM Generating %1 statement for:\n").arg(action);
+    str+=qApp->translate("toExtract","-- Generating %1 statement for:\n").arg(action);
   }
   for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
     if (!(*i).startsWith(QString::fromLatin1("TABLE REFERENCES"))) {
-      str+=QString::fromLatin1("REM ");
+      str+=QString::fromLatin1("-- ");
       str+=(*i);
       str+=QString::fromLatin1("\n");
     }
@@ -685,7 +712,7 @@ void toExtract::initialNext(const QString &blocks,QString &initial,QString &next
   }
 }
 
-void toExtract::addDescription(std::list<QString> &ret,std::list<QString> &ctx,
+void toExtract::addDescription(std::list<QString> &ret,const std::list<QString> &ctx,
 			       const QString &arg1,const QString &arg2,
 			       const QString &arg3,const QString &arg4,
 			       const QString &arg5,const QString &arg6,
@@ -778,4 +805,63 @@ QString toExtract::contextDescribe(const QString &str,int level)
   if (level==0)
     return str.mid(0,pos);
   return QString::null;
+}
+
+QString toExtract::createFromParse(std::list<toSQLParse::statement>::iterator start,
+				   std::list<toSQLParse::statement>::iterator end)
+{
+  QString ret;
+  toSQLParse::statement newstat(toSQLParse::statement::Statement);
+  while(start!=end) {
+    newstat.subTokens().insert(newstat.subTokens().end(),*start);
+    start++;
+  }
+  return toSQLParse::indentStatement(newstat,connection()).stripWhiteSpace();
+}
+
+std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QString>::const_iterator begin,
+								   std::list<QString>::const_iterator end,
+								   int level)
+{
+  std::list<columnInfo> ret;
+
+  while(begin!=end) {
+    std::list<QString> row=toExtract::splitDescribe(*begin);
+    for(int i=0;i<level;i++)
+      toShift(row);
+    if (toShift(row)=="COLUMN") {
+      QString name=toShift(row);
+      columnInfo *current=NULL;
+      for(std::list<toExtract::columnInfo>::iterator j=ret.begin();j!=ret.end();j++) {
+	if ((*j).Name==name) {
+	  current=&(*j);
+	  break;
+	}
+      }
+      if (current==NULL) {
+	ret.insert(ret.end(),columnInfo(name));
+	current=&(*(ret.rbegin()));
+      }
+      QString extra=toShift(row);
+      if (extra=="ORDER")
+	current->Order=toShift(row).toInt();
+      else if (!extra.isEmpty()) {
+	QString data=toShift(row);
+	if (data.isEmpty()) {
+	  if (!current->Definition.isEmpty())
+	    throw qApp->translate("toExtract","More than one definition for column %1").arg(name);
+	  current->Definition=extra;
+	} else {
+	  if (current->Data.find(extra)!=current->Data.end())
+	    throw qApp->translate("toExtract","Same kind of definition existing more than once for column %1").arg(name);
+	  current->Data[extra]=data;
+	}
+      }
+    }
+    begin++;
+  }
+
+  ret.sort();
+
+  return ret;
 }

@@ -52,13 +52,13 @@ class toResultView;
 class toResultParam : public QVBox, public toResult {
   Q_OBJECT
 
-  int LastItem;
+  QString LastItem;
   QString LastValue;
-  std::map<int,QString> NewValues;
+  std::map<QString,QString> NewValues;
 
   toResultView *Params;
   QLineEdit *Value;
-  QToolButton *Hidden;
+  QToolButton *Toggle;
 
   void saveChange();
 public:
@@ -73,11 +73,13 @@ private slots:
   void generateFile(void);
   void applySession(void);
   void applySystem(void);
+  void applyChanges(void);
   void changeItem(void);
   void changedData(int row,int col,const QString &data);
   void dropChanges(void);
   void done(void);
   void showHidden(bool);
+  void showGlobal(bool);
 public slots:
   virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.

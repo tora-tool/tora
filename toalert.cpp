@@ -205,16 +205,16 @@ void toAlert::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(tr("&Add name"),Registered,SLOT(setFocus()),ALT+Key_R);
+      ToolMenu->insertItem(tr("&Add name"),Registered,SLOT(setFocus()),toKeySequence(tr("Alt+R", "Alert|Add Name")));
       ToolMenu->insertItem(QPixmap((const char **)trash_xpm),tr("&Remove name"),
-			   this,SLOT(remove(void)),CTRL+Key_Backspace);
+			   this,SLOT(remove(void)),toKeySequence(tr("Ctrl+Backspace", "Alert|Remove name")));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(tr("Edit &name"),Name,SLOT(setFocus()),ALT+Key_N);
-      ToolMenu->insertItem(tr("Edit &message"),Message,SLOT(setFocus()),ALT+Key_M);
+      ToolMenu->insertItem(tr("Edit &name"),Name,SLOT(setFocus()),toKeySequence(tr("Alt+N", "Alert|Edit name")));
+      ToolMenu->insertItem(tr("Edit &message"),Message,SLOT(setFocus()),toKeySequence(tr("Alt+M", "Alert|Message")));
       ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),tr("&Message in memo..."),
-			   this,SLOT(memo(void)),CTRL+Key_M);
+			   this,SLOT(memo(void)),toKeySequence(tr("Ctrl+M", "Alert|Message in memo")));
       ToolMenu->insertItem(QPixmap((const char **)return_xpm),tr("&Send alert"),
-			   this,SLOT(send(void)),CTRL+Key_Return);
+			   this,SLOT(send(void)),toKeySequence(tr("Ctrl+Return", "Alert|Send alert")));
 
       toMainWidget()->menuBar()->insertItem(tr("&Alert"),ToolMenu,-1,toToolMenuIndex());
     }

@@ -1,13 +1,10 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>toWorksheetSetupUI</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>toWorksheetSetupUI</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -15,246 +12,208 @@
             <height>480</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
-    <property>
-        <name>toolTip</name>
-        <string>Automatically save file when closing worksheet (Without asking any questions).</string>
+    <property name="toolTip" stdset="0">
+        <string>Automatically save file when closing editor (Without asking any questions).</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>0</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0">
+            <property name="name">
                 <cstring>GroupBox1</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>SQL Worksheet</string>
+            <property name="title">
+                <string>SQL Editor</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>AutoSave</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Auto &amp;save</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>CheckSave</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Ask about saving &amp;changes</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Ask about saving changes when closing worksheet.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>LogAtEnd</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Add &amp;log entries at end</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Add newly executed queries at end of log instead of top. Changing this will mess up the log in the windows that are opened.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>LogMulti</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Multiple lines in log.</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Display multiple lines in the SQL column of the logging.</string>
                     </property>
                 </widget>
-                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>Statistics</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Enable statistics</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Enable statistic collection per default.</string>
                     </property>
                 </widget>
-                <widget row="6"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>TimedStatistics</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Enable &amp;timed statistics</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Enable timed statistics as well when collecting normal statistics.</string>
                     </property>
                 </widget>
-                <widget row="7"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="6" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>DisplayNumber</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Display number column</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Add a numbering column to the left of the result.</string>
                     </property>
                 </widget>
-                <spacer row="12"  column="1" >
-                    <property>
-                        <name>name</name>
-                        <cstring>Spacer1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>orientation</name>
-                        <enum>Vertical</enum>
-                    </property>
-                    <property stdset="1">
-                        <name>sizeType</name>
-                        <enum>Expanding</enum>
-                    </property>
-                    <property>
-                        <name>sizeHint</name>
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget row="11"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>FileChoose</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Browse</string>
-                    </property>
-                </widget>
-                <widget row="11"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                </widget>
-                <widget row="11"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Default &amp;file</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>DefaultFile</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>File to automatically open in a new worksheet.</string>
-                    </property>
-                </widget>
-                <widget row="8"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>MoveToError</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Move &amp;cursor to error</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Move the cursor to an error if the error occurs.</string>
                     </property>
                 </widget>
-                <widget row="9"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="8" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>History</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Save previous results</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Keep previous results in while worksheet is open. Will consume lot of memory.</string>
+                    <property name="toolTip" stdset="0">
+                        <string>Keep previous results in while editor is open. Will consume lot of memory.</string>
                     </property>
                 </widget>
-                <widget row="10"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="11" column="1">
+                    <property name="name">
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>LineEditPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                </widget>
+                <widget class="QPushButton" row="11" column="2">
+                    <property name="name">
+                        <cstring>FileChoose</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Browse</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="11" column="0">
+                    <property name="name">
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Default &amp;file</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>DefaultFile</cstring>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>File to automatically open in a new editor.</string>
+                    </property>
+                </widget>
+                <spacer row="12" column="1">
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>160</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QCheckBox" row="9" column="0" rowspan="1" colspan="3">
+                    <property name="name">
                         <cstring>ExecLog</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Execute directory when selecting in log</string>
+                    <property name="text">
+                        <string>Execute directly when selecting in log</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
+                        <string>Execute a statement when it is
+			selected in the log, if disabled simply selected
+			the statement in the log.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="10" column="0" rowspan="1" colspan="3">
+                    <property name="name">
+                        <cstring>ToplevelDescribe</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Display column descriptions in own toplevel window.</string>
+                    </property>
+                    <property name="toolTip" stdset="0">
                         <string>Execute a statement when it is
 			selected in the log, if disabled simply selected
 			the statement in the log.</string>
@@ -277,7 +236,6 @@
         <receiver>ExecLog</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
-    <slot access="public">chooseFile()</slot>
 </connections>
 <tabstops>
     <tabstop>AutoSave</tabstop>
@@ -292,4 +250,8 @@
     <tabstop>DefaultFile</tabstop>
     <tabstop>FileChoose</tabstop>
 </tabstops>
+<slots>
+    <slot>chooseFile()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -59,6 +59,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
@@ -75,25 +76,12 @@
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"
 
-class toScriptTool : public toTool {
-protected:
-  virtual char **pictureXPM(void)
-  { return toscript_xpm; }
-public:
-  toScriptTool()
-    : toTool(310,"DB Extraction/Compare/Search")
-  { }
-  virtual const char *menuItem()
-  { return "DB Extraction/Compare/Search"; }
-  virtual const char *toolbarTip()
-  { return "DB or schema extraction, compare and search"; }
-  virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
-  {
-    return new toScript(main,connection);
-  }
-};
-
-static toScriptTool ScriptTool;
+static toSQL SQLObjectListMySQL("toScript:ExtractObject",
+				"TOAD 1,0,0 SHOW DATABASES",
+				"Extract objects available to extract from the database, "
+				"should have same columns",
+				"3.23",
+				"MySQL");
 
 static toSQL SQLObjectList("toScript:ExtractObject",
 			   "SELECT *\n"
@@ -109,15 +97,29 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 			   "	SELECT username,NULL,NULL\n"
 			   "	  FROM sys.all_users)\n"
 			   "  ORDER BY 1,2,3",
-			   "Extract objects available to extract from the database, "
-			   "should have same columns",
+			   "",
 			   "8.1");
+
+static toSQL SQLUserObjectList("toScript:UserExtractObject",
+			       "SELECT owner,object_type,object_name\n"
+			       "  FROM sys.all_objects\n"
+			       " WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',\n"
+			       "	               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			       " ORDER BY 1,2,3",
+			       "Extract objects available to extract from the database if you "
+			       "don't have admin access, should have same columns");
 
 static toSQL SQLPublicSynonymList("toScript:PublicSynonyms",
 				  "SELECT synonym_name\n"
 				  "  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
 				  " ORDER BY 1",
 				  "Extract all public synonyms from database");
+
+static toSQL SQLUserObjectsMySQL("toScript:UserObjects",
+				 "SHOW TABLES FROM :own<noquote>",
+				 "Get the objects available for a user, must have same columns and binds",
+				 "3.23",
+				 "MySQL");
 
 static toSQL SQLUserObjects("toScript:UserObjects",
 			    "SELECT *\n"
@@ -140,7 +142,7 @@ static toSQL SQLUserObjects("toScript:UserObjects",
 			    "          FROM sys.all_mviews\n"
 			    "         WHERE owner = :own<char[101]>)\n"
 			    " ORDER BY 1,2",
-			    "Get the objects available for a user, must have same columns and binds");
+			    "");
 
 static toSQL SQLUserObjects7("toScript:UserObjects",
 			     "SELECT *\n"
@@ -166,18 +168,43 @@ static toSQL SQLUserObjects7("toScript:UserObjects",
 			     "",
 			     "7.3");
 
-static toSQL SQLUserObjectList("toScript:UserExtractObject",
-			       "SELECT owner,object_type,object_name\n"
-			       "  FROM sys.all_objects\n"
-			       " WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',\n"
-			       "	               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
-			       " ORDER BY 1,2,3",
-			       "Extract objects available to extract from the database if you "
-			       "don't have admin access, should have same columns");
+static toSQL SQLSchemasMySQL("toScript:ExtractSchema",
+			     "SHOW DATABASES",
+			     "Get usernames available in database, must have same columns",
+			     "3.23",
+			     "MySQL");
 
 static toSQL SQLSchemas("toScript:ExtractSchema",
 			"SELECT username FROM sys.all_users ORDER BY username",
-			"Get usernames available in database, must have same columns");
+			"");
+
+class toScriptTool : public toTool {
+protected:
+  virtual char **pictureXPM(void)
+  { return toscript_xpm; }
+public:
+  toScriptTool()
+    : toTool(310,"DB Extraction/Compare/Search")
+  { }
+  virtual const char *menuItem()
+  { return "DB Extraction/Compare/Search"; }
+  virtual const char *toolbarTip()
+  { return "DB or schema extraction, compare and search"; }
+  virtual bool canHandle(toConnection &conn)
+  {
+    try {
+      return toExtract::canHandle(conn)&&!toSQL::string(SQLObjectList,conn).isEmpty();
+    } catch(...) {
+      return false;
+    }
+  }
+  virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
+  {
+    return new toScript(main,connection);
+  }
+};
+
+static toScriptTool ScriptTool;
 
 toScript::toScript(QWidget *parent,toConnection &connection)
   : toToolWidget(ScriptTool,"script.html",parent,connection)
@@ -230,7 +257,9 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   connect(ScriptUI->ModeGroup,SIGNAL(clicked(int)),this,SLOT(changeMode(int)));
   ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
   ScriptUI->SourceObjects->setSorting(0);
+  ScriptUI->SourceObjects->setResizeMode(QListView::AllColumns);
   ScriptUI->DestinationObjects->setSorting(0);
+  ScriptUI->DestinationObjects->setResizeMode(QListView::AllColumns);
 
   // Remove when migrate and resize is implemented
 #if 1
@@ -488,6 +517,13 @@ void toScript::execute(void)
 	  throw tr("No filename specified");
 
 	QFile file(ScriptUI->Filename->text());
+        if (file.exists()) {
+	  if (TOMessageBox::warning(this,tr("Write over file?"),
+				    tr("The file %1 already exists,\nare you sure you want to continue and write over it?").arg(ScriptUI->Filename->text()),
+				    tr("&Yes"),tr("&Cancel"),QString::null,0)!=0) {
+	    return;
+	  }
+	}
 	file.open(IO_WriteOnly);
 
 	if (file.status()!=IO_Ok)
@@ -802,7 +838,7 @@ void toScript::changeConnection(int,bool source)
 				      top,QCheckListItem::CheckBox);
 	lastTop->setExpandable(true);
 	if (!second.isEmpty()||first.isEmpty())
-	  lastTop->setText(1,QString::fromLatin1("USER"));
+	  lastTop->setText(1,QString::fromLatin1("DATABASE"));
       }
       if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
 	lastFirst=new toResultViewCheck(lastTop,first,QCheckListItem::CheckBox);
@@ -824,11 +860,17 @@ void toScript::readOwnerObjects(QListViewItem *item,toConnection &conn)
     try {
       QListViewItem *lastFirst=NULL;
       QString top=item->text(0);
-      toQList object=toQuery::readQueryNull(conn,SQLUserObjects,top);
+      toQuery object(conn,SQLUserObjects,top);
 
-      while(object.size()>0) {
-	QString first=toShift(object);
-	QString second=toShift(object);
+      while(!object.eof()) {
+	QString first=object.readValueNull();
+	QString second;
+	if (object.columns()>1)
+	  second=object.readValueNull();
+	else {
+	  second=first;
+	  first="TABLE";
+	}
 
 	if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
 	  lastFirst=new toResultViewCheck(item,first,QCheckListItem::CheckBox);
@@ -843,7 +885,7 @@ void toScript::readOwnerObjects(QListViewItem *item,toConnection &conn)
       }
 
       if (top==QString::fromLatin1("PUBLIC")) {
-	object=toQuery::readQueryNull(conn,SQLPublicSynonymList);
+	toQList object=toQuery::readQueryNull(conn,SQLPublicSynonymList);
 	QListViewItem *topItem=new toResultViewCheck(item,QString::fromLatin1("SYNONYM"),QCheckListItem::CheckBox);
 	while(object.size()>0) {
 	  QListViewItem *item=new toResultViewCheck(topItem,toShift(object),

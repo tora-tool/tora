@@ -94,15 +94,15 @@
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
 
-static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
-			  "SELECT UserName FROM sys.All_Users ORDER BY UserName",
-			  "List users in the database");
-
 static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
 			       "SHOW DATABASES",
-			       "",
+			       "List users in the database",
 			       "3.0",
 			       "MySQL");
+
+static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
+			  "SELECT UserName FROM sys.All_Users ORDER BY UserName",
+			  "");
 
 static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
 			       "SELECT usename AS UserName FROM pg_user ORDER BY UserName",
@@ -137,15 +137,15 @@ QString toSQLString(toConnection &conn,const QString &address)
   return sql;
 }
 
-static toSQL SQLNow("Global:Now",
-		    "SELECT TO_CHAR(SYSDATE) FROM sys.DUAL",
-		    "Get current date/time from database");
-
 static toSQL SQLNowMySQL("Global:Now",
 			 "SELECT now()",
-			 "",
+			 "Get current date/time from database",
 			 "3.0",
 			 "MySQL");
+static toSQL SQLNow("Global:Now",
+		    "SELECT TO_CHAR(SYSDATE) FROM sys.DUAL",
+		    "");
+
 static toSQL SQLNowPgSQL("Global:Now",
 			 "SELECT now()",
 			 "",
@@ -555,6 +555,7 @@ TODock *toAllocDock(const QString &name,
 #  else
   QDockWindow *dock=new QDockWindow(QDockWindow::InDock,toMainWidget());
   dock->setNewLine(true);
+  dock->setCloseMode(QDockWindow::Always);
   return dock;
 #  endif
 #endif
@@ -682,15 +683,19 @@ QString toPluginPath(void)
   char buffer[1024];
   try {
     if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-#ifdef OAS
-				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\oas.exe",
-#else
-				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\tora.exe",
-#endif
-				"Path",
+#  ifdef TOAD
+				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOAD for MySQL",
+#  else
+				"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TOra",
+#  endif
+				"UninstallString",
 				buffer,siz)) {
-      if (siz>0)
+      if (siz>0) {
 	str=buffer;
+	int ind=str.findRev('\\');
+	if(ind>=0)
+	  str=str.mid(0,ind);
+      }
     }
   } catch(...) {
   }
@@ -1058,7 +1063,13 @@ toToolWidget *toCurrentTool(QObject *cur)
 
 toConnection &toCurrentConnection(QObject *cur)
 {
-  return toCurrentTool(cur)->connection();
+  while(cur) {
+    toConnectionWidget *conn=dynamic_cast<toConnectionWidget *>(cur);
+    if (conn)
+      return conn->connection();
+    cur=cur->parent();
+  }
+  throw qApp->translate("toCurrentConnection","Couldn't find parent connection. Internal error.");
 }
 
 unsigned int toBusy::Count=0;
@@ -1337,11 +1348,51 @@ QString toUnobfuscate(const QString &str)
     return QString::fromUtf8(arr);
 }
 
+QKeySequence toKeySequence(const QString &key)
+{
+  QKeySequence ret=key;
+  if (key.isEmpty()&&ret.isEmpty())
+    printf("Key sequence %s is not valid\n",(const char *)key);
+  return ret;
+}
+
+bool toCheckKeyEvent(QKeyEvent *event,const QKeySequence &key)
+{
+  int state=0;
+  if (key.count()!=1)
+    return false;
+  int val=key[0];
+  if ((val&Qt::META)==Qt::META)
+    state|=Qt::MetaButton;
+  if ((val&Qt::SHIFT)==Qt::SHIFT)
+    state|=Qt::ShiftButton;
+  if ((val&Qt::CTRL)==Qt::CTRL)
+    state|=Qt::ControlButton;
+  if ((val&Qt::ALT)==Qt::ALT)
+    state|=Qt::AltButton;
+  
+  val&=0xfffff;
+
+  return (event->state()==state&&event->key()==val);
+}
+
 #ifndef TO_LICENSE
 
 QString toCheckLicense(bool)
 {
-  return qApp->translate("toCheckLicense","Welcome to " TOAPPNAME);
+#  ifdef TOEXPIRES
+  QDate from=QDate::fromString(TOEXPIRES,Qt::ISODate);
+  if (!from.isNull()&&from<QDate::currentDate()) {
+    TOMessageBox::critical(NULL,qApp->translate("toCheckLicense","This copy of %1 has expired").arg(TOAPPNAME),
+			   qApp->translate("toCheckLicense","This copy of %1 expired on %2.\n"
+					   "you need to download a newer version from http://www.quest.com/.").arg(TOAPPNAME).arg(TOEXPIRES),
+			   qApp->translate("toCheckLicense","Quit"));
+    exit(0);
+  }
+  return qApp->translate("toCheckLicense",qApp->translate("toCheckLicense","Welcome to " TOAPPNAME " (Expires %1)").arg(TOEXPIRES));
+#else
+  return qApp->translate("toCheckLicense",qApp->translate("toCheckLicense","Welcome to " TOAPPNAME));
+#  endif
 }
 
 bool toFreeware(void)

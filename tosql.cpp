@@ -77,6 +77,10 @@ bool toSQL::updateSQL(const QCString &name,
 		      const QCString &provider,
 		      bool modified)
 {
+#ifdef TO_NO_ORACLE
+  if (provider=="Oracle")
+    return false;
+#endif
   version def(provider,ver,sql,modified);
 
   allocCheck();

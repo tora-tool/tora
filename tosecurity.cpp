@@ -1381,22 +1381,28 @@ void toSecurity::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Security|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)commit_xpm),tr("&Save changes"),
-			   this,SLOT(saveChanges()),CTRL+Key_Return);
+			   this,SLOT(saveChanges()),
+			   toKeySequence(tr("Ctrl+Return", "Security|Save changes")));
       ToolMenu->insertItem(QPixmap((const char **)trash_xpm),tr("&Remove user/role"),
 			   this,SLOT(drop()),0,TO_ID_DROP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)adduser_xpm),tr("Add &user"),
-			   this,SLOT(addUser()),CTRL+Key_U);
+			   this,SLOT(addUser()),
+			   toKeySequence(tr("Ctrl+Shift+U", "Security|Add user")));
       ToolMenu->insertItem(QPixmap((const char **)addrole_xpm),tr("Add &role"),
-			   this,SLOT(addRole()),CTRL+Key_R);
+			   this,SLOT(addRole()),
+			   toKeySequence(tr("Ctrl+Shift+R", "Security|Add role")));
       ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm),tr("&Copy current"),
-			   this,SLOT(copy()),CTRL+Key_O,TO_ID_COPY);
+			   this,SLOT(copy()),
+			   toKeySequence(tr("Ctrl+Shift+O", "Security|Copy current")),TO_ID_COPY);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)sql_xpm),tr("Display SQL..."),
-			   this,SLOT(displaySQL()),Key_F4);
+			   this,SLOT(displaySQL()),
+			   toKeySequence(tr("F4", "Security|Display SQL")));
       toMainWidget()->menuBar()->insertItem(tr("&Security"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
       ToolMenu->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());

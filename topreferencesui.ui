@@ -1,13 +1,10 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>toPreferencesUI</class>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>toPreferencesUI</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -15,113 +12,119 @@
             <height>480</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Preferences</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="1"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PushButton1</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Ok</string>
-            </property>
-            <property stdset="1">
-                <name>default</name>
-                <bool>true</bool>
-            </property>
-        </widget>
-        <widget row="0"  column="1"  rowspan="1"  colspan="3" >
-            <class>QFrame</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Parent</cstring>
-            </property>
-            <property stdset="1">
-                <name>frameShape</name>
-                <enum>NoFrame</enum>
-            </property>
-            <property stdset="1">
-                <name>frameShadow</name>
-                <enum>Raised</enum>
-            </property>
-        </widget>
-        <widget row="1"  column="3" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PushButton2</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Cancel</string>
-            </property>
-        </widget>
-        <widget row="0"  column="0" >
-            <class>QListBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QListBox" row="0" column="0">
+            <property name="name">
                 <cstring>TabSelection</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>4</hsizetype>
                     <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>HelpButton</cstring>
+        <widget class="QFrame" row="0" column="1">
+            <property name="name">
+                <cstring>Parent</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>4</hsizetype>
-                    <vsizetype>0</vsizetype>
-                </sizepolicy>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Help</string>
+            <property name="frameShadow">
+                <enum>Raised</enum>
             </property>
         </widget>
-        <spacer row="1"  column="1" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
+        <widget class="QLayoutWidget" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
+                <cstring>layout1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Horizontal</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Preferred</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>HelpButton</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>4</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Help</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+H</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer1</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Preferred</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>PushButton2_2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Apply</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>PushButton1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Ok</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+O</string>
+                    </property>
+                    <property name="default">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>PushButton2</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Cancel</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
     </grid>
 </widget>
 <connections>
@@ -141,7 +144,7 @@
         <sender>TabSelection</sender>
         <signal>selectionChanged(QListBoxItem*)</signal>
         <receiver>toPreferencesUI</receiver>
-        <slot>selectTab(QListBoxItem *)</slot>
+        <slot>selectTab(QListBoxItem*)</slot>
     </connection>
     <connection>
         <sender>HelpButton</sender>
@@ -149,13 +152,24 @@
         <receiver>toPreferencesUI</receiver>
         <slot>help()</slot>
     </connection>
-    <slot access="public">help()</slot>
-    <slot access="public">selectTab(QListBoxItem *)</slot>
+    <connection>
+        <sender>PushButton2_2</sender>
+        <signal>clicked()</signal>
+        <receiver>toPreferencesUI</receiver>
+        <slot>saveSetting()</slot>
+    </connection>
 </connections>
 <tabstops>
     <tabstop>TabSelection</tabstop>
     <tabstop>HelpButton</tabstop>
+    <tabstop>PushButton2_2</tabstop>
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton2</tabstop>
 </tabstops>
+<slots>
+    <slot>help()</slot>
+    <slot>selectTab(QListBoxItem *)</slot>
+    <slot>saveSetting()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

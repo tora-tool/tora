@@ -46,6 +46,7 @@
 
 class QLineEdit;
 class QGrid;
+class QScrollView;
 
 class toParamGetButton : public QPushButton {
   Q_OBJECT
@@ -74,19 +75,23 @@ class toParamGet : public QDialog, public toHelpContext {
    */
   static std::map<QString,std::map<QString,QString> > Cache;
 
+  QScrollView *View;
   QGrid *Container;
 
   std::list<QLineEdit *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
+protected:
+  virtual void resizeEvent(QResizeEvent *e);
 public:
   /** Get parameters for specified SQL string.
    * @param conn Connection to get binds for.
    * @param parent Parent widget if dialog is needed.
    * @param str SQL to parse for bindings. Observe that this string can be changed to further
    *            declare the binds.
+   * @param interactive If not interactive simply rewrite the query and pass on the defaults.
    * @return Returns a list of values to feed into the query.
    */
-  static toQList getParam(toConnection &conn,QWidget *parent,QString &str);
+  static toQList getParam(toConnection &conn,QWidget *parent,QString &str,bool interactive=true);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
    * @param conn Connection to get binds for.

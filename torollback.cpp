@@ -717,7 +717,8 @@ void toRollback::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Rollback|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)online_xpm),tr("Online"),
 			   this,SLOT(online(void)),0,TO_ID_ONLINE);
@@ -730,7 +731,7 @@ void toRollback::windowActivated(QWidget *widget)
 			   this,SLOT(dropSegment(void)),0,TO_ID_DROP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
-			   Key_R+ALT);
+			   toKeySequence(tr("Alt+R", "Rollback|Change refresh")));
       toMainWidget()->menuBar()->insertItem(tr("&Rollback"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
       ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());

@@ -73,7 +73,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 {
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
-  ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty());
+  ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT,"").isEmpty());
   toRefreshCreate(OptionGroup,TO_KDE_TOOLBAR_WIDGET,QString::null,Refresh);
   DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
@@ -100,6 +100,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   } else
     DisplaySamples->setValue(samples);
   DefaultFormat->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt());
+  ToadBindings->setChecked(!toTool::globalConfig(CONF_TOAD_BINDINGS,DEFAULT_TOAD_BINDINGS).isEmpty());
+  DisplayGrid->setChecked(!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   if (typ=="KB")
@@ -140,6 +142,12 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   DockToolbar->hide();
 #endif
 
+#ifdef TOAD
+  LocaleLabel->hide();
+  Locale->hide();
+  ToadBindings->hide();
+#endif
+
   if (toMonolithic()) {
     PluginLabel->hide();
     PluginDirectory->hide();
@@ -152,20 +160,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   /** disk caching options
    */  
   
-  QString home=QDir::homeDirPath();
-  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
-  if (dirname == "")
-    dirname = QString(home+"/.tora_cache"); 
-     
-  CacheDirectory->setText(dirname);
-  
-  /** default is off
-   */
-
-  if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "Yes") 
-    DiskCaching->setChecked(true);   
-  else 
-    DiskCaching->setChecked(false);   
+  CacheDirectory->setText(toConnection::cacheDir());
+  DiskCaching->setChecked(!toTool::globalConfig(CONF_CACHE_DISK,DEFAULT_CACHE_DISK).isEmpty());
   
   CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
 					  DEFAULT_SQL_FILE));
@@ -210,7 +206,7 @@ void toGlobalSetting::saveSetting(void)
 {
   if (!toMonolithic())
     toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
-  toTool::globalSetConfig(CONF_CACHE_DISK,DiskCaching->isChecked()?"Yes":"No");
+  toTool::globalSetConfig(CONF_CACHE_DISK,DiskCaching->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_CACHE_DIR,CacheDirectory->text());
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
   toTool::globalSetConfig(CONF_DEFAULT_SESSION,DefaultSession->text());
@@ -227,6 +223,8 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_TOOLS_LEFT,ToolsLeft->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DEFAULT_FORMAT,
 			  QString::number(DefaultFormat->currentItem()));
+  toTool::globalSetConfig(CONF_TOAD_BINDINGS,ToadBindings->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_DISPLAY_GRIDLINES,DisplayGrid->isChecked()?"Yes":"");
 #if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif
@@ -291,7 +289,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
   DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty());
-  ObjectCache->setCurrentItem(toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt());
+  ObjectCache->setCurrentItem(toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt());
   BkgndConnect->setChecked(!toTool::globalConfig(CONF_BKGND_CONNECT,"").isEmpty());
   IndicateEmpty->setChecked(!toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty());
   int val=toTool::globalConfig(CONF_AUTO_LONG,"0").toInt();

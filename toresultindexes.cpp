@@ -65,6 +65,16 @@ toResultIndexes::~toResultIndexes()
   delete Query;
 }
 
+static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
+			     "SELECT a.attname, a.attname as x\n"
+			     "  FROM pg_class c, pg_attribute a, pg_user u\n"
+			     " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
+			     "   AND a.attrelid = c.oid AND c.relname = :f2\n"
+			     "   AND a.attnum > 0\n"
+			     " ORDER BY a.attnum",
+			     "List columns an index is built on",
+			     "7.1",
+			     "PostgreSQL");
 static toSQL SQLColumns("toResultIndexes:Columns",
 			"SELECT b.Column_Expression,a.Column_Name\n"
 			"  FROM sys.All_Ind_Columns a,\n"
@@ -75,7 +85,7 @@ static toSQL SQLColumns("toResultIndexes:Columns",
 			"   AND a.Index_Owner = :own<char[101]>\n"
 			"   AND a.Index_Name = :nam<char[101]>\n"
 			" ORDER BY a.Column_Position",
-			"List columns an index is built on",
+			"",
 			"8.1");
 static toSQL SQLColumns8("toResultIndexes:Columns",
 			 "SELECT Column_Name,NULL FROM sys.All_Ind_Columns\n"
@@ -83,16 +93,6 @@ static toSQL SQLColumns8("toResultIndexes:Columns",
 			 " ORDER BY Column_Position",
 			 "",
 			 "8.0");
-static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
-			     "SELECT a.attname, a.attname as x\n"
-			     "  FROM pg_class c, pg_attribute a, pg_user u\n"
-			     " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
-			     "   AND a.attrelid = c.oid AND c.relname = :f2\n"
-			     "   AND a.attnum > 0\n"
-			     " ORDER BY a.attnum",
-			     "",
-			     "7.1",
-			     "PostgreSQL");
 
 static toSQL SQLColumnsSapDB("toResultIndexes:Columns",
 			       "SELECT columnname,datatype\n"
@@ -121,6 +121,12 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
   return ret;
 }
 
+static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
+			       "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
+			       "List the indexes available on a table",
+			       "3.0",
+			       "MySQL");
+
 static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  "SELECT Owner,\n"
 			  "       Index_Name,\n"
@@ -130,7 +136,7 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  " WHERE Table_Owner = :f1<char[101]>\n"
 			  "   AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Index_Name",
-			  "List the indexes available on a table",
+			  "",
 			  "8.0");
 static toSQL SQLListIndex7("toResultIndexes:ListIndex",
 			   "SELECT Owner,\n"
@@ -144,11 +150,6 @@ static toSQL SQLListIndex7("toResultIndexes:ListIndex",
 			   "",
 			   "7.3");
 
-static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
-			       "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
-			       "",
-			       "3.0",
-			       "MySQL");
 static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
                                "SELECT u.usename as Owner,\n"
                                "       c2.relname as Index_Name,\n"
@@ -240,25 +241,24 @@ void toResultIndexes::poll(void)
 	  Last->setText(1,indexCols(indexOwner,indexName));
 	  Last->setText(2,Query->readValue());
 	  Last->setText(3,Query->readValue());
-	} else {
+	} else if (Type==MySQL) {
 	  Query->readValue(); // Tablename
 	  int unique=Query->readValue().toInt();
 	  QString name=Query->readValue();
 	  Query->readValue(); // SeqID
 	  QString col=Query->readValue();
-	  Query->readValue();
-	  Query->readValue();
-	  Query->readValue();
-	  Query->readValue();
-	  Query->readValue();
+
+	  toQDescList &desc=Query->describe();
+	  for(unsigned int i=5;i<desc.size();i++)
+	    Query->readValue();
 	  if (Last&&Last->text(0)==name)
 	    Last->setText(1,Last->text(1)+QString::fromLatin1(",")+col);
 	  else {
 	    Last=new toResultViewItem(this,NULL);
 	    Last->setText(0,name);
 	    Last->setText(1,col);
-	    Last->setText(2,QString::fromLatin1((name==QString::fromLatin1("PRIMARY"))?"PRIMARY":"INDEX"));
-	    Last->setText(3,QString::fromLatin1(unique?"NONUNIQUE":"UNIQUE"));
+	    Last->setText(2,name=="PRIMARY"?"PRIMARY":"INDEX");
+	    Last->setText(3,unique?"NONUNIQUE":"UNIQUE");
 	  }
 	}
       }

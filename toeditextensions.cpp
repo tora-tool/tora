@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "toconf.h"
+#include "toconnection.h"
 #include "toeditextensions.h"
 #include "toeditextensionsetupui.h"
 #include "tohighlightedtext.h"
@@ -182,7 +183,12 @@ void toEditExtensions::autoIndentBlock(void)
 	int chars=0;
 	QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
 	QString mrk=Current->markedText();
-	QString res=toSQLParse::indent(ind+mrk);
+	QString res;
+	try {
+	  res=toSQLParse::indent(ind+mrk,toCurrentConnection(Current));
+	} catch(...) {
+	  res=toSQLParse::indent(ind+mrk);
+	}
 	t=Current->textLine(line2);
 	unsigned int l=res.length()-ind.length();
 	if (col2==int(t.length())&&t.length()>0) // Strip last newline if on last col of line
@@ -204,7 +210,11 @@ void toEditExtensions::autoIndentBuffer(void)
     }
     Current->selectAll();
     try {
-      Current->insert(toSQLParse::indent(text.mid(pos)));
+      try {
+	Current->insert(toSQLParse::indent(text.mid(pos),toCurrentConnection(Current)));
+      } catch(...) {
+	Current->insert(toSQLParse::indent(text.mid(pos)));
+      }
     } TOCATCH
   }
 }
@@ -316,23 +326,44 @@ public:
     AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty());
     Ok=false;
     try {
-      Example->setText(toSQLParse::indent(QString::fromLatin1("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
-							      "AS\n"
-							      "  vYear  CHAR(4);\n"
-							      "BEGIN\n"
-							      "select a.TskCod TskCod, -- A Comment\n"
-							      "       count(1) Tot\n"
-							      "  from (select * from EssTsk where PrsID >= '1940');\n"
-							      "having count(a.TspActOprID) > 0;\n"
-							      "    DECLARE\n"
-							      "      oTrdStt NUMBER;\n"
-							      "    BEGIN\n"
-							      "      oTrdStt := 0;\n"
-							      "    END;\n"
-							      "    EXCEPTION\n"
-							      "        WHEN VALUE_ERROR THEN\n"
-							      "	    oRet := 3;\n"
-							      "END;")));
+      Example->setAnalyzer(toMainWidget()->currentConnection().analyzer());
+    } TOCATCH
+
+    try {
+#ifdef TOAD
+      Example->setText(toSQLParse::indent("CREATE PROCEDURE COUNT_EMPS_IN_DEPTS (OUT V_TOTAL INT)\n"
+					  "BEGIN\n"
+					  "  DECLARE V_DEPTNO INT DEFAULT 10;\n"
+					  "  DECLARE V_COUNT INT DEFAULT 0;\n"
+					  "  SET V_TOTAL = 0;\n"
+					  "  WHILE V_DEPTNO < 100 DO\n"
+					  "    SELECT COUNT(*)\n"
+					  "      INTO V_COUNT\n"
+					  "      FROM TEST.EMP\n"
+					  "      WHERE DEPTNO = V_DEPTNO;\n"
+					  "    SET V_TOTAL = V_TOTAL + V_COUNT;\n"
+					  "    SET V_DEPTNO = V_DEPTNO + 10;\n"
+					  "  END WHILE;\n"
+					  "END",Example->analyzer()));
+#else
+      Example->setText(toSQLParse::indent("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+					  "AS\n"
+					  "  vYear  CHAR(4);\n"
+					  "BEGIN\n"
+					  "select a.TskCod TskCod, -- A Comment\n"
+					  "       count(1) Tot\n"
+					  "  from (select * from EssTsk where PrsID >= '1940');\n"
+					  "having count(a.TspActOprID) > 0;\n"
+					  "    DECLARE\n"
+					  "      oTrdStt NUMBER;\n"
+					  "    BEGIN\n"
+					  "      oTrdStt := 0;\n"
+					  "    END;\n"
+					  "    EXCEPTION\n"
+					  "        WHEN VALUE_ERROR THEN\n"
+					  "	    oRet := 3;\n"
+					  "END;",Example->analyzer()));
+#endif
     } TOCATCH
     Started=true;
   }
@@ -359,7 +390,7 @@ public:
     if (Started) {
       saveCurrent();
       try {
-	Example->setText(toSQLParse::indent(Example->text()));
+	Example->setText(toSQLParse::indent(Example->text(),Example->analyzer()));
       } TOCATCH
     }
   }
@@ -410,9 +441,9 @@ public:
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
     
     IncrementalSearch=menu->insertItem(qApp->translate("toEditExtensionTool","Forward"),&EditExtensions,SLOT(searchForward()),
-				       CTRL+Key_S);
+				       toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+S", "Edit|Incremental search forward")));
     ReverseSearch=menu->insertItem(qApp->translate("toEditExtensionTool","Backward"),&EditExtensions,SLOT(searchBackward()),
-				   CTRL+Key_R);
+				   toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+R", "Edit|Incremental search backward")));
 
     toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Incremental Search"),menu,-1,(idx>=0?idx+1:0));
     
@@ -420,11 +451,11 @@ public:
     AutoIndentBlock=menu->insertItem(qApp->translate("toEditExtensionTool","Selection"),
 				     &EditExtensions,
 				     SLOT(autoIndentBlock()),
-				     ALT+CTRL+Key_I);
+				     toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+Alt+I", "Edit|Indent selection")));
     AutoIndentBuffer=menu->insertItem(qApp->translate("toEditExtensionTool","Editor"),
 				      &EditExtensions,
 				      SLOT(autoIndentBuffer()),
-				      ALT+CTRL+SHIFT+Key_I);
+				      toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+Alt+Shift+I", "Edit|Indent editor")));
     menu->insertSeparator();
     ObfuscateBlock=menu->insertItem(qApp->translate("toEditExtensionTool","Obfuscate Selection"),
 				    &EditExtensions,
@@ -437,20 +468,22 @@ public:
     menu=new QPopupMenu(toMainWidget());
     UpperCase=menu->insertItem(qApp->translate("toEditExtensionTool","Upper"),
 			       &EditExtensions,
-			       SLOT(upperCase()));
+			       SLOT(upperCase()),
+			       toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+U", "Edit|Uppercase")));
     LowerCase=menu->insertItem(qApp->translate("toEditExtensionTool","Lower"),
 			       &EditExtensions,
-			       SLOT(lowerCase()));
+			       SLOT(lowerCase()),
+			       toKeySequence(qApp->translate("toEditExtensionTool","Ctrl+L", "Edit|Lowercase")));
     toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Modify Case"),menu);
 
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
 						       qApp->translate("toEditExtensionTool","Indent Block"),&EditExtensions,
 						       SLOT(indentBlock()),
-						       ALT+Key_Right);
+						       toKeySequence(qApp->translate("toEditExtensionTool","Alt+Right", "Edit|Indent block")));
     DeindentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
 							 qApp->translate("toEditExtensionTool","De-indent Block"),&EditExtensions,
 							 SLOT(deindentBlock()),
-							 ALT+Key_Left);
+							 toKeySequence(qApp->translate("toEditExtensionTool","Alt+Left", "Edit|De-indent block")));
     GotoLine=toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Goto Line"),&EditExtensions,
 						    SLOT(gotoLine()));
 

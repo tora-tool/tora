@@ -241,7 +241,11 @@ public:
 
 QWidget *toHelpTool::configurationTab(QWidget *parent)
 {
+#ifdef TOAD
+  return NULL;
+#else
   return new toHelpPrefs(this,parent);
+#endif
 }
 
 void toHelpTool::displayHelp(void)
@@ -332,7 +336,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   std::map<QString,QString> Dsc;
-  Dsc[tr("TOra manual")]=toHelpPath();
+  Dsc[tr(TOAPPNAME " manual")]=toHelpPath();
   int tot=HelpTool.config("Number","-1").toInt();
   if(tot!=-1) {
     for(int i=0;i<tot;i++) {
@@ -447,7 +451,11 @@ void toHelp::displayHelp(const QString &context,QWidget *parent)
   else
     window=Window;
   QString file=path();
+#ifndef TOAD
   file+=context;
+#else
+  file+="/toc.htm";
+#endif
 #ifdef TO_KDE
   window->Help->openURL(file);
 #else
@@ -484,7 +492,7 @@ void toHelp::displayHelp(QWidget *parent)
 void toHelp::connectDialog(QDialog *dialog)
 {
   QAccel *a=new QAccel(dialog);
-  a->connectItem(a->insertItem(Key_F1),
+  a->connectItem(a->insertItem(toKeySequence(tr("F1", "Dialog|Help"))),
 		 &HelpTool,
 		 SLOT(displayHelp()));
 }

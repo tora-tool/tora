@@ -2172,7 +2172,7 @@ void QtMultiLineEdit::mousePressEvent( QMouseEvent *e )
 			  markDragY == numLines() - 1 && markDragX == lineLength( markDragY );
 	popup->setItemEnabled( id[ IdSelectAll ],
 				  (bool)text().length() && !allSelected );
-
+	emit displayMenu(popup);
 	int r = popup->exec( e->globalPos() );
 	delete popup;
 
@@ -3518,9 +3518,9 @@ void QtMultiLineEdit::wrapLine( int line, int removed )
 	} else if ( s[i] != '\n' ) {
 	    char c = s[i].latin1();
 	    if ( c > 0 ) {
-		if ( !d->chartable[c] )
-		    d->chartable[c] = fm.width( s[i] );
-		linew += d->chartable[c];
+		if ( !d->chartable[(unsigned int)c] )
+		    d->chartable[(unsigned int)c] = fm.width( s[i] );
+		linew += d->chartable[(unsigned int)c];
 	    } else {
 		linew += fm.width( s[i] );
 	    }

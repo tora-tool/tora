@@ -36,6 +36,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
+#include "toextract.h"
 #include "tonoblockquery.h"
 #include "toresultconstraint.h"
 #include "tosql.h"
@@ -49,9 +50,11 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
   setReadAll(true);
   addColumn(tr("Constraint Name"));
   addColumn(tr("Condition"));
+#ifndef TOAD
   addColumn(tr("Enabled"));
   addColumn(tr("Delete Rule"));
   addColumn(tr("Generated"));
+#endif
   setSQLName(QString::fromLatin1("toResultConstraint"));
 
   setSorting(0);
@@ -62,7 +65,7 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
 
 bool toResultConstraint::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn);
+  return toIsOracle(conn)||toExtract::canHandle(conn);
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
@@ -117,14 +120,18 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
 			     "",
 			     "7.3");
 
-void toResultConstraint::query(const QString &,const toQList &param)
+void toResultConstraint::addConstraint(const QString &name,const QString &definition,const QString &status)
+{
+  QListViewItem *item=new toResultViewItem(this,NULL);
+  item->setText(0,name);
+  item->setText(1,definition);
+  item->setText(2,status);
+}
+
+void toResultConstraint::query(const QString &sql,const toQList &param)
 {
   if (!handled())
     return;
-
-  if (Query)
-    delete Query;
-  Query=NULL;
 
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end())
@@ -133,17 +140,60 @@ void toResultConstraint::query(const QString &,const toQList &param)
   if (cp!=((toQList &)param).end())
     TableName=(*cp);
 
+  if (!setSQLParams(sql,param))
+    return;
+
   clear();
 
-  try {
-    toQList par;
-    par.insert(par.end(),Owner);
-    par.insert(par.end(),TableName);
-    Query=new toNoBlockQuery(connection(),toQuery::Background,
-			     toSQL::string(SQLConstraints,connection()),
-			     par);
-    Poll.start(100);
-  } TOCATCH
+  if (toIsOracle(connection())) {
+    if (Query)
+      delete Query;
+    Query=NULL;
+
+    try {
+      toQList par;
+      par.insert(par.end(),Owner);
+      par.insert(par.end(),TableName);
+      Query=new toNoBlockQuery(connection(),toQuery::Background,
+			       toSQL::string(SQLConstraints,connection()),
+			       par);
+      Poll.start(100);
+    } TOCATCH
+  } else {
+    std::list<QString> objects;
+    objects.insert(objects.end(),"TABLE FAMILY:"+Owner+"."+TableName);
+    objects.insert(objects.end(),"TABLE REFERENCES:"+Owner+"."+TableName);
+
+    toExtract extract(connection(),NULL);
+    extract.setCode(true);
+    extract.setHeading(false);
+    extract.setConstraints(true);
+    std::list<QString> dsc=extract.describe(objects);
+
+    QString name;
+    QString definition;
+    QString status;
+    
+    for(std::list<QString>::iterator i=dsc.begin();i!=dsc.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      toShift(ctx);	// Schema;
+      toShift(ctx);	// Table;
+      toShift(ctx);	// Name;
+      if (toShift(ctx)=="CONSTRAINT") {
+	QString nname=toShift(ctx);
+	if (nname!=name&&!name.isEmpty())
+	  addConstraint(name,definition,status);
+	name=nname;
+	QString extra=toShift(ctx);
+	if (extra=="DEFINITION")
+	  definition=toShift(ctx);
+	else if (extra=="STATUS")
+	  status=toShift(ctx);
+      }
+    }
+    if (!name.isEmpty())
+      addConstraint(name,definition,status);
+  }
 }
 
 toResultConstraint::~toResultConstraint()

@@ -302,6 +302,7 @@ std::list<QString> toStorageDatafile::sql(void)
       str+=FilenameOrig;
       str+=QString::fromLatin1("' TO '");
       str+=Filename->text();
+      str+="'";
       toPush(ret,str);
     }
     if (InitialSize->value()!=InitialSizeOrig) {
@@ -836,7 +837,8 @@ void toStorage::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Storage|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)online_xpm),tr("Tablespace online"),
 			   this,SLOT(online()),0,TO_ID_ONLINE);

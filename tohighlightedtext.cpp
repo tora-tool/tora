@@ -134,6 +134,11 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
       highs.insert(highs.end(),highlightInfo(str.length()+1));
       out=Normal;
       return highs;
+    } else if (c=='/'&&nc=='/') {
+      highs.insert(highs.end(),highlightInfo(i,Comment));
+      highs.insert(highs.end(),highlightInfo(str.length()+1));
+      out=Normal;
+      return highs;
     } else if (c=='/'&&nc=='*') {
       multiComment=i;
       search.clear();
@@ -195,7 +200,7 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
   return highs;
 }
 
-static toSyntaxAnalyzer DefaultAnalyzer((const char **)DefaultKeywords);
+static toSyntaxAnalyzer DefaultAnalyzer(DefaultKeywords);
 
 toSyntaxAnalyzer &toSyntaxAnalyzer::defaultAnalyzer(void)
 {
@@ -222,7 +227,7 @@ toHighlightedText::toHighlightedText(QWidget *parent,const char *name)
   NoCompletion=KeepCompletion=false;
   Current=LastCol=LastRow=-1;
   Highlight=!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty();
-  KeywordUpper=!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty();
+  KeywordUpper=!toTool::globalConfig(CONF_KEYWORD_UPPER,DEFAULT_KEYWORD_UPPER).isEmpty();
   LeftIgnore=0;
   connect(this,SIGNAL(textChanged(void)),this,SLOT(textChanged(void)));
   LastLength=0;
@@ -420,7 +425,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	  if (i==int(c.length()))
 	    painter->fillRect(LeftIgnore,0,posx-LeftIgnore,height,painter->backgroundColor());
 
-#if 1 && defined (WIN32)
+#if 0 && defined (WIN32)
 	  rect.setWidth(rect.width()-2);
 #endif
 #if 0 && defined (WIN32)
@@ -559,6 +564,14 @@ int toHighlightedText::convertLine(int line,int start,int diff)
   else if (line>=start)
     return line+diff;
   return -1;
+}
+
+bool toHighlightedText::hasErrors()
+{
+  if ( Errors.size()==0 )
+    return(false);
+  else
+    return(true);
 }
 
 void toHighlightedText::nextError(void)
@@ -881,7 +894,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       }
     }
   }
-  if (e->state()==ControlButton&&e->key()==Key_T) {
+  if (toCheckKeyEvent(e,QKeySequence("Ctrl+."))) {
     try {
       toConnection &conn=toCurrentConnection(this);
       std::list<toConnection::objectName> &objects=conn.objects(false);

@@ -62,6 +62,8 @@ public:
   { }
   virtual ~toResultFilter()
   { }
+  virtual void startingQuery(void)
+  { }
   /** This function can inspect the item to be added and decide if it is
    * valid for adding or not.
    * @param item Item to inspect.
@@ -471,6 +473,11 @@ public:
    * @return Pointer to newly allocated transposed listview.
    */
   virtual toListView *copyTransposed(void);
+signals:
+  /** Called before the menu is displayed so that you can add items to it before it is shown.
+   * @param menu Pointer to the menu about to be shown.
+   */
+  void displayMenu(QPopupMenu *menu);
 public slots:
   /** set the popup menu --> see displayMenu()
    * @param item Item to display.

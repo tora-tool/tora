@@ -50,7 +50,7 @@
 #include "tovisualize.moc"
 
 #include "icons/axis.xpm"
-#include "icons/compile.xpm"
+#include "icons/execute.xpm"
 #include "icons/grid.xpm"
 #include "icons/legend.xpm"
 
@@ -96,7 +96,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
 
   toolbar->addSeparator();
 
-  new QToolButton(QPixmap((const char **)compile_xpm),
+  new QToolButton(QPixmap((const char **)execute_xpm),
 		  tr("Update chart"),
 		  tr("Update chart"),
 		  this,SLOT(display(void)),

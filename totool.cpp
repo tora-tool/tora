@@ -64,12 +64,40 @@
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
 
-toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
-  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx),Tool(tool)
+toConnectionWidget::toConnectionWidget(toConnection &conn,QWidget *widget)
+  : Connection(&conn),Widget(widget)
 {
+  Connection->addWidget(Widget);
+}
+
+void toConnectionWidget::setConnection(toConnection &conn)
+{
+  if (Connection)
+    Connection->delWidget(Widget);
   Connection=&conn;
+  Connection->addWidget(Widget);
+}
+
+toConnectionWidget::toConnectionWidget(QWidget *widget)
+  : Widget(widget)
+{
+  Connection=NULL;
+}
+
+toConnection &toConnectionWidget::connection()
+{
+  if (Connection)
+    return *Connection;
+  QWidget *widget=Widget;
+  if (!widget)
+    throw qApp->translate("toConnectionWidget","toConnectionWidget not inherited with a QWidget");
+  return toCurrentConnection(widget->parentWidget());
+}
+
+toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
+  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx),toConnectionWidget(conn,this),Tool(tool)
+{
   Timer=NULL;
-  Connection->addWidget(this);
 
   if (parent) {
     // Voodoo for making connection changing cascade to sub tools.
@@ -82,6 +110,12 @@ toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toCon
   }
 }
 
+toConnectionWidget::~toConnectionWidget()
+{
+  if (Connection)
+    Connection->delWidget(Widget);
+}
+
 void toToolWidget::parentConnection(void)
 {
   try {
@@ -91,23 +125,21 @@ void toToolWidget::parentConnection(void)
 
 toToolWidget::~toToolWidget()
 {
-  Connection->delWidget(this);
+  toMainWidget()->toolWidgetRemoved(this);
 }
 
 void toToolWidget::setConnection(toConnection &conn)
 {
   bool connCap=false;
-  QString name=Connection->description();
+  QString name=connection().description();
   QString capt=caption();
   if (capt.startsWith(name)) {
     connCap=true;
     capt=capt.mid(name.length());
   }
-  Connection->delWidget(this);
-  Connection=&conn;
-  Connection->addWidget(this);
+  toConnectionWidget::setConnection(conn);
   if (connCap) {
-    capt.prepend(Connection->description());
+    capt.prepend(connection().description());
     setCaption(capt);
   }
   emit connectionChange();
@@ -160,8 +192,13 @@ void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &p
 std::map<QCString,toTool *> *toTool::Tools;
 std::map<QCString,QString> *toTool::Configuration;
 
+#ifdef TOAD
+#define CONFIG_FILE "/.toadrc"
+#define DEF_CONFIG_FILE "/etc/toadrc"
+#else
 #define CONFIG_FILE "/.torarc"
 #define DEF_CONFIG_FILE "/etc/torarc"
+#endif
 
 char **toTool::pictureXPM(void)
 {
@@ -212,6 +249,9 @@ void toTool::createWindow(void)
 
       newWin->show();
       main->windowsMenu();
+
+      if (tool)
+	main->toolWidgetAdded(tool);
 
       // Maximize window if only window
       {
@@ -271,8 +311,12 @@ bool toTool::saveMap(const QString &file,std::map<QCString,QString> &pairs)
 }
 
 #ifdef WIN32
-#  define APPLICATION_NAME "SOFTWARE\\Quest\\tora\\"
+#  ifdef TOAD
+#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\Toad for MySQL\\"
+#  else
+#  define APPLICATION_NAME "SOFTWARE\\Quest Software\\tora\\"
 #  define FALLBACK_NAME    "SOFTWARE\\Underscore\\tora\\"
+#  endif
 
 static char *toKeyPath(const QString &str,CRegistry &registry)
 {
@@ -478,6 +522,7 @@ const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
 	return (*Configuration)[tag];
       }
     } catch (...) {
+#ifdef FALLBACK_NAME
       try {
 	path=tag;
 	path.prepend(FALLBACK_NAME);
@@ -496,6 +541,7 @@ const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
 	}
       } catch (...) {
       }
+#endif
     }
 #endif
     (*Configuration)[tag]=QString::fromLatin1(def);

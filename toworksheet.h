@@ -61,6 +61,7 @@ class toHighlightedText;
 class toListView;
 class toResultBar;
 class toResultCols;
+class toResultCombo;
 class toResultItem;
 class toResultLong;
 class toResultPlan;
@@ -68,13 +69,14 @@ class toResultStats;
 class toResultView;
 class toTool;
 class toVisualize;
+class toTabWidget;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT
 
   bool Light;
   toHighlightedText *Editor;
-  QTabWidget *ResultTab;
+  toTabWidget *ResultTab;
   toResultLong *Result;
   toResultPlan *Plan;
   QWidget *CurrentTab;
@@ -88,6 +90,7 @@ class toWorksheet : public toToolWidget {
   toResultLong *LongOps;
   toVisualize *Visualize;
   QListViewItem *LastLogItem;
+  QToolButton *PlanButton;
   QToolButton *StopButton;
   QToolButton *StatisticButton;
   QWidget *StatTab;
@@ -95,6 +98,7 @@ class toWorksheet : public toToolWidget {
   toResultCols *Columns;
   QComboBox *Refresh;
   QLabel *Started;
+  toResultCombo *Schema;
 
   int RefreshSeconds;
   QTimer RefreshTimer;
@@ -155,6 +159,7 @@ public:
 signals:
   void executed(void);
 public slots:
+  void changeSchema(void);
   void connectionChanged(void);
   void refresh();
   void execute();
@@ -187,6 +192,7 @@ public slots:
   void stop(void);
 private slots:
   void poll(void);
+  void displayMenu(QPopupMenu *menu);
 };
 
 #endif

@@ -35,9 +35,16 @@
 #include "utils.h"
 
 #include "toconnection.h"
+#include "tohighlightedtext.h"
 #include "tomain.h"
+#include "tomysqlkeywords.h"
 #include "tosql.h"
+#include "totool.h"
 
+#include <qapplication.h>
+#include <qcheckbox.h>
+#include <qgroupbox.h>
+#include <qlayout.h>
 #include <qsqldatabase.h>
 #include <qsqlerror.h>
 #include <qsqlfield.h>
@@ -63,9 +70,21 @@ static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
 			     "7.1",
 			     "PostgreSQL");
 
+static toSQL SQLListDatabases("toQSqlConnection:ListDatabases",
+			      "show databases",
+			      "List the available databases for a mysql connection",
+			      "3.0",
+			      "MySQL");
+
+static toSQL SQLListObjectsDatabase("toQSqlConnection:ListObjectsDatabase",
+			    "show table status from :f1<noquote>",
+			    "Get the available tables for a specific database (MySQL specific, won't work for anything else)",
+			    "3.0",
+			    "MySQL");
+
 static toSQL SQLListObjects("toQSqlConnection:ListObjects",
 			    "show tables",
-			    "Get the available tables for a mysql connection",
+			    "Get the available tables for a connection",
 			    "3.0",
 			    "MySQL");
 
@@ -91,13 +110,13 @@ static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
 				 "PostgreSQL");
 
 static toSQL SQLListSynonymsSapDb("toQSqlConnection:ListSynonyms",
-			     "SELECT synonymname \"Synonym\", owner \"Schema\", tablename \"Object\"\n"
-			    "from synonyms \n"
-			    "where tabletype not in (\'SYNONYM\',\'RESULT\') \n"
-			    "order by owner,tablename",
-			     "Get synonym list, should have same columns",
-			     "",
-			     "SapDb");
+				  "SELECT synonymname \"Synonym\", owner \"Schema\", tablename \"Object\"\n"
+				  "from synonyms \n"
+				  "where tabletype not in (\'SYNONYM\',\'RESULT\') \n"
+				  "order by owner,tablename",
+				  "Get synonym list, should have same columns",
+				  "",
+				  "SapDb");
 
 static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
 			     "SELECT c.relname AS \"Synonym\", u.usename AS \"Schema\", c.relname AS \"Object\"\n"
@@ -139,7 +158,39 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
 				 "7.2",
 				 "PostgreSQL");
 
-static QString QueryParam(const QString &in,toQList &params)
+static toSQL SQLConnectionID("toQSqlConnection:ConnectionID",
+			     "SELECT connection_id()",
+			     "Get a connection ID for a session",
+			     "3.23",
+			     "MySQL");
+
+static toSQL SQLCancel("toQSqlConnection:Cancel",
+		       "KILL :f1",
+		       "Cancel a connection given it's connection ID",
+		       "3.23",
+		       "MySQL");
+
+#define CONF_ONLY_FORWARD	"OnlyForward"
+#define DEFAULT_ONLY_FORWARD	"Yes"
+
+struct toQSqlProviderAggregate {
+  enum aggregateType {
+    None,
+    AllDatabases,
+    AllTables,
+    CurrentDatabase,
+    SpecifiedDatabase
+  } Type;
+  QString Data;
+  toQSqlProviderAggregate()
+    : Type(None)
+  { }
+  toQSqlProviderAggregate(aggregateType type,const QString &data=QString::null)
+    : Type(type),Data(data)
+  { }
+};
+
+static QString QueryParam(const QString &in,toQList &params,std::list<QString> *extradata)
 {
   QString ret;
   bool inString=false;
@@ -184,24 +235,51 @@ static QString QueryParam(const QString &in,toQList &params)
 	}
 	i--;
 	
-	if (nam.isEmpty())
-	  throw QString::fromLatin1("No bind name");
-
-	if (binds.find(nam)!=binds.end()) {
-	  ret+=binds[nam];
-	  break;
+	toQSqlProviderAggregate aggr;;
+	if (in=="alldatabases")
+	  aggr=toQSqlProviderAggregate(toQSqlProviderAggregate::AllDatabases);
+	else if (in=="alltables")
+	  aggr=toQSqlProviderAggregate(toQSqlProviderAggregate::AllTables);
+	else if (in=="currenttables")
+	  aggr=toQSqlProviderAggregate(toQSqlProviderAggregate::CurrentDatabase);
+	else if (in=="database") {
+	  aggr=toQSqlProviderAggregate(toQSqlProviderAggregate::SpecifiedDatabase);
 	}
-	if (cpar==params.end())
-	  throw QString::fromLatin1("Not all bind variables suplied");
+
 	QString str;
-	if ((*cpar).isNull()) {
-	  str=QString::fromLatin1("NULL");
-	} else if ((*cpar).isInt()||(*cpar).isDouble()) {
-	  str=QString(*cpar);
-	} else {
-	  if (in!=QString::fromLatin1("noquote"))
-	    str+=QString::fromLatin1("'");
-	  QString tmp=(*cpar);
+	QString tmp;
+	if (aggr.Type==toQSqlProviderAggregate::None||aggr.Type==toQSqlProviderAggregate::SpecifiedDatabase) {
+	  if (nam.isEmpty())
+	    throw QString::fromLatin1("No bind name");
+
+	  if (binds.find(nam)!=binds.end()) {
+	    ret+=binds[nam];
+	    break;
+	  }
+	  if (cpar==params.end())
+	    throw QString::fromLatin1("Not all bind variables suplied");
+	  if ((*cpar).isNull()) {
+	    str=QString::fromLatin1("NULL");
+	  } else if ((*cpar).isInt()||(*cpar).isDouble()) {
+	    str=QString(*cpar);
+	  }
+	  tmp=(*cpar);
+	  cpar++;
+	}
+	if (str.isNull()) {
+	  if (aggr.Type!=toQSqlProviderAggregate::None) {
+	    if (extradata) {
+	      if (extradata->begin()==extradata->end())
+		return QString::null;
+	      tmp=toShift(*extradata);
+	    } else {
+	      aggr.Data=tmp;
+	      throw aggr;
+	    }
+	  } else {
+	    if (in!=QString::fromLatin1("noquote"))
+	      str+=QString::fromLatin1("'");
+	  }
 	  for(unsigned int j=0;j<tmp.length();j++) {
 	    QChar d=tmp.at(j);
 	    switch(d.latin1()) {
@@ -230,12 +308,11 @@ static QString QueryParam(const QString &in,toQList &params)
 	      str+=d;
 	    }
 	  }
-	  if (in!=QString::fromLatin1("noquote"))
+	  if (in!=QString::fromLatin1("noquote")&&aggr.Type==toQSqlProviderAggregate::None)
 	    str+=QString::fromLatin1("'");
 	}
 	binds[nam]=str;
 	ret+=str;
-	cpar++;
 	break;
       }
     default:
@@ -361,15 +438,29 @@ enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
 
 
 
-static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecordInfo recInfo)
+static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecordInfo recInfo,int *order,unsigned int orderSize)
 {
   std::list<toQuery::queryDescribe> ret;
   QSqlRecord record=recInfo.toRecord();
   unsigned int count=record.count();
+  if (order) {
+    count=orderSize;
+  }
   for (unsigned int i=0;i<count;i++) {
     toQuery::queryDescribe desc;
     desc.AlignRight=false;
-    desc.Name=record.fieldName(i);
+    int col=i;
+    if (order)
+      col=order[i]-1;
+    if (col==-1) {
+      desc.Name="Database";
+      desc.Datatype="STRING";
+      desc.Null=false;
+      desc.AlignRight=false;
+      ret.insert(ret.end(),desc);
+      continue;
+    }
+    desc.Name=record.fieldName(col);
     desc.AlignRight=false;
 
     int size=1;
@@ -827,6 +918,41 @@ static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecor
 class toQSqlProvider : public toConnectionProvider {
   QStringList Drivers;
 public:
+  static bool OnlyForward;
+
+  class qSqlSetting : public QWidget, public toSettingTab
+  {
+    QCheckBox *OnlyForward;
+  public:
+    qSqlSetting(QWidget *parent)
+      : QWidget(parent),toSettingTab("database.html#qsql")
+    {
+      QGridLayout *baseLayout=new QGridLayout(this,1,1,0,6);
+
+      QGroupBox *box=new QGroupBox(this);
+      box->setColumnLayout(0,Qt::Vertical);
+      box->layout()->setSpacing(6);
+      box->layout()->setMargin(11);
+      QGridLayout *layout=new QGridLayout(box->layout());
+      layout->setAlignment(Qt::AlignTop);
+      
+      OnlyForward=new QCheckBox(qApp->translate("qSqlSetting","Posibility to break MySQL queries (Can require more connections)"),box);
+      layout->addMultiCellWidget(OnlyForward,0,0,0,0);
+      
+      OnlyForward->setChecked(!toTool::globalConfig(CONF_ONLY_FORWARD,DEFAULT_ONLY_FORWARD).isEmpty());
+      
+      QSpacerItem *spacer=new QSpacerItem(20,20,QSizePolicy::Minimum,QSizePolicy::Expanding);
+      layout->addItem(spacer,1,0);
+
+      baseLayout->addWidget(box,0,0);
+    }
+    virtual void saveSetting(void)
+    {
+      toTool::globalSetConfig(CONF_ONLY_FORWARD,OnlyForward->isChecked()?"Yes":"");
+      toQSqlProvider::OnlyForward=OnlyForward->isChecked();
+    }
+  };
+
   static QCString fromQSqlName(const QString &driv)
   {
     if (driv==QString::fromLatin1("QMYSQL3"))
@@ -852,19 +978,30 @@ public:
     else if (driv=="SapDB")
       return QString::fromLatin1("QSAPDB7");
     else if (driv=="ODBC")
-      return QString::fromLatin1("QODBC3");
+      return QString::fromLatin1("QODBC");
     return QString::null;
   }
  
+  class mySQLAnalyzer : public toSyntaxAnalyzer {
+  public:
+    mySQLAnalyzer()
+      : toSyntaxAnalyzer(MySQLKeywords)
+    { }
+    virtual QChar quoteCharacter()
+    { return '`'; }
+    virtual bool declareBlock()
+    { return false; }
+  };
 
   class qSqlSub : public toConnectionSub {
     toSemaphore Lock;
   public:
     QSqlDatabase *Connection;
-    QString name;
+    QString Name;
+    QString ConnectionID;
 
-    qSqlSub(QSqlDatabase *conn,const QString &)
-      : Lock(1),Connection(conn)
+    qSqlSub(QSqlDatabase *conn,const QString &name)
+      : Lock(1),Connection(conn),Name(name)
     { }
 
     void lockUp() {
@@ -879,44 +1016,125 @@ public:
 	return Lock.getValue();
     } 
 
+    void reconnect(toConnection &conn);
+
     ~qSqlSub()
-    { QSqlDatabase::removeDatabase(name); }
+    { if (!Name.isEmpty()) QSqlDatabase::removeDatabase(Name); }
     void throwError(const QString &sql)
-    { throw ErrorString(Connection->lastError(),QString::fromUtf8(sql)); }
+    { throw ErrorString(Connection->lastError(),sql); }
   };
 
   class qSqlQuery : public toQuery::queryImpl {
     QSqlQuery *Query;
     QSqlRecord Record;
     qSqlSub *Connection;
+    QString CurrentExtra;
+    std::list<QString> ExtraData;
     bool EOQ;
-    bool cancelSupported;
-    bool validCheck;
     unsigned int Column;
+    unsigned int ColumnOrderSize;
+    int *ColumnOrder;
+
+    void checkQuery(void);
+
+    std::list<QString> extraData(const toQSqlProviderAggregate &aggr)
+    {
+      std::list<QString> ret;
+      std::list<toConnection::objectName> &objects=query()->connection().objects(false);
+      for(std::list<toConnection::objectName>::iterator i=objects.begin();i!=objects.end();i++) {
+	if ((*i).Type=="DATABASE"&&aggr.Type==toQSqlProviderAggregate::AllDatabases) {
+	  toPush(ret,(*i).Owner);
+	} else if ((*i).Type=="TABLE") {
+	  if (aggr.Type==toQSqlProviderAggregate::AllTables||
+	      (aggr.Type==toQSqlProviderAggregate::CurrentDatabase&&(*i).Owner==query()->connection().user())||
+	      (aggr.Type==toQSqlProviderAggregate::SpecifiedDatabase&&(*i).Owner==aggr.Data))
+	    toPush(ret,(*i).Owner+"."+(*i).Name);
+	}
+      }
+      return ret;
+    }
+    QSqlQuery *createQuery(const QString &query)
+    {
+      QSqlQuery *ret=new QSqlQuery(QString::null,Connection->Connection);
+      if (toQSqlProvider::OnlyForward)
+	ret->setForwardOnly(true);
+      ret->exec(query);
+      return ret;
+    }
   public:
     qSqlQuery(toQuery *query,qSqlSub *conn)
       : toQuery::queryImpl(query),Connection(conn)
-    { Column=0; 
+    {
+      Column=0; 
+      ColumnOrder=NULL;
       EOQ=true; 
       Query=NULL;
-      // sapdb marks value as invalid on some views	
-      // for example tables,indexes etc
-      if(query->connection().provider() == "SapDB")  {
-	validCheck =false;
-        cancelSupported=true;
-      }else {
-	validCheck =true;
-	cancelSupported=false;
-      }
     }
     virtual ~qSqlQuery()
-    { delete Query; }
+    { delete Query; delete[] ColumnOrder; }
     virtual void execute(void);
 
     virtual void cancel(void)
     {
-	if (cancelSupported) {
-        }
+      if (!Connection->ConnectionID.isEmpty()) {
+	try {
+	  toConnection &conn=query()->connection();
+	  toQList pars;
+	  pars.insert(pars.end(),Connection->ConnectionID);
+	  conn.execute(SQLCancel,pars);
+	  Connection->reconnect(conn);
+	} catch(...) {
+
+	}
+      }
+    }
+
+    QString parseReorder(const QString &str)
+    {
+      if (str.upper().startsWith("TOAD")) {
+	std::list<int> order;
+	int num=-1;
+	unsigned int i;
+	for(i=4;i<str.length();i++) {
+	  char c=str.at(i);
+	  if (isspace(c))
+	    ;
+	  else if (isdigit(c)) {
+	    if (num<0)
+	      num=0;
+	    num*=10;
+	    num+=c-'0';
+	  } else if (c=='*') {
+	    if (num>=0)
+	      throw QString("Invalid column selection, number before *");
+	    if (c=='*') {
+	      order.insert(order.end(),-1);
+	      do {
+		i++;
+	      } while(str.at(i).isSpace());
+	      break;
+	    }
+	  } else {
+	    if (num<0)
+	      throw QString("Invalid column selection, number missing");
+	    order.insert(order.end(),num);
+	    num=-1;
+	    if (c!=',')
+	      break;
+	  }
+	}
+	ColumnOrderSize=order.size();
+	if (ColumnOrderSize==0)
+	  throw QString("Missing column selection");
+	delete[] ColumnOrder;
+	ColumnOrder=new int[ColumnOrderSize];
+	int pos=0;
+	for(std::list<int>::iterator j=order.begin();j!=order.end();j++,pos++)
+	  ColumnOrder[pos]=*j;
+	  
+	return str.mid(i);
+      } else
+	return str;
     }
 
     virtual toQValue readValue(void)
@@ -927,23 +1145,60 @@ public:
 	throw QString::fromLatin1("Tried to read past end of query");
 
       Connection->lockDown();
-      QVariant val=Query->value(Column);
+      QVariant val;
+      bool fixEmpty=false;
+      if (ColumnOrder) {
+	int col=ColumnOrder[Column];
+	if (col>=1) {
+	  val=Query->value(col-1);
+	  if (Query->isNull(col-1))
+	    val.clear();
+	  else if (val.isNull())
+	    fixEmpty=true;
+	} else if (col==0) {
+	  val=CurrentExtra;
+	}
+      } else {
+	val=Query->value(Column);
+	if (Query->isNull(Column))
+	  val.clear();
+	else if (val.type()==QVariant::Date&&val.isNull())
+	  fixEmpty=true;
+      }
+      if (fixEmpty) {
+	switch(val.type()) {
+	case QVariant::Date:
+	  val=QVariant(QString("0000-00-00"));
+	  break;
+	case QVariant::DateTime:
+	  val=QVariant(QString("0000-00-00T00:00:00"));
+	  break;
+	default:
+	  break;
+	  // Do nothing
+	}
+      }
+
       // sapdb marks value as invalid on some views	
       // for example tables,indexes etc, so ignore this check
-      if (validCheck && !val.isValid()) {
-	Connection->lockUp();
-    	QString msg = QString::fromLatin1("Query Value not valid <");
-	msg +=Column;
-	msg +=QString::fromLatin1("> ");
-	msg +=query()->sql();
-	Connection->throwError(msg);
-      }
       Column++;
-      if (Column==Record.count()) {
+      if ((ColumnOrder&&Column==ColumnOrderSize)||(!ColumnOrder&&Column==Record.count())) {
 	Column=0;
 	EOQ=!Query->next();
       }
-      Connection->lockUp();
+      if (EOQ&&ExtraData.begin()!=ExtraData.end()) {
+	delete Query;
+	Query=NULL;
+	CurrentExtra=*ExtraData.begin();
+	try {
+	  Query=createQuery(QueryParam(parseReorder(query()->sql()),query()->params(),&ExtraData));
+	} catch(...) {
+	  Connection->lockUp();
+	  throw;
+	}
+	checkQuery();
+      } else
+	Connection->lockUp();
 
       return val.toString();
     }
@@ -964,6 +1219,9 @@ public:
     {
       Connection->lockDown();
       int ret=Record.count();;
+      if (ColumnOrder) {
+	ret=ColumnOrderSize;
+      }
       Connection->lockUp();
       return ret;
     }
@@ -974,7 +1232,7 @@ public:
 	QCString provider=query()->connection().provider();
 	Connection->lockDown();
 	QSqlRecordInfo recInfo=Connection->Connection->recordInfo(*Query);
-	ret=Describe(provider,recInfo);
+	ret=Describe(provider,recInfo,ColumnOrder,ColumnOrderSize);
 	Connection->lockUp();
       }
       return ret;
@@ -982,7 +1240,8 @@ public:
   };
 
   class qSqlConnection : public toConnection::connectionImpl {
-    bool multiple;
+    bool Multiple;
+    bool HasTransactions;
     qSqlSub *qSqlConv(toConnectionSub *sub)
     {
       qSqlSub *conn=dynamic_cast<qSqlSub *>(sub);
@@ -990,14 +1249,31 @@ public:
 	throw QString::fromLatin1("Internal error, not QSql sub connection");
       return conn;
     }
+    toSyntaxAnalyzer *MySQLAnalyzer;
   public:
     qSqlConnection(toConnection *conn)
       : toConnection::connectionImpl(conn)
     { 
-	if (conn->provider() == "SapDB")
-	  multiple=false;
+	if (conn->provider() == "SapDB"||
+	    (conn->provider() == "MySQL"&&toQSqlProvider::OnlyForward))
+	  Multiple=false;
 	else 
-	  multiple=true;
+	  Multiple=true;
+	if (conn->provider() == "MySQL")
+	  HasTransactions=false;
+	else
+	  HasTransactions=true;
+	MySQLAnalyzer=NULL;
+    }
+
+    virtual toSyntaxAnalyzer &analyzer()
+    {
+      if (connection().provider() == "MySQL") {
+	if (!MySQLAnalyzer)
+	  MySQLAnalyzer=new mySQLAnalyzer();
+	return *MySQLAnalyzer;
+      } else
+	return toSyntaxAnalyzer::defaultAnalyzer();
     }
 
     virtual QString quote(const QString &name)
@@ -1019,6 +1295,9 @@ public:
       if (connection().provider() == "PostgreSQL") {
 	if (name.at(0).latin1()=='\"'&&name.at(name.length()-1).latin1()=='\"')
 	  return name.left(name.length()-1).right(name.length()-2);
+      } else if (connection().provider() == "MySQL") {
+	if (name.at(0).latin1()=='`'&&name.at(name.length()-1).latin1()=='`')
+	  return name.left(name.length()-1).right(name.length()-2);
       }
       return name;
     }
@@ -1027,19 +1306,43 @@ public:
     {
       std::list<toConnection::objectName> ret;
 
-      toQuery tables(connection(),SQLListObjects);
       toConnection::objectName cur;
-      while(!tables.eof()) {
-	cur.Name=tables.readValueNull();
-	if (tables.columns()>1)
-	  cur.Owner=tables.readValueNull();
-	else
-	  cur.Owner=connection().database();
-	if (tables.columns()>2)
-	  cur.Type=tables.readValueNull();
-	else
-	  cur.Type=QString::fromLatin1("TABLE");
-	ret.insert(ret.end(),cur);
+      try {
+	toQuery databases(connection(),SQLListDatabases);
+	while(!databases.eof()) {
+	  QString db=databases.readValueNull();
+	  cur.Owner=db;
+	  cur.Type="DATABASE";
+	  cur.Name=QString::null;
+	  ret.insert(ret.end(),cur);
+	  try {
+	    toQuery tables(connection(),SQLListObjectsDatabase,db);
+	    while(!tables.eof()) {
+	      cur.Name=tables.readValueNull();
+	      cur.Owner=db;
+	      cur.Type="TABLE";
+	      for(int i=2;i<tables.columns();i++) // I just wan't the last column except for the first one
+		tables.readValueNull();
+	      cur.Comment=tables.readValueNull();
+	      ret.insert(ret.end(),cur);
+	    }
+	  } catch(...) {
+	  }
+	}
+      } catch(...) {
+	toQuery tables(connection(),SQLListObjects);
+	while(!tables.eof()) {
+	  cur.Name=tables.readValueNull();
+	  if (tables.columns()>1)
+	    cur.Owner=tables.readValueNull();
+	  else
+	    cur.Owner=connection().database();
+	  if (tables.columns()>2)
+	    cur.Type=tables.readValueNull();
+	  else
+	    cur.Type=QString::fromLatin1("TABLE");
+	  ret.insert(ret.end(),cur);
+	}
       }
 
       return ret;
@@ -1095,7 +1398,7 @@ public:
 	  qSqlSub *sub=dynamic_cast<qSqlSub *>(query.connectionSub());
 	  if (sub) {
 	    sub->lockDown();
-	    desc=Describe(connection().provider(),sub->Connection->recordInfo(quote(table.Name)));
+	    desc=Describe(connection().provider(),sub->Connection->recordInfo(quote(table.Name)),NULL,0);
 	    sub->lockUp();
 	  }
 	} else {
@@ -1119,19 +1422,19 @@ public:
     }
 
     virtual bool handleMultipleQueries() { 
-	return multiple; 
+	return Multiple; 
     }
 
     virtual void commit(toConnectionSub *sub)
     {
       qSqlSub *conn=qSqlConv(sub);
-      if (!conn->Connection->commit())
+      if (!conn->Connection->commit()&&HasTransactions)
 	conn->throwError(QString::fromLatin1("COMMIT"));
     }
     virtual void rollback(toConnectionSub *sub)
     {
       qSqlSub *conn=qSqlConv(sub);
-      if (!conn->Connection->rollback())
+      if (!conn->Connection->rollback()&&HasTransactions)
 	conn->throwError(QString::fromLatin1("ROLLBACK"));
     }
 
@@ -1168,21 +1471,27 @@ public:
     {
       qSqlSub *conn=qSqlConv(sub);
       conn->lockDown();
-      QSqlQuery Query(conn->Connection->exec(QueryParam(sql,params)));
-      if (!Query.isActive()) {
+      try {
+	QSqlQuery Query(conn->Connection->exec(QueryParam(sql,params,NULL)));
+	if (!Query.isActive()) {
+	  conn->lockUp();
+	  QString msg = QString::fromLatin1("Query not active ");
+	  msg +=sql;
+	  throw ErrorString(Query.lastError(),msg);
+	}
 	conn->lockUp();
-	QString msg = QString::fromLatin1("Query not active ");
-	msg +=sql;
-	conn->throwError(msg);
+      } catch(const toQSqlProviderAggregate &) { // Ok, this one is complicated and will probably never be used.
+	conn->lockUp();
+	throw QString("Direct exec aggregate queries are not supported, use a toQuery object for this one");
       }
-
-      conn->lockUp();
     }
   };
 
   toQSqlProvider(void)
     : toConnectionProvider("QSql",false)
-  { }
+  {
+    OnlyForward=!toTool::globalConfig(CONF_ONLY_FORWARD,DEFAULT_ONLY_FORWARD).isEmpty();
+  }
 
   virtual void initialize(void)
   {
@@ -1203,12 +1512,22 @@ public:
     }
   }
 
+  virtual QWidget *providerConfigurationTab(const QCString &provider,
+					    QWidget *parent)
+  {
+    if (provider=="MySQL")
+      return new qSqlSetting(parent);
+    return NULL;
+  }
+
   virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
   { return new qSqlConnection(conn); }
-  virtual std::list<QString> providedHosts(const QCString &)
+  virtual std::list<QString> providedHosts(const QCString &provider)
   {
     std::list<QString> ret;
-    ret.insert(ret.end(),QString::fromLatin1("localhost"));
+    ret.insert(ret.end(),"localhost");
+    if (provider=="MySQL")
+      ret.insert(ret.end(),":3306");
     return ret;
   }
   virtual std::list<QString> providedDatabases(const QCString &,const QString &,const QString &,const QString &)
@@ -1219,6 +1538,8 @@ public:
 
     return ret;
   }
+
+  static qSqlSub *toQSqlProvider::createConnection(toConnection &conn);
 };
 
 static toQSqlProvider QSqlProvider;
@@ -1231,35 +1552,89 @@ void toQSqlProvider::qSqlQuery::execute(void)
     toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
   }
   Connection->lockDown(); 
-  Query=new QSqlQuery(Connection->Connection->exec(QueryParam(query()->sql(),query()->params())));
-  if (!Query->isActive()) {
-    Connection->lockUp();
-    QString msg = QString::fromLatin1("Query not active ");
-    msg +=query()->sql();
-    Connection->throwError(msg);
+  Query=NULL;
+  try {
+    Query=createQuery(QueryParam(parseReorder(query()->sql()),query()->params(),NULL));
+  } catch(const toQSqlProviderAggregate &aggr) {
+    ExtraData=extraData(aggr);
+    if (ExtraData.begin()!=ExtraData.end())
+      CurrentExtra=*ExtraData.begin();
+    try {
+      QString t=QueryParam(parseReorder(query()->sql()),query()->params(),&ExtraData);
+      if (t.isEmpty()) {
+	toStatusMessage("Nothing to send to aggregate query");
+	Query=NULL;
+	EOQ=true;
+	Connection->lockUp();
+	return;
+      } else
+	Query=createQuery(t);
+    } catch(...) {
+      Connection->lockUp();
+      throw;
+    }
   }
+  checkQuery();
+}
+
+void toQSqlProvider::qSqlQuery::checkQuery(void) // Must call with lockDown!!!!
+{
+  while (Connection->getLockValue()>0) {
+    toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore for checkQuery"));
+  }
+  do {
+    if (!Query->isActive()) {
+      Connection->lockUp();
+      QString msg = QString::fromLatin1("Query not active ");
+      msg +=query()->sql();
+      throw ErrorString(Query->lastError(),msg);
+    }
   
-  if (Query->isSelect()) {
-    Record=Connection->Connection->record(*Query);
-    EOQ=!Query->next();
-    Column=0;
-  } else
-    EOQ=true;
+    if (Query->isSelect()) {
+      Record=Connection->Connection->record(*Query);
+      if (ColumnOrder&&ColumnOrder[ColumnOrderSize-1]==-1) {
+	unsigned int newsize=ColumnOrderSize+Record.count()-1;
+	int *newalloc=new int[newsize];
+	unsigned int i;
+	for (i=0;i<ColumnOrderSize-1;i++)
+	  newalloc[i]=ColumnOrder[i];
+	for (int colnum=1;i<newsize;i++,colnum++)
+	  newalloc[i]=colnum;
+	delete[] ColumnOrder;
+	ColumnOrder=newalloc;
+	ColumnOrderSize=newsize;
+      }
+      EOQ=!Query->next();
+      Column=0;
+    } else {
+      EOQ=true;
+    }
+    if (EOQ&&ExtraData.begin()!=ExtraData.end()) {
+      delete Query;
+      Query=NULL;
+      try {
+	Query=createQuery(QueryParam(parseReorder(query()->sql()),query()->params(),&ExtraData));
+      } catch(...) {
+	Connection->lockUp();
+	throw;
+      }
+    }
+  } while(ExtraData.begin()!=ExtraData.end()&&EOQ);
   
   Connection->lockUp();
 }
 
-toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
+toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
 {
   static int ID=0;
   ID++;
 
   QString dbName=QString::number(ID);
-  QSqlDatabase *db=QSqlDatabase::addDatabase(toQSqlName(connection().provider()),dbName);
+  QSqlDatabase *db=QSqlDatabase::addDatabase(toQSqlName(conn.provider()),dbName);
   if (!db)
     throw QString(QString::fromLatin1("Couldn't create QSqlDatabase object"));
-  db->setDatabaseName(connection().database());
-  QString host=connection().host();
+  db->setDatabaseName(conn.database());
+  QString host=conn.host();
   int pos=host.find(QString::fromLatin1(":"));
   if (pos<0)
     db->setHostName(host);
@@ -1267,12 +1642,44 @@ toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
     db->setHostName(host.mid(0,pos));
     db->setPort(host.mid(pos+1).toInt());
   }
-  db->open(connection().user(),connection().password());
+
+  db->open(conn.user(),conn.password());
   if (!db->isOpen()) {
     QString t=ErrorString(db->lastError());
     QSqlDatabase::removeDatabase(dbName);
     throw t;
   }
 
-  return new qSqlSub(db,dbName);
+  toQSqlProvider::qSqlSub *ret=new toQSqlProvider::qSqlSub(db,dbName);
+
+  // Try to figure out the connection ID for canceling
+  try {
+    QString sql=SQLConnectionID(conn);
+
+    QSqlQuery query=db->exec(sql);
+    if (query.next())
+      ret->ConnectionID=query.value(0).toString();
+  } catch(...) {
+  }
+  return ret;
 }
+
+void toQSqlProvider::qSqlSub::reconnect(toConnection &conn)
+{
+  qSqlSub *sub=createConnection(conn);
+  Connection=sub->Connection;
+  ConnectionID=sub->ConnectionID;
+
+  // Switch database and remove the old one
+  QString t=Name;
+  Name=sub->Name;
+  sub->Name=t;
+  delete sub;
+}
+
+toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
+{
+  return toQSqlProvider::createConnection(connection());
+}
+
+bool toQSqlProvider::OnlyForward;

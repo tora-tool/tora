@@ -39,6 +39,7 @@
 #include <qwidget.h>
 
 class QPopupMenu;
+class toLineChart;
 
 /** A widget that displays a piechart.
  */
@@ -166,6 +167,35 @@ protected:
   /** Reimplemented for internal reasons.
    */
   virtual void paintEvent(QPaintEvent *e);
+};
+
+/** This class can be used to make a line chart (Or bar chart) follow the values in a piechart.
+ * After it is constructed it will destroy itself if any of the two involved classes are deleted.
+ * The only available option is wether to use flow (Differences since last time) or not when
+ * updating the linechart. Requires that each valueset has a unique label to work.
+ */
+
+class toPieConnector : public QObject {
+  Q_OBJECT
+
+  toPieChart *PieChart;
+  toLineChart *LineChart;
+
+  bool Flow;
+  time_t LastStamp;
+  std::list<double> LastValues;
+public:
+  toPieConnector(toPieChart *pieChart,toLineChart *lineChart);
+  /** Set flow status.
+   */
+  void setFlow(bool flow)
+  { Flow=flow; }
+  /** Check flow status.
+   */
+  bool flow(void) const
+  { return Flow; }
+private slots:
+  void newValues(std::list<double> &values,std::list<QString> &labels); 
 };
 
 #endif

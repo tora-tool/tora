@@ -161,7 +161,8 @@ void toCurrent::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Current session|Refresh")));
       toMainWidget()->menuBar()->insertItem(tr("&Current Session"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {

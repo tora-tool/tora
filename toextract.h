@@ -46,6 +46,8 @@
 class QWidget;
 class toConnection;
 
+#include "tosqlparse.h"
+
 // Liberally ported from DDL::Oracle 1.06
 // Copyright (c) 2000, 2001 Richard Sutherland - United States of America
 
@@ -55,6 +57,52 @@ class toConnection;
 
 class toExtract {
 public:
+  /** Describes an available datatype for the database.
+   */
+  class datatype {
+  private:
+    QString Name;
+    int MaxLength;
+    int MaxPrecision;
+  public:
+    /** Create a new datatype description.
+     * @param name Name of datatype.
+     * @param maxLength Maximum length of parameter if length is needed.
+     * @param maxPrecision Maximum precision of parameter if precision is supported.
+     */
+    datatype(const QString &name,int maxLength=-1,int maxPrecision=-1)
+      : Name(name),MaxLength(maxLength),MaxPrecision(maxPrecision)
+    { }
+    /** Returns true if type has length specification.
+     */
+    bool hasLength()
+    { return MaxLength!=-1; }
+    /** Returns true if type has precision specification.
+     */
+    bool hasPrecision()
+    { return MaxPrecision!=-1; }
+    /** Get the maximum length value.
+     */
+    int maxLength()
+    { return MaxLength; }
+    /** Get the maximum precision of the datatype.
+     */
+    int maxPrecision()
+    { return MaxPrecision; }
+    /** Get the name of the datatype.
+     */
+    const QString &name()
+    { return Name; }
+
+    /** Implemented so that you can easily sort a list of them. Just compares the names.
+     */
+    bool operator < (const datatype &dat) const
+    { return Name<dat.Name; }
+    /** Implemented so that you can easily sort a list of them. Just compares the names.
+     */
+    bool operator == (const datatype &dat) const
+    { return Name==dat.Name; }    
+  };
 
   /** This is an abstract class to implement part of an extractor for a database. Observe
    * that an extractor must be stateless and threadsafe except for constructors and
@@ -163,6 +211,10 @@ public:
 		      const QString &schema,
 		      const QString &owner,
 		      const QString &name) const;
+
+    /** Get the available datatypes for the database.
+     */
+    virtual std::list<datatype> datatypes() const;
   };
 
 private:
@@ -509,6 +561,20 @@ public:
    */
   QString intSchema(const QString &owner,bool desc);
 
+  /** Get the available datatypes for a database.
+   * @return A list of datatypes.
+   */
+  std::list<datatype> datatypes();
+
+  /** Utility function, creates a statement from the start to the end specified by the
+   * parameters. The connection used to specify parsing is the one of the extractor.
+   * @param start Start of parameters.
+   * @param end End of parameters.
+   * @return The indented statement.
+   */
+  QString createFromParse(std::list<toSQLParse::statement>::iterator start,
+			  std::list<toSQLParse::statement>::iterator end);
+
   /** Create a source and destination object list to two other lists
    * containing dropped and created objects or attributes.
    * @param source Source list input (Will not be modified).
@@ -530,7 +596,7 @@ public:
    * @param ctx The current description context.
    * @param arg1 First extra argument to add.
    */
-  static void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
+  static void addDescription(std::list<QString> &ret,const std::list<QString> &ctx,
 			     const QString &arg1=QString::null,const QString &arg2=QString::null,
 			     const QString &arg3=QString::null,const QString &arg4=QString::null,
 			     const QString &arg5=QString::null,const QString &arg6=QString::null,
@@ -554,6 +620,55 @@ public:
    * @return The context, if not enough parts are available null is returned.
    */
   static QString contextDescribe(const QString &str,int level);
+
+  /** Used to get column information from a describe list
+   */
+  struct columnInfo {
+    /** Name of column
+     */
+    QString Name;
+    /** Definition of column
+     */
+    QString Definition;
+    /** Extra data for the column (Except for order which has own field.
+     */
+    std::map<QString,QString> Data;
+    /** Order of the column. Used for sorting.
+     */
+    int Order;
+
+    /** Create column information from name.
+     */
+    columnInfo(const QString &name)
+      : Name(name)
+    { Order=0; }
+    /** Implement sort order based only on Order field.
+     */
+    bool operator <(const columnInfo &inf)
+    { return Order<inf.Order; }
+    /** Implement sort order based only on Order field.
+     */
+    bool operator ==(const columnInfo &inf)
+    { return Order==inf.Order; }
+  };
+
+  /** Parse a column description and return a sorted list of column data.
+   * @param begin The iterator indicating the beginning to start searching from (Inclusive).
+   * @param end The iterator indicating the end to end searching at (Not inclusive).
+   * @param level Number of levels of context to discard before looking for "COLUMN" definition.
+   * @return The list of column definitions. Sorted by column order.
+   */
+  static std::list<columnInfo> parseColumnDescription(std::list<QString>::const_iterator begin,
+						      std::list<QString>::const_iterator end,
+						      int level=3);
+
+  /** Parse a column description and return a sorted list of column data.
+   * @param description A description list. Will go through entire list.
+   * @param level Number of levels of context to discard before looking for "COLUMN" definition.
+   * @return The list of column definitions. Sorted by column order.
+   */
+  static std::list<columnInfo> parseColumnDescription(const std::list<QString> &description,int level=3)
+  { return parseColumnDescription(description.begin(),description.end(),level); }
 
   friend class extractor;
 };

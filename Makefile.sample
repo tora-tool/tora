@@ -144,6 +144,7 @@ API=	\
 	tobarchart.h		\
 	toconf.h		\
 	toconnection.h		\
+	todatatype.h		\
 	todefaultkeywords.h	\
 	toeditwidget.h		\
 	toextract.h		\
@@ -204,9 +205,12 @@ SOURCES=\
 	tobackup.cpp \
 	tobarchart.cpp \
 	tobrowser.cpp \
+	tobrowserconstraint.cpp \
 	tobrowserconstraintui.cpp \
 	tobrowserfilterui.cpp \
+	tobrowserindex.cpp \
 	tobrowserindexui.cpp \
+	tobrowsertable.cpp \
 	tobrowsertableui.cpp \
 	tochangeconnection.cpp \
 	tochartalarmui.cpp \
@@ -215,10 +219,12 @@ SOURCES=\
 	toconnection.cpp \
 	tocurrent.cpp \
 	todatabasesettingui.cpp \
+	todatatype.cpp \
 	todebug.cpp \
 	todebugchangeui.cpp \
 	todebugtext.cpp \
 	todebugwatch.cpp \
+	toeditextensiongotoui.cpp \
 	toeditextensions.cpp \
 	toeditextensionsetupui.cpp \
 	toeditwidget.cpp \
@@ -306,6 +312,7 @@ SOURCES=\
 	tostoragetablespaceui.cpp \
 	tosyntaxsetup.cpp \
 	tosyntaxsetupui.cpp \
+	totableselect.cpp \
 	totabwidget.cpp \
 	totemplate.cpp \
 	totemplateaddfileui.cpp \
@@ -352,7 +359,7 @@ all: $(TARGET) lrelease
 #$(OBJECTS): Makefile Makefile.common
 
 .depends/%.d: %.cpp
-	@echo Making dependences for $<
+	@echo Making dependencies for $<
 	if [ ! -d .depends ] ; then mkdir -p .depends ; fi
 	$(GCC) -MM $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
@@ -462,9 +469,12 @@ plugins/tobackup.tso:\
 	objs/tobackup.o
 plugins/tobrowser.tso:\
 	objs/tobrowser.o \
+	objs/tobrowserconstraint.o \
 	objs/tobrowserconstraintui.o \
 	objs/tobrowserfilterui.o \
+	objs/tobrowserindex.o \
 	objs/tobrowserindexui.o \
+	objs/tobrowsertable.o \
 	objs/tobrowsertableui.o
 plugins/tochart.tso:\
 	objs/tobarchart.o \
@@ -487,6 +497,7 @@ plugins/todebug.tso:\
 	objs/todebugchangeui.o
 plugins/toeditextensions.tso:\
 	objs/toeditextensions.o \
+	objs/toeditextensiongotoui.o \
 	objs/toeditextensionsetupui.o
 plugins/toextract.tso:\
 	objs/toextract.o \
@@ -567,8 +578,10 @@ plugins/totuning.tso:\
 	objs/totuningsettingui.o
 plugins/towidget.tso:\
 	objs/tochangeconnection.o \
+	objs/todatatype.o \
 	objs/tofilesize.o \
 	objs/tosgastatement.o \
+	objs/totableselect.o \
 	objs/tovisualize.o \
 	objs/towaitevents.o
 plugins/toworksheet.tso:\
@@ -610,6 +623,16 @@ tora-plugin:\
 	plugins/totuning.tso \
 	plugins/towidget.tso \
 	plugins/toworksheet.tso
+# Keyboard shortcuts
+
+main.cpp: tora_toad.h
+
+tora_toad.h: tora_toad.qm
+	$(PERL) chex.pl < $< > $@
+
+tora_toad.qm: tora_toad.ts
+	$(LRELEASE) $<
+
 # Monolithic target, for non ELF platforms
 
 tora-mono: $(OBJECTS) main.cpp

@@ -201,15 +201,18 @@ void toSGATrace::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "SGA Trace|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Change &schema"),
-			   Schema,SLOT(setFocus()),ALT+Key_S);
+			   Schema,SLOT(setFocus()),
+			   toKeySequence(tr("Alt+S", "SGA Trace|Change schema")));
       ToolMenu->insertItem(tr("Change &refresh"),
 			   Refresh,SLOT(setFocus(void)),
-			   Key_R+ALT);
+			   toKeySequence(tr("Alt+R", "SGA Trace|Change refresh")));
       ToolMenu->insertItem(tr("Change t&ype"),
-			   Type,SLOT(setFocus()),ALT+Key_Y);
+			   Type,SLOT(setFocus()),
+			   toKeySequence(tr("Alt+Y", "SGA Trace|Change type")));
       toMainWidget()->menuBar()->insertItem(tr("&SGA Trace"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {

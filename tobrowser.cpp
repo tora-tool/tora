@@ -35,7 +35,10 @@
 #include "utils.h"
 
 #include "tobrowser.h"
+#include "tobrowsertable.h"
+#include "tobrowserconstraint.h"
 #include "tobrowserfilterui.h"
+#include "tobrowserindex.h"
 #include "tochangeconnection.h"
 #include "toconf.h"
 #include "toconnection.h"
@@ -70,21 +73,22 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
+#include <qmessagebox.h>
 #include <qpopupmenu.h>
+#include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qtooltip.h>
 #include <qvaluelist.h>
 #include <qworkspace.h>
 
 #include "tobrowser.moc"
-#include "tobrowserconstraintui.moc"
 #include "tobrowserfilterui.moc"
-#include "tobrowserindexui.moc"
-#include "tobrowsertableui.moc"
 
+#include "icons/addindex.xpm"
 #include "icons/addtable.xpm"
 #include "icons/filter.xpm"
 #include "icons/function.xpm"
@@ -93,8 +97,6 @@
 #include "icons/modindex.xpm"
 #include "icons/modtable.xpm"
 #include "icons/nofilter.xpm"
-#include "icons/offline.xpm"
-#include "icons/online.xpm"
 #include "icons/refresh.xpm"
 #include "icons/schema.xpm"
 #include "icons/sequence.xpm"
@@ -102,6 +104,11 @@
 #include "icons/table.xpm"
 #include "icons/tobrowser.xpm"
 #include "icons/view.xpm"
+#include "icons/trash.xpm"
+#ifndef TO_NO_ORACLE
+#include "icons/offline.xpm"
+#include "icons/online.xpm"
+#endif
 
 #define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
@@ -111,23 +118,74 @@
 #define CONF_FILTER_TABLESPACE_TYPE  	"FilterTablespaceType"
 #define CONF_FILTER_TEXT  	"FilterText"
 
-class toBrowserTool : public toTool {
-protected:
-  virtual char **pictureXPM(void)
-  { return tobrowser_xpm; }
-public:
-  toBrowserTool()
-    : toTool(20,"Schema Browser")
-  { }
-  virtual const char *menuItem()
-  { return "Schema Browser"; }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
-  {
-    return new toBrowser(parent,connection);
-  }
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn)||toIsMySQL(conn)||toIsPostgreSQL(conn) || toIsSapDB(conn); }
-};
+
+char **toBrowserTool::pictureXPM(void)
+{
+  return tobrowser_xpm;
+}
+
+toBrowserTool::toBrowserTool()
+  : toTool(20,"Schema Browser")
+{ }
+
+const char *toBrowserTool::menuItem()
+{
+  return "Schema Browser";
+}
+
+QWidget *toBrowserTool::toolWindow(QWidget *parent,toConnection &connection)
+{
+  return new toBrowser(parent,connection);
+}
+
+bool toBrowserTool::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn)||toIsMySQL(conn)||toIsPostgreSQL(conn) || toIsSapDB(conn);
+}
+
+void toBrowserTool::customSetup(int)
+{
+  QPopupMenu *createMenu=new QPopupMenu(toMainWidget());
+  createMenu->insertItem(QPixmap((const char **)modtable_xpm),tr("&Table"),
+			 this,SLOT(addTable()));
+  createMenu->insertItem(QPixmap((const char **)modindex_xpm),tr("&Index"),
+			 this,SLOT(addIndex()));
+  createMenu->insertItem(QPixmap((const char **)modconstraint_xpm),tr("&Constraint"),
+			 this,SLOT(addConstraint()));
+  toMainWidget()->menuBar()->insertItem(tr("&Create"),createMenu,-1,toToolMenuIndex());
+}
+
+void toBrowserTool::addTable(void)
+{
+  try {
+    toConnection &conn=toMainWidget()->currentConnection();
+    toBrowserTable::newTable(conn,
+			     toIsMySQL(conn)?conn.database():conn.user(),
+			     toMainWidget());
+  } TOCATCH
+}
+
+void toBrowserTool::addIndex(void)
+{
+  try {
+    toConnection &conn=toMainWidget()->currentConnection();
+    toBrowserIndex::modifyIndex(conn,
+				toIsMySQL(conn)?conn.database():conn.user(),
+				QString::null,
+				toMainWidget());
+  } TOCATCH
+}
+
+void toBrowserTool::addConstraint(void)
+{
+  try {
+    toConnection &conn=toMainWidget()->currentConnection();
+    toBrowserConstraint::modifyConstraint(conn,
+					  toIsMySQL(conn)?conn.database():conn.user(),
+					  QString::null,
+					  toMainWidget());
+  } TOCATCH
+}
 
 static toBrowserTool BrowserTool;
 
@@ -145,6 +203,8 @@ class toBrowserFilter : public toResultFilter {
   std::list<QString> Tablespaces;
   QRegExp Match;
   bool OnlyOwnSchema;
+
+  std::map<QString,bool> RemoveDuplicates;
 public:
   toBrowserFilter(int type,bool cas,bool invert,
 		  const QString &str,int tablespace,
@@ -160,38 +220,42 @@ public:
     storeFilterSettings();
   }
   
-  toBrowserFilter(void)
+  toBrowserFilter(bool empty=true)
     : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
   {
-  	readFilterSettings();
+    if (!empty)
+      readFilterSettings();
+    else
+      BrowserTool.setConfig(CONF_FILTER_TYPE,"0");  // No filter type
   }
   
   virtual void storeFilterSettings(void) 
   {
-        BrowserTool.setConfig(CONF_FILTER_IGNORE_CASE,IgnoreCase?"Yes":"No");
-        BrowserTool.setConfig(CONF_FILTER_INVERT,Invert?"Yes":"No");
-        BrowserTool.setConfig(CONF_FILTER_TYPE,QString("%1").arg(Type));
-        BrowserTool.setConfig(CONF_FILTER_TABLESPACE_TYPE,QString("%1").arg(TablespaceType));
-	BrowserTool.setConfig(CONF_FILTER_TEXT,Text);
-	toTool::saveConfig();
+    BrowserTool.setConfig(CONF_FILTER_IGNORE_CASE,IgnoreCase?"Yes":"No");
+    BrowserTool.setConfig(CONF_FILTER_INVERT,Invert?"Yes":"No");
+    BrowserTool.setConfig(CONF_FILTER_TYPE,QString("%1").arg(Type));
+    BrowserTool.setConfig(CONF_FILTER_TABLESPACE_TYPE,QString("%1").arg(TablespaceType));
+    BrowserTool.setConfig(CONF_FILTER_TEXT,Text);
+    toTool::saveConfig();
   }
 
   virtual void readFilterSettings(void) 
   {
-  	QString t;
-        Text = BrowserTool.config(CONF_FILTER_TEXT, "");
-  
-        if (BrowserTool.config(CONF_FILTER_IGNORE_CASE,"No") == "Yes") 
- 		IgnoreCase=true;
- 	else
- 		IgnoreCase=false;
-		
-	if (BrowserTool.config(CONF_FILTER_INVERT,"No") == "Yes") 
- 		Invert=true;
- 	else
- 		Invert=false;
-	Type=QString(BrowserTool.config(CONF_FILTER_TYPE,"0")).toInt();
-	TablespaceType=QString(BrowserTool.config(CONF_FILTER_TABLESPACE_TYPE,"0")).toInt();
+    QString t;
+    Text = BrowserTool.config(CONF_FILTER_TEXT, "");
+    
+    if (BrowserTool.config(CONF_FILTER_IGNORE_CASE,"No") == "Yes") 
+      IgnoreCase=true;
+    else
+      IgnoreCase=false;
+    
+    if (BrowserTool.config(CONF_FILTER_INVERT,"No") == "Yes") 
+      Invert=true;
+    else
+      Invert=false;
+    OnlyOwnSchema=false;
+    Type=QString(BrowserTool.config(CONF_FILTER_TYPE,"0")).toInt();
+    TablespaceType=QString(BrowserTool.config(CONF_FILTER_TABLESPACE_TYPE,"0")).toInt();
   }
   virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   {
@@ -244,8 +308,16 @@ public:
       return QString::fromLatin1("%")+Text.upper()+QString::fromLatin1("%");
     }
   }
+  virtual void startingQuery()
+  { RemoveDuplicates.clear(); }
   virtual bool check(const QListViewItem *item)
   {
+    QString key=item->text(0)+"."+item->text(1);
+    if (RemoveDuplicates.find(key)!=RemoveDuplicates.end())
+      return false;
+    else
+      RemoveDuplicates[key]=true;
+    
     QString str=item->text(0);
     QString tablespace=item->text(3);
     if (!tablespace.isEmpty()) {
@@ -345,6 +417,7 @@ public:
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
     setup(temp);
+
     Buttons->setButton(cur.Type);
     if (!TablespaceType->isHidden()) {
       TablespaceType->setButton(cur.TablespaceType);
@@ -399,7 +472,7 @@ void toBrowseButton::connectionChanged()
   } TOCATCH
 }
 
-#define FIRST_WIDTH 150
+#define FIRST_WIDTH 180
 
 #define TAB_TABLES		"Tables"
 #define TAB_TABLE_COLUMNS	"TablesColumns"
@@ -459,12 +532,20 @@ void toBrowseButton::connectionChanged()
 #define TAB_DBLINK_INFO		"DBLinkInfo"
 #define TAB_DBLINK_SYNONYMS	"DBLinkSynonyms"
 
+#define TAB_ACCESS		"Hosts"
+#define TAB_ACCESS_CONTENT	"HostsContent"
+
+static toSQL SQLListTablesMysql("toBrowser:ListTables",
+				"SHOW TABLES FROM :f1<noquote>",
+				"List the available tables in a schema.",
+				"3.0",
+				"MySQL");
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			   "  FROM SYS.ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
 			   "   AND UPPER(TABLE_NAME) LIKE :f2<char[101]>\n"
 			   " ORDER BY Table_Name",
-			   "List the available tables in a schema.",
+			   "",
 			   "8.0");
 static toSQL SQLListTables7("toBrowser:ListTables",
 			    "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
@@ -473,11 +554,6 @@ static toSQL SQLListTables7("toBrowser:ListTables",
 			    " ORDER BY Table_Name",
 			    "",
 			    "7.3");
-static toSQL SQLListTablesMysql("toBrowser:ListTables",
-				"SHOW TABLES FROM :f1<noquote>",
-				"",
-				"3.0",
-				"MySQL");
 static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 "SELECT c.relname AS \"Table Name\"\n"
                                 "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
@@ -495,31 +571,19 @@ static toSQL SQLListTablesSapDB("toBrowser:ListTables",
                             "",
                             "",
                             "SapDB");
-static toSQL SQLAnyGrants("toBrowser:AnyGrants",
-			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
-			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
-			  " ORDER BY Privilege,Grantee",
-			  "Display the grants on an object");
 static toSQL SQLAnyGrantsSapDB("toBrowser:AnyGrants",
                             "SELECT privilege,grantee,grantor,is_grantable\n"
                             " FROM tableprivileges \n"
                             " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>\n"
                             " ORDER by privilege,grantee ",
-                            "",
+                            "Display the grants on an object",
                             "",
                             "SapDB");
-static toSQL SQLTableTrigger("toBrowser:TableTrigger",
-			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
-			     "  FROM SYS.ALL_TRIGGERS\n"
-			     " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			     "Display the triggers operating on a table",
-			     "8.1");
-static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
-			      "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
-			      "  FROM SYS.ALL_TRIGGERS\n"
-			      " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			      "",
-			      "8.0");
+static toSQL SQLAnyGrants("toBrowser:AnyGrants",
+			  "SELECT Privilege,Grantee,Grantor,Grantable FROM SYS.ALL_TAB_PRIVS\n"
+			  " WHERE Table_Schema = :f1<char[101]> AND Table_Name = :f2<char[101]>\n"
+			  " ORDER BY Privilege,Grantee",
+			  "");
 static toSQL SQLTableTriggerSapDB("toBrowser:TableTrigger",
                             "SELECT TriggerName,'UPDATE' \"Event\",''\"Column\",'ENABLED' \"Status\",''\"Description\"\n"
                             " FROM triggers \n"
@@ -536,19 +600,31 @@ static toSQL SQLTableTriggerSapDB("toBrowser:TableTrigger",
                             " WHERE owner = upper(:f1<char[101]>) and  tablename = :f2<char[101]>\n"
                             "  and delete='YES'\n"
                             " ORDER by 1 ",
-                            "",
+                            "Display the triggers operating on a table",
                             "",
                             "SapDB");
+static toSQL SQLTableTrigger("toBrowser:TableTrigger",
+			     "SELECT Trigger_Name,Triggering_Event,Column_Name,Status,Description \n"
+			     "  FROM SYS.ALL_TRIGGERS\n"
+			     " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
+			     "",
+			     "8.1");
+static toSQL SQLTableTrigger8("toBrowser:TableTrigger",
+			      "SELECT Trigger_Name,Triggering_Event,Status,Description \n"
+			      "  FROM SYS.ALL_TRIGGERS\n"
+			      " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
+			      "",
+			      "8.0");
+static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
+			       "show table status from :own<noquote> like :tab",
+			       "Display information about a table",
+			       "3.0",
+			       "MySQL");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
 			  "SELECT *\n"
 			  "  FROM SYS.ALL_TABLES\n"
 			  " WHERE OWNER = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			  "Display information about a table");
-static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
-			       "show table status from :own<noquote> like :tab",
-			       "",
-			       "3.0",
-			       "MySQL");
+			  "");
 static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
 			       "SELECT c.*\n"
 			       "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
@@ -594,20 +670,20 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
 			       "Table partitions",
 			       "8.1");
 
-static toSQL SQLListView("toBrowser:ListView",
-			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
-			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
-			 " ORDER BY View_Name",
-			 "List the available views in a schema");
 static toSQL SQLListViewPgSQL("toBrowser:ListView",
                          "SELECT c.relname as View_Name\n"
                          "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
                          " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
                          "   AND c.relkind = 'v'"
                          " ORDER BY View_Name",
-                         "",
+                         "List the available views in a schema",
                          "7.1",
                          "PostgreSQL");
+static toSQL SQLListView("toBrowser:ListView",
+			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
+			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
+			 " ORDER BY View_Name",
+			 "");
 static toSQL SQLListViewSapDb("toBrowser:ListView",
                             "SELECT tablename \"View_Name\"\n"
                             " FROM tables \n"
@@ -616,19 +692,19 @@ static toSQL SQLListViewSapDb("toBrowser:ListView",
                             "",
                             "",
                             "SapDB");
+static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",	
+			     "SELECT pg_get_viewdef(c.relname)\n"
+			     "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+			     " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+			     "   AND c.relkind = 'v' AND c.relname = :f2",
+			     "Display SQL of a specified view",
+			     "7.1",
+			     "PostgreSQL");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",	
 			"SELECT Text SQL\n"
 			"  FROM SYS.ALL_Views\n"
 			" WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
-			"Display SQL of a specified view");
-static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",	
-			"SELECT pg_get_viewdef(c.relname)\n"
-                        "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
-                        " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
-                        "   AND c.relkind = 'v' AND c.relname = :f2",
-                        "",
-                        "7.1",
-                        "PostgreSQL");
+			"");
 static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
                             "SELECT definition \"SQL\"\n"
                             " FROM viewdefs \n"
@@ -636,13 +712,19 @@ static toSQL SQLViewSQLSapDb("toBrowser:ViewSQL",
                             "",
                             "",
                             "SapDB");
+
+static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
+			       "TOAD 1,3 SHOW INDEX FROM :f1<database>",
+			       "List the available indexes in a schema",
+			       "3.23",
+			       "MySQL");
 static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
 			  "  FROM SYS.ALL_INDEXES\n"
 			  " WHERE OWNER = :f1<char[101]>\n"
 			  "   AND UPPER(INDEX_NAME) LIKE :f2<char[101]>\n"
 			  " ORDER BY Index_Name\n",
-			  "List the available indexes in a schema");
+			  "");
 static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
 			       "SELECT c.relname AS \"Index Name\"\n"
                                "FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
@@ -659,6 +741,12 @@ static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
                             "",
                             "",
                             "SapDB");
+
+static toSQL SQLIndexColsMySQL("toBrowser:IndexCols",
+			       "SHOW INDEX FROM :f1<noquote>.:f2<noquote>",
+			       "Display columns on which an index is built",
+			       "3.23",
+			       "MySQL");
 static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
 			  "  FROM sys.All_Ind_Columns a,sys.All_Ind_Expressions b\n"
@@ -666,9 +754,8 @@ static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "   AND a.Index_Owner = b.Index_Owner(+) AND a.Index_Name = b.Index_Name(+)\n"
 			  "   AND a.column_Position = b.Column_Position(+)\n"
 			  " ORDER BY a.Column_Position",
-			  "Display columns on which an index is built",
+			  "",
 			  "8.1");
-
 static toSQL SQLIndexCols8("toBrowser:IndexCols",
 			   "SELECT Table_Name,Column_Name,Column_Length,Descend\n"
 			   "  FROM SYS.ALL_IND_COLUMNS\n"
@@ -683,7 +770,6 @@ static toSQL SQLIndexCols7("toBrowser:IndexCols",
 			   " ORDER BY Column_Position",
 			   "",
 			   "7.3");
-// The following one for PostgreSQL needs verification
 static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
                                "SELECT a.attname,\n"
                                "       format_type(a.atttypid, a.atttypmod) as FORMAT,\n"
@@ -706,17 +792,18 @@ static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
                             "",
                             "",
                             "SapDB");
-static toSQL SQLIndexInfo("toBrowser:IndexInformation",
-			  "SELECT * FROM SYS.ALL_INDEXES\n"
-			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
-			  "Display information about an index");
+
 static toSQL SQLIndexInfoSapDb("toBrowser:IndexInformation",
                             "SELECT  INDEXNAME,TABLENAME, TYPE, CREATEDATE,CREATETIME,INDEX_USED, DISABLED \n"
                             " FROM indexes\n"
                             " WHERE  owner = upper(:f1<char[101]>) and indexname = :f2<char[101]>\n",
-                            "",
+                            "Display information about an index",
                             "",
                             "SapDB");
+static toSQL SQLIndexInfo("toBrowser:IndexInformation",
+			  "SELECT * FROM SYS.ALL_INDEXES\n"
+			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",
+			  "");
 static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
                             "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
                             " FROM indexstatistics \n"
@@ -724,17 +811,6 @@ static toSQL SQLIndexStatistic("toBrowser:IndexStatstics",
                             "Index Statistics",
                             "",
                             "SapDB");
-static toSQL SQLListSequence("toBrowser:ListSequence",
-			     "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
-			     " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
-			     "   AND UPPER(SEQUENCE_NAME) LIKE :f2<char[101]>\n"
-			     " ORDER BY Sequence_Name",
-			     "List the available sequences in a schema");
-static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
-			     "SELECT * FROM SYS.ALL_SEQUENCES\n"
-			     " WHERE Sequence_Owner = :f1<char[101]>\n"
-			     "   AND Sequence_Name = :f2<char[101]>",
-			     "Display information about a sequence");
 
 static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   "SELECT c.relname AS \"Sequence Name\"\n"
@@ -742,14 +818,26 @@ static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   " WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
                                   "   AND c.relkind = 'S'\n"
                                   " ORDER BY \"Sequence Name\"",
-			          "",
+			          "List the available sequences in a schema",
 			          "7.1",
                                   "PostgreSQL");
+static toSQL SQLListSequence("toBrowser:ListSequence",
+			     "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
+			     " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
+			     "   AND UPPER(SEQUENCE_NAME) LIKE :f2<char[101]>\n"
+			     " ORDER BY Sequence_Name",
+			     "");
 static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
-			          "",
+			          "Display information about a sequence",
 			          "7.1",
                                   "PostgreSQL");
+static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
+			     "SELECT * FROM SYS.ALL_SEQUENCES\n"
+			     " WHERE Sequence_Owner = :f1<char[101]>\n"
+			     "   AND Sequence_Name = :f2<char[101]>",
+			     "");
+
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
 			    "SELECT DECODE(Owner,'PUBLIC','',Owner||'.')||Synonym_Name \"Synonym Name\"\n"
 			    "  FROM Sys.All_Synonyms\n"
@@ -763,14 +851,7 @@ static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
 			    " WHERE Owner = :f1<char[101]>\n"
 			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
-static toSQL SQLListSQL("toBrowser:ListCode",
-			"SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
-			" WHERE OWNER = :f1<char[101]>\n"
-			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
-			"                       'PROCEDURE','TYPE')\n"
-			"   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
-			" ORDER BY Object_Name",
-			"List the available Code objects in a schema");
+
 static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
 			     "SELECT p.proname AS Object_Name,\n"
                              "  CASE WHEN p.prorettype = 0 THEN 'PROCEDURE'\n"
@@ -779,7 +860,23 @@ static toSQL SQLListSQLPgSQL("toBrowser:ListCode",
                              "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                              "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
                              "ORDER BY Object_Name",
-			     "",
+			     "List the available Code objects in a schema",
+			     "7.1",
+                             "PostgreSQL");
+static toSQL SQLListSQL("toBrowser:ListCode",
+			"SELECT Object_Name,Object_Type,Status Type FROM SYS.ALL_OBJECTS\n"
+			" WHERE OWNER = :f1<char[101]>\n"
+			"   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
+			"                       'PROCEDURE','TYPE')\n"
+			"   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
+			" ORDER BY Object_Name",
+			"");
+static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
+			     "SELECT p.proname AS Object_Name\n"
+                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
+                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                             "ORDER BY Object_Name",
+			     "List the available Code objects in a schema, one column version",
 			     "7.1",
                              "PostgreSQL");
 static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
@@ -789,15 +886,7 @@ static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
 			     "                       'PROCEDURE','TYPE')\n"
 			     "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
 			     " ORDER BY Object_Name",
-			     "List the available Code objects in a schema, one column version");
-static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",
-			     "SELECT p.proname AS Object_Name\n"
-                             "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
-                             "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
-                             "ORDER BY Object_Name",
-			     "",
-			     "7.1",
-                             "PostgreSQL");
+			     "");
 
 
 static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
@@ -805,11 +894,6 @@ static toSQL SQLSQLTemplate("toBrowser:CodeTemplate",
 			    " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
 			    "   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE','TYPE')",
 			    "Declaration of object displayed in template window");
-static toSQL SQLSQLHead("toBrowser:CodeHead",
-			"SELECT Text FROM SYS.ALL_SOURCE\n"
-			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-			"   AND Type IN ('PACKAGE','TYPE')",
-			"Declaration of object");
 // PostgreSQL does not distinguish between Head and Body for Stored SQL
 // package code will be returnd for both Head and Body
 static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
@@ -817,24 +901,29 @@ static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
                              "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                              "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
                              "  AND p.proname = :f2\n",
-			     "",
+			     "Declaration of object",
 			     "7.1",
                              "PostgreSQL");
-
-static toSQL SQLSQLBody("toBrowser:CodeBody",
+static toSQL SQLSQLHead("toBrowser:CodeHead",
 			"SELECT Text FROM SYS.ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
-			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
-			"Implementation of object");
+			"   AND Type IN ('PACKAGE','TYPE')",
+			"");
 
 static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
 			"SELECT p.prosrc\n"
                         "FROM pg_proc p LEFT OUTER JOIN pg_user u ON p.proowner=u.usesysid\n"
                         "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
                         "  AND p.proname = :f2\n",
-			"",
+			"Implementation of object",
 			"7.1",
                         "PostgreSQL");
+static toSQL SQLSQLBody("toBrowser:CodeBody",
+			"SELECT Text FROM SYS.ALL_SOURCE\n"
+			" WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
+			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
+			"");
+
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
 			    "SELECT Trigger_Name FROM SYS.ALL_TRIGGERS\n"
@@ -872,6 +961,12 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Columns used by trigger");
 
+static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
+			    "SHOW TABLES FROM mysql",
+			    "Show access tables for MySQL databases",
+			    "3.23",
+			    "MySQL");
+
 QString toBrowser::schema(void)
 {
   try {
@@ -892,15 +987,20 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
   }
   if (filter)
     Filter=filter;
+  else
+    Filter=new toBrowserFilter();
+  disconnect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+  FilterButton->setOn(filter);
+  connect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
   for(std::map<QCString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
-    (*i).second->setFilter(filter?filter->clone():NULL);
+    (*i).second->setFilter(Filter->clone());
   refresh();
 }
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
-  Filter=new toBrowserFilter();
+  Filter=new toBrowserFilter(false);
 
   QToolBar *toolbar=toAllocBar(this,tr("DB Browser"));
 
@@ -910,11 +1010,12 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(QPixmap((const char **)filter_xpm),
-		  tr("Define the object filter"),
-		  tr("Define the object filter"),
-		  this,SLOT(defineFilter(void)),
-		  toolbar);
+  FilterButton=new QToolButton(toolbar);
+  FilterButton->setToggleButton(true);
+  FilterButton->setIconSet(QIconSet(QPixmap((const char **)filter_xpm)));
+  QToolTip::add(FilterButton,tr("Define the object filter"));
+  connect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+
   new QToolButton(QPixmap((const char **)nofilter_xpm),
 		  tr("Remove any object filter"),
 		  tr("Remove any object filter"),
@@ -937,25 +1038,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
   TopTab->addTab(splitter,tr("T&ables"));
   CurrentTop=splitter;
-  toResultView *resultView=new toResultLong(true,false,toQuery::Background,splitter);
-  resultView->setReadAll(true);
-  resultView->setSQL(SQLListTables);
-  resultView->resize(FIRST_WIDTH,resultView->height());
-  resultView->setResizeMode(QListView::AllColumns);
-  setFocusProxy(resultView);
-  splitter->setResizeMode(resultView,QSplitter::KeepSize);
-  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
-  FirstTab=resultView;
-  Map[TAB_TABLES]=resultView;
-  resultView->setTabWidget(TopTab);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
 
   QVBox *box=new QVBox(splitter);
-  splitter->setResizeMode(box,QSplitter::Stretch);
 
-  toolbar=toAllocBar(box,tr("Table browser"));
+  toolbar=toAllocBar(box,tr("Database browser"));
   new toBrowseButton(QPixmap((const char **)addtable_xpm),
 		     tr("Create new table"),
 		     tr("Create new table"),
@@ -970,13 +1056,20 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   new toBrowseButton(QPixmap((const char **)modconstraint_xpm),
 		     tr("Modify constraints"),
 		     tr("Modify constraints"),
-		     this,SLOT(modifyTable()),
+		     this,SLOT(modifyConstraint()),
 		     toolbar);
   new toBrowseButton(QPixmap((const char **)modindex_xpm),
 		     tr("Modify indexes"),
 		     tr("Modify indexes"),
-		     this,SLOT(modifyTable()),
+		     this,SLOT(modifyIndex()),
 		     toolbar);
+  toolbar->addSeparator();
+  new toBrowseButton(QPixmap((const char **)trash_xpm),
+		     tr("Drop table"),
+		     tr("Drop table"),
+		     this,SLOT(dropTable()),
+		     toolbar);
+#ifndef TO_NO_ORACLE
   toolbar->addSeparator();
   new toBrowseButton(QPixmap((const char **)online_xpm),
 		     tr("Enable constraint or trigger"),
@@ -988,9 +1081,29 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		     tr("Disable constraint or trigger"),
 		     this,SLOT(disableConstraints()),
 		     toolbar);
+#endif
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
-  QTabWidget *curr=new toTabWidget(box);
+  toResultView *resultView=new toResultLong(true,false,toQuery::Background,box);
+  resultView->setReadAll(true);
+  resultView->setSQL(SQLListTables);
+  resultView->setResizeMode(QListView::AllColumns);
+  setFocusProxy(resultView);
+  box->resize(FIRST_WIDTH,resultView->height());
+  splitter->setResizeMode(box,QSplitter::KeepSize);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
+  FirstTab=resultView;
+  Map[TAB_TABLES]=resultView;
+  resultView->setTabWidget(TopTab);
+  resultView->setSelectionMode(QListView::Single);
+  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
+	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayTableMenu(QPopupMenu *)));
+
+
+  QTabWidget *curr=new toTabWidget(splitter);
+  splitter->setResizeMode(curr,QSplitter::Stretch);
+
   toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);
   curr->addTab(resultCols,tr("&Columns"));
   SecondTab=resultCols;
@@ -1099,19 +1212,44 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
+
   TopTab->addTab(splitter,tr("Inde&xes"));
-  resultView=new toResultLong(true,false,toQuery::Background,splitter);
+
+  box=new QVBox(splitter);
+  toolbar=toAllocBar(box,tr("Database browser"));
+  new toBrowseButton(QPixmap((const char **)addindex_xpm),
+		     tr("Add indexes"),
+		     tr("Add indexes"),
+		     this,SLOT(addIndex()),
+		     toolbar);
+  toolbar->addSeparator();
+  new toBrowseButton(QPixmap((const char **)modindex_xpm),
+		     tr("Modify indexes"),
+		     tr("Modify indexes"),
+		     this,SLOT(modifyIndex()),
+		     toolbar);
+  toolbar->addSeparator();
+  new toBrowseButton(QPixmap((const char **)trash_xpm),
+		     tr("Drop index"),
+		     tr("Drop index"),
+		     this,SLOT(dropIndex()),
+		     toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+
+  resultView=new toResultLong(true,false,toQuery::Background,box);
   resultView->setReadAll(true);
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_INDEX]=resultView;
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListIndex);
-  resultView->resize(FIRST_WIDTH,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
   resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
-  splitter->setResizeMode(resultView,QSplitter::KeepSize);
+  connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayIndexMenu(QPopupMenu *)));
+
+  box->resize(FIRST_WIDTH,resultView->height());
+  splitter->setResizeMode(box,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
@@ -1303,6 +1441,29 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_TRIGGER_EXTRACT]=resultExtract;
 
+  splitter=new QSplitter(Horizontal,TopTab,TAB_ACCESS);
+  TopTab->addTab(splitter,tr("Access"));
+  resultView=new toResultLong(true,false,toQuery::Background,splitter);
+  resultView->setReadAll(true);
+  connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
+  Map[TAB_ACCESS]=resultView;
+  resultView->setTabWidget(TopTab);
+  resultView->setSQL(SQLMySQLAccess);
+  resultView->setResizeMode(QListView::AllColumns);
+  resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
+  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
+	  this,SLOT(changeItem(QListViewItem *)));
+  splitter->setResizeMode(resultView,QSplitter::KeepSize);
+
+  curr=new toTabWidget(splitter);
+  splitter->setResizeMode(curr,QSplitter::Stretch);
+
+  AccessContent=new toResultContent(curr,TAB_ACCESS_CONTENT);
+  curr->addTab(AccessContent,tr("&Data"));
+  SecondMap[TAB_ACCESS]=AccessContent;
+  SecondMap[TAB_ACCESS_CONTENT]=AccessContent; 
+
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   ToolMenu=NULL;
@@ -1312,9 +1473,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   refresh();
 
   connect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
-  connect(this,SIGNAL(connectionChange()),this,SLOT(refresh()));
+  connect(this,SIGNAL(connectionChange()),this,SLOT(changeConnection()));
   Schema->setFocus();
   connect(&Poll,SIGNAL(timeout()),this,SLOT(changeSecond()));
+
+  setNewFilter(NULL);
 }
 
 void toBrowser::windowActivated(QWidget *widget)
@@ -1323,16 +1486,17 @@ void toBrowser::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),this,SLOT(refresh(void)),
-			   Key_F5);
+			   toKeySequence(tr("F5", "Browser|Refresh")));
       ToolMenu->insertItem(tr("&Change Schema"),Schema,SLOT(setFocus(void)),
-			   Key_S+ALT);
+			   toKeySequence(tr("Alt+S", "Browser|Change Schema")));
       ToolMenu->insertItem(tr("Change &Object"),this,SLOT(focusObject(void)),
-			   Key_N+ALT);
+			   toKeySequence(tr("Alt+N", "Browser|Change object")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)filter_xpm),tr("&Define filter..."),
-			   this,SLOT(defineFilter(void)),CTRL+SHIFT+Key_G);
+			   this,SLOT(defineFilter(void)),
+			   toKeySequence(tr("Ctrl+Shift+G", "Browser|Define filter")));
       ToolMenu->insertItem(QPixmap((const char **)nofilter_xpm),tr("&Clear filter"),this,SLOT(clearFilter(void)),
-			   CTRL+SHIFT+Key_H);
+			   toKeySequence(tr("Ctrl+Shift+H", "Browser|Clear filter")));
       toMainWidget()->menuBar()->insertItem(tr("&Browser"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
@@ -1344,7 +1508,7 @@ void toBrowser::windowActivated(QWidget *widget)
 void toBrowser::changeSchema(int)
 {
   SecondText=QString::fromLatin1("");
-  refresh();
+  updateTabs();
 }
 
 toBrowser::~toBrowser()
@@ -1379,6 +1543,14 @@ void toBrowser::focusObject(void)
 {
   if (FirstTab)
     FirstTab->setFocus();
+}
+
+void toBrowser::changeConnection(void)
+{
+  FirstTab->clear();
+  Schema->refresh();
+  SecondText=QString::null;
+  updateTabs();
 }
 
 void toBrowser::updateTabs(void)
@@ -1419,6 +1591,7 @@ void toBrowser::changeItem(QListViewItem *item)
 void toBrowser::changeSecond(void)
 {
   QWidget *tab=TopTab->currentPage();
+  QWidget *tab2=dynamic_cast<QWidget *>(SecondTab);
   if (tab&&!strcmp(tab->name(),TAB_SYNONYM)) {
     QString owner;
     QString name;
@@ -1431,6 +1604,13 @@ void toBrowser::changeSecond(void)
       name=SecondText;
     }
     SecondTab->changeParams(owner,name);
+  } else if (tab&&!strcmp(tab->name(),TAB_ACCESS)) {
+    SecondTab->changeParams("mysql",
+			    SecondText);
+  } else if (tab&&!strcmp(tab->name(),TAB_INDEX)&&!strcmp(tab2->name(),TAB_INDEX_EXTRACT)) {
+    QListViewItem *item=FirstTab->selectedItem();
+    if (item)
+      SecondTab->changeParams(schema(),item->text(0)+"."+item->text(1));
   } else
     SecondTab->changeParams(schema(),
 			    SecondText);
@@ -1504,12 +1684,146 @@ bool toBrowser::canHandle(toConnection &conn)
 
 void toBrowser::modifyTable(void)
 {
-
+  toBrowserTable::editTable(connection(),
+			    Schema->selected(),
+			    SecondText,
+			    this);
+  refresh();
 }
 
 void toBrowser::addTable(void)
 {
+  toBrowserTable::newTable(connection(),
+			   Schema->selected(),
+			   this);
+  refresh();
+}
 
+void toBrowser::modifyConstraint(void)
+{
+  toBrowserConstraint::modifyConstraint(connection(),
+					Schema->selected(),
+					SecondText,
+					this);
+  refresh();
+}
+
+void toBrowser::modifyIndex(void)
+{
+  QString index;
+  toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
+  if (first->columns()>1&&first->selectedItem())
+    index=first->selectedItem()->text(1);
+
+  toBrowserIndex::modifyIndex(connection(),
+			      Schema->selected(),
+			      SecondText,
+			      this,
+			      index);
+  refresh();
+}
+
+void toBrowser::addIndex(void)
+{
+  toBrowserIndex::addIndex(connection(),
+			   Schema->selected(),
+			   SecondText,
+			   this);
+  refresh();
+}
+
+void toBrowser::displayTableMenu(QPopupMenu *menu)
+{
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)trash_xpm),tr("Drop table"),this,SLOT(dropTable()),0,0,0);
+  menu->insertItem(QPixmap((const char **)modconstraint_xpm),tr("Modify constraints"),this,SLOT(modifyConstraint()),0,0,0);
+  menu->insertItem(QPixmap((const char **)modindex_xpm),tr("Modify indexes"),this,SLOT(modifyIndex()),0,0,0);
+  menu->insertItem(QPixmap((const char **)addtable_xpm),tr("Create table"),this,SLOT(addTable()),0,0,0);
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)refresh_xpm),tr("Refresh"),this,SLOT(refresh()),0,0,0);
+}
+
+void toBrowser::displayIndexMenu(QPopupMenu *menu)
+{
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)trash_xpm),tr("Drop index"),this,SLOT(dropIndex()),0,0,0);
+  menu->insertItem(QPixmap((const char **)modindex_xpm),tr("Modify index"),this,SLOT(modifyIndex()),0,0,0);
+  menu->insertItem(QPixmap((const char **)addindex_xpm),tr("Create index"),this,SLOT(addIndex()),0,0,0);
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)refresh_xpm),tr("Refresh"),this,SLOT(refresh()),0,0,0);
+}
+
+void toBrowser::dropSomething(const QString &type,const QString &what)
+{
+  if (what.isEmpty())
+    return;
+  if (TOMessageBox::warning(this,tr("Dropping %1?").arg(tr(type)),
+			    tr("Are you sure you want to drop the %1 %2.%3,\n"
+			       "this action can not be undone?").arg(tr(type)).arg(Schema->selected()).arg(what),
+			    tr("&Yes"),tr("&Cancel"),QString::null,0)==0) {
+    std::list<QString> ctx;
+    toPush(ctx,Schema->selected());
+    toPush(ctx,QString(type.upper()));
+    QStringList parts=QStringList::split(".",what);
+    if (parts.count()>1) {
+      toPush(ctx,parts[1]);
+      toPush(ctx,QString("ON"));
+      toPush(ctx,parts[0]);
+    } else {
+      toPush(ctx,what);
+    }
+
+    std::list<QString> drop;
+    toExtract::addDescription(drop,ctx);
+
+    std::list<QString> empty;
+
+    try {
+      toExtract extractor(connection(),NULL);
+      extractor.setIndexes(false);
+      extractor.setConstraints(false);
+      extractor.setPrompt(false);
+      extractor.setHeading(false);
+      QString sql=extractor.migrate(drop,empty);
+
+      std::list<toSQLParse::statement> statements=toSQLParse::parse(sql,connection());
+      QProgressDialog prog(tr("Performing %1 changes").arg(tr(type)),
+			   tr("Executing %1 change script").arg(tr(type)),
+			   statements.size(),
+			   this,"progress",true);
+      prog.setCaption(tr("Performing %1 changes").arg(tr(type)));
+      for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++) {
+	QString sql=toSQLParse::indentStatement(*i,connection());
+	int i=sql.length()-1;
+	while(i>=0&&(sql.at(i)==';'||sql.at(i).isSpace()))
+	  i--;
+	if (i>=0)
+	  connection().execute(sql.mid(0,i+1));
+	qApp->processEvents();
+	if (prog.wasCancelled())
+	  throw tr("Cancelled ongoing %1 modification, %2 might be corrupt").arg(tr(type)).arg(tr(type));
+      }
+    } TOCATCH
+  }
+  refresh();
+}
+
+void toBrowser::dropTable(void)
+{
+  dropSomething("table",SecondText);
+}
+
+void toBrowser::dropIndex(void)
+{
+  toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
+  if (first->columns()>1) {
+    if (first->selectedItem()) {
+      QString index=first->selectedItem()->text(1);
+      if (index!="PRIMARY"&&!SecondText.isEmpty())
+	dropSomething("index",SecondText+"."+index);
+    }
+  } else
+    dropSomething("index",SecondText);
 }
 
 void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -1525,11 +1839,11 @@ void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &pref
   }
   ViewContent->exportData(data,prefix+":View");
   TableContent->exportData(data,prefix+":Table");
+  AccessContent->exportData(data,prefix+":Hosts");
   
   toToolWidget::exportData(data,prefix);
   if (Filter)
     Filter->exportData(data,prefix+":Filter");
-
 }
 
 void toBrowser::importData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -1540,6 +1854,7 @@ void toBrowser::importData(std::map<QCString,QString> &data,const QCString &pref
 
   ViewContent->importData(data,prefix+":View");
   TableContent->importData(data,prefix+":Table");
+  AccessContent->importData(data,prefix+":Hosts");
 
   if (data.find(prefix+":Filter:Type")!=data.end()) {
     toBrowserFilter *filter=new toBrowserFilter;
@@ -1560,14 +1875,23 @@ void toBrowser::importData(std::map<QCString,QString> &data,const QCString &pref
   if(chld&&str.length()) {
     SecondText=QString::null;
     TopTab->showPage(chld);
+
+    toResultView *newtab=Map[chld->name()];
+    if (newtab!=FirstTab&&newtab) {
+      CurrentTop=chld;
+      setFocusProxy(newtab);
+      FirstTab=newtab;
+    }
+
     str=data[prefix+":SecondTab"];
     chld=(QWidget *)child(str);
     if (chld&&str.length()) {
       QWidget *par=chld->parentWidget();
-      while(par&&!par->isA("QTabWidget"))
+      while(par&&!par->inherits("QTabWidget"))
 	par=par->parentWidget();
       if (par)
 	((QTabWidget *)par)->showPage(chld);
+      changeSecondTab(chld);
     }
     SecondText=data[prefix+":SecondText"];
   }
@@ -1580,17 +1904,34 @@ void toBrowser::importData(std::map<QCString,QString> &data,const QCString &pref
 
 void toBrowser::fixIndexCols(void)
 {
-  if (!toIsOracle(connection()))
-    return;
-  toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
-  if (tmp)
-    for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
-      if (!toUnnull(item->text(4)).isNull()) {
-	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-	if (resItem)
-	  resItem->setText(1,resItem->allText(4));
+  if (toIsOracle(connection())) {
+    toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
+    if (tmp)
+      for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
+	if (!toUnnull(item->text(4)).isNull()) {
+	  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+	  if (resItem)
+	    resItem->setText(1,resItem->allText(4));
+	}
+      }
+  } else if (toIsMySQL(connection())) {
+    toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
+    toResultLong *second=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
+    if (first&&second) {
+      QListViewItem *item=first->selectedItem();
+      if (item) {
+	QString index=item->text(1);
+	for(QListViewItem *item=second->firstChild();item;) {
+	  QListViewItem *t=item->nextSibling();
+	  if (item->text(2)!=index) {
+	    delete item;
+	    second->clearParams(); // Make sure it is reexecuted even if same table.
+	  }
+	  item=t;
+	}
       }
     }
+  }
 }
 
 static toBrowseTemplate BrowseTemplate;
@@ -1619,12 +1960,20 @@ void toBrowseTemplate::defineFilter(void)
     if (filt.exec())
       Filter=filt.getSetting();
   }
+  if (Filter) {
+    disconnect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+    FilterButton->setOn(true);
+    connect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+  }
 }
 
 void toBrowseTemplate::clearFilter(void)
 {
   delete Filter;
-  Filter=NULL;
+  Filter=new toBrowserFilter;
+  disconnect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+  FilterButton->setOn(false);
+  connect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
 }
 
 void toBrowseTemplate::removeItem(QListViewItem *item)
@@ -1996,11 +2345,12 @@ void toBrowseTemplate::insertItems(QListView *parent,QToolBar *toolbar)
   }
   Parents.insert(Parents.end(),dbitem);
 
-  new QToolButton(QPixmap((const char **)filter_xpm),
-		  qApp->translate("toBrowser","Define the object filter for database browser"),
-		  qApp->translate("toBrowser","Define the object filter for database browser"),
-		  this,SLOT(defineFilter(void)),
-		  toolbar);
+  FilterButton=new QToolButton(toolbar);
+  FilterButton->setToggleButton(true);
+  FilterButton->setIconSet(QIconSet(QPixmap((const char **)filter_xpm)));
+  QToolTip::add(FilterButton,tr("Define the object filter for database browser"));
+  connect(FilterButton,SIGNAL(toggled(bool)),this,SLOT(defineFilter()));
+
   new QToolButton(QPixmap((const char **)nofilter_xpm),
 		  qApp->translate("toBrowser","Remove any object filter for database browser"),
 		  qApp->translate("toBrowser","Remove any object filter for database browser"),

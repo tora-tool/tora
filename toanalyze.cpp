@@ -84,10 +84,19 @@ public:
   {
     return new toAnalyze(parent,connection);
   }
+  virtual bool canHandle(toConnection &conn)
+  {
+    return toIsOracle(conn)||toIsMySQL(conn);
+  }
 };
 
 static toAnalyzeTool AnalyzeTool;
 
+static toSQL SQLListTablesMySQL("toAnalyze:ListTables",
+				"toad 0,* show table status",
+				"Get table statistics, first three columns and binds must be same",
+				"4.1",
+				"MySQL");
 static toSQL SQLListTables("toAnalyze:ListTables",
 			   "select 'TABLE' \"Type\",\n"	
 			   "       owner,\n"
@@ -103,7 +112,7 @@ static toSQL SQLListTables("toAnalyze:ListTables",
 			   "  from sys.all_all_tables\n"
 			   " where iot_name is null\n"
 			   "   and temporary != 'Y' and secondary = 'N'",
-			   "Get table statistics, first three columns and binds must be same",
+			   "",
 			   "8.0");
 static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "select 'TABLE' \"Type\",\n"
@@ -163,10 +172,13 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  toolbar);
 
   toolbar->addSeparator();
-  Analyzed=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Analyzed->insertItem(tr("All"));
-  Analyzed->insertItem(tr("Not analyzed"));
-  Analyzed->insertItem(tr("Analyzed"));
+  if (toIsOracle(connection)) {
+    Analyzed=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Analyzed->insertItem(tr("All"));
+    Analyzed->insertItem(tr("Not analyzed"));
+    Analyzed->insertItem(tr("Analyzed"));
+  } else
+    Analyzed=NULL;
 
   Schema=new toResultCombo(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Schema->setSelected(tr("All"));
@@ -175,31 +187,46 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
   } TOCATCH
 
-  Type=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Type->insertItem(tr("Tables"));
-  Type->insertItem(tr("Indexes"));
 
-  toolbar->addSeparator();
-  Operation=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Operation->insertItem(tr("Compute statistics"));
-  Operation->insertItem(tr("Estimate statistics"));
-  Operation->insertItem(tr("Delete statistics"));
-  Operation->insertItem(tr("Validate references"));
-  connect(Operation,SIGNAL(activated(int)),
-	  this,SLOT(changeOperation(int)));
+  if (toIsOracle(connection)) {
+    Type=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Type->insertItem(tr("Tables"));
+    Type->insertItem(tr("Indexes"));
 
-  new QLabel(" "+tr("for")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-  For=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
-  For->insertItem(tr("All"));
-  For->insertItem(tr("Table"));
-  For->insertItem(tr("Indexed columns"));
-  For->insertItem(tr("Local indexes"));
-  toolbar->addSeparator();
-  new QLabel(tr("Sample")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Sample=new QSpinBox(1,100,1,toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Sample->setValue(100);
-  Sample->setSuffix(" "+tr("%"));
-  Sample->setEnabled(false);
+    toolbar->addSeparator();
+
+    Operation=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Operation->insertItem(tr("Compute statistics"));
+    Operation->insertItem(tr("Estimate statistics"));
+    Operation->insertItem(tr("Delete statistics"));
+    Operation->insertItem(tr("Validate references"));
+    connect(Operation,SIGNAL(activated(int)),
+	    this,SLOT(changeOperation(int)));
+
+    new QLabel(" "+tr("for")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+    For=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
+    For->insertItem(tr("All"));
+    For->insertItem(tr("Table"));
+    For->insertItem(tr("Indexed columns"));
+    For->insertItem(tr("Local indexes"));
+    toolbar->addSeparator();
+    new QLabel(tr("Sample")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Sample=new QSpinBox(1,100,1,toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Sample->setValue(100);
+    Sample->setSuffix(" "+tr("%"));
+    Sample->setEnabled(false);
+  } else {
+    Operation=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
+    Operation->insertItem(tr("Analyze table"));
+    Operation->insertItem(tr("Optimize table"));
+    connect(Operation,SIGNAL(activated(int)),
+	    this,SLOT(changeOperation(int)));
+
+    Type=NULL;
+    Sample=NULL;
+    For=NULL;
+  }
+
   toolbar->addSeparator();
   new QLabel(tr("Parallel")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   Parallel=new QSpinBox(1,100,1,toolbar,TO_KDE_TOOLBAR_WIDGET);
@@ -230,10 +257,14 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Statistics=new toResultLong(true,false,toQuery::Background,box);
   Statistics->setSelectionMode(QListView::Extended);
   Statistics->setReadAll(true);
+  connect(Statistics,SIGNAL(done()),this,SLOT(fillOwner()));
+  connect(Statistics,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayMenu(QPopupMenu *)));
 
-  connect(Analyzed,SIGNAL(activated(int)),this,SLOT(refresh()));
+  if (Analyzed)
+    connect(Analyzed,SIGNAL(activated(int)),this,SLOT(refresh()));
   connect(Schema,SIGNAL(activated(int)),this,SLOT(refresh()));
-  connect(Type,SIGNAL(activated(int)),this,SLOT(refresh()));
+  if (Type)
+    connect(Type,SIGNAL(activated(int)),this,SLOT(refresh()));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -241,35 +272,49 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
-  box=new QVBox(Tabs);
-  toolbar=toAllocBar(box,tr("Explain plans"));
+  if (toIsOracle(connection)) {
+    box=new QVBox(Tabs);
+    toolbar=toAllocBar(box,tr("Explain plans"));
 
-  Tabs->addTab(box,tr("Explain plans"));
-  QSplitter *splitter=new QSplitter(Horizontal,box);
-  Plans=new toResultLong(false,false,toQuery::Background,splitter);
-  Plans->setSelectionMode(QListView::Single);
-  try {
-    Plans->query(toSQL::string(SQLListPlans,
-			       connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
-								    DEFAULT_PLAN_TABLE)));
-  } TOCATCH
+    Tabs->addTab(box,tr("Explain plans"));
+    QSplitter *splitter=new QSplitter(Horizontal,box);
+    Plans=new toResultLong(false,false,toQuery::Background,splitter);
+    Plans->setSelectionMode(QListView::Single);
+    try {
+      Plans->query(toSQL::string(SQLListPlans,
+				 connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
+								      DEFAULT_PLAN_TABLE)));
+    } TOCATCH
 
-  connect(Plans,SIGNAL(selectionChanged()),
-	  this,SLOT(selectPlan()));
-  new QToolButton(QPixmap((const char **)refresh_xpm),
-		  tr("Refresh"),
-		  tr("Refresh"),
-		  Plans,SLOT(refresh()),
-		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+    connect(Plans,SIGNAL(selectionChanged()),
+	    this,SLOT(selectPlan()));
+    new QToolButton(QPixmap((const char **)refresh_xpm),
+		    tr("Refresh"),
+		    tr("Refresh"),
+		    Plans,SLOT(refresh()),
+		    toolbar);
+    toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
-  CurrentPlan=new toResultPlan(splitter);
+    CurrentPlan=new toResultPlan(splitter);
 
-  Worksheet=new toWorksheetStatistic(Tabs);
-  Tabs->addTab(Worksheet,tr("Worksheet statistics"));
+    Worksheet=new toWorksheetStatistic(Tabs);
+    Tabs->addTab(Worksheet,tr("Worksheet statistics"));
+  } else {
+    Plans=NULL;
+    CurrentPlan=NULL;
+    Worksheet=NULL;
+  }
 
   refresh();
   setFocusProxy(Tabs);
+}
+
+void toAnalyze::fillOwner(void)
+{
+  for(QListViewItem *item=Statistics->firstChild();item;item=item->nextSibling()) {
+    if (toUnnull(item->text(0)).isNull())
+      item->setText(0,Schema->selected());
+  }
 }
 
 void toAnalyze::selectPlan(void)
@@ -285,7 +330,7 @@ void toAnalyze::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),toKeySequence(tr("F5", "Statistics|Refresh")));
 
       toMainWidget()->menuBar()->insertItem(tr("&Statistics"),ToolMenu,-1,toToolMenuIndex());
     }
@@ -303,8 +348,10 @@ toWorksheetStatistic *toAnalyze::worksheet(void)
 
 void toAnalyze::changeOperation(int op)
 {
-  Sample->setEnabled(op==1);
-  For->setEnabled(op==0||op==1);
+  if (Sample)
+    Sample->setEnabled(op==1);
+  if (For)
+    For->setEnabled(op==0||op==1);
 }
 
 void toAnalyze::refresh(void)
@@ -313,26 +360,32 @@ void toAnalyze::refresh(void)
     Statistics->setSQL(QString::null);
     toQList par;
     QString sql;
-    if (Type->currentItem()==0)
+    if (!Type||Type->currentItem()==0)
       sql=toSQL::string(SQLListTables,connection());
     else
       sql=toSQL::string(SQLListIndex,connection());
     if (Schema->selected()!=tr("All")) {
       par.insert(par.end(),Schema->selected());
-      sql+=QString::fromLatin1("\n   AND owner = :own<char[100]>");
-    }
-    switch (Analyzed->currentItem()) {
-    default:
-      break;
-    case 1:
-      sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NULL");
-      break;
-    case 2:
-      sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NOT NULL");
-      break;
+      if (toIsOracle(connection()))
+	sql+="\n   AND owner = :own<char[100]>";
+      else
+	sql+=" FROM :f1<noquote>";
+    } else if (toIsMySQL(connection()))
+      sql+=" FROM :f1<alldatabases>";
+    if (Analyzed) {
+      switch (Analyzed->currentItem()) {
+      default:
+	break;
+      case 1:
+	sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NULL");
+	break;
+      case 2:
+	sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NOT NULL");
+	break;
+      }
     }
 
-    Statistics->query(sql,(const toQList)par);
+    Statistics->query(sql,(const toQList &)par);
   } TOCATCH
 }
 
@@ -342,9 +395,21 @@ void toAnalyze::poll(void)
     int running=0;
     for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++) {
       bool eof=false;
+
       try {
-	eof=(*i)->eof();
-      } catch(const QString &) {
+	if ((*i)->poll()) {
+	  int cols=(*i)->describe().size();
+	  for (int j=0;j<cols;j++)
+	    (*i)->readValueNull();		// Eat the output if any.
+	}
+
+	try {
+	  eof=(*i)->eof();
+	} catch(const QString &) {
+	  eof=true;
+	}
+      } catch (const QString &err) {
+	toStatusMessage(err);
 	eof=true;
       }
       if (eof) {
@@ -372,44 +437,60 @@ std::list<QString> toAnalyze::getSQL(void)
   std::list<QString> ret;
   for(QListViewItem *item=Statistics->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
-      QString sql=QString::fromLatin1("ANALYZE %3 %1.%2 ");
-      QString forc;
-      if (item->text(0)==QString::fromLatin1("TABLE")) {
-	switch(For->currentItem()) {
+      if (toIsOracle(connection())) {
+	QString sql=QString::fromLatin1("ANALYZE %3 %1.%2 ");
+	QString forc;
+	if (item->text(0)==QString::fromLatin1("TABLE")) {
+	  switch(For->currentItem()) {
+	  case 0:
+	    forc=QString::null;
+	    break;
+	  case 1:
+	    forc=QString::fromLatin1(" FOR TABLE");
+	    break;
+	  case 2:
+	    forc=QString::fromLatin1(" FOR ALL INDEXED COLUMNS");
+	    break;
+	  case 3:
+	    forc=QString::fromLatin1(" FOR ALL LOCAL INDEXES");
+	    break;
+	  }
+	}
+
+	switch(Operation->currentItem()) {
 	case 0:
-	  forc=QString::null;
+	  sql+=QString::fromLatin1("COMPUTE STATISTICS");
+	  sql+=forc;
 	  break;
 	case 1:
-	  forc=QString::fromLatin1(" FOR TABLE");
+	  sql+=QString::fromLatin1("ESTIMATE STATISTICS");
+	  sql+=forc;
+	  sql+=QString::fromLatin1(" SAMPLE %1 PERCENT").arg(Sample->value());
 	  break;
 	case 2:
-	  forc=QString::fromLatin1(" FOR ALL INDEXED COLUMNS");
+	  sql+=QString::fromLatin1("DELETE STATISTICS");
 	  break;
 	case 3:
-	  forc=QString::fromLatin1(" FOR ALL LOCAL INDEXES");
+	  sql+=QString::fromLatin1("VALIDATE REF UPDATE");
 	  break;
 	}
-      }
+	toPush(ret,sql.arg(item->text(1)).arg(item->text(2)).arg(item->text(0)));
 
-      switch(Operation->currentItem()) {
-      case 0:
-	sql+=QString::fromLatin1("COMPUTE STATISTICS");
-	sql+=forc;
-	break;
-      case 1:
-	sql+=QString::fromLatin1("ESTIMATE STATISTICS");
-	sql+=forc;
-	sql+=QString::fromLatin1(" SAMPLE %1 PERCENT").arg(Sample->value());
-	break;
-      case 2:
-	sql+=QString::fromLatin1("DELETE STATISTICS");
-	break;
-      case 3:
-	sql+=QString::fromLatin1("VALIDATE REF UPDATE");
-	break;
+      } else {
+	QString sql;
+	switch(Operation->currentItem()) {
+	case 0:
+	  sql=QString::fromLatin1("ANALYZE TABLE %1.%2 ");
+	  break;
+	case 1:
+	  sql=QString::fromLatin1("OPTIMIZE TABLE %1.%2 ");
+	  break;
+	}
+	QString owner=item->text(0);
+	if (toUnnull(owner).isNull())
+	  owner=Schema->selected();
+	toPush(ret,sql.arg(owner).arg(item->text(1)));
       }
-
-      toPush(ret,sql.arg(item->text(1)).arg(item->text(2)).arg(item->text(0)));
     }
   }
   return ret;
@@ -454,12 +535,24 @@ void toAnalyze::stop(void)
     Pending.clear();
     Stop->setEnabled(false);
     Current->setText(QString::null);
-    if (!connection().needCommit())
-      connection().rollback();
+    if (!connection().needCommit()) {
+      try {
+	connection().rollback();
+      } catch(...) { }
+    }
   } TOCATCH
 }
 
 void toAnalyze::createTool(void)
 {
   AnalyzeTool.createWindow();
+}
+
+void toAnalyze::displayMenu(QPopupMenu *menu)
+{
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)sql_xpm),tr("Display SQL"),this,SLOT(displaySQL()),0,0,0);
+  menu->insertItem(QPixmap((const char **)execute_xpm),tr("Execute"),this,SLOT(execute()),0,0,0);
+  menu->insertSeparator(0);
+  menu->insertItem(QPixmap((const char **)refresh_xpm),tr("Refresh"),this,SLOT(refresh()),0,0,0);
 }

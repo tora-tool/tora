@@ -48,6 +48,7 @@ class toConnection;
 class toConnectionProvider;
 class toSQL;
 class toQuery;
+class toSyntaxAnalyzer;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -415,7 +416,7 @@ class toConnection {
   QString Mode;
   QCString Version;
   std::list<QObject *> Widgets;
-  std::list<QCString> InitStrings;
+  std::list<QString> InitStrings;
   toLock Lock;
   std::list<toConnectionSub *> Connections;
   std::list<toConnectionSub *> Running;
@@ -466,6 +467,16 @@ public:
     */
     std::list <QString> Synonyms;
 
+    /** Create an object name with filled in values.
+     */
+    objectName(const QString &owner,const QString &name,const QString &type=QString("TABLE"),const QString &comment=QString::null)
+      : Name(name),Owner(owner),Type(type),Comment(comment)
+    { }
+
+    /** Create an empty object name.
+     */
+    objectName()
+    { }
     bool operator < (const objectName &) const;
     bool operator == (const objectName &) const;
   };
@@ -527,6 +538,12 @@ public:
      */
     virtual QString unQuote(const QString &name)
     { return name; }
+
+    /**
+     * Get syntax analyzer for connection
+     * @return A reference to the syntax analyzer to use for the connection.
+     */
+    virtual toSyntaxAnalyzer &analyzer();
 
     /** Extract available objects to query for connection. Any access to the
      * database should always be run using a long running query. If something
@@ -597,6 +614,8 @@ private:
   toConnectionSub *backgroundConnection(void);
   void freeConnection(toConnectionSub *);
   void readObjects(void);
+
+  QString cacheFile();
 public:
   /** Create a new connection.
    * @param provider Which database provider to use for this connection.
@@ -655,6 +674,12 @@ public:
   /** Get provider of connection.
    */
   const QCString &provider() const;
+
+  /** Change the current database. Observe that this only changes the record of what is the current database. You will still need
+   * to change the database oppinion on what database is the current one.
+   */
+  void setDatabase(const QString &database)
+  { Database=database; }
 
   /** Get a description of this connection.
    * @version Include version in returned string.
@@ -787,6 +812,10 @@ public:
    * Remove a statement that was added using @ref addInit.
    */
   void delInit(const QString &sql);
+  /**
+   * Get a list of the current init strings.
+   */
+  const std::list<QString> &toConnection::initStrings() const;
 
   /** Return a string representation to address an object.
    * @param name The name to be quoted.
@@ -811,6 +840,12 @@ public:
    * @param object The object to add
    */
   void addIfNotExists(objectName &object);
+
+  /**
+   * Get syntax analyzer for connection
+   * @return A reference to the syntax analyzer to use for the connection.
+   */
+  virtual toSyntaxAnalyzer &analyzer();
 
   /**
    * Get the synonyms available for objects. Do not modify the returned list.
@@ -869,7 +904,7 @@ public:
    */
   std::list<QString> running(void);
 
-  void logMessage(QString text);
+  static QString cacheDir();
   
   friend class toQuery;
 };

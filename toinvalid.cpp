@@ -191,7 +191,8 @@ void toInvalid::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Invalid|Refresh")));
 
       toMainWidget()->menuBar()->insertItem(tr("&Invalid"),ToolMenu,-1,toToolMenuIndex());
     }

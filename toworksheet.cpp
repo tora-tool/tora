@@ -41,6 +41,7 @@
 #include "toparamget.h"
 #include "toresultbar.h"
 #include "toresultcols.h"
+#include "toresultcombo.h"
 #include "toresultlong.h"
 #include "toresultplan.h"
 #include "toresultresources.h"
@@ -48,6 +49,7 @@
 #include "toresultview.h"
 #include "tosession.h"
 #include "tosgatrace.h"
+#include "totabwidget.h"
 #include "totool.h"
 #include "totabwidget.h"
 #include "tovisualize.h"
@@ -92,7 +94,7 @@
 #include "toworksheetsetupui.moc"
 
 #include "icons/clock.xpm"
-#include "icons/compile.xpm"
+#include "icons/recall.xpm"
 #include "icons/describe.xpm"
 #include "icons/eraselog.xpm"
 #include "icons/execute.xpm"
@@ -109,18 +111,20 @@
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
+#define TO_ID_PLAN			(toMain::TO_TOOL_MENU_ID+ 2)
 
-#define CONF_AUTO_SAVE   "AutoSave"
-#define CONF_CHECK_SAVE  "CheckSave"
-#define CONF_AUTO_LOAD   "AutoLoad"
-#define CONF_LOG_AT_END  "LogAtEnd"
-#define CONF_LOG_MULTI   "LogMulti"
-#define CONF_STATISTICS	 "Statistics"
-#define CONF_TIMED_STATS "TimedStats"
-#define CONF_NUMBER	 "Number"
-#define CONF_MOVE_TO_ERR "MoveToError"
-#define CONF_HISTORY	 "History"
-#define CONF_EXEC_LOG    "ExecLog"
+#define CONF_AUTO_SAVE   	"AutoSave"
+#define CONF_CHECK_SAVE  	"CheckSave"
+#define CONF_AUTO_LOAD   	"AutoLoad"
+#define CONF_LOG_AT_END  	"LogAtEnd"
+#define CONF_LOG_MULTI   	"LogMulti"
+#define CONF_STATISTICS	 	"Statistics"
+#define CONF_TIMED_STATS 	"TimedStats"
+#define CONF_NUMBER	 	"Number"
+#define CONF_MOVE_TO_ERR 	"MoveToError"
+#define CONF_HISTORY	 	"History"
+#define CONF_EXEC_LOG    	"ExecLog"
+#define CONF_TOPLEVEL_DESCRIBE	"ToplevelDescribe"
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
 { 
@@ -145,8 +149,15 @@ public:
     History->setChecked(!tool->config(CONF_HISTORY,"").isEmpty());
     if (!tool->config(CONF_NUMBER,"Yes").isEmpty())
       DisplayNumber->setChecked(true);
+    if (!tool->config(CONF_TOPLEVEL_DESCRIBE,"Yes").isEmpty())
+      ToplevelDescribe->setChecked(true);
     DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
     ExecLog->setChecked(!tool->config(CONF_EXEC_LOG,"").isEmpty());
+#ifdef TO_NO_ORACLE
+    TimedStatistics->hide();
+    MoveToError->hide();
+    Statistics->hide();
+#endif
   }
   virtual void saveSetting(void)
   {
@@ -166,6 +177,7 @@ public:
       Tool->setConfig(CONF_LOG_MULTI,"Yes");
     else
       Tool->setConfig(CONF_LOG_MULTI,"");
+    Tool->setConfig(CONF_TOPLEVEL_DESCRIBE,ToplevelDescribe->isChecked()?"Yes":"");
     Tool->setConfig(CONF_MOVE_TO_ERR,MoveToError->isChecked()?"Yes":"");
     Tool->setConfig(CONF_STATISTICS,Statistics->isChecked()?"Yes":"");
     Tool->setConfig(CONF_HISTORY,History->isChecked()?"Yes":"");
@@ -189,10 +201,10 @@ protected:
   { return toworksheet_xpm; }
 public:
   toWorksheetTool()
-    : toTool(10,"SQL Worksheet")
+    : toTool(10,"SQL Editor")
   { }
   virtual const char *menuItem()
-  { return "SQL Worksheet"; }
+  { return "SQL Editor"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
     return new toWorksheet(main,connection);
@@ -217,36 +229,28 @@ public:
    */
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    if (e->state()==ControlButton&&
-	e->key()==Key_Return) {
+    if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","Ctrl+Return", "Worksheet|Execute current")))) {
       Worksheet->execute();
       e->accept();
-    } else if (e->state()==0&&
-	       e->key()==Key_F8) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F8", "Worksheet|Execute all")))) {
       Worksheet->executeAll();
       e->accept();
-    } else if (e->state()==0&&
-	       e->key()==Key_F9) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F9", "Worksheet|Execute next")))) {
       Worksheet->executeStep();
       e->accept();
-    } else if (e->state()==ShiftButton&&
-	       e->key()==Key_F9) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","Shift+F9", "Worksheet|Execute newline separated")))) {
       Worksheet->executeNewline();
       e->accept();
-    } else if (e->state()==0&&
-	       e->key()==Key_F7) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F7", "Worksheet|Execute saved SQL")))) {
       Worksheet->executeSaved();
       e->accept();
-    } else if (e->state()==0&&
-	       e->key()==Key_F4) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","F4", "Worksheet|Describe under cursor")))) {
       Worksheet->describe();
       e->accept();
-    } else if (e->state()==AltButton&&
-	       e->key()==Key_Up) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","Alt+Up", "Worksheet|Previous log entry")))) {
       Worksheet->executePreviousLog();
       e->accept();
-    } else if (e->state()==AltButton&&
-	       e->key()==Key_Down) {
+    } else if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toWorksheet","Alt+Down", "Worksheet|Next log entry")))) {
       Worksheet->executeNextLog();
       e->accept();
     } else {
@@ -327,15 +331,15 @@ void toWorksheet::setup(bool autoLoad)
 		  tr("Execute current statement"),
 		  this,SLOT(execute(void)),
 		  toolbar);
-  new QToolButton(QPixmap((const char **)executeall_xpm),
-		  tr("Execute all statements"),
-		  tr("Execute all statements"),
-		  this,SLOT(executeAll(void)),
-		  toolbar);
   new QToolButton(QPixmap((const char **)executestep_xpm),
 		  tr("Step through statements"),
 		  tr("Step through statements"),
 		  this,SLOT(executeStep(void)),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)executeall_xpm),
+		  tr("Execute all statements"),
+		  tr("Execute all statements"),
+		  this,SLOT(executeAll(void)),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)refresh_xpm),
@@ -392,7 +396,8 @@ void toWorksheet::setup(bool autoLoad)
     connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &,bool)),
 	    this,SLOT(addLog(const QString &,const toConnection::exception &,bool)));
 
-    Columns=new toResultCols(box);
+    bool toplevel=!WorksheetTool.config(CONF_TOPLEVEL_DESCRIBE,"Yes").isEmpty();
+    Columns=new toResultCols(box,"description",toplevel?WType_TopLevel:0);
     Columns->hide();
 
     ResultTab->setTabEnabled(Columns,false);
@@ -407,6 +412,8 @@ void toWorksheet::setup(bool autoLoad)
     Visualize=new toVisualize(Result,ResultTab);
     ResultTab->addTab(Visualize,tr("&Visualize"));
     ResultTab->addTab(ResourceSplitter,tr("&Information"));
+    ResultTab->setTabShown(ResourceSplitter,Resources->handled());
+
     StatTab=new QVBox(ResultTab);
     {
       QToolBar *stattool=toAllocBar(StatTab,tr("Worksheet Statistics"));
@@ -462,11 +469,12 @@ void toWorksheet::setup(bool autoLoad)
 		    tr("Describe under cursor"),
 		    this,SLOT(describe(void)),
 		    toolbar);
-    new QToolButton(QPixmap((const char **)explainplan_xpm),
-		    tr("Explain plan of current statement"),
-		    tr("Explain plan of current statement"),
-		    this,SLOT(explainPlan(void)),
-		    toolbar);
+    PlanButton=new QToolButton(QPixmap((const char **)explainplan_xpm),
+			       tr("Explain plan of current statement"),
+			       tr("Explain plan of current statement"),
+			       this,SLOT(explainPlan(void)),
+			       toolbar);
+    PlanButton->setEnabled(Plan->handled());
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       tr("Stop execution"),
 			       tr("Stop execution"),
@@ -486,14 +494,22 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
+#ifdef TOAD
+    QLabel *label=
+#endif
     new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
     Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET);
+#ifdef TOAD
+    label->hide();
+    Refresh->hide();
+#else
+    toolbar->addSeparator();
+#endif
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
     Refresh->setEnabled(false);
     Refresh->setFocusPolicy(NoFocus);
 
-    toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)up_xpm),
 		    tr("Previous log entry"),
 		    tr("Previous log entry"),
@@ -506,7 +522,7 @@ void toWorksheet::setup(bool autoLoad)
 		    toolbar);
     toolbar->addSeparator();
 
-    SavedButton=new toPopupButton(QPixmap((const char **)compile_xpm),
+    SavedButton=new toPopupButton(QPixmap((const char **)recall_xpm),
 				  tr("Run current saved SQL"),
 				  tr("Run current saved SQL"),
 				  toolbar);
@@ -522,6 +538,21 @@ void toWorksheet::setup(bool autoLoad)
 
     toolbar->setStretchableWidget(Started=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
     Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
+    
+    Schema=new toResultCombo(toolbar);
+    Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
+    if (toIsMySQL(connection()))
+      Schema->setSelected(connection().database());
+    else if (toIsOracle(connection())||toIsSapDB(connection()))
+      Schema->setSelected(connection().user().upper());
+    else
+      Schema->setSelected(connection().user());
+    connect(Schema,SIGNAL(activated(int)),this,SLOT(changeSchema()));
+    try {
+      Schema->refresh();
+    } catch(...) {
+    }
+
     new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
     connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
@@ -549,12 +580,15 @@ void toWorksheet::setup(bool autoLoad)
 	  StatisticButton->setOn(true);
 	}
       } else {
-	StatisticButton->setEnabled(false);
+	StatisticButton->setShown(false);
       }
     } TOCATCH
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
+  Editor->setAnalyzer(connection().analyzer());
+  connect(Editor,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayMenu(QPopupMenu *)));
+
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   setFocusProxy(Editor);
 }
@@ -594,38 +628,42 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
 			   tr("&Execute Current"),this,SLOT(execute(void)),
-			   CTRL+Key_Return);
-      ToolMenu->insertItem(QPixmap((const char **)executeall_xpm),
-			   tr("Execute &All"),this,SLOT(executeAll(void)),
-			   Key_F8);
+			   toKeySequence(tr("Ctrl+Return", "Worksheet|Execute current")));
       ToolMenu->insertItem(QPixmap((const char **)executestep_xpm),
 			   tr("Execute &Next"),this,SLOT(executeStep(void)),
-			   Key_F9);
+			   toKeySequence(tr("F9", "Worksheet|Execute next")));
+      ToolMenu->insertItem(QPixmap((const char **)executeall_xpm),
+			   tr("Execute &All"),this,SLOT(executeAll(void)),
+			   toKeySequence(tr("F8", "Worksheet|Execute all")));
       ToolMenu->insertItem(tr("Execute &Newline Separated"),this,
-			   SLOT(executeNewline(void)),SHIFT+Key_F9);
+			   SLOT(executeNewline(void)),
+			   toKeySequence(tr("Shift+F9", "Worksheet|Execute newline separated")));
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
 			   tr("&Reexecute Last Statement"),this,SLOT(refresh(void)),
-			   Key_F5);
-      ToolMenu->insertItem(tr("Check syntax of buffer"),
-			   this,SLOT(parseAll()));
+			   toKeySequence(tr("F5", "Worksheet|Reexecute last statement")));
+      if (connection().provider()=="Oracle")
+	ToolMenu->insertItem(tr("Check syntax of buffer"),
+			     this,SLOT(parseAll()),
+ 			     toKeySequence(tr("Ctrl+F9","Worksheet|Check syntax of buffer")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
 			   tr("&Describe Under Cursor"),this,SLOT(describe(void)),
-			   Key_F4);
+			   toKeySequence(tr("F4", "Worksheet|Describe under cursor")));
       ToolMenu->insertItem(tr("&Explain current statement"),this,SLOT(explainPlan(void)),
-			   Key_F3);
-      ToolMenu->insertItem(tr("&Enable Statistics"),this,SLOT(toggleStatistic(void)),
-			   0,TO_ID_STATISTICS);
+			   toKeySequence(tr("F3", "Worksheet|Explain plan")),TO_ID_PLAN);
+      if (connection().provider()=="Oracle")
+	ToolMenu->insertItem(tr("&Enable Statistics"),this,SLOT(toggleStatistic(void)),
+			     0,TO_ID_STATISTICS);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
 			   tr("&Stop Execution"),Result,SLOT(stop(void)),
 			   0,TO_ID_STOP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Execute Saved SQL"),
 			   this,SLOT(executeSaved()),
-			   Key_F7);
+			   toKeySequence(tr("F7", "Worksheet|Execute saved SQL")));
       ToolMenu->insertItem(tr("Select Saved SQL"),
 			   this,SLOT(selectSaved()),
-			   CTRL+SHIFT+Key_S);
+			   toKeySequence(tr("Ctrl+Shift+S", "Worksheet|Select saved SQL")));
       ToolMenu->insertItem(QPixmap((const char **)previous_xpm),
 			   tr("Save last SQL"),
 			   this,SLOT(saveLast()));
@@ -633,16 +671,17 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Previous Log Entry"),this,SLOT(executePreviousLog()),
-			   ALT+Key_Up);
+			   toKeySequence(tr("Alt+Up", "Worksheet|Previous log entry")));
       ToolMenu->insertItem(tr("Next Log Entry"),this,SLOT(executeNextLog()),
-			   ALT+Key_Down);
+			   toKeySequence(tr("Alt+Down", "Worksheet|Next log entry")));
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   tr("Erase &Log"),this,SLOT(eraseLogButton(void)));
 
 
-      toMainWidget()->menuBar()->insertItem(tr("W&orksheet"),ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("Edit&or"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
       ToolMenu->setItemChecked(TO_ID_STATISTICS,StatisticButton->isOn());
+      ToolMenu->setItemEnabled(TO_ID_PLAN,Plan->handled());
     }
   } else {
     delete ToolMenu;
@@ -653,11 +692,13 @@ void toWorksheet::windowActivated(QWidget *widget)
 void toWorksheet::connectionChanged(void)
 {
   try {
-    if (connection().provider()=="Oracle") {
-      StatisticButton->setEnabled(true);
-    } else {
-      StatisticButton->setEnabled(false);
-    }
+    StatisticButton->setShown(connection().provider()=="Oracle");
+    ResultTab->setTabShown(ResourceSplitter,Resources->handled());
+    Editor->setAnalyzer(connection().analyzer());
+    PlanButton->setEnabled(Plan->handled());
+    delete ToolMenu;
+    ToolMenu=NULL;
+    windowActivated(this);
   } TOCATCH
 }
 
@@ -676,7 +717,7 @@ bool toWorksheet::checkSave(bool input)
 	  } catch(...) {
 	    conn+=QString::fromLatin1("unknown connection");
 	  }
-	  QString str=tr("Save changes to worksheet for %1").arg(conn);
+	  QString str=tr("Save changes to editor for %1").arg(conn);
 	  if (!Editor->filename().isEmpty())
 	    str+=QString::fromLatin1("\n(")+Editor->filename()+QString::fromLatin1(")");
 	  int ret=TOMessageBox::information(this,
@@ -1086,6 +1127,9 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,execTyp
 	       t.at(i+1).latin1()=='-')
       comment=true;
     else if (t.at(i).latin1()=='/'&&
+	     t.at(i+1).latin1()=='/')
+      comment=true;
+    else if (t.at(i).latin1()=='/'&&
 	     t.at(i+1).latin1()=='*')
       multiComment=true;
     else if (!t.at(i).isSpace()&&t.at(i)!='/')
@@ -1402,7 +1446,8 @@ void toWorksheet::describe(void)
     Columns->changeParams(table);
   else
     Columns->changeParams(owner,table);
-  Current->hide();
+  if (!Columns->isTopLevel())
+    Current->hide();
   Columns->show();
   Current=Columns;
 }
@@ -1700,4 +1745,83 @@ void toWorksheet::stop(void)
 {
   RefreshTimer.stop();	
   Result->stop();
+}
+
+void toWorksheet::displayMenu(QPopupMenu *menu)
+{
+  menu->insertSeparator(0);
+  if (!Light) {
+    menu->insertItem(tr("&Explain current statement"),this,SLOT(explainPlan(void)),
+		     toKeySequence(tr("F3", "Worksheet|Explain plan")),TO_ID_PLAN,0);
+    menu->insertItem(QPixmap((const char **)describe_xpm),
+		     tr("&Describe Under Cursor"),this,SLOT(describe(void)),
+		     toKeySequence(tr("F4", "Worksheet|Describe under cursor")),0,0);
+    menu->insertSeparator(0);
+  }
+  if (connection().provider()=="Oracle")
+    menu->insertItem(tr("Check syntax of buffer"),
+		     this,SLOT(parseAll()),
+		     toKeySequence(tr("Ctrl+F9","Worksheet|Check syntax of buffer")),0,0);
+  menu->insertItem(QPixmap((const char **)refresh_xpm),
+		   tr("&Reexecute Last Statement"),this,SLOT(refresh(void)),
+		   toKeySequence(tr("F5", "Worksheet|Reexecute last statement")),0,0);
+  menu->insertItem(tr("Execute &Newline Separated"),this,
+		   SLOT(executeNewline(void)),
+		   toKeySequence(tr("Shift+F9", "Worksheet|Execute newline separated")),0,0);
+  menu->insertItem(QPixmap((const char **)executeall_xpm),
+		   tr("Execute &All"),this,SLOT(executeAll(void)),
+		   toKeySequence(tr("F8", "Worksheet|Execute all")),0,0);
+  menu->insertItem(QPixmap((const char **)executestep_xpm),
+		   tr("Execute &Next"),this,SLOT(executeStep(void)),
+		   toKeySequence(tr("F9", "Worksheet|Execute next")),0,0);
+  menu->insertItem(QPixmap((const char **)execute_xpm),
+		   tr("&Execute Current"),this,SLOT(execute(void)),
+		   toKeySequence(tr("Ctrl+Return", "Worksheet|Execute current")),0,0);
+
+  menu->insertSeparator();
+  if (!Light) {
+    if (connection().provider()=="Oracle")
+      menu->insertItem(tr("&Enable Statistics"),this,SLOT(toggleStatistic(void)),
+		       0,TO_ID_STATISTICS);
+  }
+  menu->insertItem(QPixmap((const char **)stop_xpm),
+		   tr("&Stop Execution"),Result,SLOT(stop(void)),
+		   0,TO_ID_STOP);
+  if (!Light) {
+    menu->insertSeparator();
+    menu->insertItem(tr("Execute Saved SQL"),
+		     this,SLOT(executeSaved()),
+		     toKeySequence(tr("F7", "Worksheet|Execute saved SQL")));
+    menu->insertItem(tr("Select Saved SQL"),
+		     this,SLOT(selectSaved()),
+		     toKeySequence(tr("Ctrl+Shift+S", "Worksheet|Select saved SQL")));
+    menu->insertItem(QPixmap((const char **)previous_xpm),
+		     tr("Save last SQL"),
+		     this,SLOT(saveLast()));
+  }
+}
+
+#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = ")
+
+void toWorksheet::changeSchema(void)
+{
+  try {
+    QString schema=Schema->selected();
+    toConnection &conn=connection();
+    if (toIsOracle(conn)) {
+      QString sql=CHANGE_CURRENT_SCHEMA+schema;
+      conn.allExecute(sql);
+      for(std::list<QString>::const_iterator i=conn.initStrings().begin();i!=conn.initStrings().end();i++) {
+	if ((*i).startsWith(CHANGE_CURRENT_SCHEMA)) {
+	  conn.delInit(*i);
+	  break;
+	}
+      }
+      conn.addInit(sql);
+    } else if (toIsMySQL(conn)) {
+      conn.allExecute(QString("USE %1").arg(schema));
+      conn.setDatabase(schema);
+    } else
+      throw QString("No support for changing schema for this database");
+  } TOCATCH
 }

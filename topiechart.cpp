@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "toconf.h"
+#include "tolinechart.h"
 #include "topiechart.h"
 #include "tomain.h"
 #include "toresult.h"
@@ -45,6 +46,7 @@
 #endif
 
 #include <math.h>
+#include <time.h>
 
 #include <qapplication.h>
 #include <qpaintdevicemetrics.h>
@@ -56,7 +58,7 @@
 
 #include "topiechart.moc"
 
-#include "icons/grid.xpm"
+#include "icons/chart.xpm"
 #include "icons/print.xpm"
 
 class toPieTip : public QToolTip {
@@ -83,7 +85,7 @@ toPieChart::toPieChart(QWidget *parent,const char *name,WFlags f)
   Legend=true;
   DisplayPercent=false;
 
-  setIcon(QPixmap((const char **)grid_xpm));
+  setIcon(QPixmap((const char **)chart_xpm));
   setMinimumSize(60,60);
   Menu=NULL;
 
@@ -150,7 +152,7 @@ toPieChart::toPieChart(toPieChart *pie,QWidget *parent,const char *name,WFlags f
     DisplayPercent(pie->DisplayPercent),
     Title(pie->Title)
 {
-  setIcon(QPixmap((const char **)grid_xpm));
+  setIcon(QPixmap((const char **)chart_xpm));
   Menu=NULL;
 
   setMinimumSize(60,60);
@@ -369,4 +371,79 @@ void toPieChart::editPrint(void)
     QRect rect(0,0,metrics.width(),metrics.height());
     paintChart(&painter,rect);
   }
+}
+
+toPieConnector::toPieConnector(toPieChart *pieChart,toLineChart *lineChart)
+{
+  PieChart=pieChart;
+  LineChart=lineChart;
+  Flow=false;
+  LastStamp=0;
+
+  connect(PieChart,SIGNAL(destroyed()),this,SLOT(deleteLater()));
+  connect(LineChart,SIGNAL(destroyed()),this,SLOT(deleteLater()));
+  connect(PieChart,SIGNAL(newValues(std::list<double> &,std::list<QString> &)),
+	  this,SLOT(newValues(std::list<double> &,std::list<QString> &)));
+}
+
+void toPieConnector::newValues(std::list<double> &values,std::list<QString> &labels)
+{
+  std::map<QString,double> reorderMap;
+  std::list<double>::iterator val=values.begin();
+  std::list<QString>::iterator lab=labels.begin();
+  while(val!=values.end()&&lab!=labels.end()) {
+    reorderMap[*lab]=*val;
+    val++;
+    lab++;
+  }
+
+  std::list<QString> newlabs=LineChart->labels();
+  std::list<double> reordVals;
+  std::map<QString,double>::iterator rv;
+  lab=newlabs.begin();
+
+  while(lab!=newlabs.end()) {
+    rv=reorderMap.find(*lab);
+    if (rv!=reorderMap.end()) {
+      reordVals.insert(reordVals.end(),(*rv).second);
+      reorderMap.erase(rv);
+    } else
+      reordVals.insert(reordVals.end(),0);
+    lab++;
+  }
+  if (reorderMap.begin()!=reorderMap.end()) {
+    rv=reorderMap.begin();
+    while(rv!=reorderMap.end()) {
+      newlabs.insert(newlabs.end(),(*rv).first);
+      reordVals.insert(reordVals.end(),(*rv).second);
+      rv++;
+    }
+    LineChart->setLabels(newlabs);
+  }
+
+  QString nowstr;
+  try {
+    nowstr=toNow(toCurrentConnection(PieChart));
+  } catch(...) {
+  }
+
+  if (Flow) {
+    time_t now=time(NULL);
+    if (now!=LastStamp) {
+      if (LastValues.size()>0) {
+	std::list<double> dispVal;
+	std::list<double>::iterator i=reordVals.begin();
+	std::list<double>::iterator j=LastValues.begin();
+	while(i!=reordVals.end()&&j!=LastValues.end()) {
+	  dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	  i++;
+	  j++;
+	}
+	LineChart->addValues(dispVal,nowstr);
+      }
+      LastValues=reordVals;
+      LastStamp=now;
+    }
+  } else
+    LineChart->addValues(reordVals,nowstr);
 }

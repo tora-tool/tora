@@ -143,6 +143,19 @@ public:
   toSyntaxAnalyzer(const char **keywords);
   virtual ~toSyntaxAnalyzer()
   { }
+
+  /** Get the character used to quote names of functions etc for the database
+   */
+  virtual QChar quoteCharacter()
+  { return '\"'; }
+  /** True if declare keyword starts block.
+   */
+  virtual bool declareBlock()
+#ifdef TOAD
+  { return false; }
+#else
+  { return true; }
+#endif
   /** Analyze a line. There is no guarantee that lines will be called in any kind of order.
    * @param str Line to analyze.
    * @param in Type at start of line.
@@ -312,6 +325,10 @@ public:
    * @param highlight If true mark the extracted tablename
    */
   void tableAtCursor(QString &owner,QString &table,bool highlight=false);
+
+  /** Returns true if the editor has any errors.
+   */
+  bool hasErrors();
 signals:
   /** Emitted when lines are inserted or removed.
    * @param start Start of line inserted.

@@ -91,9 +91,12 @@ my %plugins=(
 	     "tobackup"            => { "Files" => [ "tobackup" ],
 					"Oracle" => 1 },
 	     "tobrowser"           => { "Files" => [ "tobrowser",
+						     "tobrowserconstraint",
 						     "tobrowserconstraintui",
 						     "tobrowserfilterui",
+						     "tobrowserindex",
 						     "tobrowserindexui",
+						     "tobrowsertable",
 						     "tobrowsertableui" ],
 					"Any" => 1 },
 	     "tochart"             => { "Files" => [ "tobarchart",
@@ -108,12 +111,12 @@ my %plugins=(
 						     "toresultline",
 						     "toresultpie" ],
 					"Any" => 1 },
+	     "tocurrent"           => { "Files" => [ "tocurrent" ],
+					"Oracle" => 1 },
 	     "todebug"             => { "Files" => [ "todebug",
 						     "todebugwatch",
 						     "todebugtext",
 						     "todebugchangeui" ],
-					"Oracle" => 1 },
-	     "tocurrent"           => { "Files" => [ "tocurrent" ],
 					"Oracle" => 1 },
 	     "toeditextensions"    => { "Files" => [ "toeditextensions",
 						     "toeditextensiongotoui",
@@ -155,14 +158,14 @@ my %plugins=(
 					"Oracle" => 1 },
 	     "toscript"            => { "Files" => [ "toscript",
 						     "toscriptui" ],
-					"Oracle" => 1 },
-	     "tosession"           => { "Files" => [ "tosession" ],
-					"Oracle" => 1 },
+					"Any" => 1 },
 	     "tosecurity"          => { "Files" => [ "tosecurity",
 						     "tosecurityquotaui",
 						     "tosecurityroleui",
 						     "tosecurityuserui" ],
 					"Oracle" => 1 },
+	     "tosession"           => { "Files" => [ "tosession" ],
+					"Any" => 1 },
 	     "tosgatrace"          => { "Files" => [ "tosgatrace" ],
 					"Oracle" => 1 },
 	     "tosqledit"           => { "Files" => [ "tosqledit" ],
@@ -188,8 +191,10 @@ my %plugins=(
 						     "totuningsettingui" ],
 					"Oracle" => 1 },
 	     "towidget"            => { "Files" => [ "tochangeconnection",
+						     "todatatype",
 						     "tofilesize",
 						     "tosgastatement",
+						     "totableselect",
 						     "tovisualize",
 						     "towaitevents" ],
 					"Any" => 1 },
@@ -251,7 +256,10 @@ sub findFile {
     return undef;
 }
 
-my $tmpName="/tmp/toraconfig.$$";
+my $ProgramName=shift(@ARGV);
+my $ProgramExecutable=shift(@ARGV);
+
+my $tmpName="/tmp/".$ProgramName."config.$$";
 
 my $InstallPrefix="/usr/local";
 my $InstallBin;
@@ -273,7 +281,7 @@ my $QtLibStatic;
 my $QtSearch="libqt(?:-mt)?";
 my $StdCppLibStatic;
 my $LFlags;
-my $Target="tora-mono";
+my $Target="$ProgramName-mono";
 my $ForceTarget=0;
 my $Perl=`which perl`;
 chomp $Perl;
@@ -293,7 +301,7 @@ my $OptLevel="-O3";
 
 my $MySQLInclude;
 my $MySQLLib;
-my $MySQLShared;
+my $MySQLShared="-lmysqlclient";
 my $MySQLStatic;
 my $MySQLFound=1;
 
@@ -332,7 +340,7 @@ for (@ARGV) {
     } elsif (/^--with-lib=(.*)$/) {
 	$Libs.=" $1";
     } elsif (/^--with-mono$/) {
-	$Target="tora-mono";
+	$Target="$ProgramName-mono";
 	$ForceTarget=1;
     } elsif (/^--without-mysql$/) {
 	$MySQLFound=0;
@@ -347,7 +355,7 @@ for (@ARGV) {
 	print "skipping Makefile generation.\n";
 	exit(0);
     } elsif (/^--with-static$/) {
-	$Target="tora-static";
+	$Target="$ProgramName-static";
 	$ForceTarget=1;
     } elsif (/^--with-static-oracle$/) {
 	$OracleShared="\$(ORACLE_STATIC)";
@@ -401,7 +409,7 @@ Options can be any of the following:
 --without-oracle     Compile without Oracle support (Not enabled by default)
 --without-mysql      Don't compile in MySQL support (MySQL enabled if detected)
 --without-rpath      Compile without rpath to Oracle libraries (Not enabled by default)
---disable-new-check  Disable new version check globally in TOra (Not enabled by default)
+--disable-new-check  Disable new version check globally in $ProgramName (Not enabled by default)
 --enable-opt-flag    Set the optimize flag to use for the compile (Default -O3)
 --only-prepare       Don't generate makefile, just prepare files. Assumes a Makefile is in place.
 __USAGE__
@@ -409,7 +417,7 @@ __USAGE__
     }
 }
 
-if ($Target eq "tora-static") {
+if ($Target eq "$ProgramName-static") {
     $NoRPath=1;
 }
 
@@ -497,9 +505,9 @@ int main(int,char **)
     }
 #if 0
     if (GCCVersion==2&&GCCVersionMinor==96) {
-	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\\n"
+	printf("$ProgramName will not function if compiled with some versions of gcc 2.96 since it\\n"
 	       "has problems with exception handling and RTTI. This means you can not compile\\n"
-	       "TOra on Mandrake 8.x, RedHat 7.x. You can get a fairly working version in\\n"
+	       "$ProgramName on Mandrake 8.x, RedHat 7.x. You can get a fairly working version in\\n"
 	       "Mandrake 8.1, but it still has issues.\\n");
 	return 0;
     }
@@ -1161,7 +1169,7 @@ __TEMP__
 	         "/usr/include");
 	if (-f $dlfcn && `uname`=~/linux/i ) {
 	    print "yes\n";
-	    $Target="tora-plugin";
+	    $Target="$ProgramName-plugin";
 	} else {
 	    print "no\n";
 	}
@@ -1193,7 +1201,7 @@ __EOT__
 	exit(2);
     }
 
-    if ($Target eq "tora-static") {
+    if ($Target eq "$ProgramName-static") {
 	print "checking for static libc++ ... ";
 	my $path=`$CC -v 2>&1`;
 	if ($path=~/\s(\S+)\/specs\s/s) {
@@ -1222,7 +1230,7 @@ __EOT__
 	print MAKEFILE <<__EOT__;
 ############################################################################
 #
-# TOra - An Oracle Toolkit for DBA's and developers
+# $ProgramName - For DBA's and developers
 # Copyright (C) 2003 Quest Software, Inc
 # 
 # This program is free software; you can redistribute it and/or
@@ -1258,15 +1266,15 @@ __EOT__
 
 __EOT__
 
-        print MAKEFILE "# Where to install tora\n";
+        print MAKEFILE "# Where to install $ProgramName\n";
 	print MAKEFILE "INSTALLPREFIX=\$(ROOT)$InstallPrefix\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# Where to install tora binary\n";
+	print MAKEFILE "# Where to install $ProgramName binary\n";
 	print MAKEFILE "INSTALLBIN=\$(ROOT)$InstallBin\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# Where to install tora plugins\n";
+	print MAKEFILE "# Where to install $ProgramName plugins\n";
 	print MAKEFILE "INSTALLLIB=\$(ROOT)$InstallLib\n";
 	print MAKEFILE "\n";
 
@@ -1334,7 +1342,7 @@ __EOT__
 	print MAKEFILE "ORACLE_HOME=".$ENV{ORACLE_HOME}."\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version\n";
+	print MAKEFILE "# What to compile, can be $ProgramName for plugin version, $ProgramName-mono for monolithic, $ProgramName-static for static version\n";
 	print MAKEFILE "TARGET=$Target\n";
 	print MAKEFILE "\n";
 
@@ -1366,20 +1374,22 @@ __EOT__
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8 -DOTL_ANSI_CPP\n";
 	} elsif ($OracleRelease ge "9") {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA9I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
+	} elsif (!$OracleFound) {
+	    print MAKEFILE "DEFINES+=-DTO_NO_ORACLE -DOTL_ANSI_CPP\n";
 	} else {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8I -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP\n";
 	}
 	if (!$NewCheck) {
-	    print MAKEFILE "DEFINED+=-DTO_NO_NEW_CHECK\n";
+	    print MAKEFILE "DEFINES+=-DTO_NO_NEW_CHECK\n";
 	}
-	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
+	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/$ProgramName\\\"\n";
 	if ($QtLibShared=~/qt-mt/) {
 	    print MAKEFILE "DEFINES+=-DQT_THREAD_SUPPORT\n";
 	}
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
 	}
-	if ($Target ne "tora-plugin") {
+	if ($Target ne "$ProgramName-plugin") {
 	    print MAKEFILE "DEFINES+=-DTOMONOLITHIC\n";
 	}
 
@@ -1409,7 +1419,7 @@ CFLAGS_GLOB=-g $OptLevel -fPIC -W -Wall
 #
 ############################################################################
 
-TITLE=TOra
+TITLE=$ProgramName
 
 API=	\\
 	tochangeconnection.h	\\
@@ -1417,6 +1427,7 @@ API=	\\
 	tobarchart.h		\\
 	toconf.h		\\
 	toconnection.h		\\
+	todatatype.h		\\
 	todefaultkeywords.h	\\
 	toeditwidget.h		\\
 	toextract.h		\\
@@ -1511,7 +1522,7 @@ all: \$(TARGET) lrelease
 #\$(OBJECTS): Makefile Makefile.common
 
 .depends/\%.d: \%.cpp
-	\@echo Making dependences for \$<
+	\@echo Making dependencies for \$<
 	if [ ! -d .depends ] ; then mkdir -p .depends ; fi
 	\$(GCC) -MM \$(CPPFLAGS) \$< > \$\@.tmp && \\
 		( sed "s/^\\(.*\\.\\)o\\([ :]*\\)/objs\\/\\1o \\
@@ -1542,30 +1553,30 @@ objs/\%.o: \%.cpp
 	\@echo Faulty dependency, forgot the objs/ part
 
 install-common: lrelease
-	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
+	if [ \\! -f \$(TARGET) ] ; then cp $ProgramName \$(TARGET) ; fi
 	mkdir -p \$(INSTALLBIN)
-	mkdir -p \$(INSTALLLIB)/tora/help
-	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
-	-cp  *.qm \$(INSTALLLIB)/tora >/dev/null 2>&1
+	mkdir -p \$(INSTALLLIB)/$ProgramName/help
+	-cp templates/*.tpl \$(INSTALLLIB)/$ProgramName >/dev/null 2>&1
+	-cp -r help/* \$(INSTALLLIB)/$ProgramName/help >/dev/null 2>&1
+	-cp  *.qm \$(INSTALLLIB)/$ProgramName >/dev/null 2>&1
 
 install: \$(TARGET) install-common install-kde
 	\@echo Install \$(TARGET) to \$(INSTALLBIN)
-	if [ \\! -f \$(TARGET) ] ; then cp tora \$(TARGET) ; fi
+	if [ \\! -f \$(TARGET) ] ; then cp $ProgramName \$(TARGET) ; fi
 	-strip \$(TARGET) plugins/* >/dev/null 2>&1
-	cp \$(TARGET) \$(INSTALLBIN)/tora
-	if [ -f tora-plugin ] ; \\
-	    then cp \$(TARGET) \$(INSTALLBIN)/tora ; \\
-	    rm -f tora-plugin ; \\
-	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \\
-	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \\
+	cp \$(TARGET) \$(INSTALLBIN)/$ProgramExecutable
+	if [ -f $ProgramName-plugin ] ; \\
+	    then cp \$(TARGET) \$(INSTALLBIN)/$ProgramExecutable ; \\
+	    rm -f $ProgramName-plugin ; \\
+	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \
+	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \
 	fi
-	rm -f \$(INSTALLLIB)/tora/*.tso
-	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
+	rm -f \$(INSTALLLIB)/$ProgramName/*.tso
+	-cp plugins/* \$(INSTALLLIB)/$ProgramName >/dev/null 2>&1
 
-install-debug: tora-mono install-common
-	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
-	cp tora-mono \$(INSTALLBIN)/tora
+install-debug: $ProgramName-mono install-common
+	\@echo Install $ProgramName with debugging symbols to \$(INSTALLBIN)
+	cp $ProgramName-mono \$(INSTALLBIN)/$ProgramExecutable
 
 __EOT__
 
@@ -1575,9 +1586,9 @@ install-kde:
 	mkdir -p \$(KDE_BASE)/share/icons/hicolor/32x32/apps
 	mkdir -p \$(KDE_BASE)/share/icons/hicolor/16x16/apps 
 	mkdir -p \$(KDE_BASE)/share/applnk/Development
-	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
-	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
-	cp -f rpm/tora.desktop \$(KDE_BASE)/share/applnk/Development
+	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/$ProgramExecutable.xpm
+	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/$ProgramExecutable.xpm
+	cp -f rpm/tora.desktop \$(KDE_BASE)/share/applnk/Development/$ProgramExecutable.desktop
 
 __EOT__
 	} else {
@@ -1592,13 +1603,12 @@ __EOT__
         print MAKEFILE <<__EOT__;
 uninstall:
 	\@echo Uninstalling from \$(INSTALLPREFIX)
-	-rm -f \$(INSTALLBIN)/tora
-	-rm -f \$(INSTALLBIN)/tora.real
-	-rm -rf \$(INSTALLLIB)/tora
+	-rm -f \$(INSTALLBIN)/$ProgramExecutable
+	-rm -rf \$(INSTALLLIB)/$ProgramName
 
 clean:
 	\@echo Cleaning \$(TITLE)
-	-rm -rf objs tora tora-static tora-mono >/dev/null 2>&1
+	-rm -rf objs $ProgramName $ProgramName-static $ProgramName-mono >/dev/null 2>&1
 	-rm -f *~ >/dev/null 2>&1
 	-rm -f *~ */*~ >/dev/null 2>&1
 	-rm -f *.bak >/dev/null 2>&1
@@ -1623,7 +1633,7 @@ distclean: clean
 
 apidoc: \$(API)
 	mkdir -p help/api
-	kdoc -n TOra -d help/api \$^ -lqt -lkdeui -lkhtml
+	kdoc -n $ProgramName -d help/api \$^ -lqt -lkdeui -lkhtml
 
 # Plugin definitions
 
@@ -1648,9 +1658,9 @@ __EOT__
 
 # Plugin based binary and its plugins
 
-tora-plugin:\\
+$ProgramName-plugin:\\
 __EOT__
-        print MAKEFILE "\ttora";
+        print MAKEFILE "\t$ProgramName";
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
@@ -1661,40 +1671,50 @@ __EOT__
 	}
         print MAKEFILE <<__EOT__;
 
+# Keyboard shortcuts
+
+main.cpp: tora_toad.h
+
+tora_toad.h: tora_toad.qm
+	\$(PERL) chex.pl < \$< > \$\@
+
+tora_toad.qm: tora_toad.ts
+	\$(LRELEASE) \$<
+
 # Monolithic target, for non ELF platforms
 
-tora-mono: \$(OBJECTS) main.cpp
+$ProgramName-mono: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(LIBS_GLOB) \$(STDCPP_SHARED) \$(ORACLE_SHARED) \$(QT_SHARED) \$(MYSQL_SHARED)
 
 # Static target, easier to distribute
 
-tora-static: \$(OBJECTS) main.cpp
+$ProgramName-static: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_SHARED) \$(LIBS_GLOB) \\
 		-L/usr/X11R6/lib -lXext -lX11 \\
 		\$(MYSQL_STATIC) /usr/lib/libpq.a /usr/lib/libssl.a /usr/lib/libcrypto.a
 
-# The binary for the pluginbased tora
+# The binary for the pluginbased $ProgramName
 
-tora.pro: Makefile
-	echo "# Not indended to be used for anything except lupdate" > tora.pro
-	echo 'SOURCES=	license/tolicense.cpp\\' >> tora.pro
-	echo '	license/tolicenseui.cpp\\' >> tora.pro
-	echo '	main.cpp\\' >> tora.pro
-	echo '	toextratranslations.cpp\\' >> tora.pro
-	echo "	\$(SOURCES)" >> tora.pro
-	echo 'TRANSLATIONS=\$(TRANSLATIONS)' >> tora.pro
+$ProgramName.pro: Makefile
+	echo "# Not indended to be used for anything except lupdate" > $ProgramName.pro
+	echo 'SOURCES=	license/tolicense.cpp\\' >> $ProgramName.pro
+	echo '	license/tolicenseui.cpp\\' >> $ProgramName.pro
+	echo '	main.cpp\\' >> $ProgramName.pro
+	echo '	toextratranslations.cpp\\' >> $ProgramName.pro
+	echo "	\$(SOURCES)" >> $ProgramName.pro
+	echo 'TRANSLATIONS=\$(TRANSLATIONS)' >> $ProgramName.pro
 
-lupdate: tora.pro
-	\$(LUPDATE) tora.pro
+lupdate: $ProgramName.pro
+	\$(LUPDATE) $ProgramName.pro
 
-lrelease: tora.pro \$(TRANSLATIONS)
-	\$(LRELEASE) tora.pro
+lrelease: $ProgramName.pro \$(TRANSLATIONS)
+	\$(LRELEASE) $ProgramName.pro
 
-tora:\\
+$ProgramName:\\
 __EOT__
 	print MAKEFILE "\tobjs/".join(".o \\\n\tobjs/",sort @source).
 	    ".o\\\n";
@@ -1725,18 +1745,18 @@ if ($RPMGenerate) {
         if ($plugins{$t}{Oracle}&&!($plugins{$t}{MySQL}||
 				    $plugins{$t}{Qt3}||
 				    $plugins{$t}{Any})) {
-	    push(@oracle,$RPMGenerate."/tora/$t.tso");
+	    push(@oracle,$RPMGenerate."/$ProgramName/$t.tso");
 	} elsif ($plugins{$t}{MySQL}&&!($plugins{$t}{Oracle}||
 					$plugins{$t}{Qt3}||
 					$plugins{$t}{Any})) {
-	    push(@mysql,$RPMGenerate."/tora/$t.tso");
+	    push(@mysql,$RPMGenerate."/$ProgramName/$t.tso");
 	} else {
 	    if ($QtVersion lt "3"&&$plugins{$t}{Qt3}&&!($plugins{$t}{MySQL}||
 							$plugins{$t}{Oracle}||
 							$plugins{$t}{Any})) {
 		# Qt3 only without Qt3 support.
 	    } else {
-		push(@common,$RPMGenerate."/tora/$t.tso");
+		push(@common,$RPMGenerate."/$ProgramName/$t.tso");
 	    }
 	}
     }

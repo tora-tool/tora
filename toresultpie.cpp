@@ -49,6 +49,7 @@ toResultPie::toResultPie(QWidget *parent,const char *name)
   Columns=0;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Started=false;
+  LabelFirst=false;
 }
 
 void toResultPie::start(void)
@@ -93,12 +94,27 @@ void toResultPie::poll(void)
       if (!Columns)
 	Columns=Query->describe().size();
       while(Query->poll()&&!Query->eof()) {
-	QString val=Query->readValue();
-	Values.insert(Values.end(),val.toDouble());
+	QString val;
+	QString lab;
 	if (Columns>1) {
-	  QString lab=Query->readValue();
+	  if (LabelFirst) {
+	    lab=Query->readValueNull();
+	    val=Query->readValueNull();
+	  } else {
+	    val=Query->readValueNull();
+	    lab=Query->readValueNull();
+	  }
+	  for(int i=2;i<Columns;i++)
+	    Query->readValueNull();
+	} else
+	  val=Query->readValueNull();
+	if (!Filter.isEmpty()&&!Filter.exactMatch(lab))
+	  continue;
+	if (!ValueFilter.isEmpty()&&!ValueFilter.exactMatch(val))
+	  continue;
+	Values.insert(Values.end(),val.toDouble());
+	if (Columns>1)
 	  Labels.insert(Labels.end(),lab);
-	}
       }
       if (Query->eof()) {
 	setValues(Values,Labels);

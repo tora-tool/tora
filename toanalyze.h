@@ -90,6 +90,8 @@ public slots:
   virtual void refresh(void); 
   virtual void windowActivated(QWidget *widget);
   virtual void selectPlan(void);
+  virtual void fillOwner(void);
+  virtual void displayMenu(QPopupMenu *);
 };
 
 #endif

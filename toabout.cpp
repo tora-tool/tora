@@ -57,7 +57,10 @@
 #ifdef OAS
 #include "oasabout.h"
 #else
-#  ifdef TO_LICENSE
+#  ifdef TOAD
+#include "toadabout.h"
+#  else
+#    ifdef TO_LICENSE
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
@@ -77,7 +80,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
-#  else
+#    else
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
@@ -95,7 +98,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
 "GNU General Public License for more details."
-#  endif
+#    endif
 "<HR BREAK=ALL>\n"
 "Contributors (In alphabetical order):<P>\n"
 "<UL>\n"
@@ -103,18 +106,19 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "<LI><B>Volker Götz</B> - Improved PostgreSQL support.\n"
 "<LI><B>Oliver Jehle</B> - Object caching to disc, SAP and much more.\n"
 "<LI><B>Sergei Kuchin</B> - Oracle Template Library.\n"
-"<LI><B>Michael Meskes</B> - Debian maintainer (<A HREF=http://www.debian.org/>http://www.debian.org/</A>).\n"
-"<LI><B>Selcek Ozturk</B> - Improved content editor.\n"
+"<LI><B>Michael Meskes</B> - Debian maintainer (<A HREF=http://www.debian.org>http://www.debian.org/</A>).\n"
+"<LI><B>Guillaume Moulard</B> - Log4PL/SQL documentation.\n"
+"<LI><B>Selcuk Ozturk</B> - Improved content editor.\n"
 "<LI><B>Jeff Price</B> - Endless feature requests and more.\n"
 "<LI><B>Stefan Rindeskär</B> - Improved PostgreSQL support.\n"
 "<LI><B>Adam vonNieda</B> - Improvements to RMAN monitoring from OracleTool (<A HREF=http://www.oracletool.com>http://www.oracletool.com</A>)\n"
-"<LI><B>Guillaume Moulard</B> - Log4PL/SQL documentation.\n"
 "</UL>\n"
 "Other contributors:<P>\n"
 "<B>Robert Cheramy</B>,\n"
 "<B>Francesco Dandrea</B>,\n"
 "<B>Ferdinand Gassauer</B>,\n"
 "<B>Rick Hall</B>,\n"
+"<B>Rico Hendriks</B>,\n"
 "<B>Frits Hoogland</B>,\n"
 "<B>Mihai Ibanescu</B>,\n"
 "<B>Bo Johansson</B>,\n"
@@ -133,8 +137,10 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "<B>Daniel Vérité</B>,\n"
 "<B>Joachim Zetzsche</B>,\n"
 "<B>Massimiliano Ziccardi</B>...\n";
+#  endif
 #endif
 
+#ifndef TOAD
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
 "<H3>My taste is simple, the best.</H3>\n"
@@ -357,6 +363,7 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "</H3>\n"
 "<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)\n"
 "<DIV ALIGN=LEFT>";
+#endif
 
 #define ABOUT_CAPTION TOAPPNAME " %1"
 
@@ -393,6 +400,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
   toAllocLogo();
 
   switch (page) {
+#ifndef TOAD
   case 2:
     setCaption(tr("Quotes"));
     TextView->setText(tr(QuoteText));
@@ -400,8 +408,9 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     TextView->setTextFormat(RichText);
     CancelButton->hide();
     break;
+#endif
   case 1:
-#ifdef TO_LICENSE
+#if defined(TO_LICENSE) || defined(TOAD)
     setCaption(tr("End User License"));
 #else
     setCaption(tr("GNU General Public License"));
@@ -416,7 +425,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
     QString buffer=tr(AboutText).arg(QString::fromLatin1(TOVERSION));
     TextView->setText(buffer);
-#ifdef OAS
+#if defined(OAS) || defined(TOAD)
     TextView->setPaper(QColor(255,255,255));
 #else
     TextView->setPaper(QColor(227,184,54));

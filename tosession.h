@@ -70,6 +70,7 @@ public:
     };
     std::list<sessionID> Serials;
     bool Show;
+    QString OnlyDatabase;
   public:
 
     sessionFilter()
@@ -83,6 +84,8 @@ public:
     { Show=show; }
     bool show()
     { return Show; }
+    void onlyDatabase(const QString &db)
+    { OnlyDatabase=db; }
     void updateList(toResultLong *lst);
   };
   toSessionList(QWidget *parent)
@@ -132,6 +135,8 @@ class toSession : public toToolWidget {
 
 public:
   toSession(QWidget *parent,toConnection &connection);
+
+  virtual bool canHandle(toConnection &conn);
 public slots:
   void changeTab(QWidget *tab);
   void changeItem(QListViewItem *item);
@@ -150,5 +155,9 @@ public slots:
   void selectAll(void);
   void selectNone(void);
 };
+
+#ifdef TOAD
+#include "tosessionmysql.h"
+#endif
 
 #endif

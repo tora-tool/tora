@@ -36,6 +36,7 @@
 
 #include "toconnection.h"
 #include "toresultcols.h"
+#include "toresultlong.h"
 #include "tosql.h"
 
 #include <map>
@@ -79,9 +80,14 @@ void toResultColsComment::setCachedComment(bool table,const QString &name,QStrin
   connect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
 }
 
+static toSQL SQLChangeTableCommentMySQL("toResultCols:ChangeTableComment",
+					"ALTER TABLE %1 COMMENT = %2",
+					"Set a comment on a table. Must have same % signs",
+					"4.1",
+					"MySQL");
 static toSQL SQLChangeTableComment("toResultCols:ChangeTableComment",
 				   "COMMENT ON TABLE %1 IS %2",
-				   "Set a comment on a table. Must have same % signs");
+				   "");
 static toSQL SQLChangeColumnComment("toResultCols:ChangeColumnComment",
 				    "COMMENT ON COLUMN %1 IS %2",
 				    "Set a comment on a column. Must have same % signs");
@@ -315,14 +321,25 @@ public:
   }
 };
 
+static toSQL SQLTableCommentMySQL("toResultCols:TableComment",
+				  "TOAD 15 SHOW TABLE STATUS FROM :f1<noquote> LIKE :f2<char[100]>",
+				  "Dispalay Table comment",
+				  "4.1",
+				  "MySQL");
 static toSQL SQLTableComment("toResultCols:TableComment",
 			     "SELECT Comments FROM sys.All_Tab_Comments\n"
 			     " WHERE Owner = :f1<char[100]>\n"
 			     "   AND Table_Name = :f2<char[100]>",
-			     "Display table comments");
+			     "");
 
-toResultCols::toResultCols(QWidget *parent,const char *name)
-  : QVBox(parent,name)
+static toSQL SQLTableColumns("toResultCols:ListCols",
+			     "SHOW FULL COLUMNS FROM :f1<noquote>",
+			     "Show full column information, only used for MySQL databases",
+			     "3.23",
+			     "MySQL");
+
+toResultCols::toResultCols(QWidget *parent,const char *name,WFlags f)
+  : QVBox(parent,name,f)
 {
   QHBox *box=new QHBox(this);
   Title=new QLabel(box);
@@ -336,6 +353,20 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
   Edit->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Maximum));
   connect(Edit,SIGNAL(toggled(bool)),this,SLOT(editComment(bool)));
   Columns=new resultCols(this);
+  MySQLColumns=new toResultLong(this);
+  MySQLColumns->hide();
+  Header=true;
+  resize(640,300);
+}
+
+void toResultCols::displayHeader(bool display)
+{
+  Header=display;
+
+  Title->setShown(display);
+  Comment->setShown(display&&!Edit->isChecked());
+  EditComment->setShown(display&&Edit->isChecked());
+  Edit->setShown(display);
 }
 
 void toResultCols::query(const QString &sql,const toQList &param,bool nocache)
@@ -365,12 +396,29 @@ void toResultCols::query(const QString &sql,const toQList &param,bool nocache)
       Name=*cp;
     } else {
       Name=Owner;
-      Owner=connection().user().upper();
+      if (toIsMySQL(conn))
+	Owner=connection().database();
+      else
+	Owner=connection().user().upper();
     }
 
     QString synonym;
 
     Columns->clear();
+
+    if (toIsMySQL(conn)) {
+      MySQLColumns->show();
+      Columns->hide();
+      MySQLColumns->setSQL(SQLTableColumns);
+      if (Owner.isEmpty())
+	MySQLColumns->changeParams(Name);
+      else
+	MySQLColumns->changeParams(Owner+"."+Name);
+    } else {
+      Columns->show();
+      MySQLColumns->hide();
+    }
+
     const toConnection::objectName &name=conn.realName(object,synonym,false);
 
     QString label=QString::fromLatin1("<B>");
@@ -389,25 +437,31 @@ void toResultCols::query(const QString &sql,const toQList &param,bool nocache)
       EditComment->setCachedComment(true,
 				    conn.quote(name.Owner)+"."+conn.quote(name.Name),
 				    const_cast<QString &>(name.Comment));
-    } else
+    } else {
       Comment->setText(QString::null);
+      EditComment->setCachedComment(true,
+				    conn.quote(name.Owner)+"."+conn.quote(name.Name),
+				    const_cast<QString &>(name.Comment));
+    }
 
-    if (connection().provider()=="Oracle") {
+    if (toIsOracle(connection())||toIsMySQL(connection())) {
       editComment(Edit->isChecked());
       Edit->setEnabled(true);
     } else {
-      editComment(false);
+      editComment(Edit->isChecked());
       Edit->setEnabled(false);
     }
 
-    Columns->query(name,nocache);
+    if (!toIsMySQL(conn))
+      Columns->query(name,nocache);
+
     Title->setText(label);
   } catch(const QString &) {
     try {
       QString label=QString::fromLatin1("<B>");
       label+=object;
       label+=QString::fromLatin1("</B>");
-      if (connection().provider()=="Oracle") {
+      if (connection().provider()=="Oracle"||connection().provider()=="MySQL") {
 	toConnection &conn=connection();
 	toQuery query(conn,SQLTableComment,Owner,Name);
 	QString t;
@@ -425,7 +479,8 @@ void toResultCols::query(const QString &sql,const toQList &param,bool nocache)
 	Edit->setEnabled(false);
       }
       label+=" "+tr("(Object cache not ready)");
-      Columns->query(object,Owner,Name);
+      if (!toIsMySQL(connection()))
+	Columns->query(object,Owner,Name);
       Title->setText(label);
     } catch(const QString &str) {
       Title->setText(str);
@@ -558,12 +613,15 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
 
 void toResultCols::editComment(bool val)
 {
-  Columns->editComment(val);
-  if (val) {
-    Comment->hide();
-    EditComment->show();
-  } else {
-    Comment->show();
-    EditComment->hide();
+  if (toIsOracle(connection()))
+    Columns->editComment(val);
+  if (Header) {
+    if (val) {
+      Comment->hide();
+      EditComment->show();
+    } else {
+      Comment->show();
+      EditComment->hide();
+    }
   }
 }

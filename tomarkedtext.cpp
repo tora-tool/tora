@@ -405,7 +405,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     setOverwriteMode(!isOverwriteMode());
     e->accept();
     return;
-  } else if(e->state()==ControlButton&&e->key()==Key_A) {
+  } else if(toCheckKeyEvent(e,QKeySequence(tr("Ctrl+A","Edit|Select All")))) {
     selectAll();
     e->accept();
     return;

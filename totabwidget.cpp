@@ -59,6 +59,7 @@ void toTabBar::removeTab(QTab *tab)
     if ((*i).Tab==tab) {
       QTabBar::removeTab(tab);
       Tabs.erase(i);
+      return;
     }
   }
 }
@@ -97,11 +98,11 @@ void toTabBar::layoutTabs()
       (*i).Tab->setRect((*i).Rect);
     if ((*i).Shown) {
       QRect r=(*i).Tab->rect();
-      r.moveBy(-offset,0);
+      r.moveBy(offset-r.left(),0);
       (*i).Tab->setRect(r);
+      offset+=r.width();
     } else {
       QRect r;
-      offset+=(*i).Tab->rect().width();
       (*i).Tab->setRect(r);
     }
   }

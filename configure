@@ -70,7 +70,7 @@ fi
 
 echo " $PERL"
 
-$PERL configure.pl $*
+$PERL configure.pl tora tora $*
 if [ $? != 0 ]
 then
    exit 2

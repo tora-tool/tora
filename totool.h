@@ -322,12 +322,37 @@ public:
   virtual void saveSetting(void) = 0;
 };
 
+/** This class is used to hold connections for @ref toResult classes.
+ * Must be multiply inherited by a widget otherwise it will go kaboom.
+ * It will dynamic cast itself to a QWidget from time to time so if that
+ * doesn't resolve correctly it will not work.
+ */
+class toConnectionWidget {
+  toConnection *Connection;
+  QWidget *Widget;
+public:
+  /** Constructor with the connection it should be set to initially.
+   */
+  toConnectionWidget(toConnection &conn,QWidget *widget);
+  /** Constructor without a connection. Will inherit the connection from a parent connection widget.
+   */
+  toConnectionWidget(QWidget *widget);
+  /** Destructor.
+   */
+  virtual ~toConnectionWidget();
+  /** Change connection of the widget.
+   */
+  virtual void setConnection(toConnection &conn);
+  /** Get the connection it is pointed to.
+   */
+  virtual toConnection &connection();
+};
+
 /** Simple baseclass for widgets defining the main tool widget. It is in
  * no way mandatory and all it does is register the widget in the connetion.
  */
-class toToolWidget : public QVBox, public toHelpContext {
+class toToolWidget : public QVBox, public toHelpContext, public toConnectionWidget {
   Q_OBJECT
-  toConnection *Connection;
   toTimer *Timer;
   toTool &Tool;
 private slots:
@@ -353,7 +378,7 @@ public:
    * @return Reference to connection.
    */
   toConnection &connection()
-  { return *Connection; }
+  { return toConnectionWidget::connection(); }
   /** Get the tool for this tool widget.
    * @return Reference to a tool object.
    */

@@ -59,7 +59,7 @@
 #include "tolinechartsetupui.moc"
 
 #include "icons/print.xpm"
-#include "icons/grid.xpm"
+#include "icons/chart.xpm"
 
 double toLineChart::round(double round,bool up)
 {
@@ -109,7 +109,7 @@ void toLineChart::setSamples(int samples)
 toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   : QWidget(parent,name,f)
 {
-  setIcon(QPixmap((const char**)grid_xpm));
+  setIcon(QPixmap((const char**)chart_xpm));
   Menu=NULL;
   MinAuto=MaxAuto=true;
   MinValue=MaxValue=0;
@@ -799,7 +799,7 @@ toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WF
   Enabled=chart->Enabled;
 
   setCaption(Title);
-  setIcon(QPixmap((const char**)grid_xpm));
+  setIcon(QPixmap((const char**)chart_xpm));
 
   clearZoom();
 

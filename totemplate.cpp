@@ -70,7 +70,7 @@ static std::map<QCString,QString> DefaultText(void)
 {
   std::map<QCString,QString> def;
   QString file=toPluginPath();
-#ifndef OAS
+#if (!defined(OAS)) && (!defined(TO_NO_ORACLE))
   file+=QString::fromLatin1("/sqlfunctions.tpl");
   def["PL/SQL Functions"]=file;
   file=toPluginPath();
@@ -391,11 +391,11 @@ protected:
   { return totemplate_xpm; }
 public:
   toTemplateTool()
-    : toTool(410,"SQL Template")
+    : toTool(410,"Project Manager")
   { Dock=NULL; Window=NULL; toTemplateProvider::setToolKey(key()); }
   virtual const char *menuItem()
-  { return "SQL Template"; }
-  virtual QWidget *toolWindow(QWidget *,toConnection &)
+  { return "Project Manager"; }
+  void toggleWindow()
   {
     if (!Dock||!Window) {
       Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
@@ -415,8 +415,9 @@ public:
 #endif
       Window->showResult(false);
     }
-    return NULL;
   }
+  virtual QWidget *toolWindow(QWidget *,toConnection &)
+  { toggleWindow(); return NULL; }
   void closeWindow()
   { Dock=NULL; Window=NULL; toTemplateProvider::setShown(false); }
   virtual QWidget *configurationTab(QWidget *parent)
@@ -506,7 +507,7 @@ toTemplate::toTemplate(TODock *parent)
       (*i)->insertItems(List,Toolbar);
 
   Toolbar->setStretchableWidget(new QLabel(Toolbar,TO_KDE_TOOLBAR_WIDGET));
-
+  
   WidgetExtra=NULL;
   setWidget(NULL);
 
@@ -519,6 +520,11 @@ toTemplate::~toTemplate()
 {
   TemplateTool.closeWindow();
   delete Result;
+}
+
+void toTemplate::hideTemplates()
+{
+  TemplateTool.toggleWindow();
 }
 
 void toTemplate::showResult(bool show)

@@ -102,9 +102,12 @@
 #include "icons/print.xpm"
 #include "icons/redo.xpm"
 #include "icons/search.xpm"
-#include "icons/toramini.xpm"
+#include "icons/tora.xpm"
 #include "icons/undo.xpm"
 #include "icons/up.xpm"
+#ifdef TOAD
+#include "icons/options.xpm"
+#endif
 
 #ifndef OAS
 #include "icons/commit.xpm"
@@ -219,14 +222,15 @@ toMain::toMain()
   FileMenu->insertSeparator();
   FileMenu->insertItem(tr("&Quit"),TO_FILE_QUIT);
 
-  FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
-  FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
-  FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+G", "File|New connection")),TO_NEW_CONNECTION);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+O", "File|File open")),TO_FILE_OPEN);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+W", "File|File save")),TO_FILE_SAVE);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+W", "File|File save as")),TO_FILE_SAVE_AS);
 #ifndef OAS
-  FileMenu->setAccel(Key_L|CTRL,TO_FILE_COMMIT);
-  FileMenu->setAccel(Key_J|CTRL,TO_STOP_ALL);
-  FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
-  FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+C", "File|Commit")),TO_FILE_COMMIT);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+J", "File|Stop all")),TO_STOP_ALL);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+<", "File|Rollback"))|CTRL,TO_FILE_ROLLBACK);
+  FileMenu->setAccel(toKeySequence(tr("Ctrl+Shift+U", "File|Current connection")),TO_FILE_CURRENT);
 #endif
 
   updateRecent();
@@ -249,26 +253,66 @@ toMain::toMain()
   EditMenu->insertItem(tr("Select &All"),TO_EDIT_SELECT_ALL);
   EditMenu->insertItem(tr("Read All &Items"),TO_EDIT_READ_ALL);
   EditMenu->insertSeparator();
-  EditMenu->insertItem(tr("&Options..."),TO_EDIT_OPTIONS);
+  EditMenu->insertItem(
+#ifdef TOAD
+		       QPixmap((const char **)options_xpm),
+#endif
+		       tr("&Options..."),TO_EDIT_OPTIONS);
 
   QAccel *accel=new QAccel(this);
-  accel->connectItem(accel->insertItem(Key_Insert|CTRL),this,SLOT(copyButton()));
-  accel->connectItem(accel->insertItem(Key_Delete|SHIFT),this,SLOT(cutButton()));
-  accel->connectItem(accel->insertItem(Key_Insert|SHIFT),this,SLOT(pasteButton()));
+  accel->connectItem(accel->insertItem(toKeySequence(tr("Ctrl+Insert", "Edit|Copy"))),this,SLOT(copyButton()));
+  accel->connectItem(accel->insertItem(toKeySequence(tr("Shift+Delete", "Edit|Cut"))),this,SLOT(cutButton()));
+  accel->connectItem(accel->insertItem(toKeySequence(tr("Shift+Insert", "Edit|Paste"))),this,SLOT(pasteButton()));
 
-  EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
-  EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
-  EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
-  EditMenu->setAccel(Key_C|CTRL,TO_EDIT_COPY);
-  EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
-  EditMenu->setAccel(Key_F|CTRL,TO_EDIT_SEARCH);
-  EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+A", "Edit|Select all")),TO_EDIT_SELECT_ALL);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+Z", "Edit|Undo")),TO_EDIT_UNDO);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+Y", "Edit|Redo")),TO_EDIT_REDO);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+X", "Edit|Cut")),TO_EDIT_CUT);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+C", "Edit|Copy")),TO_EDIT_COPY);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+V", "Edit|Paste")),TO_EDIT_PASTE);
+  EditMenu->setAccel(toKeySequence(tr("Ctrl+F", "Edit|Search")),TO_EDIT_SEARCH);
+  EditMenu->setAccel(toKeySequence(tr("F3", "Edit|Search next")),TO_EDIT_SEARCH_NEXT);
 
 
   menuBar()->insertItem(tr("&Edit"),EditMenu,TO_EDIT_MENU);
   connect(EditMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   std::map<QCString,toTool *> &tools=toTool::tools();
+
+  ToolsToolbar=toAllocBar(this,tr("Tools"));
+  ConnectionToolbar=toAllocBar(this,tr("Connections"));
+  new QToolButton(QPixmap((const char **)connect_xpm),
+		  tr("Connect to database"),
+		  tr("Connect to database"),
+		  this,SLOT(addConnection()),ConnectionToolbar);
+  DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
+				   tr("Disconnect current connection"),
+				   tr("Disconnect current connection"),
+				   this,SLOT(delConnection()),ConnectionToolbar);
+  DisconnectButton->setEnabled(false);
+#ifndef OAS
+  ConnectionToolbar->addSeparator();
+  NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
+				 tr("Commit connection"),
+				 tr("Commit connection"),
+				 this,SLOT(commitButton()),ConnectionToolbar)]=true;
+  NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
+				 tr("Rollback connection"),
+				 tr("Rollback connection"),
+				 this,SLOT(rollbackButton()),ConnectionToolbar)]=true;
+  ConnectionToolbar->addSeparator();
+  NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
+				 tr("Stop all running queries on connection"),
+				 tr("Stop all running queries on connection"),
+				 this,SLOT(stopButton()),ConnectionToolbar)]=true;
+#else
+  ConnectionToolbar->hide();
+#endif
+  ConnectionToolbar->addSeparator();
+  ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
+  ConnectionSelection->setMinimumWidth(200);
+  ConnectionSelection->setFocusPolicy(NoFocus);
+  connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   EditToolbar=toAllocBar(this,tr("Application"));
 
@@ -287,6 +331,12 @@ toMain::toMain()
   PrintButton->setEnabled(false);
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
+#ifdef TOAD
+  new QToolButton(QPixmap((const char **)options_xpm),
+		  tr("Edit options"),
+		  tr("Edit options"),
+		  this,SLOT(optionButton()),EditToolbar);
+#endif
   EditToolbar->addSeparator();
   UndoButton=new QToolButton(QPixmap((const char **)undo_xpm),
 			     tr("Undo"),
@@ -324,13 +374,17 @@ toMain::toMain()
   ToolsMenu=new QPopupMenu(this);
 
   HelpMenu=new QPopupMenu(this);
+#ifndef TOAD
   HelpMenu->insertItem(tr("C&urrent Context..."),TO_HELP_CONTEXT);
+#endif
   HelpMenu->insertItem(tr("&Contents..."),TO_HELP_CONTENTS);
   HelpMenu->insertSeparator();
   HelpMenu->insertItem(tr("&About " TOAPPNAME "..."),TO_HELP_ABOUT);
   HelpMenu->insertItem(tr("&License..."),TO_HELP_LICENSE);
+#ifndef TOAD
   HelpMenu->insertItem(tr("&Quotes..."),TO_HELP_QUOTES);
-  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
+#endif
+  HelpMenu->setAccel(toKeySequence(tr("F1", "Help|Help")),TO_HELP_CONTEXT);
   if (!toFreeware()) {
     HelpMenu->insertSeparator();
     HelpMenu->insertItem(tr("&Register..."),TO_HELP_REGISTER);
@@ -371,43 +425,8 @@ toMain::toMain()
     toolID++;
   }
 
-  ToolsToolbar=toAllocBar(this,tr("Tools"));
-  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
+  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"").isEmpty())
     moveToolBar(ToolsToolbar,Left);
-
-  ConnectionToolbar=toAllocBar(this,tr("Connections"));
-  new QToolButton(QPixmap((const char **)connect_xpm),
-		  tr("Connect to database"),
-		  tr("Connect to database"),
-		  this,SLOT(addConnection()),ConnectionToolbar);
-  DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
-				   tr("Disconnect current connection"),
-				   tr("Disconnect current connection"),
-				   this,SLOT(delConnection()),ConnectionToolbar);
-  DisconnectButton->setEnabled(false);
-#ifndef OAS
-  ConnectionToolbar->addSeparator();
-  NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
-				 tr("Commit connection"),
-				 tr("Commit connection"),
-				 this,SLOT(commitButton()),ConnectionToolbar)]=true;
-  NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
-				 tr("Rollback connection"),
-				 tr("Rollback connection"),
-				 this,SLOT(rollbackButton()),ConnectionToolbar)]=true;
-  ConnectionToolbar->addSeparator();
-  NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
-				 tr("Stop all running queries on connection"),
-				 tr("Stop all running queries on connection"),
-				 this,SLOT(stopButton()),ConnectionToolbar)]=true;
-#else
-  ConnectionToolbar->hide();
-#endif
-  ConnectionToolbar->addSeparator();
-  ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
-  ConnectionSelection->setMinimumWidth(200);
-  ConnectionSelection->setFocusPolicy(NoFocus);
-  connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
@@ -446,7 +465,7 @@ toMain::toMain()
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
 #endif
-  setIcon(QPixmap((const char **)toramini_xpm));
+  setIcon(QPixmap((const char **)tora_xpm));
 
   statusBar()->message(QString::null);
   FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,false);
@@ -514,10 +533,10 @@ toMain::toMain()
 #if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK) && !defined (OAS)
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
     switch(TOMessageBox::information(this,tr("Check for upgrades?"),
-				     tr("Do you want TOra to automatically check\n"
-					"http://www.globecom.se/tora for updates on startup?\n"
+				     tr("Do you want " TOAPPNAME " to automatically check\n"
+					TOHOMEPAGE " for updates on startup?\n"
 					"During this check no information about your computer\n"
-					"including TOra version is transmitted to the site"),
+					"including version is transmitted to the site"),
 				     tr("&Yes"),tr("&No"),QString::null,0)) {
     case 0:
       toTool::globalSetConfig(CONF_UPGRADE_CHECK,"Yes");
@@ -529,9 +548,14 @@ toMain::toMain()
   }
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Yes") {
     qInitNetworkProtocols();
-    VersionUrl=new QUrlOperator(QString::fromLatin1("http://www.globecom.se/tora/version.php?"
-						    TOTYPE
-						    "=1"));
+    VersionUrl=new QUrlOperator(QString::fromLatin1(TOHOMEPAGE
+#ifdef TOAD
+						    "/mysqlversion.html"
+#else
+						    "/version.php?" TOTYPE
+						    "=1"
+#endif
+						    ));
     VersionUrl->get();
     connect(VersionUrl,SIGNAL(data(const QByteArray &,QNetworkOperation *)),
 	    this,SLOT(versionData(const QByteArray &,QNetworkOperation *)));
@@ -1067,6 +1091,11 @@ void toMain::printButton(void)
   commandCallback(TO_FILE_PRINT);
 }
 
+void toMain::optionButton(void)
+{
+  commandCallback(TO_EDIT_OPTIONS);
+}
+
 void toMain::setEditWidget(toEditWidget *edit)
 {
   toMain *main=(toMain *)qApp->mainWidget();
@@ -1436,6 +1465,7 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
 	  if (tw) {
 	    toToolCaption(tw,tool->name());
 	    tw->importData(data,prefix+":Tools:"+QString::number(id).latin1());
+	    toolWidgetAdded(tw);
 	  }
 	}
       }
@@ -1568,8 +1598,7 @@ void toMain::versionFinished(QNetworkOperation *)
   if (i>=0)
     VersionString=VersionString.mid(0,i);
   if (VersionString[0].isNumber()&&VersionString > TOVERSION)
-    toStatusMessage(tr("A new version of TOra (%1) is available from\n\n"
-		       "http://www.globecom.se/tora").arg(VersionString));
+    toStatusMessage(tr("A new version of " TOAPPNAME " (%1) is available from\n\n" TOHOMEPAGE).arg(VersionString));
 #endif
 }
 
@@ -1606,4 +1635,14 @@ void toMain::keepAlive(void)
     toThread *thread=new toThread(new toMainNopExecutor(*(*i),toSQL::string("Global:Now",*(*i))));
     thread->start();
   }
+}
+
+void toMain::toolWidgetAdded(toToolWidget *tool)
+{
+  emit addedToolWidget(tool);
+}
+
+void toMain::toolWidgetRemoved(toToolWidget *tool)
+{
+  emit removedToolWidget(tool);
 }

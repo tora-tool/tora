@@ -66,6 +66,7 @@
 #define DEFAULT_REFRESH		"None"
 #define CONF_HIGHLIGHT		"SyntaxHighlight"
 #define CONF_KEYWORD_UPPER	"KeywordUpper"
+#define DEFAULT_KEYWORD_UPPER	""
 #define CONF_COLOR		"KeywordColor"
 #define CONF_PLUGIN_DIR		"PluginDir"
 #define CONF_CACHE_DIR		"CacheDir"
@@ -105,6 +106,7 @@
 #define CONF_AUTO_LONG		"AutoLong"
 #define CONF_MESSAGE_STATUSBAR	"MessageStatusbar"
 #define CONF_OBJECT_CACHE	"ObjectCache"
+#define DEFAULT_OBJECT_CACHE	"1"
 #define CONF_BKGND_CONNECT	"BackgroundConnect"
 #define CONF_MAX_CONTENT	"MaxContent"
 #define DEFAULT_MAX_CONTENT	"100"
@@ -137,6 +139,12 @@
 #define DEFAULT_CACHE_TIMEOUT	"7"
 #define CONF_TAB_STOP		"TabStop"
 #define DEFAULT_TAB_STOP	"8"
+#define CONF_TOAD_BINDINGS	"ToadBindings"
+#define DEFAULT_TOAD_BINDINGS	""
+#define CONF_DISPLAY_GRIDLINES	"Gridlines"
+#define DEFAULT_DISPLAY_GRIDLINES "Yes"
+
+#define TOEXPIRES		"never"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"
@@ -163,8 +171,11 @@
 #ifndef TOAPPNAME
 #  define TOAPPNAME		"TOra"
 #endif
+
+#define TOHOMEPAGE		"http://www.globecom.se/tora"
+
 #ifndef TOVERSION
-#  define TOVERSION               "1.3.13"
+#  define TOVERSION               "1.3.14"
 #endif
 // Stable or development version of TOra
 #define TOTYPE			"DEVELOP"

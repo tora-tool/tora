@@ -73,6 +73,7 @@
 #include "toresultview.moc"
 
 static int MaxColDisp;
+static bool Gridlines;
 
 void toResultViewMLine::setText (int col,const QString &text)
 {
@@ -108,6 +109,11 @@ void toResultViewMLine::paintCell(QPainter *pnt,const QColorGroup & cg,
   toResultViewItem::paintCell(pnt,cg,column,
 			      max(QListViewItem::width(pnt->fontMetrics(),listView(),column),width),
 			      alignment);
+  if (Gridlines) {
+    pnt->setPen(gray);
+    pnt->drawLine(width-1,0,width-1,height());
+    pnt->drawLine(0,height()-1,width-1,height()-1);
+  }
 }
 
 static int TextWidth(const QFontMetrics &fm,const QString &str)
@@ -127,8 +133,10 @@ static int TextWidth(const QFontMetrics &fm,const QString &str)
 
 int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
-  if (!MaxColDisp)
+  if (!MaxColDisp) {
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+    Gridlines=!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+  }
   QString t=text(column);
   if (t.isNull())
     t=txt;
@@ -157,8 +165,10 @@ QString toResultViewItem::text(int col) const
 
 int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
-  if (!MaxColDisp)
+  if (!MaxColDisp) {
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+    Gridlines=!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+  }
   QString t=text(column);
   if (t.isNull())
     t=txt;
@@ -172,6 +182,11 @@ void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,
   toResultView *view=dynamic_cast<toResultView *>(listView());
   if (view&&(itemBelow()==NULL||itemBelow()->itemBelow()==NULL))
     view->addItem();
+  if (Gridlines) {
+    p->setPen(gray);
+    p->drawLine(width-1,0,width-1,height());
+    p->drawLine(0,height()-1,width-1,height()-1);
+  }
 }
 
 #define ALLOC_SIZE 10
@@ -195,7 +210,7 @@ void toResultViewItem::setText (int col,const QString &txt)
       ColumnCount=ns;
     }
 
-    static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+    static QRegExp number(QString::fromLatin1("^-?\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
     ColumnData[col].Data=txt;
 
@@ -350,8 +365,10 @@ void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
 
 int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
-  if (!MaxColDisp)
+  if (!MaxColDisp) {
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+    Gridlines=!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+  }
   QString t=text(column);
   if (t.isNull())
     t=txt;
@@ -367,8 +384,10 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top,
 
 int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
-  if (!MaxColDisp)
+  if (!MaxColDisp) {
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+    Gridlines=!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty();
+  }
   QString t=text(column);
   if (t.isNull())
     t=txt;
@@ -511,6 +530,8 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
     } catch(...) {
     }
   }
+
+  QListView::contentsMouseDoubleClickEvent(e);
 }
 
 void toListView::contentsMouseMoveEvent (QMouseEvent *e)
@@ -739,7 +760,6 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
       if (selectionMode()==Multi||selectionMode()==Extended) {
 	Menu->insertSeparator();
 	Menu->insertItem(tr("Select all"),TORESULT_SELECT_ALL);
-	Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
       }
       Menu->insertSeparator();
       Menu->insertItem(tr("Export to file..."),TORESULT_EXPORT);
@@ -749,6 +769,7 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
       }
       connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
       addMenues(Menu);
+      emit displayMenu(Menu);
     }
     MenuItem=item;
     MenuColumn=col;
@@ -1096,7 +1117,11 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	output=output.left(output.length()-1);
       else if (type==3&&includeHeader)
 	output+=QString::fromLatin1("</TR>");
-      output+=QString::fromLatin1("\n");
+#ifdef WIN32
+      output+="\r\n";
+#else
+      output+="\n";
+#endif
       if (type==0) {
 	for (int k=0;k<columns();k++) {
 	  for (int l=0;l<sizes[k];l++)
@@ -1104,7 +1129,11 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	  if (k!=columns()-1)
 	    output+=QString::fromLatin1(" ");
 	}
-	output+=QString::fromLatin1("\n");
+#ifdef WIN32
+        output+="\r\n";
+#else
+        output+="\n";
+#endif
       }
     }
 
@@ -1176,7 +1205,11 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	  line=line.left(line.length()-separator.length());
 	else 
 	  line=line.left(line.length()-1);
-	line+=QString::fromLatin1("\n");
+#ifdef WIN32
+        line+="\r\n";
+#else
+        line+="\n";
+#endif
 	output+=line;
       }
 
@@ -1356,6 +1389,7 @@ QListViewItem *toResultView::createItem(QListViewItem *last,const QString &str)
 void toResultView::addItem(void)
 {
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
+  Gridlines=!toTool::globalConfig(CONF_DISPLAY_GRIDLINES,DEFAULT_DISPLAY_GRIDLINES).isEmpty();
 
   try {
     if (Query&&!Query->eof()) {
@@ -1400,6 +1434,9 @@ void toResultView::query(const QString &sql,const toQList &param)
     addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);
   }
+
+  if (Filter)
+    Filter->startingQuery();
 
   try {
     Query=new toQuery(connection(),sql,param);
@@ -1576,4 +1613,3 @@ void toResultFilter::exportData(std::map<QCString,QString> &,const QCString &)
 void toResultFilter::importData(std::map<QCString,QString> &,const QCString &)
 {
 }
-

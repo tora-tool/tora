@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconnection.h"
 #include "tohighlightedtext.h"
 #include "tosqlparse.h"
 
@@ -88,6 +89,7 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="\n"
+    "create table test ( col varchar(12) );\n"
     "insert into prova3 (prova)\n"
     "values ('This insert contains a ''\n"
     "and now it goes to new line');\n"
@@ -417,6 +419,22 @@ const toSQLParse::statement &toSQLParse::statement::operator = (const statement 
   return *this;
 }
 
+bool toSQLParse::statement::operator == (const statement &stat) const
+{
+  if (Type!=stat.Type||
+      Comment!=stat.Comment||
+      String!=stat.String)
+    return false;
+  if (SubTokens) {
+    if (!stat.SubTokens&&SubTokens->begin()!=SubTokens->end())
+      return false;
+    if ((*SubTokens)!=(*stat.SubTokens))
+      return false;
+  } else if (stat.SubTokens&&stat.SubTokens->begin()!=stat.SubTokens->end())
+    return false;
+  return true;
+}
+
 static char *Operators[]={":=",
 			  "=>",
 			  "||",
@@ -538,7 +556,7 @@ QString toSQLParse::stringTokenizer::getToken(bool forward,bool comments)
 	  if (!toIsIdent(nc))
 	    return token;
 	  state=identifier;
-	} else if (c=='\''||c=='\"') {
+	} else if (c=='\''||c==analyzer().quoteCharacter()) {
 	  endString=c;
 	  state=string;
 	} else {
@@ -596,6 +614,15 @@ QString toSQLParse::stringTokenizer::remaining(bool eol)
   return ret;
 }
 
+toSQLParse::editorTokenizer::editorTokenizer(toMarkedText *editor,int offset,int line)
+  : tokenizer(offset,line)
+{
+  Editor=editor;
+  toHighlightedText *text=dynamic_cast<toHighlightedText *>(editor);
+  if (text)
+    setAnalyzer(text->analyzer());
+}
+
 QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 {
   bool first=true;
@@ -607,7 +634,7 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
       else
 	Offset=line.length();
     }
-    stringTokenizer token(line,Offset,forward);
+    stringTokenizer token(line,analyzer(),Offset,forward);
     QString ret=token.getToken(forward,true);
     Offset=token.offset();
 
@@ -620,8 +647,9 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	  end=("*/");
 	} else if (ret.startsWith("'")&&((ret.contains("'")%2)!=0||ret.at(ret.length()-1)!='\'')) {
 	  end=("'");
-	} else if (ret.startsWith(("\""))&&((ret.contains("\"")%2)!=0||ret.at(ret.length()-1)!='\"')) {
-	  end=("\"");
+	} else if (ret.startsWith(analyzer().quoteCharacter())&&
+		   ((ret.contains(analyzer().quoteCharacter())%2)!=0||ret.at(ret.length()-1)!=analyzer().quoteCharacter())) {
+	  end=analyzer().quoteCharacter();
 	}
 	if (!end.isNull()) {
 	  for (Line++;
@@ -643,9 +671,9 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	} else if ((ret.length()>=1&&ret.at(ret.length()-1)=='\'')&&
 		   (ret.length()<2||ret[0]!='\'')) {
 	  end=("\'");
-	} else if ((ret.length()>=1&&ret.at(ret.length()-1)=='\"')&&
-		   (ret.length()<2||ret.at(0)!='\"')) {
-	  end=("\"");
+	} else if ((ret.length()>=1&&ret.at(ret.length()-1)==analyzer().quoteCharacter())&&
+		   (ret.length()<2||ret.at(0)!=analyzer().quoteCharacter())) {
+	  end=analyzer().quoteCharacter();
 	}
 	if (!end.isNull()) {
 	  for (Line--;
@@ -658,7 +686,7 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	  }
 	}
       }
-      if (comments||(!ret.startsWith(("/*"))&&!ret.startsWith(("--"))))
+      if (comments||(!ret.startsWith(("/*"))&&!ret.startsWith(("--"))&&!ret.startsWith("//")))
 	return ret;
       else {
 	first=true;
@@ -695,7 +723,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 {
   statement ret(statement::Statement);
 
-  toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
+  toSyntaxAnalyzer &syntax=tokens.analyzer();
 
   QString first;
   QString realfirst;
@@ -708,7 +736,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 #ifdef TOPARSE_DEBUG
     printf("%s (%d)\n",(const char*)token,tokens.line());
 #endif
-    if (first.isNull()&&!token.startsWith(("/*"))&&!token.startsWith(("--")))
+    if (first.isNull()&&!token.startsWith(("/*"))&&!token.startsWith("--")&&!token.startsWith("//"))
       realfirst=first=upp;
 
     if (upp==("PROCEDURE")||
@@ -718,10 +746,12 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 
     if (first!=("END")&&((first==("IF")&&upp==("THEN"))||
 			 upp==("LOOP")||
-			 upp==("DECLARE")||
+			 upp==("DO")||
+			 (syntax.declareBlock()&&upp==("DECLARE"))||
 			 (block&&upp==("AS"))||
 			 (block&&upp==("IS"))||
-			 (!declare&&upp==("BEGIN")))) {
+			 ((!declare||block)&&upp==("BEGIN")))) {
+      block=false;
       statement blk(statement::Block);
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       blk.subTokens().insert(blk.subTokens().end(),ret);
@@ -740,6 +770,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
       return blk;
     } else if (((first=="IF"&&upp=="THEN")||
 		(first=="WHEN"&&upp=="THEN")||
+		(first=="ELSIF"&&upp=="THEN")||
 		upp==("BEGIN")||
 		upp==("EXCEPTION")||
 		first==("ELSE"))&&!lst) {
@@ -767,6 +798,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 		upp!=("LIKE")&&
 		upp!=("IN")&&
 		upp!=("ELSE")&&
+		upp!=("ELSIF")&&
 		upp!=("END")&&
 		upp!=("BETWEEN")&&
 		upp!=("ASC")&&
@@ -806,7 +838,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 	com=("/*+ ")+com.mid(3)+(" */");
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,
 							     com.simplifyWhiteSpace(),tokens.line()));
-    } else if (upp.startsWith(("/*"))||upp.startsWith(("--"))) {
+    } else if (upp.startsWith(("/*"))||upp.startsWith(("--"))||upp.startsWith("//")) {
       if (ret.subTokens().begin()==ret.subTokens().end()) {
 	if (ret.Comment.isNull())
 	  ret.Comment=token;
@@ -976,8 +1008,17 @@ static QString AddComment(const QString &old,const QString &comment)
 
 QString toSQLParse::indentStatement(statement &stat,int level)
 {
+  return indentStatement(stat,level,toSyntaxAnalyzer::defaultAnalyzer());
+}
+
+QString toSQLParse::indentStatement(statement &stat,toConnection &conn,int level)
+{
+  return indentStatement(stat,level,conn.analyzer());
+}
+
+QString toSQLParse::indentStatement(statement &stat,int level,toSyntaxAnalyzer &syntax)
+{
   QString ret;
-  toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
 
   switch(stat.Type) {
   default:
@@ -1002,11 +1043,11 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if ((*i).subTokens().begin()!=(*i).subTokens().
 	    end())
 	  t=(*(*i).subTokens().begin()).String.upper();
-	if (t==("BEGIN")||t==("WHEN")||t==("ELSE"))
+	if (t==("BEGIN")||t==("WHEN")||t==("ELSE")||t==("ELSIF"))
 	  add=0;
 	if ((*i).Type==statement::List)
 	  ret+=indentString(level+add+exc);
-	ret+=indentStatement(*i,level+add+exc);
+	ret+=indentStatement(*i,level+add+exc,syntax);
 	if ((*i).Type==statement::List) {
 	  int i;
 	  for (i=ret.length()-1;i>=0&&ret[i].isSpace();i--)
@@ -1059,6 +1100,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  QString upp=(*i).String.upper();
 	  if ((*i).Type==statement::Keyword&&
 	      upp!=("LOOP")&&
+	      upp!=("DO")&&
 	      upp!=("THEN")&&
 	      upp!=("AS")&&
 	      upp!=("IS")) {
@@ -1094,7 +1136,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  ret+=(" ");
 	  current++;
 	}
-	QString t=indentStatement(*i,current);
+	QString t=indentStatement(*i,current,syntax);
 	if (t.find(("\n"))>=0)
 	  current=CurrentColumn(t);
 	else
@@ -1117,13 +1159,14 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	any=false;
 	lineList=true;
       } else if ((*i).Type==statement::Keyword&&(upp==("LOOP")||
+						 upp==("DO")||
 						 upp==("THEN")||
 						 upp==("AS")||
 						 upp==("IS"))) {
 	if (!Settings.BlockOpenLine) {
 	  if (ret.length()>0) {
 	    if (toIsIdent(ret.at(ret.length()-1))||
-		ret.at(ret.length()-1)=='\"'||
+		ret.at(ret.length()-1)==syntax.quoteCharacter()||
 		ret.at(ret.length()-1)=='\''||
 		Settings.OperatorSpace) {
 	      ret+=(" ");
@@ -1193,9 +1236,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  if (ret.length()>0&&
 	      !ret.at(ret.length()-1).isSpace()&&
 	      (Settings.OperatorSpace||((toIsIdent(t[0])||
-					 t[0]=='\"'||t[0]=='\'')&&
+					 t[0]==syntax.quoteCharacter()||t[0]=='\'')&&
 					(toIsIdent(ret.at(ret.length()-1))||
-					 ret.at(ret.length()-1)=='\"'||
+					 ret.at(ret.length()-1)==syntax.quoteCharacter()||
 					 ret.at(ret.length()-1)=='\'')
 					)
 	       )
@@ -1254,7 +1297,28 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 
 QString toSQLParse::indent(const QString &str)
 {
-  std::list<toSQLParse::statement> blk=parse(str);
+  return indent(str,toSyntaxAnalyzer::defaultAnalyzer());
+}
+
+QString toSQLParse::indent(const QString &str,toConnection &conn)
+{
+  return indent(str,conn.analyzer());
+}
+
+QString toSQLParse::indent(std::list<statement> &stat)
+{
+  return indent(stat,toSyntaxAnalyzer::defaultAnalyzer());
+}
+
+QString toSQLParse::indent(std::list<statement> &stat,toConnection &conn)
+{
+  return indent(stat,conn.analyzer());
+}
+
+QString toSQLParse::indent(const QString &str,toSyntaxAnalyzer &syntax)
+{
+  stringTokenizer tokenizer(str,syntax);
+  std::list<toSQLParse::statement> blk=parse(tokenizer);
   int pos=0;
   int level=countIndent(str,pos);
 
@@ -1262,7 +1326,7 @@ QString toSQLParse::indent(const QString &str)
   for(std::list<toSQLParse::statement>::iterator i=blk.begin();
       i!=blk.end();
       i++) {
-    ret+=indentStatement(*i,level);
+    ret+=indentStatement(*i,level,syntax);
   }
   pos=ret.length();
   while(pos>0&&ret[pos-1].isSpace()) {
@@ -1271,22 +1335,39 @@ QString toSQLParse::indent(const QString &str)
   return ret.mid(0,pos)+("\n");
 }
 
-std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens,toConnection &)
+QString toSQLParse::indent(std::list<statement> &stat,toSyntaxAnalyzer &syntax)
 {
-  return parse(tokens);
+  int pos=0;
+
+  QString ret;
+  for(std::list<toSQLParse::statement>::iterator i=stat.begin();
+      i!=stat.end();
+      i++) {
+    ret+=indentStatement(*i,0,syntax);
+  }
+  pos=ret.length();
+  while(pos>0&&ret[pos-1].isSpace()) {
+    pos--;
+  }
+  return ret.mid(0,pos)+("\n");
 }
 
-std::list<toSQLParse::statement> toSQLParse::parse(const QString &str,toConnection &)
+std::list<toSQLParse::statement> toSQLParse::parse(const QString &str,toConnection &conn)
 {
-  return parse(str);
+  stringTokenizer tokenizer(str,conn.analyzer());
+  return parse(tokenizer);
 }
 
-toSQLParse::statement toSQLParse::parseStatement(toSQLParse::tokenizer &tokens,toConnection &)
+toSQLParse::statement toSQLParse::parseStatement(toSQLParse::tokenizer &tokens,toConnection &conn)
 {
+  tokens.setAnalyzer(conn.analyzer());
   return parseStatement(tokens);
 }
 
-QString toSQLParse::indent(const QString &str,toConnection &)
+toSyntaxAnalyzer &toSQLParse::tokenizer::analyzer()
 {
-  return indent(str);
+  if (Analyzer)
+    return *Analyzer;
+  else
+    return toSyntaxAnalyzer::defaultAnalyzer();
 }

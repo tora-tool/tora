@@ -50,10 +50,16 @@ toResultExtract::toResultExtract(bool prompt,QWidget *parent,const char *name)
   Prompt=prompt;
 }
 
+static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",
+				"SELECT IF(LOCATE('.',CONCAT(:f1,:f2))>0,'INDEX','TABLE')",
+				"Get type of an object by name",
+				"4.1",
+				"MySQL");
+
 static toSQL SQLObjectType("toResultExtract:ObjectType",
 			   "SELECT Object_Type FROM sys.All_Objects\n"
 			   " WHERE Owner = :f1<char[101]> AND Object_Name = :f2<char[101]>",
-			   "Get type of an object by name");
+			   "");
 
 void toResultExtract::query(const QString &sql,const toQList &param)
 {

@@ -76,13 +76,13 @@
 static int toMaxLong=DEFAULT_MAX_LONG;
 
 static toSQL SQLComment("toOracleConnection:Comments",
-			"SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
+			"SELECT /*+ RULE */ Column_name,Comments FROM sys.All_Col_Comments\n"
 			" WHERE Owner = :f1<char[100]>\n"
 			"   AND Table_Name = :f2<char[100]>",
 			"Display column comments");
 
 static toSQL SQLMembers("toOracleConnection:Members",
-			"SELECT object_name,overload,argument_name,data_type\n"
+			"SELECT /*+ RULE */ object_name,overload,argument_name,data_type\n"
 			"  FROM sys.All_Arguments\n"
 			" WHERE Owner = :f1<char[100]>\n"
 			"   AND Package_Name = :f2<char[100]>\n"
@@ -90,7 +90,7 @@ static toSQL SQLMembers("toOracleConnection:Members",
 			"Get list of package members");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
-			    "select a.owner,a.object_name,a.object_type,b.comments\n"
+			    "select /*+ RULE */ a.owner,a.object_name,a.object_type,b.comments\n"
 			    "  from sys.all_objects a,\n"
 			    "       sys.all_tab_comments b\n"
 			    " where a.owner = b.owner(+) and a.object_name = b.table_name(+)\n"
@@ -99,7 +99,7 @@ static toSQL SQLListObjects("toOracleConnection:ListObjects",
 			    "columns and binds");
 
 static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
-			     "select synonym_name,table_owner,table_name\n"
+			     "select /*+ RULE */ synonym_name,table_owner,table_name\n"
 			     "  from sys.all_synonyms\n"
 			     " where owner = :usr<char[101]> or owner = 'PUBLIC'\n"
 			     " order by table_owner,table_name",
@@ -133,6 +133,8 @@ static void ThrowException(const otl_exception &exc)
     throw ret;
   }
 }
+
+static char HexString[]="0123456789ABCDEF";
 
 class toOracleProvider : public toConnectionProvider {
 public:
@@ -268,7 +270,18 @@ public:
 	    conn->Lock.up();
 	    if (!str.len())
 	      return null;
-	    QString buf(QString::fromUtf8(buffer));
+	    QString buf;
+	    if (dsc->ftype==otl_var_varchar_long) 
+	      buf=(QString::fromUtf8(buffer));
+	    else {
+	      char buf2[str.len()*2+1];
+	      for(int i=0;i<str.len();i++) {
+		buf2[i*2]=HexString[((unsigned char)buffer[i])/16];
+		buf2[i*2+1]=HexString[((unsigned char)buffer[i])%16];
+	      }
+	      buf2[str.len()*2]=0;
+	      buf=buf2;
+	    }
 	    delete[] buffer;
 	    return buf;
 	  }
@@ -308,12 +321,13 @@ public:
 	    if (dsc->ftype==otl_var_clob)
 	      buf=QString::fromUtf8(buffer);
 	    else {
-	      buf.fill('0',data.len()*2);
-	      QString t;
+	      char buf2[data.len()*2];
 	      for(int i=0;i<data.len();i++) {
-		t.sprintf("%02x",((unsigned int)buffer[i])%0xff);
-		buf.replace(i*2,2,t);
+		buf2[i*2]=HexString[((unsigned char)buffer[i])/16];
+		buf2[i*2+1]=HexString[((unsigned char)buffer[i])%16];
 	      }
+	      buf2[data.len()*2]=0;
+	      buf=buf2;
 	    }
 	    delete[] buffer;
 	    Running=false;
@@ -684,7 +698,7 @@ public:
 	otl_stream version(1,
 			   "SELECT banner FROM v$version",
 			   *(conn->Connection));
-	QRegExp verre(QString::fromLatin1("[0-9]\\.[0-9\\.]+[0-9]"));
+	QRegExp verre(QString::fromLatin1("[0-9]+\\.[0-9\\.]+[0-9]"));
 	QRegExp orare(QString::fromLatin1("^(\\S+ )?oracle"),false);
 	while(!version.eof()) {
 	  char buffer[1024];

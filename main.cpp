@@ -42,6 +42,8 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include "tora_toad.h"
+
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -102,6 +104,12 @@ int main(int argc,char **argv)
     QTranslator torats(0);
     torats.load(toPluginPath()+"/"+QString("tora_")+toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()),".");
     qApp->installTranslator(&torats);
+    QTranslator toadbindings;
+    if (!toTool::globalConfig(CONF_TOAD_BINDINGS,DEFAULT_TOAD_BINDINGS).isEmpty()) {
+      if (!toadbindings.load(tora_toad,sizeof(tora_toad)))
+	printf("Internal error, couldn't load TOAD bindings");
+      qApp->installTranslator(&toadbindings);
+    }
 
 #ifdef ENABLE_STYLE
     QString style=toTool::globalConfig(CONF_STYLE,"");
@@ -217,6 +225,8 @@ int main(int argc,char **argv)
     toMarkedText::setDefaultTabStop(toTool::globalConfig(CONF_TAB_STOP,DEFAULT_TAB_STOP).toInt());
 
     toUpdateIndicateEmpty();
+
+    
 
     new toMain;
 

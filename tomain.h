@@ -384,6 +384,15 @@ public:
    */
   void registerSQLEditor(int toolid);
 
+  /** Called by @ref toTool when a new tool is created.
+   * @param tool The tool widget created.
+   */
+  void toolWidgetAdded(toToolWidget *tool);
+  /** Called by @ref toToolWidget when a new tool is about to be destroyed.
+   * @param tool The tool widget created.
+   */
+  void toolWidgetRemoved(toToolWidget *tool);
+
   /** Export data to a map.
    * @param data A map that can be used to recreate the session.
    * @param prefix Prefix to add to the map.
@@ -439,6 +448,14 @@ signals:
    * @param str Connection identifier.
    */
   void removedConnection(const QString &str);
+  /** Invoked when a tool window is created.
+   * @param tool The tool created.
+   */
+  void addedToolWidget(toToolWidget *tool);
+  /** Invoked when a tool window is closed.
+   * @param tool Tool about to be removed.
+   */
+  void removedToolWidget(toToolWidget *tool);
   /** Emitted before a commit or rollback is made to the current connection.
    * @param conn Connection that is commited
    * @param cmt True if commit, false if rollback.
@@ -503,7 +520,9 @@ private slots:
   /** Print button pressed
    */
   void printButton(void);
-
+  /** Options button pressed
+   */
+  void optionButton(void);
   /** Undo button pressed
    */
   void undoButton(void);

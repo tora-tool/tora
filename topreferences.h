@@ -57,11 +57,11 @@ class toPreferences : public toPreferencesUI, public toHelpContext
 public:
   toPreferences(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
 
-  void saveSetting(void);
 
   static void displayPreferences(QWidget *parent);
 
 public slots:
+  void saveSetting(void);
   void selectTab(QListBoxItem *item);
   void help(void); 
 };

@@ -122,6 +122,36 @@
         <source>&amp;Alert</source>
         <translation>&amp;Avvisi</translation>
     </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Alert|Add Name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Backspace</source>
+        <comment>Alert|Remove name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+N</source>
+        <comment>Alert|Edit name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+M</source>
+        <comment>Alert|Message</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+M</source>
+        <comment>Alert|Message in memo</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <comment>Alert|Send alert</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toAnalyze</name>
@@ -233,6 +263,19 @@
         <source>Display SQL</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Analyze table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimize table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Statistics|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toAttachDock</name>
@@ -305,6 +348,11 @@
     <message>
         <source>This appears to be a hot backup database</source>
         <translation>Sembra essere un backup a caldo</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Backup|Refresh</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -735,6 +783,51 @@
     <message>
         <source>Extents</source>
         <translation type="unfinished">Extents</translation>
+    </message>
+    <message>
+        <source>Enable constraint or trigger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable constraint or trigger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Statistic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Partitions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Statistic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Browser|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+S</source>
+        <comment>Browser|Change Schema</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+N</source>
+        <comment>Browser|Change object</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+G</source>
+        <comment>Browser|Define filter</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+H</source>
+        <comment>Browser|Clear filter</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1587,6 +1680,33 @@
     </message>
 </context>
 <context>
+    <name>toBrowserTable</name>
+    <message>
+        <source>Performing table changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Executing table change script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancelled ongoing table modification, table might be corrupt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <source>Datatype</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toBrowserTableUI</name>
     <message>
         <source>Table columns</source>
@@ -1623,6 +1743,22 @@
     <message>
         <source>&amp;Columns</source>
         <translation>&amp;Colonne</translation>
+    </message>
+    <message>
+        <source>&amp;Extra declarations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Parallel declarations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Storage declarations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom column declarations</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1887,6 +2023,11 @@ At: %2</source>
         <source>Temporary</source>
         <translation type="obsolete">Temporaneo</translation>
     </message>
+    <message>
+        <source>F5</source>
+        <comment>Chart Manager|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toChartSetup</name>
@@ -2034,6 +2175,10 @@ di oggetti del database vuote.</translation>
         <source>Object %1 not available for %2</source>
         <translation>L&apos;oggetto %1 non disponibile per %2</translation>
     </message>
+    <message>
+        <source>Parse only not implemented for this type of connection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toConnectionProvider</name>
@@ -2103,6 +2248,11 @@ di oggetti del database vuote.</translation>
     <message>
         <source>Role</source>
         <translation>Ruolo</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Current session|Refresh</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2312,14 +2462,29 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
 </context>
 <context>
+    <name>toDatatype</name>
+    <message>
+        <source>&lt;B&gt;(&lt;/B&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;B&gt;,&lt;/B&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;B&gt;)&lt;/B&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toDebug</name>
     <message>
         <source>Head</source>
-        <translation>Testata</translation>
+        <translation type="obsolete">Testata</translation>
     </message>
     <message>
         <source>Body</source>
-        <translation>Corpo</translation>
+        <translation type="obsolete">Corpo</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -2395,7 +2560,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Run current block</source>
-        <translation>Esegui il blocco corrente</translation>
+        <translation type="obsolete">Esegui il blocco corrente</translation>
     </message>
     <message>
         <source>Stop running</source>
@@ -2411,10 +2576,6 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Return from procedure or function</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show head or body of packages and procedures.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2551,28 +2712,12 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
         <translation>Annulla</translation>
     </message>
     <message>
-        <source>Header changed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Header changed. Continuing will discard uncompiled or saved changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Compile</source>
         <translation>&amp;Compila</translation>
     </message>
     <message>
         <source>&amp;Discard changes</source>
         <translation>&amp;Scarta le modifiche</translation>
-    </message>
-    <message>
-        <source>Body changed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Body changed. Continuing will discard uncompiled or saved changes</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;New Sheet</source>
@@ -2584,7 +2729,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>&amp;Execute</source>
-        <translation>&amp;Esegui</translation>
+        <translation type="obsolete">&amp;Esegui</translation>
     </message>
     <message>
         <source>&amp;Stop</source>
@@ -2600,10 +2745,6 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>&amp;Return From</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Head Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2690,6 +2831,127 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
         <source>Failed to remove breakpoint (Reason %1)</source>
         <translation>Impossibile rimuovere il breakpoint (Motivo %1)</translation>
     </message>
+    <message>
+        <source> body</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{No debug info}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Sconosciuto</translation>
+    </message>
+    <message>
+        <source>Execute or continue execution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 changed. Continuing will discard uncompiled or saved changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F9</source>
+        <comment>Debug|Scan source</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F9</source>
+        <comment>Debug|Compile</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Chiudi</translation>
+    </message>
+    <message>
+        <source>CloseAll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Execute or continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <comment>Debug|Execute</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F12</source>
+        <comment>Debug|Stop</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F7</source>
+        <comment>Debug|Step into</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F8</source>
+        <comment>Debug|Stop over</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F6</source>
+        <comment>Debug|Return from</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F11</source>
+        <comment>Debug|Debug pane</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+N</source>
+        <comment>Debug|Next error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <comment>Debug|Previous error</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F5</source>
+        <comment>Debug|Toggle breakpoint</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F6</source>
+        <comment>Debug|Disable breakpoint</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F4</source>
+        <comment>Debug|Add watch</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Delete</source>
+        <comment>Debug|Delete watch</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F4</source>
+        <comment>Debug|Change watch</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Debug|Refresh objectlist</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+S</source>
+        <comment>Debug|Select schema</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toDebugChangeUI</name>
@@ -2770,19 +3032,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Body Scope</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The scope of the file in the body editor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Head Scope</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Currently package or type scope.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2791,6 +3041,33 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Global scope of variable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Autodetect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Package</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toEditExtensionGotoUI</name>
+    <message>
+        <source>Go to line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ok</source>
+        <translation type="unfinished">&amp;Ok</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line Number</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2913,6 +3190,50 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Modify Case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+S</source>
+        <comment>Edit|Incremental search forward</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+R</source>
+        <comment>Edit|Incremental search backward</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+I</source>
+        <comment>Edit|Indent selection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Alt+Shift+I</source>
+        <comment>Edit|Indent editor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+U</source>
+        <comment>Edit|Uppercase</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+L</source>
+        <comment>Edit|Lowercase</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Right</source>
+        <comment>Edit|Indent block</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <comment>Edit|De-indent block</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Goto Line</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3045,6 +3366,14 @@ Error:          %3</source>
     </message>
     <message>
         <source>Malformed resize string (Should contain multiple of 3 number of &apos;:&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More than one definition for column %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Same kind of definition existing more than once for column %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3394,6 +3723,11 @@ Lascia la password non criptata nel file di configurazione.</translation>
         <source>Help Browser</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>F1</source>
+        <comment>Dialog|Help</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toHelpAddFileUI</name>
@@ -3465,6 +3799,14 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
 </context>
 <context>
+    <name>toHighlightedText</name>
+    <message>
+        <source>Ctrl+T</source>
+        <comment>Edit|Table lookup</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toHtml</name>
     <message>
         <source>Invalidly went beyond end of file</source>
@@ -3516,6 +3858,156 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
 </context>
 <context>
+    <name>toImport</name>
+    <message>
+        <source>Import &amp; Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Execute</source>
+        <translation type="unfinished">Esegui</translation>
+    </message>
+    <message>
+        <source>Select schema</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open file</source>
+        <translation type="unfinished">Impossibile aprire il file</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load codec %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supplied more than one parameter for field function</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Need parameter for column (%1) but none specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inserted %1 rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tried to define same field twice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not mapped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Field %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid input, non space character between delimiter that is not separator</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toImportUI</name>
+    <message>
+        <source>Form1</source>
+        <translation type="unfinished">Form1</translation>
+    </message>
+    <message>
+        <source>Operation</source>
+        <translation type="unfinished">Operazione</translation>
+    </message>
+    <message>
+        <source>&amp;Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Browse</source>
+        <translation type="unfinished">&amp;Sfoglia</translation>
+    </message>
+    <message>
+        <source>Fileformat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delimiter</source>
+        <translation type="unfinished">Delimitatore</translation>
+    </message>
+    <message>
+        <source>,</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Separator</source>
+        <translation type="unfinished">Separatore</translation>
+    </message>
+    <message>
+        <source>Variable width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database</source>
+        <translation type="unfinished">Database</translation>
+    </message>
+    <message>
+        <source>Schema</source>
+        <translation type="unfinished">Schema</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished">Tabella</translation>
+    </message>
+    <message>
+        <source>Define filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include column names as first row</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File codec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Commit distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation type="unfinished">Anteprima</translation>
+    </message>
+    <message>
+        <source>Column mapping</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toInvalid</name>
     <message>
         <source>Invalid Objects</source>
@@ -3543,6 +4035,11 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Invalid|Refresh</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4159,6 +4656,101 @@ http://www.globecom.se/tora</translation>
 Restart to reenable. You probably have a too high refreshrate in some tool.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ctrl+G</source>
+        <comment>File|New connection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+O</source>
+        <comment>File|File open</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+W</source>
+        <comment>File|File save</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+C</source>
+        <comment>File|Commit</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+J</source>
+        <comment>File|Stop all</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+&lt;</source>
+        <comment>File|Rollback</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+U</source>
+        <comment>File|Current connection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Insert</source>
+        <comment>Edit|Copy</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+Delete</source>
+        <comment>Edit|Cut</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+Insert</source>
+        <comment>Edit|Paste</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+A</source>
+        <comment>Edit|Select all</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Z</source>
+        <comment>Edit|Undo</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Y</source>
+        <comment>Edit|Redo</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+X</source>
+        <comment>Edit|Cut</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+C</source>
+        <comment>Edit|Copy</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+V</source>
+        <comment>Edit|Paste</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F</source>
+        <comment>Edit|Search</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F3</source>
+        <comment>Edit|Search next</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F1</source>
+        <comment>Help|Help</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toMarkedText</name>
@@ -4207,6 +4799,11 @@ prima di aprire un nuovo file?</translation>
     <message>
         <source>Incremental search</source>
         <translation>Ricerca incrementale</translation>
+    </message>
+    <message>
+        <source>Ctrl+A</source>
+        <comment>Edit|Select All</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4259,6 +4856,11 @@ prima di aprire un nuovo file?</translation>
         <source>NULL</source>
         <translation>NULL</translation>
     </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <comment>Memo Editor|Save changes</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toMessageUI</name>
@@ -4280,6 +4882,33 @@ prima di aprire un nuovo file?</translation>
     </message>
     <message>
         <source>Warning message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toMySQLExtract</name>
+    <message>
+        <source>Expected block from show create table for %1.%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Internal error, couldn&apos;t parse ALTER TABLE clause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid type %1 to create</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid type %1 to describe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid type %1 to drop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid type %1 to migrate</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4675,6 +5304,26 @@ prima di aprire un nuovo file?</translation>
     <message>
         <source>Couldn&apos;t enable/disable output for session</source>
         <translation>Impossibile abilitare/disabilitare l&apos;output per la sessione</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Output|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F4</source>
+        <comment>Output|Enable</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Backspace</source>
+        <comment>Output|Clear output</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Output|Change refresh</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5238,6 +5887,10 @@ try to create them in the current schema?</source>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
+    <message>
+        <source>Duplicate an existing record</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toResultContentEditor</name>
@@ -5768,6 +6421,10 @@ Crearla adesso?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source></source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5969,6 +6626,16 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Enable snapshot too old detection.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Rollback|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Rollback|Change refresh</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6317,6 +6984,26 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>1 execution, 1 parse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>SGA Trace|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+S</source>
+        <comment>SGA Trace|Change schema</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>SGA Trace|Change refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Y</source>
+        <comment>SGA Trace|Change type</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6861,6 +7548,16 @@ Crearla adesso?</translation>
         <source>No more matches found</source>
         <translation>Nessun altro elemento trovato</translation>
     </message>
+    <message>
+        <source>F1</source>
+        <comment>Search|Help</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+R</source>
+        <comment>Edit|Replace</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toSearchReplaceUI</name>
@@ -7062,6 +7759,36 @@ Crearla adesso?</translation>
     <message>
         <source>No</source>
         <translation>No</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Security|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <comment>Security|Save changes</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+U</source>
+        <comment>Security|Add user</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+R</source>
+        <comment>Security|Add role</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+O</source>
+        <comment>Security|Copy current</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F4</source>
+        <comment>Security|Display SQL</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7460,6 +8187,16 @@ Crearla adesso?</translation>
         <source>Long ops</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>F5</source>
+        <comment>Session|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Session|Change refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toSession:AccessedObjects</name>
@@ -7581,6 +8318,71 @@ Crearla adesso?</translation>
     <message>
         <source>Write Complete</source>
         <translation>Scrittura completata</translation>
+    </message>
+</context>
+<context>
+    <name>toSessionMySQL</name>
+    <message>
+        <source>Session manager</source>
+        <translation type="unfinished">Gestione sessioni</translation>
+    </message>
+    <message>
+        <source>Update sessionlist</source>
+        <translation type="unfinished">Aggiorna la lista delle sessioni</translation>
+    </message>
+    <message>
+        <source>Only active users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">Tutto</translation>
+    </message>
+    <message>
+        <source>Kill selected session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation type="unfinished">Aggiorna</translation>
+    </message>
+    <message>
+        <source>Exclude selected sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deselect all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Session MySQL|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kill session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Change Refresh</source>
+        <translation type="unfinished">&amp;Cambia intervallo di Aggiornamento</translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Session MySQL|Change refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Session</source>
+        <translation type="unfinished">&amp;Sessione</translation>
     </message>
 </context>
 <context>
@@ -7750,6 +8552,11 @@ Crearla adesso?</translation>
     <message>
         <source>Blocks</source>
         <translation type="unfinished">Blocchi</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Storage|Refresh</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8174,6 +8981,14 @@ Crearla adesso?</translation>
         <source>&amp;Pick</source>
         <translation>&amp;Seleziona</translation>
     </message>
+    <message>
+        <source>Tab stop width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of character width of tabstops</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toTemplate</name>
@@ -8364,6 +9179,11 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>&amp;Temporary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Temporary|Refresh</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8617,6 +9437,16 @@ singolarmente quando necessario.</translation>
     <message>
         <source>&amp;Tuning</source>
         <translation>&amp;Ottimizzazione</translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Tuning|Refresh</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+R</source>
+        <comment>Tuning|Change refresh</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9396,6 +10226,77 @@ submenues are separated by a &apos;:&apos; character.</source>
     </message>
     <message>
         <source>Refresh rate of query in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <comment>Worksheet|Execute current</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F8</source>
+        <comment>Worksheet|Execute all</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F9</source>
+        <comment>Worksheet|Execute next</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+F9</source>
+        <comment>Worksheet|Execute newline separated</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F7</source>
+        <comment>Worksheet|Execute saved SQL</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F4</source>
+        <comment>Worksheet|Describe under cursor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Up</source>
+        <comment>Worksheet|Previous log entry</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Down</source>
+        <comment>Worksheet|Next log entry</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explain plan of current statement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <comment>Worksheet|Reexecute last statement</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check syntax of buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>F3</source>
+        <comment>Worksheet|Explain plan</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+S</source>
+        <comment>Worksheet|Select saved SQL</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parsing all statements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+F9</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

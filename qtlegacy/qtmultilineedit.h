@@ -167,6 +167,7 @@ signals:
     void	undoAvailable( bool );
     void	redoAvailable( bool );
     void	copyAvailable( bool );
+    void	displayMenu(QPopupMenu *);
 
 protected:
     void	paintCell( QPainter *, int row, int col );

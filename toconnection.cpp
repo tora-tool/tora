@@ -36,6 +36,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
+#include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
@@ -872,9 +873,9 @@ void toConnection::addConnection(void)
   toLocker lock(Lock);
   Connections.insert(Connections.end(),sub);
   toQList params;
-  for(std::list<QCString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
+  for(std::list<QString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
     try {
-      Connection->execute(sub,*i,params);
+      Connection->execute(sub,(*i).utf8(),params);
     } TOCATCH
   }
 }
@@ -893,7 +894,7 @@ toConnection::toConnection(const QCString &provider,
   NeedCommit=Abort=false;
   ReadingCache=false;
   if (cache) {
-    if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==1)
+    if (toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt()==1)
       readObjects();
   } else {
     ReadingValues.up();
@@ -1074,8 +1075,9 @@ void toConnection::rollback(void)
 {
   toBusy busy;
   toLocker lock(Lock);
-  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     Connection->rollback(*i);
+  }
   while(Connections.size()>2) {
     std::list<toConnectionSub *>::iterator i=Connections.begin();
     i++;
@@ -1134,20 +1136,23 @@ QString toConnection::description(bool version) const
 void toConnection::addInit(const QString &sql)
 {
   delInit(sql);
-  InitStrings.insert(InitStrings.end(),sql.utf8());
+  InitStrings.insert(InitStrings.end(),sql);
 }
 
 void toConnection::delInit(const QString &sql)
 {
-  QCString utf=sql.utf8();
-  std::list<QCString>::iterator i=InitStrings.begin();
+  std::list<QString>::iterator i=InitStrings.begin();
   while (i!=InitStrings.end()) {
-    if ((*i)==utf) {
-      InitStrings.erase(i);
-      i=InitStrings.begin();
-    } else
+    if ((*i)==sql) 
+      i=InitStrings.erase(i);
+    else
       i++;
   }
+}
+
+const std::list<QString> &toConnection::initStrings() const
+{
+  return InitStrings;
 }
 
 void toConnection::parse(const QString &sql)
@@ -1423,26 +1428,48 @@ const QCString &toConnection::provider(void) const
   return Provider;
 }
 
+QString toConnection::cacheDir()
+{
+   QString home=QDir::homeDirPath();
+   QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+
+   if (dirname.isEmpty()) {
+#ifdef WIN32
+     if (getenv("TEMP"))
+       dirname=QString(getenv("TEMP"));
+     else
+#endif
+       dirname=QString(home);
+#ifdef TOAD
+     dirname+="/.toad_cache";
+#else
+     dirname+="/.tora_cache";
+#endif
+   }
+   return dirname;
+}
+
+QString toConnection::cacheFile()
+{
+   QString dbname (description(false).stripWhiteSpace());
+
+   return (cacheDir()+"/"+dbname).simplifyWhiteSpace();
+}
+
 bool toConnection::loadDiskCache() 
 {
-   if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "No")
+   if (toTool::globalConfig(CONF_CACHE_DISK,DEFAULT_CACHE_DISK).isEmpty())
    	return false;
 
    toConnection::objectName *cur;
    int objCounter = 0;
    int synCounter = 0;
-   
-   QString dbname (Database.stripWhiteSpace());
-   QString home=QDir::homeDirPath();
-   QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
 
-   if (dirname == "")
-       dirname = QString(home+"/.tora_cache");
+   QString filename=cacheFile();
 
-   QString filename(dirname+"/"+dbname);
-   QFile file(filename.stripWhiteSpace());
+   QFile file(filename);
 
-   if (!QFile::exists(filename.stripWhiteSpace())) 
+   if (!QFile::exists(filename))
      return false;
 
    QFileInfo fi(file);
@@ -1492,20 +1519,16 @@ void toConnection::writeDiskCache()
   long objCounter = 0;
   long synCounter = 0;
 
-  if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "No")
+  if (toTool::globalConfig(CONF_CACHE_DISK,DEFAULT_CACHE_DISK).isEmpty())
    	return;
 
 
-  QString dbname (Database.stripWhiteSpace());
-  QString home=QDir::homeDirPath();
-  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
-  if (dirname == "")
-    dirname = QString(home+"/.tora_cache");
-  QString filename(dirname+"/"+dbname);
+  QString filename(cacheFile());
 	
   /** check pathnames and create
    */
 
+  QString dirname(cacheDir());
   QDir dir;
   dir.setPath(dirname);
 
@@ -1536,7 +1559,7 @@ void toConnection::writeDiskCache()
   }
   /** open file
    */  
-  QFile file(filename.stripWhiteSpace());	
+  QFile file(filename);
   file.open( IO_ReadWrite  | IO_Truncate );
   QTextStream t (&file);
   t << records.join("\x1D");
@@ -1568,7 +1591,7 @@ void toConnection::cacheObjects::run()
 
 void toConnection::readObjects(void)
 {
-  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3) {
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt()==3) {
     ReadingCache=false;
     return;
   } 
@@ -1586,7 +1609,7 @@ void toConnection::readObjects(void)
 void toConnection::rereadCache(void)
 {
 
-  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3) {
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt()==3) {
     ColumnCache.clear();
     return;
   }
@@ -1609,16 +1632,10 @@ void toConnection::rereadCache(void)
   /** delete cache file to force reload
    */
 
-  QString home=QDir::homeDirPath();
-  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
-  QString dbname (Database.stripWhiteSpace());
+  QString filename(cacheFile());
 
-  if (dirname == "")
-    dirname = QString(home+"/.tora_cache");
-  QString filename(dirname+"/"+dbname);
-
-  if (QFile::exists(filename.stripWhiteSpace())) 
-    QFile::remove(filename.stripWhiteSpace());
+  if (QFile::exists(filename)) 
+    QFile::remove(filename);
  
   readObjects();
 }
@@ -1635,13 +1652,13 @@ QString toConnection::unQuote(const QString &name)
 
 bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 {
-  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3)
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt()==3)
       return true;
 
   if (!ReadingCache) {
     if (!need)
       return true;
-    if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==2&&!block)
+    if (toTool::globalConfig(CONF_OBJECT_CACHE,DEFAULT_OBJECT_CACHE).toInt()==2&&!block)
       return true;
     readObjects();
     toMainWidget()->checkCaching();
@@ -1807,6 +1824,16 @@ bool toConnection::objectName::operator < (const objectName &nam) const
 bool toConnection::objectName::operator == (const objectName &nam) const
 {
   return Owner==nam.Owner&&Name==nam.Name&&Type==nam.Type;
+}
+
+toSyntaxAnalyzer &toConnection::connectionImpl::analyzer()
+{
+  return toSyntaxAnalyzer::defaultAnalyzer();
+}
+
+toSyntaxAnalyzer &toConnection::analyzer()
+{
+  return Connection->analyzer();
 }
 
 std::list<toConnection::objectName> toConnection::connectionImpl::objectNames(void)

@@ -92,6 +92,7 @@ public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
   void selected(QListViewItem *item);
+  void hideTemplates();
 };
 
 /**
@@ -269,8 +270,7 @@ protected:
    * @param conn Connection to query.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
-   * @param sql SQL statement, observe that it is in @ref QCString format and you
-   *            should use utf8 if converting from QString.
+   * @param sql SQL statement.
    */
   toTemplateSQL(toTemplateItem *parent,
 		const QString &name,const QString &sql);
@@ -279,8 +279,7 @@ public:
    * @param conn Connection to query.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
-   * @param sql SQL statement, observe that it is in @ref QCString format and you
-   *            should use utf8 if converting from QString.
+   * @param sql SQL statement.
    */
   toTemplateSQL(toConnection &conn,toTemplateItem *parent,
 		const QString &name,const QString &sql);

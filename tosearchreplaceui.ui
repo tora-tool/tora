@@ -1,321 +1,266 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>toSearchReplaceUI</class>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>toSearchReplaceUI</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
             <width>570</width>
-            <height>217</height>
+            <height>228</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Search &amp; Replace</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="0" column="2">
+            <property name="name">
                 <cstring>Search</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Search Top</string>
             </property>
         </widget>
-        <spacer row="5"  column="2" >
-            <property>
-                <name>name</name>
+        <spacer row="5" column="2">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="1"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
                 <cstring>SearchNext</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Search &amp;Next</string>
             </property>
-            <property stdset="1">
-                <name>accel</name>
-                <number>4146</number>
-            </property>
         </widget>
-        <widget row="2"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="2" column="2">
+            <property name="name">
                 <cstring>Replace</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Replace</string>
             </property>
-            <property stdset="1">
-                <name>accel</name>
-                <number>272629842</number>
-            </property>
         </widget>
-        <widget row="3"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="3" column="2">
+            <property name="name">
                 <cstring>ReplaceAll</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Replace &amp;All</string>
             </property>
         </widget>
-        <widget row="4"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="4" column="2">
+            <property name="name">
                 <cstring>Close</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>true</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Close</string>
             </property>
         </widget>
-        <widget row="0"  column="1"  rowspan="6"  colspan="1" >
-            <class>Line</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="Line" row="0" column="1" rowspan="6" colspan="1">
+            <property name="name">
                 <cstring>Line1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="frameShape">
+                <enum>VLine</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
         </widget>
-        <widget row="0"  column="0"  rowspan="6"  colspan="1" >
-            <class>QFrame</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QFrame" row="0" column="0" rowspan="6" colspan="1">
+            <property name="name">
                 <cstring>Frame3</cstring>
             </property>
-            <property stdset="1">
-                <name>frameShape</name>
+            <property name="frameShape">
                 <enum>NoFrame</enum>
             </property>
-            <property stdset="1">
-                <name>frameShadow</name>
+            <property name="frameShadow">
                 <enum>Raised</enum>
             </property>
-            <property>
-                <name>layoutMargin</name>
+            <property name="layoutMargin" stdset="0">
             </property>
             <vbox>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>0</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget>
-                    <class>QButtonGroup</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QButtonGroup">
+                    <property name="name">
                         <cstring>ButtonGroup1</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>5</hsizetype>
                             <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>title</name>
+                    <property name="title">
                         <string>Search</string>
                     </property>
                     <grid>
-                        <property stdset="1">
-                            <name>margin</name>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
                             <number>11</number>
                         </property>
-                        <property stdset="1">
-                            <name>spacing</name>
+                        <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-                            <class>QMultiLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QMultiLineEdit" row="0" column="0" rowspan="1" colspan="3">
+                            <property name="name">
                                 <cstring>SearchText</cstring>
                             </property>
                         </widget>
-                        <widget row="1"  column="0" >
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QRadioButton" row="1" column="0">
+                            <property name="name">
                                 <cstring>Exact</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>Exact</string>
                             </property>
-                            <property stdset="1">
-                                <name>checked</name>
+                            <property name="checked">
                                 <bool>true</bool>
                             </property>
-                            <property>
-                                <name>toolTip</name>
+                            <property name="toolTip" stdset="0">
                                 <string>Match text exactly as written</string>
                             </property>
                         </widget>
-                        <widget row="2"  column="0" >
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QCheckBox" row="2" column="0">
+                            <property name="name">
                                 <cstring>WholeWord</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>Match Word</string>
                             </property>
-                            <property>
-                                <name>toolTip</name>
+                            <property name="toolTip" stdset="0">
                                 <string>Only match whole words</string>
                             </property>
                         </widget>
-                        <widget row="2"  column="1" >
-                            <class>QCheckBox</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QCheckBox" row="2" column="1">
+                            <property name="name">
                                 <cstring>IgnoreCase</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>Ignore Case</string>
                             </property>
-                            <property>
-                                <name>toolTip</name>
+                            <property name="toolTip" stdset="0">
                                 <string>Only match whole words</string>
                             </property>
                         </widget>
-                        <widget row="1"  column="1" >
-                            <class>QRadioButton</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QRadioButton" row="1" column="1">
+                            <property name="name">
                                 <cstring>RegExp</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>RegExp</string>
                             </property>
-                            <property>
-                                <name>toolTip</name>
+                            <property name="toolTip" stdset="0">
                                 <string>Use RegExp semantics for matching (See Qt documentation)</string>
                             </property>
                         </widget>
-                        <spacer row="1"  column="2" >
-                            <property>
-                                <name>name</name>
+                        <spacer row="1" column="2">
+                            <property name="name">
                                 <cstring>Spacer2</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>orientation</name>
+                            <property name="orientation">
                                 <enum>Horizontal</enum>
                             </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
+                            <property name="sizeType">
                                 <enum>Expanding</enum>
                             </property>
-                            <property>
-                                <name>sizeHint</name>
+                            <property name="sizeHint">
                                 <size>
                                     <width>20</width>
                                     <height>20</height>
@@ -324,36 +269,33 @@
                         </spacer>
                     </grid>
                 </widget>
-                <widget>
-                    <class>QGroupBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QGroupBox">
+                    <property name="name">
                         <cstring>GroupBox1</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>5</hsizetype>
                             <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>title</name>
+                    <property name="title">
                         <string>Replace</string>
                     </property>
                     <grid>
-                        <property stdset="1">
-                            <name>margin</name>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
                             <number>11</number>
                         </property>
-                        <property stdset="1">
-                            <name>spacing</name>
+                        <property name="spacing">
                             <number>6</number>
                         </property>
-                        <widget row="0"  column="0" >
-                            <class>QMultiLineEdit</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QMultiLineEdit" row="0" column="0">
+                            <property name="name">
                                 <cstring>ReplaceText</cstring>
                             </property>
                         </widget>
@@ -400,12 +342,6 @@
         <receiver>toSearchReplaceUI</receiver>
         <slot>replace()</slot>
     </connection>
-    <slot access="public">displayHelp()</slot>
-    <slot access="public">replace()</slot>
-    <slot access="public">replaceAll()</slot>
-    <slot access="public">search()</slot>
-    <slot access="public">searchChanged()</slot>
-    <slot access="public">searchNext()</slot>
 </connections>
 <tabstops>
     <tabstop>SearchText</tabstop>
@@ -420,4 +356,13 @@
     <tabstop>ReplaceAll</tabstop>
     <tabstop>Close</tabstop>
 </tabstops>
+<slots>
+    <slot>displayHelp()</slot>
+    <slot>replace()</slot>
+    <slot>replaceAll()</slot>
+    <slot>search()</slot>
+    <slot>searchChanged()</slot>
+    <slot>searchNext()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

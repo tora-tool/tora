@@ -72,7 +72,7 @@
 
 #include "icons/add.xpm"
 #include "icons/clock.xpm"
-#include "icons/disconnect.xpm"
+#include "icons/kill.xpm"
 #include "icons/minus.xpm"
 #include "icons/noclock.xpm"
 #include "icons/refresh.xpm"
@@ -91,7 +91,21 @@ public:
   { return "Sessions"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    return new toSession(parent,connection);
+    if (toIsOracle(connection))
+      return new toSession(parent,connection);
+#ifdef TOSESSIONMYSQL_H
+    else if (toIsMySQL(connection))
+      return new toSessionMySQL(*this,parent,connection);
+#endif
+    return NULL;
+  }
+  virtual bool canHandle(toConnection &conn)
+  {
+    return toIsOracle(conn)
+#ifdef TOSESSIONMYSQL_H
+      ||toIsMySQL(conn)
+#endif
+      ;
   }
 };
 
@@ -198,8 +212,7 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
 			 "   AND a.paddr = e.addr(+)\n"
 			 "%1 ORDER BY a.Sid",
-			 "List sessions, must have same number of culumns and the first and last 2 must be "
-			 "the same");
+			 "List sessions, must have same number of culumns and the first and last 2 must be the same");
 
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget(SessionTool,"session.html",main,connection)
@@ -234,7 +247,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  this,SLOT(disableStatistics(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(QPixmap((const char **)disconnect_xpm),
+  new QToolButton(QPixmap((const char **)kill_xpm),
 		  tr("Disconnect selected session"),
 		  tr("Disconnect selected session"),
 		  this,SLOT(disconnectSession(void)),
@@ -339,6 +352,11 @@ toSession::toSession(QWidget *main,toConnection &connection)
   setFocusProxy(Sessions);
 }
 
+bool toSession::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn);
+}
+
 void toSession::excludeSelection(bool tgl)
 {
   toSessionList::sessionFilter *filt=dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
@@ -384,6 +402,14 @@ void toSessionList::updateFilter()
 
 bool toSessionList::sessionFilter::check(const QListViewItem *item)
 {
+  if (!OnlyDatabase.isEmpty()) {
+    if (OnlyDatabase=="/") {
+      if (item->text(4)=="Sleep")
+	return false;
+    } else if (OnlyDatabase!=item->text(3))
+      return false;
+  }
+
   sessionID serial(item->text(0).toInt(),item->text(1).toInt());
   bool checked=false;
   for(std::list<sessionID>::iterator i=Serials.begin();i!=Serials.end();i++)
@@ -421,18 +447,19 @@ void toSession::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Session|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)clock_xpm),tr("Enable timed statistics"),
 			   this,SLOT(enableStatistics(void)));
       ToolMenu->insertItem(QPixmap((const char **)noclock_xpm),tr("Disable timed statistics"),
 			   this,SLOT(disableStatistics(void)));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)disconnect_xpm),tr("Disconnect session"),
+      ToolMenu->insertItem(QPixmap((const char **)kill_xpm),tr("Disconnect session"),
 			   this,SLOT(disconnectSession(void)));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
-			   Key_R+ALT);
+			   toKeySequence(tr("Alt+R", "Session|Change refresh")));
       toMainWidget()->menuBar()->insertItem(tr("&Session"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {

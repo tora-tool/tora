@@ -214,15 +214,18 @@ void toOutput::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Output|Refresh")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("Output enabled"),
-			   this,SLOT(toggleMenu()),Key_F4,TO_ID_TOGGLE);
+			   this,SLOT(toggleMenu()),
+			   toKeySequence(tr("F4", "Output|Enable")),TO_ID_TOGGLE);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),tr("Clear output"),
-			   this,SLOT(clear()),CTRL+Key_Backspace);
+			   this,SLOT(clear()),
+			   toKeySequence(tr("Ctrl+Backspace", "Output|Clear output")));
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
-			   Key_R+ALT);
+			   toKeySequence(tr("Alt+R", "Output|Change refresh")));
 
       toMainWidget()->menuBar()->insertItem(tr("&Output"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemChecked(TO_ID_TOGGLE,!DisableButton->isOn());

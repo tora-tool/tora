@@ -45,6 +45,7 @@
 class QCheckBox;
 class QLabel;
 class toResultColsItem;
+class toResultLong;
 
 /** This widget is used for single record view in the content editor. Only for internal use.
  * @internal
@@ -110,14 +111,17 @@ class toResultCols : public QVBox, public toResult {
   toResultColsComment *EditComment;
   QCheckBox *Edit;
   resultCols *Columns;
+  toResultLong *MySQLColumns;
+  bool Header;
 
   virtual void query(const QString &sql,const toQList &param,bool nocache);
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultCols(QWidget *parent,const char *name=NULL);
+  toResultCols(QWidget *parent,const char *name=NULL,WFlags f=0);
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param)
@@ -127,6 +131,10 @@ public:
   virtual bool canHandle(toConnection &)
   { return true; }
 
+  /** Display header of column view
+   */
+  void displayHeader(bool disp);
+  
   // Why are these needed?
 #if 1
   /** Set the SQL statement of this list

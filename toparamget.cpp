@@ -68,16 +68,17 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   layout->setSpacing( 6 );
   layout->setMargin( 11 );
 
-  QScrollView *scroll=new QScrollView(this);
-  scroll->enableClipper(true);
-  scroll->setGeometry(10,10,330,480);
-  scroll->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-  layout->addMultiCellWidget(scroll,0,2,0,0);
+  View=new QScrollView(this);
+  View->enableClipper(true);
+  View->setGeometry(10,10,330,480);
+  View->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  layout->addMultiCellWidget(View,0,2,0,0);
 
-  Container=new QGrid(4,scroll->viewport());
-  scroll->addChild(Container,5,5);
+  Container=new QGrid(4,View->viewport());
+  View->addChild(Container,5,5);
   Container->setSpacing(10);
-  scroll->viewport()->setBackgroundColor(qApp->palette().active().background());
+  Container->setFixedWidth(View->width()-30);
+  View->viewport()->setBackgroundColor(qApp->palette().active().background());
 
   QPushButton *OkButton = new QPushButton(this,"OkButton");
   OkButton->setText(tr("&Ok"));
@@ -96,7 +97,7 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
 }
 
-toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
+toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str,bool interactive)
 {
   std::map<QString,bool> parameters;
   std::list<QString> names;
@@ -187,7 +188,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	  fname+=c;
 	  break;
 	}
-	if (fname.isEmpty()) {
+	if (fname.isEmpty()&&!toIsMySQL(conn)) {
 	  toStatusMessage(tr("Missing field name"));
 	  throw tr("Missing field name");
 	}
@@ -258,7 +259,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
   toQList ret;
   if (widget) {
     (*widget->Value.begin())->setFocus();
-    if (widget->exec()) {
+    if (!interactive||widget->exec()) {
       std::list<QString>::iterator cn=names.begin();
       for (std::list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
 	QLineEdit *current=*i;
@@ -299,4 +300,10 @@ void toParamGet::showMemo(int row)
     if (memo->exec())
       ((QLineEdit *)obj)->setText(memo->text());
   }
+}
+
+void toParamGet::resizeEvent(QResizeEvent *e)
+{
+  QDialog::resizeEvent(e);
+  Container->setFixedWidth(View->width()-30);
 }

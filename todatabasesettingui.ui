@@ -1,13 +1,10 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>toDatabaseSettingUI</class>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>toDatabaseSettingUI</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -15,438 +12,347 @@
             <height>501</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>toDatabaseSettingUI</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox" row="0" column="0">
+            <property name="name">
                 <cstring>AutoCommit</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Autocommit changes</string>
             </property>
-            <property>
-                <name>toolTip</name>
+            <property name="toolTip" stdset="0">
                 <string>Specify if changes should be automatically commited.</string>
             </property>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QComboBox</class>
+        <widget class="QComboBox" row="1" column="0">
             <item>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>Start read object cache when needed</string>
                 </property>
             </item>
             <item>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>Read object cache on connect</string>
                 </property>
             </item>
             <item>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>Never read object cache until mandatory</string>
                 </property>
             </item>
             <item>
-                <property>
-                    <name>text</name>
+                <property name="text">
                     <string>Never read object cache (Will leave parts of application nonfunctianal)</string>
                 </property>
             </item>
-            <property stdset="1">
-                <name>name</name>
+            <property name="name">
                 <cstring>ObjectCache</cstring>
             </property>
         </widget>
-        <widget row="2"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="2" column="0">
+            <property name="name">
                 <cstring>QueryGroup</cstring>
             </property>
-            <property stdset="1">
-                <name>frameShape</name>
+            <property name="frameShape">
                 <enum>Box</enum>
             </property>
-            <property stdset="1">
-                <name>frameShadow</name>
+            <property name="frameShadow">
                 <enum>Sunken</enum>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Query settings</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="2"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="2" column="0">
+                    <property name="name">
                         <cstring>TextLabel6_2_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Maximum size &amp;display</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>MaxColDisp</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>The largest default size of a column in query results.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="2" column="1" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>MaxColDisp</cstring>
                     </property>
+                    <property name="frameShape">
+                        <enum>LineEditPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
                 </widget>
-                <widget row="0"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="0" column="1">
+                    <property name="name">
                         <cstring>InitialFetch</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget row="0"  column="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="2">
+                    <property name="name">
                         <cstring>ReadAll</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;All</string>
                     </property>
                 </widget>
-                <widget row="0"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="0" column="0">
+                    <property name="name">
                         <cstring>TextLabel6</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;Initial rows to fetch in query</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>InitialFetch</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>The number of rows to always fetch when executing a query.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
                         <cstring>TextLabel6_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Initially read in content editor</string>
                     </property>
-                    <property>
-                        <name>buddy</name>
+                    <property name="buddy" stdset="0">
                         <cstring>InitialFetch</cstring>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of rows to initially start reading in content editor, use unlimited on slow connections.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLineEdit" row="1" column="1">
+                    <property name="name">
                         <cstring>MaxContent</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget row="1"  column="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="1" column="2">
+                    <property name="name">
                         <cstring>UnlimitedContent</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>&amp;All</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <widget row="5"  column="0" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox" row="5" column="0">
+            <property name="name">
                 <cstring>KeepAlive</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Keep alive</string>
+            <property name="text">
+                <string>Keep alive by periodically executing statements on unused connections if they are not used.</string>
             </property>
-            <property>
-                <name>toolTip</name>
+            <property name="toolTip" stdset="0">
                 <string>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</string>
             </property>
         </widget>
-        <widget row="4"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="4" column="0">
+            <property name="name">
                 <cstring>GroupBox2</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>UI feedback settings</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>AutoLong</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Abort long running queries and reexecute in own connection</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Reexecute a query taking more than 30 seconds in its own connection to prevent blocking other database access.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="3" column="0">
+                    <property name="name">
                         <cstring>TextLabel1</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Move to own connection after</string>
                     </property>
                 </widget>
-                <widget row="3"  column="1" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="3" column="1">
+                    <property name="name">
                         <cstring>MoveAfter</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property stdset="1">
-                        <name>suffix</name>
+                    <property name="suffix">
                         <string> seconds</string>
                     </property>
-                    <property stdset="1">
-                        <name>minValue</name>
+                    <property name="minValue">
                         <number>5</number>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>BkgndConnect</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Run UI blocking queries exclusively in main connection</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Let the background queries normally running on the main connection run in a separate connection.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="2">
+                    <property name="name">
                         <cstring>DontReread</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Don't reread data if parameters are exactly same</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>If checked will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <spacer row="6"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="6" column="0">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="3"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="3" column="0">
+            <property name="name">
                 <cstring>GroupBox3</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Dataformat</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="1"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="1" column="0">
+                    <property name="name">
                         <cstring>TextLabel1_2</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Number format</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>The way numbers should be presented.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="4" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="1" column="4">
+                    <property name="name">
                         <cstring>TextLabel3</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Decimals</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Number of decimals for fixed decimal format.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="5" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QSpinBox" row="1" column="5">
+                    <property name="name">
                         <cstring>Decimals</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>enabled</name>
+                    <property name="enabled">
                         <bool>false</bool>
                     </property>
-                    <property stdset="1">
-                        <name>maxValue</name>
+                    <property name="maxValue">
                         <number>20</number>
                     </property>
-                    <property stdset="1">
-                        <name>value</name>
+                    <property name="value">
                         <number>2</number>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
-                    <class>QComboBox</class>
+                <widget class="QComboBox" row="1" column="1">
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Default</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Scientific</string>
                         </property>
                     </item>
                     <item>
-                        <property>
-                            <name>text</name>
+                        <property name="text">
                             <string>Fixed decimal</string>
                         </property>
                     </item>
-                    <property stdset="1">
-                        <name>name</name>
+                    <property name="name">
                         <cstring>NumberFormat</cstring>
                     </property>
                 </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="6" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="6">
+                    <property name="name">
                         <cstring>IndicateEmpty</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Indicate empty values as '' instead of NULL as {null}.</string>
                     </property>
                 </widget>
@@ -479,7 +385,6 @@
         <receiver>toDatabaseSettingUI</receiver>
         <slot>numberFormatChange()</slot>
     </connection>
-    <slot access="public">numberFormatChange()</slot>
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
@@ -498,4 +403,8 @@
     <tabstop>MoveAfter</tabstop>
     <tabstop>KeepAlive</tabstop>
 </tabstops>
+<slots>
+    <slot>numberFormatChange()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

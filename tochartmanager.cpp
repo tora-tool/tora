@@ -66,7 +66,7 @@
 #include "tochartmanager.moc"
 #include "tochartsetupui.moc"
 
-#include "icons/grid.xpm"
+#include "icons/chart.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/refresh.xpm"
 
@@ -85,7 +85,7 @@ public:
     if (!Window) {
       Window=new toChartManager(toMainWidget()->workspace());
       Window->setCaption(qApp->translate("toChartTool","Chart Manager"));
-      Window->setIcon(QPixmap((const char **)grid_xpm));
+      Window->setIcon(QPixmap((const char **)chart_xpm));
     }
     Window->refresh();
     Window->show();
@@ -94,7 +94,7 @@ public:
   }
   virtual void customSetup(int toolid)
   {
-    toMainWidget()->editMenu()->insertItem(QPixmap((const char **)grid_xpm),
+    toMainWidget()->editMenu()->insertItem(QPixmap((const char **)chart_xpm),
 					   qApp->translate("toChartTool","Chart Manager..."),toolid);
 
     Handler=new toChartHandler();
@@ -264,7 +264,7 @@ toChartManager::toChartManager(QWidget *main)
 		  tr("Open tracker file"),
 		  this,SLOT(openChart()),
 		  toolbar);
-  new QToolButton(QPixmap((const char **)grid_xpm),
+  new QToolButton(QPixmap((const char **)chart_xpm),
 		  tr("Setup chart"),
 		  tr("Setup chart"),
 		  this,SLOT(setupChart()),
@@ -295,7 +295,8 @@ void toChartManager::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
-			   this,SLOT(refresh(void)),Key_F5);
+			   this,SLOT(refresh(void)),
+			   toKeySequence(tr("F5", "Chart Manager|Refresh")));
 
       toMainWidget()->menuBar()->insertItem(tr("&Chart Manager"),ToolMenu,-1,toToolMenuIndex());
     }

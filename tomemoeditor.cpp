@@ -69,8 +69,7 @@ public:
   { }
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    if (e->state()==ControlButton&&
-	e->key()==Key_Return) {
+    if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toMemoEditor","Ctrl+Return","Memo Editor|Save changes")))) {
       MemoEditor->store();
       e->accept();
     } else {
@@ -87,8 +86,7 @@ public:
   { }
   virtual void keyPressEvent(QKeyEvent *e)
   {
-    if (e->state()==ControlButton&&
-	e->key()==Key_Return) {
+    if (toCheckKeyEvent(e,QKeySequence(qApp->translate("toMemoEditor","Ctrl+Return","Memo Editor|Save changes")))) {
       MemoEditor->store();
       e->accept();
     } else {
@@ -112,6 +110,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   : QDialog(parent,NULL,modal,modal?0:WDestructiveClose),Row(row),Col(col)
 {
   setMinimumSize(400,300);
+  setCaption("Memo Editor");
 
   QBoxLayout *l=new QVBoxLayout(this);
 

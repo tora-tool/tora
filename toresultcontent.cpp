@@ -170,7 +170,7 @@ toResultContentEditor::contentItem::contentItem(QTable *table,const QString &tex
 
 QString toResultContentEditor::contentItem::key(void) const
 {
-  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+  static QRegExp number(QString::fromLatin1("^-?\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
   QString txt=text();
   if (number.match(txt)>=0) {
@@ -298,6 +298,15 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   Menu=new QPopupMenu(this);
   Menu->insertItem(tr("&Display in editor..."),TORESULT_MEMO);
   Menu->insertSeparator();
+  Menu->insertItem(QPixmap((const char **)addrecord_xpm),tr("New record"),this,SLOT(addRecord()));
+  Menu->insertItem(QPixmap((const char **)duplicaterecord_xpm),tr("Copy record"),this,SLOT(duplicateRecord()));
+  Menu->insertItem(QPixmap((const char **)saverecord_xpm),tr("Save changes"),this,SLOT(saveUnsaved()));
+  Menu->insertItem(QPixmap((const char **)canceledit_xpm),tr("Discard changes"),this,SLOT(cancelEdit()));
+  Menu->insertItem(QPixmap((const char **)trash_xpm),tr("Delete record"),this,SLOT(deleteCurrent()));
+  Menu->insertSeparator();
+  Menu->insertItem(QPixmap((const char **)filter_xpm),tr("Define filter"),parentWidget(),SLOT(changeFilter()));
+  Menu->insertItem(QPixmap((const char **)nofilter_xpm),tr("Remove all filters"),parentWidget(),SLOT(removeFilter()));
+  Menu->insertSeparator();
   Menu->insertItem(tr("&Copy field"),TORESULT_COPY_FIELD);
   Menu->insertItem(tr("&Paste field"),TORESULT_PASTE);
   Menu->insertSeparator();
@@ -308,7 +317,6 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   Menu->insertItem(tr("&Delete record"),TORESULT_DELETE);
   Menu->insertSeparator();
   Menu->insertItem(tr("Select all"),TORESULT_SELECT_ALL);
-  Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
   Menu->insertSeparator();
   Menu->insertItem(tr("Export to file..."),TORESULT_EXPORT);
   Menu->insertItem(tr("Read all"),TORESULT_READ_ALL);
@@ -840,12 +848,14 @@ void toResultContentEditor::saveUnsaved(void)
 	sql+=" (";
 	int num=0;
 	QHeader *head=horizontalHeader();
-	for (int i=0;i<numCols();i++) {
-	  if (!text(CurrentRow,i).isNull()) {
-	    if (num>0)
-	      sql+=",";
-	    sql+=conn.quote(head->label(i));
-	    num++;
+	{
+	  for (int i=0;i<numCols();i++) {
+	    if (!text(CurrentRow,i).isNull()) {
+	      if (num>0)
+		sql+=",";
+	      sql+=conn.quote(head->label(i));
+	      num++;
+	    }
 	  }
 	}
 	sql+=") VALUES (";
@@ -910,7 +920,7 @@ void toResultContentEditor::saveUnsaved(void)
 	  }
 	}
 	if (first) {
-	  sql+=(" WHERE ");
+	  sql+=(" WHERE (");
 	  int col=0;
 	  bool where=false;
 	  toQDescList::iterator di=Description.begin();
@@ -918,17 +928,15 @@ void toResultContentEditor::saveUnsaved(void)
 	    if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
 			  !(*di).Datatype.contains(("LOB")))) {
 	      if (where)
-		sql+=(" AND ");
+		sql+=(" AND (");
 	      else
 		where=true;
 	      sql+=conn.quote((*di).Name);
-	      if ((*j).isNull())
-		sql+=(" IS NULL");
-	      else {
-		sql+=("= :c");
-		sql+=QString::number(col);
-		sql+=("<char[4000],in>");
-	      }
+	      if ((*j).isEmpty())
+		sql+=" IS NULL OR "+conn.quote((*di).Name);
+	      sql+=("= :c");
+	      sql+=QString::number(col);
+	      sql+=("<char[4000],in>)");
 	    }
 	    di++;
 	  }
@@ -951,9 +959,13 @@ void toResultContentEditor::saveUnsaved(void)
 	    toQDescList::iterator di=Description.begin();
 	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	      QString str=(*j);
-	      if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
-					    !(*di).Datatype.contains(("LOB")))))
-		toPush(args,toQValue(str));
+	      if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
+			    !(*di).Datatype.contains(("LOB")))) {
+		if (str.isNull())
+		  toPush(args,toQValue(QString("")));
+		else
+		  toPush(args,toQValue(str));
+	      }
 	      di++;
 	    }
 	    toQuery q(conn,sql,args);

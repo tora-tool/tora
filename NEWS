@@ -1,3 +1,224 @@
+1.3.14:
+
+2004-04-23: Added support for MySQL in toResultParam class.
+2004-04-23: Changed how init strings in connections are stored (Using QStrings instead of QCString).
+2004-04-23: Added function to change database and get init strings for connections.
+2004-04-23: Added support for changing the schema in the worksheet.
+2004-04-21: Indicate if there are errors in debugger windows. (Thanx Francesco Dandrea)
+2004-04-21: Unquote object fix in debugger.0 (Thanx Francesco Dandrea)
+2004-04-21: Changed MySQL extractor comments from // to --.
+2004-04-21: Changed script header comments to -- from rem.
+2004-04-19: Removed compile warning in worksheet of unused variable.
+2004-03-30: Ignore errors on rollback when rollbacking QSqlConnections.
+2004-03-30: Ignore errors on rollback on stop in analyze.
+2004-03-30: Changed size policy of table and schema comboboxes when editing indexes or constraints.
+2004-03-30: Changed size of icon for main window (From 16x16 which became really small when changing windows to 32x32).
+2004-03-29: Fixed spelling of ODBC connection provider to QSql name.
+2004-03-29: Switched around Undo and Redo keybindings for TOAD.
+2004-03-29: Improved error reporting on failed queries for QSql provider.
+2004-03-29: Fixed some SQL worksheet to editor references.
+2004-03-26: Some minor linux buildfixes.
+2004-03-25: Fixed table lookup key shortcut.
+2004-03-25: Removed TOra reference in new version check.
+2004-03-25: Fixed problem with browser remembering removed filters on restart.
+2004-03-25: Problem in index list with duplicates.
+2004-03-25: Worksheet => SQL Editor.
+2004-03-25: Change order of execute next and all.
+2004-03-25: Indicate active filter
+2004-03-25: Define filter problem in import/export.
+2004-03-25: Change keep alive text to longer description.
+2004-03-25: Remove additional help.
+2004-03-25: Execute directory when selecting log should be execute directly.
+2004-03-25: Add an apply button to options dialog.
+2004-03-25: Fixed refresh default to 30 seconds.
+2004-03-25: Fixed problem with off by one in highlighted text on Windows.
+2004-03-24: Fixed resolving of program directory in windows.
+2004-03-24: Fixed no new check configure stuff. (Thanx Peter Eisentraut)
+2004-03-24: Unquote constraints better in MySQL extractor.
+2004-03-23: Don't allow to add indexes or constraints when no table is selected.
+2004-03-23: Updated Makefile.sample.
+2004-03-23: Fixed problem with help context.
+2004-03-23: Fixed oracle index description to conform to new version.
+2004-03-23: Adapted index editing to new index description.
+2004-03-23: Changed how type in indexes are reported in the index description.
+2004-03-23: Added context menu to session list.
+2004-03-23: Added shortcut to mark a selection in session browser.
+2004-03-23: Fixed context menu for analyze tool.
+2004-03-23: Fixed context menu of light worksheets.
+2004-03-23: Added context menu to some browsertabs.
+2004-03-23: Added context menu for worksheet.
+2004-03-23: Fix problem with empty owner in analyzer.
+2004-03-23: Moved create toolbar to always be visiable regardless of current tool.
+2004-03-23: Make toResults work even though they don't have a toolwidget above them.
+2004-03-23: Made it posible to select schema when creating new table.
+2004-03-23: Made it posible to work on several different tables in index dialog.
+2004-03-23: Added a toConnectionWidget class to be able to use results without tool widgets in most cases.
+2004-03-22: Removed some TOra references regarding upgrade check.
+2004-03-22: Added option (default on) for having describes in another window in worksheet.
+2004-03-22: Added option for using onlyforward queries on QSql provider.
+2004-03-22: Added a stretchable widget at the end of the template toolbar.
+2004-03-22: Changed name of SQL template to project manager.
+2004-03-22: Added MySQL access tab in browser.
+2004-03-22: Remember non standard port correctly in new connection dialog.
+2004-03-22: Fixed missreading of some invalid dates from MySQL.
+2004-03-20: Show all columns of scripting lists.
+2004-03-20: Changed to use closebuttons of Qt docks for templates.
+2004-03-20: Added browser tool create menu.'
+2004-03-20: Added add index functionality.
+2004-03-19: Some build stuff fixes.
+2004-03-19: Fixed startup on other tab in browser.
+2004-03-19: Fixed about dialog size.
+2004-03-19: Fixed translation of welcome message.
+2004-03-19: Added toolbar for index tab.
+2004-03-19: Added option to drop index.
+2004-03-19: Refresh screen after making changes in browser.
+2004-03-19: Added drop table button.
+2004-03-19: Don't let main window manage toolbars for child windows.
+2004-03-18: Fixed UI to modify indexes.
+2004-03-18: Fixed quoting of rename datafiles.
+2004-03-18: Fixed problem with closing queries to quickly on QSql provider.
+2004-03-18: Fixed problem with every non select query being execute twice.
+2004-03-18: Removed valid check for QSqlProvider since NULL:s are apparently invalid.
+2004-03-18: Fixed handling of NULL:s in toQSqlProvider.
+2004-03-18: Work around MySQL missrepresenting some values as NULL when they are not (Dates specifically).
+2004-03-18: Fixed unitialized warning in browser filter.
+2004-03-18: Fixed uninitialized value of datatype widget.
+2004-03-18: Changed initial size of modify constraint dialog.
+2004-03-18: Fill in all shortcuts of TOAD bindings to not give any fuzzy ideas to the translator.
+2004-03-18: Export to file of results now use Windows newlines on Win32.
+2004-03-18: Fixed problem with analyze command failing and not quitting.
+2004-03-18: Fixed MySQL analyzer when running on specified database.
+2004-03-18: Mark MySQL connection to only handle one query at a time.
+2004-03-18: Made default of object cache behavior configurable.
+2004-03-17: Removed unused prototype for logMessage in toConnection.
+2004-03-17: Made cacheDir a static function of toConnection.
+2004-03-17: Changed how directory cache files are generated to TEMP on windows.
+2004-03-17: Fixed some default password issues in new connection dialog.
+2004-03-17: Added support for editing constraints.
+2004-03-17: Added option to hide header of columns view.
+2004-03-17: Support for C++ style comments in syntax highlighting.
+2004-03-17: Fixed unquoting of MySQL names.
+2004-03-17: Changed filename of database object cache to work better with non Oracle databases.
+2004-03-17: Support via extractor under constraint tab if available.
+2004-03-17: Fixed app name of extraction header.
+2004-03-16: Hide options in worksheet to applicable to non Oracle.
+2004-03-16: Added RULE hints for some Oracle queries.
+2004-03-16: Fixed better support for MySQL procedural statements.
+2004-03-16: Support for C++ style comments in SQL parser.
+2004-03-16: Keep track of analyzer in syntax setup dialog.
+2004-03-16: Some adjustments for help.
+2004-03-15: Added signal before menues are display in listviews.
+2004-03-15: Hide mode if only one mode is available.
+2004-03-15: Added port to new connection list.
+2004-03-15: Call QListView doubleclick event toListView.
+2004-03-15: Fixed clicking and doubleclicking in the connection history list.
+2004-03-15: Only check if resources are supported to determine if information tab is shown.
+2004-03-15: Changed button text from clean sheet to new sheet in debugger.
+2004-03-12: Changed icon of visualize.
+2004-03-12: Updated configure script for the new binding generation.
+2004-03-12: Added option for enabling TOAD bindings.
+2004-03-12: Added TOAD compatibility bindings.
+2004-03-12: Added keyboard shortcut for save as.
+2004-03-12: Added replace keyboard shortcut back (Customizable this time).
+2004-03-12: Added function to compare key sequences to key events.
+2004-03-12: Don't include keybindings in search & replace dialog.
+2004-03-12: Changed keybinding for copy user or role (Duplicate).
+2004-03-12: Changed keybinding for add role (Duplicate).
+2004-03-12: Changed keybinding for add user (Duplicate).
+2004-03-12: Added keyboard shortcut CTRL+A to select all.
+2004-03-12: Changed default keybinding for Change current connection to CTRL+Shift+U from CTRL+U.
+2004-03-12: Changed default keybinding for commit from CTRL+L to CTRL+SHIFT+C.
+2004-03-12: Added keybindings to uppercase/lowercase commands.
+2004-03-12: Added some tuning stuff to the session list screen for MySQL.
+2004-03-11: Added new class to connect values of a piechart to a line or barchart.
+2004-03-11: Added filter to piecharts.
+2004-03-11: Fixed problem with piechart queries having more than 2 columns.
+2004-03-11: Added posibility to have labels first in pie chart.
+2004-03-11: Fixed indentation of elsif.
+2004-03-11: Added boolean as a default keyword.
+2004-03-11: Fixed spelling of TRIGGER in debugger. (Thanx Stephen)
+2004-03-11: Fixed numeric sorting in lists and content editor.
+2004-03-11: Support Oracle versions with 2 digits in version detection.
+2004-03-11: Updated sample makefile.
+2004-03-11: Added change connection button to worksheet (Which mysteriously was removed yesterday).
+2004-03-10: Enable or disable explain plan button depending if supported by database.
+2004-03-10: Removed stuff from worksheet menu not applicable to current database.
+2004-03-10: Hide statistics button in worksheet if not supported.
+2004-03-10: Hide information tab if neither LongOps or Resources are supported.
+2004-03-10: Added new sourcefile to configure and sample makefile.
+2004-03-10: Changed default location of tools toolbar to top.
+2004-03-10: Moved connection toolbar.
+2004-03-10: Moved table buttons over first pane instead of second pane.
+2004-03-10: Always call cancel on nonblocking queries that are not read to the end before deleting them (Needed for MySQL).
+2004-03-10: Implemented canceling for MySQL queries.
+2004-03-10: Set forwardOnly for QSqlQueries.
+2004-03-09: Fixed delete of column order in QSql provider.
+2004-03-09: Fixed some bugs regarding analyze for MySQL.
+2004-03-08: Fixed can handle of script to actually check extractor support.
+2004-03-05: Add an extra newline at end of migration script for MySQL tables.
+2004-03-05: Fixed some Windows build errors.
+2004-03-05: Changed version to 1.3.14.
+2004-03-05: Removed some unused tab-related stuff in toResult.
+2004-03-04: Made toResult see if connection was changed since last refresh when figuring out if result is valid.
+2004-03-04: Fixed problem when no extra parameters for column specified.
+2004-03-04: Fixed problem with column list on MySQL not in object cache.
+2004-03-04: Fixed problem when changing connection in browser.
+2004-03-04: Fixed problem when changing schema in browser.
+2004-03-04: Hide size and precision in datatype widget if not wanted when changing datatype.
+2004-03-04: Don't generate prompts or header in SQL when changing table.
+2004-03-04: Added equality operators for parsed statements.
+2004-03-04: Changed how renames are encoded in migration descriptions.
+2004-03-04: Fixed bug i migration code of extractor.
+2004-03-01: Fixed some Windows specific compilation problems.
+2004-02-29: Moved extracting column data into toExtract.
+2004-02-27: Fill out the migration data for applying changes when editing tables.
+2004-02-27: Moved createFromParse to general extractor.
+2004-02-26: Fixed so that create table dialog works with Oracle too.
+2004-02-26: Made Oracle extractor also use the EXTRA field to describe columns.
+2004-02-26: Set caption of memo editors.
+2004-02-26: Fill out dialog of edit table with contents of current table.
+2004-02-25: Fixed exception in constructor of toResultResources.
+2004-02-25: Reorganize SQL so Oracle definitions are never first if other implementations exists.
+2004-02-25: Use SHOW COLUMNS command to display information on MySQL columns.
+2004-02-25: Don't load Oracle SQL if no Oracle support.
+2004-02-25: Added index columns for MySQL.
+2004-02-25: Fixed problem with indexes under MySQL.
+2004-02-25: Made getting parameter resize behaviour better.
+2004-02-25: Fixed a bug in laying out tab bars.
+2004-02-25: Fixed potential crash in toTabWidget when widget was removed.
+2004-02-24: Made a bunch of modifications to the edit table dialog.
+2004-02-24: Added new widget to define table column datatype.
+2004-02-24: Added support for extractors to report available datatypes. 
+2004-02-24: Added index tab for MySQL in browser.
+2004-02-24: Fixed sorting of modules in configure.pl.
+2004-02-23: Add a new function in a result filter to be called before every query is executed.
+2004-02-23: Added duplicate removal in browser filter.
+2004-02-20: Fixed hang when comparing things that were actually equal.
+2004-02-18: Added support for setting table comments in column view for MySQL.
+2004-02-18: Fixed application lock on execution of faulty QSql query.
+2004-02-18: Made posible to specificy which columns of show (Or any query) is interesting for QSql provider.
+2004-02-18: Included table comments for MySQL in object cache.
+2004-02-18: New syntax for MySQL queries allow iteration of queries over multible tables/databases.
+2004-02-18: Save databases in object cache for MySQL tables.
+2004-02-18: Allow both analyze and optimize of MySQL tables in statistics tool.
+2004-02-18: Improved object cache for MySQL (Now scans all available databases).
+2004-02-17: Make cursor busy during entire extraction procedure to remove flickering cursor.
+2004-02-17: Fix so that the correct analyzer is used in tokenizers when parsing.
+2004-02-17: Fix so that the correct analyzer is used in tokenizers when using highlighted text input.
+2004-02-17: Take account of connection when auto indenting in edit extension.
+2004-02-17: Made SQL parser and tokenizers use quote character from analyzer.
+2004-02-17: Made syntax analyzer supply a quote character used for the database.
+2004-02-17: Don't upper object names while parsing extraction list.
+2004-02-17: Added some more utility functions to SQL parser.
+2004-02-13: Added support for different syntax analyzers in SQL parser.
+2004-02-13: Added support for MySQL in analyzer tool.
+2004-02-13: Fixed a const declaration of syntax highlighter.
+2004-02-13: Added specific MySQL syntax analyzer.
+2004-02-13: Made worksheet switch analyzer based on connection.
+2004-02-13: Made connection able to provide a syntax analyzer.
+2004-01-22: Fixed bug in oracle extractor. (Thanx Rico Hendriks)
+2004-01-22: Fixed some spelling errors. (Thanx Rico Hendriks)
+
 1.3.13: Released 2004-01-20
 
 2004-01-19: Fixed problem with highlighted text in windows.

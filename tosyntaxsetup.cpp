@@ -63,7 +63,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   : toSyntaxSetupUI(parent,name,fl),toSettingTab("fonts.html"),
     Analyzer(toSyntaxAnalyzer::defaultAnalyzer())
 {
-  KeywordUpper->setChecked(!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty());
+  KeywordUpper->setChecked(!toTool::globalConfig(CONF_KEYWORD_UPPER,DEFAULT_KEYWORD_UPPER).isEmpty());
   SyntaxHighlighting->setChecked(!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty());
   CodeCompletion->setChecked(!toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty());
   CompletionSort->setChecked(!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty());
@@ -113,6 +113,15 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 
   Example->setAnalyzer(Analyzer);
   Example->setReadOnly(true);
+#ifdef TO_NO_ORACLE
+  Example->setText(QString::fromLatin1("create procedure CheckObvious\n"
+				       "begin\n"
+                                       "  set Quest = 'Great'; -- This variable doesn't exist\n"
+                                       "  if Quest = 'Great' then\n"
+                                       "    call Obvious(true);\n"
+                                       "  end if;\n"
+                                       "end"));
+#else
   Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
 				       "begin\n"
 				       "  Quest:='Great'; -- This variable doesn't exist\n"
@@ -120,6 +129,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 				       "    Obvious(true);\n"
 				       "  end if;\n"
 				       "end;"));
+#endif
   Example->setCurrent(4);
   std::map<int,QString> Errors;
   Errors[2]=tr("Unknown variable");

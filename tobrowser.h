@@ -65,8 +65,11 @@ class toBrowser : public toToolWidget {
   toBrowserFilter *Filter;
   QWidget *CurrentTop;
 
+  QToolButton *FilterButton;
+  
   toResultContent *ViewContent;
   toResultContent *TableContent;
+  toResultContent *AccessContent;
 
   std::map<QCString,toResultView *> Map;
   std::map<QCString,toResult *> SecondMap;
@@ -75,6 +78,7 @@ class toBrowser : public toToolWidget {
 
   QString schema(void);
   void enableDisableConstraints(const QString &);
+  void dropSomething(const QString &,const QString &);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -99,15 +103,25 @@ public slots:
 
   void modifyTable(void);
   void addTable(void);
+  void addIndex(void);
+  void modifyConstraint(void);
+  void modifyIndex(void);
+  void dropTable(void);
+  void dropIndex(void);
   void fixIndexCols(void);
 
+  void changeConnection(void);
   void enableConstraints(void);
   void disableConstraints(void);
+
+  void displayIndexMenu(QPopupMenu *menu);
+  void displayTableMenu(QPopupMenu *menu);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {
   Q_OBJECT
 
+  QToolButton *FilterButton;
   toBrowserFilter *Filter;
   std::list<toTemplateItem *> Parents;
   bool Registered;
@@ -141,5 +155,23 @@ public:
 private slots:
   void connectionChanged(void);
 };
+
+class toBrowserTool : public toTool {
+  Q_OBJECT
+
+protected:
+  virtual char **pictureXPM(void);
+public:
+  toBrowserTool();
+  virtual const char *menuItem();
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection);
+  virtual bool canHandle(toConnection &conn);
+  virtual void customSetup(int id);
+public slots:
+  void addTable(void);
+  void addConstraint(void);
+  void addIndex(void);
+};
+
 
 #endif

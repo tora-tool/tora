@@ -53,10 +53,10 @@ toSearchReplace::toSearchReplace(QWidget *parent)
   : toSearchReplaceUI(parent,"SearchReplace"),toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
   QAccel *a=new QAccel(this);
-  a->connectItem(a->insertItem(Key_F1),
+  a->connectItem(a->insertItem(toKeySequence(tr("F1", "Search|Help"))),
 		 this,
 		 SLOT(displayHelp()));
-
+  Replace->setAccel( QKeySequence(tr("Ctrl+Shift+R","Edit|Replace")) );
   toEditWidget::addHandler(this);
   receivedFocus(toMainWidget()->editWidget());
 }

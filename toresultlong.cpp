@@ -91,6 +91,10 @@ void toResultLong::query(const QString &sql,const toQList &param)
     addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);
   }
+
+  if (Filter)
+    Filter->startingQuery();
+
   try {
     Query=new toNoBlockQuery(connection(),Mode,sql,param,Statistics);
 

@@ -50,7 +50,7 @@
 
 #include "toresultitem.moc"
 
-static toSQL SQLResource(TOSQL_RESULTRESOURCE,
+static toSQL SQLResource("toResultResources:Information",
 			 "SELECT 'Total' \"-\",         'per Execution' \"-\",                                                   'per Row processed' \"-\",\n"
 			 "       Sorts,                 DECODE(Executions,0,'N/A',ROUND(Sorts/Executions,3)) \" \",         DECODE(Rows_Processed,0,'N/A',ROUND(Sorts/Rows_Processed,3)) \" \",\n"
                          "       Parse_Calls \"Parse\", DECODE(Executions,0,'N/A',ROUND(Parse_Calls/Executions,3)) \" \",   DECODE(Rows_Processed,0,'N/A',ROUND(Parse_Calls/Rows_Processed,3)) \" \",\n"
@@ -67,6 +67,12 @@ static toSQL SQLResource(TOSQL_RESULTRESOURCE,
 			 " FROM v$sqlarea WHERE Address||':'||Hash_Value = :f1<char[100]>",
 			 "Display information about an SQL statement");
 
+toResultResources::toResultResources(QWidget *parent,const char *name)
+  : toResultItem(3,true,parent,name)
+{
+  setSQL(SQLResource);
+}
+
 void toResultItem::setup(int num,bool readable)
 {
   enableClipper(true);
@@ -76,7 +82,7 @@ void toResultItem::setup(int num,bool readable)
   WidgetPos=0;
   viewport()->setBackgroundMode(PaletteBackground);
   Result=new QGrid(2*num,viewport());
-  Result->setFixedWidth(width()-50);
+  Result->setFixedWidth(width()-30);
   addChild(Result);
   Result->setSpacing(3);
   ShowTitle=true;
@@ -261,5 +267,5 @@ void toResultItem::poll(void)
 void toResultItem::resizeEvent(QResizeEvent *e)
 {
   QScrollView::resizeEvent(e);
-  Result->setFixedWidth(width()-50);
+  Result->setFixedWidth(width()-30);
 }

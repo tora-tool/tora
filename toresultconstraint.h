@@ -63,6 +63,7 @@ class toResultConstraint : public toResultView {
 
   toNoBlockQuery *Query;
   toBackground Poll;
+  void addConstraint(const QString &name,const QString &definition,const QString &status);
 public:
   /** Create the widget.
    * @param parent Parent widget.
