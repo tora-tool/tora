@@ -160,22 +160,22 @@ toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name=N
   addColumn("Comments");
 }
 
-QString toResultCols::query(const QString &sql,const QString *Param1,const QString *Param2,const QString *Param3)
+QString toResultCols::query(const QString &sql,const list<QString> &param)
 {
-  delete Query;
   SQL=sql;
   QString Owner;
   QString TableName;
-  if (Param1) {
-    SQL=*Param1;
-    Owner=*Param1;
+  list<QString>::iterator cp=((list<QString> &)param).begin();
+  if (cp!=((list<QString> &)param).end()) {
+    SQL=*cp;
+    Owner=*cp;
   }
-  if (Param2) {
+  cp++;
+  if (cp!=((list<QString> &)param).end()) {
     SQL.append(".");
-    SQL.append(*Param2);
-    TableName=(*Param2);
+    SQL.append(*cp);
+    TableName=(*cp);
   }
-  Query=NULL;
   LastItem=NULL;
   RowNumber=0;
 
@@ -193,13 +193,15 @@ QString toResultCols::query(const QString &sql,const QString *Param1,const QStri
 
     QString str("SELECT * FROM ");
     str.append(SQL);
+#if 0
     str.append(" WHERE NULL = NULL");
+#endif
 
-    Query->open(1,
+    otl_stream Query(1,
 		(const char *)str,
 		Connection.connection());
 
-    Description=Query->describe_select(DescriptionLen);
+    Description=Query.describe_select(DescriptionLen);
 
     toResultViewMLine *item;
     for (int i=0;i<DescriptionLen;i++) {

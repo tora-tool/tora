@@ -57,9 +57,7 @@ toResultLock::toResultLock(toConnection &conn,QWidget *parent,const char *name)
 }
 
 QString toResultLock::query(const QString &sql,
-			    const QString *Param1=NULL,
-			    const QString *Param2=NULL,
-			    const QString *Param3=NULL)
+			    const list<QString> &param)
 {
   clear();
 

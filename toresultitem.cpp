@@ -123,7 +123,7 @@ void toResultItem::done(void)
   NumWidgets=WidgetPos;
 }
 
-QString toResultItem::query(const QString &sql,const QString *Param1,const QString *Param2,const QString *Param3)
+QString toResultItem::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
 
@@ -137,19 +137,12 @@ QString toResultItem::query(const QString &sql,const QString *Param1,const QStri
     int MaxColNum=toTool::globalConfig(CONF_MAX_COL_NUM,DEFAULT_MAX_COL_NUM).toInt();
     int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
 
-    for (int i=0;i<MaxColNum;i++)
-      Query.set_column_type(i+1,otl_var_char,MaxColSize);
-
     Query.open(1,
 	       (const char *)sql,
 	       Connection.connection());
 
-    if (Param1)
-      Query<<(const char *)(*Param1);
-    if (Param2)
-      Query<<(const char *)(*Param2);
-    if (Param3)
-      Query<<(const char *)(*Param3);
+    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
+      Query<<(const char *)(*i);
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -178,14 +171,7 @@ QString toResultItem::query(const QString &sql,const QString *Param1,const QStri
 	}
       }
 
-      if (!Query.eof())
-	Query>>buffer;
-      else
-	sprintf(buffer,"{null}");
-      if (Query.is_null())
-	sprintf(buffer,"{null}");
-
-      addItem(Description[i].name,buffer);
+      addItem(Description[i].name,toReadValue(Description[i],Query,MaxColSize));
     }
     done();
     return "";

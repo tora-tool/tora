@@ -159,6 +159,14 @@ void toHighlightedText::setText(const QString &str)
   toMarkedText::setText(str);
 }
 
+void toHighlightedText::setCurrent(int line)
+{
+  Current=line;
+  if (line>=0)
+    setCursorPosition(line,0);
+  repaint();
+}
+
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 {
   if (!Highlight) {
@@ -274,7 +282,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	wasCol=col;
 	wasMarked=marked;
 	if (nc=='\t') {
-	  int tab=painter->fontMetrics().width("        ");;
+	  int tab=painter->fontMetrics().width("xxxxxxxx");;
 	  int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
 	  int left=(posx==hMargin()-1?LeftIgnore:posx);
 	  painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
@@ -293,26 +301,31 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   if (hasFocus()) {
     int curline,curcol;
     getCursorPosition (&curline,&curcol);
-    if (curline!=LastRow) {
+    if (row==curline) {
       if (err!=Errors.end())
 	toStatusMessage((*err).second);
       else {
 	err=Errors.find(LastRow);
-	if (err==Errors.end())
+	if (err!=Errors.end())
 	  toStatusMessage("");
       }
     }
 
-    if (row==curline&&(LastRow!=curline||LastCol!=curcol)) {
-      LastRow=curline;
-      LastCol=curcol;
-      if (!isReadOnly()) {
-	QPoint pos=cursorPoint();
-	painter->drawLine(pos.x(),0,pos.x(),
-			  painter->fontMetrics().ascent()+painter->fontMetrics().descent());
-      }
-    } else
-      LastRow=LastCol=-1;
+    if (row==curline) {
+      if (LastRow!=curline||LastCol!=curcol)
+	Cursor=true;
+      if (Cursor) {
+	LastRow=curline;
+	LastCol=curcol;
+	if (!isReadOnly()) {
+	  QPoint pos=cursorPoint();
+	  painter->drawLine(pos.x(),0,pos.x(),
+			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
+	}
+	Cursor=false;
+      } else
+	Cursor=true;
+    }
   }
 }
 
@@ -375,9 +388,10 @@ void toHighlightedText::previousError(void)
     if ((*i).first>=curline) {
       if (curcol<0)
 	curcol=(*i).first;
-      setCursorPosition(curcol,0);
       break;
     }
     curcol=(*i).first;
   }
+  if (curcol>=0)
+    setCursorPosition(curcol,0);
 }

@@ -38,7 +38,10 @@ class toResultPlan : public toResultView {
 public:
   toResultPlan(toConnection &conn,QWidget *parent,const char *name=NULL);
 
-  virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL);
+  virtual QString query(const QString &sql,const list<QString> &param);
+  // Why is this needed?
+  QString query(const QString &sql)
+  { list<QString> p; return query(sql,p); }
 };
 
 #endif

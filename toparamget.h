@@ -26,25 +26,27 @@
  ****************************************************************************/
 
 
-#ifndef __TORESULT_H
-#define __TORESULT_H
+#ifndef __TOPARAMGET_H
+#define __TOPARAMGET_H
 
 #include <list>
+#include <map>
 
-class QString;
+#include <qdialog.h>
 
-class toResult {
+class QLineEdit;
+class QGrid;
+
+class toParamGet : public QDialog {
+private:
+  static map<QString,QString> Cache;
+
+  QGrid *Container;
+
+  list<QLineEdit *> Value;
+  toParamGet(QWidget *parent=0,const char *name=0);
 public:
-  toResult(void)
-  { }
-  virtual ~toResult()
-  { }
-
-  virtual void refresh(void) = NULL;
-  virtual QString query(const QString &sql,const list<QString> &params) = NULL;
-  virtual void changeParams(const QString &Param1) = NULL;
-  virtual void changeParams(const QString &Param1,const QString &Param2) = NULL;
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = NULL;
+  static list<QString> getParam(QWidget *parent,QString &str);
 };
 
 #endif

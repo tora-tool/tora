@@ -79,6 +79,8 @@ public:
 
   virtual bool close(bool del);
   void createDefault(void);
+public slots:
+  void windowsMenu(void);
 private slots:
   void addConnection(void);
   bool delConnection(void);
@@ -91,7 +93,6 @@ private slots:
   void saveButton(void);
 
   void editFileMenu(void);
-  void windowsMenu(void);
 
   void undoButton(void);
   void redoButton(void);
@@ -109,6 +110,7 @@ void toSetSessionType(const QString &str);
 QString toGetSessionType(void);
 QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL);
 void toRefreshParse(QTimer *timer,const QString &str);
+QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 
 #define TOCATCH \
     catch (const otl_exception &exc) {\

@@ -35,6 +35,8 @@
 #include "otlv32.h"
 
 class toResultField : public toHighlightedText, public toResult {
+  Q_OBJECT
+
   QString SQL;
   toConnection &Connection;
 
@@ -44,16 +46,19 @@ public:
   void setSQL(const QString &sql)
   { SQL=sql; }
 
-  virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL);
+  virtual QString query(const QString &sql,const list<QString> &param);
 
+  QString query(const QString &sql)
+  { list<QString> p; return query(sql,p); }
+public slots:
   virtual void refresh(void)
   { query(SQL); }
   virtual void changeParams(const QString &Param1)
-  { query(SQL,&Param1); }
+  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
   virtual void changeParams(const QString &Param1,const QString &Param2)
-  { query(SQL,&Param1,&Param2); }
+  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { query(SQL,&Param1,&Param2,&Param3); }
+  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif

@@ -47,6 +47,8 @@
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
 #include "icons/eraselog.xpm"
+#include "icons/online.xpm"
+#include "icons/offline.xpm"
 
 #define CONF_POLLING    "Refresh"
 #define DEFAULT_POLLING	"10 seconds"
@@ -88,14 +90,16 @@ public:
   toOutputTool()
     : toTool(103,"SQL Output")
   { }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual const char *menuItem()
+  { return "SQL Output"; }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end()) {
       (*i).second->setFocus();
       return NULL;
     } else {
-      QWidget *window=new toOutput(main,connection);
+      QWidget *window=new toOutput(parent,connection);
       Windows[&connection]=window;
       window->setIcon(*toolbarImage());
       return window;
@@ -115,22 +119,37 @@ static toOutputTool OutputTool;
 
 static QPixmap *toRefreshPixmap;
 static QPixmap *toEraseLogPixmap;
+static QPixmap *toOnlinePixmap;
+static QPixmap *toOfflinePixmap;
 
-toOutput::toOutput(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
   if (!toEraseLogPixmap)
     toEraseLogPixmap=new QPixmap((const char **)eraselog_xpm);
+  if (!toOnlinePixmap)
+    toOnlinePixmap=new QPixmap((const char **)online_xpm);
+  if (!toOfflinePixmap)
+    toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",main,this);
+
+  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",
 		  "Poll for output now",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
+  QToolButton *disableButton=new QToolButton(toolbar);
+  disableButton->setToggleButton(true);
+  disableButton->setIconSet(QIconSet(*toOnlinePixmap),false);
+  disableButton->setIconSet(QIconSet(*toOfflinePixmap),true);
+  disableButton->setOn(!enabled);
+  connect(disableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
+  QToolTip::add(disableButton,"Enable or disable getting SQL output.");
+
   new QToolButton(*toEraseLogPixmap,
 		  "Clear output",	
 		  "Clear output",
@@ -147,27 +166,32 @@ toOutput::toOutput(toMain *main,toConnection &connection)
   Timer=new QTimer(this);
   connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
   toRefreshParse(Timer,OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
-  try {
-    otl_cursor::direct_exec(Connection.connection(),
-			    "BEGIN\n"
-			    "    DBMS_OUTPUT.ENABLE;"
-			    "END;");
-  } catch (...) {
-    toStatusMessage("Couldn't enable output for session");
-  }
   Connection.addWidget(this);
+  if (enabled)
+    disable(false);
+}
+
+void toOutput::disable(bool dis)
+{
+  try {
+    if (dis)
+      otl_cursor::direct_exec(Connection.connection(),
+			      "BEGIN\n"
+			      "    DBMS_OUTPUT.DISABLE;"
+			      "END;");
+    else
+      otl_cursor::direct_exec(Connection.connection(),
+			      "BEGIN\n"
+			      "    DBMS_OUTPUT.ENABLE;"
+			      "END;");
+  } catch (...) {
+    toStatusMessage("Couldn't enable/disable output for session");
+  }
 }
 
 toOutput::~toOutput()
 {
-  try {
-    otl_cursor::direct_exec(Connection.connection(),
-			    "BEGIN\n"
-			    "    DBMS_OUTPUT.DISABLE;"
-			    "END;");
-  } catch (...) {
-    toStatusMessage("Couldn't disable output for session");
-  }
+  disable(true);
   OutputTool.closeWindow(Connection);
   Connection.delWidget(this);
 }
@@ -188,7 +212,7 @@ void toOutput::refresh(void)
       query>>lines;
       query>>numlines;
       for (int i=0;i<numlines;i++)
-	Output->insertLine((const char *)lines.v[i]);
+	insertLine((const char *)lines.v[i]);
     } while(numlines>=254);
   } catch (const QString &str) {
     toStatusMessage((const char *)str);

@@ -44,7 +44,6 @@ class QTabWidget;
 class toStorageDefinition;
 class toConnection;
 class toResultStorage;
-class toMain;
 class toFilesize;
 
 class toStorageTablespace : public QWidget
@@ -149,7 +148,7 @@ class toStorage : public QVBox {
   QToolButton *NewFileButton;
   QToolButton *MoveFileButton;
 public:
-  toStorage(toMain *parent,toConnection &connection);
+  toStorage(QWidget *parent,toConnection &connection);
   ~toStorage();
 public slots:
   void refresh(void);

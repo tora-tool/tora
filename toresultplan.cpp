@@ -54,9 +54,7 @@ toResultPlan::toResultPlan(toConnection &conn,QWidget *parent,const char *name)
 }
 
 QString toResultPlan::query(const QString &sql,
-			    const QString *Param1=NULL,
-			    const QString *Param2=NULL,
-			    const QString *Param3=NULL)
+			    const list<QString> &param)
 {
   clear();
 
@@ -83,16 +81,16 @@ QString toResultPlan::query(const QString &sql,
 	    (const char *)planTable,ident);
 
     {
-      map <int,QListViewItem *> parents;
-      map <int,QListViewItem *> last;
+      map <QString,QListViewItem *> parents;
+      map <QString,QListViewItem *> last;
       QListViewItem *lastTop=NULL;
       otl_stream query(1,
 		       buffer,
 		       Connection.connection());
       while(!query.eof()) {
-	int id;
+	char id[50];
 	char strId[50];
-	int parentid;
+	char parentid[50];
 	char operation[31];
 	char options[31];
 	char object[31];
@@ -101,7 +99,6 @@ QString toResultPlan::query(const QString &sql,
 	char bytes[50];
 	char cardinality[50];
 	query>>id;
-	sprintf(strId,"%d",id);
 	query>>parentid;
 	query>>operation;
 	query>>options;

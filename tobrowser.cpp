@@ -37,6 +37,7 @@
 #include <qvaluelist.h>
 
 #include "totool.h"
+#include "tomain.h"
 #include "tobrowser.h"
 #include "toresultview.h"
 #include "toresultcols.h"
@@ -62,9 +63,9 @@ public:
   { }
   virtual const char *menuItem()
   { return "Schema Browser"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toBrowser(main,connection);
+    QWidget *window=new toBrowser(parent,connection);
     window->setIcon(*toolbarImage());
     return window;
   }
@@ -106,14 +107,14 @@ static QPixmap *toRefreshPixmap;
 #define TAB_TRIGGER_SOURCE	"TriggerSource"
 #define TAB_TRIGGER_COLS	"TriggerCols"
 
-toBrowser::toBrowser(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toBrowser::toBrowser(QWidget *parent,toConnection &connection)
+  : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
   Connection.addWidget(this);
 
-  QToolBar *toolbar=new QToolBar("Schema Browser",main,this);
+  QToolBar *toolbar=new QToolBar("Schema Browser",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Update from DB",
 		  "Update from DB",

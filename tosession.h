@@ -68,7 +68,7 @@ class toSession : public QVBox {
   void enableStatistics(bool enable);
 
 public:
-  toSession(toMain *parent,toConnection &connection);
+  toSession(QWidget *parent,toConnection &connection);
   virtual ~toSession();
 public slots:
   void changeTab(QWidget *tab);

@@ -44,10 +44,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 
   Example->setAnalyzer(Analyzer);
   Example->setReadOnly(true);
-  Example->setCurrent(4);
-  map<int,QString> Errors;
-  Errors[2]="Unknown variable";
-  Example->setErrors(Errors);
   Example->setText(
 "create procedure CheckObvious as
 begin
@@ -56,6 +52,10 @@ begin
     Obvious(true);
   end if;
 end;");
+  Example->setCurrent(4);
+  map<int,QString> Errors;
+  Errors[2]="Unknown variable";
+  Example->setErrors(Errors);
 
   Current=NULL;
 }

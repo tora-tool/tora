@@ -139,9 +139,9 @@ public:
   { }
   virtual const char *menuItem()
   { return "Rollback Segments"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toRollback(main,connection);
+    QWidget *window=new toRollback(parent,connection);
     window->setIcon(*toolbarImage());
     return window;
   }
@@ -381,9 +381,9 @@ public:
 	   "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))" // Is there always an extent 0?
 	   " order by a.segment_name");
   }
-  virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL)
+  virtual QString query(const QString &sql,const list<QString> &param)
   {
-    QString ret=toResultView::query(sql,Param1,Param2,Param3);
+    QString ret=toResultView::query(sql,param);
     try {
       otl_stream trx(1,
 		     "select to_char(b.start_uext)"
@@ -467,9 +467,8 @@ public:
     addColumn("SQL");
     setSorting(0);
     NumExtents=0;
-
   }
-  virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL)
+  virtual QString query(const QString &sql,const list<QString> &param)
   {
     try {
       clear();
@@ -502,17 +501,21 @@ public:
 	item->setText(6,buffer);
       }
 
-      otl_stream rlb(1,
-		     "select b.Extents,"
-		     "       b.CurExt+b.CurBlk/c.Blocks"
-		     "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
-		     " where a.segment_id = b.usn"
-		     "   and a.owner = c.owner"
-		     "   and a.segment_name = c.segment_name"
-		     "   and c.segment_type = 'ROLLBACK'"
-		     "   and b.curext = c.extent_id"
-		     " order by a.segment_name",
-		     Connection.connection());
+      otl_stream rlb;
+      rlb.set_column_type(1,otl_var_double);
+      rlb.set_column_type(2,otl_var_double);
+      rlb.open(1,
+	       "select b.Extents,"
+	       "       b.CurExt+b.CurBlk/c.Blocks"
+	       "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
+	       " where a.segment_id = b.usn"
+	       "   and a.owner = c.owner"
+	       "   and a.segment_name = c.segment_name"
+	       "   and c.segment_type = 'ROLLBACK'"
+	       "   and b.curext = c.extent_id"
+	       " order by a.segment_name",
+	       Connection.connection());
+
       CurExt.clear();
       MaxExt.clear();
 
@@ -592,8 +595,8 @@ static QPixmap *toTrashPixmap;
 static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
-toRollback::toRollback(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toRollback::toRollback(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -606,7 +609,7 @@ toRollback::toRollback(toMain *main,toConnection &connection)
   if (!toOfflinePixmap)
     toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
-  QToolBar *toolbar=new QToolBar("Rollback Segments",main,this);
+  QToolBar *toolbar=new QToolBar("Rollback Segments",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Update segment list",
 		  "Update segment list",

@@ -36,7 +36,6 @@
 
 #include "otlv32.h"
 
-class toMain;
 class toConnection;
 
 class toSettingTab {
@@ -74,7 +73,7 @@ public:
   { return NULL; }
   virtual const char *toolbarTip()
   { return menuItem(); }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection) = NULL;
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection) = NULL;
 
   // These should not be used by the actual tools
   static void saveConfig(void);

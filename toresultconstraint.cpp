@@ -66,14 +66,16 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
   return ret;
 }
 
-QString toResultConstraint::query(const QString &sql,const QString *Param1,const QString *Param2,const QString *Param3)
+QString toResultConstraint::query(const QString &sql,const list<QString> &param)
 {
   QString Owner;
   QString TableName;
-  if (Param1)
-    Owner=Param1->upper();
-  if (Param2)
-    TableName=Param2->upper();
+  list<QString>::iterator cp=((list<QString> &)param).begin();
+  if (cp!=((list<QString> &)param).end())
+    Owner=*cp;
+  cp++;
+  if (cp!=((list<QString> &)param).end())
+    TableName=(*cp);
 
   Query=NULL;
   LastItem=NULL;

@@ -110,9 +110,9 @@ public:
   { }
   virtual const char *menuItem()
   { return "Storage Manager"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toStorage(main,connection);
+    QWidget *window=new toStorage(parent,connection);
     window->setIcon(*toolbarImage());
     return window;
   }
@@ -454,8 +454,8 @@ static QPixmap *toModTablespacePixmap;
 static QPixmap *toReadTablespacePixmap;
 static QPixmap *toWriteTablespacePixmap;
 
-toStorage::toStorage(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toStorage::toStorage(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -482,7 +482,7 @@ toStorage::toStorage(toMain *main,toConnection &connection)
   if (!toWriteTablespacePixmap)
     toWriteTablespacePixmap=new QPixmap((const char **)writetablespace_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",main,this);
+  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Update",
 		  "Update",

@@ -183,34 +183,21 @@ toResultView::toResultView(toConnection &conn,QWidget *parent,const char *name)
 void toResultView::addItem(void)
 {
   int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-  char buffer[MaxColSize+1];
-  buffer[MaxColSize]=0;
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
 
   try {
     if (Query&&!Query->eof()) {
       RowNumber++;
       int disp=0;
-      QListViewItem *item=createItem(this,LastItem,NULL);
-      LastItem=item;
+      LastItem=createItem(this,LastItem,NULL);
       if (NumberColumn) {
-	sprintf(buffer,"%d",RowNumber);
-	item->setText(0,buffer);
+	LastItem->setText(0,QString::number(RowNumber));
 	disp=1;
       }
-      for (int j=0;j<DescriptionLen&&!Query->eof();j++) {
-	(*Query)>>buffer;
-	if (Query->is_null())
-	  item->setText(j+disp,"{null}");
-	else
-	  item->setText(j+disp,buffer);
-      }
+      for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
+	LastItem->setText(j+disp,toReadValue(Description[j],*Query,MaxColSize));
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
 }
 
 void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
@@ -228,7 +215,7 @@ void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   
 }
 
-QString toResultView::query(const QString &sql,const QString *Param1,const QString *Param2,const QString *Param3)
+QString toResultView::query(const QString &sql,const list<QString> &param)
 {
   delete Query;
   SQL=sql;
@@ -246,29 +233,14 @@ QString toResultView::query(const QString &sql,const QString *Param1,const QStri
   try {
     Query=new otl_stream;
 
-    int MaxColNum=toTool::globalConfig(CONF_MAX_COL_NUM,DEFAULT_MAX_COL_NUM).toInt();
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-
-    for (int i=0;i<MaxColNum;i++)
-      Query->set_column_type(i+1,otl_var_char,MaxColSize);
-
     Query->open(1,
 		(const char *)sql,
 		Connection.connection());
 
-    if (Param1)
-      (*Query)<<(const char *)(*Param1);
-    if (Param2)
-      (*Query)<<(const char *)(*Param2);
-    if (Param3)
-      (*Query)<<(const char *)(*Param3);
+    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
+      (*Query)<<(const char *)(*i);
 
     Description=Query->describe_select(DescriptionLen);
-
-    if (DescriptionLen>MaxColNum) {
-      toStatusMessage("Too many column in result, increase maximum column number");
-      return "";
-    }
 
     bool hidden=false;
 
@@ -306,7 +278,7 @@ QString toResultView::query(const QString &sql,const QString *Param1,const QStri
     for (int i=0;(i<MaxNumber||ReadAll)&&!Query->eof();i++)
       addItem();
 
-    char buffer[10];
+    char buffer[100];
     if (Query->get_rpc()>0)
       sprintf(buffer,"%d rows processed",(int)Query->get_rpc());
     else

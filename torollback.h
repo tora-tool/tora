@@ -91,7 +91,7 @@ class toRollback : public QVBox {
   QString currentSegment(void);
 
 public:
-  toRollback(toMain *parent,toConnection &connection);
+  toRollback(QWidget *parent,toConnection &connection);
   ~toRollback();
 public slots:
   void changeStatement(QListViewItem *item);

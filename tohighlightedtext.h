@@ -95,6 +95,7 @@ private:
   int LeftIgnore;
   bool Highlight;
   bool KeywordUpper;
+  bool Cursor;
   map<int,QString> Errors;
   toSyntaxAnalyzer *Analyzer;
 protected:
@@ -112,8 +113,7 @@ public:
 
   void setErrors(const map<int,QString> &errors)
   { Errors=errors; repaint(); }
-  void setCurrent(int current)
-  { Current=current; repaint(); }
+  void setCurrent(int current);
   void setKeywordUpper(bool val)
   { KeywordUpper=val; }
   void setHighlight(bool val)

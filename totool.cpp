@@ -30,6 +30,7 @@
 
 #include <qapplication.h>
 #include <qstring.h>
+#include <qworkspace.h>
 
 #include "totool.h"
 #include "tomain.h"
@@ -81,7 +82,7 @@ void toTool::createWindow(void)
 {
   toMain *main=(toMain *)qApp->mainWidget();
   try {
-    QWidget *newWin=toolWindow(main,main->currentConnection());
+    QWidget *newWin=toolWindow(main->workspace(),main->currentConnection());
 
     if (newWin) {
       QString title(main->currentConnection().connectString());
@@ -89,6 +90,7 @@ void toTool::createWindow(void)
       title.append(name());
       newWin->setCaption(title);
       newWin->show();
+      main->windowsMenu(); // Update accellerators
     }
   } TOCATCH
 }

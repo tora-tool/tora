@@ -62,9 +62,9 @@ public:
   { }
   virtual const char *menuItem()
   { return "Sessions"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toSession(main,connection);
+    QWidget *window=new toSession(parent,connection);
     window->setIcon(*toolbarImage());
     return window;
   }
@@ -77,8 +77,8 @@ static QPixmap *toClockPixmap;
 static QPixmap *toNoClockPixmap;
 static QPixmap *toDisconnectPixmap;
 
-toSession::toSession(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toSession::toSession(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -89,7 +89,7 @@ toSession::toSession(toMain *main,toConnection &connection)
   if (!toDisconnectPixmap)
     toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
 
-  QToolBar *toolbar=new QToolBar("SGA Trace",main,this);
+  QToolBar *toolbar=new QToolBar("SGA Trace",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Update sessionlist",
 		  "Update sessionlist",

@@ -48,6 +48,8 @@ public:
   bool hasMarkedText()
   { return QMultiLineEdit::hasMarkedText(); }
   virtual void keyPressEvent(QKeyEvent *e);
+  void clear(void)
+  { Filename=""; RedoAvailable=false; UndoAvailable=false; setEdit(); QMultiLineEdit::clear(); setEdited(false); }
 
   bool getRedoAvailable(void)
   { return RedoAvailable; }

@@ -34,13 +34,15 @@
 #include "totool.h"
 #include "toconf.h"
 
+#include "toresultfield.moc"
+
 toResultField::toResultField(toConnection &conn,QWidget *parent,const char *name)
   : toHighlightedText(parent,name), Connection(conn)
 {
   setReadOnly(true);
 }
 
-QString toResultField::query(const QString &sql,const QString *Param1,const QString *Param2,const QString *Param3)
+QString toResultField::query(const QString &sql,const list<QString> &param)
 {
   SQL=sql;
 
@@ -57,12 +59,8 @@ QString toResultField::query(const QString &sql,const QString *Param1,const QStr
 	       (const char *)sql,
 	       Connection.connection());
 
-    if (Param1)
-      Query<<(const char *)(*Param1);
-    if (Param2)
-      Query<<(const char *)(*Param2);
-    if (Param3)
-      Query<<(const char *)(*Param3);
+    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
+      Query<<(const char *)(*i);
 
     QString text;
 

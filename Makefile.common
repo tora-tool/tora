@@ -23,7 +23,7 @@ default: all
 
 include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 
-DEFINES+=-DOTL_ORA8I -D_REENTRANT
+DEFINES+=-DOTL_ORA8I -DOTL_FORCE_CHAR -D_REENTRANT
 CPPFLAGS_GLOB=
 UIC=uic
 

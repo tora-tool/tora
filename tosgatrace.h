@@ -58,7 +58,7 @@ class toSGATrace : public QVBox {
   void updateSchemas(void);
 
 public:
-  toSGATrace(toMain *parent,toConnection &connection);
+  toSGATrace(QWidget *parent,toConnection &connection);
   virtual ~toSGATrace();
 public slots:
   void changeSchema(const QString &str);

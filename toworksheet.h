@@ -93,7 +93,7 @@ class toWorksheet : public QVBox {
   void query(const QString &str);
   bool checkSave(bool input);
 public:
-  toWorksheet(toMain *parent,toConnection &connection);
+  toWorksheet(QWidget *parent,toConnection &connection);
   virtual ~toWorksheet();
 
   virtual bool close(bool del);

@@ -15,5 +15,13 @@
 2001-01-21: Added support for .ui files in configure script.
 2001-01-21: Added inital PL/SQL debugger tool.
 2001-01-21: Added thread support classes.
+2001-01-22: Added binding support in worksheet.
+2001-01-22: Changed to use list of strings for queries (Big change).
+2001-01-23: Fixed bug in toResultCols.
+2001-01-23: Fixed bug in PL/SQL parsing of worksheet.
+2001-01-23: Make toTool::toolWindow take QWidget as first parameter (Tools can be empedded in other tools now).
+2001-01-23: Added support for bind variables in worksheet.
+2001-01-24: Stop forcing char when querying.
+2001-01-24: Changed otl so it forces char on number and date columns unless explicitly forced.
 
 0.3: Released 2001-01-17

@@ -35,7 +35,7 @@ class toResultIndexes : public toResultView {
   QString indexCols(const QString &conOwner,const QString &conName);
 public:
   toResultIndexes(toConnection &conn,QWidget *parent,const char *name=NULL);
-  virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL);
+  virtual QString query(const QString &sql,const list<QString> &param);
 };
 
 #endif

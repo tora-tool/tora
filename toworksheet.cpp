@@ -56,6 +56,7 @@
 #include "toresultview.h"
 #include "toresultresources.h"
 #include "tohighlightedtext.h"
+#include "toparamget.h"
 
 #include "toworksheet.moc"
 
@@ -196,7 +197,7 @@ public:
   { }
   virtual const char *menuItem()
   { return "SQL Worksheet"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
     QWidget *window=new toWorksheet(main,connection);
     window->setIcon(*toolbarImage());
@@ -229,8 +230,8 @@ void toWorksheet::viewResources(void)
   }
 }
 
-toWorksheet::toWorksheet(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toWorksheet::toWorksheet(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -247,7 +248,7 @@ toWorksheet::toWorksheet(toMain *main,toConnection &connection)
   if (!toEraseLogPixmap)
     toEraseLogPixmap=new QPixmap((const char **)eraselog_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Worksheet",main,this);
+  QToolBar *toolbar=new QToolBar("SQL Worksheet",toMainWidget(),this);
   new QToolButton(*toExecutePixmap,
 		  "Execute current statement",
 		  "Execute current statement",
@@ -412,31 +413,38 @@ void toWorksheet::refresh(void)
 
 void toWorksheet::query(const QString &str)
 {
-  QString res=Result->query(str);
 
-  toResultViewItem *item;
-  if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
-    if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-      item=new toResultViewItem(Logging,NULL);
+  try {
+    QString execSql=str;
+    list<QString> param=toParamGet::getParam(this,execSql);
+    QString res=Result->query(execSql,param);
+
+    toResultViewItem *item;
+    if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
+      if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+	item=new toResultViewItem(Logging,NULL);
+      else
+	item=new toResultViewItem(Logging,LastLogItem);
+    } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+      item=new toResultViewMLine(Logging,NULL);
     else
-      item=new toResultViewItem(Logging,LastLogItem);
-  } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-    item=new toResultViewMLine(Logging,NULL);
-  else
-    item=new toResultViewMLine(Logging,LastLogItem);
-  item->setText(0,str);
+      item=new toResultViewMLine(Logging,LastLogItem);
+    item->setText(0,str);
 
-  LastLogItem=item;
-  item->setText(1,res);
-  {
-    item->setText(2,toNow(Connection));
+    LastLogItem=item;
+    item->setText(1,res);
+    {
+      item->setText(2,toNow(Connection));
+    }
+    Logging->setCurrentItem(item);
+    Logging->ensureItemVisible(item);
+    if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
+      Connection.connection().commit();
+    else
+      Connection.setNeedCommit();
+  } catch (const QString &str) {
+    toStatusMessage(str);
   }
-  Logging->setCurrentItem(item);
-  Logging->ensureItemVisible(item);
-  if (!WorksheetTool.config(CONF_AUTO_COMMIT,"").isEmpty())
-    Connection.connection().commit();
-  else
-    Connection.setNeedCommit();
 }
 
 void NewStatement(void)
@@ -560,7 +568,9 @@ void toWorksheet::execute(bool all,bool step)
 			if (Blocks[j].CloseBlock) {
 			  toStatusMessage("Ending unstarted block");
 			  return;
-			}
+			} else if (Blocks[j].WantEnd)
+			  BlockCount++;
+
 			code=true;
 			if (Blocks[j].WantSemi)
 			  state=endCode;
@@ -579,10 +589,13 @@ void toWorksheet::execute(bool all,bool step)
 	      if (br)
 		break;
 	    }
+#if 0
 	    if (c==':') {
 	      toStatusMessage("Can't execute SQL with bind variables in SQL Worksheet");
 	      return;
-	    } else if (c==';') {
+	    } else
+#endif
+	    if (c==';') {
 	      endLine=line;
 	      endPos=i+1;
 	      state=beginning;

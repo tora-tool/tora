@@ -109,9 +109,9 @@ public:
   { }
   virtual const char *menuItem()
   { return "SGA Trace"; }
-  virtual QWidget *toolWindow(toMain *main,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    QWidget *window=new toSGATrace(main,connection);
+    QWidget *window=new toSGATrace(parent,connection);
     window->setIcon(*toolbarImage());
     return window;
   }
@@ -152,13 +152,13 @@ static QComboBox *CreateSort(QWidget *parent,const char *name)
   return sort;
 }
 
-toSGATrace::toSGATrace(toMain *main,toConnection &connection)
-  : QVBox(main->workspace(),NULL,WDestructiveClose),Connection(connection)
+toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=new QToolBar("SGA Trace",main,this);
+  QToolBar *toolbar=new QToolBar("SGA Trace",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Fetch statements in SGA",
 		  "Fetch statements in SGA",
@@ -254,9 +254,11 @@ void toSGATrace::refresh(void)
 	CurrentSort != "First Load Time")
       select.append(" DESC");
   }
-  if (!CurrentSchema.isEmpty())
-    Trace->query(select,&CurrentSchema);
-  else
+  if (!CurrentSchema.isEmpty()) {
+    list<QString> p;
+    p.insert(p.end(),CurrentSchema);
+    Trace->query(select,p);
+  } else
     Trace->query(select);
 
   Statement->refresh();

@@ -44,6 +44,37 @@ toMain *mainWidget;
 
 #define CHUNK_SIZE 63
 
+#include <stdio.h>
+
+QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
+{
+  switch (dsc.otl_var_dbtype) {
+  default:  // Try using char if all else fails
+    {
+      char buffer[dsc.dbsize*2+1]; // The *2 is for raw columns
+      q>>buffer;
+      if (q.is_null())
+	return "{null}";
+      return buffer;
+    }
+    break;
+  case otl_var_varchar_long:
+  case otl_var_raw_long:
+  case otl_var_clob:
+  case otl_var_blob:
+    {
+      char buffer[maxSize+1];
+      otl_long_string data(buffer,maxSize);
+      q>>data;
+      if (q.is_null())
+	return "{null}";
+      buffer[data.len()]=0; // Not sure if this is needed
+      return buffer;
+    }
+    break;
+  }
+}
+
 QString toSQLString(toConnection &conn,const QString &address)
 {
   QString sql;

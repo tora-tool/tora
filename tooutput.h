@@ -33,22 +33,25 @@
 
 class toConnection;
 class toMarkedText;
-class toMain;
 class QTimer;
 
 class toOutput : public QVBox {
   Q_OBJECT
 
-  toConnection &Connection;
   toMarkedText *Output;
   QTimer *Timer;
 
+protected:
+  toConnection &Connection;
 public:
-  toOutput(toMain *parent,toConnection &connection);
+  toOutput(QWidget *parent,toConnection &connection,bool enabled=true);
   virtual ~toOutput();
+  void insertLine(const QString &str)
+  { Output->insertLine(str); }
 public slots:
   void clear(void);
-  void refresh(void);
+  virtual void refresh(void);
+  virtual void disable(bool);
   void changeRefresh(const QString &str);
 };
 

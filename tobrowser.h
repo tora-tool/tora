@@ -32,8 +32,6 @@
 #include <qvbox.h>
 #include <map>
 
-#include "tomain.h"
-
 class QComboBox;
 class QTabWidget;
 class toResult;
@@ -55,7 +53,7 @@ class toBrowser : public QVBox {
   map<QString,toResultView *> Map;
   map<QString,toResult *> SecondMap;
 public:
-  toBrowser(toMain *parent,toConnection &connection);
+  toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
 
 public slots:
