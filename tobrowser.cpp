@@ -272,7 +272,6 @@ public:
 #define TAB_VIEW_DATA		"ViewData"
 #define TAB_VIEW_GRANTS		"ViewGrants"
 #define TAB_VIEW_DEPEND		"ViewDepend"
-#define TAB_VIEW_COMMENT	"ViewComment"
 #define TAB_VIEW_EXTRACT	"ViewExtract"
 
 #define TAB_SEQUENCES		"Sequences"
@@ -336,11 +335,9 @@ static toSQL SQLTableTrigger7("toBrowser:TableTrigger",
 			      QString::null,
 			      "7.3");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
-			  "SELECT b.comments \"Comment\" ,a.*\n"
-			  "  FROM ALL_TABLES a,\n"
-			  "       ALL_TAB_COMMENTS b\n"
-			  " WHERE a.OWNER = :f1<char[101]> AND a.Table_Name = :f2<char[101]>\n"
-			  "   AND b.OWNER = :f1<char[101]> AND b.Table_Name = :f2<char[101]>",
+			  "SELECT *\n"
+			  "  FROM ALL_TABLES\n"
+			  " WHERE OWNER = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			  "Display information about a table");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "show table status from :own<noquote> like :tab",
@@ -357,10 +354,6 @@ static toSQL SQLViewSQL("toBrowser:ViewSQL",
 			"  FROM ALL_Views\n"
 			" WHERE Owner = :f1<char[101]> AND View_Name = :f2<char[101]>",
 			"Display SQL of a specified view");
-static toSQL SQLViewComment("toBrowser:ViewComment",
-			    "SELECT Comments FROM ALL_TAB_COMMENTS\n"
-			    " WHERE Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			    "Display comment on a view");
 
 static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "SELECT Index_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
@@ -562,11 +555,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   QTabWidget *curr=new QTabWidget(box);
-  resultView=new toResultCols(curr,TAB_TABLE_COLUMNS);
-  curr->addTab(resultView,"&Columns");
-  SecondTab=resultView;
-  SecondMap[TAB_TABLES]=resultView;
-  SecondMap[TAB_TABLE_COLUMNS]=resultView;
+  toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);
+  curr->addTab(resultCols,"&Columns");
+  SecondTab=resultCols;
+  SecondMap[TAB_TABLES]=resultCols;
+  SecondMap[TAB_TABLE_COLUMNS]=resultCols;
 
   resultView=new toResultIndexes(curr,TAB_TABLE_INDEXES);
   curr->addTab(resultView,"&Indexes");
@@ -620,10 +613,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
-  resultView=new toResultCols(curr,TAB_VIEW_COLUMNS);
-  curr->addTab(resultView,"&Columns");
-  SecondMap[TAB_VIEWS]=resultView;
-  SecondMap[TAB_VIEW_COLUMNS]=resultView;
+  resultCols=new toResultCols(curr,TAB_VIEW_COLUMNS);
+  curr->addTab(resultCols,"&Columns");
+  SecondMap[TAB_VIEWS]=resultCols;
+  SecondMap[TAB_VIEW_COLUMNS]=resultCols;
 
   toResultField *resultField=new toResultField(curr,TAB_VIEW_SQL);
   resultField->setSQL(SQLViewSQL);
@@ -643,12 +636,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   toResultDepend *resultDepend=new toResultDepend(curr,TAB_VIEW_DEPEND);
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_VIEW_DEPEND]=resultDepend;
-
-  resultItem=new toResultItem(1,true,curr,TAB_VIEW_COMMENT);
-  resultItem->showTitle(false);
-  resultItem->setSQL(SQLViewComment);
-  curr->addTab(resultItem,"Co&mment");
-  SecondMap[TAB_VIEW_COMMENT]=resultItem;
 
   resultExtract=new toResultExtract(this,TAB_VIEW_EXTRACT);
   curr->addTab(resultExtract,"Script");

@@ -60,6 +60,8 @@
 2001-09-19: Improved performance of statistics.
 2001-09-19: Added setting tabs for connections types.
 2001-09-19: Add Oracle setting tab.
+2001-09-19: Display some object info on top of column descriptions.
+2001-09-19: Removed comments from views and tables (In column desc now) in browser.
 
 1.1.0: Released 2001-09-09
 

@@ -190,27 +190,21 @@ public:
 };
 
 toResultCols::toResultCols(QWidget *parent,const char *name)
-  : toResultView(false,true,parent,name)
+  : QVBox(parent,name)
 {
-  setReadAll(true);
-  addColumn("Column Name");
-  addColumn("Data Type");
-  addColumn("NULL");
-  addColumn("Comments");
-  setSQLName("toResultCols");
+  Title=new QLabel(this);
+  Columns=new resultCols(this);
 }
 
-static toSQL SQLComment("toResultCols:Comments",
-			"SELECT Column_name,Comments FROM All_Col_Comments\n"
-			" WHERE Owner = :f1<char[100]>\n"
-			"   AND Table_Name = :f2<char[100]>",
-			"Display column comments");
+static toSQL SQLTableComment("toResultCols:TableComments",
+			     "SELECT Comments FROM All_Tab_Comments\n"
+			     " WHERE Owner = :f1<char[100]>\n"
+			     "   AND Table_Name = :f2<char[100]>",
+			     "Display column comments");
 
 void toResultCols::query(const QString &,const toQList &param)
 {
-  setParams(param);
-  if (!handled())
-    return;
+  toQList subp;
 
   toConnection &conn=connection();
 
@@ -229,8 +223,12 @@ void toResultCols::query(const QString &,const toQList &param)
     TableName=(*cp);
   } else {
     try {
+      sql=QString::null;
       const toConnection::tableName &name=conn.realName(Owner);
-      sql=conn.quote(name.Owner);
+      if (!name.Synonym.isEmpty())
+	sql=conn.quote(name.Synonym)+"</B> synonym for <B>";
+
+      sql+=conn.quote(name.Owner);
       if (!sql.isEmpty())
 	sql+=".";
       sql+=conn.quote(name.Name);
@@ -239,6 +237,74 @@ void toResultCols::query(const QString &,const toQList &param)
     } catch(...) {
     }
   }
+  if (!Owner.isEmpty())
+    toPush(subp,toQValue(Owner));
+  toPush(subp,toQValue(TableName));
+
+  Columns->query(sql,subp);
+
+  sql.prepend("<B>");
+  sql+="</B>";
+  try {
+    QString comment;
+    toQuery query(conn,SQLTableComment,Owner,TableName);
+    while(!query.eof()) {
+      if (comment)
+	comment+=" ";
+      comment+=query.readValueNull();
+    }
+    if (comment) {
+      sql+=" - ";
+      sql+=comment;
+    }
+  } TOCATCH
+  Title->setText(sql);
+}
+
+toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
+  : toResultView(false,true,parent,name)
+{
+  setReadAll(true);
+  addColumn("Column Name");
+  addColumn("Data Type");
+  addColumn("NULL");
+  addColumn("Comments");
+  setSQLName("toResultCols");
+}
+
+static toSQL SQLComment("toResultCols:Comments",
+			"SELECT Column_name,Comments FROM All_Col_Comments\n"
+			" WHERE Owner = :f1<char[100]>\n"
+			"   AND Table_Name = :f2<char[100]>",
+			"Display column comments");
+
+void toResultCols::resultCols::query(const QString &,const toQList &param)
+{
+  setParams(param);
+  if (!handled())
+    return;
+
+  toConnection &conn=connection();
+
+  QString sql;
+  QString Owner;
+  QString TableName;
+
+  toQList::iterator cp=((toQList &)param).begin();
+  if (cp!=((toQList &)param).end()) {
+    sql=conn.quote(*cp);
+    Owner=*cp;
+  }
+  cp++;
+  if (cp!=((toQList &)param).end()) {
+    sql+=".";
+    sql+=conn.quote(*cp);
+    TableName=*cp;
+  } else {
+    TableName=Owner;
+    Owner=QString::null;
+  }
+
   LastItem=NULL;
   RowNumber=0;
 
@@ -286,9 +352,4 @@ void toResultCols::query(const QString &,const toQList &param)
     }
   } TOCATCH
   updateContents();
-}
-
-bool toResultCols::canHandle(toConnection &conn)
-{
-  return true;
 }
