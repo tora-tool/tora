@@ -326,6 +326,7 @@ public slots:
   void previousError(void);
 private slots:
   void selectComplete(void);
+  void setStatusMessage(void); 
 };
 
 #endif

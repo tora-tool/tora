@@ -42,6 +42,7 @@
 #include <qstylesheet.h>
 #include <qapplication.h>
 #include <qlistbox.h>
+#include <qtimer.h>
 
 #include "tohighlightedtext.h"
 #include "toconnection.h"
@@ -250,6 +251,17 @@ toSyntaxAnalyzer::infoType toHighlightedText::lineIn(int line)
     return (*i).second;
 }
 
+void toHighlightedText::setStatusMessage(void)
+{
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  std::map<int,QString>::iterator err=Errors.find(curline);
+  if (err==Errors.end())
+    toStatusMessage("");
+  else
+    toStatusMessage((*err).second,true);
+}
+
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 {
   if (!Highlight) {
@@ -409,11 +421,11 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   if (hasFocus()) {
     if (row==curline) {
       if (err!=Errors.end())
-	toStatusMessage((*err).second,true);
+	QTimer::singleShot(1,this,SLOT(setStatusMessage(void)));
       else {
 	err=Errors.find(LastRow);
 	if (err!=Errors.end())
-	  toStatusMessage("");
+	  QTimer::singleShot(1,this,SLOT(setStatusMessage(void)));
       }
     }
 

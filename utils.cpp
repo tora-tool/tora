@@ -513,9 +513,9 @@ QString toFontToString(const QFont &fnt)
   QStringList lst;
   lst.insert(lst.end(),fnt.family());
   lst.insert(lst.end(),QString::number(fnt.pointSize()));
-  lst.insert(lst.end(),QString::number(fnt.weight()));
-  lst.insert(lst.end(),QString::number(fnt.italic()));
-  lst.insert(lst.end(),QString::number(fnt.charSet()));
+  lst.insert(lst.end(),QString::number(int(fnt.weight())));
+  lst.insert(lst.end(),QString::number(int(fnt.italic())));
+  lst.insert(lst.end(),QString::number(int(fnt.charSet())));
   return lst.join("/");
 #  endif
 #endif
