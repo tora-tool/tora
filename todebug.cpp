@@ -2460,6 +2460,8 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(*toChangeWatchPixmap,"Chan&ge Watch",this,SLOT(changeWatch(void)),
 			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Select Schema",Schema,SLOT(setFocus(void)),
+			   ALT+Key_S);
       ToolMenu->insertItem("Erase Runtime &Log",this,SLOT(clearLog(void)));
 
       toMainWidget()->menuBar()->insertItem("&Debug",ToolMenu,-1,toToolMenuIndex());

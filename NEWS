@@ -46,6 +46,7 @@
 2001-07-08: Check the autocommit in content as well.
 2001-07-08: Added an option to change the connection to that of the
 	current window when changing window.
+2001-07-08: Added key binding to select schema in debugger.
 
 0.12: Released 2001-07-01
 
