@@ -38,15 +38,9 @@
 #define __TOSGATRACE_H
 
 #include <qdialog.h>
-#include "totool.h"
 
-class QCheckBox;
-class QComboBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QTabWidget;
-class QToolButton;
+#include "totool.h"
+#include "torollbackdialogui.h"
 
 class toConnection;
 class toResultItem;
@@ -54,27 +48,20 @@ class toResultView;
 class toSGAStatement;
 class toStorageDefinition;
 
-class toRollbackDialog : public QDialog
+class toRollbackDialog : public toRollbackDialogUI
 { 
   Q_OBJECT
     
-  QTabWidget *DialogTabs;
-  QWidget *RollbackInfo;
-  QLineEdit *Name;
-  QLabel *TextLabel1;
-  QCheckBox *Public;
-  QLabel *TextLabel1_2;
-  QComboBox *Tablespace;
   toStorageDefinition *Storage;
-  QPushButton *OkButton;
 
 public:
   toRollbackDialog(toConnection &conn,QWidget *parent=0,const char *name=0);
 
-  QString getSQL(void);
+  std::list<QString> sql(void);
 
 public slots:
   void valueChanged(const QString &str);
+  void displaySQL(void); 
 };
 
 class toRollback : public toToolWidget {

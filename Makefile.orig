@@ -74,6 +74,7 @@ SOURCES=\
 	toresultstorage.cpp	        \
 	toresultview.cpp	        \
 	torollback.cpp		        \
+	torollbackdialogui.cpp	        \
 	toscript.cpp		        \
 	toscriptui.cpp		        \
 	tosearchreplace.cpp	        \
@@ -188,7 +189,9 @@ plugins/toresult.tso:\
 	objs/toresultreferences.o \
 	objs/toresultstats.o \
 	objs/toresultstorage.o
-plugins/torollback.tso:objs/torollback.o
+plugins/torollback.tso:\
+	objs/torollback.o \
+	objs/torollbackdialogui.o
 plugins/toscript.tso:\
 	objs/toscript.o \
 	objs/toscriptui.o

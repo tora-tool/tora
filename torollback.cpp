@@ -71,8 +71,10 @@
 #include "tosgastatement.h"
 #include "tohelp.h"
 #include "toconnection.h"
+#include "tomemoeditor.h"
 
 #include "torollback.moc"
+#include "torollbackdialogui.moc"
 
 #include "icons/torollback.xpm"
 #include "icons/trash.xpm"
@@ -174,36 +176,9 @@ static toSQL SQLTablespace("toRollbackDialog:TablespaceName",
 			   "Get a list of tablespace names, should only have one column and same binds");
 
 toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,const char* name)
-  : QDialog(parent,name,true)
+  : toRollbackDialogUI(parent,name,true)
 {
   toHelp::connectDialog(this);
-  if (!name)
-    setName("Form1");
-  resize(470,500); 
-  setMinimumSize(QSize(470,500));
-  setMaximumSize(QSize(470,500));
-  setCaption(tr("Form1"));
-  
-  DialogTabs=new QTabWidget(this,"DialogTabs");
-  DialogTabs->setGeometry(QRect(10,10,330,480)); 
-
-  RollbackInfo=new QWidget(DialogTabs,"RollbackInfo");
-  
-  Name=new QLineEdit(RollbackInfo,"Name");
-  Name->setGeometry(QRect(10,30,310,23)); 
-  Name->setFocus();
-  connect(Name,SIGNAL(textChanged(const QString &)),
-	  this,SLOT(valueChanged(const QString &)));
-  
-  TextLabel1=new QLabel(RollbackInfo,"TextLabel1");
-  TextLabel1->setGeometry(QRect(10,10,310,16)); 
-  TextLabel1->setText(tr("&Name"));
-  QToolTip::add(TextLabel1,tr("Name of this rollback segment."));
-  
-  Tablespace=new QComboBox(false,RollbackInfo,"Tablespace");
-  Tablespace->setGeometry(QRect(10,90,310,27)); 
-  Tablespace->setEditable(false);
-  DialogTabs->addTab(RollbackInfo,tr("Rollback Segment"));
 
   try {
     toQuery q(Connection,SQLTablespace);
@@ -214,43 +189,15 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
   }
   connect(Tablespace,SIGNAL(textChanged(const QString &)),
 	  this,SLOT(valueChanged(const QString &)));
-  
-  Public=new QCheckBox(RollbackInfo,"CheckBox1");
-  Public->setGeometry(QRect(10,130,310,19)); 
-  Public->setText(tr("&Public"));
-  Public->setChecked(true);
-  QToolTip::add(Public,tr("If this should be a publicly available rollback segment."));
-  
-  TextLabel1_2=new QLabel(RollbackInfo,"TextLabel1_2");
-  TextLabel1_2->setGeometry(QRect(10,70,310,16)); 
-  TextLabel1_2->setText(tr("&Tablespace"));
-  QToolTip::add(TextLabel1_2,tr("Name of this rollback segment."));
-  
-  // buddies
-  TextLabel1->setBuddy(Name);
-  TextLabel1_2->setBuddy(Tablespace);
 
   Storage=new toStorageDefinition(DialogTabs);
   Storage->forRollback(true);
   DialogTabs->addTab(Storage,"Storage");
 
-  OkButton=new QPushButton(this,"OkButton");
-  OkButton->move(350,40); 
-  OkButton->setText(tr("&OK"));
-  OkButton->setDefault(true);
-
-  QPushButton *CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(350,90); 
-  CancelButton->setText(tr("Cancel" ));
-  CancelButton->setDefault(false);
-  
-  connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
-  connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
-
   OkButton->setEnabled(false);
 }
 
-QString toRollbackDialog::getSQL(void)
+std::list<QString> toRollbackDialog::sql(void)
 {
   QString str("CREATE ");
   if (Public->isChecked())
@@ -265,7 +212,24 @@ QString toRollbackDialog::getSQL(void)
     str+=" ";
     str+=*i;
   }
-  return str;
+  std::list<QString> ret;
+  toPush(ret,str);
+  return ret;
+}
+
+void toRollbackDialog::displaySQL(void)
+{
+  std::list<QString> lines=sql();
+  QString res;
+  for(std::list<QString>::iterator i=lines.begin();i!=lines.end();i++) {
+    res+=*i;
+    res+=";\n";
+  }
+  if (res.length()>0) {
+    toMemoEditor memo(this,res,-1,-1,true,true);
+    memo.exec();
+  } else
+    toStatusMessage("No changes made");
 }
 
 void toRollbackDialog::valueChanged(const QString &str)
@@ -775,7 +739,9 @@ void toRollback::addSegment(void)
   toRollbackDialog newSegment(connection(),this);
   if (newSegment.exec()) {
     try {
-      connection().execute(newSegment.getSQL());
+      std::list<QString> sql=newSegment.sql();
+      for(std::list<QString>::iterator i=sql.begin();i!=sql.end();i++)
+	connection().execute(*i);
       refresh();
     } TOCATCH
   }
