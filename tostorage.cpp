@@ -152,17 +152,28 @@ toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags
 
 void toStorageTablespace::permanentToggle(bool val)
 {
-  if (!val)
-    Dictionary->setChecked(true);
-  LocalAuto->setEnabled(val);
-  LocalSelect->setEnabled(val);
+  try {
+    if (toCurrentConnection(this).version()>="8") {
+      emit tempFile(!val&&!Dictionary->isChecked());
+      return;
+    }
+    if (!val)
+      Dictionary->setChecked(true);
+    LocalAuto->setEnabled(val);
+    LocalSelect->setEnabled(val);
+  } TOCATCH
 }
 
 void toStorageTablespace::dictionaryToggle(bool val)
 {
-  Permanent->setEnabled(val);
-  DefaultStorage->setEnabled(val);
-  emit allowStorage(val);
+  try {
+    if (toCurrentConnection(this).version()<"8")
+      Permanent->setEnabled(val);
+    else
+      emit tempFile(!Permanent->isChecked()&&!val);
+    DefaultStorage->setEnabled(val);
+    emit allowStorage(val);
+  } TOCATCH
 }
 
 void toStorageTablespace::allowDefault(bool val)
@@ -227,8 +238,8 @@ std::list<QString> toStorageTablespace::sql()
   return ret;
 }
 
-toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* name,WFlags fl)
-  : toStorageDatafileUI(parent,name,fl)
+toStorageDatafile::toStorageDatafile(bool temp,bool dispName,QWidget* parent,const char* name,WFlags fl)
+  : toStorageDatafileUI(parent,name,fl),Tempfile(temp)
 {
   Modify=false;
   InitialSizeOrig=NextSizeOrig=MaximumSizeOrig=0;
@@ -253,7 +264,11 @@ std::list<QString> toStorageDatafile::sql(void)
 {
   std::list<QString> ret;
   if (!Modify) {
-    QString str("'");
+    QString str;
+    if (Tempfile)
+      str="TEMPFILE '";
+    else
+      str="DATAFILE '";
     QString filename(Filename->text());
     filename.replace(QRegExp("'"),"''");
     str.append(filename);
@@ -282,13 +297,19 @@ std::list<QString> toStorageDatafile::sql(void)
       toPush(ret,str);
     }
     if (InitialSize->value()!=InitialSizeOrig) {
-      str="DATAFILE '";
+      if (Tempfile)
+	str="TEMPFILE '";
+      else
+	str="DATAFILE '";
       str+=Filename->text();
       str+="' RESIZE ";
       str+=InitialSize->sizeString();
       toPush(ret,str);
     }
-    str="DATAFILE '";
+    if (Tempfile)
+      str="TEMPFILE '";
+    else
+      str="DATAFILE '";
     str+=Filename->text();
     str+="' AUTOEXTEND ";
     if (AutoExtend->isChecked()) {
@@ -348,35 +369,6 @@ void toStorageDialog::Setup(void)
   toHelp::connectDialog(this);
 }
 
-toStorageDialog::toStorageDialog(const QString &tablespace,QWidget *parent)
-  : toStorageDialogUI(parent,"Storage Dialog",true)
-{
-  Setup();
-  OkButton->setEnabled(false);
-
-  if (!tablespace.isNull()) {
-    Mode=NewDatafile;
-    TablespaceOrig=tablespace;
-    setCaption("Add datafile");
-    Tablespace=NULL;
-    Default=NULL;
-    Datafile=new toStorageDatafile(false,DialogTab);
-    DialogTab->addTab(Datafile,"Datafile");
-  } else {
-    Mode=NewTablespace;
-    setCaption("Add tablespace");
-    Datafile=new toStorageDatafile(true,DialogTab);
-    DialogTab->addTab(Datafile,"Datafile");
-    Tablespace=new toStorageTablespace(DialogTab);
-    DialogTab->addTab(Tablespace,"Tablespace");
-    Default=new toStorageDefinition(DialogTab);
-    DialogTab->addTab(Default,"Default Storage");
-    Default->setEnabled(false);
-    connect(Tablespace,SIGNAL(allowStorage(bool)),this,SLOT(allowStorage(bool)));
-  }
-  connect(Datafile,SIGNAL(validContent(bool)),this,SLOT(validContent(bool)));
-}
-
 static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
 			       "SELECT min_extlen/1024,\n"
 			       "       extent_management,\n"
@@ -392,6 +384,48 @@ static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
 			       " WHERE tablespace_name = :nam<char[70]>",
 			       "Get information about a tablespace for the modify dialog, "
 			       "must have same columns and bindings");
+
+toStorageDialog::toStorageDialog(const QString &tablespace,QWidget *parent)
+  : toStorageDialogUI(parent,"Storage Dialog",true)
+{
+  Setup();
+  OkButton->setEnabled(false);
+
+  if (!tablespace.isNull()) {
+    toQList result;
+    try {
+      result=toQuery::readQuery(toCurrentConnection(this),
+				SQLTablespaceInfo,tablespace);
+      if (result.size()!=10)
+	throw QString("Invalid response from query");
+    } TOCATCH
+
+    toShift(result);
+    QString dict=toShift(result);
+    QString temp=toShift(result);
+
+    Mode=NewDatafile;
+    TablespaceOrig=tablespace;
+    setCaption("Add datafile");
+    Tablespace=NULL;
+    Default=NULL;
+    Datafile=new toStorageDatafile(dict!="DICTIONARY"&&temp!="PERMANENT",false,DialogTab);
+    DialogTab->addTab(Datafile,"Datafile");
+  } else {
+    Mode=NewTablespace;
+    setCaption("Add tablespace");
+    Datafile=new toStorageDatafile(false,true,DialogTab);
+    DialogTab->addTab(Datafile,"Datafile");
+    Tablespace=new toStorageTablespace(DialogTab);
+    DialogTab->addTab(Tablespace,"Tablespace");
+    Default=new toStorageDefinition(DialogTab);
+    DialogTab->addTab(Default,"Default Storage");
+    Default->setEnabled(false);
+    connect(Tablespace,SIGNAL(allowStorage(bool)),this,SLOT(allowStorage(bool)));
+    connect(Tablespace,SIGNAL(tempFile(bool)),Datafile,SLOT(setTempFile(bool)));
+  }
+  connect(Datafile,SIGNAL(validContent(bool)),this,SLOT(validContent(bool)));
+}
 
 toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QWidget *parent)
   : toStorageDialogUI(parent,"Storage Dialog",true)
@@ -456,13 +490,26 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
 {
   Setup();
   Mode=ModifyDatafile;
-  Datafile=new toStorageDatafile(true,DialogTab);
+
+  toQList result;
+  try {
+    result=toQuery::readQuery(toCurrentConnection(this),
+			      SQLTablespaceInfo,tablespace);
+    if (result.size()!=10)
+      throw QString("Invalid response from query");
+  } TOCATCH
+
+  toShift(result);
+  QString dict=toShift(result);
+  QString temp=toShift(result);
+
+  Datafile=new toStorageDatafile(dict!="DICTIONARY"&&temp!="PERMANENT",true,DialogTab);
   DialogTab->addTab(Datafile,"Datafile");
   setCaption("Modify datafile");
   Tablespace=NULL;
   Default=NULL;
 
-  toQList result=toQuery::readQuery(conn,SQLDatafileInfo,tablespace,filename);
+  result=toQuery::readQuery(conn,SQLDatafileInfo,tablespace,filename);
 
   if (result.size()!=4)
     throw QString("Invalid response from query (Wanted 4, got %1 entries").arg(result.size());
@@ -556,7 +603,7 @@ std::list<QString> toStorageDialog::sql(void)
     {
       QString start="ALTER TABLESPACE \"";
       start+=TablespaceOrig;
-      start+="\" ADD DATAFILE";
+      start+="\" ADD ";
       std::list<QString> lst=Datafile->sql();
       for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
 	start+=" ";
@@ -569,7 +616,7 @@ std::list<QString> toStorageDialog::sql(void)
     {
       QString start="CREATE TABLESPACE \"";
       start+=Datafile->getName().upper();
-      start+="\" DATAFILE ";
+      start+="\" ";
       std::list<QString> lst=Datafile->sql();
       {
 	for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {

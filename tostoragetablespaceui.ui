@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>592</width>
             <height>480</height>
         </rect>
     </property>
@@ -77,7 +77,7 @@
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Permanent</cstring>
+                        <cstring>Online</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
@@ -96,7 +96,7 @@
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Online</cstring>
+                        <cstring>Permanent</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
@@ -267,7 +267,7 @@
         <slot>allowDefault(bool)</slot>
     </connection>
     <connection>
-        <sender>Online</sender>
+        <sender>Permanent</sender>
         <signal>toggled(bool)</signal>
         <receiver>toStorageTablespaceUI</receiver>
         <slot>permanentToggle(bool)</slot>

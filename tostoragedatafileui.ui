@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>588</width>
+            <width>580</width>
             <height>480</height>
         </rect>
     </property>
@@ -83,7 +83,35 @@
                 <cstring>Filename</cstring>
             </property>
         </widget>
-        <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
+            <class>toFilesize</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>InitialSize</cstring>
+            </property>
+        </widget>
+        <spacer row="7"  column="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="6"  column="0"  rowspan="1"  colspan="3" >
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -152,34 +180,6 @@
                 </widget>
             </grid>
         </widget>
-        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
-            <class>toFilesize</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>InitialSize</cstring>
-            </property>
-        </widget>
-        <spacer row="6"  column="1" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer1</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
     </grid>
 </widget>
 <customwidgets>

@@ -79,6 +79,7 @@ public:
   friend class toStorageDialog;
 signals:
   void allowStorage(bool);
+  void tempFile(bool);
 
 public slots:
   virtual void permanentToggle(bool);
@@ -96,12 +97,14 @@ class toStorageDatafile : public toStorageDatafileUI
   int NextSizeOrig;
   int MaximumSizeOrig;
   QString FilenameOrig;
+  bool Tempfile;
 
 public:
-  toStorageDatafile(bool dispName,QWidget *parent = 0,const char *name=0,WFlags fl=0);
+  toStorageDatafile(bool tempFile,bool dispName,
+		    QWidget *parent = 0,const char *name=0,WFlags fl=0);
 
   QString getName(void);
-  std::list<QString> sql(void);
+  std::list<QString> sql();
 
   friend class toStorageDialog;
 signals:
@@ -110,6 +113,9 @@ signals:
 public slots:
   virtual void browseFile(void);
   virtual void autoExtend(bool);
+  virtual void setTempFile(bool temp)
+  { Tempfile=temp; }
+
   virtual void maximumSize(bool);
   virtual void valueChanged(const QString &);
 };
