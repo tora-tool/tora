@@ -32,6 +32,47 @@
  *
  ****************************************************************************/
 
-#include "toproject.h"
+#ifndef TOPROJECT_H
+#define TOPROJECT_H
 
-static toProjectTemplate ProjectTemplate;
+#include "totemplate.h"
+
+class toProjectTemplateItem : public toTemplateItem {
+  QString Filename;
+public:
+  toProjectTemplateItem(QListViewItem *item,QString name);
+  toProjectTemplateItem(QListView *item,QString name=QString::null);
+
+  virtual void doubleClick(void);
+
+  virtual QWidget *selectedWidget(QWidget *parent);
+};
+
+class toProjectTemplate : public QObject, public toTemplateProvider {
+  Q_OBJECT
+
+  toProjectTemplateItem *Root;
+  QString Filename;
+public:
+  toProjectTemplate(void)
+    : QObject(NULL,"projecttemplate"),toTemplateProvider("project")
+  { }
+
+  virtual void insertItems(QListView *parent,QToolBar *toolbar);
+  virtual void removeItems(QListViewItem *item);
+};
+
+class toProject : public toToolWidget {
+  Q_OBJECT
+public:
+  toProject(QListViewItem *top,QWidget *parnet);
+
+public slots:
+  void addFile(void);
+  void delFile(void); 
+  void newProject(void);
+  void saveProject(void);
+  void generateSQL(void);
+};
+
+#endif
