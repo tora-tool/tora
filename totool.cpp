@@ -342,19 +342,20 @@ void toTool::loadConfig(void)
     conf=getenv("HOME");
   }
   conf.append(CONFIG_FILE);
-  if (!loadMap(conf,*Configuration))
-    loadMap(DEF_CONFIG_FILE,*Configuration);
+  try {
+    loadMap(conf,*Configuration);
+  } catch(...) {
+    try {
+      loadMap(DEF_CONFIG_FILE,*Configuration);
+    } catch(...) {
+    }
+  }
 #endif
 }
 
 bool toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
 {
-  QCString data;
-  try {
-    data=toReadFile(filename);
-  } catch (...) {
-    return false;
-  }
+  QCString data=toReadFile(filename);
 
   int pos=0;
   int bol=0;

@@ -342,7 +342,9 @@ public:
       try {
 	QString file=item->text(1);
 	std::map<QString,QString> pairs;
-	if (!toTool::loadMap(file,pairs)) {
+	try {
+	  toTool::loadMap(file,pairs);
+	} catch(...) {
 	  if (TOMessageBox::warning(this,
 				    "Couldn't open file.",
 				    "Couldn't open file. Start on new file?",
@@ -590,32 +592,34 @@ void toTextTemplate::insertItems(QListView *parent,QToolBar *)
 void toTextTemplate::addFile(QListView *parent,const QString &root,const QString &file)
 {
   std::map<QString,QString> pairs;
-  toTool::loadMap(file,pairs);
-  toTemplateItem *last=new toTemplateItem(*this,parent,root);
-  int lastLevel=0;
-  QStringList lstCtx;
-  for(std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
-    QStringList ctx=QStringList::split(":",(*i).first);
-    if (last) {
-      while(last&&lastLevel>=int(ctx.count())) {
-	last=dynamic_cast<toTemplateItem *>(last->parent());
-	lastLevel--;
+  try {
+    toTool::loadMap(file,pairs);
+    toTemplateItem *last=new toTemplateItem(*this,parent,root);
+    int lastLevel=0;
+    QStringList lstCtx;
+    for(std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+      QStringList ctx=QStringList::split(":",(*i).first);
+      if (last) {
+	while(last&&lastLevel>=int(ctx.count())) {
+	  last=dynamic_cast<toTemplateItem *>(last->parent());
+	  lastLevel--;
+	}
+	while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	  last=dynamic_cast<toTemplateItem *>(last->parent());
+	  lastLevel--;
+	}
       }
-      while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
-	last=dynamic_cast<toTemplateItem *>(last->parent());
-	lastLevel--;
+      if (lastLevel<0)
+	throw QString("Internal error, lastLevel < 0");
+      while(lastLevel<int(ctx.count())-1) {
+	last=new toTemplateItem(last,ctx[lastLevel]);
+	lastLevel++;
       }
-    }
-    if (lastLevel<0)
-      throw QString("Internal error, lastLevel < 0");
-    while(lastLevel<int(ctx.count())-1) {
-      last=new toTemplateItem(last,ctx[lastLevel]);
+      last=new toTemplateText(last,ctx[lastLevel],(*i).second);
+      lstCtx=ctx;
       lastLevel++;
     }
-    last=new toTemplateText(last,ctx[lastLevel],(*i).second);
-    lstCtx=ctx;
-    lastLevel++;
-  }
+  } TOCATCH
 }
 
 toTemplateSQL::toTemplateSQL(toConnection &conn,toTemplateItem *parent,

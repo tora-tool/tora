@@ -473,8 +473,8 @@ toMain::toMain()
   if (!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty()) {
     try {
       std::map<QString,QString> session;
-      if (toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session))
-	importData(session,"TOra");
+      toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session);
+      importData(session,"TOra");
     } TOCATCH
   }
 
@@ -857,8 +857,8 @@ void toMain::commandCallback(int cmd)
     case TO_FILE_LAST_SESSION:
       try {
 	std::map<QString,QString> session;
-	if (toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session))
-	  importData(session,"TOra");
+	toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session);
+	importData(session,"TOra");
       } TOCATCH
       break;
     case TO_FILE_CLOSE_SESSION:
@@ -1404,8 +1404,8 @@ void toMain::loadSession(void)
   if (!filename.isEmpty()) {
     try {
       std::map<QString,QString> session;
-      if (toTool::loadMap(filename,session))
-	importData(session,"TOra");
+      toTool::loadMap(filename,session);
+      importData(session,"TOra");
     } TOCATCH
   }
 }

@@ -276,14 +276,14 @@ public:
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool loadMap(const QString &filename,std::map<QString,QString> &map);
+  static void loadMap(const QString &filename,std::map<QString,QString> &map);
   /**
    * Save a string to string map to file.
    * @see loadMap
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool saveMap(const QString &filename,std::map<QString,QString> &map);
+  static void saveMap(const QString &filename,std::map<QString,QString> &map);
 public slots:
   /**
    * Create a window of the current tool. This function sets up a toolwindow for

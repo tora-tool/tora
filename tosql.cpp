@@ -241,12 +241,7 @@ bool toSQL::saveSQL(const QString &filename,bool all)
 void toSQL::loadSQL(const QString &filename)
 {
   allocCheck();
-  QCString data;
-  try {
-    data=toReadFile(filename);
-  } catch(...) {
-    return;
-  }
+  QCString data=toReadFile(filename);
   
   int size=data.length();
   int pos=0;

@@ -248,8 +248,8 @@ void toWorksheetStatistic::load(void)
   if (!filename.isEmpty()) {
     try {
       std::map<QString,QString> ret;
-      if (toTool::loadMap(filename,ret))
-	addStatistics(ret);
+      toTool::loadMap(filename,ret);
+      addStatistics(ret);
     } TOCATCH
   }
 }

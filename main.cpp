@@ -146,7 +146,10 @@ int main(int argc,char **argv)
     }
 #endif
 
-    toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+    try {
+      toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
+    } catch(...) {
+    }
     toConnectionProvider::initializeAll();
 
     {
