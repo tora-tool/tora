@@ -52,10 +52,10 @@ static toSQL SQLVersion("toQSqlConnection:Version",
 			"MySQL");
 
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
-			"SELECT SUBSTR(version(), 12, 5) AS version",
-			QString::null,
-			"7.1",
-			"PostgreSQL");
+			     "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
+			     QString::null,
+			     "7.1",
+			     "PostgreSQL");
 
 static toSQL SQLListObjects("toQSqlConnection:ListObjects",
 			    "show tables",
