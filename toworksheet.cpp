@@ -527,8 +527,6 @@ bool toWorksheet::describe(const QString &query)
   }
 }
 
-#include <stdio.h>
-
 void toWorksheet::query(const QString &str,bool direct)
 {
   if (Started>0&&!QueryString.isEmpty())
@@ -594,7 +592,6 @@ void toWorksheet::query(const QString &str,bool direct)
 	}
       } else {
 	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
-	printf("(%d):%s\n",strlen(execSql.utf8()),(const char *)execSql.utf8());
 	Result->query(execSql,param);
 	time(&Started);
 	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
