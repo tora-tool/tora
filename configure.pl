@@ -67,6 +67,7 @@ my $ForceTarget=0;
 my $Perl=`which perl`;
 chomp $Perl;
 my $Linux;
+my $Solaris;
 my $KDEApplication;
 my $KDEInclude;
 my $KDELibs;
@@ -507,6 +508,9 @@ __TEMP__
 
     if (`uname`=~/linux/i) {
 	$Linux=1;
+    } elsif (`uname`=~/solaris/i) {
+	$NoRPath=1;
+	$Libs.=" -lrt";
     } else {
 	$NoRPath=1;
     }
