@@ -152,8 +152,9 @@ public:
     virtual void setLine(int line)
     { Line=line; }
     /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
      */
-    virtual QString remaining(void) = 0;
+    virtual QString remaining(bool eol) = 0;
   };
 
   /** Tokenizer class which gets tokens from a string.
@@ -170,9 +171,9 @@ public:
      */
     virtual QString getToken(bool forward=true,bool comment=false);
     /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
      */
-    virtual QString remaining(void)
-    { return String.mid(offset(),String.length()-offset()); }
+    virtual QString remaining(bool eol);
   };
 
   /** Tokenizer class which gets tokens from an editor.
@@ -189,8 +190,9 @@ public:
      */
     virtual QString getToken(bool forward=true,bool comment=false);
     /** Get the data remaining after the current position.
+     * @param eol If true end of line, otherwise end of tokenizer.
      */
-    virtual QString remaining(void);
+    virtual QString remaining(bool eol);
   };
 
   /** Parse a string.
@@ -217,6 +219,30 @@ public:
    */
   static std::list<statement> parse(const QString &str,toConnection &conn)
   { return parse(str); }
+
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param tokens Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static std::list<statement> parseStatement(tokenizer &tokens);
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param str Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static std::list<statement> parseStatement(const QString &str)
+  { stringTokenizer tokens(str); return parseStatement(tokens); }
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param tokens Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static std::list<statement> parseStatement(tokenizer &tokens,toConnection &conn)
+  { return parseStatement(tokens); }
+  /** Get one statement (or block) from the root of an editor or string.
+   * @param str Tokenizer to get tokens from.
+   * @param conn Connection to determine SQL dialog. (For future use)
+   */
+  static std::list<statement> parseStatement(const QString &str,toConnection &conn)
+  { stringTokenizer tokens(str); return parseStatement(tokens,conn); }
 
   /** Indent a string.
    * @param str String to indent.

@@ -949,8 +949,15 @@ static void NewStatement(void)
     Blocks[i].Pos=0;
 }
 
+static QString StripComment(const QString)
+{
+
+}
+
 void toWorksheet::execute(bool all,bool step)
 {
+  
+
   bool sqlparse;
   bool code=true;
   bool beforeCode=false;

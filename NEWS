@@ -1,6 +1,9 @@
 1.3.5:
 
-2002-04-14: New tokenizer classes for the SQL parser.
+2002-04-15: Made SQL parser handle SQL*Plus specific commands correctly (End on newline, not ;)
+2002-04-15: Added end of line functionality to tokenizer.
+2002-04-15: Added new function to parse one statement from a tokenizer.
+2002-04-15: New tokenizer classes for the SQL parser, should make it much more adaptable to other uses.
 2002-04-14: Fixed problem with missing style.
 2002-04-14: Fixed problem with describing insert statements.
 2002-04-14: Another stab at fixing extraction of sources in oracle extraction.
