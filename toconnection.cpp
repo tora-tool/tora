@@ -85,9 +85,9 @@ void toConnectionProvider::removeProvider(const QCString &provider)
 
 toConnectionProvider::~toConnectionProvider()
 {
-  if (!Provider.isEmpty())
-    removeProvider(Provider);
   try {
+    if (!Provider.isEmpty())
+      removeProvider(Provider);
     std::map<QCString,toConnectionProvider *>::iterator i=Types->find(Provider);
     if (i!=Types->end())
       Types->erase(i);
