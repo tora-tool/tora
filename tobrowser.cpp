@@ -676,13 +676,13 @@ void toBrowser::refresh(void)
 		     toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
 		     otlConnect());
     for(int i=0;!users.eof();i++) {
-      char buffer[31];
+      char buffer[100];
       users>>buffer;
       Schema->insertItem(QString::fromUtf8(buffer));
       if (selected==QString::fromUtf8(buffer))
 	Schema->setCurrentItem(i);
     }
-    if (!Schema->currentText().isEmpty()) {
+    if (!Schema->currentText().isEmpty()&&FirstTab) {
       QListViewItem *item=FirstTab->currentItem();
       QString str;
       if (item)
