@@ -49,6 +49,8 @@
 #include "tosql.h"
 #include "totool.h"
 
+#include <stdio.h>
+
 #include <qcheckbox.h>
 #include <qfile.h>
 #include <qlineedit.h>
@@ -232,7 +234,10 @@ public:
 	      otl_long_string sink(10000);
 	      while(!lob.eof())
 		lob>>sink;
-	      toStatusMessage("Data exists past length of LOB",false,false);
+	      if (toThread::mainThread())
+		toStatusMessage("Data exists past length of LOB");
+	      else
+		printf("Data exists past length of LOB in thread\n");
 	    }
 	    buffer[len]=0; // Not sure if this is needed
 	    QString buf(QString::fromUtf8(buffer));

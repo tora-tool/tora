@@ -1,5 +1,7 @@
 1.3.3:
 
+2002-01-21: Some fixes to errors when reading LOB:s.
+2002-01-21: Added email alerting to chart manager.
 2002-01-21: Added toSMTP class to send email alerts.
 2002-01-21: Fixed KDE installation into the KMenu.
 2002-01-20: Fixed KDE3 linkage problem in configure.
