@@ -1612,6 +1612,7 @@ int toDebug::continueExecution(int stopon)
 
 void toDebug::executeInTarget(const QString &str,toQList &params)
 {
+  toBusy busy;
   {
     toLocker lock(Lock);
     TargetSQL=toDeepCopy(str);

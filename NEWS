@@ -87,6 +87,10 @@
 2001-08-23: Renamed toQuery::queryValue to toQValue.
 2001-08-23: Did some include file dependency cleanups.
 2001-08-23: Fixed problem with public rollback. (Thanx Joachim Zetzsche)
+2001-08-24: Read nulls in explain plan.
+2001-08-24: Busy while execute in targe in debugger.
+2001-08-24: Fixed problem with extracting package bodies.
+2001-08-24: Made rethrow shorter in toExtract.
 
 0.14: Released 2001-08-02
 

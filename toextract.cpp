@@ -1532,7 +1532,7 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
   if (!Code)
     return "";
 
-  static QRegExp StripType("^[^ \t]+[ \t]+");
+  QRegExp StripType(QString("^%1\\s+%2").arg(type).arg(name),false);
   toQuery inf(Connection,SQLDisplaySource,type,name,owner);
   if (inf.eof())
     throw QString("Couldn't find source for of %1.%2").arg(owner).arg(name);
@@ -1543,23 +1543,20 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
       arg(type).
       arg(schema).
       arg(name.lower());
-  if (!Describe)
-    ret+="CREATE OR REPLACE ";
   bool first=true;
   while(!inf.eof()) {
     QString line=inf.readValue();
     if (first&&!Describe) {
-      unsigned int i=0;
-      for (i=0;i<line.length();i++) {
-	if (line.at(i).isSpace())
-	  break;
-	ret+=line.at(i);
-      }
-      while(i<line.length()&&line.at(i).isSpace())
-	i++;
-      line=line.right(line.length()-i);
-      ret+=" ";
-      ret+=schema;
+      int len;
+      int pos=StripType.match(line,0,&len);
+      if (pos!=0)
+	throw QString("Displaying source of wrong type for %1. Got %2 expected 0.")
+	  .arg(type).arg(pos);
+      QString tmp=QString("CREATE OR REPLACE %1 %2%3")
+	.arg(type).arg(schema).arg(name);
+      tmp+=line.mid(len);
+      line=tmp;
+
       first=false;
     }
     ret+=line;
@@ -6120,16 +6117,12 @@ QString toExtract::create(std::list<QString> &objects)
 
 void toExtract::rethrow(const QString &what,const QString &object,const QString &exc)
 {
-  throw QString("Encountered error in toExtract\n\n"
+  throw QString("Error in toExtract\n"
 		"Operation:      %1\n"
 		"Object:         %2\n"
-		"TOra Version:   %3\n"
-		"Oracle Version: %4\n"
-		"Error:          %5").
+		"Error:          %3").
     arg(what).
     arg(object).
-    arg(TOVERSION).
-    arg(Connection.version()).
     arg(exc);
 }
 

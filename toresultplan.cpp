@@ -100,15 +100,15 @@ void toResultPlan::query(const QString &sql,
       QListViewItem *lastTop=NULL;
       toQuery query(conn,toSQL::string(SQLViewPlan,conn).arg(planTable).arg(ident));
       while(!query.eof()) {
-	QString id=query.readValue();
-	QString parentid=query.readValue();
-	QString operation=query.readValue();
-	QString options=query.readValue();
-	QString object=query.readValue();
-	QString optimizer=query.readValue();
-	QString cost=query.readValue();
-	QString bytes=query.readValue();
-	QString cardinality=query.readValue();
+	QString id=query.readValueNull();
+	QString parentid=query.readValueNull();
+	QString operation=query.readValueNull();
+	QString options=query.readValueNull();
+	QString object=query.readValueNull();
+	QString optimizer=query.readValueNull();
+	QString cost=query.readValueNull();
+	QString bytes=query.readValueNull();
+	QString cardinality=query.readValueNull();
 
 	QListViewItem *item;
 	if (parentid&&parents[parentid]) {
