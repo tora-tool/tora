@@ -52,6 +52,7 @@ Extended functionality:
 * Proxy connection provider.
 * QSql connection provider.
 * Store worksheet statistic on save session.
+* Use new toSQLParse for tree structure in toDebug.
 
 New tools:
 

@@ -75,8 +75,8 @@ void printStatement(toSQLParse::statement &stat,int level)
       printf(" ");
     printf("Comment:%s\n",(const char *)stat.Comment);
   }
-  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
-      i!=stat.SubTokens.end();
+  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
+      i!=stat.SubTokens->end();
       i++)
     printStatement(*i,level+1);
 }
@@ -122,8 +122,8 @@ having count(a.TspActOprID) > 0;
  */
 SELECT /*+
 FULL(a)
-*/ a.TskCod TskCod, -- Test comment
-       a.CreEdt CreEdt,
+*/ a.TskCod TskCod -- Test comment
+      ,a.CreEdt CreEdt,
        a.TspActOprID /* One comment OprID */ , -- Another comment
        COUNT(1) Tot,
        COUNT(a.TspActOprID) Lft,
@@ -131,7 +131,8 @@ FULL(a)
        SUM(b.FinAmt) FinAmt,
        TraCod
   FROM EssTsk a,EssTra b
- WHERE DECODE(a.TspActOprID,NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
+ WHERE DECODE(a.TspActOprID, --Hello?
+NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
    AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
  GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
 HAVING COUNT(a.TspActOprID) > 0;
@@ -620,7 +621,7 @@ int toSQLParse::countIndent(const QString &txt,int &chars)
 toSQLParse::settings toSQLParse::Settings={true,
 					   false,
 					   false,
-					   false,
+					   true,
 					   true,
 					   true,
 					   true,
@@ -795,8 +796,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if (Settings.CommaBefore) {
 	  ret+=IndentComment(Settings.CommentColumn,current,comment,true);
 	  comment=QString::null;
-	  ret+=indentString(level+maxlev-2);
-	  ret+=", ";
+	  ret+=indentString(level+maxlev-(Settings.OperatorSpace?2:1));
+	  ret+=",";
 	} else {
 	  ret+=",";
 	  ret+=IndentComment(Settings.CommentColumn,current+1,comment,true);
@@ -864,13 +865,15 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  any=false;
 	  extra=0;
 	} else {
-	  if (ret.length()>0&&(Settings.OperatorSpace||((toIsIdent(t[0])||
-							 t[0]=='\"')&&
-							(toIsIdent(ret.at(ret.length()-1))||
-							 ret.at(ret.length()-1)==')'||
-							 ret.at(ret.length()-1)=='\"')
-							)
-			       )
+	  if (ret.length()>0&&
+	      !ret[ret.length()-1].isSpace()&&
+	      (Settings.OperatorSpace||((toIsIdent(t[0])||
+					 t[0]=='\"')&&
+					(toIsIdent(ret.at(ret.length()-1))||
+					 ret.at(ret.length()-1)==')'||
+					 ret.at(ret.length()-1)=='\"')
+					)
+	       )
 	      ) {
 	    if (t!=";"&&
 		t!="."&&
@@ -908,7 +911,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
     } else if (!comment.isEmpty()) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
       comment=QString::null;
-      ret+=indentString(level-(Settings.OperatorSpace?3:1));
+      ret+=indentString(level-(Settings.OperatorSpace?2:1));
     }
     break;
   }
