@@ -49,7 +49,8 @@ class toSQLParse {
 public:
   /** Structure the statement is parsed into.
    */
-  struct statement {
+  class statement {
+  public:
     /** Type of this token.
      */
     enum type {
@@ -59,24 +60,35 @@ public:
       /** Start of statement.
        */
       Statement,
+      /** Sub list
+       */
+      List,
       /** Parameter of statement.
        */
       Parameter,
       /** Another token of whatever it is detected in.
        */
-      Token
+      Token,
+      /** Unparsed data
+       */
+      Raw
       /** Type of token.
        */
     } Type;
-    /** The actual token.
-     */
-    QString String;
     /** Was there a comment attached to this token
      */
     QString Comment;
+    /** The actual token.
+     */
+    QString String;
     /** Subtokens to this token.
      */
     std::list<statement> SubTokens;
+    /** Create statement
+     */
+    statement(type ntype=Token,const QString &token=QString::null)
+      : Type(ntype),String(token)
+    { }
   };
 
   /** Get next SQL token from an editor.
@@ -102,10 +114,21 @@ public:
 
   /** Parse a string.
    * @param str String to parse.
+   * @return Parsed statement tree.
+   */
+  static std::list<statement> parse(const QString &str);
+  /** Parse a string.
+   * @param str String to parse.
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return Parsed statement tree.
    */
-  std::list<statement> parse(const QString &str,toConnection &conn);
+  static std::list<statement> parse(const QString &str,toConnection &conn)
+    { return parse(str); }
+
+private:
+  static statement parseStatement(const QString &str,
+				  int &pos,
+				  bool declare);
 };
 
 #endif

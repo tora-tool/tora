@@ -201,6 +201,18 @@ toSyntaxAnalyzer &toSyntaxAnalyzer::defaultAnalyzer(void)
   return DefaultAnalyzer;
 }
 
+bool toSyntaxAnalyzer::reservedWord(const QString &str)
+{
+  if(str.length()==0)
+    return false;
+  QString t=str.upper();
+  std::list<const char *> &curKey=Keywords[(unsigned char)char(str[0])];
+  for(std::list<const char *>::iterator i=curKey.begin();i!=curKey.end();i++)
+    if (t==(*i))
+      return true;
+  return false;
+}
+
 toHighlightedText::toHighlightedText(QWidget *parent,const char *name)
   : toMarkedText(parent,name),Analyzer(&DefaultAnalyzer)
 {

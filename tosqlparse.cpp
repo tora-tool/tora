@@ -33,7 +33,7 @@
  ****************************************************************************/
 
 #include "tosqlparse.h"
-#include "tomarkedtext.h"
+#include "tohighlightedtext.h"
 
 #ifdef TOPARSE_DEBUG
 
@@ -44,19 +44,68 @@ bool toMonolithic(void)
   return false;
 }
 
-int main(int argc,char **argv) {
-  QString res=
-    "SELECT test -- Hello\n"
-    "     , there\n"
-    "  FROM dobedoo WHERE \"Mupp\" >= 'Test''\n"
-    "string with several lines'\n"
-    "\n"
-    "/* A comment */ /* And another\n"
-    " * on the same line */\n"
-    "SELECT *\n"
-    "  FROM (SELECT * FROM dobedoo)\n"
-    " WHERE hello = 9.2\n";
+void printStatement(toSQLParse::statement &stat,int level)
+{
+  for (int i=0;i<level;i++)
+    printf(" ");
 
+  switch(stat.Type) {
+  case toSQLParse::statement::Block:
+    printf("Block:");
+    break;
+  case toSQLParse::statement::Statement:
+    printf("Statement:");
+    break;
+  case toSQLParse::statement::List:
+    printf("List:");
+    break;
+  case toSQLParse::statement::Parameter:
+    printf("Parameter:");
+    break;
+  case toSQLParse::statement::Token:
+    printf("Token:");
+    break;
+  case toSQLParse::statement::Raw:
+    printf("Raw:");
+    break;
+  }
+  printf("%s\n",(const char *)stat.String);
+  if (!stat.Comment.isNull()) {
+    for (int i=0;i<level;i++)
+      printf(" ");
+    printf("Comment:%s\n",(const char *)stat.Comment);
+  }
+  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+      i!=stat.SubTokens.end();
+      i++)
+    printStatement(*i,level+1);
+}
+
+int main(int argc,char **argv) {
+  QString res="
+CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
+					     oNumSwt                     OUT  NUMBER)
+AS
+  vYear  CHAR(4);
+BEGIN
+
+    DECLARE
+      oTrdStt NUMBER;
+    BEGIN
+      oTrdStt := 0;
+    END;
+
+    EXCEPTION
+        WHEN VALUE_ERROR THEN
+	    oRet := 3;
+	WHEN NO_DATA_FOUND THEN
+	    oRet := 2;
+	WHEN OTHERS THEN
+	    oRet := 1;
+END;
+";
+
+#if 0
   QApplication test(argc,argv);
   toMarkedText text(NULL);
   text.setText(res);
@@ -132,6 +181,12 @@ int main(int argc,char **argv) {
     printf("Token:%s\n",(const char *)ret);
   }
 
+#endif
+  std::list<toSQLParse::statement> stat=toSQLParse::parse(res);
+
+  for(std::list<toSQLParse::statement>::iterator i=stat.begin();i!=stat.end();i++) {
+    printStatement(*i,1);
+  }
 
   return 0;
 }
@@ -331,3 +386,92 @@ QString toSQLParse::getToken(toMarkedText *text,int &curLine,int &pos,bool forwa
   return QString::null;
 }
 
+toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,bool declare)
+{
+  statement ret(statement::Statement);
+
+  toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
+
+  QString first=getToken(str,pos,true,true);
+
+  for (QString token=first;
+       !token.isNull();
+       token=getToken(str,pos,true,true)) {
+    QString upp=token.upper();
+    printf("Token:%s\n",(const char *)token);
+    if ((first=="IF"&&upp=="THEN")||
+	upp=="LOOP"||
+	upp=="DECLARE"||
+	upp=="AS"||
+	upp=="IS"||
+	(!declare&&upp=="BEGIN")) {
+      statement blk(statement::Block);
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+      blk.SubTokens.insert(blk.SubTokens.end(),ret);
+      statement cur(statement::Statement);
+      bool dcl=(upp=="DECLARE"||upp=="IS"||upp=="AS");
+      do {
+	cur=parseStatement(str,pos,dcl);
+	if (cur.Type==statement::List)
+	  toStatusMessage("Unbalanced parenthesis (Too many ')')");
+	blk.SubTokens.insert(blk.SubTokens.end(),cur);
+      } while(cur.SubTokens.begin()!=cur.SubTokens.end()&&
+	      (*cur.SubTokens.begin()).String.upper()!="END");
+      return blk;
+    } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Parameter,token));
+      return ret;
+    } else if (upp==","||syntax.reservedWord(upp)) {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Parameter,token));
+    } else if (upp=="(") {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+      statement lst=parseStatement(str,pos,false);
+      statement t=toPop(lst.SubTokens);
+      ret.SubTokens.insert(ret.SubTokens.end(),lst);
+      ret.SubTokens.insert(ret.SubTokens.end(),t);
+      if (lst.Type!=statement::List) {
+	toStatusMessage("Unbalanced parenthesis (Too many '(')");
+	return ret;
+      }
+    } else if (upp==")") {
+      ret.Type=statement::List;
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+      return ret;
+    } else if (upp==";") {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+      return ret;
+    } else if (upp.startsWith("/*")||upp.startsWith("--")) {
+      if (ret.SubTokens.begin()==ret.SubTokens.end()) {
+	if (ret.Comment.isNull())
+	  ret.Comment=token;
+	else
+	  ret.Comment+="\n"+token;
+      } else {
+	QString &com=(*ret.SubTokens.rbegin()).Comment;
+	if (com.isEmpty())
+	  com=token;
+	else
+	  com+="\n"+token;
+      }
+    } else {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+    }
+  }
+  return ret;
+}
+
+std::list<toSQLParse::statement> toSQLParse::parse(const QString &str)
+{
+  int pos=0;
+  std::list<toSQLParse::statement> ret;
+  statement cur(statement::Statement);
+  for(cur=parseStatement(str,pos,false);
+      cur.SubTokens.begin()!=cur.SubTokens.end();
+      cur=parseStatement(str,pos,false)) {
+    ret.insert(ret.end(),cur);
+  }
+  if (pos<int(str.length()))
+    ret.insert(ret.end(),statement(statement::Raw,
+				   str.mid(pos,str.length()-pos)));
+  return ret;
+}

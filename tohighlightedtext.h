@@ -156,6 +156,12 @@ public:
    */
   QColor getColor(infoType typ);
 
+  /** Check if a word is reserved.
+   * @param word Word to check.
+   * @return True if word is reserved.
+   */
+  bool reservedWord(const QString &word);
+
   friend class toSyntaxSetup;
   /** Get the default syntax analyzer.
    * @return Reference to the default analyzer.
