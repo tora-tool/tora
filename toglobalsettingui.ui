@@ -601,17 +601,6 @@ Will leave the password unencryptet in the config file.</string>
                         </sizepolicy>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="5" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>UpgradeCheck</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Check for upgrades on startup</string>
-                    </property>
-                    <property name="toolTip" stdset="0">
-                        <string>Check the homepage for upgrades to the program. Does not send any information about the users computer or installation.</string>
-                    </property>
-                </widget>
                 <widget class="QCheckBox" row="6" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>DisplayGrid</cstring>
@@ -701,7 +690,6 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>Statusbar</tabstop>
     <tabstop>MaximizeMain</tabstop>
     <tabstop>ToolsLeft</tabstop>
-    <tabstop>UpgradeCheck</tabstop>
     <tabstop>Locale</tabstop>
     <tabstop>ConnectHistory</tabstop>
     <tabstop>Status</tabstop>

@@ -165,12 +165,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   
   CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
 					  DEFAULT_SQL_FILE));
-#if QT_VERSION >= 300
-  UpgradeCheck->setChecked(!toTool::globalConfig(CONF_UPGRADE_CHECK,"").isEmpty());
-#else
-  UpgradeCheck->hide();
-#endif
-
   Locale->setText(toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()));
 }
 
@@ -247,10 +241,6 @@ void toGlobalSetting::saveSetting(void)
     toTool::globalSetConfig(CONF_CHART_SAMPLES,"-1");
   else
     toTool::globalSetConfig(CONF_CHART_SAMPLES,QString::number(ChartSamples->value()));
-
-#if QT_VERSION >= 300
-  toTool::globalSetConfig(CONF_UPGRADE_CHECK,UpgradeCheck->isChecked()?"Yes":"");
-#endif
 
   toTool::globalSetConfig(CONF_LOCALE,Locale->text());
 }

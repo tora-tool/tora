@@ -210,11 +210,6 @@ private:
 
   QTimer KeepAlive;
 
-#if QT_VERSION >= 300
-  QUrlOperator *VersionUrl;
-  QString VersionString;
-#endif
-
   toEditWidget *Edit;
 
   toEditWidget *findEdit(QWidget *edit);
@@ -548,8 +543,6 @@ private slots:
    */
   void displayMessage(void);
 
-  void versionData(const QByteArray &data,QNetworkOperation *op);
-  void versionFinished(QNetworkOperation *op);
   void keepAlive();
 };
 

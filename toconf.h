@@ -125,7 +125,6 @@
 #define CONF_AUTO_INDENT_RO	"AutoIndent"
 #define CONF_INDICATE_EMPTY	"IndicateEmpty"
 #define CONF_EXTENSIONS  	"Extensions"
-#define CONF_UPGRADE_CHECK	"UpdateCheck"
 #define CONF_RECENT_FILES	"RecentFiles"
 #define CONF_RECENT_MAX		"RecentMax"
 #define DEFAULT_RECENT_MAX	"5"

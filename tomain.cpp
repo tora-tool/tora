@@ -533,42 +533,6 @@ toMain::toMain()
   else
     show();
 
-#if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK) && !defined (OAS)
-  if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
-    switch(TOMessageBox::information(this,tr("Check for upgrades?"),
-				     tr("Do you want " TOAPPNAME " to automatically check\n"
-					TOHOMEPAGE " for updates on startup?\n"
-					"During this check no information about your computer\n"
-					"including version is transmitted to the site"),
-				     tr("&Yes"),tr("&No"),QString::null,0)) {
-    case 0:
-      toTool::globalSetConfig(CONF_UPGRADE_CHECK,"Yes");
-      break;
-    case 1:
-      toTool::globalSetConfig(CONF_UPGRADE_CHECK,"");
-      break;
-    }
-  }
-  if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Yes") {
-    qInitNetworkProtocols();
-    VersionUrl=new QUrlOperator(QString::fromLatin1(TOHOMEPAGE
-#ifdef TOAD
-						    "/mysqlversion.html"
-#else
-						    "/version.php?" TOTYPE
-						    "=1"
-#endif
-						    ));
-    VersionUrl->get();
-    connect(VersionUrl,SIGNAL(data(const QByteArray &,QNetworkOperation *)),
-	    this,SLOT(versionData(const QByteArray &,QNetworkOperation *)));
-    connect(VersionUrl,SIGNAL(finished(QNetworkOperation *)),
-	    this,SLOT(versionFinished(QNetworkOperation *)));
-  } else {
-    VersionUrl=NULL;
-  }
-#endif
-
   toBackground::init();
 
   if (Connections.size()==0) {
@@ -1599,25 +1563,6 @@ void toMain::displayMessage(const QString &str)
 {
   toPush(StatusMessages,str);
   QTimer::singleShot(1,this,SLOT(displayMessage()));
-}
-
-void toMain::versionData(const QByteArray &data,QNetworkOperation *)
-{
-#if QT_VERSION >= 300
-  if (data.size()>0&&data.data()!=NULL)
-    VersionString+=QCString(data.data(),data.size());
-#endif
-}
-
-void toMain::versionFinished(QNetworkOperation *)
-{
-#if QT_VERSION >= 300
-  int i=VersionString.find('\n');
-  if (i>=0)
-    VersionString=VersionString.mid(0,i);
-  if (VersionString[0].isNumber()&&VersionString > TOVERSION)
-    toStatusMessage(tr("A new version of " TOAPPNAME " (%1) is available from\n\n" TOHOMEPAGE).arg(VersionString));
-#endif
 }
 
 void toMain::updateKeepAlive(void)
