@@ -100,6 +100,8 @@ toResultStorage::toResultStorage(QWidget *parent,const char *name)
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);
   setColumnAlignment(7,AlignRight);
+  setColumnAlignment(8,AlignCenter);
+  setColumnAlignment(9,AlignCenter);
   setColumnAlignment(10,AlignRight);
   setColumnAlignment(11,AlignRight);
 

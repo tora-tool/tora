@@ -274,6 +274,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
     Window=this;
   QBoxLayout *l=new QVBoxLayout(this);
   QToolBar *toolbar=toAllocBar(this,"Help Navigation",QString::null);
+  toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed));
   l->addWidget(toolbar);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
