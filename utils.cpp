@@ -593,7 +593,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     QToolBar *bar=(QToolBar *)dock;
     if (bar) {
       toMainWidget()->moveToolBar(bar,place);
-      bar->setStretchableWidget(container,TO_KDE_TOOLBAR_WIDGET);
+      bar->setStretchableWidget(container);
     }
   }
 #  else

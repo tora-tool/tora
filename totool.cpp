@@ -196,6 +196,8 @@ void toTool::createWindow(void)
 {
   toMain *main=(toMain *)qApp->mainWidget();
   try {
+    if (!canHandle(main->currentConnection()))
+      throw QString("The tool %1 doesn't support the current database").arg(name());
     QWidget *newWin=toolWindow(main->workspace(),main->currentConnection());
 
     if (newWin) {

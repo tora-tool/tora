@@ -302,6 +302,10 @@ void toWorksheet::viewResources(void)
     QString address=toSQLToAddress(connection(),QueryString);
 
     Resources->changeParams(address);
+
+    QString sql=toSQL::string(TOSQL_LONGOPS,connection());
+    sql+="   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
+    LongOps->setSQL(sql);
     LongOps->changeParams(address);
   } TOCATCH
 }
@@ -391,10 +395,9 @@ void toWorksheet::setup(bool autoLoad)
 
     ResourceSplitter=new QSplitter(Vertical,ResultTab);
     Resources=new toResultResources(ResourceSplitter);
+
     LongOps=new toResultLong(ResourceSplitter);
-    QString sql=toSQL::string(TOSQL_LONGOPS,connection());
-    sql+="   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
-    LongOps->setSQL(sql);
+
     Visualize=new toVisualize(Result,ResultTab);
     ResultTab->addTab(Visualize,tr("&Visualize"));
     ResultTab->addTab(ResourceSplitter,tr("&Information"));

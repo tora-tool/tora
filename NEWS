@@ -1,3 +1,9 @@
+1.3.10:
+
+2003-02-13: Check if tools are supported on a database when creating windows.
+2003-02-13: Fixed problem with non Oracle databases and worksheets.
+2003-02-13: Updated to new version of OTL.
+
 1.3.9.1: Released 2003-02-12
 
 2003-02-12: Added option to disable snapshot too old detection (Disabled by default).
