@@ -205,15 +205,24 @@ void toResultCols::query(const QString &,const toQList &param)
 
   toConnection &conn=connection();
 
+
+  QString Owner;
+  QString Name;
   QString object;
+  
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end()) {
     object=conn.quote(*cp);
+    Owner=*cp;
   }
   cp++;
   if (cp!=((toQList &)param).end()) {
     object+=".";
     object+=conn.quote(*cp);
+    Name=*cp;
+  } else {
+    Name=Owner;
+    Owner=connection().user().upper();
   }
 
   QString synonym;
@@ -240,8 +249,16 @@ void toResultCols::query(const QString &,const toQList &param)
     Columns->query(name);
     Title->setText(label);
   } catch(const QString &str) {
-    Title->setText(str);
-    toStatusMessage(str);
+    try {
+      QString label="<B>";
+      label+=object;
+      label+="</B> - Object cache not ready";
+      Columns->query(object,Owner,Name);
+      Title->setText(label);
+    } catch(const QString &str) {
+      Title->setText(str);
+      toStatusMessage(str);
+    }
   }
 }
 
@@ -256,6 +273,46 @@ toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
   setSorting(0);
 }
 
+void toResultCols::resultCols::describe(toQDescList &desc)
+{
+  int col=1;
+  for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+    QListViewItem *item=new toResultColsItem(this,NULL);
+    
+    item->setText(0,QString::number(col++));
+    item->setText(1,(*i).Name);
+    item->setText(2,(*i).Datatype);
+    if ((*i).Null)
+      item->setText(3,"NULL");
+    else
+      item->setText(3,"NOT NULL");
+    item->setText(4,(*i).Comment);
+    
+    item->setText(10,Owner);
+    item->setText(11,Name);
+  }
+}
+
+void toResultCols::resultCols::query(const QString &object,
+				     const QString &owner,const QString &name)
+{
+  try {
+    QString sql="SELECT * FROM ";
+    sql+=object;
+    sql+=" WHERE NULL=NULL";
+
+    toQuery query(toCurrentConnection(this),sql);
+    toQDescList desc=query.describe();
+
+    Owner=owner;
+    Name=name;
+
+    describe(desc);
+  } catch(...) {
+    toStatusMessage("Failed to describe "+object);
+  }
+}
+
 void toResultCols::resultCols::query(const toConnection::objectName &name)
 {
   try {
@@ -268,24 +325,11 @@ void toResultCols::resultCols::query(const toConnection::objectName &name)
 
     toQDescList desc=conn.columns(name);
 
-    int col=1;
-    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
-      QListViewItem *item=new toResultColsItem(this,NULL);
+    Owner=name.Owner;
+    Name=name.Name;
 
-      item->setText(0,QString::number(col++));
-      item->setText(1,(*i).Name);
-      item->setText(2,(*i).Datatype);
-      if ((*i).Null)
-	item->setText(3,"NULL");
-      else
-	item->setText(3,"NOT NULL");
-      item->setText(4,(*i).Comment);
-
-      item->setText(10,name.Owner);
-      item->setText(11,name.Name);
-    }
+    describe(desc);
   } catch(...) {
     toStatusMessage("Failed to describe "+name.Owner+"."+name.Name);
   }
-  updateContents();
 }

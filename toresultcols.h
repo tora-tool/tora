@@ -51,15 +51,17 @@ class QLabel;
 
 class toResultCols : public QVBox, public toResult {
   class resultCols : public toListView {
+    QString Owner;
+    QString Name;
   public:
     /** Create the widget.
      * @param parent Parent widget.
      * @param name Name of widget.
      */
     resultCols(QWidget *parent,const char *name=NULL);
-    /** Reimplemented for internal reasons.
-     */
+    virtual void describe(toQDescList &desc);
     virtual void query(const toConnection::objectName &);
+    virtual void query(const QString &table,const QString &owner,const QString &name);
     friend class toResultColsItem;
   };
   QLabel *Title;
