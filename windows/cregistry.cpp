@@ -1,7 +1,7 @@
 // Registry Access class (updated) by David Overton (david@insomniavisions.com).
 // These will compile either ANSI or UNICODE.
 
-#include "windows/cregistry.h"
+#include "cregistry.h"
 
 // Returns true if the OS is Windows NT or Windows 2000
 bool CRegistry::IsWinNTor2K()
