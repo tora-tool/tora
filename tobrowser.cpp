@@ -738,7 +738,12 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
   Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
-  Schema->setSelected(connection.user().upper());
+  if (connection.provider()=="MySQL")
+    Schema->setSelected(connection.database());
+  else if (connection.provider()=="Oracle")
+    Schema->setSelected(connection.user().upper());
+  else
+    Schema->setSelected(connection.user());
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   new toChangeConnection(toolbar);
   
