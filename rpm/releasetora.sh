@@ -42,6 +42,8 @@ tar czf ../tora$TYPE-$1.tar.gz tora-$1
 tar cf - tora-$1 | bzip2 > /usr/src/RPM/SOURCES/tora-$1.tar.bz2
 rpm -bb tora-$1/rpm/tora.spec
 cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm ../tora$TYPE-$1-1gc-$GLIBC.i686.rpm 
+cp /usr/src/RPM/RPMS/i686/tora-mysql-$1-1gc.i686.rpm ../tora-mysql$TYPE-$1-1gc-$GLIBC.i686.rpm 
+cp /usr/src/RPM/RPMS/i686/tora-oracle-$1-1gc.i686.rpm ../tora-oracle$TYPE-$1-1gc-$GLIBC.i686.rpm 
 
 SRCPWD=`pwd`
 cd /usr/src/RPM/BUILD/tora-$1
@@ -74,6 +76,8 @@ else
     export ORACLE_HOME=$ORACLE_HOME/../9.0.1
     rpm -bb tora-$1/rpm/tora.spec
     cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm ../tora$TYPE-$1-1gc-oracle9.i686.rpm 
+    cp /usr/src/RPM/RPMS/i686/tora-mysql-$1-1gc.i686.rpm ../tora-mysql$TYPE-$1-1gc-oracle9.i686.rpm 
+    cp /usr/src/RPM/RPMS/i686/tora-oracle-$1-1gc.i686.rpm ../tora-oracle$TYPE-$1-1gc-oracle9.i686.rpm 
 
     cd /usr/src/RPM/BUILD/tora-$1
     make tora-mono
