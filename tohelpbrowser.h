@@ -32,63 +32,31 @@
  *
  ****************************************************************************/
 
-#ifndef __TOHELP_H
-#define __TOHELP_H
+#ifndef __TOHELPBROWSER_H
+#define __TOHELPBROWSER_H
 
-#include <qdialog.h>
+#include <list>
+#include <khtml_part.h>
 
-#include <map>
+class KURL;
 
-class toListView;
-class QLineEdit;
-class QTextBrowser;
-class QListViewItem;
-class QProgressBar;
-class toHelpBrowser;
-class QToolButton;
-
-class toHelp : public QDialog {
+class toHelpBrowser : public KHTMLPart {
   Q_OBJECT
 
-  static toHelp *Window;
-
-  bool Searching;
-
-  toListView *Sections;
-  toListView *Result;
-  QLineEdit *SearchLine;
-  QComboBox *Manuals;
-
-#ifdef TO_KDE
-  toHelpBrowser *Help;
-#else
-  QTextBrowser *Help;
-#endif
-  QProgressBar *Progress;
-
-  virtual void closeEvent(QCloseEvent *e)
-  { if (!Searching) QDialog::closeEvent(e); }
+  list<QString> Backward;
+  list<QString> Forward;
+private slots:
+  void openURLRequest(const KURL &url,const KParts::URLArgs &);
 public:
-  static QString path(const QString &path=QString::null);
-  toHelp(QWidget *,const char *name);
-  virtual ~toHelp();
-  static void displayHelp(const QString &context);
+  toHelpBrowser(QWidget *parent,const char *name=NULL);
+  virtual bool openURL(const KURL &url);
 public slots:
-  void search(void);
-  void changeContent(QListViewItem *);
-  void removeSelected(void);
-};
-
-class toHelpContext {
-  QString Name;
-public:
-  toHelpContext(const QString &file)
-    : Name(file)
-  { }
-  virtual ~toHelpContext()
-  { }
-  virtual const QString &context(void) const
-  { return Name; }
+  void forward(void);
+  void backward(void);
+signals:
+  void backwardAvailable(bool);
+  void forwardAvailable(bool);
+  void textChanged(void);
 };
 
 #endif

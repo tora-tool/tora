@@ -49,7 +49,8 @@ TO_NAMESPACE;
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qsplitter.h>
-#include <qsplitter.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
 #include <qtabwidget.h>
 #include <qtextbrowser.h>
 #include <qtextview.h>
@@ -61,12 +62,72 @@ TO_NAMESPACE;
 #include "tohtml.h"
 #include "tohelp.h"
 #include "toconf.h"
+
 #include "toresultview.h"
 #include "totool.h"
 
 #include "tohelp.moc"
 #include "tohelpaddfileui.moc"
 #include "tohelpsetupui.moc"
+
+#ifdef TO_KDE
+#include "tohelpbrowser.h"
+#include "tohelpbrowser.moc"
+
+toHelpBrowser::toHelpBrowser(QWidget *parent,const char *name)
+  : KHTMLPart(parent,name)
+{
+  connect(browserExtension(),
+	  SIGNAL(openURLRequest(const KURL &,const KParts::URLArgs &)),
+	  this,
+	  SLOT(openURLRequest(const KURL &,const KParts::URLArgs &)));
+}
+
+void toHelpBrowser::openURLRequest(const KURL &url,const KParts::URLArgs &)
+{
+  emit backwardAvailable(false);
+  openURL(url);
+  emit textChanged();
+}
+
+bool toHelpBrowser::openURL(const KURL &url)
+{
+  if (Forward.size()>0) {
+    emit forwardAvailable(false);
+    Forward.clear();
+  }
+  if (Backward.size()==1)
+    emit backwardAvailable(true);
+  toPush(Backward,url.url());
+  emit textChanged();
+  return KHTMLPart::openURL(url);
+}
+
+void toHelpBrowser::backward(void)
+{
+  toPush(Forward,toPop(Backward));
+  QString url=(*Backward.rbegin());
+  if (Forward.size()==1)
+    emit forwardAvailable(true);
+  if (Backward.size()==1)
+    emit backwardAvailable(false);
+  KHTMLPart::openURL(url);
+  emit textChanged();
+}
+
+void toHelpBrowser::forward(void)
+{
+  QString url=toPop(Forward);
+  if (Forward.size()==0)
+    emit forwardAvailable(false);
+  if (Backward.size()==1)
+    emit backwardAvailable(true);
+  toPush(Backward,url);
+  KHTMLPart::openURL(url);
+  emit textChanged();
+}
+
+#endif
 
 toHelp *toHelp::Window;
 
@@ -183,6 +244,9 @@ toHelp::toHelp(QWidget *parent,const char *name)
 {
   Window=this;
   QBoxLayout *l=new QVBoxLayout(this);
+  QToolBar *toolbar=toAllocBar(this,"Help Navigation",QString::null);
+  l->addWidget(toolbar);
+
   QSplitter *splitter=new QSplitter(Horizontal,this);
   l->addWidget(splitter);
 
@@ -209,13 +273,33 @@ toHelp::toHelp(QWidget *parent,const char *name)
 	  this,SLOT(changeContent(QListViewItem *)));
 
 #ifdef TO_KDE
-  Help=new KHTMLPart(splitter);
-#else  
+  Help=new toHelpBrowser(splitter);
+#else
   Help=new QTextBrowser(splitter);
+  Help->mimeSourceFactory()->addFilePath(path());
 #endif
+  // Help->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
   setCaption("TOra Help Browser");
-  splitter->setResizeMode(tabs,QSplitter::KeepSize);
-  setGeometry(x(),y(),640,480);
+
+  QToolButton *button;
+  button=new QToolButton(LeftArrow,toolbar);
+  connect(Help,SIGNAL(backwardAvailable(bool)),
+	  button,SLOT(setEnabled(bool)));
+  button->setEnabled(false);
+  connect(button,SIGNAL(clicked(void)),
+	  Help,SLOT(backward(void)));
+  QToolTip::add(button,"Backward one help page");
+
+  button=new QToolButton(RightArrow,toolbar);
+  connect(Help,SIGNAL(forwardAvailable(bool)),
+	  button,SLOT(setEnabled(bool)));
+  button->setEnabled(false);
+  connect(button,SIGNAL(clicked(void)),
+	  Help,SLOT(forward(void)));
+  QToolTip::add(button,"Forward one help page");
+
+  connect(Help,SIGNAL(textChanged(void)),
+	  this,SLOT(removeSelection(void)));
 
   map<QString,QString> Dsc;
   Dsc["TOra manual"]=toHelpPath();
@@ -229,9 +313,10 @@ toHelp::toHelp(QWidget *parent,const char *name)
       Dsc[dsc]=file;
     }
   }
-#ifndef TO_KDE
-  Help->mimeSourceFactory()->addFilePath(path());
-#endif
+
+  splitter->setResizeMode(tabs,QSplitter::KeepSize);
+  setGeometry(x(),y(),max(width(),640),max(height(),480));
+
   QListViewItem *lastParent=NULL;
   for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
@@ -310,9 +395,6 @@ toHelp::toHelp(QWidget *parent,const char *name)
 
 toHelp::~toHelp()
 {
-  Quit=true;
-  while (Searching)
-    qApp->processEvents();
   Window=NULL;
 }
 
@@ -332,10 +414,9 @@ void toHelp::displayHelp(const QString &context)
   if (!Window)
     new toHelp(toMainWidget(),"Help window");
 #ifdef TO_KDE
-  QString file="file://";
-  file+=path();
+  QString file=path();
   file+=context;
-  Window->Help->openURL(KURL(file));
+  Window->Help->openURL(file);
 #else
   if (context.find("htm")>=0)
     Window->Help->setTextFormat(RichText);
@@ -349,9 +430,7 @@ void toHelp::displayHelp(const QString &context)
 void toHelp::changeContent(QListViewItem *item)
 {
 #ifdef TO_KDE
-  QString file="file://";
-  file+=item->text(2);
-  Window->Help->openURL(KURL(file));
+  Window->Help->openURL(item->text(2));
 #else
   if (item->text(2).find("htm")>=0)
     Help->setTextFormat(RichText);
@@ -364,6 +443,8 @@ void toHelp::changeContent(QListViewItem *item)
 
 void toHelp::search(void)
 {
+  if (Searching)
+    return;
   Result->clear();
   QStringList words=QStringList::split(QRegExp("\\s+"),SearchLine->text().lower());
   if (words.count()==0)
@@ -373,6 +454,8 @@ void toHelp::search(void)
   int steps=1;
   Progress->setProgress(0);
   Progress->show();
+  Searching=true;
+  qApp->processEvents();
   for (QListViewItem *parent=Sections->firstChild();parent;parent=parent->nextSibling()) {
     if (Manuals->currentItem()==0||parent->text(0)==Manuals->currentText()) {
       QString path=toHelp::path(parent->text(2));
@@ -444,7 +527,15 @@ void toHelp::search(void)
       } TOCATCH
     }
     Progress->setProgress(steps);
+    steps++;
     qApp->processEvents();
   }
   Progress->hide();
+  Searching=false;
+}
+
+void toHelp::removeSelected(void)
+{
+  Sections->clearSelection();
+  Result->clearSelection();
 }
