@@ -48,12 +48,14 @@ class toResult;
 class toResultView;
 class QListViewItem;
 class toResultFilter;
+class QPopupMenu;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
 
   QComboBox *Schema;
   QTabWidget *TopTab;
+  QPopupMenu *ToolMenu;
 
   QString SecondText;
   toResultView *FirstTab;
@@ -76,6 +78,7 @@ public slots:
   void changeItem(QListViewItem *item);
   void clearFilter(void);
   void defineFilter(void);
+  void windowActivated(QWidget *widget);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

@@ -49,6 +49,11 @@ TO_NAMESPACE;
 #include <qvaluelist.h>
 #include <qbuttongroup.h>
 #include <qregexp.h>
+#include <qpopupmenu.h>
+
+#ifdef TO_KDE
+#  include <kmenubar.h>
+#endif
 
 #include "totool.h"
 #include "tomain.h"
@@ -388,7 +393,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   
   TopTab=new QTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
-  TopTab->addTab(splitter,"Tables");
+  TopTab->addTab(splitter,"T&ables");
   toResultView *resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   resultView->setSQL(SQLListTables);
@@ -402,30 +407,30 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   QTabWidget *curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultView=new toResultCols(connection,curr,TAB_TABLE_COLUMNS);
-  curr->addTab(resultView,"Columns");
+  curr->addTab(resultView,"&Columns");
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondTab=resultView;
   SecondMap[TAB_TABLES]=resultView;
   SecondMap[TAB_TABLE_COLUMNS]=resultView;
 
   resultView=new toResultIndexes(connection,curr,TAB_TABLE_INDEXES);
-  curr->addTab(resultView,"Indexes");
+  curr->addTab(resultView,"&Indexes");
   SecondMap[TAB_TABLE_INDEXES]=resultView;
 
   toResultConstraint *resultConstraint=new toResultConstraint(connection,curr,
 							      TAB_TABLE_CONS);
-  curr->addTab(resultConstraint,"Constraints");
+  curr->addTab(resultConstraint,"C&onstraints");
   SecondMap[TAB_TABLE_CONS]=resultConstraint;
 
   toResultReferences *resultReferences=new toResultReferences(connection,curr,
 							      TAB_TABLE_DEPEND);
-  curr->addTab(resultReferences,"References");
+  curr->addTab(resultReferences,"&References");
   SecondMap[TAB_TABLE_DEPEND]=resultReferences;
 
   resultView=new toResultView(true,false,connection,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLTableGrants);
-  curr->addTab(resultView,"Grants");
+  curr->addTab(resultView,"&Grants");
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
   resultView=new toResultView(true,false,connection,curr,TAB_TABLE_TRIGGERS);
@@ -435,7 +440,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
   toResultContent *content=new toResultContent(connection,curr,TAB_TABLE_DATA);
-  curr->addTab(content,"Data");
+  curr->addTab(content,"&Data");
   SecondMap[TAB_TABLE_DATA]=content;
 
   toResultItem *resultItem=new toResultItem(2,true,connection,curr,TAB_TABLE_INFO);
@@ -446,11 +451,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultItem=new toResultItem(1,true,connection,curr,TAB_TABLE_COMMENT);
   resultItem->showTitle(false);
   resultItem->setSQL(SQLTableComment(connection));
-  curr->addTab(resultItem,"Comment");
+  curr->addTab(resultItem,"Co&mment");
   SecondMap[TAB_TABLE_COMMENT]=resultItem;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_VIEWS);
-  TopTab->addTab(splitter,"Views");
+  TopTab->addTab(splitter,"&Views");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_VIEWS]=resultView;
@@ -462,7 +467,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultView=new toResultCols(connection,curr,TAB_VIEW_COLUMNS);
-  curr->addTab(resultView,"Columns");
+  curr->addTab(resultView,"&Columns");
   SecondMap[TAB_VIEWS]=resultView;
   SecondMap[TAB_VIEW_COLUMNS]=resultView;
 
@@ -473,27 +478,27 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_SQL]=resultField;
 
   content=new toResultContent(connection,curr,TAB_VIEW_DATA);
-  curr->addTab(content,"Data");
+  curr->addTab(content,"&Data");
   SecondMap[TAB_VIEW_DATA]=content;
 
   resultView=new toResultView(true,false,connection,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLTableGrants);
-  curr->addTab(resultView,"Grants");
+  curr->addTab(resultView,"&Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
   toResultDepend *resultDepend=new toResultDepend(connection,curr,TAB_VIEW_DEPEND);
-  curr->addTab(resultDepend,"Dependencies");
+  curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_VIEW_DEPEND]=resultDepend;
 
   resultItem=new toResultItem(1,true,connection,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
   resultItem->setSQL(SQLViewComment(connection));
-  curr->addTab(resultItem,"Comment");
+  curr->addTab(resultItem,"Co&mment");
   SecondMap[TAB_VIEW_COMMENT]=resultItem;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
-  TopTab->addTab(splitter,"Indexes");
+  TopTab->addTab(splitter,"Inde&xes");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_INDEX]=resultView;
@@ -508,7 +513,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,connection,curr,TAB_INDEX_COLS);
   resultView->setSQL(SQLIndexCols);
-  curr->addTab(resultView,"Columns");
+  curr->addTab(resultView,"&Columns");
   SecondMap[TAB_INDEX]=resultView;
   SecondMap[TAB_INDEX_COLS]=resultView;
 
@@ -518,7 +523,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_INDEX_INFO]=resultItem;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
-  TopTab->addTab(splitter,"Sequences");
+  TopTab->addTab(splitter,"&Sequences");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;
@@ -537,7 +542,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SYNONYM);
-  TopTab->addTab(splitter,"Synonyms");
+  TopTab->addTab(splitter,"S&ynonyms");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SYNONYM]=resultView;
@@ -556,7 +561,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_PLSQL);
-  TopTab->addTab(splitter,"PL/SQL");
+  TopTab->addTab(splitter,"&PL/SQL");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_PLSQL]=resultView;
@@ -571,21 +576,21 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultField=new toResultField(connection,curr,TAB_PLSQL_SOURCE);
   resultField->setSQL(SQLSQLHead);
-  curr->addTab(resultField,"Declaration");
+  curr->addTab(resultField,"&Declaration");
   SecondMap[TAB_PLSQL]=resultField;
   SecondMap[TAB_PLSQL_SOURCE]=resultField;
 
   resultField=new toResultField(connection,curr,TAB_PLSQL_BODY);
   resultField->setSQL(SQLSQLBody);
-  curr->addTab(resultField,"Body");
+  curr->addTab(resultField,"B&ody");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
   resultDepend=new toResultDepend(connection,curr,TAB_PLSQL_DEPEND);
-  curr->addTab(resultDepend,"Dependencies");
+  curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
-  TopTab->addTab(splitter,"Triggers");
+  TopTab->addTab(splitter,"Tri&ggers");
   resultView=new toResultView(true,false,connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_TRIGGER]=resultView;
@@ -606,21 +611,48 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultField=new toResultField(connection,curr,TAB_TRIGGER_SOURCE);
   resultField->setSQL(SQLTriggerBody);
-  curr->addTab(resultField,"Code");
+  curr->addTab(resultField,"C&ode");
   SecondMap[TAB_TRIGGER_SOURCE]=resultField;
 
   resultView=new toResultView(true,false,connection,curr,TAB_TRIGGER_COLS);
   resultView->setSQL(SQLTriggerCols);
-  curr->addTab(resultView,"Columns");
+  curr->addTab(resultView,"&Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
   resultDepend=new toResultDepend(connection,curr,TAB_TRIGGER_DEPEND);
-  curr->addTab(resultDepend,"Dependencies");
+  curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_TRIGGER_DEPEND]=resultDepend;
+
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
 
   connect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
+  Schema->setFocus();
+}
+
+void toBrowser::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(*RefreshPixmap,"&Refresh",this,SLOT(refresh(void)),
+			   Key_F5);
+      ToolMenu->insertItem("&Change Schema",Schema,SLOT(setFocus(void)),
+			   Key_S+ALT);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*FilterPixmap,"&Define filter",this,SLOT(defineFilter(void)),
+			   CTRL+Key_F);
+      ToolMenu->insertItem(*NoFilterPixmap,"&Clear filter",this,SLOT(clearFilter(void)),
+			   CTRL+SHIFT+Key_F);
+      toMainWidget()->menuBar()->insertItem("&Browser",ToolMenu,-1,toToolMenuIndex());
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
+  }
 }
 
 toBrowser::~toBrowser()
@@ -681,9 +713,20 @@ void toBrowser::changeSecondTab(QWidget *tab)
   if (tab) {
     SecondTab=SecondMap[tab->name()];
     SecondMap[TopTab->currentPage()->name()]=SecondTab;
-    if (SecondTab&&!SecondText.isEmpty())
+    if (SecondTab&&!SecondText.isEmpty()) {
+      try {
+	for(QWidget *widget=dynamic_cast<QWidget *>(SecondTab)->parentWidget();
+	    widget;
+	    widget=widget->parentWidget())
+	  if (widget->isA("QTabWidget")) {
+	    widget->setFocus();
+	    break;
+	  }
+      } catch(...) {
+      }
       SecondTab->changeParams(Schema->currentText(),
 			      SecondText);
+    }
   }
 }
 
@@ -693,6 +736,7 @@ void toBrowser::changeTab(QWidget *tab)
     FirstTab=Map[tab->name()];
     SecondTab=SecondMap[tab->name()];
     SecondText="";
+    TopTab->setFocus();
     if (FirstTab&&SecondTab)
       refresh();
   }

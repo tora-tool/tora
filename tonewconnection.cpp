@@ -138,27 +138,29 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   char buffer[1024];
   try {
     if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-				"SOFTWARE\\ORACLE\\ALL_HOMES",
-				"LAST_HOME",
+				"SOFTWARE\\ORACLE\\HOME0",
+				"TNS_ADMIN",
 				buffer,siz)) {
-      QString key="SOFTWARE\\ORACLE\\ALL_HOMES\\ID";
-      if (siz>0) {
-	key+=buffer;
-	siz=1024;
-	if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
-    			  	    key,
-				    "PATH",
-				    buffer,siz)) {
-	  if (siz>0) {
-	    str=buffer;
-	    str+="\\network\\admin";
-	  }
+      if (siz>0)
+	str=buffer;
+      else
+	throw 0;
+    } else
+      throw 0;
+  } catch(...) {
+    try {
+      if (registry.GetStringValue(HKEY_LOCAL_MACHINE,
+				  "SOFTWARE\\ORACLE\\HOME0",
+				  "ORACLE_HOME",
+				  buffer,siz)) {
+	if (siz>0) {
+	  str=buffer;
+	  str+="\\network\\admin";
 	}
       }
+    } catch(...) {
     }
-  } catch(...) {
   }
-
 #else
   if (!getenv("ORACLE_HOME"))
     throw QString("ORACLE_HOME environment variable not set");
