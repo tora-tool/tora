@@ -118,14 +118,15 @@ echo -n "."
 echo " just kidding ;)"
 
 echo
-echo "-------------------------------------------------------------------"
+echo "------------------------------------------------------------------------"
 echo
 echo "You must use a GNU version of make to compile this program."
 echo
-echo "If you have any problems check the Makefile.setup for the settings."
+echo "If you have any problems check the top of the Makefile for the settings."
 echo
 echo "       ... that wishlist mentioned above does really exist. So if"
 echo "you feel like showing your appreciation for TOra, this is the"
 echo "place to go. I just love CDs and DVDs"
 echo
-echo "-------------------------------------------------------------------"
+echo "                                                          Henrik Johnson"
+echo "------------------------------------------------------------------------"

@@ -1297,6 +1297,13 @@ distclean: clean
 	-rm LICENSE.h >/dev/null 2>&1
 	-rm configure.setup >/dev/null 2>&1
 
+# This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
+# configure won't try to detect those. It's up to you.
+
+apidoc: \$(API)
+	mkdir -p help/api
+	kdoc -n TOra -d help/api \$^ -lqt -lkdeui -lkhtml
+
 # Plugin definitions
 
 __EOT__

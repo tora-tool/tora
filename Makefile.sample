@@ -387,6 +387,16 @@ distclean: clean
 	-mv Makefile >/dev/null 2>&1
 	-rm LICENSE.h >/dev/null 2>&1
 	-rm configure.setup >/dev/null 2>&1
+
+# This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
+# configure won't try to detect those. It's up to you.
+
+apidoc: $(API)
+	mkdir -p help/api
+	kdoc -n TOra -d help/api $^ -lqt -lkdeui -lkhtml
+
+# Plugin definitions
+
 plugins/toalert.tso:\
 	objs/toalert.o
 plugins/toanalyze.tso:\
@@ -495,7 +505,7 @@ plugins/toworksheet.tso:\
 
 # Plugin based binary and its plugins
 
-tora-plugin: 
+tora-plugin:\
 	tora \
 	plugins/toalert.tso \
 	plugins/toanalyze.tso \
@@ -542,7 +552,7 @@ tora-static: $(OBJECTS) main.cpp
 
 # The binary for the pluginbased tora
 
-tora: \
+tora:\
 	objs/main.o \
 	objs/toabout.o \
 	objs/toaboutui.o \
