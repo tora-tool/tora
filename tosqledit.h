@@ -66,7 +66,6 @@ public:
 public slots:
   void loadSQL(void);
   void saveSQL(void);
-  void saveAllSQL(void);
   void deleteVersion(void);
   void selectionChanged(void);
   void changeVersion(const QString &);

@@ -63,6 +63,8 @@
 #define CONF_LIST_SCALE		"ListScale"
 #define DEFAULT_LIST_SCALE	"0.8"
 #define CONF_DESKTOP_AWARE	"DesktopAware"
+#define CONF_STATUS_MESSAGE     "StatusMessage"
+#define DEFAULT_STATUS_MESSAGE  "5"
 
 // Undefining this will leave out the style selection option stuff from the program
 #ifndef TO_KDE

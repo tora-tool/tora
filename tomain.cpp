@@ -821,7 +821,7 @@ bool toMain::close(bool del)
 void toMain::createDefault(void)
 {
   commandCallback(TO_TOOLS);
-  toStatusMessage("Welcome to Tora");
+  toStatusMessage("Welcome to Tora",true);
 }
 
 void toMain::setCoordinates(int line,int col)

@@ -11,13 +11,13 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>400</width>
+            <width>392</width>
             <height>401</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
-        <string></string>
+        <string>toGlobalSettingUI</string>
     </property>
     <widget>
         <class>QGroupBox</class>
@@ -175,90 +175,13 @@
                 <x>10</x>
                 <y>115</y>
                 <width>381</width>
-                <height>135</height>
+                <height>175</height>
             </rect>
         </property>
         <property stdset="1">
             <name>title</name>
             <string>Options</string>
         </property>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>LongSession</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>170</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Long sessions</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Open new connections to the database to prevent
-the interface from locking up when executing.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>DesktopAware</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>105</y>
-                    <width>170</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Desktop aware</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Colors get really weird in KDE if you select this.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>190</x>
-                    <y>25</y>
-                    <width>80</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Table scale</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>ListScale</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Scale with which to print lists and tables.</string>
-            </property>
-        </widget>
         <widget>
             <class>QLineEdit</class>
             <property stdset="1">
@@ -292,6 +215,80 @@ the interface from locking up when executing.</string>
             </property>
         </widget>
         <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SavePassword</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>25</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Save last password</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Remember the last password you used to connect.
+Will leave the password unencryptet in the config file.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>LongSession</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Long sessions</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Open new connections to the database to prevent
+the interface from locking up when executing.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DesktopAware</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Desktop aware</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Colors get really weird in KDE if you select this.</string>
+            </property>
+        </widget>
+        <widget>
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
@@ -300,9 +297,9 @@ the interface from locking up when executing.</string>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
-                    <x>190</x>
+                    <x>180</x>
                     <y>65</y>
-                    <width>80</width>
+                    <width>90</width>
                     <height>16</height>
                 </rect>
             </property>
@@ -323,13 +320,41 @@ the interface from locking up when executing.</string>
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
+                <cstring>TextLabel3</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>180</x>
+                    <y>25</y>
+                    <width>90</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Table scale</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ListScale</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Scale with which to print lists and tables.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>RefreshLabel</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
-                    <x>190</x>
-                    <y>105</y>
+                    <x>180</x>
+                    <y>145</y>
                     <width>80</width>
                     <height>16</height>
                 </rect>
@@ -344,28 +369,51 @@ the interface from locking up when executing.</string>
             </property>
         </widget>
         <widget>
-            <class>QCheckBox</class>
+            <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>SavePassword</cstring>
+                <cstring>StatusLabel</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
-                    <x>10</x>
-                    <y>25</y>
-                    <width>170</width>
-                    <height>19</height>
+                    <x>180</x>
+                    <y>105</y>
+                    <width>90</width>
+                    <height>16</height>
                 </rect>
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Save last password</string>
+                <string>Status &amp;message</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Status</cstring>
             </property>
             <property>
                 <name>toolTip</name>
-                <string>Remember the last password you used to connect.
-Will leave the password unencryptet in the config file.</string>
+                <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Status</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>280</x>
+                    <y>100</y>
+                    <width>90</width>
+                    <height>23</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>suffix</name>
+                <string> seconds</string>
             </property>
         </widget>
     </widget>
@@ -394,13 +442,14 @@ Will leave the password unencryptet in the config file.</string>
 </connections>
 <tabstops>
     <tabstop>CustomSQL</tabstop>
-    <tabstop>PluginDirectory</tabstop>
     <tabstop>SQLBrowse</tabstop>
+    <tabstop>PluginDirectory</tabstop>
     <tabstop>PluginBrowse</tabstop>
     <tabstop>SavePassword</tabstop>
     <tabstop>LongSession</tabstop>
     <tabstop>DesktopAware</tabstop>
-    <tabstop>Style</tabstop>
     <tabstop>ListScale</tabstop>
+    <tabstop>Style</tabstop>
+    <tabstop>Status</tabstop>
 </tabstops>
 </UI>

@@ -165,12 +165,14 @@ void toResultLong::addItem(void)
 	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
 	  First=false;
 	}
+	emit done();
 	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
       } catch (const QString &str) {
 	if (First) {
 	  emit firstResult(SQL,str);
 	  First=false;
 	}
+	emit done();
 	toStatusMessage(str);
       }
     } else if (Query->eof()) {

@@ -145,11 +145,15 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
   throw QString("SQL Query not found in SGA");
 }
 
-void toStatusMessage(const QString &str)
+void toStatusMessage(const QString &str,bool save)
 {
   toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
   if (main) {
-    main->statusBar()->message(str);
+    int sec=toTool::globalConfig(CONF_STATUS_MESSAGE,DEFAULT_STATUS_MESSAGE).toInt();
+    if (save||sec==0)
+      main->statusBar()->message(str);
+    else
+      main->statusBar()->message(str,sec*1000);
     QToolTip::add(main->statusBar(),str);
   }
 }

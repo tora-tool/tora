@@ -308,7 +308,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     getCursorPosition (&curline,&curcol);
     if (row==curline) {
       if (err!=Errors.end())
-	toStatusMessage((*err).second);
+	toStatusMessage((*err).second,true);
       else {
 	err=Errors.find(LastRow);
 	if (err!=Errors.end())

@@ -59,9 +59,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty());
   Refresh=toRefreshCreate(OptionGroup);
-  Refresh->setGeometry(QRect(280,100,88,22));
+  Refresh->setGeometry(QRect(280,140,88,22));
   RefreshLabel->setBuddy(Refresh);
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
+  Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
+					DEFAULT_STATUS_MESSAGE).toInt());
 
 #ifdef ENABLE_STYLE
   Style->insertItem("CDE");
@@ -131,6 +133,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)
