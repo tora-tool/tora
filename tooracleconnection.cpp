@@ -224,11 +224,12 @@ public:
 	      return null;
 	    }
 	    int len=lob.len();
-	    if (dsc->ftype==otl_var_clob)
-	      len*=5;
 	    if (toMaxLong>=0&&len>toMaxLong)
 	      len=toMaxLong;
-	    buffer=new char[len+1];
+	    int buflen=len;
+	    if (dsc->ftype==otl_var_clob)
+	      buflen*=5;
+	    buffer=new char[buflen+1];
 	    buffer[0]=0;
 	    otl_long_string data(buffer,len);
 	    lob>>data;
