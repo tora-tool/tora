@@ -508,7 +508,7 @@ void toWorksheet::changeResult(QWidget *widget)
 void toWorksheet::refresh(void)
 {
   if (!QueryString.isEmpty()) {
-    Result->query(QueryString);
+    query(QueryString);
     StopButton->setEnabled(true);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     if (CurrentTab==Plan)
@@ -525,6 +525,7 @@ void toWorksheet::query(const QString &str)
     QString execSql=str;
     list<QString> param=toParamGet::getParam(this,execSql);
     Result->query(execSql,param);
+    Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
     StopButton->setEnabled(true);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
   } catch (const QString &str) {

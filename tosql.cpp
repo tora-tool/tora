@@ -116,8 +116,20 @@ bool toSQL::deleteSQL(const QString &name,
   }
 }
 
+toSQL toSQL::sql(const QString &name)
+{
+  allocCheck();
+  sqlMap::iterator i=Definitions->find(name);
+  if (i!=Definitions->end())
+    return name;
+  QString str="Tried to get unknown SQL (";
+  str+=name;
+  str+=")";
+  throw str;
+}
+
 QCString toSQL::sql(const QString &name,
-		       const toConnection &conn)
+		    const toConnection &conn)
 {
   allocCheck();
   const QString &ver=conn.version();

@@ -119,7 +119,8 @@ void toGlobalSetting::sqlBrowse(void)
 
 void toGlobalSetting::saveSetting(void)
 {
-  toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
+  if (!toMonolithic())
+    toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
   toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());

@@ -25,6 +25,10 @@
 	touched. For some more details, files are saved in the local 8bit
 	format (Gotten from LANG). Config values and sql strings are stored
 	in UTF8, the rest of the files are in Latin1.
+2001-03-13: Don't erase plugin dir from settings if running monolithic.
+2001-03-13: Went over toResultViews so names are set correctly (Mostly)
+2001-03-13: Added another quote.
+2001-03-13: Fixed bug in toWorksheet regarding refresh with parameters.
 
 0.6: Released 2001-02-23
 

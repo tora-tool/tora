@@ -367,7 +367,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
   if (paint)
     painter->translate(0,header()->height());
 
-  double y=(header()->height()-1)/scale+header()->height();
+  double y=(header()->height()+1)/scale+header()->height();
   int curLevel=level;
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;

@@ -504,6 +504,7 @@ public:
     addColumn("SQL");
     setSorting(0);
     NumExtents=0;
+    setSQLName("toRollbackOpen");
   }
   virtual void query(const QString &sql,const list<QString> &param)
   {

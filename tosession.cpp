@@ -216,7 +216,7 @@ void toSession::refresh(void)
     session=CurrentItem->text(0);
     serial=CurrentItem->text(1);
   }
-  Sessions->query(SQLSessions(Connection));
+  Sessions->query(SQLSessions);
   for (CurrentItem=Sessions->firstChild();CurrentItem;CurrentItem=CurrentItem->nextSibling())
     if (CurrentItem->text(0)==session&&
 	CurrentItem->text(1)==serial) {

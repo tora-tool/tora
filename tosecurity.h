@@ -26,43 +26,23 @@
  ****************************************************************************/
 
 
-#ifndef __TORESULTFIELD_H
-#define __TORESULTFIELD_H
+#ifndef __TOSECURITY_H
+#define __TOSECURITY_H
 
-#include "toconnection.h"
-#include "tohighlightedtext.h"
-#include "toresult.h"
-#include "otlv32.h"
+#include <qvbox.h>
 
-class toSQL;
+class toConnection;
 
-class toResultField : public toHighlightedText, public toResult {
+class toSecurity : public QVBox {
   Q_OBJECT
 
-  QString SQL;
+protected:
   toConnection &Connection;
-
 public:
-  toResultField(toConnection &conn,QWidget *parent,const char *name=NULL);
-
-  void setSQL(const QString &sql)
-  { SQL=sql; }
-  void setSQL(toSQL &sql);
-
-  virtual void query(const QString &sql,const list<QString> &param);
-
-  void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
-  void query(toSQL &sql);
+  toSecurity(QWidget *parent,toConnection &connection);
+  virtual ~toSecurity();
 public slots:
-  virtual void refresh(void)
-  { query(SQL); }
-  virtual void changeParams(const QString &Param1)
-  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  virtual void refresh(void);
 };
 
 #endif

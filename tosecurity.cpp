@@ -25,44 +25,65 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
 
-#ifndef __TORESULTFIELD_H
-#define __TORESULTFIELD_H
+#include <qlabel.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
 
 #include "toconnection.h"
-#include "tohighlightedtext.h"
-#include "toresult.h"
-#include "otlv32.h"
+#include "tosecurity.h"
+#include "tosql.h"
+#include "totool.h"
+#include "tomain.h"
 
-class toSQL;
+#include "tosecurity.moc"
 
-class toResultField : public toHighlightedText, public toResult {
-  Q_OBJECT
+#include "icons/refresh.xpm"
+#include "icons/tosecurity.xpm"
 
-  QString SQL;
-  toConnection &Connection;
-
+class toSecurityTool : public toTool {
+protected:
+  virtual char **pictureXPM(void)
+  { return tosecurity_xpm; }
 public:
-  toResultField(toConnection &conn,QWidget *parent,const char *name=NULL);
-
-  void setSQL(const QString &sql)
-  { SQL=sql; }
-  void setSQL(toSQL &sql);
-
-  virtual void query(const QString &sql,const list<QString> &param);
-
-  void query(const QString &sql)
-  { list<QString> p; query(sql,p); }
-  void query(toSQL &sql);
-public slots:
-  virtual void refresh(void)
-  { query(SQL); }
-  virtual void changeParams(const QString &Param1)
-  { list<QString> p; p.insert(p.end(),Param1); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
+  toSecurityTool()
+    : toTool(13,"Security Manager")
+  { }
+  virtual const char *menuItem()
+  { return "Security Manager"; }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  {
+    return new toSecurity(parent,connection);
+  }
 };
 
-#endif
+static toSecurityTool OutputTool;
+
+static QPixmap *toRefreshPixmap;
+
+toSecurity::toSecurity(QWidget *main,toConnection &connection)
+  : QVBox(main,NULL,WDestructiveClose),Connection(connection)
+{
+  if (!toRefreshPixmap)
+    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
+
+  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
+  new QToolButton(*toRefreshPixmap,
+		  "Poll for output now",
+		  "Poll for output now",
+		  this,SLOT(refresh(void)),
+		  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+
+  Connection.addWidget(this);
+}
+
+toSecurity::~toSecurity()
+{
+  Connection.delWidget(this);
+}
+
+void toSecurity::refresh(void)
+{
+}

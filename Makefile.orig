@@ -55,6 +55,7 @@ SOURCES=\
 	toresultview.cpp	\
 	torollback.cpp		\
 	tosession.cpp		\
+	tosecurity.cpp		\
 	tosgastatement.cpp	\
 	tosgatrace.cpp		\
 	tosql.cpp		\
@@ -96,6 +97,7 @@ plugins/toresultstats.tso:objs/toresultstats.o
 plugins/toresultstorage.tso:objs/toresultstorage.o
 plugins/torollback.tso:objs/torollback.o
 plugins/tosession.tso:objs/tosession.o
+plugins/tosecurity.tso:objs/tosecurity.o
 plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
@@ -140,6 +142,7 @@ tora-plugin: \
 	plugins/toresultstorage.tso \
 	plugins/torollback.tso \
 	plugins/tosession.tso \
+	plugins/tosecurity.tso \
 	plugins/tosgastatement.tso \
 	plugins/tosgatrace.tso \
 	plugins/tosqledit.tso \

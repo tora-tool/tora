@@ -58,7 +58,8 @@ private:
 
   QString Name;
 
-  toSQL(const toSQL &)
+  toSQL(const QString &name)
+    : Name(name)
   { }
 
   static void allocCheck(void)
@@ -76,9 +77,10 @@ public:
 		        const QString &ver);
 
   static QCString sql(const QString &name,const toConnection &conn);
-
   static QCString sql(const toSQL &sqldef,const toConnection &conn)
   { return sql(sqldef.Name,conn); }
+
+  static toSQL sql(const QString &name);
 
   static bool saveSQL(const QString &file);
   static bool loadSQL(const QString &file);

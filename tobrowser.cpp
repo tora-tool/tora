@@ -338,7 +338,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_COLUMNS]=resultView;
 
   toResultField *resultField=new toResultField(Connection,curr,TAB_VIEW_SQL);
-  resultField->setSQL(SQLViewSQL(Connection));
+  resultField->setSQL(SQLViewSQL);
   curr->addTab(resultField,"SQL");
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondMap[TAB_VIEW_SQL]=resultField;
@@ -441,13 +441,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_SOURCE);
-  resultField->setSQL(SQLSQLHead(Connection));
+  resultField->setSQL(SQLSQLHead);
   curr->addTab(resultField,"Declaration");
   SecondMap[TAB_PLSQL]=resultField;
   SecondMap[TAB_PLSQL_SOURCE]=resultField;
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_BODY);
-  resultField->setSQL(SQLSQLBody(Connection));
+  resultField->setSQL(SQLSQLBody);
   curr->addTab(resultField,"Body");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
@@ -476,7 +476,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TRIGGER_INFO]=resultItem;
 
   resultField=new toResultField(Connection,curr,TAB_TRIGGER_SOURCE);
-  resultField->setSQL(SQLTriggerBody(Connection));
+  resultField->setSQL(SQLTriggerBody);
   curr->addTab(resultField,"Code");
   SecondMap[TAB_TRIGGER_SOURCE]=resultField;
 

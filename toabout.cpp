@@ -68,18 +68,14 @@ static const char *QuoteText=
 <DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>
 <H3>My taste is simple, the best.</H3>
 <DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>
-
 <H3>Working weeks come to its end, party time is here again.</H3>
 <DIV ALIGN=RIGHT>Come with me, Depeche Mode<DIV ALIGN=LEFT>
-
 <H3>I want to run<BR>I want to hide<BR>I want to tear down the walls<BR>
 That hold me inside</H3>
 <DIV ALIGN=RIGHT>Where the streets have no name, U2<DIV ALIGN=LEFT>
-
 <H3>Got a letter from the government the other day.<BR>
 Opened it and read it. It said they were suckers.</H3>
 <DIV ALIGN=RIGHT>Black steel, Tricky<DIV ALIGN=LEFT>
-
 <H3>It's a small world and it smells funny<BR>
 I'd buy another if it wasn't for the money</H3>
 <DIV ALIGN=RIGHT>Vision Thing, Sisters of Mercy<DIV ALIGN=LEFT>
@@ -114,6 +110,10 @@ especially since I rule.</H3>
 <DIV ALIGN=LEFT>
 <H3>The trouble with being punctual is that nobody's there to appreciate it.</H3>
 <DIV ALIGN=RIGHT>Franklin P. Jones
+<DIV ALIGN=LEFT>
+<H3>I might disagree with what you have to say,
+but I'll defend your right to say it to the death.</A>
+<DIV ALIGN=RIGHT>Voltaire
 <DIV ALIGN=LEFT>
 <H3>Life is a sexually transmittable desease with terminal outcome.</H3>
 <DIV ALIGN=RIGHT>Unknown

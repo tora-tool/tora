@@ -61,7 +61,7 @@
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
 #define CONF_LONG_SESSION	"LongSeparate"
 #define CONF_LIST_SCALE		"ListScale"
-#define DEFAULT_LIST_SCALE	"0.5"
+#define DEFAULT_LIST_SCALE	"0.8"
 #define CONF_DESKTOP_AWARE	"DesktopAware"
 
 // Undefining this will leave out the style selection option stuff from the program

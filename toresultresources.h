@@ -38,7 +38,7 @@ class toResultResources : public toResultItem {
 public:
   toResultResources(toConnection &conn,QWidget *parent,const char *name=NULL)
     : toResultItem(3,true,conn,parent,name)
-  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,Connection)); }
+  { setSQL(toSQL::sql(TOSQL_RESULTRESOURCE,conn)); }
 };
 
 #endif

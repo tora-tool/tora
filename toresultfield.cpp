@@ -34,6 +34,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tosql.h"
 
 #include "toresultfield.moc"
 
@@ -73,4 +74,15 @@ void toResultField::query(const QString &sql,const list<QString> &param)
     }
     setText(text);
   } TOCATCH
+}
+
+void toResultField::setSQL(toSQL &sql)
+{
+  SQL=sql(Connection);
+  setFilename(sql.name());
+}
+void toResultField::query(toSQL &sql)
+{
+  setFilename(sql.name());
+  query(sql(Connection));
 }
