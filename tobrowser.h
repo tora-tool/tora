@@ -45,6 +45,7 @@ class QTabWidget;
 class toResult;
 class toResultView;
 class QListViewItem;
+class toResultFilter;
 
 class toBrowser : public QVBox {
   Q_OBJECT
@@ -57,9 +58,11 @@ class toBrowser : public QVBox {
   QString SecondText;
   toResultView *FirstTab;
   toResult *SecondTab;
+  toResultFilter *Filter;
 
   map<QString,toResultView *> Map;
   map<QString,toResult *> SecondMap;
+  void setNewFilter(toResultFilter *filter);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -71,6 +74,8 @@ public slots:
   void changeTab(QWidget *tab);
   void changeSecondTab(QWidget *tab);
   void changeItem(QListViewItem *item);
+  void clearFilter(void);
+  void defineFilter(void);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

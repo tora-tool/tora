@@ -39,6 +39,8 @@
 2001-05-23: Massive configure.pl updates.
 2001-05-23: Fixed problem with undefined font.
 2001-05-23: Some build changes.
+2001-05-24: Added filter functionality to toResultView.
+2001-05-24: Added filter in schema browser.
 
 0.9.1: Released 2001-05-20
 

@@ -660,6 +660,7 @@ void toResultView::setup(bool readable,bool dispCol)
   NumberColumn=dispCol;
   if (NumberColumn)
     addColumn("#");
+  Filter=NULL;
 }
 
 toResultView::toResultView(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
@@ -683,6 +684,7 @@ void toResultView::addItem(void)
     if (Query&&!Query->eof()) {
       RowNumber++;
       int disp=0;
+      QListViewItem *last=LastItem;
       LastItem=createItem(this,LastItem,NULL);
       if (NumberColumn) {
 	LastItem->setText(0,QString::number(RowNumber));
@@ -691,6 +693,11 @@ void toResultView::addItem(void)
 	LastItem->setText(columns(),QString::number(RowNumber));
       for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
 	LastItem->setText(j+disp,toReadValue(Description[j],*Query,MaxColSize));
+      if (Filter&&!Filter->check(LastItem)) {
+	delete LastItem;
+	LastItem=last;
+	RowNumber--;
+      }
     }
   } TOCATCH
 }
@@ -797,6 +804,7 @@ void toResultView::readAll(void)
 toResultView::~toResultView()
 {
   delete Query;
+  delete Filter;
 }
 
 void toResultView::keyPressEvent(QKeyEvent *e)

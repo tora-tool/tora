@@ -48,6 +48,16 @@ class QPrinter;
 class toSQL;
 class toResultCols;
 
+class toResultFilter {
+public:
+  toResultFilter()
+  { }
+  virtual ~toResultFilter()
+  { }
+  virtual bool check(const QListViewItem *item) = 0;
+  virtual toResultFilter *clone(void) = 0;
+};
+
 class toResultViewItem : public QListViewItem {
 public:
   toResultViewItem(QListView *parent,QListViewItem *after,const char *buffer=NULL)
@@ -184,6 +194,8 @@ protected:
   bool ReadableColumns;
   bool NumberColumn;
   bool ReadAll;
+  toResultFilter *Filter;
+
   void setup(bool readable,bool dispCol);
 
   virtual bool eof(void)
@@ -203,6 +215,11 @@ public:
   { return DescriptionLen; }
   void setQueryColumns(int col)
   { DescriptionLen=col; }
+
+  void setFilter(toResultFilter *filter)
+  { Filter=filter; }
+  toResultFilter *filter(void)
+  { return Filter; }
 
   bool numberColumn() const
   { return NumberColumn; }

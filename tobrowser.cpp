@@ -39,10 +39,13 @@ TO_NAMESPACE;
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qcombobox.h>
+#include <qcheckbox.h>
+#include <qlineedit.h>
 #include <qlabel.h>
 #include <qsplitter.h>
 #include <qworkspace.h>
 #include <qvaluelist.h>
+#include <qbuttongroup.h>
 
 #include "totool.h"
 #include "tomain.h"
@@ -58,8 +61,10 @@ TO_NAMESPACE;
 #include "toresultcontent.h"
 #include "toresultdepend.h"
 #include "tosql.h"
+#include "tobrowserfilterui.h"
 
 #include "tobrowser.moc"
+#include "tobrowserfilterui.moc"
 
 #include "icons/tobrowser.xpm"
 #include "icons/refresh.xpm"
@@ -71,6 +76,7 @@ TO_NAMESPACE;
 #include "icons/sequence.xpm"
 #include "icons/synonym.xpm"
 #include "icons/filter.xpm"
+#include "icons/nofilter.xpm"
 
 class toBrowserTool : public toTool {
 protected:
@@ -91,6 +97,78 @@ public:
 };
 
 static toBrowserTool BrowserTool;
+
+class toBrowserFilter : public toBrowserFilterUI {
+public:
+  class setting : public toResultFilter {
+    int Type;
+    bool IgnoreCase;
+    bool Invert;
+    QString Text;
+    QRegExp Match;
+  public:
+    setting(int type=0,bool cas=false,bool invert=false,const QString &str=QString::null)
+      : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str)
+    {
+      if (!str.isEmpty()) {
+	Match.setPattern(str);
+	Match.setCaseSensitive(cas);
+      }
+    }
+    virtual bool check(const QListViewItem *item)
+    {
+      QString str=item->text(0);
+      switch(Type) {
+      case 0:
+	return true;
+      case 1:
+	if (IgnoreCase) {
+	  if (str.upper().startsWith(Text))
+	    return !Invert;
+	} else if (str.startsWith(Text))
+	  return !Invert;
+	break;
+      case 2:
+	if (IgnoreCase) {
+	  if (str.right(Text.length()).upper()==Text)
+	    return !Invert;
+	} else if (str.right(Text.length())==Text)
+	  return !Invert;
+	break;
+      case 3:
+	if (str.contains(Text,!IgnoreCase))
+	  return !Invert;
+	break;
+      case 4:
+	if (Match.match(str)>=0)
+	  return !Invert;
+	break;
+      }
+      return Invert;
+    }
+    virtual toResultFilter *clone(void)
+    { return new setting(*this); }
+    friend class toBrowserFilter;
+  };
+  toBrowserFilter(QWidget *parent)
+    : toBrowserFilterUI(parent,"Filter Setting",true)
+  { }
+  toBrowserFilter(const setting &cur,QWidget *parent)
+    : toBrowserFilterUI(parent,"Filter Setting",true)
+  {
+    Buttons->setButton(cur.Type);
+    String->setText(cur.Text);
+    Invert->setChecked(cur.Invert);
+    IgnoreCase->setChecked(cur.IgnoreCase);
+  }
+  setting *getSetting(void)
+  {
+    return new setting(Buttons->id(Buttons->selected()),
+		       IgnoreCase->isChecked(),
+		       Invert->isChecked(),
+		       String->text());
+  }
+};
 
 #define FIRST_WIDTH 150
 
@@ -258,23 +336,48 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    " WHERE Trigger_Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>",
 			    "Columns used by trigger");
 
+static QPixmap *RefreshPixmap;
+static QPixmap *FilterPixmap;
+static QPixmap *NoFilterPixmap;
+
+void toBrowser::setNewFilter(toResultFilter *filter)
+{
+  if (filter)
+    Filter=filter;
+  for(map<QString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
+    (*i).second->setFilter(filter?filter->clone():NULL);
+  refresh();
+}
+
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
 {
+  if (!RefreshPixmap)
+    RefreshPixmap=new QPixmap((const char **)refresh_xpm);
+  if (!FilterPixmap)
+    FilterPixmap=new QPixmap((const char **)filter_xpm);
+  if (!NoFilterPixmap)
+    NoFilterPixmap=new QPixmap((const char **)nofilter_xpm);
+  Filter=NULL;
   Connection.addWidget(this);
 
   QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.connectString());
 
-  new QToolButton(QPixmap((const char *)refresh_xpm),
+  new QToolButton(*RefreshPixmap,
 		  "Update from DB",
 		  "Update from DB",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(QPixmap((const char *)filter_xpm),
+  new QToolButton(*FilterPixmap,
 		  "Define the object filter",
 		  "Define the object filter",
-		  this,SLOT(refresh(void)),
+		  this,SLOT(defineFilter(void)),
+		  toolbar);
+  new QToolButton(*NoFilterPixmap,
+		  "Remove any object filter",
+		  "Remove any object filter",
+		  this,SLOT(clearFilter(void)),
 		  toolbar);
   Schema=new QComboBox(toolbar);
   connect(Schema,SIGNAL(activated(int)),
@@ -521,6 +624,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 toBrowser::~toBrowser()
 {
   Connection.delWidget(this);
+  delete Filter;
 }
 
 void toBrowser::refresh(void)
@@ -590,6 +694,25 @@ void toBrowser::changeTab(QWidget *tab)
     SecondText="";
     if (FirstTab&&SecondTab)
       refresh();
+  }
+}
+
+void toBrowser::clearFilter(void)
+{
+  setNewFilter(NULL);
+}
+
+void toBrowser::defineFilter(void)
+{
+  toBrowserFilter::setting *setting=dynamic_cast<toBrowserFilter::setting *>(Filter);
+  if (setting) {
+    toBrowserFilter filt(*setting,this);
+    if (filt.exec())
+      setNewFilter(filt.getSetting());
+  } else {
+    toBrowserFilter filt(this);
+    if (filt.exec())
+      setNewFilter(filt.getSetting());
   }
 }
 
