@@ -532,9 +532,15 @@ void toMain::windowsMenu(void)
 void toMain::commandCallback(int cmd)
 {
   QWidget *focus=qApp->focusWidget();
-  if (focus&&(focus->isA("QLineEdit")||
-	      focus->isA("QComboBox")))
-    editDisable(Edit);
+  
+  if (focus) {
+    toEditWidget *edit=findEdit(focus);
+    if (edit&&edit!=Edit)
+      setEditWidget(edit);
+    else if (focus->isA("QLineEdit")||
+	       focus->isA("QComboBox"))
+      editDisable(Edit);
+  }
 
   if (Tools[cmd])
     Tools[cmd]->createWindow();
@@ -869,7 +875,6 @@ void toMain::editDisable(toEditWidget *edit)
   toMain *main=(toMain *)qApp->mainWidget();
 
   if (main) {
-    edit=main->findEdit(edit);
     if(edit&&edit==main->Edit) {
       main->editEnable(edit,false,false,false,false,false,false,false,false,false,false,false);
       main->Edit=NULL;
@@ -877,26 +882,18 @@ void toMain::editDisable(toEditWidget *edit)
   }
 }
 
-toEditWidget *toMain::findEdit(toEditWidget *edit)
+toEditWidget *toMain::findEdit(QWidget *widget)
 {
-  if (edit!=Edit) {
+  while(widget) {
     try {
-      QWidget *widget=dynamic_cast<QWidget *>(edit);
-      if (widget)
-	while(widget) {
-	  try {
-	    edit=dynamic_cast<toEditWidget *>(widget);
-	  } catch(...) {
-	    edit=NULL;
-	  }
-	  if (edit==Edit)
-	    break;
-	  widget=widget->parentWidget();
-	}
+      toEditWidget *edit=dynamic_cast<toEditWidget *>(widget);
+      if (edit)
+	return edit;
     } catch(...) {
     }
+    widget=widget->parentWidget();
   }
-  return edit;
+  return NULL;
 }
 
 void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
@@ -904,7 +901,6 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
 			bool cut,bool copy,bool paste,
 			bool,bool,bool)
 {
-  edit=findEdit(edit);
   if (edit&&edit==Edit) {
     LoadButton->setEnabled(open);
     if (save)

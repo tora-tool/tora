@@ -42,6 +42,7 @@
 #include <qcombobox.h>
 #include <qworkspace.h>
 #include <qpopupmenu.h>
+#include <qmenubar.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
