@@ -239,7 +239,7 @@ my $InstallBin;
 my $InstallLib;
 my $Includes;
 my $CC;
-my $Libs="-lcrypt -lm -lpthread";
+my $Libs="-lm -lpthread";
 my $MOC;
 my $UIC;
 my $LRelease;
@@ -621,7 +621,7 @@ __TEMP__
 	    print "no\n";
 	}
 
-	$Libs.=" -lkdecore -lkdeui -lDCOP -lkhtml";
+	$Libs.=" -lkdecore -lkdeui -lDCOP -lkhtml -lkparts -lkio";
 	if ($KDEVersion lt "2.9") {
 	    $Libs.=" -lkfile";
 	}
@@ -1135,21 +1135,27 @@ __TEMP__
 
     print "checking for extra libraries ... ";
 
+    my $extra="none";
+
     if (`uname`=~/linux/i) {
-	print "none\n";
+	$extra="-lcrypt";
+    } elsif (`uname`=~/bsd/i) {
+	# Noop
     } elsif (`uname`=~/sunos/i) {
 	$NoRPath=1;
 	if (`uname -r`>=8.0) {
-	    $Libs.=" -lrt";
-	    print " -lrt\n";
+	    $extra="-lcrypt -lrt";
 	} else {
-	    $Libs.=" -lposix4";
-	    print " -lposix4\n";
+	    $extra="-lcrypt -lposix4";
 	}
     } else {
 	$NoRPath=1;
-	print "none\n";
     }
+    if ($extra ne "none") {
+	$Libs.=" $extra";
+    }
+    print "$extra\n";
+
     if (!$NoRPath) {
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" -Xlinker \"--rpath\=$QtLib\" ";
     }
@@ -1173,7 +1179,7 @@ __TEMP__
 				 return -f $_[0];
 			     },
 	         "/usr/include");
-	if (-f $dlfcn && `uname`=~/linux/i ) {
+	if (-f $dlfcn && `uname`=~/linux|bsd/i ) {
 	    print "yes\n";
 	    $Target="tora-plugin";
 	} else {

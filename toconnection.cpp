@@ -44,6 +44,11 @@
 #include <qprogressdialog.h>
 #include <qwidget.h>
 
+// A little magic to get lrefresh to work and get a check on qApp
+
+#undef QT_TRANSLATE_NOOP
+#define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
+
 // Connection provider implementation
 
 std::map<QCString,toConnectionProvider *> *toConnectionProvider::Providers;
@@ -126,7 +131,7 @@ toConnectionProvider &toConnectionProvider::fetchProvider(const QCString &provid
   checkAlloc();
   std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(provider);
   if (i==Providers->end())
-    throw qApp->translate("toConnectionProvider","Tried to fetch unknown provider %1").arg(provider);
+    throw QT_TRANSLATE_NOOP("toConnectionProvider","Tried to fetch unknown provider %1").arg(provider);
   return *((*i).second);
 }
 

@@ -462,4 +462,6 @@ private slots:
       toStatusMessage(str);\
     }
 
+#define QTRANS(x,y) (qApp?qApp->translate(x,y):QString::fromLatin1(y))
+
 #endif

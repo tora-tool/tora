@@ -41,6 +41,11 @@
 #include <qfile.h>
 #include <qregexp.h>
 
+// A little magic to get lrefresh to work and get a check on qApp
+
+#undef QT_TRANSLATE_NOOP
+#define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
+
 toSQL::sqlMap *toSQL::Definitions;
 const char * const toSQL::TOSQL_USERLIST= "Global:UserList";
 const char * const toSQL::TOSQL_CREATEPLAN= "Global:CreatePlan";
@@ -248,7 +253,7 @@ void toSQL::loadSQL(const QString &filename)
     switch(data[pos]) {
     case '\n':
       if (endtag==-1)
-	throw qApp->translate("toSQL","Malformed tag in config file. Missing = on row.");
+	throw QT_TRANSLATE_NOOP("toSQL","Malformed tag in config file. Missing = on row.");
       data[wpos]=0;
       {
 	QCString nam=((const char *)data)+bol;
@@ -279,7 +284,7 @@ void toSQL::loadSQL(const QString &filename)
       if (endtag==-1) {
 	if (vertag>=0) {
 	  if (provtag>=0)
-	    throw qApp->translate("toSQL","Malformed line in SQL dictionary file. Two '[' before '='");
+	    throw QT_TRANSLATE_NOOP("toSQL","Malformed line in SQL dictionary file. Two '[' before '='");
 	  provtag=pos;
 	} else
 	  vertag=pos;
@@ -308,7 +313,7 @@ void toSQL::loadSQL(const QString &filename)
 	  data[wpos]=':';
 	break;
       default:
-	throw qApp->translate("toSQL","Unknown escape character in string (Only \\\\ and \\n recognised)");
+	throw QT_TRANSLATE_NOOP("toSQL","Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
       break;
     default:

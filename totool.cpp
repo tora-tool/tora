@@ -59,6 +59,11 @@
 
 #include "totool.moc"
 
+// A little magic to get lrefresh to work and get a check on qApp
+
+#undef QT_TRANSLATE_NOOP
+#define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
+
 toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
   : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx),Tool(tool)
 {
@@ -271,7 +276,7 @@ static char *toKeyPath(const QString &str,CRegistry &registry)
   for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
     ;
   if (pos<0)
-    throw qApp->translate("toKeyPath","Couldn't find \\ in path");
+    throw QT_TRANSLATE_NOOP("toKeyPath","Couldn't find \\ in path");
   QString ret=str.mid(0,pos);
   if (buf)
     free(buf);
@@ -286,7 +291,7 @@ static char *toKeyValue(const QString &str)
   for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
     ;
   if (pos<0)
-    throw qApp->translate("toKeyValue","Couldn't find \\ in path");
+    throw QT_TRANSLATE_NOOP("toKeyValue","Couldn't find \\ in path");
   if (buf)
     free(buf);
   buf=strdup(str.mid(pos+1));
@@ -370,7 +375,7 @@ void toTool::loadMap(const QString &filename,std::map<QCString,QString> &pairs)
     case '\n':
       data[wpos]=0;
       if (endtag==-1)
-	throw qApp->translate("toTool","Malformed tag in config file. Missing = on row. (%1)").
+	throw QT_TRANSLATE_NOOP("toTool","Malformed tag in config file. Missing = on row. (%1)").
 	  arg(data.mid(bol,wpos-bol));
       {
 	QCString tag=((const char *)data)+bol;
@@ -402,7 +407,7 @@ void toTool::loadMap(const QString &filename,std::map<QCString,QString> &pairs)
 	  data[wpos]=':';
 	break;
       default:
-	throw qApp->translate("toTool","Unknown escape character in string (Only \\\\ and \\n recognised)");
+	throw QT_TRANSLATE_NOOP("toTool","Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
       break;
     default:

@@ -83,6 +83,11 @@
 
 #define CHUNK_SIZE 31
 
+// A little magic to get lrefresh to work and get a check on qApp
+
+#undef QT_TRANSLATE_NOOP
+#define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
+
 static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM sys.All_Users ORDER BY UserName",
 			  "List users in the database");
@@ -704,7 +709,7 @@ QCString toReadFile(const QString &filename)
       QFile file(tmpFile);
       if (!file.open(IO_ReadOnly)) {
 	KIO::NetAccess::removeTempFile(tmpFile);
-	throw qApp->translate("toReadFile","Couldn't open file %1.").arg(filename);
+	throw QT_TRANSLATE_NOOP("toReadFile","Couldn't open file %1.").arg(filename);
       }
 
       int size=file.size();
@@ -713,7 +718,7 @@ QCString toReadFile(const QString &filename)
       if (file.readBlock(buf,size)==-1) {
 	delete[] buf;
 	KIO::NetAccess::removeTempFile(tmpFile);
-	throw qApp->translate("toReadFile","Encountered problems read configuration");
+	throw QT_TRANSLATE_NOOP("toReadFile","Encountered problems read configuration");
       }
       buf[size]=0;
       QCString ret(buf,size+1);
@@ -721,19 +726,19 @@ QCString toReadFile(const QString &filename)
       KIO::NetAccess::removeTempFile(tmpFile);
       return ret;
     }
-    throw qApp->translate("toReadFile","Couldn't download file");
+    throw QT_TRANSLATE_NOOP("toReadFile","Couldn't download file");
   }
 #endif
   QFile file(expanded);
   if (!file.open(IO_ReadOnly))
-    throw qApp->translate("toReadFile","Couldn't open file %1.").arg(filename);
+    throw QT_TRANSLATE_NOOP("toReadFile","Couldn't open file %1.").arg(filename);
   
   int size=file.size();
   
   char *buf=new char[size+1];
   if (file.readBlock(buf,size)==-1) {
     delete[] buf;
-    throw qApp->translate("toReadFile","Encountered problems read configuration");
+    throw QT_TRANSLATE_NOOP("toReadFile","Encountered problems read configuration");
   }
   buf[size]=0;
   QCString ret(buf,size+1);
@@ -750,37 +755,37 @@ bool toWriteFile(const QString &filename,const QCString &data)
     KTempFile file;
     file.file()->writeBlock(data,data.length());
     if (file.status()!=IO_Ok) {
-      TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
-			    qApp->translate("toWriteFile","Couldn't write data to tempfile"));
+      TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
+			    QT_TRANSLATE_NOOP("toWriteFile","Couldn't write data to tempfile"));
       file.unlink();
       return false;
     }
     file.close();
     if (!KIO::NetAccess::upload(file.name(),url)) {
       file.unlink();
-      TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
-			    qApp->translate("toWriteFile","Couldn't upload data to URL"));
+      TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
+			    QT_TRANSLATE_NOOP("toWriteFile","Couldn't upload data to URL"));
       return false;
     }
     file.unlink();
-    toStatusMessage(qApp->translate("toWriteFile","File saved successfully"),false,false);
+    toStatusMessage(QT_TRANSLATE_NOOP("toWriteFile","File saved successfully"),false,false);
     return true;
   }
 #endif
 
   QFile file(expanded);
   if (!file.open(IO_WriteOnly)) {
-    TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
-			  qApp->translate("toWriteFile","Couldn't open file for writing"));
+    TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
+			  QT_TRANSLATE_NOOP("toWriteFile","Couldn't open file for writing"));
     return false;
   }
   file.writeBlock(data,data.length());
   if (file.status()!=IO_Ok) {
-    TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
-			  qApp->translate("toWriteFile","Couldn't write data to file"));
+    TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
+			  QT_TRANSLATE_NOOP("toWriteFile","Couldn't write data to file"));
     return false;
   }
-  toStatusMessage(qApp->translate("toWriteFile","File saved successfully"),false,false);
+  toStatusMessage(QT_TRANSLATE_NOOP("toWriteFile","File saved successfully"),false,false);
   return true;
 }
 
@@ -1171,7 +1176,7 @@ QString toTranslateMayby(const QString &ctx,const QString &text)
     printf("QT_TRANSLATE_NOOP(\"%s\",\"%s\"),\n",(const char *)ctx.latin1(),(const char *)text.latin1());
   }
 #endif
-  return qApp->translate(ctx.latin1(),text.latin1());
+  return QT_TRANSLATE_NOOP(ctx.latin1(),text.latin1());
 }
 
 toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,

@@ -9126,7 +9126,7 @@ separeras med ett &apos;:&apos; tecken.</translation>
     </message>
     <message>
         <source>&amp;Enable statistics</source>
-        <translation>Lå på stat&amp;estik</translation>
+        <translation>Slå på stat&amp;estik</translation>
     </message>
     <message>
         <source>Enable statistic collection per default.</source>
