@@ -306,6 +306,10 @@ QCString toQValue::utf8Value(void) const
   case doubleType:
     {
       QCString ret;
+      if (Value.Double!=int(Value.Double)) {
+	ret.setNum(Value.Double);
+	return ret;
+      }
       char buf[100];
       switch(NumberFormat) {
       default:
@@ -366,6 +370,8 @@ void toQValue::setNumberFormat(int format,int decimals)
 
 QString toQValue::formatNumber(double number)
 {
+  if (number==int(number))
+    return QString::number(number);
   switch(NumberFormat) {
   case 1:
     {
@@ -399,10 +405,10 @@ toQValue::operator QString() const
   switch(Type) {
   case nullType:
     return QString::null;
-  case intType:
-    return QString::number(Value.Int);
   case doubleType:
     return formatNumber(Value.Double);
+  case intType:
+    return QString::number(Value.Int);
   case stringType:
     return *Value.String;
   }
