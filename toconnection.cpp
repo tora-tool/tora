@@ -1588,7 +1588,7 @@ bool toConnection::loadDiskCache()
    if (toTool::globalConfig(CONF_CACHE_DISK,DEFAULT_CACHE_DISK).isEmpty())
    	return false;
 
-   toConnection::objectName *cur;
+   toConnection::objectName *cur = 0;
    int objCounter = 0;
    int synCounter = 0;
 
@@ -1636,6 +1636,7 @@ bool toConnection::loadDiskCache()
        synCounter++;
      }
      ObjectNames.insert(ObjectNames.end(),(*cur));
+     delete cur; cur = 0;
    }
    return true;
 }
