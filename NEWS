@@ -20,6 +20,7 @@
 2001-05-21: Include schema when dragging schema objects in templates.
 2001-05-21: Restore original if there are problems storing toResultContent.
 2001-05-21: Fixed to drag in toListView.
+2001-05-22: Added context menu and memo edit to toResultContent.
 
 0.9.1: Released 2001-05-20
 

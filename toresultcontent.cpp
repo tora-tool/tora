@@ -36,8 +36,10 @@ TO_NAMESPACE;
 
 #include <stdio.h>
 #include <qdragobject.h>
+#include <qclipboard.h>
 
 #include "toconf.h"
+#include "tomemoeditor.h"
 #include "tomain.h"
 #include "toresultcontent.h"
 #include "toresultview.h"
@@ -73,7 +75,10 @@ void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
 void toResultContent::contentsMousePressEvent(QMouseEvent *e)
 {
   LastMove=QPoint(-1,-1);
-  QTable::contentsMousePressEvent(e);
+  if (e->button()==RightButton)
+    displayMenu(e->globalPos());
+  else
+    QTable::contentsMousePressEvent(e);
 }
 
 void toResultContent::contentsMouseReleaseEvent(QMouseEvent *e)
@@ -121,6 +126,8 @@ toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *
   SortRow=-1;
   setAcceptDrops(true);
   LastMove=QPoint(-1,-1);
+  MenuColumn=MenuRow=-1;
+  Menu=NULL;
 }
 
 void toResultContent::wrongUsage(void)
@@ -391,6 +398,25 @@ void toResultContent::print(void)
   print.print();
 }
 
+void toResultContent::exportFile(void)
+{
+  toResultView list(false,true,Connection,this);
+  list.hide();
+  QString name="Content of ";
+  name+=Owner;
+  name+=".";
+  name+=Table;
+  list.setSQLName(name);
+  QString sql="SELECT * FROM \"";
+  sql+=Owner;
+  sql+="\".\"";
+  sql+=Table;
+  sql+="\"";
+  list.query(sql);
+  list.readAll();
+  list.exportFile();
+}
+
 void toResultContent::activateNextCell()
 {
   if (currentColumn()+1<numCols())
@@ -416,3 +442,86 @@ void toResultContent::focusOutEvent (QFocusEvent *e)
   QTable::focusOutEvent(e);
 }
 
+#define TORESULT_COPY     1
+#define TORESULT_PASTE    2
+#define TORESULT_MEMO     3
+#define TORESULT_READ_ALL 4
+#define TORESULT_EXPORT   5
+
+void toResultContent::displayMenu(const QPoint &p)
+{
+  QPoint lp=mapFromGlobal(p);
+  lp=QPoint(lp.x()+contentsX()-verticalHeader()->width(),
+	    lp.y()+contentsY()-horizontalHeader()->height());
+  MenuColumn=columnAt(lp.x());
+  MenuRow=rowAt(lp.y());
+  if (MenuColumn>=0&&MenuRow>=0) {
+    if (!Menu) {
+      Menu=new QPopupMenu(this);
+      Menu->insertItem("&Copy",TORESULT_COPY);
+      Menu->insertItem("&Paste",TORESULT_PASTE);
+      Menu->insertItem("&Display in editor",TORESULT_MEMO);
+      Menu->insertItem("Export to file",TORESULT_COPY);
+      Menu->insertSeparator();
+      Menu->insertItem("Read all",TORESULT_READ_ALL);
+      connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
+    }
+    setCurrentCell(MenuRow,MenuColumn);
+    Menu->popup(p);
+    QClipboard *clip=qApp->clipboard();
+    Menu->setItemEnabled(TORESULT_PASTE,!clip->text().isEmpty());
+  }
+}
+
+void toResultContent::displayMemo(void)
+{
+  toMemoEditor *edit=new toMemoEditor(this,text(MenuRow,MenuColumn));
+  connect(edit,SIGNAL(changeData(int,int,const QString &)),
+	  this,SLOT(changeData(int,int,const QString &)));
+}
+
+void toResultContent::changeData(int row,int col,const QString &str)
+{
+  changePosition(col,row);
+  if (CurrentRow!=row) {
+    OrigValues.clear();
+    for (int i=0;i<numCols();i++)
+      OrigValues.insert(OrigValues.end(),text(MenuRow,i));
+    CurrentRow=row;
+  }
+  setText(row,col,str);
+  setCurrentCell(row,col);
+}
+
+void toResultContent::menuCallback(int cmd)
+{
+  switch(cmd) {
+  case TORESULT_COPY:
+    {
+      QClipboard *clip=qApp->clipboard();
+      clip->setText(text(MenuRow,MenuColumn));
+    }
+    break;
+  case TORESULT_PASTE:
+    {
+      QClipboard *clip=qApp->clipboard();
+      if (CurrentRow!=MenuRow) {
+	OrigValues.clear();
+	for (int i=0;i<numCols();i++)
+	  OrigValues.insert(OrigValues.end(),text(MenuRow,i));
+	CurrentRow=MenuRow;
+      }
+      setText(MenuRow,MenuColumn,clip->text());
+    }
+    break;
+  case TORESULT_MEMO:
+    displayMemo();
+    break;
+  case TORESULT_READ_ALL:
+    readAll();
+    break;
+  case TORESULT_EXPORT:
+    exportFile();
+    break;
+  }
+}

@@ -54,6 +54,10 @@ class toResultContent : public QTable,public toResult {
   bool AddRow;
   QPoint LastMove;
 
+  QPopupMenu *Menu;
+  int MenuColumn;
+  int MenuRow;
+
   int SortRow;
   bool SortRowAsc;
 
@@ -85,12 +89,19 @@ public:
 
   void readAll(void);
   void print(void);
+  virtual void exportFile(void);
 public slots:
   virtual void changeSort(int);
   virtual void refresh(void)
   { changeParams(Owner,Table); }
   virtual void changeParams(const QString &Param1,const QString &Param2);
   void changePosition(int col,int row);
+
+  virtual void displayMenu(const QPoint &);
+  virtual void displayMemo(void);
+protected slots:
+  virtual void menuCallback(int);
+  virtual void changeData(int,int,const QString &); 
 };
 
 #endif
