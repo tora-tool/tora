@@ -41,6 +41,7 @@
 #include "totool.h"
 
 #include <qapplication.h>
+#include <qprogressdialog.h>
 #include <qwidget.h>
 
 // Connection provider implementation
@@ -1340,6 +1341,26 @@ bool toConnection::cacheAvailable(bool block,bool need)
   if (ReadingValues.getValue()==0) {
     if (block) {
       toBusy busy;
+      if (toThread::mainThread()) {
+	QProgressDialog waiting("Waiting for object caching to be completed.\n"
+				"Canceling this dialog will probably leave some list of\n"
+				"database objects empty.",
+				"&Cancel",
+				10,
+				toMainWidget(),
+				"progress",
+				true);
+	waiting.setCaption("Waiting for object cache");
+	int num=1;
+	do {
+	  qApp->processEvents();
+	  toThread::msleep(100);
+	  waiting.setProgress((++num)%10);
+	  if (waiting.wasCancelled())
+	    return false;
+	} while(ReadingValues.getValue()<1);
+      }
+
       ReadingValues.down();
       ReadingValues.up();
     } else
