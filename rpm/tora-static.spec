@@ -17,12 +17,13 @@ BuildRequires: qt2-devel
 Tool for Oracle (Tora) is a tool for DBAs and database software developers.
 It is inspired by TOAD for Windows. It features a schema browser, SQL
 worksheet, PL/SQL editor & debugger, storage manager, rollback segment
-monitor, instance manager, and SQL output viewer.
+monitor, instance manager, and SQL output viewer. This RPM is statically
+linked with Qt for increased portability.
 
 %prep
 %setup -q
 %build
-./configure --prefix=/usr
+./configure --prefix=/usr --with-static
 make
 
 %install
@@ -34,11 +35,9 @@ cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
 mkdir -p $RPM_BUILD_ROOT%{_iconsdir}
 cp icons/tora.xpm $RPM_BUILD_ROOT%{_iconsdir}/tora.xpm
 
-strip plugins/*.so tora
+strip tora-static
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
-cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp plugins/*.so $RPM_BUILD_ROOT%{_prefix}/lib/tora
+cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
 
 %post
 %{update_menus}
@@ -56,4 +55,3 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/X11R6/bin/tora
 %{_menudir}/tora
 %{_iconsdir}/tora.xpm
-%{_prefix}/lib/tora
