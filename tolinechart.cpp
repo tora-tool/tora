@@ -35,6 +35,7 @@
  ****************************************************************************/
 
 #include <qpainter.h>
+#include <qworkspace.h>
 
 #include "tolinechart.h"
 #include "tomain.h"
@@ -406,20 +407,21 @@ void toLineChart::mouseReleaseEvent(QMouseEvent *e)
       QPainter p(this);
       p.setRasterOp(NotROP);
       p.drawRect(rect);
-      if (MousePoint[0].x()!=e->x()&&
-	  MousePoint[0].y()!=e->y()) {
-	int samples=countSamples();
-	UseSamples=samples*rect.width()/Chart.width();
-	if (UseSamples<2)
-	  UseSamples=2;
-	SkipSamples+=samples*(Chart.width()+Chart.x()-rect.x()-rect.width())/Chart.width();
-	Zooming=true;
-
-	double t=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y()-rect.height())/Chart.height()+zMinValue;
-	zMaxValue=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y())/Chart.height()+zMinValue;
-	zMinValue=t;
-	update();
-      }
+    }
+    if (MousePoint[0].x()!=e->x()&&
+	MousePoint[0].y()!=e->y()) {
+      QRect rect=fixRect(MousePoint[0],e->pos());
+      int samples=countSamples();
+      UseSamples=samples*rect.width()/Chart.width()+2;
+      if (UseSamples<2)
+	UseSamples=2;
+      SkipSamples+=samples*(Chart.width()+Chart.x()-rect.x()-rect.width())/Chart.width();
+      Zooming=true;
+      
+      double t=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y()-rect.height())/Chart.height()+zMinValue;
+      zMaxValue=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y())/Chart.height()+zMinValue;
+      zMinValue=t;
+      update();
     }
     MousePoint[1]=MousePoint[0]=QPoint(-1,-1);
   } else if (e->button()==RightButton) {
@@ -463,5 +465,66 @@ void toLineChart::mouseMoveEvent(QMouseEvent *e)
       p.drawRect(fixRect(MousePoint[0],MousePoint[1]));
     MousePoint[1]=e->pos();
     p.drawRect(fixRect(MousePoint[0],MousePoint[1]));
+  }
+}
+
+
+void toLineChart::mouseDoubleClickEvent(QMouseEvent *e)
+{
+  if (e->button()==LeftButton) {
+    QWidget *newWin=new toLineChart(this,toMainWidget()->workspace());
+    newWin->show();
+    toMainWidget()->windowsMenu();
+
+#if 1
+      // This is a really ugly workaround for a Qt layout bug
+      QWidget *tmp=NULL;
+      QWidget *tmp2=NULL;
+      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+        if (newWin!=widget)
+	  tmp2=widget;
+	else
+	    tmp=newWin;
+	if (tmp2&&tmp)
+	  break;
+      }
+      if(tmp2&&tmp) {
+        tmp2->setFocus();
+        tmp->setFocus();
+      }
+#endif
+  }
+}
+
+toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WFlags f)
+  : QWidget(parent,name,f)
+{
+  Values=chart->Values;
+  XValues=chart->XValues;
+  Labels=chart->Labels;
+  Legend=chart->Legend;
+  Last=false;
+  Grid=5;
+  AxisText=true;
+  MinValue=chart->MinValue;
+  MinAuto=chart->MinAuto;
+  MaxValue=chart->MaxValue;
+  MaxAuto=chart->MaxAuto;
+  Samples=chart->Samples;
+  Title=chart->Title;
+  YPostfix=chart->YPostfix;
+
+  setCaption(Title);
+
+  clearZoom();
+
+  setMinimumSize(80,50);
+
+  // Use list font
+  QString str=toTool::globalConfig(CONF_LIST,"");
+  if (!str.isEmpty()) {
+    QFont font(toStringToFont(str));
+    setFont(font);
   }
 }

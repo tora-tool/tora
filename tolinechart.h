@@ -76,6 +76,7 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent *e);
   virtual void mousePressEvent(QMouseEvent *e);
   virtual void mouseMoveEvent(QMouseEvent *e);
+  virtual void mouseDoubleClickEvent(QMouseEvent *e);
 
   int countSamples(void);
   void clearZoom(void);
@@ -86,6 +87,14 @@ public:
    * @param f Widget flags.
    */
   toLineChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  /** Create a new chart by copying all the data from another chart.
+   * @param chart Chart to copy data from.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   * @param f Widget flags.
+   */
+  toLineChart(toLineChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.

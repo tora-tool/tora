@@ -226,65 +226,65 @@ static toTuningTool TuningTool;
 static QPixmap *toRefreshPixmap;
 
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
-				     "select 1,sum(blocks) from v$archived_log",
+				     "select sysdate,sum(blocks) from v$archived_log",
 				     "Archive log write");
 
 static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
-				  "select 1,100-100*sum(getmisses)/sum(gets) from v$rowcache",
+				  "select sysdate,100-100*sum(getmisses)/sum(gets) from v$rowcache",
 				  "Buffer hitrate");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
-				    "select 1,value/to_number(:f1<char[101]>)\n"
+				    "select sysdate,value/to_number(:f1<char[101]>)\n"
 				    "  from v$sysstat where statistic# = 182",
 				    "Bytes sent to client");
 
 static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
-				     "select 1,value/to_number(:f1<char[101]>)\n"
+				     "select sysdate,value/to_number(:f1<char[101]>)\n"
 				     "  from v$sysstat where statistic# = 183",
 				     "Bytes sent from client");
 
 static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
-				"select 1,value\n"
+				"select sysdate,value\n"
 				"  from v$sysstat where statistic# = 181",
 				"Execute count");
 
 static toSQL SQLOverviewParse("toTuning:Overview:Parse",
-			      "select 1,value\n"
+			      "select sysdate,value\n"
 			      "  from v$sysstat where statistic# = 179",
 			      "Parse count");
 
 static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
-				    "select 1,value\n"
+				    "select sysdate,value\n"
 				    "  from v$sysstat where statistic# = 100",
 				    "Redo entries");
 
 static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
-				   "select 1,value\n"
+				   "select sysdate,value\n"
 				   "  from v$sysstat where statistic# = 106",
 				   "Redo blocks written");
 
 static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
-				    "select 1,sum(value)\n"
+				    "select sysdate,sum(value)\n"
 				    "  from v$sysstat where statistic# in (38,39)",
 				    "Blocks read");
 
 static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
-				     "select 1,sum(value)\n"
+				     "select sysdate,sum(value)\n"
 				     "  from v$sysstat where statistic# in (41,42)",
 				     "Blocks written");
 
 static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
-				     "select 1,value\n"
+				     "select sysdate,value\n"
 				     "  from v$sysstat where statistic# = 40",
 				     "Blocks physically read");
 
 static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
-				      "select 1,value\n"
+				      "select sysdate,value\n"
 				      "  from v$sysstat where statistic# = 44",
 				      "Blocks physically written");
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
-			       "select 1,\n"
+			       "select sysdate,\n"
 			       "       sum(decode(status,'INACTIVE',1,0)),\n"
 			       "       sum(decode(status,'ACTIVE',1,0))\n"
 			       "  from v$session\n"
@@ -292,7 +292,7 @@ static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "Information about active/inactive clients");
 
 static toSQL SQLOverviewSGAUsed("toTuning:Overview:SGAUsed",
-				"select 1,100*(total-free)/total\n"
+				"select sysdate,100*(total-free)/total\n"
 				"  from (select sum(value) total from v$sga where name in ('Fixed Size','Variable Size')),\n"
 				"       (select bytes free from v$sgastat where pool = 'shared pool' and name = 'free memory')",
 				"SGA used");

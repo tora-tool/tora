@@ -33,11 +33,10 @@ Extended functionality:
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
 * Statistics saving and comparison in worksheet.
-* Zooming in line and barcharts.
 * File I/O statistics in storage.
 * Change parameters in tuning info.
 * Generate new pfile from modified parameters.
-* Statistics in debugger as well.
+* Printing of charts.
 
 New tools:
 

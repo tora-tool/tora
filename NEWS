@@ -36,6 +36,8 @@
 2001-08-10: Just generate binary packages on release and only copy same release.
 2001-08-11: Include statistics from parallel servers in sessionstatistics.
 2001-08-12: Added zooming to linecharts.
+2001-08-13: Added zooming to barcharts.
+2001-08-13: Made it possible to get snapshot of chart by doubleclicking on it.
 
 0.14: Released 2001-08-02
 

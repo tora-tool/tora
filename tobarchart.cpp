@@ -35,6 +35,7 @@
  ****************************************************************************/
 
 #include <qpainter.h>
+#include <qworkspace.h>
 
 #include "tobarchart.h"
 #include "tomain.h"
@@ -92,10 +93,15 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
 {
   MaxAuto=true;
   MaxValue=0;
+  MinAuto=false;
+  MinValue=0;
   Legend=true;
   Grid=5;
   AxisText=true;
   Last=false;
+  MousePoint[0]=MousePoint[1]=QPoint(-1,-1);
+
+  clearZoom();
 
   setSamples(toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt());
 
@@ -134,6 +140,32 @@ void toBarChart::addValues(list<double> &value,const QString &xValue)
   update();
 }
 
+QRect toBarChart::fixRect(QPoint p1,QPoint p2)
+{
+  if (p1.x()<Chart.x())
+    p1.setX(Chart.x());
+  if (p2.x()<Chart.x())
+    p2.setX(Chart.x());
+  if (p1.x()>Chart.x()+Chart.width())
+    p1.setX(Chart.x()+Chart.width());
+  if (p2.x()>Chart.x()+Chart.width())
+    p2.setX(Chart.x()+Chart.width());
+
+  if (p1.y()<Chart.y())
+    p1.setY(Chart.y());
+  if (p2.y()<Chart.y())
+    p2.setY(Chart.y());
+  if (p1.y()>Chart.y()+Chart.height())
+    p1.setY(Chart.y()+Chart.height());
+  if (p2.y()>Chart.y()+Chart.height())
+    p2.setY(Chart.y()+Chart.height());
+
+  return QRect(min(p1.x(),p2.x()),
+	       min(p1.y(),p2.y()),
+	       abs(p1.x()-p2.x()),
+	       abs(p1.y()-p2.y()));
+}
+
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
 
 void toBarChart::paintEvent(QPaintEvent *e)
@@ -143,6 +175,8 @@ void toBarChart::paintEvent(QPaintEvent *e)
 
   int right=width();
   int bottom=height();
+  int top=0;
+  int left=0;
 
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
 
@@ -154,7 +188,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
     p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
     p.restore();
-    p.translate(0,bounds.height()+2);
+    p.translate(0,top=bounds.height()+2);
     bottom-=bounds.height()+2;
   }
   if (Last) {
@@ -170,6 +204,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     if (!str.isEmpty()) {
       QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,str);
       p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
+      top+=bounds.height();
       p.translate(0,bounds.height());
       bottom-=bounds.height();
     }
@@ -214,44 +249,40 @@ void toBarChart::paintEvent(QPaintEvent *e)
       }
     }
   }
-  double minval=0,maxval=0;
   bool leftAxis=true;
-  if (MaxAuto) {
-    bool firstMax=true;
-    list<double> total;
-    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-      list<double>::iterator k=total.begin();
-      for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	if (k==total.end()) {
-	  total.insert(total.end(),*j);
-	  k=total.end();
-	} else {
-	  *k+=*j;
-	  k++;
+  if (!Zooming) {
+    if (MinAuto||MaxAuto) {
+      bool first=true;
+      for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+	for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	  if (first) {
+	    zMinValue=*j;
+	    zMaxValue=*j;
+	    first=false;
+	  } else if (zMaxValue<*j)
+	    zMaxValue=*j;
+	  else if (zMinValue>*j)
+	    zMinValue=*j;
 	}
       }
+      if (zMaxValue==0&&zMinValue==0)
+	leftAxis=false;
+      zMaxValue=round(zMaxValue,true);
+      zMinValue=round(zMinValue,false);
     }
-    for(list<double>::iterator k=total.begin();k!=total.end();k++) {
-      if (firstMax) {
-	maxval=*k;
-	firstMax=false;
-      } else if (maxval<*k)
-	maxval=*k;
-    }
-    if (maxval==0)
-      leftAxis=false;
-    maxval=round(maxval,true);
+    if(!MinAuto)
+      zMinValue=MinValue;
+    if(!MaxAuto)
+      zMaxValue=MaxValue;
   }
-  if(!MaxAuto)
-    maxval=MaxValue;
 
   if (AxisText) {
     int yoffset=0;
     QString minstr;
     QString maxstr;
     if (leftAxis) {
-      minstr=QString::number(minval);
-      maxstr=QString::number(maxval);
+      minstr=QString::number(zMinValue);
+      maxstr=QString::number(zMaxValue);
       minstr+=YPostfix;
       maxstr+=YPostfix;
       QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
@@ -268,13 +299,26 @@ void toBarChart::paintEvent(QPaintEvent *e)
       minXstr=*(XValues.begin());
       maxXstr=*(XValues.rbegin());
 
+      if (Zooming) {
+	int count=0;
+	for(list<QString>::reverse_iterator i=XValues.rbegin();i!=XValues.rend();i++) {
+	  if (count==SkipSamples)
+	    maxXstr=*i;
+	  else if (count==SkipSamples+UseSamples-1) {
+	    minXstr=*i;
+	    break;
+	  }
+	  count++;
+	}
+      }
+
       QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
       xoffset=bounds.height();
       bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
       if (xoffset<bounds.height())
 	xoffset=bounds.height();
 
-      if (minval!=0||maxval!=0) {
+      if (zMinValue!=0||zMaxValue!=0) {
 	p.save();
 	p.rotate(-90);
 #if 0
@@ -292,7 +336,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
 		 AlignLeft|AlignTop|ExpandTabs,minXstr);
       p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
 		 AlignRight|AlignTop|ExpandTabs,maxXstr);
-      p.translate(yoffset,0);
+      p.translate(left=yoffset,0);
     }
     right-=yoffset;
     bottom-=xoffset;
@@ -300,6 +344,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
 
   p.save();
   p.setBrush(white);
+  Chart=QRect(left+2,top+2,right-3,bottom-3);
   p.drawRect(2,2,right-3,bottom-3);
   p.restore();
   if (Grid>1) {
@@ -314,26 +359,33 @@ void toBarChart::paintEvent(QPaintEvent *e)
     p.restore();
   }
 
-  const QWMatrix &mtx=p.worldMatrix();
-  p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-5,bottom-5);
   list<QPointArray> Points;
   int cp=0;
-  int samples=Samples;
-  if (Samples<=0)
-    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
-      samples=max(samples,int((*i).size()));
-  int zeroy=int(bottom-2-(-minval/(maxval-minval)*(bottom-4)));
+  int samples=countSamples();
+  int zeroy=int(bottom-2-(-zMinValue/(zMaxValue-zMinValue)*(bottom-4)));
   if (samples>1) {
+    const QWMatrix &mtx=p.worldMatrix();
+    p.setClipRect(mtx.dx()+2,mtx.dy()+2,right-3,bottom-3);
+    if (Zooming)
+      p.drawText(2,2,right-4,bottom-4,
+		 AlignLeft|AlignTop,"Zoom");
     for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
       list<double> &val=*i;
       int count=0;
+      int skip=SkipSamples;
       QPointArray a(samples+10);
       int x=right-2;
       for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
-	int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
-	x=right-2-count*(right-4)/(samples-1);
-	a.setPoint(count,x,val);
-	count++;
+	if (skip>0)
+	  skip--;
+	else {
+	  int val=int(bottom-2-((*j-zMinValue)/(zMaxValue-zMinValue)*(bottom-4)));
+	  x=right-2-count*(right-4)/(samples-1);
+	  a.setPoint(count,x,val);
+	  count++;
+	  if (count>=samples)
+	    break;
+	}
       }
       a.resize(count*2);
       Points.insert(Points.end(),a);
@@ -353,7 +405,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
 	Bottom[x]=0;
       if (lx!=x)
 	lb=Bottom[x];
-      a.setPoint(a.size()-1-j,x,bottom-2-lb);
+      a.setPoint(a.size()-1-j,x,zeroy-lb);
       y-=lb;
       a.setPoint(j,x,y);
       Bottom[x]=zeroy-y;
@@ -365,5 +417,134 @@ void toBarChart::paintEvent(QPaintEvent *e)
     p.drawPolygon(a);
     p.restore();
   }
+  MousePoint[1]=QPoint(-1,-1);
 }
 
+void toBarChart::mouseReleaseEvent(QMouseEvent *e)
+{
+  if (e->button()==LeftButton&&MousePoint[0].x()>=0) {
+    if (MousePoint[1].x()>=0) {
+      QRect rect=fixRect(MousePoint[0],MousePoint[1]);
+      QPainter p(this);
+      p.setRasterOp(NotROP);
+      p.drawRect(rect);
+    }
+    if (MousePoint[0].x()!=e->x()&&
+	MousePoint[0].y()!=e->y()) {
+      QRect rect=fixRect(MousePoint[0],e->pos());
+      int samples=countSamples();
+      UseSamples=samples*rect.width()/Chart.width()+2;
+      if (UseSamples<2)
+	UseSamples=2;
+      SkipSamples+=samples*(Chart.width()+Chart.x()-rect.x()-rect.width())/Chart.width();
+      Zooming=true;
+      
+      double t=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y()-rect.height())/Chart.height()+zMinValue;
+      zMaxValue=(zMaxValue-zMinValue)*(Chart.y()+Chart.height()-rect.y())/Chart.height()+zMinValue;
+      zMinValue=t;
+      update();
+    }
+    MousePoint[1]=MousePoint[0]=QPoint(-1,-1);
+  } else if (e->button()==RightButton) {
+    clearZoom();
+    update();
+  }
+}
+
+int toBarChart::countSamples(void)
+{
+  int samples=Samples;
+  if (Samples<=0)
+    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
+      samples=max(samples,int((*i).size()));
+  if (UseSamples>1&&UseSamples<samples)
+    samples=UseSamples;
+  return samples;
+}
+
+void toBarChart::mousePressEvent(QMouseEvent *e)
+{
+  if (e->button()==LeftButton)
+    MousePoint[0]=e->pos();
+}
+
+void toBarChart::clearZoom(void)
+{
+  Zooming=false;
+  SkipSamples=0;
+  UseSamples=-1;
+  zMinValue=-1;
+  zMaxValue=-1;
+}
+
+void toBarChart::mouseMoveEvent(QMouseEvent *e)
+{
+  if (MousePoint[0].x()>=0) {
+    QPainter p(this);
+    p.setRasterOp(NotROP);
+    if (MousePoint[1].x()>=0)
+      p.drawRect(fixRect(MousePoint[0],MousePoint[1]));
+    MousePoint[1]=e->pos();
+    p.drawRect(fixRect(MousePoint[0],MousePoint[1]));
+  }
+}
+
+void toBarChart::mouseDoubleClickEvent(QMouseEvent *e)
+{
+  if (e->button()==LeftButton) {
+    QWidget *newWin=new toBarChart(this,toMainWidget()->workspace());
+    newWin->show();
+    toMainWidget()->windowsMenu();
+
+#if 1
+      // This is a really ugly workaround for a Qt layout bug
+      QWidget *tmp=NULL;
+      QWidget *tmp2=NULL;
+      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+        if (newWin!=widget)
+	  tmp2=widget;
+	else
+	    tmp=newWin;
+	if (tmp2&&tmp)
+	  break;
+      }
+      if(tmp2&&tmp) {
+        tmp2->setFocus();
+        tmp->setFocus();
+      }
+#endif
+  }
+}
+
+toBarChart::toBarChart (toBarChart *chart,QWidget *parent,const char *name,WFlags f)
+  : QWidget(parent,name,f)
+{
+  Values=chart->Values;
+  XValues=chart->XValues;
+  Labels=chart->Labels;
+  Legend=chart->Legend;
+  Last=false;
+  Grid=5;
+  AxisText=true;
+  MinValue=chart->MinValue;
+  MinAuto=chart->MinAuto;
+  MaxValue=chart->MaxValue;
+  MaxAuto=chart->MaxAuto;
+  Samples=chart->Samples;
+  Title=chart->Title;
+  YPostfix=chart->YPostfix;
+
+  setCaption(Title);
+
+  clearZoom();
+
+  setMinimumSize(80,50);
+
+  // Use list font
+  QString str=toTool::globalConfig(CONF_LIST,"");
+  if (!str.isEmpty()) {
+    QFont font(toStringToFont(str));
+    setFont(font);
+  }
+}

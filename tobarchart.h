@@ -54,13 +54,31 @@ protected:
   bool Last;
   int Grid;
   bool AxisText;
+  double MinValue;
+  bool MinAuto;
   double MaxValue;
   bool MaxAuto;
   QString YPostfix;
   int Samples;
   QString Title;
 
+  QRect Chart;
+  QPoint MousePoint[2];
+  int SkipSamples;
+  int UseSamples;
+  bool Zooming;
+  double zMinValue;
+  double zMaxValue;
+
   static double round(double round,bool up);
+  QRect fixRect(QPoint p1,QPoint p2);
+  virtual void mouseReleaseEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
+  virtual void mouseMoveEvent(QMouseEvent *e);
+  virtual void mouseDoubleClickEvent(QMouseEvent *e);
+
+  int countSamples(void);
+  void clearZoom(void);
 public:
   /** Create a new barchart.
    * @param parent Parent widget.
@@ -68,6 +86,14 @@ public:
    * @param f Widget flags.
    */
   toBarChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  /** Create a new barchart by copying all the data from another barchart.
+   * @param chart Chart to copy data from.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   * @param f Widget flags.
+   */
+  toBarChart(toBarChart *chart,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Specify if legend should be displayed to the right of the graph, default is on.
    * @param on Whether to display legend or not.
@@ -133,6 +159,10 @@ public:
    */
   void setMaxValueAuto(void)
   { MaxAuto=true; update(); }
+  /** Set min value on y-axis to auto.
+   */
+  void setMinValueAuto(void)
+  { MinAuto=true; update(); }
   /** Set max value on y-axis to auto.
    */
   void setMaxValue(double maxVal)
@@ -142,6 +172,16 @@ public:
    */
   double maxValue(void) const
   { return MaxValue; }
+  /** Set min value on y-axis.
+   * @param val Min value on y-axis.
+   */
+  void setMinValue(double minVal)
+  { MinAuto=false; MinValue=minVal; update(); }
+  /** Get minimum value on y-axis. Will not return the automatically determinned minimum value.
+   * @return Minimum value on y-axis.
+   */
+  double minValue(void) const
+  { return MinValue; }
 
   /** Set the number of samples on the x-axis. Setting samples to -1 will keep all entries.
    * @param samples Number of samples.
