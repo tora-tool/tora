@@ -1218,10 +1218,10 @@ void toMain::createDefault(void)
 
 void toMain::setCoordinates(int line,int col)
 {
-  QString str=tr("Row: ");
+  QString str=tr("Row:")+" ";
   str+=QString::number(line);
   RowLabel->setText(str);
-  str=tr("Col:");
+  str=tr("Col:")+" ";
   str+=QString::number(col);
   ColumnLabel->setText(str);
   RowLabel->show();

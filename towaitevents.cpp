@@ -99,7 +99,7 @@ void toWaitEvents::setup(int session)
   Session=session;
 
   QToolBar *toolbar=toAllocBar(this,tr("Server Tuning"));
-  new QLabel(tr("Display "),toolbar);
+  new QLabel(tr("Display")+" ",toolbar);
   QComboBox *type=new QComboBox(toolbar);
   type->insertItem(tr("Time"));
   type->insertItem(tr("Count"));
@@ -135,8 +135,8 @@ void toWaitEvents::setup(int session)
   Delta->setTitle(tr("System wait events"));
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Delta->showLegend(false);
-  Delta->setYPostfix(tr(" ms/s"));
-  Delta->setYPostfix(tr(" ms/s"));
+  Delta->setYPostfix(" "+tr("ms/s"));
+  Delta->setYPostfix(" "+tr("ms/s"));
   Delta->setSQLName(QString::fromLatin1("toTuning:WaitEvents"));
   layout->addMultiCellWidget(Delta,0,0,0,1);
 
@@ -144,9 +144,9 @@ void toWaitEvents::setup(int session)
   DeltaTimes->setTitle(tr("System wait events count"));
   DeltaTimes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaTimes->showLegend(false);
-  DeltaTimes->setYPostfix(tr(" ms/s"));
+  DeltaTimes->setYPostfix(" "+tr("ms/s"));
   DeltaTimes->hide();
-  DeltaTimes->setYPostfix(tr(" waits/s"));
+  DeltaTimes->setYPostfix(" "+tr("waits/s"));
   DeltaTimes->setSQLName(QString::fromLatin1("toTuning:WaitEventsCount"));
   layout->addMultiCellWidget(DeltaTimes,0,0,0,1);
 

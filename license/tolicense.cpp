@@ -184,15 +184,15 @@ static QString CheckLicense(const QString &user,const QString &license)
   if (licstr==ret) {
     int license=DecodeChar(prepstr[4])*32+DecodeChar(prepstr[5]);
 
-    QString ret=tr("Welcome to TOra");
+    QString ret=qApp->translate("toCheckLicense","Welcome to TOra")+" ";
     if (license==0)
-      ret+=tr(" (Personal license, not for commerical use)");
+      ret+=qApp->translate("toCheckLicense","(Personal license, not for commerical use)");
     else if (license==1)
-      ret+=tr(" (Commercial license one user)");
+      ret+=qApp->translate("toCheckLicense","(Commercial license one user)");
     else if (license==1000)
-      ret+=tr(" (Commerical site license)");
+      ret+=qApp->translate("toCheckLicense","(Commerical site license)");
     else
-      ret+=tr(" (Commercial license %1 users)").arg(license);
+      ret+=qApp->translate("toCheckLicense","(Commercial license %1 users)").arg(license);
 
     return ret;
   }
@@ -254,7 +254,7 @@ QString toCheckLicense(bool force)
     toTool::globalSetConfig("RegKey",regkey);
     ret=CheckLicense(user,regkey);
     if (ret.isNull())
-      ret=tr("Welcome to TOra (Unregistered version, not for commercial use)");
+      ret=qApp->translate("toCheckLicense","Welcome to TOra (Unregistered version, not for commercial use)");
     else
       toTool::saveConfig();
   }

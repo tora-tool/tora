@@ -6077,7 +6077,7 @@ void toOracleExtract::describeView(toExtract &ext,
 					SQLViewSource,
 					name,owner);
   if (source.size()==0)
-    throw qApp->translate("toOracleExtract","Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+    throw qApp->translate("toOracleExtract","Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);

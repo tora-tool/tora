@@ -131,7 +131,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Schema "),toolbar);
+  new QLabel(tr("Schema")+" ",toolbar);
   Schema=new toResultCombo(toolbar);
   Schema->additionalItem(tr("Any"));
   Schema->setSelected(connection.user().upper());
@@ -140,18 +140,18 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel(tr("Refresh "),toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel(tr("Type "),toolbar);
+  new QLabel(tr("Type")+" ",toolbar);
   Type=new QComboBox(toolbar);
   Type->insertItem(tr("SGA"));
   Type->insertItem(tr("Long operations"));
 
   toolbar->addSeparator();
-  new QLabel(tr("Selection "),toolbar);
+  new QLabel(tr("Selection")+" ",toolbar);
   Limit=new QComboBox(toolbar);
   Limit->insertItem(tr("All"));
   Limit->insertItem(tr("Unfinished"));

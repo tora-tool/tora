@@ -182,9 +182,9 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   QVBox *vbox=new QVBox(splitter);
 
   QHBox *hbox=new QHBox(vbox);
-  new QLabel(tr("Name "),hbox);
+  new QLabel(tr("Name")+" ",hbox);
   Name=new QLineEdit(hbox);
-  new QLabel(tr(" Database "),hbox);
+  new QLabel(" "+tr("Database")+" ",hbox);
   Version=new QComboBox(hbox);
   Version->setEditable(true);
   Version->setDuplicatesEnabled(false);

@@ -267,7 +267,7 @@ void toResultCols::query(const QString &,const toQList &param)
 	  label+=query.readValueNull();
 	}
       }
-      label+=tr(" (Object cache not ready)");
+      label+=" "+tr("(Object cache not ready)");
       Columns->query(object,Owner,Name);
       Title->setText(label);
     } catch(const QString &str) {

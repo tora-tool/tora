@@ -696,7 +696,7 @@ void toChartManager::alarm(void)
     else if (signal.Action==Email)
       new toSMTP(QString::fromLatin1("TOra <noreply@localhost>"),
 		 signal.Extra,
-		 tr("TOra alert: ")+signal.Chart,
+		 tr("TOra alert:")+" "+signal.Chart,
 		 tr("A defined alert value was detected:\n\n%1\n\nAt: %2").arg(signal.Alarm).arg(signal.xValue));
   }
 }

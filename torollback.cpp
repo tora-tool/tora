@@ -636,7 +636,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   DropButton->setEnabled(false);
   toolbar->addSeparator();
 
-  new QLabel(tr("Refresh "),toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 

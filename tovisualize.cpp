@@ -83,7 +83,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   QToolTip::add(Axis,tr("Display axis legend"));
   Axis->setOn(true);
 
-  QToolTip::add(new QLabel(tr(" Title columns "),toolbar),
+  QToolTip::add(new QLabel(" "+tr("Title columns")+" ",toolbar),
 		tr("Number of columns to use as title"));
   Title=new QComboBox(toolbar);
   Title->insertItem(QString::fromLatin1("1"));

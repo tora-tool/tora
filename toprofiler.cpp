@@ -413,7 +413,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel(tr("Repeat run "),toolbar);
+  new QLabel(tr("Repeat run")+" ",toolbar);
 
   Repeat=new QSpinBox(toolbar);
   Repeat->setValue(5);
@@ -421,7 +421,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel(tr("Comment "),toolbar);
+  new QLabel(tr("Comment")+" ",toolbar);
   Comment=new QLineEdit(toolbar);
   Comment->setText(tr("Unknown"));
 

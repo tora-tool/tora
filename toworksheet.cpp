@@ -450,7 +450,7 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
-    new QLabel(tr("Refresh "),toolbar);
+    new QLabel(tr("Refresh")+" ",toolbar);
     Refresh=toRefreshCreate(toolbar);
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
@@ -953,10 +953,9 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
 
   {
     QString str=result;
-    str+=tr("\n(Duration ");
-    str+=buf;
-    str+=QString::fromLatin1(")");
+    str+="\n"+tr("(Duration %1)").arg(buf);
     if (error)
+
       toStatusMessage(str);
     else
       toStatusMessage(str,false,false);

@@ -231,7 +231,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  this,SLOT(disconnectSession(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Refresh "),toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar);
   connect(Refresh=toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));

@@ -154,7 +154,7 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  this,SLOT(clear()),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Refresh "),toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar);
   connect(Refresh=toRefreshCreate(toolbar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));

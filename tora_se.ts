@@ -1,5 +1,24 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>@default</name>
+    <message>
+        <source>&amp;Refresh</source>
+        <translation type="obsolete">&amp;Uppdatera</translation>
+    </message>
+    <message>
+        <source>&amp;Statistics</source>
+        <translation type="obsolete">&amp;Statestik</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Running %1 Pending %2</source>
+        <translation type="obsolete">Aktiva %1 Väntande %2</translation>
+    </message>
+</context>
+<context>
     <name>main</name>
     <message>
         <source>Loaded plugin %1</source>
@@ -55,7 +74,7 @@
         <translation>Alarm Meddelanden</translation>
     </message>
     <message>
-        <source>Registered </source>
+        <source>Registered</source>
         <translation>Registrerade</translation>
     </message>
     <message>
@@ -67,11 +86,11 @@
         <translation>Ta bort registrerad</translation>
     </message>
     <message>
-        <source>Name </source>
+        <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <source>Message </source>
+        <source>Message</source>
         <translation>Meddelande</translation>
     </message>
     <message>
@@ -85,14 +104,6 @@
     <message>
         <source>Time</source>
         <translation>Tid</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Namn</translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation>Meddelande</translation>
     </message>
     <message>
         <source>Failed to start polling thread, try closing some other tools and restart Alert Messenger</source>
@@ -178,7 +189,7 @@
         <translation>Kontrollera referenser</translation>
     </message>
     <message>
-        <source> for </source>
+        <source>for</source>
         <translation>för</translation>
     </message>
     <message>
@@ -194,15 +205,15 @@
         <translation>Lokala index</translation>
     </message>
     <message>
-        <source>Sample </source>
+        <source>Sample</source>
         <translation>Urval</translation>
     </message>
     <message>
-        <source> %</source>
+        <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <source>Parallel </source>
+        <source>Parallel</source>
         <translation>Parallell</translation>
     </message>
     <message>
@@ -1821,7 +1832,7 @@
         <translation>ALARM:</translation>
     </message>
     <message>
-        <source>TOra alert: </source>
+        <source>TOra alert:</source>
         <translation>TOra alarm:</translation>
     </message>
     <message>
@@ -1959,6 +1970,26 @@ Vid: %2</translation>
     <message>
         <source>Welcome to TOra</source>
         <translation>Välkommen till TOra</translation>
+    </message>
+    <message>
+        <source>(Personal license, not for commerical use)</source>
+        <translation>(Personlig licens, ej för kommersiell användande)</translation>
+    </message>
+    <message>
+        <source>(Commercial license one user)</source>
+        <translation>(Kommersiell licens en användare)</translation>
+    </message>
+    <message>
+        <source>(Commerical site license)</source>
+        <translation>(Kommersiell plats licens)</translation>
+    </message>
+    <message>
+        <source>(Commercial license %1 users)</source>
+        <translation>(Kommersiell licens %1 användare)</translation>
+    </message>
+    <message>
+        <source>Welcome to TOra (Unregistered version, not for commercial use)</source>
+        <translation>Välkommen till TOra (Oregistrerad version, ej för kommsiellt bruk)</translation>
     </message>
 </context>
 <context>
@@ -2156,7 +2187,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source> seconds</source>
-        <translation>sekunder</translation>
+        <translation> sekunder</translation>
     </message>
     <message>
         <source>Run UI blocking queries exclusively in main thread</source>
@@ -3058,7 +3089,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source> seconds</source>
-        <translation>sekunder</translation>
+        <translation> sekunder</translation>
     </message>
     <message>
         <source>Status &amp;message</source>
@@ -3211,6 +3242,14 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>Check the TOra webpage for upgrades to the program. Does not send any information about the users computer or TOra installation.</source>
         <translation>Kontakta TOra hemsida om uppgraderingar kommit till programmet. Sänder ingen information angående användarens dator eller TOra installationen.</translation>
+    </message>
+    <message>
+        <source>Translation</source>
+        <translation>Översättning</translation>
+    </message>
+    <message>
+        <source>Which translation locale to use for this program. Must restart to have effect.</source>
+        <translation>Vilken översättnings locale som skall användas för programmet. Måste starta om för innan det får effekt.</translation>
     </message>
 </context>
 <context>
@@ -3430,6 +3469,49 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>Couldn&apos;t find \ in path</source>
         <translation>Kunde inte hitta \ i sökväg</translation>
+    </message>
+</context>
+<context>
+    <name>toLicense</name>
+    <message>
+        <source>Register</source>
+        <translation>Registrera</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Avsluta</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <translation>Fortsätt</translation>
+    </message>
+    <message>
+        <source>Not a valid license key</source>
+        <translation>Ingen giltig licensnyckel</translation>
+    </message>
+    <message>
+        <source>Please check your name and registration key?</source>
+        <translation>Kontrollera ditt namn och din registreringsnyckel?</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>Really quit?</source>
+        <translation>Vill du verkligen avsluta?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to quit?</source>
+        <translation>Är du säker på att du verkligen vill avsluta?</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Ja</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Nej</translation>
     </message>
 </context>
 <context>
@@ -3896,7 +3978,7 @@ om din dator inklusive version eller platform av TOra tll Underscore AB</transla
         <translation>Kunde inte hitta angiven anslutning (%1)</translation>
     </message>
     <message>
-        <source>Row: </source>
+        <source>Row:</source>
         <translation>Rad:</translation>
     </message>
     <message>
@@ -4137,7 +4219,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>A list of previous connections. Select to bring over to the left.</source>
-        <translation>En lista över föregående anslutningar. Välj en post för över information till höger.</translation>
+        <translation type="obsolete">En lista över föregående anslutningar. Välj en post för över information till höger.</translation>
     </message>
     <message>
         <source>&amp;Username</source>
@@ -4190,6 +4272,10 @@ before opening a new file?</source>
     <message>
         <source>Cancel</source>
         <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>A list of previous connections. Select to bring over to the right.</source>
+        <translation>En lista över föregående anslutningar. Välj en post för över information till höger.</translation>
     </message>
 </context>
 <context>
@@ -4327,7 +4413,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>Couldn&apos;t find user %1.%2</source>
-        <translation>Kunde inte hitta vy %1.%2</translation>
+        <translation type="obsolete">Kunde inte hitta vy %1.%2</translation>
     </message>
     <message>
         <source>Couldn&apos;t find constraint %1.%2</source>
@@ -4352,6 +4438,10 @@ before opening a new file?</source>
     <message>
         <source>Invalid type %1 to drop</source>
         <translation>Felaktig typ %1 för borttagning</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t find view %1.%2</source>
+        <translation>Kunde inte hitta vy %1.%2</translation>
     </message>
 </context>
 <context>
@@ -4432,7 +4522,7 @@ before opening a new file?</source>
         <translation>Rensa utdata</translation>
     </message>
     <message>
-        <source>Refresh </source>
+        <source>Refresh</source>
         <translation>Uppdatera</translation>
     </message>
     <message>
@@ -4586,18 +4676,18 @@ before opening a new file?</source>
     <name>toProfiler</name>
     <message>
         <source>Invalid Objects</source>
-        <translation>Felaktiga Objekt</translation>
+        <translation type="obsolete">Felaktiga Objekt</translation>
     </message>
     <message>
         <source>Refresh list</source>
         <translation>Uppdatera lista</translation>
     </message>
     <message>
-        <source>Repeat run </source>
+        <source>Repeat run</source>
         <translation>Kör om</translation>
     </message>
     <message>
-        <source>Comment </source>
+        <source>Comment</source>
         <translation>Kommentar</translation>
     </message>
     <message>
@@ -4628,7 +4718,7 @@ before opening a new file?</source>
         <source>Profiler tables doesn&apos;t exist. Should TOra
 try to create them in the current schema.
 Should TOra try to create it?</source>
-        <translation>Profiltabellerna finns inte. Skall TOra
+        <translation type="obsolete">Profiltabellerna finns inte. Skall TOra
 försöka skapa om dem i nuvarande schema?</translation>
     </message>
     <message>
@@ -4650,6 +4740,16 @@ försöka skapa om dem i nuvarande schema?</translation>
     <message>
         <source>Something went wrong collecting statistics</source>
         <translation>Någonting gick fel när statestik hämtades</translation>
+    </message>
+    <message>
+        <source>PL/SQL Profiler</source>
+        <translation>PL/SQL Profiler</translation>
+    </message>
+    <message>
+        <source>Profiler tables doesn&apos;t exist. Should TOra
+try to create them in the current schema?</source>
+        <translation>Profiltabellerna finns inte. Skall TOra
+försöka skapa om dem i nuvarande schema?</translation>
     </message>
 </context>
 <context>
@@ -4904,7 +5004,7 @@ försöka skapa om dem i nuvarande schema?</translation>
         <translation>&lt;/B&gt; synonym för &lt;B&gt;</translation>
     </message>
     <message>
-        <source> (Object cache not ready)</source>
+        <source>(Object cache not ready)</source>
         <translation>(Objekt cache ej redo)</translation>
     </message>
 </context>
@@ -5702,7 +5802,7 @@ Skall TOra försöka skapa den?</translation>
         <translation>Ta bort segment</translation>
     </message>
     <message>
-        <source>Refresh </source>
+        <source>Refresh</source>
         <translation>Uppdatera</translation>
     </message>
     <message>
@@ -5986,7 +6086,7 @@ Skall TOra försöka skapa den?</translation>
         <translation>Hämta satser från SGA</translation>
     </message>
     <message>
-        <source>Schema </source>
+        <source>Schema</source>
         <translation>Schema</translation>
     </message>
     <message>
@@ -5994,11 +6094,11 @@ Skall TOra försöka skapa den?</translation>
         <translation>Valfri</translation>
     </message>
     <message>
-        <source>Refresh </source>
+        <source>Refresh</source>
         <translation>Uppdatera</translation>
     </message>
     <message>
-        <source>Type </source>
+        <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
@@ -6010,7 +6110,7 @@ Skall TOra försöka skapa den?</translation>
         <translation>Långa operationer</translation>
     </message>
     <message>
-        <source>Selection </source>
+        <source>Selection</source>
         <translation>Urval</translation>
     </message>
     <message>
@@ -6088,6 +6188,10 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Unknown selection</source>
         <translation>Okänt urval</translation>
+    </message>
+    <message>
+        <source>Top buffers/row</source>
+        <translation>Top bufferhämtning/rad</translation>
     </message>
 </context>
 <context>
@@ -6182,11 +6286,11 @@ Skall TOra försöka skapa den?</translation>
         <translation>Text Namn</translation>
     </message>
     <message>
-        <source>Name </source>
+        <source>Name</source>
         <translation>Namn</translation>
     </message>
     <message>
-        <source> Database </source>
+        <source>Database</source>
         <translation>Databas</translation>
     </message>
     <message>
@@ -6248,6 +6352,10 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Cancel</source>
         <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Database </source>
+        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -6353,7 +6461,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen</translation>
     </message>
 </context>
 <context>
@@ -6372,7 +6480,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Schema</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Schema</translation>
     </message>
     <message>
         <source>All</source>
@@ -6380,7 +6488,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Objects</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Objekt</translation>
     </message>
     <message>
         <source>&amp;Include objects</source>
@@ -6436,7 +6544,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen</translation>
     </message>
     <message>
         <source>Generated schema</source>
@@ -6484,7 +6592,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sök</translation>
     </message>
     <message>
         <source>Migrate</source>
@@ -6564,7 +6672,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resultat</translation>
     </message>
     <message>
         <source>Difference</source>
@@ -6590,7 +6698,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Search &amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sök &amp;Nästa</translation>
     </message>
     <message>
         <source>&amp;Replace</source>
@@ -6606,7 +6714,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sök</translation>
     </message>
     <message>
         <source>Exact</source>
@@ -6653,7 +6761,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Save changes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spara ändringar</translation>
     </message>
     <message>
         <source>Remove user/role</source>
@@ -6733,7 +6841,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>No changes made</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inga ändringar gjorda</translation>
     </message>
     <message>
         <source>Save changes?</source>
@@ -6773,18 +6881,18 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ja</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nej</translation>
     </message>
 </context>
 <context>
     <name>toSecurityObject</name>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Objekt</translation>
     </message>
     <message>
         <source>Admin</source>
@@ -6799,7 +6907,7 @@ Skall TOra försöka skapa den?</translation>
     <name>toSecurityQuota</name>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen</translation>
     </message>
     <message>
         <source>Unlimited</source>
@@ -6903,7 +7011,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&amp;ösenord</translation>
     </message>
     <message>
         <source>Role authenticated by the operating system</source>
@@ -6919,7 +7027,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Global</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Global</translation>
     </message>
     <message>
         <source>No password required for role</source>
@@ -6927,7 +7035,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ingen</translation>
     </message>
 </context>
 <context>
@@ -6996,7 +7104,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&amp;ösenord</translation>
     </message>
     <message>
         <source>User authenticated by the operating system</source>
@@ -7012,7 +7120,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Global</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Global</translation>
     </message>
     <message>
         <source>&amp;Temporary Tablespace</source>
@@ -7069,8 +7177,8 @@ Skall TOra försöka skapa den?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Refresh </source>
-        <translation type="unfinished"></translation>
+        <source>Refresh</source>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Session wait states</source>
@@ -7082,7 +7190,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statestik</translation>
     </message>
     <message>
         <source>Wait events</source>
@@ -7114,7 +7222,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Open Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Öppna Frågor</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
@@ -7142,15 +7250,15 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Commit work?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spara arbete?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Nej</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -7184,7 +7292,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Osuser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">OS användare</translation>
     </message>
     <message>
         <source>Network Service Banner</source>
@@ -7341,7 +7449,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Modify tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Andra tablespace</translation>
     </message>
     <message>
         <source>Modify file</source>
@@ -7369,7 +7477,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Objekt</translation>
     </message>
     <message>
         <source>Partition</source>
@@ -7377,7 +7485,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Extents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Antal Extent</translation>
     </message>
     <message>
         <source>&amp;Refresh</source>
@@ -7487,7 +7595,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Browse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Leta</translation>
     </message>
     <message>
         <source>Auto extend</source>
@@ -7608,18 +7716,18 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>No changes made</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inga ändringar gjorda</translation>
     </message>
 </context>
 <context>
     <name>toStorageDialogUI</name>
     <message>
         <source>Modify tablespace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Andra tablespace</translation>
     </message>
     <message>
         <source>Display the SQL used to generate the specified object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Visa SQL för att generera det angivna objektet</translation>
     </message>
     <message>
         <source>Tab 2</source>
@@ -7898,11 +8006,11 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;Browse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Leta</translation>
     </message>
     <message>
         <source>Canel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avbryt</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
@@ -7910,7 +8018,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Fil</translation>
     </message>
     <message>
         <source>&amp;Root</source>
@@ -8055,7 +8163,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Unknown escape character in string (Only \\ and \n recognised)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Okänt tecken efter \. Endast \\ och \n tillåtna</translation>
     </message>
     <message>
         <source>Alert Messenger</source>
@@ -8067,7 +8175,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>Current Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nuvarande Session</translation>
     </message>
     <message>
         <source>DB Extraction/Compare/Search</source>
@@ -8083,7 +8191,7 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>PL/SQL Profiler</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PL/SQL Profiler</translation>
     </message>
     <message>
         <source>Password Change</source>
@@ -8095,11 +8203,11 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>SGA Trace</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SGA Spårning</translation>
     </message>
     <message>
         <source>SQL Output</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SQL Utdata</translation>
     </message>
     <message>
         <source>SQL Template</source>
@@ -8181,11 +8289,11 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Nej</translation>
     </message>
     <message>
         <source>Server Tuning</source>
@@ -8196,10 +8304,6 @@ tabs individually as they are needed.</source>
         <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
-        <source>Refresh </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable and disable tuning tabs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8208,8 +8312,8 @@ tabs individually as they are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> blocks/s</source>
-        <translation type="unfinished"></translation>
+        <source>blocks/s</source>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Wrong format of name on chart (%1).</source>
@@ -8245,7 +8349,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>&amp;Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Parametrar</translation>
     </message>
     <message>
         <source>&amp;Blocking locks</source>
@@ -8279,6 +8383,10 @@ tabs individually as they are needed.</source>
         <source>&amp;Tuning</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> blocks/s</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toTuning:Charts:4BAClients</name>
@@ -8292,7 +8400,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">System</translation>
     </message>
 </context>
 <context>
@@ -8307,7 +8415,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Parse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parse</translation>
     </message>
     <message>
         <source>Calls</source>
@@ -8330,7 +8438,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Storlek</translation>
     </message>
     <message>
         <source>Total Records</source>
@@ -8403,7 +8511,7 @@ tabs individually as they are needed.</source>
     <name>toTuning:Options</name>
     <message>
         <source>Parameter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parameter</translation>
     </message>
     <message>
         <source>Enabled</source>
@@ -8430,7 +8538,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Reads</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Läsningar</translation>
     </message>
     <message>
         <source>Blocks Read</source>
@@ -8472,12 +8580,12 @@ tabs individually as they are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> blocks/s</source>
+        <source>blocks/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hitrate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Träffratio</translation>
     </message>
     <message>
         <source>&lt; Client input</source>
@@ -8523,6 +8631,10 @@ tabs individually as they are needed.</source>
         <source>Timescale</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> blocks/s</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toTuningOverviewUI</name>
@@ -8532,7 +8644,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>SGA</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SGA</translation>
     </message>
     <message>
         <source>Buffer Cache</source>
@@ -8608,7 +8720,7 @@ tabs individually as they are needed.</source>
     </message>
     <message>
         <source>Parallel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parallell</translation>
     </message>
     <message>
         <source>Dedicated</source>
@@ -8693,7 +8805,7 @@ tabs individually as they are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> Title columns </source>
+        <source>Title columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8712,7 +8824,7 @@ tabs individually as they are needed.</source>
         <translation type="unfinished">Server Tuning</translation>
     </message>
     <message>
-        <source>Display </source>
+        <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8752,7 +8864,7 @@ tabs individually as they are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> ms/s</source>
+        <source>ms/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8760,7 +8872,7 @@ tabs individually as they are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> waits/s</source>
+        <source>waits/s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8854,7 +8966,7 @@ Total %1%2</source>
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resultat</translation>
     </message>
     <message>
         <source>Timestamp</source>
@@ -8877,8 +8989,8 @@ Total %1%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Refresh </source>
-        <translation type="unfinished"></translation>
+        <source>Refresh</source>
+        <translation type="unfinished">Uppdatera</translation>
     </message>
     <message>
         <source>Run current saved SQL</source>
@@ -8958,15 +9070,15 @@ Total %1%2</source>
     </message>
     <message>
         <source>Save file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Spara fil</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Ja</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Nej</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -8986,11 +9098,11 @@ Total %1%2</source>
     </message>
     <message>
         <source>%1 rows processed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 rader bearbetade</translation>
     </message>
     <message>
         <source>Query executed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fråga exekverad</translation>
     </message>
     <message>
         <source>Duration while query has been running
@@ -8999,8 +9111,7 @@ Total %1%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-(Duration </source>
+        <source>(Duration %1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9030,7 +9141,7 @@ submenues are separated by a &apos;:&apos; character.</source>
     </message>
     <message>
         <source>Undescribed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obeskrivd</translation>
     </message>
     <message>
         <source>No plan available to save</source>
@@ -9109,7 +9220,7 @@ submenues are separated by a &apos;:&apos; character.</source>
     </message>
     <message>
         <source>&amp;Browse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Leta</translation>
     </message>
     <message>
         <source>Default &amp;file</source>

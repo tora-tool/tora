@@ -804,14 +804,14 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
 {
   BackgroundGroup->setColumnLayout(1,Horizontal);
 
-  setupChart(ArchiveWrite,tr("< Archive write"),tr(" blocks/s"),SQLOverviewArchiveWrite);
+  setupChart(ArchiveWrite,tr("< Archive write")," "+tr("blocks/s"),SQLOverviewArchiveWrite);
   setupChart(BufferHit,tr("Hitrate"),QString::fromLatin1("%"),SQLOverviewBufferHit);
   BufferHit->setMaxValue(100);
   BufferHit->setFlow(false);
   setupChart(ClientInput,tr("< Client input"),QString::fromLatin1("b/s"),SQLOverviewClientInput);
   setupChart(ClientOutput,tr("Client output >"),QString::fromLatin1("b/s"),SQLOverviewClientOutput);
   setupChart(ExecuteCount,tr("Executes >"),QString::fromLatin1("/s"),SQLOverviewExecute);
-  setupChart(LogWrite,tr("Log writer >"),tr(" blocks/s"),SQLOverviewRedoBlocks);
+  setupChart(LogWrite,tr("Log writer >")," "+tr("blocks/s"),SQLOverviewRedoBlocks);
   setupChart(LogicalChange,tr("Buffer changed >"),tr(" blocks/s"),SQLOverviewLogicalWrite);
   setupChart(LogicalRead,tr("< Buffer gets"),tr(" blocks/s"),SQLOverviewLogicalRead);
   setupChart(ParseCount,tr("Parse >"),QString::fromLatin1("/s"),SQLOverviewParse);
@@ -1314,7 +1314,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Refresh "),toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar);
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->addSeparator();

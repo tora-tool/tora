@@ -131,7 +131,7 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   }
   def+=connection.user();
 
-  new QLabel(tr("Registered "),toolbar);
+  new QLabel(tr("Registered")+" ",toolbar);
   Registered=new QComboBox(toolbar);
   Registered->insertItem(def);
   Registered->setEditable(true);
@@ -155,11 +155,11 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel(tr("Name "),toolbar);
+  new QLabel(tr("Name")+" ",toolbar);
   Name=new QLineEdit(toolbar);
   Name->setText(def);
   connect(Name,SIGNAL(returnPressed()),this,SLOT(send()));
-  new QLabel(tr("Message "),toolbar);
+  new QLabel(tr("Message")+" ",toolbar);
   Message=new QLineEdit(toolbar);
   connect(Message,SIGNAL(returnPressed()),this,SLOT(send()));
   new QToolButton(QPixmap((const char **)toworksheet_xpm),

@@ -185,20 +185,20 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(Operation,SIGNAL(activated(int)),
 	  this,SLOT(changeOperation(int)));
 
-  new QLabel(tr(" for "),toolbar);
+  new QLabel(" "+tr("for")+" ",toolbar);
   For=new QComboBox(toolbar);
   For->insertItem(tr("All"));
   For->insertItem(tr("Table"));
   For->insertItem(tr("Indexed columns"));
   For->insertItem(tr("Local indexes"));
   toolbar->addSeparator();
-  new QLabel(tr("Sample "),toolbar);
+  new QLabel(tr("Sample")+" ",toolbar);
   Sample=new QSpinBox(1,100,1,toolbar);
   Sample->setValue(100);
-  Sample->setSuffix(tr(" %"));
+  Sample->setSuffix(" "+tr("%"));
   Sample->setEnabled(false);
   toolbar->addSeparator();
-  new QLabel(tr("Parallel "),toolbar);
+  new QLabel(tr("Parallel")+" ",toolbar);
   Parallel=new QSpinBox(1,100,1,toolbar);
   toolbar->addSeparator();
   
