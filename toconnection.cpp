@@ -377,10 +377,10 @@ QCString toQValue::utf8(void) const
       QCString ret(Value.Array->size()*2+1);
       for(unsigned int i=0;i<Value.Array->size();i++) {
 	unsigned char c=(unsigned char)Value.Array->at(i);
-	ret[i*2]=HexString[(c/16)%16];
-	ret[i*2+1]=HexString[c%16];
+	ret.at(i*2)=HexString[(c/16)%16];
+	ret.at(i*2+1)=HexString[c%16];
       }
-      ret[Value.Array->size()*2]=0;
+      ret.at(Value.Array->size()*2)=0;
       return ret;
     }
   }
@@ -472,7 +472,7 @@ toQValue toQValue::createFromHex(const QCString &hex)
   QByteArray arr((hex.length()+1)/2);
   for(unsigned int i=0;i<hex.length();i+=2) {
     int num;
-    char c=hex[i];
+    char c=hex.at(i);
     if (c>='a')
       num=c-'a';
     else if (c>='A')
@@ -480,14 +480,14 @@ toQValue toQValue::createFromHex(const QCString &hex)
     else
       num=c-'0';
     num<<=4;
-    c=hex[i+1];
+    c=hex.at(i+1);
     if (c>='a')
       num+=c-'a';
     else if (c>='A')
       num+=c-'A';
     else
       num+=c-'0';
-    arr[i/2]=num;
+    arr.at(i/2)=num;
   }
   return createBinary(arr);
 }
@@ -512,7 +512,7 @@ toQValue toQValue::createFromHex(const QString &hex)
       num+=c-'A';
     else
       num+=c-'0';
-    arr[i/2]=num;
+    arr.at(i/2)=num;
   }
   return createBinary(arr);
 }

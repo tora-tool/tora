@@ -52,6 +52,7 @@ class toResultContent;
 class toResultFilter;
 class toResultView;
 class toMySQLUser;
+class toMySQLUserAccess;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
@@ -84,6 +85,7 @@ class toBrowser : public toToolWidget {
   QListViewItem *selectedItem();
 #ifdef TOEXTENDED_MYSQL
   toMySQLUser *UserPanel;
+  toMySQLUserAccess *AccessPanel;
 #endif
 public:
   toBrowser(QWidget *parent,toConnection &connection);
@@ -132,6 +134,9 @@ public slots:
 
   void displayIndexMenu(QPopupMenu *menu);
   void displayTableMenu(QPopupMenu *menu);
+
+  void addUser(void);
+  void dropUser(void);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

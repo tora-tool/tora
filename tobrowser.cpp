@@ -113,6 +113,9 @@
 #include "icons/offline.xpm"
 #include "icons/online.xpm"
 #endif
+#ifdef TOEXTENDED_MYSQL
+#include "icons/new.xpm"
+#endif
 
 #define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
@@ -1454,7 +1457,24 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_ACCESS);
   TopTab->addTab(splitter,tr("Access"));
+#ifdef TOEXTENDED_MYSQL
+  box=new QVBox(splitter);
+  toolbar=toAllocBar(box,tr("Database browser"));
+  new toBrowseButton(QPixmap((const char **)new_xpm),
+		     tr("Add user"),
+		     tr("Add user"),
+		     this,SLOT(addUser()),
+		     toolbar);
+  new toBrowseButton(QPixmap((const char **)trash_xpm),
+		     tr("Drop user"),
+		     tr("Drop user"),
+		     this,SLOT(dropUser()),
+		     toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  resultView=new toResultLong(true,false,toQuery::Background,box);
+#else
   resultView=new toResultLong(true,false,toQuery::Background,splitter);
+#endif
   resultView->setReadAll(true);
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_ACCESS]=resultView;
@@ -1463,30 +1483,32 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged()),
 	  this,SLOT(changeItem()));
-  splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
 #ifdef TOEXTENDED_MYSQL
+  splitter->setResizeMode(box,QSplitter::KeepSize);
   resultView->setSQL(SQLMySQLUsers);
 
   AccessContent=NULL;
+
   UserPanel=new toMySQLUser(curr,TAB_ACCESS_USER);
   curr->addTab(UserPanel,tr("&User"));
   SecondMap[TAB_ACCESS]=UserPanel;
   SecondMap[TAB_ACCESS_USER]=UserPanel;
 
-  toMySQLUserAccess *access=new toMySQLUserAccess(curr,TAB_ACCESS_OBJECTS);
-  curr->addTab(access,tr("&Objects"));
+  AccessPanel=new toMySQLUserAccess(curr,TAB_ACCESS_OBJECTS);
+  curr->addTab(AccessPanel,tr("&Objects"));
   SecondMap[TAB_ACCESS_OBJECTS]=UserPanel;	// Yes, it should be this one, it will signal the TAB_ACCESS_OBJECTS to update.
-  connect(access,SIGNAL(hasChanged()),UserPanel,SLOT(hasChanged()));
-  connect(UserPanel,SIGNAL(saveChanges(const QString &,const QString &)),access,SLOT(saveChanges(const QString &,const QString &)));
-  connect(UserPanel,SIGNAL(changeUser(const QString &)),access,SLOT(changeUser(const QString &)));
+  connect(AccessPanel,SIGNAL(hasChanged()),UserPanel,SLOT(hasChanged()));
+  connect(UserPanel,SIGNAL(saveChanges(const QString &,const QString &)),AccessPanel,SLOT(saveChanges(const QString &,const QString &)));
+  connect(UserPanel,SIGNAL(changeUser(const QString &)),AccessPanel,SLOT(changeUser(const QString &)));
 
   AccessContent=new toResultContent(curr,TAB_ACCESS_CONTENT);
   curr->addTab(AccessContent,tr("&Hosts"));
   SecondMap[TAB_ACCESS_CONTENT]=AccessContent; 
 #else
+  splitter->setResizeMode(resultView,QSplitter::KeepSize);
   resultView->setSQL(SQLMySQLAccess);
 
   AccessContent=new toResultContent(curr,TAB_ACCESS_CONTENT);
@@ -1535,6 +1557,31 @@ void toBrowser::windowActivated(QWidget *widget)
     delete ToolMenu;
     ToolMenu=NULL;
   }
+}
+
+static toSQL SQLDropUser("toBrowser:DropUser",
+			 "DELETE FROM mysql.user WHERE concat(user,'@',host) = :f1<char[255]>",
+			 "Drop MYSQL user",
+			 "3.23",
+			 "MySQL");
+
+void toBrowser::addUser()
+{
+#ifdef TOEXTENDED_MYSQL
+  UserPanel->changeParams(QString::null,QString::null);
+#endif
+}
+
+void toBrowser::dropUser()
+{
+#ifdef TOEXTENDED_MYSQL
+  try {
+    AccessPanel->dropCurrentAccess();
+    connection().execute(SQLDropUser,selectedItem()->text(0));
+    flushPrivs();
+    refresh();
+  } TOCATCH
+#endif
 }
 
 void toBrowser::changeSchema(int)
@@ -1976,7 +2023,7 @@ QListViewItem *toBrowser::selectedItem()
 
 void toBrowser::dropIndex(void)
 {
-  for(QListViewItem *item=FirstTab->firstChild();item;item!=item->nextSibling()) {
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
       QString index=item->text(1);
       if (index!="PRIMARY"&&!item->text(0).isEmpty())
@@ -1995,6 +2042,7 @@ bool toBrowser::close(bool del)
   
   return toToolWidget::close(del);
 }
+
 void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   data[prefix+":Schema"]=Schema->selected();

@@ -1372,7 +1372,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));
-  connect(Editor,SIGNAL(changesMade()),this,SIGNAL(changesMade()));
+  connect(Editor,SIGNAL(changesSaved()),this,SIGNAL(changesSaved()));
 }
 
 void toResultContent::changeFilter(void)

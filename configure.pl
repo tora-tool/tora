@@ -1568,8 +1568,8 @@ install: \$(TARGET) install-common install-kde
 	if [ -f $ProgramName-plugin ] ; \\
 	    then cp \$(TARGET) \$(INSTALLBIN)/$ProgramExecutable ; \\
 	    rm -f $ProgramName-plugin ; \\
-	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \
-	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \
+	else cp \$(TARGET) \$(INSTALLBIN)/tora.real ; \\
+	    cp rpm/tora.sh \$(INSTALLBIN)/tora ; \\
 	fi
 	rm -f \$(INSTALLLIB)/$ProgramName/*.tso
 	-cp plugins/* \$(INSTALLLIB)/$ProgramName >/dev/null 2>&1
