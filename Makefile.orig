@@ -36,6 +36,7 @@ SOURCES=\
 	toglobalsetting.cpp     \
 	tohelp.cpp		\
 	tohighlightedtext.cpp	\
+	tohtml.cpp		\
 	tomain.cpp		\
 	tomarkedtext.cpp	\
 	tomemoeditor.cpp	\
@@ -203,6 +204,7 @@ tora: \
 	objs/toglobalsetting.o \
 	objs/tohelp.o \
 	objs/tohighlightedtext.o \
+	objs/tohtml.o \
 	objs/tomain.o \
 	objs/tomarkedtext.o \
 	objs/tomemoeditor.o \
