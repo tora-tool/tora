@@ -54,7 +54,7 @@
 #define TO_DEBUGOUT(x)
 #endif
 
-#define PREFETCH_SIZE 1000
+#define PREFETCH_SIZE 5000
 
 void toNoBlockQuery::queryTask::run(void)
 {

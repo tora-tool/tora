@@ -513,6 +513,7 @@ void toListView::editPrint(void)
 {
   TOPrinter printer;
   printer.setMinMax(1,1000);
+  printer.setFromTo(1,1000);
   if (printer.setup()) {
     printer.setCreator("TOra");
     QPainter painter(&printer);
@@ -1119,6 +1120,8 @@ void toResultView::setup(bool readable,bool dispCol)
   Filter=NULL;
   readAllEnabled(true);
   ReadAll=false;
+  SortColumn=-2;
+  SortAscending=true;
 }
 
 toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
@@ -1131,6 +1134,17 @@ toResultView::toResultView(QWidget *parent,const char *name)
   : toListView(parent,name)
 {
   setup(false,true);
+}
+
+#define STOP_RESIZE_ROW 200
+
+QListViewItem *toResultView::createItem(QListViewItem *last,const QString &str)
+{
+  if (childCount()==STOP_RESIZE_ROW)
+    for (int i=0;i<columns();i++)
+      setColumnWidthMode(i,Manual);
+
+  return new toResultViewItem(this,last,str);
 }
 
 void toResultView::addItem(void)
@@ -1282,6 +1296,38 @@ void toResultView::menuCallback(int cmd)
 int toResultView::queryColumns(void) const
 {
   return Query?Query->columns():0;
+}
+
+void toResultView::setSorting(int col,bool asc)
+{
+  if (col==SortColumn&&asc==SortAscending)
+    return;
+  SortColumn=col;
+  SortAscending=asc;
+  if (((col==0&&NumberColumn)||(col==columns()&&!NumberColumn))&&asc==true) {
+    col=-1;
+    toListView::setSorting(0,true);
+    sort();
+    QTimer::singleShot(1,this,SLOT(checkHeading()));
+  } else if (SortConnected) {
+    SortConnected=false;
+    disconnect(header(),SIGNAL(clicked(int)),this,SLOT(headingClicked(int)));
+  }
+  toListView::setSorting(col,asc);
+}
+
+void toResultView::headingClicked(int col)
+{
+  if (col==SortColumn)
+    setSorting(col,!SortAscending);
+  else
+    setSorting(col,true);
+}
+
+void toResultView::checkHeading(void)
+{
+  SortConnected=true;
+  connect(header(),SIGNAL(clicked(int)),this,SLOT(headingClicked(int)));
 }
 
 toResultListFormat::toResultListFormat(QWidget *parent,const char *name)

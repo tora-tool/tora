@@ -391,6 +391,8 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   } TOCATCH
 }
 
+#define STOP_RESIZE_ROW 200
+
 void toResultContentEditor::poll(void)
 {
   try {
@@ -413,18 +415,20 @@ void toResultContentEditor::poll(void)
       }
       
       std::list<QString> data;
+      int dataSize=0;
 
       for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
 	for (int k=0;k<numCols();k++)
-	  if (SkipNumber==0||j<SkipNumber)
+	  if (SkipNumber==0||j<SkipNumber) {
 	    data.insert(data.end(),Query->readValueNull());
-	  else
+	    dataSize++;
+	  } else
 	    Query->readValueNull();
 	if (SkipNumber!=0&&j>=SkipNumber)
 	  SkipNumber--;
       }
 
-      int rows=Row+data.size()/numCols()+1;
+      int rows=Row+dataSize/numCols()+1;
       if (numRows()!=rows) {
 	setUpdatesEnabled(false);
 	setNumRows(rows);
@@ -432,24 +436,27 @@ void toResultContentEditor::poll(void)
 #if QT_VERSION >= 300
 	int origRow=Row;
 #endif
-	while(data.size()>0) {
+	while(dataSize>0) {
 	  verticalHeader()->setLabel(Row,QString::number(Row+1));
-	  for(int j=0;j<numCols();j++)
+	  for(int j=0;j<numCols();j++) {
 	    setText(Row,j,toShift(data));
+	    dataSize--;
+	  }
 	  Row++;
 	}
 #if QT_VERSION >= 300
-	for(int j=0;j<numCols();j++) {
-	  int width=columnWidth(j);
-	  for(int k=origRow;k<Row;k++) {
-	    QRect bounds=fontMetrics().boundingRect(text(k,j));
-	    int cw=min(bounds.width(),MaxColDisp);
-	    if (cw>width)
-	      width=cw;
+	if (numRows()<STOP_RESIZE_ROW)
+	  for(int j=0;j<numCols();j++) {
+	    int width=columnWidth(j);
+	    for(int k=origRow;k<Row;k++) {
+	      QRect bounds=fontMetrics().boundingRect(text(k,j));
+	      int cw=min(bounds.width(),MaxColDisp);
+	      if (cw>width)
+		width=cw;
+	    }
+	    if (width!=columnWidth(j))
+	      setColumnWidth(j,width);
 	  }
-	  if (width!=columnWidth(j))
-	    setColumnWidth(j,width);
-	}
 #endif
 	setUpdatesEnabled(true);
       }

@@ -441,6 +441,10 @@ protected slots:
 class toResultView : public toListView, public toResult {
   Q_OBJECT
 
+  int SortColumn;
+  bool SortAscending;
+  bool SortConnected;
+
   /** Reimplemented for internal reasons.
    */
   virtual void keyPressEvent (QKeyEvent * e);
@@ -550,8 +554,7 @@ public:
    * @param str String to set first column to.
    * @return Allocated item.
    */
-  virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
-  { return new toResultViewItem(this,last,str); }
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &str);
 
   /** Reimplemented for internal reasons.
    */
@@ -609,6 +612,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void addMenues(QPopupMenu *);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setSorting(int col,bool asc=true);
 public slots:
   /** Reimplemented for internal reasons.
    */
@@ -633,6 +639,9 @@ public slots:
    */
   virtual bool canHandle(toConnection &)
   { return true; }
+private slots:
+  void headingClicked(int col);
+  void checkHeading(void); 
 protected slots:
   /** Reimplemented for internal reasons.
    */

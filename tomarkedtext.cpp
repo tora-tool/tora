@@ -139,6 +139,7 @@ void toMarkedText::editPrint(void)
 {
   TOPrinter printer;
   printer.setMinMax(1,1000);
+  printer.setFromTo(1,1000);
   if (printer.setup()) {
     printer.setCreator("TOra");
     QPainter painter(&printer);

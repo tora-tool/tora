@@ -1,0 +1,2 @@
+?package(tora):needs=X11 section=Apps/Databases\
+  title="tora" command="/usr/bin/tora" 

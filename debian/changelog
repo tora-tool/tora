@@ -1,3 +1,50 @@
+tora (1.3.6-1) unstable; urgency=low
+
+  * New upstream version.
+  * Added some more patches from CVS to fix several minor bugs.
+
+ -- Michael Meskes <meskes@debian.org>  Wed,  3 Jul 2002 10:37:51 +0200
+ 
+tora (1.3.5.1-1) unstable; urgency=low
+
+  * New upstream version with several minor bugfixes
+
+ -- Michael Meskes <meskes@debian.org>  Fri, 19 Apr 2002 10:32:16 +0200
+
+
+tora (1.3.5-1) unstable; urgency=low
+
+  * New upstream version with new style selection code and other improvements.
+  * Fixed spelling bug in help file (closes: 143344).
+
+ -- Michael Meskes <meskes@debian.org>  Wed, 17 Apr 2002 19:54:18 +0200
+tora (1.3.4-3) unstable; urgency=low
+
+  * Deactivated style selection stuff (ENABLE_STYLE) to make tora compile
+    again (closes: 141919, 142128).
+
+ -- Michael Meskes <meskes@debian.org>  Sun, 14 Apr 2002 14:54:47 +0200
+ 
+tora (1.3.4-2) unstable; urgency=low
+
+  * Added upstream fixes.
+  * Added menu entry.
+
+ -- Michael Meskes <meskes@debian.org>  Sat,  9 Mar 2002 20:23:02 +0100
+ 
+tora (1.3.4-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Michael Meskes <meskes@debian.org>  Thu,  7 Mar 2002 12:42:50 +0100
+
+
+tora (1.3.3-4) unstable; urgency=low
+
+  * Added more upstream fixes (closes: 133777)
+
+ -- Michael Meskes <meskes@debian.org>  Sun,  3 Mar 2002 11:26:44 +0100
+
 tora (1.3.3-3) unstable; urgency=low
 
   * Added some upstream fixes (closes: 134133)
