@@ -632,18 +632,72 @@ void toExtract::describeConstraint(std::list<QString> &lst,const QString &schema
     }
     addDescription(lst,ctx,ret);
 
-    ret="";
     if (Connection.version()<"8")
-      ret+=status;
+      ret=status;
     else {
-      ret+=defferable;
+      ret=defferable;
       ret+="\nINITIALLY ";
       ret+=deffered;
-      ret+="\n";
-      ret+=status;
+      addDescription(lst,ctx,ret);
+      ret=status;
     }
     addDescription(lst,ctx,ret);
   }
+}
+
+QString toExtract::migrateConstraint(bool create,std::list<QString> &lst)
+{
+  QString lastSchema;
+  QString lastTable;
+  QString lastName;
+  QString lastType;
+  QString sql;
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+    std::list<QString> ctx=splitDescribe(*i);
+    QString schema=toShift(ctx);
+    QString table=toShift(ctx);
+    if (toShift(ctx)!="TABLE")
+      continue;
+    QString name=toShift(ctx);
+    if (toShift(ctx)!="CONSTRAINT")
+      continue;
+    QString type=toShift(ctx);
+    QString extra=toShift(ctx);
+    if (schema==lastSchema&&
+	table==lastTable&&
+	name==lastName&&
+	type==lastType) {
+      if (create)
+	sql+=" "+extra;
+    } else if (extra.isEmpty()) {
+      if (create) {
+	if (!sql.isEmpty())
+	  sql+=";\n\n";
+	if (Prompt)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+	sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
+	  arg(schema).arg(table).arg(name).arg(type);
+      } else {
+	if (Prompt)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+	sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
+	  arg(schema).arg(table).arg(name);
+      }
+      lastSchema=schema;
+      lastTable=table;
+      lastName=name;
+      lastType=type;
+    } else if (create) {
+      if (Prompt)
+	sql+=QString("PROMPT ALTER TABLE %1%2 MODIFY CONSTRAINT %3\n\n").
+	  arg(schema).arg(table).arg(name);
+      sql+=QString("ALTER TABLE %1%2 MODIFY CONSTRAINT %3 %4\n\n").
+	arg(schema).arg(table).arg(name).arg(extra);
+    }
+  }
+  return sql;
 }
 
 static toSQL SQLDBLink("toExtract:ExtractDBLink",
