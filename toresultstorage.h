@@ -57,6 +57,7 @@ class toResultStorage : public toResultView {
   QString CurrentSpace;
   QString CurrentFile;
 
+  void saveSelected(void);
   void update(void);
 public:
   toResultStorage(QWidget *parent,const char *name=NULL);

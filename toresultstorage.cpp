@@ -419,10 +419,28 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 #define FILECOLUMNS 14
 #define COLUMNS (FILECOLUMNS-2)
 
+void toResultStorage::saveSelected(void)
+{
+  QListViewItem *item=selectedItem();
+  if (item) {
+    if (item->parent()||OnlyFiles) {
+      CurrentSpace=item->text(COLUMNS);
+      CurrentFile=item->text(0);
+    } else {
+      CurrentSpace=item->text(0);
+      CurrentFile=QString::null;
+    }
+  }
+}
+
+
 void toResultStorage::query(void)
 {
   if (!handled()||Tablespaces||Files)
     return;
+
+  saveSelected();
+  clear();
 
   toConnection &conn=connection();
 
@@ -445,17 +463,6 @@ void toResultStorage::query(void)
 
 void toResultStorage::update(void)
 {
-  QListViewItem *item=selectedItem();
-  if (item) {
-    if (item->parent()||OnlyFiles) {
-      CurrentSpace=item->text(COLUMNS);
-      CurrentFile=item->text(0);
-    } else {
-      CurrentSpace=item->text(0);
-      CurrentFile=QString::null;
-    }
-  }
-
   clear();
   if (!OnlyFiles) {
     for(std::list<QString>::iterator j=TablespaceValues.begin();j!=TablespaceValues.end();) {
@@ -575,6 +582,7 @@ void toResultStorage::setOnlyFiles(bool only)
     removeColumn(columns()-1);
     setRootIsDecorated(true);
   }
+  saveSelected();
   OnlyFiles=only;
   update();
 }
