@@ -666,6 +666,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 {
   QString ret;
   switch(stat.Type) {
+  default:
+    throw QString("Internal error in toSQLParse, should never get here");
+    break;
   case statement::Block:
     {
       ret=IndentComment(level,0,stat.Comment,false);
@@ -877,8 +880,6 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       ret+=indentString(level-(Settings.OperatorSpace?3:1));
     }
     break;
-  default:
-    throw QString("Internal error in toSQLParse, should never get here");
   }
   return ret;
 }
