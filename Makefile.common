@@ -81,7 +81,7 @@ install: $(TARGET)
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
 	mkdir -p $(INSTALLLIB)/tora
 	cp plugins/* $(INSTALLLIB)/tora
-	cp templates/*.tpl $(INSTALLLIB/tora
+	cp templates/*.tpl $(INSTALLLIB)/tora
 
 clean:
 	@echo Cleaning $(TITLE)

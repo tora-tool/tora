@@ -615,13 +615,50 @@ void toBrowseTemplate::removeItem(QListViewItem *item)
     }
 }
 
+class toTemplateTableItem : public toTemplateItem {
+  toConnection &Connection;
+public:
+  toTemplateTableItem(toConnection &conn,toTemplateItem *parent,
+		       const QString &name)
+    : toTemplateItem(parent,name),Connection(conn)
+  {
+  }
+  virtual QWidget *selectedWidget(QWidget *par)
+  {
+    QString object=parent()->text(0);
+    QString typ=text(0);
+    QString schema=parent()->parent()->parent()->text(0);
+
+    toResultView *res;
+
+    if (typ=="Constraints") {
+      res=new toResultConstraint(Connection,par);
+    } else if (typ=="References") {
+      res=new toResultReferences(Connection,par);
+    } else if (typ=="Grants") {
+      res=new toResultView(true,false,Connection,par);
+      res->setSQL(SQLTableGrants);
+    } else
+      return NULL;
+    res->changeParams(object,schema);
+    return res;
+  }
+};
+
 class toTemplateSchemaItem : public toTemplateItem {
   toConnection &Connection;
 public:
   toTemplateSchemaItem(toConnection &conn,toTemplateItem *parent,
 		       const QString &name)
     : toTemplateItem(parent,name),Connection(conn)
-  { }
+  {
+    QString typ=parent->text(0);
+    if (typ=="Tables") {
+      new toTemplateTableItem(conn,this,"Constraints");
+      new toTemplateTableItem(conn,this,"References");
+      new toTemplateTableItem(conn,this,"Grants");
+    }
+  }
   virtual QWidget *selectedWidget(QWidget *par)
   {
     QString object=text(0);
