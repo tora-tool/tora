@@ -135,7 +135,6 @@ static struct {
 	       { 0,"store",	false,false,false,true ,false,false,false},
 	       { 0,"spool",	false,false,false,true ,false,false,false},
 	       { 0,"prompt",	false,false,false,true ,false,false,false},
-	       { 0,"set",	false,false,false,true ,false,false,false},
 	       { 0,NULL,	false,false,false,false,false,false,false}
 };
 
