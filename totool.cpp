@@ -167,6 +167,7 @@ void toTool::createWindow(void)
       }
       if (tool)
 	toToolCaption(tool,name());
+
       newWin->show();
 
       // Maximize window if only window

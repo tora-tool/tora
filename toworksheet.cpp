@@ -494,6 +494,8 @@ void toWorksheet::setup(bool autoLoad)
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
+  if (autoLoad)
+    Editor->setFocus();
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
