@@ -926,6 +926,12 @@ void toHighlightedText::focusOutEvent(QFocusEvent *e)
 
 toHighlightedText::~toHighlightedText()
 {
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  std::map<int,QString>::iterator err=Errors.find(curline);
+  if (err==Errors.end())
+    toStatusMessage(QString::null);
+
   delete Completion;
   Completion=NULL;
 }

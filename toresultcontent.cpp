@@ -239,7 +239,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
     toEditWidget(false,true,true,
 		 false,false,
 		 false,false,false,
-		 true,false,true)
+		 true,true,true)
 {
   Query=NULL;
   SingleEdit=NULL;
@@ -930,6 +930,14 @@ void toResultContentEditor::changeData(int row,int col,const QString &str)
   setCurrentCell(row,col);
 }
 
+void toResultContentEditor::editSelectAll(void)
+{
+  removeSelection(0);
+  QTableSelection sel;
+  sel.init(0,0);
+  sel.expandTo(numRows()-1,numCols()-1);
+}
+
 void toResultContentEditor::menuCallback(int cmd)
 {
   switch(cmd) {
@@ -971,21 +979,11 @@ void toResultContentEditor::menuCallback(int cmd)
     }
     break;
   case TORESULT_SELECT_ALL:
-    {
-      removeSelection(0);
-      QTableSelection sel;
-      sel.init(0,0);
-      sel.expandTo(numRows()-1,numCols()-1);
-      addSelection(sel);
-    }
+    editSelectAll();
     break;
   case TORESULT_COPY_TRANS:
     {
-      removeSelection(0);
-      QTableSelection sel;
-      sel.init(0,0);
-      sel.expandTo(numRows()-1,numCols()-1);
-      addSelection(sel);
+      editSelectAll();
       toListView *lst=copySelection(true);
       if (lst) {
 	lst->copyTransposed();

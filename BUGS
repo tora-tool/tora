@@ -24,3 +24,6 @@ toMysqlConnection:
 
 otl:
 	Sometimes looses open cursors when cancelling and multiple queries are running.
+
+toParamGet:
+	Should ignore ':' within comments.

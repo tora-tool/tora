@@ -104,6 +104,9 @@
 2001-12-06: Fixed a memory leak on copying charts.
 2001-12-06: Added new selection stuff to content editor as well.
 2001-12-06: Added new option with default format of exported lists.
+2001-12-06: Remove error line on destruct in editor.
+2001-12-06: Fixed problem with multiline comments in paramget.
+2001-12-06: Fixed problem with multiline comments in worksheet.
 
 1.1.5: Released 2001-11-26
 

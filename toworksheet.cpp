@@ -982,6 +982,7 @@ void toWorksheet::execute(bool all,bool step)
     enum {
       beginning,
       comment,
+      multiComment,
       inStatement,
       inString,
       inCode,
@@ -1012,6 +1013,9 @@ void toWorksheet::execute(bool all,bool step)
 	if (state==comment) {
 	  state=lastState;
 	  break;
+	} else if (state==multiComment) {
+	  if (c=='*'&&nc=='/')
+	    state=lastState;
 	} else if (state!=inString&&c=='\'') {
 	  lastState=state;
 	  state=inString;
@@ -1027,6 +1031,9 @@ void toWorksheet::execute(bool all,bool step)
 	    if (c=='-'&&nc=='-') {
 	      lastState=state;
 	      state=comment;
+	    } else if (c=='/'&&nc=='*') {
+	      lastState=state;
+	      state=multiComment;
 	    } else {
 	      for (int j=0;Blocks[j].Start;j++) {
 		int &pos=Blocks[j].Pos;
@@ -1078,6 +1085,10 @@ void toWorksheet::execute(bool all,bool step)
 	    if (c=='-'&&nc=='-') {
 	      lastState=state;
 	      state=comment;
+	      break;
+	    } else if (c=='/'&&nc=='*') {
+	      lastState=state;
+	      state=multiComment;
 	      break;
 	    } else if (!c.isSpace()&&(c!='/'||data.length()!=1)) {
 	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step&&startLine>=0&&startPos>=0) {

@@ -106,6 +106,7 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
     inString,
     normal,
     comment,
+    multiComment,
     name,
     specification,
     endInput
@@ -137,6 +138,8 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 
     if (state==normal&&c=='-'&&nc=='-')
       state=comment;
+    else if (state==normal&&c=='/'&&nc=='*')
+      state=multiComment;
     else {
       switch(state) {
       case inString:
@@ -145,6 +148,10 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	break;
       case comment:
 	if (c=='\n')
+	  state=normal;
+	break;
+      case multiComment:
+	if (c=='*'&&nc=='/')
 	  state=normal;
 	break;
       case normal:

@@ -253,6 +253,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void editReadAll(void);
+  /** Select all contents. Default NOP.
+   */
+  virtual void editSelectAll(void);
 
   /** Set a new filter setting.
    * @param all Apply filter to all tables, otherwise only for this table.
