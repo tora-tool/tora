@@ -79,6 +79,7 @@ SOURCES=\
 	tonoblockquery.cpp	        \
 	tooutput.cpp		        \
 	tooracleconnection.cpp	        \
+	tooraclesettingui.cpp		\
 	toparamget.cpp		        \
 	topiechart.cpp		        \
 	topreferences.cpp	        \
@@ -258,7 +259,9 @@ plugins/toworksheet.tso: \
 
 # Special plugins
 
-plugins/tooracleconnection.tso:objs/tooracleconnection.o
+plugins/tooracleconnection.tso: \
+	objs/tooracleconnection.o \
+	objs/tooraclesettingui.o
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(ORACLE_SHARED) -o $@ $^

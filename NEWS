@@ -56,6 +56,10 @@
 2001-09-18: Added quote function to connectionImpl.
 2001-09-18: Rewrote toResultCols to be more generic.
 2001-09-19: Fixed problem extracting partitions.
+2001-09-19: Used stream pooling of otl (Improve performance).
+2001-09-19: Improved performance of statistics.
+2001-09-19: Added setting tabs for connections types.
+2001-09-19: Add Oracle setting tab.
 
 1.1.0: Released 2001-09-09
 

@@ -48,6 +48,9 @@
 #include "tomemoeditor.moc"
 
 #include "icons/filesave.xpm"
+#include "icons/cut.xpm"
+#include "icons/copy.xpm"
+#include "icons/paste.xpm"
 
 toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 			   bool sql,bool modal)
@@ -58,16 +61,15 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 
   QBoxLayout *l=new QVBoxLayout(this);
 
-  if (row>=0&&col>=0) {
-    QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
+  QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
 
+  if (row>=0&&col>=0) {
     new QToolButton(QPixmap((const char **)filesave_xpm),
 		    "Save changes",
 		    "Save changes",
 		    this,SLOT(store(void)),
 		    toolbar);
-    toolbar->setStretchableWidget(new QLabel("",toolbar));
-    l->addWidget(toolbar);
+    toolbar->addSeparator();
   }
 
   if (sql)

@@ -1,0 +1,229 @@
+<!DOCTYPE UI><UI>
+<class>toOracleSettingUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toOracleSettingUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>588</width>
+            <height>281</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="1"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Default date format</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The default dateformat to use when querying the database.</string>
+            </property>
+        </widget>
+        <widget row="0"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_2_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Checkpoint name</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>CheckPoint</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The name of the checkpoint used when needed to rollback work.</string>
+            </property>
+        </widget>
+        <spacer row="3"  column="0"  rowspan="1"  colspan="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2_2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="3"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CreatePlanTable</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Create Table</string>
+            </property>
+        </widget>
+        <widget row="1"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>DefaultDate</cstring>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CheckPoint</cstring>
+            </property>
+        </widget>
+        <widget row="2"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel6_3</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Explain plan table</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Name of the table to put explain plan output in.</string>
+            </property>
+        </widget>
+        <widget row="2"  column="1"  rowspan="1"  colspan="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExplainPlan</cstring>
+            </property>
+        </widget>
+        <widget row="5"  column="0" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>TextLabel1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Statement cache size</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>PoolSize</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The number of open statements to cache. Large value will use Oracle memory and small will increase server CPU usage.</string>
+            </property>
+        </widget>
+        <widget row="5"  column="1"  rowspan="1"  colspan="2" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PoolSize</cstring>
+            </property>
+            <property stdset="1">
+                <name>maxValue</name>
+                <number>1000</number>
+            </property>
+            <property stdset="1">
+                <name>minValue</name>
+                <number>2</number>
+            </property>
+            <property stdset="1">
+                <name>value</name>
+                <number>2</number>
+            </property>
+        </widget>
+        <spacer row="4"  column="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer6</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>CreatePlanTable</sender>
+        <signal>clicked()</signal>
+        <receiver>toOracleSettingUI</receiver>
+        <slot>createPlanTable()</slot>
+    </connection>
+    <slot access="public">createPlanTable()</slot>
+</connections>
+<tabstops>
+    <tabstop>CheckPoint</tabstop>
+    <tabstop>DefaultDate</tabstop>
+    <tabstop>ExplainPlan</tabstop>
+    <tabstop>CreatePlanTable</tabstop>
+    <tabstop>PoolSize</tabstop>
+</tabstops>
+</UI>

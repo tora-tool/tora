@@ -772,6 +772,38 @@ public:
    */
   static std::list<QString> databases(const QString &provider,const QString &host,
 				      const QString &user,const QString &pwd);
+  /**
+   * Create and return configuration tab for this connectiontype. The returned widget should also
+   * be a childclass of @ref toSettingTab.
+   *
+   * @return A pointer to the widget containing the setup tab for this tool or NULL of
+   * no settings are available.
+   */
+  virtual QWidget *configurationTab(QWidget *parent)
+  { return NULL; }
+  /**
+   * Get connection specific settings.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Contents of this setting.
+   */
+  const QString &config(const QString &tag,const QString &def);
+  /**
+   * Change connectionspecific setting. Depending on the implementation this can change the
+   * contents on disk or not.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Default value of the setting, if it is not available.
+   */
+  void setConfig(const QString &tag,const QString &value);
 };
 
 #endif

@@ -36,6 +36,9 @@
 
 #include <qfile.h>
 #include <qregexp.h>
+#include <qspinbox.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
 
 #include "tomain.h"
 
@@ -43,11 +46,20 @@
 #  include "windows/cregistry.h"
 #endif
 
+#define OTL_STREAM_POOLING_ON
+#define OTL_STL
+
 #include "otlv32.h"
 #include "toconnection.h"
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
+
+#include "tooraclesettingui.h"
+#include "tooraclesettingui.moc"
+
+#define CONF_POOL_SIZE 	  "PoolSize"
+#define DEFAULT_POOL_SIZE "32"
 
 // Must be larger than max long size in otl.
 
@@ -95,6 +107,7 @@ public:
   };
 
   class oracleQuery : public toQuery::queryImpl {
+    QCString LastSQL;
     otl_stream *Query;
   public:
     oracleQuery(toQuery *query,oracleSub *conn)
@@ -413,60 +426,8 @@ public:
       }
     }
 
-    virtual toConnectionSub *createConnection(void)
-    {
-      QString oldSid;
-      bool sqlNet=!connection().host().isEmpty();
-      if (!sqlNet) {
-	oldSid=getenv("ORACLE_SID");
-	toSetEnv("ORACLE_SID",connection().database().latin1());
-      }
-      otl_connect *conn;
-      try {
-	QString mode=connection().mode();
-	int oper=0;
-	int dba=0;
-	if (mode=="SYS_OPER")
-	  oper=1;
-	else if (mode=="SYS_DBA")
-	  dba=1;
-	conn=new otl_connect(connectString(),0,oper,dba);
-      } catch (const otl_exception &exc) {
-	if (!sqlNet) {
-	  if (oldSid.isNull())
-	    toUnSetEnv("ORACLE_SID");
-	  else
-	    toSetEnv("ORACLE_SID",oldSid.latin1());
-	}
-	ThrowException(exc);
-      }
-      if (!sqlNet) {
-	if (oldSid.isNull())
-	  toUnSetEnv("ORACLE_SID");
-	else {
-	  toSetEnv("ORACLE_SID",oldSid.latin1());
-	}
-      }
+    virtual toConnectionSub *createConnection(void);
 
-      try {
-	{
-	  QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
-	  str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
-	  str+="'";
-	  otl_stream date(1,str.utf8(),*conn);
-	}
-	{
-	  otl_stream info(1,
-			  "BEGIN\n"
-			  "  DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
-			  "END;",
-			  *conn);
-	}
-      } catch(...) {
-	toStatusMessage("Failed to set new default date format for session");
-      }
-      return new oracleSub(conn);
-    }
     void closeConnection(toConnectionSub *conn)
     {
       delete conn;
@@ -632,6 +593,7 @@ public:
     delete buf;
     return ret;
   }
+  virtual QWidget *configurationTab(QWidget *parent);
 };
 
 static toOracleProvider OracleProvider;
@@ -642,13 +604,20 @@ void toOracleProvider::oracleQuery::execute(void)
   if (!conn)
     throw QString("Internal error, not oracle sub connection");
   try {
-    delete Query;
-    Query=new otl_stream;
-    Query->set_commit(0);
-    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-    Query->open(1,
-		query()->sql(),
-		*(conn->Connection));
+    if (query()->params().begin()==query()->params().end()||LastSQL!=query()->sql()) {
+      delete Query;
+      Query=NULL;
+      LastSQL=query()->sql();
+    }
+    if (!Query) {
+      Query=new otl_stream;
+      Query->set_commit(0);
+      Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+      Query->open(1,
+		  LastSQL,
+		  *(conn->Connection));
+    }
+
     otl_null null;
     for(toQList::iterator i=query()->params().begin();i!=query()->params().end();i++) {
       if ((*i).isNull())
@@ -665,4 +634,131 @@ void toOracleProvider::oracleQuery::execute(void)
   } catch (const otl_exception &exc) {
     ThrowException(exc);
   }
+}
+
+toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
+{
+  QString oldSid;
+  bool sqlNet=!connection().host().isEmpty();
+  if (!sqlNet) {
+    oldSid=getenv("ORACLE_SID");
+    toSetEnv("ORACLE_SID",connection().database().latin1());
+  }
+  otl_connect *conn;
+  try {
+    QString mode=connection().mode();
+    int oper=0;
+    int dba=0;
+    if (mode=="SYS_OPER")
+      oper=1;
+    else if (mode=="SYS_DBA")
+      dba=1;
+    conn=new otl_connect(connectString(),0,oper,dba);
+    conn->set_stream_pool_size(OracleProvider.config(CONF_POOL_SIZE,DEFAULT_POOL_SIZE).toInt());
+  } catch (const otl_exception &exc) {
+    if (!sqlNet) {
+      if (oldSid.isNull())
+	toUnSetEnv("ORACLE_SID");
+      else
+	toSetEnv("ORACLE_SID",oldSid.latin1());
+    }
+    ThrowException(exc);
+  }
+  if (!sqlNet) {
+    if (oldSid.isNull())
+      toUnSetEnv("ORACLE_SID");
+    else {
+      toSetEnv("ORACLE_SID",oldSid.latin1());
+    }
+  }
+  
+  try {
+    {
+      QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
+      str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
+      str+="'";
+      otl_stream date(1,str.utf8(),*conn);
+    }
+    {
+      otl_stream info(1,
+		      "BEGIN\n"
+		      "  DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
+		      "END;",
+		      *conn);
+    }
+  } catch(...) {
+    toStatusMessage("Failed to set new default date format for session");
+  }
+  return new oracleSub(conn);
+}
+
+static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
+				"CREATE TABLE %1 (\n"
+				"    STATEMENT_ID    VARCHAR2(30),\n"
+				"    TIMESTAMP       DATE,\n"
+				"    REMARKS         VARCHAR2(80),\n"
+				"    OPERATION       VARCHAR2(30),\n"
+				"    OPTIONS         VARCHAR2(30),\n"
+				"    OBJECT_NODE     VARCHAR2(128),\n"
+				"    OBJECT_OWNER    VARCHAR2(30),\n"
+				"    OBJECT_NAME     VARCHAR2(30),\n"
+				"    OBJECT_INSTANCE NUMERIC,\n"
+				"    OBJECT_TYPE     VARCHAR2(30),\n"
+				"    OPTIMIZER       VARCHAR2(255),\n"
+				"    SEARCH_COLUMNS  NUMBER,\n"
+				"    ID              NUMERIC,\n"
+				"    PARENT_ID       NUMERIC,\n"
+				"    POSITION        NUMERIC,\n"
+				"    COST            NUMERIC,\n"
+				"    CARDINALITY     NUMERIC,\n"
+				"    BYTES           NUMERIC,\n"
+				"    OTHER_TAG       VARCHAR2(255),\n"
+				"    PARTITION_START VARCHAR2(255),\n"
+				"    PARTITION_STOP  VARCHAR2(255),\n"
+				"    PARTITION_ID    NUMERIC,\n"
+				"    OTHER           LONG,\n"
+				"    DISTRIBUTION    VARCHAR2(30)\n"
+				")",
+				"Create plan table, must have same % signs");
+
+class toOracleSetting : public toOracleSettingUI, public toSettingTab
+{
+public:
+  toOracleSetting(QWidget *parent)
+    : toOracleSettingUI(parent),toSettingTab("tooraclesetting.html")
+  {
+    PoolSize->setValue(OracleProvider.config(CONF_POOL_SIZE,DEFAULT_POOL_SIZE).toInt());
+    DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
+					      DEFAULT_DATE_FORMAT));
+    CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
+					     DEFAULT_PLAN_CHECKPOINT));
+    ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
+					      DEFAULT_PLAN_TABLE));
+    try {
+      // Check if connection exists
+      toMainWidget()->currentConnection();
+      CreatePlanTable->setEnabled(true);
+    } catch (...) {
+    }
+  }
+  virtual void saveSetting(void)
+  {
+    OracleProvider.setConfig(CONF_POOL_SIZE,QString::number(PoolSize->value()));
+    toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
+    toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
+    toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
+  }
+  virtual void createPlanTable(void)
+  {
+    try {
+      toConnection &conn=toMainWidget()->currentConnection();
+      conn.execute(toSQL::string(SQLCreatePlanTable,conn).
+		   arg(ExplainPlan->text()));
+    } TOCATCH
+  }
+};
+
+QWidget *toOracleProvider::configurationTab(QWidget *parent)
+{
+  return new toOracleSetting(parent);
 }

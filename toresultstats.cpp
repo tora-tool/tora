@@ -102,13 +102,12 @@ void toResultStats::setup(void)
 }
 
 static toSQL SQLStatistics("toResultStats:Statistics",
-			   "SELECT Statistic#,SUM(Value) FROM V$SesStat WHERE SID = :f1<int>\n"
-			   " GROUP BY Statistic#",
+			   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
 			   "Get statistics for session, must have same number of columns");
 static toSQL SQLSessionIO("toResultStats:SessionIO",
-			  "SELECT SUM(Block_Gets) \"block gets\",\n"
-			  "       SUM(Block_Changes) \"block changes\",\n"
-			  "       SUM(Consistent_Changes) \"consistent changes\"\n"
+			  "SELECT Block_Gets \"block gets\",\n"
+			  "       Block_Changes \"block changes\",\n"
+			  "       Consistent_Changes \"consistent changes\"\n"
 			  "  FROM v$sess_io\n"
 			  " WHERE SID = :f1<int>",
 			  "Get session IO, must have same binds");
@@ -185,10 +184,9 @@ void toResultStats::changeSession(int ses)
 }
 
 static toSQL SQLStatisticName("toResultStats:StatisticName",
-			      "SELECT b.Name,a.Statistic#,SUM(a.Value)\n"
+			      "SELECT b.Name,a.Statistic#,a.Value\n"
 			      "  FROM V$SesStat a,V$StatName b\n"
-			      " WHERE a.SID = :f1<int> AND a.statistic# = b.statistic#\n"
-			      " GROUP BY b.name,a.Statistic#",
+			      " WHERE a.SID = :f1<int> AND a.statistic# = b.statistic#\n",
 			      "Get statistics and their names for session, must have same number of columns");
 static toSQL SQLSystemStatisticName("toResultStats:SystemStatisticName",
 				    "SELECT Name,Statistic#,Value\n"

@@ -208,25 +208,11 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
     ReadAll->setChecked(true);
   else
     InitialFetch->setText(str);
-  DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
-					    DEFAULT_DATE_FORMAT));
-  CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
-					   DEFAULT_PLAN_CHECKPOINT));
-  ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
-					    DEFAULT_PLAN_TABLE));
-  
+
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
-
-  try {
-    // Check if connection exists
-    toMainWidget()->currentConnection();
-    CreatePlanTable->setEnabled(true);
-  } catch (...) {
-
-  }
 }
 
 void toDatabaseSetting::saveSetting(void)
@@ -236,48 +222,7 @@ void toDatabaseSetting::saveSetting(void)
     toTool::globalSetConfig(CONF_MAX_NUMBER,"-1");
   else
     toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
-  toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
-  toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
-  toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
   toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
-}
-
-static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
-				"CREATE TABLE %1 (\n"
-				"    STATEMENT_ID    VARCHAR2(30),\n"
-				"    TIMESTAMP       DATE,\n"
-				"    REMARKS         VARCHAR2(80),\n"
-				"    OPERATION       VARCHAR2(30),\n"
-				"    OPTIONS         VARCHAR2(30),\n"
-				"    OBJECT_NODE     VARCHAR2(128),\n"
-				"    OBJECT_OWNER    VARCHAR2(30),\n"
-				"    OBJECT_NAME     VARCHAR2(30),\n"
-				"    OBJECT_INSTANCE NUMERIC,\n"
-				"    OBJECT_TYPE     VARCHAR2(30),\n"
-				"    OPTIMIZER       VARCHAR2(255),\n"
-				"    SEARCH_COLUMNS  NUMBER,\n"
-				"    ID              NUMERIC,\n"
-				"    PARENT_ID       NUMERIC,\n"
-				"    POSITION        NUMERIC,\n"
-				"    COST            NUMERIC,\n"
-				"    CARDINALITY     NUMERIC,\n"
-				"    BYTES           NUMERIC,\n"
-				"    OTHER_TAG       VARCHAR2(255),\n"
-				"    PARTITION_START VARCHAR2(255),\n"
-				"    PARTITION_STOP  VARCHAR2(255),\n"
-				"    PARTITION_ID    NUMERIC,\n"
-				"    OTHER           LONG,\n"
-				"    DISTRIBUTION    VARCHAR2(30)\n"
-				")",
-				"Create plan table, must have same % signs");
-
-void toDatabaseSetting::createPlanTable(void)
-{
-  try {
-    toConnection &conn=toMainWidget()->currentConnection();
-    conn.execute(toSQL::string(SQLCreatePlanTable,conn).
-		 arg(ExplainPlan->text()));
-  } TOCATCH
 }
 
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)

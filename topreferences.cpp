@@ -43,6 +43,7 @@
 #include "tosyntaxsetup.h"
 #include "tohelp.h"
 #include "topreferencesui.h"
+#include "toconnection.h"
 
 #include "topreferences.moc"
 #include "topreferencesui.moc"
@@ -99,12 +100,22 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   item=new QListBoxText(TabSelection,"Global Settings");
   addWidget(item,new toGlobalSetting(Parent));
 
-  item=new QListBoxText(TabSelection,"Database Settings");
-  addWidget(item,new toDatabaseSetting(Parent));
-
   item=new QListBoxText(TabSelection,"Font Settings");
   addWidget(item,new toSyntaxSetup(Parent));
   
+  item=new QListBoxText(TabSelection,"Database Settings");
+  addWidget(item,new toDatabaseSetting(Parent));
+
+  std::list<QString> prov=toConnectionProvider::providers();
+  for (std::list<QString>::iterator i=prov.begin();i!=prov.end();i++) {
+    QWidget *tab=toConnectionProvider::fetchProvider(*i).configurationTab(Parent);
+    if (tab) {
+      QString str(" ");
+      str.append(*i);
+      addWidget(new QListBoxText(TabSelection,str),tab);
+    }
+  }
+
   item=new QListBoxText(TabSelection,"Tools");
   addWidget(item,new toToolSetting(Parent));
 

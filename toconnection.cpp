@@ -41,6 +41,7 @@
 #include "tosql.h"
 #include "toconf.h"
 #include "tomain.h"
+#include "totool.h"
 
 // Connection provider implementation
 
@@ -117,6 +118,22 @@ std::list<QString> toConnectionProvider::databases(const QString &provider,const
 						   const QString &user,const QString &pwd)
 {
   return fetchProvider(provider).databases(host,user,pwd);
+}
+
+const QString &toConnectionProvider::config(const QString &tag,const QString &def)
+{
+  QString str=provider();
+  str.append(":");
+  str.append(tag);
+  return toTool::globalConfig(str,def);
+}
+
+void toConnectionProvider::setConfig(const QString &tag,const QString &def)
+{
+  QString str=provider();
+  str.append(":");
+  str.append(tag);
+  toTool::globalSetConfig(str,def);
 }
 
 // Query value implementation
