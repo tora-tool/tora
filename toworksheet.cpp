@@ -446,6 +446,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
     Refresh->setEnabled(false);
+    Refresh->setFocusPolicy(NoFocus);
 
     toolbar->addSeparator();
 
@@ -489,13 +490,20 @@ void toWorksheet::setup(bool autoLoad)
     } else {
       StatisticButton->setEnabled(false);
     }
-    setTabOrder(Editor,Result);
-    setTabOrder(Result,Refresh);
+
+#if 0
+    setTabOrder(Editor,ResultTab);
+    setTabOrder(ResultTab,Result);
+    setTabOrder(Result,Columns);
+    setTabOrder(Columns,Refresh);
+#endif
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
+#if 0
   if (autoLoad)
     Editor->setFocus();
+#endif
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)

@@ -371,6 +371,7 @@ toMain::toMain()
   toolbar->addSeparator();
   ConnectionSelection=new QComboBox(toolbar);
   ConnectionSelection->setFixedWidth(200);
+  ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   menuBar()->insertItem("&Tools",ToolsMenu,TO_TOOLS_MENU);
