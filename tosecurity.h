@@ -29,24 +29,40 @@
 #ifndef __TOSECURITY_H
 #define __TOSECURITY_H
 
-#include <qvbox.h>
 #include <list>
+
+#include <qvbox.h>
+#include <qlistview.h>
 
 class toConnection;
 class toResultView;
 class toSecurityPage;
 class toSecurityQuota;
 class QTabWidget;
+class QToolButton;
 
 class toSecuritySystem : public QListView {
   Q_OBJECT
 
   toConnection &Connection;
   void eraseUser();
-  void setOn(QListViewItem *,bool);
 public:
   toSecuritySystem(toConnection &conn,QWidget *parent);
   void changeUser(const QString &);
+  void sql(const QString &user,list<QString> &sql);
+public slots:
+  virtual void changed(QListViewItem *item);
+};
+
+class toSecurityRoleGrant : public QListView {
+  Q_OBJECT
+
+  toConnection &Connection;
+  void eraseUser(bool user);
+  QCheckListItem *findChild(QListViewItem *parent,const QString &name);
+public:
+  toSecurityRoleGrant(toConnection &conn,QWidget *parent);
+  void changeUser(bool user,const QString &);
   void sql(const QString &user,list<QString> &sql);
 public slots:
   virtual void changed(QListViewItem *item);
@@ -86,18 +102,25 @@ class toSecurity : public QVBox {
 
   toResultView *UserList;
   toSecuritySystem *SystemGrant;
+  toSecurityRoleGrant *RoleGrant;
   toSecurityObject *ObjectGrant;
   toSecurityPage *General;
   toSecurityQuota *Quota;
+  QToolButton *DropButton;
   QTabWidget *Tabs;
   list<QString> sql(void);
 public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual ~toSecurity();
+  virtual void changeUser(bool);
 public slots:
   virtual void refresh(void);
-  virtual void changeUser(void);
+  virtual void changeUser(QListViewItem *)
+  { changeUser(true); }
   virtual void saveChanges(void);
+  virtual void addUser(void);
+  virtual void addRole(void);
+  virtual void drop(void);
 };
 
 #endif
