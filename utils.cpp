@@ -75,7 +75,7 @@
 #include "windows/cregistry.h"
 #endif
 
-#define CHUNK_SIZE 63
+#define CHUNK_SIZE 31
 
 static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
@@ -128,6 +128,103 @@ QString toNow(toConnection &conn)
   }
 }
 
+QString toSQLStripSpecifier(const QString &sql)
+{
+  QString ret;
+  char inString=0;
+  for(unsigned int i=0;i<sql.length();i++) {
+    QChar c=sql.at(i);
+    if (inString) {
+      if (char(c)==inString) {
+	inString=0;
+      }
+      ret+=c;
+    } else {
+      switch(char(c)) {
+      case '\'':
+	inString='\'';
+	ret+=c;
+	break;
+      case '\"':
+	inString='\"';
+	ret+=c;
+	break;
+      case ':':
+	ret+=c;
+	for (i++;i<sql.length();i++) {
+	  c=sql.at(i);
+	  if (!c.isLetterOrNumber())
+	    break;
+	  ret+=c;
+	}
+	if (c=='<') {
+	  ret+=" ";
+	  for (i++;i<sql.length();i++) {
+	    c=sql.at(i);
+	    ret+=" ";
+	    if (c=='>') {
+	      i++;
+	      break;
+	    }
+	  }
+	}
+	i--;
+	break;
+      default:
+	ret+=c;
+      }
+    }
+  }
+  return ret;
+}
+
+QString toSQLStripBind(const QString &sql)
+{
+  QString ret;
+  char inString=0;
+  for(unsigned int i=0;i<sql.length();i++) {
+    QChar c=sql.at(i);
+    if (inString) {
+      if (char(c)==inString) {
+	inString=0;
+      }
+      ret+=c;
+    } else {
+      switch(char(c)) {
+      case '\'':
+	inString='\'';
+	ret+=c;
+	break;
+      case '\"':
+	inString='\"';
+	ret+=c;
+	break;
+      case ':':
+	ret+="''";
+	for (i++;i<sql.length();i++) {
+	  c=sql.at(i);
+	  if (!c.isLetterOrNumber())
+	    break;
+	}
+	if (c=='<') {
+	  for (i++;i<sql.length();i++) {
+	    c=sql.at(i);
+	    if (c=='>') {
+	      i++;
+	      break;
+	    }
+	  }
+	}
+	i--;
+	break;
+      default:
+	ret+=c;
+      }
+    }
+  }
+  return ret;
+}
+
 static toSQL SQLAddress("Global:Address",
 			"SELECT Address||':'||Hash_Value\n"
 			"  FROM V$SQLText_With_Newlines\n"
@@ -136,12 +233,12 @@ static toSQL SQLAddress("Global:Address",
 
 QString toSQLToAddress(toConnection &conn,const QString &sql)
 {
-  QString search;
+  QString search=toSQLStripSpecifier(sql);
 
-  toQList vals=toQuery::readQuery(conn,SQLAddress,sql.left(CHUNK_SIZE));
+  toQList vals=toQuery::readQuery(conn,SQLAddress,search.left(CHUNK_SIZE));
 
   for(toQList::iterator i=vals.begin();i!=vals.end();i++) {
-    if (sql==toSQLString(conn,*i))
+    if (search==toSQLString(conn,*i))
       return *i;
   }
   throw QString("SQL Query not found in SGA");

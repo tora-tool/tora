@@ -90,8 +90,7 @@ public:
   { toQList p; query(sql,p); }
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &amp;conn)
-  { return toIsOracle(conn); }
+  virtual bool canHandle(toConnection &amp;conn);
 };
 
 #endif

@@ -369,10 +369,19 @@ public:
       }
 
       try {
-	QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
-	str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
-	str+="'";
-	otl_stream date(1,str.utf8(),*conn);
+	{
+	  QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
+	  str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
+	  str+="'";
+	  otl_stream date(1,str.utf8(),*conn);
+	}
+	{
+	  otl_stream info(1,
+			  "BEGIN\n"
+			  "  DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
+			  "END;",
+			  *conn);
+	}
       } catch(...) {
 	toStatusMessage("Failed to set new default date format for session");
       }

@@ -708,6 +708,18 @@ toToolWidget *toCurrentTool(QObject *widget);
 /** Check if this connection is an oracle connection.
  */
 bool toIsOracle(const toConnection &);
+/** Strip extra bind specifier from an SQL statement. (That means the extra <***> part after
+ * the bind variable.
+ * @param sql The sql to strip.
+ * @return Return a string containing the same statement without qualifiers, which means the
+ *         sql sent to Oracle and available in the SGA.
+ */
+QString toSQLStripSpecifier(const QString &sql);
+/** Strip extra binds and replace with empty strings.
+ * @param sql The sql to strip.
+ * @return Return a string containing the same statement without binds.
+ */
+QString toSQLStripBind(const QString &sql);
 /** Whenever this class is instantiated the window will display a busy cursor. You
  * can instantiate this function as many time as you want, only when all of them are
  * destructed the curser will revert back to normal.

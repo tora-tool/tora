@@ -114,6 +114,6 @@
 #  define DEFAULT_PLUGIN_DIR ""
 #endif
 // Version of TOra, must also change rpm files
-#define TOVERSION               "1.1.0"
+#define TOVERSION               "1.1.1"
 
 #endif

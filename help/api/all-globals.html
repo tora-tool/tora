@@ -117,11 +117,15 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref658">toIsOracle</A></b> (const <A HREF="toConnection.html">toConnection</A> &amp;) 
 </LI>
-<LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref660">max</A></b> (T a, T b) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref659">toSQLStripSpecifier</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+</LI>
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref660">toSQLStripBind</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref661">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref662">max</A></b> (T a, T b) 
+</LI>
+<LI>template &lt;class T&gt;
+T &nbsp;<b><A HREF="#ref663">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -478,12 +482,32 @@ T &nbsp;<b><A HREF="#ref661">min</A></b> (T a, T b)
 <A NAME="toIsOracle"></A><A NAME="ref658"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>toIsOracle</strong> (const <A HREF="toConnection.html">toConnection</A> &amp;)
 <br></td><td align="right"><h3><strong>toIsOracle</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Check if this connection is an oracle connection.
  </p>
-<A NAME="max"></A><A NAME="ref660"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="toSQLStripSpecifier"></A><A NAME="ref659"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>toSQLStripSpecifier</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<br></td><td align="right"><h3><strong>toSQLStripSpecifier</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Strip extra bind specifier from an SQL statement. (That means the extra &lt;***&gt; part after
+ the bind variable.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">The sql to strip.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Return a string containing the same statement without qualifiers, which means the
+         sql sent to Oracle and available in the SGA.
+ </p>
+<A NAME="toSQLStripBind"></A><A NAME="ref660"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>toSQLStripBind</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<br></td><td align="right"><h3><strong>toSQLStripBind</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Strip extra binds and replace with empty strings.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">The sql to strip.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Return a string containing the same statement without binds.
+ </p>
+<A NAME="max"></A><A NAME="ref662"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Get maximum number of a and b.
  </p>
-<A NAME="min"></A><A NAME="ref661"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref663"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Get minimum number of a and b.

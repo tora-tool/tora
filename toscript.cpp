@@ -75,18 +75,8 @@ public:
   { return "DB or schema extraction and compare"; }
   virtual QWidget *toolWindow(QWidget *main,toConnection &connection)
   {
-    QVBox *window=new QVBox(main);
+    QWidget *window=new toScript(main,connection);
     window->setIcon(*toolbarImage());
-
-    QToolBar *toolbar=toAllocBar(window,"SQL worksheet",connection.description());
-    toScript *script=new toScript(window,connection);
-
-    new QToolButton(QPixmap((const char **)execute_xpm),
-		    "Perform defined extraction",
-		    "Perform defined extraction",
-		    script,SLOT(execute(void)),
-		    toolbar);
-    toolbar->setStretchableWidget(new QLabel("",toolbar));
 
     return window;
   }
@@ -175,6 +165,15 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 toScript::toScript(QWidget *parent,toConnection &connection)
   : toToolWidget(ScriptTool,"script.html",parent,connection)
 {
+  QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
+
+  new QToolButton(QPixmap((const char **)execute_xpm),
+		  "Perform defined extraction",
+		  "Perform defined extraction",
+		  this,SLOT(execute(void)),
+		  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+
   ScriptUI=new toScriptUI(this);
 
   QSplitter *hsplitter=new QSplitter(Horizontal,ScriptUI->DifferenceTab);

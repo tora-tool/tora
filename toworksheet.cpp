@@ -580,10 +580,9 @@ void toWorksheet::query(const QString &str,bool direct)
     }
     pos=chk.find("end",pos+1);
   }
-  QString execSql=str;
-  if (!code&&execSql.length()>0&&execSql.at(execSql.length()-1)==';')
-    execSql.truncate(execSql.length()-1);
-  QueryString=execSql;
+  QueryString=str;
+  if (!code&&QueryString.length()>0&&QueryString.at(QueryString.length()-1)==';')
+    QueryString.truncate(QueryString.length()-1);
   
   bool nobinds=false;
   chk=str.lower();
@@ -593,11 +592,11 @@ void toWorksheet::query(const QString &str,bool direct)
   if(chk.startsWith("create trigger "))
     nobinds=true;
   
-  if (!describe(execSql)) {
+  if (!describe(QueryString)) {
     toQList param;
     if (!nobinds)
       try {
-	param=toParamGet::getParam(this,execSql);
+	param=toParamGet::getParam(this,QueryString);
       } catch (const QString &str) {
 	toStatusMessage(str);
 	return;
@@ -607,29 +606,29 @@ void toWorksheet::query(const QString &str,bool direct)
       try {
 	Timer.start();
 	
-	toQuery query(connection(),execSql,param);
+	toQuery query(connection(),QueryString,param);
 	
 	char buffer[100];
 	if (query.rowsProcessed()>0)
 	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
 	else
 	  sprintf(buffer,"Query executed");
-	addLog(execSql,buffer);
+	addLog(QueryString,buffer);
       } catch (const QString &exc) {
-	addLog(execSql,exc);
+	addLog(QueryString,exc);
       }
     } else {
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
-	Result->query(execSql,param);
+	Result->query(QueryString,param);
       } catch (const QString &exc) {
-	addLog(execSql,exc);
+	addLog(QueryString,exc);
       }
       Timer.start();
       if (StatisticButton->isOn())
 	toRefreshParse(timer(),Refresh->currentText());
       
-      Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
+      Result->setSQLName(QueryString.simplifyWhiteSpace().left(40));
     }
     StopButton->setEnabled(true);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);

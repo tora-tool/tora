@@ -14,6 +14,9 @@
 	back to GPL.
 2001-09-12: Handle pixmap to xpm conversion better.
 2001-09-12: Fixed problem with schema extractor.
+2001-09-12: Set client info when opening connection.
+2001-09-12: Fixed problem with binds and sql address resolution.
+2001-09-12: Added support for MySQL in explain plan.
 
 1.1.0: Released 2001-09-09
 

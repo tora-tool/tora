@@ -55,6 +55,37 @@
 toResultPlan::toResultPlan(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
+  setSQLName("toResultPlan");
+}
+
+static toSQL SQLViewPlan("toResultPlan:ViewPlan",
+			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
+			 "  FROM %1 WHERE Statement_ID = 'Tora %2' ORDER BY NVL(Parent_ID,0),ID",
+			 "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
+
+bool toResultPlan::canHandle(toConnection &conn)
+{
+  return toIsOracle(conn)||conn.provider()=="MySQL";
+}
+
+void toResultPlan::query(const QString &sql,
+			 const toQList &param)
+{
+  if (!handled())
+    return;
+
+  if (connection().provider()=="MySQL") {
+    setRootIsDecorated(false);
+    setSorting(0);
+    toResultView::query("EXPLAIN "+toSQLStripBind(sql),param);
+    return;
+  }
+
+  clear();
+
+  while(columns()>0) {
+    removeColumn(0);
+  }
   setAllColumnsShowFocus(true);
   setSorting(-1);
   setRootIsDecorated(true);
@@ -66,21 +97,6 @@ toResultPlan::toResultPlan(QWidget *parent,const char *name)
   addColumn("Cost");
   addColumn("Bytes");
   addColumn("Cardinality");
-  setSQLName("toResultPlan");
-}
-
-static toSQL SQLViewPlan("toResultPlan:ViewPlan",
-			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
-			 "  FROM %1 WHERE Statement_ID = 'Tora %2' ORDER BY NVL(Parent_ID,0),ID",
-			 "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
-
-void toResultPlan::query(const QString &sql,
-			 const toQList &param)
-{
-  if (!handled())
-    return;
-
-  clear();
 
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
@@ -94,7 +110,7 @@ void toResultPlan::query(const QString &sql,
     int ident=(int)time(NULL);
 
     QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = 'Tora %1' INTO %2 FOR %3").
-      arg(ident).arg(planTable).arg(sql);
+      arg(ident).arg(planTable).arg(toSQLStripSpecifier(sql));
     conn.execute(explain);
 
     {
