@@ -1,6 +1,6 @@
 %define name tora
 %define group Developement/Databases
-%define version 0.9
+%define version 0.9.1
 %define release 1static
 
 Name: %{name}
@@ -16,7 +16,8 @@ Group: %{group}
 Tool for Oracle (Tora) is a tool for DBAs and database software developers.
 It is inspired by TOAD for Windows. It features a schema browser, SQL
 worksheet, PL/SQL editor & debugger, storage manager, rollback segment
-monitor, instance manager, and SQL output viewer.
+monitor, instance manager, SQL output viewer, SQL template tree and
+schema extraction and compare.
 
 %prep
 %setup -q
@@ -29,6 +30,8 @@ make
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 strip tora-static
 cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
+cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
 
 %post
 

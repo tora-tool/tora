@@ -155,11 +155,6 @@ static toSQL SQLViewSQL("toBrowser:ViewSQL",
 			"  FROM ALL_Views\n"
 			" WHERE Owner = :f1<char[31]> AND View_Name = :f2<char[31]>",
 			"Display SQL of a specified view");
-static toSQL SQLViewGrants("toBrowser:ViewGrants",
-			   "SELECT Privilege,Grantee,Grantor,Grantable FROM ALL_TAB_PRIVS\n"
-			   " WHERE Table_Schema = :f1<char[31]> AND Table_Name = :f2<char[31]>\n"
-			   " ORDER BY Privilege,Grantee",
-			   "Display grants on a view");
 static toSQL SQLViewComment("toBrowser:ViewComment",
 			    "SELECT Comments FROM ALL_TAB_COMMENTS\n"
 			    " WHERE Owner = :f1<char[31]> AND Table_Name = :f2<char[31]>",
@@ -369,7 +364,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL(SQLViewGrants);
+  resultView->setSQL(SQLTableGrants);
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
@@ -640,7 +635,7 @@ public:
       res->setSQL(SQLTableGrants);
     } else
       return NULL;
-    res->changeParams(object,schema);
+    res->changeParams(schema,object);
     return res;
   }
 };
@@ -656,6 +651,8 @@ public:
     if (typ=="Tables") {
       new toTemplateTableItem(conn,this,"Constraints");
       new toTemplateTableItem(conn,this,"References");
+      new toTemplateTableItem(conn,this,"Grants");
+    } else if (typ=="Views") {
       new toTemplateTableItem(conn,this,"Grants");
     }
   }

@@ -45,11 +45,14 @@ on RedHat 7.0 as well.
 tora-{version}-bin.tar.gz
 -------------------------
 This is a dynamically linked tora which is just to unpack wherever you want
-it.
+it. To use the SQL templates copy the files in the template library to
+the library /usr/lib/tora.
 
 tora-{version}-static.tar.gz
 ----------------------------
 This is a statically linked tora which you just unpack wherever you want it.
+ To use the SQL templates copy the files in the template library to the
+library /usr/lib/tora.
 
 Installing from source
 ======================
