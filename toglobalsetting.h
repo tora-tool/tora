@@ -48,6 +48,7 @@ public:
   toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
   virtual void saveSetting(void);
+  virtual void createPlanTable(void);
 };
 
 #endif

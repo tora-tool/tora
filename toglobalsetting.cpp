@@ -45,6 +45,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tomain.h"
 #include "toglobalsetting.h"
+#include "tosql.h"
 
 #include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
@@ -163,6 +164,14 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags
   MaxColSize->setValidator(new QIntValidator(MaxColSize));
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
+
+  try {
+    // Check if connection exists
+    toMainWidget()->currentConnection();
+    CreatePlanTable->setEnabled(true);
+  } catch (...) {
+
+  }
 }
 
 void toDatabaseSetting::saveSetting(void)
@@ -173,4 +182,44 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
   toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
   toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
+}
+
+static toSQL SQLCreatePlanTable("Global:CreatePlan",
+				"CREATE TABLE %1 (
+    STATEMENT_ID    VARCHAR2(30),
+    TIMESTAMP       DATE,
+    REMARKS         VARCHAR2(80),
+    OPERATION       VARCHAR2(30),
+    OPTIONS         VARCHAR2(30),
+    OBJECT_NODE     VARCHAR2(128),
+    OBJECT_OWNER    VARCHAR2(30),
+    OBJECT_NAME     VARCHAR2(30),
+    OBJECT_INSTANCE NUMERIC,
+    OBJECT_TYPE     VARCHAR2(30),
+    OPTIMIZER       VARCHAR2(255),
+    SEARCH_COLUMNS  NUMBER,
+    ID              NUMERIC,
+    PARENT_ID       NUMERIC,
+    POSITION        NUMERIC,
+    COST            NUMERIC,
+    CARDINALITY     NUMERIC,
+    BYTES           NUMERIC,
+    OTHER_TAG       VARCHAR2(255),
+    PARTITION_START VARCHAR2(255),
+    PARTITION_STOP  VARCHAR2(255),
+    PARTITION_ID    NUMERIC,
+    OTHER           LONG,
+    DISTRIBUTION    VARCHAR2(30)
+)",
+				"Create plan table, must have same % signs");
+
+void toDatabaseSetting::createPlanTable(void)
+{
+  try {
+    toConnection &conn=toMainWidget()->currentConnection();
+    otl_cursor::direct_exec(conn.connection(),
+			    toSQL::string(SQLCreatePlanTable,conn).
+			    arg(ExplainPlan->text()).
+			    utf8());
+  } TOCATCH
 }

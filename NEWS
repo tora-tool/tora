@@ -64,6 +64,12 @@
 2001-04-30: Changed CC to GCC in Makefile.
 2001-04-30: Made configure output less after actual configure.
 2001-04-30: New version of otl (3.2.18)
+2001-05-02: Added create plan table button.
+2001-05-02: Fixed executeAll in worksheet.
+2001-05-02: Fixed problem with comments in worksheet with PL/SQL.
+2001-05-02: Made toExtract extract content of tables.
+2001-05-02: Fixed problem loading large files.
+2001-05-03: Final changes to make extract actually work (Whoopeee!)
 
 0.7: Released 2001-03-24
 

@@ -36,6 +36,7 @@
 #include "toextract.h"
 #include "tosql.h"
 #include "tomain.h"
+#include "toconf.h"
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size
@@ -601,7 +602,7 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
 	str>>buffer;
 	ret+="REFERENCES ";
 	ret+=schema;
-	ret+=QString::fromUtf8(buffer);
+	ret+=QString::fromUtf8(buffer).lower();
 	ret+=constraintColumns(rOwner,rName);
 
 	if (delRule=="CASCADE")
@@ -1664,7 +1665,7 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
   if (!Code)
     return "";
 
-  static QRegExp StripType("^[a-zA-Z]+[ \t]+[^ \t]");
+  static QRegExp StripType("^[a-zA-Z]+[ \t]+[^ \t\\(]+");
   otl_stream inf(1,
 		 SQLDisplaySource(Connection),
 		 Connection.connection());
@@ -1954,9 +1955,9 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
     arg(unique).
     arg(bitmap).
     arg(schema).
-    arg(name).
+    arg(name.lower()).
     arg(schema2).
-    arg(table);
+    arg(table.lower());
   if (Prompt) {
     ret="PROMPT ";
     ret+=sql;
@@ -4447,7 +4448,7 @@ QString toExtract::grantedPrivs(const QString &schema,const QString &name,int ty
 	arg(priv.lower()).
 	arg(schema).
 	arg(object).
-	arg(name).
+	arg(name.lower()).
 	arg(toShift(result));
       if (Prompt) {
 	ret+="PROMPT ";
@@ -4810,6 +4811,78 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
   while(triggers.size()>0)
     ret+=createTrigger(schema,owner,toShift(triggers));
+  return ret;
+}
+
+QString toExtract::createTableContents(const QString &schema,const QString &owner,const QString &name)
+{
+  QString ret;
+  if (Contents) {
+    if (Prompt)
+      ret+=QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(name.lower());
+    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+
+    otl_stream str;
+    str.set_all_column_types(otl_all_num2str);
+
+    str.open(1,QString("SELECT * FROM %1.%2").arg(owner).arg(name).utf8(),Connection.connection());
+
+    int descLen;
+    otl_column_desc *desc=str.describe_select(descLen);
+    bool first=true;
+
+    QString beg=QString("INSERT INTO %1%2 (").arg(schema).arg(name.lower());
+    for (int i=0;i<descLen;i++) {
+      if (first)
+	first=false;
+      else
+	beg+=",";
+      beg+=QString::fromUtf8((const char *)desc[i].name).lower();
+    }
+    beg+=") VALUES (";
+
+    QRegExp find("'");
+    while(!str.eof()) {
+      QString line=beg;
+      first=true;
+      for (int i=0;i<descLen;i++) {
+	if (first)
+	  first=false;
+	else
+	  line+=",";
+	switch (desc[i].otl_var_dbtype) {
+	case otl_var_timestamp:
+	  {
+	    otl_datetime tim;
+	    str>>tim;
+	    if (str.is_null())
+	      line+="NULL";
+	    else {
+	      QString str;
+	      str.sprintf("TO_DATE('%04d-%02d-%02d %02d:%02d:%02d','YYYY-MM-DD HH24:MI:SS')",
+			  tim.year,tim.month,tim.day,tim.hour,tim.minute,tim.second);
+	      line+=str;
+	    }
+	  }
+	  break;
+	default:
+	  QString val=toReadValue(desc[i],str,MaxColSize);
+	  if (val=="{null}")
+	    line+="NULL";
+	  else {
+	    val.replace(find,"''");
+	    line+="'";
+	    line+=val;
+	    line+="'";
+	  }
+	};
+      }
+      line+=");\n";
+      ret+=line;
+    }
+    ret+="COMMIT;\n\n";
+  }
+
   return ret;
 }
 
@@ -5474,7 +5547,7 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
       QString tab=toShift(quota);
       ret+=QString("   QUOTA %1 ON %2\n").
 	arg(siz).
-	arg(tab);
+	arg(tab.lower());
     }
   }
   ret+=";\n\n";
@@ -6198,6 +6271,8 @@ QString toExtract::create(list<QString> &objects)
 	ret+=createTable(schema,owner,name);
       else if (utype=="TABLE FAMILY")
 	ret+=createTableFamily(schema,owner,name);
+      else if (utype=="TABLE CONTENTS")
+	ret+=createTableContents(schema,owner,name);
       else if (utype=="TABLE REFERENCES")
 	ret+=createTableReferences(schema,owner,name);
       else if (utype=="TABLESPACE")

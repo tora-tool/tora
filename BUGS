@@ -14,4 +14,4 @@ Qt:
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
 
 gcc-2.96:
-	Seems really bad at handling exceptions in multithreaded applications, won't work with TOra.
+	Seems really bad at handling exceptions, won't work with TOra.

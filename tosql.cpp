@@ -27,9 +27,6 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
-#include <unistd.h>
-
 #include <qfile.h>
 #include <qregexp.h>
 
@@ -63,7 +60,6 @@ bool toSQL::updateSQL(const QString &name,
 		      const QString &ver,
 		      bool modified)
 {
-  printf("%s\n",(const char *)name);
   version def(ver,sql,modified);
 
   allocCheck();

@@ -518,13 +518,15 @@ void toMain::commandCallback(int cmd)
 	    
 	    int size=file.size();
 	    
-	    char buf[size+1];
+	    char *buf=new char[size+1];
 	    if (file.readBlock(buf,size)==-1) {
+	      delete buf;
 	      throw QString("Encountered problems read configuration");
 	    }
 	    buf[size]=0;
 	    mark->setText(QString::fromLocal8Bit(buf));
 	    mark->setFilename(filename);
+	    delete buf;
 	    toStatusMessage("File opened successfully");
 	  }
 	}

@@ -200,7 +200,7 @@ void toAllocLogo(void)
   }
 }
 
-toSplash::toSplash(QWidget *parent=0,const char *name=0,WFlags f=0,bool allowLines=TRUE)
+toSplash::toSplash(QWidget *parent,const char *name,WFlags f,bool allowLines)
   : QVBox(parent,name,f,allowLines)
 {
   toAllocLogo();
@@ -217,7 +217,7 @@ toSplash::toSplash(QWidget *parent=0,const char *name=0,WFlags f=0,bool allowLin
   move((d->width()-width())/2,(d->height()-height())/2);
 }
 
-toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0)
+toAbout::toAbout(QWidget* parent,const char* name,bool modal,WFlags fl)
   : QDialog(parent,name,modal,fl)
 {
   toAllocLogo();

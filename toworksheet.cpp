@@ -381,12 +381,13 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
       if (file.open(IO_ReadOnly)) {
 	int size=file.size();
 	    
-	char buf[size+1];
+	char *buf=new char[size+1];
 	if (file.readBlock(buf,size)!=-1) {
 	  buf[size]=0;
 	  Editor->setText(QString::fromLocal8Bit(buf));
 	  Editor->setEdited(false);
 	}
+	delete buf;
       }
     }
   }
@@ -544,6 +545,7 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
 {
   QString now=toNow(Connection);
   toResultViewItem *item;
+
   if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
     if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
       item=new toResultViewItem(Logging,NULL);
@@ -614,7 +616,7 @@ void toWorksheet::execute(bool all,bool step)
 	else
 	  nc=' ';
 	if (state==comment) {
-	  state=beginning;
+	  state=lastState;
 	  break;
 	} else if (state!=inString&&c=='\'') {
 	  lastState=state;
@@ -628,34 +630,39 @@ void toWorksheet::execute(bool all,bool step)
 	      state=inCode;
 	    break;
 	  case inCode:
-	    for (int j=0;Blocks[j].Start;j++) {
-	      int &pos=Blocks[j].Pos;
-	      if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
-		if (pos>0||!toIsIdent(lastChar)) {
-		  pos++;
-		  if (!Blocks[j].Start[pos]) {
-		    if (!toIsIdent(nc)) {
-		      if (Blocks[j].CloseBlock) {
-			BlockCount--;
-			if (BlockCount<=0)
-			  state=inStatement;
-		      } else if (Blocks[j].WantEnd)
-			BlockCount++;
-		      NewStatement();
-		      if (state==inCode) {
-			if (Blocks[j].WantSemi)
-			  state=endCode;
-			else
-			  state=inCode;
-		      }
-		      break;
-		    } else
-		      pos=0;
-		  }
+	    if (c=='-'&&nc=='-') {
+	      lastState=state;
+	      state=comment;
+	    } else {
+	      for (int j=0;Blocks[j].Start;j++) {
+		int &pos=Blocks[j].Pos;
+		if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
+		  if (pos>0||!toIsIdent(lastChar)) {
+		    pos++;
+		    if (!Blocks[j].Start[pos]) {
+		      if (!toIsIdent(nc)) {
+			if (Blocks[j].CloseBlock) {
+			  BlockCount--;
+			  if (BlockCount<=0)
+			    state=inStatement;
+			} else if (Blocks[j].WantEnd)
+			  BlockCount++;
+			NewStatement();
+			if (state==inCode) {
+			  if (Blocks[j].WantSemi)
+			    state=endCode;
+			  else
+			    state=inCode;
+			}
+			break;
+		      } else
+			pos=0;
+		    }
+		  } else
+		    pos=0;
 		} else
 		  pos=0;
-	      } else
-		pos=0;
+	      }
 	    }
 	    break;
 	  case beginning:
@@ -664,6 +671,7 @@ void toWorksheet::execute(bool all,bool step)
 	      for (int j=0;Blocks[j].Start;j++) {
 		unsigned int len=strlen(Blocks[j].Start);
 		if (rest.startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest[len]))) {
+		  lastState=state;
 		  state=comment;
 		  break;
 		}
@@ -672,6 +680,7 @@ void toWorksheet::execute(bool all,bool step)
 		break;
 	    }
 	    if ((c=='-'&&nc=='-')||(c=='/'&&data.length()==1)) {
+	      lastState=state;
 	      state=comment;
 	      break;
 	    } else if (!c.isSpace()) {
@@ -733,10 +742,20 @@ void toWorksheet::execute(bool all,bool step)
 		  Editor->setCursorPosition(endLine,endPos,true);
 		if (Editor->hasMarkedText()) {
 		  QueryString=Editor->markedText();
-		  query(QueryString);
 		  try {
-		    Result->readAll();
-		  } TOCATCH
+		    otl_stream str(1,
+				   QueryString.utf8(),
+				   Connection.connection());
+		    char buffer[100];
+		    if (str.get_rpc()>0)
+		      sprintf(buffer,"%d rows processed",(int)str.get_rpc());
+		    else
+		      sprintf(buffer,"Query executed");
+		    addLog(QueryString,buffer);
+		  } catch (const otl_exception &exc) {
+		    addLog(QueryString,QString::fromUtf8((const char *)exc.msg));
+		  } 
+		  qApp->processEvents();
 		  NewStatement();
 		  code=false;
 		}

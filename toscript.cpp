@@ -299,45 +299,54 @@ list<QString> toScript::createObjectList(QListView *source)
     }
   }
   
-  for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
-    toPush(lst,*i);
-  for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
-    toPush(lst,*i);
-  for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
-    toPush(lst,*i);
-  for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-    QString line="ROLE:";
-    line+=*i;
-    toPush(lst,line);
-  }
-  for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-    QString line="USER:";
-    line+=*i;
-    toPush(lst,line);
+  if (IncludeDDL->isChecked()) {
+    for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+      toPush(lst,*i);
+    for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+      toPush(lst,*i);
+    for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+      toPush(lst,*i);
+    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      QString line="ROLE:";
+      line+=*i;
+      toPush(lst,line);
+    }
+    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      QString line="USER:";
+      line+=*i;
+      toPush(lst,line);
+    }
+    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      QString line="TABLE FAMILY:";
+      line+=*i;
+      toPush(lst,line);
+    }
+    for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+      toPush(lst,*i);
+    for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+      toPush(lst,*i);
   }
   for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-    QString line="TABLE FAMILY:";
+    QString line="TABLE CONTENTS:";
     line+=*i;
     toPush(lst,line);
   }
-  for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
-    toPush(lst,*i);
-  for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
-    toPush(lst,*i);
-  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-    QString line="TABLE REFERENCES:";
-    line+=*i;
-    toPush(lst,line);
-  }
-  for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-    QString line="ROLE GRANTS:";
-    line+=*i;
-    toPush(lst,line);
-  }
-  for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-    QString line="USER GRANTS:";
-    line+=*i;
-    toPush(lst,line);
+  if (IncludeDDL->isChecked()) {
+    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      QString line="TABLE REFERENCES:";
+      line+=*i;
+      toPush(lst,line);
+    }
+    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      QString line="ROLE GRANTS:";
+      line+=*i;
+      toPush(lst,line);
+    }
+    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      QString line="USER GRANTS:";
+      line+=*i;
+      toPush(lst,line);
+    }
   }
   return lst;
 }
@@ -416,6 +425,7 @@ void toScript::execute(void)
     Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
     if (!script.isEmpty()) {
       Worksheet->editor()->setText(script);
+      Worksheet->editor()->setFilename(QString::null);
       Worksheet->editor()->setEdited(true);
     }
   } TOCATCH
