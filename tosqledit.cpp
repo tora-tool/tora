@@ -487,3 +487,77 @@ void toSQLEdit::newSQL(void)
     } TOCATCH
   }
 }
+
+static toSQLTemplate SQLTemplate;
+
+toSQLTemplateItem::toSQLTemplateItem(QListView *parent)
+  : toTemplateItem(SQLTemplate,parent,"SQL Dictionary")
+{
+  setExpandable(true);
+}
+
+static QString JustLast(const QString &str)
+{
+  int pos=str.findRev(":");
+  if (pos>=0)
+    return str.mid(pos+1);
+  return str;
+}
+
+toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
+				     const QString &name)
+  : toTemplateItem(parent,JustLast(name))
+{
+  Name=name;
+  setExpandable(true);
+}
+
+void toSQLTemplateItem::expand(void)
+{
+  std::list<QString> def;
+  if (Name.isNull())
+    def=toSQL::range(Name);
+  else
+    def=toSQL::range(Name+":");
+  QString last;
+  for(std::list<QString>::iterator sql=def.begin();sql!=def.end();sql++) {
+    QString name=*sql;
+    if (!Name.isNull())
+      name=name.mid(Name.length()+1);
+    if (name.find(":")!=-1)
+      name=name.mid(0,name.find(":"));
+    if (name!=last) {
+      if (Name.isNull())
+	new toSQLTemplateItem(this,name);
+      else
+	new toSQLTemplateItem(this,Name+":"+name);
+      last=name;
+    }
+  }
+}
+
+QString toSQLTemplateItem::allText(int col) const
+{
+  try {
+    toSQL::sqlMap defs=toSQL::definitions();
+    if (defs.find(Name)==defs.end())
+      return QString::null;
+    return toSQL::string(Name,toMainWidget()->currentConnection());
+  } catch(...) {
+    return QString::null;
+  }
+}
+
+void toSQLTemplateItem::collapse(void)
+{
+  while(firstChild())
+    delete firstChild();
+}
+
+QWidget *toSQLTemplateItem::selectedWidget(QWidget *parent)
+{
+  toHighlightedText *widget=new toHighlightedText(parent);
+  widget->setReadOnly(true);
+  widget->setText(allText(0));
+  return widget;
+}

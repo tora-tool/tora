@@ -35,6 +35,7 @@
 #ifndef TOSQLEDIT_H
 #define TOSQLEDIT_H
 
+#include "totemplate.h"
 #include "totool.h"
 
 class QComboBox;
@@ -82,6 +83,28 @@ public slots:
   { commitChanges(true); }
   void editSQL(const QString &);
   void newSQL();
+};
+
+class toSQLTemplateItem : public toTemplateItem {
+  QString Name;
+public:
+  toSQLTemplateItem(QListView *parent);
+  toSQLTemplateItem(toSQLTemplateItem *parent,
+		    const QString &name);
+  virtual void expand(void);
+  virtual void collapse(void);
+  virtual QWidget *selectedWidget(QWidget *parent);
+
+  virtual QString allText(int col) const;
+};
+
+class toSQLTemplate : public toTemplateProvider {
+public:
+  toSQLTemplate()
+    : toTemplateProvider("SQL Dictionary")
+  { }
+  virtual void insertItems(QListView *parent,QToolBar *toolbar)
+  { new toSQLTemplateItem(parent); }
 };
 
 #endif

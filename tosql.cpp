@@ -332,8 +332,8 @@ std::list<QString> toSQL::range(const QString &startWith)
 {
   std::list<QString> ret;
   for(sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
-    if ((*i).first>startWith) {
-      if ((*i).first.startsWith(startWith))
+    if ((*i).first>startWith||startWith.isNull()) {
+      if ((*i).first.startsWith(startWith)||startWith.isNull())
 	ret.insert(ret.end(),(*i).first);
       else
 	return ret;
