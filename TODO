@@ -54,8 +54,6 @@ Extended functionality:
 * Store worksheet statistic on save session.
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
-* Scrolling in charts.
-* Ask in worksheet if saving changes when opening new file.
 * Change default listened to name in alert log.
 * Statistics manager.
 	* Index only analyzing.
@@ -66,6 +64,7 @@ Extended functionality:
 * Track data in charts to a file.
 * Scrollable charts with longer history.
 * Don't refresh non charts tabs automatically in tuning.
+* Use QTable to display the result in the worksheet.
 
 New tools:
 
