@@ -203,23 +203,23 @@ toAlert::~toAlert()
 }
 
 static toSQL SQLRegister("toAlert:Register",
-			 "BEGIN DBMS_ALERT.REGISTER(:name<char[4000]>); END;",
+			 "BEGIN SYS.DBMS_ALERT.REGISTER(:name<char[4000]>); END;",
 			 "Register an alert name, must have same binds");
 static toSQL SQLRemove("toAlert:Remove",
-		       "BEGIN DBMS_ALERT.REMOVE(:name<char[4000]>); END;",
+		       "BEGIN SYS.DBMS_ALERT.REMOVE(:name<char[4000]>); END;",
 		       "Remove a registered an alert name, must have same binds");
 static toSQL SQLRemoveAll("toAlert:RemoveAll",
-			  "BEGIN DBMS_ALERT.REMOVEALL; END;",
+			  "BEGIN SYS.DBMS_ALERT.REMOVEALL; END;",
 			  "Remove all registered alerts");
 static toSQL SQLPoll("toAlert:PollAlert",
 		     "BEGIN\n"
-		     "  DBMS_ALERT.WAITANY(:name<char[4000],out>,:msg<char[4000],out>,\n"
-		     "                     :stat<in,out>,:tim<char[10],in>);\n"
+		     "  SYS.DBMS_ALERT.WAITANY(:name<char[4000],out>,:msg<char[4000],out>,\n"
+		     "                         :stat<in,out>,:tim<char[10],in>);\n"
 		     "END;",
 		     "Poll for alert, must have same binds");
 static toSQL SQLSignal("toAlert:Signal",
 		     "BEGIN\n"
-		     "  DBMS_ALERT.SIGNAL(:name<char[4000],in>,:msg<char[4000],in>);\n"
+		     "  SYS.DBMS_ALERT.SIGNAL(:name<char[4000],in>,:msg<char[4000],in>);\n"
 		     "END;",
 		     "Signal alert, must have same binds");
 

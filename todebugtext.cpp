@@ -79,7 +79,7 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,
 
 static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
 			   "DECLARE\n"
-			   "    proginf DBMS_DEBUG.PROGRAM_INFO;\n"
+			   "    proginf SYS.DBMS_DEBUG.PROGRAM_INFO;\n"
 			   "    bnum BINARY_INTEGER;\n"
 			   "    ret BINARY_INTEGER;\n"
 			   "BEGIN\n"
@@ -87,10 +87,10 @@ static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
 			   "    proginf.Name:=:name<char[100],in>;\n"
 			   "    proginf.Owner:=:schema<char[100],in>;\n"
 			   "    proginf.DbLink:=NULL;\n"
-			   "    proginf.LibUnitType:=DBMS_DEBUG.LibUnitType_Procedure;\n"
+			   "    proginf.LibUnitType:=SYS.DBMS_DEBUG.LibUnitType_Procedure;\n"
 			   "    proginf.EntryPointName:=NULL;\n"
 			   "    proginf.Line#:=:line<int,in>;\n"
-			   "    ret:=DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);\n"
+			   "    ret:=SYS.DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);\n"
 			   "    SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM sys.DUAL;\n"
 			   "END;",
 			   "Set breakpoint, must have same bindings");
@@ -129,7 +129,7 @@ static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
 				"    ret BINARY_INTEGER;\n"
 				"BEGIN\n"
 				"    bnum:=:bnum<int,in>;\n"
-				"    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);\n"
+				"    ret:=SYS.DBMS_DEBUG.DELETE_BREAKPOINT(bnum);\n"
 				"    SELECT ret INTO :ret<int,out> FROM sys.DUAL;\n"
 				"END;",
 				"Clear breakpoint, must have same bindings");
