@@ -118,6 +118,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Original values of rows currently being edited.
    */
   std::list<QString> OrigValues;
+  /** Original values of rows currently being edited.
+   */
+  bool *BinaryColumns;
   /** Stream to read data from.
    */
   toNoBlockQuery *Query;
@@ -372,6 +375,8 @@ signals:
   /** Emitted to indicate wether a filter is used.
    */
   void filterEnabled(bool);
+  //* Emitted when changes were saved.
+  void changesSaved();
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.
@@ -441,6 +446,9 @@ public:
 private slots:
   void changeFilter(void);
   void removeFilter(void);
+signals:
+  //* Emitted when changes were saved.
+  void changesSaved(void);
 public slots:
   /** Erase last parameters
    */

@@ -89,6 +89,7 @@ public:
     }
     Window->refresh();
     Window->show();
+    Window->raise();
     Window->setFocus();
     return Window;
   }

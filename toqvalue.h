@@ -46,6 +46,7 @@ class toQValue {
     intType,
     doubleType,
     stringType,
+    binaryType,
     nullType
   } Type;
 
@@ -53,6 +54,7 @@ class toQValue {
     int Int;
     double Double;
     QString *String;
+    QByteArray *Array;
   } Value;
 public:
   /** Create null value.
@@ -81,6 +83,10 @@ public:
    */
   const toQValue &operator = (const toQValue &copy);
 
+  /** Check a value for equality. Requires same type and same value. NULL is equal to other NULL values.
+   */
+  bool operator == (const toQValue &) const;
+
   /** Check if this is an int value.
    */
   bool isInt(void) const;
@@ -93,10 +99,13 @@ public:
   /** Check if this value is null.
    */
   bool isNull(void) const;
+  /** Check if this value is binary.
+   */
+  bool isBinary(void) const;
 
   /** Get utf8 format of this value.
    */
-  QCString utf8Value(void) const;
+  QCString utf8(void) const;
   /** Get integer representation of this value.
    */
   int toInt(void) const;
@@ -104,9 +113,18 @@ public:
    */
   double toDouble(void) const;
 
-  /** Convert value to a string.
+  /** Get binary representation of value. Can only be called when the data is actually binary.
+   */
+  const QByteArray &toByteArray(void) const;
+
+  /** Convert value to a string. If binary convert to hex.
    */
   operator QString() const;
+
+  /** Convert value to a string. If binary convert to hex.
+   */
+  QString toString() const
+  { return QString(*this); }
 
   /** Set numberformat.
    * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
@@ -123,6 +141,15 @@ public:
   /** Get decimals if fixed decimals.
    */
   static int numberDecimals(void);
+  /** Create a binary value
+   */
+  static toQValue createBinary(const QByteArray &arr);
+  /** Create a binary value from it's hex representation.
+   */
+  static toQValue createFromHex(const QString &hex);
+  /** Create a binary value from it's hex representation.
+   */
+  static toQValue createFromHex(const QCString &hex);
 };
 
 /** A short representation of list<toQuery::queryValue>

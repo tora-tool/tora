@@ -327,7 +327,6 @@ void toBrowserTable::toggleCustom(bool val)
 void toBrowserTable::uglyWorkaround()
 {
   // Somehome the size doesn't get updated until way later so just keep calling until it gets set.
-  printf("%d\n",ColumnList->width());
   if (ColumnList->width()>220||UglyFlag) {
     ColumnGrid->setFixedWidth(ColumnList->width()-30);
     UglyFlag=true;

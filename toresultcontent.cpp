@@ -279,6 +279,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 		 true,true,true)
 {
   CurrentEditor=NULL;
+  BinaryColumns=0;
   SearchStart=SearchEnd=0;
   NoUseReturning=false;
   AllFilter=false;
@@ -335,7 +336,9 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 
 toResultContentEditor::~toResultContentEditor()
 {
+  saveUnsaved();
   delete Query;
+  delete BinaryColumns;
 }
 
 void toResultContentEditor::wrongUsage(void)
@@ -437,6 +440,12 @@ void toResultContentEditor::poll(void)
       bool first=false;
       if (numRows()==0) {
 	Description=Query->describe();
+
+	delete BinaryColumns;
+	BinaryColumns=new bool[Description.size()];
+	for(unsigned int j=0;j<Description.size();j++)
+	  BinaryColumns[j]=false;
+
 	setNumCols(Description.size());
 
 	QHeader *head=horizontalHeader();
@@ -458,8 +467,11 @@ void toResultContentEditor::poll(void)
 	    toQValue val=Query->readValueNull();
 	    if (val.isDouble())
 	      data.insert(data.end(),QString::number(val.toDouble()));
-	    else
+	    else {
+	      if (val.isBinary())
+		BinaryColumns[k]=true;
 	      data.insert(data.end(),val);
+	    }
 	    dataSize++;
 	  } else
 	    Query->readValueNull();
@@ -762,8 +774,8 @@ void toResultContentEditor::deleteCurrent()
       bool oracle=(connection().provider()=="Oracle");
       {
         for(int i=0;i<numCols();i++) {
-	  if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
-			!(*di).Datatype.contains(("LOB")))) {
+	  if (!oracle||(!(*di).Datatype.upper().startsWith(("LONG"))&&
+			!(*di).Datatype.upper().contains(("LOB")))) {
 	    if (where)
 	      sql+=(" AND ");
 	    else
@@ -774,7 +786,10 @@ void toResultContentEditor::deleteCurrent()
 	    else {
 	      sql+=("= :c");
 	      sql+=QString::number(i);
-	      sql+=("<char[4000]>");
+	      if (BinaryColumns[i]) {
+		sql+=("<raw_long>");
+	      } else
+		sql+=("<char[4000]>");
 	    }
 	  }
 	  di++;
@@ -788,9 +803,13 @@ void toResultContentEditor::deleteCurrent()
       di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
-				      !(*di).Datatype.contains(("LOB")))))
-	  toPush(args,toQValue(str));
+	if (!str.isNull()&&(!oracle||(!(*di).Datatype.upper().startsWith(("LONG"))&&
+				      !(*di).Datatype.upper().contains(("LOB"))))) {
+	  if (BinaryColumns[i])
+	    toPush(args,toQValue::createFromHex(str));
+	  else
+	    toPush(args,toQValue(str));
+	}
 	di++;
       }
       conn.execute(sql,args);
@@ -860,15 +879,27 @@ void toResultContentEditor::saveUnsaved(void)
 	}
 	sql+=") VALUES (";
 	num=0;
-	for (int i=0;i<numCols();i++) {
+	toQDescList::iterator di=Description.begin();
+	for (int i=0;i<numCols()&&di!=Description.end();i++) {
 	  if (!text(CurrentRow,i).isNull()) {
 	    if (num>0)
 	      sql+=(",");
 	    sql+=(":f");
 	    sql+=QString::number(num+1);
-	    sql+=("<char[4000],in>");
+	    if (BinaryColumns[i]) {
+	      if ((*di).Datatype.upper().contains("LOB"))
+		sql+=("<blob>");
+	      else
+		sql+=("<raw_long,in>");
+	    } else {
+	      if ((*di).Datatype.upper().contains("LOB"))
+		sql+=("<clob>");
+	      else
+		sql+=("<char[4000],in>");
+	    }
 	    num++;
 	  }
+	  di++;
 	}
 	sql+=(")");
 	if(oracle&&!NoUseReturning) 
@@ -878,8 +909,12 @@ void toResultContentEditor::saveUnsaved(void)
 	  toQList args;
 	  for (int i=0;i<numCols();i++) {
 	    QString str=text(CurrentRow,i);
-	    if (!str.isNull())
-	      toPush(args,toQValue(str));
+	    if (!str.isNull()) {
+	      if (BinaryColumns[i])
+		toPush(args,toQValue::createFromHex(str));
+	      else
+		toPush(args,toQValue(str));
+	    }
 	  }
 	  toQuery q(conn,sql,args);
 	  if(oracle&&!NoUseReturning)
@@ -902,7 +937,8 @@ void toResultContentEditor::saveUnsaved(void)
 	QHeader *head=horizontalHeader();
 	std::list<QString>::iterator k=OrigValues.begin();
 	bool first=false;
-	for(int i=0;i<numCols();i++,k++) {
+	toQDescList::iterator di=Description.begin();
+	for(int i=0;i<numCols()&&di!=Description.end();i++,k++) {
 	  QString fld=text(CurrentRow,i);
 	  if (*k!=fld) {
 	    if (!first)
@@ -915,9 +951,20 @@ void toResultContentEditor::saveUnsaved(void)
 	    else {
 	      sql+=("= :f");
 	      sql+=QString::number(i);
-	      sql+=("<char[4000],in>");
+	      if (BinaryColumns[i]) {
+		if ((*di).Datatype.upper().contains("LOB"))
+		  sql+=("<blob>");
+		else
+		  sql+=("<raw_long,in>");
+	      } else {
+		if ((*di).Datatype.upper().contains("LOB"))
+		  sql+=("<clob>");
+		else
+		  sql+=("<char[4000],in>");
+	      }
 	    }
 	  }
+	  di++;
 	}
 	if (first) {
 	  sql+=(" WHERE (");
@@ -925,8 +972,8 @@ void toResultContentEditor::saveUnsaved(void)
 	  bool where=false;
 	  toQDescList::iterator di=Description.begin();
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	    if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
-			  !(*di).Datatype.contains(("LOB")))) {
+	    if (!oracle||(!(*di).Datatype.upper().startsWith(("LONG"))&&
+			  !(*di).Datatype.upper().contains(("LOB")))) {
 	      if (where)
 		sql+=(" AND (");
 	      else
@@ -936,7 +983,10 @@ void toResultContentEditor::saveUnsaved(void)
 		sql+=" IS NULL OR "+conn.quote((*di).Name);
 	      sql+=("= :c");
 	      sql+=QString::number(col);
-	      sql+=("<char[4000],in>)");
+	      if (BinaryColumns[col])
+		sql+=("<raw_long,in>)");
+	      else
+		sql+=("<char[4000],in>)");
 	    }
 	    di++;
 	  }
@@ -952,17 +1002,24 @@ void toResultContentEditor::saveUnsaved(void)
 	    std::list<QString>::iterator k=OrigValues.begin();
 	    for (int i=0;i<numCols();i++,k++) {
 	      QString str=text(CurrentRow,i);
-	      if (str!=*k&&!str.isNull())
-		toPush(args,toQValue(str));
+	      if (str!=*k&&!str.isNull()) {
+		if (BinaryColumns[i])
+		  toPush(args,toQValue::createFromHex(str));
+		else
+		  toPush(args,toQValue(str));
+	      }
 	    }
 
+	    col=0;
 	    toQDescList::iterator di=Description.begin();
 	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	      QString str=(*j);
-	      if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
-			    !(*di).Datatype.contains(("LOB")))) {
+	      if (!oracle||(!(*di).Datatype.upper().startsWith(("LONG"))&&
+			    !(*di).Datatype.upper().contains(("LOB")))) {
 		if (str.isNull())
 		  toPush(args,toQValue(QString("")));
+		else if (BinaryColumns[col])
+		  toPush(args,toQValue::createFromHex(str));
 		else
 		  toPush(args,toQValue(str));
 	      }
@@ -984,6 +1041,8 @@ void toResultContentEditor::saveUnsaved(void)
 	  }
 	}
       }
+
+      emit changesSaved();
     } TOCATCH
     OrigValues.clear();
     if(oracle) {
@@ -1313,6 +1372,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));
+  connect(Editor,SIGNAL(changesMade()),this,SIGNAL(changesMade()));
 }
 
 void toResultContent::changeFilter(void)

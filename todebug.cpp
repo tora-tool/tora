@@ -129,6 +129,7 @@ public:
   {
     std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end()) {
+      (*i).second->raise();
       (*i).second->setFocus();
       return NULL;
     } else {

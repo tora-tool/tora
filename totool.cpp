@@ -248,6 +248,9 @@ void toTool::createWindow(void)
 	toToolCaption(tool,name());
 
       newWin->show();
+      newWin->raise();
+      newWin->setFocus();
+
       main->windowsMenu();
 
       if (tool)
@@ -256,8 +259,8 @@ void toTool::createWindow(void)
       // Maximize window if only window
       {
 	bool max=true;
-	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-	  QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
+	  QWidget *widget=toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
 	  if (widget&&widget!=newWin&&!widget->isHidden())
 	    max=false;
 	}
@@ -269,8 +272,8 @@ void toTool::createWindow(void)
       // This is a really ugly workaround for a Qt layout bug
       QWidget *tmp=NULL;
       QWidget *tmp2=NULL;
-      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
+        QWidget *widget=toMainWidget()->workspace()->windowList(QWorkspace::CreationOrder).at(i);
         if (newWin!=widget)
 	  tmp2=widget;
 	else

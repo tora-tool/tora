@@ -83,9 +83,12 @@ public:
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     if (Window)
-      Window->setFocus();
+      Window->show();
     else
       Window=new toSQLEdit(parent,connection);
+    
+    Window->raise();
+    Window->setFocus();
     Window->setIcon(QPixmap((const char **)tosqledit_xpm));
     return Window;
   }

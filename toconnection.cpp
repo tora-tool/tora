@@ -220,6 +220,9 @@ toQValue::toQValue(const toQValue &copy)
   case stringType:
     Value.String=new QString(*copy.Value.String);
     break;
+  case binaryType:
+    Value.Array=new QByteArray(*copy.Value.Array);
+    break;
   case nullType:
     break;
   }
@@ -229,6 +232,8 @@ const toQValue &toQValue::operator = (const toQValue &copy)
 {
   if (Type==stringType)
     delete Value.String;
+  else if (Type==binaryType)
+    delete Value.Array;
 
   Type=copy.Type;
   switch(Type) {
@@ -241,10 +246,34 @@ const toQValue &toQValue::operator = (const toQValue &copy)
   case stringType:
     Value.String=new QString(*copy.Value.String);
     break;
+  case binaryType:
+    Value.Array=new QByteArray(*copy.Value.Array);
+    break;
   case nullType:
     break;
   }
   return *this;
+}
+
+bool toQValue::operator == (const toQValue &val) const
+{
+  if (isNull()&&val.isNull())
+    return true;
+  if (val.Type!=Type)
+    return false;
+  switch (Type) {
+  case intType:
+    return (val.Value.Int==Value.Int);
+  case doubleType:
+    return (val.Value.Double==Value.Double);
+  case stringType:
+    return (*val.Value.String)==(*Value.String);
+  case binaryType:
+    return (*val.Value.Array)==(*Value.Array);
+  case nullType:
+    break;
+  }
+  return false;		// Should never get here
 }
 
 toQValue::toQValue(const QString &str)
@@ -262,6 +291,8 @@ toQValue::~toQValue()
 {
   if (Type==stringType)
     delete Value.String;
+  else if (Type==binaryType)
+    delete Value.Array;
 }
 
 bool toQValue::isInt(void) const
@@ -279,6 +310,11 @@ bool toQValue::isString(void) const
   return Type==stringType;
 }
 
+bool toQValue::isBinary(void) const
+{
+  return Type==binaryType;
+}
+
 bool toQValue::isNull(void) const
 {
   if (Type==nullType)
@@ -288,7 +324,16 @@ bool toQValue::isNull(void) const
   return false;
 }
 
-QCString toQValue::utf8Value(void) const
+const QByteArray &toQValue::toByteArray() const
+{
+  if (Type!=binaryType)
+    throw qApp->translate("toQValue","Tried to convert non binary value to binary");
+  return *Value.Array;
+}
+
+static char HexString[]="0123456789ABCDEF";
+
+QCString toQValue::utf8(void) const
 {
   switch(Type) {
   case nullType:
@@ -327,6 +372,17 @@ QCString toQValue::utf8Value(void) const
     }
   case stringType:
     return Value.String->utf8();
+  case binaryType:
+    {
+      QCString ret(Value.Array->size()*2+1);
+      for(unsigned int i=0;i<Value.Array->size();i++) {
+	unsigned char c=(unsigned char)Value.Array->at(i);
+	ret[i*2]=HexString[(c/16)%16];
+	ret[i*2+1]=HexString[c%16];
+      }
+      ret[Value.Array->size()*2]=0;
+      return ret;
+    }
   }
   throw qApp->translate("toQValue","Unknown type of query value");
 }
@@ -342,6 +398,8 @@ int toQValue::toInt(void) const
     return int(Value.Double);
   case stringType:
     return Value.String->toInt();
+  case binaryType:
+    throw qApp->translate("toQValue","Can't transform binary value to int");
   }
   throw qApp->translate("toQValue","Unknown type of query value");
 }
@@ -357,6 +415,8 @@ double toQValue::toDouble(void) const
     return Value.Double;
   case stringType:
     return Value.String->toDouble();
+  case binaryType:
+    throw qApp->translate("toQValue","Can't transform binary value to double");
   }
   throw qApp->translate("toQValue","Unknown type of query value");
 }
@@ -399,6 +459,64 @@ int toQValue::numberDecimals(void)
   return NumberDecimals;
 }
 
+toQValue toQValue::createBinary(const QByteArray &arr)
+{
+  toQValue ret;
+  ret.Type=binaryType;
+  ret.Value.Array=new QByteArray(arr);
+  return ret;
+}
+
+toQValue toQValue::createFromHex(const QCString &hex)
+{
+  QByteArray arr((hex.length()+1)/2);
+  for(unsigned int i=0;i<hex.length();i+=2) {
+    int num;
+    char c=hex[i];
+    if (c>='a')
+      num=c-'a';
+    else if (c>='A')
+      num=c-'A';
+    else
+      num=c-'0';
+    num<<=4;
+    c=hex[i+1];
+    if (c>='a')
+      num+=c-'a';
+    else if (c>='A')
+      num+=c-'A';
+    else
+      num+=c-'0';
+    arr[i/2]=num;
+  }
+  return createBinary(arr);
+}
+
+toQValue toQValue::createFromHex(const QString &hex)
+{
+  QByteArray arr((hex.length()+1)/2);
+  for(unsigned int i=0;i<hex.length();i+=2) {
+    int num;
+    char c=hex.at(i);
+    if (c>='a')
+      num=c-'a';
+    else if (c>='A')
+      num=c-'A';
+    else
+      num=c-'0';
+    num<<=4;
+    c=hex.at(i+1);
+    if (c>='a')
+      num+=c-'a';
+    else if (c>='A')
+      num+=c-'A';
+    else
+      num+=c-'0';
+    arr[i/2]=num;
+  }
+  return createBinary(arr);
+}
+
 toQValue::operator QString() const
 {
   switch(Type) {
@@ -410,6 +528,16 @@ toQValue::operator QString() const
     return QString::number(Value.Int);
   case stringType:
     return *Value.String;
+  case binaryType:
+    {
+      QString ret;
+      for(unsigned int i=0;i<Value.Array->size();i++) {
+	unsigned char c=(unsigned char)Value.Array->at(i);
+	ret+=HexString[(c/16)%16];
+	ret+=HexString[c%16];
+      }
+      return ret;
+    }
   }
   throw qApp->translate("toQValue","Unknown type of query value");
 }

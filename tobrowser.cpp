@@ -62,6 +62,10 @@
 #include "totabwidget.h"
 #include "totool.h"
 
+#ifdef TOEXTENDED_MYSQL
+#  include "tomysqluser.h"
+#endif
+
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
@@ -532,8 +536,10 @@ void toBrowseButton::connectionChanged()
 #define TAB_DBLINK_INFO		"DBLinkInfo"
 #define TAB_DBLINK_SYNONYMS	"DBLinkSynonyms"
 
-#define TAB_ACCESS		"Hosts"
-#define TAB_ACCESS_CONTENT	"HostsContent"
+#define TAB_ACCESS		"Access"
+#define TAB_ACCESS_CONTENT	"AccessContent"
+#define TAB_ACCESS_USER		"AccessUser"
+#define TAB_ACCESS_OBJECTS	"AccessObjects"
 
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
 				"SHOW TABLES FROM :f1<noquote>",
@@ -966,6 +972,12 @@ static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
 			    "Show access tables for MySQL databases",
 			    "3.23",
 			    "MySQL");
+
+static toSQL SQLMySQLUsers("toBrowser:MySQLUsers",
+			   "SELECT concat(user,'@',host) Users FROM mysql.user",
+			   "Show users for MySQL databases",
+			   "3.23",
+			   "MySQL");
 
 static toSQL SQLTruncateTable("toBrowser:TruncateTable",
 			      "TRUNCATE %1.%2",
@@ -1447,20 +1459,42 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   Map[TAB_ACCESS]=resultView;
   resultView->setTabWidget(TopTab);
-  resultView->setSQL(SQLMySQLAccess);
   resultView->setResizeMode(QListView::AllColumns);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged()),
 	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
-
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
+
+#ifdef TOEXTENDED_MYSQL
+  resultView->setSQL(SQLMySQLUsers);
+
+  AccessContent=NULL;
+  UserPanel=new toMySQLUser(curr,TAB_ACCESS_USER);
+  curr->addTab(UserPanel,tr("&User"));
+  SecondMap[TAB_ACCESS]=UserPanel;
+  SecondMap[TAB_ACCESS_USER]=UserPanel;
+
+  toMySQLUserAccess *access=new toMySQLUserAccess(curr,TAB_ACCESS_OBJECTS);
+  curr->addTab(access,tr("&Objects"));
+  SecondMap[TAB_ACCESS_OBJECTS]=UserPanel;	// Yes, it should be this one, it will signal the TAB_ACCESS_OBJECTS to update.
+  connect(access,SIGNAL(hasChanged()),UserPanel,SLOT(hasChanged()));
+  connect(UserPanel,SIGNAL(saveChanges(const QString &,const QString &)),access,SLOT(saveChanges(const QString &,const QString &)));
+  connect(UserPanel,SIGNAL(changeUser(const QString &)),access,SLOT(changeUser(const QString &)));
+
+  AccessContent=new toResultContent(curr,TAB_ACCESS_CONTENT);
+  curr->addTab(AccessContent,tr("&Hosts"));
+  SecondMap[TAB_ACCESS_CONTENT]=AccessContent; 
+#else
+  resultView->setSQL(SQLMySQLAccess);
 
   AccessContent=new toResultContent(curr,TAB_ACCESS_CONTENT);
   curr->addTab(AccessContent,tr("&Data"));
   SecondMap[TAB_ACCESS]=AccessContent;
   SecondMap[TAB_ACCESS_CONTENT]=AccessContent; 
+#endif
+  connect(AccessContent,SIGNAL(changesSaved()),this,SLOT(flushPrivs()));
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
@@ -1606,9 +1640,15 @@ void toBrowser::changeSecond(void)
       name=SecondText;
     }
     SecondTab->changeParams(owner,name);
+#ifdef TOEXTENDED_MYSQL
+  } else if (tab&&!strcmp(tab->name(),TAB_ACCESS)&&!strcmp(tab2->name(),TAB_ACCESS_CONTENT)) {
+    SecondTab->changeParams("mysql",
+			    "host");
+#else
   } else if (tab&&!strcmp(tab->name(),TAB_ACCESS)) {
     SecondTab->changeParams("mysql",
 			    SecondText);
+#endif
   } else if (tab&&!strcmp(tab->name(),TAB_INDEX)&&!strcmp(tab2->name(),TAB_INDEX_EXTRACT)) {
     QListViewItem *item=selectedItem();
     if (item)
@@ -1849,6 +1889,13 @@ void toBrowser::truncateTable(void)
   }
 }
 
+void toBrowser::flushPrivs(void)
+{
+  try {
+    connection().execute("FLUSH PRIVILEGES");
+  } TOCATCH
+}
+
 void toBrowser::checkTable(void)
 {
   QString sql;
@@ -1940,6 +1987,14 @@ void toBrowser::dropIndex(void)
   }
 }
 
+bool toBrowser::close(bool del)
+{
+#ifdef TOEXTENDED_MYSQL
+  UserPanel->saveChanges();
+#endif
+  
+  return toToolWidget::close(del);
+}
 void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   data[prefix+":Schema"]=Schema->selected();
@@ -1953,8 +2008,8 @@ void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &pref
   }
   ViewContent->exportData(data,prefix+":View");
   TableContent->exportData(data,prefix+":Table");
-  AccessContent->exportData(data,prefix+":Hosts");
-  
+  if (AccessContent)
+    AccessContent->exportData(data,prefix+":Hosts");
   toToolWidget::exportData(data,prefix);
   if (Filter)
     Filter->exportData(data,prefix+":Filter");
@@ -1968,7 +2023,8 @@ void toBrowser::importData(std::map<QCString,QString> &data,const QCString &pref
 
   ViewContent->importData(data,prefix+":View");
   TableContent->importData(data,prefix+":Table");
-  AccessContent->importData(data,prefix+":Hosts");
+  if (AccessContent)
+    AccessContent->importData(data,prefix+":Hosts");
 
   if (data.find(prefix+":Filter:Type")!=data.end()) {
     toBrowserFilter *filter=new toBrowserFilter;

@@ -1200,6 +1200,8 @@ public:
       } else
 	Connection->lockUp();
 
+      if (val.type()==QVariant::ByteArray)
+	return toQValue::createBinary(val.toByteArray());
       return val.toString();
     }
     virtual bool eof(void)
@@ -1659,13 +1661,13 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
   QString opt;
 
   std::set<QString> options=conn.options();
-  if (options.find("Compress")==options.end())
+  if (options.find("Compress")!=options.end())
     opt+=";CLIENT_COMPRESS";
-  if (options.find("Ignore Space")==options.end())
+  if (options.find("Ignore Space")!=options.end())
     opt+=";CLIENT_IGNORE_SPACE";
-  if (options.find("No Schema")==options.end())
+  if (options.find("No Schema")!=options.end())
     opt+=";CLIENT_NO_SCHEMA";
-  if (options.find("SSL")==options.end())
+  if (options.find("SSL")!=options.end())
     opt+=";CLIENT_SSL";
 
   if (!opt.isEmpty())

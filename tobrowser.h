@@ -51,6 +51,7 @@ class toResultCombo;
 class toResultContent;
 class toResultFilter;
 class toResultView;
+class toMySQLUser;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
@@ -81,6 +82,9 @@ class toBrowser : public toToolWidget {
   void dropSomething(const QString &,const QString &);
 
   QListViewItem *selectedItem();
+#ifdef TOEXTENDED_MYSQL
+  toMySQLUser *UserPanel;
+#endif
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -89,6 +93,8 @@ public:
 
   virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+
+  virtual bool close(bool del);
 public slots:
   void refresh(void);
   void updateTabs(void);
@@ -115,6 +121,7 @@ public slots:
   void checkTable(void);
   void optimizeTable(void);
   void analyzeTable(void);
+  void flushPrivs(void);
 
   void dropIndex(void);
   void fixIndexCols(void);

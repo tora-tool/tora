@@ -777,7 +777,11 @@ QCString toReadFile(const QString &filename)
   KURL url(expanded);
   if (!url.isLocalFile()) {
     QString tmpFile;
-    if(KIO::NetAccess::download(url,tmpFile,toMainWidget())) {
+    if(KIO::NetAccess::download(url,tmpFile
+#if KDE_VERSION >= 0x30200
+				,toMainWidget()
+#endif
+				)) {
       QFile file(tmpFile);
       if (!file.open(IO_ReadOnly)) {
 	KIO::NetAccess::removeTempFile(tmpFile);
@@ -833,7 +837,11 @@ bool toWriteFile(const QString &filename,const QCString &data)
       return false;
     }
     file.close();
-    if (!KIO::NetAccess::upload(file.name(),url,toMainWidget())) {
+    if (!KIO::NetAccess::upload(file.name(),url
+#if KDE_VERSION >= 0x30200
+				,toMainWidget()
+#endif
+				)) {
       file.unlink();
       TOMessageBox::warning(toMainWidget(),QT_TRANSLATE_NOOP("toWriteFile","File error"),
 			    QT_TRANSLATE_NOOP("toWriteFile","Couldn't upload data to URL"));
@@ -1246,7 +1254,7 @@ toQValue toNull(const toQValue &str)
   if (IndicateEmpty) {
     if (str.isNull())
       return str;
-    if (str==QString(""))
+    if (str.toString().length()==0)
       return QString::fromLatin1("''");
   } else if (str.isNull())
     return QString::fromLatin1("{null}");

@@ -681,8 +681,8 @@ void toMain::windowsMenu(void)
   QRegExp strip(QString::fromLatin1(" <[0-9]+>$"));
   int id=0;
   unsigned int i;
-  for (i=0;i<workspace()->windowList().count();i++) {
-    QWidget *widget=workspace()->windowList().at(i);
+  for (i=0;i<workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
+    QWidget *widget=workspace()->windowList(QWorkspace::CreationOrder).at(i);
     if (widget&&!widget->isHidden()) {
       if (first)
 	first=false;
@@ -692,7 +692,8 @@ void toMain::windowsMenu(void)
 	WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
       else
 	WindowsMenu->changeItem(TO_WINDOWS_WINDOWS+i,caption);
-      WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,workspace()->activeWindow()==workspace()->windowList().at(i));
+      WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,
+				  workspace()->activeWindow()==workspace()->windowList(QWorkspace::CreationOrder).at(i));
       if (i<9) {
 	WindowsMenu->setAccel(Key_1+id|CTRL,TO_WINDOWS_WINDOWS+i);
 	caption+=QString::fromLatin1(" <");
@@ -731,8 +732,11 @@ void toMain::commandCallback(int cmd)
     if (Tools[cmd-TO_ABOUT_ID_OFFSET])
       Tools[cmd-TO_ABOUT_ID_OFFSET]->about(this);
   } else if (cmd>=TO_WINDOWS_WINDOWS&&cmd<=TO_WINDOWS_END) {
-    if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count()))
-      workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
+    if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList(QWorkspace::CreationOrder).count())) {
+      QWidget *widget=workspace()->windowList(QWorkspace::CreationOrder).at(cmd-TO_WINDOWS_WINDOWS);
+      widget->raise();
+      widget->setFocus();
+    }
   } else if (cmd>=TO_STATUS_ID&&cmd<=TO_STATUS_ID_END) {
     QString str=StatusMenu->text(cmd);
     new toMemoEditor(this,str);
@@ -860,9 +864,9 @@ void toMain::commandCallback(int cmd)
       toPreferences::displayPreferences(this);
       break;
     case TO_WINDOWS_CLOSE_ALL:
-      while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
-	if (workspace()->windowList().at(0)&&
-	    !workspace()->windowList().at(0)->close(true))
+      while (workspace()->windowList(QWorkspace::CreationOrder).count()>0&&workspace()->windowList(QWorkspace::CreationOrder).at(0))
+	if (workspace()->windowList(QWorkspace::CreationOrder).at(0)&&
+	    !workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
 	  return;
       break;
     case TO_WINDOWS_CLOSE:
@@ -1387,8 +1391,8 @@ void toMain::exportData(std::map<QCString,QString> &data,const QCString &prefix)
     }
 
     id=1;
-    for (unsigned int i=0;i<workspace()->windowList().count();i++) {
-      toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
+    for (unsigned int i=0;i<workspace()->windowList(QWorkspace::CreationOrder).count();i++) {
+      toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList(QWorkspace::CreationOrder).at(i));
       if (tool) {
 	QCString key=prefix+":Tools:"+QString::number(id).latin1();
 	tool->exportData(data,key);
@@ -1526,9 +1530,9 @@ void toMain::closeSession(void)
   } TOCATCH
 
   // Workaround in bug in Qt 3.0.0
-  while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
-    if (workspace()->windowList().at(0)&&
-	!workspace()->windowList().at(0)->close(true))
+  while (workspace()->windowList(QWorkspace::CreationOrder).count()>0&&workspace()->windowList(QWorkspace::CreationOrder).at(0))
+    if (workspace()->windowList(QWorkspace::CreationOrder).at(0)&&
+	!workspace()->windowList(QWorkspace::CreationOrder).at(0)->close(true))
       return;
   while (Connections.end()!=Connections.begin()) {
     if (!delConnection())

@@ -134,8 +134,6 @@ static void ThrowException(const otl_exception &exc)
   }
 }
 
-static char HexString[]="0123456789ABCDEF";
-
 class toOracleProvider : public toConnectionProvider {
 public:
   class connectionDeleter : public toTask {
@@ -262,7 +260,7 @@ public:
 	    int len=toMaxLong;
 	    if (toMaxLong<0)
 	      len=DEFAULT_MAX_LONG;
-	    buffer=new char[len+1];
+	    buffer=(char *)malloc(len+1);
 	    buffer[len]=0;
 	    otl_long_string str(buffer,len);
 	    (*Query)>>str;
@@ -271,19 +269,15 @@ public:
 	    if (!str.len())
 	      return null;
 	    QString buf;
-	    if (dsc->ftype==otl_var_varchar_long) 
+	    if (dsc->ftype==otl_var_varchar_long) {
 	      buf=(QString::fromUtf8(buffer));
-	    else {
-	      char buf2[str.len()*2+1];
-	      for(int i=0;i<str.len();i++) {
-		buf2[i*2]=HexString[((unsigned char)buffer[i])/16];
-		buf2[i*2+1]=HexString[((unsigned char)buffer[i])%16];
-	      }
-	      buf2[str.len()*2]=0;
-	      buf=buf2;
+	      free(buffer);
+	      return buf;
+	    } else {
+	      QByteArray ret;
+	      ret.assign(buffer,str.len());
+	      return toQValue::createBinary(ret);
 	    }
-	    delete[] buffer;
-	    return buf;
 	  }
 	case otl_var_clob:
 	case otl_var_blob:
@@ -302,7 +296,7 @@ public:
 	      len*=5;
 	    else
 	      len*=2;
-	    buffer=new char[len+1];
+	    buffer=(char *)malloc(len+1);
 	    buffer[0]=0;
 	    otl_long_string data(buffer,len);
 	    lob>>data;
@@ -317,22 +311,18 @@ public:
 		printf("Data exists past length of LOB in thread\n");
 	    }
 	    buffer[data.len()]=0;
-	    QString buf;
-	    if (dsc->ftype==otl_var_clob)
-	      buf=QString::fromUtf8(buffer);
-	    else {
-	      char buf2[data.len()*2];
-	      for(int i=0;i<data.len();i++) {
-		buf2[i*2]=HexString[((unsigned char)buffer[i])/16];
-		buf2[i*2+1]=HexString[((unsigned char)buffer[i])%16];
-	      }
-	      buf2[data.len()*2]=0;
-	      buf=buf2;
-	    }
-	    delete[] buffer;
 	    Running=false;
 	    conn->Lock.up();
-	    return buf;
+
+	    if (dsc->ftype==otl_var_clob) {
+	      QString buf=QString::fromUtf8(buffer);
+	      free(buffer);
+	      return buf;
+	    } else {
+	      QByteArray ret;
+	      ret.assign(buffer,data.len());
+	      return toQValue::createBinary(ret);
+	    }
 	  }
 	  break;
 	default:  // Try using char if all else fails
@@ -935,8 +925,25 @@ void toOracleProvider::oracleQuery::execute(void)
 	  case otl_var_long_int:
 	    (*Query)<<(*i).toInt();
 	    break;
+	  case otl_var_raw_long:
+	  case otl_var_blob:
+	    if ((*i).isBinary()) {
+	      QByteArray arr=(*i).toByteArray();
+	      otl_long_string str(arr,arr.size(),arr.size());
+	      (*Query)<<str;
+	      break;
+	    }
+	    // Intentially left out break
+	  case otl_var_varchar_long:
+	  case otl_var_clob:
+	    {
+	      QCString buf=(*i).utf8();
+	      otl_long_string str(buf,buf.length(),buf.length());
+	      (*Query)<<str;
+	    }
+	    break;
 	  default:
-	    (*Query)<<QString(*i).utf8();
+	    (*Query)<<(*i).utf8();
 	    break;
 	  }
 	} else {
