@@ -63,6 +63,13 @@ TO_NAMESPACE;
 
 #include "icons/tobrowser.xpm"
 #include "icons/refresh.xpm"
+#include "icons/schema.xpm"
+#include "icons/index.xpm"
+#include "icons/view.xpm"
+#include "icons/table.xpm"
+#include "icons/function.xpm"
+#include "icons/sequence.xpm"
+#include "icons/synonym.xpm"
 
 class toBrowserTool : public toTool {
 protected:
@@ -649,11 +656,27 @@ public:
   {
     QString typ=parent->text(0);
     if (typ=="Tables") {
+      QPixmap image((const char **)table_xpm);
+      setPixmap(0,image);
       new toTemplateTableItem(conn,this,"Constraints");
       new toTemplateTableItem(conn,this,"References");
       new toTemplateTableItem(conn,this,"Grants");
     } else if (typ=="Views") {
+      QPixmap image((const char **)view_xpm);
+      setPixmap(0,image);
       new toTemplateTableItem(conn,this,"Grants");
+    } else if (typ=="Sequences") {
+      QPixmap image((const char **)sequence_xpm);
+      setPixmap(0,image);
+    } else if (typ=="Code" || typ =="Triggers") {
+      QPixmap image((const char **)function_xpm);
+      setPixmap(0,image);
+    } else if (typ=="Indexes") {
+      QPixmap image((const char **)index_xpm);
+      setPixmap(0,image);
+    } else if (typ=="Synonyms") {
+      QPixmap image((const char **)synonym_xpm);
+      setPixmap(0,image);
     }
   }
   virtual QWidget *selectedWidget(QWidget *par)
@@ -715,7 +738,8 @@ public:
   toTemplateDBItem(toConnection &conn,toTemplateItem *parent,
 		   const QString &name)
     : toTemplateSQL(conn,parent,name,toSQL::sql(TOSQL_USERLIST,conn))
-  { }
+  {
+  }
   virtual ~toTemplateDBItem()
   {
     toBrowseTemplate *prov=dynamic_cast<toBrowseTemplate *>(&provider());
@@ -725,34 +749,43 @@ public:
   virtual toTemplateItem *createChild(const QString &name)
   {
     toTemplateItem *item=new toTemplateItem(this,name);
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Tables",
-			     SQLListTables(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Views",
-			     SQLListView(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Indexes",
-			     SQLListIndex(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Sequences",
-			     SQLListSequence(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Synonyms",
-			     SQLListSynonym(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Code",
-			     SQLListSQLShort(connection()));
-    new toTemplateSchemaList(connection(),
-			     item,
-			     "Triggers",
-			     SQLListTrigger(connection()));
+    QPixmap image(schema_xpm);
+    item->setPixmap(0,image);
+    QPixmap table((const char **)table_xpm);
+    QPixmap view((const char **)view_xpm);
+    QPixmap sequence((const char **)sequence_xpm);
+    QPixmap function((const char **)function_xpm);
+    QPixmap index((const char **)index_xpm);
+    QPixmap synonym((const char **)synonym_xpm);
+
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Tables",
+			      SQLListTables(connection())))->setPixmap(0,table);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Views",
+			      SQLListView(connection())))->setPixmap(0,view);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Indexes",
+			      SQLListIndex(connection())))->setPixmap(0,index);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Sequences",
+			      SQLListSequence(connection())))->setPixmap(0,sequence);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Synonyms",
+			      SQLListSynonym(connection())))->setPixmap(0,synonym);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Code",
+			      SQLListSQLShort(connection())))->setPixmap(0,function);
+    (new toTemplateSchemaList(connection(),
+			      item,
+			      "Triggers",
+			      SQLListTrigger(connection())))->setPixmap(0,function);
     return item;
   }
 };
