@@ -83,8 +83,7 @@ protected:
   virtual void paintLegend(QPainter *p,QRect &rect);
   virtual void paintTitle(QPainter *p,QRect &rect);
   virtual void paintAxis(QPainter *p,QRect &rect);
-  virtual void paintGrid(QPainter *p,QRect &rect);
-  virtual void paintChart(QPainter *p,const QRect &rect);
+  virtual void paintChart(QPainter *p,QRect &rect);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.

@@ -968,7 +968,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs->addTab(grid,"&Charts");
 
   FileIO=new toTuningFileIO(this);
-  connect(this,SIGNAL(connectionChanged()),FileIO,SLOT(changeConnection()));
+  connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
 
   Tabs->addTab(FileIO,"&File I/O");
 

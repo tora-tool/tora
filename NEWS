@@ -59,6 +59,7 @@
 2001-10-05: Fixed insertion of objects with schema.
 2001-10-05: Implemented multiline aware syntax highlighter.
 2001-10-05: Implemented C-style comment highlighting.
+2001-10-05: Fixed problem in storage manager. (Thanx Martin)
 
 1.1.1: Released 2001-09-24
 

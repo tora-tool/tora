@@ -169,6 +169,7 @@ QRect toLineChart::fixRect(QPoint p1,QPoint p2)
 
 void toLineChart::paintTitle(QPainter *p,QRect &rect)
 {
+  QFontMetrics fm=p->fontMetrics();
   if (!Title.isEmpty()) {
     p->save();
     QFont f=p->font();
@@ -199,56 +200,9 @@ void toLineChart::paintTitle(QPainter *p,QRect &rect)
   }
 }
 
-void toLineChart::paintChart(QPainter *p,QRect &rect)
+void toLineChart::paintLegend(QPainter *p,QRect &rect)
 {
-  paintTitle(p,rect);
-}
-
-void toLineChart::paintEvent(QPaintEvent *e)
-{
-  QPainter p(this);
-  QRect rect(0,0,width(),height());
-  paintChart(&p,rect);
-
-  QFontMetrics fm=p.fontMetrics();
-
-  int right=width();
-  int bottom=height();
-  int top=0;
-  int left=0;
-
-  p.fillRect(0,0,width(),height(),qApp->palette().active().background());
-
-  if (!Title.isEmpty()) {
-    p.save();
-    QFont f=p.font();
-    f.setBold(true);
-    p.setFont(f);
-    QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
-    p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,Title);
-    p.restore();
-    p.translate(0,top=bounds.height()+2);
-    bottom-=bounds.height()+2;
-  }
-  if (Last) {
-    QString str;
-    for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-      if ((*i).begin()!=(*i).end()) {
-	if (!str.isEmpty())
-	  str+="\n";
-	str+=QString::number(*(*i).rbegin());
-	str+=YPostfix;
-      }
-    }
-    if (!str.isEmpty()) {
-      QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,str);
-      p.drawText(0,2,width(),bounds.height(),AlignHCenter|AlignTop|ExpandTabs,str);
-      top+=bounds.height();
-      p.translate(0,bounds.height());
-      bottom-=bounds.height();
-    }
-  }
-
+  QFontMetrics fm=p->fontMetrics();
   if (Legend) {
     int lwidth=0;
     int lheight=0;
@@ -266,56 +220,39 @@ void toLineChart::paintEvent(QPaintEvent *e)
       lheight+=4;
       lwidth+=14;
     }
-    int lx=width()-lwidth-2;
+    int lx=rect.width()-lwidth-2;
     int ly=2;
     if (lx<50)
       lx=50;
-    right=lx;
-    p.save();
-    p.setBrush(white);
-    p.drawRect(lx,ly,lwidth,lheight);
-    p.restore();
+    p->save();
+    p->setBrush(white);
+    p->drawRect(lx,ly,lwidth,lheight);
+    p->restore();
     lx+=12;
     ly+=2;
     int cp=0;
     for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
       if (!(*i).isEmpty()&&*i!=" ") {
-	p.drawText(bounds,FONT_ALIGN,*i);
-	p.save();
-	p.setBrush(toChartColor(cp++));
-	p.drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
-	p.restore();
+	p->drawText(bounds,FONT_ALIGN,*i);
+	p->save();
+	p->setBrush(toChartColor(cp++));
+	p->drawRect(lx-10,ly+bounds.height()/2-fm.ascent()/2,8,fm.ascent());
+	p->restore();
 	ly+=bounds.height();
       }
     }
+    rect.setRight(lx);
   }
+}
+
+void toLineChart::paintAxis(QPainter *p,QRect &rect)
+{
+  QFontMetrics fm=p->fontMetrics();
+
   bool leftAxis=true;
-  if (!Zooming) {
-    if (MinAuto||MaxAuto) {
-      bool first=true;
-      for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	  if (first) {
-	    zMinValue=*j;
-	    zMaxValue=*j;
-	    first=false;
-	  } else if (zMaxValue<*j)
-	    zMaxValue=*j;
-	  else if (zMinValue>*j)
-	    zMinValue=*j;
-	}
-      }
-      if (zMaxValue==0&&zMinValue==0)
-	leftAxis=false;
-      zMaxValue=round(zMaxValue,true);
-      zMinValue=round(zMinValue,false);
-    }
-    if(!MinAuto)
-      zMinValue=MinValue;
-    if(!MaxAuto)
-      zMaxValue=MaxValue;
-  }
+  if ((zMaxValue==0||zMaxValue==round(0,true))&&zMinValue==0)
+    leftAxis=false;
 
   if (AxisText) {
     int yoffset=0;
@@ -361,74 +298,109 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	xoffset=bounds.height();
 
       if (zMinValue!=0||zMaxValue!=0) {
-	p.save();
-	p.rotate(-90);
+	p->save();
+	p->rotate(-90);
 #if 0
-	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+	p->drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
 		   AlignLeft|AlignBottom|ExpandTabs,minstr);
-	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+	p->drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
 		   AlignRight|AlignBottom|ExpandTabs,maxstr);
 #else
 	// Qt bug, seems to clip left edge of 0 among others.
-	p.drawText(xoffset-bottom+2,fm.ascent()+1,minstr);
-	p.drawText(-2-ybounds.width(),fm.ascent()+1,maxstr);
+	p->drawText(xoffset-rect.height()+2,fm.ascent()+1,minstr);
+	p->drawText(-2-ybounds.width(),fm.ascent()+1,maxstr);
 #endif
-	p.restore();
+	p->restore();
       } else
 	yoffset=0;
-      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+      p->drawText(yoffset+2,rect.height()-xoffset-2,rect.width()-4-yoffset,xoffset,
 		 AlignLeft|AlignTop|ExpandTabs,minXstr);
-      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+      p->drawText(yoffset+2,rect.height()-xoffset-2,rect.width()-4-yoffset,xoffset,
 		 AlignRight|AlignTop|ExpandTabs,maxXstr);
-      p.translate(left=yoffset,0);
-      right-=yoffset;
-      bottom-=xoffset;
+      p->translate(yoffset,0);
+      rect.setLeft(yoffset);
+      rect.setBottom(rect.bottom()-xoffset);
     }
   }
 
-  p.save();
-  p.setBrush(white);
-  Chart=QRect(left+2,top+2,right-3,bottom-3);
-  p.drawRect(2,2,right-3,bottom-3);
-  p.restore();
+  p->save();
+  p->setBrush(white);
+  Chart=QRect(rect.left()+2,rect.top()+2,rect.width()-3,rect.height()-3);
+  p->drawRect(2,2,rect.width()-3,rect.height()-3);
+  p->restore();
   if (Grid>1) {
-    p.save();
-    p.setPen(gray);
+    p->save();
+    p->setPen(gray);
     for (int i=1;i<Grid;i++) {
-      int ypos=(bottom-4)*i/Grid+2;
-      int xpos=(right-4)*i/Grid+2;
-      p.drawLine(3,ypos,right-3,ypos);
-      p.drawLine(xpos,3,xpos,bottom-3);
+      int ypos=(rect.height()-4)*i/Grid+2;
+      int xpos=(rect.width()-4)*i/Grid+2;
+      p->drawLine(3,ypos,rect.width()-3,ypos);
+      p->drawLine(xpos,3,xpos,rect.height()-3);
     }
-    p.restore();
+    p->restore();
   }
+}
+
+void toLineChart::paintChart(QPainter *p,QRect &rect)
+{
+  if (!Zooming) {
+    if (MinAuto||MaxAuto) {
+      bool first=true;
+      for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	  if (first) {
+	    zMinValue=*j;
+	    zMaxValue=*j;
+	    first=false;
+	  } else if (zMaxValue<*j)
+	    zMaxValue=*j;
+	  else if (zMinValue>*j)
+	    zMinValue=*j;
+	}
+      }
+      zMaxValue=round(zMaxValue,true);
+      zMinValue=round(zMinValue,false);
+    }
+    if(!MinAuto)
+      zMinValue=MinValue;
+    else
+      zMinValue=round(zMinValue,false);
+    if(!MaxAuto)
+      zMaxValue=MaxValue;
+    else
+      zMaxValue=round(zMaxValue,true);
+  }
+
+  paintTitle(p,rect);
+  paintLegend(p,rect);
+  paintAxis(p,rect);
 
   int cp=0;
   int samples=countSamples();
   if (samples>1) {
-    const QWMatrix &mtx=p.worldMatrix();
-    p.setClipRect(int(mtx.dx()+2),int(mtx.dy()+2),right-3,bottom-3);
+    const QWMatrix &mtx=p->worldMatrix();
+    p->setClipRect(int(mtx.dx()+2),int(mtx.dy()+2),rect.width()-3,rect.height()-3);
     if (Zooming)
-      p.drawText(2,2,right-4,bottom-4,
-		 AlignLeft|AlignTop,"Zoom");
+      p->drawText(2,2,rect.width()-4,rect.height()-4,
+		  AlignLeft|AlignTop,"Zoom");
     for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-      p.save();
-      p.setPen(toChartColor(cp++));
+      p->save();
+      p->setPen(toChartColor(cp++));
       std::list<double> &val=*i;
       int count=0;
       bool first=true;
       int lval=0;
-      int lx=right-2;
+      int lx=rect.width()-2;
       int skip=SkipSamples;
       for(std::list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&lx>=2;j++) {
 	if (skip>0)
 	  skip--;
 	else {
-	  int val=int(bottom-2-((*j-zMinValue)/(zMaxValue-zMinValue)*(bottom-4)));
+	  int val=int(rect.height()-2-((*j-zMinValue)/(zMaxValue-zMinValue)*(rect.height()-4)));
 	  if (!first) {
 	    int x=lx;
-	    x=right-2-(count+1)*(right-4)/samples;
-	    p.drawLine(x,val,lx,lval);
+	    x=rect.width()-2-(count+1)*(rect.width()-4)/samples;
+	    p->drawLine(x,val,lx,lval);
 	    lx=x;
 	  } else
 	    first=false;
@@ -438,9 +410,16 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	    break;
 	}
       }
-      p.restore();
+      p->restore();
     }
   }
+}
+
+void toLineChart::paintEvent(QPaintEvent *e)
+{
+  QPainter p(this);
+  QRect rect(0,0,width(),height());
+  paintChart(&p,rect);
   MousePoint[1]=QPoint(-1,-1);
 }
 

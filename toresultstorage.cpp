@@ -329,7 +329,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "       v$temp_extent_pool t,\n"
 			 "       (select :unt<int> unit from dual) b\n"
 			 " WHERE (t.file_id (+)= d.file_id)\n"
-			 "   AND (d.file_name = v.file#)",
+			 "   AND (d.file_id = v.file#)",
 			 "Display information about a datafile in a tablespace. "
 			 "All columns must be present in the output (Should be 13)",
 			 "8.1");
