@@ -377,7 +377,7 @@ $(OCI_LIB): $(OCI_DLL)
 	@echo Preparing OCI library $@
 	if [ ! -d lib ] ; then mkdir -p lib ; fi
 	pexports -o $< > lib/oci.def
-	dlltool --def lib/oci.def --dllname $< --output-lib $@
+	dlltool --def lib/oci.def --output-lib $@
 	-rm -f lib/oci.def
 
 .depends/%.d: %.cpp
