@@ -101,6 +101,7 @@ SOURCES=\
 	toresultline.cpp	        \
 	toresultlock.cpp	        \
 	toresultlong.cpp	        \
+	toresultparam.cpp		\
 	toresultpie.cpp		        \
 	toresultplan.cpp	        \
 	toresultreferences.cpp	        \
@@ -231,6 +232,7 @@ plugins/toresult.tso:\
 	objs/toresultlock.o \
 	objs/toresultlong.o \
 	objs/toresultplan.o \
+	objs/toresultparam.o \
 	objs/toresultreferences.o \
 	objs/toresultstats.o \
 	objs/toresultstorage.o

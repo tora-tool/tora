@@ -53,6 +53,7 @@
 #  include <kmenubar.h>
 #endif
 
+#include "toresultparam.h"
 #include "tochangeconnection.h"
 #include "toconnection.h"
 #include "tomain.h"
@@ -130,10 +131,6 @@ static toSQL SQLDispQueue("toTuning:Indicators:MTS contention:2DispQueue",
 static toSQL SQLServerQueue("toTuning:Indicators:MTS contention:3ServerQueue",
 			    "SELECT DECODE (NVL(SUM(totalq),0),0, 'No requests', ROUND(SUM(wait)/SUM(totalq),3)) FROM v$queue WHERE type='COMMON'",
 			    "Server request queue waits (1/100s).");
-
-static toSQL SQLParameters("toTuning:Parameters",
-			   "select name,value,description from v$parameter",
-			   "Display parameters of Oracle server");
 
 static toSQL SQLOptions("toTuning:Options",
 			"select parameter \"Parameter\",\n"
@@ -741,8 +738,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Statistics=new toResultStats(Tabs);
   Tabs->addTab(Statistics,"&Statistics");
 
-  Parameters=new toResultView(true,false,Tabs);
-  Parameters->setSQL(SQLParameters);
+  Parameters=new toResultParam(Tabs);
   Tabs->addTab(Parameters,"&Parameters");
 
   Options=new toResultView(true,false,Tabs);

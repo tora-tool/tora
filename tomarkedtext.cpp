@@ -46,6 +46,7 @@
 #include "totool.h"
 #include "toconf.h"
 #include "tosearchreplace.h"
+#include "tohighlightedtext.h"
 
 #include "tomarkedtext.moc"
 

@@ -16,6 +16,9 @@
 2001-09-27: Added options and license tuning tabs.
 2001-09-27: Added max free extent column to storage manager.
 2001-09-27: Added hitrate to rollback manager.
+2001-09-27: Don't exit in toExtract on exception (Skip object instead).
+2001-09-27: Added keyboard shortcuts to change tabs in worksheet.
+2001-09-27: Fixed drawing of background outside edit area in editors.
 
 1.1.1: 2001-09-24
 

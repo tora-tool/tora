@@ -208,13 +208,6 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   int posx=hMargin()-1;
   QRect rect;
 
-#if 0
-  if (viewWidth()>cellWidth()) {
-    setCellWidth(viewWidth());
-    return;
-  }
-#endif
-
   int height=cellHeight();
   int width=cellWidth();
   QPalette cp=qApp->palette();
@@ -853,5 +846,53 @@ void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
       setCursorPosition(lastline,lastcol,true);
     }
   } catch(...) {
+  }
+}
+
+void toHighlightedText::paintEvent(QPaintEvent *pe)
+{
+  toMarkedText::paintEvent(pe);
+
+  if (Highlight) {
+    if (cellWidth()<viewWidth()) {
+      QPainter painter(this);
+      QColor nrm=Analyzer->getColor(toSyntaxAnalyzer::NormalBkg);
+      QColor bkg=Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg);
+      int lasty=minViewY();
+      int ypos=0;
+      int x=cellWidth()+minViewX();
+      int width=viewWidth()+minViewX()-x;
+      bool repaint=(nrm!=colorGroup().background());
+      QRect re;
+      QRegion region=pe->region();
+      for(std::map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+	if (rowYPos((*i).first,&ypos)) {
+	  re=QRect(x,lasty,width,ypos-lasty);
+	  if (repaint&&lasty!=ypos&&region.contains(re))
+	    painter.fillRect(re,nrm);
+	  re=QRect(x,ypos,width,cellHeight());
+	  if (region.contains(re))
+	    painter.fillRect(re,bkg);
+	  lasty=ypos+cellHeight();
+	}
+      }
+      if (repaint&&lasty<viewHeight()) {
+	re=QRect(x,lasty,width,viewHeight()-lasty+minViewY());
+	if (region.contains(re))
+	  painter.fillRect(re,nrm);
+      }
+      if (rowYPos(Current,&ypos)) {
+	re=QRect(x,ypos,width,cellHeight());
+	if (region.contains(re))
+	  painter.fillRect(re,Analyzer->getColor(toSyntaxAnalyzer::CurrentBkg));
+      }
+
+      if (repaint&&rowYPos(numLines()-1,&ypos)) {
+	re=QRect(minViewX(),ypos+cellHeight(),
+		 cellWidth(),minViewY()+viewHeight()-ypos-cellHeight());
+	if (region.contains(re))
+	  painter.fillRect(re,nrm);
+      }
+    }
   }
 }

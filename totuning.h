@@ -51,6 +51,7 @@ class QComboBox;
 class toConnection;
 class toListView;
 class toResultStats;
+class toResultParam;
 class toResultView;
 class toResultChart;
 class toResultItem;
@@ -108,7 +109,7 @@ class toTuning : public toToolWidget {
   QPopupMenu *ToolMenu;
   QTabWidget *Tabs;
   toListView *Indicators;
-  toResultView *Parameters;
+  toResultParam *Parameters;
   toResultView *Options;
   toResultItem *Licenses;
   toResultStats *Statistics;

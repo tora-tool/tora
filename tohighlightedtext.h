@@ -293,6 +293,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell (QPainter *painter,int row,int col);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void paintEvent(QPaintEvent *pe);
 
   /** Get the tablename currently under the cursor.
    * @param owner Filled with owner or table or QString::null if no owner specified.

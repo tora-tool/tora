@@ -356,7 +356,7 @@ void toWorksheet::setup(bool autoLoad)
     Editor=new toWorksheetText(this,splitter);
     ResultTab=new QTabWidget(splitter);
     QVBox *box=new QVBox(ResultTab);
-    ResultTab->addTab(box,"Result");
+    ResultTab->addTab(box,"&Result");
 
     Result=new toResultLong(box);
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
@@ -368,11 +368,11 @@ void toWorksheet::setup(bool autoLoad)
 
     ResultTab->setTabEnabled(Columns,false);
     Visualize=new toVisualize(Result,ResultTab);
-    ResultTab->addTab(Visualize,"Visualize");
+    ResultTab->addTab(Visualize,"&Visualize");
     Plan=new toResultPlan(ResultTab);
-    ResultTab->addTab(Plan,"Execution plan");
+    ResultTab->addTab(Plan,"E&xecution plan");
     Resources=new toResultResources(ResultTab);
-    ResultTab->addTab(Resources,"Information");
+    ResultTab->addTab(Resources,"&Information");
     StatSplitter=new QSplitter(Horizontal,ResultTab);
     Statistics=new toResultStats(true,StatSplitter);
     Statistics->setTabWidget(ResultTab);
@@ -398,11 +398,11 @@ void toWorksheet::setup(bool autoLoad)
     bar->setSamples(-1);
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    bar,SLOT(changeParams(const QString &)));
-    ResultTab->addTab(StatSplitter,"Statistics");
+    ResultTab->addTab(StatSplitter,"&Statistics");
     ResultTab->setTabEnabled(StatSplitter,false);
 
     Logging=new toResultView(true,false,ResultTab);
-    ResultTab->addTab(Logging,"Logging");
+    ResultTab->addTab(Logging,"&Logging");
     Logging->addColumn("SQL");
     Logging->addColumn("Result");
     Logging->addColumn("Timestamp");

@@ -6179,77 +6179,81 @@ QString toExtract::create(std::list<QString> &objects)
       QString schema=intSchema(owner);
 
       try {
-	if (utype=="CONSTRAINT")
-	  ret+=createConstraint(schema,owner,name);
-	else if (utype=="DATABASE LINK")
-	  ret+=createDBLink(schema,owner,name);
-	else if (utype=="EXCHANGE INDEX")
-	  ret+=createExchangeIndex(schema,owner,name);
-	else if (utype=="EXCHANGE TABLE")
-	  ret+=createExchangeTable(schema,owner,name);
-	else if (utype=="FUNCTION")
-	  ret+=createFunction(schema,owner,name);
-	else if (utype=="INDEX")
-	  ret+=createIndex(schema,owner,name);
-	else if (utype=="MATERIALIZED VIEW")
-	  ret+=createMaterializedView(schema,owner,name);
-	else if (utype=="MATERIALIZED VIEW LOG")
-	  ret+=createMaterializedViewLog(schema,owner,name);
-	else if (utype=="PACKAGE")
-	  ret+=createPackage(schema,owner,name);
-	else if (utype=="PACKAGE BODY")
-	  ret+=createPackageBody(schema,owner,name);
-	else if (utype=="PROCEDURE")
-	  ret+=createProcedure(schema,owner,name);
-	else if (utype=="PROFILE")
-	  ret+=createProfile(schema,owner,name);
-	else if (utype=="ROLE")
-	  ret+=createRole(schema,owner,name);
-	else if (utype=="ROLE GRANTS")
-	  ret+=grantedPrivs(name.lower(),name,6);
-	else if (utype=="ROLLBACK SEGMENT")
-	  ret+=createRollbackSegment(schema,owner,name);
-	else if (utype=="SEQUENCE")
-	  ret+=createSequence(schema,owner,name);
-	else if (utype=="SNAPSHOT")
-	  ret+=createSnapshot(schema,owner,name);
-	else if (utype=="SNAPSHOT LOG")
-	  ret+=createSnapshotLog(schema,owner,name);
-	else if (utype=="SYNONYM")
-	  ret+=createSynonym(schema,owner,name);
-	else if (utype=="TABLE")
-	  ret+=createTable(schema,owner,name);
-	else if (utype=="TABLE FAMILY")
-	  ret+=createTableFamily(schema,owner,name);
-	else if (utype=="TABLE CONTENTS")
-	  ret+=createTableContents(schema,owner,name);
-	else if (utype=="TABLE REFERENCES")
-	  ret+=createTableReferences(schema,owner,name);
-	else if (utype=="TABLESPACE")
-	  ret+=createTablespace(schema,owner,name);
-	else if (utype=="TRIGGER")
-	  ret+=createTrigger(schema,owner,name);
-	else if (utype=="TYPE")
-	  ret+=createType(schema,owner,name);
-	else if (utype=="USER")
-	  ret+=createUser(schema,owner,name);
-	else if (utype=="USER GRANTS") {
-	  QString nam;
-	  if (Schema!="1"&&!Schema.isEmpty())
-	    nam=Schema.lower();
-	  else
-	    nam=name.lower();
-	  ret+=grantedPrivs(nam,name,4);
-	} else if (utype=="VIEW")
-	  ret+=createView(schema,owner,name);
-	else {
-	  QString str="Invalid type ";
-	  str+=type;
-	  str+=" to create";
-	  throw str;
+	try {
+	  if (utype=="CONSTRAINT")
+	    ret+=createConstraint(schema,owner,name);
+	  else if (utype=="DATABASE LINK")
+	    ret+=createDBLink(schema,owner,name);
+	  else if (utype=="EXCHANGE INDEX")
+	    ret+=createExchangeIndex(schema,owner,name);
+	  else if (utype=="EXCHANGE TABLE")
+	    ret+=createExchangeTable(schema,owner,name);
+	  else if (utype=="FUNCTION")
+	    ret+=createFunction(schema,owner,name);
+	  else if (utype=="INDEX")
+	    ret+=createIndex(schema,owner,name);
+	  else if (utype=="MATERIALIZED VIEW")
+	    ret+=createMaterializedView(schema,owner,name);
+	  else if (utype=="MATERIALIZED VIEW LOG")
+	    ret+=createMaterializedViewLog(schema,owner,name);
+	  else if (utype=="PACKAGE")
+	    ret+=createPackage(schema,owner,name);
+	  else if (utype=="PACKAGE BODY")
+	    ret+=createPackageBody(schema,owner,name);
+	  else if (utype=="PROCEDURE")
+	    ret+=createProcedure(schema,owner,name);
+	  else if (utype=="PROFILE")
+	    ret+=createProfile(schema,owner,name);
+	  else if (utype=="ROLE")
+	    ret+=createRole(schema,owner,name);
+	  else if (utype=="ROLE GRANTS")
+	    ret+=grantedPrivs(name.lower(),name,6);
+	  else if (utype=="ROLLBACK SEGMENT")
+	    ret+=createRollbackSegment(schema,owner,name);
+	  else if (utype=="SEQUENCE")
+	    ret+=createSequence(schema,owner,name);
+	  else if (utype=="SNAPSHOT")
+	    ret+=createSnapshot(schema,owner,name);
+	  else if (utype=="SNAPSHOT LOG")
+	    ret+=createSnapshotLog(schema,owner,name);
+	  else if (utype=="SYNONYM")
+	    ret+=createSynonym(schema,owner,name);
+	  else if (utype=="TABLE")
+	    ret+=createTable(schema,owner,name);
+	  else if (utype=="TABLE FAMILY")
+	    ret+=createTableFamily(schema,owner,name);
+	  else if (utype=="TABLE CONTENTS")
+	    ret+=createTableContents(schema,owner,name);
+	  else if (utype=="TABLE REFERENCES")
+	    ret+=createTableReferences(schema,owner,name);
+	  else if (utype=="TABLESPACE")
+	    ret+=createTablespace(schema,owner,name);
+	  else if (utype=="TRIGGER")
+	    ret+=createTrigger(schema,owner,name);
+	  else if (utype=="TYPE")
+	    ret+=createType(schema,owner,name);
+	  else if (utype=="USER")
+	    ret+=createUser(schema,owner,name);
+	  else if (utype=="USER GRANTS") {
+	    QString nam;
+	    if (Schema!="1"&&!Schema.isEmpty())
+	      nam=Schema.lower();
+	    else
+	      nam=name.lower();
+	    ret+=grantedPrivs(nam,name,4);
+	  } else if (utype=="VIEW")
+	    ret+=createView(schema,owner,name);
+	  else {
+	    QString str="Invalid type ";
+	    str+=type;
+	    str+=" to create";
+	    throw str;
+	  }
+	} catch (const QString &exc) {
+	  rethrow("Create",*i,exc);
 	}
       } catch (const QString &exc) {
-	rethrow("Create",*i,exc);
+	toStatusMessage(exc);
       }
     }
   } catch(...) {
@@ -6313,75 +6317,79 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
       std::list<QString> cur;
 
       try {
-	if (utype=="CONSTRAINT")
-	  describeConstraint(cur,schema,owner,name);
-	else if (utype=="DATABASE LINK")
-	  describeDBLink(cur,schema,owner,name);
-	else if (utype=="EXCHANGE INDEX")
-	  describeExchangeIndex(cur,schema,owner,name);
-	else if (utype=="EXCHANGE TABLE")
-	  describeExchangeTable(cur,schema,owner,name);
-	else if (utype=="FUNCTION")
-	  describeFunction(cur,schema,owner,name);
-	else if (utype=="INDEX")
-	  describeIndex(cur,schema,owner,name);
-	else if (utype=="MATERIALIZED VIEW")
-	  describeMaterializedView(cur,schema,owner,name);
-	else if (utype=="MATERIALIZED VIEW LOG")
-	  describeMaterializedViewLog(cur,schema,owner,name);
-	else if (utype=="PACKAGE")
-	  describePackage(cur,schema,owner,name);
-	else if (utype=="PACKAGE BODY")
-	  describePackageBody(cur,schema,owner,name);
-	else if (utype=="PROCEDURE")
-	  describeProcedure(cur,schema,owner,name);
-	else if (utype=="PROFILE")
-	  describeProfile(cur,schema,owner,name);
-	else if (utype=="ROLE")
-	  describeRole(cur,schema,owner,name);
-	else if (utype=="ROLE GRANTS") {
-	  // A nop, everything is done in describe role
-	} else if (utype=="ROLLBACK SEGMENT")
-	  describeRollbackSegment(cur,schema,owner,name);
-	else if (utype=="SEQUENCE")
-	  describeSequence(cur,schema,owner,name);
-	else if (utype=="SNAPSHOT")
-	  describeSnapshot(cur,schema,owner,name);
-	else if (utype=="SNAPSHOT LOG")
-	  describeSnapshotLog(cur,schema,owner,name);
-	else if (utype=="SYNONYM")
-	  describeSynonym(cur,schema,owner,name);
-	else if (utype=="TABLE")
-	  describeTable(cur,schema,owner,name);
-	else if (utype=="TABLE FAMILY")
-	  describeTableFamily(cur,schema,owner,name);
-	else if (utype=="TABLE REFERENCES")
-	  describeTableReferences(cur,schema,owner,name);
-	else if (utype=="TABLE CONTENTS") {
-	  // A nop, nothing is described of contents
-	} else if (utype=="TABLESPACE")
-	  describeTablespace(cur,schema,owner,name);
-	else if (utype=="TRIGGER")
-	  describeTrigger(cur,schema,owner,name);
-	else if (utype=="TYPE")
-	  describeType(cur,schema,owner,name);
-	else if (utype=="USER")
-	  describeUser(cur,schema,owner,name);
-	else if (utype=="USER GRANTS") {
-	  // A nop, everything is done in describe user
-	} else if (utype=="VIEW")
-	  describeView(cur,schema,owner,name);
-	else {
-	  QString str="Invalid type ";
-	  str+=type;
-	  str+=" to describe";
-	  throw str;
+	try {
+	  if (utype=="CONSTRAINT")
+	    describeConstraint(cur,schema,owner,name);
+	  else if (utype=="DATABASE LINK")
+	    describeDBLink(cur,schema,owner,name);
+	  else if (utype=="EXCHANGE INDEX")
+	    describeExchangeIndex(cur,schema,owner,name);
+	  else if (utype=="EXCHANGE TABLE")
+	    describeExchangeTable(cur,schema,owner,name);
+	  else if (utype=="FUNCTION")
+	    describeFunction(cur,schema,owner,name);
+	  else if (utype=="INDEX")
+	    describeIndex(cur,schema,owner,name);
+	  else if (utype=="MATERIALIZED VIEW")
+	    describeMaterializedView(cur,schema,owner,name);
+	  else if (utype=="MATERIALIZED VIEW LOG")
+	    describeMaterializedViewLog(cur,schema,owner,name);
+	  else if (utype=="PACKAGE")
+	    describePackage(cur,schema,owner,name);
+	  else if (utype=="PACKAGE BODY")
+	    describePackageBody(cur,schema,owner,name);
+	  else if (utype=="PROCEDURE")
+	    describeProcedure(cur,schema,owner,name);
+	  else if (utype=="PROFILE")
+	    describeProfile(cur,schema,owner,name);
+	  else if (utype=="ROLE")
+	    describeRole(cur,schema,owner,name);
+	  else if (utype=="ROLE GRANTS") {
+	    // A nop, everything is done in describe role
+	  } else if (utype=="ROLLBACK SEGMENT")
+	    describeRollbackSegment(cur,schema,owner,name);
+	  else if (utype=="SEQUENCE")
+	    describeSequence(cur,schema,owner,name);
+	  else if (utype=="SNAPSHOT")
+	    describeSnapshot(cur,schema,owner,name);
+	  else if (utype=="SNAPSHOT LOG")
+	    describeSnapshotLog(cur,schema,owner,name);
+	  else if (utype=="SYNONYM")
+	    describeSynonym(cur,schema,owner,name);
+	  else if (utype=="TABLE")
+	    describeTable(cur,schema,owner,name);
+	  else if (utype=="TABLE FAMILY")
+	    describeTableFamily(cur,schema,owner,name);
+	  else if (utype=="TABLE REFERENCES")
+	    describeTableReferences(cur,schema,owner,name);
+	  else if (utype=="TABLE CONTENTS") {
+	    // A nop, nothing is described of contents
+	  } else if (utype=="TABLESPACE")
+	    describeTablespace(cur,schema,owner,name);
+	  else if (utype=="TRIGGER")
+	    describeTrigger(cur,schema,owner,name);
+	  else if (utype=="TYPE")
+	    describeType(cur,schema,owner,name);
+	  else if (utype=="USER")
+	    describeUser(cur,schema,owner,name);
+	  else if (utype=="USER GRANTS") {
+	    // A nop, everything is done in describe user
+	  } else if (utype=="VIEW")
+	    describeView(cur,schema,owner,name);
+	  else {
+	    QString str="Invalid type ";
+	    str+=type;
+	    str+=" to describe";
+	    throw str;
+	  }
+	} catch (const QString &exc) {
+	  rethrow("Describe",*i,exc);
 	}
+	cur.sort();
+	ret.merge(cur);
       } catch (const QString &exc) {
-	rethrow("Describe",*i,exc);
+	toStatusMessage(exc);
       }
-      cur.sort();
-      ret.merge(cur);
     }
   } catch(...) {
     delete progress;
