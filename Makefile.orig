@@ -46,6 +46,7 @@ SOURCES=\
 	toresultitem.cpp	\
 	toresultlock.cpp	\
 	toresultplan.cpp	\
+	toresultreferences.cpp	\
 	toresultstats.cpp	\
 	toresultstorage.cpp	\
 	toresultview.cpp	\
@@ -53,6 +54,8 @@ SOURCES=\
 	tosession.cpp		\
 	tosgastatement.cpp	\
 	tosgatrace.cpp		\
+	tosql.cpp		\
+	tosqledit.cpp		\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
@@ -63,7 +66,7 @@ SOURCES=\
 
 TARGET=tora-plugin
 
-TOVERSION=-DTOVERSION=\"0.5\"
+TOVERSION=-DTOVERSION=\"0.6\"
 
 include Makefile.setup
 include Makefile.common
@@ -82,12 +85,14 @@ plugins/toresultconstraint.so:objs/toresultconstraint.o
 plugins/toresultcontent.so:objs/toresultcontent.o
 plugins/toresultindexes.so:objs/toresultindexes.o
 plugins/toresultlock.so:objs/toresultlock.o
+plugins/toresultreferences.so:objs/toresultreferences.o
 plugins/toresultstats.so:objs/toresultstats.o
 plugins/toresultstorage.so:objs/toresultstorage.o
 plugins/torollback.so:objs/torollback.o
 plugins/tosession.so:objs/tosession.o
 plugins/tosgastatement.so:objs/tosgastatement.o
 plugins/tosgatrace.so:objs/tosgatrace.o
+plugins/tosqledit.so:objs/tosqledit.o
 plugins/tostorage.so:objs/tostorage.o
 plugins/tostoragedefinition.so:objs/tostoragedefinition.o
 plugins/toworksheet.so:objs/toworksheet.o
@@ -97,14 +102,14 @@ plugins/toworksheet.so:objs/toworksheet.o
 tora-mono: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(CC) $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(LIBS_GLOB) $(QT_SHARED)
+		$(LIBS_GLOB) $(STDCPP_SHARED) $(ORACLE_SHARED) $(QT_SHARED)
 
 # Static target, easier to distribute
 
 tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(CC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
-		$(QT_STATIC) $(LIBS_GLOB) -L/usr/X11R6/lib -lXt -lz -ljpeg -lXext
+		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) -L/usr/X11R6/lib -lXt -lz -ljpeg -lXext
 
 # Plugin based binary and its plugins
 
@@ -120,12 +125,14 @@ tora-plugin: \
 	plugins/toresultcontent.so \
 	plugins/toresultindexes.so \
 	plugins/toresultlock.so \
+	plugins/toresultreferences.so \
 	plugins/toresultstats.so \
 	plugins/toresultstorage.so \
 	plugins/torollback.so \
 	plugins/tosession.so \
 	plugins/tosgastatement.so \
 	plugins/tosgatrace.so \
+	plugins/tosqledit.so \
 	plugins/tostorage.so \
 	plugins/tostoragedefinition.so \
 	plugins/toworksheet.so \
@@ -146,10 +153,11 @@ tora: \
 	objs/toresultitem.o \
 	objs/toresultplan.o \
 	objs/toresultview.o \
+	objs/tosql.o \
 	objs/tosyntaxsetup.o \
 	objs/tothread.o \
 	objs/totool.o \
 	objs/utils.o
 	@echo Linking $@
 	$(CC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
-		-o $@ $^ $(LIBS_GLOB) $(QT_SHARED)
+		-o $@ $^ $(LIBS_GLOB) $(ORACLE_SHARED) $(STDCPP_SHARED) $(QT_SHARED)

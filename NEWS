@@ -1,4 +1,4 @@
-0.6:
+0.6: Released 2001-02-23
 
 2001-02-13: Added support for building static RPM
 2001-02-13: Link StdC++ statically as well in tora-static
@@ -12,13 +12,16 @@
 2001-02-21: Added version detection in toConnection.
 2001-02-21: Added SQL dictionary functionality.
 2001-02-22: Adopted TOra to use SQL dictionary (Woah, that was boring)
-2001-02-22: Added index to all menues so tools can add themselves anywhere in the menus.
+2001-02-22: Added index to all menues so tools can add themselves anywhere in
+		the menus.
 2001-02-22: Added customSetup function to tools, called when toMain is setup.
 2001-02-22: Don't hide row/column labels since it doesn't seem to work.
 2001-02-22: Fixed bug in toParamGet that added \n to end of all statements.
-2001-02-22: Added autoLoad parameter to toWorksheet widget to be able to use it in sql editor.
+2001-02-22: Added autoLoad parameter to toWorksheet widget to be able to use
+		it in sql editor.
 2001-02-22: Added SQL dictionary editor tool.
-2001-02-22: Made : be separator in configurationfiles instead of \\, backwards compatible though.
+2001-02-22: Made : be separator in configurationfiles instead of \\, backwards
+		compatible though.
 
 0.5: Released 2001-02-12
 
