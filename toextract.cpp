@@ -412,6 +412,9 @@ QString toExtract::generateHeading(const QString &action,
 {
   if (!Heading)
     return "";
+  char host[1024];
+  gethostname(host,1024);
+
   QString str=QString("REM This DDL was reverse engineered by
 REM TOra, Version %1
 REM
@@ -426,8 +429,6 @@ REM
     arg(Connection.host()).
     arg(Connection.version()).
     arg(QDateTime::currentDateTime().toString());
-  char host[1024];
-  gethostname(host,1024);
   if (action=="FREE SPACE")
     str+="REM Generating free space report";
   else {
@@ -572,7 +573,7 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
       (tchr=="R")?"FOREIGN KEY":
       "CHECK";
 
-    QString sql("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4\n").
+    QString sql=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4\n").
       arg(schema).arg(table.lower()).arg(name.lower()).arg(type);
     if (Prompt) {
       ret="PROMPT ";
@@ -1006,7 +1007,7 @@ QString toExtract::indexColumns(const QString &indent,
     inf>>buffer;
     QString asc=QString::fromUtf8(buffer);
     QString row;
-    if (func.match(col)) {
+    if (func.match(col)>=0) {
       otl_stream def(1,
 		     SQLIndexFunction(Connection),
 		     Connection.connection());
@@ -1054,7 +1055,7 @@ void toExtract::describeIndexColumns(list<QString> &lst,list<QString> &ctx,
     inf>>buffer;
     QString asc=QString::fromUtf8(buffer);
     QString row;
-    if (func.match(col)) {
+    if (func.match(col)>=0) {
       otl_stream def(1,
 		     SQLIndexFunction(Connection),
 		     Connection.connection());
@@ -2778,7 +2779,7 @@ QString toExtract::createMViewTable(const QString &schema,const QString &owner,
   QString ret;
 
   for(QStringList::Iterator i=linesIn.begin();i!=linesIn.end()&&!done;i++) {
-    if(parallel.match(*i))
+    if(parallel.match(*i)>=0)
       started=true;
     if (started) {
       QString line=*i;
@@ -2814,7 +2815,7 @@ void toExtract::describeMViewTable(list<QString> &lst,list<QString> &ctx,
   QString ret;
 
   for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
-    if(parallel.match(*i))
+    if(parallel.match(*i)>=0)
       started=true;
     if (started)
       lst.insert(lst.end(),reContext(ctx,3,*i));
@@ -2842,7 +2843,7 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
   QString ret;
 
   for(QStringList::Iterator i=linesIn.begin();i!=linesIn.end()&&!done;i++) {
-    if(start.match(*i))
+    if(start.match(*i)>=0)
       started=true;
     if (started) {
       QString line=*i;
@@ -2850,7 +2851,7 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
 	line.truncate(line.length()-1);
 	done=true;
       }
-      if (!ignore.match(line)&&line.length()) {
+      if (ignore.match(line)<0&&line.length()>0) {
 	ret+=line;
 	ret+="\n";
       }
@@ -2879,7 +2880,7 @@ void toExtract::describeMViewIndex(list<QString> &lst,list<QString> &ctx,
   QString ret;
 
   for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
-    if(start.match(*i))
+    if(start.match(*i)>=0)
       started=true;
     if (started)
       lst.insert(lst.end(),reContext(ctx,3,*i));
@@ -5949,6 +5950,7 @@ QString toExtract::compile(list<QString> &objects)
   QString ret=generateHeading("COMPILE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Creating script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
@@ -5997,6 +5999,7 @@ QString toExtract::create(list<QString> &objects)
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Creating script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
@@ -6091,6 +6094,7 @@ list<QString> toExtract::describe(list<QString> &objects)
   list<QString> ret;
 
   QProgressDialog progress("Creating description","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Creating script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
@@ -6186,6 +6190,7 @@ QString toExtract::drop(list<QString> &objects)
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Creating script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
@@ -6271,6 +6276,7 @@ QString toExtract::resize(list<QString> &objects)
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  progress.setCaption("Creating script");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
