@@ -65,6 +65,7 @@ class toResultLock;
 class toResultLong;
 class toResultParam;
 class toResultStats;
+class toWaitEvents;
 
 class toTuningMiss : public toResultLine {
 public:
@@ -157,46 +158,6 @@ public slots:
   void poll(void);
 };
 
-class toTuningWait : public QVBox {
-  Q_OBJECT
-
-  toResultBar *Delta;
-  toResultBar *DeltaTimes;
-  toPieChart *AbsolutePie;
-  toPieChart *DeltaPie;
-  QListView *Types;
-  toNoBlockQuery *Query;
-  toBackground Poll;
-
-  bool First;
-  bool ShowTimes;
-  QString Now;
-  std::list<QString> Labels;
-  time_t LastTime;
-  std::list<double> LastCurrent;
-  std::list<double> LastTimes;
-  std::list<double> Current;
-  std::list<double> CurrentTimes;
-  std::list<double> Relative;
-  std::list<double> RelativeTimes;
-  std::list<bool> Enabled;
-
-  std::map<QString,bool> HideMap;
-public:
-  toTuningWait(QWidget *parent,const char *name);
-
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
-public slots:
-  virtual void connectionChanged(void);
-  virtual void changeSelection(void);
-  virtual void poll(void);
-  virtual void refresh(void);
-  virtual void start(void);
-  virtual void stop(void);
-  virtual void changeType(int);
-};
-
 class toTuning : public toToolWidget {
   Q_OBJECT
 
@@ -213,7 +174,7 @@ class toTuning : public toToolWidget {
   toResultStats *Statistics;
   toResultLong *LibraryCache;
   toResultLong *ControlFiles;
-  toTuningWait *Waits;
+  toWaitEvents *Waits;
 
   std::map<QString,QGrid *> Charts;
 

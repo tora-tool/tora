@@ -279,8 +279,8 @@ static toSQL SQLLongOps("toSGATrace:LongOps",
 			" where b.sql_address = a.address(+)\n"
 			"   and b.sql_hash_value = a.hash_value(+)\n"
 			"   and b.opname is not null",
-			"Display the contents of long the long operations list. Must have a hidden "
-			"with SGA address and at the end and a table name 'b' with a column username.");
+			"Display the contents of long the long operations list. Must have a hidden column "
+			"with SGA address at the end and a table name 'b' with a column username.");
 
 void toSGATrace::refresh(void)
 {

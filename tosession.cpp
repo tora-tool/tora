@@ -48,6 +48,7 @@
 #include "tosgastatement.h"
 #include "tosql.h"
 #include "totool.h"
+#include "towaitevents.h"
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
@@ -254,6 +255,9 @@ toSession::toSession(QWidget *main,toConnection &connection)
   IOBar->setYPostfix("blocks/s");
   ResultTab->addTab(StatisticSplitter,"Statistics");
 
+  Waits=new toWaitEvents(0,ResultTab,"waits");
+  ResultTab->addTab(Waits,"Wait events");
+
   ConnectInfo=new toResultLong(true,false,toQuery::Background,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
@@ -455,6 +459,7 @@ void toSession::changeItem(QListViewItem *item)
     if (!item->text(0).isEmpty()) {
       WaitBar->changeParams(item->text(0));
       IOBar->changeParams(item->text(0));
+      Waits->setSession(item->text(0).toInt());
     }
     LastSession=item->text(0);
   }

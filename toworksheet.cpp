@@ -529,6 +529,8 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
 			   "&Describe Under Cursor",this,SLOT(describe(void)),
 			   Key_F4);
+      ToolMenu->insertItem("&Explain current statement",this,SLOT(explainPlan(void)),
+			   Key_F3);
       ToolMenu->insertItem("&Enable Statistics",this,SLOT(toggleStatistic(void)),
 			   0,TO_ID_STATISTICS);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
@@ -702,7 +704,7 @@ bool toWorksheet::describe(const QString &query)
   }
 }
 
-void toWorksheet::query(const QString &str,bool direct)
+void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 {
   Result->stop();
 
@@ -728,7 +730,10 @@ void toWorksheet::query(const QString &str,bool direct)
   if(chk.startsWith("create trigger "))
     nobinds=true;
   
-  if (!describe(QueryString)) {
+  if (onlyPlan) {
+    ResultTab->showPage(Plan);
+    Plan->query(str);
+  } else if (!describe(QueryString)) {
 
     toSQLParse::stringTokenizer tokens(str);
     QString first=tokens.getToken(true).upper();
@@ -920,7 +925,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   saveDefaults();
 }
 
-void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct)
+void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan)
 {
   Editor->setCursorPosition(line,pos,false);
   Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
@@ -963,7 +968,7 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
     t=t.mid(i);
   }
   if (t.length())
-    query(t,direct);
+    query(t,direct,onlyPlan);
 }
 
 void toWorksheet::execute()
@@ -986,6 +991,28 @@ void toWorksheet::execute()
 	  (tokens.line()==cline&&tokens.offset()<cpos));
 
   execute(tokens,line,pos,false);
+}
+
+void toWorksheet::explainPlan()
+{
+  if (Editor->hasMarkedText())
+    query(Editor->markedText(),false,true);
+
+  toSQLParse::editorTokenizer tokens(Editor);
+
+  int cpos,cline;
+  Editor->getCursorPosition(&cline,&cpos);
+
+  int line;
+  int pos;
+  do {
+    line=tokens.line();
+    pos=tokens.offset();
+    toSQLParse::parseStatement(tokens);
+  } while(tokens.line()<cline||
+	  (tokens.line()==cline&&tokens.offset()<cpos));
+
+  execute(tokens,line,pos,false,true);
 }
 
 void toWorksheet::executeStep()

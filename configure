@@ -118,7 +118,7 @@ done
 
 echo "done"
 
-echo $ac_n "removing leftover object files ... $ac_c"
+echo $ac_n "removing leftover intermediate files ... $ac_c"
 rm -rf objs 2> /dev/null
 echo "done"
 

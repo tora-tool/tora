@@ -17,6 +17,7 @@ Extended functionality:
 	Libraries
 	Materialized Views
 	Dimensions
+	Partitions
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
@@ -26,7 +27,7 @@ Extended functionality:
 	PL/SQL doc (Like JavaDoc).
 	Synchonize editors that edit the same file.
 * Debugger
-	Don't lock during execution.
+	Don't lock during execution
 	Support for Oracle 7
 	Support for multiple open editors
 	Use toSQLParse
@@ -34,6 +35,7 @@ Extended functionality:
 	Support for one referential cursor output variable
 * Full support for Oracle 9i.
 	Support for undo tablespaces.
+	Support for list partitions in extractor
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.

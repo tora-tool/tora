@@ -113,12 +113,12 @@ class toWorksheet : public toToolWidget {
   QString duration(int,bool hundreds=true);
   void saveHistory(void);
   void viewResources(void);
-  void query(const QString &str,bool direct);
+  void query(const QString &str,bool direct,bool onlyPlan=false);
   bool checkSave(bool input);
   void saveDefaults(void);
   void setup(bool autoLoad);
 
-  void execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct);
+  void execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan=false);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
   toWorksheet(QWidget *parent,const char *name,toConnection &connection);
@@ -152,6 +152,7 @@ public slots:
   void windowActivated(QWidget *w);
   void queryDone(void);
   void enableStatistic(bool);
+  void explainPlan(void);
   void toggleStatistic(void)
   { StatisticButton->setOn(!StatisticButton->isOn()); }
   void showSaved(void);
