@@ -1,3 +1,4 @@
+
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -202,9 +203,10 @@ void toStorageTablespace::uniformToggle(bool val)
 std::list<QString> toStorageTablespace::sql()
 {
   std::list<QString> ret;
-  QString str("MINIMUM EXTENT ");
-  str.append(MinimumExtent->sizeString());
-  toPush(ret,str);
+  QString str;
+  if (ExtentGroup->isEnabled()&&Dictionary->isChecked())
+    toPush(ret,"MINIMUM EXTENT "+MinimumExtent->sizeString());
+
   if (Logging->isChecked()!=LoggingOrig||!Modify) {
     if (Logging->isChecked())
       str="LOGGING";
