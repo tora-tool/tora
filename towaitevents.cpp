@@ -50,6 +50,7 @@
 #include <qlistview.h>
 #include <qpainter.h>
 #include <qsplitter.h>
+#include <qtoolbar.h>
 
 class toWaitEventsItem : public toResultViewItem {
   int Color;

@@ -1,5 +1,8 @@
 1.3.6:
 
+2002-05-27: Fixed compile problem in waitstate when compiling with Qt2.
+2002-05-27: Made configure search for shared libraries called .sl as well as .so (HP-UX).
+2002-05-27: Display filename when asking to save file in worksheet.
 2002-05-23: Don't pass connection to toolbar.
 2002-05-23: Code review of uncaught exceptions, huge number of changes.
 2002-05-23: Fixed problem with opening errounus templates.

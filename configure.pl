@@ -555,7 +555,7 @@ __TEMP__
 
 	print "checking for KDE libraries ... ";
 
-	$KDELibs=findFile("^libDCOP.so",sub {
+	$KDELibs=findFile("^libDCOP.s[ol]",sub {
                                    	    return -f $_[0];
 					},
 			     $KDELibs,
@@ -625,7 +625,7 @@ __TEMP__
 
 	print "checking for Qt library linked to KDE ... ";
 	my $found=0;
-	if (open(LDD,"ldd $KDELibs/libkdecore.so 2>&1 |")) {
+	if (open(LDD,"ldd $KDELibs/libkdecore.s[ol] 2>&1 |")) {
 	    while(<LDD>) {
 		if (/\/([^\/]+qt[^\.]*)/) {
 		    $QtSearch="$1";
@@ -646,14 +646,14 @@ __TEMP__
 
     print "checking for Qt library ... ";
 
-    $QtLib=findFile("^".$QtSearch."[23]\\.so",sub {
+    $QtLib=findFile("^".$QtSearch."[23]\\.s[ol]",sub {
 	                                        if (-f $_[0] && ! -l $_[0]) {
 						    my $lib;
 						    ($lib,$QtLibShared)=($_[0]=~/^(.*)\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }
-						    if (-f "$lib/lib$QtLibShared.so") {
+						    if (-f "$lib/lib$QtLibShared.so" || -f "$lib/lib$QtLibShared.sl") {
 							$QtLibShared=" -l$QtLibShared";
 							return 1;
 						    }
@@ -688,7 +688,7 @@ __TEMP__
 		    );
 
     if (! -d $QtLib) {
-	$QtLib=findFile("^$QtSearch\\.so\\.[23]",sub {
+	$QtLib=findFile("^$QtSearch\\.s[ol]\\.[23]",sub {
 		                                     if (-f $_[0] && ! -l $_[0]) {
 							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 							 if (!defined $QtLibShared) {
@@ -1018,7 +1018,7 @@ __TEMP__
 	} else {
 	    print "$MySQLInclude\n";
 	    print "checking for MySQL library ... ";
-	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
+	    $MySQLLib=findFile("^libmysqlclient\\.s[ol]",sub {
 		                                          return -f $_[0] && ! -l $_[0];
 						      },
 			       $MySQLLib,
