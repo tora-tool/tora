@@ -39,6 +39,8 @@
 #include "toresultstats.h"
 #include "totool.h"
 
+#include <qapplication.h>
+
 #include <signal.h>
 #include <sys/types.h>
 #ifndef WIN32

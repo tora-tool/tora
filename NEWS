@@ -1,5 +1,6 @@
 1.3.7:
 
+2002-07-28: Fixed problem with Qt only compile.
 2002-07-19: Added top buffers/row in sga trace.
 2002-07-18: Added option to set locale to global options.
 2002-07-18: Some more missing translations added.
