@@ -34,9 +34,9 @@
  *
  ****************************************************************************/
 
-#include <stdio.h>
-#include <map>
 #include <time.h>
+
+#include <map>
 
 #include <qmessagebox.h>
 
