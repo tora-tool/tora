@@ -487,9 +487,10 @@ void toMain::commandCallback(int cmd)
       case TO_FILE_SAVE_AS:
 	newFilename=true;
       case TO_FILE_SAVE:
+	QFileInfo file(mark->filename());
 	QString filename=mark->filename();
 	if (newFilename||filename.isEmpty())
-	  filename=QFileDialog::getSaveFileName(filename,"*.sql\n*.txt",this);
+	  filename=QFileDialog::getSaveFileName(file.filePath(),"*.sql\n*.txt",this);
 	if (!filename.isEmpty()) {
 	  QFile file(filename);
 	  if (!file.open(IO_WriteOnly)) {

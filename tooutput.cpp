@@ -42,6 +42,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "tomarkedtext.h"
 #include "tomain.h"
+#include "tosql.h"
 
 #include "tooutput.moc"
 
@@ -172,19 +173,27 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
     disable(false);
 }
 
+static toSQL SQLEnable("toOutput:Enable",
+		       "BEGIN\n"
+		       "    DBMS_OUTPUT.ENABLE;\n"
+		       "END;",
+		       "Enable output collection");
+static toSQL SQLDisable("toOutput:Disable",
+			"BEGIN\n"
+			"    DBMS_OUTPUT.DISABLE;\n"
+			"END;",
+			"Disable output collection");
+
+
 void toOutput::disable(bool dis)
 {
   try {
     if (dis)
       otl_cursor::direct_exec(Connection.connection(),
-			      "BEGIN\n"
-			      "    DBMS_OUTPUT.DISABLE;"
-			      "END;");
+			      SQLDisable(Connection));
     else
       otl_cursor::direct_exec(Connection.connection(),
-			      "BEGIN\n"
-			      "    DBMS_OUTPUT.ENABLE;"
-			      "END;");
+			      SQLEnable(Connection));
   } catch (...) {
     toStatusMessage("Couldn't enable/disable output for session");
   }
@@ -197,16 +206,20 @@ toOutput::~toOutput()
   Connection.delWidget(this);
 }
 
+static toSQL SQLLines("toOutput:Poll",
+		      "BEGIN\n"
+		      "    DBMS_OUTPUT.GET_LINES(:lines<char[256],out[255]>,\n"
+		      "                          :numlines<int,inout>);\n"
+		      "END;",
+		      "Get lines from SQL Output, must use same bindings");
+
 void toOutput::refresh(void)
 {
   try {
     int numlines;
     do {
       otl_stream query(1,
-		       "BEGIN"
-		       "    DBMS_OUTPUT.GET_LINES(:lines<char[256],out[255]>,"
-		       "                          :numlines<int,inout>);"
-		       "END;",
+		       SQLLines(Connection),
 		       Connection.connection());
       query<<254;
       otl_cstr_tab<257,255> lines;

@@ -37,7 +37,7 @@
 #include "totool.h"
 #include "tomarkedtext.h"
 
-class QTabWindow;
+class QTabWidget;
 class toResultView;
 class toResultItem;
 class toResultStats;
@@ -96,12 +96,15 @@ class toWorksheet : public QVBox {
   void query(const QString &str);
   bool checkSave(bool input);
 public:
-  toWorksheet(QWidget *parent,toConnection &connection);
+  toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
   virtual ~toWorksheet();
 
   virtual bool close(bool del);
 
   void execute(bool all,bool step=false);
+
+  toMarkedText *editor(void)
+  { return Editor; }
 public slots:
   void refresh();
   void execute()

@@ -112,8 +112,8 @@ void toTool::saveConfig(void)
     if (!file.open(IO_WriteOnly))
       return;
 
-    QString newline("\n");
-    QString backslash("\\");
+    QRegExp newline("\n");
+    QRegExp backslash("\\");
     for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
       QString line=(*i).first;
       line.append("=");
@@ -195,7 +195,10 @@ void toTool::loadConfig(void)
 	buf[wpos]='\n';
 	break;
       case '\\':
-	buf[wpos]='\\';
+	if (endtag>=0)
+	  buf[wpos]='\\';
+	else
+	  buf[wpos]=':';
 	break;
       default:
 	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
@@ -212,7 +215,7 @@ void toTool::loadConfig(void)
 const QString &toTool::config(const QString &tag,const QString &def)
 {
   QString str=name();
-  str.append("\\");
+  str.append(":");
   str.append(tag);
   return globalConfig(str,def);
 }
@@ -220,7 +223,7 @@ const QString &toTool::config(const QString &tag,const QString &def)
 void toTool::setConfig(const QString &tag,const QString &def)
 {
   QString str=name();
-  str.append("\\");
+  str.append(":");
   str.append(tag);
   globalSetConfig(str,def);
 }

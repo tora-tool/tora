@@ -29,6 +29,10 @@
 TO_NAMESPACE;
 
 #include <stdio.h>
+#include <unistd.h>
+
+#include <qfile.h>
+#include <qregexp.h>
 
 #include "tosql.h"
 #include "toconnection.h"
@@ -38,9 +42,10 @@ toSQL::sqlMap *toSQL::Definitions;
 bool toSQL::updateSQL(const QString &name,
 		      const QString &sql,
 		      const QString &description,
-		      const QString &version)
+		      const QString &ver,
+		      bool modified)
 {
-  versions def(version,sql);
+  version def(ver,sql,modified);
 
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
@@ -50,20 +55,36 @@ bool toSQL::updateSQL(const QString &name,
       return false;
     }
     definition newDef;
+    newDef.Modified=modified;
     newDef.Description=description;
-    list<versions> &cl=newDef.Versions;
-    cl.insert(cl.end(),def);
+    if (!sql.isNull()) {
+      list<version> &cl=newDef.Versions;
+      cl.insert(cl.end(),def);
+    }
     (*Definitions)[name]=newDef;
     return true;
   } else {
-    (*i).second.Description=description;
-    list<versions> &cl=(*i).second.Versions;
-    for (list<versions>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version==version) {
-	(*j)=def;
+    if (!description.isNull()) {
+      if ((*i).second.Description!=description) {
+	(*i).second.Description=description;
+	(*i).second.Modified=modified;
+      }
+      if (!modified)
+	fprintf(stderr,"ERROR:Overwrite description of nonmodified (%s)\n",(const char *)name);
+    }
+    list<version> &cl=(*i).second.Versions;
+    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+      if ((*j).Version==ver) {
+	if (!sql.isNull()) {
+	  (*j)=def;
+	  if (def.SQL!=(*j).SQL)
+	    (*j).Modified=modified;
+	}
 	return false;
-      } else if ((*j).Version>version) {
-	cl.insert(j,def);
+      } else if ((*j).Version>ver) {
+	if (!sql.isNull()) {
+	  cl.insert(j,def);
+	}
 	return true;
       }
     }
@@ -73,21 +94,21 @@ bool toSQL::updateSQL(const QString &name,
 }
 
 bool toSQL::deleteSQL(const QString &name,
-		      const QString &version)
+		      const QString &ver)
 {
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
   if (i==Definitions->end()) {
     return false;
   } else {
-    list<versions> &cl=(*i).second.Versions;
-    for (list<versions>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version==version) {
+    list<version> &cl=(*i).second.Versions;
+    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+      if ((*j).Version==ver) {
 	cl.erase(j);
 	if (cl.begin()==cl.end())
 	  Definitions->erase(i);
 	return true;
-      } else if ((*j).Version>version) {
+      } else if ((*j).Version>ver) {
 	return false;
       }
     }
@@ -99,16 +120,16 @@ const QString &toSQL::sql(const QString &name,
 			  const toConnection &conn)
 {
   allocCheck();
-  const QString &version=conn.version();
+  const QString &ver=conn.version();
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end()) {
     QString *sql=NULL;
-    list<versions> &cl=(*i).second.Versions;
-    for (list<versions>::iterator j=cl.begin();j!=cl.end();j++) {
-      if ((*j).Version<=version||!sql) {
+    list<version> &cl=(*i).second.Versions;
+    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+      if ((*j).Version<=ver||!sql) {
 	sql=&(*j).SQL;
       }
-      if ((*j).Version>=version)
+      if ((*j).Version>=ver)
 	return *sql;
     }
     if (sql)
@@ -120,3 +141,132 @@ const QString &toSQL::sql(const QString &name,
   throw str;
 }
 
+bool toSQL::saveSQL(const QString &filename)
+{
+  allocCheck();
+  QFile file(expandFile(filename));
+  if (!file.open(IO_WriteOnly))
+    return false;
+
+  QRegExp backslash("\\");
+  QRegExp newline("\n");
+  for (sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
+    definition &def=(*i).second;
+    QString name=(*i).first;
+    if (def.Modified) {
+      QString line=name;
+      line+="=";
+      line+=def.Description;
+      line.replace(backslash,"\\\\");
+      line.replace(newline,"\\n");
+      file.writeBlock(line,line.length());
+      file.writeBlock("\n",1);
+    }
+    for (list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
+      version &ver=(*j);
+      if (ver.Modified) {
+	QString line=name;
+	line+="[";
+	line+=ver.Version;
+	line+="]=";
+	line+=ver.SQL;
+	line.replace(backslash,"\\\\");
+	line.replace(newline,"\\n");
+	file.writeBlock(line,line.length());
+	file.writeBlock("\n",1);
+      }
+    }
+  }
+  return true;
+}
+
+QString toSQL::expandFile(const QString &file)
+{
+  QString ret(file);
+  ret.replace(QRegExp("$HOME"),getenv("HOME"));
+  return ret;
+}
+
+bool toSQL::loadSQL(const QString &filename)
+{
+  allocCheck();
+  QFile file(expandFile(filename));
+  if (!file.open(IO_ReadOnly))
+    return false;
+  
+  int size=file.size();
+  
+  char buf[size+1];
+  if (file.readBlock(buf,size)==-1) {
+    throw QString("Encountered problems read configuration");
+  }
+  buf[size]=0;
+  int pos=0;
+  int bol=0;
+  int endtag=-1;
+  int vertag=-1;
+  int wpos=0;
+  while(pos<size) {
+    switch(buf[pos]) {
+    case '\n':
+      if (endtag==-1)
+	throw QString("Malformed tag in config file. Missing = on row.");
+      buf[wpos]=0;
+      {
+	QString nam=buf+bol;
+	QString val=buf+endtag+1;
+	if (vertag==-1)
+	  updateSQL(nam,QString::null,val,QString::null,true);
+	else
+	  updateSQL(nam,val,QString::null,buf+vertag+1,true);
+      }
+      bol=pos+1;
+      vertag=endtag=-1;
+      wpos=pos;
+      break;
+    case '=':
+      if (endtag==-1) {
+	endtag=pos;
+	buf[wpos]=0;
+	wpos=pos;
+      }
+      break;
+    case '[':
+      if (endtag==-1) {
+	if (vertag>=0)
+	  throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
+	vertag=pos;
+	buf[wpos]=0;
+	wpos=pos;
+      }
+      break;
+    case ']':
+      if (endtag==-1) {
+	buf[wpos]=0;
+	wpos=pos;
+      }
+      break;
+    case '\\':
+      pos++;
+      switch(buf[pos]) {
+      case 'n':
+	buf[wpos]='\n';
+	break;
+      case '\\':
+	if (endtag>=0)
+	  buf[wpos]='\\';
+	else
+	  buf[wpos]=':';
+	break;
+      default:
+	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
+      }
+      break;
+    default:
+      buf[wpos]=buf[pos];
+    }
+    wpos++;
+    pos++;
+  }
+  return true;
+}

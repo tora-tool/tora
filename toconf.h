@@ -59,6 +59,8 @@
 #define CONF_KEYWORD_UPPER	"KeywordUpper"
 #define CONF_COLOR		"KeywordColor"
 #define CONF_PLUGIN_DIR		"PluginDir"
+#define CONF_SQL_FILE		"SQLDictionary"
+#define DEFAULT_SQL_FILE	"$HOME/.torasql"
 
 // Undefining this will leave out the style selection option stuff from the program
 #define ENABLE_STYLE

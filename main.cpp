@@ -35,6 +35,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tohighlightedtext.h"
 #include "toabout.h"
+#include "tosql.h"
 
 #include <stdio.h>
 
@@ -107,6 +108,8 @@ int main(int argc,char **argv)
 		 (const char *)(*i),dlerror());
     }
 #endif
+
+    toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
 
     toDefaultAnalyzer().updateSettings();
 

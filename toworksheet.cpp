@@ -243,7 +243,7 @@ void toWorksheet::viewResources(void)
   } TOCATCH
 }
 
-toWorksheet::toWorksheet(QWidget *main,toConnection &connection)
+toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   : QVBox(main,NULL,WDestructiveClose),Connection(connection)
 {
   if (!toRefreshPixmap)
@@ -336,22 +336,23 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection)
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeResult(QWidget *)));
 
-  Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
-  if (!Editor->filename().isEmpty()) {
-    QFile file(Editor->filename());
-    if (!file.open(IO_ReadOnly)) {
-      return;
-    }
+  if (autoLoad) {
+    Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
+    if (!Editor->filename().isEmpty()) {
+      QFile file(Editor->filename());
+      if (!file.open(IO_ReadOnly))
+	return;
 	    
-    int size=file.size();
+      int size=file.size();
 	    
-    char buf[size+1];
-    if (file.readBlock(buf,size)==-1)
-      return;
+      char buf[size+1];
+      if (file.readBlock(buf,size)==-1)
+	return;
 
-    buf[size]=0;
-    Editor->setText(buf);
-    Editor->setEdited(false);
+      buf[size]=0;
+      Editor->setText(buf);
+      Editor->setEdited(false);
+    }
   }
 }
 

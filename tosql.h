@@ -37,17 +37,19 @@ class toConnection;
 
 class toSQL {
 public:
-  struct versions {
+  struct version {
     QString Version;
     QString SQL;
-    versions(const QString &ver,const QString &sql)
-      : Version(ver),SQL(sql)
+    bool Modified;
+    version(const QString &ver,const QString &sql,bool modified=false)
+      : Version(ver),SQL(sql),Modified(modified)
     { }
   };
 
   struct definition {
     QString Description;
-    list<versions> Versions;
+    bool Modified;
+    list<version> Versions;
   };
 
   typedef map<QString,definition> sqlMap;
@@ -61,19 +63,25 @@ private:
 
   static void allocCheck(void)
   { if (!Definitions) Definitions=new sqlMap; }
+
+  static QString expandFile(const QString &file);
 public:
   static bool updateSQL(const QString &name,
 		        const QString &sql,
 		        const QString &description,
-		        const QString &version="8.1.5");
+		        const QString &ver="8.1.5",
+			bool modified=true);
 
   static bool deleteSQL(const QString &name,
-		        const QString &version);
+		        const QString &ver);
 
   static const QString &sql(const QString &name,const toConnection &conn);
 
   static const QString &sql(const toSQL &sqldef,const toConnection &conn)
   { return sql(sqldef.Name,conn); }
+
+  static bool saveSQL(const QString &file);
+  static bool loadSQL(const QString &file);
 
   static const sqlMap &definitions(void)
   { allocCheck(); return *Definitions; }
@@ -84,9 +92,9 @@ public:
   toSQL(const QString &name,
 	const QString &sql,
 	const QString &description=QString::null,
-	const QString &version="8.1.5")
+	const QString &ver="8.1.5")
     : Name(name)
-  { updateSQL(name,sql,description,version); }
+  { updateSQL(name,sql,description,ver,false); }
 };
 
 #endif
