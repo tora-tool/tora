@@ -1,0 +1,246 @@
+<HTML>
+<HEAD>
+<TITLE>Source: toresultcontent.h</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>Source: toresultcontent.h</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<pre>
+//***************************************************************************
+/*
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2000 GlobeCom AB
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
+ *
+ * All trademarks belong to their respective owners.
+ *
+ ****************************************************************************/
+
+#ifndef __TORESULTCONTENT_H
+#define __TORESULTCONTENT_H
+
+#include &lt;list&gt;
+#include &lt;qtable.h&gt;
+#include "toresult.h"
+#include "toconnection.h"
+
+/** This widget allows the user to browse the contents of a table and also edit
+ * the content. The table is specified by the first and second parameter in the query.
+ * The sql is not used in the query.
+ */
+
+class toResultContent : public QTable,public toResult {
+  Q_OBJECT
+
+  /** Connection of this result content.
+   */
+  toConnection &amp;Connection;
+  /** Owner of table.
+   */
+  QString Owner;
+  /** Tablename.
+   */
+  QString Table;
+  /** Original values of rows currently being edited.
+   */
+  list&lt;QString&gt; OrigValues;
+  /** Stream to read data from.
+   */
+  otl_stream *Query;
+  /** Description of data stream.
+   */
+  otl_column_desc *Description;
+  /** Number of rows read from stream.
+   */
+  int Row;
+  /** Current row of editing.
+   */
+  int CurrentRow;
+  /** Indicator to add more rows.
+   */
+  bool AddRow;
+  /** Used to detect drag.
+   */
+  QPoint LastMove;
+
+  /** Popup menu if available.
+   */
+  QPopupMenu *Menu;
+  /** Column of item selected when popup menu displayed.
+   */
+  int MenuColumn;
+  /** Row of item selected when popup menu displayed.
+   */
+  int MenuRow;
+
+  /** Current sorting row.
+   */
+  int SortRow;
+  /** Indicate if sorting ascending or descending.
+   */
+  bool SortRowAsc;
+
+  /** Add another row to the contents.
+   */
+  void addRow(void);
+  /** Throw an exception about wrong usage.
+   */
+  void wrongUsage(void);
+
+  /** Reimplemented for internal reasons.
+   */
+  virtual void drawContents(QPainter * p,int cx,int cy,int cw,int ch);
+  /** Reimplemented for internal reasons.
+   */
+  virtual QWidget *beginEdit(int row,int col,bool replace);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void paintCell(QPainter *p,int row,int col,const QRect &amp;cr,bool selected);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusInEvent (QFocusEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusOutEvent (QFocusEvent *e); 
+  /** Reimplemented for internal reasons.
+   */
+  virtual void activateNextCell();
+
+  /** Reimplemented for internal reasons.
+   */
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void dropEvent(QDropEvent *event);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void contentsMousePressEvent(QMouseEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void contentsMouseReleaseEvent(QMouseEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void contentsMouseMoveEvent (QMouseEvent *e);
+  
+public:
+  /** Create the widget.
+   * @param conn Connection to display.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
+  toResultContent(toConnection &amp;conn,QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param)
+  { wrongUsage(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1)
+  { wrongUsage(); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { wrongUsage(); }
+
+  /** Read all rows from the table.
+   */
+  void readAll(void);
+  /** Print the contents.
+   */
+  void print(void);
+  /** Export contents to file.
+   */
+  virtual void exportFile(void);
+public slots:
+  /** Change sorting column
+   * @param col Column selected to change as sorting.
+   */
+  virtual void changeSort(int col); 
+  /** Reimplemented for internal reasons.
+   */
+  virtual void refresh(void)
+  { changeParams(Owner,Table); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
+  /** Current cell changed.
+   * @param row New row.
+   * @param col New column.
+   */
+  void changePosition(int row,int col);
+
+  /** Display popup menu
+   * @param p Point to display popup at.
+   */
+  virtual void displayMenu(const QPoint &amp;p);
+  /** Display editable memo viewer at current position.
+   */
+  virtual void displayMemo(void);
+protected slots:
+  /** Callback from popup menu.
+   * @param cmd Command ID.
+   */
+  virtual void menuCallback(int cmd);
+  /** Change data at specified position.
+   * @param row Row to change.
+   * @param col Column to change.
+   * @param data New contents of data.
+   */ 
+  virtual void changeData(int row,int col,const QString &amp;data); 
+};
+
+#endif
+</pre>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

@@ -1,0 +1,137 @@
+<HTML>
+<HEAD>
+<TITLE>class toHtml</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toHtml</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> A small and hopefully pretty efficient parser of HTML tags. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohtml_h.html">tohtml.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toHtml.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toHtml</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref13">~toHtml</A></b> () 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref14">nextToken</A></b> (void) 
+</LI>
+<LI>const char *&nbsp;<b><A HREF="#ref15">value</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref16">isTag</A></b> (void) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref17">open</A></b> (void) 
+</LI>
+<LI><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref18">text</A></b> (void) 
+</LI>
+<LI>const char *&nbsp;<b><A HREF="#ref19">tag</A></b> (void) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref20">eof</A></b> (void) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref21">search</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A small and hopefully pretty efficient parser of HTML tags. No attempt what
+ so ever is made trying to check the validity of the text so if you forget
+ a closing &gt; you will probably end up with an exception.
+</p>
+<p> A simple traverser counting the number of paragraphs might look like this.
+</p>
+<p></p><table border="0" width="100%">
+<tr>
+<td bgcolor="#BEEAE0">
+<pre>
+
+int paragraphs++;
+<A HREF="toHtml.html#toHtml">toHtml</A> count("Paragraphs&lt;P&gt;And some&lt;/P&gt;&lt;P&gt;Dobedoo");
+while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
+  count.<A HREF="toHtml.html#nextToken">nextToken</A>();
+  if (count.<A HREF="toHtml.html#isTag">isTag</A>()&amp;&amp;count.<A HREF="toHtml.html#open">open</A>()&amp;&amp;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>(count.<A HREF="toHtml.html#tag">tag</A>())=="p")
+    paragraphs++;
+}
+
+</pre>
+</td></tr>
+
+</table> <p>
+ </p>
+<A NAME="toHtml"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHtml</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data)
+<br></td><td align="right"><h3><strong>toHtml</strong></h3></td></tr></table><p></p><p> Create a HTML parser.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to parse.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toHtml"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toHtml</strong> ()
+<br></td><td align="right"><h3><strong>~toHtml</strong></h3></td></tr></table><p></p><A NAME="nextToken"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>nextToken</strong> (void)
+<br></td><td align="right"><h3><strong>nextToken</strong></h3></td></tr></table><p></p><p> Read the next token which can be either a open tag, close tag or text.
+</p>
+<p> Observe that nextToken destroys the data it has parsed, so you
+ can't search it later. Searhing must be done on an new toHtml,
+ several serches can be made though on the same toHtml.
+   </p>
+<A NAME="value"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char *&nbsp;<strong>value</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name)
+<br></td><td align="right"><h3><strong>value</strong></h3></td></tr></table><p></p><p> Get value of a qualifier.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of qualifier in lowercase.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Value of qualifier or NULL.
+   </p>
+<A NAME="isTag"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isTag</strong> (void)
+<br></td><td align="right"><h3><strong>isTag</strong></h3></td></tr></table><p></p><p> Return true if current token is a tag.
+</p>
+<p><b>Returns</b>: True if tag.
+   </p>
+<A NAME="open"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>open</strong> (void)
+<br></td><td align="right"><h3><strong>open</strong></h3></td></tr></table><p></p><p> Return true if open tag. Only valid if <A HREF="toHtml.html#isTag">isTag</A> is true.
+</p>
+<p><b>Returns</b>: True if open tag.
+   </p>
+<A NAME="text"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>text</strong> (void)
+<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p></p><p> Get bread text if available. Expands &amp;# characters are expanded before returned.
+ Only valid if <A HREF="toHtml.html#isTag">isTag</A> returns false.
+</p>
+<p><b>Returns</b>: The parsed text.
+   </p>
+<A NAME="tag"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char *&nbsp;<strong>tag</strong> (void)
+<br></td><td align="right"><h3><strong>tag</strong></h3></td></tr></table><p></p><p> Get name of tag in lowercase. Only valid if <A HREF="toHtml.html#isTag">isTag</A> returns true.
+</p>
+<p><b>Returns</b>: Name of tag (Excluding / if close tag).
+   </p>
+<A NAME="eof"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
+<br></td><td align="right"><h3><strong>eof</strong></h3></td></tr></table><p></p><p> Check if at end of data
+</p>
+<p><b>Returns</b>: True if at end of data.
+   </p>
+<A NAME="search"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>search</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<br></td><td align="right"><h3><strong>search</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Search data for a simple text.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to search.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Substring to search for in data.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

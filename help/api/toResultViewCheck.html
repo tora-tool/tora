@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+<TITLE>class toResultViewCheck</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toResultViewCheck</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> An item to display in a toListView or toResultView. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresultview_h.html">toresultview.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qchecklistitem.html">QCheckListItem</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultViewMLCheck.html">toResultViewMLCheck</A></TD></TR>
+<TR><TH><A HREF="full-list-toResultViewCheck.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toResultViewCheck</A></b> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref2">toResultViewCheck</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;text,QCheckListItem::Type type=Controller) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref3">paintCell</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> * p,const <A HREF="http://doc.trolltech.com/qcolorgroup.html">QColorGroup</A> &amp; cg,int column,int width,int align) 
+</LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref4">text</A></b> (int col)  const
+</LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref5">key</A></b> (int col,bool)  const
+</LI>
+<LI>virtual  int &nbsp;<b><A HREF="#ref6">width</A></b> (const <A HREF="http://doc.trolltech.com/qfontmetrics.html">QFontMetrics</A> &amp;fm, const <A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *top, int column)  const
+</LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref7">allText</A></b> (int col)  const
+</LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref8">tooltip</A></b> (int col)  const
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> An item to display in a toListView or toResultView. They differ from normal
+ QListViewItems in that they can have a tooltip and actually contain more text
+ than is displayed in the cell of the listview.
+ </p>
+<A NAME="toResultViewCheck"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent list view.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultViewCheck"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultViewCheck</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;text,QCheckListItem::Type type=Controller)
+<br></td><td align="right"><h3><strong>toResultViewCheck</strong></h3></td></tr></table><p></p><p> Create a new item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent item.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>text</i></TD><TD align="left" valign="top">Text of first column.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of check on this item.
+   </TD></TR>
+</TABLE></P>
+<A NAME="paintCell"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintCell</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> * p,const <A HREF="http://doc.trolltech.com/qcolorgroup.html">QColorGroup</A> &amp; cg,int column,int width,int align)
+<br></td><td align="right"><h3><strong>paintCell</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qchecklistitem.html#95e769">QCheckListItem</A>.</p>
+<A NAME="text"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>text</strong> (int col)
+<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qchecklistitem.html#14613d">QCheckListItem</A>.</p>
+<A NAME="key"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>key</strong> (int col,bool)
+<br></td><td align="right"><h3><strong>key</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> String to sort the data on. This is reimplemented so that numbers are sorted as numbers
+ and not as strings.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column
+</TD></TR>
+<TR><TD align="left" valign="top"><i>asc</i></TD><TD align="left" valign="top">Wether to sort ascending or not.
+   </TD></TR>
+</TABLE></P>
+<A NAME="width"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>width</strong> (const <A HREF="http://doc.trolltech.com/qfontmetrics.html">QFontMetrics</A> &amp;fm, const <A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *top, int column)
+<br></td><td align="right"><h3><strong>width</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qchecklistitem.html#d12c8d">QCheckListItem</A>.</p>
+<A NAME="allText"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>allText</strong> (int col)
+<br></td><td align="right"><h3><strong>allText</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get all text for this item. This is used for copying, drag &amp; drop and memo editing etc.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: All of the text.
+   </p>
+<A NAME="tooltip"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>tooltip</strong> (int col)
+<br></td><td align="right"><h3><strong>tooltip</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get the text to be displayed as tooltip for this item.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: The text to display as tooltip.
+   </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

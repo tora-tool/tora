@@ -1,0 +1,92 @@
+<HTML>
+<HEAD>
+<TITLE>class toSyntaxAnalyzer</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toSyntaxAnalyzer</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> This class implements a syntax parser to provide information to
+ a syntax highlighted editor. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohighlightedtext_h.html">tohighlightedtext.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toSyntaxAnalyzer.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>enum <A HREF="#ref1">infoType</A> {    Normal=0,
+    /** This is a keyword
+}
+</LI>
+<LI>struct <A HREF="toSyntaxAnalyzer__highlightInfo.html">highlightInfo</A>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref11">toSyntaxAnalyzer</A></b> (const char **keywords) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref12">~toSyntaxAnalyzer</A></b> () 
+</LI>
+<LI>virtual  list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref13">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+</LI>
+<LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref14">getColor</A></b> (infoType typ) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend <b><A HREF="#ref15">toSyntaxSetup</A></b></LI>
+</ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref6">isSymbol</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class implements a syntax parser to provide information to
+ a syntax highlighted editor.
+ </p>
+<A NAME="infoType"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>infoType</strong> {    Normal=0,
+    /** This is a keyword
+}
+</td><td align="right"><h3><strong>infoType</strong></h3></td></tr></table><p></p><p> Normal text
+     </p>
+<A NAME="toSyntaxAnalyzer__highlightInfo.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>highlightInfo</strong> <small>(struct)</small></td><td align="right"><h3><strong>highlightInfo</strong></h3></td></tr></table><p></p><p> Information about a change in highlighting.
+   </p>
+<A NAME="isSymbol"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isSymbol</strong> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c)
+<br></td><td align="right"><h3><strong>isSymbol</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Check if this is part of a symbol or not.
+   </p>
+<A NAME="toSyntaxAnalyzer"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSyntaxAnalyzer</strong> (const char **keywords)
+<br></td><td align="right"><h3><strong>toSyntaxAnalyzer</strong></h3></td></tr></table><p></p><p> Create a syntax analysed
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>keywords</i></TD><TD align="left" valign="top">A list of keywords.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toSyntaxAnalyzer"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Line to analyze.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of where highlighting should change. Start as normal.
+   </p>
+<A NAME="getColor"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<strong>getColor</strong> (infoType typ)
+<br></td><td align="right"><h3><strong>getColor</strong></h3></td></tr></table><p></p><p> Get a colordefinition for a <A HREF="toSyntaxAnalyzer.html#infoType">infoType</A> value.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>typ</i></TD><TD align="left" valign="top"><A HREF="toSyntaxAnalyzer.html#infoType">infoType</A> to get color for.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Color of that type.
+   </p>
+<A NAME="toSyntaxSetup"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend  <strong>toSyntaxSetup</strong>
+</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

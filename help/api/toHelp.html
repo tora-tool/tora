@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<TITLE>class toHelp</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toHelp</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ Display a help browser. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohelp_h.html">tohelp.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-toHelp.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref15">toHelp</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref17">~toHelp</A></b> () 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">path</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null) 
+</LI>
+<LI>static  void &nbsp;<b><A HREF="#ref18">displayHelp</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+ Display a help browser. A help manual consists of HTML pages where at least
+ two pages are mandatory.
+</p>
+<p> The first one is toc.htm which is parsed for links which are added to the left
+ pane tree view. Indentation is handled with the tag dl which open and close a
+ tree branch.
+</p>
+<p> The following file would result in two main headings with the first one having
+ one leaf widget as well.
+</p>
+<p></p><table border="0" width="100%">
+<tr>
+<td bgcolor="#BEEAE0">
+<pre>
+
+&lt;A HREF="first.html"&gt;1 Head&lt;/A&gt;&lt;BR&gt;
+&lt;DL&gt;
+&lt;A HREF="second.html&gt;1.1 Head Head&lt;/A&gt;&lt;/BR&gt;
+&lt;/DL&gt;
+&lt;A HREF="third.html"&gt;2 Foot&lt;/A&gt;&lt;BR&gt;
+
+</pre>
+</td></tr>
+
+</table> <p>
+</p>
+<p> The second file which is optional and should be called index.htm if it exists
+ should contain a file with links to keywords in the manual. This must be present
+ for search to be possible in the manual. Keywords are indicated by the &lt;dd&gt; tag
+ in these files as well as a link to where the keyword is described. Indentation
+ is possible using the &lt;dl&gt; tag is possible here as well.
+</p>
+<p> The following will make the keywords "Head", "Head, Head Head" and "Foot" available.
+</p><table border="0" width="100%">
+<tr>
+<td bgcolor="#BEEAE0">
+<pre>
+
+&lt;DD&gt;&lt;A HREF="first.html"&gt;Head&lt;/A&gt;&lt;BR&gt;
+&lt;DL&gt;
+    &lt;DD&gt;&lt;A HREF="second.html"&gt;Head Head&lt;/A&gt;&lt;BR&gt;
+&lt;/DL&gt;
+&lt;DD&gt;&lt;A HREF="third.html"&gt;Foot&lt;/A&gt;
+
+</pre>
+</td></tr>
+
+</table> <p>
+ The reason the files look this way is that this way they are compatible with
+ the Oracle manuals from Oracle Corporation and these can be browsed as well in
+ this help viewer.
+ </p>
+<A NAME="toHelp"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelp</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name)
+<br></td><td align="right"><h3><strong>toHelp</strong></h3></td></tr></table><p></p><p>
+ Create help widget.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="path"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>path</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null)
+<br></td><td align="right"><h3><strong>path</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Help function to get a clean path from a path string. Strips trailing / etc.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>path</i></TD><TD align="left" valign="top">Path to strip.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Stripped path in string.
+   </p>
+<A NAME="~toHelp"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toHelp</strong> ()
+<br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context)
+<br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. Pops up a help window that
+ displays the selected topic.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>context</i></TD><TD align="left" valign="top">Context to display.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

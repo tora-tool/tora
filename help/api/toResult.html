@@ -1,0 +1,93 @@
+<HTML>
+<HEAD>
+<TITLE>class toResult</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toResult</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> Abstract baseclass of widgets that can perform queries. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresult_h.html">toresult.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultCols.html">toResultCols</A>, <A HREF="toResultConstraint.html">toResultConstraint</A>, <A HREF="toResultContent.html">toResultContent</A>, <A HREF="toResultDepend.html">toResultDepend</A>, <A HREF="toResultField.html">toResultField</A>, <A HREF="toResultIndexes.html">toResultIndexes</A>, <A HREF="toResultItem.html">toResultItem</A>, <A HREF="toResultLock.html">toResultLock</A>, <A HREF="toResultLong.html">toResultLong</A>, <A HREF="toResultPlan.html">toResultPlan</A>, <A HREF="toResultReferences.html">toResultReferences</A>, <A HREF="toResultResources.html">toResultResources</A>, <A HREF="toResultStats.html">toResultStats</A>, <A HREF="toResultView.html">toResultView</A></TD></TR>
+<TR><TH><A HREF="full-list-toResult.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toResult</A></b> (void) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref2">~toResult</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref3">refresh</A></i></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref4">query</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;params) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref5">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref7">changeParams</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Abstract baseclass of widgets that can perform queries. Usefull because you can execute
+ the query without knowing how it's UI is presented.
+ </p>
+<A NAME="toResult"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResult</strong> (void)
+<br></td><td align="right"><h3><strong>toResult</strong></h3></td></tr></table><p></p><A NAME="~toResult"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toResult</strong> ()
+<br></td><td align="right"><h3><strong>~toResult</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="refresh"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>refresh</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>refresh</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Re execute last query
+   </p>
+<A NAME="query"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>query</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;params)
+<br></td><td align="right"><h3><i><strong>query</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Perform a query.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Execute an SQL statement.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>params</i></TD><TD align="left" valign="top">Parameters needed as input to execute statement.
+   </TD></TR>
+</TABLE></P>
+<A NAME="changeParams"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
+<br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">First parameter.
+   </TD></TR>
+</TABLE></P>
+<A NAME="changeParams"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
+<br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">First parameter.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">Second parameter.
+   </TD></TR>
+</TABLE></P>
+<A NAME="changeParams"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>changeParams</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
+<br></td><td align="right"><h3><i><strong>changeParams</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Reexecute with changed parameters.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>Param1</i></TD><TD align="left" valign="top">First parameter.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>Param2</i></TD><TD align="left" valign="top">Second parameter.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>Param3</i></TD><TD align="left" valign="top">Third parameter.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

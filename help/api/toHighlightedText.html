@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+<TITLE>class toHighlightedText</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toHighlightedText</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"> A simple editor which supports syntax highlighting. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohighlightedtext_h.html">tohighlightedtext.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="toMarkedText.html">toMarkedText</A> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultField.html">toResultField</A></TD></TR>
+<TR><TH><A HREF="full-list-toHighlightedText.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref13">toHighlightedText</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref14">clear</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref15">setText</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref16">setErrors</A></b> (const map&lt;int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;errors) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref17">setCurrent</A></b> (int current) 
+</LI>
+<LI>int &nbsp;<b><A HREF="#ref18">current</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref19">setKeywordUpper</A></b> (bool val) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref20">setHighlight</A></b> (bool val) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref21">setAnalyzer</A></b> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer) 
+</LI>
+<LI><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref22">analyzer</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref23">paintCell</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *painter,int row,int col) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref26">nextError</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref27">previousError</A></b> (void) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref24">insertedLines</A></b> (int start,int diff) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  int &nbsp;<b><A HREF="#ref12">convertLine</A></b> (int line,int start,int diff) 
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref11">setLeftIgnore</A></b> (int ignore) 
+</LI>
+</ul><h4>Protected Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref25">textChanged</A></b> (void) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A simple editor which supports syntax highlighting.
+ </p>
+<A NAME="setLeftIgnore"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLeftIgnore</strong> (int ignore)
+<br></td><td align="right"><h3><strong>setLeftIgnore</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Set how much of the left margin to ignore painting.
+   </p>
+<A NAME="convertLine"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>convertLine</strong> (int line,int start,int diff)
+<br></td><td align="right"><h3><strong>convertLine</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Convert a linenumber after a change of the buffer to another linenumber. Can be
+ used to convert a specific linenumber after receiving a <A HREF="toHighlightedText.html#insertedLines">insertedLines</A> call.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>line</i></TD><TD align="left" valign="top">Line number.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>start</i></TD><TD align="left" valign="top">Start of change.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>diff</i></TD><TD align="left" valign="top">Lines added or removed.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: New linenumber or -1 if line doesn't exist anymore.
+   </p>
+<A NAME="toHighlightedText"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHighlightedText</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toHighlightedText</strong></h3></td></tr></table><p></p><p> Create a new editor.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of widget.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="clear"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>clear</strong> (void)
+<br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p></p><p> Clear the editor.
+   </p>
+<p>Reimplemented from <A HREF="toMarkedText.html#clear">toMarkedText</A>.</p>
+<A NAME="setText"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setText</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<br></td><td align="right"><h3><strong>setText</strong></h3></td></tr></table><p></p><p> Set the text of this editor.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#d5e499">QMultiLineEdit</A>.</p>
+<A NAME="setErrors"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setErrors</strong> (const map&lt;int,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;errors)
+<br></td><td align="right"><h3><strong>setErrors</strong></h3></td></tr></table><p></p><p> Set the error list map.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>errors</i></TD><TD align="left" valign="top">A map of linenumbers to errorstrings. These will be displayed in the
+               statusbar if the cursor is placed on the line.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setCurrent"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setCurrent</strong> (int current)
+<br></td><td align="right"><h3><strong>setCurrent</strong></h3></td></tr></table><p></p><p> Set current line. Will be indicated with a different background.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>current</i></TD><TD align="left" valign="top">Current line.
+   </TD></TR>
+</TABLE></P>
+<A NAME="current"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>current</strong> (void)
+<br></td><td align="right"><h3><strong>current</strong></h3></td></tr></table><p></p><p> Get current line.
+</p>
+<p><b>Returns</b>: Current line.
+   </p>
+<A NAME="setKeywordUpper"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setKeywordUpper</strong> (bool val)
+<br></td><td align="right"><h3><strong>setKeywordUpper</strong></h3></td></tr></table><p></p><p> Set keyword upper flag. If this is set keywords will be converted to uppercase when painted.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">New value of keyword to upper flag.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setHighlight"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setHighlight</strong> (bool val)
+<br></td><td align="right"><h3><strong>setHighlight</strong></h3></td></tr></table><p></p><p> The the highlighting flag. If this isn't set no highlighting is done.
+   </p>
+<A NAME="setAnalyzer"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setAnalyzer</strong> (<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer)
+<br></td><td align="right"><h3><strong>setAnalyzer</strong></h3></td></tr></table><p></p><p> Set the syntax highlighter to use.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>analyzer</i></TD><TD align="left" valign="top">Analyzer to use.
+   </TD></TR>
+</TABLE></P>
+<A NAME="analyzer"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>analyzer</strong> (void)
+<br></td><td align="right"><h3><strong>analyzer</strong></h3></td></tr></table><p></p><p> Get the current syntaxhighlighter.
+</p>
+<p><b>Returns</b>: Analyzer used.
+   </p>
+<A NAME="paintCell"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintCell</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *painter,int row,int col)
+<br></td><td align="right"><h3><strong>paintCell</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#a74781">QMultiLineEdit</A>.</p>
+<A NAME="insertedLines"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>insertedLines</strong> (int start,int diff)
+<br></td><td align="right"><h3><strong>insertedLines</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when lines are inserted or removed.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>start</i></TD><TD align="left" valign="top">Start of line inserted.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>diff</i></TD><TD align="left" valign="top">Number of lines inserted or removed.
+   </TD></TR>
+</TABLE></P>
+<A NAME="textChanged"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>textChanged</strong> (void)
+<br></td><td align="right"><h3><strong>textChanged</strong></h3></td></tr></table><p> <small>[protected slots slot]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#c01b41">QMultiLineEdit</A>.</p>
+<A NAME="nextError"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>nextError</strong> (void)
+<br></td><td align="right"><h3><strong>nextError</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go to next error.
+   </p>
+<A NAME="previousError"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>previousError</strong> (void)
+<br></td><td align="right"><h3><strong>previousError</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go to previous error.
+   </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<TITLE>class toResultItem</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toResultItem</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="toresultitem_h.html">toresultitem.h</A>&gt;</code></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qscrollview.html">QScrollView</A> <small>(qt)</small> <small>[public ]</small>, <i><A HREF="toResult.html">toResult</A></i> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultResources.html">toResultResources</A></TD></TR>
+<TR><TH><A HREF="full-list-toResultItem.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref15">toResultItem</A></b> (int num,bool readable,<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref16">toResultItem</A></b> (int num,<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref17">setSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref18">showTitle</A></b> (bool val) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref19">alignRight</A></b> (bool val) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref20">dataFont</A></b> (const <A HREF="http://doc.trolltech.com/qfont.html">QFont</A> &amp;val) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;param) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref22">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+</LI>
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref23">refresh</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref25">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref26">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref12">start</A></b> (void) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref13">addItem</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref14">done</A></b> (void) 
+</LI>
+</ul><h4>Protected Members</h4><ul><LI>toConnection &amp;<b><A HREF="#ref11">Connection</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="Connection"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp; <strong>Connection</strong>
+</td><td align="right"><h3><strong>Connection</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="start"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
+<br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="addItem"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addItem</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value)
+<br></td><td align="right"><h3><strong>addItem</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="done"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>done</strong> (void)
+<br></td><td align="right"><h3><strong>done</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="toResultItem"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultItem</strong> (int num,bool readable,<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultItem</strong></h3></td></tr></table><p></p><A NAME="toResultItem"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultItem</strong> (int num,<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultItem</strong></h3></td></tr></table><p></p><A NAME="setSQL"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><A NAME="showTitle"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>showTitle</strong> (bool val)
+<br></td><td align="right"><h3><strong>showTitle</strong></h3></td></tr></table><p></p><A NAME="alignRight"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>alignRight</strong> (bool val)
+<br></td><td align="right"><h3><strong>alignRight</strong></h3></td></tr></table><p></p><A NAME="dataFont"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>dataFont</strong> (const <A HREF="http://doc.trolltech.com/qfont.html">QFont</A> &amp;val)
+<br></td><td align="right"><h3><strong>dataFont</strong></h3></td></tr></table><p></p><A NAME="query"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;param)
+<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
+<A NAME="query"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
+<A NAME="refresh"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>refresh</strong> (void)
+<br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
+<A NAME="changeParams"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
+<br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
+<A NAME="changeParams"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
+<br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
+<A NAME="changeParams"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
+<br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

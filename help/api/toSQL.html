@@ -1,0 +1,285 @@
+<HTML>
+<HEAD>
+<TITLE>class toSQL</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class toSQL</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+ This class handles an abstraction of SQL statements used by TOra to extract
+ information and manipulate data. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tosql_h.html">tosql.h</A>&gt;</code></TD></TR>
+<TR><TH><A HREF="full-list-toSQL.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>struct <A HREF="toSQL__version.html">version</A>
+</LI>
+<LI>struct <A HREF="toSQL__definition.html">definition</A>
+</LI>
+<LI>typedef map&lt;QString,definition&gt;  <A HREF="#ref3">sqlMap</A>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref22">operator ()</A></b> (const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref23">name</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref24">toSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1") 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref9">updateSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+			bool modified=true) 
+</LI>
+<LI>static  bool &nbsp;<b><A HREF="#ref10">deleteSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref11">string</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref12">string</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sqldef,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref13">description</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">description</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sql) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref15">sql</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref16">sql</A></b> (const <A HREF="toSQL.html">toSQL</A> &amp;sqldef,const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+<LI>static  <A HREF="toSQL.html">toSQL</A> &nbsp;<b><A HREF="#ref17">sql</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+</LI>
+<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref18">range</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith) 
+</LI>
+<LI>static  bool &nbsp;<b><A HREF="#ref19">saveSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file,bool all=false) 
+</LI>
+<LI>static  void &nbsp;<b><A HREF="#ref20">loadSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file) 
+</LI>
+<LI>static  const sqlMap &amp;&nbsp;<b><A HREF="#ref21">definitions</A></b> (void) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>static const char * const <b><A HREF="#ref8">TOSQL_USERLIST</A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+ This class handles an abstraction of SQL statements used by TOra to extract
+ information and manipulate data. This is usefull in two ways, first off you
+ can edit the strings using a handy editor inside TOra if you find bugs. Also
+ you can use different statements for different Oracle versions. You can also
+ add support for new versions of Oracle without any need for recompilation or
+ programming knowledge.
+</p>
+<p> All information about SQL statements are stored in one global static map which
+ contains a name, a description and one or several statements connected to one
+ Oracle version.
+</p>
+<p> To determine which SQL to use the statement with the highest
+ version not above the current connection is used. If no statements below or
+ equal to the current version is available the lowest available is used.
+ </p>
+<A NAME="toSQL__version.html"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>version</strong> <small>(struct)</small></td><td align="right"><h3><strong>version</strong></h3></td></tr></table><p></p><p>
+ Contains a statement with it's version.
+   </p>
+<A NAME="toSQL__definition.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>definition</strong> <small>(struct)</small></td><td align="right"><h3><strong>definition</strong></h3></td></tr></table><p></p><p>
+ Definition of one toSQL statement with its description and versions.
+   </p>
+<A NAME="sqlMap"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,definition&gt;  <strong>sqlMap</strong></td><td align="right"><h3><strong>sqlMap</strong></h3></td></tr></table><p></p><p> Type of map of statement names to statement definitions.
+   </p>
+<A NAME="TOSQL_USERLIST"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>static const char * const  <strong>TOSQL_USERLIST</strong>
+</td><td align="right"><h3><strong>TOSQL_USERLIST</strong></h3></td></tr></table><p></p><A NAME="updateSQL"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>updateSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1",
+			bool modified=true)
+<br></td><td align="right"><h3><strong>updateSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Update the map with new information.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of this SQL statement.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Statement to execute for this SQL.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>description</i></TD><TD align="left" valign="top">Description of this SQL.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version of database this statement is meant for.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>modified</i></TD><TD align="left" valign="top">Wether this is a modification or an addition to the map.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: True if a new statement was saved, otherwise false.
+   </p>
+<A NAME="deleteSQL"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>deleteSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+		        const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver)
+<br></td><td align="right"><h3><strong>deleteSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Remove an SQL statement from a map. If the last version is removed
+ from a statement it's definition is also removed.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name to remove.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version to remove.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: True if a version was found to be removed.
+   </p>
+<A NAME="string"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>string</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>string</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the statement of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of statement.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing the statement.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="string"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>string</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sqldef,const <A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>string</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the statement of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sqlDef</i></TD><TD align="left" valign="top">SQL to get name of statement from.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing the statement.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="description"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>description</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<br></td><td align="right"><h3><strong>description</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get description of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of SQL to get name from..
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing description.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="description"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>description</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sql)
+<br></td><td align="right"><h3><strong>description</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get description of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sqlDef</i></TD><TD align="left" valign="top">SQL to get name of statement from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing description.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="sql"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>sql</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>sql</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the statement of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of statement.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing the statement.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="sql"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>sql</strong> (const <A HREF="toSQL.html">toSQL</A> &amp;sqldef,const <A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>sql</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the statement of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sqlDef</i></TD><TD align="left" valign="top">SQL to get name of statement from.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing the statement.
+</p>
+<p><b>Throws</b>: QString, with, description, of, problem, fetching, string.</p>
+<A NAME="sql"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSQL.html">toSQL</A> &nbsp;<strong>sql</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<br></td><td align="right"><h3><strong>sql</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get an SQL from a specified name.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name to get SQL for.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: a toSQL object for given name.
+   </p>
+<A NAME="range"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>range</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith)
+<br></td><td align="right"><h3><strong>range</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
+ Get all defined names that start with a given substring.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>startWith</i></TD><TD align="left" valign="top">The string that the name should start with.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: A list of names available.
+   </p>
+<A NAME="saveSQL"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>saveSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file,bool all=false)
+<br></td><td align="right"><h3><strong>saveSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Save SQL definitions to file.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>file</i></TD><TD align="left" valign="top">Filename to save to.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>all</i></TD><TD align="left" valign="top">If true all statements will be saved, otherwised only modified are saved.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: True if saved successfully.
+   </p>
+<A NAME="loadSQL"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>loadSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file)
+<br></td><td align="right"><h3><strong>loadSQL</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Load definitions from file.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>file</i></TD><TD align="left" valign="top">Filename to load from.
+</TD></TR>
+</TABLE></P>
+<p><b>Throws</b>: s, QString, describing, the, problem, loading.</p>
+<A NAME="definitions"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const sqlMap &amp;&nbsp;<strong>definitions</strong> (void)
+<br></td><td align="right"><h3><strong>definitions</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the entire map of SQL definitions
+</p>
+<p><b>Returns</b>: A reference to the map of definitions.
+   </p>
+<A NAME="operator%20()"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>operator ()</strong> (const <A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p> Get the statement of an SQL.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to get version from.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String containing the statement.
+   </p>
+<A NAME="name"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>name</strong> (void)
+<br></td><td align="right"><h3><strong>name</strong></h3></td></tr></table><p></p><p> Get name of this SQL.
+</p>
+<p><b>Returns</b>: Name.
+   </p>
+<A NAME="toSQL"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;description="",
+	const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ver="8.1")
+<br></td><td align="right"><h3><strong>toSQL</strong></h3></td></tr></table><p></p><p> Create a new SQL. Observe that the only thing this does is insert the supplied
+ information into the definition map, deleting the SQL will not the information from
+ the defitinion map. Only one description can be made for each statement name.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of SQL.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Statement of this SQL.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>description</i></TD><TD align="left" valign="top">Description of statement.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>ver</i></TD><TD align="left" valign="top">Version this statement applies to.
+   </TD></TR>
+</TABLE></P>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

@@ -1,0 +1,373 @@
+<HTML>
+<HEAD>
+<TITLE>Source: toextract.h</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>Source: toextract.h</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<pre>
+//***************************************************************************
+/*
+ * TOra - An Oracle Toolkit for DBA's and developers
+ * Copyright (C) 2000 GlobeCom AB
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *      As a special exception, you have permission to link this program
+ *      with the Oracle Client libraries and distribute executables, as long
+ *      as you follow the requirements of the GNU GPL in regard to all of the
+ *      software in the executable aside from Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB. Observe that this does not
+ *      disallow linking to the Qt Free Edition.
+ *
+ * All trademarks belong to their respective owners.
+ *
+ ****************************************************************************/
+
+#ifndef __TO_EXTRACT
+#define __TO_EXTRACT
+
+#include "toconnection.h"
+
+// Liberally ported from DDL::Oracle 1.06
+// Copyright (c) 2000, 2001 Richard Sutherland - United States of America
+
+class toExtractProgress;
+
+class toExtract {
+  toConnection &amp;Connection;
+  QWidget *Parent;
+
+  // Attributes
+  QString Schema;
+  QString Resize;
+  bool Code;
+  bool Comments;
+  bool Constraints;
+  bool Contents;
+  bool Grants;
+  bool Heading;
+  bool Indexes;
+  bool Parallel;
+  bool Partition;
+  bool Prompt;
+  bool Storage;
+
+  // Flags
+  bool IsASnapIndex;
+  bool IsASnapTable;
+  bool Describe;
+
+  // Database info
+  int BlockSize;
+  list&lt;QString&gt; Initial;
+  list&lt;QString&gt; Next;
+  list&lt;QString&gt; Limit;
+
+  // Compile functions
+  QString compile(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+		  const QString &amp;type);
+  QString compilePackage(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+			 const QString &amp;type);
+
+  // Create functions
+  QString createConstraint(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createDBLink(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createExchangeIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createExchangeTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createFunction(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createMaterializedView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createMaterializedViewLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createPackage(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createPackageBody(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createProcedure(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createProfile(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createRole(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createRollbackSegment(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createSequence(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createSnapshot(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createSnapshotLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createSynonym(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTableFamily(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTableContents(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTableReferences(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTablespace(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTrigger(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createType(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createUser(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+
+  // Description functions
+  void describeConstraint(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			  const QString &amp;name);
+  void describeDBLink(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		      const QString &amp;name);
+  void describeExchangeIndex(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			     const QString &amp;name);
+  void describeExchangeTable(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			     const QString &amp;name);
+  void describeFunction(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			const QString &amp;name);
+  void describeIndex(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		     const QString &amp;name);
+  void describeMaterializedView(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+				const QString &amp;name);
+  void describeMaterializedViewLog(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+				   const QString &amp;name);
+  void describePackage(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		       const QString &amp;name);
+  void describePackageBody(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			   const QString &amp;name);
+  void describeProcedure(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			 const QString &amp;name);
+  void describeProfile(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		       const QString &amp;name);
+  void describeRole(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		    const QString &amp;name);
+  void describeRollbackSegment(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			       const QString &amp;name);
+  void describeSequence(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			const QString &amp;name);
+  void describeSnapshot(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			const QString &amp;name);
+  void describeSnapshotLog(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			   const QString &amp;name);
+  void describeSynonym(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		       const QString &amp;name);
+  void describeTable(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		     const QString &amp;name);
+  void describeTableFamily(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			   const QString &amp;name);
+  void describeTableReferences(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			       const QString &amp;name);
+  void describeTablespace(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+			  const QString &amp;name);
+  void describeTrigger(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		       const QString &amp;name);
+  void describeType(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		    const QString &amp;name);
+  void describeUser(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		    const QString &amp;name);
+  void describeView(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		    const QString &amp;name);
+
+  // Drop functions
+  QString dropConstraint(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+			 const QString &amp;owner);
+  QString dropDatabaseLink(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+			   const QString &amp;owner);
+  QString dropMViewLog(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		       const QString &amp;owner);
+  QString dropObject(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		     const QString &amp;owner);
+  QString dropProfile(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		      const QString &amp;owner);
+  QString dropSchemaObject(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+			   const QString &amp;owner);
+  QString dropSynonym(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		      const QString &amp;owner);
+  QString dropTable(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		    const QString &amp;owner);
+  QString dropTablespace(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+			 const QString &amp;owner);
+  QString dropUser(const QString &amp;schema,const QString &amp;name,const QString &amp;type,
+		   const QString &amp;owner);
+
+  // Resize functions
+  QString resizeIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString resizeTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+
+  // Misc extract functions
+  QString constraintColumns(const QString &amp;owner,const QString &amp;name);
+  QString createComments(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createIOT(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createMView(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+		      const QString &amp;type);
+  QString createMViewIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createMViewLog(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+			 const QString &amp;type);
+  QString createMViewTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createPartitionedIOT(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createPartitionedIndex(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+				 const QString &amp;soFar);
+  QString createPartitionedTable(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString createTableText(list&lt;QString&gt; &amp;result,const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString displaySource(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+			const QString &amp;type);
+  QString grantedPrivs(const QString &amp;schema,const QString &amp;name,int type=3);
+  QString indexColumns(const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  QString keyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type,
+		     const QString &amp;table);
+  QString partitionKeyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
+  QString rangePartitions(const QString &amp;owner,const QString &amp;name,
+			  const QString &amp;subPartitionType,const QString &amp;locality);
+  QString resizeIndexPartition(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+			       const QString &amp;partition,const QString &amp;seqType);
+  QString resizeTablePartition(const QString &amp;schema,const QString &amp;owner,const QString &amp;name,
+			       const QString &amp;partition,const QString &amp;seqType);
+  QString subPartitionKeyColumns(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
+  QString tableColumns(const QString &amp;owner,const QString &amp;name);
+
+  // Misc describe functions
+  void describeAttributes(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,list&lt;QString&gt; &amp;result);
+  void describeComments(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+			const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describePrivs(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,const QString &amp;name);
+  void describeIndexColumns(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+			    const QString &amp;owner,const QString &amp;name);
+  void describeIOT(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+		   const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describeMView(list&lt;QString&gt; &amp;lst,const QString &amp;schema,
+		     const QString &amp;owner,const QString &amp;name,const QString &amp;type);
+  void describeMViewIndex(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,const QString &amp;schema,
+			  const QString &amp;owner,const QString &amp;name);
+  void describeMViewLog(list&lt;QString&gt; &amp;lst,const QString &amp;schema,
+			const QString &amp;owner,const QString &amp;name,const QString &amp;type);
+  void describeMViewTable(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,const QString &amp;schema,
+			  const QString &amp;owner,const QString &amp;name);
+  void describePartitionedIndex(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+				const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describePartitionedIOT(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+			      const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describePartitionedTable(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+				const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describePartitions(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+			  const QString &amp;owner,const QString &amp;name,
+			  const QString &amp;subPartitionType,const QString &amp;locality);
+  void describeTableText(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,list&lt;QString&gt; &amp;result,
+			 const QString &amp;schema,const QString &amp;owner,const QString &amp;name);
+  void describeTableColumns(list&lt;QString&gt; &amp;lst,list&lt;QString&gt; &amp;ctx,
+			    const QString &amp;owner,const QString &amp;name);
+  void describeSource(list&lt;QString&gt; &amp;lst,const QString &amp;schema,const QString &amp;owner,
+		      const QString &amp;name,const QString &amp;type);
+
+  // Misc functions
+  void addDescription(list&lt;QString&gt; &amp;ret,list&lt;QString&gt; &amp;ctx,
+		      const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+		      const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+		      const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+		      const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+		      const QString &amp;arg9=QString::null);
+  void clearFlags(void);
+  QString generateHeading(const QString &amp;action,list&lt;QString&gt; &amp;list);
+  void initialNext(const QString &amp;blocks,QString &amp;initial,QString &amp;next);
+  void objectExists(const QString &amp;owner,const QString &amp;name,const QString &amp;type);
+  QString prepareDB(const QString &amp;data);
+  QString segmentAttributes(list&lt;QString&gt; &amp;result);
+  QString intSchema(const QString &amp;owner);
+  void setSizes(void);
+  QString reContext(list&lt;QString&gt; &amp;ctx,int strip,const QString &amp;str);
+  void rethrow(const QString &amp;what,const QString &amp;object,const otl_exception &amp;exc);
+public:
+  toExtract(toConnection &amp;conn,QWidget *parent);
+
+  QString compile(list&lt;QString&gt; &amp;object);
+  QString create(list&lt;QString&gt; &amp;object);
+  list&lt;QString&gt; describe(list&lt;QString&gt; &amp;object);
+  QString drop(list&lt;QString&gt; &amp;object);
+  QString resize(list&lt;QString&gt; &amp;object);
+  QString migrate(list&lt;QString&gt; &amp;drpLst,list&lt;QString&gt; &amp;crtLst);
+
+  void parseObject(const QString &amp;object,QString &amp;owner,QString &amp;name);
+
+  void setSchema(const QString &amp;schema)
+  { Schema=schema; }
+  void setResize(const QString &amp;resize)
+  { Resize=resize; setSizes(); }
+  void setPrompt(bool prompt)
+  { Prompt=prompt; }
+  void setHeading(bool heading)
+  { Heading=heading; }
+  void setConstraints(bool constraints)
+  { Constraints=constraints; }
+  void setIndexes(bool indexes)
+  { Indexes=indexes; }
+  void setGrants(bool val)
+  { Grants=val; }
+  void setStorage(bool val)
+  { Storage=val; }
+  void setParallel(bool val)
+  { Parallel=val; }
+  void setPartition(bool val)
+  { Partition=val; }
+  void setContents(bool val)
+  { Contents=val; }
+  void setComments(bool val)
+  { Comments=val; }
+  void setCode(bool val)
+  { Code=val; }
+
+  const QString &amp;getSchema(void)
+  { return Schema; }
+  bool getResize(void)
+  { return Resize; }
+  bool getPrompt(void)
+  { return Prompt; }
+  bool getHeading(void)
+  { return Heading; }
+  bool getConstraints(void)
+  { return Constraints; }
+  bool getIndexes(void)
+  { return Indexes; }
+  bool getGrants(void)
+  { return Grants; }
+  bool getStorage(void)
+  { return Storage; }
+  bool getParallel(void)
+  { return Parallel; }
+  bool getPartition(void)
+  { return Partition; }
+  bool getContents(void)
+  { return Contents; }
+  bool getComments(void)
+  { return Comments; }
+  bool getCode(void)
+  { return Code; }
+};
+
+#endif
+</pre>
+<HR>
+	<table>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:24:22 2001, using kdoc 2.0a53.</small></td></tr>
+	</table>
+</BODY>
+</HTML>
