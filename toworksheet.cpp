@@ -354,7 +354,8 @@ void toWorksheet::setup(bool autoLoad)
 			       Result,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
-    toolbar->setStretchableWidget(new QLabel(toolbar));
+    toolbar->setStretchableWidget(Started=new QLabel(toolbar));
+    Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
   } else {
     QSplitter *splitter=new QSplitter(Vertical,this);
 
@@ -460,7 +461,8 @@ void toWorksheet::setup(bool autoLoad)
     connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
     connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
 
-    toolbar->setStretchableWidget(new QLabel("",toolbar));
+    toolbar->setStretchableWidget(Started=new QLabel(toolbar));
+    Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
     new toChangeConnection(toolbar);
 
     connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
@@ -499,6 +501,7 @@ void toWorksheet::setup(bool autoLoad)
 
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 #if 0
   if (autoLoad)
     Editor->setFocus();
@@ -667,6 +670,7 @@ void toWorksheet::refresh(void)
   if (!QueryString.isEmpty()) {
     query(QueryString,false);
     StopButton->setEnabled(true);
+    Poll.start(1000);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     if (Light)
       return;
@@ -782,6 +786,8 @@ void toWorksheet::query(const QString &str,bool direct)
       Result->stop();
       Timer.start();
       StopButton->setEnabled(true);
+      Poll.start(1000);
+      QToolTip::add(Started,"Duration while query has been running\n\n"+QueryString);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
@@ -821,6 +827,23 @@ void toWorksheet::saveHistory(void)
     connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
 	    this,SLOT(addLog(const QString &,const toConnection::exception &)));
   }
+}
+
+QString toWorksheet::duration(int dur,bool hundreds)
+{
+  char buf[100];
+  if (dur>=3600000) {
+    if (hundreds)
+      sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%100);
+    else
+      sprintf(buf,"%d:%02d:%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60);
+  } else {
+    if (hundreds)
+      sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%100);
+    else
+      sprintf(buf,"%d:%02d",dur/60000,(dur/1000)%60);
+  }
+  return buf;
 }
 
 void toWorksheet::addLog(const QString &sql,const toConnection::exception &result)
@@ -872,12 +895,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     LastLine=LastOffset=-1;
   }
 
-  char buf[100];
-  if (dur>=3600000) {
-    sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%100);
-  } else {
-    sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%100);
-  }
+  QString buf=duration(dur);
 
   if (!Light) {
     item->setText(3,buf);
@@ -1177,6 +1195,9 @@ void toWorksheet::queryDone(void)
     emit executed();
   timer()->stop();
   StopButton->setEnabled(false);
+  Poll.stop();
+  QToolTip::remove(Started);
+  Started->setText(QString::null);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
   saveDefaults();
 }
@@ -1424,4 +1445,9 @@ void toWorksheet::executeNextLog(void)
       }
     }
   }
+}
+
+void toWorksheet::poll(void)
+{
+  Started->setText(duration(Timer.elapsed(),false));
 }

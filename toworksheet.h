@@ -43,6 +43,7 @@
 #include <qframe.h>
 #include <qtoolbutton.h>
 #include <qdatetime.h>
+#include <qtimer.h>
 
 #include "totool.h"
 #include "toconnection.h"
@@ -76,7 +77,6 @@ class toWorksheet : public toToolWidget {
   QTabWidget *ResultTab;
   toResultLong *Result;
   toResultPlan *Plan;
-  QString CurrentQuery;
   QWidget *CurrentTab;
   QString QueryString;
   toResultItem *Resources;
@@ -90,11 +90,13 @@ class toWorksheet : public toToolWidget {
   bool TryStrip;
   toResultCols *Columns;
   QComboBox *Refresh;
+  QLabel *Started;
 
   QPopupMenu *SavedMenu;
   QToolButton *SavedButton;
   QString SavedLast;
   QTime Timer;
+  QTimer Poll;
 
   QWidget *Current;
   std::map<int,toResultLong *> History;
@@ -105,6 +107,7 @@ class toWorksheet : public toToolWidget {
 
   QPopupMenu *ToolMenu;
 
+  QString duration(int,bool hundreds=true);
   void saveHistory(void);
   void viewResources(void);
   void query(const QString &str,bool direct);
@@ -156,6 +159,8 @@ public slots:
   void executeNextLog(void);
   void addLog(const QString &sql,const toConnection::exception &result);
   void changeRefresh(const QString &);
+private slots:
+  void poll(void);
 };
 
 #endif
