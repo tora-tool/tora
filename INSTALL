@@ -41,6 +41,12 @@ that it will also install tora into the Mandrake menu system. The same library
 problems and solutions apply. This version is compiled with KDE support
 enabled and requires kdelibs to be installed.
 
+tora-{version}-1qt.i686.rpm
+-------------------------------
+This version is excactly the same as the 1gc version mentioned before except
+that it will also install tora into the Mandrake menu system. The same library
+problems and solutions apply. This version is not compiled using KDE support.
+
 tora-{version}-1static.i686.rpm
 -------------------------------
 This is a statically linked version. The libraries that are linked statically
@@ -54,6 +60,12 @@ This is a dynamically linked tora which is just to unpack wherever you want
 it. To use the SQL templates copy the files in the template directory to
 the library /usr/lib/tora. This version has KDE support enabled and requires
 KDE libraries available.
+
+tora-{version}-qt.tar.gz
+-------------------------
+This is a dynamically linked tora which is just to unpack wherever you want
+it. To use the SQL templates copy the files in the template directory to
+the library /usr/lib/tora. This version does not have  KDE support enabled.
 
 tora-{version}-static.tar.gz
 ----------------------------

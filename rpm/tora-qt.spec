@@ -1,7 +1,7 @@
 %define name tora
 %define group Developement/Databases
 %define version 0.10
-%define release 1gc
+%define release 1qt
 
 Name: %{name}
 Version: %{version}
@@ -22,16 +22,15 @@ schema extraction and compare.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --without-rpath --with-kde
+./configure --prefix=/usr --without-rpath
 make
 
 %install
 
-strip plugins/*.tso tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
+strip tora
 cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp plugins/*.tso $RPM_BUILD_ROOT%{_prefix}/lib/tora
 cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
 
 %post
@@ -52,5 +51,3 @@ rm -rf $RPM_BUILD_ROOT
 %doc NEWS
 
 %{_prefix}/X11R6/bin/tora
-%{_prefix}/lib/tora
-%define name tora

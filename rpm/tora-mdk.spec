@@ -22,7 +22,7 @@ schema extraction and compare.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr --without-rpath
+./configure --prefix=/usr --without-rpath --with-kde
 make
 
 %install
