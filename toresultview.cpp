@@ -75,7 +75,7 @@ static int MaxColDisp;
 
 void toResultViewMLine::setText (int col,const QString &text)
 {
-  QListViewItem::setText(col,text);
+  toResultViewItem::setText(col,text);
   int pos=0;
   int lines=0;
   do {
@@ -89,7 +89,7 @@ void toResultViewMLine::setText (int col,const QString &text)
 
 void toResultViewMLine::setup(void)
 {
-  QListViewItem::setup();
+  toResultViewItem::setup();
   int margin=listView()->itemMargin()*2+1;
   setHeight((listView()->fontMetrics().height()+1)*Lines+margin);
 }
@@ -98,7 +98,7 @@ void toResultViewMLine::paintCell(QPainter *pnt,const QColorGroup & cg,
 				  int column,int width,int alignment)
 {
   toResultViewItem::paintCell(pnt,cg,column,
-			      max(QListViewItem::width(pnt->fontMetrics(),listView(),column),width),
+			      max(toResultViewItem::width(pnt->fontMetrics(),listView(),column),width),
 			      alignment);
 }
 
@@ -117,14 +117,23 @@ static int TextWidth(const QFontMetrics &fm,const QString &str)
   return maxWidth;
 }
 
-int toResultViewMLine::width(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
 }
 
-int toResultViewItem::width(const QFontMetrics &fm, const QListView *top, int column) const
+QString toResultViewItem::text(int col) const
+{
+  QString txt=allText(col);
+  int pos=txt.find('\n');
+  if (pos!=-1)
+    return txt.mid(0,pos)+"...";
+  return txt;
+}
+
+int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
@@ -140,55 +149,96 @@ void toResultViewItem::paintCell(QPainter * p,const QColorGroup & cg,int column,
     view->addItem();
 }
 
-QString toResultViewItem::text(int col) const
-{
-  QString text=QListViewItem::text(col);
-  int pos=text.find('\n');
-  if (pos!=-1) {
-    text.remove(pos,text.length());
-    text.append(QString::fromLatin1("..."));
-  }
-  
-  return text;
-}
+#define ALLOC_SIZE 10
 
-QString toResultViewItem::key(int col,bool asc) const
+void toResultViewItem::setText (int col,const QString &txt)
 {
-  if (KeyCache==NULL) {
-    CacheSize=(listView()->columns()+1)*2;
-    KeyCache=new QString[CacheSize];
-    for(int i=0;i<CacheSize;i+=2) {
-      KeyCache[i]=realKey(i/2,true);
-      KeyCache[i+1]=realKey(i/2,false);
+  if (txt!=text(col)) {
+    if (col>=ColumnCount||!ColumnData) {
+      int ns=(col+ALLOC_SIZE)/ALLOC_SIZE*ALLOC_SIZE;
+      keyData *nd=new keyData[ns];
+      int i;
+      for(i=0;i<ColumnCount;i++)
+	nd[i]=ColumnData[i];
+      while(i<ns) {
+	nd[i].Width=0;
+	nd[i].Type=keyData::String;
+	i++;
+      }
+      delete[] ColumnData;
+      ColumnData=nd;
+      ColumnCount=ns;
     }
+
+    static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+
+    ColumnData[col].Data=txt;
+
+    if(txt=="N/A") {
+      ColumnData[col].Type=keyData::String;
+      ColumnData[col].KeyAsc="\xff";
+      ColumnData[col].KeyDesc="\x00";
+    } else if(number.match(txt)>=0) {
+      ColumnData[col].Type=keyData::Number;
+
+      static char buf[100];
+      sprintf(buf,"%015.5f",txt.toFloat());
+      ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=QString::fromLatin1(buf);
+    } else {
+      ColumnData[col].Type=keyData::String;
+      ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=ColumnData[col].Data;
+    }
+    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
   }
-  if (col*2>=CacheSize)
-    return realKey(col,asc);
-  else
-    return KeyCache[col*2+(asc==true?0:1)];
+  QListViewItem::setText(col,text(col));
 }
 
-QString toResultViewItem::realKey(int col,bool asc) const
+void toResultViewCheck::setText (int col,const QString &txt)
 {
-  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+  if (txt!=text(col)) {
+    if (col>ColumnCount||!ColumnData) {
+      int ns=(col+ALLOC_SIZE-1)/ALLOC_SIZE*ALLOC_SIZE;
+      keyData *nd=new keyData[ns];
+      int i;
+      for(i=0;i<ColumnCount;i++)
+	nd[i]=ColumnData[i];
+      while(i<ns) {
+	nd[i].Width=0;
+	nd[i].Type=keyData::String;
+	i++;
+      }
+      delete[] ColumnData;
+      ColumnData=nd;
+      ColumnCount=ns;
+    }
 
-  QString val=text(col);
-  if (number.match(val)>=0) {
-    static char buf[100];
-    sprintf(buf,"%015.5f",text(col).toFloat());
-    return QString::fromLatin1(buf);
-  } else if (val==QString::fromLatin1("N/A")) {
-    if (asc)
-      return QString::fromLatin1("\xff");
-    else
-      return QString::fromLatin1("\001");
+    static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+
+    ColumnData[col].Data=txt;
+
+    if(txt=="N/A") {
+      ColumnData[col].Type=keyData::String;
+      ColumnData[col].KeyAsc="\xff";
+      ColumnData[col].KeyDesc="\x00";
+    } else if(number.match(txt)) {
+      ColumnData[col].Type=keyData::Number;
+
+      static char buf[100];
+      sprintf(buf,"%015.5f",txt.toFloat());
+      ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=QString::fromLatin1(buf);
+    } else {
+      ColumnData[col].Type=keyData::String;
+      ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=ColumnData[col].Data;
+    }
+    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
   }
-  return val;
+
+  QCheckListItem::setText(col,text(col));
 }
 
 void toResultViewMLCheck::setText (int col,const QString &text)
 {
-  QCheckListItem::setText(col,text);
+  toResultViewCheck::setText(col,text);
   int pos=0;
   int lines=0;
   do {
@@ -202,7 +252,7 @@ void toResultViewMLCheck::setText (int col,const QString &text)
 
 void toResultViewMLCheck::setup(void)
 {
-  QCheckListItem::setup();
+  toResultViewCheck::setup();
   int margin=listView()->itemMargin()*2;
   setHeight((listView()->fontMetrics().height()+1)*Lines+margin);
 }
@@ -211,18 +261,18 @@ void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
 				   int column,int width,int alignment)
 {
   toResultViewCheck::paintCell(pnt,cg,column,
-			       max(QCheckListItem::width(pnt->fontMetrics(),listView(),column),width),
+			       max(toResultViewCheck::width(pnt->fontMetrics(),listView(),column),width),
 			       alignment);
 }
 
-int toResultViewMLCheck::width(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
 }
 
-int toResultViewCheck::width(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
@@ -241,47 +291,11 @@ void toResultViewCheck::paintCell(QPainter * p,const QColorGroup & cg,int column
 
 QString toResultViewCheck::text(int col) const
 {
-  QString text=QCheckListItem::text(col);
-  int pos=text.find('\n');
-  if (pos!=-1) {
-    text.remove(pos,text.length());
-    text.append(QString::fromLatin1("..."));
-  }
-  
-  return text;
-}
-
-QString toResultViewCheck::key(int col,bool asc) const
-{
-  if (KeyCache==NULL) {
-    CacheSize=(listView()->columns()+1)*2;
-    KeyCache=new QString[CacheSize];
-    for(int i=0;i<CacheSize;i+=2) {
-      KeyCache[i]=realKey(col/2,true);
-      KeyCache[i+1]=realKey(col/2,false);
-    }
-  }
-  if (col*2>=CacheSize)
-    return realKey(col,asc);
-  else
-    return KeyCache[col*2+(asc==true?0:1)];
-}
-
-QString toResultViewCheck::realKey(int col,bool asc) const
-{
-  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+$"));
-  QString val=text(col);
-  if (number.match(val)>=0) {
-    static char buf[100];
-    sprintf(buf,"%015.5f",text(col).toFloat());
-    return QString::fromLatin1(buf);
-  } else if (val=="N/A") {
-    if (asc)
-      return QString::fromLatin1("\xff");
-    else
-      return QString::fromLatin1("\001");
-  }
-  return val;
+  QString txt=allText(col);
+  int pos=txt.find('\n');
+  if (pos!=-1)
+    return txt.mid(0,pos)+"...";
+  return txt;
 }
 
 class toListTip : public QToolTip {

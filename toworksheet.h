@@ -102,7 +102,7 @@ class toWorksheet : public toToolWidget {
   QTimer Poll;
 
   QWidget *Current;
-  std::map<int,toResultLong *> History;
+  std::map<int,QWidget *> History;
   int LastID;
 
   int LastLine;

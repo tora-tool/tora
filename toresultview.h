@@ -89,11 +89,17 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewItem : public QListViewItem {
-  mutable int CacheSize;
-  mutable QString *KeyCache;
-  QString realKey(int col,bool asc) const;
-  void invalidateCache(void)
-  { delete[] KeyCache; KeyCache=NULL; }
+  struct keyData {
+    QString Data;
+    QString KeyAsc;
+    QString KeyDesc;
+    int Width;
+    enum { String,Number } Type;
+  };
+  int ColumnCount;
+  keyData *ColumnData;
+protected:
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -102,7 +108,7 @@ public:
    */
   toResultViewItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); KeyCache=NULL; }
+  { ColumnData=NULL; ColumnCount=0; if (buf) setText(0,buf); }
   /** Create a new item.
    * @param parent Parent to this item.
    * @param after Insert after this item.
@@ -110,15 +116,14 @@ public:
    */
   toResultViewItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); KeyCache=NULL; }
+  { ColumnData=NULL; ColumnCount=0; if (buf) setText(0,buf); }
   /** Reimplemented for internal reasons.
    */
   virtual ~toResultViewItem()
-  { delete[] KeyCache; }
+  { delete[] ColumnData; }
   /** Reimplemented for internal reasons.
    */
-  virtual void setText (int col,const QString &txt)
-  { invalidateCache(); QListViewItem::setText(col,txt); }
+  virtual void setText (int col,const QString &txt);
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
@@ -130,16 +135,18 @@ public:
    * @param col Column
    * @param asc Wether to sort ascending or not.
    */
-  virtual QString key(int col,bool asc) const;
+  virtual QString key(int col,bool asc) const
+  { if (col>=ColumnCount) return QString::null; return asc?ColumnData[col].KeyAsc:ColumnData[col].KeyDesc; }
   /** Reimplemented for internal reasons.
    */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int width(const QFontMetrics &, const QListView *, int col) const
+  { if (col>=ColumnCount) return 0; return ColumnData[col].Width; }
   /** Get all text for this item. This is used for copying, drag & drop and memo editing etc.
    * @param col Column.
    * @return All of the text.
    */
   virtual QString allText(int col) const
-  { return QListViewItem::text(col); }
+  { if (col>=ColumnCount) return QString::null; return ColumnData[col].Data; }
   /** Get the text to be displayed as tooltip for this item.
    * @param col Column.
    * @return The text to display as tooltip.
@@ -155,6 +162,8 @@ private:
   /** Number of lines in the largest row.
    */
   int Lines;
+protected:
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -181,14 +190,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const
-  { return QListViewItem::text(col); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual QString allText(int col) const
-  { return QListViewItem::text(col); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
+  { return toResultViewItem::allText(col); }
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
@@ -199,11 +201,17 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewCheck : public QCheckListItem {
-  mutable int CacheSize;
-  mutable QString *KeyCache;
-  QString realKey(int col,bool asc) const;
-  void invalidateCache(void)
-  { delete[] KeyCache; KeyCache=NULL; }
+  struct keyData {
+    QString Data;
+    QString KeyAsc;
+    QString KeyDesc;
+    int Width;
+    enum { String,Number } Type;
+  };
+  int ColumnCount;
+  keyData *ColumnData;
+protected:
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -212,7 +220,7 @@ public:
    */
   toResultViewCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); KeyCache=NULL; }
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
   /** Create a new item.
    * @param parent Parent item.
    * @param text Text of first column.
@@ -220,15 +228,14 @@ public:
    */
   toResultViewCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); KeyCache=NULL; }
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
   /** Reimplemented for internal reasons.
    */
   virtual ~toResultViewCheck()
-  { delete[] KeyCache; }
+  { delete[] ColumnData; }
   /** Reimplemented for internal reasons.
    */
-  virtual void setText (int col,const QString &txt)
-  { invalidateCache(); QListViewItem::setText(col,txt); }
+  virtual void setText (int col,const QString &txt);
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
@@ -240,16 +247,23 @@ public:
    * @param col Column
    * @param asc Wether to sort ascending or not.
    */
-  virtual QString key(int col,bool) const;
+  /** String to sort the data on. This is reimplemented so that numbers are sorted as numbers
+   * and not as strings.
+   * @param col Column
+   * @param asc Wether to sort ascending or not.
+   */
+  virtual QString key(int col,bool asc) const
+  { if (col>=ColumnCount) return QString::null; return asc?ColumnData[col].KeyAsc:ColumnData[col].KeyDesc; }
   /** Reimplemented for internal reasons.
    */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int width(const QFontMetrics &, const QListView *, int col) const
+  { if (col>=ColumnCount) return 0; return ColumnData[col].Width; }
   /** Get all text for this item. This is used for copying, drag & drop and memo editing etc.
    * @param col Column.
    * @return All of the text.
    */
   virtual QString allText(int col) const
-  { return QCheckListItem::text(col); }
+  { if (col>=ColumnCount) return QString::null; return ColumnData[col].Data; }
   /** Get the text to be displayed as tooltip for this item.
    * @param col Column.
    * @return The text to display as tooltip.
@@ -265,6 +279,8 @@ private:
   /** Number of lines in the largest row.
    */
   int Lines;
+protected:
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -296,9 +312,6 @@ public:
    */
   virtual QString allText(int col) const
   { return QListViewItem::text(col); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
@@ -538,6 +551,11 @@ public:
    * @return Columns in query.
    */
   int queryColumns() const;
+
+  /** Get the query used to execute this.
+   */
+  toQuery *query()
+  { return Query; }
 
   /** Set a filter to this list.
    * @param filter The new filter or NULL if no filter is to be used.

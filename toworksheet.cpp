@@ -802,13 +802,31 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       try {
 	First=false;
 	Timer.start();
-	toQuery query(connection(),toQuery::Long,QueryString,param);
-
 	QString buffer;
-	if (query.rowsProcessed()>0)
-	  buffer=tr("%1 rows processed").arg((int)query.rowsProcessed());
-	else
-	  buffer=tr("Query executed");
+	if (WorksheetTool.config(CONF_HISTORY,"").isEmpty()&&!Light) {
+	  toQuery query(connection(),toQuery::Long,QueryString,param);
+	  if (query.rowsProcessed()>0)
+	    buffer=tr("%1 rows processed").arg((int)query.rowsProcessed());
+	  else
+	    buffer=tr("Query executed");
+	} else {
+	  toResultView *query=new toResultView(Current->parentWidget());
+
+	  try {
+	    query->query(QueryString,param);
+	    if (query->query()->rowsProcessed()>0)
+	      buffer=tr("%1 rows processed").arg((int)query->query()->rowsProcessed());
+	    else
+	      buffer=tr("Query executed");
+	    Current->hide();
+	    Current=query;
+	    Current->show();
+	  } catch(...) {
+	    delete query;
+	    throw;
+	  }
+	}
+
 	addLog(QueryString,toConnection::exception(buffer),false);
       } catch (const QString &exc) {
 	addLog(QueryString,exc,true);
@@ -1117,6 +1135,7 @@ void toWorksheet::executeAll()
 			 true);
   int line;
   int pos;
+  bool ignore=true;
   do {
     line=tokens.line();
     pos=tokens.offset();
@@ -1125,9 +1144,27 @@ void toWorksheet::executeAll()
     if (dialog.wasCancelled())
       break;
     toSQLParse::parseStatement(tokens);
-    execute(tokens,line,pos,true);
+
+    if (ignore&&(tokens.line()>cline||
+		 (tokens.line()==cline&&
+		  tokens.offset()>=cpos))) {
+      ignore=false;
+      cline=line;
+      cpos=pos;
+    }
+
+    if (tokens.line()<Editor->numLines()&&!ignore) {
+      execute(tokens,line,pos,true);
+      if (Current) {
+	toResultView *last=dynamic_cast<toResultView *>(Current);
+	if (last&&last->firstChild())
+	  History[LastID]=last;
+      }
+    }
   } while(tokens.line()<Editor->numLines());
-  Editor->selectAll();
+
+  Editor->setCursorPosition(cline,cpos,false);
+  Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
 }
 
 void toWorksheet::eraseLogButton()
@@ -1136,7 +1173,7 @@ void toWorksheet::eraseLogButton()
     return;
   Logging->clear();
   LastLogItem=NULL;
-  for(std::map<int,toResultLong *>::iterator i=History.begin();i!=History.end();i++)
+  for(std::map<int,QWidget *>::iterator i=History.begin();i!=History.end();i++)
     delete (*i).second;
   History.clear();
 }
@@ -1362,6 +1399,8 @@ void toWorksheet::insertStatement(const QString &str)
     Editor->setCursorPosition(line,col,false);
 
     Editor->findPosition(i+str.length(),line,col);
+    if (Editor->textLine(line).at(col)==';')
+      col++;
     Editor->setCursorPosition(line,col,true);
   } else {
     QString t=str;
@@ -1395,7 +1434,7 @@ void toWorksheet::executePreviousLog(void)
       if (prev->text(4).isEmpty())
 	query(prev->allText(0),false);
       else {
-	std::map<int,toResultLong *>::iterator i=History.find(prev->text(4).toInt());
+	std::map<int,QWidget *>::iterator i=History.find(prev->text(4).toInt());
 	if (i!=History.end()&&(*i).second) {
 	  Current->hide();
 	  Current=(*i).second;
@@ -1424,7 +1463,7 @@ void toWorksheet::executeNextLog(void)
       if (next->text(4).isEmpty())
 	query(next->allText(0),false);
       else {
-	std::map<int,toResultLong *>::iterator i=History.find(next->text(4).toInt());
+	std::map<int,QWidget *>::iterator i=History.find(next->text(4).toInt());
 	if (i!=History.end()&&(*i).second) {
 	  Current->hide();
 	  Current=(*i).second;
