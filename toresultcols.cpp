@@ -235,13 +235,15 @@ void toResultCols::query(const QString &,const toQList &param)
       Owner=name.Owner;
       TableName=name.Name;
     } catch(...) {
+      TableName=Owner;
+      Owner=QString::null;
     }
   }
   if (!Owner.isEmpty())
     toPush(subp,toQValue(Owner));
   toPush(subp,toQValue(TableName));
 
-  Columns->query(sql,subp);
+  Columns->query(QString::null,subp);
 
   sql.prepend("<B>");
   sql+="</B>";
@@ -257,7 +259,8 @@ void toResultCols::query(const QString &,const toQList &param)
       sql+=" - ";
       sql+=comment;
     }
-  } TOCATCH
+  } catch(...) {
+  }
   Title->setText(sql);
 }
 
@@ -350,6 +353,8 @@ void toResultCols::resultCols::query(const QString &,const toQList &param)
       toPush(lst,toQValue((*i).Name));
       LastItem->setText(4,comments[(*i).Name]);
     }
-  } TOCATCH
+  } catch(...) {
+    toStatusMessage("Failed to describe "+sql);
+  }
   updateContents();
 }

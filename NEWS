@@ -70,7 +70,8 @@
 2001-09-19: Added option to clear object cache for connection.
 2001-09-19: Made possible to display errors in memo editor.
 2001-09-19: Fixed duplicate entry in status history on error in worksheet.
-2001-09-19: Invalid object browser.
+2001-09-19: Added invalid object browser tool.
+2001-09-19: Made it possible to use toExtract without progress indication.
 
 1.1.0: Released 2001-09-09
 
