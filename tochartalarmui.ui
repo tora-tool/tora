@@ -1,279 +1,345 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI>
 <class>toChartAlarmUI</class>
-<widget class="QDialog">
-    <property name="name">
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
         <cstring>toChartAlarmUI</cstring>
     </property>
-    <property name="geometry">
+    <property stdset="1">
+        <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>396</width>
+            <width>388</width>
             <height>509</height>
         </rect>
     </property>
-    <property name="caption">
+    <property stdset="1">
+        <name>caption</name>
         <string>Chart alarm</string>
     </property>
     <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
+        <property stdset="1">
+            <name>margin</name>
             <number>11</number>
         </property>
-        <property name="spacing">
+        <property stdset="1">
+            <name>spacing</name>
             <number>6</number>
         </property>
-        <widget class="QComboBox" row="0" column="2">
+        <widget row="0"  column="2" >
+            <class>QComboBox</class>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>Any</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>All</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>Sum</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>Average</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>Max</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>Min</string>
                 </property>
             </item>
-            <property name="name">
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Operation</cstring>
             </property>
         </widget>
-        <widget class="QComboBox" row="1" column="2">
+        <widget row="3"  column="2" >
+            <class>QComboBox</class>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
+                    <string>Statusmessage</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Email</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Ignore</string>
+                </property>
+            </item>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Action</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="2" >
+            <class>QComboBox</class>
+            <item>
+                <property>
+                    <name>text</name>
                     <string>=</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>!=</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>&lt;</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>&gt;</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>&lt;=</string>
                 </property>
             </item>
             <item>
-                <property name="text">
+                <property>
+                    <name>text</name>
                     <string>&gt;=</string>
                 </property>
             </item>
-            <property name="name">
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Comparison</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="2" column="2">
-            <property name="name">
+        <widget row="2"  column="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Value</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="1">
-            <property name="name">
+        <widget row="0"  column="1" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel1</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string>Operation</string>
             </property>
-            <property name="toolTip" stdset="0">
+            <property>
+                <name>toolTip</name>
                 <string>Operation to perform on the selected columns</string>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="1">
-            <property name="name">
+        <widget row="2"  column="1" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel2</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string>Value</string>
             </property>
-            <property name="toolTip" stdset="0">
+            <property>
+                <name>toolTip</name>
                 <string>Value to use in comparison.</string>
             </property>
         </widget>
-        <widget class="QLabel" row="1" column="1">
-            <property name="name">
+        <widget row="1"  column="1" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel1_2</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string>Comparison</string>
             </property>
-            <property name="toolTip" stdset="0">
+            <property>
+                <name>toolTip</name>
                 <string>What comparison to do with the result from the above operation.</string>
             </property>
         </widget>
-        <widget class="QLabel" row="3" column="1">
-            <property name="name">
+        <widget row="3"  column="1" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel3</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string>Action</string>
             </property>
-            <property name="toolTip" stdset="0">
+            <property>
+                <name>toolTip</name>
                 <string>What to do when alarm is triggered.</string>
             </property>
         </widget>
-        <widget class="QLayoutWidget" row="7" column="0" rowspan="1" colspan="3">
-            <property name="name">
+        <widget row="7"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Layout2</cstring>
             </property>
             <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
+                <property stdset="1">
+                    <name>margin</name>
                     <number>0</number>
                 </property>
-                <property name="spacing">
+                <property stdset="1">
+                    <name>spacing</name>
                     <number>6</number>
                 </property>
                 <spacer>
-                    <property name="name" stdset="0">
+                    <property>
+                        <name>name</name>
                         <cstring>Spacer1</cstring>
                     </property>
-                    <property name="orientation">
+                    <property stdset="1">
+                        <name>orientation</name>
                         <enum>Horizontal</enum>
                     </property>
-                    <property name="sizeType">
+                    <property stdset="1">
+                        <name>sizeType</name>
                         <enum>Expanding</enum>
                     </property>
-                    <property name="sizeHint">
+                    <property>
+                        <name>sizeHint</name>
                         <size>
                             <width>20</width>
                             <height>20</height>
                         </size>
                     </property>
                 </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
                         <cstring>PushButton1</cstring>
                     </property>
-                    <property name="text">
+                    <property stdset="1">
+                        <name>text</name>
                         <string>&amp;Ok</string>
                     </property>
-                    <property name="default">
+                    <property stdset="1">
+                        <name>default</name>
                         <bool>true</bool>
                     </property>
                 </widget>
-                <widget class="QPushButton">
-                    <property name="name">
+                <widget>
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
                         <cstring>PushButton2</cstring>
                     </property>
-                    <property name="text">
+                    <property stdset="1">
+                        <name>text</name>
                         <string>Cancel</string>
                     </property>
                 </widget>
             </hbox>
         </widget>
-        <widget class="toListView" row="0" column="0" rowspan="7" colspan="1">
-            <property name="name">
+        <widget row="0"  column="0"  rowspan="7"  colspan="1" >
+            <class>toListView</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Charts</cstring>
             </property>
-            <property name="sizePolicy">
+            <property stdset="1">
+                <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
                     <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property name="focusPolicy">
+            <property stdset="1">
+                <name>focusPolicy</name>
                 <enum>StrongFocus</enum>
             </property>
         </widget>
-        <spacer row="6" column="2">
-            <property name="name" stdset="0">
+        <spacer row="6"  column="2" >
+            <property>
+                <name>name</name>
                 <cstring>Spacer2</cstring>
             </property>
-            <property name="orientation">
+            <property stdset="1">
+                <name>orientation</name>
                 <enum>Vertical</enum>
             </property>
-            <property name="sizeType">
+            <property stdset="1">
+                <name>sizeType</name>
                 <enum>Expanding</enum>
             </property>
-            <property name="sizeHint">
+            <property>
+                <name>sizeHint</name>
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget class="QCheckBox" row="5" column="1" rowspan="1" colspan="2">
-            <property name="name">
+        <widget row="5"  column="1"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Persistent</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string>Persistent</string>
             </property>
-            <property name="toolTip" stdset="0">
+            <property>
+                <name>toolTip</name>
                 <string>Remember this alarm when restarting TOra.</string>
             </property>
         </widget>
-        <widget class="QComboBox" row="3" column="2">
-            <item>
-                <property name="text">
-                    <string>Statusmessage</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Email</string>
-                </property>
-            </item>
-            <item>
-                <property name="text">
-                    <string>Ignore</string>
-                </property>
-            </item>
-            <property name="name">
-                <cstring>Action</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="4" column="1">
-            <property name="name">
+        <widget row="4"  column="1" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>ExtraLabel</cstring>
             </property>
-            <property name="text">
+            <property stdset="1">
+                <name>text</name>
                 <string></string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="4" column="2">
-            <property name="name">
+        <widget row="4"  column="2" >
+            <class>QLineEdit</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Extra</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
             </property>
         </widget>
     </grid>
@@ -290,14 +356,13 @@
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
     </customwidget>
 </customwidgets>
 <images>
-    <image name="image0">
+    <image>
+        <name>image0</name>
         <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
     </image>
 </images>
@@ -320,6 +385,7 @@
         <receiver>toChartAlarmUI</receiver>
         <slot>changeValue(int)</slot>
     </connection>
+    <slot access="public">changeValue(int)</slot>
 </connections>
 <tabstops>
     <tabstop>Charts</tabstop>
@@ -332,11 +398,4 @@
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton2</tabstop>
 </tabstops>
-<variables>
-    <variable></variable>
-</variables>
-<slots>
-    <slot>changeValue(int)</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
 </UI>

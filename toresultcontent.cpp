@@ -448,6 +448,7 @@ void toResultContentEditor::poll(void)
 	    setText(Row,j,toShift(data));
 	  Row++;
 	}
+#if QT_VERSION >= 300
 	for(int j=0;j<numCols();j++) {
 	  int width=columnWidth(j);
 	  for(int k=origRow;k<Row;k++) {
@@ -459,6 +460,7 @@ void toResultContentEditor::poll(void)
 	  if (width!=columnWidth(j))
 	    setColumnWidth(j,width);
 	}
+#endif
       }
       if (first&&SingleEdit) {
 	SingleEdit->changeSource(this);

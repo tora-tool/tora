@@ -746,7 +746,7 @@ std::list<QString> toExtract::splitDescribe(const QString &str)
 QString toExtract::partDescribe(const QString &str,int level)
 {
   QStringList ctx=QStringList::split("\01",str);
-  if (ctx.count()<=level)
+  if (ctx.count()<=(unsigned int)level)
     return QString::null;
   return ctx[level];
 }
