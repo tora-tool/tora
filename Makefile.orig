@@ -330,7 +330,6 @@ tora-plugin: \
 	plugins/toinvalid.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \
-	plugins/tonoblockquery.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \
