@@ -14,6 +14,8 @@
 2001-05-10: Changed how LICENSE.h is generated.
 2001-05-11: Removed tryLock and tryDown in tothread.
 2001-05-11: Added option to compile using QThread instead of PThreads.
+2001-05-11: Added some more quotes.
+2001-05-11: Fixed problem in toResultCols and "" tables.
 
 0.8: Released 2001-05-07
 

@@ -188,14 +188,16 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
   QString TableName;
   list<QString>::iterator cp=((list<QString> &)param).begin();
   if (cp!=((list<QString> &)param).end()) {
-    SQL=*cp;
+    SQL="\"";
+    SQL+=*cp;
     Owner=*cp;
   }
   cp++;
   if (cp!=((list<QString> &)param).end()) {
-    SQL.append(".");
+    SQL.append("\".\"");
     SQL.append(*cp);
     TableName=(*cp);
+    SQL+="\"";
   }
   LastItem=NULL;
   RowNumber=0;
