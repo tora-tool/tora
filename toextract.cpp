@@ -642,7 +642,7 @@ QString toExtract::intSchema(const QString &owner,bool desc)
   if (owner.upper()=="PUBLIC")
     return "PUBLIC";
   if (Schema=="1") {
-    QString ret=Connection.quote(Schema);
+    QString ret=Connection.quote(owner);
     if (!desc)
       ret+=".";
     return ret;

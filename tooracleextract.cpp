@@ -2901,7 +2901,7 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
   static QRegExp func("^sys_nc[0-9]g");
   toQuery inf(CONNECTION,SQLIndexColumns,name,owner);
   while(!inf.eof()) {
-    QString col=QUOTE(inf.readValue());
+    QString col=inf.readValue();
     QString asc=inf.readValue();
     QString row;
     if (func.match(col)>=0) {
@@ -2913,7 +2913,7 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
       else
 	row=function;
     } else
-      row=col;
+      row=QUOTE(col);
     addDescription(lst,ctx,"COLUMN",row);
   }
 }
@@ -3324,7 +3324,7 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
 {
   toQList cols=toQuery::readQueryNull(CONNECTION,SQLTableColumns,name,owner);
   while(cols.size()>0) {
-    QString col=toShift(cols);
+    QString col=QUOTE(toShift(cols));
     QString line=toShift(cols);
     QString def=toShift(cols);
     if (!def.isEmpty()) {

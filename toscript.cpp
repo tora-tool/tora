@@ -38,6 +38,7 @@
 #include "tofilesize.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
+#include "toreport.h"
 #include "toresultview.h"
 #include "toscript.h"
 #include "toscriptui.h"
@@ -449,6 +450,8 @@ void toScript::execute(void)
       mode=2;
     else if (ScriptUI->Search->isChecked())
       mode=3;
+    else if (ScriptUI->Report->isChecked())
+      mode=4;
     else {
       toStatusMessage("No mode selected");
       return;
@@ -469,7 +472,8 @@ void toScript::execute(void)
     case 0:
     case 2:
     case 3:
-      destinationDescription=source.describe(sourceObjects);
+    case 4:
+      sourceDescription=source.describe(sourceObjects);
       break;
       break;
     }
@@ -507,27 +511,28 @@ void toScript::execute(void)
     }
     if (mode==3) {
       Worksheet->hide();
+      Report->hide();
       SearchList->show();
       QRegExp re(ScriptUI->SearchWord->text(),false);
       QStringList words(QStringList::split(QRegExp(" "),
 						   ScriptUI->SearchWord->text().
 						   upper().simplifyWhiteSpace()));
       QString word=ScriptUI->SearchWord->text().upper();
-      int mode=0;
+      int searchMode=0;
       if (ScriptUI->AllWords->isChecked())
-	mode=1;
+	searchMode=1;
       else if (ScriptUI->AnyWords->isChecked())
-	mode=2;
+	searchMode=2;
       else if (ScriptUI->RegExp->isChecked())
-	mode=3;
+	searchMode=3;
       else if (ScriptUI->ExactMatch->isChecked())
-	mode=4;
+	searchMode=4;
       std::list<QString> result;
-      for(std::list<QString>::iterator i=destinationDescription.begin();
-	  i!=destinationDescription.end();
+      for(std::list<QString>::iterator i=sourceDescription.begin();
+	  i!=sourceDescription.end();
 	  i++) {
 	QStringList ctx=QStringList::split("\01",(*i).upper());
-	switch(mode) {
+	switch(searchMode) {
 	case 1:
 	case 2:
 	  {
@@ -537,7 +542,7 @@ void toScript::execute(void)
 	      if (ctx.last().contains(s))
 		count++;
 	    }
-	    if ((mode==2&&count>0)||(mode==1&&count==words.count()))
+	    if ((searchMode==2&&count>0)||(searchMode==1&&count==words.count()))
 	      result.insert(result.end(),*i);
 	  }
 	  break;
@@ -552,9 +557,15 @@ void toScript::execute(void)
 	}
       }
       fillDifference(result,SearchList);
+    } else if (mode==4) {
+      Worksheet->hide();
+      SearchList->hide();
+      Report->show();
+      Report->setText(toGenerateReport(source.connection(),sourceDescription));
     } else {
       Worksheet->show();
       SearchList->hide();
+      Report->hide();
       fillDifference(sourceDescription,DropList);
       fillDifference(destinationDescription,CreateList);
     }
