@@ -664,14 +664,51 @@ void toExtract::describeConstraint(std::list<QString> &lst,const QString &schema
   }
 }
 
-QString toExtract::migrateConstraint(bool create,std::list<QString> &lst)
+QString toExtract::migrateConstraint(std::list<QString> &source,std::list<QString> &destin)
 {
   QString lastSchema;
   QString lastTable;
   QString lastName;
   QString lastType;
   QString sql;
-  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  srcDst2DropCreate(source,destin,drop,create);
+
+  for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+    std::list<QString> ctx=splitDescribe(*i);
+    QString schema=toShift(ctx);
+    QString table=toShift(ctx);
+    if (toShift(ctx)!="TABLE")
+      continue;
+    QString name=toShift(ctx);
+    if (toShift(ctx)!="CONSTRAINT")
+      continue;
+    QString type=toShift(ctx);
+    QString extra=toShift(ctx);
+    if ((schema!=lastSchema||
+	 table!=lastTable||
+	 name!=lastName||
+	 type!=lastType)&&
+	extra.isEmpty()) {
+      if (Prompt)
+	sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
+	  arg(schema).arg(table).arg(name);
+      sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
+	arg(schema).arg(table).arg(name);
+      lastSchema=schema;
+      lastTable=table;
+      lastName=name;
+      lastType=type;
+    }
+    
+  }
+
+  lastSchema=lastTable=lastName=lastType=QString::null;
+
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
     std::list<QString> ctx=splitDescribe(*i);
     QString schema=toShift(ctx);
     QString table=toShift(ctx);
@@ -686,29 +723,20 @@ QString toExtract::migrateConstraint(bool create,std::list<QString> &lst)
 	table==lastTable&&
 	name==lastName&&
 	type==lastType) {
-      if (create)
-	sql+=" "+extra;
+      sql+=" "+extra;
     } else if (extra.isEmpty()) {
-      if (create) {
-	if (!sql.isEmpty())
-	  sql+=";\n\n";
-	if (Prompt)
-	  sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
-	    arg(schema).arg(table).arg(name);
-	sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
-	  arg(schema).arg(table).arg(name).arg(type);
-      } else {
-	if (Prompt)
-	  sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
-	    arg(schema).arg(table).arg(name);
-	sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
+      if (!sql.isEmpty())
+	sql+=";\n\n";
+      if (Prompt)
+	sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
 	  arg(schema).arg(table).arg(name);
-      }
+      sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
+	arg(schema).arg(table).arg(name).arg(type);
       lastSchema=schema;
       lastTable=table;
       lastName=name;
       lastType=type;
-    } else if (create) {
+    } else {
       if (Prompt)
 	sql+=QString("PROMPT ALTER TABLE %1%2 MODIFY CONSTRAINT %3\n\n").
 	  arg(schema).arg(table).arg(name);
@@ -716,6 +744,9 @@ QString toExtract::migrateConstraint(bool create,std::list<QString> &lst)
 	arg(schema).arg(table).arg(name).arg(extra);
     }
   }
+  if (!sql.isEmpty())
+    sql+=";\n\n";
+  
   return sql;
 }
 
@@ -771,11 +802,55 @@ void toExtract::describeDBLink(std::list<QString> &lst,const QString &schema,con
   ctx.insert(ctx.end(),"DATABASE LINK");
   ctx.insert(ctx.end(),name.lower());
 
-  addDescription(lst,ctx,publ);
-  addDescription(lst,ctx,QString("%1 IDENTIFIED BY %2 USING '%3'").
+  addDescription(lst,ctx,publ,QString("%1 IDENTIFIED BY %2 USING '%3'").
 		 arg(user.lower()).
 		 arg(password.lower()).
 		 arg(prepareDB(host)));
+}
+
+QString toExtract::migrateDBLink(std::list<QString> &source,std::list<QString> &destin)
+{
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  srcDst2DropCreate(source,destin,drop,create);
+
+  QString ret;
+
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=splitDescribe(*i);
+      if (toShift(ctx)!="DATABASE LINK")
+	continue;
+      QString sql;
+      if (toShift(ctx)=="PUBLIC")
+	sql="DROP PUBLIC DATABASE LINK ";
+      else
+	sql="DROP DATABASE LINK";
+      sql+=toShift(ctx);
+      if (Prompt)
+	ret+="PROMPT "+sql+"\n\n";
+      ret+=sql;
+      ret+=";\n\n";
+    }
+  }
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=splitDescribe(*i);
+    if (toShift(ctx)!="DATABASE LINK")
+      continue;
+    QString sql;
+    if (toShift(ctx)=="PUBLIC")
+      sql="CREATE PUBLIC DATABASE LINK ";
+    else
+      sql="CREATE DATABASE LINK";
+    sql+=toShift(ctx);
+    if (Prompt)
+      ret+="PROMPT "+sql+"\n\n";
+    ret+=sql;
+    ret+=toShift(ctx);
+    ret+=";\n\n";
+  }
+  return ret;
 }
 
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
@@ -6545,4 +6620,33 @@ QString toExtract::resize(std::list<QString> &objects)
 QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
 {
   throw QString("Migration not implemented yet");
+}
+
+void toExtract::srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
+				  std::list<QString> &drop,std::list<QString> &create)
+{
+  drop.clear();
+  create.clear();
+
+  std::list<QString>::iterator i=source.begin();
+  std::list<QString>::iterator j=destination.begin();
+  while(i!=source.end()&&j!=destination.end()) {
+    if (*i!=*j) {
+      if (*i<*j) {
+	drop.insert(drop.end(),*i);
+	i++;
+      } else {
+	create.insert(create.end(),*j);
+	j++;
+      }
+    }
+  }
+  while(i!=source.end()) {
+    drop.insert(drop.end(),*i);
+    i++;
+  }
+  while(j!=destination.end()) {
+    create.insert(create.end(),*j);
+    j++;
+  }
 }

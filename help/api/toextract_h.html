@@ -195,7 +195,8 @@ class toExtract {
 		    const QString &name);
 
   // Migrate functions
-  QString migrateConstraint(bool create,std::list<QString> &lst);
+  QString migrateConstraint(std::list<QString> &src,std::list<QString> &dst);
+  QString migrateDBLink(std::list<QString> &src,std::list<QString> &dst);
 
   // Drop functions
   QString dropConstraint(const QString &schema,const QString &name,const QString &type,
@@ -512,6 +513,16 @@ public:
    */
   bool getCode(void)
   { return Code; }
+
+  /** Create a source and destination object list to two other lists
+   * containing dropped and created objects or attributes.
+   * @param source Source list input (Will not be modified).
+   * @param destination Destination list input (Will not be modified).
+   * @param drop Drop list output (Will be overwritten).
+   * @param create Create list output (Will be overwritten).
+   */
+  static void srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
+				std::list<QString> &drop,std::list<QString> &creat);
 };
 
 #endif

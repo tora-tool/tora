@@ -89,23 +89,8 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 			   "	SELECT 'ROLE',role,NULL\n"
 			   "	  FROM sys.dba_roles\n"
 			   "	UNION\n"
-			   "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
-			   "	  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
-			   "	UNION\n"
-			   "	SELECT owner,'DATABASE LINK',db_link\n"
-			   "	  FROM sys.all_db_links\n"
-			   "	UNION\n"
-			   "	SELECT owner,object_type,object_name\n"
-			   "	  FROM sys.all_objects\n"
-			   "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
-			   "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
-			   "	UNION\n"
-			   "	SELECT owner,'TABLE',table_name\n"
-			   "	  FROM sys.all_tables\n"
-			   "	 WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL\n"
-			   "	UNION\n"
-			   "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
-			   "	  FROM sys.all_mviews\n"
+			   "	SELECT 'PUBLIC',NULL,NULL\n"
+			   "	  FROM dual\n"
 			   "	UNION\n"
 			   "	SELECT username,NULL,NULL\n"
 			   "	  FROM sys.all_users)\n"
@@ -114,37 +99,58 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 			   "should have same columns",
 			   "8.1");
 
-static toSQL SQLObjectList7("toScript:ExtractObject",
+static toSQL SQLPublicSynonymList("toScript:PublicSynonyms",
+				  "SELECT synonym_name\n"
+				  "  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
+				  " ORDER BY 1",
+				  "Extract all public synonyms from database");
+
+static toSQL SQLUserObjects("toScript:UserObjects",
 			    "SELECT *\n"
-			    "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
-			    "	  FROM sys.dba_tablespaces\n"
-			    "	UNION\n"
-			    "	SELECT 'ROLE',role,NULL\n"
-			    "	  FROM sys.dba_roles\n"
-			    "	UNION\n"
-			    "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
-			    "	  FROM sys.all_synonyms WHERE owner = 'PUBLIC'\n"
-			    "	UNION\n"
-			    "	SELECT owner,'DATABASE LINK',db_link\n"
-			    "	  FROM sys.all_db_links\n"
-			    "	UNION\n"
-			    "	SELECT owner,object_type,object_name\n"
-			    "	  FROM sys.all_objects\n"
-			    "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
-			    "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
-			    "	UNION\n"
-			    "	SELECT owner,'TABLE',table_name\n"
-			    "	  FROM sys.all_tables\n"
-			    "	 WHERE temporary != 'Y' AND secondary = 'N'\n"
-			    "	UNION\n"
-			    "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
-			    "	  FROM sys.all_mviews\n"
-			    "	UNION\n"
-			    "	SELECT username,NULL,NULL\n"
-			    "	  FROM sys.all_users)\n"
-			    "  ORDER BY 1,2,3",
-			    "",
-			    "7.0");
+			    "  FROM (SELECT 'DATABASE LINK',db_link\n"
+			    "          FROM sys.all_db_links\n"
+			    "         WHERE owner = :own<char[101]>\n"
+			    "        UNION\n"
+			    "        SELECT object_type,object_name\n"
+			    "          FROM sys.all_objects\n"
+			    "         WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
+			    "                               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			    "           AND owner = :own<char[101]>\n"
+			    "         UNION\n"
+			    "        SELECT 'TABLE',table_name\n"
+			    "          FROM sys.all_tables\n"
+			    "         WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL\n"
+			    "           AND owner = :own<char[101]>\n"
+			    "        UNION\n"
+			    "        SELECT 'MATERIALIZED TABLE',mview_name AS object\n"
+			    "          FROM sys.all_mviews\n"
+			    "         WHERE owner = :own<char[101]>)\n"
+			    " ORDER BY 1,2",
+			    "Get the objects available for a user, must have same columns and binds");
+
+static toSQL SQLUserObjects7("toScript:UserObjects",
+			     "SELECT *\n"
+			     "  FROM (SELECT 'DATABASE LINK',db_link\n"
+			     "          FROM sys.all_db_links\n"
+			     "         WHERE owner = :own<char[101]>\n"
+			     "        UNION\n"
+			     "        SELECT object_type,object_name\n"
+			     "          FROM sys.all_objects\n"
+			     "         WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
+			     "                               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			     "           AND owner = :own<char[101]>\n"
+			     "         UNION\n"
+			     "        SELECT 'TABLE',table_name\n"
+			     "          FROM sys.all_tables\n"
+			     "         WHERE temporary != 'Y' AND secondary = 'N'\n"
+			     "           AND owner = :own<char[101]>\n"
+			     "        UNION\n"
+			     "        SELECT 'MATERIALIZED TABLE',mview_name AS object\n"
+			     "          FROM sys.all_mviews\n"
+			     "         WHERE owner = :own<char[101]>)\n"
+			     " ORDER BY 1,2",
+			     QString::null,
+			     "7.3");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
 			       "SELECT owner,object_type,object_name\n"
@@ -236,6 +242,11 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   connect(ScriptUI->DestinationSchema,SIGNAL(activated(int)),this,SLOT(changeDestinationSchema(int)));
   connect(ScriptUI->SourceObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
   connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+
+  connect(ScriptUI->SourceObjects,SIGNAL(expanded(QListViewItem *)),
+	  this,SLOT(expandSource(QListViewItem *)));
+  connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),
+	  this,SLOT(expandDestination(QListViewItem *)));
 
   ScriptUI->Schema->setCurrentItem(0);
 }
@@ -445,20 +456,13 @@ void toScript::execute(void)
 	throw QString ("Destination shouldn't be enabled now, internal error");
       }
 
-      // Remove entries existing in both source and destination
-      std::list<QString>::iterator i=sourceDescription.begin();
-      std::list<QString>::iterator j=destinationDescription.begin();
-      while(i!=sourceDescription.end()&&j!=destinationDescription.end()) {
-	if (*i==*j) {
-	  sourceDescription.erase(i);
-	  destinationDescription.erase(j);
-	  i=sourceDescription.begin();
-	  j=destinationDescription.begin();
-	} else if (*i<*j)
-	  i++;
-	else
-	  j++;
-      }
+      std::list<QString> drop;
+      std::list<QString> create;
+
+      toExtract::srcDst2DropCreate(sourceDescription,destinationDescription,
+				   drop,create);
+      sourceDescription=drop;
+      destinationDescription=create;
     }
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,mode==1||mode==2||mode==3);
     ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,mode==0||mode==2);
@@ -589,10 +593,11 @@ void toScript::changeConnection(int,bool source)
       QListViewItem *parent=NULL;
       for (QListViewItem *item=sourceL->firstChild();item;item=next) {
 	QListViewItem *lastParent=parent;
-	if (!parent)
+	if (!parent) {
 	  parent=new toResultViewCheck(destinationL,item->text(0),
 				       QCheckListItem::CheckBox);
-	else
+	  parent->setExpandable(true);
+	} else
 	  parent=new toResultViewCheck(parent,item->text(0),
 				       QCheckListItem::CheckBox);
 	parent->setText(1,item->text(1));
@@ -647,6 +652,7 @@ void toScript::changeConnection(int,bool source)
 				       ScriptUI->SourceObjects:
 				       ScriptUI->DestinationObjects),
 				      top,QCheckListItem::CheckBox);
+	lastTop->setExpandable(true);
 	if (!second.isEmpty()||first.isEmpty())
 	  lastTop->setText(1,"USER");
       }
@@ -662,6 +668,44 @@ void toScript::changeConnection(int,bool source)
       }
     }
   } TOCATCH
+}
+
+void toScript::readOwnerObjects(QListView *list,QListViewItem *item,toConnection &conn)
+{
+  if (!item->parent()&&!item->firstChild()) {
+    try {
+      QListViewItem *lastFirst=NULL;
+      QString top=item->text(0);
+      toQList object=toQuery::readQueryNull(conn,SQLUserObjects,top);
+
+      while(object.size()>0) {
+	QString first=toShift(object);
+	QString second=toShift(object);
+
+	if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
+	  lastFirst=new toResultViewCheck(item,first,QCheckListItem::CheckBox);
+	  if (second.isEmpty())
+	    lastFirst->setText(1,top);
+	}
+	if (!second.isEmpty()&&lastFirst) {
+	  QListViewItem *item=new toResultViewCheck(lastFirst,second,QCheckListItem::CheckBox);
+	  item->setText(1,first);
+	  item->setText(2,top);
+	}
+      }
+
+      if (top=="PUBLIC") {
+	object=toQuery::readQueryNull(conn,SQLPublicSynonymList);
+	QListViewItem *topItem=new toResultViewCheck(item,"SYNONYM",QCheckListItem::CheckBox);
+	while(object.size()>0) {
+	  QListViewItem *item=new toResultViewCheck(topItem,toShift(object),
+						    QCheckListItem::CheckBox);
+	  item->setText(1,"SYNONYM");
+	  item->setText(2,top);
+	}
+      }
+    } TOCATCH
+  }
 }
 
 void toScript::changeMode(int mode)
@@ -710,9 +754,17 @@ void toScript::changeMode(int mode)
 
 void toScript::objectClicked(QListViewItem *parent)
 {
+  if (!parent)
+    return;
   toResultViewCheck *pchk=dynamic_cast<toResultViewCheck *>(parent);
   if (!pchk)
     return;
+  if (!parent->parent()&&!parent->firstChild()) {
+    if (parent->listView()==ScriptUI->SourceObjects)
+      expandSource(parent);
+    else if (parent->listView()==ScriptUI->DestinationObjects)
+      expandDestination(parent);
+  }
   bool on=pchk->isOn();
   QListViewItem *next=NULL;
   for (QListViewItem *item=parent->firstChild();item;item=next) {
@@ -854,4 +906,18 @@ void toScript::setupExtract(toExtract &extr)
     }
     extr.setResize(siz);
   }
+}
+
+void toScript::expandSource(QListViewItem *item)
+{
+  if (item)
+    readOwnerObjects(ScriptUI->SourceObjects,item,
+		     toMainWidget()->connection(ScriptUI->SourceConnection->currentText()));
+}
+
+void toScript::expandDestination(QListViewItem *item)
+{
+  if (item)
+    readOwnerObjects(ScriptUI->DestinationObjects,item,
+		     toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
 }

@@ -60,6 +60,7 @@ class toScript : public toToolWidget {
   void changeSchema(int,bool source);
   std::list<QString> createObjectList(QListView *);
   void fillDifference(std::list<QString> &objects,QListView *list);
+  void readOwnerObjects(QListView *list,QListViewItem *item,toConnection &conn);
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();
@@ -79,6 +80,9 @@ public slots:
   { changeSchema(val,false); }
   void newSize(void);
   void removeSize(void);
+
+  void expandSource(QListViewItem *item);
+  void expandDestination(QListViewItem *item);
 };
 
 #endif
