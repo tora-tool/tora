@@ -37,6 +37,8 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
+#include <list>
+
 #include <qwidget.h>
 
 class toSearchReplace;
@@ -45,6 +47,28 @@ class toSearchReplace;
  * access copy, cut, paste, open, save commands of the user interface.
  */
 class toEditWidget {
+public:
+  /** Class used to extent how to enable/disable parts of the interface as
+   * focus changes.
+   */
+  class editHandler {
+  public:
+    /** Constructor.
+     */
+    editHandler()
+    { }
+    /** Destructor.
+     */
+    virtual ~editHandler()
+    { }
+    /** Called when a new widget receives the focus.
+     */
+    virtual void receivedFocus(QWidget *widget);
+    /** Called when a widget loses the focus.
+     */
+    virtual void lostFocus(QWidget *widget);
+  };
+private:
   bool Open;
   bool Save;
   bool Print;
@@ -57,6 +81,8 @@ class toEditWidget {
   bool SelectAll;
   bool ReadAll;
   void setMainSettings(void);
+
+  static std::list<editHandler *> Handlers;
 public:
   /** Empty constructor, all functions are disabled.
    */
@@ -218,9 +244,16 @@ public:
   /** Call this when this widget has received the focus.
    */
   void receivedFocus(void);
-  /** Call this when this widget has lost the focus.
+  /** Called when this widget has lost the focus.
    */
-  void lostFocus(void);
+  virtual void lostFocus(void);
+
+  /** Add a hook to be called every time focus changes.
+   */
+  static void addHandler(editHandler *handler);
+  /** Removed a hook from being called every time focus changes.
+   */
+  static void delHandler(editHandler *handler);
 };
 
 #endif

@@ -290,6 +290,32 @@ void toResultContentEditor::keyPressEvent(QKeyEvent *e)
       } else
 	MaxNumber+=20;
     }
+  } else if (e->key()==Key_Return) {
+    if (e->state()==0) {
+      gotoNextRecord();
+      e->accept();
+      return;
+    } else if (e->state()==ShiftButton) {
+      gotoPreviousRecord();
+      e->accept();
+      return;
+    }
+  } else if (e->key()==Key_Tab) {
+    if (e->state()==0) {
+      if (currentColumn()<numCols()-1)
+	setCurrentCellFocus(currentRow(),currentColumn()+1);
+      else if (currentRow()<numRows()-1)
+	setCurrentCellFocus(currentRow()+1,0);
+      e->accept();
+      return;
+    } else if (e->state()==ShiftButton) {
+      if (currentColumn()>0)
+	setCurrentCellFocus(currentRow(),currentColumn()-1);
+      else if (currentRow()>0)
+	setCurrentCellFocus(currentRow()-1,numCols()-1);
+      e->accept();
+      return;
+    }
   }
   QTable::keyPressEvent(e);
 }

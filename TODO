@@ -16,6 +16,11 @@ Extended functionality:
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
+* Editor improvements
+	Indent block
+	Deintent block
+	Pretty print
+	CVS support (Or whatever this is called in windows)
 * Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
 * Extract grants from objects.

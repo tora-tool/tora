@@ -37,6 +37,8 @@
 #include "toeditwidget.h"
 #include "tomain.h"
 
+std::list<toEditWidget::editHandler *> toEditWidget::Handlers;
+
 void toEditWidget::setMainSettings(void)
 {
   toMain::editEnable(this);
@@ -92,7 +94,14 @@ toEditWidget::~toEditWidget()
   toMain::editDisable(this);
 }
 
+void toEditWidget::lostFocus(void)
+{
+}
+
 void toEditWidget::receivedFocus(void)
 {
   toMain::setEditWidget(this);
+  for(std::list<editHandler *>::iterator i=Handlers.begin();i!=Handlers.end();i++) {
+    (*i)->receivedFocus(dynamic_cast<QWidget *>(this));
+  }
 }

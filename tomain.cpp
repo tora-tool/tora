@@ -895,6 +895,8 @@ void toMain::setEditWidget(toEditWidget *edit)
 {
   toMain *main=(toMain *)qApp->mainWidget();
   if (main&&edit) {
+    if (main->Edit)
+      main->Edit->lostFocus();
     main->Edit=edit;
     main->RowLabel->hide();
     main->ColumnLabel->hide();
@@ -927,6 +929,7 @@ void toMain::editDisable(toEditWidget *edit)
   if (main) {
     if(edit&&edit==main->Edit) {
       main->editEnable(edit,false,false,false,false,false,false,false,false,false,false,false);
+      main->Edit->lostFocus();
       main->Edit=NULL;
     }
   }
@@ -953,35 +956,15 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
 {
   if (edit&&edit==Edit) {
     LoadButton->setEnabled(open);
-    if (save)
-      SaveButton->setEnabled(true);
-    else
-      SaveButton->setEnabled(false);
-
+    SaveButton->setEnabled(save);
     PrintButton->setEnabled(print);
 
-    if (undo)
-      UndoButton->setEnabled(true);
-    else
-      UndoButton->setEnabled(false);
-    if (redo)
-      RedoButton->setEnabled(true);
-    else
-      RedoButton->setEnabled(false);
+    UndoButton->setEnabled(undo);
+    RedoButton->setEnabled(redo);
 
-    if (cut)
-      CutButton->setEnabled(true);
-    else
-      CutButton->setEnabled(false);
-    if (copy)
-      CopyButton->setEnabled(true);
-    else
-      CopyButton->setEnabled(false);
-
-    if (paste)
-      PasteButton->setEnabled(true);
-    else
-      PasteButton->setEnabled(false);
+    CutButton->setEnabled(cut);
+    CopyButton->setEnabled(copy);
+    PasteButton->setEnabled(paste);
   }
 }
 
