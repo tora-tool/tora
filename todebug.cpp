@@ -2551,5 +2551,7 @@ void toDebug::closeEditor()
 
     Editors->removePage(editor);
     delete editor;
+    if (Editors->count()==0)
+      newSheet();
   }
 }
