@@ -4,85 +4,8 @@ Installing TOra
 Using a binary distribution
 ===========================
 
-There are a few different distributions available. First lets start with the
-similarities. They are all compiled using the following libraries and programs
-
-gcc 2.95.3
-stdc++ 2.95.2
-Qt 2.3 (Should be binary compatible with 2.2 and above)
-Oracle 8.1.7.0.1
-
-The base distribution was Mandrake 7.2. Whatever you use you need a working
-Oracle client installation (Even if you go with the static binary). If you
-have trouble connecting first make sure sqlplus can connect before trying to
-get support for TOra.
-
-tora-{version}-1gc.i686.rpm
----------------------------
-This version should work reasonable well on any glibc2.1 based system which
-uses GCC 2.95.* or EARLIER. Which means pretty much everyone except RedHat
-7.x and Mandrake 8. This version is compiled with KDE support enabled and
-requires kdelibs to be installed.
-
-You will probably get a complaint about clntsh.so missing. What you need to
-do is make sure that this is the only thing that it complains about and then
-install it anyway using the command.
-
-rpm -ivh --nodeps {rpm}
-
-After this you must also make sure ld.so can find the clntsh file which is
-in the $ORACLE_HOME/lib directory. You can either add this is /etc/ld.so.conf
-or add it in LD_LIBRARY_PATH. This should install tora in /usr/bin.
-
-tora-{version}-1mdk.i686.rpm
-----------------------------
-This version is excactly the same as the 1gc version mentioned before except
-that it will also install tora into the Mandrake menu system. The same library
-problems and solutions apply. This version is compiled with KDE support
-enabled and requires kdelibs to be installed.
-
-tora-{version}-1qt.i686.rpm
--------------------------------
-This version is excactly the same as the 1gc version mentioned before except
-that it will also install tora into the Mandrake menu system. The same library
-problems and solutions apply. This version is not compiled using KDE support.
-
-tora-{version}-1static.i686.rpm
--------------------------------
-This is a statically linked version. The libraries that are linked statically
-are stdc++, Qt and Oracle. This means that this version should probably work
-on RedHat 7.x and Mandrake 8 as well. This version does not have KDE support
-enabled.
-
-tora-{version}-bin.tar.gz
--------------------------
-This is a dynamically linked tora which is just to unpack wherever you want
-it. To use the SQL templates copy the files in the template directory to
-the library /usr/lib/tora. To use help copy the files in the help directory
-to the /usr/lib/tora/help directory. This version has KDE support enabled and
-requires KDE libraries available.
-
-tora-{version}-qt.tar.gz
--------------------------
-This is a dynamically linked tora which is just to unpack wherever you want
-it. To use the SQL templates copy the files in the template directory to
-the library /usr/lib/tora. To use help copy the files in the help directory
-to the /usr/lib/tora/help directory. This version does not have KDE support
-enabled.
-
-tora-{version}-static.tar.gz
-----------------------------
-This is a statically linked tora which you just unpack wherever you want it.
- To use the SQL templates copy the files in the template directory to the
-library /usr/lib/tora. To use help copy the files in the help directory
-to the /usr/lib/tora/help directory. This version does not have KDE support
-enabled.
-
-tora-{version}.zip
-------------------
-This is a windows installation. It is compiled on Windows 2000 using
-Microsoft Visual C++ 6.0 with servicepack 5. It also requires a working
-Oracle client installation.
+Check the release notes for various binary distributions available of this
+release.
 
 Installing from source
 ======================
@@ -95,6 +18,7 @@ Before you try to compile TOra you will need the following prerequisites:
    versions of Oracle but is as of this version not supported (Please try and
    send me patches).
 4. PERL 5
+5. GNU Make.
 
 Thats about it, you should be set to start trying.
 
@@ -112,7 +36,8 @@ troubles. It will also copy the file Makefile.orig to Makefile so you
 can start compiling.
 
 After that you should be able to compile by just issuing "make" followed
-by "make install".
+by "make install". Observe that you probably need a GNU version of make
+since TOra uses GNU extensions in the makefile.
 
 If you experience problems with configure
 -----------------------------------------

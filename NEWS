@@ -17,6 +17,8 @@
 2001-09-12: Set client info when opening connection.
 2001-09-12: Fixed problem with binds and sql address resolution.
 2001-09-12: Added support for MySQL in explain plan.
+2001-09-12: Added note that gnu make must be used.
+2001-09-12: Updates to the INSTALL file for 1.1 changes of the install.
 
 1.1.0: Released 2001-09-09
 

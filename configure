@@ -97,4 +97,6 @@ $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < 
 echo "\"</PRE>\\n\";" >> LICENSE.h
 
 echo
+echo "You must use a GNU version of make to compile this program."
+echo
 echo "If you have any problems check the Makefile.setup for the settings."
