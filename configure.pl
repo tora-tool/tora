@@ -1069,7 +1069,7 @@ __EOT__
 	print MAKEFILE "ORACLE_SHARED=$OracleShared\n";
 	print MAKEFILE "\n";
 
-	if ($OracleRelease>9) {
+	if ($OracleRelease ge "9") {
 	    print MAKEFILE "# Static Oracle libraries\n";
 	    print MAKEFILE "ORACLE_STATIC=\$(STATIC_CLIENTLIBS)\n";
 	    print MAKEFILE "\n";
