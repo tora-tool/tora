@@ -351,13 +351,15 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	  painter->drawLine(cursorx-1,0,cursorx-1,
 			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
 	}
-	if (Completion) {
+	if (Completion&&!KeepCompletion) {
 	  int x=cursorPoint().x()-xOffset();
 	  QString mrk=markedText();
 	  if (!mrk.isEmpty()&&(line1!=curline||col1!=curcol))
 	    x-=painter->fontMetrics().width(mrk);
 	  QPoint p=mapToGlobal(QPoint(x,cursorPoint().y()+cellHeight()-yOffset()));
-	  Completion->move(topLevelWidget()->mapFromGlobal(p));
+	  p=topLevelWidget()->mapFromGlobal(p);
+	  if (Completion->pos()!=p)
+	    Completion->move(p);
 	}
 	Cursor++;
       } else
@@ -531,7 +533,9 @@ void toHighlightedText::checkComplete(void)
 	}
 	QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
 				    cursorPoint().y()+cellHeight()-yOffset()));
-	Completion->move(topLevelWidget()->mapFromGlobal(p));
+	p=topLevelWidget()->mapFromGlobal(p);
+	if (Completion->pos()!=p)
+	    Completion->move(p);
 	QSize size=Completion->sizeHint();
 	size.setWidth(size.width()+20);
 	Completion->setFixedSize(size);
