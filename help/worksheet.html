@@ -124,8 +124,8 @@ END;
 </pre></td></tr></table><P>
 In the example above there are three statements that TOra will recognize and execute.<P>
 There are a few words that are treated as comments for compatibility with SQL*Plus scripts. They are
-<B>--</B>, <B>REM</B>, <B>PROMPT</B> and <B>SET</B>. Comments will disregard whatever is to the right on
-the line.<P>
+<B>--</B>, <B>REM</B> and <B>PROMPT</B>. Comments will disregard whatever is to the right on the line.
+Also multi line <B>/* ... */</B> style comments are recognised and ignored.<P>
 You can also use bind variables in the worksheet by using the normal <B>:</B> character. See
 <A HREF=common.html#param>getting bind parameters</A> for more information how this works. One nice
 feature is that the first line retrieved from the result set is stored in the parameter cache with
