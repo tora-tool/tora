@@ -45,8 +45,8 @@ TO_NAMESPACE;
 #include "icons/largelogo.xpm"
 
 static const char *AboutText=
-"<IMG SRC=largelogo.xpm ALIGN=right><BR>
-<H1>TOra</H1>Version %s
+"<IMG SRC=largelogo.xpm BORDER=1><BR>
+Version %s
 <P>
 &copy; 2000 copyright of GlobeCom AB
 (<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>
@@ -252,6 +252,7 @@ toAbout::toAbout(QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption(buffer);
     sprintf(buffer,AboutText,TOVERSION);
     TextView->setText(buffer);
+    TextView->setPaper(QColor(227,184,54));
     ChangeButton->setText(tr("&Quotes"));
     Page=0;
   }
@@ -267,11 +268,13 @@ void toAbout::changeView(void)
     ChangeButton->setText(tr("&License"));
     TextView->setText(QuoteText);
     setCaption("Favourite Quotes");
+    TextView->setPaper(QColor(255,255,255));
     Page++;
     break;
   case 1:
     ChangeButton->setText(tr("&About"));
     TextView->setText(LicenseText);
+    TextView->setPaper(QColor(255,255,255));
     setCaption("License");
     Page++;
     break;
@@ -281,6 +284,7 @@ void toAbout::changeView(void)
     setCaption(buffer);
     sprintf(buffer,AboutText,TOVERSION);
     TextView->setText(buffer);
+    TextView->setPaper(QColor(227,184,54));
     ChangeButton->setText(tr("&Quotes"));
     Page=0;
     break;

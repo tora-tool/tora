@@ -39,6 +39,7 @@ TO_NAMESPACE;
 #include <qapplication.h>
 #include <qpalette.h>
 #include <qpaintdevicemetrics.h>
+#include <qdragobject.h>
 
 #include "toresultview.h"
 #include "toresultview.moc"
@@ -46,6 +47,7 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tomemoeditor.h"
 
 static int MaxColDisp;
 
@@ -272,6 +274,9 @@ void toResultView::setup(bool readable,bool dispCol)
   AllResult=new toResultTip(this);
   setShowSortIndicator(true);
   setSorting(-1);
+  Menu=NULL;
+  connect(this,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
+	  this,SLOT(displayMenu(QListViewItem *,const QPoint &,int)));
 }
 
 toResultView::toResultView(bool readable,bool dispCol,toConnection &conn,QWidget *parent,const char *name)
@@ -314,7 +319,6 @@ void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   QListViewItem *item=itemAt(contentsToViewport(p));
   toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
   toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
-  QString str;
   QClipboard *clip=qApp->clipboard();
   if (resItem)
     clip->setText(resItem->allText(col));
@@ -323,6 +327,30 @@ void toResultView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   else if (item)
     clip->setText(item->text(col));
   
+}
+
+void toResultView::contentsMouseMoveEvent (QMouseEvent *e)
+{
+  if (e->state()==LeftButton&&
+      e->stateAfter()==LeftButton) {
+    QPoint p=e->pos();
+    int col=header()->sectionAt(p.x());
+    QListViewItem *item=itemAt(contentsToViewport(p));
+    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+    QString str;
+    if (resItem)
+      str=resItem->allText(col);
+    else if (chkItem)
+      str=chkItem->allText(col);
+    else if (item)
+      str=item->text(col);
+    if (str.length()) {
+      QDragObject *d=new QTextDrag(str,this);
+      d->dragCopy();
+    }
+  } else
+    QListView::contentsMouseMoveEvent(e);
 }
 
 void toResultView::query(const QString &sql,const list<QString> &param)
@@ -589,8 +617,71 @@ void toResultView::setSQL(toSQL &sql)
   SQL=sql(Connection);
   Name=sql.name();
 }
+
 void toResultView::query(toSQL &sql)
 {
   Name=sql.name();
   query(sql(Connection));
+}
+
+#define TORESULT_COPY 1
+#define TORESULT_MEMO 2
+#define TORESULT_SQL  3
+
+void toResultView::displayMenu(QListViewItem *item,const QPoint &p,int col)
+{
+  if (item) {
+    if (!Menu) {
+      Menu=new QPopupMenu(this);
+      Menu->insertItem("&Copy",TORESULT_COPY);
+      Menu->insertItem("Display in editor",TORESULT_MEMO);
+      if (!Name.isEmpty()) {
+	Menu->insertSeparator();
+	Menu->insertItem("Edit SQL",TORESULT_SQL);
+      }
+      connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
+    }
+    MenuItem=item;
+    MenuColumn=col;
+    Menu->popup(p);
+  }
+}
+
+void toResultView::displayMemo(void)
+{
+  QString str=menuText();
+  if (!str.isEmpty())
+    new toMemoEditor(this,str);
+}
+
+void toResultView::menuCallback(int cmd)
+{
+  switch(cmd) {
+  case TORESULT_COPY:
+    {
+      QClipboard *clip=qApp->clipboard();
+      clip->setText(menuText());
+    }
+    break;
+  case TORESULT_MEMO:
+    displayMemo();
+    break;
+  case TORESULT_SQL:
+    toMainWidget()->editSQL(Name);
+    break;
+  }
+}
+
+QString toResultView::menuText(void)
+{
+  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(MenuItem);
+  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(MenuItem);
+  QString str;
+  if (resItem)
+    str=resItem->allText(MenuColumn);
+  else if (chkItem)
+    str=chkItem->allText(MenuColumn);
+  else if (MenuItem)
+    str=MenuItem->text(MenuColumn);
+  return str;
 }

@@ -34,6 +34,7 @@
 #include "otlv32.h"
 
 class QListViewItem;
+class QPopupMenu;
 class toResultView;
 class toResultTip;
 class QPrinter;
@@ -128,8 +129,11 @@ protected:
   otl_column_desc *Description;
   QListViewItem *LastItem;
   QString Name;
-
   toResultTip *AllResult;
+
+  QListViewItem *MenuItem;
+  int MenuColumn;
+  QPopupMenu *Menu;
 
   int RowNumber;
   bool ReadableColumns;
@@ -138,6 +142,7 @@ protected:
   void setup(bool readable,bool dispCol);
 
   virtual void contentsMouseDoubleClickEvent (QMouseEvent *e);
+  virtual void contentsMouseMoveEvent (QMouseEvent *e);
   virtual bool eof(void)
   { return !Query||Query->eof(); }
 
@@ -167,6 +172,7 @@ public:
   { return Name; }
   void setSQLName(const QString &name)
   { Name=name; }
+  QString menuText(void);
 
   virtual QListViewItem *createItem(QListView *parent,QListViewItem *last,const char *str)
   { return new toResultViewItem(parent,last,str); }
@@ -182,7 +188,7 @@ public:
 
   virtual void print(void);
   virtual void focusInEvent (QFocusEvent *e);
-  virtual void focusOutEvent (QFocusEvent *e); 
+  virtual void focusOutEvent (QFocusEvent *e);
 public slots:
   virtual void refresh(void)
   { query(SQL); }
@@ -193,6 +199,10 @@ public slots:
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { list<QString> p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
   virtual void addItem(void);
+  virtual void displayMenu(QListViewItem *,const QPoint &,int);
+  virtual void displayMemo(void);
+protected slots:
+  void menuCallback(int);
 };
 
 #endif

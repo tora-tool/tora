@@ -64,6 +64,7 @@ private:
   void addConnection(toConnection *conn);
   map<int,toTool *> Tools;
   list<QToolButton *> NeedConnection;
+  int SQLEditor;
 
   QToolButton *DisconnectButton;
   QToolButton *LoadButton;
@@ -113,6 +114,11 @@ public:
 
   list<QString> connections(void);
   toConnection &connection(const QString &);
+
+  void editSQL(const QString &str);
+  void registerSQLEditor(int toolid);
+signals:
+  void sqlEditor(const QString &str);
 public slots:
   void windowsMenu(void);
 private slots:

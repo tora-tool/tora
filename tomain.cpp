@@ -273,6 +273,7 @@ toMain::toMain()
   int toolID=TO_TOOLS;
   int lastPriorityPix=0;
   int lastPriorityMenu=0;
+  SQLEditor=-1;
   for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
@@ -848,6 +849,11 @@ void toMain::editEnable(bool open,bool save,bool print,
   }
 }
 
+void toMain::registerSQLEditor(int tool)
+{
+  SQLEditor=tool;
+}
+
 bool toMain::close(bool del)
 {
   while (workspace()->windowList().count()>0)
@@ -874,4 +880,12 @@ void toMain::setCoordinates(int line,int col)
   str="Col:";
   str+=QString::number(col);
   ColumnLabel->setText(str);
+}
+
+void toMain::editSQL(const QString &str)
+{
+  if (SQLEditor>=0&&Tools[SQLEditor]) {
+    Tools[SQLEditor]->createWindow();
+    emit sqlEditor(str);
+  }
 }

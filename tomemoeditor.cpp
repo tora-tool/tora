@@ -25,52 +25,59 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSQLEDIT_H
-#define __TOSQLEDIT_H
+TO_NAMESPACE;
 
-#include <qvbox.h>
+#include <qpixmap.h>
+#include <qtoolbar.h>
+#include <qtoolbutton.h>
+#include <qlayout.h>
+#include <qlabel.h>
 
-class toWorksheet;
-class toMarkedText;
-class QComboBox;
-class QListView;
-class QLineEdit;
-class QToolButton;
+#include "tomemoeditor.h"
+#include "tohighlightedtext.h"
+#include "tomarkedtext.h"
+#include "tomain.h"
 
-class toSQLEdit : public QVBox {
-  Q_OBJECT
+#include "tomemoeditor.moc"
 
-  QListView *Statements;
-  QLineEdit *Name;
-  toMarkedText *Description;
-  QComboBox *Version;
-  toWorksheet *Editor;
-  QToolButton *TrashButton;
-  QToolButton *CommitButton;
-  QString LastVersion;
-  QString Filename;
+#include "icons/filesave.xpm"
 
-protected:
-  toConnection &Connection;
-  void updateStatements(const QString &def=QString::null);
+static QPixmap *toFileSavePixmap;
 
-  bool checkStore(bool);
-  virtual bool close(bool del);
+toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,bool sql)
+  : QDialog(parent,NULL,false,WDestructiveClose)
+{
+  Row=row;
+  Col=col;
+  if (!toFileSavePixmap)
+    toFileSavePixmap=new QPixmap((const char **)filesave_xpm);
 
-  void selectionChanged(const QString &ver);
-  void changeSQL(const QString &name,const QString &ver);
-public:
-  toSQLEdit(QWidget *parent,toConnection &connection);
-  virtual ~toSQLEdit();
+  QBoxLayout *l=new QVBoxLayout(this);
 
-public slots:
-  void loadSQL(void);
-  void saveSQL(void);
-  void deleteVersion(void);
-  void selectionChanged(void);
-  void changeVersion(const QString &);
-  void commitChanges(void);
-  void editSQL(const QString &);
-};
+  if (row>=0&&col>=0) {
+    QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
 
-#endif
+    new QToolButton(*toFileSavePixmap,
+		    "Save changes",
+		    "Save changes",
+		    this,SLOT(store(void)),
+		    toolbar);
+    toolbar->setStretchableWidget(new QLabel("",toolbar));
+    l->addWidget(toolbar);
+  }
+
+  if (sql)
+    Editor=new toHighlightedText(this);
+  else
+    Editor=new toMarkedText(this);
+  l->addWidget(Editor);
+  Editor->setText(str);
+  Editor->setReadOnly(row>=0&&col>=0);
+  show();
+}
+
+void toMemoEditor::store(void)
+{
+  emit changeData(Row,Col,Editor->text());
+  close();
+}

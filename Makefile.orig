@@ -35,6 +35,7 @@ SOURCES=\
 	tohighlightedtext.cpp	\
 	tomain.cpp		\
 	tomarkedtext.cpp	\
+	tomemoeditor.cpp	\
 	tonewconnection.cpp	\
 	tonoblockquery.cpp	\
 	tooutput.cpp		\
@@ -78,7 +79,7 @@ SOURCES=\
 
 TARGET=tora-plugin
 
-TOVERSION=-DTOVERSION=\"0.8\"
+TOVERSION=-DTOVERSION=\"0.9\"
 
 include Makefile.setup
 include Makefile.common
@@ -184,6 +185,7 @@ tora: \
 	objs/tohighlightedtext.o \
 	objs/tomain.o \
 	objs/tomarkedtext.o \
+	objs/tomemoeditor.o \
 	objs/tonewconnection.o \
 	objs/topreferences.o \
 	objs/toresultcontent.o \

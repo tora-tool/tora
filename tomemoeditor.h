@@ -25,52 +25,25 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSQLEDIT_H
-#define __TOSQLEDIT_H
+#ifndef __TOMEMOEDITOR_H
+#define __TOMEMOEDITOR_H
 
-#include <qvbox.h>
+#include <qdialog.h>
 
-class toWorksheet;
 class toMarkedText;
-class QComboBox;
-class QListView;
-class QLineEdit;
-class QToolButton;
 
-class toSQLEdit : public QVBox {
+class toMemoEditor : public QDialog {
   Q_OBJECT
 
-  QListView *Statements;
-  QLineEdit *Name;
-  toMarkedText *Description;
-  QComboBox *Version;
-  toWorksheet *Editor;
-  QToolButton *TrashButton;
-  QToolButton *CommitButton;
-  QString LastVersion;
-  QString Filename;
-
-protected:
-  toConnection &Connection;
-  void updateStatements(const QString &def=QString::null);
-
-  bool checkStore(bool);
-  virtual bool close(bool del);
-
-  void selectionChanged(const QString &ver);
-  void changeSQL(const QString &name,const QString &ver);
+  toMarkedText *Editor;
+  int Row;
+  int Col;
 public:
-  toSQLEdit(QWidget *parent,toConnection &connection);
-  virtual ~toSQLEdit();
-
-public slots:
-  void loadSQL(void);
-  void saveSQL(void);
-  void deleteVersion(void);
-  void selectionChanged(void);
-  void changeVersion(const QString &);
-  void commitChanges(void);
-  void editSQL(const QString &);
+  toMemoEditor(QWidget *parent,const QString &data,int row=-1,int col=-1,bool sql=false);
+signals:
+  void changeData(int row,int col,const QString &);
+protected slots:
+  void store(void);
 };
 
 #endif

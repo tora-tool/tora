@@ -86,6 +86,7 @@ public:
   virtual void customSetup(int toolid)
   {
     toMainWidget()->editMenu()->insertItem("&Edit SQL",toolid);
+    toMainWidget()->registerSQLEditor(toolid);
   }
   void closeWindow(void)
   {
@@ -184,6 +185,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
 
   connect(Statements,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
   connect(Version,SIGNAL(activated(const QString &)),this,SLOT(changeVersion(const QString &)));
+  connect(toMainWidget(),SIGNAL(sqlEditor(const QString &)),this,SLOT(editSQL(const QString &)));
 
   updateStatements();
 
@@ -295,6 +297,42 @@ void toSQLEdit::selectionChanged(void)
     selectionChanged(Connection.version());
 }
 
+void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
+{
+  toSQL::sqlMap sql=toSQL::definitions();
+  toSQL::definition &def=sql[name];
+  list<toSQL::version> &ver=def.Versions;
+  
+  Name->setText(name);
+  Name->setEdited(false);
+  Description->setText(def.Description);
+  Description->setEdited(false);
+  
+  Version->clear();
+  LastVersion="";
+  list<toSQL::version>::iterator j=ver.end();
+  int ind;
+  for (list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
+    Version->insertItem((*i).Version);
+    if ((*i).Version<=maxver||j==ver.end()) {
+      j=i;
+      LastVersion=(*i).Version;
+      ind=Version->count()-1;
+    }
+  }
+  if (j!=ver.end()) {
+    Editor->editor()->setText((*j).SQL);
+    TrashButton->setEnabled(true);
+    CommitButton->setEnabled(true);
+    Version->setCurrentItem(ind);
+  } else {
+    Editor->editor()->clear();
+    TrashButton->setEnabled(false);
+    CommitButton->setEnabled(false);
+  }
+  Editor->editor()->setEdited(false);
+}
+
 void toSQLEdit::selectionChanged(const QString &maxver)
 {
   QListViewItem *item=Statements->selectedItem();
@@ -305,37 +343,12 @@ void toSQLEdit::selectionChanged(const QString &maxver)
       name.prepend(":");
       name.prepend(item->text(0));
     }
-    toSQL::sqlMap sql=toSQL::definitions();
-    toSQL::definition &def=sql[name];
-    list<toSQL::version> &ver=def.Versions;
-
-    Name->setText(name);
-    Name->setEdited(false);
-    Description->setText(def.Description);
-    Description->setEdited(false);
-
-    Version->clear();
-    LastVersion="";
-    list<toSQL::version>::iterator j=ver.end();
-    int ind;
-    for (list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
-      Version->insertItem((*i).Version);
-      if ((*i).Version<=maxver||j==ver.end()) {
-	j=i;
-	LastVersion=(*i).Version;
-	ind=Version->count()-1;
-      }
-    }
-    if (j!=ver.end()) {
-      Editor->editor()->setText((*j).SQL);
-      TrashButton->setEnabled(true);
-      CommitButton->setEnabled(true);
-      Version->setCurrentItem(ind);
-    } else {
-      Editor->editor()->clear();
-      TrashButton->setEnabled(false);
-      CommitButton->setEnabled(false);
-    }
-    Editor->editor()->setEdited(false);
+    changeSQL(name,maxver);
   }
+}
+
+void toSQLEdit::editSQL(const QString &nam)
+{
+  if (checkStore(false))
+    changeSQL(nam,Connection.version());
 }
