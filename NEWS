@@ -23,6 +23,8 @@
 2001-05-29: Some layout changes to global settings.
 2001-05-29: Sort tool tabs in alphabetic order in settings.
 2001-05-30: Keep track of which is default and not in toParamGet.
+2001-05-30: Fixed refresh button bug in toCurrent.
+2001-05-30: Major rewrite of toHtml to be really fast.
 
 0.10: Released 2001-05-25
 

@@ -207,7 +207,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
       QString href;
       QListViewItem *last=NULL;
       while(!file.eof()) {
-	toHtml::tag tag=file.nextTag();
+	file.nextTag();
 
 #if 0
 	if (tag.Tag.isEmpty()) {
@@ -223,41 +223,44 @@ toHelp::toHelp(QWidget *parent,const char *name)
 	}
 #endif
 
-	if (tag.Tag.isEmpty()&&inA) {
-	  dsc+=QString::fromLatin1(tag.Text);
+	if (!file.isTag()&&inA) {
+	  dsc+=QString::fromLatin1(file.text());
 	  dsc=dsc.simplifyWhiteSpace();
-	} else if (tag.Tag=="a") {
-	  if (tag.Open) {
-	    href=QString::fromLatin1(tag.Qualifiers["href"]);
-	    if (!href.isEmpty())
-	      inA=true;
-	  } else {
-	    if (inA&&
-		!dsc.isEmpty()&&
-		!href.isEmpty()) {
-	      if (href.find("//")<0&&
-		  href.find("..")<0) {
-		last=new QListViewItem(parent,last,dsc);
-		filename=path;
-		filename+="/";
-		filename+=href;
-		last->setText(1,filename);
+	} else {
+	  QCString tag=file.tag();
+	  if (tag=="a") {
+	    if (file.open()) {
+	      href=QString::fromLatin1(file.value("href"));
+	      if (!href.isEmpty())
+		inA=true;
+	    } else {
+	      if (inA&&
+		  !dsc.isEmpty()&&
+		  !href.isEmpty()) {
+		if (href.find("//")<0&&
+		    href.find("..")<0) {
+		  last=new QListViewItem(parent,last,dsc);
+		  filename=path;
+		  filename+="/";
+		  filename+=href;
+		  last->setText(1,filename);
+		}
+		dsc="";
 	      }
-	      dsc="";
+	      inA=false;
 	    }
-	    inA=false;
-	  }
-	} else if (tag.Tag=="dl") {
-	  if (tag.Open) {
-	    if (!last)
-	      last=new QListViewItem(parent,NULL,"--------");
-	    parent=last;
-	    last=NULL;
-	  } else {
-	    last=parent;
-	    parent=parent->parent();
-	    if (!parent)
-	      throw QString("Missing parent, unbalanced dl in help file content");
+	  } else if (tag=="dl") {
+	    if (file.open()) {
+	      if (!last)
+		last=new QListViewItem(parent,NULL,"--------");
+	      parent=last;
+	      last=NULL;
+	    } else {
+	      last=parent;
+	      parent=parent->parent();
+	      if (!parent)
+		throw QString("Missing parent, unbalanced dl in help file content");
+	    }
 	  }
 	}
       }

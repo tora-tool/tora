@@ -4,133 +4,195 @@
 #include "tohtml.h"
 
 toHtml::toHtml(const QCString &data)
-  : Data(data)
 {
+  Data=qstrdup(data);
+  Length=data.length();
   Position=0;
+  LastChar=0;
 }
 
 toHtml::~toHtml()
 {
+  delete Data;
 }
 
 void toHtml::skipSpace(void)
 {
-  while(isspace(data()))
+  if (Position>=Length)
+    return;
+  char c=LastChar;
+  if (!c)
+    c=Data[Position];
+  if (isspace(c)) {
     Position++;
+    LastChar=0;
+    while(Position<Length&&isspace(Data[Position]))
+      Position++;
+  }
 }
 
 bool toHtml::eof(void)
 {
-  if (Position>Data.length())
+  if (Position>Length)
     throw QString("Invalidly went beyond end of file");
-  return Position==Data.length();
+  return Position==Length;
 }
 
-char toHtml::data(size_t pos)
+void toHtml::nextTag(void)
 {
-  if (pos>=Data.size())
-    throw QString("Tried to access string out of bounds in data (%d)").arg(pos);
-  return Data[pos];
-}
-
-toHtml::tag toHtml::nextTag(void)
-{
-  tag ret;
-  ret.Open=false;
   if (eof())
     throw QString("Reading HTML after eof");
-  if (Data[Position]=='<') {
+  QualifierNum=0;
+  char c=LastChar;
+  if (!c)
+    c=Data[Position];
+  if (c=='<') {
+    IsTag=true;
     Position++;
+    LastChar=0;
     skipSpace();
-    if (Data[Position]!='/')
-      ret.Open=true;
-    else
+    if (Position>=Length)
+      throw QString("Lone < at end");
+    if (Data[Position]!='/') {
+      Open=true;
+    } else {
+      Open=false;
       Position++;
+    }
     skipSpace();
     {
       size_t start=Position;
-      while(!isspace(data())&&data()!='>')
+      while(Position<Length&&!isspace(Data[Position])&&Data[Position]!='>') {
+	Data[Position]=tolower(Data[Position]);
 	Position++;
-      ret.Tag=mid(start,Position-start).lower();
+      }
+      Tag=mid(start,Position-start);
     }
     for(;;) {
       skipSpace();
-      if (data()=='>') {
+      if (Position>=Length)
+	throw QString("Unended tag at end");
+
+      c=LastChar;
+      if (!c)
+	c=Data[Position];
+      if (c=='>') {
+	LastChar=0;
 	Position++;
 	break;
       }
 
-      QString nam;
-      QString val;
+      // Must always be an empty char here, so LastChar not needed to be checked.
+
       {
 	size_t start=Position;
-	while(!isspace(data())&&data()!='=')
+	
+	while(Position<Length&&!isspace(Data[Position])&&Data[Position]!='=') {
+	  Data[Position]=tolower(Data[Position]);
 	  Position++;
-	nam=mid(start,Position-start).lower();
+	}
+	Qualifiers[QualifierNum].Name=mid(start,Position-start);
       }
       skipSpace();
-      if (data()=='=') {
+      if (Position>=Length)
+	throw QString("Unended tag qualifier at end");
+      c=LastChar;
+      if (!c)
+	c=Data[Position];
+      if (c=='=') {
+	LastChar=0;
 	Position++;
 	skipSpace();
-	char c=data();
+	if (Position>=Length)
+	  throw QString("Unended tag qualifier data at end");
+	c=Data[Position];
 	if (c=='\''||c=='\"') {
 	  Position++;
 	  size_t start=Position;
-	  while(data()!=c)
+	  while(Data[Position]!=c) {
 	    Position++;
-	  val=mid(start,Position-start);
+	    if (Position>=Length)
+	      throw QString("Unended quoted string at end");
+	  }
+	  Qualifiers[QualifierNum].Value=mid(start,Position-start);
 	  Position++;
+	  LastChar=0;
 	} else {
 	  size_t start=Position;
-	  while(!isspace(data())&&data()!='>')
+	  while(!isspace(Data[Position])&&Data[Position]!='>') {
 	    Position++;
-	  val=mid(start,Position-start);
+	    if (Position>=Length)
+	      throw QString("Unended qualifier data at end");
+	  }
+	  Qualifiers[QualifierNum].Value=mid(start,Position-start);
 	}
       }
-      ret.Qualifiers[nam]=val;
+      QualifierNum++;
+      if (QualifierNum>=TO_HTML_MAX_QUAL)
+	throw QString("Exceded qualifier max in toHtml");
     }
   } else {
+    IsTag=false;
     size_t start=Position;
-    while(Position<Data.length()) {
-      if (data()=='<')
+    Position++;
+    LastChar=0;
+    while(Position<Length) {
+      if (Data[Position]=='<')
 	break;
       Position++;
     }
-    QCString str=Data.mid(start,Position-start);
-    for (size_t i=0;i<str.length();i++) {
-      char c=str[i];
-      if (c=='&') {
-	size_t start=i+1;
-	while(i<str.length()&&str[i]!=';')
-	  i++;
-	QCString tmp=str.mid(start,i-start);
-	if (tmp[0]=='#') {
-	  tmp=tmp.right(tmp.length()-1);
-	  ret.Text+=QChar(char(tmp.toInt()));
-	} else if (tmp=="auml")
-	  ret.Text+="å";
-	// The rest of the & codes...
-      } else
-	ret.Text+=QChar(c);
-    }
+    Text=mid(start,Position-start);
+  }
+}
+
+const char *toHtml::value(const QCString &q)
+{
+  for (int i=0;i<QualifierNum;i++) {
+    if (q==Qualifiers[i].Name)
+      return Qualifiers[i].Value;
+  }
+  return NULL;
+}
+
+QCString toHtml::text()
+{
+  QCString ret;
+  for (const char *cur=Text;*cur;cur++) {
+    char c=*cur;
+    if (c=='&') {
+      const char *start=cur+1;
+      while(*cur&&*cur!=';')
+	cur++;
+      QCString tmp(start,cur-start);
+      if (tmp[0]=='#') {
+	tmp=tmp.right(tmp.length()-1);
+	ret+=QChar(char(tmp.toInt()));
+      } else if (tmp=="auml")
+	ret+="å";
+      // The rest of the & codes...
+    } else
+      ret+=QChar(c);
   }
   return ret;
 }
 
-QCString toHtml::mid(size_t start,size_t size)
+const char *toHtml::mid(size_t start,size_t size)
 {
   if (size==0)
     return "";
-  if (start>=Data.length())
+  if (start>=Length)
     throw QString("Tried to access string out of bounds in mid (start=%1)").arg(start);
-  if (size>Data.length())
+  if (size>Length)
     throw QString("Tried to access string out of bounds in mid (size=%1)").arg(size);
-  if (start+size>Data.length())
+  if (start+size>Length)
     throw QString("Tried to access string out of bounds in mid (total=%1+%2>%3)").
       arg(start).
       arg(size).
-      arg(Data.length());
-  return Data.mid(start,size);
+      arg(Length);
+
+  LastChar=Data[start+size];
+  Data[start+size]=0;
+  return Data+start;
 }
 
 bool toHtml::search(const QString &str)
@@ -144,7 +206,7 @@ bool toHtml::search(const QString &str)
   } lastState,state=beginning;
   unsigned int pos=0;
   char endString;
-  for (size_t i=0;i<Data.length();i++) {
+  for (size_t i=0;i<Length;i++) {
     char c=tolower(Data[i]);
     if (c=='\''||c=='\"') {
       endString=c;
@@ -164,7 +226,7 @@ bool toHtml::search(const QString &str)
 	} else {
 	  pos++;
 	  if (pos>=data.length()) {
-	    if (i+1>=Data.length()||!isalnum(Data[i+1]))
+	    if (i+1>=Length||!isalnum(Data[i+1]))
 	      return true;
 	    pos=0;
 	  }
