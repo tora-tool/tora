@@ -53,6 +53,7 @@ Extended functionality:
 * QSql connection provider.
 * Store worksheet statistic on save session.
 * Use new toSQLParse for tree structure in toDebug.
+* Configure key bindings.
 
 New tools:
 

@@ -354,9 +354,10 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
       SearchString=QString::null;
       toStatusMessage("Incremental search:",false,false);
     } else if (Search) {
-      if (!LastSearch.length())
+      if (!SearchString.length())
 	SearchString=LastSearch;
-      incrementalSearch(SearchForward,true);
+      if (SearchString.length())
+	incrementalSearch(SearchForward,true);
     }
     e->accept();
     return;
