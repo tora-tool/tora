@@ -323,10 +323,6 @@ toMain::toMain()
 
   ToolsMenu=new QPopupMenu(this);
 
-  QToolBar *toolbar=toAllocBar(this,tr("Tools"));
-  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
-    moveToolBar(toolbar,Left);
-
   HelpMenu=new QPopupMenu(this);
   HelpMenu->insertItem(tr("C&urrent Context..."),TO_HELP_CONTEXT);
   HelpMenu->insertItem(tr("&Contents..."),TO_HELP_CONTENTS);
@@ -341,8 +337,6 @@ toMain::toMain()
   }
 
   int toolID=TO_TOOLS;
-  int lastPriorityPix=0;
-  int lastPriorityMenu=0;
   SQLEditor=-1;
   DefaultTool=toolID;
   QCString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"").latin1();
@@ -351,7 +345,6 @@ toMain::toMain()
 
   for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
-    const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
 
     QCString tmp=(*i).first;
@@ -361,40 +354,6 @@ toMain::toMain()
 
     if (defName==(*i).first)
       DefaultTool=toolID;
-
-    int priority=(*i).second->priority();
-    if (priority/100!=lastPriorityPix/100&&
-	pixmap) {
-      toolbar->addSeparator();
-      lastPriorityPix=priority;
-    }
-    if (priority/100!=lastPriorityMenu/100&&
-	menuName) {
-      ToolsMenu->insertSeparator();
-      lastPriorityMenu=priority;
-    }
-
-    if (pixmap) {
-      if (!toolTip)
-	toolTip="";
-      NeedConnection[new QToolButton(*pixmap,
-				     qApp->translate("toTool",toolTip),
-				     qApp->translate("toTool",toolTip),
-				     (*i).second,
-				     SLOT(createWindow(void)),
-				     toolbar)]=(*i).second;
-    }
-
-    if (menuName) {
-#ifdef TODEBUG_TRANSLATION
-      printf("QT_TRANSLATE_NOOP(\"toTool\",\"%s\"),\n",(const char *)menuName);
-#endif
-      if (pixmap)
-	ToolsMenu->insertItem(*pixmap,qApp->translate("toTool",menuName),toolID);
-      else
-	ToolsMenu->insertItem(qApp->translate("toTool",menuName),toolID);
-      ToolsMenu->setItemEnabled(toolID,false);
-    }
 
     if ((*i).second->hasAbout()&&menuName) {
       if (!toolAbout) {
@@ -412,10 +371,6 @@ toMain::toMain()
     toolID++;
   }
 
-#ifndef TOOL_TOOLBAR
-  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
-#endif
-
   ConnectionToolbar=toAllocBar(this,tr("Connections"));
   new QToolButton(QPixmap((const char **)connect_xpm),
 		  tr("Connect to database"),
@@ -431,24 +386,28 @@ toMain::toMain()
   NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
 				 tr("Commit connection"),
 				 tr("Commit connection"),
-				 this,SLOT(commitButton()),ConnectionToolbar)]=NULL;
+				 this,SLOT(commitButton()),ConnectionToolbar)]=true;
   NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
 				 tr("Rollback connection"),
 				 tr("Rollback connection"),
-				 this,SLOT(rollbackButton()),ConnectionToolbar)]=NULL;
+				 this,SLOT(rollbackButton()),ConnectionToolbar)]=true;
   ConnectionToolbar->addSeparator();
   NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
 				 tr("Stop all running queries on connection"),
 				 tr("Stop all running queries on connection"),
-				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
+				 this,SLOT(stopButton()),ConnectionToolbar)]=true;
 #else
   ConnectionToolbar->hide();
 #endif
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
-  ConnectionSelection->setFixedWidth(200);
+  // ConnectionSelection->setFixedWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
+
+  ToolsToolbar=toAllocBar(this,tr("Tools"));
+  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
+    moveToolBar(ToolsToolbar,Left);
 
   menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
@@ -497,10 +456,6 @@ toMain::toMain()
   FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,false);
   DisconnectButton->setEnabled(false);
 
-  for (std::map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
-       j!=NeedConnection.end();j++)
-    (*j).first->setEnabled(false);
-
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
   RowLabel->setMinimumWidth(60);
@@ -530,6 +485,10 @@ toMain::toMain()
   if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty())
     showMaximized();
   show();
+
+  for (std::map<QToolButton *,bool>::iterator j=NeedConnection.begin();
+       j!=NeedConnection.end();j++)
+    (*j).first->setEnabled(false);
 
   QString welcome;
 
@@ -1021,11 +980,11 @@ bool toMain::delConnection(void)
     FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,false);
     FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,false);
     DisconnectButton->setEnabled(false);
-    for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+    ToolsMenu->clear();
+    ToolsToolbar->clear();
+    for (std::map<QToolButton *,bool>::iterator i=NeedConnection.begin();
 	 i!=NeedConnection.end();i++)
       (*i).first->setEnabled(false);
-    for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
-      ToolsMenu->setItemEnabled((*j).first,false);
   } else
     changeConnection();
   return true;
@@ -1275,24 +1234,64 @@ void toMain::changeConnection(void)
 {
   try {
     toConnection &conn=currentConnection();
-    for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
-	 i!=NeedConnection.end();i++) {
-      toTool *tool=(*i).second;
-      if (!tool)
-	(*i).first->setEnabled(true);
-      else if (tool->canHandle(conn))
-	(*i).first->setEnabled(true);
-      else
-	(*i).first->setEnabled(false);
-    }  
-    for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
-      toTool *tool=(*j).second;
-      if (!tool)
-	ToolsMenu->setItemEnabled((*j).first,true);
-      else if (tool->canHandle(conn))
-	ToolsMenu->setItemEnabled((*j).first,true);
-      else
-	ToolsMenu->setItemEnabled((*j).first,false);
+    for (std::map<QToolButton *,bool>::iterator i=NeedConnection.begin();
+	 i!=NeedConnection.end();i++)
+      (*i).first->setEnabled(true);
+
+    int toolID=TO_TOOLS;
+    int lastPriorityPix=0;
+    int lastPriorityMenu=0;
+
+    ToolsMenu->clear();
+    ToolsToolbar->clear();
+
+    std::map<QCString,toTool *> &tools=toTool::tools();
+    for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+      const QPixmap *pixmap=(*i).second->toolbarImage();
+      const char *toolTip=(*i).second->toolbarTip();
+      const char *menuName=(*i).second->menuItem();
+
+      QCString tmp=(*i).first;
+      tmp+=CONF_TOOL_ENABLE;
+      if (toTool::globalConfig(tmp,"Yes").isEmpty())
+	continue;
+
+      if ((*i).second->canHandle(conn)) {
+	int priority=(*i).second->priority();
+	if (priority/100!=lastPriorityPix/100&&
+	    pixmap) {
+	  ToolsToolbar->addSeparator();
+	  lastPriorityPix=priority;
+	}
+	if (priority/100!=lastPriorityMenu/100&&
+	    menuName) {
+	  ToolsMenu->insertSeparator();
+	  lastPriorityMenu=priority;
+	}
+
+	if (pixmap) {
+	  if (!toolTip)
+	    toolTip="";
+	  new QToolButton(*pixmap,
+			  qApp->translate("toTool",toolTip),
+			  qApp->translate("toTool",toolTip),
+			  (*i).second,
+			  SLOT(createWindow(void)),
+			  ToolsToolbar);
+	}
+
+	if (menuName) {
+#ifdef TODEBUG_TRANSLATION
+	  printf("QT_TRANSLATE_NOOP(\"toTool\",\"%s\"),\n",(const char *)menuName);
+#endif
+	  if (pixmap)
+	    ToolsMenu->insertItem(*pixmap,qApp->translate("toTool",menuName),toolID);
+	  else
+	    ToolsMenu->insertItem(qApp->translate("toTool",menuName),toolID);
+	}
+      }
+
+      toolID++;
     }
   } TOCATCH
 }

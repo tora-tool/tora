@@ -981,8 +981,8 @@ toConnection::~toConnection()
 
 toConnectionSub *toConnection::mainConnection()
 {
-  toLocker lock(Lock);
   if (Connection->handleMultipleQueries()) {
+    toLocker lock(Lock);
     return (*(Connections.begin()));
   } else {
     return longConnection();

@@ -100,10 +100,9 @@ private:
    */
   std::map<int,toTool *> Tools;
   /**
-   * A list of toolbuttons that need an open connection to be enabled. If tool pointer
-   * is zero simply require any connection to be enabled.
+   * A list of toolbuttons that need an open connection to be enabled.
    */
-  std::map<QToolButton *,toTool *> NeedConnection;
+  std::map<QToolButton *,bool> NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -158,6 +157,10 @@ private:
    * Edit buttons toolbar.
    */
   QToolBar *EditToolbar;
+  /**
+   * Tool buttons toolbar.
+   */
+  QToolBar *ToolsToolbar;
   /**
    * Connection buttons toolbar.
    */
