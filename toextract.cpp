@@ -1915,7 +1915,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   ret+=sql;
   ret+=indexColumns("",owner,name);
   if (domain=="DOMAIN") {
-    ret+=QString("INDEXTYPE IS \"%1\".\"%2\"\nPARAMTERS ('%3');\n\n").
+    ret+=QString("INDEXTYPE IS \"%1\".\"%2\"\nPARAMETERS ('%3');\n\n").
       arg(domOwner).arg(domName).arg(prepareDB(domParam));
     return ret;
   }
