@@ -338,7 +338,7 @@ toResultContentEditor::~toResultContentEditor()
 {
   saveUnsaved();
   delete Query;
-  delete BinaryColumns;
+  delete [] BinaryColumns;
 }
 
 void toResultContentEditor::wrongUsage(void)
@@ -441,7 +441,7 @@ void toResultContentEditor::poll(void)
       if (numRows()==0) {
 	Description=Query->describe();
 
-	delete BinaryColumns;
+	delete [] BinaryColumns;
 	BinaryColumns=new bool[Description.size()];
 	for(unsigned int j=0;j<Description.size();j++)
 	  BinaryColumns[j]=false;

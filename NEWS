@@ -9,6 +9,7 @@
 2005-02-17: Applied patch 1048530 to correct races/crash
 2005-02-17: Applied patch 1055777 to correct problem with queries that failed segfaulting
 2005-02-17: Applied patch 1055783 to correct parsing/extraction of triggers
+2005-02-17: Applied patch 1057806 to correctly free memory
 
 1.3.14.1: 2004-07-01
 
