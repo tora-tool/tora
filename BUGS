@@ -2,9 +2,6 @@ OCI:
 	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an
 	Oracle bug since other programs have the same problem)
 
-OTL:
-	Doesn't seem to handle object types and some other types (Like ROWID for instance).
-
 Toolbars:
 	When in KDE and using a gradient style (Like KDE highcolor for instance) backgrounds of
 	toolbuttons and labels in the toolbar doesn't have the correct background. This is due
@@ -21,12 +18,6 @@ gcc-2.96:
 toMain:
 	Traversing the menues using keys will disable some file/edit entries that should be
 	enabled.
-
-toNoBlockQuery:
-	Can't abort execution on queries when using TO_QTHREAD.
-
-toTemplate:
-	Can't seem to delete entries from the template lists.
 
 toResultCols:
 	Doesn't follow synonyms for comments and statistics.

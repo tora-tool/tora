@@ -63,7 +63,22 @@ protected:
   int Samples;
   QString Title;
 
+  QRect Chart;
+  QPoint MousePoint[2];
+  int SkipSamples;
+  int UseSamples;
+  bool Zooming;
+  double zMinValue;
+  double zMaxValue;
+
   static double round(double round,bool up);
+  QRect fixRect(QPoint p1,QPoint p2);
+  virtual void mouseReleaseEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
+  virtual void mouseMoveEvent(QMouseEvent *e);
+
+  int countSamples(void);
+  void clearZoom(void);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.

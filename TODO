@@ -11,6 +11,7 @@ Extended functionality:
 	Rename table
 		ALTER TABLE ... RENAME TO ...
 	Editing triggers
+	Reverse engeneering of objects
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.

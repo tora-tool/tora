@@ -322,6 +322,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
   if (Samples<=0)
     for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
       samples=max(samples,int((*i).size()));
+  int zeroy=int(bottom-2-(-minval/(maxval-minval)*(bottom-4)));
   if (samples>1) {
     for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
       list<double> &val=*i;
@@ -355,7 +356,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
       a.setPoint(a.size()-1-j,x,bottom-2-lb);
       y-=lb;
       a.setPoint(j,x,y);
-      Bottom[x]=bottom-2-y;
+      Bottom[x]=zeroy-y;
       lx=x;
     }
 

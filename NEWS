@@ -35,6 +35,7 @@
 2001-08-10: Some fixes to configure to make work on more systems.
 2001-08-10: Just generate binary packages on release and only copy same release.
 2001-08-11: Include statistics from parallel servers in sessionstatistics.
+2001-08-12: Added zooming to linecharts.
 
 0.14: Released 2001-08-02
 
