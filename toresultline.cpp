@@ -162,3 +162,4 @@ void toResultLine::connectionChanged(void)
   toResult::connectionChanged();
   clear();
 }
+

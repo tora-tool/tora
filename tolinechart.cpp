@@ -634,3 +634,62 @@ toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WF
     setFont(font);
   }
 }
+
+void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefix)
+{
+  int id=0;
+  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    id++;
+    ret[prefix+":Labels:"+QString::number(id)]=*i;
+  }
+  id=0;
+  for(std::list<QString>::iterator i=XValues.begin();i!=XValues.end();i++) {
+    id++;
+    ret[prefix+":XValues:"+QString::number(id)]=*i;
+  }
+  for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+    QString value;
+
+    for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+      if (!value.isNull())
+	value+=",";
+      value+=QString::number(*j);
+    }
+    id++;
+    ret[prefix+":Values:"+QString::number(id)]=value;
+  }
+}
+
+void toLineChart::importData(std::map<QString,QString> &ret,const QString &prefix)
+{
+  int id;
+  std::map<QString,QString>::iterator i;
+
+  id=1;
+  Labels.clear();
+  while((i=ret.find(prefix+":Labels:"+QString::number(id)))!=ret.end()) {
+    Labels.insert(Labels.end(),(*i).second);
+    id++;
+  }
+
+  id=1;
+  XValues.clear();
+  while((i=ret.find(prefix+":XValues:"+QString::number(id)))!=ret.end()) {
+    XValues.insert(XValues.end(),(*i).second);
+    id++;
+  }
+
+  id=1;
+  Values.clear();
+  QRegExp comma(",");
+  while((i=ret.find(prefix+":Values:"+QString::number(id)))!=ret.end()) {
+    QStringList lst=QStringList::split(comma,(*i).second);
+    std::list<double> vals;
+    for(unsigned int j=0;j<lst.count();j++)
+      vals.insert(vals.end(),lst[j].toDouble());
+
+    Values.insert(Values.end(),vals);
+    id++;
+  }
+  update();
+}

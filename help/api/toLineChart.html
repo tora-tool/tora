@@ -80,15 +80,19 @@
 </LI>
 <LI>std::list<std::list<double> > &&nbsp;<b><A HREF="#ref60">values</A></b> (void) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref62">clear</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref61">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref63">setup</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref62">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref64">editPrint</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref64">clear</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref65">openCopy</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref65">setup</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref61">valueAdded</A></b> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref66">editPrint</A></b> (void) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref67">openCopy</A></b> (void) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref63">valueAdded</A></b> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI><A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &nbsp;<b><A HREF="#ref24">fixRect</A></b> (<A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> p1,<A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> p2) 
 </LI>
@@ -112,7 +116,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref34">paintChart</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref66">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref68">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
 </LI>
 </ul><h4>Protected Static Methods</h4><ul><LI>static  double &nbsp;<b><A HREF="#ref23">round</A></b> (double round,bool up) 
 </LI>
@@ -340,7 +344,25 @@
 </p>
 <p><b>Returns</b>: Values in piechart.
    </p>
-<A NAME="valueAdded"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>valueAdded</strong> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues)
+<A NAME="exportData"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p></p><p> Export chart to a map.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">A map that can be used to recreate the data of a chart.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
+   </TD></TR>
+</TABLE></P>
+<A NAME="importData"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p></p><p> Import data
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to read from a map.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
+   </TD></TR>
+</TABLE></P>
+<A NAME="valueAdded"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>valueAdded</strong> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues)
 <br></td><td align="right"><h3><strong>valueAdded</strong></h3></td></tr></table><p> <small>[virtual signal]</small></p><p> A new value set was added to the chart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -349,19 +371,19 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">X-value on these values.
    </TD></TR>
 </TABLE></P>
-<A NAME="clear"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>clear</strong> (void)
+<A NAME="clear"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>clear</strong> (void)
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Clear the values from the chart.
    </p>
-<A NAME="setup"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setup</strong> (void)
+<A NAME="setup"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setup</strong> (void)
 <br></td><td align="right"><h3><strong>setup</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Setup values of charts.
    </p>
-<A NAME="editPrint"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<A NAME="editPrint"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Print the chart.
    </p>
-<A NAME="openCopy"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>openCopy</strong> (void)
+<A NAME="openCopy"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>openCopy</strong> (void)
 <br></td><td align="right"><h3><strong>openCopy</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Open chart in new window.
    </p>
-<A NAME="paintEvent"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e)
+<A NAME="paintEvent"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e)
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qwidget.html#ef2069">QWidget</A>.</p>
