@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qworkspace.h>
 #include <qtabwidget.h>
 #include <qtoolbutton.h>
@@ -56,7 +54,7 @@ TO_NAMESPACE;
 
 class toCurrentInfoTool : public toTool {
 protected:
-  map<toConnection *,QWidget *> Windows;
+  std::map<toConnection *,QWidget *> Windows;
 
   virtual char **pictureXPM(void)
   { return tocurrent_xpm; }
@@ -68,7 +66,7 @@ public:
   { return "Current Session"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end()) {
       (*i).second->setFocus();
       return NULL;
@@ -81,7 +79,7 @@ public:
   }
   void closeWindow(toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end())
       Windows.erase(i);
   }

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qregexp.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
@@ -57,8 +55,8 @@ TO_NAMESPACE;
 
 #include "toparamget.moc"
 
-map<QString,QString> toParamGet::DefaultCache;
-map<QString,QString> toParamGet::Cache;
+std::map<QString,QString> toParamGet::DefaultCache;
+std::map<QString,QString> toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
   : QDialog(parent,name,true)
@@ -101,8 +99,8 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
 
 toQList toParamGet::getParam(QWidget *parent,QString &str)
 {
-  map<QString,bool> parameters;
-  list<QString> names;
+  std::map<QString,bool> parameters;
+  std::list<QString> names;
   toParamGet *widget=NULL;
 
   enum {
@@ -206,7 +204,7 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	  if (!widget)
 	    widget=new toParamGet(parent);
 	  new QLabel(fname,widget->Container);
-	  map<QString,QString>::iterator fnd=Cache.find(fname);
+	  std::map<QString,QString>::iterator fnd=Cache.find(fname);
 	  bool found=true;
 	  if (fnd==Cache.end()) {
 	    fnd=DefaultCache.find(fname);
@@ -241,8 +239,8 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
   if (widget) {
     (*widget->Value.begin())->setFocus();
     if (widget->exec()) {
-      list<QString>::iterator cn=names.begin();
-      for (list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
+      std::list<QString>::iterator cn=names.begin();
+      for (std::list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
 	QLineEdit *current=*i;
 	QString val;
 	if (current) {

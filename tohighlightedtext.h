@@ -112,7 +112,7 @@ private:
   };
   /** An array of lists of keywords, indexed on the first character.
    */
-  list<const char *> Keywords[256];
+  std::list<const char *> Keywords[256];
 protected:
   /** Check if this is part of a symbol or not.
    */
@@ -148,7 +148,7 @@ public:
    * @param str Line to analyze.
    * @return A list of where highlighting should change. Start as normal.
    */
-  virtual list<highlightInfo> analyzeLine(const QString &str);
+  virtual std::list<highlightInfo> analyzeLine(const QString &str);
   /** Get a colordefinition for a @ref infoType value.
    * @param typ @ref infoType to get color for.
    * @return Color of that type.
@@ -156,7 +156,7 @@ public:
   QColor getColor(infoType typ)
   { return Colors[typ]; }
 
-  friend toSyntaxSetup;
+  friend class toSyntaxSetup;
 };
 
 /** Get the default syntax analyzer.
@@ -197,7 +197,7 @@ private:
   bool Cursor;
   /** Map of rows with errors and their error message.
    */
-  map<int,QString> Errors;
+  std::map<int,QString> Errors;
   /** The syntax analyzer to use.
    */
   toSyntaxAnalyzer *Analyzer;
@@ -233,7 +233,7 @@ public:
    * @param errors A map of linenumbers to errorstrings. These will be displayed in the
    *               statusbar if the cursor is placed on the line.
    */
-  void setErrors(const map<int,QString> &errors);
+  void setErrors(const std::map<int,QString> &errors);
   /** Set current line. Will be indicated with a different background.
    * @param current Current line.
    */

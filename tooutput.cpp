@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -94,7 +92,7 @@ public:
 
 class toOutputTool : public toTool {
 protected:
-  map<toConnection *,QWidget *> Windows;
+  std::map<toConnection *,QWidget *> Windows;
 
   virtual char **pictureXPM(void)
   { return tooutput_xpm; }
@@ -106,7 +104,7 @@ public:
   { return "SQL Output"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end()) {
       (*i).second->setFocus();
       return NULL;
@@ -119,7 +117,7 @@ public:
   }
   void closeWindow(toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end())
       Windows.erase(i);
   }

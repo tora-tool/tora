@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <stdio.h>
 
 #include <qtextview.h>
@@ -152,11 +150,14 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<DIV ALIGN=RIGHT>Television, Disposable Heroes of Hiphoprasy\n"
 "<DIV ALIGN=LEFT>\n"
 "<H3>What did you do yesterday?<BR>\n"
-"I did absolutely nothing and it everything I thought it would be.</H3>\n"
+"I did absolutely nothing and it was everything I thought it would be.</H3>\n"
 "<DIV ALIGN=RIGHT>The movie \"Officespace\"\n"
 "<DIV ALIGN=LEFT>\n"
 "<H3>Think about how stupid the average person is.<BR>Then realise that half of them are more stupid than that.</H3>\n"
 "<DIV ALIGN=RIGHT>George Carlin\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>I drink to make other people interesting.</H3>\n"
+"<DIV ALIGN=RIGHT>George Jean Nathan\n"
 "<DIV ALIGN=LEFT>\n"
 "<H3>Life is a sexually transmittable desease with terminal outcome.</H3>\n"
 "<DIV ALIGN=RIGHT>Unknown\n"

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <ctype.h>
 
 #include <qpainter.h>
@@ -56,7 +54,7 @@ TO_NAMESPACE;
 toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
 {
   for (int i=0;keywords[i];i++) {
-    list<const char *> &curKey=Keywords[(unsigned char)char(toupper(*keywords[i]))];
+    std::list<const char *> &curKey=Keywords[(unsigned char)char(toupper(*keywords[i]))];
     curKey.insert(curKey.end(),keywords[i]);
   }
   ColorsUpdated=false;
@@ -68,14 +66,14 @@ toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)
   Text=text;
 }
 
-list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str)
+std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str)
 {
   if (!ColorsUpdated) {
     updateSettings();
     ColorsUpdated=true;
   }
-  list<highlightInfo> highs;
-  list<posibleHit> search;
+  std::list<highlightInfo> highs;
+  std::list<posibleHit> search;
 
   bool inWord;
   bool wasWord=false;
@@ -83,7 +81,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
   QChar endString;
 
   for (int i=0;i<int(str.length());i++) {
-    list<posibleHit>::iterator j=search.begin();
+    std::list<posibleHit>::iterator j=search.begin();
 
     bool nextSymbol=((int(str.length())!=i+1)&&isSymbol(str[i+1]));
     if (inString>=0) {
@@ -114,7 +112,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
 	  }
 	  j++;
 	} else {
-	  list<posibleHit>::iterator k=j;
+	  std::list<posibleHit>::iterator k=j;
 	  j++;
 	  search.erase(k);
 	}
@@ -125,8 +123,8 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
 	inWord=false;
 
       if (!wasWord&&inWord) {
-	list<const char *> &curKey=Keywords[(unsigned char)char(str[i].upper())];
-	for (list<const char *>::iterator j=curKey.begin();
+	std::list<const char *> &curKey=Keywords[(unsigned char)char(str[i].upper())];
+	for (std::list<const char *>::iterator j=curKey.begin();
 	     j!=curKey.end();j++) {
 	  if (strlen(*j)==1) {
 	    if (!nextSymbol) {
@@ -200,8 +198,8 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     col2=col1=-1;
   }
 
-  list<toSyntaxAnalyzer::highlightInfo> highs=Analyzer->analyzeLine(str);
-  list<toSyntaxAnalyzer::highlightInfo>::iterator highPos=highs.begin();
+  std::list<toSyntaxAnalyzer::highlightInfo> highs=Analyzer->analyzeLine(str);
+  std::list<toSyntaxAnalyzer::highlightInfo>::iterator highPos=highs.begin();
 
   int posx=hMargin()-1;
   QRect rect;
@@ -221,7 +219,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
   QColor bkg=Analyzer->getColor(toSyntaxAnalyzer::NormalBkg);
 
-  map<int,QString>::iterator err=Errors.find(row);
+  std::map<int,QString>::iterator err=Errors.find(row);
   if (err!=Errors.end())
     bkg=Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg);
   if (Current==row)
@@ -351,7 +349,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   }
 }
 
-void toHighlightedText::setErrors(const map<int,QString> &errors)
+void toHighlightedText::setErrors(const std::map<int,QString> &errors)
 {
   Errors=errors;
   toStatusMessage(QString::null);
@@ -366,8 +364,8 @@ void toHighlightedText::textChanged(void)
     if (LastLength>0) {
       getCursorPosition (&curline,&curcol);
       int diff=lines-LastLength;
-      map<int,QString> newErr;
-      for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+      std::map<int,QString> newErr;
+      for (std::map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
 	int newLine=convertLine((*i).first,curline-diff,diff);
 	if (newLine>=0)
 	  newErr[newLine]=(*i).second;
@@ -400,7 +398,7 @@ void toHighlightedText::nextError(void)
 {
   int curline,curcol;
   getCursorPosition (&curline,&curcol);
-  for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+  for (std::map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
     if ((*i).first>curline) {
       setCursorPosition((*i).first,0);
       break;
@@ -408,12 +406,61 @@ void toHighlightedText::nextError(void)
   }
 }
 
+#if 0
+void toHighlightedText::keyPressEvent(QKeyEvent *e)
+{
+  int origPos,origLine;
+  getCursorPosition(&origLine,&origPos);
+  pos=origPos;
+  line=origLine;
+
+  {
+    char inString=0;
+    QString str=textLine(line);
+    for(;;) {
+      char p=str[pos];
+      if (isString) {
+	if (p==inString)
+	  inString=0;
+      } else if (p==';') {
+	pos++;
+	if (pos>str.length()) {
+	  pos=0;
+	  line++;
+	}
+	break;
+      } else if (p=='\"'||p=='\'')
+	inString=str[pos];
+
+      if (pos>0)
+	pos--;
+      else if (line>0) {
+	line--;
+	str=textLine(line);
+	pos=str.length();
+      } else {
+	pos=0;
+	line=0;
+	break;
+      }
+    }
+  }
+
+  {
+    
+  }
+
+  map<int,QString> tables;
+  toMarkedText::keyPressEvent(e);
+}
+#endif
+
 void toHighlightedText::previousError(void)
 {
   int curline,curcol;
   getCursorPosition (&curline,&curcol);
   curcol=-1;
-  for (map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
+  for (std::map<int,QString>::iterator i=Errors.begin();i!=Errors.end();i++) {
     if ((*i).first>=curline) {
       if (curcol<0)
 	curcol=(*i).first;

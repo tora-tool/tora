@@ -64,7 +64,7 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
 
     if (first) {
       clear();
-      list<QString> labels;
+      std::list<QString> labels;
       for(toQDescList::iterator i=desc.begin();i!=desc.end();i++)
 	if (i!=desc.begin())
 	  labels.insert(labels.end(),(*i).Name);
@@ -75,7 +75,7 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
       int num=0;
       QString lab=query.readValue();
       num++;
-      list<double> vals;
+      std::list<double> vals;
       while(num<query.columns()) {
 	vals.insert(vals.end(),query.readValue().toDouble());
 	num++;
@@ -84,22 +84,22 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
 	time_t now=time(NULL);
 	if (now!=LastStamp) {
 	  if (LastValues.size()>0) {
-	    list<double> dispVal;
-	    list<double>::iterator i=vals.begin();
-	    list<double>::iterator j=LastValues.begin();
+	    std::list<double> dispVal;
+	    std::list<double>::iterator i=vals.begin();
+	    std::list<double>::iterator j=LastValues.begin();
 	    while(i!=vals.end()&&j!=LastValues.end()) {
 	      dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
 	      i++;
 	      j++;
 	    }
-	    list<double> tmp=transform(dispVal);
+	    std::list<double> tmp=transform(dispVal);
 	    addValues(tmp,lab);
 	  }
 	  LastValues=vals;
 	  LastStamp=now;
 	}
       } else {
-	list<double> tmp=transform(vals);
+	std::list<double> tmp=transform(vals);
 	addValues(tmp,lab);
       }
     }
@@ -107,7 +107,7 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
   update();
 }
 
-list<double> toResultLine::transform(list<double> &input)
+std::list<double> toResultLine::transform(std::list<double> &input)
 {
   return input;
 }

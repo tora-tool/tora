@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qwidget.h>
 
 #include "toconnection.h"
@@ -45,53 +43,53 @@ TO_NAMESPACE;
 
 // Connection provider implementation
 
-map<QString,toConnectionProvider *> *toConnectionProvider::Providers;
+std::map<QString,toConnectionProvider *> *toConnectionProvider::Providers;
 
 toConnectionProvider::toConnectionProvider(const QString &provider)
 {
-  Providers=new map<QString,toConnectionProvider *>;
+  Providers=new std::map<QString,toConnectionProvider *>;
   Provider=provider; (*Providers)[Provider]=this;
 }
 
 toConnectionProvider::~toConnectionProvider()
 {
-  map<QString,toConnectionProvider *>::iterator i=Providers->find(Provider);
+  std::map<QString,toConnectionProvider *>::iterator i=Providers->find(Provider);
   if (i!=Providers->end())
     Providers->erase(i);
 }
 
-list<QString> toConnectionProvider::hosts(void)
+std::list<QString> toConnectionProvider::hosts(void)
 {
-  list<QString> ret;
+  std::list<QString> ret;
   return ret;
 }
 
-list<QString> toConnectionProvider::providers(void)
+std::list<QString> toConnectionProvider::providers(void)
 {
-  list<QString> ret;
+  std::list<QString> ret;
   if (!Providers)
     return ret;
-  for(map<QString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
+  for(std::map<QString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
     ret.insert(ret.end(),(*i).first);
   return ret;
 }
 
-list<QString> toConnectionProvider::modes(void)
+std::list<QString> toConnectionProvider::modes(void)
 {
-  list<QString> ret;
+  std::list<QString> ret;
   ret.insert(ret.end(),"Normal");
   return ret;
 }
 
 toConnectionProvider &toConnectionProvider::fetchProvider(const QString &provider)
 {
-  map<QString,toConnectionProvider *>::iterator i=Providers->find(provider);
+  std::map<QString,toConnectionProvider *>::iterator i=Providers->find(provider);
   if (i==Providers->end())
     throw QString("Tried to fetch unknown provider %1").arg(provider);
   return *((*i).second);
 }
 
-list<QString> toConnectionProvider::modes(const QString &provider)
+std::list<QString> toConnectionProvider::modes(const QString &provider)
 {
   return fetchProvider(provider).hosts();
 }
@@ -102,12 +100,12 @@ toConnection::connectionImpl *toConnectionProvider::connection(const QString &pr
   return fetchProvider(provider).connection(conn);
 }
 
-list<QString> toConnectionProvider::hosts(const QString &provider)
+std::list<QString> toConnectionProvider::hosts(const QString &provider)
 {
   return fetchProvider(provider).hosts();
 }
 
-list<QString> toConnectionProvider::databases(const QString &provider,const QString &host)
+std::list<QString> toConnectionProvider::databases(const QString &provider,const QString &host)
 {
   return fetchProvider(provider).databases(host);
 }
@@ -390,7 +388,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,
   Query->execute();
 }
 
-toQuery::toQuery(toConnection &conn,toSQL &sql,const list<queryValue> &params)
+toQuery::toQuery(toConnection &conn,toSQL &sql,const toQList &params)
   : Connection(conn),ConnectionSub(conn.mainConnection()),Params(params),SQL(sql(conn))
 {  
   Mode=Normal;
@@ -399,7 +397,7 @@ toQuery::toQuery(toConnection &conn,toSQL &sql,const list<queryValue> &params)
   Query->execute();
 }
 
-toQuery::toQuery(toConnection &conn,const QString &sql,const list<queryValue> &params)
+toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
   : Connection(conn),ConnectionSub(conn.mainConnection()),Params(params),SQL(sql.utf8())
 {
   Mode=Normal;
@@ -408,7 +406,7 @@ toQuery::toQuery(toConnection &conn,const QString &sql,const list<queryValue> &p
   Query->execute();
 }
 
-toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const list<queryValue> &params)
+toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const toQList &params)
   : Connection(conn),
     Params(params),
     SQL(sql(conn))
@@ -420,7 +418,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const list<queryVa
   Query->execute();
 }
 
-toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const list<queryValue> &params)
+toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQList &params)
   : Connection(conn),
     Params(params),
     SQL(sql.utf8())
@@ -441,14 +439,14 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
   Query=conn.Connection->createQuery(this,ConnectionSub);
 }
 
-void toQuery::execute(toSQL &sql,const list<queryValue> &params)
+void toQuery::execute(toSQL &sql,const toQList &params)
 {
   SQL=sql(Connection);
   Params=params;
   Query->execute();
 }
 
-void toQuery::execute(const QString &sql,const list<queryValue> &params)
+void toQuery::execute(const QString &sql,const toQList &params)
 {
   SQL=sql.utf8();
   Params=params;
@@ -466,8 +464,8 @@ bool toQuery::eof(void)
 {
   if (Mode==All) {
     if (Query->eof()) {
-      list<toConnectionSub *> &cons=Connection.connections();
-      for(list<toConnectionSub *>::iterator i=cons.begin();i!=cons.end();i++) {
+      std::list<toConnectionSub *> &cons=Connection.connections();
+      for(std::list<toConnectionSub *>::iterator i=cons.begin();i!=cons.end();i++) {
 	if (*i==ConnectionSub) {
 	  i++;
 	  if (i!=cons.end()) {
@@ -483,7 +481,7 @@ bool toQuery::eof(void)
   return Query->eof();
 }
 
-toQList toQuery::readQuery(toConnection &conn,toSQL &sql,list<queryValue> &params)
+toQList toQuery::readQuery(toConnection &conn,toSQL &sql,toQList &params)
 {
   toBusy busy;
   toQuery query(conn,sql,params);
@@ -493,7 +491,7 @@ toQList toQuery::readQuery(toConnection &conn,toSQL &sql,list<queryValue> &param
   return ret;
 }
 
-toQList toQuery::readQuery(toConnection &conn,const QString &sql,list<queryValue> &params)
+toQList toQuery::readQuery(toConnection &conn,const QString &sql,toQList &params)
 {
   toBusy busy;
   toQuery query(conn,sql,params);
@@ -560,7 +558,7 @@ void toConnection::addConnection(void)
   toConnectionSub *sub=Connection->createConnection();
   Connections.insert(Connections.end(),sub);
   toQList params;
-  for(list<QCString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
+  for(std::list<QCString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
     try {
       Connection->execute(sub,*i,params);
     } TOCATCH
@@ -595,10 +593,10 @@ toConnection::toConnection(const toConnection &conn)
 toConnection::~toConnection()
 {
   toBusy busy;
-  for (list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
     delete (*i);
   }
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     Connection->closeConnection(*i);
   }
   delete Connection;
@@ -617,14 +615,14 @@ toConnectionSub *toConnection::longConnection()
 #endif
   if (Connections.size()==1)
     addConnection();
-  list<toConnectionSub *>::iterator i=Connections.begin();
+  std::list<toConnectionSub *>::iterator i=Connections.begin();
   i++;
   return (*i);
 }
 
 void toConnection::freeConnection(toConnectionSub *sub)
 {
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     if (*i==sub)
       return;
   }
@@ -634,10 +632,10 @@ void toConnection::freeConnection(toConnectionSub *sub)
 void toConnection::commit(void)
 {
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
     Connection->commit(*i);
   while(Connections.size()>2) {
-    list<toConnectionSub *>::iterator i=Connections.begin();
+    std::list<toConnectionSub *>::iterator i=Connections.begin();
     i++;
     delete (*i);
     Connections.erase(i);
@@ -647,10 +645,10 @@ void toConnection::commit(void)
 void toConnection::rollback(void)
 {
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++)
     Connection->rollback(*i);
   while(Connections.size()>2) {
-    list<toConnectionSub *>::iterator i=Connections.begin();
+    std::list<toConnectionSub *>::iterator i=Connections.begin();
     i++;
     delete (*i);
     Connections.erase(i);
@@ -659,7 +657,7 @@ void toConnection::rollback(void)
 
 void toConnection::delWidget(QWidget *widget)
 {
-  for (list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i++) {
+  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i++) {
     if ((*i)==widget) {
       Widgets.erase(i);
       break;
@@ -669,10 +667,10 @@ void toConnection::delWidget(QWidget *widget)
 
 bool toConnection::closeWidgets(void)
 {
-  for (list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
+  for (std::list<QWidget *>::iterator i=Widgets.begin();i!=Widgets.end();i=Widgets.begin()) {
     if (!(*i)->close(true))
       return false;
-    list<QWidget *>::iterator nextI=Widgets.begin();
+    std::list<QWidget *>::iterator nextI=Widgets.begin();
     if (i==nextI)
       throw QString("All tool widgets need to have autodelete flag set");
   }
@@ -705,7 +703,7 @@ void toConnection::addInit(const QString &sql)
 void toConnection::delInit(const QString &sql)
 {
   QCString utf=sql.utf8();
-  list<QCString>::iterator i=InitStrings.begin();
+  std::list<QCString>::iterator i=InitStrings.begin();
   while (i!=InitStrings.end()) {
     if ((*i)==utf) {
       InitStrings.erase(i);
@@ -836,7 +834,7 @@ void toConnection::execute(const QString &sql,
 void toConnection::allExecute(toSQL &sql,toQList &params)
 {
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,toSQL::sql(sql,*this),params);
     } TOCATCH
@@ -846,7 +844,7 @@ void toConnection::allExecute(toSQL &sql,toQList &params)
 void toConnection::allExecute(const QString &sql,toQList &params)
 {
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,sql.utf8(),params);
     } TOCATCH
@@ -903,7 +901,7 @@ void toConnection::allExecute(toSQL &sql,
     args.insert(args.end(),arg9);
 
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,toSQL::sql(sql,*this),args);
     } TOCATCH
@@ -960,7 +958,7 @@ void toConnection::allExecute(const QString &sql,
     args.insert(args.end(),arg9);
 
   toBusy busy;
-  for(list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     try {
       Connection->execute(*i,sql.utf8(),args);
     } TOCATCH

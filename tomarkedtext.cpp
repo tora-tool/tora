@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qprinter.h>
 #include <qpainter.h>
 #include <qapplication.h>

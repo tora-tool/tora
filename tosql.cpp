@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qfile.h>
 #include <qregexp.h>
 
@@ -85,7 +83,7 @@ bool toSQL::updateSQL(const QString &name,
     newDef.Modified=modified;
     newDef.Description=description;
     if (!sql.isNull()) {
-      list<version> &cl=newDef.Versions;
+      std::list<version> &cl=newDef.Versions;
       cl.insert(cl.end(),def);
     }
     (*Definitions)[name]=newDef;
@@ -99,8 +97,8 @@ bool toSQL::updateSQL(const QString &name,
       if (!modified)
 	fprintf(stderr,"ERROR:Overwrite description of nonmodified (%s)\n",(const char *)name);
     }
-    list<version> &cl=(*i).second.Versions;
-    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+    std::list<version> &cl=(*i).second.Versions;
+    for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
       if ((*j).Version==ver) {
 	if (!sql.isNull()) {
 	  (*j)=def;
@@ -128,8 +126,8 @@ bool toSQL::deleteSQL(const QString &name,
   if (i==Definitions->end()) {
     return false;
   } else {
-    list<version> &cl=(*i).second.Versions;
-    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+    std::list<version> &cl=(*i).second.Versions;
+    for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
       if ((*j).Version==ver) {
 	cl.erase(j);
 	if (cl.begin()==cl.end())
@@ -163,8 +161,8 @@ QString toSQL::string(const QString &name,
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end()) {
     QString *sql=NULL;
-    list<version> &cl=(*i).second.Versions;
-    for (list<version>::iterator j=cl.begin();j!=cl.end();j++) {
+    std::list<version> &cl=(*i).second.Versions;
+    for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
       if ((*j).Version<=ver||!sql) {
 	sql=&(*j).SQL;
       }
@@ -200,7 +198,7 @@ bool toSQL::saveSQL(const QString &filename,bool all)
       str=line.latin1();
       str+="\n";
     }
-    for (list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
+    for (std::list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
       version &ver=(*j);
       if (ver.Modified||all) {
 	QString line=name;
@@ -305,9 +303,9 @@ void toSQL::loadSQL(const QString &filename)
   }
 }
 
-list<QString> toSQL::range(const QString &startWith)
+std::list<QString> toSQL::range(const QString &startWith)
 {
-  list<QString> ret;
+  std::list<QString> ret;
   for(sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
     if ((*i).first>startWith) {
       if ((*i).first.startsWith(startWith))

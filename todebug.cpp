@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <stack>
 
 #ifdef TO_KDE
@@ -115,7 +113,7 @@ TO_NAMESPACE;
 #define TO_ID_CHANGE_WATCH	(toMain::TO_TOOL_MENU_ID+11)
 
 class toDebugTool : public toTool {
-  map<toConnection *,QWidget *> Windows;
+  std::map<toConnection *,QWidget *> Windows;
 
   virtual char **pictureXPM(void)
   { return todebug_xpm; }
@@ -127,7 +125,7 @@ public:
   { return "PL/SQL Debugger"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end()) {
       (*i).second->setFocus();
       return NULL;
@@ -140,7 +138,7 @@ public:
   }
   void closeWindow(toConnection &connection)
   {
-    map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
+    std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
     if (i!=Windows.end())
       Windows.erase(i);
   }
@@ -778,7 +776,7 @@ void toDebug::execute(void)
     } state=beginning;
 
     CurrentParams.clear();
-    list<debugParam>::iterator cp=CurrentParams.begin();
+    std::list<debugParam>::iterator cp=CurrentParams.begin();
     QString callName;
     QString retType;
 
@@ -869,7 +867,7 @@ void toDebug::execute(void)
     QListViewItem *last=NULL;
     head->setOpen(true);
 
-    for(list<debugParam>::iterator i=CurrentParams.begin();i!=CurrentParams.end();i++) {
+    for(std::list<debugParam>::iterator i=CurrentParams.begin();i!=CurrentParams.end();i++) {
       if ((*i).In)
 	last=new toResultViewItem(head,last,(*i).Name);
       sql+=sep;
@@ -1009,9 +1007,9 @@ void toDebug::updateContent(bool body)
   QListViewItem *item=NULL;
 
   QChar stringEnd;
-  stack<QString> parentType;
-  stack<bool> parentDecl;
-  stack<QListViewItem *> parentItem;
+  std::stack<QString> parentType;
+  std::stack<bool> parentDecl;
+  std::stack<QListViewItem *> parentItem;
   QString type="";
   bool declaration=true;
   state=space;
@@ -1309,7 +1307,7 @@ void toDebug::updateState(int reason)
 	  head=head->nextSibling();
 	head=new toResultViewItem(Parameters,head,"Output");
 	head->setOpen(true);
-	list<debugParam>::iterator cp;
+	std::list<debugParam>::iterator cp;
 	for(cp=CurrentParams.begin();cp!=CurrentParams.end()&&!(*cp).Out;cp++)
 	  ;
 

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <signal.h>
 #include <sys/types.h>
 #ifndef WIN32

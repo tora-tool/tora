@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qdragobject.h>
 #include <qclipboard.h>
 #include <qpopupmenu.h>
@@ -356,7 +354,7 @@ void toResultContentEditor::saveUnsaved()
       sql+=Table;
       sql+="\" SET ";
       QHeader *head=horizontalHeader();
-      list<QString>::iterator k=OrigValues.begin();
+      std::list<QString>::iterator k=OrigValues.begin();
       bool first=false;
       for(int i=0;i<numCols();i++,k++) {
 	if (*k!=text(CurrentRow,i)) {
@@ -379,7 +377,7 @@ void toResultContentEditor::saveUnsaved()
       if (first) {
 	sql+=" WHERE ";
 	int col=0;
-	for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	  sql+="\"";
 	  sql+=head->label(col);
 	  sql+="\" ";
@@ -397,13 +395,13 @@ void toResultContentEditor::saveUnsaved()
 	  toConnection &conn=connection();
 	  toQList args;
 
-	  list<QString>::iterator k=OrigValues.begin();
+	  std::list<QString>::iterator k=OrigValues.begin();
 	  for (int i=0;i<numCols();i++,k++) {
 	    QString str=text(CurrentRow,i);
 	    if (str!=*k&&!str.isNull())
 	      toPush(args,toQValue(str));
 	  }
-	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	    QString str=(*j);
 	    if (!str.isNull())
 	      toPush(args,toQValue(str));
@@ -416,7 +414,7 @@ void toResultContentEditor::saveUnsaved()
 	    conn.setNeedCommit();
 	} catch (const QString &str) {
 	  int col=0;
-	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
+	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
 	    setText(CurrentRow,col,*j);
 	  toStatusMessage(str);
 	}

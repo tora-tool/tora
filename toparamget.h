@@ -70,14 +70,14 @@ class toParamGet : public QDialog {
   Q_OBJECT
   /** Default values cache
    */
-  static map<QString,QString> DefaultCache;
+  static std::map<QString,QString> DefaultCache;
   /** Specified values cache
    */
-  static map<QString,QString> Cache;
+  static std::map<QString,QString> Cache;
 
   QGrid *Container;
 
-  list<QLineEdit *> Value;
+  std::list<QLineEdit *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   /** Get parameters for specified SQL string.

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef WIN32
 #  include "windows/cregistry.h"
 #endif
@@ -70,10 +68,10 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 
   Database->insertItem(toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE));
 
-  list<QString> lst=toConnectionProvider::providers();
+  std::list<QString> lst=toConnectionProvider::providers();
   int sel=0,cur=0;
   QString provider=toTool::globalConfig(CONF_PROVIDER,DEFAULT_PROVIDER);
-  for(list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
     Provider->insertItem(*i);
     if (*i==provider)
       sel=cur;
@@ -133,12 +131,12 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 
 void toNewConnection::changeProvider(void)
 {
-  list<QString> hosts=toConnectionProvider::hosts(Provider->currentText());
+  std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText());
   QString current=Host->currentText();
 
   Host->clear();
   bool sqlNet=false;
-  for(list<QString>::iterator i=hosts.begin();i!=hosts.end();i++) {
+  for(std::list<QString>::iterator i=hosts.begin();i!=hosts.end();i++) {
     if ((*i).isEmpty())
       sqlNet=true;
     Host->insertItem(*i);
@@ -157,11 +155,12 @@ void toNewConnection::changeProvider(void)
 
 void toNewConnection::changeHost(void)
 {
-  list<QString> databases=toConnectionProvider::databases(Provider->currentText(),Host->currentText());
+  std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
+							       Host->currentText());
   QString current=Database->currentText();
 
   Database->clear();
-  for(list<QString>::iterator i=databases.begin();i!=databases.end();i++)
+  for(std::list<QString>::iterator i=databases.begin();i!=databases.end();i++)
     Database->insertItem(*i);
   Database->lineEdit()->setText(current);
 }

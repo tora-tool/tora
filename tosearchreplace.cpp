@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>

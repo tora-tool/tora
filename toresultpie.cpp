@@ -55,8 +55,8 @@ void toResultPie::query(const QString &sql,const toQList &param)
   try {
     toQuery query(connection(),sql,param);
 
-    list<QString> labels;
-    list<double> values;
+    std::list<QString> labels;
+    std::list<double> values;
     int len;
     while(!query.eof()) {
       QString val=query.readValue();

@@ -57,7 +57,7 @@ class toPreferences : public QDialog, public toHelpContext
 
   QWidget *Shown;
 
-  map<QListBoxItem *,QWidget *> Tabs;
+  std::map<QListBoxItem *,QWidget *> Tabs;
 
   void addWidget(QListBoxItem *,QWidget *);
 

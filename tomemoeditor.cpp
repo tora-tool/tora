@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qpixmap.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>

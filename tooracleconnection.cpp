@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qfile.h>
 #include <qregexp.h>
 
@@ -187,9 +185,9 @@ public:
       Query->describe_select(descriptionLen);
       return descriptionLen;
     }
-    virtual list<toQuery::queryDescribe> describe(void)
+    virtual std::list<toQuery::queryDescribe> describe(void)
     {
-      list<toQuery::queryDescribe> ret;
+      std::list<toQuery::queryDescribe> ret;
       int descriptionLen;
       otl_column_desc *description=Query->describe_select(descriptionLen);
 
@@ -420,22 +418,22 @@ public:
 
   virtual toConnection::connectionImpl *connection(toConnection *conn)
   { return new oracleConnection(conn); }
-  virtual list<QString> modes(void)
+  virtual std::list<QString> modes(void)
   {
-    list<QString> ret;
+    std::list<QString> ret;
     ret.insert(ret.end(),"Normal");
     ret.insert(ret.end(),"SYS_OPER");
     ret.insert(ret.end(),"SYS_DBA");
     return ret;
   }
-  virtual list<QString> hosts(void)
+  virtual std::list<QString> hosts(void)
   {
-    list<QString> ret;
+    std::list<QString> ret;
     ret.insert(ret.end(),QString::null);
     ret.insert(ret.end(),"SQL*Net");
     return ret;
   }
-  virtual list<QString> databases(const QString &host)
+  virtual std::list<QString> databases(const QString &host)
   {
     QString str;
 #ifdef WIN32
@@ -480,7 +478,7 @@ public:
     str.append("/tnsnames.ora");
 
 
-    list<QString> ret;
+    std::list<QString> ret;
 
     QFile file(str);
     if (!file.open(IO_ReadOnly))

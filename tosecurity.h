@@ -57,7 +57,7 @@ public:
   toSecuritySystem(toConnection &conn,QWidget *parent);
   void changeUser(const QString &);
   void eraseUser(bool all=true);
-  void sql(const QString &user,list<QString> &sql);
+  void sql(const QString &user,std::list<QString> &sql);
 public slots:
   virtual void changed(QListViewItem *item);
 };
@@ -70,7 +70,7 @@ class toSecurityRoleGrant : public QListView {
 public:
   toSecurityRoleGrant(toConnection &conn,QWidget *parent);
   void changeUser(bool user,const QString &);
-  void sql(const QString &user,list<QString> &sql);
+  void sql(const QString &user,std::list<QString> &sql);
   void eraseUser(bool user,bool all=true);
 public slots:
   virtual void changed(QListViewItem *item);
@@ -83,7 +83,7 @@ class toSecurityObject : public QListView {
 public:
   toSecurityObject(toConnection &conn,QWidget *parent);
   void changeUser(const QString &);
-  void sql(const QString &user,list<QString> &sql);
+  void sql(const QString &user,std::list<QString> &sql);
   void eraseUser(bool all=true);
 public slots:
   virtual void changed(QListViewItem *item);
@@ -115,7 +115,7 @@ class toSecurity : public toToolWidget {
   QToolButton *DropButton;
   QToolButton *CopyButton;
   QTabWidget *Tabs;
-  list<QString> sql(void);
+  std::list<QString> sql(void);
 public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual void changeUser(bool);

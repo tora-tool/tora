@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -212,7 +210,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
 #endif
 
   int def=0;
-  list<QString> cons=toMainWidget()->connections();
+  std::list<QString> cons=toMainWidget()->connections();
   int i=0;
   while(cons.size()>0) {
     QString str=toShift(cons);
@@ -244,18 +242,18 @@ toScript::~toScript()
   Connection.delWidget(this);
 }
 
-list<QString> toScript::createObjectList(QListView *source)
+std::list<QString> toScript::createObjectList(QListView *source)
 {
-  list<QString> lst;
+  std::list<QString> lst;
 
-  list<QString> otherGlobal;
-  list<QString> profiles;
-  list<QString> roles;
-  list<QString> tableSpace;
-  list<QString> tables;
-  list<QString> userOther;
-  list<QString> userViews;
-  list<QString> users;
+  std::list<QString> otherGlobal;
+  std::list<QString> profiles;
+  std::list<QString> roles;
+  std::list<QString> tableSpace;
+  std::list<QString> tables;
+  std::list<QString> userOther;
+  std::list<QString> userViews;
+  std::list<QString> users;
 
   QListViewItem *next=NULL;
   for (QListViewItem *item=source->firstChild();item;item=next) {
@@ -320,69 +318,69 @@ list<QString> toScript::createObjectList(QListView *source)
   
   if (IncludeDDL->isChecked()) {
     {
-      for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+      for(std::list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
 	toPush(lst,*i);
     }
     {
-      for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+      for(std::list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
 	toPush(lst,*i);
     }
     {
-      for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+      for(std::list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
 	toPush(lst,*i);
     }
     {
-      for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      for(std::list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
 	QString line="ROLE:";
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
-      for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      for(std::list<QString>::iterator i=users.begin();i!=users.end();i++) {
 	QString line="USER:";
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
-      for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
 	QString line="TABLE FAMILY:";
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
-      for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+      for(std::list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
 	toPush(lst,*i);
     }
     {
-      for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+      for(std::list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
 	toPush(lst,*i);
     }
   }
-  for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+  for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
     QString line="TABLE CONTENTS:";
     line+=*i;
     toPush(lst,line);
   }
   if (IncludeDDL->isChecked()) {
     {
-      for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+      for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
 	QString line="TABLE REFERENCES:";
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
-      for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      for(std::list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
 	QString line="ROLE GRANTS:";
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
-      for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      for(std::list<QString>::iterator i=users.begin();i!=users.end();i++) {
 	QString line="USER GRANTS:";
 	line+=*i;
 	toPush(lst,line);
@@ -409,10 +407,10 @@ void toScript::execute(void)
       return;
     }
 
-    list<QString> sourceObjects=createObjectList(SourceObjects);
+    std::list<QString> sourceObjects=createObjectList(SourceObjects);
 
-    list<QString> sourceDescription;
-    list<QString> destinationDescription;
+    std::list<QString> sourceDescription;
+    std::list<QString> destinationDescription;
     QString script;
 
     toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
@@ -430,7 +428,7 @@ void toScript::execute(void)
     }
 
     if (Destination->isEnabled()) {
-      list<QString> destinationObjects=createObjectList(DestinationObjects);
+      std::list<QString> destinationObjects=createObjectList(DestinationObjects);
       toExtract destination(toMainWidget()->connection(DestinationConnection->currentText()),this);
       setupExtract(destination);
       switch(mode) {
@@ -444,8 +442,8 @@ void toScript::execute(void)
       }
 
       // Remove entries existing in both source and destination
-      list<QString>::iterator i=sourceDescription.begin();
-      list<QString>::iterator j=destinationDescription.begin();
+      std::list<QString>::iterator i=sourceDescription.begin();
+      std::list<QString>::iterator j=destinationDescription.begin();
       while(i!=sourceDescription.end()&&j!=destinationDescription.end()) {
 	if (*i==*j) {
 	  sourceDescription.erase(i);
@@ -470,13 +468,13 @@ void toScript::execute(void)
   } TOCATCH
       }
 
-void toScript::fillDifference(list<QString> &objects,QListView *view)
+void toScript::fillDifference(std::list<QString> &objects,QListView *view)
 {
   view->clear();
   QListViewItem *last=NULL;
   int lastLevel=0;
   QStringList lstCtx;
-  for(list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for(std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     //    printf("Adding %s\n",(const char *)*i);
     QStringList ctx=QStringList::split("\01",*i);
     if (last) {

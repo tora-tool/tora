@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qheader.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>
@@ -122,12 +120,12 @@ public:
     bool Invert;
     QString Text;
     int TablespaceType;
-    list<QString> Tablespaces;
+    std::list<QString> Tablespaces;
     QRegExp Match;
   public:
     setting(int type,bool cas,bool invert,
 	    const QString &str,int tablespace,
-	    const list<QString> &tablespaces)
+	    const std::list<QString> &tablespaces)
       : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str),
 	TablespaceType(tablespace),Tablespaces(tablespaces)
     {
@@ -151,7 +149,7 @@ public:
 	case 1:
 	  {
 	    bool ok=false;
-	    for(list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++) {
+	    for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++) {
 	      if (*i==tablespace) {
 		ok=true;
 		break;
@@ -162,7 +160,7 @@ public:
 	  }
 	  break;
 	case 2:
-	  for(list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++)
+	  for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++)
 	    if (*i==tablespace)
 	      return false;
 	  break;
@@ -219,7 +217,7 @@ public:
     setup();
     TablespaceType->setButton(cur.TablespaceType);
     Buttons->setButton(cur.Type);
-    for(list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
+    for(std::list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
       for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
 	if (item->text(0)==*i) {
 	  item->setSelected(true);
@@ -232,7 +230,7 @@ public:
   }
   setting *getSetting(void)
   {
-    list<QString> tablespaces;
+    std::list<QString> tablespaces;
     for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
       if (item->isSelected())
 	tablespaces.insert(tablespaces.end(),item->text(0));
@@ -420,7 +418,7 @@ void toBrowser::setNewFilter(toResultFilter *filter)
 {
   if (filter)
     Filter=filter;
-  for(map<QString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
+  for(std::map<QString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
     (*i).second->setFilter(filter?filter->clone():NULL);
   refresh();
 }
@@ -838,13 +836,13 @@ void toBrowser::defineFilter(void)
 
 void toBrowseTemplate::addDatabase(const QString &name)
 {
-  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+  for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
     new toTemplateItem(*i,name);
 }
 
 void toBrowseTemplate::removeDatabase(const QString &name)
 {
-  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++) {
+  for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++) {
     for (QListViewItem *item=(*i)->firstChild();item;item=item->nextSibling())
       if (item->text(0)==name) {
 	delete item;
@@ -855,7 +853,7 @@ void toBrowseTemplate::removeDatabase(const QString &name)
 
 void toBrowseTemplate::removeItem(QListViewItem *item)
 {
-  for(list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
+  for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
     if ((*i)==item) {
       Parents.erase(i);
       break;
@@ -1092,8 +1090,8 @@ void toBrowseTemplate::insertItems(QListView *parent)
 	    this,SLOT(removeDatabase(const QString &)));
   }
   toTemplateItem *dbitem=new toBrowseTemplateItem(*this,parent,"DB Browser");
-  list<QString> conn=toMainWidget()->connections();
-  for (list<QString>::iterator i=conn.begin();i!=conn.end();i++) {
+  std::list<QString> conn=toMainWidget()->connections();
+  for (std::list<QString>::iterator i=conn.begin();i!=conn.end();i++) {
     toConnection &conn=toMainWidget()->connection(*i);
     new toTemplateDBItem(conn,dbitem,*i);
   }

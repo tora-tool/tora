@@ -79,7 +79,7 @@ private:
    * A map of @ref Key to tools. Used to keep track of the different tools
    * available.
    */
-  static map<QString,toTool *> *Tools;
+  static std::map<QString,toTool *> *Tools;
   /**
    * A map containing the available configuration settings. By convention the
    * character ':' is used to separate parts of the path.
@@ -89,7 +89,7 @@ private:
    * @see config
    * @see setConfig
    */
-  static map<QString,QString> *Configuration;
+  static std::map<QString,QString> *Configuration;
   /**
    * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
    */
@@ -193,8 +193,8 @@ public:
    * @see Tools
    * @return A reference to the tool map.
    */
-  static map<QString,toTool *> &tools(void)
-  { if (!Tools) Tools=new map<QString,toTool *>; return *Tools; }
+  static std::map<QString,toTool *> &tools(void)
+  { if (!Tools) Tools=new std::map<QString,toTool *>; return *Tools; }
   /**
    * Save configuration to file.
    */
@@ -252,14 +252,14 @@ public:
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool loadMap(const QString &filename,map<QString,QString> &map);
+  static bool loadMap(const QString &filename,std::map<QString,QString> &map);
   /**
    * Save a string to string map to file.
    * @see loadMap
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool saveMap(const QString &filename,map<QString,QString> &map);
+  static bool saveMap(const QString &filename,std::map<QString,QString> &map);
 public slots:
   /**
    * Create a window of the current tool. This function sets up a toolwindow for

@@ -58,7 +58,7 @@ private:
     { }
     virtual void run(void);
   };
-  friend queryTask;
+  friend class queryTask;
 
   /** This semaphore indicates wether the query is still running.
    */

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif

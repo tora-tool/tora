@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>
@@ -843,7 +841,7 @@ void toSecurityObject::changeUser(const QString &user)
   } TOCATCH
 }
 
-void toSecurityObject::sql(const QString &user,list<QString> &sqlLst)
+void toSecurityObject::sql(const QString &user,std::list<QString> &sqlLst)
 {
   QListViewItem *next=NULL;
   for (QListViewItem *item=firstChild();item;item=next) {
@@ -944,7 +942,7 @@ toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
   connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
 }
 
-void toSecuritySystem::sql(const QString &user,list<QString> &sqlLst)
+void toSecuritySystem::sql(const QString &user,std::list<QString> &sqlLst)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
     QString sql;
@@ -1083,7 +1081,7 @@ QCheckListItem *toSecurityRoleGrant::findChild(QListViewItem *parent,const QStri
   return NULL;
 }
 
-void toSecurityRoleGrant::sql(const QString &user,list<QString> &sqlLst)
+void toSecurityRoleGrant::sql(const QString &user,std::list<QString> &sqlLst)
 {
   bool any=false;
   bool chg=false;
@@ -1325,9 +1323,9 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   refresh();
 }
 
-list<QString> toSecurity::sql(void)
+std::list<QString> toSecurity::sql(void)
 {
-  list<QString> ret;
+  std::list<QString> ret;
   QString tmp=General->sql();
   if (!tmp.isEmpty())
     ret.insert(ret.end(),tmp);
@@ -1338,7 +1336,7 @@ list<QString> toSecurity::sql(void)
     RoleGrant->sql(name,ret);
   }
 #if 0
-  for (list<QString>::iterator i=ret.begin();i!=ret.end();i++)
+  for (std::list<QString>::iterator i=ret.begin();i!=ret.end();i++)
     printf("SQL:%s\n",(const char *)(*i));
 #endif
 
@@ -1349,7 +1347,7 @@ void toSecurity::changeUser(bool ask)
 {
   if (ask) {
     try {
-      list<QString> sqlList=sql();
+      std::list<QString> sqlList=sql();
       if (sqlList.size()!=0) {
 	switch(TOMessageBox::warning(this,
 				     "Save changes?",
@@ -1437,8 +1435,8 @@ void toSecurity::refresh(void)
 
 void toSecurity::saveChanges()
 {
-  list<QString> sqlList=sql();
-  for (list<QString>::iterator i=sqlList.begin();i!=sqlList.end();i++) {
+  std::list<QString> sqlList=sql();
+  for (std::list<QString>::iterator i=sqlList.begin();i!=sqlList.end();i++) {
     try {
       connection().execute(*i);
     } TOCATCH

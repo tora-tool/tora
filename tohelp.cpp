@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <khtml_part.h>
@@ -334,7 +332,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
-  map<QString,QString> Dsc;
+  std::map<QString,QString> Dsc;
   Dsc["TOra manual"]=toHelpPath();
   int tot=HelpTool.config("Number",QString::number(-1)).toInt();
   if(tot!=-1) {
@@ -351,7 +349,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
   setGeometry(x(),y(),max(width(),640),max(height(),480));
 
   QListViewItem *lastParent=NULL;
-  for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
+  for(std::map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
       QString path=toHelp::path((*i).second);
       QString filename=(*i).second;
@@ -535,7 +533,7 @@ void toHelp::search(void)
       filename+="index.htm";
       try {
 	toHtml file(toReadFile(filename));
-	list<QString> Context;
+	std::list<QString> Context;
 	bool inDsc=false;
 	bool aRestart=true;
 	QString dsc;
@@ -563,7 +561,7 @@ void toHelp::search(void)
 	      if (!dsc.isEmpty()&&
 		  !href.isEmpty()) {
 		QString tmp;
-		for (list<QString>::iterator i=Context.begin();i!=Context.end();i++)
+		for (std::list<QString>::iterator i=Context.begin();i!=Context.end();i++)
 		  if (i!=Context.begin()&&!(*i).isEmpty()) {
 		    tmp+=*i;
 		    tmp+=", ";

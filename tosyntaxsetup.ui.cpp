@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include "tosyntaxsetup.ui.h"
 
 #include <qcheckbox.h>

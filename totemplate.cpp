@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
@@ -67,8 +65,8 @@ TO_NAMESPACE;
 #include <stdio.h>
 
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
-  map<QString,QString> &TemplateMap;
-  map<QString,QString>::iterator LastTemplate;
+  std::map<QString,QString> &TemplateMap;
+  std::map<QString,QString>::iterator LastTemplate;
   toTimer Timer;
 public:
   virtual void updateFromMap(void)
@@ -78,7 +76,7 @@ public:
     QListViewItem *last=NULL;
     int lastLevel=0;
     QStringList lstCtx;
-    for(map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
+    for(std::map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
       QStringList ctx=QStringList::split(":",(*i).first);
       if (last) {
 	while(last&&lastLevel>=int(ctx.count())) {
@@ -111,7 +109,7 @@ public:
       lastLevel++;
     }
   }
-  toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
+  toTemplateEdit(std::map<QString,QString> &pairs,QWidget *parent,const char *name=0)
     : toTemplateEditUI(parent,name,true,WStyle_Maximize),
       toHelpContext("template.html#editor"),
       TemplateMap(pairs)
@@ -265,7 +263,7 @@ public:
     if (item) {
       try {
 	QString file=item->text(1);
-	map<QString,QString> pairs;
+	std::map<QString,QString> pairs;
 	if (!toTool::loadMap(file,pairs)) {
 	  if (TOMessageBox::warning(this,
 				    "Couldn't open file.",
@@ -369,7 +367,7 @@ toTemplate::toTemplate(QWidget *parent)
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
 
   if (toTemplateProvider::Providers)
-    for (list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
+    for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
 	 i!=toTemplateProvider::Providers->end();
 	 i++)
       (*i)->insertItems(List);
@@ -455,12 +453,12 @@ void toTextTemplate::insertItems(QListView *parent)
 
 void toTextTemplate::addFile(QListView *parent,const QString &root,const QString &file)
 {
-  map<QString,QString> pairs;
+  std::map<QString,QString> pairs;
   toTool::loadMap(file,pairs);
   toTemplateItem *last=new toTemplateItem(*this,parent,root);
   int lastLevel=0;
   QStringList lstCtx;
-  for(map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+  for(std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
     QStringList ctx=QStringList::split(":",(*i).first);
     if (last) {
       while(last&&lastLevel>=int(ctx.count())) {

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <list>
 
 #include <qcheckbox.h>
@@ -280,7 +278,7 @@ void toRollbackDialog::valueChanged(const QString &str)
 static bool BarsAlignLeft=true;
 
 static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
-		      int width,list<double> &val,list<double> &maxExt,list<double> &curExt)
+		      int width,std::list<double> &val,std::list<double> &maxExt,std::list<double> &curExt)
 {
   if (val.begin()==val.end()) {
     p->fillRect(0,0,width,item->height(),
@@ -289,9 +287,9 @@ static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
     int num=0;
     int lastHeight=0;
 
-    list<double>::iterator j=curExt.begin();
-    list<double>::iterator k=maxExt.begin();
-    for(list<double>::iterator i=val.begin();
+    std::list<double>::iterator j=curExt.begin();
+    std::list<double>::iterator k=maxExt.begin();
+    for(std::list<double>::iterator i=val.begin();
 	i!=val.end()&&j!=curExt.end()&&k!=maxExt.end();
 	i++,j++,k++) {
       num++;
@@ -373,9 +371,9 @@ public:
 			    int column,int width,int alignment)
     {
       if (column==4) {
-	list<double> items;
-	list<double> curExt;
-	list<double> maxExt;
+	std::list<double> items;
+	std::list<double> curExt;
+	std::list<double> maxExt;
 	for (int i=TRANSCOL;!text(i).isEmpty();i++) {
 	  items.insert(items.end(),text(i).toDouble());
 	  curExt.insert(curExt.end(),text(12).toDouble()+text(13).toDouble()/text(14).toDouble());
@@ -464,18 +462,18 @@ static toSQL SQLCurrentExtent("toRollback:CurrentExtent",
 
 class toRollbackOpen : public toResultView {
   struct statementData {
-    list<double> OpenExt;
+    std::list<double> OpenExt;
     QString Opened;
     int Executed;
     int BufferGets;
     int Shown;
   };
 
-  typedef map<QString,statementData> statements;
+  typedef std::map<QString,statementData> statements;
   statements Statements;
   int NumExtents;
-  list<double> CurExt;
-  list<double> MaxExt;
+  std::list<double> CurExt;
+  std::list<double> MaxExt;
 public:
   class openItem : public toResultViewItem {
     toRollbackOpen *parent(void)
@@ -489,7 +487,7 @@ public:
     {
       if (column==2) {
 	QString address=text(4);
-	list<double> &StartExt=parent()->Statements[address].OpenExt;
+	std::list<double> &StartExt=parent()->Statements[address].OpenExt;
 	PaintBars(this,pnt,cg,width,StartExt,parent()->MaxExt,parent()->CurExt);
       } else
 	toResultViewItem::paintCell(pnt,cg,column,width,alignment);
@@ -512,7 +510,7 @@ public:
     }
   };
 
-  friend openItem;
+  friend class openItem;
 
   virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
   { return new openItem(this,last,str); }
@@ -575,7 +573,7 @@ public:
       if (RollbackTool.config(CONF_NEED_TWO,"Yes").isEmpty())
 	needTwo=false;
 
-      map<QString,int> Exists;
+      std::map<QString,int> Exists;
       for(QListViewItem *i=firstChild();i;) {
 	QString address=i->text(4);
 	Exists[address]=1;

@@ -89,7 +89,7 @@ public slots:
 class toTemplateProvider {
   /** List of currently available template providers.
    */
-  static list<toTemplateProvider *> *Providers;
+  static std::list<toTemplateProvider *> *Providers;
 public:
   toTemplateProvider();
   virtual ~toTemplateProvider()

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
@@ -331,7 +329,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
 {
   toSQL::sqlMap sql=toSQL::definitions();
   toSQL::definition &def=sql[name];
-  list<toSQL::version> &ver=def.Versions;
+  std::list<toSQL::version> &ver=def.Versions;
   
   Name->setText(name);
   Name->setEdited(false);
@@ -340,9 +338,9 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
   
   Version->clear();
   LastVersion="";
-  list<toSQL::version>::iterator j=ver.end();
+  std::list<toSQL::version>::iterator j=ver.end();
   int ind;
-  for (list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
+  for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
     Version->insertItem((*i).Version);
     if ((*i).Version<=maxver||j==ver.end()) {
       j=i;

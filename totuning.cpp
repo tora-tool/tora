@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <time.h>
 
 #include <qtoolbar.h>
@@ -465,7 +463,7 @@ void toTuningOverview::refresh(void)
     tmp+=unitStr;
     ArchiveInfo->setText(tmp);
 
-    list<QLabel *>::iterator labIt=Backgrounds.begin();
+    std::list<QLabel *>::iterator labIt=Backgrounds.begin();
 
     res=toQuery::readQuery(conn,SQLOverviewRound);
     tmp=toShift(res);
@@ -587,8 +585,8 @@ void toTuningOverview::refresh(void)
     tmp+=unitStr;
     RedoSize->setText(tmp);
 
-    list<double> &values=FileUsed->values();
-    list<double>::iterator i=values.begin();
+    std::list<double> &values=FileUsed->values();
+    std::list<double>::iterator i=values.begin();
     double size=0;
     double used=0;
     if (i!=values.end())
@@ -641,8 +639,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   toQList unit;
   unit.insert(unit.end(),toQValue(toSizeDecode(unitStr)));
   {
-    list<QString> val=toSQL::range("toTuning:Charts");
-    for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
+    std::list<QString> val=toSQL::range("toTuning:Charts");
+    for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
       QStringList parts=QStringList::split(":",*i);
       if (parts[2].mid(1,1)=="B") {
 	toResultBar *chart=new toResultBar(grid);
@@ -735,10 +733,10 @@ void toTuning::refresh(void)
     Overview->refresh();
   } else if (current==Indicators) {
     Indicators->clear();
-    list<QString> val=toSQL::range("toTuning:Indicators");
+    std::list<QString> val=toSQL::range("toTuning:Indicators");
     QListViewItem *parent=NULL;
     QListViewItem *last=NULL;
-    for(list<QString>::iterator i=val.begin();i!=val.end();i++) {
+    for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
       try {
 	toQList val=toQuery::readQuery(connection(),toSQL::string(*i,connection()));
 	QStringList parts=QStringList::split(":",*i);
@@ -782,7 +780,7 @@ toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
     toQList Files=toQuery::readQuery(conn,SQLListFiles);
     viewport()->setBackgroundColor(qApp->palette().active().background());
     
-    list<QString> labels;
+    std::list<QString> labels;
     labels.insert(labels.end(),"Reads");
     labels.insert(labels.end(),"Blocks Read");
     labels.insert(labels.end(),"Writes");
@@ -790,7 +788,7 @@ toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
     Box=new QGrid(2,this->viewport());
     addChild(Box);
     while(Files.size()>0) {
-      list<QString> val;
+      std::list<QString> val;
       toBarChart *chart=new toBarChart(Box);
       Charts[toShift(Files)]=chart;
       chart->setTitle(toShift(Files));
@@ -815,18 +813,18 @@ void toTuningFileIO::refresh(void)
       while(FileInfo.size()>0) {
 	QString file=toShift(FileInfo);
 	QString label=toShift(FileInfo);
-	list<double> vals;
+	std::list<double> vals;
 	vals.insert(vals.end(),toShift(FileInfo).toDouble());
 	vals.insert(vals.end(),toShift(FileInfo).toDouble());
 	vals.insert(vals.end(),toShift(FileInfo).toDouble());
 	vals.insert(vals.end(),toShift(FileInfo).toDouble());
 
-	list<double> last=LastValues[file];
+	std::list<double> last=LastValues[file];
 
-	list<double> dispVal;
+	std::list<double> dispVal;
 	if (last.size()>0) {
-	  list<double>::iterator i=vals.begin();
-	  list<double>::iterator j=last.begin();
+	  std::list<double>::iterator i=vals.begin();
+	  std::list<double>::iterator j=last.begin();
 	  while(i!=vals.end()&&j!=last.end()) {
 	    dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
 	    i++;
@@ -857,10 +855,10 @@ toTuningMiss::toTuningMiss(QWidget *parent=0,const char *name=0)
 {
 }
 
-list<double> toTuningMiss::transform(list<double> &inp)
+std::list<double> toTuningMiss::transform(std::list<double> &inp)
 {
-  list<double> ret;
-  for(list<double>::iterator i=inp.begin();i!=inp.end();i++) {
+  std::list<double> ret;
+  for(std::list<double>::iterator i=inp.begin();i!=inp.end();i++) {
     double first=*i;
     i++;
     if (i!=inp.end()) {

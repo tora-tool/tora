@@ -62,8 +62,8 @@ class toBrowser : public toToolWidget {
   toResult *SecondTab;
   toResultFilter *Filter;
 
-  map<QString,toResultView *> Map;
-  map<QString,toResult *> SecondMap;
+  std::map<QString,toResultView *> Map;
+  std::map<QString,toResult *> SecondMap;
   void setNewFilter(toResultFilter *filter);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
@@ -84,7 +84,7 @@ public slots:
 class toBrowseTemplate : public QObject,public toTemplateProvider {
   Q_OBJECT
 
-  list<toTemplateItem *> Parents;
+  std::list<toTemplateItem *> Parents;
   bool Registered;
 public:
   toBrowseTemplate(void)

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include "toresultcols.h"
 #include "tomain.h"
 #include "tosql.h"

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <stdio.h>
 #ifdef TO_KDE
 #  include <kfontdialog.h>
@@ -109,7 +107,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 		   "  end if;\n"
 		   "end;");
   Example->setCurrent(4);
-  map<int,QString> Errors;
+  std::map<int,QString> Errors;
   Errors[2]="Unknown variable";
   Example->setErrors(Errors);
 
@@ -262,7 +260,7 @@ void toSyntaxSetup::saveSetting(void)
   toTool::globalSetConfig(CONF_LIST,List);
   toTool::globalSetConfig(CONF_HIGHLIGHT,SyntaxHighlighting->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
-  for (map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
+  for (std::map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
     QString str(CONF_COLOR);
     str+=":";
     str+=(*i).first;

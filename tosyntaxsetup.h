@@ -49,7 +49,7 @@ class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab {
   QString Text;
   QString List;
   QListBoxItem *Current;
-  map<QString,QColor> Colors;
+  std::map<QString,QColor> Colors;
   toSyntaxAnalyzer Analyzer;
 public:
   toSyntaxSetup(QWidget *parent=0,const char *name=0,WFlags fl=0);

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kmenubar.h>
 #include <kfiledialog.h>
@@ -245,7 +243,7 @@ toMain::toMain()
   connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
   menuBar()->insertItem("&Edit",EditMenu,TO_EDIT_MENU);
 
-  map<QString,toTool *> &tools=toTool::tools();
+  std::map<QString,toTool *> &tools=toTool::tools();
 
   QToolBar *toolbar=toAllocBar(this,"Application",QString::null);
 
@@ -305,7 +303,7 @@ toMain::toMain()
   SQLEditor=-1;
   DefaultTool=toolID;
   QString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"");
-  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+  for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
@@ -421,7 +419,7 @@ toMain::toMain()
   menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
   DisconnectButton->setEnabled(false);
 
-  for (map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
+  for (std::map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
        j!=NeedConnection.end();j++)
     (*j).first->setEnabled(false);
 
@@ -447,7 +445,7 @@ toMain::toMain()
   ColumnLabel->show();
 
   toolID=TO_TOOLS;
-  for (map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
+  for (std::map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
     (*k).second->customSetup(toolID);
     toolID++;
   }
@@ -488,7 +486,7 @@ void toMain::windowActivated(QWidget *widget)
     if (tool) {
       toConnection &conn=tool->connection();
       int pos=0;
-      for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+      for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
 	if (&conn==*i) {
 	  ConnectionSelection->setCurrentItem(pos);
 	  break;
@@ -811,7 +809,7 @@ void toMain::addConnection(void)
 
 toConnection &toMain::currentConnection()
 {
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     if ((*i)->description()==ConnectionSelection->currentText()) {
       return *(*i);
     }
@@ -822,7 +820,7 @@ toConnection &toMain::currentConnection()
 void toMain::addConnection(toConnection *conn)
 {
   int j=0;
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++,j++) {
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++,j++) {
     if ((*i)->description()==conn->description()) {
       ConnectionSelection->setCurrentItem(j);
       createDefault();
@@ -850,7 +848,7 @@ bool toMain::delConnection(void)
 {
   toConnection *conn=NULL;
   int pos=0;
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
     if ((*i)->description()==ConnectionSelection->currentText()) {
       conn=(*i);
       if (conn->needCommit()) {
@@ -885,26 +883,26 @@ bool toMain::delConnection(void)
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
     DisconnectButton->setEnabled(false);
-    for (map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+    for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
 	 i!=NeedConnection.end();i++)
       (*i).first->setEnabled(false);
-    for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
+    for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
       menuBar()->setItemEnabled((*j).first,false);
   }
   return true;
 }
 
-list<QString> toMain::connections(void)
+std::list<QString> toMain::connections(void)
 {
-  list<QString> ret;
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
+  std::list<QString> ret;
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
     toPush(ret,(*i)->description());
   return ret;
 }
 
 toConnection &toMain::connection(const QString &str)
 {
-  for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
+  for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
     if ((*i)->description()==str)
       return *(*i);
   throw QString("Couldn't find specified connectionts (%1)").arg(str);
@@ -1051,16 +1049,16 @@ void toMain::contextHelp(void)
 
 void toMain::statusMenu(void)
 {
-  list<QString> status=toStatusMessages();
+  std::list<QString> status=toStatusMessages();
   StatusMenu->clear();
-  for(list<QString>::iterator i=status.begin();i!=status.end();i++)
+  for(std::list<QString>::iterator i=status.begin();i!=status.end();i++)
     StatusMenu->insertItem(*i);
 }
 
 void toMain::changeConnection(void)
 {
   toConnection &conn=currentConnection();
-  for (map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+  for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
        i!=NeedConnection.end();i++) {
     toTool *tool=(*i).second;
     if (!tool)
@@ -1070,7 +1068,7 @@ void toMain::changeConnection(void)
     else
       (*i).first->setEnabled(false);
   }  
-  for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
+  for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
     toTool *tool=(*j).second;
     if (!tool)
       menuBar()->setItemEnabled((*j).first,true);

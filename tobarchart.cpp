@@ -82,7 +82,7 @@ void toBarChart::setSamples(int samples)
     while (int(XValues.size())>Samples)
       XValues.erase(XValues.begin());
 
-    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+    for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++)
       while (int((*i).size())>Samples)
 	(*i).erase((*i).begin());
   }
@@ -101,6 +101,7 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   AxisText=true;
   Last=false;
   MousePoint[0]=MousePoint[1]=QPoint(-1,-1);
+  setFocusPolicy(StrongFocus);
 
   clearZoom();
 
@@ -116,24 +117,24 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   }
 }
 
-void toBarChart::addValues(list<double> &value,const QString &xValue)
+void toBarChart::addValues(std::list<double> &value,const QString &xValue)
 {
   if (int(XValues.size())==Samples&&Samples>0)
     XValues.erase(XValues.begin());
   XValues.insert(XValues.end(),xValue);
 
   if (Samples>0)
-    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+    for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++)
       if (int((*i).size())==Samples)
 	(*i).erase((*i).begin());
 
-  list<double>::iterator j=value.begin();
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end()&&j!=value.end();i++) {
+  std::list<double>::iterator j=value.begin();
+  for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end()&&j!=value.end();i++) {
     (*i).insert((*i).end(),*j);
     j++;
   }
   while(j!=value.end()) {
-    list<double> t;
+    std::list<double> t;
     t.insert(t.end(),*j);
     Values.insert(Values.end(),t);
     j++;
@@ -194,7 +195,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
   }
   if (Last) {
     QString str;
-    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+    for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
       if ((*i).begin()!=(*i).end()) {
 	if (!str.isEmpty())
 	  str+="\n";
@@ -214,7 +215,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
   if (Legend) {
     int lwidth=0;
     int lheight=0;
-    for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       if (!(*i).isEmpty()&&*i!=" ") {
 	QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
 	if (lwidth<bounds.width())
@@ -238,7 +239,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     lx+=12;
     ly+=2;
     int cp=0;
-    for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       if (!(*i).isEmpty()&&*i!=" ") {
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
 	p.drawText(bounds,FONT_ALIGN,*i);
@@ -254,9 +255,9 @@ void toBarChart::paintEvent(QPaintEvent *e)
   if (!Zooming) {
     if (MinAuto) {
       bool first=true;
-      list<list<double> >::reverse_iterator i=Values.rbegin();
+      std::list<std::list<double> >::reverse_iterator i=Values.rbegin();
       if (i!=Values.rend()) {
-	for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
 	if (first) {
 	  first=false;
 	  zMinValue=*j;
@@ -267,10 +268,10 @@ void toBarChart::paintEvent(QPaintEvent *e)
     }
     if (MaxAuto) {
       bool first=true;
-      list<double> total;
-      for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-	list<double>::iterator k=total.begin();
-	for(list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+      std::list<double> total;
+      for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+	std::list<double>::iterator k=total.begin();
+	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
 	  if (k==total.end()) {
 	    total.insert(total.end(),*j);
 	    k=total.end();
@@ -280,7 +281,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
 	  }
 	}
       }
-      for(list<double>::iterator i=total.begin();i!=total.end();i++) {
+      for(std::list<double>::iterator i=total.begin();i!=total.end();i++) {
 	if (first) {
 	  first=false;
 	  zMaxValue=*i;
@@ -304,6 +305,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
     int yoffset=0;
     QString minstr;
     QString maxstr;
+    QRect ybounds;
     if (leftAxis) {
       minstr=QString::number(zMinValue);
       maxstr=QString::number(zMaxValue);
@@ -311,9 +313,9 @@ void toBarChart::paintEvent(QPaintEvent *e)
       maxstr+=YPostfix;
       QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
       yoffset=bounds.height();
-      bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
-      if (yoffset<bounds.height())
-	yoffset=bounds.height();
+      ybounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
+      if (yoffset<ybounds.height())
+	yoffset=ybounds.height();
     }
     
     QString maxXstr;
@@ -325,7 +327,7 @@ void toBarChart::paintEvent(QPaintEvent *e)
 
       if (Zooming) {
 	int count=0;
-	for(list<QString>::reverse_iterator i=XValues.rbegin();i!=XValues.rend();i++) {
+	for(std::list<QString>::reverse_iterator i=XValues.rbegin();i!=XValues.rend();i++) {
 	  if (count==SkipSamples)
 	    maxXstr=*i;
 	  else if (count==SkipSamples+UseSamples-1) {
@@ -348,12 +350,13 @@ void toBarChart::paintEvent(QPaintEvent *e)
 #if 0
 	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
 		   AlignLeft|AlignBottom|ExpandTabs,minstr);
-#else
-	// Qt bug, seems to clip left edge of 0 among others.
-	p.drawText(xoffset-bottom+2,fm.ascent(),minstr);
-#endif
 	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
 		   AlignRight|AlignBottom|ExpandTabs,maxstr);
+#else
+	// Qt bug, seems to clip left edge of 0 among others.
+	p.drawText(xoffset-bottom+2,fm.ascent()+1,minstr);
+	p.drawText(-2-ybounds.width(),fm.ascent()+1,maxstr);
+#endif
 	p.restore();
       } else
 	yoffset=0;
@@ -384,23 +387,23 @@ void toBarChart::paintEvent(QPaintEvent *e)
     p.restore();
   }
 
-  list<QPointArray> Points;
+  std::list<QPointArray> Points;
   int cp=0;
   int samples=countSamples();
   int zeroy=int(bottom-2-(-zMinValue/(zMaxValue-zMinValue)*(bottom-4)));
   if (samples>1) {
     const QWMatrix &mtx=p.worldMatrix();
-    p.setClipRect(mtx.dx()+2,mtx.dy()+2,right-3,bottom-3);
+    p.setClipRect(int(mtx.dx()+2),int(mtx.dy()+2),right-3,bottom-3);
     if (Zooming)
       p.drawText(2,2,right-4,bottom-4,
 		 AlignLeft|AlignTop,"Zoom");
-    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
-      list<double> &val=*i;
+    for(std::list<std::list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
+      std::list<double> &val=*i;
       int count=0;
       int skip=SkipSamples;
       QPointArray a(samples+10);
       int x=right-2;
-      for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
+      for(std::list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
 	if (skip>0)
 	  skip--;
 	else {
@@ -418,8 +421,8 @@ void toBarChart::paintEvent(QPaintEvent *e)
     }
   }
 
-  map<int,int> Bottom;
-  for(list<QPointArray>::iterator i=Points.begin();i!=Points.end();i++) {
+  std::map<int,int> Bottom;
+  for(std::list<QPointArray>::iterator i=Points.begin();i!=Points.end();i++) {
     QPointArray a=*i;
     int lx=0;
     int lb=0;
@@ -480,7 +483,7 @@ int toBarChart::countSamples(void)
 {
   int samples=Samples;
   if (Samples<=0)
-    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
+    for(std::list<std::list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
       samples=max(samples,int((*i).size()));
   if (UseSamples>1&&UseSamples<samples)
     samples=UseSamples;

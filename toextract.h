@@ -74,9 +74,9 @@ class toExtract {
 
   // Database info
   int BlockSize;
-  list<QString> Initial;
-  list<QString> Next;
-  list<QString> Limit;
+  std::list<QString> Initial;
+  std::list<QString> Next;
+  std::list<QString> Limit;
 
   // Compile functions
   QString compile(const QString &schema,const QString &owner,const QString &name,
@@ -114,57 +114,57 @@ class toExtract {
   QString createView(const QString &schema,const QString &owner,const QString &name);
 
   // Description functions
-  void describeConstraint(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeConstraint(std::list<QString> &lst,const QString &schema,const QString &owner,
 			  const QString &name);
-  void describeDBLink(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeDBLink(std::list<QString> &lst,const QString &schema,const QString &owner,
 		      const QString &name);
-  void describeExchangeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeExchangeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
 			     const QString &name);
-  void describeExchangeTable(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeExchangeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
 			     const QString &name);
-  void describeFunction(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeFunction(std::list<QString> &lst,const QString &schema,const QString &owner,
 			const QString &name);
-  void describeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
 		     const QString &name);
-  void describeMaterializedView(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeMaterializedView(std::list<QString> &lst,const QString &schema,const QString &owner,
 				const QString &name);
-  void describeMaterializedViewLog(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeMaterializedViewLog(std::list<QString> &lst,const QString &schema,const QString &owner,
 				   const QString &name);
-  void describePackage(list<QString> &lst,const QString &schema,const QString &owner,
+  void describePackage(std::list<QString> &lst,const QString &schema,const QString &owner,
 		       const QString &name);
-  void describePackageBody(list<QString> &lst,const QString &schema,const QString &owner,
+  void describePackageBody(std::list<QString> &lst,const QString &schema,const QString &owner,
 			   const QString &name);
-  void describeProcedure(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeProcedure(std::list<QString> &lst,const QString &schema,const QString &owner,
 			 const QString &name);
-  void describeProfile(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeProfile(std::list<QString> &lst,const QString &schema,const QString &owner,
 		       const QString &name);
-  void describeRole(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeRole(std::list<QString> &lst,const QString &schema,const QString &owner,
 		    const QString &name);
-  void describeRollbackSegment(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeRollbackSegment(std::list<QString> &lst,const QString &schema,const QString &owner,
 			       const QString &name);
-  void describeSequence(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeSequence(std::list<QString> &lst,const QString &schema,const QString &owner,
 			const QString &name);
-  void describeSnapshot(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeSnapshot(std::list<QString> &lst,const QString &schema,const QString &owner,
 			const QString &name);
-  void describeSnapshotLog(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeSnapshotLog(std::list<QString> &lst,const QString &schema,const QString &owner,
 			   const QString &name);
-  void describeSynonym(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeSynonym(std::list<QString> &lst,const QString &schema,const QString &owner,
 		       const QString &name);
-  void describeTable(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
 		     const QString &name);
-  void describeTableFamily(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeTableFamily(std::list<QString> &lst,const QString &schema,const QString &owner,
 			   const QString &name);
-  void describeTableReferences(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeTableReferences(std::list<QString> &lst,const QString &schema,const QString &owner,
 			       const QString &name);
-  void describeTablespace(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeTablespace(std::list<QString> &lst,const QString &schema,const QString &owner,
 			  const QString &name);
-  void describeTrigger(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeTrigger(std::list<QString> &lst,const QString &schema,const QString &owner,
 		       const QString &name);
-  void describeType(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeType(std::list<QString> &lst,const QString &schema,const QString &owner,
 		    const QString &name);
-  void describeUser(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeUser(std::list<QString> &lst,const QString &schema,const QString &owner,
 		    const QString &name);
-  void describeView(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeView(std::list<QString> &lst,const QString &schema,const QString &owner,
 		    const QString &name);
 
   // Drop functions
@@ -225,54 +225,54 @@ class toExtract {
   QString tableColumns(const QString &owner,const QString &name);
 
   // Misc describe functions
-  void describeAttributes(list<QString> &lst,list<QString> &ctx,toQList &result);
-  void describeComments(list<QString> &lst,list<QString> &ctx,
+  void describeAttributes(std::list<QString> &lst,std::list<QString> &ctx,toQList &result);
+  void describeComments(std::list<QString> &lst,std::list<QString> &ctx,
 			const QString &schema,const QString &owner,const QString &name);
-  void describePrivs(list<QString> &lst,list<QString> &ctx,const QString &name);
-  void describeIndexColumns(list<QString> &lst,list<QString> &ctx,
+  void describePrivs(std::list<QString> &lst,std::list<QString> &ctx,const QString &name);
+  void describeIndexColumns(std::list<QString> &lst,std::list<QString> &ctx,
 			    const QString &owner,const QString &name);
-  void describeIOT(list<QString> &lst,list<QString> &ctx,
+  void describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
 		   const QString &schema,const QString &owner,const QString &name);
-  void describeMView(list<QString> &lst,const QString &schema,
+  void describeMView(std::list<QString> &lst,const QString &schema,
 		     const QString &owner,const QString &name,const QString &type);
-  void describeMViewIndex(list<QString> &lst,list<QString> &ctx,const QString &schema,
+  void describeMViewIndex(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
 			  const QString &owner,const QString &name);
-  void describeMViewLog(list<QString> &lst,const QString &schema,
+  void describeMViewLog(std::list<QString> &lst,const QString &schema,
 			const QString &owner,const QString &name,const QString &type);
-  void describeMViewTable(list<QString> &lst,list<QString> &ctx,const QString &schema,
+  void describeMViewTable(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
 			  const QString &owner,const QString &name);
-  void describePartitionedIndex(list<QString> &lst,list<QString> &ctx,
+  void describePartitionedIndex(std::list<QString> &lst,std::list<QString> &ctx,
 				const QString &schema,const QString &owner,const QString &name);
-  void describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
+  void describePartitionedIOT(std::list<QString> &lst,std::list<QString> &ctx,
 			      const QString &schema,const QString &owner,const QString &name);
-  void describePartitionedTable(list<QString> &lst,list<QString> &ctx,
+  void describePartitionedTable(std::list<QString> &lst,std::list<QString> &ctx,
 				const QString &schema,const QString &owner,const QString &name);
-  void describePartitions(list<QString> &lst,list<QString> &ctx,
+  void describePartitions(std::list<QString> &lst,std::list<QString> &ctx,
 			  const QString &owner,const QString &name,
 			  const QString &subPartitionType,const QString &locality);
-  void describeTableText(list<QString> &lst,list<QString> &ctx,toQList &result,
+  void describeTableText(std::list<QString> &lst,std::list<QString> &ctx,toQList &result,
 			 const QString &schema,const QString &owner,const QString &name);
-  void describeTableColumns(list<QString> &lst,list<QString> &ctx,
+  void describeTableColumns(std::list<QString> &lst,std::list<QString> &ctx,
 			    const QString &owner,const QString &name);
-  void describeSource(list<QString> &lst,const QString &schema,const QString &owner,
+  void describeSource(std::list<QString> &lst,const QString &schema,const QString &owner,
 		      const QString &name,const QString &type);
 
   // Misc functions
-  void addDescription(list<QString> &ret,list<QString> &ctx,
+  void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
 		      const QString &arg1=QString::null,const QString &arg2=QString::null,
 		      const QString &arg3=QString::null,const QString &arg4=QString::null,
 		      const QString &arg5=QString::null,const QString &arg6=QString::null,
 		      const QString &arg7=QString::null,const QString &arg8=QString::null,
 		      const QString &arg9=QString::null);
   void clearFlags(void);
-  QString generateHeading(const QString &action,list<QString> &list);
+  QString generateHeading(const QString &action,std::list<QString> &list);
   void initialNext(const QString &blocks,QString &initial,QString &next);
   void objectExists(const QString &owner,const QString &name,const QString &type);
   QString prepareDB(const QString &data);
   QString segmentAttributes(toQList &result);
   QString intSchema(const QString &owner);
   void setSizes(void);
-  QString reContext(list<QString> &ctx,int strip,const QString &str);
+  QString reContext(std::list<QString> &ctx,int strip,const QString &str);
   void rethrow(const QString &what,const QString &object,const QString &exc);
 public:
   /** Create a new extractor.
@@ -287,7 +287,7 @@ public:
    *               The type can be any of FUNCTION, PROCEDURE, TRIGGER, VIEW or PACKAGE.
    * @return A string containing a script to compile the specified objects.
    */
-  QString compile(list<QString> &object);
+  QString compile(std::list<QString> &object);
 
   /** Create script to recreate list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -300,7 +300,7 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS.
    * @return A string containing a script to recreate the specified objects.
    */
-  QString create(list<QString> &object);
+  QString create(std::list<QString> &object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -315,7 +315,7 @@ public:
    *         considered like a list of strings separated by the character '\001'.
    *         The later in each string the smaller item the change and it is hierachical.
    */
-  list<QString> describe(list<QString> &object);
+  std::list<QString> describe(std::list<QString> &object);
 
   /** Create script to drop a list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -327,13 +327,13 @@ public:
    *               TRIGGER, TYPE, USER.
    * @return A string containing a script to drop the specified objects.
    */
-  QString drop(list<QString> &object);
+  QString drop(std::list<QString> &object);
   /** Not implemented yet.
    */
-  QString resize(list<QString> &object);
+  QString resize(std::list<QString> &object);
   /** Not implemented yet.
    */
-  QString migrate(list<QString> &drpLst,list<QString> &crtLst);
+  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst);
 
   /** Parse an object string to get owner and name of the object.
    * @param object Object string on the format {owner}.{name}.

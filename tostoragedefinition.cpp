@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qframe.h>

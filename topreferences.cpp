@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qframe.h>
 #include <qlistbox.h>
 #include <qpushbutton.h>
@@ -88,7 +86,7 @@ void toPreferences::displayPreferences(QWidget *parent)
 void toPreferences::saveSetting(void)
 {
   
-  for (map<QListBoxItem *,QWidget *>::iterator i=Tabs.begin();i!=Tabs.end();i++) {
+  for (std::map<QListBoxItem *,QWidget *>::iterator i=Tabs.begin();i!=Tabs.end();i++) {
     toSettingTab *tab=dynamic_cast<toSettingTab *>((*i).second);
     if (tab)
       tab->saveSetting();
@@ -126,15 +124,15 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
 
   TabSelection->setCurrentItem(0);
 
-  map<QString,toTool *> tools=toTool::tools();
-  map<QString,toTool *> newSort;
+  std::map<QString,toTool *> tools=toTool::tools();
+  std::map<QString,toTool *> newSort;
   {
-    for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
+    for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
       newSort[(*i).second->name()]=(*i).second;
   }
 
   {
-    for (map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
+    for (std::map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
       QWidget *tab=(*i).second->configurationTab(this);
       if (tab) {
 	QString str(" ");

@@ -37,8 +37,6 @@
 #ifndef __TOMAIN_H
 #define __TOMAIN_H
 
-TO_NAMESPACE;
-
 #include <list>
 #include <map>
 
@@ -113,7 +111,7 @@ private:
   /**
    * The connections that have been opened in TOra.
    */
-  list<toConnection *> Connections;
+  std::list<toConnection *> Connections;
   /**
    * Workspace of main window.
    */
@@ -129,7 +127,7 @@ private:
   /**
    * A map from menu ID:s to tools.
    */
-  map<int,toTool *> Tools;
+  std::map<int,toTool *> Tools;
   /**
    * A map of toolbuttons to tools that need connection to be enabled.
    */
@@ -137,7 +135,7 @@ private:
    * A list of toolbuttons that need an open connection to be enabled. If tool pointer
    * is zero simply require any connection to be enabled.
    */
-  map<QToolButton *,toTool *> NeedConnection;
+  std::map<QToolButton *,toTool *> NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -328,7 +326,7 @@ public:
    * @return List of connection names. The returned list can then be used by
    * @ref connection to get the actual connection.
    */
-  list<QString> connections(void);
+  std::list<QString> connections(void);
   /** Get a connection identified by a string.
    * @return A reference to a connection.
    * @exception QString If connection wasn't found.
@@ -556,7 +554,7 @@ int toSizeDecode(const QString &str);
  * @param lst List to shift value from (Also modified).
  * @return The first value in the list.
  */
-template <class T> T toShift(list<T> &lst)
+template <class T> T toShift(std::list<T> &lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -571,7 +569,7 @@ template <class T> T toShift(list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toUnShift(list<T> &lst,const T &str)
+template <class T> void toUnShift(std::list<T> &lst,const T &str)
 {
   lst.insert(lst.begin(),str);
 }
@@ -580,7 +578,7 @@ template <class T> void toUnShift(list<T> &lst,const T &str)
  * @param lst List to pop value from (Also modified).
  * @return The value in the list of objects.
  */
-template <class T> T toPop(list<T> &lst)
+template <class T> T toPop(std::list<T> &lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -595,7 +593,7 @@ template <class T> T toPop(list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toPush(list<T> &lst,const T &str)
+template <class T> void toPush(std::list<T> &lst,const T &str)
 {
   lst.push_back(str);
 }
@@ -680,7 +678,7 @@ bool inline toIsIdent(QChar c)
 QString toPluginPath(void);
 /** Get a list of the latest status messages that have been shown.
  */
-list<QString> toStatusMessages(void);
+std::list<QString> toStatusMessages(void);
 /** Get a color for a chart item.
  * @param index Indicating which chart item to get color for.
  */
@@ -713,11 +711,8 @@ public:
       toStatusMessage(str);\
     }
 
-#ifdef WIN32
 /**
- * @internal
- * @deprecated
- * Only for WIN32
+ * Get maximum number of a and b.
  */
 template <class T>
 T max(T a, T b)
@@ -726,16 +721,12 @@ T max(T a, T b)
 }
 
 /**
- * @internal
- * @deprecated
- * Only for WIN32
+ * Get minimum number of a and b.
  */
 template <class T>
 T min(T a, T b)
 {
     return a < b ? a : b ;
 }
-
-#endif
 
 #endif

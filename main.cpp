@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -77,8 +75,10 @@ bool toMonolithic(void)
 
 int main(int argc,char **argv)
 {
+#if 0
 #ifdef ENABLE_QT_XFT
   toSetEnv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT).latin1());
+#endif
 #endif
 #ifdef TO_KDE
   new KApplication(argc,argv,"tora");
@@ -102,7 +102,7 @@ int main(int argc,char **argv)
     {
       toSplash splash(NULL,"About TOra",false);
       splash.show();
-      list<QString> failed;
+      std::list<QString> failed;
       QString dirPath=toPluginPath();
       QDir d(dirPath,"*.tso",QDir::Name,QDir::Files);
       for (unsigned int i=0;i<d.count();i++) {
@@ -116,9 +116,9 @@ int main(int argc,char **argv)
       bool success;
       do {
 	success=false;
-	list<QString> current=failed;
+	std::list<QString> current=failed;
 	failed.clear();
-	for(list<QString>::iterator i=current.begin();i!=current.end();i++) {
+	for(std::list<QString>::iterator i=current.begin();i!=current.end();i++) {
 	  if (!dlopen(*i,RTLD_LAZY|RTLD_GLOBAL)) {
 	    failed.insert(failed.end(),*i);
 	  } else {
@@ -132,7 +132,7 @@ int main(int argc,char **argv)
 	  }
 	}
       } while(failed.begin()!=failed.end()&&success);
-      for(list<QString>::iterator i=failed.begin();i!=failed.end();i++)
+      for(std::list<QString>::iterator i=failed.begin();i!=failed.end();i++)
 	if (!dlopen(*i,RTLD_LAZY|RTLD_GLOBAL))
 	  printf("Failed to load %s\n  %s\n",
 		 (const char *)(*i),dlerror());

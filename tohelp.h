@@ -239,7 +239,7 @@ public:
    */
   static void connectDialog(QDialog *dialog);
 
-  friend toHelpPrefs;
+  friend class toHelpPrefs;
 };
 
 #endif

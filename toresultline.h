@@ -59,7 +59,7 @@ class toResultLine : public toLineChart, public toResult {
   time_t LastStamp;
   /** Last read values.
    */
-  list<double> LastValues;
+  std::list<double> LastValues;
   /** Query to run.
    */
   QString SQL;
@@ -117,7 +117,7 @@ public:
    * @param input The untransformed valueset.
    * @return The valueset actually added to the chart.
    */
-  virtual list<double> transform(list<double> &input);
+  virtual std::list<double> transform(std::list<double> &input);
 public slots:
   /** Read another value to the chart.
    */

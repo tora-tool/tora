@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -102,8 +100,8 @@ toTimer *toToolWidget::timer(void)
   return Timer;
 }
 
-map<QString,toTool *> *toTool::Tools;
-map<QString,QString> *toTool::Configuration;
+std::map<QString,toTool *> *toTool::Tools;
+std::map<QString,QString> *toTool::Configuration;
 
 #define CONFIG_FILE "/.torarc"
 #define DEF_CONFIG_FILE "/etc/torarc"
@@ -117,7 +115,7 @@ toTool::toTool(int priority,const char *name)
   : Name(name)
 {
   if (!Tools)
-    Tools=new map<QString,toTool *>;
+    Tools=new std::map<QString,toTool *>;
   Priority=priority;
   Key.sprintf("%05d%s",priority,name);
   (*Tools)[Key]=this;
@@ -183,7 +181,7 @@ void toTool::createWindow(void)
   } TOCATCH
 }
 
-bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
+bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
 {
   QCString data;
   QString newfile(file);
@@ -196,7 +194,7 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
 
     QRegExp newline("\n");
     QRegExp backslash("\\");
-    for (map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+    for (std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
       QString line=(*i).first;
       line.append("=");
       line.replace(backslash,"\\\\");
@@ -331,7 +329,7 @@ void toTool::loadConfig(void)
 {
   if (Configuration)
     delete Configuration;
-  Configuration=new map<QString,QString>;
+  Configuration=new std::map<QString,QString>;
 
 #ifndef WIN32
 #  if QT_VERSION < 300
@@ -349,7 +347,7 @@ void toTool::loadConfig(void)
 #endif
 }
 
-bool toTool::loadMap(const QString &filename,map<QString,QString> &pairs)
+bool toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
 {
   QCString data;
   try {
@@ -433,7 +431,7 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
   if (!Configuration)
     loadConfig();
 
-  map<QString,QString>::iterator i=Configuration->find(tag);
+  std::map<QString,QString>::iterator i=Configuration->find(tag);
   if (i==Configuration->end()) {
 #if defined(WIN32)
     CRegistry registry;

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <qlabel.h>
 #include <qgrid.h>
 
@@ -178,7 +176,7 @@ void toResultItem::query(const QString &sql,const toQList &param)
     for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
       QString name=(*i).Name;
       if (ReadableColumns)
-	toReadableColumn((*i).Name);
+	toReadableColumn(name);
 
       addItem(name,query.readValue());
     }

@@ -34,16 +34,14 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include "totemplate.h"
 
-list<toTemplateProvider *> *toTemplateProvider::Providers;
+std::list<toTemplateProvider *> *toTemplateProvider::Providers;
 
 toTemplateProvider::toTemplateProvider()
 {
   if (!Providers)
-    Providers=new list<toTemplateProvider *>;
+    Providers=new std::list<toTemplateProvider *>;
   Providers->insert(Providers->end(),this);
 }
 

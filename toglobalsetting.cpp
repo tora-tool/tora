@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #endif
@@ -279,10 +277,10 @@ void toDatabaseSetting::createPlanTable(void)
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
   : toToolSettingUI(parent,name,fl),toSettingTab("toolsetting.html")
 {
-  map<QString,toTool *> &tools=toTool::tools();
+  std::map<QString,toTool *> &tools=toTool::tools();
 
   Enabled->setSorting(0);
-  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+  for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const char *menuName=(*i).second->menuItem();
     if(FirstTool.isEmpty())
       FirstTool=menuName;

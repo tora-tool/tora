@@ -1,3 +1,4 @@
+
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -72,7 +73,7 @@ void toPieChart::paintEvent(QPaintEvent *e)
   int bottom=height();
 
   double tot=0;
-  for(list<double>::iterator i=Values.begin();i!=Values.end();i++)
+  for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++)
     tot+=*i;
 
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
@@ -93,8 +94,8 @@ void toPieChart::paintEvent(QPaintEvent *e)
     int lwidth=0;
     int lheight=0;
 
-    list<double>::iterator j=Values.begin();
-    for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    std::list<double>::iterator j=Values.begin();
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       QString sizstr;
       if (j!=Values.end()) {
 	if (DisplayPercent)
@@ -134,7 +135,7 @@ void toPieChart::paintEvent(QPaintEvent *e)
     ly+=2;
     int cp=0;
     j=Values.begin();
-    for(list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       QString sizstr;
       if (j!=Values.end()) {
 	if (DisplayPercent)
@@ -166,7 +167,7 @@ void toPieChart::paintEvent(QPaintEvent *e)
   int cp=0;
   int pos=0;
   unsigned int count=0;
-  for(list<double>::iterator i=Values.begin();i!=Values.end();i++) {
+  for(std::list<double>::iterator i=Values.begin();i!=Values.end();i++) {
     count++;
     int size=int(*i*5760/tot);
     if (size<=0)

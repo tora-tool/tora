@@ -62,7 +62,7 @@ class toResultContentEditor : public QTable,public toResult {
   QString Table;
   /** Original values of rows currently being edited.
    */
-  list<QString> OrigValues;
+  std::list<QString> OrigValues;
   /** Stream to read data from.
    */
   toQuery *Query;
@@ -182,7 +182,7 @@ public:
    */
   virtual void changeFilter(const QString &criteria,const QString &order);
 
-  friend toResultContent;
+  friend class toResultContent;
 public slots:
   /** Change sorting column
    * @param col Column selected to change as sorting.

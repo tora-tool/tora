@@ -194,8 +194,9 @@ int main(int argv,char **argc)
     }
     if (GCCVersion==2&&GCCVersionMinor==96) {
 	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\n"
-	       "has problems with exception handling. I know you can not compile this in\n"
-	       "Mandrake 8.0, RedHat 7.0-7.2. You can however compile TOra in Mandrake 8.1\n";
+	       "has problems with exception handling and RTTI. This means you can not compile\n"
+	       "TOra on Mandrake 8.x, RedHat 7.x. You can get a fairly working version in\n"
+	       "Mandrake 8.1, but it still has issues.\n");
 	return 0;
     }
     return 0;
@@ -772,7 +773,6 @@ __EOT__
 	} else {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8I\n";
 	}
-	print MAKEFILE "DEFINES+=-DTO_NAMESPACE=\"using namespace std\"\n";
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";

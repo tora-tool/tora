@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include "toresultfield.h"
 #include "tomain.h"
 #include "totool.h"

@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <stdio.h>
 #include <map>
 
@@ -97,8 +95,8 @@ void toResultPlan::query(const QString &sql,
     conn.execute(explain);
 
     {
-      map <QString,QListViewItem *> parents;
-      map <QString,QListViewItem *> last;
+      std::map <QString,QListViewItem *> parents;
+      std::map <QString,QListViewItem *> last;
       QListViewItem *lastTop=NULL;
       toQuery query(conn,toSQL::string(SQLViewPlan,conn).arg(planTable).arg(ident));
       while(!query.eof()) {

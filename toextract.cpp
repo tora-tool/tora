@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #ifndef WIN32
 #include <unistd.h>
 #else
@@ -95,7 +93,7 @@ void toExtract::clearFlags(void)
   Describe=false;
 }
 
-void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
+void toExtract::addDescription(std::list<QString> &ret,std::list<QString> &ctx,
 			       const QString &arg1,const QString &arg2,
 			       const QString &arg3,const QString &arg4,
 			       const QString &arg5,const QString &arg6,
@@ -124,7 +122,7 @@ void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
   else
     numArgs=0;
 
-  list<QString> args=ctx;
+  std::list<QString> args=ctx;
   if (numArgs>0)
     args.insert(args.end(),arg1);
   if (numArgs>1)
@@ -146,7 +144,7 @@ void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
 
   QString str;
   bool first=true;
-  for(list<QString>::iterator i=args.begin();i!=args.end();i++) {
+  for(std::list<QString>::iterator i=args.begin();i!=args.end();i++) {
     if (first)
       first=false;
     else
@@ -157,12 +155,12 @@ void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
   ret.insert(ret.end(),str);
 }
 
-QString toExtract::reContext(list<QString> &ctx,int strip,const QString &str)
+QString toExtract::reContext(std::list<QString> &ctx,int strip,const QString &str)
 {
   QStringList lst=QStringList::split("\01",str);
   QString ret;
   QString sep="";
-  for(list<QString>::iterator i=ctx.begin();i!=ctx.end();i++) {
+  for(std::list<QString>::iterator i=ctx.begin();i!=ctx.end();i++) {
     ret+=sep;
     ret+=*i;
     if (sep.isEmpty())
@@ -351,7 +349,7 @@ QString toExtract::createComments(const QString &schema,
   return ret;
 }
 
-void toExtract::describeComments(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeComments(std::list<QString> &lst,std::list<QString> &ctx,
 				 const QString &schema,const QString &owner,const QString &name)
 {
   if (Comments) {
@@ -393,7 +391,7 @@ QString toExtract::intSchema(const QString &owner)
 }
 
 QString toExtract::generateHeading(const QString &action,
-				   list<QString> &lst)
+				   std::list<QString> &lst)
 {
   if (!Heading)
     return "";
@@ -423,7 +421,7 @@ QString toExtract::generateHeading(const QString &action,
   if (lst.size()!=1)
     str+="s";
   str+=" for:\nREM\n";
-  for(list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
     if (!(*i).startsWith("TABLE REFERENCES")) {
       str+="REM ";
       str+=(*i);
@@ -583,7 +581,7 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
   return ret;
 }
 
-void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
+void toExtract::describeConstraint(std::list<QString> &lst,const QString &schema,
 				   const QString &owner,const QString &name)
 {
   if (Constraints) {
@@ -606,7 +604,7 @@ void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
       (tchr=="R")?"FOREIGN KEY":
       "CHECK";
 
-    list<QString> ctx;
+    std::list<QString> ctx;
     ctx.insert(ctx.end(),schema);
     ctx.insert(ctx.end(),"TABLE");
     ctx.insert(ctx.end(),table.lower());
@@ -683,7 +681,7 @@ QString toExtract::createDBLink(const QString &schema,const QString &owner,const
   return ret;
 }
 
-void toExtract::describeDBLink(list<QString> &lst,const QString &schema,const QString &owner,
+void toExtract::describeDBLink(std::list<QString> &lst,const QString &schema,const QString &owner,
 			       const QString &name)
 {
   toQuery inf(Connection,SQLDBLink,owner,name);
@@ -696,7 +694,7 @@ void toExtract::describeDBLink(list<QString> &lst,const QString &schema,const QS
   QString sql=QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(name.lower());
   QString ret;
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),"DATABASE LINK");
   ctx.insert(ctx.end(),name.lower());
 
@@ -830,7 +828,7 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
   return ret;
 }
 
-void toExtract::describeExchangeIndex(list<QString> &lst,const QString &schema,const QString &owner,
+void toExtract::describeExchangeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
 				      const QString &name)
 {
   QStringList str=QStringList::split(":",name);
@@ -855,7 +853,7 @@ void toExtract::describeExchangeIndex(list<QString> &lst,const QString &schema,c
 
   toUnShift(result,toQValue(""));
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"TABLE");
   ctx.insert(ctx.end(),table);
@@ -942,7 +940,7 @@ QString toExtract::indexColumns(const QString &indent,
   return ret;
 }
 
-void toExtract::describeIndexColumns(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeIndexColumns(std::list<QString> &lst,std::list<QString> &ctx,
 				     const QString &owner,const QString &name)
 {
   static QRegExp quote("\"");
@@ -1039,7 +1037,7 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
   return ret;
 }
 
-void toExtract::describeExchangeTable(list<QString> &lst,const QString &schema,const QString &owner,
+void toExtract::describeExchangeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
 				      const QString &name)
 {
   QStringList str=QStringList::split(":",name);
@@ -1056,7 +1054,7 @@ void toExtract::describeExchangeTable(list<QString> &lst,const QString &schema,c
 
   QString sql=toSQL::string(SQLExchangeTable,Connection).arg(type).arg(blocks);
   toQList result=toQuery::readQuery(Connection,sql,segment,partition,owner);
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"EXCHANGE TABLE");
   ctx.insert(ctx.end(),segment);
@@ -1066,9 +1064,9 @@ void toExtract::describeExchangeTable(list<QString> &lst,const QString &schema,c
 
 void toExtract::initialNext(const QString &blocks,QString &initial,QString &next)
 {
-  list<QString>::iterator iinit=Initial.begin();
-  list<QString>::iterator inext=Next.begin();
-  list<QString>::iterator ilimit=Limit.begin();
+  std::list<QString>::iterator iinit=Initial.begin();
+  std::list<QString>::iterator inext=Next.begin();
+  std::list<QString>::iterator ilimit=Limit.begin();
   while(ilimit!=Initial.end()) {
     if (*ilimit=="UNLIMITED"||
 	(*ilimit).toFloat()>blocks.toFloat()) {
@@ -1152,7 +1150,7 @@ QString toExtract::segmentAttributes(toQList &result)
   return ret;
 }
 
-void toExtract::describeAttributes(list<QString> &dsp,list<QString> &ctx,toQList &result)
+void toExtract::describeAttributes(std::list<QString> &dsp,std::list<QString> &ctx,toQList &result)
 {
   if (!Storage)
     return;
@@ -1268,7 +1266,7 @@ QString toExtract::createTableText(toQList &result,const QString &schema,
   return ret;
 }
 
-void toExtract::describeTableText(list<QString> &lst,list<QString> &ctx,toQList &result,
+void toExtract::describeTableText(std::list<QString> &lst,std::list<QString> &ctx,toQList &result,
 				  const QString &schema,const QString &owner,const QString &name)
 {
   QString monitoring     =toShift(result);
@@ -1502,7 +1500,7 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
   return ret;
 }
 
-void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeTableColumns(std::list<QString> &lst,std::list<QString> &ctx,
 				     const QString &owner,const QString &name)
 {
   toQList cols=toQuery::readQuery(Connection,SQLTableColumns,name,owner);
@@ -1571,14 +1569,14 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeSource(list<QString> &lst,
+void toExtract::describeSource(std::list<QString> &lst,
 			       const QString &schema,const QString &owner,
 			       const QString &name,const QString &type)
 {
   if (!Code)
     return;
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),type);
   ctx.insert(ctx.end(),name.lower());
@@ -1591,7 +1589,7 @@ QString toExtract::createFunction(const QString &schema,const QString &owner,con
   return displaySource(schema,owner,name,"FUNCTION");
 }
 
-void toExtract::describeFunction(list<QString> &lst,const QString &schema,
+void toExtract::describeFunction(std::list<QString> &lst,const QString &schema,
 				 const QString &owner,const QString &name)
 {
   describeSource(lst,schema,owner,name,"FUNCTION");
@@ -1866,7 +1864,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   return ret;
 }
 
-void toExtract::describeIndex(list<QString> &lst,const QString &schema,
+void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
 			      const QString &owner,const QString &name)
 {
   if (Indexes)
@@ -1893,7 +1891,7 @@ void toExtract::describeIndex(list<QString> &lst,const QString &schema,
 
   QString schema2=intSchema(tableOwner);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema2);
   ctx.insert(ctx.end(),"TABLE");
   ctx.insert(ctx.end(),table.lower());
@@ -2177,7 +2175,7 @@ QString toExtract::createPartitionedIndex(const QString &schema,const QString &o
   return ret;
 }
 
-void toExtract::describePartitionedIndex(list<QString> &lst,list<QString> &ctx,
+void toExtract::describePartitionedIndex(std::list<QString> &lst,std::list<QString> &ctx,
 					 const QString &schema,const QString &owner,
 					 const QString &name)
 {
@@ -2388,7 +2386,7 @@ QString toExtract::rangePartitions(const QString &owner,const QString &name,
   return ret;
 }
 
-void toExtract::describePartitions(list<QString> &lst,list<QString> &ctx,
+void toExtract::describePartitions(std::list<QString> &lst,std::list<QString> &ctx,
 				   const QString &owner,const QString &name,
 				   const QString &subPartitionType,const QString &caller)
 {
@@ -2409,7 +2407,7 @@ void toExtract::describePartitions(list<QString> &lst,list<QString> &ctx,
     for (int i=0;i<16;i++)
       toPush(storage,toShift(result));
 
-    list<QString> cctx=ctx;
+    std::list<QString> cctx=ctx;
     cctx.insert(cctx.end(),"PARTITION");
     cctx.insert(cctx.end(),partition.lower());
 
@@ -2442,13 +2440,13 @@ QString toExtract::createMaterializedViewLog(const QString &schema,const QString
   return createMViewLog(schema,owner,name,"MATERIALIZED VIEW");
 }
 
-void toExtract::describeMaterializedView(list<QString> &lst,const QString &schema,
+void toExtract::describeMaterializedView(std::list<QString> &lst,const QString &schema,
 					 const QString &owner,const QString &name)
 {
   describeMView(lst,schema,owner,name,"MATERIALIZED VIEW");
 }
 
-void toExtract::describeMaterializedViewLog(list<QString> &lst,const QString &schema,
+void toExtract::describeMaterializedViewLog(std::list<QString> &lst,const QString &schema,
 					    const QString &owner,const QString &name)
 {
   describeMViewLog(lst,schema,owner,name,"MATERIALIZED VIEW LOG");
@@ -2572,7 +2570,7 @@ QString toExtract::createMView(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeMView(list<QString> &lst,
+void toExtract::describeMView(std::list<QString> &lst,
 			      const QString &schema,const QString &owner,
 			      const QString &name,const QString &type)
 {
@@ -2593,7 +2591,7 @@ void toExtract::describeMView(list<QString> &lst,
   toQuery inf(Connection,SQLIndexName,table,owner);
   QString index(inf.readValue());
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),type);
   ctx.insert(ctx.end(),name.lower());
@@ -2654,7 +2652,7 @@ QString toExtract::createMViewTable(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeMViewTable(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeMViewTable(std::list<QString> &lst,std::list<QString> &ctx,
 				   const QString &schema,const QString &owner,const QString &name)
 {
   if (!Storage||!Parallel)
@@ -2666,11 +2664,11 @@ void toExtract::describeMViewTable(list<QString> &lst,list<QString> &ctx,
   bool started=false;
   bool done=false;
 
-  list<QString> tbllst;
+  std::list<QString> tbllst;
   describeTable(tbllst,schema,owner,name);
   QString ret;
 
-  for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+  for(std::list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
     if(parallel.match(*i)>=0)
       started=true;
     if (started)
@@ -2718,7 +2716,7 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeMViewIndex(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeMViewIndex(std::list<QString> &lst,std::list<QString> &ctx,
 				   const QString &schema,const QString &owner,const QString &name)
 {
   if (!Storage||!Parallel)
@@ -2731,11 +2729,11 @@ void toExtract::describeMViewIndex(list<QString> &lst,list<QString> &ctx,
   bool started=false;
   bool done=false;
 
-  list<QString> tbllst;
+  std::list<QString> tbllst;
   describeIndex(tbllst,schema,owner,name);
   QString ret;
 
-  for(list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
+  for(std::list<QString>::iterator i=tbllst.begin();i!=tbllst.end()&&!done;i++) {
     if(start.match(*i)>=0)
       started=true;
     if (started)
@@ -2828,7 +2826,7 @@ QString toExtract::createMViewLog(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeMViewLog(list<QString> &lst,
+void toExtract::describeMViewLog(std::list<QString> &lst,
 				 const QString &schema,const QString &owner,
 				 const QString &name,const QString &type)
 {
@@ -2841,7 +2839,7 @@ void toExtract::describeMViewLog(list<QString> &lst,
   QString primaryKey   =toShift(result);
   QString filterColumns=toShift(result);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),type);
   ctx.insert(ctx.end(),name.lower());
@@ -3105,7 +3103,7 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
   return ret;
 }
 
-void toExtract::describeTable(list<QString> &lst,
+void toExtract::describeTable(std::list<QString> &lst,
 			      const QString &schema,const QString &owner,const QString &name)
 {
   toQuery inf(Connection,SQLTableType,name,owner);
@@ -3115,7 +3113,7 @@ void toExtract::describeTable(list<QString> &lst,
   QString partitioned(inf.readValue());
   QString iot_type(inf.readValue());
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"TABLE");
   ctx.insert(ctx.end(),name.lower());
@@ -3397,7 +3395,7 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
   return ret;
 }
 
-void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
+void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString> &ctx,
 				       const QString &schema,const QString &owner,
 				       const QString &name)
 {
@@ -3510,7 +3508,7 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
   return ret;
 }
 
-void toExtract::describeIOT(list<QString> &lst,list<QString> &ctx,
+void toExtract::describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
 			    const QString &schema,const QString &owner,const QString &name)
 {
   toQList storage=toQuery::readQuery(Connection,SQLIOTInfo,name,owner);
@@ -3919,7 +3917,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
   return ret;
 }
 
-void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
+void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QString> &ctx,
 					 const QString &schema,const QString &owner,
 					 const QString &name)
 {
@@ -3962,7 +3960,7 @@ void toExtract::describePartitionedTable(list<QString> &lst,list<QString> &ctx,
       for(int i=0;i<16;i++)
 	toPush(storage,toShift(segment));
 
-      list<QString> cctx=ctx;
+      std::list<QString> cctx=ctx;
       cctx.insert(cctx.end(),"PARTITION");
       cctx.insert(cctx.end(),partition.lower());
       addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
@@ -4001,7 +3999,7 @@ QString toExtract::createPackage(const QString &schema,const QString &owner,cons
   return displaySource(schema,owner,name,"PACKAGE");
 }
 
-void toExtract::describePackage(list<QString> &lst,
+void toExtract::describePackage(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   describeSource(lst,schema,owner,name,"PACKAGE");
@@ -4012,7 +4010,7 @@ QString toExtract::createPackageBody(const QString &schema,const QString &owner,
   return displaySource(schema,owner,name,"PACKAGE BODY");
 }
 
-void toExtract::describePackageBody(list<QString> &lst,const QString &schema,
+void toExtract::describePackageBody(std::list<QString> &lst,const QString &schema,
 				    const QString &owner,const QString &name)
 {
   describeSource(lst,schema,owner,name,"PACKAGE BODY");
@@ -4023,7 +4021,7 @@ QString toExtract::createProcedure(const QString &schema,const QString &owner,co
   return displaySource(schema,owner,name,"PROCEDURE");
 }
 
-void toExtract::describeProcedure(list<QString> &lst,
+void toExtract::describeProcedure(std::list<QString> &lst,
 				  const QString &schema,const QString &owner,const QString &name)
 {
   describeSource(lst,schema,owner,name,"PROCEDURE");
@@ -4039,13 +4037,13 @@ QString toExtract::createSnapshotLog(const QString &schema,const QString &owner,
   return createMViewLog(schema,owner,name,"SNAPSHOT");
 }
 
-void toExtract::describeSnapshot(list<QString> &lst,const QString &schema,
+void toExtract::describeSnapshot(std::list<QString> &lst,const QString &schema,
 				 const QString &owner,const QString &name)
 {
   describeMView(lst,schema,owner,name,"SNAPSHOT");
 }
 
-void toExtract::describeSnapshotLog(list<QString> &lst,const QString &schema,
+void toExtract::describeSnapshotLog(std::list<QString> &lst,const QString &schema,
 				    const QString &owner,const QString &name)
 {
   describeMViewLog(lst,schema,owner,name,"SNAPSHOT LOG");
@@ -4100,7 +4098,7 @@ QString toExtract::createProfile(const QString &schema,const QString &owner,cons
   return ret;
 }
 
-void toExtract::describeProfile(list<QString> &lst,
+void toExtract::describeProfile(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -4109,7 +4107,7 @@ void toExtract::describeProfile(list<QString> &lst,
   if (info.size()==0)
     throw QString("Couldn't find profile %1").arg(name);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),"PROFILE");
   ctx.insert(ctx.end(),name.lower());
   addDescription(lst,ctx);
@@ -4154,7 +4152,7 @@ QString toExtract::createRole(const QString &schema,const QString &owner,const Q
   return ret;
 }
 
-void toExtract::describeRole(list<QString> &lst,
+void toExtract::describeRole(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -4163,7 +4161,7 @@ void toExtract::describeRole(list<QString> &lst,
   if (info.size()==0)
     throw QString("Couldn't find role %1").arg(name);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),"ROLE");
   ctx.insert(ctx.end(),name.lower());
   addDescription(lst,ctx);
@@ -4276,7 +4274,7 @@ QString toExtract::grantedPrivs(const QString &schema,const QString &name,int ty
   return ret;
 }
 
-void toExtract::describePrivs(list<QString> &lst,list<QString> &ctx,const QString &name)
+void toExtract::describePrivs(std::list<QString> &lst,std::list<QString> &ctx,const QString &name)
 {
   if (!Grants)
     return;
@@ -4355,7 +4353,7 @@ QString toExtract::createRollbackSegment(const QString &schema,const QString &ow
   return ret;
 }
 
-void toExtract::describeRollbackSegment(list<QString> &lst,
+void toExtract::describeRollbackSegment(std::list<QString> &lst,
 					const QString &schema,const QString &owner,
 					const QString &name)
 {
@@ -4367,7 +4365,7 @@ void toExtract::describeRollbackSegment(list<QString> &lst,
   QString minExtent     = toShift(result);
   QString maxExtent     = toShift(result);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),"ROLLBACK SEGMENT");
   ctx.insert(ctx.end(),name.lower());
 
@@ -4443,7 +4441,7 @@ QString toExtract::createSequence(const QString &schema,const QString &owner,con
   return ret; 
 }
 
-void toExtract::describeSequence(list<QString> &lst,
+void toExtract::describeSequence(std::list<QString> &lst,
 				 const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -4452,7 +4450,7 @@ void toExtract::describeSequence(list<QString> &lst,
   if (info.size()==0)
     throw QString("Couldn't find sequence %1").arg(name);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema.lower());
   ctx.insert(ctx.end(),"SEQUENCE");
   ctx.insert(ctx.end(),name.lower());
@@ -4507,7 +4505,7 @@ QString toExtract::createSynonym(const QString &schema,const QString &owner,cons
   return ret;
 }
 
-void toExtract::describeSynonym(list<QString> &lst,
+void toExtract::describeSynonym(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -4526,7 +4524,7 @@ void toExtract::describeSynonym(list<QString> &lst,
   QString useSchema=(schema=="PUBLIC")?QString(""):schema;
   QString tableSchema=intSchema(tableOwner);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   if (owner=="PUBLIC")
     ctx.insert(ctx.end(),owner);
   addDescription(lst,ctx,"SYNONYM",QString("%1%2%3").
@@ -4686,7 +4684,7 @@ QString toExtract::createTableContents(const QString &schema,const QString &owne
   return ret;
 }
 
-void toExtract::describeTableFamily(list<QString> &lst,
+void toExtract::describeTableFamily(std::list<QString> &lst,
 				    const QString &schema,const QString &owner,const QString &name)
 {
   describeTable(lst,schema,owner,name);
@@ -4726,7 +4724,7 @@ QString toExtract::createTableReferences(const QString &schema,const QString &ow
   return ret;
 }
 
-void toExtract::describeTableReferences(list<QString> &lst,
+void toExtract::describeTableReferences(std::list<QString> &lst,
 					const QString &schema,const QString &owner,const QString &name)
 {
   toQList constraints=toQuery::readQuery(Connection,SQLTableReferences,name,owner);
@@ -4851,7 +4849,7 @@ QString toExtract::createTrigger(const QString &schema,const QString &owner,cons
   return ret;
 }
 
-void toExtract::describeTrigger(list<QString> &lst,
+void toExtract::describeTrigger(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
   if (!Code)
@@ -4907,7 +4905,7 @@ void toExtract::describeTrigger(list<QString> &lst,
     object=baseType;
   }
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema.lower());
   ctx.insert(ctx.end(),"TRIGGER");
   ctx.insert(ctx.end(),name.lower());
@@ -5172,7 +5170,7 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
   return ret;
 }
 
-void toExtract::describeTablespace(list<QString> &lst,
+void toExtract::describeTablespace(std::list<QString> &lst,
 				   const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -5194,7 +5192,7 @@ void toExtract::describeTablespace(list<QString> &lst,
   QString extentManagement =toShift(info);
   QString allocationType   =toShift(info);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
 
   if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
     ctx.insert(ctx.end(),"TEMPORARY TABLESPACE");
@@ -5215,7 +5213,7 @@ void toExtract::describeTablespace(list<QString> &lst,
     QString maxBytes       =toShift(files);
     QString incrementBy    =toShift(files);
 
-    list<QString> cctx=ctx;
+    std::list<QString> cctx=ctx;
     if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
       cctx.insert(cctx.end(),"TEMPFILE");
     else
@@ -5264,7 +5262,7 @@ QString toExtract::createType(const QString &schema,const QString &owner,const Q
   return displaySource(schema,owner,name,"TYPE");
 }
 
-void toExtract::describeType(list<QString> &lst,
+void toExtract::describeType(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   describeSource(lst,schema,owner,name,"TYPE");
@@ -5350,7 +5348,7 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
   return ret;
 }
 
-void toExtract::describeUser(list<QString> &lst,
+void toExtract::describeUser(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   toQList info=toQuery::readQuery(Connection,
@@ -5365,7 +5363,7 @@ void toExtract::describeUser(list<QString> &lst,
   QString defaultTablespace  =toShift(info);
   QString temporaryTablespace=toShift(info);
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),"USER");
   QString nam;
   if (Schema!="1"&&!Schema.isEmpty())
@@ -5445,7 +5443,7 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
   return ret;
 }
 
-void toExtract::describeView(list<QString> &lst,
+void toExtract::describeView(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
   if (!Code)
@@ -5456,7 +5454,7 @@ void toExtract::describeView(list<QString> &lst,
   if (source.size()==0)
     throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
 
-  list<QString> ctx;
+  std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"VIEW");
   ctx.insert(ctx.end(),name.lower());
@@ -5962,7 +5960,7 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
   return ret;
 }
 
-QString toExtract::compile(list<QString> &objects)
+QString toExtract::compile(std::list<QString> &objects)
 {
   clearFlags();
   QString ret=generateHeading("COMPILE",objects);
@@ -5973,7 +5971,7 @@ QString toExtract::compile(list<QString> &objects)
   progress.setLabel(label);
 
   int num=1;
-  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6013,7 +6011,7 @@ QString toExtract::compile(list<QString> &objects)
   return ret;
 }
 
-QString toExtract::create(list<QString> &objects)
+QString toExtract::create(std::list<QString> &objects)
 {
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
@@ -6024,7 +6022,7 @@ QString toExtract::create(list<QString> &objects)
   progress.setLabel(label);
 
   int num=1;
-  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6135,12 +6133,12 @@ void toExtract::rethrow(const QString &what,const QString &object,const QString 
     arg(exc);
 }
 
-list<QString> toExtract::describe(list<QString> &objects)
+std::list<QString> toExtract::describe(std::list<QString> &objects)
 {
   clearFlags();
   Describe=true;
 
-  list<QString> ret;
+  std::list<QString> ret;
 
   QProgressDialog progress("Creating description","&Cancel",objects.size(),Parent,"progress",true);
   progress.setCaption("Creating description");
@@ -6148,7 +6146,7 @@ list<QString> toExtract::describe(list<QString> &objects)
   progress.setLabel(label);
 
   int num=1;
-  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6167,7 +6165,7 @@ list<QString> toExtract::describe(list<QString> &objects)
     QString utype=type.upper();
     QString schema=intSchema(owner);
 
-    list<QString> cur;
+    std::list<QString> cur;
 
     try {
       if (utype=="CONSTRAINT")
@@ -6243,7 +6241,7 @@ list<QString> toExtract::describe(list<QString> &objects)
   return ret;
 }
 
-QString toExtract::drop(list<QString> &objects)
+QString toExtract::drop(std::list<QString> &objects)
 {
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
@@ -6254,7 +6252,7 @@ QString toExtract::drop(list<QString> &objects)
   progress.setLabel(label);
 
   int num=1;
-  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6333,7 +6331,7 @@ QString toExtract::drop(list<QString> &objects)
   return ret;
 }
 
-QString toExtract::resize(list<QString> &objects)
+QString toExtract::resize(std::list<QString> &objects)
 {
   throw QString("Resize not implemented yet");
   clearFlags();
@@ -6345,7 +6343,7 @@ QString toExtract::resize(list<QString> &objects)
   progress.setLabel(label);
 
   int num=1;
-  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+  for (std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6382,7 +6380,7 @@ QString toExtract::resize(list<QString> &objects)
   return ret;
 }
 
-QString toExtract::migrate(list<QString> &drpLst,list<QString> &crtLst)
+QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
 {
   throw QString("Migration not implemented yet");
 }

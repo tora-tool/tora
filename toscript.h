@@ -60,8 +60,8 @@ class toScript : public toScriptUI, public toHelpContext {
   void setupExtract(toExtract &);
   void changeConnection(int,bool source);
   void changeSchema(int,bool source);
-  list<QString> createObjectList(QListView *);
-  void fillDifference(list<QString> &objects,QListView *list);
+  std::list<QString> createObjectList(QListView *);
+  void fillDifference(std::list<QString> &objects,QListView *list);
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();

@@ -65,9 +65,9 @@ void toChangeConnection::popupMenu(void)
 {
   popup()->clear();
   toConnection &conn=toCurrentConnection(this);
-  list<QString> cons=toMainWidget()->connections();
+  std::list<QString> cons=toMainWidget()->connections();
   int idx=0;
-  for (list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
+  for (std::list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
     if (toCurrentTool(this)->canHandle(toMainWidget()->connection(*i))) {
       popup()->insertItem(*i,idx);
       if (conn.description()==*i)
@@ -78,8 +78,8 @@ void toChangeConnection::popupMenu(void)
 
 void toChangeConnection::changeConnection(int val)
 {
-  list<QString> cons=toMainWidget()->connections();
-  list<QString>::iterator i=cons.begin();
+  std::list<QString> cons=toMainWidget()->connections();
+  std::list<QString>::iterator i=cons.begin();
   while (i!=cons.end()&&val>0) {
     i++;
     val--;

@@ -56,7 +56,7 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param);
-  friend toResultColsItem;
+  friend class toResultColsItem;
 };
 
 #endif

@@ -64,7 +64,11 @@
 2001-08-17: Fixed a couple of utf8 bugs.
 2001-08-17: Changed operator () in toSQL to return QString.
 2001-08-18: Merged help from 1.0 version.
-2001-08-19: Changed configure to not be so harsh on gcc-2.96.
+2001-08-20: Changed the LICENSE and deleted section 9.
+2001-08-20: Fixed bug with readble columns in resultitem.
+2001-08-20: Fixed problem with y-axis legend and Xft.
+2001-08-20: Fixed some warnings for gcc-2.96.
+2001-08-20: Removed the ugly TO_NAMESPACE hack.
 
 0.14: Released 2001-08-02
 

@@ -82,7 +82,6 @@ TARGET=tora-plugin
 #   TO_NAMESPACE    - Any namespaces that should be used
 #   TO_DEBUG_MEMORY - Enable memory debugging framework (SLOW)
 DEFINES+=-DOTL_ORA8I
-DEFINES+=-DTO_NAMESPACE="using namespace std"
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 
 # Where to find perl on your system

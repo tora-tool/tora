@@ -97,7 +97,7 @@ class toDebug : public toToolWidget {
     bool Out;
   };
 
-  list<debugParam> CurrentParams;
+  std::list<debugParam> CurrentParams;
 
   // Toolbar
   QComboBox *Schema;
@@ -183,7 +183,7 @@ public:
 
   virtual ~toDebug();
 
-  friend targetTask;
+  friend class targetTask;
 
   bool isRunning(void);
 

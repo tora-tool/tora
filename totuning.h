@@ -61,16 +61,16 @@ class toBarChart;
 class toTuningMiss : public toResultLine {
 public:
   toTuningMiss(QWidget *parent=0,const char *name=0);
-  virtual list<double> transform(list<double> &trans);
+  virtual std::list<double> transform(std::list<double> &trans);
 };
 
 class toTuningFileIO : public QScrollView {
   Q_OBJECT
 
   QGrid *Box;
-  map<QString,toBarChart *> Charts;
+  std::map<QString,toBarChart *> Charts;
   time_t LastStamp;
-  map<QString,list<double> > LastValues;
+  std::map<QString,std::list<double> > LastValues;
   virtual void resizeEvent(QResizeEvent *e);
 public:
   toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0);
@@ -79,7 +79,7 @@ public slots:
 };
 
 class toTuningOverview : public toTuningOverviewUI {
-  list<QLabel *> Backgrounds;
+  std::list<QLabel *> Backgrounds;
   void setupChart(toResultLine *chart,const QString &,const QString &,toSQL &sql);
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);

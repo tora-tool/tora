@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-TO_NAMESPACE;
-
 #include <stdlib.h>
 
 #ifdef TO_KDE
@@ -131,7 +129,7 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
   throw QString("SQL Query not found in SGA");
 }
 
-static list<QString> LastMessages;
+static std::list<QString> LastMessages;
 
 void toStatusMessage(const QString &str,bool save)
 {
@@ -152,7 +150,7 @@ void toStatusMessage(const QString &str,bool save)
   }
 }
 
-list<QString> toStatusMessages(void)
+std::list<QString> toStatusMessages(void)
 {
   return LastMessages;
 }
