@@ -12,7 +12,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-oracle --without-mysql --without-rpath
+	./configure --prefix=/usr --with-static-oracle --without-mysql --without-rpath
 
 	touch configure-stamp
 
