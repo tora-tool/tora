@@ -35,16 +35,19 @@ SOURCES=\
 	tomain.cpp		\
 	tomarkedtext.cpp	\
 	tonewconnection.cpp	\
+	tonoblockquery.cpp	\
 	tooutput.cpp		\
 	toparamget.cpp		\
 	topreferences.cpp	\
 	toresultcols.cpp	\
 	toresultconstraint.cpp	\
 	toresultcontent.cpp	\
+	toresultdepend.cpp	\
 	toresultfield.cpp	\
 	toresultindexes.cpp	\
 	toresultitem.cpp	\
 	toresultlock.cpp	\
+	toresultlong.cpp	\
 	toresultplan.cpp	\
 	toresultreferences.cpp	\
 	toresultstats.cpp	\
@@ -66,7 +69,7 @@ SOURCES=\
 
 TARGET=tora-plugin
 
-TOVERSION=-DTOVERSION=\"0.6\"
+TOVERSION=-DTOVERSION=\"0.7\"
 
 include Makefile.setup
 include Makefile.common
@@ -79,12 +82,15 @@ plugins/todebug.so:\
 	objs/todebugchange.o
 plugins/tofilesize.so:objs/tofilesize.o
 plugins/tooutput.so:objs/tooutput.o
+plugins/tonoblockquery.so:objs/tonoblockquery.o
 plugins/toparamget.so:objs/toparamget.o
 plugins/toresultcols.so:objs/toresultcols.o
 plugins/toresultconstraint.so:objs/toresultconstraint.o
 plugins/toresultcontent.so:objs/toresultcontent.o
+plugins/toresultdepend.so:objs/toresultdepend.o
 plugins/toresultindexes.so:objs/toresultindexes.o
 plugins/toresultlock.so:objs/toresultlock.o
+plugins/toresultlong.so:objs/toresultlong.o
 plugins/toresultreferences.so:objs/toresultreferences.o
 plugins/toresultstats.so:objs/toresultstats.o
 plugins/toresultstorage.so:objs/toresultstorage.o
@@ -118,13 +124,16 @@ tora-plugin: \
 	plugins/tobrowser.so \
 	plugins/todebug.so \
 	plugins/tofilesize.so \
+	plugins/tonoblockquery.so \
 	plugins/tooutput.so \
 	plugins/toparamget.so \
 	plugins/toresultcols.so \
 	plugins/toresultconstraint.so \
 	plugins/toresultcontent.so \
+	plugins/toresultdepend.so \
 	plugins/toresultindexes.so \
 	plugins/toresultlock.so \
+	plugins/toresultlong.so \
 	plugins/toresultreferences.so \
 	plugins/toresultstats.so \
 	plugins/toresultstorage.so \
