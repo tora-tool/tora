@@ -41,6 +41,7 @@ Extended functionality:
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
 * Doubleclicking on a listview should set param defaults to that line.
+* Display wait cursor when running SQL.
 
 New tools:
 

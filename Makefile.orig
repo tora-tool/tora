@@ -39,6 +39,7 @@ SOURCES=\
 	tohelpsetupui.cpp	\
 	tohighlightedtext.cpp	\
 	tohtml.cpp		\
+	tolinechart.cpp		\
 	tomain.cpp		\
 	tomarkedtext.cpp	\
 	tomemoeditor.cpp	\
@@ -101,6 +102,7 @@ API=	\
 	tohelp.h		\
 	tohighlightedtext.h	\
 	tohtml.h		\
+	tolinechart.h		\
 	tomain.h		\
 	tomainwindow.kde.h	\
 	tomarkedtext.2.h	\
@@ -139,6 +141,7 @@ plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserfilterui.o
 plugins/tocharts.tso:\
+	objs/tolinechart.o \
 	objs/topiechart.o
 plugins/todebug.tso:\
 	objs/todebug.o \

@@ -1,9 +1,10 @@
-1.1:
+1.1.0:
 
 2001-08-01: Added pie chart class.
 2001-08-02: Fixed release script to grab correct tag if specified.
 2001-08-02: Added another quote.
 2001-08-02: Merge from the 0.14 release.
+2001-08-07: Added line chart class.
 
 0.14: Released 2001-08-02
 

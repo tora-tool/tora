@@ -65,6 +65,7 @@ void toPieChart::paintEvent(QPaintEvent *e)
   QFontMetrics fm=p.fontMetrics();
 
   int right=width();
+  int bottom=height();
 
   p.fillRect(0,0,width(),height(),qApp->palette().active().background());
   if (Legend) {
@@ -119,7 +120,7 @@ void toPieChart::paintEvent(QPaintEvent *e)
       size=5760-pos;
     p.save();
     p.setBrush(toChartColor(cp++));
-    p.drawPie(2,2,right-4,height()-4,pos,size);
+    p.drawPie(2,2,right-4,bottom-4,pos,size);
     p.restore();
     pos+=size;
   }
@@ -136,8 +137,8 @@ void toPieChart::paintEvent(QPaintEvent *e)
 
     double posy=sin((2*pos+size)*M_PI/5760);
     double posx=cos((2*pos+size)*M_PI/5760);
-    posy*=-height()/3;
-    posy+=height()/2;
+    posy*=-bottom/3;
+    posy+=bottom/2;
     posx*=right/3;
     posx+=right/2;
     QString sizstr=QString::number(*i);
