@@ -1,6 +1,6 @@
 <HTML><HEAD><TITLE>Session Manager</TITLE></HEAD><BODY>
 <H1>Session Manager</H1>
-This tool is used to manage the connections made to the database.
+This tool is used to manage the connections made to the database.<P>
 <IMG SRC=images/session.png><P>
 The session tool consists of a toolbar, a list displaying the connections currently open to
 the database and at the bottom a tabbed pane where you can investigate a specific connection
@@ -24,6 +24,9 @@ transaction to finish before kicking the session out or not.</TD></TR>
 <TR><TD VALIGN=top><B>
 Refresh time</B></TD><TD VALIGN=top>
 A list where you can select the interval between automatic updates.</TD></TR>
+<TR><TD VALIGN=top><B>
+Change connection</B></TD><TD VALIGN=top>
+Change the connection to administrate storage for.</TD></TR>
 </TABLE><P>
 <H2>Inspecting a session</H2>
 When you select a session the following information is available in the tabbed pane at the
@@ -32,7 +35,8 @@ bottom of the window.<P>
 <TR><TD VALIGN=top><B>
 Statistics</B></TD><TD VALIGN=top>
 The session statistics available for the session. You will get more statistics if you enable
-timed statistics through the toolbar.</TD></TR>
+timed statistics through the toolbar. There are also two charts displaying waitstates and
+I/O for the selected session.</TD></TR>
 <TR><TD VALIGN=top><B>
 Connection info</B></TD><TD VALIGN=top>
 Information about the connection and versions of the components used.</TD></TR>
