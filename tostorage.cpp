@@ -795,7 +795,9 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   Objects->addColumn(tr("Blocks"));
   Objects->setColumnAlignment(3,AlignRight);
   Objects->setColumnAlignment(4,AlignRight);
-
+  Objects->setSorting(0);
+  Objects->setShowSortIndicator(TRUE);
+    
   Extents=new toStorageExtent(ExtentParent);
   Objects->setSelectionMode(QListView::Single);
   Storage->setSelectionMode(QListView::Single);
