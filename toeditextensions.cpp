@@ -56,51 +56,18 @@
 static int IndentIndex;
 static int DeindentIndex;
 
-#define TABSTOP 8
-
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_INDENT_LEVEL	"IndentLevel"
 #define DEFAULT_INDENT_LEVEL	"4"
-
-static bool ExpandSpaces;
-static int IndentLevel;
+#define CONF_COMMA_BEFORE	"CommaBefore"
+#define CONF_BLOCK_OPEN_LINE	"BlockOpenLine"
+#define CONF_OPERATOR_SPACE	"OperatorSpace"
+#define CONF_KEYWORD_UPPER	"KeywordUpper"
+#define CONF_RIGHT_SEPARATOR	"RightSeparator"
+#define CONF_END_BLOCK_NEWLINE	"EndBlockNewline"
 
 QToolButton *IndentButton;
 QToolButton *DeindentButton;
-
-static int CountIndent(const QString &txt,int &chars)
-{
-  int level=0;
-  chars=0;
-  while(txt[chars].isSpace()&&chars<int(txt.length())) {
-    char c=txt[chars];
-    if (c=='\n')
-      level=0;
-    else if (c==' ')
-      level++;
-    else if (c=='\t')
-      level=(level/TABSTOP+1)*TABSTOP;
-    chars++;
-  }
-  return level;
-}
-
-static QString IndentString(int level,bool &eol)
-{
-  if (eol) {
-    QString ret="\n";
-    if (ExpandSpaces) {
-      for(int i=0;i<level/8;i++)
-	ret+="\t";
-      for(int j=0;j<level%8;j++)
-	ret+=" ";
-    } else
-      for(int j=0;j<level;j++)
-	ret+=" ";
-    return ret;
-  } else
-    return " ";
-}
 
 void toEditExtensions::receivedFocus(QWidget *widget)
 {
@@ -125,8 +92,6 @@ void toEditExtensions::lostFocus(QWidget *widget)
 
 void toEditExtensions::intIndent(int delta)
 {
-  bool eol;
-
   int line1,col1,line2,col2;
 
   if (!Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
@@ -139,10 +104,9 @@ void toEditExtensions::intIndent(int delta)
   QString res;
   for(int i=line1;i<=line2;i++) {
     QString t=Current->textLine(i);
-    int chars;
-    int level=CountIndent(t,chars);
-    eol=true;
-    res+=IndentString(max(0,level+delta),eol);
+    int chars=0;
+    int level=toSQLParse::countIndent(t,chars);
+    res+=toSQLParse::indentString(max(0,level+delta));
     res+=t.mid(chars);
   }
 
@@ -157,12 +121,12 @@ void toEditExtensions::intIndent(int delta)
 
 void toEditExtensions::deindentBlock(void)
 {
-  intIndent(-IndentLevel);
+  intIndent(-toSQLParse::getSetting().IndentLevel);
 }
 
 void toEditExtensions::indentBlock(void)
 {
-  intIndent(IndentLevel);
+  intIndent(toSQLParse::getSetting().IndentLevel);
 }
 
 static toEditExtensions EditExtensions;
@@ -172,30 +136,89 @@ class toEditExtensionTool;
 class toEditExtensionSetup : public toEditExtensionSetupUI, public toSettingTab
 {
   toEditExtensionTool *Tool;
-
+  toSQLParse::settings Current;
+  bool Ok;
+  bool Started;
 public:
   toEditExtensionSetup(toEditExtensionTool *tool,QWidget *parent,const char *name=NULL)
     : toEditExtensionSetupUI(parent,name),toSettingTab("editextension.html"),Tool(tool)
   {
-    IndentLevel->setValue(::IndentLevel);
-    ExpandSpaces->setChecked(::ExpandSpaces);
+    Current=toSQLParse::getSetting();
+    Started=false;
+    IndentLevel->setValue(Current.IndentLevel);
+    ExpandSpaces->setChecked(Current.ExpandSpaces);
+    CommaBefore->setChecked(Current.CommaBefore);
+    BlockOpenLine->setChecked(Current.BlockOpenLine);
+    OperatorSpace->setChecked(Current.OperatorSpace);
+    KeywordUpper->setChecked(Current.KeywordUpper);
+    RightSeparator->setChecked(Current.RightSeparator);
+    EndBlockNewline->setChecked(Current.EndBlockNewline);
+    Ok=false;
+    Example->setText(toSQLParse::indent("select a.TskCod TskCod,\n"
+					"       count(1) Tot\n"
+					"  from EssTsk a,EssTra b\n"
+					" where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
+					" group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
+					"having count(a.TspActOprID) > 0;\n"
+					"CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+					"AS\n"
+					"  vYear  CHAR(4);\n"
+					"BEGIN\n"
+					"\n"
+					"    DECLARE\n"
+					"      oTrdStt NUMBER;\n"
+					"    BEGIN\n"
+					"      oTrdStt := 0;\n"
+					"    END;\n"
+					"\n"
+					"    EXCEPTION\n"
+					"        WHEN VALUE_ERROR THEN\n"
+					"	    oRet := 3;\n"
+					"END;"));
+    Started=true;
+  }
+  virtual ~toEditExtensionSetup()
+  {
+    if (!Ok)
+      toSQLParse::setSetting(Current);
+  }
+  void saveCurrent(void)
+  {
+    Current.IndentLevel=IndentLevel->value();
+    Current.ExpandSpaces=ExpandSpaces->isChecked();
+    Current.CommaBefore=CommaBefore->isChecked();
+    Current.BlockOpenLine=BlockOpenLine->isChecked();
+    Current.OperatorSpace=OperatorSpace->isChecked();
+    Current.KeywordUpper=KeywordUpper->isChecked();
+    Current.RightSeparator=RightSeparator->isChecked();
+    Current.EndBlockNewline=EndBlockNewline->isChecked();
+    toSQLParse::setSetting(Current);
+  }
+  virtual void changed(void)
+  {
+    if (Started) {
+      saveCurrent();
+      Example->setText(toSQLParse::indent(Example->text()));
+    }
   }
   virtual void saveSetting(void);
 };
 
 class toEditExtensionTool : public toTool {
 public:
-  void cacheConfig(void)
-  {
-    ExpandSpaces=!config(CONF_EXPAND_SPACES,"Yes").isEmpty();
-    IndentLevel=config(CONF_INDENT_LEVEL,DEFAULT_INDENT_LEVEL).toInt();
-    if (!IndentLevel)
-      IndentLevel=4;
-  }
   toEditExtensionTool()
     : toTool(400,"Editor")
   {
-    cacheConfig();
+    toSQLParse::settings cur;
+    cur.ExpandSpaces=!config(CONF_EXPAND_SPACES,"Yes").isEmpty();
+    cur.IndentLevel=config(CONF_INDENT_LEVEL,DEFAULT_INDENT_LEVEL).toInt();
+    cur.CommaBefore=!config(CONF_COMMA_BEFORE,"").isEmpty();
+    cur.BlockOpenLine=!config(CONF_BLOCK_OPEN_LINE,"").isEmpty();
+    cur.OperatorSpace=!config(CONF_OPERATOR_SPACE,"Yes").isEmpty();
+    cur.KeywordUpper=!config(CONF_KEYWORD_UPPER,"Yes").isEmpty();
+    cur.RightSeparator=!config(CONF_RIGHT_SEPARATOR,"Yes").isEmpty();
+    cur.EndBlockNewline=!config(CONF_END_BLOCK_NEWLINE,"Yes").isEmpty();
+    toSQLParse::setSetting(cur);
   }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
@@ -234,123 +257,16 @@ public:
 
 void toEditExtensionSetup::saveSetting(void)
 {
-  Tool->setConfig(CONF_INDENT_LEVEL,QString::number(IndentLevel->value()));
+  Ok=true;
   Tool->setConfig(CONF_EXPAND_SPACES,ExpandSpaces->isChecked()?"Yes":"");
-  Tool->cacheConfig();
+  Tool->setConfig(CONF_INDENT_LEVEL,QString::number(IndentLevel->value()));
+  Tool->setConfig(CONF_COMMA_BEFORE,CommaBefore->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_BLOCK_OPEN_LINE,BlockOpenLine->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_OPERATOR_SPACE,OperatorSpace->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_RIGHT_SEPARATOR,RightSeparator->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_END_BLOCK_NEWLINE,EndBlockNewline->isChecked()?"Yes":"");
+  saveCurrent();
 }
 
 static toEditExtensionTool EditExtensionTool;
-
-#if 0 // Unfinished stuff for pretty print
-
-static QString Indent(int level,bool &eol);
-static int indent=4;
-
-static void IndentBlock(const QString &sql,int &pos,QString &token,
-			QString &ret,int level,bool eol)
-{
-  bool pre=false;
-  QString upp=token.upper();
-
-  ret+=Indent(level,eol);
-  ret+=token;
-  level+=indent;
-  if (upp=="AS"||upp=="IS"||upp=="DECLARE") 
-    pre=true;
-
-  for (token=toSQLParse::getToken(sql,pos);
-       !token.isNull();
-       token=toSQLParse::getToken(sql,pos)) {
-    upp=token.upper();
-    if (upp="END") {
-      eol=true;
-      break;
-    } else if (upp=="BEGIN"||upp=="THEN"||upp=="LOOP") {
-      if (pre) {
-	ret+=Indent(level-indent,eol);
-	ret+=token;
-	eol=true;
-	pre=false;
-      } else {
-	IndentBlock(sql,pos,token,ret,level,eol);
-      }
-    } else if (upp=="AS"||upp=="IS"||upp=="DECLARE") {
-      IndentBlock(sql,pos,token,ret,level,eol);
-    }
-  }
-  if (!token.isNull()) {
-    ret+=Indent(level,eol);
-    ret+=token;
-    for (token=toSQLParse::getToken(sql,pos);
-	 !token.isNull()&&token!=";";
-	 token=toSQLParse::getToken(sql,pos)) {
-      ret+=" ";
-      ret+=token;
-    }
-    ret+=";"
-  }
-}
-
-QString toIndentSQL(const QString &sql,bool start)
-{
-  int level=0;
-  int pos=0;
-  std::list<int> statementIndent;
-
-  if (!start) {
-    while(sql[pos].isSpace()&&pos<sql.length()) {
-      char c=sql[pos];
-      if (c=='\n')
-	level=0;
-      else if (c==' ')
-	level++;
-      else if (c=='\t')
-	level=(leve+TABSTOP-1)/TABSTOP*TABSTOP;
-      pos++;
-    }
-  }
-  bool pre=false;
-  bool any=false;
-  bool eol=false;
-  QString ret;
-  for (QString token=toSQLParse::getToken(sql,pos);
-       !token.isNull();
-       token=toSQLParse::getToken(sql,pos)) {
-    QString upp=token.lower();
-    if (upp=="BEGIN"||upp=="THEN"||upp=="LOOP") {
-      if (pre)
-	ret+=Indent(level-indent,eol);
-      else
-	ret+=Indent(level,eol);
-      ret+=token;
-      if (!pre)
-	level+=indent;
-      else
-	pre=false;
-      any=false;
-      eol=true;
-    } else if (upp=="END") {
-      level-=indent;
-      ret+=Indent(level,eol);
-      ret+=token;
-      any=pre=false;
-    } else if (upp=="AND"||upp=="OR") {
-      ret+=" ";
-      ret+=upp;
-      eol=true;
-      any=false;
-      ret+=Indent(level+statementIndent);
-    } else if (upp==";") {
-      ret+=";";
-      statementIndent.clear();
-      eol=true;
-      any=false;
-    } else if (upp=="DECLARE"||upp=="AS"||upp=="IS") {
-      pre=true;
-      eol=true;
-      any=false;
-    }
-  }
-}
-
-#endif

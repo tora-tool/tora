@@ -12,7 +12,7 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class toSQLParse</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"> Parse an SQL statement to a structured list of blocks, statements and tokens. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+		<TD valign="top" align="right" colspan="1"> A bunch of functions to parse and indent SQL text. <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
@@ -26,9 +26,7 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Types</h4><ul><LI>struct <A HREF="toSQLParse__statement.html">statement</A>
-</LI>
-</ul><h4>Public Methods</h4><ul><LI>std::list<statement> &nbsp;<b><A HREF="#ref4">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
+<h4>Public Types</h4><ul><LI>class <A HREF="toSQLParse__statement.html">statement</A>
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref2">getToken</A></b> (<A HREF="toMarkedText.html">toMarkedText</A> *text,int &curLine,int &pos,bool forward=true,
 			  bool comment=false) 
@@ -36,9 +34,21 @@
 <LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref3">getToken</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,int &pos,bool forward=true,
 			  bool comment=false) 
 </LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Parse an SQL statement to a structured list of blocks, statements and tokens.
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref4">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</LI>
+<LI>static  std::list<statement> &nbsp;<b><A HREF="#ref5">parse</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref6">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref7">indent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref8">indentString</A></b> (int level) 
+</LI>
+<LI>static  int &nbsp;<b><A HREF="#ref9">countIndent</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A bunch of functions to parse and indent SQL text.
  </p>
-<A NAME="toSQLParse__statement.html"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>statement</strong> <small>(struct)</small></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Structure the statement is parsed into.
+<A NAME="toSQLParse__statement.html"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>statement</strong> <small>(class)</small></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Structure the statement is parsed into.
    </p>
 <A NAME="getToken"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>getToken</strong> (<A HREF="toMarkedText.html">toMarkedText</A> *text,int &curLine,int &pos,bool forward=true,
 			  bool comment=false)
@@ -74,8 +84,17 @@
 </TABLE></P>
 <p><b>Returns</b>: String with next token in editor
    </p>
-<A NAME="parse"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
-<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p></p><p> Parse a string.
+<A NAME="parse"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to parse.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: Parsed statement tree.
+   </p>
+<A NAME="parse"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<statement> &nbsp;<strong>parse</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
+<br></td><td align="right"><h3><strong>parse</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Parse a string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to parse.
@@ -85,6 +104,40 @@
 </TABLE></P>
 <p><b>Returns</b>: Parsed statement tree.
    </p>
+<A NAME="indent"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to indent.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: An indented string.
+   </p>
+<A NAME="indent"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,<A HREF="toConnection.html">toConnection</A> &conn)
+<br></td><td align="right"><h3><strong>indent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Indent a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to indent.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to determine SQL dialect. (For future use)
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: An indented string.
+   </p>
+<A NAME="indentString"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>indentString</strong> (int level)
+<br></td><td align="right"><h3><strong>indentString</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create an indentation string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>level</i></TD><TD align="left" valign="top">Number of characters to indent.
+   </TD></TR>
+</TABLE></P>
+<A NAME="countIndent"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>countIndent</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<br></td><td align="right"><h3><strong>countIndent</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Count indentation level of a string.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to check.
+   </TD></TR>
+</TABLE></P>
 <HR>
 	<table>
 	</table>

@@ -42,11 +42,22 @@
 class toMarkedText;
 class toConnection;
 
-/** Parse an SQL statement to a structured list of blocks, statements and tokens.
+/** A bunch of functions to parse and indent SQL text.
  */
 
 class toSQLParse {
 public:
+  struct settings {
+    bool ExpandSpaces;
+    bool CommaBefore;
+    bool BlockOpenLine;
+    bool OperatorSpace;
+    bool KeywordUpper;
+    bool RightSeparator;
+    bool EndBlockNewline;
+    int IndentLevel;
+  };
+
   /** Structure the statement is parsed into.
    */
   class statement {
@@ -65,7 +76,7 @@ public:
       List,
       /** Parameter of statement.
        */
-      Parameter,
+      Keyword,
       /** Another token of whatever it is detected in.
        */
       Token,
@@ -123,12 +134,46 @@ public:
    * @return Parsed statement tree.
    */
   static std::list<statement> parse(const QString &str,toConnection &conn)
-    { return parse(str); }
+  { return parse(str); }
+
+  /** Indent a string.
+   * @param str String to indent.
+   * @return An indented string.
+   */
+  static QString indent(const QString &str);
+  /** Indent a string.
+   * @param str String to indent.
+   * @param conn Connection to determine SQL dialect. (For future use)
+   * @return An indented string.
+   */
+  static QString indent(const QString &str,toConnection &conn)
+  { return indent(str); }
+
+  /** Create an indentation string.
+   * @param level Number of characters to indent.
+   */
+  static QString indentString(int level);
+  /** Count indentation level of a string.
+   * @param str String to check.
+   * @param chars Position in string.
+   */
+  static int countIndent(const QString &str,int &chars);
 
 private:
+  static settings Settings;
   static statement parseStatement(const QString &str,
 				  int &pos,
 				  bool declare);
+  static QString indentStatement(statement &stat,int level);
+public:
+  /** Get current settings.
+   */
+  static settings getSetting(void)
+  { return Settings; }
+  /** Get current settings.
+   */
+  static void setSetting(const settings &setting)
+  { Settings=setting; }
 };
 
 #endif

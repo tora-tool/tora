@@ -35,9 +35,9 @@
 #include "tosqlparse.h"
 #include "tohighlightedtext.h"
 
-#ifdef TOPARSE_DEBUG
-
 #include <stdio.h>
+
+#ifdef TOPARSE_DEBUG
 
 bool toMonolithic(void)
 {
@@ -59,8 +59,8 @@ void printStatement(toSQLParse::statement &stat,int level)
   case toSQLParse::statement::List:
     printf("List:");
     break;
-  case toSQLParse::statement::Parameter:
-    printf("Parameter:");
+  case toSQLParse::statement::Keyword:
+    printf("Keyword:");
     break;
   case toSQLParse::statement::Token:
     printf("Token:");
@@ -83,6 +83,18 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+SELECT a.TskCod TskCod,
+       a.CreEdt CreEdt,
+       a.TspActOprID OprID,
+       COUNT(1) Tot,
+       COUNT(a.TspActOprID) Lft,
+       b.TraCod TraCod,
+       SUM(b.FinAmt) FinAmt
+  FROM EssTsk a,EssTra b
+ WHERE DECODE(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)
+   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
+ GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
+HAVING COUNT(a.TspActOprID) > 0;
 CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
 					     oNumSwt                     OUT  NUMBER)
 AS
@@ -182,11 +194,14 @@ END;
   }
 
 #endif
+
   std::list<toSQLParse::statement> stat=toSQLParse::parse(res);
 
   for(std::list<toSQLParse::statement>::iterator i=stat.begin();i!=stat.end();i++) {
     printStatement(*i,1);
   }
+
+  printf("%s\n",(const char *)toSQLParse::indent(res));
 
   return 0;
 }
@@ -398,7 +413,6 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
        !token.isNull();
        token=getToken(str,pos,true,true)) {
     QString upp=token.upper();
-    printf("Token:%s\n",(const char *)token);
     if ((first=="IF"&&upp=="THEN")||
 	upp=="LOOP"||
 	upp=="DECLARE"||
@@ -406,7 +420,7 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
 	upp=="IS"||
 	(!declare&&upp=="BEGIN")) {
       statement blk(statement::Block);
-      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Keyword,token));
       blk.SubTokens.insert(blk.SubTokens.end(),ret);
       statement cur(statement::Statement);
       bool dcl=(upp=="DECLARE"||upp=="IS"||upp=="AS");
@@ -419,10 +433,10 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
 	      (*cur.SubTokens.begin()).String.upper()!="END");
       return blk;
     } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
-      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Parameter,token));
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Keyword,token));
       return ret;
-    } else if (upp==","||syntax.reservedWord(upp)) {
-      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Parameter,token));
+    } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT")) {
+      ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Keyword,token));
     } else if (upp=="(") {
       ret.SubTokens.insert(ret.SubTokens.end(),statement(statement::Token,token));
       statement lst=parseStatement(str,pos,false);
@@ -473,5 +487,230 @@ std::list<toSQLParse::statement> toSQLParse::parse(const QString &str)
   if (pos<int(str.length()))
     ret.insert(ret.end(),statement(statement::Raw,
 				   str.mid(pos,str.length()-pos)));
+  return ret;
+}
+
+#define TABSTOP 8
+
+int toSQLParse::countIndent(const QString &txt,int &chars)
+{
+  int level=0;
+  while(txt[chars].isSpace()&&chars<int(txt.length())) {
+    char c=txt[chars];
+    if (c=='\n')
+      level=0;
+    else if (c==' ')
+      level++;
+    else if (c=='\t')
+      level=(level/TABSTOP+1)*TABSTOP;
+    chars++;
+  }
+  return level;
+}
+
+toSQLParse::settings toSQLParse::Settings={true,
+					   false,
+					   false,
+					   true,
+					   true,
+					   true,
+					   true,
+					   4};
+
+QString toSQLParse::indentString(int level)
+{
+  QString ret;
+  if (Settings.ExpandSpaces) {
+    for(int i=0;i<level/8;i++)
+      ret+="\t";
+    for(int j=0;j<level%8;j++)
+      ret+=" ";
+  } else
+    for(int j=0;j<level;j++)
+      ret+=" ";
+  return ret;
+}
+
+QString toSQLParse::indentStatement(statement &stat,int level)
+{
+  QString ret;
+  switch(stat.Type) {
+  case statement::Block:
+    {
+      int exc=0;
+      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+	  i!=stat.SubTokens.end();
+	  i++) {
+	int add=0;
+	std::list<toSQLParse::statement>::iterator j=i;
+	j++;
+	if (i!=stat.SubTokens.begin()&&
+	    j!=stat.SubTokens.end())
+	  add=Settings.IndentLevel;
+	else
+	  exc=0;
+
+	QString t;
+	if ((*i).SubTokens.begin()!=(*i).SubTokens.end())
+	  t=(*(*i).SubTokens.begin()).String.upper();
+	if (t=="BEGIN"||t=="WHEN")
+	  add-=Settings.IndentLevel;
+	ret+=indentStatement(*i,level+add+exc);
+	if (t=="EXCEPTION")
+	  exc=Settings.IndentLevel;
+      }
+      if (Settings.EndBlockNewline)
+	ret+="\n";
+    }
+    break;
+  case statement::List:
+  case statement::Statement:
+    int maxlev=0;
+    bool any=true;
+    int current;
+    bool first;
+    bool noKeyBreak=false;
+    if (stat.Type==statement::Statement) {
+      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+	  i!=stat.SubTokens.end();
+	  i++) {
+	if (any) {
+	  if ((*i).Type==statement::Keyword) {
+	    if (int((*i).String.length())+1>maxlev)
+	      maxlev=(*i).String.length()+1;
+	    any=false;
+	  } else if (i==stat.SubTokens.begin()) {
+	    noKeyBreak=true;
+	    break;
+	  }
+	} else if ((*i).Type==statement::Token)
+	  any=true;
+      }
+      first=true;
+      current=0;
+      any=true;
+    } else {
+      for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+	  i!=stat.SubTokens.end();) {
+	if ((*i).Type!=statement::Keyword)
+	  noKeyBreak=true;
+	break;
+      }
+      current=level;
+      first=false;
+    }
+    for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+	i!=stat.SubTokens.end();
+	i++) {
+      QString upp=(*i).String.upper();
+      if ((*i).Type==statement::List) {
+	if (Settings.OperatorSpace) {
+	  ret+=" ";
+	  current++;
+	}
+	ret+=indentStatement(*i,current);
+	any=true;
+      } else if ((*i).String==",") {
+	if (Settings.CommaBefore) {
+	  ret+="\n";
+	  ret+=indentString(level+maxlev-2);
+	  ret+=", ";
+	} else {
+	  ret+=",\n";
+	  ret+=indentString(level+maxlev);
+	}
+	current=level+maxlev;
+	any=false;
+	first=true;
+      } else if (upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS") {
+	if (!Settings.BlockOpenLine) {
+	  if (ret.length()>0) {
+	    if (toIsIdent(ret[ret.length()-1])||Settings.OperatorSpace) {
+	      ret+=" ";
+	      current++;
+	    }
+	  }
+	  ret+=Settings.KeywordUpper?(*i).String.upper():(*i).String;
+	  current+=(*i).String.length();
+	} else {
+	  ret+="\n";
+	  ret+=indentString(level);
+	  ret+=Settings.KeywordUpper?(*i).String.upper():(*i).String;
+	  current=level+(*i).String.length();
+	}
+	any=false;
+      } else if (any&&(*i).Type==statement::Keyword&&!noKeyBreak) {
+	if (first)
+	  first=false;
+	else
+	  ret+="\n";
+	ret+=indentString(level);
+	ret+=QString("%1").arg(Settings.KeywordUpper?(*i).String.upper():(*i).String,
+			       Settings.RightSeparator?maxlev-1:1-maxlev);
+	current=level+maxlev-1;
+	any=false;
+      } else {
+	QString t=(*i).String;
+	if ((*i).Type==statement::Keyword) {
+	  if (Settings.KeywordUpper)
+	    t=upp;
+	} else {
+	  any=true;
+	}
+	int extra;
+	if (first) {
+	  first=false;
+	  any=false;
+	  extra=0;
+	} else {
+	  if (ret.length()>0&&(Settings.OperatorSpace||(toIsIdent(t[0])&&
+							(toIsIdent(ret[ret.length()-1])||
+							 ret[ret.length()-1]==')')))) {
+	    if (t!=";"&&
+		t!="."&&
+		ret[ret.length()-1]!='.'&&
+		current!=0) {
+	      current++;
+	      ret+=" ";
+	    }
+	  }
+	  extra=maxlev;
+	}
+	if (current<level+maxlev) {
+	  if (current==0)
+	    ret+=indentString(level+maxlev);
+	  else
+	    while(current<level+maxlev) {
+	      ret+=" ";
+	      current++;
+	    }
+	  current=level+maxlev;
+	}
+	ret+=t;
+	current+=t.length();
+      }
+    }
+    if (stat.Type==statement::Statement)
+      ret+="\n";
+    break;
+  }
+  return ret;
+}
+
+QString toSQLParse::indent(const QString &str)
+{
+  std::list<toSQLParse::statement> blk=parse(str);
+  int pos=0;
+  int level=countIndent(str,pos);
+
+  QString ret;
+  for(std::list<toSQLParse::statement>::iterator i=blk.begin();
+      i!=blk.end();
+      i++) {
+    ret+=indentStatement(*i,level);
+    if (Settings.EndBlockNewline&&(*i).Type!=statement::Block)
+      ret+="\n";
+  }
+  printf("Indentation:\n\n%s\n\n",(const char *)ret);
   return ret;
 }
