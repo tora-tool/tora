@@ -776,7 +776,7 @@ void toDebug::execute(void)
 	TargetSemaphore.up(); // Go go power rangers!
       }
       StartedSemaphore.down();
-      if (sync()>=0)
+      if (sync()>=0&&RunningTarget)
 	continueExecution(TO_BREAK_ANY_CALL);
     } TOCATCH
   } else
@@ -1338,7 +1338,7 @@ void toDebug::updateState(int reason)
       if (depth>=2) {
 	viewSource(schema,name,type,line.toInt(),true);
       } else {
-	continueExecution(TO_BREAK_NEXT_LINE);
+	if (RunningTarget) continueExecution(TO_BREAK_NEXT_LINE);
 	return;
       }
     } TOCATCH
@@ -1536,7 +1536,8 @@ void toDebug::executeInTarget(const QString &str,toQList &params)
 
 void toDebug::stop(void)
 {
-  continueExecution(TO_ABORT_EXECUTION);
+  if (RunningTarget) 
+    continueExecution(TO_ABORT_EXECUTION);
 }
 
 toDebug::toDebug(QWidget *main,toConnection &connection)
@@ -2121,12 +2122,11 @@ toDebug::~toDebug()
 	toLocker lock(Lock);
 	TargetSQL="";
 	TargetSemaphore.up();
-      }
+      } 
       ChildSemaphore.down();
     } else
       Lock.unlock();
   } TOCATCH
-
   try {
     DebugTool.closeWindow(connection());
   } TOCATCH
@@ -2286,7 +2286,6 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(tr("Erase Runtime &Log"),this,SLOT(clearLog(void)));
 
       toMainWidget()->menuBar()->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
-
       if (!isRunning()) {
 	ToolMenu->setItemEnabled(TO_ID_STOP,false);
 	ToolMenu->setItemEnabled(TO_ID_STEP_INTO,false);
@@ -2318,23 +2317,25 @@ void toDebug::selectedWatch()
   if (item) {
     if (!item->text(5).isEmpty()&&item->text(5)!=QString::fromLatin1("LIST")&&item->text(5)!=QString::fromLatin1("NULL")) {
       DelWatchButton->setEnabled(false);
-      ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
+      if (ToolMenu) ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
     } else {
       DelWatchButton->setEnabled(true);
-      ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,true);
+      if (ToolMenu) ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,true);
     }
     if (item->text(4).isEmpty()) {
       ChangeWatchButton->setEnabled(true);
-      ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,true);
+      if (ToolMenu) ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,true);
     } else {
       ChangeWatchButton->setEnabled(false);
-      ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+      if (ToolMenu) ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
     }
   } else {
     DelWatchButton->setEnabled(false);
     ChangeWatchButton->setEnabled(false);
-    ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
-    ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+    if (ToolMenu) {
+      ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
+      ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+    }
   }
 }
 

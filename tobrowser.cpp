@@ -1768,7 +1768,7 @@ void toBrowser::changeSecond(void)
   } else if (tab&&!strcmp(tab->name(),TAB_INDEX)&&!strcmp(tab2->name(),TAB_INDEX_EXTRACT)) {
     QListViewItem *item=selectedItem();
     if (item)
-      SecondTab->changeParams(schema(),item->text(0)+"."+item->text(1));
+      SecondTab->changeParams(schema(),item->text(0));//+"."+item->text(1));
   } else
     SecondTab->changeParams(schema(),
 			    SecondText);
