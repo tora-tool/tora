@@ -10,9 +10,9 @@ Summary: Toolkit for Oracle
 Source0: %{name}-%{version}.tar.bz2
 Copyright: GPL
 BuildRoot: %{_tmppath}/tora-root
-Requires: qt2 libclnstsh.so
+Requires: qt2 libclntsh.so
 Group: %{group}
-BuildRequires: qt2-devel
+BuildRequires: qt2-devel libclntsh.so
 
 %Description
 Tool for Oracle (Tora) is a tool for DBAs and database software developers.
