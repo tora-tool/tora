@@ -8461,9 +8461,10 @@ public:
    delete[] buf;
  }
 
-  int write_dt(void* trg, const void* src, const int sz)
-  {
+  int write_dt(void* trg, const void* src, const int
 #if (defined(OTL_ORA8I)||defined(OTL_ORA9I))&&defined(OTL_ORA_TIMESTAMP)
+	       )
+  {
     OCIDateTime* trg_ptr=OTL_RCAST(OCIDateTime*,trg);
     otl_datetime* src_ptr=OTL_RCAST(otl_datetime*,OTL_CCAST(void*,src));
     int rc=0;
@@ -8510,6 +8511,7 @@ public:
     if(rc!=0)return 0;
     return 1;
 #else
+	       sz)
     memcpy(trg,src,sz);
     return 1;
 #endif
