@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include <kmenubar.h>
 #endif
 
+#include <qcombobox.h>
 #include <qregexp.h>
 #include <qlabel.h>
 #include <qlistview.h>
