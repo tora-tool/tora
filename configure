@@ -78,7 +78,7 @@ fi
 
 # Get the MOC/UIC stuff
 
-egrep "^(UIC|MOC)" Makefile > configure.setup
+egrep "^(UIC|MOC)" Makefile | perl -p -e 's/\$(QTDIR)/\$QTDIR/g' > configure.setup
 
 . ./configure.setup
 rm -f configure.setup

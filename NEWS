@@ -1,5 +1,6 @@
 1.3.13:
 
+2003-11-18: Fixed for configure to handle QTDIR variable in makefile.
 2003-11-18: Added duplicate row functionality to content editor.
 2003-11-09: Don't check to save changes when selecting a new package. (Thanx Francesco Dandrea)
 2003-11-06: Fixed refresh for content editor.
