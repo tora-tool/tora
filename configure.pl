@@ -819,7 +819,7 @@ __TEMP__
     $QtInclude=findFile("^qglobal\\.h\$",sub {
 	                                     if (open(QT,"<$_[0]")) {
 						 while(<QT>) {
-						     if (/#define\s+QT_VERSION_STR\s+\"([0-9\.]+)\"/) {
+						     if (/#define\s+QT_VERSION_STR\s+\"([0-9\.]+)[-"]+/) {
 							 $QtVersion=$1;
 							 if ($QtVersion ge "2.2") {
 							     last;
