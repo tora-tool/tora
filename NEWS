@@ -34,6 +34,8 @@
 2001-03-21: Fixed bug in setting env when missing NLS_LANG (Thanx rhwang).
 2001-03-23: Added security manager.
 2001-03-23: Fixed listview traversion in toDebug.
+2001-03-24: Changed undo to CTRL+Y (Standard Qt)
+2001-03-24: Changed toResultContent to be editable.
 
 0.6: Released 2001-02-23
 

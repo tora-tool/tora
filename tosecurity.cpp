@@ -27,8 +27,6 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
-
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qlabel.h>

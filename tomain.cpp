@@ -53,6 +53,7 @@ TO_NAMESPACE;
 #include "toabout.h"
 #include "topreferences.h"
 #include "toresultview.h"
+#include "toresultcontent.h"
 
 #include "tomain.moc"
 
@@ -178,7 +179,7 @@ toMain::toMain()
   EditMenu->insertSeparator();
   EditMenu->insertItem("&Options",TO_EDIT_OPTIONS);
   EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
-  EditMenu->setAccel(Key_Z|CTRL|SHIFT,TO_EDIT_REDO);
+  EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
   EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
   EditMenu->setAccel(Key_C|CTRL,TO_EDIT_COPY);
   EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
@@ -413,7 +414,8 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    if (dynamic_cast<toResultView *>(currWidget)) {
+    if (dynamic_cast<toResultView *>(currWidget)||
+	dynamic_cast<toResultContent *>(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
     } else {
@@ -545,16 +547,22 @@ void toMain::commandCallback(int cmd)
     case TO_EDIT_READ_ALL:
       {
 	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
 	if (res)
 	  res->readAll();
+	else if (cnt)
+	  cnt->readAll();
       }
       break;
     case TO_FILE_PRINT:
       {
 	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
 	if (res)
 	  res->print();
-	if (mark)
+	else if (res)
+	  cnt->print();
+	else if (mark)
 	  mark->print();
       }
       break;

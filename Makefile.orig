@@ -90,7 +90,6 @@ plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toparamget.tso:objs/toparamget.o
 plugins/toresultcols.tso:objs/toresultcols.o
 plugins/toresultconstraint.tso:objs/toresultconstraint.o
-plugins/toresultcontent.tso:objs/toresultcontent.o
 plugins/toresultdepend.tso:objs/toresultdepend.o
 plugins/toresultindexes.tso:objs/toresultindexes.o
 plugins/toresultlock.tso:objs/toresultlock.o
@@ -139,7 +138,6 @@ tora-plugin: \
 	plugins/toparamget.tso \
 	plugins/toresultcols.tso \
 	plugins/toresultconstraint.tso \
-	plugins/toresultcontent.tso \
 	plugins/toresultdepend.tso \
 	plugins/toresultindexes.tso \
 	plugins/toresultlock.tso \
@@ -169,6 +167,7 @@ tora: \
 	objs/tomarkedtext.o \
 	objs/tonewconnection.o \
 	objs/topreferences.o \
+	objs/toresultcontent.o \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
 	objs/toresultplan.o \

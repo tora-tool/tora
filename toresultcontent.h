@@ -29,13 +29,51 @@
 #ifndef __TORESULTCONTENT_H
 #define __TORESULTCONTENT_H
 
-#include "toresultview.h"
+#include <list>
+#include <qtable.h>
+#include "toresult.h"
+#include "toconnection.h"
 
-class toResultContent : public toResultView {
+class toResultContent : public QTable,public toResult {
+  Q_OBJECT
+
+  toConnection &Connection;
+  QString Owner;
+  QString Table;
+  list<QString> OrigValues;
+  otl_stream *Query;
+  otl_column_desc *Description;
+  int Row;
+  int CurrentRow;
+  bool AddRow;
+
+  void addRow(void);
+  void wrongUsage(void);
+
+  virtual void drawContents(QPainter * p,int cx,int cy,int cw,int ch);
+  virtual QWidget *beginEdit(int row,int col,bool replace);
+  virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
+  virtual void keyPressEvent(QKeyEvent *e);
+  virtual void mousePressEvent(QMouseEvent *);
+  virtual void focusInEvent (QFocusEvent *e);
+  virtual void focusOutEvent (QFocusEvent *e); 
 public:
   toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL);
+  virtual void query(const QString &sql,const list<QString> &param)
+  { wrongUsage(); }
+  virtual void changeParams(const QString &Param1)
+  { wrongUsage(); }
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  { wrongUsage(); }
+
+  void readAll(void);
+  void print(void);
 public slots:
+  virtual void refresh(void)
+  { changeParams(Owner,Table); }
   virtual void changeParams(const QString &Param1,const QString &Param2);
+
+  void changePosition(int col,int row);
 };
 
 #endif

@@ -27,19 +27,281 @@
 
 TO_NAMESPACE;
 
+#include <stdio.h>
+
+#include "toconf.h"
+#include "tomain.h"
 #include "toresultcontent.h"
+#include "toresultview.h"
+
+#include "toresultcontent.moc"
+
+#define INC_SIZE 50
 
 toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL)
-  : toResultView(conn,parent,name)
+  : QTable(parent,name),Connection(conn)
 {
-  setSQLName("toResultContent");
+  Query=NULL;
+  connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
+  CurrentRow=-1;
+  setFocusPolicy(StrongFocus);
+}
+
+void toResultContent::wrongUsage(void)
+{
+  throw QString("Can't use these on toResultContent");
 }
 
 void toResultContent::changeParams(const QString &Param1,const QString &Param2)
 {
-  SQL="SELECT * FROM ";
-  SQL.append(Param1);
-  SQL.append(".");
-  SQL.append(Param2);
-  query(SQL);
+  Owner=Param1;
+  Table=Param2;
+  setNumRows(0);
+  setNumCols(0);
+
+  delete Query;
+  Query=NULL;
+
+  try {
+    QString sql;
+    sql="SELECT * FROM \"";
+    sql+=Owner;
+    sql+="\".\"";
+    sql+=Table;
+    sql+="\"";
+    Query=new otl_stream;
+    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+    Query->open(1,
+		sql.utf8(),
+		Connection.connection());
+
+    int descriptionLen;
+    Description=Query->describe_select(descriptionLen);
+
+    setNumCols(descriptionLen);
+    QHeader *head=horizontalHeader();
+    for (int i=0;i<descriptionLen;i++) {
+      QString name(QString::fromUtf8(Description[i].name));
+      head->setLabel(i,name);
+    }
+    int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
+    Row=0;
+    setNumRows(INC_SIZE);
+    for (int i=0;i<MaxNumber&&!Query->eof();i++) {
+      if (Row+2>=numRows())
+	setNumRows(numRows()+INC_SIZE);
+      addRow();
+    }
+    setNumRows(Row+1);
+  } TOCATCH
+  OrigValues.clear();
+  CurrentRow=-1;
 }
+
+void toResultContent::addRow(void)
+{
+  AddRow=false;
+  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
+  try {
+    if (Query&&!Query->eof()) {
+      if (Row+1>=numRows())
+	setNumRows(Row+3);
+      verticalHeader()->setLabel(Row,QString::number(Row+1));
+      for (int j=0;j<numCols()&&!Query->eof();j++)
+	setText(Row,j,toReadValue(Description[j],*Query,MaxColSize));
+      Row++;
+    }
+  } TOCATCH
+}
+
+void toResultContent::keyPressEvent(QKeyEvent *e)
+{
+  if (e->key()==Key_PageDown) {
+    int height=verticalHeader()->sectionSize(0);
+    if (!Query->eof()&&height>0) {
+      int num=visibleHeight()/height;
+      setNumRows(Row+num+1);
+      for (int i=0;i<num&&!Query->eof();i++) {
+	if (Row+2>=numRows())
+	  setNumRows(numRows()+INC_SIZE);
+	addRow();
+      }
+      if (numRows()!=Row+1)
+	setNumRows(Row+1);
+    }
+  }
+  QTable::keyPressEvent(e);
+}
+
+void toResultContent::paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected)
+{
+  if (row+1>=Row)
+    AddRow=true;
+  QTable::paintCell(p,row,col,cr,selected);
+}
+
+QWidget *toResultContent::beginEdit(int row,int col,bool replace)
+{
+  OrigValues.clear();
+  for (int i=0;i<numCols();i++)
+    OrigValues.insert(OrigValues.end(),text(row,i));
+
+  return QTable::beginEdit(row,col,replace);
+}
+
+static bool nullString(const QString &str)
+{
+  return str=="{null}"||str.isNull();
+}
+
+void toResultContent::changePosition(int row,int col)
+{
+  if (CurrentRow!=row&&OrigValues.size()>0) {
+    if (CurrentRow>=Row) {
+      QString sql="INSERT INTO \"";
+      sql+=Owner;
+      sql+="\".\"";
+      sql+=Table;
+      sql+="\" VALUES (";
+      for (int i=0;i<numCols();i++) {
+	sql+=":f";
+	sql+=QString::number(i);
+	sql+="<char[4000]>";
+	if (i+1<numCols())
+	  sql+=",";
+      }
+      sql+=")";
+      try {
+	otl_stream exec(1,
+			sql.utf8(),
+			Connection.connection());
+	otl_null null;
+	for (int i=0;i<numCols();i++) {
+	  QString str=text(CurrentRow,i);
+	  otl_null null;
+	  if (nullString(str))
+	    exec<<null;
+	  else
+	    exec<<str.utf8();
+	}
+	Row++;
+	setNumRows(Row+1);
+      } TOCATCH
+    } else {
+      QString sql="UPDATE \"";
+      sql+=Owner;
+      sql+="\".\"";
+      sql+=Table;
+      sql+="\" SET ";
+      QHeader *head=horizontalHeader();
+      for(int i=0;i<numCols();i++) {
+	sql+="\"";
+	sql+=head->label(i);
+	sql+="\" ";
+	if (nullString(text(CurrentRow,i)))
+	  sql+=" = NULL";
+	else {
+	  sql+="= :f";
+	  sql+=QString::number(i);
+	  sql+="<char[4000]>";
+	}
+	if (i+1<numCols())
+	  sql+=", ";
+      }
+      sql+=" WHERE ";
+      int col=0;
+      for(list<QString>::iterator i=OrigValues.begin();i!=OrigValues.end();i++,col++) {
+	sql+="\"";
+	sql+=head->label(col);
+	sql+="\" ";
+	if (nullString(*i))
+	  sql+=" IS NULL";
+	else {
+	  sql+="= :c";
+	  sql+=QString::number(col);
+	  sql+="<char[4000]>";
+	}
+	if (col+1<numCols())
+	  sql+=" AND ";
+      }
+      try {
+	otl_stream exec(1,
+			sql.utf8(),
+			Connection.connection());
+      
+	otl_null null;
+	for (int i=0;i<numCols();i++) {
+	  QString str=text(CurrentRow,i);
+	  if (!nullString(str))
+	    exec<<str.utf8();
+	}
+	for(list<QString>::iterator i=OrigValues.begin();i!=OrigValues.end();i++,col++) {
+	  QString str=(*i);
+	  if (!nullString(str))
+	    exec<<str.utf8();
+	}
+      } TOCATCH
+    }
+    OrigValues.clear();
+  }
+  CurrentRow=row;
+}
+
+void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
+{
+  QTable::drawContents(p,cx,cy,cw,ch);
+  if (AddRow)
+    addRow();
+}
+
+void toResultContent::mousePressEvent(QMouseEvent *e)
+{
+  setFocus();
+  QTable::mousePressEvent(e);
+}
+
+void toResultContent::readAll(void)
+{
+  while (Query&&!Query->eof()) {
+    if (Row+2>=numRows())
+      setNumRows(numRows()+INC_SIZE);
+    addRow();
+  }
+  setNumRows(Row+1);
+}
+
+void toResultContent::print(void)
+{
+  toResultView *print=new toResultView(false,true,Connection,this);
+  print->hide();
+  QString name="Content of ";
+  name+=Owner;
+  name+=".";
+  name+=Table;
+  print->setSQLName(name);
+  QString sql="SELECT * FROM \"";
+  sql+=Owner;
+  sql+="\".\"";
+  sql+=Table;
+  sql+="\"";
+  print->query(sql);
+  print->print();
+  delete print;
+}
+
+void toResultContent::focusInEvent (QFocusEvent *e)
+{
+  printf("Focus received\n");
+  toMain::editEnable(false,false,true,
+		     false,false,
+		     false,false,false);
+  QTable::focusInEvent(e);
+}
+
+void toResultContent::focusOutEvent (QFocusEvent *e)
+{
+  printf("Focus lost\n");
+  toMain::editDisable();
+  QTable::focusOutEvent(e);
+}
+

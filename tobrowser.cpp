@@ -305,9 +305,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,"Triggers");
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
-  resultView=new toResultContent(Connection,curr,TAB_TABLE_DATA);
-  curr->addTab(resultView,"Data");
-  SecondMap[TAB_TABLE_DATA]=resultView;
+  toResultContent *content=new toResultContent(Connection,curr,TAB_TABLE_DATA);
+  curr->addTab(content,"Data");
+  SecondMap[TAB_TABLE_DATA]=content;
 
   toResultItem *resultItem=new toResultItem(2,true,Connection,curr,TAB_TABLE_INFO);
   resultItem->setSQL(SQLTableInfo(Connection));
@@ -343,9 +343,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondMap[TAB_VIEW_SQL]=resultField;
 
-  resultView=new toResultContent(Connection,curr,TAB_VIEW_DATA);
-  curr->addTab(resultView,"Data");
-  SecondMap[TAB_VIEW_DATA]=resultView;
+  content=new toResultContent(Connection,curr,TAB_VIEW_DATA);
+  curr->addTab(content,"Data");
+  SecondMap[TAB_VIEW_DATA]=content;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
