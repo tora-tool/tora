@@ -101,6 +101,7 @@ void toResultCombo::poll(void)
 	delete Query;
 	Query=NULL;
 	Poll.stop();
+	setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
       }
     }
   } catch(const QString &exc) {
