@@ -72,6 +72,7 @@ private slots:
   void applySession(void);
   void applySystem(void);
   void changeItem(void);
+  void changedData(int row,int col,const QString &data);
 public slots:
   virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.

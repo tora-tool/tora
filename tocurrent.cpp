@@ -53,6 +53,7 @@
 #include "tocurrent.h"
 #include "toresultstats.h"
 #include "toconnection.h"
+#include "toresultparam.h"
 
 #include "tocurrent.moc"
 
@@ -97,10 +98,6 @@ static toSQL SQLVersion("toCurrent:Version",
 			"select banner \"Version\" from v$version",
 			"Display version of Oracle");
 
-static toSQL SQLParameters("toCurrent:Parameters",
-			   "select name,value,description from v$parameter",
-			   "Display parameters of Oracle server");
-
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
   : toToolWidget(CurrentTool,"current.html",main,connection)
 {
@@ -125,8 +122,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Version=new toResultView(true,false,Tabs);
   Version->setSQL(SQLVersion);
   Tabs->addTab(Version,"Version");
-  Parameters=new toResultView(true,false,Tabs);
-  Parameters->setSQL(SQLParameters);
+  Parameters=new toResultParam(Tabs);
   Tabs->addTab(Parameters,"Parameters");
   Statistics=new toResultStats(false,Tabs);
   Tabs->addTab(Statistics,"Statistics");
@@ -214,7 +210,6 @@ void toCurrent::addRole(QListViewItem *parent)
 void toCurrent::refresh()
 {
   Parameters->refresh();
-  Parameters->setSorting(0);
   Version->refresh();
   Statistics->refreshStats();
   Grants->clear();

@@ -42,6 +42,7 @@
 class toResultView;
 class QTabWidget;
 class toResultStats;
+class toResultParam;
 class QPopupMenu;
 
 class toCurrent : public toToolWidget {
@@ -50,7 +51,7 @@ class toCurrent : public toToolWidget {
   QTabWidget *Tabs;
   toResultView *Version;
   toListView *Grants;
-  toResultView *Parameters;
+  toResultParam *Parameters;
   toResultStats *Statistics;
   QPopupMenu *ToolMenu;
   virtual void addRole(QListViewItem *parent);

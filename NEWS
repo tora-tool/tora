@@ -21,6 +21,8 @@
 2001-09-27: Fixed drawing of background outside edit area in editors.
 2001-09-28: Speedup of drawing background fix, also set background on normal
 	editor.
+2001-09-28: Fixed alignment of column name in extract.
+2001-09-29: Done parameter editor.
 
 1.1.1: 2001-09-24
 
