@@ -61,6 +61,7 @@ class QGrid;
 class toBarChart;
 class QPopupMenu;
 class toLegendChart;
+class toResultLock;
 
 class toTuningMiss : public toResultLine {
 public:
@@ -155,6 +156,7 @@ class toTuning : public toToolWidget {
   toListView *Indicators;
   toResultParam *Parameters;
   toResultLong *Options;
+  toResultLock *BlockingLocks;
   toResultItem *Licenses;
   toResultStats *Statistics;
   toTuningWait *Waits;

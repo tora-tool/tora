@@ -70,6 +70,7 @@
 #include "toresultlong.h"
 #include "totuningsettingui.h"
 #include "tonoblockquery.h"
+#include "toresultlock.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
@@ -1272,6 +1273,9 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Parameters=new toResultParam(Tabs,"parameters");
   Tabs->addTab(Parameters,"&Parameters");
 
+  BlockingLocks=new toResultLock(Tabs,"locks");
+  Tabs->addTab(BlockingLocks,"&Blocking locks");
+
   Options=new toResultLong(true,false,toQuery::Background,Tabs,"options");
   Options->setSQL(SQLOptions);
   Tabs->addTab(Options,"&Options");
@@ -1458,6 +1462,8 @@ void toTuning::refresh(void)
     Statistics->refreshStats();
   else if (LastTab==Parameters)
     Parameters->refresh();
+  else if (LastTab==BlockingLocks)
+    BlockingLocks->refresh();
   else if (LastTab==Options)
     Options->refresh();
   else if (LastTab==Licenses)

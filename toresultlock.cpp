@@ -52,7 +52,6 @@ toResultLock::toResultLock(QWidget *parent,const char *name)
   setSorting(-1);
   setRootIsDecorated(true);
   addColumn("Session");
-  addColumn("Lock ID:s");
   addColumn("Schema");
   addColumn("Osuser");
   addColumn("Program");
@@ -73,9 +72,23 @@ toResultLock::~toResultLock()
   delete Query;
 }
 
+static toSQL SQLBlockingLock("toResultLock:BlockingLocks",
+			     "select b.sid,b.schemaname,b.osuser,b.program,\n"
+			     "       DECODE(a.type,'TM','DML enqueue','TX','Transaction enqueue','UL','User supplied','Internal ('||a.type||')'),\n"
+			     "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)),\n"
+			     "       DECODE(a.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.request)),\n"
+			     "       d.object_name,\n"
+			     "       ' ',\n"
+			     "       TO_CHAR(SYSDATE-a.CTIME/3600/24)\n"
+			     "  from v$lock a,v$session b,v$locked_object c,sys.all_objects d\n"
+			     " where a.sid = b.sid\n"
+			     "   and c.session_id = a.sid\n"
+			     "   and d.object_id = c.object_id\n"
+			     "   and a.request != 0",
+			     "List session blocked by a lock");
+
 static toSQL SQLLock("toResultLock:Locks",
-		     "select TO_CHAR(b.sid),\n"
-		     "       a.id1||':'||a.id2,\n"
+		     "select b.sid,\n"
 		     "       b.schemaname,\n"
 		     "       b.osuser,\n"
 		     "       b.program,\n"
@@ -100,7 +113,9 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "                  and bb.object_id = c.object_id)\n"
 		     "   and a.id1 = e.id1\n"
 		     "   and a.id2 = e.id2\n"
-		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[101]> and aa.lmode != aa.request and aa.request != 0)",
+		     "   and e.sid = :f1<char[101]>\n"
+		     "   and e.lmode != e.request\n"
+		     "   and e.request != 0",
 		     "List locks in a session");
 
 void toResultLock::query(const QString &sql,
@@ -121,37 +136,68 @@ void toResultLock::query(const QString &sql,
   try {
     LastItem=NULL;
     toQList par;
-    par.insert(par.end(),sql);
-    Query=new toNoBlockQuery(connection(),toQuery::Background,
-			     toSQL::string(SQLLock,connection()),par);
+    if (!sql.isEmpty()) {
+      par.insert(par.end(),sql);
+      Query=new toNoBlockQuery(connection(),toQuery::Background,
+			       toSQL::string(SQLLock,connection()),par);
+    } else {
+      Query=new toNoBlockQuery(connection(),toQuery::Background,
+			       toSQL::string(SQLBlockingLock,connection()),par);
+    }
     Poll.start(100);
   } TOCATCH
 }
+
+#define MARK_COL 20
 
 void toResultLock::poll(void)
 {
   try {
     if (Query&&Query->poll()) {
       if (!Query->eof()) {
-	if (!LastItem)
-	  LastItem=new toResultViewItem(this,NULL);
-	else
-	  LastItem=new toResultViewItem(LastItem,NULL);
-	for (int pos=0;!Query->eof();pos++)
-	  LastItem->setText(pos,Query->readValue());
-
-	delete Query;
-	Query=NULL;
-
-	toQList par;
-	par.insert(par.end(),LastItem->text(0));
-	Query=new toNoBlockQuery(connection(),toQuery::Background,
-				 toSQL::string(SQLLock,connection()),par);
-      } else {
-	delete Query;
-	Query=NULL;
-	Poll.stop();
+	do {
+	  QListViewItem *item;
+	  if (!LastItem)
+	    item=new toResultViewItem(this,NULL);
+	  else
+	    item=new toResultViewItem(LastItem,NULL);
+	  toQDescList desc=Query->describe();
+	  for (unsigned int pos=0;pos<desc.size();pos++)
+	    item->setText(int(pos),Query->readValue());
+	} while(!Query->eof());
       }
+
+      delete Query;
+      Query=NULL;
+
+      LastItem=NULL;
+      QListViewItem *next=NULL;
+      for (QListViewItem *item=firstChild();item;item=next) {
+	if (item->text(MARK_COL).isEmpty()) {
+	  LastItem=item;
+	  item->setText(MARK_COL,"Yes");
+	  item->setOpen(true);
+	  toQList par;
+	  par.insert(par.end(),LastItem->text(0));
+	  Query=new toNoBlockQuery(connection(),toQuery::Background,
+				   toSQL::string(SQLLock,connection()),par);
+	  break;
+	}
+	if (item->firstChild()) {
+	  next=item->firstChild();
+	} else if (item->nextSibling())
+	  next=item->nextSibling();
+	else {
+	  next=item;
+	  do {
+	    next=next->parent();
+	  } while(next&&!next->nextSibling());
+	  if (next)
+	    next=next->nextSibling();
+	}
+      }
+      if (!LastItem)
+	Poll.stop();
     }
   } catch(const QString &exc) {
     delete Query;
