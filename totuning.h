@@ -67,15 +67,29 @@ public:
 class toTuningFileIO : public QScrollView {
   Q_OBJECT
 
-  QGrid *Box;
-  std::map<QString,toBarChart *> Charts;
+  QGrid *TablespaceTime;
+  QGrid *TablespaceReads;
+  QGrid *FileTime;
+  QGrid *FileReads;
   time_t LastStamp;
+  std::map<QString,toBarChart *> ReadsCharts;
+  std::map<QString,toLineChart *> TimeCharts;
   std::map<QString,std::list<double> > LastValues;
   virtual void resizeEvent(QResizeEvent *e);
+
+  void saveSample(const QString &,const QString &,
+		  double reads,double writes,
+		  double readBlk,double writeBlk,
+		  double avgTim,double minTim,
+		  double maxRead,double maxWrite);
+
+  void allocCharts(const QString &,const QString &);
+
 public:
   toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0);
 public slots:
   virtual void refresh(void);
+  virtual void changeCharts(int val);
 };
 
 class toTuningOverview : public toTuningOverviewUI {
