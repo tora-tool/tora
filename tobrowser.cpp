@@ -53,6 +53,7 @@
 #include "toresultitem.h"
 #include "toresultlong.h"
 #include "toresultreferences.h"
+#include "toresultstorage.h"
 #include "toresultview.h"
 #include "tosql.h"
 #include "totool.h"
@@ -383,6 +384,7 @@ public:
 #define TAB_TABLE_GRANTS	"TablesGrants"
 #define TAB_TABLE_TRIGGERS	"TablesTriggers"
 #define TAB_TABLE_INFO		"TablesInfo"
+#define TAB_TABLE_EXTENT	"TablesExtent"
 #define TAB_TABLE_EXTRACT	"TablesExtract"
 
 #define TAB_VIEWS		"Views"
@@ -401,6 +403,7 @@ public:
 #define TAB_INDEX		"Index"
 #define TAB_INDEX_COLS		"IndexCols"
 #define TAB_INDEX_INFO		"IndexInfo"
+#define TAB_INDEX_EXTENT	"IndexesExtent"
 #define TAB_INDEX_EXTRACT	"IndexExtract"
 
 #define TAB_SYNONYM		"Synonym"
@@ -881,6 +884,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,tr("Information"));
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
+  toResultExtent *resultExtent=new toResultExtent(curr,TAB_TABLE_EXTENT);
+  curr->addTab(resultExtent,tr("Extents"));
+  SecondMap[TAB_TABLE_EXTENT]=resultExtent;
+
   toResultExtract *resultExtract=new toResultExtract(true,this,TAB_TABLE_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_TABLE_EXTRACT]=resultExtract;
@@ -960,6 +967,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultItem->setSQL(SQLIndexInfo);
   curr->addTab(resultItem,tr("Info"));
   SecondMap[TAB_INDEX_INFO]=resultItem;
+
+  resultExtent=new toResultExtent(curr,TAB_INDEX_EXTENT);
+  curr->addTab(resultExtent,tr("Extents"));
+  SecondMap[TAB_INDEX_EXTENT]=resultExtent;
 
   resultExtract=new toResultExtract(true,this,TAB_INDEX_EXTRACT);
   curr->addTab(resultExtract,tr("Script"));
@@ -1481,6 +1492,9 @@ public:
       return tool;
     } else if (typ==qApp->translate("toBrowser","Indexes")) {
       res=new toResultIndexes(tool);
+    } else if (typ==qApp->translate("toBrowser","Extents")) {
+      new toResultExtent(tool);
+      return tool;
     } else if (typ==qApp->translate("toBrowser","Constraints")) {
       res=new toResultConstraint(tool);
     } else if (typ==qApp->translate("toBrowser","Triggers")) {
@@ -1547,6 +1561,7 @@ public:
       new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Data"));
       new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
       if (conn.provider()=="Oracle") {
+	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Extents"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
       }
     } else if (typ==qApp->translate("toBrowser","Views")) {
@@ -1589,6 +1604,7 @@ public:
       setPixmap(0,image);
       if (conn.provider()=="Oracle") {
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Information"));
+	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Extents"));
 	new toTemplateTableItem(conn,this,qApp->translate("toBrowser","Script"));
       }
     } else if (typ==qApp->translate("toBrowser","Synonyms")) {

@@ -40,6 +40,68 @@
 
 class toNoBlockQuery;
 
+class toStorageExtent : public QWidget {
+  Q_OBJECT
+
+public:
+  struct extentName {
+    QString Owner;
+    QString Table;
+    QString Partition;
+    int Size;
+
+    extentName(void)
+    { }
+    extentName(const QString &owner,const QString &table,const QString &partition,int size);
+    bool operator < (const extentName &) const;
+    bool operator == (const extentName &) const;
+  };
+  struct extent : public extentName {
+    int File;
+    int Block;
+
+    extent(void)
+    { File=Block=0; }
+    extent(const QString &owner,const QString &table,const QString &partition,
+	   int file,int block,int size);
+    bool operator < (const extent &) const;
+    bool operator == (const extent &) const;
+  };
+private:
+  std::list<extent> Extents;
+  extentName Highlight;
+  QString Tablespace;
+
+  std::map<int,int> FileOffset;
+  int Total;
+public:
+  toStorageExtent(QWidget *parent,const char *name=NULL);
+  void highlight(const QString &owner,const QString &table,const QString &partition);
+
+  void setTablespace(const QString &tablespace);
+  void setFile(const QString &tablespace,int file);
+
+  std::list<extentName> objects(void);
+protected:
+  virtual void paintEvent(QPaintEvent *);
+};
+
+class toResultExtent : public toStorageExtent,public toResult {
+  Q_OBJECT
+public:
+  toResultExtent(QWidget *parent,const char *name=NULL);
+
+  /** Support Oracle
+   */
+  virtual bool canHandle(toConnection &conn);
+public slots:
+  /** Perform a query.
+   * @param sql Execute an SQL statement.
+   * @param params Parameters needed as input to execute statement.
+   */
+  virtual void query(const QString &sql,const toQList &params);
+};
+
 class toResultStorage : public toResultView {
   Q_OBJECT
 

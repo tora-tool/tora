@@ -147,51 +147,6 @@ public slots:
   virtual void displaySQL(void);
 };
 
-class toStorageExtent : public QWidget {
-  Q_OBJECT
-
-public:
-  struct extentName {
-    QString Owner;
-    QString Table;
-    QString Partition;
-    int Size;
-
-    extentName(void)
-    { }
-    extentName(const QString &owner,const QString &table,const QString &partition,int size);
-    bool operator < (const extentName &) const;
-    bool operator == (const extentName &) const;
-  };
-  struct extent : public extentName {
-    int File;
-    int Block;
-
-    extent(void)
-    { File=Block=0; }
-    extent(const QString &owner,const QString &table,const QString &partition,
-	   int file,int block,int size);
-    bool operator < (const extent &) const;
-    bool operator == (const extent &) const;
-  };
-private:
-  std::list<extent> Extents;
-  extentName Highlight;
-
-  std::map<int,int> FileOffset;
-  int Total;
-public:
-  toStorageExtent(QWidget *parent);
-  void highlight(const QString &owner,const QString &table,const QString &partition);
-
-  void setTablespace(const QString &tablespace);
-  void setFile(const QString &tablespace,int file);
-
-  std::list<extentName> objects(void);
-protected:
-  virtual void paintEvent(QPaintEvent *);
-};
-
 class toStorage : public toToolWidget {
   Q_OBJECT
 

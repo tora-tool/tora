@@ -1,5 +1,7 @@
 1.3.9:
 
+2002-02-01: Added extent view in browser.
+2002-02-01: Added result extent class.
 2002-02-01: Fixed problem with lots of parameters to configure. (Thanx Mihai Ibanescu)
 2002-02-01: Changed resize rows to 500 from 200 in resultviews.
 2002-02-01: Added option to never read object cache. (Thanx Oliver Jehle)
