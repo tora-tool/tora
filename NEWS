@@ -1,4 +1,4 @@
-0.13:
+1.0:
 
 2001-07-02: Upgraded to 3.2.20 of OTL.
 2001-07-02: Rewrote tns_names finding on Windows.
@@ -7,6 +7,7 @@
 2001-07-03: Added status message history.
 2001-07-03: Don't copy xpm files to help, help will use png.
 2001-07-03: Always update schema list in db browser when refreshing.
+2001-07-03: Display the short key number in the caption of toolwindows.
 
 0.12: Released 2001-07-01
 
