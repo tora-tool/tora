@@ -25,32 +25,35 @@ SRCPWD=`pwd`
 cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
+cp icons/* help
 mv tora-mono tora
 cd ..
 echo Packing tora-$1-bin.tar.gz
 tar czf $SRCPWD/../tora-$1-bin.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
-    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm
+    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 cd $SRCPWD
 rpm -ba tora-$1/rpm/tora-static.spec
 cd /usr/src/RPM/BUILD
 mv tora-$1/tora-static tora-$1/tora
+cp icons/* help
 echo Packing tora-$1-static.tar.gz
 tar czf $SRCPWD/../tora-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
-    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm
+    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
 cd $SRCPWD
 rpm -ba tora-$1/rpm/tora-qt.spec
 cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
+cp icons/* help
 cd ..
 mv tora-$1/tora-mono tora-$1/tora
 echo Packing tora-$1-qt.tar.gz
 tar czf $SRCPWD/../tora-$1-qt.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
     tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
-    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm
+    tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
 
 cd $SRCPWD/..
 rm -rf t

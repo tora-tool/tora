@@ -58,20 +58,25 @@ tora-{version}-bin.tar.gz
 -------------------------
 This is a dynamically linked tora which is just to unpack wherever you want
 it. To use the SQL templates copy the files in the template directory to
-the library /usr/lib/tora. This version has KDE support enabled and requires
-KDE libraries available.
+the library /usr/lib/tora. To use help copy the files in the help directory
+to the /usr/lib/tora/help directory. This version has KDE support enabled and
+requires KDE libraries available.
 
 tora-{version}-qt.tar.gz
 -------------------------
 This is a dynamically linked tora which is just to unpack wherever you want
 it. To use the SQL templates copy the files in the template directory to
-the library /usr/lib/tora. This version does not have  KDE support enabled.
+the library /usr/lib/tora. To use help copy the files in the help directory
+to the /usr/lib/tora/help directory. This version does not have KDE support
+enabled.
 
 tora-{version}-static.tar.gz
 ----------------------------
 This is a statically linked tora which you just unpack wherever you want it.
  To use the SQL templates copy the files in the template directory to the
-library /usr/lib/tora. This version does not have KDE support enabled.
+library /usr/lib/tora. To use help copy the files in the help directory
+to the /usr/lib/tora/help directory. This version does not have KDE support
+enabled.
 
 Installing from source
 ======================

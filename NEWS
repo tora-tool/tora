@@ -12,6 +12,7 @@
 2001-05-26: Install all *.xpm to help dir on install.
 2001-05-26: Added help install to rpms as well.
 2001-05-26: Some updates and bugfixes to toCurrent.
+2001-05-26: Fixed to the INSTALL files and releasetora.sh to incorporate help.
 
 0.10: Released 2001-05-25
 
