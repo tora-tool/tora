@@ -590,7 +590,10 @@ __TEMP__
 	    print "no\n";
 	}
 
-	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile -lkhtml";
+	$Libs.=" -lkdecore -lkdeui -lDCOP -lkhtml";
+	if ($KDEVersion lt "2.9") {
+	    $Libs.=" -lkfile";
+	}
 	$LFlags.="\"-L".$KDELibs."\" ";
 	if (!$NoRPath) {
 	    $LFlags.="-Xlinker \"--rpath=$KDELibs\" ";
