@@ -55,18 +55,14 @@ First send a mail to (TOra <tora-develop@lists.sourceforge.net>), the TOra
 development mailing list and let me know what isn't working so I can fix it
 in the next version.
 
-Then copy the file Makefile.setup.orig to Makefile.setup and edit it to
+Then copy the file Makefile.sample to Makefile and edit it to
 fill out the correct values in it.
-
-Lastly copy the file Makefile.orig to Makefile and you should be set to
-continue compiling as normal by "make", "make install".
 
 Why I'm not using autoconf
 ==========================
 
 Whenever I start out using autoconf in any of my projects I end up spending
-more time trying to get autoconf to work instead of time actually spend
-getting the configure script to work instead of coding.
+more time trying to get autoconf to work instead of time spent coding.
 
 People tend to think that autoconf is just a strapon fix all problems
 solution to configuring, but this is not the case. Especially if you

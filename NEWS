@@ -1,5 +1,6 @@
 1.3.6:
 
+2002-04-25: Some fixes to the INSTALL file.
 2002-04-24: Applied patch to make configure detect Qt snapshots.
 2002-04-20: Added wait state analyzer to session manager.
 2002-04-20: Added session support for waitstate analyzer.
