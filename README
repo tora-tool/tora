@@ -7,12 +7,11 @@ which basically means that any derivatory work must be released under GPL as
 well.
 
 Toolkit for Oracle is a program for Oracle developers and administrators. It
-is still alpha quality which means it is not feature complete as regard to
-version 1.0. The main lacking as you will find is in documentation which is
-pretty much non existant. You will hopefully see that the program is pretty
-stable the parts there is.
+is in beta testing and should be feature complete for version 1.0 except for
+some more testing and documentation. The main lacking as you will find is in
+documentation which is pretty much non existant.
 
-The features that are available so far is (As of version 0.7.1):
+The features that are available so far is (As of version 0.10):
 
 * PL/SQL Editor and Debugger.
 * SQL Worksheet with statistics and explain plan functiontionality.
@@ -29,6 +28,8 @@ The features that are available so far is (As of version 0.7.1):
 * Syntax highlighting of SQL.
 * Print support.
 * SQL template tree.
+* Server tuning.
+* Current session info.
 
 For installation instructions se the file INSTALL.
 
