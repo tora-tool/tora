@@ -33,16 +33,49 @@
 #include "toconnection.h"
 #include "tomain.h"
 
-toConnection::toConnection(const char *iuser,const char *ipassword,const char *ihost)
-: User(iuser),Password(ipassword),Host(ihost)
+void toConnection::connect(void)
 {
-  Connection=new otl_connect((const char *)connectString(true),0);
+  QString oldSid;
+  if (!SqlNet) {
+    oldSid=getenv("ORACLE_SID");
+    setenv("ORACLE_SID",Host,1);
+  }
+  try {
+    Connection=new otl_connect((const char *)connectString(true),0);
+  } catch (...) {
+    if (!SqlNet) {
+      if (oldSid.isNull())
+	unsetenv("ORACLE_SID");
+      else
+	setenv("ORACLE_SID",oldSid,1);
+    }
+    throw;
+  }
+  if (!SqlNet) {
+    if (oldSid.isNull())
+      unsetenv("ORACLE_SID");
+    else {
+      setenv("ORACLE_SID",oldSid,1);
+    }
+  }
 
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
   str.append(toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT));
   str.append("'");
   otl_stream date(1,(const char *)str,*Connection);
   NeedCommit=false;
+}
+
+toConnection::toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost)
+: SqlNet(sqlNet),User(iuser),Password(ipassword),Host(ihost)
+{
+  connect();
+}
+
+toConnection::toConnection(const toConnection &conn)
+: SqlNet(conn.SqlNet),User(conn.User),Password(conn.Password),Host(conn.Host)
+{
+  connect();
 }
 
 bool toConnection::closeWidgets(void)
@@ -72,8 +105,10 @@ QString toConnection::connectString(bool pw=false) const
     ret.append("/");
     ret.append(Password);
   }
-  ret.append("@");
-  ret.append(Host);
+  if (!pw||SqlNet) {
+    ret.append("@");
+    ret.append(Host);
+  }
   return ret;
 }
 

@@ -24,6 +24,8 @@
 		though)
 2001-02-06: Created splash screen while loading plugins.
 2001-02-06: Fixed bug in toResultItem regarding eof queries.
+2001-02-09: Added support for TNS_ADMIN in finding tnsnames.ora. (Petr Sindylek)
+2001-02-10: Support for connecting through shared memory.
 
 0.4: Released 2001-01-27
 

@@ -40,6 +40,7 @@ class QComboBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QCheckBox;
 
 class toNewConnection : public QDialog
 { 
@@ -53,6 +54,7 @@ class toNewConnection : public QDialog
     QComboBox* Database;
     QLineEdit* Password;
     QLineEdit* User;
+    QCheckBox* SqlNet;
 public:
     toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
     ~toNewConnection();

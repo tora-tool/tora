@@ -26,8 +26,6 @@
  ****************************************************************************/
 
 
-#include "tonewconnection.h"
-
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qmessagebox.h>
@@ -38,19 +36,23 @@
 #include <qvariant.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+#include <qcheckbox.h>
+#include <qtooltip.h>
 
 #include "tonewconnection.moc"
 #include "totool.h"
 #include "toconf.h"
+#include "tonewconnection.h"
+
 
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
   : QDialog(parent,name,modal,fl)
 {
   if (!name)
     setName("toNewConnection");
-  resize(241,201); 
-  setMinimumSize(241,201);
-  setMaximumSize(241,201);
+  resize(240,240); 
+  setMinimumSize(240,240);
+  setMaximumSize(240,240);
   setCaption(tr("New database connection"));
 
   TextLabel1=new QLabel(this,"TextLabel1");
@@ -62,7 +64,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   TextLabel2->setText(tr("Password"));
 
   TextLabel3=new QLabel(this,"TextLabel3");
-  TextLabel3->setGeometry(QRect(10,100,61,20)); 
+  TextLabel3->setGeometry(QRect(10,140,61,20)); 
   TextLabel3->setText(tr("Database"));
 
   User=new QLineEdit(this,"User");
@@ -79,8 +81,13 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
   Password->setEchoMode(QLineEdit::Password);
 
+  SqlNet=new QCheckBox("Use SQL*Net",this);
+  SqlNet->setGeometry(QRect(10,110,220,20));
+  SqlNet->setChecked(!toTool::globalConfig(CONF_SQLNET,"Yes").isEmpty());
+  QToolTip::add(SqlNet,"Use SQL*Net to connect (Requires listener) instead of shared memory");
+
   Database=new QComboBox(false,this,"Database");
-  Database->setGeometry(QRect(10,120,220,27)); 
+  Database->setGeometry(QRect(10,160,220,27)); 
   QString defdb=toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE);
   Database->setEditable(true);
   Database->setAutoCompletion(true);
@@ -88,22 +95,28 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     Database->insertItem(defdb);
 
   OkButton=new QPushButton(this,"OkButton");
-  OkButton->move(10,160); 
+  OkButton->move(10,200); 
   OkButton->setText(tr("&Connect"));
   OkButton->setDefault(true);
 
   CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(130,160); 
+  CancelButton->move(130,200); 
   CancelButton->setText(tr("Cancel"));
 
   connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
 
   if (!getenv("ORACLE_HOME"))
-    return;
+    throw QString("ORACLE_HOME environment variable not set");
 
-  QString str(getenv("ORACLE_HOME"));
-  str.append("/network/admin/tnsnames.ora");
+  QString str;
+  if (getenv("TNS_ADMIN")) {
+    str=getenv("TNS_ADMIN");
+  } else {
+    str=getenv("ORACLE_HOME");
+    str.append("/network/admin");
+  }
+  str.append("/tnsnames.ora");
 
   QFile file(str);
   if (!file.open(IO_ReadOnly)) {
@@ -161,7 +174,11 @@ toConnection *toNewConnection::makeConnection(void)
     else
       toTool::globalSetConfig(CONF_PASSWORD,DEFAULT_SAVE_PWD);
     toTool::globalSetConfig(CONF_DATABASE,Database->currentText());
-    toConnection *retCon=new toConnection(User->text(),Password->text(),Database->currentText());
+    toTool::globalSetConfig(CONF_SQLNET,SqlNet->isChecked()?"Yes":"");
+    toConnection *retCon=new toConnection(SqlNet->isChecked(),
+					  User->text(),
+					  Password->text(),
+					  Database->currentText());
     return retCon;
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");

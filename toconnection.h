@@ -37,13 +37,16 @@ class QWidget;
 
 class toConnection {
   otl_connect *Connection;
+  bool SqlNet;
   QString User;
   QString Password;
   QString Host;
   list<QWidget *> Widgets;
   bool NeedCommit;
+  void connect(void);
 public:
-  toConnection(const char *iuser,const char *ipassword,const char *ihost);
+  toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost);
+  toConnection(const toConnection &conn);
   ~toConnection();
   bool closeWidgets(void);
   const QString &user() const

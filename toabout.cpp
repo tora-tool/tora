@@ -105,13 +105,28 @@ I don't see why I should have to believe in it in this one.</H3>
 especially since I rule.</H3>
 <DIV ALIGN=RIGHT>The movie \"Clerks\"
 <DIV ALIGN=LEFT>
+<H3>Stay alert! Trust no one! Keep your laser handy!</H3>
+<DIV ALIGN=RIGHT>Roleplaying game Paranoia
+<DIV ALIGN=LEFT>
+<H3>The best definition of a gentleman is a man who can play the accordion -- but doesn't.</H3>
+<DIV ALIGN=RIGHT>Tom Crichton
+<DIV ALIGN=LEFT>
+<H3>The trouble with being punctual is that nobody's there to appreciate it.</H3>
+<DIV ALIGN=RIGHT>Franklin P. Jones
+<DIV ALIGN=LEFT>
 <H3>Life is a sexually transmittable desease with terminal outcome.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
 <H3>If you don't know where you are going you are never lost.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
+<H3>If you're right 90% of the time, why quibble about the remaining 3%?</H3>
+<DIV ALIGN=RIGHT>Unknown
+<DIV ALIGN=LEFT>
 <H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>
+<DIV ALIGN=RIGHT>Unknown
+<DIV ALIGN=LEFT>
+<H3>Accepptance testing: An unsuccessfull attampt to find bugs.</H3>
 <DIV ALIGN=RIGHT>Unknown
 <DIV ALIGN=LEFT>
 <H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>

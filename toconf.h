@@ -37,6 +37,7 @@
 #define DEFAULT_DATABASE	""
 #define CONF_USER		"DefaultUser"
 #define DEFAULT_USER		"system"
+#define CONF_SQLNET		"SqlNet"
 #define CONF_MAX_NUMBER		"MaxNumber"
 #define DEFAULT_MAX_NUMBER	"50"
 #define CONF_MAX_COL_SIZE	"MaxColSize"

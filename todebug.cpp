@@ -389,9 +389,7 @@ bool toDebug::isRunning(void)
 void toDebug::targetTask::run(void)
 {
   {
-    toConnection Connection(Parent.Connection.user(),
-			    Parent.Connection.password(),
-			    Parent.Connection.host());
+    toConnection Connection(Parent.Connection);
     otl_stream init(1,"
 DECLARE
   ret VARCHAR2(200);
