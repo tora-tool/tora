@@ -231,12 +231,6 @@ tora-plugin: \
 
 # The binary for the pluginbased tora
 
-test:   objs/test.o \
-	objs/test2.o
-	@echo Linking $@
-	$(GCC) $(LFLAGS) $(LFLAGS_GLOB) \
-		-o $@ $^ $(LIBS_GLOB) $(ORACLE_SHARED) $(STDCPP_SHARED) $(QT_SHARED)
-
 tora: \
 	objs/main.o \
 	objs/toabout.o \

@@ -19,6 +19,7 @@
 2001-06-17: Some configure fixes.
 2001-06-19: Added status messages to help out how toResultContents work.
 2001-06-19: Fixed problem with saving data in update of toResultContents.
+2001-06-24: Cleanups and bugfixes in toResultCols.
 
 0.11: Released 2001-06-03
 

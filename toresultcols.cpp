@@ -77,83 +77,81 @@ public:
 			 SQLInfo(view->Connection),
 			 view->Connection.connection());
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      ColInfo<<text(10).utf8()<<text(11).utf8()<<text(0).utf8();
-      char buffer[4001];
-      buffer[0] = 0;
+      list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(0));
       QString result("<B>");
       result.append(text(0));
       result.append("</B><BR><BR>");
 
       int any=0;
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      QString cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	result.append("Default value: <B>");
-	result.append(QString::fromUtf8(buffer));
+	result.append(cur);
 	result.append("</B><BR><BR>");
 	any++;
       }
 
       QString analyze;
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Distinct values: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Low value: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("High value: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Density: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Number of nulls: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Number of histogram buckets: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Last analyzed: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Sample size: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
-      ColInfo>>buffer;
-      if (strlen(buffer)) {
+      cur=toShift(resLst);
+      if (!cur.isEmpty()) {
 	analyze.append("Average column size: <B>");
-	analyze.append(QString::fromUtf8(buffer));
+	analyze.append(cur);
 	analyze.append("</B><BR>");
 	any++;
       }
@@ -312,12 +310,10 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 	item->setText(3,"NULL");
       else
 	item->setText(3,"NOT NULL");
-      ColComment<<Owner.utf8()<<TableName.utf8()<<Description[i].name;
-      if (!ColComment.eof()) {
-	char buffer[4001];
-	ColComment>>buffer;
-	item->setText(4,QString::fromUtf8(buffer));
-      }
+
+      list<QString> comLst=toReadQuery(ColComment,Owner,TableName,
+				       QString::fromUtf8(Description[i].name));
+      item->setText(4,toShift(comLst));
     }
   } TOCATCH
   updateContents();
