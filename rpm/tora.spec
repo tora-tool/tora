@@ -8,7 +8,7 @@ Summary:			Toolkit for Oracle
 Name:				%{_name}
 Version:			%{_version}
 Release:			%{_release}
-Source:				%{_name}-%{_version}.tar.gz
+Source:				%{_name}-%{_version}.tar.bz2
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
@@ -88,7 +88,7 @@ Requires:		%{_name} = %{_version}
 Oracle specific plugins for %{_name}.
 
 %changelog
-* Tue Doc 18 2001 Henrik Johnson <tora@underscore.se>
+* Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
 - created from SuSE specfile by Pascal Bleser
 
 %prep
