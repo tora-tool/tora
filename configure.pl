@@ -1195,6 +1195,7 @@ API=	\\
 	tohelpbrowser.h		\\
 	tohighlightedtext.h	\\
 	tohtml.h		\\
+	tolegendchart.h		\\
 	tolinechart.h		\\
 	tomain.h		\\
 	tomainwindow.kde.h	\\
