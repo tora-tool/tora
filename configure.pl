@@ -666,10 +666,11 @@ __TEMP__
 
     print "checking for Qt library ... ";
 
-    $QtLib=findFile("^".$QtSearch."[23]\\.(?:s[ol]|dylib)",sub {
-	                                        if (-f $_[0] && ! -l $_[0]) {
+    $QtLib=findFile("^".$QtSearch."\\.?[23]\\.(?:s[ol]|dylib)",sub {
+	                                        my $file=$_[0];
+	                                        if (-f $file && (!-l $file || $file=~/dylib/ )) {
 						    my $lib;
-						    ($lib,$QtLibShared)=($_[0]=~/^(.*)\/lib(qt-mt[23]?)[^\/]*$/);
+						    ($lib,$QtLibShared)=($file=~/^(.*)\/lib(qt-mt[23]?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }

@@ -123,7 +123,7 @@ rm -rf objs 2> /dev/null
 echo "done"
 
 echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
-$PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
+$PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE.txt >> LICENSE.h
 echo '"</PRE>\n";' >> LICENSE.h
 
 echo $ac_n "ordering CD from http://www.globecom.se/tora/wish .$ac_c"
