@@ -77,9 +77,9 @@ protected:
   static double round(double round,bool up);
   QRect fixRect(QPoint p1,QPoint p2);
   virtual void mouseReleaseEvent(QMouseEvent *e);
-  virtual void mousePressEvent(QMouseEvent *e);
   virtual void mouseMoveEvent(QMouseEvent *e);
   virtual void mouseDoubleClickEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
 
   int countSamples(void);
   void clearZoom(void);

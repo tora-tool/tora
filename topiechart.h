@@ -40,6 +40,8 @@
 #include <list>
 #include <qwidget.h>
 
+class QPopupMenu;
+
 /** A widget that displays a piechart.
  */
 
@@ -52,6 +54,11 @@ class toPieChart : public QWidget {
   bool Legend;
   bool DisplayPercent;
   QString Title;
+  QPopupMenu *Menu;
+
+protected:
+  virtual void mouseDoubleClickEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
 public:
   /** Create a new piechart.
    * @param parent Parent widget.
@@ -59,6 +66,14 @@ public:
    * @param f Widget flags.
    */
   toPieChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  /** Create a copy of a piechart.
+   * @param pie Pie chart to copy.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   * @param f Widget flags.
+   */
+  toPieChart(toPieChart *pie,QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
 
   /** Set the postfix text to append the current values when they are displayed in the
    * pie.
@@ -129,7 +144,17 @@ public:
   std::list<QString> &labels(void)
   { return Labels; }
 
+public slots:
+  /** Print the chart
+   */
+  void editPrint(void);
+  /** Open in new window
+   */
+  void openCopy(void);
 protected:
+  /** Paint chart in a given rectangle.
+   */
+  virtual void paintChart(QPainter *p,QRect rect);
   /** Reimplemented for internal reasons.
    */
   virtual void paintEvent(QPaintEvent *e);

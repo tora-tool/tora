@@ -68,18 +68,21 @@
 #include <list>
 #include <qwidget.h>
 
+class QPopupMenu;
+
 /** A widget that displays a linechart with optional background throbber (Not implemented yet).
  */
 
 class toLineChart : public QWidget {
   Q_OBJECT
 
+  QPopupMenu *Menu;
+
 protected:
   std::list<std::list<double> > Values;
   std::list<QString> XValues;
   std::list<QString> Labels;
   bool Legend;
-  bool Throbber;
   bool Last;
   int Grid;
   bool AxisText;
@@ -102,12 +105,17 @@ protected:
   static double round(double round,bool up);
   QRect fixRect(QPoint p1,QPoint p2);
   virtual void mouseReleaseEvent(QMouseEvent *e);
-  virtual void mousePressEvent(QMouseEvent *e);
   virtual void mouseMoveEvent(QMouseEvent *e);
   virtual void mouseDoubleClickEvent(QMouseEvent *e);
+  virtual void mousePressEvent(QMouseEvent *e);
 
   int countSamples(void);
   void clearZoom(void);
+
+  virtual void paintLegend(QPainter *p,QRect &rect);
+  virtual void paintTitle(QPainter *p,QRect &rect);
+  virtual void paintAxis(QPainter *p,QRect &rect);
+  virtual void paintChart(QPainter *p,QRect &rect);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.
@@ -156,19 +164,6 @@ public:
    */
   const QString &title(void)
   { return Title; }
-
-  /** Specify if throbber should be displayed in the graph, default is off.
-   * The throbber is a large bar in the background showing the most recent value more
-   * pominently than the historical values.
-   * @param on Whether to display throbber or not.
-   */
-  void showThrobber(bool on)
-  { Throbber=on; update(); }
-  /** Check if throbber is displayed or not.
-   * @return If throbber is displayed or not.
-   */
-  bool throbber(void) const
-  { return Throbber; }
 
   /** Specify if a grid should be displayed in the graph, default is on.
    * @param div Number of parts to divide grid into.
@@ -269,8 +264,19 @@ public slots:
   /** Clear the values from the chart.
    */
   virtual void clear(void)
-  { Values.clear(); XValues.clear(); }
+  { Values.clear(); XValues.clear(); update(); }
 
+  /** Setup values of charts.
+   */
+  virtual void setup(void);
+
+  /** Print the chart.
+   */
+  virtual void editPrint(void);
+
+  /** Open chart in new window.
+   */
+  virtual void openCopy(void);
 protected:
   /** Reimplemented for internal reasons.
    */

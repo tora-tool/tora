@@ -64,6 +64,8 @@
 2001-10-05: Reorganization of drawing linechart class.
 2001-10-05: Made barchart be descendant of linechart.
 2001-10-06: Made it possible to set up line & barcharts.
+2001-10-06: Use bytes not userbytes on available in storage.
+2001-10-06: Printing of piechart.
 
 1.1.1: Released 2001-09-24
 
