@@ -1282,9 +1282,9 @@ __EOT__
 	print MAKEFILE "PERL=$Perl\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# Comment out this line if you want more output from compile\n";
-	print MAKEFILE ".SILENT:\n";
-	print MAKEFILE "\n";
+	#print MAKEFILE "# Comment out this line if you want more output from compile\n";
+	#print MAKEFILE ".SILENT:\n";
+	#print MAKEFILE "\n";
 
 	print MAKEFILE <<__EOT__;
 # Additional flags set when using only the precompiler.
