@@ -42,6 +42,7 @@
 
 #include <qvbox.h>
 #include "toresultview.h"
+#include "tohelp.h"
 
 class QListView;
 class QListViewItem;
@@ -55,7 +56,7 @@ class toTemplateProvider;
 /** Not part of the API.
  */
 
-class toTemplate : public QVBox {
+class toTemplate : public QVBox, public toHelpContext {
   Q_OBJECT
 
   QSplitter *Splitter;

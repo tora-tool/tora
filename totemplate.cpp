@@ -343,7 +343,7 @@ toTemplate *toTemplate::templateWidget(QListViewItem *item)
 }
 
 toTemplate::toTemplate(QWidget *parent)
-  : QVBox(parent)
+  : QVBox(parent),toHelpContext("template.html")
 {
   Splitter=new QSplitter(Vertical,this);
   List=new toListView(Splitter);

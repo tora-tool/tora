@@ -120,7 +120,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Grants->addColumn("Type");
   Grants->addColumn("Grantable");
   Grants->setRootIsDecorated(true);
-  Tabs->addTab(Grants,"Grants");
+  Tabs->addTab(Grants,"Privileges");
   Version=new toResultView(true,false,connection,Tabs);
   Version->setSQL(SQLVersion);
   Tabs->addTab(Version,"Version");

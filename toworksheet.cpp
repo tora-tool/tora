@@ -115,20 +115,22 @@ static struct {
   bool Comment;
   bool BeforeCode;
   bool StartCode;
-} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true },
-	       { 0,"if",	true ,false,false,false,false,false},
-	       { 0,"loop",	true ,false,false,false,false,false},
-	       { 0,"while",	true ,false,false,false,false,false},
-	       { 0,"declare",	false,false,false,false,true ,true },
-	       { 0,"create",	false,false,false,false,true ,false},
-	       { 0,"package",	true ,false,false,false,false,true },
-	       { 0,"procedure",	false,false,false,false,false,true },
-	       { 0,"function",	false,false,false,false,false,true },
-	       { 0,"end",	false,true ,true ,false,false,false},
-	       { 0,"rem",	false,false,false,true ,false,false},
-	       { 0,"prompt",	false,false,false,true ,false,false},
-	       { 0,"set",	false,false,false,true ,false,false},
-	       { 0,NULL,	false,false,false,false,false,false}
+  bool NoBinds;
+} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true ,false},
+	       { 0,"if",	true ,false,false,false,false,false,false},
+	       { 0,"loop",	true ,false,false,false,false,false,false},
+	       { 0,"while",	true ,false,false,false,false,false,false},
+	       { 0,"declare",	false,false,false,false,true ,true ,false},
+	       { 0,"create",	false,false,false,false,true ,false,false},
+	       { 0,"package",	true ,false,false,false,false,true ,false},
+	       { 0,"procedure",	false,false,false,false,false,true ,false},
+	       { 0,"function",	false,false,false,false,false,true ,false},
+	       { 0,"trigger",   false,false,false,false,false,true ,false},
+	       { 0,"end",	false,true ,true ,false,false,false,false},
+	       { 0,"rem",	false,false,false,true ,false,false,false},
+	       { 0,"prompt",	false,false,false,true ,false,false,false},
+	       { 0,"set",	false,false,false,true ,false,false,false},
+	       { 0,NULL,	false,false,false,false,false,false,false}
 };
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
@@ -541,14 +543,23 @@ void toWorksheet::query(const QString &str,bool direct)
       execSql.truncate(execSql.length()-1);
     QueryString=execSql;
 
+    bool nobinds=false;
+    chk=str.lower();
+    chk.replace(strq," ");
+    chk=chk.simplifyWhiteSpace();
+    chk.replace(QRegExp(" or replace ")," ");
+    if(chk.startsWith("create trigger "))
+      nobinds=true;
+
     if (!describe(execSql)) {
-      list<QString> param=toParamGet::getParam(this,execSql);
+      list<QString> param;
+      if (!nobinds)
+	param=toParamGet::getParam(this,execSql);
       if (direct) {
 	try {
 	  otl_stream inf(1,
 			 execSql.utf8(),
 			 otlConnect());
-	  list<QString> param=toParamGet::getParam(this,execSql);
 	  {
 	    otl_null null;
 	    for (list<QString>::iterator i=param.begin();i!=param.end();i++) {

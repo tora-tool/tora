@@ -63,7 +63,11 @@
 2001-07-10: Fixed Qt compile problem in browser.
 2001-07-10: Added warning when dropping rollback segment.
 2001-07-10: Removed sort order from sga trace.
-2001-07-10: Fixed spelling in toextract (Thanx Stefan Rindeskär).
+2001-07-11: Fixed spelling in toextract (Thanx Stefan Rindeskär).
+2001-07-11: Changed name of grants tab in current.
+2001-07-11: Added help context to template help.
+2001-07-11: Fixed problem creating triggers in worksheet.
+2001-07-11: Fixed problem with duplicate getting params in worksheet.
 
 0.12: Released 2001-07-01
 
