@@ -46,6 +46,7 @@ toResultStats::toResultStats(bool onlyChanged,int ses,toConnection &conn,QWidget
 {
   SessionID=ses;
   setSQLName("toResultStats");
+  System=false;
   setup();
 }
 
@@ -65,6 +66,14 @@ toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent
   } catch (otl_exc &) {
     SessionID=-1;
   }
+  System=false;
+  setup();
+}
+
+toResultStats::toResultStats(toConnection &conn,QWidget *parent,const char *name)
+  : toResultView(false,false,conn,parent,name),OnlyChanged(false)
+{
+  System=true;
   setup();
 }
 
@@ -93,14 +102,24 @@ static toSQL SQLSessionIO("toResultStats:SessionIO",
 			  "  FROM v$sess_io\n"
 			  " WHERE SID = :f1<int>",
 			  "Get session IO, must have same binds");
+static toSQL SQLSystemStatistics("toResultStats:SystemStatistics",
+				 "SELECT Statistic#,Value FROM v$sysstat",
+				 "Get system statistics, must have same number of columns");
 
 void toResultStats::resetStats(void)
 {
   try {
-    otl_stream str(1,
-		   SQLStatistics(Connection),
-		   Connection.connection());
-    str<<SessionID;
+    otl_stream str;
+    if (System)
+      str.open(1,
+	       SQLSystemStatistics(Connection),
+	       Connection.connection());
+    else {
+      str.open(1,
+	       SQLStatistics(Connection),
+	       Connection.connection());
+      str<<SessionID;
+    }
     while(!str.eof()) {
       int id;
       double value;
@@ -110,22 +129,26 @@ void toResultStats::resetStats(void)
       if (id<TO_STAT_MAX+TO_STAT_BLOCKS)
 	LastValues[id]=value;
     }
-    otl_stream sesio(1,
-		     SQLSessionIO(Connection),
-		     Connection.connection());
-    sesio<<SessionID;
-    int id=0;
-    while(!sesio.eof()) {
-      double value;
-      sesio>>value;
-      LastValues[id]=value;
-      id++;
+    if (!System) {
+      otl_stream sesio(1,
+		       SQLSessionIO(Connection),
+		       Connection.connection());
+      sesio<<SessionID;
+      int id=0;
+      while(!sesio.eof()) {
+	double value;
+	sesio>>value;
+	LastValues[id]=value;
+	id++;
+      }
     }
   } TOCATCH
 }
 
 void toResultStats::changeSession(otl_connect &conn)
 {
+  if (System)
+    throw QString("Can't change session on system statistics");
   try {
     otl_stream str(1,
 		   SQLSession(Connection),
@@ -138,6 +161,8 @@ void toResultStats::changeSession(otl_connect &conn)
 
 void toResultStats::changeSession(int ses)
 {
+  if (System)
+    throw QString("Can't change session on system statistics");
   if (SessionID!=ses) {
     SessionID=ses;
     resetStats();
@@ -148,30 +173,40 @@ void toResultStats::changeSession(int ses)
 static toSQL SQLStatisticName("toResultStats:StatisticName",
 			      "SELECT b.Name,a.Statistic#,a.Value\n"
 			      "  FROM V$SesStat a,V$StatName b\n"
-			      " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#\n"
-			      " ORDER BY UPPER(b.Name) Desc",
+			      " WHERE a.SID = :f1<int> AND a.Statistic# = b.Statistic#\n",
 			      "Get statistics and their names for session, must have same number of columns");
+static toSQL SQLSystemStatisticName("toResultStats:SystemStatisticName",
+				    "SELECT Name,Statistic#,Value\n"
+				    "  FROM v$sysstat\n",
+				    "Get statistics and their names for system statistics, must have same number of columns");
 
 void toResultStats::refreshStats(bool reset)
 {
   try {
     clear();
-    otl_stream str(1,
-		   SQLStatisticName(Connection),
-		   Connection.connection());
-    otl_stream sesio(1,
-		     SQLSessionIO(Connection),
-		     Connection.connection());
-    sesio<<SessionID;
-
-    str<<SessionID;
+    otl_stream str;
+    otl_stream sesio;
+    if (System)
+      str.open(1,
+	       SQLSystemStatisticName(Connection),
+	       Connection.connection());
+    else {
+      str.open(1,
+	       SQLStatisticName(Connection),
+	       Connection.connection());
+      sesio.open(1,
+		 SQLSessionIO(Connection),
+		 Connection.connection());
+      sesio<<SessionID;
+      str<<SessionID;
+    }
     int SesID=0;
     int Row=0;
-    while(!str.eof()||!sesio.eof()) {
+    while(!str.eof()||(!System&&!sesio.eof())) {
       int id;
       double value;
       char buffer[65];
-      if (!sesio.eof()) {
+      if (!System&&!sesio.eof()) {
 	int len;
 	otl_column_desc *description=sesio.describe_select(len);
 	strcpy(buffer,description[SesID%len].name);
@@ -186,16 +221,15 @@ void toResultStats::refreshStats(bool reset)
       }
       QString delta;
       QString absVal;
-      toResultViewItem *last=NULL;
       setQueryColumns(3);
 
       if (value!=0) {
-	absVal.sprintf("%g",value);
+	absVal.sprintf("%.15g",value);
 	if (id<TO_STAT_MAX+TO_STAT_BLOCKS) {
-	  delta.sprintf("%g",value-LastValues[id]);
+	  delta.sprintf("%.15g",value-LastValues[id]);
 	  toResultViewItem *item;
 	  if (value!=LastValues[id]||!OnlyChanged) {
-	    item=new toResultViewItem(this,last);
+	    item=new toResultViewItem(this,NULL);
 	    if (reset)
 	      LastValues[id]=value;
 	    item->setText(0,QString::fromUtf8(buffer));
@@ -206,7 +240,6 @@ void toResultStats::refreshStats(bool reset)
 	      item->setText(2,delta);
 	    }
 	    item->setText(3,QString::number(++Row));
-	    last=item;
 	  }
 	}
       }

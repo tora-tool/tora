@@ -41,6 +41,10 @@
 2001-05-23: Some build changes.
 2001-05-24: Added filter functionality to toResultView.
 2001-05-24: Added filter in schema browser.
+2001-05-25: Added some functions for more advanced queries of toSQL.
+2001-05-25: Added server tuning tool.
+2001-05-25: Added server statistics to toResultStats.
+2001-05-25: Fixed precision in toResultStats to 15 digits.
 
 0.9.1: Released 2001-05-20
 

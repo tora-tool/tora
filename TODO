@@ -1,7 +1,3 @@
-Beta todo list:
-
-* Server statistics and tuning information.
-
 Extended functionality:
 
 * SQL Browser
@@ -28,6 +24,7 @@ Extended functionality:
 * Segments view in storage view.
 * Add replace to toResultContent.
 * Ability to change/move redofiles.
+* Posibility to delete records in toResultContent.
 
 Windows problems:
 

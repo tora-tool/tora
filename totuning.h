@@ -32,31 +32,26 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTSTATS_H
-#define __TORESULTSTATS_H
+#ifndef __TOTUNING_H
+#define __TOTUNING_H
 
-#include "toresultview.h"
+#include <qvbox.h>
 
-#define TO_STAT_MAX 500
-#define TO_STAT_BLOCKS 10
+class toConnection;
+class toListView;
+class toResultStats;
 
-class toResultStats : public toResultView {
+class toTuning : public QVBox {
   Q_OBJECT
-  int SessionID;
-  bool OnlyChanged;
-  bool System;
-  double LastValues[TO_STAT_MAX+TO_STAT_BLOCKS];
-  void setup();
-public:
-  toResultStats(bool OnlyChanged,int ses,toConnection &conn,QWidget *parent,const char *name=NULL);
-  toResultStats(bool OnlyChanged,toConnection &conn,QWidget *parent,const char *name=NULL);
-  toResultStats(toConnection &conn,QWidget *parent,const char *name=NULL);
 
-  void resetStats(void);
-  void changeSession(otl_connect &conn);
-  void changeSession(int ses);
+  toListView *Indicators;
+  toResultStats *Statistics;
+  toConnection &Connection;
+public:
+  toTuning(QWidget *parent,toConnection &connection);
+  virtual ~toTuning();
 public slots:
-  void refreshStats(bool reset=true);
+  virtual void refresh(void);
 };
 
 #endif

@@ -318,3 +318,29 @@ bool toSQL::loadSQL(const QString &filename)
   delete buf;
   return true;
 }
+
+list<QString> toSQL::range(const QString &startWith)
+{
+  list<QString> ret;
+  for(sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
+    if ((*i).first>startWith) {
+      if ((*i).first.startsWith(startWith))
+	ret.insert(ret.end(),(*i).first);
+      else
+	return ret;
+    }
+  }
+  return ret;
+}
+
+QString toSQL::description(const QString &name)
+{
+  allocCheck();
+  sqlMap::iterator i=Definitions->find(name);
+  if (i!=Definitions->end())
+    return (*i).second.Description;
+  QString str="Tried to get unknown SQL (";
+  str+=name;
+  str+=")";
+  throw str;
+}

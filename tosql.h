@@ -83,12 +83,18 @@ public:
   static QString string(const toSQL &sqldef,const toConnection &conn)
   { return string(sqldef.Name,conn); }
 
+  static QString description(const QString &name);
+  static QString description(const toSQL &sql)
+  { return description(sql.Name); }
+
   static QCString sql(const QString &name,const toConnection &conn)
   { return string(name,conn).utf8(); }
   static QCString sql(const toSQL &sqldef,const toConnection &conn)
   { return sql(sqldef.Name,conn); }
 
   static toSQL sql(const QString &name);
+
+  static list<QString> range(const QString &startWith);
 
   static bool saveSQL(const QString &file,bool all=false);
   static bool loadSQL(const QString &file);
