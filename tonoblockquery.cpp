@@ -56,8 +56,6 @@
 
 #define PREFETCH_SIZE 1000
 
-#define TO_LONG_FORCE 3
-
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");

@@ -79,9 +79,6 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Current row of editing.
    */
   int NewRecordRow;
-  /** Indicator to add more rows.
-   */
-  bool AddRow;
   /** Used to detect drag.
    */
   QPoint LastMove;
@@ -110,9 +107,6 @@ class toResultContentEditor : public QTable,public toEditWidget {
    */
   QString Order;
 
-  /** Add another row to the contents.
-   */
-  void addRow(void);
   /** Throw an exception about wrong usage.
    */
   void wrongUsage(void);

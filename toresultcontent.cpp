@@ -249,16 +249,20 @@ void toResultContentEditor::poll(void)
 	setNumRows(INC_SIZE);
       }
       
-      for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
-	if (Row+2>=numRows()) {
-	  if (MaxNumber>0&&numRows()+INC_SIZE>MaxNumber)
-	    setNumRows(MaxNumber+1);
-	  else
-	    setNumRows(numRows()+INC_SIZE);
-	}
-	addRow();
+      std::list<QString> data;
+
+      for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++)
+	for (int k=0;k<numCols();k++)
+	  data.insert(data.end(),Query->readValueNull());
+
+      setNumRows(Row+data.size()/numCols()+1);
+
+      while(data.size()>0) {
+	verticalHeader()->setLabel(Row,QString::number(Row+1));
+	for(int j=0;j<numCols();j++)
+	  setText(Row,j,toShift(data));
+	Row++;
       }
-      setNumRows(Row+1);
 
       if (Query->eof()) {
 	delete Query;
@@ -273,21 +277,6 @@ void toResultContentEditor::poll(void)
     Poll.stop();
     toStatusMessage(str);
   }
-}
-
-void toResultContentEditor::addRow(void)
-{
-  AddRow=false;
-  try {
-    if (Query&&Query->poll()&&!Query->eof()) {
-      if (Row+1>=numRows())
-	setNumRows(Row+2);
-      verticalHeader()->setLabel(Row,QString::number(Row+1));
-      for (int j=0;j<numCols()&&!Query->eof();j++)
-	setText(Row,j,Query->readValueNull());
-      Row++;
-    }
-  } TOCATCH
 }
 
 void toResultContentEditor::keyPressEvent(QKeyEvent *e)
