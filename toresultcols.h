@@ -32,6 +32,7 @@
 #include "toresultview.h"
 
 class toResultColsItem;
+class otl_stream;
 
 class toResultCols : public toResultView {
 public:

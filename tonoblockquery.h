@@ -26,50 +26,59 @@
  ****************************************************************************/
 
 
-#ifndef __TOSQLEDIT_H
-#define __TOSQLEDIT_H
+#ifndef __TONOBLOCKQUERY_H
+#define __TONOBLOCKQUERY_H
 
-#include <qvbox.h>
+#include "toconnection.h"
+#include "tothread.h"
 
-class toWorksheet;
-class toMarkedText;
-class QComboBox;
-class QListView;
-class QLineEdit;
-class QToolButton;
+class toNoBlockQuery {
+private:
+  class queryTask : public toTask {
+    toNoBlockQuery &Parent;
+  public:
+    queryTask(toNoBlockQuery &parent)
+      : Parent(parent)
+    { }
+    virtual void run(void);
+  };
+  friend queryTask;
 
-class toSQLEdit : public QVBox {
-  Q_OBJECT
-
-  QListView *Statements;
-  QLineEdit *Name;
-  toMarkedText *Description;
-  QComboBox *Version;
-  toWorksheet *Editor;
-  QToolButton *TrashButton;
-  QToolButton *CommitButton;
-  QString LastVersion;
-  QString Filename;
-
-protected:
+  toSemaphore Running;
+  toSemaphore Continue;
+  toLock Lock;
+  list<QString>::iterator CurrentValue;
+  list<QString> ReadingValues;
+  list<QString> Values;
+  bool EOQ;
+  otl_connect *LongConn;
   toConnection &Connection;
-  void updateStatements(const QString &def=QString::null);
+  QString SQL;
+  QString Error;
+  int DescriptionLength;
+  int Processed;
+  otl_column_desc *Description;
+  list<QString> Param;
+  toThread *Thread;
 
-  bool checkStore(bool);
-  virtual bool close(bool del);
-
-  void selectionChanged(const QString &ver);
+  void checkError()
+  { if (!Error.isNull()) throw Error; }
 public:
-  toSQLEdit(QWidget *parent,toConnection &connection);
-  virtual ~toSQLEdit();
+  toNoBlockQuery(toConnection &conn,
+		 const QString &sql,
+		 const list<QString> &param);
+  virtual ~toNoBlockQuery();
 
-public slots:
-  void loadSQL(void);
-  void saveSQL(void);
-  void deleteVersion(void);
-  void selectionChanged(void);
-  void changeVersion(const QString &);
-  void commitChanges(void);
+  bool poll(void)
+  { return Running.getValue()||CurrentValue!=Values.end(); }
+
+  otl_column_desc *describe(int &length);
+
+  QString readValue(void);
+
+  int getProcessed(void);
+
+  bool eof(void);
 };
 
 #endif

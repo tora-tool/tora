@@ -172,7 +172,7 @@ void *toThreadStartWrapper(void *t)
   sigset_t Sigs;
   sigfillset(&Sigs);
   sigdelset(&Sigs,SIGHUP);
-  sigdelset(&Sigs,SIGINT);
+  // I hope this signal will cancel subqueries
   sigdelset(&Sigs,SIGQUIT);
   sigdelset(&Sigs,SIGALRM);
   sigdelset(&Sigs,SIGTERM);
@@ -182,6 +182,9 @@ void *toThreadStartWrapper(void *t)
   sigdelset(&Sigs,SIGPIPE);
   sigdelset(&Sigs,SIGUSR1);
   pthread_sigmask(SIG_BLOCK,&Sigs,NULL);
+  sigemptyset(&Sigs);
+  sigaddset(&Sigs,SIGINT);
+  pthread_sigmask(SIG_UNBLOCK,&Sigs,NULL);
   try {
     thread->StartSemaphore.up();
     thread->Task->run();
@@ -197,3 +200,7 @@ void *toThreadStartWrapper(void *t)
   return NULL;
 }
 
+void toThread::kill(int signo)
+{
+  THREAD_ASSERT(pthread_kill(*this,signo));
+}

@@ -39,6 +39,7 @@ TO_NAMESPACE;
 #include <qtabwidget.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qmenubar.h>
 #include <qworkspace.h>
 #include <qgrid.h>
 #include <qcheckbox.h>
@@ -57,6 +58,7 @@ TO_NAMESPACE;
 #include "toresultresources.h"
 #include "tohighlightedtext.h"
 #include "toparamget.h"
+#include "toresultlong.h"
 
 #include "toworksheet.moc"
 
@@ -317,7 +319,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 
   Editor=new toHighlightedText(splitter);
   ResultTab=new QTabWidget(splitter);
-  Result=new toResultView(connection,ResultTab);
+  Result=new toResultLong(connection,ResultTab);
   ResultTab->addTab(Result,"Data");
   Plan=new toResultPlan(connection,ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
@@ -353,6 +355,39 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
       Editor->setText(buf);
       Editor->setEdited(false);
     }
+  }
+
+  ToolMenu=NULL;
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
+}
+
+void toWorksheet::windowActivated(QWidget *widget)
+{
+  if (widget==this) {
+    if (!ToolMenu) {
+      ToolMenu=new QPopupMenu(this);
+      ToolMenu->insertItem(*toExecutePixmap,"&Execute Current",this,SLOT(execute(void)),
+			   CTRL+Key_Return);
+      ToolMenu->insertItem(*toExecuteAllPixmap,"Execute &All",this,SLOT(executeAll(void)),
+			   Key_F8);
+      ToolMenu->insertItem(*toExecuteStepPixmap,"Execute &Next",this,SLOT(executeStep(void)),
+			   Key_F9);
+      ToolMenu->insertItem(*toRefreshPixmap,"&Refresh",this,SLOT(refresh(void)),
+			   Key_F5);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toCommitPixmap,"&Commit",this,SLOT(commitButton(void)),
+			   Key_F2);
+      ToolMenu->insertItem(*toRollbackPixmap,"&Rollback",this,SLOT(rollbackButton(void)),
+			   CTRL+Key_Backspace);
+      ToolMenu->insertSeparator();
+      ToolMenu->insertItem(*toEraseLogPixmap,"Erase &Log",this,SLOT(eraseLogButton(void)));
+
+      toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,TO_TOOL_MENU_INDEX);
+    }
+  } else {
+    delete ToolMenu;
+    ToolMenu=NULL;
   }
 }
 
@@ -439,6 +474,7 @@ void toWorksheet::query(const QString &str)
 {
 
   try {
+    QString now=toNow(Connection);
     QString execSql=str;
     list<QString> param=toParamGet::getParam(this,execSql);
     QString res=Result->query(execSql,param);
@@ -458,7 +494,7 @@ void toWorksheet::query(const QString &str)
     LastLogItem=item;
     item->setText(1,res);
     {
-      item->setText(2,toNow(Connection));
+      item->setText(2,now);
     }
     Logging->setCurrentItem(item);
     Logging->ensureItemVisible(item);
@@ -678,4 +714,10 @@ void toWorksheet::execute(bool all,bool step)
     else if (CurrentTab==Resources)
       viewResources();
   }
+}
+
+void toWorksheet::eraseLogButton()
+{
+  Logging->clear();
+  LastLogItem=NULL;
 }

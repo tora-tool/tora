@@ -44,7 +44,9 @@ class toConnection {
   QString Version;
   list<QWidget *> Widgets;
   bool NeedCommit;
-  void connect(void);
+  otl_connect *newConnection(void);
+  void setup(void);
+  otl_connect *FreeLong;
 public:
   toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost);
   toConnection(const toConnection &conn);
@@ -71,6 +73,9 @@ public:
   void addWidget(QWidget *widget)
   { Widgets.insert(Widgets.end(),widget); }
   void delWidget(QWidget *widget);
+
+  otl_connect *longOperation(void);
+  void longOperationFree(otl_connect *conn);
 };
 
 #endif

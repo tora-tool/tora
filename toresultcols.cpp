@@ -272,12 +272,12 @@ QString toResultCols::query(const QString &sql,const list<QString> &param)
 	break;
       }
       if (datatype=="NUMBER") {
-	if (Description[i].scale) {
+	if (Description[i].prec) {
 	  datatype.append(" (");
-	  datatype.append(QString::number(Description[i].scale));
-	  if (Description[i].prec!=0) {
+	  datatype.append(QString::number(Description[i].prec));
+	  if (Description[i].scale!=0) {
 	    datatype.append(",");
-	    datatype.append(QString::number(Description[i].prec));
+	    datatype.append(QString::number(Description[i].scale));
 	  }
 	  datatype.append(")");
 	}

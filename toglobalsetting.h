@@ -68,6 +68,7 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QLineEdit *DefaultDate;
   QLineEdit *PluginDirectory;
   QCheckBox *SavePassword;
+  QCheckBox *LongSession;
   QComboBox *StyleList;
   QComboBox *RefreshList;
   QPushButton *SelectDir;

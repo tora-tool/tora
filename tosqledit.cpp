@@ -88,7 +88,7 @@ public:
 
 static toSQLEditTool SQLEditTool;
 
-void toSQLEdit::updateStatements(void)
+void toSQLEdit::updateStatements(const QString &sel)
 {
   Statements->clear();
   toSQL::sqlMap sql=toSQL::definitions();
@@ -105,8 +105,15 @@ void toSQLEdit::updateStatements(void)
 	head->setSelectable(false);
       }
       item=new QListViewItem(head,item,str.right(str.length()-i-1));
-    } else
+      if (sel==str) {
+	Statements->setSelected(item,true);
+	Statements->setOpen(head,true);
+      }
+    } else {
       head=new QListViewItem(Statements,head,str);
+      if (sel==str)
+	Statements->setSelected(head,true);
+    }
   }
 }
 
@@ -253,6 +260,8 @@ bool toSQLEdit::checkStore(bool justVer)
 		       justVer?LastVersion:Version->currentText());
       TrashButton->setEnabled(true);
       CommitButton->setEnabled(true);
+      if (Name->edited())
+	updateStatements(Name->text());
     case 1:
       Name->setEdited(false);
       Description->setEdited(false);

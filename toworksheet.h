@@ -38,6 +38,7 @@
 #include "tomarkedtext.h"
 
 class QTabWidget;
+class toResultLong;
 class toResultView;
 class toResultItem;
 class toResultStats;
@@ -80,15 +81,17 @@ class toWorksheet : public QVBox {
   QAccel *Accelerators;
   toMarkedText *Editor;
   QTabWidget *ResultTab;
-  toResultView *Result;
+  toResultLong *Result;
   toResultPlan *Plan;
   QString CurrentQuery;
   QWidget *CurrentTab;
   QString QueryString;
   toResultItem *Resources;
   toResultStats *Statistics;
-  QListView *Logging;
+  toResultView *Logging;
   QListViewItem *LastLogItem;
+
+  QPopupMenu *ToolMenu;
 
   toConnection &Connection;
 
@@ -117,9 +120,9 @@ public slots:
   { Connection.commit(); }
   void rollbackButton()
   { Connection.rollback(); }
-  void eraseLogButton()
-  { Logging->clear(); LastLogItem=NULL; }
+  void eraseLogButton();
   void changeResult(QWidget *widget);
+  void windowActivated(QWidget *w);
 };
 
 #endif

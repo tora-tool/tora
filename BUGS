@@ -4,3 +4,6 @@ OCI:
 toDebug:
 	Seems a recompiled object seems invalidated the first time it is executed in the target
 	session.
+
+toBrowser:
+	Sometimes bugs out when displaying information in toResultItem, this doesn't seem to be a tora bug.

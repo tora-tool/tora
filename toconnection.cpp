@@ -35,15 +35,16 @@ TO_NAMESPACE;
 #include "toconnection.h"
 #include "tomain.h"
 
-void toConnection::connect(void)
+otl_connect *toConnection::newConnection(void)
 {
   QString oldSid;
   if (!SqlNet) {
     oldSid=getenv("ORACLE_SID");
     setenv("ORACLE_SID",Host,1);
   }
+  otl_connect *conn;
   try {
-    Connection=new otl_connect((const char *)connectString(true),0);
+    conn=new otl_connect((const char *)connectString(true),0);
   } catch (...) {
     if (!SqlNet) {
       if (oldSid.isNull())
@@ -64,7 +65,15 @@ void toConnection::connect(void)
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
   str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
   str+="'";
-  otl_stream date(1,str,*Connection);
+  otl_stream date(1,str,*conn);
+  return conn;
+}
+
+void toConnection::setup(void)
+{
+  Connection=newConnection();
+  FreeLong=NULL;
+  NeedCommit=false;
 
   try {
     otl_stream version(1,
@@ -89,19 +98,18 @@ void toConnection::connect(void)
   } catch (...) {
     // Ignore any errors here
   }
-  NeedCommit=false;
 }
 
 toConnection::toConnection(bool sqlNet,const char *iuser,const char *ipassword,const char *ihost)
 : SqlNet(sqlNet),User(iuser),Password(ipassword),Host(ihost)
 {
-  connect();
+  setup();
 }
 
 toConnection::toConnection(const toConnection &conn)
 : SqlNet(conn.SqlNet),User(conn.User),Password(conn.Password),Host(conn.Host)
 {
-  connect();
+  setup();
 }
 
 bool toConnection::closeWidgets(void)
@@ -122,6 +130,7 @@ toConnection::~toConnection()
     delete (*i);
   }
   delete Connection;
+  delete FreeLong;
 }
 
 QString toConnection::connectString(bool pw=false) const
@@ -158,4 +167,28 @@ void toConnection::delWidget(QWidget *widget)
       break;
     }
   }
+}
+
+otl_connect *toConnection::longOperation(void)
+{
+  if (toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
+    return Connection;
+  if (FreeLong) {
+    otl_connect *ret=FreeLong;
+    FreeLong=NULL;
+    return ret;
+  }
+  return newConnection();
+}
+
+#include <stdio.h>
+
+void toConnection::longOperationFree(otl_connect *conn)
+{
+  if (conn==Connection)
+    return;
+  if (FreeLong)
+    delete conn;
+  else
+    FreeLong=conn;
 }

@@ -61,6 +61,7 @@
 #define CONF_PLUGIN_DIR		"PluginDir"
 #define CONF_SQL_FILE		"SQLDictionary"
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
+#define CONF_LONG_SESSION	"LongSeparate"
 
 // Undefining this will leave out the style selection option stuff from the program
 #define ENABLE_STYLE

@@ -156,21 +156,28 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   if (!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty())
     SavePassword->setChecked(true);
 
+  LongSession = new QCheckBox( GroupBox6, "LongSession" );
+  LongSession->setGeometry( QRect( 10, 60, 130, 20 ) ); 
+  LongSession->setText( tr( "&Long sessions"  ) );
+  QToolTip::add(  LongSession, tr( "Create separate session for queries that could take a long time to not block application" ) );
+  if (!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty())
+    LongSession->setChecked(true);
+
   QLabel *label=new QLabel(tr("&Refresh"),GroupBox6);
-  label->setGeometry(QRect(10,60,45,20));
+  label->setGeometry(QRect(10,100,45,20));
   QToolTip::add(label,tr("Default refresh time"));
 
   RefreshList = toRefreshCreate(GroupBox6);
-  RefreshList->setGeometry(QRect(60,60,90,20));
+  RefreshList->setGeometry(QRect(60,100,90,20));
   label->setBuddy(RefreshList);
 
 #ifdef ENABLE_STYLE
   label=new QLabel(tr("S&tyle"),GroupBox6);
-  label->setGeometry(QRect(10,100,45,20));
+  label->setGeometry(QRect(10,140,45,20));
   QToolTip::add(label,tr("Select the theme for the controls of the window"));
 
   StyleList = new QComboBox(GroupBox6);
-  StyleList->setGeometry(QRect(60,100,90,20));
+  StyleList->setGeometry(QRect(60,140,90,20));
   StyleList->insertItem("CDE");
   StyleList->insertItem("Motif");
   StyleList->insertItem("Motif Plus");
@@ -223,7 +230,8 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   setTabOrder( PlanTable, PlanCheckpoint );
   setTabOrder( PlanCheckpoint, DefaultDate );
   setTabOrder( DefaultDate, SavePassword );
-  setTabOrder( SavePassword,  RefreshList );
+  setTabOrder( SavePassword,  LongSession );
+  setTabOrder( LongSession,  RefreshList );
 #ifdef ENABLE_STYLE
   setTabOrder( RefreshList, StyleList );
 #endif
@@ -260,6 +268,7 @@ void toGlobalSettings::saveSetting(void)
     toTool::globalSetConfig(CONF_SAVE_PWD,"Yes");
   else
     toTool::globalSetConfig(CONF_SAVE_PWD,"");
+  toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
 }
 
 void toGlobalSettings::chooseFile(void)

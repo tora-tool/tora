@@ -168,25 +168,25 @@ QString toResultItem::query(const QString &sql,const list<QString> &param)
     buffer[MaxColSize]=0;
 
     for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
+      QString name=Description[i].name;
       if (ReadableColumns) {
 	bool inWord=false;
-	char *name=Description[i].name;
-	for (unsigned int j=0;j<strlen(name);j++) {
+	for (unsigned int j=0;j<name.length();j++) {
 	  if (name[j]=='_')
 	    name[j]=' ';
-	  if (isspace(name[j]))
+	  if (name[j].isSpace())
 	    inWord=false;
-	  else if (isalpha(name[j])) {
+	  else if (name[j].isLetter()) {
 	    if (inWord)
-	      name[j]=tolower(name[j]);
+	      name[j]=name[j].lower();
 	    else
-	      name[j]=toupper(name[j]);
+	      name[j]=name[j].upper();
 	    inWord=true;
 	  }
 	}
       }
 
-      addItem(Description[i].name,toReadValue(Description[i],Query,MaxColSize));
+      addItem(name,toReadValue(Description[i],Query,MaxColSize));
     }
     done();
     return "";

@@ -255,31 +255,31 @@ QString toResultView::query(const QString &sql,const list<QString> &param)
     bool hidden=false;
 
     for (int i=0;i<DescriptionLen;i++) {
+      QString name=Description[i].name;
       if (ReadableColumns) {
 	bool inWord=false;
-	char *name=Description[i].name;
-	for (unsigned int j=0;j<strlen(name);j++) {
+	for (unsigned int j=0;j<name.length();j++) {
 	  if (name[j]=='_')
 	    name[j]=' ';
-	  if (isspace(name[j]))
+	  if (name[j].isSpace())
 	    inWord=false;
-	  else if (isalpha(name[j])) {
+	  else if (name[j].isLetter()) {
 	    if (inWord)
-	      name[j]=tolower(name[j]);
+	      name[j]=name[j].lower();
 	    else
-	      name[j]=toupper(name[j]);
+	      name[j]=name[j].upper();
 	    inWord=true;
 	  }
 	}
       }
-      if (Description[i].name[0]&&Description[i].name[0]!=' ') {
+      if (name.length()>0&&name[0]!=' ') {
 	if (hidden)
 	  throw QString("Can only hide last column in query");
-	if (Description[i].name[0]=='-') {
-	  addColumn(Description[i].name+1);
+	if (name[0]=='-') {
+	  addColumn(name.right(name.length()));
 	  setColumnAlignment(columns()-1,AlignRight);
 	} else
-	  addColumn(Description[i].name);
+	  addColumn(name);
       } else
 	hidden=true;
     }

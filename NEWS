@@ -1,3 +1,9 @@
+0.7:
+
+2001-02-27: Mixed up precision/scale in column definition.
+2001-03-01: Added support for separate session in worksheet.
+2001-03-01: Added context menu for worksheet.
+
 0.6: Released 2001-02-23
 
 2001-02-13: Added support for building static RPM

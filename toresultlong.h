@@ -26,50 +26,38 @@
  ****************************************************************************/
 
 
-#ifndef __TOSQLEDIT_H
-#define __TOSQLEDIT_H
+#ifndef __TORESULTLONG_H
+#define __TORESULTLONG_H
 
-#include <qvbox.h>
+#include <qlistview.h>
+#include <qtimer.h>
+#include "toconnection.h"
+#include "toresultview.h"
+#include "otlv32.h"
 
-class toWorksheet;
-class toMarkedText;
-class QComboBox;
-class QListView;
-class QLineEdit;
-class QToolButton;
+class QListViewItem;
+class toresultlong;
+class toResultTip;
+class toNoBlockQuery;
 
-class toSQLEdit : public QVBox {
+class toResultLong : public toResultView {
   Q_OBJECT
 
-  QListView *Statements;
-  QLineEdit *Name;
-  toMarkedText *Description;
-  QComboBox *Version;
-  toWorksheet *Editor;
-  QToolButton *TrashButton;
-  QToolButton *CommitButton;
-  QString LastVersion;
-  QString Filename;
-
 protected:
-  toConnection &Connection;
-  void updateStatements(const QString &def=QString::null);
+  toNoBlockQuery *Query;
+  QTimer Timer;
+  bool HasHeaders;
 
-  bool checkStore(bool);
-  virtual bool close(bool del);
-
-  void selectionChanged(const QString &ver);
 public:
-  toSQLEdit(QWidget *parent,toConnection &connection);
-  virtual ~toSQLEdit();
+  toResultLong(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
+  toResultLong(toConnection &conn,QWidget *parent,const char *name=NULL);
+  ~toResultLong();
 
+  virtual QString query(const QString &sql,const list<QString> &param);
+  QString query(const QString &sql)
+  { list<QString> p; return query(sql,p); }
 public slots:
-  void loadSQL(void);
-  void saveSQL(void);
-  void deleteVersion(void);
-  void selectionChanged(void);
-  void changeVersion(const QString &);
-  void commitChanges(void);
+  void addItem(void);
 };
 
 #endif

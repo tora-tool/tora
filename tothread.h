@@ -105,6 +105,8 @@ public:
   operator pthread_t()
   { return Thread; };
 
+  void kill(int signo);
+
   static pthread_t getID(void)
   { return pthread_self(); }
   static void yield(void)
