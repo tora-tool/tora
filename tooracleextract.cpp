@@ -5073,12 +5073,8 @@ static toSQL SQLTriggerInfo("toOracleExtract:TriggerInfo",
 			    "      , table_name\n"
 			    "      , base_object_type\n"
 			    "      , referencing_names\n"
-			    "      , description\n"
-			    "      , DECODE(\n"
-			    "                when_clause\n"
-			    "               ,null,null\n"
-			    "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
-			    "              )\n"
+			    "      , upper(description)\n"
+			    "      , when_clause\n"
 			    "      , trigger_body\n"
 			    "      , DECODE(status,'ENABLED','ENABLE','DISABLE')\n"
 			    " FROM\n"
@@ -5097,12 +5093,8 @@ static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
 			     "      , table_name\n"
 			     "      , 'TABLE'                           AS base_object_type\n"
 			     "      , referencing_names\n"
-			     "      , description\n"
-			     "      , DECODE(\n"
-			     "                when_clause\n"
-			     "               ,null,null\n"
-			     "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
-			     "              )\n"
+			     "      , upper(description)\n"
+			     "      , when_clause\n"
 			     "      , trigger_body\n"
 			     "      , DECODE(status,'ENABLED','ENABLE','DISABLE')\n"
 			     " FROM\n"
@@ -5142,9 +5134,12 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   else if (triggerType.find("INSTEAD OF")>=0)
     trgType="INSTEAD OF";
 
+
   QString trgPart = trgType+" "+event;
   QRegExp src("\\s"+trgPart+"\\s",false);
+  description.replace(QRegExp("\nON"),QString("\n ON"));
   int pos=description.find(src);
+  //QString columns=description;
   QString columns;
   if (pos>=0) {
     pos+=trgPart.length()+2;
@@ -5180,8 +5175,11 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   }
   if (triggerType.find("EACH ROW")>=0)
     ret+="FOR EACH ROW\n";
-  if (!when.isEmpty())
+  if (!when.isEmpty()) {
+    ret+="WHEN (";
     ret+=when;
+    ret+=")\n";
+  }
   ret+=body;
   ret+="\n/\n\n";
   if (status!="ENABLE") {
@@ -5983,11 +5981,12 @@ void toOracleExtract::describeTrigger(toExtract &ext,
   QString src=trgType;
   src+=" ";
   src+=event;
+  description.replace(QRegExp("\nON"),QString("\n ON"));
   int pos=description.find(src);
   QString columns;
   if (pos>=0) {
     pos+=src.length();
-    int endPos=description.find(" ON ",pos);
+    int endPos=description.find(" ON ",pos,false);
     if (endPos>=0) {
       columns=description.right(description.length()-pos);
       columns.truncate(endPos-pos);
