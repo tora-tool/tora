@@ -635,9 +635,14 @@ public:
   toOracleProvider(void)
     : toConnectionProvider("Oracle")
   {
+  }
+
+  virtual void initialize(void)
+  {
     toMaxLong=toTool::globalConfig(CONF_MAX_LONG,
 				   QString::number(DEFAULT_MAX_LONG)).toInt();
-    otl_connect::otl_initialize(1);
+    if (otl_connect::otl_initialize(1))
+      addProvider(name());
   }
 
   virtual toConnection::connectionImpl *provideConnection(const QString &,toConnection *conn)

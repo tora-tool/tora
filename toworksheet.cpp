@@ -512,13 +512,6 @@ void toWorksheet::setup(bool autoLoad)
       StatisticButton->setEnabled(false);
     }
 
-#if 0
-    setTabOrder(Editor,ResultTab);
-    setTabOrder(ResultTab,Result);
-    setTabOrder(Result,Columns);
-    setTabOrder(Columns,Refresh);
-#endif
-
     connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));

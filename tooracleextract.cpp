@@ -6682,7 +6682,7 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
 QString toOracleExtract::migrateSource(toExtract &ext,
 				       std::list<QString> &source,
 				       std::list<QString> &destin,
-				       const QString &type) const
+				       const QString &sourcetype) const
 {
   std::list<QString> drop;
   std::list<QString> create;
@@ -6691,7 +6691,51 @@ QString toOracleExtract::migrateSource(toExtract &ext,
 
   toExtract::srcDst2DropCreate(source,destin,drop,create);
 
-  return QString::null;
+  QString lastOwner;
+  QString lastName;
+
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString owner=toShift(ctx);
+      QString type=toShift(ctx);
+      if (type!=sourcetype)
+	continue;
+      QString name=toShift(ctx);
+      
+      if (lastOwner!=owner||name!=lastName) {
+	QString sql="DROP "+sourcetype+" "+owner+"."+name;
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+	lastOwner=owner;
+	lastName=name;
+      }
+   }
+  }
+  lastOwner=lastName=QString::null;
+
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+    
+    QString owner=toShift(ctx);
+    QString type=toShift(ctx);
+    if (type!=sourcetype)
+      continue;
+    QString name=toShift(ctx);
+    QString source=toShift(ctx);
+
+    if (lastOwner!=owner||name!=lastName&&!source.isEmpty()) {
+      QString sql="CREATE "+sourcetype+" "+owner+"."+name;
+      if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+      ret+=source+"\n\n";
+      lastOwner=owner;
+      lastName=name;
+    }
+  }
+
+  return ret;
 }
 
 // Implementation public interface
