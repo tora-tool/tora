@@ -98,12 +98,18 @@ class toResultContentEditor : public QTable,public toEditWidget {
    */
   bool SortRowAsc;
   
+  /** Use filter for all tables.
+   */
+  bool AllFilter;
   /** Filter selection criteria
    */
-  QString Criteria;
+  std::map<QString,QString> Criteria;
   /** Filter retrieve order
    */
-  QString Order;
+  std::map<QString,QString> Order;
+  /** Current filter name in map
+   */
+  QString FilterName;
 
   /** Throw an exception about wrong usage.
    */
@@ -190,7 +196,17 @@ public:
    */
   virtual void editReadAll(void);
 
-  virtual void changeFilter(const QString &criteria,const QString &order);
+  /** Set a new filter setting.
+   * @param all Apply filter to all tables, otherwise only for this table.
+   * @param criteria Criteria to filter on.
+   * @param order Order to read data on.
+   */
+  void changeFilter(bool all,const QString &criteria,const QString &order);
+
+  /** Get information about if filter affect all tables.
+   */
+  bool allFilter()
+  { return AllFilter; }
 
   friend class toResultContent;
 public slots:
@@ -294,7 +310,7 @@ public:
 private slots:
   void changeFilter(void);
   void removeFilter(void)
-  { Editor->changeFilter(QString::null,QString::null); }
+  { Editor->changeFilter(Editor->allFilter(),QString::null,QString::null); }
 public slots:
   /** Reimplemented for internal reasons.
    */

@@ -39,6 +39,7 @@
 #include <qtoolbutton.h>
 #include <qlineedit.h>
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -203,6 +204,14 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 
   Owner=Param1;
   Table=Param2;
+  if (AllFilter)
+    FilterName="";
+  else {
+    FilterName=Owner;
+    FilterName+=".";
+    FilterName+=Table;
+  }
+
   setNumRows(0);
   setNumCols(0);
   NewRecordRow = -1;
@@ -215,13 +224,13 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
     QString sql;
     sql="SELECT * FROM ";
     sql+=table();
-    if (!Criteria.isEmpty()) {
+    if (!Criteria[FilterName].isEmpty()) {
       sql+=" WHERE ";
-      sql+=Criteria;
+      sql+=Criteria[FilterName];
     }
-    if (!Order.isEmpty()) {
+    if (!Order[FilterName].isEmpty()) {
       sql+=" ORDER BY ";
-      sql+=Order;
+      sql+=Order[FilterName];
     }
     toQList par;
     Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,par);
@@ -868,17 +877,29 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 void toResultContent::changeFilter(void)
 {
   toResultContentFilterUI filter(this,"FilterSetup",true);
-  filter.Order->setText(Editor->Order);
-  filter.Criteria->setText(Editor->Criteria);
+  filter.AllTables->setChecked(Editor->allFilter());
+  filter.Order->setText(Editor->Order[Editor->FilterName]);
+  filter.Criteria->setText(Editor->Criteria[Editor->FilterName]);
   filter.Columns->changeParams(Editor->Owner,Editor->Table);
   if(filter.exec())
-    Editor->changeFilter(filter.Criteria->text(),filter.Order->text());
+    Editor->changeFilter(filter.AllTables->isChecked(),
+			 filter.Criteria->text(),
+			 filter.Order->text());
 }
 
-void toResultContentEditor::changeFilter(const QString &crit,const QString &ord)
+void toResultContentEditor::changeFilter(bool all,const QString &crit,const QString &ord)
 {
-  Criteria=crit;
-  Order=ord;
+  AllFilter=all;
+  QString nam;
+  if (AllFilter)
+    nam="";
+  else {
+    nam=Owner;
+    nam+=".";
+    nam+=Table;
+  }
+  Criteria[nam]=crit;
+  Order[nam]=ord;
   saveUnsaved();
   changeParams(Owner,Table);
 }

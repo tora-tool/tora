@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>584</width>
+            <width>580</width>
             <height>480</height>
         </rect>
     </property>
@@ -178,6 +178,17 @@
                 </size>
             </property>
         </spacer>
+        <widget row="4"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AllTables</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Use for all tables</string>
+            </property>
+        </widget>
     </grid>
 </widget>
 <customwidgets>

@@ -251,6 +251,11 @@ In the <B>selection criteria</B> part you can add whatever you want to go after 
 In the <B>sort order</B> you can list the columns you want to sort on. The sort order only affect the order the records
 are read from the database, after they are read you can still sort on any column by clicking it. To the right is a
 list of available columns in the table.<P>
+Finally at the bottom is a checkbox called <B>use for all tables</B>. If this box is checked the index is used for
+all tables, if not checked you can define specific filters for each tables and the content editor will remember the
+different filters as you jump between tables. The reason for this is that it's quite common that not all tables have
+all the columns you want to filter on for a table, in this case you will get an error trying to access the table
+with a faulty filter setting.<P>
 <A NAME=filter><H2>Defining a filter</H2>
 Filtering is based on the object name and can be specified in a variety of ways. This
 is the dialog used to specify the filter.<P>
