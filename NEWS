@@ -25,6 +25,7 @@
 2001-10-28: Fixed problem with setting statusmessage when painting text.
 2001-10-28: Made the saved SQL part of the worksheet hierarchical.
 2001-10-29: Minor change to code completion behaviour.
+2001-10-29: Fixed problem with executeAll queries.
 
 1.1.3: Released 2001-10-19
 

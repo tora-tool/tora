@@ -506,14 +506,15 @@ bool toQuery::eof(void)
 	      delete Query;
 	      Query=NULL;
 	      Query=connection().Connection->createQuery(this,ConnectionSub);
+	      Query->execute();
+	      Connection.Lock.lock();
 	    }
 	    break;
 	  }
 	}
+	Connection.Lock.unlock();
       } catch(...) {
       }
-      if (found)
-	Connection.Lock.unlock();
     }
   }
   return Query->eof();
