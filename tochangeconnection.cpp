@@ -35,6 +35,7 @@
  ****************************************************************************/
 
 #include <qpopupmenu.h>
+#include <qtooltip.h>
 
 #include "tomain.h"
 #include "tochangeconnection.h"
