@@ -951,7 +951,7 @@ __TEMP__
 	} else {
 	    print "$OracleRelease\n";
 	}
-	$TestDB.=" $OracleShared";
+	$TestDB.=" -lclntsh";
     }
     if ($MySQLFound) {
 	$TestDB.=" -lmysqlclient";
