@@ -1,5 +1,6 @@
 1.3.10:
 
+2003-07-22: Changed release script to only create one binary which is static with all but Oracle.
 2003-07-22: Changed installation to use a shellscript to set up library path for Oracle libs unless plugins.
 2003-07-22: Don't make static imply static oracle. To get static oracle use specific switch.
 2003-07-22: Update API doc.
