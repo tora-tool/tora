@@ -56,6 +56,9 @@ SOURCES=\
 	torollback.cpp		\
 	tosession.cpp		\
 	tosecurity.cpp		\
+	tosecurityquotaui.cpp	\
+	tosecurityroleui.cpp	\
+	tosecurityuserui.cpp	\
 	tosgastatement.cpp	\
 	tosgatrace.cpp		\
 	tosql.cpp		\
@@ -97,7 +100,11 @@ plugins/toresultstats.tso:objs/toresultstats.o
 plugins/toresultstorage.tso:objs/toresultstorage.o
 plugins/torollback.tso:objs/torollback.o
 plugins/tosession.tso:objs/tosession.o
-plugins/tosecurity.tso:objs/tosecurity.o
+plugins/tosecurity.tso:\
+	objs/tosecurity.o \
+	objs/tosecurityquotaui.o \
+	objs/tosecurityroleui.o \
+	objs/tosecurityuserui.o
 plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
