@@ -2,8 +2,8 @@
 
 * Compile objects in target thread in toDebug.
 * Write help.
-* Finnish PL/SQL function templates.
 * Problem creating new SQL in SQL editor.
+* Problem deleting template in template editor.
 
 Extended functionality:
 
