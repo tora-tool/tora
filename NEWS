@@ -3,6 +3,7 @@
 2002-01-15: Change label of copy format selection dialog.
 2002-01-15: Fix for external authentication.
 2002-01-15: Fixed clipboard selection mode. (Thanx Volker Götz)
+2002-01-15: Fixed problem with toExtract and missing type.
 
 1.3.2: Released 2002-01-15
 

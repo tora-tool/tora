@@ -267,7 +267,9 @@ QString toExtract::create(std::list<QString> &objects)
       if (pos<0)
 	throw QString("Internal error, missing : in object description");
       parseObject(type.right(type.length()-pos-1),owner,name);
+      printf("BT %s\n",(const char *)type);
       type.truncate(pos);
+      printf("AT %s\n",(const char *)type);
       QString utype=type.upper();
       QString schema=intSchema(owner,false);
 
@@ -276,11 +278,12 @@ QString toExtract::create(std::list<QString> &objects)
 	  extractor *ext=findExtractor("CREATE",utype);
 	  if (ext)
 	    ret+=ext->create(*this,
-			     Connection.provider(),
+			     utype,
 			     schema,
 			     owner,
 			     name);
 	  else {
+	    printf("OE %s\n",(const char *)type);
 	    QString str="Invalid type ";
 	    str+=type;
 	    str+=" to create";
@@ -346,7 +349,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
 	  if (ext)
 	    ext->describe(*this,
 			  cur,
-			  Connection.provider(),
+			  utype,
 			  schema,
 			  owner,
 			  name);
@@ -412,11 +415,11 @@ QString toExtract::drop(std::list<QString> &objects)
 	try {
 	  extractor *ext=findExtractor("CREATE",utype);
 	  if (ext)
-	    ret+=ext->create(*this,
-			     Connection.provider(),
-			     schema,
-			     owner,
-			     name);
+	    ret+=ext->drop(*this,
+			   utype,
+			   schema,
+			   owner,
+			   name);
 	  else {
 	    QString str="Invalid type ";
 	    str+=type;
