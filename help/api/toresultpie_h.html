@@ -85,8 +85,8 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &amp;sql,const toQList &amp;param);
-  virtual bool canHandle(toConnection &amp;)
+  virtual void query(const QString &sql,const toQList &param);
+  virtual bool canHandle(toConnection &)
   { return true; }
 
   // Why are these needed?
@@ -94,24 +94,24 @@ public:
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
-  void setSQL(const QString &amp;sql)
+  void setSQL(const QString &sql)
   { toResult::setSQL(sql); }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &amp;sql)
+  void setSQL(toSQL &sql)
   { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &amp;sql)
+  void query(const QString &sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &amp;sql)
+  void query(toSQL &sql)
   { toResult::query(sql); }
 #endif
 public slots:
@@ -121,15 +121,15 @@ public slots:
   { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1)
+  virtual void changeParams(const QString &Param1)
   { toResult::changeParams(Param1); }
   /** Reimplemented For internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  virtual void changeParams(const QString &Param1,const QString &Param2)
   { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
 };
 

@@ -65,7 +65,7 @@
 #ifndef __TOMEMOEDITOR_H
 #define __TOMEMOEDITOR_H
 
-#include &lt;qdialog.h&gt;
+#include <qdialog.h>
 
 class toMarkedText;
 
@@ -93,7 +93,7 @@ public:
    * @param sql Use SQL syntax highlighting of widget.
    * @param modal Display in modal dialog
    */
-  toMemoEditor(QWidget *parent,const QString &amp;data,int row=-1,int col=-1,
+  toMemoEditor(QWidget *parent,const QString &data,int row=-1,int col=-1,
 	       bool sql=false,bool modal=false);
   /** Get editor text.
    * @return String of editor.
@@ -105,7 +105,7 @@ signals:
    * @param col Pass on from creation.
    * @param data New data to save.
    */
-  void changeData(int row,int col,const QString &amp;data);
+  void changeData(int row,int col,const QString &data);
 private slots:
   void store(void);
 };

@@ -65,9 +65,9 @@
 #ifndef __TORESULT_H
 #define __TORESULT_H
 
-#include &lt;list&gt;
+#include <list>
 
-#include &lt;qobject.h&gt;
+#include <qobject.h>
 #include "toqvalue.h"
 #include "tosql.h"
 
@@ -115,14 +115,14 @@ protected:
   /** Get the current connection from the closest tool.
    * @return Reference to connection.
    */
-  toConnection &amp;connection(void);
+  toConnection &connection(void);
   /** Get the timer associated with the closest tool.
    * @return Pointer to tool timer.
    */
   toTimer *timer(void);
   /** Set parameters of last query.
    */
-  void setParams(const toQList &amp;par)
+  void setParams(const toQList &par)
   { Params=par; ParametersSet=true; }
 public:
   toResult(void);
@@ -137,31 +137,31 @@ public:
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.
    */
-  virtual void query(const QString &amp;sql,const toQList &amp;params) = 0;
+  virtual void query(const QString &sql,const toQList &params) = 0;
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    */
-  virtual void changeParams(const QString &amp;Param1)
+  virtual void changeParams(const QString &Param1)
   { Params.clear(); Params.insert(Params.end(),toQValue(Param1)); query(SQL,Params); }
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    * @param Param1 Second parameter.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
+  virtual void changeParams(const QString &Param1,const QString &Param2);
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    * @param Param2 Second parameter.
    * @param Param3 Third parameter.
    */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3);
+  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3);
   /** Reimplemented for internal reasons.
    */
-  virtual bool canHandle(toConnection &amp;)
+  virtual bool canHandle(toConnection &)
   { return false; }
   /** Get last parameters used.
    * @return Don't modify the list returned.
    */
-  toQList &amp;params(void)
+  toQList &params(void)
   { return Params; }
   /** Check if this result is handled by the current connection
    */
@@ -179,22 +179,22 @@ public:
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
-  void setSQL(const QString &amp;sql)
+  void setSQL(const QString &sql)
   { SQL=sql; }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(toSQL &amp;sql);
+  void setSQL(toSQL &sql);
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &amp;sql);
+  void query(const QString &sql);
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(toSQL &amp;sql);
+  void query(toSQL &sql);
   /** Get SQL to execute
    */
   QString sql(void)
@@ -206,7 +206,7 @@ public:
   { return Name; }
   /** Set SQL name of list.
    */
-  virtual void setSQLName(const QString &amp;name)
+  virtual void setSQLName(const QString &name)
   { Name=name; }
 
   friend class toResultObject;

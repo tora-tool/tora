@@ -550,7 +550,7 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
-      ToolMenu->insertItem("Edit current saved SQL",
+      ToolMenu->insertItem("Edit saved SQL",
 			   this,SLOT(editSQL()));
 				   
 
