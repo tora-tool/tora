@@ -1,12 +1,73 @@
 <HTML><HEAD><TITLE>Server Tuning</TITLE></HEAD><BODY>
 <H1>Server Tuning</H1>
-This tool provides easy access to important server indicators as well as server statistics.<P>
+This tool provides easy access to important server indicators as well as server statistics
+and an editor for database parameters.<P>
 <IMG SRC=images/tuning.png><P>
-The interface for this tool is very simple. There are three tabs in the window. The first one
-present performance <B>indicators</B>. The second one present the <B>statistics</B> available for
-the server. The statistics is shown in two columns, the first one contain the actual value,
-the second show the change in the value since the last update. The last tab displays the
-<B>parameters</B> set in the database. To update press the <B>refresh</B>
-button in the toolbar.
+The interface for this tool is very simple. First there is a toolbar with the following controlls.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Refresh</B></TD>
+<TD VALIGN=top>
+Refresh data from the database, will not read another value for charts.</TD></TR>
+<TR><TD VALIGN=top><B>
+Refresh rate</B></TD>
+<TD VALIGN=top>
+The interval between which to auto update data, observe that setting this too low could put a high
+load on a database server. This is also the sample interval for charts.</TD></TR>
+<TR><TD VALIGN=top><B>
+Change connection</B></TD>
+<TD VALIGN=top>
+Change the connection to monitor in the tuning tool.</TD></TR>
+</TABLE><P>
+There are several tabs in the window.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Overview</B></TD>
+<TD VALIGN=top>
+Displays an overview of dtabase statistics, shows the flow of data through the server in an
+intuitive way.</TD></TR>
+<TR><TD VALIGN=top><B>
+Charts</B></TD>
+<TD VALIGN=top>
+Charts containing important performance information from the database.</TD></TR>
+<TR><TD VALIGN=top><B>
+File I/O</B></TD>
+<TD VALIGN=top>
+Displays information about I/O separated by tablespace or datafile. You can select if you
+want to see average wait time, blocks for tablespace or datafile by using the combobox at the
+top of the charts.</TD></TR>
+<TR><TD VALIGN=top><B>
+Indicators</B></TD>
+<TD VALIGN=top>
+Imprtant performance <B>indicators</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Statistics</B></TD>
+<TD VALIGN=top>
+Raw statistic information from the server. The statistics is shown in two columns, the first one contain the actual value,
+the second show the change in the value since the last update.</TD></TR>
+<TR><TD VALIGN=top><B>parameters</B></TD>
+<TD><A NAME=pfile>This tab displays the values of the parameters of the database. You can also use it to change the values by selecting a
+row and entering a new value at the bottom of the tab. After changes has been made you can apply or export these changes
+using the buttons in the toolbar at the top of the parameter editor.<P>
+<IMG BORDER=1 SRC=images/pfileeditor.png><P>
+<TABLE>
+<TR><TD VALIGN=top><B>Generate p-file</B></TD>
+<TD>Generate a p-file with the current changes (And original changes as well) into a <A HREF=common.html#memo>memo editor</A>.</TD></TR>
+<TR><TD VALIGN=top><B>Apply changes to system</B></TD>
+<TD>Apply changes made to the system.</TD></TR>
+<TR><TD VALIGN=top><B>Apply changes to current session</B></TD>
+<TD>Apply changes to the current session. Will only apply changes to the main connection and not any child sessions TOra might open
+for instance when statements are executed in the worksheet.</TD></TR>
+</TABLE>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Options</B></TD>
+<TD VALIGN=top>
+List the options available in the database server.</TD></TR>
+<TR><TD VALIGN=top><B>
+Licenses</B></TD>
+<TD VALIGN=top>
+Display license information to the current database.</TD></TR>
+</TABLE>
 </BODY>
 </HTML>
