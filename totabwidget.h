@@ -39,6 +39,10 @@
 #include <qtabwidget.h>
 #include <list>
 
+/** An extension of the regular tab bar with an extension to be able to hide
+ * tabs without removing them.
+ */
+
 class toTabBar : public QTabBar {
   Q_OBJECT
 
@@ -54,30 +58,58 @@ class toTabBar : public QTabBar {
   std::list<barTab> Tabs;
   QTab *copyTab(QTab *tab);
 public:
+  /** Constructor.
+   */
   toTabBar(QWidget *parent=0,const char *name=0)
     : QTabBar(parent,name)
   { }
+  /** Reimplemented for internal reasons.
+   */
   virtual int insertTab(QTab *newTab,int ix=-1);
+  /** Reimplemented for internal reasons.
+   */
   virtual int addTab(QTab *newTab)
   { return insertTab(newTab); }
+  /** Reimplemented for internal reasons.
+   */
   virtual void removeTab(QTab *t);
 
+  /** Reimplemented for internal reasons.
+   */
   virtual void layoutTabs();
+  /** Specify if a tab is shown.
+   * @param ix Index of the tab to change visibility.
+   * @param shown Show tab if true, hide if false.
+   */
   virtual void setTabShown(int ix,bool shown);
 };
 
+/** An extension of the regular tab widget with posibility to hide tabs.
+ */
 class toTabWidget: public QTabWidget{ 
   Q_OBJECT
   toTabBar *Tabs;
 public:
+  /** Constructor.
+   */
   toTabWidget(QWidget *parent=0,const char *name=0,WFlags f=0)
     : QTabWidget(parent,name,f)
   { setTabBar(Tabs=new toTabBar(this)); }
 
+  /** Specify if a tab is shown.
+   * @param w Widget to change visibility.
+   * @param shown Show tab if true, hide if false.
+   */
   virtual void setTabShown(QWidget *w, bool value);
 
+  /** Specify that a tab is shown.
+   * @param w Tab to show.
+   */
   virtual void showTab(QWidget *w)
   { setTabShown(w,true); }
+  /** Specify that a tab is hidden.
+   * @param w Tab to hide.
+   */
   virtual void hideTab(QWidget *w)
   { setTabShown(w,false); }
 };

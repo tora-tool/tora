@@ -1,5 +1,6 @@
 1.3.11:
 
+2003-07-31: Added toTabWidget to API.
 2003-07-31: Fixed compile problems with Forte compile. (Thanx Francesco Dandrea)
 2003-07-31: Made configure accept beta versions Qt.
 2003-07-30: Fixes for tab widget pane hiding. (Thanx Oliver Jehle)

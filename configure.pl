@@ -1551,6 +1551,7 @@ API=	\\
 	tosmtp.h                \\
 	tosql.h			\\
 	tosqlparse.h		\\
+	totabwidget.h           \\
 	totemplate.h		\\
 	totextview.h            \\
 	tothread.h		\\
