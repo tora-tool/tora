@@ -5265,7 +5265,8 @@ static toSQL SQLViewColumns("toOracleExtract:ViewColumns",
 			    "SELECT column_name\n"
 			    "  FROM sys.all_tab_columns\n"
 			    " WHERE table_name = :nam<char[100]>\n"
-			    "   AND owner      = :own<char[100]>\n",
+			    "   AND owner      = :own<char[100]>\n"
+			    " ORDER BY column_id",
 			    "Get column names of the view, must have same binds and columns");
 
 QString toOracleExtract::createView(toExtract &ext,

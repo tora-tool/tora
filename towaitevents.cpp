@@ -445,7 +445,7 @@ void toWaitEvents::poll(void)
 static toSQL SQLSessionWaitEvents("toWaitEvents:Session",
 				  "SELECT b.name,\n"
 				  "       SYSDATE,\n"
-				  "       (NVL(a.time_waited,0)*10)%1E6,\n"
+				  "       NVL(a.time_waited,0)*10,\n"
 				  "       NVL(a.total_waits,0),\n"
 				  "       NVL(a.time_waited,0)\n"
 				  "  FROM v$session_event a,\n"

@@ -1,5 +1,7 @@
 1.3.6:
 
+2002-05-10: Fixed problem with view extraction column order.
+2002-05-07: Fixed problem with session wait event analyzer.
 2002-04-28: Fixed restoring session in schema browser.
 2002-04-28: Fixed problem with object and primary key of same name in oracle extractor.
 2002-04-28: Fixed problem with background labels in tuning.
