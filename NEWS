@@ -8,6 +8,8 @@
 2001-11-02: Fixed problem with about dialog.
 2001-11-02: Fixed problem with export long values to text files.
 2001-11-02: Added registration stuff for non freeware version.
+2001-11-02: Fixed problem with add tablespace/datafile dialog.
+2001-11-02: Fixed problem with exception in constructor of queries.
 
 1.1.4: Released 2001-11-02
 

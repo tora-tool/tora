@@ -244,9 +244,9 @@ toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* n
   if (!dispName) {
     Name->hide();
     NameLabel->hide();
-    Name->setFocus();
-  } else 
     Filename->setFocus();
+  } else 
+    Name->setFocus();
 
   InitialSize->setTitle("&Size");
   NextSize->setTitle("&Next");
@@ -339,7 +339,7 @@ QString toStorageDatafile::getName(void)
 
 void toStorageDatafile::valueChanged(const QString &str)
 {
-  if ((!Name||!Name->text().isEmpty())&&
+  if ((Name->isHidden()||!Name->text().isEmpty())&&
       !Filename->text().isEmpty())
     emit validContent(true);
   else

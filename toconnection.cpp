@@ -355,8 +355,16 @@ toQuery::toQuery(toConnection &conn,toSQL &sql,
     Params.insert(Params.end(),arg9);
   
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,const QString &sql,
@@ -410,8 +418,16 @@ toQuery::toQuery(toConnection &conn,const QString &sql,
     Params.insert(Params.end(),arg9);
   
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,toSQL &sql,const toQList &params)
@@ -419,8 +435,16 @@ toQuery::toQuery(toConnection &conn,toSQL &sql,const toQList &params)
 {  
   Mode=Normal;
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
@@ -428,8 +452,16 @@ toQuery::toQuery(toConnection &conn,const QString &sql,const toQList &params)
 {
   Mode=Normal;
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const toQList &params)
@@ -440,8 +472,16 @@ toQuery::toQuery(toConnection &conn,queryMode mode,toSQL &sql,const toQList &par
   Mode=mode;
   ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQList &params)
@@ -452,8 +492,16 @@ toQuery::toQuery(toConnection &conn,queryMode mode,const QString &sql,const toQL
   Mode=mode;
   ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
-  Query->execute();
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+    Query->execute();
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    Connection.freeConnection(ConnectionSub);
+    throw;
+  }
 }
 
 toQuery::toQuery(toConnection &conn,queryMode mode)
@@ -462,7 +510,14 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
   Mode=mode;
   ConnectionSub=(mode!=Long?conn.mainConnection():conn.longConnection());
   toBusy busy;
-  Query=conn.Connection->createQuery(this,ConnectionSub);
+  try {
+    Query=NULL;
+    Query=conn.Connection->createQuery(this,ConnectionSub);
+  } catch(...) {
+    delete Query;
+    Query=NULL;
+    throw;
+  }
 }
 
 void toQuery::execute(toSQL &sql,const toQList &params)
