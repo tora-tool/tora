@@ -28,19 +28,19 @@
 # Makefile.setup and modify it to satisfy your need.
 
 # Where to install tora
-INSTALLPREFIX=/usr/local
+INSTALLPREFIX=$(ROOT)/usr/local
 
 # Where to install tora binary
-INSTALLBIN=/usr/local/bin
+INSTALLBIN=$(ROOT)/usr/local/bin
 
 # Where to install tora plugins
-INSTALLLIB=/usr/local/lib
+INSTALLLIB=$(ROOT)/usr/local/lib
 
 # Additional includes needed to compile program
 INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/plsql/public" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/include/qt2"
 
 # C++ Compiler to use
-GCC="gcc"
+GCC="/usr/bin/cc"
 
 # Additional libraries to link with
 LIBS_GLOB=-lcrypt -lm -lpthread -ldl
@@ -60,11 +60,11 @@ QT_STATIC=/usr/lib/qt2/lib/libqt.a
 # Path to Qt meta compiler
 MOC="/usr/lib/qt2/bin/moc"
 
+# Path to Qt interface compiler
+UIC="/usr/lib/qt2/bin/uic"
+
 # Additional paths to find libraries
 LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/usr/lib/qt2/lib"
-
-# Path to Qt interface compiler
-UIC=uic
 
 # Oracle library
 ORACLE_SHARED=-lclntsh
@@ -84,11 +84,11 @@ DEFINES+=-DOTL_ORA8I
 DEFINES+=-DTO_NAMESPACE="using namespace std"
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 
-# How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat
-FIXKDE=cat
-
 # Where to find perl on your system
 PERL=/usr/bin/perl
+
+# How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat
+FIXKDE=cat
 
 # Comment out this line if you want more output from compile
 .SILENT:
@@ -104,3 +104,4 @@ CFLAGS_GLOB=-g -fPIC -Wall
 
 # Where to install tora
 INSTALLPREFIX=/usr/local
+

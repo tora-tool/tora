@@ -627,10 +627,6 @@ __EOT__
 	print MAKEFILE "LFLAGS=$LFlags\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# Path to Qt interface compiler\n";
-	print MAKEFILE "UIC=uic\n";
-	print MAKEFILE "\n";
-
 	print MAKEFILE "# Oracle library\n";
 	print MAKEFILE "ORACLE_SHARED=-lclntsh\n";
 	print MAKEFILE "\n";
