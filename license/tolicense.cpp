@@ -158,7 +158,8 @@ static QString CheckLicense(const QString &user,const QString &license)
    */
   MD5Init(&MD5);
   MD5Update(&MD5,(unsigned char *)SECRET_HASH,strlen(SECRET_HASH));
-  MD5Update(&MD5,(unsigned char *)prepstr,strlen(prepstr));
+  if (prepstr)
+    MD5Update(&MD5,(unsigned char *)prepstr,strlen(prepstr));
   MD5Update(&MD5,(unsigned char *)userp,strlen(userp)>255?255:strlen(userp));
   MD5Final(output,&MD5);
   

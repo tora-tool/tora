@@ -1264,6 +1264,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   toBusy busy;
 
   QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
+  toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update user and role list",

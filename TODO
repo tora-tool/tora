@@ -55,6 +55,7 @@ Extended functionality:
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
 * Scrolling in charts.
+* Ask in worksheet if saving changes when opening new file.
 
 New tools:
 
