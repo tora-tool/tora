@@ -1134,12 +1134,14 @@ __TEMP__
 			     },
 	         "/usr/include");
 	if (-f $dlfcn && `uname`=~/linux/i ) {
-	    $Libs.=" -ldl";
 	    print "yes\n";
 	    $Target="tora-plugin";
 	} else {
 	    print "no\n";
 	}
+    }
+    if (`uname`=~/linux/i ) {
+	$Libs.=" -ldl";
     }
 
     if (!-f $CC) {
