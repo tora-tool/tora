@@ -509,6 +509,7 @@ __TEMP__
     }
     close TEMP;
     if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o $tmpName $tmpName.cpp")) {
+        $ENV{"LD_LIBRARY_PATH"} .= ":".$ENV{"ORACLE_HOME"}."/lib32";
         $ENV{"LD_LIBRARY_PATH"} .= ":".$ENV{"ORACLE_HOME"}."/lib";
         $ENV{"LD_LIBRARY_PATH"} .= ":".$ENV{"ORACLE_HOME"};
 	if (!system($tmpName)) {
@@ -1012,6 +1013,7 @@ __TEMP__
     }
     print "\n";
 
+    $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib32\" ";
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."\" ";
     $LFlags.="\"-L".$QtLib."\" ";
@@ -1045,6 +1047,7 @@ __TEMP__
     print "$extra\n";
 
     if (!$NoRPath) {
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib32\" ";
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."\" ";
 	$LFlags.="-Xlinker \"--rpath\=$QtLib\" ";
