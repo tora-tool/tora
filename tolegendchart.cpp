@@ -67,6 +67,7 @@ QSize toLegendChart::sizeHint(void)
   QFontMetrics fm=fontMetrics();
   int lwidth=0;
   int lheight=0;
+
   {
     for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       if (!(*i).isEmpty()&&*i!=" ") {
@@ -78,23 +79,42 @@ QSize toLegendChart::sizeHint(void)
     }
   }
   if (lheight>0) {
-    lheight+=4;
-    lwidth+=14;
+    lheight+=8;
+    lwidth+=18;
   }
   setFixedWidth(lwidth);
+
+  if (!Title.isEmpty()) {
+    QRect bounds=fm.boundingRect(0,0,lwidth,10000,FONT_ALIGN,Title);
+    lheight+=bounds.height()+2;
+  }
+
   return QSize(lwidth,lheight);
 }
 
 void toLegendChart::paintEvent(QPaintEvent *e)
 {
   QSize size=sizeHint();
-  int lwidth=size.width();
-  int lheight=size.height();
+  int lwidth=size.width()-4;
+  int lheight=size.height()-4;
 
   QPainter p(this);
-  QFontMetrics fm=p.fontMetrics();
+  QFontMetrics fm=fontMetrics();
 
   int lx=2;
+
+  if (!Title.isEmpty()) {
+    p.save();
+    QFont f=p.font();
+    f.setBold(true);
+    p.setFont(f);
+    QRect bounds=fm.boundingRect(0,0,width(),height(),FONT_ALIGN,Title);
+    p.drawText(0,2,width(),height(),AlignHCenter|AlignTop|ExpandTabs,Title);
+    p.restore();
+    p.translate(0,bounds.height()+2);
+    lheight-=bounds.height()+2;
+  }
+
   int ly=2;
   p.save();
   p.setBrush(white);

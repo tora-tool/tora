@@ -44,6 +44,8 @@
 class toLegendChart : public QWidget {
   Q_OBJECT
 
+  QString Title;
+
   std::list<QString> Labels;
 public:
   /** Create a new legend.
@@ -52,6 +54,17 @@ public:
    * @param f Widget flags.
    */
   toLegendChart(QWidget *parent=NULL,const char *name=NULL,WFlags f=0);
+
+  /** Set title of the chart. Set to empty string to not display title.
+   * @param title Title of chart.
+   */
+  void setTitle(const QString &title=QString::null)
+  { Title=title; update(); }
+  /** Get title of chart.
+   * @return Title of chart.
+   */
+  const QString &title(void)
+  { return Title; }
 
   /** Set list of chart labels.
    * @param labels List of labels, if label is empty it will not appear in legend.

@@ -1602,6 +1602,7 @@ toTuningWait::toTuningWait(QWidget *parent)
   AbsolutePie->showLegend(false);
   layout->addWidget(AbsolutePie,1,2);
   Legend=new toLegendChart(this);
+  Legend->setTitle("Legend");
   layout->addMultiCellWidget(Legend,0,1,0,0);
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
