@@ -391,8 +391,9 @@ public:
       }
     }
     Dock=toAllocDock("Template",QString::null,*toolbarImage());
-    QWidget *window=new toTemplate(Dock);
+    toTemplate *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);
+    window->attachResult();
     return Dock;
   }
   void closeWindow(toConnection &connection)
@@ -452,7 +453,6 @@ toTemplate::toTemplate(QWidget *parent)
 			  QString::null,
 			  *TemplateTool.toolbarImage());
   Frame=new toTemplateResult(dock,this);
-  toAttachDock(dock,Frame,QMainWindow::Bottom);
 
   connect(List,SIGNAL(expanded(QListViewItem *)),this,SLOT(expand(QListViewItem *)));
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
@@ -474,6 +474,11 @@ toTemplate::~toTemplate()
   delete Result;
 }
 
+void toTemplate::attachResult(void)
+{
+  toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+}
+
 void toTemplate::closeFrame(void)
 {
   Result=NULL;
@@ -493,7 +498,7 @@ void toTemplate::expand(QListViewItem *item)
 QWidget *toTemplate::frame(void)
 {
   if (Result->isHidden())
-    toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
+    attachResult();
   return Frame;
 }
 

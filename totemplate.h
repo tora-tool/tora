@@ -53,6 +53,7 @@ class toTemplateProvider;
 class toNoBlockQuery;
 
 /** Not part of the API.
+ * @internal
  */
 
 class toTemplate : public QVBox, public toHelpContext {
@@ -78,7 +79,8 @@ public:
   virtual bool canHandle(toConnection &conn)
   { return true; }
 
-  virtual void closeFrame(void);
+  void closeFrame(void);
+  void attachResult(void);
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
