@@ -1,6 +1,6 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2000-2001,2001  GlobeCom AB (http://www.globecom.se)
+Copyright (C) 2000-2001,2001 Underscore AB (http://www.underscore.se)
 
 For information about license see the LICENSE file. It is distributed under QPL
 which basically means that any derivatory work must be released under an open

@@ -1,7 +1,7 @@
 //***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
- * Copyright (C) 2000-2001,2001 GlobeCom AB
+ * Copyright (C) 2000-2001,2001 Underscore AB
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,15 +20,13 @@
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries. You
- *      are also allowed to link this program with the Qt Non Commercial for
- *      Windows.
+ *      software in the executable aside from Oracle client libraries.
  *
  *      Specifically you are not permitted to link this program with the
- *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
- *      permitted to distribute binaries compiled against these libraries
- *      without written consent from GlobeCom AB. Observe that this does not
- *      disallow linking to the Qt Free Edition.
+ *      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+ *      And you are not permitted to distribute binaries compiled against
+ *      these libraries without written consent from Underscore AB. Observe
+ *      that this does not disallow linking to the Qt Free Edition.
  *
  * All trademarks belong to their respective owners.
  *
@@ -59,9 +57,10 @@
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1\n"
 "<P>\n"
-"&copy; 2000-2001,2001 copyright of GlobeCom AB\n"
-"(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
+"&copy; 2000-2001,2001 copyright of Underscore AB\n"
+"(<A HREF=http://www.underscore.se>http://www.underscore.se/</a>).<P>\n"
 "Written by Henrik Johnson.<P>\n"
+"Webhosting by GlobeCom AB (<A HREF=http://www.globecom.se>www.globecom.se</A>).<P>\n"
 "This program is available\n"
 "under the GNU General Public License.<P>\n"
 "Uses the Qt library version 2.2 by TrollTech\n"

@@ -1,6 +1,6 @@
 TOra - Toolkit for Oracle
 =========================
-Copyright (C) 2000-2001,2001  GlobeCom AB (http://www.globecom.se)
+Copyright (C) 2000-2001,2001  Underscore AB (http://www.underscore.se)
 
 For information about license see the LICENSE file. It is distributed under GPL
 which basically means that any derivatory work must be released under an open
@@ -61,7 +61,7 @@ features that are available so far is (As of version 1.2):
 
 For installation instructions se the file INSTALL.
 
-TOra is developed by Henrik Johnson (tora@globecom.se) of GlobeCom AB
-(http://www.globecom.se) and has the homepage http://www.globecom.se/tora.
+TOra is developed by Henrik Johnson (tora@underscore.se) of Underscore AB
+(http://www.underscore.se) and has the homepage http://www.globecom.se/tora.
 
 Oracle is copyright of Oracle Corporation.

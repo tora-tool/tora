@@ -40,6 +40,7 @@
 2001-11-07: Some minor fixes to configure (Thanx Roman Stepanov).
 2001-11-07: Fixed crash when changing objects in debugger and compiling.
 2001-11-07: Fixed problem with unitialized variable in -- comments.
+2001-11-07: Changed copyright and license. Windows version is now no longer free.
 
 1.1.4: Released 2001-11-02
 
