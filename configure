@@ -84,11 +84,10 @@ then
     mv Makefile.orig Makefile
 fi
 
-echo "static char *LicenseText=\"" > LICENSE.h
-echo "<PRE>" >> LICENSE.h
-$PERL -e 'while(<>) { s/\\/\\\\/; s/\"/\\\"/g; print; }' < LICENSE >> LICENSE.h
-echo "</PRE>" >> LICENSE.h
-echo "\";" >> LICENSE.h
+echo -n "static char *LicenseText=" > LICENSE.h
+echo "\"<PRE>\\n\"" >> LICENSE.h
+$PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
+echo "\"</PRE>\\n\";" >> LICENSE.h
 
 echo
 echo "If you have any problems check the Makefile.setup for the settings."

@@ -28,6 +28,17 @@
 #ifndef __TOTHREAD_H
 #define __TOTHREAD_H
 
+#ifdef __WIN__
+#define TOQTTHREAD
+#endif
+
+class toTask {
+public:
+  virtual ~toTask() { }
+  virtual void run(void) = 0;
+};
+
+#ifndef TOQTTHREAD
 #include <semaphore.h>
 #include <pthread.h>
 #include <signal.h>
@@ -50,12 +61,6 @@ public:
   int getValue();
 };
 
-class toTask {
-public:
-  virtual ~toTask() { }
-  virtual void run(void) = 0;
-};
-
 class toLock {
 private:
   pthread_mutex_t Mutex;
@@ -67,21 +72,6 @@ public:
   void lock(void);
   void unlock(void);
   bool tryLock(void);
-
-  operator pthread_mutex_t *()
-  { return &Mutex; }
-};
-
-class toLocker {
-private:
-  toLock &Lock;
-public:
-  toLocker(toLock &lock)
-    : Lock(lock)
-  { Lock.lock(); }
-  toLocker(const toLocker &);
-  ~toLocker()
-  { Lock.unlock(); }
 };
 
 class toThread {
@@ -112,5 +102,69 @@ public:
   { sched_yield(); }
   static void sleep(struct timespec time);
 };
+
+#else
+#include <qthread.h>
+
+class toSemaphore {
+private:
+  QSemaphore sem;
+public:
+  toSemaphore();
+  toSemaphore(const toSemaphore &);
+  toSemaphore(int val);
+  ~toSemaphore();
+
+  void up();
+  void down();
+  bool tryDown();
+  int getValue();
+};
+
+class toLock {
+private:
+  QMutex Mutex
+public:
+  toLock(void);
+  toLock(const toLock &);
+  ~toLock();
+
+  void lock(void);
+  void unlock(void);
+  bool tryLock(void);
+};
+
+class toThread {
+private:
+  QThread		Thread;
+  toTask		*Task;
+  toSemaphore		StartSemaphore;
+  friend void		*toThreadStartWrapper(void*);
+  
+  toThread(const toThread &);
+public:
+  toThread(toTask *);
+  ~toThread();
+  
+  void start(void);
+  void startAsync(void);
+
+  static void sleep(struct timespec time);
+};
+
+#endif
+
+class toLocker {
+private:
+  toLock &Lock;
+public:
+  toLocker(toLock &lock)
+    : Lock(lock)
+  { Lock.lock(); }
+  toLocker(const toLocker &);
+  ~toLocker()
+  { Lock.unlock(); }
+};
+
 
 #endif

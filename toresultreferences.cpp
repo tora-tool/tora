@@ -33,7 +33,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tosql.h"
 
-toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const char *name=NULL)
+toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(false,false,conn,parent,name)
 {
   setReadAll(true);
@@ -73,27 +73,27 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
 }
 
 static toSQL SQLConstraints("toResultReferences:References",
-			    "SELECT Owner,
-       Table_Name,
-       Constraint_Name,
-       R_Owner,
-       R_Constraint_Name,
-       Status,
-       Delete_Rule
-  FROM all_constraints a
- WHERE constraint_type = 'R'
-   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name
-                                         FROM all_constraints b
-                                        WHERE b.OWNER = :owner<char[31]>
-                                          AND b.TABLE_NAME = :tab<char[31]>)
- ORDER BY Constraint_Name",
+			    "SELECT Owner,\n"
+			    "       Table_Name,\n"
+			    "       Constraint_Name,\n"
+			    "       R_Owner,\n"
+			    "       R_Constraint_Name,\n"
+			    "       Status,\n"
+			    "       Delete_Rule\n"
+			    "  FROM all_constraints a\n"
+			    " WHERE constraint_type = 'R'\n"
+			    "   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name\n"
+			    "                                         FROM all_constraints b\n"
+			    "                                        WHERE b.OWNER = :owner<char[31]>\n"
+			    "                                          AND b.TABLE_NAME = :tab<char[31]>)\n"
+			    " ORDER BY Constraint_Name",
 			    "List the references from foreign constraints to specified table, must return same columns");
 static toSQL SQLDependencies("toResultReferences:Dependencies",
-			     "SELECT owner,name,type||' '||dependency_type
-  FROM dba_dependencies
- WHERE referenced_owner = :owner<char[31]>
-   AND referenced_name = :tab<char[31]>
- ORDER BY owner,type,name",
+			     "SELECT owner,name,type||' '||dependency_type\n"
+			     "  FROM dba_dependencies\n"
+			     " WHERE referenced_owner = :owner<char[31]>\n"
+			     "   AND referenced_name = :tab<char[31]>\n"
+			     " ORDER BY owner,type,name",
 			     "List the dependencies from other objects to this object, must return same number of columns");
 
 void toResultReferences::query(const QString &sql,const list<QString> &param)
@@ -125,62 +125,66 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
     Query<<TableName.utf8();
 
     QListViewItem *item=NULL;
-    while(!Query.eof()) {
-      item=new QListViewItem(this,item,NULL);
+    char *buffer=new char[MaxColSize+1];
+    buffer[MaxColSize]=0;
+    try {
+      while(!Query.eof()) {
+        item=new QListViewItem(this,item,NULL);
 
-      char buffer[MaxColSize+1];
-      buffer[MaxColSize]=0;
-      Query>>buffer;
-      QString consOwner(QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(1,QString::fromUtf8(buffer));
-      Query>>buffer;
-      QString consName(QString::fromUtf8(buffer));
-      QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
-      item->setText(0,consOwner);
-      item->setText(2,consName);
-      Query>>buffer;
-      QString rConsOwner(QString::fromUtf8(buffer));
-      Query>>buffer;
-      QString rConsName(QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(4,QString::fromUtf8(buffer));
-      QString Condition;
+        Query>>buffer;
+        QString consOwner(QString::fromUtf8(buffer));
+        Query>>buffer;
+        item->setText(1,QString::fromUtf8(buffer));
+        Query>>buffer;
+        QString consName(QString::fromUtf8(buffer));
+        QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
+        item->setText(0,consOwner);
+        item->setText(2,consName);
+        Query>>buffer;
+        QString rConsOwner(QString::fromUtf8(buffer));
+        Query>>buffer;
+        QString rConsName(QString::fromUtf8(buffer));
+        Query>>buffer;
+        item->setText(4,QString::fromUtf8(buffer));
+        QString Condition;
 
-      Condition="foreign key (";
-      Condition.append(colNames);
-      Condition.append(") references ");
-      Condition.append(rConsOwner);
-      Condition.append(".");
-      QString cols(constraintCols(rConsOwner,rConsName));
+        Condition="foreign key (";
+        Condition.append(colNames);
+        Condition.append(") references ");
+        Condition.append(rConsOwner);
+        Condition.append(".");
+        QString cols(constraintCols(rConsOwner,rConsName));
 
-      Condition.append(TableName);
-      Condition.append("(");
-      Condition.append(cols);
-      Condition.append(")");
+        Condition.append(TableName);
+        Condition.append("(");
+        Condition.append(cols);
+        Condition.append(")");
 
-      item->setText(3,Condition);
-      Query>>buffer;
-      item->setText(5,QString::fromUtf8(buffer));
+        item->setText(3,Condition);
+        Query>>buffer;
+        item->setText(5,QString::fromUtf8(buffer));
+      }
+
+      otl_stream Deps(1,
+	  	      SQLDependencies(Connection),
+		      Connection.connection());
+      Deps<<Owner.utf8();
+      Deps<<TableName.utf8();
+      while(!Deps.eof()) {
+        item=new QListViewItem(this,item,NULL);
+        Deps>>buffer;
+        item->setText(0,QString::fromUtf8(buffer));
+        Deps>>buffer;
+        item->setText(1,QString::fromUtf8(buffer));
+        Deps>>buffer;
+        item->setText(3,QString::fromUtf8(buffer));
+        item->setText(4,"DEPENDENCY");
+      }
+    } catch (...) {
+      delete buffer;
+      throw;
     }
-
-    otl_stream Deps(1,
-		    SQLDependencies(Connection),
-		    Connection.connection());
-    Deps<<Owner.utf8();
-    Deps<<TableName.utf8();
-    while(!Deps.eof()) {
-      item=new QListViewItem(this,item,NULL);
-      char buffer[MaxColSize+1];
-      buffer[MaxColSize]=0;
-      Deps>>buffer;
-      item->setText(0,QString::fromUtf8(buffer));
-      Deps>>buffer;
-      item->setText(1,QString::fromUtf8(buffer));
-      Deps>>buffer;
-      item->setText(3,QString::fromUtf8(buffer));
-      item->setText(4,"DEPENDENCY");
-    }
+    delete buffer;
   } TOCATCH
   updateContents();
 }

@@ -27,7 +27,9 @@
 
 TO_NAMESPACE;
 
+#ifndef __WIN__
 #include <unistd.h>
+#endif
 
 #include <qapplication.h>
 #include <qstring.h>
@@ -98,6 +100,7 @@ void toTool::createWindow(void)
 
 void toTool::saveConfig(void)
 {
+#ifndef __WIN__
   if (!Configuration)
     return;
   QString conf;
@@ -139,6 +142,7 @@ void toTool::saveConfig(void)
     unlink(conf);
   link(newconf,conf);
   unlink(newconf);
+#endif
 }
 
 void toTool::loadConfig(void)
@@ -146,7 +150,7 @@ void toTool::loadConfig(void)
   if (Configuration)
     delete Configuration;
   Configuration=new map<QString,QString>;
-
+#ifndef __WIN__
   QString conf;
   if (getenv("HOME")) {
     conf=getenv("HOME");
@@ -215,6 +219,7 @@ void toTool::loadConfig(void)
     wpos++;
     pos++;
   }
+#endif
 }
 
 const QString &toTool::config(const QString &tag,const QString &def)

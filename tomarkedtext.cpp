@@ -122,7 +122,7 @@ void toMarkedText::print(void)
 }
 
 int toMarkedText::printPage(QPrinter *printer,QPainter *painter,int line,int &offset,
-			    int pageNo,bool paint=true)
+			    int pageNo,bool paint)
 {
   QPaintDeviceMetrics metrics(printer);
   painter->drawLine(0,0,metrics.width(),0);

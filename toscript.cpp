@@ -90,76 +90,76 @@ public:
 static toScriptTool ScriptTool;
 
 static toSQL SQLObjectList("toScript:ExtractObject",
-			   "SELECT *
-  FROM (SELECT 'TABLESPACE',tablespace_name,NULL
-	  FROM dba_tablespaces
-	UNION
-	SELECT 'ROLE',role,NULL
-	  FROM dba_roles
-	UNION
-	SELECT 'PUBLIC','SYNONYM',synonym_name
-	  FROM all_synonyms WHERE owner = 'PUBLIC'
-	UNION
-	SELECT owner,'DATABASE LINK',db_link
-	  FROM all_db_links
-	UNION
-	SELECT owner,object_type,object_name
-	  FROM all_objects
-	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',
-			       'PACKAGE BODY','FUNCTION','PROCEDURE')
-	UNION
-	SELECT owner,'TABLE',table_name
-	  FROM all_tables
-	 WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL
-	UNION
-	SELECT owner,'MATERIALIZED TABLE',mview_name AS object
-	  FROM all_mviews
-	UNION
-	SELECT username,NULL,NULL
-	  FROM all_users)
-  ORDER BY 1,2,3",
+			   "SELECT *\n"
+			   "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
+			   "	  FROM dba_tablespaces\n"
+			   "	UNION\n"
+			   "	SELECT 'ROLE',role,NULL\n"
+			   "	  FROM dba_roles\n"
+			   "	UNION\n"
+			   "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
+			   "	  FROM all_synonyms WHERE owner = 'PUBLIC'\n"
+			   "	UNION\n"
+			   "	SELECT owner,'DATABASE LINK',db_link\n"
+			   "	  FROM all_db_links\n"
+			   "	UNION\n"
+			   "	SELECT owner,object_type,object_name\n"
+			   "	  FROM all_objects\n"
+			   "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
+			   "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			   "	UNION\n"
+			   "	SELECT owner,'TABLE',table_name\n"
+			   "	  FROM all_tables\n"
+			   "	 WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL\n"
+			   "	UNION\n"
+			   "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
+			   "	  FROM all_mviews\n"
+			   "	UNION\n"
+			   "	SELECT username,NULL,NULL\n"
+			   "	  FROM all_users)\n"
+			   "  ORDER BY 1,2,3",
 			   "Extract objects available to extract from the database, "
 			   "should have same columns",
 			   "8.1");
 
 static toSQL SQLObjectList7("toScript:ExtractObject",
-			    "SELECT *
-  FROM (SELECT 'TABLESPACE',tablespace_name,NULL
-	  FROM dba_tablespaces
-	UNION
-	SELECT 'ROLE',role,NULL
-	  FROM dba_roles
-	UNION
-	SELECT 'PUBLIC','SYNONYM',synonym_name
-	  FROM all_synonyms WHERE owner = 'PUBLIC'
-	UNION
-	SELECT owner,'DATABASE LINK',db_link
-	  FROM all_db_links
-	UNION
-	SELECT owner,object_type,object_name
-	  FROM all_objects
-	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',
-			       'PACKAGE BODY','FUNCTION','PROCEDURE')
-	UNION
-	SELECT owner,'TABLE',table_name
-	  FROM all_tables
-	 WHERE temporary != 'Y' AND secondary = 'N'
-	UNION
-	SELECT owner,'MATERIALIZED TABLE',mview_name AS object
-	  FROM all_mviews
-	UNION
-	SELECT username,NULL,NULL
-	  FROM all_users)
-  ORDER BY 1,2,3",
+			    "SELECT *\n"
+			    "  FROM (SELECT 'TABLESPACE',tablespace_name,NULL\n"
+			    "	  FROM dba_tablespaces\n"
+			    "	UNION\n"
+			    "	SELECT 'ROLE',role,NULL\n"
+			    "	  FROM dba_roles\n"
+			    "	UNION\n"
+			    "	SELECT 'PUBLIC','SYNONYM',synonym_name\n"
+			    "	  FROM all_synonyms WHERE owner = 'PUBLIC'\n"
+			    "	UNION\n"
+			    "	SELECT owner,'DATABASE LINK',db_link\n"
+			    "	  FROM all_db_links\n"
+			    "	UNION\n"
+			    "	SELECT owner,object_type,object_name\n"
+			    "	  FROM all_objects\n"
+			    "	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',\n"
+			    "			       'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			    "	UNION\n"
+			    "	SELECT owner,'TABLE',table_name\n"
+			    "	  FROM all_tables\n"
+			    "	 WHERE temporary != 'Y' AND secondary = 'N'\n"
+			    "	UNION\n"
+			    "	SELECT owner,'MATERIALIZED TABLE',mview_name AS object\n"
+			    "	  FROM all_mviews\n"
+			    "	UNION\n"
+			    "	SELECT username,NULL,NULL\n"
+			    "	  FROM all_users)\n"
+			    "  ORDER BY 1,2,3",
 			    QString::null,
 			    "7.0");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
-			       "SELECT owner,object_type,object_name
-  FROM all_objects
- WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',
-	               'PACKAGE BODY','FUNCTION','PROCEDURE')
- ORDER BY 1,2,3",
+			       "SELECT owner,object_type,object_name\n"
+			       "  FROM all_objects\n"
+			       " WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',\n"
+			       "	               'PACKAGE BODY','FUNCTION','PROCEDURE')\n"
+			       " ORDER BY 1,2,3",
 			       "Extract objects available to extract from the database if you "
 			       "don't have admin access, should have same columns");
 
@@ -304,31 +304,47 @@ list<QString> toScript::createObjectList(QListView *source)
   }
   
   if (IncludeDDL->isChecked()) {
-    for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
-      toPush(lst,*i);
-    for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
-      toPush(lst,*i);
-    for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
-      toPush(lst,*i);
-    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-      QString line="ROLE:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
+	toPush(lst,*i);
     }
-    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-      QString line="USER:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
+	toPush(lst,*i);
     }
-    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE FAMILY:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
+	toPush(lst,*i);
     }
-    for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
-      toPush(lst,*i);
-    for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
-      toPush(lst,*i);
+    {
+      for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+	QString line="ROLE:";
+	line+=*i;
+	toPush(lst,line);
+      }
+    }
+    {
+      for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+	QString line="USER:";
+	line+=*i;
+	toPush(lst,line);
+      }
+    }
+    {
+      for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+	QString line="TABLE FAMILY:";
+	line+=*i;
+	toPush(lst,line);
+      }
+    }
+    {
+      for(list<QString>::iterator i=userViews.begin();i!=userViews.end();i++)
+	toPush(lst,*i);
+    }
+    {
+      for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
+	toPush(lst,*i);
+    }
   }
   for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
     QString line="TABLE CONTENTS:";
@@ -336,20 +352,26 @@ list<QString> toScript::createObjectList(QListView *source)
     toPush(lst,line);
   }
   if (IncludeDDL->isChecked()) {
-    for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE REFERENCES:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
+	QString line="TABLE REFERENCES:";
+	line+=*i;
+	toPush(lst,line);
+      }
     }
-    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-      QString line="ROLE GRANTS:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+	QString line="ROLE GRANTS:";
+	line+=*i;
+	toPush(lst,line);
+      }
     }
-    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
-      QString line="USER GRANTS:";
-      line+=*i;
-      toPush(lst,line);
+    {
+      for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+	QString line="USER GRANTS:";
+	line+=*i;
+	toPush(lst,line);
+      }
     }
   }
   return lst;

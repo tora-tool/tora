@@ -197,4 +197,18 @@ QString toFontToString(const QFont &fnt);
 
 #define toIsIdent(c) (c.isLetterOrNumber()||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')
 
+#ifdef __WIN__
+template <class T>
+T max(T a, T b)
+{
+    return a > b ? a : b ;
+}
+
+template <class T>
+T min(T a, T b)
+{
+    return a < b ? a : b ;
+}
+#endif
+
 #endif

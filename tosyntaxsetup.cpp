@@ -74,14 +74,13 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 
   Example->setAnalyzer(Analyzer);
   Example->setReadOnly(true);
-  Example->setText(
-"create procedure CheckObvious as
-begin
-  GlobeCom:='Great'; -- This variable doesn't exist
-  if GlobeCom = 'Great' then
-    Obvious(true);
-  end if;
-end;");
+  Example->setText("create procedure CheckObvious as\n"
+		   "begin\n"
+		   "  GlobeCom:='Great'; -- This variable doesn't exist\n"
+		   "  if GlobeCom = 'Great' then\n"
+		   "    Obvious(true);\n"
+		   "  end if;\n"
+		   "end;");
   Example->setCurrent(4);
   map<int,QString> Errors;
   Errors[2]="Unknown variable";

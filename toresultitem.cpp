@@ -97,8 +97,8 @@ void toResultItem::addItem(const QString &title,const QString &value)
       tmp[i]=Widgets[i];
     delete Widgets;
     Widgets=tmp;
-    for (int i=WidgetPos;i<NumWidgets;i++)
-      Widgets[i]=NULL;
+    for (int j=WidgetPos;j<NumWidgets;j++)
+      Widgets[j]=NULL;
   }
   QLabel *widget;
   if (!Widgets[WidgetPos]) {
@@ -159,35 +159,42 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
 	       sql.utf8(),
 	       Connection.connection());
 
-    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
-      Query<<(*i).utf8();
+    {
+      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
+	Query<<(*i).utf8();
+    }
 
     Description=Query.describe_select(DescriptionLen);
 
-    char buffer[MaxColSize+1];
+    char *buffer=new char[MaxColSize+1];
     buffer[MaxColSize]=0;
-
-    for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
-      QString name=QString::fromUtf8(Description[i].name);
-      if (ReadableColumns) {
-	bool inWord=false;
-	for (unsigned int j=0;j<name.length();j++) {
-	  if (name[j]=='_')
-	    name[j]=' ';
-	  if (name[j].isSpace())
-	    inWord=false;
-	  else if (name[j].isLetter()) {
-	    if (inWord)
-	      name[j]=name[j].lower();
-	    else
-	      name[j]=name[j].upper();
-	    inWord=true;
+    try {
+      for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
+	QString name=QString::fromUtf8(Description[i].name);
+	if (ReadableColumns) {
+	  bool inWord=false;
+	  for (unsigned int j=0;j<name.length();j++) {
+	    if (name.at(j)=='_')
+	      name.ref(j)=' ';
+	    if (name.at(j).isSpace())
+	      inWord=false;
+	    else if (name.at(j).isLetter()) {
+	      if (inWord)
+		name.ref(j)=name.at(j).lower();
+	      else
+		name.ref(j)=name.at(j).upper();
+	      inWord=true;
+	    }
 	  }
 	}
-      }
 
-      addItem(name,toReadValue(Description[i],Query,MaxColSize));
+	addItem(name,toReadValue(Description[i],Query,MaxColSize));
+      }
+    } catch (...) {
+      delete buffer;
+      throw;
     }
+    delete buffer;
     done();
   } catch (const QString &str) {
     done();

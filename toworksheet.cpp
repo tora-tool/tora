@@ -108,7 +108,7 @@ static struct {
 	       { 0,NULL,	false,false,false,false }
 };
 
-toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
+toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent,const char* name)
   : QFrame(parent,name),Tool(tool)
 {
   GroupBox1 = new QGroupBox( this, "GroupBox1" );
@@ -670,7 +670,7 @@ void toWorksheet::execute(bool all,bool step)
 	      QString rest=data.right(data.length()-i).lower();
 	      for (int j=0;Blocks[j].Start;j++) {
 		unsigned int len=strlen(Blocks[j].Start);
-		if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest[len]))) {
+		if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
 		  lastState=state;
 		  state=comment;
 		  break;
@@ -799,7 +799,7 @@ void toWorksheet::execute(bool all,bool step)
   }
   if (Editor->hasMarkedText()&&!all) {
     QueryString=Editor->markedText();
-    if (!code&&QueryString[QueryString.length()-1]==';')
+    if (!code&&QueryString.at(QueryString.length()-1)==';')
       QueryString.remove(QueryString.length()-1,1);
     query(QueryString);
     if (CurrentTab==Plan)

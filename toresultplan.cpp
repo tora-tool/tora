@@ -30,6 +30,10 @@ TO_NAMESPACE;
 #include <stdio.h>
 #include <map>
 
+#ifdef __WIN__
+#include <time.h>
+#endif
+
 #include "toresultplan.h"
 #include "tomain.h"
 #include "toconf.h"

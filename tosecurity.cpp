@@ -62,14 +62,14 @@ TO_NAMESPACE;
 #include "icons/copyuser.xpm"
 
 static toSQL SQLUserInfo("toSecurity:UserInfo",
-			 "SELECT Account_Status,
-       Password,
-       External_Name,
-       Profile,
-       Default_Tablespace,
-       Temporary_Tablespace
-  FROM DBA_Users
- WHERE UserName = :f1<char[100]>",
+			 "SELECT Account_Status,\n"
+			 "       Password,\n"
+			 "       External_Name,\n"
+			 "       Profile,\n"
+			 "       Default_Tablespace,\n"
+			 "       Temporary_Tablespace\n"
+			 "  FROM DBA_Users\n"
+			 " WHERE UserName = :f1<char[100]>",
 			 "Get information about a user, must have same columns and same binds.");
 
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
@@ -90,20 +90,20 @@ static toSQL SQLRoles("toSecurity:Roles",
 		      "Get roles available in DB, should return one entry");
 
 static toSQL SQLListSystem("toSecurity:ListSystemPrivs",
-			   "SELECT a.name
-  FROM system_privilege_map a,
-       v$enabledprivs b
- WHERE b.priv_number = a.privilege
- ORDER BY a.name",
+			   "SELECT a.name\n"
+			   "  FROM system_privilege_map a,\n"
+			   "       v$enabledprivs b\n"
+			   " WHERE b.priv_number = a.privilege\n"
+			   " ORDER BY a.name",
 			   "Get name of available system privileges");
 
 static toSQL SQLQuota("toSecurity:Quota",
-		      "SELECT Tablespace_name,
-       Bytes,
-       Max_bytes
-  FROM DBA_TS_Quotas
- WHERE Username = :f1<char[200]>
- ORDER BY Tablespace_name",
+		      "SELECT Tablespace_name,\n"
+		      "       Bytes,\n"
+		      "       Max_bytes\n"
+		      "  FROM DBA_TS_Quotas\n"
+		      " WHERE Username = :f1<char[200]>\n"
+		      " ORDER BY Tablespace_name",
 		      "Get information about what quotas the user has, "
 		      "must have same columns and same binds.");
 
@@ -112,45 +112,45 @@ static toSQL SQLSystemGrant("toSecurity:SystemGrant",
 			    "Get information about the system privileges a user has, should have same bindings and columns");
 
 static toSQL SQLObjectList("toSecurity:ObjectList",
-			   "SELECT object_type,
-       owner,
-       object_name
-  FROM all_objects
- WHERE object_type IN ('FUNCTION','LIBRARY','PACKAGE','PROCEDURE','SEQUENCE',
-		       'TABLE','TYPE','VIEW','OPERATOR','DIRECTORY')
- ORDER BY owner,object_type,object_name",
+			   "SELECT object_type,\n"
+			   "       owner,\n"
+			   "       object_name\n"
+			   "  FROM all_objects\n"
+			   " WHERE object_type IN ('FUNCTION','LIBRARY','PACKAGE','PROCEDURE','SEQUENCE',\n"
+			   "		       'TABLE','TYPE','VIEW','OPERATOR','DIRECTORY')\n"
+			   " ORDER BY owner,object_type,object_name",
 			   "List objects available to set privileges on, must have same columns");
 
 static toSQL SQLObjectPrivs("toSecurity:ObjectPrivs",
-			    "SELECT DECODE(:type<char[100]>,'FUNCTION','EXECUTE',
-			       'LIBRARY','EXECUTE',
-			       'PACKAGE','EXECUTE',
-			       'PROCEDURE','EXECUTE',
-			       'SEQUENCE','ALTER,SELECT',
-			       'TABLE','ALTER,DELETE,INDEX,INSERT,REFERENCES,SELECT,UPDATE',
-			       'TYPE','EXECUTE',
-			       'VIEW','DELETE,SELECT,INSERT,UPDATE',
-			       'OPERATOR','EXECUTE',
-			       'DIRECTORY','READ',
-			       NULL) FROM DUAL",
+			    "SELECT DECODE(:type<char[100]>,'FUNCTION','EXECUTE',\n"
+			    "			       'LIBRARY','EXECUTE',\n"
+			    "			       'PACKAGE','EXECUTE',\n"
+			    "			       'PROCEDURE','EXECUTE',\n"
+			    "			       'SEQUENCE','ALTER,SELECT',\n"
+			    "			       'TABLE','ALTER,DELETE,INDEX,INSERT,REFERENCES,SELECT,UPDATE',\n"
+			    "			       'TYPE','EXECUTE',\n"
+			    "			       'VIEW','DELETE,SELECT,INSERT,UPDATE',\n"
+			    "			       'OPERATOR','EXECUTE',\n"
+			    "			       'DIRECTORY','READ',\n"
+			    "			       NULL) FROM DUAL",
 			    "Takes a type as parameter and return ',' separated list of privileges");
 
 static toSQL SQLObjectGrant("toSecurity:ObjectGrant",
-			    "SELECT owner,
-       table_name,
-       privilege,
-       grantable
-  FROM dba_tab_privs
- WHERE grantee = :f1<char[100]>",
+			    "SELECT owner,\n"
+			    "       table_name,\n"
+			    "       privilege,\n"
+			    "       grantable\n"
+			    "  FROM dba_tab_privs\n"
+			    " WHERE grantee = :f1<char[100]>",
 			    "Get the privilege on objects for a user or role, "
 			    "must have same columns and binds");
 
 static toSQL SQLRoleGrant("toSecurity:RoleGrant",
-			  "SELECT granted_role,
-       admin_option,
-       default_role
-  FROM dba_role_privs
- WHERE grantee = :f1<char[100]>",
+			  "SELECT granted_role,\n"
+			  "       admin_option,\n"
+			  "       default_role\n"
+			  "  FROM dba_role_privs\n"
+			  " WHERE grantee = :f1<char[100]>",
 			  "Get the roles granted to a user or role, "
 			  "must have same columns and binds");
 
@@ -529,33 +529,39 @@ void toSecurityUser::changeUser(const QString &user)
 	AuthType=password;
       }
 
-      query>>buffer;
-      str=QString::fromUtf8(buffer);
-      for (int i=0;i<Profile->count();i++) {
-	if (Profile->text(i)==str) {
-	  Profile->setCurrentItem(i);
-	  OrgProfile=str;
-	  break;
+      {
+        query>>buffer;
+        str=QString::fromUtf8(buffer);
+        for (int i=0;i<Profile->count();i++) {
+  	  if (Profile->text(i)==str) {
+	    Profile->setCurrentItem(i);
+	    OrgProfile=str;
+	    break;
+	  }
 	}
       }
 
-      query>>buffer;
-      str=QString::fromUtf8(buffer);
-      for (int i=0;i<DefaultSpace->count();i++) {
-	if (DefaultSpace->text(i)==str) {
-	  DefaultSpace->setCurrentItem(i);
-	  OrgDefault=str;
-	  break;
+      {
+	query>>buffer;
+	str=QString::fromUtf8(buffer);
+	for (int i=0;i<DefaultSpace->count();i++) {
+	  if (DefaultSpace->text(i)==str) {
+	    DefaultSpace->setCurrentItem(i);
+	    OrgDefault=str;
+	    break;
+	  }
 	}
       }
 
-      query>>buffer;
-      str=QString::fromUtf8(buffer);
-      for (int i=0;i<TempSpace->count();i++) {
-	if (TempSpace->text(i)==str) {
-	  TempSpace->setCurrentItem(i);
-	  OrgTemp=str;
-	  break;
+      {
+	query>>buffer;
+	str=QString::fromUtf8(buffer);
+	for (int i=0;i<TempSpace->count();i++) {
+	  if (TempSpace->text(i)==str) {
+	    TempSpace->setCurrentItem(i);
+	    OrgTemp=str;
+	    break;
+	  }
 	}
       }
     }
@@ -703,9 +709,9 @@ public:
   void clear(void)
   {
     if (User->isHidden())
-      return Role->clear();
+      Role->clear();
     else
-      return User->clear(false);
+      User->clear(false);
   }
   bool user(void)
   {

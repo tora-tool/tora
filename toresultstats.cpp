@@ -34,7 +34,7 @@ TO_NAMESPACE;
 #include "toresultstats.moc"
 
 toResultStats::toResultStats(bool onlyChanged,int ses,toConnection &conn,QWidget *parent,
-			     const char *name=NULL)
+			     const char *name)
   : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
 {
   SessionID=ses;
@@ -47,7 +47,7 @@ static toSQL SQLSession("toResultStats:Session",
 			"Get session id of current session");
 
 toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent,
-			     const char *name=NULL)
+			     const char *name)
   : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
 {
   try {
@@ -55,7 +55,7 @@ toResultStats::toResultStats(bool onlyChanged,toConnection &conn,QWidget *parent
 		   SQLSession(Connection),
 		   Connection.connection());
     str>>SessionID;
-  } catch (otl_exc &exc) {
+  } catch (otl_exc &) {
     SessionID=-1;
   }
   setup();
@@ -80,12 +80,11 @@ static toSQL SQLStatistics("toResultStats:Statistics",
 			   "SELECT Statistic#,Value FROM V$SesStat WHERE SID = :f1<int>",
 			   "Get statistics for session, must have same number of columns");
 static toSQL SQLSessionIO("toResultStats:SessionIO",
-			  "
-SELECT Block_Gets \"block gets\",
-       Block_Changes \"block changes\",
-       Consistent_Changes \"consistent changes\"
-  FROM v$sess_io
- WHERE SID = :f1<int>",
+			  "SELECT Block_Gets \"block gets\",\n"
+			  "       Block_Changes \"block changes\",\n"
+			  "       Consistent_Changes \"consistent changes\"\n"
+			  "  FROM v$sess_io\n"
+			  " WHERE SID = :f1<int>",
 			  "Get session IO, must have same binds");
 
 void toResultStats::resetStats(void)

@@ -53,7 +53,7 @@ TO_NAMESPACE;
 #include "toglobalsettingui.cpp"
 #include "todatabasesettingui.cpp"
 
-toGlobalSetting::toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)
+toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   : toGlobalSettingUI(parent,name,fl)
 {
   LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
@@ -145,7 +145,7 @@ void toGlobalSetting::saveSetting(void)
 #endif
 }
 
-toDatabaseSetting::toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)
+toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   : toDatabaseSettingUI(parent,name,fl)
 {
   MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
@@ -185,32 +185,32 @@ void toDatabaseSetting::saveSetting(void)
 }
 
 static toSQL SQLCreatePlanTable("Global:CreatePlan",
-				"CREATE TABLE %1 (
-    STATEMENT_ID    VARCHAR2(30),
-    TIMESTAMP       DATE,
-    REMARKS         VARCHAR2(80),
-    OPERATION       VARCHAR2(30),
-    OPTIONS         VARCHAR2(30),
-    OBJECT_NODE     VARCHAR2(128),
-    OBJECT_OWNER    VARCHAR2(30),
-    OBJECT_NAME     VARCHAR2(30),
-    OBJECT_INSTANCE NUMERIC,
-    OBJECT_TYPE     VARCHAR2(30),
-    OPTIMIZER       VARCHAR2(255),
-    SEARCH_COLUMNS  NUMBER,
-    ID              NUMERIC,
-    PARENT_ID       NUMERIC,
-    POSITION        NUMERIC,
-    COST            NUMERIC,
-    CARDINALITY     NUMERIC,
-    BYTES           NUMERIC,
-    OTHER_TAG       VARCHAR2(255),
-    PARTITION_START VARCHAR2(255),
-    PARTITION_STOP  VARCHAR2(255),
-    PARTITION_ID    NUMERIC,
-    OTHER           LONG,
-    DISTRIBUTION    VARCHAR2(30)
-)",
+				"CREATE TABLE %1 (\n"
+				"    STATEMENT_ID    VARCHAR2(30),\n"
+				"    TIMESTAMP       DATE,\n"
+				"    REMARKS         VARCHAR2(80),\n"
+				"    OPERATION       VARCHAR2(30),\n"
+				"    OPTIONS         VARCHAR2(30),\n"
+				"    OBJECT_NODE     VARCHAR2(128),\n"
+				"    OBJECT_OWNER    VARCHAR2(30),\n"
+				"    OBJECT_NAME     VARCHAR2(30),\n"
+				"    OBJECT_INSTANCE NUMERIC,\n"
+				"    OBJECT_TYPE     VARCHAR2(30),\n"
+				"    OPTIMIZER       VARCHAR2(255),\n"
+				"    SEARCH_COLUMNS  NUMBER,\n"
+				"    ID              NUMERIC,\n"
+				"    PARENT_ID       NUMERIC,\n"
+				"    POSITION        NUMERIC,\n"
+				"    COST            NUMERIC,\n"
+				"    CARDINALITY     NUMERIC,\n"
+				"    BYTES           NUMERIC,\n"
+				"    OTHER_TAG       VARCHAR2(255),\n"
+				"    PARTITION_START VARCHAR2(255),\n"
+				"    PARTITION_STOP  VARCHAR2(255),\n"
+				"    PARTITION_ID    NUMERIC,\n"
+				"    OTHER           LONG,\n"
+				"    DISTRIBUTION    VARCHAR2(30)\n"
+				")",
 				"Create plan table, must have same % signs");
 
 void toDatabaseSetting::createPlanTable(void)

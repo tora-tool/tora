@@ -80,7 +80,7 @@ public:
   virtual void saveSetting(void);
 };
 
-toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
+toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
   : QFrame(parent,name),Tool(tool)
 {
   GroupBox1 = new QGroupBox( this, "GroupBox1" );

@@ -70,13 +70,13 @@ void toFilesize::setup()
   connect(Value,SIGNAL(valueChanged(int)),this,SLOT(changedSize(void)));
 }
 
-toFilesize::toFilesize(QWidget* parent=0,const char* name=0)
+toFilesize::toFilesize(QWidget* parent,const char* name)
   : QButtonGroup(parent,name)
 {
   setup();
 }
 
-toFilesize::toFilesize(const QString &title,QWidget* parent=0,const char* name=0)
+toFilesize::toFilesize(const QString &title,QWidget* parent,const char* name)
   : QButtonGroup(title,parent,name)
 {
   setup();

@@ -33,7 +33,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tosql.h"
 
-toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const char *name=NULL)
+toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(false,false,conn,parent,name)
 {
   setReadAll(true);
@@ -125,59 +125,65 @@ void toResultConstraint::query(const QString &sql,const list<QString> &param)
       item=new QListViewItem(this,LastItem,NULL);
       LastItem=item;
 
-      char buffer[MaxColSize+1];
-      buffer[MaxColSize]=0;
-      Query>>buffer;
-      QString consName(QString::fromUtf8(buffer));
-      QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
-      item->setText(0,consName);
-      Query>>buffer;
-      QString Check(QString::fromUtf8(buffer));
-      Query>>buffer;
-      QString rConsOwner(QString::fromUtf8(buffer));
-      Query>>buffer;
-      QString rConsName(QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(2,QString::fromUtf8(buffer));
-      Query>>buffer;
-      QString Condition;
-      switch(buffer[0]) {
-      case 'U':
-	Condition="unique (";
-	Condition.append(colNames);
-	Condition.append(")");
-	break;
-      case 'P':
-	Condition="primary key (";
-	Condition.append(colNames);
-	Condition.append(")");
-	break;
-      case 'C':
-      case 'V':
-      case 'O':
-	Condition="check (";
-	Condition.append(Check);
-	Condition.append(")");
-	break;
-      case 'R':
-	Condition="foreign key (";
-	Condition.append(colNames);
-	Condition.append(") references ");
-	Condition.append(rConsOwner);
-	Condition.append(".");
-	QString cols(constraintCols(rConsOwner,rConsName));
+      char *buffer=new char[MaxColSize+1];
+      try {
+        buffer[MaxColSize]=0;
+        Query>>buffer;
+        QString consName(QString::fromUtf8(buffer));
+        QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
+        item->setText(0,consName);
+        Query>>buffer;
+        QString Check(QString::fromUtf8(buffer));
+        Query>>buffer;
+        QString rConsOwner(QString::fromUtf8(buffer));
+        Query>>buffer;
+        QString rConsName(QString::fromUtf8(buffer));
+        Query>>buffer;
+        item->setText(2,QString::fromUtf8(buffer));
+        Query>>buffer;
+        QString Condition;
+        switch(buffer[0]) {
+        case 'U':
+	  Condition="unique (";
+	  Condition.append(colNames);
+	  Condition.append(")");
+	  break;
+        case 'P':
+	  Condition="primary key (";
+	  Condition.append(colNames);
+	  Condition.append(")");
+	  break;
+        case 'C':
+        case 'V':
+        case 'O':
+	  Condition="check (";
+	  Condition.append(Check);
+	  Condition.append(")");
+	  break;
+        case 'R':
+	  Condition="foreign key (";
+	  Condition.append(colNames);
+	  Condition.append(") references ");
+	  Condition.append(rConsOwner);
+	  Condition.append(".");
+	  QString cols(constraintCols(rConsOwner,rConsName));
 
-	Condition.append(LastTable);
-	Condition.append("(");
-	Condition.append(cols);
-	Condition.append(")");
-	break;
+	  Condition.append(LastTable);
+	  Condition.append("(");
+	  Condition.append(cols);
+	  Condition.append(")");
+	  break;
+	}
+        item->setText(1,Condition);
+        Query>>buffer;
+        item->setText(3,QString::fromUtf8(buffer));
+        Query>>buffer;
+        item->setText(4,QString::fromUtf8(buffer));
+      } catch (...) {
+	delete buffer;
+	throw;
       }
-      item->setText(1,Condition);
-      Query>>buffer;
-      item->setText(3,QString::fromUtf8(buffer));
-      Query>>buffer;
-      item->setText(4,QString::fromUtf8(buffer));
+      delete buffer;
     }
   } TOCATCH
   updateContents();

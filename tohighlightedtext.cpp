@@ -142,7 +142,7 @@ toSyntaxAnalyzer &toDefaultAnalyzer(void)
   return DefaultAnalyzer;
 }
 
-toHighlightedText::toHighlightedText(QWidget *parent,const char *name=NULL)
+toHighlightedText::toHighlightedText(QWidget *parent,const char *name)
   : toMarkedText(parent,name),Analyzer(&DefaultAnalyzer)
 {
   Current=LastCol=LastRow=-1;
@@ -259,7 +259,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       if (wasMarked!=marked||col!=wasCol||str[i]=='\t') {
 	QChar nc;
 	if (c.length()>0&&i<int(str.length())) {
-	  nc=c[c.length()-1];
+	  nc=c.at(c.length()-1);
 	  c.truncate(c.length()-1);
 	}
 

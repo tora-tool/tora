@@ -118,15 +118,15 @@ void toResultLong::addItem(void)
 	      if (ReadableColumns) {
 		bool inWord=false;
 		for (unsigned int j=0;j<name.length();j++) {
-		  if (name[j]=='_')
-		    name[j]=' ';
-		  if (name[j].isSpace())
+		  if (name.at(j)=='_')
+		    name.ref(j)=' ';
+		  if (name.at(j).isSpace())
 		    inWord=false;
-		  else if (name[j].isLetter()) {
+		  else if (name.at(j).isLetter()) {
 		    if (inWord)
-		      name[j]=name[j].lower();
+		      name.ref(j)=name.at(j).lower();
 		    else
-		      name[j]=name[j].upper();
+		      name.ref(j)=name.at(j).upper();
 		    inWord=true;
 		  }
 		}

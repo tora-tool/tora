@@ -25,6 +25,8 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
+
 #include "tosyntaxsetup.ui.h"
 
 #include <qcheckbox.h>
@@ -36,6 +38,8 @@
 #include <qvariant.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
+
+#include "tohighlightedtext.h"
 
 /* 
  *  Constructs a toSyntaxSetupUI which is a child of 'parent', with the 

@@ -27,7 +27,9 @@
 
 TO_NAMESPACE;
 
+#ifndef __WIN__
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 
 #include <qapplication.h>
@@ -45,7 +47,7 @@ TO_NAMESPACE;
 
 #include <stdio.h>
 
-#ifndef MONOLITHIC
+#ifndef TOMONOLITHIC
 #include <dlfcn.h>
 
 #include <qdir.h>
@@ -68,7 +70,9 @@ int main(int argc,char **argv)
   otl_connect::otl_initialize(1);
   try {
 #ifdef ENABLE_QT_XFT
-    setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
+#  ifndef __WIN__
+	  setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
+#  endif
 #endif
 #ifdef TO_KDE
     KApplication mainApp(argc,argv,"tora");
@@ -143,7 +147,13 @@ int main(int argc,char **argv)
 	  nls=nls.left(pos);
 	nls+=".UTF8";
       }
+#ifdef __WIN__
+      QString str="NLS_LANG=";
+      str+=nls;
+      _putenv(str);
+#else
       setenv("NLS_LANG",nls,true);
+#endif
     }
 
 
@@ -196,4 +206,5 @@ int main(int argc,char **argv)
   } catch (...) {
     printf("Unhandled exception:\nUnknown type\n");
   }
+  return 1;
 }

@@ -38,7 +38,7 @@ TO_NAMESPACE;
 
 #define INC_SIZE 50
 
-toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL)
+toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name)
   : QTable(parent,name),Connection(conn)
 {
   Query=NULL;
@@ -100,7 +100,7 @@ void toResultContent::changeParams(const QString &Param1,const QString &Param2)
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     Row=0;
     setNumRows(INC_SIZE);
-    for (int i=0;i<MaxNumber&&!Query->eof();i++) {
+    for (int j=0;j<MaxNumber&&!Query->eof();j++) {
       if (Row+2>=numRows())
 	setNumRows(numRows()+INC_SIZE);
       addRow();
@@ -224,11 +224,11 @@ void toResultContent::changePosition(int row,int col)
       }
       sql+=" WHERE ";
       int col=0;
-      for(list<QString>::iterator i=OrigValues.begin();i!=OrigValues.end();i++,col++) {
+      for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	sql+="\"";
 	sql+=head->label(col);
 	sql+="\" ";
-	if (nullString(*i))
+	if (nullString(*j))
 	  sql+=" IS NULL";
 	else {
 	  sql+="= :c";
@@ -249,8 +249,8 @@ void toResultContent::changePosition(int row,int col)
 	  if (!nullString(str))
 	    exec<<str.utf8();
 	}
-	for(list<QString>::iterator i=OrigValues.begin();i!=OrigValues.end();i++,col++) {
-	  QString str=(*i);
+	for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	  QString str=(*j);
 	  if (!nullString(str))
 	    exec<<str.utf8();
 	}

@@ -2,11 +2,16 @@
 
 2001-05-08: Extended TODO with some extra items.
 2001-05-08: Added drag & drop for toResultViews.
-2001-05-09: Added new logos from Peter Nyborg (Thanx).
+2001-05-09: Added new logos (Thanx Peter Nyborg).
 2001-05-09: Adopted about to new logos.
 2001-05-09: Added the fabled context menu to results.
 2001-05-09: Added option to edit system SQL from results.
 2001-05-09: Added files for supporting debian (Thanx Robert Cheramy).
+2001-05-10: Removed multiline strings since Visual C++ doesn't like them.
+2001-05-10: Always popup default tool when creating connection.
+2001-05-10: Fixed parameter parsing again.
+2001-05-10: Lots of changes to push code through Visual C++.
+2001-05-10: Changed how LICENSE.h is generated.
 
 0.8: Released 2001-05-07
 

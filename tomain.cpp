@@ -366,8 +366,8 @@ toMain::toMain()
   menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
   DisconnectButton->setEnabled(false);
 
-  for (list<QToolButton *>::iterator i=NeedConnection.begin();i!=NeedConnection.end();i++)
-    (*i)->setEnabled(false);
+  for (list<QToolButton *>::iterator j=NeedConnection.begin();j!=NeedConnection.end();j++)
+    (*j)->setEnabled(false);
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
@@ -403,8 +403,8 @@ toMain::toMain()
   ColumnLabel->show();
 
   toolID=TO_TOOLS;
-  for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
-    (*i).second->customSetup(toolID);
+  for (map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
+    (*k).second->customSetup(toolID);
     toolID++;
   }
   Search=NULL;
@@ -688,8 +688,8 @@ void toMain::addConnection(toConnection *conn)
     DisconnectButton->setEnabled(true);
     for (list<QToolButton *>::iterator i=NeedConnection.begin();i!=NeedConnection.end();i++)
       (*i)->setEnabled(true);
-    for (map<int,toTool *>::iterator i=Tools.begin();i!=Tools.end();i++)
-      menuBar()->setItemEnabled((*i).first,true);
+    for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
+      menuBar()->setItemEnabled((*j).first,true);
   }
 }
 
@@ -733,8 +733,8 @@ bool toMain::delConnection(void)
     DisconnectButton->setEnabled(false);
     for (list<QToolButton *>::iterator i=NeedConnection.begin();i!=NeedConnection.end();i++)
       (*i)->setEnabled(false);
-    for (map<int,toTool *>::iterator i=Tools.begin();i!=Tools.end();i++)
-      menuBar()->setItemEnabled((*i).first,false);
+    for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
+      menuBar()->setItemEnabled((*j).first,false);
   }
   return true;
 }

@@ -49,34 +49,46 @@ static toSQL SQLUserNames(TOSQL_USERLIST,
 
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 {
-  switch (dsc.otl_var_dbtype) {
-  default:  // Try using char if all else fails
-    {
-      // The *2 is for raw columns, also dates and numbers are a bit tricky
-      // but if someone specifies a dateformat longer than 100 bytes he
-      // deserves everything he gets!
-      char buffer[max(dsc.dbsize*2+1,100)];
-      q>>buffer;
-      if (q.is_null())
-	return "{null}";
-      return QString::fromUtf8(buffer);
+  char *buffer=new char[max(dsc.dbsize*2+1,100)];
+  try {
+    switch (dsc.otl_var_dbtype) {
+    default:  // Try using char if all else fails
+      {
+	// The *2 is for raw columns, also dates and numbers are a bit tricky
+	// but if someone specifies a dateformat longer than 100 bytes he
+	// deserves everything he gets!
+	q>>buffer;
+	if (q.is_null()) {
+	  delete buffer;
+	  return "{null}";
+	}
+	QString buf(QString::fromUtf8(buffer));
+	delete buffer;
+        return buf;
+      }
+      break;
+    case otl_var_varchar_long:
+    case otl_var_raw_long:
+    case otl_var_clob:
+    case otl_var_blob:
+      {
+	otl_long_string data(buffer,maxSize);
+	q>>data;
+	buffer[maxSize]=0;
+	if (q.is_null()) {
+	  delete buffer;
+	  return "{null}";
+	}
+	buffer[data.len()]=0; // Not sure if this is needed
+	QString buf(QString::fromUtf8(buffer));
+	delete buffer;
+	return buf;
+      }
+      break;
     }
-    break;
-  case otl_var_varchar_long:
-  case otl_var_raw_long:
-  case otl_var_clob:
-  case otl_var_blob:
-    {
-      char buffer[maxSize+1];
-      otl_long_string data(buffer,maxSize);
-      q>>data;
-      buffer[maxSize]=0;
-      if (q.is_null())
-	return "{null}";
-      buffer[data.len()]=0; // Not sure if this is needed
-      return QString::fromUtf8(buffer);
-    }
-    break;
+  } catch (...) {
+    delete buffer;
+    throw;
   }
 }
 
@@ -304,11 +316,11 @@ list<QString> toReadQuery(otl_stream &str,list<QString> &args)
 }
 
 list<QString> toReadQuery(otl_stream &str,
-			  const QString &arg1=QString::null,const QString &arg2=QString::null,
-			  const QString &arg3=QString::null,const QString &arg4=QString::null,
-			  const QString &arg5=QString::null,const QString &arg6=QString::null,
-			  const QString &arg7=QString::null,const QString &arg8=QString::null,
-			  const QString &arg9=QString::null)
+			  const QString &arg1,const QString &arg2,
+			  const QString &arg3,const QString &arg4,
+			  const QString &arg5,const QString &arg6,
+			  const QString &arg7,const QString &arg8,
+			  const QString &arg9)
 {
   int numArgs;
   if (!arg9.isNull())
@@ -366,11 +378,11 @@ list<QString> toReadQuery(toConnection &conn,const QCString &query,list<QString>
 }
 
 list<QString> toReadQuery(toConnection &conn,const QCString &query,
-			  const QString &arg1=QString::null,const QString &arg2=QString::null,
-			  const QString &arg3=QString::null,const QString &arg4=QString::null,
-			  const QString &arg5=QString::null,const QString &arg6=QString::null,
-			  const QString &arg7=QString::null,const QString &arg8=QString::null,
-			  const QString &arg9=QString::null)
+			  const QString &arg1,const QString &arg2,
+			  const QString &arg3,const QString &arg4,
+			  const QString &arg5,const QString &arg6,
+			  const QString &arg7,const QString &arg8,
+			  const QString &arg9)
 {
   int numArgs;
   if (!arg9.isNull())

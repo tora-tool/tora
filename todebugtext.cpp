@@ -69,21 +69,21 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,toConn
 }
 
 static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
-			   "DECLARE
-    proginf DBMS_DEBUG.PROGRAM_INFO;
-    bnum BINARY_INTEGER;
-    ret BINARY_INTEGER;
-BEGIN
-    proginf.Namespace:=:type<int,in>;
-    proginf.Name:=:name<char[100],in>;
-    proginf.Owner:=:schema<char[100],in>;
-    proginf.DbLink:=NULL;
-    proginf.LibUnitType:=DBMS_DEBUG.LibUnitType_Procedure;
-    proginf.EntryPointName:=NULL;
-    proginf.Line#:=:line<int,in>;
-    ret:=DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);
-    SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM DUAL;
-END;",
+			   "DECLARE\n"
+			   "    proginf DBMS_DEBUG.PROGRAM_INFO;\n"
+			   "    bnum BINARY_INTEGER;\n"
+			   "    ret BINARY_INTEGER;\n"
+			   "BEGIN\n"
+			   "    proginf.Namespace:=:type<int,in>;\n"
+			   "    proginf.Name:=:name<char[100],in>;\n"
+			   "    proginf.Owner:=:schema<char[100],in>;\n"
+			   "    proginf.DbLink:=NULL;\n"
+			   "    proginf.LibUnitType:=DBMS_DEBUG.LibUnitType_Procedure;\n"
+			   "    proginf.EntryPointName:=NULL;\n"
+			   "    proginf.Line#:=:line<int,in>;\n"
+			   "    ret:=DBMS_DEBUG.SET_BREAKPOINT(proginf,proginf.Line#,bnum,0,1);\n"
+			   "    SELECT ret,bnum INTO :ret<int,out>,:bnum<int,out> FROM DUAL;\n"
+			   "END;",
 			   "Set breakpoint, must have same bindings");
 		       
 
@@ -118,14 +118,14 @@ void toBreakpointItem::setBreakpoint(void)
 }
 
 static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
-				"DECLARE
-    bnum BINARY_INTEGER;
-    ret BINARY_INTEGER;
-BEGIN
-    bnum:=:bnum<int,in>;
-    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);
-    SELECT ret INTO :ret<int,out> FROM DUAL;
-END;",
+				"DECLARE\n"
+				"    bnum BINARY_INTEGER;\n"
+				"    ret BINARY_INTEGER;\n"
+				"BEGIN\n"
+				"    bnum:=:bnum<int,in>;\n"
+				"    ret:=DBMS_DEBUG.DELETE_BREAKPOINT(bnum);\n"
+				"    SELECT ret INTO :ret<int,out> FROM DUAL;\n"
+				"END;",
 				"Clear breakpoint, must have same bindings");
 
 void toBreakpointItem::clearBreakpoint()

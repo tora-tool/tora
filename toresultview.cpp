@@ -375,12 +375,14 @@ void toResultView::query(const QString &sql,const list<QString> &param)
 		sql.utf8(),
 		Connection.connection());
 
-    otl_null null;
-    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
-      if ((*i).isNull())
-	(*Query)<<null;
-      else
-	(*Query)<<(*i).utf8();
+    {
+      otl_null null;
+      for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
+	if ((*i).isNull())
+	  (*Query)<<null;
+        else
+    	  (*Query)<<(*i).utf8();
+      }
     }
 
     Description=Query->describe_select(DescriptionLen);
@@ -392,23 +394,23 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       if (ReadableColumns) {
 	bool inWord=false;
 	for (unsigned int j=0;j<name.length();j++) {
-	  if (name[j]=='_')
-	    name[j]=' ';
-	  if (name[j].isSpace())
+	  if (name.at(j)=='_')
+	    name.ref(j)=' ';
+	  if (name.at(j).isSpace())
 	    inWord=false;
-	  else if (name[j].isLetter()) {
+	  else if (name.at(j).isLetter()) {
 	    if (inWord)
-	      name[j]=name[j].lower();
+	      name.ref(j)=name.at(j).lower();
 	    else
-	      name[j]=name[j].upper();
+	      name.ref(j)=name.at(j).upper();
 	    inWord=true;
 	  }
 	}
       }
-      if (name.length()>0&&name[0]!=' ') {
+      if (name.length()>0&&name.at(0)!=' ') {
 	if (hidden)
 	  throw QString("Can only hide last column in query");
-	if (name[0]=='-') {
+	if (name.at(0)=='-') {
 	  addColumn(name.right(name.length()-1));
 	  setColumnAlignment(columns()-1,AlignRight);
 	} else
@@ -423,7 +425,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       setSorting(DescriptionLen);
 
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
-    for (int i=0;i<MaxNumber&&!Query->eof();i++)
+    for (int j=0;j<MaxNumber&&!Query->eof();j++)
       addItem();
     if (ReadAll)
       readAll();

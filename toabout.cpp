@@ -44,148 +44,145 @@ TO_NAMESPACE;
 
 #include "icons/largelogo.xpm"
 
-static const char *AboutText=
-"<IMG SRC=largelogo.xpm BORDER=1><BR>
-Version %s
-<P>
-&copy; 2000 copyright of GlobeCom AB
-(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>
-Written by Henrik Johnson.<P>
-This program is available
-under the GNU Public License.<P>
-Uses the Qt library version 2.2 by TrollTech
-(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>
+static const char *AboutText="<IMG SRC=largelogo.xpm BORDER=1><BR>\n"
+"Version %s\n"
+"<P>\n"
+"&copy; 2000 copyright of GlobeCom AB\n"
+"(<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>\n"
+"Written by Henrik Johnson.<P>\n"
+"This program is available\n"
+"under the GNU Public License.<P>\n"
+"Uses the Qt library version 2.2 by TrollTech\n"
+"(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>\n"
+"\n"
+"<HR BREAK=ALL>\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.";
 
-<HR BREAK=ALL>
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-";
-
-static const char *QuoteText=
-"<H3>People who think they know everything tend to irritate those of us who do.</H3>
-<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>
-<H3>My taste is simple, the best.</H3>
-<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>
-<H3>Working weeks come to its end, party time is here again.</H3>
-<DIV ALIGN=RIGHT>Come with me, Depeche Mode<DIV ALIGN=LEFT>
-<H3>I want to run<BR>I want to hide<BR>I want to tear down the walls<BR>
-That hold me inside</H3>
-<DIV ALIGN=RIGHT>Where the streets have no name, U2<DIV ALIGN=LEFT>
-<H3>Got a letter from the government the other day.<BR>
-Opened it and read it. It said they were suckers.</H3>
-<DIV ALIGN=RIGHT>Black steel, Tricky<DIV ALIGN=LEFT>
-<H3>It's a small world and it smells funny<BR>
-I'd buy another if it wasn't for the money</H3>
-<DIV ALIGN=RIGHT>Vision Thing, Sisters of Mercy<DIV ALIGN=LEFT>
-<H3>I'm a 21:st century digital boy<BR>
-I don't know how to live, but I got a lot of toys</H3>
-<DIV ALIGN=RIGHT>21:st century digital boy, Bad Religion
-<DIV ALIGN=left>
-<H3>When will the world listen to reason?<BR>
-When will the truth come into season?<BR>
-I have a feeling it will be a long time.</H3>
-<DIV ALIGN=RIGHT>It'll be a long time, Offspring
-<DIV ALIGN=left>
-<H3>Happiness isn't something you experience, it's something you remember.</H3>
-<DIV ALIGN=RIGHT>Oscar Levant
-<DIV ALIGN=LEFT>
-<H3>I didn't believe in reincarnation in any of my other lives.<BR>
-I don't see why I should have to believe in it in this one.</H3>
-<DIV ALIGN=RIGHT>Strange de Jim
-<DIV ALIGN=LEFT>
-<H3>If a man has a strong faith he can indulge in the luxury of skepticism.</H3>
-<DIV ALIGN=RIGHT>Friedrich Nietzsche
-<DIV ALIGN=LEFT>
-<H3>I'm a firm believer in the concept of a ruling class,<BR>
-especially since I rule.</H3>
-<DIV ALIGN=RIGHT>The movie \"Clerks\"
-<DIV ALIGN=LEFT>
-<H3>Stay alert! Trust no one! Keep your laser handy!</H3>
-<DIV ALIGN=RIGHT>Roleplaying game Paranoia
-<DIV ALIGN=LEFT>
-<H3>The best definition of a gentleman is a man who can play the accordion -- but doesn't.</H3>
-<DIV ALIGN=RIGHT>Tom Crichton
-<DIV ALIGN=LEFT>
-<H3>The trouble with being punctual is that nobody's there to appreciate it.</H3>
-<DIV ALIGN=RIGHT>Franklin P. Jones
-<DIV ALIGN=LEFT>
-<H3>I might disagree with what you have to say,
-but I'll defend your right to say it to the death.</H3>
-<DIV ALIGN=RIGHT>Voltaire
-<DIV ALIGN=LEFT>
-<H3>Life is a sexually transmittable desease with terminal outcome.</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>Software is like sex, it is better when it is free.</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>If you don't know where you are going you are never lost.</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>If you're right 90% of the time, why quibble about the remaining 3%?</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>Accepptance testing: An unsuccessfull attempt to find bugs.</H3>
-<DIV ALIGN=RIGHT>Unknown
-<DIV ALIGN=LEFT>
-<H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>
-Resten slösade jag bort.</H3>
-<DIV ALIGN=RIGHT>Unknown Swede
-<DIV ALIGN=LEFT>
-<H3>
-<UL>
-<LI>Make it idiot proof, and someone will make a better idiot.<P>
-<LI>I don't suffer from insanity. I enjoy every minute of it.<P>
-<LI>Press any key to continue or any other key to quit<P>
-<LI>The box said \"Requires Windows 95 or better.\" So I installed LINUX<P>
-<LI>&lt;-- Your information went that way --&gt;<P>
-<LI>Go away, or I will replace you with a very small shell script.<P>
-<LI>Do not meddle in the affairs of sysadmins, for they are suddle and quick to anger.
-</UL>
-</H3>
-<DIV ALIGN=RIGHT>Think Geek (http://www.thinkgeek.com/)
-<DIV ALIGN=LEFT>
-<H3>
-<UL>
-<LI>Luck can't last a lifetime unless you die young!<P>
-<LI>Misfortune: While good fortune often eludes you, this kind never misses.<P>
-<LI>For every winner, there are dozens of losers. Odds are you are one of them.<P>
-<LI>Failure: When your best just isn't good enough.<P>
-<LI>Quitters never win, winners never quit, but those who never win and never quit are idiots.<P>
-<LI>If you can't learn to do something well, learn to enjoy doing it poorly.<P>
-<LI>If at first you don't succeed, failure may be your style.<P>
-<LI>There are no stupid questions, but there are a lot of inquisitive idiots.<P>
-<LI>There is no joy greater than soaring high on the wings of your dreams,
-	except mayby the joy of watching a dreamer who has nowhere to land but in the ocean of reality.<P>
-<LI>The only consistent feature of all of your dissatisfying relationships is you.<P>
-<LI>When you earnestly believe you can compensate for a lack of skill by doubling your efforts,
-	there's no end to what you can't do.<P>
-<LI>Never underestimate the power of stupid people in large groups.<P>
-<LI>The downside of being better than everyone else is that people tend to assume you're pretentious.<P>
-<LI>In the battle between you and the world, bet on the world.<P>
-<LI>You'll always miss 100% of the shots you don't take, and, statistically speaking, 99% of the shots you do.<P>
-<LI>The secret to success is knowing who to blame for your failures.<P>
-<LI>When birds fly in the right formation, they need only exert half the effort.
-	Even in nature, teamwork results in collective laziness.<P>
-<LI>It's amazing how much easier it is for a team to work together when no one has any idea where they're going.<P>
-<LI>Attitudes are contagious. Mine might kill you.<P>
-<LI>When people are free to do as they please, they usually imitate each other.<P>
-<LI>If we don't take care of the customer, mayby they'll stop bugging us.<P>
-<LI>It takes months to find a customer, but only seconds to lose one.
-	The good news is we should run out of them in no time.<P>
-<LI>Mediocrity: It takes a lot less time, and most people won't notice the difference until it's too late.<P>
-<LI>Laziness: Success is a jurney, not a destination. So stop running.<P>
-<LI>Hard work often pays off after time, but laziness always pays off now.<P>
-<LI>The tallest blade of grass is the first to be cut by the lawnmower.
-</UL>
-</H3>
-<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)
-<DIV ALIGN=LEFT>";
+static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
+"<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
+"<H3>My taste is simple, the best.</H3>\n"
+"<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
+"<H3>Working weeks come to its end, party time is here again.</H3>\n"
+"<DIV ALIGN=RIGHT>Come with me, Depeche Mode<DIV ALIGN=LEFT>\n"
+"<H3>I want to run<BR>I want to hide<BR>I want to tear down the walls<BR>\n"
+"That hold me inside</H3>\n"
+"<DIV ALIGN=RIGHT>Where the streets have no name, U2<DIV ALIGN=LEFT>\n"
+"<H3>Got a letter from the government the other day.<BR>\n"
+"Opened it and read it. It said they were suckers.</H3>\n"
+"<DIV ALIGN=RIGHT>Black steel, Tricky<DIV ALIGN=LEFT>\n"
+"<H3>It's a small world and it smells funny<BR>\n"
+"I'd buy another if it wasn't for the money</H3>\n"
+"<DIV ALIGN=RIGHT>Vision Thing, Sisters of Mercy<DIV ALIGN=LEFT>\n"
+"<H3>I'm a 21:st century digital boy<BR>\n"
+"I don't know how to live, but I got a lot of toys</H3>\n"
+"<DIV ALIGN=RIGHT>21:st century digital boy, Bad Religion\n"
+"<DIV ALIGN=left>\n"
+"<H3>When will the world listen to reason?<BR>\n"
+"When will the truth come into season?<BR>\n"
+"I have a feeling it will be a long time.</H3>\n"
+"<DIV ALIGN=RIGHT>It'll be a long time, Offspring\n"
+"<DIV ALIGN=left>\n"
+"<H3>Happiness isn't something you experience, it's something you remember.</H3>\n"
+"<DIV ALIGN=RIGHT>Oscar Levant\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>I didn't believe in reincarnation in any of my other lives.<BR>\n"
+"I don't see why I should have to believe in it in this one.</H3>\n"
+"<DIV ALIGN=RIGHT>Strange de Jim\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>If a man has a strong faith he can indulge in the luxury of skepticism.</H3>\n"
+"<DIV ALIGN=RIGHT>Friedrich Nietzsche\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>I'm a firm believer in the concept of a ruling class,<BR>\n"
+"especially since I rule.</H3>\n"
+"<DIV ALIGN=RIGHT>The movie \"Clerks\"\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Stay alert! Trust no one! Keep your laser handy!</H3>\n"
+"<DIV ALIGN=RIGHT>Roleplaying game Paranoia\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>The best definition of a gentleman is a man who can play the accordion -- but doesn't.</H3>\n"
+"<DIV ALIGN=RIGHT>Tom Crichton\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>The trouble with being punctual is that nobody's there to appreciate it.</H3>\n"
+"<DIV ALIGN=RIGHT>Franklin P. Jones\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>I might disagree with what you have to say,\n"
+"but I'll defend your right to say it to the death.</H3>\n"
+"<DIV ALIGN=RIGHT>Voltaire\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Life is a sexually transmittable desease with terminal outcome.</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Software is like sex, it is better when it is free.</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>If you don't know where you are going you are never lost.</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>If you're right 90% of the time, why quibble about the remaining 3%?</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Accepptance testing: An unsuccessfull attempt to find bugs.</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>\n"
+"Resten slösade jag bort.</H3>\n"
+"<DIV ALIGN=RIGHT>Unknown Swede\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>\n"
+"<UL>\n"
+"<LI>Make it idiot proof, and someone will make a better idiot.<P>\n"
+"<LI>I don't suffer from insanity. I enjoy every minute of it.<P>\n"
+"<LI>Press any key to continue or any other key to quit<P>\n"
+"<LI>The box said \"Requires Windows 95 or better.\" So I installed LINUX<P>\n"
+"<LI>&lt;-- Your information went that way --&gt;<P>\n"
+"<LI>Go away, or I will replace you with a very small shell script.<P>\n"
+"<LI>Do not meddle in the affairs of sysadmins, for they are suddle and quick to anger.\n"
+"</UL>\n"
+"</H3>\n"
+"<DIV ALIGN=RIGHT>Think Geek (http://www.thinkgeek.com/)\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>\n"
+"<UL>\n"
+"<LI>Luck can't last a lifetime unless you die young!<P>\n"
+"<LI>Misfortune: While good fortune often eludes you, this kind never misses.<P>\n"
+"<LI>For every winner, there are dozens of losers. Odds are you are one of them.<P>\n"
+"<LI>Failure: When your best just isn't good enough.<P>\n"
+"<LI>Quitters never win, winners never quit, but those who never win and never quit are idiots.<P>\n"
+"<LI>If you can't learn to do something well, learn to enjoy doing it poorly.<P>\n"
+"<LI>If at first you don't succeed, failure may be your style.<P>\n"
+"<LI>There are no stupid questions, but there are a lot of inquisitive idiots.<P>\n"
+"<LI>There is no joy greater than soaring high on the wings of your dreams,\n"
+"	except mayby the joy of watching a dreamer who has nowhere to land but in the ocean of reality.<P>\n"
+"<LI>The only consistent feature of all of your dissatisfying relationships is you.<P>\n"
+"<LI>When you earnestly believe you can compensate for a lack of skill by doubling your efforts,\n"
+"	there's no end to what you can't do.<P>\n"
+"<LI>Never underestimate the power of stupid people in large groups.<P>\n"
+"<LI>The downside of being better than everyone else is that people tend to assume you're pretentious.<P>\n"
+"<LI>In the battle between you and the world, bet on the world.<P>\n"
+"<LI>You'll always miss 100% of the shots you don't take, and, statistically speaking, 99% of the shots you do.<P>\n"
+"<LI>The secret to success is knowing who to blame for your failures.<P>\n"
+"<LI>When birds fly in the right formation, they need only exert half the effort.\n"
+"	Even in nature, teamwork results in collective laziness.<P>\n"
+"<LI>It's amazing how much easier it is for a team to work together when no one has any idea where they're going.<P>\n"
+"<LI>Attitudes are contagious. Mine might kill you.<P>\n"
+"<LI>When people are free to do as they please, they usually imitate each other.<P>\n"
+"<LI>If we don't take care of the customer, mayby they'll stop bugging us.<P>\n"
+"<LI>It takes months to find a customer, but only seconds to lose one.\n"
+"	The good news is we should run out of them in no time.<P>\n"
+"<LI>Mediocrity: It takes a lot less time, and most people won't notice the difference until it's too late.<P>\n"
+"<LI>Laziness: Success is a jurney, not a destination. So stop running.<P>\n"
+"<LI>Hard work often pays off after time, but laziness always pays off now.<P>\n"
+"<LI>The tallest blade of grass is the first to be cut by the lawnmower.\n"
+"</UL>\n"
+"</H3>\n"
+"<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)\n"
+"<DIV ALIGN=LEFT>";
 
 
 #define ABOUT_CAPTION "TOra %s"

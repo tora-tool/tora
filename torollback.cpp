@@ -86,7 +86,7 @@ public:
   virtual void saveSetting(void);
 };
 
-toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent=0,const char* name=0)
+toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent,const char* name)
   : QFrame(parent,name),Tool(tool)
 {
   GroupBox1=new QGroupBox(this,"GroupBox1");
@@ -317,31 +317,31 @@ static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
 }
 
 static toSQL SQLRollback("toRollback:Information",
-			 "select a.segment_name \"Segment\",
-       a.owner \"Owner\",
-       a.tablespace_name \"Tablespace\",
-       a.status \"Status\",
-       b.xacts \"-Transactions\",
-       ROUND(a.initial_extent/1024/1024,3) \"-Initial (MB)\",
-       ROUND(a.next_extent/1024/1024,3) \"-Next (MB)\",
-       a.pct_increase \"-PCT Increase\",
-       ROUND(b.rssize/1024/1024,3) \"-Current (MB)\",
-       ROUND(b.optsize/1024/1024,3) \"-Optimal (MB)\",
-       ROUND(b.aveactive/1024/1024,3) \"-Used (MB)\",
-       b.Extents \"-Extents\",
-       b.CurExt \"-Current\",
-       b.CurBlk \"-Block\",
-       c.Blocks \"-Blocks\",
-       a.segment_id \" USN\"
-  from dba_rollback_segs a,
-       v$rollstat b,
-       dba_extents c
- where a.segment_id = b.usn(+)
-   and a.owner = c.owner
-   and a.segment_name = c.segment_name
-   and c.segment_type = 'ROLLBACK'
-   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))
- order by a.segment_name",
+			 "select a.segment_name \"Segment\",\n"
+			 "       a.owner \"Owner\",\n"
+			 "       a.tablespace_name \"Tablespace\",\n"
+			 "       a.status \"Status\",\n"
+			 "       b.xacts \"-Transactions\",\n"
+			 "       ROUND(a.initial_extent/1024/1024,3) \"-Initial (MB)\",\n"
+			 "       ROUND(a.next_extent/1024/1024,3) \"-Next (MB)\",\n"
+			 "       a.pct_increase \"-PCT Increase\",\n"
+			 "       ROUND(b.rssize/1024/1024,3) \"-Current (MB)\",\n"
+			 "       ROUND(b.optsize/1024/1024,3) \"-Optimal (MB)\",\n"
+			 "       ROUND(b.aveactive/1024/1024,3) \"-Used (MB)\",\n"
+			 "       b.Extents \"-Extents\",\n"
+			 "       b.CurExt \"-Current\",\n"
+			 "       b.CurBlk \"-Block\",\n"
+			 "       c.Blocks \"-Blocks\",\n"
+			 "       a.segment_id \" USN\"\n"
+			 "  from dba_rollback_segs a,\n"
+			 "       v$rollstat b,\n"
+			 "       dba_extents c\n"
+			 " where a.segment_id = b.usn(+)\n"
+			 "   and a.owner = c.owner\n"
+			 "   and a.segment_name = c.segment_name\n"
+			 "   and c.segment_type = 'ROLLBACK'\n"
+			 "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))\n"
+			 " order by a.segment_name",
 			 "Get information about rollback segments.");
 
 static toSQL SQLStartExt("toRollback:StartExtent",
@@ -597,10 +597,10 @@ public:
 
       // Erase unused
 
-      for (statements::iterator i=Statements.begin();i!=Statements.end();i++) {
-	if (Exists.find((*i).first)==Exists.end()) {
-	  Statements.erase((*i).first);
-	  i=Statements.begin();
+      for (statements::iterator j=Statements.begin();j!=Statements.end();j++) {
+	if (Exists.find((*j).first)==Exists.end()) {
+	  Statements.erase((*j).first);
+	  j=Statements.begin();
 	}
       }
     } TOCATCH

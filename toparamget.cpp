@@ -40,6 +40,7 @@ TO_NAMESPACE;
 #include "toparamget.h"
 #include "totool.h"
 #include "toconf.h"
+#include "tomain.h"
 
 map<QString,QString> toParamGet::Cache;
 
@@ -104,11 +105,11 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
     QChar nc;
 
     if (i<str.length())
-      c=str[i];
+      c=str.at(i);
     else
       c='\n';
     if (i<str.length()-1)
-      nc=str[i+1];
+      nc=str.at(i+1);
     else
       nc='\n';
 

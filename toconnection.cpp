@@ -42,20 +42,39 @@ otl_connect *toConnection::newConnection(void)
   QString oldSid;
   if (!SqlNet) {
     oldSid=getenv("ORACLE_SID");
+#ifdef __WIN__
+    QString str="ORACLE_SID=";
+    str+=Host;
+    putenv(str);
+#else
     setenv("ORACLE_SID",Host,1);
+#endif
   }
   otl_connect *conn;
   try {
     conn=new otl_connect((const char *)connectString(true),0);
   } catch (...) {
+#ifdef __WIN__
+    QString str="ORACLE_SID=";
+    str+=oldSid;
+    if (!SqlNet)
+      putenv(str);
+#else
     if (!SqlNet) {
       if (oldSid.isNull())
 	unsetenv("ORACLE_SID");
       else
 	setenv("ORACLE_SID",oldSid,1);
     }
+#endif
     throw;
   }
+#ifdef __WIN__
+  QString envStr="ORACLE_SID=";
+  envStr+=oldSid;
+  if (!SqlNet)
+    putenv(envStr);
+#else
   if (!SqlNet) {
     if (oldSid.isNull())
       unsetenv("ORACLE_SID");
@@ -63,6 +82,7 @@ otl_connect *toConnection::newConnection(void)
       setenv("ORACLE_SID",oldSid,1);
     }
   }
+#endif
 
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
   str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
@@ -138,11 +158,11 @@ toConnection::~toConnection()
     delete (*i);
   }
   delete Connection;
-  for (list<otl_connect *>::iterator i=FreeConnect.begin();i!=FreeConnect.end();i++)
-    delete (*i);
+  for (list<otl_connect *>::iterator j=FreeConnect.begin();j!=FreeConnect.end();j++)
+    delete (*j);
 }
 
-QString toConnection::connectString(bool pw=false) const
+QString toConnection::connectString(bool pw) const
 {
   QString ret(User);
   if (pw) {

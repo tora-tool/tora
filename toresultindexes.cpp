@@ -33,7 +33,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tosql.h"
 
-toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *name=NULL)
+toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(false,false,conn,parent,name)
 {
   setReadAll(true);
@@ -71,13 +71,13 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
 }
 
 static toSQL SQLListIndex("toResultIndexes:ListIndex",
-			  "SELECT Owner,"
-			  "       Index_Name,"
-			  "       Index_Type,"
-			  "       Uniqueness"
-			  "  FROM All_Indexes"
-			  " WHERE Table_Owner = :f1<char[31]>"
-			  "   AND Table_Name = :f2<char[31]>"
+			  "SELECT Owner,\n"
+			  "       Index_Name,\n"
+			  "       Index_Type,\n"
+			  "       Uniqueness\n"
+			  "  FROM All_Indexes\n"
+			  " WHERE Table_Owner = :f1<char[31]>\n"
+			  "   AND Table_Name = :f2<char[31]>\n"
 			  " ORDER BY Index_Name",
 			  "List the indexes available on a table");
 

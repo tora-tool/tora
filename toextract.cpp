@@ -25,7 +25,15 @@
  *
  ****************************************************************************/
 
+TO_NAMESPACE;
+
+#ifndef __WIN__
 #include <unistd.h>
+#endif
+
+#ifdef __WIN__
+#include <winsock.h>
+#endif
 
 #include <qapplication.h>
 #include <qdatetime.h>
@@ -39,17 +47,17 @@
 #include "toconf.h"
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
-			  "SELECT block_size
-  FROM (SELECT bytes/blocks/1024   AS block_size
-          FROM user_segments
-         WHERE bytes  IS NOT NULL
-           AND blocks IS NOT NULL
-         UNION
-        SELECT bytes/blocks/1024   AS block_size
-          FROM user_free_space
-         WHERE bytes  IS NOT NULL
-           AND blocks IS NOT NULL)
- WHERE rownum < 2",
+			  "SELECT block_size\n"
+			  "  FROM (SELECT bytes/blocks/1024   AS block_size\n"
+			  "          FROM user_segments\n"
+			  "         WHERE bytes  IS NOT NULL\n"
+			  "           AND blocks IS NOT NULL\n"
+			  "         UNION\n"
+			  "        SELECT bytes/blocks/1024   AS block_size\n"
+			  "          FROM user_free_space\n"
+			  "         WHERE bytes  IS NOT NULL\n"
+			  "           AND blocks IS NOT NULL)\n"
+			  " WHERE rownum < 2",
 			  "Get information about block sizes, same columns");
 
 toExtract::toExtract(toConnection &conn,QWidget *parent)
@@ -80,11 +88,11 @@ void toExtract::clearFlags(void)
 }
 
 void toExtract::addDescription(list<QString> &ret,list<QString> &ctx,
-			  const QString &arg1=QString::null,const QString &arg2=QString::null,
-			  const QString &arg3=QString::null,const QString &arg4=QString::null,
-			  const QString &arg5=QString::null,const QString &arg6=QString::null,
-			  const QString &arg7=QString::null,const QString &arg8=QString::null,
-			  const QString &arg9=QString::null)
+			       const QString &arg1,const QString &arg2,
+			       const QString &arg3,const QString &arg4,
+			       const QString &arg5,const QString &arg6,
+			       const QString &arg7,const QString &arg8,
+			       const QString &arg9)
 {
   int numArgs;
   if (!arg9.isNull())
@@ -152,10 +160,10 @@ QString toExtract::reContext(list<QString> &ctx,int strip,const QString &str)
     if (sep.isEmpty())
       sep="\01";
   }
-  for(QStringList::Iterator i=lst.begin();i!=lst.end();i++) {
+  for(QStringList::Iterator j=lst.begin();j!=lst.end();j++) {
     if (strip>0) {
       ret+=sep;
-      ret+=*i;
+      ret+=*j;
     } else
       strip--;
     if (sep.isEmpty())
@@ -199,12 +207,12 @@ void toExtract::setSizes(void)
 }
 
 static toSQL SQLObjectExists("toExtract:ObjectExists",
-			     "SELECT
-       'X'
-  FROM all_objects
- WHERE object_name = :nam<char[100]>
-   AND owner = :own<char[100]>
-   AND object_type = :typ<char[100]>",
+			     "SELECT\n"
+			     "       'X'\n"
+			     "  FROM all_objects\n"
+			     " WHERE object_name = :nam<char[100]>\n"
+			     "   AND owner = :own<char[100]>\n"
+			     "   AND object_type = :typ<char[100]>",
 			     "Check if object exists, must have same binds.");
 
 void toExtract::objectExists(const QString &owner,const QString &name,const QString &type)
@@ -221,7 +229,7 @@ QString toExtract::compile(const QString &schema,const QString &owner,const QStr
 {
   QString type1=(type=="PACKAGE BODY")?QString("PACKAGE"):type;
   QString type2=(type=="PACKAGE BODY")?QString(" BODY"):
-                (type=="PACKAGE")?QString(" PACKAGE"):QString::null;
+    (type=="PACKAGE")?QString(" PACKAGE"):QString::null;
 
   objectExists(owner,name,type);
 
@@ -256,11 +264,11 @@ QString toExtract::compilePackage(const QString &schema,const QString &owner,con
 }
 
 static toSQL SQLConstraintCols("toExtract:ConstraintCols",
-			       "SELECT LOWER(column_name)
-  FROM all_cons_columns
- WHERE owner = :own<char[100]>
-   AND constraint_name = :con<char[100]>
- ORDER BY position",
+			       "SELECT LOWER(column_name)\n"
+			       "  FROM all_cons_columns\n"
+			       " WHERE owner = :own<char[100]>\n"
+			       "   AND constraint_name = :con<char[100]>\n"
+			       " ORDER BY position",
 			       "List columns in a constraint, must have same binds and columns");
 
 QString toExtract::constraintColumns(const QString &owner,const QString &name)
@@ -287,19 +295,19 @@ QString toExtract::constraintColumns(const QString &owner,const QString &name)
 }
 
 static toSQL SQLTableComments("toExtract:TableComment",
-			      "SELECT comments
-  FROM all_tab_comments
- WHERE table_name = :nam<char[100]>
-   AND comments IS NOT NULL
-   AND owner = :own<char[100]>",
+			      "SELECT comments\n"
+			      "  FROM all_tab_comments\n"
+			      " WHERE table_name = :nam<char[100]>\n"
+			      "   AND comments IS NOT NULL\n"
+			      "   AND owner = :own<char[100]>",
 			      "Extract comments about a table, must have same columns and binds");
 static toSQL SQLColumnComments("toExtract:ColumnComment",
-			       "SELECT column_name,
-       comments
-  FROM all_col_comments
- WHERE table_name = :nam<char[100]>
-   AND comments IS NOT NULL
-   AND owner = :own<char[100]>",
+			       "SELECT column_name,\n"
+			       "       comments\n"
+			       "  FROM all_col_comments\n"
+			       " WHERE table_name = :nam<char[100]>\n"
+			       "   AND comments IS NOT NULL\n"
+			       "   AND owner = :own<char[100]>",
 			       "Extract comments about a columns, must have same columns and binds");
 
 QString toExtract::createComments(const QString &schema,
@@ -418,15 +426,14 @@ QString toExtract::generateHeading(const QString &action,
   char host[1024];
   gethostname(host,1024);
 
-  QString str=QString("REM This DDL was reverse engineered by
-REM TOra, Version %1
-REM
-REM at:   %2
-REM from: %3, an Oracle Release %4 instance
-REM
-REM on:   %5
-REM
-").
+  QString str=QString("REM This DDL was reverse engineered by\n"
+		      "REM TOra, Version %1\n"
+		      "REM\n"
+		      "REM at:   %2\n"
+		      "REM from: %3, an Oracle Release %4 instance\n"
+		      "REM\n"
+		      "REM on:   %5\n"
+		      "REM\n").
     arg(TOVERSION).
     arg(host).
     arg(Connection.host()).
@@ -474,10 +481,10 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
     if (search>=object.length()) {
       name=owner;
       owner=Connection.user();
-    } else if (object[search]!='.')
+    } else if (object.at(search)!='.')
       throw 2;
     search++;
-    if (object[search]=='\"') {
+    if (object.at(search)=='\"') {
       int pos=object.find('\"',search+1);
       if (pos<0)
 	throw 3;
@@ -499,43 +506,43 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
 }
 
 static toSQL SQLListConstraint("toExtract:ListConstraint",
-			       "SELECT table_name,
-       constraint_type,
-       search_condition,
-       r_owner,
-       r_constraint_name,
-       delete_rule,
-       DECODE(status,'ENABLED','ENABLE NOVALIDATE','DISABLE'),
-       deferrable,
-       deferred
-  FROM all_constraints
- WHERE owner = :own<char[100]>
-   AND constraint_name = :nam<char[100]>",
+			       "SELECT table_name,\n"
+			       "       constraint_type,\n"
+			       "       search_condition,\n"
+			       "       r_owner,\n"
+			       "       r_constraint_name,\n"
+			       "       delete_rule,\n"
+			       "       DECODE(status,'ENABLED','ENABLE NOVALIDATE','DISABLE'),\n"
+			       "       deferrable,\n"
+			       "       deferred\n"
+			       "  FROM all_constraints\n"
+			       " WHERE owner = :own<char[100]>\n"
+			       "   AND constraint_name = :nam<char[100]>",
 			       "Get information about a constraint, same binds and columns",
 			       "8.0");
 
 static toSQL SQLListConstraint7("toExtract:ListConstraint",
-			       "SELECT table_name,
-       constraint_type,
-       search_condition,
-       r_owner,
-       r_constraint_name,
-       delete_rule,
-       DECODE(status,'ENABLED','ENABLE','DISABLE'),
-       NULL,
-       NULL
-  FROM all_constraints
- WHERE owner = :own<char[100]>
-   AND constraint_name = :nam<char[100]>",
-			       QString::null,
-			       "7.0");
+				"SELECT table_name,\n"
+				"       constraint_type,\n"
+				"       search_condition,\n"
+				"       r_owner,\n"
+				"       r_constraint_name,\n"
+				"       delete_rule,\n"
+				"       DECODE(status,'ENABLED','ENABLE','DISABLE'),\n"
+				"       NULL,\n"
+				"       NULL\n"
+				"  FROM all_constraints\n"
+				" WHERE owner = :own<char[100]>\n"
+				"   AND constraint_name = :nam<char[100]>",
+				QString::null,
+				"7.0");
 
 static toSQL SQLConstraintTable("toExtract:ConstraintTable",
-			     "SELECT table_name
-  FROM all_constraints
- WHERE owner = :own<char[100]>
-   AND constraint_name = :nam<char[100]>",
-			     "Get tablename from constraint name, same binds and columns");
+				"SELECT table_name\n"
+				"  FROM all_constraints\n"
+				" WHERE owner = :own<char[100]>\n"
+				"   AND constraint_name = :nam<char[100]>",
+				"Get tablename from constraint name, same binds and columns");
 
 QString toExtract::createConstraint(const QString &schema,const QString &owner,const QString &name)
 {
@@ -711,14 +718,14 @@ void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
 }
 
 static toSQL SQLDBLink("toExtract:ExtractDBLink",
-		       "SELECT l.userid,
-       l.password,
-       l.host
-  FROM sys.link$ l,
-       sys.user$ u
- WHERE u.name    = :own<char[100]>
-   AND l.owner# = u.user#
-   AND l.name LIKE :nam<char[100]>||'%'",
+		       "SELECT l.userid,\n"
+		       "       l.password,\n"
+		       "       l.host\n"
+		       "  FROM sys.link$ l,\n"
+		       "       sys.user$ u\n"
+		       " WHERE u.name    = :own<char[100]>\n"
+		       "   AND l.owner# = u.user#\n"
+		       "   AND l.name LIKE :nam<char[100]>||'%'",
 		       "Get information about a DB Link, must have same binds and columns");
 
 QString toExtract::createDBLink(const QString &schema,const QString &owner,const QString &name)
@@ -786,76 +793,76 @@ void toExtract::describeDBLink(list<QString> &lst,const QString &schema,const QS
 }
 
 static toSQL SQLPartitionSegmentType("toExtract:PartitionSegment type",
-				     "SELECT SUBSTR(segment_type,7),
-       TO_CHAR(blocks)
-  FROM dba_segments
- WHERE segment_name = :nam<char[100]>
-   AND partition_name = :prt<char[100]>
-   AND owner = :own<char[100]>",
-				 "Get segment type for object partition, same binds and columns");
+				     "SELECT SUBSTR(segment_type,7),\n"
+				     "       TO_CHAR(blocks)\n"
+				     "  FROM dba_segments\n"
+				     " WHERE segment_name = :nam<char[100]>\n"
+				     "   AND partition_name = :prt<char[100]>\n"
+				     "   AND owner = :own<char[100]>",
+				     "Get segment type for object partition, same binds and columns");
 
 static toSQL SQLExchangeIndex("toExtract:ExchangeIndex",
-			      "SELECT
-        LTRIM(i.degree)
-      , LTRIM(i.instances)
-      , i.table_name
-      , DECODE(
-                i.uniqueness
-               ,'UNIQUE',' UNIQUE'
-               ,null
-              )                       AS uniqueness
-      , DECODE(
-                i.index_type
-               ,'BITMAP',' BITMAP'
-               ,null
-              )                       AS index_type
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , p.pct_free
-      , DECODE(
-                p.ini_trans
-               ,0,1
-               ,null,1
-               ,p.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                p.max_trans
-               ,0,255
-               ,null,255
-               ,p.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , p.initial_extent
-      , p.next_extent
-      , p.min_extent
-      , DECODE(
-                p.max_extent
-               ,2147483645,'unlimited'
-               ,           p.max_extent
-              )                       AS max_extent
-      , p.pct_increase
-      , NVL(p.freelists,1)
-      , NVL(p.freelist_groups,1)
-      , LOWER(p.buffer_pool)          AS buffer_pool
-      , DECODE(
-                p.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(p.tablespace_name)      AS tablespace_name
-      , %2                            AS blocks
- FROM
-        dba_indexes  i
-      , dba_ind_%1s  p
- WHERE
-            p.index_name   = :nam<char[100]>
-        AND p.%1_name      = :typ<char[100]>
-        AND i.index_name   = p.index_name
-        AND p.index_owner  = :own<char[100]>
-        AND i.owner        = p.index_owner",
+			      "SELECT\n"
+			      "        LTRIM(i.degree)\n"
+			      "      , LTRIM(i.instances)\n"
+			      "      , i.table_name\n"
+			      "      , DECODE(\n"
+			      "                i.uniqueness\n"
+			      "               ,'UNIQUE',' UNIQUE'\n"
+			      "               ,null\n"
+			      "              )                       AS uniqueness\n"
+			      "      , DECODE(\n"
+			      "                i.index_type\n"
+			      "               ,'BITMAP',' BITMAP'\n"
+			      "               ,null\n"
+			      "              )                       AS index_type\n"
+			      "        -- Physical Properties\n"
+			      "      , 'INDEX'                       AS organization\n"
+			      "        -- Segment Attributes\n"
+			      "      , 'N/A'                         AS cache\n"
+			      "      , 'N/A'                         AS pct_used\n"
+			      "      , p.pct_free\n"
+			      "      , DECODE(\n"
+			      "                p.ini_trans\n"
+			      "               ,0,1\n"
+			      "               ,null,1\n"
+			      "               ,p.ini_trans\n"
+			      "              )                       AS ini_trans\n"
+			      "      , DECODE(\n"
+			      "                p.max_trans\n"
+			      "               ,0,255\n"
+			      "               ,null,255\n"
+			      "               ,p.max_trans\n"
+			      "              )                       AS max_trans\n"
+			      "        -- Storage Clause\n"
+			      "      , p.initial_extent\n"
+			      "      , p.next_extent\n"
+			      "      , p.min_extent\n"
+			      "      , DECODE(\n"
+			      "                p.max_extent\n"
+			      "               ,2147483645,'unlimited'\n"
+			      "               ,           p.max_extent\n"
+			      "              )                       AS max_extent\n"
+			      "      , p.pct_increase\n"
+			      "      , NVL(p.freelists,1)\n"
+			      "      , NVL(p.freelist_groups,1)\n"
+			      "      , LOWER(p.buffer_pool)          AS buffer_pool\n"
+			      "      , DECODE(\n"
+			      "                p.logging\n"
+			      "               ,'NO','NOLOGGING'\n"
+			      "               ,     'LOGGING'\n"
+			      "              )                       AS logging\n"
+			      "      , LOWER(p.tablespace_name)      AS tablespace_name\n"
+			      "      , %2                            AS blocks\n"
+			      " FROM\n"
+			      "        dba_indexes  i\n"
+			      "      , dba_ind_%1s  p\n"
+			      " WHERE\n"
+			      "            p.index_name   = :nam<char[100]>\n"
+			      "        AND p.%1_name      = :typ<char[100]>\n"
+			      "        AND i.index_name   = p.index_name\n"
+			      "        AND p.index_owner  = :own<char[100]>\n"
+			      "        AND i.owner        = p.index_owner",
 			      "Get information about exchange index, "
 			      "must have same %, binds and columns");
 
@@ -962,35 +969,35 @@ void toExtract::describeExchangeIndex(list<QString> &lst,const QString &schema,c
 }
 
 static toSQL SQLIndexColumns("toExtract:IndexColumns",
-			     "SELECT column_name,
-       descend
-  FROM all_ind_columns
- WHERE index_name = :nam<char[100]>
-   AND index_owner = :own<char[100]>
- ORDER BY column_position",
+			     "SELECT column_name,\n"
+			     "       descend\n"
+			     "  FROM all_ind_columns\n"
+			     " WHERE index_name = :nam<char[100]>\n"
+			     "   AND index_owner = :own<char[100]>\n"
+			     " ORDER BY column_position",
 			     "Get column names from index, same binds and columns",
 			     "8.1");
 static toSQL SQLIndexColumns7("toExtract:IndexColumns",
-			      "SELECT column_name,
-       'ASC'
-  FROM all_ind_columns
- WHERE index_name = :nam<char[100]>
-   AND index_owner = :own<char[100]>
- ORDER BY column_position",
+			      "SELECT column_name,\n"
+			      "       'ASC'\n"
+			      "  FROM all_ind_columns\n"
+			      " WHERE index_name = :nam<char[100]>\n"
+			      "   AND index_owner = :own<char[100]>\n"
+			      " ORDER BY column_position",
 			      QString::null,
 			      "7");
 static toSQL SQLIndexFunction("toExtract:IndexFunction",
-			      "SELECT c.default$
-  FROM sys.col$ c,
-       all_indexes i,
-       all_objects o
- WHERE i.index_name = :ind<char[100]>
-   AND o.object_name = i.table_name
-   AND c.obj# = o.object_id
-   AND c.name = :tab<char[100]>
-   AND i.owner = :own<char[100]>
-   AND o.owner = i.table_owner",
-			     "Get function of index column, same column and binds");
+			      "SELECT c.default$\n"
+			      "  FROM sys.col$ c,\n"
+			      "       all_indexes i,\n"
+			      "       all_objects o\n"
+			      " WHERE i.index_name = :ind<char[100]>\n"
+			      "   AND o.object_name = i.table_name\n"
+			      "   AND c.obj# = o.object_id\n"
+			      "   AND c.name = :tab<char[100]>\n"
+			      "   AND i.owner = :own<char[100]>\n"
+			      "   AND o.owner = i.table_owner",
+			      "Get function of index column, same column and binds");
 
 QString toExtract::indexColumns(const QString &indent,
 				const QString &owner,
@@ -1085,53 +1092,53 @@ void toExtract::describeIndexColumns(list<QString> &lst,list<QString> &ctx,
 }
 
 static toSQL SQLExchangeTable("toExtract:ExchangeTable",
-			      "SELECT
-        DECODE(
-                t.monitoring
-               ,'NO','NOMONITORING'
-               ,     'MONITORING'
-              )                              AS monitoring
-      , t.table_name
-      , LTRIM(t.degree)                      AS degree
-      , LTRIM(t.instances)                   AS instances
-      , 'HEAP'                               AS organization
-      , DECODE(
-                t.cache
-               ,'y','CACHE'
-               ,    'NOCACHE'
-              )                              AS cache
-      , p.pct_used
-      , p.pct_free
-      , p.ini_trans
-      , p.max_trans
-      , p.initial_extent
-      , p.next_extent
-      , p.min_extent
-      , DECODE(
-                p.max_extent
-               ,2147483645,'unlimited'
-               ,p.max_extent
-              )                              AS max_extents
-      , p.pct_increase
-      , p.freelists
-      , p.freelist_groups
-      , LOWER(p.buffer_pool)                 AS buffer_pool
-      , DECODE(
-                p.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                              AS logging
-      , LOWER(p.tablespace_name)             AS tablespace_name
-      , %2 - NVL(p.empty_blocks,0)           AS blocks
- FROM
-        dba_tables        t
-      , dba_tab_%1s       p
- WHERE
-            p.table_name   = :nam<char[100]>
-        AND p.%1_name      = :sgm<char[100]>
-        AND t.table_name   = p.table_name
-        AND p.table_owner  = :own<char[100]>
-        AND t.owner        = p.table_owner",
+			      "SELECT\n"
+			      "        DECODE(\n"
+			      "                t.monitoring\n"
+			      "               ,'NO','NOMONITORING'\n"
+			      "               ,     'MONITORING'\n"
+			      "              )                              AS monitoring\n"
+			      "      , t.table_name\n"
+			      "      , LTRIM(t.degree)                      AS degree\n"
+			      "      , LTRIM(t.instances)                   AS instances\n"
+			      "      , 'HEAP'                               AS organization\n"
+			      "      , DECODE(\n"
+			      "                t.cache\n"
+			      "               ,'y','CACHE'\n"
+			      "               ,    'NOCACHE'\n"
+			      "              )                              AS cache\n"
+			      "      , p.pct_used\n"
+			      "      , p.pct_free\n"
+			      "      , p.ini_trans\n"
+			      "      , p.max_trans\n"
+			      "      , p.initial_extent\n"
+			      "      , p.next_extent\n"
+			      "      , p.min_extent\n"
+			      "      , DECODE(\n"
+			      "                p.max_extent\n"
+			      "               ,2147483645,'unlimited'\n"
+			      "               ,p.max_extent\n"
+			      "              )                              AS max_extents\n"
+			      "      , p.pct_increase\n"
+			      "      , p.freelists\n"
+			      "      , p.freelist_groups\n"
+			      "      , LOWER(p.buffer_pool)                 AS buffer_pool\n"
+			      "      , DECODE(\n"
+			      "                p.logging\n"
+			      "               ,'NO','NOLOGGING'\n"
+			      "               ,     'LOGGING'\n"
+			      "              )                              AS logging\n"
+			      "      , LOWER(p.tablespace_name)             AS tablespace_name\n"
+			      "      , %2 - NVL(p.empty_blocks,0)           AS blocks\n"
+			      " FROM\n"
+			      "        dba_tables        t\n"
+			      "      , dba_tab_%1s       p\n"
+			      " WHERE\n"
+			      "            p.table_name   = :nam<char[100]>\n"
+			      "        AND p.%1_name      = :sgm<char[100]>\n"
+			      "        AND t.table_name   = p.table_name\n"
+			      "        AND p.table_owner  = :own<char[100]>\n"
+			      "        AND t.owner        = p.table_owner",
 			      "Get information about exchange table, "
 			      "must have same %, binds and columns");
 
@@ -1216,7 +1223,7 @@ QString toExtract::segmentAttributes(list<QString> &result)
   if (Storage) {
     if (result.size()!=18)
       throw QString("Internal error, result should be 18 in segment attributes (Was %1)").
-		    arg(result.size());
+	arg(result.size());
 
     list<QString>::iterator i=result.begin();
 
@@ -1340,11 +1347,11 @@ void toExtract::describeAttributes(list<QString> &dsp,list<QString> &ctx,list<QS
 }
 
 static toSQL SQLPrimaryKey("toExtract:PrimaryKey",
-			   "SELECT constraint_name
-  FROM all_constraints
- WHERE table_name = :nam<char[100]>
-   AND constraint_type = 'P'
-   AND owner = :own<char[100]>",
+			   "SELECT constraint_name\n"
+			   "  FROM all_constraints\n"
+			   " WHERE table_name = :nam<char[100]>\n"
+			   "   AND constraint_type = 'P'\n"
+			   "   AND owner = :own<char[100]>",
 			   "Get constraint name for primary key of table, same binds and columns");
 
 QString toExtract::createTableText(list<QString> &result,const QString &schema,
@@ -1424,185 +1431,185 @@ void toExtract::describeTableText(list<QString> &lst,list<QString> &ctx,list<QSt
 }
 
 static toSQL SQLTableColumns("toExtract:TableColumns",
-			     "SELECT  RPAD(LOWER(column_name),32)
-     || RPAD(
-             DECODE(
-                     data_type
-                    ,'NUMBER',DECODE(
-                                      data_precision
-                                     ,null,DECODE(
-                                                   data_scale
-                                                  ,0,'INTEGER'
-                                                  ,  'NUMBER   '
-                                                 )
-                                     ,'NUMBER   '
-                                    )
-                    ,'RAW'     ,'RAW      '
-                    ,'CHAR'    ,'CHAR     '
-                    ,'NCHAR'   ,'NCHAR    '
-                    ,'UROWID'  ,'UROWID   '
-                    ,'VARCHAR2','VARCHAR2 '
-                    ,data_type
-                   )
-               || DECODE(
-                          data_type
-                         ,'DATE',null
-                         ,'LONG',null
-                         ,'NUMBER',DECODE(
-                                           data_precision
-                                          ,null,null
-                                          ,'('
-                                         )
-                         ,'RAW'      ,'('
-                         ,'CHAR'     ,'('
-                         ,'NCHAR'    ,'('
-                         ,'UROWID'   ,'('
-                         ,'VARCHAR2' ,'('
-                         ,'NVARCHAR2','('
-                         ,null
-                        )
-               || DECODE(
-                          data_type
-                         ,'RAW'      ,data_length
-                         ,'CHAR'     ,data_length
-                         ,'NCHAR'    ,data_length
-                         ,'UROWID'   ,data_length
-                         ,'VARCHAR2' ,data_length
-                         ,'NVARCHAR2',data_length
-                         ,'NUMBER'   ,data_precision
-                         , null
-                        )
-               || DECODE(
-                          data_type
-                         ,'NUMBER',DECODE(
-                           data_precision
-                          ,null,null
-                          ,DECODE(
-                                   data_scale
-                                  ,null,null
-                                  ,0   ,null
-                                  ,',' || data_scale
-                                 )
-                              )
-                        )
-               || DECODE(
-                          data_type
-                         ,'DATE',null
-                         ,'LONG',null
-                         ,'NUMBER',DECODE(
-                                           data_precision
-                                          ,null,null
-                                          ,')'
-                                         )
-                         ,'RAW'      ,')'
-                         ,'CHAR'     ,')'
-                         ,'NCHAR'    ,')'
-                         ,'UROWID'   ,')'
-                         ,'VARCHAR2' ,')'
-                         ,'NVARCHAR2',')'
-                         ,null
-                        )
-             ,32
-            )
-     , data_default
-     , DECODE(
-                nullable
-               ,'N','NOT NULL'
-               ,     null
-              )
-  FROM all_tab_columns
- WHERE table_name = :nam<char[100]>
-   AND owner = :own<char[100]>
- ORDER BY column_id",
+			     "SELECT  RPAD(LOWER(column_name),32)\n"
+			     "     || RPAD(\n"
+			     "             DECODE(\n"
+			     "                     data_type\n"
+			     "                    ,'NUMBER',DECODE(\n"
+			     "                                      data_precision\n"
+			     "                                     ,null,DECODE(\n"
+			     "                                                   data_scale\n"
+			     "                                                  ,0,'INTEGER'\n"
+			     "                                                  ,  'NUMBER   '\n"
+			     "                                                 )\n"
+			     "                                     ,'NUMBER   '\n"
+			     "                                    )\n"
+			     "                    ,'RAW'     ,'RAW      '\n"
+			     "                    ,'CHAR'    ,'CHAR     '\n"
+			     "                    ,'NCHAR'   ,'NCHAR    '\n"
+			     "                    ,'UROWID'  ,'UROWID   '\n"
+			     "                    ,'VARCHAR2','VARCHAR2 '\n"
+			     "                    ,data_type\n"
+			     "                   )\n"
+			     "               || DECODE(\n"
+			     "                          data_type\n"
+			     "                         ,'DATE',null\n"
+			     "                         ,'LONG',null\n"
+			     "                         ,'NUMBER',DECODE(\n"
+			     "                                           data_precision\n"
+			     "                                          ,null,null\n"
+			     "                                          ,'('\n"
+			     "                                         )\n"
+			     "                         ,'RAW'      ,'('\n"
+			     "                         ,'CHAR'     ,'('\n"
+			     "                         ,'NCHAR'    ,'('\n"
+			     "                         ,'UROWID'   ,'('\n"
+			     "                         ,'VARCHAR2' ,'('\n"
+			     "                         ,'NVARCHAR2','('\n"
+			     "                         ,null\n"
+			     "                        )\n"
+			     "               || DECODE(\n"
+			     "                          data_type\n"
+			     "                         ,'RAW'      ,data_length\n"
+			     "                         ,'CHAR'     ,data_length\n"
+			     "                         ,'NCHAR'    ,data_length\n"
+			     "                         ,'UROWID'   ,data_length\n"
+			     "                         ,'VARCHAR2' ,data_length\n"
+			     "                         ,'NVARCHAR2',data_length\n"
+			     "                         ,'NUMBER'   ,data_precision\n"
+			     "                         , null\n"
+			     "                        )\n"
+			     "               || DECODE(\n"
+			     "                          data_type\n"
+			     "                         ,'NUMBER',DECODE(\n"
+			     "                           data_precision\n"
+			     "                          ,null,null\n"
+			     "                          ,DECODE(\n"
+			     "                                   data_scale\n"
+			     "                                  ,null,null\n"
+			     "                                  ,0   ,null\n"
+			     "                                  ,',' || data_scale\n"
+			     "                                 )\n"
+			     "                              )\n"
+			     "                        )\n"
+			     "               || DECODE(\n"
+			     "                          data_type\n"
+			     "                         ,'DATE',null\n"
+			     "                         ,'LONG',null\n"
+			     "                         ,'NUMBER',DECODE(\n"
+			     "                                           data_precision\n"
+			     "                                          ,null,null\n"
+			     "                                          ,')'\n"
+			     "                                         )\n"
+			     "                         ,'RAW'      ,')'\n"
+			     "                         ,'CHAR'     ,')'\n"
+			     "                         ,'NCHAR'    ,')'\n"
+			     "                         ,'UROWID'   ,')'\n"
+			     "                         ,'VARCHAR2' ,')'\n"
+			     "                         ,'NVARCHAR2',')'\n"
+			     "                         ,null\n"
+			     "                        )\n"
+			     "             ,32\n"
+			     "            )\n"
+			     "     , data_default\n"
+			     "     , DECODE(\n"
+			     "                nullable\n"
+			     "               ,'N','NOT NULL'\n"
+			     "               ,     null\n"
+			     "              )\n"
+			     "  FROM all_tab_columns\n"
+			     " WHERE table_name = :nam<char[100]>\n"
+			     "   AND owner = :own<char[100]>\n"
+			     " ORDER BY column_id",
 			     "Extract column definitions from table",
 			     "8.0");
 static toSQL SQLTableColumns7("toExtract:TableColumns",
-			      "       SELECT
-        RPAD(LOWER(column_name),32)
-     || RPAD(
-             DECODE(
-                     data_type
-                    ,'NUMBER',DECODE(
-                                      data_precision
-                                     ,null,DECODE(
-                                                   data_scale
-                                                  ,0,'INTEGER'
-                                                  ,  'NUMBER   '
-                                                 )
-                                     ,'NUMBER   '
-                                    )
-                    ,'RAW'     ,'RAW      '
-                    ,'CHAR'    ,'CHAR     '
-                    ,'NCHAR'   ,'NCHAR    '
-                    ,'UROWID'  ,'UROWID   '
-                    ,'VARCHAR2','VARCHAR2 '
-                    ,data_type
-                   )
-               || DECODE(
-                          data_type
-                         ,'DATE',null
-                         ,'LONG',null
-                         ,'NUMBER',DECODE(
-                                           data_precision
-                                          ,null,null
-                                          ,'('
-                                         )
-                         ,'RAW'      ,'('
-                         ,'CHAR'     ,'('
-                         ,'NCHAR'    ,'('
-                         ,'UROWID'   ,'('
-                         ,'VARCHAR2' ,'('
-                         ,'NVARCHAR2','('
-                         ,null
-                        )
-               || DECODE(
-                          data_type
-                         ,'RAW'      ,data_length
-                         ,'CHAR'     ,data_length
-                         ,'NCHAR'    ,data_length
-                         ,'UROWID'   ,data_length
-                         ,'VARCHAR2' ,data_length
-                         ,'NVARCHAR2',data_length
-                         ,'NUMBER'   ,data_precision
-                         , null
-                        )
-               || DECODE(
-                          data_type
-                         ,'NUMBER',DECODE(
-                           data_precision
-                          ,null,null
-                          ,DECODE(
-                                   data_scale
-                                  ,null,null
-                                  ,0   ,null
-                                  ,',' || data_scale
-                                 )
-                              )
-                        )
-               || DECODE(
-                          data_type
-                         ,'DATE',null
-                         ,'LONG',null
-                         ,'NUMBER',DECODE(
-                                           data_precision
-                                          ,null,null
-                                          ,')'
-                                         )
-                         ,'RAW'      ,')'
-                         ,'CHAR'     ,')'
-                         ,'NCHAR'    ,')'
-                         ,'UROWID'   ,')'
-                         ,'VARCHAR2' ,')'
-                         ,'NVARCHAR2',')'
-                         ,null
-                        )
-             ,33
-            )
-     , data_default
-  FROM all_tab_columns
- WHERE table_name = :nam<char[100]>
-   AND owner = :own<char[100]>
- ORDER BY column_id",
+			      "       SELECT\n"
+			      "        RPAD(LOWER(column_name),32)\n"
+			      "     || RPAD(\n"
+			      "             DECODE(\n"
+			      "                     data_type\n"
+			      "                    ,'NUMBER',DECODE(\n"
+			      "                                      data_precision\n"
+			      "                                     ,null,DECODE(\n"
+			      "                                                   data_scale\n"
+			      "                                                  ,0,'INTEGER'\n"
+			      "                                                  ,  'NUMBER   '\n"
+			      "                                                 )\n"
+			      "                                     ,'NUMBER   '\n"
+			      "                                    )\n"
+			      "                    ,'RAW'     ,'RAW      '\n"
+			      "                    ,'CHAR'    ,'CHAR     '\n"
+			      "                    ,'NCHAR'   ,'NCHAR    '\n"
+			      "                    ,'UROWID'  ,'UROWID   '\n"
+			      "                    ,'VARCHAR2','VARCHAR2 '\n"
+			      "                    ,data_type\n"
+			      "                   )\n"
+			      "               || DECODE(\n"
+			      "                          data_type\n"
+			      "                         ,'DATE',null\n"
+			      "                         ,'LONG',null\n"
+			      "                         ,'NUMBER',DECODE(\n"
+			      "                                           data_precision\n"
+			      "                                          ,null,null\n"
+			      "                                          ,'('\n"
+			      "                                         )\n"
+			      "                         ,'RAW'      ,'('\n"
+			      "                         ,'CHAR'     ,'('\n"
+			      "                         ,'NCHAR'    ,'('\n"
+			      "                         ,'UROWID'   ,'('\n"
+			      "                         ,'VARCHAR2' ,'('\n"
+			      "                         ,'NVARCHAR2','('\n"
+			      "                         ,null\n"
+			      "                        )\n"
+			      "               || DECODE(\n"
+			      "                          data_type\n"
+			      "                         ,'RAW'      ,data_length\n"
+			      "                         ,'CHAR'     ,data_length\n"
+			      "                         ,'NCHAR'    ,data_length\n"
+			      "                         ,'UROWID'   ,data_length\n"
+			      "                         ,'VARCHAR2' ,data_length\n"
+			      "                         ,'NVARCHAR2',data_length\n"
+			      "                         ,'NUMBER'   ,data_precision\n"
+			      "                         , null\n"
+			      "                        )\n"
+			      "               || DECODE(\n"
+			      "                          data_type\n"
+			      "                         ,'NUMBER',DECODE(\n"
+			      "                           data_precision\n"
+			      "                          ,null,null\n"
+			      "                          ,DECODE(\n"
+			      "                                   data_scale\n"
+			      "                                  ,null,null\n"
+			      "                                  ,0   ,null\n"
+			      "                                  ,',' || data_scale\n"
+			      "                                 )\n"
+			      "                              )\n"
+			      "                        )\n"
+			      "               || DECODE(\n"
+			      "                          data_type\n"
+			      "                         ,'DATE',null\n"
+			      "                         ,'LONG',null\n"
+			      "                         ,'NUMBER',DECODE(\n"
+			      "                                           data_precision\n"
+			      "                                          ,null,null\n"
+			      "                                          ,')'\n"
+			      "                                         )\n"
+			      "                         ,'RAW'      ,')'\n"
+			      "                         ,'CHAR'     ,')'\n"
+			      "                         ,'NCHAR'    ,')'\n"
+			      "                         ,'UROWID'   ,')'\n"
+			      "                         ,'VARCHAR2' ,')'\n"
+			      "                         ,'NVARCHAR2',')'\n"
+			      "                         ,null\n"
+			      "                        )\n"
+			      "             ,33\n"
+			      "            )\n"
+			      "     , data_default\n"
+			      "  FROM all_tab_columns\n"
+			      " WHERE table_name = :nam<char[100]>\n"
+			      "   AND owner = :own<char[100]>\n"
+			      " ORDER BY column_id",
 			      QString::null,
 			      "7.0");
 
@@ -1651,12 +1658,12 @@ void toExtract::describeTableColumns(list<QString> &lst,list<QString> &ctx,
 }
 
 static toSQL SQLDisplaySource("toExtract:ListSource",
-			      "SELECT text
-  FROM all_source
- WHERE type = :typ<char[100]>
-   AND name = :nam<char[100]>
-   AND owner = :own<char[100]>
- ORDER BY line",
+			      "SELECT text\n"
+			      "  FROM all_source\n"
+			      " WHERE type = :typ<char[100]>\n"
+			      "   AND name = :nam<char[100]>\n"
+			      "   AND owner = :own<char[100]>\n"
+			      " ORDER BY line",
 			      "Get source of an object from the database, "
 			      "must have same columns and binds");
 
@@ -1690,11 +1697,11 @@ QString toExtract::displaySource(const QString &schema,const QString &owner,
     if (first&&!Describe) {
       unsigned int i=0;
       for (i=0;i<line.length();i++) {
-	if (line[i].isSpace())
+	if (line.at(i).isSpace())
 	  break;
-	ret+=line[i];
+	ret+=line.at(i);
       }
-      while(i<line.length()&&line[i].isSpace())
+      while(i<line.length()&&line.at(i).isSpace())
 	i++;
       line=line.right(line.length()-i);
       ret+=" ";
@@ -1731,206 +1738,206 @@ QString toExtract::createFunction(const QString &schema,const QString &owner,con
 void toExtract::describeFunction(list<QString> &lst,const QString &schema,
 				 const QString &owner,const QString &name)
 {
-  return describeSource(lst,schema,owner,name,"FUNCTION");
+  describeSource(lst,schema,owner,name,"FUNCTION");
 }
 
 static toSQL SQLIndexInfo7("toExtract:IndexInfo",
-			   "SELECT  'N/A'                           AS partitioned
-      , table_name
-      , table_owner
-      , DECODE(
-                uniqueness
-               ,'UNIQUE',' UNIQUE'
-               ,null
-              )
-      , null                            AS bitmap
-      , null                            AS domain
-      , null
-      , null
-      , null
-  FROM all_indexes
- WHERE index_name = :nam<char[100]>
-   AND owner = :own<char[100]>",
+			   "SELECT  'N/A'                           AS partitioned\n"
+			   "      , table_name\n"
+			   "      , table_owner\n"
+			   "      , DECODE(\n"
+			   "                uniqueness\n"
+			   "               ,'UNIQUE',' UNIQUE'\n"
+			   "               ,null\n"
+			   "              )\n"
+			   "      , null                            AS bitmap\n"
+			   "      , null                            AS domain\n"
+			   "      , null\n"
+			   "      , null\n"
+			   "      , null\n"
+			   "  FROM all_indexes\n"
+			   " WHERE index_name = :nam<char[100]>\n"
+			   "   AND owner = :own<char[100]>",
 			   "Initial information about an index, same binds and columns",
 			   "7.0");
 static toSQL SQLIndexInfo("toExtract:IndexInfo",
-			  "SELECT partitioned
-      , table_name
-      , table_owner
-      , DECODE(
-                uniqueness
-               ,'UNIQUE',' UNIQUE'
-               ,null
-              )
-      , DECODE(
-                index_type
-               ,'BITMAP',' BITMAP'
-               ,null
-              )
-      , DECODE(
-                index_type
-               ,'DOMAIN','DOMAIN'
-               ,null
-              )
-      , ityp_owner
-      , ityp_name
-      , parameters
-  FROM all_indexes
- WHERE index_name = :nam<char[100]>
-   AND owner = :own<char[100]>",
+			  "SELECT partitioned\n"
+			  "      , table_name\n"
+			  "      , table_owner\n"
+			  "      , DECODE(\n"
+			  "                uniqueness\n"
+			  "               ,'UNIQUE',' UNIQUE'\n"
+			  "               ,null\n"
+			  "              )\n"
+			  "      , DECODE(\n"
+			  "                index_type\n"
+			  "               ,'BITMAP',' BITMAP'\n"
+			  "               ,null\n"
+			  "              )\n"
+			  "      , DECODE(\n"
+			  "                index_type\n"
+			  "               ,'DOMAIN','DOMAIN'\n"
+			  "               ,null\n"
+			  "              )\n"
+			  "      , ityp_owner\n"
+			  "      , ityp_name\n"
+			  "      , parameters\n"
+			  "  FROM all_indexes\n"
+			  " WHERE index_name = :nam<char[100]>\n"
+			  "   AND owner = :own<char[100]>",
 			  QString::null,
 			  "8.0");
 
 static toSQL SQLIndexSegment("toExtract:IndexSegment",
-			     "SELECT  LTRIM(i.degree)
-      , LTRIM(i.instances)
-      , DECODE(
-                i.compression
-               ,'ENABLED',i.prefix_length
-               ,0
-              )                             AS compressed
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , i.pct_free
-      , DECODE(
-                i.ini_trans
-               ,0,1
-               ,null,1
-               ,i.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                i.max_trans
-               ,0,255
-               ,null,255
-               ,i.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , i.initial_extent
-      , i.next_extent
-      , i.min_extents
-      , DECODE(
-                i.max_extents
-               ,2147483645,'unlimited'
-               ,           i.max_extents
-              )                       AS max_extents
-      , i.pct_increase
-      , NVL(i.freelists,1)
-      , NVL(i.freelist_groups,1)
-      , LOWER(i.buffer_pool)          AS buffer_pool
-      , DECODE(
-                i.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(i.tablespace_name)      AS tablespace_name
-      , s.blocks
-  FROM  all_indexes   i
-      , dba_segments  s
- WHERE  i.index_name   = :nam<char[100]>
-   AND  s.segment_name = i.index_name
-   AND  i.owner        = :own<char[100]>
-   AND  s.owner        = i.owner",
+			     "SELECT  LTRIM(i.degree)\n"
+			     "      , LTRIM(i.instances)\n"
+			     "      , DECODE(\n"
+			     "                i.compression\n"
+			     "               ,'ENABLED',i.prefix_length\n"
+			     "               ,0\n"
+			     "              )                             AS compressed\n"
+			     "        -- Physical Properties\n"
+			     "      , 'INDEX'                       AS organization\n"
+			     "        -- Segment Attributes\n"
+			     "      , 'N/A'                         AS cache\n"
+			     "      , 'N/A'                         AS pct_used\n"
+			     "      , i.pct_free\n"
+			     "      , DECODE(\n"
+			     "                i.ini_trans\n"
+			     "               ,0,1\n"
+			     "               ,null,1\n"
+			     "               ,i.ini_trans\n"
+			     "              )                       AS ini_trans\n"
+			     "      , DECODE(\n"
+			     "                i.max_trans\n"
+			     "               ,0,255\n"
+			     "               ,null,255\n"
+			     "               ,i.max_trans\n"
+			     "              )                       AS max_trans\n"
+			     "        -- Storage Clause\n"
+			     "      , i.initial_extent\n"
+			     "      , i.next_extent\n"
+			     "      , i.min_extents\n"
+			     "      , DECODE(\n"
+			     "                i.max_extents\n"
+			     "               ,2147483645,'unlimited'\n"
+			     "               ,           i.max_extents\n"
+			     "              )                       AS max_extents\n"
+			     "      , i.pct_increase\n"
+			     "      , NVL(i.freelists,1)\n"
+			     "      , NVL(i.freelist_groups,1)\n"
+			     "      , LOWER(i.buffer_pool)          AS buffer_pool\n"
+			     "      , DECODE(\n"
+			     "                i.logging\n"
+			     "               ,'NO','NOLOGGING'\n"
+			     "               ,     'LOGGING'\n"
+			     "              )                       AS logging\n"
+			     "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
+			     "      , s.blocks\n"
+			     "  FROM  all_indexes   i\n"
+			     "      , dba_segments  s\n"
+			     " WHERE  i.index_name   = :nam<char[100]>\n"
+			     "   AND  s.segment_name = i.index_name\n"
+			     "   AND  i.owner        = :own<char[100]>\n"
+			     "   AND  s.owner        = i.owner",
 			     "Get information about how index is stored",
 			     "8.1");
 
 static toSQL SQLIndexSegment8("toExtract:IndexSegment",
-			      "SELECT  LTRIM(i.degree)
-      , LTRIM(i.instances)
-      , 0                             AS compressed
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , i.pct_free
-      , DECODE(
-                i.ini_trans
-               ,0,1
-               ,null,1
-               ,i.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                i.max_trans
-               ,0,255
-               ,null,255
-               ,i.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , i.initial_extent
-      , i.next_extent
-      , i.min_extents
-      , DECODE(
-                i.max_extents
-               ,2147483645,'unlimited'
-               ,           i.max_extents
-              )                       AS max_extents
-      , i.pct_increase
-      , NVL(i.freelists,1)
-      , NVL(i.freelist_groups,1)
-      , LOWER(i.buffer_pool)          AS buffer_pool
-      , DECODE(
-                i.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(i.tablespace_name)      AS tablespace_name
-      , s.blocks
-  FROM  all_indexes   i
-      , dba_segments  s
- WHERE  i.index_name   = :nam<char[100]>
-   AND  s.segment_name = i.index_name
-   AND  i.owner        = :own<char[100]>
-   AND  s.owner        = i.owner",
+			      "SELECT  LTRIM(i.degree)\n"
+			      "      , LTRIM(i.instances)\n"
+			      "      , 0                             AS compressed\n"
+			      "        -- Physical Properties\n"
+			      "      , 'INDEX'                       AS organization\n"
+			      "        -- Segment Attributes\n"
+			      "      , 'N/A'                         AS cache\n"
+			      "      , 'N/A'                         AS pct_used\n"
+			      "      , i.pct_free\n"
+			      "      , DECODE(\n"
+			      "                i.ini_trans\n"
+			      "               ,0,1\n"
+			      "               ,null,1\n"
+			      "               ,i.ini_trans\n"
+			      "              )                       AS ini_trans\n"
+			      "      , DECODE(\n"
+			      "                i.max_trans\n"
+			      "               ,0,255\n"
+			      "               ,null,255\n"
+			      "               ,i.max_trans\n"
+			      "              )                       AS max_trans\n"
+			      "        -- Storage Clause\n"
+			      "      , i.initial_extent\n"
+			      "      , i.next_extent\n"
+			      "      , i.min_extents\n"
+			      "      , DECODE(\n"
+			      "                i.max_extents\n"
+			      "               ,2147483645,'unlimited'\n"
+			      "               ,           i.max_extents\n"
+			      "              )                       AS max_extents\n"
+			      "      , i.pct_increase\n"
+			      "      , NVL(i.freelists,1)\n"
+			      "      , NVL(i.freelist_groups,1)\n"
+			      "      , LOWER(i.buffer_pool)          AS buffer_pool\n"
+			      "      , DECODE(\n"
+			      "                i.logging\n"
+			      "               ,'NO','NOLOGGING'\n"
+			      "               ,     'LOGGING'\n"
+			      "              )                       AS logging\n"
+			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
+			      "      , s.blocks\n"
+			      "  FROM  all_indexes   i\n"
+			      "      , dba_segments  s\n"
+			      " WHERE  i.index_name   = :nam<char[100]>\n"
+			      "   AND  s.segment_name = i.index_name\n"
+			      "   AND  i.owner        = :own<char[100]>\n"
+			      "   AND  s.owner        = i.owner",
 			      QString::null,
 			      "8.0");
 
 static toSQL SQLIndexSegment7("toExtract:IndexSegment",
-			      "SELECT  'N/A'                         AS degree
-      , 'N/A'                         AS instances
-      , 0                             AS compressed
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , i.pct_free
-      , DECODE(
-                i.ini_trans
-               ,0,1
-               ,null,1
-               ,i.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                i.max_trans
-               ,0,255
-               ,null,255
-               ,i.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , i.initial_extent
-      , i.next_extent
-      , i.min_extents
-      , DECODE(
-                i.max_extents
-               ,2147483645,'unlimited'
-               ,           i.max_extents
-              )                       AS max_extents
-      , i.pct_increase
-      , NVL(i.freelists,1)
-      , NVL(i.freelist_groups,1)
-      , 'N/A'                         AS buffer_pool
-      , 'N/A'                         AS logging
-      , LOWER(i.tablespace_name)      AS tablespace_name
-      , s.blocks
-  FROM  all_indexes   i
-      , dba_segments  s
- WHERE  i.index_name   = :nam<char[100]>
-   AND  s.segment_name = i.index_name
-   AND  i.owner        = :own<char[100]>
-   AND  s.owner        = i.owner",
+			      "SELECT  'N/A'                         AS degree\n"
+			      "      , 'N/A'                         AS instances\n"
+			      "      , 0                             AS compressed\n"
+			      "        -- Physical Properties\n"
+			      "      , 'INDEX'                       AS organization\n"
+			      "        -- Segment Attributes\n"
+			      "      , 'N/A'                         AS cache\n"
+			      "      , 'N/A'                         AS pct_used\n"
+			      "      , i.pct_free\n"
+			      "      , DECODE(\n"
+			      "                i.ini_trans\n"
+			      "               ,0,1\n"
+			      "               ,null,1\n"
+			      "               ,i.ini_trans\n"
+			      "              )                       AS ini_trans\n"
+			      "      , DECODE(\n"
+			      "                i.max_trans\n"
+			      "               ,0,255\n"
+			      "               ,null,255\n"
+			      "               ,i.max_trans\n"
+			      "              )                       AS max_trans\n"
+			      "        -- Storage Clause\n"
+			      "      , i.initial_extent\n"
+			      "      , i.next_extent\n"
+			      "      , i.min_extents\n"
+			      "      , DECODE(\n"
+			      "                i.max_extents\n"
+			      "               ,2147483645,'unlimited'\n"
+			      "               ,           i.max_extents\n"
+			      "              )                       AS max_extents\n"
+			      "      , i.pct_increase\n"
+			      "      , NVL(i.freelists,1)\n"
+			      "      , NVL(i.freelist_groups,1)\n"
+			      "      , 'N/A'                         AS buffer_pool\n"
+			      "      , 'N/A'                         AS logging\n"
+			      "      , LOWER(i.tablespace_name)      AS tablespace_name\n"
+			      "      , s.blocks\n"
+			      "  FROM  all_indexes   i\n"
+			      "      , dba_segments  s\n"
+			      " WHERE  i.index_name   = :nam<char[100]>\n"
+			      "   AND  s.segment_name = i.index_name\n"
+			      "   AND  i.owner        = :own<char[100]>\n"
+			      "   AND  s.owner        = i.owner",
 			      QString::null,
 			      "7.0");
 
@@ -2063,215 +2070,215 @@ void toExtract::describeIndex(list<QString> &lst,const QString &schema,
 }
 
 static toSQL SQLIndexPartition8("toExtract:IndexPartition",
-				"SELECT  -- 8.0 Indexes may partition only by RANGE
-        i.partitioning_type
-      , 'N/A'                         AS subpartitioning_type
-      , i.locality
-      , 0                             AS compressed
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , i.def_pct_free
-      , DECODE(
-                i.def_ini_trans
-               ,0,1
-               ,null,1
-               ,i.def_ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                i.def_max_trans
-               ,0,255
-               ,null,255
-               ,i.def_max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               i.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,i.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               i.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,i.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                i.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,i.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                i.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,i.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                i.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,i.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                i.def_freelists
-               ,0,1
-               ,null,1
-               ,i.def_freelists
-              )                       AS freelists
-      , DECODE(
-                i.def_freelist_groups
-               ,0,1
-               ,null,1
-               ,i.def_freelist_groups
-              )                       AS freelist_groups
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                i.def_logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))
-        -- Don't have default blocks, so use larger of initial/next
-      , GREATEST(
-                  DECODE(
-                          i.def_initial_extent
-                         ,'DEFAULT',s.initial_extent / :bs<char[100]> / 1024
-                         ,i.def_initial_extent
-                        )
-                 ,DECODE(
-                          i.def_next_extent
-                         ,'DEFAULT',s.next_extent / :bs<char[100]> / 1024
-                         ,i.def_next_extent
-                        )
-                )                     AS blocks
- FROM
-        all_part_indexes  i
-      , dba_tablespaces   s
-      , all_part_tables   t
- WHERE
-            -- def_tablspace is sometimes NULL in PART_INDEXES,
-            -- we'll have to go over to the table for the defaults
-            i.index_name      = :nam<char[100]>
-        AND t.table_name      = i.table_name
-        AND s.tablespace_name = t.def_tablespace_name
-        AND i.owner           = :own<char[100]>
-        AND n.owner           = i.owner
-        AND t.owner           = i.owner",
+				"SELECT  -- 8.0 Indexes may partition only by RANGE\n"
+				"        i.partitioning_type\n"
+				"      , 'N/A'                         AS subpartitioning_type\n"
+				"      , i.locality\n"
+				"      , 0                             AS compressed\n"
+				"        -- Physical Properties\n"
+				"      , 'INDEX'                       AS organization\n"
+				"        -- Segment Attributes\n"
+				"      , 'N/A'                         AS cache\n"
+				"      , 'N/A'                         AS pct_used\n"
+				"      , i.def_pct_free\n"
+				"      , DECODE(\n"
+				"                i.def_ini_trans\n"
+				"               ,0,1\n"
+				"               ,null,1\n"
+				"               ,i.def_ini_trans\n"
+				"              )                       AS ini_trans\n"
+				"      , DECODE(\n"
+				"                i.def_max_trans\n"
+				"               ,0,255\n"
+				"               ,null,255\n"
+				"               ,i.def_max_trans\n"
+				"              )                       AS max_trans\n"
+				"        -- Storage Clause\n"
+				"      ,DECODE(\n"
+				"               i.def_initial_extent\n"
+				"              ,'DEFAULT',s.initial_extent\n"
+				"              ,i.def_initial_extent * :bs<char[100]> * 1024\n"
+				"             )                        AS initial_extent\n"
+				"      ,DECODE(\n"
+				"               i.def_next_extent\n"
+				"              ,'DEFAULT',s.next_extent\n"
+				"              ,i.def_next_extent * :bs<char[100]> * 1024\n"
+				"             )                        AS next_extent\n"
+				"      , DECODE(\n"
+				"                i.def_min_extents\n"
+				"               ,'DEFAULT',s.min_extents\n"
+				"               ,i.def_min_extents\n"
+				"              )                       AS min_extents\n"
+				"      , DECODE(\n"
+				"                i.def_max_extents\n"
+				"               ,'DEFAULT',DECODE(\n"
+				"                                  s.max_extents\n"
+				"                                 ,2147483645,'unlimited'\n"
+				"                                 ,s.max_extents\n"
+				"                                )\n"
+				"               ,2147483645,'unlimited'\n"
+				"               ,i.def_max_extents\n"
+				"              )                       AS max_extents\n"
+				"      , DECODE(\n"
+				"                i.def_pct_increase\n"
+				"               ,'DEFAULT',s.pct_increase\n"
+				"               ,i.def_pct_increase\n"
+				"              )                       AS pct_increase\n"
+				"      , DECODE(\n"
+				"                i.def_freelists\n"
+				"               ,0,1\n"
+				"               ,null,1\n"
+				"               ,i.def_freelists\n"
+				"              )                       AS freelists\n"
+				"      , DECODE(\n"
+				"                i.def_freelist_groups\n"
+				"               ,0,1\n"
+				"               ,null,1\n"
+				"               ,i.def_freelist_groups\n"
+				"              )                       AS freelist_groups\n"
+				"      , 'N/A'                         AS buffer_pool\n"
+				"      , DECODE(\n"
+				"                i.def_logging\n"
+				"               ,'NO','NOLOGGING'\n"
+				"               ,     'LOGGING'\n"
+				"              )                       AS logging\n"
+				"      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))\n"
+				"        -- Don't have default blocks, so use larger of initial/next\n"
+				"      , GREATEST(\n"
+				"                  DECODE(\n"
+				"                          i.def_initial_extent\n"
+				"                         ,'DEFAULT',s.initial_extent / :bs<char[100]> / 1024\n"
+				"                         ,i.def_initial_extent\n"
+				"                        )\n"
+				"                 ,DECODE(\n"
+				"                          i.def_next_extent\n"
+				"                         ,'DEFAULT',s.next_extent / :bs<char[100]> / 1024\n"
+				"                         ,i.def_next_extent\n"
+				"                        )\n"
+				"                )                     AS blocks\n"
+				" FROM\n"
+				"        all_part_indexes  i\n"
+				"      , dba_tablespaces   s\n"
+				"      , all_part_tables   t\n"
+				" WHERE\n"
+				"            -- def_tablspace is sometimes NULL in PART_INDEXES,\n"
+				"            -- we'll have to go over to the table for the defaults\n"
+				"            i.index_name      = :nam<char[100]>\n"
+				"        AND t.table_name      = i.table_name\n"
+				"        AND s.tablespace_name = t.def_tablespace_name\n"
+				"        AND i.owner           = :own<char[100]>\n"
+				"        AND n.owner           = i.owner\n"
+				"        AND t.owner           = i.owner",
 				"Get information about index partitions, "
 				"must have same columns and same columns",
 				"8.0");
 
 static toSQL SQLIndexPartition("toExtract:IndexPartition",
-			       "SELECT  -- Indexes may partition only by RANGE or RANGE/HASH
-        i.partitioning_type
-      , i.subpartitioning_type
-      , i.locality
-      , DECODE(
-                n.compression
-               ,'ENABLED',n.prefix_length
-               ,0
-              )                             AS compressed
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , i.def_pct_free
-      , DECODE(
-                i.def_ini_trans
-               ,0,1
-               ,null,1
-               ,i.def_ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                i.def_max_trans
-               ,0,255
-               ,null,255
-               ,i.def_max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               i.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,i.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               i.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,i.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                i.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,i.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                i.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,i.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                i.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,i.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                i.def_freelists
-               ,0,1
-               ,null,1
-               ,i.def_freelists
-              )                       AS freelists
-      , DECODE(
-                i.def_freelist_groups
-               ,0,1
-               ,null,1
-               ,i.def_freelist_groups
-              )                       AS freelist_groups
-      , LOWER(i.def_buffer_pool)        AS buffer_pool
-      , DECODE(
-                i.def_logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))
-        -- Don't have default blocks, so use larger of initial/next
-      , GREATEST(
-                  DECODE(
-                          i.def_initial_extent
-                         ,'DEFAULT',s.initial_extent / :bs<char[100]> / 1024
-                         ,i.def_initial_extent
-                        )
-                 ,DECODE(
-                          i.def_next_extent
-                         ,'DEFAULT',s.next_extent / :bs<char[100]> / 1024
-                         ,i.def_next_extent
-                        )
-                )                     AS blocks
- FROM
-        all_part_indexes  i
-      , all_indexes       n
-      , dba_tablespaces   s
-      , all_part_tables   t
- WHERE
-            -- def_tablspace is sometimes NULL in PART_INDEXES,
-            -- we'll have to go over to the table for the defaults
-            i.index_name      = :nam<char[100]>
-        AND n.index_name      = i.index_name
-        AND t.table_name      = i.table_name
-        AND s.tablespace_name = t.def_tablespace_name
-        AND i.owner           = :own<char[100]>
-        AND n.owner           = i.owner
-        AND t.owner           = i.owner",
+			       "SELECT  -- Indexes may partition only by RANGE or RANGE/HASH\n"
+			       "        i.partitioning_type\n"
+			       "      , i.subpartitioning_type\n"
+			       "      , i.locality\n"
+			       "      , DECODE(\n"
+			       "                n.compression\n"
+			       "               ,'ENABLED',n.prefix_length\n"
+			       "               ,0\n"
+			       "              )                             AS compressed\n"
+			       "        -- Physical Properties\n"
+			       "      , 'INDEX'                       AS organization\n"
+			       "        -- Segment Attributes\n"
+			       "      , 'N/A'                         AS cache\n"
+			       "      , 'N/A'                         AS pct_used\n"
+			       "      , i.def_pct_free\n"
+			       "      , DECODE(\n"
+			       "                i.def_ini_trans\n"
+			       "               ,0,1\n"
+			       "               ,null,1\n"
+			       "               ,i.def_ini_trans\n"
+			       "              )                       AS ini_trans\n"
+			       "      , DECODE(\n"
+			       "                i.def_max_trans\n"
+			       "               ,0,255\n"
+			       "               ,null,255\n"
+			       "               ,i.def_max_trans\n"
+			       "              )                       AS max_trans\n"
+			       "        -- Storage Clause\n"
+			       "      ,DECODE(\n"
+			       "               i.def_initial_extent\n"
+			       "              ,'DEFAULT',s.initial_extent\n"
+			       "              ,i.def_initial_extent * :bs<char[100]> * 1024\n"
+			       "             )                        AS initial_extent\n"
+			       "      ,DECODE(\n"
+			       "               i.def_next_extent\n"
+			       "              ,'DEFAULT',s.next_extent\n"
+			       "              ,i.def_next_extent * :bs<char[100]> * 1024\n"
+			       "             )                        AS next_extent\n"
+			       "      , DECODE(\n"
+			       "                i.def_min_extents\n"
+			       "               ,'DEFAULT',s.min_extents\n"
+			       "               ,i.def_min_extents\n"
+			       "              )                       AS min_extents\n"
+			       "      , DECODE(\n"
+			       "                i.def_max_extents\n"
+			       "               ,'DEFAULT',DECODE(\n"
+			       "                                  s.max_extents\n"
+			       "                                 ,2147483645,'unlimited'\n"
+			       "                                 ,s.max_extents\n"
+			       "                                )\n"
+			       "               ,2147483645,'unlimited'\n"
+			       "               ,i.def_max_extents\n"
+			       "              )                       AS max_extents\n"
+			       "      , DECODE(\n"
+			       "                i.def_pct_increase\n"
+			       "               ,'DEFAULT',s.pct_increase\n"
+			       "               ,i.def_pct_increase\n"
+			       "              )                       AS pct_increase\n"
+			       "      , DECODE(\n"
+			       "                i.def_freelists\n"
+			       "               ,0,1\n"
+			       "               ,null,1\n"
+			       "               ,i.def_freelists\n"
+			       "              )                       AS freelists\n"
+			       "      , DECODE(\n"
+			       "                i.def_freelist_groups\n"
+			       "               ,0,1\n"
+			       "               ,null,1\n"
+			       "               ,i.def_freelist_groups\n"
+			       "              )                       AS freelist_groups\n"
+			       "      , LOWER(i.def_buffer_pool)        AS buffer_pool\n"
+			       "      , DECODE(\n"
+			       "                i.def_logging\n"
+			       "               ,'NO','NOLOGGING'\n"
+			       "               ,     'LOGGING'\n"
+			       "              )                       AS logging\n"
+			       "      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))\n"
+			       "        -- Don't have default blocks, so use larger of initial/next\n"
+			       "      , GREATEST(\n"
+			       "                  DECODE(\n"
+			       "                          i.def_initial_extent\n"
+			       "                         ,'DEFAULT',s.initial_extent / :bs<char[100]> / 1024\n"
+			       "                         ,i.def_initial_extent\n"
+			       "                        )\n"
+			       "                 ,DECODE(\n"
+			       "                          i.def_next_extent\n"
+			       "                         ,'DEFAULT',s.next_extent / :bs<char[100]> / 1024\n"
+			       "                         ,i.def_next_extent\n"
+			       "                        )\n"
+			       "                )                     AS blocks\n"
+			       " FROM\n"
+			       "        all_part_indexes  i\n"
+			       "      , all_indexes       n\n"
+			       "      , dba_tablespaces   s\n"
+			       "      , all_part_tables   t\n"
+			       " WHERE\n"
+			       "            -- def_tablspace is sometimes NULL in PART_INDEXES,\n"
+			       "            -- we'll have to go over to the table for the defaults\n"
+			       "            i.index_name      = :nam<char[100]>\n"
+			       "        AND n.index_name      = i.index_name\n"
+			       "        AND t.table_name      = i.table_name\n"
+			       "        AND s.tablespace_name = t.def_tablespace_name\n"
+			       "        AND i.owner           = :own<char[100]>\n"
+			       "        AND n.owner           = i.owner\n"
+			       "        AND t.owner           = i.owner",
 			       QString::null,
 			       "8.1");
 
@@ -2357,11 +2364,11 @@ QString toExtract::subPartitionKeyColumns(const QString &owner,const QString &na
 }
 
 static toSQL SQLKeyColumns("toExtract:KeyColumns",	
-			   "SELECT  column_name
-  FROM all_%1_key_columns
- WHERE name           = :nam<char[100]>
-   AND owner          = :owner<char[100]>
-   AND object_type LIKE :typ<char[100]>||'%'",
+			   "SELECT  column_name\n"
+			   "  FROM all_%1_key_columns\n"
+			   " WHERE name           = :nam<char[100]>\n"
+			   "   AND owner          = :owner<char[100]>\n"
+			   "   AND object_type LIKE :typ<char[100]>||'%'",
 			   "Get key columns of partitions, "
 			   "must have same binds, columns and %");
 
@@ -2387,84 +2394,84 @@ QString toExtract::keyColumns(const QString &owner,const QString &name,
 }
 
 static toSQL SQLRangePartitions("toExtract:RangePartitions",
-				"SELECT  partition_name
-      , high_value
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , pct_free
-      , ini_trans
-      , max_trans
-        -- Storage Clause
-      , initial_extent
-      , next_extent
-      , min_extent
-      , DECODE(
-                max_extent
-               ,2147483645,'unlimited'
-               ,           max_extent
-              )                       AS max_extents
-      , pct_increase
-      , NVL(freelists,1)
-      , NVL(freelist_groups,1)
-      , LOWER(buffer_pool)
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , tablespace_name
-      , leaf_blocks                   AS blocks
- FROM   all_ind_partitions
- WHERE      index_name  =  :nam<char[100]>
-        AND index_owner =  :own<char[100]>
- ORDER BY partition_name",
+				"SELECT  partition_name\n"
+				"      , high_value\n"
+				"      , 'N/A'                         AS cache\n"
+				"      , 'N/A'                         AS pct_used\n"
+				"      , pct_free\n"
+				"      , ini_trans\n"
+				"      , max_trans\n"
+				"        -- Storage Clause\n"
+				"      , initial_extent\n"
+				"      , next_extent\n"
+				"      , min_extent\n"
+				"      , DECODE(\n"
+				"                max_extent\n"
+				"               ,2147483645,'unlimited'\n"
+				"               ,           max_extent\n"
+				"              )                       AS max_extents\n"
+				"      , pct_increase\n"
+				"      , NVL(freelists,1)\n"
+				"      , NVL(freelist_groups,1)\n"
+				"      , LOWER(buffer_pool)\n"
+				"      , DECODE(\n"
+				"                logging \n"
+				"               ,'NO','NOLOGGING'\n"
+				"               ,     'LOGGING'\n"
+				"              )                       AS logging\n"
+				"      , tablespace_name\n"
+				"      , leaf_blocks                   AS blocks\n"
+				" FROM   all_ind_partitions\n"
+				" WHERE      index_name  =  :nam<char[100]>\n"
+				"        AND index_owner =  :own<char[100]>\n"
+				" ORDER BY partition_name",
 				"Get information about partition ranges, must have same binds "
 				"and columns",
 				"8.1");
 
 static toSQL SQLRangePartitions8("toExtract:RangePartitions",
-				 "SELECT  partition_name
-      , high_value
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , pct_free
-      , ini_trans
-      , max_trans
-        -- Storage Clause
-      , initial_extent
-      , next_extent
-      , min_extent
-      , DECODE(
-                max_extent
-               ,2147483645,'unlimited'
-               ,           max_extent
-              )                       AS max_extents
-      , pct_increase
-      , NVL(freelists,1)
-      , NVL(freelist_groups,1)
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , tablespace_name
-      , leaf_blocks                   AS blocks
- FROM   all_ind_partitions
- WHERE      index_name  =  :nam<char[100]>
-        AND index_owner =  :own<char[100]>
- ORDER BY partition_name",
+				 "SELECT  partition_name\n"
+				 "      , high_value\n"
+				 "      , 'N/A'                         AS cache\n"
+				 "      , 'N/A'                         AS pct_used\n"
+				 "      , pct_free\n"
+				 "      , ini_trans\n"
+				 "      , max_trans\n"
+				 "        -- Storage Clause\n"
+				 "      , initial_extent\n"
+				 "      , next_extent\n"
+				 "      , min_extent\n"
+				 "      , DECODE(\n"
+				 "                max_extent\n"
+				 "               ,2147483645,'unlimited'\n"
+				 "               ,           max_extent\n"
+				 "              )                       AS max_extents\n"
+				 "      , pct_increase\n"
+				 "      , NVL(freelists,1)\n"
+				 "      , NVL(freelist_groups,1)\n"
+				 "      , 'N/A'                         AS buffer_pool\n"
+				 "      , DECODE(\n"
+				 "                logging \n"
+				 "               ,'NO','NOLOGGING'\n"
+				 "               ,     'LOGGING'\n"
+				 "              )                       AS logging\n"
+				 "      , tablespace_name\n"
+				 "      , leaf_blocks                   AS blocks\n"
+				 " FROM   all_ind_partitions\n"
+				 " WHERE      index_name  =  :nam<char[100]>\n"
+				 "        AND index_owner =  :own<char[100]>\n"
+				 " ORDER BY partition_name",
 				 QString::null,
 				 "8.1");
 
 static toSQL SQLIndexSubPartitionName("toExtract:IndexSubPartitionName",
-				      "SELECT subpartition_name,
-       tablespace_name
-  FROM all_ind_subpartitions
- WHERE index_name     = :ind<char[100]>
-   AND partition_name = :prt<char[100]>
-   AND index_owner    = :own<char[100]>
- ORDER BY subpartition_name",
+				      "SELECT subpartition_name,\n"
+				      "       tablespace_name\n"
+				      "  FROM all_ind_subpartitions\n"
+				      " WHERE index_name     = :ind<char[100]>\n"
+				      "   AND partition_name = :prt<char[100]>\n"
+				      "   AND index_owner    = :own<char[100]>\n"
+				      " ORDER BY subpartition_name",
 				      "Get information about a subpartition, "
 				      "must have same binds and columns");
 
@@ -2586,7 +2593,7 @@ void toExtract::describePartitions(list<QString> &lst,list<QString> &ctx,
 }
 
 QString toExtract::createMaterializedView(const QString &schema,const QString &owner,
-					   const QString &name)
+					  const QString &name)
 {
   return createMView(schema,owner,name,"MATERIALIZED VIEW");
 }
@@ -2610,62 +2617,62 @@ void toExtract::describeMaterializedViewLog(list<QString> &lst,const QString &sc
 }
 
 static toSQL SQLMViewInfo("toExtract:MaterializedViewInfo",
-			  "       SELECT
-              m.container_name
-            , DECODE(
-                      m.build_mode
-                     ,'YES','USING PREBUILT TABLE'
-                     ,DECODE(
-                              m.last_refresh_date
-                             ,null,'BUILD DEFERRED'
-                             ,'BUILD IMMEDIATE'
-                            )
-                    )                                  AS build_mode
-            , DECODE(
-                      m.refresh_method
-                     ,'NEVER','NEVER REFRESH'
-                     ,'REFRESH ' || m.refresh_method
-                    )                                  AS refresh_method
-            , DECODE(
-                      m.refresh_mode
-                     ,'NEVER',null
-                     ,'ON ' || m.refresh_mode
-                    )                                  AS refresh_mode
-            , TO_CHAR(s.start_with, 'DD-MON-YYYY HH24:MI:SS')
-                                                       AS start_with
-            , s.next
-            , DECODE(
-                      s.refresh_method
-                     ,'PRIMARY KEY','WITH  PRIMARY KEY'
-                     ,'ROWID'      ,'WITH  ROWID'
-                     ,null
-                    )                                  AS using_pk
-            , s.master_rollback_seg
-            , DECODE(
-                      m.updatable
-                     ,'N',null
-                     ,DECODE(
-                              m.rewrite_enabled
-                             ,'Y','FOR UPDATE ENABLE QUERY REWRITE'
-                             ,'N','FOR UPDATE DISABLE QUERY REWRITE'
-                            )
-                    )                                  AS updatable
-            , s.query
-       FROM
-              all_mviews     m
-            , all_snapshots  s
-       WHERE
-                  m.mview_name  = :nam<char[100]>
-              AND s.name        = m.mview_name
-              AND m.owner       = :own<char[100]>
-              AND s.owner       = m.owner",
+			  "       SELECT\n"
+			  "              m.container_name\n"
+			  "            , DECODE(\n"
+			  "                      m.build_mode\n"
+			  "                     ,'YES','USING PREBUILT TABLE'\n"
+			  "                     ,DECODE(\n"
+			  "                              m.last_refresh_date\n"
+			  "                             ,null,'BUILD DEFERRED'\n"
+			  "                             ,'BUILD IMMEDIATE'\n"
+			  "                            )\n"
+			  "                    )                                  AS build_mode\n"
+			  "            , DECODE(\n"
+			  "                      m.refresh_method\n"
+			  "                     ,'NEVER','NEVER REFRESH'\n"
+			  "                     ,'REFRESH ' || m.refresh_method\n"
+			  "                    )                                  AS refresh_method\n"
+			  "            , DECODE(\n"
+			  "                      m.refresh_mode\n"
+			  "                     ,'NEVER',null\n"
+			  "                     ,'ON ' || m.refresh_mode\n"
+			  "                    )                                  AS refresh_mode\n"
+			  "            , TO_CHAR(s.start_with, 'DD-MON-YYYY HH24:MI:SS')\n"
+			  "                                                       AS start_with\n"
+			  "            , s.next\n"
+			  "            , DECODE(\n"
+			  "                      s.refresh_method\n"
+			  "                     ,'PRIMARY KEY','WITH  PRIMARY KEY'\n"
+			  "                     ,'ROWID'      ,'WITH  ROWID'\n"
+			  "                     ,null\n"
+			  "                    )                                  AS using_pk\n"
+			  "            , s.master_rollback_seg\n"
+			  "            , DECODE(\n"
+			  "                      m.updatable\n"
+			  "                     ,'N',null\n"
+			  "                     ,DECODE(\n"
+			  "                              m.rewrite_enabled\n"
+			  "                             ,'Y','FOR UPDATE ENABLE QUERY REWRITE'\n"
+			  "                             ,'N','FOR UPDATE DISABLE QUERY REWRITE'\n"
+			  "                            )\n"
+			  "                    )                                  AS updatable\n"
+			  "            , s.query\n"
+			  "       FROM\n"
+			  "              all_mviews     m\n"
+			  "            , all_snapshots  s\n"
+			  "       WHERE\n"
+			  "                  m.mview_name  = :nam<char[100]>\n"
+			  "              AND s.name        = m.mview_name\n"
+			  "              AND m.owner       = :own<char[100]>\n"
+			  "              AND s.owner       = m.owner",
 			  "Get information about materialized view, must have same columns and binds");
 
 static toSQL SQLIndexName("toExtract:TableIndexes",
-			  "SELECT index_name
-  FROM all_indexes
- WHERE table_name = :nam<char[100]>
-   AND owner = own<char[100]>",
+			  "SELECT index_name\n"
+			  "  FROM all_indexes\n"
+			  " WHERE table_name = :nam<char[100]>\n"
+			  "   AND owner = own<char[100]>",
 			  "Get indexes available to a table, must have same binds and columns");
 
 QString toExtract::createMView(const QString &schema,const QString &owner,
@@ -2775,7 +2782,7 @@ void toExtract::describeMView(list<QString> &lst,
     addDescription(lst,ctx,usingPK);
     if (!masterRBSeg.isEmpty()&&Storage)
       addDescription(lst,ctx,QString("USING MASTER ROLLBACK SEGMENT %1").
-	arg(masterRBSeg.lower()));
+		     arg(masterRBSeg.lower()));
   }
 
   if (!updatable.isEmpty())
@@ -2804,7 +2811,7 @@ QString toExtract::createMViewTable(const QString &schema,const QString &owner,
       started=true;
     if (started) {
       QString line=*i;
-      if (line.length()>0&&line[line.length()-1]==';') {
+      if (line.length()>0&&line.at(line.length()-1)==';') {
 	line.truncate(line.length()-1);
 	done=true;
       }
@@ -2868,7 +2875,7 @@ QString toExtract::createMViewIndex(const QString &schema,const QString &owner,
       started=true;
     if (started) {
       QString line=*i;
-      if (line.length()>0&&line[line.length()-1]==';') {
+      if (line.length()>0&&line.at(line.length()-1)==';') {
 	line.truncate(line.length()-1);
 	done=true;
       }
@@ -2911,37 +2918,37 @@ void toExtract::describeMViewIndex(list<QString> &lst,list<QString> &ctx,
 }
 
 static toSQL SQLSnapshotInfo("toExtract:SnapshotInfo",
-			     "SELECT log_table,
-       rowids,
-       primary_key,
-       filter_columns
-  FROM all_snapshot_logs
-   AND master = :nam<char[100]>
-   AND log_owner = :own<char[100]>",
+			     "SELECT log_table,\n"
+			     "       rowids,\n"
+			     "       primary_key,\n"
+			     "       filter_columns\n"
+			     "  FROM all_snapshot_logs\n"
+			     "   AND master = :nam<char[100]>\n"
+			     "   AND log_owner = :own<char[100]>",
 			     "Get information about snapshot or materialized view log, "
 			     "must have same binds and columns");
 
 static toSQL SQLSnapshotColumns("toExtract:SnapshotColumns",
-				"SELECT
-        column_name
- FROM
-        dba_snapshot_log_filter_cols
- WHERE
-            name  = :nam<char[100]>
-        AND owner = :own<char[100]>
- MINUS
- SELECT
-        column_name
- FROM
-        all_cons_columns  c
-      , all_constraints   d
- WHERE
-            d.table_name      = :nam<char[100]>
-        AND d.constraint_type = 'P'
-        AND c.table_name      = d.table_name
-        AND c.constraint_name = d.constraint_name
-        AND d.owner           = :own<char[100]>
-        AND c.owner           = d.owner",
+				"SELECT\n"
+				"        column_name\n"
+				" FROM\n"
+				"        dba_snapshot_log_filter_cols\n"
+				" WHERE\n"
+				"            name  = :nam<char[100]>\n"
+				"        AND owner = :own<char[100]>\n"
+				" MINUS\n"
+				" SELECT\n"
+				"        column_name\n"
+				" FROM\n"
+				"        all_cons_columns  c\n"
+				"      , all_constraints   d\n"
+				" WHERE\n"
+				"            d.table_name      = :nam<char[100]>\n"
+				"        AND d.constraint_type = 'P'\n"
+				"        AND c.table_name      = d.table_name\n"
+				"        AND c.constraint_name = d.constraint_name\n"
+				"        AND d.owner           = :own<char[100]>\n"
+				"        AND c.owner           = d.owner",
 				"Get columns of snapshot log, must have same columns and binds");
 
 QString toExtract::createMViewLog(const QString &schema,const QString &owner,
@@ -3047,211 +3054,211 @@ void toExtract::describeMViewLog(list<QString> &lst,
 }
 
 static toSQL SQLTableType("toExtract:TableType",
-			  "SELECT partitioned,
-      iot_type
- FROM all_tables
-WHERE table_name = :nam<char[100]>
-  AND owner = :own<char[100]>",
+			  "SELECT partitioned,\n"
+			  "      iot_type\n"
+			  " FROM all_tables\n"
+			  "WHERE table_name = :nam<char[100]>\n"
+			  "  AND owner = :own<char[100]>",
 			  "Get table type, must have same columns and binds",
 			  "8.0");
 
 static toSQL SQLTableType7("toExtract:TableType",
-			   "SELECT 'NO',
-      'NOT IOT'
- FROM all_tables
-WHERE table_name = :nam<char[100]>
-  AND owner = :own<char[100]>",
+			   "SELECT 'NO',\n"
+			   "      'NOT IOT'\n"
+			   " FROM all_tables\n"
+			   "WHERE table_name = :nam<char[100]>\n"
+			   "  AND owner = :own<char[100]>",
 			   QString::null,
 			   "7.0");
 
 static toSQL SQLTableInfo("toExtract:TableInfo",
-			  "SELECT
-        -- Table Properties
-        DECODE(
-                t.monitoring
-               ,'NO','NOMONITORING'
-               ,     'MONITORING'
-              )                       AS monitoring
-      , 'N/A'                         AS table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)
-      , LTRIM(t.instances)
-        -- Physical Properties
-      , DECODE(
-                t.iot_type
-               ,'IOT','INDEX'
-               ,      'HEAP'
-              )                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )
-      , t.pct_used
-      , t.pct_free
-      , DECODE(
-                t.ini_trans
-               ,0,1
-               ,null,1
-               ,t.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                t.max_trans
-               ,0,255
-               ,null,255
-               ,t.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , t.initial_extent
-      , t.next_extent
-      , t.min_extents
-      , DECODE(
-                t.max_extents
-               ,2147483645,'unlimited'
-               ,           t.max_extents
-              )                       AS max_extents
-      , NVL(t.pct_increase,0)
-      , NVL(t.freelists,1)
-      , NVL(t.freelist_groups,1)
-      , LOWER(t.buffer_pool)          AS buffer_pool
-      , DECODE(
-                t.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(t.tablespace_name)      AS tablespace_name
-      , s.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_tables    t
-      , dba_segments  s
- WHERE
-            t.table_name   = :nam<char[100]>
-        AND t.table_name   = s.segment_name
-        AND s.owner        = :own<char[100]>
-        AND t.owner        = s.owner",
+			  "SELECT\n"
+			  "        -- Table Properties\n"
+			  "        DECODE(\n"
+			  "                t.monitoring\n"
+			  "               ,'NO','NOMONITORING'\n"
+			  "               ,     'MONITORING'\n"
+			  "              )                       AS monitoring\n"
+			  "      , 'N/A'                         AS table_name\n"
+			  "        -- Parallel Clause\n"
+			  "      , LTRIM(t.degree)\n"
+			  "      , LTRIM(t.instances)\n"
+			  "        -- Physical Properties\n"
+			  "      , DECODE(\n"
+			  "                t.iot_type\n"
+			  "               ,'IOT','INDEX'\n"
+			  "               ,      'HEAP'\n"
+			  "              )                       AS organization\n"
+			  "        -- Segment Attributes\n"
+			  "      , DECODE(\n"
+			  "                LTRIM(t.cache)\n"
+			  "               ,'Y','CACHE'\n"
+			  "               ,    'NOCACHE'\n"
+			  "              )\n"
+			  "      , t.pct_used\n"
+			  "      , t.pct_free\n"
+			  "      , DECODE(\n"
+			  "                t.ini_trans\n"
+			  "               ,0,1\n"
+			  "               ,null,1\n"
+			  "               ,t.ini_trans\n"
+			  "              )                       AS ini_trans\n"
+			  "      , DECODE(\n"
+			  "                t.max_trans\n"
+			  "               ,0,255\n"
+			  "               ,null,255\n"
+			  "               ,t.max_trans\n"
+			  "              )                       AS max_trans\n"
+			  "        -- Storage Clause\n"
+			  "      , t.initial_extent\n"
+			  "      , t.next_extent\n"
+			  "      , t.min_extents\n"
+			  "      , DECODE(\n"
+			  "                t.max_extents\n"
+			  "               ,2147483645,'unlimited'\n"
+			  "               ,           t.max_extents\n"
+			  "              )                       AS max_extents\n"
+			  "      , NVL(t.pct_increase,0)\n"
+			  "      , NVL(t.freelists,1)\n"
+			  "      , NVL(t.freelist_groups,1)\n"
+			  "      , LOWER(t.buffer_pool)          AS buffer_pool\n"
+			  "      , DECODE(\n"
+			  "                t.logging\n"
+			  "               ,'NO','NOLOGGING'\n"
+			  "               ,     'LOGGING'\n"
+			  "              )                       AS logging\n"
+			  "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
+			  "      , s.blocks - NVL(t.empty_blocks,0)\n"
+			  " FROM\n"
+			  "        all_tables    t\n"
+			  "      , dba_segments  s\n"
+			  " WHERE\n"
+			  "            t.table_name   = :nam<char[100]>\n"
+			  "        AND t.table_name   = s.segment_name\n"
+			  "        AND s.owner        = :own<char[100]>\n"
+			  "        AND t.owner        = s.owner",
 			  "Get information about a vanilla table, must have same binds and columns",
 			  "8.1");
 
 static toSQL SQLTableInfo8("toExtract:TableInfo",
-			   "SELECT
-        -- Table Properties
-        'N/A'                         AS monitoring
-      , 'N/A'                         AS table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)
-      , LTRIM(t.instances)
-        -- Physical Properties
-      , DECODE(
-                t.iot_type
-               ,'IOT','INDEX'
-               ,      'HEAP'
-              )                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )
-      , t.pct_used
-      , t.pct_free
-      , DECODE(
-                t.ini_trans
-               ,0,1
-               ,null,1
-               ,t.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                t.max_trans
-               ,0,255
-               ,null,255
-               ,t.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , t.initial_extent
-      , t.next_extent
-      , t.min_extents
-      , DECODE(
-                t.max_extents
-               ,2147483645,'unlimited'
-               ,           t.max_extents
-              )                       AS max_extents
-      , NVL(t.pct_increase,0)
-      , NVL(t.freelists,1)
-      , NVL(t.freelist_groups,1)
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                t.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(t.tablespace_name)      AS tablespace_name
-      , s.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_tables    t
-      , dba_segments  s
- WHERE
-            t.table_name   = :nam<char[100]>
-        AND t.table_name   = s.segment_name
-        AND s.owner        = :own<char[100]>
-        AND t.owner        = s.owner",
+			   "SELECT\n"
+			   "        -- Table Properties\n"
+			   "        'N/A'                         AS monitoring\n"
+			   "      , 'N/A'                         AS table_name\n"
+			   "        -- Parallel Clause\n"
+			   "      , LTRIM(t.degree)\n"
+			   "      , LTRIM(t.instances)\n"
+			   "        -- Physical Properties\n"
+			   "      , DECODE(\n"
+			   "                t.iot_type\n"
+			   "               ,'IOT','INDEX'\n"
+			   "               ,      'HEAP'\n"
+			   "              )                       AS organization\n"
+			   "        -- Segment Attributes\n"
+			   "      , DECODE(\n"
+			   "                LTRIM(t.cache)\n"
+			   "               ,'Y','CACHE'\n"
+			   "               ,    'NOCACHE'\n"
+			   "              )\n"
+			   "      , t.pct_used\n"
+			   "      , t.pct_free\n"
+			   "      , DECODE(\n"
+			   "                t.ini_trans\n"
+			   "               ,0,1\n"
+			   "               ,null,1\n"
+			   "               ,t.ini_trans\n"
+			   "              )                       AS ini_trans\n"
+			   "      , DECODE(\n"
+			   "                t.max_trans\n"
+			   "               ,0,255\n"
+			   "               ,null,255\n"
+			   "               ,t.max_trans\n"
+			   "              )                       AS max_trans\n"
+			   "        -- Storage Clause\n"
+			   "      , t.initial_extent\n"
+			   "      , t.next_extent\n"
+			   "      , t.min_extents\n"
+			   "      , DECODE(\n"
+			   "                t.max_extents\n"
+			   "               ,2147483645,'unlimited'\n"
+			   "               ,           t.max_extents\n"
+			   "              )                       AS max_extents\n"
+			   "      , NVL(t.pct_increase,0)\n"
+			   "      , NVL(t.freelists,1)\n"
+			   "      , NVL(t.freelist_groups,1)\n"
+			   "      , 'N/A'                         AS buffer_pool\n"
+			   "      , DECODE(\n"
+			   "                t.logging\n"
+			   "               ,'NO','NOLOGGING'\n"
+			   "               ,     'LOGGING'\n"
+			   "              )                       AS logging\n"
+			   "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
+			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
+			   " FROM\n"
+			   "        all_tables    t\n"
+			   "      , dba_segments  s\n"
+			   " WHERE\n"
+			   "            t.table_name   = :nam<char[100]>\n"
+			   "        AND t.table_name   = s.segment_name\n"
+			   "        AND s.owner        = :own<char[100]>\n"
+			   "        AND t.owner        = s.owner",
 			   QString::null,
 			   "8.0");
 
 static toSQL SQLTableInfo7("toExtract:TableInfo",
-			   "SELECT
-        -- Table Properties
-        'N/A'                         AS monitoring
-      , 'N/A'                         AS table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)
-      , LTRIM(t.instances)
-        -- Physical Properties
-      , 'N/A'                         AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )
-      , t.pct_used
-      , t.pct_free
-      , DECODE(
-                t.ini_trans
-               ,0,1
-               ,null,1
-               ,t.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                t.max_trans
-               ,0,255
-               ,null,255
-               ,t.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , t.initial_extent
-      , t.next_extent
-      , t.min_extents
-      , DECODE(
-                t.max_extents
-               ,2147483645,'unlimited'
-               ,           t.max_extents
-              )                       AS max_extents
-      , NVL(t.pct_increase,0)
-      , NVL(t.freelists,1)
-      , NVL(t.freelist_groups,1)
-      , 'N/A'                         AS buffer_pool
-      , 'N/A'                         AS logging
-      , LOWER(t.tablespace_name)      AS tablespace_name
-      , s.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_tables    t
-      , dba_segments  s
- WHERE
-            t.table_name   = :nam<char[100]>
-        AND t.table_name   = s.segment_name
-        AND s.owner        = :own<char[100]>
-        AND t.owner        = s.owner",
+			   "SELECT\n"
+			   "        -- Table Properties\n"
+			   "        'N/A'                         AS monitoring\n"
+			   "      , 'N/A'                         AS table_name\n"
+			   "        -- Parallel Clause\n"
+			   "      , LTRIM(t.degree)\n"
+			   "      , LTRIM(t.instances)\n"
+			   "        -- Physical Properties\n"
+			   "      , 'N/A'                         AS organization\n"
+			   "        -- Segment Attributes\n"
+			   "      , DECODE(\n"
+			   "                LTRIM(t.cache)\n"
+			   "               ,'Y','CACHE'\n"
+			   "               ,    'NOCACHE'\n"
+			   "              )\n"
+			   "      , t.pct_used\n"
+			   "      , t.pct_free\n"
+			   "      , DECODE(\n"
+			   "                t.ini_trans\n"
+			   "               ,0,1\n"
+			   "               ,null,1\n"
+			   "               ,t.ini_trans\n"
+			   "              )                       AS ini_trans\n"
+			   "      , DECODE(\n"
+			   "                t.max_trans\n"
+			   "               ,0,255\n"
+			   "               ,null,255\n"
+			   "               ,t.max_trans\n"
+			   "              )                       AS max_trans\n"
+			   "        -- Storage Clause\n"
+			   "      , t.initial_extent\n"
+			   "      , t.next_extent\n"
+			   "      , t.min_extents\n"
+			   "      , DECODE(\n"
+			   "                t.max_extents\n"
+			   "               ,2147483645,'unlimited'\n"
+			   "               ,           t.max_extents\n"
+			   "              )                       AS max_extents\n"
+			   "      , NVL(t.pct_increase,0)\n"
+			   "      , NVL(t.freelists,1)\n"
+			   "      , NVL(t.freelist_groups,1)\n"
+			   "      , 'N/A'                         AS buffer_pool\n"
+			   "      , 'N/A'                         AS logging\n"
+			   "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
+			   "      , s.blocks - NVL(t.empty_blocks,0)\n"
+			   " FROM\n"
+			   "        all_tables    t\n"
+			   "      , dba_segments  s\n"
+			   " WHERE\n"
+			   "            t.table_name   = :nam<char[100]>\n"
+			   "        AND t.table_name   = s.segment_name\n"
+			   "        AND s.owner        = :own<char[100]>\n"
+			   "        AND t.owner        = s.owner",
 			   QString::null,
 			   "7.0");
 
@@ -3286,7 +3293,7 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
 }
 
 void toExtract::describeTable(list<QString> &lst,
-			       const QString &schema,const QString &owner,const QString &name)
+			      const QString &schema,const QString &owner,const QString &name)
 {
   otl_stream inf(1,
 		 SQLTableType(Connection),
@@ -3323,235 +3330,235 @@ void toExtract::describeTable(list<QString> &lst,
 }
 
 static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
-			     "SELECT
-        '  '
-      , 'N/A'
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )
-      , t.pct_used
-      , t.pct_free
-      , DECODE(
-                t.ini_trans
-               ,0,1
-               ,null,1
-               ,t.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                t.max_trans
-               ,0,255
-               ,null,255
-               ,t.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , t.initial_extent
-      , t.next_extent
-      , t.min_extents
-      , DECODE(
-                t.max_extents
-               ,2147483645,'unlimited'
-               ,           t.max_extents
-              )                       AS max_extents
-      , NVL(t.pct_increase,0)
-      , NVL(t.freelists,1)
-      , NVL(t.freelist_groups,1)
-      , LOWER(t.buffer_pool)          AS buffer_pool
-      , DECODE(
-                t.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(t.tablespace_name)      AS tablespace_name
-      , s.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_tables    t
-      , dba_segments  s
- WHERE
-            t.iot_name     = :nam<char[100]>
-        AND t.table_name   = s.segment_name
-        AND s.owner        = :own<char[100]>
-        AND t.owner        = s.owner",
-			  "Get information about overflow segment for table, must have same binds and columns",
-			  "8.0");
+			     "SELECT\n"
+			     "        '  '\n"
+			     "      , 'N/A'\n"
+			     "        -- Segment Attributes\n"
+			     "      , DECODE(\n"
+			     "                LTRIM(t.cache)\n"
+			     "               ,'Y','CACHE'\n"
+			     "               ,    'NOCACHE'\n"
+			     "              )\n"
+			     "      , t.pct_used\n"
+			     "      , t.pct_free\n"
+			     "      , DECODE(\n"
+			     "                t.ini_trans\n"
+			     "               ,0,1\n"
+			     "               ,null,1\n"
+			     "               ,t.ini_trans\n"
+			     "              )                       AS ini_trans\n"
+			     "      , DECODE(\n"
+			     "                t.max_trans\n"
+			     "               ,0,255\n"
+			     "               ,null,255\n"
+			     "               ,t.max_trans\n"
+			     "              )                       AS max_trans\n"
+			     "        -- Storage Clause\n"
+			     "      , t.initial_extent\n"
+			     "      , t.next_extent\n"
+			     "      , t.min_extents\n"
+			     "      , DECODE(\n"
+			     "                t.max_extents\n"
+			     "               ,2147483645,'unlimited'\n"
+			     "               ,           t.max_extents\n"
+			     "              )                       AS max_extents\n"
+			     "      , NVL(t.pct_increase,0)\n"
+			     "      , NVL(t.freelists,1)\n"
+			     "      , NVL(t.freelist_groups,1)\n"
+			     "      , LOWER(t.buffer_pool)          AS buffer_pool\n"
+			     "      , DECODE(\n"
+			     "                t.logging\n"
+			     "               ,'NO','NOLOGGING'\n"
+			     "               ,     'LOGGING'\n"
+			     "              )                       AS logging\n"
+			     "      , LOWER(t.tablespace_name)      AS tablespace_name\n"
+			     "      , s.blocks - NVL(t.empty_blocks,0)\n"
+			     " FROM\n"
+			     "        all_tables    t\n"
+			     "      , dba_segments  s\n"
+			     " WHERE\n"
+			     "            t.iot_name     = :nam<char[100]>\n"
+			     "        AND t.table_name   = s.segment_name\n"
+			     "        AND s.owner        = :own<char[100]>\n"
+			     "        AND t.owner        = s.owner",
+			     "Get information about overflow segment for table, must have same binds and columns",
+			     "8.0");
 
 static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
-				   "SELECT
-        -- Table Properties
-        DECODE(
-                t.monitoring
-               ,'NO','NOMONITORING'
-               ,     'MONITORING'
-              )                       AS monitoring
-      , t.table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)               AS degree
-      , LTRIM(t.instances)            AS instances
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )                       AS cache
-      , 'N/A'                         AS pct_used
-      , p.def_pct_free                AS pct_free
-      , p.def_ini_trans               AS ini_trans
-      , p.def_max_trans               AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               p.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,p.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               p.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,p.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                p.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,p.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                p.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,p.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                p.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,p.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                p.def_freelists
-               ,0,1
-               ,NVL(p.def_freelists,1)
-              )                       AS freelists
-      , DECODE(
-                p.def_freelist_groups
-               ,0,1
-               ,NVL(p.def_freelist_groups,1)
-              )                       AS freelist_groups
-      , LOWER(p.def_buffer_pool)      AS buffer_pool
-      , DECODE(
-                p.def_logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(p.def_tablespace_name)  AS tablespace_name
-      , t.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_all_tables    t
-      , all_part_indexes  p
-      , dba_tablespaces   s
- WHERE
-            t.table_name      = :name<char[100]>
-        AND p.table_name      = t.table_name
-        AND s.tablespace_name = p.def_tablespace_name
-        AND t.owner           = :own<char[100]>
-        AND p.owner           = t.owner",
+				   "SELECT\n"
+				   "        -- Table Properties\n"
+				   "        DECODE(\n"
+				   "                t.monitoring\n"
+				   "               ,'NO','NOMONITORING'\n"
+				   "               ,     'MONITORING'\n"
+				   "              )                       AS monitoring\n"
+				   "      , t.table_name\n"
+				   "        -- Parallel Clause\n"
+				   "      , LTRIM(t.degree)               AS degree\n"
+				   "      , LTRIM(t.instances)            AS instances\n"
+				   "        -- Physical Properties\n"
+				   "      , 'INDEX'                       AS organization\n"
+				   "        -- Segment Attributes\n"
+				   "      , DECODE(\n"
+				   "                LTRIM(t.cache)\n"
+				   "               ,'Y','CACHE'\n"
+				   "               ,    'NOCACHE'\n"
+				   "              )                       AS cache\n"
+				   "      , 'N/A'                         AS pct_used\n"
+				   "      , p.def_pct_free                AS pct_free\n"
+				   "      , p.def_ini_trans               AS ini_trans\n"
+				   "      , p.def_max_trans               AS max_trans\n"
+				   "        -- Storage Clause\n"
+				   "      ,DECODE(\n"
+				   "               p.def_initial_extent\n"
+				   "              ,'DEFAULT',s.initial_extent\n"
+				   "              ,p.def_initial_extent * :bs<char[100]> * 1024\n"
+				   "             )                        AS initial_extent\n"
+				   "      ,DECODE(\n"
+				   "               p.def_next_extent\n"
+				   "              ,'DEFAULT',s.next_extent\n"
+				   "              ,p.def_next_extent * :bs<char[100]> * 1024\n"
+				   "             )                        AS next_extent\n"
+				   "      , DECODE(\n"
+				   "                p.def_min_extents\n"
+				   "               ,'DEFAULT',s.min_extents\n"
+				   "               ,p.def_min_extents\n"
+				   "              )                       AS min_extents\n"
+				   "      , DECODE(\n"
+				   "                p.def_max_extents\n"
+				   "               ,'DEFAULT',DECODE(\n"
+				   "                                  s.max_extents\n"
+				   "                                 ,2147483645,'unlimited'\n"
+				   "                                 ,s.max_extents\n"
+				   "                                )\n"
+				   "               ,2147483645,'unlimited'\n"
+				   "               ,p.def_max_extents\n"
+				   "              )                       AS max_extents\n"
+				   "      , DECODE(\n"
+				   "                p.def_pct_increase\n"
+				   "               ,'DEFAULT',s.pct_increase\n"
+				   "               ,p.def_pct_increase\n"
+				   "              )                       AS pct_increase\n"
+				   "      , DECODE(\n"
+				   "                p.def_freelists\n"
+				   "               ,0,1\n"
+				   "               ,NVL(p.def_freelists,1)\n"
+				   "              )                       AS freelists\n"
+				   "      , DECODE(\n"
+				   "                p.def_freelist_groups\n"
+				   "               ,0,1\n"
+				   "               ,NVL(p.def_freelist_groups,1)\n"
+				   "              )                       AS freelist_groups\n"
+				   "      , LOWER(p.def_buffer_pool)      AS buffer_pool\n"
+				   "      , DECODE(\n"
+				   "                p.def_logging \n"
+				   "               ,'NO','NOLOGGING'\n"
+				   "               ,     'LOGGING'\n"
+				   "              )                       AS logging\n"
+				   "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
+				   "      , t.blocks - NVL(t.empty_blocks,0)\n"
+				   " FROM\n"
+				   "        all_all_tables    t\n"
+				   "      , all_part_indexes  p\n"
+				   "      , dba_tablespaces   s\n"
+				   " WHERE\n"
+				   "            t.table_name      = :name<char[100]>\n"
+				   "        AND p.table_name      = t.table_name\n"
+				   "        AND s.tablespace_name = p.def_tablespace_name\n"
+				   "        AND t.owner           = :own<char[100]>\n"
+				   "        AND p.owner           = t.owner",
 				   "Get information about a partitioned indexed organized table, "
 				   "must have same columns and binds",
 				   "8.1");
 
 static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
-				    "SELECT
-        -- Table Properties
-        'N/A'                         AS monitoring
-      , t.table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)               AS degree
-      , LTRIM(t.instances)            AS instances
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )                       AS cache
-      , 'N/A'                         AS pct_used
-      , p.def_pct_free                AS pct_free
-      , p.def_ini_trans               AS ini_trans
-      , p.def_max_trans               AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               p.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,p.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               p.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,p.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                p.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,p.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                p.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,p.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                p.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,p.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                p.def_freelists
-               ,0,1
-               ,NVL(p.def_freelists,1)
-              )                       AS freelists
-      , DECODE(
-                p.def_freelist_groups
-               ,0,1
-               ,NVL(p.def_freelist_groups,1)
-              )                       AS freelist_groups
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                p.def_logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(p.def_tablespace_name)  AS tablespace_name
-      , t.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_all_tables    t
-      , all_part_indexes  p
-      , dba_tablespaces   s
- WHERE
-            t.table_name      = :name<char[100]>
-        AND p.table_name      = t.table_name
-        AND s.tablespace_name = p.def_tablespace_name
-        AND t.owner           = :own<char[100]>
-        AND p.owner           = t.owner",
+				    "SELECT\n"
+				    "        -- Table Properties\n"
+				    "        'N/A'                         AS monitoring\n"
+				    "      , t.table_name\n"
+				    "        -- Parallel Clause\n"
+				    "      , LTRIM(t.degree)               AS degree\n"
+				    "      , LTRIM(t.instances)            AS instances\n"
+				    "        -- Physical Properties\n"
+				    "      , 'INDEX'                       AS organization\n"
+				    "        -- Segment Attributes\n"
+				    "      , DECODE(\n"
+				    "                LTRIM(t.cache)\n"
+				    "               ,'Y','CACHE'\n"
+				    "               ,    'NOCACHE'\n"
+				    "              )                       AS cache\n"
+				    "      , 'N/A'                         AS pct_used\n"
+				    "      , p.def_pct_free                AS pct_free\n"
+				    "      , p.def_ini_trans               AS ini_trans\n"
+				    "      , p.def_max_trans               AS max_trans\n"
+				    "        -- Storage Clause\n"
+				    "      ,DECODE(\n"
+				    "               p.def_initial_extent\n"
+				    "              ,'DEFAULT',s.initial_extent\n"
+				    "              ,p.def_initial_extent * :bs<char[100]> * 1024\n"
+				    "             )                        AS initial_extent\n"
+				    "      ,DECODE(\n"
+				    "               p.def_next_extent\n"
+				    "              ,'DEFAULT',s.next_extent\n"
+				    "              ,p.def_next_extent * :bs<char[100]> * 1024\n"
+				    "             )                        AS next_extent\n"
+				    "      , DECODE(\n"
+				    "                p.def_min_extents\n"
+				    "               ,'DEFAULT',s.min_extents\n"
+				    "               ,p.def_min_extents\n"
+				    "              )                       AS min_extents\n"
+				    "      , DECODE(\n"
+				    "                p.def_max_extents\n"
+				    "               ,'DEFAULT',DECODE(\n"
+				    "                                  s.max_extents\n"
+				    "                                 ,2147483645,'unlimited'\n"
+				    "                                 ,s.max_extents\n"
+				    "                                )\n"
+				    "               ,2147483645,'unlimited'\n"
+				    "               ,p.def_max_extents\n"
+				    "              )                       AS max_extents\n"
+				    "      , DECODE(\n"
+				    "                p.def_pct_increase\n"
+				    "               ,'DEFAULT',s.pct_increase\n"
+				    "               ,p.def_pct_increase\n"
+				    "              )                       AS pct_increase\n"
+				    "      , DECODE(\n"
+				    "                p.def_freelists\n"
+				    "               ,0,1\n"
+				    "               ,NVL(p.def_freelists,1)\n"
+				    "              )                       AS freelists\n"
+				    "      , DECODE(\n"
+				    "                p.def_freelist_groups\n"
+				    "               ,0,1\n"
+				    "               ,NVL(p.def_freelist_groups,1)\n"
+				    "              )                       AS freelist_groups\n"
+				    "      , 'N/A'                         AS buffer_pool\n"
+				    "      , DECODE(\n"
+				    "                p.def_logging \n"
+				    "               ,'NO','NOLOGGING'\n"
+				    "               ,     'LOGGING'\n"
+				    "              )                       AS logging\n"
+				    "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
+				    "      , t.blocks - NVL(t.empty_blocks,0)\n"
+				    " FROM\n"
+				    "        all_all_tables    t\n"
+				    "      , all_part_indexes  p\n"
+				    "      , dba_tablespaces   s\n"
+				    " WHERE\n"
+				    "            t.table_name      = :name<char[100]>\n"
+				    "        AND p.table_name      = t.table_name\n"
+				    "        AND s.tablespace_name = p.def_tablespace_name\n"
+				    "        AND t.owner           = :own<char[100]>\n"
+				    "        AND p.owner           = t.owner",
 				    QString::null,
 				    "8.0");
 
 static toSQL SQLPartitionIndexNames("toExtract:PartitionIndexNames",
-				    "SELECT index_name
-  FROM all_part_indexes
- WHERE table_name = :nam<char[100]>
-   AND owner      = :own<char[100]>
- ORDER BY index_name",
+				    "SELECT index_name\n"
+				    "  FROM all_part_indexes\n"
+				    " WHERE table_name = :nam<char[100]>\n"
+				    "   AND owner      = :own<char[100]>\n"
+				    " ORDER BY index_name",
 				    "Index names of partition table, "
 				    "must have same binds and columns");
 
@@ -3618,73 +3625,73 @@ void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
 }
 
 static toSQL SQLIOTInfo("toExtract:IOTInfo",
-			"SELECT
-        -- Table Properties
-        DECODE(
-                b.monitoring
-               ,'NO','NOMONITORING'
-               ,     'MONITORING'
-              )
-      , 'N/A'                         AS table_name
-        -- Parallel Clause
-      , LTRIM(a.degree)
-      , LTRIM(a.instances)
-        -- Physical Properties
-      , 'INDEX'                       AS organization
-        -- Segment Attributes
-      , 'N/A'                         AS cache
-      , 'N/A'                         AS pct_used
-      , a.pct_free
-      , DECODE(
-                a.ini_trans
-               ,0,1
-               ,null,1
-               ,a.ini_trans
-              )                       AS ini_trans
-      , DECODE(
-                a.max_trans
-               ,0,255
-               ,null,255
-               ,a.max_trans
-              )                       AS max_trans
-        -- Storage Clause
-      , a.initial_extent
-      , a.next_extent
-      , a.min_extents
-      , DECODE(
-                a.max_extents
-               ,2147483645,'unlimited'
-               ,a.max_extents
-              )                       AS max_extents
-      , a.pct_increase
-      , NVL(a.freelists,1)
-      , NVL(a.freelist_groups,1)
-      , LOWER(a.buffer_pool)          AS buffer_pool
-      , DECODE(
-                b.logging
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(a.tablespace_name)      AS tablespace_name
-      , DECODE(
-                b.blocks
-                ,null,GREATEST(a.initial_extent,a.next_extent) 
-                      / (b.blocks * 1024)
-                ,'0' ,GREATEST(a.initial_extent,a.next_extent)
-                      / (b.blocks * 1024)
-                ,b.blocks
-              )                       AS blocks
- FROM
-        all_indexes a,
-        all_all_tables b,
-        all_constraints c
- WHERE  a.table_name  = :nam<char[100]>
-   AND  b.owner = a.owner
-   AND  b.table_name = a.table_name
-   AND  a.owner = :own<char[100]>
-   AND  c.constraint_name = a.index_name
-   AND  c.owner = a.owner
-   AND  c.constraint_type = 'P'",
+			"SELECT\n"
+			"        -- Table Properties\n"
+			"        DECODE(\n"
+			"                b.monitoring\n"
+			"               ,'NO','NOMONITORING'\n"
+			"               ,     'MONITORING'\n"
+			"              )\n"
+			"      , 'N/A'                         AS table_name\n"
+			"        -- Parallel Clause\n"
+			"      , LTRIM(a.degree)\n"
+			"      , LTRIM(a.instances)\n"
+			"        -- Physical Properties\n"
+			"      , 'INDEX'                       AS organization\n"
+			"        -- Segment Attributes\n"
+			"      , 'N/A'                         AS cache\n"
+			"      , 'N/A'                         AS pct_used\n"
+			"      , a.pct_free\n"
+			"      , DECODE(\n"
+			"                a.ini_trans\n"
+			"               ,0,1\n"
+			"               ,null,1\n"
+			"               ,a.ini_trans\n"
+			"              )                       AS ini_trans\n"
+			"      , DECODE(\n"
+			"                a.max_trans\n"
+			"               ,0,255\n"
+			"               ,null,255\n"
+			"               ,a.max_trans\n"
+			"              )                       AS max_trans\n"
+			"        -- Storage Clause\n"
+			"      , a.initial_extent\n"
+			"      , a.next_extent\n"
+			"      , a.min_extents\n"
+			"      , DECODE(\n"
+			"                a.max_extents\n"
+			"               ,2147483645,'unlimited'\n"
+			"               ,a.max_extents\n"
+			"              )                       AS max_extents\n"
+			"      , a.pct_increase\n"
+			"      , NVL(a.freelists,1)\n"
+			"      , NVL(a.freelist_groups,1)\n"
+			"      , LOWER(a.buffer_pool)          AS buffer_pool\n"
+			"      , DECODE(\n"
+			"                b.logging\n"
+			"               ,'NO','NOLOGGING'\n"
+			"               ,     'LOGGING'\n"
+			"              )                       AS logging\n"
+			"      , LOWER(a.tablespace_name)      AS tablespace_name\n"
+			"      , DECODE(\n"
+			"                b.blocks\n"
+			"                ,null,GREATEST(a.initial_extent,a.next_extent) \n"
+			"                      / (b.blocks * 1024)\n"
+			"                ,'0' ,GREATEST(a.initial_extent,a.next_extent)\n"
+			"                      / (b.blocks * 1024)\n"
+			"                ,b.blocks\n"
+			"              )                       AS blocks\n"
+			" FROM\n"
+			"        all_indexes a,\n"
+			"        all_all_tables b,\n"
+			"        all_constraints c\n"
+			" WHERE  a.table_name  = :nam<char[100]>\n"
+			"   AND  b.owner = a.owner\n"
+			"   AND  b.table_name = a.table_name\n"
+			"   AND  a.owner = :own<char[100]>\n"
+			"   AND  c.constraint_name = a.index_name\n"
+			"   AND  c.owner = a.owner\n"
+			"   AND  c.constraint_type = 'P'",
 			"Get storage information about a IOT storage, "
 			"same binds and columns");
 
@@ -3723,305 +3730,305 @@ void toExtract::describeIOT(list<QString> &lst,list<QString> &ctx,
 }
 
 static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
-				   "SELECT
-        -- Table Properties
-        DECODE(
-                t.monitoring
-               ,'NO','NOMONITORING'
-               ,     'MONITORING'
-              )                       AS monitoring
-      , t.table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)               AS degree
-      , LTRIM(t.instances)            AS instances
-        -- Physical Properties
-      , DECODE(
-                t.iot_type
-               ,'IOT','INDEX'
-               ,      'HEAP'
-              )                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )                       AS cache
-      , p.def_pct_used
-      , p.def_pct_free                AS pct_free
-      , p.def_ini_trans               AS ini_trans
-      , p.def_max_trans               AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               p.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,p.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               p.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,p.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                p.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,p.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                p.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,p.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                p.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,p.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                p.def_freelists
-               ,0,1
-               ,NVL(p.def_freelists,1)
-              )                       AS freelists
-      , DECODE(
-                p.def_freelist_groups
-               ,0,1
-               ,NVL(p.def_freelist_groups,1)
-              )                       AS freelist_groups
-      , LOWER(p.def_buffer_pool)      AS buffer_pool
-      , DECODE(
-                p.def_logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(p.def_tablespace_name)  AS tablespace_name
-      , t.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_all_tables   t
-      , all_part_tables  p
-      , dba_tablespaces  s
- WHERE
-            t.table_name      = :nam<char[100]>
-        AND p.table_name      = t.table_name
-        AND s.tablespace_name = p.def_tablespace_name
-        AND t.owner           = :own<char[100]>
-        AND p.owner           = t.owner",
+				   "SELECT\n"
+				   "        -- Table Properties\n"
+				   "        DECODE(\n"
+				   "                t.monitoring\n"
+				   "               ,'NO','NOMONITORING'\n"
+				   "               ,     'MONITORING'\n"
+				   "              )                       AS monitoring\n"
+				   "      , t.table_name\n"
+				   "        -- Parallel Clause\n"
+				   "      , LTRIM(t.degree)               AS degree\n"
+				   "      , LTRIM(t.instances)            AS instances\n"
+				   "        -- Physical Properties\n"
+				   "      , DECODE(\n"
+				   "                t.iot_type\n"
+				   "               ,'IOT','INDEX'\n"
+				   "               ,      'HEAP'\n"
+				   "              )                       AS organization\n"
+				   "        -- Segment Attributes\n"
+				   "      , DECODE(\n"
+				   "                LTRIM(t.cache)\n"
+				   "               ,'Y','CACHE'\n"
+				   "               ,    'NOCACHE'\n"
+				   "              )                       AS cache\n"
+				   "      , p.def_pct_used\n"
+				   "      , p.def_pct_free                AS pct_free\n"
+				   "      , p.def_ini_trans               AS ini_trans\n"
+				   "      , p.def_max_trans               AS max_trans\n"
+				   "        -- Storage Clause\n"
+				   "      ,DECODE(\n"
+				   "               p.def_initial_extent\n"
+				   "              ,'DEFAULT',s.initial_extent\n"
+				   "              ,p.def_initial_extent * :bs<char[100]> * 1024\n"
+				   "             )                        AS initial_extent\n"
+				   "      ,DECODE(\n"
+				   "               p.def_next_extent\n"
+				   "              ,'DEFAULT',s.next_extent\n"
+				   "              ,p.def_next_extent * :bs<char[100]> * 1024\n"
+				   "             )                        AS next_extent\n"
+				   "      , DECODE(\n"
+				   "                p.def_min_extents\n"
+				   "               ,'DEFAULT',s.min_extents\n"
+				   "               ,p.def_min_extents\n"
+				   "              )                       AS min_extents\n"
+				   "      , DECODE(\n"
+				   "                p.def_max_extents\n"
+				   "               ,'DEFAULT',DECODE(\n"
+				   "                                  s.max_extents\n"
+				   "                                 ,2147483645,'unlimited'\n"
+				   "                                 ,s.max_extents\n"
+				   "                                )\n"
+				   "               ,2147483645,'unlimited'\n"
+				   "               ,p.def_max_extents\n"
+				   "              )                       AS max_extents\n"
+				   "      , DECODE(\n"
+				   "                p.def_pct_increase\n"
+				   "               ,'DEFAULT',s.pct_increase\n"
+				   "               ,p.def_pct_increase\n"
+				   "              )                       AS pct_increase\n"
+				   "      , DECODE(\n"
+				   "                p.def_freelists\n"
+				   "               ,0,1\n"
+				   "               ,NVL(p.def_freelists,1)\n"
+				   "              )                       AS freelists\n"
+				   "      , DECODE(\n"
+				   "                p.def_freelist_groups\n"
+				   "               ,0,1\n"
+				   "               ,NVL(p.def_freelist_groups,1)\n"
+				   "              )                       AS freelist_groups\n"
+				   "      , LOWER(p.def_buffer_pool)      AS buffer_pool\n"
+				   "      , DECODE(\n"
+				   "                p.def_logging \n"
+				   "               ,'NO','NOLOGGING'\n"
+				   "               ,     'LOGGING'\n"
+				   "              )                       AS logging\n"
+				   "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
+				   "      , t.blocks - NVL(t.empty_blocks,0)\n"
+				   " FROM\n"
+				   "        all_all_tables   t\n"
+				   "      , all_part_tables  p\n"
+				   "      , dba_tablespaces  s\n"
+				   " WHERE\n"
+				   "            t.table_name      = :nam<char[100]>\n"
+				   "        AND p.table_name      = t.table_name\n"
+				   "        AND s.tablespace_name = p.def_tablespace_name\n"
+				   "        AND t.owner           = :own<char[100]>\n"
+				   "        AND p.owner           = t.owner",
 				   "Get storage information about a partitioned table, "
 				   "same binds and columns",
 				   "8.1");
 
 static toSQL SQLPartitionTableInfo8("toExtract:PartitionTableInfo",
-				    "SELECT
-        -- Table Properties
-        'N/A'                         AS monitoring
-      , t.table_name
-        -- Parallel Clause
-      , LTRIM(t.degree)               AS degree
-      , LTRIM(t.instances)            AS instances
-        -- Physical Properties
-      , DECODE(
-                t.iot_type
-               ,'IOT','INDEX'
-               ,      'HEAP'
-              )                       AS organization
-        -- Segment Attributes
-      , DECODE(
-                LTRIM(t.cache)
-               ,'Y','CACHE'
-               ,    'NOCACHE'
-              )                       AS cache
-      , p.def_pct_used
-      , p.def_pct_free                AS pct_free
-      , p.def_ini_trans               AS ini_trans
-      , p.def_max_trans               AS max_trans
-        -- Storage Clause
-      ,DECODE(
-               p.def_initial_extent
-              ,'DEFAULT',s.initial_extent
-              ,p.def_initial_extent * :bs<char[100]> * 1024
-             )                        AS initial_extent
-      ,DECODE(
-               p.def_next_extent
-              ,'DEFAULT',s.next_extent
-              ,p.def_next_extent * :bs<char[100]> * 1024
-             )                        AS next_extent
-      , DECODE(
-                p.def_min_extents
-               ,'DEFAULT',s.min_extents
-               ,p.def_min_extents
-              )                       AS min_extents
-      , DECODE(
-                p.def_max_extents
-               ,'DEFAULT',DECODE(
-                                  s.max_extents
-                                 ,2147483645,'unlimited'
-                                 ,s.max_extents
-                                )
-               ,2147483645,'unlimited'
-               ,p.def_max_extents
-              )                       AS max_extents
-      , DECODE(
-                p.def_pct_increase
-               ,'DEFAULT',s.pct_increase
-               ,p.def_pct_increase
-              )                       AS pct_increase
-      , DECODE(
-                p.def_freelists
-               ,0,1
-               ,NVL(p.def_freelists,1)
-              )                       AS freelists
-      , DECODE(
-                p.def_freelist_groups
-               ,0,1
-               ,NVL(p.def_freelist_groups,1)
-              )                       AS freelist_groups
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                p.def_logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(p.def_tablespace_name)  AS tablespace_name
-      , t.blocks - NVL(t.empty_blocks,0)
- FROM
-        all_all_tables   t
-      , all_part_tables  p
-      , dba_tablespaces  s
- WHERE
-            t.table_name      = :nam<char[100]>
-        AND p.table_name      = t.table_name
-        AND s.tablespace_name = p.def_tablespace_name
-        AND t.owner           = :own<char[100]>
-        AND p.owner           = t.owner",
+				    "SELECT\n"
+				    "        -- Table Properties\n"
+				    "        'N/A'                         AS monitoring\n"
+				    "      , t.table_name\n"
+				    "        -- Parallel Clause\n"
+				    "      , LTRIM(t.degree)               AS degree\n"
+				    "      , LTRIM(t.instances)            AS instances\n"
+				    "        -- Physical Properties\n"
+				    "      , DECODE(\n"
+				    "                t.iot_type\n"
+				    "               ,'IOT','INDEX'\n"
+				    "               ,      'HEAP'\n"
+				    "              )                       AS organization\n"
+				    "        -- Segment Attributes\n"
+				    "      , DECODE(\n"
+				    "                LTRIM(t.cache)\n"
+				    "               ,'Y','CACHE'\n"
+				    "               ,    'NOCACHE'\n"
+				    "              )                       AS cache\n"
+				    "      , p.def_pct_used\n"
+				    "      , p.def_pct_free                AS pct_free\n"
+				    "      , p.def_ini_trans               AS ini_trans\n"
+				    "      , p.def_max_trans               AS max_trans\n"
+				    "        -- Storage Clause\n"
+				    "      ,DECODE(\n"
+				    "               p.def_initial_extent\n"
+				    "              ,'DEFAULT',s.initial_extent\n"
+				    "              ,p.def_initial_extent * :bs<char[100]> * 1024\n"
+				    "             )                        AS initial_extent\n"
+				    "      ,DECODE(\n"
+				    "               p.def_next_extent\n"
+				    "              ,'DEFAULT',s.next_extent\n"
+				    "              ,p.def_next_extent * :bs<char[100]> * 1024\n"
+				    "             )                        AS next_extent\n"
+				    "      , DECODE(\n"
+				    "                p.def_min_extents\n"
+				    "               ,'DEFAULT',s.min_extents\n"
+				    "               ,p.def_min_extents\n"
+				    "              )                       AS min_extents\n"
+				    "      , DECODE(\n"
+				    "                p.def_max_extents\n"
+				    "               ,'DEFAULT',DECODE(\n"
+				    "                                  s.max_extents\n"
+				    "                                 ,2147483645,'unlimited'\n"
+				    "                                 ,s.max_extents\n"
+				    "                                )\n"
+				    "               ,2147483645,'unlimited'\n"
+				    "               ,p.def_max_extents\n"
+				    "              )                       AS max_extents\n"
+				    "      , DECODE(\n"
+				    "                p.def_pct_increase\n"
+				    "               ,'DEFAULT',s.pct_increase\n"
+				    "               ,p.def_pct_increase\n"
+				    "              )                       AS pct_increase\n"
+				    "      , DECODE(\n"
+				    "                p.def_freelists\n"
+				    "               ,0,1\n"
+				    "               ,NVL(p.def_freelists,1)\n"
+				    "              )                       AS freelists\n"
+				    "      , DECODE(\n"
+				    "                p.def_freelist_groups\n"
+				    "               ,0,1\n"
+				    "               ,NVL(p.def_freelist_groups,1)\n"
+				    "              )                       AS freelist_groups\n"
+				    "      , 'N/A'                         AS buffer_pool\n"
+				    "      , DECODE(\n"
+				    "                p.def_logging \n"
+				    "               ,'NO','NOLOGGING'\n"
+				    "               ,     'LOGGING'\n"
+				    "              )                       AS logging\n"
+				    "      , LOWER(p.def_tablespace_name)  AS tablespace_name\n"
+				    "      , t.blocks - NVL(t.empty_blocks,0)\n"
+				    " FROM\n"
+				    "        all_all_tables   t\n"
+				    "      , all_part_tables  p\n"
+				    "      , dba_tablespaces  s\n"
+				    " WHERE\n"
+				    "            t.table_name      = :nam<char[100]>\n"
+				    "        AND p.table_name      = t.table_name\n"
+				    "        AND s.tablespace_name = p.def_tablespace_name\n"
+				    "        AND t.owner           = :own<char[100]>\n"
+				    "        AND p.owner           = t.owner",
 				    QString::null,
 				    "8.0");
 
 static toSQL SQLPartitionType("toExtract:PartitionType",
-			      "SELECT
-        partitioning_type
-      , partition_count
-      , subpartitioning_type
-      , def_subpartition_count
- FROM
-        all_part_tables
- WHERE
-            table_name = :nam<char[100]>
-        AND owner = :own<char[100]>",
+			      "SELECT\n"
+			      "        partitioning_type\n"
+			      "      , partition_count\n"
+			      "      , subpartitioning_type\n"
+			      "      , def_subpartition_count\n"
+			      " FROM\n"
+			      "        all_part_tables\n"
+			      " WHERE\n"
+			      "            table_name = :nam<char[100]>\n"
+			      "        AND owner = :own<char[100]>",
 			      "Get partition type, must have same binds and columns",
 			      "8.1");
 
 static toSQL SQLPartitionType8("toExtract:PartitionType",
-			       "SELECT
-        partitioning_type
-      , partition_count
-      , 'N/A'                        AS subpartitioning_type
-      , 'N/A'                        AS def_subpartition_count
- FROM
-        all_part_tables
- WHERE
-            table_name = :nam<char[100]>
-        AND owner = :own<char[100]>",
+			       "SELECT\n"
+			       "        partitioning_type\n"
+			       "      , partition_count\n"
+			       "      , 'N/A'                        AS subpartitioning_type\n"
+			       "      , 'N/A'                        AS def_subpartition_count\n"
+			       " FROM\n"
+			       "        all_part_tables\n"
+			       " WHERE\n"
+			       "            table_name = :nam<char[100]>\n"
+			       "        AND owner = :own<char[100]>",
 			       QString::null,
 			       "8.0");
 
 static toSQL SQLPartitionSegment("toExtract:PartitionSegment",
-				 "SELECT
-        partition_name
-      , high_value
-      , 'N/A'
-      , pct_used
-      , pct_free
-      , ini_trans
-      , max_trans
-        -- Storage Clause
-      , initial_extent
-      , next_extent
-      , min_extent
-      , DECODE(
-                max_extent
-               ,2147483645,'unlimited'
-               ,           max_extent
-              )                       AS max_extents
-      , pct_increase
-      , NVL(freelists,1)
-      , NVL(freelist_groups,1)
-      , LOWER(buffer_pool)
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(tablespace_name)
-      , blocks - NVL(empty_blocks,0)
- FROM
-        all_tab_partitions
- WHERE  table_name = :nam<char[100]>
-   AND  owner = :nam<char[100]>
- ORDER BY partition_name",
+				 "SELECT\n"
+				 "        partition_name\n"
+				 "      , high_value\n"
+				 "      , 'N/A'\n"
+				 "      , pct_used\n"
+				 "      , pct_free\n"
+				 "      , ini_trans\n"
+				 "      , max_trans\n"
+				 "        -- Storage Clause\n"
+				 "      , initial_extent\n"
+				 "      , next_extent\n"
+				 "      , min_extent\n"
+				 "      , DECODE(\n"
+				 "                max_extent\n"
+				 "               ,2147483645,'unlimited'\n"
+				 "               ,           max_extent\n"
+				 "              )                       AS max_extents\n"
+				 "      , pct_increase\n"
+				 "      , NVL(freelists,1)\n"
+				 "      , NVL(freelist_groups,1)\n"
+				 "      , LOWER(buffer_pool)\n"
+				 "      , DECODE(\n"
+				 "                logging \n"
+				 "               ,'NO','NOLOGGING'\n"
+				 "               ,     'LOGGING'\n"
+				 "              )                       AS logging\n"
+				 "      , LOWER(tablespace_name)\n"
+				 "      , blocks - NVL(empty_blocks,0)\n"
+				 " FROM\n"
+				 "        all_tab_partitions\n"
+				 " WHERE  table_name = :nam<char[100]>\n"
+				 "   AND  owner = :nam<char[100]>\n"
+				 " ORDER BY partition_name",
 				 "Information about segment storage for partitioned tables, "
 				 "must have same binds and columns",
 				 "8.1");
 
 static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
-				 "SELECT
-        partition_name
-      , high_value
-      , 'N/A'
-      , pct_used
-      , pct_free
-      , ini_trans
-      , max_trans
-        -- Storage Clause
-      , initial_extent
-      , next_extent
-      , min_extent
-      , DECODE(
-                max_extent
-               ,2147483645,'unlimited'
-               ,           max_extent
-              )                       AS max_extents
-      , pct_increase
-      , NVL(freelists,1)
-      , NVL(freelist_groups,1)
-      , 'N/A'                         AS buffer_pool
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , LOWER(tablespace_name)
-      , blocks - NVL(empty_blocks,0)
- FROM
-        all_tab_partitions
- WHERE  table_name = :nam<char[100]>
-   AND  owner = :nam<char[100]>
- ORDER BY partition_name",
+				  "SELECT\n"
+				  "        partition_name\n"
+				  "      , high_value\n"
+				  "      , 'N/A'\n"
+				  "      , pct_used\n"
+				  "      , pct_free\n"
+				  "      , ini_trans\n"
+				  "      , max_trans\n"
+				  "        -- Storage Clause\n"
+				  "      , initial_extent\n"
+				  "      , next_extent\n"
+				  "      , min_extent\n"
+				  "      , DECODE(\n"
+				  "                max_extent\n"
+				  "               ,2147483645,'unlimited'\n"
+				  "               ,           max_extent\n"
+				  "              )                       AS max_extents\n"
+				  "      , pct_increase\n"
+				  "      , NVL(freelists,1)\n"
+				  "      , NVL(freelist_groups,1)\n"
+				  "      , 'N/A'                         AS buffer_pool\n"
+				  "      , DECODE(\n"
+				  "                logging \n"
+				  "               ,'NO','NOLOGGING'\n"
+				  "               ,     'LOGGING'\n"
+				  "              )                       AS logging\n"
+				  "      , LOWER(tablespace_name)\n"
+				  "      , blocks - NVL(empty_blocks,0)\n"
+				  " FROM\n"
+				  "        all_tab_partitions\n"
+				  " WHERE  table_name = :nam<char[100]>\n"
+				  "   AND  owner = :nam<char[100]>\n"
+				  " ORDER BY partition_name",
 				  QString::null,
 				  "8.0");
 
 static toSQL SQLSubPartitionName("toExtract:SubPartitionName",
-				 "SELECT subpartition_name,
-       tablespace_name
-  FROM all_tab_subpartitions
- WHERE table_name = :nam<char[100]>
-   AND partition_name = :prt<char[100]>
-   AND table_owner = :own<char[100]>
- ORDER BY subpartition_name",
+				 "SELECT subpartition_name,\n"
+				 "       tablespace_name\n"
+				 "  FROM all_tab_subpartitions\n"
+				 " WHERE table_name = :nam<char[100]>\n"
+				 "   AND partition_name = :prt<char[100]>\n"
+				 "   AND table_owner = :own<char[100]>\n"
+				 " ORDER BY subpartition_name",
 				 "Get information about sub partitions, "
 				 "must have same columns and binds");
 
 static toSQL SQLPartitionName("toExtract:PartitionName",
-				 "SELECT partition_name,
-       tablespace_name
-  FROM all_tab_partitions
- WHERE table_name = :nam<char[100]>
-   AND table_owner = :own<char[100]>
- ORDER BY partition_name",
-				 "Get information about hash partition names, "
-				 "must have same columns and binds");
+			      "SELECT partition_name,\n"
+			      "       tablespace_name\n"
+			      "  FROM all_tab_partitions\n"
+			      " WHERE table_name = :nam<char[100]>\n"
+			      "   AND table_owner = :own<char[100]>\n"
+			      " ORDER BY partition_name",
+			      "Get information about hash partition names, "
+			      "must have same columns and binds");
 
 QString toExtract::createPartitionedTable(const QString &schema,const QString &owner,
 					  const QString &name)
@@ -4248,30 +4255,30 @@ void toExtract::describeSnapshotLog(list<QString> &lst,const QString &schema,
 }
 
 static toSQL SQLProfileInfo("toExtract:ProfileInfo",
-			    "SELECT
-        RPAD(resource_name,27)
-      , DECODE(
-                RESOURCE_NAME
-               ,'PASSWORD_VERIFY_FUNCTION',DECODE(
-                                                   limit
-                                                  ,'UNLIMITED','null'
-                                                  ,LOWER(limit)
-                                                 )
-               ,                           LOWER(limit)
-              )
- FROM
-        dba_profiles
- WHERE
-        profile = :nam<char[100]>
- ORDER
-    BY
-        DECODE(
-               SUBSTR(resource_name,1,8)
-              ,'FAILED_L',2
-              ,'PASSWORD',2
-              ,1
-             )
-      , resource_name",
+			    "SELECT\n"
+			    "        RPAD(resource_name,27)\n"
+			    "      , DECODE(\n"
+			    "                RESOURCE_NAME\n"
+			    "               ,'PASSWORD_VERIFY_FUNCTION',DECODE(\n"
+			    "                                                   limit\n"
+			    "                                                  ,'UNLIMITED','null'\n"
+			    "                                                  ,LOWER(limit)\n"
+			    "                                                 )\n"
+			    "               ,                           LOWER(limit)\n"
+			    "              )\n"
+			    " FROM\n"
+			    "        dba_profiles\n"
+			    " WHERE\n"
+			    "        profile = :nam<char[100]>\n"
+			    " ORDER\n"
+			    "    BY\n"
+			    "        DECODE(\n"
+			    "               SUBSTR(resource_name,1,8)\n"
+			    "              ,'FAILED_L',2\n"
+			    "              ,'PASSWORD',2\n"
+			    "              ,1\n"
+			    "             )\n"
+			    "      , resource_name",
 			    "Get information about a profile, must have same binds and columns");
 
 QString toExtract::createProfile(const QString &schema,const QString &owner,const QString &name)
@@ -4315,23 +4322,23 @@ void toExtract::describeProfile(list<QString> &lst,
 }
 
 static toSQL SQLRoleInfo("toExtract:RoleInfo",
-			 "SELECT
-        DECODE(
-                r.password_required
-               ,'YES', DECODE(
-                               u.password
-                              ,'EXTERNAL','IDENTIFIED EXTERNALLY'
-                              ,'IDENTIFIED BY VALUES ''' 
-                                || u.password || ''''
-                             )
-               ,'NOT IDENTIFIED'
-              )                         AS password
- FROM
-        dba_roles   r
-      , sys.user$  u
- WHERE
-            r.role = :rol<char[100]>
-        AND u.name = r.role",
+			 "SELECT\n"
+			 "        DECODE(\n"
+			 "                r.password_required\n"
+			 "               ,'YES', DECODE(\n"
+			 "                               u.password\n"
+			 "                              ,'EXTERNAL','IDENTIFIED EXTERNALLY'\n"
+			 "                              ,'IDENTIFIED BY VALUES ''' \n"
+			 "                                || u.password || ''''\n"
+			 "                             )\n"
+			 "               ,'NOT IDENTIFIED'\n"
+			 "              )                         AS password\n"
+			 " FROM\n"
+			 "        dba_roles   r\n"
+			 "      , sys.user$  u\n"
+			 " WHERE\n"
+			 "            r.role = :rol<char[100]>\n"
+			 "        AND u.name = r.role",
 			 "Get information about a role, must have same binds and columns");
 
 QString toExtract::createRole(const QString &schema,const QString &owner,const QString &name)
@@ -4367,43 +4374,43 @@ void toExtract::describeRole(list<QString> &lst,
 }
 
 static toSQL SQLRolePrivs("toExtract:RolePrivs",
-			  "SELECT
-        granted_role
-      , DECODE(
-                admin_option
-               ,'YES','WITH ADMIN OPTION'
-               ,null
-              )                         AS admin_option
-  FROM  dba_role_privs
- WHERE  grantee = :nam<char[100]>
- ORDER  BY granted_role",
+			  "SELECT\n"
+			  "        granted_role\n"
+			  "      , DECODE(\n"
+			  "                admin_option\n"
+			  "               ,'YES','WITH ADMIN OPTION'\n"
+			  "               ,null\n"
+			  "              )                         AS admin_option\n"
+			  "  FROM  dba_role_privs\n"
+			  " WHERE  grantee = :nam<char[100]>\n"
+			  " ORDER  BY granted_role",
 			  "Get roles granted, must have same columns and binds");
 
 static toSQL SQLSystemPrivs("toExtract:SystemPrivs",
-			    "SELECT
-        privilege
-      , DECODE(
-                admin_option
-               ,'YES','WITH ADMIN OPTION'
-               ,null
-              )                         AS admin_option
-  FROM  dba_sys_privs
- WHERE  grantee = :nam<char[100]>
- ORDER  BY privilege",
+			    "SELECT\n"
+			    "        privilege\n"
+			    "      , DECODE(\n"
+			    "                admin_option\n"
+			    "               ,'YES','WITH ADMIN OPTION'\n"
+			    "               ,null\n"
+			    "              )                         AS admin_option\n"
+			    "  FROM  dba_sys_privs\n"
+			    " WHERE  grantee = :nam<char[100]>\n"
+			    " ORDER  BY privilege",
 			    "Get system priveleges granted, must have same columns and binds");
 
 static toSQL SQLObjectPrivs("toExtract:ObjectPrivs",
-			    "SELECT  privilege
-      , owner
-      , table_name
-      , DECODE(
-                grantable
-               ,'YES','WITH GRANT OPTION'
-               ,null
-              )                         AS grantable
-  FROM  dba_tab_privs
- WHERE  grantee = :nam<char[100]>
- ORDER  BY table_name,privilege",
+			    "SELECT  privilege\n"
+			    "      , owner\n"
+			    "      , table_name\n"
+			    "      , DECODE(\n"
+			    "                grantable\n"
+			    "               ,'YES','WITH GRANT OPTION'\n"
+			    "               ,null\n"
+			    "              )                         AS grantable\n"
+			    "  FROM  dba_tab_privs\n"
+			    " WHERE  grantee = :nam<char[100]>\n"
+			    " ORDER  BY table_name,privilege",
 			    "Get object priveleges granted, must have same columns and binds");
 
 QString toExtract::grantedPrivs(const QString &schema,const QString &name,int typ)
@@ -4503,25 +4510,25 @@ void toExtract::describePrivs(list<QString> &lst,list<QString> &ctx,const QStrin
 }
 
 static toSQL SQLRollbackSegment("toExtract:RollbackSegment",
-				"SELECT  DECODE(
-                r.owner
-               ,'PUBLIC',' PUBLIC '
-               ,         ' '
-              )                                  AS is_public
-      , r.tablespace_name
-      , NVL(r.initial_extent,t.initial_extent)   AS initial_extent
-      , NVL(r.next_extent,t.next_extent)         AS next_extent
-      , r.min_extents
-      , DECODE(
-                r.max_extents
-               ,2147483645,'unlimited'
-               ,           r.max_extents
-              )                                  AS max_extents
-  FROM  dba_rollback_segs    r
-      , all_tablespaces  t
- WHERE
-            r.segment_name    = :nam<char[100]>
-        AND t.tablespace_name = r.tablespace_name",
+				"SELECT  DECODE(\n"
+				"                r.owner\n"
+				"               ,'PUBLIC',' PUBLIC '\n"
+				"               ,         ' '\n"
+				"              )                                  AS is_public\n"
+				"      , r.tablespace_name\n"
+				"      , NVL(r.initial_extent,t.initial_extent)   AS initial_extent\n"
+				"      , NVL(r.next_extent,t.next_extent)         AS next_extent\n"
+				"      , r.min_extents\n"
+				"      , DECODE(\n"
+				"                r.max_extents\n"
+				"               ,2147483645,'unlimited'\n"
+				"               ,           r.max_extents\n"
+				"              )                                  AS max_extents\n"
+				"  FROM  dba_rollback_segs    r\n"
+				"      , all_tablespaces  t\n"
+				" WHERE\n"
+				"            r.segment_name    = :nam<char[100]>\n"
+				"        AND t.tablespace_name = r.tablespace_name",
 				"Get information about rollback segment, "
 				"must have same binds and columns");
 
@@ -4580,41 +4587,41 @@ void toExtract::describeRollbackSegment(list<QString> &lst,
 }
 
 static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
-			     "SELECT  'START WITH       '
-         || LTRIM(TO_CHAR(last_number,'fm999999999'))
-                                         AS start_with
-      , 'INCREMENT BY     '
-         || LTRIM(TO_CHAR(increment_by,'fm999999999')) AS imcrement_by
-      , DECODE(
-                min_value
-               ,0,'NOMINVALUE'
-               ,'MINVALUE         ' || TO_CHAR(min_value)
-              )                          AS min_value
-      , DECODE(
-                TO_CHAR(max_value,'fm999999999999999999999999999')
-               ,'999999999999999999999999999','NOMAXVALUE'
-               ,'MAXVALUE         ' || TO_CHAR(max_value)
-              )                          AS max_value
-      , DECODE(
-                cache_size
-               ,0,'NOCACHE'
-               ,'CACHE            ' || TO_CHAR(cache_size)
-              )                          AS cache_size
-      , DECODE(
-                cycle_flag
-               ,'Y','CYCLE'
-               ,'N', 'NOCYCLE'
-              )                          AS cycle_flag
-      , DECODE(
-                order_flag
-               ,'Y','ORDER'
-               ,'N', 'NOORDER'
-              )                          AS order_flag
- FROM
-        all_sequences
- WHERE
-            sequence_name  = :nam<char[100]>
-        AND sequence_owner = :own<char[100]>",
+			     "SELECT  'START WITH       '\n"
+			     "         || LTRIM(TO_CHAR(last_number,'fm999999999'))\n"
+			     "                                         AS start_with\n"
+			     "      , 'INCREMENT BY     '\n"
+			     "         || LTRIM(TO_CHAR(increment_by,'fm999999999')) AS imcrement_by\n"
+			     "      , DECODE(\n"
+			     "                min_value\n"
+			     "               ,0,'NOMINVALUE'\n"
+			     "               ,'MINVALUE         ' || TO_CHAR(min_value)\n"
+			     "              )                          AS min_value\n"
+			     "      , DECODE(\n"
+			     "                TO_CHAR(max_value,'fm999999999999999999999999999')\n"
+			     "               ,'999999999999999999999999999','NOMAXVALUE'\n"
+			     "               ,'MAXVALUE         ' || TO_CHAR(max_value)\n"
+			     "              )                          AS max_value\n"
+			     "      , DECODE(\n"
+			     "                cache_size\n"
+			     "               ,0,'NOCACHE'\n"
+			     "               ,'CACHE            ' || TO_CHAR(cache_size)\n"
+			     "              )                          AS cache_size\n"
+			     "      , DECODE(\n"
+			     "                cycle_flag\n"
+			     "               ,'Y','CYCLE'\n"
+			     "               ,'N', 'NOCYCLE'\n"
+			     "              )                          AS cycle_flag\n"
+			     "      , DECODE(\n"
+			     "                order_flag\n"
+			     "               ,'Y','ORDER'\n"
+			     "               ,'N', 'NOORDER'\n"
+			     "              )                          AS order_flag\n"
+			     " FROM\n"
+			     "        all_sequences\n"
+			     " WHERE\n"
+			     "            sequence_name  = :nam<char[100]>\n"
+			     "        AND sequence_owner = :own<char[100]>",
 			     "Get information about sequences, must have same binds");
 
 QString toExtract::createSequence(const QString &schema,const QString &owner,const QString &name)
@@ -4660,14 +4667,14 @@ void toExtract::describeSequence(list<QString> &lst,
 }
 
 static toSQL SQLSynonymInfo("toExtract:SynonymInfo",
-			    "SELECT  table_owner
-      , table_name
-      , NVL(db_link,'NULL')
- FROM
-        all_synonyms
- WHERE
-            synonym_name = :nam<char[100]>
-        AND owner = :own<char[100]>",
+			    "SELECT  table_owner\n"
+			    "      , table_name\n"
+			    "      , NVL(db_link,'NULL')\n"
+			    " FROM\n"
+			    "        all_synonyms\n"
+			    " WHERE\n"
+			    "            synonym_name = :nam<char[100]>\n"
+			    "        AND owner = :own<char[100]>",
 			    "Get information about a synonym, must have same binds and columns");
 
 QString toExtract::createSynonym(const QString &schema,const QString &owner,const QString &name)
@@ -4730,62 +4737,62 @@ void toExtract::describeSynonym(list<QString> &lst,
 }
 
 static toSQL SQLTableConstraints("toExtract:TableConstraints",
-				 "SELECT
-        constraint_type,
-        constraint_name
- FROM
-        all_constraints cn
- WHERE      table_name       = :nam<char[100]>
-        AND owner            = :own<char[100]>
-        AND constraint_type IN('P','U','C')
-        AND generated        != 'GENERATED NAME'
- ORDER
-    BY
-       DECODE(
-               constraint_type
-              ,'P',1
-              ,'U',2
-              ,'C',4
-             )
-     , constraint_name",
+				 "SELECT\n"
+				 "        constraint_type,\n"
+				 "        constraint_name\n"
+				 " FROM\n"
+				 "        all_constraints cn\n"
+				 " WHERE      table_name       = :nam<char[100]>\n"
+				 "        AND owner            = :own<char[100]>\n"
+				 "        AND constraint_type IN('P','U','C')\n"
+				 "        AND generated        != 'GENERATED NAME'\n"
+				 " ORDER\n"
+				 "    BY\n"
+				 "       DECODE(\n"
+				 "               constraint_type\n"
+				 "              ,'P',1\n"
+				 "              ,'U',2\n"
+				 "              ,'C',4\n"
+				 "             )\n"
+				 "     , constraint_name",
 				 "Get constraints tied to a table except referential, same binds and columns");
 
 static toSQL SQLTableReferences("toExtract:TableReferences",
-				"SELECT
-        constraint_name
- FROM
-        all_constraints cn
- WHERE      table_name       = :nam<char[100]>
-        AND owner            = :own<char[100]>
-        AND constraint_type IN('R')
-        AND generated        != 'GENERATED NAME'
- ORDER
-    BY
-       DECODE(
-               constraint_type
-              ,'R',1
-             )
-     , constraint_name",
-				 "Get foreign constraints from a table, same binds and columns");
+				"SELECT\n"
+				"        constraint_name\n"
+				" FROM\n"
+				"        all_constraints cn\n"
+				" WHERE      table_name       = :nam<char[100]>\n"
+				"        AND owner            = :own<char[100]>\n"
+				"        AND constraint_type IN('R')\n"
+				"        AND generated        != 'GENERATED NAME'\n"
+				" ORDER\n"
+				"    BY\n"
+				"       DECODE(\n"
+				"               constraint_type\n"
+				"              ,'R',1\n"
+				"             )\n"
+				"     , constraint_name",
+				"Get foreign constraints from a table, same binds and columns");
 
 static toSQL SQLTableTriggers("toExtract:TableTriggers",
-			      "SELECT  trigger_name
-  FROM  all_triggers
- WHERE      table_name = :nam<char[100]>
-        AND owner      = :own<char[100]>
- ORDER  BY  trigger_name",
+			      "SELECT  trigger_name\n"
+			      "  FROM  all_triggers\n"
+			      " WHERE      table_name = :nam<char[100]>\n"
+			      "        AND owner      = :own<char[100]>\n"
+			      " ORDER  BY  trigger_name",
 			      "Get triggers for a table, must have same columns and binds");
 
 static toSQL SQLIndexNames("toExtract:IndexNames",
-			   "SELECT owner,index_name
-  FROM all_indexes a
- WHERE table_name = :nam<char[100]>
-   AND table_owner = :own<char[100]>
-   AND (owner,index_name) NOT IN (SELECT b.owner,
-                                         b.constraint_name
-                                    FROM all_constraints b
-                                   WHERE b.owner = a.table_owner
-                                     AND b.table_name = a.table_name)",
+			   "SELECT owner,index_name\n"
+			   "  FROM all_indexes a\n"
+			   " WHERE table_name = :nam<char[100]>\n"
+			   "   AND table_owner = :own<char[100]>\n"
+			   "   AND (owner,index_name) NOT IN (SELECT b.owner,\n"
+			   "                                         b.constraint_name\n"
+			   "                                    FROM all_constraints b\n"
+			   "                                   WHERE b.owner = a.table_owner\n"
+			   "                                     AND b.table_name = a.table_name)",
 			   "Get all indexes not tied to any constriaints, same binds and columns");
 
 QString toExtract::createTableFamily(const QString &schema,const QString &owner,const QString &name)
@@ -4950,48 +4957,48 @@ void toExtract::describeTableReferences(list<QString> &lst,
 }
 
 static toSQL SQLTriggerInfo("toExtract:TriggerInfo",
-			    "SELECT  trigger_type
-      , RTRIM(triggering_event)
-      , table_owner
-      , table_name
-      , base_object_type
-      , referencing_names
-      , description
-      , DECODE(
-                when_clause
-               ,null,null
-               ,'WHEN (' || when_clause || ')' || CHR(10)
-              )
-      , trigger_body
- FROM
-        all_triggers
- WHERE
-            trigger_name = :nam<char[100]>
-        AND owner        = :own<char[100]>",
+			    "SELECT  trigger_type\n"
+			    "      , RTRIM(triggering_event)\n"
+			    "      , table_owner\n"
+			    "      , table_name\n"
+			    "      , base_object_type\n"
+			    "      , referencing_names\n"
+			    "      , description\n"
+			    "      , DECODE(\n"
+			    "                when_clause\n"
+			    "               ,null,null\n"
+			    "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
+			    "              )\n"
+			    "      , trigger_body\n"
+			    " FROM\n"
+			    "        all_triggers\n"
+			    " WHERE\n"
+			    "            trigger_name = :nam<char[100]>\n"
+			    "        AND owner        = :own<char[100]>",
 			    "Get information about triggers, must have same binds and columns",
 			    "8.1");
 
 static toSQL SQLTriggerInfo8("toExtract:TriggerInfo",
-			     "SELECT
-        trigger_type
-      , RTRIM(triggering_event)
-      , table_owner
-      , table_name
-        -- Only table triggers before 8i
-      , 'TABLE'                           AS base_object_type
-      , referencing_names
-      , description
-      , DECODE(
-                when_clause
-               ,null,null
-               ,'WHEN (' || when_clause || ')' || CHR(10)
-              )
-      , trigger_body
- FROM
-        all_triggers
- WHERE
-            trigger_name = :nam<char[100]>
-        AND owner        = :own<char[100]>",
+			     "SELECT\n"
+			     "        trigger_type\n"
+			     "      , RTRIM(triggering_event)\n"
+			     "      , table_owner\n"
+			     "      , table_name\n"
+			     "        -- Only table triggers before 8i\n"
+			     "      , 'TABLE'                           AS base_object_type\n"
+			     "      , referencing_names\n"
+			     "      , description\n"
+			     "      , DECODE(\n"
+			     "                when_clause\n"
+			     "               ,null,null\n"
+			     "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
+			     "              )\n"
+			     "      , trigger_body\n"
+			     " FROM\n"
+			     "        all_triggers\n"
+			     " WHERE\n"
+			     "            trigger_name = :nam<char[100]>\n"
+			     "        AND owner        = :own<char[100]>",
 			     QString::null,
 			     "8.0");
 
@@ -5144,142 +5151,142 @@ void toExtract::describeTrigger(list<QString> &lst,
 }
 
 static toSQL SQLTablespaceInfo("toExtract:TablespaceInfo",
-			       "SELECT  initial_extent
-      , next_extent
-      , min_extents
-      , DECODE(
-                max_extents
-               ,2147483645,'unlimited'
-               ,null,DECODE(
-                              :bs<char[100]>
-                            , 1,  57
-                            , 2, 121
-                            , 4, 249
-                            , 8, 505
-                            ,16,1017
-                            ,32,2041
-                            ,'\?\?\?'
-                           )
-               ,max_extents
-              )                       AS max_extents
-      , pct_increase
-      , min_extlen
-      , contents
-      , logging
-      , extent_management
-      , allocation_type
- FROM
-        dba_tablespaces
- WHERE
-        tablespace_name = :nam<char[100]>",
+			       "SELECT  initial_extent\n"
+			       "      , next_extent\n"
+			       "      , min_extents\n"
+			       "      , DECODE(\n"
+			       "                max_extents\n"
+			       "               ,2147483645,'unlimited'\n"
+			       "               ,null,DECODE(\n"
+			       "                              :bs<char[100]>\n"
+			       "                            , 1,  57\n"
+			       "                            , 2, 121\n"
+			       "                            , 4, 249\n"
+			       "                            , 8, 505\n"
+			       "                            ,16,1017\n"
+			       "                            ,32,2041\n"
+			       "                            ,'\?\?\?'\n"
+			       "                           )\n"
+			       "               ,max_extents\n"
+			       "              )                       AS max_extents\n"
+			       "      , pct_increase\n"
+			       "      , min_extlen\n"
+			       "      , contents\n"
+			       "      , logging\n"
+			       "      , extent_management\n"
+			       "      , allocation_type\n"
+			       " FROM\n"
+			       "        dba_tablespaces\n"
+			       " WHERE\n"
+			       "        tablespace_name = :nam<char[100]>",
 			       "Get tablespace information, must have same columns and binds",
 			       "8.1");
 
 static toSQL SQLTablespaceInfo8("toExtract:TablespaceInfo",
-				"SELECT  initial_extent
-      , next_extent
-      , min_extents
-      , DECODE(
-                max_extents
-               ,2147483645,'unlimited'
-               ,null,DECODE(
-                             :bs<char[100]>
-                            , 1,  57
-                            , 2, 121
-                            , 4, 249
-                            , 8, 505
-                            ,16,1017
-                            ,32,2041
-                            ,'\?\?\?'
-                           )
-               ,max_extents
-              )                       AS max_extents
-      , pct_increase
-      , min_extlen
-      , contents
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , 'N/A'                         AS extent_management
-      , 'N/A'                         AS allocation_type
- FROM
-        dba_tablespaces
- WHERE
-        tablespace_name = :nam<char[100]>",
+				"SELECT  initial_extent\n"
+				"      , next_extent\n"
+				"      , min_extents\n"
+				"      , DECODE(\n"
+				"                max_extents\n"
+				"               ,2147483645,'unlimited'\n"
+				"               ,null,DECODE(\n"
+				"                             :bs<char[100]>\n"
+				"                            , 1,  57\n"
+				"                            , 2, 121\n"
+				"                            , 4, 249\n"
+				"                            , 8, 505\n"
+				"                            ,16,1017\n"
+				"                            ,32,2041\n"
+				"                            ,'\?\?\?'\n"
+				"                           )\n"
+				"               ,max_extents\n"
+				"              )                       AS max_extents\n"
+				"      , pct_increase\n"
+				"      , min_extlen\n"
+				"      , contents\n"
+				"      , DECODE(\n"
+				"                logging \n"
+				"               ,'NO','NOLOGGING'\n"
+				"               ,     'LOGGING'\n"
+				"              )                       AS logging\n"
+				"      , 'N/A'                         AS extent_management\n"
+				"      , 'N/A'                         AS allocation_type\n"
+				" FROM\n"
+				"        dba_tablespaces\n"
+				" WHERE\n"
+				"        tablespace_name = :nam<char[100]>",
 				QString::null,
 				"8.0");
 
 static toSQL SQLTablespaceInfo7("toExtract:TablespaceInfo",
-				"SELECT  initial_extent
-      , next_extent
-      , min_extents
-      , DECODE(
-                max_extents
-               ,2147483645,'unlimited'
-               ,null,DECODE(
-                             $block_size
-                            , 1,  57
-                            , 2, 121
-                            , 4, 249
-                            , 8, 505
-                            ,16,1017
-                            ,32,2041
-                            ,'\?\?\?'
-                           )
-               ,max_extents
-              )                       AS max_extents
-      , pct_increase
-      , min_extlen
-      , contents
-      , DECODE(
-                logging 
-               ,'NO','NOLOGGING'
-               ,     'LOGGING'
-              )                       AS logging
-      , 'N/A'                         AS extent_management
-      , 'N/A'                         AS allocation_type
- FROM
-        dba_tablespaces
- WHERE
-        tablespace_name = :nam<char[100]>",
+				"SELECT  initial_extent\n"
+				"      , next_extent\n"
+				"      , min_extents\n"
+				"      , DECODE(\n"
+				"                max_extents\n"
+				"               ,2147483645,'unlimited'\n"
+				"               ,null,DECODE(\n"
+				"                             $block_size\n"
+				"                            , 1,  57\n"
+				"                            , 2, 121\n"
+				"                            , 4, 249\n"
+				"                            , 8, 505\n"
+				"                            ,16,1017\n"
+				"                            ,32,2041\n"
+				"                            ,'\?\?\?'\n"
+				"                           )\n"
+				"               ,max_extents\n"
+				"              )                       AS max_extents\n"
+				"      , pct_increase\n"
+				"      , min_extlen\n"
+				"      , contents\n"
+				"      , DECODE(\n"
+				"                logging \n"
+				"               ,'NO','NOLOGGING'\n"
+				"               ,     'LOGGING'\n"
+				"              )                       AS logging\n"
+				"      , 'N/A'                         AS extent_management\n"
+				"      , 'N/A'                         AS allocation_type\n"
+				" FROM\n"
+				"        dba_tablespaces\n"
+				" WHERE\n"
+				"        tablespace_name = :nam<char[100]>",
 				QString::null,
 				"7.0");
 
 static toSQL SQLDatafileInfo("toExtract:DatafileInfo",
-			     "SELECT
-        file_name
-      , bytes
-      , autoextensible
-      , DECODE(
-                SIGN(2147483645 - maxbytes)
-               ,-1,'unlimited'
-               ,maxbytes
-              )                               AS maxbytes
-      , increment_by * :bs<char[100]> * 1024     AS increment_by
- FROM
-        (select * from dba_temp_files union select * from dba_data_files)
- WHERE
-        tablespace_name = :nam<char[100]>
- ORDER  BY file_name",
+			     "SELECT\n"
+			     "        file_name\n"
+			     "      , bytes\n"
+			     "      , autoextensible\n"
+			     "      , DECODE(\n"
+			     "                SIGN(2147483645 - maxbytes)\n"
+			     "               ,-1,'unlimited'\n"
+			     "               ,maxbytes\n"
+			     "              )                               AS maxbytes\n"
+			     "      , increment_by * :bs<char[100]> * 1024     AS increment_by\n"
+			     " FROM\n"
+			     "        (select * from dba_temp_files union select * from dba_data_files)\n"
+			     " WHERE\n"
+			     "        tablespace_name = :nam<char[100]>\n"
+			     " ORDER  BY file_name",
 			     "Get information about datafiles in a tablespace, "
 			     "same binds and columns",
 			     "8.0");
 
 static toSQL SQLDatafileInfo7("toExtract:DatafileInfo",
-			      "SELECT
-        file_name
-      , bytes
-      , 'N/A'                                 AS autoextensible
-      , 'N/A'                                 AS maxbytes
-      , DECODE(:bs<char[100]>,
-               NULL,'N/A','N/A')              AS increment_by
- FROM
-        dba_data_files
- WHERE
-        tablespace_name = :nam<char[100]>
- ORDER  BY file_name",
+			      "SELECT\n"
+			      "        file_name\n"
+			      "      , bytes\n"
+			      "      , 'N/A'                                 AS autoextensible\n"
+			      "      , 'N/A'                                 AS maxbytes\n"
+			      "      , DECODE(:bs<char[100]>,\n"
+			      "               NULL,'N/A','N/A')              AS increment_by\n"
+			      " FROM\n"
+			      "        dba_data_files\n"
+			      " WHERE\n"
+			      "        tablespace_name = :nam<char[100]>\n"
+			      " ORDER  BY file_name",
 			      QString::null,
 			      "7.0");
 
@@ -5486,35 +5493,35 @@ void toExtract::describeType(list<QString> &lst,
 }
 
 static toSQL SQLUserInfo("toExtract:UserInfo",
-			 "SELECT
-        DECODE(
-                password
-               ,'EXTERNAL','EXTERNALLY'
-               ,'BY VALUES ''' || password || ''''
-              )                         AS password
-      , profile
-      , default_tablespace
-      , temporary_tablespace
- FROM
-        dba_users
- WHERE
-        username = :nam<char[100]>",
+			 "SELECT\n"
+			 "        DECODE(\n"
+			 "                password\n"
+			 "               ,'EXTERNAL','EXTERNALLY'\n"
+			 "               ,'BY VALUES ''' || password || ''''\n"
+			 "              )                         AS password\n"
+			 "      , profile\n"
+			 "      , default_tablespace\n"
+			 "      , temporary_tablespace\n"
+			 " FROM\n"
+			 "        dba_users\n"
+			 " WHERE\n"
+			 "        username = :nam<char[100]>",
 			 "Information about authentication for a user, "
 			 "same binds and columns");
 
 static toSQL SQLUserQuotas("toExtract:UserQuotas",
-			   "SELECT
-        DECODE(
-                max_bytes
-               ,-1,'unlimited'
-               ,TO_CHAR(max_bytes,'99999999')
-              )                         AS max_bytes
-      , tablespace_name
- FROM
-        dba_ts_quotas
- WHERE
-        username = :nam<char[100]>
- ORDER  BY tablespace_name",
+			   "SELECT\n"
+			   "        DECODE(\n"
+			   "                max_bytes\n"
+			   "               ,-1,'unlimited'\n"
+			   "               ,TO_CHAR(max_bytes,'99999999')\n"
+			   "              )                         AS max_bytes\n"
+			   "      , tablespace_name\n"
+			   " FROM\n"
+			   "        dba_ts_quotas\n"
+			   " WHERE\n"
+			   "        username = :nam<char[100]>\n"
+			   " ORDER  BY tablespace_name",
 			   "Get information about tablespaces for a user, "
 			   "same binds and columns");
 
@@ -5608,12 +5615,12 @@ void toExtract::describeUser(list<QString> &lst,
 }
 
 static toSQL SQLViewSource("toExtract:ViewSource",
-			   "SELECT  text
- FROM
-        all_views
- WHERE
-            view_name = :nam<char[100]>
-        AND owner = :own<char[100]>",
+			   "SELECT  text\n"
+			   " FROM\n"
+			   "        all_views\n"
+			   " WHERE\n"
+			   "            view_name = :nam<char[100]>\n"
+			   "        AND owner = :own<char[100]>",
 			   "Get the source of the view, must have same binds and columns");
 
 QString toExtract::createView(const QString &schema,const QString &owner,const QString &name)
@@ -5831,50 +5838,50 @@ QString toExtract::dropUser(const QString &schema,const QString &owner,
 }
 
 static toSQL SQLIndexPartitioned("toExtract:IndexPartitioned",
-				 "SELECT partitioned
-  FROM all_indexes
- WHERE index_name = :nam<char[100]>
-   AND owner = :own<char[100]>",
+				 "SELECT partitioned\n"
+				 "  FROM all_indexes\n"
+				 " WHERE index_name = :nam<char[100]>\n"
+				 "   AND owner = :own<char[100]>",
 				 "Get information about if an index is partitioned or not, "
 				 "must use same binds and columns");
 
 static toSQL SQLSegmentInfo("toExtract:SegmentInfo",
-			    "SELECT
-       s.blocks - NVL(t.empty_blocks,0)
-     , s.initial_extent
-     , s.next_extent
-FROM
-       dba_segments s
-     , all_tables   t
-WHERE
-           s.segment_name = :nam<char[100]>
-       AND s.segment_type = 'TABLE'
-       AND s.owner        = :own<char[100]>",
-				 "Get information about a segment, "
-				 "must have same binds and columns");
+			    "SELECT\n"
+			    "       s.blocks - NVL(t.empty_blocks,0)\n"
+			    "     , s.initial_extent\n"
+			    "     , s.next_extent\n"
+			    "FROM\n"
+			    "       dba_segments s\n"
+			    "     , all_tables   t\n"
+			    "WHERE\n"
+			    "           s.segment_name = :nam<char[100]>\n"
+			    "       AND s.segment_type = 'TABLE'\n"
+			    "       AND s.owner        = :own<char[100]>",
+			    "Get information about a segment, "
+			    "must have same binds and columns");
 
 static toSQL SQLObjectPartitions("toExtract:ObjectPartitions",
-				 "SELECT
-        partition_name
-      , SUBSTR(segment_type,7)   -- PARTITION or SUBPARTITION
- FROM
-        all_segments
- WHERE
-            segment_name = :nam<char[100]>
-        AND owner        = :own<char[100]>",
+				 "SELECT\n"
+				 "        partition_name\n"
+				 "      , SUBSTR(segment_type,7)   -- PARTITION or SUBPARTITION\n"
+				 " FROM\n"
+				 "        all_segments\n"
+				 " WHERE\n"
+				 "            segment_name = :nam<char[100]>\n"
+				 "        AND owner        = :own<char[100]>",
 				 "Get partitions and their type for an object, "
 				 "must use same binds and columns");
 
 static toSQL SQLIndexSegmentInfo("toExtract:IndexSegmentInfo",
-				 "SELECT  s.blocks
-        , s.initial_extent
-        , s.next_extent
-   FROM
-          all_segments s
-   WHERE
-              s.segment_name = :nam<char[100]>
-          AND s.segment_type = 'INDEX'
-          AND s.owner        = :own<char[100]>",
+				 "SELECT  s.blocks\n"
+				 "        , s.initial_extent\n"
+				 "        , s.next_extent\n"
+				 "   FROM\n"
+				 "          all_segments s\n"
+				 "   WHERE\n"
+				 "              s.segment_name = :nam<char[100]>\n"
+				 "          AND s.segment_type = 'INDEX'\n"
+				 "          AND s.owner        = :own<char[100]>",
 				 "Get information about index segment, "
 				 "must have same binds and columns");
 
@@ -5938,21 +5945,20 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
 }
 
 static toSQL SQLIndexPartitionSegment("toExtract:IndexPartitionSegment",
-				      "
-SELECT
-       s.blocks
-     , s.initial_extent
-     , s.next_extent
-     , p.partitioning_type
-FROM
-       dba_segments      s
-     , all_part_indexes  p
-WHERE
-           s.segment_name   = :nam<char[100]>
-       AND s.partition_name = :prt<char[100]>
-       AND p.index_name     = s.segment_name
-       AND s.owner          = :own<char[100]>
-       AND p.owner          = s.owner",
+				      "SELECT\n"
+				      "       s.blocks\n"
+				      "     , s.initial_extent\n"
+				      "     , s.next_extent\n"
+				      "     , p.partitioning_type\n"
+				      "FROM\n"
+				      "       dba_segments      s\n"
+				      "     , all_part_indexes  p\n"
+				      "WHERE\n"
+				      "           s.segment_name   = :nam<char[100]>\n"
+				      "       AND s.partition_name = :prt<char[100]>\n"
+				      "       AND p.index_name     = s.segment_name\n"
+				      "       AND s.owner          = :own<char[100]>\n"
+				      "       AND p.owner          = s.owner",
 				      "Get information about an index partition segment, "
 				      "must have have same binds and columns");
 
@@ -5993,35 +5999,35 @@ QString toExtract::resizeIndexPartition(const QString &schema,const QString &own
 }
 
 static toSQL SQLTablePartitioned("toExtract:TablePartitioned",
-				 "SELECT partitioned
-  FROM all_tables
- WHERE table_name = :nam<char[100]>
-   AND owner = :own<char[100]>",
+				 "SELECT partitioned\n"
+				 "  FROM all_tables\n"
+				 " WHERE table_name = :nam<char[100]>\n"
+				 "   AND owner = :own<char[100]>",
 				 "Get information about if a table is partitioned or not, "
 				 "must use same binds and columns");
 
 static toSQL SQLTablePartIndexes("toExtract:TablePartIndexes",
-				 "SELECT
-       owner
-     , index_name
-FROM
-       dba_part_indexes
-WHERE
-           table_name = :nam<char[100]>
-       AND owner      = :own<char[100]>",
+				 "SELECT\n"
+				 "       owner\n"
+				 "     , index_name\n"
+				 "FROM\n"
+				 "       dba_part_indexes\n"
+				 "WHERE\n"
+				 "           table_name = :nam<char[100]>\n"
+				 "       AND owner      = :own<char[100]>",
 				 "Get information about indexes of a partitioned table, "
 				 "must have same binds and columns");
 
 static toSQL SQLTablePartIndex("toExtract:TablePartIndex",
-				 "SELECT
-       owner
-     , index_name
-FROM
-       dba_part_indexes
-WHERE
-           table_name = :nam<char[100]>
-       AND owner      = :own<char[100]>
-       AND locality   = 'LOCAL'",
+			       "SELECT\n"
+			       "       owner\n"
+			       "     , index_name\n"
+			       "FROM\n"
+			       "       dba_part_indexes\n"
+			       "WHERE\n"
+			       "           table_name = :nam<char[100]>\n"
+			       "       AND owner      = :own<char[100]>\n"
+			       "       AND locality   = 'LOCAL'",
 			       "Get information about index of a partition in a table, "
 			       "must have same binds and columns");
 
@@ -6101,25 +6107,24 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
   }
 }
 static toSQL SQLTablePartitionSegment("toExtract:TablePartitionSegment",
-				      "
-       SELECT
-              s.blocks - NVL(t.empty_blocks,0)
-            , s.initial_extent
-            , s.next_extent
-            , p.partitioning_type
-       FROM
-              dba_segments          s
-            , all_tab_%1s  t
-            , all_part_tables       p
-       WHERE
-                  s.segment_name   = :nam<char[100]>
-              AND s.partition_name = :prt<char[100]>
-              AND t.table_name     = s.segment_name
-              AND t.partition_name = s.partition_name
-              AND p.table_name     = t.table_name
-              AND s.owner          = :own<char[100]>
-              AND p.owner          = s.owner
-              AND t.table_owner    = s.owner",
+				      "SELECT\n"
+				      "              s.blocks - NVL(t.empty_blocks,0)\n"
+				      "            , s.initial_extent\n"
+				      "            , s.next_extent\n"
+				      "            , p.partitioning_type\n"
+				      "       FROM\n"
+				      "              dba_segments          s\n"
+				      "            , all_tab_%1s  t\n"
+				      "            , all_part_tables       p\n"
+				      "       WHERE\n"
+				      "                  s.segment_name   = :nam<char[100]>\n"
+				      "              AND s.partition_name = :prt<char[100]>\n"
+				      "              AND t.table_name     = s.segment_name\n"
+				      "              AND t.partition_name = s.partition_name\n"
+				      "              AND p.table_name     = t.table_name\n"
+				      "              AND s.owner          = :own<char[100]>\n"
+				      "              AND p.owner          = s.owner\n"
+				      "              AND t.table_owner    = s.owner",
 				      "Get information about an index partition segment, "
 				      "must have have same binds, columns and %");
 

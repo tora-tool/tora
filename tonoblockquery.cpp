@@ -29,7 +29,9 @@ TO_NAMESPACE;
 
 #include <signal.h>
 #include <sys/types.h>
+#ifndef __WIN__
 #include <unistd.h>
+#endif
 
 #include "tonoblockquery.h"
 #include "totool.h"
@@ -234,12 +236,14 @@ toNoBlockQuery::~toNoBlockQuery()
     toLocker lock(Lock);
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
+#ifndef __WIN__
 #if 1
       // This is how I would like it to work
       Thread->kill(SIGINT);
 #else
       // This is how it works
       kill(getpid(),SIGINT);
+#endif
 #endif
       Quit=true;
     }

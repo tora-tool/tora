@@ -74,5 +74,10 @@
 #endif
 #define CONF_STYLE		"Style"
 #define DEFAULT_STYLE		"Windows"
+#ifdef __WIN__
+#define TOMONOLITHIC
+#define DEFAULT_PLUGIN_DIR ""
+
+#endif
 
 #endif

@@ -163,7 +163,7 @@ public:
   }
 };
 
-toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name=NULL)
+toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(false,true,conn,parent,name)
 {
   setReadAll(true);

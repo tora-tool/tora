@@ -126,9 +126,11 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 	    
   int size=file.size();
 	    
-  char buf[size+1];
-  if (file.readBlock(buf,size)==-1)
+  char *buf=new char[size+1];
+  if (file.readBlock(buf,size)==-1) {
+    delete buf;
     return;
+  }
 
   buf[size]=0;
 
@@ -160,6 +162,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     }
     pos++;
   }
+  delete buf;
 }
 
 toNewConnection::~toNewConnection()
