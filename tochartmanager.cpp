@@ -267,7 +267,7 @@ toChartManager::toChartManager(QWidget *main)
 		  this,SLOT(setupChart()),
 		  toolbar);
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   List=new toListView(this);
   List->addColumn(tr("Connection"));

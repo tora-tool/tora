@@ -484,7 +484,7 @@ toTemplate::toTemplate(QWidget *parent)
 	 i++)
       (*i)->insertItems(List,Toolbar);
 
-  Toolbar->setStretchableWidget(new QLabel(QString::null,Toolbar));
+  Toolbar->setStretchableWidget(new QLabel(Toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   WidgetExtra=NULL;
   setWidget(NULL);

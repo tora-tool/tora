@@ -34,6 +34,7 @@
  ****************************************************************************/
 
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "tofilesize.h"
 #include "tohelp.h"
@@ -779,8 +780,8 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 				 this,SLOT(moveFile(void)),
 				 toolbar);
  
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Storage=new toResultStorage(!StorageTool.config(CONF_DISP_AVAILABLEGRAPH,"Yes").isEmpty(),

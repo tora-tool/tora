@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "toextract.h"
 #include "tohighlightedtext.h"
@@ -110,8 +111,8 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh()),
 		  toolbar);
 
-  toolbar->setStretchableWidget(new QLabel(toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
 

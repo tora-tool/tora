@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
@@ -184,10 +185,10 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  this,SLOT(clear()),
 		  ToolBar);
   ToolBar->addSeparator();
-  new QLabel(tr("Refresh")+" ",ToolBar);
+  new QLabel(tr("Refresh")+" ",ToolBar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh=toRefreshCreate(ToolBar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
-  ToolBar->setStretchableWidget(new QLabel(QString::null,ToolBar));
+  ToolBar->setStretchableWidget(new QLabel(ToolBar,TO_KDE_TOOLBAR_WIDGET));
 
   Output=new toMarkedText(this);
 
@@ -344,7 +345,7 @@ static toSQL SQLLog("toLogOutput:Poll",
 toLogOutput::toLogOutput(QWidget *parent,toConnection &connection)
   : toOutput(parent,connection)
 {
-  Type=new QComboBox(toolBar());
+  Type=new QComboBox(toolBar(),TO_KDE_TOOLBAR_WIDGET);
   Type->insertItem(tr("SQL Output"));
   Type->insertItem(tr("Log4PL/SQL"));
   Type->setCurrentItem(OutputTool.config(CONF_TYPE,DEFAULT_TYPE).toInt());

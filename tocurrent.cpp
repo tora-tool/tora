@@ -36,6 +36,7 @@
 
 #include "tochangeconnection.h"
 #include "toconnection.h"
+#include "toconf.h"
 #include "tocurrent.h"
 #include "tomain.h"
 #include "toresultlong.h"
@@ -114,8 +115,8 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
 		  tr("Update"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   Tabs=new QTabWidget(this);
 

@@ -32,9 +32,12 @@
  *
  ****************************************************************************/
 
+#include "utils.h"
+
 #include "tobrowser.h"
 #include "tobrowserfilterui.h"
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "tohelp.h"
 #include "tomain.h"
@@ -738,7 +741,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  tr("Remove any object filter"),
 		  this,SLOT(clearFilter(void)),
 		  toolbar);
-  Schema=new toResultCombo(toolbar);
+  Schema=new toResultCombo(toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
   Schema->setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
@@ -748,8 +751,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
     Schema->setSelected(connection.user().upper());
   else
     Schema->setSelected(connection.user());
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
   
   TopTab=new QTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
@@ -794,7 +797,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		  tr("Modify indexes"),
 		  this,SLOT(modifyTable()),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   QTabWidget *curr=new QTabWidget(box);
   toResultCols *resultCols=new toResultCols(curr,TAB_TABLE_COLUMNS);

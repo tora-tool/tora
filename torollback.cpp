@@ -636,12 +636,12 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   DropButton->setEnabled(false);
   toolbar->addSeparator();
 
-  new QLabel(tr("Refresh")+" ",toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Segments=new toRollbackView(splitter);

@@ -151,4 +151,6 @@
 // Stable or development version of TOra
 #define TOTYPE			"DEVELOP"
 
+#define TO_KDE_TOOLBAR_WIDGET	"kde toolbar widget"
+
 #endif

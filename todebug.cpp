@@ -1581,7 +1581,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  Schema=new QComboBox(toolbar);
+  Schema=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
 
@@ -1699,7 +1699,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   DelWatchButton->setEnabled(false);
   ChangeWatchButton->setEnabled(false);
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   QSplitter *hsplitter=new QSplitter(Horizontal,splitter);

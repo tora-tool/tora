@@ -359,7 +359,7 @@ void toWorksheet::setup(bool autoLoad)
 			       Result,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
-    toolbar->setStretchableWidget(Started=new QLabel(toolbar));
+    toolbar->setStretchableWidget(Started=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
     Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
   } else {
     QSplitter *splitter=new QSplitter(Vertical,this);
@@ -456,7 +456,7 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
-    new QLabel(tr("Refresh")+" ",toolbar);
+    new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
     Refresh=toRefreshCreate(toolbar);
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
@@ -479,9 +479,9 @@ void toWorksheet::setup(bool autoLoad)
 		    this,SLOT(saveLast(void)),
 		    toolbar);
 
-    toolbar->setStretchableWidget(Started=new QLabel(toolbar));
+    toolbar->setStretchableWidget(Started=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
     Started->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
-    new toChangeConnection(toolbar);
+    new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
     connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	    this,SLOT(changeResult(QWidget *)));

@@ -1230,7 +1230,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   connect(btn,SIGNAL(toggled(bool)),Editor,SLOT(singleRecordForm(bool)));
   QToolTip::add(btn,tr("Toggle between table or single record editing"));
   
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));
 }

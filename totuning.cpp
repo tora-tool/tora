@@ -1314,7 +1314,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Refresh")+" ",toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->addSeparator();
@@ -1327,8 +1327,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   connect(TabMenu,SIGNAL(aboutToShow()),this,SLOT(showTabMenu()));
   connect(TabMenu,SIGNAL(activated(int)),this,SLOT(enableTabMenu(int)));
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   Tabs=new QTabWidget(this);
 

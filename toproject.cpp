@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconf.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
@@ -403,7 +404,7 @@ toProject::toProject(toProjectTemplateItem *top,QWidget *parent)
 		  tr("Move down in project"),
 		  this,SLOT(moveDown()),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   Project=new toListView(this);
   Project->addColumn(tr("File"));
   Project->addColumn(tr("Size"));

@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "tohighlightedtext.h"
 #include "toprofiler.h"
@@ -413,16 +414,16 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel(tr("Repeat run")+" ",toolbar);
+  new QLabel(tr("Repeat run")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
 
-  Repeat=new QSpinBox(toolbar);
+  Repeat=new QSpinBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Repeat->setValue(5);
   Repeat->setMaxValue(1000);
 
   toolbar->addSeparator();
 
   new QLabel(tr("Comment")+" ",toolbar);
-  Comment=new QLineEdit(toolbar);
+  Comment=new QLineEdit(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Comment->setText(tr("Unknown"));
 
   toolbar->addSeparator();
@@ -442,9 +443,9 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 		  this,SLOT(execute()),
 		  toolbar);
 
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
-  new toChangeConnection(toolbar);
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   Tabs=new QTabWidget(this);
   Script=new toWorksheet(Tabs,NULL,connection);

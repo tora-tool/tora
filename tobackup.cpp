@@ -36,6 +36,7 @@
 
 #include "tobackup.h"
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "tomain.h"
 #include "toresultlong.h"
 #include "tosql.h"
@@ -353,8 +354,8 @@ toBackup::toBackup(QWidget *main,toConnection &connection)
 		  tr("Update"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   Tabs=new QTabWidget(this);
 

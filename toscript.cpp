@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconf.h"
 #include "toextract.h"
 #include "tofilesize.h"
 #include "tohighlightedtext.h"
@@ -181,7 +182,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
 		  tr("Perform defined extraction"),
 		  this,SLOT(execute(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   ScriptUI=new toScriptUI(this);
 

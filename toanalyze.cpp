@@ -160,24 +160,24 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  toolbar);
 
   toolbar->addSeparator();
-  Analyzed=new QComboBox(toolbar);
+  Analyzed=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Analyzed->insertItem(tr("All"));
   Analyzed->insertItem(tr("Not analyzed"));
   Analyzed->insertItem(tr("Analyzed"));
 
-  Schema=new toResultCombo(toolbar);
+  Schema=new toResultCombo(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Schema->setSelected(tr("All"));
   Schema->additionalItem(tr("All"));
   try {
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
   } TOCATCH
 
-  Type=new QComboBox(toolbar);
+  Type=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Type->insertItem(tr("Tables"));
   Type->insertItem(tr("Indexes"));
 
   toolbar->addSeparator();
-  Operation=new QComboBox(toolbar);
+  Operation=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Operation->insertItem(tr("Compute statistics"));
   Operation->insertItem(tr("Estimate statistics"));
   Operation->insertItem(tr("Delete statistics"));
@@ -185,21 +185,21 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(Operation,SIGNAL(activated(int)),
 	  this,SLOT(changeOperation(int)));
 
-  new QLabel(" "+tr("for")+" ",toolbar);
-  For=new QComboBox(toolbar);
+  new QLabel(" "+tr("for")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  For=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   For->insertItem(tr("All"));
   For->insertItem(tr("Table"));
   For->insertItem(tr("Indexed columns"));
   For->insertItem(tr("Local indexes"));
   toolbar->addSeparator();
-  new QLabel(tr("Sample")+" ",toolbar);
-  Sample=new QSpinBox(1,100,1,toolbar);
+  new QLabel(tr("Sample")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Sample=new QSpinBox(1,100,1,toolbar,TO_KDE_TOOLBAR_WIDGET);
   Sample->setValue(100);
   Sample->setSuffix(" "+tr("%"));
   Sample->setEnabled(false);
   toolbar->addSeparator();
-  new QLabel(tr("Parallel")+" ",toolbar);
-  Parallel=new QSpinBox(1,100,1,toolbar);
+  new QLabel(tr("Parallel")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Parallel=new QSpinBox(1,100,1,toolbar,TO_KDE_TOOLBAR_WIDGET);
   toolbar->addSeparator();
   
   new QToolButton(QPixmap((const char **)execute_xpm),
@@ -208,7 +208,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  this,SLOT(execute()),
 		  toolbar);
 
-  Current=new QLabel(toolbar);
+  Current=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Current->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
   toolbar->setStretchableWidget(Current);
 
@@ -253,7 +253,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  tr("Refresh"),
 		  Plans,SLOT(refresh()),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   CurrentPlan=new toResultPlan(splitter);
 

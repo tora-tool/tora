@@ -394,7 +394,7 @@ toMain::toMain()
   }
 
 #ifndef TOOL_TOOLBAR
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 #endif
 
   ConnectionToolbar=toAllocBar(this,tr("Connections"));
@@ -422,7 +422,7 @@ toMain::toMain()
 				 tr("Stop all running queries on connection"),
 				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
   ConnectionToolbar->addSeparator();
-  ConnectionSelection=new QComboBox(ConnectionToolbar);
+  ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
   ConnectionSelection->setFixedWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));

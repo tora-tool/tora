@@ -313,7 +313,7 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
   if (item)
     refresh=item;
   else
-    refresh=new QComboBox(false,parent);
+    refresh=new QComboBox(false,parent,TO_KDE_TOOLBAR_WIDGET);
 
   refresh->insertItem(qApp->translate("toRefreshCreate","None"));
   refresh->insertItem(qApp->translate("toRefreshCreate","2 seconds"));
@@ -567,7 +567,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     QToolBar *bar=(QToolBar *)dock;
     if (bar) {
       toMainWidget()->moveToolBar(bar,place);
-      bar->setStretchableWidget(container);
+      bar->setStretchableWidget(container,TO_KDE_TOOLBAR_WIDGET);
     }
   }
 #  else

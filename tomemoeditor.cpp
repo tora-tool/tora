@@ -34,6 +34,7 @@
 
 #include "utils.h"
 
+#include "toconf.h"
 #include "tohighlightedtext.h"
 #include "tomarkedtext.h"
 #include "tomemoeditor.h"
@@ -190,14 +191,14 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 		    this,SLOT(lastColumn()),Toolbar);
   }
   Toolbar->addSeparator();
-  Null=new QCheckBox(tr("NULL"),Toolbar);
+  Null=new QCheckBox(tr("NULL"),Toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Null,SIGNAL(toggled(bool)),this,SLOT(null(bool)));
   Null->setEnabled(!Editor->isReadOnly());
   Null->setFocusPolicy(StrongFocus);
 
   setText(str);
 
-  Label=new QLabel(QString::null,Toolbar);
+  Label=new QLabel(Toolbar,TO_KDE_TOOLBAR_WIDGET);
   Label->setAlignment(AlignRight|AlignVCenter);
   Toolbar->setStretchableWidget(Label);
 

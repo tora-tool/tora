@@ -329,7 +329,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
 	  Help,SLOT(forward(void)));
   QToolTip::add(button,tr("Forward one help page"));
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   std::map<QString,QString> Dsc;
   Dsc[tr("TOra manual")]=toHelpPath();

@@ -131,7 +131,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel(tr("Schema")+" ",toolbar);
+  new QLabel(tr("Schema")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   Schema=new toResultCombo(toolbar);
   Schema->additionalItem(tr("Any"));
   Schema->setSelected(connection.user().upper());
@@ -140,19 +140,19 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel(tr("Refresh")+" ",toolbar);
+  new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel(tr("Type")+" ",toolbar);
-  Type=new QComboBox(toolbar);
+  new QLabel(tr("Type")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Type=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Type->insertItem(tr("SGA"));
   Type->insertItem(tr("Long operations"));
 
   toolbar->addSeparator();
-  new QLabel(tr("Selection")+" ",toolbar);
-  Limit=new QComboBox(toolbar);
+  new QLabel(tr("Selection")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Limit=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Limit->insertItem(tr("All"));
   Limit->insertItem(tr("Unfinished"));
   Limit->insertItem(tr("Top executions"));
@@ -166,8 +166,8 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Limit->insertItem(tr("Top rows/exec"));
   Limit->insertItem(tr("Top buffers/row"));
 
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
 

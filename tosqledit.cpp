@@ -171,7 +171,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
 		  toolbar);
   CommitButton->setEnabled(true);
   TrashButton->setEnabled(false);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
   Statements=new toListView(splitter);

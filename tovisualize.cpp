@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "tobarchart.h"
+#include "toconf.h"
 #include "tolinechart.h"
 #include "topiechart.h"
 #include "toresultview.h"
@@ -58,7 +59,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
 {
   QToolBar *toolbar=toAllocBar(this,tr("Data visualization"));
   
-  Type=new QComboBox(toolbar);
+  Type=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Type->insertItem(tr("Bar chart"),0);
   Type->insertItem(tr("Line chart"),1);
   Type->insertItem(tr("Pie chart"),2);
@@ -85,7 +86,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
 
   QToolTip::add(new QLabel(" "+tr("Title columns")+" ",toolbar),
 		tr("Number of columns to use as title"));
-  Title=new QComboBox(toolbar);
+  Title=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Title->insertItem(QString::fromLatin1("1"));
   Title->insertItem(QString::fromLatin1("2"));
   Title->insertItem(QString::fromLatin1("3"));
@@ -101,7 +102,7 @@ toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
 		  this,SLOT(display(void)),
 		  toolbar);
 
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   Result=new QWidget(this);
   Result->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));

@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "toalert.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "tomemoeditor.h"
@@ -133,8 +134,8 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   }
   def+=connection.user();
 
-  new QLabel(tr("Registered")+" ",toolbar);
-  Registered=new QComboBox(toolbar);
+  new QLabel(tr("Registered")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Registered=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Registered->insertItem(def);
   Registered->setEditable(true);
   Registered->setDuplicatesEnabled(false);
@@ -157,12 +158,12 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel(tr("Name")+" ",toolbar);
-  Name=new QLineEdit(toolbar);
+  new QLabel(tr("Name")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Name=new QLineEdit(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Name->setText(def);
   connect(Name,SIGNAL(returnPressed()),this,SLOT(send()));
-  new QLabel(tr("Message")+" ",toolbar);
-  Message=new QLineEdit(toolbar);
+  new QLabel(tr("Message")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+  Message=new QLineEdit(toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Message,SIGNAL(returnPressed()),this,SLOT(send()));
   new QToolButton(QPixmap((const char **)toworksheet_xpm),
 		  tr("Edit message in memo"),

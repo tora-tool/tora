@@ -36,6 +36,7 @@
 
 #include "toanalyze.h"
 #include "tobarchart.h"
+#include "toconf.h"
 #include "toresultview.h"
 #include "toworksheetstatistic.h"
 
@@ -106,7 +107,7 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   ShowPlans->setOn(true);
   connect(ShowPlans,SIGNAL(toggled(bool)),this,SLOT(showPlans(bool)));
 
-  toolbar->setStretchableWidget(new QLabel(toolbar));
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
 
   Dummy=new QWidget(Splitter);
 

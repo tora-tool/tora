@@ -35,6 +35,7 @@
 #include "utils.h"
 
 #include "tochangeconnection.h"
+#include "toconf.h"
 #include "toconnection.h"
 #include "tofilesize.h"
 #include "tomain.h"
@@ -1346,8 +1347,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 		  tr("Display SQL needed to make current changes"),
 		  this,SLOT(displaySQL(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
-  new toChangeConnection(toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
+  new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
   UserList=new toListView(splitter);
