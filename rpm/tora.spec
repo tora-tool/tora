@@ -6,8 +6,8 @@
 
 
 %define _name		tora
-%define _version	1.3.10
-%define _release	1mdk
+%define _version	1.3.10pre
+%define _release	2mdk
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 
@@ -90,12 +90,18 @@ Summary:		Oracle specific plugins for %{_name}
 Group:			Development/Databases
 Requires:		%{_name} = %{_version}
 Autoreq:		0
-Requires:		tora
 
 %description oracle
-Oracle specific plugins for %{_name}.
+Oracle specific plugins for %{_name}. This plugin will require a valid installation
+of an Oracle Client of version 8.1 or later to function that can be downloaded by
+a free registration from Oracle Technet from http://technet.oracle.com. NOTE: You
+will require to download the entire server distribution to install the client, but
+it is available as a choice in the installer.
 
 %changelog
+* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
+- change description of Oracle package to reflect needing an Oracle Client installation.
+
 * Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
 - added the oracle preload and a LD_LIBRARY_PATH setup to make compilation work without Oracle in your ld.so path.
 - also added a workaround of the whole requires problem for the Oracle package.
