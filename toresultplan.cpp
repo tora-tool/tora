@@ -53,6 +53,7 @@ toResultPlan::toResultPlan(toConnection &conn,QWidget *parent,const char *name)
   addColumn("Cost");
   addColumn("Bytes");
   addColumn("Cardinality");
+  setSQLName("toResultPlan");
 }
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",

@@ -171,6 +171,7 @@ toResultCols::toResultCols(toConnection &conn,QWidget *parent,const char *name=N
   addColumn("Data Type");
   addColumn("NULL");
   addColumn("Comments");
+  setSQLName("toResultCols");
 }
 
 static toSQL SQLComment("toResultCols:Comments",

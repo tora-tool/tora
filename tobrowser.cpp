@@ -262,7 +262,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab->addTab(splitter,"Tables");
   toResultView *resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLListTables,Connection));
+  resultView->setSQL(SQLListTables);
   resultView->resize(FIRST_WIDTH,resultView->height());
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   FirstTab=resultView;
@@ -295,13 +295,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLTableGrants,Connection));
+  resultView->setSQL(SQLTableGrants);
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TABLE_TRIGGERS);
   resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLTableTrigger,Connection));
+  resultView->setSQL(SQLTableTrigger);
   curr->addTab(resultView,"Triggers");
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
@@ -310,13 +310,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_TABLE_DATA]=resultView;
 
   toResultItem *resultItem=new toResultItem(2,true,Connection,curr,TAB_TABLE_INFO);
-  resultItem->setSQL(toSQL::sql(SQLTableInfo,Connection));
+  resultItem->setSQL(SQLTableInfo(Connection));
   curr->addTab(resultItem,"Information");
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_TABLE_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL(toSQL::sql(SQLTableComment,Connection));
+  resultItem->setSQL(SQLTableComment(Connection));
   curr->addTab(resultItem,"Comment");
   SecondMap[TAB_TABLE_COMMENT]=resultItem;
 
@@ -325,7 +325,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_VIEWS]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListView,Connection));
+  resultView->setSQL(SQLListView);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -338,7 +338,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_VIEW_COLUMNS]=resultView;
 
   toResultField *resultField=new toResultField(Connection,curr,TAB_VIEW_SQL);
-  resultField->setSQL(toSQL::sql(SQLViewSQL,Connection));
+  resultField->setSQL(SQLViewSQL(Connection));
   curr->addTab(resultField,"SQL");
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   SecondMap[TAB_VIEW_SQL]=resultField;
@@ -349,7 +349,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
-  resultView->setSQL(toSQL::sql(SQLViewGrants,Connection));
+  resultView->setSQL(SQLViewGrants);
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
 
@@ -359,7 +359,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
-  resultItem->setSQL(toSQL::sql(SQLViewComment,Connection));
+  resultItem->setSQL(SQLViewComment(Connection));
   curr->addTab(resultItem,"Comment");
   SecondMap[TAB_VIEW_COMMENT]=resultItem;
 
@@ -368,7 +368,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_INDEX]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListIndex,Connection));
+  resultView->setSQL(SQLListIndex);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -378,13 +378,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultView=new toResultView(true,false,Connection,curr,TAB_INDEX_COLS);
-  resultView->setSQL(toSQL::sql(SQLIndexCols,Connection));
+  resultView->setSQL(SQLIndexCols);
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_INDEX]=resultView;
   SecondMap[TAB_INDEX_COLS]=resultView;
 
   resultItem=new toResultItem(2,true,Connection,curr,TAB_INDEX_INFO);
-  resultItem->setSQL(toSQL::sql(SQLIndexInfo,Connection));
+  resultItem->setSQL(SQLIndexInfo(Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_INDEX_INFO]=resultItem;
 
@@ -393,7 +393,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListSequence,Connection));
+  resultView->setSQL(SQLListSequence);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -402,7 +402,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,Connection,curr,TAB_SEQUENCES_INFO);
-  resultItem->setSQL(toSQL::sql(SQLSequenceInfo,Connection));
+  resultItem->setSQL(SQLSequenceInfo(Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
@@ -412,7 +412,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_SYNONYM]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListSynonym,Connection));
+  resultView->setSQL(SQLListSynonym);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -421,7 +421,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
   splitter->setResizeMode(curr,QSplitter::Stretch);
   resultItem=new toResultItem(2,true,Connection,curr,TAB_SYNONYM_INFO);
-  resultItem->setSQL(toSQL::sql(SQLSynonymInfo,Connection));
+  resultItem->setSQL(SQLSynonymInfo(Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
@@ -431,7 +431,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_PLSQL]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListSQL,Connection));
+  resultView->setSQL(SQLListSQL);
   resultView->resize(FIRST_WIDTH*2,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -441,13 +441,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_SOURCE);
-  resultField->setSQL(toSQL::sql(SQLSQLHead,Connection));
+  resultField->setSQL(SQLSQLHead(Connection));
   curr->addTab(resultField,"Declaration");
   SecondMap[TAB_PLSQL]=resultField;
   SecondMap[TAB_PLSQL_SOURCE]=resultField;
 
   resultField=new toResultField(Connection,curr,TAB_PLSQL_BODY);
-  resultField->setSQL(toSQL::sql(SQLSQLBody,Connection));
+  resultField->setSQL(SQLSQLBody(Connection));
   curr->addTab(resultField,"Body");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
@@ -460,7 +460,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView=new toResultView(true,false,Connection,splitter);
   resultView->setReadAll(true);
   Map[TAB_TRIGGER]=resultView;
-  resultView->setSQL(toSQL::sql(SQLListTrigger,Connection));
+  resultView->setSQL(SQLListTrigger);
   resultView->resize(FIRST_WIDTH,resultView->height());
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
@@ -470,18 +470,18 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
   resultItem=new toResultItem(2,true,Connection,curr,TAB_TRIGGER_INFO);
-  resultItem->setSQL(toSQL::sql(SQLTriggerInfo,Connection));
+  resultItem->setSQL(SQLTriggerInfo(Connection));
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_TRIGGER]=resultItem;
   SecondMap[TAB_TRIGGER_INFO]=resultItem;
 
   resultField=new toResultField(Connection,curr,TAB_TRIGGER_SOURCE);
-  resultField->setSQL(toSQL::sql(SQLTriggerBody,Connection));
+  resultField->setSQL(SQLTriggerBody(Connection));
   curr->addTab(resultField,"Code");
   SecondMap[TAB_TRIGGER_SOURCE]=resultField;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TRIGGER_COLS);
-  resultView->setSQL(toSQL::sql(SQLTriggerCols,Connection));
+  resultView->setSQL(SQLTriggerCols);
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 

@@ -38,6 +38,7 @@ toResultStats::toResultStats(bool onlyChanged,int ses,toConnection &conn,QWidget
   : toResultView(false,false,conn,parent,name),OnlyChanged(onlyChanged)
 {
   SessionID=ses;
+  setSQLName("toResultStats");
   setup();
 }
 

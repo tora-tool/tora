@@ -42,6 +42,7 @@ toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const 
   addColumn("Enabled");
   addColumn("Delete Rule");
   addColumn("Generated");
+  setSQLName("toResultConstraint");
 }
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",

@@ -391,7 +391,7 @@ public:
   toRollbackView(toConnection &conn,QWidget *parent)
     : toResultView(false,false,conn,parent)
   {
-    setSQL(SQLRollback(conn));
+    setSQL(SQLRollback);
   }
   virtual void query(const QString &sql,const list<QString> &param)
   {

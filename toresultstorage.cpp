@@ -81,6 +81,7 @@ toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *
   addColumn("Available");
   addColumn("Coalesced");
   addColumn("Free fragments");
+  setSQLName("toResultStorage");
 
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);

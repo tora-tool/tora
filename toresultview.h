@@ -38,6 +38,7 @@ class QListViewItem;
 class toResultView;
 class toResultTip;
 class QPrinter;
+class toSQL;
 
 class toResultViewItem : public QListViewItem {
 public:
@@ -85,6 +86,7 @@ protected:
   int DescriptionLen;
   otl_column_desc *Description;
   QListViewItem *LastItem;
+  QString Name;
 
   toResultTip *AllResult;
 
@@ -105,22 +107,30 @@ protected:
 public:
   toResultView(bool readable,bool numCol,toConnection &conn,QWidget *parent,const char *name=NULL);
   toResultView(toConnection &conn,QWidget *parent,const char *name=NULL);
-  ~toResultView()
-  { delete Query; }
+  ~toResultView();
 
   void setReadAll(bool all)
   { ReadAll=all;}
 
   void readAll(void);
 
+  QString sqlName(void)
+  { return Name; }
+  void setSQLName(const QString &name)
+  { Name=name; }
+
   virtual QListViewItem *createItem(QListView *parent,QListViewItem *last,const char *str)
   { return new toResultViewItem(parent,last,str); }
 
   void setSQL(const QString &sql)
-    { SQL=sql; }
+  { SQL=sql; }
+  void setSQL(toSQL &sql);
+
   virtual void query(const QString &sql,const list<QString> &param);
   void query(const QString &sql)
   { list<QString> p; query(sql,p); }
+  void query(toSQL &sql);
+
   virtual void print(void);
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 

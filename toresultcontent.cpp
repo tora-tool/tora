@@ -32,6 +32,7 @@ TO_NAMESPACE;
 toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL)
   : toResultView(conn,parent,name)
 {
+  setSQLName("toResultContent");
 }
 
 void toResultContent::changeParams(const QString &Param1,const QString &Param2)

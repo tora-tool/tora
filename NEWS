@@ -9,8 +9,10 @@
 2001-03-02: Fixed a really pesky bug in toReadValue.
 2001-03-02: Created hierachichal depend widget.
 2001-03-02: Fixed bug when readiing config and sql.
-2001-03-03: Added printing.
+2001-03-03: Added printing support of result views and marked text.
 2001-03-03: Fixed file path bug when opening/saving (again).
+2001-03-03: Made readAll a little bit more responsive in result view.
+2001-03-04: Added name to toResultView, mainly for printing.
 
 0.6: Released 2001-02-23
 

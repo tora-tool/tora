@@ -43,6 +43,7 @@ toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const 
   addColumn("Condition");
   addColumn("Enabled");
   addColumn("Delete Rule");
+  setSQLName("toResultReferences");
 }
 
 static toSQL SQLConsColumns("toResultReferences:ForeignColumns",

@@ -202,6 +202,7 @@ toMain::toMain()
 			     "Print",
 			     "Print",
 			     this,SLOT(printButton()),toolbar);
+  PrintButton->setEnabled(false);
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
   toolbar->addSeparator();

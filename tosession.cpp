@@ -146,13 +146,13 @@ toSession::toSession(QWidget *main,toConnection &connection)
   SessionStatistics=new toResultStats(false,0,Connection,ResultTab);
   ResultTab->addTab(SessionStatistics,"Statistics");
   ConnectInfo=new toResultView(true,false,Connection,ResultTab);
-  ConnectInfo->setSQL(SQLConnectInfo(Connection));
+  ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
   PendingLocks=new toResultLock(Connection,ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
   LockedObjects=new toResultView(false,false,Connection,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
-  LockedObjects->setSQL(SQLLockedObject(Connection));
+  LockedObjects->setSQL(SQLLockedObject);
   CurrentStatement=new toSGAStatement(ResultTab,Connection);
   ResultTab->addTab(CurrentStatement,"Current Statement");
   PreviousStatement=new toSGAStatement(ResultTab,Connection);
@@ -161,7 +161,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
   OpenCursors=new toResultView(false,true,Connection,OpenSplitter);
-  OpenCursors->setSQL(SQLOpenCursors(Connection));
+  OpenCursors->setSQL(SQLOpenCursors);
   OpenStatement=new toSGAStatement(OpenSplitter,Connection);
 
   connect(Sessions,SIGNAL(selectionChanged(QListViewItem *)),

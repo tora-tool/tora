@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "toresultview.moc"
 #include "tomain.h"
+#include "tosql.h"
 #include "toconf.h"
 #include "totool.h"
 
@@ -292,8 +293,10 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     }
 
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
-    for (int i=0;(i<MaxNumber||ReadAll)&&!Query->eof();i++)
+    for (int i=0;i<MaxNumber&&!Query->eof();i++)
       addItem();
+    if (ReadAll)
+      readAll();
 
     char buffer[100];
     if (Query->get_rpc()>0)
@@ -311,8 +314,21 @@ void toResultView::query(const QString &sql,const list<QString> &param)
 
 void toResultView::readAll(void)
 {
-  while(!eof())
+  toStatusMessage("Reading all entries");
+  int i=0;
+  while(!eof()) {
     addItem();
+    i++;
+    if (i%100==0)
+      qApp->processEvents();
+  }
+}
+
+toResultView::~toResultView()
+{
+  delete Query;
+  if (qApp->focusWidget()==this)
+    toMain::editDisable();
 }
 
 QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
@@ -335,7 +351,18 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),header()->height(),SingleLine|AlignRight|AlignVCenter,numPage);
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignRight|AlignVCenter,
+		      numPage);
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignHCenter|AlignVCenter,
+		      Connection.connectString());
+    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
+		      header()->height(),
+		      SingleLine|AlignLeft|AlignVCenter,
+		      sqlName());
     painter->drawLine(0,header()->height()-1,metrics.width(),header()->height()-1);
     painter->translate(0,header()->height());
   }
@@ -344,7 +371,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;
   QListViewItem *item=top;
-  while(item&&y+item->height()<metrics.height()) {
+  while(item&&(y+item->height()<metrics.height()||item==top)) {
     if (column==0)
       x=curLevel;
     else
@@ -454,3 +481,13 @@ void toResultView::focusOutEvent (QFocusEvent *e)
   QListView::focusOutEvent(e);
 }
 
+void toResultView::setSQL(toSQL &sql)
+{
+  SQL=sql(Connection);
+  Name=sql.name();
+}
+void toResultView::query(toSQL &sql)
+{
+  Name=sql.name();
+  query(sql(Connection));
+}

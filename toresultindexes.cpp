@@ -41,6 +41,7 @@ toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *
   addColumn("Columns");
   addColumn("Type");
   addColumn("Unique");
+  setSQLName("toResultIndexes");
 }
 
 static toSQL SQLColumns("toResultIndexes:Columns",

@@ -89,6 +89,9 @@ public:
   const QString &operator () (const toConnection &conn)
   { return sql(Name,conn); }
 
+  const QString &name(void)
+  { return Name; }
+
   toSQL(const QString &name,
 	const QString &sql,
 	const QString &description=QString::null,

@@ -56,6 +56,7 @@ toResultLock::toResultLock(toConnection &conn,QWidget *parent,const char *name)
   addColumn("Object");
   addColumn("Grabbed");
   addColumn("Requested");
+  setSQLName("toResultLock");
 }
 
 static toSQL SQLLock("toResultLock:Locks",
