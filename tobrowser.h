@@ -44,11 +44,12 @@ class QComboBox;
 class QListViewItem;
 class QPopupMenu;
 class QTabWidget;
+class QToolBar;
+class toBrowserFilter;
 class toResult;
 class toResultContent;
 class toResultFilter;
 class toResultView;
-class toBrowserFilter;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
@@ -103,17 +104,22 @@ public slots:
 class toBrowseTemplate : public QObject,public toTemplateProvider {
   Q_OBJECT
 
+  toBrowserFilter *Filter;
   std::list<toTemplateItem *> Parents;
   bool Registered;
 public:
   toBrowseTemplate(void)
     : toTemplateProvider()
-  { Registered=false; }
-  void insertItems(QListView *parent);
+  { Registered=false; Filter=NULL; }
+  void insertItems(QListView *parent,QToolBar *toolbar);
   void removeItem(QListViewItem *item);
+  toBrowserFilter *filter(void)
+  { return Filter; }
 public slots:
   void addDatabase(const QString &);
   void removeDatabase(const QString &); 
+  void defineFilter(void);
+  void clearFilter(void);
 };
 
 #endif

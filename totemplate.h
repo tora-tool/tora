@@ -48,6 +48,7 @@ class QListView;
 class QListViewItem;
 class QSplitter;
 class QTextView;
+class QToolBar;
 class toConnection;
 class toListView;
 class toTemplateItem;
@@ -61,7 +62,7 @@ class toNoBlockQuery;
 class toTemplate : public QVBox, public toHelpContext {
   Q_OBJECT
 
-  QSplitter *Splitter;
+  QToolBar *Toolbar;
   toListView *List;
   QWidget *WidgetExtra;
   QWidget *Result;
@@ -104,8 +105,9 @@ public:
 
   /** Insert a parent item for this template provider into a list view.
    * @param parent The list into which to insert the item.
+   * @param toolbar The template toolbar if any buttons are to be added on it.
    */
-  virtual void insertItems(QListView *parent)=0;
+  virtual void insertItems(QListView *parent,QToolBar *toolbar)=0;
 
   friend class toTemplate;
 };

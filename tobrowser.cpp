@@ -130,12 +130,14 @@ class toBrowserFilter : public toResultFilter {
   int TablespaceType;
   std::list<QString> Tablespaces;
   QRegExp Match;
+  bool OnlyOwnSchema;
 public:
   toBrowserFilter(int type,bool cas,bool invert,
 		  const QString &str,int tablespace,
-		  const std::list<QString> &tablespaces)
+		  const std::list<QString> &tablespaces,
+		  bool onlyOwnSchema=false)
     : Type(type),IgnoreCase(cas),Invert(invert),Text(cas?str.upper():str),
-      TablespaceType(tablespace),Tablespaces(tablespaces)
+      TablespaceType(tablespace),Tablespaces(tablespaces),OnlyOwnSchema(onlyOwnSchema)
   {
     if (!str.isEmpty()) {
       Match.setPattern(str);
@@ -158,10 +160,13 @@ public:
     int id=1;
     for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++,id++)
       data[prefix+":Space:"+QString::number(id)]=*i;
+    if (OnlyOwnSchema)
+      data[prefix+":OwnlyOwnSchema"]="Yes";
   }
   virtual void importData(std::map<QString,QString> &data,const QString &prefix)
   {
     Type=data[prefix+":Type"].toInt();
+    OnlyOwnSchema=!data[prefix+":OnlyOwnSchema"].isEmpty();
     TablespaceType=data[prefix+":SpaceType"].toInt();
     IgnoreCase=!data[prefix+":Ignore"].isEmpty();
     Invert=!data[prefix+":Invert"].isEmpty();
@@ -179,6 +184,8 @@ public:
       id++;
     }
   }
+  bool onlyOwnSchema(void)
+  { return OnlyOwnSchema; }
   virtual QString wildCard(void)
   {
     switch(Type) {
@@ -266,35 +273,44 @@ public:
 
 class toBrowserFilterSetup : public toBrowserFilterUI {
 public:
-  void setup(void)
+  void setup(bool temp)
   {
     toHelp::connectDialog(this);
-    Tablespaces->setNumberColumn(false);
-    Tablespaces->setReadableColumns(true);
-    Tablespaces->query(SQLListTablespaces);
-    Tablespaces->setSelectionMode(QListView::Multi);
+    if (!temp) {
+      OnlyOwnSchema->hide();
+      Tablespaces->setNumberColumn(false);
+      Tablespaces->setReadableColumns(true);
+      Tablespaces->query(SQLListTablespaces);
+      Tablespaces->setSelectionMode(QListView::Multi);
+    } else {
+      TablespaceType->hide();
+      Tablespaces->query(SQLListTablespaces);
+    }
   }
-  toBrowserFilterSetup(QWidget *parent)
+  toBrowserFilterSetup(bool temp,QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
-    setup();
+    setup(temp);
   }
-  toBrowserFilterSetup(toBrowserFilter &cur,QWidget *parent)
+  toBrowserFilterSetup(bool temp,toBrowserFilter &cur,QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
-    setup();
-    TablespaceType->setButton(cur.TablespaceType);
-    Buttons->setButton(cur.Type);
-    for(std::list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
-      for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
-	if (item->text(0)==*i) {
-	  item->setSelected(true);
-	  break;
-	}
+    setup(temp);
+    if (!TablespaceType->isHidden()) {
+      TablespaceType->setButton(cur.TablespaceType);
+      Buttons->setButton(cur.Type);
+      for(std::list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
+	for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
+	  if (item->text(0)==*i) {
+	    item->setSelected(true);
+	    break;
+	  }
+      }
     }
     String->setText(cur.Text);
     Invert->setChecked(cur.Invert);
     IgnoreCase->setChecked(cur.IgnoreCase);
+    OnlyOwnSchema->setChecked(cur.OnlyOwnSchema);
   }
   toBrowserFilter *getSetting(void)
   {
@@ -1230,11 +1246,11 @@ void toBrowser::clearFilter(void)
 void toBrowser::defineFilter(void)
 {
   if (Filter) {
-    toBrowserFilterSetup filt(*Filter,this);
+    toBrowserFilterSetup filt(false,*Filter,this);
     if (filt.exec())
       setNewFilter(filt.getSetting());
   } else {
-    toBrowserFilterSetup filt(this);
+    toBrowserFilterSetup filt(false,this);
     if (filt.exec())
       setNewFilter(filt.getSetting());
   }
@@ -1332,6 +1348,8 @@ void toBrowser::fixIndexCols(void)
     }
 }
 
+static toBrowseTemplate BrowseTemplate;
+
 void toBrowseTemplate::removeDatabase(const QString &name)
 {
   for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++) {
@@ -1341,6 +1359,27 @@ void toBrowseTemplate::removeDatabase(const QString &name)
 	break;
       }
   }
+}
+
+void toBrowseTemplate::defineFilter(void)
+{
+  if (Filter) {
+    toBrowserFilterSetup filt(true,*Filter,toMainWidget());
+    if (filt.exec()) {
+      delete Filter;
+      Filter=filt.getSetting();
+    }
+  } else {
+    toBrowserFilterSetup filt(true,toMainWidget());
+    if (filt.exec())
+      Filter=filt.getSetting();
+  }
+}
+
+void toBrowseTemplate::clearFilter(void)
+{
+  delete Filter;
+  Filter=NULL;
 }
 
 void toBrowseTemplate::removeItem(QListViewItem *item)
@@ -1578,13 +1617,23 @@ public:
   { }
   virtual toTemplateItem *createChild(const QString &name)
   {
-    return new toTemplateSchemaItem(connection(),this,name);
+    toBrowserFilter *filter=BrowseTemplate.filter();
+    toTemplateItem *item=new toTemplateSchemaItem(connection(),this,name);
+    if (filter&&!filter->check(item)) {
+      delete item;
+      return NULL;
+    }
+    return item;
   }
   virtual toQList parameters(void)
   {
     toQList ret;
     ret.insert(ret.end(),parent()->text(0));
-    ret.insert(ret.end(),toQValue("%"));
+    toBrowserFilter *filter=BrowseTemplate.filter();
+    if (filter)
+      ret.insert(ret.end(),filter->wildCard());
+    else
+      ret.insert(ret.end(),toQValue("%"));
     return ret;
   }
 };
@@ -1613,6 +1662,13 @@ public:
     QPixmap function((const char **)function_xpm);
     QPixmap index((const char **)index_xpm);
     QPixmap synonym((const char **)synonym_xpm);
+
+    toBrowserFilter *filter=BrowseTemplate.filter();
+    if (filter&&filter->onlyOwnSchema()&&
+	name.upper()!=connection().user().upper()) {
+      delete item;
+      return NULL;
+    }
 
     (new toTemplateSchemaList(connection(),
 			      item,
@@ -1659,7 +1715,7 @@ public:
   }
 };
 
-void toBrowseTemplate::insertItems(QListView *parent)
+void toBrowseTemplate::insertItems(QListView *parent,QToolBar *toolbar)
 {
   if (!Registered) {
     connect(toMainWidget(),SIGNAL(addedConnection(const QString &)),
@@ -1674,6 +1730,17 @@ void toBrowseTemplate::insertItems(QListView *parent)
     new toTemplateDBItem(conn,dbitem,*i);
   }
   Parents.insert(Parents.end(),dbitem);
+
+  new QToolButton(QPixmap((const char **)filter_xpm),
+		  "Define the object filter",
+		  "Define the object filter",
+		  this,SLOT(defineFilter(void)),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)nofilter_xpm),
+		  "Remove any object filter",
+		  "Remove any object filter",
+		  this,SLOT(clearFilter(void)),
+		  toolbar);
 }
 
 void toBrowseTemplate::addDatabase(const QString &name)
@@ -1682,4 +1749,3 @@ void toBrowseTemplate::addDatabase(const QString &name)
     new toTemplateDBItem(toMainWidget()->connection(name),*i,name);
 }
 
-static toBrowseTemplate BrowseTemplate;

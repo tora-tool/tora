@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>488</width>
+            <width>480</width>
             <height>378</height>
         </rect>
     </property>
@@ -28,7 +28,7 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <spacer row="2"  column="0" >
+        <spacer row="4"  column="0" >
             <property>
                 <name>name</name>
                 <cstring>Spacer1</cstring>
@@ -49,7 +49,7 @@
                 </size>
             </property>
         </spacer>
-        <widget row="2"  column="1" >
+        <widget row="4"  column="1" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -71,7 +71,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget row="2"  column="2" >
+        <widget row="4"  column="2" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -89,7 +89,7 @@
                 <string>Cancel</string>
             </property>
         </widget>
-        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+        <widget row="1"  column="0"  rowspan="1"  colspan="3" >
             <class>QButtonGroup</class>
             <property stdset="1">
                 <name>name</name>
@@ -284,7 +284,39 @@
                 </widget>
             </grid>
         </widget>
-        <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>OnlyOwnSchema</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Only display own schema</string>
+            </property>
+        </widget>
+        <spacer row="3"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="2"  column="0"  rowspan="1"  colspan="3" >
             <class>QButtonGroup</class>
             <property stdset="1">
                 <name>name</name>

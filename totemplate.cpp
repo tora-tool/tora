@@ -49,12 +49,14 @@
 
 #include <qfiledialog.h>
 #include <qfileinfo.h>
+#include <qlabel.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qsplitter.h>
 #include <qtextview.h>
 #include <qtimer.h>
+#include <qtoolbar.h>
 
 #include "totemplate.moc"
 #include "totemplateaddfileui.moc"
@@ -442,6 +444,8 @@ public:
 toTemplate::toTemplate(QWidget *parent)
   : QVBox(parent),toHelpContext("template.html")
 {
+  Toolbar=toAllocBar(this,"Template Toolbar",QString::null);
+
   List=new toListView(this);
   List->addColumn("Template");
   List->setRootIsDecorated(true);
@@ -462,7 +466,9 @@ toTemplate::toTemplate(QWidget *parent)
     for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
 	 i!=toTemplateProvider::Providers->end();
 	 i++)
-      (*i)->insertItems(List);
+      (*i)->insertItems(List,Toolbar);
+
+  Toolbar->setStretchableWidget(new QLabel("",Toolbar));
 
   WidgetExtra=NULL;
   setWidget(NULL);
@@ -543,10 +549,10 @@ public:
   toTextTemplate()
   { }
   void addFile(QListView *parent,const QString &root,const QString &file);
-  virtual void insertItems(QListView *parent);
+  virtual void insertItems(QListView *parent,QToolBar *toolbar);
 };
 
-void toTextTemplate::insertItems(QListView *parent)
+void toTextTemplate::insertItems(QListView *parent,QToolBar *)
 {
   int tot=TemplateTool.config("Number",QString::number(-1)).toInt();
   std::map<QString,QString> def=DefaultText();

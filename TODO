@@ -2,7 +2,6 @@ Extended functionality:
 
 * SQL Browser
 	Add information about partitions.
-	Implement filter in templatebased browser.
 	Modify tables
 		Caching/Nocaching
 			ALTER TABLE ... CACHE/NOCACHE
