@@ -37,6 +37,7 @@
 
 #include "toeditwidget.h"
 #include "toresult.h"
+#include "toresultlistformatui.h"
 
 #include <qlistview.h>
 
@@ -335,7 +336,7 @@ class toListView : public QListView,public toEditWidget {
    */
   virtual QListViewItem *printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,
 				   int &column,int &level,int pageNo,bool paint=true);
-  int exportType(void);
+  int exportType(QString &separator,QString &delimiter);
 public:
   /** Create new list view.
    * @param parent Parent of list.
@@ -375,8 +376,11 @@ public:
    * @param includeHeader Include header.
    * @param onlySelection Only include selection.
    * @param type Format of exported list.
+   * @param separator Separator for CSV format.
+   * @param delimiter Delimiter for CSV format.
    */
-  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1);
+  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,
+			       const QString &separator=";",const QString &delimiter="\"");
   /** Export list as file.
    */
   virtual bool editSave(bool ask);
@@ -633,6 +637,15 @@ protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void menuCallback(int);
+};
+
+class toResultListFormat : public toResultListFormatUI {
+  Q_OBJECT
+public:
+  toResultListFormat(QWidget *parent,const char *name);
+  void saveDefault(void);
+public slots:
+  virtual void formatChanged(int pos);
 };
 
 #endif

@@ -57,6 +57,7 @@
 #include <qdragobject.h>
 #include <qfiledialog.h>
 #include <qheader.h>
+#include <qlineedit.h>
 #include <qmessagebox.h>
 #include <qpaintdevicemetrics.h>
 #include <qpainter.h>
@@ -598,14 +599,16 @@ void toListView::menuCallback(int cmd)
     break;
   case TORESULT_COPY_SEL:
     try {
+      QString str=exportAsText(false,true);
       QClipboard *clip=qApp->clipboard();
-      clip->setText(exportAsText(false,true));
+      clip->setText(str);
     } TOCATCH
     break;
   case TORESULT_COPY_SEL_HEAD:
     try {
+      QString str=exportAsText(true,true);
       QClipboard *clip=qApp->clipboard();
-      clip->setText(exportAsText(true,true));
+      clip->setText(str);
     } TOCATCH
     break;
   case TORESULT_SELECT_ALL:
@@ -749,7 +752,9 @@ toListView *toListView::copyTransposed(void)
 bool toListView::editSave(bool ask)
 {
   try {
-    int type=exportType();
+    QString delimiter;
+    QString separator;
+    int type=exportType(separator,delimiter);
 
     QString nam;
     switch(type) {
@@ -770,31 +775,33 @@ bool toListView::editSave(bool ask)
     if (filename.isEmpty())
       return false;
   
-    return toWriteFile(filename,exportAsText(true,false,type));
+    return toWriteFile(filename,exportAsText(true,false,type,separator,delimiter));
   } TOCATCH
   return false;
 }
 
-int toListView::exportType(void)
+int toListView::exportType(QString &separator,QString &delimiter)
 {
-  toResultListFormatUI format(this,NULL,true);
-  format.Format->insertItem("Text");
-  format.Format->insertItem("Tab delimited");
-  format.Format->insertItem("CSV");
-  format.Format->insertItem("HTML");
-  format.Format->setCurrentItem(toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt());
-
+  toResultListFormat format(this,NULL);
   if (!format.exec())
     return -1;
+
+  format.saveDefault();
+
+  separator=format.Separator->text();
+  delimiter=format.Delimiter->text();
 
   return format.Format->currentItem();
 
 }
 
-QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
+QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
+				 const QString &sep,const QString &del)
 {
+  QString separator=sep;
+  QString delimiter=del;
   if (type<0)
-    type=exportType();
+    type=exportType(separator,delimiter);
   if (type<0)
     throw QString("");
 
@@ -874,7 +881,11 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	  output+=QString("%1\t").arg(header()->label(j));
 	  break;
 	case 2:
-	  output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
+	  output+=QString("%1%2%3%4").
+	    arg(delimiter).
+	    arg(QuoteString(header()->label(j))).
+	    arg(delimiter).
+	    arg(separator);
 	  break;
 	case 3:
 	  output+="<TH ALIGN=LEFT BGCOLOR=#cfcfcf>";
@@ -882,9 +893,11 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	  output+="</TH>";
 	  break;
 	}
-      if (output.length()>0&&type!=3)
+      if (output.length()>0&&type==2)
+	output=output.left(output.length()-separator.length());
+      else if (output.length()>0&&type!=3)
 	output=output.left(output.length()-1);
-      if (type==3&&includeHeader)
+      else if (type==3&&includeHeader)
 	output+="</TR>";
       output+="\n";
       if (type==0) {
@@ -935,7 +948,12 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	    break;
 	  case 2:
 	    line+=indent;
-	    line+=QString("\"%1\";").arg(QuoteString(text));
+	    line+=QString("%1%2%3%4").
+	      arg(delimiter).
+	      arg(QuoteString(text)).
+	      arg(delimiter).
+	      arg(separator);
+
 	    break;
 	  case 3:
 	    line+=QString("<TD%1>").arg(bgcolor);
@@ -948,7 +966,9 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	}
 	if (type==3)
 	  line+="</TR>";
-	else
+	else if (type==2)
+	  line=line.left(line.length()-separator.length());
+	else 
 	  line=line.left(line.length()-1);
 	line+="\n";
 	output+=line;
@@ -1264,3 +1284,30 @@ int toResultView::queryColumns(void) const
   return Query?Query->columns():0;
 }
 
+toResultListFormat::toResultListFormat(QWidget *parent,const char *name)
+  : toResultListFormatUI(parent,name,true)
+{
+  Format->insertItem("Text");
+  Format->insertItem("Tab delimited");
+  Format->insertItem("CSV");
+  Format->insertItem("HTML");
+  int num=toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt();
+  Format->setCurrentItem(num);
+  formatChanged(num);
+
+  Delimiter->setText(toTool::globalConfig(CONF_CSV_DELIMITER,DEFAULT_CSV_DELIMITER));
+  Separator->setText(toTool::globalConfig(CONF_CSV_SEPARATOR,DEFAULT_CSV_SEPARATOR));
+}
+
+void toResultListFormat::formatChanged(int pos)
+{
+  Separator->setEnabled(pos==2);
+  Delimiter->setEnabled(pos==2);
+}
+
+void toResultListFormat::saveDefault(void)
+{
+  toTool::globalSetConfig(CONF_CSV_DELIMITER,Delimiter->text());
+  toTool::globalSetConfig(CONF_CSV_SEPARATOR,Separator->text());
+  toTool::globalSetConfig(CONF_DEFAULT_FORMAT,QString::number(Format->currentItem()));
+}

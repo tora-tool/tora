@@ -89,6 +89,18 @@ static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 " WHERE UserName = :f1<char[100]>",
 			 "Get information about a user, must have same columns and same binds.");
 
+static toSQL SQLUserInfo7("toSecurity:UserInfo",
+			  "SELECT 'OPEN',\n"
+			  "       Password,\n"
+			  "       NULL,\n"
+			  "       Profile,\n"
+			  "       Default_Tablespace,\n"
+			  "       Temporary_Tablespace\n"
+			  "  FROM sys.DBA_Users\n"
+			  " WHERE UserName = :f1<char[100]>",
+			  QString::null,
+			  "7.3");
+
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
 			 "SELECT Role,Password_required FROM sys.DBA_Roles WHERE Role = :f1<char[101]>",
 			 "Get information about a role, must have same columns and same binds.");

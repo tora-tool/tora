@@ -260,11 +260,13 @@ static toSQL SQLSignal("toAlert:Signal",
 void toAlert::pollTask::run(void)
 {
   Parent.Lock.lock();
-  while(Parent.State!=Quit) {
+  bool fatal=false;
+  while(Parent.State!=Quit&&!fatal) {
     Parent.Lock.unlock();
     try {
       {
 	toLocker lock(Parent.Lock);
+	fatal=true;
 	{
 	  for(std::list<QString>::iterator i=Parent.AddNames.begin();
 	      i!=Parent.AddNames.end();
@@ -284,6 +286,7 @@ void toAlert::pollTask::run(void)
 	  }
 	}
 	Parent.DelNames.clear();
+	fatal=false;
       }
 
       {

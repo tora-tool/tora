@@ -82,6 +82,7 @@ Extended functionality:
 * Easier to grant all priviledges to a user.
 * Save column order of open tools when saving/restoring session.
 * Remember settings in print dialog.
+* Make it posible to configure CSV separator/delimiter in chartmanager.
 
 New tools:
 
