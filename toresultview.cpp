@@ -344,7 +344,11 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
     else if (item)
       str=item->text(i);
 
-    toParamGet::setDefault(head->label(i).lower(),toUnnull(str));
+    try {
+      toParamGet::setDefault(toCurrentConnection(this),
+			     head->label(i).lower(),toUnnull(str));
+    } catch(...) {
+    }
   }
 }
 

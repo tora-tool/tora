@@ -363,34 +363,25 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   GotoEnd=false;
 
   try {
-    bool where=false;
     SQL="SELECT * FROM ";
     SQL+=table();
     if (!Criteria[FilterName].isEmpty()) {
       SQL+=" WHERE (";
       SQL+=Criteria[FilterName];
-      where=true;
     }
-    QString init=SQL;
 
     SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
     
-    if (SkipNumber>0) {
-      if (where) {
-	SQL+=")";
-	init+=") AND ";
-      } else
-	init+=" WHERE ";
-      init+="ROWNUM <= ";
-      init+=QString::number(SkipNumber);
-    }
-
     if (!Order[FilterName].isEmpty()) {
       SQL+=" ORDER BY ";
-      init+=" ORDER BY ";
       SQL+=Order[FilterName];
-      init+=Order[FilterName];
     }
+
+    QString init;
+    if (SkipNumber>0)
+      init="SELECT * FROM ("+SQL+") WHERE ROWNUM <= "+QString::number(SkipNumber);
+    else
+      init=SQL;
 
     toQList par;
 

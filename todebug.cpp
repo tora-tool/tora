@@ -778,9 +778,9 @@ void toDebug::execute(void)
 	    if (token[0]=='\''&&token.length()>=2)
 	      token=token.mid(1,token.length()-2);
 	    if (token.upper()=="NULL")
-	      toParamGet::setDefault((*cp).Name,QString::null);
+	      toParamGet::setDefault(connection(),(*cp).Name,QString::null);
 	    else
-	      toParamGet::setDefault((*cp).Name,token);
+	      toParamGet::setDefault(connection(),(*cp).Name,token);
 	  }
 	  break;
 	case done:
@@ -846,7 +846,7 @@ void toDebug::execute(void)
 	// Can't hold lock since refresh of output will try to lock
 	toQList input;
 	try {
-	  input=toParamGet::getParam(this,sql);
+	  input=toParamGet::getParam(connection(),this,sql);
 	} catch(...) {
 	  return;
 	}

@@ -1,5 +1,10 @@
 1.3.4:
 
+2002-02-22: Added assign as an ignored word in the worksheet.
+2002-02-22: Made parameters for paramget be connection specific.
+2002-02-22: Fixed problem with SET keyword in worksheet.
+2002-02-22: Fixed bug with initial fetch in content editor.
+2002-02-22: Added small tool to change password.
 2002-02-17: Applied Debian packaging patch (Thanx Michael Meskes).
 2002-02-17; Fixed problem with compile under gcc-3.0.
 2002-02-15: Improved postgresql support for index and sequence (Thanx Volker Götz).

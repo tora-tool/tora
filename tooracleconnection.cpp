@@ -239,6 +239,8 @@ public:
 	      len=toMaxLong;
 	    if (dsc->ftype==otl_var_clob)
 	      len*=5;
+	    else
+	      len*=2;
 	    buffer=new char[len+1];
 	    buffer[0]=0;
 	    otl_long_string data(buffer,len);

@@ -54,8 +54,8 @@
 
 #include "toparamget.moc"
 
-std::map<QString,QString> toParamGet::DefaultCache;
-std::map<QString,QString> toParamGet::Cache;
+std::map<QString,std::map<QString,QString> > toParamGet::DefaultCache;
+std::map<QString,std::map<QString,QString> > toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
   : QDialog(parent,name,true),toHelpContext("common.html#param")
@@ -96,11 +96,14 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
 }
 
-toQList toParamGet::getParam(QWidget *parent,QString &str)
+toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 {
   std::map<QString,bool> parameters;
   std::list<QString> names;
   toParamGet *widget=NULL;
+
+  std::map<QString,QString> &cache=Cache[conn.description()];
+  std::map<QString,QString> &defaultCache=DefaultCache[conn.description()];
 
   enum {
     afterName,
@@ -221,11 +224,11 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	  if (!widget)
 	    widget=new toParamGet(parent);
 	  new QLabel(fname,widget->Container);
-	  std::map<QString,QString>::iterator fnd=Cache.find(fname);
+	  std::map<QString,QString>::iterator fnd=cache.find(fname);
 	  bool found=true;
-	  if (fnd==Cache.end()) {
-	    fnd=DefaultCache.find(fname);
-	    if (fnd==DefaultCache.end())
+	  if (fnd==cache.end()) {
+	    fnd=defaultCache.find(fname);
+	    if (fnd==defaultCache.end())
 	      found=false;
 	  }
 	  QLineEdit *edit=new QLineEdit(widget->Container,QString::number(num));
@@ -267,7 +270,7 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	    val=QString::null;
 	}
 	if (cn!=names.end()) {
-	  Cache[*cn]=val;
+	  cache[*cn]=val;
 	  cn++;
 	}
 	ret.insert(ret.end(),val);
@@ -283,9 +286,9 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
   return ret;
 }
 
-void toParamGet::setDefault(const QString &name,const QString &val)
+void toParamGet::setDefault(toConnection &conn,const QString &name,const QString &val)
 {
-  DefaultCache[name]=val;
+  (DefaultCache[conn.description()])[name]=val;
 }
 
 void toParamGet::showMemo(int row)

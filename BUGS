@@ -36,3 +36,6 @@ toSGATrace:
 
 toDebug:
 	Creating a procedure should also add it to the object cache.
+
+toScript:
+	Seems to not update enable/disable status when changing to report mode.

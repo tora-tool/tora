@@ -125,6 +125,8 @@ my %plugins=(
 					"Oracle" => 1 },
 	     "toqsqlconnection"    => { "Files" => [ "toqsqlconnection" ],
 					"Qt3" => 1 },
+	     "topassword"          => { "Files" => [ "topassword" ],
+					"Oracle" => 1 },
 	     "toprofiler"          => { "Files" => [ "toprofiler" ],
 					"Oracle" => 1 },
 	     "toresult"            => { "Files" => [ "toresultcols",

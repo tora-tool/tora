@@ -142,6 +142,7 @@ static struct {
 	       { 0,"spool",	false,false,false,true ,false,false,false,false},
 	       { 0,"prompt",	false,false,false,true ,false,false,false,false},
 	       { 0,"set",	false,false,false,false,false,false,false,true },
+	       { 0,"assign",	false,false,false,true ,false,false,false,false},
 	       { 0,NULL,	false,false,false,false,false,false,false,false}
 };
 
@@ -776,7 +777,7 @@ void toWorksheet::query(const QString &str,bool direct)
     toQList param;
     if (!nobinds)
       try {
-	param=toParamGet::getParam(this,QueryString);
+	param=toParamGet::getParam(connection(),this,QueryString);
       } catch (...) {
 	return;
       }
@@ -1060,21 +1061,6 @@ void toWorksheet::execute(bool all,bool step)
 	    }
 	    break;
 	  case beginning:
-	    {
-	      QString rest=data.right(data.length()-i).lower();
-	      for (int j=0;Blocks[j].Start;j++) {
-		if (Blocks[j].Comment) {
-		  unsigned int len=strlen(Blocks[j].Start);
-		  if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
-		    lastState=state;
-		    state=comment;
-		    break;
-		  }
-		}
-	      }
-	      if (state==comment)
-		break;
-	    }
 	    if (c=='@') {
 	      lastState=state;
 	      state=comment;
@@ -1088,21 +1074,47 @@ void toWorksheet::execute(bool all,bool step)
 	      state=multiComment;
 	      break;
 	    } else if (!c.isSpace()&&(c!='/'||data.length()!=1)) {
+	      QString rest=data.right(data.length()-i).lower();
 	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step&&startLine>=0&&startPos>=0) {
 		state=done;
 		break;
-	      } else
+	      } else {
+		for (int j=0;Blocks[j].Start;j++) {
+		  if (Blocks[j].Comment) {
+		    unsigned int len=strlen(Blocks[j].Start);
+		    if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
+		      lastState=state;
+		      state=comment;
+		      break;
+		    }
+		  }
+		}
+		if (state==comment)
+		  break;
 		beforeCode=code=false;
+	      }
 	      startLine=line;
 	      startPos=i;
 	      endLine=-1;
 	      endPos=-1;
 	      state=inStatement;
+	      for (int j=0;Blocks[j].Start;j++) {
+		if (Blocks[j].SingleLine) {
+		  unsigned int len=strlen(Blocks[j].Start);
+		  if (rest.lower().startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest.at(len)))) {
+		    endLine=line;
+		    i=data.length()-1;
+		    endPos=i+1;
+
+		    state=beginning;
+		    break;
+		  }
+		}
+	      }
 	    } else
 	      break;
 	  case inStatement:
 	    {
-	      bool ending=false;
 	      if (!code&&sqlparse) {
 		bool br=false;
 		for (int j=0;Blocks[j].Start&&!br;j++) {
@@ -1116,10 +1128,6 @@ void toWorksheet::execute(bool all,bool step)
 			    beforeCode=true;
 			    pos=0;
 			    br=true;
-			  } else if (Blocks[j].SingleLine) {
-			    i=data.length()-1;
-			    ending=true;
-			    break;
 			  }
 			  if (beforeCode) {
 			    if (Blocks[j].CloseBlock) {
@@ -1157,9 +1165,7 @@ void toWorksheet::execute(bool all,bool step)
 		    beforeCode=false;
 		}
 	      }
-	      if (c==';')
-		ending=true;
-	      if (ending) {
+	      if (c==';') {
 		endLine=line;
 		endPos=i+1;
 		state=beginning;
@@ -1265,7 +1271,7 @@ void toWorksheet::saveDefaults(void)
       else if (item)
 	str=item->text(i);
 
-      toParamGet::setDefault(head->label(i).lower(),toUnnull(str));
+      toParamGet::setDefault(connection(),head->label(i).lower(),toUnnull(str));
     }
   }
 }

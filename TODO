@@ -87,11 +87,9 @@ Extended functionality:
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
 * Synchonize worksheets that edit the same file.
-* Posibility to change password.
 
 New tools:
 
-* Schema report builder.
 * SQL Builder?
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
