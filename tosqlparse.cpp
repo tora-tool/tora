@@ -85,6 +85,27 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+CREATE or REPLACE Procedure TEST_SPR
+(
+    IN_TICKET_NUM   IN  VARCHAR2
+)
+IS
+
+BEGIN
+
+BEGIN
+
+for cur_rec in (select emp_id from employees) loop
+
+	update employees set emp_id = emp_id + 1
+	where emp_id = cur_rec.emp_id;
+	commit;
+end loop;
+	
+END;
+END TEST_SPR;
+
+
 SELECT owner,
        OBJECT,
        TYPE FROM v$access

@@ -75,9 +75,7 @@ else
     cd $SRCPWD
     export ORACLE_HOME=$ORACLE_HOME/../9.0.1
     rpm -bb tora-$1/rpm/tora.spec
-    cp /usr/src/RPM/RPMS/*/tora-$1-1gc.*.rpm ../tora$TYPE-$1-1gc-oracle9.i686.rpm 
-    cp /usr/src/RPM/RPMS/*/tora-mysql-$1-1gc.*.rpm ../tora-mysql$TYPE-$1-1gc-oracle9.i686.rpm 
-    cp /usr/src/RPM/RPMS/*/tora-oracle-$1-1gc.*.rpm ../tora-oracle$TYPE-$1-1gc-oracle9.i686.rpm 
+    cp /usr/src/RPM/RPMS/*/tora-oracle-$1-1gc.*.rpm ../tora-oracle9$TYPE-$1-1gc-$GLIBC.i686.rpm 
 
     cd /usr/src/RPM/BUILD/tora-$1
     make tora-mono
