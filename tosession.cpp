@@ -76,7 +76,7 @@ protected:
   { return tosession_xpm; }
 public:
   toSessionTool()
-    : toTool(101,"Sessions")
+    : toTool(201,"Sessions")
   { }
   virtual const char *menuItem()
   { return "Sessions"; }

@@ -70,7 +70,7 @@ class toAnalyzeTool : public toTool {
   { return toanalyze_xpm; }
 public:
   toAnalyzeTool()
-    : toTool(201,"Statistics Manager")
+    : toTool(301,"Statistics Manager")
   { }
   virtual const char *menuItem()
   { return "Statistics Manager"; }

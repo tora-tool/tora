@@ -49,6 +49,8 @@ Extended functionality:
 * Make entire tuning polling in background.
 * Use object cache in browser if possible.
 * Tooltips in content editor.
+* Make toExtract plugin based.
+* Add support to run profiling in background.
 
 New tools:
 

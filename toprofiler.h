@@ -39,17 +39,19 @@
 
 class toResultItem;
 class toResultLong;
-class toHighlightedText;
+class toWorksheet;
 class QComboBox;
 class QSpinBox;
 class QToolButton;
 class toProfilerUnits;
+class toProfilerSource;
 class QLineEdit;
 
 class toProfiler : public toToolWidget {
   Q_OBJECT
 
   int CurrentRun;
+  int LastUnit;
 
   QToolButton *Background;
   QSpinBox *Repeat;
@@ -58,14 +60,16 @@ class toProfiler : public toToolWidget {
   QComboBox *Run;
   toResultItem *Info;
   toProfilerUnits *Units;
-  toResultLong *Lines;
-  toHighlightedText *Script;
+  toProfilerSource *Lines;
+  toWorksheet *Script;
 public:
   toProfiler(QWidget *parent,toConnection &connection);
 public slots:
   void refresh(void);
   void changeRun(void); 
   void execute(void);
+  void changeObject(void);
+  void calcTotals(void);
 };
 
 #endif

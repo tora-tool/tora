@@ -78,7 +78,7 @@ protected:
   { return toalert_xpm; }
 public:
   toAlertTool()
-    : toTool(202,"Alert Tool")
+    : toTool(302,"Alert Tool")
   { }
   virtual const char *menuItem()
   { return "Alert Tool"; }

@@ -72,7 +72,8 @@ static toSQL SQLComment("toOracleConnection:Comments",
 			"Display column comments");
 
 static toSQL SQLMembers("toOracleConnection:Members",
-			"SELECT object_name,overload,argument_name FROM sys.All_Arguments\n"
+			"SELECT object_name,overload,argument_name,data_type\n"
+			"  FROM sys.All_Arguments\n"
 			" WHERE Owner = :f1<char[100]>\n"
 			"   AND Package_Name = :f2<char[100]>\n"
 			" ORDER BY object_name,overload,sequence",
@@ -474,6 +475,7 @@ public:
 	    QString name = member.readValue();
 	    QString overload = member.readValue();
 	    QString arg = member.readValueNull();
+	    QString type = member.readValueNull();
 	    if (lastName!=name||overload!=lastOver) {
 	      if (desc.Name.contains("("))
 		desc.Name+=")";
@@ -487,6 +489,8 @@ public:
 	    } else
 	      desc.Name+=", ";
 	    desc.Name+=arg;
+	    desc.Name+=" ";
+	    desc.Name+=type;
 	  }
 	  if (desc.Name.contains("("))
 	    desc.Name+=")";

@@ -116,7 +116,7 @@ class toDebugTool : public toTool {
   { return todebug_xpm; }
 public:
   toDebugTool()
-    : toTool(10,"PL/SQL Debugger")
+    : toTool(101,"PL/SQL Debugger")
   { }
   virtual const char *menuItem()
   { return "PL/SQL Debugger"; }
@@ -2086,6 +2086,7 @@ bool toDebugText::compile(void)
 	word+=2;
     }
 
+    int typeInd=word;
     if (words[word].upper()!="PROCEDURE"&&
 	words[word].upper()!="TYPE"&&
 	words[word].upper()!="FUNCTION"&&
@@ -2114,7 +2115,7 @@ bool toDebugText::compile(void)
       return false;
     }
 
-    QString type=words[0];
+    QString type=words[typeInd];
     QString schema;
     QString object;
 
@@ -2128,7 +2129,7 @@ bool toDebugText::compile(void)
     }
 
     QString sql="CREATE OR REPLACE ";
-    sql.append(words[0]);
+    sql.append(type);
     if (body)
       sql.append(" BODY ");
     else

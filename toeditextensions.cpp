@@ -192,7 +192,7 @@ public:
       IndentLevel=4;
   }
   toEditExtensionTool()
-    : toTool(300,"Editor")
+    : toTool(400,"Editor")
   {
     cacheConfig();
   }

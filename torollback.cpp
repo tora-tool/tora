@@ -151,7 +151,7 @@ protected:
   { return torollback_xpm; }
 public:
   toRollbackTool()
-    : toTool(102,"Rollback Segments")
+    : toTool(202,"Rollback Segments")
   { }
   virtual const char *menuItem()
   { return "Rollback Segments"; }

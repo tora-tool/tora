@@ -60,6 +60,9 @@
 2001-11-29: Redrew the clock icons.
 2001-11-29: Fixed problem with exceptions in provider being thrown.
 2001-11-29: Fixed completion with overloaded functions.
+2001-11-29: Added datatype to function completion.
+2001-11-30: Completed PL/SQL profiler.
+2001-12-01: Reordered tools.
 
 1.1.5: Released 2001-11-26
 

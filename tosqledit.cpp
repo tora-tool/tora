@@ -77,7 +77,7 @@ protected:
 
 public:
   toSQLEditTool()
-    : toTool(301,"SQL Dictionary Editor")
+    : toTool(401,"SQL Dictionary Editor")
   { Window=NULL; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {

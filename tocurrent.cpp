@@ -67,7 +67,7 @@ protected:
   { return tocurrent_xpm; }
 public:
   toCurrentInfoTool()
-    : toTool(103,"Current Session")
+    : toTool(203,"Current Session")
   { }
   virtual const char *menuItem()
   { return "Current Session"; }
