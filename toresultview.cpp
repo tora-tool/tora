@@ -811,6 +811,88 @@ void toListView::editSave(bool ask)
   delete sizes;
 }
 
+void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix)
+{
+  int id=0;
+  for(int i=0;i<columns();i++) {
+    id++;
+    ret[prefix+":Labels:"+QString::number(id)]=header()->label(i);
+  }
+  std::map<QListViewItem *,int> itemMap;
+  QListViewItem *next=NULL;
+  id=0;
+  if (rootIsDecorated())
+    ret[prefix+":Decorated"]="Yes";
+  for (QListViewItem *item=firstChild();item;item=next) {
+    id++;
+    QString nam=prefix;
+    nam+=":Items:";
+    nam+=QString::number(id);
+    nam+=":";
+    itemMap[item]=id;
+    if (item->parent())
+      ret[nam+"Parent"]=QString::number(itemMap[item->parent()]);
+    else
+      ret[nam+"Parent"]="0";
+    for(int i=0;i<columns();i++) {
+      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+      QString val;
+      if (resItem)
+	val=resItem->allText(i);
+      else if (chkItem)
+	val=resItem->allText(i);
+      else
+	val=item->text(i);
+      ret[nam+QString::number(i)]=val;
+    }
+
+    if (item->firstChild())
+      next=item->firstChild();
+    else if (item->nextSibling())
+      next=item->nextSibling();
+    else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+  }
+}
+
+void toListView::importData(std::map<QString,QString> &ret,const QString &prefix)
+{
+  int id;
+  std::map<QString,QString>::iterator i;
+  clear();
+
+  id=1;
+  while((i=ret.find(prefix+":Labels:"+QString::number(id)))!=ret.end()) {
+    addColumn((*i).second);
+    id++;
+  }
+
+  setRootIsDecorated(ret.find(prefix+":Decorated")!=ret.end());
+
+  std::map<int,QListViewItem *> itemMap;
+
+  id=1;
+  while((i=ret.find(prefix+":Items:"+QString::number(id)+":Parent"))!=ret.end()) {
+    QString nam=prefix+":Items:"+QString::number(id)+":";
+    int parent=(*i).second.toInt();
+    toResultViewItem *item;
+    if (parent)
+      item=new toResultViewItem(itemMap[parent],NULL);
+    else
+      item=new toResultViewItem(this,NULL);
+    itemMap[id]=item;
+    for(int j=0;j<columns();j++)
+      item->setText(j,ret[nam+QString::number(j)]);
+    id++;
+  }
+}
 
 bool toResultView::eof(void)
 {

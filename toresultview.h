@@ -37,6 +37,8 @@
 
 #include <qlistview.h>
 
+#include <map>
+
 #include "toresult.h"
 #include "tomain.h"
 #include "toeditwidget.h"
@@ -361,6 +363,17 @@ public:
   /** Export list as file
    */
   virtual void editSave(bool ask);
+
+  /** Export data to a map.
+   * @param data A map that can be used to recreate the data of a chart.
+   * @param prefix Prefix to add to the map.
+   */
+  void exportData(std::map<QString,QString> &data,const QString &prefix);
+  /** Import data
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  void importData(std::map<QString,QString> &data,const QString &prefix);
 public slots:
   /** Display the menu at the given point and column.
    * @param item Item to display.

@@ -49,11 +49,15 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref21">editSave</A></b> (bool ask) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref22">displayMenu</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col) 
+<LI>void &nbsp;<b><A HREF="#ref22">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref23">displayMemo</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref23">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref24">menuCallback</A></b> (int id) 
+</ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref24">displayMenu</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref25">displayMemo</A></b> (void) 
+</LI>
+</ul><h4>Protected Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref26">menuCallback</A></b> (int id) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  The TOra implementation of a listview which offers a few extra goodies to the baseclass.
@@ -107,7 +111,25 @@
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export list as file
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
-<A NAME="displayMenu"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col)
+<A NAME="exportData"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p></p><p> Export data to a map.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">A map that can be used to recreate the data of a chart.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
+   </TD></TR>
+</TABLE></P>
+<A NAME="importData"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p></p><p> Import data
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to read from a map.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
+   </TD></TR>
+</TABLE></P>
+<A NAME="displayMenu"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMenu</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col)
 <br></td><td align="right"><h3><strong>displayMenu</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display the menu at the given point and column.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -118,10 +140,10 @@
 <TR><TD align="left" valign="top"><i>col</i></TD><TD align="left" valign="top">Column to display menu for.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayMemo"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMemo</strong> (void)
+<A NAME="displayMemo"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayMemo</strong> (void)
 <br></td><td align="right"><h3><strong>displayMemo</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Display memo of selected menu column
    </p>
-<A NAME="menuCallback"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int id)
+<A NAME="menuCallback"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>menuCallback</strong> (int id)
 <br></td><td align="right"><h3><strong>menuCallback</strong></h3></td></tr></table><p> <small>[protected slots virtual slot]</small></p><p> Callback when menu is selected. If you override this make sure you
  call the parents function when you have parsed your entries.
 </p>
