@@ -47,6 +47,7 @@
 toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   : toLineChart(parent,name,f)
 {
+  setMinValue(0);
 }
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
