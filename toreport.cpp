@@ -104,7 +104,7 @@ static QString DescribeConstraints(std::list<QString> &desc,
 				   const QString &context)
 {
   QString ret=
-    "<H4>CONSTRAINT</H4>\n"
+    "<H4>CONSTRAINTS</H4>\n"
     "<TABLE BORDER=0 WIDTH=100%><TR><TH ALIGN=left WIDTH=25%>Name</TH><TH ALIGN=left WIDTH=50%>Constraint</TH><TH ALIGN=left WIDTH=25%>Status</TH></TR>\n";
 
   QString lastName;
@@ -180,7 +180,7 @@ static QString DescribeColumns(std::list<QString> &desc,
   } while(i!=desc.end());
 
   QString ret=
-    "<H4>COLUMN</H4>\n"
+    "<H4>COLUMNS</H4>\n"
     "<TABLE WIDTH=100% BORDER=0><TR><TH ALIGN=left WIDTH=25%>Name</TH>";
   if (hasDatatype)
     ret+="<TH ALIGN=left WIDTH=25%>Definition</TH>";
