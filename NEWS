@@ -7,6 +7,7 @@
 2001-08-07: Added line chart class.
 2001-08-07: Get connection from toToolWidget in toResult classes.
 2001-08-07: Added piechart of waitstates in session.
+2001-08-07: Added posibility to change connection in tool (Not debug yet).
 
 0.14: Released 2001-08-02
 

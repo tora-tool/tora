@@ -27,21 +27,28 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toToolWidget</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref3">toToolWidget</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
 	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
 	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
 	       const char *name=NULL) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref3">~toToolWidget</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref4">~toToolWidget</A></b> () 
 </LI>
-<LI><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<b><A HREF="#ref4">otlConnect</A></b> () 
+<LI><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<b><A HREF="#ref5">otlConnect</A></b> () 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref5">connection</A></b> () 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref6">connection</A></b> () 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref7">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref2">connectionChange</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Simple baseclass for widgets defining the main tool widget. It is in
  no way mandatory and all it does is register the widget in the connetion.
  </p>
-<A NAME="toToolWidget"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
+<A NAME="connectionChange"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>connectionChange</strong> (void)
+<br></td><td align="right"><h3><strong>connectionChange</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when the connection is changed.
+   </p>
+<A NAME="toToolWidget"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
 	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
 	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
 	       const char *name=NULL)
@@ -57,18 +64,19 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toToolWidget"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toToolWidget</strong> ()
-<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="otlConnect"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<strong>otlConnect</strong> ()
+<A NAME="~toToolWidget"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toToolWidget</strong> ()
+<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="otlConnect"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#otl_connect">otl_connect</A> &amp;&nbsp;<strong>otlConnect</strong> ()
 <br></td><td align="right"><h3><strong>otlConnect</strong></h3></td></tr></table><p></p><p> Get the otl_connect structure of the current connection.
 </p>
 <p><b>Returns</b>: Reference to otl_connect object.
    </p>
-<A NAME="connection"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
+<A NAME="connection"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the current connection.
 </p>
 <p><b>Returns</b>: Reference to connection.
    </p>
-<HR>
+<A NAME="setConnection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<br></td><td align="right"><h3><strong>setConnection</strong></h3></td></tr></table><p></p><HR>
 	<table>
 	</table>
 </BODY>

@@ -294,6 +294,10 @@ public:
 class toToolWidget : public QVBox, public toHelpContext {
   Q_OBJECT
   toConnection *Connection;
+signals:
+  /** Emitted when the connection is changed.
+   */
+  void connectionChange(void);
 public:
   /** Create widget.
    * @param ctx Help context for this tool.
@@ -315,6 +319,7 @@ public:
    */
   toConnection &connection()
   { return *Connection; }
+  void setConnection(toConnection &conn);
 };
 
 #endif

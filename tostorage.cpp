@@ -57,6 +57,7 @@ TO_NAMESPACE;
 #include <qwhatsthis.h>
 #include <qworkspace.h>
 
+#include "tochangeconnection.h"
 #include "tostorage.h"
 #include "tostoragedefinition.h"
 #include "toresultstorage.h"
@@ -741,6 +742,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 				 toolbar);
  
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   Storage=new toResultStorage(this);
 

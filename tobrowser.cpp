@@ -56,6 +56,7 @@ TO_NAMESPACE;
 #  include <kmenubar.h>
 #endif
 
+#include "tochangeconnection.h"
 #include "totool.h"
 #include "tomain.h"
 #include "tobrowser.h"
@@ -394,6 +395,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
   
   TopTab=new QTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);

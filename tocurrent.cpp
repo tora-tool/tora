@@ -41,6 +41,7 @@ TO_NAMESPACE;
 #include <qtoolbutton.h>
 #include <qlabel.h>
 
+#include "tochangeconnection.h"
 #include "tomain.h"
 #include "toresultview.h"
 #include "totool.h"
@@ -112,6 +113,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   Tabs=new QTabWidget(this);
   Grants=new toListView(Tabs);

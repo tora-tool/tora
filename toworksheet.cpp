@@ -77,6 +77,7 @@ TO_NAMESPACE;
 #include "toresultstats.h"
 #include "toresultcols.h"
 #include "toconf.h"
+#include "tochangeconnection.h"
 #include "toworksheetsetupui.h"
 
 #include "toworksheet.moc"
@@ -347,6 +348,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  this,SLOT(eraseLogButton(void)),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeResult(QWidget *)));

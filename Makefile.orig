@@ -27,6 +27,7 @@ SOURCES=\
 	tobrowserfilterui.cpp	\
 	toconnection.cpp	\
 	tocurrent.cpp		\
+	tochangeconnection.cpp	\
 	todebug.cpp		\
 	todebugchange.cpp	\
 	todebugtext.cpp		\
@@ -94,6 +95,7 @@ SOURCES=\
 	utils.cpp
 
 API=	\
+	tochangeconnection.h	\
 	toconf.h		\
 	toconnection.h		\
 	todefaultkeywords.h	\
@@ -240,6 +242,7 @@ tora-plugin: \
 tora: \
 	objs/main.o \
 	objs/toabout.o \
+	objs/tochangeconnection.o \
 	objs/toconnection.o \
 	objs/toglobalsetting.o \
 	objs/tohelp.o \

@@ -49,6 +49,7 @@ TO_NAMESPACE;
 #include <qtoolbutton.h>
 #include <qvalidator.h>
 
+#include "tochangeconnection.h"
 #include "toconnection.h"
 #include "tofilesize.h"
 #include "tomain.h"
@@ -1363,6 +1364,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 			     toolbar);
   CopyButton->setEnabled(false);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
   UserList=new toResultView(false,false,splitter);

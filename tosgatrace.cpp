@@ -51,6 +51,7 @@ TO_NAMESPACE;
 #include <qgroupbox.h>
 #include <qtooltip.h>
 
+#include "tochangeconnection.h"
 #include "totool.h"
 #include "tosgatrace.h"
 #include "toresultview.h"
@@ -143,6 +144,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   connect(toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
 

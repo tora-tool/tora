@@ -74,6 +74,25 @@ toToolWidget::~toToolWidget()
   Connection->delWidget(this);
 }
 
+void toToolWidget::setConnection(toConnection &conn)
+{
+  bool connCap=false;
+  QString name=Connection->connectString();
+  QString capt=caption();
+  if (capt.startsWith(name)) {
+    connCap=true;
+    capt=capt.mid(name.length());
+  }
+  Connection->delWidget(this);
+  Connection=&conn;
+  Connection->addWidget(this);
+  if (connCap) {
+    capt.prepend(Connection->connectString());
+    setCaption(capt);
+  }
+  emit connectionChange();
+}
+
 otl_connect &toToolWidget::otlConnect()
 {
   return Connection->connection();

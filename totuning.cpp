@@ -41,6 +41,7 @@ TO_NAMESPACE;
 #include <qtabwidget.h>
 #include <qlabel.h>
 
+#include "tochangeconnection.h"
 #include "toconnection.h"
 #include "tomain.h"
 #include "toresultview.h"
@@ -153,6 +154,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
+  new toChangeConnection(toolbar);
 
   QTabWidget *Tabs=new QTabWidget(this);
   Indicators=new toListView(Tabs);
