@@ -1,5 +1,12 @@
 1.3.10:
 
+2003-04-23: Added new filter functionality for sessions view.
+2003-04-23: Remember sortorder when refreshing resultlists when refreshing.
+2003-04-23: Remember sort order of sessions.
+2003-04-23: Change recompile all to recompile selection in invalid objects.
+2003-04-23: Added set module call on new connections.
+2003-04-23: Added show SQL for analyze tool.
+2003-04-23: Added blocks column in storage object list tool.
 2003-04-08: Added define TOAPPNAME for application name and use it where needed.
 2003-04-08: Fixed problem with treebased browsing of code.
 2003-04-08: Fixed problems with '' in sql parser.

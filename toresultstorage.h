@@ -53,11 +53,19 @@ public:
     int Size;
 
     extentName(void)
-    { }
+    { Size=0; }
     extentName(const QString &owner,const QString &table,const QString &partition,int size);
     bool operator < (const extentName &) const;
     bool operator == (const extentName &) const;
   };
+
+  struct extentTotal : public extentName {
+    int Extents;
+    extentTotal(const QString &owner,const QString &table,const QString &partition,int size)
+      : extentName(owner,table,partition,size)
+    { Extents=1; }
+  };
+
   struct extent : public extentName {
     int File;
     int Block;
@@ -83,7 +91,7 @@ public:
   void setTablespace(const QString &tablespace);
   void setFile(const QString &tablespace,int file);
 
-  std::list<extentName> objects(void);
+  std::list<extentTotal> objects(void);
 protected:
   virtual void paintEvent(QPaintEvent *);
 };

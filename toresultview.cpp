@@ -1472,6 +1472,15 @@ void toResultView::checkHeading(void)
   connect(header(),SIGNAL(clicked(int)),this,SLOT(headingClicked(int)));
 }
 
+void toResultView::refresh(void)
+{
+  int lastSort=SortColumn;
+  bool lastAsc=SortAscending;
+  toResult::refresh();
+  if (lastSort>=0)
+    setSorting(lastSort,lastAsc);
+}
+
 toResultListFormat::toResultListFormat(QWidget *parent,const char *name)
   : toResultListFormatUI(parent,name,true)
 {
@@ -1507,3 +1516,4 @@ void toResultFilter::exportData(std::map<QCString,QString> &,const QCString &)
 void toResultFilter::importData(std::map<QCString,QString> &,const QCString &)
 {
 }
+

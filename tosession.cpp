@@ -64,16 +64,20 @@
 #include <qtimer.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
+#include <qtooltip.h>
 #include <qworkspace.h>
 #include <qworkspace.h>
 
 #include "tosession.moc"
 
+#include "icons/add.xpm"
 #include "icons/clock.xpm"
 #include "icons/disconnect.xpm"
+#include "icons/minus.xpm"
 #include "icons/noclock.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
+#include "icons/filter.xpm"
 
 class toSessionTool : public toTool {
 protected:
@@ -238,13 +242,30 @@ toSession::toSession(QWidget *main,toConnection &connection)
   toolbar->addSeparator();
   new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
   connect(Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+  toolbar->addSeparator();
+
+  QToolButton *btn=new QToolButton(toolbar);
+  btn->setToggleButton(true);
+  btn->setIconSet(QPixmap((const char **)filter_xpm));
+  connect(btn,SIGNAL(toggled(bool)),this,SLOT(excludeSelection(bool)));
+  QToolTip::add(btn,tr("Exclude selected sessions"));
+  new QToolButton(QPixmap((const char **)add_xpm),
+		  tr("Select all sessions"),
+		  tr("Select all sessions"),
+		  this,SLOT(selectAll(void)),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)minus_xpm),
+		  tr("Deselect all sessions"),
+		  tr("Deselect all sessions"),
+		  this,SLOT(selectNone(void)),
+		  toolbar);
 
   toolbar->setStretchableWidget(Total=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   Total->setAlignment(AlignRight|AlignVCenter|ExpandTabs);
   new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Sessions=new toResultLong(false,false,toQuery::Background,splitter);
+  Sessions=new toSessionList(splitter);
   Sessions->setReadAll(true);
   connect(Sessions,SIGNAL(done()),this,SLOT(done()));
 
@@ -316,6 +337,82 @@ toSession::toSession(QWidget *main,toConnection &connection)
   refresh();
 
   setFocusProxy(Sessions);
+}
+
+void toSession::excludeSelection(bool tgl)
+{
+  toSessionList::sessionFilter *filt=dynamic_cast<toSessionList::sessionFilter *>(Sessions->filter());
+  if (filt) {
+    filt->setShow(!tgl);
+    refresh();
+  }
+}
+
+void toSession::selectAll(void)
+{
+  for (QListViewItem *item=Sessions->firstChild();item;item=item->nextSibling()) {
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
+    if (chk)
+      chk->setOn(true);
+  }
+}
+
+void toSession::selectNone(void)
+{
+  for (QListViewItem *item=Sessions->firstChild();item;item=item->nextSibling()) {
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
+    if (chk)
+      chk->setOn(false);
+  }
+}
+
+QListViewItem *toSessionList::createItem(QListViewItem *last,const QString &str)
+{
+  sessionFilter *filt=dynamic_cast<sessionFilter *>(filter());
+  if (filt&&filt->show())
+    return new toResultViewCheck(this,last,str,QCheckListItem::CheckBox);
+  else
+    return new toResultViewItem(this,last,str);
+}
+
+void toSessionList::updateFilter()
+{
+  sessionFilter *filt=dynamic_cast<sessionFilter *>(filter());
+  if (filt)
+    filt->updateList(this);
+}
+
+bool toSessionList::sessionFilter::check(const QListViewItem *item)
+{
+  int serial=item->text(1).toInt();
+  bool checked=false;
+  for(std::list<int>::iterator i=Serials.begin();i!=Serials.end();i++)
+    if ((*i)==serial) {
+      checked=true;
+      break;
+    }
+  const toResultViewCheck *chk=dynamic_cast<const toResultViewCheck *>(item);
+  if (chk) {
+    const_cast<toResultViewCheck *>(chk)->setOn(checked);
+    return true;
+  }
+  return !checked;
+}
+
+void toSessionList::sessionFilter::updateList(toResultLong *lst)
+{
+  bool first=true;
+  for (QListViewItem *item=lst->firstChild();item;item=item->nextSibling()) {
+    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
+    if (chk) {
+      if (first) {
+	Serials.clear();
+	first=false;
+      }
+      if (chk->isOn())
+	Serials.insert(Serials.end(),chk->text(1).toInt());
+    }
+  }
 }
 
 void toSession::windowActivated(QWidget *widget)

@@ -85,6 +85,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
     removeColumn(0);
   }
   HasHeaders=false;
+  setSorting(-1);
 
   if (NumberColumn) {
     addColumn(QString::fromLatin1("#"));
@@ -169,10 +170,12 @@ void toResultLong::addItem(void)
 	  }
 	  HasHeaders=true;
 
-	  if (NumberColumn)
-	    setSorting(0);
-	  else
-	    setSorting(Description.size());
+	  if (sortColumn()<0) {
+	    if (NumberColumn)
+	      setSorting(0);
+	    else
+	      setSorting(Description.size());
+	  }
 	}
 
 	if (!Query->eof()) {

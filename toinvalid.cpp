@@ -114,9 +114,9 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 		  toolbar);
 
   new QToolButton(QPixmap((const char **)compile_xpm),
-		  tr("Recompile all"),
-		  tr("Recompile all"),
-		  this,SLOT(recompileAll()),
+		  tr("Recompile selected"),
+		  tr("Recompile selected"),
+		  this,SLOT(recompileSelected()),
 		  toolbar);
 
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
@@ -150,7 +150,7 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
   setFocusProxy(Objects);
 }
 
-void toInvalid::recompileAll(void)
+void toInvalid::recompileSelected(void)
 {
   QProgressDialog progress(tr("Recompiling all invalid"),
 			   tr("Cancel"),Objects->childCount(),this,"progress",true);
@@ -161,7 +161,7 @@ void toInvalid::recompileAll(void)
 
   for(QListViewItem *item=Objects->firstChild();item;item=item->nextSibling()) {
     toResultViewItem *ci=dynamic_cast<toResultViewItem *>(item);
-    if (ci) {
+    if (ci&&ci->isSelected()) {
       progress.setLabelText("Recompiling "+ci->allText(1)+"."+ci->allText(2));
       progress.setProgress(i);
       qApp->processEvents();

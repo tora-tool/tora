@@ -992,6 +992,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       otl_stream info(1,
 		      "BEGIN\n"
 		      "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME " (http://www.globecom.se/tora)');\n"
+		      "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
 		      "END;",
 		      *conn);
     }

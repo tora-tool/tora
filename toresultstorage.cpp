@@ -890,21 +890,22 @@ void toStorageExtent::paintEvent(QPaintEvent *)
 }
 
 
-std::list<toStorageExtent::extentName> toStorageExtent::objects(void)
+std::list<toStorageExtent::extentTotal> toStorageExtent::objects(void)
 {
-  std::list<extentName> ret;
+  std::list<extentTotal> ret;
 
   for(std::list<extent>::iterator i=Extents.begin();i!=Extents.end();i++) {
     bool dup=false;
-    for (std::list<extentName>::iterator j=ret.begin();j!=ret.end();j++) {
+    for (std::list<extentTotal>::iterator j=ret.begin();j!=ret.end();j++) {
       if ((*j)==(*i)) {
-	(*j).Size++;
+	(*j).Size+=(*i).Size;
+	(*j).Extents++;
 	dup=true;
 	break;
       }
     }
     if (!dup)
-      toPush(ret,extentName((*i).Owner,(*i).Table,(*i).Partition,1));
+      toPush(ret,extentTotal((*i).Owner,(*i).Table,(*i).Partition,(*i).Size));
   }
 
   ret.sort();

@@ -36,6 +36,9 @@
 #define TOSESSION_H
 
 #include "totool.h"
+#include "toresultlong.h"
+
+#include <list>
 
 class QComboBox;
 class QListViewItem;
@@ -47,13 +50,41 @@ class toPopupMenu;
 class toResultBar;
 class toResultCombo;
 class toResultLock;
-class toResultLong;
 class toResultStats;
 class toSGAStatement;
 class toWaitEvents;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
+
+class toSessionList : public toResultLong {
+public:
+  class sessionFilter : public toResultFilter {
+    std::list<int> Serials;
+    bool Show;
+  public:
+
+    sessionFilter()
+    { Show=true; }
+    sessionFilter(const std::list<int> &serials,bool show)
+    { Serials=serials; Show=show; }
+    virtual bool check(const QListViewItem *item);
+    virtual toResultFilter *clone(void)
+    { return new sessionFilter(Serials,Show); }
+    void setShow(bool show)
+    { Show=show; }
+    bool show()
+    { return Show; }
+    void updateList(toResultLong *lst);
+  };
+  toSessionList(QWidget *parent)
+    : toResultLong(false,false,toQuery::Background,parent)
+  { setFilter(new sessionFilter); }
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &str);
+  void updateFilter(void);
+  virtual void refresh(void)
+  { updateFilter(); toResultLong::refresh(); }
+};
 
 class toSession : public toToolWidget {
   Q_OBJECT
@@ -107,6 +138,9 @@ public slots:
   void disconnectSession(void);
   void windowActivated(QWidget *widget);
   void done(void);
+  void excludeSelection(bool);
+  void selectAll(void);
+  void selectNone(void);
 };
 
 #endif

@@ -38,6 +38,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tomain.h"
+#include "tomemoeditor.h"
 #include "toresultcombo.h"
 #include "toresultlong.h"
 #include "toresultplan.h"
@@ -66,6 +67,7 @@
 
 #include "icons/execute.xpm"
 #include "icons/refresh.xpm"
+#include "icons/sql.xpm"
 #include "icons/stop.xpm"
 #include "icons/toanalyze.xpm"
 
@@ -206,6 +208,11 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		  tr("Start analyzing"),
 		  tr("Start analyzing"),
 		  this,SLOT(execute()),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)sql_xpm),
+		  tr("Display SQL"),
+		  tr("Display SQL"),
+		  this,SLOT(displaySQL()),
 		  toolbar);
 
   Current=new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET);
@@ -359,10 +366,9 @@ void toAnalyze::poll(void)
   } TOCATCH
 }
 
-void toAnalyze::execute(void)
+std::list<QString> toAnalyze::getSQL(void)
 {
-  stop();
-
+  std::list<QString> ret;
   for(QListViewItem *item=Statistics->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
       QString sql=QString::fromLatin1("ANALYZE %3 %1.%2 ");
@@ -402,9 +408,28 @@ void toAnalyze::execute(void)
 	break;
       }
 
-      toPush(Pending,sql.arg(item->text(1)).arg(item->text(2)).arg(item->text(0)));
+      toPush(ret,sql.arg(item->text(1)).arg(item->text(2)).arg(item->text(0)));
     }
   }
+  return ret;
+}
+
+void toAnalyze::displaySQL(void)
+{
+  QString txt;
+  std::list<QString> sql=getSQL();
+  for(std::list<QString>::iterator i=sql.begin();i!=sql.end();i++)
+    txt+=(*i)+";\n";
+  new toMemoEditor(this,txt,-1,-1,true);
+}
+
+void toAnalyze::execute(void)
+{
+  stop();
+
+  std::list<QString> sql=getSQL();
+  for(std::list<QString>::iterator i=sql.begin();i!=sql.end();i++)
+    toPush(Pending,*i);
 
   try {
     toQList par;

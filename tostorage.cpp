@@ -792,7 +792,9 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   Objects->addColumn(tr("Object"));
   Objects->addColumn(tr("Partition"));
   Objects->addColumn(tr("Extents"));
+  Objects->addColumn(tr("Blocks"));
   Objects->setColumnAlignment(3,AlignRight);
+  Objects->setColumnAlignment(4,AlignRight);
 
   Extents=new toStorageExtent(ExtentParent);
   Objects->setSelectionMode(QListView::Single);
@@ -1021,14 +1023,15 @@ void toStorage::selectionChanged(void)
       Extents->setTablespace(item->text(0));
 
     if (!ExtentParent->isHidden()) {
-      std::list<toStorageExtent::extentName> obj=Extents->objects();
+      std::list<toStorageExtent::extentTotal> obj=Extents->objects();
       QListViewItem *objItem=NULL;
       Objects->clear();
-      for (std::list<toStorageExtent::extentName>::iterator i=obj.begin();i!=obj.end();i++) {
+      for (std::list<toStorageExtent::extentTotal>::iterator i=obj.begin();i!=obj.end();i++) {
 	objItem=new toResultViewItem(Objects,objItem,(*i).Owner);
 	objItem->setText(1,(*i).Table);
 	objItem->setText(2,(*i).Partition);
-	objItem->setText(3,QString::number((*i).Size));
+	objItem->setText(3,QString::number((*i).Extents));
+	objItem->setText(4,QString::number((*i).Size));
       }
     }
 

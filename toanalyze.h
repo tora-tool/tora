@@ -74,6 +74,7 @@ class toAnalyze : public toToolWidget {
   std::list<QString> Pending;
 
   QPopupMenu *ToolMenu;
+  std::list<QString> getSQL(void);
 public:
   toAnalyze(QWidget *parent,toConnection &connection);
 
@@ -81,6 +82,7 @@ public:
 
   static void createTool(void);
 public slots:
+  virtual void displaySQL(void);
   virtual void changeOperation(int);
   virtual void execute(void);
   virtual void poll(void);

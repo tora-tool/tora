@@ -237,6 +237,24 @@ public:
   toResultViewCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
   { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+  /** Create a new item.
+   * @param parent Parent list view.
+   * @param after After last item.
+   * @param text Text of first column.
+   * @param type Type of check on this item.
+   */
+  toResultViewCheck(QListView *parent,QListViewItem *after,const QString &text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,after,QString::null,type)
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+  /** Create a new item.
+   * @param parent Parent item.
+   * @param after After last item.
+   * @param text Text of first column.
+   * @param type Type of check on this item.
+   */
+  toResultViewCheck(QListViewItem *parent,QListViewItem *after,const QString &text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,after,QString::null,type)
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
   /** Reimplemented for internal reasons.
    */
   virtual ~toResultViewCheck()
@@ -672,11 +690,14 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setSorting(int col,bool asc=true);
+  /** Reimplemented for internal reasons.
+   */
+  virtual int sortColumn() const
+  { return SortColumn; }
 public slots:
   /** Reimplemented for internal reasons.
    */
-  virtual void refresh(void)
-  { toResult::refresh(); }
+  virtual void refresh(void);
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)
