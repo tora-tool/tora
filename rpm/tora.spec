@@ -1,36 +1,28 @@
 # This specfile is Mandrake Linux specific
 #
-# Requires the following .rpmmacros
-#
-# %__find_requires %(echo $HOME)/bin/find-requires-nonoracle %{?buildroot:%{buildroot}}
-#
-# Where the find-requires-nonoracle contains the following
-#
-# #!/bin/sh
-# /usr/lib/rpm/find-requires $@ | grep -v 'libclntsh\.so' | grep -v 'libwtc.*\.so'
-#
-# This is to remove dependencies to the oracle libraries in the oracle rpm.
+# This requires a working Oracle installation to build with a set ORACLE_HOME
+# environment. Requires at least version 8.1.7 of Oracle.
 #
 
 
 %define _name		tora
-%define _version	1.3.9.2
-%define _release	2mdk
+%define _version	1.3.10
+%define _release	1mdk
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 
-Summary:			Toolkit for Oracle
-Name:				%{_name}
-Version:			%{_version}
-Release:			%{_release}
-Source:				%{_name}-%{_version}.tar.gz
-URL:				http://www.globecom.se/tora
-Group:				Development/Databases
-Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 9.1
-Copyright:			GPL
-BuildRoot:			%{_tmppath}/tora-root
-Prefix:				%{_prefix}
+Summary:		Toolkit for Oracle
+Name:			%{_name}
+Version:		%{_version}
+Release:		%{_release}
+Source:			%{_name}-%{_version}.tar.gz
+URL:			http://www.globecom.se/tora
+Group:			Development/Databases
+Packager:		Henrik Johnson <tora@underscore.se>
+Distribution:		Mandrake Linux 9.1
+Copyright:		GPL
+BuildRoot:		%{_tmppath}/tora-root
+Prefix:			%{_prefix}
 
 %description
 Toolkit for Oracle is a program for database developers and administrators. The
@@ -94,25 +86,34 @@ features that are available so far is (As of version 1.2):
 This build is compiled with KDE and Mandrake Menu support.
 
 %package oracle
-Summary:			Oracle specific plugins for %{_name}
+Summary:		Oracle specific plugins for %{_name}
 Group:			Development/Databases
 Requires:		%{_name} = %{_version}
+Autoreq:		0
+Requires:		tora
+
 %description oracle
 Oracle specific plugins for %{_name}.
 
 %changelog
-* Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
-- created from SuSE specfile by Pascal Bleser
-
-* Sun Mar 9 2003 Henrik Johnson <tora@underscore.se>
-- adapted to Mandrake Linux
+* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
+- added the oracle preload and a LD_LIBRARY_PATH setup to make compilation work without Oracle in your ld.so path.
+- also added a workaround of the whole requires problem for the Oracle package.
+- changed version to 1.3.10.
 
 * Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
 - added comment about fixing requires problem.
 
+* Sun Mar 9 2003 Henrik Johnson <tora@underscore.se>
+- adapted to Mandrake Linux.
+
+* Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
+- created from SuSE specfile by Pascal Bleser.
+
 %prep
 %setup -q
 export QTDIR="%{_qtdir}"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$ORACLE_HOME/lib"
 CFLAGS="$RPM_OPT_FLAGS" \
 CXXFLAGS="$RPM_OPT_FLAGS" \
 ./configure \

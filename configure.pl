@@ -208,6 +208,8 @@ __EOMK__
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	\$(GCC) -shared \$(CFLAGS) \$(LFLAGS) \$(LFLAGS_GLOB) \$(MYSQL_SHARED) -o \$@ \$^
 __EOMK__
+	     "tooraclepreload"     => { "Files" => [ "tooraclepreload" ],
+					"Oracle" => 1 },
 	     );
 
 sub addInclude {
@@ -1463,6 +1465,10 @@ __EOT__
 	if ($KDEApplication) {
 	    print MAKEFILE "DEFINES+=-DTO_KDE\n";
 	}
+	if ($Target ne "tora-plugin") {
+	    print MAKEFILE "DEFINES+=-DTOMONOLITHIC\n";
+	}
+
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Where to find perl on your system\n";

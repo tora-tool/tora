@@ -1,8 +1,11 @@
 1.3.10:
 
+2003-03-10: Some more work on the mandrake spec file.
+2003-03-10: Changed version.
+2003-03-10: Added a dummy plugin to preload oracle libraries from ORACLE_HOME path.
 2003-03-08: Created Mandrake Linux specific RPM.
-2003-02-18: Fixed problem with not making outer john to v$process in Session viewer.
-2003-02-18: Added some more keywords.
+2003-02-08: Fixed problem with not making outer john to v$process in Session viewer.
+2003-02-08: Added some more keywords.
 
 1.3.9.2: Released 2003-02-16
 
