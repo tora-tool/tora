@@ -1,0 +1,95 @@
+############################################################################
+#
+# TOra - An Oracle Toolkit for DBA's and developers
+# Copyright (C) 2000  GlobeCom AB
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+############################################################################
+
+default: all
+
+include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
+
+DEFINES+=-DOTL_ORA8I
+CPPFLAGS_GLOB=
+
+ARCH=$(shell uname)
+LFLAGS_GLOB=-g
+CFLAGS_GLOB=-g -Wall
+.SILENT:
+
+CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
+CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES) $(TOVERSION)
+CHFLAGS=$(CHFLAGS_GLOB) $(INCLUDES) $(DEFINES)
+
+OBJECTS=$(filter %.o,$(SOURCES:%.cpp=objs/%.o))
+
+DEPENDS=$(filter %.d,$(SOURCES:%.cpp=.depends/%.d))
+
+vpath %.h $(INCLUDE)
+
+.PHONY: all clean fixmod install realinstall
+
+all: $(TARGET)
+
+#$(OBJECTS): Makefile Makefile.common
+
+.depends/%.d: %.cpp
+	@echo Making dependences for $<
+	if [ ! -d .depends ] ; then mkdir .depends ; fi
+	$(CC) -M $(CPPFLAGS) $< > $@.tmp && \
+		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o objs\/\1co \
+		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
+
+include $(DEPENDS)
+
+%.moc: %.h
+	@echo Metacompiling $<
+	$(MOC) -o $@ $<
+
+objs/%.o: %.cpp
+	@echo Compiling $<
+	if [ ! -d objs ] ; then mkdir objs ; fi
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+%.o : objs/%.o
+	@echo Faulty dependency, forgot the objs/ part
+
+$(TARGET):
+	@echo Linking $@
+	$(CC) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(LIBS_GLOB) $(QT_SHARED)
+
+install: $(TARGET)
+	@echo Install $(TARGET) to $(INSTALLBIN)
+	strip $(TARGET)
+	cp $(TARGET) $(INSTALLBIN)
+
+clean:
+	@echo Cleaning $(TITLE)
+	-rm -f $(OBJECTS) $(TARGET) 2>&1 >/dev/null
+	-rm -f *.moc 2>&1 >/dev/null
+	-rm -f *~ 2>&1 >/dev/null
+	-rm -f *.bak 2>&1 >/dev/null
+
+distclean: clean
+	-rm -rf .depends 2>&1 >/dev/null
+	-rm -rf .xvpics 2>&1 >/dev/null
+	-rm -rf icons/.xvpics 2>&1 >/dev/null
+	-rm -rf objs 2>&1 >/dev/null
+	-rm \#*\# 2>&1 >/dev/null
+	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null
+	-mv Makefile Makefile.orig 2>&1 >/dev/null
+	-rm LICENSE.h

@@ -1,0 +1,14 @@
+Extended functionality:
+* In the SQL Browser, add referenses to tables view to display referential constraints to and from the table.
+* In the SQL Browser, add information about partitions.
+* Update syntax highlighting from v$reserved_words (Is this a good idea, stuff seems to missing there OUT and EXCEPTION wasn't in there).
+
+New tools:
+* Info about current session.
+* Schema comparison.
+* PL/SQL Editor.
+* Server statistics and tuning information.
+* Rollback manager
+	* Display active transactions (v$transaction). Show as much as posible about transaction.
+	* Display open cursors (v$open_cursor). Get start extent by polling, not exact but works fairly well. Extra pane on right.
+	* Online/Offline, Create, Drop

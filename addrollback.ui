@@ -1,0 +1,180 @@
+<!DOCTYPE UI><UI>
+<class>Form1</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>Form1</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>470</width>
+            <height>500</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>minimumSize</name>
+        <size>
+            <width>470</width>
+            <height>500</height>
+        </size>
+    </property>
+    <property stdset="1">
+        <name>maximumSize</name>
+        <size>
+            <width>470</width>
+            <height>500</height>
+        </size>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Form1</string>
+    </property>
+    <widget>
+        <class>QTabWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>DialogTabs</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>330</width>
+                <height>480</height>
+            </rect>
+        </property>
+        <widget>
+            <class>QWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>RollbackInfo</cstring>
+            </property>
+            <attribute>
+                <name>title</name>
+                <string>Rollback Segment</string>
+            </attribute>
+            <widget>
+                <class>QLineEdit</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>Name</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>30</y>
+                        <width>310</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>310</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Name</string>
+                </property>
+                <property>
+                    <name>buddy</name>
+                    <cstring>Name</cstring>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Name of this rollback segment.</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>CheckBox1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>130</y>
+                        <width>310</width>
+                        <height>19</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Public</string>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>If this should be a publicly available rollback segment.</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>70</y>
+                        <width>310</width>
+                        <height>16</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>&amp;Tablespace</string>
+                </property>
+                <property>
+                    <name>buddy</name>
+                    <cstring>Tablespace</cstring>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Name of this rollback segment.</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QComboBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>Tablespace</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>90</y>
+                        <width>310</width>
+                        <height>27</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>editable</name>
+                    <bool>true</bool>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+</widget>
+</UI>

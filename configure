@@ -1,0 +1,53 @@
+#!/bin/sh
+############################################################################
+#
+# TOra - An Oracle Toolkit for DBA's and developers
+# Copyright (C) 2000  GlobeCom AB
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+############################################################################
+
+echo Trying to configure TOra
+
+PERL=`which perl`
+
+if [ -z $PERL ]
+then
+	echo PERL Required for installation
+fi
+
+for a in *.h
+do
+    if grep -i Q_OBJECT $a >/dev/null
+    then
+	touch `echo $a | sed 's/\.h$/\.moc/'`
+    fi
+done
+sleep 1
+touch *.h
+
+if [ \! -f Makefile ]
+then
+    mv Makefile.orig Makefile
+fi
+
+echo "static char *LicenseText=\"" > LICENSE.h
+echo "<PRE>" >> LICENSE.h
+$PERL -e 'while(<>) { s/\\/\\\\/; s/\"/\\\"/g; print; }' < LICENSE >> LICENSE.h
+echo "</PRE>" >> LICENSE.h
+echo "\";" >> LICENSE.h
+
+$PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
