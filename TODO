@@ -86,6 +86,7 @@ Extended functionality:
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
 * Synchonize worksheets that edit the same file.
+* Ability to set order of files in SQL project.
 
 New tools:
 
@@ -100,6 +101,3 @@ New tools:
 	* Datafiles added within 30 days
 	* Objects added within 30 days
 	* Objects edited within 30 days
-* Project manager:
-	* A list of files or subprojects.
-	* Assemble into one file in the end.

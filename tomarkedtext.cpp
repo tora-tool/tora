@@ -212,6 +212,15 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
   return line;
 }
 
+void toMarkedText::openFilename(const QString &file)
+{
+  QCString data=toReadFile(file);
+  setText(QString::fromLocal8Bit(data));
+  setFilename(file);
+  setEdited(false);
+  toStatusMessage("File opened successfully",false,false);
+}
+
 bool toMarkedText::editOpen(void)
 {
   if (edited()) {
@@ -231,10 +240,7 @@ bool toMarkedText::editOpen(void)
   QString filename=toOpenFilename(file.dirPath(),QString::null,this);
   if (!filename.isEmpty()) {
     try {
-      QCString data=toReadFile(filename);
-      setText(QString::fromLocal8Bit(data));
-      setFilename(filename);
-      toStatusMessage("File opened successfully",false,false);
+      openFilename(filename);
       return true;
     } TOCATCH
   }

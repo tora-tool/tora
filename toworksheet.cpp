@@ -1571,3 +1571,14 @@ void toWorksheet::importData(std::map<QString,QString> &data,const QString &pref
   toToolWidget::importData(data,prefix);
 }
 
+toWorksheet *toWorksheet::fileWorksheet(const QString &file)
+{
+  toWorksheet *worksheet=new toWorksheet(toMainWidget()->workspace(),
+					 toMainWidget()->currentConnection(),
+					 false);
+  worksheet->editor()->openFilename(file);
+  worksheet->show();
+  toToolCaption(worksheet,WorksheetTool.name());
+  toMainWidget()->windowsMenu();
+  return worksheet;
+}

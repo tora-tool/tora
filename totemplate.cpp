@@ -461,7 +461,8 @@ toTemplate::toTemplate(QWidget *parent)
 
   connect(List,SIGNAL(expanded(QListViewItem *)),this,SLOT(expand(QListViewItem *)));
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
-  connect(List,SIGNAL(doubleClicked(QListViewItem *)),this,SLOT(doubleClick(QListViewItem *)));
+  connect(List,SIGNAL(doubleClicked(QListViewItem *)),this,SLOT(selected(QListViewItem *)));
+  connect(List,SIGNAL(returnPressed(QListViewItem *)),this,SLOT(selected(QListViewItem *)));
 
   if (toTemplateProvider::Providers)
     for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
@@ -503,12 +504,12 @@ void toTemplate::expand(QListViewItem *item)
   }
 }
 
-void toTemplate::doubleClick(QListViewItem *item)
+void toTemplate::selected(QListViewItem *item)
 {
   try {
     toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
     if (ti)
-      ti->doubleClick();
+      ti->selected();
   } catch (...) {
   }
 }
@@ -548,11 +549,13 @@ void toTemplate::setWidget(QWidget *widget)
   if (!widget)
     widget=new QTextView(frame());
 
-  widget->show();
-  if (WidgetExtra)
-    delete WidgetExtra;
+  if (WidgetExtra!=widget) {
+    widget->show();
+    if (WidgetExtra)
+      delete WidgetExtra;
 
-  WidgetExtra=widget;
+    WidgetExtra=widget;
+  }
 }
 
 class toTextTemplate : toTemplateProvider {

@@ -87,7 +87,7 @@ public:
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
-  void doubleClick(QListViewItem *item);
+  void selected(QListViewItem *item);
 };
 
 /**
@@ -101,6 +101,7 @@ class toTemplateProvider {
    */
   static std::list<toTemplateProvider *> *Providers;
   QString Name;
+  bool Open;
 public:
   toTemplateProvider(const QString &name);
   virtual ~toTemplateProvider()
@@ -177,9 +178,9 @@ public:
    */
   virtual void expand(void)
   { }
-  /** This function is called when the item is doubleclicked.
+  /** This function is called when the item is selected by doubleclicking or pressing return.
    */
-  virtual void doubleClick(void)
+  virtual void selected(void)
   { }
   /** This function is called when the item is collapsed.
    */

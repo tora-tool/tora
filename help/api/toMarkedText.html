@@ -44,49 +44,51 @@
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref19">filename</A></b> (void)  const
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref20">setFilename</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">openFilename</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &file) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref21">setEdit</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">setFilename</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref22">focusInEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">setEdit</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref23">focusOutEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref23">focusInEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref24">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">focusOutEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref25">editPrint</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref25">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref26">editOpen</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref26">editPrint</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref27">editSave</A></b> (bool ask) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref27">editOpen</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref28">editUndo</A></b> (void) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref28">editSave</A></b> (bool ask) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref29">editRedo</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref29">editUndo</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref30">editCut</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref30">editRedo</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref31">editCopy</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref31">editCut</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref32">editPaste</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref32">editCopy</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref33">editSearch</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref33">editPaste</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref34">editSelectAll</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref34">editSearch</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref35">incrementalSearch</A></b> (bool forward) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">editSelectAll</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>void &nbsp;<b><A HREF="#ref36">incrementalSearch</A></b> (bool forward) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref10">mousePressEvent</A></b> (<A HREF="http://doc.trolltech.com/qmouseevent.html">QMouseEvent</A> *e) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref11">keyPressEvent</A></b> (<A HREF="http://doc.trolltech.com/qkeyevent.html">QKeyEvent</A> *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">newLine</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref39">newLine</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref39">dropEvent</A></b> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref40">dropEvent</A></b> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is the enhanced editor used in TOra. It mainly offers integration in the TOra
  menues and printsupport in addition to normal QMultiLineEdit.
@@ -152,72 +154,79 @@
 </p>
 <p><b>Returns</b>: Filename of editor.
    </p>
-<A NAME="setFilename"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setFilename</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="openFilename"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>openFilename</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &file)
+<br></td><td align="right"><h3><strong>openFilename</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Open a file for editing.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>file</i></TD><TD align="left" valign="top">File to open for editing.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setFilename"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setFilename</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>setFilename</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set the current filename of the file in editor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String containing filename.
    </TD></TR>
 </TABLE></P>
-<A NAME="setEdit"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setEdit</strong> (void)
+<A NAME="setEdit"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setEdit</strong> (void)
 <br></td><td align="right"><h3><strong>setEdit</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Update user interface with availability of copy/paste etc.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#setEdit">toEditWidget</A>.</p>
-<A NAME="focusInEvent"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
+<A NAME="focusInEvent"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
 <br></td><td align="right"><h3><strong>focusInEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#0fa015">QMultiLineEdit</A>.</p>
-<A NAME="focusOutEvent"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusOutEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
+<A NAME="focusOutEvent"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusOutEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
 <br></td><td align="right"><h3><strong>focusOutEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#33ebb8">QMultiLineEdit</A>.</p>
-<A NAME="paintEvent"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe)
+<A NAME="paintEvent"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe)
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<A NAME="editPrint"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
+<A NAME="editPrint"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Print this editor.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editPrint">toEditWidget</A>.</p>
-<A NAME="editOpen"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (void)
+<A NAME="editOpen"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (void)
 <br></td><td align="right"><h3><strong>editOpen</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editOpen">toEditWidget</A>.</p>
-<A NAME="editSave"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editSave</strong> (bool ask)
+<A NAME="editSave"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editSave</strong> (bool ask)
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
-<A NAME="editUndo"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editUndo</strong> (void)
+<A NAME="editUndo"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editUndo</strong> (void)
 <br></td><td align="right"><h3><strong>editUndo</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editUndo">toEditWidget</A>.</p>
-<A NAME="editRedo"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editRedo</strong> (void)
+<A NAME="editRedo"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editRedo</strong> (void)
 <br></td><td align="right"><h3><strong>editRedo</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editRedo">toEditWidget</A>.</p>
-<A NAME="editCut"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editCut</strong> (void)
+<A NAME="editCut"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editCut</strong> (void)
 <br></td><td align="right"><h3><strong>editCut</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editCut">toEditWidget</A>.</p>
-<A NAME="editCopy"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editCopy</strong> (void)
+<A NAME="editCopy"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editCopy</strong> (void)
 <br></td><td align="right"><h3><strong>editCopy</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editCopy">toEditWidget</A>.</p>
-<A NAME="editPaste"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPaste</strong> (void)
+<A NAME="editPaste"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPaste</strong> (void)
 <br></td><td align="right"><h3><strong>editPaste</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editPaste">toEditWidget</A>.</p>
-<A NAME="editSearch"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSearch</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
+<A NAME="editSearch"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSearch</strong> (<A HREF="#toSearchReplace">toSearchReplace</A> *search)
 <br></td><td align="right"><h3><strong>editSearch</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSearch">toEditWidget</A>.</p>
-<A NAME="editSelectAll"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSelectAll</strong> (void)
+<A NAME="editSelectAll"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editSelectAll</strong> (void)
 <br></td><td align="right"><h3><strong>editSelectAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSelectAll">toEditWidget</A>.</p>
-<A NAME="incrementalSearch"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>incrementalSearch</strong> (bool forward)
+<A NAME="incrementalSearch"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>incrementalSearch</strong> (bool forward)
 <br></td><td align="right"><h3><strong>incrementalSearch</strong></h3></td></tr></table><p></p><p> Start incremental search mode, or search next if started.
    </p>
-<A NAME="exportData"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="exportData"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -226,7 +235,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="importData"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -235,9 +244,9 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
-<A NAME="newLine"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>newLine</strong> (void)
+<A NAME="newLine"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>newLine</strong> (void)
 <br></td><td align="right"><h3><strong>newLine</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#408c84">QMultiLineEdit</A>.</p>
-<A NAME="dropEvent"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *)
+<A NAME="dropEvent"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *)
 <br></td><td align="right"><h3><strong>dropEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#421c20">QMultiLineEdit</A>.</p>
 <HR>
 	<table>

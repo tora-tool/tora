@@ -1,5 +1,8 @@
 1.3.4:
 
+2002-03-03: Added a method to open a worksheet on a specific file.
+2002-03-03: Added open file method to editor.
+2002-03-03: Added template for SQL projects.
 2002-03-02: Save template filter on save session.
 2002-03-01: Fixed some valgrind warnings.
 2002-03-01: Template provider save & restore state functionality.

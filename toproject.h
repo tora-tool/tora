@@ -37,42 +37,79 @@
 
 #include "totemplate.h"
 
+#include <map>
+
 class toProjectTemplateItem : public toTemplateItem {
   QString Filename;
+  void setup(const QString &name,bool open);
 public:
-  toProjectTemplateItem(QListViewItem *item,QString name);
-  toProjectTemplateItem(QListView *item,QString name=QString::null);
+  toProjectTemplateItem(toTemplateItem *item,QString name,bool open=true);
+  toProjectTemplateItem(QListView *item,QString name=QString::null,bool open=true);
 
-  virtual void doubleClick(void);
+  const QString &filename(void) const
+  { return Filename; }
+  void setFilename(const QString &file);
+  bool project(void);
+  virtual void selected(void);
 
   virtual QWidget *selectedWidget(QWidget *parent);
+};
+
+class toProject : public QVBox {
+  Q_OBJECT
+  
+  toProjectTemplateItem *Root;
+  QToolButton *DelFile;
+  QListView *Project;
+  std::map<QListViewItem *,toProjectTemplateItem *> ItemMap;
+
+  void update(toProjectTemplateItem *sourceparent,toResultViewItem *parent);
+  QString generateSQL(toProjectTemplateItem *item);
+public:
+  toProject(toProjectTemplateItem *top,QWidget *parent);
+  ~toProject();
+
+public slots:
+  void update(void);
+  void addFile(void);
+  void delFile(void); 
+  void newProject(void);
+  void saveProject(void);
+  void generateSQL(void);
+  void selectionChanged(void);
 };
 
 class toProjectTemplate : public QObject, public toTemplateProvider {
   Q_OBJECT
 
   toProjectTemplateItem *Root;
-  QString Filename;
+  std::map<QString,QString> Import;
+
+  QToolButton *AddFile;
+  QToolButton *DelFile;
+
+  toProject *Details;
 public:
   toProjectTemplate(void)
     : QObject(NULL,"projecttemplate"),toTemplateProvider("project")
-  { }
+  { Details=NULL; }
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 
   virtual void insertItems(QListView *parent,QToolBar *toolbar);
   virtual void removeItems(QListViewItem *item);
-};
 
-class toProject : public toToolWidget {
-  Q_OBJECT
-public:
-  toProject(QListViewItem *top,QWidget *parnet);
+  virtual QWidget *selectedWidget(QWidget *parent);
 
+  virtual toProjectTemplateItem *root(void)
+  { return Root; }
+
+  friend class toProject;
 public slots:
-  void addFile(void);
-  void delFile(void); 
-  void newProject(void);
-  void saveProject(void);
-  void generateSQL(void);
+  void addFile();
+  void delFile(); 
+  void changeItem(QListViewItem *item);
 };
 
 #endif

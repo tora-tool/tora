@@ -116,7 +116,7 @@
 #define CONF_EXTENSIONS  	"Extensions"
 #define CONF_UPGRADE_CHECK	"UpdageCheck"
 #ifdef TO_KDE
-#define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files,*.txt|Text files,*|All files"
+#define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"
 #else
 #define DEFAULT_EXTENSIONS	"SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"
 #endif

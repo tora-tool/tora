@@ -1738,13 +1738,13 @@ void toBrowseTemplate::insertItems(QListView *parent,QToolBar *toolbar)
   Parents.insert(Parents.end(),dbitem);
 
   new QToolButton(QPixmap((const char **)filter_xpm),
-		  "Define the object filter",
-		  "Define the object filter",
+		  "Define the object filter for database browser",
+		  "Define the object filter for database browser",
 		  this,SLOT(defineFilter(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)nofilter_xpm),
-		  "Remove any object filter",
-		  "Remove any object filter",
+		  "Remove any object filter for database browser",
+		  "Remove any object filter for database browser",
 		  this,SLOT(clearFilter(void)),
 		  toolbar);
 }

@@ -134,6 +134,8 @@ public:
 
   virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
   virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+
+  static toWorksheet *fileWorksheet(const QString &file);
 signals:
   void executed(void);
 public slots:

@@ -132,6 +132,10 @@ public:
    */
   virtual QString filename(void) const
   { return Filename; }
+  /** Open a file for editing.
+   * @param file File to open for editing.
+   */
+  virtual void openFilename(const QString &file);
   /** Set the current filename of the file in editor.
    * @param str String containing filename.
    */
