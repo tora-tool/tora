@@ -47,6 +47,7 @@ class toResultView;
 class QListViewItem;
 class toResultFilter;
 class QPopupMenu;
+class toResultContent;
 
 class toBrowser : public toToolWidget {
   Q_OBJECT
@@ -60,6 +61,9 @@ class toBrowser : public toToolWidget {
   toResult *SecondTab;
   toResultFilter *Filter;
 
+  toResultContent *ViewContent;
+  toResultContent *TableContent;
+
   std::map<QString,toResultView *> Map;
   std::map<QString,toResult *> SecondMap;
   void setNewFilter(toResultFilter *filter);
@@ -70,6 +74,9 @@ public:
   virtual ~toBrowser();
 
   virtual bool canHandle(toConnection &conn);
+
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 public slots:
   void refresh(void);
   void updateTabs(void);

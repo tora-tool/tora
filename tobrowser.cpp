@@ -148,6 +148,39 @@ public:
       : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
     {
     }
+    virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+    {
+      data[prefix+":Type"]=QString::number(Type);
+      if (IgnoreCase)
+	data[prefix+":Ignore"]="Yes";
+      if (Invert)
+	data[prefix+":Invert"]="Yes";
+      data[prefix+":SpaceType"]=QString::number(TablespaceType);
+      data[prefix+":Text"]=Text;
+      int id=1;
+      for(std::list<QString>::iterator i=Tablespaces.begin();i!=Tablespaces.end();i++,id++)
+	data[prefix+":Space:"+QString::number(id)]=*i;
+    }
+    virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+    {
+      Type=data[prefix+":Type"].toInt();
+      TablespaceType=data[prefix+":SpaceType"].toInt();
+      IgnoreCase=!data[prefix+":Ignore"].isEmpty();
+      Invert=!data[prefix+":Invert"].isEmpty();
+      Text=data[prefix+":Text"];
+      if (!Text.isEmpty()) {
+	Match.setPattern(Text);
+	Match.setCaseSensitive(IgnoreCase);
+      }
+      int id=1;
+      std::map<QString,QString>::iterator i;
+      Tablespaces.clear();
+      while((i=data.find(prefix+":Space:"+QString::number(id)))!=data.end()) {
+	Tablespaces.insert(Tablespaces.end(),(*i).second);
+	i++;
+	id++;
+      }
+    }
     virtual bool check(const QListViewItem *item)
     {
       QString str=item->text(0);
@@ -505,11 +538,15 @@ QString toBrowser::schema(void)
 
 void toBrowser::setNewFilter(toResultFilter *filter)
 {
+  if (Filter) {
+    delete Filter;
+    Filter=NULL;
+  }
   if (filter)
     Filter=filter;
   for(std::map<QString,toResultView *>::iterator i=Map.begin();i!=Map.end();i++)
     (*i).second->setFilter(filter?filter->clone():NULL);
-  updateTabs();
+  refresh();
 }
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
@@ -617,9 +654,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultView,"Triggers");
   SecondMap[TAB_TABLE_TRIGGERS]=resultView;
 
-  toResultContent *content=new toResultContent(curr,TAB_TABLE_DATA);
-  curr->addTab(content,"&Data");
-  SecondMap[TAB_TABLE_DATA]=content;
+  TableContent=new toResultContent(curr,TAB_TABLE_DATA);
+  curr->addTab(TableContent,"&Data");
+  SecondMap[TAB_TABLE_DATA]=TableContent;
 
   toResultItem *resultItem=new toResultItem(2,true,curr,TAB_TABLE_INFO);
   resultItem->setSQL(SQLTableInfo);
@@ -656,9 +693,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"SQL");
   SecondMap[TAB_VIEW_SQL]=resultField;
 
-  content=new toResultContent(curr,TAB_VIEW_DATA);
-  curr->addTab(content,"&Data");
-  SecondMap[TAB_VIEW_DATA]=content;
+  ViewContent=new toResultContent(curr,TAB_VIEW_DATA);
+  curr->addTab(ViewContent,"&Data");
+  SecondMap[TAB_VIEW_DATA]=ViewContent;
 
   resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
@@ -1045,6 +1082,70 @@ void toBrowser::modifyTable(void)
 void toBrowser::addTable(void)
 {
 
+}
+
+void toBrowser::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  data[prefix+":Schema"]=Schema->currentText();
+  data[prefix+":FirstTab"]=TopTab->currentPage()->name();
+  data[prefix+":SecondText"]=SecondText;
+  for(std::map<QString,toResult *>::iterator i=SecondMap.begin();i!=SecondMap.end();i++) {
+    if ((*i).second==SecondTab&&Map.find((*i).first)==Map.end()) {
+      data[prefix+":SecondTab"]=(*i).first;
+      break;
+    }
+  }
+  ViewContent->exportData(data,prefix+":View");
+  TableContent->exportData(data,prefix+":Table");
+  
+  toToolWidget::exportData(data,prefix);
+  if (Filter)
+    Filter->exportData(data,prefix+":Filter");
+
+}
+
+void toBrowser::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  disconnect(Schema,SIGNAL(activated(int)),
+	     this,SLOT(changeSchema(int)));
+  disconnect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
+
+  ViewContent->importData(data,prefix+":View");
+  TableContent->importData(data,prefix+":Table");
+
+  if (data.find(prefix+":Filter:Type")!=data.end()) {
+    toResultFilter *filter=new toBrowserFilter::setting();
+    filter->importData(data,prefix+":Filter");
+    setNewFilter(filter);
+  } else
+    setNewFilter(NULL);
+
+  toToolWidget::importData(data,prefix);
+  QString str=data[prefix+":Schema"];
+  for(int i=0;i<Schema->count();i++)
+    if (Schema->text(i)==str)
+      Schema->setCurrentItem(i);
+  str=data[prefix+":FirstTab"];
+  QWidget *chld=(QWidget *)child(str);
+  if(chld&&str.length()) {
+    SecondText=QString::null;
+    TopTab->showPage(chld);
+    str=data[prefix+":SecondTab"];
+    chld=(QWidget *)child(str);
+    if (chld&&str.length()) {
+      QWidget *par=chld->parentWidget();
+      while(par&&!par->isA("QTabWidget"))
+	par=par->parentWidget();
+      if (par)
+	((QTabWidget *)par)->showPage(chld);
+    }
+    SecondText=data[prefix+":SecondText"];
+  }
+
+  connect(Schema,SIGNAL(activated(int)),
+	  this,SLOT(changeSchema(int)));
+  connect(TopTab,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeTab(QWidget *)));
+  refresh();
 }
 
 void toBrowser::fixIndexCols(void)

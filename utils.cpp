@@ -1064,6 +1064,38 @@ void toToolCaption(toToolWidget *widget,const QString &caption)
   toMainWidget()->windowsMenu();
 }
 
+void toMapExport(std::map<QString,QString> &data,const QString &prefix,
+		 std::map<QString,QString> &src)
+{
+  std::map<QString,QString>::iterator i=src.begin();
+  if (i!=src.end()) {
+    data[prefix+":First"]=(*i).first;
+    QString key=prefix+":d:";
+    do {
+      data[key+(*i).first]=(*i).second;
+      i++;
+    } while(i!=src.end());
+  }
+}
+
+void toMapImport(std::map<QString,QString> &data,const QString &prefix,
+		 std::map<QString,QString> &dst)
+{
+  dst.clear();
+  std::map<QString,QString>::iterator i=data.find(prefix+":First");
+  if (i!=data.end()) {
+    QString key=prefix+":d:";
+    i=data.find(key+(*i).second);
+    while(i!=data.end()&&(*i).first.startsWith(key)) {
+      QString t=(*i).first.mid(key.length());
+      if (t.isNull())
+	t="";
+      dst[t]=(*i).second;
+      i++;
+    }
+  }
+}
+
 #ifndef TO_LICENSE
 
 QString toCheckLicense(bool)

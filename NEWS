@@ -31,7 +31,10 @@
 2001-11-21: Don't draw piecharts if all values are 0.
 2001-11-21: Display wait events in ms, nor 100s of second.
 2001-11-21: Fixed help context on bind parameter.
-2001-11-21: Added single record form editor in content editor.
+2001-11-22: Added single record form editor in content editor.
+2001-11-22: Added session support to browser.
+2001-11-22: Fixed problem with filter on toresultlongs.
+2001-11-22: Removed a memory leak in filter buffers.
 
 1.1.5:
 

@@ -1041,6 +1041,21 @@ void toResultContentEditor::singleRecordForm(bool display)
   }
 }
 
+void toResultContentEditor::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (AllFilter)
+    data[prefix+":All"]="Yes";
+  toMapExport(data,prefix+":Crit",Criteria);
+  toMapExport(data,prefix+":Order",Order);
+}
+
+void toResultContentEditor::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  AllFilter=!data[prefix+":All"].isEmpty();
+  toMapImport(data,prefix+":Crit",Criteria);
+  toMapImport(data,prefix+":Order",Order);
+}
+
 toResultContentSingle::toResultContentSingle(QWidget *parent)
   : QScrollView(parent)
 {

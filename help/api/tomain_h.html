@@ -787,6 +787,21 @@ QString toSQLStripBind(const QString &sql);
  */
 QString toExpandFile(const QString &file);
 
+/** Export the contents of a map into another map.
+ * @param data The destination map.
+ * @param prefix Prefix to save map using.
+ * @param src The map to save.
+ */
+void toMapExport(std::map<QString,QString> &data,const QString &prefix,
+		 std::map<QString,QString> &src);
+/** Import the contents of a map from another map.
+ * @param data The source map.
+ * @param prefix Prefix to use for restoring from map.
+ * @param dst The map to save into.
+ */
+void toMapImport(std::map<QString,QString> &data,const QString &prefix,
+		 std::map<QString,QString> &dst);
+
 /** Find an item in a listview.
  * @param list The list to search for the item.
  * @param str The string to search for. You can specify parent/child with : in the string.

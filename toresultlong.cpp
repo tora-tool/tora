@@ -171,7 +171,7 @@ void toResultLong::addItem(void)
 	    disp=1;
 	  }
 	  do {
-	    RowNumber++;
+	    QListViewItem *last=LastItem;
 	    LastItem=createItem(LastItem,NULL);
 	    if (NumberColumn)
 	      LastItem->setText(0,QString::number(RowNumber));
@@ -179,6 +179,11 @@ void toResultLong::addItem(void)
 	      LastItem->setText(cols,QString::number(RowNumber));
 	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
 	      LastItem->setText(j+disp,Query->readValue());
+	    if (Filter&&!Filter->check(LastItem)) {
+	      delete LastItem;
+	      LastItem=last;
+	    } else
+	      RowNumber++;
 	  } while(Query->poll()&&!Query->eof()&&(MaxNumber<0||MaxNumber>RowNumber));
 	}
 	if (em) {

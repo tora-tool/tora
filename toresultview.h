@@ -72,6 +72,18 @@ public:
    * @return A newly created copy of this filter.
    */
   virtual toResultFilter *clone(void) = 0;
+  /** Export data to a map.
+   * @param data A map that can be used to recreate the data of a chart.
+   * @param prefix Prefix to add to the map.
+   */
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  { }
+  /** Import data
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  { }
 };
 
 /** An item to display in a toListView or toResultView. They differ from normal
