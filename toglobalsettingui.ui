@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>631</width>
+            <width>623</width>
             <height>563</height>
         </rect>
     </property>
@@ -692,6 +692,21 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Display all available samples</string>
                     </property>
                 </widget>
+                <widget row="4"  column="1" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>UpgradeCheck</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Check for upgrades on startup</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Check the TOra webpage for upgrades to the program. Does not send any information about the users computer or TOra installation.</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
     </grid>
@@ -763,6 +778,7 @@ Will leave the password unencryptet in the config file.</string>
     <tabstop>Statusbar</tabstop>
     <tabstop>MaximizeMain</tabstop>
     <tabstop>ToolsLeft</tabstop>
+    <tabstop>UpgradeCheck</tabstop>
     <tabstop>ConnectHistory</tabstop>
     <tabstop>Status</tabstop>
     <tabstop>HistorySize</tabstop>

@@ -1,5 +1,7 @@
 1.3.3:
 
+2002-01-25: More fixes to non oracle configure.
+2002-01-25: Added optional upgrade check.
 2002-01-25: Only build plugin based TOra on linux.
 2002-01-25: Fixed problem compiling without mysql & oracle support in configure.
 2002-01-25: Better support for Oracle versions in configure.pl.

@@ -84,7 +84,7 @@ my %plugins=(
 					"Oracle" => 1 },
 	     "toanalyze"           => { "Files" => [ "toanalyze",
 						     "toworksheetstatistic" ],
-					"Oracle" => 1 },
+					"Any" => 1 },
 	     "tobackup"            => { "Files" => [ "tobackup" ],
 					"Oracle" => 1 },
 	     "tobrowser"           => { "Files" => [ "tobrowser",

@@ -48,6 +48,11 @@
 
 #include <qtimer.h>
 
+#if QT_VERSION >= 300
+class QNetworkOperation;
+class QUrlOperator;
+#endif
+
 #define TOMessageBox QMessageBox
 
 class QComboBox;
@@ -199,6 +204,11 @@ private:
    * Default tool id
    */
   int DefaultTool;
+
+#if QT_VERSION >= 300
+  QUrlOperator *VersionUrl;
+  QString VersionString;
+#endif
 
   toEditWidget *Edit;
 
@@ -492,6 +502,11 @@ private slots:
   /** Display status message
    */
   void displayMessage(void);
+
+#if QT_VERSION >= 300
+  void versionData(const QByteArray &data,QNetworkOperation *op);
+  void versionFinished(QNetworkOperation *op);
+#endif
 };
 
 /** Get a pointer to the main window

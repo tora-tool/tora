@@ -75,6 +75,11 @@
 #include <qvbox.h>
 #include <qworkspace.h>
 
+#if QT_VERSION >= 300
+#include <qurloperator.h>
+#include <qnetwork.h>
+#endif
+
 #include "tomain.moc"
 #include "tomessageui.moc"
 #ifdef TO_KDE
@@ -498,6 +503,37 @@ toMain::toMain()
 	importData(session,"TOra");
     } TOCATCH
   }
+
+#if QT_VERSION >= 300
+  if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
+    switch(TOMessageBox::information(this,"Check for upgrades?",
+				     "Do you want TOra to automatically check\n"
+				     "http://www.globecom.se/tora for updates on startup?\n"
+				     "During this check no information about your computer\n"
+				     "including TOra version is transmitted to the site",
+				     "&Yes","&No",QString::null,0)) {
+    case 0:
+      toTool::globalSetConfig(CONF_UPGRADE_CHECK,"Yes");
+      break;
+    case 1:
+      toTool::globalSetConfig(CONF_UPGRADE_CHECK,"");
+      break;
+    }
+  }
+  if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Yes") {
+    qInitNetworkProtocols();
+    VersionUrl=new QUrlOperator(QString("http://www.globecom.se/tora/version.php?")+
+				TOTYPE+"=1");
+    VersionUrl->get();
+    connect(VersionUrl,SIGNAL(data(const QByteArray &,QNetworkOperation *)),
+	    this,SLOT(versionData(const QByteArray &,QNetworkOperation *)));
+    connect(VersionUrl,SIGNAL(finished(QNetworkOperation *)),
+	    this,SLOT(versionFinished(QNetworkOperation *)));
+  } else {
+    VersionUrl=NULL;
+  }
+#endif
+
   if (Connections.size()==0) {
     try {
       toNewConnection newConnection(this,"First connection",true);
@@ -1380,3 +1416,20 @@ void toMain::displayMessage(const QString &str)
   toPush(StatusMessages,str);
   QTimer::singleShot(1,this,SLOT(displayMessage()));
 }
+
+#if QT_VERSION >= 300
+
+void toMain::versionData(const QByteArray &data,QNetworkOperation *op)
+{
+  VersionString+=QCString(data);
+}
+
+void toMain::versionFinished(QNetworkOperation *op)
+{
+  if (VersionString[0].isNumber()&&VersionString.mid(0,strlen(TOVERSION)) >= TOVERSION)
+    toStatusMessage("A new version of TOra ("+VersionString+") is available from\n\n"
+		    "http://www.globecom.se/tora");
+  delete VersionUrl;
+}
+
+#endif

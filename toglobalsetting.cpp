@@ -160,6 +160,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 
   CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
 					  DEFAULT_SQL_FILE));
+  UpgradeCheck->setChecked(!toTool::globalConfig(CONF_UPGRADE_CHECK,"").isEmpty());
 }
 
 void toGlobalSetting::pluginBrowse(void)
@@ -231,6 +232,8 @@ void toGlobalSetting::saveSetting(void)
     toTool::globalSetConfig(CONF_CHART_SAMPLES,"-1");
   else
     toTool::globalSetConfig(CONF_CHART_SAMPLES,QString::number(ChartSamples->value()));
+
+  toTool::globalSetConfig(CONF_UPGRADE_CHECK,UpgradeCheck->isChecked()?"Yes":"");
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
