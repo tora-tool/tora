@@ -738,7 +738,7 @@ QCString toReadFile(const QString &filename)
 bool toWriteFile(const QString &filename,const QCString &data)
 {
   QString expanded=toExpandFile(filename);
-#ifndef TO_KDE
+#ifdef TO_KDE
   KURL url(expanded);
   if (!url.isLocalFile()) {
     KTempFile file;
