@@ -1,5 +1,7 @@
 1.3.13:
 
+2003-11-21: Fixed bug with package code completion. (Thanx Francesco Dandrea)
+2003-11-21: Added close all editors to debugger. (Thanx Francesco Dandrea)
 2003-11-20: Changed order of libstdc++ paths in configure.
 2003-11-19: Work around OTL bug when reading large LOB:s.
 2003-11-19: Fixed for configure to handle QTDIR variable in makefile... again..

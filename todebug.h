@@ -182,6 +182,8 @@ class toDebug : public toToolWidget {
 
   void setDeferedBreakpoints(void);
   bool checkStop(void);
+  void closeEditor(toDebugText* &editor);
+
 private slots:
   void startTarget(void);
 public:
@@ -235,6 +237,7 @@ public slots:
   void changeWatch(void);
   void changeWatch(QListViewItem *item);
   void closeEditor(void);
+  void closeAllEditor(void);
 };
 
 class toDebugWatch : public toDebugWatchUI {

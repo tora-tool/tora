@@ -112,6 +112,7 @@
 #define TO_ID_DEL_WATCH		(toMain::TO_TOOL_MENU_ID+10)
 #define TO_ID_CHANGE_WATCH	(toMain::TO_TOOL_MENU_ID+11)
 #define TO_ID_CLOSE_EDITOR	(toMain::TO_TOOL_MENU_ID+12)
+#define TO_ID_CLOSE_ALL_EDITOR      (toMain::TO_TOOL_MENU_ID+14)
 
 class toDebugTool : public toTool {
   std::map<toConnection *,QWidget *> Windows;
@@ -2217,6 +2218,8 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)close_xpm),
 			   tr("Close"),this,SLOT(closeEditor(void)),
 			   0,TO_ID_CLOSE_EDITOR);
+      ToolMenu->insertItem(tr("CloseAll"),this,SLOT(closeAllEditor(void)),
+			   0,TO_ID_CLOSE_ALL_EDITOR);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
 			   tr("&Execute or continue"),this,SLOT(execute(void)),
@@ -2538,8 +2541,25 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
 
 void toDebug::closeEditor()
 {
-
   toDebugText *editor=currentEditor();
+  closeEditor(editor);
+}
+
+void toDebug::closeAllEditor()
+{
+  int editorCount=Editors->count();
+  while(editorCount>0){
+    editorCount--;
+    toDebugText *editor=dynamic_cast<toDebugText *>(Editors->page(editorCount));
+    if(editor)
+      closeEditor(editor);
+  }
+}
+
+
+void toDebug::closeEditor(toDebugText* &editor)
+{
+
   if (editor&&checkCompile(editor)) {
     QString name=editor->name();
     for (QListViewItem *item=Contents->firstChild();item;item=item->nextSibling()) {

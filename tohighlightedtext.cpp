@@ -715,6 +715,8 @@ void toHighlightedText::checkComplete(void)
 	     i!=desc.end();i++) {
 	  QString t;
 	  int ind=(*i).Name.find("(");
+	  if (ind <0)
+	    ind=(*i).Name.find("RETURNING")-1;//it could be a function or procedure without parameters. -1 to remove the space
 	  if (ind>=0)
 	    t=conn.quote((*i).Name.mid(0,ind))+(*i).Name.mid(ind);
 	  else
