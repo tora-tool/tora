@@ -80,6 +80,8 @@ Extended functionality:
 * Include status of code objects in browsertool.
 * Implement printing of text view.
 * Plugin interface to alerttypes.
+* Handle AQ_ priviledges correctly in security manager (Using DBMS_AQADM package).
+* Easier to grant all priviledges to a user.
 
 New tools:
 
