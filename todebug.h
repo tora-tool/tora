@@ -66,6 +66,7 @@
 #define TO_NAME_TRIGGER		3
 #define TO_NAME_NONE		127
 
+#define TO_BREAK_CONTINUE       0
 #define TO_BREAK_EXCEPTION	2
 #define TO_BREAK_ANY_CALL	12
 #define TO_BREAK_RETURN		16

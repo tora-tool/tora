@@ -547,8 +547,10 @@ bool toDebug::hasMembers(const QString &str)
 
 void toDebug::execute(void)
 {
-  if (!checkStop())
+  if (RunningTarget) {
+    continueExecution(TO_BREAK_CONTINUE);
     return;
+  }
 
   if (!checkCompile())
     return;
@@ -1564,8 +1566,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  tr("Run current block"),
-		  tr("Run current block"),
+		  tr("Execute or continue execution"),
+		  tr("Execute or continue execution"),
 		  this,SLOT(execute(void)),
 		  toolbar);
   StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
@@ -2284,7 +2286,7 @@ void toDebug::windowActivated(QWidget *widget)
 			   Key_F9,TO_ID_COMPILE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
-			   tr("&Execute"),this,SLOT(execute(void)),
+			   tr("&Execute or continue"),this,SLOT(execute(void)),
 			   CTRL+Key_Return,TO_ID_EXECUTE);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
 			   tr("&Stop"),this,SLOT(stop(void)),
