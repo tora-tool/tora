@@ -26,602 +26,409 @@
         <name>caption</name>
         <string>toGlobalSettingUI</string>
     </property>
-    <widget>
-        <class>QGroupBox</class>
+    <grid>
         <property stdset="1">
-            <name>name</name>
-            <cstring>OptionGroup</cstring>
+            <name>margin</name>
+            <number>11</number>
         </property>
         <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>140</y>
-                <width>381</width>
-                <height>255</height>
-            </rect>
+            <name>spacing</name>
+            <number>6</number>
         </property>
-        <property stdset="1">
-            <name>title</name>
-            <string>Options</string>
-        </property>
-        <widget>
-            <class>QLineEdit</class>
+        <widget row="1"  column="0" >
+            <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>ListScale</cstring>
+                <cstring>OptionGroup</cstring>
             </property>
             <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>20</y>
-                    <width>88</width>
-                    <height>22</height>
-                </rect>
+                <name>title</name>
+                <string>Options</string>
             </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SavePassword</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>25</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Save last password</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Remember the last password you used to connect.
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="2" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ListScale</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SavePassword</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Save last password</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Remember the last password you used to connect.
 Will leave the password unencryptet in the config file.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel3</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>25</y>
-                    <width>90</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Table scale</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>ListScale</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Scale with which to print lists and tables.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>DesktopAware</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>105</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Desktop aware</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Colors get really weird in KDE if you select this.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>AntialiaseFonts</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>185</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Antialiase fonts</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>DockToolbar</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>225</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Docks use toolbars</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Check this if docks are to use toolbars instead of normal frames.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>IncludeDB</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>145</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Include DB in caption</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Include database connection in window captions</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>LongSession</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Long sessions</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Open new connections to the database to prevent
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Table scale</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>ListScale</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Scale with which to print lists and tables.</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>AntialiaseFonts</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Antialiase fonts</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DockToolbar</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Docks use toolbars</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Check this if docks are to use toolbars instead of normal frames.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LongSession</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Long sessions</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Open new connections to the database to prevent
 the interface from locking up when executing.</string>
-            </property>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>StatusLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Status &amp;message</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Status</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SizeLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Size Unit</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>SizeUnite</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Define the unit sizes should be displayed in tora.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="2" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Status</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string> seconds</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>StyleLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Style</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Style</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The style to use for the user interface.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>IncludeDB</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Include DB in caption</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Include database connection in window captions</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DesktopAware</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Desktop aware</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Colors get really weird in KDE if you select this.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="1" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>RefreshLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Refresh</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Refresh</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Default refreshtime in tools.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="2" >
+                    <class>QComboBox</class>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Bytes</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>KB</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>MB</string>
+                        </property>
+                    </item>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SizeUnit</cstring>
+                    </property>
+                </widget>
+                <widget row="4"  column="2" >
+                    <class>QComboBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Style</cstring>
+                    </property>
+                </widget>
+                <widget row="3"  column="2" >
+                    <class>QComboBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Refresh</cstring>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget>
-            <class>QLabel</class>
+        <widget row="0"  column="0" >
+            <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>StatusLabel</cstring>
+                <cstring>GroupBox2</cstring>
             </property>
             <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>65</y>
-                    <width>90</width>
-                    <height>16</height>
-                </rect>
+                <name>title</name>
+                <string>Paths</string>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Status &amp;message</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Status</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>RefreshLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>145</y>
-                    <width>80</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Refresh</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Default refreshtime in tools.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SizeLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>105</y>
-                    <width>80</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Size Unit</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>SizeUnite</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Define the unit sizes should be displayed in tora.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QSpinBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Status</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>60</y>
-                    <width>90</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>suffix</name>
-                <string> seconds</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QComboBox</class>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Bytes</string>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
                 </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>KB</string>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
                 </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>MB</string>
-                </property>
-            </item>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SizeUnit</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>100</y>
-                    <width>88</width>
-                    <height>22</height>
-                </rect>
-            </property>
+                <widget row="0"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel5</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Custom SQL</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>CustomSQL</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>SQLBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CustomSQL</cstring>
+                    </property>
+                </widget>
+                <widget row="2"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Plugin directory</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>PluginDirectory</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Directory where to find plugins when starting tora.</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginDirectory</cstring>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HelpDirectory</cstring>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PluginLabel_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Help directory</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>HelpDirectory</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Directory where to find plugins when starting tora.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>HelpBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
-        <widget>
-            <class>QComboBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Style</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>180</y>
-                    <width>88</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>StyleLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>185</y>
-                    <width>90</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Style</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Style</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>The style to use for the user interface.</string>
-            </property>
-        </widget>
-    </widget>
-    <widget>
-        <class>QGroupBox</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>GroupBox2</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>5</y>
-                <width>380</width>
-                <height>135</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>title</name>
-            <string>Paths</string>
-        </property>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel5</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>25</y>
-                    <width>100</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Custom SQL</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>CustomSQL</cstring>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>SQLBrowse</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>290</x>
-                    <y>15</y>
-                    <width>80</width>
-                    <height>28</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Browse</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CustomSQL</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>120</x>
-                    <y>20</y>
-                    <width>160</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>105</y>
-                    <width>100</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Plugin directory</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>PluginDirectory</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Directory where to find plugins when starting tora.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginBrowse</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>290</x>
-                    <y>95</y>
-                    <width>80</width>
-                    <height>28</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Browse</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginDirectory</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>120</x>
-                    <y>100</y>
-                    <width>160</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>HelpDirectory</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>120</x>
-                    <y>60</y>
-                    <width>160</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>PluginLabel_2</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>100</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Help directory</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>HelpDirectory</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Directory where to find plugins when starting tora.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>HelpBrowse</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>290</x>
-                    <y>55</y>
-                    <width>80</width>
-                    <height>28</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Browse</string>
-            </property>
-        </widget>
-    </widget>
+    </grid>
 </widget>
 <connections>
     <connection>

@@ -70,9 +70,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
-  Refresh=toRefreshCreate(OptionGroup);
-  Refresh->setGeometry(QRect(280,140,88,22));
-  RefreshLabel->setBuddy(Refresh);
+  toRefreshCreate(OptionGroup,NULL,NULL,Refresh);
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
@@ -118,6 +116,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 
 #ifdef TO_KDE
   DockToolbar->hide();
+  DesktopAware->hide();
 #endif
   DockToolbar->setChecked(toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes"));
 

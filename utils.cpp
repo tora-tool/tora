@@ -196,9 +196,13 @@ toMain *toMainWidget(void)
   return dynamic_cast<toMain *>(qApp->mainWidget());
 }
 
-QComboBox *toRefreshCreate(QWidget *parent,const char *name,const char *def)
+QComboBox *toRefreshCreate(QWidget *parent,const char *name,const char *def,QComboBox *item)
 {
-  QComboBox *refresh=new QComboBox(false,parent);
+  QComboBox *refresh;
+  if (item)
+    refresh=item;
+  else
+    refresh=new QComboBox(false,parent);
 
   refresh->insertItem("None");
   refresh->insertItem("10 seconds");

@@ -40,7 +40,6 @@
 #include "todatabasesettingui.h"
 
 class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
-  QComboBox *Refresh;
 public:
   toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
 

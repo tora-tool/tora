@@ -166,7 +166,8 @@ QString toSQLString(toConnection &conn,const QString &address);
 QString toNow(toConnection &conn);
 void toSetSessionType(const QString &str);
 QString toGetSessionType(void);
-QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL);
+QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL,
+			   QComboBox *item=NULL);
 void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 bool toMonolithic(void);
