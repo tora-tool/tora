@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>634</width>
+            <width>630</width>
             <height>669</height>
         </rect>
     </property>
@@ -1486,15 +1486,6 @@
         <receiver>OutputDir</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
-    <connection>
-        <sender>Browse</sender>
-        <signal>clicked()</signal>
-        <receiver>toScriptUI</receiver>
-        <slot>browseFile()</slot>
-    </connection>
-    <slot access="public">newSize(void)</slot>
-    <slot access="public">browseFile()</slot>
-    <slot access="public">removeSize(void)</slot>
 </connections>
 <tabstops>
     <tabstop>Tabs</tabstop>

@@ -48,6 +48,10 @@
 #include "totool.h"
 #include "toworksheet.h"
 
+#ifdef TO_HAS_KPRINT
+#include <kfiledialog.h>
+#endif
+
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdir.h>
@@ -256,6 +260,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   connect(ScriptUI->DestinationSchema,SIGNAL(activated(int)),this,SLOT(changeDestinationSchema(int)));
   connect(ScriptUI->SourceObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
   connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+  connect(ScriptUI->Browse,SIGNAL(clicked()),this,SLOT(browseFile()));
 
   connect(ScriptUI->SourceObjects,SIGNAL(expanded(QListViewItem *)),
 	  this,SLOT(expandSource(QListViewItem *)));
@@ -484,13 +489,13 @@ void toScript::execute(void)
 	file.open(IO_WriteOnly);
 
 	if (file.status()!=IO_Ok)
-	  throw QString(tr("Couldn't open file %1")).arg(file.name());
+	  throw tr("Couldn't open file %1").arg(file.name());
 
 	QTextStream stream(&file);
 	source.create(stream,sourceObjects);
 
 	if (file.status()!=IO_Ok)
-	  throw QString(tr("Error writing to file %1")).arg(file.name());
+	  throw tr("Error writing to file %1").arg(file.name());
 
 	script=tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
       } else if (ScriptUI->OutputDir->isChecked()) {
@@ -626,7 +631,26 @@ void toScript::execute(void)
       Worksheet->hide();
       SearchList->hide();
       Report->show();
-      Report->setText(toGenerateReport(source.connection(),sourceDescription));
+      QString res=toGenerateReport(source.connection(),sourceDescription);
+      Report->setText(res);
+      if (ScriptUI->OutputFile->isChecked()) {
+	if (ScriptUI->Filename->text().isEmpty())
+	  toStatusMessage(tr("No filename specified"));
+	else {
+	  QFile file(ScriptUI->Filename->text());
+	  file.open(IO_WriteOnly);
+
+	  if (file.status()!=IO_Ok)
+	    toStatusMessage(tr("Couldn't open file %1").arg(file.name()));
+	  else {
+	    QTextStream stream(&file);
+	    stream<<res;
+
+	    if (file.status()!=IO_Ok)
+	      toStatusMessage(tr("Error writing to file %1").arg(file.name()));
+	  }
+	}
+      }
     } else {
       Worksheet->show();
       SearchList->hide();

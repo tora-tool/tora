@@ -1,5 +1,6 @@
 1.3.9:
 
+2002-02-01: Added UI to script to output extraction to file instead of editor.
 2002-02-01: Made extractor output to stream instead of strings.
 2002-02-01: Fixed warning in Qt only.
 2002-01-31: Remember what was open in template editor after it has been closed.
