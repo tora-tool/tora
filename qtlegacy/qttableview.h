@@ -25,7 +25,7 @@ class QScrollBar;
 class QCornerSquare;
 
 
-class Q_EXPORT QtTableView : public QFrame
+class QtTableView : public QFrame
 {
     Q_OBJECT
 public:

@@ -27,7 +27,7 @@ struct QtMultiLineData;
 class QtMultiLineEditCommand;
 class QValidator;
 
-class Q_EXPORT QtMultiLineEdit : public QtTableView
+class QtMultiLineEdit : public QtTableView
 {
     Q_OBJECT
     Q_ENUMS( EchoMode WordWrap WrapPolicy )

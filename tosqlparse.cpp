@@ -877,6 +877,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       ret+=indentString(level-(Settings.OperatorSpace?3:1));
     }
     break;
+  default:
+    throw QString("Internal error in toSQLParse, should never get here");
   }
   return ret;
 }

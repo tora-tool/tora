@@ -25,7 +25,9 @@
 #include "qtimer.h"
 #include "qdict.h"
 #include "qcursor.h"
-
+#ifndef QT_NO_COMPAT
+#include "qstyle.h"
+#endif
 #include <ctype.h>
 
 
@@ -2384,12 +2386,10 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 #if defined(_WS_X11_)
 	paste();		// Will repaint the cursor line.
 #else
-#  if 0
-#    ifndef QT_NO_COMPAT
-	if ( style() == MotifStyle )
+#ifndef QT_NO_COMPAT
+	if ( style().styleHint(QStyle::SH_GUIStyle) == Qt::MotifStyle )
 	    paste();
-#    endif	    
-#  endif
+#endif	    
 #endif
     }
 #endif
