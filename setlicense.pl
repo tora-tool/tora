@@ -49,6 +49,7 @@ my $license=<<__EOT__;
  *      libraries.
  *
  ****************************************************************************/
+
 __EOT__
 
 use File::Copy;
@@ -75,6 +76,12 @@ for my $file (@ARGV) {
 	    }
 	    print OUTFILE $license;
 	    print OUTFILE "\n";
+	    while(<FILE>) {
+		if (!/^\s*$/) {
+		    last;
+		}
+	    }
+	    print OUTFILE;
 	    while(<FILE>) {
 		print OUTFILE;
 	    }

@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qframe.h>
 #include <qlistbox.h>
 #include <qpushbutton.h>
@@ -85,19 +84,19 @@ void toPreferences::saveSetting(void)
   toTool::saveConfig();
 }
 
-toPreferences::toPreferences( QWidget* parent,  const char* name, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, fl )
+toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
+  : QDialog(parent,name,modal,fl)
 {
   Shown=NULL;
-  if ( !name )
-    setName( "toPreferences" );
-  resize( 580, 470 ); 
-  setCaption( tr( "Settings"  ) );
-  setMinimumSize( QSize( 580, 470 ) );
-  setMaximumSize( QSize( 580, 470 ) );
+  if (!name)
+    setName("toPreferences");
+  resize(580,470); 
+  setCaption(tr("Settings" ));
+  setMinimumSize(QSize(580,470));
+  setMaximumSize(QSize(580,470));
   
-  TabSelection = new QListBox( this, "TabSelection" );
-  TabSelection->setGeometry( QRect( 10, 10, 141, 401 ) ); 
+  TabSelection = new QListBox(this,"TabSelection");
+  TabSelection->setGeometry(QRect(10,10,141,401)); 
   
   QListBoxText *item;
   item=new QListBoxText(TabSelection,"Global Settings");
@@ -117,19 +116,19 @@ toPreferences::toPreferences( QWidget* parent,  const char* name, bool modal, WF
     }
   }
 
-  CancelButton = new QPushButton( this, "CancelButton" );
-  CancelButton->move(460, 430); 
-  CancelButton->setText( tr( "Cancel"  ) );
-  CancelButton->setDefault( FALSE );
+  CancelButton = new QPushButton(this,"CancelButton");
+  CancelButton->move(460,430); 
+  CancelButton->setText(tr("Cancel" ));
+  CancelButton->setDefault(false);
   
-  OkButton = new QPushButton( this, "OkButton" );
-  OkButton->move(330, 430); 
-  OkButton->setText( tr( "&OK"  ) );
-  OkButton->setDefault( TRUE );
+  OkButton = new QPushButton(this,"OkButton");
+  OkButton->move(330,430); 
+  OkButton->setText(tr("&OK" ));
+  OkButton->setDefault(true);
   
   // tab order
-  setTabOrder( TabSelection, OkButton );
-  setTabOrder( OkButton, CancelButton );
+  setTabOrder(TabSelection,OkButton);
+  setTabOrder(OkButton,CancelButton);
   
   connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));

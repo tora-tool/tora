@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef __TORESULTRESOURCES_H
 #define __TORESULTRESOURCES_H
 

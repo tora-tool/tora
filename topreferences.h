@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef TOPREFERENCES_H
 #define TOPREFERENCES_H
 
@@ -56,7 +55,7 @@ class toPreferences : public QDialog
   QPushButton* CancelButton;
   QPushButton* OkButton;
 public:
-  toPreferences( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+  toPreferences(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
 
   void saveSetting(void);
 

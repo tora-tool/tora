@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qworkspace.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>

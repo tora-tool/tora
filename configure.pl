@@ -165,13 +165,12 @@ __TEMP__
     $MOC=findFile("moc2",undef,$QtDir."/bin","/usr/lib/qt2","/usr/lib/qt2/bin","/usr/local/lib/qt2","/usr/local/lib/qt2/bin",
 		  "/usr/lib/qt","/usr/bin","/usr/local/bin","/usr/local/lib/qt");
 
-    if ($MOC && !-f $MOC) {
+    if (defined $MOC && -f $MOC) {
 	$MOC.="/moc2";
-	if (!-f $MOC) {
-	    $MOC=findFile("moc",undef,$QtDir."/bin","/usr/lib/qt2","/usr/lib/qt2/bin","/usr/local/lib/qt2","/usr/local/lib/qt2/bin",
-			  "/usr/lib/qt","/usr/bin","/usr/local/bin","/usr/local/lib/qt");
-	    $MOC.="/moc";
-	}
+    } else {
+	$MOC=findFile("moc",undef,$QtDir."/bin","/usr/lib/qt2","/usr/lib/qt2/bin","/usr/local/lib/qt2","/usr/local/lib/qt2/bin",
+		      "/usr/lib/qt","/usr/bin","/usr/local/bin","/usr/local/lib/qt");
+	$MOC.="/moc";
     }
     if (!-f $MOC) {
 	print "Couldn't find metacompiler for Qt\n";

@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qcheckbox.h>
 #include <qfiledialog.h>
 #include <qgroupbox.h>
@@ -142,26 +141,26 @@ toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags
   Logging=new QCheckBox(GroupBox3,"Logging");
   Logging->setGeometry(QRect(10,25,290,19)); 
   Logging->setText(tr("&Logging"));
-  Logging->setChecked(TRUE);
+  Logging->setChecked(true);
   QToolTip::add( Logging,tr("Should objects created in the tablespace be logging by default."));
   
   Permanent=new QCheckBox(GroupBox3,"Permanent");
   Permanent->setGeometry(QRect(10,55,290,19)); 
   Permanent->setText(tr("&Permanent"));
-  Permanent->setChecked(TRUE);
+  Permanent->setChecked(true);
   QToolTip::add( Permanent,tr("Should the contents of the tablespace be permanent after the end of a session."));
   connect(Permanent,SIGNAL(toggled(bool)),this,SLOT(permanentToggle(bool)));
 
   Online=new QCheckBox(GroupBox3,"Online");
   Online->setGeometry(QRect(10,85,290,19)); 
   Online->setText(tr("&Online"));
-  Online->setChecked(TRUE);
+  Online->setChecked(true);
   QToolTip::add( Online,tr("Should the contents of the tablespace be permanent after the end of a session."));
 
   DefaultStorage=new QCheckBox(GroupBox3,"DefaultStorage");
   DefaultStorage->setGeometry(QRect(10,115,290,19));
   DefaultStorage->setText("&Specify Default Storage");
-  DefaultStorage->setChecked(FALSE);
+  DefaultStorage->setChecked(false);
   QToolTip::add( DefaultStorage,tr("Allow specification of default storage (Separate tab)") );
   connect(DefaultStorage,SIGNAL(toggled(bool)),this,SLOT(allowDefault(bool)));
 
@@ -173,7 +172,7 @@ toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags
   Dictionary=new QRadioButton(ButtonGroup2,"Dictionary");
   Dictionary->setGeometry(QRect(10,25,140,19)); 
   Dictionary->setText(tr("&Dictionary"));
-  Dictionary->setChecked(TRUE);
+  Dictionary->setChecked(true);
   QToolTip::add( Dictionary,tr("Manage tablespace usiing dictionary tables."));
   connect(Dictionary,SIGNAL(toggled(bool)),this,SLOT(dictionaryToggle(bool)));
 
@@ -189,7 +188,7 @@ toStorageTablespace::toStorageTablespace(QWidget* parent,const char* name,WFlags
   
   LocalUniform=new toFilesize("Extent &Size",ButtonGroup2,"LocalUniform");
   LocalUniform->setGeometry(QRect(10,110,291,61)); 
-  LocalUniform->setEnabled(FALSE);
+  LocalUniform->setEnabled(false);
   LocalUniform->setValue(1024);
 }
 
@@ -308,17 +307,17 @@ toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* n
 
   NextSize=new toFilesize("&Next",GroupBox1,"NextSize");
   NextSize->setGeometry(QRect(10,55,291,60)); 
-  NextSize->setEnabled(FALSE);
+  NextSize->setEnabled(false);
 
   UnlimitedMax=new QCheckBox(GroupBox1,"UnlimitedMax");
   UnlimitedMax->setGeometry(QRect(10,125,290,19)); 
   UnlimitedMax->setText(tr("&Unlimited max size"));
-  UnlimitedMax->setEnabled(FALSE);
+  UnlimitedMax->setEnabled(false);
   connect(UnlimitedMax,SIGNAL(toggled(bool)),this,SLOT(maximumSize(bool)));
   
   MaximumSize=new toFilesize("&Maximum size",GroupBox1,"MaximumSize");
   MaximumSize->setGeometry(QRect(10,155,291,60)); 
-  MaximumSize->setEnabled(FALSE);
+  MaximumSize->setEnabled(false);
   
   connect(BrowseFile,SIGNAL(clicked(void)),this,SLOT(browseFile(void)));
   
@@ -390,15 +389,15 @@ void toStorageDialog::Setup(void)
   DialogTab=new QTabWidget(this);
   DialogTab->setGeometry(10,10,330,480);
 
-  OkButton = new QPushButton(this, "OkButton" );
-  OkButton->move(350, 40); 
-  OkButton->setText( tr( "&OK"  ) );
-  OkButton->setDefault( TRUE );
+  OkButton = new QPushButton(this,"OkButton");
+  OkButton->move(350,40); 
+  OkButton->setText(tr("&OK"));
+  OkButton->setDefault(true);
 
-  QPushButton *CancelButton = new QPushButton(this, "CancelButton" );
-  CancelButton->move(350, 90); 
-  CancelButton->setText( tr( "Cancel"  ) );
-  CancelButton->setDefault( FALSE );
+  QPushButton *CancelButton=new QPushButton(this,"CancelButton");
+  CancelButton->move(350,90); 
+  CancelButton->setText(tr("Cancel"));
+  CancelButton->setDefault(false);
   
   connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));

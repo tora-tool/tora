@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include "tonewconnection.h"
 
 #include <qfile.h>
@@ -44,109 +43,109 @@
 #include "totool.h"
 #include "toconf.h"
 
-toNewConnection::toNewConnection( QWidget* parent,  const char* name, bool modal, WFlags fl )
-    : QDialog( parent, name, modal, fl )
+toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
+  : QDialog(parent,name,modal,fl)
 {
-    if ( !name )
-	setName( "toNewConnection" );
-    resize( 241, 201 ); 
-    setMinimumSize(241,201);
-    setMaximumSize(241,201);
-    setCaption( tr( "New database connection"  ) );
+  if (!name)
+    setName("toNewConnection");
+  resize(241,201); 
+  setMinimumSize(241,201);
+  setMaximumSize(241,201);
+  setCaption(tr("New database connection"));
 
-    TextLabel1 = new QLabel( this, "TextLabel1" );
-    TextLabel1->setGeometry( QRect( 10, 0, 61, 20 ) ); 
-    TextLabel1->setText( tr( "Username"  ) );
+  TextLabel1=new QLabel(this,"TextLabel1");
+  TextLabel1->setGeometry(QRect(10,0,61,20)); 
+  TextLabel1->setText(tr("Username"));
 
-    TextLabel2 = new QLabel( this, "TextLabel2" );
-    TextLabel2->setGeometry( QRect( 10, 50, 61, 20 ) ); 
-    TextLabel2->setText( tr( "Password"  ) );
+  TextLabel2=new QLabel(this,"TextLabel2");
+  TextLabel2->setGeometry(QRect(10,50,61,20)); 
+  TextLabel2->setText(tr("Password"));
 
-    TextLabel3 = new QLabel( this, "TextLabel3" );
-    TextLabel3->setGeometry( QRect( 10, 100, 61, 20 ) ); 
-    TextLabel3->setText( tr( "Database"  ) );
+  TextLabel3=new QLabel(this,"TextLabel3");
+  TextLabel3->setGeometry(QRect(10,100,61,20)); 
+  TextLabel3->setText(tr("Database"));
 
-    User = new QLineEdit( this, "User" );
-    User->setGeometry( QRect( 10, 20, 220, 23 ) ); 
-    User->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
-    User->setFocus();
+  User=new QLineEdit(this,"User");
+  User->setGeometry(QRect(10,20,220,23)); 
+  User->setText(toTool::globalConfig(CONF_USER,DEFAULT_USER));
+  User->setFocus();
 
-    Password = new QLineEdit( this, "Password" );
-    Password->setGeometry( QRect( 10, 70, 220, 23 ) ); 
-    Password->setAutoMask( FALSE );
-    if (toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD).isEmpty())
-      Password->setText(DEFAULT_PASSWORD);
-    else
-      Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
-    Password->setEchoMode( QLineEdit::Password );
+  Password=new QLineEdit(this,"Password");
+  Password->setGeometry(QRect(10,70,220,23)); 
+  Password->setAutoMask(false);
+  if (toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD).isEmpty())
+    Password->setText(DEFAULT_PASSWORD);
+  else
+    Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
+  Password->setEchoMode(QLineEdit::Password);
 
-    Database = new QComboBox( FALSE, this, "Database" );
-    Database->setGeometry( QRect( 10, 120, 220, 27 ) ); 
-    QString defdb=toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE);
-    Database->setEditable( TRUE );
-    Database->setAutoCompletion(true);
-    if (!defdb.isEmpty())
-      Database->insertItem(defdb);
+  Database=new QComboBox(false,this,"Database");
+  Database->setGeometry(QRect(10,120,220,27)); 
+  QString defdb=toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE);
+  Database->setEditable(true);
+  Database->setAutoCompletion(true);
+  if (!defdb.isEmpty())
+    Database->insertItem(defdb);
 
-    OkButton = new QPushButton( this, "OkButton" );
-    OkButton->move( 10, 160 ); 
-    OkButton->setText( tr( "&Connect"  ) );
-    OkButton->setDefault( TRUE );
+  OkButton=new QPushButton(this,"OkButton");
+  OkButton->move(10,160); 
+  OkButton->setText(tr("&Connect"));
+  OkButton->setDefault(true);
 
-    CancelButton = new QPushButton( this, "CancelButton" );
-    CancelButton->move( 130, 160 ); 
-    CancelButton->setText( tr( "Cancel"  ) );
+  CancelButton=new QPushButton(this,"CancelButton");
+  CancelButton->move(130,160); 
+  CancelButton->setText(tr("Cancel"));
 
-    connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
-    connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
+  connect(OkButton,SIGNAL(clicked()),SLOT(accept()));
+  connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
 
-    if (!getenv("ORACLE_HOME"))
-      return;
+  if (!getenv("ORACLE_HOME"))
+    return;
 
-    QString str(getenv("ORACLE_HOME"));
-    str.append("/network/admin/tnsnames.ora");
+  QString str(getenv("ORACLE_HOME"));
+  str.append("/network/admin/tnsnames.ora");
 
-    QFile file(str);
-    if (!file.open(IO_ReadOnly)) {
-      return;
-    }
+  QFile file(str);
+  if (!file.open(IO_ReadOnly)) {
+    return;
+  }
 	    
-    int size=file.size();
+  int size=file.size();
 	    
-    char buf[size+1];
-    if (file.readBlock(buf,size)==-1)
-      return;
+  char buf[size+1];
+  if (file.readBlock(buf,size)==-1)
+    return;
 
-    buf[size]=0;
+  buf[size]=0;
 
-    char *begname=NULL;
-    int pos=0;
-    int param=0;
-    while(pos<size) {
-      if (buf[pos]=='#') {
+  char *begname=NULL;
+  int pos=0;
+  int param=0;
+  while(pos<size) {
+    if (buf[pos]=='#') {
+      buf[pos]=0;
+      while(pos<size&&buf[pos]!='\n')
+	pos++;
+    } else if (isspace(buf[pos])) {
+      buf[pos]=0;
+    } else if (buf[pos]=='=') {
+      if (param==0) {
 	buf[pos]=0;
-	while(pos<size&&buf[pos]!='\n')
-	  pos++;
-      } else if (isspace(buf[pos])) {
-	buf[pos]=0;
-      } else if (buf[pos]=='=') {
-	if (param==0) {
-	  buf[pos]=0;
-	  if (begname&&begname!=defdb) {
-	    Database->insertItem(begname);
-	  }
+	if (begname&&begname!=defdb) {
+	  Database->insertItem(begname);
 	}
-      } else if (buf[pos]=='(') {
-	begname=NULL;
-	param++;
-      } else if (buf[pos]==')') {
-	begname=NULL;
-	param--;
-      } else if (!begname) {
-	begname=buf+pos;
       }
-      pos++;
+    } else if (buf[pos]=='(') {
+      begname=NULL;
+      param++;
+    } else if (buf[pos]==')') {
+      begname=NULL;
+      param--;
+    } else if (!begname) {
+      begname=buf+pos;
     }
+    pos++;
+  }
 }
 
 toNewConnection::~toNewConnection()
@@ -167,8 +166,8 @@ toConnection *toNewConnection::makeConnection(void)
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");
     str.append((const char *)exc.msg);
-    QMessageBox::information( this, "Unable to connect to the database",
-			      str);
+    QMessageBox::information(this,"Unable to connect to the database",
+			     str);
     return NULL;
   }
 }

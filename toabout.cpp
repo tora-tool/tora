@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <stdio.h>
 
 #include <qtextview.h>
@@ -113,7 +112,7 @@ Resten slösade jag bort.</H3>
 
 #define ABOUT_CAPTION "TOra %s"
 
-toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=FALSE,WFlags fl=0)
+toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0)
   : QDialog(parent,name,modal,fl)
 {
   QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",
@@ -128,20 +127,20 @@ toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=FALSE,WFlags fl
   TextView->setGeometry(QRect(10,10,620,280));
   TextView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   
-  ChangeButton = new QPushButton( this, "ChangeButton" );
-  ChangeButton->setGeometry( QRect( 144, 300, 104, 32 ) ); 
+  ChangeButton=new QPushButton(this,"ChangeButton");
+  ChangeButton->setGeometry(QRect(144,300,104,32)); 
 
-  QPushButton *OkButton = new QPushButton( this, "OkButton" );
-  OkButton->setGeometry( QRect( 392, 300, 104, 32 ) ); 
-  OkButton->setText( tr( "&Ok"  ) );
-  OkButton->setDefault( TRUE );
+  QPushButton *OkButton=new QPushButton(this,"OkButton");
+  OkButton->setGeometry(QRect(392,300,104,32)); 
+  OkButton->setText(tr("&Ok"));
+  OkButton->setDefault(true);
 
   if (!parent) {
     Page=1;
     changeView();
-    QPushButton *CancelButton = new QPushButton(this,"CanceButton");
-    CancelButton->setGeometry( QRect( 506, 300, 104, 32 ) ); 
-    CancelButton->setText( tr( "&Cancel"  ) );
+    QPushButton *CancelButton=new QPushButton(this,"CanceButton");
+    CancelButton->setGeometry(QRect(506,300,104,32)); 
+    CancelButton->setText(tr("&Cancel"));
     connect(CancelButton,SIGNAL(clicked()),SLOT(reject()));
   } else {
     char buffer[10000];
@@ -149,7 +148,7 @@ toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=FALSE,WFlags fl
     setCaption(buffer);
     sprintf(buffer,AboutText,TOVERSION);
     TextView->setText(buffer);
-    ChangeButton->setText( tr( "&Quotes"  ) );
+    ChangeButton->setText(tr("&Quotes"));
     Page=0;
   }
 
@@ -161,13 +160,13 @@ void toAbout::changeView(void)
 {
   switch (Page) {
   case 0:
-    ChangeButton->setText( tr( "&License" ) );
+    ChangeButton->setText(tr("&License"));
     TextView->setText(QuoteText);
     setCaption("Favourite Quotes");
     Page++;
     break;
   case 1:
-    ChangeButton->setText( tr( "&About" ) );
+    ChangeButton->setText(tr("&About"));
     TextView->setText(LicenseText);
     setCaption("License");
     Page++;
@@ -178,7 +177,7 @@ void toAbout::changeView(void)
     setCaption(buffer);
     sprintf(buffer,AboutText,TOVERSION);
     TextView->setText(buffer);
-    ChangeButton->setText( tr( "&Quotes" ) );
+    ChangeButton->setText(tr("&Quotes"));
     Page=0;
     break;
   }

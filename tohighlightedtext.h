@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef __TOHIGHLIGHTEDTEXT_H
 #define __TOHIGHLIGHTEDTEXT_H
 

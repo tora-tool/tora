@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include "toresultcontent.h"
 
 toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL)

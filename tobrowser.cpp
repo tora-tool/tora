@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qheader.h>
 #include <qtabwidget.h>
 #include <qtoolbar.h>

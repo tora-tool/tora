@@ -25,6 +25,7 @@
  *
  ****************************************************************************/
 
+
 #include <qtooltip.h>
 #include <qgroupbox.h>
 #include <qframe.h>
@@ -70,7 +71,7 @@ toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags
   UnlimitedExtent=new QCheckBox(GroupBox1,"UnlimitedExtent");
   UnlimitedExtent->setGeometry(QRect(170,25,130,19)); 
   UnlimitedExtent->setText(tr("&Unlimited Extents"));
-  UnlimitedExtent->setChecked(TRUE);
+  UnlimitedExtent->setChecked(true);
   QToolTip::add( UnlimitedExtent,tr("No limit on the number of allocated extents.\\nCan caused decreased performance due to fragmentation."));
   connect(UnlimitedExtent,SIGNAL(toggled(bool)),this,SLOT(unlimitedExtents(bool)));
 
@@ -84,7 +85,7 @@ toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags
   MaximumExtent->setMinValue(1);
   MaximumExtent->setValue(1);
   MaximumExtent->setMaxValue(2147483647);
-  MaximumExtent->setEnabled(FALSE);
+  MaximumExtent->setEnabled(false);
 
   TextLabel1=new QLabel(GroupBox1,"TextLabel1");
   TextLabel1->setGeometry(QRect(10,55,110,16)); 
@@ -100,13 +101,13 @@ toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags
   OptimalNull=new QCheckBox(Optimal,"OptimalNull");
   OptimalNull->setGeometry(QRect(10,25,130,19)); 
   OptimalNull->setText(tr("&No Optimal Size"));
-  OptimalNull->setChecked(TRUE);
+  OptimalNull->setChecked(true);
   QToolTip::add( OptimalNull,tr("Don't deallocated unused extents"));
   connect(OptimalNull,SIGNAL(toggled(bool)),this,SLOT(optimalExtents(bool)));
 
   OptimalSize=new toFilesize("&Size",Optimal,"OptimalSize");
   OptimalSize->setGeometry(QRect(10,55,290,60)); 
-  OptimalSize->setEnabled(FALSE);
+  OptimalSize->setEnabled(false);
 
   PCTIncrease=new QSpinBox(this,"PCTIncrease");
   PCTIncrease->setGeometry(QRect(170,415,150,23)); 

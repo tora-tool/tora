@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include "toresultstorage.h"
 #include "tomain.h"
 #include "toconf.h"

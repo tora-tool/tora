@@ -70,7 +70,7 @@
 #define CONF_NEED_TWO   "NeedTwo"
 #define CONF_ALIGN_LEFT "AlignLeft"
 
-class toRollbackPrefs : public QFrame, public toSettingTab
+class toRollbackPrefs : public QFrame,public toSettingTab
 { 
   QGroupBox *GroupBox1;
   QCheckBox *NoExec;
@@ -80,36 +80,36 @@ class toRollbackPrefs : public QFrame, public toSettingTab
   toTool *Tool;
 
 public:
-  toRollbackPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0);
+  toRollbackPrefs(toTool *tool,QWidget* parent=0,const char* name=0);
   virtual void saveSetting(void);
 };
 
-toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
+toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent=0,const char* name=0)
   : QFrame(parent,name),Tool(tool)
 {
-  GroupBox1 = new QGroupBox( this, "GroupBox1" );
-  GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
-  GroupBox1->setTitle( tr( "Rollback Tool"  ) );
+  GroupBox1=new QGroupBox(this,"GroupBox1");
+  GroupBox1->setGeometry(QRect(10,10,380,380)); 
+  GroupBox1->setTitle(tr("Rollback Tool" ));
   
-  NoExec = new QCheckBox( GroupBox1, "NoCopy" );
-  NoExec->setGeometry( QRect( 20, 30, 340, 20 ) ); 
-  NoExec->setText( tr( "&Restart reexecuted statements"  ) );
-  QToolTip::add( NoExec, tr( "Start statements again that have been reexecuted." ) );
+  NoExec=new QCheckBox(GroupBox1,"NoCopy");
+  NoExec->setGeometry(QRect(20,30,340,20)); 
+  NoExec->setText(tr("&Restart reexecuted statements" ));
+  QToolTip::add(NoExec,tr("Start statements again that have been reexecuted."));
   
-  NeedRead = new QCheckBox( GroupBox1, "Needread" );
-  NeedRead->setGeometry( QRect( 20, 70, 340, 20 ) ); 
-  NeedRead->setText( tr( "&Must read buffers"  ) );
-  QToolTip::add( NeedRead, tr( "Don't display statements that have not read buffers." ) );
+  NeedRead=new QCheckBox(GroupBox1,"Needread");
+  NeedRead->setGeometry(QRect(20,70,340,20)); 
+  NeedRead->setText(tr("&Must read buffers" ));
+  QToolTip::add(NeedRead,tr("Don't display statements that have not read buffers."));
   
-  NeedTwo = new QCheckBox( GroupBox1, "NeedTwo" );
-  NeedTwo->setGeometry( QRect( 20, 110, 340, 20 ) ); 
-  NeedTwo->setText( tr( "&Exclude first appearance"  ) );
-  QToolTip::add( NeedTwo, tr( "A statement must be visible at least two consecutive polls to be displayed." ) );
+  NeedTwo=new QCheckBox(GroupBox1,"NeedTwo");
+  NeedTwo->setGeometry(QRect(20,110,340,20)); 
+  NeedTwo->setText(tr("&Exclude first appearance" ));
+  QToolTip::add(NeedTwo,tr("A statement must be visible at least two consecutive polls to be displayed."));
   
-  AlignLeft = new QCheckBox( GroupBox1, "AlignLeft" );
-  AlignLeft->setGeometry( QRect( 20, 150, 340, 20 ) ); 
-  AlignLeft->setText( tr( "&Disregard start extent."  ) );
-  QToolTip::add( AlignLeft, tr( "Always start from the left border when displaying extent usage." ) );
+  AlignLeft=new QCheckBox(GroupBox1,"AlignLeft");
+  AlignLeft->setGeometry(QRect(20,150,340,20)); 
+  AlignLeft->setText(tr("&Disregard start extent." ));
+  QToolTip::add(AlignLeft,tr("Always start from the left border when displaying extent usage."));
   
   if (!tool->config(CONF_NO_EXEC,"Yes").isEmpty())
     NoExec->setChecked(true);
@@ -177,11 +177,11 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
   TextLabel1=new QLabel(RollbackInfo,"TextLabel1");
   TextLabel1->setGeometry(QRect(10,10,310,16)); 
   TextLabel1->setText(tr("&Name"));
-  QToolTip::add( TextLabel1,tr("Name of this rollback segment."));
+  QToolTip::add(TextLabel1,tr("Name of this rollback segment."));
   
-  Tablespace=new QComboBox(FALSE,RollbackInfo,"Tablespace");
+  Tablespace=new QComboBox(false,RollbackInfo,"Tablespace");
   Tablespace->setGeometry(QRect(10,90,310,27)); 
-  Tablespace->setEditable(TRUE);
+  Tablespace->setEditable(false);
   DialogTabs->addTab(RollbackInfo,tr("Rollback Segment"));
 
   try {
@@ -218,15 +218,15 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
   Storage->forRollback(true);
   DialogTabs->addTab(Storage,"Storage");
 
-  OkButton = new QPushButton(this,"OkButton");
+  OkButton=new QPushButton(this,"OkButton");
   OkButton->move(350,40); 
-  OkButton->setText(tr("&OK" ));
-  OkButton->setDefault(TRUE);
+  OkButton->setText(tr("&OK"));
+  OkButton->setDefault(true);
 
-  QPushButton *CancelButton = new QPushButton(this, "CancelButton" );
-  CancelButton->move(350, 90); 
-  CancelButton->setText( tr( "Cancel"  ) );
-  CancelButton->setDefault( FALSE );
+  QPushButton *CancelButton=new QPushButton(this,"CancelButton");
+  CancelButton->move(350,90); 
+  CancelButton->setText(tr("Cancel" ));
+  CancelButton->setDefault(false);
   
   connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
@@ -258,7 +258,7 @@ void toRollbackDialog::valueChanged(const QString &str)
 }
 
 #define MIN_HEIGHT 4
-#define TRANSCOL 15
+#define TRANSCOL 16
 
 static bool BarsAlignLeft=true;
 
@@ -293,8 +293,8 @@ static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
       }
 
       int height=item->height()*num/val.size();
-      int pos=int((start)*width/(*k));
-      int posEnd=int((end+1)*width/(*k));
+      int pos=int(start*width/(*k));
+      int posEnd=int(end*width/(*k));
 
       if (start>end) {
 	p->fillRect(0,lastHeight,posEnd,height,fg);
@@ -325,9 +325,9 @@ public:
 	list<double> curExt;
 	list<double> maxExt;
 	for (int i=TRANSCOL;!text(i).isEmpty();i++) {
-	  items.insert(items.end(),text(i).toInt());
-	  curExt.insert(curExt.end(),text(12).toInt());
-	  maxExt.insert(maxExt.end(),text(11).toInt());
+	  items.insert(items.end(),text(i).toDouble());
+	  curExt.insert(curExt.end(),text(12).toDouble()+text(13).toDouble()/text(14).toDouble());
+	  maxExt.insert(maxExt.end(),text(11).toDouble());
 	}
 	PaintBars(this,pnt,cg,width,items,
 		  maxExt,curExt);
@@ -369,8 +369,16 @@ public:
 	   "       b.Extents \"-Extents\","
 	   "       b.CurExt \"-Current\","
 	   "       b.CurBlk \"-Block\","
+	   "       c.Blocks \"-Blocks\","
 	   "       a.segment_id \" USN\""
-	   "  from dba_rollback_segs a,v$rollstat b where a.segment_id = b.usn(+)"
+	   "  from dba_rollback_segs a,"
+	   "       v$rollstat b,"
+	   "       dba_extents c"
+	   " where a.segment_id = b.usn(+)"
+	   "   and a.owner = c.owner"
+	   "   and a.segment_name = c.segment_name"
+	   "   and c.segment_type = 'ROLLBACK'"
+	   "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))" // Is there always an extent 0?
 	   " order by a.segment_name");
   }
   virtual QString query(const QString &sql,const QString *Param1=NULL,const QString *Param2=NULL,const QString *Param3=NULL)
@@ -378,12 +386,14 @@ public:
     QString ret=toResultView::query(sql,Param1,Param2,Param3);
     try {
       otl_stream trx(1,
-		     "SELECT TO_CHAR(Start_UExt) FROM v$transaction WHERE XidUSN = :f1<char[40]>",
+		     "select to_char(b.start_uext)"
+		     "  from v$transaction b"
+		     " where b.xidusn = :f1<char[40]>",
 		     Connection.connection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
 	trx<<i->text(TRANSCOL-1);
 	for (int j=TRANSCOL;!trx.eof();j++) {
-	  char buffer[40];
+	  char buffer[50];
 	  trx>>buffer;
 	  i->setText(j,buffer);
 	}
@@ -426,7 +436,7 @@ public:
 	toResultViewItem::paintCell(pnt,cg,column,width,alignment);
     }
 
-    virtual int width(const QFontMetrics &fm, const QListView *top, int column) const
+    virtual int width(const QFontMetrics &fm,const QListView *top,int column) const
     {
       if (column==2)
 	return 100;
@@ -494,8 +504,13 @@ public:
 
       otl_stream rlb(1,
 		     "select b.Extents,"
-		     "       b.CurExt+b.CurBlk/1000000"
-		     "  from dba_rollback_segs a,v$rollstat b where a.segment_id = b.usn"
+		     "       b.CurExt+b.CurBlk/c.Blocks"
+		     "  from dba_rollback_segs a,v$rollstat b,dba_extents c"
+		     " where a.segment_id = b.usn"
+		     "   and a.owner = c.owner"
+		     "   and a.segment_name = c.segment_name"
+		     "   and c.segment_type = 'ROLLBACK'"
+		     "   and b.curext = c.extent_id"
 		     " order by a.segment_name",
 		     Connection.connection());
       CurExt.clear();

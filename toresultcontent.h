@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef __TORESULTCONTENT_H
 #define __TORESULTCONTENT_H
 

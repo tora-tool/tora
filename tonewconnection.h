@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef __TONEWCONNECTION_H
 #define __TONEWCONNECTION_H
 
@@ -55,7 +54,7 @@ class toNewConnection : public QDialog
     QLineEdit* Password;
     QLineEdit* User;
 public:
-    toNewConnection( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
     ~toNewConnection();
 
     toConnection *makeConnection();

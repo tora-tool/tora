@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
@@ -89,8 +88,6 @@ public:
   toOutputTool()
     : toTool(103,"SQL Output")
   { }
-  virtual const char *menuItem()
-  { return "SQL Output"; }
   virtual QWidget *toolWindow(toMain *main,toConnection &connection)
   {
     map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);

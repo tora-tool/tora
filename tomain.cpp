@@ -182,7 +182,7 @@ toMain::toMain()
   map<QString,toTool *> &tools=toTool::tools();
 
   QToolBar *toolbar=new QToolBar(this);
-  addToolBar(toolbar,tr("Main toolbar"),Top,FALSE);
+  addToolBar(toolbar,tr("Main toolbar"),Top,false);
 
   LoadButton=new QToolButton(*toLoadPixmap,
 			     "Load file into editor",
@@ -225,7 +225,7 @@ toMain::toMain()
 
 #ifdef TOOL_TOOLBAR
   toolbar=new QToolBar(this);
-  addToolBar(toolbar,tr("Tools toolbar"),Top,FALSE);
+  addToolBar(toolbar,tr("Tools toolbar"),Top,false);
 #else
   toolbar->addSeparator();
 #endif
@@ -301,7 +301,7 @@ toMain::toMain()
   menuBar()->insertItem("&Tools",curr);
 
   WindowsMenu=new QPopupMenu(this);
-  WindowsMenu->setCheckable( TRUE );
+  WindowsMenu->setCheckable(true);
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
   menuBar()->insertItem("&Windows",WindowsMenu);
 
@@ -691,36 +691,36 @@ void toMain::editEnable(bool open,bool save,
   toMain *main=(toMain *)qApp->mainWidget();
   if (main) {
     if (open)
-      main->LoadButton->setEnabled(TRUE);
+      main->LoadButton->setEnabled(true);
     else
-      main->LoadButton->setEnabled(FALSE);
+      main->LoadButton->setEnabled(false);
     if (save)
-      main->SaveButton->setEnabled(TRUE);
+      main->SaveButton->setEnabled(true);
     else
-      main->SaveButton->setEnabled(FALSE);
+      main->SaveButton->setEnabled(false);
 
     if (undo)
-      main->UndoButton->setEnabled(TRUE);
+      main->UndoButton->setEnabled(true);
     else
-      main->UndoButton->setEnabled(FALSE);
+      main->UndoButton->setEnabled(false);
     if (redo)
-      main->RedoButton->setEnabled(TRUE);
+      main->RedoButton->setEnabled(true);
     else
-      main->RedoButton->setEnabled(FALSE);
+      main->RedoButton->setEnabled(false);
 
     if (cut)
-      main->CutButton->setEnabled(TRUE);
+      main->CutButton->setEnabled(true);
     else
-      main->CutButton->setEnabled(FALSE);
+      main->CutButton->setEnabled(false);
     if (copy)
-      main->CopyButton->setEnabled(TRUE);
+      main->CopyButton->setEnabled(true);
     else
-      main->CopyButton->setEnabled(FALSE);
+      main->CopyButton->setEnabled(false);
 
     if (paste)
-      main->PasteButton->setEnabled(TRUE);
+      main->PasteButton->setEnabled(true);
     else
-      main->PasteButton->setEnabled(FALSE);
+      main->PasteButton->setEnabled(false);
   }
 }
 

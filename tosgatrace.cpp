@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qmessagebox.h>

@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #ifndef __TOGLOBALSETTINGS_H
 #define __TOGLOBALSETTINGS_H
 
@@ -76,7 +75,7 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QComboBox *RefreshList;
 
 public:
-  toGlobalSettings( QWidget *parent = 0, const char *name = 0, bool modal = FALSE, WFlags fl = 0 );
+  toGlobalSettings(QWidget *parent=0,const char *name=0,bool modal=false,WFlags fl=0);
 
   virtual void saveSetting(void);
 

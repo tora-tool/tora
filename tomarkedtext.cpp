@@ -26,7 +26,6 @@
  ****************************************************************************/
 
 
-
 #include "tomarkedtext.h"
 #include "tomain.h"
 #include "totool.h"
