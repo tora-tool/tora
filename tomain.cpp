@@ -259,7 +259,7 @@ toMain::toMain()
 #ifdef TOAD
 		       QPixmap((const char **)options_xpm),
 #endif
-		       tr("&Options..."),TO_EDIT_OPTIONS);
+		       tr("&Preferences..."),TO_EDIT_OPTIONS);
 
   QAccel *accel=new QAccel(this);
   accel->connectItem(accel->insertItem(toKeySequence(tr("Ctrl+Insert", "Edit|Copy"))),this,SLOT(copyButton()));
