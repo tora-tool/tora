@@ -927,7 +927,7 @@ void toWorksheet::queryDone(void)
 
       if (str=="{null}")
 	str=QString::null;
-      toParamGet::setDefault(head->label(i).lower(),str,false);
+      toParamGet::setDefault(head->label(i).lower(),str);
     }
   }
 }

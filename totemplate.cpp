@@ -107,11 +107,12 @@ public:
     }
   }
   toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
-    : toTemplateEditUI(parent,name,true),TemplateMap(pairs)
+    : toTemplateEditUI(parent,name,true,WStyle_Maximize),TemplateMap(pairs)
   {
     LastTemplate=TemplateMap.end();
     connect(&Timer,SIGNAL(timeout()),this,SLOT(updateFromMap()));
     updateFromMap();
+    Description->setWordWrap(QMultiLineEdit::WidgetWidth);
   }
   virtual void remove(void)
   {

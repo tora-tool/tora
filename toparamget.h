@@ -45,6 +45,7 @@ class QGrid;
 
 class toParamGet : public QDialog {
 private:
+  static map<QString,QString> DefaultCache;
   static map<QString,QString> Cache;
 
   QGrid *Container;
@@ -53,7 +54,7 @@ private:
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   static list<QString> getParam(QWidget *parent,QString &str);
-  static void setDefault(const QString &name,const QString &val,bool overwrite=true);
+  static void setDefault(const QString &name,const QString &val);
 };
 
 #endif

@@ -49,6 +49,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tomain.h"
 
+map<QString,QString> toParamGet::DefaultCache;
 map<QString,QString> toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
@@ -188,12 +189,18 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
 	    widget=new toParamGet(parent);
 	  new QLabel(fname,widget->Container);
 	  map<QString,QString>::iterator fnd=Cache.find(fname);
+	  bool found=true;
+	  if (fnd==Cache.end()) {
+	    fnd=DefaultCache.find(fname);
+	    if (fnd==DefaultCache.end())
+	      found=false;
+	  }
 	  QLineEdit *edit=new QLineEdit(widget->Container);
 	  QCheckBox *box=new QCheckBox("NULL",widget->Container);
 	  connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
-	  if (fnd!=Cache.end()) {
-	    edit->setText(Cache[fname]);
-	    if (Cache[fname].isNull())
+	  if (found) {
+	    edit->setText((*fnd).second);
+	    if ((*fnd).second.isNull())
 	      box->setChecked(true);
 	  }
 	  widget->Value.insert(widget->Value.end(),edit);
@@ -234,12 +241,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
   return ret;
 }
 
-void toParamGet::setDefault(const QString &name,const QString &val,bool overwrite)
+void toParamGet::setDefault(const QString &name,const QString &val)
 {
-  if (!overwrite) {
-    map<QString,QString>::iterator fnd=Cache.find(name);
-    if (fnd!=Cache.end())
-      return;
-  }
-  Cache[name]=val;
+  DefaultCache[name]=val;
 }
