@@ -1,5 +1,6 @@
 1.3.9:
 
+2002-02-04: Progress dialog on execute all.
 2002-02-04: Added some more quotes.
 2002-02-04: Fixed compile clash with pthread in tooutput.cpp.
 2002-02-04: Changed precision of sort to 12 digits (Rather have 1,2,3 sorted right than 1E14)

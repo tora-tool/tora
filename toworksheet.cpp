@@ -75,6 +75,7 @@
 #include <qmultilineedit.h>
 #include <qnamespace.h>
 #include <qpixmap.h>
+#include <qprogressdialog.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qsplitter.h>
@@ -1108,11 +1109,21 @@ void toWorksheet::executeAll()
   int cpos,cline;
   Editor->getCursorPosition(&cline,&cpos);
 
+  QProgressDialog dialog(tr("Executing all statements"),
+			 tr("Cancel"),
+			 Editor->numLines(),
+			 this,
+			 "Progress",
+			 true);
   int line;
   int pos;
   do {
     line=tokens.line();
     pos=tokens.offset();
+    dialog.setProgress(line);
+    qApp->processEvents();
+    if (dialog.wasCancelled())
+      break;
     toSQLParse::parseStatement(tokens);
     execute(tokens,line,pos,true);
   } while(tokens.line()<Editor->numLines());
