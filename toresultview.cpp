@@ -169,7 +169,7 @@ public:
 	
       QString text=item->text(col);
       if (resItem)
-	key=resItem->allText(col);
+	key=resItem->tooltip(col);
       else
 	key=text;
       int textWidth=TextWidth(qApp->fontMetrics(),text)+Result->itemMargin()*2+2;

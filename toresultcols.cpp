@@ -62,7 +62,7 @@ public:
     }
     return toResultViewMLine::key(column,ascending);
   }
-  virtual QString allText(int col) const
+  virtual QString tooltip(int col) const
   {
     toResultCols *view=dynamic_cast<toResultCols *>(listView());
     try {

@@ -53,6 +53,8 @@ public:
   virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
   virtual QString allText(int col) const
   { return QListViewItem::text(col); }
+  virtual QString tooltip(int col) const
+  { return allText(col); }
 };
 
 class toResultViewMLine : public toResultViewItem {

@@ -40,6 +40,9 @@
 2001-04-03: toIsIdent takes QChar instead of char.
 2001-04-03: Minor Unicode fix in toDebug.
 2001-04-03: View correct results of long running query in statusbar also.
+2001-04-03: Added tooltip virtual function so you can copy different content
+	than the tooltip.
+2001-04-03: Fixed copying of the toResultCols.
 
 0.7: Released 2001-03-24
 

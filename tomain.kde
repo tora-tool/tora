@@ -107,6 +107,9 @@ public:
   { return ToolsMenu; }
   QPopupMenu *helpMenu()
   { return HelpMenu; }
+
+  list<QString> connections(void);
+  toConnection &connection(const QString &);
 public slots:
   void windowsMenu(void);
 private slots:
@@ -120,9 +123,6 @@ private slots:
   void loadButton(void);
   void saveButton(void);
   void printButton(void);
-
-  list<QString> connections(void);
-  toConnection &connection(const QString &);
 
   void editFileMenu(void);
 
