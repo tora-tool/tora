@@ -210,6 +210,19 @@ __EOMK__
 __EOMK__
 	     );
 
+sub addInclude {
+    my ($before,$newinc)=@_;
+    return $before if ($newinc eq "/usr/include");
+    return $before if (/\"$newinc\"/=~$before);
+    my $inc="\"-I$newinc\"";
+    if (defined $before) {
+	$before.=" $inc";
+    } else {
+	$before=$inc;
+    }
+    return $before;
+}
+
 sub findFile {
     my ($files)=shift(@_);
     my ($check)=shift(@_);
@@ -557,7 +570,7 @@ __TEMP__
 	if (!defined $KDEInclude) {
 	    print "\nKDE includes not found\n";
 	}
-	$Includes.="\"-I".$KDEInclude."\" ";
+	$Includes=&addInclude($Includes,$KDEInclude);
 
 	print "checking for KDE print support ... ";
 
@@ -1176,13 +1189,13 @@ __TEMP__
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" -Xlinker \"--rpath\=$QtLib\" ";
     }
 
-    $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/demo\" ";
-    $Includes.="\"-I".$ENV{ORACLE_HOME}."/plsql/public\" ";
-    $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/public\" ";
-    $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
-    $Includes.="\"-I".$QtInclude."\"";
+    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/demo");
+    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/plsql/public");
+    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
+    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
+    $Includes=&addInclude($Includes,$QtInclude);
     if (defined $MySQLInclude) {
-	$Includes.=" \"-I".$MySQLInclude."\"";
+	$Includes=&addInclude($Includes,$MySQLInclude);
     }
 
     if (!$ForceTarget) {

@@ -247,7 +247,7 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
       for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
 	QString t=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toLineChart"),*i);
 	if (!t.isEmpty()&&*i!=" "&&(j==Enabled.end()||*j)) {
-	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
+	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,t);
 	  if (lwidth<bounds.width())
 	    lwidth=bounds.width();
 	  lheight+=bounds.height();
@@ -274,8 +274,8 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
     int cp=0;
     std::list<bool>::iterator j=Enabled.begin();
     for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-      QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
       QString t=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toLineChart"),*i);
+      QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,t);
       if (!t.isEmpty()&&t!=" "&&(j==Enabled.end()||*j)) {
 	p->drawText(bounds,FONT_ALIGN,t);
 	p->save();

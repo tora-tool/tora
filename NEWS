@@ -1,3 +1,9 @@
+1.3.9:
+
+2002-10-23: Added column with server PID to session view.
+2002-10-23: Fixed problem with translated chartlabels.
+2002-10-09: Don't add multiple include paths or a -I/usr/include.
+
 1.3.8: Released 2002-10-05
 
 2002-10-05: Made warning messages display message in a text editor.
