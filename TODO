@@ -39,6 +39,7 @@ Extended functionality:
 * Ability to select default tool in options.
 * Option to change current connection to the connection of the current tool.
 * Parameter file editor in server tuning.
+* Install in KDE menu if KDE detected.
 
 Windows problems:
 
