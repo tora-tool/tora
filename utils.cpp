@@ -366,12 +366,13 @@ QString toDeepCopy(const QString &str)
 }
 
 #ifdef ENABLE_STYLE
-#include <qmotifstyle.h>
-#include <qmotifplusstyle.h>
-#include <qsgistyle.h>
-#include <qcdestyle.h>
-#include <qwindowsstyle.h>
-#include <qplatinumstyle.h>
+#  if QT_VERSION < 300
+#    include <qmotifstyle.h>
+#    include <qmotifplusstyle.h>
+#    include <qsgistyle.h>
+#    include <qcdestyle.h>
+#    include <qwindowsstyle.h>
+#    include <qplatinumstyle.h>
 
 void toSetSessionType(const QString &str)
 {
@@ -408,6 +409,44 @@ QString toGetSessionType(void)
     return "Windows";
   throw QString("Failed to find style match");
 }
+
+QStringList toGetSessionTypes(void)
+{
+  QStringList ret;
+  ret<<"Motif Plus";
+  ret<<"SGI";
+  ret<<"CDI";
+  ret<<"Motif";
+  ret<<"Platinum";
+  ret<<"Windows";
+  return ret;
+}
+
+#  else
+#    include <qstylefactory.h>
+#    include <qstyle.h>
+
+QStringList toGetSessionTypes(void)
+{
+  return QStyleFactory::keys();
+}
+
+QString toGetSessionType(void)
+{
+  QStyle *style=&qApp->style();
+  return style->className();
+}
+
+void toSetSessionType(const QString &str)
+{
+  QStyle *style=QStyleFactory::create(str);
+  if (style)
+    qApp->setStyle(style);    
+  else
+    throw QString("Failed to find style match");
+}
+
+#  endif
 #endif
 
 QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)

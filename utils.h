@@ -135,6 +135,9 @@ void toSetSessionType(const QString &str);
  * @see toSetSessionType
  */
 QString toGetSessionType(void);
+/** Get the available styles.
+ */
+QStringList toGetSessionTypes(void);
 /** Create or fill a combobox with refresh intervals.
  * @param parent Parent of created combobox.
  * @param name Name of created combobox.

@@ -1,5 +1,6 @@
 1.3.5:
 
+2002-04-12: Added support for the Qt Style factory if Qt3.
 2002-04-12: Don't block UI while reading users in schema browser.
 2002-04-12: Added new widget, combobox with background reading of query to add values.
 2002-04-11: Changed registry key for windows settings.

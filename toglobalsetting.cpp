@@ -112,25 +112,14 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 #endif
 
 #ifdef ENABLE_STYLE
-  Style->insertItem("CDE");
-  Style->insertItem("Motif");
-  Style->insertItem("Motif Plus");
-  Style->insertItem("Platinum");
-  Style->insertItem("SGI");
-  Style->insertItem("Windows");
+  Style->insertStringList(toGetSessionTypes());
   QString str=toGetSessionType();
-  if (str=="CDE")
-    Style->setCurrentItem(0);
-  else if (str=="Motif")
-    Style->setCurrentItem(1);
-  else if (str=="Motif Plus")
-    Style->setCurrentItem(2);
-  else if (str=="Platinum")
-    Style->setCurrentItem(3);
-  else if (str=="SGI")
-    Style->setCurrentItem(4);
-  else if (str=="Windows")
-    Style->setCurrentItem(5);
+  for (int i=0;i<Style->count();i++) {
+    if (str==Style->text(i)) {
+      Style->setCurrentItem(i);
+      break;
+    }
+  }
 #else
   Style->hide();
   StyleLabel->hide();

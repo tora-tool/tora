@@ -82,7 +82,6 @@ Extended functionality:
 * Easier to grant all priviledges to a user.
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
-* Use style factory if Qt3 when selecting styles.
 
 New tools:
 
