@@ -512,7 +512,9 @@ toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
   : toTemplateItem(parent,JustLast(name))
 {
   Name=name;
-  setExpandable(true);
+  std::list<QCString> def=toSQL::range(Name+":");
+  if (def.begin()!=def.end())
+    setExpandable(true);
 }
 
 void toSQLTemplateItem::expand(void)
@@ -545,7 +547,7 @@ QString toSQLTemplateItem::allText(int) const
     toSQL::sqlMap defs=toSQL::definitions();
     if (defs.find(Name)==defs.end())
       return QString::null;
-    return toSQL::string(Name,toMainWidget()->currentConnection());
+    return toSQL::string(Name,toMainWidget()->currentConnection())+";";
   } catch(...) {
     return QString::null;
   }

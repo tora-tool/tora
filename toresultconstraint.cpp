@@ -50,7 +50,7 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
   setReadAll(true);
   addColumn(tr("Constraint Name"));
   addColumn(tr("Condition"));
-#ifndef TOAD
+#ifndef TO_NO_ORACLE
   addColumn(tr("Enabled"));
   addColumn(tr("Delete Rule"));
   addColumn(tr("Generated"));

@@ -88,8 +88,14 @@ for a in *.ui license/*ui
 do
     base=`echo $a | sed 's/\.[^\.]*$//'`
     echo $ac_n ".$ac_c"
-    $UIC -o $base.h $a
-    $UIC -i $base.h -o $base.cpp $a
+    if [ \! -f $base.h ]
+    then
+	$UIC -o $base.h $a
+    fi
+    if [ \! -f $base.cpp ]
+    then
+	$UIC -i $base.h -o $base.cpp $a
+    fi
 done
 echo " done"
 
@@ -98,7 +104,11 @@ for a in *.h qtlegacy/*.h license/*.h
 do
     if grep -i Q_OBJECT $a >/dev/null
     then
-	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
+	base=`echo $a | sed 's/\.h$//'`
+	if [ \! -f $base.moc ]
+	then
+	    $MOC -o $base.moc $a
+	fi
     fi
 done
 echo done

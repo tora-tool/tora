@@ -79,6 +79,8 @@ class toBrowser : public toToolWidget {
   QString schema(void);
   void enableDisableConstraints(const QString &);
   void dropSomething(const QString &,const QString &);
+
+  QListViewItem *selectedItem();
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
@@ -94,7 +96,7 @@ public slots:
   void changeTab(QWidget *tab);
   void changeSecond(void);
   void changeSecondTab(QWidget *tab);
-  void changeItem(QListViewItem *item);
+  void changeItem();
   void clearFilter(void);
   void defineFilter(void);
   void windowActivated(QWidget *widget);
@@ -106,7 +108,14 @@ public slots:
   void addIndex(void);
   void modifyConstraint(void);
   void modifyIndex(void);
+
   void dropTable(void);
+  void truncateTable(void);
+
+  void checkTable(void);
+  void optimizeTable(void);
+  void analyzeTable(void);
+
   void dropIndex(void);
   void fixIndexCols(void);
 

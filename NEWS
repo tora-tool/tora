@@ -1,5 +1,21 @@
 1.3.14:
 
+2004-05-19: Changed logo to say Quest.
+2004-05-18: Changed release script to precompile uic files.
+2004-05-18: Only generate uic and moc files that are missing on configure.
+2004-05-18: Implemented more options for MySQL connection including SSL and Compress.
+2004-05-18: Implemented new more flexible handling of options for connections.
+2004-05-18: Enable selectAll for list views.
+2004-05-18: Added truncate, check, optimize and analyze table functions in browser.
+2004-05-18: Multi selects in browser.
+2004-05-13: KDE compile fixes.
+2004-05-13: Added dropdown history of parameters.
+2004-05-13: Parameter history are no longer connection specific.
+2004-05-13: Add ; to end of toSQL templates.
+2004-05-13: Don't show expandable if no children in toSQL templates.
+2004-05-06: Fixed RAW handling for Oracle.
+2004-04-27: Fixed warnings in new gcc version in qt legacy source.
+2004-04-24: Worked over TOAD and TO_NO_ORACLE defines.
 2004-04-23: Added support for MySQL in toResultParam class.
 2004-04-23: Changed how init strings in connections are stored (Using QStrings instead of QCString).
 2004-04-23: Added function to change database and get init strings for connections.

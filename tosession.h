@@ -156,7 +156,7 @@ public slots:
   void selectNone(void);
 };
 
-#ifdef TOAD
+#ifdef TOEXTENDED_MYSQL
 #include "tosessionmysql.h"
 #endif
 

@@ -472,12 +472,12 @@ public:
   }
 };
 
-toListView::toListView(QWidget *parent,const char *name)
-  : QListView(parent,name),
+toListView::toListView(QWidget *parent,const char *name,WFlags f)
+  : QListView(parent,name,f),
     toEditWidget(false,true,true,
 		 false,false,
 		 false,false,false,
-		 true,false,false)
+		 true,true,false)
 {
   FirstSearch=false;
   setTreeStepSize(15);
@@ -1363,14 +1363,14 @@ void toResultView::setup(bool readable,bool dispCol)
   SortAscending=true;
 }
 
-toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name)
-  : toListView(parent,name)
+toResultView::toResultView(bool readable,bool dispCol,QWidget *parent,const char *name,WFlags f)
+  : toListView(parent,name,f)
 {
   setup(readable,dispCol);
 }
 
-toResultView::toResultView(QWidget *parent,const char *name)
-  : toListView(parent,name)
+toResultView::toResultView(QWidget *parent,const char *name,WFlags f)
+  : toListView(parent,name,f)
 {
   setup(false,true);
 }

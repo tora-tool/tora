@@ -404,8 +404,9 @@ public:
   /** Create new list view.
    * @param parent Parent of list.
    * @param name Name of list.
+   * @param f Widget flags.
    */
-  toListView(QWidget *parent,const char *name=NULL);
+  toListView(QWidget *parent,const char *name=NULL,WFlags f=0);
 
   /** Get SQL name of list.
    */
@@ -446,6 +447,11 @@ public:
    */
   virtual bool editSave(bool ask);
 
+  /** Select all contents.
+   */
+  virtual void editSelectAll(void)
+  { selectAll(true); }
+  
   /** Move to top of data
    */
   virtual void searchTop(void)
@@ -558,13 +564,15 @@ public:
    * @param numCol If number column is to be displayed.
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultView(bool readable,bool numCol,QWidget *parent,const char *name=NULL);
+  toResultView(bool readable,bool numCol,QWidget *parent,const char *name=NULL,WFlags f=0);
   /** Create list. The columns are not readable and the number column is displayed.
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultView(QWidget *parent,const char *name=NULL);
+  toResultView(QWidget *parent,const char *name=NULL,WFlags f=0);
   ~toResultView();
 
   /** Set the read all flag.

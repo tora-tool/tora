@@ -40,6 +40,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 
 #include <qstring.h>
 
@@ -413,10 +414,10 @@ class toConnection {
   QString Password;
   QString Host;
   QString Database;
-  QString Mode;
   QCString Version;
   std::list<QObject *> Widgets;
   std::list<QString> InitStrings;
+  std::set<QString> Options;
   toLock Lock;
   std::list<toConnectionSub *> Connections;
   std::list<toConnectionSub *> Running;
@@ -624,11 +625,11 @@ public:
    * @param password Password to connect with.
    * @param host Host to connect to the database with.
    * @param database Database to connect to.
-   * @param mode Mode to connect to the database with.
+   * @param options Options used to connect to the database with.
    * @param cache Enable object cache for this connection.
    */
   toConnection(const QCString &provider,const QString &user,const QString &password,
-	       const QString &host,const QString &database,const QString &mode=QString::null,
+	       const QString &host,const QString &database,const std::set<QString> &options,
 	       bool cache=true);
   /** Create a copy of a connection. Will not cache objects, so objects will never be available
    *  in a subconnection.
@@ -639,6 +640,9 @@ public:
    */
   virtual ~toConnection();
 
+  //* Get the options for the connection.
+  const std::set<QString> &options() const
+  { return Options; }
   /** Try to close all the widgets associated with this connection.
    * @return True if all widgets agreed to close.
    */
@@ -663,10 +667,6 @@ public:
    */
   const QString &database() const
   { return Database; }
-  /** Get mode of connection.
-   */
-  const QString &mode() const
-  { return Mode; }
   /** Get version of connection.
    */
   const QCString &version() const
@@ -940,14 +940,12 @@ public:
   virtual ~toConnectionProvider();
 
   /** Create an implementation of a connection to this database.
+   * @param provider Provider to use for connection.
+   * @param conn The connection object to use the created connection.
    * @return A connection implementation created with new.
    */
   virtual toConnection::connectionImpl *provideConnection(const QCString &provider,
 							  toConnection *conn)=0;
-  /** List the available modes for this database.
-   * @return A list of modes that the connection implementation understands.
-   */
-  virtual std::list<QString> providedModes(const QCString &provider);
   /** List the available hosts this database provider knows about.
    * @return A list of hosts.
    */
@@ -968,6 +966,13 @@ public:
   virtual void initialize(void)
   { }
 
+  /** Get a list of options available for the connection. An option with the name
+   * "-" indicates a break should be made to separate the rest of the options from the previous
+   * options. An option preceeded by "*" means selected by default. The * shoul be stripped before
+   * before passing it to the connection call.
+   */
+  virtual std::list<QString> providedOptions(const QCString &provider);
+
   /**
    * Create and return configuration tab for this connectiontype. The returned widget should also
    * be a childclass of @ref toSettingTab.
@@ -983,9 +988,9 @@ public:
   /** Get a list of names for providers.
    */
   static std::list<QCString> providers();
-  /** Get a list of modes for a given provider.
+  /** Get a list of options for a given provider.
    */
-  static std::list<QString> modes(const QCString &provider);
+  static std::list<QString> options(const QCString &provider);
   /** Implement a connection for a given provider.
    * @param provider Provider to implement.
    * @param conn Connection to create implementation for.

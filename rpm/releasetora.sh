@@ -33,6 +33,8 @@ GLIBC=glibc22
 rm -rf `find tora -name CVS`
 touch tora/* tora/*/*
 mv tora tora-$1
+echo Preparing source
+( cd tora-$1 ; ./configure --with-qt-uic=/usr/local/qt3/bin/uic ; rm -f `find . -name "*.moc"` .depends )
 echo Packing source
 tar czf ../tora$TYPE-$1.tar.gz tora-$1
 ln -sf `pwd`/../tora$TYPE-$1.tar.gz /usr/src/RPM/SOURCES/tora-$1.tar.gz

@@ -330,7 +330,7 @@ public:
     } TOCATCH
 
     try {
-#ifdef TOAD
+#ifdef TO_NO_ORACLE
       Example->setText(toSQLParse::indent("CREATE PROCEDURE COUNT_EMPS_IN_DEPTS (OUT V_TOTAL INT)\n"
 					  "BEGIN\n"
 					  "  DECLARE V_DEPTNO INT DEFAULT 10;\n"

@@ -967,6 +967,12 @@ static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
 			    "3.23",
 			    "MySQL");
 
+static toSQL SQLTruncateTable("toBrowser:TruncateTable",
+			      "TRUNCATE %1.%2",
+			      "Truncate a table",
+			      "",
+			      "Any");
+
 QString toBrowser::schema(void)
 {
   try {
@@ -1095,9 +1101,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   FirstTab=resultView;
   Map[TAB_TABLES]=resultView;
   resultView->setTabWidget(TopTab);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayTableMenu(QPopupMenu *)));
 
 
@@ -1175,9 +1180,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListView);
   resultView->resize(FIRST_WIDTH,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
@@ -1243,9 +1247,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListIndex);
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   connect(resultView,SIGNAL(displayMenu(QPopupMenu *)),this,SLOT(displayIndexMenu(QPopupMenu *)));
 
   box->resize(FIRST_WIDTH,resultView->height());
@@ -1292,9 +1295,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListSequence);
   resultView->resize(FIRST_WIDTH,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
@@ -1326,9 +1328,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListSynonym);
   resultView->resize(FIRST_WIDTH,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
@@ -1361,9 +1362,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListSQL);
   resultView->resize(FIRST_WIDTH*2,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
@@ -1403,9 +1403,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLListTrigger);
   resultView->resize(FIRST_WIDTH,resultView->height());
   resultView->setResizeMode(QListView::AllColumns);
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   curr=new toTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
@@ -1451,9 +1450,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setSQL(SQLMySQLAccess);
   resultView->setResizeMode(QListView::AllColumns);
   resultView->resize(FIRST_WIDTH,resultView->height());
-  resultView->setSelectionMode(QListView::Single);
-  connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
-	  this,SLOT(changeItem(QListViewItem *)));
+  connect(resultView,SIGNAL(selectionChanged()),
+	  this,SLOT(changeItem()));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
 
   curr=new toTabWidget(splitter);
@@ -1575,12 +1573,16 @@ void toBrowser::firstDone(void)
 	break;
       }
     }
-  } else if (FirstTab->selectedItem())
-    SecondText=FirstTab->selectedItem()->text(0);
+  } else {
+    QListViewItem *item=selectedItem();
+    if (item)
+      SecondText=item->text(0);
+  }
 }
 
-void toBrowser::changeItem(QListViewItem *item)
+void toBrowser::changeItem()
 {
+  QListViewItem *item=selectedItem();
   if (item) {
     SecondText=item->text(0);
     if (SecondTab&&!SecondText.isEmpty())
@@ -1608,7 +1610,7 @@ void toBrowser::changeSecond(void)
     SecondTab->changeParams("mysql",
 			    SecondText);
   } else if (tab&&!strcmp(tab->name(),TAB_INDEX)&&!strcmp(tab2->name(),TAB_INDEX_EXTRACT)) {
-    QListViewItem *item=FirstTab->selectedItem();
+    QListViewItem *item=selectedItem();
     if (item)
       SecondTab->changeParams(schema(),item->text(0)+"."+item->text(1));
   } else
@@ -1711,15 +1713,17 @@ void toBrowser::modifyConstraint(void)
 void toBrowser::modifyIndex(void)
 {
   QString index;
-  toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
-  if (first->columns()>1&&first->selectedItem())
-    index=first->selectedItem()->text(1);
+  QListViewItem *item=selectedItem();
+  if (FirstTab->columns()>1&&item)
+    index=item->text(1);
 
-  toBrowserIndex::modifyIndex(connection(),
-			      Schema->selected(),
-			      SecondText,
-			      this,
-			      index);
+  if (item) {
+    toBrowserIndex::modifyIndex(connection(),
+				Schema->selected(),
+				item->text(0),
+				this,
+				index);
+  }
   refresh();
 }
 
@@ -1736,6 +1740,14 @@ void toBrowser::displayTableMenu(QPopupMenu *menu)
 {
   menu->insertSeparator(0);
   menu->insertItem(QPixmap((const char **)trash_xpm),tr("Drop table"),this,SLOT(dropTable()),0,0,0);
+  menu->insertItem(tr("Truncate table"),this,SLOT(truncateTable()),0,0,0);
+  menu->insertSeparator(0);
+  if (toIsMySQL(connection())) {
+    menu->insertItem(tr("Check table"),this,SLOT(checkTable()),0,0,0);
+    menu->insertItem(tr("Optimize table"),this,SLOT(optimizeTable()),0,0,0);
+    menu->insertItem(tr("Analyze table"),this,SLOT(analyzeTable()),0,0,0);
+    menu->insertSeparator(0);
+  }
   menu->insertItem(QPixmap((const char **)modconstraint_xpm),tr("Modify constraints"),this,SLOT(modifyConstraint()),0,0,0);
   menu->insertItem(QPixmap((const char **)modindex_xpm),tr("Modify indexes"),this,SLOT(modifyIndex()),0,0,0);
   menu->insertItem(QPixmap((const char **)addtable_xpm),tr("Create table"),this,SLOT(addTable()),0,0,0);
@@ -1813,17 +1825,119 @@ void toBrowser::dropTable(void)
   dropSomething("table",SecondText);
 }
 
+void toBrowser::truncateTable(void)
+{
+  bool force=false;
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      switch (force?0:TOMessageBox::warning(this,tr("Truncate table?"),
+					    tr("Are you sure you want to truncate the table %2.%3,\n"
+					       "this action can not be undone?").arg(Schema->selected()).arg(item->text(0)),
+					    tr("&Yes"),tr("Yes to &all"),tr("&Cancel"),0)) {
+      case 1:
+	force=true;
+	// Intentionally no break here.
+      case 0:
+	connection().execute(toSQL::string(SQLTruncateTable,connection()).
+			     arg(connection().quote(Schema->selected())).
+			     arg(connection().quote(item->text(0))));
+	break;
+      case 2:
+	return;
+      }
+    }
+  }
+}
+
+void toBrowser::checkTable(void)
+{
+  QString sql;
+
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      if (sql.isEmpty())
+	sql="CHECK TABLE ";
+      else
+	sql+=", ";
+      sql+=connection().quote(Schema->selected())+"."+connection().quote(item->text(0));
+    }
+  }
+
+  if (!sql.isEmpty()) {
+    toResultLong *result=new toResultLong(this,"Check result",WType_TopLevel|WDestructiveClose);
+    result->query(sql);
+    result->show();
+  }
+
+}
+
+void toBrowser::optimizeTable(void)
+{
+  QString sql;
+
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      if (sql.isEmpty())
+	sql="OPTIMIZE TABLE ";
+      else
+	sql+=", ";
+      sql+=connection().quote(Schema->selected())+"."+connection().quote(item->text(0));
+    }
+  }
+
+  if (!sql.isEmpty()) {
+    toResultLong *result=new toResultLong(this,"Check result",WType_TopLevel|WDestructiveClose);
+    result->query(sql);
+    result->show();
+  }
+}
+
+void toBrowser::analyzeTable(void)
+{
+  QString sql;
+
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      if (sql.isEmpty())
+	sql="ANALYZE TABLE ";
+      else
+	sql+=", ";
+      sql+=connection().quote(Schema->selected())+"."+connection().quote(item->text(0));
+    }
+  }
+
+  if (!sql.isEmpty()) {
+    toResultLong *result=new toResultLong(this,"Check result",WType_TopLevel|WDestructiveClose);
+    result->query(sql);
+    result->show();
+  }
+}
+
+QListViewItem *toBrowser::selectedItem()
+{
+  QListViewItem *selected=NULL;
+  for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+    if (item->isSelected()) {
+      if (item==FirstTab->currentItem())
+	return item;
+      else if (!selected)
+	selected=item;
+    }
+  }
+  return selected;
+}
+
 void toBrowser::dropIndex(void)
 {
-  toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
-  if (first->columns()>1) {
-    if (first->selectedItem()) {
-      QString index=first->selectedItem()->text(1);
-      if (index!="PRIMARY"&&!SecondText.isEmpty())
-	dropSomething("index",SecondText+"."+index);
+  for(QListViewItem *item=FirstTab->firstChild();item;item!=item->nextSibling()) {
+    if (item->isSelected()) {
+      QString index=item->text(1);
+      if (index!="PRIMARY"&&!item->text(0).isEmpty())
+	dropSomething("index",item->text(0)+"."+index);
+      else
+	dropSomething("index",item->text(0));
     }
-  } else
-    dropSomething("index",SecondText);
+  }
 }
 
 void toBrowser::exportData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -1915,10 +2029,9 @@ void toBrowser::fixIndexCols(void)
 	}
       }
   } else if (toIsMySQL(connection())) {
-    toResultLong *first=dynamic_cast<toResultLong *>(FirstTab);
     toResultLong *second=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
-    if (first&&second) {
-      QListViewItem *item=first->selectedItem();
+    if (FirstTab&&second) {
+      QListViewItem *item=selectedItem();
       if (item) {
 	QString index=item->text(1);
 	for(QListViewItem *item=second->firstChild();item;) {

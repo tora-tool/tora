@@ -88,6 +88,9 @@
 #include "tomessageui.moc"
 #ifdef TO_KDE
 #include "tomainwindow.kde.moc"
+
+#include "icons/toramini.xpm"
+
 #else
 #include "tomainwindow.moc"
 #endif
@@ -1370,7 +1373,12 @@ void toMain::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 	  data[key+":Password"]=toObfuscate((*i)->password());
 	data[key+":User"]=(*i)->user();
 	data[key+":Host"]=(*i)->host();
-	data[key+":Mode"]=(*i)->mode();
+
+	QString options;
+	for(std::set<QString>::const_iterator j=(*i)->options().begin();j!=(*i)->options().end();j++)
+	  options+=","+*j;
+	data[key+":Options"]=options.mid(1); // Strip extra , in beginning
+
 	data[key+":Database"]=(*i)->database();
 	data[key+":Provider"]=(*i)->provider();
 	connMap[*i]=id;
@@ -1423,7 +1431,13 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
     QString database=(*i).second;
     QString user=data[key+":User"];
     QString host=data[key+":Host"];
-    QString mode=data[key+":Mode"];
+
+    QStringList optionlist=QStringList::split(",",data[key+":Options"]);
+    std::set<QString> options;
+    for(unsigned int j=0;j<optionlist.count();j++)
+      if (!optionlist[j].isEmpty())
+	options.insert(optionlist[j]);
+
     QString password=toUnobfuscate(data[key+":Password"]);
     QString provider=data[key+":Provider"];
     bool ok=true;
@@ -1437,7 +1451,7 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
     }
     if (ok) {
       try {
-	toConnection *conn=new toConnection(provider.latin1(),user,password,host,database,mode);
+	toConnection *conn=new toConnection(provider.latin1(),user,password,host,database,options);
 	if (conn) {
 	  conn=addConnection(conn,false);
 	  connMap[id]=conn;

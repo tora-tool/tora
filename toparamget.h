@@ -44,7 +44,7 @@
 #include <qdialog.h>
 #include <qpushbutton.h>
 
-class QLineEdit;
+class QComboBox;
 class QGrid;
 class QScrollView;
 
@@ -70,15 +70,15 @@ class toParamGet : public QDialog, public toHelpContext {
   Q_OBJECT
   /** Default values cache
    */
-  static std::map<QString,std::map<QString,QString> > DefaultCache;
+  static std::map<QString,std::list<QString> > DefaultCache;
   /** Specified values cache
    */
-  static std::map<QString,std::map<QString,QString> > Cache;
+  static std::map<QString,std::list<QString> > Cache;
 
   QScrollView *View;
   QGrid *Container;
 
-  std::list<QLineEdit *> Value;
+  std::list<QComboBox *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 protected:
   virtual void resizeEvent(QResizeEvent *e);

@@ -494,12 +494,12 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
     QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
-#ifdef TOAD
+#ifdef TO_NO_ORACLE
     QLabel *label=
 #endif
-    new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
+      new QLabel(tr("Refresh")+" ",toolbar,TO_KDE_TOOLBAR_WIDGET);
     Refresh=toRefreshCreate(toolbar,TO_KDE_TOOLBAR_WIDGET);
-#ifdef TOAD
+#ifdef TO_NO_ORACLE
     label->hide();
     Refresh->hide();
 #else

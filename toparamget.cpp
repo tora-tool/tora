@@ -42,6 +42,7 @@
 
 #include <qapplication.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qgrid.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -54,8 +55,8 @@
 
 #include "toparamget.moc"
 
-std::map<QString,std::map<QString,QString> > toParamGet::DefaultCache;
-std::map<QString,std::map<QString,QString> > toParamGet::Cache;
+std::map<QString,std::list<QString> > toParamGet::DefaultCache;
+std::map<QString,std::list<QString> > toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
   : QDialog(parent,name,true),toHelpContext(QString::fromLatin1("common.html#param"))
@@ -102,9 +103,6 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str,boo
   std::map<QString,bool> parameters;
   std::list<QString> names;
   toParamGet *widget=NULL;
-
-  std::map<QString,QString> &cache=Cache[conn.description()];
-  std::map<QString,QString> &defaultCache=DefaultCache[conn.description()];
 
   enum {
     afterName,
@@ -225,19 +223,29 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str,boo
 	  if (!widget)
 	    widget=new toParamGet(parent);
 	  new QLabel(fname,widget->Container);
-	  std::map<QString,QString>::iterator fnd=cache.find(fname);
-	  bool found=true;
-	  if (fnd==cache.end()) {
-	    fnd=defaultCache.find(fname);
-	    if (fnd==defaultCache.end())
-	      found=false;
-	  }
-	  QLineEdit *edit=new QLineEdit(widget->Container,QString::number(num));
+	  QComboBox *edit=new QComboBox(widget->Container,QString::number(num));
+	  edit->setEditable(true);
+	  QString defval;
+	  std::map<QString,std::list<QString> >::iterator fnd=Cache.find(fname);
+	  if (fnd!=Cache.end())
+	    for(std::list<QString>::iterator i=(*fnd).second.begin();i!=(*fnd).second.end();i++) {
+	      if (edit->count()==0)
+		defval=*i;
+	      edit->insertItem(*i);
+	    }
+	  
+	  fnd=DefaultCache.find(fname);
+	  if (fnd!=DefaultCache.end())
+	    for(std::list<QString>::iterator i=(*fnd).second.begin();i!=(*fnd).second.end();i++) {
+	      if (edit->count()==0)
+		defval=*i;
+	      edit->insertItem(*i);
+	    }
+
 	  QCheckBox *box=new QCheckBox(tr("NULL"),widget->Container);
 	  connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
-	  if (found) {
-	    edit->setText((*fnd).second);
-	    if ((*fnd).second.isNull())
+	  if (edit->count()>0) {
+	    if (defval.isNull())
 	      box->setChecked(true);
 	  }
 	  toParamGetButton *btn=new toParamGetButton(num,widget->Container);
@@ -261,17 +269,32 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str,boo
     (*widget->Value.begin())->setFocus();
     if (!interactive||widget->exec()) {
       std::list<QString>::iterator cn=names.begin();
-      for (std::list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
-	QLineEdit *current=*i;
+      for (std::list<QComboBox *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
+	QComboBox *current=*i;
 	QString val;
 	if (current) {
 	  if (current->isEnabled())
-	    val=current->text();
+	    val=current->currentText();
 	  else
 	    val=QString::null;
 	}
 	if (cn!=names.end()) {
-	  cache[*cn]=val;
+	  std::list<QString> &lst=Cache[*cn];
+	  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+	    if ((*i)==val) {
+	      lst.erase(i);
+	      break;
+	    }
+	  lst.insert(lst.begin(),val);
+
+	  std::map<QString,std::list<QString> >::iterator fnd=DefaultCache.find(*cn);
+	  if (fnd!=DefaultCache.find(*cn))
+	    for(std::list<QString>::iterator i=(*fnd).second.begin();i!=(*fnd).second.end();i++)
+	      if ((*i)==val) {
+		(*fnd).second.erase(i);
+		break;
+	      }
+
 	  cn++;
 	}
 	ret.insert(ret.end(),val);
@@ -287,9 +310,21 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str,boo
   return ret;
 }
 
-void toParamGet::setDefault(toConnection &conn,const QString &name,const QString &val)
+void toParamGet::setDefault(toConnection &,const QString &name,const QString &val)
 {
-  (DefaultCache[conn.description()])[name]=val;
+  std::map<QString,std::list<QString> >::iterator fnd=Cache.find(name);
+  if (fnd!=Cache.end())
+    for(std::list<QString>::iterator i=(*fnd).second.begin();i!=(*fnd).second.end();i++)
+      if (val==*i)
+	return;
+
+  std::list<QString> &lst=DefaultCache[name];
+  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++)
+    if ((*i)==val) {
+      lst.erase(i);
+      break;
+    }
+  lst.insert(lst.begin(),val);
 }
 
 void toParamGet::showMemo(int row)

@@ -759,12 +759,13 @@ public:
 
   virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
   { return new oracleConnection(conn); }
-  virtual std::list<QString> providedModes(const QCString &)
+  virtual std::list<QString> providedOptions(const QCString &)
   {
     std::list<QString> ret;
-    ret.insert(ret.end(),QString::fromLatin1("Normal"));
-    ret.insert(ret.end(),QString::fromLatin1("SYS_OPER"));
-    ret.insert(ret.end(),QString::fromLatin1("SYS_DBA"));
+    ret.insert(ret.end(),"*SQL*Net");
+    ret.insert(ret.end(),"-");
+    ret.insert(ret.end(),"SYS_OPER");
+    ret.insert(ret.end(),"SYS_DBA");
     return ret;
   }
   virtual std::list<QString> providedHosts(const QCString &)
@@ -968,18 +969,20 @@ void toOracleProvider::oracleQuery::cancel(void)
 toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
 {
   QString oldSid;
-  bool sqlNet=!connection().host().isEmpty();
+
+  std::set<QString> options=connection().options();
+
+  bool sqlNet=(options.find("SQL*Net")!=options.end());
   if (!sqlNet) {
     oldSid=getenv("ORACLE_SID");
     toSetEnv("ORACLE_SID",connection().database().utf8());
   }
   otl_connect *conn=NULL;
   try {
-    QString mode=connection().mode();
     int session_mode=OCI_DEFAULT;
-    if (mode==QString::fromLatin1("SYS_OPER"))
+    if (options.find("SYS_OPER")!=options.end())
       session_mode=OCI_SYSOPER;
-    else if (mode==QString::fromLatin1("SYS_DBA"))
+    else if (options.find("SYS_DBA")!=options.end())
       session_mode=OCI_SYSDBA;
     do {
       conn=new otl_connect;

@@ -48,8 +48,8 @@
 #include <qtooltip.h>
 
 toResultLong::toResultLong(bool readable,bool dispCol,toQuery::queryMode mode,
-			   QWidget *parent,const char *name)
-  : toResultView(readable,dispCol,parent,name)
+			   QWidget *parent,const char *name,WFlags f)
+  : toResultView(readable,dispCol,parent,name,f)
 {
   Query=NULL;
   Statistics=NULL;
@@ -57,8 +57,8 @@ toResultLong::toResultLong(bool readable,bool dispCol,toQuery::queryMode mode,
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
-toResultLong::toResultLong(QWidget *parent,const char *name)
-  : toResultView(parent,name)
+toResultLong::toResultLong(QWidget *parent,const char *name,WFlags f)
+  : toResultView(parent,name,f)
 {
   Query=NULL;
   Statistics=NULL;

@@ -1153,7 +1153,7 @@ public:
 	  val=Query->value(col-1);
 	  if (Query->isNull(col-1))
 	    val.clear();
-	  else if (val.isNull())
+	  else if ((val.type()==QVariant::Date||val.type()==QVariant::DateTime)&&val.isNull())
 	    fixEmpty=true;
 	} else if (col==0) {
 	  val=CurrentExtra;
@@ -1162,7 +1162,7 @@ public:
 	val=Query->value(Column);
 	if (Query->isNull(Column))
 	  val.clear();
-	else if (val.type()==QVariant::Date&&val.isNull())
+	else if ((val.type()==QVariant::Date||val.type()==QVariant::DateTime)&&val.isNull())
 	  fixEmpty=true;
       }
       if (fixEmpty) {
@@ -1530,6 +1530,19 @@ public:
       ret.insert(ret.end(),":3306");
     return ret;
   }
+
+  virtual std::list<QString> providedOptions(const QCString &provider)
+  {
+    std::list<QString> ret;
+    if (provider=="MySQL") {
+      ret.insert(ret.end(),"*SSL");
+      ret.insert(ret.end(),"*Compress");
+      ret.insert(ret.end(),"-");
+      ret.insert(ret.end(),"Ignore Space");
+      ret.insert(ret.end(),"No Schema");
+    }
+    return ret;
+  }
   virtual std::list<QString> providedDatabases(const QCString &,const QString &,const QString &,const QString &)
   {
     std::list<QString> ret;
@@ -1642,6 +1655,21 @@ toQSqlProvider::qSqlSub *toQSqlProvider::createConnection(toConnection &conn)
     db->setHostName(host.mid(0,pos));
     db->setPort(host.mid(pos+1).toInt());
   }
+
+  QString opt;
+
+  std::set<QString> options=conn.options();
+  if (options.find("Compress")==options.end())
+    opt+=";CLIENT_COMPRESS";
+  if (options.find("Ignore Space")==options.end())
+    opt+=";CLIENT_IGNORE_SPACE";
+  if (options.find("No Schema")==options.end())
+    opt+=";CLIENT_NO_SCHEMA";
+  if (options.find("SSL")==options.end())
+    opt+=";CLIENT_SSL";
+
+  if (!opt.isEmpty())
+    db->setConnectOptions(opt.mid(1));	// Strip first ; character
 
   db->open(conn.user(),conn.password());
   if (!db->isOpen()) {

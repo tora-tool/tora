@@ -87,6 +87,12 @@ toConnectionProvider::toConnectionProvider(const QCString &provider,bool add)
   (*Types)[provider]=this;
 }
 
+std::list<QString> toConnectionProvider::providedOptions(const QCString &)
+{
+  std::list<QString> ret;
+  return ret;
+}
+
 void toConnectionProvider::removeProvider(const QCString &provider)
 {
   std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(provider);
@@ -130,13 +136,6 @@ void toConnectionProvider::initializeAll(void)
       (*i).second->initialize();
 }
 
-std::list<QString> toConnectionProvider::providedModes(const QCString &)
-{
-  std::list<QString> ret;
-  ret.insert(ret.end(),QString::fromLatin1("Normal"));
-  return ret;
-}
-
 toConnectionProvider &toConnectionProvider::fetchProvider(const QCString &provider)
 {
   checkAlloc();
@@ -146,9 +145,9 @@ toConnectionProvider &toConnectionProvider::fetchProvider(const QCString &provid
   return *((*i).second);
 }
 
-std::list<QString> toConnectionProvider::modes(const QCString &provider)
+std::list<QString> toConnectionProvider::options(const QCString &provider)
 {
-  return fetchProvider(provider).providedModes(provider);
+  return fetchProvider(provider).providedOptions(provider);
 }
 
 QWidget *toConnectionProvider::configurationTab(const QCString &provider,QWidget *parent)
@@ -883,8 +882,8 @@ void toConnection::addConnection(void)
 toConnection::toConnection(const QCString &provider,
 			   const QString &user,const QString &password,
 			   const QString &host,const QString &database,
-			   const QString &mode,bool cache)
-  : Provider(provider),User(user),Password(password),Host(host),Database(database),Mode(mode)
+			   const std::set<QString> &options,bool cache)
+  : Provider(provider),User(user),Password(password),Host(host),Database(database),Options(options)
 {
   BackgroundConnection=NULL;
   BackgroundCount=0;
@@ -908,7 +907,7 @@ toConnection::toConnection(const toConnection &conn)
     Password(conn.Password),
     Host(conn.Host),
     Database(conn.Database),
-    Mode(conn.Database)
+    Options(conn.Options)
 {
   BackgroundConnection=NULL;
   BackgroundCount=0;

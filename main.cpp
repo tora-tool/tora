@@ -53,7 +53,8 @@
 #include <time.h>
 
 #ifdef TO_KDE
-#include <kapp.h>
+#include <kcmdlineargs.h>
+#include <kapplication.h>
 #endif
 
 #include <qapplication.h>
@@ -87,7 +88,8 @@ int main(int argc,char **argv)
 #endif
 
 #ifdef TO_KDE
-  new KApplication(argc,argv,"tora");
+  KCmdLineArgs::init(argc, argv, "tora", "tora", "Toolkit for Oracle", TOVERSION);
+  new KApplication;
 #else
 #  ifndef WIN32
   if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())

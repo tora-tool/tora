@@ -45,6 +45,13 @@ class toNewConnection : public toNewConnectionUI, public toHelpContext
   Q_OBJECT
 
   int DefaultPort;
+
+  QVBoxLayout *OptionGroupLayout;
+
+  std::map<QString,bool> Options;
+  std::list<QWidget *> OptionWidgets;
+
+  void processOptions(const QString &);
 public:
   toNewConnection(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
   ~toNewConnection();

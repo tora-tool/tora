@@ -151,7 +151,7 @@ public:
   /** True if declare keyword starts block.
    */
   virtual bool declareBlock()
-#ifdef TOAD
+#ifdef TO_NO_ORACLE
   { return false; }
 #else
   { return true; }

@@ -41,6 +41,7 @@
 #include "toresultview.h"
 #include "totool.h"
 
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qfile.h>
@@ -70,6 +71,12 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     toHelpContext(QString::fromLatin1("newconnection.html"))
 {
   toHelp::connectDialog(this);
+
+  OptionGroup->setColumnLayout(0, Qt::Vertical );
+  OptionGroup->layout()->setSpacing( 6 );
+  OptionGroup->layout()->setMargin( 11 );
+  OptionGroupLayout = new QVBoxLayout( OptionGroup->layout() );
+  OptionGroupLayout->setAlignment( Qt::AlignTop );
 
   QPopupMenu *menu = new QPopupMenu(Previous);
   Database->insertItem(toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE));
@@ -101,8 +108,8 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   }
   Provider->setCurrentItem(sel);
   changeProvider();
+  processOptions(toTool::globalConfig(CONF_OPTIONS,DEFAULT_OPTIONS));
 
-  SqlNet->setChecked(!toTool::globalConfig(CONF_HOST,DEFAULT_HOST).isEmpty());
   QString host=toTool::globalConfig(CONF_HOST,DEFAULT_HOST);
 
   int portix=host.find(":");
@@ -153,7 +160,11 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
       tmp+=CONF_PROVIDER;
       QString provider=toTool::globalConfig(tmp,DEFAULT_PROVIDER);
 
-      last=new QListViewItem(Previous,last,provider,host,database,user,passstr);
+      tmp=path;
+      tmp+=CONF_OPTIONS;
+      QString options=toTool::globalConfig(tmp,DEFAULT_OPTIONS);
+
+      last=new QListViewItem(Previous,last,provider,host,database,user,passstr,options);
     }
   }
 }
@@ -167,8 +178,9 @@ void toNewConnection::changeProvider(void)
     std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText().latin1());
     QString current=Host->currentText();
 
-    Host->clear();
     bool sqlNet=false;
+
+    Host->clear();
     DefaultPort=0;
     for(std::list<QString>::iterator i=hosts.begin();i!=hosts.end();i++) {
       if ((*i).isEmpty())
@@ -184,26 +196,56 @@ void toNewConnection::changeProvider(void)
       Host->hide();
       PortLabel->hide();
       Port->hide();
-      SqlNet->show();
     } else {
       HostLabel->show();
       Host->show();
       PortLabel->show();
       Port->show();
-      SqlNet->hide();
     }
     Host->lineEdit()->setText(current);
-    Mode->clear();
-    std::list<QString> modes=toConnectionProvider::modes(Provider->currentText().latin1());
-    for(std::list<QString>::iterator j=modes.begin();j!=modes.end();j++)
-      Mode->insertItem(*j);
-    if (Mode->count()==1) {
-      Mode->hide();
-      ModeLabel->hide();
-    } else {
-      Mode->show();
-      ModeLabel->show();
+
+    for(std::list<QWidget *>::iterator k=OptionWidgets.begin();k!=OptionWidgets.end();k++) {
+      if ((*k)->isA("QCheckBox")) {
+	QCheckBox *box=(QCheckBox *)(*k);
+	Options[box->text()]=box->isChecked();
+      }
+      delete *k;
     }
+    OptionWidgets.clear();
+
+    std::list<QString> options=toConnectionProvider::options(Provider->currentText().latin1());
+    for(std::list<QString>::iterator j=options.begin();j!=options.end();j++) {
+      if ((*j)=="-") {
+	QFrame *frame=new QFrame(OptionGroup);
+	frame->setFrameShape( QFrame::HLine );
+	frame->setFrameShadow( QFrame::Sunken );
+	OptionGroupLayout->addWidget(frame);
+	frame->show();
+	OptionWidgets.insert(OptionWidgets.end(),frame);
+      } else {
+	QString option=*j;
+	bool defOn=false;
+	if (option.startsWith("*")) {
+	  defOn=true;
+	  option=option.mid(1);
+	}
+
+	QCheckBox *ow=new QCheckBox(OptionGroup);
+	ow->setText(option);
+	if (Options.find(option)!=Options.end())
+	  ow->setChecked((*(Options.find(option))).second);
+	else
+	  ow->setChecked(defOn);
+	OptionGroupLayout->addWidget(ow);
+	ow->show();
+	OptionWidgets.insert(OptionWidgets.end(),ow);
+      }
+    }
+    if (options.begin()==options.end())
+      OptionGroup->hide();
+    else
+      OptionGroup->show();
+
   } catch (const QString &str) {
     Host->clear();
     toStatusMessage(str);
@@ -213,25 +255,44 @@ void toNewConnection::changeProvider(void)
 void toNewConnection::changeHost(void)
 {
   try {
-    QString host;
-    if (SqlNet->isHidden())
+    if (!Host->isHidden()) {
+      QString host;
       host=Host->currentText();
-    else
-      host=(SqlNet->isChecked()?QString::fromLatin1("SQL*Net"):QString::null);
-    std::list<QString> databases=toConnectionProvider::databases(Provider->currentText().latin1(),
-								 host,
-								 Username->text(),
-								 Password->text());
-    QString current=Database->currentText();
-
-    Database->clear();
-    for(std::list<QString>::iterator i=databases.begin();i!=databases.end();i++)
-      Database->insertItem(*i);
-    Database->lineEdit()->setText(current);
+      std::list<QString> databases=toConnectionProvider::databases(Provider->currentText().latin1(),
+								   host,
+								   Username->text(),
+								   Password->text());
+      QString current=Database->currentText();
+      
+      Database->clear();
+      for(std::list<QString>::iterator i=databases.begin();i!=databases.end();i++)
+	Database->insertItem(*i);
+      Database->lineEdit()->setText(current);
+    }
   } catch (const QString &str) {
     Database->clear();
     toStatusMessage(str);
-  } 
+  }
+}
+
+void toNewConnection::processOptions(const QString &str)
+{
+  QStringList options=QStringList::split(",",str);
+  std::map<QString,bool> values;
+  for(unsigned int i=0;i<options.count();i++) {
+    QString val=options[i];
+    if (val.startsWith("*"))
+      values[val.mid(1)]=true;
+    else
+      values[val]=false;
+  }
+  for(std::list<QWidget *>::iterator k=OptionWidgets.begin();k!=OptionWidgets.end();k++) {
+    if ((*k)->isA("QCheckBox")) {
+      QCheckBox *box=(QCheckBox *)(*k);
+      if (values.find(box->text())!=values.end())
+	box->setChecked(values[box->text()]);
+    }
+  }
 }
 
 toConnection *toNewConnection::makeConnection(void)
@@ -241,10 +302,25 @@ toConnection *toNewConnection::makeConnection(void)
     toTool::globalSetConfig(CONF_USER,Username->text());
     QString pass;
     QString host;
-    if (SqlNet->isHidden())
+    if (Host->isHidden())
       host=Host->currentText();
-    else
-      host=SqlNet->isChecked()?QString::fromLatin1("SQL*Net"):QString::null;
+
+    QString optionstring;
+    std::set<QString> options;
+
+    for(std::list<QWidget *>::iterator k=OptionWidgets.begin();k!=OptionWidgets.end();k++) {
+      if ((*k)->isA("QCheckBox")) {
+	if (!optionstring.isEmpty())
+	  optionstring+=",";	
+	QCheckBox *box=(QCheckBox *)(*k);
+	if (box->isChecked()) {
+	  optionstring+="*";
+	  options.insert(box->text());
+	}
+	optionstring+=box->text();
+      }
+    }
+    toTool::globalSetConfig(CONF_OPTIONS,optionstring);
 
     std::list<QString> con=toMainWidget()->connections();
     for(std::list<QString>::iterator i=con.begin();i!=con.end();i++) {
@@ -268,7 +344,7 @@ toConnection *toNewConnection::makeConnection(void)
 					  Password->text(),
 					  host,
 					  Database->currentText(),
-					  Mode->currentText());
+					  options);
     {
       for(QListViewItem *item=Previous->firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==Provider->currentText()&&
@@ -293,7 +369,8 @@ toConnection *toNewConnection::makeConnection(void)
 		      host,
 		      Database->currentText(),
 		      Username->text(),
-		      retCon->password());
+		      retCon->password(),
+		      optionstring);
     historySave();
     return retCon;
   } catch (const QString &exc) {
@@ -305,6 +382,7 @@ toConnection *toNewConnection::makeConnection(void)
     return NULL;
   }
 }
+
 void toNewConnection::historySave(void) {
   int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
   int i=0;
@@ -350,6 +428,13 @@ void toNewConnection::historySave(void) {
     else
       toTool::globalEraseConfig(tmp);
     
+    tmp=path;
+    tmp+=CONF_OPTIONS;
+    if (i<siz&&item)
+      toTool::globalSetConfig(tmp,item->text(5));
+    else
+      toTool::globalEraseConfig(tmp);
+    
     i++;
     if (i<siz&&item)
       j++;
@@ -368,18 +453,19 @@ void toNewConnection::historySelection(void)
 	break;
       }
     changeProvider();
-    if (SqlNet->isHidden()) {
-      QString host=item->text(1);
-      int portix=host.find(":");
-      if (portix>=0) {
-	Host->lineEdit()->setText(host.mid(0,portix));
-	Port->setValue(host.mid(portix+1).toInt());
-      } else {
-	Host->lineEdit()->setText(host);
-	Port->setValue(DefaultPort);
-      }
-    } else
-      SqlNet->setChecked(!item->text(1).isEmpty());
+
+    QString host=item->text(1);
+    int portix=host.find(":");
+    if (portix>=0) {
+      Host->lineEdit()->setText(host.mid(0,portix));
+      Port->setValue(host.mid(portix+1).toInt());
+    } else {
+      Host->lineEdit()->setText(host);
+      Port->setValue(DefaultPort);
+    }
+
+    processOptions(item->text(5));
+
     Database->lineEdit()->setText(item->text(2));
     Username->setText(item->text(3));
     if(item->text(4)!=DEFAULT_PASSWORD)
