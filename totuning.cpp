@@ -1850,8 +1850,8 @@ void toTuningFileIO::refresh(void)
 
 void toTuningFileIO::poll(void)
 {
-  if (Query&&Query->poll()) {
-    try {
+  try {
+    if (Query&&Query->poll()) {
       QString tablespace;
       QString datafile;
       QString timestr;
@@ -1908,8 +1908,8 @@ void toTuningFileIO::poll(void)
 	delete Query;
 	Query=NULL;
       }
-    } TOCATCH
-  }
+    }
+  } TOCATCH
 }
 
 void toTuningFileIO::resizeEvent(QResizeEvent *e)
