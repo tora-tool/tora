@@ -84,11 +84,11 @@ install: $(TARGET)
 
 clean:
 	@echo Cleaning $(TITLE)
-	-rm -rf objs tora tora-static tora-mono 2>&1 >/dev/null
-	-rm -f *~ 2>&1 >/dev/null
-	-rm -f *~ */*~ 2>&1 >/dev/null
-	-rm -f *.bak 2>&1 >/dev/null
-	-rm -rf plugins 2>&1 >/dev/null
+	-rm -rf objs tora tora-static tora-mono >/dev/null 2>&1
+	-rm -f *~ >/dev/null 2>&1
+	-rm -f *~ */*~ >/dev/null 2>&1
+	-rm -f *.bak >/dev/null 2>&1
+	-rm -rf plugins >/dev/null 2>&1
 	-for a in *.kde ; \
              do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n";' $$a`; \
          done
@@ -97,12 +97,12 @@ clean:
          done
 
 distclean: clean
-	-rm -rf .depends 2>&1 >/dev/null
-	-rm -rf .xvpics 2>&1 >/dev/null
-	-rm -rf icons/.xvpics 2>&1 >/dev/null
-	-rm -f *.moc 2>&1 >/dev/null
-	-rm \#*\# 2>&1 >/dev/null
-	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null
-	-mv Makefile Makefile.orig 2>&1 >/dev/null
-	-rm LICENSE.h
-	-rm configure.setup
+	-rm -rf .depends >/dev/null 2>&1
+	-rm -rf .xvpics >/dev/null 2>&1
+	-rm -rf icons/.xvpics >/dev/null 2>&1
+	-rm -f *.moc >/dev/null 2>&1 
+	-rm \#*\# >/dev/null 2>&1
+	-cp Makefile.setup.orig Makefile.setup >/dev/null 2>&1
+	-mv Makefile Makefile.orig >/dev/null 2>&1
+	-rm LICENSE.h >/dev/null 2>&1
+	-rm configure.setup >/dev/null 2>&1
