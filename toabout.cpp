@@ -73,7 +73,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "<HR BREAK=ALL>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 #else
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1\n"
@@ -95,8 +95,20 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-"GNU General Public License for more details.";
+"GNU General Public License for more details."
 #endif
+"<HR BREAK=ALL>\n"
+"<B>Contributors (In no particular order):</B><P>\n"
+"<B>Volker Götz</B> - Improved PostgreSQL support.<BR>\n"
+"<B>Selcek Ozturk</B> - Improved content editor<P>\n"
+"<B>Stefan Rindeskär</B> - Improved PostgreSQL support.<BR>\n"
+"<B>Alexander (Leo) Bergolth</B> - Access to Oracle 7 database<P>\n"
+"Other contributors:<P>\n"
+"<B>Roman Stepanov</B>, <B>Joachim Zetzsche</B>, <B>Massimiliano Ziccardi</B>,\n"
+"<B>Jan Pruner</B>, <B>Jonas Rathert</B>, <B>Norbert Kiesel</B>, <B>Jonas Rathert</B>,\n"
+"<B>Norbert Kiesel</B>, <B>Frank Pavageau</B>, <B>Peter Nyborg</B>, <B>Robert Cheramy</B>,\n"
+"<B>Ferdinand Gassauer</B>, <B>Christopher R. Redinger</B>, <B>Jeff Price</B>,\n"
+"<B>Frits Hoogland</B> ...";
 
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
