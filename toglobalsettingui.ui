@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>392</width>
+            <width>393</width>
             <height>401</height>
         </rect>
     </property>
@@ -240,55 +240,6 @@ Will leave the password unencryptet in the config file.</string>
             </property>
         </widget>
         <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>LongSession</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Long sessions</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Open new connections to the database to prevent
-the interface from locking up when executing.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>DesktopAware</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>105</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Desktop aware</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Colors get really weird in KDE if you select this.</string>
-            </property>
-        </widget>
-        <widget>
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
@@ -369,6 +320,26 @@ the interface from locking up when executing.</string>
             </property>
         </widget>
         <widget>
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Status</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>280</x>
+                    <y>100</y>
+                    <width>90</width>
+                    <height>23</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>suffix</name>
+                <string> seconds</string>
+            </property>
+        </widget>
+        <widget>
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
@@ -397,23 +368,76 @@ the interface from locking up when executing.</string>
             </property>
         </widget>
         <widget>
-            <class>QSpinBox</class>
+            <class>QCheckBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>Status</cstring>
+                <cstring>DesktopAware</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
-                    <x>280</x>
-                    <y>100</y>
-                    <width>90</width>
-                    <height>23</height>
+                    <x>10</x>
+                    <y>105</y>
+                    <width>160</width>
+                    <height>19</height>
                 </rect>
             </property>
             <property stdset="1">
-                <name>suffix</name>
-                <string> seconds</string>
+                <name>text</name>
+                <string>&amp;Desktop aware</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Colors get really weird in KDE if you select this.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>LongSession</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Long sessions</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Open new connections to the database to prevent
+the interface from locking up when executing.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AntialiaseFonts</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>145</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Antialiase fonts</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
             </property>
         </widget>
     </widget>
@@ -448,6 +472,7 @@ the interface from locking up when executing.</string>
     <tabstop>SavePassword</tabstop>
     <tabstop>LongSession</tabstop>
     <tabstop>DesktopAware</tabstop>
+    <tabstop>AntialiaseFonts</tabstop>
     <tabstop>ListScale</tabstop>
     <tabstop>Style</tabstop>
     <tabstop>Status</tabstop>

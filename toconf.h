@@ -64,10 +64,13 @@
 #define CONF_DESKTOP_AWARE	"DesktopAware"
 #define CONF_STATUS_MESSAGE     "StatusMessage"
 #define DEFAULT_STATUS_MESSAGE  "5"
+#define CONF_QT_XFT             "Xft"
+#define DEFAULT_QT_XFT          "false"
 
 // Undefining this will leave out the style selection option stuff from the program
 #ifndef TO_KDE
 #define ENABLE_STYLE
+#define ENABLE_QT_XFT
 #endif
 #define CONF_STYLE		"Style"
 #define DEFAULT_STYLE		"Windows"

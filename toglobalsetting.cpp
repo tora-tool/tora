@@ -64,6 +64,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
+#ifdef ENABLE_QT_XFT
+  AntialiaseFonts->setChecked(toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT)=="true");
+#else
+  AntialiaseFonts->hide();
+#endif
 
 #ifdef ENABLE_STYLE
   Style->insertItem("CDE");
@@ -134,6 +139,9 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
+#ifdef ENABLE_QT_XFT
+  toTool::globalSetConfig(CONF_QT_XFT,AntialiaseFonts->isChecked()?"true":"false");
+#endif
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0)

@@ -66,6 +66,9 @@ bool toMonolithic(void)
 int main(int argc,char **argv)
 {
   try {
+#ifdef ENABLE_QT_XFT
+    setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
+#endif
 #ifdef TO_KDE
     KApplication mainApp(argc,argv,"tora");
 #else

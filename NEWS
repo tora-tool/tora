@@ -57,6 +57,7 @@
 2001-04-26: Fixed a few compile warnings on GCC 2.96.
 2001-04-26: Fixed bug with missing default file in worksheet.
 2001-04-27: Added bugfix to font selection bug in Qt 2.3.
+2001-04-27: Added option to disable/enable antialiasing.
 
 0.7: Released 2001-03-24
 
