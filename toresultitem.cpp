@@ -67,6 +67,7 @@ static toSQL SQLResource(TOSQL_RESULTRESOURCE,
 
 void toResultItem::setup(int num,bool readable)
 {
+  enableClipper(true);
   ReadableColumns=readable;
   Widgets=NULL;
   NumWidgets=0;

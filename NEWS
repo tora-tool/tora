@@ -57,6 +57,10 @@
 2001-08-16: Fixed a lot of problem with new DB access.
 2001-08-16: Fixed problem with default value in changing watches.
 2001-08-17: Added documentation to the connection API.
+2001-08-17: Fixed problem with large toResultItems.
+2001-08-17: Started implementing tool connection handling code.
+2001-08-17: As a proof of concept debugger doesn't support Oracle 7.x databases.
+2001-08-17: Added support for canHandle in changeConnection class.
 
 0.14: Released 2001-08-02
 

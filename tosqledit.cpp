@@ -63,6 +63,7 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "toworksheet.h"
 #include "tosqledit.h"
+#include "toconnection.h"
 
 #include "tosqledit.moc"
 
@@ -144,7 +145,7 @@ static QPixmap *toTrashPixmap;
 static QPixmap *toAddPixmap;
 
 toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
-  : toToolWidget("sqledit.html",main,connection)
+  : toToolWidget(SQLEditTool,"sqledit.html",main,connection)
 {
   if (!toLoadPixmap)
     toLoadPixmap=new QPixmap((const char **)fileopen_xpm);

@@ -683,8 +683,8 @@ QString toConnection::description(void) const
 {
   QString ret(User);
   ret+="@";
-  ret+Database;
-  if (!Host.isEmpty()) {
+  ret+=Database;
+  if (!Host.isEmpty()&&Host!="SQL*Net") {
     ret+=".";
     ret+=Host;
   }
@@ -967,3 +967,7 @@ void toConnection::allExecute(const QString &sql,
   }
 }
 
+const QString &toConnection::provider(void) const
+{
+  return Provider.provider();
+}

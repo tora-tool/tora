@@ -242,7 +242,7 @@ void toWorksheet::viewResources(void)
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
-  : toToolWidget("worksheet.html",main,connection)
+  : toToolWidget(WorksheetTool,"worksheet.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -1007,4 +1007,14 @@ void toWorksheet::executeNewline(void)
   Editor->setCursorPosition(eline,epos,true);
   if (Editor->hasMarkedText())
     query(Editor->markedText(),false);
+}
+
+void toWorksheet::commitButton(void)
+{
+  connection().commit();
+}
+
+void toWorksheet::rollbackButton(void)
+{
+  connection().rollback();
 }

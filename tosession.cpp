@@ -143,7 +143,7 @@ static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "Display chart of session generated I/O");
 
 toSession::toSession(QWidget *main,toConnection &connection)
-  : toToolWidget("session.html",main,connection)
+  : toToolWidget(SessionTool,"session.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

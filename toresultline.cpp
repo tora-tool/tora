@@ -39,6 +39,7 @@
 #include "tomain.h"
 #include "toconf.h"
 #include "tosql.h"
+#include "totool.h"
 
 #include "toresultline.moc"
 

@@ -47,6 +47,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toresultcontent.h"
 #include "toresultview.h"
+#include "totool.h"
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"

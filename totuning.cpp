@@ -611,7 +611,7 @@ void toTuningOverview::refresh(void)
 }
 
 toTuning::toTuning(QWidget *main,toConnection &connection)
-  : toToolWidget("tuning.html",main,connection)
+  : toToolWidget(TuningTool,"tuning.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

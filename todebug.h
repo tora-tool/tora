@@ -43,6 +43,7 @@
 #include "tothread.h"
 #include "tohighlightedtext.h"
 #include "todebugwatch.h"
+#include "toconnection.h"
 
 #define TO_SUCCESS		0
 #define TO_ERROR_ILLEGAL_LINE	12

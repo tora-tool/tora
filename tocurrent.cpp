@@ -100,7 +100,7 @@ static toSQL SQLParameters("toCurrent:Parameters",
 			   "Display parameters of Oracle server");
 
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
-  : toToolWidget("current.html",main,connection)
+  : toToolWidget(CurrentTool,"current.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

@@ -52,6 +52,7 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "tomain.h"
 #include "toconf.h"
+#include "totool.h"
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size\n"

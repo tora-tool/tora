@@ -40,6 +40,7 @@
 #include "tobarchart.h"
 #include "tomain.h"
 #include "toconf.h"
+#include "totool.h"
 
 #include "tobarchart.moc"
 

@@ -58,6 +58,7 @@ TO_NAMESPACE;
 #include "toconf.h"
 #include "tonewconnection.h"
 #include "tomain.h"
+#include "toconnection.h"
 
 #include "tonewconnection.moc"
 #include "tonewconnectionui.moc"
@@ -254,7 +255,11 @@ void toNewConnection::historySelection(void)
 {
   QListViewItem *item=Previous->selectedItem();
   if (item) {
-    Provider->lineEdit()->setText(item->text(0));
+    for (int i=0;i<Provider->count();i++)
+      if (Provider->text(i)==item->text(0)) {
+	Provider->setCurrentItem(i);
+	break;
+      }
     if (SqlNet->isHidden())
       Host->lineEdit()->setText(item->text(1));
     else

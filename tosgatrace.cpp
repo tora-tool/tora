@@ -122,7 +122,7 @@ static toSGATraceTool SGATraceTool;
 static QPixmap *toRefreshPixmap;
 
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
-  : toToolWidget("trace.html",main,connection)
+  : toToolWidget(SGATraceTool,"trace.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

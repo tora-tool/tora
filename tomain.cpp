@@ -333,13 +333,12 @@ toMain::toMain()
     if (pixmap) {
       if (!toolTip)
 	toolTip="";
-      NeedConnection.insert(NeedConnection.end(),
-			    new QToolButton(*pixmap,
-					    toolTip,
-					    toolTip,
-					    (*i).second,
-					    SLOT(createWindow(void)),
-					    toolbar));
+      NeedConnection[new QToolButton(*pixmap,
+				     toolTip,
+				     toolTip,
+				     (*i).second,
+				     SLOT(createWindow(void)),
+				     toolbar)]=(*i).second;
     }
 
     if (menuName) {
@@ -369,19 +368,18 @@ toMain::toMain()
 				   this,SLOT(delConnection()),toolbar);
   DisconnectButton->setEnabled(false);
   toolbar->addSeparator();
-  NeedConnection.insert(NeedConnection.end(),
-			new QToolButton(*toCommitPixmap,
-					"Commit connection",
-					"Commit connection",
-					this,SLOT(commitButton()),toolbar));
-  NeedConnection.insert(NeedConnection.end(),
-			new QToolButton(*toRollbackPixmap,
-					"Rollback connection",
-					"Rollback connection",
-					this,SLOT(rollbackButton()),toolbar));
+  NeedConnection[new QToolButton(*toCommitPixmap,
+				 "Commit connection",
+				 "Commit connection",
+				 this,SLOT(commitButton()),toolbar)]=NULL;
+  NeedConnection[new QToolButton(*toRollbackPixmap,
+				 "Rollback connection",
+				 "Rollback connection",
+				 this,SLOT(rollbackButton()),toolbar)]=NULL;
   toolbar->addSeparator();
   ConnectionSelection=new QComboBox(toolbar);
   ConnectionSelection->setFixedWidth(200);
+  connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   menuBar()->insertItem("&Tools",ToolsMenu,TO_TOOLS_MENU);
 
@@ -423,8 +421,9 @@ toMain::toMain()
   menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
   DisconnectButton->setEnabled(false);
 
-  for (list<QToolButton *>::iterator j=NeedConnection.begin();j!=NeedConnection.end();j++)
-    (*j)->setEnabled(false);
+  for (map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
+       j!=NeedConnection.end();j++)
+    (*j).first->setEnabled(false);
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
@@ -840,12 +839,9 @@ void toMain::addConnection(toConnection *conn)
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,true);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,true);
     DisconnectButton->setEnabled(true);
-    for (list<QToolButton *>::iterator i=NeedConnection.begin();i!=NeedConnection.end();i++)
-      (*i)->setEnabled(true);
-    for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
-      menuBar()->setItemEnabled((*j).first,true);
   }
 
+  changeConnection();
   emit addedConnection(conn->description());
   createDefault();
 }
@@ -889,8 +885,9 @@ bool toMain::delConnection(void)
     menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
     menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
     DisconnectButton->setEnabled(false);
-    for (list<QToolButton *>::iterator i=NeedConnection.begin();i!=NeedConnection.end();i++)
-      (*i)->setEnabled(false);
+    for (map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+	 i!=NeedConnection.end();i++)
+      (*i).first->setEnabled(false);
     for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
       menuBar()->setItemEnabled((*j).first,false);
   }
@@ -1058,4 +1055,29 @@ void toMain::statusMenu(void)
   StatusMenu->clear();
   for(list<QString>::iterator i=status.begin();i!=status.end();i++)
     StatusMenu->insertItem(*i);
+}
+
+void toMain::changeConnection(void)
+{
+  toConnection &conn=currentConnection();
+  for (map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
+       i!=NeedConnection.end();i++) {
+    toTool *tool=(*i).second;
+    if (!tool)
+      (*i).first->setEnabled(true);
+    else if (tool->canHandle(conn))
+      (*i).first->setEnabled(true);
+    else
+      (*i).first->setEnabled(false);
+  }  
+  for (map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
+    toTool *tool=(*j).second;
+    if (!tool)
+      menuBar()->setItemEnabled((*j).first,true);
+    else if (tool->canHandle(conn))
+      menuBar()->setItemEnabled((*j).first,true);
+    else
+      menuBar()->setItemEnabled((*j).first,false);
+
+  }
 }

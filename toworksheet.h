@@ -111,10 +111,8 @@ public slots:
   void executeStep()
   { execute(false,true); }
   void executeNewline();
-  void commitButton()
-  { connection().commit(); }
-  void rollbackButton()
-  { connection().rollback(); }
+  void commitButton();
+  void rollbackButton();
   void eraseLogButton();
   void changeResult(QWidget *widget);
   void windowActivated(QWidget *w);

@@ -38,7 +38,9 @@
 #include <qtooltip.h>
 
 #include "tomain.h"
+#include "toconnection.h"
 #include "tochangeconnection.h"
+#include "totool.h"
 
 #include "tochangeconnection.moc"
 #include "icons/changeconnect.xpm"
@@ -66,9 +68,11 @@ void toChangeConnection::popupMenu(void)
   list<QString> cons=toMainWidget()->connections();
   int idx=0;
   for (list<QString>::iterator i=cons.begin();i!=cons.end();i++,idx++) {
-    popup()->insertItem(*i,idx);
-    if (conn.description()==*i)
-      popup()->setItemChecked(idx,true);
+    if (toCurrentTool(this)->canHandle(toMainWidget()->connection(*i))) {
+      popup()->insertItem(*i,idx);
+      if (conn.description()==*i)
+	popup()->setItemChecked(idx,true);
+    }
   }
 }
 

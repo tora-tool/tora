@@ -99,9 +99,9 @@ class QToolButton;
 class QPopupMenu;
 class QLabel;
 class toSearchReplace;
-
-#include "toconnection.h"
-#include "totool.h"
+class toTool;
+class toToolWidget;
+class toConnection;
 
 /** This class defines the main window. Observe that this class will have different baseclass
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
@@ -131,9 +131,13 @@ private:
    */
   map<int,toTool *> Tools;
   /**
-   * A list of toolbuttons that need an open connection to be enabled.
+   * A map of toolbuttons to tools that need connection to be enabled.
    */
-  list<QToolButton *> NeedConnection;
+  /**
+   * A list of toolbuttons that need an open connection to be enabled. If tool pointer
+   * is zero simply require any connection to be enabled.
+   */
+  map<QToolButton *,toTool *> NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -400,7 +404,9 @@ private slots:
    */
   void printButton(void);
 
-
+  /** Change current connection
+   */
+  void changeConnection(void);
   /** Undo button pressed
    */
   void undoButton(void);
@@ -419,6 +425,34 @@ private slots:
   /** Called when active window is changed.
    */
   void windowActivated(QWidget *);
+};
+
+
+/** A timer descendant which also keep track of the last timer setting sent to it.
+ */
+class toTimer : public QTimer {
+  Q_OBJECT
+
+  int LastTimer;
+public:
+  /** Create timer.
+   * @param parent Parent object of timer.
+   * @param name Name of timer.
+   */
+  toTimer(QObject *parent=0,const char * name=0)
+    : QTimer(parent,name)
+  { }
+  /** Start timer.
+   * @param msec Milliseconds to timeout.
+   * @param sshot Set to true if only timeout once.
+   */
+  int start(int msec,bool sshot=false)
+  { LastTimer=msec; return QTimer::start(msec,sshot); }
+  /** Get last timer start timeout.
+   * @return Last timeout in millisecond.
+   */
+  int lastTimer(void)
+  { return LastTimer; }
 };
 
 /** Display a message in the statusbar of the main window.
@@ -669,33 +703,6 @@ class toBusy {
 public:
   toBusy();
   ~toBusy();
-};
-
-/** A timer descendant which also keep track of the last timer setting sent to it.
- */
-class toTimer : public QTimer {
-  Q_OBJECT
-
-  int LastTimer;
-public:
-  /** Create timer.
-   * @param parent Parent object of timer.
-   * @param name Name of timer.
-   */
-  toTimer(QObject *parent=0,const char * name=0)
-    : QTimer(parent,name)
-  { }
-  /** Start timer.
-   * @param msec Milliseconds to timeout.
-   * @param sshot Set to true if only timeout once.
-   */
-  int start(int msec,bool sshot=false)
-  { LastTimer=msec; return QTimer::start(msec,sshot); }
-  /** Get last timer start timeout.
-   * @return Last timeout in millisecond.
-   */
-  int lastTimer(void)
-  { return LastTimer; }
 };
 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that

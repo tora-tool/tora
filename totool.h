@@ -154,6 +154,11 @@ public:
   virtual const char *toolbarTip()
   { return menuItem(); }
 
+  /** Check if the tool can handle a specific connection. Default is to only handle
+   * connections from the provider Oracle.
+   * @return True if connection can be handled.
+   */
+  virtual bool canHandle(toConnection &conn);
   /**
    * This function is called as a last step after the main widget is created. It could
    * be used to insert the tool pretty much anywhere in the user interface if the toolmenu,
@@ -295,6 +300,7 @@ class toToolWidget : public QVBox, public toHelpContext {
   Q_OBJECT
   toConnection *Connection;
   toTimer *Timer;
+  toTool &Tool;
 signals:
   /** Emitted when the connection is changed.
    */
@@ -306,7 +312,8 @@ public:
    * @param conn Connection of widget.
    * @param name Name of widget.
    */
-  toToolWidget(const QString &ctx,
+  toToolWidget(toTool &tool,
+	       const QString &ctx,
 	       QWidget *parent,
 	       toConnection &conn,
 	       const char *name=NULL);
@@ -316,6 +323,17 @@ public:
    */
   toConnection &connection()
   { return *Connection; }
+  /** Get the tool for this tool widget.
+   * @return Reference to a tool object.
+   */
+  toTool &tool(void)
+  { return Tool; }
+  /** Check if this tool can handle a specific connection.
+   * @param provider Name of connection.
+   * @return True if connection is handled.
+   */
+  virtual bool canHandle(toConnection &conn)
+  { return Tool.canHandle(conn); }
   /** Change connection of tool.
    */
   void setConnection(toConnection &conn);

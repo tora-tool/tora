@@ -144,6 +144,14 @@ public:
     if (i!=Windows.end())
       Windows.erase(i);
   }
+  virtual bool canHandle(toConnection &conn)
+  {
+    if (conn.provider()!="Oracle")
+      return false;
+    if (conn.version()<"8.0")
+      return false;
+    return true;
+  }
 };
 
 static toDebugTool DebugTool;
@@ -1626,7 +1634,7 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main,toConnection &connection)
-  : toToolWidget("debugger.html",main,connection),TargetThread()
+  : toToolWidget(DebugTool,"debugger.html",main,connection),TargetThread()
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

@@ -182,7 +182,7 @@ public:
   }
 };
 
-static toSecurityTool OutputTool;
+static toSecurityTool SecurityTool;
 
 static QPixmap *toRefreshPixmap;
 static QPixmap *toCommitPixmap;
@@ -1249,7 +1249,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 }
 
 toSecurity::toSecurity(QWidget *main,toConnection &connection)
-  : toToolWidget("security.html",main,connection)
+  : toToolWidget(SecurityTool,"security.html",main,connection)
 {
   toBusy busy;
   if (!toRefreshPixmap)

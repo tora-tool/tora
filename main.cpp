@@ -55,6 +55,7 @@ TO_NAMESPACE;
 #include "tohighlightedtext.h"
 #include "toabout.h"
 #include "tosql.h"
+#include "totool.h"
 
 #ifndef TOMONOLITHIC
 #include <dlfcn.h>

@@ -63,8 +63,8 @@ TO_NAMESPACE;
 
 #include "totool.moc"
 
-toToolWidget::toToolWidget(const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
-  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx)
+toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
+  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx),Tool(tool)
 {
   Connection=&conn;
   Timer=NULL;
@@ -470,4 +470,9 @@ void toTool::globalSetConfig(const QString &tag,const QString &value)
     loadConfig();
 
   (*Configuration)[tag]=value;
+}
+
+bool toTool::canHandle(toConnection &conn)
+{
+  return (conn.provider()=="Oracle");
 }

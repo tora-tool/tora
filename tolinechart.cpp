@@ -40,6 +40,7 @@
 #include "tolinechart.h"
 #include "tomain.h"
 #include "toconf.h"
+#include "totool.h"
 
 #include "tolinechart.moc"
 

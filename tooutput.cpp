@@ -52,6 +52,7 @@ TO_NAMESPACE;
 #include "tomarkedtext.h"
 #include "tomain.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 #include "tooutput.moc"
 
@@ -134,7 +135,7 @@ static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
-  : toToolWidget("output.html",main,connection)
+  : toToolWidget(OutputTool,"output.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

@@ -623,7 +623,7 @@ static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
 toRollback::toRollback(QWidget *main,toConnection &connection)
-  : toToolWidget("rollback.html",main,connection)
+  : toToolWidget(RollbackTool,"rollback.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

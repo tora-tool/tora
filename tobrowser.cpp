@@ -426,7 +426,7 @@ void toBrowser::setNewFilter(toResultFilter *filter)
 }
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
-  : toToolWidget("browser.html",parent,connection)
+  : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
   if (!RefreshPixmap)
     RefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -879,17 +879,20 @@ public:
     toResultView *res;
 
     if (typ=="Constraints") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       res=new toResultConstraint(tool);
     } else if (typ=="References") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       res=new toResultReferences(tool);
     } else if (typ=="Grants") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       res=new toResultView(true,false,tool);
@@ -949,7 +952,8 @@ public:
     QString schema=parent()->parent()->text(0);
 
     if (typ=="Code"||typ=="Triggers") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       toResultField *fld=new toResultField(tool);
@@ -960,14 +964,16 @@ public:
       fld->changeParams(schema,object);
       return fld;
     } else if (typ=="Tables"||typ=="Views") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       toResultCols *cols=new toResultCols(tool);
       cols->changeParams(schema,object);
       return cols;
     } else if (typ=="Indexes") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       toResultView *resultView=new toResultView(true,false,tool);
@@ -975,7 +981,8 @@ public:
       resultView->changeParams(schema,object);
       return resultView;
     } else if (typ=="Synonyms"||typ=="Sequences") {
-      toToolWidget *tool=new toToolWidget(QString::null,
+      toToolWidget *tool=new toToolWidget(BrowserTool,
+					  QString::null,
 					  par,
 					  Connection);
       toResultItem *resultItem=new toResultItem(1,true,tool);

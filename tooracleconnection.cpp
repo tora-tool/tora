@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include "toconnection.h"
 #include "tomain.h"
 #include "toconf.h"
+#include "totool.h"
 
 // Must be larger than max long size in otl.
 

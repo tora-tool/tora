@@ -637,7 +637,7 @@ static QPixmap *toWriteTablespacePixmap;
 static QPixmap *toModFilePixmap;
 
 toStorage::toStorage(QWidget *main,toConnection &connection)
-  : toToolWidget("storage.html",main,connection)
+  : toToolWidget(StorageTool,"storage.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

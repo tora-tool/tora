@@ -59,6 +59,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toglobalsetting.h"
 #include "tosql.h"
+#include "toconnection.h"
 
 #include "toglobalsettingui.moc"
 #include "todatabasesettingui.moc"
