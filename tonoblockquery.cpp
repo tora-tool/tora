@@ -66,6 +66,7 @@ void toNoBlockQuery::queryTask::run(void)
   try {
     {
       Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
+      Query.set_commit(0);
       TO_DEBUGOUT("Open query\n");
 
       Query.open(1,
@@ -94,7 +95,7 @@ void toNoBlockQuery::queryTask::run(void)
       for (;;) {
 	for (int i=0;i<Length;i++) {
 	  TO_DEBUGOUT("Reading value\n");
-	  QString value(toReadValue(Parent.Description[i],Query,Parent.MaxColSize));
+	  QString value(toReadValue(Query));
 	  {
 	    TO_DEBUGOUT("Locking parent\n");
 	    toLocker lock(Parent.Lock);
@@ -140,6 +141,10 @@ void toNoBlockQuery::queryTask::run(void)
     TO_DEBUGOUT("Locking exception string\n");
     toLocker lock(Parent.Lock);
     Parent.Error=str;
+  } catch (...) {
+    TO_DEBUGOUT("Unknown exception\n");
+    toLocker lock(Parent.Lock);
+    Parent.Error="Unknown exception";
   }
 
   TO_DEBUGOUT("Locking EOQ\n");
@@ -184,7 +189,6 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   DescriptionLength=0;
   Quit=EOQ=false;
   Processed=0;
-  MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
 
   toLocker lock(Lock);
   try {

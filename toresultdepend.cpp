@@ -40,8 +40,6 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "tomain.h"
 
-#define TO_BUFFER_SIZE 100
-
 static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "SELECT DISTINCT\n"
 			     "       referenced_owner \"Owner\",\n"
@@ -74,14 +72,14 @@ void toResultDepend::addChilds(QListViewItem *item)
     query<<item->text(1).utf8();
     QListViewItem *last=NULL;
     while(!query.eof()) {
-      QString owner=toReadValue(Description[0],query,TO_BUFFER_SIZE);
-      QString name=toReadValue(Description[0],query,TO_BUFFER_SIZE);
+      QString owner=toReadValue(query);
+      QString name=toReadValue(query);
       bool old=exists(owner,name);
       last=new QListViewItem(item,last);
       last->setText(0,owner);
       last->setText(1,name);
       for (int i=2;i<DescriptionLen;i++)
-	last->setText(i,toReadValue(Description[i],query,TO_BUFFER_SIZE));
+	last->setText(i,toReadValue(query));
       if (!old)
 	addChilds(last);
     }

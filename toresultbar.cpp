@@ -72,7 +72,6 @@ void toResultBar::query(const QString &sql,const list<QString> &param,bool first
       }
     }
 
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
     list<QString> labels;
     int len;
     otl_column_desc *desc=str.describe_select(len);
@@ -86,11 +85,11 @@ void toResultBar::query(const QString &sql,const list<QString> &param,bool first
 
     while(!str.eof()) {
       int num=0;
-      QString lab=toReadValue(desc[num],str,MaxColSize);
+      QString lab=toReadValue(str);
       num++;
       list<double> vals;
       while(num<len) {
-	QString lab=toReadValue(desc[num],str,MaxColSize);
+	QString lab=toReadValue(str);
 	vals.insert(vals.end(),lab.toDouble());
 	num++;
       }

@@ -57,8 +57,6 @@ void toResultField::query(const QString &sql,const list<QString> &param)
   try {
     otl_stream Query;
 
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-
     Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query.open(1,
 	       sql.utf8(),
@@ -69,15 +67,8 @@ void toResultField::query(const QString &sql,const list<QString> &param)
 
     QString text;
 
-    int DescriptionLen,col;
-    otl_column_desc *Description=Query.describe_select(DescriptionLen);
-
-    col=0;
-    while(!Query.eof()) {
-      text.append(toReadValue(Description[col],Query,MaxColSize));
-      col++;
-      col%=DescriptionLen;
-    }
+    while(!Query.eof())
+      text.append(toReadValue(Query));
     setText(text);
   } TOCATCH
 }

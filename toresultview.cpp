@@ -776,7 +776,6 @@ toResultView::toResultView(QWidget *parent,const char *name)
 
 void toResultView::addItem(void)
 {
-  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
   MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
 
   try {
@@ -791,7 +790,7 @@ void toResultView::addItem(void)
       } else
 	LastItem->setText(columns(),QString::number(RowNumber));
       for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
-	LastItem->setText(j+disp,toReadValue(Description[j],*Query,MaxColSize));
+	LastItem->setText(j+disp,toReadValue(*Query));
       if (Filter&&!Filter->check(LastItem)) {
 	delete LastItem;
 	LastItem=last;

@@ -480,14 +480,12 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &
 void toRefreshParse(toTimer *timer,const QString &str=QString::null);
 /** Read a value from a query. (Warning, this function will change when OTL 3.2.20 is
  * integrated in TOra)
- * @param dsc Description of query to read values from.
  * @param q OTL Stream to read data from.
- * @param maxSize Maximum size of data to read from query.
  * @return Read value from query.
  * @exception otl_exception on error in input stream.
  * @exception QString other internal errors.
  */
-QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
+QString toReadValue(otl_stream &q);
 /** Get information about wether this TOra has plugin support or not.
  * @return True if plugin support is enabled.
  */

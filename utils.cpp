@@ -80,18 +80,21 @@ static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 			  "SELECT UserName FROM All_Users ORDER BY UserName",
 			  "List users in the database");
 
-QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
+QString toReadValue(otl_stream &q)
 {
   char *buffer;
+  otl_var_desc *dsc=q.describe_next_out_var();
+  if (!dsc)
+    throw QString("Couldn't get description of next column to read");
 
   try {
-    switch (dsc.otl_var_dbtype) {
+    switch (dsc->ftype) {
     default:  // Try using char if all else fails
       {
 	// The *2 is for raw columns, also dates and numbers are a bit tricky
 	// but if someone specifies a dateformat longer than 100 bytes he
 	// deserves everything he gets!
-	buffer=new char[max(dsc.dbsize*2+1,100)];
+	buffer=new char[max(dsc->elem_size*2+1,100)];
 	buffer[0]=0;
 	q>>buffer;
 	if (q.is_null()) {
@@ -108,14 +111,20 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
     case otl_var_clob:
     case otl_var_blob:
       {
-	buffer=new char[maxSize+1];
-	buffer[0]=0;
-	otl_long_string data(buffer,maxSize);
-	q>>data;
-	buffer[maxSize]=0;
-	if (q.is_null()) {
-	  delete buffer;
+	otl_lob_stream lob;
+	q>>lob;
+	if (lob.len()==0)
 	  return "{null}";
+	buffer=new char[lob.len()+1];
+	buffer[0]=0;
+	otl_long_string data(buffer,lob.len());
+	lob>>data;
+	if (!lob.eof()) {
+	  otl_long_string sink(10000);
+	  while(!lob.eof()) {
+	    lob>>sink;
+	  }
+	  toStatusMessage("Weird data exists past length of LOB");
 	}
 	buffer[data.len()]=0; // Not sure if this is needed
 	QString buf(QString::fromUtf8(buffer));
@@ -458,14 +467,9 @@ list<QString> toReadQuery(otl_stream &str,list<QString> &args)
       str<<(*i).utf8();
   }
 
-  int len;
-  otl_column_desc *dsc=str.describe_select(len);
   list<QString> ret;
-  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-  for (int col=0;!str.eof();col++) {
-    if (col==len)
-      col=0;
-    QString dat=toReadValue(dsc[col],str,MaxColSize);
+  while(!str.eof()) {
+    QString dat=toReadValue(str);
     if (dat=="{null}")
       dat=QString::null;
     ret.insert(ret.end(),dat);

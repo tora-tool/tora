@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
+            <width>376</width>
             <height>401</height>
         </rect>
     </property>
@@ -79,32 +79,6 @@
                     <property stdset="1">
                         <name>name</name>
                         <cstring>MaxColDisp</cstring>
-                    </property>
-                </widget>
-                <widget row="1"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>MaxColSize</cstring>
-                    </property>
-                </widget>
-                <widget row="1"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel6_2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Maximum column size</string>
-                    </property>
-                    <property>
-                        <name>buddy</name>
-                        <cstring>InitialFetch</cstring>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>The maximum column size to fetch from the database.</string>
                     </property>
                 </widget>
                 <widget row="2"  column="0" >

@@ -12824,7 +12824,7 @@ public:
     &amt,
     offset,
     OTL_RCAST(dvoid*,abuf),
-    OTL_SCAST(ub4,elem_size),
+    OTL_SCAST(ub4,buf_size),
     0,
     0,
     0,

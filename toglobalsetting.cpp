@@ -198,8 +198,6 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 {
   MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
 					   DEFAULT_MAX_COL_DISP));
-  MaxColSize->setText(toTool::globalConfig(CONF_MAX_COL_SIZE,
-					   DEFAULT_MAX_COL_SIZE));
   QString str=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER);
   if (str.toInt()<0)
     ReadAll->setChecked(true);
@@ -212,7 +210,6 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
 					    DEFAULT_PLAN_TABLE));
   
-  MaxColSize->setValidator(new QIntValidator(MaxColSize));
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
 
@@ -230,7 +227,6 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 void toDatabaseSetting::saveSetting(void)
 {
   toTool::globalSetConfig(CONF_MAX_COL_DISP,MaxColDisp->text());
-  toTool::globalSetConfig(CONF_MAX_COL_SIZE,MaxColSize->text());
   if (ReadAll->isChecked())
     toTool::globalSetConfig(CONF_MAX_NUMBER,"-1");
   else

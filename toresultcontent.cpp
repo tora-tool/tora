@@ -213,14 +213,13 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 void toResultContentEditor::addRow(void)
 {
   AddRow=false;
-  int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
   try {
     if (Query&&!Query->eof()) {
       if (Row+1>=numRows())
 	setNumRows(Row+3);
       verticalHeader()->setLabel(Row,QString::number(Row+1));
       for (int j=0;j<numCols()&&!Query->eof();j++)
-	setText(Row,j,toReadValue(Description[j],*Query,MaxColSize));
+	setText(Row,j,toReadValue(*Query));
       Row++;
     }
   } TOCATCH

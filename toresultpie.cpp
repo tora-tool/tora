@@ -70,18 +70,13 @@ void toResultPie::query(const QString &sql,const list<QString> &param)
 
     list<QString> labels;
     list<double> values;
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
     int len;
-    otl_column_desc *desc=str.describe_select(len);
-    int num=0;
     while(!str.eof()) {
-      QString val=toReadValue(desc[num%len],str,MaxColSize);
+      QString val=toReadValue(str);
       values.insert(values.end(),val.toDouble());
-      num++;
       if (len>1) {
-	QString lab=toReadValue(desc[num%len],str,MaxColSize);
+	QString lab=toReadValue(str);
 	labels.insert(labels.end(),lab);
-	num++;
       }
     }
     setValues(values,labels);

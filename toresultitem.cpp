@@ -175,8 +175,6 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
     otl_column_desc *Description;
     otl_stream Query;
 
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
-
     Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
 
     Query.open(1,
@@ -190,35 +188,27 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
 
     Description=Query.describe_select(DescriptionLen);
 
-    char *buffer=new char[MaxColSize+1];
-    buffer[MaxColSize]=0;
-    try {
-      for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
-	QString name=QString::fromUtf8(Description[i].name);
-	if (ReadableColumns) {
-	  bool inWord=false;
-	  for (unsigned int j=0;j<name.length();j++) {
-	    if (name.at(j)=='_')
-	      name.ref(j)=' ';
-	    if (name.at(j).isSpace())
-	      inWord=false;
-	    else if (name.at(j).isLetter()) {
-	      if (inWord)
-		name.ref(j)=name.at(j).lower();
-	      else
-		name.ref(j)=name.at(j).upper();
-	      inWord=true;
-	    }
+    for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
+      QString name=QString::fromUtf8(Description[i].name);
+      if (ReadableColumns) {
+	bool inWord=false;
+	for (unsigned int j=0;j<name.length();j++) {
+	  if (name.at(j)=='_')
+	    name.ref(j)=' ';
+	  if (name.at(j).isSpace())
+	    inWord=false;
+	  else if (name.at(j).isLetter()) {
+	    if (inWord)
+	      name.ref(j)=name.at(j).lower();
+	    else
+	      name.ref(j)=name.at(j).upper();
+	    inWord=true;
 	  }
 	}
-
-	addItem(name,toReadValue(Description[i],Query,MaxColSize));
       }
-    } catch (...) {
-      delete buffer;
-      throw;
+
+      addItem(name,toReadValue(Query));
     }
-    delete buffer;
     done();
   } catch (const QString &str) {
     done();

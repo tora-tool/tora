@@ -72,7 +72,13 @@ objs/%.o: %.cpp
 %.o : objs/%.o
 	@echo Faulty dependency, forgot the objs/ part
 
-install: $(TARGET)
+install-common:
+	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
+	mkdir -p $(INSTALLLIB)/tora/help
+	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
+	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
+
+install: $(TARGET) install-common
 	@echo Install $(TARGET) to $(INSTALLBIN)
 	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
 	-strip $(TARGET) plugins/* >/dev/null 2>&1
@@ -82,6 +88,15 @@ install: $(TARGET)
 	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
+
+install-debug: tora-mono install-common
+	@echo Install tora with debugging symbols to $(INSTALLBIN)
+	cp tora-mono $(INSTALLBIN)/tora
+
+uninstall:
+	@echo Uninstalling from $(INSTALLPREFIX)
+	rm $(INSTALLBIN)/tora
+	rm -rf $(INSTALLLIB)/tora
 
 clean:
 	@echo Cleaning $(TITLE)

@@ -67,9 +67,6 @@ private:
    * continue reading values.
    */
   toSemaphore Continue;
-  /** Max column size when reading values.
-   */
-  int MaxColSize;
   /** Lock for all this stuff
    */
   toLock Lock;

@@ -78,10 +78,14 @@ otl_connect *toConnection::newConnection(void)
     }
   }
 
-  QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
-  str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
-  str+="'";
-  otl_stream date(1,str.utf8(),*conn);
+  try {
+    QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
+    str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
+    str+="'";
+    otl_stream date(1,str.utf8(),*conn);
+  } catch(...) {
+    toStatusMessage("Failed to set new default date format for session");
+  }
   for (list<QString>::iterator i=InitStrings.begin();i!=InitStrings.end();i++) {
     try {
       otl_cursor::direct_exec(*conn,(*i).utf8());
@@ -89,6 +93,7 @@ otl_connect *toConnection::newConnection(void)
       toStatusMessage(QString::fromUtf8((const char *)exc.msg));
     }
   }
+
   return conn;
 }
 

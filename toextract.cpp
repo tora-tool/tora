@@ -4847,7 +4847,6 @@ QString toExtract::createTableContents(const QString &schema,const QString &owne
   if (Contents) {
     if (Prompt)
       ret+=QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(name.lower());
-    int MaxColSize=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt();
 
     otl_stream str;
     str.set_all_column_types(otl_all_num2str);
@@ -4893,7 +4892,7 @@ QString toExtract::createTableContents(const QString &schema,const QString &owne
 	  }
 	  break;
 	default:
-	  QString val=toReadValue(desc[i],str,MaxColSize);
+	  QString val=toReadValue(str);
 	  if (val=="{null}")
 	    line+="NULL";
 	  else {
