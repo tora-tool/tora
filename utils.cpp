@@ -535,7 +535,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
 #ifdef TO_KDE
   KDockMainWindow *main=dynamic_cast<KDockMainWindow *>(toMainWidget());
   if (main) {
-    KDockWidget::DockPosition pos;
+    KDockWidget::DockPosition pos=KDockWidget::DockLeft;
     int pct=20;
     switch (place) {
     case QMainWindow::Top:
@@ -547,14 +547,12 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       break;
     default:
       toStatusMessage(qApp->translate("toAttachDock","Unknown dock position"));
-      // Intentionally left out break
-    case QMainWindow::Left:
-      pos=KDockWidget::DockLeft;
       break;
     case QMainWindow::Right:
       pct=80;
       pos=KDockWidget::DockRight;
       break;
+    case QMainWindow::Left:
     case QMainWindow::Minimized:
       break;
     }

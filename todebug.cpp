@@ -1338,7 +1338,7 @@ void toDebug::updateState(int reason)
 	QListViewItem *next=NULL;
 	for (QListViewItem *item=Watch->firstChild();item;item=next) {
 	  int ret = -1;
-	  int space;
+	  int space = 0;
 	  QString value;
 	  if (item->text(0).isEmpty()) {
 	    toQuery query(connection(),SQLLocalWatch,item->text(2));
