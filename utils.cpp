@@ -1243,7 +1243,7 @@ QString toUnobfuscate(const QString &str)
 
   QByteArray arr(int(str.length()/2));
   for(unsigned int i=1;i<str.length();i+=2)
-    arr[i/2]=str.mid(i,2).toInt(0,16);
+    arr.at(i/2)=str.mid(i,2).toInt(0,16);
   if (str.at(0)=='\002') {
 #if QT_VERSION >= 0x030100
     QByteArray ret=qUncompress(arr);

@@ -39,6 +39,8 @@
 
 #include <qstring.h>
 
+#define TOSQL_LONGOPS "toSGATrace:LongOps"
+
 class QComboBox;
 class QListViewItem;
 class QPopupMenu;

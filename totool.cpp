@@ -311,13 +311,13 @@ void toTool::saveConfig(void)
       QString value=(*i).second;
       path.prepend(APPLICATION_NAME);
       path.replace(re,"\\");
-      if (value.isEmpty())
+      if (value.isEmpty()) {
 	if (!registry.SetStringValue(HKEY_CURRENT_USER,
 				     toKeyPath(path,registry),
 				     toKeyValue(path),
 				     ""))
 	  toStatusMessage(QT_TRANSLATE_NOOP("toTool","Couldn't save empty value at key %1").arg(path));
-      else {
+      } else {
 	char *t=strdup(value.utf8());
 	if (!registry.SetStringValue(HKEY_CURRENT_USER,
 				     toKeyPath(path,registry),
@@ -469,24 +469,29 @@ const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
 	  QString ret=QString::fromUtf8(buffer);
 	  (*Configuration)[tag]=ret;
 	} else {
-	  path=tag;
-	  path.prepend(FALLBACK_NAME);
-	  path.replace(re,"\\");
-	  if (registry.GetStringValue(HKEY_CURRENT_USER,
-				      toKeyPath(path,registry),
-				      toKeyValue(path),
-				      buffer,siz)) {
-	    if (siz>0) {
-	      QString ret=QString::fromUtf8(buffer);
-	      (*Configuration)[tag]=ret;
-	    } else {
-	      (*Configuration)[tag]="";
-	    }
-	  }
+	  (*Configuration)[tag]="";
 	}
 	return (*Configuration)[tag];
       }
     } catch (...) {
+      try {
+	path=tag;
+	path.prepend(FALLBACK_NAME);
+	path.replace(re,"\\");
+	if (registry.GetStringValue(HKEY_CURRENT_USER,
+				    toKeyPath(path,registry),
+				    toKeyValue(path),
+				    buffer,siz)) {
+	  if (siz>0) {
+	    QString ret=QString::fromUtf8(buffer);
+	    (*Configuration)[tag]=ret;
+	  } else {
+	    (*Configuration)[tag]="";
+	  }
+	  return (*Configuration)[tag];
+	}
+      } catch (...) {
+      }
     }
 #endif
     (*Configuration)[tag]=QString::fromLatin1(def);

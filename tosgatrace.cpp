@@ -258,9 +258,9 @@ static toSQL SQLSGATrace("toSGATrace:SGATrace",
 			 "       sys.all_users b\n"
 			 " where a.parsing_user_id = b.user_id",
 			 "Display the contents of the SGA stack. Must have one hidden column "
-			 "with SGA address at the end and a table name 'b' with a column username.");
+			 "with SGA address at the end and a table name 'b' with a column username and must accept \"and ...\" clauses at end.");
 
-static toSQL SQLLongOps("toSGATrace:LongOps",
+static toSQL SQLLongOps(TOSQL_LONGOPS,
 			"SELECT b.opname \"Type\",\n"
 			"       a.SQL_Text \"SQL Text\",\n"
 			"       b.start_time \"Start Time\",\n"
@@ -287,7 +287,8 @@ static toSQL SQLLongOps("toSGATrace:LongOps",
 			"   and b.sql_hash_value = a.hash_value(+)\n"
 			"   and b.opname is not null",
 			"Display the contents of long the long operations list. Must have a hidden column "
-			"with SGA address at the end and a table name 'b' with a column username.");
+			"with SGA address at the end and a table name 'b' with a column username and sid "
+			"and must accept \"and ...\" clauses at end.");
 
 void toSGATrace::refresh(void)
 {

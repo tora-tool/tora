@@ -46,6 +46,7 @@
 #include "toresultview.h"
 #include "tosession.h"
 #include "tosgastatement.h"
+#include "tosgatrace.h"
 #include "tosql.h"
 #include "totool.h"
 #include "towaitevents.h"
@@ -179,19 +180,22 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "       a.last_call_et \"Last SQL\",\n"
 			 "       a.Process \"-Client PID\",\n"
 			 "       e.SPid \"-Server PID\",\n"
+			 "       DECODE(f.sofar,NULL,NULL,f.sofar||'/'||f.totalwork) \"Progress\",\n"
 			 "       d.sql_text \"Current statement\",\n"
-			 "       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
-			 "       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
+			 "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
+			 "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
 			 "  FROM v$session a,\n"
 			 "       v$sess_io b,\n"
 			 "       v$sesstat c,\n"
 			 "       v$sql d,\n"
-			 "       v$process e\n"
+			 "       v$process e,\n"
+			 "       v$session_longops f\n"
 			 " WHERE a.sid = b.sid(+)\n"
 			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
 			 "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
 			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
 			 "   AND a.paddr = e.addr\n"
+			 "   AND a.sql_address = f.sql_address(+) AND a.sql_hash_value = f.sql_hash_value(+)\n"
 			 "%1 ORDER BY a.Sid",
 			 "List sessions, must have same number of culumns and the first and last 2 must be "
 			 "the same");
@@ -208,7 +212,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
   Select=new toResultCombo(toolbar,TO_KDE_TOOLBAR_WIDGET);
-  Select->setSelected(tr("All"));
+  Select->setSelected(tr("Only active users"));
+  Select->additionalItem(tr("Only active users"));
   Select->additionalItem(tr("All"));
   Select->additionalItem(tr("No background"));
   Select->additionalItem(tr("No system"));
@@ -247,6 +252,16 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(Sessions,SIGNAL(done()),this,SLOT(done()));
 
   ResultTab=new QTabWidget(splitter);
+
+  CurrentStatement=new toSGAStatement(ResultTab);
+  ResultTab->addTab(CurrentStatement,tr("Current Statement"));
+
+  QString sql=toSQL::string(TOSQL_LONGOPS,connection);
+  sql+=" AND b.sid = :sid<char[101]>";
+  LongOps=new toResultLong(true,false,toQuery::Background,ResultTab);
+  LongOps->setSQL(sql);
+  ResultTab->addTab(LongOps,tr("Long ops"));
+
   StatisticSplitter=new QSplitter(Horizontal,ResultTab);
   SessionStatistics=new toResultStats(false,0,StatisticSplitter);
   WaitBar=new toResultBar(StatisticSplitter);
@@ -270,8 +285,6 @@ toSession::toSession(QWidget *main,toConnection &connection)
   LockedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
   ResultTab->addTab(LockedObjects,tr("Locked Objects"));
   LockedObjects->setSQL(SQLLockedObject);
-  CurrentStatement=new toSGAStatement(ResultTab);
-  ResultTab->addTab(CurrentStatement,tr("Current Statement"));
   AccessedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
   AccessedObjects->setSQL(SQLAccessedObjects);
   ResultTab->addTab(AccessedObjects,tr("Accessing"));
@@ -346,13 +359,15 @@ void toSession::refresh(void)
     QString sql=toSQL::string(SQLSessions,connection());
     QString extra;
     if (Select->currentItem()==0)
-      ; // Do nothing
+      extra="   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
     else if (Select->currentItem()==1)
-      extra=QString::fromLatin1("   AND a.Type != 'BACKGROUND'\n");
+      ; // Do nothing
     else if (Select->currentItem()==2)
-      extra=QString::fromLatin1("   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n");
+      extra="   AND a.Type != 'BACKGROUND'\n";
+    else if (Select->currentItem()==3)
+      extra="   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
     else
-      extra=QString::fromLatin1("   AND a.SchemaName = '")+Select->currentText()+QString::fromLatin1("'\n");
+      extra="   AND a.SchemaName = '"+Select->currentText()+"'\n";
     Sessions->setSQL(sql.arg(extra));
     Sessions->refresh();
   } TOCATCH
@@ -402,6 +417,8 @@ void toSession::changeTab(QWidget *tab)
 	} TOCATCH
       } else if (CurrentTab==ConnectInfo)
 	ConnectInfo->changeParams(item->text(0));
+      else if (CurrentTab==LongOps)
+	LongOps->changeParams(item->text(0));
       else if (CurrentTab==PendingLocks)
 	PendingLocks->query(item->text(0));
       else if (CurrentTab==OpenSplitter) {

@@ -1,11 +1,17 @@
-1.3.9:
+1.3.9: Released 2003-02-08
 
-2002-02-05: Don't repaint entire editor when entering ' in an editor.
-2002-02-05: Fixed problem with toObfuscate.
-2002-02-05: Stop query before traversing log.
-2002-02-05: Fixed problem with text depending on allText content in listviews.
-2002-02-05: Fixed problem with columns not being extracted from triggers.
-2002-02-05: Made TriggerInfo be in right SQL group.
+2002-02-07: Added default option to only show active sessions in sessionmanager.
+2002-02-07: Changed default pane in session to current statement.
+2002-02-07: Added long ops pane to session manager.
+2002-02-07: Added progress from long ops to session view.
+2002-02-07: Other minor windows compilation fixes.
+2002-02-07: Fixed problem with settings not being saved in windows.
+2002-02-07: Don't repaint entire editor when entering ' in an editor.
+2002-02-06: Fixed problem with toObfuscate.
+2002-02-06: Stop query before traversing log.
+2002-02-06: Fixed problem with text depending on allText content in listviews.
+2002-02-06: Fixed problem with columns not being extracted from triggers.
+2002-02-06: Made TriggerInfo be in right SQL group.
 2002-02-05: Report error to UI not just console in alert messenger.
 2002-02-05: Fixed lock in alert messenger when not privy to use it.
 2002-02-05: Added checks if saving to registry in windows fails.
