@@ -353,19 +353,19 @@ Options can be any of the following:
 --with-qt-include    Specify Qt include directory
 --with-qt-libs       Specify Qt library directory
 --with-gcc           Specify which GCC compiler to use
---with-mono          Force monolithic compilation (Default: No for linux, otherwise yes)
+--with-mono          Force monolithic compilation (Not enabled for linux by default)
 --with-lib           Add extra library to include (Include -l as well)
---with-static-oracle Force use of static Oracle libraries only (Default: No)
---with-kde           Compile as KDE application (Requires KDE 2.2 or later) (Default: Yes, if detected)
+--with-static-oracle Force use of static Oracle libraries only (Not enabled by default)
+--with-kde           Compile as KDE application (Requires KDE 2.2 or later) (Enabled if detected)
 --without-kde        Dont compile as KDE application even though KDE available.
 --with-kde-include   Where to find KDE include files
 --with-kde-libs      Where to find KDE libraries
 --with-mysql-include Where to find MySQL include files
 --with-mysql-libs    Where to find MySQL library files
---without-oracle     Compile without Oracle support (Default: No)
---without-mysql      Don't compile in MySQL support (Default: No, if detected)
---without-rpath      Compile without rpath to Oracle libraries (Default: no)
---disable-new-check  Disable new version check globally in TOra (Default: no)
+--without-oracle     Compile without Oracle support (Not enabled by default)
+--without-mysql      Don't compile in MySQL support (MySQL enabled if detected)
+--without-rpath      Compile without rpath to Oracle libraries (Not enabled by default)
+--disable-new-check  Disable new version check globally in TOra (Not enabled by default)
 __USAGE__
         exit(2);
     }
@@ -1488,7 +1488,6 @@ install: \$(TARGET) install-common install-kde
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
 
 install-debug: tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)
