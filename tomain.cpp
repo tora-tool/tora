@@ -472,10 +472,13 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
       menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-      if (dynamic_cast<toListView *>(currWidget))
+      if (dynamic_cast<toListView *>(currWidget)) {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
-      else
+        menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
+      } else {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,false);
+        menuBar()->setItemEnabled(TO_EDIT_SEARCH,false);
+      }
     }
   }
   menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,

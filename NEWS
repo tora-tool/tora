@@ -10,7 +10,8 @@
 2001-05-20: Added option to select font in result.
 2001-05-20: Added some icons in the browser.
 2001-05-20: Open list if selected children in security.
-2001-05-20: Added search to results.
+2001-05-21: Added search to results.
+2001-05-21: Fixed problem with disabled menu for toListView.
 
 0.9.1: Released 2001-05-20
 

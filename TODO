@@ -8,7 +8,7 @@ Beta todo list:
 * Drag & drop from/to toResultContents.
 * Add search to toResultContent.
 * Info about current session.
-      Display parameters (v$param...)
+	Display parameters (v$param...)
 * Server statistics and tuning information.
 * Object search tool.
 
