@@ -109,6 +109,10 @@ class toExtract {
   QString partitionKeyColumns(const QString &owner,const QString &name,const QString &type);
   QString rangePartitions(const QString &owner,const QString &name,
 			  const QString &subPartitionType,const QString &locality);
+  QString resizeIndexPartition(const QString &schema,const QString &owner,const QString &name,
+			       const QString &partition,const QString &seqType);
+  QString resizeTablePartition(const QString &schema,const QString &owner,const QString &name,
+			       const QString &partition,const QString &seqType);
   QString subPartitionKeyColumns(const QString &owner,const QString &name,const QString &type);
   QString tableColumns(const QString &owner,const QString &name);
 

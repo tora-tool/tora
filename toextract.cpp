@@ -4124,11 +4124,342 @@ QString toExtract::dropUser(const QString &schema,const QString &owner,
   return ret;
 }
 
+static toSQL SQLIndexPartitioned("toExtract:IndexPartitioned",
+				 "SELECT partitioned
+  FROM all_indexes
+ WHERE index_name = :nam<char[100]>
+   AND owner = :own<char[100]>",
+				 "Get information about if an index is partitioned or not, "
+				 "must use same binds and columns");
+
+static toSQL SQLSegmentInfo("toExtract:SegmentInfo",
+			    "SELECT
+       s.blocks - NVL(t.empty_blocks,0)
+     , s.initial_extent
+     , s.next_extent
+FROM
+       dba_segments s
+     , all_tables   t
+WHERE
+           s.segment_name = :nam<char[100]>
+       AND s.segment_type = 'TABLE'
+       AND s.owner        = :own<char[100]>",
+				 "Get information about a segment, "
+				 "must have same binds and columns");
+
+static toSQL SQLObjectPartitions("toExtract:ObjectPartitions",
+				 "SELECT
+        partition_name
+      , SUBSTR(segment_type,7)   -- PARTITION or SUBPARTITION
+ FROM
+        all_segments
+ WHERE
+            segment_name = :nam<char[100]>
+        AND owner        = :own<char[100]>",
+				 "Get partitions and their type for an object, "
+				 "must use same binds and columns");
+
+static toSQL SQLIndexSegmentInfo("toExtract:IndexSegmentInfo",
+				 "SELECT  s.blocks
+        , s.initial_extent
+        , s.next_extent
+   FROM
+          all_segments s
+   WHERE
+              s.segment_name = :nam<char[100]>
+          AND s.segment_type = 'INDEX'
+          AND s.owner        = :own<char[100]>",
+				 "Get information about index segment, "
+				 "must have same binds and columns");
+
+QString toExtract::resizeIndex(const QString &schema,const QString &owner,const QString &name)
+{
+  QStringList str=QStringList::split(":",name);
+  if (str.count()>2)
+    throw QString("When calling resizeIndex name should contain one : maximum");
+  QString index=str.first();
+  QString partition;
+  if (str.count()==2)
+    partition=str.last();
+
+  if (!partition.isEmpty()) {
+    list<QString> result=toReadQuery(Connection,SQLPartitionSegmentType(Connection),
+				     index,partition);
+
+    if (result.size()!=2)
+      throw QString("Index partition %1.%2 not found").arg(owner).arg(name);
+
+    return resizeIndexPartition(schema,owner,index,partition,toShift(result));
+  }
+  list<QString> result=toReadQuery(Connection,SQLIndexPartitioned(Connection),name,owner);
+  if (result.size()!=1)
+    throw QString("Index %1.%2 not found").arg(owner).arg(name);
+  QString partitioned=toShift(result);
+  if (partitioned=="NO") {
+    list<QString> segment=toReadQuery(Connection,SQLIndexSegmentInfo(Connection),
+				      name,"INDEX",owner);
+    QString blocks =toShift(segment);
+    QString initial=toShift(segment);
+    QString next   =toShift(segment);
+    if (Resize)
+      initialNext(blocks,initial,next);
+    QString sql=QString("ALTER INDEX %1%2 REBUILD").arg(schema).arg(name.lower());
+    QString ret;
+    if (Prompt) {
+      ret="PROMPT ";
+      ret+=sql;
+      ret+="\n\n";
+    }
+    ret+=sql;
+    ret+=QString("\nSTORAGE\n"
+		 "(\n"
+		 "  INITIAL  %1\n"
+		 "  NEXT     %2\n"
+		 ");\n\n").arg(initial).arg(next);
+    return ret;
+  } else {
+    list<QString> partitions=toReadQuery(Connection,
+					 SQLObjectPartitions(Connection),
+					 name,owner);
+    QString ret;
+    while(partitions.size()>0) {
+      QString partition=toShift(partitions);
+      QString seqType  =toShift(partitions);
+      ret+=resizeIndexPartition(schema,owner,name,partition,seqType);
+    }
+    return ret;
+  }
+}
+
+static toSQL SQLIndexPartitionSegment("toExtract:IndexPartitionSegment",
+				      "
+SELECT
+       s.blocks
+     , s.initial_extent
+     , s.next_extent
+     , p.partitioning_type
+FROM
+       dba_segments      s
+     , all_part_indexes  p
+WHERE
+           s.segment_name   = :nam<char[100]>
+       AND s.partition_name = :prt<char[100]>
+       AND p.index_name     = s.segment_name
+       AND s.owner          = :own<char[100]>
+       AND p.owner          = s.owner",
+				      "Get information about an index partition segment, "
+				      "must have have same binds and columns");
+
+QString toExtract::resizeIndexPartition(const QString &schema,const QString &owner,
+					const QString &name,const QString &partition,
+					const QString &seqType)
+{
+  list<QString> result=toReadQuery(Connection,SQLIndexPartitionSegment(Connection),
+				   name,partition,owner);
+  QString blocks          =toShift(result);
+  QString initial         =toShift(result);
+  QString next            =toShift(result);
+  QString partitioningType=toShift(result);
+  if (Resize)
+    initialNext(blocks,initial,next);
+  QString ret;
+  QString sql=QString("ALTER INDEX %1%2 REBUILD %3 %4").
+    arg(schema).
+    arg(name.lower()).
+    arg(seqType).
+    arg(partition.lower());
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  if (seqType=="PARTITION"&&partitioningType=="RANGE")
+    ret+=QString("\nSTORAGE\n"
+		 "(\n"
+		 "  INITIAL  %1\n"
+		 "  NEXT     %2\n"
+		 ")\n").
+      arg(initial).
+      arg(next);
+  ret+=";\n\n";
+  return ret;
+}
+
+static toSQL SQLTablePartitioned("toExtract:TablePartitioned",
+				 "SELECT partitioned
+  FROM all_tables
+ WHERE table_name = :nam<char[100]>
+   AND owner = :own<char[100]>",
+				 "Get information about if a table is partitioned or not, "
+				 "must use same binds and columns");
+
+static toSQL SQLTablePartIndexes("toExtract:TablePartIndexes",
+				 "SELECT
+       owner
+     , index_name
+FROM
+       dba_part_indexes
+WHERE
+           table_name = :nam<char[100]>
+       AND owner      = :own<char[100]>",
+				 "Get information about indexes of a partitioned table, "
+				 "must have same binds and columns");
+
+static toSQL SQLTablePartIndex("toExtract:TablePartIndex",
+				 "SELECT
+       owner
+     , index_name
+FROM
+       dba_part_indexes
+WHERE
+           table_name = :nam<char[100]>
+       AND owner      = :own<char[100]>
+       AND locality   = 'LOCAL'",
+			       "Get information about index of a partition in a table, "
+			       "must have same binds and columns");
+
+QString toExtract::resizeTable(const QString &schema,const QString &owner,const QString &name)
+{
+  QStringList str=QStringList::split(":",name);
+  if (str.count()>2)
+    throw QString("When calling resizeTable name should contain one : maximum");
+  QString table=str.first();
+  QString partition;
+  if (str.count()==2)
+    partition=str.last();
+
+  if (!partition.isEmpty()) {
+    list<QString> result=toReadQuery(Connection,SQLPartitionSegmentType(Connection),
+				     table,partition);
+
+    if (result.size()!=2)
+      throw QString("Table partition %1.%2 not found").arg(owner).arg(name);
+
+    QString ret=resizeTablePartition(schema,owner,table,partition,toShift(result));
+
+    list<QString> indexes=toReadQuery(Connection,SQLTablePartIndex(Connection),
+				      table,owner);
+    while(indexes.size()>0) {
+      QString schema2=setSchema(toShift(indexes));
+      QString index=setSchema(toShift(indexes));
+      index+=":";
+      index+=partition;
+      ret+=resizeIndex(schema2,owner,index);
+    }
+    return ret;
+  }
+  list<QString> result=toReadQuery(Connection,SQLTablePartitioned(Connection),name,owner);
+  if (result.size()!=1)
+    throw QString("Table %1.%2 not found").arg(owner).arg(name);
+  QString partitioned=toShift(result);
+  if (partitioned=="NO") {
+    list<QString> segment=toReadQuery(Connection,SQLSegmentInfo(Connection),name,"TABLE",owner);
+    QString blocks =toShift(segment);
+    QString initial=toShift(segment);
+    QString next   =toShift(segment);
+    if (Resize)
+      initialNext(blocks,initial,next);
+    QString sql=QString("ALTER TABLE %1%2 MOVE").arg(schema).arg(name.lower());
+    QString ret;
+    if (Prompt) {
+      ret="PROMPT ";
+      ret+=sql;
+      ret+="\n\n";
+    }
+    ret+=sql;
+    ret+=QString("\nSTORAGE\n"
+		 "(\n"
+		 "  INITIAL  %1\n"
+		 "  NEXT     %2\n"
+		 ");\n\n").arg(initial).arg(next);
+    return ret;
+  } else {
+    list<QString> partitions=toReadQuery(Connection,
+					 SQLObjectPartitions(Connection),
+					 name,owner);
+    QString ret;
+    while(partitions.size()>0) {
+      QString partition=toShift(partitions);
+      QString seqType  =toShift(partitions);
+      ret+=resizeTablePartition(schema,owner,name,partition,seqType);
+    }
+
+    list<QString> indexes=toReadQuery(Connection,SQLTablePartIndexes(Connection),
+				      name,owner);
+    while(indexes.size()>0) {
+      QString schema2=setSchema(toShift(indexes));
+      ret+=resizeIndex(schema2,owner,toShift(indexes));
+    }
+    return ret;
+  }
+}
+static toSQL SQLTablePartitionSegment("toExtract:TablePartitionSegment",
+				      "
+       SELECT
+              s.blocks - NVL(t.empty_blocks,0)
+            , s.initial_extent
+            , s.next_extent
+            , p.partitioning_type
+       FROM
+              dba_segments          s
+            , all_tab_%1s  t
+            , all_part_tables       p
+       WHERE
+                  s.segment_name   = :nam<char[100]>
+              AND s.partition_name = :prt<char[100]>
+              AND t.table_name     = s.segment_name
+              AND t.partition_name = s.partition_name
+              AND p.table_name     = t.table_name
+              AND s.owner          = :own<char[100]>
+              AND p.owner          = s.owner
+              AND t.table_owner    = s.owner",
+				      "Get information about an index partition segment, "
+				      "must have have same binds, columns and %");
+
+QString toExtract::resizeTablePartition(const QString &schema,const QString &owner,
+					const QString &name,const QString &partition,
+					const QString &seqType)
+{
+  list<QString> result=toReadQuery(Connection,
+				   toSQL::string(SQLTablePartitionSegment,Connection).
+				   arg(seqType).utf8(),
+				   name,partition,owner);
+  QString blocks          =toShift(result);
+  QString initial         =toShift(result);
+  QString next            =toShift(result);
+  QString partitioningType=toShift(result);
+  if (Resize)
+    initialNext(blocks,initial,next);
+  QString ret;
+  QString sql=QString("ALTER TABLE %1%2 MOVE %3 %4").
+    arg(schema).
+    arg(name.lower()).
+    arg(seqType).
+    arg(partition.lower());
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  if (seqType=="PARTITION"&&partitioningType=="RANGE")
+    ret+=QString("\nSTORAGE\n"
+		 "(\n"
+		 "  INITIAL  %1\n"
+		 "  NEXT     %2\n"
+		 ")\n").
+      arg(initial).
+      arg(next);
+  ret+=";\n\n";
+  return ret;
+}
+
 QString toExtract::compile(const QString &type,list<QString> &objects)
 {
-  QString ret=generateHeading("COMPILE",type,objects);
-
   QString utype=type.upper();
+  QString ret=generateHeading("COMPILE",utype,objects);
+
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     QString owner;
     QString name;
@@ -4154,9 +4485,9 @@ QString toExtract::compile(const QString &type,list<QString> &objects)
 
 QString toExtract::create(const QString &type,list<QString> &objects)
 {
-  QString ret=generateHeading("CREATE",type,objects);
-
   QString utype=type.upper();
+  QString ret=generateHeading("CREATE",utype,objects);
+
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     QString owner;
     QString name;
@@ -4225,9 +4556,8 @@ QString toExtract::create(const QString &type,list<QString> &objects)
 
 QString toExtract::drop(const QString &type,list<QString> &objects)
 {
-  QString ret=generateHeading("CREATE",type,objects);
-
   QString utype=type.upper();
+  QString ret=generateHeading("CREATE",utype,objects);
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     QString owner;
     QString name;
@@ -4235,51 +4565,51 @@ QString toExtract::drop(const QString &type,list<QString> &objects)
     QString schema=setSchema(owner);
 
     if (utype=="CONSTRAINT")
-      ret+=dropConstraint(schema,owner,type,name);
+      ret+=dropConstraint(schema,owner,utype,name);
     else if (utype=="DATABASE LINK")
-      ret+=dropDatabaseLink(schema,owner,type,name);
+      ret+=dropDatabaseLink(schema,owner,utype,name);
     else if (utype=="DIMENSION")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="DIRECTORY")
-      ret+=dropObject(schema,owner,type,name);
+      ret+=dropObject(schema,owner,utype,name);
     else if (utype=="FUNCTION")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="INDEX")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="MATERIALIZED VIEW")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="MATERIALIZED VIEW LOG")
-      ret+=dropMViewLog(schema,owner,type,name);
+      ret+=dropMViewLog(schema,owner,utype,name);
     else if (utype=="PACKAGE")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="PROCEDURE")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="PROFILE")
-      ret+=dropProfile(schema,owner,type,name);
+      ret+=dropProfile(schema,owner,utype,name);
     else if (utype=="ROLE")
-      ret+=dropObject(schema,owner,type,name);
+      ret+=dropObject(schema,owner,utype,name);
     else if (utype=="ROLLBACK SEGMENT")
-      ret+=dropObject(schema,owner,type,name);
+      ret+=dropObject(schema,owner,utype,name);
     else if (utype=="SEQUENCE")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="SNAPSHOT")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="SNAPSHOT LOG")
-      ret+=dropMViewLog(schema,owner,type,name);
+      ret+=dropMViewLog(schema,owner,utype,name);
     else if (utype=="SYNONYM")
-      ret+=dropSynonym(schema,owner,type,name);
+      ret+=dropSynonym(schema,owner,utype,name);
     else if (utype=="TABLE")
-      ret+=dropTable(schema,owner,type,name);
+      ret+=dropTable(schema,owner,utype,name);
     else if (utype=="TABLESPACE")
-      ret+=dropTablespace(schema,owner,type,name);
+      ret+=dropTablespace(schema,owner,utype,name);
     else if (utype=="TRIGGER")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="TYPE")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else if (utype=="USER")
-      ret+=dropUser(schema,owner,type,name);
+      ret+=dropUser(schema,owner,utype,name);
     else if (utype=="VIEW")
-      ret+=dropSchemaObject(schema,owner,type,name);
+      ret+=dropSchemaObject(schema,owner,utype,name);
     else {
       QString str="Invalid type ";
       str+=type;
@@ -4290,3 +4620,27 @@ QString toExtract::drop(const QString &type,list<QString> &objects)
   return ret;
 }
 
+QString toExtract::resize(const QString &type,list<QString> &objects)
+{
+  QString ret=generateHeading("CREATE",type,objects);
+
+  QString utype=type.upper();
+  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString owner;
+    QString name;
+    parseObject(*i,owner,name);
+    QString schema=setSchema(owner);
+
+    if (utype=="INDEX")
+      ret+=resizeIndex(schema,owner,name);
+    else if (utype=="TABLE")
+      ret+=resizeTable(schema,owner,name);
+    else {
+      QString str="Invalid type ";
+      str+=type;
+      str+=" to resize";
+      throw str;
+    }    
+  }
+  return ret;
+}
