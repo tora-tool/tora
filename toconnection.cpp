@@ -948,10 +948,11 @@ QString toConnection::description(void) const
     ret+=Host;
   }
 
-  ret+=" [";
-  if (!Version.isEmpty())
+  if (!Version.isEmpty()) {
+    ret+=" [";
     ret+=Version;
-  ret+="]";
+    ret+="]";
+  }
   return ret;
 }
 

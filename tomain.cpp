@@ -1048,3 +1048,56 @@ void toMain::checkCaching(void)
   else
     Poll.start(100);
 }
+
+void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (isMaximized())
+    data[prefix+":State"]="Maximized";
+  else if (isMinimized())
+    data[prefix+":State"]="Minimized";
+
+  data[prefix+":X"]=QString::number(x());
+  data[prefix+":Y"]=QString::number(y());
+  data[prefix+":Width"]=QString::number(width());
+  data[prefix+":Height"]=QString::number(height());
+
+  int id=1;
+  std::map<toConnection *,int> connMap;
+  for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+    QString key=prefix+":Connection:"+QString::number(id);
+    if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
+      data[key+":Password"]=(*i)->password();
+    data[key+":User"]=(*i)->user();
+    data[key+":Host"]=(*i)->host();
+    data[key+":Database"]=(*i)->database();
+    data[key+":Provider"]=(*i)->provider();
+    connMap[*i]=id;
+    id++;
+  }
+
+  id=1;
+  for (unsigned int i=0;i<workspace()->windowList().count();i++) {
+    toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
+    if (tool) {
+      QString key=prefix+":Tools:"+QString::number(id);
+      tool->exportData(data,key);
+      data[key+":Type"]=tool->tool().key();
+      data[key+":Connection"]=connMap[&tool->connection()];
+    }
+    id++;
+  }
+}
+
+void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (data[prefix+":State"]=="Maximized")
+    showMaximized();
+  else if (data[prefix+":State"]=="Minimized")
+    showMinimized();
+  else
+    showNormal();
+  setGeometry(data[prefix+":X"].toInt(),
+	      data[prefix+":Y"].toInt(),
+	      data[prefix+":Width"].toInt(),
+	      data[prefix+":Height"].toInt());
+}

@@ -139,6 +139,13 @@ public:
   QString name() const
   { return Name; }
   /**
+   * Get the name.
+   *
+   * @return Name of tool.
+   */
+  QString key() const
+  { return Key; }
+  /**
    * Get the priority.
    *
    * @return Priority of tool.
@@ -232,6 +239,13 @@ public:
    */
   static std::map<QString,toTool *> &tools(void)
   { if (!Tools) Tools=new std::map<QString,toTool *>; return *Tools; }
+  /**
+   * Get a pointer to the tool with a specified key.
+   *
+   * @see Tools
+   * @return A pointer to the tool or NULL if tool doesn't exist.
+   */
+  static toTool *tool(const QString &key);
   /**
    * Save configuration to file.
    */
@@ -380,6 +394,17 @@ public:
    * @return Pointer to a timer object.
    */
   toTimer *timer(void);
+
+  /** Export data to a map.
+   * @param data A map that can be used to recreate the data of a chart.
+   * @param prefix Prefix to add to the map.
+   */
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  /** Import data
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 };
 
 #endif

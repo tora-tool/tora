@@ -110,6 +110,34 @@ toTimer *toToolWidget::timer(void)
   return Timer;
 }
 
+void toToolWidget::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (isMaximized())
+    data[prefix+":State"]="Maximized";
+  else if (isMinimized())
+    data[prefix+":State"]="Minimized";
+
+  data[prefix+":X"]=QString::number(x());
+  data[prefix+":Y"]=QString::number(y());
+  data[prefix+":Width"]=QString::number(width());
+  data[prefix+":Height"]=QString::number(height());
+}
+
+void toToolWidget::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (data[prefix+":State"]=="Maximized")
+    showMaximized();
+  else if (data[prefix+":State"]=="Minimized")
+    showMinimized();
+  else
+    showNormal();
+
+  setGeometry(data[prefix+":X"].toInt(),
+	      data[prefix+":Y"].toInt(),
+	      data[prefix+":Width"].toInt(),
+	      data[prefix+":Height"].toInt());
+}
+
 std::map<QString,toTool *> *toTool::Tools;
 std::map<QString,QString> *toTool::Configuration;
 
@@ -435,4 +463,15 @@ void toTool::globalSetConfig(const QString &tag,const QString &value)
 bool toTool::canHandle(toConnection &conn)
 {
   return (conn.provider()=="Oracle");
+}
+
+toTool *toTool::tool(const QString &key)
+{
+  if (!Tools)
+    Tools=new std::map<QString,toTool *>;
+  std::map<QString,toTool *>::iterator i=Tools->find(key);
+  if (i==Tools->end())
+    return NULL;
+  
+  return (*i).second;
 }

@@ -57,25 +57,29 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref57">registerSQLEditor</A></b> (int toolid) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref62">windowsMenu</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref58">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref63">statusMenu</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref59">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref64">contextHelp</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref64">windowsMenu</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref65">windowActivated</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *) 
+<LI>void &nbsp;<b><A HREF="#ref65">statusMenu</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref66">editFileMenu</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref66">contextHelp</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref67">checkCaching</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref67">windowActivated</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref58">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref68">editFileMenu</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref59">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref69">checkCaching</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref60">removedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref60">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref61">willCommit</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
+<LI>void &nbsp;<b><A HREF="#ref61">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref62">removedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref63">willCommit</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref43">setEditWidget</A></b> (<A HREF="toEditWidget.html">toEditWidget</A> *edit) 
 </LI>
@@ -219,28 +223,46 @@
                member.
    </TD></TR>
 </TABLE></P>
-<A NAME="sqlEditor"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sqlEditor</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="exportData"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">A map that can be used to recreate the data of a chart.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
+   </TD></TR>
+</TABLE></P>
+<A NAME="importData"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to read from a map.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
+   </TD></TR>
+</TABLE></P>
+<A NAME="sqlEditor"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sqlEditor</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>sqlEditor</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked to start editing an SQL identifier.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Identifier to start editing.
    </TD></TR>
 </TABLE></P>
-<A NAME="addedConnection"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="addedConnection"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>addedConnection</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked when a connection is added.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Connection identifier.
    </TD></TR>
 </TABLE></P>
-<A NAME="removedConnection"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="removedConnection"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
 <br></td><td align="right"><h3><strong>removedConnection</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked when a connection is removed.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Connection identifier.
    </TD></TR>
 </TABLE></P>
-<A NAME="willCommit"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>willCommit</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
+<A NAME="willCommit"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>willCommit</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
 <br></td><td align="right"><h3><strong>willCommit</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted before a commit or rollback is made to the current connection.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -249,22 +271,22 @@
 <TR><TD align="left" valign="top"><i>cmt</i></TD><TD align="left" valign="top">True if commit, false if rollback.
    </TD></TR>
 </TABLE></P>
-<A NAME="windowsMenu"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowsMenu</strong> (void)
+<A NAME="windowsMenu"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowsMenu</strong> (void)
 <br></td><td align="right"><h3><strong>windowsMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to enable/disable entries in the windows menu
    </p>
-<A NAME="statusMenu"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>statusMenu</strong> (void)
+<A NAME="statusMenu"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>statusMenu</strong> (void)
 <br></td><td align="right"><h3><strong>statusMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to fill the status menu with the latest status entries
    </p>
-<A NAME="contextHelp"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>contextHelp</strong> (void)
+<A NAME="contextHelp"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>contextHelp</strong> (void)
 <br></td><td align="right"><h3><strong>contextHelp</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Display context help. 
    </p>
-<A NAME="windowActivated"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowActivated</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *)
+<A NAME="windowActivated"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowActivated</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *)
 <br></td><td align="right"><h3><strong>windowActivated</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Called when active window is changed.
    </p>
-<A NAME="editFileMenu"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editFileMenu</strong> (void)
+<A NAME="editFileMenu"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editFileMenu</strong> (void)
 <br></td><td align="right"><h3><strong>editFileMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to enable/disable entries in the edit & file menu
    </p>
-<A NAME="checkCaching"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>checkCaching</strong> (void)
+<A NAME="checkCaching"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>checkCaching</strong> (void)
 <br></td><td align="right"><h3><strong>checkCaching</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Check if object caching is done.
    </p>
 <HR>

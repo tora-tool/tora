@@ -17,6 +17,7 @@
 2001-11-19: Added functions to export a listview to file.
 2001-11-19: Added ability to save, load & compare worksheet statistics.
 2001-11-20: Fixed focus in worksheet to be on editor on startup.
+2001-11-20: Started writing functions to save state of application to file.
 
 1.1.5:
 

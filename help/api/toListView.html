@@ -49,9 +49,9 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref21">editSave</A></b> (bool ask) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref22">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref23">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref23">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref24">displayMenu</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item,const <A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> &pnt,int col) 
 </LI>
@@ -111,8 +111,8 @@
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export list as file
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
-<A NAME="exportData"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
-<br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p></p><p> Export data to a map.
+<A NAME="exportData"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">A map that can be used to recreate the data of a chart.
@@ -120,8 +120,8 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
-<br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p></p><p> Import data
+<A NAME="importData"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">Data to read from a map.
