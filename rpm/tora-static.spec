@@ -1,7 +1,7 @@
 %define name tora
 %define group Developement/Databases
 %define version 0.7
-%define release 1gc
+%define release 1static
 
 Name: %{name}
 Version: %{version}
@@ -22,20 +22,16 @@ monitor, instance manager, and SQL output viewer.
 %prep
 %setup -q
 %build
-./configure --prefix=/usr
+./configure --prefix=/usr --with-static
 make
 
 %install
 
 #install menu
-mkdir -p $RPM_BUILD_ROOT%{_menudir}
-cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
 
-strip plugins/*.so tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
-cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
-cp plugins/*.so $RPM_BUILD_ROOT%{_prefix}/lib/tora
+strip tora-static
+cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
 
 %post
 
@@ -49,5 +45,4 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,0755)
 
 %{_prefix}/X11R6/bin/tora
-%{_prefix}/lib/tora
 
