@@ -243,6 +243,7 @@ void toResultLong::stop(void)
   if (Query) {
     delete Query;
     Query=NULL;
+    Timer.stop();
     emit done();
   }
 }
