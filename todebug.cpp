@@ -36,7 +36,6 @@
 
 TO_NAMESPACE;
 
-#include <ctype.h>
 #include <stack>
 
 #ifdef TO_KDE

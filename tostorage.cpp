@@ -983,8 +983,6 @@ void toStorage::modifyTablespace(void)
   } TOCATCH
 }
 
-#include <stdio.h>
-
 void toStorage::modifyDatafile(void)
 {
   try {

@@ -50,8 +50,6 @@ TO_NAMESPACE;
 
 #define INC_SIZE 50
 
-#include <stdio.h>
-
 void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
 {
   if (e->state()==LeftButton&&
@@ -254,8 +252,6 @@ static bool nullString(const QString &str)
 {
   return str=="{null}"||str.isNull();
 }
-
-#include <stdio.h>
 
 void toResultContent::changePosition(int row,int col)
 {

@@ -72,8 +72,6 @@ TO_NAMESPACE;
 #include "icons/commit.xpm"
 #include "icons/tosqledit.xpm"
 
-#include <stdio.h>
-
 static QPixmap *toSQLEditPixmap;
 
 class toSQLEditTool : public toTool {

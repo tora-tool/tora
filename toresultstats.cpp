@@ -247,4 +247,5 @@ void toResultStats::refreshStats(bool reset)
       }
     }
   } TOCATCH
+  updateContents();
 }

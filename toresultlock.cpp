@@ -36,7 +36,6 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
 #include <map>
 
 #include "toresultlock.h"

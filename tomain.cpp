@@ -166,8 +166,6 @@ static toResultContent *toContent(QWidget *widget)
   return NULL;
 }
 
-#include <stdio.h>
-
 toMain::toMain()
   : toMainWindow()
 {

@@ -37,7 +37,6 @@
 TO_NAMESPACE;
 
 #include <stdio.h>
-#include <ctype.h>
 
 #include <qclipboard.h>
 #include <qheader.h>

@@ -25,6 +25,8 @@
 2001-07-06: Fixed bug in prefetch for resultlong.
 2001-07-06: Don't hang when reading all in resultlong.
 2001-07-06: Last part of general documentation done, only the tools left.
+2001-07-06: Fixed update problem in statistic widget.
+2001-07-06: Removed lots of stdio.h includes.
 
 0.12: Released 2001-07-01
 

@@ -90,8 +90,6 @@ char **toTool::pictureXPM(void)
   return NULL;
 }
 
-#include <stdio.h>
-
 toTool::toTool(int priority,const char *name)
   : Name(name)
 {

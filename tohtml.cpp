@@ -34,8 +34,8 @@
  *
  ****************************************************************************/
 
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "tohtml.h"
 

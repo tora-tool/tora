@@ -36,9 +36,6 @@
 
 TO_NAMESPACE;
 
-#include <ctype.h>
-#include <stdio.h>
-
 #include <qpainter.h>
 #include <qpalette.h>
 #include <qsimplerichtext.h>

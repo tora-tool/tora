@@ -36,9 +36,6 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
-#include <ctype.h>
-
 #include "toresultfield.h"
 #include "tomain.h"
 #include "totool.h"

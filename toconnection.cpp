@@ -45,8 +45,6 @@ TO_NAMESPACE;
 #include "toconnection.h"
 #include "tomain.h"
 
-#include <stdio.h>
-
 otl_connect *toConnection::newConnection(void)
 {
   QString oldSid;

@@ -37,11 +37,10 @@
 TO_NAMESPACE;
 
 #include <stdio.h>
-
 #ifdef TO_KDE
-#include <kfontdialog.h>
+#  include <kfontdialog.h>
 #else
-#include <qfontdialog.h>
+#  include <qfontdialog.h>
 #endif
 #include <qfont.h>
 #include <qcolordialog.h>
