@@ -1,0 +1,6 @@
+#!/bin/sh
+# Support script to properly set environments for TORA to run
+
+export QTDIR=/usr/share/qt
+
+exec /usr/lib/tora/tora.real "$@"

@@ -12,7 +12,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --with-static-oracle --without-mysql --without-rpath
+	./configure --prefix=/usr --without-oracle --without-mysql --without-rpath
 
 	touch configure-stamp
 
@@ -45,6 +45,8 @@ install: build
 
 	# Add here commands to install the package into debian/tora.
 	$(MAKE) install ROOT=$(CURDIR)/debian/tora
+	-mkdir $(CURDIR)/debian/tora/usr/lib/tora/help/images
+	-install --owner root --group root --mode=644 help/images/* $(CURDIR)/debian/tora/usr/lib/tora/help/images
 	-mv $(CURDIR)/debian/tora/usr/bin/tora $(CURDIR)/debian/tora/usr/lib/tora/tora.real
 	-install --owner root --group root --mode=755 debian/tora.wrapper $(CURDIR)/debian/tora/usr/bin/tora
 

@@ -8,6 +8,7 @@ Standards-Version: 3.5.2
 Package: tora
 Architecture: any
 Depends: ${shlibs:Depends}
+Suggests: libqt3-psql|libqt3-odbc|libqt3-mysql
 Description: A graphical toolkit for database developers and administrators.
  Tora features a schema browser, SQL worksheet, PL/SQL editor & debugger,
  storage manager, rollback segment monitor, instance manager, and SQL output
