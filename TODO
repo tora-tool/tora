@@ -4,6 +4,7 @@
 * Write help.
 * Problem creating new SQL in SQL editor.
 * Problem deleting template in template editor.
+* Add option to suppress line numbers in toworksheet.
 
 Extended functionality:
 
@@ -18,6 +19,7 @@ Extended functionality:
 	Rename table
 		ALTER TABLE ... RENAME TO ...
 	Filter on tablespace
+	Editing triggers
 * Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
 * Make it possible to reorder columns in toResultContent.

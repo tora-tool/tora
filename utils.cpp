@@ -191,6 +191,8 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
   throw QString("SQL Query not found in SGA");
 }
 
+static list<QString> LastMessages;
+
 void toStatusMessage(const QString &str,bool save)
 {
   toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
@@ -200,8 +202,19 @@ void toStatusMessage(const QString &str,bool save)
       main->statusBar()->message(str);
     else
       main->statusBar()->message(str,sec*1000);
+    if (!save) {
+      toPush(LastMessages,str);
+      if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
+							DEFAULT_STATUS_SAVE).toInt())
+	toShift(LastMessages);
+    }
     QToolTip::add(main->statusBar(),str);
   }
+}
+
+list<QString> toStatusMessages(void)
+{
+  return LastMessages;
 }
 
 toMain *toMainWidget(void)

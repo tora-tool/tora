@@ -91,6 +91,7 @@ TO_NAMESPACE;
 #include "icons/copy.xpm"
 #include "icons/paste.xpm"
 #include "icons/toramini.xpm"
+#include "icons/up.xpm"
 
 #define DEFAULT_TITLE "TOra %s"
 
@@ -150,6 +151,7 @@ static QPixmap *toCopyPixmap;
 static QPixmap *toPastePixmap;
 static QPixmap *toPrintPixmap;
 static QPixmap *toTOraPixmap;
+static QPixmap *toUpPixmap;
 
 static toResultContent *toContent(QWidget *widget)
 {
@@ -195,6 +197,8 @@ toMain::toMain()
     toPrintPixmap=new QPixmap((const char **)print_xpm);
   if (!toTOraPixmap)
     toTOraPixmap=new QPixmap((const char **)toramini_xpm);
+  if (!toUpPixmap)
+    toUpPixmap=new QPixmap((const char **)up_xpm);
 
   qApp->setMainWidget(this);
   setDockMenuEnabled(true);
@@ -415,6 +419,15 @@ toMain::toMain()
     (*j)->setEnabled(false);
 
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
+
+  QToolButton *dispStatus=new QToolButton(statusBar());
+  dispStatus->setIconSet(*toUpPixmap);
+  statusBar()->addWidget(dispStatus,0,true);
+  StatusMenu=new QPopupMenu(dispStatus);
+  dispStatus->setPopup(StatusMenu);
+  dispStatus->setPopupDelay(0);
+  connect(StatusMenu,SIGNAL(aboutToShow()),
+	  this,SLOT(statusMenu()));
 
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
@@ -641,12 +654,7 @@ void toMain::commandCallback(int cmd)
 	} catch(...) {
 	  res=NULL;
 	}
-	toResultContent *cnt;
-	try {
-	  cnt=toContent(qApp->focusWidget());
-	} catch (...) {
-	  cnt=NULL;
-	}
+	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  res->print();
 	else if (cnt)
@@ -670,12 +678,7 @@ void toMain::commandCallback(int cmd)
 	} catch(...) {
 	  res=NULL;
 	}
-	toResultContent *cnt;
-	try {
-	  cnt=toContent(qApp->focusWidget());
-	} catch (...) {
-	  cnt=NULL;
-	}
+	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  Search->setTarget(res);
 	else if (cnt)
@@ -699,7 +702,7 @@ void toMain::commandCallback(int cmd)
       contextHelp();
       break;
     case TO_HELP_CONTENTS:
-      toHelp::displayHelp("index.html");
+      toHelp::displayHelp("toc.htm");
       break;
     case TO_HELP_ABOUT:
       {
@@ -987,5 +990,13 @@ void toMain::contextHelp(void)
     }
     cur=cur->parent();
   }
-  toHelp::displayHelp("index.html");
+  toHelp::displayHelp("toc.htm");
+}
+
+void toMain::statusMenu(void)
+{
+  list<QString> status=toStatusMessages();
+  StatusMenu->clear();
+  for(list<QString>::iterator i=status.begin();i!=status.end();i++)
+    StatusMenu->insertItem(*i);
 }

@@ -81,6 +81,8 @@
 #define CONF_SIZE_UNIT		"SizeUnit"
 #define DEFAULT_SIZE_UNIT	"MB"
 #define CONF_HELP_PATH		"HelpPath"
+#define CONF_STATUS_SAVE	"StatusSave"
+#define DEFAULT_STATUS_SAVE	"10"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program
@@ -98,6 +100,6 @@
 #  define DEFAULT_PLUGIN_DIR ""
 #endif
 // Version of TOra, must also change rpm files
-#define TOVERSION               "0.12"
+#define TOVERSION               "0.13"
 
 #endif

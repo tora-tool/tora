@@ -197,6 +197,10 @@ private:
    */
   QPopupMenu *HelpMenu;
   /**
+   * Display latest status messages
+   */
+  QPopupMenu *StatusMenu;
+  /**
    * Current column label.
    */
   QLabel *ColumnLabel;
@@ -354,6 +358,9 @@ public slots:
   /** Used to enable/disable entries in the windows menu
    */
   void windowsMenu(void);
+  /** Used to fill the status menu with the latest status entries
+   */ 
+  void statusMenu(void);
 private slots:
   /** Used to enable/disable entries in the edit & file menu
    */
@@ -649,6 +656,9 @@ bool inline toIsIdent(QChar c)
  * @return String containing directory
  */
 QString toPluginPath(void);
+/** Get a list of the latest status messages that have been shown.
+ */
+list<QString> toStatusMessages(void);
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

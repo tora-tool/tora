@@ -1,0 +1,191 @@
+<HTML><HEAD><TITLE>Elements of the main window</TITLE></HEAD><BODY>
+The main window in TOra has the following elemts as shown below. It is assumes you know how
+to handle a normal windows interface and no explanation about how to press buttons, select
+menues will be presented. If you are administration Oracle you probably know how to handle a
+mouse.<P>
+
+<IMG SRC=images/workspace.png>
+<H1>Menubar</H1>
+If you've ever used a windows program you will recognise most of the menues hopefully.<P>
+<H2>File menu</H2>
+<IMG SRC=images/filemenu.png><P>
+<TABLE>
+<TR><TD VALIGN=top><B>New connection</B></TD>
+<TD VALIGN=top>This will pop up the <A HREF=newconnection.html>new connection</A> dialog which is used
+to open new connections to oracle.</A>
+</TD></TR>
+<TR><TD VALIGN=top><B>Close connection</B></TD>
+<TD VALIGN=top>Will close the current connection to Oracle. If uncommited data exists it will also ask
+if you want to commit or rollback the changes. Observe that any tools associated with this
+connection will also be closed when closing a connection.</TD></TR>
+<TR><TD VALIGN=top><B>Commit connection</B></TD>
+<TD VALIGN=top>Commit the changes currently made to the database.</TD></TR>
+<TR><TD VALIGN=top><B>Rollback connection</B></TD>
+<TD VALIGN=top>Rollback any changes made in the current connection.</TD></TR>
+<TR><TD VALIGN=top><B>Load</B></TD>
+<TD VALIGN=top>This command will open a dialog asking you for a filename to
+load into the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Save</B></TD>
+<TD VALIGN=top>This command will open a dialog asking you for a filename to
+save the contents of the editor that currently holds the focus. If the editor already has
+a filename this will be used and no dialog displayed.
+</TD></TR>
+<TR><TD VALIGN=top><B>Save As</B></TD>
+<TD VALIGN=top>This command will open a dialog asking you for a filename to
+save the contents of the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Print</B></TD>
+<TD VALIGN=top>Will print the contents of the list or editor that currently holds the focus</TD></TR>
+<TR><TD VALIGN=top><B>Quit</B></TD>
+<TD VALIGN=top>Close all connections and exit TOra</TD></TR>
+</TABLE>
+<H2>Edit menu</H2>
+<IMG SRC=images/editmenu.png><P>
+<TABLE>
+<TR><TD VALIGN=top><B>Undo</B></TD>
+<TD VALIGN=top>Undo the latest change in the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Redo</B></TD>
+<TD VALIGN=top>Redo a previous undo of the latest change in the editor that currently holds the
+focus.</TD></TR>
+<TR><TD VALIGN=top><B>Copy</B></TD>
+<TD VALIGN=top>Copy the current selection the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Cut</B></TD>
+<TD VALIGN=top>Cut the current selection the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Paste</B></TD>
+<TD VALIGN=top>Paste the contents of the clipboard into the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Search &amp; Replace</B></TD>
+<TD VALIGN=top>Display the <A HREF=searchreplace.html>search &amp; replace</A> dialog.</TD></TR>
+<TR><TD VALIGN=top><B>Search Next</B></TD>
+<TD VALIGN=top>Make another search with the current search settings.</TD></TR>
+<TR><TD VALIGN=top><B>Select All</B></TD>
+<TD VALIGN=top>Select all rows in the current editor.</TD></TR>
+<TR><TD VALIGN=top><B>Read All Items</B></TD>
+<TD VALIGN=top>Read all items available for a list. Normally TOra doesn't read all available rows for
+a query, just enough to fill the screen. Scrolling down will read more. Selecting this
+will read all available rows from the query, this could take a very long time and
+consume a lot of memory if selected for a large query result.</TD></TR>
+<TR><TD VALIGN=top><B>Options</B></TD>
+<TD VALIGN=top>Displays the <A HREF=preferences.html>options</A> dialog where all aspects of TOra are
+configured.</TD></TR>
+<TR><TD VALIGN=top><B>Edit SQL</B></TD>
+<TD VALIGN=top>This may not be available because it is actually a tool plugin. Can be used to customize
+SQL used by TOra to determine the state of a database. See <A HREF=sqledit.html>SQL editor</A>
+for more into.
+</TD></TR>
+</TABLE>
+<H2>Tools menu</H2>
+<IMG SRC=images/toolsmenu.png><P>
+The entries of this menu start up new tools for the current connection (See 
+<A HREF=window.html#connection>connection management</A> for more information about
+current connections). The contents of the menu may vary depending on which tool
+plugins are loaded.
+<H2>Toolspecific menu</H2>
+There may be a toolspecific menu entered between the Tools and Windows menues (In the
+screenshot it is called Worksheet). These are describe in connection to the tools that
+display them.<P>
+<H2>Windows menu</H2>
+<IMG SRC=images/windowsmenu.png><P>
+<TABLE>
+<TR><TD><B>Close</B></TD>
+<TD>Close the current tool window.</TD></TR>
+<TR><TD><B>Close All</B></TD>
+<TD>Close all open windows. This will not close any database connections, only windows.</TD></TR>
+<TR><TD><B>Cascade</B></TD>
+<TD>Cascade the open windows over the workspace</TD></TR>
+<TR><TD><B>Tile</B></TD>
+<TD>Tile the open windows over the workspace</TD></TR>
+<TR><TD><B>Open windows</B></TD>
+<TD>Here windows will line up as you open them.</TD></TR>
+</TABLE>
+<H2>Help menu</H2>
+<IMG SRC=images/helpmenu.png><P>
+<TABLE>
+<TR><TD><B>Current Context</B></TD>
+<TD>This will display a help page on the current context you are currently in.
+If no specific context is found the table of contents is shown.</TD></TR>
+<TR><TD><B>Content</B></TD>
+<TD>Open the help window displaying the contents of the TOra help.</TD></TR>
+<TR><TD><B>About TOra</B></TD>
+<TD>Display information about TOra copyright and licensing. Also be sure not to
+miss the quotes page which is really interesting read.</TD></TR>
+</TABLE>
+<H1>Application toolbar</H1>
+Using the toolbar you can perform the most common editing operations, handle your connections
+and open tool windows.<p>
+
+<IMG SRC=images/toolbar.png><P>
+
+<H2>Editor buttons</H2>
+<TABLE>
+<TR><TD VALIGN=top><B>Load</B></TD>
+<TD VALIGN=top>This command will open a dialog asking you for a filename to
+load into the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Save</B></TD>
+<TD VALIGN=top>This command will open a dialog asking you for a filename to
+save the contents of the editor that currently holds the focus. If the editor already has
+a filename this will be used and no dialog displayed.
+</TD></TR>
+<TR><TD VALIGN=top><B>Print</B></TD>
+<TD VALIGN=top>Will print the contents of the list or editor that currently holds the focus</TD></TR>
+<TR><TD VALIGN=top><B>Undo</B></TD>
+<TD VALIGN=top>Undo the latest change in the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Redo</B></TD>
+<TD VALIGN=top>Redo a previous undo of the latest change in the editor that currently holds the
+focus.</TD></TR>
+<TR><TD VALIGN=top><B>Copy</B></TD>
+<TD VALIGN=top>Copy the current selection the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Cut</B></TD>
+<TD VALIGN=top>Cut the current selection the editor that currently holds the focus.</TD></TR>
+<TR><TD VALIGN=top><B>Paste</B></TD>
+<TD VALIGN=top>Paste the contents of the clipboard into the editor that currently holds the focus.</TD></TR>
+</TABLE>
+<H2>Tools</H2>
+The buttons in this section can vary depending on which plugins were loaded at startup,
+they are described in the <A HREF=tools.html>tools section</A> of the help. What is notable
+here is that when a button is pressed it is started for the currently selected connection
+available at the end of the application toolbar.
+<H2><A NAME=connection>Connection management</H2>
+All the buttons in this section have one thing in common. Except for the new connection they
+all operate on the currently selected connection. The currently open connections are available
+in a drop down list at the right of the toolbar. The selected item in this list is the connection
+that new tools will be working on and also any commit, rollback or close connection command.
+<TABLE>
+<TR><TD VALIGN=top><B>New connection</B></TD>
+<TD VALIGN=top>This will pop up the <A HREF=newconnection.html>new connection</A> dialog which is used
+to open new connections to oracle.</A>
+</TD></TR>
+<TR><TD VALIGN=top><B>Close connection</B></TD>
+<TD VALIGN=top>Will close the current connection to Oracle. If uncommited data exists it will also ask
+if you want to commit or rollback the changes. Observe that any tools associated with this
+connection will also be closed when closing a connection.</TD></TR>
+<TR><TD VALIGN=top><B>Commit connection</B></TD>
+<TD VALIGN=top>Commit the changes currently made to the database.</TD></TR>
+<TR><TD VALIGN=top><B>Rollback connection</B></TD>
+<TD VALIGN=top>Rollback any changes made in the current connection.</TD></TR>
+</TABLE>
+<H1>Other items in the workspace</H1>
+There are a few other items on the workspace that are worth taking notice of.
+<H2>Statusbar</H2>
+This will display any messages that TOra need to inform the user of. TOra generally
+takes the path of not bothering the user with popups when something goes wrong, but
+simply displays it in the statusbar. So if something isn't working, make sure you
+check the statusbar if something went wrong.<P>
+There is an up button available to the right of the toolbar which when pressed can display
+a history of the contents of the status bar. This is also usefull since the statusbar usually
+clears after certain amount of time but the information is always available here. Both the
+time until a message disapears and the amount of backlog to keep is configarable from the
+<A HREF=preferences.html>option</A> dialog.
+Furthest to the right is the current coordinates of
+the editor that currently has the focus.<P>
+<H2>Tool windows</H2>
+These are the tools that actually let you interact with Oracle. For more information check out
+the <A HREF=tools.html>tools section</A> of the help.
+<H2>Workspace</H2>
+The part of the main window that contain the tool windows.
+<H2>Editors</H2>
+For more information about key bindings etc in editors check out the
+<A HREF=editors.html>dedicated section</A>.
+<H2>Result List</H2>
+These mean every kind of list displayed in TOra. For information about
+how to interact with these check out the <A HREF=lists.html>dedicated section</A>.
+</body>
+</html>

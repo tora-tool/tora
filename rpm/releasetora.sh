@@ -30,7 +30,6 @@ SRCPWD=`pwd`
 cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
-cp icons/* help
 mv tora-mono tora
 cd ..
 echo Packing tora-$1-bin.tar.gz
@@ -43,7 +42,6 @@ rpm -ba tora-$1/rpm/tora-static.spec
 cd /usr/src/RPM/BUILD/tora-$1
 strip tora-static
 mv tora-static tora
-cp icons/* help
 cd ..
 echo Packing tora-$1-static.tar.gz
 tar czf $SRCPWD/../tora-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
@@ -56,7 +54,6 @@ cd /usr/src/RPM/BUILD/tora-$1
 make tora-mono
 strip tora-mono
 mv tora-mono tora
-cp icons/* help
 cd ..
 echo Packing tora-$1-qt.tar.gz
 tar czf $SRCPWD/../tora-$1-qt.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
