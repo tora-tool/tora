@@ -55,6 +55,7 @@
 #include <qregexp.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
+#include <qtextview.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 
@@ -190,6 +191,8 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   SearchList->setRootIsDecorated(true);
   SearchList->setSorting(0);
   SearchList->hide();
+  Report=new QTextView(box);
+  Report->hide();
 
   DropList=new toListView(hsplitter);
   DropList->addColumn("Dropped");
@@ -495,7 +498,7 @@ void toScript::execute(void)
       sourceDescription=drop;
       destinationDescription=create;
     }
-    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,mode==1||mode==2||mode==3);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,mode==1||mode==2||mode==3||mode==4);
     ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,mode==0||mode==2);
     if (!script.isEmpty()) {
       Worksheet->editor()->setText(script);
@@ -746,28 +749,28 @@ void toScript::changeMode(int mode)
 
   if (mode==0||mode==2)
     ScriptUI->Destination->setEnabled(true);
-  else if (mode==1||mode==3)
+  else if (mode==1||mode==3||mode==4)
     ScriptUI->Destination->setEnabled(false);
 
   if (mode==1||mode==2)
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,true);
-  else if (mode==0||mode==3)
+  else if (mode==0||mode==3||mode==4)
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
 
   if (mode==1)
     ScriptUI->IncludeContent->setEnabled(true);
-  else if (mode==0||mode==2||mode==3)
+  else if (mode==0||mode==2||mode==3||mode==4)
     ScriptUI->IncludeContent->setEnabled(false);
 
   if (mode==1||mode==2) {
     ScriptUI->IncludeHeader->setEnabled(true);
     ScriptUI->IncludePrompt->setEnabled(true);
-  } else if (mode==0||mode==3) {
+  } else if (mode==0||mode==3||mode==4) {
     ScriptUI->IncludeHeader->setEnabled(false);
     ScriptUI->IncludePrompt->setEnabled(false);
   }
 
-  if (mode==0||mode==2||mode==3) {
+  if (mode==0||mode==2||mode==3||mode==4) {
     ScriptUI->IncludeDDL->setEnabled(false);
     ScriptUI->IncludeDDL->setChecked(true);
   } else if (mode==1)

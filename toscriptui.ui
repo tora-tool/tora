@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>658</width>
+            <width>654</width>
             <height>585</height>
         </rect>
     </property>
@@ -426,7 +426,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>focusPolicy</name>
-                                    <enum>TabFocus</enum>
+                                    <enum>NoFocus</enum>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
@@ -552,7 +552,7 @@
                                 </property>
                                 <property stdset="1">
                                     <name>focusPolicy</name>
-                                    <enum>TabFocus</enum>
+                                    <enum>NoFocus</enum>
                                 </property>
                                 <property stdset="1">
                                     <name>text</name>
@@ -697,33 +697,6 @@
                                     <number>3</number>
                                 </property>
                             </widget>
-                            <widget row="3"  column="0" >
-                                <class>QRadioButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>Migrate</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Migrate</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>buttonGroupId</name>
-                                    <number>2</number>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>Create database scripts to convert schema or database from source to destination</string>
-                                </property>
-                            </widget>
                             <widget row="0"  column="1"  rowspan="14"  colspan="1" >
                                 <class>Line</class>
                                 <property stdset="1">
@@ -756,7 +729,7 @@
                                     </size>
                                 </property>
                             </spacer>
-                            <spacer row="4"  column="0"  rowspan="10"  colspan="1" >
+                            <spacer row="5"  column="0"  rowspan="9"  colspan="1" >
                                 <property>
                                     <name>name</name>
                                     <cstring>Spacer10_2</cstring>
@@ -777,6 +750,60 @@
                                     </size>
                                 </property>
                             </spacer>
+                            <widget row="3"  column="0" >
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>Migrate</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Migrate</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>2</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Create database scripts to convert schema or database from source to destination</string>
+                                </property>
+                            </widget>
+                            <widget row="4"  column="0" >
+                                <class>QRadioButton</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>Report</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Report</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>4</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Create database scripts to convert schema or database from source to destination</string>
+                                </property>
+                            </widget>
                         </grid>
                     </widget>
                     <widget row="1"  column="0" >

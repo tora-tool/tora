@@ -151,6 +151,7 @@ API=	\
 	toparamget.h		\
 	topiechart.h		\
 	toqvalue.h		\
+	toreport.h		\
 	toresult.h		\
 	toresultbar.h		\
 	toresultcols.h		\
@@ -235,6 +236,7 @@ SOURCES=\
 	topreferences.cpp \
 	topreferencesui.cpp \
 	toprofiler.cpp \
+	toreport.cpp \
 	toresult.cpp \
 	toresultbar.cpp \
 	toresultcols.cpp \
@@ -450,6 +452,7 @@ plugins/toeditextensions.tso:\
 	objs/toeditextensionsetupui.o
 plugins/toextract.tso:\
 	objs/toextract.o \
+	objs/toreport.o \
 	objs/toresultextract.o
 plugins/toinvalid.tso:\
 	objs/toinvalid.o

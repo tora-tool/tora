@@ -743,3 +743,10 @@ std::list<QString> toExtract::splitDescribe(const QString &str)
   return ret;
 }
 
+QString toExtract::partDescribe(const QString &str,int level)
+{
+  QStringList ctx=QStringList::split("\01",str);
+  if (ctx.count()<=level)
+    return QString::null;
+  return ctx[level];
+}

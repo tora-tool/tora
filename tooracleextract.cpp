@@ -5572,6 +5572,7 @@ void toOracleExtract::describeProfile(toExtract &ext,
     throw QString("Couldn't find profile %1").arg(name);
 
   std::list<QString> ctx;
+  ctx.insert(ctx.end(),"NONE");
   ctx.insert(ctx.end(),"PROFILE");
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
@@ -5596,6 +5597,7 @@ void toOracleExtract::describeRole(toExtract &ext,
     throw QString("Couldn't find role %1").arg(name);
 
   std::list<QString> ctx;
+  ctx.insert(ctx.end(),"NONE");
   ctx.insert(ctx.end(),"ROLE");
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
@@ -5617,6 +5619,7 @@ void toOracleExtract::describeRollbackSegment(toExtract &ext,
   QString maxExtent     = toShift(result);
 
   std::list<QString> ctx;
+  ctx.insert(ctx.end(),"NONE");
   ctx.insert(ctx.end(),"ROLLBACK SEGMENT");
   ctx.insert(ctx.end(),QUOTE(name));
 
@@ -5693,12 +5696,11 @@ void toOracleExtract::describeSynonym(toExtract &ext,
     dbLink="";
   else
     dbLink="@"+QUOTE(dbLink);
-  QString useSchema=(schema=="PUBLIC")?QString(""):schema;
   QString tableSchema=ext.intSchema(tableOwner,true);
 
   std::list<QString> ctx;
-  if (owner=="PUBLIC")
-    ctx.insert(ctx.end(),owner);
+
+  ctx.insert(ctx.end(),owner);
   addDescription(lst,ctx,"SYNONYM",QString("%1%2%3").
 		 arg(tableSchema).arg(QUOTE(tableName)).arg(dbLink));
 }
@@ -5810,6 +5812,7 @@ void toOracleExtract::describeTablespace(toExtract &ext,
 
   std::list<QString> ctx;
 
+  ctx.insert(ctx.end(),"NONE");
   if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
     ctx.insert(ctx.end(),"TEMPORARY TABLESPACE");
   else
@@ -5982,6 +5985,7 @@ void toOracleExtract::describeUser(toExtract &ext,
   QString temporaryTablespace=toShift(info);
 
   std::list<QString> ctx;
+  ctx.insert(ctx.end(),"NONE");
   ctx.insert(ctx.end(),"USER");
   QString nam;
   if (ext.getSchema()!="1"&&!ext.getSchema().isEmpty())

@@ -114,6 +114,7 @@ my %plugins=(
 						     "toeditextensionsetupui" ],
 					"Any" => 1 },
 	     "toextract"           => { "Files" => [ "toextract",
+						     "toreport",
 						     "toresultextract" ],
 					"Oracle" => 1 },
 	     "toinvalid"           => { "Files" => [ "toinvalid" ],
@@ -1313,6 +1314,7 @@ API=	\\
 	toparamget.h		\\
 	topiechart.h		\\
 	toqvalue.h		\\
+	toreport.h              \\
 	toresult.h		\\
 	toresultbar.h		\\
 	toresultcols.h		\\

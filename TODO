@@ -81,6 +81,7 @@ Extended functionality:
 
 New tools:
 
+* Schema report builder.
 * SQL Builder?
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.

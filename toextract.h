@@ -491,6 +491,8 @@ public:
    */
   static std::list<QString> splitDescribe(const QString &str);
 
+  static QString partDescribe(const QString &str,int level);
+
   friend class extractor;
 };
 

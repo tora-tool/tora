@@ -32,61 +32,18 @@
  *
  ****************************************************************************/
 
-#ifndef TOSCRIPT_H
-#define TOSCRIPT_H
-
-#include "tohelp.h"
-#include "toscriptui.h"
+#ifndef TOREPORT_H
+#define TOREPORT_H
 
 #include <list>
 
-class QTextView;
-class toConnection;
-class toExtract;
-class toListView;
-class toScriptUI;
-class toWorksheet;
+#include <qstring.h>
 
-class toScript : public toToolWidget {
-  Q_OBJECT
-
-  toScriptUI *ScriptUI;
-  toWorksheet *Worksheet;
-  toListView *DropList;
-  toListView *CreateList;
-  toListView *SearchList;
-  QTextView *Report;
-
-  void setupExtract(toExtract &);
-  void changeConnection(int,bool source);
-  void changeSchema(int,bool source);
-  std::list<QString> createObjectList(QListView *);
-  void fillDifference(std::list<QString> &objects,QListView *list);
-  void readOwnerObjects(QListView *list,QListViewItem *item,toConnection &conn);
-public:
-  toScript(QWidget *parent,toConnection &connection);
-  virtual ~toScript();
-
-
-public slots:
-  void execute(void);
-  void changeMode(int);
-  void changeSource(int val)
-  { changeConnection(val,true); }
-  void changeDestination(int val)
-  { changeConnection(val,false); }
-  void objectClicked(QListViewItem *item);
-  void changeSourceSchema(int val)
-  { changeSchema(val,true); }
-  void changeDestinationSchema(int val)
-  { changeSchema(val,false); }
-  void newSize(void);
-  void removeSize(void);
-
-  void expandSource(QListViewItem *item);
-  void expandDestination(QListViewItem *item);
-  void addConnection(const QString &name);
-  void delConnection(const QString &name);
-};
+/** Generate an HTML based report on a description of database objects from @ref toExtract.
+ * @param conn Connection description list was generated from.
+ * @param desc Description list to create report on.
+ * @return An HTML formatted report on the contents of @ref desc.
+ */
+QString toGenerateReport(toConnection &conn,std::list<QString> &desc);
 
 #endif
