@@ -89,7 +89,7 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
   new QToolButton(QPixmap((const char **)trash_xpm),
 		  "Drop current changes",
 		  "Drop current changes",
-		  this,SLOT(applySession()),toolbar);
+		  this,SLOT(dropChanges()),toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
   Params=new toResultLong(false,false,toQuery::Normal,this);
