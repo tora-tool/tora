@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>591</width>
+            <width>587</width>
             <height>393</height>
         </rect>
     </property>
@@ -338,6 +338,10 @@
                     <hsizetype>7</hsizetype>
                     <vsizetype>7</vsizetype>
                 </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>allColumnsShowFocus</name>
+                <bool>true</bool>
             </property>
         </widget>
         <widget row="0"  column="0" >

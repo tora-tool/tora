@@ -86,6 +86,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   {
     int maxHist=toTool::globalConfig(CONF_CONNECT_CURRENT,0).toInt();
     Previous->setSorting(-1);
+    QListViewItem *last=NULL;
     for (int i=0;i<maxHist;i++) {
       QString path=CONF_CONNECT_HISTORY;
       path+=":";
@@ -107,7 +108,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
       tmp+=CONF_DATABASE;
       QString database=toTool::globalConfig(tmp,DEFAULT_DATABASE);
 
-      new QListViewItem(Previous,database,user,check,passstr);
+      last=new QListViewItem(Previous,last,database,user,check,passstr);
     }
   }
 
@@ -227,7 +228,7 @@ toConnection *toNewConnection::makeConnection(void)
 	}
       }
     }
-    new QListViewItem(Previous,
+    new QListViewItem(Previous,NULL,
 		      Database->currentText(),
 		      Username->text(),
 		      SqlNet->isChecked()?"SQL*Net":"",
@@ -254,7 +255,6 @@ toConnection *toNewConnection::makeConnection(void)
 	tmp=path;
 	tmp+=CONF_DATABASE;
 	toTool::globalSetConfig(tmp,item->text(0));
-	
 	i++;
       }
       toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(i));
