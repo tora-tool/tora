@@ -41,7 +41,7 @@ mv tora tora-$1
 tar czf ../tora$TYPE-$1.tar.gz tora-$1
 tar cf - tora-$1 | bzip2 > /usr/src/RPM/SOURCES/tora-$1.tar.bz2
 rpm -bb tora-$1/rpm/tora.spec
-cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm tora$TYPE-$1-1gc-$GLIBC.i686.rpm 
+cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm ../tora$TYPE-$1-1gc-$GLIBC.i686.rpm 
 
 SRCPWD=`pwd`
 cd /usr/src/RPM/BUILD/tora-$1
@@ -68,12 +68,12 @@ then
     tar czf $SRCPWD/../tora$TYPE-$1-static.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
 	tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
 	tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
-    cp /usr/src/RPM/RPMS/i686/tora-$1-1static.i686.rpm tora$TYPE-$1-1static.i686.rpm 
+    cp /usr/src/RPM/RPMS/i686/tora-$1-1static.i686.rpm ../tora$TYPE-$1-1static.i686.rpm 
 else
     cd $SRCPWD
     export ORACLE_HOME=$ORACLE_HOME/../9.0.1
     rpm -bb tora-$1/rpm/tora.spec
-    cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm tora$TYPE-$1-1gc-oracle9.i686.rpm 
+    cp /usr/src/RPM/RPMS/i686/tora-$1-1gc.i686.rpm ../tora$TYPE-$1-1gc-oracle9.i686.rpm 
 
     cd /usr/src/RPM/BUILD/tora-$1
     make tora-mono
