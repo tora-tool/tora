@@ -153,6 +153,8 @@
 2001-12-11: Made single selection in template list.
 2001-12-12: Added all tabs in schema browser to template schema browser.
 2001-12-12: Fixed synonym handling in template browser.
+2001-12-12: Fixed sorting of numerical values in content editor.
+2001-12-12: Changed to on type editing in content editor.
 
 1.1.5: Released 2001-11-26
 

@@ -43,6 +43,7 @@
 #include <qmessagebox.h>
 #include <qgrid.h>
 #include <qtooltip.h>
+#include <stdio.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -149,6 +150,33 @@ void toResultContentMemo::nextColumn()
     else
       cnt->setCurrentCell(cnt->currentRow(),col+1);
   }
+}
+
+toResultContentEditor::contentItem::contentItem(QTable *table,const QString &text)
+  : QTableItem(table,OnTyping,text)
+{
+}
+
+QString toResultContentEditor::contentItem::key(void) const
+{
+  static QRegExp number("^\\d*\\.?\\d+E?-?\\d*.?.?$");
+
+  QString val=text();
+  if (number.match(val)>=0) {
+    static char buf[100];
+    sprintf(buf,"%015.5f",text().toFloat());
+    return buf;
+  }
+  return val;
+}
+
+void toResultContentEditor::setText(int row,int col,const QString &text)
+{
+  QTableItem *itm=item(row,col);
+  if (itm)
+    itm->setText(text);
+  else
+    setItem(row,col,new contentItem(this,text));
 }
 
 void toResultContentEditor::editSearch(toSearchReplace *search)

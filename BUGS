@@ -15,9 +15,6 @@ Qt:
 KDE:
 	When destructing several docked windows sometimes make weird slot disconnect.
 
-toResultContent:
-	Doesn't sort numbers numerically.
-
 toGetToken:
 	Doesn't handle comments when going backwards.
 

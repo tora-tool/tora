@@ -218,6 +218,12 @@ class toResultContentEditor : public QTable,public toEditWidget {
   toConnection &connection()
   { return toCurrentConnection(this); }
 
+  class contentItem : public QTableItem {
+  public:
+    contentItem(QTable *table,const QString &text);
+    virtual QString key(void) const;
+  };
+
   toListView *copySelection(bool);
 public:
   /** Create the widget.
@@ -256,6 +262,10 @@ public:
   /** Select all contents. Default NOP.
    */
   virtual void editSelectAll(void);
+
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setText(int row,int col,const QString &text);
 
   /** Set a new filter setting.
    * @param all Apply filter to all tables, otherwise only for this table.

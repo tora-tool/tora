@@ -16,7 +16,6 @@ Extended functionality:
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
-	Right align numbers.
 * Editor improvements
 	CVS support (Or whatever this is called in windows).
 	PL/SQL doc (Like JavaDoc).
