@@ -470,10 +470,8 @@ toMain::toMain()
       }
     } while(!conn);
     
-    if (conn) {
+    if (conn)
       addConnection(conn);
-      toTool::saveConfig();
-    }
   } TOCATCH
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));

@@ -127,21 +127,18 @@ private:
   /** Parameters to pass to query before execution.
    */
   toQList Param;
-  /** Child thread.
-   */
-  toThread *Thread;
   /** Statistics to be used if any.
    */
   toResultStats *Statistics;
   /** Description of result
    */
   toQDescList Description;
-  /** Query used to run query
-   */
-  toQuery *Query;
   /** When query is executed
    */
   time_t Started;
+  /** Query used to run query
+   */
+  toQuery *Query;
   /** Throw error if any.
    */
   void checkError();

@@ -267,6 +267,8 @@ toConnection *toNewConnection::makeConnection(void)
       toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(i));
     }
 
+    toTool::saveConfig();
+
     return retCon;
   } catch (const QString &exc) {
     QString str("Unable to connect to the database.\n");

@@ -39,16 +39,13 @@
 #include <qspinbox.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
+#include <qvalidator.h>
+#include <qcheckbox.h>
 
 #include "tomain.h"
 
 #ifdef WIN32
 #  include "windows/cregistry.h"
-#endif
-
-#if 0
-#define OTL_STREAM_POOLING_ON
-#define OTL_STL
 #endif
 
 #include "otlv32.h"
@@ -60,14 +57,15 @@
 #include "tooraclesettingui.h"
 #include "tooraclesettingui.moc"
 
-#define CONF_POOL_SIZE 	  "PoolSize"
-#define DEFAULT_POOL_SIZE "32"
+#define CONF_MAX_LONG     "MaxLong"
 
 // Must be larger than max long size in otl.
 
-#ifndef TO_ORACLE_LONG_SIZE
-#define TO_ORACLE_LONG_SIZE 33000 
+#ifndef DEFAULT_MAX_LONG
+#define DEFAULT_MAX_LONG 33000 
 #endif
+
+static int toMaxLong=DEFAULT_MAX_LONG;
 
 static toSQL SQLComment("toOracleConnection:Comments",
 			"SELECT Column_name,Comments FROM sys.All_Col_Comments\n"
@@ -169,9 +167,12 @@ public:
 	case otl_var_varchar_long:
 	case otl_var_raw_long:
 	  {
-	    buffer=new char[TO_ORACLE_LONG_SIZE+1];
-	    buffer[TO_ORACLE_LONG_SIZE]=0;
-	    otl_long_string str(buffer,TO_ORACLE_LONG_SIZE);
+	    int len=toMaxLong;
+	    if (toMaxLong<0)
+	      len=DEFAULT_MAX_LONG;
+	    buffer=new char[len+1];
+	    buffer[len]=0;
+	    otl_long_string str(buffer,len);
 	    (*Query)>>str;
 	    if (!str.len())
 	      return null;
@@ -186,18 +187,20 @@ public:
 	    (*Query)>>lob;
 	    if (lob.len()==0)
 	      return null;
-	    buffer=new char[lob.len()+1];
+	    int len=toMaxLong;
+	    if (toMaxLong<0)
+	      len=lob.len();
+	    buffer=new char[len+1];
 	    buffer[0]=0;
-	    otl_long_string data(buffer,lob.len());
+	    otl_long_string data(buffer,len);
 	    lob>>data;
 	    if (!lob.eof()) {
 	      otl_long_string sink(10000);
-	      while(!lob.eof()) {
+	      while(!lob.eof())
 		lob>>sink;
-	      }
-	      toStatusMessage("Weird data exists past length of LOB");
+	      toStatusMessage("Data exists past length of LOB",false,false);
 	    }
-	    buffer[data.len()]=0; // Not sure if this is needed
+	    buffer[len]=0; // Not sure if this is needed
 	    QString buf(QString::fromUtf8(buffer));
 	    delete buffer;
 	    return buf;
@@ -527,6 +530,8 @@ public:
   toOracleProvider(void)
     : toConnectionProvider("Oracle")
   {
+    toMaxLong=toTool::globalConfig(CONF_MAX_LONG,
+				   QString::number(DEFAULT_MAX_LONG)).toInt();
     otl_connect::otl_initialize(1);
   }
 
@@ -717,9 +722,6 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     else if (mode=="SYS_DBA")
       dba=1;
     conn=new otl_connect(connectString(),0,oper,dba);
-#ifdef OTL_STREAM_POOLING_ON
-    conn->set_stream_pool_size(OracleProvider.config(CONF_POOL_SIZE,DEFAULT_POOL_SIZE).toInt());
-#endif
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())
@@ -790,15 +792,21 @@ class toOracleSetting : public toOracleSettingUI, public toSettingTab
 {
 public:
   toOracleSetting(QWidget *parent)
-    : toOracleSettingUI(parent),toSettingTab("tooraclesetting.html")
+    : toOracleSettingUI(parent),toSettingTab("database.html#oracle")
   {
-    PoolSize->setValue(OracleProvider.config(CONF_POOL_SIZE,DEFAULT_POOL_SIZE).toInt());
     DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
 					      DEFAULT_DATE_FORMAT));
     CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
 					     DEFAULT_PLAN_CHECKPOINT));
     ExplainPlan->setText(toTool::globalConfig(CONF_PLAN_TABLE,
 					      DEFAULT_PLAN_TABLE));
+    int len=toTool::globalConfig(CONF_MAX_LONG,
+				 QString::number(DEFAULT_MAX_LONG)).toInt();
+    if (len>=0) {
+      MaxLong->setText(QString::number(len));
+      MaxLong->setValidator(new QIntValidator(MaxLong));
+      Unlimited->setChecked(false);
+    }
     try {
       // Check if connection exists
       toMainWidget()->currentConnection();
@@ -808,10 +816,16 @@ public:
   }
   virtual void saveSetting(void)
   {
-    OracleProvider.setConfig(CONF_POOL_SIZE,QString::number(PoolSize->value()));
     toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
     toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
     toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
+    if (Unlimited->isChecked()) {
+      toMaxLong=-1;
+      toTool::globalSetConfig(CONF_MAX_LONG,"-1");
+    } else {
+      toTool::globalSetConfig(CONF_MAX_LONG,MaxLong->text());
+      toMaxLong=MaxLong->text().toInt();
+    }
   }
   virtual void createPlanTable(void)
   {

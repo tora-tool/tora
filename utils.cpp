@@ -62,6 +62,7 @@
 #include <qmenubar.h>
 #include <qlistview.h>
 #include <qcheckbox.h>
+#include <qlabel.h>
 
 #include "tohighlightedtext.h"
 #include "tonewconnection.h"
@@ -278,6 +279,7 @@ void toStatusMessage(const QString &str,bool save,bool log)
 	    toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,"Yes");
 	    TOMessageBox::information(toMainWidget(),
 				      "Information","You can enable this through the Global Settings in the Options (Edit menu)");
+	    toTool::saveConfig();
 	  }
 	}
 	toPush(LastMessages,str);

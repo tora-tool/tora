@@ -42,6 +42,7 @@ any response at all will be aborted and moved.
 <B>Abort long running queries and reexecute in own connection</B> above for more info).
 </TD></TR>
 </TABLE>
+<A NAME=oracle>
 There may also be pages under this for each individual database provider. Currently onlye Oracle uses
 this feature. That setup looks like this.<P>
 <IMG SRC=images/oracle.png>
@@ -64,9 +65,10 @@ conversion specification. For more information see the Oracle SQL Reference.
 button to create the table if you don't have it.
 </TD></TR>
 <TR><TD VALIGN=top>
-<B>Statement cache size</B></TD>
-<TD VALIGN=top>Indicate the number of open statement handles TOra can keep while it is running. This will reduce
-statement parsing needed when TOra extracts information from the database.
+<B>Max LONG and LOB data length</B></TD>
+<TD VALIGN=top>The amount of data to read from LONG, BLOB or CLOB data fields. If you always want
+all the data to be read check the <B>Unlimited</B> checkbox to the right. LONG datafields can
+not be specified as <B>Unlimited</B>, if this is specified 33000 characters are read by default.
 </TD></TR>
 </TABLE>
 </BODY>

@@ -87,9 +87,9 @@ do
     touch -t 7312210000 $b
 done
 
-echo "static char *LicenseText=\"<PRE>\\n\"" > LICENSE.h
+echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
-echo "\"</PRE>\\n\";" >> LICENSE.h
+echo '"</PRE>\n";' >> LICENSE.h
 
 echo
 echo "You must use a GNU version of make to compile this program."

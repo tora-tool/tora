@@ -132,6 +132,7 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
     } else if (c=='-'&&nc=='-') {
       highs.insert(highs.end(),highlightInfo(i,Comment));
       highs.insert(highs.end(),highlightInfo(str.length()+1));
+      out=Normal;
       return highs;
     } else if (c=='/'&&nc=='*') {
       multiComment=i;

@@ -1941,7 +1941,6 @@ bool toDebug::checkCompile(void)
 	return false;
       if (!HeadEditor->compile())
 	return false;
-      refresh();
       break;
     case 1:
       HeadEditor->setEdited(false);
@@ -1962,7 +1961,6 @@ bool toDebug::checkCompile(void)
 	return false;
       if (!BodyEditor->compile())
 	return false;
-      refresh();
       break;
     case 1:
       BodyEditor->setEdited(false);

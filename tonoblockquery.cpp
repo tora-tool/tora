@@ -211,9 +211,9 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
-  Thread=new toThread(new queryTask(*this));
+  toThread *thread=new toThread(new queryTask(*this));
   TO_DEBUGOUT("Created thread\n");
-  Thread->start();
+  thread->start();
   TO_DEBUGOUT("Started thread\n");
 }
 
@@ -247,9 +247,9 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
 
   toLocker lock(Lock);
   TO_DEBUGOUT("Creating thread\n");
-  Thread=new toThread(new queryTask(*this));
+  toThread *thread=new toThread(new queryTask(*this));
   TO_DEBUGOUT("Created thread\n");
-  Thread->start();
+  thread->start();
   TO_DEBUGOUT("Started thread\n");
 }
 
@@ -363,9 +363,9 @@ bool toNoBlockQuery::poll(void)
 	Statistics->changeSession(*Query);
 
       TO_DEBUGOUT("Creating thread\n");
-      Thread=new toThread(new queryTask(*this));
+      toThread *thread=new toThread(new queryTask(*this));
       TO_DEBUGOUT("Created thread\n");
-      Thread->start();
+      thread->start();
       TO_DEBUGOUT("Started thread\n");
     } else
       Lock.unlock();

@@ -236,22 +236,22 @@ int main(int,char **)
     std::map<int,int> test;
     test[2]=2;
     if (test[2]!=2) {
-	printf ("Maps doesn't seem to work\n");
+	printf ("Maps doesn't seem to work\\n");
 	exit(2);
     }
     static int GCCVersion=__GNUC__;
     static int GCCVersionMinor=__GNUC_MINOR__;
     static int QtVersion=QT_VERSION;
     if (QtVersion<220) {
-	printf ("Requires Qt version >= 2.2 (Found %s)\n",QT_VERSION_STR);
+	printf ("Requires Qt version >= 2.2 (Found %s)\\n",QT_VERSION_STR);
 	exit(2);
     }
 #if 0
     if (GCCVersion==2&&GCCVersionMinor==96) {
-	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\n"
-	       "has problems with exception handling and RTTI. This means you can not compile\n"
-	       "TOra on Mandrake 8.x, RedHat 7.x. You can get a fairly working version in\n"
-	       "Mandrake 8.1, but it still has issues.\n");
+	printf("TOra will not function if compiled with some versions of gcc 2.96 since it\\n"
+	       "has problems with exception handling and RTTI. This means you can not compile\\n"
+	       "TOra on Mandrake 8.x, RedHat 7.x. You can get a fairly working version in\\n"
+	       "Mandrake 8.1, but it still has issues.\\n");
 	return 0;
     }
 #endif
@@ -281,6 +281,7 @@ __TEMP__
 	}
     }
 
+    unlink($tmpName);
     if ($CC) {
         unlink("$tmpName.cpp");
 	return 1;
