@@ -60,8 +60,6 @@
 #include "icons/toscript.xpm"
 #include "icons/execute.xpm"
 
-static QPixmap *ExecutePixmap;
-
 class toScriptTool : public toTool {
 protected:
   virtual char **pictureXPM(void)
@@ -79,12 +77,10 @@ public:
     QVBox *window=new QVBox(main);
     window->setIcon(*toolbarImage());
 
-    if (!ExecutePixmap)
-      ExecutePixmap=new QPixmap((const char **)execute_xpm);
     QToolBar *toolbar=toAllocBar(window,"SQL worksheet",connection.description());
     toScript *script=new toScript(window,connection);
 
-    new QToolButton(*ExecutePixmap,
+    new QToolButton(QPixmap((const char **)execute_xpm),
 		    "Perform defined extraction",
 		    "Perform defined extraction",
 		    script,SLOT(execute(void)),

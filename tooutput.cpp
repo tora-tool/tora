@@ -124,26 +124,12 @@ public:
 
 static toOutputTool OutputTool;
 
-static QPixmap *toRefreshPixmap;
-static QPixmap *toEraseLogPixmap;
-static QPixmap *toOnlinePixmap;
-static QPixmap *toOfflinePixmap;
-
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   : toToolWidget(OutputTool,"output.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!toEraseLogPixmap)
-    toEraseLogPixmap=new QPixmap((const char **)eraselog_xpm);
-  if (!toOnlinePixmap)
-    toOnlinePixmap=new QPixmap((const char **)online_xpm);
-  if (!toOfflinePixmap)
-    toOfflinePixmap=new QPixmap((const char **)offline_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Poll for output now",
 		  "Poll for output now",
 		  this,SLOT(refresh(void)),
@@ -151,13 +137,13 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   toolbar->addSeparator();
   DisableButton=new QToolButton(toolbar);
   DisableButton->setToggleButton(true);
-  DisableButton->setIconSet(QIconSet(*toOnlinePixmap),false);
-  DisableButton->setIconSet(QIconSet(*toOfflinePixmap),true);
+  DisableButton->setIconSet(QIconSet(QPixmap((const char **)online_xpm)),false);
+  DisableButton->setIconSet(QIconSet(QPixmap((const char **)offline_xpm)),true);
   DisableButton->setOn(!enabled);
   connect(DisableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
   QToolTip::add(DisableButton,"Enable or disable getting SQL output.");
 
-  new QToolButton(*toEraseLogPixmap,
+  new QToolButton(QPixmap((const char **)eraselog_xpm),
 		  "Clear output",	
 		  "Clear output",
 		  this,SLOT(clear()),

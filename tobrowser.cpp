@@ -426,10 +426,6 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 			    " WHERE Trigger_Owner = :f1<char[101]> AND Trigger_Name = :f2<char[101]>",
 			    "Columns used by trigger");
 
-static QPixmap *RefreshPixmap;
-static QPixmap *FilterPixmap;
-static QPixmap *NoFilterPixmap;
-
 QString toBrowser::schema(void)
 {
   QString ret=Schema->currentText();
@@ -450,28 +446,22 @@ void toBrowser::setNewFilter(toResultFilter *filter)
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
-  if (!RefreshPixmap)
-    RefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!FilterPixmap)
-    FilterPixmap=new QPixmap((const char **)filter_xpm);
-  if (!NoFilterPixmap)
-    NoFilterPixmap=new QPixmap((const char **)nofilter_xpm);
   Filter=NULL;
 
   QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.description());
 
-  new QToolButton(*RefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update from DB",
 		  "Update from DB",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*FilterPixmap,
+  new QToolButton(QPixmap((const char **)filter_xpm),
 		  "Define the object filter",
 		  "Define the object filter",
 		  this,SLOT(defineFilter(void)),
 		  toolbar);
-  new QToolButton(*NoFilterPixmap,
+  new QToolButton(QPixmap((const char **)nofilter_xpm),
 		  "Remove any object filter",
 		  "Remove any object filter",
 		  this,SLOT(clearFilter(void)),
@@ -742,14 +732,14 @@ void toBrowser::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(*RefreshPixmap,"&Refresh",this,SLOT(refresh(void)),
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",this,SLOT(refresh(void)),
 			   Key_F5);
       ToolMenu->insertItem("&Change Schema",Schema,SLOT(setFocus(void)),
 			   Key_S+ALT);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(*FilterPixmap,"&Define filter",this,SLOT(defineFilter(void)),
+      ToolMenu->insertItem(QPixmap((const char **)filter_xpm),"&Define filter",this,SLOT(defineFilter(void)),
 			   CTRL+SHIFT+Key_G);
-      ToolMenu->insertItem(*NoFilterPixmap,"&Clear filter",this,SLOT(clearFilter(void)),
+      ToolMenu->insertItem(QPixmap((const char **)nofilter_xpm),"&Clear filter",this,SLOT(clearFilter(void)),
 			   CTRL+SHIFT+Key_H);
       toMainWidget()->menuBar()->insertItem("&Browser",ToolMenu,-1,toToolMenuIndex());
     }

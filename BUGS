@@ -26,3 +26,6 @@ toResultContent:
 
 toTemplate:
 	Doesn't seem to remember more than one template file.
+
+utils:
+	Can't find SQL in SGA if using OTL specifiers for binds.

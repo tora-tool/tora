@@ -220,16 +220,6 @@ public:
 
 static toWorksheetTool WorksheetTool;
 
-static QPixmap *toRefreshPixmap;
-static QPixmap *toExecutePixmap;
-static QPixmap *toExecuteAllPixmap;
-static QPixmap *toExecuteStepPixmap;
-static QPixmap *toCommitPixmap;
-static QPixmap *toRollbackPixmap;
-static QPixmap *toEraseLogPixmap;
-static QPixmap *toStopPixmap;
-static QPixmap *toStatisticPixmap;
-
 void toWorksheet::viewResources(void)
 {
   try {
@@ -242,55 +232,36 @@ void toWorksheet::viewResources(void)
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   : toToolWidget(WorksheetTool,"worksheet.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!toExecutePixmap)
-    toExecutePixmap=new QPixmap((const char **)execute_xpm);
-  if (!toExecuteAllPixmap)
-    toExecuteAllPixmap=new QPixmap((const char **)executeall_xpm);
-  if (!toExecuteStepPixmap)
-    toExecuteStepPixmap=new QPixmap((const char **)executestep_xpm);
-  if (!toCommitPixmap)
-    toCommitPixmap=new QPixmap((const char **)commit_xpm);
-  if (!toRollbackPixmap)
-    toRollbackPixmap=new QPixmap((const char **)rollback_xpm);
-  if (!toEraseLogPixmap)
-    toEraseLogPixmap=new QPixmap((const char **)eraselog_xpm);
-  if (!toStopPixmap)
-    toStopPixmap=new QPixmap((const char **)stop_xpm);
-  if (!toStatisticPixmap)
-    toStatisticPixmap=new QPixmap((const char **)clock_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
 
-  new QToolButton(*toExecutePixmap,
+  new QToolButton(QPixmap((const char **)execute_xpm),
 		  "Execute current statement",
 		  "Execute current statement",
 		  this,SLOT(execute(void)),
 		  toolbar);
-  new QToolButton(*toExecuteAllPixmap,
+  new QToolButton(QPixmap((const char **)executeall_xpm),
 		  "Execute all statements",
 		  "Execute all statements",
 		  this,SLOT(executeAll(void)),
 		  toolbar);
-  new QToolButton(*toExecuteStepPixmap,
+  new QToolButton(QPixmap((const char **)executestep_xpm),
 		  "Step through statements",
 		  "Step through statements",
 		  this,SLOT(executeStep(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh",
 		  "Update last executed statement",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*toCommitPixmap,
+  new QToolButton(QPixmap((const char **)commit_xpm),
 		  "Commit work",
 		  "Commit work",
 		  this,SLOT(commitButton(void)),
 		  toolbar);
-  new QToolButton(*toRollbackPixmap,
+  new QToolButton(QPixmap((const char **)rollback_xpm),
 		  "Rollback work",
 		  "Rollback work",
 		  this,SLOT(rollbackButton(void)),
@@ -348,14 +319,14 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   LastLogItem=NULL;
 
   toolbar->addSeparator();
-  StopButton=new QToolButton(*toStopPixmap,
+  StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			     "Stop execution",
 			     "Stop execution",
 			     Result,SLOT(stop(void)),
 			     toolbar);
   StopButton->setEnabled(false);
   toolbar->addSeparator();
-  new QToolButton(*toEraseLogPixmap,
+  new QToolButton(QPixmap((const char **)eraselog_xpm),
 		  "Clear execution log",
 		  "Clear execution log",
 		  this,SLOT(eraseLogButton(void)),
@@ -364,7 +335,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   toolbar->addSeparator();
   StatisticButton=new QToolButton(toolbar);
   StatisticButton->setToggleButton(true);
-  StatisticButton->setIconSet(QIconSet(*toStatisticPixmap));
+  StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
   connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
   QToolTip::add(StatisticButton,"Gather session statistic of execution");
   new QLabel("Refresh",toolbar);
@@ -421,28 +392,36 @@ void toWorksheet::windowActivated(QWidget *widget)
   if (widget==w) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(*toExecutePixmap,"&Execute Current",this,SLOT(execute(void)),
+      ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
+			   "&Execute Current",this,SLOT(execute(void)),
 			   CTRL+Key_Return);
-      ToolMenu->insertItem(*toExecuteAllPixmap,"Execute &All",this,SLOT(executeAll(void)),
+      ToolMenu->insertItem(QPixmap((const char **)executeall_xpm),
+			   "Execute &All",this,SLOT(executeAll(void)),
 			   Key_F8);
-      ToolMenu->insertItem(*toExecuteStepPixmap,"Execute &Next",this,SLOT(executeStep(void)),
+      ToolMenu->insertItem(QPixmap((const char **)executestep_xpm),
+			   "Execute &Next",this,SLOT(executeStep(void)),
 			   Key_F9);
       ToolMenu->insertItem("Execute &Newline Separated",this,
 			   SLOT(executeNewline(void)),SHIFT+Key_F9);
-      ToolMenu->insertItem(*toRefreshPixmap,"&Refresh",this,SLOT(refresh(void)),
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
+			   "&Refresh",this,SLOT(refresh(void)),
 			   Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(*toCommitPixmap,"&Commit",this,SLOT(commitButton(void)),
+      ToolMenu->insertItem(QPixmap((const char **)commit_xpm),
+			   "&Commit",this,SLOT(commitButton(void)),
 			   Key_F2);
-      ToolMenu->insertItem(*toRollbackPixmap,"&Rollback",this,SLOT(rollbackButton(void)),
+      ToolMenu->insertItem(QPixmap((const char **)rollback_xpm),
+			   "&Rollback",this,SLOT(rollbackButton(void)),
 			   CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem("&Enable statistics",this,SLOT(toggleStatistic(void)),
 			   0,TO_ID_STATISTICS);
-      ToolMenu->insertItem(*toStopPixmap,"&Stop execution",Result,SLOT(stop(void)),
+      ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
+			   "&Stop execution",Result,SLOT(stop(void)),
 			   0,TO_ID_STOP);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(*toEraseLogPixmap,"Erase &Log",this,SLOT(eraseLogButton(void)));
+      ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
+			   "Erase &Log",this,SLOT(eraseLogButton(void)));
 
       toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());

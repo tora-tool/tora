@@ -49,23 +49,19 @@
 
 #include "icons/filesave.xpm"
 
-static QPixmap *toFileSavePixmap;
-
 toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 			   bool sql,bool modal)
   : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
 {
   Row=row;
   Col=col;
-  if (!toFileSavePixmap)
-    toFileSavePixmap=new QPixmap((const char **)filesave_xpm);
 
   QBoxLayout *l=new QVBoxLayout(this);
 
   if (row>=0&&col>=0) {
     QToolBar *toolbar=toAllocBar(this,"Memo Editor",QString::null);
 
-    new QToolButton(*toFileSavePixmap,
+    new QToolButton(QPixmap((const char **)filesave_xpm),
 		    "Save changes",
 		    "Save changes",
 		    this,SLOT(store(void)),

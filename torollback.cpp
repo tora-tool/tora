@@ -310,6 +310,7 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       dba_extents c,\n"
 			 "       (select :unit<char[100]> unit from dual) d\n"
 			 " where a.segment_id = b.usn(+)\n"
+			 "   and (a.owner = c.owner or a.owner = 'PUBLIC')\n"
 			 "   and a.segment_name = c.segment_name\n"
 			 "   and c.segment_type = 'ROLLBACK'\n"
 			 "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))\n"
@@ -576,42 +577,25 @@ public:
   }
 };
 
-static QPixmap *toRefreshPixmap;
-static QPixmap *toAddPixmap;
-static QPixmap *toTrashPixmap;
-static QPixmap *toOnlinePixmap;
-static QPixmap *toOfflinePixmap;
-
 toRollback::toRollback(QWidget *main,toConnection &connection)
   : toToolWidget(RollbackTool,"rollback.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!toAddPixmap)
-    toAddPixmap=new QPixmap((const char **)addrollback_xpm);
-  if (!toTrashPixmap)
-    toTrashPixmap=new QPixmap((const char **)trash_xpm);
-  if (!toOnlinePixmap)
-    toOnlinePixmap=new QPixmap((const char **)online_xpm);
-  if (!toOfflinePixmap)
-    toOfflinePixmap=new QPixmap((const char **)offline_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"Rollback analyzer",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update segment list",
 		  "Update segment list",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
 
-  OnlineButton=new QToolButton(*toOnlinePixmap,
+  OnlineButton=new QToolButton(QPixmap((const char **)online_xpm),
 			       "Take segment online",
 			       "Take segment online",
 			       this,SLOT(online(void)),
 			       toolbar);
   OnlineButton->setEnabled(false);
-  OfflineButton=new QToolButton(*toOfflinePixmap,
+  OfflineButton=new QToolButton(QPixmap((const char **)offline_xpm),
 				"Take segment offline",
 				"Take segment offline",
 				this,SLOT(offline(void)),
@@ -619,12 +603,12 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   OfflineButton->setEnabled(false);
   toolbar->addSeparator();
 
-  new QToolButton(*toAddPixmap,
+  new QToolButton(QPixmap((const char **)addrollback_xpm),
 		  "Create new rollback segment",
 		  "Create new rollback segment",
 		  this,SLOT(addSegment(void)),
 		  toolbar);
-  DropButton=new QToolButton(*toTrashPixmap,
+  DropButton=new QToolButton(QPixmap((const char **)trash_xpm),
 			     "Drop segment",
 			     "Drop segment",
 			     this,SLOT(dropSegment(void)),

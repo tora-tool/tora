@@ -184,14 +184,6 @@ public:
 
 static toSecurityTool SecurityTool;
 
-static QPixmap *toRefreshPixmap;
-static QPixmap *toCommitPixmap;
-static QPixmap *toTrashPixmap;
-static QPixmap *toAddRolePixmap;
-static QPixmap *toAddUserPixmap;
-static QPixmap *toCopyUserPixmap;
-static QPixmap *toSqlPixmap;
-
 class toSecurityQuota : public toSecurityQuotaUI {
   toConnection &Connection;
   QListViewItem *CurrentItem;
@@ -1253,59 +1245,45 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   : toToolWidget(SecurityTool,"security.html",main,connection)
 {
   toBusy busy;
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!toCommitPixmap)
-    toCommitPixmap=new QPixmap((const char **)commit_xpm);
-  if (!toTrashPixmap)
-    toTrashPixmap=new QPixmap((const char **)trash_xpm);
-  if (!toAddRolePixmap)
-    toAddRolePixmap=new QPixmap((const char **)addrole_xpm);
-  if (!toAddUserPixmap)
-    toAddUserPixmap=new QPixmap((const char **)adduser_xpm);
-  if (!toCopyUserPixmap)
-    toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
-  if (!toSqlPixmap)
-    toSqlPixmap=new QPixmap((const char **)sql_xpm);
 
   QToolBar *toolbar=toAllocBar(this,"Security manager",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Poll for output now",
 		  "Poll for output now",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*toCommitPixmap,
+  new QToolButton(QPixmap((const char **)commit_xpm),
 		  "Save changes",
 		  "Save changes",
 		  this,SLOT(saveChanges(void)),
 		  toolbar);
-  DropButton=new QToolButton(*toTrashPixmap,
+  DropButton=new QToolButton(QPixmap((const char **)trash_xpm),
 			     "Remove user/role",
 			     "Remove user/role",
 			     this,SLOT(drop(void)),
 			     toolbar);
   DropButton->setEnabled(false);
   toolbar->addSeparator();
-  new QToolButton(*toAddUserPixmap,
+  new QToolButton(QPixmap((const char **)adduser_xpm),
 		  "Add new user",
 		  "Add new user",
 		  this,SLOT(addUser(void)),
 		  toolbar);
-  new QToolButton(*toAddRolePixmap,
+  new QToolButton(QPixmap((const char **)addrole_xpm),
 		  "Add new role",
 		  "Add new role",
 		  this,SLOT(addRole(void)),
 		  toolbar);
-  CopyButton=new QToolButton(*toCopyUserPixmap,
+  CopyButton=new QToolButton(QPixmap((const char **)copyuser_xpm),
 			     "Copy current user or role",
 			     "Copy current user or role",
 			     this,SLOT(copy(void)),
 			     toolbar);
   CopyButton->setEnabled(false);
   toolbar->addSeparator();
-  new QToolButton(*toSqlPixmap,
+  new QToolButton(QPixmap((const char **)sql_xpm),
 		  "Display SQL needed to make current changes",
 		  "Display SQL needed to make current changes",
 		  this,SLOT(displaySQL(void)),

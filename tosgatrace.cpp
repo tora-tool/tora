@@ -116,17 +116,12 @@ public:
 
 static toSGATraceTool SGATraceTool;
 
-static QPixmap *toRefreshPixmap;
-
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   : toToolWidget(SGATraceTool,"trace.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"SGA trace",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Fetch statements in SGA",
 		  "Fetch statements in SGA",
 		  this,SLOT(refresh(void)),

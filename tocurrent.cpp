@@ -88,8 +88,6 @@ public:
 
 static toCurrentInfoTool CurrentTool;
 
-static QPixmap *toRefreshPixmap;
-
 static toSQL SQLVersion("toCurrent:Version",
 			"select banner \"Version\" from v$version",
 			"Display version of Oracle");
@@ -101,12 +99,9 @@ static toSQL SQLParameters("toCurrent:Parameters",
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
   : toToolWidget(CurrentTool,"current.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"SQL Output",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update",
 		  "Update",
 		  this,SLOT(refresh(void)),

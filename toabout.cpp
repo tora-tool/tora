@@ -247,13 +247,13 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 
 #define ABOUT_CAPTION "TOra %1"
 
-static QPixmap *toLogoPixmap=NULL;
-
 void toAllocLogo(void)
 {
-  if (!toLogoPixmap) {
-    toLogoPixmap=new QPixmap((const char **)largelogo_xpm);
-    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",*toLogoPixmap);
+  static bool Alloced=false;
+  if (!Alloced) {
+    Alloced=true;
+    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",
+						    QPixmap((const char **)largelogo_xpm));
   }
 }
 
@@ -265,7 +265,7 @@ toSplash::toSplash(QWidget *parent,const char *name,WFlags f)
   setBackgroundColor(white);
   QLabel *logo=new QLabel(this,"Logo");
   logo->setBackgroundColor(white);
-  logo->setPixmap(*toLogoPixmap);
+  logo->setPixmap(QPixmap((const char **)largelogo_xpm));
   Label=new QLabel("Loading plugins",this);
   Label->setBackgroundColor(white);
   Progress=new QProgressBar(this,"Progress");
@@ -300,5 +300,4 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     TextView->setPaper(QColor(227,184,54));
     break;
   }
-
 }

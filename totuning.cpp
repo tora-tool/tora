@@ -232,8 +232,6 @@ public:
 
 static toTuningTool TuningTool;
 
-static QPixmap *toRefreshPixmap;
-
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 				     "select sysdate,sum(blocks) from v$archived_log",
 				     "Archive log write");
@@ -612,12 +610,9 @@ void toTuningOverview::refresh(void)
 toTuning::toTuning(QWidget *main,toConnection &connection)
   : toToolWidget(TuningTool,"tuning.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"Server Tuning",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh",
 		  "Refresh",
 		  this,SLOT(refresh(void)),

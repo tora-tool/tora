@@ -84,11 +84,6 @@ public:
 
 static toSessionTool SessionTool;
 
-static QPixmap *toRefreshPixmap;
-static QPixmap *toClockPixmap;
-static QPixmap *toNoClockPixmap;
-static QPixmap *toDisconnectPixmap;
-
 static toSQL SQLConnectInfo("toSession:ConnectInfo",
 			    "select authentication_type,osuser,network_service_banner\n"
 			    "  from v$session_connect_info where sid = :f1<char[101]>",
@@ -144,35 +139,26 @@ static toSQL SQLSessionIO(TO_SESSION_IO,
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget(SessionTool,"session.html",main,connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
-  if (!toClockPixmap)
-    toClockPixmap=new QPixmap((const char **)clock_xpm);
-  if (!toNoClockPixmap)
-    toNoClockPixmap=new QPixmap((const char **)noclock_xpm);
-  if (!toDisconnectPixmap)
-    toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
-
   QToolBar *toolbar=toAllocBar(this,"Session manager",connection.description());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Update sessionlist",
 		  "Update sessionlist",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*toClockPixmap,
+  new QToolButton(QPixmap((const char **)clock_xpm),
 		  "Enable timed statistics",
 		  "Enable timed statistics",
 		  this,SLOT(enableStatistics(void)),
 		  toolbar);
-  new QToolButton(*toNoClockPixmap,
+  new QToolButton(QPixmap((const char **)noclock_xpm),
 		  "Disable timed statistics",
 		  "Disable timed statistics",
 		  this,SLOT(disableStatistics(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QToolButton(*toDisconnectPixmap,
+  new QToolButton(QPixmap((const char **)disconnect_xpm),
 		  "Disconnect selected session",
 		  "Disconnect selected session",
 		  this,SLOT(disconnectSession(void)),

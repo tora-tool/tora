@@ -143,21 +143,6 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_TOOLS		1000
 #define TO_ABOUT_ID_OFFSET	(toMain::TO_TOOL_ABOUT_ID-TO_TOOLS)
 
-static QPixmap *toLoadPixmap;
-static QPixmap *toSavePixmap;
-static QPixmap *toConnectPixmap;
-static QPixmap *toDisconnectPixmap;
-static QPixmap *toCommitPixmap;
-static QPixmap *toRollbackPixmap;
-static QPixmap *toUndoPixmap;
-static QPixmap *toRedoPixmap;
-static QPixmap *toCutPixmap;
-static QPixmap *toCopyPixmap;
-static QPixmap *toPastePixmap;
-static QPixmap *toPrintPixmap;
-static QPixmap *toTOraPixmap;
-static QPixmap *toUpPixmap;
-
 static toResultContent *toContent(QWidget *widget)
 {
   while(widget) {
@@ -174,50 +159,23 @@ static toResultContent *toContent(QWidget *widget)
 toMain::toMain()
   : toMainWindow()
 {
-  if (!toConnectPixmap)
-    toConnectPixmap=new QPixmap((const char **)connect_xpm);
-  if (!toDisconnectPixmap)
-    toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
-  if (!toLoadPixmap)
-    toLoadPixmap=new QPixmap((const char **)fileopen_xpm);
-  if (!toSavePixmap)
-    toSavePixmap=new QPixmap((const char **)filesave_xpm);
-  if (!toRollbackPixmap)
-    toRollbackPixmap=new QPixmap((const char **)rollback_xpm);
-  if (!toCommitPixmap)
-    toCommitPixmap=new QPixmap((const char **)commit_xpm);
-  if (!toUndoPixmap)
-    toUndoPixmap=new QPixmap((const char **)undo_xpm);
-  if (!toRedoPixmap)
-    toRedoPixmap=new QPixmap((const char **)redo_xpm);
-  if (!toCutPixmap)
-    toCutPixmap=new QPixmap((const char **)cut_xpm);
-  if (!toCopyPixmap)
-    toCopyPixmap=new QPixmap((const char **)copy_xpm);
-  if (!toPastePixmap)
-    toPastePixmap=new QPixmap((const char **)paste_xpm);
-  if (!toPrintPixmap)
-    toPrintPixmap=new QPixmap((const char **)print_xpm);
-  if (!toTOraPixmap)
-    toTOraPixmap=new QPixmap((const char **)toramini_xpm);
-  if (!toUpPixmap)
-    toUpPixmap=new QPixmap((const char **)up_xpm);
-
   qApp->setMainWidget(this);
   setDockMenuEnabled(true);
 
   FileMenu=new QPopupMenu(this);
-  FileMenu->insertItem(*toConnectPixmap,"&New Connection...",TO_NEW_CONNECTION);
-  FileMenu->insertItem(*toDisconnectPixmap,"&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
+  FileMenu->insertItem(QPixmap((const char **)connect_xpm),
+		       "&New Connection...",TO_NEW_CONNECTION);
+  FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
+		       "&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(*toCommitPixmap,"&Commit connection",TO_FILE_COMMIT);
-  FileMenu->insertItem(*toRollbackPixmap,"&Rollback connection",TO_FILE_ROLLBACK);
+  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit connection",TO_FILE_COMMIT);
+  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(*toLoadPixmap,"&Open File...",TO_FILE_OPEN);
-  FileMenu->insertItem(*toSavePixmap,"&Save",TO_FILE_SAVE);
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),TO_FILE_SAVE);
   FileMenu->insertItem("&Save As..",TO_FILE_SAVE_AS);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(*toPrintPixmap,"&Print..",TO_FILE_PRINT);
+  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
   FileMenu->insertSeparator();
   FileMenu->insertItem("&Quit",TO_FILE_QUIT);
   menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
@@ -227,12 +185,12 @@ toMain::toMain()
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
 
   EditMenu=new QPopupMenu(this);
-  EditMenu->insertItem(*toUndoPixmap,"&Undo",TO_EDIT_UNDO);
-  EditMenu->insertItem(*toRedoPixmap,"&Redo",TO_EDIT_REDO);
+  EditMenu->insertItem(QPixmap((const char **)undo_xpm),"&Undo",TO_EDIT_UNDO);
+  EditMenu->insertItem(QPixmap((const char **)redo_xpm),"&Redo",TO_EDIT_REDO);
   EditMenu->insertSeparator();
-  EditMenu->insertItem(*toCutPixmap,"Cu&t",TO_EDIT_CUT);
-  EditMenu->insertItem(*toCopyPixmap,"&Copy",TO_EDIT_COPY);
-  EditMenu->insertItem(*toPastePixmap,"&Paste",TO_EDIT_PASTE);
+  EditMenu->insertItem(QPixmap((const char **)cut_xpm),"Cu&t",TO_EDIT_CUT);
+  EditMenu->insertItem(QPixmap((const char **)copy_xpm),"&Copy",TO_EDIT_COPY);
+  EditMenu->insertItem(QPixmap((const char **)paste_xpm),"&Paste",TO_EDIT_PASTE);
   EditMenu->insertSeparator();
   EditMenu->insertItem("&Search && Replace",TO_EDIT_SEARCH);
   EditMenu->insertItem("Search &Next",TO_EDIT_SEARCH_NEXT);
@@ -254,15 +212,15 @@ toMain::toMain()
 
   QToolBar *toolbar=toAllocBar(this,"Application",QString::null);
 
-  LoadButton=new QToolButton(*toLoadPixmap,
+  LoadButton=new QToolButton(QPixmap((const char **)fileopen_xpm),
 			     "Load file into editor",
 			     "Load file into editor",
 			     this,SLOT(loadButton()),toolbar);
-  SaveButton=new QToolButton(*toSavePixmap,
+  SaveButton=new QToolButton(QPixmap((const char **)filesave_xpm),
 			     "Save file from editor",
 			     "Save file from editor",
 			     this,SLOT(saveButton()),toolbar);
-  PrintButton=new QToolButton(*toPrintPixmap,
+  PrintButton=new QToolButton(QPixmap((const char **)print_xpm),
 			     "Print",
 			     "Print",
 			     this,SLOT(printButton()),toolbar);
@@ -270,26 +228,26 @@ toMain::toMain()
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
   toolbar->addSeparator();
-  UndoButton=new QToolButton(*toUndoPixmap,
+  UndoButton=new QToolButton(QPixmap((const char **)undo_xpm),
 			     "Undo",
 			     "Undo",
 			     this,SLOT(undoButton()),toolbar);
-  RedoButton=new QToolButton(*toRedoPixmap,
+  RedoButton=new QToolButton(QPixmap((const char **)redo_xpm),
 			     "Redo",
 			     "Redo",
 			     this,SLOT(redoButton()),toolbar);
-  CutButton=new QToolButton(*toCutPixmap,
+  CutButton=new QToolButton(QPixmap((const char **)cut_xpm),
 			     "Cut to clipboard",
 			     "Cut to clipboard",
 			     this,SLOT(cutButton()),toolbar);
-  CopyButton=new QToolButton(*toCopyPixmap,
+  CopyButton=new QToolButton(QPixmap((const char **)copy_xpm),
 			     "Copy to clipboard",
 			     "Copy to clipboard",
 			     this,SLOT(copyButton()),toolbar);
-  PasteButton=new QToolButton(*toPastePixmap,
-			     "Paste from clipboard",
-			     "Paste from clipboard",
-			     this,SLOT(pasteButton()),toolbar);
+  PasteButton=new QToolButton(QPixmap((const char **)paste_xpm),
+			      "Paste from clipboard",
+			      "Paste from clipboard",
+			      this,SLOT(pasteButton()),toolbar);
   UndoButton->setEnabled(false);
   RedoButton->setEnabled(false);
   CutButton->setEnabled(false);
@@ -385,21 +343,21 @@ toMain::toMain()
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 #endif
 
-  new QToolButton(*toConnectPixmap,
+  new QToolButton(QPixmap((const char **)connect_xpm),
 		  "Connect to database",
 		  "Connect to database",
 		  this,SLOT(addConnection()),toolbar);
-  DisconnectButton=new QToolButton(*toDisconnectPixmap,
+  DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
 				   "Disconnect current connection",
 				   "Disconnect current connection",
 				   this,SLOT(delConnection()),toolbar);
   DisconnectButton->setEnabled(false);
   toolbar->addSeparator();
-  NeedConnection[new QToolButton(*toCommitPixmap,
+  NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
 				 "Commit connection",
 				 "Commit connection",
 				 this,SLOT(commitButton()),toolbar)]=NULL;
-  NeedConnection[new QToolButton(*toRollbackPixmap,
+  NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
 				 "Rollback connection",
 				 "Rollback connection",
 				 this,SLOT(rollbackButton()),toolbar)]=NULL;
@@ -424,7 +382,7 @@ toMain::toMain()
   setCaption(buffer);
 
 #ifdef TO_KDE
-  KDockWidget *mainDock=createDockWidget(buffer,*toTOraPixmap);
+  KDockWidget *mainDock=createDockWidget(buffer,QPixmap((const char **)toramini_xpm));
   Workspace=new QWorkspace(mainDock);
   mainDock->setWidget(Workspace);
   setView(mainDock);
@@ -434,7 +392,7 @@ toMain::toMain()
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
 #endif
-  setIcon(*toTOraPixmap);
+  setIcon(QPixmap((const char **)toramini_xpm));
 
   statusBar()->message("Ready");
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
@@ -449,7 +407,7 @@ toMain::toMain()
   connect(menuBar(),SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   QToolButton *dispStatus=new QToolButton(statusBar());
-  dispStatus->setIconSet(*toUpPixmap);
+  dispStatus->setIconSet(QPixmap((const char **)up_xpm));
   statusBar()->addWidget(dispStatus,0,true);
   StatusMenu=new QPopupMenu(dispStatus);
   dispStatus->setPopup(StatusMenu);
