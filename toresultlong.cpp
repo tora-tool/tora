@@ -231,7 +231,7 @@ public:
   toDeleteQuery(toNoBlockQuery *rip)
   { RIP=rip; }
   virtual void run(void)
-  { delete rip; }
+  { delete RIP; }
 };
 
 #endif
@@ -240,8 +240,16 @@ void toResultLong::stop(void)
 {
   if (Query) {
 #ifdef TO_QTHREAD
-    toThread *thread=new toThread(new toDeleteQuery(Query));
-    thread->startAsync();
+    try {
+      if (Query->poll())
+	delete Query;
+      else {
+	toThread *thread=new toThread(new toDeleteQuery(Query));
+	thread->startAsync();
+      }
+    } catch(...) {
+      delete Query;
+    }
 #else
     delete Query;
 #endif

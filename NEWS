@@ -3,8 +3,9 @@
 2001-08-01: Added pie chart class.
 2001-08-02: Fixed release script to grab correct tag if specified.
 2001-08-02: Added another quote.
+2001-08-02: Merge from the 0.14 release.
 
-1.0:
+0.14: Released 2001-08-02
 
 2001-07-12: Added check for Oracle Client in windows installer.
 2001-07-12: Removed the index.html file.
@@ -30,6 +31,14 @@
 2001-07-29: Maximize tool window if there is only one.
 2001-07-29: Only fix layout on maximized tool windows.
 2001-07-31: Fixed problem with queries that doesn't return any rows.
+2001-08-01: Fixed some lock problems in toDebug.
+2001-08-01: Update errors on recompile in debugger.
+2001-08-01: Handle changing errors without leaving dangling statusmessages.
+2001-08-01: Fixed a nasty buffer overrun in toHtml.
+2001-08-01: Improved cancelling queries when using QThread.
+2001-08-01: Fixed workaround in layout bug.
+2001-08-02: Fixed toc.htm to display properly without KDE support.
+2001-08-02: Changed 1.0 version to 0.14.
 
 0.13: Released 2001-07-11
 

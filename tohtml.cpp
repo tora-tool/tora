@@ -41,8 +41,9 @@
 
 toHtml::toHtml(const QCString &data)
 {
-  Data=qstrdup(data);
-  Length=data.length();
+  Length=strlen(data);
+  Data=new char[Length+1];
+  strcpy(Data,data);
   Position=0;
   LastChar=0;
 }

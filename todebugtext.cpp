@@ -181,6 +181,28 @@ static toSQL SQLReadErrors("toDebug:ReadErrors",
 			   " ORDER BY Type,Line",
 			   "Get lines with errors in object (Observe first line 0)");
 
+bool toDebugText::readErrors(toConnection &conn)
+{
+  try {
+    otl_stream errors(1,SQLReadErrors(Connection),conn.connection());
+    map<int,QString> Errors;
+
+    errors<<Schema.utf8();
+    errors<<Object.utf8();
+    errors<<Type.utf8();
+    while(!errors.eof()) {
+      char buffer[4001];
+      int line;
+      errors>>line;
+      errors>>buffer;
+      Errors[line]+=" ";
+      Errors[line]+=QString::fromUtf8(buffer);
+    }
+    setErrors(Errors);
+    return true;
+  } TOCATCH
+  return false;
+}
 bool toDebugText::readData(toConnection &conn,QListView *Stack)
 {
   QListViewItem *item=NULL;
@@ -195,8 +217,6 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
 		      SQLReadErrors(Connection),
 		      conn.connection());
 
-    map<int,QString> Errors;
-
     lines<<Schema.utf8();
     lines<<Object.utf8();
     lines<<Type.utf8();
@@ -209,27 +229,17 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
     setText(str);
     setEdited(false);
     setCurrent(-1);
+
     if (str.isEmpty())
       return false;
     else {
-      errors<<Schema.utf8();
-      errors<<Object.utf8();
-      errors<<Type.utf8();
-      while(!errors.eof()) {
-	char buffer[4001];
-	int line;
-	errors>>line;
-	errors>>buffer;
-	Errors[line]+=" ";
-	Errors[line]+=QString::fromUtf8(buffer);
-      }
-      setErrors(Errors);
       if (item&&
 	  Schema==item->text(2)&&
 	  Object==item->text(0)&&
 	  Type==item->text(3))
 	setCurrent(item->text(1).toInt()-1);
-      return true;
+
+      return readErrors(conn);
     }
   } TOCATCH
   return false;

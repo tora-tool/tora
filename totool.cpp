@@ -140,23 +140,20 @@ void toTool::createWindow(void)
 
 #if 1
       // This is a really ugly workaround for a Qt layout bug
-      if (newWin->isMaximized()) {
-	QWidget *tmp=NULL;
-	QWidget *tmp2=NULL;
-	for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
-	  QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
-	  if (newWin!=widget) {
-	    tmp2=widget;
-	  } else {
+      QWidget *tmp=NULL;
+      QWidget *tmp2=NULL;
+      for (unsigned int i=0;i<toMainWidget()->workspace()->windowList().count();i++) {
+        QWidget *widget=toMainWidget()->workspace()->windowList().at(i);
+        if (newWin!=widget)
+	  tmp2=widget;
+	else
 	    tmp=newWin;
-	  }
-	  if (tmp2&&tmp)
-	    break;
-	}
-	if(tmp2&&tmp) {
-	  tmp2->setFocus();
-	  tmp->setFocus();
-	}
+	if (tmp2&&tmp)
+	  break;
+      }
+      if(tmp2&&tmp) {
+        tmp2->setFocus();
+        tmp->setFocus();
       }
 #endif
     }

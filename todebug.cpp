@@ -431,15 +431,21 @@ void toDebug::targetTask::run(void)
 {
   {
     toConnection Connection(Parent.connection());
-    otl_cursor::direct_exec(Connection.connection(),
-			    SQLDebugEnable(Connection));
-    otl_stream init(1,
-		    SQLDebugInit(Connection),
-		    Connection.connection());
-    int colSize;
-    {
+    try {
+      otl_cursor::direct_exec(Connection.connection(),
+			      SQLDebugEnable(Connection));
+    } catch (...) {
+      toLocker lock(Parent.Lock);
+      Parent.TargetLog+="Couldn't enable debugging for target session\n";
+    }
+    try {
+      otl_stream init(1,
+		      SQLDebugInit(Connection),
+		      Connection.connection());
+
+      Parent.DebuggerStarted=true;
       char buffer[201];
-      buffer[0] = 0;
+      buffer[0]=0;
       toLocker lock(Parent.Lock);
       init>>buffer;
       Parent.TargetID=QString::fromUtf8(buffer);
@@ -447,7 +453,15 @@ void toDebug::targetTask::run(void)
       Parent.TargetSession=QString::fromUtf8(buffer);
       Parent.ChildSemaphore.up();
       Parent.TargetLog+="Debug session connected\n";
+    } catch (const otl_exception &exc) {
+      toLocker lock(Parent.Lock);
+      Parent.TargetLog+="Couldn't start debugging:";
+      Parent.TargetLog+=QString::fromUtf8((const char *)exc.msg);
+      Parent.DebuggerStarted=false;
+      Parent.ChildSemaphore.up();
+      return;
     }
+    int colSize;
     while(1) {
       {
 	toLocker lock(Parent.Lock);
@@ -513,7 +527,7 @@ void toDebug::targetTask::run(void)
 	Parent.Lock.unlock();
       } catch (const otl_exception &exc) {
 	Parent.Lock.lock();
-	Parent.TargetLog+="SQL Error Encountered\n";
+	Parent.TargetLog+="SQL Error Encountered:";
 	Parent.TargetLog+=QString::fromUtf8((const char *)exc.msg);
 	Parent.Lock.unlock();
       } catch (...) {
@@ -535,6 +549,7 @@ void toDebug::targetTask::run(void)
 
   }
   toLocker lock(Parent.Lock);
+  Parent.DebuggerStarted=false;
   Parent.TargetLog+="Closing debug session\n";
   Parent.TargetThread=NULL;
   Parent.ChildSemaphore.up();
@@ -1944,8 +1959,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
-  startTarget();
-  readLog();
+  connect(&StartTimer,SIGNAL(timeout(void)),this,SLOT(startTarget(void)));
+  StartTimer.start(1,true);
 }
 
 static toSQL SQLAttach("toDebug:Attach",
@@ -1966,12 +1981,24 @@ void toDebug::startTarget(void)
   }
 
   ChildSemaphore.down();
+  if (!DebuggerStarted) {
+    {
+      toLocker lock(Lock);
+      TOMessageBox::critical(this,"Couldn't start debugging",
+			     QString("Couldn't connect to target session:\n")+
+			     TargetLog,
+			     "&Ok");
+    }
+    close(false);
+    return;
+  }
   try {
     otl_stream attach(1,
 		      SQLAttach(connection()),
 		      otlConnect());
     attach<<TargetID.utf8();
   } TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
+  readLog();
 }
 
 toDebugText *toDebug::currentEditor(void)
@@ -2280,6 +2307,7 @@ bool toDebugText::compile(void)
     try {
       list<QString> nopar;
       Debugger->executeInTarget(sql,nopar);
+      readErrors(Debugger->connection());
       Schema=schema.upper();
       Object=object.upper();
       Type=type.upper();
@@ -2315,13 +2343,18 @@ void toDebug::compile(void)
 
 toDebug::~toDebug()
 {
-  stop();
-  {
-    toLocker lock(Lock);
-    TargetSQL="";
-    TargetSemaphore.up();
-  }
-  ChildSemaphore.down();
+  Lock.lock();
+  if (DebuggerStarted) {
+    Lock.unlock();
+    stop();
+    {
+      toLocker lock(Lock);
+      TargetSQL="";
+      TargetSemaphore.up();
+    }
+    ChildSemaphore.down();
+  } else
+    Lock.unlock();
 
   DebugTool.closeWindow(connection());
 }

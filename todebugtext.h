@@ -96,6 +96,7 @@ public:
   void clear(void);
 
   bool readData(toConnection &connection,QListView *);
+  bool readErrors(toConnection &connection);
   bool compile(void);
 protected:
   virtual void paintCell(QPainter *painter,int row,int col);

@@ -233,8 +233,7 @@ public:
    * @param errors A map of linenumbers to errorstrings. These will be displayed in the
    *               statusbar if the cursor is placed on the line.
    */
-  void setErrors(const map<int,QString> &errors)
-  { Errors=errors; update(); }
+  void setErrors(const map<int,QString> &errors);
   /** Set current line. Will be indicated with a different background.
    * @param current Current line.
    */

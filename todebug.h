@@ -37,6 +37,8 @@
 #ifndef __TODEBUG_H
 #define __TODEBUG_H
 
+#include <qtimer.h>
+
 #include "totool.h"
 #include "tothread.h"
 #include "tohighlightedtext.h"
@@ -139,10 +141,12 @@ class toDebug : public toToolWidget {
   list<QString> OutputData;
   int ColumnSize;
   bool RunningTarget;
+  bool DebuggerStarted;
   // Can be read after thread startup
   QString TargetID;
   QString TargetSession;
   // End of lock stuff
+  QTimer StartTimer;
 
   class targetTask : public toTask {
     toDebug &Parent;
@@ -159,7 +163,6 @@ class toDebug : public toToolWidget {
 
   bool checkCompile(void);
   void updateCurrent(void);
-  void startTarget(void);
   QString currentName(void);
   int sync(void);
   bool hasMembers(const QString &str);
@@ -172,6 +175,8 @@ class toDebug : public toToolWidget {
 
   void setDeferedBreakpoints(void);
   bool checkStop(void);
+private slots:
+  void startTarget(void);
 public:
   toDebug(QWidget *parent,toConnection &connection);
 

@@ -348,6 +348,13 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   }
 }
 
+void toHighlightedText::setErrors(const map<int,QString> &errors)
+{
+  Errors=errors;
+  toStatusMessage(QString::null);
+  update();
+}
+
 void toHighlightedText::textChanged(void)
 {
   int curline,curcol,lines;
