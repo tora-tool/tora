@@ -15,6 +15,17 @@ Access Methods:/*+ NO_INDEX(table[ index]) */=Instruct Oracle not to use an inde
 Access Methods:/*+ REWRITE(view) */=Specify the optimizer to always use a materialized view speicified by <I>view</I>. Several views can be specified.
 Access Methods:/*+ ROWID(table) */=Instruct Oracle to use a rowid when accessing the table named <I>table</I>. The tablename can also indicate an alias in the query.
 Access Methods:/*+ USE_CONCAT */=Instruct the optimizer to always transform queries using the <B>OR</B> operator to a <B>UNION ALL</B> statement.
+Additional Hints:/*+ CACHE(table) */=Specify that the table specified by <I>table</I> should be placed at the most recent end of the LRU.
+Additional Hints:/*+ MERGE(view) */=Perform merging of a view specified by <I>view</I> containing a <B>GROUP BY</B> statement. This is only done explicitly since otherwise the optimizer will use another approach to perform the query.
+Additional Hints:/*+ NOCACHE(table) */=Specify that the table specified by <I>table</I> should be placed at the oldest end of the LRU meaning that it will be flushed from memory first after additional disc accesses.
+Additional Hints:/*+ NO_MERGE(view) */=Don't perform merging of a view specified by <I>view</I> containing a <B>GROUP BY</B> statement.
+Additional Hints:/*+ NO_PUSH_PRED(view) */=Don't push a join predicate into the view specified by <I>view</I>.
+Additional Hints:/*+ NO_UNNEST */=Don't unnest nested subqueries into the main body of the query.
+Additional Hints:/*+ ORDERED_PREDICATES */=The <B>ORDERED_PREDICATES</B> hint forces the optimizer to preserve the order of predicate evaluation, except for predicates used as index keys.\n
+Additional Hints:/*+ PUSH_PRED(view) */=Use the PUSH_PRED hint to force pushing of a join predicate into the view specified by <I>view</I>.
+Additional Hints:/*+ PUSH_SUBQ */=Force unnested subqueries to be performed first in the execution of the query,
+Additional Hints:/*+ STAR_TRANSFORMATION */=The <B>STAR_TRANSFORMATION</B> hint makes the optimizer use the best plan in which star transformation has been used.\n
+Additional Hints:/*+ UNNEST */=If specified nested subqueries are unnested into the main body of the query.
 Join Operators:/*+ DRIVING_SITE(table) */=This hint can be used to force the optimizer to choose a specific driving site to perform the query in a distributed server specified by <I>table</I>.
 Join Operators:/*+ HASH_AJ */=Use a anti hash join to perform an anti join. Should be specified in the subquery getting the resultset that should not be matched by the <B>IN</B> operator.<P>\n<PRE>\nSELECT COUNT(1) FROM user_tables a\n WHERE table_name NOT IN \n       (SELECT /*+ HASH_AJ */ table_name\n          FROM user_indexes b\n         WHERE a.table_name = b.table_name);\n</PRE>
 Join Operators:/*+ HASH_SJ */=Use a hash semi join. Should be specified in the subquery getting the resultset for the semi join.<P>\n<PRE>\nSELECT COUNT(1) FROM user_tables a\n WHERE EXISTS \n       (SELECT /*+ HASH_SJ */ 'X'\n          FROM user_indexes b\n         WHERE a.table_name = b.table_name);\n</PRE>
