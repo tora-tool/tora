@@ -18,18 +18,21 @@ BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
 
 %description
-Toolkit for Oracle is a program for Oracle developers and administrators. The
+Toolkit for Oracle is a program for database developers and administrators. The
 features that are available so far is (As of version 1.2):
 
 * Handles multiple connections
+* Support Oracle & MySQL
 * Advanced SQL Worksheet
 	* Explain plan
+	* PL/SQL auto indentation
 	* Statement statistics
 	* Error location indication
 	* SQL syntax highlighting
 	* Code completion
 	* Visualization of result
 	* PL/SQL block parsing
+	* Statement statistics comparison
 * Schema browser
 	* Table & view editing
 	* References & dependencies
@@ -45,6 +48,7 @@ features that are available so far is (As of version 1.2):
 * Server tuning
 	* Server overview
 	* Tuning charts
+	* Wait state analyzer
 	* I/O by tablespace & file
 	* Performance indicators
 	* Server statistics
@@ -57,6 +61,8 @@ features that are available so far is (As of version 1.2):
 * SGA and long operations trace
 * Current session information
 
+* PL/SQL profiler
+* Explain plan browser
 * Statistics manager
 * DBMS alert tool
 * Invalid object browser
@@ -104,7 +110,7 @@ CXXFLAGS="$RPM_OPT_FLAGS" \
 	 --with-kde \
          --without-rpath \
          --with-static-oracle \
-         --with-rpm-contents
+         --with-rpm-contents="${RPM_BUILD_ROOT}"
 
 %build
 export QTDIR="%{_qt2dir}"
