@@ -19,6 +19,7 @@
 2001-07-18: Fixed another pesky bug with long running queries.
 2001-07-22: Fixed some potential problems with browser.
 2001-07-23: Removed all 31 and 41 sized buffer and replaced with 101.
+2001-07-24: Applied a patch for forked make to work (Thanx Jonas Rathert).
 
 0.13: Released 2001-07-11
 
@@ -31,7 +32,7 @@
 2001-07-03: Always update schema list in db browser when refreshing.
 2001-07-03: Display the short key number in the caption of toolwindows.
 2001-07-03: Started the main help pages. The main roadblock on the way to 1.0.
-2001-07-04: Fixed typo in Makefile.common (Thanx Jonas Rather).
+2001-07-04: Fixed typo in Makefile.common (Thanx Jonas Rathert).
 2001-07-04: Rewrote settings for worksheet to use designer.
 2001-07-04: Added option to remove numbering column in worksheet.
 2001-07-04: Another parsing fix for worksheet.

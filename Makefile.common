@@ -43,7 +43,7 @@ Makefile.orig: Makefile
 
 .depends/%.d: %.cpp
 	@echo Making dependences for $<
-	if [ ! -d .depends ] ; then mkdir .depends ; fi
+	if [ ! -d .depends ] ; then mkdir -p .depends ; fi
 	$(GCC) -MM $(CPPFLAGS) $< > $@.tmp && \
 		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
 		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
@@ -61,12 +61,12 @@ include $(DEPENDS)
 
 plugins/%.tso:
 	@echo Linking plugin $@
-	if [ ! -d plugins ] ; then mkdir plugins ; fi
+	if [ ! -d plugins ] ; then mkdir -p plugins ; fi
 	$(GCC) -shared $(CFLAGS) -o $@ $^
 
 objs/%.o: %.cpp
 	@echo Compiling $<
-	if [ ! -d objs ] ; then mkdir objs ; fi
+	if [ ! -d objs ] ; then mkdir -p objs ; fi
 	$(GCC) $(CFLAGS) -o $@ -c $<
 
 %.o : objs/%.o
