@@ -654,6 +654,7 @@ static toSQL SQLListSQLShort("toBrowser:ListCodeShort",
 		 	     " WHERE OWNER = :f1<char[101]>\n"
 			     "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			     "                       'PROCEDURE','TYPE')\n"
+			     "   AND UPPER(OBJECT_NAME) LIKE :f2<char[101]>\n"
 			     " ORDER BY Object_Name",
 			     "List the available Code objects in a schema, one column version");
 static toSQL SQLListSQLShortPgSQL("toBrowser:ListCodeShort",

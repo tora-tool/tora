@@ -444,13 +444,13 @@ toMain::toMain()
 				 tr("Stop all running queries on connection"),
 				 tr("Stop all running queries on connection"),
 				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
+  ConnectionToolbar->hide();
 #endif
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
   ConnectionSelection->setFixedWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
-  ConnectionToolbar->hide();
 
   menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
