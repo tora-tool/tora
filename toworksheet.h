@@ -110,6 +110,7 @@ public:
 
   toMarkedText *editor(void)
   { return Editor; }
+
 public slots:
   void refresh();
   void execute()

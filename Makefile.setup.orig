@@ -24,8 +24,8 @@
 #
 ############################################################################
 
-# If you have problems with the configure script copy this file to Makefile.setup
-# and modify it to satisfy your need.
+# If you have problems with the configure script copy this file to
+# Makefile.setup and modify it to satisfy your need.
 
 # Where to install tora
 INSTALLPREFIX=/usr/local

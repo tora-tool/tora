@@ -181,6 +181,7 @@ public:
   toDebugText *bodyEditor(void)
   { return BodyEditor; }
   QString currentSchema(void);
+
 public slots:
   void stop(void);
   void compile(void);

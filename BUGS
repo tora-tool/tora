@@ -1,12 +1,13 @@
 OCI:
-	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an Oracle bug since other programs have same problem)
+	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an
+	Oracle bug since other programs have the same problem)
 
 OTL:
-	Doesn't seem to handle object types and some other types (Like ROWID).
+	Doesn't seem to handle object types and some other types (Like ROWID for instance).
 
 toDebug:
-	Seems a recompiled object seems invalidated the first time it is executed in the target
-	session.
+	Seems a recompiled object is invalidated the first time it is executed in the target
+	session. Just start again and you should be fine.
 
 Qt:
 	Some layouts seem to expand far beyond the content of the screen until you resize it.

@@ -150,6 +150,7 @@ class toStorage : public QVBox {
 public:
   toStorage(QWidget *parent,toConnection &connection);
   ~toStorage();
+
 public slots:
   void refresh(void);
 

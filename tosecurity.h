@@ -114,6 +114,7 @@ public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual ~toSecurity();
   virtual void changeUser(bool);
+
 public slots:
   virtual void refresh(void);
   virtual void changeUser(QListViewItem *)
