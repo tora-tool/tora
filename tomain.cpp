@@ -457,7 +457,7 @@ toMain::toMain()
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
 {
   QWidget *currWidget=qApp->focusWidget();
-  if (dynamic_cast<toMarkedText *>(currWidget)) {
+  if (currWidget->inherits("toMarkedText")) {
     toMarkedText *marked=dynamic_cast<toMarkedText *>(currWidget);
     bool readOnly=marked->isReadOnly();
     menuBar()->setItemEnabled(TO_EDIT_UNDO,!readOnly&&marked->getUndoAvailable());
@@ -487,14 +487,14 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    if (dynamic_cast<toResultView *>(currWidget)||
+    if (currWidget->inherits("toResultView")||
 	toContent(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
       menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-      if (dynamic_cast<toListView *>(currWidget)) {
+      if (currWidget->inherits("toListView")) {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
         menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
       } else {
@@ -542,7 +542,12 @@ void toMain::commandCallback(int cmd)
     if (cmd-TO_WINDOWS_WINDOWS<int(workspace()->windowList().count()))
       workspace()->windowList().at(cmd-TO_WINDOWS_WINDOWS)->setFocus();
   } else {
-    toMarkedText *mark=dynamic_cast<toMarkedText *>(qApp->focusWidget());
+    toMarkedText *mark;
+    try {
+      mark=dynamic_cast<toMarkedText *>(qApp->focusWidget());
+    } catch(...) {
+      mark=NULL;
+    }
     if (mark) {
       bool readOnly=mark->isReadOnly();
       bool newFilename=false;
@@ -612,7 +617,12 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_EDIT_READ_ALL:
       {
-	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	toResultView *res;
+	try {
+	  res=dynamic_cast<toResultView *>(qApp->focusWidget());
+	} catch(...) {
+	  res=NULL;
+	}
 	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  res->readAll();
@@ -622,8 +632,18 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_FILE_PRINT:
       {
-	toListView *res=dynamic_cast<toListView *>(qApp->focusWidget());
-	toResultContent *cnt=toContent(qApp->focusWidget());
+	toListView *res;
+	try {
+	  res=dynamic_cast<toListView *>(qApp->focusWidget());
+	} catch(...) {
+	  res=NULL;
+	}
+	toResultContent *cnt;
+	try {
+	  cnt=toContent(qApp->focusWidget());
+	} catch (...) {
+	  cnt=NULL;
+	}
 	if (res)
 	  res->print();
 	else if (cnt)
@@ -641,10 +661,20 @@ void toMain::commandCallback(int cmd)
       if (mark)
 	Search->setTarget(mark);
       else {
-	toListView *lst=dynamic_cast<toListView *>(qApp->focusWidget());
-	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
-	if (lst)
-	  Search->setTarget(lst);
+	toListView *res;
+	try {
+	  res=dynamic_cast<toListView *>(qApp->focusWidget());
+	} catch(...) {
+	  res=NULL;
+	}
+	toResultContent *cnt;
+	try {
+	  cnt=toContent(qApp->focusWidget());
+	} catch (...) {
+	  cnt=NULL;
+	}
+	if (res)
+	  Search->setTarget(res);
 	else if (cnt)
 	  Search->setTarget(cnt);
       }
@@ -943,10 +973,14 @@ void toMain::contextHelp(void)
 {
   QObject *cur=qApp->focusWidget();
   while(cur) {
-    toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
-    if (ctx) {
-      toHelp::displayHelp(ctx->context());
-      return;
+    try {
+      toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
+      if (ctx) {
+        toHelp::displayHelp(ctx->context());
+        return;
+      }
+    } catch(...) {
+      // Catch problems with Visual C++ missing RTTI
     }
     cur=cur->parent();
   }

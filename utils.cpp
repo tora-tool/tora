@@ -383,7 +383,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
     default:
       throw QString("Unknown dock position");
     }
-    KDockWidget *dw=dynamic_cast<KDockWidget *>(dock);
+    KDockWidget *dw=(KDockWidget *)(dock);
     if (dw) {
       dw->setWidget(container);
       dw->manualDock(main->getMainDockWidget(),pos,20);

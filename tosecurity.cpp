@@ -229,7 +229,9 @@ toSecurityQuota::toSecurityQuota(toConnection &conn,QWidget *parent)
     while(!tablespaces.eof()) {
       char buf[100];
       tablespaces>>buf;
-      item=new QListViewItem(Tablespaces,item,QString::fromUtf8(buf),"None",QString::null,"None");
+      item=new toResultViewItem(Tablespaces,item,QString::fromUtf8(buf));
+      item->setText(1,"None");
+      item->setText(3,"None");
     }
   } TOCATCH
 }
@@ -766,18 +768,18 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
 	oType=oName=QString::null;
 	typeItem=nameItem=NULL;
 	oOwner=owner;
-	ownerItem=new QListViewItem(this,ownerItem,owner);
+	ownerItem=new toResultViewItem(this,ownerItem,owner);
       }
       if (type!=oType) {
 	oName=QString::null;
 	nameItem=NULL;
 	oType=type;
-	typeItem=new QListViewItem(ownerItem,typeItem,type);
+	typeItem=new toResultViewItem(ownerItem,typeItem,type);
 	typelst<<type.utf8();
 	typelst>>buffer;
 	Options=QStringList::split(",",QString::fromUtf8(buffer));
       }
-      nameItem=new QListViewItem(typeItem,nameItem,name);
+      nameItem=new toResultViewItem(typeItem,nameItem,name);
       for (QStringList::Iterator i=Options.begin();i!=Options.end();i++) {
 	QListViewItem *item=new toResultViewCheck(nameItem,*i,QCheckListItem::CheckBox);
 	item->setText(2,name);
@@ -1456,7 +1458,8 @@ void toSecurity::refresh(void)
 	     this,SLOT(changeUser(QListViewItem *)));
   UserList->clear();
   try {
-    QListViewItem *parent=new QListViewItem(UserList,NULL,"Users","USER:");
+    QListViewItem *parent=new toResultViewItem(UserList,NULL,"Users");
+    parent->setText(1,"USER:");
     parent->setOpen(true);
     parent->setSelectable(false);
     otl_stream user(1,
@@ -1468,11 +1471,13 @@ void toSecurity::refresh(void)
       user>>buffer;
       QString id="USER:";
       id+=QString::fromUtf8(buffer);
-      item=new QListViewItem(parent,item,QString::fromUtf8(buffer),id);
+      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      item->setText(1,id);
       if (id==UserID)
 	UserList->setSelected(item,true);
     }
-    parent=new QListViewItem(UserList,parent,"Roles","ROLE:");
+    parent=new toResultViewItem(UserList,parent,"Roles");
+    parent->setText(1,"ROLE:");
     parent->setOpen(true);
     parent->setSelectable(false);
     otl_stream roles(1,
@@ -1484,7 +1489,8 @@ void toSecurity::refresh(void)
       roles>>buffer;
       QString id="ROLE:";
       id+=QString::fromUtf8(buffer);
-      item=new QListViewItem(parent,item,QString::fromUtf8(buffer),id);
+      item=new toResultViewItem(parent,item,QString::fromUtf8(buffer));
+      item->setText(1,id);
       if (id==UserID)
 	UserList->setSelected(item,true);
     }

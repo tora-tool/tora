@@ -900,12 +900,9 @@ void toWorksheet::queryDone(void)
     QHeader *head=Result->header();
     for (int i=0;i<Result->columns();i++) {
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
       QString str;
       if (resItem)
 	str=resItem->allText(i);
-      else if (chkItem)
-	str=chkItem->allText(i);
       else if (item)
 	str=item->text(i);
 

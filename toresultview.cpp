@@ -249,8 +249,18 @@ public:
   virtual void maybeTip(const QPoint &p)
   {
     QListViewItem *item=List->itemAt(p);
-    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+    toResultViewItem *resItem;
+    try {
+      resItem=dynamic_cast<toResultViewItem *>(item);
+    } catch(...) {
+      resItem=NULL;
+    }
+    toResultViewCheck *chkItem;
+    try {
+      chkItem=dynamic_cast<toResultViewCheck *>(item);
+    } catch(...) {
+      chkItem=NULL;
+    }
     if (item) {
       int col=List->header()->sectionAt(List->viewportToContents(p).x());
       QPoint t(List->header()->sectionPos(col),0);
@@ -306,8 +316,18 @@ void toListView::contentsMouseDoubleClickEvent (QMouseEvent *e)
   QPoint p=e->pos();
   int col=header()->sectionAt(p.x());
   QListViewItem *item=itemAt(contentsToViewport(p));
-  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+  toResultViewItem *resItem;
+  try {
+    resItem=dynamic_cast<toResultViewItem *>(item);
+  } catch(...) {
+    resItem=NULL;
+  }
+  toResultViewCheck *chkItem;
+  try {
+    chkItem=dynamic_cast<toResultViewCheck *>(item);
+  } catch(...) {
+    chkItem=NULL;
+  }
   QClipboard *clip=qApp->clipboard();
   if (resItem)
     clip->setText(resItem->allText(col));
@@ -327,8 +347,18 @@ void toListView::contentsMouseMoveEvent (QMouseEvent *e)
     QPoint p=e->pos();
     int col=header()->sectionAt(p.x());
     QListViewItem *item=itemAt(contentsToViewport(p));
-    toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-    toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+    toResultViewItem *resItem;
+    try {
+      resItem=dynamic_cast<toResultViewItem *>(item);
+    } catch(...) {
+      resItem=NULL;
+    }
+    toResultViewCheck *chkItem;
+    try {
+      chkItem=dynamic_cast<toResultViewCheck *>(item);
+    } catch(...) {
+      chkItem=NULL;
+    }
     QString str;
     if (resItem)
       str=resItem->allText(col);
@@ -540,8 +570,18 @@ void toListView::menuCallback(int cmd)
 
 QString toListView::menuText(void)
 {
-  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(MenuItem);
-  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(MenuItem);
+  toResultViewItem *resItem;
+  try {
+    resItem=dynamic_cast<toResultViewItem *>(MenuItem);
+  } catch(...) {
+    resItem=NULL;
+  }
+  toResultViewCheck *chkItem;
+  try {
+    chkItem=dynamic_cast<toResultViewCheck *>(MenuItem);
+  } catch(...) {
+    chkItem=NULL;
+  }
   QString str;
   if (resItem)
     str=resItem->allText(MenuColumn);
