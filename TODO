@@ -78,6 +78,7 @@ Extended functionality:
 * Include public objects in script tool.
 * Option wether tool button open new window or an already open tool.
 * Include status of code objects in browsertool.
+* Implement printing of text view.
 
 New tools:
 

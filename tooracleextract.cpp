@@ -105,7 +105,7 @@ class toOracleExtract : public toExtract::extractor {
   void describeAttributes(toExtract &ext,std::list<QString> &dsp,std::list<QString> &ctx,
 			  toQList &result) const;
   void describeComments(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
-			const QString &schema,const QString &owner,const QString &name) const;
+			const QString &owner,const QString &name) const;
   void describePrivs(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
 		     const QString &name) const;
   void describeIOT(toExtract &ext,std::list<QString> &lst,std::list<QString> &ctx,
@@ -2821,7 +2821,6 @@ void toOracleExtract::describeAttributes(toExtract &ext,
 void toOracleExtract::describeComments(toExtract &ext,
 				       std::list<QString> &lst,
 				       std::list<QString> &ctx,
-				       const QString &schema,
 				       const QString &owner,
 				       const QString &name) const
 {
@@ -2881,7 +2880,7 @@ void toOracleExtract::describeIOT(toExtract &ext,
   toQList storage=toQuery::readQueryNull(CONNECTION,SQLIOTInfo,name,owner);
 
   describeTableText(ext,lst,ctx,storage,schema,owner,name);
-  describeComments(ext,lst,ctx,schema,owner,name);
+  describeComments(ext,lst,ctx,owner,name);
   if (ext.getStorage()) {
     toQList overflow=toQuery::readQueryNull(CONNECTION,segments(ext,SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
@@ -3166,7 +3165,7 @@ void toOracleExtract::describePartitionedIOT(toExtract &ext,
     addDescription(lst,cctx);
     describePartitions(ext,lst,cctx,owner,index,"NONE","IOT");
   }
-  describeComments(ext,lst,ctx,schema,owner,name);
+  describeComments(ext,lst,ctx,owner,name);
   if (ext.getStorage()) {
     toQList overflow=toQuery::readQueryNull(CONNECTION,segments(ext,SQLOverflowInfo),name,owner);
     if (overflow.size()==18) {
@@ -3298,7 +3297,7 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
     }
   }
 
-  describeComments(ext,lst,ctx,schema,owner,name);
+  describeComments(ext,lst,ctx,owner,name);
 }
 
 void toOracleExtract::describeSource(toExtract &ext,
@@ -5313,12 +5312,13 @@ void toOracleExtract::describeConstraint(toExtract &ext,
     ctx.insert(ctx.end(),"CONSTRAINT");
     ctx.insert(ctx.end(),QUOTE(name));
 
-    QString ret;
+    QString ret=type;
     if (tchr=="C") {
-      ret+="CHECK (";
+      ret+=" (";
       ret+=search;
       ret+=")";
     } else {
+      ret+=" ";
       ret+=constraintColumns(ext,owner,name).simplifyWhiteSpace();
 
       if (tchr=="R") {
@@ -5334,11 +5334,14 @@ void toOracleExtract::describeConstraint(toExtract &ext,
     }
     addDescription(lst,ctx,"DEFINITION",ret);
 
+    if (status.startsWith("ENABLE"))
+      status="ENABLED";
+
     if (CONNECTION.version()<"8")
       ret=status;
     else {
-      ret=defferable;
-      ret+="\nINITIALLY ";
+      addDescription(lst,ctx,"STATUS",defferable);
+      ret="INITIALLY ";
       ret+=deffered;
       addDescription(lst,ctx,"STATUS",ret);
       ret=status;
@@ -5741,7 +5744,7 @@ void toOracleExtract::describeTable(toExtract &ext,
 
   toQList result=toQuery::readQueryNull(CONNECTION,segments(ext,SQLTableInfo),name,owner);
   describeTableText(ext,lst,ctx,result,schema,owner,name);
-  describeComments(ext,lst,ctx,schema,owner,name);
+  describeComments(ext,lst,ctx,owner,name);
 }
 
 void toOracleExtract::describeTableFamily(toExtract &ext,
@@ -6039,7 +6042,7 @@ void toOracleExtract::describeView(toExtract &ext,
   addDescription(lst,ctx);
   QString text=toShift(source);
   addDescription(lst,ctx,"AS",text.simplifyWhiteSpace());
-  describeComments(ext,lst,ctx,schema,owner,name);
+  describeComments(ext,lst,ctx,owner,name);
 
   toQuery query(CONNECTION,"SELECT * FROM "+QUOTE(owner)+"."+QUOTE(name)+" WHERE NULL = NULL");
 

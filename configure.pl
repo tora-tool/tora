@@ -72,6 +72,7 @@ my @source=(
 	    "tosyntaxsetup",
 	    "tosyntaxsetupui",
 	    "totemplateprovider",
+	    "totextview",
 	    "tothread",
 	    "totool",
 	    "totoolsettingui",

@@ -174,6 +174,7 @@ API=	\
 	tosql.h			\
 	tosqlparse.h		\
 	totemplate.h		\
+	totextview.h		\
 	tothread.h		\
 	totool.h		\
 	tovisualize.h		\
@@ -290,6 +291,7 @@ SOURCES=\
 	totemplateeditui.cpp \
 	totemplateprovider.cpp \
 	totemplatesetupui.cpp \
+	totextview.cpp \
 	tothread.cpp \
 	totool.cpp \
 	totoolsettingui.cpp \
@@ -615,6 +617,7 @@ tora:\
 	objs/tosyntaxsetup.o \
 	objs/tosyntaxsetupui.o \
 	objs/totemplateprovider.o \
+	objs/totextview.o \
 	objs/tothread.o \
 	objs/totool.o \
 	objs/totoolsettingui.o \

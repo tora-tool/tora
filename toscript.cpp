@@ -43,6 +43,7 @@
 #include "toscript.h"
 #include "toscriptui.h"
 #include "tosql.h"
+#include "totextview.h"
 #include "totool.h"
 #include "toworksheet.h"
 
@@ -192,7 +193,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   SearchList->setRootIsDecorated(true);
   SearchList->setSorting(0);
   SearchList->hide();
-  Report=new QTextView(box);
+  Report=new toTextView(box);
   Report->hide();
 
   DropList=new toListView(hsplitter);
