@@ -65,7 +65,13 @@
 #ifndef __TORESULTPLAN_H
 #define __TORESULTPLAN_H
 
+#include <map>
+
+#include <qtimer.h>
+
 #include "toresultview.h"
+
+class toNoBlockQuery;
 
 /** This widget displays the execution plan of a statement. The statement
  * is identified by the first parameter which should be the address as gotten
@@ -74,12 +80,25 @@
 
 class toResultPlan : public toResultView {
   Q_OBJECT
+
+  QString Ident;
+  std::map <QString,QListViewItem *> Parents;
+  std::map <QString,QListViewItem *> Last;
+  QListViewItem *LastTop;
+  bool Reading;
+  toNoBlockQuery *Query;
+  QTimer Poll;
+  void checkException(const QString &);
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
   toResultPlan(QWidget *parent,const char *name=NULL);
+
+  /** Destruct object
+   */
+  ~toResultPlan();
 
   /** Reimplemented for internal reasons.
    */
@@ -91,6 +110,8 @@ public:
   /** Support Oracle
    */
   virtual bool canHandle(toConnection &conn);
+private slots:
+  void poll();
 };
 
 #endif

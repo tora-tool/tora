@@ -116,8 +116,7 @@ public:
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    */
-  virtual void changeParams(const QString &Param1)
-  { toQList params; params.insert(Params.end(),toQValue(Param1)); query(SQL,params); }
+  virtual void changeParams(const QString &Param1);
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    * @param Param1 Second parameter.

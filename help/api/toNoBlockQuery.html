@@ -46,9 +46,11 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref25">readValue</A></b> (void) 
 </LI>
-<LI>int &nbsp;<b><A HREF="#ref26">rowsProcessed</A></b> (void) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref26">readValueNull</A></b> (void) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref27">eof</A></b> (void) 
+<LI>int &nbsp;<b><A HREF="#ref27">rowsProcessed</A></b> (void) 
+</LI>
+<LI>bool &nbsp;<b><A HREF="#ref28">eof</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is class to be able to run a query in the background without
  blocking until a response is available from OCI.
@@ -104,12 +106,17 @@
 </p>
 <p><b>Returns</b>: The next available value.
    </p>
-<A NAME="rowsProcessed"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>rowsProcessed</strong> (void)
+<A NAME="readValueNull"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>readValueNull</strong> (void)
+<br></td><td align="right"><h3><strong>readValueNull</strong></h3></td></tr></table><p></p><p> Read the next value from the query. Don't send NULL as string.
+</p>
+<p><b>Returns</b>: The next available value.
+   </p>
+<A NAME="rowsProcessed"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>rowsProcessed</strong> (void)
 <br></td><td align="right"><h3><strong>rowsProcessed</strong></h3></td></tr></table><p></p><p> Get the number of rows processed.
 </p>
 <p><b>Returns</b>: Number of rows processed.
    </p>
-<A NAME="eof"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
+<A NAME="eof"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>eof</strong> (void)
 <br></td><td align="right"><h3><strong>eof</strong></h3></td></tr></table><p></p><p> Check if at end of query.
 </p>
 <p><b>Returns</b>: True if query is done.

@@ -75,7 +75,7 @@ void toNoBlockQuery::queryTask::run(void)
       for (;;) {
 	for (int i=0;i<Length;i++) {
 	  TO_DEBUGOUT("Reading value\n");
-	  toQValue value(Parent.Query.readValue());
+	  toQValue value(Parent.Query.readValueNull());
 	  {
 	    TO_DEBUGOUT("Locking parent\n");
 	    toLocker lock(Parent.Lock);
@@ -135,7 +135,7 @@ void toNoBlockQuery::queryTask::run(void)
   TO_DEBUGOUT("Done\n");
 }
 
-QString toNoBlockQuery::readValue()
+QString toNoBlockQuery::readValueNull()
 {
   if (CurrentValue==Values.end()) {
     TO_DEBUGOUT("Waiting for running\n");
@@ -160,6 +160,13 @@ QString toNoBlockQuery::readValue()
   return ret;
 }
 
+QString toNoBlockQuery::readValue()
+{
+  QString ret=readValueNull();
+  if (ret.isNull())
+    ret="{null}";
+  return ret;
+}
 
 toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
 			       const toQList &param,toResultStats *stats)

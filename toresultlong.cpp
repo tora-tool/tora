@@ -69,8 +69,9 @@ toResultLong::toResultLong(QWidget *parent,const char *name)
 
 void toResultLong::query(const QString &sql,const toQList &param)
 {
+  if (!setSQLParams(sql,param))
+    return;
   stop();
-  setSQL(sql);
   Query=NULL;
   LastItem=NULL;
   RowNumber=0;
@@ -88,21 +89,26 @@ void toResultLong::query(const QString &sql,const toQList &param)
   try {
     Query=new toNoBlockQuery(connection(),Mode,sql,param,Statistics);
 
-    MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
+    if (ReadAll)
+      MaxNumber=-1;
+    else
+      MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
   } catch (const toConnection::exception &str) {
     emit firstResult(toResult::sql(),str);
     emit done();
-    throw;
+    if (Mode!=toQuery::Long)
+      toStatusMessage(str);
   } catch (const QString &str) {
     emit firstResult(toResult::sql(),str);
     emit done();
-    throw;
+    if (Mode!=toQuery::Long)
+      toStatusMessage(str);
   }
   updateContents();
 }
 
-#define TO_POLL_CHECK 500
+#define TO_POLL_CHECK 100
 
 void toResultLong::readAll(void)
 {
@@ -169,7 +175,7 @@ void toResultLong::addItem(void)
 	      LastItem->setText(cols,QString::number(RowNumber));
 	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
 	      LastItem->setText(j+disp,Query->readValue());
-	  } while(Query->poll()&&!Query->eof()&&MaxNumber>RowNumber);
+	  } while(Query->poll()&&!Query->eof()&&(MaxNumber<0||MaxNumber>RowNumber));
 	}
 	if (em) {
 	  First=false;
@@ -193,6 +199,8 @@ void toResultLong::addItem(void)
     if (First) {
       emit firstResult(sql(),str);
       First=false;
+      if (Mode!=toQuery::Long)
+	toStatusMessage(str);
     } else
       toStatusMessage(str);
     cleanup();
@@ -200,6 +208,8 @@ void toResultLong::addItem(void)
     if (First) {
       emit firstResult(sql(),str);
       First=false;
+      if (Mode!=toQuery::Long)
+	toStatusMessage(str);
     } else
       toStatusMessage(str);
     cleanup();

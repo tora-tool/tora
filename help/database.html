@@ -18,6 +18,11 @@ or not at all while reading many lines. It will also keep the entire result in m
 the <B>All</B> box and reading a really large table could bring your machine to it's knees.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Don't reread data if query is exactly same.</B>
+</TR></TD>If checked TOra will not refresh a query if it is reexecuted exactly the same two times in a row.
+This is mainly usefull in the schema browser when you have a slow connection and need to switch between
+tabs a lot.
+<TR><TD VALIGN=top>
 <B>Maximum size display</B></TD>
 <TD VALIGN=top>The maximum width a list column will get automatically regardless of how large the content
 is. This is so you can still see the rest of the columns even if one of the first can contain

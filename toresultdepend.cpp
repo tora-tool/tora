@@ -90,26 +90,6 @@ toResultDepend::~toResultDepend()
   delete Query;
 }
 
-void toResultDepend::addChilds(QListViewItem *item)
-{
-  try {
-    toQuery query(connection(),sql(),item->text(0),item->text(1));
-    QListViewItem *last=NULL;
-    while(!query.eof()) {
-      QString owner=query.readValue();
-      QString name=query.readValue();
-      bool old=exists(owner,name);
-      last=new QListViewItem(item,last);
-      last->setText(0,owner);
-      last->setText(1,name);
-      for (int i=2;i<query.columns();i++)
-	last->setText(i,query.readValue());
-      if (!old)
-	addChilds(last);
-    }
-  } TOCATCH
-}
-
 bool toResultDepend::exists(const QString &owner,const QString &name)
 {
   QListViewItem *item=firstChild();
@@ -152,7 +132,6 @@ void toResultDepend::query(const QString &sql,const toQList &param)
 			     param);
     Poll.start(100);
   } TOCATCH
-
 }
 
 void toResultDepend::poll(void)
@@ -162,12 +141,19 @@ void toResultDepend::poll(void)
       int cols=Query->describe().size();
       while(Query->poll()&&!Query->eof()) {
 	QListViewItem *item;
-	if (Current)
-	  item=new toResultViewItem(this,NULL);
-	else
-	  item=new toResultViewItem(Current,NULL);
-	for(int i=0;i<cols;i++) {
-	  item->setText(i,Query->readValue());
+	QString owner=Query->readValue();
+	QString name=Query->readValue();
+	if (!exists(owner,name)) {
+	  if (!Current)
+	    item=new toResultViewItem(this,NULL,owner);
+	  else
+	    item=new toResultViewItem(Current,NULL,owner);
+	  item->setText(1,name);
+	  for(int i=2;i<cols;i++)
+	    item->setText(i,Query->readValue());
+	} else {
+	  for(int i=2;i<cols;i++)
+	    Query->readValue();
 	}
       }
       if (Query->eof()) {

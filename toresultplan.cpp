@@ -46,6 +46,7 @@
 #include "toconf.h"
 #include "totool.h"
 #include "tosql.h"
+#include "tonoblockquery.h"
 
 #include "toresultplan.moc"
 
@@ -53,6 +54,8 @@ toResultPlan::toResultPlan(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
   setSQLName("toResultPlan");
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+  Query=NULL;
 }
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
@@ -65,12 +68,24 @@ bool toResultPlan::canHandle(toConnection &conn)
   return toIsOracle(conn)||conn.provider()=="MySQL";
 }
 
+toResultPlan::~toResultPlan()
+{
+  delete Query;
+}
+
 void toResultPlan::query(const QString &sql,
 			 const toQList &param)
 {
   if (!handled())
     return;
 
+  if (!setSQLParams(sql,param))
+    return;
+
+  if (Query) {
+    delete Query;
+    Query=NULL;
+  }
   if (connection().provider()=="MySQL") {
     setRootIsDecorated(false);
     setSorting(0);
@@ -104,75 +119,110 @@ void toResultPlan::query(const QString &sql,
 
     conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
 
-    int ident=(int)time(NULL);
+    Ident=(int)time(NULL);
 
     QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = 'Tora %1' INTO %2 FOR %3").
-      arg(ident).arg(planTable).arg(toSQLStripSpecifier(sql));
-    conn.execute(explain);
+      arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
+    Reading=false;
+    toQList par;
+    Query=new toNoBlockQuery(conn,toQuery::Normal,explain,par);
+    Parents.clear();
+    Last.clear();
+    Poll.start(100);
 
-    {
-      std::map <QString,QListViewItem *> parents;
-      std::map <QString,QListViewItem *> last;
-      QListViewItem *lastTop=NULL;
-      toQuery query(conn,toSQL::string(SQLViewPlan,conn).arg(planTable).arg(ident));
-      while(!query.eof()) {
-	QString id=query.readValueNull();
-	QString parentid=query.readValueNull();
-	QString operation=query.readValueNull();
-	QString options=query.readValueNull();
-	QString object=query.readValueNull();
-	QString optimizer=query.readValueNull();
-	QString cost=query.readValueNull();
-	QString bytes=query.readValueNull();
-	QString cardinality=query.readValueNull();
+    LastTop=NULL;
 
-	QListViewItem *item;
-	if (parentid&&parents[parentid]) {
-	  item=new QListViewItem(parents[parentid],last[parentid],
-				 id,
-				 operation,
-				 options,
-				 object,
-				 optimizer,
-				 cost,
-				 bytes,
-				 cardinality);
-	  setOpen(parents[parentid],true);
-	  parents[id]=item;
-	  last[parentid]=item;
-	} else {
-	  item=new QListViewItem(this,lastTop,
-				 id,
-				 operation,
-				 options,
-				 object,
-				 optimizer,
-				 cost,
-				 bytes,
-				 cardinality);
-	  parents[id]=item;
-	  lastTop=item;
+  } catch (const QString &str) {
+    checkException(str);
+  }
+  updateContents();
+}
+
+void toResultPlan::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      if (!Reading) {
+	toQList par;
+	delete Query;
+	Query=NULL;
+	Query=new toNoBlockQuery(connection(),toQuery::Normal,
+				 toSQL::string(SQLViewPlan,connection()).
+				 arg(toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE)).
+				 arg(Ident),par);
+	Reading=true;
+      } else {
+	while(Query->poll()&&!Query->eof()) {
+	  QString id=Query->readValueNull();
+	  QString parentid=Query->readValueNull();
+	  QString operation=Query->readValueNull();
+	  QString options=Query->readValueNull();
+	  QString object=Query->readValueNull();
+	  QString optimizer=Query->readValueNull();
+	  QString cost=Query->readValueNull();
+	  QString bytes=Query->readValueNull();
+	  QString cardinality=Query->readValueNull();
+
+	  QListViewItem *item;
+	  if (parentid&&Parents[parentid]) {
+	    item=new QListViewItem(Parents[parentid],Last[parentid],
+				   id,
+				   operation,
+				   options,
+				   object,
+				   optimizer,
+				   cost,
+				   bytes,
+				   cardinality);
+	    setOpen(Parents[parentid],true);
+	    Parents[id]=item;
+	    Last[parentid]=item;
+	  } else {
+	    item=new QListViewItem(this,LastTop,
+				   id,
+				   operation,
+				   options,
+				   object,
+				   optimizer,
+				   cost,
+				   bytes,
+				   cardinality);
+	    Parents[id]=item;
+	    LastTop=item;
+	  }
+	}
+	if (Query->eof()) {
+	  delete Query;
+	  Query=NULL;
+	  Poll.stop();
+	  QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
+	  connection().execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
 	}
       }
     }
-
-    conn.execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
   } catch (const QString &str) {
-    try {
-      if (str.startsWith("ORA-02404")) {
-	int ret=TOMessageBox::warning(this,
-				      "Plan table doesn't exist",
-				      QString("Specified plan table %1 didn't exist.\n"
-					      "Should TOra try to create it?").arg(planTable),
-				      "&Yes","&No",0,1);
-	if (ret==0) {
-	  connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
-					     connection()).arg(planTable));
-	  query(sql,param);
-	}
-      } else
-	throw;
-    } TOCATCH
+    checkException(str);
   }
-  updateContents();
+}
+
+void toResultPlan::checkException(const QString &str)
+{
+  try {
+    if (str.startsWith("ORA-02404")) {
+      QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
+      int ret=TOMessageBox::warning(this,
+				    "Plan table doesn't exist",
+				    QString("Specified plan table %1 didn't exist.\n"
+					    "Should TOra try to create it?").arg(planTable),
+				    "&Yes","&No",0,1);
+      if (ret==0) {
+	connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
+					   connection()).arg(planTable));
+	QString t=sql();
+	setSQL(QString::null);
+	query(t,params());
+      }
+    } else
+      toStatusMessage(str);
+  } TOCATCH
 }

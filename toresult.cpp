@@ -155,6 +155,13 @@ void toResult::changeParams(const QString &Param1,const QString &Param2)
   query(SQL,params);
 }
 
+void toResult::changeParams(const QString &Param1)
+{
+  toQList params;
+  toPush(params,toQValue(Param1));
+  query(SQL,params);
+}
+
 void toResultObject::connectionChanged(void)
 {
   Result->connectionChanged();
