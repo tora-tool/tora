@@ -42,7 +42,6 @@ Extended functionality:
 * Lots of more template texts including SQL syntax.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
-* Ability to generate into several script (One per object and type) in DB extraction.
 * Printing of toResultItems.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
