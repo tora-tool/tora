@@ -116,6 +116,7 @@
 2001-08-31: Updated keyword list (Thanx Jan Pruner).
 2001-09-02: Sort lists numerical even if last two chars are not digits.
 2001-09-02: Some compilefixes for non KDE and gcc-3.0 support.
+2001-09-03: Added some DBA layouts for browser.
 
 0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 
