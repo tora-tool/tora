@@ -47,12 +47,29 @@
 #include "toconnection.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 // Must be larger than max long size in otl.
 
 #ifndef TO_ORACLE_LONG_SIZE
 #define TO_ORACLE_LONG_SIZE 33000 
 #endif
+
+static toSQL SQLComment("toOracleConnection:Comments",
+			"SELECT Column_name,Comments FROM All_Col_Comments\n"
+			" WHERE Owner = :f1<char[100]>\n"
+			"   AND Table_Name = :f2<char[100]>",
+			"Display column comments");
+
+static toSQL SQLListObjects("toOracleConnection:ListObjects",
+			    "select table_name,owner,null from all_tables\n"
+			    "union\n"
+			    "select view_name,owner,null from all_views\n"
+			    "union\n"
+			    "select table_name,table_owner,synonym_name\n"
+			    "  from all_synonyms where owner in ('PUBLIC',:owner<char[101]>)",
+			    "List the objects to cache for a connection, should have same "
+			    "columns and binds");
 
 static void ThrowException(const otl_exception &exc)
 {
@@ -313,6 +330,58 @@ public:
     oracleConnection(toConnection *conn)
       : toConnection::connectionImpl(conn)
     { }
+
+    virtual std::list<toConnection::tableName> tableNames(void)
+    {
+      std::list<toConnection::tableName> ret;
+      toQuery tables(connection(),SQLListObjects,connection().user());
+      while(!tables.eof()) {
+	toConnection::tableName cur;
+	cur.Name=tables.readValueNull();
+	cur.Owner=tables.readValueNull();
+	cur.Synonym=tables.readValueNull();
+	ret.insert(ret.end(),cur);
+      }
+      return ret;
+    }
+    virtual std::list<toConnection::columnDesc> columnDesc(const toConnection::tableName &table)
+    {
+      std::list<toConnection::columnDesc> ret;
+      std::map<QString,QString> comments;
+      try {
+	toQuery comment(connection(),SQLComment,table.Owner,table.Name);
+	while(!comment.eof()) {
+	  QString col=comment.readValue();
+	  comments[col]=comment.readValueNull();
+	}
+      } catch (...) {
+      }
+
+      try {
+	QString SQL="SELECT * FROM \"";
+	SQL+=table.Owner;
+	SQL+="\".\"";
+	SQL+=table.Name;
+	SQL+="\" WHERE NULL=NULL";
+	toQuery query(connection(),SQL);
+	toQDescList desc=query.describe();
+	toConnection::columnDesc cur;
+	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
+	  QString name=(*j).Name;
+	  cur.Comment=comments[name];
+	  if (name.upper()==name)
+	    name=name.lower();
+	  else
+	    name="\""+name+"\"";
+	  cur.Name=name;
+
+	  toPush(ret,cur);
+	}
+      } catch(...) {
+      }
+
+      return ret;
+    }
 
     virtual void commit(toConnectionSub *sub)
     {

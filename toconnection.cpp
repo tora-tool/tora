@@ -1031,16 +1031,6 @@ const QString &toConnection::provider(void) const
   return Provider.provider();
 }
 
-static toSQL SQLListObjects("toConnection:ListObjects",
-			    "select table_name,owner,null from all_tables\n"
-			    "union\n"
-			    "select view_name,owner,null from all_views\n"
-			    "union\n"
-			    "select table_name,table_owner,synonym_name\n"
-			    "  from all_synonyms where owner in ('PUBLIC',:owner<char[101]>)",
-			    "List the objects to cache for a connection, should have same "
-			    "columns and binds");
-
 void toConnection::readObjects(void)
 {
   try {
@@ -1048,14 +1038,7 @@ void toConnection::readObjects(void)
       toBusy busy;
       toStatusMessage("Reading available objects",true);
       qApp->processEvents();
-      toQuery tables(*this,SQLListObjects,user());
-      while(!tables.eof()) {
-	tableName cur;
-	cur.Name=tables.readValueNull();
-	cur.Owner=tables.readValueNull();
-	cur.Synonym=tables.readValueNull();
-	TableNames.insert(TableNames.end(),cur);
-      }
+      TableNames=Connection->tableNames();
       TableNames.sort();
       toStatusMessage("");
     }
@@ -1082,28 +1065,16 @@ const toConnection::tableName &toConnection::realName(const QString &object)
   throw QString("Object %1 not available for %2").arg(object).arg(user());
 }
 
-std::list<QString> &toConnection::columns(const tableName &table)
+std::list<toConnection::columnDesc> &toConnection::columns(const tableName &table)
 {
-  std::map<tableName,std::list<QString> >::iterator i=ColumnCache.find(table);
-  if (i==ColumnCache.end()) {
+  std::map<tableName,std::list<columnDesc> >::iterator i=ColumnCache.find(table);
+  if (i==ColumnCache.end())
+    ColumnCache[table]=Connection->columnDesc(table);
+
+#if 0
     std::list<QString> cols;
-    QString SQL="SELECT * FROM \"";
-    SQL+=table.Owner;
-    SQL+="\".\"";
-    SQL+=table.Name;
-    SQL+="\" WHERE NULL=NULL";
-    toQuery query(*this,SQL);
-    toQDescList desc=query.describe();
-    for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
-      QString name=(*j).Name;
-      if (name.upper()==name)
-	name=name.lower();
-      else
-	name="\""+name+"\"";
-      toPush(cols,name);
-    }
-    ColumnCache[table]=cols;
-  }
+#endif
+
   return ColumnCache[table];
 }
 
@@ -1121,4 +1092,16 @@ bool toConnection::tableName::operator < (const tableName &nam) const
 bool toConnection::tableName::operator == (const tableName &nam) const
 {
   return Owner==nam.Owner&&Name==nam.Name;
+}
+
+std::list<toConnection::tableName> toConnection::connectionImpl::tableNames(void)
+{
+  std::list<toConnection::tableName> ret;
+  return ret;
+}
+
+std::list<toConnection::columnDesc> toConnection::connectionImpl::columnDesc(const tableName &)
+{
+  std::list<toConnection::columnDesc> ret;
+  return ret;
 }

@@ -386,6 +386,35 @@ class toConnection {
 
 public:
 
+  /** Contain information about a tablename.
+   */
+  struct tableName {
+    /** The object name
+     */
+    QString Name;
+    /** The schema that owns it
+     */
+    QString Owner;
+    /** Synonym name, only available if this is a synonym. The tablename & owner will
+     * point to what it is a synonym for.
+     */
+    QString Synonym;
+
+    bool operator < (const tableName &) const;
+    bool operator == (const tableName &) const;
+  };
+
+  /** Contain information about a column in a table.
+   */
+  struct columnDesc {
+    /** Column name
+     */
+    QString Name;
+    /** Column Description
+     */
+    QString Comment;
+  };
+
   /** This class is an abstract baseclass to actually implement the comunication with the
    * database. 
    * (See also @ref toQuery::queryImpl and @ref toConnectionProvider)
@@ -428,6 +457,16 @@ public:
      */
     virtual connectionImpl *clone(toConnection *newConn) const = 0;
 
+    /** Extract available objects to query for connection.
+     * @return List of available objects.
+     */
+    virtual std::list<tableName> tableNames(void);
+    /** Extract available columns to query for a table.
+     * @param table Table to get column for.
+     * @return List of columns for table.
+     */
+    virtual std::list<toConnection::columnDesc> columnDesc(const tableName &table);
+
     /** Create a new query implementation for this connection.
      * @return A query implementation, allocated with new.
      */
@@ -440,24 +479,6 @@ public:
     virtual void execute(toConnectionSub *conn,const QCString &sql,toQList &params) = 0;
   };
 
-  /** Contain information about a tablename.
-   */
-  struct tableName {
-    /** The object name
-     */
-    QString Name;
-    /** The schema that owns it
-     */
-    QString Owner;
-    /** Synonym name, only available if this is a synonym. The tablename & owner will
-     * point to what it is a synonym for.
-     */
-    QString Synonym;
-
-    bool operator < (const tableName &) const;
-    bool operator == (const tableName &) const;
-  };
-
 private:
 
   void addConnection(void);
@@ -466,7 +487,7 @@ private:
 
   connectionImpl *Connection;
 
-  std::map<tableName,std::list<QString> > ColumnCache;
+  std::map<tableName,std::list<columnDesc> > ColumnCache;
   std::list<tableName> TableNames;
 
   toConnectionSub *mainConnection(void);
@@ -655,7 +676,7 @@ public:
    * and should be fairly fast after the first call. Do not modify the returned list.
    * @return A list of the columns for a table.
    */
-  std::list<QString> &columns(const tableName &table);
+  std::list<columnDesc> &columns(const tableName &table);
   /**
    * Clear the object and column cache.
    */
