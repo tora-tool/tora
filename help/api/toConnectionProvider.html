@@ -26,58 +26,58 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref8">toConnectionProvider</A></b> (const QCString &provider,bool add=true) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref8">toConnectionProvider</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,bool add=true) 
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref9">~toConnectionProvider</A></b> () 
 </LI>
-<LI>virtual  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><i><A HREF="#ref10">provideConnection</A></i></b> (const QCString &provider,
+<LI>virtual  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><i><A HREF="#ref10">provideConnection</A></i></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,
 							  <A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
-<LI>virtual  std::list<QString> &nbsp;<b><A HREF="#ref11">providedHosts</A></b> (const QCString &provider) 
+<LI>virtual  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref11">providedHosts</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
-<LI>virtual  std::list<QString> &nbsp;<b><i><A HREF="#ref12">providedDatabases</A></i></b> (const QCString &provider,
-					       const QString &host,
-					       const QString &user,
-					       const QString &pwd) 
+<LI>virtual  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><i><A HREF="#ref12">providedDatabases</A></i></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref13">initialize</A></b> (void) 
 </LI>
-<LI>virtual  std::list<QString> &nbsp;<b><A HREF="#ref14">providedOptions</A></b> (const QCString &provider) 
+<LI>virtual  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref14">providedOptions</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
-<LI>virtual  <A HREF="#QWidget">QWidget</A> *&nbsp;<b><A HREF="#ref15">providerConfigurationTab</A></b> (const QCString &provider,<A HREF="#QWidget">QWidget</A> *parent) 
+<LI>virtual  <A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref15">providerConfigurationTab</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent) 
 </LI>
-<LI>const QString &&nbsp;<b><A HREF="#ref22">config</A></b> (const QCString &tag,const QCString &def) 
+<LI>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref22">config</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &tag,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &def) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref23">setConfig</A></b> (const QCString &tag,const QCString &value) 
+<LI>void &nbsp;<b><A HREF="#ref23">setConfig</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &tag,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &value) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="#QWidget">QWidget</A> *&nbsp;<b><A HREF="#ref16">configurationTab</A></b> (const QCString &provider,<A HREF="#QWidget">QWidget</A> *parent) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref16">configurationTab</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent) 
 </LI>
-<LI>static  std::list<QCString> &nbsp;<b><A HREF="#ref17">providers</A></b> () 
+<LI>static  std::list<<A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A>> &nbsp;<b><A HREF="#ref17">providers</A></b> () 
 </LI>
-<LI>static  std::list<QString> &nbsp;<b><A HREF="#ref18">options</A></b> (const QCString &provider) 
+<LI>static  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref18">options</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
-<LI>static  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><A HREF="#ref19">connection</A></b> (const QCString &provider,<A HREF="toConnection.html">toConnection</A> *conn) 
+<LI>static  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><A HREF="#ref19">connection</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
-<LI>static  std::list<QString> &nbsp;<b><A HREF="#ref20">hosts</A></b> (const QCString &provider) 
+<LI>static  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref20">hosts</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
-<LI>static  std::list<QString> &nbsp;<b><A HREF="#ref21">databases</A></b> (const QCString &provider,const QString &host,
-				      const QString &user,const QString &pwd) 
+<LI>static  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref21">databases</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,
+				      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd) 
 </LI>
 <LI>static  void &nbsp;<b><A HREF="#ref24">initializeAll</A></b> (void) 
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref6">addProvider</A></b> (const QCString &provider) 
+</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref6">addProvider</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref7">removeProvider</A></b> (const QCString &provider) 
+<LI>void &nbsp;<b><A HREF="#ref7">removeProvider</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is used to implement new database providers.
  </p>
-<A NAME="addProvider"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addProvider</strong> (const QCString &provider)
+<A NAME="addProvider"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addProvider</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>addProvider</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Add a provider to the list that this provider can handle.
    </p>
-<A NAME="removeProvider"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removeProvider</strong> (const QCString &provider)
+<A NAME="removeProvider"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removeProvider</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>removeProvider</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Remove a provider from the list that this provider can handle.
    </p>
-<A NAME="toConnectionProvider"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnectionProvider</strong> (const QCString &provider,bool add=true)
+<A NAME="toConnectionProvider"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnectionProvider</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,bool add=true)
 <br></td><td align="right"><h3><strong>toConnectionProvider</strong></h3></td></tr></table><p></p><p> Create a new provider with the specified name.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -87,7 +87,7 @@
 <A NAME="~toConnectionProvider"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toConnectionProvider</strong> ()
 <br></td><td align="right"><h3><strong>~toConnectionProvider</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destructor.
    </p>
-<A NAME="provideConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<i><strong>provideConnection</strong></i> (const QCString &provider,
+<A NAME="provideConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<i><strong>provideConnection</strong></i> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,
 							  <A HREF="toConnection.html">toConnection</A> *conn)
 <br></td><td align="right"><h3><i><strong>provideConnection</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create an implementation of a connection to this database.
 </p>
@@ -99,15 +99,15 @@
 </TABLE></P>
 <p><b>Returns</b>: A connection implementation created with new.
    </p>
-<A NAME="providedHosts"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>providedHosts</strong> (const QCString &provider)
+<A NAME="providedHosts"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>providedHosts</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>providedHosts</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> List the available hosts this database provider knows about.
 </p>
 <p><b>Returns</b>: A list of hosts.
    </p>
-<A NAME="providedDatabases"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<i><strong>providedDatabases</strong></i> (const QCString &provider,
-					       const QString &host,
-					       const QString &user,
-					       const QString &pwd)
+<A NAME="providedDatabases"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<i><strong>providedDatabases</strong></i> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,
+					       const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd)
 <br></td><td align="right"><h3><i><strong>providedDatabases</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> List the available databases this provider knows about for a given host.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -124,13 +124,13 @@
 <br></td><td align="right"><h3><strong>initialize</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Will be called after program has been started and before connections have been opened.
   Use for initialization.
    </p>
-<A NAME="providedOptions"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>providedOptions</strong> (const QCString &provider)
+<A NAME="providedOptions"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>providedOptions</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>providedOptions</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get a list of options available for the connection. An option with the name
  "-" indicates a break should be made to separate the rest of the options from the previous
  options. An option preceeded by "*" means selected by default. The * shoul be stripped before
  before passing it to the connection call.
    </p>
-<A NAME="providerConfigurationTab"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#QWidget">QWidget</A> *&nbsp;<strong>providerConfigurationTab</strong> (const QCString &provider,<A HREF="#QWidget">QWidget</A> *parent)
+<A NAME="providerConfigurationTab"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *&nbsp;<strong>providerConfigurationTab</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>providerConfigurationTab</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
  Create and return configuration tab for this connectiontype. The returned widget should also
  be a childclass of <A HREF="toSettingTab.html">toSettingTab</A>.
@@ -139,16 +139,16 @@
 <p><b>Returns</b>: A pointer to the widget containing the setup tab for this tool or NULL of
  no settings are available.
    </p>
-<A NAME="configurationTab"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#QWidget">QWidget</A> *&nbsp;<strong>configurationTab</strong> (const QCString &provider,<A HREF="#QWidget">QWidget</A> *parent)
+<A NAME="configurationTab"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *&nbsp;<strong>configurationTab</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="/usr/lib/qt3/doc/html/qwidget.html">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>configurationTab</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of names for providers.
    </p>
-<A NAME="providers"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QCString> &nbsp;<strong>providers</strong> ()
+<A NAME="providers"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A>> &nbsp;<strong>providers</strong> ()
 <br></td><td align="right"><h3><strong>providers</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of names for providers.
    </p>
-<A NAME="options"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>options</strong> (const QCString &provider)
+<A NAME="options"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>options</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>options</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of options for a given provider.
    </p>
-<A NAME="connection"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<strong>connection</strong> (const QCString &provider,<A HREF="toConnection.html">toConnection</A> *conn)
+<A NAME="connection"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<strong>connection</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,<A HREF="toConnection.html">toConnection</A> *conn)
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Implement a connection for a given provider.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -157,11 +157,11 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create implementation for.
    </TD></TR>
 </TABLE></P>
-<A NAME="hosts"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>hosts</strong> (const QCString &provider)
+<A NAME="hosts"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>hosts</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider)
 <br></td><td align="right"><h3><strong>hosts</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of hosts this provider knows about.
    </p>
-<A NAME="databases"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<QString> &nbsp;<strong>databases</strong> (const QCString &provider,const QString &host,
-				      const QString &user,const QString &pwd)
+<A NAME="databases"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &nbsp;<strong>databases</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &provider,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &host,
+				      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &user,const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &pwd)
 <br></td><td align="right"><h3><strong>databases</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of databases for a given provider and host.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -176,7 +176,7 @@
 </TABLE></P>
 <p><b>Returns</b>: List of known databases.
    </p>
-<A NAME="config"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QString &&nbsp;<strong>config</strong> (const QCString &tag,const QCString &def)
+<A NAME="config"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &&nbsp;<strong>config</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &tag,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &def)
 <br></td><td align="right"><h3><strong>config</strong></h3></td></tr></table><p></p><p>
  Get connection specific settings.
 </p>
@@ -192,7 +192,7 @@
 <TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Contents of this setting.
    </TD></TR>
 </TABLE></P>
-<A NAME="setConfig"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConfig</strong> (const QCString &tag,const QCString &value)
+<A NAME="setConfig"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConfig</strong> (const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &tag,const <A HREF="/usr/lib/qt3/doc/html/qcstring.html">QCString</A> &value)
 <br></td><td align="right"><h3><strong>setConfig</strong></h3></td></tr></table><p></p><p>
  Change connectionspecific setting. Depending on the implementation this can change the
  contents on disk or not.
@@ -214,7 +214,7 @@
    </p>
 <HR>
 	<table>
-	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
 	</table>
 </BODY>
 </HTML>

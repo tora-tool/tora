@@ -34,49 +34,49 @@
 <LI>virtual  void &nbsp;<b><A HREF="#ref5">initialize</A></b> (<A HREF="toExtract.html">toExtract</A> &ext)  const
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref6">create</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			<A HREF="#QTextStream">QTextStream</A> &stream,
-			const QString &type,
-			const QString &schema,
-			const QString &owner,
-			const QString &name)  const
+			<A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)  const
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref7">describe</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			  std::list<QString> &lst,
-			  const QString &type,
-			  const QString &schema,
-			  const QString &owner,
-			  const QString &name)  const
+			  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &lst,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)  const
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref8">migrate</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			 <A HREF="#QTextStream">QTextStream</A> &stream,
-			 const QString &type,
-			 std::list<QString> &src,
-			 std::list<QString> &dst)  const
+			 <A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			 std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &src,
+			 std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &dst)  const
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref9">drop</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-		      <A HREF="#QTextStream">QTextStream</A> &stream,
-		      const QString &type,
-		      const QString &schema,
-		      const QString &owner,
-		      const QString &name)  const
+		      <A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)  const
 </LI>
 <LI>virtual  std::list<datatype> &nbsp;<b><A HREF="#ref10">datatypes</A></b> ()  const
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref1">registerExtract</A></b> (const QString &db,
-			 const QString &oper,
-			 const QString &type) 
+</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref1">registerExtract</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &db,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &oper,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref2">unregisterExtract</A></b> (const QString &db,
-			   const QString &oper,
-			   const QString &type) 
+<LI>void &nbsp;<b><A HREF="#ref2">unregisterExtract</A></b> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &db,
+			   const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &oper,
+			   const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is an abstract class to implement part of an extractor for a database. Observe
  that an extractor must be stateless and threadsafe except for constructors and
  destructors. Use the toExtract::context function for saving context.
    </p>
-<A NAME="registerExtract"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>registerExtract</strong> (const QString &db,
-			 const QString &oper,
-			 const QString &type)
+<A NAME="registerExtract"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>registerExtract</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &db,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &oper,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type)
 <br></td><td align="right"><h3><strong>registerExtract</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Register an operation to be handled by this extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -88,9 +88,9 @@
 <TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">The type of object that this is implemented for. Database specific.
      </TD></TR>
 </TABLE></P>
-<A NAME="unregisterExtract"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>unregisterExtract</strong> (const QString &db,
-			   const QString &oper,
-			   const QString &type)
+<A NAME="unregisterExtract"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>unregisterExtract</strong> (const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &db,
+			   const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &oper,
+			   const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type)
 <br></td><td align="right"><h3><strong>unregisterExtract</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Unregister an operation to be handled by this extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -122,11 +122,11 @@
      </TD></TR>
 </TABLE></P>
 <A NAME="create"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>create</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			<A HREF="#QTextStream">QTextStream</A> &stream,
-			const QString &type,
-			const QString &schema,
-			const QString &owner,
-			const QString &name)
+			<A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+			const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to recreate a database object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -148,11 +148,11 @@
 <p><b>Returns</b>: A string containing a script to recreate an object.
      </p>
 <A NAME="describe"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>describe</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			  std::list<QString> &lst,
-			  const QString &type,
-			  const QString &schema,
-			  const QString &owner,
-			  const QString &name)
+			  std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &lst,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+			  const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to describe a database object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -172,10 +172,10 @@
      </TD></TR>
 </TABLE></P>
 <A NAME="migrate"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>migrate</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			 <A HREF="#QTextStream">QTextStream</A> &stream,
-			 const QString &type,
-			 std::list<QString> &src,
-			 std::list<QString> &dst)
+			 <A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+			 const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+			 std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &src,
+			 std::list<<A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A>> &dst)
 <br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to migrate a database object from one description to
  another description.
 </p>
@@ -192,11 +192,11 @@
 <p><b>Returns</b>: A script to change the src database object to dst.
      </p>
 <A NAME="drop"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>drop</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-		      <A HREF="#QTextStream">QTextStream</A> &stream,
-		      const QString &type,
-		      const QString &schema,
-		      const QString &owner,
-		      const QString &name)
+		      <A HREF="/usr/lib/qt3/doc/html/qtextstream.html">QTextStream</A> &stream,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &type,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &schema,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &owner,
+		      const <A HREF="/usr/lib/qt3/doc/html/qstring.html">QString</A> &name)
 <br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to drop an object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -220,7 +220,7 @@
      </p>
 <HR>
 	<table>
-	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:24:59 2005, using kdoc 2.0a54.</small></td></tr>
+	<tr><td><small>Generated by: nneul on skyhawk on Wed Feb 23 19:49:58 2005, using kdoc 2.0a54.</small></td></tr>
 	</table>
 </BODY>
 </HTML>
