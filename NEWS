@@ -7,6 +7,7 @@
 2001-07-12: Fixed a workaround for the Qt layout bug on maximized windows.
 2001-07-12: Fixed rpm packaging problem.
 2001-07-12: Fixed spell error in rpm category.
+2001-07-12: Added msvcrt.dll to windows installation.
 
 0.13: Released 2001-07-11
 

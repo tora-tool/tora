@@ -20,6 +20,7 @@ Extended functionality:
 * Implement migration, resize and report in toScript.
 * Lots of more template texts including hints and SQL syntax.
 * Datafiles & tablespaces in DB browser.
+* DB Links in DB browser.
 * Display execution type of statements (Until first response if not next option).
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
