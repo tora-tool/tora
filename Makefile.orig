@@ -51,6 +51,7 @@ SOURCES=\
 	tobrowserconstraintui.cpp	\
 	tobrowserfilterui.cpp	        \
 	tobrowserindexui.cpp	        \
+	tobrowsertableui.cpp	        \
 	toconnection.cpp	        \
 	tocurrent.cpp		        \
 	tochangeconnection.cpp	        \
@@ -188,7 +189,8 @@ plugins/tobrowser.tso:\
 	objs/tobrowser.o \
 	objs/tobrowserconstraintui.o \
 	objs/tobrowserfilterui.o \
-	objs/tobrowserindexui.o
+	objs/tobrowserindexui.o \
+	objs/tobrowsertableui.o
 plugins/tocharts.tso:\
 	objs/tobarchart.o \
 	objs/tolinechart.o \

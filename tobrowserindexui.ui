@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>596</width>
+            <width>588</width>
             <height>480</height>
         </rect>
     </property>
@@ -157,7 +157,7 @@
             </property>
             <property>
                 <name>buddy</name>
-                <cstring>UniqueCols</cstring>
+                <cstring>Cols</cstring>
             </property>
         </widget>
         <widget row="2"  column="0"  rowspan="1"  colspan="4" >
@@ -190,11 +190,11 @@
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>RadioButton1</cstring>
+                        <cstring>RadioButton4</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Primary key</string>
+                        <string>Normal</string>
                     </property>
                     <property stdset="1">
                         <name>checked</name>
@@ -209,11 +209,11 @@
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>RadioButton2</cstring>
+                        <cstring>RadioButton1</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Unique</string>
+                        <string>Primary key</string>
                     </property>
                     <property stdset="1">
                         <name>buttonGroupId</name>
@@ -224,11 +224,30 @@
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>RadioButton2_2</cstring>
+                        <cstring>RadioButton2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Unique</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>2</number>
+                    </property>
+                </widget>
+                <widget row="0"  column="3" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>BitmapType</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
                         <string>Bitmap</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>3</number>
                     </property>
                 </widget>
             </grid>
@@ -290,6 +309,6 @@
     <tabstop>ToolButton1</tabstop>
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton2</tabstop>
-    <tabstop>RadioButton2_2</tabstop>
+    <tabstop>BitmapType</tabstop>
 </tabstops>
 </UI>

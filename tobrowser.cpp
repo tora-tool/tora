@@ -76,6 +76,7 @@
 #include "tobrowserfilterui.moc"
 #include "tobrowserindexui.moc"
 #include "tobrowserconstraintui.moc"
+#include "tobrowsertableui.moc"
 
 #include "icons/tobrowser.xpm"
 #include "icons/refresh.xpm"

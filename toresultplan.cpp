@@ -36,10 +36,7 @@
 
 #include <stdio.h>
 #include <map>
-
-#ifdef WIN32
 #include <time.h>
-#endif
 
 #include <qmessagebox.h>
 

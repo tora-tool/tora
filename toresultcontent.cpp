@@ -281,7 +281,7 @@ void toResultContentEditor::deleteCurrent()
       sql+=head->label(i);
       if (!mysql)
 	sql+="\" ";
-      if (text(currentRow(),i))
+      if (!text(currentRow(),i))
 	sql+=" IS NULL";
       else {
 	sql+="= :c";
@@ -307,13 +307,16 @@ void toResultContentEditor::deleteCurrent()
 	conn.setNeedCommit();
     } TOCATCH
   }
-  for (int row=currentRow()+1;row<numRows();row++)
+  int crow=currentRow();
+  for (int row=crow+1;row<numRows();row++)
     swapRows(row-1,row);
-  if (currentRow()<Row)
+  if (crow<Row)
     Row--;
   else
     setNumRows(Row);
+
   setNumRows(Row+1);
+  setCurrentCell(crow,0);
 }
 
 void toResultContentEditor::saveUnsaved()
@@ -517,6 +520,7 @@ void toResultContentEditor::focusOutEvent (QFocusEvent *e)
 #define TORESULT_MEMO     3
 #define TORESULT_READ_ALL 4
 #define TORESULT_EXPORT   5
+#define TORESULT_DELETE	  6
 
 void toResultContentEditor::displayMenu(const QPoint &p)
 {
@@ -531,8 +535,10 @@ void toResultContentEditor::displayMenu(const QPoint &p)
       Menu->insertItem("&Copy",TORESULT_COPY);
       Menu->insertItem("&Paste",TORESULT_PASTE);
       Menu->insertItem("&Display in editor",TORESULT_MEMO);
-      Menu->insertItem("Export to file",TORESULT_EXPORT);
       Menu->insertSeparator();
+      Menu->insertItem("&Delete record",TORESULT_DELETE);
+      Menu->insertSeparator();
+      Menu->insertItem("Export to file",TORESULT_EXPORT);
       Menu->insertItem("Read all",TORESULT_READ_ALL);
       connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
     }
@@ -583,6 +589,10 @@ void toResultContentEditor::menuCallback(int cmd)
       }
       setText(MenuRow,MenuColumn,clip->text());
     }
+    break;
+  case TORESULT_DELETE:
+    setCurrentCell(MenuRow,0);
+    deleteCurrent();
     break;
   case TORESULT_MEMO:
     displayMemo();

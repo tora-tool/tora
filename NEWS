@@ -19,6 +19,8 @@
 2001-09-12: Added support for MySQL in explain plan.
 2001-09-12: Added note that gnu make must be used.
 2001-09-12: Updates to the INSTALL file for 1.1 changes of the install.
+2001-09-13: Fixed problem with deleting rows in toResultContent.
+2001-09-13: Fixed problem with missing time.h header for solaris.
 
 1.1.0: Released 2001-09-09
 
