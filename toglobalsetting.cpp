@@ -76,6 +76,14 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   ListScale->setText(toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
+  IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
+
+  QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
+  if (typ=="KB")
+    SizeUnit->setCurrentItem(1);
+  else if (typ=="MB")
+    SizeUnit->setCurrentItem(2);
+
 #ifdef ENABLE_QT_XFT
   AntialiaseFonts->setChecked(toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT)=="true");
 #else
@@ -148,15 +156,17 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());
   toTool::globalSetConfig(CONF_LIST_SCALE,ListScale->text());
-#ifdef ENABLE_STYLE
-  toTool::globalSetConfig(CONF_STYLE,Style->currentText());
-  toSetSessionType(Style->currentText());
-#endif
   toTool::globalSetConfig(CONF_SAVE_PWD,SavePassword->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_LONG_SESSION,LongSession->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DESKTOP_AWARE,DesktopAware->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_SIZE_UNIT,SizeUnit->currentText());
+#ifdef ENABLE_STYLE
+  toTool::globalSetConfig(CONF_STYLE,Style->currentText());
+  toSetSessionType(Style->currentText());
+#endif
 #ifdef ENABLE_QT_XFT
   toTool::globalSetConfig(CONF_QT_XFT,AntialiaseFonts->isChecked()?"true":"false");
 #endif

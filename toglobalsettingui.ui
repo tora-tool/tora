@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>389</width>
+            <width>377</width>
             <height>401</height>
         </rect>
     </property>
@@ -175,7 +175,7 @@
                 <x>10</x>
                 <y>115</y>
                 <width>381</width>
-                <height>220</height>
+                <height>260</height>
             </rect>
         </property>
         <property stdset="1">
@@ -193,22 +193,6 @@
                 <rect>
                     <x>280</x>
                     <y>20</y>
-                    <width>88</width>
-                    <height>22</height>
-                </rect>
-            </property>
-        </widget>
-        <widget>
-            <class>QComboBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Style</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>60</y>
                     <width>88</width>
                     <height>22</height>
                 </rect>
@@ -243,34 +227,6 @@ Will leave the password unencryptet in the config file.</string>
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>StyleLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>65</y>
-                    <width>90</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Style</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Style</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>The style to use for the user interface.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
                 <cstring>TextLabel3</cstring>
             </property>
             <property stdset="1">
@@ -293,127 +249,6 @@ Will leave the password unencryptet in the config file.</string>
             <property>
                 <name>toolTip</name>
                 <string>Scale with which to print lists and tables.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>RefreshLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>145</y>
-                    <width>80</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Refresh</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Default refreshtime in tools.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QSpinBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Status</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>280</x>
-                    <y>100</y>
-                    <width>90</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>suffix</name>
-                <string> seconds</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>StatusLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>180</x>
-                    <y>105</y>
-                    <width>90</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Status &amp;message</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Status</cstring>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>LongSession</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>65</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Long sessions</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Open new connections to the database to prevent
-the interface from locking up when executing.</string>
-            </property>
-        </widget>
-        <widget>
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>AntialiaseFonts</cstring>
-            </property>
-            <property stdset="1">
-                <name>geometry</name>
-                <rect>
-                    <x>10</x>
-                    <y>145</y>
-                    <width>160</width>
-                    <height>19</height>
-                </rect>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Antialiase fonts</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
             </property>
         </widget>
         <widget>
@@ -444,13 +279,37 @@ the interface from locking up when executing.</string>
             <class>QCheckBox</class>
             <property stdset="1">
                 <name>name</name>
+                <cstring>AntialiaseFonts</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>185</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Antialiase fonts</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>DockToolbar</cstring>
             </property>
             <property stdset="1">
                 <name>geometry</name>
                 <rect>
                     <x>10</x>
-                    <y>180</y>
+                    <y>225</y>
                     <width>160</width>
                     <height>19</height>
                 </rect>
@@ -462,6 +321,233 @@ the interface from locking up when executing.</string>
             <property>
                 <name>toolTip</name>
                 <string>Check this if docks are to use toolbars instead of normal frames.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>IncludeDB</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>145</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Include DB in caption</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Include database connection in window captions</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>LongSession</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>10</x>
+                    <y>65</y>
+                    <width>160</width>
+                    <height>19</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Long sessions</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Open new connections to the database to prevent
+the interface from locking up when executing.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>StatusLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>180</x>
+                    <y>65</y>
+                    <width>90</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Status &amp;message</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Status</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The time in seconds temporary messages will be displayed in the status bar. 0 menas keep.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>RefreshLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>180</x>
+                    <y>145</y>
+                    <width>80</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Refresh</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Default refreshtime in tools.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SizeLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>180</x>
+                    <y>105</y>
+                    <width>80</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Size Unit</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>SizeUnite</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Define the unit sizes should be displayed in tora.</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Status</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>280</x>
+                    <y>60</y>
+                    <width>90</width>
+                    <height>23</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>suffix</name>
+                <string> seconds</string>
+            </property>
+        </widget>
+        <widget>
+            <class>QComboBox</class>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Bytes</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>KB</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>MB</string>
+                </property>
+            </item>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SizeUnit</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>280</x>
+                    <y>100</y>
+                    <width>88</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Style</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>280</x>
+                    <y>180</y>
+                    <width>88</width>
+                    <height>22</height>
+                </rect>
+            </property>
+        </widget>
+        <widget>
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>StyleLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>geometry</name>
+                <rect>
+                    <x>180</x>
+                    <y>185</y>
+                    <width>90</width>
+                    <height>16</height>
+                </rect>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Style</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>Style</cstring>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>The style to use for the user interface.</string>
             </property>
         </widget>
     </widget>
@@ -497,8 +583,11 @@ the interface from locking up when executing.</string>
     <tabstop>LongSession</tabstop>
     <tabstop>DesktopAware</tabstop>
     <tabstop>AntialiaseFonts</tabstop>
+    <tabstop>DockToolbar</tabstop>
+    <tabstop>IncludeDB</tabstop>
     <tabstop>ListScale</tabstop>
     <tabstop>Style</tabstop>
     <tabstop>Status</tabstop>
+    <tabstop>SizeUnit</tabstop>
 </tabstops>
 </UI>

@@ -172,6 +172,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
 TODock *toAllocDock(const QString &name,
 		    const QString &db,
 		    const QPixmap &icon);
+int toSizeDecode(const QString &str);
 void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place);
 list<QString> toReadQuery(otl_stream &,list<QString> &args);
 list<QString> toReadQuery(otl_stream &,

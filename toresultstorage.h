@@ -41,6 +41,7 @@
 
 class toResultStorage : public toResultView {
   bool ShowCoalesced;
+  QString Unit;
 public:
   toResultStorage(toConnection &conn,QWidget *parent,const char *name=NULL);
 

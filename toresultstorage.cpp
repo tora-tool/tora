@@ -74,6 +74,7 @@ public:
 toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *name)
   : toResultView(false,false,conn,parent,name)
 {
+  Unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   setAllColumnsShowFocus(true);
   setSorting(-1);
   setRootIsDecorated(true);
@@ -82,9 +83,9 @@ toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *
   addColumn("Enabled");
   addColumn("Contents");
   addColumn("Logging");
-  addColumn("Size (MB)");
-  addColumn("User (MB)");
-  addColumn("Free (MB)");
+  addColumn(QString("Size (%1)").arg(Unit));
+  addColumn(QString("User (%1)").arg(Unit));
+  addColumn(QString("Free (%1)").arg(Unit));
   addColumn("Available");
   addColumn("Coalesced");
   addColumn("Free fragments");
@@ -104,15 +105,16 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 			      "       ' ',\n"
 			      "       a.contents,\n"
 			      "       a.logging,\n"
-			      "       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-			      "       to_char(round(sum(c.user_bytes)/1024/1024,2)),\n"
-			      "       to_char(round(b.total_bytes/1024/1023,2)),\n"
+			      "       to_char(round(sum(c.bytes)/unit,2)),\n"
+			      "       to_char(round(sum(c.user_bytes)/unit,2)),\n"
+			      "       to_char(round(b.total_bytes/unit,2)),\n"
 			      "       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',\n"
 			      "       to_char(round(b.percent_extents_coalesced,1))||'%',\n"
 			      "       to_char(b.total_extents)\n"
 			      "  from dba_tablespaces a,\n"
 			      "       (select * from dba_temp_files union select * from dba_data_files) c,\n"
-			      "       dba_free_space_coalesced b\n"
+			      "       dba_free_space_coalesced b,\n"
+			      "       (select :unit<int> unit from dual) d\n"
 			      " where a.tablespace_name = b.tablespace_name\n"
 			      "   and c.tablespace_name = a.tablespace_name\n"
 			      " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes\n"
@@ -127,15 +129,16 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
 			       "       ' ',\n"
 			       "       a.contents,\n"
 			       "       a.logging,\n"
-			       "       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-			       "       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-			       "       to_char(round(b.total_bytes/1024/1023,2)),\n"
+			       "       to_char(round(sum(c.bytes)/unit,2)),\n"
+			       "       to_char(round(sum(c.bytes)/unit,2)),\n"
+			       "       to_char(round(b.total_bytes/unit,2)),\n"
 			       "       to_char(round(b.total_bytes*100/sum(c.bytes),2))||'%',\n"
 			       "       to_char(round(b.percent_extents_coalesced,1))||'%',\n"
 			       "       to_char(b.total_extents)\n"
 			       "  from dba_tablespaces a,\n"
 			       "       dba_data_files c,\n"
-			       "       dba_free_space_coalesced b\n"
+			       "       dba_free_space_coalesced b,\n"
+			       "       (select :unit<int> unit from dual) d\n"
 			       " where a.tablespace_name = b.tablespace_name\n"
 			       "   and c.tablespace_name = a.tablespace_name\n"
 			       " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.percent_extents_coalesced,b.total_extents,b.total_bytes\n"
@@ -149,15 +152,16 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 				"       ' ',\n"
 				"       a.contents,\n"
 				"       a.logging,\n"
-				"       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-				"       to_char(round(sum(c.user_bytes)/1024/1024,2)),\n"
-				"       to_char(round(b.total_bytes/1024/1023,2)),\n"
+				"       to_char(round(sum(c.bytes)/unit,2)),\n"
+				"       to_char(round(sum(c.user_bytes)/unit,2)),\n"
+				"       to_char(round(b.total_bytes/unit,2)),\n"
 				"       to_char(round(b.total_bytes*100/sum(c.user_bytes),2))||'%',\n"
 				"       '-',\n"
 				"       to_char(b.total_extents)\n"
 				"  from dba_tablespaces a,\n"
 				"       (select * from dba_temp_files union select * from dba_data_files) c,\n"
-				"       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b\n"
+				"       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b,\n"
+				"       (select :unit<int> unit from dual) d\n"
 				" where a.tablespace_name = b.tablespace_name\n"
 				"   and c.tablespace_name = a.tablespace_name\n"
 				" group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes\n"
@@ -172,15 +176,16 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "       ' ',\n"
 				 "       a.contents,\n"
 				 "       a.logging,\n"
-				 "       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-				 "       to_char(round(sum(c.bytes)/1024/1024,2)),\n"
-				 "       to_char(round(b.total_bytes/1024/1023,2)),\n"
+				 "       to_char(round(sum(c.bytes)/unit,2)),\n"
+				 "       to_char(round(sum(c.bytes)/unit,2)),\n"
+				 "       to_char(round(b.total_bytes/unit,2)),\n"
 				 "       to_char(round(b.total_bytes*100/sum(c.bytes),2))||'%',\n"
 				 "       '-',\n"
 				 "       to_char(b.total_extents)\n"
 				 "  from dba_tablespaces a,\n"
 				 "       dba_data_files c,\n"
-				 "       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b\n"
+				 "       (select tablespace_name,sum(bytes) total_bytes,count(1) total_extents from dba_free_space group by tablespace_name) b,\n"
+				 "       (select :unit<int> unit from dual) d\n"
 				 " where a.tablespace_name = b.tablespace_name\n"
 				 "   and c.tablespace_name = a.tablespace_name\n"
 				 " group by a.tablespace_name,a.status,a.contents,a.logging,a.allocation_type,b.total_extents,b.total_bytes\n"
@@ -194,16 +199,17 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "       b.enabled,\n"
 			 "       ' ',\n"
 			 "       ' ',\n"
-			 "       to_char(round(c.bytes/1024/1024,2)),\n"
-			 "       to_char(round(c.user_bytes/1024/1024,2)),\n"
-			 "       to_char(round(sum(a.bytes)/1024/1023,2)),\n"
+			 "       to_char(round(c.bytes/unit,2)),\n"
+			 "       to_char(round(c.user_bytes/unit,2)),\n"
+			 "       to_char(round(sum(a.bytes)/unit,2)),\n"
 			 "       to_char(round(sum(a.bytes)*100/c.user_bytes,2))||'%',\n"
 			 "       ' ',\n"
 			 "       to_char(count(1)),\n"
 			 "       a.tablespace_name\n"
 			 "  from dba_free_space a,\n"
 			 "       v$datafile b,\n"
-			 "       (select * from dba_temp_files union select * from dba_data_files) c\n"
+			 "       (select * from dba_temp_files union select * from dba_data_files) c,\n"
+			 "       (select :unit<int> unit from dual) d\n"
 			 " where a.file_id=b.file#\n"
 			 "   and a.file_id=c.file_id\n"
 			 "   and a.tablespace_name = :f1<char[31]>\n"
@@ -219,16 +225,17 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "       b.enabled,\n"
 			  "       ' ',\n"
 			  "       ' ',\n"
-			  "       to_char(round(c.bytes/1024/1024,2)),\n"
-			  "       to_char(round(c.bytes/1024/1024,2)),\n"
-			  "       to_char(round(sum(a.bytes)/1024/1023,2)),\n"
+			  "       to_char(round(c.bytes/unit,2)),\n"
+			  "       to_char(round(c.bytes/unit,2)),\n"
+			  "       to_char(round(sum(a.bytes)/unit,2)),\n"
 			  "       to_char(round(sum(a.bytes)*100/c.bytes,2))||'%',\n"
 			  "       ' ',\n"
 			  "       to_char(count(1)),\n"
 			  "       a.tablespace_name\n"
 			  "  from dba_free_space a,\n"
 			  "       v$datafile b,\n"
-			  "       dba_data_files c\n"
+			  "       dba_data_files c,\n"
+			  "       (select :unit<int> unit from dual) d\n"
 			  " where a.file_id=b.file#\n"
 			  "   and a.file_id=c.file_id\n"
 			  "   and a.tablespace_name = :f1<char[31]>\n"
@@ -262,6 +269,7 @@ void toResultStorage::query(void)
       sql=toSQL::sql(SQLNoShowCoalesced,Connection);
 
     otl_stream tblspc(1,sql,Connection.connection());
+    tblspc<<toSizeDecode(Unit);
 
     otl_stream datfil(1,
 		      SQLDatafile(Connection),
@@ -273,6 +281,7 @@ void toResultStorage::query(void)
 	tblspc>>buffer;
 	tablespace->setText(i,QString::fromUtf8(buffer));
       }
+      datfil<<toSizeDecode(Unit);
       datfil<<tablespace->text(0).utf8();
       QListViewItem *lastFile=NULL;
       while(!datfil.eof()) {

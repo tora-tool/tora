@@ -41,11 +41,11 @@ TO_NAMESPACE;
 #include <qapplication.h>
 #include <qstring.h>
 #include <qworkspace.h>
+#include <qfile.h>
 
 #include "totool.h"
 #include "tomain.h"
-
-#include <qfile.h>
+#include "toconf.h"
 
 #include "totool.moc"
 
@@ -95,8 +95,11 @@ void toTool::createWindow(void)
     QWidget *newWin=toolWindow(main->workspace(),main->currentConnection());
 
     if (newWin) {
-      QString title(main->currentConnection().connectString());
-      title.append(" ");
+      QString title;
+      if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
+	title=main->currentConnection().connectString();
+	title.append(" ");
+      }
       title.append(name());
       newWin->setCaption(title);
       newWin->show();

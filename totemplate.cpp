@@ -151,8 +151,10 @@ public:
     if (item)
       item=item->parent();
     QString str;
-    if (item)
+    if (item) {
       str=name(item);
+      str+=":";
+    }
     Name->setText(str);
   }
   virtual void changeSelection(void)

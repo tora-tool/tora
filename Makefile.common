@@ -76,12 +76,12 @@ objs/%.o: %.cpp
 install: $(TARGET)
 	@echo Install $(TARGET) to $(INSTALLBIN)
 	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
-	strip $(TARGET) plugins/*
+	-strip $(TARGET) plugins/* >/dev/null 2>&1
 	cp $(TARGET) $(INSTALLBIN)/tora
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
 	mkdir -p $(INSTALLLIB)/tora
-	cp plugins/* $(INSTALLLIB)/tora
-	cp templates/*.tpl $(INSTALLLIB)/tora
+	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
+	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
 
 clean:
 	@echo Cleaning $(TITLE)

@@ -2,6 +2,10 @@
 
 2001-05-20: Added missing addtemplate.xpm
 2001-05-20: Fixed the --without-rpath option to work.
+2001-05-20: Fixes for installing tora-mono using the install.
+2001-05-20: Some fixes to the template editor.
+2001-05-20: Implemented option to include DB in title or not.
+2001-05-20: Implemented option of size unit.
 
 0.9.1: Released 2001-05-20
 

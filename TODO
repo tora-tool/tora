@@ -1,4 +1,25 @@
+Beta todo list:
+
+* SQL Browser
+	Schema filter
+	Object search
+* Modify storage in storage manager.
+* Expand admin/default in security for all privtypes.
+* Edit memo in toResultContent.
+* Add search to toResultContent/toResultView.
+* Display objects in tablespace storage manager.
+* Display execution type of statements (Until first response if not next option).
+* Option to read all data (See before option as well).
+* Select font for toResultViews.
+* Drag & drop from/to toResultContents.
+* Segments view in storage view.
+* Info about current session.
+      Display parameters (v$param...)
+* Server statistics and tuning information.
+* Object search tool.
+
 Extended functionality:
+
 * SQL Browser
 	Add information about partitions.
 	Modify tables
@@ -9,41 +30,24 @@ Extended functionality:
 		Add columns
 	Rename table
 		ALTER TABLE ... RENAME TO ...
-	Schema filter
-	Object search
-* Modify storage in storage manager.
 * Ability to save a session (Including breakpoints, parameter cache windows etc)
 * Add consumer group settings to security manager.
-* Expand admin/default in security for all privtypes.
-* Edit memo in toResultContent.
-* Make it possible to compile as KDE application.
 * Make it possible to reorder columns in toResultContent.
 * Extract grants from objects.
 * Implement extract of temporary tables.
 * Implement migration, resize and report in toScript.
-* Add search to toResultContent/toResultView.
-* Display objects in tablespace storage manager.
-* Option to display user@db in window
-* Select bytes/Kb/Mb in size reports.
-* Display execution type of statements (Until first response if not next option).
-* Option to read all data (See before option as well).
-* Select font for toResultViews.
-* Segments view in storage view.
-* Drag & drop from/to toResultContents.
 * Lots of more template texts including hints and SQL syntax.
 
 Windows problems:
+
 * New window coredump
 * Saving of settings
 * Locating tnsnames.ora without ORACLE_HOME
 * Can't abort queries when using QThreads
 
 New tools:
-* Info about current session.
-      Display parameters (v$param...)
-* Server statistics and tuning information.
+
 * SQL Builder?
 * Display invalid objects.
-* Object search tool.
 * Links into Oracle HTML help?
 * PL/SQL Profiler.

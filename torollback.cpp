@@ -54,6 +54,7 @@ TO_NAMESPACE;
 #include <qwhatsthis.h>
 #include <qwidget.h>
 #include <qworkspace.h>
+#include <qheader.h>
 
 #include "tomain.h"
 #include "totool.h"
@@ -329,12 +330,12 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       a.tablespace_name \"Tablespace\",\n"
 			 "       a.status \"Status\",\n"
 			 "       b.xacts \"-Transactions\",\n"
-			 "       ROUND(a.initial_extent/1024/1024,3) \"-Initial (MB)\",\n"
-			 "       ROUND(a.next_extent/1024/1024,3) \"-Next (MB)\",\n"
+			 "       ROUND(a.initial_extent/unit,3) \"-Initial (MB)\",\n"
+			 "       ROUND(a.next_extent/unit,3) \"-Next (MB)\",\n"
 			 "       a.pct_increase \"-PCT Increase\",\n"
-			 "       ROUND(b.rssize/1024/1024,3) \"-Current (MB)\",\n"
-			 "       ROUND(b.optsize/1024/1024,3) \"-Optimal (MB)\",\n"
-			 "       ROUND(b.aveactive/1024/1024,3) \"-Used (MB)\",\n"
+			 "       ROUND(b.rssize/unit,3) \"-Current (MB)\",\n"
+			 "       ROUND(b.optsize/unit,3) \"-Optimal (MB)\",\n"
+			 "       ROUND(b.aveactive/unit,3) \"-Used (MB)\",\n"
 			 "       b.Extents \"-Extents\",\n"
 			 "       b.CurExt \"-Current\",\n"
 			 "       b.CurBlk \"-Block\",\n"
@@ -342,7 +343,8 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       a.segment_id \" USN\"\n"
 			 "  from dba_rollback_segs a,\n"
 			 "       v$rollstat b,\n"
-			 "       dba_extents c\n"
+			 "       dba_extents c,\n"
+			 "       (select :unit<char[100]> unit from dual) d\n"
 			 " where a.segment_id = b.usn(+)\n"
 			 "   and a.owner = c.owner\n"
 			 "   and a.segment_name = c.segment_name\n"
@@ -406,7 +408,20 @@ public:
   }
   virtual void query(const QString &sql,const list<QString> &param)
   {
-    toResultView::query(sql,param);
+    QString unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
+    
+    list<QString> par;
+    par.insert(par.end(),QString::number(toSizeDecode(unit)));
+    toResultView::query(sql,par);
+    QRegExp repl("(MB)");
+    QString res="(";
+    res+=unit;
+    res+=")";
+    for (int i=0;i<columns();i++) {
+      QString str=header()->label(i);
+      str.replace(repl,res);
+      header()->setLabel(i,str);
+    }
     try {
       otl_stream trx(1,
 		     SQLStartExt(Connection),

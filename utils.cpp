@@ -280,7 +280,7 @@ QString toGetSessionType(void)
 QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
 {
   QString name=str;
-  if (db.isEmpty()) {
+  if (db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     name+=" ";
     name+=db;
   }
@@ -304,7 +304,7 @@ TODock *toAllocDock(const QString &name,
 		    const QPixmap &icon)
 {
   QString str=name;
-  if (db.isEmpty()) {
+  if (db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     str+=" ";
     str+=db;
   }
@@ -557,4 +557,13 @@ QFont toStringToFont(const QString &str)
 	     bool(lst[3].toInt()),QFont::CharSet(lst[4].toInt()));
   return font;
 #endif
+}
+
+int toSizeDecode(const QString &str)
+{
+  if (str=="KB")
+    return 1024;
+  if (str=="MB")
+    return 1024*1024;
+  return 1;
 }
