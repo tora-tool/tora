@@ -279,39 +279,6 @@ toMain::toMain()
   std::map<QCString,toTool *> &tools=toTool::tools();
 
   ToolsToolbar=toAllocBar(this,tr("Tools"));
-  ConnectionToolbar=toAllocBar(this,tr("Connections"));
-  new QToolButton(QPixmap((const char **)connect_xpm),
-		  tr("Connect to database"),
-		  tr("Connect to database"),
-		  this,SLOT(addConnection()),ConnectionToolbar);
-  DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
-				   tr("Disconnect current connection"),
-				   tr("Disconnect current connection"),
-				   this,SLOT(delConnection()),ConnectionToolbar);
-  DisconnectButton->setEnabled(false);
-#ifndef OAS
-  ConnectionToolbar->addSeparator();
-  NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
-				 tr("Commit connection"),
-				 tr("Commit connection"),
-				 this,SLOT(commitButton()),ConnectionToolbar)]=true;
-  NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
-				 tr("Rollback connection"),
-				 tr("Rollback connection"),
-				 this,SLOT(rollbackButton()),ConnectionToolbar)]=true;
-  ConnectionToolbar->addSeparator();
-  NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
-				 tr("Stop all running queries on connection"),
-				 tr("Stop all running queries on connection"),
-				 this,SLOT(stopButton()),ConnectionToolbar)]=true;
-#else
-  ConnectionToolbar->hide();
-#endif
-  ConnectionToolbar->addSeparator();
-  ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
-  ConnectionSelection->setMinimumWidth(200);
-  ConnectionSelection->setFocusPolicy(NoFocus);
-  connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   EditToolbar=toAllocBar(this,tr("Application"));
 
@@ -369,6 +336,40 @@ toMain::toMain()
   CopyButton->setEnabled(false);
   PasteButton->setEnabled(false);
   SearchButton->setEnabled(false);
+  
+  ConnectionToolbar=toAllocBar(this,tr("Connections"));
+  new QToolButton(QPixmap((const char **)connect_xpm),
+		  tr("Connect to database"),
+		  tr("Connect to database"),
+		  this,SLOT(addConnection()),ConnectionToolbar);
+  DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
+				   tr("Disconnect current connection"),
+				   tr("Disconnect current connection"),
+				   this,SLOT(delConnection()),ConnectionToolbar);
+  DisconnectButton->setEnabled(false);
+#ifndef OAS
+  ConnectionToolbar->addSeparator();
+  NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
+				 tr("Commit connection"),
+				 tr("Commit connection"),
+				 this,SLOT(commitButton()),ConnectionToolbar)]=true;
+  NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
+				 tr("Rollback connection"),
+				 tr("Rollback connection"),
+				 this,SLOT(rollbackButton()),ConnectionToolbar)]=true;
+  ConnectionToolbar->addSeparator();
+  NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
+				 tr("Stop all running queries on connection"),
+				 tr("Stop all running queries on connection"),
+				 this,SLOT(stopButton()),ConnectionToolbar)]=true;
+#else
+  ConnectionToolbar->hide();
+#endif
+  ConnectionToolbar->addSeparator();
+  ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
+  ConnectionSelection->setMinimumWidth(250);
+  ConnectionSelection->setFocusPolicy(NoFocus);
+  connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
   ToolsMenu=new QPopupMenu(this);
 

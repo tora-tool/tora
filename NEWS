@@ -3,6 +3,7 @@
 2005-02-17: Textual updates, new urls, new logo, etc.
 2005-02-17: Applied patch #? for fixing toinvalid invalid object recompilation
 2005-02-17: Removed references to commercial license and registration
+2005-02-17: Applied patch to put open/save/etc. at more standard initial position and resize connection popup (#1001613)
 
 1.3.14.1: 2004-07-01
 
