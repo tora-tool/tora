@@ -509,7 +509,8 @@ __TEMP__
     }
     close TEMP;
     if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared $TestDB -o $tmpName $tmpName.cpp")) {
-        $ENV{"LD_LIBRARY_PATH"}=$ENV{"LD_LIBRARY_PATH"}.":".$ENV{"ORACLE_HOME"}."/lib";
+        $ENV{"LD_LIBRARY_PATH"} .= ":".$ENV{"ORACLE_HOME"}."/lib";
+        $ENV{"LD_LIBRARY_PATH"} .= ":".$ENV{"ORACLE_HOME"};
 	if (!system($tmpName)) {
 	    $CC=$gcc;
 	}
@@ -1012,6 +1013,7 @@ __TEMP__
     print "\n";
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
+    $LFlags.="\"-L".$ENV{ORACLE_HOME}."\" ";
     $LFlags.="\"-L".$QtLib."\" ";
     if ($OracleRelease =~ /^8.0/) {
         $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
@@ -1043,13 +1045,16 @@ __TEMP__
     print "$extra\n";
 
     if (!$NoRPath) {
-	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" -Xlinker \"--rpath\=$QtLib\" ";
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."\" ";
+	$LFlags.="-Xlinker \"--rpath\=$QtLib\" ";
     }
 
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/demo");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/plsql/public");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/rdbms/public");
     $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/network/public");
+    $Includes=&addInclude($Includes,$ENV{ORACLE_HOME}."/sdk/include");
     if ( $ENV{C_INCLUDE_PATH} ) {
       $Includes=&addInclude($Includes,$ENV{C_INCLUDE_PATH});
     }
