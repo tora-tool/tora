@@ -1,11 +1,21 @@
 # This specfile is Mandrake Linux specific
 #
-# Just removing the references to menu stuff should make it generic
+# Requires the following .rpmmacros
 #
+# %__find_requires %(echo $HOME)/bin/find-requires-nonoracle %{?buildroot:%{buildroot}}
+#
+# Where the find-requires-nonoracle contains the following
+#
+# #!/bin/sh
+# /usr/lib/rpm/find-requires $@ | grep -v 'libclntsh\.so' | grep -v 'libwtc.*\.so'
+#
+# This is to remove dependencies to the oracle libraries in the oracle rpm.
+#
+
 
 %define _name		tora
 %define _version	1.3.9.2
-%define _release	1mdk
+%define _release	2mdk
 %define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 
@@ -93,6 +103,12 @@ Oracle specific plugins for %{_name}.
 %changelog
 * Tue Dec 18 2001 Henrik Johnson <tora@underscore.se>
 - created from SuSE specfile by Pascal Bleser
+
+* Sun Mar 9 2003 Henrik Johnson <tora@underscore.se>
+- adapted to Mandrake Linux
+
+* Mon Mar 10 2003 Henrik Johnson <tora@underscore.se>
+- added comment about fixing requires problem.
 
 %prep
 %setup -q
