@@ -461,7 +461,7 @@ void toResultContent::displayMenu(const QPoint &p)
       Menu->insertItem("&Copy",TORESULT_COPY);
       Menu->insertItem("&Paste",TORESULT_PASTE);
       Menu->insertItem("&Display in editor",TORESULT_MEMO);
-      Menu->insertItem("Export to file",TORESULT_COPY);
+      Menu->insertItem("Export to file",TORESULT_EXPORT);
       Menu->insertSeparator();
       Menu->insertItem("Read all",TORESULT_READ_ALL);
       connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
@@ -475,7 +475,7 @@ void toResultContent::displayMenu(const QPoint &p)
 
 void toResultContent::displayMemo(void)
 {
-  toMemoEditor *edit=new toMemoEditor(this,text(MenuRow,MenuColumn));
+  toMemoEditor *edit=new toMemoEditor(this,text(MenuRow,MenuColumn),MenuRow,MenuColumn);
   connect(edit,SIGNAL(changeData(int,int,const QString &)),
 	  this,SLOT(changeData(int,int,const QString &)));
 }

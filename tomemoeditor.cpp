@@ -79,7 +79,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,bo
     Editor=new toMarkedText(this);
   l->addWidget(Editor);
   Editor->setText(str);
-  Editor->setReadOnly(row>=0&&col>=0);
+  Editor->setReadOnly(row<0||col<0);
   show();
 }
 
