@@ -1456,6 +1456,8 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultExtract,tr("Script"));
   SecondMap[TAB_TRIGGER_EXTRACT]=resultExtract;
 
+  connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
+  
   splitter=new QSplitter(Horizontal,TopTab,TAB_ACCESS);
   TopTab->addTab(splitter,tr("Access"));
 #ifdef TOEXTENDED_MYSQL
