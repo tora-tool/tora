@@ -705,6 +705,8 @@ bool toListView::editSave(bool ask)
 
     QString nam;
     switch(type) {
+    case -1:
+      return false;
     default:
       nam="*.txt";
       break;
