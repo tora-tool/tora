@@ -269,9 +269,8 @@ toThread::toThread(toTask *task)
   Lock->lock();
   for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();) {
     if ((*i)->Thread.finished()&&(*i)!=this) {
-      Lock->unlock();
       delete (*i);
-      Lock->lock();
+      Threads->erase(i);
       i=Threads->begin();
     } else
       i++;
@@ -281,14 +280,6 @@ toThread::toThread(toTask *task)
 
 toThread::~toThread()
 {
-  Lock->lock();
-  for (std::list<toThread *>::iterator i=Threads->begin();i!=Threads->end();i++) {
-    if ((*i)==this) {
-      Threads->erase(i);
-      break;
-    }
-  }
-  Lock->unlock();
 }
 
 void toThread::start(void)
@@ -321,8 +312,8 @@ toThread::taskRunner::taskRunner(toTask *task)
 void toThread::taskRunner::run(void)
 {
   try {
-    StartSemaphore.up();
     Lock->lock();
+    StartSemaphore.up();
     toThread::LastID++;
     toThread::ThreadID=LastID;
     Lock->unlock();
