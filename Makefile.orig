@@ -125,7 +125,7 @@ tora-static: $(OBJECTS) main.cpp
 	@echo Linking $@
 	$(CC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
 		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) \
-		-L/usr/X11R6/lib -lXt -lz -ljpeg -lXext -lmng
+		-L/usr/X11R6/lib -lXt -lz -ljpeg -lXext
 
 # Plugin based binary and its plugins
 
