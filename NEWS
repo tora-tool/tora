@@ -13,6 +13,7 @@
 2001-09-10: After a bit discussion about licensing with Daniel Person changed
 	back to GPL.
 2001-09-12: Handle pixmap to xpm conversion better.
+2001-09-12: Fixed problem with schema extractor.
 
 1.1.0: Released 2001-09-09
 

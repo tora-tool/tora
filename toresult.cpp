@@ -171,7 +171,8 @@ void toResultObject::setup(void)
   QObject::connect(toCurrentTool(obj),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   if (Result->Handled)
     Result->Handled=Result->canHandle(Result->connection());
-  Result->changeHandle();
+  if (!Result->Handled)
+    Result->changeHandle();
   delete Result->Setup;
   Result->Setup=NULL;
 }

@@ -43,6 +43,7 @@
 #include <qtoolbutton.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
+#include <qpushbutton.h>
 
 #include "tomarkedtext.h"
 #include "tofilesize.h"
@@ -172,10 +173,12 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 			"Get usernames available in database, must have same columns");
 
 toScript::toScript(QWidget *parent,toConnection &connection)
-  : toScriptUI(parent),toHelpContext("script.html"),Connection(connection)
+  : toToolWidget(ScriptTool,"script.html",parent,connection)
 {
-  QSplitter *hsplitter=new QSplitter(Horizontal,DifferenceTab);
-  Worksheet=new toWorksheet(ResultTab,Connection);
+  ScriptUI=new toScriptUI(this);
+
+  QSplitter *hsplitter=new QSplitter(Horizontal,ScriptUI->DifferenceTab);
+  Worksheet=new toWorksheet(ScriptUI->ResultTab,connection);
   DropList=new toResultView(false,false,hsplitter);
   DropList->addColumn("Dropped");
   DropList->setRootIsDecorated(true);
@@ -184,26 +187,26 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   CreateList->addColumn("Created");
   CreateList->setRootIsDecorated(true);
   CreateList->setSorting(0);
-  Tabs->setTabEnabled(ResultTab,false);
-  Tabs->setTabEnabled(DifferenceTab,false);
+  ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,false);
+  ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,false);
 
-  QGridLayout *layout=new QGridLayout(ResultTab);
+  QGridLayout *layout=new QGridLayout(ScriptUI->ResultTab);
   layout->addWidget(Worksheet,0,0);
-  layout=new QGridLayout(DifferenceTab);
+  layout=new QGridLayout(ScriptUI->DifferenceTab);
   layout->addWidget(hsplitter,0,0);
 
-  Initial->setTitle("&Initial");
-  Limit->setTitle("&Limit");
-  Next->setTitle("&Next");
-  connect(ModeGroup,SIGNAL(clicked(int)),this,SLOT(changeMode(int)));
-  Tabs->setTabEnabled(ResizeTab,false);
-  SourceObjects->setSorting(0);
-  DestinationObjects->setSorting(0);
+  ScriptUI->Initial->setTitle("&Initial");
+  ScriptUI->Limit->setTitle("&Limit");
+  ScriptUI->Next->setTitle("&Next");
+  connect(ScriptUI->ModeGroup,SIGNAL(clicked(int)),this,SLOT(changeMode(int)));
+  ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
+  ScriptUI->SourceObjects->setSorting(0);
+  ScriptUI->DestinationObjects->setSorting(0);
 
   // Remove when migrate and resize is implemented
 #if 1
-  Migrate->hide();
-  Resize->hide();
+  ScriptUI->Migrate->hide();
+  ScriptUI->Resize->hide();
 #endif
 
   int def=0;
@@ -211,32 +214,32 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   int i=0;
   while(cons.size()>0) {
     QString str=toShift(cons);
-    if(str==Connection.description()&&def==0)
+    if(str==connection.description()&&def==0)
       def=i;
     i++;
-    SourceConnection->insertItem(str);
-    DestinationConnection->insertItem(str);
+    ScriptUI->SourceConnection->insertItem(str);
+    ScriptUI->DestinationConnection->insertItem(str);
   }
-  SourceConnection->setCurrentItem(def);
+  ScriptUI->SourceConnection->setCurrentItem(def);
   changeSource(def);
   changeDestination(def);
-  DestinationConnection->setCurrentItem(def);
+  ScriptUI->DestinationConnection->setCurrentItem(def);
 
-  connect(SourceConnection,SIGNAL(activated(int)),this,SLOT(changeSource(int)));
-  connect(DestinationConnection,SIGNAL(activated(int)),this,SLOT(changeDestination(int)));
-  connect(SourceSchema,SIGNAL(activated(int)),this,SLOT(changeSourceSchema(int)));
-  connect(DestinationSchema,SIGNAL(activated(int)),this,SLOT(changeDestinationSchema(int)));
-  connect(SourceObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
-  connect(DestinationObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+  connect(ScriptUI->AddButton,SIGNAL(clicked()),this,SLOT(newSize()));
+  connect(ScriptUI->Remove,SIGNAL(clicked()),this,SLOT(removeSize()));
 
-  Schema->setCurrentItem(0);
+  connect(ScriptUI->SourceConnection,SIGNAL(activated(int)),this,SLOT(changeSource(int)));
+  connect(ScriptUI->DestinationConnection,SIGNAL(activated(int)),this,SLOT(changeDestination(int)));
+  connect(ScriptUI->SourceSchema,SIGNAL(activated(int)),this,SLOT(changeSourceSchema(int)));
+  connect(ScriptUI->DestinationSchema,SIGNAL(activated(int)),this,SLOT(changeDestinationSchema(int)));
+  connect(ScriptUI->SourceObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+  connect(ScriptUI->DestinationObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
 
-  Connection.addWidget(this);
+  ScriptUI->Schema->setCurrentItem(0);
 }
 
 toScript::~toScript()
 {
-  Connection.delWidget(this);
 }
 
 std::list<QString> toScript::createObjectList(QListView *source)
@@ -313,7 +316,7 @@ std::list<QString> toScript::createObjectList(QListView *source)
     }
   }
   
-  if (IncludeDDL->isChecked()) {
+  if (ScriptUI->IncludeDDL->isChecked()) {
     {
       for(std::list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
 	toPush(lst,*i);
@@ -361,7 +364,7 @@ std::list<QString> toScript::createObjectList(QListView *source)
     line+=*i;
     toPush(lst,line);
   }
-  if (IncludeDDL->isChecked()) {
+  if (ScriptUI->IncludeDDL->isChecked()) {
     {
       for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
 	QString line="TABLE REFERENCES:";
@@ -391,26 +394,26 @@ void toScript::execute(void)
 {
   try {
     int mode;
-    if (Compare->isChecked())
+    if (ScriptUI->Compare->isChecked())
       mode=0;
-    else if (Extract->isChecked())
+    else if (ScriptUI->Extract->isChecked())
       mode=1;
-    else if (Migrate->isChecked())
+    else if (ScriptUI->Migrate->isChecked())
       mode=2;
-    else if (Resize->isChecked())
+    else if (ScriptUI->Resize->isChecked())
       mode=3;
     else {
       toStatusMessage("No mode selected");
       return;
     }
 
-    std::list<QString> sourceObjects=createObjectList(SourceObjects);
+    std::list<QString> sourceObjects=createObjectList(ScriptUI->SourceObjects);
 
     std::list<QString> sourceDescription;
     std::list<QString> destinationDescription;
     QString script;
 
-    toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
+    toExtract source(toMainWidget()->connection(ScriptUI->SourceConnection->currentText()),this);
     setupExtract(source);
     switch(mode) {
     case 1:
@@ -424,9 +427,11 @@ void toScript::execute(void)
       break;
     }
 
-    if (Destination->isEnabled()) {
-      std::list<QString> destinationObjects=createObjectList(DestinationObjects);
-      toExtract destination(toMainWidget()->connection(DestinationConnection->currentText()),this);
+    if (ScriptUI->Destination->isEnabled()) {
+      std::list<QString> destinationObjects=createObjectList(ScriptUI->DestinationObjects);
+      toExtract destination(toMainWidget()->connection(ScriptUI->
+						       DestinationConnection->
+						       currentText()),this);
       setupExtract(destination);
       switch(mode) {
       case 0:
@@ -453,8 +458,8 @@ void toScript::execute(void)
 	  j++;
       }
     }
-    Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
-    Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,mode==1||mode==2||mode==3);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,mode==0||mode==2);
     if (!script.isEmpty()) {
       Worksheet->editor()->setText(script);
       Worksheet->editor()->setFilename(QString::null);
@@ -511,13 +516,14 @@ void toScript::changeConnection(int,bool source)
   try {
     QListView *sourceL=NULL;
     QListView *destinationL=NULL;
-    if (SourceConnection->currentText()==DestinationConnection->currentText()) {
+    if (ScriptUI->SourceConnection->currentText()==
+	ScriptUI->DestinationConnection->currentText()) {
       if (source) {
-	destinationL=SourceObjects;
-	sourceL=DestinationObjects;
+	destinationL=ScriptUI->SourceObjects;
+	sourceL=ScriptUI->DestinationObjects;
       } else {
-	sourceL=SourceObjects;
-	destinationL=DestinationObjects;
+	sourceL=ScriptUI->SourceObjects;
+	destinationL=ScriptUI->DestinationObjects;
       }
     }
     if (sourceL&&destinationL&&sourceL->firstChild()) {
@@ -553,21 +559,23 @@ void toScript::changeConnection(int,bool source)
       }
       return;
     }
-    (source?SourceObjects:DestinationObjects)->clear();
-    (source?SourceSchema:DestinationSchema)->clear();
-    (source?SourceSchema:DestinationSchema)->insertItem("All");
-    toConnection &conn=toMainWidget()->connection((source?SourceConnection:DestinationConnection)
+    (source?ScriptUI->SourceObjects:ScriptUI->DestinationObjects)->clear();
+    (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->clear();
+    (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->insertItem("All");
+    toConnection &conn=toMainWidget()->connection((source?
+						   ScriptUI->SourceConnection:
+						   ScriptUI->DestinationConnection)
 						  ->currentText());
     toQList object;
     try {
-      object=toQuery::readQuery(conn,SQLObjectList);
+      object=toQuery::readQueryNull(conn,SQLObjectList);
     } catch(...) {
-      object=toQuery::readQuery(conn,SQLUserObjectList);
+      object=toQuery::readQueryNull(conn,SQLUserObjectList);
     }
     toQList schema=toQuery::readQuery(conn,SQLSchemas);
     while(schema.size()>0) {
       QString str=toShift(schema);
-      (source?SourceSchema:DestinationSchema)->insertItem(str);
+      (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->insertItem(str);
     }
     QListViewItem *lastTop=NULL;
     QListViewItem *lastFirst=NULL;
@@ -578,7 +586,9 @@ void toScript::changeConnection(int,bool source)
 
       if (top!=(lastTop?lastTop->text(0):QString::null)) {
 	lastFirst=NULL;
-	lastTop=new toResultViewCheck((source?SourceObjects:DestinationObjects),
+	lastTop=new toResultViewCheck((source?
+				       ScriptUI->SourceObjects:
+				       ScriptUI->DestinationObjects),
 				      top,QCheckListItem::CheckBox);
 	if (!second.isEmpty()||first.isEmpty())
 	  lastTop->setText(1,"USER");
@@ -601,42 +611,42 @@ void toScript::changeMode(int mode)
 {
 
   if (mode==0||mode==2)
-    Destination->setEnabled(true);
+    ScriptUI->Destination->setEnabled(true);
   else if (mode==1||mode==3)
-    Destination->setEnabled(false);
+    ScriptUI->Destination->setEnabled(false);
 
   if (mode==1||mode==2||mode==3)
-    Tabs->setTabEnabled(ResizeTab,true);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,true);
   else if (mode==0)
-    Tabs->setTabEnabled(ResizeTab,false);
+    ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
 
   if (mode==1)
-    IncludeContent->setEnabled(true);
+    ScriptUI->IncludeContent->setEnabled(true);
   else if (mode==0||mode==2||mode==3)
-    IncludeContent->setEnabled(false);
+    ScriptUI->IncludeContent->setEnabled(false);
 
   if (mode==1||mode==2||mode==3) {
-    IncludeHeader->setEnabled(true);
-    IncludePrompt->setEnabled(true);
+    ScriptUI->IncludeHeader->setEnabled(true);
+    ScriptUI->IncludePrompt->setEnabled(true);
   } else if (mode==0) {
-    IncludeHeader->setEnabled(false);
-    IncludePrompt->setEnabled(false);
+    ScriptUI->IncludeHeader->setEnabled(false);
+    ScriptUI->IncludePrompt->setEnabled(false);
   }
 
   if (mode==0||mode==2||mode==3) {
-    IncludeDDL->setEnabled(false);
-    IncludeDDL->setChecked(mode!=3);
+    ScriptUI->IncludeDDL->setEnabled(false);
+    ScriptUI->IncludeDDL->setChecked(mode!=3);
   } else if (mode==1)
-    IncludeDDL->setEnabled(true);
+    ScriptUI->IncludeDDL->setEnabled(true);
 
-  IncludeConstraints->setEnabled(IncludeDDL->isChecked());
-  IncludeIndexes->setEnabled(IncludeDDL->isChecked());
-  IncludeGrants->setEnabled(IncludeDDL->isChecked());
-  IncludeStorage->setEnabled(IncludeDDL->isChecked());
-  IncludeParallell->setEnabled(IncludeDDL->isChecked());
-  IncludePartition->setEnabled(IncludeDDL->isChecked());
-  IncludeCode->setEnabled(IncludeDDL->isChecked());
-  IncludeComment->setEnabled(IncludeDDL->isChecked());
+  ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeGrants->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeCode->setEnabled(ScriptUI->IncludeDDL->isChecked());
+  ScriptUI->IncludeComment->setEnabled(ScriptUI->IncludeDDL->isChecked());
 }
 
 void toScript::objectClicked(QListViewItem *parent)
@@ -670,8 +680,10 @@ void toScript::objectClicked(QListViewItem *parent)
 
 void toScript::changeSchema(int,bool source)
 {
-  QString src=(source?SourceSchema:DestinationSchema)->currentText();
-  for(QListViewItem *parent=(source?SourceObjects:DestinationObjects)->firstChild();
+  QString src=(source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->currentText();
+  for(QListViewItem *parent=(source?
+			     ScriptUI->SourceObjects:
+			     ScriptUI->DestinationObjects)->firstChild();
       parent;
       parent=parent->nextSibling()) {
     toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(parent);
@@ -683,7 +695,7 @@ void toScript::changeSchema(int,bool source)
 	chk=dynamic_cast<toResultViewCheck *>(item);
 	if (chk) {
 	  chk->setEnabled(ena);
-	  (source?SourceObjects:DestinationObjects)->repaintItem(chk);
+	  (source?ScriptUI->SourceObjects:ScriptUI->DestinationObjects)->repaintItem(chk);
 	}
 
 	if (item->firstChild())
@@ -710,58 +722,69 @@ void toScript::changeSchema(int,bool source)
 
 void toScript::newSize(void)
 {
-  QString init=Initial->sizeString();
-  QString next=Next->sizeString();
-  QString max=Limit->sizeString();
+  QString init=ScriptUI->Initial->sizeString();
+  QString next=ScriptUI->Next->sizeString();
+  QString max=ScriptUI->Limit->sizeString();
   QString maxNum;
-  maxNum.sprintf("%010d",Limit->value());
+  maxNum.sprintf("%010d",ScriptUI->Limit->value());
 
-  for (QListViewItem *item=Sizes->firstChild();item;item=item->nextSibling())
+  for (QListViewItem *item=ScriptUI->Sizes->firstChild();item;item=item->nextSibling())
     if (max==item->text(0)) {
       toStatusMessage("Replacing existing size with new");
       delete item;
       break;
     }
   
-  new QListViewItem(Sizes,max,init,next,maxNum);
-  Sizes->setSorting(3);
+  new QListViewItem(ScriptUI->Sizes,max,init,next,maxNum);
+  ScriptUI->Sizes->setSorting(3);
 }
 
 void toScript::removeSize(void)
 {
-  QListViewItem *item=Sizes->selectedItem();
+  QListViewItem *item=ScriptUI->Sizes->selectedItem();
   if (item)
     delete item;
 }
 
 void toScript::setupExtract(toExtract &extr)
 {
-  extr.setCode       (IncludeCode->isEnabled()       &&IncludeCode->isChecked()       );
-  extr.setComments   (IncludeComment->isEnabled()    &&IncludeComment->isChecked()    );
-  extr.setConstraints(IncludeConstraints->isEnabled()&&IncludeConstraints->isChecked());
-  extr.setContents   (IncludeContent->isEnabled()    &&IncludeContent->isChecked()    );
-  extr.setGrants     (IncludeGrants->isEnabled()     &&IncludeGrants->isChecked()     );
-  extr.setHeading    (IncludeHeader->isEnabled()     &&IncludeHeader->isChecked()     );
-  extr.setIndexes    (IncludeIndexes->isEnabled()    &&IncludeIndexes->isChecked()    );
-  extr.setParallel   (IncludeParallell->isEnabled()  &&IncludeParallell->isChecked()  );
-  extr.setPartition  (IncludePartition->isEnabled()  &&IncludePartition->isChecked()  );
-  extr.setPrompt     (IncludePrompt->isEnabled()     &&IncludePrompt->isChecked()     );
-  extr.setStorage    (IncludeStorage->isEnabled()    &&IncludeStorage->isChecked()    );
+  extr.setCode       (ScriptUI->IncludeCode->isEnabled()       &&
+		      ScriptUI->IncludeCode->isChecked()       );
+  extr.setComments   (ScriptUI->IncludeComment->isEnabled()    &&
+		      ScriptUI->IncludeComment->isChecked()    );
+  extr.setConstraints(ScriptUI->IncludeConstraints->isEnabled()&&
+		      ScriptUI->IncludeConstraints->isChecked());
+  extr.setContents   (ScriptUI->IncludeContent->isEnabled()    &&
+		      ScriptUI->IncludeContent->isChecked()    );
+  extr.setGrants     (ScriptUI->IncludeGrants->isEnabled()     &&
+		      ScriptUI->IncludeGrants->isChecked()     );
+  extr.setHeading    (ScriptUI->IncludeHeader->isEnabled()     &&
+		      ScriptUI->IncludeHeader->isChecked()     );
+  extr.setIndexes    (ScriptUI->IncludeIndexes->isEnabled()    &&
+		      ScriptUI->IncludeIndexes->isChecked()    );
+  extr.setParallel   (ScriptUI->IncludeParallell->isEnabled()  &&
+		      ScriptUI->IncludeParallell->isChecked()  );
+  extr.setPartition  (ScriptUI->IncludePartition->isEnabled()  &&
+		      ScriptUI->IncludePartition->isChecked()  );
+  extr.setPrompt     (ScriptUI->IncludePrompt->isEnabled()     &&
+		      ScriptUI->IncludePrompt->isChecked()     );
+  extr.setStorage    (ScriptUI->IncludeStorage->isEnabled()    &&
+		      ScriptUI->IncludeStorage->isChecked()    );
 
-  if (Schema->currentText()=="Same")
+  if (ScriptUI->Schema->currentText()=="Same")
     extr.setSchema("1");
-  else if (Schema->currentText()=="None")
+  else if (ScriptUI->Schema->currentText()=="None")
     extr.setSchema(QString::null);
   else
-    extr.setSchema(Schema->currentText());
+    extr.setSchema(ScriptUI->Schema->currentText());
 
-  if (DontResize->isChecked())
+  if (ScriptUI->DontResize->isChecked())
     extr.setResize(QString::null);
-  else if (AutoResize->isChecked())
+  else if (ScriptUI->AutoResize->isChecked())
     extr.setResize("1");
   else {
     QString siz;
-    for (QListViewItem *item=Sizes->firstChild();item;item=item->nextSibling()) {
+    for (QListViewItem *item=ScriptUI->Sizes->firstChild();item;item=item->nextSibling()) {
       siz+=item->text(0);
       siz+=":";
       siz+=item->text(1);

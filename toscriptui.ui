@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>710</width>
+            <width>706</width>
             <height>585</height>
         </rect>
     </property>
@@ -1148,20 +1148,6 @@
         <receiver>IncludeComment</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
-    <connection>
-        <sender>AddButton</sender>
-        <signal>clicked()</signal>
-        <receiver>toScriptUI</receiver>
-        <slot>newSize(void)</slot>
-    </connection>
-    <connection>
-        <sender>Remove</sender>
-        <signal>clicked()</signal>
-        <receiver>toScriptUI</receiver>
-        <slot>removeSize(void)</slot>
-    </connection>
-    <slot access="public">changeOption(int)</slot>
-    <slot access="public">disableResize(bool)</slot>
     <slot access="public">newSize(void)</slot>
     <slot access="public">removeSize(void)</slot>
 </connections>

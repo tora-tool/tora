@@ -48,14 +48,13 @@ class toScriptUI;
 class toResultView;
 class toExtract;
 
-class toScript : public toScriptUI, public toHelpContext {
+class toScript : public toToolWidget {
   Q_OBJECT
 
   toScriptUI *ScriptUI;
   toWorksheet *Worksheet;
   toResultView *DropList;
   toResultView *CreateList;
-  toConnection &Connection;
 
   void setupExtract(toExtract &);
   void changeConnection(int,bool source);
