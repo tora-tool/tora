@@ -42,6 +42,7 @@ TO_NAMESPACE;
 #include "tosearchreplace.h"
 #include "tomain.h"
 #include "toresultview.h"
+#include "toresultcontent.h"
 
 #include "tosearchreplaceui.moc"
 
@@ -50,6 +51,7 @@ toSearchReplace::toSearchReplace(QWidget *parent)
 {
   Text=NULL;
   List=NULL;
+  Content=NULL;
 }
 
 void toSearchReplace::release(void)
@@ -58,8 +60,11 @@ void toSearchReplace::release(void)
     disconnect(Text,SIGNAL(destroyed()),this,SIGNAL(destroyed()));
   else if (List)
     disconnect(List,SIGNAL(destroyed()),this,SIGNAL(destroyed()));
+  else if (Content)
+    disconnect(Content,SIGNAL(destroyed()),this,SIGNAL(destroyed()));
   List=NULL;
   Text=NULL;
+  Content=NULL;
 }
 
 void toSearchReplace::setTarget(toMarkedText *parent)
@@ -67,6 +72,15 @@ void toSearchReplace::setTarget(toMarkedText *parent)
   release();
   Text=parent;
   connect(Text,SIGNAL(destroyed()),this,SIGNAL(destroyed()));
+  show();
+  searchChanged();
+}
+
+void toSearchReplace::setTarget(toResultContent *parent)
+{
+  release();
+  Content=parent;
+  connect(Content,SIGNAL(destroyed()),this,SIGNAL(destroyed()));
   show();
   searchChanged();
 }
@@ -84,19 +98,15 @@ void toSearchReplace::destroyed(void)
 {
   List=NULL;
   Text=NULL;
+  Content=NULL;
   hide();
   searchChanged();
 }
 
 void toSearchReplace::search(void)
 {
-  if (Text) {
-    Text->setCursorPosition(0,0);
-    searchNext();
-  } else if (List) {
-    List->setCurrentItem(NULL);
-    searchNext();
-  }
+  FromTop=true;
+  searchNext();
 }
 
 int toSearchReplace::findIndex(const QString &str,int line,int col)
@@ -163,6 +173,10 @@ bool toSearchReplace::findString(const QString &text,int &pos,int &endPos)
 void toSearchReplace::searchNext(void)
 {
   if (Text) {
+    if (FromTop) {
+      Text->setCursorPosition(0,0);
+      FromTop=false;
+    }
     QString text=Text->text();
     int col;
     int line;
@@ -187,8 +201,14 @@ void toSearchReplace::searchNext(void)
       return;
     }
   } else if (List) {
-    QListViewItem *item=List->currentItem();
-    bool first=false;
+    QListViewItem *item;
+    if (FromTop) {
+      item=List->firstChild();
+      FromTop=false;
+    } else
+      item=List->currentItem();
+
+    bool first=FromTop;
     if (!item)
       item=List->firstChild();
 
@@ -225,8 +245,35 @@ void toSearchReplace::searchNext(void)
 	  next=next->nextSibling();
       }
     }
+  } else if (Content) {
+    int row=0;
+    int col=0;
+    if (FromTop)
+      FromTop=false;
+    else {
+      row=Content->currentRow();
+      col=Content->currentColumn()+1;
+      if (col>=Content->numCols()) {
+	row++;
+	col=0;
+      }
+      while(row<Content->numRows()) {
+	int pos=0;
+	int endPos;
+	if (findString(Content->text(row,col),pos,endPos)) {
+	  Content->setCurrentCell(row,col);
+	  SearchNext->setDefault(true);
+	  return;
+	}
+	col++;
+	if (col>=Content->numCols()) {
+	  row++;
+	  col=0;
+	}
+      }
+    }
   }
-  toStatusMessage("No more matches found in text");
+  toStatusMessage("No more matches found");
   Replace->setEnabled(false);
   ReplaceAll->setEnabled(false);
 }
@@ -249,8 +296,8 @@ void toSearchReplace::replaceAll(void)
 
 void toSearchReplace::searchChanged(void)
 {
-  Search->setEnabled((Text||List)&&SearchText->length()>0);
-  SearchNext->setEnabled((Text||List)&&SearchText->length()>0);
+  Search->setEnabled((Text||List||Content)&&SearchText->length()>0);
+  SearchNext->setEnabled((Text||List||Content)&&SearchText->length()>0);
   Replace->setEnabled(false);
   ReplaceAll->setEnabled(false);
   if (Search->isEnabled())

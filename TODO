@@ -2,7 +2,6 @@ Beta todo list:
 
 * Edit memo in toResultContent.
 * Drag & drop from/to toResultContents.
-* Add search to toResultContent.
 * Info about current session.
 	Display parameters (v$param...)
 * Server statistics and tuning information.

@@ -14,6 +14,7 @@
 2001-05-21: Fixed problem with disabled menu for toListView.
 2001-05-21: Only update changed columns in toResultContent.
 2001-05-21: Fixed SEGV in toReadValue and large hex longs.
+2001-05-21: Add search in toResultContent.
 
 0.9.1: Released 2001-05-20
 

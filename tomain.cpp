@@ -639,8 +639,11 @@ void toMain::commandCallback(int cmd)
 	Search->setTarget(mark);
       else {
 	toListView *lst=dynamic_cast<toListView *>(qApp->focusWidget());
+	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
 	if (lst)
 	  Search->setTarget(lst);
+	else if (cnt)
+	  Search->setTarget(cnt);
       }
       break;
     case TO_EDIT_SEARCH_NEXT:
