@@ -698,22 +698,24 @@ void toResultContentEditor::deleteCurrent()
       bool where=false;
       toConnection &conn=connection();
       
-      for(int i=0;i<numCols();i++) {
-	if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
-	  if (where)
-	    sql+=" AND ";
-	  else
-	    where=true;
-	  sql+=conn.quote(head->label(i));
-	  if (!text(currentRow(),i))
-	    sql+=" IS NULL";
-	  else {
-	    sql+="= :c";
-	    sql+=QString::number(i);
-	    sql+="<char[4000]>";
+      {
+        for(int i=0;i<numCols();i++) {
+	  if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
+	    if (where)
+	      sql+=" AND ";
+	    else
+	      where=true;
+	    sql+=conn.quote(head->label(i));
+	    if (!text(currentRow(),i))
+	      sql+=" IS NULL";
+	    else {
+	      sql+="= :c";
+	      sql+=QString::number(i);
+	      sql+="<char[4000]>";
+	    }
 	  }
+	  di++;
 	}
-	di++;
       }
       if (!where) {
 	toStatusMessage("This table contains only LOB/LONG columns and can not be edited");

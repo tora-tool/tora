@@ -110,6 +110,15 @@ static void ThrowException(const otl_exception &exc)
     throw toConnection::exception("ORA-24344 success with compilation error");
   else {
     toConnection::exception ret(QString::fromUtf8((const char *)exc.msg));
+
+    if (ret.isEmpty()) {
+      if (exc.code!=0)
+	ret="ORA-"+QString::number(exc.code)+" missing error description";
+      else if (ret.isEmpty())
+	ret=QString("Missing error description, could occur if you have several ORACLE_HOME and the binary directory\n"
+		    "of the one which is not active is before the active ORACLE_HOME in your path");
+    }
+
     if (exc.stm_text&&strlen(exc.stm_text)) {
       ret+="\n";
       QString sql=QString::fromUtf8((const char *)exc.stm_text);

@@ -396,7 +396,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
       if (len>0)
 	SearchString.truncate(len-1);
       ok=true;
-    } else if (!e->key()==Key_Escape) {
+    } else if (e->key()!=Key_Escape) {
       QString t=e->text();
       if (t.length()) {
 	SearchString+=t;
