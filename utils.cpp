@@ -793,6 +793,9 @@ static QString AddExt(QString t,const QString &filter)
   static QRegExp hasext("\\.[^\\/]*$");
   if (t.isEmpty())
     return t;
+
+  toTool::globalSetConfig(CONF_LAST_DIR,t);
+
   if (hasext.match(t)<0) {
     static QRegExp findext("\\.[^ \t\r\n\\)\\|]*");
     int len=0;
@@ -810,15 +813,20 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
   QString t=filter;
   if (t.isEmpty())
     t=GetExtensions();
+  
+  QString dir=filename;
+  if (dir.isNull())
+    dir=toTool::globalConfig(CONF_LAST_DIR,QString::null);
+
 #ifdef TO_KDE
-  KURL url=TOFileDialog::getOpenURL(filename,t,parent);
+  KURL url=TOFileDialog::getOpenURL(dir,t,parent);
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
     return AddExt(url.path(),t);
   return AddExt(url.url(),t);
 #else
-  return AddExt(TOFileDialog::getOpenFileName(filename,t,parent),t);
+  return AddExt(TOFileDialog::getOpenFileName(dir,t,parent),t);
 #endif
 }
 
@@ -827,8 +835,13 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
   QString t=filter;
   if (t.isEmpty())
     t=GetExtensions();
+
+  QString dir=filename;
+  if (dir.isNull())
+    dir=toTool::globalConfig(CONF_LAST_DIR,QString::null);
+
 #ifdef TO_KDE
-  KURL url=TOFileDialog::getSaveURL(filename,t,parent);
+  KURL url=TOFileDialog::getSaveURL(dir,t,parent);
   if (url.hasPass())
     TOMessageBox::warning(toMainWidget(),"File open password",url.pass());
   if (url.isEmpty())
@@ -837,7 +850,7 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
     return AddExt(url.path(),t);
   return AddExt(url.url(),t);
 #else
-  return AddExt(TOFileDialog::getSaveFileName(filename,t,parent),t);
+  return AddExt(TOFileDialog::getSaveFileName(dir,t,parent),t);
 #endif
 }
 

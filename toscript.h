@@ -75,6 +75,7 @@ public slots:
   { changeConnection(val,true); }
   void changeDestination(int val)
   { changeConnection(val,false); }
+  void keepOn(QListViewItem *item);
   void objectClicked(QListViewItem *item);
   void changeSourceSchema(int val)
   { changeSchema(val,true); }

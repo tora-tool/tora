@@ -90,7 +90,7 @@ void toResultViewMLine::setup(void)
 {
   QListViewItem::setup();
   int margin=listView()->itemMargin()*2+1;
-  setHeight((height()-margin)*Lines+margin);
+  setHeight((listView()->fontMetrics().height()+1)*Lines+margin);
 }
 
 void toResultViewMLine::paintCell (QPainter *pnt,const QColorGroup & cg,
@@ -187,8 +187,8 @@ void toResultViewMLCheck::setText (int col,const QString &text)
 void toResultViewMLCheck::setup(void)
 {
   QCheckListItem::setup();
-  int margin=listView()->itemMargin()*2+1;
-  setHeight((height()-margin)*Lines+margin);
+  int margin=listView()->itemMargin()*2;
+  setHeight((listView()->fontMetrics().height()+1)*Lines+margin);
 }
 
 void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,

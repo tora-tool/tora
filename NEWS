@@ -1,5 +1,13 @@
 1.3.6:
 
+2002-04-28: Fixed restoring session in schema browser.
+2002-04-28: Fixed problem with object and primary key of same name in oracle extractor.
+2002-04-28: Fixed problem with background labels in tuning.
+2002-04-28: Fixed problem with enabling chart tabs in tuning.
+2002-04-26: Fixed problem regarding IS NULL in sql parser.
+2002-04-26: Fixed problem with expanding checked items in schema comparison.
+2002-04-26: Fixed problem with really large multiline listitems.
+2002-04-26: Keep track of last directory file was opened or saved in.
 2002-04-25: Some fixes to the INSTALL file.
 2002-04-24: Applied patch to make configure detect Qt snapshots.
 2002-04-20: Added wait state analyzer to session manager.

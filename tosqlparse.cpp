@@ -87,15 +87,19 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
-select count(case when dummy = 'Y' then dummy
-             else null end) as tot_str
-from dual;
+BEGIN
+IF 1 == 1 THEN
+NULL;
+END IF;
+IF appraisal IS NULL THEN
+NULL;
+END IF;
+END;
 
 DECLARE
 grade CHAR(1);
 appraisal VARCHAR2(20);
 BEGIN
-appraisal := 
 CASE grade
 WHEN 'A' THEN 'Excellent'
 WHEN 'B' THEN 'Very Good'
@@ -104,7 +108,14 @@ WHEN 'D' THEN 'Fair'
 WHEN 'F' THEN 'Poor'
 ELSE 'No such grade'
 END;
+IF appraisal IS NULL THEN
+NULL;
+END IF;
 END;
+
+select count(case when dummy = 'Y' then dummy
+             else null end) as tot_str
+from dual;
 
 SET TRANSACTION READ ONLY
 
@@ -690,6 +701,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
   toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
 
   QString first;
+  QString realfirst;
   bool nokey=false;
   bool block=false;
   for (QString token=tokens.getToken(true,true);
@@ -700,7 +712,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
     printf("%s\n",(const char*)token);
 #endif
     if (first.isNull()&&!token.startsWith("/*")&&!token.startsWith("--"))
-      first=upp;
+      realfirst=first=upp;
 
     if (upp=="PROCEDURE"||upp=="FUNCTION"||upp=="PACKAGE")
       block=true;
@@ -793,7 +805,9 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
       nokey=(token==".");
     }
     if (upp=="AS"||upp=="IS")
-      first="INVALID";
+      first=upp;
+    else if (first=="IS" && upp=="NULL")
+      first=realfirst;
   }
   return ret;
 }

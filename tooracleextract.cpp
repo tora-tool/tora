@@ -961,6 +961,7 @@ static toSQL SQLOverflowInfo("toOracleExtract:OverflowInfo",
 			     " WHERE\n"
 			     "            t.iot_name     = :nam<char[100]>\n"
 			     "        AND t.table_name   = s.segment_name\n"
+			     "        AND s.segment_type = 'TABLE'\n"
 			     "        AND s.owner        = :own<char[100]>\n"
 			     "        AND t.owner        = s.owner",
 			     "Get information about overflow segment for table, must have same binds and columns",
@@ -3847,6 +3848,7 @@ static toSQL SQLIndexSegment("toOracleExtract:IndexSegment",
 			     "      , %1  s\n"
 			     " WHERE  i.index_name   = :nam<char[100]>\n"
 			     "   AND  s.segment_name = i.index_name\n"
+			     "   AND  s.segment_type  = 'INDEX'\n"
 			     "   AND  i.owner        = :own<char[100]>\n"
 			     "   AND  s.owner        = i.owner",
 			     "Get information about how index is stored",
@@ -3894,6 +3896,7 @@ static toSQL SQLIndexSegment8("toOracleExtract:IndexSegment",
 			      "  FROM  sys.all_indexes   i\n"
 			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
+			      "   AND  s.segment_type = 'INDEX'\n"
 			      "   AND  s.segment_name = i.index_name\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
 			      "   AND  s.owner        = i.owner",
@@ -3939,6 +3942,7 @@ static toSQL SQLIndexSegment7("toOracleExtract:IndexSegment",
 			      "      , %1  s\n"
 			      " WHERE  i.index_name   = :nam<char[100]>\n"
 			      "   AND  s.segment_name = i.index_name\n"
+			      "   AND  s.segment_type = 'INDEX'\n"
 			      "   AND  i.owner        = :own<char[100]>\n"
 			      "   AND  s.owner        = i.owner",
 			      "",
@@ -4415,6 +4419,7 @@ static toSQL SQLTableInfo("toOracleExtract:TableInfo",
 			  " WHERE\n"
 			  "            t.table_name   = :nam<char[100]>\n"
 			  "        AND t.table_name   = s.segment_name\n"
+			  "        AND s.segment_type = 'TABLE'\n"
 			  "        AND s.owner        = :own<char[100]>\n"
 			  "        AND t.owner        = s.owner",
 			  "Get information about a vanilla table, must have same binds and columns",
@@ -4475,6 +4480,7 @@ static toSQL SQLTableInfo8("toOracleExtract:TableInfo",
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
 			   "        AND t.table_name   = s.segment_name\n"
+			   "        AND s.segment_type = 'TABLE'\n"
 			   "        AND s.owner        = :own<char[100]>\n"
 			   "        AND t.owner        = s.owner",
 			   "",
@@ -4527,6 +4533,7 @@ static toSQL SQLTableInfo7("toOracleExtract:TableInfo",
 			   " WHERE\n"
 			   "            t.table_name   = :nam<char[100]>\n"
 			   "        AND t.table_name   = s.segment_name\n"
+			   "        AND s.segment_type = 'TABLE'\n"
 			   "        AND s.owner        = :own<char[100]>\n"
 			   "        AND t.owner        = s.owner",
 			   "",

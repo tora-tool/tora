@@ -1184,6 +1184,7 @@ void toTuningOverview::poll(void)
 	  QLabel *label;
 	  if (labIt==Backgrounds.end()||*labIt==NULL) {
 	    label=new QLabel(BackgroundGroup);
+	    label->show();
 	    if (labIt==Backgrounds.end()) {
 	      Backgrounds.insert(Backgrounds.end(),label);
 	      labIt=Backgrounds.end();
@@ -1205,6 +1206,7 @@ void toTuningOverview::poll(void)
 	Values.erase(i);
       }
     }
+
     setValue(TotalProcess,"TotalProcess");
     setValue(BufferSize,"Database Buffers");
     setValue(RedoBuffer,"Redo Buffers");
@@ -1467,7 +1469,7 @@ QWidget *toTuning::tabWidget(const QString &name)
   } else if (name==CONF_WAITS) {
     widget=Waits;
   } else if (Charts.find(CONF_CHART+name)!=Charts.end()) {
-    widget=Charts[name];
+    widget=Charts[CONF_CHART+name];
   }
   return widget;
 }

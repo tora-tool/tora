@@ -1309,11 +1309,11 @@ void toBrowser::importData(std::map<QString,QString> &data,const QString &prefix
 
   toToolWidget::importData(data,prefix);
   QString str=data[prefix+":Schema"];
+  Schema->setSelected(str);
   for(int i=0;i<Schema->count();i++)
-    if (Schema->text(i)==str) {
+    if (Schema->text(i)==str)
       Schema->setCurrentItem(i);
-      Schema->setSelected(Schema->text(i));
-    }
+
   str=data[prefix+":FirstTab"];
   QWidget *chld=(QWidget *)child(str);
   if(chld&&str.length()) {

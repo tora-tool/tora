@@ -18,15 +18,8 @@ toMysqlConnection:
 otl:
 	Sometimes looses open cursors when cancelling and multiple queries are running.
 
-toSQLParse:
-	Doesn't handle case statements very well.
-
 toThread:
 	Leaves defunct processes when running under gdb.
 
-toSGATrace:
-	Doesn't work with Oracle7
-
 toScript:
 	Seems to not update enable/disable status when changing to report mode.
-	Can't expand checkbox items in the comparison description.

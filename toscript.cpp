@@ -207,6 +207,10 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,false);
   ScriptUI->Tabs->setTabEnabled(ScriptUI->DifferenceTab,false);
 
+  connect(SearchList,SIGNAL(clicked(QListViewItem *)),this,SLOT(keepOn(QListViewItem *)));
+  connect(DropList,SIGNAL(clicked(QListViewItem *)),this,SLOT(keepOn(QListViewItem *)));
+  connect(CreateList,SIGNAL(clicked(QListViewItem *)),this,SLOT(keepOn(QListViewItem *)));
+
   QGridLayout *layout=new QGridLayout(ScriptUI->ResultTab);
   layout->addWidget(box,0,0);
   layout=new QGridLayout(ScriptUI->DifferenceTab);
@@ -612,7 +616,6 @@ void toScript::fillDifference(std::list<QString> &objects,QListView *view)
       item=new toResultViewMLCheck(view,ctx[lastLevel],QCheckListItem::CheckBox);
     last=item;
     item->setOn(true);
-    item->setEnabled(false);
     lstCtx=ctx;
     lastLevel++;
   }
@@ -796,6 +799,16 @@ void toScript::changeMode(int mode)
   ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked()&&mode!=3);
   ScriptUI->IncludeCode->setEnabled(ScriptUI->IncludeDDL->isChecked());
   ScriptUI->IncludeComment->setEnabled(ScriptUI->IncludeDDL->isChecked());
+}
+
+void toScript::keepOn(QListViewItem *parent)
+{
+  if (!parent)
+    return;
+  toResultViewCheck *pchk=dynamic_cast<toResultViewCheck *>(parent);
+  if (!pchk)
+    return;
+  pchk->setOn(true);
 }
 
 void toScript::objectClicked(QListViewItem *parent)
