@@ -130,8 +130,10 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
     LastSearch=SearchString;
     toStatusMessage(QString::null);
   }
-  if (CursorTimerID>=0)
+  if (CursorTimerID>=0) {
     killTimer(CursorTimerID);
+    CursorTimerID=-1;
+  }
   toMultiLineEdit::focusOutEvent(e);
 }
 
