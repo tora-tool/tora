@@ -92,6 +92,7 @@ public slots:
   void changeCursor(QListViewItem *item);
   void changeRefresh(const QString &str);
   void refresh(void);
+  void refreshTabs(void);
   void enableStatistics(void)
   { enableStatistics(true); }
   void disableStatistics(void)

@@ -663,20 +663,18 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   ExtentButton->setToggleButton(true);
   ExtentButton->setIconSet(QIconSet(QPixmap((const char **)storageextents_xpm)));
   bool extents=!StorageTool.config(CONF_DISP_EXTENTS,"").isEmpty();
-  if (extents) {
+  if (extents)
     ExtentButton->setOn(true);
-    connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
-  }
+  connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
   QToolTip::add(ExtentButton,"Show extent view.");
 
   TablespaceButton=new QToolButton(toolbar);
   TablespaceButton->setToggleButton(true);
   TablespaceButton->setIconSet(QIconSet(QPixmap((const char **)tostorage_xpm)));
   bool tablespaces=!StorageTool.config(CONF_DISP_TABLESPACES,"Yes").isEmpty();
-  if (tablespaces) {
+  if (tablespaces)
     TablespaceButton->setOn(true);
-    connect(TablespaceButton,SIGNAL(toggled(bool)),this,SLOT(showTablespaces(bool)));
-  }
+  connect(TablespaceButton,SIGNAL(toggled(bool)),this,SLOT(showTablespaces(bool)));
   QToolTip::add(ExtentButton,"Show tablespaces or just datafiles.");
 
   toolbar->addSeparator();
