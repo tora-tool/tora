@@ -412,6 +412,10 @@ bool toDebug::isRunning(void)
   return RunningTarget;
 }
 
+static toSQL SQLDebugEnable("toDebug:EnableDebug",
+			    "ALTER SESSION SET PLSQL_DEBUG = TRUE",
+			    "Enable PL/SQL debugging");
+
 static toSQL SQLDebugInit("toDebug:Initialize",
 			  "DECLARE\n"
 			  "  ret VARCHAR2(200);\n"
@@ -423,11 +427,12 @@ static toSQL SQLDebugInit("toDebug:Initialize",
 			  "END;",
 			  "Initialize the debug session, must have same bindings");
 
-
 void toDebug::targetTask::run(void)
 {
   {
     toConnection Connection(Parent.connection());
+    otl_cursor::direct_exec(Connection.connection(),
+			    SQLDebugEnable(Connection));
     otl_stream init(1,
 		    SQLDebugInit(Connection),
 		    Connection.connection());
@@ -1263,12 +1268,12 @@ static toSQL SQLLocalIndex("toDebug:LocalIndex",
 			   "  proginf DBMS_DEBUG.program_info;\n"
 			   "  i BINARY_INTEGER;\n"
 			   "  indata DBMS_DEBUG.index_table;\n"
-			   "  outdata VARCHAR2(4000) := '';\n"
+			   "  outdata VARCHAR2(4000);\n"
 			   "BEGIN\n"
 			   "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,0,proginf,indata);\n"
 			   "  IF ret = DBMS_DEBUG.success THEN\n"
 			   "    i:=indata.first;\n"
-			   "    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP\n"
+			   "    WHILE i IS NOT NULL AND (LENGTH(outdata)<3900 OR outdata IS NULL) LOOP\n"
 			   "      outdata:=outdata||indata(i)||',';\n"
 			   "      i:=indata.next(i);\n"
 			   "    END LOOP;\n"
@@ -1282,7 +1287,7 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
 			    "  proginf DBMS_DEBUG.program_info;\n"
 			    "  i BINARY_INTEGER;\n"
 			    "  indata DBMS_DEBUG.index_table;\n"
-			    "  outdata VARCHAR2(4000) := '';\n"
+			    "  outdata VARCHAR2(4000);\n"
 			    "BEGIN\n"
 			    "  proginf.Namespace:=:namespace<int,in>;\n"
 			    "  proginf.Name:=:object<char[41],in>;\n"
@@ -1291,7 +1296,7 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
 			    "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,NULL,proginf,indata);\n"
 			    "  IF ret = DBMS_DEBUG.success THEN\n"
 			    "    i:=indata.first;\n"
-			    "    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP\n"
+			    "    WHILE i IS NOT NULL AND (LENGTH(outdata)<3900 OR outdata IS NULL) LOOP\n"
 			    "      outdata:=outdata||indata(i)||',';\n"
 			    "      i:=indata.next(i);\n"
 			    "    END LOOP;\n"
@@ -1489,7 +1494,8 @@ void toDebug::updateState(int reason)
 		if (start<end) {
 		  QString name=item->text(2);
 		  name+="(";
-		  name+=QString::fromUtf8(start);
+		  // Why do I have to add 1 here for it to work?
+		  name+=QString::number(atoi(start)+1);
 		  name+=")";
 		  last=new toResultViewItem(item,last);
 		  last->setText(0,item->text(0));
@@ -1715,8 +1721,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   QToolBar *toolbar=toAllocBar(this,"Debugger",connection.connectString());
 
   new QToolButton(*toRefreshPixmap,
-		  "Update code list",
-		  "Update code list",
+		  "Update object list",
+		  "Update object list",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
@@ -1951,10 +1957,6 @@ static toSQL SQLAttach("toDebug:Attach",
 		       "END;",
 		       "Connect to the debugging session");
 
-static toSQL SQLDebugEnable("toDebug:EnableDebug",
-			    "ALTER SESSION SET PLSQL_DEBUG = TRUE",
-			    "Enable PL/SQL debugging");
-
 void toDebug::startTarget(void)
 {
   {
@@ -1969,8 +1971,6 @@ void toDebug::startTarget(void)
 		      SQLAttach(connection()),
 		      otlConnect());
     attach<<TargetID.utf8();
-    otl_cursor::direct_exec(otlConnect(),
-			    SQLDebugEnable(connection()));
   } TOCATCH  // Trying to run somthing after this won't work (And will hang tora I think)
 }
 
@@ -2448,10 +2448,10 @@ void toDebug::windowActivated(QWidget *widget)
 			   CTRL+Key_P);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(*toToggleBreakPixmap,"&Toggle Breakpoint",this,SLOT(toggleBreak(void)),
-			   Key_F5);
+			   CTRL+Key_F5);
       ToolMenu->insertItem(*toEnableBreakPixmap,"D&isable Breakpoint",
 			   this,SLOT(toggleEnable(void)),
-			   CTRL+Key_Space);
+			   CTRL+Key_F6);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(*toAddWatchPixmap,"&Add Watch",this,SLOT(addWatch(void)),
 			   Key_F4);
@@ -2460,6 +2460,8 @@ void toDebug::windowActivated(QWidget *widget)
       ToolMenu->insertItem(*toChangeWatchPixmap,"Chan&ge Watch",this,SLOT(changeWatch(void)),
 			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Refresh Object List",this,SLOT(refresh()),
+			   Key_F5);
       ToolMenu->insertItem("Select Schema",Schema,SLOT(setFocus(void)),
 			   ALT+Key_S);
       ToolMenu->insertItem("Erase Runtime &Log",this,SLOT(clearLog(void)));
@@ -2478,6 +2480,11 @@ void toDebug::windowActivated(QWidget *widget)
 	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
       if (!DebugTabs->isHidden())
 	toMainWidget()->menuBar()->setItemChecked(TO_ID_DEBUG_PANE,true);
+
+      if (!DelWatchButton->isEnabled())
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
+      if (!ChangeWatchButton->isEnabled())
+	toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
     }
   } else {
     delete ToolMenu;
@@ -2569,21 +2576,25 @@ void toDebug::changeWatch(QListViewItem *item)
   if (item&&item->text(4).isEmpty()) {
     QString description="Enter new value to the watch ";
     description+=item->text(2);
-    QString data=item->text(3);
+    QString data;
 
     toDebugChangeUI dialog(this,"WatchChange",true);
     toHelp::connectDialog(&dialog);
 
     dialog.HeadLabel->setText(description);
     QString index=item->text(5);
+
+    if (item->text(5)=="NULL") {
+      dialog.NullValue->setChecked(true);
+      data=item->text(3);
+    }
+
     if (!index.isEmpty()&&index!="LIST")
       dialog.Index->setValue(item->text(5).toInt());
     if (index!="LIST") {
       dialog.Index->setEnabled(false);
       dialog.Value->setText(data);
     }
-    if (item->text(4)=="NULL")
-      dialog.NullValue->setChecked(true);
 
     if (dialog.exec()) {
       int ret=-1;

@@ -12,5 +12,201 @@ The lower pane <B>Contents</B> contains the structure of the selected object. He
 find declared methods of packages and also variables or even anonymous blocks in your code.
 Selecting a line in this pane will move the cursor to where the element is in your code, for
 instance where a variable or method is declared.<P>
+To the right is a large editor area where you can edit the current object. The editor is
+describe more <A HREF=debugger.html#editor>later</A>.<P>
+The last part of the screen is not always visible which contain information about the
+currently currently running <A HREF=debugging.html#debugging>debugging</A> session.<P>
+<A NAME=toolbar><H2>Toolbar &amp; menu</H2>
+The toolbar and menu contain pretty much the same commands with a few exceptions.
+<TABLE>
+<TR><TD VALIGN=top><B>
+Refresh object list</B></TD><TD VALIGN=top>
+Update the <B>Object</B> list to the left of the screen. This is first on the toolbar and close
+to the end in the menu. The keyboard shortcut for this is <B>F5</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Select schema</B></TD><TD VALIGN=top>
+In the toolbar this is a combobox listing the available schemas. Changing the schema will change
+the objects displayed in the <B>Object</B> list. Selecting it in the menu (Close to the end) or
+selecting the <B>ALT+S</B> keyboard shortcut will move the keyboard focus to the toolbar
+combobox.</TD></TR>
+<TR><TD VALIGN=top><B>
+New sheet</B></TD><TD VALIGN=top>
+Start editing a new object.</TD></TR>
+<TR><TD VALIGN=top><B>
+Scan source</B></TD><TD VALIGN=top>
+Update the <B>Contents</B> list to the left on the screen according to the source currently in
+the editor. TOra will try to keep up with this as you write, but new blocks and declarations
+will only show up if you rescan the source. The keyboard shortcut for this is <B>CTRL+F9</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Compile</B></TD><TD VALIGN=top>
+Compile the current editor. This will compile the procedure with the debug option, if you don't
+have the debug options you need to recompile it in order to be able to see watches.
+The keyboard shortcut for this is <B>F9</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Execute</B></TD><TD VALIGN=top>
+Call the method, procedure or function closest to the cursor. It's off course only when you 
+edit packages that there are several methods to choose from in the current editor. If you have
+changed the source TOra will ask you if you want to recompile and start over or simply continue
+without recompiling. The keyboard shortcut for this is <B>CTRL+Return</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Stop</B></TD><TD VALIGN=top>
+Halt the currently running execution. The keyboard shortcut for this is <B>F12</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Step into</B></TD><TD VALIGN=top>
+Step into any functions or procedures called on the current line of execution.
+ The keyboard shortcut for this is <B>F7</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Step over</B></TD><TD VALIGN=top>
+Step to the next line of the current editor.
+ The keyboard shortcut for this is <B>F8</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Return from</B></TD><TD VALIGN=top>
+Continue running until returned from the current function or procedure.
+The keyboard shortcut for this is <B>F6</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Head editor</B></TD><TD VALIGN=top>
+Switch between the head and body editor. For more information see the
+<A HREF=debugger.html#editor>editor</A> section below.
+The keyboard shortcut for this is <B>CTRL+Space</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Debug pane</B></TD><TD VALIGN=top>
+Display or hide the <A HREF=debugging.html#debugging>debugging pane</A> at the bottom of
+the debugging window. The keyboard shortcut for this is <B>F11</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Next error</B></TD><TD VALIGN=top>
+Move the cursor to the next syntax error in the current editor. For more information
+about syntax errors in editors see the <A HREF=debugger.html#editor>editor section</A>.
+The keyboard shortcut for this is <B>CTRL+N</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Previous error</B></TD><TD VALIGN=top>
+Move the cursor to the previous syntax error in the current editor. For more information
+about syntax errors in editors see the <A HREF=debugger.html#editor>editor section</A>.
+The keyboard shortcut for this is <B>CTRL+P</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Toggle breakpoint</B></TD><TD VALIGN=top>
+Add or remove a breakpoint on the current line of the editor. Breakpoints are indicated
+with a small stopsign to the right of the line in the <A HREF=debugger.html#editor>editor</A>.
+The keyboard shortcut for this is <B>CTRL+F5</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Disable breakpoint</B></TD><TD VALIGN=top>
+Will disable or enable a breakpoint on the current editor. A disabled breakpoint will be
+seen is grayed out in the margin of the <A HREF=debugger.html#editor>editor</A> of the line
+it is on. The keyboard shortcut for this is <B>CTRL+F6</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Add watch</B></TD><TD VALIGN=top>
+Add a watched variable. See here for more information about
+<A HREF=debugger.html#watches>watches</A>. The keyboard shortcut for this is <B>F4</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Delete watch</B></TD><TD VALIGN=top>
+Remove a watched variable. The keyboard shortcut for this is <B>CTRL+Del</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Change watch</B></TD><TD VALIGN=top>
+Change the value of a watch. See here for more information about
+<A HREF=debugger.html#watches>watches</A>. The keyboard shortcut for this is <B>CTRL+F4</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Erase runtime log</B></TD><TD VALIGN=top>
+Remove the content of the runtime log which is in the rightmost pane of the
+<A HREF=debugger.html#debugger>debugger info</A>.</TD></TR>
+</TABLE><P>
+<A NAME=editor><H2>Debugger editor</H2>
+There are a few things that are special to the PL/SQL debugger compared to other editors in
+TOra. First of all there are actually two editors. In one you edit the declaration of a package
+this is called the <B>head</B> editor. The other one is used to edit the implementation of a
+package and is called the <B>body</B> editor. If you are editing procedures or functions you
+will only use the <B>body</B> editor. You switch between the editors using the <B>CTRL+Space</B>
+keyboard shortcut or with the <B>head editor</B> toolbar button or menu entry. This also mean
+that when you run a program and make a change, but still decide to keep stepping through your
+program without restarting you can have one other changed file plus the current file, if you
+try to step to another object TOra will ask if you want to continue until you are back in the
+edited files or recompile.<P>
+Another thing special in this editor is that the PL/SQL editor will show you errors in the
+package. The errors are highlighted with a special background color (The default is red, but
+this is configurable in the <A HREF=fonts.html>options</A>. You can also use the <B>next error</B>
+or <B>previous error</B> toolbar button/menu entries to step between the errors.<P>
+Next thing to know about the debugger is breakpoints. You can set a breakpoint either by
+selecting the <B>toggle breakpoint</B> toolbar button or menu entry. This will add a breakpoint
+to the line you are currently on in the editor. To remove the breakpoint simply select
+<B>toggle breakpoint</B> again. Another way to add or remove breakpoints is to doubleclick in the
+left margin of the editor where you also see where the breakpoints are. They are indicated by a
+small stop sign in the margin. If you want to temporarily disable a breakpoint that you might
+need to enable again later you can also choose <B>disable breakpoint</B>, this is also a toggle
+so selecting the command again will reenable the breakpoint. For those of you who don't know
+breakpoints means that when execution of the object comes to the line containing the breakpoint
+the debugger will stop and allow you to inspect the data.<P>
+Which brings us to the last special thing in this editor which is the current line of execution,
+this is an indication of where the execution currently is at. This line is indicated by a
+special background (Default is green, but that is configurable in the
+<A HREF=fonts.html>options</A>).<P>
+<A NAME=debugger.html><H2>Debugger information</H2>
+Information about the current state of execution is shown in the hidable pane at the bottom of
+the debugger window. You hide or show this by selecting the command <B>debug pane</B> command
+or by pressing the <B>F11</B> key. The debug pane consist of several tabs containing the following
+information.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Stack trace</B></TD><TD VALIGN=top>
+Contains the current stack trace. This means the list of called objects that have lead to
+the current line of execution. Selecting a line will bring up the object and line where
+the the call to the next object was made except for the last line which is the current
+line of execution.</TD></TR>
+<TR><TD VALIGN=top><B>
+Watches</B></TD><TD VALIGN=top>
+Watches is where you can inspect variables in your PL/SQL code while running. They are
+explained in more detail <A HREF=debugger.html#watches>later</A>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Breakpoints</B></TD><TD VALIGN=top>
+A list of where you current have your breakpoints and their status. The status can be
+<B>enabled</B> or <B>disabled</B> which are pretty self explanatory. It can also be
+<B>defered</B> which means that some error have occured setting the breakpoint. Every time
+execution is restarted TOra tries to set any breakpoints that are <B>defered</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Parameters</B></TD><TD VALIGN=top>
+This displays the input and output parameters that you passed to the
+original call that started the debugging. The output parameters are off course not available
+until the execution is finnished.</TD></TR>
+<TR><TD VALIGN=top><B>
+Debug output</B></TD><TD VALIGN=top>
+Any DBMS_OUTPUT output from your debugging session will end up in this window. For more
+information about using this see the <A HREF=output.html>output tool</A>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Runtime log</B></TD><TD VALIGN=top>
+This is simply a log displaying what is happening in the target debugging thread and
+probably not of much interest to anybody except TOra developers.</TD></TR>
+</TABLE><P>
+<A NAME=watches><H2>Watches</H2>
+Watches are a way to inspect the contents of variables in a running program. When you add
+a watch using the <B>add watch</B> command you are presented with the following dialog.<P>
+<IMG SRC=addwatch.png><P>
+First of all you need to select the scope the variable is declared in. The <B>local</B> scope
+is variables only declared in the current context, like for instance this function or procedure.
+The <B>head</B> and <B>body</B> are variables declared in packages. Variables in packages
+are usually also available in the <B>global</B> scope. When you declare a watch in any scope
+except for <B>local</B> you should also indicate the object in which the variable is declared
+in the format <I>schema.object.variable</I>. The current object is prepended to the variable
+name when you select anything but the <B>local</B> scope.<P>
+Last you have to fill out the variable. If you have the cursor on a variable in the editor that
+is prefilled when you add the watch.<P>
+You can then see the contents of this variable in the <B>watch</B> pane of the
+<A HREF=debugger.html>debugger info</A>. The value will be updated every time execution stops
+while you are debugging. If the variable can not be found it will be <B>{Unavailable</B>. If
+all variables are unavailable even though they shouldn't you have probably forgotten to compile
+the object with the debug option. You can remedy this by simply using the <B>compile</B>
+command. TOra will always compile programs using the debug option when in the PL/SQL debugger.<P>
+TOra can also inspect list and table object which will show up as child items in the list to
+the variable. When this is a case you can also see how many items an array is having in the
+parent of the actual data items.<P>
+You can remove a watch by selecting it in the watch list and selecting the <B>remove watch</B>
+command.<P>
+You can also change the content of a watch. First you select the watch you want to change in
+the watch list, then you select the <B>change watch</B> command. You will be shown this
+dialog.<P>
+<IMG SRC=changewatch.png><P>
+If you had the selected the parent of an array watch you will be able to select the index you
+want to assign a new value with the <B>index</B> indicator to right. Then you enter the new value in
+the text field or check the <B>NULL</B> indicator to set the value to NULL.<P>
 </BODY>
 </HTML>
