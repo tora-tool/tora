@@ -44,7 +44,7 @@
 
 double toLineChart::round(double round,bool up)
 {
-  double base=1;
+  double base=1.0E-5;
   double mult=1;
   if (round<0) {
     mult=-1;
@@ -216,6 +216,7 @@ void toLineChart::paintEvent(QPaintEvent *e)
     }
   }
   double minval=0,maxval=0;
+  bool leftAxis=true;
   if (MinAuto||MaxAuto) {
     bool first=true;
     for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
@@ -230,8 +231,9 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	  minval=*j;
       }
     }
-    if (maxval!=0)
-      maxval=round(maxval,true);
+    if (maxval==0&&minval==0)
+      leftAxis=false;
+    maxval=round(maxval,true);
     minval=round(minval,false);
   }
   if(!MinAuto)
@@ -243,7 +245,7 @@ void toLineChart::paintEvent(QPaintEvent *e)
     int yoffset=0;
     QString minstr;
     QString maxstr;
-    if (minval!=0||maxval!=0) {
+    if (leftAxis) {
       minstr=QString::number(minval);
       maxstr=QString::number(maxval);
       minstr+=YPostfix;

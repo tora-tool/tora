@@ -132,7 +132,7 @@ static toSQL SQLChartsPhysical("toTuning:Charts:1BBPhysical I/O",
 			       "       sum(decode(statistic#,40,value,0)) \"Physical reads\",\n"
 			       "       sum(decode(statistic#,44,value,0)) \"Physical writes\",\n"
 			       "       sum(decode(statistic#,105,value,0)) \"Redo writes\"\n"
-			       "  from v$sysstat",
+			       "  from v$sysstat where statistic# in (40,44,105)",
 			       "Generate chart of physical I/O of database.");
 
 static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
@@ -141,7 +141,7 @@ static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
 			       "       sum(decode(statistic#,39,value,0)) \"Consistent gets\",\n"
 			       "       sum(decode(statistic#,41,value,0)) \"Block changes\",\n"
 			       "       sum(decode(statistic#,42,value,0)) \"Consistent changes\"\n"
-			       "  from v$sysstat",
+			       "  from v$sysstat where statistic# in (38,39,41,42)",
 			       "Generate chart of physical I/O of database.");
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
@@ -154,8 +154,7 @@ static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "       control \"Control File I/O\",\n"
 			   "       direct \"Direct I/O\",\n"
 			   "       log \"Log file\",\n"
-			   "       net \"SQL*Net\",\n"
-			   "       total-parallel-filewrite-writecomplete-fileread-singleread-control-direct-log-net \"Other\"\n"
+			   "       net \"SQL*Net\"\n"
 			   "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
 			   "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
 			   "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
@@ -164,8 +163,7 @@ static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "               SUM(DECODE(SUBSTR(event,1,12),'control file',time_waited,0)) control,\n"
 			   "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
 			   "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
-			   "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
-			   "		   SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
+			   "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net\n"
 			   "          from v$system_event)\n",
 			   "Used to generate chart for system wait time.");
 
@@ -402,7 +400,8 @@ static toSQL SQLOverviewSGA("toTuning:Overview:SGA",
 			    "Information about SGA");
 
 static toSQL SQLOverviewBackground("toTuning:Overview:Background",
-				   "select substr(name,1,3),count(1) from v$bgprocess where paddr != '00' group by substr(name,1,3)",
+				   "select substr(name,1,3),count(1) from v$bgprocess where paddr != '00'\n"
+				   " group by substr(name,1,3) order by substr(name,1,3)",
 				   "Background processes");
 
 static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
