@@ -209,12 +209,7 @@ toNoBlockQuery::~toNoBlockQuery()
     toLocker lock(Lock);
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
-#ifndef WIN32
-      if (Query.connection().provider()=="Oracle")
-	Thread->kill(SIGINT);
-#else
-      // Can't kill it, so well just leave it alone till it's done
-#endif
+      Query.cancel();
       Quit=true;
     }
   }

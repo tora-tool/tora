@@ -195,35 +195,10 @@ bool toResultLong::eof(void)
   return !Query||Query->eof();
 }
 
-#ifdef WIN32
-class toDeleteQuery : public toTask {
-  toNoBlockQuery *RIP;
-public:
-  toDeleteQuery(toNoBlockQuery *rip)
-  { RIP=rip; }
-  virtual void run(void)
-  { delete RIP; }
-};
-
-#endif
-
 void toResultLong::stop(void)
 {
   if (Query) {
-#ifdef WIN32
-    try {
-      if (Query->poll())
-	delete Query;
-      else {
-	toThread *thread=new toThread(new toDeleteQuery(Query));
-	thread->startAsync();
-      }
-    } catch(...) {
-      delete Query;
-    }
-#else
     delete Query;
-#endif
     Query=NULL;
     emit done();
   }

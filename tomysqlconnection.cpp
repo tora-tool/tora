@@ -203,6 +203,10 @@ public:
       }
       return ret;
     }
+    virtual void cancel(void)
+    {
+      // Not implemented
+    }
     virtual bool eof(void)
     {
       if (!Result)

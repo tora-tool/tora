@@ -151,6 +151,10 @@ public:
      * @return Column number.
      */
     virtual int columns(void) = 0;
+    /** Cancel the current execution of a query. This will usually be called from another
+     * thread than is executing the query.
+     */
+    virtual void cancel(void) = 0;
   };
 
 private:
@@ -362,6 +366,9 @@ public:
 					   const QString &arg5=QString::null,const QString &arg6=QString::null,
 					   const QString &arg7=QString::null,const QString &arg8=QString::null,
 					   const QString &arg9=QString::null);
+  /** Cancel the current execution of a query.
+   */
+  void cancel(void);
 };
 
 /** A short representation of a @ref toQuery::queryDescribe

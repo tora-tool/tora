@@ -4,6 +4,7 @@
 2001-09-24: Implemented an extended object cache instead of table cache.
 2001-09-24: Read object cache in background instead of when needed.
 2001-09-24: toResultCols uses new object cache.
+2001-09-24: Made aborting queries correctly on windows work.
 
 1.1.1: 2001-09-24
 

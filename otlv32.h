@@ -12408,6 +12408,13 @@ public:
 
  }
 
+ void cancel(void)
+ {
+  if(attached){
+    OCIBreak(srvhp,errhp);
+  }
+ }
+
  int server_detach(void)
  {int rc=0;
   if(attached){
@@ -14034,6 +14041,10 @@ public:
   }
  }
 
+ void cancel(void)
+ {
+   connect_struct.cancel();
+ }
 
  void server_attach(const char* tnsname=0)
  {

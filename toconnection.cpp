@@ -628,6 +628,11 @@ toQValue toQuery::readValueNull(void)
   return Query->readValue();
 }
 
+void toQuery::cancel(void)
+{
+  Query->cancel();
+}
+
 // toConnection implementation
 
 void toConnection::addConnection(void)

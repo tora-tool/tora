@@ -222,6 +222,7 @@ public:
       // Never get here
       return QString::null;
     }
+    virtual void cancel(void);
     virtual bool eof(void)
     {
       if (!Query)
@@ -671,6 +672,14 @@ void toOracleProvider::oracleQuery::execute(void)
   } catch (const otl_exception &exc) {
     ThrowException(exc);
   }
+}
+
+void toOracleProvider::oracleQuery::cancel(void)
+{
+  oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
+  if (!conn)
+    throw QString("Internal error, not oracle sub connection");
+  conn->Connection->cancel();
 }
 
 toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
