@@ -105,8 +105,12 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 	UNION
 	SELECT owner,object_type,object_name
 	  FROM all_objects
-	 WHERE object_type IN ('VIEW','TABLE','TYPE','SEQUENCE','PACKAGE',
+	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',
 			       'PACKAGE BODY','FUNCTION','PROCEDURE')
+	UNION
+	SELECT owner,'TABLE',table_name
+	  FROM all_tables
+	 WHERE temporary != 'Y' AND secondary = 'N'
 	UNION
 	SELECT owner,'MATERIALIZED TABLE',mview_name AS object
 	  FROM all_mviews
@@ -173,6 +177,8 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   connect(SourceSchema,SIGNAL(activated(int)),this,SLOT(changeSourceSchema(int)));
   connect(Objects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
 
+  Schema->setCurrentItem(0);
+
   Connection.addWidget(this);
 }
 
@@ -199,8 +205,6 @@ void toScript::execute(void)
       toStatusMessage("No mode selected");
       return;
     }
-    Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
-    Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
 
     list<QString> tableSpace;
     list<QString> profiles;
@@ -313,6 +317,10 @@ void toScript::execute(void)
     list<QString> destinationObjects;
     if (Destination->isEnabled()) {
     }
+    Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
+    Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
+    if (!script.isEmpty())
+      Worksheet->editor()->setText(script);
   } TOCATCH
 }
 

@@ -22,6 +22,7 @@ Extended functionality:
 * Add function to create plan table from TOra.
 * Extract grants from objects.
 * Implement migrate functionality in toExtract.
+* Implement extract of temporary tables.
 
 New tools:
 * Info about current session.

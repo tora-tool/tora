@@ -258,7 +258,7 @@ static toSQL SQLConstraintCols("toExtract:ConstraintCols",
 			       "SELECT LOWER(column_name)
   FROM all_cons_columns
  WHERE owner = :own<char[100]>
-   AND constrant_name = :con<char[100]>
+   AND constraint_name = :con<char[100]>
  ORDER BY position",
 			       "List columns in a constraint, must have same binds and columns");
 
@@ -284,10 +284,10 @@ QString toExtract::constraintColumns(const QString &owner,const QString &name)
 }
 
 static toSQL SQLTableComments("toExtract:TableComment",
-			      "SELECT comments,
+			      "SELECT comments
   FROM all_tab_comments
  WHERE table_name = :nam<char[100]>
-   AND comment IS NOT NULL
+   AND comments IS NOT NULL
    AND owner = :own<char[100]>",
 			      "Extract comments about a table, must have same columns and binds");
 static toSQL SQLColumnComments("toExtract:ColumnComment",
@@ -295,7 +295,7 @@ static toSQL SQLColumnComments("toExtract:ColumnComment",
        comments
   FROM all_col_comments
  WHERE table_name = :nam<char[100]>
-   AND comment IS NOT NULL
+   AND comments IS NOT NULL
    AND owner = :own<char[100]>",
 			       "Extract comments about a columns, must have same columns and binds");
 
@@ -306,12 +306,14 @@ QString toExtract::createComments(const QString &schema,
   QString ret;
   if (Comments) {
     QString sql;
-    otl_stream str(1,
+    otl_stream inf(1,
 		   SQLTableComments(Connection),
 		   Connection.connection());
-    while(!str.eof()) {
+    inf<<name.utf8();
+    inf<<owner.utf8();
+    while(!inf.eof()) {
       char buffer[10000];
-      str>>buffer;
+      inf>>buffer;
       sql=QString("COMMENT ON TABLE %1%2 IS '%3'").
 	arg(schema.lower()).
 	arg(name.lower()).
@@ -327,15 +329,17 @@ QString toExtract::createComments(const QString &schema,
     otl_stream col(1,
 		   SQLColumnComments(Connection),
 		   Connection.connection());
+    col<<name.utf8();
+    col<<owner.utf8();
     while(!col.eof()) {
       char buffer[10000];
-      str>>buffer;
-      QString col=QString::fromUtf8(buffer);
-      str>>buffer;
+      col>>buffer;
+      QString column=QString::fromUtf8(buffer);
+      col>>buffer;
       sql=QString("COMMENT ON COLUMN %1%2.%3 IS '%4'").
 	arg(schema.lower()).
 	arg(name.lower()).
-	arg(col.lower()).
+	arg(column.lower()).
 	arg(prepareDB(QString::fromUtf8(buffer)));
       if (Prompt) {
 	ret+="PROMPT ";
@@ -353,23 +357,27 @@ void toExtract::describeComments(list<QString> &lst,list<QString> &ctx,
 				 const QString &schema,const QString &owner,const QString &name)
 {
   if (Comments) {
-    otl_stream str(1,
+    otl_stream inf(1,
 		   SQLTableComments(Connection),
 		   Connection.connection());
-    while(!str.eof()) {
+    inf<<name.utf8();
+    inf<<owner.utf8();
+    while(!inf.eof()) {
       char buffer[10000];
-      str>>buffer;
+      inf>>buffer;
       addDescription(lst,ctx,"COMMENT",QString::fromUtf8(buffer));
     }
     otl_stream col(1,
 		   SQLColumnComments(Connection),
 		   Connection.connection());
+    col<<name.utf8();
+    col<<owner.utf8();
     while(!col.eof()) {
       char buffer[10000];
-      str>>buffer;
-      QString col=QString::fromUtf8(buffer);
-      str>>buffer;
-      addDescription(lst,ctx,"COLUMN",col.lower(),"COMMENT",QString::fromUtf8(buffer));
+      col>>buffer;
+      QString column=QString::fromUtf8(buffer);
+      col>>buffer;
+      addDescription(lst,ctx,"COLUMN",column.lower(),"COMMENT",QString::fromUtf8(buffer));
     }
   }
 }
@@ -404,23 +412,22 @@ QString toExtract::generateHeading(const QString &action,
 {
   if (!Heading)
     return "";
-  QString str="REM This DDL was reverse engineered by
+  QString str=QString("REM This DDL was reverse engineered by
 REM TOra, Version %1
 REM
 REM at:   %2
 REM from: %3, an Oracle Release %4 instance
 REM
-REM on:   %4
+REM on:   %5
 REM
-";
-  char host[1024];
-  gethostname(host,1024);
-  str.
+").
     arg(TOVERSION).
     arg(host).
     arg(Connection.host()).
     arg(Connection.version()).
     arg(QDateTime::currentDateTime().toString());
+  char host[1024];
+  gethostname(host,1024);
   if (action=="FREE SPACE")
     str+="REM Generating free space report";
   else {
@@ -461,7 +468,7 @@ void toExtract::parseObject(const QString &object,QString &owner,QString &name)
     if (search>=object.length()) {
       name=owner;
       owner=Connection.user();
-    } else if (owner[search]!='.')
+    } else if (object[search]!='.')
       throw 2;
     search++;
     if (object[search]=='\"') {
@@ -519,7 +526,7 @@ static toSQL SQLListConstraint7("toExtract:ListConstraint",
 
 static toSQL SQLConstraintTable("toExtract:ConstraintTable",
 			     "SELECT table_name
-  FROM all_constraint
+  FROM all_constraints
  WHERE owner = :own<char[100]>
    AND constraint_name = :nam<char[100]>",
 			     "Get tablename from constraint name, same binds and columns");
@@ -565,8 +572,8 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
       (tchr=="R")?"FOREIGN KEY":
       "CHECK";
 
-    QString sql("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4\n");
-    sql.arg(schema).arg(table.lower()).arg(name.lower()).arg(type);
+    QString sql("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4\n").
+      arg(schema).arg(table.lower()).arg(name.lower()).arg(type);
     if (Prompt) {
       ret="PROMPT ";
       ret+=sql;
@@ -865,8 +872,8 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
   QString type=QString::fromUtf8(buffer);
   QString blocks=QString::fromUtf8(buffer);
 
-  QString sql=toSQL::string(SQLExchangeIndex,Connection);
-  sql.arg(type).arg(blocks);
+  QString sql=toSQL::string(SQLExchangeIndex,Connection).
+    arg(type).arg(blocks);
   list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
   QString degree=toShift(result);
   QString instances=toShift(result);
@@ -876,8 +883,8 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
 
   toUnShift(result,"");
 
-  sql=QString("CREATE%1%2 INDEX %3%4 ON %3%5\n");
-  sql.arg(unique).arg(bitmap).arg(schema).arg(segment).arg(table);
+  sql=QString("CREATE%1%2 INDEX %3%4 ON %3%5\n").
+    arg(unique).arg(bitmap).arg(schema).arg(segment).arg(table);
 
   QString ret;
   if (Prompt) {
@@ -919,8 +926,7 @@ void toExtract::describeExchangeIndex(list<QString> &lst,const QString &schema,c
   QString type=QString::fromUtf8(buffer);
   QString blocks=QString::fromUtf8(buffer);
 
-  QString sql=toSQL::string(SQLExchangeIndex,Connection);
-  sql.arg(type).arg(blocks);
+  QString sql=toSQL::string(SQLExchangeIndex,Connection).arg(type).arg(blocks);
   list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
   QString degree=toShift(result);
   QString instances=toShift(result);
@@ -976,7 +982,7 @@ static toSQL SQLIndexFunction("toExtract:IndexFunction",
    AND c.obj# = o.object_id
    AND c.name = :tab<char[100]>
    AND i.owner = :own<char[100]>
-   AND o.owner = t.table_owner",
+   AND o.owner = i.table_owner",
 			     "Get function of index column, same column and binds");
 
 QString toExtract::indexColumns(const QString &indent,
@@ -1141,8 +1147,7 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
   QString type=QString::fromUtf8(buffer);
   QString blocks=QString::fromUtf8(buffer);
 
-  QString sql=toSQL::string(SQLExchangeTable,Connection);
-  sql.arg(type).arg(blocks);
+  QString sql=toSQL::string(SQLExchangeTable,Connection).arg(type).arg(blocks);
   list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
   QString ret=createTableText(result,schema,owner,segment);
   ret+=";\n\n";
@@ -1169,8 +1174,7 @@ void toExtract::describeExchangeTable(list<QString> &lst,const QString &schema,c
   QString type=QString::fromUtf8(buffer);
   QString blocks=QString::fromUtf8(buffer);
 
-  QString sql=toSQL::string(SQLExchangeTable,Connection);
-  sql.arg(type).arg(blocks);
+  QString sql=toSQL::string(SQLExchangeTable,Connection).arg(type).arg(blocks);
   list<QString> result=toReadQuery(Connection,sql.utf8(),segment,partition,owner);
   list<QString> ctx;
   ctx.insert(ctx.end(),schema);
@@ -1203,7 +1207,8 @@ QString toExtract::segmentAttributes(list<QString> &result)
   QString ret;
   if (Storage) {
     if (result.size()!=18)
-      throw QString("Internal error, result should be 18 in segment attributes");
+      throw QString("Internal error, result should be 18 in segment attributes (Was %1)").
+		    arg(result.size());
 
     list<QString>::iterator i=result.begin();
 
@@ -3578,15 +3583,17 @@ static toSQL SQLIOTInfo("toExtract:IOTInfo",
               )                       AS blocks
  FROM
         all_indexes a,
-        all_all_tables b
+        all_all_tables b,
+        all_constraints c
  WHERE  a.table_name  = :nam<char[100]>
    AND  b.owner = a.owner
    AND  b.table_name = a.table_name
-   AND  a.owner = :own<char[100]>",
+   AND  a.owner = :own<char[100]>
+   AND  c.constraint_name = a.index_name
+   AND  c.owner = a.owner
+   AND  c.constraint_type = 'P'",
 			"Get storage information about a IOT storage, "
 			"same binds and columns");
-
-
 
 QString toExtract::createIOT(const QString &schema,const QString &owner,
 			     const QString &name)
@@ -4626,7 +4633,6 @@ static toSQL SQLTableConstraints("toExtract:TableConstraints",
 
 static toSQL SQLTableReferences("toExtract:TableReferences",
 				"SELECT
-        constraint_type,
         constraint_name
  FROM
         all_constraints cn
@@ -4680,8 +4686,10 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
 
   list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
   while(constraints.size()>0) {
-    if (iotType!="IOT"||toShift(constraints)!="P")
+    if (toShift(constraints)!="P"||iotType!="IOT")
       ret+=createConstraint(schema,owner,toShift(constraints));
+    else
+      toShift(constraints);
   }
 
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
@@ -4713,8 +4721,10 @@ void toExtract::describeTableFamily(list<QString> &lst,
 
   list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
   while(constraints.size()>0) {
-    if (iotType!="IOT"||toShift(constraints)!="P")
+    if (toShift(constraints)!="P"||iotType!="IOT")
       describeConstraint(lst,schema,owner,toShift(constraints));
+    else
+      toShift(constraints);
   }
 
   list<QString> triggers=toReadQuery(Connection,SQLTableTriggers(Connection),name,owner);
@@ -4725,7 +4735,7 @@ void toExtract::describeTableFamily(list<QString> &lst,
 QString toExtract::createTableReferences(const QString &schema,const QString &owner,const QString &name)
 {
   QString ret;
-  list<QString> constraints=toReadQuery(Connection,SQLTableConstraints(Connection),name,owner);
+  list<QString> constraints=toReadQuery(Connection,SQLTableReferences(Connection),name,owner);
   while(constraints.size()>0)
     ret+=createConstraint(schema,owner,toShift(constraints));
   return ret;
@@ -5939,10 +5949,13 @@ QString toExtract::compile(list<QString> &objects)
   QString ret=generateHeading("COMPILE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  QLabel *label=new QLabel(&progress);
+  progress.setLabel(label);
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
+    label->setText(*i);
     qApp->processEvents();
     if (progress.wasCancelled())
       throw QString("Creating script was cancelled");
@@ -5976,16 +5989,22 @@ QString toExtract::compile(list<QString> &objects)
   return ret;
 }
 
+#include <stdio.h>
+
 QString toExtract::create(list<QString> &objects)
 {
   clearFlags();
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  QLabel *label=new QLabel(&progress);
+  progress.setLabel(label);
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    printf("%s\n",(const char *)(*i));
     progress.setProgress(num);
+    label->setText(*i);
     qApp->processEvents();
     if (progress.wasCancelled())
       throw QString("Creating script was cancelled");
@@ -5995,7 +6014,7 @@ QString toExtract::create(list<QString> &objects)
     QString owner;
     QString name;
     int pos=type.find(":");
-    if (pos>=0)
+    if (pos<0)
       throw QString("Internal error, missing : in object description");
     parseObject(type.right(type.length()-pos-1),owner,name);
     type.truncate(pos);
@@ -6072,10 +6091,13 @@ list<QString> toExtract::describe(list<QString> &objects)
   list<QString> ret;
 
   QProgressDialog progress("Creating description","&Cancel",objects.size(),Parent,"progress",true);
+  QLabel *label=new QLabel(&progress);
+  progress.setLabel(label);
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
+    label->setText(*i);
     qApp->processEvents();
     if (progress.wasCancelled())
       throw QString("Creating script was cancelled");
@@ -6164,10 +6186,13 @@ QString toExtract::drop(list<QString> &objects)
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  QLabel *label=new QLabel(&progress);
+  progress.setLabel(label);
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
+    label->setText(*i);
     qApp->processEvents();
     if (progress.wasCancelled())
       throw QString("Creating script was cancelled");
@@ -6246,10 +6271,13 @@ QString toExtract::resize(list<QString> &objects)
   QString ret=generateHeading("CREATE",objects);
 
   QProgressDialog progress("Creating script","&Cancel",objects.size(),Parent,"progress",true);
+  QLabel *label=new QLabel(&progress);
+  progress.setLabel(label);
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     progress.setProgress(num);
+    label->setText(*i);
     qApp->processEvents();
     if (progress.wasCancelled())
       throw QString("Creating script was cancelled");
