@@ -97,6 +97,7 @@
 #define CONF_CHART_SAMPLES	"ChartSamples"
 #define DEFAULT_CHART_SAMPLES	"100"
 #define CONF_CODE_COMPLETION	"CodeComplete"
+#define CONF_COMPLETION_SORT	"CompleteSort"
 #define CONF_MAXIMIZE_MAIN	"MaximizeMain"
 
 #ifndef TO_KDE

@@ -439,6 +439,10 @@ static QString UpperIdent(const QString &str)
 bool toHighlightedText::invalidToken(int line,int col)
 {
   bool ident=true;
+  if (line<0) {
+    line=0;
+    col=0;
+  }
   while(line<numLines()) {
     QString cl=textLine(line);
     while(col<int(cl.length())) {
@@ -516,6 +520,8 @@ void toHighlightedText::checkComplete(void)
       try {
 	toConnection &conn=toCurrentConnection(this);
 	AllComplete=conn.columns(conn.realName(name));
+	if (!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty())
+	  AllComplete.sort();
 	Completion=new QListBox(topLevelWidget());
 	Completion->setFocusPolicy(NoFocus);
 	Completion->setFont(font());

@@ -873,7 +873,7 @@ QString toGetToken(toMarkedText *text,int &curLine,int &pos,bool forward)
 
   int inc=forward?1:-1;
 
-  while(curLine<int(text->numLines())) {
+  while(curLine<int(text->numLines())&&curLine>=0) {
     QString line=text->textLine(curLine);
     while((forward&&pos<int(line.length()))||(!forward&&pos>=0)) {
       if (!forward)

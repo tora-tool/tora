@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>580</width>
+            <width>572</width>
             <height>480</height>
         </rect>
     </property>
@@ -66,7 +66,66 @@
                         <string>Enable syntax highlighting, or use simple text editor</string>
                     </property>
                 </widget>
-                <spacer row="5"  column="1" >
+                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>KeywordUpper</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Keyword upper</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CodeExample</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Code example</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ResultExample</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>List example</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PushButton1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Choose</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PushButton1_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Choose</string>
+                    </property>
+                </widget>
+                <spacer row="6"  column="1" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -87,65 +146,6 @@
                         </size>
                     </property>
                 </spacer>
-                <widget row="4"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>PushButton1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Choose</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="2" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>PushButton1_2</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Choose</string>
-                    </property>
-                </widget>
-                <widget row="4"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>ResultExample</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>List example</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>CodeExample</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Code example</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>KeywordUpper</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Keyword upper</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
-                    </property>
-                </widget>
                 <widget row="2"  column="0"  rowspan="1"  colspan="3" >
                     <class>QCheckBox</class>
                     <property stdset="1">
@@ -158,7 +158,30 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
+                        <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CompletionSort</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Sort completion rows</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Sort the available completion rows alphabetically or in the order the are.</string>
                     </property>
                 </widget>
             </grid>
@@ -287,6 +310,12 @@
         <signal>selectionChanged(QListBoxItem*)</signal>
         <receiver>toSyntaxSetupUI</receiver>
         <slot>changeLine(QListBoxItem *)</slot>
+    </connection>
+    <connection>
+        <sender>CodeCompletion</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CompletionSort</receiver>
+        <slot>setEnabled(bool)</slot>
     </connection>
     <slot access="public">changeHighlight(bool)</slot>
     <slot access="public">changeLine(QListBoxItem *)</slot>
