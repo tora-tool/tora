@@ -219,7 +219,7 @@ void toLineChart::paintTitle(QPainter *p,QRect &rect)
       if ((*i).begin()!=(*i).end()) {
 	if (!str.isEmpty())
 	  str+=QString::fromLatin1("\n");
-	str+=QString::number(*(*i).rbegin());
+	str+=toQValue::formatNumber(*(*i).rbegin());
 	str+=YPostfix;
       }
     }
@@ -310,8 +310,8 @@ void toLineChart::paintAxis(QPainter *p,QRect &rect)
     QString maxstr;
     QRect ybounds;
     if (leftAxis) {
-      minstr=QString::number(zMinValue);
-      maxstr=QString::number(zMaxValue);
+      minstr=toQValue::formatNumber(zMinValue);
+      maxstr=toQValue::formatNumber(zMaxValue);
       maxstr+=YPostfix;
       QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
       yoffset=bounds.height();
@@ -621,8 +621,8 @@ void toLineChart::chartSetup(void)
 void toLineChart::setup(void)
 {
   toLineChartSetupUI setup(this,NULL,true);
-  setup.MinValue->setText(QString::number(MinValue));
-  setup.MaxValue->setText(QString::number(MaxValue));
+  setup.MinValue->setText(toQValue::formatNumber(MinValue));
+  setup.MaxValue->setText(toQValue::formatNumber(MaxValue));
   setup.AutoMax->setChecked(MaxAuto);
   setup.AutoMin->setChecked(MinAuto);
   setup.ShowAxis->setChecked(AxisText);

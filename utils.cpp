@@ -852,8 +852,11 @@ static QString AddExt(QString t,const QString &filter)
     int pos=findext.match(filter,0,&len);
     if (pos>=0)
       t+=filter.mid(pos,len);
-    else
-      t+=QString::fromLatin1(".sql");
+    else {
+      QFile file(t);
+      if (!file.exists())
+	t+=QString::fromLatin1(".sql");
+    }
   }
   return t;
 }
