@@ -139,8 +139,6 @@ void toBarChart::addValues(list<double> &value,const QString &xValue)
 
 #define FONT_ALIGN AlignLeft|AlignTop|ExpandTabs
 
-#include <stdio.h>
-
 void toBarChart::paintEvent(QPaintEvent *e)
 {
   QPainter p(this);
