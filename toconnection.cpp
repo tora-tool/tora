@@ -1280,7 +1280,7 @@ void toConnection::delInit(const QString &sql)
   }
 }
 
-const std::list<QString> &toConnection::initStrings() const
+const std::list<QString> toConnection::initStrings() const
 {
   return InitStrings;
 }

@@ -38,6 +38,7 @@
 #ifndef TOCONNECTION_H
 #define TOCONNECTION_H
 
+#include "config.h"
 #include "toqvalue.h"
 #include "tothread.h"
 
@@ -818,7 +819,7 @@ public:
   /**
    * Get a list of the current init strings.
    */
-  const std::list<QString> &toConnection::initStrings() const;
+  const std::list<QString> initStrings() const;
 
   /** Return a string representation to address an object.
    * @param name The name to be quoted.
