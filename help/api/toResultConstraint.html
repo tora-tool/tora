@@ -28,19 +28,19 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref7">toResultConstraint</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref8">toResultConstraint</A></b> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref8">~toResultConstraint</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref9">~toResultConstraint</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref9">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref10">query</A></b> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref10">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref11">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This widget displays information about the constraints of an object
  specified by the first and second parameter in the query. The sql is not
  used in the query.
  </p>
-<A NAME="toResultConstraint"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultConstraint</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toResultConstraint"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultConstraint</strong> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toResultConstraint</strong></h3></td></tr></table><p></p><p> Create the widget.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -49,14 +49,14 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toResultConstraint"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultConstraint</strong> ()
+<A NAME="~toResultConstraint"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultConstraint</strong> ()
 <br></td><td align="right"><h3><strong>~toResultConstraint</strong></h3></td></tr></table><p></p><p> Destroy object
    </p>
-<A NAME="query"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
+<A NAME="query"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="canHandle"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
+<A NAME="canHandle"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Support Oracle
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#canHandle">toResultView</A>.</p>

@@ -31,7 +31,7 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref4">toQValue</A></b> (int i) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref5">toQValue</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>&nbsp;<b><A HREF="#ref5">toQValue</A></b> (const QString &amp;str) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref6">toQValue</A></b> (double d) 
 </LI>
@@ -41,29 +41,43 @@
 </LI>
 <LI>const <A HREF="toQValue.html">toQValue</A> &amp;&nbsp;<b><A HREF="#ref9">operator = </A></b> (const <A HREF="toQValue.html">toQValue</A> &amp;copy) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref10">isInt</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref10">operator == </A></b> (const <A HREF="toQValue.html">toQValue</A> &amp;)  const
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref11">isDouble</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref11">isInt</A></b> (void)  const
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref12">isString</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref12">isDouble</A></b> (void)  const
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref13">isNull</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref13">isString</A></b> (void)  const
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref14">utf8Value</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref14">isNull</A></b> (void)  const
 </LI>
-<LI>int &nbsp;<b><A HREF="#ref15">toInt</A></b> (void)  const
+<LI>bool &nbsp;<b><A HREF="#ref15">isBinary</A></b> (void)  const
 </LI>
-<LI>double &nbsp;<b><A HREF="#ref16">toDouble</A></b> (void)  const
+<LI>QCString &nbsp;<b><A HREF="#ref16">utf8</A></b> (void)  const
 </LI>
-<LI>operator &nbsp;<b><A HREF="#ref17">QString</A></b> ()  const
+<LI>int &nbsp;<b><A HREF="#ref17">toInt</A></b> (void)  const
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref18">setNumberFormat</A></b> (int format,int decimals) 
+<LI>double &nbsp;<b><A HREF="#ref18">toDouble</A></b> (void)  const
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref19">formatNumber</A></b> (double number) 
+<LI>const QByteArray &amp;&nbsp;<b><A HREF="#ref19">toByteArray</A></b> (void)  const
 </LI>
-<LI>static  int &nbsp;<b><A HREF="#ref20">numberFormat</A></b> (void) 
+<LI>operator &nbsp;<b><A HREF="#ref20">QString</A></b> ()  const
 </LI>
-<LI>static  int &nbsp;<b><A HREF="#ref21">numberDecimals</A></b> (void) 
+<LI>QString &nbsp;<b><A HREF="#ref21">toString</A></b> ()  const
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref22">setNumberFormat</A></b> (int format,int decimals) 
+</LI>
+<LI>static  QString &nbsp;<b><A HREF="#ref23">formatNumber</A></b> (double number) 
+</LI>
+<LI>static  int &nbsp;<b><A HREF="#ref24">numberFormat</A></b> (void) 
+</LI>
+<LI>static  int &nbsp;<b><A HREF="#ref25">numberDecimals</A></b> (void) 
+</LI>
+<LI>static  <A HREF="toQValue.html">toQValue</A> &nbsp;<b><A HREF="#ref26">createBinary</A></b> (const QByteArray &amp;arr) 
+</LI>
+<LI>static  <A HREF="toQValue.html">toQValue</A> &nbsp;<b><A HREF="#ref27">createFromHex</A></b> (const QString &amp;hex) 
+</LI>
+<LI>static  <A HREF="toQValue.html">toQValue</A> &nbsp;<b><A HREF="#ref28">createFromHex</A></b> (const QCString &amp;hex) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This function is used to represent values that are passed to and from queries
  </p>
@@ -77,7 +91,7 @@
 <TR><TD align="left" valign="top"><i>i</i></TD><TD align="left" valign="top">Value.
    </TD></TR>
 </TABLE></P>
-<A NAME="toQValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<A NAME="toQValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const QString &amp;str)
 <br></td><td align="right"><h3><strong>toQValue</strong></h3></td></tr></table><p></p><p> Create string value.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -100,31 +114,43 @@
 <A NAME="operator%20=%20"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="toQValue.html">toQValue</A> &amp;&nbsp;<strong>operator = </strong> (const <A HREF="toQValue.html">toQValue</A> &amp;copy)
 <br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Assign this value from another value.
    </p>
-<A NAME="isInt"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isInt</strong> (void)
+<A NAME="operator%20==%20"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>operator == </strong> (const <A HREF="toQValue.html">toQValue</A> &amp;)
+<br></td><td align="right"><h3><strong>operator == </strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check a value for equality. Requires same type and same value. NULL is equal to other NULL values.
+   </p>
+<A NAME="isInt"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isInt</strong> (void)
 <br></td><td align="right"><h3><strong>isInt</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is an int value.
    </p>
-<A NAME="isDouble"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isDouble</strong> (void)
+<A NAME="isDouble"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isDouble</strong> (void)
 <br></td><td align="right"><h3><strong>isDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is a double value.
    </p>
-<A NAME="isString"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isString</strong> (void)
+<A NAME="isString"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isString</strong> (void)
 <br></td><td align="right"><h3><strong>isString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this is a string value.
    </p>
-<A NAME="isNull"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isNull</strong> (void)
+<A NAME="isNull"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isNull</strong> (void)
 <br></td><td align="right"><h3><strong>isNull</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this value is null.
    </p>
-<A NAME="utf8Value"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>utf8Value</strong> (void)
-<br></td><td align="right"><h3><strong>utf8Value</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get utf8 format of this value.
+<A NAME="isBinary"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isBinary</strong> (void)
+<br></td><td align="right"><h3><strong>isBinary</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Check if this value is binary.
    </p>
-<A NAME="toInt"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>toInt</strong> (void)
+<A NAME="utf8"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QCString &nbsp;<strong>utf8</strong> (void)
+<br></td><td align="right"><h3><strong>utf8</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get utf8 format of this value.
+   </p>
+<A NAME="toInt"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>toInt</strong> (void)
 <br></td><td align="right"><h3><strong>toInt</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get integer representation of this value.
    </p>
-<A NAME="toDouble"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double &nbsp;<strong>toDouble</strong> (void)
+<A NAME="toDouble"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>double &nbsp;<strong>toDouble</strong> (void)
 <br></td><td align="right"><h3><strong>toDouble</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get double representation of this value.
    </p>
-<A NAME="QString"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>operator &nbsp;<strong>QString</strong> ()
-<br></td><td align="right"><h3><strong>QString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Convert value to a string.
+<A NAME="toByteArray"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QByteArray &amp;&nbsp;<strong>toByteArray</strong> (void)
+<br></td><td align="right"><h3><strong>toByteArray</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get binary representation of value. Can only be called when the data is actually binary.
    </p>
-<A NAME="setNumberFormat"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setNumberFormat</strong> (int format,int decimals)
+<A NAME="QString"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>operator &nbsp;<strong>QString</strong> ()
+<br></td><td align="right"><h3><strong>QString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Convert value to a string. If binary convert to hex.
+   </p>
+<A NAME="toString"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>toString</strong> ()
+<br></td><td align="right"><h3><strong>toString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Convert value to a string. If binary convert to hex.
+   </p>
+<A NAME="setNumberFormat"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setNumberFormat</strong> (int format,int decimals)
 <br></td><td align="right"><h3><strong>setNumberFormat</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Set numberformat.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -133,16 +159,25 @@
 <TR><TD align="left" valign="top"><i>decimals</i></TD><TD align="left" valign="top">Number on decimals for fixed decimals.
    </TD></TR>
 </TABLE></P>
-<A NAME="formatNumber"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>formatNumber</strong> (double number)
+<A NAME="formatNumber"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>formatNumber</strong> (double number)
 <br></td><td align="right"><h3><strong>formatNumber</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Format a number according to current settings.
    </p>
-<A NAME="numberFormat"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberFormat</strong> (void)
+<A NAME="numberFormat"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberFormat</strong> (void)
 <br></td><td align="right"><h3><strong>numberFormat</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get number format.
 </p>
 <p><b>Returns</b>: Format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
    </p>
-<A NAME="numberDecimals"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberDecimals</strong> (void)
+<A NAME="numberDecimals"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberDecimals</strong> (void)
 <br></td><td align="right"><h3><strong>numberDecimals</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get decimals if fixed decimals.
+   </p>
+<A NAME="createBinary"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQValue.html">toQValue</A> &nbsp;<strong>createBinary</strong> (const QByteArray &amp;arr)
+<br></td><td align="right"><h3><strong>createBinary</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create a binary value
+   </p>
+<A NAME="createFromHex"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQValue.html">toQValue</A> &nbsp;<strong>createFromHex</strong> (const QString &amp;hex)
+<br></td><td align="right"><h3><strong>createFromHex</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create a binary value from it's hex representation.
+   </p>
+<A NAME="createFromHex"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQValue.html">toQValue</A> &nbsp;<strong>createFromHex</strong> (const QCString &amp;hex)
+<br></td><td align="right"><h3><strong>createFromHex</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Create a binary value from it's hex representation.
    </p>
 <HR>
 </BODY>

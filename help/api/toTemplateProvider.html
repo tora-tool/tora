@@ -27,25 +27,25 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toTemplateProvider</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toTemplateProvider</A></b> (const QCString &amp;name) 
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref7">~toTemplateProvider</A></b> () 
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<b><A HREF="#ref8">name</A></b> () 
+<LI>const QCString &nbsp;<b><A HREF="#ref8">name</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">insertItems</A></i></b> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,<A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *toolbar) 
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">insertItems</A></i></b> (<A HREF="#QListView">QListView</A> *parent,<A HREF="#QToolBar">QToolBar</A> *toolbar) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref10">exportData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref10">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref12">importData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref11">exportAllData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref11">exportAllData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref13">importAllData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>static  void &nbsp;<b><A HREF="#ref13">importAllData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
 <LI>static  void &nbsp;<b><A HREF="#ref14">setShown</A></b> (bool shown) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref15">setToolKey</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;key) 
+<LI>static  void &nbsp;<b><A HREF="#ref15">setToolKey</A></b> (const QCString &amp;key) 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref16">toTemplate</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
@@ -53,14 +53,14 @@
  a static object just like the tools. It can also be assumed that a maximum of one
  template window will be opened.
  </p>
-<A NAME="toTemplateProvider"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateProvider</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name)
+<A NAME="toTemplateProvider"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateProvider</strong> (const QCString &amp;name)
 <br></td><td align="right"><h3><strong>toTemplateProvider</strong></h3></td></tr></table><p></p><p> List of currently available template providers.
    </p>
 <A NAME="~toTemplateProvider"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toTemplateProvider</strong> ()
-<br></td><td align="right"><h3><strong>~toTemplateProvider</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="name"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>name</strong> ()
+<br></td><td align="right"><h3><strong>~toTemplateProvider</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="name"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const QCString &nbsp;<strong>name</strong> ()
 <br></td><td align="right"><h3><strong>name</strong></h3></td></tr></table><p></p><p> Get name of this template provider.
    </p>
-<A NAME="insertItems"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>insertItems</strong></i> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,<A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *toolbar)
+<A NAME="insertItems"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>insertItems</strong></i> (<A HREF="#QListView">QListView</A> *parent,<A HREF="#QToolBar">QToolBar</A> *toolbar)
 <br></td><td align="right"><h3><i><strong>insertItems</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Insert a parent item for this template provider into a list view.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -69,7 +69,7 @@
 <TR><TD align="left" valign="top"><i>toolbar</i></TD><TD align="left" valign="top">The template toolbar if any buttons are to be added on it.
    </TD></TR>
 </TABLE></P>
-<A NAME="exportData"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="exportData"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Save settings for this template provider.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -78,7 +78,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix of where to save info.
    </TD></TR>
 </TABLE></P>
-<A NAME="exportAllData"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportAllData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="exportAllData"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportAllData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>exportAllData</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Save settings for all template providers.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -87,7 +87,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix of where to save info.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="importData"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -96,7 +96,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
-<A NAME="importAllData"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importAllData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="importAllData"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importAllData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>importAllData</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Import data for all template providers.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -108,7 +108,7 @@
 <A NAME="setShown"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setShown</strong> (bool shown)
 <br></td><td align="right"><h3><strong>setShown</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Used internally to indicate if template help is shown.
    </p>
-<A NAME="setToolKey"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setToolKey</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;key)
+<A NAME="setToolKey"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setToolKey</strong> (const QCString &amp;key)
 <br></td><td align="right"><h3><strong>setToolKey</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Used internally to indicate tool key string
    </p>
 <A NAME="toTemplate"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toTemplate</strong>

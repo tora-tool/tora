@@ -69,6 +69,8 @@
 
 #include &lt;list&gt;
 
+#include &lt;qregexp.h&gt;
+
 class toNoBlockQuery;
 class toSQL;
 
@@ -85,6 +87,9 @@ class toResultPie : public toPieChart, public toResult {
   toBackground Poll;
   int Columns;
   bool Started;
+  bool LabelFirst;
+  QRegExp Filter;
+  QRegExp ValueFilter;
 public:
   /** Create widget.
    * @param parent Parent of list.
@@ -104,6 +109,29 @@ public:
   /** Start automatic updating from tool timer.
    */
   void start();
+
+  /** Indicate that the first column should be the label.
+   */
+  void setLabelFirst(bool first)
+  { LabelFirst=first; }
+  /** Check label first status.
+   */
+  bool labelFirst(void)
+  { return LabelFirst; }
+  /** Set a filter on which columns to add based on label.
+   * @param filter A regexp which the label must match.
+   * @param valueFilter A regexp which the value must match.
+   */
+  void setFilter(const QRegExp &amp;filter,const QRegExp &amp;valueFilter)
+  { Filter=filter; ValueFilter=valueFilter; }
+  /** Get the current filter.
+   */
+  const QRegExp &amp;filter(void)
+  { return Filter; }
+  /** Get the current value filter.
+   */
+  const QRegExp &amp;valueFilter(void)
+  { return ValueFilter; }
 
   // Why are these needed?
 #if 1

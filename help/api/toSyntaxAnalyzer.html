@@ -37,16 +37,20 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref13">~toSyntaxAnalyzer</A></b> () 
 </LI>
-<LI>virtual  std::list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,infoType in,infoType &amp;out) 
+<LI>virtual  QChar &nbsp;<b><A HREF="#ref14">quoteCharacter</A></b> () 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref15">getColor</A></b> (infoType typ) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref15">declareBlock</A></b> () 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref16">reservedWord</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;word) 
+<LI>virtual  std::list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref16">analyzeLine</A></b> (const QString &amp;str,infoType in,infoType &amp;out) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref18">defaultAnalyzer</A></b> () 
+<LI>QColor &nbsp;<b><A HREF="#ref17">getColor</A></b> (infoType typ) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref17">toSyntaxSetup</A></b></LI>
-</ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref7">isSymbol</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
+<LI>bool &nbsp;<b><A HREF="#ref18">reservedWord</A></b> (const QString &amp;word) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref20">defaultAnalyzer</A></b> () 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref19">toSyntaxSetup</A></b></LI>
+</ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref7">isSymbol</A></b> (QChar c) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class implements a syntax parser to provide information to
  a syntax highlighted editor.
@@ -58,7 +62,7 @@
      </p>
 <A NAME="toSyntaxAnalyzer__highlightInfo.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>highlightInfo</strong> <small>(struct)</small></td><td align="right"><h3><strong>highlightInfo</strong></h3></td></tr></table><p></p><p> Information about a change in highlighting.
    </p>
-<A NAME="isSymbol"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isSymbol</strong> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c)
+<A NAME="isSymbol"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isSymbol</strong> (QChar c)
 <br></td><td align="right"><h3><strong>isSymbol</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Check if this is part of a symbol or not.
    </p>
 <A NAME="toSyntaxAnalyzer"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSyntaxAnalyzer</strong> (const char **keywords)
@@ -69,7 +73,13 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toSyntaxAnalyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
-<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,infoType in,infoType &amp;out)
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="quoteCharacter"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QChar &nbsp;<strong>quoteCharacter</strong> ()
+<br></td><td align="right"><h3><strong>quoteCharacter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get the character used to quote names of functions etc for the database
+   </p>
+<A NAME="declareBlock"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>declareBlock</strong> ()
+<br></td><td align="right"><h3><strong>declareBlock</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> True if declare keyword starts block.
+   </p>
+<A NAME="analyzeLine"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const QString &amp;str,infoType in,infoType &amp;out)
 <br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -82,7 +92,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A list of where highlighting should change. Start as normal.
    </p>
-<A NAME="getColor"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<strong>getColor</strong> (infoType typ)
+<A NAME="getColor"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QColor &nbsp;<strong>getColor</strong> (infoType typ)
 <br></td><td align="right"><h3><strong>getColor</strong></h3></td></tr></table><p></p><p> Get a colordefinition for a <A HREF="toSyntaxAnalyzer.html#infoType">infoType</A> value.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -91,7 +101,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Color of that type.
    </p>
-<A NAME="reservedWord"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>reservedWord</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;word)
+<A NAME="reservedWord"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>reservedWord</strong> (const QString &amp;word)
 <br></td><td align="right"><h3><strong>reservedWord</strong></h3></td></tr></table><p></p><p> Check if a word is reserved.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -100,8 +110,8 @@
 </TABLE></P>
 <p><b>Returns</b>: True if word is reserved.
    </p>
-<A NAME="toSyntaxSetup"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toSyntaxSetup</strong>
-</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><A NAME="defaultAnalyzer"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>defaultAnalyzer</strong> ()
+<A NAME="toSyntaxSetup"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toSyntaxSetup</strong>
+</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><A NAME="defaultAnalyzer"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>defaultAnalyzer</strong> ()
 <br></td><td align="right"><h3><strong>defaultAnalyzer</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the default syntax analyzer.
 </p>
 <p><b>Returns</b>: Reference to the default analyzer.

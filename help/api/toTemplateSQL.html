@@ -29,11 +29,11 @@
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toTemplateSQL</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+		const QString &amp;name,const QString &amp;sql) 
 </LI>
 <LI>virtual  <A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref6">connection</A></b> () 
 </LI>
-<LI>virtual  <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<b><A HREF="#ref7">createChild</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<LI>virtual  <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<b><A HREF="#ref7">createChild</A></b> (const QString &amp;name) 
 </LI>
 <LI>virtual  <A HREF="#toQList">toQList</A> &nbsp;<b><A HREF="#ref8">parameters</A></b> (void) 
 </LI>
@@ -41,13 +41,13 @@
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref10">toTemplateSQLObject</A></b></LI>
 </ul><h4>Protected Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toTemplateSQL</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+		const QString &amp;name,const QString &amp;sql) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class represent an item that when expanded will execute an SQL statement
  and create child items which are the result of the query.
  </p>
 <A NAME="toTemplateSQL"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateSQL</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+		const QString &amp;name,const QString &amp;sql)
 <br></td><td align="right"><h3><strong>toTemplateSQL</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -57,12 +57,11 @@
 </TD></TR>
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
 </TD></TR>
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement, observe that it is in <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> format and you
-            should use utf8 if converting from QString.
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement.
    </TD></TR>
 </TABLE></P>
 <A NAME="toTemplateSQL"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateSQL</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,
-		const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+		const QString &amp;name,const QString &amp;sql)
 <br></td><td align="right"><h3><strong>toTemplateSQL</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -72,8 +71,7 @@
 </TD></TR>
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
 </TD></TR>
-<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement, observe that it is in <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> format and you
-            should use utf8 if converting from QString.
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL statement.
    </TD></TR>
 </TABLE></P>
 <A NAME="connection"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
@@ -81,7 +79,7 @@
 </p>
 <p><b>Returns</b>: Reference to connection.
    </p>
-<A NAME="createChild"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<strong>createChild</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="createChild"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toTemplateItem.html">toTemplateItem</A> *&nbsp;<strong>createChild</strong> (const QString &amp;name)
 <br></td><td align="right"><h3><strong>createChild</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Create a child of this item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

@@ -18,7 +18,7 @@
 	<HR>
 	<TABLE BORDER="0">
 		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tohelp_h.html">tohelp.h</A>&gt;</code></TD></TR>
-<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qdialog.html">QDialog</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherits</TH><TD>QDialog <small>(unknown)</small> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toHelp.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -28,17 +28,17 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref15">toHelp</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name,bool modal=true) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref15">toHelp</A></b> (<A HREF="#QWidget">QWidget</A> *parent,const char *name,bool modal=true) 
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref17">~toHelp</A></b> () 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">path</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  QString &nbsp;<b><A HREF="#ref16">path</A></b> (const QString &amp;path=QString::null) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref18">displayHelp</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
+<LI>static  void &nbsp;<b><A HREF="#ref18">displayHelp</A></b> (const QString &amp;context,<A HREF="#QWidget">QWidget</A> *parent=NULL) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref19">displayHelp</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
+<LI>static  void &nbsp;<b><A HREF="#ref19">displayHelp</A></b> (<A HREF="#QWidget">QWidget</A> *parent=NULL) 
 </LI>
-<LI>static  void &nbsp;<b><A HREF="#ref20">connectDialog</A></b> (<A HREF="http://doc.trolltech.com/qdialog.html">QDialog</A> *dialog) 
+<LI>static  void &nbsp;<b><A HREF="#ref20">connectDialog</A></b> (QDialog *dialog) 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref21">toHelpPrefs</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
@@ -94,7 +94,7 @@
  the Oracle manuals from Oracle Corporation and these can be browsed as well in
  this help viewer.
  </p>
-<A NAME="toHelp"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelp</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name,bool modal=true)
+<A NAME="toHelp"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHelp</strong> (<A HREF="#QWidget">QWidget</A> *parent,const char *name,bool modal=true)
 <br></td><td align="right"><h3><strong>toHelp</strong></h3></td></tr></table><p></p><p>
  Create help widget.
 </p>
@@ -106,7 +106,7 @@
 <TR><TD align="left" valign="top"><i>modal</i></TD><TD align="left" valign="top">If dialog is for a modal dialog or not
    </TD></TR>
 </TABLE></P>
-<A NAME="path"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>path</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;path=QString::null)
+<A NAME="path"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>path</strong> (const QString &amp;path=QString::null)
 <br></td><td align="right"><h3><strong>path</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Help function to get a clean path from a path string. Strips trailing / etc.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -116,7 +116,7 @@
 <p><b>Returns</b>: Stripped path in string.
    </p>
 <A NAME="~toHelp"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toHelp</strong> ()
-<br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
+<br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const QString &amp;context,<A HREF="#QWidget">QWidget</A> *parent=NULL)
 <br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. Pops up a help window that
  displays the selected topic.
 </p>
@@ -126,7 +126,7 @@
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">If NULL use modal dialog and main window.
    </TD></TR>
 </TABLE></P>
-<A NAME="displayHelp"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
+<A NAME="displayHelp"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (<A HREF="#QWidget">QWidget</A> *parent=NULL)
 <br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. The context is derived from
  the widget that currently holds the focus.
 </p>
@@ -134,7 +134,7 @@
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">If NULL use modal dialog and main window.
    </TD></TR>
 </TABLE></P>
-<A NAME="connectDialog"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>connectDialog</strong> (<A HREF="http://doc.trolltech.com/qdialog.html">QDialog</A> *dialog)
+<A NAME="connectDialog"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>connectDialog</strong> (QDialog *dialog)
 <br></td><td align="right"><h3><strong>connectDialog</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Connect the F1 key to display help for a modal dialog. Don't use this directly,
  instead call displayHelp directly and bind Key_F1 to that call. This is because the
  help in modal dialogs are cludgy at best and should be avoided if possible.

@@ -28,9 +28,9 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toTemplateItem</A></b> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">toTemplateItem</A></b> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="#QListView">QListView</A> *parent,const QString &amp;name) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref3">toTemplateItem</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *after=NULL) 
+<LI>&nbsp;<b><A HREF="#ref3">toTemplateItem</A></b> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const QString &amp;name,<A HREF="#QListViewItem">QListViewItem</A> *after=NULL) 
 </LI>
 <LI><A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;&nbsp;<b><A HREF="#ref4">provider</A></b> (void) 
 </LI>
@@ -40,7 +40,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref7">collapse</A></b> (void) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref8">selectedWidget</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
+<LI>virtual  <A HREF="#QWidget">QWidget</A> *&nbsp;<b><A HREF="#ref8">selectedWidget</A></b> (<A HREF="#QWidget">QWidget</A> *parent) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref9">setSelected</A></b> (bool sel) 
 </LI>
@@ -48,7 +48,7 @@
  collapse methods that are called when this item is expanded or collapsed from the
  template widget.
  </p>
-<A NAME="toTemplateItem"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<A NAME="toTemplateItem"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateProvider.html">toTemplateProvider</A> &amp;prov,<A HREF="#QListView">QListView</A> *parent,const QString &amp;name)
 <br></td><td align="right"><h3><strong>toTemplateItem</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -59,7 +59,7 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Contents of the first column of the item.
    </TD></TR>
 </TABLE></P>
-<A NAME="toTemplateItem"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name,<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *after=NULL)
+<A NAME="toTemplateItem"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTemplateItem</strong> (<A HREF="toTemplateItem.html">toTemplateItem</A> *parent,const QString &amp;name,<A HREF="#QListViewItem">QListViewItem</A> *after=NULL)
 <br></td><td align="right"><h3><strong>toTemplateItem</strong></h3></td></tr></table><p></p><p> Create an item.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -85,7 +85,7 @@
 <A NAME="collapse"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>collapse</strong> (void)
 <br></td><td align="right"><h3><strong>collapse</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function is called when the item is collapsed.
    </p>
-<A NAME="selectedWidget"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<strong>selectedWidget</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
+<A NAME="selectedWidget"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#QWidget">QWidget</A> *&nbsp;<strong>selectedWidget</strong> (<A HREF="#QWidget">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>selectedWidget</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> This function can be used to return a widget that is displays extra information for
  this item. Return NULL if no widget is to be displayed. The widget will be deleted
  when this item is no longer shown.
@@ -93,7 +93,6 @@
 <A NAME="setSelected"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setSelected</strong> (bool sel)
 <br></td><td align="right"><h3><strong>setSelected</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qlistviewitem.html#84b0c2">QListViewItem</A>.</p>
 <HR>
 </BODY>
 </HTML>

@@ -90,6 +90,8 @@ public:
   { }
   virtual ~toResultFilter()
   { }
+  virtual void startingQuery(void)
+  { }
   /** This function can inspect the item to be added and decide if it is
    * valid for adding or not.
    * @param item Item to inspect.
@@ -430,8 +432,9 @@ public:
   /** Create new list view.
    * @param parent Parent of list.
    * @param name Name of list.
+   * @param f Widget flags.
    */
-  toListView(QWidget *parent,const char *name=NULL);
+  toListView(QWidget *parent,const char *name=NULL,WFlags f=0);
 
   /** Get SQL name of list.
    */
@@ -472,6 +475,11 @@ public:
    */
   virtual bool editSave(bool ask);
 
+  /** Select all contents.
+   */
+  virtual void editSelectAll(void)
+  { selectAll(true); }
+  
   /** Move to top of data
    */
   virtual void searchTop(void)
@@ -499,6 +507,11 @@ public:
    * @return Pointer to newly allocated transposed listview.
    */
   virtual toListView *copyTransposed(void);
+signals:
+  /** Called before the menu is displayed so that you can add items to it before it is shown.
+   * @param menu Pointer to the menu about to be shown.
+   */
+  void displayMenu(QPopupMenu *menu);
 public slots:
   /** set the popup menu --&gt; see displayMenu()
    * @param item Item to display.
@@ -579,13 +592,15 @@ public:
    * @param numCol If number column is to be displayed.
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultView(bool readable,bool numCol,QWidget *parent,const char *name=NULL);
+  toResultView(bool readable,bool numCol,QWidget *parent,const char *name=NULL,WFlags f=0);
   /** Create list. The columns are not readable and the number column is displayed.
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultView(QWidget *parent,const char *name=NULL);
+  toResultView(QWidget *parent,const char *name=NULL,WFlags f=0);
   ~toResultView();
 
   /** Set the read all flag.

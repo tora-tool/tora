@@ -28,13 +28,13 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toResultDepend</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toResultDepend</A></b> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref6">~toResultDepend</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref7">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref7">query</A></b> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref8">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
+<LI>void &nbsp;<b><A HREF="#ref8">query</A></b> (const QString &amp;sql) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref9">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
@@ -45,7 +45,7 @@
  used in the query. It will also recurs through all dependencies of the
  objects depended on.
  </p>
-<A NAME="toResultDepend"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultDepend</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toResultDepend"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultDepend</strong> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toResultDepend</strong></h3></td></tr></table><p></p><p> Create the widget.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -57,11 +57,11 @@
 <A NAME="~toResultDepend"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultDepend</strong> ()
 <br></td><td align="right"><h3><strong>~toResultDepend</strong></h3></td></tr></table><p></p><p> Object destructor.
    </p>
-<A NAME="query"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
+<A NAME="query"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const QString &amp;sql,const <A HREF="#toQList">toQList</A> &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="query"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
+<A NAME="query"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const QString &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>

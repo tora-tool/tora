@@ -218,6 +218,17 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
  * @return Multiplier specified by string.
  */
 int toSizeDecode(const QString &amp;str);
+/**
+ * Check that a key sequence is valid and return same sequence
+ */
+QKeySequence toKeySequence(const QString &amp;keysequence);
+/**
+ * Check if a key sequence and a key event represent the same key and return if that is the case.
+ * Only support single key keysequences.
+ * @param event Key event.
+ * @param key Key sequence.
+ */
+bool toCheckKeyEvent(QKeyEvent *event,const QKeySequence &amp;key);
 
 /** Shift the first value out of a list.
  * @param lst List to shift value from (Also modified).

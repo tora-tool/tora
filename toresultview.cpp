@@ -692,21 +692,41 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 void toListView::editPrint(void)
 {
   TOPrinter printer;
-  printer.setMinMax(1,1000);
-  printer.setFromTo(1,1000);
-  if (printer.setup()) {
-    printer.setCreator(tr(TOAPPNAME));
-    QPainter painter(&printer);
 
-    QListViewItem *item=firstChild();
-    int column=0;
-    int tree=rootIsDecorated()?treeStepSize():0;
-    int page=1;
-    while(page<printer.fromPage()&&
-	  (item=printPage(&printer,&painter,item,column,tree,page++,false)))
-      painter.resetXForm();
-    while((item=printPage(&printer,&painter,item,column,tree,page++))&&
-	  (printer.toPage()==0||page<=printer.toPage())) {
+  std::map<int,int> PageColumns;
+  std::map<int,QListViewItem *> PageItems;
+
+  int column=0;
+  int tree=rootIsDecorated()?treeStepSize():0;
+  int page=1;
+  PageColumns[1]=0;
+  QListViewItem *item=PageItems[1]=firstChild();
+
+  printer.setCreator(tr(TOAPPNAME));
+  QPainter painter(&printer);
+
+  while((item=printPage(&printer,&painter,item,column,tree,page++,false))) {
+    PageColumns[page]=column;
+    PageItems[page]=item;
+  }
+
+  printer.setMinMax(1,page-1);
+  printer.setFromTo(1,page-1);
+  if (printer.setup()) {
+#ifdef TO_KDE
+    QValueList<int> pages=printer.pageList();
+#else
+    QValueList<int> pages;
+    for(int i=printer.fromPage();i<=printer.toPage()||(printer.toPage()==0&&i<page);i++)
+      pages+=i;
+#endif
+
+    for(QValueList<int>::iterator pageit=pages.begin();pageit!=pages.end();pageit++) {
+      page=*pageit;
+      item=PageItems[page];
+      column=PageColumns[page];
+
+      printPage(&printer,&painter,item,column,tree,page,true);
       printer.newPage();
       painter.resetXForm();
       qApp->processEvents();

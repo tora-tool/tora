@@ -118,13 +118,15 @@ public:
    * @param mode Query mode to use when executing query
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultLong(bool readable,bool numCol,toQuery::queryMode mode,QWidget *parent,const char *name=NULL);
+  toResultLong(bool readable,bool numCol,toQuery::queryMode mode,QWidget *parent,const char *name=NULL,WFlags f=0);
   /** Create widget. The columns are not readable and the number column is displayed.
    * @param parent Parent of list.
    * @param name Name of widget.
+   * @param f Widget flags.
    */
-  toResultLong(QWidget *parent,const char *name=NULL);
+  toResultLong(QWidget *parent,const char *name=NULL,WFlags f=0);
   ~toResultLong();
 
   /** Set statistics widget.

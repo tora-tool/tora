@@ -12,12 +12,12 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class toTextView</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"> A tora editwidget version of the <A HREF="http://doc.trolltech.com/qtextview.html">QTextView</A> widget. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+		<TD valign="top" align="right" colspan="1"> A tora editwidget version of the <A HREF="#QTextView">QTextView</A> widget. <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
 		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totextview_h.html">totextview.h</A>&gt;</code></TD></TR>
-<TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qtextview.html">QTextView</A> <small>(qt)</small> <small>[public ]</small>, <A HREF="toEditWidget.html">toEditWidget</A> <small>[public ]</small></TD></TR>
+<TR><TH>Inherits</TH><TD><A HREF="#QTextView">QTextView</A> <small>[public ]</small>, <A HREF="toEditWidget.html">toEditWidget</A> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toTextView.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -27,10 +27,10 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toTextView</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=0,const char *name=0) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">toTextView</A></b> (<A HREF="#QWidget">QWidget</A> *parent=0,const char *name=0) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref2">toTextView</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A>&amp;text,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context=QString::null,
-	    <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=0,const char *name=0) 
+<LI>&nbsp;<b><A HREF="#ref2">toTextView</A></b> (const QString&amp;text,const QString &amp;context=QString::null,
+	    <A HREF="#QWidget">QWidget</A> *parent=0,const char *name=0) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref3">editCopy</A></b> (void) 
 </LI>
@@ -38,16 +38,16 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref5">editSave</A></b> (bool) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref6">focusInEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref6">focusInEvent</A></b> (QFocusEvent *e) 
 </LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A tora editwidget version of the <A HREF="http://doc.trolltech.com/qtextview.html">QTextView</A> widget.
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A tora editwidget version of the <A HREF="#QTextView">QTextView</A> widget.
  </p>
-<A NAME="toTextView"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTextView</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=0,const char *name=0)
-<br></td><td align="right"><h3><strong>toTextView</strong></h3></td></tr></table><p></p><p> See <A HREF="http://doc.trolltech.com/qtextview.html">QTextView</A>
+<A NAME="toTextView"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTextView</strong> (<A HREF="#QWidget">QWidget</A> *parent=0,const char *name=0)
+<br></td><td align="right"><h3><strong>toTextView</strong></h3></td></tr></table><p></p><p> See <A HREF="#QTextView">QTextView</A>
    </p>
-<A NAME="toTextView"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTextView</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A>&amp;text,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context=QString::null,
-	    <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=0,const char *name=0)
-<br></td><td align="right"><h3><strong>toTextView</strong></h3></td></tr></table><p></p><p> See <A HREF="http://doc.trolltech.com/qtextview.html">QTextView</A>
+<A NAME="toTextView"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toTextView</strong> (const QString&amp;text,const QString &amp;context=QString::null,
+	    <A HREF="#QWidget">QWidget</A> *parent=0,const char *name=0)
+<br></td><td align="right"><h3><strong>toTextView</strong></h3></td></tr></table><p></p><p> See <A HREF="#QTextView">QTextView</A>
    </p>
 <A NAME="editCopy"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editCopy</strong> (void)
 <br></td><td align="right"><h3><strong>editCopy</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
@@ -61,10 +61,9 @@
 <br></td><td align="right"><h3><strong>editSave</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSave">toEditWidget</A>.</p>
-<A NAME="focusInEvent"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
+<A NAME="focusInEvent"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (QFocusEvent *e)
 <br></td><td align="right"><h3><strong>focusInEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qtextview.html#2366c4">QTextView</A>.</p>
 <HR>
 </BODY>
 </HTML>

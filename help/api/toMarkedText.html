@@ -28,13 +28,13 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref13">toMarkedText</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref13">toMarkedText</A></b> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref14">insert</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,bool mark) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref14">insert</A></b> (const QString &amp;str,bool mark) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">insert</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">insert</A></b> (const QString &amp;str) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref16">markedText</A></b> () 
+<LI>QString &nbsp;<b><A HREF="#ref16">markedText</A></b> () 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref17">hasMarkedText</A></b> () 
 </LI>
@@ -42,23 +42,23 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref19">getMarkedRegion</A></b> (int * line1,int * col1,int * line2,int * col2)  const
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref20">filename</A></b> (void)  const
+<LI>virtual  QString &nbsp;<b><A HREF="#ref20">filename</A></b> (void)  const
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref21">openFilename</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">openFilename</A></b> (const QString &amp;file) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref22">setFilename</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">setFilename</A></b> (const QString &amp;str) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref23">setEdit</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref24">focusInEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref24">focusInEvent</A></b> (QFocusEvent *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref25">focusOutEvent</A></b> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref25">focusOutEvent</A></b> (QFocusEvent *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref26">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref26">paintEvent</A></b> (QPaintEvent *pe) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref27">editPrint</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref28">editOpen</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref28">editOpen</A></b> (QString file=QString::null) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref29">editSave</A></b> (bool ask) 
 </LI>
@@ -78,40 +78,38 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref37">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">searchReplace</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">searchReplace</A></b> (const QString &amp;newData) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref39">searchCanReplace</A></b> (bool all) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref40">incrementalSearch</A></b> (bool forward) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref41">exportData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref41">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref42">importData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref42">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref43">findPosition</A></b> (int index,int &amp;line,int &amp;col) 
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref11">mousePressEvent</A></b> (<A HREF="http://doc.trolltech.com/qmouseevent.html">QMouseEvent</A> *e) 
+</ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref11">mousePressEvent</A></b> (QMouseEvent *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref12">keyPressEvent</A></b> (<A HREF="http://doc.trolltech.com/qkeyevent.html">QKeyEvent</A> *e) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">keyPressEvent</A></b> (QKeyEvent *e) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref44">newLine</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref45">dropEvent</A></b> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref45">dropEvent</A></b> (QDropEvent *) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref46">timerEvent</A></b> (<A HREF="http://doc.trolltech.com/qtimerevent.html">QTimerEvent</A> *) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref46">timerEvent</A></b> (QTimerEvent *) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is the enhanced editor used in TOra. It mainly offers integration in the TOra
  menues and printsupport in addition to normal QMultiLineEdit.
  </p>
-<A NAME="mousePressEvent"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>mousePressEvent</strong> (<A HREF="http://doc.trolltech.com/qmouseevent.html">QMouseEvent</A> *e)
+<A NAME="mousePressEvent"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>mousePressEvent</strong> (QMouseEvent *e)
 <br></td><td align="right"><h3><strong>mousePressEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#97465e">QMultiLineEdit</A>.</p>
-<A NAME="keyPressEvent"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>keyPressEvent</strong> (<A HREF="http://doc.trolltech.com/qkeyevent.html">QKeyEvent</A> *e)
+<A NAME="keyPressEvent"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>keyPressEvent</strong> (QKeyEvent *e)
 <br></td><td align="right"><h3><strong>keyPressEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#eeb683">QMultiLineEdit</A>.</p>
-<A NAME="toMarkedText"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMarkedText</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<A NAME="toMarkedText"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMarkedText</strong> (<A HREF="#QWidget">QWidget</A> *parent,const char *name=NULL)
 <br></td><td align="right"><h3><strong>toMarkedText</strong></h3></td></tr></table><p></p><p> Create an editor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -120,7 +118,7 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of this widget.
    </TD></TR>
 </TABLE></P>
-<A NAME="insert"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>insert</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,bool mark)
+<A NAME="insert"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>insert</strong> (const QString &amp;str,bool mark)
 <br></td><td align="right"><h3><strong>insert</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Insert text and optionallly mark inserted text.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -129,49 +127,43 @@
 <TR><TD align="left" valign="top"><i>mark</i></TD><TD align="left" valign="top">True if mark inserted as selected.
    </TD></TR>
 </TABLE></P>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#b2b7a6">QMultiLineEdit</A>.</p>
-<A NAME="insert"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>insert</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<A NAME="insert"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>insert</strong> (const QString &amp;str)
 <br></td><td align="right"><h3><strong>insert</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Insert text.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">String to insert.
    </TD></TR>
 </TABLE></P>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#b2b7a6">QMultiLineEdit</A>.</p>
-<A NAME="markedText"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>markedText</strong> ()
+<A NAME="markedText"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>QString &nbsp;<strong>markedText</strong> ()
 <br></td><td align="right"><h3><strong>markedText</strong></h3></td></tr></table><p></p><p> Get selected text. This function is now public.
 </p>
 <p><b>Returns</b>: The selected text.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#21ee74">QMultiLineEdit</A>.</p>
 <A NAME="hasMarkedText"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>hasMarkedText</strong> ()
 <br></td><td align="right"><h3><strong>hasMarkedText</strong></h3></td></tr></table><p></p><p> Check if selection is available. This function is now public.
 </p>
 <p><b>Returns</b>: True if selection is available.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#10d311">QMultiLineEdit</A>.</p>
 <A NAME="clear"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>clear</strong> (void)
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p></p><p> Erase the contents of the editor.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#2fac98">QMultiLineEdit</A>.</p>
 <A NAME="getMarkedRegion"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>getMarkedRegion</strong> (int * line1,int * col1,int * line2,int * col2)
 <br></td><td align="right"><h3><strong>getMarkedRegion</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get location of the current selection. This function is now public. See the
  Qt documentation for more information.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#aaf8b1">QMultiLineEdit</A>.</p>
-<A NAME="filename"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>filename</strong> (void)
+<A NAME="filename"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>filename</strong> (void)
 <br></td><td align="right"><h3><strong>filename</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Get filename of current file in editor.
 </p>
 <p><b>Returns</b>: Filename of editor.
    </p>
-<A NAME="openFilename"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>openFilename</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file)
+<A NAME="openFilename"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>openFilename</strong> (const QString &amp;file)
 <br></td><td align="right"><h3><strong>openFilename</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Open a file for editing.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>file</i></TD><TD align="left" valign="top">File to open for editing.
    </TD></TR>
 </TABLE></P>
-<A NAME="setFilename"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setFilename</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<A NAME="setFilename"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setFilename</strong> (const QString &amp;str)
 <br></td><td align="right"><h3><strong>setFilename</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Set the current filename of the file in editor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -182,22 +174,20 @@
 <br></td><td align="right"><h3><strong>setEdit</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Update user interface with availability of copy/paste etc.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#setEdit">toEditWidget</A>.</p>
-<A NAME="focusInEvent"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
+<A NAME="focusInEvent"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusInEvent</strong> (QFocusEvent *e)
 <br></td><td align="right"><h3><strong>focusInEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#0fa015">QMultiLineEdit</A>.</p>
-<A NAME="focusOutEvent"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusOutEvent</strong> (<A HREF="http://doc.trolltech.com/qfocusevent.html">QFocusEvent</A> *e)
+<A NAME="focusOutEvent"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>focusOutEvent</strong> (QFocusEvent *e)
 <br></td><td align="right"><h3><strong>focusOutEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
-<p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#33ebb8">QMultiLineEdit</A>.</p>
-<A NAME="paintEvent"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe)
+<A NAME="paintEvent"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (QPaintEvent *pe)
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <A NAME="editPrint"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Print this editor.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editPrint">toEditWidget</A>.</p>
-<A NAME="editOpen"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null)
+<A NAME="editOpen"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (QString file=QString::null)
 <br></td><td align="right"><h3><strong>editOpen</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editOpen">toEditWidget</A>.</p>
@@ -239,7 +229,7 @@
 <p><b>Returns</b>: True if found, should select the found text.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#searchNext">toEditWidget</A>.</p>
-<A NAME="searchReplace"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData)
+<A NAME="searchReplace"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const QString &amp;newData)
 <br></td><td align="right"><h3><strong>searchReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Replace entry with new data
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#searchReplace">toEditWidget</A>.</p>
@@ -254,7 +244,7 @@
 <A NAME="incrementalSearch"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>incrementalSearch</strong> (bool forward)
 <br></td><td align="right"><h3><strong>incrementalSearch</strong></h3></td></tr></table><p></p><p> Start incremental search mode, or search next if started.
    </p>
-<A NAME="exportData"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="exportData"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -263,7 +253,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="importData"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -284,11 +274,8 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="newLine"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>newLine</strong> (void)
-<br></td><td align="right"><h3><strong>newLine</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#408c84">QMultiLineEdit</A>.</p>
-<A NAME="dropEvent"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *)
-<br></td><td align="right"><h3><strong>dropEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#421c20">QMultiLineEdit</A>.</p>
-<A NAME="timerEvent"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>timerEvent</strong> (<A HREF="http://doc.trolltech.com/qtimerevent.html">QTimerEvent</A> *)
-<br></td><td align="right"><h3><strong>timerEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#0cf52b">QMultiLineEdit</A>.</p>
-<HR>
+<br></td><td align="right"><h3><strong>newLine</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="dropEvent"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (QDropEvent *)
+<br></td><td align="right"><h3><strong>dropEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="timerEvent"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>timerEvent</strong> (QTimerEvent *)
+<br></td><td align="right"><h3><strong>timerEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><HR>
 </BODY>
 </HTML>

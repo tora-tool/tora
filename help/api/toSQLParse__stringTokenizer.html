@@ -28,16 +28,19 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">stringTokenizer</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,int offset=0,int line=0) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref2">stringTokenizer</A></b> (const QString &amp;str,int offset=0,int line=0) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref3">getToken</A></b> (bool forward=true,bool comment=false) 
+<LI>&nbsp;<b><A HREF="#ref3">stringTokenizer</A></b> (const QString &amp;str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer,int offset=0,int line=0) 
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref4">remaining</A></b> (bool eol) 
+<LI>virtual  QString &nbsp;<b><A HREF="#ref4">getToken</A></b> (bool forward=true,bool comment=false) 
+</LI>
+<LI>virtual  QString &nbsp;<b><A HREF="#ref5">remaining</A></b> (bool eol) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Tokenizer class which gets tokens from a string.
    </p>
-<A NAME="stringTokenizer"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>stringTokenizer</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,int offset=0,int line=0)
-<br></td><td align="right"><h3><strong>stringTokenizer</strong></h3></td></tr></table><p></p><A NAME="getToken"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>getToken</strong> (bool forward=true,bool comment=false)
+<A NAME="stringTokenizer"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>stringTokenizer</strong> (const QString &amp;str,int offset=0,int line=0)
+<br></td><td align="right"><h3><strong>stringTokenizer</strong></h3></td></tr></table><p></p><A NAME="stringTokenizer"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>stringTokenizer</strong> (const QString &amp;str,<A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;analyzer,int offset=0,int line=0)
+<br></td><td align="right"><h3><strong>stringTokenizer</strong></h3></td></tr></table><p></p><A NAME="getToken"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>getToken</strong> (bool forward=true,bool comment=false)
 <br></td><td align="right"><h3><strong>getToken</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get a token from the string.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -47,7 +50,7 @@
      </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toSQLParse__tokenizer.html#getToken">tokenizer</A>.</p>
-<A NAME="remaining"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>remaining</strong> (bool eol)
+<A NAME="remaining"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> QString &nbsp;<strong>remaining</strong> (bool eol)
 <br></td><td align="right"><h3><strong>remaining</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get the data remaining after the current position.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

@@ -46,7 +46,7 @@
 	       bool search,
 	       bool selectAll,bool readAll) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref19">editOpen</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref19">editOpen</A></b> (QString file=QString::null) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref20">editSave</A></b> (bool askfile) 
 </LI>
@@ -114,7 +114,7 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref52">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref53">searchReplace</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref53">searchReplace</A></b> (const QString &amp;newData) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref54">searchCanReplace</A></b> (bool all) 
 </LI>
@@ -150,7 +150,7 @@
 	       bool selectAll,bool readAll)
 <br></td><td align="right"><h3><strong>setEdit</strong></h3></td></tr></table><p></p><p> Specify new enabled functions.
    </p>
-<A NAME="editOpen"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> file=QString::null)
+<A NAME="editOpen"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>editOpen</strong> (QString file=QString::null)
 <br></td><td align="right"><h3><strong>editOpen</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform an open on this widget. Default NOP.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -262,7 +262,7 @@
 </p>
 <p><b>Returns</b>: True if found, should select the found text.
    </p>
-<A NAME="searchReplace"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData)
+<A NAME="searchReplace"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const QString &amp;newData)
 <br></td><td align="right"><h3><strong>searchReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Replace entry with new data
    </p>
 <A NAME="searchCanReplace"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchCanReplace</strong> (bool all)

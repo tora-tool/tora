@@ -72,8 +72,9 @@
 #include &lt;qdialog.h&gt;
 #include &lt;qpushbutton.h&gt;
 
-class QLineEdit;
+class QComboBox;
 class QGrid;
+class QScrollView;
 
 class toParamGetButton : public QPushButton {
   Q_OBJECT
@@ -97,24 +98,28 @@ class toParamGet : public QDialog, public toHelpContext {
   Q_OBJECT
   /** Default values cache
    */
-  static std::map&lt;QString,std::map&lt;QString,QString&gt; &gt; DefaultCache;
+  static std::map&lt;QString,std::list&lt;QString&gt; &gt; DefaultCache;
   /** Specified values cache
    */
-  static std::map&lt;QString,std::map&lt;QString,QString&gt; &gt; Cache;
+  static std::map&lt;QString,std::list&lt;QString&gt; &gt; Cache;
 
+  QScrollView *View;
   QGrid *Container;
 
-  std::list&lt;QLineEdit *&gt; Value;
+  std::list&lt;QComboBox *&gt; Value;
   toParamGet(QWidget *parent=0,const char *name=0);
+protected:
+  virtual void resizeEvent(QResizeEvent *e);
 public:
   /** Get parameters for specified SQL string.
    * @param conn Connection to get binds for.
    * @param parent Parent widget if dialog is needed.
    * @param str SQL to parse for bindings. Observe that this string can be changed to further
    *            declare the binds.
+   * @param interactive If not interactive simply rewrite the query and pass on the defaults.
    * @return Returns a list of values to feed into the query.
    */
-  static toQList getParam(toConnection &amp;conn,QWidget *parent,QString &amp;str);
+  static toQList getParam(toConnection &amp;conn,QWidget *parent,QString &amp;str,bool interactive=true);
   /** Specify a default value for the cache. This can not overwrite a manually
    * specified value by the user.
    * @param conn Connection to get binds for.

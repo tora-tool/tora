@@ -31,20 +31,23 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref2">~toResultFilter</A></b> () 
 </LI>
-<LI>virtual  bool &nbsp;<b><i><A HREF="#ref3">check</A></i></b> (const <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref3">startingQuery</A></b> (void) 
 </LI>
-<LI>virtual  <A HREF="toResultFilter.html">toResultFilter</A> *&nbsp;<b><i><A HREF="#ref4">clone</A></i></b> (void) 
+<LI>virtual  bool &nbsp;<b><i><A HREF="#ref4">check</A></i></b> (const <A HREF="#QListViewItem">QListViewItem</A> *item) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref5">exportData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  <A HREF="toResultFilter.html">toResultFilter</A> *&nbsp;<b><i><A HREF="#ref5">clone</A></i></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref6">importData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref6">exportData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref7">importData</A></b> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Baseclass for filters to apply to the <A HREF="toResultView.html">toResultView</A> to filter out
  rows that you don't want to add as items to the list.
  </p>
 <A NAME="toResultFilter"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultFilter</strong> ()
 <br></td><td align="right"><h3><strong>toResultFilter</strong></h3></td></tr></table><p></p><A NAME="~toResultFilter"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toResultFilter</strong> ()
-<br></td><td align="right"><h3><strong>~toResultFilter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="check"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<i><strong>check</strong></i> (const <A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
+<br></td><td align="right"><h3><strong>~toResultFilter</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="startingQuery"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>startingQuery</strong> (void)
+<br></td><td align="right"><h3><strong>startingQuery</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="check"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<i><strong>check</strong></i> (const <A HREF="#QListViewItem">QListViewItem</A> *item)
 <br></td><td align="right"><h3><i><strong>check</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> This function can inspect the item to be added and decide if it is
  valid for adding or not.
 </p>
@@ -54,12 +57,12 @@
 </TABLE></P>
 <p><b>Returns</b>: If false is returned the item isn't added.
    </p>
-<A NAME="clone"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toResultFilter.html">toResultFilter</A> *&nbsp;<i><strong>clone</strong></i> (void)
+<A NAME="clone"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toResultFilter.html">toResultFilter</A> *&nbsp;<i><strong>clone</strong></i> (void)
 <br></td><td align="right"><h3><i><strong>clone</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a copy of this filter.
 </p>
 <p><b>Returns</b>: A newly created copy of this filter.
    </p>
-<A NAME="exportData"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="exportData"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -68,7 +71,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
+<A NAME="importData"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
