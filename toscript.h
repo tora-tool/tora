@@ -82,6 +82,7 @@ public slots:
   { changeSchema(val,false); }
   void newSize(void);
   void removeSize(void);
+  void browseFile(void);
 
   void expandSource(QListViewItem *item);
   void expandDestination(QListViewItem *item);

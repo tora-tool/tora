@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>638</width>
+            <width>634</width>
             <height>669</height>
         </rect>
     </property>
@@ -57,11 +57,11 @@
                 <grid>
                     <property stdset="1">
                         <name>margin</name>
-                        <number>11</number>
+                        <number>-1</number>
                     </property>
                     <property stdset="1">
                         <name>spacing</name>
-                        <number>6</number>
+                        <number>-1</number>
                     </property>
                     <widget row="0"  column="2"  rowspan="3"  colspan="1" >
                         <class>QGroupBox</class>
@@ -1486,7 +1486,14 @@
         <receiver>OutputDir</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>Browse</sender>
+        <signal>clicked()</signal>
+        <receiver>toScriptUI</receiver>
+        <slot>browseFile()</slot>
+    </connection>
     <slot access="public">newSize(void)</slot>
+    <slot access="public">browseFile()</slot>
     <slot access="public">removeSize(void)</slot>
 </connections>
 <tabstops>

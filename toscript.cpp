@@ -477,6 +477,9 @@ void toScript::execute(void)
       if (ScriptUI->OutputTab->isChecked())
 	script+=source.create(sourceObjects);
       else if (ScriptUI->OutputFile->isChecked()) {
+	if (ScriptUI->Filename->text().isEmpty())
+	  throw tr("No filename specified");
+
 	QFile file(ScriptUI->Filename->text());
 	file.open(IO_WriteOnly);
 
@@ -491,6 +494,9 @@ void toScript::execute(void)
 
 	script=tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
       } else if (ScriptUI->OutputDir->isChecked()) {
+	if (ScriptUI->Filename->text().isEmpty())
+	  throw tr("No filename specified");
+
 	QFile file(ScriptUI->Filename->text()+QDir::separator()+"script.sql");
 	file.open(IO_WriteOnly);
 
@@ -1039,4 +1045,17 @@ void toScript::expandDestination(QListViewItem *item)
       readOwnerObjects(item,
 		       toMainWidget()->connection(ScriptUI->DestinationConnection->currentText()));
   } TOCATCH
+}
+
+void toScript::browseFile(void)
+{
+  if (ScriptUI->OutputFile->isChecked()) {
+    QString f=toOpenFilename(QString::null,QString::null,this);
+    if (!f.isEmpty())
+      ScriptUI->Filename->setText(f);
+  } else if (ScriptUI->OutputDir->isChecked()) {
+    QString f=TOFileDialog::getExistingDirectory(QString::null,this);
+    if (!f.isEmpty())
+      ScriptUI->Filename->setText(f);
+  }
 }
