@@ -43,6 +43,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %defattr(-,root,root,0755)
 
+%doc tora-%{version}/BUGS
+%doc tora-%{version}/TODO
+%doc tora-%{version}/INSTALL
+%doc tora-%{version}/README
+%doc tora-%{version}/NEWS
+
 %{_prefix}/X11R6/bin/tora
 %{_prefix}/lib/tora
 %define name tora
