@@ -412,7 +412,11 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
     QString buffer=tr(AboutText).arg(QString::fromLatin1(TOVERSION));
     TextView->setText(buffer);
+#ifdef OAS
+    TextView->setPaper(QColor(255,255,255));
+#else
     TextView->setPaper(QColor(227,184,54));
+#endif
     TextView->setTextFormat(RichText);
     CancelButton->hide();
     break;
