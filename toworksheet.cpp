@@ -973,8 +973,10 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
 
 void toWorksheet::execute()
 {
-  if (Editor->hasMarkedText())
+  if (Editor->hasMarkedText()) {
     query(Editor->markedText(),false);
+    return;
+  }
 
   toSQLParse::editorTokenizer tokens(Editor);
 
@@ -995,8 +997,10 @@ void toWorksheet::execute()
 
 void toWorksheet::explainPlan()
 {
-  if (Editor->hasMarkedText())
+  if (Editor->hasMarkedText()) {
     query(Editor->markedText(),false,true);
+    return;
+  }
 
   toSQLParse::editorTokenizer tokens(Editor);
 
