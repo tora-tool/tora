@@ -5228,6 +5228,10 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
 				  SQLDatafileInfo(Connection),
 				  QString::number(BlockSize),
 				  name);
+  if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
+    ret+="TEMPFILE\n";
+  else
+    ret+="DATAFILE\n";
   QString comma="  ";
   while(files.size()>0) {
     QString fileName       =toShift(files);

@@ -46,17 +46,25 @@ class toScript : public toScriptUI {
   toConnection &Connection;
 
   void setupExtract(toExtract &);
+  void changeConnection(int,bool source);
+  void changeSchema(int,bool source);
 public:
   toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();
 
+
 public slots:
   void execute(void);
   void changeMode(int);
-  void changeSource(int);
-  void changeDestination(int);
+  void changeSource(int val)
+  { changeConnection(val,true); }
+  void changeDestination(int val)
+  { changeConnection(val,false); }
   void objectClicked(QListViewItem *item);
-  void changeSourceSchema(int);
+  void changeSourceSchema(int val)
+  { changeSchema(val,true); }
+  void changeDestinationSchema(int val)
+  { changeSchema(val,false); }
   void newSize(void);
   void removeSize(void);
 };

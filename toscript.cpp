@@ -187,7 +187,8 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   Next->setTitle("&Next");
   connect(ModeGroup,SIGNAL(clicked(int)),this,SLOT(changeMode(int)));
   Tabs->setTabEnabled(ResizeTab,false);
-  Objects->setSorting(0);
+  SourceObjects->setSorting(0);
+  DestinationObjects->setSorting(0);
 
   int def=0;
   list<QString> cons=toMainWidget()->connections();
@@ -201,14 +202,16 @@ toScript::toScript(QWidget *parent,toConnection &connection)
     DestinationConnection->insertItem(str);
   }
   SourceConnection->setCurrentItem(def);
-  DestinationConnection->setCurrentItem(def);
   changeSource(def);
   changeDestination(def);
+  DestinationConnection->setCurrentItem(def);
 
   connect(SourceConnection,SIGNAL(activated(int)),this,SLOT(changeSource(int)));
   connect(DestinationConnection,SIGNAL(activated(int)),this,SLOT(changeDestination(int)));
   connect(SourceSchema,SIGNAL(activated(int)),this,SLOT(changeSourceSchema(int)));
-  connect(Objects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+  connect(DestinationSchema,SIGNAL(activated(int)),this,SLOT(changeDestinationSchema(int)));
+  connect(SourceObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
+  connect(DestinationObjects,SIGNAL(clicked(QListViewItem *)),this,SLOT(objectClicked(QListViewItem *)));
 
   Schema->setCurrentItem(0);
 
@@ -251,7 +254,7 @@ void toScript::execute(void)
     list<QString> userOther;
 
     QListViewItem *next=NULL;
-    for (QListViewItem *item=Objects->firstChild();item;item=next) {
+    for (QListViewItem *item=SourceObjects->firstChild();item;item=next) {
       QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
 
       if (chk&&chk->isEnabled()) {
@@ -312,6 +315,8 @@ void toScript::execute(void)
     }
 
     list<QString> sourceObjects;
+    list<QString> destinationObjects;
+
     for(list<QString>::iterator i=tableSpace.begin();i!=tableSpace.end();i++)
       toPush(sourceObjects,*i);
     for(list<QString>::iterator i=profiles.begin();i!=profiles.end();i++)
@@ -371,26 +376,70 @@ void toScript::execute(void)
 	break;
       }
     } catch (const QString &str) {
-      
+      toStatusMessage(str);
     }
 
-    list<QString> destinationObjects;
     if (Destination->isEnabled()) {
     }
     Tabs->setTabEnabled(ResultTab,mode==1||mode==2||mode==3);
     Tabs->setTabEnabled(DifferenceTab,mode==0||mode==2);
-    if (!script.isEmpty())
+    if (!script.isEmpty()) {
       Worksheet->editor()->setText(script);
+      Worksheet->editor()->setEdited(true);
+    }
   } TOCATCH
 }
 
-void toScript::changeSource(int)
+void toScript::changeConnection(int,bool source)
 {
   try {
-    Objects->clear();
-    SourceSchema->clear();
-    SourceSchema->insertItem("All");
-    toConnection &conn=toMainWidget()->connection(SourceConnection->currentText());
+    QListView *sourceL=NULL;
+    QListView *destinationL=NULL;
+    if (SourceConnection->currentText()==DestinationConnection->currentText()) {
+      if (source) {
+	destinationL=SourceObjects;
+	sourceL=DestinationObjects;
+      } else {
+	sourceL=SourceObjects;
+	destinationL=DestinationObjects;
+      }
+    }
+    if (sourceL&&destinationL&&sourceL->firstChild()) {
+      destinationL->clear();
+      QListViewItem *next=NULL;
+      QListViewItem *parent=NULL;
+      for (QListViewItem *item=sourceL->firstChild();item;item=next) {
+	QListViewItem *lastParent=parent;
+	if (!parent)
+	  parent=new QCheckListItem(destinationL,item->text(0),
+				    QCheckListItem::CheckBox);
+	else
+	  parent=new QCheckListItem(parent,item->text(0),
+				    QCheckListItem::CheckBox);
+	if (item->firstChild())
+	  next=item->firstChild();
+	else if (item->nextSibling()) {
+	  next=item->nextSibling();
+	  parent=lastParent;
+	} else {
+	  next=item;
+	  parent=lastParent;
+	  do {
+	    next=next->parent();
+	    if (parent)
+	      parent=parent->parent();
+	  } while(next&&!next->nextSibling());
+	  if (next)
+	    next=next->nextSibling();
+	}
+      }
+      return;
+    }
+    (source?SourceObjects:DestinationObjects)->clear();
+    (source?SourceSchema:DestinationSchema)->clear();
+    (source?SourceSchema:DestinationSchema)->insertItem("All");
+    toConnection &conn=toMainWidget()->connection((source?SourceConnection:DestinationConnection)
+						  ->currentText());
     list<QString> object;
     try {
       object=toReadQuery(conn,SQLObjectList(conn));
@@ -400,7 +449,7 @@ void toScript::changeSource(int)
     list<QString> schema=toReadQuery(conn,SQLSchemas(conn));
     while(schema.size()>0) {
       QString str=toShift(schema);
-      SourceSchema->insertItem(str);
+      (source?SourceSchema:DestinationSchema)->insertItem(str);
     }
     QListViewItem *lastTop=NULL;
     QListViewItem *lastFirst=NULL;
@@ -411,7 +460,8 @@ void toScript::changeSource(int)
 
       if (top!=(lastTop?lastTop->text(0):QString::null)) {
 	lastFirst=NULL;
-	lastTop=new QCheckListItem(Objects,top,QCheckListItem::CheckBox);
+	lastTop=new QCheckListItem((source?SourceObjects:DestinationObjects),
+				   top,QCheckListItem::CheckBox);
 	if (!second.isEmpty()||first.isEmpty())
 	  lastTop->setText(1,"USER");
       }
@@ -425,20 +475,6 @@ void toScript::changeSource(int)
 	item->setText(1,first);
 	item->setText(2,top);
       }
-    }
-  } TOCATCH
-}
-
-void toScript::changeDestination(int)
-{
-  try {
-    DestinationSchema->clear();
-    DestinationSchema->insertItem("All");
-    toConnection &conn=toMainWidget()->connection(DestinationConnection->currentText());
-    list<QString> schema=toReadQuery(conn,SQLSchemas(conn));
-    while(schema.size()>0) {
-      QString str=toShift(schema);
-      DestinationSchema->insertItem(str);
     }
   } TOCATCH
 }
@@ -508,10 +544,12 @@ void toScript::objectClicked(QListViewItem *parent)
   }
 }
 
-void toScript::changeSourceSchema(int)
+void toScript::changeSchema(int,bool source)
 {
-  QString src=SourceSchema->currentText();
-  for(QListViewItem *parent=Objects->firstChild();parent;parent=parent->nextSibling()) {
+  QString src=(source?SourceSchema:DestinationSchema)->currentText();
+  for(QListViewItem *parent=(source?SourceObjects:DestinationObjects)->firstChild();
+      parent;
+      parent=parent->nextSibling()) {
     QCheckListItem *chk=dynamic_cast<QCheckListItem *>(parent);
     if (chk) {
       bool ena=((src==chk->text(0))||(src=="All"));
@@ -521,7 +559,7 @@ void toScript::changeSourceSchema(int)
 	chk=dynamic_cast<QCheckListItem *>(item);
 	if (chk) {
 	  chk->setEnabled(ena);
-	  Objects->repaintItem(chk);
+	  (source?SourceObjects:DestinationObjects)->repaintItem(chk);
 	}
 
 	if (item->firstChild())
