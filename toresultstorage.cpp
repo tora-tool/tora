@@ -29,13 +29,13 @@
 #include "tosql.h"
 #include "toconnection.h"
 
-class toResultStorageItem : public QListViewItem {
+class toResultStorageItem : public toResultViewItem {
 public:
   toResultStorageItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
-    : QListViewItem(parent,after,buf)
+    : toResultViewItem(parent,after,buf)
   { }
   toResultStorageItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
-    : QListViewItem(parent,after,buf)
+    : toResultViewItem(parent,after,buf)
   { }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
   {

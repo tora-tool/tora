@@ -135,11 +135,12 @@ QString toResultViewItem::text(int col) const
 
 QString toResultViewItem::key(int col,bool asc) const
 {
-  static QRegExp number("^\\d*\\.?\\d+$");
+  static QRegExp number("^\\d*\\.?\\d+E?-?\\d*.?.?$");
+
   QString val=text(col);
   if (number.match(val)>=0) {
     static char buf[100];
-    sprintf(buf,"%015f",text(col).toFloat());
+    sprintf(buf,"%015.5f",text(col).toFloat());
     return buf;
   }
   return val;
