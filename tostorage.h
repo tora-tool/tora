@@ -107,11 +107,17 @@ class toStorageDatafile : public QWidget
   QLineEdit *Name;
   toFilesize *InitialSize;
 
+  bool Modify;
+  int InitialSizeOrig;
+  int NextSizeOrig;
+  int MaximumSizeOrig;
+  QString FilenameOrig;
+
 public:
   toStorageDatafile(bool dispName,QWidget *parent = 0,const char *name=0,WFlags fl=0);
 
   QString getName(void);
-  QString getSQL(void);
+  QStringList getSQL(void);
 
   friend class toStorageDialog;
 signals:
@@ -185,6 +191,7 @@ public slots:
   void newDatafile(void);
   void newTablespace(void);
   void modifyTablespace(void);
+  void modifyDatafile(void);
   void moveFile(void);
 
   void selectionChanged(void);

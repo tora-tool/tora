@@ -287,6 +287,7 @@ QStringList toStorageTablespace::getSQL()
 toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* name,WFlags fl)
   : QWidget(parent,name,fl)
 {
+  Modify=false;
   if (!name)
     setName("DataFile");
   setCaption(tr("Create datafile"));
@@ -352,27 +353,62 @@ toStorageDatafile::toStorageDatafile(bool dispName,QWidget* parent,const char* n
   
 }
 
-QString toStorageDatafile::getSQL(void)
+QStringList toStorageDatafile::getSQL(void)
 {
-  QString str("'");
-  QString filename(Filename->text());
-  filename.replace(QRegExp("'"),"''");
-  str.append(filename);
-  str.append("' SIZE ");
-  str.append(InitialSize->sizeString());
-  str.append(" REUSE AUTOEXTEND ");
-  if (AutoExtend->isChecked()) {
-    str.append("ON NEXT ");
-    str.append(NextSize->sizeString());
-    str.append(" MAXSIZE ");
-    if (UnlimitedMax->isChecked())
-      str.append("UNLIMITED");
-    else {
-      str.append(MaximumSize->sizeString());
+  QStringList ret;
+  if (!Modify) {
+    QString str("'");
+    QString filename(Filename->text());
+    filename.replace(QRegExp("'"),"''");
+    str.append(filename);
+    str.append("' SIZE ");
+    str.append(InitialSize->sizeString());
+    str.append(" REUSE AUTOEXTEND ");
+    if (AutoExtend->isChecked()) {
+      str.append("ON NEXT ");
+      str.append(NextSize->sizeString());
+      str.append(" MAXSIZE ");
+      if (UnlimitedMax->isChecked())
+	str.append("UNLIMITED");
+      else {
+	str.append(MaximumSize->sizeString());
+      }
+    } else
+      str.append("OFF");
+    ret+=str;
+  } else {
+    QString str;
+    if (Filename->text()!=FilenameOrig) {
+      str="RENAME FILE '";
+      str+=FilenameOrig;
+      str+="' TO '";
+      str+=Filename->text();
+      ret+=str;
     }
-  } else
-    str.append("OFF");
-  return str;
+    if (InitialSize->value()!=InitialSizeOrig) {
+      str="DATAFILE '";
+      str+=Filename->text();
+      str+="' RESIZE ";
+      str+=InitialSize->sizeString();
+      ret+=str;
+    }
+    str="DATAFILE '";
+    str+=Filename->text();
+    str+="' AUTOEXTEND ";
+    if (AutoExtend->isChecked()) {
+      str.append("ON NEXT ");
+      str.append(NextSize->sizeString());
+      str.append(" MAXSIZE ");
+      if (UnlimitedMax->isChecked())
+	str.append("UNLIMITED");
+      else {
+	str.append(MaximumSize->sizeString());
+      }
+    } else
+      str.append("OFF");
+    ret+=str;
+  }
+  return ret;
 }
 
 void toStorageDatafile::browseFile(void)
@@ -384,7 +420,7 @@ void toStorageDatafile::browseFile(void)
 
 void toStorageDatafile::autoExtend(bool val)
 {
-  MaximumSize->setEnabled(val);
+  MaximumSize->setEnabled(!UnlimitedMax->isChecked());
   UnlimitedMax->setEnabled(val);
   NextSize->setEnabled(val);
 }
@@ -471,7 +507,7 @@ static toSQL SQLTablespaceInfo("toStorage:TablespaceInfo",
 			       "       pct_increase\n"
 			       "  FROM dba_tablespaces\n"
 			       " WHERE tablespace_name = :nam<char[70]>",
-			       "Get information about a tablespace for the create dialog, "
+			       "Get information about a tablespace for the modify dialog, "
 			       "must have same columns and bindings");
 
 toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QWidget *parent)
@@ -488,6 +524,8 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QW
 
   list<QString> result=toReadQuery(conn,SQLTablespaceInfo(conn),
 				   tablespace);
+  if (result.size()!=10)
+    throw QString("Invalid response from query");
   Tablespace->MinimumExtent->setValue(toShift(result).toInt());
 
   Tablespace->Modify=true;
@@ -516,6 +554,56 @@ toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,QW
   else
     Default->MaximumExtent->setValue(num);
   Default->PCTIncrease->setValue(toShift(result).toInt());
+}
+
+static toSQL SQLDatafileInfo("toStorage:DatafileInfo",
+			     "SELECT bytes/1024,\n"
+			     "       autoextensible,\n"
+			     "       bytes/blocks*increment_by/1024,\n"
+			     "       maxbytes/1024\n"
+			     "  FROM dba_data_files\n"
+			     " WHERE tablespace_name = :nam<char[70]>"
+			     "   AND file_name = :fil<char[1500]>",
+			     "Get information about a datafile for the modify dialog, "
+			     "must have same columns and bindings");
+
+toStorageDialog::toStorageDialog(toConnection &conn,const QString &tablespace,
+				 const QString &filename,QWidget *parent)
+  : QDialog(parent,"Storage Dialog",true)
+{
+  Setup();
+  Datafile=new toStorageDatafile(true,DialogTab);
+  DialogTab->addTab(Datafile,"Datafile");
+  setCaption("Modify datafile");
+  Tablespace=NULL;
+  Default=NULL;
+
+  list<QString> result=toReadQuery(conn,SQLDatafileInfo(conn),
+				   tablespace,filename);
+  if (result.size()!=4)
+    throw QString("Invalid response from query (Wanted 4, got %1 entries").arg(result.size());
+  Datafile->Name->setText(tablespace);
+  Datafile->Name->setEnabled(false);
+  Datafile->Modify=true;
+  Datafile->FilenameOrig=filename;
+  Datafile->Filename->setText(filename);
+  Datafile->InitialSize->setValue(Datafile->InitialSizeOrig=toShift(result).toInt());
+  if (toShift(result)!="NO") {
+    Datafile->AutoExtend->setChecked(true);
+    Datafile->NextSize->setValue(Datafile->NextSizeOrig=toShift(result).toInt());
+  } else {
+    Datafile->NextSizeOrig=0;
+  }
+
+  int num=toShift(result).toInt();
+  if (num==0) {
+    Datafile->UnlimitedMax->setChecked(true);
+    Datafile->MaximumSize->setEnabled(false);
+  } else {
+    Datafile->UnlimitedMax->setChecked(false);
+    Datafile->MaximumSize->setValue(num);
+  }
+  Datafile->MaximumSizeOrig=num;
 }
 
 void toStorageDialog::validContent(bool val)
@@ -623,7 +711,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   ModFileButton=new QToolButton(*toModFilePixmap,
 				"Modify file",
 				"Modify file",
-				this,SLOT(modifyTablespace(void)),
+				this,SLOT(modifyDatafile(void)),
 				toolbar);
   toolbar->addSeparator(); 
   new QToolButton(*toNewTablespacePixmap,
@@ -836,7 +924,7 @@ void toStorage::newDatafile(void)
       str="ALTER TABLESPACE \"";
       str.append(Storage->currentTablespace());
       str.append("\" ADD DATAFILE ");
-      str.append(newFile.Datafile->getSQL());
+      str.append(newFile.Datafile->getSQL().join(" "));
       otl_cursor::direct_exec(Connection.connection(),
 			      str.utf8());
       refresh();
@@ -854,7 +942,7 @@ void toStorage::newTablespace(void)
       str="CREATE TABLESPACE \"";
       str.append(newSpace.Datafile->getName());
       str.append("\" DATAFILE ");
-      str.append(newSpace.Datafile->getSQL());
+      str.append(newSpace.Datafile->getSQL().join(" "));
       str.append(" ");
       str.append(newSpace.Tablespace->getSQL().join(" "));
       if (newSpace.Tablespace->allowStorage()) {
@@ -867,8 +955,6 @@ void toStorage::newTablespace(void)
     }
   } TOCATCH
 }
-
-#include <stdio.h>
 
 void toStorage::modifyTablespace(void)
 {
@@ -891,6 +977,28 @@ void toStorage::modifyTablespace(void)
 	QString str=start;
 	str.append("DEFAULT ");
 	str.append(modifySpace.Default->getSQL());
+	otl_cursor::direct_exec(Connection.connection(),
+				str.utf8());
+      }
+      refresh();
+    }
+  } TOCATCH
+}
+
+#include <stdio.h>
+
+void toStorage::modifyDatafile(void)
+{
+  try {
+    toStorageDialog modifySpace(Connection,Storage->currentTablespace(),
+				Storage->currentFilename(),this);
+
+    if (modifySpace.exec()) {
+      QString start="ALTER DATABASE ";
+      QStringList opr=modifySpace.Datafile->getSQL();
+      for (unsigned int i=0;i<opr.count();i++) {
+	QString str=start;
+	str+=opr[i];
 	otl_cursor::direct_exec(Connection.connection(),
 				str.utf8());
       }

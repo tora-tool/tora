@@ -76,7 +76,7 @@ toResultStorage::toResultStorage(toConnection &conn,QWidget *parent,const char *
 {
   Unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   setAllColumnsShowFocus(true);
-  setSorting(-1);
+  setSorting(0);
   setRootIsDecorated(true);
   addColumn("Name");
   addColumn("Status");
@@ -233,7 +233,8 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "8.0");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
-			 "SELECT  v.name,\n"
+			 "SELECT  d.tablespace_name,\n"
+			 "	v.name,\n"
 			 "	v.status,\n"
 			 "	v.enabled,\n"
 			 "	' ',\n"
@@ -243,17 +244,16 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "        to_char(round(s.bytes/b.unit,2)),\n"
 			 "        to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
 			 "	' ',\n"
-			 "	to_char(s.num),\n"
-			 "	d.tablespace_name\n"
+			 "	to_char(s.num)\n"
 			 "  FROM  sys.dba_data_files d,\n"
 			 "	v$datafile v,\n"
 			 "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
 			 "        (select :unit<int> unit from dual) b\n"
 			 " WHERE  (s.file_id (+)= d.file_id)\n"
 			 "   AND  (d.file_name = v.name)\n"
-			 "   AND  (d.tablespace_name = :nam<char[100]>)"
 			 " UNION  ALL\n"
-			 "SELECT  v.name,\n"
+			 "SELECT  d.tablespace_name,\n"
+			 "      v.name,\n"
 			 "	v.status,\n"
 			 "	v.enabled,\n"
 			 "	' ',\n"
@@ -263,21 +263,20 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "        to_char(round((d.user_bytes-t.bytes_cached)/b.unit,2)),\n"
 			 "        to_char(round((d.user_bytes-t.bytes_cached)*100/d.user_bytes,2))||'%',\n"
 			 "	' ',\n"
-			 "	'1',\n"
-			 "	d.tablespace_name\n"
+			 "	'1'\n"
 			 "  FROM  sys.dba_temp_files d,\n"
 			 "	v$tempfile v,\n"
 			 "	v$temp_extent_pool t,\n"
 			 "        (select :unit<int> unit from dual) b\n"
 			 " WHERE  (t.file_id (+)= d.file_id)\n"
-			 "   AND  (d.file_name = v.file#)"
-			 "   AND  (d.tablespace_name = :nam<char[100]>)",
+			 "   AND  (d.file_name = v.file#)",
 			 "Display information about a datafile in a tablespace. "
 			 "All columns must be present in the output (Should be 12)",
 			 "8.1");
 
 static toSQL SQLDatafile8("toResultStorage:Datafile",
-			  "SELECT  v.name,\n"
+			  "SELECT  d.tablespace_name,\n"
+			  "	v.name,\n"
 			  "	v.status,\n"
 			  "	v.enabled,\n"
 			  "	' ',\n"
@@ -287,15 +286,13 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "        to_char(round(s.bytes/b.unit,2)),\n"
 			  "        to_char(round(s.bytes*100/d.user_bytes,2))||'%',\n"
 			  "	' ',\n"
-			  "	to_char(s.num),\n"
-			  "	d.tablespace_name\n"
+			  "	to_char(s.num)\n"
 			  "  FROM  sys.dba_data_files d,\n"
 			  "	v$datafile v,\n"
 			  "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
 			  "        (select :unit<int> unit from dual) b\n"
 			  " WHERE  (s.file_id (+)= d.file_id)\n"
-			  "   AND  (d.file_name = v.name)\n"
-			  "   AND  (d.tablespace_name = :nam<char[100]>)",
+			  "   AND  (d.file_name = v.name)",
 			  "",
 			  "8.0");
 
@@ -326,37 +323,40 @@ void toResultStorage::query(void)
     otl_stream tblspc(1,sql,Connection.connection());
     tblspc<<toSizeDecode(Unit);
 
-    otl_stream datfil(1,
-		      SQLDatafile(Connection),
-		      Connection.connection());
-    QListViewItem *lastTablespace=NULL;
     while(!tblspc.eof()) {
-      QListViewItem *tablespace=new toResultStorageItem(this,lastTablespace);
+      QListViewItem *tablespace=new toResultStorageItem(this,NULL);
       for (int i=0;i<11;i++) {
 	tblspc>>buffer;
 	tablespace->setText(i,QString::fromUtf8(buffer));
       }
-      datfil<<toSizeDecode(Unit);
-      datfil<<tablespace->text(0).utf8();
-      QListViewItem *lastFile=NULL;
-      while(!datfil.eof()) {
-	QListViewItem *file=new toResultStorageItem(tablespace,lastFile);
-	for (int i=0;i<12;i++) {
-	  datfil>>buffer;
-	  file->setText(i,QString::fromUtf8(buffer));
-	}
-	lastFile=file;
-	if (currentSpace==file->text(11)&&
-	    currentFile==file->text(0))
-	  setSelected(file,true);
-      }
-      lastTablespace=tablespace;
+      tablespace->setExpandable(true);
       if (currentSpace==tablespace->text(0)) {
 	if (currentFile.isEmpty())
 	  setSelected(tablespace,true);
-	else
-	  setOpen(tablespace,true);
       }
+    }
+
+    otl_stream datfil(1,
+		      SQLDatafile(Connection),
+		      Connection.connection());
+    datfil<<toSizeDecode(Unit);
+    while(!datfil.eof()) {
+      datfil>>buffer;
+      QString name=QString::fromUtf8(buffer);
+      QListViewItem *tablespace;
+      for (tablespace=firstChild();tablespace&&tablespace->text(0)!=name;tablespace=tablespace->nextSibling())
+	;
+      if (!tablespace)
+	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
+      QListViewItem *file=new toResultStorageItem(tablespace,NULL);
+      for (int i=0;i<11;i++) {
+	datfil>>buffer;
+	file->setText(i,QString::fromUtf8(buffer));
+      }
+      file->setText(11,name);
+      if (currentSpace==file->text(11)&&
+	  currentFile==file->text(0))
+	setSelected(file,true);
     }
   } TOCATCH
   updateContents();

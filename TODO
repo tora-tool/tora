@@ -1,12 +1,9 @@
 Beta todo list:
 
-* Info about current session.
-	Display parameters (v$param...)
 * Server statistics and tuning information.
 * SQL Browser
 	Schema filter
 	Object search
-* Modify datafiles in storage manager.
 
 Extended functionality:
 
@@ -32,7 +29,7 @@ Extended functionality:
 * Display objects in tablespace storage manager.
 * Segments view in storage view.
 * Add replace to toResultContent.
-* Ability to change redofiles.
+* Ability to change/move redofiles.
 
 Windows problems:
 

@@ -29,8 +29,10 @@
 2001-05-22: Added functionality to OTL for connecting as SYS_DBA/SYS_OPER.
 2001-05-22: Changed back to printfs in main.
 2001-05-22: Added functionality to connect as SYS_DBA/SYS_OPER in toConnection.
-2001-05-22: Rewrote SQL in toResultStorage (From 3 min to 10 seconds execution
+2001-05-22: Rewrote SQL in toResultStorage (From 51 min to 20 seconds execution
 	time on	my test DB with coalesced disabled).
+2001-05-22: Added functionality to modify datafiles.
+2001-05-22: Added tool to get information about current session.
 
 0.9.1: Released 2001-05-20
 
