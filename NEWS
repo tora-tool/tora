@@ -1,5 +1,9 @@
 1.3.2:
 
+2002-01-13: Applied patch for improved PostgreSQL support. (Thanx Volker Goetz)
+2002-01-13: Added support for set without ending ; on line in worksheet.
+2002-01-13: Ignore worksheet lines starting with '@' character.
+2002-01-13: Fixed problem with next/previous memo editor buttons in lists.
 2002-01-13: Disable coalesced by default in storage manager.
 2002-01-13: Don't sort sga trace result in listview by default.
 2002-01-13: Changed name of Windows menu to Window menu.

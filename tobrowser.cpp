@@ -446,6 +446,16 @@ static toSQL SQLListIndex("toBrowser:ListIndex",
 			  "   AND UPPER(INDEX_NAME) LIKE :f2<char[101]>\n"
 			  " ORDER BY Index_Name\n",
 			  "List the available indexes in a schema");
+static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
+			       "SELECT c.relname AS \"Index Name\"\n"
+                               "FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
+                               "WHERE (u.usename = :f1 OR u.usesysid IS NULL)\n"
+                               "  AND c.relkind = 'i'\n"
+                               "ORDER BY \"Index Name\"",
+			       QString::null,
+			       "7.1",
+			       "PostgreSQL");
+
 
 static toSQL SQLIndexCols("toBrowser:IndexCols",
 			  "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"
@@ -471,6 +481,17 @@ static toSQL SQLIndexCols7("toBrowser:IndexCols",
 			   " ORDER BY Column_Position",
 			   QString::null,
 			   "7.3");
+// The following one for PostgreSQL needs verification
+static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
+                           "SELECT a.attname, format_type(a.atttypid, a.atttypmod),\n"
+                           "       a.attnotnull, a.atthasdef, a.attnum\n"
+                           "FROM pg_class c, pg_attribute a\n"
+                           "WHERE c.relname = :f2\n"
+                           "AND a.attnum > 0 AND a.attrelid = c.oid\n"
+                           "ORDER BY a.attnum",
+			   QString::null,
+			   "7.1",
+                           "PostgreSQL");
 static toSQL SQLIndexInfo("toBrowser:IndexInformation",
 			  "SELECT * FROM SYS.ALL_INDEXES\n"
 			  " WHERE Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>",

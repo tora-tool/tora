@@ -335,9 +335,14 @@ void toMemoEditor::previousColumn(void)
 	    next=next->nextSibling();
 	}
       }
-      lst->setCurrentItem(item);
-    } else {
+      if (item!=cur) {
+	lst->setCurrentItem(item);
+	cur=NULL;
+      }
+    } else
       Col--;
+
+    if (cur) {
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
@@ -374,10 +379,13 @@ void toMemoEditor::nextColumn(void)
 	if (next)
 	  next=next->nextSibling();
       }
-      if (next)
+      if (next) {
 	lst->setCurrentItem(next);
-    } else {
+	cur=NULL;
+      }
+    } else
       Col++;
+    if (cur) {
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)

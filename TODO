@@ -14,6 +14,9 @@ Extended functionality:
 		Remove constraints
 	Rename table
 		ALTER TABLE ... RENAME TO ...
+	DB Links
+	Libraries
+	Materialized Views
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
@@ -26,7 +29,6 @@ Extended functionality:
 * Implement extract of temporary tables.
 * Implement migratghhgggion, resize and report in toExtract.
 * Lots of more template texts including SQL syntax.
-* DB Links in DB browser.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
@@ -67,6 +69,8 @@ Extended functionality:
 * Add auto extend information to the storage manager.
 * Add copy datafile/tablespace in storage manager.
 * Add warning when changing to Default Storage when disabled in modify tablespace in storage.
+* Enable copy in main window on lists.
+* Explain plan without execute in worksheet.
 
 New tools:
 

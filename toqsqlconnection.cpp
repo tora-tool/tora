@@ -181,7 +181,6 @@ static QString QueryParam(const QString &in,toQList &params)
       ret+=c;
     }
   }
-
   return ret;
 }
 

@@ -987,7 +987,7 @@ void toMain::editEnable(toEditWidget *edit)
 		     edit->selectAllEnabled(),
 		     edit->readAllEnabled());
 
-#if QT_VERSION > 300
+#if QT_VERSION >= 300
   // Set Selection Mode on X11
   QClipboard *clip=qApp->clipboard();
   if(clip->supportsSelection())

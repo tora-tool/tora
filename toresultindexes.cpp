@@ -45,7 +45,7 @@
 
 bool toResultIndexes::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn)||conn.provider()=="MySQL";
+  return toIsOracle(conn)||conn.provider()=="MySQL"||conn.provider()=="PostgreSQL";
 }
 
 toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
@@ -85,6 +85,16 @@ static toSQL SQLColumns8("toResultIndexes:Columns",
 			 " ORDER BY Column_Position",
 			 QString::null,
 			 "8.0");
+static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
+                         "SELECT a.attname, a.attname\n"
+                         "  FROM pg_class c, pg_attribute a, pg_user u\n"
+                         " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
+                         "   AND a.attrelid = c.oid AND c.relname = :f2\n"
+                         "   AND a.attnum > 0\n"
+                         " ORDER BY a.attnum",
+			 QString::null,
+			 "7.1",
+                         "PostgreSQL");
 
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
@@ -132,6 +142,24 @@ static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
 			       QString::null,
 			       "3.0",
 			       "MySQL");
+static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
+                               "SELECT u.usename as Owner,\n"
+                               "       c2.relname as Index_Name,\n"
+                               "  CASE WHEN i.indisprimary = TRUE THEN 'PRIMARY'\n"
+                               "       ELSE 'NORMAL'\n"
+                               "  END AS Index_Type,\n"
+                               "  CASE WHEN i.indisunique = TRUE THEN 'UNIQUE'\n"
+                               "       ELSE 'NON UNIQUE'\n"
+                               "  END AS non_unique\n"
+                               "  FROM pg_class c, pg_class c2, pg_index i, pg_user u\n"
+                               " WHERE c.relowner=u.usesysid and u.usename = :f1\n"
+                               "   AND c.relname = :f2\n"
+                               "   AND c.oid = i.indrelid\n"
+                               "   AND i.indexrelid = c2.oid\n"
+                               " ORDER BY c2.relname",
+			       QString::null,
+			       "7.1",
+			       "PostgreSQL");
 
 void toResultIndexes::query(const QString &sql,const toQList &param)
 {
@@ -147,6 +175,8 @@ void toResultIndexes::query(const QString &sql,const toQList &param)
     Type=Oracle;
   else if (conn.provider()=="MySQL")
     Type=MySQL;
+  else if (conn.provider()=="PostgreSQL")
+    Type=PostgreSQL;
   else
     return;
     
@@ -181,7 +211,7 @@ void toResultIndexes::poll(void)
       return;
     if (Query&&Query->poll()) {
       while(Query->poll()&&!Query->eof()) {
-	if (Type==Oracle) {
+	if (Type==Oracle||Type==PostgreSQL) {
 	  Last=new toResultViewItem(this,NULL);
 	  
 	  QString indexOwner(Query->readValue());

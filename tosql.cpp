@@ -183,6 +183,7 @@ QString toSQL::string(const QString &name,
       }
       if (sql)
 	return *sql;
+
       prov="Any";
     } while(!quit);
   }

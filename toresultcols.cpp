@@ -318,11 +318,14 @@ void toResultCols::resultCols::query(const QString &object,
 				     const QString &owner,const QString &name)
 {
   try {
-    QString sql="SELECT * FROM ";
-    sql+=object;
-    sql+=" WHERE NULL=NULL";
-
     toConnection &conn=toCurrentConnection(this);
+
+    QString sql="SELECT * FROM ";
+    if(conn.provider() == "PostgreSQL")
+      sql+=name;
+    else
+      sql+=object;
+    sql+=" WHERE NULL=NULL";
 
     setSQLName(QString("Description of %1").
 	       arg(object));

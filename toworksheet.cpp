@@ -125,22 +125,24 @@ static struct {
   bool BeforeCode;
   bool StartCode;
   bool NoBinds;
-} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true ,false},
-	       { 0,"if",	true ,false,false,false,false,false,false},
-	       { 0,"loop",	true ,false,false,false,false,false,false},
-	       { 0,"while",	true ,false,false,false,false,false,false},
-	       { 0,"declare",	false,false,false,false,true ,true ,false},
-	       { 0,"create",	false,false,false,false,true ,false,false},
-	       { 0,"package",	true ,false,false,false,false,true ,false},
-	       { 0,"procedure",	false,false,false,false,false,true ,false},
-	       { 0,"function",	false,false,false,false,false,true ,false},
-	       { 0,"trigger",   false,false,false,false,false,true ,false},
-	       { 0,"end",	false,true ,true ,false,false,false,false},
-	       { 0,"rem",	false,false,false,true ,false,false,false},
-	       { 0,"store",	false,false,false,true ,false,false,false},
-	       { 0,"spool",	false,false,false,true ,false,false,false},
-	       { 0,"prompt",	false,false,false,true ,false,false,false},
-	       { 0,NULL,	false,false,false,false,false,false,false}
+  bool SingleLine;
+} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true ,false,false},
+	       { 0,"if",	true ,false,false,false,false,false,false,false},
+	       { 0,"loop",	true ,false,false,false,false,false,false,false},
+	       { 0,"while",	true ,false,false,false,false,false,false,false},
+	       { 0,"declare",	false,false,false,false,true ,true ,false,false},
+	       { 0,"create",	false,false,false,false,true ,false,false,false},
+	       { 0,"package",	true ,false,false,false,false,true ,false,false},
+	       { 0,"procedure",	false,false,false,false,false,true ,false,false},
+	       { 0,"function",	false,false,false,false,false,true ,false,false},
+	       { 0,"trigger",   false,false,false,false,false,true ,false,false},
+	       { 0,"end",	false,true ,true ,false,false,false,false,false},
+	       { 0,"rem",	false,false,false,true ,false,false,false,false},
+	       { 0,"store",	false,false,false,true ,false,false,false,false},
+	       { 0,"spool",	false,false,false,true ,false,false,false,false},
+	       { 0,"prompt",	false,false,false,true ,false,false,false,false},
+	       { 0,"set",	false,false,false,false,false,false,false,true },
+	       { 0,NULL,	false,false,false,false,false,false,false,false}
 };
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
@@ -1079,7 +1081,11 @@ void toWorksheet::execute(bool all,bool step)
 	      if (state==comment)
 		break;
 	    }
-	    if (c=='-'&&nc=='-') {
+	    if (c=='@') {
+	      lastState=state;
+	      state=comment;
+	      break;
+	    } else if (c=='-'&&nc=='-') {
 	      lastState=state;
 	      state=comment;
 	      break;
@@ -1101,66 +1107,75 @@ void toWorksheet::execute(bool all,bool step)
 	    } else
 	      break;
 	  case inStatement:
-	    if (!code&&sqlparse) {
-	      bool br=false;
-	      for (int j=0;Blocks[j].Start&&!br;j++) {
-		int &pos=Blocks[j].Pos;
-		if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
-		  if (pos>0||(!toIsIdent(lastChar))) {
-		    pos++;
-		    if (!Blocks[j].Start[pos]) {
-		      if (!toIsIdent(nc)) {
-			if (Blocks[j].BeforeCode) {
-			  beforeCode=true;
-			  pos=0;
-			  br=true;
-			}
-			if (beforeCode) {
-			  if (Blocks[j].CloseBlock) {
-			    toStatusMessage("Ending unstarted block");
-			    return;
-			  } else if (Blocks[j].StartCode) {
-			    if (Blocks[j].WantEnd)
-			      BlockCount++;
-
-			    code=true;
-			    if (Blocks[j].WantSemi)
-			      state=endCode;
-			    else
-			      state=inCode;
-			    NewStatement();
+	    {
+	      bool ending=false;
+	      if (!code&&sqlparse) {
+		bool br=false;
+		for (int j=0;Blocks[j].Start&&!br;j++) {
+		  int &pos=Blocks[j].Pos;
+		  if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
+		    if (pos>0||(!toIsIdent(lastChar))) {
+		      pos++;
+		      if (!Blocks[j].Start[pos]) {
+			if (!toIsIdent(nc)) {
+			  if (Blocks[j].BeforeCode) {
+			    beforeCode=true;
+			    pos=0;
 			    br=true;
+			  } else if (Blocks[j].SingleLine) {
+			    i=data.length()-1;
+			    ending=true;
+			    break;
 			  }
-			}
-		      } else
-			pos=0;
-		    } 
+			  if (beforeCode) {
+			    if (Blocks[j].CloseBlock) {
+			      toStatusMessage("Ending unstarted block");
+			      return;
+			    } else if (Blocks[j].StartCode) {
+			      if (Blocks[j].WantEnd)
+				BlockCount++;
+
+			      code=true;
+			      if (Blocks[j].WantSemi)
+				state=endCode;
+			      else
+				state=inCode;
+			      NewStatement();
+			      br=true;
+			    }
+			  }
+			} else
+			  pos=0;
+		      } 
+		    } else
+		      pos=0;
 		  } else
 		    pos=0;
-		} else
-		  pos=0;
-	      }
-	      if (br)
-		break;
-	    }
-	    if (c==';') {
-	      endLine=line;
-	      endPos=i+1;
-	      state=beginning;
-	      if (all) {
-		Editor->setCursorPosition(startLine,startPos,false);
-		Editor->setCursorPosition(endLine,endPos,true);
-		LastLine=LastOffset=-1;
-		if (Editor->hasMarkedText()) {
-		  query(Editor->markedText(),true);
-		  qApp->processEvents();
-		  NewStatement();
-		  beforeCode=code=false;
 		}
-	      } else if (step&&
-			 ((line==cline&&i>cpos)||(line>cline))) {
-		state=done;
-		break;
+		if (br)
+		  break;
+	      }
+	      if (c==';')
+		ending=true;
+	      if (ending) {
+		endLine=line;
+		endPos=i+1;
+		state=beginning;
+		if (all) {
+		  Editor->setCursorPosition(startLine,startPos,false);
+		  Editor->setCursorPosition(endLine,endPos,true);
+		  LastLine=LastOffset=-1;
+		  if (Editor->hasMarkedText()) {
+		    query(Editor->markedText(),true);
+		    qApp->processEvents();
+		    NewStatement();
+		    beforeCode=code=false;
+		  }
+		} else if (step&&
+			   ((line==cline&&i>cpos)||(line>cline))) {
+		  state=done;
+		  break;
+		}
 	      }
 	    }
 	    break;
