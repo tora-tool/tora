@@ -278,6 +278,26 @@ static QString ErrorString(const QSqlError &err,const QString &sql=QString::null
 #define NUMERICOID              1700
 #define REFCURSOROID    	1790
 
+// MySQL datatypes (From mysql_com.h)
+
+enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
+                        FIELD_TYPE_SHORT,  FIELD_TYPE_LONG,
+                        FIELD_TYPE_FLOAT,  FIELD_TYPE_DOUBLE,
+                        FIELD_TYPE_NULL,   FIELD_TYPE_TIMESTAMP,
+                        FIELD_TYPE_LONGLONG,FIELD_TYPE_INT24,
+                        FIELD_TYPE_DATE,   FIELD_TYPE_TIME,
+                        FIELD_TYPE_DATETIME, FIELD_TYPE_YEAR,
+                        FIELD_TYPE_NEWDATE,
+                        FIELD_TYPE_ENUM=247,
+                        FIELD_TYPE_SET=248,
+                        FIELD_TYPE_TINY_BLOB=249,
+                        FIELD_TYPE_MEDIUM_BLOB=250,
+                        FIELD_TYPE_LONG_BLOB=251,
+                        FIELD_TYPE_BLOB=252,
+                        FIELD_TYPE_VAR_STRING=253,
+                        FIELD_TYPE_STRING=254
+};
+
 static std::list<toQuery::queryDescribe> Describe(const QString &type,QSqlRecordInfo recInfo)
 {
   std::list<toQuery::queryDescribe> ret;
@@ -292,7 +312,82 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type,QSqlRecord
     int size=1;
 
     QSqlFieldInfo info(recInfo.find(desc.Name));
-    if (type=="PostgreSQL") {
+    if (type=="MySQL") {
+      switch(info.typeID()) {
+      case FIELD_TYPE_DECIMAL:
+	desc.Datatype="DECIMAL";
+	break;
+      case FIELD_TYPE_TINY:
+	desc.Datatype="TINY";
+	break;
+      case FIELD_TYPE_SHORT:
+	desc.Datatype="SHORT";
+	break;
+      case FIELD_TYPE_LONG:
+	desc.Datatype="LONG";
+	break;
+      case FIELD_TYPE_FLOAT:
+	desc.Datatype="FLOAT";
+	break;
+      case FIELD_TYPE_DOUBLE:
+	desc.Datatype="DOUBLE";
+	break;
+      case FIELD_TYPE_NULL:
+	desc.Datatype="NULL";
+	break;
+      case FIELD_TYPE_TIMESTAMP:
+	desc.Datatype="TIMESTAMP";
+	break;
+      case FIELD_TYPE_LONGLONG:
+	desc.Datatype="LONGLONG";
+	break;
+      case FIELD_TYPE_INT24:
+	desc.Datatype="INT23";
+	break;
+      case FIELD_TYPE_DATE:
+	desc.Datatype="DATE";
+	break;
+      case FIELD_TYPE_TIME:
+	desc.Datatype="TIME";
+	break;
+      case FIELD_TYPE_DATETIME:
+	desc.Datatype="DATETIME";
+	break;
+      case FIELD_TYPE_YEAR:
+	desc.Datatype="YEAR";
+	break;
+      case FIELD_TYPE_NEWDATE:
+	desc.Datatype="NEWDATE";
+	break;
+      case FIELD_TYPE_ENUM:
+	desc.Datatype="ENUM";
+	break;
+      case FIELD_TYPE_SET:
+	desc.Datatype="SET";
+	break;
+      case FIELD_TYPE_TINY_BLOB:
+	desc.Datatype="TINY_BLOB";
+	break;
+      case FIELD_TYPE_MEDIUM_BLOB:
+	desc.Datatype="MEDIUM_BLOB";
+	break;
+      case FIELD_TYPE_LONG_BLOB:
+	desc.Datatype="LONG_BLOB";
+	break;
+      case FIELD_TYPE_BLOB:
+	desc.Datatype="BLOB";
+	break;
+      case FIELD_TYPE_VAR_STRING:
+	desc.Datatype="VAR_STRING";
+	break;
+      case FIELD_TYPE_STRING:
+	desc.Datatype="STRING";
+	break;
+      default:
+	desc.Datatype="UNKNOWN";
+	break;
+      }
+    } else if (type=="PostgreSQL") {
       switch(info.typeID()) {
       case BOOLOID:
 	desc.Datatype="BOOL";

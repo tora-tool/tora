@@ -1,5 +1,6 @@
 1.3.5:
 
+2002-04-10: Better criteria specification in session manager.
 2002-04-10: Fixed bug with submenu saved SQL in worksheet.
 2002-04-10: Display only analyzed/not analyzed objects in statistics manager.
 2002-04-10: Added support for indexes in statistics manager.

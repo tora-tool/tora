@@ -187,7 +187,7 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
 			 "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
 			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
-			 " ORDER BY a.Sid",
+			 "%1 ORDER BY a.Sid",
 			 "List sessions, must have same number of culumns and the first and last 2 must be "
 			 "the same");
 
@@ -201,6 +201,18 @@ toSession::toSession(QWidget *main,toConnection &connection)
 		  "Update sessionlist",
 		  this,SLOT(refresh(void)),
 		  toolbar);
+  toolbar->addSeparator();
+  Select=new QComboBox(toolbar);
+  Select->insertItem("All");
+  Select->insertItem("No background");
+  Select->insertItem("No system");
+  toQList users=toQuery::readQuery(connection,
+				   toSQL::string(toSQL::TOSQL_USERLIST,connection));
+  for(toQList::iterator i=users.begin();i!=users.end();i++)
+    Select->insertItem(*i);
+
+  connect(Select,SIGNAL(activated(int)),this,SLOT(refresh()));
+  
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)clock_xpm),
 		  "Enable timed statistics",
@@ -227,7 +239,6 @@ toSession::toSession(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Sessions=new toResultLong(false,false,toQuery::Background,splitter);
-  Sessions->setSQL(SQLSessions);
   Sessions->setReadAll(true);
   connect(Sessions,SIGNAL(done()),this,SLOT(done()));
 
@@ -322,6 +333,17 @@ void toSession::refresh(void)
     Serial=item->text(1);
   } else
     Session=Serial=QString::null;
+  QString sql=toSQL::string(SQLSessions,connection());
+  QString extra;
+  if (Select->currentItem()==0)
+    ; // Do nothing
+  else if (Select->currentItem()==1)
+    extra="   AND a.Type != 'BACKGROUND'\n";
+  else if (Select->currentItem()==2)
+    extra="   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
+  else
+    extra="   AND a.SchemaName = '"+Select->currentText()+"'\n";
+  Sessions->setSQL(sql.arg(extra));
   Sessions->refresh();
 }
 

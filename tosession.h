@@ -61,6 +61,8 @@ class toSession : public toToolWidget {
 
   QWidget *CurrentTab;
 
+  QComboBox *Select;
+
   toSGAStatement *CurrentStatement;
   toSGAStatement *PreviousStatement;
   toResultStats *SessionStatistics;

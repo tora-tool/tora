@@ -1384,7 +1384,7 @@ bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 
 std::list<toConnection::objectName> &toConnection::objects(bool block)
 {
-  if (!cacheAvailable(block)) {
+  if (!cacheAvailable(false,block)) {
     toStatusMessage("Not done caching objects",false,false);
     static std::list<objectName> ret;
     return ret;
@@ -1395,7 +1395,7 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
 
 void toConnection::addIfNotExists(toConnection::objectName &obj)
 {
-  if (!cacheAvailable(false)) {
+  if (!cacheAvailable(true,false)) {
     toStatusMessage("Not done caching objects",false,false);
     return;
   }
@@ -1409,7 +1409,7 @@ void toConnection::addIfNotExists(toConnection::objectName &obj)
 
 std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
 {
-  if (!cacheAvailable(block)) {
+  if (!cacheAvailable(true,block)) {
     toStatusMessage("Not done caching objects",false,false);
     static std::map<QString,objectName> ret;
     return ret;
@@ -1422,7 +1422,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
 						       QString &synonym,
 						       bool block)
 {
-  if (!cacheAvailable(block))
+  if (!cacheAvailable(true,block))
     throw QString("Not done caching objects");
 
   QString name;
