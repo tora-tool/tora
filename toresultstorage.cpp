@@ -212,7 +212,7 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                "SELECT d.tablespace_name, \n"
                                "       d.status,\n"
-			       "       'DICTIONARY',\n"
+			       "       ' ',\n"
                                "       d.contents,\n"
                                "       d.logging,\n"
                                "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
@@ -303,7 +303,7 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  "SELECT d.tablespace_name, \n"
                                  "       d.status,\n"
-				 "       'DICTIONARY',\n"
+				 "       ' ',\n"
                                  "       d.contents,\n"
                                  "       d.logging,\n"
                                  "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
