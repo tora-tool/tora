@@ -307,7 +307,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
   Help->mimeSourceFactory()->addFilePath(path());
 #endif
   // Help->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
-  setCaption(tr("TOra Help Browser"));
+  setCaption(tr("Help Browser"));
 
   connect(Help,SIGNAL(textChanged(void)),
 	  this,SLOT(removeSelection(void)));

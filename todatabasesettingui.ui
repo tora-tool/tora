@@ -69,7 +69,7 @@
             <item>
                 <property>
                     <name>text</name>
-                    <string>Never read object cache (Will leave parts of TOra nonfunctianal)</string>
+                    <string>Never read object cache (Will leave parts of application nonfunctianal)</string>
                 </property>
             </item>
             <property stdset="1">
@@ -320,7 +320,7 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
+                        <string>If checked will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
                     </property>
                 </widget>
             </grid>

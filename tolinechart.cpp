@@ -705,7 +705,7 @@ void toLineChart::editPrint(void)
   TOPrinter printer;
   printer.setMinMax(1,1);
   if (printer.setup()) {
-    printer.setCreator(tr("TOra"));
+    printer.setCreator(tr(TOAPPNAME));
     QPainter painter(&printer);
     QPaintDeviceMetrics metrics(&printer);
     QRect rect(0,0,metrics.width(),metrics.height());

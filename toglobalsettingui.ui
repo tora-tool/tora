@@ -117,7 +117,7 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Directory where to find plugins when starting tora.</string>
+                        <string>Directory where to find plugins when starting.</string>
                     </property>
                 </widget>
                 <widget row="4"  column="2" >
@@ -154,7 +154,7 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Directory where to find plugins when starting tora.</string>
+                        <string>Directory where to place cached dataaseinformation.</string>
                     </property>
                 </widget>
 
@@ -174,7 +174,7 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Directory where to find plugins when starting tora.</string>
+                        <string>Directory where to find help files.</string>
                     </property>
                 </widget>
                 <widget row="1"  column="1" >
@@ -211,7 +211,7 @@
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>What session to use by TOra when saving session.</string>
+                        <string>Default session to use when saving a session.</string>
                     </property>
                 </widget>
                 <widget row="2"  column="1" >
@@ -476,7 +476,7 @@ Will leave the password unencryptet in the config file.</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</string>
+                        <string>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</string>
                     </property>
                 </widget>
                 <widget row="6"  column="0" >
@@ -529,7 +529,7 @@ Will leave the password unencryptet in the config file.</string>
                     </property>
                     <property>
                         <name>toolTip</name>
-                        <string>Define the unit sizes should be displayed in tora.</string>
+                        <string>Define the unit sizes should be displayed.</string>
                     </property>
                 </widget>
                 <widget row="6"  column="4"  rowspan="1"  colspan="2" >

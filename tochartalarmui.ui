@@ -321,7 +321,7 @@
             </property>
             <property>
                 <name>toolTip</name>
-                <string>Remember this alarm when restarting TOra.</string>
+                <string>Remember this alarm when restarting.</string>
             </property>
         </widget>
         <widget row="4"  column="1" >

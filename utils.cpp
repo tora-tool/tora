@@ -1281,7 +1281,7 @@ QString toUnobfuscate(const QString &str)
 
 QString toCheckLicense(bool)
 {
-  return qApp->translate("toCheckLicense","Welcome to TOra");
+  return qApp->translate("toCheckLicense","Welcome to " TOAPPNAME);
 }
 
 bool toFreeware(void)

@@ -354,7 +354,7 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)\n"
 "<DIV ALIGN=LEFT>";
 
-#define ABOUT_CAPTION "TOra %1"
+#define ABOUT_CAPTION TOAPPNAME " %1"
 
 void toAllocLogo(void)
 {
@@ -398,7 +398,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     break;
   case 1:
 #ifdef TO_LICENSE
-    setCaption(tr("TOra for Windows License"));
+    setCaption(tr("End User License"));
 #else
     setCaption(tr("GNU General Public License"));
 #endif

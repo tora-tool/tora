@@ -628,7 +628,7 @@ void toListView::editPrint(void)
   printer.setMinMax(1,1000);
   printer.setFromTo(1,1000);
   if (printer.setup()) {
-    printer.setCreator(tr("TOra"));
+    printer.setCreator(tr(TOAPPNAME));
     QPainter painter(&printer);
 
     QListViewItem *item=firstChild();

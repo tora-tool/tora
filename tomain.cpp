@@ -113,11 +113,8 @@
 #include "icons/refresh.xpm"
 #endif
 
-#ifdef OAS
-#define DEFAULT_TITLE "OAS %s"
-#else
-#define DEFAULT_TITLE "TOra %s"
-#endif
+#define DEFAULT_TITLE TOAPPNAME " %s"
+
 const int toMain::TO_FILE_MENU		= 10;
 const int toMain::TO_EDIT_MENU		= 20;
 const int toMain::TO_TOOLS_MENU		= 30;
@@ -334,7 +331,7 @@ toMain::toMain()
   HelpMenu->insertItem(tr("C&urrent Context..."),TO_HELP_CONTEXT);
   HelpMenu->insertItem(tr("&Contents..."),TO_HELP_CONTENTS);
   HelpMenu->insertSeparator();
-  HelpMenu->insertItem(tr("&About TOra..."),TO_HELP_ABOUT);
+  HelpMenu->insertItem(tr("&About " TOAPPNAME "..."),TO_HELP_ABOUT);
   HelpMenu->insertItem(tr("&License..."),TO_HELP_LICENSE);
   HelpMenu->insertItem(tr("&Quotes..."),TO_HELP_QUOTES);
   HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
@@ -444,6 +441,7 @@ toMain::toMain()
 				 tr("Stop all running queries on connection"),
 				 tr("Stop all running queries on connection"),
 				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
+#else
   ConnectionToolbar->hide();
 #endif
   ConnectionToolbar->addSeparator();
@@ -553,7 +551,7 @@ toMain::toMain()
     } TOCATCH
   }
 
-#if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK)
+#if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK) && !defined (OAS)
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
     switch(TOMessageBox::information(this,tr("Check for upgrades?"),
 				     tr("Do you want TOra to automatically check\n"
@@ -864,7 +862,7 @@ void toMain::commandCallback(int cmd)
     case TO_HELP_LICENSE:
     case TO_HELP_QUOTES:
       {
-	toAbout about(cmd-TO_HELP_ABOUT,this,"About TOra",true);
+	toAbout about(cmd-TO_HELP_ABOUT,this,"About " TOAPPNAME,true);
 	about.exec();
       }
       break;
@@ -1515,7 +1513,7 @@ void toMain::displayMessage(void)
     disabled=true;
     toUnShift(StatusMessages,
 	      tr("Message flood, temporary disabling of message box error reporting from now on.\n"
-		 "Restart TOra to reenable. You probably have a too high refreshrate in some tool."));
+		 "Restart to reenable. You probably have a too high refreshrate in some tool."));
   }
 
   if (recursive)

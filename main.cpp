@@ -112,7 +112,7 @@ int main(int argc,char **argv)
 
 #ifndef TOMONOLITHIC
     {
-      toSplash splash(NULL,"About TOra",false);
+      toSplash splash(NULL,"About " TOAPPNAME,false);
       splash.show();
       std::list<QString> failed;
       QString dirPath=toPluginPath();
@@ -170,7 +170,7 @@ int main(int argc,char **argv)
 
 #ifndef TO_LICENSE
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
-      toAbout *about=new toAbout(0,NULL,"About TOra",true);
+      toAbout *about=new toAbout(0,NULL,"About " TOAPPNAME,true);
       if (!about->exec()) {
 	exit (2);
       }
