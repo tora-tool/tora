@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include <map>
 
 #include <qmainwindow.h>
+#include <qtimer.h>
 
 #if 0
 /**
