@@ -241,8 +241,13 @@ QString toResultView::query(const QString &sql,const list<QString> &param)
 		(const char *)sql,
 		Connection.connection());
 
-    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
-      (*Query)<<(const char *)(*i);
+    otl_null null;
+    for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {
+      if ((*i).isNull())
+	(*Query)<<null;
+      else
+	(*Query)<<(const char *)(*i);
+    }
 
     Description=Query->describe_select(DescriptionLen);
 

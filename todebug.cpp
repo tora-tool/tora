@@ -446,8 +446,13 @@ END;
 		     (const char *)sql,
 		     Connection.connection());
 
-	for(list<QString>::iterator i=inParams.begin();i!=inParams.end();i++)
-	  q<<(const char *)(*i);
+	otl_null null;
+	for(list<QString>::iterator i=inParams.begin();i!=inParams.end();i++) {
+	  if ((*i).isNull())
+	    q<<null;
+	  else
+	    q<<(const char *)(*i);
+	}
 
 	outParams=new list<QString>;
 

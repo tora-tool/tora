@@ -38,6 +38,7 @@
 #include <qfontdialog.h>
 #include <qcombobox.h>
 #include <qvalidator.h>
+#include <qfiledialog.h>
 
 #include "toconf.h"
 #include "totool.h"
@@ -53,8 +54,24 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
     setName( "toGlobalSettings" );
   setCaption( tr( "Global settings"  ) );
 
+  if (!toMonolithic()) {
+    GroupBox7 = new QGroupBox( this, "GroupBox5" );
+    GroupBox7->setGeometry( QRect( 10, 195, 380, 60 ) ); 
+    GroupBox7->setTitle( tr( "Plugin directory"  ) );
+
+    PluginDirectory = new QLineEdit( GroupBox7, "PluginDirectory" );
+    PluginDirectory->setGeometry( QRect( 10, 20, 270, 23 ) ); 
+    PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
+						  DEFAULT_PLUGIN_DIR));
+
+    SelectDir = new QPushButton( GroupBox7, "FileChoose" );
+    SelectDir->setGeometry( QRect( 290, 14, 80, 32 ) ); 
+    SelectDir->setText( tr( "&Browse"  ) );
+    connect(SelectDir,SIGNAL(clicked(void)),this,SLOT(chooseFile(void)));
+  }
+
   GroupBox5 = new QGroupBox( this, "GroupBox5" );
-  GroupBox5->setGeometry( QRect( 10, 260, 380, 140 ) ); 
+  GroupBox5->setGeometry( QRect( 10, 265, 380, 135 ) ); 
   GroupBox5->setTitle( tr( "Database settings"  ) );
 
   TextLabel1_3 = new QLabel( GroupBox5, "TextLabel1_3" );
@@ -88,7 +105,7 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
 					  DEFAULT_PLAN_TABLE));
 
   GroupBox1 = new QGroupBox( this, "GroupBox1" );
-  GroupBox1->setGeometry( QRect( 10, 10, 210, 180 ) ); 
+  GroupBox1->setGeometry( QRect( 10, 10, 210, 175 ) ); 
   GroupBox1->setTitle( tr( "Query settings"  ) );
 
   TextLabel1_2_3 = new QLabel( GroupBox1, "TextLabel1_2_3" );
@@ -144,7 +161,7 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   MaxColNum->setValidator(valid);
 
   GroupBox6 = new QGroupBox( this, "GroupBox6" );
-  GroupBox6->setGeometry( QRect( 230, 10, 160, 180 ) ); 
+  GroupBox6->setGeometry( QRect( 230, 10, 160, 175 ) ); 
   GroupBox6->setTitle( tr( "Options"  ) );
 
   SavePassword = new QCheckBox( GroupBox6, "SavePassword" );
@@ -204,7 +221,7 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   setTabOrder( RefreshList, StyleList );
 #endif
 
-    // buddies
+  // buddies
   TextLabel1_3->setBuddy( PlanTable );
   TextLabel1_3_2->setBuddy( PlanCheckpoint );
   TextLabel1_2_3->setBuddy( MaxColNum );
@@ -228,9 +245,19 @@ void toGlobalSettings::saveSetting(void)
   toTool::globalSetConfig(CONF_STYLE,StyleList->currentText());
   toSetSessionType(StyleList->currentText());
 #endif
+  if (!toMonolithic()) {
+    toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
+  }
 
   if (SavePassword->isChecked())
     toTool::globalSetConfig(CONF_SAVE_PWD,"Yes");
   else
     toTool::globalSetConfig(CONF_SAVE_PWD,"");
+}
+
+void toGlobalSettings::chooseFile(void)
+{
+  QString str=QFileDialog::getExistingDirectory(PluginDirectory->text(),this);
+  if (!str.isEmpty())
+    PluginDirectory->setText(str);
 }

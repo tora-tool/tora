@@ -32,24 +32,27 @@ fi
 $PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
 echo PERL=$PERL >> Makefile.setup
 
+# Get the MOC stuff
+
+grep -E "^(UIC)|(MOC)" Makefile.setup > configure.setup
+
+. ./configure.setup
+
 for a in *.ui
 do
     base=`echo $a | sed s/\.[^\.]*$//`
-    touch $base.h
-    touch $base.cpp
-    touch $base.moc
+    echo Generating $base.h \& $base.cpp
+    $UIC -o $base.h $a
+    $UIC -i $base.h -o $base.cpp $a
 done
 for a in *.h
 do
     if grep -i Q_OBJECT $a >/dev/null
     then
-	touch `echo $a | sed 's/\.h$/\.moc/'`
+        echo Metacompiling $a
+	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
 done
-sleep 1
-touch *.h
-sleep 1
-touch *.ui
 
 if [ \! -f Makefile ]
 then

@@ -57,6 +57,7 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QLabel *TextLabel1;
   QLabel *TextLabel7;
   QGroupBox *GroupBox6;
+  QGroupBox *GroupBox7;
 
   QLineEdit *PlanCheckpoint;
   QLineEdit *PlanTable;
@@ -65,14 +66,19 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QLineEdit *MaxColDisp;
   QLineEdit *MaxColNum;
   QLineEdit *DefaultDate;
+  QLineEdit *PluginDirectory;
   QCheckBox *SavePassword;
   QComboBox *StyleList;
   QComboBox *RefreshList;
+  QPushButton *SelectDir;
 
 public:
   toGlobalSettings(QWidget *parent=0,const char *name=0,bool modal=false,WFlags fl=0);
 
   virtual void saveSetting(void);
+
+public slots:
+  void chooseFile(void);
 };
 
 #endif

@@ -28,6 +28,7 @@
 
 #include <qregexp.h>
 #include <qlabel.h>
+#include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qgrid.h>
 #include <qscrollview.h>
@@ -52,7 +53,7 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   QScrollView *scroll=new QScrollView(this);
   scroll->setGeometry(10,10,330,480);
 
-  Container=new QGrid(2,scroll->viewport());
+  Container=new QGrid(3,scroll->viewport());
   scroll->addChild(Container,5,5);
   Container->setSpacing(10);
   scroll->viewport()->setBackgroundColor(qApp->palette().active().background());
@@ -177,8 +178,16 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
 	  if (!widget)
 	    widget=new toParamGet(parent);
 	  new QLabel(fname,widget->Container);
-	  widget->Value.insert(widget->Value.end(),
-			       new QLineEdit(Cache[fname],widget->Container));
+	  map<QString,QString>::iterator fnd=Cache.find(fname);
+	  QLineEdit *edit=new QLineEdit(widget->Container);
+	  QCheckBox *box=new QCheckBox("NULL",widget->Container);
+	  connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
+	  if (fnd!=Cache.end()) {
+	    edit->setText(Cache[fname]);
+	    if (Cache[fname].isNull())
+	      box->setChecked(true);
+	  }
+	  widget->Value.insert(widget->Value.end(),edit);
 	  names.insert(names.end(),fname);
 	}
       }
@@ -192,14 +201,19 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
     (*widget->Value.begin())->setFocus();
     if (widget->exec()) {
       list<QString>::iterator cn=names.begin();
-      for (list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
+      for (list<QWidget *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
+	QLineEdit *current=dynamic_cast<QLineEdit *>(*i);
+	QString val;
+	if (current) {
+	  if (current->isEnabled())
+	    val=current->text();
+	  else
+	    val=QString::null;
+	}
 	if (cn!=names.end()) {
-	  Cache[*cn]=(*i)->text();
+	  Cache[*cn]=val;
 	  cn++;
 	}
-	QString val=(*i)->text();
-	if (val.isNull())
-	  val="";
 	ret.insert(ret.end(),val);
       }
     } else

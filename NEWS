@@ -7,8 +7,19 @@
 2001-01-28: Added option to disable PL/SQL parsing of worksheet content.
 2001-01-28: Fixed a new change watch dialog.
 2001-01-28: Changed to OTL v3.2.12.
-2001-01-28: Fixed bug in debugger if neither IN or OUT is specified for parameter.
-2001-01-28: Fixed to use toResultViewItem in Parameters in toDebug
+2001-01-28: Fixed bug in debugger if neither IN or OUT is specified for
+		parameter.
+2001-01-28: Fixed to use toResultViewItem in Parameters in toDebug.
+2001-01-29: Changed configure to run uic and moc where needed (Got rid of those
+		sleep thingies).
+2001-01-29: Added ability to specify NULL as parameters in toParamGet.
+2001-01-31: Display tooltip of content of statusbar.
+2001-01-31: Added -lpthread to configure.pl script, needed on some distibutions.
+2001-02-02: Added plugin functionality.
+2001-02-02: Included an unmodified version of the GPL (Had removed the appendix).
+2001-02-02: Minor change in largelogo.xpm.
+2001-02-02: Added static compile option (Not in configure, no one will
+		probably need this except me).
 
 0.4: Released 2001-01-27
 

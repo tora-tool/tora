@@ -67,7 +67,7 @@ public:
   int priority() const
   { return Priority; }
   static map<QString,toTool *> &tools(void)
-  { return *Tools; }
+  { if (!Tools) Tools=new map<QString,toTool *>; return *Tools; }
   virtual const QPixmap *toolbarImage();
   virtual const char *menuItem()
   { return NULL; }

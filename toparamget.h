@@ -43,7 +43,7 @@ private:
 
   QGrid *Container;
 
-  list<QLineEdit *> Value;
+  list<QWidget *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   static list<QString> getParam(QWidget *parent,QString &str);

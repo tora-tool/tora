@@ -19,10 +19,9 @@
 #
 ############################################################################
 
-TITLE=Tora
+TITLE=TOra
 SUBDIRS=
 SOURCES=\
-	main.cpp		\
 	toabout.cpp 		\
 	tobrowser.cpp		\
 	toconnection.cpp	\
@@ -39,7 +38,6 @@ SOURCES=\
 	tooutput.cpp		\
 	toparamget.cpp		\
 	topreferences.cpp	\
-	torollback.cpp		\
 	toresultcols.cpp	\
 	toresultconstraint.cpp	\
 	toresultcontent.cpp	\
@@ -51,20 +49,106 @@ SOURCES=\
 	toresultstats.cpp	\
 	toresultstorage.cpp	\
 	toresultview.cpp	\
+	torollback.cpp		\
 	tosession.cpp		\
-	tosgatrace.cpp		\
 	tosgastatement.cpp	\
+	tosgatrace.cpp		\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
 	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
+	utils.cpp		\
 
-TARGET =tora
-TOVERSION=-DTOVERSION=\"v0.4\"
+TARGET=tora-plugin
+
+TOVERSION=-DTOVERSION=\"0.5\"
 
 include Makefile.setup
 include Makefile.common
 
-tora: $(OBJECTS)
+plugins/tobrowser.so:objs/tobrowser.o
+plugins/todebug.so:\
+	objs/todebug.o \
+	objs/todebugwatch.o \
+	objs/todebugtext.o \
+	objs/todebugchange.o
+plugins/tofilesize.so:objs/tofilesize.o
+plugins/tooutput.so:objs/tooutput.o
+plugins/toparamget.so:objs/toparamget.o
+plugins/toresultcols.so:objs/toresultcols.o
+plugins/toresultconstraint.so:objs/toresultconstraint.o
+plugins/toresultcontent.so:objs/toresultcontent.o
+plugins/toresultindexes.so:objs/toresultindexes.o
+plugins/toresultlock.so:objs/toresultlock.o
+plugins/toresultstats.so:objs/toresultstats.o
+plugins/toresultstorage.so:objs/toresultstorage.o
+plugins/torollback.so:objs/torollback.o
+plugins/tosession.so:objs/tosession.o
+plugins/tosgastatement.so:objs/tosgastatement.o
+plugins/tosgatrace.so:objs/tosgatrace.o
+plugins/tostorage.so:objs/tostorage.o
+plugins/tostoragedefinition.so:objs/tostoragedefinition.o
+plugins/toworksheet.so:objs/toworksheet.o
+
+# Monolithic target, for non ELF platforms
+
+tora-mono: $(OBJECTS) main.cpp
+	$(CC) $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
+		$(LIBS_GLOB) $(QT_SHARED)
+
+# Static target, easier to distribute
+
+tora-static: $(OBJECTS) main.cpp
+	@echo Linking $@
+	$(CC) $(LFLAGS) $(CFLAGS) $(LFLAGS_GLOB) -DTOMONOLITHIC -o $@ $(OBJECTS) main.cpp \
+		$(QT_STATIC) $(LIBS_GLOB) -L/usr/X11R6/lib -lXt -lz -ljpeg -lXext
+
+# Plugin based binary and its plugins
+
+tora-plugin: \
+	tora \
+	plugins/tobrowser.so \
+	plugins/todebug.so \
+	plugins/tofilesize.so \
+	plugins/tooutput.so \
+	plugins/toparamget.so \
+	plugins/toresultcols.so \
+	plugins/toresultconstraint.so \
+	plugins/toresultcontent.so \
+	plugins/toresultindexes.so \
+	plugins/toresultlock.so \
+	plugins/toresultstats.so \
+	plugins/toresultstorage.so \
+	plugins/torollback.so \
+	plugins/tosession.so \
+	plugins/tosgastatement.so \
+	plugins/tosgatrace.so \
+	plugins/tostorage.so \
+	plugins/tostoragedefinition.so \
+	plugins/toworksheet.so \
+
+# The binary for the pluginbased tora
+
+tora: \
+	objs/main.o \
+	objs/toabout.o \
+	objs/toconnection.o \
+	objs/toglobalsetting.o \
+	objs/tohighlightedtext.o \
+	objs/tomain.o \
+	objs/tomarkedtext.o \
+	objs/tonewconnection.o \
+	objs/topreferences.o \
+	objs/toresultfield.o \
+	objs/toresultitem.o \
+	objs/toresultplan.o \
+	objs/toresultview.o \
+	objs/tosyntaxsetup.o \
+	objs/tothread.o \
+	objs/totool.o \
+	objs/utils.o
+	@echo Linking $@
+	$(CC) $(LFLAGS) -Xlinker "--export-dynamic" $(LFLAGS_GLOB) \
+		-o $@ $^ $(LIBS_GLOB) $(QT_SHARED)

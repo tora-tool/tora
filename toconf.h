@@ -57,6 +57,7 @@
 #define CONF_HIGHLIGHT		"SyntaxHighlight"
 #define CONF_KEYWORD_UPPER	"KeywordUpper"
 #define CONF_COLOR		"KeywordColor"
+#define CONF_PLUGIN_DIR		"PluginDir"
 
 // Undefining this will leave out the style selection option stuff from the program
 #define ENABLE_STYLE

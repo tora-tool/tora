@@ -23,13 +23,12 @@ default: all
 
 include $(ORACLE_HOME)/rdbms/lib/env_rdbms.mk
 
-DEFINES+=-DOTL_ORA8I -DOTL_FORCE_CHAR -D_REENTRANT
+DEFINES+=-DOTL_ORA8I -DOTL_FORCE_CHAR -D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 CPPFLAGS_GLOB=
-UIC=uic
 
 ARCH=$(shell uname)
 LFLAGS_GLOB=-g
-CFLAGS_GLOB=-g -Wall
+CFLAGS_GLOB=-g -fPIC -Wall
 .SILENT:
 
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
@@ -66,6 +65,11 @@ include $(DEPENDS)
 	$(UIC) -o $(<:%.ui=%.h) $<
 	$(UIC) -i $(<:%.ui=%.h) -o $@ $<
 
+plugins/%.so:
+	@echo Linking plugin $<
+	if [ ! -d plugins ] ; then mkdir plugins ; fi
+	$(CC) -shared $(CFLAGS) -o $@ $^
+
 objs/%.o: %.cpp
 	@echo Compiling $<
 	if [ ! -d objs ] ; then mkdir objs ; fi
@@ -74,20 +78,21 @@ objs/%.o: %.cpp
 %.o : objs/%.o
 	@echo Faulty dependency, forgot the objs/ part
 
-$(TARGET):
-	@echo Linking $@
-	$(CC) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(LIBS_GLOB) $(QT_SHARED)
-
 install: $(TARGET)
 	@echo Install $(TARGET) to $(INSTALLBIN)
+	if [ \! -f $(TARGET) ] ; then cp tora $(TARGET) ; fi
 	strip $(TARGET)
-	cp $(TARGET) $(INSTALLBIN)
+	cp $(TARGET) $(INSTALLBIN)/tora
+	rm tora-plugin 2>&1 >/dev/null
+	mkdir -p $(INSTALLLIB)/tora
+	cp plugins/* $(INSTALLLIB)/tora
 
 clean:
 	@echo Cleaning $(TITLE)
-	-rm -f $(OBJECTS) $(TARGET) 2>&1 >/dev/null
+	-rm -f $(OBJECTS) tora tora-static tora-mono 2>&1 >/dev/null
 	-rm -f *~ 2>&1 >/dev/null
 	-rm -f *.bak 2>&1 >/dev/null
+	-rm -rf plugins 2>&1 >/dev/null
 
 distclean: clean
 	-rm -rf .depends 2>&1 >/dev/null

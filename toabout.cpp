@@ -40,12 +40,10 @@
 #include "LICENSE.h"
 
 #include "icons/largelogo.xpm"
-#include "icons/tora.xpm"
 
 static const char *AboutText=
-"<IMG SRC=tora.xpm ALIGN=left><IMG SRC=largelogo.xpm ALIGN=right>
-<H1>TOra</H1>
-Toolkit For Oracle %s
+"<IMG SRC=largelogo.xpm ALIGN=left><BR>
+Version %s
 <P>
 &copy; 2000 copyright of GlobeCom AB
 (<A HREF=http://www.globecom.se>http://www.globecom.se/</a>).<P>
@@ -53,7 +51,12 @@ Written by Henrik Johnson.<P>
 This program is available
 under the GNU Public License.<P>
 Uses the Qt library version 2.2 by TrollTech
-(<A HREF=http://www.troll.no>http://www.troll.no/</A>).
+(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 ";
 
 static const char *QuoteText=
@@ -116,10 +119,11 @@ Resten slösade jag bort.</H3>
 toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0)
   : QDialog(parent,name,modal,fl)
 {
-  QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",
-						  QPixmap((const char **)largelogo_xpm));
-  QMimeSourceFactory::defaultFactory()->setPixmap("tora.xpm",
-						  QPixmap((const char **)tora_xpm));
+  static QPixmap *Logo=NULL;
+  if (!Logo) {
+    Logo=new QPixmap((const char **)largelogo_xpm);
+    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",*Logo);
+  }
 
   TextView=new QTextView(this);
   TextView->setTextFormat(RichText);

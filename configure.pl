@@ -50,7 +50,7 @@ my $InstallBin;
 my $InstallLib;
 my $Includes;
 my $CC;
-my $Libs="-lstdc++ -lcrypt -lclntsh -lm";
+my $Libs="-lstdc++ -lcrypt -lclntsh -lm -lpthread";
 my $MOC;
 my $QtDir;
 my $QtInclude;
@@ -59,6 +59,7 @@ my $QtLib;
 my $QtLibShared;
 my $QtLibStatic;
 my $LFlags;
+my $Target="tora-mono";
 
 $QtDir=$ENV{QTDIR};
 
@@ -290,7 +291,7 @@ __TEMP__
     if (-d $QtLibStatic) {
 	$QtLibStatic.="/libqt2.a";
     } else {
-	$QtLibStatic=findFile("^libqt2\\.a",sub {
+	$QtLibStatic=findFile("^libqt\\.a",sub {
 	                                        return -f $_[0] && ! -l $_[0];
 				       },
 			      $QtDir."/lib",
@@ -356,6 +357,11 @@ __TEMP__
     }
     print "Installing binaries to $InstallLib\n";
 
+    if (`uname`=~/linux/i) {
+	print "Compiling for linux. Generate pluginbased tora.\n";
+	$Target="tora-plugin";
+    }
+
     if (open (MAKEFILE,">Makefile.setup")) {
 	print MAKEFILE "INSTALLPREFIX=$InstallPrefix\n";
 	print MAKEFILE "INSTALLBIN=$InstallBin\n";
@@ -367,6 +373,8 @@ __TEMP__
 	print MAKEFILE "QT_STATIC=$QtLibStatic\n";
 	print MAKEFILE "MOC=\"$MOC\"\n";
 	print MAKEFILE "LFLAGS=$LFlags\n";
+	print MAKEFILE "UIC=uic\n";
+	print MAKEFILE "TARGET=$Target\n";
 	close MAKEFILE;
     } else {
 	print "Couldn't open Makefile.setup for writing\n";

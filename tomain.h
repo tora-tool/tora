@@ -115,6 +115,7 @@ QString toGetSessionType(void);
 QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def=NULL);
 void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
+bool toMonolithic(void);
 
 #define TO_WINDOWS_MENU		10
 #define TO_TOOL_MENU_INDEX	(toMainWidget()->menuBar()->indexOf(TO_WINDOWS_MENU))
