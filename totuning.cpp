@@ -84,14 +84,25 @@
 
 #define CONF_OVERVIEW "Overview"
 #define CONF_FILEIO   "File I/O"
-#define CONF_CHARTS   "Charts"
 #define CONF_WAITS    "Wait events"
+#define CONF_CHART    "chart"
 
 static std::list<QString> TabList(void)
 {
   std::list<QString> ret;
   ret.insert(ret.end(),CONF_OVERVIEW);
-  ret.insert(ret.end(),CONF_CHARTS);
+  std::list<QString> val=toSQL::range("toTuning:Charts");
+  QString last;
+  for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
+    QStringList parts=QStringList::split(":",*i);
+    if (parts.size()==3) {
+      parts.append(parts[2]);
+      parts[2]="Charts";
+    }
+    if (last!=parts[2])
+      ret.insert(ret.end(),parts[2]);
+    last=parts[2];
+  }
   ret.insert(ret.end(),CONF_WAITS);
   ret.insert(ret.end(),CONF_FILEIO);
   return ret;
@@ -1224,8 +1235,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Overview=new toTuningOverview(this,"overview");
   Tabs->addTab(Overview,"&Overview");
 
-  Charts=new QGrid(2,Tabs,"charts");
-
   QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   toQList unit;
   unit.insert(unit.end(),toQValue(toSizeDecode(unitStr)));
@@ -1233,49 +1242,60 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     std::list<QString> val=toSQL::range("toTuning:Charts");
     for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
       QStringList parts=QStringList::split(":",*i);
-      if (parts[2].mid(1,1)=="B") {
-	toResultBar *chart=new toResultBar(Charts);
-	chart->setTitle(parts[2].mid(3));
+      if (parts.size()==3) {
+	parts.append(parts[2]);
+	parts[2]="Charts";
+      }
+      std::map<QString,QGrid *>::iterator j=Charts.find(CONF_CHART+parts[2]);
+      QGrid *cchart;
+      if (j==Charts.end())
+	Charts[CONF_CHART+parts[2]]=cchart=new QGrid(2,Tabs,CONF_CHART+parts[2]);
+      else
+	cchart=(*j).second;
+
+      if (parts[3].mid(1,1)=="B") {
+	toResultBar *chart=new toResultBar(cchart);
+	chart->setTitle(parts[3].mid(3));
 	toQList par;
-	if (parts[2].mid(2,1)=="B")
+	if (parts[3].mid(2,1)=="B")
 	  chart->setYPostfix(" blocks/s");
-	else if (parts[2].mid(2,1)=="M")
+	else if (parts[3].mid(2,1)=="M")
 	  chart->setYPostfix(" ms/s");
-	else if (parts[2].mid(2,1)=="S") {
+	else if (parts[3].mid(2,1)=="S") {
 	  par=unit;
 	  QString t=unitStr;
 	  t+="/s";
 	  chart->setYPostfix(t);
-	} else if (parts[2].mid(2,1)=="A")
+	} else if (parts[3].mid(2,1)=="A")
 	  chart->setFlow(false);
 	else
 	  chart->setYPostfix("/s");
 	chart->query(toSQL::sql(*i),par);
-      } else if (parts[2].mid(1,1)=="L"||parts[2].mid(1,1)=="C") {
+      } else if (parts[3].mid(1,1)=="L"||parts[3].mid(1,1)=="C") {
 	toResultLine *chart;
-	if (parts[2].mid(1,1)=="C")
-	  chart=new toTuningMiss(Charts);
+	if (parts[3].mid(1,1)=="C")
+	  chart=new toTuningMiss(cchart);
 	else
-	  chart=new toResultLine(Charts);
-	chart->setTitle(parts[2].mid(3));
+	  chart=new toResultLine(cchart);
+	chart->setTitle(parts[3].mid(3));
 	toQList par;
-	if (parts[2].mid(2,1)=="B")
+	if (parts[3].mid(2,1)=="B")
 	  chart->setYPostfix(" blocks/s");
-	else if (parts[2].mid(2,1)=="S") {
+	else if (parts[3].mid(2,1)=="S") {
 	  par=unit;
 	  QString t=unitStr;
 	  t+="/s";
 	  chart->setYPostfix(t);
-	} else if (parts[2].mid(2,1)=="P") {
+	} else if (parts[3].mid(2,1)=="P") {
 	  chart->setYPostfix(" %");
 	  chart->setMinValue(0);
         } else
 	  chart->setYPostfix("/s");
 	chart->query(toSQL::sql(*i),par);
-      } else if (parts[2].mid(1,1)=="P") {
-	toResultPie *chart=new toResultPie(Charts);
-	chart->setTitle(parts[2].mid(3));
-	if (parts[2].mid(2,1)=="S") {
+      } else if (parts[3].mid(1,1)=="P") {
+	toResultPie *chart=new toResultPie(cchart);
+	chart->setTitle(parts[3].mid(3));
+	if (parts[3].mid(2,1)=="S") {
 	  chart->query(toSQL::sql(*i),unit);
 	  chart->setPostfix(unitStr);
 	} else
@@ -1285,7 +1305,8 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
     }
   }
 
-  Tabs->addTab(Charts,"&Charts");
+  for (std::map<QString,QGrid *>::iterator k=Charts.begin();k!=Charts.end();k++)
+    Tabs->addTab((*k).second,(*k).first);
 
   FileIO=new toTuningFileIO(this,"fileio");
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
@@ -1350,12 +1371,12 @@ QWidget *toTuning::tabWidget(const QString &name)
   QWidget *widget=NULL;
   if (name==CONF_OVERVIEW) {
     widget=Overview;
-  } else if (name==CONF_CHARTS) {
-    widget=Charts;
   } else if (name==CONF_FILEIO) {
     widget=FileIO;
   } else if (name==CONF_WAITS) {
     widget=Waits;
+  } else if (Charts.find(CONF_CHART+name)!=Charts.end()) {
+    widget=Charts[name];
   }
   return widget;
 }
@@ -1398,8 +1419,9 @@ void toTuning::enableTab(const QString &name,bool enable)
     else
       Overview->stop();
     widget=Overview;
-  } else if (name==CONF_CHARTS) {
-    QObjectList *childs=(QObjectList *)Charts->children();
+  } else if (Charts.find(CONF_CHART+name)!=Charts.end()) {
+    QGrid *chart=Charts[name];
+    QObjectList *childs=(QObjectList *)chart->children();
     for(unsigned int i=0;i<childs->count();i++) {
       toResultLine *line=dynamic_cast<toResultLine *>(childs->at(i));
       if (line) {
@@ -1423,7 +1445,7 @@ void toTuning::enableTab(const QString &name,bool enable)
 	  pie->stop();
       }
     }
-    widget=Charts;
+    widget=chart;
   } else if (name==CONF_WAITS) {
     if (enable)
       Waits->start();

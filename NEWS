@@ -1,5 +1,9 @@
 1.3.5:
 
+2002-04-09: Added posibility to use several chart tabs in tuning.
+2002-04-09: Added option to specify if synonym object cache is needed.
+2002-04-04: Fixed problem with multiline comments in worksheet.
+2002-03-26: Speedup of content editor.
 2002-03-14: Made stop all disabled if no connection exists.
 2002-03-11: Fixed problem with doubleclicking on history entries in connection dialog.
 2002-03-10: Fixed  default values of columns in extractor again.

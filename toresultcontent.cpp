@@ -432,6 +432,7 @@ void toResultContentEditor::poll(void)
 
       int rows=Row+data.size()/numCols()+1;
       if (numRows()!=rows) {
+	setUpdatesEnabled(false);
 	setNumRows(rows);
 
 #if QT_VERSION >= 300
@@ -456,6 +457,7 @@ void toResultContentEditor::poll(void)
 	    setColumnWidth(j,width);
 	}
 #endif
+	setUpdatesEnabled(true);
       }
       if (first&&SingleEdit) {
 	SingleEdit->changeSource(this);

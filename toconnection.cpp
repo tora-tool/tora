@@ -805,8 +805,10 @@ toConnection::toConnection(const QString &provider,
   if (cache) {
     if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==1)
       readObjects();
-  } else
+  } else {
     ReadingValues.up();
+    ReadingValues.up();
+  }
 }
 
 toConnection::toConnection(const toConnection &conn)
@@ -822,6 +824,7 @@ toConnection::toConnection(const toConnection &conn)
   Connection=toConnectionProvider::connection(Provider,this);
   addConnection();
   Version=Connection->version(mainConnection());
+  ReadingValues.up();
   ReadingValues.up();
   ReadingCache=false;
   NeedCommit=Abort=false;
@@ -852,6 +855,7 @@ toConnection::~toConnection()
   }
   Abort=true;
   if (ReadingCache) {
+    ReadingValues.down();
     ReadingValues.down();
     for(std::list<toConnectionSub *>::iterator i=Connections.begin();i!=Connections.end();i++) {
       Connection->closeConnection(*i);
@@ -1283,9 +1287,12 @@ void toConnection::cacheObjects::run()
   try {
     Connection.ObjectNames=Connection.Connection->objectNames();
     Connection.ObjectNames.sort();
+    Connection.ReadingValues.up();
     if (Connection.ObjectNames.size()>0)
       Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
   } catch(...) {
+    if (Connection.ReadingValues.getValue()==0)
+      Connection.ReadingValues.up();
   }
   Connection.ReadingValues.up();
 }
@@ -1305,7 +1312,7 @@ void toConnection::readObjects(void)
 
 void toConnection::rereadCache(void)
 {
-  if(ReadingValues.getValue()==0&&ReadingCache) {
+  if(ReadingValues.getValue()<2&&ReadingCache) {
     toStatusMessage("Not done caching objects, can not clear unread cache");
     return;
   }
@@ -1328,7 +1335,7 @@ QString toConnection::unQuote(const QString &name)
   return Connection->unQuote(name);
 }
 
-bool toConnection::cacheAvailable(bool block,bool need)
+bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 {
   if (!ReadingCache) {
     if (!need)
@@ -1338,7 +1345,7 @@ bool toConnection::cacheAvailable(bool block,bool need)
     readObjects();
     toMainWidget()->checkCaching();
   }
-  if (ReadingValues.getValue()==0) {
+  if (ReadingValues.getValue()==0||(ReadingValues.getValue()==1&&synonyms==true)) {
     if (block) {
       toBusy busy;
       if (toThread::mainThread()) {
@@ -1352,16 +1359,22 @@ bool toConnection::cacheAvailable(bool block,bool need)
 				true);
 	waiting.setCaption("Waiting for object cache");
 	int num=1;
+
+	int waitVal=(synonyms?2:1);
 	do {
 	  qApp->processEvents();
 	  toThread::msleep(100);
 	  waiting.setProgress((++num)%10);
 	  if (waiting.wasCancelled())
 	    return false;
-	} while(ReadingValues.getValue()<1);
+	} while(ReadingValues.getValue()<waitVal);
       }
 
       ReadingValues.down();
+      if (synonyms) {
+	ReadingValues.down();
+	ReadingValues.up();
+      }
       ReadingValues.up();
     } else
       return false;

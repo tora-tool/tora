@@ -169,7 +169,7 @@ class toTuning : public toToolWidget {
   toResultLong *ControlFiles;
   toTuningWait *Waits;
 
-  QGrid *Charts;
+  std::map<QString,QGrid *> Charts;
 
   QComboBox *Refresh;
   toTuningOverview *Overview;

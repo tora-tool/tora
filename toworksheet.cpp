@@ -1007,8 +1007,10 @@ void toWorksheet::execute(bool all,bool step)
 	  state=lastState;
 	  break;
 	} else if (state==multiComment) {
-	  if (c=='*'&&nc=='/')
+	  if (c=='*'&&nc=='/') {
 	    state=lastState;
+	    i++;
+	  }
 	} else if (state!=inString&&c=='\'') {
 	  lastState=state;
 	  state=inString;

@@ -153,6 +153,10 @@ class toOracleExtract : public toExtract::extractor {
   QString migrateIndexColumns(std::list<QString> &destin,
 			      std::list<QString>::iterator i,
 			      const QString &context) const;
+  QString migrateSource(toExtract &ext,
+			std::list<QString> &source,
+			std::list<QString> &destin,
+			const QString &type) const;
 
   // Create functions
 
@@ -3339,7 +3343,7 @@ void toOracleExtract::describeSource(toExtract &ext,
   ctx.insert(ctx.end(),type);
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
-  addDescription(lst,ctx,displaySource(ext,schema,owner,name,type,true).simplifyWhiteSpace());
+  addDescription(lst,ctx,displaySource(ext,schema,owner,name,type,true));
 }
 
 void toOracleExtract::describeTableColumns(toExtract &ext,
@@ -3360,7 +3364,7 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
     }
     line+=toShift(cols);
     addDescription(lst,ctx,"COLUMN",col);
-    addDescription(lst,ctx,"COLUMN",col,line.simplifyWhiteSpace());
+    addDescription(lst,ctx,"COLUMN",col,line);
     addDescription(lst,ctx,"COLUMN",col,"ORDER",QString::number(num));
     num++;
   }
@@ -6065,7 +6069,7 @@ void toOracleExtract::describeView(toExtract &ext,
 
   addDescription(lst,ctx);
   QString text=toShift(source);
-  addDescription(lst,ctx,"AS",text.simplifyWhiteSpace());
+  addDescription(lst,ctx,"AS",text);
   describeComments(ext,lst,ctx,owner,name);
 
   toQuery query(CONNECTION,"SELECT * FROM "+QUOTE(owner)+"."+QUOTE(name)+" WHERE NULL = NULL");
@@ -6669,11 +6673,25 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
       }
       lastOwner=owner;
       lastName=name;
-	
     }
   }
 
   return ret;
+}
+
+QString toOracleExtract::migrateSource(toExtract &ext,
+				       std::list<QString> &source,
+				       std::list<QString> &destin,
+				       const QString &type) const
+{
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  QString ret;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+
+  return QString::null;
 }
 
 // Implementation public interface

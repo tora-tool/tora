@@ -86,6 +86,8 @@ Extended functionality:
 * Remember last directory of save dialogs and settings in print dialog.
 * Synchonize worksheets that edit the same file.
 * Use style factory if Qt3 when selecting styles.
+* SQL*Loader controlfile generator.
+* Support for undo tablespaces in Oracle 9.
 
 New tools:
 
