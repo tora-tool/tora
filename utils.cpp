@@ -310,7 +310,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
     name+=db;
   }
   QToolBar *tool;
-#ifdef TO_KDE // Will only work after KDE2.2
+#ifdef TO_KDE
   if (parent==toMainWidget())
     tool=new KToolBar(toMainWidget(),QMainWindow::Top);
   else {

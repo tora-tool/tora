@@ -35,6 +35,7 @@ Extended functionality:
 * Posibility to delete records in toResultContent.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Posibility to delete rows in toResultContent.
+* Information about SGA memory in DB tuning.
 
 Windows problems:
 

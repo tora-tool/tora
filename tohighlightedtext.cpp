@@ -58,7 +58,7 @@ toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
     list<const char *> &curKey=Keywords[(unsigned char)char(toupper(*keywords[i]))];
     curKey.insert(curKey.end(),keywords[i]);
   }
-  updateSettings();
+  ColorsUpdated=false;
 }
 
 toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)
@@ -69,6 +69,10 @@ toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)
 
 list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QString &str)
 {
+  if (!ColorsUpdated) {
+    updateSettings();
+    ColorsUpdated=true;
+  }
   list<highlightInfo> highs;
   list<posibleHit> search;
 

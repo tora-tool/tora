@@ -75,7 +75,6 @@ SOURCES=\
 	tosgatrace.cpp		\
 	tosql.cpp		\
 	tosqledit.cpp		\
-	tosimplequery.cpp	\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
@@ -178,7 +177,6 @@ plugins/totemplate.tso:\
 	objs/totemplatesetupui.o
 plugins/totuning.tso:objs/totuning.o
 plugins/toworksheet.tso:objs/toworksheet.o
-plugins/tosimplequery.tso:objs/tosimplequery.o
 
 # Monolithic target, for non ELF platforms
 
@@ -229,8 +227,7 @@ tora-plugin: \
 	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
 	plugins/totuning.tso \
-	plugins/toworksheet.tso \
-	plugins/tosimplequery.tso
+	plugins/toworksheet.tso
 
 # The binary for the pluginbased tora
 

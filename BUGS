@@ -5,6 +5,12 @@ OCI:
 OTL:
 	Doesn't seem to handle object types and some other types (Like ROWID for instance).
 
+Toolbars:
+	When in KDE and using a gradient style (Like KDE highcolor for instance) backgrounds of
+	toolbuttons and labels in the toolbar doesn't have the correct background. This is due
+	to a KDE bug I think. Other people on the KDE mailinglist seem to have experienced similar
+	difficulties.
+
 toDebug:
 	Seems a recompiled object is invalidated the first time it is executed in the target
 	session. Just start again and you should be fine.
