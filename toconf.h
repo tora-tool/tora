@@ -91,6 +91,8 @@
 #define DEFAULT_CONNECT_SIZE	"20"
 #define CONF_DEFAULT_TOOL	"DefaultTool"
 #define CONF_TOOL_ENABLE	"Enabled"
+#define CONF_CHART_SAMPLES	"ChartSamples"
+#define DEFAULT_CHART_SAMPLES	"100"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

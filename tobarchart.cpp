@@ -74,21 +74,16 @@ double toBarChart::round(double round,bool up)
 
 void toBarChart::setSamples(int samples)
 {
-  if (samples<=0) {
-    QWidget *d=QApplication::desktop();
-    Samples=d->width();
-    AutoSamples=true;
-  } else {
-    Samples=samples;
-    AutoSamples=false;
+  Samples=samples;
+
+  if (Samples>0) {
+    while (int(XValues.size())>Samples)
+      XValues.erase(XValues.begin());
+
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+      while (int((*i).size())>Samples)
+	(*i).erase((*i).begin());
   }
-
-  while (int(XValues.size())>Samples)
-    XValues.erase(XValues.begin());
-
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
-    while (int((*i).size())>Samples)
-      (*i).erase((*i).begin());
   update();
 }
 
@@ -102,7 +97,7 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
   AxisText=true;
   Last=false;
 
-  setSamples();
+  setSamples(toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt());
 
   setMinimumSize(80,50);
 
@@ -116,13 +111,14 @@ toBarChart::toBarChart(QWidget *parent,const char *name,WFlags f)
 
 void toBarChart::addValues(list<double> &value,const QString &xValue)
 {
-  if (int(XValues.size())==Samples)
+  if (int(XValues.size())==Samples&&Samples>0)
     XValues.erase(XValues.begin());
   XValues.insert(XValues.end(),xValue);
 
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
-    if (int((*i).size())==Samples)
-      (*i).erase((*i).begin());
+  if (Samples>0)
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+      if (int((*i).size())==Samples)
+	(*i).erase((*i).begin());
 
   list<double>::iterator j=value.begin();
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end()&&j!=value.end();i++) {
@@ -241,58 +237,68 @@ void toBarChart::paintEvent(QPaintEvent *e)
       } else if (maxval<*k)
 	maxval=*k;
     }
-    maxval=round(maxval,true);
+    if (maxval!=0)
+      maxval=round(maxval,true);
   }
   if(!MaxAuto)
     maxval=MaxValue;
 
   if (AxisText) {
-    QString minstr=QString::number(minval);
-    QString maxstr=QString::number(maxval);
-    minstr+=YPostfix;
-    maxstr+=YPostfix;
-    QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
-    int yoffset=bounds.height();
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
-    if (yoffset<bounds.height())
+    int yoffset=0;
+    QString minstr;
+    QString maxstr;
+    if (minval!=0||maxval!=0) {
+      minstr=QString::number(minval);
+      maxstr=QString::number(maxval);
+      minstr+=YPostfix;
+      maxstr+=YPostfix;
+      QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
       yoffset=bounds.height();
+      bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
+      if (yoffset<bounds.height())
+	yoffset=bounds.height();
+    }
     
     QString maxXstr;
     QString minXstr;
-    if (XValues.begin()!=XValues.end()) {
+    int xoffset=0;
+    if (XValues.size()>1) {
       minXstr=*(XValues.begin());
       maxXstr=*(XValues.rbegin());
-    }
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
-    int xoffset=bounds.height();
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
-    if (xoffset<bounds.height())
-      xoffset=bounds.height();
 
-    p.save();
-    p.rotate(-90);
+      QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
+      xoffset=bounds.height();
+      bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
+      if (xoffset<bounds.height())
+	xoffset=bounds.height();
+
+      if (minval!=0||maxval!=0) {
+	p.save();
+	p.rotate(-90);
 #if 0
-    p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
-	       AlignLeft|AlignBottom|ExpandTabs,minstr);
+	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+		   AlignLeft|AlignBottom|ExpandTabs,minstr);
 #else
-    // Qt bug, seems to clip left edge of 0 among others.
-    p.drawText(xoffset-bottom+2,fm.ascent(),minstr);
+	// Qt bug, seems to clip left edge of 0 among others.
+	p.drawText(xoffset-bottom+2,fm.ascent(),minstr);
 #endif
-    p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
-	       AlignRight|AlignBottom|ExpandTabs,maxstr);
-    p.restore();
-    p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignLeft|AlignTop|ExpandTabs,minXstr);
-    p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignRight|AlignTop|ExpandTabs,maxXstr);
-    p.translate(yoffset,0);
+	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+		   AlignRight|AlignBottom|ExpandTabs,maxstr);
+	p.restore();
+      }
+      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+		 AlignLeft|AlignTop|ExpandTabs,minXstr);
+      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+		 AlignRight|AlignTop|ExpandTabs,maxXstr);
+      p.translate(yoffset,0);
+    }
     right-=yoffset;
     bottom-=xoffset;
   }
 
   p.save();
   p.setBrush(white);
-  p.drawRect(2,2,right-4,bottom-4);
+  p.drawRect(2,2,right-3,bottom-3);
   p.restore();
   if (Grid>1) {
     p.save();
@@ -300,28 +306,29 @@ void toBarChart::paintEvent(QPaintEvent *e)
     for (int i=1;i<Grid;i++) {
       int ypos=(bottom-4)*i/Grid+2;
       int xpos=(right-4)*i/Grid+2;
-      p.drawLine(3,ypos,right-4,ypos);
-      p.drawLine(xpos,3,xpos,bottom-4);
+      p.drawLine(3,ypos,right-3,ypos);
+      p.drawLine(xpos,3,xpos,bottom-3);
     }
     p.restore();
   }
 
   const QWMatrix &mtx=p.worldMatrix();
-  p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-6,bottom-6);
+  p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-5,bottom-5);
   list<QPointArray> Points;
   int cp=0;
-  {
+  int samples=Samples;
+  if (Samples<=0)
+    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
+      samples=max(samples,int((*i).size()));
+  if (samples>1) {
     for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
       list<double> &val=*i;
       int count=0;
-      QPointArray a(Samples+10);
+      QPointArray a(samples+10);
       int x=right-2;
       for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&x>=2;j++) {
 	int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
-	if (AutoSamples)
-	  x--;
-	else
-	  x=right-4-count*(right-4)/Samples;
+	x=right-2-count*(right-4)/(samples-1);
 	a.setPoint(count,x,val);
 	count++;
       }
@@ -334,15 +341,20 @@ void toBarChart::paintEvent(QPaintEvent *e)
   map<int,int> Bottom;
   for(list<QPointArray>::iterator i=Points.begin();i!=Points.end();i++) {
     QPointArray a=*i;
+    int lx=0;
+    int lb=0;
     for(unsigned int j=0;j<a.size()/2;j++) {
       int x,y;
       a.point(j,&x,&y);
       if(Bottom.find(x)==Bottom.end())
 	Bottom[x]=0;
-      a.setPoint(a.size()-1-j,x,bottom-2-Bottom[x]);
-      y-=Bottom[x];
+      if (lx!=x)
+	lb=Bottom[x];
+      a.setPoint(a.size()-1-j,x,bottom-2-lb);
+      y-=lb;
       a.setPoint(j,x,y);
       Bottom[x]=bottom-2-y;
+      lx=x;
     }
 
     p.save();

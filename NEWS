@@ -25,6 +25,13 @@
 2001-08-09: Added more choices to refresh time.
 2001-08-09: Improved statistics in worksheet.
 2001-08-09: New server overview in server tuning.
+2001-08-09: Fixed problem with many parameters in toParamGet.
+2001-08-10: Added support for using memo editor in dialogs.
+2001-08-10: Added memo editing in toParamGet.
+2001-08-10: Made toParamGet resizable.
+2001-08-10: Added default chart sample setting.
+2001-08-10: Added posibility to create chart with unlimited samples.
+2001-08-10: Lots of off by one pixel errors in charts fixed.
 
 0.14: Released 2001-08-02
 

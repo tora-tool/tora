@@ -324,12 +324,14 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   bar->setSQL(toSQL::string(TO_SESSION_WAIT,connection));
   bar->setTitle("Wait states");
   bar->setYPostfix("ms/s");
+  bar->setSamples(-1);
   connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	  bar,SLOT(changeParams(const QString &)));
   bar=new toResultBar(StatSplitter);
   bar->setSQL(toSQL::string(TO_SESSION_IO,connection));
   bar->setTitle("I/O");
   bar->setYPostfix("blocks/s");
+  bar->setSamples(-1);
   connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	  bar,SLOT(changeParams(const QString &)));
   ResultTab->addTab(StatSplitter,"Statistics");

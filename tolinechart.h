@@ -61,7 +61,6 @@ protected:
   bool MaxAuto;
   QString YPostfix;
   int Samples;
-  bool AutoSamples;
   QString Title;
 
   static double round(double round,bool up);
@@ -175,9 +174,7 @@ public:
   double maxValue(void) const
   { return MaxValue; }
 
-  /** Set the number of samples on the x-axis. Setting samples to -1 will keep enough samples
-   * to display one for each pixel of the screen. More samples than that will never be used
-   * regardless of this setting.
+  /** Set the number of samples on the x-axis. Setting samples to -1 will keep all entries.
    * @param samples Number of samples.
    */
   void setSamples(int samples=-1);

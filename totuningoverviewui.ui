@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>790</width>
-            <height>606</height>
+            <width>869</width>
+            <height>501</height>
         </rect>
     </property>
     <property stdset="1">
@@ -28,6 +28,20 @@
             <name>spacing</name>
             <number>6</number>
         </property>
+        <widget row="9"  column="0"  rowspan="1"  colspan="2" >
+            <class>toResultLine</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Timescale</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                </sizepolicy>
+            </property>
+        </widget>
         <widget row="4"  column="3" >
             <class>toResultLine</class>
             <property stdset="1">
@@ -56,7 +70,7 @@
                 </size>
             </property>
         </spacer>
-        <widget row="0"  column="4"  rowspan="9"  colspan="1" >
+        <widget row="0"  column="4"  rowspan="10"  colspan="1" >
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -324,7 +338,7 @@
                 </spacer>
             </grid>
         </widget>
-        <widget row="0"  column="6"  rowspan="9"  colspan="1" >
+        <widget row="0"  column="6"  rowspan="10"  colspan="1" >
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -663,53 +677,11 @@
                             <name>spacing</name>
                             <number>6</number>
                         </property>
-                        <widget row="2"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>TextLabel2_2_2_2_5_2_2</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>Size</string>
-                            </property>
-                            <property stdset="1">
-                                <name>alignment</name>
-                                <set>AlignCenter</set>
-                            </property>
-                            <property>
-                                <name>hAlign</name>
-                            </property>
-                        </widget>
-                        <widget row="3"  column="0" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
-                                <cstring>ArchiveSize</cstring>
-                            </property>
-                            <property stdset="1">
-                                <name>font</name>
-                                <font>
-                                    <bold>1</bold>
-                                </font>
-                            </property>
-                            <property stdset="1">
-                                <name>text</name>
-                                <string>TextLabel3</string>
-                            </property>
-                            <property stdset="1">
-                                <name>alignment</name>
-                                <set>AlignCenter</set>
-                            </property>
-                            <property>
-                                <name>hAlign</name>
-                            </property>
-                        </widget>
                         <widget row="1"  column="0" >
                             <class>QLabel</class>
                             <property stdset="1">
                                 <name>name</name>
-                                <cstring>ArchiveFiles</cstring>
+                                <cstring>ArchiveInfo</cstring>
                             </property>
                             <property stdset="1">
                                 <name>font</name>
@@ -737,7 +709,7 @@
                             </property>
                             <property stdset="1">
                                 <name>text</name>
-                                <string>Files</string>
+                                <string>Files/Size</string>
                             </property>
                             <property stdset="1">
                                 <name>alignment</name>
@@ -828,13 +800,6 @@
                 <cstring>ClientInput</cstring>
             </property>
         </widget>
-        <widget row="7"  column="3" >
-            <class>toResultLine</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ExecuteCount</cstring>
-            </property>
-        </widget>
         <widget row="2"  column="5" >
             <class>toResultLine</class>
             <property stdset="1">
@@ -854,13 +819,6 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>LogicalChange</cstring>
-            </property>
-        </widget>
-        <widget row="6"  column="3" >
-            <class>toResultLine</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ParseCount</cstring>
             </property>
         </widget>
         <widget row="1"  column="5" >
@@ -891,27 +849,6 @@
                 </size>
             </property>
         </spacer>
-        <spacer row="5"  column="3" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer9</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
         <widget row="4"  column="5" >
             <class>toResultLine</class>
             <property stdset="1">
@@ -919,7 +856,7 @@
                 <cstring>LogWrite</cstring>
             </property>
         </widget>
-        <spacer row="5"  column="5"  rowspan="4"  colspan="1" >
+        <spacer row="5"  column="5"  rowspan="5"  colspan="1" >
             <property>
                 <name>name</name>
                 <cstring>Spacer7</cstring>
@@ -982,49 +919,7 @@
                 </size>
             </property>
         </spacer>
-        <spacer row="3"  column="3" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer10</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="8"  column="3" >
-            <property>
-                <name>name</name>
-                <cstring>Spacer5</cstring>
-            </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Vertical</enum>
-            </property>
-            <property stdset="1">
-                <name>sizeType</name>
-                <enum>Expanding</enum>
-            </property>
-            <property>
-                <name>sizeHint</name>
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget row="0"  column="2"  rowspan="9"  colspan="1" >
+        <widget row="0"  column="2"  rowspan="10"  colspan="1" >
             <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
@@ -1532,6 +1427,83 @@
                 </widget>
             </grid>
         </widget>
+        <spacer row="3"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer10</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <spacer row="5"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer9</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="6"  column="3" >
+            <class>toResultLine</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ParseCount</cstring>
+            </property>
+        </widget>
+        <widget row="7"  column="3" >
+            <class>toResultLine</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExecuteCount</cstring>
+            </property>
+        </widget>
+        <spacer row="8"  column="3"  rowspan="2"  colspan="1" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer5</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Vertical</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <customwidgets>

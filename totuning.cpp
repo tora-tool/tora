@@ -226,65 +226,65 @@ static toTuningTool TuningTool;
 static QPixmap *toRefreshPixmap;
 
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
-				     "select sysdate,sum(blocks) from v$archived_log",
+				     "select 1,sum(blocks) from v$archived_log",
 				     "Archive log write");
 
 static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
-				  "select sysdate,100-100*sum(getmisses)/sum(gets) from v$rowcache",
+				  "select 1,100-100*sum(getmisses)/sum(gets) from v$rowcache",
 				  "Buffer hitrate");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
-				    "select sysdate,value/to_number(:f1<char[101]>)\n"
+				    "select 1,value/to_number(:f1<char[101]>)\n"
 				    "  from v$sysstat where statistic# = 182",
 				    "Bytes sent to client");
 
 static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
-				     "select sysdate,value/to_number(:f1<char[101]>)\n"
+				     "select 1,value/to_number(:f1<char[101]>)\n"
 				     "  from v$sysstat where statistic# = 183",
 				     "Bytes sent from client");
 
 static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
-				"select sysdate,value\n"
+				"select 1,value\n"
 				"  from v$sysstat where statistic# = 181",
 				"Execute count");
 
 static toSQL SQLOverviewParse("toTuning:Overview:Parse",
-			      "select sysdate,value\n"
+			      "select 1,value\n"
 			      "  from v$sysstat where statistic# = 179",
 			      "Parse count");
 
 static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
-				    "select sysdate,value\n"
+				    "select 1,value\n"
 				    "  from v$sysstat where statistic# = 100",
 				    "Redo entries");
 
 static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
-				   "select sysdate,value\n"
+				   "select 1,value\n"
 				   "  from v$sysstat where statistic# = 106",
 				   "Redo blocks written");
 
 static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
-				    "select sysdate,sum(value)\n"
+				    "select 1,sum(value)\n"
 				    "  from v$sysstat where statistic# in (38,39)",
 				    "Blocks read");
 
 static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
-				     "select sysdate,sum(value)\n"
+				     "select 1,sum(value)\n"
 				     "  from v$sysstat where statistic# in (41,42)",
 				     "Blocks written");
 
 static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
-				     "select sysdate,value\n"
+				     "select 1,value\n"
 				     "  from v$sysstat where statistic# = 40",
 				     "Blocks physically read");
 
 static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
-				      "select sysdate,value\n"
+				      "select 1,value\n"
 				      "  from v$sysstat where statistic# = 44",
 				      "Blocks physically written");
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
-			       "select sysdate,\n"
+			       "select 1,\n"
 			       "       sum(decode(status,'ACTIVE',1,0)),\n"
 			       "       sum(decode(status,'INACTIVE',1,0))\n"
 			       "  from v$session\n"
@@ -292,10 +292,14 @@ static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "Information about active/inactive clients");
 
 static toSQL SQLOverviewSGAUsed("toTuning:Overview:SGAUsed",
-				"select sysdate,100*(total-free)/total\n"
+				"select 1,100*(total-free)/total\n"
 				"  from (select sum(value) total from v$sga where name in ('Fixed Size','Variable Size')),\n"
 				"       (select bytes free from v$sgastat where pool = 'shared pool' and name = 'free memory')",
 				"SGA used");
+
+static toSQL SQLOverviewTimescale("toTuning:Overview:Timescale",
+				  "select sysdate,0 from dual",
+				  "Get timescale of other graphs");
 
 static toSQL SQLOverviewFilespace("toTuning:Overview:Filespace",
 				  "select sum(bytes)/to_number(:f1<char[101]>),'Free'\n"
@@ -317,8 +321,8 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
   list<QString> val;
   if (postfix=="b/s") {
     QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
-    unitStr+="/s";
     val.insert(val.end(),QString::number(toSizeDecode(unitStr)));
+    unitStr+="/s";
     chart->setYPostfix(unitStr);
   } else
     chart->setYPostfix(postfix);
@@ -330,20 +334,23 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
 {
   BackgroundGroup->setColumnLayout(1,Horizontal);
 
-  setupChart(ArchiveWrite,"Archive Write >"," blocks/s",SQLOverviewArchiveWrite);
+  setupChart(ArchiveWrite,"Archive write >"," blocks/s",SQLOverviewArchiveWrite);
   setupChart(BufferHit,"Hitrate","%",SQLOverviewBufferHit);
   BufferHit->setMaxValue(100);
   BufferHit->setFlow(false);
-  setupChart(ClientInput,"< Client Input","b/s",SQLOverviewClientInput);
-  setupChart(ClientOutput,"Client Output >","b/s",SQLOverviewClientOutput);
+  setupChart(ClientInput,"< Client input","b/s",SQLOverviewClientInput);
+  setupChart(ClientOutput,"Client output >","b/s",SQLOverviewClientOutput);
   setupChart(ExecuteCount,"Executes >","/s",SQLOverviewExecute);
   setupChart(LogWrite,"Log writer >"," blocks/s",SQLOverviewRedoBlocks);
   setupChart(LogicalChange,"Buffer changed >"," blocks/s",SQLOverviewLogicalWrite);
   setupChart(LogicalRead,"< Buffer gets"," blocks/s",SQLOverviewLogicalRead);
   setupChart(ParseCount,"Parse >","/s",SQLOverviewParse);
-  setupChart(PhysicalRead,"< Read"," blocks/s",SQLOverviewPhysicalRead);
-  setupChart(PhysicalWrite,"Write >"," blocks/s",SQLOverviewPhysicalWrite);
+  setupChart(PhysicalRead,"< Physical read"," blocks/s",SQLOverviewPhysicalRead);
+  setupChart(PhysicalWrite,"Physical write >"," blocks/s",SQLOverviewPhysicalWrite);
   setupChart(RedoEntries,"Redo entries >","/s",SQLOverviewRedoEntries);
+  setupChart(Timescale,"Timescale","",SQLOverviewTimescale);
+  Timescale->showAxisLegend(true);
+  Timescale->showLast(false);
 
   ClientChart->showGrid(0);
   ClientChart->showLegend(false);
@@ -371,59 +378,63 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
   //refresh();
 }
 
-toSQL SQLOverviewArchive("toTuning:Overview:Archive",
-			 "select count(1),\n"
-			 "       nvl(sum(blocks*block_size),0)/to_number(:f1<char[101]>)\n"
-			 "  from v$archived_log",
-			 "Information about archive logs");
+static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
+				"select count(1),\n"
+				"       nvl(sum(blocks*block_size),0)/to_number(:f1<char[101]>)\n"
+				"  from v$archived_log",
+				"Information about archive logs");
 
-toSQL SQLOverviewLog("toTuning:Overview:Log",
-		     "select count(1),\n"
-		     "       max(decode(status,'CURRENT',group#,0)),\n"
-		     "       sum(decode(status,'CURRENT',bytes,0))/to_number(:f1<char[101]>),\n"
-		     "       sum(bytes)/to_number(:f1<char[101]>) from v$log\n",
-		     "Information about redo logs");
+static toSQL SQLOverviewLog("toTuning:Overview:Log",
+			    "select count(1),\n"
+			    "       max(decode(status,'CURRENT',group#,0)),\n"
+			    "       sum(decode(status,'CURRENT',bytes,0))/to_number(:f1<char[101]>),\n"
+			    "       sum(bytes)/to_number(:f1<char[101]>) from v$log\n",
+			    "Information about redo logs");
 
-toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
-			     "select count(1) from v$tablespace",
-			     "Number of tablespaces");
+static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
+				    "select count(1) from v$tablespace",
+				    "Number of tablespaces");
 
-toSQL SQLOverviewSGA("toTuning:Overview:SGA",
-		     "select name,value/to_number(:f1<char[101]>) from v$sga",
-		     "Information about SGA");
+static toSQL SQLOverviewSGA("toTuning:Overview:SGA",
+			    "select name,value/to_number(:f1<char[101]>) from v$sga",
+			    "Information about SGA");
 
-toSQL SQLOverviewBackground("toTuning:Overview:Background",
-			    "select substr(name,1,3),count(1) from v$bgprocess where paddr != '00' group by substr(name,1,3)",
-			    "Background processes");
+static toSQL SQLOverviewBackground("toTuning:Overview:Background",
+				   "select substr(name,1,3),count(1) from v$bgprocess where paddr != '00' group by substr(name,1,3)",
+				   "Background processes");
 
-toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
-			   "select count(1) from v$session where type = 'USER' and server = 'DEDICATED'",
-			   "Dedicated server process");
+static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
+				  "select count(1) from v$session where type = 'USER' and server = 'DEDICATED'",
+				  "Dedicated server process");
 
-toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
-			    "select count(1) from v$dispatcher",
-			    "Dispatcher processes");
+static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
+				   "select count(1) from v$dispatcher",
+				   "Dispatcher processes");
 
-toSQL SQLOverviewParallell("toTuning:Overview:Parallell",
-			   "select count(1) from v$px_process",
-			   "Parallell processes");
+static toSQL SQLOverviewParallell("toTuning:Overview:Parallell",
+				  "select count(1) from v$px_process",
+				  "Parallell processes");
 
-toSQL SQLOverviewShared("toTuning:Overview:Shared",
-			"select count(1) from v$shared_server",
-			"Shared processes");
+static toSQL SQLOverviewShared("toTuning:Overview:Shared",
+			       "select count(1) from v$shared_server",
+			       "Shared processes");
 
-toSQL SQLOverviewRound("toTuning:Overview:Roundtime",
-		       "select round(average_wait,2) from v$system_event\n"
-		       " where event in ('SQL*Net message from client',\n"
-		       "                 'SQL*Net message to client') order by event",
-		       "Client roundtime info");
+static toSQL SQLOverviewRound("toTuning:Overview:Roundtime",
+			      "select round(average_wait,2) from v$system_event\n"
+			      " where event in ('SQL*Net message from client',\n"
+			      "                 'SQL*Net message to client') order by event",
+			      "Client roundtime info");
 
 static toSQL SQLOverviewClientTotal("toTuning:Overview:ClientTotal",
-			       "select count(1),\n"
-			       "       sum(decode(status,'ACTIVE',1,0))\n"
-			       "  from v$session\n"
-			       " where type != 'BACKGROUND'",
-			       "Information about total and active clients");
+				    "select count(1),\n"
+				    "       sum(decode(status,'ACTIVE',1,0))\n"
+				    "  from v$session\n"
+				    " where type != 'BACKGROUND'",
+				    "Information about total and active clients");
+
+static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
+				  "select count(1) from v$datafile",
+				  "Number of datafiles");
 
 void toTuningOverview::refresh(void)
 {
@@ -435,10 +446,11 @@ void toTuningOverview::refresh(void)
     val.insert(val.end(),QString::number(toSizeDecode(unitStr)));
 
     list<QString> res=toReadQuery(conn,SQLOverviewArchive(conn),val);
-    ArchiveFiles->setText(toShift(res));
     QString tmp=toShift(res);
+    tmp+="/";
+    tmp+=toShift(res);
     tmp+=unitStr;
-    ArchiveSize->setText(tmp);
+    ArchiveInfo->setText(tmp);
 
     list<QLabel *>::iterator labIt=Backgrounds.begin();
 
@@ -579,6 +591,9 @@ void toTuningOverview::refresh(void)
 
     res=toReadQuery(conn,SQLOverviewTablespaces(conn));
     Tablespaces->setText(toShift(res));
+
+    res=toReadQuery(conn,SQLOverviewDatafiles(conn));
+    Files->setText(toShift(res));
   } TOCATCH
 }
 
@@ -632,7 +647,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setFlow(false);
 	else
 	  chart->setYPostfix("/s");
-	chart->setSamples(100);
 	chart->query(toSQL::sql(*i,connection),par);
       } else if (parts[2].mid(1,1)=="L") {
 	toResultLine *chart=new toResultLine(grid);
@@ -647,7 +661,6 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 	  chart->setYPostfix(t);
 	} else
 	  chart->setYPostfix("/s");
-	chart->setSamples(100);
 	chart->query(toSQL::sql(*i,connection),par);
       } else if (parts[2].mid(1,1)=="P") {
 	toResultPie *chart=new toResultPie(grid);

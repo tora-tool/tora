@@ -41,16 +41,31 @@
 #include <map>
 
 #include <qdialog.h>
+#include <qpushbutton.h>
 
 class QLineEdit;
 class QGrid;
+
+class toParamGetButton : public QPushButton {
+  Q_OBJECT
+  int Row;
+public:
+  toParamGetButton(int row,QWidget *parent=0,const char *name=0)
+    : QPushButton(parent,name),Row(row)
+  { connect(this,SIGNAL(clicked()),this,SLOT(internalClicked())); }
+private slots:
+  void internalClicked(void)
+  { emit clicked(Row); }
+signals:
+  void clicked(int);
+};
 
 /** A help class to parse SQL for input/output bindings and if available also pop up a 
  * dialog and ask for values. Also maintains an internal cache of old values.
  */
 
 class toParamGet : public QDialog {
-private:
+  Q_OBJECT
   /** Default values cache
    */
   static map<QString,QString> DefaultCache;
@@ -60,7 +75,7 @@ private:
 
   QGrid *Container;
 
-  list<QWidget *> Value;
+  list<QLineEdit *> Value;
   toParamGet(QWidget *parent=0,const char *name=0);
 public:
   /** Get parameters for specified SQL string.
@@ -76,6 +91,9 @@ public:
    * @param val Value of the bind variable.
    */
   static void setDefault(const QString &name,const QString &val);
+private slots:
+
+  virtual void showMemo(int row);
 };
 
 #endif

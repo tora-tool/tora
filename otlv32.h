@@ -12297,6 +12297,7 @@ public:
     0);
   if(status)return 0;
 
+  toBusy(true);
   status=OCIServerAttach
    (srvhp,
     errhp,
@@ -12304,6 +12305,7 @@ public:
                OTL_RCAST(text*,OTL_CCAST(char*,tnsname)),
     tnsname==0?0:strlen(OTL_CCAST(char*,tnsname)),
     0);
+  toBusy(false);
   if(status)return 0;
   status=OCIAttrSet
    (OTL_RCAST(dvoid*,svchp),
@@ -12338,12 +12340,14 @@ public:
    cred_type=OCI_CRED_EXT;
   else
    cred_type=OCI_CRED_RDBMS;
+  toBusy(true);
   status=OCISessionBegin
    (svchp,
     errhp,
     authp,
     cred_type,
     OTL_SCAST(ub4,ses_mode));
+  toBusy(false);
   if(status)return 0;
 
   in_session=1;
@@ -12390,12 +12394,14 @@ public:
    cred_type=OCI_CRED_RDBMS;
   }
 
+  toBusy(true);
   status=OCISessionBegin
    (svchp,
     errhp,
     authp,
     cred_type,
     OTL_SCAST(ub4,ses_mode));
+  toBusy(false);
   if(status)return 0;
 
   status=OCIAttrSet
@@ -12417,7 +12423,9 @@ public:
  int server_detach(void)
  {int rc=0;
   if(attached){
+   toBusy(true);
    OCIServerDetach(srvhp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
+   toBusy(false);
    rc=1;
   }
   if(srvhp!=0)OCIHandleFree(OTL_RCAST(dvoid*,srvhp),OTL_SCAST(ub4,OCI_HTYPE_SERVER));
@@ -12439,7 +12447,9 @@ public:
  int session_end(void)
  {int status;
   if(!in_session)return 0;
+  toBusy(true);
   status=OCISessionEnd(svchp,errhp,authp,0);
+  toBusy(false);
   if(status)return 0;
 
   in_session=0;
@@ -12587,12 +12597,18 @@ public:
 
  int commit(void)
  {
-  return !OCITransCommit(svchp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(true);
+  bool ret=!OCITransCommit(svchp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(false);
+  return ret;
  }
 
  int rollback(void)
  {
-  return !OCITransRollback(svchp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(true);
+  bool ret=!OCITransRollback(svchp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(false);
+  return ret;
  }
 
 };
@@ -12800,6 +12816,7 @@ public:
    len=0;
    return 1;
   }
+  toBusy(true);
   rc=OCILobRead
    (connect->svchp,
     connect->errhp,
@@ -12812,6 +12829,7 @@ public:
     0,
     0,
     OTL_SCAST(ub1,SQLCS_IMPLICIT));
+  toBusy(false);
   len=amt;
   if(rc!=0)return 0;
   return 1;
@@ -12830,6 +12848,7 @@ public:
   ub4 amt=buf_len;
   ub4 offset=1;
   int rc;
+  toBusy(true);
   rc=OCILobWrite
    (connect->svchp,
     connect->errhp,
@@ -12843,6 +12862,7 @@ public:
     0,
     0,
     OTL_SCAST(ub1,SQLCS_IMPLICIT));
+  toBusy(false);
   if(rc!=0)return 0;
   return 1;
  }
@@ -12867,6 +12887,7 @@ public:
    s.set_len(0);
    return 1;
   }
+  toBusy(true);
   rc=OCILobRead
    (connect->svchp,
     connect->errhp,
@@ -12879,6 +12900,7 @@ public:
     0,
     0,
     OTL_SCAST(ub1,SQLCS_IMPLICIT));
+  toBusy(false);
   switch(rc){
   case OCI_SUCCESS:
    if(aoffset==1)
@@ -12923,6 +12945,7 @@ public:
    mode=OCI_NEXT_PIECE;
   else
    mode=OCI_LAST_PIECE;
+  toBusy(true);
   rc=OCILobWrite
    (connect->svchp,
     connect->errhp,
@@ -12936,6 +12959,7 @@ public:
     0,
     0,
     OTL_SCAST(ub1,SQLCS_IMPLICIT));
+  toBusy(false);
   if(rc==OCI_NEED_DATA||
      rc==OCI_SUCCESS||
      rc==OCI_SUCCESS_WITH_INFO){
@@ -13229,6 +13253,7 @@ public:
 
  int parse(const char* stm_text)
  {
+  toBusy(true);
   status=OCIStmtPrepare
    (cda,
     errhp,
@@ -13236,6 +13261,7 @@ public:
     OTL_SCAST(ub4,strlen(stm_text)),
     OTL_SCAST(ub4,OCI_NTV_SYNTAX),
     OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(false);
   if(status)return 0;
   return 1;
  }
@@ -13271,12 +13297,14 @@ public:
  int fetch(const short iters,int& eof_data)
  {
   eof_data=0;
+  toBusy(true);
   status=OCIStmtFetch
    (cda,
     errhp,
     OTL_SCAST(ub4,iters),
     OTL_SCAST(ub4,OCI_FETCH_NEXT),
     OTL_SCAST(ub4,OCI_DEFAULT));
+  toBusy(false);
   eof_status=status;
   if(status!=OCI_SUCCESS&&
      status!=OCI_SUCCESS_WITH_INFO&&
@@ -13462,6 +13490,7 @@ public:
 
   eof_desc=0;
   if(straight_select&&pos_nbr==0){
+   toBusy(true);
    status=OCIStmtExecute
     (db->svchp,
      cda,
@@ -13471,6 +13500,7 @@ public:
      0,
      0,
      OCI_DESCRIBE_ONLY);
+   toBusy(false);
    if(status!=OCI_SUCCESS)return 0;
    status=OCIAttrGet
     (cda,
@@ -13573,6 +13603,7 @@ public:
   int len;
 
   strcpy(OTL_RCAST(char*,exception_struct.msg),"123456789");
+  toBusy(true);
   OCIErrorGet
    (OTL_RCAST(dvoid*,errhp),
     OTL_SCAST(ub4,1),
@@ -13581,6 +13612,7 @@ public:
     OTL_RCAST(text*,exception_struct.msg),
     OTL_SCAST(ub4,sizeof(exception_struct.msg)),
     OCI_HTYPE_ERROR);
+  toBusy(false);
   exception_struct.code=errcode;
   len=strlen(OTL_RCAST(char*,exception_struct.msg));
   exception_struct.msg[len]=0;

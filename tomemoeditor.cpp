@@ -53,8 +53,9 @@ TO_NAMESPACE;
 
 static QPixmap *toFileSavePixmap;
 
-toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,bool sql)
-  : QDialog(parent,NULL,false,WDestructiveClose)
+toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
+			   bool sql,bool modal)
+  : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
 {
   Row=row;
   Col=col;
@@ -82,11 +83,18 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,bo
   l->addWidget(Editor);
   Editor->setText(str);
   Editor->setReadOnly(row<0||col<0);
-  show();
+  Editor->setFocus();
+  if (!modal)
+    show();
+}
+
+QString toMemoEditor::text(void)
+{
+  return Editor->text();
 }
 
 void toMemoEditor::store(void)
 {
   emit changeData(Row,Col,Editor->text());
-  close();
+  accept();
 }

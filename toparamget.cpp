@@ -45,12 +45,17 @@ TO_NAMESPACE;
 #include <qpushbutton.h>
 #include <qapplication.h>
 #include <qpalette.h>
+#include <qlayout.h>
+#include <qsizepolicy.h>
 
 #include "toparamget.h"
 #include "totool.h"
 #include "toconf.h"
 #include "tomain.h"
 #include "tohelp.h"
+#include "tomemoeditor.h"
+
+#include "toparamget.moc"
 
 map<QString,QString> toParamGet::DefaultCache;
 map<QString,QString> toParamGet::Cache;
@@ -59,29 +64,37 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   : QDialog(parent,name,true)
 {
   toHelp::connectDialog(this);
-  resize(470,500);
-  setMinimumSize(QSize(470,500));
-  setMaximumSize(QSize(470,500));
+  resize(500,480);
   setCaption("Define binding variables");
 
-  QScrollView *scroll=new QScrollView(this);
-  scroll->setGeometry(10,10,330,480);
+  QGridLayout *layout=new QGridLayout(this,3,2);
+  layout->setSpacing( 6 );
+  layout->setMargin( 11 );
 
-  Container=new QGrid(3,scroll->viewport());
+  QScrollView *scroll=new QScrollView(this);
+  scroll->enableClipper(true);
+  scroll->setGeometry(10,10,330,480);
+  scroll->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  layout->addMultiCellWidget(scroll,0,2,0,0);
+
+  Container=new QGrid(4,scroll->viewport());
   scroll->addChild(Container,5,5);
   Container->setSpacing(10);
   scroll->viewport()->setBackgroundColor(qApp->palette().active().background());
 
   QPushButton *OkButton = new QPushButton(this,"OkButton");
-  OkButton->move(350,10); 
   OkButton->setText(tr("&OK"));
   OkButton->setDefault(true);
+  layout->addWidget(OkButton,0,1);
 
   QPushButton *CancelButton=new QPushButton(this,"CancelButton");
-  CancelButton->move(350,60); 
   CancelButton->setText(tr("Cancel"));
   CancelButton->setDefault(false);
-  
+  layout->addWidget(CancelButton,1,1);
+
+  QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
+  layout->addItem(spacer,2,1);
+
   connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
 }
@@ -112,6 +125,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
   def+=QString::number(min(toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE).toInt(),3999));
   def+="]>";
 
+  int num=0;
   for(unsigned int i=0;i<str.length()+1;i++) {
     QChar c;
     QChar nc;
@@ -199,7 +213,7 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
 	    if (fnd==DefaultCache.end())
 	      found=false;
 	  }
-	  QLineEdit *edit=new QLineEdit(widget->Container);
+	  QLineEdit *edit=new QLineEdit(widget->Container,QString::number(num));
 	  QCheckBox *box=new QCheckBox("NULL",widget->Container);
 	  connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
 	  if (found) {
@@ -207,8 +221,14 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
 	    if ((*fnd).second.isNull())
 	      box->setChecked(true);
 	  }
+	  toParamGetButton *btn=new toParamGetButton(num,widget->Container);
+	  btn->setText("Edit");
+	  btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed));
+	  connect(btn,SIGNAL(clicked(int)),widget,SLOT(showMemo(int)));
+	  connect(box,SIGNAL(toggled(bool)),btn,SLOT(setDisabled(bool)));
 	  widget->Value.insert(widget->Value.end(),edit);
 	  names.insert(names.end(),fname);
+	  num++;
 	}
       }
       fname="";
@@ -222,8 +242,8 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
     (*widget->Value.begin())->setFocus();
     if (widget->exec()) {
       list<QString>::iterator cn=names.begin();
-      for (list<QWidget *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
-	QLineEdit *current=(QLineEdit *)*i;
+      for (list<QLineEdit *>::iterator i=widget->Value.begin();i!=widget->Value.end();i++) {
+	QLineEdit *current=*i;
 	QString val;
 	if (current) {
 	  if (current->isEnabled())
@@ -248,4 +268,14 @@ list<QString> toParamGet::getParam(QWidget *parent,QString &str)
 void toParamGet::setDefault(const QString &name,const QString &val)
 {
   DefaultCache[name]=val;
+}
+
+void toParamGet::showMemo(int row)
+{
+  QObject *obj=child(QString::number(row));
+  if (obj) {
+    toMemoEditor *memo=new toMemoEditor(this,((QLineEdit *)obj)->text(),row,0,false,true);
+    if (memo->exec())
+      ((QLineEdit *)obj)->setText(memo->text());
+  }
 }

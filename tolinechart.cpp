@@ -74,22 +74,16 @@ double toLineChart::round(double round,bool up)
 
 void toLineChart::setSamples(int samples)
 {
-  if (samples<=0) {
-    QWidget *d=QApplication::desktop();
-    Samples=d->width();
-    AutoSamples=true;
-  } else {
-    Samples=samples;
-    AutoSamples=false;
+  Samples=samples;
+
+  if (Samples>0) {
+    while (int(XValues.size())>Samples)
+      XValues.erase(XValues.begin());
+
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+      while (int((*i).size())>Samples)
+	(*i).erase((*i).begin());
   }
-
-  while (int(XValues.size())>Samples)
-    XValues.erase(XValues.begin());
-
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
-    while (int((*i).size())>Samples)
-      (*i).erase((*i).begin());
-
   update();
 }
 
@@ -104,7 +98,7 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   Grid=5;
   AxisText=true;
   
-  setSamples();
+  setSamples(toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt());
 
   setMinimumSize(80,50);
 
@@ -118,13 +112,14 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
 
 void toLineChart::addValues(list<double> &value,const QString &xValue)
 {
-  if (int(XValues.size())==Samples)
+  if (int(XValues.size())==Samples&&Samples>0)
     XValues.erase(XValues.begin());
   XValues.insert(XValues.end(),xValue);
 
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
-    if (int((*i).size())==Samples)
-      (*i).erase((*i).begin());
+  if (Samples>0)
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
+      if (int((*i).size())==Samples)
+	(*i).erase((*i).begin());
 
   list<double>::iterator j=value.begin();
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end()&&j!=value.end();i++) {
@@ -235,7 +230,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	  minval=*j;
       }
     }
-    maxval=round(maxval,true);
+    if (maxval!=0)
+      maxval=round(maxval,true);
     minval=round(minval,false);
   }
   if(!MinAuto)
@@ -244,52 +240,61 @@ void toLineChart::paintEvent(QPaintEvent *e)
     maxval=MaxValue;
 
   if (AxisText) {
-    QString minstr=QString::number(minval);
-    QString maxstr=QString::number(maxval);
-    minstr+=YPostfix;
-    maxstr+=YPostfix;
-    QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
-    int yoffset=bounds.height();
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
-    if (yoffset<bounds.height())
+    int yoffset=0;
+    QString minstr;
+    QString maxstr;
+    if (minval!=0||maxval!=0) {
+      minstr=QString::number(minval);
+      maxstr=QString::number(maxval);
+      minstr+=YPostfix;
+      maxstr+=YPostfix;
+      QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minstr);
       yoffset=bounds.height();
+      bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxstr);
+      if (yoffset<bounds.height())
+	yoffset=bounds.height();
+    }
     
     QString maxXstr;
     QString minXstr;
-    if (XValues.begin()!=XValues.end()) {
+    int xoffset=0;
+    if (XValues.size()>1) {
       minXstr=*(XValues.begin());
       maxXstr=*(XValues.rbegin());
-    }
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
-    int xoffset=bounds.height();
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
-    if (xoffset<bounds.height())
-      xoffset=bounds.height();
 
-    p.save();
-    p.rotate(-90);
+      QRect bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
+      xoffset=bounds.height();
+      bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
+      if (xoffset<bounds.height())
+	xoffset=bounds.height();
+
+      if (minval!=0||maxval!=0) {
+	p.save();
+	p.rotate(-90);
 #if 0
-    p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
-	       AlignLeft|AlignBottom|ExpandTabs,minstr);
+	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+		   AlignLeft|AlignBottom|ExpandTabs,minstr);
 #else
-    // Qt bug, seems to clip left edge of 0 among others.
-    p.drawText(xoffset-bottom+2,fm.ascent(),minstr);
+	// Qt bug, seems to clip left edge of 0 among others.
+	p.drawText(xoffset-bottom+2,fm.ascent(),minstr);
 #endif
-    p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
-	       AlignRight|AlignBottom|ExpandTabs,maxstr);
-    p.restore();
-    p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignLeft|AlignTop|ExpandTabs,minXstr);
-    p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignRight|AlignTop|ExpandTabs,maxXstr);
-    p.translate(yoffset,0);
+	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
+		   AlignRight|AlignBottom|ExpandTabs,maxstr);
+	p.restore();
+      }
+      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+		 AlignLeft|AlignTop|ExpandTabs,minXstr);
+      p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
+		 AlignRight|AlignTop|ExpandTabs,maxXstr);
+      p.translate(yoffset,0);
+    }
     right-=yoffset;
     bottom-=xoffset;
   }
 
   p.save();
   p.setBrush(white);
-  p.drawRect(2,2,right-4,bottom-4);
+  p.drawRect(2,2,right-3,bottom-3);
   p.restore();
   if (Grid>1) {
     p.save();
@@ -297,39 +302,42 @@ void toLineChart::paintEvent(QPaintEvent *e)
     for (int i=1;i<Grid;i++) {
       int ypos=(bottom-4)*i/Grid+2;
       int xpos=(right-4)*i/Grid+2;
-      p.drawLine(3,ypos,right-4,ypos);
-      p.drawLine(xpos,3,xpos,bottom-4);
+      p.drawLine(3,ypos,right-3,ypos);
+      p.drawLine(xpos,3,xpos,bottom-3);
     }
     p.restore();
   }
 
   int cp=0;
-  const QWMatrix &mtx=p.worldMatrix();
-  p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-6,bottom-6);
-  for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
-    p.save();
-    p.setPen(toChartColor(cp++));
-    list<double> &val=*i;
-    int count=0;
-    bool first=true;
-    int lval=0;
-    int lx=right-2;
-    for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&lx>=2;j++) {
-      int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
-      if (!first) {
-	int x=lx;
-	if (AutoSamples)
-	  x--;
-	else
-	  x=right-4-count*(right-4)/Samples;
-	p.drawLine(x,val,lx,lval);
-	lx=x;
-      } else
-	first=false;
-      lval=val;
-      count++;
+  int samples=Samples;
+  if (Samples<=0)
+    for(list<list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++)
+      samples=max(samples,int((*i).size()));
+  if (samples>1) {
+    const QWMatrix &mtx=p.worldMatrix();
+    p.setClipRect(mtx.dx()+3,mtx.dy()+3,right-5,bottom-5);
+    for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
+      p.save();
+      p.setPen(toChartColor(cp++));
+      list<double> &val=*i;
+      int count=0;
+      bool first=true;
+      int lval=0;
+      int lx=right-2;
+      for(list<double>::reverse_iterator j=val.rbegin();j!=val.rend()&&lx>=2;j++) {
+	int val=int(bottom-2-((*j-minval)/(maxval-minval)*(bottom-4)));
+	if (!first) {
+	  int x=lx;
+	  x=right-2-(count+1)*(right-4)/(samples-1);
+	  p.drawLine(x,val,lx,lval);
+	  lx=x;
+	} else
+	  first=false;
+	lval=val;
+	count++;
+      }
+      p.restore();
     }
-    p.restore();
   }
 }
 
