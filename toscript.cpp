@@ -110,16 +110,49 @@ static toSQL SQLObjectList("toScript:ExtractObject",
 	UNION
 	SELECT owner,'TABLE',table_name
 	  FROM all_tables
+	 WHERE temporary != 'Y' AND secondary = 'N' AND iot_name IS NULL
+	UNION
+	SELECT owner,'MATERIALIZED TABLE',mview_name AS object
+	  FROM all_mviews
+	UNION
+	SELECT username,NULL,NULL
+	  FROM all_users)
+  ORDER BY 1,2,3",
+			   "Extract objects available to extract from the database, "
+			   "should have same columns",
+			   "8.1");
+
+static toSQL SQLObjectList7("toScript:ExtractObject",
+			    "SELECT *
+  FROM (SELECT 'TABLESPACE',tablespace_name,NULL
+	  FROM dba_tablespaces
+	UNION
+	SELECT 'ROLE',role,NULL
+	  FROM dba_roles
+	UNION
+	SELECT 'PUBLIC','SYNONYM',synonym_name
+	  FROM all_synonyms WHERE owner = 'PUBLIC'
+	UNION
+	SELECT owner,'DATABASE LINK',db_link
+	  FROM all_db_links
+	UNION
+	SELECT owner,object_type,object_name
+	  FROM all_objects
+	 WHERE object_type IN ('VIEW','TYPE','SEQUENCE','PACKAGE',
+			       'PACKAGE BODY','FUNCTION','PROCEDURE')
+	UNION
+	SELECT owner,'TABLE',table_name
+	  FROM all_tables
 	 WHERE temporary != 'Y' AND secondary = 'N'
 	UNION
 	SELECT owner,'MATERIALIZED TABLE',mview_name AS object
 	  FROM all_mviews
-        UNION
-        SELECT username,NULL,NULL
-          FROM all_users)
+	UNION
+	SELECT username,NULL,NULL
+	  FROM all_users)
   ORDER BY 1,2,3",
-			   "Extract objects available to extract from the database, "
-			   "should have same columns");
+			    QString::null,
+			    "7.0");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
 			       "SELECT owner,object_type,object_name
@@ -210,7 +243,9 @@ void toScript::execute(void)
     list<QString> profiles;
     list<QString> otherGlobal;
 
+    list<QString> roles;
     list<QString> tables;
+    list<QString> users;
 
     list<QString> userViews;
     list<QString> userOther;
@@ -252,6 +287,10 @@ void toScript::execute(void)
 	      toPush(tableSpace,line);
 	    else if (type=="PROFILE")
 	      toPush(profiles,line);
+	    else if (type=="ROLE")
+	      toPush(roles,name);
+	    else if (type=="USER")
+	      toPush(users,name);
 	    else
 	      toPush(otherGlobal,line);
 	  }
@@ -279,9 +318,18 @@ void toScript::execute(void)
       toPush(sourceObjects,*i);
     for(list<QString>::iterator i=otherGlobal.begin();i!=otherGlobal.end();i++)
       toPush(sourceObjects,*i);
+    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      QString line="ROLE:";
+      line+=*i;
+      toPush(sourceObjects,line);
+    }
+    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      QString line="USER:";
+      line+=*i;
+      toPush(sourceObjects,line);
+    }
     for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE FAMILY";
-      line+=":";
+      QString line="TABLE FAMILY:";
       line+=*i;
       toPush(sourceObjects,line);
     }
@@ -290,15 +338,25 @@ void toScript::execute(void)
     for(list<QString>::iterator i=userOther.begin();i!=userOther.end();i++)
       toPush(sourceObjects,*i);
     for(list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-      QString line="TABLE REFERENCES";
-      line+=":";
+      QString line="TABLE REFERENCES:";
+      line+=*i;
+      toPush(sourceObjects,line);
+    }
+    for(list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
+      QString line="ROLE GRANTS:";
+      line+=*i;
+      toPush(sourceObjects,line);
+    }
+    for(list<QString>::iterator i=users.begin();i!=users.end();i++) {
+      QString line="USER GRANTS:";
       line+=*i;
       toPush(sourceObjects,line);
     }
 
     list<QString> sourceDescription;
     QString script;
-    {
+
+    try {
       toExtract source(toMainWidget()->connection(SourceConnection->currentText()),this);
       setupExtract(source);
       switch(mode) {
@@ -312,6 +370,8 @@ void toScript::execute(void)
       case 3:
 	break;
       }
+    } catch (const QString &str) {
+      
     }
 
     list<QString> destinationObjects;
@@ -352,13 +412,15 @@ void toScript::changeSource(int)
       if (top!=(lastTop?lastTop->text(0):QString::null)) {
 	lastFirst=NULL;
 	lastTop=new QCheckListItem(Objects,top,QCheckListItem::CheckBox);
+	if (!second.isEmpty()||first.isEmpty())
+	  lastTop->setText(1,"USER");
       }
       if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
 	lastFirst=new QCheckListItem(lastTop,first,QCheckListItem::CheckBox);
 	if (second.isEmpty())
 	  lastFirst->setText(1,top);
       }
-      if (!second.isEmpty()) {
+      if (!second.isEmpty()&&lastFirst) {
 	QListViewItem *item=new QCheckListItem(lastFirst,second,QCheckListItem::CheckBox);
 	item->setText(1,first);
 	item->setText(2,top);
@@ -526,7 +588,7 @@ void toScript::setupExtract(toExtract &extr)
 
   if (Schema->currentText()=="Same")
     extr.setSchema("1");
-  if (Schema->currentText()=="None")
+  else if (Schema->currentText()=="None")
     extr.setSchema(QString::null);
   else
     extr.setSchema(Schema->currentText());

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>610</width>
+            <width>606</width>
             <height>585</height>
         </rect>
     </property>
@@ -518,21 +518,7 @@
                         <column>
                             <property>
                                 <name>text</name>
-                                <string>Schema</string>
-                            </property>
-                            <property>
-                                <name>clickable</name>
-                                <bool>true</bool>
-                            </property>
-                            <property>
-                                <name>resizeable</name>
-                                <bool>true</bool>
-                            </property>
-                        </column>
-                        <column>
-                            <property>
-                                <name>text</name>
-                                <string>Object</string>
+                                <string>Objects</string>
                             </property>
                             <property>
                                 <name>clickable</name>

@@ -102,6 +102,7 @@ static struct {
 	       { 0,"procedure",	false,false,false,false },
 	       { 0,"function",	false,false,false,false },
 	       { 0,"end",	false,true ,true ,false },
+	       { 0,"rem",	false,false,false,true  },
 	       { 0,"prompt",	false,false,false,true  },
 	       { 0,"set",	false,false,false,true  },
 	       { 0,NULL,	false,false,false,false }
@@ -631,7 +632,7 @@ void toWorksheet::execute(bool all,bool step)
 	  case inCode:
 	    for (int j=0;Blocks[j].Start;j++) {
 	      int &pos=Blocks[j].Pos;
-	      if (tolower(c)==Blocks[j].Start[pos]) {
+	      if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
 		if (pos>0||!toIsIdent(lastChar)) {
 		  pos++;
 		  if (!Blocks[j].Start[pos]) {
@@ -660,11 +661,23 @@ void toWorksheet::execute(bool all,bool step)
 	    }
 	    break;
 	  case beginning:
-	    if (c=='-'&&nc=='-') {
+	    {
+	      QString rest=data.right(data.length()-i).lower();
+	      for (int j=0;Blocks[j].Start;j++) {
+		unsigned int len=strlen(Blocks[j].Start);
+		if (rest.startsWith(Blocks[j].Start)&&(rest.length()<=len||!toIsIdent(rest[len]))) {
+		  state=comment;
+		  break;
+		}
+	      }
+	      if (state==comment)
+		break;
+	    }
+	    if ((c=='-'&&nc=='-')||(c=='/'&&data.length()==1)) {
 	      state=comment;
 	      break;
 	    } else if (!c.isSpace()) {
-	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step) {
+	      if (((line==cline&&i>cpos)||(line>cline))&&!all&&!step&&startLine>=0&&startPos>=0) {
 		state=done;
 		break;
 	      } else
@@ -681,15 +694,12 @@ void toWorksheet::execute(bool all,bool step)
 	      bool br=false;
 	      for (int j=0;Blocks[j].Start&&!br;j++) {
 		int &pos=Blocks[j].Pos;
-		if (tolower(c)==Blocks[j].Start[pos]) {
+		if (c.lower()==Blocks[j].Start[pos]&&!Blocks[j].Comment) {
 		  if (pos>0||(!toIsIdent(lastChar))) {
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
 		      if (!toIsIdent(nc)) {
-			if (Blocks[j].Comment=true) {
-			  state=comment;
-			  
-			} else if (Blocks[j].CloseBlock) {
+			if (Blocks[j].CloseBlock) {
 			  toStatusMessage("Ending unstarted block");
 			  return;
 			} else if (Blocks[j].WantEnd)
@@ -726,7 +736,9 @@ void toWorksheet::execute(bool all,bool step)
 		if (Editor->hasMarkedText()) {
 		  QueryString=Editor->markedText();
 		  query(QueryString);
-		  Result->readAll();
+		  try {
+		    Result->readAll();
+		  } TOCATCH
 		  NewStatement();
 		  code=false;
 		}

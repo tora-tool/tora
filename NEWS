@@ -45,6 +45,10 @@
 2001-04-03: Fixed copying of the toResultCols.
 2001-04-04: Create foreign constraints separately from table in toExtract.
 2001-04-04: If toResultItem contains numeric value sort numerically.
+2001-04-06: Ignore rem in worksheet.
+2001-04-06: Ignore lone / on line.
+2001-04-07: Fixed SQL parsing in Worksheet... again.
+2001-04-07: Fixed bug when resultlong encounteres error correctly.
 
 0.7: Released 2001-03-24
 

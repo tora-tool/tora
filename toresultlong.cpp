@@ -79,7 +79,15 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
 
     addItem();
 
-  } TOCATCH
+  } catch (const otl_exception &exc) {
+    emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
+    emit done();
+    throw;
+  } catch (const QString &str) {
+    emit firstResult(SQL,str);
+    emit done();
+    throw;
+  }
   updateContents();
 }
 

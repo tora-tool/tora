@@ -196,7 +196,7 @@ class toExtract {
   QString createTableText(list<QString> &result,const QString &schema,const QString &owner,const QString &name);
   QString displaySource(const QString &schema,const QString &owner,const QString &name,
 			const QString &type);
-  QString grantedPrivs(const QString &name);
+  QString grantedPrivs(const QString &schema,const QString &name,int type=3);
   QString indexColumns(const QString &schema,const QString &owner,const QString &name);
   QString keyColumns(const QString &owner,const QString &name,const QString &type,
 		     const QString &table);
@@ -259,6 +259,7 @@ class toExtract {
   QString intSchema(const QString &owner);
   void setSizes(void);
   QString reContext(list<QString> &ctx,int strip,const QString &str);
+  void rethrow(const QString &what,const QString &object,const otl_exception &exc);
 public:
   toExtract(toConnection &conn,QWidget *parent);
 

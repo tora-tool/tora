@@ -271,11 +271,13 @@ QString toExtract::constraintColumns(const QString &owner,const QString &name)
   str<<name.utf8();
 
   QString ret="(\n    ";
-  bool any=false;
+  bool first=true;
   while(!str.eof()) {
     char buffer[100];
     str>>buffer;
-    if (any)
+    if (first)
+      first=false;
+    else
       ret+=",\n    ";
     ret+=QString::fromUtf8(buffer);
   }
@@ -440,9 +442,11 @@ REM
     str+="s";
   str+=" for:\nREM\n";
   for(list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
-    str+="REM ";
-    str+=(*i);
-    str+="\n";
+    if (!(*i).startsWith("TABLE REFERENCES")) {
+      str+="REM ";
+      str+=(*i);
+      str+="\n";
+    }
   }
   str+="\n";
   return str;
@@ -582,9 +586,9 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
     }
     ret+=sql;
     if (tchr=="C") {
-      ret+="    CHECK (";
+      ret+="    (";
       ret+=search;
-      ret+="\n";
+      ret+=")\n";
     } else {
       ret+=constraintColumns(owner,name);
 
@@ -669,6 +673,7 @@ void toExtract::describeConstraint(list<QString> &lst,const QString &schema,
     if (tchr=="C") {
       ret+="CHECK (";
       ret+=search;
+      ret+=")";
     } else {
       ret+=constraintColumns(owner,name);
 
@@ -1027,11 +1032,12 @@ QString toExtract::indexColumns(const QString &indent,
       row=col;
     ret+=indent;
     if(first) {
-      ret+="  , ";
       first=false;
-    } else
       ret+="    ";
+    } else
+      ret+="  , ";
     ret+=row;
+    ret+="\n";
   }
   ret+=indent;
   ret+=")\n";
@@ -1242,7 +1248,7 @@ QString toExtract::segmentAttributes(list<QString> &result)
 	ret+="\n";
       }
       if (!IsASnapIndex)
-	ret+=QString("%1PCTFREE             %2\n").arg(indent).arg(pctUsed);
+	ret+=QString("%1PCTUSED             %2\n").arg(indent).arg(pctUsed);
     }
     if (!IsASnapIndex)
       ret+=QString("%1PCTFREE             %2\n").arg(indent).arg(pctFree);
@@ -1310,7 +1316,7 @@ void toExtract::describeAttributes(list<QString> &dsp,list<QString> &ctx,list<QS
     if (cache!="N/A")
       addDescription(dsp,ctx,cache);
     if (!IsASnapIndex)
-      addDescription(dsp,ctx,QString("PCTFREE %1").arg(pctUsed));
+      addDescription(dsp,ctx,QString("PCTUSED %1").arg(pctUsed));
   }
   if (!IsASnapIndex) {
     addDescription(dsp,ctx,QString("PCTFREE %1").arg(pctFree));
@@ -1497,12 +1503,12 @@ static toSQL SQLTableColumns("toExtract:TableColumns",
                         )
              ,32
             )
-     || DECODE(
+     , data_default
+     , DECODE(
                 nullable
                ,'N','NOT NULL'
                ,     null
               )
-     , data_default
   FROM all_tab_columns
  WHERE table_name = :nam<char[100]>
    AND owner = :own<char[100]>
@@ -1613,11 +1619,15 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
       ret+="\n  , ";
     ret+=toShift(cols);
     QString def=toShift(cols);
+    QString notNull=toShift(cols);
     if (!def.isEmpty()) {
-      ret+=" DEFAULT ";
+      ret+="DEFAULT ";
       ret+=def;
+      ret+=" ";
     }
+    ret+=notNull;
   }
+  ret+="\n";
   return ret;
 }
 
@@ -1973,7 +1983,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
 
   toUnShift(storage,"");
   ret+=segmentAttributes(storage);
-  if (!compressed.isEmpty()&&Storage) {
+  if (!compressed.isEmpty()&&compressed!="0"&&Storage) {
     ret+="COMPRESS            ";
     ret+=compressed;
     ret+="\n";
@@ -2037,7 +2047,7 @@ void toExtract::describeIndex(list<QString> &lst,const QString &schema,
 
   toUnShift(storage,"");
   describeAttributes(lst,ctx,storage);
-  if (!compressed.isEmpty()&&Storage)
+  if (!compressed.isEmpty()&&compressed!="0"&&Storage)
     addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
 }
 
@@ -3301,6 +3311,61 @@ void toExtract::describeTable(list<QString> &lst,
   describeComments(lst,ctx,schema,owner,name);
 }
 
+static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
+			     "SELECT
+        '  '
+      , 'N/A'
+        -- Segment Attributes
+      , DECODE(
+                LTRIM(t.cache)
+               ,'Y','CACHE'
+               ,    'NOCACHE'
+              )
+      , t.pct_used
+      , t.pct_free
+      , DECODE(
+                t.ini_trans
+               ,0,1
+               ,null,1
+               ,t.ini_trans
+              )                       AS ini_trans
+      , DECODE(
+                t.max_trans
+               ,0,255
+               ,null,255
+               ,t.max_trans
+              )                       AS max_trans
+        -- Storage Clause
+      , t.initial_extent
+      , t.next_extent
+      , t.min_extents
+      , DECODE(
+                t.max_extents
+               ,2147483645,'unlimited'
+               ,           t.max_extents
+              )                       AS max_extents
+      , NVL(t.pct_increase,0)
+      , NVL(t.freelists,1)
+      , NVL(t.freelist_groups,1)
+      , LOWER(t.buffer_pool)          AS buffer_pool
+      , DECODE(
+                t.logging
+               ,'NO','NOLOGGING'
+               ,     'LOGGING'
+              )                       AS logging
+      , LOWER(t.tablespace_name)      AS tablespace_name
+      , s.blocks - NVL(t.empty_blocks,0)
+ FROM
+        all_tables    t
+      , dba_segments  s
+ WHERE
+            t.iot_name     = :nam<char[100]>
+        AND t.table_name   = s.segment_name
+        AND s.owner        = :own<char[100]>
+        AND t.owner        = s.owner",
+			  "Get information about overflow segment for table, must have same binds and columns",
+			  "8.0");
+
 static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 				   "SELECT
         -- Table Properties
@@ -3485,6 +3550,12 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
   list<QString> result=toReadQuery(Connection,SQLPartitionedIOTInfo(Connection),
 				   QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
+  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+  if (overflow.size()==18) {
+    ret+="OVERFLOW\n";
+    ret+=segmentAttributes(overflow);
+  }
+
   otl_stream inf(1,
 		 SQLPartitionIndexNames(Connection),
 		 Connection.connection());
@@ -3523,6 +3594,12 @@ void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
   addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
   describePartitions(lst,ctx,owner,index,"NONE","IOT");
   describeComments(lst,ctx,schema,owner,name);
+  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+  describeComments(lst,ctx,schema,owner,name);
+  if (overflow.size()==18) {
+    ctx.insert(ctx.end(),"OVERFLOW");
+    describeAttributes(lst,ctx,overflow);
+  }
 }
 
 static toSQL SQLIOTInfo("toExtract:IOTInfo",
@@ -3602,6 +3679,11 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
   list<QString> storage=toReadQuery(Connection,SQLIOTInfo(Connection),name,owner);
 
   QString ret=createTableText(storage,schema,owner,name);
+  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+  if (overflow.size()==18) {
+    ret+="OVERFLOW\n";
+    ret+=segmentAttributes(overflow);
+  }
   ret+=";\n\n";
   ret+=createComments(schema,owner,name);
   return ret;
@@ -3613,7 +3695,12 @@ void toExtract::describeIOT(list<QString> &lst,list<QString> &ctx,
   list<QString> storage=toReadQuery(Connection,SQLIOTInfo(Connection),name,owner);
 
   describeTableText(lst,ctx,storage,schema,owner,name);
+  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
   describeComments(lst,ctx,schema,owner,name);
+  if (overflow.size()==18) {
+    ctx.insert(ctx.end(),"OVERFLOW");
+    describeAttributes(lst,ctx,overflow);
+  }
 }
 
 static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
@@ -3981,7 +4068,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
 	    first=false;
 	  else
 	    ret+="\n          , ";
-	  ret+=QString("SUBPARTITION %1 TABLESPACE %2").
+	  ret+=QString("SUBPARTITION %2 TABLESPACE %1").
 	    arg(toShift(subs).lower()).
 	    arg(toShift(subs).lower());
 	}
@@ -3998,7 +4085,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
 	first=false;
       else
 	ret+="\n  , ";
-      ret+=QString("PARTITION %1 TABLESPACE %2").
+      ret+=QString("PARTITION %2 TABLESPACE %1").
 	arg(toShift(hash).lower()).
 	arg(toShift(hash).lower());
     }
@@ -4235,7 +4322,7 @@ QString toExtract::createRole(const QString &schema,const QString &owner,const Q
   if (Prompt)
     ret=QString("PROMPT CREATE ROLE %1\n\n").arg(name.lower());
   ret+=QString("CREATE ROLE %1 %2;\n\n").arg(name.lower()).arg(toShift(info));
-  ret+=grantedPrivs(name);
+  ret+=grantedPrivs(name.lower(),name,1);
   return ret;
 }
 
@@ -4295,61 +4382,68 @@ static toSQL SQLObjectPrivs("toExtract:ObjectPrivs",
  ORDER  BY table_name,privilege",
 			    "Get object priveleges granted, must have same columns and binds");
 
-QString toExtract::grantedPrivs(const QString &name)
+QString toExtract::grantedPrivs(const QString &schema,const QString &name,int typ)
 {
   if (!Grants)
     return "";
 
-  list<QString> result=toReadQuery(Connection,SQLRolePrivs(Connection),name);
   QString ret;
-  while(result.size()>0) {
-    QString sql=QString("GRANT %1 TO %2 %3").
-      arg(toShift(result).lower()).
-      arg(name.lower()).
-      arg(toShift(result));
-    if (Prompt) {
-      ret+="PROMPT ";
+  if ((typ&1)==1) {
+    list<QString> result=toReadQuery(Connection,SQLSystemPrivs(Connection),name);
+    while(result.size()>0) {
+      QString priv=toShift(result).lower();
+      QString sql=QString("GRANT %1 TO %2 %3").
+	arg(priv).
+	arg(schema).
+	arg(toShift(result));
+      if (Prompt) {
+	ret+="PROMPT ";
+	ret+=sql;
+	ret+="\n\n";
+      }
       ret+=sql;
-      ret+="\n\n";
+      ret+=";\n\n";
     }
-    ret+=sql;
-    ret+=";\n\n";
   }
 
-  result=toReadQuery(Connection,SQLSystemPrivs(Connection),name);
-  while(result.size()>0) {
-    QString sql=QString("GRANT %1 TO %2 %3").
-      arg(toShift(result).lower()).
-      arg(name.lower()).
-      arg(toShift(result));
-    if (Prompt) {
-      ret+="PROMPT ";
+  if ((typ&2)==2) {
+    list<QString> result=toReadQuery(Connection,SQLRolePrivs(Connection),name);
+    while(result.size()>0) {
+      QString priv=toShift(result).lower();
+      QString sql=QString("GRANT %1 TO %2 %3").
+	arg(priv).
+	arg(name.lower()).
+	arg(toShift(result));
+      if (Prompt) {
+	ret+="PROMPT ";
+	ret+=sql;
+	ret+="\n\n";
+      }
       ret+=sql;
-      ret+="\n\n";
+      ret+=";\n\n";
     }
-    ret+="\n\n";
-    ret+=sql;
-    ret+=";\n\n";
   }
 
-  result=toReadQuery(Connection,SQLObjectPrivs(Connection),name);
-  while(result.size()>0) {
-    QString priv=toShift(result);
-    QString schema=intSchema(toShift(result));
-    QString sql=QString("GRANT %1 ON %2%3 TO %4 %5").
-      arg(priv.lower()).
-      arg(schema).
-      arg(toShift(result).lower()).
-      arg(name).
-      arg(toShift(result));
-    if (Prompt) {
-      ret+="PROMPT ";
+  if ((typ&4)==4) {
+    list<QString> result=toReadQuery(Connection,SQLObjectPrivs(Connection),name);
+    while(result.size()>0) {
+      QString priv=toShift(result);
+      QString schema=intSchema(toShift(result));
+      QString object=toShift(result).lower();
+      QString sql=QString("GRANT %1 ON %2%3 TO %4 %5").
+	arg(priv.lower()).
+	arg(schema).
+	arg(object).
+	arg(name).
+	arg(toShift(result));
+      if (Prompt) {
+	ret+="PROMPT ";
+	ret+=sql;
+	ret+="\n\n";
+      }
       ret+=sql;
-      ret+="\n\n";
+      ret+=";\n\n";
     }
-    ret+="\n\n";
-    ret+=sql;
-    ret+=";\n\n";
   }
   return ret;
 }
@@ -4659,19 +4753,26 @@ static toSQL SQLTableTriggers("toExtract:TableTriggers",
 			      "Get triggers for a table, must have same columns and binds");
 
 static toSQL SQLIndexNames("toExtract:IndexNames",
-			   "SELECT a.index_name
+			   "SELECT owner,index_name
   FROM all_indexes a
- WHERE a.table_name = :nam<char[100]>
-   AND a.table_owner = :own<char[100]>",
-			   "Get all indexes, same binds and columns");
+ WHERE table_name = :nam<char[100]>
+   AND table_owner = :own<char[100]>
+   AND (owner,index_name) NOT IN (SELECT b.owner,
+                                         b.constraint_name
+                                    FROM all_constraints b
+                                   WHERE b.owner = a.table_owner
+                                     AND b.table_name = a.table_name)",
+			   "Get all indexes not tied to any constriaints, same binds and columns");
 
 QString toExtract::createTableFamily(const QString &schema,const QString &owner,const QString &name)
 {
   QString ret=createTable(schema,owner,name);
 
   list<QString> indexes=toReadQuery(Connection,SQLIndexNames(Connection),name,owner);
-  while(indexes.size()>0)
-    ret+=createIndex(schema,owner,toShift(indexes));
+  while(indexes.size()>0) {
+    QString indOwner(toShift(indexes));
+    ret+=createIndex(intSchema(indOwner),indOwner,toShift(indexes));
+  }
 
   otl_stream inf(1,
 		 SQLTableType(Connection),
@@ -4705,8 +4806,10 @@ void toExtract::describeTableFamily(list<QString> &lst,
   describeTable(lst,schema,owner,name);
 
   list<QString> indexes=toReadQuery(Connection,SQLIndexNames(Connection),name,owner);
-  while(indexes.size()>0)
-    describeIndex(lst,schema,owner,toShift(indexes));
+  while(indexes.size()>0) {
+    QString indOwner(toShift(indexes));
+    describeIndex(lst,intSchema(indOwner),indOwner,toShift(indexes));
+  }
 
   otl_stream inf(1,
 		 SQLTableType(Connection),
@@ -5327,13 +5430,18 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
   QString temporaryTablespace=toShift(info);
 
   QString ret;
+  QString nam;
+  if (Schema!="1"&&!Schema.isEmpty())
+    nam=Schema.lower();
+  else
+    nam=name.lower();
   if (Prompt)
-    ret=QString("PROMPT CREATE USER %1\n\n").arg(name.lower());
+    ret=QString("PROMPT CREATE USER %1\n\n").arg(nam);
   ret+=QString("CREATE USER %1 IDENTIFIED %2\n"
 	       "   PROFILE              %3\n"
 	       "   DEFAULT TABLESPACE   %4\n"
 	       "   TEMPORARY TABLESPACE %5\n").
-    arg(name.lower()).
+    arg(nam).
     arg(password).
     arg(profile.lower()).
     arg(defaultTablespace.lower()).
@@ -5342,13 +5450,15 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
   if (Storage) {
     list<QString> quota=toReadQuery(Connection,SQLUserQuotas(Connection),name);
     while(quota.size()>0) {
+      QString siz=toShift(quota);
+      QString tab=toShift(quota);
       ret+=QString("   QUOTA %1 ON %2\n").
-	arg(toShift(quota).lower()).
-	arg(toShift(quota));
+	arg(siz).
+	arg(tab);
     }
   }
   ret+=";\n\n";
-  ret+=grantedPrivs(name);
+  ret+=grantedPrivs(nam,name,3);
   return ret;
 }
 
@@ -5383,8 +5493,8 @@ void toExtract::describeUser(list<QString> &lst,
       QString siz=toShift(quota);
       QString tab=toShift(quota);
       addDescription(lst,ctx,"QUOTA",QString("%1 ON %2").
-		     arg(toShift(quota).lower()).
-		     arg(toShift(quota)));
+		     arg(siz).
+		     arg(tab));
     }
   }
   describePrivs(lst,ctx,name);
@@ -5974,24 +6084,26 @@ QString toExtract::compile(list<QString> &objects)
     QString utype=type.upper();
     QString schema=intSchema(owner);
 
-    if (utype=="FUNCTION"||
-	utype=="PROCEDURE"||
-	utype=="TRIGGER"||
-	utype=="VIEW") {
-      ret+=compile(schema,owner,name,utype);
-    } else if (utype=="PACKAGE") {
-      ret+=compilePackage(schema,owner,name,utype);
-    } else {
-      QString str="Invalid type ";
-      str+=type;
-      str+=" to compile";
-      throw str;
+    try {
+      if (utype=="FUNCTION"||
+	  utype=="PROCEDURE"||
+	  utype=="TRIGGER"||
+	  utype=="VIEW") {
+	ret+=compile(schema,owner,name,utype);
+      } else if (utype=="PACKAGE") {
+	ret+=compilePackage(schema,owner,name,utype);
+      } else {
+	QString str="Invalid type ";
+	str+=type;
+	str+=" to compile";
+	throw str;
+      }
+    } catch (const otl_exception &exc) {
+      rethrow("Compile",*i,exc);
     }
   }
   return ret;
 }
-
-#include <stdio.h>
 
 QString toExtract::create(list<QString> &objects)
 {
@@ -6005,7 +6117,6 @@ QString toExtract::create(list<QString> &objects)
 
   int num=1;
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
-    printf("%s\n",(const char *)(*i));
     progress.setProgress(num);
     label->setText(*i);
     qApp->processEvents();
@@ -6024,66 +6135,96 @@ QString toExtract::create(list<QString> &objects)
     QString utype=type.upper();
     QString schema=intSchema(owner);
 
-    if (utype=="CONSTRAINT")
-      ret+=createConstraint(schema,owner,name);
-    else if (utype=="DATABASE LINK")
-      ret+=createDBLink(schema,owner,name);
-    else if (utype=="EXCHANGE INDEX")
-      ret+=createExchangeIndex(schema,owner,name);
-    else if (utype=="EXCHANGE TABLE")
-      ret+=createExchangeTable(schema,owner,name);
-    else if (utype=="FUNCTION")
-      ret+=createFunction(schema,owner,name);
-    else if (utype=="INDEX")
-      ret+=createIndex(schema,owner,name);
-    else if (utype=="MATERIALIZED VIEW")
-      ret+=createMaterializedView(schema,owner,name);
-    else if (utype=="MATERIALIZED VIEW LOG")
-      ret+=createMaterializedViewLog(schema,owner,name);
-    else if (utype=="PACKAGE")
-      ret+=createPackage(schema,owner,name);
-    else if (utype=="PACKAGE BODY")
-      ret+=createPackageBody(schema,owner,name);
-    else if (utype=="PROCEDURE")
-      ret+=createProcedure(schema,owner,name);
-    else if (utype=="PROFILE")
-      ret+=createProfile(schema,owner,name);
-    else if (utype=="ROLE")
-      ret+=createRole(schema,owner,name);
-    else if (utype=="ROLLBACK SEGMENT")
-      ret+=createRollbackSegment(schema,owner,name);
-    else if (utype=="SEQUENCE")
-      ret+=createSequence(schema,owner,name);
-    else if (utype=="SNAPSHOT")
-      ret+=createSnapshot(schema,owner,name);
-    else if (utype=="SNAPSHOT LOG")
-      ret+=createSnapshotLog(schema,owner,name);
-    else if (utype=="SYNONYM")
-      ret+=createSynonym(schema,owner,name);
-    else if (utype=="TABLE")
-      ret+=createTable(schema,owner,name);
-    else if (utype=="TABLE FAMILY")
-      ret+=createTableFamily(schema,owner,name);
-    else if (utype=="TABLE REFERENCES")
-      ret+=createTableReferences(schema,owner,name);
-    else if (utype=="TABLESPACE")
-      ret+=createTablespace(schema,owner,name);
-    else if (utype=="TRIGGER")
-      ret+=createTrigger(schema,owner,name);
-    else if (utype=="TYPE")
-      ret+=createType(schema,owner,name);
-    else if (utype=="USER")
-      ret+=createUser(schema,owner,name);
-    else if (utype=="VIEW")
-      ret+=createView(schema,owner,name);
-    else {
-      QString str="Invalid type ";
-      str+=type;
-      str+=" to create";
-      throw str;
+    try {
+      if (utype=="CONSTRAINT")
+	ret+=createConstraint(schema,owner,name);
+      else if (utype=="DATABASE LINK")
+	ret+=createDBLink(schema,owner,name);
+      else if (utype=="EXCHANGE INDEX")
+	ret+=createExchangeIndex(schema,owner,name);
+      else if (utype=="EXCHANGE TABLE")
+	ret+=createExchangeTable(schema,owner,name);
+      else if (utype=="FUNCTION")
+	ret+=createFunction(schema,owner,name);
+      else if (utype=="INDEX")
+	ret+=createIndex(schema,owner,name);
+      else if (utype=="MATERIALIZED VIEW")
+	ret+=createMaterializedView(schema,owner,name);
+      else if (utype=="MATERIALIZED VIEW LOG")
+	ret+=createMaterializedViewLog(schema,owner,name);
+      else if (utype=="PACKAGE")
+	ret+=createPackage(schema,owner,name);
+      else if (utype=="PACKAGE BODY")
+	ret+=createPackageBody(schema,owner,name);
+      else if (utype=="PROCEDURE")
+	ret+=createProcedure(schema,owner,name);
+      else if (utype=="PROFILE")
+	ret+=createProfile(schema,owner,name);
+      else if (utype=="ROLE")
+	ret+=createRole(schema,owner,name);
+      else if (utype=="ROLE GRANTS")
+	ret+=grantedPrivs(name.lower(),name,6);
+      else if (utype=="ROLLBACK SEGMENT")
+	ret+=createRollbackSegment(schema,owner,name);
+      else if (utype=="SEQUENCE")
+	ret+=createSequence(schema,owner,name);
+      else if (utype=="SNAPSHOT")
+	ret+=createSnapshot(schema,owner,name);
+      else if (utype=="SNAPSHOT LOG")
+	ret+=createSnapshotLog(schema,owner,name);
+      else if (utype=="SYNONYM")
+	ret+=createSynonym(schema,owner,name);
+      else if (utype=="TABLE")
+	ret+=createTable(schema,owner,name);
+      else if (utype=="TABLE FAMILY")
+	ret+=createTableFamily(schema,owner,name);
+      else if (utype=="TABLE REFERENCES")
+	ret+=createTableReferences(schema,owner,name);
+      else if (utype=="TABLESPACE")
+	ret+=createTablespace(schema,owner,name);
+      else if (utype=="TRIGGER")
+	ret+=createTrigger(schema,owner,name);
+      else if (utype=="TYPE")
+	ret+=createType(schema,owner,name);
+      else if (utype=="USER")
+	ret+=createUser(schema,owner,name);
+      else if (utype=="USER GRANTS") {
+	QString nam;
+	if (Schema!="1"&&!Schema.isEmpty())
+	  nam=Schema.lower();
+	else
+	  nam=name.lower();
+	ret+=grantedPrivs(nam,name,4);
+      } else if (utype=="VIEW")
+	ret+=createView(schema,owner,name);
+      else {
+	QString str="Invalid type ";
+	str+=type;
+	str+=" to create";
+	throw str;
+      }
+    } catch (const otl_exception &exc) {
+      rethrow("Create",*i,exc);
     }
   }
   return ret;
+}
+
+void toExtract::rethrow(const QString &what,const QString &object,const otl_exception &exc)
+{
+  throw QString("Encountered error in toExtract\n\n"
+		"Operation:      %1\n"
+		"Object:         %2\n"
+		"TOra Version:   %3\n"
+		"Oracle Version: %4\n"
+		"Error:          %5\n"
+		"SQL:\n%6\n").
+    arg(what).
+    arg(object).
+    arg(TOVERSION).
+    arg(Connection.version()).
+    arg((const char *)exc.msg).
+    arg((const char *)exc.stm_text);
 }
 
 list<QString> toExtract::describe(list<QString> &objects)
@@ -6094,7 +6235,7 @@ list<QString> toExtract::describe(list<QString> &objects)
   list<QString> ret;
 
   QProgressDialog progress("Creating description","&Cancel",objects.size(),Parent,"progress",true);
-  progress.setCaption("Creating script");
+  progress.setCaption("Creating description");
   QLabel *label=new QLabel(&progress);
   progress.setLabel(label);
 
@@ -6120,63 +6261,71 @@ list<QString> toExtract::describe(list<QString> &objects)
 
     list<QString> cur;
 
-    if (utype=="CONSTRAINT")
-      describeConstraint(cur,schema,owner,name);
-    else if (utype=="DATABASE LINK")
-      describeDBLink(cur,schema,owner,name);
-    else if (utype=="EXCHANGE INDEX")
-      describeExchangeIndex(cur,schema,owner,name);
-    else if (utype=="EXCHANGE TABLE")
-      describeExchangeTable(cur,schema,owner,name);
-    else if (utype=="FUNCTION")
-      describeFunction(cur,schema,owner,name);
-    else if (utype=="INDEX")
-      describeIndex(cur,schema,owner,name);
-    else if (utype=="MATERIALIZED VIEW")
-      describeMaterializedView(cur,schema,owner,name);
-    else if (utype=="MATERIALIZED VIEW LOG")
-      describeMaterializedViewLog(cur,schema,owner,name);
-    else if (utype=="PACKAGE")
-      describePackage(cur,schema,owner,name);
-    else if (utype=="PACKAGE BODY")
-      describePackageBody(cur,schema,owner,name);
-    else if (utype=="PROCEDURE")
-      describeProcedure(cur,schema,owner,name);
-    else if (utype=="PROFILE")
-      describeProfile(cur,schema,owner,name);
-    else if (utype=="ROLE")
-      describeRole(cur,schema,owner,name);
-    else if (utype=="ROLLBACK SEGMENT")
-      describeRollbackSegment(cur,schema,owner,name);
-    else if (utype=="SEQUENCE")
-      describeSequence(cur,schema,owner,name);
-    else if (utype=="SNAPSHOT")
-      describeSnapshot(cur,schema,owner,name);
-    else if (utype=="SNAPSHOT LOG")
-      describeSnapshotLog(cur,schema,owner,name);
-    else if (utype=="SYNONYM")
-      describeSynonym(cur,schema,owner,name);
-    else if (utype=="TABLE")
-      describeTable(cur,schema,owner,name);
-    else if (utype=="TABLE FAMILY")
-      describeTableFamily(cur,schema,owner,name);
-    else if (utype=="TABLE REFERENCES")
-      describeTableReferences(cur,schema,owner,name);
-    else if (utype=="TABLESPACE")
-      describeTablespace(cur,schema,owner,name);
-    else if (utype=="TRIGGER")
-      describeTrigger(cur,schema,owner,name);
-    else if (utype=="TYPE")
-      describeType(cur,schema,owner,name);
-    else if (utype=="USER")
-      describeUser(cur,schema,owner,name);
-    else if (utype=="VIEW")
-      describeView(cur,schema,owner,name);
-    else {
-      QString str="Invalid type ";
-      str+=type;
-      str+=" to describe";
-      throw str;
+    try {
+      if (utype=="CONSTRAINT")
+	describeConstraint(cur,schema,owner,name);
+      else if (utype=="DATABASE LINK")
+	describeDBLink(cur,schema,owner,name);
+      else if (utype=="EXCHANGE INDEX")
+	describeExchangeIndex(cur,schema,owner,name);
+      else if (utype=="EXCHANGE TABLE")
+	describeExchangeTable(cur,schema,owner,name);
+      else if (utype=="FUNCTION")
+	describeFunction(cur,schema,owner,name);
+      else if (utype=="INDEX")
+	describeIndex(cur,schema,owner,name);
+      else if (utype=="MATERIALIZED VIEW")
+	describeMaterializedView(cur,schema,owner,name);
+      else if (utype=="MATERIALIZED VIEW LOG")
+	describeMaterializedViewLog(cur,schema,owner,name);
+      else if (utype=="PACKAGE")
+	describePackage(cur,schema,owner,name);
+      else if (utype=="PACKAGE BODY")
+	describePackageBody(cur,schema,owner,name);
+      else if (utype=="PROCEDURE")
+	describeProcedure(cur,schema,owner,name);
+      else if (utype=="PROFILE")
+	describeProfile(cur,schema,owner,name);
+      else if (utype=="ROLE")
+	describeRole(cur,schema,owner,name);
+      else if (utype=="ROLE GRANTS") {
+	// A nop, everything is done in describe rolw
+      } else if (utype=="ROLLBACK SEGMENT")
+	describeRollbackSegment(cur,schema,owner,name);
+      else if (utype=="SEQUENCE")
+	describeSequence(cur,schema,owner,name);
+      else if (utype=="SNAPSHOT")
+	describeSnapshot(cur,schema,owner,name);
+      else if (utype=="SNAPSHOT LOG")
+	describeSnapshotLog(cur,schema,owner,name);
+      else if (utype=="SYNONYM")
+	describeSynonym(cur,schema,owner,name);
+      else if (utype=="TABLE")
+	describeTable(cur,schema,owner,name);
+      else if (utype=="TABLE FAMILY")
+	describeTableFamily(cur,schema,owner,name);
+      else if (utype=="TABLE REFERENCES")
+	describeTableReferences(cur,schema,owner,name);
+      else if (utype=="TABLESPACE")
+	describeTablespace(cur,schema,owner,name);
+      else if (utype=="TRIGGER")
+	describeTrigger(cur,schema,owner,name);
+      else if (utype=="TYPE")
+	describeType(cur,schema,owner,name);
+      else if (utype=="USER")
+	describeUser(cur,schema,owner,name);
+      else if (utype=="USER GRANTS") {
+	// A nop, everything is done in describe user
+      } else if (utype=="VIEW")
+	describeView(cur,schema,owner,name);
+      else {
+	QString str="Invalid type ";
+	str+=type;
+	str+=" to describe";
+	throw str;
+      }
+    } catch (const otl_exception &exc) {
+      rethrow("Describe",*i,exc);
     }
     cur.sort();
     ret.merge(cur);
@@ -6214,57 +6363,61 @@ QString toExtract::drop(list<QString> &objects)
     QString utype=type.upper();
     QString schema=intSchema(owner);
 
-    if (utype=="CONSTRAINT")
-      ret+=dropConstraint(schema,owner,utype,name);
-    else if (utype=="DATABASE LINK")
-      ret+=dropDatabaseLink(schema,owner,utype,name);
-    else if (utype=="DIMENSION")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="DIRECTORY")
-      ret+=dropObject(schema,owner,utype,name);
-    else if (utype=="FUNCTION")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="INDEX")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="MATERIALIZED VIEW")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="MATERIALIZED VIEW LOG")
-      ret+=dropMViewLog(schema,owner,utype,name);
-    else if (utype=="PACKAGE")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="PROCEDURE")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="PROFILE")
-      ret+=dropProfile(schema,owner,utype,name);
-    else if (utype=="ROLE")
-      ret+=dropObject(schema,owner,utype,name);
-    else if (utype=="ROLLBACK SEGMENT")
-      ret+=dropObject(schema,owner,utype,name);
-    else if (utype=="SEQUENCE")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="SNAPSHOT")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="SNAPSHOT LOG")
-      ret+=dropMViewLog(schema,owner,utype,name);
-    else if (utype=="SYNONYM")
-      ret+=dropSynonym(schema,owner,utype,name);
-    else if (utype=="TABLE")
-      ret+=dropTable(schema,owner,utype,name);
-    else if (utype=="TABLESPACE")
-      ret+=dropTablespace(schema,owner,utype,name);
-    else if (utype=="TRIGGER")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="TYPE")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else if (utype=="USER")
-      ret+=dropUser(schema,owner,utype,name);
-    else if (utype=="VIEW")
-      ret+=dropSchemaObject(schema,owner,utype,name);
-    else {
-      QString str="Invalid type ";
-      str+=type;
-      str+=" to drop";
-      throw str;
+    try {
+      if (utype=="CONSTRAINT")
+	ret+=dropConstraint(schema,owner,utype,name);
+      else if (utype=="DATABASE LINK")
+	ret+=dropDatabaseLink(schema,owner,utype,name);
+      else if (utype=="DIMENSION")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="DIRECTORY")
+	ret+=dropObject(schema,owner,utype,name);
+      else if (utype=="FUNCTION")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="INDEX")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="MATERIALIZED VIEW")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="MATERIALIZED VIEW LOG")
+	ret+=dropMViewLog(schema,owner,utype,name);
+      else if (utype=="PACKAGE")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="PROCEDURE")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="PROFILE")
+	ret+=dropProfile(schema,owner,utype,name);
+      else if (utype=="ROLE")
+	ret+=dropObject(schema,owner,utype,name);
+      else if (utype=="ROLLBACK SEGMENT")
+	ret+=dropObject(schema,owner,utype,name);
+      else if (utype=="SEQUENCE")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="SNAPSHOT")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="SNAPSHOT LOG")
+	ret+=dropMViewLog(schema,owner,utype,name);
+      else if (utype=="SYNONYM")
+	ret+=dropSynonym(schema,owner,utype,name);
+      else if (utype=="TABLE")
+	ret+=dropTable(schema,owner,utype,name);
+      else if (utype=="TABLESPACE")
+	ret+=dropTablespace(schema,owner,utype,name);
+      else if (utype=="TRIGGER")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="TYPE")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else if (utype=="USER")
+	ret+=dropUser(schema,owner,utype,name);
+      else if (utype=="VIEW")
+	ret+=dropSchemaObject(schema,owner,utype,name);
+      else {
+	QString str="Invalid type ";
+	str+=type;
+	str+=" to drop";
+	throw str;
+      }
+    } catch (const otl_exception &exc) {
+      rethrow("Drop",*i,exc);
     }
   }
   return ret;
@@ -6300,16 +6453,20 @@ QString toExtract::resize(list<QString> &objects)
     QString utype=type.upper();
     QString schema=intSchema(owner);
 
-    if (utype=="INDEX")
-      ret+=resizeIndex(schema,owner,name);
-    else if (utype=="TABLE")
-      ret+=resizeTable(schema,owner,name);
-    else {
-      QString str="Invalid type ";
-      str+=type;
-      str+=" to resize";
-      throw str;
-    }    
+    try {
+      if (utype=="INDEX")
+	ret+=resizeIndex(schema,owner,name);
+      else if (utype=="TABLE")
+	ret+=resizeTable(schema,owner,name);
+      else {
+	QString str="Invalid type ";
+	str+=type;
+	str+=" to resize";
+	throw str;
+      }
+    } catch (const otl_exception &exc) {
+      rethrow("Resize",*i,exc);
+    }
   }
   return ret;
 }
