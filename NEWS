@@ -1,5 +1,6 @@
 1.3.6:
 
+2002-05-18: Fixed spelling error in help.
 2002-05-17: Changed release script to generate two static binaries only.
 2002-05-17: Made file IO access DB in background in tuning.
 2002-05-17: Updated version to 1.3.6.
