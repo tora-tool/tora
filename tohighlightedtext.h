@@ -216,6 +216,11 @@ protected:
   /** Reimplemented for internal reasons.
    */
   virtual void keyPressEvent(QKeyEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusOutEvent(QFocusEvent *e);
+  /** Check if to view completion.
+   */
   virtual void checkComplete(void);
 public:
   /** Convert a linenumber after a change of the buffer to another linenumber. Can be
@@ -231,6 +236,9 @@ public:
    * @param name Name of widget.
    */
   toHighlightedText(QWidget *parent,const char *name=NULL);
+  /** Reimplemented for internal reasons
+   */
+  virtual ~toHighlightedText();
 
   /** Clear the editor.
    */

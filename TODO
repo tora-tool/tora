@@ -32,7 +32,6 @@ Extended functionality:
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
 * Full support for Oracle 9i.
-* Completion on column & function names in editor.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
 * Statistics saving and comparison in worksheet.

@@ -62,8 +62,6 @@ toSyntaxAnalyzer::toSyntaxAnalyzer(const char **keywords)
   ColorsUpdated=false;
 }
 
-#include <stdio.h>
-
 toSyntaxAnalyzer::posibleHit::posibleHit(const char *text)
 {
   Pos=1;
@@ -358,8 +356,8 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	  QString mrk=markedText();
 	  if (!mrk.isEmpty()&&(line1!=curline||col1!=curcol))
 	    x-=painter->fontMetrics().width(mrk);
-	  Completion->move(x,
-			   cursorPoint().y()+cellHeight()-yOffset());
+	  QPoint p=mapToGlobal(QPoint(x,cursorPoint().y()+cellHeight()-yOffset()));
+	  Completion->move(topLevelWidget()->mapFromGlobal(p));
 	}
 	Cursor++;
       } else
@@ -496,12 +494,16 @@ void toHighlightedText::checkComplete(void)
       try {
 	toConnection &conn=toCurrentConnection(this);
 	AllComplete=conn.columns(conn.realName(name));
-	Completion=new QListBox(this);
+	Completion=new QListBox(topLevelWidget());
+	Completion->setFocusPolicy(NoFocus);
+	Completion->setFont(font());
 	CompleteItem=-1;
 	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
 	  Completion->insertItem(*i);
 	}
-	Completion->move(cursorPoint().x()-xOffset(),cursorPoint().y()+cellHeight()-yOffset());
+	QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
+				    cursorPoint().y()+cellHeight()-yOffset()));
+	Completion->move(topLevelWidget()->mapFromGlobal(p));
 	Completion->setFixedHeight(cellHeight()*min(int(AllComplete.size()),8));
 	Completion->show();
 	connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
@@ -638,4 +640,16 @@ void toHighlightedText::previousError(void)
   }
   if (curcol>=0)
     setCursorPosition(curcol,0);
+}
+
+void toHighlightedText::focusOutEvent(QFocusEvent *e)
+{
+  delete Completion;
+  Completion=NULL;
+}
+
+toHighlightedText::~toHighlightedText()
+{
+  delete Completion;
+  Completion=NULL;
 }

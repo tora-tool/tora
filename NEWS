@@ -44,6 +44,8 @@
 2001-09-17: Added option to maximize main window on startup.
 2001-09-17: Added code completion to toHighlightedText.
 2001-09-17: Removed timer from results.
+2001-09-17: Made it possible to use shortkeys in sub worksheets.
+2001-09-17: Added describe under cursor to worksheet.
 
 1.1.0: Released 2001-09-09
 

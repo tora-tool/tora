@@ -92,6 +92,7 @@
 #include "icons/eraselog.xpm"
 #include "icons/stop.xpm"
 #include "icons/clock.xpm"
+#include "icons/describe.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
@@ -220,6 +221,50 @@ public:
 
 static toWorksheetTool WorksheetTool;
 
+class toWorksheetText : public toHighlightedText {
+  toWorksheet *Worksheet;
+public:
+  toWorksheetText(toWorksheet *worksheet,QWidget *parent,const char *name=NULL)
+    : toHighlightedText(parent,name),Worksheet(worksheet)
+  { }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e)
+  {
+    if (e->state()==ControlButton&&
+	e->key()==Key_Return) {
+      Worksheet->execute();
+      e->accept();
+    } else if (e->state()==0&&
+	       e->key()==Key_F8) {
+      Worksheet->executeAll();
+      e->accept();
+    } else if (e->state()==0&&
+	       e->key()==Key_F9) {
+      Worksheet->executeStep();
+      e->accept();
+    } else if (e->state()==ShiftButton&&
+	       e->key()==Key_F9) {
+      Worksheet->executeNewline();
+      e->accept();
+    } else if (e->state()==0&&
+	       e->key()==Key_F2) {
+      Worksheet->commitButton();
+      e->accept();
+    } else if (e->state()==0&&
+	       e->key()==Key_F4) {
+      Worksheet->describe();
+      e->accept();
+    } else if (e->state()==ControlButton&&
+	       e->key()==Key_Backspace) {
+      Worksheet->rollbackButton();
+      e->accept();
+    } else {
+      toHighlightedText::keyPressEvent(e);
+    }
+  }
+};
+
 void toWorksheet::viewResources(void)
 {
   try {
@@ -268,7 +313,7 @@ void toWorksheet::setup(bool autoLoad)
 		  toolbar);
 
   if (Light) {
-    Editor=new toHighlightedText(this);
+    Editor=new toWorksheetText(this,this);
     Result=new toResultLong(this);
     Result->hide();
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
@@ -287,6 +332,11 @@ void toWorksheet::setup(bool autoLoad)
     Refresh=NULL;
     ToolMenu=NULL;
     toolbar->addSeparator();
+    new QToolButton(QPixmap((const char **)describe_xpm),
+		    "Describe under cursor",
+		    "Describe under cursor",
+		    this,SLOT(describe(void)),
+		    toolbar);
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       "Stop execution",
 			       "Stop execution",
@@ -296,7 +346,7 @@ void toWorksheet::setup(bool autoLoad)
   } else {
     QSplitter *splitter=new QSplitter(Vertical,this);
 
-    Editor=new toHighlightedText(splitter);
+    Editor=new toWorksheetText(this,splitter);
     ResultTab=new QTabWidget(splitter);
     QVBox *box=new QVBox(ResultTab);
     ResultTab->addTab(box,"Result");
@@ -346,6 +396,11 @@ void toWorksheet::setup(bool autoLoad)
     LastLogItem=NULL;
 
     toolbar->addSeparator();
+    new QToolButton(QPixmap((const char **)describe_xpm),
+		    "Describe under cursor",
+		    "Describe under cursor",
+		    this,SLOT(describe(void)),
+		    toolbar);
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       "Stop execution",
 			       "Stop execution",
@@ -457,6 +512,9 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   "&Rollback",this,SLOT(rollbackButton(void)),
 			   CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
+			   "&Describe under cursor",this,SLOT(describe(void)),
+			   Key_F4);
       ToolMenu->insertItem("&Enable statistics",this,SLOT(toggleStatistic(void)),
 			   0,TO_ID_STATISTICS);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
@@ -594,11 +652,8 @@ bool toWorksheet::describe(const QString &query)
       } else
 	throw QString("Wrong number of parameters for describe");
     }
-    QWidget *curr=ResultTab->currentPage();
     Columns->show();
     Result->hide();
-    if (curr==Result)
-      ResultTab->showPage(Columns);
     return true;
   } else {
     if (Light)
@@ -1092,4 +1147,49 @@ void toWorksheet::commitButton(void)
 void toWorksheet::rollbackButton(void)
 {
   connection().rollback();
+}
+
+void toWorksheet::describe(void)
+{
+  if (Light)
+    return;
+
+  int curline,curcol;
+  Editor->getCursorPosition (&curline,&curcol);
+
+  QString owner;
+  QString table;
+  QString token=Editor->textLine(curline);
+  if (curcol>0&&token[curcol-1].isLetterOrNumber())
+    token=toGetToken(Editor,curline,curcol,false);
+  else
+    token=QString::null;
+
+  int lastline=curline;
+  int lastcol=curcol;
+
+  token=toGetToken(Editor,curline,curcol,false);
+  if (token==".") {
+    lastline=curline;
+    lastcol=curcol;
+    owner=toGetToken(Editor,curline,curcol,false);
+    toGetToken(Editor,lastline,lastcol,true);
+    table+=toGetToken(Editor,lastline,lastcol,true);
+  } else {
+    owner=toGetToken(Editor,lastline,lastcol,true);
+    token=toGetToken(Editor,lastline,lastcol,true);
+    if (token==".")
+      table=toGetToken(Editor,lastline,lastcol,true);
+    else {
+      table=owner;
+      owner=QString::null;
+    }
+  }
+
+  if (owner.isNull())
+    Columns->changeParams(unQuote(table));
+  else
+    Columns->changeParams(unQuote(owner),unQuote(table));
+  Columns->show();
+  Result->hide();
 }

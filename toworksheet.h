@@ -119,6 +119,7 @@ public slots:
   { execute(false,true); }
   void executeNewline();
   void commitButton();
+  void describe();
   void rollbackButton();
   void eraseLogButton();
   void changeResult(QWidget *widget);
