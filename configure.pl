@@ -1456,7 +1456,7 @@ install: \$(TARGET) install-common install-kde
 	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp -r help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 install-debug: tora-mono install-common
 	\@echo Install tora with debugging symbols to \$(INSTALLBIN)

@@ -154,7 +154,7 @@ API=	\
 	toparamget.h		\
 	topiechart.h		\
 	toqvalue.h		\
-	toreport.h		\
+	toreport.h              \
 	toresult.h		\
 	toresultbar.h		\
 	toresultcols.h		\
@@ -174,11 +174,11 @@ API=	\
 	toresultstats.h		\
 	toresultview.h		\
 	tosgastatement.h	\
-	tosmtp.h		\
+	tosmtp.h                \
 	tosql.h			\
 	tosqlparse.h		\
 	totemplate.h		\
-	totextview.h		\
+	totextview.h            \
 	tothread.h		\
 	totool.h		\
 	tovisualize.h		\
@@ -237,10 +237,12 @@ SOURCES=\
 	tooraclesettingui.cpp \
 	tooutput.cpp \
 	toparamget.cpp \
+	topassword.cpp \
 	topiechart.cpp \
 	topreferences.cpp \
 	topreferencesui.cpp \
 	toprofiler.cpp \
+	toproject.cpp \
 	toreport.cpp \
 	toresult.cpp \
 	toresultbar.cpp \
@@ -374,7 +376,7 @@ install: $(TARGET) install-common install-kde
 	rm -f $(INSTALLLIB)/tora/*.tso
 	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
-	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
+	-cp -r help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1
 
 install-debug: tora-mono install-common
 	@echo Install tora with debugging symbols to $(INSTALLBIN)
@@ -477,8 +479,12 @@ plugins/tooracleconnection.tso:\
 	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) -o $@ $^ $(ORACLE_SHARED)
 plugins/tooutput.tso:\
 	objs/tooutput.o
+plugins/topassword.tso:\
+	objs/topassword.o
 plugins/toprofiler.tso:\
 	objs/toprofiler.o
+plugins/toproject.tso:\
+	objs/toproject.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
@@ -554,7 +560,9 @@ tora-plugin:\
 	plugins/tomysqlconnection.tso \
 	plugins/tooracleconnection.tso \
 	plugins/tooutput.tso \
+	plugins/topassword.tso \
 	plugins/toprofiler.tso \
+	plugins/toproject.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \
