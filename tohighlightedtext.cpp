@@ -439,6 +439,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   } else
     painter->fillRect(LeftIgnore,0,width-LeftIgnore,height,bkg);
   painter->setPen(cp.active().text());
+  painter->setBackgroundColor(Analyzer->getColor(toSyntaxAnalyzer::NormalBkg));
 
   if (hasFocus()) {
     if (row==curline) {
