@@ -1,5 +1,20 @@
 1.3.2:
 
+2002-01-13: Disable coalesced by default in storage manager.
+2002-01-13: Don't sort sga trace result in listview by default.
+2002-01-13: Changed name of Windows menu to Window menu.
+2002-01-13: Applied patch for fixing copy problem in X11. (Thanx Volkor Goetz)
+2002-01-13: Fixed problem with no alphanumerical source packages.
+2002-01-13: Implemented describe in Oracle extractor.
+2002-01-12: Fixed bug in describe of snap tables.
+2002-01-12: Added case sensetivity in Oracle extractor.
+2002-01-12: Implemented create in Oracle extractor.
+2002-01-10: Implemented Oracle drop as a proof of concept for extractor.
+2002-01-10: Fixed problem with forgetting to delete progress in extractor.
+2002-01-10: Use new extractor stuff in result extract class.
+2002-01-10: New DB generic extractor framework in place.
+2002-01-03: Added two more quotes.
+2002-01-02: Changed version to 1.3.2.
 2002-01-02: Some more tweaks on the QSql connection provider.
 2002-01-02: Fixed problem with buttons not activating on some connection changes.
 2002-01-02: Added clear chart to context menu of line chart.

@@ -182,6 +182,7 @@ my %plugins=(
 						     "toworksheetsetupui" ],
 					"Any" => 1 },
 	     "tooracleconnection"  => { "Files" => [ "tooracleconnection",
+						     "tooracleextract",
 						     "tooraclesettingui" ],
 					"Oracle" => 1,
 					"Custom" => <<__EOMK__ } ,

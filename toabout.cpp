@@ -205,6 +205,13 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "big productions.</H3>\n"
 "<DIV ALIGN=RIGHT>Userfriendly\n"
 "<DIV ALIGN=LEFT>\n"
+"<H3>Communism doesn't work because people like to own stuff.</H3>\n"
+"<DIV ALIGN=RIGHT>Frank Zappa\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Sure there have been injuries and deaths in boxing,<BR>\n"
+"but none of them serious.</H3>\n"
+"<DIV ALIGN=RIGHT>Boxer Alan Minter\n"
+"<DIV ALIGN=LEFT>\n"
 "<H3>Life is a sexually transmittable desease with terminal outcome.</H3>\n"
 "<DIV ALIGN=RIGHT>Unknown\n"
 "<DIV ALIGN=LEFT>\n"
@@ -217,7 +224,7 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<H3>Hiroshima '45 Chernobyl '86 Windows '95</H3>\n"
 "<DIV ALIGN=RIGHT>Unknown\n"
 "<DIV ALIGN=LEFT>\n"
-"<H3>Accepptance testing: An unsuccessfull attempt to find bugs.</H3>\n"
+"<H3>Acceptance testing: An unsuccessfull attempt to find bugs.</H3>\n"
 "<DIV ALIGN=RIGHT>Unknown\n"
 "<DIV ALIGN=LEFT>\n"
 "<H3>Great minds discuss ideas,<BR>\n"
@@ -291,7 +298,6 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "</H3>\n"
 "<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)\n"
 "<DIV ALIGN=LEFT>";
-
 
 #define ABOUT_CAPTION "TOra %1"
 

@@ -405,7 +405,7 @@ toMain::toMain()
   WindowsMenu=new QPopupMenu(this);
   WindowsMenu->setCheckable(true);
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
-  menuBar()->insertItem("&Windows",WindowsMenu,TO_WINDOWS_MENU);
+  menuBar()->insertItem("&Window",WindowsMenu,TO_WINDOWS_MENU);
 
   menuBar()->insertSeparator();
 
@@ -987,10 +987,12 @@ void toMain::editEnable(toEditWidget *edit)
 		     edit->selectAllEnabled(),
 		     edit->readAllEnabled());
 
+#if QT_VERSION > 300
   // Set Selection Mode on X11
   QClipboard *clip=qApp->clipboard();
   if(clip->supportsSelection())
     clip->setSelectionMode(true);
+#endif
 }
 
 void toMain::editDisable(toEditWidget *edit)

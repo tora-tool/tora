@@ -67,9 +67,13 @@ void toResultExtract::query(const QString &sql,const toQList &param)
     owner=*i;
     i++;
   }
+  toConnection &conn=toToolWidget::connection();
   if (i==params().end()) {
     name=owner;
-    owner=toToolWidget::connection().user().upper();
+    if (toIsOracle(conn))
+      owner=conn.user().upper();
+    else
+      owner=conn.user();
   } else {
     name=*i;
     i++;
@@ -78,7 +82,7 @@ void toResultExtract::query(const QString &sql,const toQList &param)
   try {
     QString type;
     if (i==params().end()) {
-      toQuery query(toToolWidget::connection(),SQLObjectType,owner,name);
+      toQuery query(conn,SQLObjectType,owner,name);
 
       if(query.eof())
 	throw QString("Object not found");
@@ -89,16 +93,19 @@ void toResultExtract::query(const QString &sql,const toQList &param)
 
     std::list<QString> objects;
 
-    if (type=="TABLE"||type=="TABLE PARTITION") {
-      objects.insert(objects.end(),"TABLE FAMILY:"+owner+"."+name);
-      objects.insert(objects.end(),"TABLE REFERENCES:"+owner+"."+name);
-    } else if (type.startsWith("PACKAGE")&&Prompt) {
-      objects.insert(objects.end(),"PACKAGE:"+owner+"."+name);
-      objects.insert(objects.end(),"PACKAGE BODY:"+owner+"."+name);
+    if (toIsOracle(conn)) {
+      if (type=="TABLE"||type=="TABLE PARTITION") {
+	objects.insert(objects.end(),"TABLE FAMILY:"+owner+"."+name);
+	objects.insert(objects.end(),"TABLE REFERENCES:"+owner+"."+name);
+      } else if (type.startsWith("PACKAGE")&&Prompt) {
+	objects.insert(objects.end(),"PACKAGE:"+owner+"."+name);
+	objects.insert(objects.end(),"PACKAGE BODY:"+owner+"."+name);
+      } else
+	objects.insert(objects.end(),type+":"+owner+"."+name);
     } else
-      objects.insert(objects.end(),type+":"+owner+"."+name);
+	objects.insert(objects.end(),type+":"+owner+"."+name);
 
-    toExtract extract(toToolWidget::connection(),NULL);
+    toExtract extract(conn,NULL);
     extract.setCode(true);
     extract.setHeading(false);
     extract.setPrompt(Prompt);
@@ -108,5 +115,9 @@ void toResultExtract::query(const QString &sql,const toQList &param)
 
 bool toResultExtract::canHandle(toConnection &conn)
 {
-  return toIsOracle(conn);
+  try {
+    return toExtract::canHandle(conn)&&!toSQL::string(SQLObjectType,conn).isEmpty();
+  } catch(...) {
+    return false;
+  }
 }

@@ -165,7 +165,6 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   QSplitter *splitter=new QSplitter(Vertical,this);
 
   Trace=new toResultLong(false,false,toQuery::Background,splitter);
-  Trace->setSorting(0);
   Trace->setReadAll(true);
   Statement=new toSGAStatement(splitter);
 

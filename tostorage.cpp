@@ -109,7 +109,7 @@ public:
 toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
   : toStoragePrefsUI(parent,name),toSettingTab("storage.html"),Tool(tool)
 {
-  DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED,"Yes").isEmpty());
+  DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED,"").isEmpty());
   DispExtents->setChecked(!tool->config(CONF_DISP_EXTENTS,"").isEmpty());
 }
 
@@ -839,7 +839,7 @@ void toStorage::windowActivated(QWidget *widget)
 
 void toStorage::refresh(void)
 {
-  Storage->showCoalesced(!StorageTool.config(CONF_DISP_COALESCED,"Yes").isEmpty());
+  Storage->showCoalesced(!StorageTool.config(CONF_DISP_COALESCED,"").isEmpty());
   Storage->query();
 }
 

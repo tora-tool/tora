@@ -227,6 +227,7 @@ SOURCES=\
 	tonewconnectionui.cpp \
 	tonoblockquery.cpp \
 	tooracleconnection.cpp \
+	tooracleextract.cpp \
 	tooraclesettingui.cpp \
 	tooutput.cpp \
 	toparamget.cpp \
@@ -459,6 +460,7 @@ plugins/tomysqlconnection.tso:\
 	$(GCC) -shared $(CFLAGS) $(LFLAGS) $(LFLAGS_GLOB) $(MYSQL_SHARED) -o $@ $^
 plugins/tooracleconnection.tso:\
 	objs/tooracleconnection.o \
+	objs/tooracleextract.o \
 	objs/tooraclesettingui.o
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir -p plugins ; fi

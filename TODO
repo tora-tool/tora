@@ -62,6 +62,11 @@ Extended functionality:
 * Session:Long operations(v$session_longops)
 * Archive log info
 * Rollback:Shrink rollback segment(ALTER ROLLBACK SEGMENT TO {value})
+* Wait event analyzer in sessions.
+* Separate refresh of session info and session list.
+* Add auto extend information to the storage manager.
+* Add copy datafile/tablespace in storage manager.
+* Add warning when changing to Default Storage when disabled in modify tablespace in storage.
 
 New tools:
 

@@ -35,18 +35,135 @@
 #ifndef TO_EXTRACT
 #define TO_EXTRACT
 
-#include "toconnection.h"
+#include <list>
+#include <map>
+
+#include <qstring.h>
+#include <qvariant.h>
+
+class QWidget;
+class toConnection;
 
 // Liberally ported from DDL::Oracle 1.06
 // Copyright (c) 2000, 2001 Richard Sutherland - United States of America
-
-class toExtractProgress;
 
 /**
  * This class can be used to reverse engineered database objects.
  */
 
 class toExtract {
+public:
+
+  /** This is an abstract class to implement part of an extractor for a database. Observe
+   * that an extractor must be stateless and threadsafe except for constructors and
+   * destructors. Use the toExtract::context function for saving context.
+   */
+  class extractor {
+  protected:
+    /** Register an operation to be handled by this extractor.
+     * @param db Database this extractor works on.
+     * @param oper What kind of operation to implement. Can be one of CREATE,
+     *             DESCRIBE, MIGRATE or DROP.
+     * @param type The type of object that this is implemented for. Database specific.
+     */
+    void registerExtract(const QString &db,
+			 const QString &oper,
+			 const QString &type);
+    /** Unregister an operation to be handled by this extractor.
+     * @param db Database this extractor works on.
+     * @param oper What kind of operation to implement. Can be one of CREATE,
+     *             DESCRIBE, MIGRATE or DROP.
+     * @param type The type of object that this is implemented for. Database specific.
+     */
+    void unregisterExtract(const QString &db,
+			   const QString &oper,
+			   const QString &type);
+  public:
+    /** Create an extractor. Normally called from a statical instantiator. Should register
+     * objects it can handle @ref registerExtract. Apart from the objects it handles one
+     * extractor per database can also register an empty operation and type parameter to
+     * @ref registerExtract which will be called to initialize an extractor once per
+     * constructed toExtract object.
+     * operation. 
+     */
+    extractor();
+    /** Destructor.
+     */
+    virtual ~extractor();
+
+    /** Initiate an extractor for a given connection. Can be used to set up states necessary
+     * for further processing. Should probably set blocksize to be used for resizing (@ref
+     * toExtract::setBlocksize).
+     * @param ext Extractor to generate script.
+     */
+    virtual void initialize(toExtract &ext) const
+    { }
+
+    /** Called to generate a script to recreate a database object.
+     * @param ext Extractor to generate script.
+     * @param type Type of object to recreate.
+     * @param schema Specify the schema of the output script or description. If empty
+     *               don't specify any object. If the string "1" use same object as input.
+     *               Otherwise use the specified schema.
+     * @param owner Owner of database object.
+     * @param name Name of database object.
+     * @return A string containing a script to recreate an object.
+     */
+    virtual QString create(toExtract &ext,
+			   const QString &type,
+			   const QString &schema,
+			   const QString &owner,
+			   const QString &name) const
+    { return QString::null; }
+    /** Called to describe a database object.
+     * @param ext Extractor to generate script.
+     * @param lst List of descriptions for the object. Should be appended.
+     * @param type Type of object to recreate.
+     * @param schema Specify the schema of the output script or description. If empty
+     *               don't specify any object. If the string "1" use same object as input.
+     *               Otherwise use the specified schema.
+     * @param owner Owner of database object.
+     * @param name Name of database object.
+     */
+    virtual void describe(toExtract &ext,
+			  std::list<QString> &lst,
+			  const QString &type,
+			  const QString &schema,
+			  const QString &owner,
+			  const QString &name) const 
+    { }
+    /** Called to generate a script to migrate a database object from one description to
+     * another description.
+     * @param ext Extractor to generate script.
+     * @param type Type of object to migrate.
+     * @param src Source description list.
+     * @param dst Destination description list.
+     * @return A script to change the src database object to dst.
+     */
+    virtual QString migrate(toExtract &ext,
+			    const QString &type,
+			    std::list<QString> &src,
+			    std::list<QString> &dst) const
+    { return QString::null; }
+    /** Called to generate a script to drop an object.
+     * @param ext Extractor to generate script.
+     * @param type Type of object to recreate.
+     * @param schema Specify the schema of the output script or description. If empty
+     *               don't specify any object. If the string "1" use same object as input.
+     *               Otherwise use the specified schema.
+     * @param owner Owner of database object.
+     * @param name Name of database object.
+     * @return A string containing a script to recreate an object.
+     */
+    virtual QString drop(toExtract &ext,
+			 const QString &type,
+			 const QString &schema,
+			 const QString &owner,
+			 const QString &name) const
+    { return QString::null; }
+  };
+
+private:
   toConnection &Connection;
   QWidget *Parent;
 
@@ -64,12 +181,7 @@ class toExtract {
   bool Partition;
   bool Prompt;
   bool Storage;
-  QString DbaSegments;
-
-  // Flags
-  bool IsASnapIndex;
-  bool IsASnapTable;
-  bool Describe;
+  bool Initialized;
 
   // Database info
   int BlockSize;
@@ -77,262 +189,67 @@ class toExtract {
   std::list<QString> Next;
   std::list<QString> Limit;
 
-  // Compile functions
-  QString compile(const QString &schema,const QString &owner,const QString &name,
-		  const QString &type);
-  QString compilePackage(const QString &schema,const QString &owner,const QString &name,
-			 const QString &type);
+  // Context, can be used by the extractor to save context
+  std::map<QString,QVariant> Context;
 
-  // Create functions
-  QString createConstraint(const QString &schema,const QString &owner,const QString &name);
-  QString createDBLink(const QString &schema,const QString &owner,const QString &name);
-  QString createExchangeIndex(const QString &schema,const QString &owner,const QString &name);
-  QString createExchangeTable(const QString &schema,const QString &owner,const QString &name);
-  QString createFunction(const QString &schema,const QString &owner,const QString &name);
-  QString createIndex(const QString &schema,const QString &owner,const QString &name);
-  QString createContextPrefs(const QString &schema,const QString &owner,const QString &name, const QString &sql);
-  QString createMaterializedView(const QString &schema,const QString &owner,const QString &name);
-  QString createMaterializedViewLog(const QString &schema,const QString &owner,const QString &name);
-  QString createPackage(const QString &schema,const QString &owner,const QString &name);
-  QString createPackageBody(const QString &schema,const QString &owner,const QString &name);
-  QString createProcedure(const QString &schema,const QString &owner,const QString &name);
-  QString createProfile(const QString &schema,const QString &owner,const QString &name);
-  QString createRole(const QString &schema,const QString &owner,const QString &name);
-  QString createRollbackSegment(const QString &schema,const QString &owner,const QString &name);
-  QString createSequence(const QString &schema,const QString &owner,const QString &name);
-  QString createSnapshot(const QString &schema,const QString &owner,const QString &name);
-  QString createSnapshotLog(const QString &schema,const QString &owner,const QString &name);
-  QString createSynonym(const QString &schema,const QString &owner,const QString &name);
-  QString createTable(const QString &schema,const QString &owner,const QString &name);
-  QString createTableFamily(const QString &schema,const QString &owner,const QString &name);
-  QString createTableContents(const QString &schema,const QString &owner,const QString &name);
-  QString createTableReferences(const QString &schema,const QString &owner,const QString &name);
-  QString createTablespace(const QString &schema,const QString &owner,const QString &name);
-  QString createTrigger(const QString &schema,const QString &owner,const QString &name);
-  QString createType(const QString &schema,const QString &owner,const QString &name);
-  QString createUser(const QString &schema,const QString &owner,const QString &name);
-  QString createView(const QString &schema,const QString &owner,const QString &name);
+  // Stuff to handle extractors
+  static std::map<QString,extractor *> *Extractors;
 
-  // Description functions
-  void describeConstraint(std::list<QString> &lst,const QString &schema,const QString &owner,
-			  const QString &name);
-  void describeDBLink(std::list<QString> &lst,const QString &schema,const QString &owner,
-		      const QString &name);
-  void describeExchangeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
-			     const QString &name);
-  void describeExchangeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
-			     const QString &name);
-  void describeFunction(std::list<QString> &lst,const QString &schema,const QString &owner,
-			const QString &name);
-  void describeIndex(std::list<QString> &lst,const QString &schema,const QString &owner,
-		     const QString &name);
-  void describeMaterializedView(std::list<QString> &lst,const QString &schema,const QString &owner,
-				const QString &name);
-  void describeMaterializedViewLog(std::list<QString> &lst,const QString &schema,const QString &owner,
-				   const QString &name);
-  void describePackage(std::list<QString> &lst,const QString &schema,const QString &owner,
-		       const QString &name);
-  void describePackageBody(std::list<QString> &lst,const QString &schema,const QString &owner,
-			   const QString &name);
-  void describeProcedure(std::list<QString> &lst,const QString &schema,const QString &owner,
-			 const QString &name);
-  void describeProfile(std::list<QString> &lst,const QString &schema,const QString &owner,
-		       const QString &name);
-  void describeRole(std::list<QString> &lst,const QString &schema,const QString &owner,
-		    const QString &name);
-  void describeRollbackSegment(std::list<QString> &lst,const QString &schema,const QString &owner,
-			       const QString &name);
-  void describeSequence(std::list<QString> &lst,const QString &schema,const QString &owner,
-			const QString &name);
-  void describeSnapshot(std::list<QString> &lst,const QString &schema,const QString &owner,
-			const QString &name);
-  void describeSnapshotLog(std::list<QString> &lst,const QString &schema,const QString &owner,
-			   const QString &name);
-  void describeSynonym(std::list<QString> &lst,const QString &schema,const QString &owner,
-		       const QString &name);
-  void describeTable(std::list<QString> &lst,const QString &schema,const QString &owner,
-		     const QString &name);
-  void describeTableFamily(std::list<QString> &lst,const QString &schema,const QString &owner,
-			   const QString &name);
-  void describeTableReferences(std::list<QString> &lst,const QString &schema,const QString &owner,
-			       const QString &name);
-  void describeTablespace(std::list<QString> &lst,const QString &schema,const QString &owner,
-			  const QString &name);
-  void describeTrigger(std::list<QString> &lst,const QString &schema,const QString &owner,
-		       const QString &name);
-  void describeType(std::list<QString> &lst,const QString &schema,const QString &owner,
-		    const QString &name);
-  void describeUser(std::list<QString> &lst,const QString &schema,const QString &owner,
-		    const QString &name);
-  void describeView(std::list<QString> &lst,const QString &schema,const QString &owner,
-		    const QString &name);
+  static void allocExtract(void);
+  static QString extractorName(const QString &db,
+			       const QString &oper,
+			       const QString &type);
+  static extractor *findExtractor(toConnection &conn,
+				  const QString &oper,
+				  const QString &type);
+  extractor *findExtractor(const QString &oper,
+			   const QString &type)
+  { return findExtractor(Connection,oper,type); }
+  void initialize(void);
 
-  // Migrate functions
-  QString migrateConstraint(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateDBLink(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateIndex(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateFunction(std::list<QString> &src,std::list<QString> &dst);
-  QString migratePackage(std::list<QString> &src,std::list<QString> &dst);
-  QString migratePackageBody(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateProcedure(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateProfile(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateRole(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateSequence(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateSynonym(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateTable(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateTableFamily(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateTableReferences(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateTrigger(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateType(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateUser(std::list<QString> &src,std::list<QString> &dst);
-  QString migrateView(std::list<QString> &src,std::list<QString> &dst);
+  // General internal functions
 
-  // Drop functions
-  QString dropConstraint(const QString &schema,const QString &name,const QString &type,
-			 const QString &owner);
-  QString dropDatabaseLink(const QString &schema,const QString &name,const QString &type,
-			   const QString &owner);
-  QString dropMViewLog(const QString &schema,const QString &name,const QString &type,
-		       const QString &owner);
-  QString dropObject(const QString &schema,const QString &name,const QString &type,
-		     const QString &owner);
-  QString dropProfile(const QString &schema,const QString &name,const QString &type,
-		      const QString &owner);
-  QString dropSchemaObject(const QString &schema,const QString &name,const QString &type,
-			   const QString &owner);
-  QString dropSynonym(const QString &schema,const QString &name,const QString &type,
-		      const QString &owner);
-  QString dropTable(const QString &schema,const QString &name,const QString &type,
-		    const QString &owner);
-  QString dropTablespace(const QString &schema,const QString &name,const QString &type,
-			 const QString &owner);
-  QString dropUser(const QString &schema,const QString &name,const QString &type,
-		   const QString &owner);
-
-  // Resize functions
-  QString resizeIndex(const QString &schema,const QString &owner,const QString &name);
-  QString resizeTable(const QString &schema,const QString &owner,const QString &name);
-
-  // Misc extract functions
-  QString constraintColumns(const QString &owner,const QString &name);
-  QString createComments(const QString &schema,const QString &owner,const QString &name);
-  QString createIOT(const QString &schema,const QString &owner,const QString &name);
-  QString createMView(const QString &schema,const QString &owner,const QString &name,
-		      const QString &type);
-  QString createMViewIndex(const QString &schema,const QString &owner,const QString &name);
-  QString createMViewLog(const QString &schema,const QString &owner,const QString &name,
-			 const QString &type);
-  QString createMViewTable(const QString &schema,const QString &owner,const QString &name);
-  QString createPartitionedIOT(const QString &schema,const QString &owner,const QString &name);
-  QString createPartitionedIndex(const QString &schema,const QString &owner,const QString &name,
-				 const QString &soFar);
-  QString createPartitionedTable(const QString &schema,const QString &owner,const QString &name);
-  QString createTableText(toQList &result,const QString &schema,const QString &owner,const QString &name);
-  QString displaySource(const QString &schema,const QString &owner,const QString &name,
-			const QString &type);
-  QString grantedPrivs(const QString &schema,const QString &name,int type=3);
-  QString indexColumns(const QString &schema,const QString &owner,const QString &name);
-  QString keyColumns(const QString &owner,const QString &name,const QString &type,
-		     const QString &table);
-  QString partitionKeyColumns(const QString &owner,const QString &name,const QString &type);
-  QString rangePartitions(const QString &owner,const QString &name,
-			  const QString &subPartitionType,const QString &locality);
-  QString resizeIndexPartition(const QString &schema,const QString &owner,const QString &name,
-			       const QString &partition,const QString &seqType);
-  QString resizeTablePartition(const QString &schema,const QString &owner,const QString &name,
-			       const QString &partition,const QString &seqType);
-  QString subPartitionKeyColumns(const QString &owner,const QString &name,const QString &type);
-  QString tableColumns(const QString &owner,const QString &name);
-
-  // Misc describe functions
-  void describeAttributes(std::list<QString> &lst,std::list<QString> &ctx,toQList &result);
-  void describeComments(std::list<QString> &lst,std::list<QString> &ctx,
-			const QString &schema,const QString &owner,const QString &name);
-  void describePrivs(std::list<QString> &lst,std::list<QString> &ctx,const QString &name);
-  void describeIndexColumns(std::list<QString> &lst,std::list<QString> &ctx,
-			    const QString &owner,const QString &name);
-  void describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
-		   const QString &schema,const QString &owner,const QString &name);
-  void describeMView(std::list<QString> &lst,const QString &schema,
-		     const QString &owner,const QString &name,const QString &type);
-  void describeMViewIndex(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
-			  const QString &owner,const QString &name);
-  void describeMViewLog(std::list<QString> &lst,const QString &schema,
-			const QString &owner,const QString &name,const QString &type);
-  void describeMViewTable(std::list<QString> &lst,std::list<QString> &ctx,const QString &schema,
-			  const QString &owner,const QString &name);
-  void describePartitionedIndex(std::list<QString> &lst,std::list<QString> &ctx,
-				const QString &schema,const QString &owner,const QString &name);
-  void describePartitionedIOT(std::list<QString> &lst,std::list<QString> &ctx,
-			      const QString &schema,const QString &owner,const QString &name);
-  void describePartitionedTable(std::list<QString> &lst,std::list<QString> &ctx,
-				const QString &schema,const QString &owner,const QString &name);
-  void describePartitions(std::list<QString> &lst,std::list<QString> &ctx,
-			  const QString &owner,const QString &name,
-			  const QString &subPartitionType,const QString &locality);
-  void describeTableText(std::list<QString> &lst,std::list<QString> &ctx,toQList &result,
-			 const QString &schema,const QString &owner,const QString &name);
-  void describeTableColumns(std::list<QString> &lst,std::list<QString> &ctx,
-			    const QString &owner,const QString &name);
-  void describeSource(std::list<QString> &lst,const QString &schema,const QString &owner,
-		      const QString &name,const QString &type);
-
-  // Misc functions
-  void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
-		      const QString &arg1=QString::null,const QString &arg2=QString::null,
-		      const QString &arg3=QString::null,const QString &arg4=QString::null,
-		      const QString &arg5=QString::null,const QString &arg6=QString::null,
-		      const QString &arg7=QString::null,const QString &arg8=QString::null,
-		      const QString &arg9=QString::null);
-  std::list<QString> splitDescribe(const QString &str);
-  void clearFlags(void);
-  QString generateHeading(const QString &action,std::list<QString> &list);
-  void initialNext(const QString &blocks,QString &initial,QString &next);
-  void objectExists(const QString &owner,const QString &name,const QString &type);
-  QString prepareDB(const QString &data);
-  QString segmentAttributes(toQList &result);
-  QString intSchema(const QString &owner);
+  /** Parse an object string to get owner and name of the object.
+   * @param object Object string on the format {owner}.{name}.
+   * @param owner Reference to string which will get the object owner.
+   * @param name Reference to string which will get the object name.
+   */
+  void parseObject(const QString &object,QString &owner,QString &name);
   void setSizes(void);
-  QString reContext(std::list<QString> &ctx,int strip,const QString &str);
+
   void rethrow(const QString &what,const QString &object,const QString &exc);
-  QString dbaSegment(const toSQL &);
+  QString generateHeading(const QString &action,std::list<QString> &list);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.
    * @param parent Parent widget of progress indicator.
    */
-
   toExtract(toConnection &conn,QWidget *parent);
-
-  /** Compile the following list of objects.
-   * @param object List of object. This has the format {type}:{schema}.{object}.
-   *               The type can be any of FUNCTION, PROCEDURE, TRIGGER, VIEW or PACKAGE.
-   * @return A string containing a script to compile the specified objects.
-   */
-  QString compile(std::list<QString> &object);
 
   /** Create script to recreate list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
-   *               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
    *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
    *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
    *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
    *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
    *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
-   *               TRIGGER, TYPE, USER, USER GRANTS.
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to recreate the specified objects.
    */
   QString create(std::list<QString> &object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
-   *               The type can be any of CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
    *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
    *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
    *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
    *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
    *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
-   *               TRIGGER, TYPE, USER, USER GRANTS.
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A list of strings describing the objects. Each string should be
    *         considered like a list of strings separated by the character '\001'.
    *         The later in each string the smaller item the change and it is hierachical.
@@ -341,28 +258,32 @@ public:
 
   /** Create script to drop a list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
-   *               The type can be any of CONSTRAINT, DATABASE LINK, DIMENSION
-   *               DIRECTORY, FUNCTION, INDEX, MATERIALIZED VIEW,
-   *               MATERIALIZED VIEW LOG, PACKAGE, PROCEDURE,
-   *               PROFILE, ROLE, ROLLBACK SEGMENT, SEQUENCE,
-   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLESPACE,
-   *               TRIGGER, TYPE, USER.
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to drop the specified objects.
    */
   QString drop(std::list<QString> &object);
-  /** Not implemented yet.
-   */
-  QString resize(std::list<QString> &object);
+
   /** Not implemented yet.
    */
   QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst);
 
-  /** Parse an object string to get owner and name of the object.
-   * @param object Object string on the format {owner}.{name}.
-   * @param owner Reference to string which will get the object owner.
-   * @param name Reference to string which will get the object name.
+  /** Set a context for this extractor.
+   * @param name Name of this context
+   * @param val Value of this context
    */
-  void parseObject(const QString &object,QString &owner,QString &name);
+  void setState(const QString &name,const QVariant &val);
+  /** Get the value of a context for the current extractor.
+   * @param name Name of the context to extract.
+   * @return The value of the context.
+   */
+  QVariant state(const QString &name);
 
   /** Set the schema of the extraction.
    * @param schema Specify the schema of the output script or description. If empty
@@ -434,6 +355,11 @@ public:
    */
   void setCode(bool val)
   { Code=val; }
+  /** Set blocksize of database.
+   * @param val New value of blocksize.
+   */
+  void setBlockSize(int val)
+  { BlockSize=val; setSizes(); }
 
   /** Get schema specification.
    * @return Schema specification.
@@ -446,7 +372,7 @@ public:
    * @see setResize
    */
   bool getResize(void)
-  { return Resize; }
+  { return !Resize.isEmpty(); }
   /** Check if prompt are generated.
    * @return If prompts are generated.
    */
@@ -502,6 +428,30 @@ public:
    */
   bool getCode(void)
   { return Code; }
+  /** Get blocksize.
+   */
+  int getBlockSize(void)
+  { return BlockSize; }
+  /** Get the connection this extractor is working on.
+   */
+  toConnection &connection()
+  { return Connection; }
+
+  /** Fill in the initial and next value for an object currently holding a @ref number of
+   * allocated blocks. Uses the resize or default sizes.
+   * @param blocks Blocks currently allocated.
+   * @param initial New initial value.
+   * @param next New next value.
+   */
+  void initialNext(const QString &blocks,QString &initial,QString &next);
+
+  /** Get the schema name specified by the extractor setup. Will include the following '.'
+   * if needed.
+   * @param owner Owner of object to get schema for.
+   * @param desc Used from describe and not to generate script.
+   * @return The translated schema.
+   */
+  QString intSchema(const QString &owner,bool desc);
 
   /** Create a source and destination object list to two other lists
    * containing dropped and created objects or attributes.
@@ -512,6 +462,31 @@ public:
    */
   static void srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
 				std::list<QString> &drop,std::list<QString> &creat);
+
+  /** Check if a database is supported at all by the extractor.
+   * @param conn Connection to check for support.
+   * @return True if the database is supported.
+   */
+  static bool canHandle(toConnection &conn);
+
+  /** Add a list to description.
+   * @param ret The return list to add a line to.
+   * @param ctx The current description context.
+   * @param arg1 First extra argument to add.
+   */
+  static void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
+			     const QString &arg1=QString::null,const QString &arg2=QString::null,
+			     const QString &arg3=QString::null,const QString &arg4=QString::null,
+			     const QString &arg5=QString::null,const QString &arg6=QString::null,
+			     const QString &arg7=QString::null,const QString &arg8=QString::null,
+			     const QString &arg9=QString::null);
+  /** Split a description line into its components.
+   * @param str The description line to split.
+   * @return The list of components.
+   */
+  static std::list<QString> splitDescribe(const QString &str);
+
+  friend class extractor;
 };
 
 #endif
