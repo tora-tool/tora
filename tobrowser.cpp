@@ -410,6 +410,7 @@ void toBrowseButton::connectionChanged()
 #define TAB_TABLE_GRANTS	"TablesGrants"
 #define TAB_TABLE_TRIGGERS	"TablesTriggers"
 #define TAB_TABLE_INFO		"TablesInfo"
+#define TAB_TABLE_PARTITION	"TablesPartition"
 #define TAB_TABLE_STATISTIC	"TablesStatistic"
 #define TAB_TABLE_EXTENT	"TablesExtent"
 #define TAB_TABLE_EXTRACT	"TablesExtract"
@@ -571,6 +572,33 @@ static toSQL SQLTableStatistic("toBrowser:TableStatstics",
                             "Table Statistics",
                             "",
                             "SapDB");
+static toSQL SQLTablePartition("toBrowser:TablePartitions",
+			       "select    p.partition_name \"Partition\"\n"
+			       "	, p.composite \"Composite\"\n"
+			       "	, p.num_rows \"Partition rows\"\n"
+			       "	, p.high_value \"High value\"\n"
+			       "	, p.subpartition_count \"Subpartitions\"\n"
+			       "	, p.partition_position \"Position\"\n"
+			       "	, s.subpartition_name \"Subpartition\"\n"
+			       "	, s.num_rows \"Subpartition rows\"\n"
+			       "	, s.subpartition_position \"Subpartition position\"\n"
+			       "  from all_tab_partitions p,\n"
+			       "       all_tab_subpartitions s\n"
+			       " where p.table_owner = s.table_owner(+)\n"
+			       "   and p.table_name = s.table_name(+)\n"
+			       "   and p.partition_name = s.partition_name(+)\n"
+			       "   and p.table_owner like upper(:table_owner)\n"
+			       "   and p.table_name like upper(:table_name)\n"
+			       "/* and (p.partition_name like upper (:partition_name) or :partition_name is null ) */\n"
+			       "/* and (s.subpartition_name like upper (:subpartition_name) or :subpartition_name is null) */\n"
+			       "/* and (p.composite like :composite or :composite is null) */\n"
+			       " order by p.table_owner\n"
+			       "	, p.table_name\n"
+			       "	, p.partition_name\n"
+			       "	, s.subpartition_name\n",
+			       "Table partitions",
+			       "8.1");
+
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
 			 "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
@@ -1013,6 +1041,12 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setReadAll(true);
   curr->addTab(resultView,tr("Statistic"));
   SecondMap[TAB_TABLE_STATISTIC]=resultView;
+
+  resultView=new toResultLong(true,false,toQuery::Background,curr,TAB_TABLE_PARTITION);
+  resultView->setSQL(SQLTablePartition);
+  resultView->setReadAll(true);
+  curr->addTab(resultView,tr("Partitions"));
+  SecondMap[TAB_TABLE_PARTITION]=resultView;
 
   toResultExtent *resultExtent=new toResultExtent(curr,TAB_TABLE_EXTENT);
   curr->addTab(resultExtent,tr("Extents"));
