@@ -85,29 +85,6 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
- WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL);
-CREATE OR REPLACE procedure spTuxGetAccData as
-  vYear  CHAR(4);
-begin
-  null;
-end;
-    /* A little comment
-     */
-    SELECT /*+
-FULL(a)
-*/ a.TskCod TskCod -- Test comment
-      ,a.CreEdt CreEdt,
-       a.TspActOprID /* One comment OprID */ , -- Another comment
-       COUNT(1) Tot,
-       COUNT(a.TspActOprID) Lft,
-       b.TraCod TraCod,
-       SUM(b.FinAmt) FinAmt,
-       TraCod
-  FROM EssTsk a,EssTra b
- WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)
-   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
- GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
-HAVING COUNT(a.TspActOprID) > 0;
 -- Another comment
 
 CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,
@@ -130,6 +107,28 @@ BEGIN
 	WHEN OTHERS THEN
 	    oRet := 1;
 END;
+CREATE OR REPLACE procedure spTuxGetAccData as
+  vYear  CHAR(4);
+begin
+  null;
+end;
+    /* A little comment
+     */
+    SELECT /*+
+FULL(a)
+*/ a.TskCod TskCod -- Test comment
+      ,a.CreEdt CreEdt,
+       a.TspActOprID /* One comment OprID */ , -- Another comment
+       COUNT(1) Tot,
+       COUNT(a.TspActOprID) Lft,
+       b.TraCod TraCod,
+       SUM(b.FinAmt) FinAmt,
+       TraCod
+  FROM EssTsk a,EssTra b
+ WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)
+   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
+ GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
+HAVING COUNT(a.TspActOprID) > 0;
 SELECT a.Sid \"-Id\",
        a.Serial# \"-Serial#\",
        a.SchemaName \"Schema\",
@@ -499,32 +498,23 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
 
   toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
 
-  QString first=getToken(str,pos,true,true);
-
+  QString first;
   bool nokey=false;
-  for (QString token=first;
+  for (QString token=getToken(str,pos,true,true);
        !token.isNull();
        token=getToken(str,pos,true,true)) {
     QString upp=token.upper();
-    bool is=false;
-    if (upp=="IS") {
-      int tpos=pos;
-      QString t=getToken(str,tpos,true,true);
-      is=true;
-      while(!t.isNull()&&t!=";"&&(syntax.reservedWord(t)||toIsIdent(t[0]))) {
-	if (t=="NULL") {
-	  is=false;
-	  break;
-	}
-	t=getToken(str,tpos,true,true);
-      }
-    }
+#ifdef TOPARSE_DEBUG
+    printf("%s\n",(const char*)token);
+#endif
+    if (first.isNull()&&!token.startsWith("/*")&&!token.startsWith("--"))
+      first=upp;
 
     if ((first=="IF"&&upp=="THEN")||
 	upp=="LOOP"||
 	upp=="DECLARE"||
 	upp=="AS"||
-	is||
+	((first=="CREATE"||first=="PROCEDURE"||first=="FUNCTION"||first=="PACKAGE")&&upp=="IS")||
 	(!declare&&upp=="BEGIN")) {
       statement blk(statement::Block);
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
@@ -542,7 +532,7 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
     } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
       return ret;
-    } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT"&&upp!="LIKE"&&upp!="IN"&&upp!="BETWEEN")&&!nokey) {
+    } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT"&&upp!="IS"&&upp!="LIKE"&&upp!="IN"&&upp!="BETWEEN"&&upp!="ASC"&&upp!="DESC"&&upp!="NULL")&&!nokey) {
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
       nokey=false;
     } else if (upp=="(") {
@@ -704,6 +694,8 @@ static QString AddComment(const QString &old,const QString &comment)
 QString toSQLParse::indentStatement(statement &stat,int level)
 {
   QString ret;
+  toSyntaxAnalyzer &syntax=toSyntaxAnalyzer::defaultAnalyzer();
+
   switch(stat.Type) {
   default:
     throw QString("Internal error in toSQLParse, should never get here");
@@ -822,7 +814,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	current=level+maxlev;
 	any=false;
 	lineList=true;
-      } else if (upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS") {
+      } else if ((*i).Type==statement::Keyword&&(upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS")) {
 	if (!Settings.BlockOpenLine) {
 	  if (ret.length()>0) {
 	    if (toIsIdent(ret.at(ret.length()-1))||Settings.OperatorSpace) {
@@ -867,8 +859,6 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	QString t=(*i).String;
 	bool add=false;
 	if ((*i).Type==statement::Keyword) {
-	  if (Settings.KeywordUpper)
-	    t=upp;
 	  if (!lineList&&
 	      !any&&
 	      (*i).Type==statement::Keyword&&
@@ -878,6 +868,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	} else {
 	  any=true;
 	}
+	if (syntax.reservedWord(upp)&&Settings.KeywordUpper)
+	  t=upp;
+
 	int extra;
 	if (first) {
 	  first=false;
