@@ -441,7 +441,7 @@ distclean: clean
 LICENSE.h: LICENSE.txt
 	@echo Generating LICENSE.h
 	@echo 'static char *LicenseText="<PRE>"' > LICENSE.h
-	$(PERL) -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE.txt >> LICENSE.h
+	$(PERL) -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$$_\\n\"\n"; }' < $< >> $@
 	@echo '"</PRE>";' >> LICENSE.h
 
 # Keyboard shortcuts
