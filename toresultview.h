@@ -100,7 +100,7 @@ class toResultViewItem : public QListViewItem {
   keyData *ColumnData;
   QString firstText(int col) const;
 protected:
-  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -167,7 +167,7 @@ private:
    */
   int Lines;
 protected:
-  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -218,7 +218,7 @@ class toResultViewCheck : public QCheckListItem {
   int ColumnCount;
   keyData *ColumnData;
 protected:
-  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const;
   QString firstText(int col) const;
 public:
   /** Create a new item.
@@ -291,7 +291,7 @@ private:
    */
   int Lines;
 protected:
-  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
+  virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.

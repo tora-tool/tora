@@ -54,7 +54,10 @@
 
 #include "icons/largelogo.xpm"
 
-#ifdef TO_LICENSE
+#ifdef OAS
+#include "oasabout.h"
+#else
+#  ifdef TO_LICENSE
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
@@ -74,7 +77,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
-#else
+#  else
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1 (<A HREF=http://www.globecom.se/tora>http://www.globecom.se/tora</A>)\n"
 "<P>\n"
@@ -96,7 +99,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
 "GNU General Public License for more details."
-#endif
+#  endif
 "<HR BREAK=ALL>\n"
 "Contributors (In alphabetical order):<P>\n"
 "<UL>\n"
@@ -129,6 +132,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "<B>Roman Stepanov</B>,\n"
 "<B>Joachim Zetzsche</B>,\n"
 "<B>Massimiliano Ziccardi</B>...\n";
+#endif
 
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
@@ -243,6 +247,9 @@ static const char *QuoteText="<H3>People who think they know everything tend to 
 "<H3>Sure there have been injuries and deaths in boxing,<BR>\n"
 "but none of them serious.</H3>\n"
 "<DIV ALIGN=RIGHT>Boxer Alan Minter\n"
+"<DIV ALIGN=LEFT>\n"
+"<H3>Plans are useless, but planning is indispensible.</H3>\n"
+"<DIV ALIGN=RIGHT>Dwight Eisenhower\n"
 "<DIV ALIGN=LEFT>\n"
 "<H3>Life is a sexually transmittable desease with terminal outcome.</H3>\n"
 "<DIV ALIGN=RIGHT>Unknown\n"

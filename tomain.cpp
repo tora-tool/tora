@@ -92,7 +92,6 @@
 #include "tomainwindow.moc"
 #endif
 
-#include "icons/commit.xpm"
 #include "icons/connect.xpm"
 #include "icons/copy.xpm"
 #include "icons/cut.xpm"
@@ -102,16 +101,23 @@
 #include "icons/paste.xpm"
 #include "icons/print.xpm"
 #include "icons/redo.xpm"
-#include "icons/refresh.xpm"
-#include "icons/rollback.xpm"
 #include "icons/search.xpm"
-#include "icons/stop.xpm"
 #include "icons/toramini.xpm"
 #include "icons/undo.xpm"
 #include "icons/up.xpm"
 
-#define DEFAULT_TITLE "TOra %s"
+#ifndef OAS
+#include "icons/commit.xpm"
+#include "icons/rollback.xpm"
+#include "icons/stop.xpm"
+#include "icons/refresh.xpm"
+#endif
 
+#ifdef OAS
+#define DEFAULT_TITLE "OAS %s"
+#else
+#define DEFAULT_TITLE "TOra %s"
+#endif
 const int toMain::TO_FILE_MENU		= 10;
 const int toMain::TO_EDIT_MENU		= 20;
 const int toMain::TO_TOOLS_MENU		= 30;
@@ -192,12 +198,14 @@ toMain::toMain()
 		       tr("&New Connection..."),TO_NEW_CONNECTION);
   FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
 		       tr("&Close Connection"),this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
+#ifndef OAS
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)commit_xpm),tr("&Commit Connection"),TO_FILE_COMMIT);
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),tr("&Rollback Connection"),TO_FILE_ROLLBACK);
   FileMenu->insertItem(tr("C&urrent Connection"),TO_FILE_CURRENT);
   FileMenu->insertItem(QPixmap((const char **)stop_xpm),tr("Stop All Queries"),TO_STOP_ALL);
   FileMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("Reread Object Cache"),TO_FILE_CLEARCACHE);
+#endif
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),tr("&Open File..."),TO_FILE_OPEN);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),tr("&Save"),TO_FILE_SAVE);
@@ -217,10 +225,12 @@ toMain::toMain()
   FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
   FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
   FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
+#ifndef OAS
   FileMenu->setAccel(Key_L|CTRL,TO_FILE_COMMIT);
   FileMenu->setAccel(Key_J|CTRL,TO_STOP_ALL);
   FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
   FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
+#endif
 
   updateRecent();
 
@@ -419,6 +429,7 @@ toMain::toMain()
 				   tr("Disconnect current connection"),
 				   this,SLOT(delConnection()),ConnectionToolbar);
   DisconnectButton->setEnabled(false);
+#ifndef OAS
   ConnectionToolbar->addSeparator();
   NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
 				 tr("Commit connection"),
@@ -433,11 +444,13 @@ toMain::toMain()
 				 tr("Stop all running queries on connection"),
 				 tr("Stop all running queries on connection"),
 				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
+#endif
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
   ConnectionSelection->setFixedWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
+  ConnectionToolbar->hide();
 
   menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));

@@ -124,11 +124,14 @@ static int TextWidth(const QFontMetrics &fm,const QString &str)
   return maxWidth;
 }
 
-int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
-  return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
+  QString t=text(column);
+  if (t.isNull())
+    t=txt;
+  return min(TextWidth(fm,t),MaxColDisp)+top->itemMargin()*2+2;
 }
 
 QString toResultViewItem::firstText(int col) const
@@ -151,11 +154,14 @@ QString toResultViewItem::text(int col) const
   return firstText(col);
 }
 
-int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
-  QRect bounds=fm.boundingRect(text(column));
+  QString t=text(column);
+  if (t.isNull())
+    t=txt;
+  QRect bounds=fm.boundingRect(t);
   return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
 }
 
@@ -210,7 +216,7 @@ void toResultViewItem::setText (int col,const QString &txt)
       ColumnData[col].Type=keyData::String;
       ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=ColumnData[col].Data;
     }
-    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
+    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col,txt);
   }
   QListViewItem::setText(col,firstText(col));
 }
@@ -263,7 +269,7 @@ void toResultViewCheck::setText (int col,const QString &txt)
       ColumnData[col].Type=keyData::String;
       ColumnData[col].KeyAsc=ColumnData[col].KeyDesc=ColumnData[col].Data;
     }
-    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
+    ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col,txt);
   }
   QCheckListItem::setText(col,firstText(col));
 }
@@ -311,18 +317,24 @@ void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
 			       alignment);
 }
 
-int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
-  return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
+  QString t=text(column);
+  if (t.isNull())
+    t=txt;
+  return min(TextWidth(fm,t),MaxColDisp)+top->itemMargin()*2+2;
 }
 
-int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
+int toResultViewCheck::realWidth(const QFontMetrics &fm, const QListView *top, int column,const QString &txt) const
 {
   if (!MaxColDisp)
     MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
-  QRect bounds=fm.boundingRect(text(column));
+  QString t=text(column);
+  if (t.isNull())
+    t=txt;
+  QRect bounds=fm.boundingRect(t);
   return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
 }
 
