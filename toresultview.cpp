@@ -606,39 +606,53 @@ void toListView::focusOutEvent (QFocusEvent *e)
   QListView::focusOutEvent(e);
 }
 
+static QString QuoteString(const QString &str)
+{
+  static QRegExp quote("\"");
+  QString t=str;
+  t.replace(quote,"\"\"");
+  return t;
+}
+
 void toListView::exportFile(void)
 {
-  int *sizes=new int[columns()];
+  int type=TOMessageBox::information(this,"Export format",
+				     "Select format to use for exporting to file",
+				     "Text","Tab delimited","CSV");
+  int *sizes=NULL;
   try {
-    int level=0;
-    for (int i=0;i<columns();i++)
-      sizes[i]=header()->label(i).length();
+    if (type==0) {
+      sizes=new int[columns()];
+      int level=0;
+      for (int i=0;i<columns();i++)
+	sizes[i]=header()->label(i).length();
 
-    {
-      QListViewItem *next=NULL;
-      for (QListViewItem *item=firstChild();item;item=next) {
+      {
+	QListViewItem *next=NULL;
+	for (QListViewItem *item=firstChild();item;item=next) {
 
-        for (int i=0;i<columns();i++) {
-	  int csiz=item->text(i).length();
-	  if (i==0)
-	    csiz+=level;
-	  if (sizes[i]<csiz)
-	    sizes[i]=csiz;
-	}
+	  for (int i=0;i<columns();i++) {
+	    int csiz=item->text(i).length();
+	    if (i==0)
+	      csiz+=level;
+	    if (sizes[i]<csiz)
+	      sizes[i]=csiz;
+	  }
 
-        if (item->firstChild()) {
-	  level++;
-	  next=item->firstChild();
-	} else if (item->nextSibling())
-	  next=item->nextSibling();
-        else {
-	  next=item;
-	  do {
-	    next=next->parent();
-	    level--;
-	  } while(next&&!next->nextSibling());
-	  if (next)
-	    next=next->nextSibling();
+	  if (item->firstChild()) {
+	    level++;
+	    next=item->firstChild();
+	  } else if (item->nextSibling())
+	    next=item->nextSibling();
+	  else {
+	    next=item;
+	    do {
+	      next=next->parent();
+	      level--;
+	    } while(next&&!next->nextSibling());
+	    if (next)
+	      next=next->nextSibling();
+	  }
 	}
       }
     }
@@ -648,14 +662,29 @@ void toListView::exportFile(void)
     QString indent;
 
     for (int j=0;j<columns();j++)
-      output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
+      switch(type) {
+      case 0:
+	output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
+	break;
+      case 1:
+	output+=QString("%1\t").arg(header()->label(j));
+	break;
+      case 2:
+	output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
+	break;
+      }
+    if (output.length()>0)
+      output=output.left(output.length()-1);
     output+="\n";
-    for (int k=0;k<columns();k++) {
-      for (int l=0;l<sizes[k];l++)
-	output+="=";
-      output+=" ";
+    if (type==0) {
+      for (int k=0;k<columns();k++) {
+	for (int l=0;l<sizes[k];l++)
+	  output+="=";
+	if (k!=columns()-1)
+	  output+=" ";
+      }
+      output+="\n";
     }
-    output+="\n";
 
     QListViewItem *next=NULL;
     for (QListViewItem *item=firstChild();item;item=next) {
@@ -663,7 +692,18 @@ void toListView::exportFile(void)
       QString line=indent;
 
       for (int i=0;i<columns();i++)
-	line+=QString("%1 ").arg(item->text(i),(i==0?indent.length():0)-sizes[i]);
+	switch(type) {
+	case 0:
+	  line+=QString("%1 ").arg(item->text(i),(i==0?indent.length():0)-sizes[i]);
+	  break;
+	case 1:
+	  line+=QString("%1\t").arg(item->text(i));
+	  break;
+	case 2:
+	  line+=QString("\"%1\";").arg(QuoteString(item->text(i)));
+	  break;
+	}
+      line=line.left(line.length()-1);
       line+="\n";
       output+=line;
 
