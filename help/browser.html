@@ -33,8 +33,12 @@ Schema</B></TD><TD>
 The last item on the toolbar is a combo box where you can select the schema to display
 objects for. It defaults the schema you are currently logged in as. Only schemas that are
 visible to the current user is selectable in the lost (Really, TOra does not contain the
-secret DBA password that will always let you access everything regardless of your privileges)
-.</TD></TR>
+secret DBA password that will always let you access everything regardless of your privileges).
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Change connection</B></TD>
+<TD VALIGN=top>
+Change the connection this tool window should operate on.</TD></TR>
 </TABLE><P>
 The rest of the interface consists of two tabbed windows, one within the other. The first one
 you can use to select the object type you want to inspect. When you have selected a type you
@@ -79,8 +83,8 @@ Information</B></TD><TD VALIGN=top>
 Contains information about the table available in the SGA including
 analyzed statistics etc.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
-Comment</B></TD><TD VALIGN=top>
-This tab displays the current tables comment if it exists.</TD></TR>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 Views</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
@@ -105,8 +109,8 @@ The grants that have been made on this view.</TD></TR>
 Dependencies</B></TD><TD VALIGN=top>
 The objects that depend on this view.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
-Comment</B></TD><TD VALIGN=top>
-This tab displays the current views comment if it exists.</TD></TR>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 Indexes</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
@@ -116,18 +120,33 @@ The columns that the index operate on.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 Info</B></TD><TD VALIGN=top>
 Information in the SGA about an index. For instance analyzed statistics available for this index.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 Sequences</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 Info</B></TD><TD VALIGN=top>
 Information about the sequence.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this object.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 Synonyms</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
 Info</B></TD><TD VALIGN=top>
 Information about the synonyms</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this object.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 PL/SQL</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
@@ -138,8 +157,14 @@ The declaration of a package or type.</TD></TR>
 Body</B></TD><TD VALIGN=top>
 The implementation of a package, body, procedure or function.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this object.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
 Dependencies</B></TD><TD VALIGN=top>
 Dependencies this object has.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 <TR><TD VALIGN=top><B>
 Triggers</B></TD><TD></TD><TD VALIGN=top>
 </TD></TR>
@@ -153,18 +178,79 @@ The code that implement the trigger.</TD></TR>
 Columns</B></TD><TD VALIGN=top>
 The columns this trigger operates on.</TD></TR>
 <TR><TD></TD><TD VALIGN=top><B>
+Grants</B></TD><TD VALIGN=top>
+The grants that have been made on this object.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
 Dependencies</B></TD><TD VALIGN=top>
 Dependencies of this object.</TD></TR>
+<TR><TD></TD><TD VALIGN=top><B>
+Script</B></TD><TD VALIGN=top>
+This tab displays an SQL script to recreate the database object.</TD></TR>
 </TABLE><P>
 <A NAME=content><H2>Content editor</H2>
 The content let you edit the contents of a table or view. There are a few things to note about this.<P>
 First of all the content editor is designed to behave nicely to the database which means that it
 will only save the data when it thinks you are finished editing a row. This happens when you the current row
 change or you commit the database. When there is unsaved data you can see it in the status bar that there
-exists unsaved data.<P>
-Observe that the current <A HREF=browser.html#filter>filter</A> functionality only affect which objects that are
-displayed in the database browser and not the rows that are visible in the content editor. This is a much asked
-for feature already implemented for the next stable release 1.2.<P>
+exists unsaved data. Also observe that the content editor will respect the auto commit setting in the
+<A HREF=database.html>database settings</A>.<P>
+The content editor has it's own toolbar with the following buttons.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Define filter</B></TD><TD>
+Displays the <A HREF=browser.html#contentfilter>define filter dialog</A>. This is used to specify which
+objects to show in the browser. The default filter is to show everything.</TD></TR>
+<TR><TD VALIGN=top><B>
+Clear filter</B></TD><TD>
+Remove the current filter and revert to the default of showing everything.</TD></TR>
+<TR><TD VALIGN=top><B>
+Add new record
+</B></TD><TD>
+Add a new record to the current table.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Save changes
+</B></TD><TD>
+Save the changes made to the current row to the database. Observe that this will not commit the changes.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Discard changes
+</B></TD><TD>
+Discard the changes made to the current row to the database. Observe that this will not rollback the database connection.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Delete current record
+</B></TD><TD>
+Delete the current record from the database.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Go to first row
+</B></TD><TD>
+Go to the first record in the editor.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Go to previous row
+</B></TD><TD>
+Go to the previous record in the editor.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Go to next row
+</B></TD><TD>
+Go to the next record in the editor.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Go to last row
+</B></TD><TD>
+Go to the last record in the editor. Observe that this will read in all available records in the table into memory.
+</TD></TR>
+</TABLE><P>
+<A NAME=contentfilter>
+The content editor can define a fileter to specify which part of a table to edit. This dialog looks like this.<P>
+<IMG SRC=images/contentfilter.png><P>
+In the <B>selection criteria</B> part you can add whatever you want to go after a <B>where</B> in a select statement.
+In the <B>sort order</B> you can list the columns you want to sort on. The sort order only affect the order the records
+are read from the database, after they are read you can still sort on any column by clicking it. To the right is a
+list of available columns in the table.<P>
 <A NAME=filter><H2>Defining a filter</H2>
 Filtering is based on the object name and can be specified in a variety of ways. This
 is the dialog used to specify the filter.<P>
@@ -198,6 +284,19 @@ Ignore the case when matches. Since object names are pretty much always uppercas
 <TR><TD VALIGN=top><B>
 Invert selection</B></TD><TD>
 If set, include all the objects that does not meet the specified criteria instead of the ones which does.</TD></TR>
+</TABLE><P>
+Some objects you can also search on what tablespace they are located on. This can be specified by the lower
+part of the dialog.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Include all</B></TD><TD>
+Include all regardless of tablespace.</TD></TR>
+<TR><TD VALIGN=top><B>
+Include</B></TD><TD>
+Include the objects located on the selected tablespaces in the list below.</TD></TR>
+<TR><TD VALIGN=top><B>
+Exclude</B></TD><TD>
+Include the objects not located on the selected tablespaces in the list below.</TD></TR>
 </TABLE>
 </BODY>
 </HTML>

@@ -283,7 +283,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   if (lineIn(row+1)!=out) {
     int i=row+1;
     painter->save();
-    do {
+    while(i<numLines()&&out!=lineIn(i)) {
       if (out==toSyntaxAnalyzer::Normal)
 	LineInput.erase(LineInput.find(i));
       else
@@ -296,7 +296,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       }
       Analyzer->analyzeLine(textLine(i),out,out);
       i++;
-    } while(i<numLines()&&out!=lineIn(i));
+    }
     painter->restore();
   }
 
