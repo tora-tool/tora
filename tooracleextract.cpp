@@ -313,6 +313,8 @@ class toOracleExtract : public toExtract::extractor {
 			   std::list<QString> &destin) const;
   QString migrateRole(toExtract &ext,std::list<QString> &source,
 		      std::list<QString> &destin) const;
+  QString migrateSequence(toExtract &ext,std::list<QString> &source,
+			  std::list<QString> &destin) const;
 public:
   // Public interface
 
@@ -5668,6 +5670,7 @@ void toOracleExtract::describeRole(toExtract &ext,
   ctx.insert(ctx.end(),"ROLE");
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
+  addDescription(lst,ctx,"INFO",toShift(info));
   describePrivs(ext,lst,ctx,name);
 }
 
@@ -6883,10 +6886,10 @@ QString toOracleExtract::migrateRole(toExtract &ext,
   std::list<QString> privs;
 
   QString ret;
+  QString lrole;
 
   {
     bool dropped=false;
-    QString lrole;
     for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
       std::list<QString> ctx=toExtract::splitDescribe(*i);
       QString owner=toShift(ctx);
@@ -6901,17 +6904,134 @@ QString toOracleExtract::migrateRole(toExtract &ext,
 	  ret+="PROMPT "+sql+"\n\n";
 	ret+=sql+";\n\n";
 	dropped=true;
-      } else if (role!=lrole&&!dropped)
-	privs.insert(privs.end(),role);
+      } else if (!dropped) {
+	if (toShift(ctx)!="GRANT")
+	  continue;
+	QString type=toShift(ctx);
+	QString on=toShift(ctx);
+	QString what=toShift(ctx);
+	QString sql=QString("REVOKE %1").arg(QUOTE(type));
+	if (!on.isEmpty())
+	  sql+=QUOTE(on);
+	if (!what.isEmpty()) {
+	  if (what=="ON")
+	    sql+="FROM";
+	  else
+	    sql+=QUOTE(what);
+	}
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+      }
       lrole=role;
     }
   }
+  lrole=QString::null;
 
   for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
     std::list<QString> ctx=toExtract::splitDescribe(*i);
     QString owner=toShift(ctx);
-    
+    if (toShift(ctx)!="ROLE")
+      continue;
+    QString role=toShift(ctx);
+    if (ctx.begin()==ctx.end())
+      continue;
+    else {
+      QString extra=toShift(ctx);
+      if (extra=="INFO") {
+	QString sql="CREATE ROLE "+QUOTE(role)+";";
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+QString("%1;\n\n").arg(toShift(ctx));
+      } else if (extra=="GRANT") {
+	QString type=toShift(ctx);
+	QString on=toShift(ctx);
+	QString what=toShift(ctx);
+	QString sql=QString("GRANT %1").arg(QUOTE(type));
+	if (!on.isEmpty())
+	  sql+=QUOTE(on);
+	if (!what.isEmpty())
+	  sql+=QUOTE(what);
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+      }
+    }
+    lrole=role;
   }
+  return ret;
+}
+
+QString toOracleExtract::migrateSequence(toExtract &ext,
+					 std::list<QString> &source,
+					 std::list<QString> &destin) const
+{
+  QString ret;
+
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString owner=toShift(ctx);
+      if (toShift(ctx)!="SEQUENCE")
+	continue;
+      QString sequence=toShift(ctx);
+      if (ctx.begin()==ctx.end()) {
+	QString sql=QString("DROP SEQUENCE %1.%2").arg(QUOTE(owner)).arg(QUOTE(sequence));
+	if (PROMPT)
+	  ret+="PROMPT "+sql+"\n\n";
+	ret+=sql+";\n\n";
+      }
+    }
+  }
+  bool created=false;
+  QString lastOwner;
+  QString lastSequence;
+  QString sql;
+  QString prompt;
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+    QString owner=toShift(ctx);
+    if (toShift(ctx)!="SEQUENCE")
+      continue;
+    QString sequence=toShift(ctx);
+    if (lastSequence!=sequence||lastOwner!=owner) {
+      if (created) {
+	prompt=QString("CREATE SEQUENCE %1.%2").arg(lastOwner).arg(lastSequence);
+	sql.prepend(prompt);
+      } else {
+	prompt=QString("ALTER SEQUENCE %1.%2").arg(lastOwner).arg(lastSequence);
+	sql.prepend(prompt);
+      }
+      if (PROMPT)
+	ret+=prompt+"\n\n";
+      ret+=sql+";\n\n";
+
+      prompt=sql=
+      created=false;
+    }
+    if (ctx.begin()==ctx.end())
+      created=true;
+    else
+      sql+=" "+toShift(ctx);
+
+    lastOwner=owner;
+    lastSequence=sequence;
+  }
+
+  if (created) {
+    prompt=QString("CREATE SEQUENCE %1.%2").arg(lastOwner).arg(lastSequence);
+    sql.prepend(prompt);
+  } else {
+    prompt=QString("ALTER SEQUENCE %1.%2").arg(lastOwner).arg(lastSequence);
+    sql.prepend(prompt);
+  }
+  if (PROMPT)
+    ret+=prompt+"\n\n";
+  ret+=sql+";\n\n";
   return ret;
 }
 

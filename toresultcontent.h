@@ -252,16 +252,11 @@ public:
   ~toResultContentEditor();
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &,const toQList &)
-  { wrongUsage(); }
+  virtual void query(const QString &,const toQList &);
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &)
-  { wrongUsage(); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &,const QString &,const QString &)
-  { wrongUsage(); }
+  virtual void changeParams(const QString &Param1,const QString &Param2)
+  { toQList pars; pars.insert(pars.end(),Param1); pars.insert(pars.end(),Param2); query(QString::null,pars); }
   
   /** Print this editor.
    */
@@ -314,13 +309,6 @@ public slots:
    * @param col Column selected to change as sorting.
    */
   virtual void changeSort(int col); 
-  /** Reimplemented for internal reasons.
-   */
-  virtual void refresh(void)
-  { QString t=Owner; Owner=QString::null; changeParams(t,Table); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &Param1,const QString &Param2);
   /** Current cell changed.
    * @param row New row.
    * @param col New column.
@@ -454,27 +442,27 @@ public slots:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { Editor->clearParams(); }
+  { toResult::clearParams(); Editor->clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { Editor->refresh(); }
+  { toResult::refresh(); }
   /** Reimplemented for internal reasons.
    */
   virtual void query(const QString &sql,const toQList &param)
-  { Editor->query(sql,param); }
+  { if (!setSQLParams(sql,param)) return; Editor->query(sql,param); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1)
-  { Editor->changeParams(Param1); }
+  { toResult::changeParams(Param1); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2)
-  { Editor->changeParams(Param1,Param2); }
+  { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { Editor->changeParams(Param1,Param2,Param3); }
+  { toResult::changeParams(Param1,Param2,Param3); }
   /** Save unsaved changes in the editor
    */
   virtual void saveUnsaved(void)

@@ -344,18 +344,22 @@ void toResultContentEditor::changeSort(int col)
   sortColumn(SortRow,SortRowAsc,true);
 }
 
-void toResultContentEditor::changeParams(const QString &Param1,const QString &Param2)
+void toResultContentEditor::query(const QString &,const toQList &params)
 {
-  if (Param1==Owner&&Param2==Table&&!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty())
-    return;
+  if (params.size()!=2)
+    wrongUsage();
+  toQList::const_iterator par=params.begin();
+  QString Param1=*par;
+  par++;
+  QString Param2=*par;
 
   Owner=Param1;
   Table=Param2;
   if (AllFilter)
-    FilterName=QString::fromLatin1("");
+    FilterName=("");
   else {
     FilterName=Owner;
-    FilterName+=QString::fromLatin1(".");
+    FilterName+=(".");
     FilterName+=Table;
   }
 
@@ -369,13 +373,13 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   GotoEnd=false;
 
   try {
-    SQL=QString::fromLatin1("SELECT * FROM ");
+    SQL=("SELECT * FROM ");
     SQL+=table();
     bool where=false;
     if (!Criteria[FilterName.utf8()].isEmpty()) {
-      SQL+=QString::fromLatin1(" WHERE ");
+      SQL+=(" WHERE ");
       SQL+=Criteria[FilterName.utf8()];
-      SQL+=QString::fromLatin1(" ");
+      SQL+=(" ");
       where=true;
     }
     emit filterEnabled(where);
@@ -384,7 +388,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 
     QString order;
     if (!Order[FilterName.utf8()].isEmpty()) {
-      order=QString::fromLatin1(" ORDER BY ");
+      order=(" ORDER BY ");
       order+=Order[FilterName.utf8()];
     }
 
@@ -579,10 +583,10 @@ void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &c
   }
 
   QString txt=text(row,col);
-  int nl=txt.find(QString::fromLatin1("\n"));
+  int nl=txt.find(("\n"));
   if (nl>=0) {
     txt=txt.mid(0,nl);
-    txt+=QString::fromLatin1("...");
+    txt+=("...");
   }
 
   toQDescList::iterator i=Description.begin();
@@ -609,7 +613,7 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
   saveRow(row);
 
   QString txt=text(row,col);
-  if (txt.contains(QString::fromLatin1("\n"))) {
+  if (txt.contains(("\n"))) {
     toMemoEditor *edit=new toResultContentMemo(this,txt,row,col);
     connect(edit,SIGNAL(changeData(int,int,const QString &)),
 	    this,SLOT(changeData(int,int,const QString &)));
@@ -673,7 +677,7 @@ void toResultContentEditor::addRecord()
       swapRows(row,row-1);
 
     for (int i=0;i<numCols();i++)
-      setText(crow,i,QString::fromLatin1(""));
+      setText(crow,i,(""));
 
     NewRecordRow = crow;
     setNumRows(numRows());
@@ -722,9 +726,9 @@ void toResultContentEditor::deleteCurrent()
   saveUnsaved();
   if (currentRow()<Row) {
     try {
-      QString sql=QString::fromLatin1("DELETE FROM ");
+      QString sql=("DELETE FROM ");
       sql+=table();
-      sql+=QString::fromLatin1(" WHERE ");
+      sql+=(" WHERE ");
     
       QHeader *head=horizontalHeader();
       toQDescList::iterator di=Description.begin();
@@ -734,19 +738,19 @@ void toResultContentEditor::deleteCurrent()
       bool oracle=(connection().provider()=="Oracle");
       {
         for(int i=0;i<numCols();i++) {
-	  if (!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
-			!(*di).Datatype.contains(QString::fromLatin1("LOB")))) {
+	  if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
+			!(*di).Datatype.contains(("LOB")))) {
 	    if (where)
-	      sql+=QString::fromLatin1(" AND ");
+	      sql+=(" AND ");
 	    else
 	      where=true;
 	    sql+=conn.quote(head->label(i));
 	    if (!text(currentRow(),i))
-	      sql+=QString::fromLatin1(" IS NULL");
+	      sql+=(" IS NULL");
 	    else {
-	      sql+=QString::fromLatin1("= :c");
+	      sql+=("= :c");
 	      sql+=QString::number(i);
-	      sql+=QString::fromLatin1("<char[4000]>");
+	      sql+=("<char[4000]>");
 	    }
 	  }
 	  di++;
@@ -760,8 +764,8 @@ void toResultContentEditor::deleteCurrent()
       di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
-				      !(*di).Datatype.contains(QString::fromLatin1("LOB")))))
+	if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
+				      !(*di).Datatype.contains(("LOB")))))
 	  toPush(args,toQValue(str));
 	di++;
       }
@@ -815,28 +819,40 @@ void toResultContentEditor::saveUnsaved(void)
       oracle=(connection().provider()=="Oracle");
       toStatusMessage(tr("Saved row"),false,false);
       if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
-	QString sql=QString::fromLatin1("INSERT INTO ");
+	QString sql=("INSERT INTO ");
 	sql+=table();
-	sql+=QString::fromLatin1(" VALUES (");
+	sql+=" (";
+	int num=0;
+	QHeader *head=horizontalHeader();
 	for (int i=0;i<numCols();i++) {
-	  sql+=QString::fromLatin1(":f");
-	  sql+=QString::number(i);
-	  sql+=QString::fromLatin1("<char[4000],in>");
-	  if (i+1<numCols())
-	    sql+=QString::fromLatin1(",");
+	  if (!text(CurrentRow,i).isNull()) {
+	    if (num>0)
+	      sql+=",";
+	    sql+=conn.quote(head->label(i));
+	    num++;
+	  }
 	}
-	sql+=QString::fromLatin1(")");
+	sql+=") VALUES (";
+	num=0;
+	for (int i=0;i<numCols();i++) {
+	  if (!text(CurrentRow,i).isNull()) {
+	    if (num>0)
+	      sql+=(",");
+	    sql+=(":f");
+	    sql+=QString::number(num+1);
+	    sql+=("<char[4000],in>");
+	    num++;
+	  }
+	}
+	sql+=(")");
 	if(oracle&&!NoUseReturning) 
-	  sql+=QString::fromLatin1(" RETURNING ROWID INTO :r<char[101],out>");
+	  sql+=(" RETURNING ROWID INTO :r<char[101],out>");
 	
 	try {
 	  toQList args;
-	  toQValue null;
 	  for (int i=0;i<numCols();i++) {
 	    QString str=text(CurrentRow,i);
-	    if (str.isNull())
-	      toPush(args,null);
-	    else
+	    if (!str.isNull())
 	      toPush(args,toQValue(str));
 	  }
 	  toQuery q(conn,sql,args);
@@ -854,9 +870,9 @@ void toResultContentEditor::saveUnsaved(void)
 	  oracle = false;
 	}
       } else {
-	QString sql=QString::fromLatin1("UPDATE ");
+	QString sql=("UPDATE ");
 	sql+=table();
-	sql+=QString::fromLatin1(" SET ");
+	sql+=(" SET ");
 	QHeader *head=horizontalHeader();
 	std::list<QString>::iterator k=OrigValues.begin();
 	bool first=false;
@@ -866,36 +882,36 @@ void toResultContentEditor::saveUnsaved(void)
 	    if (!first)
 	      first=true;
 	    else
-	      sql+=QString::fromLatin1(", ");
+	      sql+=(", ");
 	    sql+=conn.quote(head->label(i));
 	    if (fld.isNull())
-	      sql+=QString::fromLatin1(" = NULL");
+	      sql+=(" = NULL");
 	    else {
-	      sql+=QString::fromLatin1("= :f");
+	      sql+=("= :f");
 	      sql+=QString::number(i);
-	      sql+=QString::fromLatin1("<char[4000],in>");
+	      sql+=("<char[4000],in>");
 	    }
 	  }
 	}
 	if (first) {
-	  sql+=QString::fromLatin1(" WHERE ");
+	  sql+=(" WHERE ");
 	  int col=0;
 	  bool where=false;
 	  toQDescList::iterator di=Description.begin();
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	    if (!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
-			  !(*di).Datatype.contains(QString::fromLatin1("LOB")))) {
+	    if (!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
+			  !(*di).Datatype.contains(("LOB")))) {
 	      if (where)
-		sql+=QString::fromLatin1(" AND ");
+		sql+=(" AND ");
 	      else
 		where=true;
 	      sql+=conn.quote((*di).Name);
 	      if ((*j).isNull())
-		sql+=QString::fromLatin1(" IS NULL");
+		sql+=(" IS NULL");
 	      else {
-		sql+=QString::fromLatin1("= :c");
+		sql+=("= :c");
 		sql+=QString::number(col);
-		sql+=QString::fromLatin1("<char[4000],in>");
+		sql+=("<char[4000],in>");
 	      }
 	    }
 	    di++;
@@ -905,7 +921,7 @@ void toResultContentEditor::saveUnsaved(void)
 	    return;
 	  }
 	  if(oracle&&!NoUseReturning)
-	    sql+=QString::fromLatin1(" RETURNING ROWID INTO :r<char[101],out>");
+	    sql+=(" RETURNING ROWID INTO :r<char[101],out>");
 	  try {
 	    toQList args;
 
@@ -919,8 +935,8 @@ void toResultContentEditor::saveUnsaved(void)
 	    toQDescList::iterator di=Description.begin();
 	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	      QString str=(*j);
-	      if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
-					    !(*di).Datatype.contains(QString::fromLatin1("LOB")))))
+	      if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(("LONG"))&&
+					    !(*di).Datatype.contains(("LOB")))))
 		toPush(args,toQValue(str));
 	      di++;
 	    }
@@ -945,9 +961,9 @@ void toResultContentEditor::saveUnsaved(void)
     if(oracle) {
       try {
 	QString sql;
-	sql=QString::fromLatin1("SELECT * FROM ");
+	sql=("SELECT * FROM ");
 	sql+=table();
-	sql+=QString::fromLatin1(" WHERE rowid = :r<char[101]>");
+	sql+=(" WHERE rowid = :r<char[101]>");
 	toQuery q(connection(),sql,rowid);
 	for (int j=0;j<numCols()&&!q.eof();j++)
 	  setText(CurrentRow,j,q.readValueNull());
@@ -1137,7 +1153,7 @@ QString toResultContentEditor::table(void)
     QString sql;
     if (connection().provider()!="PostgreSQL") {
       sql=connection().quote(Owner);
-      sql+=QString::fromLatin1(".");
+      sql+=(".");
     }
     sql+=connection().quote(Table);
     return sql;
@@ -1285,16 +1301,16 @@ void toResultContentEditor::changeFilter(bool all,const QString &crit,const QStr
   AllFilter=all;
   QString nam;
   if (AllFilter)
-    nam=QString::fromLatin1("");
+    nam=("");
   else {
     nam=Owner;
-    nam+=QString::fromLatin1(".");
+    nam+=(".");
     nam+=Table;
   }
   Criteria[nam.utf8()]=crit;
   Order[nam.utf8()]=ord;
   saveUnsaved();
-  
+
   QString t=Owner;
   Owner=QString::null;
   changeParams(t,Table);
@@ -1383,7 +1399,7 @@ toListView *toResultContentEditor::copySelection(bool header)
     int row;
     int col;
     if (header) {
-      lst->addColumn(QString::fromLatin1("#"));
+      lst->addColumn(("#"));
       lst->setColumnAlignment(0,AlignRight);
     }
     for (col=sel.leftCol();col<=sel.rightCol();col++) {
@@ -1437,7 +1453,7 @@ void toResultContentSingle::changeSource(QTable *table)
     new QLabel(head->label(i),Container);
     QLineEdit *edit=new QLineEdit(Container,QString::number(i));
     edit->setFixedWidth(300);
-    QCheckBox *box=new QCheckBox(QString::fromLatin1("NULL"),Container);
+    QCheckBox *box=new QCheckBox(("NULL"),Container);
     connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
 
     toParamGetButton *btn=new toParamGetButton(i,Container);

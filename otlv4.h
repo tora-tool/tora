@@ -8512,6 +8512,7 @@ public:
     return 1;
 #else
 	       sz)
+  {
     memcpy(trg,src,sz);
     return 1;
 #endif

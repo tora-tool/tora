@@ -77,3 +77,23 @@ and has the homepage http://www.globecom.se/tora. If you encounter problems you
 can find both mailinglists and bugtracking tools from this page.
 
 Oracle is copyright of Oracle Corporation.
+
+Supplying patches to TOra
+=========================
+Even though TOra is an open source GPL project it is also a commercial
+project for the Windows platform. Both these projects are compiled
+from the same codebase. Therefore any patches that are to be accepted
+by me into the project must adhere to one of the following three
+conditions.
+
+1. The code given is public domain without any associated copyright.
+
+2. The copyright of the code given is assigned to Underscore AB.
+
+3. The code is licensed under LGPL and part of a separate library.
+
+Since most patches are a few lines of code which are part of files
+which have an assigned copyright at the top of the files if nothing
+else is specified the second alternative is assumed (Because the files
+in question does have a copyright at the top of them and nobody
+bothered changing them).
