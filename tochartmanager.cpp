@@ -72,16 +72,21 @@
 
 class toChartTool : public toTool {
 protected:
+  toChartHandler *Handler;
   toChartManager *Window;
-
 public:
   toChartTool()
     : toTool(930,"Chart Manager")
   { Window=NULL; }
   virtual QWidget *toolWindow(QWidget *,toConnection &)
   {
-    if (!Window)
+    if (!Handler)
       return NULL;
+    if (!Window) {
+      Window=new toChartManager(toMainWidget()->workspace());
+      Window->setCaption(qApp->translate("toChartTool","Chart Manager"));
+      Window->setIcon(QPixmap((const char **)grid_xpm));
+    }
     Window->refresh();
     Window->show();
     Window->setFocus();
@@ -92,15 +97,22 @@ public:
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)grid_xpm),
 					   qApp->translate("toChartTool","Chart Manager..."),toolid);
 
-    Window=new toChartManager(toMainWidget()->workspace());
-    Window->setCaption(qApp->translate("toChartTool","Chart Manager"));
-    Window->setIcon(QPixmap((const char **)grid_xpm));
-    Window->close();
+    Handler=new toChartHandler();
   }
   void closeWindow(void)
   {
     Window=NULL;
   }
+  void closeHandler(void)
+  {
+    Handler=NULL;
+  }
+
+  toChartHandler *handler()
+  { return Handler; }
+  toChartManager *manager()
+  { return Window; }
+
   virtual bool canHandle(toConnection &)
   { return true; }
 };
@@ -203,7 +215,7 @@ public:
   }
 };
 
-toChartReceiver::toChartReceiver(toChartManager *parent,toLineChart *chart)
+toChartReceiver::toChartReceiver(toChartHandler *parent,toLineChart *chart)
   : QObject(parent)
 {
   Parent=parent;
@@ -239,15 +251,6 @@ void toChartReceiver::valueAdded(std::list<double> &value,const QString &xValues
 toChartManager::toChartManager(QWidget *main)
   : QVBox(main),toHelpContext(QString::fromLatin1("chartmanager.html"))
 {
-  loadSettings();
-
-  connect(toMainWidget(),SIGNAL(chartAdded(toLineChart *)),
-	  this,SLOT(addChart(toLineChart *)));
-  connect(toMainWidget(),SIGNAL(chartRemoved(toLineChart *)),
-	  this,SLOT(removeChart(toLineChart *)));
-  connect(toMainWidget(),SIGNAL(chartSetup(toLineChart *)),
-	  this,SLOT(setupChart(toLineChart *)));
-
   QToolBar *toolbar=toAllocBar(this,tr("Chart Manager"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
@@ -282,7 +285,6 @@ toChartManager::toChartManager(QWidget *main)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
   connect(&Refresh,SIGNAL(timeout()),this,SLOT(refresh()));
-  connect(&Timer,SIGNAL(timeout()),this,SLOT(alarm()));
 
   setFocusProxy(List);
 }
@@ -306,25 +308,26 @@ void toChartManager::windowActivated(QWidget *widget)
 toChartManager::~toChartManager()
 {
   ChartTool.closeWindow();
-  Charts.clear();
 }
 
-void toChartManager::addChart(toLineChart *chart)
+void toChartHandler::addChart(toLineChart *chart)
 {
   Charts.insert(Charts.end(),new toChartReceiver(this,chart));
-  Refresh.start(1,true);
+  toChartManager *manager=ChartTool.manager();
+  if (manager)
+    manager->Refresh.start(1,true);
 }
 
-void toChartManager::removeChart(toLineChart *chart)
+void toChartHandler::removeChart(toLineChart *chart)
 {
   for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
     if ((*i)->chart()==chart) {
       QString name=(*i)->name();
       if (!name.isNull()) {
-	std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(name);
+	std::map<QString,std::list<toChartManager::chartAlarm> >::iterator fnda=Alarms.find(name);
 	if (fnda!=Alarms.end()) {
 	  bool any=false;
-	  for(std::list<chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();) {
+	  for(std::list<toChartManager::chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();) {
 	    if (!(*j).Persistent) {
 	      (*fnda).second.erase(j);
 	      j=(*fnda).second.begin();
@@ -337,7 +340,7 @@ void toChartManager::removeChart(toLineChart *chart)
 	    Alarms.erase(fnda);
 	}
 
-	std::map<QString,chartTrack>::iterator fndt=Files.find(name);
+	std::map<QString,toChartManager::chartTrack>::iterator fndt=Files.find(name);
 	if (fndt!=Files.end()) {
 	  if (!(*fndt).second.Persistent)
 	    Files.erase(fndt);
@@ -346,7 +349,9 @@ void toChartManager::removeChart(toLineChart *chart)
 
       delete *i;
       Charts.erase(i);
-      Refresh.start(1,true);
+      toChartManager *manager=ChartTool.manager();
+      if (manager)
+	manager->Refresh.start(1,true);
       return;
     }
   }
@@ -542,7 +547,7 @@ bool toChartManager::chartAlarm::checkValue(double val)
   return false;
 }
 
-void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
+void toChartManager::chartAlarm::valueAdded(toChartHandler *handler,
 					    const QString &str,
 					    std::list<double> &value,
 					    const QString &xValue)
@@ -625,19 +630,19 @@ void toChartManager::chartAlarm::valueAdded(toChartManager *manager,
   if (sig) {
     if (Signal)
       return;
-    manager->SignalAlarms.insert(manager->SignalAlarms.end(),
+    handler->SignalAlarms.insert(handler->SignalAlarms.end(),
 				 alarmSignal(Action,xValue,str,toString(),Extra));
-    manager->Timer.start(1,true);
+    handler->Timer.start(1,true);
     Signal=true;
   } else
     Signal=false;
 }
 
-void toChartManager::saveSettings(void)
+void toChartHandler::saveSettings(void)
 {
   {
     int num=0;
-    for(std::map<QString,chartTrack>::iterator i=Files.begin();i!=Files.end();i++) {
+    for(std::map<QString,toChartManager::chartTrack>::iterator i=Files.begin();i!=Files.end();i++) {
       if ((*i).second.Persistent) {
 	num++;
 	QCString name=QCString("Files:")+QString::number(num).latin1();
@@ -649,9 +654,9 @@ void toChartManager::saveSettings(void)
   }
   {
     int num=0;
-    for(std::map<QString,std::list<chartAlarm> >::iterator i=Alarms.begin();
+    for(std::map<QString,std::list<toChartManager::chartAlarm> >::iterator i=Alarms.begin();
 	i!=Alarms.end();i++) {
-      for(std::list<chartAlarm>::iterator j=(*i).second.begin();j!=(*i).second.end();j++) {
+      for(std::list<toChartManager::chartAlarm>::iterator j=(*i).second.begin();j!=(*i).second.end();j++) {
 	if ((*j).Persistent) {
 	  num++;
 	  QCString name=QCString("Alarms:")+QString::number(num).latin1();
@@ -665,7 +670,7 @@ void toChartManager::saveSettings(void)
   toTool::saveConfig();
 }
 
-void toChartManager::loadSettings(void)
+void toChartHandler::loadSettings(void)
 {
   {
     for(int num=ChartTool.config("FilesCount","0").toInt();num>0;num--) {
@@ -673,7 +678,7 @@ void toChartManager::loadSettings(void)
       QString t=ChartTool.config(name+":Name","");
       QString s=ChartTool.config(name+":Spec","");
       if (!t.isEmpty()&&!s.isEmpty())
-	Files[t]=chartTrack(s,true);
+	Files[t]=toChartManager::chartTrack(s,true);
     }
   }
   {
@@ -682,18 +687,18 @@ void toChartManager::loadSettings(void)
       QString t=ChartTool.config(name+":Name","");
       QString s=ChartTool.config(name+":Spec","");
       if (!t.isEmpty()&&!s.isEmpty())
-	Alarms[t].insert(Alarms[t].end(),chartAlarm(s,true));
+	Alarms[t].insert(Alarms[t].end(),toChartManager::chartAlarm(s,true));
     }
   }
 }
 
-void toChartManager::alarm(void)
+void toChartHandler::alarm(void)
 {
   while(SignalAlarms.size()>0) {
-    alarmSignal signal=toShift(SignalAlarms);
-    if (signal.Action==StatusMessage)
+    toChartManager::alarmSignal signal=toShift(SignalAlarms);
+    if (signal.Action==toChartManager::StatusMessage)
       toStatusMessage(tr("ALARM:")+signal.Chart+QString::fromLatin1(": ")+signal.Alarm+QString::fromLatin1(": ")+signal.xValue);
-    else if (signal.Action==Email)
+    else if (signal.Action==toChartManager::Email)
       new toSMTP(QString::fromLatin1(TOAPPNAME " <noreply@localhost>"),
 		 signal.Extra,
 		 tr("TOra alert:")+" "+signal.Chart,
@@ -701,19 +706,19 @@ void toChartManager::alarm(void)
   }
 }
 
-void toChartManager::valueAdded(toLineChart *chart,
+void toChartHandler::valueAdded(toLineChart *chart,
 				const QString &chartName,
 				std::list<double> &value,
 				const QString &xValue)
 {
-  std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(chartName);
+  std::map<QString,std::list<toChartManager::chartAlarm> >::iterator fnda=Alarms.find(chartName);
   if (fnda!=Alarms.end()) {
-    std::list<chartAlarm> &alarms=(*fnda).second;
-    for(std::list<chartAlarm>::iterator i=alarms.begin();i!=alarms.end();i++)
+    std::list<toChartManager::chartAlarm> &alarms=(*fnda).second;
+    for(std::list<toChartManager::chartAlarm>::iterator i=alarms.begin();i!=alarms.end();i++)
       (*i).valueAdded(this,chartName,value,xValue);
   }
 
-  std::map<QString,chartTrack>::iterator fndt=Files.find(chartName);
+  std::map<QString,toChartManager::chartTrack>::iterator fndt=Files.find(chartName);
   if (fndt!=Files.end()) {
     QFile &file=(*fndt).second.File;
     bool header=false;
@@ -825,16 +830,16 @@ void toChartManager::openChart(void)
 void toChartManager::setupChart(void)
 {
   toChartReceiver *chart=selectedChart();
-  if (chart)
-    setupChart(chart->chart());
+  if (chart&&ChartTool.handler())
+    ChartTool.handler()->setupChart(chart->chart());
 }
 
 toChartReceiver *toChartManager::selectedChart(void)
 {
   try {
     QListViewItem *item=List->selectedItem();
-    if (item) {
-      for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
+    if (item&&ChartTool.handler()) {
+      for(std::list<toChartReceiver *>::iterator i=ChartTool.handler()->Charts.begin();i!=ChartTool.handler()->Charts.end();i++) {
 	toResult *result=(*i)->result();
 	if (result) {
 	  if (item->text(0)==result->connection().description(false)&&
@@ -847,23 +852,23 @@ toChartReceiver *toChartManager::selectedChart(void)
   return NULL;
 }
 
-void toChartManager::setupChart(toLineChart *chart)
+void toChartHandler::setupChart(toLineChart *chart)
 {
   for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
     if ((*i)->chart()==chart) {
       QString name=(*i)->name();
       if (!name.isNull()) {
-	std::list<chartAlarm> alarm;
-	std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(name);
+	std::list<toChartManager::chartAlarm> alarm;
+	std::map<QString,std::list<toChartManager::chartAlarm> >::iterator fnda=Alarms.find(name);
 	if (fnda!=Alarms.end())
 	  alarm=(*fnda).second;
 
-	chartTrack file;
-	std::map<QString,chartTrack>::iterator fndt=Files.find(name);
+	toChartManager::chartTrack file;
+	std::map<QString,toChartManager::chartTrack>::iterator fndt=Files.find(name);
 	if (fndt!=Files.end())
 	  file=(*fndt).second;
 
-	toChartSetup setup(chart,this,NULL,true);
+	toChartSetup setup(chart,toMainWidget(),NULL,true);
 	setup.Alarms->addColumn(tr("Alarms"));
 	setup.Alarms->addColumn(tr("Persistent"));
 	setup.Alarms->setSorting(0);
@@ -880,7 +885,7 @@ void toChartManager::setupChart(toLineChart *chart)
 				     QSizePolicy::Preferred));
 	t->showLegend(false);
 	t->showAxisLegend(false);
-	for(std::list<chartAlarm>::iterator j=alarm.begin();j!=alarm.end();j++)
+	for(std::list<toChartManager::chartAlarm>::iterator j=alarm.begin();j!=alarm.end();j++)
 	  new QListViewItem(setup.Alarms,
 			    (*j).toString(),
 			    (*j).Persistent?tr("Persistent"):tr("Temporary"));
@@ -890,16 +895,16 @@ void toChartManager::setupChart(toLineChart *chart)
 	    if (fndt!=Files.end())
 	      Files.erase(fndt);
 	  } else {
-	    Files[name]=chartTrack(setup.Filename->text(),
-				   setup.Persistent->isChecked());
+	    Files[name]=toChartManager::chartTrack(setup.Filename->text(),
+						   setup.Persistent->isChecked());
 	  }
 	  if (fnda!=Alarms.end())
 	    Alarms.erase(fnda);
 	  alarm.clear();
 	  for(QListViewItem *item=setup.Alarms->firstChild();
 	      item;item=item->nextSibling()) {
-	    alarm.insert(alarm.end(),chartAlarm(item->text(0),
-						item->text(1)==tr("Persistent")));
+	    alarm.insert(alarm.end(),toChartManager::chartAlarm(item->text(0),
+								item->text(1)==tr("Persistent")));
 	  }
 	  if (alarm.size()>0)
 	    Alarms[name]=alarm;
@@ -913,9 +918,11 @@ void toChartManager::setupChart(toLineChart *chart)
 
 void toChartManager::refresh(void)
 {
+  if (!ChartTool.handler())
+    return;
   try {
     List->clear();
-    for(std::list<toChartReceiver *>::iterator i=Charts.begin();i!=Charts.end();i++) {
+    for(std::list<toChartReceiver *>::iterator i=ChartTool.handler()->Charts.begin();i!=ChartTool.handler()->Charts.end();i++) {
       toResult *result=(*i)->result();
       if (result) {
 	toResultViewItem *item=new toResultViewMLine(List,
@@ -925,8 +932,8 @@ void toChartManager::refresh(void)
 	item->setText(2,result->sqlName());
 	QString name=(*i)->name();
 	if (!name.isNull()) {
-	  std::map<QString,std::list<chartAlarm> >::iterator fnda=Alarms.find(name);
-	  if (fnda!=Alarms.end()) {
+	  std::map<QString,std::list<chartAlarm> >::iterator fnda=ChartTool.handler()->Alarms.find(name);
+	  if (fnda!=ChartTool.handler()->Alarms.end()) {
 	    QString t;
 	    for(std::list<chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();j++) {
 	      t+=(*j).toString();
@@ -936,11 +943,27 @@ void toChartManager::refresh(void)
 	      item->setText(4,t.mid(0,t.length()-1));
 	  }
 
-	  std::map<QString,chartTrack>::iterator fndt=Files.find(name);
-	  if (fndt!=Files.end())
+	  std::map<QString,chartTrack>::iterator fndt=ChartTool.handler()->Files.find(name);
+	  if (fndt!=ChartTool.handler()->Files.end())
 	    item->setText(3,(*fndt).second.File.name());
 	}
       }
     }
   } TOCATCH
+}
+
+toChartHandler::toChartHandler()
+{
+  connect(toMainWidget(),SIGNAL(chartAdded(toLineChart *)),
+	  this,SLOT(addChart(toLineChart *)));
+  connect(toMainWidget(),SIGNAL(chartRemoved(toLineChart *)),
+	  this,SLOT(removeChart(toLineChart *)));
+  connect(toMainWidget(),SIGNAL(chartSetup(toLineChart *)),
+	  this,SLOT(setupChart(toLineChart *)));
+  connect(&Timer,SIGNAL(timeout()),this,SLOT(alarm()));
+}
+
+toChartHandler::~toChartHandler()
+{
+  ChartTool.closeHandler();
 }

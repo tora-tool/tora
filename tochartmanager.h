@@ -49,16 +49,17 @@ class toListView;
 class toResult;
 class toChartSetup;
 class toChartAlarm;
+class toChartHandler;
 
 class toChartReceiver : public QObject {
   Q_OBJECT
 
   QString LastName;
-  toChartManager *Parent;
+  toChartHandler *Parent;
   toLineChart *Chart;
   toResult *Result;
 public:
-  toChartReceiver(toChartManager *parent,toLineChart *chart);
+  toChartReceiver(toChartHandler *parent,toLineChart *chart);
 
   toLineChart *chart(void)
   { return Chart; }
@@ -149,45 +150,59 @@ class toChartManager : public QVBox, public toHelpContext {
 
     bool checkValue(double value);
 
-    void valueAdded(toChartManager *manager,const QString &str,
+    void valueAdded(toChartHandler *handler,const QString &str,
 		    std::list<double> &value,const QString &xValue);
   };
 
-  QTimer Timer;
   QTimer Refresh;
   toListView *List;
   QPopupMenu *ToolMenu;
-
-  std::map<QString,std::list<chartAlarm> > Alarms;
-  std::map<QString,chartTrack> Files;
-
-  std::list<toChartReceiver *> Charts;
-  std::list<alarmSignal> SignalAlarms;
 
   friend struct chartAlarm;
   friend struct alarmSignal;
 
   toChartReceiver *selectedChart(void);
-  void loadSettings(void);
-  void saveSettings(void);
 public:
   toChartManager(QWidget *parent);
   ~toChartManager();
 
+  friend class toChartSetup;
+  friend class toChartAlarm;
+  friend class toChartHandler;
+public slots:
+  void refresh(void);
+  void windowActivated(QWidget *widget);
+  void setupChart(void);
+  void openChart(void);
+};
+
+class toChartHandler : public QObject {
+  Q_OBJECT
+
+  QTimer Timer;
+  std::map<QString,std::list<toChartManager::chartAlarm> > Alarms;
+  std::map<QString,toChartManager::chartTrack> Files;
+
+  std::list<toChartReceiver *> Charts;
+  std::list<toChartManager::alarmSignal> SignalAlarms;
+
+  void loadSettings(void);
+  void saveSettings(void);
+public:
+  toChartHandler();
+  ~toChartHandler();
+
   void valueAdded(toLineChart *chart,const QString &chartName,
 		  std::list<double> &vale,const QString &xValue);
 
-  friend class toChartSetup;
-  friend class toChartAlarm;
+  friend class toChartManager;
+  friend class toChartManager::alarmSignal;
+  friend class toChartManager::chartAlarm;
 public slots:
-  void refresh(void);
+  void alarm(void);
   void addChart(toLineChart *chart);
   void setupChart(toLineChart *chart);
   void removeChart(toLineChart *chart);
-  void windowActivated(QWidget *widget);
-  void alarm(void);
-  void setupChart(void);
-  void openChart(void);
 };
 
 #endif

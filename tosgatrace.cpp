@@ -322,7 +322,7 @@ void toSGATrace::refresh(void)
 	toStatusMessage(tr("Unfinished is only available for long operations"));
       break;
     case 2:
-      select+=QString::fromLatin("\n   and a.executions = 1 and a.parse = 1");
+      select+=QString::fromLatin1("\n   and a.executions = 1 and a.parse = 1");
       break;
     case 3:
       order=QString::fromLatin1("a.Executions");
