@@ -1237,7 +1237,7 @@ __EOT__
 	for my $t (keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
-		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
+		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		push(@allsource,@{$plugins{$t}{Files}});
 	    }
@@ -1360,7 +1360,7 @@ __EOT__
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
-		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
+		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE "plugins/$t.tso:\\\n\tobjs/".
 		    join(".o \\\n\tobjs/",
@@ -1382,7 +1382,7 @@ __EOT__
 	for my $t (sort keys %plugins) {
 	    if (($plugins{$t}{Oracle}&&$OracleFound)||
 		($plugins{$t}{MySQL}&&$MySQLFound)||
-		($plugins{$t}{Qt3}&&$QtVersion gt "3")||
+		($plugins{$t}{Qt3}&&$QtVersion ge "3")||
 		$plugins{$t}{Any}) {
 		print MAKEFILE " \\\n\tplugins/$t.tso";
 	    }
