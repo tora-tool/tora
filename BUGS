@@ -12,3 +12,4 @@ toDebug:
 Qt:
 	Some layouts seem to expand far beyond the content of the screen until you resize it.
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
+	The QFontDialog doesn't remember the family of the font you pass to it.

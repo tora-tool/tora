@@ -378,18 +378,16 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
     Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
     if (!Editor->filename().isEmpty()) {
       QFile file(Editor->filename());
-      if (!file.open(IO_ReadOnly))
-	return;
+      if (file.open(IO_ReadOnly)) {
+	int size=file.size();
 	    
-      int size=file.size();
-	    
-      char buf[size+1];
-      if (file.readBlock(buf,size)==-1)
-	return;
-
-      buf[size]=0;
-      Editor->setText(QString::fromLocal8Bit(buf));
-      Editor->setEdited(false);
+	char buf[size+1];
+	if (file.readBlock(buf,size)!=-1) {
+	  buf[size]=0;
+	  Editor->setText(QString::fromLocal8Bit(buf));
+	  Editor->setEdited(false);
+	}
+      }
     }
   }
 
@@ -402,6 +400,8 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
     StatisticButton->setOn(true);
   }
 }
+
+#include <stdio.h>
 
 void toWorksheet::windowActivated(QWidget *widget)
 {

@@ -37,6 +37,7 @@ TO_NAMESPACE;
 #include "tohighlightedtext.h"
 #include "tosyntaxsetup.h"
 #include "toconf.h"
+#include "tomain.h"
 
 #include "tosyntaxsetup.ui.moc"
 #include "tosyntaxsetup.ui.cpp"
@@ -49,11 +50,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   if (!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty())
     SyntaxHighlighting->setChecked(true);
 
-  QFont font( "Courier", 12, QFont::Bold);
-  QString fnt=toTool::globalConfig(CONF_TEXT,"");
-  if (fnt.length())
-    font.setRawName(fnt);
-  Text=font.rawName();
+  QFont font(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
+  Text=toFontToString(font);
   checkFixedWidth(font);
   CodeExample->setFont(font);
   Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)]=Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
@@ -181,11 +179,9 @@ void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 void toSyntaxSetup::selectFont(void)
 {
   bool ok=true;
-  QFont font;
-  font.setRawName(Text);
-  font=QFontDialog::getFont (&ok,font,this);
+  QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);
   if (ok) {
-    Text=font.rawName();
+    Text=toFontToString(font);
     CodeExample->setFont(font);
     Example->setFont(font);
     checkFixedWidth(font);

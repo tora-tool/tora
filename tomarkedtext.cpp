@@ -43,14 +43,8 @@ TO_NAMESPACE;
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
 : QMultiLineEdit(parent,name)
 {
-  QString font=toTool::globalConfig(CONF_TEXT,"");
-  if (!font.isEmpty()) {
-    QFont fnt;
-    fnt.setRawName(font);
-    setFont(fnt);
-  } else {
-    setFont( QFont( "Courier", 12, QFont::Bold ) );
-  }
+  setFont(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
+
   UndoAvailable=false;
   RedoAvailable=false;
   connect(this,SIGNAL(redoAvailable(bool)),this,SLOT(setRedoAvailable(bool)));

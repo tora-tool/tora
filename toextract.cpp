@@ -1198,7 +1198,7 @@ void toExtract::initialNext(const QString &blocks,QString &initial,QString &next
   list<QString>::iterator ilimit=Limit.begin();
   while(ilimit!=Initial.end()) {
     if (*ilimit=="UNLIMITED"||
-	(*ilimit).toFloat()>blocks) {
+	(*ilimit).toFloat()>blocks.toFloat()) {
       initial=*iinit;
       next=*inext;
       return;
@@ -5075,7 +5075,7 @@ static toSQL SQLTablespaceInfo("toExtract:TablespaceInfo",
                             , 8, 505
                             ,16,1017
                             ,32,2041
-                            ,'???'
+                            ,'\?\?\?'
                            )
                ,max_extents
               )                       AS max_extents
@@ -5107,7 +5107,7 @@ static toSQL SQLTablespaceInfo8("toExtract:TablespaceInfo",
                             , 8, 505
                             ,16,1017
                             ,32,2041
-                            ,'???'
+                            ,'\?\?\?'
                            )
                ,max_extents
               )                       AS max_extents
@@ -5143,7 +5143,7 @@ static toSQL SQLTablespaceInfo7("toExtract:TablespaceInfo",
                             , 8, 505
                             ,16,1017
                             ,32,2041
-                            ,'???'
+                            ,'\?\?\?'
                            )
                ,max_extents
               )                       AS max_extents

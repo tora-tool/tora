@@ -369,7 +369,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
     painter->scale(scale,scale);
-    painter->drawLine(0,header()->height()-1,mwidth,header()->height()-1);
+    painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
   }
   for (int i=column;i<columns();i++) {
     double width=columnWidth(i);
@@ -380,7 +380,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
 	break;
     }
     if (paint)
-      painter->drawText(x,0,width,header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+      painter->drawText(int(x),0,int(width),header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
     x+=width;
   }
   if (paint)
@@ -410,7 +410,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
       if (i==0)
 	width-=curLevel;
       if (paint) {
-	item->paintCell(painter,qApp->palette().active(),i,width,columnAlignment(i));
+	item->paintCell(painter,qApp->palette().active(),i,int(width),columnAlignment(i));
 	painter->translate(width,0);
       }
       x+=width;
@@ -433,7 +433,7 @@ QListViewItem *toResultView::printPage(QPrinter *printer,QPainter *painter,QList
     }
   }
   if (paint)
-    painter->drawLine(0,0,mwidth,0);
+    painter->drawLine(0,0,int(mwidth),0);
   if (newCol>=0) {
     column=newCol;
     return top;

@@ -446,3 +446,36 @@ void toPush(list<QString> &lst,const QString &str)
 {
   lst.push_back(str);
 }
+
+QString toFontToString(const QFont &fnt)
+{
+#ifdef TO_FONT_RAW_NAME
+  return fnt.rawName();
+#else
+  QStringList lst;
+  lst.insert(lst.end(),fnt.family());
+  lst.insert(lst.end(),QString::number(fnt.pointSize()));
+  lst.insert(lst.end(),QString::number(fnt.weight()));
+  lst.insert(lst.end(),QString::number(fnt.italic()));
+  lst.insert(lst.end(),QString::number(fnt.charSet()));
+  printf("%s\n",(const char *)lst.join("/"));
+  return lst.join("/");
+#endif
+}
+
+QFont toStringToFont(const QString &str)
+{
+#ifdef TO_FONT_RAW_NAME
+  QFont fnt;
+  fnt.setRawName(str);
+  return fnt;
+#else
+  QStringList lst=QStringList::split("/",str);
+  if (lst.count()!=5)
+    return QFont( "Courier", 12, QFont::Bold);
+  QFont font(lst[0],lst[1].toInt(),lst[2].toInt(),
+	     bool(lst[3].toInt()),QFont::CharSet(lst[4].toInt()));
+  printf("%s = %s?\n",(const char *)str,(const char *)toFontToString(font));
+  return font;
+#endif
+}
