@@ -32,6 +32,8 @@
  *
  ****************************************************************************/
 
+#include "tomain.h"
+
 #include <qpainter.h>
 #include <qapplication.h>
 #include <qworkspace.h>
@@ -44,7 +46,6 @@
 #include "topiechart.h"
 #include "totool.h"
 #include "toconf.h"
-#include "tomain.h"
 
 #ifdef TO_HAS_KPRINT
 #include <kprinter.h>

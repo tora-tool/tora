@@ -33,9 +33,15 @@
 </LI>
 </ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">statement</A></b> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null) 
 </LI>
+<LI>&nbsp;<b><A HREF="#ref6">statement</A></b> (const statement &) 
+</LI>
+<LI>const statement &&nbsp;<b><A HREF="#ref7">operator = </A></b> (const statement &) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">~statement</A></b> () 
+</LI>
 </ul><h4>Public Members</h4><ul><LI>QString <b><A HREF="#ref2">Comment</A></b></LI>
 <LI>QString <b><A HREF="#ref3">String</A></b></LI>
-<LI>std::list<statement> <b><A HREF="#ref4">SubTokens</A></b></LI>
+<LI>std::list<statement> *<b><A HREF="#ref4">SubTokens</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Structure the statement is parsed into.
    </p>
 <A NAME="type"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>type</strong> {      Block,
@@ -45,9 +51,18 @@
        </p>
 <A NAME="Comment"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>Comment</strong>
 </td><td align="right"><h3><strong>Comment</strong></h3></td></tr></table><p></p><A NAME="String"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A>  <strong>String</strong>
-</td><td align="right"><h3><strong>String</strong></h3></td></tr></table><p></p><A NAME="SubTokens"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<statement>  <strong>SubTokens</strong>
+</td><td align="right"><h3><strong>String</strong></h3></td></tr></table><p></p><A NAME="SubTokens"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<statement> * <strong>SubTokens</strong>
 </td><td align="right"><h3><strong>SubTokens</strong></h3></td></tr></table><p></p><A NAME="statement"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (type ntype=Token,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &token=QString::null)
 <br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Create statement
+     </p>
+<A NAME="statement"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>statement</strong> (const statement &)
+<br></td><td align="right"><h3><strong>statement</strong></h3></td></tr></table><p></p><p> Copy constructor
+     </p>
+<A NAME="operator%20=%20"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const statement &&nbsp;<strong>operator = </strong> (const statement &)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Copy operator
+     </p>
+<A NAME="~statement"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~statement</strong> ()
+<br></td><td align="right"><h3><strong>~statement</strong></h3></td></tr></table><p></p><p> Destroy statement
      </p>
 <HR>
 	<table>

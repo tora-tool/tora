@@ -48,7 +48,7 @@ class toResultLock : public toResultView {
   toBackground Poll;
   toNoBlockQuery *Query;
   QListViewItem *LastItem;
-  map<int,bool> Checked;
+  std::map<int,bool> Checked;
 public:
   toResultLock(QWidget *parent,const char *name=NULL);
   ~toResultLock();

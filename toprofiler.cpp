@@ -41,6 +41,7 @@
 #include <qmessagebox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
+#include <qpainter.h>
 
 #include "toprofiler.h"
 #include "tosql.h"
@@ -499,7 +500,7 @@ void toProfiler::execute(void)
   try {
     try {
       toQuery query(connection(),SQLProfilerDetect);
-    } catch(const QString &str) {
+    } catch(const QString &) {
       int ret=TOMessageBox::warning(this,
 				    "Profiler tables doesn't exist",
 				    "Profiler tables doesn't exist. Should TOra\n"

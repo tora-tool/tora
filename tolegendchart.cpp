@@ -68,9 +68,11 @@ std::list<int> toLegendChart::sizeHint(int &height,int &items)
   QFontMetrics fm=fontMetrics();
 
   int count=0;
-  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++)
-    if (!(*i).isEmpty()&&*i!=" ")
-      count++;
+  {
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++)
+      if (!(*i).isEmpty()&&*i!=" ")
+	count++;
+  }
 
   items=(count+Columns-1)/Columns;
 
@@ -135,8 +137,10 @@ void toLegendChart::paintEvent(QPaintEvent *e)
   std::list<int> widths=sizeHint(height,items);
 
   int width=4;
-  for(std::list<int>::iterator i=widths.begin();i!=widths.end();i++)
-    width+=(*i)+12;
+  {
+    for(std::list<int>::iterator i=widths.begin();i!=widths.end();i++)
+      width+=(*i)+12;
+  }
 
   QPainter p(this);
   QFontMetrics fm=fontMetrics();

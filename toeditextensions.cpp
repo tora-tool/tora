@@ -163,7 +163,7 @@ void toEditExtensions::autoIndentBuffer(void)
   if (Current) {
     QString text=Current->text();
     unsigned int pos=0;
-    while(pos<text.length()&&text[pos].isSpace()) {
+    while(pos<text.length()&&text.at(pos).isSpace()) {
       pos++;
     }
     Current->selectAll();
@@ -184,8 +184,8 @@ static void ObfuscateStat(toSQLParse::statement &stat,QString &ret)
 {
   if (ret.length()>0&&
       stat.String.length()>0&&
-      toIsIdent(ret[ret.length()-1])&&
-      toIsIdent(stat.String[0])) {
+      toIsIdent(ret.at(ret.length()-1))&&
+      toIsIdent(stat.String.at(0))) {
     if (CountLine(ret)<60)
       ret+=" ";
     else
@@ -196,8 +196,8 @@ static void ObfuscateStat(toSQLParse::statement &stat,QString &ret)
     ret+=stat.Comment;
     ret+="\n";
   }
-  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
-      i!=stat.SubTokens.end();
+  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens->begin();
+      i!=stat.SubTokens->end();
       i++) {
     ObfuscateStat(*i,ret);
   }
@@ -209,7 +209,7 @@ void toEditExtensions::obfuscateBlock(void)
     QString str=Current->markedText();
     if (!str.isEmpty()) {
       toSQLParse::statement stat;
-      stat.SubTokens=toSQLParse::parse(str);
+      *stat.SubTokens=toSQLParse::parse(str);
       QString res;
       ObfuscateStat(stat,res);
       Current->insert(res);
@@ -223,7 +223,7 @@ void toEditExtensions::obfuscateBuffer(void)
     QString str=Current->text();
     if (!str.isEmpty()) {
       toSQLParse::statement stat;
-      stat.SubTokens=toSQLParse::parse(str);
+      *stat.SubTokens=toSQLParse::parse(str);
       Current->selectAll();
       QString res;
       ObfuscateStat(stat,res);

@@ -36,6 +36,8 @@
 #include <kfiledialog.h>
 #endif
 
+#include "tomain.h"
+
 #include <qpopupmenu.h>
 #include <qclipboard.h>
 #include <qheader.h>
@@ -53,7 +55,6 @@
 #include <qworkspace.h>
 
 #include "tosearchreplace.h"
-#include "tomain.h"
 #include "toresultview.h"
 #include "tosql.h"
 #include "toconf.h"

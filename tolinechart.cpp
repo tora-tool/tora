@@ -32,6 +32,8 @@
  *
  ****************************************************************************/
 
+#include "tomain.h"
+
 #include <qpainter.h>
 #include <qworkspace.h>
 #include <qlineedit.h>
@@ -43,7 +45,6 @@
 #include <qpopupmenu.h>
 
 #include "tolinechart.h"
-#include "tomain.h"
 #include "toconf.h"
 #include "totool.h"
 #include "tolinechartsetupui.h"
@@ -663,14 +664,18 @@ toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WF
 void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefix)
 {
   int id=0;
-  for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-    id++;
-    ret[prefix+":Labels:"+QString::number(id)]=*i;
+  {
+    for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+      id++;
+      ret[prefix+":Labels:"+QString::number(id)]=*i;
+    }
   }
   id=0;
-  for(std::list<QString>::iterator i=XValues.begin();i!=XValues.end();i++) {
-    id++;
-    ret[prefix+":XValues:"+QString::number(id)]=*i;
+  {
+    for(std::list<QString>::iterator i=XValues.begin();i!=XValues.end();i++) {
+      id++;
+      ret[prefix+":XValues:"+QString::number(id)]=*i;
+    }
   }
   id=0;
   for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {

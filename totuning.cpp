@@ -34,6 +34,7 @@
 
 #include <time.h>
 
+#include <qpainter.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtabwidget.h>
@@ -1878,11 +1879,13 @@ void toTuningWait::changeSelection(void)
   int typ=0;
   std::list<QString> used;
   std::map<QString,int> usedMap;
-  for (std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-    usedMap[*i]=typ;
-    enabled[typ]=false;
-    included[typ]=false;
-    typ++;
+  {
+    for (std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
+      usedMap[*i]=typ;
+      enabled[typ]=false;
+      included[typ]=false;
+      typ++;
+    }
   }
   for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
     QString txt=item->text(1);
@@ -1894,9 +1897,11 @@ void toTuningWait::changeSelection(void)
     included[usedMap[txt]]=true;
   }
   used.sort();
-  for(std::list<QString>::iterator i=used.begin();i!=used.end();i++) {
-    if (!enabled[usedMap[*i]])
-      *i=QString::null;
+  {
+    for(std::list<QString>::iterator i=used.begin();i!=used.end();i++) {
+      if (!enabled[usedMap[*i]])
+	*i=QString::null;
+    }
   }
       
   try {
@@ -1910,43 +1915,47 @@ void toTuningWait::changeSelection(void)
 
     std::list<std::list<double> > &cur=(ShowTimes?Times:Values);
 
-    for(std::list<std::list<double> >::iterator i=cur.begin();
-	i!=cur.end();i++) {
-      typ=0;
-      relative.clear();
-      std::list<double> current;
-      std::list<double>::iterator k=lastAbsolute.begin();
-      for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
-	if (included[typ]) {
-	  if (enabled[typ]) {
-	    current.insert(current.end(),*j);
-	    if (k!=lastAbsolute.end()) {
-	      relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
-	      k++;
-	    }
-	  } else {
-	    current.insert(current.end(),0);
-	    if (k!=lastAbsolute.end()) {
-	      relative.insert(relative.end(),0);
-	      k++;
+    {
+      for(std::list<std::list<double> >::iterator i=cur.begin();
+  	  i!=cur.end();i++) {
+	typ=0;
+	relative.clear();
+	std::list<double> current;
+	std::list<double>::iterator k=lastAbsolute.begin();
+	for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
+	  if (included[typ]) {
+	    if (enabled[typ]) {
+	      current.insert(current.end(),*j);
+	      if (k!=lastAbsolute.end()) {
+		relative.insert(relative.end(),max(double(0),((*j)-(*k))/((*ctime)-last)));
+		k++;
+	      }
+	    } else {
+	      current.insert(current.end(),0);
+	      if (k!=lastAbsolute.end()) {
+		relative.insert(relative.end(),0);
+		k++;
+	      }
 	    }
 	  }
+	  typ++;
 	}
-	typ++;
-      }
-      if (relative.size()>0&&xval!=XValues.end()) {
-	Delta->addValues(relative,*xval);
-	xval++;
-      }
-      lastAbsolute=current;
-      if (ctime!=TimeStamp.end()) {
-	last=*ctime;
-	ctime++;
+	if (relative.size()>0&&xval!=XValues.end()) {
+	  Delta->addValues(relative,*xval);
+	  xval++;
+	}
+	lastAbsolute=current;
+	if (ctime!=TimeStamp.end()) {
+	  last=*ctime;
+	  ctime++;
+	}
       }
     }
     double total=0;
-    for (std::list<double>::iterator i=lastAbsolute.begin();i!=lastAbsolute.end();i++)
-      total+=*i;
+    {
+      for (std::list<double>::iterator i=lastAbsolute.begin();i!=lastAbsolute.end();i++)
+	total+=*i;
+    }
     AbsolutePie->setValues(lastAbsolute,used);
     AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+" s");
     total=0;
@@ -1985,10 +1994,12 @@ void toTuningWait::poll(void)
 	QListViewItem *item=NULL;
 	std::map<QString,bool> types;
 	int typ=0;
-	for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
-	  types[ci->text(1)]=true;
-	  item=ci;
-	  typ++;
+	{
+	  for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
+	    types[ci->text(1)]=true;
+	    item=ci;
+	    typ++;
+	  }
 	}
 
 	std::list<double>::iterator j=CurrentTimes.begin();

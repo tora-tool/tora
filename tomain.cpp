@@ -1121,17 +1121,19 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
 
   int id=1;
   std::map<toConnection *,int> connMap;
-  for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-    QString key=prefix+":Connection:"+QString::number(id);
-    if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
-      data[key+":Password"]=(*i)->password();
-    data[key+":User"]=(*i)->user();
-    data[key+":Host"]=(*i)->host();
-    data[key+":Mode"]=(*i)->mode();
-    data[key+":Database"]=(*i)->database();
-    data[key+":Provider"]=(*i)->provider();
-    connMap[*i]=id;
-    id++;
+  {
+    for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+      QString key=prefix+":Connection:"+QString::number(id);
+      if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
+	data[key+":Password"]=(*i)->password();
+      data[key+":User"]=(*i)->user();
+      data[key+":Host"]=(*i)->host();
+      data[key+":Mode"]=(*i)->mode();
+      data[key+":Database"]=(*i)->database();
+      data[key+":Provider"]=(*i)->provider();
+      connMap[*i]=id;
+      id++;
+    }
   }
 
   id=1;

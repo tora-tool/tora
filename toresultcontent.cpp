@@ -32,6 +32,7 @@
  *
  ****************************************************************************/
 
+#include <qpainter.h>
 #include <qdragobject.h>
 #include <qclipboard.h>
 #include <qpopupmenu.h>
@@ -44,6 +45,7 @@
 #include <qgrid.h>
 #include <qtooltip.h>
 #include <stdio.h>
+#include <qregexp.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -82,7 +84,7 @@ toResultContentEditor *toResultContentMemo::contentEditor()
 }
 
 toResultContentMemo::toResultContentMemo(QWidget *parent,const QString &data,int row,int col,
-					 bool sql=false)
+					 bool sql)
   : toMemoEditor(parent,data,row,col,sql,false,true)
 {
   toResultContentEditor *cnt=contentEditor();

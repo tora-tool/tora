@@ -32,6 +32,8 @@
  *
  ****************************************************************************/
 
+#include "tomain.h"
+
 #include <qprinter.h>
 #include <qpainter.h>
 #include <qapplication.h>
@@ -39,7 +41,6 @@
 #include <qpaintdevicemetrics.h>
 #include <qfileinfo.h>
 
-#include "tomain.h"
 #include "tomarkedtext.h"
 #include "totool.h"
 #include "toconf.h"

@@ -677,33 +677,34 @@ QString toExtract::migrateConstraint(std::list<QString> &source,std::list<QStrin
 
   srcDst2DropCreate(source,destin,drop,create);
 
-  for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
-    std::list<QString> ctx=splitDescribe(*i);
-    QString schema=toShift(ctx);
-    QString table=toShift(ctx);
-    if (toShift(ctx)!="TABLE")
-      continue;
-    QString name=toShift(ctx);
-    if (toShift(ctx)!="CONSTRAINT")
-      continue;
-    QString type=toShift(ctx);
-    QString extra=toShift(ctx);
-    if ((schema!=lastSchema||
-	 table!=lastTable||
-	 name!=lastName||
-	 type!=lastType)&&
-	extra.isEmpty()) {
-      if (Prompt)
-	sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
-	  arg(schema).arg(table).arg(name);
-      sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
-	arg(schema).arg(table).arg(name);
-      lastSchema=schema;
-      lastTable=table;
-      lastName=name;
-      lastType=type;
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=splitDescribe(*i);
+      QString schema=toShift(ctx);
+      QString table=toShift(ctx);
+      if (toShift(ctx)!="TABLE")
+	continue;
+      QString name=toShift(ctx);
+      if (toShift(ctx)!="CONSTRAINT")
+        continue;
+      QString type=toShift(ctx);
+      QString extra=toShift(ctx);
+      if ((schema!=lastSchema||
+  	   table!=lastTable||
+	   name!=lastName||
+	   type!=lastType)&&
+	  extra.isEmpty()) {
+	if (Prompt)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+        sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
+  	  arg(schema).arg(table).arg(name);
+	lastSchema=schema;
+	lastTable=table;
+	lastName=name;
+        lastType=type;
+      }
     }
-    
   }
 
   lastSchema=lastTable=lastName=lastType=QString::null;

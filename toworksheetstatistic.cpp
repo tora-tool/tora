@@ -32,6 +32,7 @@
  *
  ****************************************************************************/
 
+#include <qtooltip.h>
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qpopupmenu.h>

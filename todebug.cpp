@@ -2580,12 +2580,14 @@ void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
 void toDebug::importData(std::map<QString,QString> &data,const QString &prefix)
 {
   QString str=data[prefix+":Schema"];
-  for(int i=0;i<Schema->count();i++)
-    if (Schema->text(i)==str) {
-      Schema->setCurrentItem(i);
-      changeSchema(i);
-      break;
-    }
+  {
+    for(int i=0;i<Schema->count();i++)
+      if (Schema->text(i)==str) {
+	Schema->setCurrentItem(i);
+	changeSchema(i);
+	break;
+      }
+  }
 
   HeadEditor->importData(data,prefix+":Head");
   BodyEditor->importData(data,prefix+":Body");

@@ -95,12 +95,19 @@ public:
     QString String;
     /** Subtokens to this token.
      */
-    std::list<statement> SubTokens;
+    std::list<statement> *SubTokens;
     /** Create statement
      */
-    statement(type ntype=Token,const QString &token=QString::null)
-      : Type(ntype),String(token)
-    { }
+    statement(type ntype=Token,const QString &token=QString::null);
+    /** Copy constructor
+     */
+    statement(const statement &);
+    /** Copy operator
+     */
+    const statement &operator = (const statement &);
+    /** Destroy statement
+     */
+    ~statement();
   };
 
   /** Get next SQL token from an editor.
