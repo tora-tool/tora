@@ -316,8 +316,8 @@ void toWorksheet::setup(bool autoLoad)
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh",
-		  "Update last executed statement",
+		  "Reexecute Last Statement",
+		  "Reexecute Last Statement",
 		  this,SLOT(refresh(void)),
 		  toolbar);
 
@@ -566,7 +566,7 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Execute &Newline Separated",this,
 			   SLOT(executeNewline(void)),SHIFT+Key_F9);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
-			   "&Refresh",this,SLOT(refresh(void)),
+			   "&Reexecute Last Statement",this,SLOT(refresh(void)),
 			   Key_F5);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
@@ -839,10 +839,14 @@ void toWorksheet::saveHistory(void)
     disconnect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
     disconnect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
 	       this,SLOT(addLog(const QString &,const toConnection::exception &)));
+    disconnect(StopButton,SIGNAL(clicked(void)),Result,SLOT(stop(void)));
 
     Result=new toResultLong(Result->parentWidget());
+    if (StatisticButton->isOn())
+      enableStatistic(true);
     Result->show();
     Current=Result;
+    connect(StopButton,SIGNAL(clicked(void)),Result,SLOT(stop(void)));
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
     connect(Result,SIGNAL(firstResult(const QString &,const toConnection::exception &)),
 	    this,SLOT(addLog(const QString &,const toConnection::exception &)));

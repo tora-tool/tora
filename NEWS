@@ -39,6 +39,8 @@
 2001-11-22: Made some improvements and bugfixes to tuning waits.
 2001-11-22: Use non solid brushes for chart colors.
 2001-11-22: Fixed problems with restored session tools window caption.
+2001-11-22: Fixed problem with resetting statistics in worksheet.
+2001-11-22: Fixed problem stoping query in worksheet.
 
 1.1.5:
 
