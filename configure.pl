@@ -164,7 +164,7 @@ __TEMP__
 
     # try to find out the Oracle client release
     my ($ORACLE_RELEASE) = undef;
-    open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus |") || die "Cannot call sqlplus: $!";
+    open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus '-?' |") || die "Cannot call sqlplus: $!";
     while (<ORA>) {
         if (/Release\s(\S+)/) {
              $ORACLE_RELEASE = $1;
