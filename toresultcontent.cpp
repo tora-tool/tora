@@ -372,25 +372,25 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
       SQL+=")";
     }
 
-    SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
-    
     if (!Order[FilterName].isEmpty()) {
       SQL+=" ORDER BY ";
       SQL+=Order[FilterName];
     }
 
-    QString init;
-    if (SkipNumber>0)
-      init="SELECT * FROM ("+SQL+") WHERE ROWNUM <= "+QString::number(SkipNumber);
-    else
-      init=SQL;
-
     toQList par;
 
-    if (connection().provider()=="Oracle")
+    if (connection().provider()=="Oracle") {
+      QString init;
+      SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
+      if (SkipNumber>0)
+	init="SELECT * FROM ("+SQL+") WHERE ROWNUM <= "+QString::number(SkipNumber);
+      else
+	init=SQL;
       Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
-    else
+    } else {
+      SkipNumber=0;
       Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);
+    }
     Poll.start(100);
     OrigValues.clear();
     CurrentRow=-1;
