@@ -822,20 +822,20 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	  output+="</TH>";
 	  break;
 	}
-    }
-    if (output.length()>0)
-      output=output.left(output.length()-1);
-    if (type==3&&includeHeader)
-      output+="</TR>";
-    output+="\n";
-    if (type==0) {
-      for (int k=0;k<columns();k++) {
-	for (int l=0;l<sizes[k];l++)
-	  output+="=";
-	if (k!=columns()-1)
-	  output+=" ";
-      }
+      if (output.length()>0&&type!=3)
+	output=output.left(output.length()-1);
+      if (type==3&&includeHeader)
+	output+="</TR>";
       output+="\n";
+      if (type==0) {
+	for (int k=0;k<columns();k++) {
+	  for (int l=0;l<sizes[k];l++)
+	    output+="=";
+	  if (k!=columns()-1)
+	    output+=" ";
+	}
+	output+="\n";
+      }
     }
 
     QListViewItem *next=NULL;
@@ -879,7 +879,8 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
 	    break;
 	  case 3:
 	    line+=QString("<TD%1>").arg(bgcolor);
-	    line+=indent;
+	    if (i==0)
+	      line+=indent;
 	    line+=text;
 	    line+="</TD>";
 	    break;
@@ -894,7 +895,7 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
       }
 
       if (item->firstChild()) {
-	if (type==3)
+	if (type!=3)
 	  indent+=" ";
 	else
 	  indent+="&nbsp;";
