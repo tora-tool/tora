@@ -85,9 +85,8 @@ toHelpBrowser::toHelpBrowser(QWidget *parent,const char *name)
 
 void toHelpBrowser::openURLRequest(const KURL &url,const KParts::URLArgs &)
 {
-  emit backwardAvailable(false);
-  openURL(url);
   emit textChanged();
+  openURL(url);
 }
 
 bool toHelpBrowser::openURL(const KURL &url)
@@ -99,7 +98,6 @@ bool toHelpBrowser::openURL(const KURL &url)
   if (Backward.size()==1)
     emit backwardAvailable(true);
   toPush(Backward,url.url());
-  emit textChanged();
   return KHTMLPart::openURL(url);
 }
 
