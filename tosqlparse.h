@@ -56,6 +56,7 @@ public:
     bool RightSeparator;
     bool EndBlockNewline;
     int IndentLevel;
+    int CommentColumn;
   };
 
   /** Structure the statement is parsed into.

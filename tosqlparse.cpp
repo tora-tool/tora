@@ -515,7 +515,8 @@ toSQLParse::settings toSQLParse::Settings={true,
 					   true,
 					   true,
 					   true,
-					   4};
+					   4,
+					   60};
 
 QString toSQLParse::indentString(int level)
 {

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
+            <width>541</width>
             <height>394</height>
         </rect>
     </property>
@@ -28,11 +28,130 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget row="0"  column="1" >
-            <class>QSpinBox</class>
+        <widget row="10"  column="0"  rowspan="1"  colspan="2" >
+            <class>toHighlightedText</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>IndentLevel</cstring>
+                <cstring>Example</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                </sizepolicy>
+            </property>
+        </widget>
+        <widget row="7"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>RightSeparator</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Right justify keywords in each statement.</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string></string>
+            </property>
+        </widget>
+        <widget row="8"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>EndBlockNewline</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Insert a &amp;newline after each block</string>
+            </property>
+        </widget>
+        <widget row="4"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>BlockOpenLine</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Place THEN, LOOP, AS and IS on new line at b&amp;eginning of new block</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string></string>
+            </property>
+        </widget>
+        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CommaBefore</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Place &amp;comma on new line before item instead of after on same line</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string></string>
+            </property>
+        </widget>
+        <widget row="9"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExampleLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Example</string>
+            </property>
+        </widget>
+        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExpandSpaces</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Expand spaces to tabs when indenting</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Transform spaces to tabs whenever posible when indenting.</string>
+            </property>
+        </widget>
+        <widget row="5"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>OperatorSpace</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Put spaces around operators</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Insert extra spaces between operators.</string>
+            </property>
+        </widget>
+        <widget row="6"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>KeywordUpper</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Transform keywords to &amp;uppercase</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string></string>
             </property>
         </widget>
         <widget row="0"  column="0" >
@@ -50,130 +169,33 @@
                 <cstring>IndentLevel</cstring>
             </property>
         </widget>
-        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
+        <widget row="0"  column="1" >
+            <class>QSpinBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>BlockOpenLine</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Place THEN, LOOP, AS and IS on new line at b&amp;eginning of new block</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string></string>
+                <cstring>IndentLevel</cstring>
             </property>
         </widget>
-        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>CommaBefore</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Place &amp;comma on new line before item instead of after on same line</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string></string>
-            </property>
-        </widget>
-        <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ExpandSpaces</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Expand spaces to tabs when indenting</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Transform spaces to tabs whenever posible when indenting.</string>
-            </property>
-        </widget>
-        <widget row="4"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>OperatorSpace</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Put spaces around operators</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string>Insert extra spaces between operators.</string>
-            </property>
-        </widget>
-        <widget row="5"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>KeywordUpper</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Transform keywords to &amp;uppercase</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string></string>
-            </property>
-        </widget>
-        <widget row="6"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>RightSeparator</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Right justify keywords in each statement.</string>
-            </property>
-            <property>
-                <name>toolTip</name>
-                <string></string>
-            </property>
-        </widget>
-        <widget row="7"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>EndBlockNewline</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Insert a &amp;newline after each block</string>
-            </property>
-        </widget>
-        <widget row="9"  column="0"  rowspan="1"  colspan="2" >
-            <class>toHighlightedText</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Example</cstring>
-            </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
-                <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>7</vsizetype>
-                </sizepolicy>
-            </property>
-        </widget>
-        <widget row="8"  column="0"  rowspan="1"  colspan="2" >
+        <widget row="1"  column="0" >
             <class>QLabel</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>ExampleLabel</cstring>
+                <cstring>TextLabel1_2</cstring>
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>Example</string>
+                <string>&amp;Same line comment column</string>
+            </property>
+            <property>
+                <name>buddy</name>
+                <cstring>CommentColumn</cstring>
+            </property>
+        </widget>
+        <widget row="1"  column="1" >
+            <class>QSpinBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>CommentColumn</cstring>
             </property>
         </widget>
     </grid>
@@ -249,10 +271,17 @@
         <receiver>toEditExtensionSetupUI</receiver>
         <slot>changed(void)</slot>
     </connection>
+    <connection>
+        <sender>CommentColumn</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>toEditExtensionSetupUI</receiver>
+        <slot>changed(void)</slot>
+    </connection>
     <slot access="public">changed(void)</slot>
 </connections>
 <tabstops>
     <tabstop>IndentLevel</tabstop>
+    <tabstop>CommentColumn</tabstop>
     <tabstop>ExpandSpaces</tabstop>
     <tabstop>CommaBefore</tabstop>
     <tabstop>BlockOpenLine</tabstop>
