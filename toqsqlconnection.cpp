@@ -727,9 +727,12 @@ void toQSqlProvider::qSqlQuery::execute(void)
     Connection->throwError();
   }
   
-  Record=Connection->Connection->record(*Query);
-  EOQ=!Query->next();
-  Column=0;
+  if (Query->isSelect()) {
+    Record=Connection->Connection->record(*Query);
+    EOQ=!Query->next();
+    Column=0;
+  } else
+    EOQ=true;
   
   Connection->Lock.up();
 }

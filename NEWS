@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-03-01: Fixed crash when updating stuff with QSql provider.
 2002-02-28: Fixed Qt3 problem with checkboxes in QButtonGroup.
 2002-02-28: Made it posible to use resultsets without tool widget parents.
 2002-02-28: Fixed problem with font settings for code and text.
