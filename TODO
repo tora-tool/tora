@@ -57,7 +57,6 @@ Extended functionality:
 New tools:
 
 * SQL Builder?
-* PL/SQL Profiler.
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
 * Alert log viewer.

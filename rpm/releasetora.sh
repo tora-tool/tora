@@ -57,7 +57,7 @@ tar czf $SRCPWD/../tora$TYPE-$1-bin-$GLIBC.tar.gz tora-$1/tora tora-$1/README to
 if [ "X$GLIBC" = "Xglibc21" ]
 then
     cd $SRCPWD
-    QTDIR=/usr/local/qt
+    QTDIR=/usr/local/qt3
     export QTDIR
     rpm -bb tora-$1/rpm/tora-static.spec
     cd /usr/src/RPM/BUILD/tora-$1
