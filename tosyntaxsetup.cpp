@@ -277,8 +277,8 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-  toTool::globalSetConfig(CONF_TEXT,toFontToString(CodeExample->font()));
-  toTool::globalSetConfig(CONF_CODE,toFontToString(TextExample->font()));
+  toTool::globalSetConfig(CONF_TEXT,toFontToString(TextExample->font()));
+  toTool::globalSetConfig(CONF_CODE,toFontToString(CodeExample->font()));
   toTool::globalSetConfig(CONF_LIST,List);
   bool highlight=SyntaxHighlighting->isChecked();
   toTool::globalSetConfig(CONF_HIGHLIGHT,highlight?"Yes":"");
