@@ -200,6 +200,7 @@ void *toThreadStartWrapper(void *t)
   //tell whoever called this->start that we're running
   sigset_t Sigs;
   sigfillset(&Sigs);
+#ifndef TO_NO_PTHREADSIGMASK
   sigdelset(&Sigs,SIGHUP);
   // I hope this signal will cancel subqueries
   sigdelset(&Sigs,SIGQUIT);
@@ -214,6 +215,7 @@ void *toThreadStartWrapper(void *t)
   sigemptyset(&Sigs);
   sigaddset(&Sigs,SIGINT);
   pthread_sigmask(SIG_UNBLOCK,&Sigs,NULL);
+#endif
   try {
     thread->StartSemaphore.up();
     thread->Task->run();
@@ -238,10 +240,14 @@ bool toThread::mainThread(void)
 
 void toThread::msleep(int msec)
 {
+#ifdef QT_THREAD_SUPPORT
+  QThread::msleep(msec);
+#else
   struct timespec req;
   req.tv_sec=msec/1000;
   req.tv_nsec=(msec%1000)*1000000;
   nanosleep(&req,&req);
+#endif
 }
 
 #else
