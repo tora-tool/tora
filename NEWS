@@ -63,6 +63,7 @@
 2001-07-10: Fixed Qt compile problem in browser.
 2001-07-10: Added warning when dropping rollback segment.
 2001-07-10: Removed sort order from sga trace.
+2001-07-10: Fixed spelling in toextract (Thanx Stefan Rindeskär).
 
 0.12: Released 2001-07-01
 

@@ -451,7 +451,7 @@ QString toExtract::generateHeading(const QString &action,
   else {
     str+="REM Generating ";
     str+=action;
-    str+=" statements";
+    str+=" statement";
   }
   if (lst.size()!=1)
     str+="s";
