@@ -36,6 +36,9 @@
 2001-06-30: Added icon and resourcefile for windows build.
 2001-07-01: Finding paths through registry in windows.
 2001-07-01: Fixing rpms for api documentation.
+2001-07-01: Changed license to allow using Qt Non Commercial for Windows.
+2001-07-01: Minor fixes to release script.
+2001-07-01: Some fixes to the help viewer.
 
 0.11: Released 2001-06-03
 

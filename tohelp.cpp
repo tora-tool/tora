@@ -337,7 +337,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
       if ((*i).first=="TOra manual") {
 	parent=new QListViewItem(Sections,NULL,(*i).first,QString::null,filename);
 	if (!lastParent)
-	  parent=lastParent;
+	  lastParent=parent;
       } else
 	parent=lastParent=new QListViewItem(Sections,lastParent,(*i).first,
 					    QString::null,filename);

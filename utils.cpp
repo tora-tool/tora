@@ -660,7 +660,7 @@ QString toHelpPath(void)
   QString str=toTool::globalConfig(CONF_HELP_PATH,"");
   if (str.isEmpty()) {
     str=toPluginPath();
-    str+="/help";
+    str+="/help/toc.htm";
   }
   return str;
 }
