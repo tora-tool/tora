@@ -343,6 +343,11 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
     QString c;
 
+#if QT_VERSION >= 300
+    int lastcol=0;
+    int MAXCOL=20;
+#endif
+
     for (int i=0;i<=int(str.length())&&posx<width;i++) {
       if (i==int(str.length())) {
 	marked=!wasMarked;
@@ -376,7 +381,14 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	wasMarked=marked;
       }
 
-      if (wasMarked!=marked||col!=wasCol||str[i]=='\t'||(curline==row&&curcol==i)) {
+      if (wasMarked!=marked||col!=wasCol||str[i]=='\t'||(curline==row&&curcol==i)
+#if QT_VERSION >= 300
+	  ||(lastcol+MAXCOL>i)
+#endif
+	  ) {
+#if QT_VERSION >= 300
+	lastcol=i;
+#endif
 	QChar nc;
 	if (c.length()>0&&i<int(str.length())) {
 	  nc=c.at(c.length()-1);

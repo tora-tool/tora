@@ -235,7 +235,8 @@ class toResultContentEditor : public QTable,public toEditWidget {
 public:
   /** Indicate that editor should never use returning clauses even if this is oracle.
    */
-  void useNoReturning(bool use);
+  void useNoReturning(bool use)
+  { NoUseReturning=use; }
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
