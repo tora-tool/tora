@@ -221,9 +221,9 @@ public:
 	      conn->Lock.up();
 	      return null;
 	    }
-	    int len=toMaxLong;
-	    if (toMaxLong<0)
-	      len=lob.len();
+	    int len=lob.len();
+	    if (toMaxLong>=0&&len>toMaxLong)
+	      len=toMaxLong;
 	    buffer=new char[len+1];
 	    buffer[0]=0;
 	    otl_long_string data(buffer,len);
