@@ -580,7 +580,7 @@ __TEMP__
 	}
 	print "KDE libraries at $KDELibs\n";
 
-	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile";
+	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile -lkhtml";
 	$LFlags.=" \"-L".$KDELibs."\"";
 	if (!$NoRPath) {
 	    $LFlags.=" -Xlinker \"--rpath=$KDELibs\"";

@@ -44,6 +44,7 @@ class QLineEdit;
 class QTextBrowser;
 class QListViewItem;
 class QProgressBar;
+class KHTMLPart;
 
 class toHelp : public QDialog {
   Q_OBJECT
@@ -56,7 +57,12 @@ class toHelp : public QDialog {
   toListView *Sections;
   toListView *Result;
   QLineEdit *SearchLine;
+
+#ifdef TO_KDE
+  KHTMLPart *Help;
+#else
   QTextBrowser *Help;
+#endif
   QProgressBar *Progress;
 public:
   toHelp(QWidget *,const char *name);

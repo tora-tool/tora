@@ -36,6 +36,7 @@ TO_NAMESPACE;
 
 #ifdef TO_KDE
 #include <kfiledialog.h>
+#include <khtml_part.h>
 #endif
 
 #include <qdir.h>
@@ -170,7 +171,11 @@ toHelp::toHelp(QWidget *parent,const char *name)
   connect(Result,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
+#ifdef TO_KDE
+  Help=new KHTMLPart(splitter);
+#else  
   Help=new QTextBrowser(splitter);
+#endif
   setCaption("TOra Help Browser");
   splitter->setResizeMode(tabs,QSplitter::KeepSize);
   setGeometry(x(),y(),640,480);
@@ -187,13 +192,15 @@ toHelp::toHelp(QWidget *parent,const char *name)
       Dsc[dsc]=file;
     }
   }
+#ifndef TO_KDE
   Help->mimeSourceFactory()->addFilePath(toHelpPath());
+#endif
   for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
-      QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first);
       QString path=(*i).second;
       QString filename=path;
       filename+="/toc.htm";
+      QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first,filename);
       toHtml file(toReadFile(filename));
       bool inA=false;
       QString dsc;
@@ -278,22 +285,36 @@ void toHelp::displayHelp(const QString &context)
 {
   if (!Window)
     new toHelp(toMainWidget(),"Help window");
+#ifdef TO_KDE
+  QString file="file://";
+  file+=toHelpPath();
+  file+="/";
+  file+=context;
+  Window->Help->openURL(KURL(file));
+#else
   if (context.find("htm")>=0)
     Window->Help->setTextFormat(RichText);
   else
     Window->Help->setTextFormat(AutoText);
   Window->Help->setSource(context);
+#endif
   Window->show();
 }
 
 void toHelp::changeContent(QListViewItem *item)
 {
+#ifdef TO_KDE
+  QString file="file://";
+  file+=item->text(1);
+  Window->Help->openURL(KURL(file));
+#else
   if (item->text(1).find("htm")>=0)
     Help->setTextFormat(RichText);
   else
     Help->setTextFormat(AutoText);
   if (!item->text(1).isEmpty())
     Help->setSource(item->text(1));
+#endif
 }
 
 void toHelp::search(void)
