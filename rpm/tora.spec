@@ -1,9 +1,12 @@
 # This specfile is Mandrake Linux specific
+#
+# Just removing the references to menu stuff should make it generic
+#
 
 %define _name		tora
 %define _version	1.3.9.2
-%define _release	1gc
-%define _prefix		/usr/X11R6
+%define _release	1mdk
+%define _prefix		/usr
 %define _qtdir		/usr/lib/qt3
 
 Summary:			Toolkit for Oracle
@@ -103,7 +106,6 @@ CXXFLAGS="$RPM_OPT_FLAGS" \
 	 --with-qt="%{_qtdir}" \
 	 --with-kde \
          --without-rpath \
-         --with-oracle \
          --with-rpm-contents="%{_prefix}/lib"
 
 %build
@@ -138,7 +140,12 @@ cp rpm/tora.menu $RPM_BUILD_ROOT%{_menudir}/tora
 %doc BUGS INSTALL LICENSE.txt NEWS README TODO
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
+%{_prefix}/lib/tora/*.tpl
+%{_prefix}/lib/tora/*.qm
 %{_prefix}/lib/tora/help
+%{_menudir}/tora
+%{_iconsdir}/hicolor/*/apps/tora.xpm
+%{_datadir}/applnk/Development/tora.desktop
 
 %files oracle -f rpmoracle
 %defattr(-,root,root)
