@@ -592,9 +592,7 @@ static toSQL SQLTablePartition("toBrowser:TablePartitions",
 			       "/* and (p.partition_name like upper (:partition_name) or :partition_name is null ) */\n"
 			       "/* and (s.subpartition_name like upper (:subpartition_name) or :subpartition_name is null) */\n"
 			       "/* and (p.composite like :composite or :composite is null) */\n"
-			       " order by p.table_owner\n"
-			       "	, p.table_name\n"
-			       "	, p.partition_name\n"
+			       " order by p.partition_name\n"
 			       "	, s.subpartition_name\n",
 			       "Table partitions",
 			       "8.1");
