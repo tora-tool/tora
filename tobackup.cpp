@@ -49,6 +49,7 @@
 #include <qmenubar.h>
 #include <qpopupmenu.h>
 #include <qtabwidget.h>
+#include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qworkspace.h>
 

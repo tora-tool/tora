@@ -2202,7 +2202,7 @@ static toSQL SQLWaitEvents("toTuning:WaitEvents",
 			   " UNION ALL SELECT s.name,\n"
 			   "       SYSDATE,\n"
 			   "       NVL(s.VALUE,0),\n"
-			   "       0,\n"
+			   "       1,\n"
 			   "       NVL(s.VALUE,0)\n"
 			   "  FROM v$sysstat s\n"
 			   " WHERE s.name='CPU used by this session'\n"

@@ -660,9 +660,10 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   ExtentButton->setToggleButton(true);
   ExtentButton->setIconSet(QIconSet(QPixmap((const char **)storageextents_xpm)));
   bool extents=!StorageTool.config(CONF_DISP_EXTENTS,"").isEmpty();
-  if (extents)
+  if (extents) {
     ExtentButton->setOn(true);
-  connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
+    connect(ExtentButton,SIGNAL(toggled(bool)),this,SLOT(showExtent(bool)));
+  }
   QToolTip::add(ExtentButton,"Show extent view.");
   toolbar->addSeparator();
 
