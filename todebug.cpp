@@ -1636,8 +1636,17 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   toolbar->addSeparator();
   ShowButton=new QToolButton(toolbar);
   ShowButton->setToggleButton(true);
+
+#if QT_VERSION >= 300
+  QIconSet iconset;
+  iconset.setPixmap(QPixmap((const char **)showbody_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::Off);
+  iconset.setPixmap(QPixmap((const char **)showhead_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::On);
+  ShowButton->setIconSet(iconset);
+#else
   ShowButton->setIconSet(QIconSet(QPixmap((const char **)showhead_xpm)),true);
   ShowButton->setIconSet(QIconSet(QPixmap((const char **)showbody_xpm)),false);
+#endif
+
   connect(ShowButton,SIGNAL(toggled(bool)),this,SLOT(changeView(bool)));
   QToolTip::add(ShowButton,tr("Show head or body of packages and procedures."));
 

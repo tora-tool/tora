@@ -83,6 +83,7 @@ Extended functionality:
 * Save column order of open tools when saving/restoring session.
 * Remember settings in print dialog.
 * Make it posible to configure CSV separator/delimiter in chartmanager.
+* Save state of SQL output window.
 
 New tools:
 

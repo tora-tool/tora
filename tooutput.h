@@ -39,9 +39,11 @@
 
 class QComboBox;
 class QPopupMenu;
+class QToolBar;
 class QToolButton;
 class toConnection;
 class toMarkedText;
+class toResultView;
 
 class toOutput : public toToolWidget {
   Q_OBJECT
@@ -50,6 +52,7 @@ class toOutput : public toToolWidget {
   QPopupMenu *ToolMenu;
   QToolButton *DisableButton;
   QComboBox *Refresh;
+  QToolBar *ToolBar;
 
   void poll(void);
 public:
@@ -58,6 +61,10 @@ public:
   void insertLine(const QString &str)
   { Output->insertLine(str); }
   bool enabled(void);
+  QToolBar *toolBar(void)
+  { return ToolBar; }
+  toMarkedText *output(void)
+  { return Output; }
 public slots:
   void clear(void);
   virtual void refresh(void);
@@ -65,6 +72,18 @@ public slots:
   void changeRefresh(const QString &str);
   void windowActivated(QWidget *widget);
   void toggleMenu();
+};
+
+class toLogOutput : public toOutput {
+  Q_OBJECT
+
+  QComboBox *Type;
+  toResultView *Log;
+public:
+  toLogOutput(QWidget *parent,toConnection &connection);
+public slots:
+  virtual void refresh(void);
+  void changeType(void);
 };
 
 #endif

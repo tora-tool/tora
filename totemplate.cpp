@@ -74,6 +74,9 @@ static std::map<QCString,QString> DefaultText(void)
   file=toPluginPath();
   file+=QString::fromLatin1("/hints.tpl");
   def["Optimizer Hints"]=file;
+  file=toPluginPath();
+  file+=QString::fromLatin1("/log4plsql.tpl");
+  def["Log4PL/SQL"]=file;
   return def;
 }
 

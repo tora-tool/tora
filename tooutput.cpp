@@ -37,6 +37,7 @@
 #include "toconnection.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
+#include "toresultview.h"
 #include "tosql.h"
 #include "totool.h"
 
@@ -49,6 +50,7 @@
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
 #include <qstring.h>
@@ -69,9 +71,17 @@
 #define CONF_POLLING    "Refresh"
 #define DEFAULT_POLLING	"10 seconds"
 
+#define CONF_TYPE	"Type"
+#define DEFAULT_TYPE	"0"
+
+#define CONF_LOG_USER	"LogUser"
+#define DEFAULT_LOG_USER "ULOG"
+
 class toOutputPrefs : public QGroupBox, public toSettingTab
 { 
-  QComboBox* AutoPolling;
+  QComboBox *AutoPolling;
+  QComboBox *Type;
+  QLineEdit *User;
   toTool *Tool;
 
 public:
@@ -86,10 +96,23 @@ public:
 
     AutoPolling=toRefreshCreate(this,NULL,Tool->config(CONF_POLLING,DEFAULT_POLLING));
     label->setBuddy(AutoPolling);
+
+    label=new QLabel(qApp->translate("toOutputPrefs","Default &source"),this);
+    Type=new QComboBox(this);
+    Type->insertItem(qApp->translate("toLogOutput","SQL Output"));
+    Type->insertItem(qApp->translate("toLogOutput","Log4PL/SQL"));
+    Type->setCurrentItem(Tool->config(CONF_TYPE,DEFAULT_TYPE).toInt());
+    label->setBuddy(Type);
+
+    label=new QLabel(qApp->translate("toOutputPrefs","Log4PL/SQL &User"),this);
+    User=new QLineEdit(Tool->config(CONF_LOG_USER,DEFAULT_LOG_USER),this);
+    label->setBuddy(User);
   }
   virtual void saveSetting(void)
   {
     Tool->setConfig(CONF_POLLING,AutoPolling->currentText());
+    Tool->setConfig(CONF_TYPE,QString::number(Type->currentItem()));
+    Tool->setConfig(CONF_LOG_USER,User->text());
   }
 };
 
@@ -112,7 +135,7 @@ public:
       (*i).second->setFocus();
       return NULL;
     } else {
-      QWidget *window=new toOutput(parent,connection);
+      QWidget *window=new toLogOutput(parent,connection);
       Windows[&connection]=window;
       return window;
     }
@@ -132,18 +155,25 @@ static toOutputTool OutputTool;
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   : toToolWidget(OutputTool,"output.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,tr("SQL Output"));
+  ToolBar=toAllocBar(this,tr("SQL Output"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  tr("Poll for output now"),
 		  tr("Poll for output now"),
 		  this,SLOT(refresh(void)),
-		  toolbar);
-  toolbar->addSeparator();
-  DisableButton=new QToolButton(toolbar);
+		  ToolBar);
+  ToolBar->addSeparator();
+  DisableButton=new QToolButton(ToolBar);
   DisableButton->setToggleButton(true);
+#if QT_VERSION >= 300
+  QIconSet iconset;
+  iconset.setPixmap(QPixmap((const char **)online_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::Off);
+  iconset.setPixmap(QPixmap((const char **)offline_xpm),QIconSet::Automatic,QIconSet::Normal,QIconSet::On);
+  DisableButton->setIconSet(iconset);
+#else
   DisableButton->setIconSet(QIconSet(QPixmap((const char **)online_xpm)),false);
   DisableButton->setIconSet(QIconSet(QPixmap((const char **)offline_xpm)),true);
+#endif
   DisableButton->setOn(!enabled);
   connect(DisableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
   QToolTip::add(DisableButton,tr("Enable or disable getting SQL output."));
@@ -152,12 +182,12 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 		  tr("Clear output"),
 		  tr("Clear output"),
 		  this,SLOT(clear()),
-		  toolbar);
-  toolbar->addSeparator();
-  new QLabel(tr("Refresh")+" ",toolbar);
-  connect(Refresh=toRefreshCreate(toolbar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
+		  ToolBar);
+  ToolBar->addSeparator();
+  new QLabel(tr("Refresh")+" ",ToolBar);
+  connect(Refresh=toRefreshCreate(ToolBar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
-  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
+  ToolBar->setStretchableWidget(new QLabel(QString::null,ToolBar));
 
   Output=new toMarkedText(this);
 
@@ -293,4 +323,54 @@ void toOutput::changeRefresh(const QString &str)
 bool toOutput::enabled(void)
 {
   return !DisableButton->isOn();
+}
+
+static toSQL SQLLog("toLogOutput:Poll",
+		    "SELECT LDATE||'.'||to_char(mod(LHSECS,100),'09') \"Timestamp\",\n"
+		    "       decode(llevel,1,'OFF',\n"
+		    "                     2,'FATAL',\n"
+		    "                     3,'ERROR',\n"
+		    "                     4,'WARNING',\n"
+		    "                     5,'INFO',\n"
+		    "                     6,'DEBUG',\n"
+		    "                     7,'ALL' ,\n"
+		    "                     'UNDEFINED') \"Level\",\n"
+		    "       LUSER \"User\",\n"
+		    "       LSECTION \"Section\",\n"
+		    "       LTEXTE \"Text\"\n"
+		    "  from %1.tlog order by id desc\n",
+		    "Poll data from PL/SQL log table");
+
+toLogOutput::toLogOutput(QWidget *parent,toConnection &connection)
+  : toOutput(parent,connection)
+{
+  Type=new QComboBox(toolBar());
+  Type->insertItem(tr("SQL Output"));
+  Type->insertItem(tr("Log4PL/SQL"));
+  Type->setCurrentItem(OutputTool.config(CONF_TYPE,DEFAULT_TYPE).toInt());
+  connect(Type,SIGNAL(activated(int)),this,SLOT(changeType()));
+
+  Log=new toResultView(false,false,this);
+  changeType();
+}
+
+void toLogOutput::refresh(void)
+{
+  if (Type->currentItem()==1) {
+    Log->setSQL(QString::null);
+    Log->query(SQLLog(connection()).arg(OutputTool.config(CONF_LOG_USER,DEFAULT_LOG_USER)));
+  }
+  toOutput::refresh();
+}
+
+void toLogOutput::changeType(void)
+{
+  if (Type->currentItem()==1) {
+    output()->hide();
+    Log->show();
+    refresh();
+  } else {
+    output()->show();
+    Log->hide();
+  }
 }

@@ -91,7 +91,7 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
   QToolBar *toolbar=toAllocBar(this,tr("Parameter editor"));
   Hidden=new QToolButton(toolbar);
   Hidden->setToggleButton(true);
-  Hidden->setIconSet(QIconSet(QPixmap((const char **)scansource_xpm)),false);
+  Hidden->setIconSet(QIconSet(QPixmap((const char **)scansource_xpm)));
   connect(Hidden,SIGNAL(toggled(bool)),this,SLOT(showHidden(bool)));
   QToolTip::add(Hidden,tr("Display hidden parameters. This will only word if you are logged in as the sys user."));
   toolbar->addSeparator();

@@ -1,5 +1,8 @@
 1.3.7:
 
+2002-07-28: Fixed problem with setIconSet on parameter ignored.
+2002-07-28: Added some Log4PL/SQL support to toOutput.
+2002-07-28: Added template docs for Log4PL/SQL (Thanx Guillaume Moulard).
 2002-07-28: Fixed problem with reading all initially on content editor.
 2002-07-28: Fixed problem with Qt only compile.
 2002-07-19: Added top buffers/row in sga trace.
