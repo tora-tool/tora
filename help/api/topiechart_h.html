@@ -74,8 +74,8 @@
 class toPieChart : public QWidget {
   Q_OBJECT
 
-  list&lt;double&gt; Values;
-  list&lt;QString&gt; Labels;
+  std::list&lt;double&gt; Values;
+  std::list&lt;QString&gt; Labels;
   QString Postfix;
   bool Legend;
   bool DisplayPercent;
@@ -138,7 +138,7 @@ public:
    * @param values List of values to display.
    * @param labels List of labels, if label is empty it will not appear in legend.
    */
-  void setValues(list&lt;double&gt; &amp;values,list&lt;QString&gt; &amp;labels)
+  void setValues(std::list&lt;double&gt; &amp;values,std::list&lt;QString&gt; &amp;labels)
   { Values=values; Labels=labels; update(); }
   /** Add a value to the piechart.
    * @param value New value to add.
@@ -149,12 +149,12 @@ public:
   /** Get list of values.
    * @return Values in piechart.
    */
-  list&lt;double&gt; &amp;values(void)
+  std::list&lt;double&gt; &amp;values(void)
   { return Values; }
   /** Get labels of piechart.
    * @return List of labels.
    */
-  list&lt;QString&gt; &amp;labels(void)
+  std::list&lt;QString&gt; &amp;labels(void)
   { return Labels; }
 
 protected:

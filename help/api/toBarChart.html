@@ -70,15 +70,15 @@
 </LI>
 <LI>int &nbsp;<b><A HREF="#ref50">samples</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref51">setLabels</A></b> (const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
+<LI>void &nbsp;<b><A HREF="#ref51">setLabels</A></b> (const std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
 </LI>
-<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref52">labels</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref52">labels</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref53">addValues</A></b> (list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref53">addValues</A></b> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues) 
 </LI>
-<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref54">xValues</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref54">xValues</A></b> (void) 
 </LI>
-<LI>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref55">values</A></b> (void) 
+<LI>std::list&lt;std::list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref55">values</A></b> (void) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref56">clear</A></b> (void) 
 </LI>
@@ -100,9 +100,9 @@
 </LI>
 </ul><h4>Protected Static Methods</h4><ul><LI>static  double &nbsp;<b><A HREF="#ref22">round</A></b> (double round,bool up) 
 </LI>
-</ul><h4>Protected Members</h4><ul><LI>list&lt;list&lt;double&gt; &gt; <b><A HREF="#ref1">Values</A></b></LI>
-<LI>list&lt;QString&gt; <b><A HREF="#ref2">XValues</A></b></LI>
-<LI>list&lt;QString&gt; <b><A HREF="#ref3">Labels</A></b></LI>
+</ul><h4>Protected Members</h4><ul><LI>std::list&lt;std::list&lt;double&gt; &gt; <b><A HREF="#ref1">Values</A></b></LI>
+<LI>std::list&lt;QString&gt; <b><A HREF="#ref2">XValues</A></b></LI>
+<LI>std::list&lt;QString&gt; <b><A HREF="#ref3">Labels</A></b></LI>
 <LI>bool <b><A HREF="#ref4">Legend</A></b></LI>
 <LI>bool <b><A HREF="#ref5">Last</A></b></LI>
 <LI>int <b><A HREF="#ref6">Grid</A></b></LI>
@@ -123,9 +123,9 @@
 <LI>double <b><A HREF="#ref21">zMaxValue</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget that displays a barchart. Each line is added onto the next one.
  </p>
-<A NAME="Values"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt;  <strong>Values</strong>
-</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="XValues"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>XValues</strong>
-</td><td align="right"><h3><strong>XValues</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>Labels</strong>
+<A NAME="Values"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;std::list&lt;double&gt; &gt;  <strong>Values</strong>
+</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="XValues"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>XValues</strong>
+</td><td align="right"><h3><strong>XValues</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>Labels</strong>
 </td><td align="right"><h3><strong>Labels</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Legend"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Legend</strong>
 </td><td align="right"><h3><strong>Legend</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Last"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Last</strong>
 </td><td align="right"><h3><strong>Last</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Grid"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Grid</strong>
@@ -285,19 +285,19 @@
 </p>
 <p><b>Returns</b>: Max number of samples.
    </p>
-<A NAME="setLabels"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLabels</strong> (const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
+<A NAME="setLabels"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLabels</strong> (const std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
 <br></td><td align="right"><h3><strong>setLabels</strong></h3></td></tr></table><p></p><p> Set the labels on the chart lines.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>labels</i></TD><TD align="left" valign="top">Labels of the lines. Empty labels will not show up in the legend.
    </TD></TR>
 </TABLE></P>
-<A NAME="labels"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
+<A NAME="labels"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
 <br></td><td align="right"><h3><strong>labels</strong></h3></td></tr></table><p></p><p> Get the labels of the chart lines.
 </p>
 <p><b>Returns</b>: List of labels.
    </p>
-<A NAME="addValues"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues)
+<A NAME="addValues"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues)
 <br></td><td align="right"><h3><strong>addValues</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Add a new value set to the chart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -306,12 +306,12 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">X-value on these values.
    </TD></TR>
 </TABLE></P>
-<A NAME="xValues"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>xValues</strong> (void)
+<A NAME="xValues"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>xValues</strong> (void)
 <br></td><td align="right"><h3><strong>xValues</strong></h3></td></tr></table><p></p><p> Get list of labels
 </p>
 <p><b>Returns</b>: List of labels
    </p>
-<A NAME="values"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
+<A NAME="values"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;std::list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
 <br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
 </p>
 <p><b>Returns</b>: Values in piechart.

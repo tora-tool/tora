@@ -79,10 +79,10 @@ class toHelpBrowser : public KHTMLPart {
 
   /** List of backward history. The current page is at the end of the list.
    */
-  list&lt;QString&gt; Backward;
+  std::list&lt;QString&gt; Backward;
   /** List of forward history if you have started walking backwards.
    */
-  list&lt;QString&gt; Forward;
+  std::list&lt;QString&gt; Forward;
 private slots:
   /** Reimplemented for internal reasons.
    */

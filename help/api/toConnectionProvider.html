@@ -34,23 +34,23 @@
 </LI>
 <LI>virtual  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><i><A HREF="#ref6">connection</A></i></b> (<A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
-<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref7">modes</A></b> (void) 
+<LI>virtual  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref7">modes</A></b> (void) 
 </LI>
-<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref8">hosts</A></b> (void) 
+<LI>virtual  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref8">hosts</A></b> (void) 
 </LI>
-<LI>virtual  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><i><A HREF="#ref9">databases</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
+<LI>virtual  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><i><A HREF="#ref9">databases</A></i></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toConnectionProvider.html">toConnectionProvider</A> &amp;&nbsp;<b><A HREF="#ref10">fetchProvider</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
 </LI>
-<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref11">providers</A></b> () 
+<LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref11">providers</A></b> () 
 </LI>
-<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref12">modes</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+<LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref12">modes</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
 </LI>
 <LI>static  <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<b><A HREF="#ref13">connection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,<A HREF="toConnection.html">toConnection</A> *conn) 
 </LI>
-<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref14">hosts</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
+<LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref14">hosts</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
 </LI>
-<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref15">databases</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
+<LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref15">databases</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is used to implement new database providers.
  </p>
@@ -72,17 +72,17 @@
 </p>
 <p><b>Returns</b>: A connection implementation created with new.
    </p>
-<A NAME="modes"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (void)
+<A NAME="modes"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (void)
 <br></td><td align="right"><h3><strong>modes</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> List the available modes for this database.
 </p>
 <p><b>Returns</b>: A list of modes that the connection implementation understands.
    </p>
-<A NAME="hosts"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (void)
+<A NAME="hosts"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (void)
 <br></td><td align="right"><h3><strong>hosts</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> List the available hosts this database provider knows about.
 </p>
 <p><b>Returns</b>: A list of hosts.
    </p>
-<A NAME="databases"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<i><strong>databases</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
+<A NAME="databases"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<i><strong>databases</strong></i> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
 <br></td><td align="right"><h3><i><strong>databases</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> List the available databases this provider knows about for a given host.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -100,10 +100,10 @@
 </TABLE></P>
 <p><b>Returns</b>: Reference to provider object.
    </p>
-<A NAME="providers"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>providers</strong> ()
+<A NAME="providers"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>providers</strong> ()
 <br></td><td align="right"><h3><strong>providers</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of names for providers.
    </p>
-<A NAME="modes"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<A NAME="modes"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>modes</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
 <br></td><td align="right"><h3><strong>modes</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of modes for a given provider.
    </p>
 <A NAME="connection"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> *&nbsp;<strong>connection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,<A HREF="toConnection.html">toConnection</A> *conn)
@@ -115,10 +115,10 @@
 <TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to create implementation for.
    </TD></TR>
 </TABLE></P>
-<A NAME="hosts"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
+<A NAME="hosts"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>hosts</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider)
 <br></td><td align="right"><h3><strong>hosts</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of hosts this provider knows about.
    </p>
-<A NAME="databases"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>databases</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
+<A NAME="databases"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>databases</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;host)
 <br></td><td align="right"><h3><strong>databases</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get a list of databases for a given provider and host.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

@@ -69,7 +69,12 @@
 2001-08-20: Fixed problem with y-axis legend and Xft.
 2001-08-20: Fixed some warnings for gcc-2.96.
 2001-08-20: Removed the ugly TO_NAMESPACE hack.
+2001-08-20: Lots of gcc-3.0 fixes, now compiles using gcc-3.0.1.
 2001-08-20: Re made toSyntaxSetupUI in designer.
+2001-08-20: Don't include ui.cpp files into other cpp files.
+2001-08-20: Time executing using hundreds of a second.
+2001-08-20: Time duration using hundreds of seconds in worksheet.
+2001-08-20: Display duration in statusmessage in worksheet.
 
 0.14: Released 2001-08-02
 

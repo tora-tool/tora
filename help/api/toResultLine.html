@@ -45,7 +45,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref15">clear</A></b> (void) 
 </LI>
-<LI>virtual  list&lt;double&gt; &nbsp;<b><A HREF="#ref16">transform</A></b> (list&lt;double&gt; &amp;input) 
+<LI>virtual  std::list&lt;double&gt; &nbsp;<b><A HREF="#ref16">transform</A></b> (std::list&lt;double&gt; &amp;input) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref17">refresh</A></b> (void) 
 </LI>
@@ -114,7 +114,7 @@
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toLineChart.html#clear">toLineChart</A>.</p>
-<A NAME="transform"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;double&gt; &nbsp;<strong>transform</strong> (list&lt;double&gt; &amp;input)
+<A NAME="transform"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;double&gt; &nbsp;<strong>transform</strong> (std::list&lt;double&gt; &amp;input)
 <br></td><td align="right"><h3><strong>transform</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Transform valueset. Make it possible to perform more complex transformation.
  called directly before adding the valueset to the chart. After flow transformation.
  Default is passthrough.

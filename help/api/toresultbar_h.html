@@ -87,7 +87,7 @@ class toResultBar : public toBarChart, public toResult {
   time_t LastStamp;
   /** Last read values.
    */
-  list&lt;double&gt; LastValues;
+  std::list&lt;double&gt; LastValues;
   /** Query to run.
    */
   QString SQL;
@@ -145,7 +145,7 @@ public:
    * @param input The untransformed valueset.
    * @return The valueset actually added to the chart.
    */
-  virtual list&lt;double&gt; transform(list&lt;double&gt; &amp;input);
+  virtual std::list&lt;double&gt; transform(std::list&lt;double&gt; &amp;input);
 public slots:
   /** Read another value to the chart.
    */

@@ -32,7 +32,7 @@
 </LI>
 <LI>struct <A HREF="toSQL__definition.html">definition</A>
 </LI>
-<LI>typedef map&lt;QString,definition&gt;  <A HREF="#ref3">sqlMap</A>
+<LI>typedef std::map&lt;QString,definition&gt;  <A HREF="#ref3">sqlMap</A>
 </LI>
 </ul><h4>Public Methods</h4><ul><LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref23">operator ()</A></b> (const <A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
@@ -66,7 +66,7 @@
 </LI>
 <LI>static  <A HREF="toSQL.html">toSQL</A> &nbsp;<b><A HREF="#ref18">sql</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>static  list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref19">range</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith) 
+<LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref19">range</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith) 
 </LI>
 <LI>static  bool &nbsp;<b><A HREF="#ref20">saveSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;file,bool all=false) 
 </LI>
@@ -98,7 +98,7 @@
 <A NAME="toSQL__definition.html"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>definition</strong> <small>(struct)</small></td><td align="right"><h3><strong>definition</strong></h3></td></tr></table><p></p><p>
  Definition of one toSQL statement with its description and versions.
    </p>
-<A NAME="sqlMap"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,definition&gt;  <strong>sqlMap</strong></td><td align="right"><h3><strong>sqlMap</strong></h3></td></tr></table><p></p><p> Type of map of statement names to statement definitions.
+<A NAME="sqlMap"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,definition&gt;  <strong>sqlMap</strong></td><td align="right"><h3><strong>sqlMap</strong></h3></td></tr></table><p></p><p> Type of map of statement names to statement definitions.
    </p>
 <A NAME="TOSQL_USERLIST"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>static const char * const  <strong>TOSQL_USERLIST</strong>
 </td><td align="right"><h3><strong>TOSQL_USERLIST</strong></h3></td></tr></table><p></p><A NAME="TOSQL_CREATEPLAN"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>static const char * const  <strong>TOSQL_CREATEPLAN</strong>
@@ -213,7 +213,7 @@
 </TABLE></P>
 <p><b>Returns</b>: a toSQL object for given name.
    </p>
-<A NAME="range"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>range</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith)
+<A NAME="range"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>range</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;startWith)
 <br></td><td align="right"><h3><strong>range</strong></h3></td></tr></table><p> <small>[static]</small></p><p>
  Get all defined names that start with a given substring.
 </p>

@@ -37,11 +37,11 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref13">~toSyntaxAnalyzer</A></b> () 
 </LI>
-<LI>virtual  list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>virtual  std::list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref15">getColor</A></b> (infoType typ) 
 </LI>
-</ul><h4>Public Members</h4><ul><LI>friend <b><A HREF="#ref16">toSyntaxSetup</A></b></LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref16">toSyntaxSetup</A></b></LI>
 </ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref7">isSymbol</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class implements a syntax parser to provide information to
@@ -65,7 +65,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toSyntaxAnalyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
-<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -83,7 +83,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Color of that type.
    </p>
-<A NAME="toSyntaxSetup"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend  <strong>toSyntaxSetup</strong>
+<A NAME="toSyntaxSetup"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toSyntaxSetup</strong>
 </td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><HR>
 	<table>
 	</table>

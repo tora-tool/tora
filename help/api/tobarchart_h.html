@@ -75,9 +75,9 @@ class toBarChart : public QWidget {
   Q_OBJECT
 
 protected:
-  list&lt;list&lt;double&gt; &gt; Values;
-  list&lt;QString&gt; XValues;
-  list&lt;QString&gt; Labels;
+  std::list&lt;std::list&lt;double&gt; &gt; Values;
+  std::list&lt;QString&gt; XValues;
+  std::list&lt;QString&gt; Labels;
   bool Legend;
   bool Last;
   int Grid;
@@ -224,30 +224,30 @@ public:
   /** Set the labels on the chart lines.
    * @param labels Labels of the lines. Empty labels will not show up in the legend.
    */
-  void setLabels(const list&lt;QString&gt; &amp;labels)
+  void setLabels(const std::list&lt;QString&gt; &amp;labels)
   { Labels=labels; update(); }
   /** Get the labels of the chart lines.
    * @return List of labels.
    */
-  list&lt;QString&gt; &amp;labels(void)
+  std::list&lt;QString&gt; &amp;labels(void)
   { return Labels; }
 
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
    * @param label X-value on these values.
    */
-  virtual void addValues(list&lt;double&gt; &amp;value,const QString &amp;xValues);
+  virtual void addValues(std::list&lt;double&gt; &amp;value,const QString &amp;xValues);
 
   /** Get list of labels
    * @return List of labels
    */
-  list&lt;QString&gt; &amp;xValues(void)
+  std::list&lt;QString&gt; &amp;xValues(void)
   { return XValues; }
 
   /** Get list of values.
    * @return Values in piechart.
    */
-  list&lt;list&lt;double&gt; &gt; &amp;values(void)
+  std::list&lt;std::list&lt;double&gt; &gt; &amp;values(void)
   { return Values; }
 
 public slots:

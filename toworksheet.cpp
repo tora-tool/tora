@@ -34,8 +34,6 @@
  *
  ****************************************************************************/
 
-#include <time.h>
-
 #ifdef TO_KDE
 #include <kfiledialog.h>
 #include <kmenubar.h>
@@ -560,72 +558,71 @@ bool toWorksheet::describe(const QString &query)
 
 void toWorksheet::query(const QString &str,bool direct)
 {
-  if (Started>0&&!QueryString.isEmpty())
+  if (!Timer.isNull()&&!QueryString.isEmpty())
     addLog(QueryString,"Aborted");
 
   QRegExp strq("'[^']*'");
-  try {
-    QString chk=str.lower();
-    chk.replace(strq," ");
-    bool code=false;
-    int pos=chk.find("end",0);
-    while (pos>0) {  // Ignore position 0, since that isn't a block anyway
-      QChar c=chk[pos-1];
-      QChar ec=chk[pos+3];
-      if (!toIsIdent(c)&&!toIsIdent(ec)) {
-	code=true;
-	break;
-      }
-      pos=chk.find("end",pos+1);
+  QString chk=str.lower();
+  chk.replace(strq," ");
+  bool code=false;
+  int pos=chk.find("end",0);
+  while (pos>0) {  // Ignore position 0, since that isn't a block anyway
+    QChar c=chk[pos-1];
+    QChar ec=chk[pos+3];
+    if (!toIsIdent(c)&&!toIsIdent(ec)) {
+      code=true;
+      break;
     }
-    QString execSql=str;
-    if (!code&&execSql.length()>0&&execSql.at(execSql.length()-1)==';')
-      execSql.truncate(execSql.length()-1);
-    QueryString=execSql;
-
-    bool nobinds=false;
-    chk=str.lower();
-    chk.replace(strq," ");
-    chk=chk.simplifyWhiteSpace();
-    chk.replace(QRegExp(" or replace ")," ");
-    if(chk.startsWith("create trigger "))
-      nobinds=true;
-
-    if (!describe(execSql)) {
-      toQList param;
-      if (!nobinds)
-	param=toParamGet::getParam(this,execSql);
-      toStatusMessage("Processing query",true);
-      if (direct) {
-	try {
-	  time(&Started);
-
-	  toQuery query(connection(),execSql,param);
-
-	  char buffer[100];
-	  if (query.rowsProcessed()>0)
-	    sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
-	  else
-	    sprintf(buffer,"Query executed");
-	  addLog(execSql,buffer);
-	} catch (const QString &exc) {
-	  addLog(execSql,exc);
-	  toStatusMessage(exc);
-	}
-      } else {
-	Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
+    pos=chk.find("end",pos+1);
+  }
+  QString execSql=str;
+  if (!code&&execSql.length()>0&&execSql.at(execSql.length()-1)==';')
+    execSql.truncate(execSql.length()-1);
+  QueryString=execSql;
+  
+  bool nobinds=false;
+  chk=str.lower();
+  chk.replace(strq," ");
+  chk=chk.simplifyWhiteSpace();
+  chk.replace(QRegExp(" or replace ")," ");
+  if(chk.startsWith("create trigger "))
+    nobinds=true;
+  
+  if (!describe(execSql)) {
+    toQList param;
+    if (!nobinds)
+      param=toParamGet::getParam(this,execSql);
+    toStatusMessage("Processing query",true);
+    if (direct) {
+      try {
+	Timer.start();
+	
+	toQuery query(connection(),execSql,param);
+	
+	char buffer[100];
+	if (query.rowsProcessed()>0)
+	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
+	else
+	  sprintf(buffer,"Query executed");
+	addLog(execSql,buffer);
+      } catch (const QString &exc) {
+	addLog(execSql,exc);
+      }
+    } else {
+      Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
+      try {
 	Result->query(execSql,param);
-	time(&Started);
-	if (StatisticButton->isOn())
-	  toRefreshParse(timer(),Refresh->currentText());
-	  
-	Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
+      } catch (const QString &exc) {
+	addLog(execSql,exc);
       }
-      StopButton->setEnabled(true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+      Timer.start();
+      if (StatisticButton->isOn())
+	toRefreshParse(timer(),Refresh->currentText());
+      
+      Result->setSQLName(execSql.simplifyWhiteSpace().left(40));
     }
-  } catch (const QString &str) {
-    toStatusMessage(str);
+    StopButton->setEnabled(true);
+    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
   }
 }
 
@@ -634,11 +631,11 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   QString now=toNow(connection());
   toResultViewItem *item;
 
-  time_t dur=0;
-  if (Started>0) {
-    time(&dur);
-    dur-=Started;
-    Started=0;
+  int dur=0;
+  if (!Timer.isNull()) {
+    dur=Timer.elapsed();
+    QTime null;
+    Timer=null;
   }
 
   if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
@@ -656,15 +653,23 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   item->setText(1,result);
   item->setText(2,now);
   char buf[100];
-  if (dur>=3600) {
-    sprintf(buf,"%d:%02d:%02d",int(dur/3600),int(dur/60)%60,int(dur%60));
+  if (dur>=3600000) {
+    sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%1000);
   } else {
-    sprintf(buf,"%d:%02d",int(dur/60),int(dur%60));
+    sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%1000);
   }
   item->setText(3,buf);
 
   Logging->setCurrentItem(item);
   Logging->ensureItemVisible(item);
+
+  {
+    QString str=result;
+    str+=" (Duration ";
+    str+=buf;
+    str+=")";
+    toStatusMessage(str);
+  }
 
   if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
     connection().commit();
@@ -915,7 +920,7 @@ void toWorksheet::eraseLogButton()
 
 void toWorksheet::queryDone(void)
 {
-  if (Started>0&&!QueryString.isEmpty())
+  if (!Timer.isNull()&&!QueryString.isEmpty())
     addLog(QueryString,"Aborted");
 
   timer()->stop();

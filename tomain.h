@@ -702,7 +702,6 @@ public:
   toBusy();
   ~toBusy();
 };
-
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

@@ -46,13 +46,13 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref15">legend</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref16">setValues</A></b> (list&lt;double&gt; &amp;values,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
+<LI>void &nbsp;<b><A HREF="#ref16">setValues</A></b> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref17">addValue</A></b> (double value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;label) 
 </LI>
-<LI>list&lt;double&gt; &amp;&nbsp;<b><A HREF="#ref18">values</A></b> (void) 
+<LI>std::list&lt;double&gt; &amp;&nbsp;<b><A HREF="#ref18">values</A></b> (void) 
 </LI>
-<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref19">labels</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref19">labels</A></b> (void) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref20">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
 </LI>
@@ -119,7 +119,7 @@
 </p>
 <p><b>Returns</b>: If legend is displayed or not.
    </p>
-<A NAME="setValues"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setValues</strong> (list&lt;double&gt; &amp;values,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
+<A NAME="setValues"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setValues</strong> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
 <br></td><td align="right"><h3><strong>setValues</strong></h3></td></tr></table><p></p><p> Set value list of piechart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -137,12 +137,12 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">Label of this new value.
    </TD></TR>
 </TABLE></P>
-<A NAME="values"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;double&gt; &amp;&nbsp;<strong>values</strong> (void)
+<A NAME="values"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;double&gt; &amp;&nbsp;<strong>values</strong> (void)
 <br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
 </p>
 <p><b>Returns</b>: Values in piechart.
    </p>
-<A NAME="labels"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
+<A NAME="labels"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
 <br></td><td align="right"><h3><strong>labels</strong></h3></td></tr></table><p></p><p> Get labels of piechart.
 </p>
 <p><b>Returns</b>: List of labels.

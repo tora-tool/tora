@@ -40,6 +40,7 @@
 #include <qmultilineedit.h>
 #include <qframe.h>
 #include <qtoolbutton.h>
+#include <qdatetime.h>
 
 #include "tomain.h"
 #include "totool.h"
@@ -82,7 +83,7 @@ class toWorksheet : public toToolWidget {
   bool TryStrip;
   toResultCols *Columns;
   QComboBox *Refresh;
-  time_t Started;
+  QTime Timer;
 
   QPopupMenu *ToolMenu;
 

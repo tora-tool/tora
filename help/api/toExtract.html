@@ -29,17 +29,17 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref138">toExtract</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref139">compile</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref139">compile</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref140">create</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref140">create</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
 </LI>
-<LI>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref141">describe</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref141">describe</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref142">drop</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref142">drop</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref143">resize</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref143">resize</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref144">migrate</A></b> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref144">migrate</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref145">parseObject</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
@@ -107,7 +107,7 @@
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent widget of progress indicator.
    </TD></TR>
 </TABLE></P>
-<A NAME="compile"></A><A NAME="ref139"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>compile</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<A NAME="compile"></A><A NAME="ref139"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>compile</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
 <br></td><td align="right"><h3><strong>compile</strong></h3></td></tr></table><p></p><p> Compile the following list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -117,7 +117,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to compile the specified objects.
    </p>
-<A NAME="create"></A><A NAME="ref140"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>create</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<A NAME="create"></A><A NAME="ref140"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>create</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
 <br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p></p><p> Create script to recreate list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -133,7 +133,7 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to recreate the specified objects.
    </p>
-<A NAME="describe"></A><A NAME="ref141"></A><table width="100%"><tr bgcolor="#eeeeee"><td>list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>describe</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<A NAME="describe"></A><A NAME="ref141"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>describe</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p></p><p> Create a description of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -151,7 +151,7 @@
          considered like a list of strings separated by the character '\001'.
          The later in each string the smaller item the change and it is hierachical.
    </p>
-<A NAME="drop"></A><A NAME="ref142"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>drop</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<A NAME="drop"></A><A NAME="ref142"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>drop</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
 <br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p></p><p> Create script to drop a list of objects.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -166,10 +166,10 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to drop the specified objects.
    </p>
-<A NAME="resize"></A><A NAME="ref143"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>resize</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
+<A NAME="resize"></A><A NAME="ref143"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>resize</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;object)
 <br></td><td align="right"><h3><strong>resize</strong></h3></td></tr></table><p></p><p> Not implemented yet.
    </p>
-<A NAME="migrate"></A><A NAME="ref144"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>migrate</strong> (list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst)
+<A NAME="migrate"></A><A NAME="ref144"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>migrate</strong> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;drpLst,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;crtLst)
 <br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p></p><p> Not implemented yet.
    </p>
 <A NAME="parseObject"></A><A NAME="ref145"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>parseObject</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;object,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)

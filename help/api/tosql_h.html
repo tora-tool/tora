@@ -129,12 +129,12 @@ public:
     bool Modified;
     /** List of the different versions of the statement.
      */
-    list&lt;version&gt; Versions;
+    std::list&lt;version&gt; Versions;
   };
 
   /** Type of map of statement names to statement definitions.
    */
-  typedef map&lt;QString,definition&gt; sqlMap;
+  typedef std::map&lt;QString,definition&gt; sqlMap;
 private:
   /** Map of statement names to statement definitions.
    */
@@ -240,7 +240,7 @@ public:
    * @param startWith The string that the name should start with.
    * @return A list of names available.
    */
-  static list&lt;QString&gt; range(const QString &amp;startWith);
+  static std::list&lt;QString&gt; range(const QString &amp;startWith);
 
   /** Save SQL definitions to file.
    * @param file Filename to save to.
