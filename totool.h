@@ -1,5 +1,5 @@
 /***************************************************************************
-/*
+ *
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2003 Quest Software, Inc
  * 
