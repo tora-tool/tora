@@ -724,6 +724,10 @@
         <source>Remove any object filter for database browser</source>
         <translation>Radera objektfilter för databas utforskare</translation>
     </message>
+    <message>
+        <source>Extents</source>
+        <translation>Antal Extent</translation>
+    </message>
 </context>
 <context>
     <name>toBrowser:AnyGrants</name>
@@ -2156,7 +2160,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Run UI blocking queries exclusively in main thread</source>
-        <translation>Kör enbart UI blockerande frågor i huvud anslutningen</translation>
+        <translation type="obsolete">Kör enbart UI blockerande frågor i huvud anslutningen</translation>
     </message>
     <message>
         <source>Let the background queries normally running on the main connection run in a separate connection.</source>
@@ -2217,6 +2221,22 @@ fetch size. Will adjust value to be higher.</source>
     <message>
         <source>Never read object cache until mandatory</source>
         <translation>Läs aldrig cache om det inte är obligatoriskt</translation>
+    </message>
+    <message>
+        <source>Run UI blocking queries exclusively in main connection</source>
+        <translation>Kör blockerande databasfrågor exklusivt på huvudanslutning</translation>
+    </message>
+    <message>
+        <source>Never read object cache (Will leave parts of TOra nonfunctianal)</source>
+        <translation>Läs aldrig objekt cache (Lämnar delar av TOra icke fungerande)</translation>
+    </message>
+    <message>
+        <source>Keep alive</source>
+        <translation>Håll vid liv</translation>
+    </message>
+    <message>
+        <source>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</source>
+        <translation>Se till att anslutningar hålls vid liv genom att periodiskt (Var 5 minut) sända en fråga på alla inaktiva anslutningar.</translation>
     </message>
 </context>
 <context>
@@ -3212,6 +3232,18 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
         <source>Which translation locale to use for this program. Must restart to have effect.</source>
         <translation>Vilken översättnings locale som skall användas för programmet. Måste starta om för innan det får effekt.</translation>
     </message>
+    <message>
+        <source>&amp;Cache directory</source>
+        <translation>&amp;Cache bibliotek</translation>
+    </message>
+    <message>
+        <source>Use Disk Caching</source>
+        <translation>Använd disk cache</translation>
+    </message>
+    <message>
+        <source>Use Disk Caching of ObjectLists and Synonyms</source>
+        <translation>Använd disk cachning av objektlista och synonymer</translation>
+    </message>
 </context>
 <context>
     <name>toHelp</name>
@@ -3401,6 +3433,18 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>&amp;Invalid</source>
         <translation>&amp;Ogiltig</translation>
+    </message>
+    <message>
+        <source>Recompile all</source>
+        <translation>Kompilera om allt</translation>
+    </message>
+    <message>
+        <source>Recompiling all invalid</source>
+        <translation>Kompilera om alla felaktiga paket</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
@@ -5602,10 +5646,6 @@ Skall TOra försöka skapa den?</translation>
         <source>Invalidations</source>
         <translation>Invalideringar</translation>
     </message>
-    <message>
-        <source> </source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>toResultStats</name>
@@ -6400,6 +6440,34 @@ Skall TOra försöka skapa den?</translation>
         <source>None</source>
         <translation>Ingen</translation>
     </message>
+    <message>
+        <source>No filename specified</source>
+        <translation>Inget filnamn angivet</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open file %1</source>
+        <translation>Kunde inte öppna fil %1</translation>
+    </message>
+    <message>
+        <source>Error writing to file %1</source>
+        <translation>Fel vid skrivning till fil %1</translation>
+    </message>
+    <message>
+        <source>-- Script generated to file %1 successfully</source>
+        <translation>-- Skript genererat till fil %1 gick bra</translation>
+    </message>
+    <message>
+        <source>rem Master script for DDL reverse engineering by TOra
+
+</source>
+        <translation>rem Huvudskript för DDL generering av TOra
+
+</translation>
+    </message>
+    <message>
+        <source>-- Scripts generate to directory %1 successfully</source>
+        <translation>-- Generering av skript till bibliotek %1 gick bra</translation>
+    </message>
 </context>
 <context>
     <name>toScriptUI</name>
@@ -6614,6 +6682,46 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Difference</source>
         <translation>Skillnad</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Utdata</translation>
+    </message>
+    <message>
+        <source>Output tab</source>
+        <translation>Utdata flik</translation>
+    </message>
+    <message>
+        <source>Output dir</source>
+        <translation>Till bibliotek</translation>
+    </message>
+    <message>
+        <source>Output to directory so that each object is placed in a different file with the objects file.</source>
+        <translation type="obsolete">Skriv till bibliotek så att varje objekt är placerat i enskilda filer.</translation>
+    </message>
+    <message>
+        <source>Output file</source>
+        <translation>Till fil</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Leta</translation>
+    </message>
+    <message>
+        <source>Commit distance</source>
+        <translation>Commit avstånd</translation>
+    </message>
+    <message>
+        <source>The number of insertstatements to make between each commit (0 means whole table)b</source>
+        <translation type="obsolete">Antalet poster som skall skrivas in i databasen mellan varje commit (0 betyder hela tabellen)</translation>
+    </message>
+    <message>
+        <source>The number of insertstatements to make between each commit (0 means whole table)</source>
+        <translation>Antalet poster som skall skrivas in i databasen mellan varje commit (0 betyder hela tabellen)</translation>
+    </message>
+    <message>
+        <source>Output to directory so that each object is placed in a different file.</source>
+        <translation>Skriv till bibliotek så att varje objekt är placerat i enskilda filer.</translation>
     </message>
 </context>
 <context>
@@ -7075,12 +7183,8 @@ Skall TOra försöka skapa den?</translation>
 <context>
     <name>toSemaphore</name>
     <message>
-        <source>Error in semaphore function &quot;%1&quot; didn&apos;t work</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>The semaphore function &quot;%1&quot; failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Semaphorfunktionen &quot;%1&quot; har fallerat</translation>
     </message>
 </context>
 <context>
@@ -7696,6 +7800,10 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Blocks/line: %1</source>
         <translation>Block/Rad: %1</translation>
+    </message>
+    <message>
+        <source>Tablespace: %1</source>
+        <translation>Tablespace: %1</translation>
     </message>
 </context>
 <context>

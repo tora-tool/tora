@@ -242,6 +242,11 @@ public:
    * @param def Contents of this setting.
    */
   static void globalSetConfig(const QCString &tag,const QString &value);
+  /**
+   * Remove a setting. Can be usefull for removing sensetive information.
+   * @param tag The name of the configuration setting to remove.
+   */
+  static void globalEraseConfig(const QCString &tag);
 
   /**
    * Get tool specific settings.
@@ -266,6 +271,11 @@ public:
    * @param def Default value of the setting, if it is not available.
    */
   void setConfig(const QCString &tag,const QString &value);
+  /**
+   * Remove a toolspecific setting. Can be usefull for removing sensetive information.
+   * @param tag The name of the configuration setting to remove.
+   */
+  void eraseConfig(const QCString &tag);
   /**
    * Load a string to string map from file saved by the @ref saveMap function.
    * @param filename Filename to load

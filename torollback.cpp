@@ -703,9 +703,9 @@ void toRollback::windowActivated(QWidget *widget)
       ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
       toMainWidget()->menuBar()->insertItem(tr("&Rollback"),ToolMenu,-1,toToolMenuIndex());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
     }
   } else {
     delete ToolMenu;
@@ -765,9 +765,9 @@ void toRollback::changeItem(QListViewItem *item)
     OfflineButton->setEnabled(false);
   }
   DropButton->setEnabled(item);
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
 }
 
 void toRollback::changeRefresh(const QString &str)

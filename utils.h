@@ -357,6 +357,18 @@ QString toUnnull(const QString &str);
 /** Convert string read by readValueNull to value to be read by readValue.
  */
 QString toNull(const QString &str);
+
+/** Take a string and make it illegible. Some security through obscurity here so you will
+ * need to check the source to see what is actually done.
+ * @param str String to be made unreadable.
+ * @return Obfuscated string.
+ */
+QString toObfuscate(const QString &str);
+/** Unmake the actions of @ref toObfuscate.
+ * @param Obfuscated string.
+ * @return Original string.
+ */
+QString toUnobfuscate(const QString &str);
 /** Check if the current widget is within the active modal widget (Or no modal widget exists)
  */
 bool toCheckModal(QWidget *widget);

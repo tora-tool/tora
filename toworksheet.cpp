@@ -597,8 +597,8 @@ void toWorksheet::windowActivated(QWidget *widget)
 			   tr("Erase &Log"),this,SLOT(eraseLogButton(void)));
 
       toMainWidget()->menuBar()->insertItem(tr("W&orksheet"),ToolMenu,-1,toToolMenuIndex());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
-      toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,
+      ToolMenu->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
+      ToolMenu->setItemChecked(TO_ID_STATISTICS,
 						StatisticButton->isOn());
     }
   } else {
@@ -818,7 +818,8 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       StopButton->setEnabled(true);
       Poll.start(1000);
       QToolTip::add(Started,tr("Duration while query has been running\n\n")+QueryString);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+      if (ToolMenu)
+	ToolMenu->setItemEnabled(TO_ID_STOP,true);
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
 	saveHistory();
@@ -1140,7 +1141,8 @@ void toWorksheet::queryDone(void)
   } TOCATCH
   StopButton->setEnabled(false);
   Poll.stop();
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+  if (ToolMenu)
+    ToolMenu->setItemEnabled(TO_ID_STOP,false);
   saveDefaults();
 }
 
@@ -1171,7 +1173,7 @@ void toWorksheet::enableStatistic(bool ena)
   if (ena) {
     Result->setStatistics(Statistics);
     ResultTab->setTabEnabled(StatTab,true);
-    toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,true);
+    ToolMenu->setItemChecked(TO_ID_STATISTICS,true);
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
       try {
@@ -1186,7 +1188,8 @@ void toWorksheet::enableStatistic(bool ena)
     }
     Result->setStatistics(NULL);
     ResultTab->setTabEnabled(StatTab,false);
-    toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,false);
+    if (ToolMenu)
+      ToolMenu->setItemChecked(TO_ID_STATISTICS,false);
   }
 }
 

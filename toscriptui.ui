@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>630</width>
-            <height>669</height>
+            <width>888</width>
+            <height>791</height>
         </rect>
     </property>
     <property stdset="1">
@@ -290,33 +290,6 @@
                                     <number>10</number>
                                 </property>
                             </widget>
-                            <widget row="9"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeContent</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>focusPolicy</name>
-                                    <enum>NoFocus</enum>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Include content of tables</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>buttonGroupId</name>
-                                    <number>10</number>
-                                </property>
-                            </widget>
                             <widget row="5"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
                                 <property stdset="1">
@@ -355,48 +328,6 @@
                                     <number>10</number>
                                 </property>
                             </widget>
-                            <widget row="12"  column="3" >
-                                <class>QComboBox</class>
-                                <item>
-                                    <property>
-                                        <name>text</name>
-                                        <string>Same</string>
-                                    </property>
-                                </item>
-                                <item>
-                                    <property>
-                                        <name>text</name>
-                                        <string>None</string>
-                                    </property>
-                                </item>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>Schema</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>editable</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>duplicatesEnabled</name>
-                                    <bool>false</bool>
-                                </property>
-                            </widget>
-                            <widget row="12"  column="2" >
-                                <class>QLabel</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>TextLabel3</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Generated schema</string>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>Select the schema to generate in script</string>
-                                </property>
-                            </widget>
                             <widget row="2"  column="2"  rowspan="1"  colspan="2" >
                                 <class>QCheckBox</class>
                                 <property stdset="1">
@@ -414,37 +345,6 @@
                                 <property stdset="1">
                                     <name>buttonGroupId</name>
                                     <number>10</number>
-                                </property>
-                            </widget>
-                            <widget row="10"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludePrompt</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>focusPolicy</name>
-                                    <enum>NoFocus</enum>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Generate prompts</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>buttonGroupId</name>
-                                    <number>10</number>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>Generate prompts to display progress in SQLPlus</string>
                                 </property>
                             </widget>
                             <widget row="8"  column="2"  rowspan="1"  colspan="2" >
@@ -468,33 +368,6 @@
                                 <property stdset="1">
                                     <name>buttonGroupId</name>
                                     <number>10</number>
-                                </property>
-                            </widget>
-                            <widget row="11"  column="2"  rowspan="1"  colspan="2" >
-                                <class>QCheckBox</class>
-                                <property stdset="1">
-                                    <name>name</name>
-                                    <cstring>IncludeHeader</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
-                                    <bool>false</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>text</name>
-                                    <string>Generate header</string>
-                                </property>
-                                <property stdset="1">
-                                    <name>checked</name>
-                                    <bool>true</bool>
-                                </property>
-                                <property stdset="1">
-                                    <name>buttonGroupId</name>
-                                    <number>10</number>
-                                </property>
-                                <property>
-                                    <name>toolTip</name>
-                                    <string>Generate header at the top of the script</string>
                                 </property>
                             </widget>
                             <widget row="3"  column="2"  rowspan="1"  colspan="2" >
@@ -573,7 +446,7 @@
                                     <number>3</number>
                                 </property>
                             </widget>
-                            <widget row="0"  column="1"  rowspan="14"  colspan="1" >
+                            <widget row="0"  column="1"  rowspan="15"  colspan="1" >
                                 <class>Line</class>
                                 <property stdset="1">
                                     <name>name</name>
@@ -584,28 +457,7 @@
                                     <enum>Vertical</enum>
                                 </property>
                             </widget>
-                            <spacer row="13"  column="2" >
-                                <property>
-                                    <name>name</name>
-                                    <cstring>Spacer9_2</cstring>
-                                </property>
-                                <property stdset="1">
-                                    <name>orientation</name>
-                                    <enum>Vertical</enum>
-                                </property>
-                                <property stdset="1">
-                                    <name>sizeType</name>
-                                    <enum>Expanding</enum>
-                                </property>
-                                <property>
-                                    <name>sizeHint</name>
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <spacer row="5"  column="0"  rowspan="9"  colspan="1" >
+                            <spacer row="5"  column="0"  rowspan="10"  colspan="1" >
                                 <property>
                                     <name>name</name>
                                     <cstring>Spacer10_2</cstring>
@@ -678,6 +530,184 @@
                                 <property>
                                     <name>toolTip</name>
                                     <string>Create database scripts to convert schema or database from source to destination</string>
+                                </property>
+                            </widget>
+                            <widget row="9"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludePrompt</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Generate prompts</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>10</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Generate prompts to display progress in SQLPlus</string>
+                                </property>
+                            </widget>
+                            <spacer row="14"  column="2" >
+                                <property>
+                                    <name>name</name>
+                                    <cstring>Spacer9_2</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>orientation</name>
+                                    <enum>Vertical</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>sizeType</name>
+                                    <enum>Expanding</enum>
+                                </property>
+                                <property>
+                                    <name>sizeHint</name>
+                                    <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                    </size>
+                                </property>
+                            </spacer>
+                            <widget row="10"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeHeader</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Generate header</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>10</number>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Generate header at the top of the script</string>
+                                </property>
+                            </widget>
+                            <widget row="13"  column="3" >
+                                <class>QComboBox</class>
+                                <item>
+                                    <property>
+                                        <name>text</name>
+                                        <string>Same</string>
+                                    </property>
+                                </item>
+                                <item>
+                                    <property>
+                                        <name>text</name>
+                                        <string>None</string>
+                                    </property>
+                                </item>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>Schema</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>editable</name>
+                                    <bool>true</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>duplicatesEnabled</name>
+                                    <bool>false</bool>
+                                </property>
+                            </widget>
+                            <widget row="13"  column="2" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>TextLabel3</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Generated schema</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>Select the schema to generate in script</string>
+                                </property>
+                            </widget>
+                            <widget row="11"  column="2"  rowspan="1"  colspan="2" >
+                                <class>QCheckBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>IncludeContent</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>focusPolicy</name>
+                                    <enum>NoFocus</enum>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Include content of tables</string>
+                                </property>
+                                <property stdset="1">
+                                    <name>checked</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>buttonGroupId</name>
+                                    <number>10</number>
+                                </property>
+                            </widget>
+                            <widget row="12"  column="2" >
+                                <class>QLabel</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>TextLabel1_3</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>text</name>
+                                    <string>Commit distance</string>
+                                </property>
+                                <property>
+                                    <name>toolTip</name>
+                                    <string>The number of insertstatements to make between each commit (0 means whole table)</string>
+                                </property>
+                            </widget>
+                            <widget row="12"  column="3" >
+                                <class>QSpinBox</class>
+                                <property stdset="1">
+                                    <name>name</name>
+                                    <cstring>CommitDistance</cstring>
+                                </property>
+                                <property stdset="1">
+                                    <name>enabled</name>
+                                    <bool>false</bool>
+                                </property>
+                                <property stdset="1">
+                                    <name>maxValue</name>
+                                    <number>1000000</number>
                                 </property>
                             </widget>
                         </grid>
@@ -984,7 +1014,7 @@
                                 </property>
                                 <property>
                                     <name>toolTip</name>
-                                    <string>Output to directory so that each object is placed in a different file with the objects file.</string>
+                                    <string>Output to directory so that each object is placed in a different file.</string>
                                 </property>
                             </widget>
                             <widget row="0"  column="1" >
@@ -1484,6 +1514,12 @@
         <sender>Extract</sender>
         <signal>toggled(bool)</signal>
         <receiver>OutputDir</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>IncludeContent</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CommitDistance</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
 </connections>

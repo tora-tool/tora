@@ -1227,10 +1227,10 @@ void toDebug::updateState(int reason)
     StepIntoButton->setEnabled(false);
     ReturnButton->setEnabled(false);
     if (ToolMenu) {
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,false);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,false);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,false);
+      ToolMenu->setItemEnabled(TO_ID_STOP,false);
+      ToolMenu->setItemEnabled(TO_ID_STEP_INTO,false);
+      ToolMenu->setItemEnabled(TO_ID_STEP_OVER,false);
+      ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,false);
     }
     HeadEditor->setCurrent(-1);
     BodyEditor->setCurrent(-1);
@@ -1288,10 +1288,10 @@ void toDebug::updateState(int reason)
     StepIntoButton->setEnabled(true);
     ReturnButton->setEnabled(true);
     if (ToolMenu) {
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,true);
+      ToolMenu->setItemEnabled(TO_ID_STOP,true);
+      ToolMenu->setItemEnabled(TO_ID_STEP_INTO,true);
+      ToolMenu->setItemEnabled(TO_ID_STEP_OVER,true);
+      ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,true);
     }
     try {
       toQuery info(connection(),SQLRuntimeInfo);
@@ -1471,7 +1471,7 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
       HeadEditor->setFocus();
       ShowButton->setEnabled(true);
       if (ToolMenu)
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
+	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
       ShowButton->setOn(true);
       updateContent(false);
     } else { 
@@ -2035,12 +2035,12 @@ void toDebug::updateCurrent()
       ShowButton->setEnabled(false);
       ShowButton->setOn(false);
       if (ToolMenu)
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
+	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
     } else {
       HeadEditor->readData(connection(),StackTrace);
       ShowButton->setEnabled(true);
       if (ToolMenu)
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
+	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
     }
 
     currentEditor()->setFocus();
@@ -2070,7 +2070,7 @@ void toDebug::showDebug(bool show)
   else
     DebugTabs->hide();
   if (ToolMenu)
-    toMainWidget()->menuBar()->setItemChecked(TO_ID_DEBUG_PANE,show);
+    ToolMenu->setItemChecked(TO_ID_DEBUG_PANE,show);
 }
 
 void toDebug::changeView(bool head)
@@ -2085,7 +2085,7 @@ void toDebug::changeView(bool head)
     setFocusProxy(BodyEditor);
   }
   if (ToolMenu)
-    toMainWidget()->menuBar()->setItemChecked(TO_ID_HEAD_TOGGLE,head);
+    ToolMenu->setItemChecked(TO_ID_HEAD_TOGGLE,head);
   currentEditor()->setFocus();
 }
 
@@ -2290,7 +2290,7 @@ void toDebug::newSheet(void)
     BodyEditor->setSchema(Schema->currentText());
     scanSource();
     if (ToolMenu)
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
+      ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,true);
     ShowButton->setEnabled(true);
   }
 }
@@ -2397,25 +2397,25 @@ void toDebug::windowActivated(QWidget *widget)
 			   ALT+Key_S);
       ToolMenu->insertItem(tr("Erase Runtime &Log"),this,SLOT(clearLog(void)));
 
-      toMainWidget()->menuBar()->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
+      ToolMenu->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
 
       if (!isRunning()) {
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_INTO,false);
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STEP_OVER,false);
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_RETURN_FROM,false);
+	ToolMenu->setItemEnabled(TO_ID_STOP,false);
+	ToolMenu->setItemEnabled(TO_ID_STEP_INTO,false);
+	ToolMenu->setItemEnabled(TO_ID_STEP_OVER,false);
+	ToolMenu->setItemEnabled(TO_ID_RETURN_FROM,false);
       }
       if (currentEditor()==HeadEditor)
-	toMainWidget()->menuBar()->setItemChecked(TO_ID_HEAD_TOGGLE,true);
+	ToolMenu->setItemChecked(TO_ID_HEAD_TOGGLE,true);
       if (!ShowButton->isEnabled())
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
+	ToolMenu->setItemEnabled(TO_ID_HEAD_TOGGLE,false);
       if (!DebugTabs->isHidden())
-	toMainWidget()->menuBar()->setItemChecked(TO_ID_DEBUG_PANE,true);
+	ToolMenu->setItemChecked(TO_ID_DEBUG_PANE,true);
 
       if (!DelWatchButton->isEnabled())
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
+	ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
       if (!ChangeWatchButton->isEnabled())
-	toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+	ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
     }
   } else {
     delete ToolMenu;
@@ -2439,23 +2439,23 @@ void toDebug::selectedWatch()
   if (item) {
     if (!item->text(5).isEmpty()&&item->text(5)!=QString::fromLatin1("LIST")) {
       DelWatchButton->setEnabled(false);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
+      ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
     } else {
       DelWatchButton->setEnabled(true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,true);
+      ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,true);
     }
     if (item->text(4).isEmpty()) {
       ChangeWatchButton->setEnabled(true);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,true);
+      ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,true);
     } else {
       ChangeWatchButton->setEnabled(false);
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+      ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
     }
   } else {
     DelWatchButton->setEnabled(false);
     ChangeWatchButton->setEnabled(false);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_CHANGE_WATCH,false);
+    ToolMenu->setItemEnabled(TO_ID_DEL_WATCH,false);
+    ToolMenu->setItemEnabled(TO_ID_CHANGE_WATCH,false);
   }
 }
 

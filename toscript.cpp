@@ -62,6 +62,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qregexp.h>
+#include <qspinbox.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
 #include <qtextview.h>
@@ -857,10 +858,8 @@ void toScript::changeMode(int mode)
   else if (mode==0||mode==3||mode==4)
     ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
 
-  if (mode==1)
-    ScriptUI->IncludeContent->setEnabled(true);
-  else if (mode==0||mode==2||mode==3||mode==4)
-    ScriptUI->IncludeContent->setEnabled(false);
+  ScriptUI->IncludeContent->setEnabled(mode==1);
+  ScriptUI->CommitDistance->setEnabled(mode==1);
 
   if (mode==1||mode==2) {
     ScriptUI->IncludeHeader->setEnabled(true);
@@ -1012,7 +1011,8 @@ void toScript::setupExtract(toExtract &extr)
   extr.setConstraints(ScriptUI->IncludeConstraints->isEnabled()&&
 		      ScriptUI->IncludeConstraints->isChecked());
   extr.setContents   (ScriptUI->IncludeContent->isEnabled()    &&
-		      ScriptUI->IncludeContent->isChecked()    );
+		      ScriptUI->IncludeContent->isChecked()    ,
+		      ScriptUI->CommitDistance->value()        );
   extr.setGrants     (ScriptUI->IncludeGrants->isEnabled()     &&
 		      ScriptUI->IncludeGrants->isChecked()     );
   extr.setHeading    (ScriptUI->IncludeHeader->isEnabled()     &&

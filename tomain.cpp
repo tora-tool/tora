@@ -470,11 +470,11 @@ toMain::toMain()
   setIcon(QPixmap((const char **)toramini_xpm));
 
   statusBar()->message(QString::null);
-  menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
-  menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
-  menuBar()->setItemEnabled(TO_STOP_ALL,false);
-  menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
-  menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
+  FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,false);
+  FileMenu->setItemEnabled(TO_FILE_COMMIT,false);
+  FileMenu->setItemEnabled(TO_STOP_ALL,false);
+  FileMenu->setItemEnabled(TO_FILE_ROLLBACK,false);
+  FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,false);
   DisconnectButton->setEnabled(false);
 
   for (std::map<QToolButton *,toTool *>::iterator j=NeedConnection.begin();
@@ -608,11 +608,11 @@ void toMain::showFileMenu(void)
 {
   bool hascon=(ConnectionSelection->count()>0);
 
-  menuBar()->setItemEnabled(TO_FILE_COMMIT,hascon);
-  menuBar()->setItemEnabled(TO_STOP_ALL,hascon);
-  menuBar()->setItemEnabled(TO_FILE_ROLLBACK,hascon);
-  menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,hascon);
-  menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,hascon);
+  FileMenu->setItemEnabled(TO_FILE_COMMIT,hascon);
+  FileMenu->setItemEnabled(TO_STOP_ALL,hascon);
+  FileMenu->setItemEnabled(TO_FILE_ROLLBACK,hascon);
+  FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,hascon);
+  FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,hascon);
 
   updateRecent();
 }
@@ -636,7 +636,7 @@ void toMain::updateRecent()
 	  FileMenu->changeItem(TO_LAST_FILE_ID+i,fi.fileName());
 	}
       }
-      menuBar()->setItemEnabled(TO_LAST_FILE_ID+i,Edit&&Edit->openEnabled());
+      FileMenu->setItemEnabled(TO_LAST_FILE_ID+i,Edit&&Edit->openEnabled());
     }
   }
 }
@@ -925,11 +925,11 @@ toConnection *toMain::addConnection(toConnection *conn,bool def)
   ConnectionSelection->setCurrentItem(ConnectionSelection->count()-1);
 
   if (ConnectionSelection->count()==1) {
-    menuBar()->setItemEnabled(TO_FILE_COMMIT,true);
-    menuBar()->setItemEnabled(TO_STOP_ALL,true);
-    menuBar()->setItemEnabled(TO_FILE_ROLLBACK,true);
-    menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,true);
-    menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,true);
+    FileMenu->setItemEnabled(TO_FILE_COMMIT,true);
+    FileMenu->setItemEnabled(TO_STOP_ALL,true);
+    FileMenu->setItemEnabled(TO_FILE_ROLLBACK,true);
+    FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,true);
+    FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,true);
     DisconnectButton->setEnabled(true);
   }
 
@@ -993,17 +993,17 @@ bool toMain::delConnection(void)
     pos++;
   }
   if (ConnectionSelection->count()==0) {
-    menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
-    menuBar()->setItemEnabled(TO_STOP_ALL,false);
-    menuBar()->setItemEnabled(TO_FILE_ROLLBACK,false);
-    menuBar()->setItemEnabled(TO_FILE_CLEARCACHE,false);
-    menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
+    FileMenu->setItemEnabled(TO_FILE_COMMIT,false);
+    FileMenu->setItemEnabled(TO_STOP_ALL,false);
+    FileMenu->setItemEnabled(TO_FILE_ROLLBACK,false);
+    FileMenu->setItemEnabled(TO_FILE_CLEARCACHE,false);
+    FileMenu->setItemEnabled(TO_CLOSE_CONNECTION,false);
     DisconnectButton->setEnabled(false);
     for (std::map<QToolButton *,toTool *>::iterator i=NeedConnection.begin();
 	 i!=NeedConnection.end();i++)
       (*i).first->setEnabled(false);
     for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++)
-      menuBar()->setItemEnabled((*j).first,false);
+      ToolsMenu->setItemEnabled((*j).first,false);
   } else
     changeConnection();
   return true;
@@ -1165,19 +1165,19 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     PasteButton->setEnabled(paste);
     SearchButton->setEnabled(search);
 
-    menuBar()->setItemEnabled(TO_EDIT_UNDO,undo);
-    menuBar()->setItemEnabled(TO_EDIT_REDO,redo);
-    menuBar()->setItemEnabled(TO_EDIT_CUT,cut);
-    menuBar()->setItemEnabled(TO_EDIT_COPY,copy);
-    menuBar()->setItemEnabled(TO_EDIT_PASTE,paste);
-    menuBar()->setItemEnabled(TO_EDIT_SELECT_ALL,selectAll);
-    menuBar()->setItemEnabled(TO_EDIT_READ_ALL,readAll);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH,search);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
+    EditMenu->setItemEnabled(TO_EDIT_UNDO,undo);
+    EditMenu->setItemEnabled(TO_EDIT_REDO,redo);
+    EditMenu->setItemEnabled(TO_EDIT_CUT,cut);
+    EditMenu->setItemEnabled(TO_EDIT_COPY,copy);
+    EditMenu->setItemEnabled(TO_EDIT_PASTE,paste);
+    EditMenu->setItemEnabled(TO_EDIT_SELECT_ALL,selectAll);
+    EditMenu->setItemEnabled(TO_EDIT_READ_ALL,readAll);
+    EditMenu->setItemEnabled(TO_EDIT_SEARCH,search);
+    EditMenu->setItemEnabled(TO_EDIT_SEARCH_NEXT,Search&&Search->searchNextAvailable());
 
-    menuBar()->setItemEnabled(TO_FILE_OPEN,open);
-    menuBar()->setItemEnabled(TO_FILE_SAVE,save);
-    menuBar()->setItemEnabled(TO_FILE_SAVE_AS,save);
+    FileMenu->setItemEnabled(TO_FILE_OPEN,open);
+    FileMenu->setItemEnabled(TO_FILE_SAVE,save);
+    FileMenu->setItemEnabled(TO_FILE_SAVE_AS,save);
   }
 }
 
@@ -1265,12 +1265,11 @@ void toMain::changeConnection(void)
     for (std::map<int,toTool *>::iterator j=Tools.begin();j!=Tools.end();j++) {
       toTool *tool=(*j).second;
       if (!tool)
-	menuBar()->setItemEnabled((*j).first,true);
+	ToolsMenu->setItemEnabled((*j).first,true);
       else if (tool->canHandle(conn))
-	menuBar()->setItemEnabled((*j).first,true);
+	ToolsMenu->setItemEnabled((*j).first,true);
       else
-	menuBar()->setItemEnabled((*j).first,false);
-
+	ToolsMenu->setItemEnabled((*j).first,false);
     }
   } TOCATCH
 }

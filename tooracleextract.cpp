@@ -4761,6 +4761,10 @@ void toOracleExtract::createTableContents(toExtract &ext,
       beg+=") VALUES (";
 
       QRegExp find("'");
+
+      int row=0;
+      int maxRow=ext.getCommitDistance();
+
       while(!query.eof()) {
 	QString line=beg;
 	first=true;
@@ -4788,6 +4792,10 @@ void toOracleExtract::createTableContents(toExtract &ext,
 	}
 	line+=");\n";
 	stream<<line;
+
+	row++;
+	if (maxRow>0&&row%maxRow==0)
+	  stream<<"COMMIT;\n";
       }
     } catch (...) {
       delete[] dates;

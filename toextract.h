@@ -185,6 +185,8 @@ private:
   bool Storage;
   bool Initialized;
 
+  int CommitDistance;
+
   // Database info
   int BlockSize;
   std::list<QString> Initial;
@@ -390,9 +392,10 @@ public:
   { Partition=val; }
   /** Include contents of tables in scripts.
    * @param val Include contents of tables.
+   * @param commitdistance The commit distance of the contents 0 means whole tables.
    */
-  void setContents(bool val)
-  { Contents=val; }
+  void setContents(bool val,int commitdistance)
+  { Contents=val; CommitDistance=commitdistance; }
   /** Include comments in extraction.
    * @param val Include indexes.
    */
@@ -466,6 +469,11 @@ public:
    */
   bool getContents(void)
   { return Contents; }
+  /** Get the distance of the commits when content is generated.
+   * @return Commit distance.
+   */
+  int getCommitDistance(void)
+  { return CommitDistance; }
   /** Check if comments are generated.
    * @return If comments are generated.
    */

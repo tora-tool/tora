@@ -869,19 +869,19 @@ void toStorage::windowActivated(QWidget *widget)
 
       toMainWidget()->menuBar()->insertItem(tr("&Storage"),ToolMenu,-1,toToolMenuIndex());
 
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
-						ModTablespaceButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_DATAFILE,
-						ModFileButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
+			       ModTablespaceButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
+			       ModFileButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
     }
   } else {
     delete ToolMenu;
@@ -1061,19 +1061,19 @@ void toStorage::selectionChanged(void)
     NewFileButton->setEnabled(true);
     ModTablespaceButton->setEnabled(true);
   }
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
-					    ModTablespaceButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MODIFY_DATAFILE,
-					    ModFileButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
-  toMainWidget()->menuBar()->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_LOGGING,LoggingButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_NOLOGGING,EraseLogButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_READ_WRITE,ReadWriteButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_READ_ONLY,ReadOnlyButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_MODIFY_TABLESPACE,
+			   ModTablespaceButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_MODIFY_DATAFILE,
+			   ModFileButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_ADD_DATAFILE,NewFileButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_COALESCE,CoalesceButton->isEnabled());
+  ToolMenu->setItemEnabled(TO_ID_MOVE_FILE,MoveFileButton->isEnabled());
 }
 
 void toStorage::newDatafile(void)

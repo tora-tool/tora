@@ -427,6 +427,14 @@ const QString &toTool::config(const QCString &tag,const QCString &def)
   return globalConfig(str,def);
 }
 
+void toTool::eraseConfig(const QCString &tag)
+{
+  QCString str=name();
+  str.append(":");
+  str.append(tag);
+  globalEraseConfig(str);
+}
+
 void toTool::setConfig(const QCString &tag,const QString &def)
 {
   QCString str=name();
@@ -483,6 +491,24 @@ const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
     return (*Configuration)[tag];
   }
   return (*i).second;
+}
+
+void toTool::globalEraseConfig(const QCString &tag)
+{
+  if (!Configuration)
+    loadConfig();
+  std::map<QCString,QString>::iterator i=Configuration->find(tag);
+  if (i!=Configuration->end()) {
+    Configuration->erase(i);
+#if defined(WIN32)
+    CRegistry registry;
+    QRegExp re(QString::fromLatin1(":"));
+    QCString path=tag;
+    path.prepend(APPLICATION_NAME);
+    path.replace(re,"\\"); 
+    registry.DeleteKey(HKEY_CURRENT_USER,path); // Don't really care if it works.
+#endif
+  }
 }
 
 void toTool::globalSetConfig(const QCString &tag,const QString &value)

@@ -724,6 +724,10 @@
         <source>Remove any object filter for database browser</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Extents</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toBrowser:AnyGrants</name>
@@ -2149,7 +2153,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Run UI blocking queries exclusively in main thread</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>Let the background queries normally running on the main connection run in a separate connection.</source>
@@ -2209,6 +2213,22 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Never read object cache until mandatory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run UI blocking queries exclusively in main connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never read object cache (Will leave parts of TOra nonfunctianal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep alive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3191,6 +3211,18 @@ Will leave the password unencryptet in the config file.</source>
         <source>Which translation locale to use for this program. Must restart to have effect.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Cache directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Disk Caching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Disk Caching of ObjectLists and Synonyms</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toHelp</name>
@@ -3379,6 +3411,18 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>&amp;Invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recompile all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recompiling all invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6344,6 +6388,32 @@ Should TOra try to create it?</source>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>No filename specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error writing to file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Script generated to file %1 successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rem Master script for DDL reverse engineering by TOra
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Scripts generate to directory %1 successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toScriptUI</name>
@@ -6557,6 +6627,46 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output dir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output to directory so that each object is placed in a different file with the objects file.</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>Output file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Commit distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The number of insertstatements to make between each commit (0 means whole table)b</source>
+        <translation type="obsolete"></translation>
+    </message>
+    <message>
+        <source>The number of insertstatements to make between each commit (0 means whole table)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output to directory so that each object is placed in a different file.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7639,6 +7749,10 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Blocks/line: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tablespace: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -843,6 +843,8 @@ void toStorageExtent::paintEvent(QPaintEvent *)
   paint.fillRect(0,0,width(),offset,colorGroup().background());
   paint.drawText(0,0,width(),offset,AlignLeft|AlignTop,tr("Files: %1").arg(FileOffset.size()));
   paint.drawText(0,0,width(),offset,AlignRight|AlignTop,tr("Extents: %1").arg(Extents.size()));
+  if (Tablespace)
+    paint.drawText(0,0,width(),offset,AlignCenter|AlignTop,tr("Tablespace: %1").arg(Tablespace));
   paint.drawText(0,0,width(),offset,AlignLeft|AlignBottom,tr("Blocks: %1").arg(Total));
   paint.drawText(0,0,width(),offset,AlignRight|AlignBottom,tr("Blocks/line: %1").arg(int(lineblocks)));
 

@@ -90,14 +90,14 @@ void toEditExtensions::receivedFocus(toEditWidget *widget)
 
   bool enable=Current&&!Current->isReadOnly();
 
-  toMainWidget()->menuBar()->setItemEnabled(IndentIndex,enable);
-  toMainWidget()->menuBar()->setItemEnabled(DeindentIndex,enable);
-  toMainWidget()->menuBar()->setItemEnabled(AutoIndentBlock,enable);
-  toMainWidget()->menuBar()->setItemEnabled(ObfuscateBlock,enable);
-  toMainWidget()->menuBar()->setItemEnabled(AutoIndentBuffer,Current);
-  toMainWidget()->menuBar()->setItemEnabled(ObfuscateBuffer,Current);
-  toMainWidget()->menuBar()->setItemEnabled(IncrementalSearch,Current);
-  toMainWidget()->menuBar()->setItemEnabled(ReverseSearch,Current);
+  toMainWidget()->editMenu()->setItemEnabled(IndentIndex,enable);
+  toMainWidget()->editMenu()->setItemEnabled(DeindentIndex,enable);
+  toMainWidget()->editMenu()->setItemEnabled(AutoIndentBlock,enable);
+  toMainWidget()->editMenu()->setItemEnabled(ObfuscateBlock,enable);
+  toMainWidget()->editMenu()->setItemEnabled(AutoIndentBuffer,Current);
+  toMainWidget()->editMenu()->setItemEnabled(ObfuscateBuffer,Current);
+  toMainWidget()->editMenu()->setItemEnabled(IncrementalSearch,Current);
+  toMainWidget()->editMenu()->setItemEnabled(ReverseSearch,Current);
   if(IndentButton)
     IndentButton->setEnabled(enable);
   if(DeindentButton)

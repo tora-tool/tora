@@ -109,7 +109,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
   if (pass)
     Password->setText(QString::fromLatin1(DEFAULT_PASSWORD));
   else
-    Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
+    Password->setText(toUnobfuscate(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD)));
 
   QString defdb=toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE);
   Database->setEditable(true);
@@ -129,7 +129,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
       tmp=path;
       tmp+=CONF_PASSWORD;
       QString passstr=(pass?QString::fromLatin1(DEFAULT_PASSWORD):
-                      (toTool::globalConfig(tmp,DEFAULT_PASSWORD)));
+                      (toUnobfuscate(toTool::globalConfig(tmp,DEFAULT_PASSWORD))));
 
       tmp=path;
       tmp+=CONF_HOST;
@@ -218,7 +218,7 @@ toConnection *toNewConnection::makeConnection(void)
       pass=Password->text();
     else
       pass=DEFAULT_SAVE_PWD;
-    toTool::globalSetConfig(CONF_PASSWORD,pass);
+    toTool::globalSetConfig(CONF_PASSWORD,toObfuscate(pass));
     toTool::globalSetConfig(CONF_DATABASE,Database->currentText());
     QString host;
     if (SqlNet->isHidden())
@@ -277,34 +277,54 @@ toConnection *toNewConnection::makeConnection(void)
 void toNewConnection::historySave(void) {
       int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
       int i=0;
-      for(QListViewItem *item=Previous->firstChild();item&&i<siz;item=item->nextSibling()) {
+      int j=0;
+      int oldHist=toTool::globalConfig(CONF_CONNECT_CURRENT,0).toInt();
+
+      for(QListViewItem *item=Previous->firstChild();i<oldHist;item=(item?item=item->nextSibling():0)) {
 	QCString path=CONF_CONNECT_HISTORY;
 	path+=":";
 	path+=QString::number(i).latin1();
 
 	QCString tmp=path;
 	tmp+=CONF_PROVIDER;
-	toTool::globalSetConfig(tmp,item->text(0));
+	if (i<siz&&item)
+	  toTool::globalSetConfig(tmp,item->text(0));
+	else
+	  toTool::globalEraseConfig(tmp);
 
 	tmp=path;
 	tmp+=CONF_HOST;
-	toTool::globalSetConfig(tmp,item->text(1));
+	if (i<siz&&item)
+	  toTool::globalSetConfig(tmp,item->text(1));
+	else
+	  toTool::globalEraseConfig(tmp);
 
 	tmp=path;
 	tmp+=CONF_DATABASE;
-	toTool::globalSetConfig(tmp,item->text(2));
+	if (i<siz&&item)
+	  toTool::globalSetConfig(tmp,item->text(2));
+	else
+	  toTool::globalEraseConfig(tmp);
 
 	tmp=path;
 	tmp+=CONF_USER;
-	toTool::globalSetConfig(tmp,item->text(3));
+	if (i<siz&&item)
+	  toTool::globalSetConfig(tmp,item->text(3));
+	else
+	  toTool::globalEraseConfig(tmp);
 
 	tmp=path;
 	tmp+=CONF_PASSWORD;
-	toTool::globalSetConfig(tmp,item->text(4));
+	if (i<siz&&item)
+	  toTool::globalSetConfig(tmp,toObfuscate(item->text(4)));
+	else
+	  toTool::globalEraseConfig(tmp);
 
 	i++;
+	if (i<siz&&item)
+	  j++;
       }
-      toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(i));
+      toTool::globalSetConfig(CONF_CONNECT_CURRENT,QString::number(j));
       toTool::saveConfig();
 }
 

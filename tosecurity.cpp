@@ -1405,8 +1405,8 @@ void toSecurity::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)sql_xpm),tr("Display SQL..."),
 			   this,SLOT(displaySQL()),Key_F4);
       toMainWidget()->menuBar()->insertItem(tr("&Security"),ToolMenu,-1,toToolMenuIndex());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+      ToolMenu->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
     }
   } else {
     delete ToolMenu;
@@ -1482,8 +1482,10 @@ void toSecurity::changeUser(bool ask)
       UserID=item->text(1);
       DropButton->setEnabled(item->parent());
       CopyButton->setEnabled(item->parent());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
-      toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
+      if (ToolMenu) {
+	ToolMenu->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
+	ToolMenu->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
+      }
 
       if (UserID[4].latin1()!=':')
 	throw tr("Invalid security ID");
