@@ -246,6 +246,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
   toConnection &connection()
   { return toCurrentConnection(this); }
 
+  toListView *copySelection(bool);
 public:
   /** Create the widget.
    * @param parent Parent widget.

@@ -82,7 +82,7 @@ void toPieChart::mouseDoubleClickEvent(QMouseEvent *e)
 
 void toPieChart::openCopy(void)
 {
-  QWidget *newWin=new toPieChart(this,toMainWidget()->workspace());
+  QWidget *newWin=new toPieChart(this,toMainWidget()->workspace(),NULL,WDestructiveClose);
   newWin->show();
   toMainWidget()->windowsMenu();
 

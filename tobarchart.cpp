@@ -179,7 +179,7 @@ toBarChart::toBarChart (toBarChart *chart,QWidget *parent,const char *name,WFlag
 
 void toBarChart::openCopy(void)
 {
-  QWidget *newWin=new toBarChart(this,toMainWidget()->workspace());
+  QWidget *newWin=new toBarChart(this,toMainWidget()->workspace(),NULL,WDestructiveClose);
   newWin->show();
   toMainWidget()->windowsMenu();
 

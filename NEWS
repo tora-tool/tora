@@ -100,6 +100,9 @@
 2001-12-06: Changed shortcut of options tab in tuning.
 2001-12-06: Change to general page on add in security manager.
 2001-12-06: Fixed problem with changed selection in security manager.
+2001-12-06: Fixed problem with rownumber in resultlong.
+2001-12-06: Fixed a memory leak on copying charts.
+2001-12-06: Added new selection stuff to content editor as well.
 
 1.1.5: Released 2001-11-26
 

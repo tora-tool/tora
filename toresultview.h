@@ -393,6 +393,10 @@ public:
    * @param prefix Prefix to read data from.
    */
   virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  /** Create transposed copy of list
+   * @return Pointer to newly allocated transposed listview.
+   */
+  virtual toListView *copyTransposed(void);
 public slots:
   /** Display the menu at the given point and column.
    * @param item Item to display.

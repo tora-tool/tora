@@ -602,7 +602,8 @@ void toLineChart::mouseDoubleClickEvent(QMouseEvent *e)
 
 void toLineChart::openCopy(void)
 {
-  QWidget *newWin=new toLineChart(this,toMainWidget()->workspace());
+  QWidget *newWin=new toLineChart(this,toMainWidget()->workspace(),NULL,WDestructiveClose);
+
   newWin->show();
   toMainWidget()->windowsMenu();
 

@@ -174,9 +174,9 @@ void toResultLong::addItem(void)
 	    QListViewItem *last=LastItem;
 	    LastItem=createItem(LastItem,NULL);
 	    if (NumberColumn)
-	      LastItem->setText(0,QString::number(RowNumber));
+	      LastItem->setText(0,QString::number(RowNumber+1));
 	    else
-	      LastItem->setText(cols,QString::number(RowNumber));
+	      LastItem->setText(cols,QString::number(RowNumber+1));
 	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
 	      LastItem->setText(j+disp,Query->readValue());
 	    if (Filter&&!Filter->check(LastItem)) {

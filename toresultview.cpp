@@ -50,6 +50,7 @@
 #include <qfiledialog.h>
 #include <qregexp.h>
 #include <qcombobox.h>
+#include <qworkspace.h>
 
 #include "tosearchreplace.h"
 #include "tomain.h"
@@ -527,24 +528,27 @@ void toListView::editPrint(void)
 #define TORESULT_READ_ALL 	6
 #define TORESULT_EXPORT   	7
 #define TORESULT_SELECT_ALL	8
+#define TORESULT_COPY_TRANS	9
 
 void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
 {
   if (item) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
+      Menu->insertItem("Display in editor",TORESULT_MEMO);
+      Menu->insertSeparator();
       Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
       if (selectionMode()==Multi||selectionMode()==Extended) {
 	Menu->insertItem("Copy selection",TORESULT_COPY_SEL);
 	Menu->insertItem("Copy selection with header",TORESULT_COPY_SEL_HEAD);
       }
+      Menu->insertItem("Copy transposed",TORESULT_COPY_TRANS);
       if (selectionMode()==Multi||selectionMode()==Extended) {
 	Menu->insertSeparator();
 	Menu->insertItem("Select all",TORESULT_SELECT_ALL);
 	Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
       }
       Menu->insertSeparator();
-      Menu->insertItem("Display in editor",TORESULT_MEMO);
       Menu->insertItem("Export to file",TORESULT_EXPORT);
       if (!Name.isEmpty()) {
 	Menu->insertSeparator();
@@ -593,6 +597,9 @@ void toListView::menuCallback(int cmd)
   case TORESULT_MEMO:
     displayMemo();
     break;
+  case TORESULT_COPY_TRANS:
+    copyTransposed();
+    break;
   case TORESULT_SQL:
     toMainWidget()->editSQL(Name);
     break;
@@ -633,6 +640,50 @@ static QString QuoteString(const QString &str)
 void toListView::editSearch(toSearchReplace *search)
 {
   search->setTarget(this);
+}
+
+toListView *toListView::copyTransposed(void)
+{
+  toListView *lst=new toListView(toMainWidget()->workspace());
+  lst->setWFlags(lst->getWFlags()|WDestructiveClose);
+  lst->Name=Name;
+
+  QListViewItem *next=NULL;
+  for(int i=1;i<columns();i++) {
+    next=new toResultViewItem(lst,next);
+    next->setText(0,header()->label(i));
+  }
+
+  next=NULL;
+  int col=1;
+  lst->addColumn(header()->label(0));
+  for (QListViewItem *item=firstChild();item;item=next) {
+
+    lst->addColumn(item->text(0));
+    QListViewItem *ci=lst->firstChild();
+    for(int i=1;i<columns()&&ci;i++) {
+      ci->setText(col,item->text(i));
+      ci=ci->nextSibling();
+    }
+
+    if (item->firstChild()) {
+      next=item->firstChild();
+    } else if (item->nextSibling())
+      next=item->nextSibling();
+    else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+    col++;
+  }
+  lst->setCaption(Name);
+  lst->show();
+  toMainWidget()->windowsMenu();
+  return lst;
 }
 
 void toListView::editSave(bool ask)

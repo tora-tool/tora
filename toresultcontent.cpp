@@ -223,6 +223,17 @@ void toResultContentEditor::dropEvent(QDropEvent *e)
   }
 }
 
+#define TORESULT_COPY_FIELD	1
+#define TORESULT_PASTE    	2
+#define TORESULT_COPY_SEL	3
+#define TORESULT_COPY_SEL_HEAD	4
+#define TORESULT_COPY_TRANS	5
+#define TORESULT_MEMO     	6
+#define TORESULT_READ_ALL 	7
+#define TORESULT_EXPORT   	8
+#define TORESULT_DELETE	  	9
+#define TORESULT_SELECT_ALL	10
+
 toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   : QTable(parent,name),
     toEditWidget(false,true,true,
@@ -235,13 +246,31 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
   CurrentRow=-1;
   setFocusPolicy(StrongFocus);
-  setSelectionMode(NoSelection);
+  setSelectionMode(Single);
   connect(horizontalHeader(),SIGNAL(clicked(int)),this,SLOT(changeSort(int)));
   SortRow=-1;
   setAcceptDrops(true);
   LastMove=QPoint(-1,-1);
   MenuColumn=MenuRow=-1;
-  Menu=NULL;
+
+  Menu=new QPopupMenu(this);
+  Menu->insertItem("&Display in editor",TORESULT_MEMO);
+  Menu->insertSeparator();
+  Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
+  Menu->insertItem("&Paste field",TORESULT_PASTE);
+  Menu->insertSeparator();
+  Menu->insertItem("Copy selection",TORESULT_COPY_SEL);
+  Menu->insertItem("Copy selection with header",TORESULT_COPY_SEL_HEAD);
+  Menu->insertItem("Copy transposed",TORESULT_COPY_TRANS);
+  Menu->insertSeparator();
+  Menu->insertItem("&Delete record",TORESULT_DELETE);
+  Menu->insertSeparator();
+  Menu->insertItem("Select all",TORESULT_SELECT_ALL);
+  Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
+  Menu->insertSeparator();
+  Menu->insertItem("Export to file",TORESULT_EXPORT);
+  Menu->insertItem("Read all",TORESULT_READ_ALL);
+  connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
 
   QString str=toTool::globalConfig(CONF_LIST,"");
   if (!str.isEmpty()) {
@@ -871,13 +900,6 @@ void toResultContentEditor::focusInEvent (QFocusEvent *e)
   QTable::focusInEvent(e);
 }
 
-#define TORESULT_COPY     1
-#define TORESULT_PASTE    2
-#define TORESULT_MEMO     3
-#define TORESULT_READ_ALL 4
-#define TORESULT_EXPORT   5
-#define TORESULT_DELETE	  6
-
 void toResultContentEditor::displayMenu(const QPoint &p)
 {
   QPoint lp=mapFromGlobal(p);
@@ -886,18 +908,6 @@ void toResultContentEditor::displayMenu(const QPoint &p)
   MenuColumn=columnAt(lp.x());
   MenuRow=rowAt(lp.y());
   if (MenuColumn>=0&&MenuRow>=0) {
-    if (!Menu) {
-      Menu=new QPopupMenu(this);
-      Menu->insertItem("&Copy",TORESULT_COPY);
-      Menu->insertItem("&Paste",TORESULT_PASTE);
-      Menu->insertItem("&Display in editor",TORESULT_MEMO);
-      Menu->insertSeparator();
-      Menu->insertItem("&Delete record",TORESULT_DELETE);
-      Menu->insertSeparator();
-      Menu->insertItem("Export to file",TORESULT_EXPORT);
-      Menu->insertItem("Read all",TORESULT_READ_ALL);
-      connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
-    }
     setCurrentCell(MenuRow,MenuColumn);
     Menu->popup(p);
     QClipboard *clip=qApp->clipboard();
@@ -923,7 +933,7 @@ void toResultContentEditor::changeData(int row,int col,const QString &str)
 void toResultContentEditor::menuCallback(int cmd)
 {
   switch(cmd) {
-  case TORESULT_COPY:
+  case TORESULT_COPY_FIELD:
     {
       QClipboard *clip=qApp->clipboard();
       clip->setText(text(MenuRow,MenuColumn));
@@ -934,6 +944,53 @@ void toResultContentEditor::menuCallback(int cmd)
       QClipboard *clip=qApp->clipboard();
       saveRow(MenuRow);
       setText(MenuRow,MenuColumn,clip->text());
+    }
+    break;
+  case TORESULT_COPY_SEL:
+    {
+      toListView *lst=copySelection(true);
+      if (lst) {
+	try {
+	  QClipboard *clip=qApp->clipboard();
+	  clip->setText(lst->exportAsText(false,false));
+	} TOCATCH
+	delete lst;
+      }
+    }
+    break;
+  case TORESULT_COPY_SEL_HEAD:
+    {
+      toListView *lst=copySelection(true);
+      if (lst) {
+	try {
+	  QClipboard *clip=qApp->clipboard();
+	  clip->setText(lst->exportAsText(true,false));
+	} TOCATCH
+        delete lst;
+      }
+    }
+    break;
+  case TORESULT_SELECT_ALL:
+    {
+      removeSelection(0);
+      QTableSelection sel;
+      sel.init(0,0);
+      sel.expandTo(numRows()-1,numCols()-1);
+      addSelection(sel);
+    }
+    break;
+  case TORESULT_COPY_TRANS:
+    {
+      removeSelection(0);
+      QTableSelection sel;
+      sel.init(0,0);
+      sel.expandTo(numRows()-1,numCols()-1);
+      addSelection(sel);
+      toListView *lst=copySelection(true);
+      if (lst) {
+	lst->copyTransposed();
+	delete lst;
+      }
     }
     break;
   case TORESULT_DELETE:
@@ -1132,6 +1189,33 @@ void toResultContentEditor::importData(std::map<QString,QString> &data,const QSt
   AllFilter=!data[prefix+":All"].isEmpty();
   toMapImport(data,prefix+":Crit",Criteria);
   toMapImport(data,prefix+":Order",Order);
+}
+
+toListView *toResultContentEditor::copySelection(bool header)
+{
+  QTableSelection sel=selection(0);
+  if (sel.isActive()) {
+    toListView *lst=new toListView(this);
+    int row;
+    int col;
+    if (header)
+      lst->addColumn("#");
+    for (col=sel.leftCol();col<=sel.rightCol();col++)
+      lst->addColumn(horizontalHeader()->label(col));
+    QListViewItem *item=NULL;
+    for (row=sel.topRow();row<=sel.bottomRow();row++) {
+      item=new toResultViewItem(lst,item);
+      if (header)
+	item->setText(0,verticalHeader()->label(row));
+      for (col=sel.leftCol();col<=sel.rightCol();col++) {
+	item->setText(col-sel.leftCol()+(header?1:0),
+		      text(row,col));
+      }
+    }
+    lst->setSQLName("Contents");
+    return lst;
+  }
+  return NULL;
 }
 
 toResultContentSingle::toResultContentSingle(QWidget *parent)
