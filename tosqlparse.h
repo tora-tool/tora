@@ -204,8 +204,7 @@ public:
    * @param tokens Tokenizer provider to generate parsed tree from.
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(tokenizer &tokens,toConnection &conn)
-  { return parse(tokens); }
+  static std::list<statement> parse(tokenizer &tokens,toConnection &conn);
   /** Parse a string.
    * @param str String to parse.
    * @return Parsed statement tree.
@@ -217,8 +216,7 @@ public:
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(const QString &str,toConnection &conn)
-  { return parse(str); }
+  static std::list<statement> parse(const QString &str,toConnection &conn);
 
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
@@ -235,8 +233,7 @@ public:
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(tokenizer &tokens,toConnection &conn)
-  { return parseStatement(tokens); }
+  static statement parseStatement(tokenizer &tokens,toConnection &conn);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
@@ -260,8 +257,7 @@ public:
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(const QString &str,toConnection &conn)
-  { return indent(str); }
+  static QString indent(const QString &str,toConnection &conn);
 
   /** Create an indentation string.
    * @param level Number of characters to indent.

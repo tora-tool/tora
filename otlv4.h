@@ -1936,7 +1936,7 @@ public:
  }
 
  virtual void set_len(const int new_len=0,
-                      const bool set_all_to_null=true)
+                      const bool=true)
 
  {
   OTL_UNUSED_ARG(new_len)

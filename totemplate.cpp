@@ -409,7 +409,7 @@ public:
     window->attachResult();
     return Dock;
   }
-  void closeWindow(toConnection &connection)
+  void closeWindow(toConnection &)
   { Dock=NULL; }
   virtual QWidget *configurationTab(QWidget *parent)
   { return new toTemplatePrefs(this,parent); }
