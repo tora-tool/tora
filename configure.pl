@@ -209,7 +209,8 @@ __TEMP__
 
 void test(void) // Not called
 {
-    QApplication app(argv,argc);
+    int argc;
+    QApplication app(argc,NULL);
     otl_connect *test=new otl_connect("Test",0);
 }
 __TEMP__
@@ -218,14 +219,15 @@ __TEMP__
 #include <mysql.h>
 void test(void)
 {
-    QApplication app(argv,argc);
+    int argc;
+    QApplication app(argc,NULL);
     mysql_free_result(NULL);
 }
 __TEMP__
     }
     print TEMP <<__TEMP__;
 
-int main(int argv,char **argc)
+int main(int,char **)
 {
     std::map<int,int> test;
     test[2]=2;
