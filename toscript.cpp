@@ -55,6 +55,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdir.h>
+#include <qfiledialog.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
