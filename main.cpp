@@ -55,7 +55,6 @@
 #endif
 
 #include <qapplication.h>
-#include <qclipboard.h>
 #include <qmessagebox.h>
 #include <qtextcodec.h>
 
@@ -104,13 +103,6 @@ int main(int argc,char **argv)
     QString style=toTool::globalConfig(CONF_STYLE,"");
     if (!style.isEmpty())
       toSetSessionType(style);
-#endif
-
-#if QT_VERSION >= 300
-    // Set Selection Mode on X11
-    QClipboard *clip=qApp->clipboard();
-    if(clip->supportsSelection())
-      clip->setSelectionMode(true);
 #endif
 
 #ifndef TOMONOLITHIC
