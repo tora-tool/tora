@@ -117,6 +117,7 @@ public slots:
   void modifyConstraint(void);
   void modifyIndex(void);
 
+  void changeType(void);
   void dropTable(void);
   void truncateTable(void);
 

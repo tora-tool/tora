@@ -1011,7 +1011,7 @@ void toScript::changeSchema(int,bool source)
 
 	if (item->firstChild())
 	  next=item->firstChild();
-	else if (item->nextSibling())
+	else if (item->nextSibling()&&item->nextSibling()->depth())
 	  next=item->nextSibling();
 	else {
 	  next=item;

@@ -1,6 +1,12 @@
 1.3.14: 2004-06-29
 
+2004-06-28: Added PostgreSQL default port.
+2004-06-28: Fixed indentation of Quotes under windows.
+2004-06-22: Changed homepage back to original again.
 2004-06-20: Fixed install. (Thanx Robert Ham)
+2004-06-10: Fixed performance problem in scripting tool. (Thanx Ivan Brezina)
+2004-06-10: Multiple selection in invalid tool. (Thanx Alexander Sheremet)
+2004-06-10: Some performance updates for iterating through lists. (Thanx Ivan Brezina)
 2004-06-04: Updated about with new homepage location.
 2004-06-04: Somw Windows compile fixes.
 2004-06-04: Fixed bug in drop index.

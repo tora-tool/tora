@@ -128,8 +128,10 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
   Objects=new toResultLong(false,false,toQuery::Background,splitter);
   Objects->setSQL(SQLListInvalid);
 
-  Objects->setSelectionMode(QListView::Single);
+  Objects->setSelectionMode(QListView::Extended);
   connect(Objects,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
+  connect(Objects,SIGNAL(currentChanged(QListViewItem *)),
+	  this,SLOT(changeSelection()));
 
   Source=new toResultExtract(false,splitter);
   Source->setSQL(SQLListSource);
@@ -173,6 +175,8 @@ void toInvalid::recompileSelected(void)
       QString sql;
       if (type=="INDEX")
 	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" REBUILD";
+      else if (type=="PACKAGE BODY")
+	sql="ALTER PACKAGE "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE BODY REUSE SETTINGS";
       else
 	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE REUSE SETTINGS";
       try {

@@ -696,7 +696,7 @@ void toChartHandler::loadSettings(void)
 
 void toChartHandler::alarm(void)
 {
-  while(SignalAlarms.size()>0) {
+  while(!SignalAlarms.empty()) {
     toChartManager::alarmSignal signal=toShift(SignalAlarms);
     if (signal.Action==toChartManager::StatusMessage)
       toStatusMessage(tr("ALARM:")+signal.Chart+QString::fromLatin1(": ")+signal.Alarm+QString::fromLatin1(": ")+signal.xValue);
@@ -908,7 +908,7 @@ void toChartHandler::setupChart(toLineChart *chart)
 	    alarm.insert(alarm.end(),toChartManager::chartAlarm(item->text(0),
 								item->text(1)==tr("Persistent")));
 	  }
-	  if (alarm.size()>0)
+	  if (!alarm.empty())
 	    Alarms[name]=alarm;
 	  saveSettings();
 	}

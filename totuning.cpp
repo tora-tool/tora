@@ -1078,7 +1078,7 @@ void toTuningOverview::overviewQuery::run(void)
 
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewBackground);
     QStringList back;
-    while(res.size()>0) {
+    while(!res.empty()) {
       tmp=toShift(res);
       if(tmp==QString::fromLatin1("DBW"))
 	tmp=QString::fromLatin1("DBWR");
@@ -1112,7 +1112,7 @@ void toTuningOverview::overviewQuery::run(void)
     double tot=0;
     double sql=0;
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewSGA,val);
-    while(res.size()>0) {
+    while(!res.empty()) {
       QString nam=toShift(res);
       tmp=toShift(res);
       if (nam=="Database Buffers"||nam=="Redo Buffers")
@@ -1827,7 +1827,7 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
 
     std::list<double> last=LastValues[name];
     std::list<double> dispVal;
-    if (last.size()>0) {
+    if (!last.empty()) {
       std::list<double>::iterator i=vals.begin();
       std::list<double>::iterator j=last.begin();
       while(i!=vals.end()&&j!=last.end()) {
@@ -1841,7 +1841,7 @@ void toTuningFileIO::saveSample(const QString &name,const QString &label,
     if (ReadsCharts.find(name)==ReadsCharts.end())
       allocCharts(name);
 
-    if (dispVal.size()>0) {
+    if (!dispVal.empty()) {
       toBarChart *chart=ReadsCharts[name];
       chart->addValues(dispVal,label);
     }

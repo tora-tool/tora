@@ -678,9 +678,9 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
     else
       resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfo,
 				       name,*it);
-    if(resultset.size()>0) {
+    if(!resultset.empty()) {
       first=true;
-      while (resultset.size()>0) {
+      while (!resultset.empty()) {
 	QString pre_class=toShift(resultset);
 	QString pre_obj=toShift(resultset);
 	QString pre_attr=toShift(resultset);
@@ -709,7 +709,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
       else
 	resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfoNoAttr,
 					 name,*it);
-      if(resultset.size()>0) {
+      if(!resultset.empty()) {
 	QString pre_obj=toShift(resultset);
 	pre_name=QString("%1_%2").arg(name).arg(pre_obj);
 	pre_name.truncate(30);
@@ -729,7 +729,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
     resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfo,
 				     name,"STOPLIST");
   pre_name="";
-  while (resultset.size()>0) {
+  while (!resultset.empty()) {
     QString pre_class=toShift(resultset);
     QString pre_obj=toShift(resultset);
     QString pre_attr=toShift(resultset);
@@ -760,7 +760,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
       resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfoNoAttr,
 				       name,"STOPLIST");
 
-    if(resultset.size()>0) {
+    if(!resultset.empty()) {
       QString pre_obj=toShift(resultset);
       pre_name=QString("%1_%2").arg(name).arg(pre_obj);
       pre_name.truncate(30);
@@ -779,7 +779,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
     resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfo,
 				     name,"SECTION_GROUP");
   pre_name="";
-  while (resultset.size()>0) {
+  while (!resultset.empty()) {
     QString pre_class=toShift(resultset);
     QString pre_obj=toShift(resultset);
     QString pre_attr=toShift(resultset);
@@ -820,7 +820,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
     else
       resultset=toQuery::readQueryNull(CONNECTION,SQLContextInfoNoAttr,
 				       name,"SECTION_GROUP");
-    if(resultset.size()>0) {
+    if(!resultset.empty()) {
       QString pre_obj=toShift(resultset);
       pre_name=QString("%1_%2").arg(name).arg(pre_obj);
       pre_name.truncate(30);
@@ -840,7 +840,7 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
     else
       resultset=toQuery::readQueryNull(CONNECTION,SQLContextColumn,
 				       name);
-    if(resultset.size()>0) {
+    if(!resultset.empty()) {
       toQValue vlang=toShift(resultset);
       toQValue vfrmt=toShift(resultset);
       toQValue vcset=toShift(resultset);
@@ -1134,7 +1134,7 @@ QString toOracleExtract::createMView(toExtract &ext,
 				     const QString &type) const
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLMViewInfo,name,owner);
-  if (result.size()==0)
+  if (result.empty())
     throw qApp->translate("toOracleExtract","Couldn't find materialised table %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString table        =toShift(result);
@@ -2125,7 +2125,7 @@ QString toOracleExtract::createPartitionedTable(toExtract &ext,
       toQList segment=toQuery::readQueryNull(CONNECTION,SQLPartitionSegment,name,owner);
 
       QString comma="    ";
-      while(segment.size()>0) {
+      while(!segment.empty()) {
 	toQList storage;
 	QString partition=toShift(segment);
 	QString highValue=toShift(segment);
@@ -2147,7 +2147,7 @@ QString toOracleExtract::createPartitionedTable(toExtract &ext,
 					      name,partition,owner);
 	  bool first=true;
 	  ret+="        (\n            ";
-	  while(subs.size()>0) {
+	  while(!subs.empty()) {
 	    if (first)
 	      first=false;
 	    else
@@ -2163,7 +2163,7 @@ QString toOracleExtract::createPartitionedTable(toExtract &ext,
       toQList hash=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,name,owner);
       bool first=true;
       ret+="(\n    ";
-      while(hash.size()>0) {
+      while(!hash.empty()) {
 	if (first)
 	  first=false;
 	else
@@ -2232,7 +2232,7 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
   QString ret;
   if ((typ&1)==1) {
     toQList result=toQuery::readQueryNull(CONNECTION,SQLSystemPrivs,name);
-    while(result.size()>0) {
+    while(!result.empty()) {
       QString priv=QString(toShift(result)).lower();
       QString sql=QString("GRANT %1 TO %2 %3").
 	arg(priv).
@@ -2250,7 +2250,7 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
 
   if ((typ&2)==2) {
     toQList result=toQuery::readQueryNull(CONNECTION,SQLRolePrivs,name);
-    while(result.size()>0) {
+    while(!result.empty()) {
       QString priv=QString(toShift(result)).lower();
       QString sql=QString("GRANT %1 TO %2 %3").
 	arg(priv).
@@ -2268,7 +2268,7 @@ QString toOracleExtract::grantedPrivs(toExtract &ext,
 
   if ((typ&4)==4) {
     toQList result=toQuery::readQueryNull(CONNECTION,SQLObjectPrivs,name);
-    while(result.size()>0) {
+    while(!result.empty()) {
       QString priv=QString(toShift(result)).lower();
       QString schema=ext.intSchema(toShift(result),false);
       QString object=QUOTE(toShift(result));
@@ -2457,13 +2457,13 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
     return "";
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRangePartitions,name,owner);
-  if (result.size()==0||result.size()%18)
+  if (result.empty()||result.size()%18)
     throw qApp->translate("toOracleExtract","Couldn't find partition range %1.%2").arg(owner).arg(name);
 
   QString ret;
 
   QString comma="    ";
-  while(result.size()>0) {
+  while(!result.empty()) {
     QString partition=toShift(result);
     QString highValue=toShift(result);
 
@@ -2776,7 +2776,7 @@ QString toOracleExtract::tableColumns(toExtract &ext,
   toQList cols=toQuery::readQueryNull(CONNECTION,SQLTableColumns,name,owner);
   bool first=true;
   QString ret;
-  while(cols.size()>0) {
+  while(!cols.empty()) {
     if (first)
       first=false;
     else
@@ -2891,19 +2891,19 @@ void toOracleExtract::describePrivs(toExtract &ext,
     return;
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRolePrivs,name);
-  while(result.size()>0) {
+  while(!result.empty()) {
     QString role=QUOTE(toShift(result));
     addDescription(lst,ctx,"GRANT","ROLE "+role,toShift(result));
   }
 
   result=toQuery::readQueryNull(CONNECTION,SQLSystemPrivs,name);
-  while(result.size()>0) {
+  while(!result.empty()) {
     QString priv=QString(toShift(result)).lower();
     addDescription(lst,ctx,"GRANT",priv,toShift(result));
   }
 
   result=toQuery::readQueryNull(CONNECTION,SQLObjectPrivs,name);
-  while(result.size()>0) {
+  while(!result.empty()) {
     QString priv=toShift(result);
     QString schema=ext.intSchema(toShift(result),false);
     QString res=schema;
@@ -2969,7 +2969,7 @@ void toOracleExtract::describeMView(toExtract &ext,std::list<QString> &lst,
 				    const QString &name,const QString &type) const
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLMViewInfo,name,owner);
-  if (result.size()==0)
+  if (result.empty())
     throw qApp->translate("toOracleExtract","Couldn't find materialised table %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString table        =toShift(result);
@@ -3155,10 +3155,10 @@ void toOracleExtract::describePartitions(toExtract &ext,
     return;
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRangePartitions,name,owner);
-  if (result.size()==0||result.size()%18)
+  if (result.empty()||result.size()%18)
     throw qApp->translate("toOracleExtract","Couldn't find partition range %1.%2").arg(owner).arg(name);
 
-  while(result.size()>0) {
+  while(!result.empty()) {
     QString partition=toShift(result);
     QString highValue=toShift(result);
 
@@ -3299,7 +3299,7 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
 
       toQList segment=toQuery::readQueryNull(CONNECTION,SQLPartitionSegment,name,owner);
 
-      while(segment.size()>0) {
+      while(!segment.empty()) {
 	toQList storage;
 	QString partition=toShift(segment);
 	QString highValue=toShift(segment);
@@ -3318,7 +3318,7 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
 	if (subPartitionType=="HASH") {
 	  toQList subs=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,
 					      name,partition,owner);
-	  while(subs.size()>0) {
+	  while(!subs.empty()) {
 	    QString subpart=QUOTE(toShift(subs));
 	    QString tabspac=toShift(subs);
 	    addDescription(lst,cctx,subprtstr,subpart);
@@ -3330,7 +3330,7 @@ void toOracleExtract::describePartitionedTable(toExtract &ext,
     } else {
       toQList hash=toQuery::readQueryNull(CONNECTION,SQLSubPartitionName,
 					  name,owner);
-      while(hash.size()>0) {
+      while(!hash.empty()) {
 	QString partition=QUOTE(toShift(hash));
 	QString tablespac=toShift(hash);
 	addDescription(lst,ctx,prtstr,partition);
@@ -3369,7 +3369,7 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
 {
   toQList cols=toQuery::readQueryNull(CONNECTION,SQLTableColumns,name,owner);
   int num=1;
-  while(cols.size()>0) {
+  while(!cols.empty()) {
     QString col=QUOTE(toShift(cols));
     QString line=toShift(cols);
     QString extra=toShift(cols);
@@ -4122,7 +4122,7 @@ QString toOracleExtract::createProfile(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLProfileInfo,
 				      name);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find profile %1").arg(name);
 
   QString ret;
@@ -4130,7 +4130,7 @@ QString toOracleExtract::createProfile(toExtract &ext,
     ret=QString("PROMPT CREATE PROFILE %1\n\n").arg(QUOTE(name));
   ret+=QString("CREATE PROFILE %1\n").arg(QUOTE(name));
 
-  while(info.size()!=0) {
+  while(!info.empty()) {
     ret+="   ";
     ret+=toShift(info);
     ret+=" ";
@@ -4169,7 +4169,7 @@ QString toOracleExtract::createRole(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLRoleInfo,
 				      name);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find role %1").arg(name);
 
   QString ret;
@@ -4280,7 +4280,7 @@ QString toOracleExtract::createSequence(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLSequenceInfo,
 				      name,owner);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find sequence %1").arg(name);
 
   QString ret;
@@ -4288,7 +4288,7 @@ QString toOracleExtract::createSequence(toExtract &ext,
     ret=QString("PROMPT CREATE SEQUENCE %1%2\n\n").arg(schema).arg(QUOTE(name));
   ret+=QString("CREATE SEQUENCE %1%2\n").arg(schema).arg(QUOTE(name));
 
-  while(info.size()!=0) {
+  while(!info.empty()) {
     ret+="   ";
     ret+=toShift(info);
     ret+="\n";
@@ -4332,7 +4332,7 @@ QString toOracleExtract::createSynonym(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLSynonymInfo,
 				      name,owner);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find synonym %1.%2").arg(owner).arg(name);
   
   QString tableOwner = toShift(info);
@@ -4697,7 +4697,7 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
   toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableConstraints,name,owner);
   toQList indexes=toQuery::readQueryNull(CONNECTION,SQLIndexNames,name,owner);
 
-  while(indexes.size()>0) {
+  while(!indexes.empty()) {
     QString indOwner(toShift(indexes));
     QString indName(toShift(indexes));
     bool add=true;
@@ -4717,7 +4717,7 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
       ret+=createIndex(ext,ext.intSchema(indOwner,false),indOwner,indName);
   }
 
-  while(constraints.size()>0) {
+  while(!constraints.empty()) {
     QString type=toShift(constraints);
     QString name=toShift(constraints);
     QString search=toShift(constraints);
@@ -4726,7 +4726,7 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
   }
 
   toQList triggers=toQuery::readQueryNull(CONNECTION,SQLTableTriggers,name,owner);
-  while(triggers.size()>0)
+  while(!triggers.empty())
     ret+=createTrigger(ext,schema,owner,toShift(triggers));
   return ret;
 }
@@ -4816,7 +4816,7 @@ QString toOracleExtract::createTableReferences(toExtract &ext,
 {
   QString ret;
   toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableReferences,name,owner);
-  while(constraints.size()>0)
+  while(!constraints.empty())
     ret+=createConstraint(ext,schema,owner,toShift(constraints));
   return ret;
 }
@@ -5009,7 +5009,7 @@ QString toOracleExtract::createTablespace(toExtract &ext,
   else
     ret+="DATAFILE\n";
   QString comma="  ";
-  while(files.size()>0) {
+  while(!files.empty()) {
     QString fileName       =toShift(files);
     QString bytes          =toShift(files);
     QString autoExtensible =toShift(files);
@@ -5268,7 +5268,7 @@ QString toOracleExtract::createUser(toExtract &ext,
 
   if (ext.getStorage()) {
     toQList quota=toQuery::readQueryNull(CONNECTION,SQLUserQuotas,name);
-    while(quota.size()>0) {
+    while(!quota.empty()) {
       QString siz=toShift(quota);
       QString tab=toShift(quota);
       ret+=QString("   QUOTA %1 ON %2\n").
@@ -5308,7 +5308,7 @@ QString toOracleExtract::createView(toExtract &ext,
   toQList source=toQuery::readQueryNull(CONNECTION,
 					SQLViewSource,
 					name,owner);
-  if (source.size()==0)
+  if (source.empty())
     throw qApp->translate("toOracleExtract","Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
   QString text=toShift(source);
@@ -5325,7 +5325,7 @@ QString toOracleExtract::createView(toExtract &ext,
 				      name,owner);
   ret+="(";
   QString sep="\n    ";
-  while(cols.size()>0) {
+  while(!cols.empty()) {
     QString str=toShift(cols);
     ret+=sep;
     ret+=QUOTE(str);
@@ -5639,7 +5639,7 @@ void toOracleExtract::describeProfile(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLProfileInfo,
 				      name);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find profile %1").arg(name);
 
   std::list<QString> ctx;
@@ -5648,7 +5648,7 @@ void toOracleExtract::describeProfile(toExtract &ext,
   ctx.insert(ctx.end(),QUOTE(name));
   addDescription(lst,ctx);
 
-  while(info.size()!=0) {
+  while(!info.empty()) {
     QString nam=toShift(info);
     QString val=toShift(info);
     addDescription(lst,ctx,nam,val);
@@ -5664,7 +5664,7 @@ void toOracleExtract::describeRole(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLRoleInfo,
 				      name);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find role %1").arg(name);
 
   std::list<QString> ctx;
@@ -5717,7 +5717,7 @@ void toOracleExtract::describeSequence(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLSequenceInfo,
 				      name,owner);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find sequence %1").arg(name);
 
   std::list<QString> ctx;
@@ -5727,7 +5727,7 @@ void toOracleExtract::describeSequence(toExtract &ext,
 
   addDescription(lst,ctx);
 
-  while(info.size()!=0)
+  while(!info.empty())
     addDescription(lst,ctx,toShift(info));
 }
 
@@ -5758,7 +5758,7 @@ void toOracleExtract::describeSynonym(toExtract &ext,
   toQList info=toQuery::readQueryNull(CONNECTION,
 				      SQLSynonymInfo,
 				      name,owner);
-  if (info.size()==0)
+  if (info.empty())
     throw qApp->translate("toOracleExtract","Couldn't find synonym %1.%2").arg(owner).arg(name);
   
   QString tableOwner = toShift(info);
@@ -5820,7 +5820,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
   describeTable(ext,lst,schema,owner,name);
 
   toQList indexes=toQuery::readQueryNull(CONNECTION,SQLIndexNames,name,owner);
-  while(indexes.size()>0) {
+  while(!indexes.empty()) {
     QString indOwner(toShift(indexes));
     describeIndex(ext,lst,ext.intSchema(indOwner,true),indOwner,toShift(indexes));
   }
@@ -5833,7 +5833,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
   QString iotType(inf.readValue());
 
   toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableConstraints,name,owner);
-  while(constraints.size()>0) {
+  while(!constraints.empty()) {
     if (toShift(constraints)!="P"||iotType!="IOT")
       describeConstraint(ext,lst,schema,owner,toShift(constraints));
     else
@@ -5842,7 +5842,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
   }
 
   toQList triggers=toQuery::readQueryNull(CONNECTION,SQLTableTriggers,name,owner);
-  while(triggers.size()>0)
+  while(!triggers.empty())
     describeTrigger(ext,lst,schema,owner,toShift(triggers));
 }
 
@@ -5853,7 +5853,7 @@ void toOracleExtract::describeTableReferences(toExtract &ext,
 					      const QString &name) const
 {
   toQList constraints=toQuery::readQueryNull(CONNECTION,SQLTableReferences,name,owner);
-  while(constraints.size()>0)
+  while(!constraints.empty())
     describeConstraint(ext,lst,schema,owner,toShift(constraints));
 }
 
@@ -5897,7 +5897,7 @@ void toOracleExtract::describeTablespace(toExtract &ext,
 				       SQLDatafileInfo,
 				       QString::number(ext.getBlockSize()),
 				       name);
-  while(files.size()>0) {
+  while(!files.empty()) {
     QString fileName       =toShift(files);
     QString bytes          =toShift(files);
     QString autoExtensible =toShift(files);
@@ -6075,7 +6075,7 @@ void toOracleExtract::describeUser(toExtract &ext,
 
   if (ext.getStorage()) {
     toQList quota=toQuery::readQueryNull(CONNECTION,SQLUserQuotas,name);
-    while(quota.size()>0) {
+    while(!quota.empty()) {
       QString siz=toShift(quota);
       QString tab=toShift(quota);
       addDescription(lst,ctx,"QUOTA",QString("%1 ON %2").
@@ -6097,7 +6097,7 @@ void toOracleExtract::describeView(toExtract &ext,
   toQList source=toQuery::readQueryNull(CONNECTION,
 					SQLViewSource,
 					name,owner);
-  if (source.size()==0)
+  if (source.empty())
     throw qApp->translate("toOracleExtract","Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
   std::list<QString> ctx;
@@ -6133,7 +6133,7 @@ QString toOracleExtract::dropConstraint(toExtract &ext,
   toQList tableName=toQuery::readQueryNull(CONNECTION,
 					   SQLConstraintTable,
 					   owner,name);
-  if (tableName.size()==0)
+  if (tableName.empty())
     throw qApp->translate("toOracleExtract","Couldn't find constraint %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString sql=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3").
@@ -7590,7 +7590,7 @@ void toOracleExtract::initialize(toExtract &ext) const
     ext.setBlockSize(toShift(ret).toInt());
   } catch(...) {
     toQList ret=toQuery::readQueryNull(CONNECTION,SQLSetSizingFallback);
-    if (ret.size()==0)
+    if (ret.empty())
       ret=toQuery::readQueryNull(CONNECTION,SQLSetSizingFallback2);
     ext.setBlockSize(toShift(ret).toInt());
   }

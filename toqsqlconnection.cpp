@@ -1530,6 +1530,8 @@ public:
     ret.insert(ret.end(),"localhost");
     if (provider=="MySQL")
       ret.insert(ret.end(),":3306");
+    else if (provider=="PostgreSQL")
+      ret.insert(ret.end(),":5432");
     return ret;
   }
 

@@ -74,6 +74,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qheader.h>
+#include <qinputdialog.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qmenubar.h>
@@ -1833,6 +1834,7 @@ void toBrowser::displayTableMenu(QPopupMenu *menu)
     menu->insertItem(tr("Check table"),this,SLOT(checkTable()),0,0,0);
     menu->insertItem(tr("Optimize table"),this,SLOT(optimizeTable()),0,0,0);
     menu->insertItem(tr("Analyze table"),this,SLOT(analyzeTable()),0,0,0);
+    menu->insertItem(tr("Change type"),this,SLOT(changeType()),0,0,0);
     menu->insertSeparator(0);
   }
   menu->insertItem(QPixmap((const char **)modconstraint_xpm),tr("Modify constraints"),this,SLOT(modifyConstraint()),0,0,0);
@@ -1983,6 +1985,25 @@ void toBrowser::optimizeTable(void)
     toResultLong *result=new toResultLong(this,"Check result",WType_TopLevel|WDestructiveClose);
     result->query(sql);
     result->show();
+  }
+}
+
+void toBrowser::changeType(void)
+{
+  bool ok;
+  QString text=QInputDialog::getText("Change table type","Enter new table type",QLineEdit::Normal,
+				     "MyISAM",&ok,this);
+  if (ok&&!text.isEmpty()) {
+    for(QListViewItem *item=FirstTab->firstChild();item;item=item->nextSibling()) {
+      if (item->isSelected()) {
+	QString sql="ALTER TABLE ";
+	sql+=connection().quote(Schema->selected())+"."+connection().quote(item->text(0));
+	sql+=" TYPE = "+text;
+	try {
+	  connection().execute(sql);
+	} TOCATCH
+      }
+    }
   }
 }
 
