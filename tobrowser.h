@@ -115,6 +115,8 @@ public:
   virtual void removeItem(QListViewItem *item);
   toBrowserFilter *filter(void)
   { return Filter; }
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
 public slots:
   void addDatabase(const QString &);
   void removeDatabase(const QString &); 

@@ -36,10 +36,9 @@
 
 class toProjectTemplateItem : public toTemplateItem {
   QString Filename;
-
 public:
   toProjectTemplateItem(QListViewItem *item,QString name);
-  toProjectTemplateItem(QListView *item);
+  toProjectTemplateItem(QListView *item,QString name=QString::null);
 
   virtual void doubleClick(void);
 };
@@ -48,15 +47,17 @@ class toProjectTemplate : public QObject, public toTemplateProvider {
   Q_OBJECT
 
   toProjectTemplateItem *Root;
-
+  QString Filename;
 public:
   toBrowseTemplate(void)
-    : QObject(NULL,"projecttemplate"),toTemplateProvider()
+    : QObject(NULL,"projecttemplate"),toTemplateProvider("project")
   { }
 
   virtual void insertItems(QListView *parent,QToolBar *toolbar);
   virtual void removeItems(QListViewItem *item);
+public slots:
+  void addFile(void);
+  void removeFile(void);
 };
 
 static toProjectTemplate ProjectTemplate;
-

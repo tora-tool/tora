@@ -1755,3 +1755,16 @@ void toBrowseTemplate::addDatabase(const QString &name)
     new toTemplateDBItem(toMainWidget()->connection(name),*i,name);
 }
 
+void toBrowseTemplate::importData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (data.find(prefix+":Filter:Type")!=data.end()) {
+    Filter=new toBrowserFilter;
+    Filter->importData(data,prefix+":Filter");
+  }
+}
+
+void toBrowseTemplate::exportData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (Filter)
+    Filter->exportData(data,prefix+":Filter");
+}
