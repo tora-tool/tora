@@ -310,7 +310,7 @@ tora-static: $(OBJECTS) main.cpp
 		$(QT_STATIC) $(STDCPP_STATIC) $(ORACLE_STATIC) $(LIBS_GLOB) $(MYSQL_STATIC) \
 		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libXft.a /usr/X11R6/lib/libXrender.a \
 		/usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a\
-		-lz -ljpeg
+		/usr/X11R6/lib/libXinerama.a /usr/X11R6/lib/libGL.a -lz -ljpeg
 
 # Plugin based binary and its plugins
 

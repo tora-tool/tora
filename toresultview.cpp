@@ -51,6 +51,7 @@
 #include <qdragobject.h>
 #include <qfiledialog.h>
 #include <qregexp.h>
+#include <qcombobox.h>
 
 #include "tosearchreplace.h"
 #include "tomain.h"
