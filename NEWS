@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-05-12: Set mimetype to text/html when copying to HTML.
+2003-05-12: Fixed HTML exporting of lists.
 2003-05-04: Fixed invisible menu in debugger.
 2003-06-02: Fixed some missing Q_OBJECT declarations.
 2003-05-28: Fixed bug with multiline list items.

@@ -731,7 +731,9 @@ void toListView::menuCallback(int cmd)
     try {
       QString str=exportAsText(false,true);
       QClipboard *clip=qApp->clipboard();
-      clip->setText(str);
+      QTextDrag *drag=new QTextDrag(str);
+      drag->setSubtype("html");
+      clip->setData(drag);
     } TOCATCH
     break;
   case TORESULT_LEFT:
@@ -747,7 +749,9 @@ void toListView::menuCallback(int cmd)
     try {
       QString str=exportAsText(true,true);
       QClipboard *clip=qApp->clipboard();
-      clip->setText(str);
+      QTextDrag *drag=new QTextDrag(str);
+      drag->setSubtype("html");
+      clip->setData(drag);
     } TOCATCH
     break;
   case TORESULT_SELECT_ALL:
@@ -1107,6 +1111,9 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	    line+=QString::fromLatin1("<TD%1>").arg(bgcolor);
 	    if (i==0)
 	      line+=indent;
+	    text.replace('&',"&amp;");
+	    text.replace('<',"&lt;");
+	    text.replace('>',"&gt");
 	    line+=text;
 	    line+=QString::fromLatin1("</TD>");
 	    break;
