@@ -29,11 +29,13 @@
 #include <ctype.h>
 #include <stack>
 
+#include <qbuttongroup.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
+#include <qradiobutton.h>
 #include <qsizepolicy.h>
 #include <qsplitter.h>
 #include <qstring.h>
@@ -47,7 +49,6 @@
 #include "toconf.h"
 #include "todebug.h"
 #include "todebugtext.h"
-#include "todebugwatch.h"
 #include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
@@ -78,6 +79,8 @@
 #include "icons/todebug.xpm"
 #include "icons/togglebreak.xpm"
 #include "icons/toworksheet.xpm"
+
+#define TO_DEBUG
 
 class toDebugTool : public toTool {
   map<toConnection *,QWidget *> Windows;
@@ -115,15 +118,100 @@ static toDebugTool DebugTool;
 
 #include <stdio.h>
 
-class toDebugWatch : public toDebugWatchUI {
-public:
-  toDebugWatch(toDebug *parent);
-};
-
 toDebugWatch::toDebugWatch(toDebug *parent)
-  : toDebugWatchUI(parent,"AddWatch",true)
+  : toDebugWatchUI(parent,"AddWatch",true),Debugger(parent)
 {
-  
+  Items=Debugger->currentContents();
+  QString type=Debugger->currentEditor()->type();
+  {
+    int curline,curcol;
+    Debugger->currentEditor()->getCursorPosition (&curline,&curcol);
+    Default=Debugger->currentEditor()->textLine(curline);
+    const char *line=Default;
+    while(curcol>0&&toIsIdent(line[curcol-1]))
+      curcol--;
+    while(curcol<int(Default.length())&&!toIsIdent(line[curcol]))
+      curcol++;
+    Default.replace(0,curcol,"");
+    line=Default;
+    curcol=1;
+    while(curcol<int(Default.length())&&toIsIdent(line[curcol]))
+      curcol++;
+    Default=Default.left(curcol);
+  }
+  if (Items&&(type.left(7)=="PACKAGE"||type.left(4)=="TYPE")) {
+    Object=Debugger->currentEditor()->object();
+    for (Items=Items->firstChild();Items&&Items->text(0)!="Misc";Items=Items->nextSibling())
+      ;
+  } else {
+    CurrentScope->setEnabled(false);
+    Items=NULL;
+  }
+  connect(Scope,SIGNAL(clicked(int)),this,SLOT(changeScope(int)));
+  changeScope(1);
+}
+
+void toDebugWatch::changeScope(int num)
+{
+  switch(num) {
+  case 1:
+    Name->clear();
+    Name->insertItem(Default);
+    break;
+  case 2:
+    Name->clear();
+    QListViewItem *item;
+    if (Items) {
+      for (item=Items->firstChild();item;item=item->nextSibling())
+	Name->insertItem(item->text(0));
+    }
+    break;
+  case 3:
+    Name->clear();
+    QString str=Debugger->currentEditor()->schema();
+    str+=".";
+    if (!Object.isEmpty()) {
+      str+=Object;
+      str+=".";
+    }
+    str+=Default;
+    Name->insertItem(str);
+    break;
+  }
+}
+
+QListViewItem *toDebugWatch::createWatch(QListView *watches)
+{
+  QString str;
+  switch(Scope->id(Scope->selected())) {
+  case 1:
+    return new QListViewItem(watches,"","",Name->currentText());
+  case 2:
+    str=Debugger->currentEditor()->schema();
+    str+=".";
+    str+=Name->currentText();
+    break;
+  case 3:
+    str=Name->currentText();
+    break;
+  }
+  QString schema;
+  QString object;
+  QString name;
+  int pos=str.find(".");
+  if (pos>0) {
+    schema=str.left(pos);
+    str.remove(0,pos+1);
+  } else {
+    toStatusMessage("Can't parse location");
+    return NULL;
+  }
+  pos=str.find(".");
+  if (pos>0) {
+    object=str.left(pos);
+    str.remove(0,pos+1);
+  }
+  return new QListViewItem(watches,schema,object,str);
 }
 
 class toDebugOutput : public toOutput {
@@ -445,6 +533,21 @@ QString toDebug::currentName(void)
     return "Head";
   else
     return "Body";
+}
+
+QString toDebug::currentSchema(void)
+{
+  return Schema->currentText();
+}
+
+QListViewItem *toDebug::currentContents(void)
+{
+  QListViewItem *item;
+  QString name=currentName();
+  for (item=Contents->firstChild();item;item=item->nextSibling())
+    if (item->text(0)==name)
+      break;
+  return item;
 }
 
 void toDebug::reorderContent(int start,int diff)
@@ -1006,7 +1109,7 @@ void toDebug::updateState(int reason)
     }
     break;
   default:
-    DebugTabs->show();
+    DebugButton->setOn(true);
     StopButton->setEnabled(true);
     StepOverButton->setEnabled(true);
     StepIntoButton->setEnabled(true);
@@ -1072,9 +1175,99 @@ END;",
 	item->setOpen(true);
       }
       Output->refresh();
-      if (depth>=2)
+      if (depth>=2) {
+	try {
+	  for (QListViewItem *item=Watch->firstChild();item;item=item->nextSibling()) {
+	    while (item->firstChild())
+	      delete item->firstChild();
+	  }
+	  otl_stream local(1,
+			   "
+DECLARE
+  ret BINARY_INTEGER;
+  data VARCHAR2(4000);
+BEGIN
+  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,0,data,NULL);
+  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;
+END;
+",
+			   Connection.connection());
+	  otl_stream index(1,
+			   "
+DECLARE
+  ret BINARY_INTEGER;
+  proginf DBMS_DEBUG.program_info;
+  i BINARY_INTEGER;
+  indata DBMS_DEBUG.index_table;
+  outdata VARCHAR2(4000) := '';
+BEGIN
+  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,0,proginf,indata);
+  IF ret = DBMS_DEBUG.success THEN
+    i:=indata.first;
+    WHILE i IS NOT NULL OR LENGTH(outdata)>3900 LOOP
+      outdata:=outdata||indata(i)||',';
+      i:=indata.next(i);
+    END LOOP;
+  ELSE
+    outdata:='Data';
+  END IF;
+  SELECT outdata INTO :data<char[4001],out> FROM DUAL;
+END;",
+			   Connection.connection());
+  
+	  QListViewItem *next=NULL;
+	  for (QListViewItem *item=Watch->firstChild();item;item=next) {
+	    local<<item->text(2);
+	    int ret;
+	    local>>ret;
+	    char buffer[4001];
+	    local>>buffer;
+	    if (ret==TO_SUCCESS)
+	      item->setText(3,buffer);
+	    else if (ret==TO_ERROR_NULLVALUE)
+	      item->setText(3,"{Null}");
+	    else if (ret==TO_ERROR_NULLCOLLECTION)
+	      item->setText(3,"{Null}");
+	    else if (ret==TO_ERROR_INDEX_TABLE) {
+	      index<<item->text(2);
+	      char buffer[4001];
+	      index>>buffer;
+	      char *start=buffer;
+	      char *end;
+	      QListViewItem *last=NULL;
+	      for (end=start;*end;end++) {
+		if (*end==',') {
+		  *end=0;
+		  if (start<end) {
+		    QString name=item->text(2);
+		    name+="(";
+		    name+=start;
+		    name+=")";
+		    last=new QListViewItem(item,last,item->text(0),item->text(1),name);
+		  }
+		  start=end+1;
+		}
+	      }
+	    } else
+	      item->setText(3,"{Unavailable}");
+	    if (item->firstChild())
+	      next=item->firstChild();
+	    else if (item->nextSibling())
+	      next=item->nextSibling();
+	    else {
+	      next=item->parent();
+	      if (next) {
+		QString str="[Count ";
+		str+=QString::number(next->childCount());
+		str+="]";
+		next->setText(3,str);
+		next=next->nextSibling();
+	      }
+	    }
+	  }
+	} TOCATCH
 	viewSource(schema,name,type,line,true);
-      else
+      } else
 	continueExecution(TO_BREAK_NEXT_LINE);
     } TOCATCH
     break;
@@ -1330,7 +1523,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   new QToolButton(*toAddWatchPixmap,
 		  "Add new variable watch",
 		  "Add new variable watch",
-		  this,SLOT(toggleBreak(void)),
+		  this,SLOT(addWatch(void)),
 		  toolbar);
   new QToolButton(*toDelWatchPixmap,
 		  "Delete variable watch",
@@ -1386,10 +1579,9 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   Watch=new toResultView(false,false,Connection,DebugTabs);
   Watch->addColumn("Schema");
-  Watch->addColumn("Type");
   Watch->addColumn("Object");
+  Watch->addColumn("Variable");
   Watch->addColumn("Data");
-  Watch->setSorting(-1);
   Watch->setRootIsDecorated(true);
   Watch->setTreeStepSize(10);
   Watch->setAllColumnsShowFocus(true);
@@ -1880,4 +2072,26 @@ void toDebug::toggleEnable(void)
 {
   currentEditor()->toggleBreakpoint(-1,true);
   currentEditor()->setFocus();
+}
+
+void toDebug::addWatch(void)
+{
+  toDebugWatch watch(this);
+  if (watch.exec()) {
+    watch.createWatch(Watch);
+    if (isRunning())
+      updateState(TO_REASON_WHATEVER);
+  }
+}
+
+void toDebug::focusInEvent(QFocusEvent *e)
+{
+  QVBox::focusInEvent(e);
+  printf("Focus in");
+}
+
+void toDebug::focusOutEvent(QFocusEvent *e)
+{
+  QVBox::focusOutEvent(e);
+  printf("Focus out");
 }

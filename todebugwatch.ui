@@ -9,8 +9,8 @@
     <property stdset="1">
         <name>geometry</name>
         <rect>
-            <x>198</x>
-            <y>115</y>
+            <x>0</x>
+            <y>0</y>
             <width>200</width>
             <height>250</height>
         </rect>
@@ -34,10 +34,62 @@
         <string>Add variable watch</string>
     </property>
     <widget>
+        <class>QComboBox</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Name</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>165</y>
+                <width>180</width>
+                <height>27</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>editable</name>
+            <bool>true</bool>
+        </property>
+        <property stdset="1">
+            <name>duplicatesEnabled</name>
+            <bool>false</bool>
+        </property>
+    </widget>
+    <widget>
+        <class>QLabel</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>TextLabel1</cstring>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>10</x>
+                <y>140</y>
+                <width>180</width>
+                <height>16</height>
+            </rect>
+        </property>
+        <property stdset="1">
+            <name>text</name>
+            <string>&amp;Variable name</string>
+        </property>
+        <property>
+            <name>buddy</name>
+            <cstring>Name</cstring>
+        </property>
+        <property>
+            <name>toolTip</name>
+            <string>Variable name to watch.</string>
+        </property>
+    </widget>
+    <widget>
         <class>QButtonGroup</class>
         <property stdset="1">
             <name>name</name>
-            <cstring>ButtonGroup1</cstring>
+            <cstring>Scope</cstring>
         </property>
         <property stdset="1">
             <name>geometry</name>
@@ -75,6 +127,10 @@
                 <name>checked</name>
                 <bool>true</bool>
             </property>
+            <property stdset="1">
+                <name>buttonGroupId</name>
+                <number>1</number>
+            </property>
             <property>
                 <name>toolTip</name>
                 <string>Currently running scope.</string>
@@ -98,6 +154,14 @@
             <property stdset="1">
                 <name>text</name>
                 <string>&amp;Current Scope</string>
+            </property>
+            <property stdset="1">
+                <name>focusPolicy</name>
+                <enum>NoFocus</enum>
+            </property>
+            <property stdset="1">
+                <name>buttonGroupId</name>
+                <number>2</number>
             </property>
             <property>
                 <name>toolTip</name>
@@ -123,59 +187,15 @@
                 <name>text</name>
                 <string>&amp;Global</string>
             </property>
+            <property stdset="1">
+                <name>buttonGroupId</name>
+                <number>3</number>
+            </property>
             <property>
                 <name>toolTip</name>
                 <string>Global scope of variable.</string>
             </property>
         </widget>
-    </widget>
-    <widget>
-        <class>QLabel</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>TextLabel1</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>140</y>
-                <width>180</width>
-                <height>16</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>text</name>
-            <string>&amp;Variable name</string>
-        </property>
-        <property>
-            <name>buddy</name>
-            <cstring>Name</cstring>
-        </property>
-        <property>
-            <name>toolTip</name>
-            <string>Variable name to watch.</string>
-        </property>
-    </widget>
-    <widget>
-        <class>QComboBox</class>
-        <property stdset="1">
-            <name>name</name>
-            <cstring>Name</cstring>
-        </property>
-        <property stdset="1">
-            <name>geometry</name>
-            <rect>
-                <x>10</x>
-                <y>165</y>
-                <width>180</width>
-                <height>27</height>
-            </rect>
-        </property>
-        <property stdset="1">
-            <name>editable</name>
-            <bool>true</bool>
-        </property>
     </widget>
     <widget>
         <class>QPushButton</class>
@@ -186,9 +206,9 @@
         <property stdset="1">
             <name>geometry</name>
             <rect>
-                <x>120</x>
+                <x>110</x>
                 <y>205</y>
-                <width>70</width>
+                <width>80</width>
                 <height>32</height>
             </rect>
         </property>
@@ -208,7 +228,7 @@
             <rect>
                 <x>10</x>
                 <y>205</y>
-                <width>70</width>
+                <width>80</width>
                 <height>32</height>
             </rect>
         </property>

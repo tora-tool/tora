@@ -32,16 +32,21 @@
 #include <qvbox.h>
 #include "tothread.h"
 #include "tohighlightedtext.h"
+#include "todebugwatch.h"
 
 #define TO_SUCCESS		0
 #define TO_ERROR_ILLEGAL_LINE	12
 #define TO_ERROR_BAD_HANDLE	16
 #define TO_ERROR_TIMEOUT	31
+#define TO_ERROR_NULLVALUE	32
+#define TO_ERROR_NULLCOLLECTION	40
+#define TO_ERROR_INDEX_TABLE	18
 
 #define TO_REASON_KNL_EXIT	25
 #define TO_REASON_NO_SESSION	-1
 #define TO_REASON_TIMEOUT	17
 #define TO_REASON_EXIT		15
+#define TO_REASON_WHATEVER	0
 
 #define TO_NAME_CURSOR		0	
 #define TO_NAME_TOPLEVEL	1
@@ -65,6 +70,7 @@ class toOutput;
 class toDebugText;
 class QComboBox;
 class toConnection;
+class QMenuBar;
 
 class toDebug : public QVBox {
   Q_OBJECT
@@ -90,6 +96,9 @@ class toDebug : public QVBox {
   QToolButton *StepIntoButton;
   QToolButton *ReturnButton;
   QToolButton *DebugButton;
+
+  // Extra menu
+  QMenuBar *ToolMenu;
 
   // Content pane
   QListView *Objects;
@@ -137,7 +146,6 @@ class toDebug : public QVBox {
   bool checkCompile(void);
   void updateCurrent(void);
   void startTarget(void);
-  toDebugText *currentEditor(void);
   QString currentName(void);
   int sync(void);
   bool hasMembers(const QString &str);
@@ -158,6 +166,12 @@ public:
 
   bool isRunning(void);
 
+  QListViewItem *currentContents(void);
+  toDebugText *currentEditor(void);
+  QString currentSchema(void);
+
+  virtual void focusInEvent (QFocusEvent *);
+  virtual void focusOutEvent (QFocusEvent *);
 public slots:
   void stop(void);
   void compile(void);
@@ -176,12 +190,28 @@ public slots:
   void execute(void);
   void toggleBreak(void);
   void toggleEnable(void);
+  void addWatch(void);
   void stepInto(void)
   { continueExecution(TO_BREAK_ANY_CALL); }
   void stepOver(void)
   { continueExecution(TO_BREAK_NEXT_LINE); }
   void returnFrom(void)
   { continueExecution(TO_BREAK_ANY_RETURN); }
+};
+
+class toDebugWatch : public toDebugWatchUI {
+  Q_OBJECT
+
+  QListViewItem *Items;
+  toDebug *Debugger;
+  QString Object;
+  QString Default;
+public:
+  toDebugWatch(toDebug *parent);
+
+  QListViewItem *createWatch(QListView *watches);
+public slots:
+  void changeScope(int num);
 };
 
 #endif

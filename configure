@@ -36,7 +36,7 @@ for a in *.ui
 do
     base=`echo $a | sed s/\.[^\.]*$//`
     touch $base.h
-    echo "#include \"$base.h\"" >$base.cpp
+    touch $base.cpp
     touch $base.moc
 done
 for a in *.h
