@@ -93,6 +93,15 @@ void toExtract::clearFlags(void)
   Describe=false;
 }
 
+std::list<QString> toExtract::splitDescribe(const QString &str)
+{
+  QStringList ctx=QStringList::split("\01",str);
+  std::list<QString> ret;
+  for(unsigned int i=0;i<ctx.count();i++)
+    ret.insert(ret.end(),ctx[i]);
+  return ret;
+}
+
 void toExtract::addDescription(std::list<QString> &ret,std::list<QString> &ctx,
 			       const QString &arg1,const QString &arg2,
 			       const QString &arg3,const QString &arg4,

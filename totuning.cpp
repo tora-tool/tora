@@ -147,6 +147,7 @@ static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "select sysdate,\n"
+			   "       cpu \"CPU\",\n"
 			   "       parallel \"Parallel execution\",\n"
 			   "       filewrite \"DB File Write\",\n"
 			   "       writecomplete \"Write Complete\",\n"
@@ -165,7 +166,8 @@ static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "               SUM(DECODE(SUBSTR(event,1,11),'direct path',time_waited,0)) direct,\n"
 			   "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
 			   "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net\n"
-			   "          from v$system_event)\n",
+			   "          from v$system_event),\n"
+			   "       (select value*10 cpu from v$sysstat where statistic# = 12)",
 			   "Used to generate chart for system wait time.");
 
 static toSQL SQLChartsExecution("toTuning:Charts:6LNExecution",

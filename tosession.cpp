@@ -104,6 +104,7 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 			    "Display open cursors of this session");
 static toSQL SQLSessionWait(TO_SESSION_WAIT,
 			    "select sysdate,\n"
+			    "       cpu \"CPU\",\n"
 			    "       parallel \"Parallel execution\",\n"
 			    "       filewrite \"DB File Write\",\n"
 			    "       writecomplete \"Write Complete\",\n"
@@ -124,7 +125,9 @@ static toSQL SQLSessionWait(TO_SESSION_WAIT,
 			    "               SUM(DECODE(SUBSTR(event,1,3),'log',time_waited,0)) log,\n"
 			    "               SUM(DECODE(SUBSTR(event,1,7),'SQL*Net',time_waited,0))-SUM(DECODE(event,'SQL*Net message from client',time_waited,0)) net,\n"
 			    "		    SUM(DECODE(event,'PX Idle Wait',0,'SQL*Net message from client',0,time_waited)) total\n"
-			    "          from v$session_event where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid))\n",
+			    "          from v$session_event where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)),\n"
+			    "       (select value*10 cpu from v$sesstat a\n"
+			    "         where statistic# = 12 and a.sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid))",
 			    "Used to generate chart for session wait time.");
 static toSQL SQLSessionIO(TO_SESSION_IO,
 			  "select sysdate,\n"

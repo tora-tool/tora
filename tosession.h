@@ -49,8 +49,8 @@ class toResultStats;
 class toResultLock;
 class toResultBar;
 
-#define TO_SESSION_WAIT "toSession:SessionIO"
-#define TO_SESSION_IO   "toSession:SessionWait"
+#define TO_SESSION_WAIT "toSession:SessionWait"
+#define TO_SESSION_IO   "toSession:SessionIO"
 
 class toSession : public toToolWidget {
   Q_OBJECT
