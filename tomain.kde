@@ -121,6 +121,9 @@ private slots:
   void saveButton(void);
   void printButton(void);
 
+  list<QString> connections(void);
+  toConnection &connection(const QString &);
+
   void editFileMenu(void);
 
   void undoButton(void);
