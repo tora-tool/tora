@@ -2814,7 +2814,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     addDescription(dsp,ctx,"STORAGE",QString("BUFFER_POOL %1").arg(QUOTE(bufferPool)));
   }
   if (CONNECTION.version()>="8.0")
-    addDescription(dsp,ctx,"PARAMETERS",QString("%1").arg(logging));
+    addDescription(dsp,ctx,"PARAMETERS",logging);
   addDescription(dsp,ctx,"PARAMETERS",QString("TABLESPACE %1").arg(QUOTE(tablespace)));
 }
 
