@@ -596,7 +596,7 @@ bool toWorksheet::checkSave(bool input)
 	  } catch(...) {
 	    str+="unknown connection";
 	  }
-	  if (!Editor->filename.isEmpty())
+	  if (!Editor->filename().isEmpty())
 	    str+="\n("+Editor->filename()+")";
 	  int ret=TOMessageBox::information(this,
 					    "Save file",
