@@ -165,7 +165,9 @@ void toHighlightedText::setCurrent(int line)
   Current=line;
   if (line>=0)
     setCursorPosition(line,0);
+#if 0
   repaint();
+#endif
 }
 
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
@@ -296,7 +298,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
     if (posx<width)
       painter->fillRect(posx,0,width-posx,height,bkg);
   } else
-      painter->fillRect(0,0,width,height,bkg);
+      painter->fillRect(LeftIgnore,0,width-LeftIgnore,height,bkg);
   painter->setPen(cp.active().text());
 
   if (hasFocus()) {

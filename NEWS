@@ -4,6 +4,12 @@
 2001-02-13: Link StdC++ statically as well in tora-static
 2001-02-13: Added namespace support (Will work with Standard C++)
 2001-02-14: Link oracle libs statically as well in tora-static
+2001-02-17: Added a whole bunch of quotes.
+2001-02-19: Removed a lot of flickering when changing packages in toDebug.
+2001-02-19: No automatic updates in toHighlightedText when changing
+		current/errors.
+2001-02-20: Added dependency views to database browser.
+2001-02-20: Pass path instead of filename to file open dialog.
 
 0.5: Released 2001-02-12
 

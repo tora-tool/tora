@@ -42,6 +42,7 @@ TO_NAMESPACE;
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qworkspace.h>
+#include <qfileinfo.h>
 
 #include <stdio.h>
 
@@ -458,7 +459,8 @@ void toMain::commandCallback(int cmd)
 	break;
       case TO_FILE_OPEN:
 	if (!readOnly) {
-	  QString filename=QFileDialog::getOpenFileName(mark->filename(),"*.sql\n*.txt",this);
+	  QFileInfo file(mark->filename());
+	  QString filename=QFileDialog::getOpenFileName(file.filePath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
 	    QFile file(filename);
 	    if (!file.open(IO_ReadOnly)) {

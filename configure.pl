@@ -153,7 +153,7 @@ int main(int argv,char **argc)
 }
 __TEMP__
     close TEMP;
-    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared -o$tmpName $tmpName.cpp")) {
+    if (!system("$gcc $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -o$tmpName $tmpName.cpp")) {
 	if (!system($tmpName)) {
 	    $CC=$gcc;
 	}

@@ -1476,6 +1476,7 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
       HeadEditor->setCursorPosition(line-1,0);
     HeadEditor->setFocus();
     ShowButton->setOn(true);
+    HeadEditor->repaint();
   } else if (BodyEditor->schema()==schema&&
 	     BodyEditor->object()==name&&
 	     BodyEditor->type()==type) {
@@ -1486,6 +1487,7 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
 
     BodyEditor->setFocus();
     ShowButton->setOn(false);
+    BodyEditor->repaint();
   } else if (!BodyEditor->edited()&&(setCurrent||BodyEditor->current()<0)) {
     BodyEditor->setData(schema,type,name);
     BodyEditor->readData(Connection,StackTrace);
@@ -1508,6 +1510,8 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
     if (setCurrent) {
       HeadEditor->setCurrent(-1);
       BodyEditor->setCurrent(-1);
+      HeadEditor->repaint();
+      BodyEditor->repaint();
     }
     return false;
   }

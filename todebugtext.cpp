@@ -215,7 +215,9 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
   Object=object;
   FirstItem=NULL;
   NoBreakpoints=false;
+#if 0
   repaint();
+#endif
 }
 
 toDebugText::toDebugText(QListView *breakpoints,

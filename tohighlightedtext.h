@@ -112,7 +112,7 @@ public:
   void setText(const QString &str);
 
   void setErrors(const map<int,QString> &errors)
-  { Errors=errors; repaint(); }
+  { Errors=errors; }
   void setCurrent(int current);
   int current(void)
   { return Current; }

@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "toresultcols.h"
 #include "toresultconstraint.h"
+#include "toresultreferences.h"
 #include "toresultitem.h"
 #include "toresultfield.h"
 #include "toresultindexes.h"
@@ -81,6 +82,7 @@ static QPixmap *toRefreshPixmap;
 #define TAB_TABLES		"Tables"
 #define TAB_TABLE_COLUMNS	"TablesColumns"
 #define TAB_TABLE_CONS		"TablesConstraint"
+#define TAB_TABLE_DEPEND	"TablesDepend"
 #define TAB_TABLE_INDEXES	"TablesIndexes"
 #define TAB_TABLE_DATA		"TablesData"
 #define TAB_TABLE_GRANTS	"TablesGrants"
@@ -92,6 +94,7 @@ static QPixmap *toRefreshPixmap;
 #define TAB_VIEW_SQL		"ViewSQL"
 #define TAB_VIEW_DATA		"ViewData"
 #define TAB_VIEW_GRANTS		"ViewGrants"
+#define TAB_VIEW_DEPEND		"ViewDepend"
 #define TAB_VIEW_COMMENT	"ViewComment"
 #define TAB_SEQUENCES		"Sequences"
 #define TAB_SEQUENCES_INFO	"SequencesInfo"
@@ -103,10 +106,12 @@ static QPixmap *toRefreshPixmap;
 #define TAB_PLSQL		"PLSQL"
 #define TAB_PLSQL_SOURCE	"PLSQLSource"
 #define TAB_PLSQL_BODY		"PLSQLBody"
+#define TAB_PLSQL_DEPEND	"PLSQLDepend"
 #define TAB_TRIGGER		"Trigger"
 #define TAB_TRIGGER_INFO	"TriggerInfo"
 #define TAB_TRIGGER_SOURCE	"TriggerSource"
 #define TAB_TRIGGER_COLS	"TriggerCols"
+#define TAB_TRIGGER_DEPEND	"TriggerDepend"
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
@@ -158,6 +163,11 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 							      TAB_TABLE_CONS);
   curr->addTab(resultConstraint,"Constraints");
   SecondMap[TAB_TABLE_CONS]=resultConstraint;
+
+  toResultReferences *resultReferences=new toResultReferences(Connection,curr,
+							      TAB_TABLE_DEPEND);
+  curr->addTab(resultReferences,"References");
+  SecondMap[TAB_TABLE_DEPEND]=resultReferences;
 
   resultView=new toResultView(true,false,Connection,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
@@ -230,6 +240,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		     " ORDER BY Privilege,Grantee");
   curr->addTab(resultView,"Grants");
   SecondMap[TAB_VIEW_GRANTS]=resultView;
+
+  resultView=new toResultView(true,false,Connection,curr,TAB_VIEW_DEPEND);
+  resultView->setReadAll(true);
+  resultView->setSQL("SELECT referenced_owner \"Owner\","
+		     "       referenced_type \"Type\","
+		     "       referenced_name \"Name\","
+		     "       dependency_type \"Dependency Type\""
+		     "  FROM dba_dependencies"
+		     " WHERE owner = :owner<char[31]>"
+		     "   AND name = :name<char[31]>"
+		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  curr->addTab(resultView,"Dependencies");
+  SecondMap[TAB_VIEW_DEPEND]=resultView;
 
   resultItem=new toResultItem(1,true,Connection,curr,TAB_VIEW_COMMENT);
   resultItem->showTitle(false);
@@ -346,6 +369,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"Body");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
+  resultView=new toResultView(true,false,Connection,curr,TAB_PLSQL_DEPEND);
+  resultView->setReadAll(true);
+  resultView->setSQL("SELECT referenced_owner \"Owner\","
+		     "       referenced_type \"Type\","
+		     "       referenced_name \"Name\","
+		     "       dependency_type \"Dependency Type\""
+		     "  FROM dba_dependencies"
+		     " WHERE owner = :owner<char[31]>"
+		     "   AND name = :name<char[31]>"
+		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  curr->addTab(resultView,"Dependencies");
+  SecondMap[TAB_PLSQL_DEPEND]=resultView;
+
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
   TopTab->addTab(splitter,"Triggers");
   resultView=new toResultView(true,false,Connection,splitter);
@@ -386,6 +422,19 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 		     "WHERE Trigger_Owner = :f1<char[31]> AND Trigger_Name = :f2<char[31]>");
   curr->addTab(resultView,"Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
+
+  resultView=new toResultView(true,false,Connection,curr,TAB_TRIGGER_DEPEND);
+  resultView->setReadAll(true);
+  resultView->setSQL("SELECT referenced_owner \"Owner\","
+		     "       referenced_type \"Type\","
+		     "       referenced_name \"Name\","
+		     "       dependency_type \"Dependency Type\""
+		     "  FROM dba_dependencies"
+		     " WHERE owner = :owner<char[31]>"
+		     "   AND name = :name<char[31]>"
+		     " ORDER BY referenced_owner,referenced_type,referenced_name");
+  curr->addTab(resultView,"Dependencies");
+  SecondMap[TAB_TRIGGER_DEPEND]=resultView;
 
   refresh();
 

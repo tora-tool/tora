@@ -133,6 +133,55 @@ especially since I rule.</H3>
 <H3>Jag spenderade mina pengar på sprit kvinnor och sång.<BR>
 Resten slösade jag bort.</H3>
 <DIV ALIGN=RIGHT>Unknown Swede
+<DIV ALIGN=LEFT>
+<H3>
+<UL>
+<LI>Make it idiot proof, and someone will make a better idiot.<P>
+<LI>I don't suffer from insanity. I enjoy every minute of it.<P>
+<LI>Press any key to continue or any other key to quit<P>
+<LI>The box said \"Requires Windows 95 or better.\" So I installed LINUX<P>
+<LI>&lt;-- Your information went that way --&gt;<P>
+<LI>Go away, or I will replace you with a very small shell script.<P>
+<LI>Do not meddle in the affairs of sysadmins, for they are suddle and quick to anger.
+</UL>
+</H3>
+<DIV ALIGN=RIGHT>Think Geek (http://www.thinkgeek.com/)
+<DIV ALIGN=LEFT>
+<H3>
+<UL>
+<LI>Luck can't last a lifetime unless you die young!<P>
+<LI>Misfortune: While good fortune often eludes you, this kind never misses.<P>
+<LI>For every winner, there are dozens of losers. Odds are you are one of them.<P>
+<LI>Failure: When your best just isn't good enough.<P>
+<LI>Quitters never win, winners never quit, but those who never win and never quit are idiots.<P>
+<LI>If you can't learn to do something well, learn to enjoy doing it poorly.<P>
+<LI>If at first you don't succeed, failure may be your style.<P>
+<LI>There are no stupid questions, but there are a lot of inquisitive idiots.<P>
+<LI>There is no joy greater than soaring high on the wings of your dreams,
+	except mayby the joy of watching a dreamer who has nowhere to land but in the ocean of reality.<P>
+<LI>The only consistent feature of all of your dissatisfying relationships is you.<P>
+<LI>When you earnestly believe you can compensate for a lack of skill by doubling your efforts,
+	there's no end to what you can't do.<P>
+<LI>Never underestimate the power of stupid people in large groups.<P>
+<LI>The downside of being better than everyone else is that people tend to assume you're pretentious.<P>
+<LI>In the battle between you cand the world, bet on the world.<P>
+<LI>You'll always miss 100% of the shots you don't take, and, statistically speaking, 99% of the shots you do.<P>
+<LI>The secret to success is knowing who to blame for your failures.<P>
+<LI>When birds fly in the right formation, they need only exert half the effort.
+	Even in nature, teamwork results in collective laziness.<P>
+<LI>It's amazing how much easier it is for a team to work together when no one has any idea where they're going.<P>
+<LI>Attitudes are contagious. Mine might kill you.<P>
+<LI>When people are free to do as they please, they usually imitate each other.<P>
+<LI>If we don't take care of the customer, mayby they'll stop bugging us.<P>
+<LI>It takes months to find a customer, but only seconds to lose one.
+	The good news is we should run out of them in no time.<P>
+<LI>Mediocrity: It takes a lot less time, and most people won't notice the difference until it's too late.<P>
+<LI>Laziness: Success is a jurney, not a destination. So stop running.<P>
+<LI>Hard work often pays off after time, but laziness always pays off now.<P>
+<LI>The tallest blade of grass is the first to be cut by the lawnmower.
+</UL>
+</H3>
+<DIV ALIGN=RIGHT>Despair INC (http://www.despair.com/)
 <DIV ALIGN=LEFT>";
 
 
