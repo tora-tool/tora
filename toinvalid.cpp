@@ -68,8 +68,9 @@
 #include "icons/compile.xpm"
 
 static toSQL SQLListInvalid("toInvalid:ListInvalid",
-			    "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\"\n"
-			    "  FROM sys.all_objects WHERE status = 'INVALID'",
+			    "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\",status \"Status\"\n"
+			    "  FROM sys.all_objects\n"
+			    " WHERE status <> 'VALID'",
 			    "Get invalid objects, must have same first three columns.");
 
 static toSQL SQLListSource("toInvalid:ListSource",
@@ -162,13 +163,18 @@ void toInvalid::recompileSelected(void)
   for(QListViewItem *item=Objects->firstChild();item;item=item->nextSibling()) {
     toResultViewItem *ci=dynamic_cast<toResultViewItem *>(item);
     if (ci&&ci->isSelected()) {
+      toConnection &conn=connection();
       progress.setLabelText("Recompiling "+ci->allText(1)+"."+ci->allText(2));
       progress.setProgress(i);
       qApp->processEvents();
-      QString sql="ALTER "+ci->allText(2)+" "+connection().quote(ci->allText(0))+"."+connection().quote(ci->allText(1))+
-	" REUSE SETTINGS";
+      QString type=ci->allText(2);
+      QString sql;
+      if (type=="INDEX")
+	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" REBUILD";
+      else
+	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE REUSE SETTINGS";
       try {
-	connection().execute(sql);
+	conn.execute(sql);
       } catch(...) {
       }
     }

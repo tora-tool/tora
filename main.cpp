@@ -143,6 +143,7 @@ int main(int argc,char **argv)
 	  }
 	}
       } while(failed.begin()!=failed.end()&&success);
+
       for(std::list<QString>::iterator i=failed.begin();i!=failed.end();i++)
 	if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL))
 	  fprintf(stderr,"Failed to load %s\n  %s\n",

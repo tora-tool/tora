@@ -43,6 +43,7 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qtextview.h>
+#include <qdesktopwidget.h>
 
 #include "tolicense.moc"
 #include "tolicenseui.moc"
@@ -50,8 +51,14 @@
 toLicense::toLicense(QWidget *parent)
   : toLicenseUI(parent,"license",WStyle_Customize|WStyle_DialogBorder|WType_Modal)
 {
-  QWidget *d=QApplication::desktop();
-  move((d->width()-width())/2,(d->height()-height())/2);
+  QDesktopWidget *d=QApplication::desktop();
+
+  QRect rect=d->availableGeometry(d->primaryScreen());
+
+  setMaximumWidth(rect.width());
+  setMaximumHeight(rect.height());
+
+  move((rect.width()-width())/2,(rect.height()-height())/2);
 
   TextView->setText(QString(toAbout::aboutText()).arg(TOVERSION));
   TextView->setPaper(QColor(227,183,54));
