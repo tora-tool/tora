@@ -31,6 +31,7 @@
 2001-04-01: Added default timeout to status messages.
 2001-04-01: Don't forget to emit done on error in longrunning queries.
 2001-04-01: Added icon to toSQLEdit window.
+2001-04-01: Added lots of options to toExtract.
 
 0.7: Released 2001-03-24
 

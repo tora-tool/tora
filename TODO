@@ -20,6 +20,7 @@ Extended functionality:
 * Make it possible to compile as KDE application.
 * Make it possible to reorder columns in toResultContent.
 * Add function to create plan table from TOra.
+* Extract grants from objects.
 
 New tools:
 * Info about current session.

@@ -41,6 +41,15 @@ class toExtract {
   QString Resize;
   bool Prompt;
   bool Heading;
+  bool Constraints;
+  bool Indexes;
+  bool Grants;
+  bool Storage;
+  bool Parallel;
+  bool Partition;
+  bool Contents;
+  bool Comments;
+  bool Code;
 
   // Flags
   bool IsASnapIndex;
@@ -244,7 +253,7 @@ class toExtract {
   void objectExists(const QString &owner,const QString &name,const QString &type);
   QString prepareDB(const QString &data);
   QString segmentAttributes(list<QString> &result);
-  QString setSchema(const QString &owner);
+  QString intSchema(const QString &owner);
   void setSizes(void);
   QString reContext(list<QString> &ctx,int strip,const QString &str);
 public:
@@ -256,16 +265,32 @@ public:
   QString drop(const QString &type,list<QString> &object);
   QString resize(const QString &type,list<QString> &object);
 
-#if 0
   void setSchema(const QString &schema)
   { Schema=schema; }
-#endif
   void setResize(const QString &resize)
   { Resize=resize; setSizes(); }
   void setPrompt(bool prompt)
   { Prompt=prompt; }
   void setHeading(bool heading)
   { Heading=heading; }
+  void setConstraints(bool constraints)
+  { Constraints=constraints; }
+  void setIndexes(bool indexes)
+  { Indexes=indexes; }
+  void setGrants(bool val)
+  { Grants=val; }
+  void setStorage(bool val)
+  { Storage=val; }
+  void setParallel(bool val)
+  { Parallel=val; }
+  void setPartition(bool val)
+  { Partition=val; }
+  void setContents(bool val)
+  { Contents=val; }
+  void setComments(bool val)
+  { Comments=val; }
+  void setCode(bool val)
+  { Code=val; }
 
   const QString &getSchema(void)
   { return Schema; }
@@ -275,6 +300,24 @@ public:
   { return Prompt; }
   bool getHeading(void)
   { return Heading; }
+  bool getConstraints(void)
+  { return Constraints; }
+  bool getIndexes(void)
+  { return Indexes; }
+  bool getGrants(void)
+  { return Grants; }
+  bool getStorage(void)
+  { return Storage; }
+  bool getParallel(void)
+  { return Parallel; }
+  bool getPartition(void)
+  { return Partition; }
+  bool getContents(void)
+  { return Contents; }
+  bool getComments(void)
+  { return Comments; }
+  bool getCode(void)
+  { return Code; }
 };
 
 #endif
