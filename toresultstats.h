@@ -37,9 +37,8 @@
 #ifndef __TORESULTSTATS_H
 #define __TORESULTSTATS_H
 
-#include <qtimer.h>
-
 #include "toresultview.h"
+#include "tobackground.h"
 
 class toNoBlockQuery;
 
@@ -70,7 +69,7 @@ class toResultStats : public toResultView {
   bool Reset;
   toNoBlockQuery *Query;
   toNoBlockQuery *SessionIO;
-  QTimer Poll;
+  toBackground Poll;
 
   /** Setup widget.
    */

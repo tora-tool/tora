@@ -39,7 +39,8 @@
 
 #include <qscrollview.h>
 #include <qfont.h>
-#include <qtimer.h>
+
+#include "tobackground.h"
 #include "toresult.h"
 
 class QGrid;
@@ -82,7 +83,7 @@ class toResultItem : public QScrollView, public toResult {
   QFont DataFont;
 
   toNoBlockQuery *Query;
-  QTimer Poll;
+  toBackground Poll;
 
   /** Setup widget.
    * @param num Number of columns.

@@ -49,6 +49,7 @@ SOURCES=\
 	toaboutui.cpp			\
 	toalert.cpp			\
 	toanalyze.cpp			\
+	tobackground.cpp		\
 	tobarchart.cpp		        \
 	tobrowser.cpp		        \
 	tobrowserconstraintui.cpp	\
@@ -152,6 +153,7 @@ SOURCES=\
 
 API=	\
 	tochangeconnection.h	\
+	tobackground.h		\
 	tobarchart.h		\
 	toconf.h		\
 	toconnection.h		\
@@ -347,6 +349,7 @@ tora: \
 	objs/main.o \
 	objs/toabout.o \
 	objs/toaboutui.o \
+	objs/tobackground.o \
 	objs/toconnection.o \
 	objs/todatabasesettingui.o \
 	objs/toeditwidget.o \

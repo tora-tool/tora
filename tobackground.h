@@ -34,46 +34,66 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTSTORAGE_H
-#define __TORESULTSTORAGE_H
+#ifndef __TOBACKGROUND_H
+#define __TOBACKGROUND_H
 
-#include "toresultview.h"
-#include "tobackground.h"
+#include <qtimer.h>
 
-class toNoBlockQuery;
+class QLabel;
+class QMovie;
 
-class toResultStorage : public toResultView {
-  Q_OBJECT
-
-  bool ShowCoalesced;
-  QString Unit;
-  toBackground Poll;
-
-  toNoBlockQuery *Tablespaces;
-  toNoBlockQuery *Files;
-
-  std::list<QString> TablespaceValues;
-  std::list<QString> FileValues;
-
-  QString CurrentSpace;
-  QString CurrentFile;
+/** A timer descendant which also keep track of the last timer setting sent to it.
+ */
+class toTimer : public QTimer {
+  int LastTimer;
 public:
-  toResultStorage(QWidget *parent,const char *name=NULL);
-  ~toResultStorage();
-
-  void showCoalesced(bool shw)
-  { ShowCoalesced=shw; }
-
-  QString currentTablespace(void);
-  QString currentFilename(void);
-  /** Support Oracle
+  /** Create timer.
+   * @param parent Parent object of timer.
+   * @param name Name of timer.
    */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
-public slots:
-  virtual void query(void);
-private slots:
-  void poll(void);
+  toTimer(QObject *parent=0,const char * name=0)
+    : QTimer(parent,name)
+  { }
+  /** Start timer.
+   * @param msec Milliseconds to timeout.
+   * @param sshot Set to true if only timeout once.
+   */
+  int start(int msec,bool sshot=false)
+  { LastTimer=msec; return QTimer::start(msec,sshot); }
+  /** Get last timer start timeout.
+   * @return Last timeout in millisecond.
+   */
+  int lastTimer(void)
+  { return LastTimer; }
+};
+
+/**
+ * A descendant of timer which will indicate in the statusbar of the
+ * main window when any timer is running. Can not do singleshots, only
+ * periodic intervals.
+ */
+class toBackground : public toTimer {
+  static int Running;
+  static QLabel *Label;
+  static QMovie *Animation;
+public:
+  /**
+   * Create a background timer widget.
+   * @param parent Parent widget.
+   * @param name Name of widget.
+   */
+  toBackground(QObject* parent=0,const char* name=0)
+    : toTimer(parent,name)
+  { }
+  /** Start repeating timer with msec interval.
+   * @param msec Millsecond repeat interval.
+   */
+  void start(int msec);
+  /** Stop timer
+   */
+  void stop(void);
+
+  static void init(void);
 };
 
 #endif

@@ -59,7 +59,7 @@ class toAnalyze : public toToolWidget {
   QSpinBox *Parallel;
   QLabel *Current;
   QToolButton *Stop;
-  QTimer *Poll;
+  toBackground Poll;
 
   std::list<toNoBlockQuery *> Running;
   std::list<QString> Pending;

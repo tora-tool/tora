@@ -65,9 +65,9 @@
 #ifndef __TORESULTLONG_H
 #define __TORESULTLONG_H
 
-#include <qtimer.h>
 #include "toresultview.h"
 #include "toconnection.h"
+#include "tobackground.h"
 
 class QListViewItem;
 class toresultlong;
@@ -85,7 +85,7 @@ class toResultLong : public toResultView {
   toNoBlockQuery *Query;
   /** Timer to poll for new data.
    */
-  toTimer Timer;
+  toBackground Timer;
   /** Indicator if headers have been parsed yet.
    */
   bool HasHeaders;

@@ -37,8 +37,7 @@
 #ifndef __TORESULTFIELD_H
 #define __TORESULTFIELD_H
 
-#include <qtimer.h>
-
+#include "tobackground.h"
 #include "tohighlightedtext.h"
 #include "toresult.h"
 
@@ -54,7 +53,7 @@ class toResultField : public toHighlightedText, public toResult {
 
   QString Unapplied;
   toNoBlockQuery *Query;
-  QTimer Poll;
+  toBackground Poll;
 
 public:
   /** Create the widget.

@@ -66,10 +66,10 @@
 #define __TORESULTPIE_H
 
 #include <list>
-#include <qtimer.h>
 
 #include "toresult.h"
 #include "topiechart.h"
+#include "tobackground.h"
 
 class toSQL;
 class toNoBlockQuery;
@@ -84,7 +84,7 @@ class toResultPie : public toPieChart, public toResult {
   toNoBlockQuery *Query;
   std::list<QString> Labels;
   std::list<double> Values;
-  QTimer Poll;
+  toBackground Poll;
   int Columns;
 public:
   /** Create widget.

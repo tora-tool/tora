@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: toresultdepend.h</TITLE>
+<TITLE>Source: tobackground.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: toresultdepend.h</h1>
+		<h1>Source: tobackground.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,56 +62,66 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTDEPEND_H
-#define __TORESULTDEPEND_H
+#ifndef __TOBACKGROUND_H
+#define __TOBACKGROUND_H
 
-#include "tobackground.h"
-#include "toresultview.h"
+#include <qtimer.h>
 
-class toNoBlockQuery;
+class QLabel;
+class QMovie;
 
-/** This widget displays information about the dependencies of an object
- * specified by the first and second parameter in the query. The sql is not
- * used in the query. It will also recurs through all dependencies of the
- * objects depended on.
+/** A timer descendant which also keep track of the last timer setting sent to it.
  */
-
-class toResultDepend : public toResultView {
-  Q_OBJECT
-
-  /** Check if an object already exists.
-   * @param owner Owner of object.
-   * @param name Name of object.
-   * @return True if object exists.
-   */
-  bool exists(const QString &owner,const QString &name);
-
-  toNoBlockQuery *Query;
-  toBackground Poll;
-  QListViewItem *Current;
+class toTimer : public QTimer {
+  int LastTimer;
 public:
-  /** Create the widget.
+  /** Create timer.
+   * @param parent Parent object of timer.
+   * @param name Name of timer.
+   */
+  toTimer(QObject *parent=0,const char * name=0)
+    : QTimer(parent,name)
+  { }
+  /** Start timer.
+   * @param msec Milliseconds to timeout.
+   * @param sshot Set to true if only timeout once.
+   */
+  int start(int msec,bool sshot=false)
+  { LastTimer=msec; return QTimer::start(msec,sshot); }
+  /** Get last timer start timeout.
+   * @return Last timeout in millisecond.
+   */
+  int lastTimer(void)
+  { return LastTimer; }
+};
+
+/**
+ * A descendant of timer which will indicate in the statusbar of the
+ * main window when any timer is running. Can not do singleshots, only
+ * periodic intervals.
+ */
+class toBackground : public toTimer {
+  static int Running;
+  static QLabel *Label;
+  static QMovie *Animation;
+public:
+  /**
+   * Create a background timer widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
-  toResultDepend(QWidget *parent,const char *name=NULL);
+  toBackground(QObject* parent=0,const char* name=0)
+    : toTimer(parent,name)
+  { }
+  /** Start repeating timer with msec interval.
+   * @param msec Millsecond repeat interval.
+   */
+  void start(int msec);
+  /** Stop timer
+   */
+  void stop(void);
 
-  /** Object destructor.
-   */
-  ~toResultDepend();
-  /** Reimplemented for internal reasons.
-   */
-  virtual void query(const QString &sql,const toQList &param);
-  /** Reimplemented for internal reasons.
-   */
-  void query(const QString &sql)
-  { toQList p; query(sql,p); }
-  /** Support Oracle
-   */
-  virtual bool canHandle(toConnection &conn)
-  { return toIsOracle(conn); }
-public slots:
-  void poll(void);
+  static void init(void);
 };
 
 #endif

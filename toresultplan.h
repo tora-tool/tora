@@ -39,9 +39,8 @@
 
 #include <map>
 
-#include <qtimer.h>
-
 #include "toresultview.h"
+#include "tobackground.h"
 
 class toNoBlockQuery;
 
@@ -59,7 +58,7 @@ class toResultPlan : public toResultView {
   QListViewItem *LastTop;
   bool Reading;
   toNoBlockQuery *Query;
-  QTimer Poll;
+  toBackground Poll;
   void checkException(const QString &);
 public:
   /** Create the widget.

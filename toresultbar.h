@@ -41,10 +41,9 @@
 
 #include <list>
 
-#include <qtimer.h>
-
 #include "toresult.h"
 #include "tobarchart.h"
+#include "tobackground.h"
 
 class toSQL;
 class toNoBlockQuery;
@@ -67,7 +66,7 @@ class toResultBar : public toBarChart, public toResult {
   std::list<double> LastValues;
   bool First;
   toNoBlockQuery *Query;
-  QTimer Poll;
+  toBackground Poll;
   unsigned int Columns;
   void query(const QString &sql,const toQList &param,bool first);
 public:

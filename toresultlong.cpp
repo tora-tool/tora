@@ -186,13 +186,15 @@ void toResultLong::addItem(void)
 	  return;
 	}
 	if (MaxNumber<0||MaxNumber>RowNumber)
-	  Timer.start(1,true); // Must use timer, would mean really long recursion otherwise
+	  Timer.start(1); // Must use timer, would mean really long recursion otherwise
+	else
+	  Timer.stop();
       } else {
 	if (Query->eof()) {
 	  cleanup();
 	  return;
 	} else if (!Timer.isActive())
-	  Timer.start(TO_POLL_CHECK,true);
+	  Timer.start(TO_POLL_CHECK);
       }
     }
   } catch (const toConnection::exception &str) {
@@ -221,6 +223,7 @@ void toResultLong::cleanup(void)
   delete Query;
   Query=NULL;
   emit done();  
+  Timer.stop();
 }
 
 bool toResultLong::eof(void)

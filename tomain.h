@@ -43,6 +43,8 @@
 #include <qmainwindow.h>
 #include <qtimer.h>
 
+#include "tobackground.h"
+
 #if 0
 /**
  * The class to use for a printer object.
@@ -211,10 +213,7 @@ private:
    * Current row label.
    */
   QLabel *RowLabel;
-  /**
-   * Indicate if currently reading object cache.
-   */
-  QLabel *CachingLabel;
+  toBackground Poll;
   /**
    * Search & replace dialog if available.
    */
@@ -460,33 +459,6 @@ private slots:
   void checkCaching(void);
 };
 
-
-/** A timer descendant which also keep track of the last timer setting sent to it.
- */
-class toTimer : public QTimer {
-  Q_OBJECT
-
-  int LastTimer;
-public:
-  /** Create timer.
-   * @param parent Parent object of timer.
-   * @param name Name of timer.
-   */
-  toTimer(QObject *parent=0,const char * name=0)
-    : QTimer(parent,name)
-  { }
-  /** Start timer.
-   * @param msec Milliseconds to timeout.
-   * @param sshot Set to true if only timeout once.
-   */
-  int start(int msec,bool sshot=false)
-  { LastTimer=msec; return QTimer::start(msec,sshot); }
-  /** Get last timer start timeout.
-   * @return Last timeout in millisecond.
-   */
-  int lastTimer(void)
-  { return LastTimer; }
-};
 
 /** Display a message in the statusbar of the main window.
  * @param str Message to display

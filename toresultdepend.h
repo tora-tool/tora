@@ -37,8 +37,7 @@
 #ifndef __TORESULTDEPEND_H
 #define __TORESULTDEPEND_H
 
-#include <qtimer.h>
-
+#include "tobackground.h"
 #include "toresultview.h"
 
 class toNoBlockQuery;
@@ -60,7 +59,7 @@ class toResultDepend : public toResultView {
   bool exists(const QString &owner,const QString &name);
 
   toNoBlockQuery *Query;
-  QTimer Poll;
+  toBackground Poll;
   QListViewItem *Current;
 public:
   /** Create the widget.

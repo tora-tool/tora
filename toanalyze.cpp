@@ -187,8 +187,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  Poll=new QTimer(this);
-  connect(Poll,SIGNAL(timeout()),this,SLOT(poll()));
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
   refresh();
 }
@@ -242,7 +241,7 @@ void toAnalyze::poll(void)
       running++;
   }
   if (!running) {
-    Poll->stop();
+    Poll.stop();
     refresh();
     stop();
   } else
@@ -300,7 +299,7 @@ void toAnalyze::execute(void)
     if (!sql.isEmpty())
       toPush(Running,new toNoBlockQuery(connection(),sql,par));
   }
-  Poll->start(100);
+  Poll.start(100);
   Stop->setEnabled(true);
   poll();
 }

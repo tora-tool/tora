@@ -453,7 +453,8 @@ toMain::toMain()
   } while(welcome.isNull());
 
   toStatusMessage(welcome,true);
-  CachingLabel=NULL;
+
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(checkCaching()));
 
   try {
     toNewConnection newConnection(this,"First connection",true);
@@ -1072,19 +1073,8 @@ void toMain::checkCaching(void)
     if (!(*i)->cacheAvailable())
       num++;
   }
-  if (num==0) {
-    if (CachingLabel)
-      CachingLabel->hide();
-  } else {
-    if (!CachingLabel) {
-      CachingLabel=new QLabel(statusBar());
-      statusBar()->addWidget(CachingLabel,0,true);
-    }
-    CachingLabel->show();
-    if (num>1)
-      CachingLabel->setText("Caching "+QString::number(num));
-    else
-      CachingLabel->setText("Caching");
-    QTimer::singleShot(200,this,SLOT(checkCaching()));
-  }
+  if (num==0)
+    Poll.stop();
+  else
+    Poll.start(100);
 }
