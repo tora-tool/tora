@@ -93,7 +93,7 @@ public:
   {
     toMainWidget()->editMenu()->insertSeparator();
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)tosqledit_xpm),
-					   "&Edit SQL...",toolid);
+					   tr("&Edit SQL..."),toolid);
     toMainWidget()->registerSQLEditor(toolid);
   }
   void closeWindow(void)
@@ -116,7 +116,7 @@ void toSQLEdit::updateStatements(const QString &sel)
 
   for(toSQL::sqlMap::iterator pos=sql.begin();pos!=sql.end();pos++) {
     QString str=(*pos).first;
-    int i=str.find(":");
+    int i=str.find(QString::fromLatin1(":"));
     if (i>=0) {
       if (!head||head->text(0)!=str.left(i)) {
 	head=new QListViewItem(Statements,str.left(i));
@@ -141,50 +141,50 @@ void toSQLEdit::updateStatements(const QString &sel)
 toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   : toToolWidget(SQLEditTool,"sqledit.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL editor");
+  QToolBar *toolbar=toAllocBar(this,tr("SQL editor"));
 
   new QToolButton(QPixmap((const char **)fileopen_xpm),
-		  "Load SQL dictionary file",
-		  "Load SQL dictionary file",
+		  tr("Load SQL dictionary file"),
+		  tr("Load SQL dictionary file"),
 		  this,SLOT(loadSQL()),
 		  toolbar);
   new QToolButton(QPixmap((const char **)filesave_xpm),
-		  "Save modified SQL to dictionary file",
-		  "Save modified SQL to dictionary file",
+		  tr("Save modified SQL to dictionary file"),
+		  tr("Save modified SQL to dictionary file"),
 		  this,SLOT(saveSQL()),
 		  toolbar);
   toolbar->addSeparator();
   CommitButton=new QToolButton(QPixmap((const char **)commit_xpm),
-			       "Save this entry in the dictionary",
-			       "Save this entry in the dictionary",
+			       tr("Save this entry in the dictionary"),
+			       tr("Save this entry in the dictionary"),
 			       this,SLOT(commitChanges()),
 			       toolbar);
   TrashButton=new QToolButton(QPixmap((const char **)trash_xpm),
-			      "Delete this version from the SQL dictionary",
-			      "Delete this version from the SQL dictionary",
+			      tr("Delete this version from the SQL dictionary"),
+			      tr("Delete this version from the SQL dictionary"),
 			      this,SLOT(deleteVersion()),
 			      toolbar);
   new QToolButton(QPixmap((const char **)add_xpm),
-		  "Start new SQL definition",
-		  "Start new SQL definition",
+		  tr("Start new SQL definition"),
+		  tr("Start new SQL definition"),
 		  this,SLOT(newSQL()),
 		  toolbar);
   CommitButton->setEnabled(true);
   TrashButton->setEnabled(false);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
   Statements=new toListView(splitter);
   Statements->setRootIsDecorated(true);
-  Statements->addColumn("Text Name");
+  Statements->addColumn(tr("Text Name"));
   Statements->setSorting(0);
   Statements->setSelectionMode(QListView::Single);
   QVBox *vbox=new QVBox(splitter);
 
   QHBox *hbox=new QHBox(vbox);
-  new QLabel("Name ",hbox);
+  new QLabel(tr("Name "),hbox);
   Name=new QLineEdit(hbox);
-  new QLabel(" Database ",hbox);
+  new QLabel(tr(" Database "),hbox);
   Version=new QComboBox(hbox);
   Version->setEditable(true);
   Version->setDuplicatesEnabled(false);
@@ -193,7 +193,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
 
   QFrame *line = new QFrame(vbox);
   line->setFrameStyle(QFrame::HLine|QFrame::Sunken);
-  new QLabel("Description",vbox);
+  new QLabel(tr("Description"),vbox);
   splitter=new QSplitter(Vertical,vbox);
   Description=new toMarkedText(splitter);
   Editor=new toWorksheet(splitter,connection,false);
@@ -243,13 +243,13 @@ void toSQLEdit::saveSQL(void)
 
 void toSQLEdit::deleteVersion(void)
 {
-  QString provider;
-  QString version;
+  QCString provider;
+  QCString version;
   if (!splitVersion(Version->currentText(),provider,version))
     return;
 
   try {
-    toSQL::deleteSQL(Name->text(),version,provider);
+    toSQL::deleteSQL(Name->text().latin1(),version,provider);
     Version->removeItem(Version->currentItem());
 
     if (Version->count()==0) {
@@ -261,7 +261,7 @@ void toSQLEdit::deleteVersion(void)
       }
       newSQL();
     } else
-      selectionChanged(connection().provider()+":"+connection().version());
+      selectionChanged(QString::fromLatin1(connection().provider()+":"+connection().version()));
   } TOCATCH
 }
 
@@ -272,27 +272,27 @@ bool toSQLEdit::close(bool del)
   return false;
 }
 
-bool toSQLEdit::splitVersion(const QString &split,QString &provider,QString &version)
+bool toSQLEdit::splitVersion(const QString &split,QCString &provider,QCString &version)
 {
-  int found=split.find(":");
+  int found=split.find(QString::fromLatin1(":"));
   if (found<0) {
-    TOMessageBox::warning(this,"Wrong format of version",
-			  "Should be database provider:version.",
-			  "&Ok");
+    TOMessageBox::warning(this,tr("Wrong format of version"),
+			  tr("Should be database provider:version."),
+			  tr("&Ok"));
     return false;
   }
-  provider=split.mid(0,found);
+  provider=split.mid(0,found).latin1();
   if (provider.length()==0) {
-    TOMessageBox::warning(this,"Wrong format of version",
-			  "Should be database provider:version. Can't start with :.",
-			  "&Ok");
+    TOMessageBox::warning(this,tr("Wrong format of version"),
+			  tr("Should be database provider:version. Can't start with :."),
+			  tr("&Ok"));
     return false;
   }
-  version=split.mid(found+1);
+  version=split.mid(found+1).latin1();
   if (version.length()==0) {
-    TOMessageBox::warning(this,"Wrong format of version",
-			  "Should be database provider:version. Can't end with the first :.",
-			  "&Ok");
+    TOMessageBox::warning(this,tr("Wrong format of version"),
+			  tr("Should be database provider:version. Can't end with the first :."),
+			  tr("&Ok"));
     return false;
   }
   return true;
@@ -300,14 +300,14 @@ bool toSQLEdit::splitVersion(const QString &split,QString &provider,QString &ver
 
 void toSQLEdit::commitChanges(bool changeSelected)
 {
-  QString provider;
-  QString version;
+  QCString provider;
+  QCString version;
   if (!splitVersion(Version->currentText(),provider,version))
     return;
   QString name=Name->text();
   QListViewItem *item=toFindItem(Statements,name);
   if (!item) {
-    int i=name.find(":");
+    int i=name.find(QString::fromLatin1(":"));
     if (i>=0) {
       item=toFindItem(Statements,name.mid(0,i));
       if (!item)
@@ -325,13 +325,13 @@ void toSQLEdit::commitChanges(bool changeSelected)
   }
   connectList(true);
   if (Description->text().isEmpty()) {
-    TOMessageBox::warning(this,"Missing description",
-			  "No description filled in. This is necessary to save SQL."
-			  " Adding undescribed as description.",
-			  "&Ok");
-    Description->setText("Undescribed");
+    TOMessageBox::warning(this,tr("Missing description"),
+			  tr("No description filled in. This is necessary to save SQL."
+			  " Adding undescribed as description."),
+			  tr("&Ok"));
+    Description->setText(tr("Undescribed"));
   }
-  toSQL::updateSQL(name,
+  toSQL::updateSQL(name.latin1(),
 		   Editor->editor()->text(),
 		   Description->text(),
 		   version,
@@ -357,9 +357,9 @@ bool toSQLEdit::checkStore(bool justVer)
        (!justVer&&Version->currentText()!=LastVersion)||
        Description->edited())&&
       Version->currentText().length()>0) {
-    switch (TOMessageBox::information(this,"Modified SQL dictionary",
-				      "Save changes into the SQL dictionary",
-				      "&Yes","&No","&Cancel",0,2)) {
+    switch (TOMessageBox::information(this,tr("Modified SQL dictionary"),
+				      tr("Save changes into the SQL dictionary"),
+				      tr("&Yes"),tr("&No"),tr("&Cancel"),0,2)) {
     case 0:
       commitChanges(false);
       break;
@@ -391,7 +391,7 @@ void toSQLEdit::selectionChanged(void)
 {
   try {
     if (checkStore(false))
-      selectionChanged(connection().provider()+":"+connection().version());
+      selectionChanged(QString::fromLatin1(connection().provider()+":"+connection().version()));
   } TOCATCH
 }
 
@@ -413,8 +413,8 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
 
   Version->clear();
   LastVersion="";
-  if (sql.find(name)!=sql.end()) {
-    toSQL::definition &def=sql[name];
+  if (sql.find(name.latin1())!=sql.end()) {
+    toSQL::definition &def=sql[name.latin1()];
     std::list<toSQL::version> &ver=def.Versions;
   
     Description->setText(def.Description);
@@ -424,7 +424,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
     int ind;
     for (std::list<toSQL::version>::iterator i=ver.begin();i!=ver.end();i++) {
       QString str=(*i).Provider;
-      str+=":";
+      str+=QString::fromLatin1(":");
       str+=(*i).Version;
       Version->insertItem(str);
       if (str<=maxver||j==ver.end()) {
@@ -446,7 +446,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
     CommitButton->setEnabled(true);
   }
   if (LastVersion.isEmpty()) {
-    LastVersion="Any:Any";
+    LastVersion=QString::fromLatin1("Any:Any");
     Version->insertItem(LastVersion);
   }
   Editor->editor()->setEdited(false);
@@ -460,7 +460,7 @@ void toSQLEdit::selectionChanged(const QString &maxver)
       QString name=item->text(0);
       while(item->parent()) {
 	item=item->parent();
-	name.prepend(":");
+	name.prepend(QString::fromLatin1(":"));
 	name.prepend(item->text(0));
       }
       changeSQL(name,maxver);
@@ -472,7 +472,7 @@ void toSQLEdit::editSQL(const QString &nam)
 {
   try {
     if (checkStore(false))
-      changeSQL(nam,connection().provider()+":"+connection().version());
+      changeSQL(nam,QString::fromLatin1(connection().provider()+":"+connection().version()));
   } TOCATCH
 }
 
@@ -480,13 +480,13 @@ void toSQLEdit::newSQL(void)
 {
   if (checkStore(false)) {
     QString name=Name->text();
-    int found=name.find(":");
+    int found=name.find(QString::fromLatin1(":"));
     if(found<0)
       name=QString::null;
     else
       name=name.mid(0,found+1);
     try {
-      changeSQL(name,connection().provider()+":Any");
+      changeSQL(name,QString::fromLatin1(connection().provider()+":Any"));
     } TOCATCH
   }
 }
@@ -494,21 +494,21 @@ void toSQLEdit::newSQL(void)
 static toSQLTemplate SQLTemplate;
 
 toSQLTemplateItem::toSQLTemplateItem(QListView *parent)
-  : toTemplateItem(SQLTemplate,parent,"SQL Dictionary")
+  : toTemplateItem(SQLTemplate,parent,qApp->translate("toSQL","SQL Dictionary"))
 {
   setExpandable(true);
 }
 
-static QString JustLast(const QString &str)
+static QString JustLast(const QCString &str)
 {
   int pos=str.findRev(":");
   if (pos>=0)
-    return str.mid(pos+1);
-  return str;
+    return QString::fromLatin1(str.mid(pos+1));
+  return QString::fromLatin1(str);
 }
 
 toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
-				     const QString &name)
+				     const QCString &name)
   : toTemplateItem(parent,JustLast(name))
 {
   Name=name;
@@ -517,20 +517,20 @@ toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
 
 void toSQLTemplateItem::expand(void)
 {
-  std::list<QString> def;
-  if (Name.isNull())
+  std::list<QCString> def;
+  if (Name.isEmpty())
     def=toSQL::range(Name);
   else
     def=toSQL::range(Name+":");
-  QString last;
-  for(std::list<QString>::iterator sql=def.begin();sql!=def.end();sql++) {
-    QString name=*sql;
-    if (!Name.isNull())
+  QCString last;
+  for(std::list<QCString>::iterator sql=def.begin();sql!=def.end();sql++) {
+    QCString name=*sql;
+    if (!Name.isEmpty())
       name=name.mid(Name.length()+1);
     if (name.find(":")!=-1)
       name=name.mid(0,name.find(":"));
     if (name!=last) {
-      if (Name.isNull())
+      if (Name.isEmpty())
 	new toSQLTemplateItem(this,name);
       else
 	new toSQLTemplateItem(this,Name+":"+name);

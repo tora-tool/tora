@@ -133,7 +133,7 @@ void toNoBlockQuery::queryTask::run(void)
   } catch (...) {
     TO_DEBUGOUT("Unknown exception\n");
     toLocker lock(Parent.Lock);
-    Parent.Error=QString("Unknown exception");
+    Parent.Error=qApp->translate("toNoBlockQuery","Unknown exception");
   }
 
   TO_DEBUGOUT("Locking EOQ\n");
@@ -164,7 +164,7 @@ QString toNoBlockQuery::readValueNull()
     TO_DEBUGOUT("Continue running\n");
     Continue.up();
     if (CurrentValue==Values.end())
-      throw QString("Reading past end of query");
+      throw qApp->translate("toNoBlockQuery","Reading past end of query");
   }
   checkError();
   QString ret=*CurrentValue;
@@ -194,7 +194,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
   } catch(...) {
     delete Query;
     Query=NULL;
-    Error=QString("Couldn't open query");
+    Error=qApp->translate("toNoBlockQuery","Couldn't open query");
     return;
   }
   TO_DEBUGOUT("Created no block query\n");
@@ -220,7 +220,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
     thread->start();
     TO_DEBUGOUT("Started thread\n");
   } catch(...) {
-    Error=QString("Failed to start background query thread");
+    Error=qApp->translate("toNoBlockQuery","Failed to start background query thread");
     while(Running.getValue())
       Running.down();
     Quit=EOQ=true;
@@ -242,7 +242,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
   } catch(...) {
     delete Query;
     Query=NULL;
-    Error=QString("Couldn't open query");
+    Error=qApp->translate("toNoBlockQuery","Couldn't open query");
     return;
   }
   TO_DEBUGOUT("Created no block query\n");
@@ -271,7 +271,7 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
     thread->start();
     TO_DEBUGOUT("Started thread\n");
   } catch(...) {
-    Error=QString("Failed to start background query thread");
+    Error=qApp->translate("toNoBlockQuery","Failed to start background query thread");
     while(Running.getValue())
       Running.down();
     Quit=EOQ=true;
@@ -363,7 +363,7 @@ bool toNoBlockQuery::poll(void)
   if (Started>0&&Started<time(NULL)&&!Description.size()) {
     if (Query&&(Query->mode()==toQuery::Normal||Query->mode()==toQuery::Background)) {
       try {
-	toStatusMessage("Restarting query in own connection",false,false);
+	toStatusMessage(qApp->translate("toNoBlockQuery","Restarting query in own connection"),false,false);
 	toConnection &conn=Query->connection();
 	Lock.unlock();
 	TO_DEBUGOUT("Stopping normal query\n");
@@ -395,7 +395,7 @@ bool toNoBlockQuery::poll(void)
 	thread->start();
 	TO_DEBUGOUT("Started thread\n");
       } catch(...) {
-	Error=QString("Failed to start background query thread");
+	Error=qApp->translate("toNoBlockQuery","Failed to start background query thread");
 	while(Running.getValue())
 	  Running.down();
 	Quit=EOQ=true;

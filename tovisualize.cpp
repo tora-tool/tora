@@ -56,48 +56,48 @@
 toVisualize::toVisualize(toListView *source,QWidget *parent,const char *name)
   : QVBox(parent,name),Source(source)
 {
-  QToolBar *toolbar=toAllocBar(this,"Data visualization");
+  QToolBar *toolbar=toAllocBar(this,tr("Data visualization"));
   
   Type=new QComboBox(toolbar);
-  Type->insertItem("Bar chart",0);
-  Type->insertItem("Line chart",1);
-  Type->insertItem("Pie chart",2);
+  Type->insertItem(tr("Bar chart"),0);
+  Type->insertItem(tr("Line chart"),1);
+  Type->insertItem(tr("Pie chart"),2);
 
   toolbar->addSeparator();
 
   Legend=new QToolButton(toolbar);
   Legend->setToggleButton(true);
   Legend->setIconSet(QIconSet(QPixmap((const char **)legend_xpm)));
-  QToolTip::add(Legend,"Display legend");
+  QToolTip::add(Legend,tr("Display legend"));
   Legend->setOn(true);
 
   Grid=new QToolButton(toolbar);
   Grid->setToggleButton(true);
   Grid->setIconSet(QIconSet(QPixmap((const char **)grid_xpm)));
-  QToolTip::add(Grid,"Display grid");
+  QToolTip::add(Grid,tr("Display grid"));
   Grid->setOn(true);
 
   Axis=new QToolButton(toolbar);
   Axis->setToggleButton(true);
   Axis->setIconSet(QIconSet(QPixmap((const char **)axis_xpm)));
-  QToolTip::add(Axis,"Display axis legend");
+  QToolTip::add(Axis,tr("Display axis legend"));
   Axis->setOn(true);
 
-  QToolTip::add(new QLabel(" Title columns ",toolbar),
-		"Number of columns to use as title");
+  QToolTip::add(new QLabel(tr(" Title columns "),toolbar),
+		tr("Number of columns to use as title"));
   Title=new QComboBox(toolbar);
-  Title->insertItem("1");
-  Title->insertItem("2");
-  Title->insertItem("3");
-  Title->insertItem("4");
-  Title->insertItem("5");
-  Title->insertItem("6");
+  Title->insertItem(QString::fromLatin1("1"));
+  Title->insertItem(QString::fromLatin1("2"));
+  Title->insertItem(QString::fromLatin1("3"));
+  Title->insertItem(QString::fromLatin1("4"));
+  Title->insertItem(QString::fromLatin1("5"));
+  Title->insertItem(QString::fromLatin1("6"));
 
   toolbar->addSeparator();
 
   new QToolButton(QPixmap((const char **)compile_xpm),
-		  "Update chart",
-		  "Update chart",
+		  tr("Update chart"),
+		  tr("Update chart"),
 		  this,SLOT(display(void)),
 		  toolbar);
 
@@ -117,7 +117,7 @@ void toVisualize::display(void)
       chart->showLegend(Legend->isOn());
       int add=0;
       int tit=max(1,Title->currentText().toInt());
-      if(Source->columnText(0)=="#")
+      if(Source->columnText(0)==QString::fromLatin1("#"))
 	add=1;
       chart->setTitle(Source->columnText(add));
       chart->showGrid(Grid->isOn()?5:0);
@@ -132,7 +132,7 @@ void toVisualize::display(void)
       for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
 	QString label=item->text(add);
 	for (int j=add+1;j<tit+add;j++) {
-	  label+=", ";
+	  label+=QString::fromLatin1(", ");
 	  label+=item->text(j);
 	}
 	std::list<double> val;
@@ -150,7 +150,7 @@ void toVisualize::display(void)
       chart->showLegend(Legend->isOn());
       int add=0;
       int tit=max(1,Title->currentText().toInt());
-      if(Source->columnText(0)=="#")
+      if(Source->columnText(0)==QString::fromLatin1("#"))
 	add=1;
       chart->setTitle(Source->columnText(add));
       chart->showGrid(Grid->isOn()?5:0);
@@ -165,7 +165,7 @@ void toVisualize::display(void)
       for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
 	QString label=item->text(add);
 	for (int j=add+1;j<tit+add;j++) {
-	  label+=", ";
+	  label+=QString::fromLatin1(", ");
 	  label+=item->text(j);
 	}
 	std::list<double> val;
@@ -183,13 +183,13 @@ void toVisualize::display(void)
       chart->showLegend(Legend->isOn());
       int add=0;
       int tit=max(1,Title->currentText().toInt());
-      if(Source->columnText(0)=="#")
+      if(Source->columnText(0)==QString::fromLatin1("#"))
 	add=1;
       chart->setTitle(Source->columnText(add));
       for (QListViewItem *item=Source->firstChild();item;item=item->nextSibling()) {
 	QString label=item->text(add);
 	for (int j=add+1;j<tit+add;j++) {
-	  label+=", ";
+	  label+=QString::fromLatin1(", ");
 	  label+=item->text(j);
 	}
 	chart->addValue(item->text(tit+add).toDouble(),label);

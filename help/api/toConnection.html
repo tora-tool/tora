@@ -32,7 +32,7 @@
 </LI>
 <LI>class <i><A HREF="toConnection__connectionImpl.html">connectionImpl</A></i>
 </LI>
-</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref35">toConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &user,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &password,
+</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref35">toConnection</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &user,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &password,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &host,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &database,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &mode=QString::null,
 	       bool cache=true) 
 </LI>
@@ -52,9 +52,9 @@
 </LI>
 <LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref43">mode</A></b> ()  const
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref44">version</A></b> ()  const
+<LI>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &&nbsp;<b><A HREF="#ref44">version</A></b> ()  const
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref45">provider</A></b> ()  const
+<LI>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &&nbsp;<b><A HREF="#ref45">provider</A></b> ()  const
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref46">description</A></b> (bool version=true)  const
 </LI>
@@ -150,7 +150,7 @@
  database. 
  (See also toQuery::queryImpl and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
    </p>
-<A NAME="toConnection"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &user,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &password,
+<A NAME="toConnection"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toConnection</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &provider,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &user,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &password,
 	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &host,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &database,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &mode=QString::null,
 	       bool cache=true)
 <br></td><td align="right"><h3><strong>toConnection</strong></h3></td></tr></table><p></p><p> Create a new connection.
@@ -203,10 +203,10 @@
 <A NAME="mode"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>mode</strong> ()
 <br></td><td align="right"><h3><strong>mode</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get mode of connection.
    </p>
-<A NAME="version"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>version</strong> ()
+<A NAME="version"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &&nbsp;<strong>version</strong> ()
 <br></td><td align="right"><h3><strong>version</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get version of connection.
    </p>
-<A NAME="provider"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>provider</strong> ()
+<A NAME="provider"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &&nbsp;<strong>provider</strong> ()
 <br></td><td align="right"><h3><strong>provider</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get provider of connection.
    </p>
 <A NAME="description"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>description</strong> (bool version=true)

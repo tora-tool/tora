@@ -182,7 +182,7 @@ void toResultLine::addMenues(QPopupMenu *popup)
 {
   if (sqlName().length()) {
     popup->insertSeparator();
-    popup->insertItem("Edit SQL...",
+    popup->insertItem(tr("Edit SQL..."),
 		      this,SLOT(editSQL()));
   }
 }

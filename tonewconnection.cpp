@@ -64,30 +64,31 @@
 #include "tonewconnectionui.moc"
 
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
-  : toNewConnectionUI(parent,name,modal,fl),toHelpContext("newconnection.html")
+  : toNewConnectionUI(parent,name,modal,fl),
+    toHelpContext(QString::fromLatin1("newconnection.html"))
 {
   toHelp::connectDialog(this);
 
   Database->insertItem(toTool::globalConfig(CONF_DATABASE,DEFAULT_DATABASE));
-  Previous->addColumn("Provider");
-  Previous->addColumn("Host");
-  Previous->addColumn("Database");
-  Previous->addColumn("Username");
+  Previous->addColumn(tr("Provider"));
+  Previous->addColumn(tr("Host"));
+  Previous->addColumn(tr("Database"));
+  Previous->addColumn(tr("Username"));
   Previous->setSelectionMode(QListView::Single);
 
-  std::list<QString> lst=toConnectionProvider::providers();
+  std::list<QCString> lst=toConnectionProvider::providers();
   int sel=0,cur=0;
-  QString provider=toTool::globalConfig(CONF_PROVIDER,DEFAULT_PROVIDER);
-  for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
-    Provider->insertItem(*i);
+  QCString provider=toTool::globalConfig(CONF_PROVIDER,DEFAULT_PROVIDER).latin1();
+  for(std::list<QCString>::iterator i=lst.begin();i!=lst.end();i++) {
+    Provider->insertItem(QString::fromLatin1(*i));
     if (*i==provider)
       sel=cur;
     cur++;
   }
   if (cur==0) {
     TOMessageBox::information(this,
-			      "No connection provider",
-			      "No available connection provider, plugins probably missing");
+			      tr("No connection provider"),
+			      tr("No available connection provider, plugins probably missing"));
     reject();
     return;
   }
@@ -102,7 +103,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 
   bool pass=toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD).isEmpty();
   if (pass)
-    Password->setText(DEFAULT_PASSWORD);
+    Password->setText(QString::fromLatin1(DEFAULT_PASSWORD));
   else
     Password->setText(toTool::globalConfig(CONF_PASSWORD,DEFAULT_PASSWORD));
 
@@ -114,16 +115,16 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
     Previous->setSorting(-1);
     QListViewItem *last=NULL;
     for (int i=0;i<maxHist;i++) {
-      QString path=CONF_CONNECT_HISTORY;
+      QCString path=CONF_CONNECT_HISTORY;
       path+=":";
-      path+=QString::number(i);
-      QString tmp=path;
+      path+=QString::number(i).latin1();
+      QCString tmp=path;
       tmp+=CONF_USER;
-      QString user=toTool::globalConfig(tmp,QString::null);
+      QString user=toTool::globalConfig(tmp,"");
 
       tmp=path;
       tmp+=CONF_PASSWORD;
-      QString passstr=(pass?QString(DEFAULT_PASSWORD):
+      QString passstr=(pass?QString::fromLatin1(DEFAULT_PASSWORD):
                       (toTool::globalConfig(tmp,DEFAULT_PASSWORD)));
 
       tmp=path;
@@ -146,7 +147,7 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
 void toNewConnection::changeProvider(void)
 {
   try {
-    std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText());
+    std::list<QString> hosts=toConnectionProvider::hosts(Provider->currentText().latin1());
     QString current=Host->currentText();
 
     Host->clear();
@@ -167,7 +168,7 @@ void toNewConnection::changeProvider(void)
     }
     Host->lineEdit()->setText(current);
     Mode->clear();
-    std::list<QString> modes=toConnectionProvider::modes(Provider->currentText());
+    std::list<QString> modes=toConnectionProvider::modes(Provider->currentText().latin1());
     for(std::list<QString>::iterator j=modes.begin();j!=modes.end();j++)
       Mode->insertItem(*j);
   } catch (const QString &str) {
@@ -183,8 +184,8 @@ void toNewConnection::changeHost(void)
     if (SqlNet->isHidden())
       host=Host->currentText();
     else
-      host=(SqlNet->isChecked()?QString("SQL*Net"):QString::null);
-    std::list<QString> databases=toConnectionProvider::databases(Provider->currentText(),
+      host=(SqlNet->isChecked()?QString::fromLatin1("SQL*Net"):QString::null);
+    std::list<QString> databases=toConnectionProvider::databases(Provider->currentText().latin1(),
 								 host,
 								 Username->text(),
 								 Password->text());
@@ -216,7 +217,7 @@ toConnection *toNewConnection::makeConnection(void)
     if (SqlNet->isHidden())
       host=Host->currentText();
     else
-      host=SqlNet->isChecked()?QString("SQL*Net"):QString::null;
+      host=SqlNet->isChecked()?QString::fromLatin1("SQL*Net"):QString::null;
     toTool::globalSetConfig(CONF_HOST,host);
 
     std::list<QString> con=toMainWidget()->connections();
@@ -224,7 +225,7 @@ toConnection *toNewConnection::makeConnection(void)
       try {
 	toConnection &conn=toMainWidget()->connection(*i);
 	if(conn.user()==Username->text()&&
-	   conn.provider()==Provider->currentText()&&
+	   conn.provider()==Provider->currentText().latin1()&&
 	   conn.host()==host&&
 	   conn.database()==Database->currentText())
 	  return &conn;
@@ -232,7 +233,7 @@ toConnection *toNewConnection::makeConnection(void)
       }
     }
 
-    toConnection *retCon=new toConnection(Provider->currentText(),
+    toConnection *retCon=new toConnection(Provider->currentText().latin1(),
 					  Username->text(),
 					  Password->text(),
 					  host,
@@ -259,11 +260,11 @@ toConnection *toNewConnection::makeConnection(void)
       int siz=toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt();
       int i=0;
       for(QListViewItem *item=Previous->firstChild();item&&i<siz;item=item->nextSibling()) {
-	QString path=CONF_CONNECT_HISTORY;
+	QCString path=CONF_CONNECT_HISTORY;
 	path+=":";
-	path+=QString::number(i);
+	path+=QString::number(i).latin1();
 
-	QString tmp=path;
+	QCString tmp=path;
 	tmp+=CONF_PROVIDER;
 	toTool::globalSetConfig(tmp,item->text(0));
 
@@ -292,10 +293,10 @@ toConnection *toNewConnection::makeConnection(void)
 
     return retCon;
   } catch (const QString &exc) {
-    QString str("Unable to connect to the database.\n");
+    QString str=tr("Unable to connect to the database.\n");
     str.append(exc);
     TOMessageBox::information(this,
-			      "Unable to connect to the database",
+			      tr("Unable to connect to the database"),
 			      str);
     return NULL;
   }
@@ -327,8 +328,8 @@ void toNewConnection::historyConnect(void)
   bool ok=true;
   if(Password->text()==DEFAULT_PASSWORD) {
     ok=false;
-    QString name=QInputDialog::getText("Enter password",
-				       "Enter password to use for connection.",
+    QString name=QInputDialog::getText(tr("Enter password"),
+				       tr("Enter password to use for connection."),
 				       QLineEdit::Password,QString::null,&ok,this);
     if (ok)
       Password->setText(name);

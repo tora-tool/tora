@@ -76,13 +76,13 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
 };
 
@@ -379,8 +379,7 @@ public:
    * @param separator Separator for CSV format.
    * @param delimiter Delimiter for CSV format.
    */
-  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,
-			       const QString &separator=";",const QString &delimiter="\"");
+  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,const QString &separator=";",const QString &delimiter="\"");
   /** Export list as file.
    */
   virtual bool editSave(bool ask);
@@ -403,12 +402,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Create transposed copy of list
    * @return Pointer to newly allocated transposed listview.
    */

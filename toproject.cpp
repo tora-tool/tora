@@ -83,7 +83,7 @@ void toProjectTemplateItem::setup(const QString &name,bool open)
   if (project()&&!Filename.isEmpty()&&open) {
     try {
       QString data=QString::fromUtf8(toReadFile(Filename));
-      QStringList files=QStringList::split(QRegExp("\n"),data);
+      QStringList files=QStringList::split(QRegExp(QString::fromLatin1("\n")),data);
       toProjectTemplateItem *last=NULL;
       for(unsigned int i=0;i<files.count();i++)
 	last=new toProjectTemplateItem(this,last,files[i]);
@@ -96,9 +96,9 @@ void toProjectTemplateItem::setup(const QString &name,bool open)
 void toProjectTemplateItem::setFilename(const QString &name)
 {
   if (parent()) {
-    int pos=name.findRev("/");
+    int pos=name.findRev(QString::fromLatin1("/"));
     if (pos<0)
-      pos=name.findRev("\\");
+      pos=name.findRev(QString::fromLatin1("\\"));
     if (pos>=0)
       setText(0,name.mid(pos+1));
     else
@@ -116,7 +116,7 @@ toProjectTemplateItem::toProjectTemplateItem(toTemplateItem *item,
 }
 
 toProjectTemplateItem::toProjectTemplateItem(QListView *item,QString name,bool open)
-  : toTemplateItem(ProjectTemplate,item,"SQL Project")
+  : toTemplateItem(ProjectTemplate,item,qApp->translate("toProject","SQL Project"))
 {
   setup(name,open);
 }
@@ -191,12 +191,12 @@ toProject *toProjectTemplate::selectedWidget(QWidget *parent)
   return Details;
 }
 
-void toProjectTemplate::importData(std::map<QString,QString> &data,const QString &prefix)
+void toProjectTemplate::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   bool any=false;
-  std::map<QString,QString>::iterator i=data.find(prefix+":");
+  std::map<QCString,QString>::iterator i=data.find(prefix+":");
   while(i!=data.end()) {
-    if ((*i).first.startsWith(prefix)) {
+    if ((*i).first.mid(0,prefix.length())==prefix) {
       Import[(*i).first.mid(prefix.length()+1)]=(*i).second;
       any=true;
     } else if (any)
@@ -205,7 +205,7 @@ void toProjectTemplate::importData(std::map<QString,QString> &data,const QString
   }
 }
 
-void toProjectTemplate::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toProjectTemplate::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   if (!Root)
     return;
@@ -215,17 +215,17 @@ void toProjectTemplate::exportData(std::map<QString,QString> &data,const QString
   data[prefix+":"]=Root->filename();
   for (QListViewItem *item=Root->firstChild();item;item=next) {
     id++;
-    QString nam=prefix;
+    QCString nam=prefix;
     nam+=":Items:";
-    nam+=QString::number(id);
+    nam+=QString::number(id).latin1();
     nam+=":";
     itemMap[item]=id;
     if (item->parent())
       data[nam+"Parent"]=QString::number(itemMap[item->parent()]);
     else
-      data[nam+"Parent"]="0";
+      data[nam+"Parent"]=QString::fromLatin1("0");
     if (item->isOpen())
-      data[nam+"Open"]="Yes";
+      data[nam+"Open"]=QString::fromLatin1("Yes");
     toProjectTemplateItem *projitem=dynamic_cast<toProjectTemplateItem *>(item);
     QString val;
     if (projitem)
@@ -254,13 +254,13 @@ void toProjectTemplate::insertItems(QListView *parent,QToolBar *toolbar)
   Root->setOpen(true);
 
   int id=1;
-  std::map<QString,QString>::iterator i;
+  std::map<QCString,QString>::iterator i;
   std::map<int,toProjectTemplateItem *> itemMap;
 
   toProjectTemplateItem *last=NULL;
 
-  while((i=Import.find("Items:"+QString::number(id)+":Parent"))!=Import.end()) {
-    QString nam="Items:"+QString::number(id)+":";
+  while((i=Import.find(QCString("Items:")+QString::number(id).latin1()+":Parent"))!=Import.end()) {
+    QCString nam=QCString("Items:")+QString::number(id).latin1()+":";
     int parent=(*i).second.toInt();
     if (parent)
       last=new toProjectTemplateItem(itemMap[parent],last,Import[nam+"0"],false);
@@ -274,13 +274,13 @@ void toProjectTemplate::insertItems(QListView *parent,QToolBar *toolbar)
 
   connect(parent,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(changeItem(QListViewItem *)));
   AddFile=new QToolButton(QPixmap((const char **)addproject_xpm),
-			  "Add file to project",
-			  "Add file to project",
+			  qApp->translate("toProject","Add file to project"),
+			  qApp->translate("toProject","Add file to project"),
 			  this,SLOT(addFile()),
 			  toolbar);
   DelFile=new QToolButton(QPixmap((const char **)trash_xpm),
-			  "Remove file from project",
-			  "Remove file from project",
+			  qApp->translate("toProject","Remove file from project"),
+			  qApp->translate("toProject","Remove file from project"),
 			  this,SLOT(delFile()),
 			  toolbar);
   AddFile->setEnabled(false);
@@ -302,7 +302,7 @@ void toProjectTemplate::removeItems(QListViewItem *item)
 void toProjectTemplate::addFile(void)
 {
   QString file=toOpenFilename(QString::null,
-			      PROJECT_EXTENSIONS,
+			      QString::fromLatin1(PROJECT_EXTENSIONS),
 			      toMainWidget());
   if (!file.isNull()) {
     QListView *view=Root->listView();
@@ -337,7 +337,7 @@ void toProjectTemplate::delFile(void)
 void toProject::update(toProjectTemplateItem *sourceparent,toResultViewItem *parent)
 {
   if (parent==NULL) {
-    parent=new toResultViewItem(Project,NULL,"SQL Project");
+    parent=new toResultViewItem(Project,NULL,tr("SQL Project"));
     parent->setOpen(true);
     ItemMap[parent]=sourceparent;
   }
@@ -365,48 +365,48 @@ toProject::toProject(toProjectTemplateItem *top,QWidget *parent)
 {
   Root=top;
 
-  QToolBar *toolbar=toAllocBar(this,"SQL project");
+  QToolBar *toolbar=toAllocBar(this,tr("SQL project"));
   new QToolButton(QPixmap((const char **)addproject_xpm),
-		  "Add file to project",
-		  "Add file to project",
+		  tr("Add file to project"),
+		  tr("Add file to project"),
 		  this,SLOT(addFile()),
 		  toolbar);
   new QToolButton(QPixmap((const char **)filesave_xpm),
-		  "Save project",
-		  "Save project",
+		  tr("Save project"),
+		  tr("Save project"),
 		  this,SLOT(saveProject()),
 		  toolbar);
   DelFile=new QToolButton(QPixmap((const char **)trash_xpm),
-			  "Remove file from project",
-			  "Remove file from project",
+			  tr("Remove file from project"),
+			  tr("Remove file from project"),
 			  this,SLOT(delFile()),
 			  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)new_xpm),
-		  "Add new subproject",
-		  "Add new subproject",
+		  tr("Add new subproject"),
+		  tr("Add new subproject"),
 		  this,SLOT(newProject()),
 		  toolbar);
   new QToolButton(QPixmap((const char **)sql_xpm),
-		  "Generate SQL for this project",
-		  "Generate SQL for this project",
+		  tr("Generate SQL for this project"),
+		  tr("Generate SQL for this project"),
 		  this,SLOT(generateSQL()),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)up_xpm),
-		  "Move up in project",
-		  "Move up in project",
+		  tr("Move up in project"),
+		  tr("Move up in project"),
 		  this,SLOT(moveUp()),
 		  toolbar);
   new QToolButton(QPixmap((const char **)down_xpm),
-		  "Move down in project",
-		  "Move down in project",
+		  tr("Move down in project"),
+		  tr("Move down in project"),
 		  this,SLOT(moveDown()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
   Project=new toListView(this);
-  Project->addColumn("File");
-  Project->addColumn("Size");
+  Project->addColumn(tr("File"));
+  Project->addColumn(tr("Size"));
   Project->setSelectionMode(QListView::Single);
   Project->setRootIsDecorated(true);
   Project->setSorting(0);
@@ -493,7 +493,7 @@ void toProject::newProject(void)
 	  last=last->nextSibling();
       }
       if (oi) {
-	new toProjectTemplateItem(oi,last,"untitled.tpr");
+	new toProjectTemplateItem(oi,last,tr("untitled.tpr"));
 	Project->update();
       }
     }
@@ -511,12 +511,12 @@ void toProject::saveProject(void)
       if (oi) {
 	QFileInfo file(oi->filename());
 	QString fn=oi->filename();
-	fn=toSaveFilename(file.dirPath(),"*.tpr",this);
+	fn=toSaveFilename(file.dirPath(),QString::fromLatin1("*.tpr"),this);
 	if (!fn.isEmpty()) {
 	  QString data;
 	  for(QListViewItem *item=oi->firstChild();item;item=item->nextSibling()) {
 	    toProjectTemplateItem *projitem=dynamic_cast<toProjectTemplateItem *>(item);
-	    data+=projitem->filename()+"\n";
+	    data+=projitem->filename()+QString::fromLatin1("\n");
 	  }
 	  if (toWriteFile(fn,data.utf8()))
 	    oi->setFilename(fn);
@@ -533,10 +533,10 @@ QString toProject::generateSQL(toProjectTemplateItem *parent)
       item;
       item=dynamic_cast<toProjectTemplateItem *>(item->nextSibling())) {
     if (item->project()) {
-      data+="\n\n-- Start of project "+item->filename()+"\n\n";
+      data+=tr("\n\n-- Start of project %1\n\n").arg(item->filename());
       data+=generateSQL(item);
     } else {
-      data+="\n\n-- Start of file "+item->filename()+"\n\n";
+      data+=tr("\n\n-- Start of file %1\n\n").arg(item->filename());
       data+=QString::fromLocal8Bit(toReadFile(item->filename()));
     }
   }

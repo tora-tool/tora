@@ -78,9 +78,9 @@ public:
   toOutputPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : QGroupBox(1,Horizontal,parent,name),toSettingTab("output.html"),Tool(tool)
   {
-    setTitle("SQL Output");
+    setTitle(tr("SQL Output"));
 
-    QLabel *label=new QLabel("&Polling timeout",this);
+    QLabel *label=new QLabel(tr("&Polling timeout"),this);
     label->setGeometry(QRect(20,30,100,20));
     QToolTip::add(label,tr("Time between trying to poll for output."));
 
@@ -132,11 +132,11 @@ static toOutputTool OutputTool;
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   : toToolWidget(OutputTool,"output.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL Output");
+  QToolBar *toolbar=toAllocBar(this,tr("SQL Output"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Poll for output now",
-		  "Poll for output now",
+		  tr("Poll for output now"),
+		  tr("Poll for output now"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
@@ -146,18 +146,18 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   DisableButton->setIconSet(QIconSet(QPixmap((const char **)offline_xpm)),true);
   DisableButton->setOn(!enabled);
   connect(DisableButton,SIGNAL(toggled(bool)),this,SLOT(disable(bool)));
-  QToolTip::add(DisableButton,"Enable or disable getting SQL output.");
+  QToolTip::add(DisableButton,tr("Enable or disable getting SQL output."));
 
   new QToolButton(QPixmap((const char **)eraselog_xpm),
-		  "Clear output",	
-		  "Clear output",
+		  tr("Clear output"),
+		  tr("Clear output"),
 		  this,SLOT(clear()),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Refresh ",toolbar);
+  new QLabel(tr("Refresh "),toolbar);
   connect(Refresh=toRefreshCreate(toolbar,NULL,OutputTool.config(CONF_POLLING,DEFAULT_POLLING)),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   Output=new toMarkedText(this);
 
@@ -182,18 +182,18 @@ void toOutput::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Output enabled",
+      ToolMenu->insertItem(tr("Output enabled"),
 			   this,SLOT(toggleMenu()),Key_F4,TO_ID_TOGGLE);
-      ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),"Clear output",
+      ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),tr("Clear output"),
 			   this,SLOT(clear()),CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+      ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
 
-      toMainWidget()->menuBar()->insertItem("&Output",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Output"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemChecked(TO_ID_TOGGLE,!DisableButton->isOn());
     }
   } else {
@@ -233,7 +233,7 @@ void toOutput::disable(bool dis)
     if (ToolMenu)
       ToolMenu->setItemChecked(TO_ID_TOGGLE,!DisableButton->isOn());
   } catch (...) {
-    toStatusMessage("Couldn't enable/disable output for session");
+    toStatusMessage(tr("Couldn't enable/disable output for session"));
   }
 }
 

@@ -161,7 +161,7 @@ void toEditExtensions::autoIndentBlock(void)
       int line1,col1,line2,col2;
       if (Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
 	QString t=Current->textLine(line1).mid(0,col1);
-	t+="a";
+	t+=QString::fromLatin1("a");
 	int chars=0;
 	QString ind=toSQLParse::indentString(toSQLParse::countIndent(t,chars));
 	QString mrk=Current->markedText();
@@ -194,7 +194,7 @@ void toEditExtensions::autoIndentBuffer(void)
 
 static int CountLine(const QString &str)
 {
-  int found=str.findRev("\n");
+  int found=str.findRev(QString::fromLatin1("\n"));
   if (found<0)
     return str.length();
   else
@@ -208,14 +208,14 @@ static void ObfuscateStat(toSQLParse::statement &stat,QString &ret)
       toIsIdent(ret.at(ret.length()-1))&&
       toIsIdent(stat.String.at(0))) {
     if (CountLine(ret)<60)
-      ret+=" ";
+      ret+=QString::fromLatin1(" ");
     else
-      ret+="\n";
+      ret+=QString::fromLatin1("\n");
   }
   ret+=stat.String;
   if (!stat.Comment.isEmpty()) {
     ret+=stat.Comment;
-    ret+="\n";
+    ret+=QString::fromLatin1("\n");
   }
   for(std::list<toSQLParse::statement>::iterator i=stat.subTokens().begin();
       i!=stat.subTokens().end();
@@ -281,23 +281,23 @@ public:
     AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty());
     Ok=false;
     try {
-      Example->setText(toSQLParse::indent("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
-					  "AS\n"
-					  "  vYear  CHAR(4);\n"
-					  "BEGIN\n"
-					  "select a.TskCod TskCod, -- A Comment\n"
-					  "       count(1) Tot\n"
-					  "  from (select * from EssTsk where PrsID >= '1940');\n"
-					  "having count(a.TspActOprID) > 0;\n"
-					  "    DECLARE\n"
-					  "      oTrdStt NUMBER;\n"
-					  "    BEGIN\n"
-					  "      oTrdStt := 0;\n"
-					  "    END;\n"
-					  "    EXCEPTION\n"
-					  "        WHEN VALUE_ERROR THEN\n"
-					  "	    oRet := 3;\n"
-					  "END;"));
+      Example->setText(toSQLParse::indent(QString::fromLatin1("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+							      "AS\n"
+							      "  vYear  CHAR(4);\n"
+							      "BEGIN\n"
+							      "select a.TskCod TskCod, -- A Comment\n"
+							      "       count(1) Tot\n"
+							      "  from (select * from EssTsk where PrsID >= '1940');\n"
+							      "having count(a.TspActOprID) > 0;\n"
+							      "    DECLARE\n"
+							      "      oTrdStt NUMBER;\n"
+							      "    BEGIN\n"
+							      "      oTrdStt := 0;\n"
+							      "    END;\n"
+							      "    EXCEPTION\n"
+							      "        WHEN VALUE_ERROR THEN\n"
+							      "	    oRet := 3;\n"
+							      "END;")));
     } TOCATCH
     Started=true;
   }
@@ -374,48 +374,48 @@ public:
 
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
     
-    IncrementalSearch=menu->insertItem("Forward",&EditExtensions,SLOT(searchForward()),
+    IncrementalSearch=menu->insertItem(tr("Forward"),&EditExtensions,SLOT(searchForward()),
 				       CTRL+Key_S);
-    ReverseSearch=menu->insertItem("Backward",&EditExtensions,SLOT(searchBackward()),
+    ReverseSearch=menu->insertItem(tr("Backward"),&EditExtensions,SLOT(searchBackward()),
 				   CTRL+Key_R);
 
-    toMainWidget()->editMenu()->insertItem("Incremental Search",menu,-1,(idx>=0?idx+1:0));
+    toMainWidget()->editMenu()->insertItem(tr("Incremental Search"),menu,-1,(idx>=0?idx+1:0));
     
     menu=new QPopupMenu(toMainWidget());
-    AutoIndentBlock=menu->insertItem("Selection",
+    AutoIndentBlock=menu->insertItem(tr("Selection"),
 				     &EditExtensions,
 				     SLOT(autoIndentBlock()),
 				     ALT+CTRL+Key_I);
-    AutoIndentBuffer=menu->insertItem("Editor",
+    AutoIndentBuffer=menu->insertItem(tr("Editor"),
 				      &EditExtensions,
 				      SLOT(autoIndentBuffer()),
 				      ALT+CTRL+SHIFT+Key_I);
     menu->insertSeparator();
-    ObfuscateBlock=menu->insertItem("Obfuscate Selection",
+    ObfuscateBlock=menu->insertItem(tr("Obfuscate Selection"),
 				    &EditExtensions,
 				    SLOT(obfuscateBlock()));
-    ObfuscateBuffer=menu->insertItem("Obfuscate Editor",
+    ObfuscateBuffer=menu->insertItem(tr("Obfuscate Editor"),
 				     &EditExtensions,
 				     SLOT(obfuscateBuffer()));
-    toMainWidget()->editMenu()->insertItem("Auto Indent",menu);
+    toMainWidget()->editMenu()->insertItem(tr("Auto Indent"),menu);
 
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
-						       "Indent Block",&EditExtensions,
+						       tr("Indent Block"),&EditExtensions,
 						       SLOT(indentBlock()),
 						       ALT+Key_Right);
     DeindentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
-							 "De-indent Block",&EditExtensions,
+							 tr("De-indent Block"),&EditExtensions,
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
 
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
-				 "Indent block in editor",
-				 "Indent block in editor",
+				 tr("Indent block in editor"),
+				 tr("Indent block in editor"),
 				 &EditExtensions,SLOT(indentBlock()),
 				 toMainWidget()->editToolbar());
     DeindentButton=new QToolButton(QPixmap((const char **)deindent_xpm),
-				   "De-indent block in editor",
-				   "De-indent block in editor",
+				   tr("De-indent block in editor"),
+				   tr("De-indent block in editor"),
 				   &EditExtensions,SLOT(deindentBlock()),
 				   toMainWidget()->editToolbar());
 

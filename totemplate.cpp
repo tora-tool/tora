@@ -65,21 +65,21 @@
 
 #include "icons/totemplate.xpm"
 
-static std::map<QString,QString> DefaultText(void)
+static std::map<QCString,QString> DefaultText(void)
 {
-  std::map<QString,QString> def;
+  std::map<QCString,QString> def;
   QString file=toPluginPath();
-  file+="/sqlfunctions.tpl";
+  file+=QString::fromLatin1("/sqlfunctions.tpl");
   def["PL/SQL Functions"]=file;
   file=toPluginPath();
-  file+="/hints.tpl";
+  file+=QString::fromLatin1("/hints.tpl");
   def["Optimizer Hints"]=file;
   return def;
 }
 
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
-  std::map<QString,QString> &TemplateMap;
-  std::map<QString,QString>::iterator LastTemplate;
+  std::map<QCString,QString> &TemplateMap;
+  std::map<QCString,QString>::iterator LastTemplate;
   void connectList(bool conn)
   {
     if (conn)
@@ -94,7 +94,7 @@ class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   }
   void allocateItem(void)
   {
-    QStringList lst=QStringList::split(":",Name->text());
+    QStringList lst=QStringList::split(QString::fromLatin1(":"),Name->text());
     unsigned int li=0;
     QListViewItem *parent=NULL;
     for(QListViewItem *item=Templates->firstChild();item&&li<lst.count();) {
@@ -113,15 +113,15 @@ class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
       li++;
     }
   }
-  bool clearUnused(QListViewItem *first,const QString &pre)
+  bool clearUnused(QListViewItem *first,const QCString &pre)
   {
     bool ret=false;
     while(first) {
       QListViewItem *delitem=first;
-      QString str=pre;
+      QCString str=pre;
       if (!str.isEmpty())
 	str+=":";
-      str+=first->text(0);
+      str+=first->text(0).latin1();
       if (first->firstChild()&&clearUnused(first->firstChild(),str))
 	delitem=NULL;
       if (delitem&&TemplateMap.find(str)!=TemplateMap.end())
@@ -143,8 +143,8 @@ public:
       QListViewItem *last=NULL;
       int lastLevel=0;
       QStringList lstCtx;
-      for(std::map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
-	QStringList ctx=QStringList::split(":",(*i).first);
+      for(std::map<QCString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
+	QStringList ctx=QStringList::split(QString::fromLatin1(":"),QString::fromLatin1((*i).first));
 	if (last) {
 	  while(last&&lastLevel>=int(ctx.count())) {
 	    last=last->parent();
@@ -156,7 +156,7 @@ public:
 	  }
 	}
 	if (lastLevel<0)
-	  throw QString("Internal error, lastLevel < 0");
+	  throw tr("Internal error, lastLevel < 0");
 	while(lastLevel<int(ctx.count())-1) {
 	  if (last)
 	    last=new QListViewItem(last,ctx[lastLevel]);
@@ -180,9 +180,9 @@ public:
       reject();
     }
   }
-  toTemplateEdit(std::map<QString,QString> &pairs,QWidget *parent,const char *name=0)
+  toTemplateEdit(std::map<QCString,QString> &pairs,QWidget *parent,const char *name=0)
     : toTemplateEditUI(parent,name,true,WStyle_Maximize),
-      toHelpContext("template.html#editor"),
+      toHelpContext(QString::fromLatin1("template.html#editor")),
       TemplateMap(pairs)
   {
     toHelp::connectDialog(this);
@@ -196,8 +196,8 @@ public:
       QListViewItem *item=findLast();
       TemplateMap.erase(LastTemplate);
       LastTemplate=TemplateMap.end();
-      Name->setText("");
-      Description->setText("");
+      Name->setText(QString::null);
+      Description->setText(QString::null);
       if (item) {
 	connectList(false);
 	clearUnused(Templates->firstChild(),"");
@@ -209,12 +209,12 @@ public:
   {
     Preview->setText(Description->text());
   }
-  QString name(QListViewItem *item)
+  QCString name(QListViewItem *item)
   {
-    QString str=item->text(0);
+    QCString str=item->text(0).latin1();
     for(item=item->parent();item;item=item->parent()) {
       str.prepend(":");
-      str.prepend(item->text(0));
+      str.prepend(item->text(0).latin1());
     }
     return str;
   }
@@ -222,7 +222,7 @@ public:
   {
     changeSelection();
     LastTemplate=TemplateMap.end();
-    Description->setText("");
+    Description->setText(QString::null);
     QListViewItem *item=Templates->selectedItem();
     if (item) {
       connectList(false);
@@ -230,7 +230,7 @@ public:
       connectList(true);
       item=item->parent();
     }
-    QString str;
+    QCString str;
     if (item) {
       str=name(item);
       str+=":";
@@ -241,15 +241,15 @@ public:
   {
     bool update=false;
     if (LastTemplate!=TemplateMap.end()) {
-      if (Name->text()!=(*LastTemplate).first||
+      if (Name->text().latin1()!=(*LastTemplate).first||
 	  Description->text()!=(*LastTemplate).second) {
 	TemplateMap.erase(LastTemplate);
-	TemplateMap[Name->text()]=Description->text();
+	TemplateMap[Name->text().latin1()]=Description->text();
 	allocateItem();
 	update=true;
       }
     } else if (!Name->text().isEmpty()) {
-      TemplateMap[Name->text()]=Description->text();
+      TemplateMap[Name->text().latin1()]=Description->text();
       allocateItem();
       update=true;
     }
@@ -257,16 +257,16 @@ public:
 
     QListViewItem *item=Templates->selectedItem();
     if (item) {
-      QString str=name(item);
+      QCString str=name(item);
       LastTemplate=TemplateMap.find(str);
       if (LastTemplate!=TemplateMap.end()) {
-	Name->setText((*LastTemplate).first);
+	Name->setText(QString::fromLatin1((*LastTemplate).first));
 	Description->setText((*LastTemplate).second);
 	Preview->setText((*LastTemplate).second);
       } else {
-	Name->setText("");
+	Name->setText(QString::null);
 	Description->clear();
-	Preview->setText("");
+	Preview->setText(QString::null);
       }
     } else
       LastTemplate=TemplateMap.end();
@@ -285,7 +285,7 @@ public:
   virtual void browse(void)
   {
     QFileInfo file(Filename->text());
-    QString filename=toOpenFilename(file.dirPath(),"*.tpl",this);
+    QString filename=toOpenFilename(file.dirPath(),QString::fromLatin1("*.tpl"),this);
     if (!filename.isEmpty())
       Filename->setText(filename);
   }
@@ -305,13 +305,13 @@ public:
   toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
     : toTemplateSetupUI(parent,name),toSettingTab("template.html#setup"),Tool(tool)
   {
-    std::map<QString,QString> def=DefaultText();
+    std::map<QCString,QString> def=DefaultText();
 
-    int tot=Tool->config("Number",QString::number(-1)).toInt();
+    int tot=Tool->config("Number","-1").toInt();
     {
       for(int i=0;i<tot;i++) {
-	QString num=QString::number(i);
-        QString root=Tool->config(num,"");
+	QCString num=QString::number(i).latin1();
+        QCString root=Tool->config(num,"").latin1();
         num+="file";
         QString file=Tool->config(num,"");
 	new QListViewItem(FileList,root,file);
@@ -319,14 +319,14 @@ public:
 	  def.erase(def.find(root));
       }
     }
-    for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
+    for (std::map<QCString,QString>::iterator i=def.begin();i!=def.end();i++)
       new QListViewItem(FileList,(*i).first,(*i).second);
   }
   virtual void saveSetting(void)
   {
     int i=0;
     for(QListViewItem *item=FileList->firstChild();item;item=item->nextSibling()) {
-      QString nam=QString::number(i);
+      QCString nam=QString::number(i).latin1();
       Tool->setConfig(nam,item->text(0));
       nam+="file";
       Tool->setConfig(nam,item->text(1));
@@ -346,28 +346,28 @@ public:
     if (item) {
       try {
 	QString file=item->text(1);
-	std::map<QString,QString> pairs;
+	std::map<QCString,QString> pairs;
 	try {
 	  toTool::loadMap(file,pairs);
 	} catch(...) {
 	  if (TOMessageBox::warning(this,
-				    "Couldn't open file.",
-				    "Couldn't open file. Start on new file?",
-				    "&Ok",
-				    "Cancel")==1)
+				    tr("Couldn't open file."),
+				    tr("Couldn't open file. Start on new file?"),
+				    tr("&Ok"),
+				    tr("Cancel"))==1)
 	    return;
 	}
 	toTemplateEdit edit(pairs,this);
 	if (edit.exec()) {
 	  edit.changeSelection();
 	  if (!toTool::saveMap(file,pairs))
-	    throw QString("Couldn't write file");
+	    throw tr("Couldn't write file");
 	}
       } catch (const QString &str) {
 	TOMessageBox::warning(this,
-			      "Couldn't open file",
+			      tr("Couldn't open file"),
 			      str,
-			      "&Ok");
+			      tr("&Ok"));
       }
     }
   }
@@ -400,7 +400,7 @@ public:
 	return NULL;
       }
     }
-    Dock=toAllocDock("Template",QString::null,*toolbarImage());
+    Dock=toAllocDock(tr("Template"),QString::null,*toolbarImage());
     toTemplate *window=new toTemplate(Dock);
     toAttachDock(Dock,window,QMainWindow::Left);
     window->attachResult();
@@ -434,7 +434,7 @@ toTemplate *toTemplate::templateWidget(QListView *obj)
       return tpl;
     lst=lst->parent();
   }
-  throw("Not a toTemplate parent");
+  throw tr("Not a toTemplate parent");
 }
 
 toTemplate *toTemplate::templateWidget(QListViewItem *item)
@@ -453,19 +453,19 @@ public:
 };
 
 toTemplate::toTemplate(QWidget *parent)
-  : QVBox(parent),toHelpContext("template.html")
+  : QVBox(parent),toHelpContext(QString::fromLatin1("template.html"))
 {
-  Toolbar=toAllocBar(this,"Template Toolbar");
+  Toolbar=toAllocBar(this,tr("Template Toolbar"));
 
   List=new toListView(this);
-  List->addColumn("Template");
+  List->addColumn(tr("Template"));
   List->setRootIsDecorated(true);
   List->setSorting(0);
   List->setShowSortIndicator(false);
   List->setTreeStepSize(10);
   List->setSelectionMode(QListView::Single);
   TODock *dock;
-  dock=Result=toAllocDock("Template result",
+  dock=Result=toAllocDock(tr("Template result"),
 			  QString::null,
 			  *TemplateTool.toolbarImage());
   Frame=new toTemplateResult(dock,this);
@@ -481,7 +481,7 @@ toTemplate::toTemplate(QWidget *parent)
 	 i++)
       (*i)->insertItems(List,Toolbar);
 
-  Toolbar->setStretchableWidget(new QLabel("",Toolbar));
+  Toolbar->setStretchableWidget(new QLabel(QString::null,Toolbar));
 
   WidgetExtra=NULL;
   setWidget(NULL);
@@ -582,13 +582,13 @@ public:
 
 void toTextTemplate::insertItems(QListView *parent,QToolBar *)
 {
-  int tot=TemplateTool.config("Number",QString::number(-1)).toInt();
-  std::map<QString,QString> def=DefaultText();
+  int tot=TemplateTool.config("Number","-1").toInt();
+  std::map<QCString,QString> def=DefaultText();
 
   {
     for(int i=0;i<tot;i++) {
-      QString num=QString::number(i);
-      QString root=TemplateTool.config(num,"");
+      QCString num=QString::number(i).latin1();
+      QCString root=TemplateTool.config(num,"").latin1();
       num+="file";
       QString file=TemplateTool.config(num,"");
       addFile(parent,root,file);
@@ -596,20 +596,20 @@ void toTextTemplate::insertItems(QListView *parent,QToolBar *)
 	def.erase(def.find(root));
     }
   }
-  for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
+  for (std::map<QCString,QString>::iterator i=def.begin();i!=def.end();i++)
     addFile(parent,(*i).first,(*i).second);
 }
 
 void toTextTemplate::addFile(QListView *parent,const QString &root,const QString &file)
 {
-  std::map<QString,QString> pairs;
+  std::map<QCString,QString> pairs;
   try {
     toTool::loadMap(file,pairs);
     toTemplateItem *last=new toTemplateItem(*this,parent,root);
     int lastLevel=0;
     QStringList lstCtx;
-    for(std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
-      QStringList ctx=QStringList::split(":",(*i).first);
+    for(std::map<QCString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+      QStringList ctx=QStringList::split(QString::fromLatin1(":"),(*i).first);
       if (last) {
 	while(last&&lastLevel>=int(ctx.count())) {
 	  last=dynamic_cast<toTemplateItem *>(last->parent());
@@ -621,7 +621,7 @@ void toTextTemplate::addFile(QListView *parent,const QString &root,const QString
 	}
       }
       if (lastLevel<0)
-	throw QString("Internal error, lastLevel < 0");
+	throw qApp->translate("toTemplate","Internal error, lastLevel < 0");
       while(lastLevel<int(ctx.count())-1) {
 	last=new toTemplateItem(last,ctx[lastLevel]);
 	lastLevel++;

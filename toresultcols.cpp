@@ -74,7 +74,7 @@ static toSQL SQLInfo7("toResultCols:Info",
 		      " WHERE Owner = :f1<char[100]>\n"
 		      "   AND Table_Name = :f2<char[100]>\n"
 		      "   AND Column_Name = :f3<char[100]>",
-		      QString::null,
+		      "",
 		      "7.3");
 
 class toResultColsItem : public toResultViewMLine {
@@ -100,85 +100,85 @@ public:
 	return QString::null;
       toQList resLst=toQuery::readQueryNull(conn,SQLInfo,
 					    text(10),text(11),text(1));
-      QString result("<B>");
+      QString result(QString::fromLatin1("<B>"));
       result+=(text(1));
-      result+=("</B><BR><BR>");
+      result+=QString::fromLatin1("</B><BR><BR>");
 
       int any=0;
       QString cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	result+=("Default value: <B>");
+	result+=qApp->translate("toResultCols","Default value: <B>");
 	result+=(cur);
-	result+=("</B><BR><BR>");
+	result+=QString::fromLatin1("</B><BR><BR>");
 	any++;
       }
 
       QString analyze;
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Distinct values: <B>");
+	analyze+=qApp->translate("toResultCols","Distinct values: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Low value: <B>");
+	analyze+=qApp->translate("toResultCols","Low value: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("High value: <B>");
+	analyze+=qApp->translate("toResultCols","High value: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Density: <B>");
+	analyze+=qApp->translate("toResultCols","Density: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Number of nulls: <B>");
+	analyze+=qApp->translate("toResultCols","Number of nulls: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Number of histogram buckets: <B>");
+	analyze+=qApp->translate("toResultCols","Number of histogram buckets: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Last analyzed: <B>");
+	analyze+=qApp->translate("toResultCols","Last analyzed: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Sample size: <B>");
+	analyze+=qApp->translate("toResultCols","Sample size: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       cur=toShift(resLst);
       if (!cur.isEmpty()) {
-	analyze+=("Average column size: <B>");
+	analyze+=qApp->translate("toResultCols","Average column size: <B>");
 	analyze+=(cur);
-	analyze+=("</B><BR>");
+	analyze+=QString::fromLatin1("</B><BR>");
 	any++;
       }
       if (!analyze.isEmpty()) {	
-	result+=("<B>Analyze statistics:</B><BR>");
+	result+=QString::fromLatin1("<B>Analyze statistics:</B><BR>");
 	result+=(analyze);
       }
       if (!any)
@@ -223,7 +223,7 @@ void toResultCols::query(const QString &,const toQList &param)
     }
     cp++;
     if (cp!=((toQList &)param).end()) {
-      object+=".";
+      object+=QString::fromLatin1(".");
       object+=conn.quote(*cp);
       Name=*cp;
     } else {
@@ -236,19 +236,19 @@ void toResultCols::query(const QString &,const toQList &param)
     Columns->clear();
     const toConnection::objectName &name=conn.realName(object,synonym,false);
 
-    QString label="<B>";
+    QString label=QString::fromLatin1("<B>");
     if (!synonym.isEmpty()) {
       label+=conn.quote(synonym);
-      label+="</B> synonym for <B>";
+      label+=tr("</B> synonym for <B>");
     }
     label+=conn.quote(name.Owner);
-    if (label!="<B>")
-      label+=".";
+    if (label!=QString::fromLatin1("<B>"))
+      label+=QString::fromLatin1(".");
     label+=conn.quote(name.Name);
     
-    label+="</B>";
+    label+=QString::fromLatin1("</B>");
     if (name.Comment) {
-      label+=" - ";
+      label+=QString::fromLatin1(" - ");
       label+=name.Comment;
     }
 
@@ -257,17 +257,17 @@ void toResultCols::query(const QString &,const toQList &param)
     Title->setText(label);
   } catch(const QString &) {
     try {
-      QString label="<B>";
+      QString label=QString::fromLatin1("<B>");
       label+=object;
-      label+="</B> -";
+      label+=QString::fromLatin1("</B> -");
       if (connection().provider()=="Oracle") {
 	toQuery query(connection(),SQLTableComment,Owner,Name);
 	while(!query.eof()) {
-	  label+=" ";
+	  label+=QString::fromLatin1(" ");
 	  label+=query.readValueNull();
 	}
       }
-      label+=" (Object cache not ready)";
+      label+=tr(" (Object cache not ready)");
       Columns->query(object,Owner,Name);
       Title->setText(label);
     } catch(const QString &str) {
@@ -280,12 +280,12 @@ void toResultCols::query(const QString &,const toQList &param)
 toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
   : toListView(parent,name)
 {
-  addColumn("#");
+  addColumn(QString::fromLatin1("#"));
   setColumnAlignment(0,AlignRight);
-  addColumn("Column Name");
-  addColumn("Data Type");
-  addColumn("NULL");
-  addColumn("Comments");
+  addColumn(tr("Column Name"));
+  addColumn(tr("Data Type"));
+  addColumn(QString::fromLatin1("NULL"));
+  addColumn(tr("Comments"));
   setSorting(0);
 }
 
@@ -299,9 +299,9 @@ void toResultCols::resultCols::describe(toQDescList &desc)
     item->setText(1,(*i).Name);
     item->setText(2,(*i).Datatype);
     if ((*i).Null)
-      item->setText(3,"NULL");
+      item->setText(3,QString::fromLatin1("NULL"));
     else
-      item->setText(3,"NOT NULL");
+      item->setText(3,QString::fromLatin1("NOT NULL"));
     item->setText(4,(*i).Comment);
     
     item->setText(10,Owner);
@@ -321,14 +321,14 @@ void toResultCols::resultCols::query(const QString &object,
   try {
     toConnection &conn=toCurrentConnection(this);
 
-    QString sql="SELECT * FROM ";
+    QString sql=QString::fromLatin1("SELECT * FROM ");
     if(conn.provider() == "PostgreSQL")
       sql+=name;
     else
       sql+=object;
-    sql+=" WHERE NULL=NULL";
+    sql+=QString::fromLatin1(" WHERE NULL=NULL");
 
-    setSQLName(QString("Description of %1").
+    setSQLName(tr("Description of %1").
 	       arg(object));
 
     toQuery query(conn,sql);
@@ -355,7 +355,7 @@ void toResultCols::resultCols::query(const QString &object,
 
     describe(desc);
   } catch(...) {
-    toStatusMessage("Failed to describe "+object);
+    toStatusMessage(tr("Failed to describe %1").arg(object));
   }
 }
 
@@ -365,7 +365,7 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
     clear();
     toConnection &conn=toCurrentConnection(this);
 
-    setSQLName(QString("Description of %1.%2").
+    setSQLName(tr("Description of %1.%2").
 	       arg(conn.quote(name.Owner)).
 	       arg(conn.quote(name.Name)));
 
@@ -376,6 +376,6 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
 
     describe(desc);
   } catch(...) {
-    toStatusMessage("Failed to describe "+name.Owner+"."+name.Name);
+    toStatusMessage(tr("Failed to describe %1").arg(name.Owner+QString::fromLatin1(".")+name.Name));
   }
 }

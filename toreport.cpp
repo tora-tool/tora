@@ -92,7 +92,7 @@ static QString GenerateConstraint(const QString &name,
 				  const QString &def,
 				  const QString &status)
 {
-  return QString("<TR><TD VALIGN=top WIDTH=25%>%1</TD><TD VALIGN=top WIDTH=50%>%2</TD><TD VALIGN=top WIDTH=25%>%3</TD></TR>\n").
+  return QString::fromLatin1("<TR><TD VALIGN=top WIDTH=25%>%1</TD><TD VALIGN=top WIDTH=50%>%2</TD><TD VALIGN=top WIDTH=25%>%3</TD></TR>\n").
     arg(toHtml::escape(name)).
     arg(toHtml::escape(def)).
     arg(toHtml::escape(status));
@@ -103,9 +103,9 @@ static QString DescribeConstraints(std::list<QString> &desc,
 				   int level,
 				   const QString &context)
 {
-  QString ret=
-    "<H4>CONSTRAINTS</H4>\n"
-    "<TABLE BORDER=0 WIDTH=100%><TR><TH ALIGN=left WIDTH=25%>Name</TH><TH ALIGN=left WIDTH=50%>Constraint</TH><TH ALIGN=left WIDTH=25%>Status</TH></TR>\n";
+  QString ret=QString::fromLatin1("<H4>CONSTRAINTS</H4>\n"
+				  "<TABLE BORDER=0 WIDTH=100%><TR><TH ALIGN=left WIDTH=25%>Name</TH>"
+				  "<TH ALIGN=left WIDTH=50%>Constraint</TH><TH ALIGN=left WIDTH=25%>Status</TH></TR>\n");
 
   QString lastName;
   QString status;
@@ -126,18 +126,18 @@ static QString DescribeConstraints(std::list<QString> &desc,
       lastName=name;
     }
 
-    if (extra=="DEFINITION")
+    if (extra==QString::fromLatin1("DEFINITION"))
       definition+=toExtract::partDescribe(*i,level+2)+" ";
-    else if (extra=="STATUS") {
+    else if (extra==QString::fromLatin1("STATUS")) {
       QString t=toExtract::partDescribe(*i,level+2);
-      if (t.startsWith("ENABLE")||t.startsWith("DISABLE"))
-	status+=t+" ";;
+      if (t.startsWith(QString::fromLatin1("ENABLE"))||t.startsWith(QString::fromLatin1("DISABLE")))
+	status+=t+QString::fromLatin1(" ");
     }
 
     i++;
   } while(i!=desc.end());
   ret+=GenerateConstraint(lastName,definition,status);
-  ret+="</TABLE>\n";
+  ret+=QString::fromLatin1("</TABLE>\n");
   return ret;
 }
 
@@ -165,57 +165,57 @@ static QString DescribeColumns(std::list<QString> &desc,
     QString col=toExtract::partDescribe(*i,level+0);
     QString extra=toExtract::partDescribe(*i,level+1);
 
-    if (extra=="ORDER") {
+    if (extra==QString::fromLatin1("ORDER")) {
       cols[col].Order=toExtract::partDescribe(*i,level+2);
       maxCol=max(maxCol,cols[col].Order.toInt());
-    } else if (extra=="COMMENT") {
+    } else if (extra==QString::fromLatin1("COMMENT")) {
       cols[col].Comment=toExtract::partDescribe(*i,level+2);
       hasComments=true;
     } else if (!extra.isEmpty()) {
-      cols[col].Datatype+=extra+" ";
+      cols[col].Datatype+=extra+QString::fromLatin1(" ");
       hasDatatype=true;
     }
 
     i++;
   } while(i!=desc.end());
 
-  QString ret=
-    "<H4>COLUMNS</H4>\n"
-    "<TABLE WIDTH=100% BORDER=0><TR><TH ALIGN=left WIDTH=25%>Name</TH>";
+  QString ret=qApp->translate("toReport",
+			      "<H4>COLUMNS</H4>\n"
+			      "<TABLE WIDTH=100% BORDER=0><TR><TH ALIGN=left WIDTH=25%>Name</TH>");
   if (hasDatatype)
-    ret+="<TH ALIGN=left WIDTH=25%>Definition</TH>";
+    ret+=qApp->translate("toReport","<TH ALIGN=left WIDTH=25%>Definition</TH>");
   if (hasComments)
-    ret+="<TH ALIGN=left WIDTH=50%>Description</TH>";
-  ret+="</TR>\n";
+    ret+=qApp->translate("toReport","<TH ALIGN=left WIDTH=50%>Description</TH>");
+  ret+=QString::fromLatin1("</TR>\n");
 
   for(int j=1;j<=maxCol;j++) {
     for(std::map<QString,toReportColumn>::iterator k=cols.begin();k!=cols.end();k++) {
       if ((*k).second.Order.toInt()==j) {
-	ret+="<TR><TD VALIGN=top WIDTH=25%>";
+	ret+=QString::fromLatin1("<TR><TD VALIGN=top WIDTH=25%>");
 	ret+=toHtml::escape((*k).first);
-	ret+="</TD>";
+	ret+=QString::fromLatin1("</TD>");
 	if (hasDatatype) {
-	  ret+="<TD VALIGN=top WIDTH=25%>";
+	  ret+=QString::fromLatin1("<TD VALIGN=top WIDTH=25%>");
 	  if (!(*k).second.Datatype.isEmpty())
 	    ret+=toHtml::escape((*k).second.Datatype);
 	  else
-	    ret+="<BR>";
-	  ret+="</TD>";
+	    ret+=QString::fromLatin1("<BR>");
+	  ret+=QString::fromLatin1("</TD>");
 	}
 	if (hasComments) {
-	  ret+="<TD VALIGN=top WIDTH=50%>";
+	  ret+=QString::fromLatin1("<TD VALIGN=top WIDTH=50%>");
 	  if (!(*k).second.Comment.isEmpty())
 	    ret+=toHtml::escape((*k).second.Comment);
 	  else
-	    ret+="&nbsp;";
-	  ret+="</TD>";
+	    ret+=QString::fromLatin1("&nbsp;");
+	  ret+=QString::fromLatin1("</TD>");
 	}
-	ret+="</TR>\n";
+	ret+=QString::fromLatin1("</TR>\n");
 	break;
       }
     }
   }
-  ret+="</TABLE>\n";
+  ret+=QString::fromLatin1("</TABLE>\n");
   return ret;
 }
 
@@ -253,32 +253,34 @@ static QString DescribePart(std::list<QString> &desc,
     } while (part.isNull());
     if (lastPart!=part) {
       if (lastPart.isNull()) {
-	i=FindItem(desc,start,level,parentContext,"TABLE");
+	i=FindItem(desc,start,level,parentContext,QString::fromLatin1("TABLE"));
 	if (i==desc.end()) {
 	  i=start;
 	  part=ValidPart(desc,i,level);
 	} else
 	  part=toExtract::partDescribe(*i,level);
       } else {
-	while(part=="TABLE") {
+	while(part==QString::fromLatin1("TABLE")) {
 	  i++;
 	  if (i==desc.end())
 	    return ret;
 	  part=toExtract::partDescribe(*i,level);
 	}
       }
-      if (lastPart=="TABLE") {
+      if (lastPart==QString::fromLatin1("TABLE")) {
 	i=start;
 	part=ValidPart(desc,i,level);
       }
       lastPart=part;
     }
-    QString child=parentContext+"\001"+part;
+    QString child=parentContext+QString::fromLatin1("\001")+part;
 
-    if (part=="COLUMN"||part=="COMMENT"||part=="CONSTRAINT") {
+    if (part==QString::fromLatin1("COLUMN")||
+	part==QString::fromLatin1("COMMENT")||
+	part==QString::fromLatin1("CONSTRAINT")) {
       i++;
     } else if (HasChildren(desc,i,child)) {
-      ret+=QString("<P><H%1>%2</H%3></P>\n").
+      ret+=QString::fromLatin1("<P><H%1>%2</H%3></P>\n").
 	arg(level+1).
 	arg(toHtml::escape(part)).
 	arg(level+1);
@@ -286,7 +288,7 @@ static QString DescribePart(std::list<QString> &desc,
 						i,
 						level+1,
 						child,
-						"COMMENT");
+						QString::fromLatin1("COMMENT"));
       if (com!=desc.end())
 	ret+="<P>"+toHtml::escape(toExtract::partDescribe(*com,level+2))+"</P>";
 
@@ -294,24 +296,24 @@ static QString DescribePart(std::list<QString> &desc,
 						i,
 						level+1,
 						child,
-						"COLUMN");
+						QString::fromLatin1("COLUMN"));
 
       if (col!=desc.end())
-	ret+=DescribeColumns(desc,col,level+2,child+"\001COLUMN");
+	ret+=DescribeColumns(desc,col,level+2,child+QString::fromLatin1("\001COLUMN"));
 
       std::list<QString>::iterator con=FindItem(desc,
 						i,
 						level+1,
 						child,
-						"CONSTRAINT");
+						QString::fromLatin1("CONSTRAINT"));
 
       if (con!=desc.end())
- 	ret+=DescribeConstraints(desc,con,level+2,child+"\001CONSTRAINT");
+ 	ret+=DescribeConstraints(desc,con,level+2,child+QString::fromLatin1("\001CONSTRAINT"));
 
       ret+=DescribePart(desc,i,level+1,child);
     } else {
       if (!part.isEmpty())
-	text+="<P>"+toHtml::escape(part)+"</P>\n";
+	text+=QString::fromLatin1("<P>")+toHtml::escape(part)+QString::fromLatin1("</P>\n");
       i++;
     }
   } while(i!=desc.end());
@@ -324,22 +326,22 @@ QString toGenerateReport(toConnection &conn,std::list<QString> &desc)
   gethostname(host,1024);
 
   QString db=conn.host();
-  if (db.length()&&db!="*")
-    db+=":";
+  if (db.length()&&db!=QString::fromLatin1("*"))
+    db+=QString::fromLatin1(":");
   else
     db=QString::null;
   db+=conn.database();
 
-  QString ret=QString("<HTML><HEAD><TITLE>Report on database %7</TITLE></HEAD>\n"
-		      "<BODY><H1>Report on database %8</H1>\n"
-		      "<TABLE BORDER=0>\n"
-		      "<TR><TD VALIGN=top>Generated by:</TD><TD VALIGN=top>TOra, Version %1</TD></TR>\n"
-		      "<TR><TD VALIGN=top>At:</TD><TD VALIGN=top>%2</TD></TR>\n"
-		      "<TR><TD VALIGN=top>From:</TD><TD VALIGN=top>%3, an %4 %5 database</TD></TR>\n"
-		      "<TR><TD VALIGN=top>On:</TD><TD VALIGN=top>%6</TD></TR>\n"
-		      "</TABLE>\n").
-    arg(TOVERSION).
-    arg(host).
+  QString ret=qApp->translate("toReport","<HTML><HEAD><TITLE>Report on database %7</TITLE></HEAD>\n"
+			      "<BODY><H1>Report on database %8</H1>\n"
+			      "<TABLE BORDER=0>\n"
+			      "<TR><TD VALIGN=top>Generated by:</TD><TD VALIGN=top>TOra, Version %1</TD></TR>\n"
+			      "<TR><TD VALIGN=top>At:</TD><TD VALIGN=top>%2</TD></TR>\n"
+			      "<TR><TD VALIGN=top>From:</TD><TD VALIGN=top>%3, an %4 %5 database</TD></TR>\n"
+			      "<TR><TD VALIGN=top>On:</TD><TD VALIGN=top>%6</TD></TR>\n"
+			      "</TABLE>\n").
+    arg(QString::fromLatin1(TOVERSION)).
+    arg(QString::fromLatin1(host)).
     arg(db).
     arg(conn.provider()).
     arg(conn.version()).
@@ -348,29 +350,29 @@ QString toGenerateReport(toConnection &conn,std::list<QString> &desc)
     arg(db);
 
   std::list<QString>::iterator i;
-  i=FindItem(desc,desc.begin(),0,QString::null,"NONE");
+  i=FindItem(desc,desc.begin(),0,QString::null,QString::fromLatin1("NONE"));
   if (i!=desc.end()) {
-    ret+="<H1>Global Objects</H1>\n";
-    ret+=DescribePart(desc,i,1,"NONE");
+    ret+=qApp->translate("toReport","<H1>Global Objects</H1>\n");
+    ret+=DescribePart(desc,i,1,QString::fromLatin1("NONE"));
   }
 
   i=desc.begin();
   QString lastContext;
   while(i!=desc.end()) {
     QString context=toExtract::partDescribe(*i,0);
-    if (context!="NONE") {
+    if (context!=QString::fromLatin1("NONE")) {
       if (context!=lastContext) {
-	if (context=="public")
-	  ret+="<H1>Public</H1>";
+	if (context==QString::fromLatin1("public"))
+	  ret+=qApp->translate("toReport","<H1>Public</H1>");
 	else
-	  ret+="<H1>Schema "+toHtml::escape(context)+"</H1>\n";
+	  ret+=qApp->translate("toReport","<H1>Schema %1</H1>\n").arg(toHtml::escape(context));
       }
       ret+=DescribePart(desc,i,1,context);
       lastContext=context;
     } else
       i++;
   }
-  ret+="</BODY>\n</HTML>";
+  ret+=QString::fromLatin1("</BODY>\n</HTML>");
 
   return ret;
 

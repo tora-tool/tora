@@ -89,20 +89,20 @@
 #define CONF_WAITS    "Wait events"
 #define CONF_CHART    "chart"
 
-static std::list<QString> TabList(void)
+static std::list<QCString> TabList(void)
 {
-  std::list<QString> ret;
+  std::list<QCString> ret;
   ret.insert(ret.end(),CONF_OVERVIEW);
-  std::list<QString> val=toSQL::range("toTuning:Charts");
+  std::list<QCString> val=toSQL::range("toTuning:Charts");
   QString last;
-  for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
-    QStringList parts=QStringList::split(":",*i);
+  for(std::list<QCString>::iterator i=val.begin();i!=val.end();i++) {
+    QStringList parts=QStringList::split(QString::fromLatin1(":"),QString::fromLatin1(*i));
     if (parts.count()==3) {
       parts.append(parts[2]);
-      parts[2]="Charts";
+      parts[2]=QString::fromLatin1("Charts");
     }
     if (last!=parts[2])
-      ret.insert(ret.end(),parts[2]);
+      ret.insert(ret.end(),parts[2].latin1());
     last=parts[2];
   }
   ret.insert(ret.end(),CONF_WAITS);
@@ -116,9 +116,9 @@ public:
   toTuningSetup(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : toTuningSettingUI(parent,name),toSettingTab("tuning.html#preferences"),Tool(tool)
   {
-    std::list<QString> tabs=TabList();
-    for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++) {
-      QListViewItem *item=new QListViewItem(EnabledTabs,*i);
+    std::list<QCString> tabs=TabList();
+    for(std::list<QCString>::iterator i=tabs.begin();i!=tabs.end();i++) {
+      QListViewItem *item=new QListViewItem(EnabledTabs,QString::fromLatin1(*i));
       if (!tool->config(*i,"").isEmpty())
 	item->setSelected(true);
     }
@@ -127,8 +127,8 @@ public:
   virtual void saveSetting(void)
   {
     for (QListViewItem *item=EnabledTabs->firstChild();item;item=item->nextSibling()) {
-      if (item->isSelected()||Tool->config(item->text(0),"Undefined")!="Undefined")
-	Tool->setConfig(item->text(0),(item->isSelected()?"Yes":""));
+      if (item->isSelected()||Tool->config(item->text(0).latin1(),"Undefined")!="Undefined")
+	Tool->setConfig(item->text(0).latin1(),QString::fromLatin1((item->isSelected()?"Yes":"")));
     }
   }
 };
@@ -174,14 +174,14 @@ static toSQL SQLDataCache9("toTuning:Indicators:Important ratios:3DataCache",
 			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100,2))||' %'\n"
 			   "  FROM v$sysstat\n"
 			   " WHERE statistic# IN (40,41,42)",
-			   QString::null,
+			   "",
 			   "9.0");
 
 static toSQL SQLDataCache7("toTuning:Indicators:Important ratios:3DataCache",
 			   "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100,2))||' %'\n"
 			   "  FROM v$sysstat\n"
 			   " WHERE statistic# IN (37,38,39)",
-			   QString::null,
+			   "",
 			   "7.3");
 
 static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
@@ -191,12 +191,12 @@ static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
 
 static toSQL SQLLogRedo9("toTuning:Indicators:Redo log contention:1LogSpace",
 			 "select value from v$sysstat where statistic# = 122",
-			 QString::null,
+			 "",
 			 "9.0");
 
 static toSQL SQLLogRedo7("toTuning:Indicators:Redo log contention:1LogSpace",
 			 "select value from v$sysstat where statistic# = 94",
-			 QString::null,
+			 "",
 			 "7.3");
 
 static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUndo",
@@ -210,14 +210,14 @@ static toSQL SQLSystemHeadUndo9("toTuning:Indicators:RBS contention:1SystemHeadU
 				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-				QString::null,
+				"",
 				"9.0");
 
 static toSQL SQLSystemHeadUndo7("toTuning:Indicators:RBS contention:1SystemHeadUndo",
 				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
 				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-				QString::null,
+				"",
 				"7.3");
 
 static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlockUndo",
@@ -231,14 +231,14 @@ static toSQL SQLSystemBlockUndo9("toTuning:Indicators:RBS contention:2SystemBloc
 				 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-				 QString::null,
+				 "",
 				 "9.0");
 
 static toSQL SQLSystemBlockUndo7("toTuning:Indicators:RBS contention:2SystemBlockUndo",
 				 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
 				 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-				 QString::null,
+				 "",
 				 "7.3");
 
 static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
@@ -252,14 +252,14 @@ static toSQL SQLHeadUndo9("toTuning:Indicators:RBS contention:3HeadUndo",
 			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-			  QString::null,
+			  "",
 			  "9.0");
 
 static toSQL SQLHeadUndo7("toTuning:Indicators:RBS contention:3HeadUndo",
 			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
 			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-			  QString::null,
+			  "",
 			  "7.3");
 
 static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
@@ -273,14 +273,14 @@ static toSQL SQLBlockUndo9("toTuning:Indicators:RBS contention:4BlockUndo",
 			   "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			   "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			   "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (40,41)) b",
-			   QString::null,
+			   "",
 			   "9.0");
 
 static toSQL SQLBlockUndo7("toTuning:Indicators:RBS contention:4BlockUndo",
 			   "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			   "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
 			   "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (37,38)) b",
-			   QString::null,
+			   "",
 			   "7.3");
 
 static toSQL SQLTotalWaits("toTuning:Indicators:RBS contention:5TotalWaits",
@@ -324,7 +324,7 @@ static toSQL SQLChartsPhysical9("toTuning:Charts:1BBPhysical I/O",
 				"       sum(decode(statistic#,46,value,0)) \"Physical writes\",\n"
 				"       sum(decode(statistic#,119,value,0)) \"Redo writes\"\n"
 				"  from v$sysstat where statistic# in (42,46,119)",
-				QString::null,
+				"",
 				"9.0");
 
 static toSQL SQLChartsPhysical7("toTuning:Charts:1BBPhysical I/O",
@@ -333,7 +333,7 @@ static toSQL SQLChartsPhysical7("toTuning:Charts:1BBPhysical I/O",
 				"       sum(decode(statistic#,40,value,0)) \"Physical writes\",\n"
 				"       sum(decode(statistic#,91,value,0)) \"Redo writes\"\n"
 				"  from v$sysstat where statistic# in (39,40,91)",
-				QString::null,
+				"",
 				"7.3");
 
 static toSQL SQLChartsLogical("toTuning:Charts:2BBLogical I/O",
@@ -353,7 +353,7 @@ static toSQL SQLChartsLogical9("toTuning:Charts:2BBLogical I/O",
 			       "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
 			       "       sum(decode(statistic#,44,value,0)) \"Consistent changes\"\n"
 			       "  from v$sysstat where statistic# in (40,41,43,44)",
-			       QString::null,
+			       "",
 			       "9.0");
 
 static toSQL SQLChartsLogical7("toTuning:Charts:2BBLogical I/O",
@@ -363,7 +363,7 @@ static toSQL SQLChartsLogical7("toTuning:Charts:2BBLogical I/O",
 			       "       sum(decode(statistic#,43,value,0)) \"Block changes\",\n"
 			       "       sum(decode(statistic#,45,value,0)) \"Consistent changes\"\n"
 			       "  from v$sysstat where statistic# in (37,38,43,45)",
-			       QString::null,
+			       "",
 			       "7.3");
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
@@ -412,7 +412,7 @@ static toSQL SQLChartsExecution9("toTuning:Charts:6LNExecution",
 				 "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
 				 "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
 				 "  from v$sysstat where statistic# in (222,220,219,4,5,6)",
-				 QString::null,
+				 "",
 				 "9.0");
 
 static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
@@ -423,7 +423,7 @@ static toSQL SQLChartsExecution7("toTuning:Charts:6LNExecution",
 				 "       sum(decode(statistic#,4,value,0))  \"Commit\",\n"
 				 "       sum(decode(statistic#,5,value,0)) \"Rollbacks\"\n"
 				 "  from v$sysstat where statistic# in (132,131,4,5,6)",
-				 QString::null,
+				 "",
 				 "7.3");
 
 static toSQL SQLChartsExecutionPie("toTuning:Charts:8PNExecution Total",
@@ -437,14 +437,14 @@ static toSQL SQLChartsExecutionPie9("toTuning:Charts:8PNExecution Total",
 				    "select value,decode(statistic#,222,'Execute',220,'Hard parse',219,'Parse',\n"
 				    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
 				    "  from v$sysstat where statistic# in (219,220,222,6,4,5) order by name",
-				    QString::null,
+				    "",
 				    "9.0");
 
 static toSQL SQLChartsExecutionPie7("toTuning:Charts:8PNExecution Total",
 				    "select value,decode(statistic#,132,'Execute',131,'Parse',\n"
 				    "                              6,'Calls',4,'Commit',5,'Rollbacks')\n"
 				    "  from v$sysstat where statistic# in (132,131,6,4,5) order by name",
-				    QString::null,
+				    "",
 				    "7.3");
 
 static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
@@ -461,7 +461,7 @@ static toSQL SQLChartsClients8("toTuning:Charts:4BAClients",
 			       "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
 			       "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
 			       "  from v$session",
-			       QString::null,
+			       "",
 			       "8.0");
 
 static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
@@ -486,7 +486,7 @@ static toSQL SQLChartsCacheMisses9("toTuning:Charts:5CPCache misses",
 				   "          from v$sysstat where statistic# IN (40,41,42)) \"Data buffer cache\",\n"
 				   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
 				   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-				   QString::null,
+				   "",
 				   "9.0");
 
 static toSQL SQLChartsCacheMisses7("toTuning:Charts:5CPCache misses",
@@ -498,7 +498,7 @@ static toSQL SQLChartsCacheMisses7("toTuning:Charts:5CPCache misses",
 				   "          from v$sysstat where statistic# IN (37,38,39)) \"Data buffer cache\",\n"
 				   "       (select 100*sum(getmisses) getmiss,sum(gets) gets from v$rowcache) \"Dictionary row cache\",\n"
 				   "       (select 100*sum(reloads) reloads,sum(pins) pins from v$librarycache) \"Library cache\"\n",
-				   QString::null,
+				   "",
 				   "7.3");
 
 static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
@@ -514,7 +514,7 @@ static toSQL SQLChartsRedo9("toTuning:Charts:7BSRedo log I/O",
 			    "       sum(decode(statistic#,115,value,0))/:unit<int> \"Redo size\",\n"
 			    "       sum(decode(statistic#,117,value,0))/:unit<int> \"Redo wastage\"\n"
 			    "  from v$sysstat where statistic# in (115,117)",
-			    QString::null,
+			    "",
 			    "9.0");
 
 static toSQL SQLChartsRedo7("toTuning:Charts:7BSRedo log I/O",
@@ -522,7 +522,7 @@ static toSQL SQLChartsRedo7("toTuning:Charts:7BSRedo log I/O",
 			    "       sum(decode(statistic#,85,value,0))/:unit<int> \"Redo size\",\n"
 			    "       sum(decode(statistic#,89,value,0))/:unit<int> \"Redo wastage\"\n"
 			    "  from v$sysstat where statistic# in (85,89)",
-			    QString::null,
+			    "",
 			    "7.3");
 
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
@@ -532,7 +532,7 @@ static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 
 static toSQL SQLOverviewArchiveWrite7("toTuning:Overview:ArchiveWrite",
 				      "select sysdate,0 from sys.dual",
-				      QString::null,
+				      "",
 				      "7.3");
 
 static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
@@ -546,14 +546,14 @@ static toSQL SQLOverviewBufferHit9("toTuning:Overview:BufferHit",
 				   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,42,value,0))/SUM(DECODE(statistic#,40,value,41,value,0)))*100\n"
 				   "  FROM v$sysstat\n"
 				   " WHERE statistic# IN (40,41,42)",
-				   QString::null,
+				   "",
 				   "9.0");
 
 static toSQL SQLOverviewBufferHit7("toTuning:Overview:BufferHit",
 				   "SELECT SYSDATE,(1-SUM(DECODE(statistic#,39,value,0))/SUM(DECODE(statistic#,37,value,38,value,0)))*100\n"
 				   "  FROM v$sysstat\n"
 				   " WHERE statistic# IN (37,38,39)",
-				   QString::null,
+				   "",
 				   "7.3");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
@@ -565,13 +565,13 @@ static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
 static toSQL SQLOverviewClientInput9("toTuning:Overview:ClientInput",
 				     "select sysdate,value/:f1<int>\n"
 				     "  from v$sysstat where statistic# = 223",
-				     QString::null,
+				     "",
 				     "9.0");
 
 static toSQL SQLOverviewClientInput7("toTuning:Overview:ClientInput",
 				     "select sysdate,value/:f1<int>\n"
 				     "  from v$sysstat where statistic# = 134",
-				     QString::null,
+				     "",
 				     "7.3");
 
 static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
@@ -583,13 +583,13 @@ static toSQL SQLOverviewClientOutput("toTuning:Overview:ClientOutput",
 static toSQL SQLOverviewClientOutput9("toTuning:Overview:ClientOutput",
 				      "select sysdate,value/:f1<int>\n"
 				      "  from v$sysstat where statistic# = 224",
-				      QString::null,
+				      "",
 				      "9.0");
 
 static toSQL SQLOverviewClientOutput7("toTuning:Overview:ClientOutput",
 				      "select sysdate,value/:f1<int>\n"
 				      "  from v$sysstat where statistic# = 133",
-				      QString::null,
+				      "",
 				      "7.3");
 
 static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
@@ -601,13 +601,13 @@ static toSQL SQLOverviewExecute("toTuning:Overview:Execute",
 static toSQL SQLOverviewExecute9("toTuning:Overview:Execute",
 				 "select sysdate,value\n"
 				 "  from v$sysstat where statistic# = 222",
-				 QString::null,
+				 "",
 				 "9.0");
 
 static toSQL SQLOverviewExecute7("toTuning:Overview:Execute",
 				 "select sysdate,value\n"
 				 "  from v$sysstat where statistic# = 132",
-				 QString::null,
+				 "",
 				 "7.3");
 
 static toSQL SQLOverviewParse("toTuning:Overview:Parse",
@@ -619,13 +619,13 @@ static toSQL SQLOverviewParse("toTuning:Overview:Parse",
 static toSQL SQLOverviewParse9("toTuning:Overview:Parse",
 			       "select sysdate,value\n"
 			       "  from v$sysstat where statistic# = 219",
-			       QString::null,
+			       "",
 			       "9.0");
 
 static toSQL SQLOverviewParse7("toTuning:Overview:Parse",
 			       "select sysdate,value\n"
 			       "  from v$sysstat where statistic# = 131",
-			       QString::null,
+			       "",
 			       "7.3");
 
 static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
@@ -637,13 +637,13 @@ static toSQL SQLOverviewRedoEntries("toTuning:Overview:RedoEntries",
 static toSQL SQLOverviewRedoEntries9("toTuning:Overview:RedoEntries",
 				     "select sysdate,value\n"
 				     "  from v$sysstat where statistic# = 114",
-				     QString::null,
+				     "",
 				     "9.0");
 
 static toSQL SQLOverviewRedoEntries7("toTuning:Overview:RedoEntries",
 				     "select sysdate,value\n"
 				     "  from v$sysstat where statistic# = 84",
-				     QString::null,
+				     "",
 				     "7.3");
 
 static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
@@ -655,13 +655,13 @@ static toSQL SQLOverviewRedoBlocks("toTuning:Overview:RedoBlocks",
 static toSQL SQLOverviewRedoBlocks9("toTuning:Overview:RedoBlocks",
 				    "select sysdate,value\n"
 				    "  from v$sysstat where statistic# = 120",
-				    QString::null,
+				    "",
 				    "9.0");
 
 static toSQL SQLOverviewRedoBlocks7("toTuning:Overview:RedoBlocks",
 				    "select sysdate,value\n"
 				    "  from v$sysstat where statistic# = 92",
-				    QString::null,
+				    "",
 				    "7.3");
 
 static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
@@ -673,13 +673,13 @@ static toSQL SQLOverviewLogicalRead("toTuning:Overview:LogicalRead",
 static toSQL SQLOverviewLogicalRead9("toTuning:Overview:LogicalRead",
 				     "select sysdate,sum(value)\n"
 				     "  from v$sysstat where statistic# in (40,41)",
-				     QString::null,
+				     "",
 				     "9.0");
 
 static toSQL SQLOverviewLogicalRead7("toTuning:Overview:LogicalRead",
 				     "select sysdate,sum(value)\n"
 				     "  from v$sysstat where statistic# in (37,38)",
-				     QString::null,
+				     "",
 				     "7.3");
 
 static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
@@ -691,13 +691,13 @@ static toSQL SQLOverviewLogicalWrite("toTuning:Overview:LogicalWrite",
 static toSQL SQLOverviewLogicalWrite9("toTuning:Overview:LogicalWrite",
 				      "select sysdate,sum(value)\n"
 				      "  from v$sysstat where statistic# in (43,44)",
-				      QString::null,
+				      "",
 				      "9.0");
 
 static toSQL SQLOverviewLogicalWrite7("toTuning:Overview:LogicalWrite",
 				      "select sysdate,sum(value)\n"
 				      "  from v$sysstat where statistic# in (43,45)",
-				      QString::null,
+				      "",
 				      "7.3");
 
 static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
@@ -709,13 +709,13 @@ static toSQL SQLOverviewPhysicalRead("toTuning:Overview:PhysicalRead",
 static toSQL SQLOverviewPhysicalRead9("toTuning:Overview:PhysicalRead",
 				      "select sysdate,value\n"
 				      "  from v$sysstat where statistic# = 42",
-				      QString::null,
+				      "",
 				      "9.0");
 
 static toSQL SQLOverviewPhysicalRead7("toTuning:Overview:PhysicalRead",
 				      "select sysdate,value\n"
 				      "  from v$sysstat where statistic# = 39",
-				      QString::null,
+				      "",
 				      "7.3");
 
 static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
@@ -727,13 +727,13 @@ static toSQL SQLOverviewPhysicalWrite("toTuning:Overview:PhysicalWrite",
 static toSQL SQLOverviewPhysicalWrite9("toTuning:Overview:PhysicalWrite",
 				       "select sysdate,value\n"
 				       "  from v$sysstat where statistic# = 46",
-				       QString::null,
+				       "",
 				       "9.0");
 
 static toSQL SQLOverviewPhysicalWrite7("toTuning:Overview:PhysicalWrite",
 				       "select sysdate,value\n"
 				       "  from v$sysstat where statistic# = 40",
-				       QString::null,
+				       "",
 				       "7.3");
 
 static toSQL SQLOverviewClient("toTuning:Overview:Client",
@@ -764,7 +764,7 @@ static toSQL SQLOverviewSGAUsed7("toTuning:Overview:SGAUsed",
 				 "select sysdate,100*(total-free)/total\n"
 				 "  from (select sum(value) total from v$sga where name in ('Fixed Size','Variable Size')),\n"
 				 "       (select bytes free from v$sgastat where name = 'free memory')",
-				 QString::null,
+				 "",
 				 "7.3");
 
 static toSQL SQLOverviewTimescale("toTuning:Overview:Timescale",
@@ -789,10 +789,10 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
   chart->setTitle(title);
   chart->showLast(true);
   toQList val;
-  if (postfix=="b/s") {
+  if (postfix==QString::fromLatin1("b/s")) {
     QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
     val.insert(val.end(),toQValue(toSizeDecode(unitStr)));
-    unitStr+="/s";
+    unitStr+=QString::fromLatin1("/s");
     chart->setYPostfix(unitStr);
   } else
     chart->setYPostfix(postfix);
@@ -804,21 +804,21 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
 {
   BackgroundGroup->setColumnLayout(1,Horizontal);
 
-  setupChart(ArchiveWrite,"< Archive write"," blocks/s",SQLOverviewArchiveWrite);
-  setupChart(BufferHit,"Hitrate","%",SQLOverviewBufferHit);
+  setupChart(ArchiveWrite,tr("< Archive write"),tr(" blocks/s"),SQLOverviewArchiveWrite);
+  setupChart(BufferHit,tr("Hitrate"),QString::fromLatin1("%"),SQLOverviewBufferHit);
   BufferHit->setMaxValue(100);
   BufferHit->setFlow(false);
-  setupChart(ClientInput,"< Client input","b/s",SQLOverviewClientInput);
-  setupChart(ClientOutput,"Client output >","b/s",SQLOverviewClientOutput);
-  setupChart(ExecuteCount,"Executes >","/s",SQLOverviewExecute);
-  setupChart(LogWrite,"Log writer >"," blocks/s",SQLOverviewRedoBlocks);
-  setupChart(LogicalChange,"Buffer changed >"," blocks/s",SQLOverviewLogicalWrite);
-  setupChart(LogicalRead,"< Buffer gets"," blocks/s",SQLOverviewLogicalRead);
-  setupChart(ParseCount,"Parse >","/s",SQLOverviewParse);
-  setupChart(PhysicalRead,"< Physical read"," blocks/s",SQLOverviewPhysicalRead);
-  setupChart(PhysicalWrite,"Physical write >"," blocks/s",SQLOverviewPhysicalWrite);
-  setupChart(RedoEntries,"Redo entries >","/s",SQLOverviewRedoEntries);
-  setupChart(Timescale,"Timescale","",SQLOverviewTimescale);
+  setupChart(ClientInput,tr("< Client input"),QString::fromLatin1("b/s"),SQLOverviewClientInput);
+  setupChart(ClientOutput,tr("Client output >"),QString::fromLatin1("b/s"),SQLOverviewClientOutput);
+  setupChart(ExecuteCount,tr("Executes >"),QString::fromLatin1("/s"),SQLOverviewExecute);
+  setupChart(LogWrite,tr("Log writer >"),tr(" blocks/s"),SQLOverviewRedoBlocks);
+  setupChart(LogicalChange,tr("Buffer changed >"),tr(" blocks/s"),SQLOverviewLogicalWrite);
+  setupChart(LogicalRead,tr("< Buffer gets"),tr(" blocks/s"),SQLOverviewLogicalRead);
+  setupChart(ParseCount,tr("Parse >"),QString::fromLatin1("/s"),SQLOverviewParse);
+  setupChart(PhysicalRead,tr("< Physical read"),tr(" blocks/s"),SQLOverviewPhysicalRead);
+  setupChart(PhysicalWrite,tr("Physical write >"),tr(" blocks/s"),SQLOverviewPhysicalWrite);
+  setupChart(RedoEntries,tr("Redo entries >"),QString::fromLatin1("/s"),SQLOverviewRedoEntries);
+  setupChart(Timescale,tr("Timescale"),QString::null,SQLOverviewTimescale);
   Timescale->showAxisLegend(true);
   Timescale->showLast(false);
 
@@ -834,7 +834,7 @@ toTuningOverview::toTuningOverview(QWidget *parent,const char *name,WFlags fl)
   SharedUsed->query(SQLOverviewSGAUsed);
   SharedUsed->setFlow(false);
   SharedUsed->setMaxValue(100);
-  SharedUsed->setYPostfix("%");
+  SharedUsed->setYPostfix(QString::fromLatin1("%"));
   SharedUsed->showLast(true);
 
   try {
@@ -920,7 +920,7 @@ static toSQL SQLOverviewArchive7("toTuning:Overview:Archive",
 				 "select 'N/A',\n"
 				 "       'N/A'\n"
 				 "  from sys.dual where 0 != :f1<int>",
-				 QString::null,
+				 "",
 				 "7.3");
 
 static toSQL SQLOverviewLog("toTuning:Overview:Log",
@@ -937,7 +937,7 @@ static toSQL SQLOverviewTablespaces("toTuning:Overview:Tablespaces",
 
 static toSQL SQLOverviewTablespaces7("toTuning:Overview:Tablespaces",
 				    "select count(1) from sys.dba_tablespaces",
-				    QString::null,
+				    "",
 				     "7.3");
 
 static toSQL SQLOverviewSGA("toTuning:Overview:SGA",
@@ -958,7 +958,7 @@ static toSQL SQLOverviewDedicated("toTuning:Overview:Dedicated",
 
 static toSQL SQLOverviewDedicated7("toTuning:Overview:Dedicated",
 				   "select count(1) from v$session where type = 'USER' and server = 'DEDICATED'",
-				   QString::null,
+				   "",
 				   "8.0");
 
 static toSQL SQLOverviewDispatcher("toTuning:Overview:Dispatcher",
@@ -972,7 +972,7 @@ static toSQL SQLOverviewParallell("toTuning:Overview:Parallel",
 
 static toSQL SQLOverviewParallell8("toTuning:Overview:Parallel",
 				   "select 'N/A' from sys.dual",
-				   QString::null,
+				   "",
 				   "8.0");
 
 static toSQL SQLOverviewShared("toTuning:Overview:Shared",
@@ -998,7 +998,7 @@ static toSQL SQLOverviewClientTotal8("toTuning:Overview:ClientTotal",
 				     "       sum(decode(status,'ACTIVE',1,0))\n"
 				     "  from v$session\n"
 				     " where type != 'BACKGROUND'",
-				     QString::null,
+				     "",
 				     "8.0");
 
 static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
@@ -1008,15 +1008,15 @@ static toSQL SQLOverviewDatafiles("toTuning:Overview:Datafiles",
 
 static toSQL SQLOverviewDatafiles8("toTuning:Overview:Datafiles",
 				  "select count(1) from v$datafile",
-				  QString::null,
+				  "",
 				  "8.0");
 
 static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
 				   "select count(1) from sys.dba_tablespaces",
-				   QString::null,
+				   "",
 				   "7.3");
 
-void toTuningOverview::overviewQuery::setValue(const QString &nam,const QString &val)
+void toTuningOverview::overviewQuery::setValue(const QCString &nam,const QString &val)
 {
   if (Parent.Quit)
     throw 1;
@@ -1032,17 +1032,17 @@ void toTuningOverview::overviewQuery::run(void)
 
     toQList res=toQuery::readQuery(*Parent.Connection,SQLOverviewArchive,val);
     QString tmp=toShift(res);
-    tmp+="/";
+    tmp+=QString::fromLatin1("/");
     tmp+=toShift(res);
     tmp+=Parent.UnitString;
     setValue("ArchiveInfo",tmp);
 
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewRound);
     tmp=toShift(res);
-    tmp+=" ms";
+    tmp+=QString::fromLatin1(" ms");
     setValue("SendFromClient",tmp);
     tmp=toShift(res);
-    tmp+=" ms";
+    tmp+=QString::fromLatin1(" ms");
     setValue("SendToClient",tmp);
 
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewClientTotal);
@@ -1076,33 +1076,33 @@ void toTuningOverview::overviewQuery::run(void)
     QStringList back;
     while(res.size()>0) {
       tmp=toShift(res);
-      if(tmp=="DBW")
-	tmp="DBWR";
-      else if (tmp=="PMO")
-	tmp="PMON";
-      else if (tmp=="ARC")
-	tmp="ARCH";
-      else if (tmp=="CKP")
-	tmp="CKPT";
-      else if (tmp=="LGW")
-	tmp="LGWR";
-      else if (tmp=="LMO")
-	tmp="LMON";
-      else if (tmp=="REC")
-	tmp="RECO";
-      else if (tmp=="TRW")
-	tmp="TRWR";
-      else if (tmp=="SMO")
-	tmp="SMON";
+      if(tmp==QString::fromLatin1("DBW"))
+	tmp=QString::fromLatin1("DBWR");
+      else if (tmp==QString::fromLatin1("PMO"))
+	tmp=QString::fromLatin1("PMON");
+      else if (tmp==QString::fromLatin1("ARC"))
+	tmp=QString::fromLatin1("ARCH");
+      else if (tmp==QString::fromLatin1("CKP"))
+	tmp=QString::fromLatin1("CKPT");
+      else if (tmp==QString::fromLatin1("LGW"))
+	tmp=QString::fromLatin1("LGWR");
+      else if (tmp==QString::fromLatin1("LMO"))
+	tmp=QString::fromLatin1("LMON");
+      else if (tmp==QString::fromLatin1("REC"))
+	tmp=QString::fromLatin1("RECO");
+      else if (tmp==QString::fromLatin1("TRW"))
+	tmp=QString::fromLatin1("TRWR");
+      else if (tmp==QString::fromLatin1("SMO"))
+	tmp=QString::fromLatin1("SMON");
 
-      tmp+=": <B>";
+      tmp+=QString::fromLatin1(": <B>");
       QString job=toShift(res);
       totJob+=job.toInt();
       tmp+=job;
-      tmp+="</B>";
+      tmp+=QString::fromLatin1("</B>");
       back<<tmp;
     }
-    setValue("Background",back.join(","));
+    setValue("Background",back.join(QString::fromLatin1(",")));
     setValue("TotalProcess",QString::number(totJob));
 
     double tot=0;
@@ -1112,7 +1112,7 @@ void toTuningOverview::overviewQuery::run(void)
       QString nam=toShift(res);
       tmp=toShift(res);
       if (nam=="Database Buffers"||nam=="Redo Buffers")
-	setValue(nam,tmp);
+	setValue(nam.latin1(),tmp);
       else if (nam=="Fixed Size"||nam=="Variable Size")
 	sql+=tmp.toDouble();
       tot+=tmp.toDouble();
@@ -1128,7 +1128,7 @@ void toTuningOverview::overviewQuery::run(void)
     setValue("RedoFiles",toShift(res));
     setValue("ActiveRedo",toShift(res));
     tmp=toShift(res);
-    tmp+="/";
+    tmp+=QString::fromLatin1("/");
     tmp+=toShift(res);
     tmp+=Parent.UnitString;
     setValue("RedoSize",tmp);
@@ -1139,7 +1139,7 @@ void toTuningOverview::overviewQuery::run(void)
     res=toQuery::readQuery(*Parent.Connection,SQLOverviewDatafiles);
     setValue("Files",toShift(res));
   } catch(const QString &str) {
-    printf("Exception occured:\n\n%s\n",(const char *)str);
+    printf("Exception occured:\n\n%s\n",(const char *)str.latin1());
   } catch(int) {
   }
   Parent.Done.up();
@@ -1160,10 +1160,10 @@ void toTuningOverview::refresh(void)
   } TOCATCH
 }
 
-void toTuningOverview::setValue(QLabel *label,const QString &nam)
+void toTuningOverview::setValue(QLabel *label,const QCString &nam)
 {
   toLocker lock(Lock);
-  std::map<QString,QString>::iterator i=Values.find(nam);
+  std::map<QCString,QString>::iterator i=Values.find(nam);
   if (i!=Values.end()) {
     label->setText((*i).second);
     Values.erase(i);
@@ -1173,7 +1173,6 @@ void toTuningOverview::setValue(QLabel *label,const QString &nam)
 void toTuningOverview::poll(void)
 {
   try {
-
     setValue(ArchiveInfo,"ArchiveInfo");
     setValue(SendFromClient,"SendFromClient");
     setValue(SendToClient,"SendToClient");
@@ -1186,11 +1185,11 @@ void toTuningOverview::poll(void)
 
     {
       toLocker lock(Lock);
-      std::map<QString,QString>::iterator i=Values.find("Background");
+      std::map<QCString,QString>::iterator i=Values.find("Background");
       if (i!=Values.end()) {
 	std::list<QLabel *>::iterator labIt=Backgrounds.begin();
 
-	QStringList lst=QStringList::split(",",(*i).second);
+	QStringList lst=QStringList::split(QString::fromLatin1(","),(*i).second);
 	for(unsigned int j=0;j<lst.count();j++) {
 	  QLabel *label;
 	  if (labIt==Backgrounds.end()||*labIt==NULL) {
@@ -1238,7 +1237,7 @@ void toTuningOverview::poll(void)
       if (j!=values.end())
 	size+=(*j);
       QString tmp=QString::number(used);
-      tmp+="/";
+      tmp+=QString::fromLatin1("/");
       tmp+=QString::number(size);
       tmp+=UnitString;
       if (tmp!=Filesize->text())
@@ -1292,49 +1291,49 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   if (TuningTool.config(CONF_OVERVIEW,"Undefined")=="Undefined") {
     QString def=QString::null;
     if (TOMessageBox::warning(toMainWidget(),
-			      "Enable all tuning statistics",
-			      "Are you sure you want to enable all tuning features.\n"
-			      "This can put heavy strain on a database and unless you\n"
-			      "are the DBA you probably don't want this. Selecting\n"
-			      "no here will give you the option to enable or disable\n"
-			      "tabs individually as they are needed.",
-			      "Yes","&No",QString::null,1)==0) {
+			      tr("Enable all tuning statistics"),
+			      tr("Are you sure you want to enable all tuning features.\n"
+				 "This can put heavy strain on a database and unless you\n"
+				 "are the DBA you probably don't want this. Selecting\n"
+				 "no here will give you the option to enable or disable\n"
+				 "tabs individually as they are needed."),
+			      tr("Yes"),tr("&No"),QString::null,1)==0) {
       def="Yes";
     }
-    std::list<QString> tabs=TabList();
-    for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++)
+    std::list<QCString> tabs=TabList();
+    for(std::list<QCString>::iterator i=tabs.begin();i!=tabs.end();i++)
       TuningTool.setConfig(*i,def);
     toTool::saveConfig();
   }
 
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
+  QToolBar *toolbar=toAllocBar(this,tr("Server Tuning"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh",
-		  "Refresh",
+		  tr("Refresh"),
+		  tr("Refresh"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Refresh ",toolbar);
+  new QLabel(tr("Refresh "),toolbar);
   Refresh=toRefreshCreate(toolbar);
   connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
   toolbar->addSeparator();
   TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),
-		 	     "Enable and disable tuning tabs",
-			     "Enable and disable tuning tabs",
-			     toolbar);
+			      tr("Enable and disable tuning tabs"),
+			      tr("Enable and disable tuning tabs"),
+			      toolbar);
   TabMenu=new QPopupMenu(TabButton);
   TabButton->setPopup(TabMenu);
   connect(TabMenu,SIGNAL(aboutToShow()),this,SLOT(showTabMenu()));
   connect(TabMenu,SIGNAL(activated(int)),this,SLOT(enableTabMenu(int)));
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   Tabs=new QTabWidget(this);
 
   Overview=new toTuningOverview(this,"overview");
-  Tabs->addTab(Overview,"&Overview");
+  Tabs->addTab(Overview,tr("&Overview"));
 
   try {
     toRefreshParse(timer());
@@ -1345,114 +1344,114 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   toQList unit;
   unit.insert(unit.end(),toQValue(toSizeDecode(unitStr)));
   {
-    std::list<QString> val=toSQL::range("toTuning:Charts");
-    for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
-      QStringList parts=QStringList::split(":",*i);
+    std::list<QCString> val=toSQL::range("toTuning:Charts");
+    for(std::list<QCString>::iterator i=val.begin();i!=val.end();i++) {
+      QStringList parts=QStringList::split(QString::fromLatin1(":"),QString::fromLatin1(*i));
       if (parts.count()==3) {
 	parts.append(parts[2]);
-	parts[2]="Charts";
+	parts[2]=QString::fromLatin1("Charts");
       }
-      std::map<QString,QGrid *>::iterator j=Charts.find(CONF_CHART+parts[2]);
+      std::map<QCString,QGrid *>::iterator j=Charts.find(QCString(CONF_CHART)+parts[2].latin1());
       QGrid *cchart;
       if (j==Charts.end())
-	Charts[CONF_CHART+parts[2]]=cchart=new QGrid(2,Tabs,CONF_CHART+parts[2]);
+	Charts[QCString(CONF_CHART)+parts[2].latin1()]=cchart=new QGrid(2,Tabs,QCString(CONF_CHART)+parts[2].latin1());
       else
 	cchart=(*j).second;
 
-      if (parts[3].mid(1,1)=="B") {
+      if (parts[3].mid(1,1)==QString::fromLatin1("B")) {
 	toResultBar *chart=new toResultBar(cchart);
 	chart->setTitle(parts[3].mid(3));
 	toQList par;
-	if (parts[3].mid(2,1)=="B")
-	  chart->setYPostfix(" blocks/s");
-	else if (parts[3].mid(2,1)=="M")
-	  chart->setYPostfix(" ms/s");
-	else if (parts[3].mid(2,1)=="S") {
+	if (parts[3].mid(2,1)==QString::fromLatin1("B"))
+	  chart->setYPostfix(tr(" blocks/s"));
+	else if (parts[3].mid(2,1)==QString::fromLatin1("M"))
+	  chart->setYPostfix(QString::fromLatin1(" ms/s"));
+	else if (parts[3].mid(2,1)==QString::fromLatin1("S")) {
 	  par=unit;
 	  QString t=unitStr;
-	  t+="/s";
+	  t+=QString::fromLatin1("/s");
 	  chart->setYPostfix(t);
-	} else if (parts[3].mid(2,1)=="A")
+	} else if (parts[3].mid(2,1)==QString::fromLatin1("A"))
 	  chart->setFlow(false);
 	else
-	  chart->setYPostfix("/s");
+	  chart->setYPostfix(QString::fromLatin1("/s"));
 	chart->query(toSQL::sql(*i),par);
-      } else if (parts[3].mid(1,1)=="L"||parts[3].mid(1,1)=="C") {
+      } else if (parts[3].mid(1,1)==QString::fromLatin1("L")||parts[3].mid(1,1)==QString::fromLatin1("C")) {
 	toResultLine *chart;
-	if (parts[3].mid(1,1)=="C")
+	if (parts[3].mid(1,1)==QString::fromLatin1("C"))
 	  chart=new toTuningMiss(cchart);
 	else
 	  chart=new toResultLine(cchart);
 	chart->setTitle(parts[3].mid(3));
 	toQList par;
-	if (parts[3].mid(2,1)=="B")
-	  chart->setYPostfix(" blocks/s");
-	else if (parts[3].mid(2,1)=="S") {
+	if (parts[3].mid(2,1)==QString::fromLatin1("B"))
+	  chart->setYPostfix(tr(" blocks/s"));
+	else if (parts[3].mid(2,1)==QString::fromLatin1("S")) {
 	  par=unit;
 	  QString t=unitStr;
-	  t+="/s";
+	  t+=QString::fromLatin1("/s");
 	  chart->setYPostfix(t);
-	} else if (parts[3].mid(2,1)=="P") {
-	  chart->setYPostfix(" %");
+	} else if (parts[3].mid(2,1)==QString::fromLatin1("P")) {
+	  chart->setYPostfix(QString::fromLatin1(" %"));
 	  chart->setMinValue(0);
         } else
-	  chart->setYPostfix("/s");
+	  chart->setYPostfix(QString::fromLatin1("/s"));
 	chart->query(toSQL::sql(*i),par);
-      } else if (parts[3].mid(1,1)=="P") {
+      } else if (parts[3].mid(1,1)==QString::fromLatin1("P")) {
 	toResultPie *chart=new toResultPie(cchart);
 	chart->setTitle(parts[3].mid(3));
-	if (parts[3].mid(2,1)=="S") {
+	if (parts[3].mid(2,1)==QString::fromLatin1("S")) {
 	  chart->query(toSQL::sql(*i),unit);
 	  chart->setPostfix(unitStr);
 	} else
 	  chart->query(toSQL::sql(*i));
       } else
-	toStatusMessage("Wrong format of name on chart ("+*i+").");
+	toStatusMessage(tr("Wrong format of name on chart (%1).").arg(*i));
     }
   }
 
-  for (std::map<QString,QGrid *>::iterator k=Charts.begin();k!=Charts.end();k++)
-    Tabs->addTab((*k).second,(*k).first.mid(strlen(CONF_CHART)));
+  for (std::map<QCString,QGrid *>::iterator k=Charts.begin();k!=Charts.end();k++)
+    Tabs->addTab((*k).second,tr((*k).first.mid(strlen(CONF_CHART))));
 
   FileIO=new toTuningFileIO(this,"fileio");
   connect(this,SIGNAL(connectionChange()),FileIO,SLOT(changeConnection()));
 
   Waits=new toWaitEvents(this,"waits");
-  Tabs->addTab(Waits,"Wait events");
+  Tabs->addTab(Waits,tr("Wait events"));
 
-  Tabs->addTab(FileIO,"&File I/O");
+  Tabs->addTab(FileIO,tr("&File I/O"));
 
   Indicators=new toListView(Tabs,"indicators");
   Indicators->setRootIsDecorated(true);
-  Indicators->addColumn("Indicator");
-  Indicators->addColumn("Value");
-  Indicators->addColumn("Reference");
-  Tabs->addTab(Indicators,"&Indicators");
+  Indicators->addColumn(tr("Indicator"));
+  Indicators->addColumn(tr("Value"));
+  Indicators->addColumn(tr("Reference"));
+  Tabs->addTab(Indicators,tr("&Indicators"));
 
   Statistics=new toResultStats(Tabs,"stats");
-  Tabs->addTab(Statistics,"&Statistics");
+  Tabs->addTab(Statistics,tr("&Statistics"));
 
   Parameters=new toResultParam(Tabs,"parameters");
-  Tabs->addTab(Parameters,"&Parameters");
+  Tabs->addTab(Parameters,tr("&Parameters"));
 
   BlockingLocks=new toResultLock(Tabs,"locks");
-  Tabs->addTab(BlockingLocks,"&Blocking locks");
+  Tabs->addTab(BlockingLocks,tr("&Blocking locks"));
 
   LibraryCache=new toResultLong(true,false,toQuery::Background,Tabs,"cache");
   LibraryCache->setSQL(SQLLibraryCache);
-  Tabs->addTab(LibraryCache,"Library C&ache");
+  Tabs->addTab(LibraryCache,tr("Library C&ache"));
 
   ControlFiles=new toResultLong(true,false,toQuery::Background,Tabs,"control");
   ControlFiles->setSQL(SQLControlFiles);
-  Tabs->addTab(ControlFiles,"Control Files");
+  Tabs->addTab(ControlFiles,tr("Control Files"));
 
   Options=new toResultLong(true,false,toQuery::Background,Tabs,"options");
   Options->setSQL(SQLOptions);
-  Tabs->addTab(Options,"Optio&ns");
+  Tabs->addTab(Options,tr("Optio&ns"));
 
   Licenses=new toResultItem(2,true,Tabs,"licenses");
   Licenses->setSQL(SQLLicense);
-  Tabs->addTab(Licenses,"&Licenses");
+  Tabs->addTab(Licenses,tr("&Licenses"));
 
   Tabs->setCurrentPage(0);
 
@@ -1463,16 +1462,16 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
-  std::list<QString> tabs=TabList();
-  for(std::list<QString>::iterator i=tabs.begin();i!=tabs.end();i++)
-    if (TuningTool.config(*i,QString::null).isEmpty())
+  std::list<QCString> tabs=TabList();
+  for(std::list<QCString>::iterator i=tabs.begin();i!=tabs.end();i++)
+    if (TuningTool.config(*i,"").isEmpty())
       enableTab(*i,false);
 
   refresh();
   setFocusProxy(Tabs);
 }
 
-QWidget *toTuning::tabWidget(const QString &name)
+QWidget *toTuning::tabWidget(const QCString &name)
 {
   QWidget *widget=NULL;
   if (name==CONF_OVERVIEW) {
@@ -1491,10 +1490,10 @@ void toTuning::showTabMenu(void)
 {
   int id=1;
   TabMenu->clear();
-  std::list<QString> tab=TabList();
-  for(std::list<QString>::iterator i=tab.begin();i!=tab.end();i++) {
+  std::list<QCString> tab=TabList();
+  for(std::list<QCString>::iterator i=tab.begin();i!=tab.end();i++) {
     id++;
-    TabMenu->insertItem(*i,id);
+    TabMenu->insertItem(tr(*i),id);
     QWidget *widget=tabWidget(*i);
     if (widget&&Tabs->isTabEnabled(widget))
       TabMenu->setItemChecked(id,true);
@@ -1503,9 +1502,9 @@ void toTuning::showTabMenu(void)
 
 void toTuning::enableTabMenu(int selid)
 {
-  std::list<QString> tab=TabList();
+  std::list<QCString> tab=TabList();
   int id=1;
-  for(std::list<QString>::iterator i=tab.begin();i!=tab.end();i++) {
+  for(std::list<QCString>::iterator i=tab.begin();i!=tab.end();i++) {
     id++;
     if (selid==id) {
       QWidget *widget=tabWidget(*i);
@@ -1516,7 +1515,7 @@ void toTuning::enableTabMenu(int selid)
   }
 }
 
-void toTuning::enableTab(const QString &name,bool enable)
+void toTuning::enableTab(const QCString &name,bool enable)
 {
   QWidget *widget=NULL;
   if (name==CONF_OVERVIEW) {
@@ -1525,8 +1524,8 @@ void toTuning::enableTab(const QString &name,bool enable)
     else
       Overview->stop();
     widget=Overview;
-  } else if (Charts.find(CONF_CHART+name)!=Charts.end()) {
-    QGrid *chart=Charts[CONF_CHART+name];
+  } else if (Charts.find(QCString(CONF_CHART)+name)!=Charts.end()) {
+    QGrid *chart=Charts[QCString(CONF_CHART)+name];
     QObjectList *childs=(QObjectList *)chart->children();
     for(unsigned int i=0;i<childs->count();i++) {
       toResultLine *line=dynamic_cast<toResultLine *>(childs->at(i));
@@ -1581,11 +1580,11 @@ void toTuning::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",this,SLOT(refresh(void)),
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),this,SLOT(refresh(void)),
 			   Key_F5);
-      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+      ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
-      toMainWidget()->menuBar()->insertItem("&Tuning",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Tuning"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -1607,21 +1606,21 @@ void toTuning::refresh(void)
     Overview->refresh();
   } else if (LastTab==Indicators) {
     Indicators->clear();
-    std::list<QString> val=toSQL::range("toTuning:Indicators");
+    std::list<QCString> val=toSQL::range("toTuning:Indicators");
     QListViewItem *parent=NULL;
     QListViewItem *last=NULL;
-    for(std::list<QString>::iterator i=val.begin();i!=val.end();i++) {
+    for(std::list<QCString>::iterator i=val.begin();i!=val.end();i++) {
       try {
 	toQList val=toQuery::readQuery(connection(),toSQL::string(*i,connection()));
-	QStringList parts=QStringList::split(":",*i);
+	QStringList parts=QStringList::split(QString::fromLatin1(":"),*i);
 	if (!parent||parent->text(0)!=parts[2]) {
 	  parent=new toResultViewItem(Indicators,NULL,parts[2]);
 	  parent->setOpen(true);
 	  last=NULL;
 	}
-	QStringList dsc=QStringList::split(".",toSQL::description(*i));
+	QStringList dsc=QStringList::split(QString::fromLatin1("."),toSQL::description(*i));
 	QString first=dsc[0];
-	first+=".";
+	first+=QString::fromLatin1(".");
 	last=new toResultViewItem(parent,last,first);
 	last->setText(1,*(val.begin()));
 	if (dsc.count()>1)
@@ -1647,15 +1646,15 @@ void toTuning::refresh(void)
     Licenses->refresh();
 }
 
-void toTuning::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toTuning::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   toToolWidget::exportData(data,prefix);
-  std::list<QString> ret=TabList();
-  for(std::list<QString>::iterator i=ret.begin();i!=ret.end();i++) {
+  std::list<QCString> ret=TabList();
+  for(std::list<QCString>::iterator i=ret.begin();i!=ret.end();i++) {
     QWidget *widget=tabWidget(*i);
     if (widget) {
       if (!Tabs->isTabEnabled(widget))
-	data[prefix+":"+*i]="Disabled";
+	data[prefix+":"+*i]=QString::fromLatin1("Disabled");
     }
   }
   data[prefix+":Current"]=Tabs->currentPage()->name();
@@ -1663,11 +1662,11 @@ void toTuning::exportData(std::map<QString,QString> &data,const QString &prefix)
   Waits->exportData(data,prefix+":Waits");
 }
 
-void toTuning::importData(std::map<QString,QString> &data,const QString &prefix)
+void toTuning::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   toToolWidget::importData(data,prefix);
-  std::list<QString> ret=TabList();
-  for(std::list<QString>::iterator i=ret.begin();i!=ret.end();i++)
+  std::list<QCString> ret=TabList();
+  for(std::list<QCString>::iterator i=ret.begin();i!=ret.end();i++)
     enableTab(*i,data[prefix+":"+(*i)].isEmpty());
   QWidget *chld=(QWidget *)child(data[prefix+":Current"]);
   if(chld)
@@ -1698,7 +1697,7 @@ static toSQL SQLFileIO8("toTuning:FileIO",
 			"  from v$tablespace a,v$datafile b,v$filestat c\n"
 			" where a.ts# = b.ts# and b.file# = c.file#\n"
 			" order by a.name",
-			QString::null,
+			"",
 			"8.0");
 
 toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
@@ -1713,11 +1712,11 @@ toTuningFileIO::toTuningFileIO(QWidget *parent,const char *name,WFlags fl)
     addChild(Box);
 
     QComboBox *combo=new QComboBox(Box);
-    combo->insertItem("File I/O");
-    combo->insertItem("File timing");
+    combo->insertItem(tr("File I/O"));
+    combo->insertItem(tr("File timing"));
     if (toCurrentConnection(this).version()>="8.0") {
-      combo->insertItem("Tablespace I/O");
-      combo->insertItem("Tablespace timing");
+      combo->insertItem(tr("Tablespace I/O"));
+      combo->insertItem(tr("Tablespace timing"));
     }
     connect(combo,SIGNAL(activated(int)),this,SLOT(changeCharts(int)));
 
@@ -1768,40 +1767,40 @@ void toTuningFileIO::changeCharts(int val)
 void toTuningFileIO::allocCharts(const QString &name,const QString &label)
 {
   std::list<QString> labels;
-  labels.insert(labels.end(),"Reads");
-  labels.insert(labels.end(),"Blocks Read");
-  labels.insert(labels.end(),"Writes");
-  labels.insert(labels.end(),"Blocks Written");
+  labels.insert(labels.end(),tr("Reads"));
+  labels.insert(labels.end(),tr("Blocks Read"));
+  labels.insert(labels.end(),tr("Writes"));
+  labels.insert(labels.end(),tr("Blocks Written"));
   std::list<QString> labelTime;
-  labelTime.insert(labelTime.end(),"Average");
-  labelTime.insert(labelTime.end(),"Minimum");
-  labelTime.insert(labelTime.end(),"Maximum Read");
-  labelTime.insert(labelTime.end(),"Maximum Write");
+  labelTime.insert(labelTime.end(),tr("Average"));
+  labelTime.insert(labelTime.end(),tr("Minimum"));
+  labelTime.insert(labelTime.end(),tr("Maximum Read"));
+  labelTime.insert(labelTime.end(),tr("Maximum Write"));
 
   toResultBar *barchart;
-  if (name.startsWith("tspc:"))
+  if (name.startsWith(QString::fromLatin1("tspc:")))
     barchart=new toResultBar(TablespaceReads);
   else
     barchart=new toResultBar(FileReads);
   ReadsCharts[name]=barchart;
   barchart->setTitle(name.mid(5));
   barchart->setMinimumSize(200,170);
-  barchart->setYPostfix("blocks/s");
+  barchart->setYPostfix(tr("blocks/s"));
   barchart->setLabels(labels);
-  barchart->setSQLName("toTuning:FileIO:Reads:"+name);
+  barchart->setSQLName(QString::fromLatin1("toTuning:FileIO:Reads:"+name));
   barchart->show();
 
   toResultLine *linechart;
-  if (name.startsWith("tspc:"))
+  if (name.startsWith(QString::fromLatin1("tspc:")))
     linechart=new toResultLine(TablespaceTime);
   else
     linechart=new toResultLine(FileTime);
   TimeCharts[name]=linechart;
   linechart->setTitle(name.mid(5));
   linechart->setMinimumSize(200,170);
-  linechart->setYPostfix("ms");
+  linechart->setYPostfix(QString::fromLatin1("ms"));
   linechart->setLabels(labelTime);
-  linechart->setSQLName("toTuning:FileIO:Time:"+name);
+  linechart->setSQLName(QString::fromLatin1("toTuning:FileIO:Time:"+name));
   linechart->show();
 }
 
@@ -1885,7 +1884,7 @@ void toTuningFileIO::poll(void)
 	  tablespace=QString::null;
 	if (tablespace!=LastTablespace) {
 	  if (!LastTablespace.isNull()) {
-	    QString name="tspc:";
+	    QString name=QString::fromLatin1("tspc:");
 	    name+=LastTablespace;
 
 	    saveSample(name,timestr,
@@ -1917,7 +1916,7 @@ void toTuningFileIO::poll(void)
 	TblMaxRead+=maxRead;
 	TblMaxWrite+=maxWrite;
 
-	QString name="file:";
+	QString name=QString::fromLatin1("file:");
 	name+=datafile;
 
 	saveSample(name,timestr,

@@ -95,8 +95,8 @@ public:
   bool readErrors(toConnection &connection);
   bool compile(void);
 
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 protected:
   virtual void paintCell(QPainter *painter,int row,int col);
   virtual void paintEvent(QPaintEvent *pe);

@@ -52,11 +52,11 @@ toResultIndexes::toResultIndexes(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
   setReadAll(true);
-  addColumn("Index Name");
-  addColumn("Columns");
-  addColumn("Type");
-  addColumn("Unique");
-  setSQLName("toResultIndexes");
+  addColumn(tr("Index Name"));
+  addColumn(tr("Columns"));
+  addColumn(tr("Type"));
+  addColumn(tr("Unique"));
+  setSQLName(QString::fromLatin1("toResultIndexes"));
 
   Query=NULL;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
@@ -83,18 +83,18 @@ static toSQL SQLColumns8("toResultIndexes:Columns",
 			 "SELECT Column_Name,NULL FROM sys.All_Ind_Columns\n"
 			 " WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			 " ORDER BY Column_Position",
-			 QString::null,
+			 "",
 			 "8.0");
 static toSQL SQLColumnsPgSQL("toResultIndexes:Columns",
-                         "SELECT a.attname, a.attname as x\n"
-                         "  FROM pg_class c, pg_attribute a, pg_user u\n"
-                         " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
-                         "   AND a.attrelid = c.oid AND c.relname = :f2\n"
-                         "   AND a.attnum > 0\n"
-                         " ORDER BY a.attnum",
-			 QString::null,
-			 "7.1",
-                         "PostgreSQL");
+			     "SELECT a.attname, a.attname as x\n"
+			     "  FROM pg_class c, pg_attribute a, pg_user u\n"
+			     " WHERE c.relowner=u.usesysid AND u.usename = :f1\n"
+			     "   AND a.attrelid = c.oid AND c.relname = :f2\n"
+			     "   AND a.attnum > 0\n"
+			     " ORDER BY a.attnum",
+			     "",
+			     "7.1",
+			     "PostgreSQL");
 
 QString toResultIndexes::indexCols(const QString &indOwner,const QString &indName)
 {
@@ -103,7 +103,7 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
   QString ret;
   while(!query.eof()) {
     if (!ret.isEmpty())
-      ret.append(",");
+      ret.append(QString::fromLatin1(","));
     QString t=query.readValueNull();
     if (t.isEmpty())
       t=query.readValue();
@@ -134,12 +134,12 @@ static toSQL SQLListIndex7("toResultIndexes:ListIndex",
 			   " WHERE Table_Owner = :f1<char[101]>\n"
 			   "   AND Table_Name = :f2<char[101]>\n"
 			   " ORDER BY Index_Name",
-			   QString::null,
+			   "",
 			   "7.3");
 
 static toSQL SQLListIndexMySQL("toResultIndexes:ListIndex",
 			       "SHOW INDEX FROM :f1<noquote>.:tab<noquote>",
-			       QString::null,
+			       "",
 			       "3.0",
 			       "MySQL");
 static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
@@ -157,7 +157,7 @@ static toSQL SQLListIndexPgSQL("toResultIndexes:ListIndex",
                                "   AND c.oid = i.indrelid\n"
                                "   AND i.indexrelid = c2.oid\n"
                                " ORDER BY c2.relname",
-			       QString::null,
+			       "",
 			       "7.1",
 			       "PostgreSQL");
 
@@ -232,13 +232,13 @@ void toResultIndexes::poll(void)
 	  Query->readValue();
 	  Query->readValue();
 	  if (Last&&Last->text(0)==name)
-	    Last->setText(1,Last->text(1)+","+col);
+	    Last->setText(1,Last->text(1)+QString::fromLatin1(",")+col);
 	  else {
 	    Last=new toResultViewItem(this,NULL);
 	    Last->setText(0,name);
 	    Last->setText(1,col);
-	    Last->setText(2,(name=="PRIMARY")?"PRIMARY":"INDEX");
-	    Last->setText(3,unique?"NONUNIQUE":"UNIQUE");
+	    Last->setText(2,QString::fromLatin1((name==QString::fromLatin1("PRIMARY"))?"PRIMARY":"INDEX"));
+	    Last->setText(3,QString::fromLatin1(unique?"NONUNIQUE":"UNIQUE"));
 	  }
 	}
       }

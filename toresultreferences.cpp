@@ -47,13 +47,13 @@ toResultReferences::toResultReferences(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
   setReadAll(true);
-  addColumn("Owner");
-  addColumn("Object");
-  addColumn("Constraint");
-  addColumn("Condition");
-  addColumn("Enabled");
-  addColumn("Delete Rule");
-  setSQLName("toResultReferences");
+  addColumn(tr("Owner"));
+  addColumn(tr("Object"));
+  addColumn(tr("Constraint"));
+  addColumn(tr("Condition"));
+  addColumn(tr("Enabled"));
+  addColumn(tr("Delete Rule"));
+  setSQLName(QString::fromLatin1("toResultReferences"));
 
   Query=NULL;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
@@ -78,7 +78,7 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
   while(!query.eof()) {
     QString value=query.readValue();
     if (!ret.isEmpty())
-      ret.append(",");
+      ret.append(QString::fromLatin1(","));
     ret.append(value);
   }
   return ret;
@@ -114,7 +114,7 @@ static toSQL SQLDependencies7("toResultReferences:Dependencies",
 			      " WHERE referenced_owner = :owner<char[101]>\n"
 			      "   AND referenced_name = :tab<char[101]>\n"
 			      " ORDER BY owner,type,name",
-			      QString::null,
+			      "",
 			      "7.3");
 
 void toResultReferences::query(const QString &sql,const toQList &param)
@@ -156,7 +156,7 @@ void toResultReferences::poll(void)
     if (Query&&Query->poll()) {
       if (!Dependencies) {
 	while(Query->poll()&&!Query->eof()) {
-	  LastItem=new toResultViewItem(this,LastItem,NULL);
+	  LastItem=new toResultViewItem(this,LastItem,QString::null);
 	
 	  QString consOwner(Query->readValue());
 	  LastItem->setText(1,Query->readValue());
@@ -169,17 +169,8 @@ void toResultReferences::poll(void)
 	  LastItem->setText(4,Query->readValue());
 	  QString Condition;
 
-	  Condition="foreign key (";
-	  Condition.append(colNames);
-	  Condition.append(") references ");
-	  Condition.append(rConsOwner);
-	  Condition.append(".");
-	  QString cols(constraintCols(rConsOwner,rConsName));
-      
-	  Condition.append(TableName);
-	  Condition.append("(");
-	  Condition.append(cols);
-	  Condition.append(")");
+	  Condition=tr("foreign key (%1) references %2.%3(%4)").
+	    arg(colNames).arg(rConsOwner).arg(TableName).arg(constraintCols(rConsOwner,rConsName));
 
 	  LastItem->setText(3,Condition);
 	  LastItem->setText(5,Query->readValue());
@@ -197,11 +188,11 @@ void toResultReferences::poll(void)
 	}
       } else {
 	while(Query->poll()&&!Query->eof()) {
-	  LastItem=new QListViewItem(this,LastItem,NULL);
+	  LastItem=new QListViewItem(this,LastItem,QString::null);
 	  LastItem->setText(0,Query->readValue());
 	  LastItem->setText(1,Query->readValue());
 	  LastItem->setText(3,Query->readValue());
-	  LastItem->setText(4,"DEPENDENCY");
+	  LastItem->setText(4,tr("DEPENDENCY"));
 	}
 	if (Query->eof()) {
 	  delete Query;

@@ -364,7 +364,7 @@ QString toOracleExtract::displaySource(toExtract &ext,
 
   toQuery inf(CONNECTION,SQLDisplaySource,type,name,owner);
   if (inf.eof())
-    throw QString("Couldn't find source for of %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find source for of %1.%2").arg(owner).arg(name);
   
   QString ret;
   if (PROMPT&&!describe)
@@ -379,7 +379,7 @@ QString toOracleExtract::displaySource(toExtract &ext,
       int len;
       int pos=StripType.match(line,0,&len);
       if (pos!=0)
-	throw QString("Displaying source of wrong type for %1. Got %2 expected 0.")
+	throw qApp->translate("toOracleExtract","Displaying source of wrong type for %1. Got %2 expected 0.")
 	  .arg(type).arg(pos);
       QString tmp=QString("CREATE OR REPLACE %1 ")
 	.arg(type);
@@ -645,10 +645,11 @@ QString toOracleExtract::createContextPrefs(toExtract &ext,
   QString prefs="";
   if(PROMPT)
     prefs+="PROMPT CREATE CONTEXT PREFERENCES\n\n";
-  prefs+="-- Context indexes can be quite complicated depending upon the\n"
-    "-- used parameters. The following is an attempt to recreate this\n"
-    "-- context index. But, a close scrutiny of the following code is\n"
-    "-- strongly recommended.\n\n";
+  prefs+=qApp->translate("toOracleExtract",
+			 "-- Context indexes can be quite complicated depending upon the\n"
+			 "-- used parameters. The following is an attempt to recreate this\n"
+			 "-- context index. But, a close scrutiny of the following code is\n"
+			 "-- strongly recommended.\n\n");
   QString tmp;
   QString pre_name="";
   QString parameters="";
@@ -1029,7 +1030,7 @@ QString toOracleExtract::createTableText(toExtract &ext,
   if (organization=="INDEX"&&ext.getStorage()) {
     toQList res=toQuery::readQueryNull(CONNECTION,SQLPrimaryKey,name,owner);
     if (res.size()!=2)
-      throw QString("Couldn't find primary key of %1.%2").arg(owner).arg(name);
+      throw qApp->translate("toOracleExtract","Couldn't find primary key of %1.%2").arg(owner).arg(name);
     QString primary=*(res.begin());
     QString tablespace=*(res.rbegin());
     ret+=QString("  , CONSTRAINT %1 PRIMARY KEY\n").arg(QUOTE(primary));
@@ -1130,7 +1131,7 @@ QString toOracleExtract::createMView(toExtract &ext,
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLMViewInfo,name,owner);
   if (result.size()==0)
-    throw QString("Couldn't find materialised table %1.%2").
+    throw qApp->translate("toOracleExtract","Couldn't find materialised table %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString table        =toShift(result);
   QString buildMode    =toShift(result);
@@ -1265,7 +1266,7 @@ QString toOracleExtract::createMViewLog(toExtract &ext,
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLSnapshotInfo,name,owner);
   if (result.size()!=4)
-    throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find log %1.%2").arg(owner).arg(name);
 
   QString table        =toShift(result);
   QString rowIds       =toShift(result);
@@ -1534,7 +1535,7 @@ QString toOracleExtract::createPartitionedIOT(toExtract &ext,
   if (ext.getPartition()) {
     toQuery inf(CONNECTION,SQLPartitionIndexNames,name,owner);
     if (!inf.eof())
-      throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+      throw qApp->translate("toOracleExtract","Couldn't find index partitions for %1.%2").arg(owner).arg(name);
     QString index(inf.readValue());
     ret+=
       "PARTITION BY RANGE\n"
@@ -2453,7 +2454,7 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRangePartitions,name,owner);
   if (result.size()==0||result.size()%18)
-    throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find partition range %1.%2").arg(owner).arg(name);
 
   QString ret;
 
@@ -2508,7 +2509,7 @@ QString toOracleExtract::segmentAttributes(toExtract &ext,toQList &result) const
   QString ret;
   if (ext.getStorage()) {
     if (result.size()!=18)
-      throw QString("Internal error, result should be 18 in segment attributes (Was %1)").
+      throw qApp->translate("toOracleExtract","Internal error, result should be 18 in segment attributes (Was %1)").
 	arg(result.size());
 
     toQList::iterator i=result.begin();
@@ -2802,7 +2803,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     return;
 
   if (result.size()!=18)
-    throw QString("Internal error, result should be 18 in segment attributes");
+    throw qApp->translate("toOracleExtract","Internal error, result should be 18 in segment attributes");
 
   toQList::iterator i=result.begin();
 
@@ -2964,7 +2965,7 @@ void toOracleExtract::describeMView(toExtract &ext,std::list<QString> &lst,
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLMViewInfo,name,owner);
   if (result.size()==0)
-    throw QString("Couldn't find materialised table %1.%2").
+    throw qApp->translate("toOracleExtract","Couldn't find materialised table %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString table        =toShift(result);
   QString buildMode    =toShift(result);
@@ -3069,7 +3070,7 @@ void toOracleExtract::describeMViewLog(toExtract &ext,
 {
   toQList result=toQuery::readQueryNull(CONNECTION,SQLSnapshotInfo,name,owner);
   if (result.size()!=4)
-    throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find log %1.%2").arg(owner).arg(name);
 
   QString table        =toShift(result);
   QString rowIds       =toShift(result);
@@ -3150,7 +3151,7 @@ void toOracleExtract::describePartitions(toExtract &ext,
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLRangePartitions,name,owner);
   if (result.size()==0||result.size()%18)
-    throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find partition range %1.%2").arg(owner).arg(name);
 
   while(result.size()>0) {
     QString partition=toShift(result);
@@ -3194,7 +3195,7 @@ void toOracleExtract::describePartitionedIOT(toExtract &ext,
   if (ext.getPartition()) {
     toQuery inf(CONNECTION,SQLPartitionIndexNames,name,owner);
     if (!inf.eof())
-      throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
+      throw qApp->translate("toOracleExtract","Couldn't find index partitions for %1.%2").arg(owner).arg(name);
     QString index(inf.readValue());
     std::list<QString> cctx=ctx;
     toPush(cctx,QString("PARTITION COLUMNS"));
@@ -3462,7 +3463,7 @@ QString toOracleExtract::createConstraint(toExtract &ext,
   if (ext.getConstraints()) {
     toQuery inf(CONNECTION,SQLListConstraint,owner,name);
     if (inf.eof())
-      throw QString("Constraint %1.%2 doesn't exist").arg(owner).arg(name);
+      throw qApp->translate("toOracleExtract","Constraint %1.%2 doesn't exist").arg(owner).arg(name);
     QString table(inf.readValue());
     QString tchr(inf.readValue());
     QString search(inf.readValue());
@@ -3538,7 +3539,7 @@ QString toOracleExtract::createDBLink(toExtract &ext,
 {
   toQuery inf(CONNECTION,SQLDBLink,owner,name);
   if (inf.eof())
-    throw QString("DBLink %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","DBLink %1.%2 doesn't exist").arg(owner).arg(name);
   QString user(inf.readValue());
   QString password(inf.readValue());
   QString host(inf.readValue());
@@ -3642,7 +3643,7 @@ QString toOracleExtract::createExchangeIndex(toExtract &ext,
 
   toQuery inf(CONNECTION,segments(ext,SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
-    throw QString("Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
   QString blocks=inf.readValue();
 
@@ -3744,7 +3745,7 @@ QString toOracleExtract::createExchangeTable(toExtract &ext,
 
   toQuery inf(CONNECTION,segments(ext,SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
-    throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
   QString blocks=inf.readValue();
 
@@ -3969,7 +3970,7 @@ QString toOracleExtract::createIndex(toExtract &ext,
 
   toQList res=toQuery::readQueryNull(CONNECTION,SQLIndexInfo,name,owner);
   if (res.size()!=10)
-    throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find index %1.%2").arg(owner).arg(name);
 
   QString partitioned=toShift(res);
   QString table      =toShift(res);
@@ -4116,7 +4117,7 @@ QString toOracleExtract::createProfile(toExtract &ext,
 				      SQLProfileInfo,
 				      name);
   if (info.size()==0)
-    throw QString("Couldn't find profile %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find profile %1").arg(name);
 
   QString ret;
   if (PROMPT)
@@ -4163,7 +4164,7 @@ QString toOracleExtract::createRole(toExtract &ext,
 				      SQLRoleInfo,
 				      name);
   if (info.size()==0)
-    throw QString("Couldn't find role %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find role %1").arg(name);
 
   QString ret;
   if (PROMPT)
@@ -4274,7 +4275,7 @@ QString toOracleExtract::createSequence(toExtract &ext,
 				      SQLSequenceInfo,
 				      name,owner);
   if (info.size()==0)
-    throw QString("Couldn't find sequence %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find sequence %1").arg(name);
 
   QString ret;
   if (PROMPT)
@@ -4326,7 +4327,7 @@ QString toOracleExtract::createSynonym(toExtract &ext,
 				      SQLSynonymInfo,
 				      name,owner);
   if (info.size()==0)
-    throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find synonym %1.%2").arg(owner).arg(name);
   
   QString tableOwner = toShift(info);
   QString tableName  = toShift(info);
@@ -4557,7 +4558,7 @@ QString toOracleExtract::createTable(toExtract &ext,
 {
   toQuery inf(CONNECTION,SQLTableType,name,owner);
   if (inf.eof())
-    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find table %1.%2").arg(owner).arg(name);
 
   QString partitioned(inf.readValue());
   QString iot_type(inf.readValue());
@@ -4682,7 +4683,7 @@ QString toOracleExtract::createTableFamily(toExtract &ext,
 
   toQuery inf(CONNECTION,SQLTableType,name,owner);
   if (inf.eof())
-    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find table %1.%2").arg(owner).arg(name);
 
   inf.readValue();
   QString iotType(inf.readValue());
@@ -4959,7 +4960,7 @@ QString toOracleExtract::createTablespace(toExtract &ext,
 				      name);
 
   if (info.size()!=10)
-    throw QString("Couldn't find tablespace %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find tablespace %1").arg(name);
 
   QString initial          =toShift(info);
   QString next             =toShift(info);
@@ -5107,7 +5108,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     return "";
   toQList result=toQuery::readQueryNull(CONNECTION,SQLTriggerInfo,name,owner);
   if (result.size()!=9)
-    throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
   QString event      =toShift(result);
   QString tableOwner =toShift(result);
@@ -5223,7 +5224,7 @@ QString toOracleExtract::createUser(toExtract &ext,
 				      name);
 
   if (info.size()!=4)
-    throw QString("Couldn't find user %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find user %1").arg(name);
 
   QString password           =toShift(info);
   QString profile            =toShift(info);
@@ -5291,7 +5292,7 @@ QString toOracleExtract::createView(toExtract &ext,
 					SQLViewSource,
 					name,owner);
   if (source.size()==0)
-    throw QString("Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+    throw qApp->translate("toOracleExtract","Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
   QString text=toShift(source);
   QString ret;
@@ -5332,7 +5333,7 @@ void toOracleExtract::describeConstraint(toExtract &ext,
   if (ext.getConstraints()) {
     toQuery inf(CONNECTION,SQLListConstraint,owner,name);
     if (inf.eof())
-      throw QString("Constraint %1.%2 doesn't exist").arg(owner).arg(name);
+      throw qApp->translate("toOracleExtract","Constraint %1.%2 doesn't exist").arg(owner).arg(name);
     QString table(inf.readValue());
     QString tchr(inf.readValue());
     QString search(inf.readValue());
@@ -5402,7 +5403,7 @@ void toOracleExtract::describeDBLink(toExtract &ext,
 {
   toQuery inf(CONNECTION,SQLDBLink,owner,name);
   if (inf.eof())
-    throw QString("DBLink %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","DBLink %1.%2 doesn't exist").arg(owner).arg(name);
   QString user(inf.readValue());
   QString password(inf.readValue());
   QString host(inf.readValue());
@@ -5434,7 +5435,7 @@ void toOracleExtract::describeExchangeIndex(toExtract &ext,
 
   toQuery inf(CONNECTION,segments(ext,SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
-    throw QString("Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Exchange index %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
   QString blocks=inf.readValue();
 
@@ -5480,7 +5481,7 @@ void toOracleExtract::describeExchangeTable(toExtract &ext,
 
   toQuery inf(CONNECTION,segments(ext,SQLPartitionSegmentType),segment,partition,owner);
   if (inf.eof())
-    throw QString("Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Exchange table %1.%2 doesn't exist").arg(owner).arg(name);
   QString type=inf.readValue();
   QString blocks=inf.readValue();
 
@@ -5514,7 +5515,7 @@ void toOracleExtract::describeIndex(toExtract &ext,
 
   toQList res=toQuery::readQueryNull(CONNECTION,SQLIndexInfo,name,owner);
   if (res.size()!=10)
-    throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find index %1.%2").arg(owner).arg(name);
 
   QString partitioned=toShift(res);
   QString table      =toShift(res);
@@ -5621,7 +5622,7 @@ void toOracleExtract::describeProfile(toExtract &ext,
 				      SQLProfileInfo,
 				      name);
   if (info.size()==0)
-    throw QString("Couldn't find profile %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find profile %1").arg(name);
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),"NONE");
@@ -5646,7 +5647,7 @@ void toOracleExtract::describeRole(toExtract &ext,
 				      SQLRoleInfo,
 				      name);
   if (info.size()==0)
-    throw QString("Couldn't find role %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find role %1").arg(name);
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),"NONE");
@@ -5698,7 +5699,7 @@ void toOracleExtract::describeSequence(toExtract &ext,
 				      SQLSequenceInfo,
 				      name,owner);
   if (info.size()==0)
-    throw QString("Couldn't find sequence %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find sequence %1").arg(name);
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
@@ -5739,7 +5740,7 @@ void toOracleExtract::describeSynonym(toExtract &ext,
 				      SQLSynonymInfo,
 				      name,owner);
   if (info.size()==0)
-    throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find synonym %1.%2").arg(owner).arg(name);
   
   QString tableOwner = toShift(info);
   QString tableName  = toShift(info);
@@ -5765,7 +5766,7 @@ void toOracleExtract::describeTable(toExtract &ext,
 {
   toQuery inf(CONNECTION,SQLTableType,name,owner);
   if (inf.eof())
-    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find table %1.%2").arg(owner).arg(name);
 
   QString partitioned(inf.readValue());
   QString iot_type(inf.readValue());
@@ -5807,7 +5808,7 @@ void toOracleExtract::describeTableFamily(toExtract &ext,
 
   toQuery inf(CONNECTION,SQLTableType,name,owner);
   if (inf.eof())
-    throw QString("Couldn't find table %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find table %1.%2").arg(owner).arg(name);
 
   inf.readValue();
   QString iotType(inf.readValue());
@@ -5849,7 +5850,7 @@ void toOracleExtract::describeTablespace(toExtract &ext,
 				      name);
 
   if (info.size()!=10)
-    throw QString("Couldn't find tablespace %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find tablespace %1").arg(name);
 
   QString initial          =toShift(info);
   QString next             =toShift(info);
@@ -5940,7 +5941,7 @@ void toOracleExtract::describeTrigger(toExtract &ext,
 
   toQList result=toQuery::readQueryNull(CONNECTION,SQLTriggerInfo,name,owner);
   if (result.size()!=9)
-    throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
   QString event      =toShift(result);
   QString tableOwner =toShift(result);
@@ -6029,7 +6030,7 @@ void toOracleExtract::describeUser(toExtract &ext,
 				      name);
 
   if (info.size()!=4)
-    throw QString("Couldn't find user %1").arg(name);
+    throw qApp->translate("toOracleExtract","Couldn't find user %1").arg(name);
 
   QString password           =toShift(info);
   QString profile            =toShift(info);
@@ -6076,7 +6077,7 @@ void toOracleExtract::describeView(toExtract &ext,
 					SQLViewSource,
 					name,owner);
   if (source.size()==0)
-    throw QString("Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+    throw qApp->translate("toOracleExtract","Couldn't find user %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
@@ -6112,7 +6113,7 @@ QString toOracleExtract::dropConstraint(toExtract &ext,
 					   SQLConstraintTable,
 					   owner,name);
   if (tableName.size()==0)
-    throw QString("Couldn't find constraint %1.%2").
+    throw qApp->translate("toOracleExtract","Couldn't find constraint %1.%2").
       arg(QUOTE(owner)).arg(QUOTE(name));
   QString sql=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3").
     arg(schema).
@@ -6791,7 +6792,7 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
       if (j!=destin.end()) {
 	std::list<QString>::iterator k=FindItem(destin,j,context,3,"ON");
 	if (k==destin.end())
-	  throw QString("Missing ON description item on index");
+	  throw qApp->translate("toOracleExtract","Missing ON description item on index");
 	QString on=toExtract::partDescribe(*k,4);
 	QString sql="CREATE "+type+" "+owner+"."+name+" ON "+on;
 	if (PROMPT)
@@ -6799,7 +6800,7 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
 	ret+=sql+"\n";
 	k=FindItem(destin,j,context,3,"COLUMN");
 	if (k==destin.end())
-	  throw QString("Couldn't find any COLUMN on index");
+	  throw qApp->translate("toOracleExtract","Couldn't find any COLUMN on index");
 	ret+=migrateIndexColumns(destin,k,toExtract::contextDescribe(*k,4));
 	k=FindItem(destin,j,context,3,"DOMAIN");
 	if (k!=destin.end()) {
@@ -7475,10 +7476,7 @@ QString toOracleExtract::create(toExtract &ext,
   } else if (type=="VIEW")
     return createView(ext,schema,owner,name);
   else {
-    QString str="Invalid type ";
-    str+=type;
-    str+=" to create";
-    throw str;
+    throw qApp->translate("toOracleExtract","Invalid type %1 to create").arg(type);
   }  
 }
 
@@ -7550,10 +7548,7 @@ void toOracleExtract::describe(toExtract &ext,
   } else if (type=="VIEW")
     describeView(ext,lst,schema,owner,name);
   else {
-    QString str="Invalid type ";
-    str+=type;
-    str+=" to describe";
-    throw str;
+    throw qApp->translate("toOracleExtract","Invalid type %1 to describe").arg(type);
   }
 }
 
@@ -7611,9 +7606,6 @@ QString toOracleExtract::drop(toExtract &ext,
   else if (type=="VIEW")
     return dropSchemaObject(ext,schema,owner,type,name);
   else {
-    QString str="Invalid type ";
-    str+=type;
-    str+=" to drop";
-    throw str;
+    throw qApp->translate("toOracleExtract","Invalid type %1 to drop").arg(type);
   }
 }

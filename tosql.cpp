@@ -44,17 +44,17 @@ toSQL::sqlMap *toSQL::Definitions;
 const char * const toSQL::TOSQL_USERLIST= "Global:UserList";
 const char * const toSQL::TOSQL_CREATEPLAN= "Global:CreatePlan";
 
-toSQL::toSQL(const QString &name,
+toSQL::toSQL(const QCString &name,
 	     const QString &sql,
 	     const QString &description,
-	     const QString &ver,
-	     const QString &provider)
+	     const QCString &ver,
+	     const QCString &provider)
   : Name(name)
 {
   updateSQL(name,sql,description,ver,provider,false);
 }
 
-toSQL::toSQL(const QString &name)
+toSQL::toSQL(const QCString &name)
   : Name(name)
 {
 }
@@ -64,11 +64,11 @@ void toSQL::allocCheck(void)
   if (!Definitions) Definitions=new sqlMap;
 }
 
-bool toSQL::updateSQL(const QString &name,
+bool toSQL::updateSQL(const QCString &name,
 		      const QString &sql,
 		      const QString &description,
-		      const QString &ver,
-		      const QString &provider,
+		      const QCString &ver,
+		      const QCString &provider,
 		      bool modified)
 {
   version def(provider,ver,sql,modified);
@@ -119,9 +119,9 @@ bool toSQL::updateSQL(const QString &name,
   }
 }
 
-bool toSQL::deleteSQL(const QString &name,
-		      const QString &ver,
-		      const QString &provider)
+bool toSQL::deleteSQL(const QCString &name,
+		      const QCString &ver,
+		      const QCString &provider)
 {
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
@@ -144,24 +144,21 @@ bool toSQL::deleteSQL(const QString &name,
   }
 }
 
-toSQL toSQL::sql(const QString &name)
+toSQL toSQL::sql(const QCString &name)
 {
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end())
     return name;
-  QString str="Tried to get unknown SQL (";
-  str+=name;
-  str+=")";
-  throw str;
+  throw qApp->translate("toSQL","Tried to get unknown SQL (%1)").arg(name);
 }
 
-QString toSQL::string(const QString &name,
+QString toSQL::string(const QCString &name,
 		      const toConnection &conn)
 {
   allocCheck();
-  QString ver=conn.version();
-  QString prov=conn.provider();
+  QCString ver=conn.version();
+  QCString prov=conn.provider();
 
   bool quit=false;
 
@@ -188,10 +185,7 @@ QString toSQL::string(const QString &name,
     } while(!quit);
   }
 
-  QString str="Tried to get unknown SQL (";
-  str+=name;
-  str+=")";
-  throw str;
+  throw qApp->translate("toSQL","Tried to get unknown SQL (%1)").arg(name);
 }
 
 bool toSQL::saveSQL(const QString &filename,bool all)
@@ -199,37 +193,36 @@ bool toSQL::saveSQL(const QString &filename,bool all)
   allocCheck();
   QCString data;
 
-  QRegExp backslash("\\");
-  QRegExp newline("\n");
+  QRegExp backslash(QString::fromLatin1("\\"));
+  QRegExp newline(QString::fromLatin1("\n"));
   for (sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
     QCString str;
     definition &def=(*i).second;
-    QString name=(*i).first;
+    QCString name=(*i).first;
     if (def.Modified||all) {
-      QString line=name;
+      QCString line=name;
       line+="=";
-      line+=def.Description;
-      line.replace(backslash,"\\\\");
-      line.replace(newline,"\\n");
-      str=line.latin1();
+      QString t=def.Description;
+      t.replace(backslash,QString::fromLatin1("\\\\"));
+      t.replace(newline,QString::fromLatin1("\\n"));
+      line+=t;
+      str=line;
       str+="\n";
     }
     for (std::list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
       version &ver=(*j);
       if (ver.Modified||all) {
-	QString line=name;
+	QCString line=name;
 	line+="[";
 	line+=ver.Version;
 	line+="][";
 	line+=ver.Provider;
 	line+="]=";
-	line.replace(backslash,"\\\\");
-	line.replace(newline,"\\n");
-	str+=line.utf8();
-	line=ver.SQL;
-	line.replace(backslash,"\\\\");
-	line.replace(newline,"\\n");
-	str+=line.utf8();
+	QString t=ver.SQL;
+	t.replace(backslash,QString::fromLatin1("\\\\"));
+	t.replace(newline,QString::fromLatin1("\\n"));
+	line+=t;
+	str+=line;
 	str+="\n";
       }
     }
@@ -254,20 +247,20 @@ void toSQL::loadSQL(const QString &filename)
     switch(data[pos]) {
     case '\n':
       if (endtag==-1)
-	throw QString("Malformed tag in config file. Missing = on row.");
+	throw qApp->translate("toSQL","Malformed tag in config file. Missing = on row.");
       data[wpos]=0;
       {
-	QString nam=((const char *)data)+bol;
+	QCString nam=((const char *)data)+bol;
 	QString val(QString::fromUtf8(((const char *)data)+endtag+1));
-	QString ver;
-	QString prov;
+	QCString ver;
+	QCString prov;
 	if (vertag>=0) {
-	  ver=QString::fromUtf8(((const char *)data)+vertag+1);
+	  ver=((const char *)data)+vertag+1;
 	  if (provtag>=0)
-	    prov=QString::fromUtf8(((const char *)data)+provtag+1);
+	    prov=((const char *)data)+provtag+1;
 	  updateSQL(nam,val,QString::null,ver,prov,true);
 	} else
-	  updateSQL(nam,QString::null,val,QString::null,QString::null,true);
+	  updateSQL(nam,QString::null,val,"","",true);
       }
       bol=pos+1;
       provtag=vertag=endtag=-1;
@@ -285,7 +278,7 @@ void toSQL::loadSQL(const QString &filename)
       if (endtag==-1) {
 	if (vertag>=0) {
 	  if (provtag>=0)
-	    throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
+	    throw qApp->translate("toSQL","Malformed line in SQL dictionary file. Two '[' before '='");
 	  provtag=pos;
 	} else
 	  vertag=pos;
@@ -314,7 +307,7 @@ void toSQL::loadSQL(const QString &filename)
 	  data[wpos]=':';
 	break;
       default:
-	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
+	throw qApp->translate("toSQL","Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
       break;
     default:
@@ -325,12 +318,12 @@ void toSQL::loadSQL(const QString &filename)
   }
 }
 
-std::list<QString> toSQL::range(const QString &startWith)
+std::list<QCString> toSQL::range(const QCString &startWith)
 {
-  std::list<QString> ret;
+  std::list<QCString> ret;
   for(sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
     if ((*i).first>startWith||startWith.isNull()) {
-      if ((*i).first.startsWith(startWith)||startWith.isNull())
+      if ((*i).first.mid(0,startWith.length())==startWith||startWith.isNull())
 	ret.insert(ret.end(),(*i).first);
       else
 	return ret;
@@ -339,14 +332,11 @@ std::list<QString> toSQL::range(const QString &startWith)
   return ret;
 }
 
-QString toSQL::description(const QString &name)
+QString toSQL::description(const QCString &name)
 {
   allocCheck();
   sqlMap::iterator i=Definitions->find(name);
   if (i!=Definitions->end())
     return (*i).second.Description;
-  QString str="Tried to get unknown SQL (";
-  str+=name;
-  str+=")";
-  throw str;
+  throw qApp->translate("toSQL","Tried to get unknown SQL (%1)").arg(name);
 }

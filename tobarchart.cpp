@@ -127,7 +127,7 @@ void toBarChart::paintChart(QPainter *p,QRect &rect)
     p->setClipRect(int(mtx.dx()+2),int(mtx.dy()+2),rect.width()-3,rect.height()-3);
     if (Zooming)
       p->drawText(2,2,rect.width()-4,rect.height()-4,
-		  AlignLeft|AlignTop,"Zoom");
+		  AlignLeft|AlignTop,tr("Zoom"));
     std::list<bool>::reverse_iterator e=Enabled.rbegin();
     for(std::list<std::list<double> >::reverse_iterator i=Values.rbegin();i!=Values.rend();i++) {
       if(e==Enabled.rend()||*e) {

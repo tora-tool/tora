@@ -61,14 +61,14 @@ void toFilesize::setup()
   layout->setStretchFactor(Value,100);
 
   MBSize=new QRadioButton(this,"MBSize");
-  MBSize->setText(tr("MB"));
+  MBSize->setText(QString::fromLatin1("MB"));
   MBSize->setChecked(true);
   layout->addWidget(MBSize);
   layout->setStretchFactor(MBSize,1);
   connect(MBSize,SIGNAL(toggled(bool)),this,SLOT(changeType(bool)));
 
   KBSize=new QRadioButton(this, "MBSize" );
-  KBSize->setText(tr("KB"));
+  KBSize->setText(QString::fromLatin1("KB"));
   KBSize->setChecked(false);
   layout->addWidget(KBSize);
   layout->setStretchFactor(KBSize,1);
@@ -132,5 +132,5 @@ QString toFilesize::sizeString(void)
     sprintf(buf,"%d K",Value->value()*1024);
   else
     sprintf(buf,"%d K",Value->value());
-  return buf;
+  return QString::fromLatin1(buf);
 }

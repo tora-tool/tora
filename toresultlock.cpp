@@ -56,17 +56,17 @@ toResultLock::toResultLock(QWidget *parent,const char *name)
   setAllColumnsShowFocus(true);
   setSorting(-1);
   setRootIsDecorated(true);
-  addColumn("Session");
-  addColumn("Schema");
-  addColumn("Osuser");
-  addColumn("Program");
-  addColumn("Type");
-  addColumn("Mode");
-  addColumn("Request");
-  addColumn("Object");
-  addColumn("Grabbed");
-  addColumn("Requested");
-  setSQLName("toResultLock");
+  addColumn(tr("Session"));
+  addColumn(tr("Schema"));
+  addColumn(tr("Osuser"));
+  addColumn(tr("Program"));
+  addColumn(tr("Type"));
+  addColumn(tr("Mode"));
+  addColumn(tr("Request"));
+  addColumn(tr("Object"));
+  addColumn(tr("Grabbed"));
+  addColumn(tr("Requested"));
+  setSQLName(QString::fromLatin1("toResultLock"));
 
   Query=NULL;
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
@@ -191,7 +191,7 @@ void toResultLock::poll(void)
       for (QListViewItem *item=firstChild();item;item=next) {
 	int sid=item->text(0).toInt();
 	if (item->text(MARK_COL).isEmpty()) {
-	  item->setText(MARK_COL,"Yes");
+	  item->setText(MARK_COL,QString::fromLatin1("Yes"));
 	  item->setOpen(true);
 	  if (!Checked[sid]) {
 	    Checked[sid]=true;

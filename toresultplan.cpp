@@ -53,7 +53,7 @@
 toResultPlan::toResultPlan(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
-  setSQLName("toResultPlan");
+  setSQLName(QString::fromLatin1("toResultPlan"));
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
   oracleSetup();
@@ -84,14 +84,14 @@ void toResultPlan::oracleSetup(void)
   setAllColumnsShowFocus(true);
   setSorting(-1);
   setRootIsDecorated(true);
-  addColumn("#");
-  addColumn("Operation");
-  addColumn("Options");
-  addColumn("Object name");
-  addColumn("Mode");
-  addColumn("Cost");
-  addColumn("Bytes");
-  addColumn("Cardinality");
+  addColumn(QString::fromLatin1("#"));
+  addColumn(tr("Operation"));
+  addColumn(tr("Options"));
+  addColumn(tr("Object name"));
+  addColumn(tr("Mode"));
+  addColumn(tr("Cost"));
+  addColumn(tr("Bytes"));
+  addColumn(tr("Cardinality"));
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);
   setColumnAlignment(7,AlignRight);
@@ -107,9 +107,9 @@ void toResultPlan::oracleNext(void)
   
   toConnection &conn=connection();
   
-  conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
+  conn.execute(QString::fromLatin1("SAVEPOINT %1").arg(chkPoint));
   
-  Ident="TOra "+QString::number((int)time(NULL)+rand());
+  Ident=QString::fromLatin1("TOra ")+QString::number((int)time(NULL)+rand());
   
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
   
@@ -118,26 +118,26 @@ void toResultPlan::oracleNext(void)
     Poll.stop();
     return;
   }
-  if (sql.length()>0&&sql.at(sql.length()-1)==';')
+  if (sql.length()>0&&sql.at(sql.length()-1).latin1()==';')
     sql=sql.mid(0,sql.length()-1);
 
-  QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+  QString explain=QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
     arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
   if (!User.isNull()&&User!=conn.user().upper()) {
     try {
-      conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(User));
+      conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(User));
     } catch(...) {
     }
     try {
       conn.execute(explain);
     } catch(...) {
       try {
-	conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+	conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
       } catch(...) {
       }
       throw;
     }
-    conn.execute(QString("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
+    conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %2").arg(connection().user()));
     toQList par;
     Query=new toNoBlockQuery(connection(),toQuery::Normal,
 			     toSQL::string(SQLViewPlan,connection()).
@@ -149,7 +149,7 @@ void toResultPlan::oracleNext(void)
     toQList par;
     Query=new toNoBlockQuery(conn,toQuery::Normal,explain,par);
   }
-  TopItem=new toResultViewItem(this,TopItem,"DML");
+  TopItem=new toResultViewItem(this,TopItem,QString::fromLatin1("DML"));
   TopItem->setText(1,sql);
   Poll.start(100);
 }
@@ -161,9 +161,9 @@ static void StripInto(std::list<toSQLParse::statement> &stats)
   bool add=true;
   for(std::list<toSQLParse::statement>::iterator i=stats.begin();i!=stats.end();i++) {
     if(into) {
-      if(!add&&(*i).String.upper()=="FROM")
+      if(!add&&(*i).String.upper()==QString::fromLatin1("FROM"))
 	add=true;
-    } else if ((*i).String.upper()=="INTO") {
+    } else if ((*i).String.upper()==QString::fromLatin1("INTO")) {
       add=false;
       into=true;
     }
@@ -181,10 +181,13 @@ void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
     else if ((*i).Type==toSQLParse::statement::Statement) {
       if ((*i).subTokens().begin()!=(*i).subTokens().end()) {
 	QString t=(*((*i).subTokens().begin())).String.upper();
-	if (t=="SELECT")
+	if (t==QString::fromLatin1("SELECT"))
 	  StripInto((*i).subTokens());
 
-	if (t=="SELECT"||t=="INSERT"||t=="UPDATE"||t=="DELETE")
+	if (t==QString::fromLatin1("SELECT")||
+	    t==QString::fromLatin1("INSERT")||
+	    t==QString::fromLatin1("UPDATE")||
+	    t==QString::fromLatin1("DELETE"))
 	  Statements.insert(Statements.end(),
 			    toSQLParse::indentStatement(*i).stripWhiteSpace());
       }
@@ -209,7 +212,7 @@ void toResultPlan::query(const QString &sql,
     if (connection().provider()=="MySQL") {
       setRootIsDecorated(false);
       setSorting(0);
-      toResultView::query("EXPLAIN "+toSQLStripBind(sql),param);
+      toResultView::query(QString::fromLatin1("EXPLAIN ")+toSQLStripBind(sql),param);
       return;
     }
 
@@ -224,7 +227,7 @@ void toResultPlan::query(const QString &sql,
     QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
     Statements.clear();
-    if (sql.startsWith("SAVED:")) {
+    if (sql.startsWith(QString::fromLatin1("SAVED:"))) {
       Ident=sql.mid(6);
       toQList par;
       Query=new toNoBlockQuery(connection(),toQuery::Background,
@@ -235,8 +238,8 @@ void toResultPlan::query(const QString &sql,
       LastTop=NULL;
       Parents.clear();
       Last.clear();
-      TopItem=new toResultViewItem(this,NULL,"DML");
-      TopItem->setText(1,"Saved plan");
+      TopItem=new toResultViewItem(this,NULL,QString::fromLatin1("DML"));
+      TopItem->setText(1,QString::fromLatin1("Saved plan"));
     } else {
       TopItem=NULL;
       std::list<toSQLParse::statement> ret=toSQLParse::parse(sql);
@@ -307,9 +310,9 @@ void toResultPlan::poll(void)
 	  delete Query;
 	  Query=NULL;
 	  QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
-	  if (!sql().startsWith("SAVED:")) {
+	  if (!sql().startsWith(QString::fromLatin1("SAVED:"))) {
 	    if (toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty())
-	      connection().execute(QString("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
+	      connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
 	    else
 	      toMainWidget()->setNeedCommit(connection());
 	  }
@@ -328,13 +331,13 @@ void toResultPlan::poll(void)
 void toResultPlan::checkException(const QString &str)
 {
   try {
-    if (str.startsWith("ORA-02404")) {
+    if (str.startsWith(QString::fromLatin1("ORA-02404"))) {
       QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
       int ret=TOMessageBox::warning(this,
-				    "Plan table doesn't exist",
-				    QString("Specified plan table %1 didn't exist.\n"
-					    "Should TOra try to create it?").arg(planTable),
-				    "&Yes","&No",0,1);
+				    tr("Plan table doesn't exist"),
+				    tr("Specified plan table %1 didn't exist.\n"
+				       "Should TOra try to create it?").arg(planTable),
+				    tr("&Yes"),tr("&No"),QString::null,0,1);
       if (ret==0) {
 	connection().execute(toSQL::string(toSQL::TOSQL_CREATEPLAN,
 					   connection()).arg(planTable));

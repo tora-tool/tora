@@ -218,7 +218,7 @@ void toLineChart::paintTitle(QPainter *p,QRect &rect)
     for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
       if ((*i).begin()!=(*i).end()) {
 	if (!str.isEmpty())
-	  str+="\n";
+	  str+=QString::fromLatin1("\n");
 	str+=QString::number(*(*i).rbegin());
 	str+=YPostfix;
       }
@@ -239,10 +239,14 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
   if (Legend) {
     int lwidth=0;
     int lheight=0;
+
+    toResult *Result=dynamic_cast<toResult *>(this);
+
     {
       std::list<bool>::iterator j=Enabled.begin();
       for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-	if (!(*i).isEmpty()&&*i!=" "&&(j==Enabled.end()||*j)) {
+	QString t=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toLineChart"),*i);
+	if (!t.isEmpty()&&*i!=" "&&(j==Enabled.end()||*j)) {
 	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,*i);
 	  if (lwidth<bounds.width())
 	    lwidth=bounds.width();
@@ -270,9 +274,10 @@ void toLineChart::paintLegend(QPainter *p,QRect &rect)
     int cp=0;
     std::list<bool>::iterator j=Enabled.begin();
     for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
-	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
-      if (!(*i).isEmpty()&&*i!=" "&&(j==Enabled.end()||*j)) {
-	p->drawText(bounds,FONT_ALIGN,*i);
+      QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,*i);
+      QString t=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toLineChart"),*i);
+      if (!t.isEmpty()&&t!=" "&&(j==Enabled.end()||*j)) {
+	p->drawText(bounds,FONT_ALIGN,t);
 	p->save();
 	QBrush brush(toChartBrush(cp));
 	p->setBrush(brush.color());
@@ -475,7 +480,7 @@ void toLineChart::paintChart(QPainter *p,QRect &rect)
     p->setClipRect(int(mtx.dx()+2),int(mtx.dy()+2),rect.width()-3,rect.height()-3);
     if (Zooming)
       p->drawText(2,2,rect.width()-4,rect.height()-4,
-		  AlignLeft|AlignTop,"Zoom");
+		  AlignLeft|AlignTop,tr("Zoom"));
     std::list<bool>::iterator k=Enabled.begin();
     for(std::list<std::list<double> >::iterator i=Values.begin();i!=Values.end();i++) {
       if(k==Enabled.end()||*k) {
@@ -594,13 +599,13 @@ void toLineChart::mousePressEvent(QMouseEvent *e)
     if (!Chart.contains(e->pos())||!Zooming) {
       if (!Menu) {
 	Menu=new QPopupMenu(this);
-	Menu->insertItem(QPixmap((const char *)print_xpm),"&Print...",this,SLOT(editPrint()));
-	Menu->insertItem("&Open in new window",this,SLOT(openCopy()));
+	Menu->insertItem(QPixmap((const char **)print_xpm),tr("&Print..."),this,SLOT(editPrint()));
+	Menu->insertItem(tr("&Open in new window"),this,SLOT(openCopy()));
 	Menu->insertSeparator();
-	Menu->insertItem("&Chart Manager...",this,SLOT(chartSetup()));
-	Menu->insertItem("&Properties...",this,SLOT(setup()));
+	Menu->insertItem(tr("&Chart Manager..."),this,SLOT(chartSetup()));
+	Menu->insertItem(tr("&Properties..."),this,SLOT(setup()));
 	Menu->insertSeparator();
-	Menu->insertItem("Clear Chart",this,SLOT(clear()));
+	Menu->insertItem(tr("Clear Chart"),this,SLOT(clear()));
 	addMenues(Menu);
       }
       Menu->popup(e->globalPos());
@@ -625,7 +630,7 @@ void toLineChart::setup(void)
   setup.ShowLegend->setChecked(Legend);
   setup.Grids->setValue(Grid);
 
-  setup.Enabled->addColumn("Enabled charts");
+  setup.Enabled->addColumn(tr("Enabled charts"));
   std::list<QString>::iterator i=Labels.begin();
   std::list<bool>::iterator j=Enabled.begin();
   QListViewItem *item=NULL;
@@ -700,7 +705,7 @@ void toLineChart::editPrint(void)
   TOPrinter printer;
   printer.setMinMax(1,1);
   if (printer.setup()) {
-    printer.setCreator("TOra");
+    printer.setCreator(tr("TOra"));
     QPainter painter(&printer);
     QPaintDeviceMetrics metrics(&printer);
     QRect rect(0,0,metrics.width(),metrics.height());
@@ -817,20 +822,20 @@ toLineChart::toLineChart (toLineChart *chart,QWidget *parent,const char *name,WF
   toMainWidget()->addChart(this);
 }
 
-void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefix)
+void toLineChart::exportData(std::map<QCString,QString> &ret,const QCString &prefix)
 {
   int id=0;
   {
     for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
       id++;
-      ret[prefix+":Labels:"+QString::number(id)]=*i;
+      ret[prefix+":Labels:"+QString::number(id).latin1()]=*i;
     }
   }
   id=0;
   {
     for(std::list<QString>::iterator i=XValues.begin();i!=XValues.end();i++) {
       id++;
-      ret[prefix+":XValues:"+QString::number(id)]=*i;
+      ret[prefix+":XValues:"+QString::number(id).latin1()]=*i;
     }
   }
   id=0;
@@ -839,38 +844,38 @@ void toLineChart::exportData(std::map<QString,QString> &ret,const QString &prefi
 
     for(std::list<double>::iterator j=(*i).begin();j!=(*i).end();j++) {
       if (!value.isNull())
-	value+=",";
+	value+=QString::fromLatin1(",");
       value+=QString::number(*j);
     }
     id++;
-    ret[prefix+":Values:"+QString::number(id)]=value;
+    ret[prefix+":Values:"+QString::number(id).latin1()]=value;
   }
   ret[prefix+":Title"]=Title;
 }
 
-void toLineChart::importData(std::map<QString,QString> &ret,const QString &prefix)
+void toLineChart::importData(std::map<QCString,QString> &ret,const QCString &prefix)
 {
   int id;
-  std::map<QString,QString>::iterator i;
+  std::map<QCString,QString>::iterator i;
 
   id=1;
   Labels.clear();
-  while((i=ret.find(prefix+":Labels:"+QString::number(id)))!=ret.end()) {
+  while((i=ret.find(prefix+":Labels:"+QString::number(id).latin1()))!=ret.end()) {
     Labels.insert(Labels.end(),(*i).second);
     id++;
   }
 
   id=1;
   XValues.clear();
-  while((i=ret.find(prefix+":XValues:"+QString::number(id)))!=ret.end()) {
+  while((i=ret.find(prefix+":XValues:"+QString::number(id).latin1()))!=ret.end()) {
     XValues.insert(XValues.end(),(*i).second);
     id++;
   }
 
   id=1;
   Values.clear();
-  QRegExp comma(",");
-  while((i=ret.find(prefix+":Values:"+QString::number(id)))!=ret.end()) {
+  QRegExp comma(QString::fromLatin1(","));
+  while((i=ret.find(prefix+":Values:"+QString::number(id).latin1()))!=ret.end()) {
     QStringList lst=QStringList::split(comma,(*i).second);
     std::list<double> vals;
     for(unsigned int j=0;j<lst.count();j++)

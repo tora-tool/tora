@@ -72,7 +72,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
   DesktopAware->setChecked(!toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty());
   ToolsLeft->setChecked(!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty());
-  toRefreshCreate(OptionGroup,NULL,NULL,Refresh);
+  toRefreshCreate(OptionGroup,NULL,QString::null,Refresh);
   DefaultSession->setText(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION));
   Status->setValue(toTool::globalConfig(CONF_STATUS_MESSAGE,
 					DEFAULT_STATUS_MESSAGE).toInt());
@@ -88,7 +88,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   int samples=toTool::globalConfig(CONF_CHART_SAMPLES,DEFAULT_CHART_SAMPLES).toInt();
   if (samples<0) {
     UnlimitedSamples->setChecked(true);
-    ChartSamples->setValue(QString(DEFAULT_CHART_SAMPLES).toInt());
+    ChartSamples->setValue(QString::fromLatin1(DEFAULT_CHART_SAMPLES).toInt());
   } else
     ChartSamples->setValue(samples);
   samples=toTool::globalConfig(CONF_DISPLAY_SAMPLES,DEFAULT_DISPLAY_SAMPLES).toInt();
@@ -172,14 +172,14 @@ void toGlobalSetting::sqlBrowse(void)
 
 void toGlobalSetting::sessionBrowse(void)
 {
-  QString str=toOpenFilename(DefaultSession->text(),"*.tse",this);
+  QString str=toOpenFilename(DefaultSession->text(),QString::fromLatin1("*.tse"),this);
   if (!str.isEmpty())
     DefaultSession->setText(str);
 }
 
 void toGlobalSetting::helpBrowse(void)
 {
-  QString str=toOpenFilename(HelpDirectory->text(),"toc.htm*",this);
+  QString str=toOpenFilename(HelpDirectory->text(),QString::fromLatin1("toc.htm*"),this);
   if (!str.isEmpty())
     HelpDirectory->setText(str);
 }
@@ -282,10 +282,10 @@ void toDatabaseSetting::saveSetting(void)
     else if (num>=maxnum)
       maxnum=num+1;
     if (maxnum!=MaxContent->text().toInt())
-      TOMessageBox::information(this,"Invalid values",
-				"Doesn't make sense to have max content less than initial\n"
-				"fetch size. Will adjust value to be higher.",
-				"&Ok");
+      TOMessageBox::information(this,tr("Invalid values"),
+				tr("Doesn't make sense to have max content less than initial\n"
+				   "fetch size. Will adjust value to be higher."),
+				tr("&Ok"));
     toTool::globalSetConfig(CONF_MAX_CONTENT,QString::number(maxnum));
   }
   toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
@@ -293,7 +293,7 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_OBJECT_CACHE,QString::number(ObjectCache->currentItem()));
   toTool::globalSetConfig(CONF_BKGND_CONNECT,BkgndConnect->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_AUTO_LONG,
-			  AutoLong->isChecked()?MoveAfter->cleanText():QString("0"));
+			  AutoLong->isChecked()?MoveAfter->cleanText():QString::fromLatin1("0"));
   toTool::globalSetConfig(CONF_INDICATE_EMPTY,IndicateEmpty->isChecked()?"Yes":"");
   toUpdateIndicateEmpty();
 }
@@ -301,20 +301,21 @@ void toDatabaseSetting::saveSetting(void)
 toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
   : toToolSettingUI(parent,name,fl),toSettingTab("toolsetting.html")
 {
-  std::map<QString,toTool *> &tools=toTool::tools();
+  std::map<QCString,toTool *> &tools=toTool::tools();
 
   Enabled->setSorting(0);
-  for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
-    const char *menuName=(*i).second->menuItem();
-    if(FirstTool.isEmpty())
-      FirstTool=menuName;
+  for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+    if ((*i).second->menuItem()) {
+      QString menuName=qApp->translate("toTool",(*i).second->menuItem());
+      if(FirstTool.isEmpty())
+	FirstTool=menuName;
 
-    if (menuName)
-      new QListViewItem(Enabled,menuName,(*i).second->name());
+      new QListViewItem(Enabled,menuName,(*i).second->name(),(*i).first);
+    }
   }
 
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
-    QString tmp=item->text(1);
+    QCString tmp=item->text(2).latin1();
     tmp+=CONF_TOOL_ENABLE;
     if(!toTool::globalConfig(tmp,"Yes").isEmpty())
       item->setSelected(true);
@@ -327,7 +328,7 @@ void toToolSetting::changeEnable(void)
 {
   QString str=DefaultTool->currentText();
   if (str.isEmpty()) {
-    str=toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool);
+    str=toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool.latin1());
   }
 
   DefaultTool->clear();
@@ -347,7 +348,7 @@ void toToolSetting::changeEnable(void)
 void toToolSetting::saveSetting(void)
 {
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
-    QString str=item->text(1);
+    QCString str=item->text(2).latin1();
     str+=CONF_TOOL_ENABLE;
     toTool::globalSetConfig(str,item->isSelected()?"Yes":"");
   }

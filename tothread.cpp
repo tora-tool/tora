@@ -51,7 +51,7 @@ toThread *toThread::DeleteThread;
 toLock *toThread::Lock;
 
 #define SEM_ASSERT(x) if((x)!=0) { toStatusMessage(\
-"Error in semaphore function \"" #x "\" didn't work"); }
+qApp->translate("toSemaphore","Error in semaphore function \"%1\" didn't work").arg(QString::fromLatin1( #x ))); }
 
 void toSemaphore::init(int ival)
 {
@@ -92,7 +92,7 @@ int toSemaphore::getValue()
 }
 
 #define MUTEX_ASSERT(x) if((x)!=0) toStatusMessage(\
-"The mutex function \"" #x "\" failed");
+qApp->translate("toLock","The mutex function \"%1\" failed").arg(QString::fromLatin1( #x )));
 
 toLock::toLock(void)
 {
@@ -115,7 +115,7 @@ void toLock::unlock()
 }
 
 #define THREAD_ASSERT(x) if((x)!=0) { \
-  toStatusMessage("Thread function \"" #x "\" failed."); }
+  toStatusMessage(qApp->translate("toThread","Thread function \"%1\" failed.").arg(QString::fromLatin1( #x ))); }
 
 void toThread::initAttr()
 {

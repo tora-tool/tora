@@ -141,7 +141,7 @@ void toMarkedText::editPrint(void)
   printer.setMinMax(1,1000);
   printer.setFromTo(1,1000);
   if (printer.setup()) {
-    printer.setCreator("TOra");
+    printer.setCreator(tr("TOra"));
     QPainter painter(&printer);
 
     int line=0;
@@ -156,12 +156,10 @@ void toMarkedText::editPrint(void)
       printer.newPage();
       painter.resetXForm();
       qApp->processEvents();
-      QString str("Printing page ");
-      str+=QString::number(page);
-      toStatusMessage(str,false,false);
+      toStatusMessage(tr("Printing page %1").arg(page),false,false);
     }
     painter.end();
-    toStatusMessage("Done printing",false,false);
+    toStatusMessage(tr("Done printing"),false,false);
   }
 }
 
@@ -173,8 +171,7 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
   QRect size=painter->boundingRect(0,0,metrics.width(),metrics.height(),
 				   AlignLeft|AlignTop|ExpandTabs|SingleLine,
 				   Filename);
-  QString str("Page: ");
-  str+=QString::number(pageNo);
+  QString str=tr("Page: %1").arg(pageNo);
   painter->drawText(0,metrics.height()-size.height(),size.width(),size.height(),
 		    AlignLeft|AlignTop|ExpandTabs|SingleLine,
 		    Filename);
@@ -189,7 +186,7 @@ int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &o
   painter->setFont(font());
   size=painter->boundingRect(0,0,metrics.width(),metrics.height(),
 			     AlignLeft|AlignTop,
-			     "x");
+			     QString::fromLatin1("x"));
   int height=size.height();
   int totalHeight=(metrics.height()-margin)/height*height;
   painter->drawLine(0,totalHeight+2,metrics.width(),totalHeight+2);
@@ -220,17 +217,17 @@ void toMarkedText::openFilename(const QString &file)
   setFilename(file);
   setEdited(false);
   toMainWidget()->addRecentFile(file);
-  toStatusMessage("File opened successfully",false,false);
+  toStatusMessage(tr("File opened successfully"),false,false);
 }
 
 bool toMarkedText::editOpen(QString suggestedFile)
 {
   if (edited()) {
     int ret=TOMessageBox::information(this,
-				      "Save changes?",
-				      "The editor has been changed, do you want to save them\n"
-				      "before opening a new file?",
-				      "&Yes","&No","&Cancel",0,2);
+				      tr("Save changes?"),
+				      tr("The editor has been changed, do you want to save them\n"
+					 "before opening a new file?"),
+				      tr("&Yes"),tr("&No"),tr("&Cancel"),0,2);
     if (ret==2)
       return false;
     else if (ret==0)
@@ -292,7 +289,7 @@ void toMarkedText::searchFound(int line,int col)
 {
   setCursorPosition(line,col+SearchString.length(),false);
   setCursorPosition(line,col,true);
-  toStatusMessage("Incremental search:"+SearchString,false,false);
+  toStatusMessage(tr("Incremental search")+QString::fromLatin1(":")+SearchString,false,false);
 }
 
 void toMarkedText::incrementalSearch(bool forward,bool next)
@@ -350,7 +347,7 @@ void toMarkedText::incrementalSearch(bool forward,bool next)
       }
     }
   }
-  toStatusMessage("Incremental search:"+SearchString+" (failed)",false,false);
+  toStatusMessage(tr("Incremental search")+QString::fromLatin1(":")+SearchString+QString::fromLatin1(" (failed)"),false,false);
   SearchFailed=true;
 }
 
@@ -371,7 +368,7 @@ void toMarkedText::incrementalSearch(bool forward)
     Search=true;
     SearchFailed=false;
     SearchString=QString::null;
-    toStatusMessage("Incremental search:",false,false);
+    toStatusMessage(tr("Incremental search")+QString::fromLatin1(":"),false,false);
   } else if (Search) {
     if (!SearchString.length())
       SearchString=LastSearch;
@@ -423,7 +420,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
   toMultiLineEdit::keyPressEvent(e);
 }
 
-void toMarkedText::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toMarkedText::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   data[prefix+":Filename"]=Filename;
   data[prefix+":Text"]=text();
@@ -433,7 +430,7 @@ void toMarkedText::exportData(std::map<QString,QString> &data,const QString &pre
   data[prefix+":Line"]=QString::number(curline);
 }
 
-void toMarkedText::importData(std::map<QString,QString> &data,const QString &prefix)
+void toMarkedText::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   QString txt=data[prefix+":Text"];
   if (txt!=text())
@@ -446,7 +443,7 @@ static int FindIndex(const QString &str,int line,int col)
 {
   int pos=0;
   for (int i=0;i<line;i++) {
-    pos=str.find("\n",pos);
+    pos=str.find(QString::fromLatin1("\n"),pos);
     if (pos<0)
       return pos;
     pos++;

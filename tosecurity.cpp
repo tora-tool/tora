@@ -98,7 +98,7 @@ static toSQL SQLUserInfo7("toSecurity:UserInfo",
 			  "       Temporary_Tablespace\n"
 			  "  FROM sys.DBA_Users\n"
 			  " WHERE UserName = :f1<char[100]>",
-			  QString::null,
+			  "",
 			  "7.3");
 
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
@@ -212,9 +212,9 @@ void toSecurityQuota::changeSize(void)
       siz.sprintf("%.0f KB",double(Size->value()));
       CurrentItem->setText(1,siz);
     } else if (None->isChecked()) {
-      CurrentItem->setText(1,"None");
+      CurrentItem->setText(1,tr("None"));
     } else if (Unlimited->isChecked()) {
-      CurrentItem->setText(1,"Unlimited");
+      CurrentItem->setText(1,tr("Unlimited"));
     }
   } else
     SizeGroup->setEnabled(false);
@@ -229,23 +229,23 @@ toSecurityQuota::toSecurityQuota(toConnection &conn,QWidget *parent)
     QListViewItem *item=NULL;
     while(!tablespaces.eof()) {
       item=new toResultViewItem(Tablespaces,item,tablespaces.readValue());
-      item->setText(1,"None");
-      item->setText(3,"None");
+      item->setText(1,tr("None"));
+      item->setText(3,tr("None"));
     }
   } TOCATCH
 }
 
 void toSecurityQuota::clearItem(QListViewItem *item)
 {
-  item->setText(1,"None");
+  item->setText(1,tr("None"));
   item->setText(2,QString::null);
-  item->setText(3,"None");
+  item->setText(3,tr("None"));
 }
 
 void toSecurityQuota::clear(void)
 {
   for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
-    item->setText(3,"None");
+    item->setText(3,tr("None"));
 }
 
 void toSecurityQuota::changeUser(const QString &user)
@@ -274,9 +274,9 @@ void toSecurityQuota::changeUser(const QString &user)
 	  QString maxStr;
 	  usedStr.sprintf("%.0f KB",usedQuota/1024);
 	  if (maxQuota<0)
-	    maxStr="Unlimited";
+	    maxStr=tr("Unlimited");
 	  else if (maxQuota==0)
-	    maxStr="None";
+	    maxStr=tr("None");
 	  else {
 	    maxStr.sprintf("%.0f KB",maxQuota/1024);
 	  }
@@ -301,9 +301,9 @@ void toSecurityQuota::changeTablespace(void)
   CurrentItem=Tablespaces->selectedItem();
   if (CurrentItem) {
     QString siz=CurrentItem->text(1);
-    if (siz=="None")
+    if (siz==tr("None"))
       None->setChecked(true);
-    else if (siz=="Unlimited")
+    else if (siz==tr("Unlimited"))
       Unlimited->setChecked(true);
     else {
       Value->setChecked(true);
@@ -319,15 +319,15 @@ QString toSecurityQuota::sql(void)
   for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling()) {
     if (item->text(1)!=item->text(3)) {
       QString siz=item->text(1);
-      if (siz.right(2)=="KB")
+      if (siz.right(2)==QString::fromLatin1("KB"))
 	siz.truncate(siz.length()-1);
-      else if (siz=="None")
-	siz="0 K";
-      else if (siz=="Unlimited")
-	siz="UNLIMITED";
-      ret+=" QUOTA ";
+      else if (siz==tr("None"))
+	siz=QString::fromLatin1("0 K");
+      else if (siz==tr("Unlimited"))
+	siz=QString::fromLatin1("UNLIMITED");
+      ret+=QString::fromLatin1(" QUOTA ");
       ret+=siz;
-      ret+=" ON ";
+      ret+=QString::fromLatin1(" ON ");
       ret+=item->text(0);
     }
   }
@@ -375,54 +375,55 @@ QString toSecurityUser::sql(void)
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
       switch(TOMessageBox::warning(this,
-				   "Passwords don't match",
-				   "The two versions of the password doesn't match",
-				   "Don't save","Cancel")) {
+				   tr("Passwords don't match"),
+				   tr("The two versions of the password doesn't match"),
+				   tr("Don't save"),	
+				   tr("Cancel"))) {
       case 0:
 	return QString::null;
       case 1:
-	throw QString("Passwords don't match");
+	throw tr("Passwords don't match");
       }
     }
     if (Password->text()!=OrgPassword) {
-      extra=" IDENTIFIED BY \"";
+      extra=QString::fromLatin1(" IDENTIFIED BY \"");
       extra+=Password->text();
-      extra+="\"";
+      extra+=QString::fromLatin1("\"");
     }
     if (OrgExpired!=ExpirePassword->isChecked()) {
       if (ExpirePassword->isChecked())
-	extra+=" PASSWORD EXPIRE";
+	extra+=QString::fromLatin1(" PASSWORD EXPIRE");
     }
   } else if (Authentication->currentPage()==GlobalTab) {
     if (OrgGlobal!=GlobalName->text()) {
-      extra=" IDENTIFIED GLOBALLY AS '";
+      extra=QString::fromLatin1(" IDENTIFIED GLOBALLY AS '");
       extra+=GlobalName->text();
-      extra+="'";
+      extra+=QString::fromLatin1("'");
     }
   } else if ((AuthType!=external)&&(Authentication->currentPage()==ExternalTab))
-    extra=" IDENTIFIED EXTERNALLY";
+    extra=QString::fromLatin1(" IDENTIFIED EXTERNALLY");
 
   if (OrgProfile!=Profile->currentText()) {
-    extra+=" PROFILE \"";
+    extra+=QString::fromLatin1(" PROFILE \"");
     extra+=Profile->currentText();
-    extra+="\"";
+    extra+=QString::fromLatin1("\"");
   }
   if (OrgDefault!=DefaultSpace->currentText()) {
-    extra+=" DEFAULT TABLESPACE \"";
+    extra+=QString::fromLatin1(" DEFAULT TABLESPACE \"");
     extra+=DefaultSpace->currentText();
-    extra+="\"";
+    extra+=QString::fromLatin1("\"");
   }
   if (OrgTemp!=TempSpace->currentText()) {
-    extra+=" TEMPORARY TABLESPACE \"";
+    extra+=QString::fromLatin1(" TEMPORARY TABLESPACE \"");
     extra+=TempSpace->currentText();
-    extra+="\"";
+    extra+=QString::fromLatin1("\"");
   }
   if (OrgLocked!=Locked->isChecked()) {
-    extra+=" ACCOUNT ";
+    extra+=QString::fromLatin1(" ACCOUNT ");
     if (Locked->isChecked())
-      extra+="LOCK";
+      extra+=QString::fromLatin1("LOCK");
     else
-      extra+="UNLOCK";
+      extra+=QString::fromLatin1("UNLOCK");
   }
   extra+=Quota->sql();
 
@@ -430,15 +431,15 @@ QString toSecurityUser::sql(void)
   if (Name->isEnabled()) {
     if (Name->text().isEmpty())
       return QString::null;
-    sql="CREATE ";
+    sql=QString::fromLatin1("CREATE ");
   } else {
     if (extra.isEmpty())
       return QString::null;
-    sql="ALTER ";
+    sql=QString::fromLatin1("ALTER ");
   }
-  sql+="USER \"";
+  sql+=QString::fromLatin1("USER \"");
   sql+=Name->text();
-  sql+="\"";
+  sql+=QString::fromLatin1("\"");
   sql+=extra;
   return sql;
 }
@@ -465,10 +466,10 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota,toConnection &conn,QWidget
 
 void toSecurityUser::clear(bool all)
 {
-  Name->setText("");
-  Password->setText("");
-  Password2->setText("");
-  GlobalName->setText("");
+  Name->setText(QString::null);
+  Password->setText(QString::null);
+  Password2->setText(QString::null);
+  GlobalName->setText(QString::null);
   if (all) {
     Profile->setCurrentItem(0);
     Authentication->showPage(PasswordTab);
@@ -479,7 +480,7 @@ void toSecurityUser::clear(bool all)
     Locked->setChecked(false);
   }
 
-  OrgProfile=OrgDefault=OrgTemp=OrgGlobal="";
+  OrgProfile=OrgDefault=OrgTemp=OrgGlobal=QString::null;
   AuthType=password;
   Name->setEnabled(true);
   OrgLocked=OrgExpired=false;
@@ -495,24 +496,24 @@ void toSecurityUser::changeUser(const QString &user)
       Name->setText(user);
 
       QString str(query.readValue());
-      if (str.startsWith("EXPIRED")) {
+      if (str.startsWith(QString::fromLatin1("EXPIRED"))) {
 	ExpirePassword->setChecked(true);
 	ExpirePassword->setEnabled(false);
 	OrgExpired=true;
-      } else if (str.startsWith("LOCKED")) {
+      } else if (str.startsWith(QString::fromLatin1("LOCKED"))) {
 	Locked->setChecked(true);
 	OrgLocked=true;
       }
 
       OrgPassword=query.readValue();
       QString pass=query.readValue();
-      if (OrgPassword=="GLOBAL") {
+      if (OrgPassword==QString::fromLatin1("GLOBAL")) {
 	OrgPassword=QString::null;
 	Authentication->showPage(GlobalTab);
 	OrgGlobal=pass;
 	GlobalName->setText(OrgGlobal);
 	AuthType=global;
-      } else if (OrgPassword=="EXTERNAL") {
+      } else if (OrgPassword==QString::fromLatin1("EXTERNAL")) {
 	OrgPassword=QString::null;
 	Authentication->showPage(ExternalTab);
 	AuthType=external;
@@ -587,47 +588,48 @@ QString toSecurityRole::sql(void)
   if (Authentication->currentPage()==PasswordTab) {
     if (Password->text()!=Password2->text()) {
       switch(TOMessageBox::warning(this,
-				   "Passwords don't match",
-				   "The two versions of the password doesn't match",
-				   "Don't save","Cancel")) {
+				   tr("Passwords don't match"),
+				   tr("The two versions of the password doesn't match"),
+				   tr("Don't save"),
+				   tr("Cancel"))) {
       case 0:
 	return QString::null;
       case 1:
-	throw QString("Passwords don't match");
+	throw tr("Passwords don't match");
       }
     }
     if (Password->text().length()>0) {
-      extra=" IDENTIFIED BY \"";
+      extra=QString::fromLatin1(" IDENTIFIED BY \"");
       extra+=Password->text();
-      extra+="\"";
+      extra+=QString::fromLatin1("\"");
     }
   } else if ((AuthType!=global)&&(Authentication->currentPage()==GlobalTab))
-    extra=" IDENTIFIED GLOBALLY";
+    extra=QString::fromLatin1(" IDENTIFIED GLOBALLY");
   else if ((AuthType!=external)&&(Authentication->currentPage()==ExternalTab))
-    extra=" IDENTIFIED EXTERNALLY";
+    extra=QString::fromLatin1(" IDENTIFIED EXTERNALLY");
   else if ((AuthType!=none)&&(Authentication->currentPage()==NoneTab))
-    extra=" NOT IDENTIFIED";
+    extra=QString::fromLatin1(" NOT IDENTIFIED");
   extra+=Quota->sql();
   QString sql;
   if (Name->isEnabled()) {
     if (Name->text().isEmpty())
       return QString::null;
-    sql="CREATE ";
+    sql=QString::fromLatin1("CREATE ");
   } else {
     if (extra.isEmpty())
       return QString::null;
-    sql="ALTER ";
+    sql=QString::fromLatin1("ALTER ");
   }
-  sql+="ROLE \"";
+  sql+=QString::fromLatin1("ROLE \"");
   sql+=Name->text();
-  sql+="\"";
+  sql+=QString::fromLatin1("\"");
   sql+=extra;
   return sql;
 }
 
 void toSecurityRole::clear(void)
 {
-  Name->setText("");
+  Name->setText(QString::null);
   Name->setEnabled(true);
 }
 
@@ -635,20 +637,20 @@ void toSecurityRole::changeRole(const QString &role)
 {
   try {
     toQuery query(Connection,SQLRoleInfo,role);
-    Password->setText("");
-    Password2->setText("");
+    Password->setText(QString::null);
+    Password2->setText(QString::null);
     if (!query.eof()) {
       Name->setText(role);
       Name->setEnabled(false);
 
       QString str(query.readValue());
-      if (str=="YES") {
+      if (str==QString::fromLatin1("YES")) {
 	AuthType=password;
 	Authentication->showPage(PasswordTab);
-      } else if (str=="GLOBAL") {
+      } else if (str==QString::fromLatin1("GLOBAL")) {
 	AuthType=global;
 	Authentication->showPage(GlobalTab);
-      } else if (str=="EXTERNAL") {
+      } else if (str==QString::fromLatin1("EXTERNAL")) {
 	AuthType=external;
 	Authentication->showPage(ExternalTab);
       } else {
@@ -656,7 +658,7 @@ void toSecurityRole::changeRole(const QString &role)
 	Authentication->showPage(NoneTab);
       }
     } else {
-      Name->setText("");
+      Name->setText(QString::null);
       Name->setEnabled(true);
       AuthType=none;
       Authentication->showPage(NoneTab);
@@ -722,7 +724,7 @@ public:
 toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
   : toListView(parent),Connection(conn)
 {
-  addColumn("Object");
+  addColumn(tr("Object"));
   setRootIsDecorated(true);
   try {
     QString oType;
@@ -753,7 +755,7 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
 	  toQList args;
 	  toPush(args,toQValue(type));
 	  typelst.execute(SQLObjectPrivs,args);
-	  Options=QStringList::split(",",typelst.readValue());
+	  Options=QStringList::split(QString::fromLatin1(","),typelst.readValue());
 	  TypeOptions[type]=Options;
 	} else
 	  Options=TypeOptions[type];
@@ -773,7 +775,7 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
 	  QListViewItem *item=new toResultViewCheck(nameItem,*i,QCheckListItem::CheckBox);
 	  item->setText(2,name);
 	  item->setText(3,owner);
-	  new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
+	  new toResultViewCheck(item,tr("Admin"),QCheckListItem::CheckBox);
 	}
       }
     }
@@ -828,12 +830,12 @@ void toSecurityObject::changeUser(const QString &user)
 	    if (chk) {
 	      if (chk->text(2)==object&&
 		  chk->text(0)==priv) {
-		chk->setText(1,"ON");
+		chk->setText(1,tr("ON"));
 		chk->setOn(true);
-		if (admin=="YES") {
+		if (admin==QString::fromLatin1("YES")) {
 		  toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
 		  if (chld) {
-		    chld->setText(1,"ON");
+		    chld->setText(1,tr("ON"));
 		    chld->setOn(true);
 		    if (open)
 		      chk->setOpen(true);
@@ -874,47 +876,47 @@ void toSecurityObject::sql(const QString &user,std::list<QString> &sqlLst)
     if (check) {
       QString sql;
       QString what=item->text(0);
-      what+=" ON \"";
+      what+=QString::fromLatin1(" ON \"");
       what+=item->text(3);
-      what+="\".\"";
+      what+=QString::fromLatin1("\".\"");
       what+=item->text(2);
-      what+="\" ";
+      what+=QString::fromLatin1("\" ");
       if (chld&&chld->isOn()&&chld->text(1).isEmpty()) {
-	sql="GRANT ";
+	sql=QString::fromLatin1("GRANT ");
 	sql+=what;
-	sql+="TO \"";
+	sql+=QString::fromLatin1("TO \"");
 	sql+=user;
-	sql+="\" WITH GRANT OPTION";
+	sql+=QString::fromLatin1("\" WITH GRANT OPTION");
 	sqlLst.insert(sqlLst.end(),sql);
       } else if (check->isOn()&&!item->text(1).isEmpty()) {
 	if (chld&&!chld->isOn()&&!chld->text(1).isEmpty()) {
-	  sql="REVOKE ";
+	  sql=QString::fromLatin1("REVOKE ");
 	  sql+=what;
-	  sql+="FROM \"";
+	  sql+=QString::fromLatin1("FROM \"");
 	  sql+=user;
-	  sql+="\"";
+	  sql+=QString::fromLatin1("\"");
 	  sqlLst.insert(sqlLst.end(),sql);	
 
-	  sql="GRANT ";
+	  sql=QString::fromLatin1("GRANT ");
 	  sql+=what;
-	  sql+="TO \"";
+	  sql+=QString::fromLatin1("TO \"");
 	  sql+=user;
-	  sql+="\"";
+	  sql+=QString::fromLatin1("\"");
 	  sqlLst.insert(sqlLst.end(),sql);
 	}
       } else if (check->isOn()&&item->text(1).isEmpty()) {
-	sql="GRANT ";
+	sql=QString::fromLatin1("GRANT ");
 	sql+=what;
-	sql+="TO \"";
+	sql+=QString::fromLatin1("TO \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);
       } else if (!check->isOn()&&!item->text(1).isEmpty()) {
-	sql="REVOKE ";
+	sql=QString::fromLatin1("REVOKE ");
 	sql+=what;
-	sql+="FROM \"";
+	sql+=QString::fromLatin1("FROM \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);
       }
     }
@@ -952,14 +954,14 @@ void toSecurityObject::changed(QListViewItem *org)
 toSecuritySystem::toSecuritySystem(toConnection &conn,QWidget *parent)
   : toListView(parent),Connection(conn)
 {
-  addColumn("Privilege name");
+  addColumn(tr("Privilege name"));
   setRootIsDecorated(true);
   try {
     toQuery priv(Connection,SQLListSystem);
     while(!priv.eof()) {
       toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),
 						    QCheckListItem::CheckBox);
-      new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
+      new toResultViewCheck(item,tr("Admin"),QCheckListItem::CheckBox);
     }
     setSorting(0);
   } TOCATCH
@@ -973,41 +975,41 @@ void toSecuritySystem::sql(const QString &user,std::list<QString> &sqlLst)
     toResultViewCheck *check=dynamic_cast<toResultViewCheck *>(item);
     toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
     if (chld&&chld->isOn()&&chld->text(1).isEmpty()) {
-      sql="GRANT ";
+      sql=QString::fromLatin1("GRANT ");
       sql+=item->text(0);
-      sql+=" TO \"";
+      sql+=QString::fromLatin1(" TO \"");
       sql+=user;
-      sql+="\" WITH ADMIN OPTION";
+      sql+=QString::fromLatin1("\" WITH ADMIN OPTION");
       sqlLst.insert(sqlLst.end(),sql);
     } else if (check->isOn()&&!item->text(1).isEmpty()) {
       if (chld&&!chld->isOn()&&!chld->text(1).isEmpty()) {
-	sql="REVOKE ";
+	sql=QString::fromLatin1("REVOKE ");
 	sql+=item->text(0);
-	sql+=" FROM \"";
+	sql+=QString::fromLatin1(" FROM \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);	
 
-	sql="GRANT ";
+	sql=QString::fromLatin1("GRANT ");
 	sql+=item->text(0);
-	sql+=" TO \"";
+	sql+=QString::fromLatin1(" TO \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);
       }
     } else if (check->isOn()&&item->text(1).isEmpty()) {
-      sql="GRANT ";
+      sql=QString::fromLatin1("GRANT ");
       sql+=item->text(0);
-      sql+=" TO \"";
+      sql+=QString::fromLatin1(" TO \"");
       sql+=user;
-      sql+="\"";
+      sql+=QString::fromLatin1("\"");
       sqlLst.insert(sqlLst.end(),sql);
     } else if (!check->isOn()&&!item->text(1).isEmpty()) {
-      sql="REVOKE ";
+      sql=QString::fromLatin1("REVOKE ");
       sql+=item->text(0);
-      sql+=" FROM \"";
+      sql+=QString::fromLatin1(" FROM \"");
       sql+=user;
-      sql+="\"";
+      sql+=QString::fromLatin1("\"");
       sqlLst.insert(sqlLst.end(),sql);
     }
   }
@@ -1058,14 +1060,14 @@ void toSecuritySystem::changeUser(const QString &user)
 	  toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
 	  if (chk)
 	    chk->setOn(true);
-	  item->setText(1,"ON");
-	  if (admin!="NO"&&item->firstChild()) {
+	  item->setText(1,tr("ON"));
+	  if (admin!=tr("NO")&&item->firstChild()) {
 	    chk=dynamic_cast<toResultViewCheck *>(item->firstChild());
 	    if (chk)
 	      chk->setOn(true);
 	    if (chk->parent())
 	      chk->parent()->setOpen(true);
-	    item->firstChild()->setText(1,"ON");
+	    item->firstChild()->setText(1,tr("ON"));
 	  }
 	  break;
 	}
@@ -1077,14 +1079,14 @@ void toSecuritySystem::changeUser(const QString &user)
 toSecurityRoleGrant::toSecurityRoleGrant(toConnection &conn,QWidget *parent)
   : toListView(parent),Connection(conn)
 {
-  addColumn("Role name");
+  addColumn(tr("Role name"));
   setRootIsDecorated(true);
   try {
     toQuery priv(Connection,SQLRoles);
     while(!priv.eof()) {
       toResultViewCheck *item=new toResultViewCheck(this,priv.readValue(),QCheckListItem::CheckBox);
-      new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
-      new toResultViewCheck(item,"Default",QCheckListItem::CheckBox);
+      new toResultViewCheck(item,tr("Admin"),QCheckListItem::CheckBox);
+      new toResultViewCheck(item,tr("Default"),QCheckListItem::CheckBox);
     }
     setSorting(0);
   } TOCATCH
@@ -1113,16 +1115,16 @@ void toSecurityRoleGrant::sql(const QString &user,std::list<QString> &sqlLst)
   QString sql;
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
     toResultViewCheck *check=dynamic_cast<toResultViewCheck *>(item);
-    QCheckListItem *chld=findChild(item,"Admin");
-    QCheckListItem *def=findChild(item,"Default");
+    QCheckListItem *chld=findChild(item,tr("Admin"));
+    QCheckListItem *def=findChild(item,tr("Default"));
     if (def&&check) {
       if (!def->isOn()&&check->isOn()) {
 	if (!except.isEmpty())
-	  except+=",\"";
+	  except+=QString::fromLatin1(",\"");
 	else
-	  except+=" EXCEPT \"";
+	  except+=QString::fromLatin1(" EXCEPT \"");
 	except+=item->text(0);
-	except+="\"";
+	except+=QString::fromLatin1("\"");
       } else if (check->isOn()&&def->isOn())
 	any=true;
       if (def->isOn()==def->text(1).isEmpty())
@@ -1130,64 +1132,64 @@ void toSecurityRoleGrant::sql(const QString &user,std::list<QString> &sqlLst)
     }
     if (chld&&chld->isOn()&&chld->text(1).isEmpty()) {
       if (check->isOn()&&!item->text(1).isEmpty()) {
-	sql="REVOKE \"";
+	sql=QString::fromLatin1("REVOKE \"");
 	sql+=item->text(0);
-	sql+="\" FROM \"";
+	sql+=QString::fromLatin1("\" FROM \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);
       }
-      sql="GRANT \"";
+      sql=QString::fromLatin1("GRANT \"");
       sql+=item->text(0);
-      sql+="\" TO \"";
+      sql+=QString::fromLatin1("\" TO \"");
       sql+=user;
-      sql+="\" WITH ADMIN OPTION";
+      sql+=QString::fromLatin1("\" WITH ADMIN OPTION");
       sqlLst.insert(sqlLst.end(),sql);
       chg=true;
     } else if (check->isOn()&&!item->text(1).isEmpty()) {
       if (chld&&!chld->isOn()&&!chld->text(1).isEmpty()) {
-	sql="REVOKE \"";
+	sql=QString::fromLatin1("REVOKE \"");
 	sql+=item->text(0);
-	sql+="\" FROM \"";
+	sql+=QString::fromLatin1("\" FROM \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);	
 
-	sql="GRANT \"";
+	sql=QString::fromLatin1("GRANT \"");
 	sql+=item->text(0);
-	sql+="\" TO \"";
+	sql+=QString::fromLatin1("\" TO \"");
 	sql+=user;
-	sql+="\"";
+	sql+=QString::fromLatin1("\"");
 	sqlLst.insert(sqlLst.end(),sql);
 	chg=true;
       }
     } else if (check->isOn()&&item->text(1).isEmpty()) {
-      sql="GRANT \"";
+      sql=QString::fromLatin1("GRANT \"");
       sql+=item->text(0);
-      sql+="\" TO \"";
+      sql+=QString::fromLatin1("\" TO \"");
       sql+=user;
-      sql+="\"";
+      sql+=QString::fromLatin1("\"");
       sqlLst.insert(sqlLst.end(),sql);
       chg=true;
     } else if (!check->isOn()&&!item->text(1).isEmpty()) {
-      sql="REVOKE \"";
+      sql=QString::fromLatin1("REVOKE \"");
       sql+=item->text(0);
-      sql+="\" FROM \"";
+      sql+=QString::fromLatin1("\" FROM \"");
       sql+=user;
-      sql+="\"";
+      sql+=QString::fromLatin1("\"");
       sqlLst.insert(sqlLst.end(),sql);
       chg=true;
     }
   }
   if (chg) {
-    sql="ALTER USER \"";
+    sql=QString::fromLatin1("ALTER USER \"");
     sql+=user;
-    sql+="\" DEFAULT ROLE ";
+    sql+=QString::fromLatin1("\" DEFAULT ROLE ");
     if (any) {
-      sql+="ALL";
+      sql+=QString::fromLatin1("ALL");
       sql+=except;
     } else
-      sql+="NONE";
+      sql+=QString::fromLatin1("NONE");
     sqlLst.insert(sqlLst.end(),sql);
   }
 }
@@ -1197,7 +1199,7 @@ void toSecurityRoleGrant::changed(QListViewItem *org)
   toResultViewCheck *item=dynamic_cast<toResultViewCheck *>(org);
   if (item) {
     if (item->isOn()) {
-      QCheckListItem *chld=findChild(item,"Default");
+      QCheckListItem *chld=findChild(item,tr("Default"));
       if (chld)
 	chld->setOn(true);
       item=dynamic_cast<toResultViewCheck *>(item->parent());
@@ -1226,7 +1228,7 @@ void toSecurityRoleGrant::eraseUser(bool user,bool all)
       if (chk) {
 	if (all) {
 	  chk->setOn(false);
-	  if (chk->text(0)=="Default")
+	  if (chk->text(0)==tr("Default"))
 	    chk->setEnabled(user);
 	}
       }
@@ -1248,18 +1250,18 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 	  QCheckListItem *chk=dynamic_cast<toResultViewCheck *>(item);
 	  if (chk)
 	    chk->setOn(true);
-	  item->setText(1,"ON");
-	  chk=findChild(item,"Admin");
-	  if (admin=="YES"&&chk) {
+	  item->setText(1,tr("ON"));
+	  chk=findChild(item,tr("Admin"));
+	  if (admin==tr("YES")&&chk) {
 	    chk->setOn(true);
-	    chk->setText(1,"ON");
+	    chk->setText(1,tr("ON"));
 	    if (chk->parent())
 	      chk->parent()->setOpen(true);
 	  }
-	  chk=findChild(item,"Default");
-	  if (def=="YES"&&chk) {
+	  chk=findChild(item,tr("Default"));
+	  if (def==tr("YES")&&chk) {
 	    chk->setOn(true);
-	    chk->setText(1,"ON");
+	    chk->setText(1,tr("ON"));
 	    if (chk->parent())
 	      chk->parent()->setOpen(true);
 	  }
@@ -1275,69 +1277,69 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 {
   toBusy busy;
 
-  QToolBar *toolbar=toAllocBar(this,"Security manager");
+  QToolBar *toolbar=toAllocBar(this,tr("Security manager"));
   toolbar->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update user and role list",
-		  "Update user and role list",
+		  tr("Update user and role list"),
+		  tr("Update user and role list"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)commit_xpm),
-		  "Save changes",
-		  "Save changes",
+		  tr("Save changes"),
+		  tr("Save changes"),
 		  this,SLOT(saveChanges(void)),
 		  toolbar);
   DropButton=new QToolButton(QPixmap((const char **)trash_xpm),
-			     "Remove user/role",
-			     "Remove user/role",
+			     tr("Remove user/role"),
+			     tr("Remove user/role"),
 			     this,SLOT(drop(void)),
 			     toolbar);
   DropButton->setEnabled(false);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)adduser_xpm),
-		  "Add new user",
-		  "Add new user",
+		  tr("Add new user"),
+		  tr("Add new user"),
 		  this,SLOT(addUser(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)addrole_xpm),
-		  "Add new role",
-		  "Add new role",
+		  tr("Add new role"),
+		  tr("Add new role"),
 		  this,SLOT(addRole(void)),
 		  toolbar);
   CopyButton=new QToolButton(QPixmap((const char **)copyuser_xpm),
-			     "Copy current user or role",
-			     "Copy current user or role",
+			     tr("Copy current user or role"),
+			     tr("Copy current user or role"),
 			     this,SLOT(copy(void)),
 			     toolbar);
   CopyButton->setEnabled(false);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)sql_xpm),
-		  "Display SQL needed to make current changes",
-		  "Display SQL needed to make current changes",
+		  tr("Display SQL needed to make current changes"),
+		  tr("Display SQL needed to make current changes"),
 		  this,SLOT(displaySQL(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
   UserList=new toListView(splitter);
-  UserList->addColumn("Users/Roles");
-  UserList->setSQLName("toSecurity:Users/Roles");
+  UserList->addColumn(tr("Users/Roles"));
+  UserList->setSQLName(QString::fromLatin1("toSecurity:Users/Roles"));
   UserList->setRootIsDecorated(true);
   UserList->setSelectionMode(QListView::Single);
   Tabs=new QTabWidget(splitter);
   Quota=new toSecurityQuota(connection,Tabs);
   General=new toSecurityPage(Quota,connection,Tabs);
-  Tabs->addTab(General,"&General");
+  Tabs->addTab(General,tr("&General"));
   RoleGrant=new toSecurityRoleGrant(connection,Tabs);
-  Tabs->addTab(RoleGrant,"&Roles");
+  Tabs->addTab(RoleGrant,tr("&Roles"));
   SystemGrant=new toSecuritySystem(connection,Tabs);
-  Tabs->addTab(SystemGrant,"&System Privileges");
+  Tabs->addTab(SystemGrant,tr("&System Privileges"));
   ObjectGrant=new toSecurityObject(connection,Tabs);
-  Tabs->addTab(ObjectGrant,"&Object Privileges");
-  Tabs->addTab(Quota,"&Quota");
+  Tabs->addTab(ObjectGrant,tr("&Object Privileges"));
+  Tabs->addTab(Quota,tr("&Quota"));
   UserList->setSelectionMode(QListView::Single);
   connect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
@@ -1358,24 +1360,24 @@ void toSecurity::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)commit_xpm),"&Save changes",
+      ToolMenu->insertItem(QPixmap((const char **)commit_xpm),tr("&Save changes"),
 			   this,SLOT(saveChanges()),CTRL+Key_Return);
-      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"&Remove user/role",
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),tr("&Remove user/role"),
 			   this,SLOT(drop()),0,TO_ID_DROP);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)adduser_xpm),"Add &user",
+      ToolMenu->insertItem(QPixmap((const char **)adduser_xpm),tr("Add &user"),
 			   this,SLOT(addUser()),CTRL+Key_U);
-      ToolMenu->insertItem(QPixmap((const char **)addrole_xpm),"Add &role",
+      ToolMenu->insertItem(QPixmap((const char **)addrole_xpm),tr("Add &role"),
 			   this,SLOT(addRole()),CTRL+Key_R);
-      ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm),"&Copy current",
+      ToolMenu->insertItem(QPixmap((const char **)copyuser_xpm),tr("&Copy current"),
 			   this,SLOT(copy()),CTRL+Key_O,TO_ID_COPY);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)sql_xpm),"Display SQL...",
+      ToolMenu->insertItem(QPixmap((const char **)sql_xpm),tr("Display SQL..."),
 			   this,SLOT(displaySQL()),Key_F4);
-      toMainWidget()->menuBar()->insertItem("&Security",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Security"),ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
     }
@@ -1391,12 +1393,12 @@ void toSecurity::displaySQL(void)
   QString res;
   for(std::list<QString>::iterator i=lines.begin();i!=lines.end();i++) {
     res+=*i;
-    res+=";\n";
+    res+=QString::fromLatin1(";\n");
   }
   if (res.length()>0)
     new toMemoEditor(this,res,-1,-1,true);
   else
-    toStatusMessage("No changes made");
+    toStatusMessage(tr("No changes made"));
 }
 
 std::list<QString> toSecurity::sql(void)
@@ -1428,9 +1430,9 @@ void toSecurity::changeUser(bool ask)
       std::list<QString> sqlList=sql();
       if (sqlList.size()!=0) {
 	switch(TOMessageBox::warning(this,
-				     "Save changes?",
-				     "Save the changes made to this user?",
-				     "Save","Discard","Cancel")) {
+				     tr("Save changes?"),
+				     tr("Save the changes made to this user?"),
+				     tr("Save"),tr("Discard"),tr("Cancel"))) {
 	case 0:
 	  saveChanges();
 	  return;
@@ -1456,10 +1458,10 @@ void toSecurity::changeUser(bool ask)
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_COPY,CopyButton->isEnabled());
 
-      if (UserID[4]!=':')
-	throw QString("Invalid security ID");
+      if (UserID[4].latin1()!=':')
+	throw tr("Invalid security ID");
       bool user=false;
-      if (UserID.startsWith("USER"))
+      if (UserID.startsWith(QString::fromLatin1("USER")))
 	user=true;
       QString username=UserID.right(UserID.length()-5);
       General->changePage(username,user);
@@ -1478,30 +1480,30 @@ void toSecurity::refresh(void)
 	     this,SLOT(changeUser(QListViewItem *)));
   UserList->clear();
   try {
-    QListViewItem *parent=new toResultViewItem(UserList,NULL,"Users");
-    parent->setText(1,"USER:");
+    QListViewItem *parent=new toResultViewItem(UserList,NULL,QString::fromLatin1("Users"));
+    parent->setText(1,QString::fromLatin1("USER:"));
     parent->setOpen(true);
     parent->setSelectable(false);
     toQuery user(connection(),toSQL::string(toSQL::TOSQL_USERLIST,connection()));
     QListViewItem *item=NULL;
     while(!user.eof()) {
       QString tmp=user.readValue();
-      QString id="USER:";
+      QString id=QString::fromLatin1("USER:");
       id+=tmp;
       item=new toResultViewItem(parent,item,tmp);
       item->setText(1,id);
       if (id==UserID)
 	UserList->setSelected(item,true);
     }
-    parent=new toResultViewItem(UserList,parent,"Roles");
-    parent->setText(1,"ROLE:");
+    parent=new toResultViewItem(UserList,parent,tr("Roles"));
+    parent->setText(1,QString::fromLatin1("ROLE:"));
     parent->setOpen(true);
     parent->setSelectable(false);
     toQuery roles(connection(),SQLRoles);
     item=NULL;
     while(!roles.eof()) {
       QString tmp=roles.readValue();
-      QString id="ROLE:";
+      QString id=QString::fromLatin1("ROLE:");
       id+=tmp;
       item=new toResultViewItem(parent,item,tmp);
       item->setText(1,id);
@@ -1522,9 +1524,9 @@ void toSecurity::saveChanges()
     } TOCATCH
   }
   if (General->user())
-    UserID="USER:";
+    UserID=QString::fromLatin1("USER:");
   else
-    UserID="ROLE:";
+    UserID=QString::fromLatin1("ROLE:");
   UserID+=General->name();
   refresh();
   changeUser(false);
@@ -1533,25 +1535,25 @@ void toSecurity::saveChanges()
 void toSecurity::drop()
 {
   if (UserID.length()>5) {
-    QString str="DROP ";
+    QString str=QString::fromLatin1("DROP ");
     if (General->user())
-      str+="USER";
+      str+=QString::fromLatin1("USER");
     else
-      str+="ROLE";
-    str+=" \"";
+      str+=QString::fromLatin1("ROLE");
+    str+=QString::fromLatin1(" \"");
     str+=UserID.right(UserID.length()-5);
-    str+="\"";
+    str+=QString::fromLatin1("\"");
     try {
       connection().execute(str);
       refresh();
       changeUser(false);
     } catch(...) {
       switch(TOMessageBox::warning(this,
-				   "Are you sure?",
-				   "The user still owns objects, add the cascade option?",
-				   "Yes","No")) {
+				   tr("Are you sure?"),
+				   tr("The user still owns objects, add the cascade option?"),
+				   tr("Yes"),tr("No"))) {
       case 0:
-	str+=" CASCADE";
+	str+=QString::fromLatin1(" CASCADE");
 	try {
 	  connection().execute(str);
 	  refresh();
@@ -1568,7 +1570,7 @@ void toSecurity::drop()
 void toSecurity::addUser(void)
 {
   for (QListViewItem *item=UserList->firstChild();item;item=item->nextSibling())
-    if (item->text(1)=="USER:") {
+    if (item->text(1)==QString::fromLatin1("USER:")) {
       UserList->clearSelection();
       UserList->setCurrentItem(item);
       Tabs->showPage(General);
@@ -1580,7 +1582,7 @@ void toSecurity::addUser(void)
 void toSecurity::addRole(void)
 {
   for (QListViewItem *item=UserList->firstChild();item;item=item->nextSibling())
-    if (item->text(1)=="ROLE:") {
+    if (item->text(1)==QString::fromLatin1("ROLE:")) {
       UserList->clearSelection();
       UserList->setCurrentItem(item);
       Tabs->showPage(General);
@@ -1597,9 +1599,9 @@ void toSecurity::copy(void)
   ObjectGrant->eraseUser(false);
   Quota->clear();
   if (General->user())
-    UserID="USER:";
+    UserID=QString::fromLatin1("USER:");
   else
-    UserID="ROLE:";
+    UserID=QString::fromLatin1("ROLE:");
   for (QListViewItem *item=UserList->firstChild();item;item=item->nextSibling())
     if (item->text(1)==UserID) {
       disconnect(UserList,SIGNAL(selectionChanged(QListViewItem *)),

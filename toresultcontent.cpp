@@ -166,13 +166,13 @@ toResultContentEditor::contentItem::contentItem(QTable *table,const QString &tex
 
 QString toResultContentEditor::contentItem::key(void) const
 {
-  static QRegExp number("^\\d*\\.?\\d+E?-?\\d*.?.?$");
+  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
   QString val=text();
   if (number.match(val)>=0) {
-    static char buf[100];
-    sprintf(buf,"%015.5f",text().toFloat());
-    return buf;
+    QString ret;
+    ret.sprintf("%015.5f",text().toFloat());
+    return ret;
   }
   return val;
 }
@@ -287,22 +287,22 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
   MenuColumn=MenuRow=-1;
 
   Menu=new QPopupMenu(this);
-  Menu->insertItem("&Display in editor...",TORESULT_MEMO);
+  Menu->insertItem(tr("&Display in editor..."),TORESULT_MEMO);
   Menu->insertSeparator();
-  Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
-  Menu->insertItem("&Paste field",TORESULT_PASTE);
+  Menu->insertItem(tr("&Copy field"),TORESULT_COPY_FIELD);
+  Menu->insertItem(tr("&Paste field"),TORESULT_PASTE);
   Menu->insertSeparator();
-  Menu->insertItem("Copy selection",TORESULT_COPY_SEL);
-  Menu->insertItem("Copy selection with header",TORESULT_COPY_SEL_HEAD);
-  Menu->insertItem("Copy transposed",TORESULT_COPY_TRANS);
+  Menu->insertItem(tr("Copy selection"),TORESULT_COPY_SEL);
+  Menu->insertItem(tr("Copy selection with header"),TORESULT_COPY_SEL_HEAD);
+  Menu->insertItem(tr("Copy transposed"),TORESULT_COPY_TRANS);
   Menu->insertSeparator();
-  Menu->insertItem("&Delete record",TORESULT_DELETE);
+  Menu->insertItem(tr("&Delete record"),TORESULT_DELETE);
   Menu->insertSeparator();
-  Menu->insertItem("Select all",TORESULT_SELECT_ALL);
+  Menu->insertItem(tr("Select all"),TORESULT_SELECT_ALL);
   Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
   Menu->insertSeparator();
-  Menu->insertItem("Export to file...",TORESULT_EXPORT);
-  Menu->insertItem("Read all",TORESULT_READ_ALL);
+  Menu->insertItem(tr("Export to file..."),TORESULT_EXPORT);
+  Menu->insertItem(tr("Read all"),TORESULT_READ_ALL);
   connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
 
   QString str=toTool::globalConfig(CONF_LIST,"");
@@ -323,7 +323,7 @@ toResultContentEditor::~toResultContentEditor()
 
 void toResultContentEditor::wrongUsage(void)
 {
-  toStatusMessage("Can't use these on toResultContent");
+  toStatusMessage(tr("Can't use these on toResultContent"));
 }
 
 void toResultContentEditor::changeSort(int col)
@@ -344,10 +344,10 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   Owner=Param1;
   Table=Param2;
   if (AllFilter)
-    FilterName="";
+    FilterName=QString::fromLatin1("");
   else {
     FilterName=Owner;
-    FilterName+=".";
+    FilterName+=QString::fromLatin1(".");
     FilterName+=Table;
   }
 
@@ -361,17 +361,17 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   GotoEnd=false;
 
   try {
-    SQL="SELECT * FROM ";
+    SQL=QString::fromLatin1("SELECT * FROM ");
     SQL+=table();
-    if (!Criteria[FilterName].isEmpty()) {
-      SQL+=" WHERE (";
-      SQL+=Criteria[FilterName];
-      SQL+=")";
+    if (!Criteria[FilterName.utf8()].isEmpty()) {
+      SQL+=QString::fromLatin1(" WHERE (");
+      SQL+=Criteria[FilterName.utf8()];
+      SQL+=QString::fromLatin1(")");
     }
 
-    if (!Order[FilterName].isEmpty()) {
-      SQL+=" ORDER BY ";
-      SQL+=Order[FilterName];
+    if (!Order[FilterName.utf8()].isEmpty()) {
+      SQL+=QString::fromLatin1(" ORDER BY ");
+      SQL+=Order[FilterName.utf8()];
     }
 
     toQList par;
@@ -380,9 +380,9 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
     SkipNumber=toTool::globalConfig(CONF_MAX_CONTENT,DEFAULT_MAX_CONTENT).toInt();
     if (SkipNumber>0) {
       if (connection().provider()=="Oracle")
-	init="SELECT * FROM ("+SQL+") WHERE ROWNUM <= "+QString::number(SkipNumber);
+	init=QString::fromLatin1("SELECT * FROM (")+SQL+QString::fromLatin1(") WHERE ROWNUM <= ")+QString::number(SkipNumber);
       else if (connection().provider()=="MySQL")
-	init=SQL+" LIMIT "+QString::number(SkipNumber);
+	init=SQL+QString::fromLatin1(" LIMIT ")+QString::number(SkipNumber);
     }
     Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
     Poll.start(100);
@@ -553,10 +553,10 @@ void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &c
   }
 
   QString txt=text(row,col);
-  int nl=txt.find("\n");
+  int nl=txt.find(QString::fromLatin1("\n"));
   if (nl>=0) {
     txt=txt.mid(0,nl);
-    txt+="...";
+    txt+=QString::fromLatin1("...");
   }
 
   toQDescList::iterator i=Description.begin();
@@ -579,11 +579,11 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 {
   SearchStart=SearchEnd=0;
   if (CurrentRow!=row)
-    toStatusMessage("Unsaved data in contents, select other row to store",true);
+    toStatusMessage(tr("Unsaved data in contents, select other row to store"),true);
   saveRow(row);
 
   QString txt=text(row,col);
-  if (txt.contains("\n")) {
+  if (txt.contains(QString::fromLatin1("\n"))) {
     toMemoEditor *edit=new toResultContentMemo(this,txt,row,col);
     connect(edit,SIGNAL(changeData(int,int,const QString &)),
 	    this,SLOT(changeData(int,int,const QString &)));
@@ -608,7 +608,7 @@ void toResultContentEditor::gotoLastRecord()
     setNumRows(Row+1);
     setCurrentCellFocus(Row-1,currentColumn());
   } else {
-    toStatusMessage("Reading all values, moving cursor to end when done",false,false);
+    toStatusMessage(tr("Reading all values, moving cursor to end when done"),false,false);
     GotoEnd=true;
   }
 }
@@ -647,7 +647,7 @@ void toResultContentEditor::addRecord()
       swapRows(row,row-1);
 
     for (int i=0;i<numCols();i++)
-      setText(crow,i,"");
+      setText(crow,i,QString::fromLatin1(""));
 
     NewRecordRow = crow;
     setNumRows(numRows());
@@ -684,7 +684,7 @@ void toResultContentEditor::cancelEdit()
     setCurrentCellFocus(crow,!currentColumn()); // Must change position
   else
     setCurrentCellFocus(crow,0);
-  toStatusMessage("Edit cancelled",false,false);
+  toStatusMessage(tr("Edit cancelled"),false,false);
 }
 
 void toResultContentEditor::deleteCurrent()
@@ -696,43 +696,46 @@ void toResultContentEditor::deleteCurrent()
   saveUnsaved();
   if (currentRow()<Row) {
     try {
-      QString sql="DELETE FROM ";
+      QString sql=QString::fromLatin1("DELETE FROM ");
       sql+=table();
-      sql+=" WHERE ";
+      sql+=QString::fromLatin1(" WHERE ");
     
       QHeader *head=horizontalHeader();
       toQDescList::iterator di=Description.begin();
       bool where=false;
       toConnection &conn=connection();
       
+      bool oracle=(connection().provider()=="Oracle");
       {
         for(int i=0;i<numCols();i++) {
-	  if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
+	  if (!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
+			!(*di).Datatype.contains(QString::fromLatin1("LOB")))) {
 	    if (where)
-	      sql+=" AND ";
+	      sql+=QString::fromLatin1(" AND ");
 	    else
 	      where=true;
 	    sql+=conn.quote(head->label(i));
 	    if (!text(currentRow(),i))
-	      sql+=" IS NULL";
+	      sql+=QString::fromLatin1(" IS NULL");
 	    else {
-	      sql+="= :c";
+	      sql+=QString::fromLatin1("= :c");
 	      sql+=QString::number(i);
-	      sql+="<char[4000]>";
+	      sql+=QString::fromLatin1("<char[4000]>");
 	    }
 	  }
 	  di++;
 	}
       }
       if (!where) {
-	toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+	toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
 	return;
       }
       toQList args;
       di=Description.begin();
       for(int i=0;i<numCols();i++) {
 	QString str=text(currentRow(),i);
-	if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
+	if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
+				      !(*di).Datatype.contains(QString::fromLatin1("LOB")))))
 	  toPush(args,toQValue(str));
 	di++;
       }
@@ -775,7 +778,7 @@ void toResultContentEditor::saveUnsaved(void)
       if (*j!=text(CurrentRow,i))
 	break;
     if (j==OrigValues.end()) {
-      toStatusMessage("No changes made",false,false);
+      toStatusMessage(tr("No changes made"),false,false);
       return;
     }
 
@@ -783,22 +786,22 @@ void toResultContentEditor::saveUnsaved(void)
     QString rowid;
     try {
       toConnection &conn = connection();
-      oracle=(connection().provider()=="Oracle"&&!NoUseReturning);
-      toStatusMessage("Saved row",false,false);
+      oracle=(connection().provider()=="Oracle");
+      toStatusMessage(tr("Saved row"),false,false);
       if (CurrentRow>=Row || CurrentRow==NewRecordRow) {
-	QString sql="INSERT INTO ";
+	QString sql=QString::fromLatin1("INSERT INTO ");
 	sql+=table();
-	sql+=" VALUES (";
+	sql+=QString::fromLatin1(" VALUES (");
 	for (int i=0;i<numCols();i++) {
-	  sql+=":f";
+	  sql+=QString::fromLatin1(":f");
 	  sql+=QString::number(i);
-	  sql+="<char[4000],in>";
+	  sql+=QString::fromLatin1("<char[4000],in>");
 	  if (i+1<numCols())
-	    sql+=",";
+	    sql+=QString::fromLatin1(",");
 	}
-	sql+=")";
-	if(oracle) 
-	  sql+=" RETURNING ROWID INTO :r<char[101],out>";
+	sql+=QString::fromLatin1(")");
+	if(oracle&&!NoUseReturning) 
+	  sql+=QString::fromLatin1(" RETURNING ROWID INTO :r<char[101],out>");
 	
 	try {
 	  toQList args;
@@ -811,7 +814,7 @@ void toResultContentEditor::saveUnsaved(void)
 	      toPush(args,toQValue(str));
 	  }
 	  toQuery q(conn,sql,args);
-	  if(oracle)
+	  if(oracle&&!NoUseReturning)
 	    rowid = q.readValueNull();
 	  Row++;
 	  setNumRows(Row+1);
@@ -825,9 +828,9 @@ void toResultContentEditor::saveUnsaved(void)
 	  oracle = false;
 	}
       } else {
-	QString sql="UPDATE ";
+	QString sql=QString::fromLatin1("UPDATE ");
 	sql+=table();
-	sql+=" SET ";
+	sql+=QString::fromLatin1(" SET ");
 	QHeader *head=horizontalHeader();
 	std::list<QString>::iterator k=OrigValues.begin();
 	bool first=false;
@@ -837,45 +840,46 @@ void toResultContentEditor::saveUnsaved(void)
 	    if (!first)
 	      first=true;
 	    else
-	      sql+=", ";
+	      sql+=QString::fromLatin1(", ");
 	    sql+=conn.quote(head->label(i));
 	    if (fld.isNull())
-	      sql+=" = NULL";
+	      sql+=QString::fromLatin1(" = NULL");
 	    else {
-	      sql+="= :f";
+	      sql+=QString::fromLatin1("= :f");
 	      sql+=QString::number(i);
-	      sql+="<char[4000],in>";
+	      sql+=QString::fromLatin1("<char[4000],in>");
 	    }
 	  }
 	}
 	if (first) {
-	  sql+=" WHERE ";
+	  sql+=QString::fromLatin1(" WHERE ");
 	  int col=0;
 	  bool where=false;
 	  toQDescList::iterator di=Description.begin();
 	  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	    if (!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB")) {
+	    if (!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
+			  !(*di).Datatype.contains(QString::fromLatin1("LOB")))) {
 	      if (where)
-		sql+=" AND ";
+		sql+=QString::fromLatin1(" AND ");
 	      else
 		where=true;
 	      sql+=conn.quote((*di).Name);
 	      if ((*j).isNull())
-		sql+=" IS NULL";
+		sql+=QString::fromLatin1(" IS NULL");
 	      else {
-		sql+="= :c";
+		sql+=QString::fromLatin1("= :c");
 		sql+=QString::number(col);
-		sql+="<char[4000],in>";
+		sql+=QString::fromLatin1("<char[4000],in>");
 	      }
 	    }
 	    di++;
 	  }
 	  if (!where) {
-	    toStatusMessage("This table contains only LOB/LONG columns and can not be edited");
+	    toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
 	    return;
 	  }
-	  if(oracle)
-	    sql+=" RETURNING ROWID INTO :r<char[101],out>";
+	  if(oracle&&!NoUseReturning)
+	    sql+=QString::fromLatin1(" RETURNING ROWID INTO :r<char[101],out>");
 	  try {
 	    toQList args;
 
@@ -889,12 +893,13 @@ void toResultContentEditor::saveUnsaved(void)
 	    toQDescList::iterator di=Description.begin();
 	    for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
 	      QString str=(*j);
-	      if (!str.isNull()&&!(*di).Datatype.startsWith("LONG")&&!(*di).Datatype.contains("LOB"))
+	      if (!str.isNull()&&(!oracle||(!(*di).Datatype.startsWith(QString::fromLatin1("LONG"))&&
+					    !(*di).Datatype.contains(QString::fromLatin1("LOB")))))
 		toPush(args,toQValue(str));
 	      di++;
 	    }
 	    toQuery q(conn,sql,args);
-	    if(oracle)
+	    if(oracle&&!NoUseReturning)
 	      rowid = q.readValueNull();
 	    if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
 	      conn.commit();
@@ -914,9 +919,9 @@ void toResultContentEditor::saveUnsaved(void)
     if(oracle) {
       try {
 	QString sql;
-	sql="SELECT * FROM ";
+	sql=QString::fromLatin1("SELECT * FROM ");
 	sql+=table();
-	sql+=" WHERE rowid = :r<char[101]>";
+	sql+=QString::fromLatin1(" WHERE rowid = :r<char[101]>");
 	toQuery q(connection(),sql,rowid);
 	for (int j=0;j<numCols()&&!q.eof();j++)
 	  setText(CurrentRow,j,q.readValueNull());
@@ -959,10 +964,7 @@ void toResultContentEditor::editPrint(void)
 {
   toResultView print(false,true,this);
   print.hide();
-  QString name="Content of ";
-  name+=Owner;
-  name+=".";
-  name+=Table;
+  QString name=tr("Content of %1.%2").arg(Owner).arg(Table);
   print.setSQLName(name);
   print.query(SQL);
   print.editPrint();
@@ -972,10 +974,7 @@ bool toResultContentEditor::editSave(bool ask)
 {
   toResultView list(false,true,this);
   list.hide();
-  QString name="Content of ";
-  name+=Owner;
-  name+=".";
-  name+=Table;
+  QString name=tr("Content of %1.%2").arg(Owner).arg(Table);
   list.setSQLName(name);
   list.query(SQL);
   list.editReadAll();
@@ -1112,7 +1111,7 @@ QString toResultContentEditor::table(void)
     QString sql;
     if (connection().provider()!="PostgreSQL") {
       sql=connection().quote(Owner);
-      sql+=".";
+      sql+=QString::fromLatin1(".");
     }
     sql+=connection().quote(Table);
     return sql;
@@ -1178,50 +1177,50 @@ bool toResultContentEditor::searchCanReplace(bool all)
 toResultContent::toResultContent(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
-  QToolBar *toolbar=toAllocBar(this,"Content editor");
+  QToolBar *toolbar=toAllocBar(this,tr("Content editor"));
   Editor=new toResultContentEditor(this,name);
 
   new QToolButton(QPixmap((const char **)filter_xpm),
-		  "Define filter for editor",
-		  "Define filter for editor",
+		  tr("Define filter for editor"),
+		  tr("Define filter for editor"),
 		  this,SLOT(changeFilter()),toolbar);
   new QToolButton(QPixmap((const char **)nofilter_xpm),
-		  "Remove any filter",
-		  "Remove any filter",
+		  tr("Remove any filter"),
+		  tr("Remove any filter"),
 		  this,SLOT(removeFilter()),toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)addrecord_xpm),
-		  "Add a new record",
-		  "Add a new record",
+		  tr("Add a new record"),
+		  tr("Add a new record"),
 		  Editor,SLOT(addRecord()),toolbar);
   new QToolButton(QPixmap((const char **)saverecord_xpm),
-		  "Save changes",
-		  "Save changes",
+		  tr("Save changes"),
+		  tr("Save changes"),
 		  Editor,SLOT(saveUnsaved()),toolbar);
   new QToolButton(QPixmap((const char **)canceledit_xpm),
-		  "Discard changes",
-		  "Discard changes",
+		  tr("Discard changes"),
+		  tr("Discard changes"),
 		  Editor,SLOT(cancelEdit()),toolbar);
   new QToolButton(QPixmap((const char **)trash_xpm),
-		  "Delete current record from table",
-		  "Delete current record from table",
+		  tr("Delete current record from table"),
+		  tr("Delete current record from table"),
 		  Editor,SLOT(deleteCurrent()),toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)rewind_xpm),
-		  "Go to first row",
-		  "Go to first row",
+		  tr("Go to first row"),
+		  tr("Go to first row"),
 		  Editor,SLOT(gotoFirstRecord()),toolbar);
   new QToolButton(QPixmap((const char **)previous_xpm),
-		  "Go to previous row",
-		  "Go to previous row",
+		  tr("Go to previous row"),
+		  tr("Go to previous row"),
 		  Editor,SLOT(gotoPreviousRecord()),toolbar);
   new QToolButton(QPixmap((const char **)next_xpm),
-		  "Go to next row",
-		  "Go to next row",
+		  tr("Go to next row"),
+		  tr("Go to next row"),
 		  Editor,SLOT(gotoNextRecord()),toolbar);
   new QToolButton(QPixmap((const char **)forward_xpm),
-		  "Go to last row",
-		  "Go to last row",
+		  tr("Go to last row"),
+		  tr("Go to last row"),
 		  Editor,SLOT(gotoLastRecord()),toolbar);
   toolbar->addSeparator();
 
@@ -1229,7 +1228,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
   btn->setToggleButton(true);
   btn->setIconSet(QIconSet(QPixmap((const char **)single_xpm)));
   connect(btn,SIGNAL(toggled(bool)),Editor,SLOT(singleRecordForm(bool)));
-  QToolTip::add(btn,"Toggle between table or single record editing");
+  QToolTip::add(btn,tr("Toggle between table or single record editing"));
   
   toolbar->setStretchableWidget(new QLabel(toolbar));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
@@ -1240,8 +1239,8 @@ void toResultContent::changeFilter(void)
 {
   toResultContentFilterUI filter(this,"FilterSetup",true);
   filter.AllTables->setChecked(Editor->allFilter());
-  filter.Order->setText(Editor->Order[Editor->FilterName]);
-  filter.Criteria->setText(Editor->Criteria[Editor->FilterName]);
+  filter.Order->setText(Editor->Order[Editor->FilterName.utf8()]);
+  filter.Criteria->setText(Editor->Criteria[Editor->FilterName.utf8()]);
   filter.Columns->changeParams(Editor->Owner,Editor->Table);
   if(filter.exec())
     Editor->changeFilter(filter.AllTables->isChecked(),
@@ -1254,14 +1253,14 @@ void toResultContentEditor::changeFilter(bool all,const QString &crit,const QStr
   AllFilter=all;
   QString nam;
   if (AllFilter)
-    nam="";
+    nam=QString::fromLatin1("");
   else {
     nam=Owner;
-    nam+=".";
+    nam+=QString::fromLatin1(".");
     nam+=Table;
   }
-  Criteria[nam]=crit;
-  Order[nam]=ord;
+  Criteria[nam.utf8()]=crit;
+  Order[nam.utf8()]=ord;
   saveUnsaved();
   
   QString t=Owner;
@@ -1286,9 +1285,9 @@ bool toResultContent::canHandle(toConnection &conn)
 void toResultContent::removeFilter(void)
 {
   if (!Editor->allFilter()) {
-    switch(TOMessageBox::information(this,"Remove filter",
-				     "Remove the filter for this table only or for all tables.",
-				     "&All","&This","&Cancel",0)) {
+    switch(TOMessageBox::information(this,tr("Remove filter"),
+				     tr("Remove the filter for this table only or for all tables."),
+				     tr("&All"),tr("&This"),tr("&Cancel"),0)) {
     case 0:
       Editor->Criteria.clear();
       Editor->Order.clear();
@@ -1329,7 +1328,7 @@ void toResultContentEditor::singleRecordForm(bool display)
   }
 }
 
-void toResultContentEditor::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toResultContentEditor::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   if (AllFilter)
     data[prefix+":All"]="Yes";
@@ -1337,7 +1336,7 @@ void toResultContentEditor::exportData(std::map<QString,QString> &data,const QSt
   toMapExport(data,prefix+":Order",Order);
 }
 
-void toResultContentEditor::importData(std::map<QString,QString> &data,const QString &prefix)
+void toResultContentEditor::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   AllFilter=!data[prefix+":All"].isEmpty();
   toMapImport(data,prefix+":Crit",Criteria);
@@ -1352,7 +1351,7 @@ toListView *toResultContentEditor::copySelection(bool header)
     int row;
     int col;
     if (header) {
-      lst->addColumn("#");
+      lst->addColumn(QString::fromLatin1("#"));
       lst->setColumnAlignment(0,AlignRight);
     }
     for (col=sel.leftCol();col<=sel.rightCol();col++) {
@@ -1376,10 +1375,7 @@ toListView *toResultContentEditor::copySelection(bool header)
 		      text(row,col));
       }
     }
-    QString name="Content of ";
-    name+=Owner;
-    name+=".";
-    name+=Table;
+    QString name=tr("Content of %1.%2").arg(Owner).arg(Table);
     lst->setSQLName(name);
     return lst;
   }
@@ -1409,11 +1405,11 @@ void toResultContentSingle::changeSource(QTable *table)
     new QLabel(head->label(i),Container);
     QLineEdit *edit=new QLineEdit(Container,QString::number(i));
     edit->setFixedWidth(300);
-    QCheckBox *box=new QCheckBox("NULL",Container);
+    QCheckBox *box=new QCheckBox(QString::fromLatin1("NULL"),Container);
     connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
 
     toParamGetButton *btn=new toParamGetButton(i,Container);
-    btn->setText("Edit");
+    btn->setText(tr("Edit"));
     btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed));
     connect(btn,SIGNAL(clicked(int)),this,SLOT(showMemo(int)));
     connect(box,SIGNAL(toggled(bool)),btn,SLOT(setDisabled(bool)));
@@ -1454,7 +1450,7 @@ void toResultContentSingle::saveRow(QTable *table,int row)
       val++;
     }
   } else
-    toStatusMessage("Internal error, save different row than current in content editor");
+    toStatusMessage(tr("Internal error, save different row than current in content editor"));
 }
 
 void toResultContentSingle::showMemo(int row)

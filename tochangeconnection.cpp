@@ -46,8 +46,8 @@
 
 toChangeConnection::toChangeConnection(QToolBar *parent,const char *name)
   : toPopupButton(QPixmap((const char **)changeconnect_xpm),
-		  "Change the connection of the tool.",
-		  "Change the connection of the tool.",
+		  tr("Change the connection of the tool."),
+		  tr("Change the connection of the tool."),
 		  parent,name)
 {
   setPopup(new QPopupMenu(this));
@@ -84,7 +84,7 @@ void toChangeConnection::changeConnection(int val)
   }
   try {
     if (i==cons.end())
-      throw QString("Couldn't find selected connection");
+      throw tr("Couldn't find selected connection");
     QWidget *cur=parentWidget();
     while(cur) {
       toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
@@ -96,6 +96,6 @@ void toChangeConnection::changeConnection(int val)
       }
       cur=cur->parentWidget();
     }
-    throw QString("Couldn't find parent connection. Internal error.");
+    throw tr("Couldn't find parent connection. Internal error.");
   } TOCATCH
 }

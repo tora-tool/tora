@@ -190,7 +190,7 @@ private:
   std::list<QString> Limit;
 
   // Context, can be used by the extractor to save context
-  std::map<QString,QVariant> Context;
+  std::map<QCString,QVariant> Context;
 
   // Stuff to handle extractors
   static std::map<QString,extractor *> *Extractors;
@@ -283,12 +283,12 @@ public:
    * @param name Name of this context
    * @param val Value of this context
    */
-  void setState(const QString &name,const QVariant &val);
+  void setState(const QCString &name,const QVariant &val);
   /** Get the value of a context for the current extractor.
    * @param name Name of the context to extract.
    * @return The value of the context.
    */
-  QVariant state(const QString &name);
+  QVariant state(const QCString &name);
 
   /** Set the schema of the extraction.
    * @param schema Specify the schema of the output script or description. If empty

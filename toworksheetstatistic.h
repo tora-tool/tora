@@ -89,9 +89,9 @@ public:
   toWorksheetStatistic(QWidget *parent);
   ~toWorksheetStatistic();
 
-  static void saveStatistics(std::map<QString,QString> &stats);
+  static void saveStatistics(std::map<QCString,QString> &stats);
 
-  void addStatistics(std::map<QString,QString> &stats);
+  void addStatistics(std::map<QCString,QString> &stats);
 
   void updateSplitter(void);
 public slots:

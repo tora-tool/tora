@@ -68,8 +68,8 @@ class toBrowser : public toToolWidget {
   toResultContent *ViewContent;
   toResultContent *TableContent;
 
-  std::map<QString,toResultView *> Map;
-  std::map<QString,toResult *> SecondMap;
+  std::map<QCString,toResultView *> Map;
+  std::map<QCString,toResult *> SecondMap;
   void setNewFilter(toBrowserFilter *filter);
   QTimer Poll;
 
@@ -80,8 +80,8 @@ public:
 
   virtual bool canHandle(toConnection &conn);
 
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public slots:
   void refresh(void);
   void updateTabs(void);
@@ -115,8 +115,8 @@ public:
   virtual void removeItem(QListViewItem *item);
   toBrowserFilter *filter(void)
   { return Filter; }
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public slots:
   void addDatabase(const QString &);
   void removeDatabase(const QString &); 

@@ -89,13 +89,13 @@ static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
 
 static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
 			       "SHOW DATABASES",
-			       QString::null,
+			       "",
 			       "3.0",
 			       "MySQL");
 
 static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
 			       "SELECT usename AS UserName FROM pg_user ORDER BY UserName",
-			       QString::null,
+			       "",
 			       "7.1",
 			       "PostgreSQL");
 
@@ -116,7 +116,7 @@ QString toSQLString(toConnection &conn,const QString &address)
     sql.append(*i);
   }
   if (sql.isEmpty())
-    throw QString("SQL Address not found in SGA");
+    throw qApp->translate("toSQLString","SQL Address not found in SGA");
   return sql;
 }
 
@@ -126,12 +126,12 @@ static toSQL SQLNow("Global:Now",
 
 static toSQL SQLNowMySQL("Global:Now",
 			 "SELECT now()",
-			 QString::null,
+			 "",
 			 "3.0",
 			 "MySQL");
 static toSQL SQLNowPgSQL("Global:Now",
 			 "SELECT now()",
-			 QString::null,
+			 "",
 			 "7.1",
 			 "PostgreSQL");
 
@@ -141,7 +141,7 @@ QString toNow(toConnection &conn)
     toQList vals=toQuery::readQuery(conn,SQLNow);
     return toPop(vals);
   } catch(...) {
-    return "Unexpected error";
+    return qApp->translate("toNow","Unexpected error");
   }
 }
 
@@ -150,35 +150,38 @@ QString toSQLStripSpecifier(const QString &sql)
   QString ret;
   char inString=0;
   for(unsigned int i=0;i<sql.length();i++) {
-    QChar c=sql.at(i);
+    QChar rc=sql.at(i);
+    char c=rc.latin1();
     if (inString) {
-      if (char(c)==inString) {
+      if (c==inString) {
 	inString=0;
       }
       ret+=c;
     } else {
-      switch(char(c)) {
+      switch(c) {
       case '\'':
 	inString='\'';
-	ret+=c;
+	ret+=rc;
 	break;
       case '\"':
 	inString='\"';
-	ret+=c;
+	ret+=rc;
 	break;
       case ':':
-	ret+=c;
+	ret+=rc;
 	for (i++;i<sql.length();i++) {
-	  c=sql.at(i);
-	  if (!c.isLetterOrNumber())
+	  rc=sql.at(i);
+	  c=rc.latin1();
+	  if (!rc.isLetterOrNumber())
 	    break;
-	  ret+=c;
+	  ret+=rc;
 	}
 	if (c=='<') {
-	  ret+=" ";
+	  ret+=QString::fromLatin1(" ");
 	  for (i++;i<sql.length();i++) {
-	    c=sql.at(i);
-	    ret+=" ";
+	    rc=sql.at(i);
+	    c=rc.latin1();
+	    ret+=QString::fromLatin1(" ");
 	    if (c=='>') {
 	      i++;
 	      break;
@@ -188,7 +191,7 @@ QString toSQLStripSpecifier(const QString &sql)
 	i--;
 	break;
       default:
-	ret+=c;
+	ret+=rc;
       }
     }
   }
@@ -200,32 +203,35 @@ QString toSQLStripBind(const QString &sql)
   QString ret;
   char inString=0;
   for(unsigned int i=0;i<sql.length();i++) {
-    QChar c=sql.at(i);
+    QChar rc=sql.at(i);
+    char c=rc.latin1();
     if (inString) {
-      if (char(c)==inString) {
+      if (c==inString) {
 	inString=0;
       }
-      ret+=c;
+      ret+=rc;
     } else {
       switch(char(c)) {
       case '\'':
 	inString='\'';
-	ret+=c;
+	ret+=rc;
 	break;
       case '\"':
 	inString='\"';
-	ret+=c;
+	ret+=rc;
 	break;
       case ':':
-	ret+="''";
+	ret+=QString::fromLatin1("''");
 	for (i++;i<sql.length();i++) {
-	  c=sql.at(i);
-	  if (!c.isLetterOrNumber())
+	  rc=sql.at(i);
+	  c=rc.latin1();
+	  if (!rc.isLetterOrNumber())
 	    break;
 	}
 	if (c=='<') {
 	  for (i++;i<sql.length();i++) {
-	    c=sql.at(i);
+	    rc=sql.at(i);
+	    c=rc.latin1();
 	    if (c=='>') {
 	      i++;
 	      break;
@@ -235,7 +241,7 @@ QString toSQLStripBind(const QString &sql)
 	i--;
 	break;
       default:
-	ret+=c;
+	ret+=rc;
       }
     }
   }
@@ -258,7 +264,7 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
     if (search==toSQLString(conn,*i))
       return *i;
   }
-  throw QString("SQL Query not found in SGA");
+  throw qApp->translate("toSQLToAddress","SQL Query not found in SGA");
 }
 
 static std::list<QString> LastMessages;
@@ -304,14 +310,14 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name,const QString &def,Q
   else
     refresh=new QComboBox(false,parent);
 
-  refresh->insertItem("None");
-  refresh->insertItem("2 seconds");
-  refresh->insertItem("5 seconds");
-  refresh->insertItem("10 seconds");
-  refresh->insertItem("30 seconds");
-  refresh->insertItem("1 min");
-  refresh->insertItem("5 min");
-  refresh->insertItem("10 min");
+  refresh->insertItem(qApp->translate("toRefreshCreate","None"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","2 seconds"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","5 seconds"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","10 seconds"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","30 seconds"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","1 min"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","5 min"));
+  refresh->insertItem(qApp->translate("toRefreshCreate","10 min"));
   QString str;
   if (def)
     str=def;
@@ -342,24 +348,24 @@ void toRefreshParse(toTimer *timer,const QString &str)
   if (t.isEmpty())
     t=toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH);
 
-  if (t=="None")
+  if (t==qApp->translate("toRefreshCreate","None")||t=="None")
     timer->stop();
-  else if (t=="2 seconds")
+  else if (t==qApp->translate("toRefreshCreate","2 seconds")||t=="2 seconds")
     timer->start(2*1000);
-  else if (t=="5 seconds")
+  else if (t==qApp->translate("toRefreshCreate","5 seconds")||t=="5 seconds")
     timer->start(5*1000);
-  else if (t=="10 seconds")
+  else if (t==qApp->translate("toRefreshCreate","10 seconds")||t=="10 seconds")
     timer->start(10*1000);
-  else if (t=="30 seconds")
+  else if (t==qApp->translate("toRefreshCreate","30 seconds")||t=="30 seconds")
     timer->start(30*1000);
-  else if (t=="1 min")
+  else if (t==qApp->translate("toRefreshCreate","1 min")||t=="1 min")
     timer->start(60*1000);
-  else if (t=="5 min")
+  else if (t==qApp->translate("toRefreshCreate","5 min")||t=="5 min")
     timer->start(300*1000);
-  else if (t=="10 min")
+  else if (t==qApp->translate("toRefreshCreate","10 min")||t=="10 min")
     timer->start(600*1000);
   else
-    throw QString("Unknown timer value");
+    throw qApp->translate("toRefreshParse","Unknown timer value");
 }
 
 QString toDeepCopy(const QString &str)
@@ -391,7 +397,7 @@ void toSetSessionType(const QString &str)
   else if (str=="Platinum")
     qApp->setStyle(new QPlatinumStyle());
   else
-    toStatusMessage("Failed to find style "+str);
+    toStatusMessage(qApp->translate("toSetSessionType","Failed to find style %1").arg(str));
 }
 
 QString toGetSessionType(void)
@@ -409,7 +415,7 @@ QString toGetSessionType(void)
     return "Platinum";
   else if (style->isA("QWindowsStyle"))
     return "Windows";
-  toStatusMessage("Failed to find style match");
+  toStatusMessage(qApp->translate("togetSessionType","Failed to find style match"));
   return DEFAULT_STYLE;
 }
 
@@ -446,7 +452,7 @@ void toSetSessionType(const QString &str)
   if (style)
     qApp->setStyle(style);
   else
-    toStatusMessage("Failed to find style "+str);
+    toStatusMessage(qApp->translate("toSetSessionType","Failed to find style %1").arg(str));
 }
 
 #  endif
@@ -461,7 +467,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str)
   }
   QString name=str;
   if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
-    name+=" ";
+    name+=QString::fromLatin1(" ");
     name+=db;
   }
   QToolBar *tool;
@@ -491,7 +497,7 @@ TODock *toAllocDock(const QString &name,
 {
   QString str=name;
   if (!db.isEmpty()&&!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
-    str+=" ";
+    str+=QString::fromLatin1(" ");
     str+=db;
   }
 #ifdef TO_KDE
@@ -531,7 +537,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       pos=KDockWidget::DockBottom;
       break;
     default:
-      toStatusMessage("Unknown dock position");
+      toStatusMessage(qApp->translate("toAttachDock","Unknown dock position"));
       // Intentionally left out break
     case QMainWindow::Left:
       pos=KDockWidget::DockLeft;
@@ -547,7 +553,7 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
       dw->manualDock(main->getMainDockWidget(),pos,pct);
     }
   } else {
-    toStatusMessage("Main widget not KDockMainWindow");
+    toStatusMessage(qApp->translate("toAttachDock","Main widget not KDockMainWindow"));
     return;
   }
 #else
@@ -593,7 +599,7 @@ QString toFontToString(const QFont &fnt)
 QFont toStringToFont(const QString &str)
 {
   if (str.isEmpty())
-    return QFont("Courier",12);
+    return QFont(QString::fromLatin1("Courier"),12);
 #if QT_VERSION >= 300
   QFont fnt;
   if (fnt.fromString(str))
@@ -604,9 +610,9 @@ QFont toStringToFont(const QString &str)
   fnt.setRawName(str);
   return fnt;
 #else
-  QStringList lst=QStringList::split("/",str);
+  QStringList lst=QStringList::split(QString::fromLatin1("/"),str);
   if (lst.count()!=5)
-    return QFont("Courier",12);
+    return QFont(QString::fromLatin1("Courier"),12);
   return QFont(lst[0],lst[1].toInt(),lst[2].toInt(),
 	       bool(lst[3].toInt())
 #  if QT_VERSION < 300
@@ -618,9 +624,9 @@ QFont toStringToFont(const QString &str)
 
 int toSizeDecode(const QString &str)
 {
-  if (str=="KB")
+  if (str==QString::fromLatin1("KB"))
     return 1024;
-  if (str=="MB")
+  if (str==QString::fromLatin1("MB"))
     return 1024*1024;
   return 1;
 }
@@ -653,7 +659,7 @@ QString toHelpPath(void)
   QString str=toTool::globalConfig(CONF_HELP_PATH,"");
   if (str.isEmpty()) {
     str=toPluginPath();
-    str+="/help/toc.htm";
+    str+=QString::fromLatin1("/help/toc.htm");
   }
   return str;
 }
@@ -683,7 +689,7 @@ QString toExpandFile(const QString &file)
   else
     home=homet;
 #endif
-  ret.replace(QRegExp("\\$HOME"),home);
+  ret.replace(QRegExp(QString::fromLatin1("\\$HOME")),home);
   return ret;
 }
 
@@ -698,7 +704,7 @@ QCString toReadFile(const QString &filename)
       QFile file(tmpFile);
       if (!file.open(IO_ReadOnly)) {
 	KIO::NetAccess::removeTempFile(tmpFile);
-	throw QString("Couldn't open file %1.").arg(filename);
+	throw qApp->translate("toReadFile","Couldn't open file %1.").arg(filename);
       }
 
       int size=file.size();
@@ -707,7 +713,7 @@ QCString toReadFile(const QString &filename)
       if (file.readBlock(buf,size)==-1) {
 	delete[] buf;
 	KIO::NetAccess::removeTempFile(tmpFile);
-	throw QString("Encountered problems read configuration");
+	throw qApp->translate("toReadFile","Encountered problems read configuration");
       }
       buf[size]=0;
       QCString ret(buf,size+1);
@@ -715,19 +721,19 @@ QCString toReadFile(const QString &filename)
       KIO::NetAccess::removeTempFile(tmpFile);
       return ret;
     }
-    throw QString("Couldn't download file");
+    throw qApp->translate("toReadFile","Couldn't download file");
   }
 #endif
   QFile file(expanded);
   if (!file.open(IO_ReadOnly))
-    throw QString("Couldn't open file %1.").arg(filename);
+    throw qApp->translate("toReadFile","Couldn't open file %1.").arg(filename);
   
   int size=file.size();
   
   char *buf=new char[size+1];
   if (file.readBlock(buf,size)==-1) {
     delete[] buf;
-    throw QString("Encountered problems read configuration");
+    throw qApp->translate("toReadFile","Encountered problems read configuration");
   }
   buf[size]=0;
   QCString ret(buf,size+1);
@@ -744,33 +750,37 @@ bool toWriteFile(const QString &filename,const QCString &data)
     KTempFile file;
     file.file()->writeBlock(data,data.length());
     if (file.status()!=IO_Ok) {
-      TOMessageBox::warning(toMainWidget(),"File error","Couldn't write data to tempfile");
+      TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
+			    qApp->translate("toWriteFile","Couldn't write data to tempfile"));
       file.unlink();
       return false;
     }
     file.close();
     if (!KIO::NetAccess::upload(file.name(),url)) {
       file.unlink();
-      TOMessageBox::warning(toMainWidget(),"File error","Couldn't upload data to URL");
+      TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
+			    qApp->translate("toWriteFile","Couldn't upload data to URL"));
       return false;
     }
     file.unlink();
-    toStatusMessage("File saved successfully",false,false);
+    toStatusMessage(qApp->translate("toWriteFile","File saved successfully"),false,false);
     return true;
   }
 #endif
 
   QFile file(expanded);
   if (!file.open(IO_WriteOnly)) {
-    TOMessageBox::warning(toMainWidget(),"File error","Couldn't open file for writing");
+    TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
+			  qApp->translate("toWriteFile","Couldn't open file for writing"));
     return false;
   }
   file.writeBlock(data,data.length());
   if (file.status()!=IO_Ok) {
-    TOMessageBox::warning(toMainWidget(),"File error","Couldn't write data to file");
+    TOMessageBox::warning(toMainWidget(),qApp->translate("toWriteFile","File error"),
+			  qApp->translate("toWriteFile","Couldn't write data to file"));
     return false;
   }
-  toStatusMessage("File saved successfully",false,false);
+  toStatusMessage(qApp->translate("toWriteFile","File saved successfully"),false,false);
   return true;
 }
 
@@ -791,28 +801,28 @@ bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
 
 static QString GetExtensions(void)
 {
-  static QRegExp repl("\\s*,\\s*");
+  static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
   QString t=toTool::globalConfig(CONF_EXTENSIONS,DEFAULT_EXTENSIONS);
-  t.replace(repl,"\n");
+  t.replace(repl,QString::fromLatin1("\n"));
   return t;
 }
 
 static QString AddExt(QString t,const QString &filter)
 {
-  static QRegExp hasext("\\.[^\\/]*$");
+  static QRegExp hasext(QString::fromLatin1("\\.[^\\/]*$"));
   if (t.isEmpty())
     return t;
 
   toTool::globalSetConfig(CONF_LAST_DIR,t);
 
   if (hasext.match(t)<0) {
-    static QRegExp findext("\\.[^ \t\r\n\\)\\|]*");
+    static QRegExp findext(QString::fromLatin1("\\.[^ \t\r\n\\)\\|]*"));
     int len=0;
     int pos=findext.match(filter,0,&len);
     if (pos>=0)
       t+=filter.mid(pos,len);
     else
-      t+=".sql";
+      t+=QString::fromLatin1(".sql");
   }
   return t;
 }
@@ -825,7 +835,7 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
   
   QString dir=filename;
   if (dir.isNull())
-    dir=toTool::globalConfig(CONF_LAST_DIR,QString::null);
+    dir=toTool::globalConfig(CONF_LAST_DIR,"");
 
 #ifdef TO_KDE
   KURL url=TOFileDialog::getOpenURL(dir,t,parent);
@@ -847,12 +857,12 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
 
   QString dir=filename;
   if (dir.isNull())
-    dir=toTool::globalConfig(CONF_LAST_DIR,QString::null);
+    dir=toTool::globalConfig(CONF_LAST_DIR,"");
 
 #ifdef TO_KDE
   KURL url=TOFileDialog::getSaveURL(dir,t,parent);
   if (url.hasPass())
-    TOMessageBox::warning(toMainWidget(),"File open password",url.pass());
+    TOMessageBox::warning(toMainWidget(),qApp->translate("toSaveFilename","File open password"),url.pass());
   if (url.isEmpty())
     return QString::null;
   if (url.isLocalFile())
@@ -968,7 +978,7 @@ toToolWidget *toCurrentTool(QObject *cur)
       return tool;
     cur=cur->parent();
   }
-  throw QString("Couldn't find parent tool. Internal error.");
+  throw qApp->translate("toCurrentTool","Couldn't find parent tool. Internal error.");
 }
 
 toConnection &toCurrentConnection(QObject *cur)
@@ -1043,7 +1053,7 @@ static QListViewItem *FindItem(QListView *lst,QListViewItem *first,const QString
     if (tmp==str)
       return first;
     else {
-      tmp+=":";
+      tmp+=QString::fromLatin1(":");
       if (str.startsWith(tmp)) {
 	QListViewItem *ret=FindItem(lst,first->firstChild(),str.mid(tmp.length()));
 	if (ret)
@@ -1066,7 +1076,7 @@ void toToolCaption(toToolWidget *widget,const QString &caption)
   if (!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty()) {
     try {
       title=widget->connection().description();
-      title+=" ";
+      title+=QString::fromLatin1(" ");
     } catch(...) {
     }
   }
@@ -1076,13 +1086,13 @@ void toToolCaption(toToolWidget *widget,const QString &caption)
   toMainWidget()->windowsMenu();
 }
 
-void toMapExport(std::map<QString,QString> &data,const QString &prefix,
-		 std::map<QString,QString> &src)
+void toMapExport(std::map<QCString,QString> &data,const QCString &prefix,
+		 std::map<QCString,QString> &src)
 {
-  std::map<QString,QString>::iterator i=src.begin();
+  std::map<QCString,QString>::iterator i=src.begin();
   if (i!=src.end()) {
-    data[prefix+":First"]=(*i).first;
-    QString key=prefix+":d:";
+    data[prefix+":First"]=QString::fromLatin1((*i).first);
+    QCString key=prefix+":d:";
     do {
       data[key+(*i).first]=(*i).second;
       i++;
@@ -1090,16 +1100,16 @@ void toMapExport(std::map<QString,QString> &data,const QString &prefix,
   }
 }
 
-void toMapImport(std::map<QString,QString> &data,const QString &prefix,
-		 std::map<QString,QString> &dst)
+void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
+		 std::map<QCString,QString> &dst)
 {
   dst.clear();
-  std::map<QString,QString>::iterator i=data.find(prefix+":First");
+  std::map<QCString,QString>::iterator i=data.find(prefix+":First");
   if (i!=data.end()) {
-    QString key=prefix+":d:";
-    i=data.find(key+(*i).second);
-    while(i!=data.end()&&(*i).first.startsWith(key)) {
-      QString t=(*i).first.mid(key.length());
+    QCString key=prefix+":d:";
+    i=data.find(key+(*i).second.latin1());
+    while(i!=data.end()&&(*i).first.mid(0,key.length()==key)) {
+      QCString t=(*i).first.mid(key.length());
       if (t.isNull())
 	t="";
       dst[t]=(*i).second;
@@ -1133,20 +1143,35 @@ QString toNull(const QString &str)
     if (str.isNull())
       return str;
     if (str.isEmpty())
-      return "''";
+      return QString::fromLatin1("''");
   } else if (str.isNull())
-    return "{null}";
+    return QString::fromLatin1("{null}");
   return str;
 }
 
 QString toUnnull(const QString &str)
 {
   if (IndicateEmpty) {
-    if (str=="''")
-      return "";
-  } else if (str=="{null}")
+    if (str==QString::fromLatin1("''"))
+      return QString::fromLatin1("");
+  } else if (str==QString::fromLatin1("{null}"))
     return QString::null;
   return str;
+}
+
+QString toTranslateMayby(const QString &ctx,const QString &text)
+{
+  if (ctx.contains(QString::fromLatin1(" "))||ctx.latin1()!=ctx.utf8()||text.latin1()||ctx.utf8()||ctx.isEmpty()||text.isEmpty())
+    return text;
+#ifdef TODEBUG_TRANSLATION
+  static std::map<QString,QString> Context;
+  QString t=ctx+QString::fromLatin1(" ")+text;
+  if (Context[t].isEmpty()) {
+    Context[t]=text;
+    printf("QT_NOOP_TRANSLATE(\"%s\",\"%s\"),\n",(const char *)ctx.latin1(),(const char *)text.latin1());
+  }
+#endif
+  return qApp->translate(ctx.latin1(),text.latin1());
 }
 
 toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
@@ -1179,7 +1204,7 @@ void toPopupButton::click(void)
 
 QString toCheckLicense(bool)
 {
-  return "Welcome to TOra";
+  return qApp->translate("toCheckLicense","Welcome to TOra");
 }
 
 bool toFreeware(void)
@@ -1192,26 +1217,3 @@ bool toFreeware(void)
 #include "license/tolicense.cpp"
 #include "license/tolicenseui.cpp"
 #endif
-
-void toCheckCommercial(const QString &reason)
-{
-  if (!toFreeware()) {
-    time_t t=toTool::globalConfig("FirstInstall","").toInt();
-    if (time(NULL)-t>31*24*3600) {
-      if (toCheckLicense(false).contains("Unregistered")) {
-	TOMessageBox::critical(toMainWidget(),
-			       "Need registration",
-			       "You are probably not using this software in a non\n"
-			       "commercial setting since:\n\n"+reason+
-			       "\n\n"
-			       "If you do please contact tora@henrik.org and explain what you\n"
-			       "are using it for and I'll send you a non commercial license so\n"
-			       "you can continue using TOra. Otherwise you need to buy a license\n"
-			       "at http://www.globecom.se/tora/register",
-			       "Ok");
-	exit(2);
-      }
-    }
-  }
-}
-

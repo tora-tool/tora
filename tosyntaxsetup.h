@@ -47,8 +47,9 @@ class QFont;
 class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
   QString List;
   QListBoxItem *Current;
-  std::map<QString,QColor> Colors;
+  std::map<QCString,QColor> Colors;
   toSyntaxAnalyzer Analyzer;
+  QCString color();
 public:
   toSyntaxSetup(QWidget *parent=0,const char *name=0,WFlags fl=0);
   virtual void saveSetting(void);

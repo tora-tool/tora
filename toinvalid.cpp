@@ -102,11 +102,11 @@ static toInvalidTool InvalidTool;
 toInvalid::toInvalid(QWidget *main,toConnection &connection)
   : toToolWidget(InvalidTool,"invalid.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Invalid Objects");
+  QToolBar *toolbar=toAllocBar(this,tr("Invalid Objects"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh list",
-		  "Refresh list",
+		  tr("Refresh list"),
+		  tr("Refresh list"),
 		  this,SLOT(refresh()),
 		  toolbar);
 
@@ -146,10 +146,10 @@ void toInvalid::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
 
-      toMainWidget()->menuBar()->insertItem("&Invalid",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Invalid"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -191,7 +191,7 @@ void toInvalid::changeSelection(void)
       toQuery errors(connection(),SQLReadErrors,item->text(0),item->text(1),item->text(2));
       while(!errors.eof()) {
 	int line=errors.readValue().toInt();
-	Errors[line]+=" ";
+	Errors[line]+=QString::fromLatin1(" ");
 	Errors[line]+=errors.readValue();
       }
       Source->editor()->setErrors(Errors);

@@ -81,8 +81,8 @@ public:
 
   void setSession(int session);
 
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public slots:
   virtual void connectionChanged(void);
   virtual void changeSelection(void);

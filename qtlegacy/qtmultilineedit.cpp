@@ -1721,7 +1721,7 @@ void QtMultiLineEdit::insert( const QString& str, bool mark )
 
 void QtMultiLineEdit::newLine()
 {
-    insert("\n");
+    insert(QString::fromLatin1("\n"));
 }
 
 /*!
@@ -2472,7 +2472,7 @@ void QtMultiLineEdit::dropEvent( QDropEvent* event )
     if ( QTextDrag::decode(event, text, fmt) ) {
 	int i = -1;
 	while ( ( i = text.find( '\r' ) ) != -1 )
-	    text.replace( i,1,"" );
+	    text.replace( i,1,QString::fromLatin1("") );
 	if ( event->source() == this && event->action() == QDropEvent::Move ) {
 	    event->acceptAction();
 	    // Careful not to tread on my own feet
@@ -2717,7 +2717,7 @@ QCString QtMultiLineEdit::pickSpecial(QMimeSource* ms, bool always_ask, const QP
 	int n=0;
 	QDict<void> done;
 	for (int i=0; !(fmt=ms->format(i)).isNull(); i++) {
-	    int semi=fmt.find(";");
+	    int semi=fmt.find(QString::fromLatin1(";"));
 	    if ( semi >= 0 )
 		fmt = fmt.left(semi);
 	    if ( fmt.left(5) == "text/" ) {

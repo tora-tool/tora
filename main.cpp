@@ -111,7 +111,7 @@ int main(int argc,char **argv)
       splash.show();
       std::list<QString> failed;
       QString dirPath=toPluginPath();
-      QDir d(dirPath,"*.tso",QDir::Name,QDir::Files);
+      QDir d(dirPath,QString::fromLatin1("*.tso"),QDir::Name,QDir::Files);
       for (unsigned int i=0;i<d.count();i++) {
 	failed.insert(failed.end(),d.filePath(d[i]));
       }
@@ -131,10 +131,8 @@ int main(int argc,char **argv)
 	  } else {
 	    success=true;
 	    progress->setProgress(progress->progress()+1);
-	    QString str("Loaded plugin ");
 	    QFileInfo file(*i);
-	    str+=file.fileName();
-	    label->setText(str);
+	    label->setText(qApp->translate("main","Loaded plugin %1").arg(file.fileName()));
 	    qApp->processEvents();
 	  }
 	}
@@ -153,7 +151,7 @@ int main(int argc,char **argv)
     toConnectionProvider::initializeAll();
 
     {
-      QString nls=getenv("NLS_LANG");
+      QCString nls=getenv("NLS_LANG");
       if (nls.isEmpty())
 	nls="american_america.UTF8";
       else {
@@ -162,7 +160,7 @@ int main(int argc,char **argv)
 	  nls=nls.left(pos);
 	nls+=".UTF8";
       }
-      toSetEnv("NLS_LANG",nls.latin1());
+      toSetEnv("NLS_LANG",nls);
     }
 
 #ifndef TO_LICENSE
@@ -186,20 +184,20 @@ int main(int argc,char **argv)
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
       exit(2);
     } else if (qApp->argc()==2) {
-      QString connect=qApp->argv()[1];
+      QString connect=QString::fromLatin1(qApp->argv()[1]);
       QString user;
-      int pos=connect.find("@");
+      int pos=connect.find(QString::fromLatin1("@"));
       if (pos>-1) {
 	user=connect.left(pos);
 	connect=connect.right(connect.length()-pos-1);
       } else {
 	user=connect;
 	if (getenv("ORACLE_SID"))
-	  connect=getenv("ORACLE_SID");
+	  connect=QString::fromLatin1(getenv("ORACLE_SID"));
       }
       if (!connect.isEmpty())
 	toTool::globalSetConfig(CONF_DATABASE,connect);
-      pos=user.find("/");
+      pos=user.find(QString::fromLatin1("/"));
       if (pos>-1) {
 	toTool::globalSetConfig(CONF_PASSWORD,user.right(user.length()-pos-1));
 	user=user.left(pos);
@@ -218,16 +216,16 @@ int main(int argc,char **argv)
     printf("Unhandled exception:\n\n%s\n",
 	   (const char *)str);
     TOMessageBox::critical(NULL,
-                           "Unhandled exception",
+                           qApp->translate("main","Unhandled exception"),
                            str,
-                           "Exit");
+                           qApp->translate("main","Exit"));
 #if 0
   } catch (...) {
     printf("Unhandled exception of unknown type.\n\n");
     TOMessageBox::critical(NULL,
-                           "Unhandled exception",
-                           "Unknown type",
-                           "Exit");
+                           qApp->translate("main","Unhandled exception"),
+                           qApp->translate("main","Unknown type"),
+                           qApp->translate("main","Exit"));
 #endif
   }
   return 1;

@@ -98,28 +98,28 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
     Colors[Analyzer.typeString(toSyntaxAnalyzer::String)]=Analyzer.getColor(toSyntaxAnalyzer::String);
     Colors[Analyzer.typeString(toSyntaxAnalyzer::Error)]=Analyzer.getColor(toSyntaxAnalyzer::Error);
 
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::NormalBkg));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Comment));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Keyword));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Normal));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::String));
-    SyntaxComponent->insertItem(Analyzer.typeString(toSyntaxAnalyzer::Error));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Comment)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Keyword)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Normal)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::String)));
+    SyntaxComponent->insertItem(tr(Analyzer.typeString(toSyntaxAnalyzer::Error)));
   } TOCATCH
 
   Example->setAnalyzer(Analyzer);
   Example->setReadOnly(true);
-  Example->setText("create procedure CheckObvious as\n"
-		   "begin\n"
-		   "  Underscore:='Great'; -- This variable doesn't exist\n"
-		   "  if Underscore = 'Great' then\n"
-		   "    Obvious(true);\n"
-		   "  end if;\n"
-		   "end;");
+  Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
+				       "begin\n"
+				       "  Underscore:='Great'; -- This variable doesn't exist\n"
+				       "  if Underscore = 'Great' then\n"
+				       "    Obvious(true);\n"
+				       "  end if;\n"
+				       "end;"));
   Example->setCurrent(4);
   std::map<int,QString> Errors;
-  Errors[2]="Unknown variable";
+  Errors[2]=tr("Unknown variable");
   Example->setErrors(Errors);
 
   Current=NULL;
@@ -127,23 +127,21 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
 
 void toSyntaxAnalyzer::readColor(const QColor &def,infoType typ)
 {
-  QString str=typeString(typ);
-  QString conf(CONF_COLOR);
-  conf+=":";
-  conf+=str;
+  QCString conf(CONF_COLOR ":");
+  conf+=typeString(typ);
   QString res=toTool::globalConfig(conf,"");
   if (res.isEmpty())
     Colors[typ]=def;
   else {
     int r,g,b;
     if (sscanf(res,"%d,%d,%d",&r,&g,&b)!=3)
-      throw QString("Wrong format of color in setings");
+      throw qApp->translate("toSyntaxAnalyzer","Wrong format of color in setings");
     QColor col(r,g,b);
     Colors[typ]=col;
   }
 }
 
-toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str)
+toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QCString &str)
 {
   if(str=="Normal")
     return Normal;
@@ -161,10 +159,10 @@ toSyntaxAnalyzer::infoType toSyntaxAnalyzer::typeString(const QString &str)
     return NormalBkg;
   if(str=="Current background")
     return CurrentBkg;
-  throw QString("Unknown type");
+  throw qApp->translate("toSyntaxAnalyzer","Unknown type");
 }
 
-QString toSyntaxAnalyzer::typeString(infoType typ)
+QCString toSyntaxAnalyzer::typeString(infoType typ)
 {
   switch(typ) {
   case Normal:
@@ -184,7 +182,7 @@ QString toSyntaxAnalyzer::typeString(infoType typ)
   case CurrentBkg:
     return "Current background";
   }
-  throw QString("Unknown type");
+  throw qApp->translate("toSyntaxAnalyzer","Unknown type");
 }
 
 void toSyntaxAnalyzer::updateSettings(void)
@@ -205,7 +203,7 @@ void toSyntaxAnalyzer::updateSettings(void)
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 {
   QFontMetrics mtr(fnt);
-  if (mtr.width("iiiiiiii")==mtr.width("MMMMMMMM"))
+  if (mtr.width(QString::fromLatin1("iiiiiiii"))==mtr.width(QString::fromLatin1("MMMMMMMM")))
     KeywordUpper->setEnabled(true);
   else {
     KeywordUpper->setChecked(false);
@@ -257,11 +255,20 @@ void toSyntaxSetup::selectResultFont(void)
   }
 }
 
+QCString toSyntaxSetup::color()
+{
+  QString t=Current->text();
+  for(std::map<QCString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++)
+    if(qApp->translate("toSyntaxSetup",(*i).first)==t)
+      return (*i).first;
+  throw tr("Unknown color name %1").arg(t);
+}
+
 void toSyntaxSetup::changeLine(QListBoxItem *item)
 {
   Current=item;
   if (Current) {
-    QColor col=Colors[Current->text()];
+    QColor col=Colors[color()];
     ExampleColor->setBackgroundColor(col);
   }
 }
@@ -270,11 +277,12 @@ void toSyntaxSetup::selectColor(void)
 {
   try {
     if (Current) {
-      QColor col=QColorDialog::getColor(Colors[Current->text()]);
+      QCString coleng=color();
+      QColor col=QColorDialog::getColor(Colors[coleng]);
       if (col.isValid()) {
-	Colors[Current->text()]=col;
+	Colors[coleng]=col;
 	ExampleColor->setBackgroundColor(col);
-	Example->analyzer().Colors[toSyntaxAnalyzer::typeString(Current->text())]=col;
+	Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)]=col;
 	Example->update();
       }
     }
@@ -292,8 +300,8 @@ void toSyntaxSetup::saveSetting(void)
   toTool::globalSetConfig(CONF_CODE_COMPLETION,highlight&&CodeCompletion->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_COMPLETION_SORT,CompletionSort->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_AUTO_INDENT,AutoIndent->isChecked()?"Yes":"");
-  for (std::map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
-    QString str(CONF_COLOR);
+  for (std::map<QCString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
+    QCString str(CONF_COLOR);
     str+=":";
     str+=(*i).first;
     QString res;

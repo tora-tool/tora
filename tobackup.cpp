@@ -243,7 +243,7 @@ static toSQL SQLLogHistory7("toBackup:LogHistory",
 			    "   ARCHIVE_NAME \"Archived log name\"\n"
 			    "FROM V$LOG_HISTORY\n"
 			    "ORDER BY SEQUENCE# DESC",
-			    QString::null,
+			    "",
 			    "7.3");
 
 static toSQL SQLOnlineBackup("toBackup:OnlineBackup",
@@ -262,7 +262,7 @@ static toSQL SQLOnlineBackup("toBackup:OnlineBackup",
 
 static toSQL SQLOnlineBackup7("toBackup:OnlineBackup",
 			      "SELECT 0 FROM DUAL",
-			      QString::null,
+			      "",
 			      "7.3");
 
 static toSQL SQLLastBackup("toBackup:LastBackup",
@@ -306,7 +306,7 @@ static toSQL SQLLastBackup("toBackup:LastBackup",
 
 static toSQL SQLLastBackup7("toBackup:LastBackup",
 			    "SELECT 'Backup information not available in Oracle 7' \"Unsupported\" FROM DUAL",
-			    QString::null,
+			    "",
 			    "7.3");
 
 static toSQL SQLCurrentBackup("toBackup:CurrentBackup",
@@ -335,48 +335,48 @@ static toSQL SQLCurrentBackup8("toBackup:CurrentBackup",
 			       " WHERE COMPNAM = 'dbms_backup_restore'\n"
 			       "   AND ROUND(SOFAR/TOTALWORK*100,2) < 100\n"
 			       " ORDER BY 1 DESC",
-			       QString::null,
+			       "",
 			       "8.0");
 
 static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
 			       "SELECT * FROM DUAL WHERE NULL = NULL",
-			       QString::null,
+			       "",
 			       "7.3");
 
 toBackup::toBackup(QWidget *main,toConnection &connection)
   : toToolWidget(BackupTool,"backup.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Backup Manager");
+  QToolBar *toolbar=toAllocBar(this,tr("Backup Manager"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update",
-		  "Update",
+		  tr("Update"),
+		  tr("Update"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   Tabs=new QTabWidget(this);
 
   QVBox *box=new QVBox(Tabs,"history");
-  new QLabel("Logswitches per day and hour",box);
+  new QLabel(tr("Logswitches per day and hour"),box);
   LogSwitches=new toResultLong(true,false,toQuery::Background,box);
   LogSwitches->setSQL(SQLLogSwitches);
-  Tabs->addTab(box,"Redo Switches");
+  Tabs->addTab(box,tr("Redo Switches"));
 
   LogHistory=new toResultLong(true,false,toQuery::Background,Tabs);
   LogHistory->setSQL(SQLLogHistory);
-  Tabs->addTab(LogHistory,"Archived Logs");
+  Tabs->addTab(LogHistory,tr("Archived Logs"));
 
   box=new QVBox(Tabs);
   LastLabel=new QLabel(box);
   LastBackup=new toResultLong(true,false,toQuery::Background,box);
   LastBackup->setSQL(SQLLastBackup);
-  Tabs->addTab(box,"Last Backup");
+  Tabs->addTab(box,tr("Last Backup"));
 
   CurrentBackup=new toResultLong(true,false,toQuery::Background,Tabs);
   CurrentBackup->setSQL(SQLCurrentBackup);
-  Tabs->addTab(CurrentBackup,"Backup Progress");
+  Tabs->addTab(CurrentBackup,tr("Backup Progress"));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -392,9 +392,9 @@ void toBackup::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
-      toMainWidget()->menuBar()->insertItem("&Backup Manager",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Backup Manager"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -420,9 +420,9 @@ void toBackup::refresh()
   } catch(...) {
   }
   if (val==0)
-    LastLabel->setText("This appears to be a cold backup database");
+    LastLabel->setText(tr("This appears to be a cold backup database"));
   else
-    LastLabel->setText("This appears to be a hot backup database");
+    LastLabel->setText(tr("This appears to be a hot backup database"));
   LastBackup->refresh();
   CurrentBackup->refresh();
 }

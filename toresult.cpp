@@ -90,7 +90,7 @@ void toResult::connectionChanged(void)
   if(FromSQL) {
     try {
       if (ParametersSet)
-	query(toSQL::string(sqlName(),connection()),(const toQList)Params);
+	query(toSQL::string(sqlName().latin1(),connection()),(const toQList)Params);
       setHandle(true);
     } catch(...) {
       setHandle(false);
@@ -187,7 +187,7 @@ void toResultObject::setup(void)
 {
   QObject *obj=dynamic_cast<QObject *>(Result);
   if (!obj) {
-    toStatusMessage("Internal error, toResult is not a descendant of toResult");
+    toStatusMessage(tr("Internal error, toResult is not a descendant of toResult"));
     return;
   }
   try {

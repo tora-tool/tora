@@ -155,12 +155,12 @@ private:
    * @param typ @ref infoType to get string for.
    * @return Description of infotype.
    */
-  static QString typeString(infoType typ);
+  static QCString typeString(infoType typ);
   /** Get an @ref infoType from a string representation of it.
    * @param str Description of @ref infoType.
    * @return @ref infoType described by string.
    */
-  static infoType typeString(const QString &str);
+  static infoType typeString(const QCString &str);
   /** Update configuration settings from this class color values.
    */
   void updateSettings(void);

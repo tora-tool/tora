@@ -82,7 +82,7 @@ public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
     : QGroupBox(1,Horizontal,parent,name),toSettingTab("trace.html"),Tool(tool)
   {
-    setTitle("SGA Trace");
+    setTitle(tr("SGA Trace"));
 
     AutoUpdate = new QCheckBox(this,"AutoRefresh");
     AutoUpdate->setText(tr("&Auto update"));
@@ -123,49 +123,49 @@ static toSGATraceTool SGATraceTool;
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   : toToolWidget(SGATraceTool,"trace.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SGA trace");
+  QToolBar *toolbar=toAllocBar(this,tr("SGA trace"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Fetch statements in SGA",
-		  "Fetch statements in SGA",
+		  tr("Fetch statements in SGA"),
+		  tr("Fetch statements in SGA"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Schema ",toolbar);
+  new QLabel(tr("Schema "),toolbar);
   Schema=new toResultCombo(toolbar);
-  Schema->additionalItem("Any");
+  Schema->additionalItem(tr("Any"));
   Schema->setSelected(connection.user().upper());
   Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
 
   connect(Schema,SIGNAL(activated(const QString &)),this,SLOT(changeSchema(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel("Refresh ",toolbar);
+  new QLabel(tr("Refresh "),toolbar);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
   toolbar->addSeparator();
-  new QLabel("Type ",toolbar);
+  new QLabel(tr("Type "),toolbar);
   Type=new QComboBox(toolbar);
-  Type->insertItem("SGA");
-  Type->insertItem("Long operations");
+  Type->insertItem(tr("SGA"));
+  Type->insertItem(tr("Long operations"));
 
   toolbar->addSeparator();
-  new QLabel("Selection ",toolbar);
+  new QLabel(tr("Selection "),toolbar);
   Limit=new QComboBox(toolbar);
-  Limit->insertItem("All");
-  Limit->insertItem("Unfinished");
-  Limit->insertItem("Top executions");
-  Limit->insertItem("Top sorts");
-  Limit->insertItem("Top diskreads");
-  Limit->insertItem("Top buffergets");
-  Limit->insertItem("Top rows");
-  Limit->insertItem("Top sorts/exec");
-  Limit->insertItem("Top diskreads/exec");
-  Limit->insertItem("Top buffergets/exec");
-  Limit->insertItem("Top rows/exec");
+  Limit->insertItem(tr("All"));
+  Limit->insertItem(tr("Unfinished"));
+  Limit->insertItem(tr("Top executions"));
+  Limit->insertItem(tr("Top sorts"));
+  Limit->insertItem(tr("Top diskreads"));
+  Limit->insertItem(tr("Top buffergets"));
+  Limit->insertItem(tr("Top rows"));
+  Limit->insertItem(tr("Top sorts/exec"));
+  Limit->insertItem(tr("Top diskreads/exec"));
+  Limit->insertItem(tr("Top buffergets/exec"));
+  Limit->insertItem(tr("Top rows/exec"));
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
@@ -198,17 +198,17 @@ void toSGATrace::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Change &schema",
+      ToolMenu->insertItem(tr("Change &schema"),
 			   Schema,SLOT(setFocus()),ALT+Key_S);
-      ToolMenu->insertItem("Change &refresh",
+      ToolMenu->insertItem(tr("Change &refresh"),
 			   Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
-      ToolMenu->insertItem("Change t&ype",
+      ToolMenu->insertItem(tr("Change t&ype"),
 			   Type,SLOT(setFocus()),ALT+Key_Y);
-      toMainWidget()->menuBar()->insertItem("&SGA Trace",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&SGA Trace"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -227,7 +227,7 @@ void toSGATrace::changeRefresh(const QString &str)
 
 void toSGATrace::changeSchema(const QString &str)
 {
-  if (str!="Any")
+  if (str!=tr("Any"))
     CurrentSchema=str;
   else
     CurrentSchema=QString::null;
@@ -302,11 +302,11 @@ void toSGATrace::refresh(void)
       select=toSQL::string(SQLLongOps,connection());
       break;
     default:
-      toStatusMessage("Unknown type of trace");
+      toStatusMessage(tr("Unknown type of trace"));
       return;
     }
     if (!CurrentSchema.isEmpty())
-      select.append("\n   and b.username = :f1<char[101]>");
+      select.append(QString::fromLatin1("\n   and b.username = :f1<char[101]>"));
 
     QString order;
     switch (Limit->currentItem()) {
@@ -314,44 +314,45 @@ void toSGATrace::refresh(void)
       break;
     case 1:
       if (Type->currentItem()==1)
-	select+="\n   and b.sofar != b.totalwork";
+	select+=QString::fromLatin1("\n   and b.sofar != b.totalwork");
       else
-	toStatusMessage("Unfinished is only available for long operations");
+	toStatusMessage(tr("Unfinished is only available for long operations"));
       break;
     case 2:
-      order="a.Executions";
+      order=QString::fromLatin1("a.Executions");
       break;
     case 3:
-      order="a.Sorts";
+      order=QString::fromLatin1("a.Sorts");
       break;
     case 4:
-      order="a.Disk_Reads";
+      order=QString::fromLatin1("a.Disk_Reads");
       break;
     case 5:
-      order="a.Buffer_Gets";
+      order=QString::fromLatin1("a.Buffer_Gets");
       break;
     case 6:
-      order="a.Rows_Processed";
+      order=QString::fromLatin1("a.Rows_Processed");
       break;
     case 7:
-      order="DECODE(a.Executions,0,0,a.Sorts/a.Executions)";
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Sorts/a.Executions)");
       break;
     case 8:
-      order="DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)";
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)");
       break;
     case 9:
-      order="DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)";
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)");
       break;
     case 10:
-      order="DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)";
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
       break;
     default:
-      toStatusMessage("Unknown selection");
+      toStatusMessage(tr("Unknown selection"));
       break;
     }
 
     if (!order.isEmpty())
-      select="SELECT * FROM (\n"+select+"\n ORDER BY "+order+" DESC)\n WHERE ROWNUM < 20";
+      select=QString::fromLatin1("SELECT * FROM (\n")+select+
+				QString::fromLatin1("\n ORDER BY "+order+" DESC)\n WHERE ROWNUM < 20");
 
     Trace->setSQL(QString::null);
     if (!CurrentSchema.isEmpty()) {

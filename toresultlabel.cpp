@@ -84,7 +84,7 @@ void toResultLabel::poll(void)
       while (!Query->eof()) {
 	res<<Query->readValue();
       }
-      setText(res.join("/"));
+      setText(res.join(QString::fromLatin1("/")));
       delete Query;
       Query=NULL;
       Poll.stop();

@@ -93,11 +93,11 @@ private:
   /**
    * Name of the tool.
    */
-  QString Name;
+  QCString Name;
   /**
    * Key of the tool, this is used for sorting.
    */
-  QString Key;
+  QCString Key;
   /**
    * Priority, used to determine in which order the tools should be listed.
    */
@@ -106,7 +106,7 @@ private:
    * A map of @ref Key to tools. Used to keep track of the different tools
    * available.
    */
-  static std::map<QString,toTool *> *Tools;
+  static std::map<QCString,toTool *> *Tools;
   /**
    * A map containing the available configuration settings. By convention the
    * character ':' is used to separate parts of the path.
@@ -116,7 +116,7 @@ private:
    * @see config
    * @see setConfig
    */
-  static std::map<QString,QString> *Configuration;
+  static std::map<QCString,QString> *Configuration;
   /**
    * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
    */
@@ -137,14 +137,14 @@ public:
    *
    * @return Name of tool.
    */
-  QString name() const
+  QCString name() const
   { return Name; }
   /**
    * Get the name.
    *
    * @return Name of tool.
    */
-  QString key() const
+  QCString key() const
   { return Key; }
   /**
    * Get the priority.
@@ -238,15 +238,15 @@ public:
    * @see Tools
    * @return A reference to the tool map.
    */
-  static std::map<QString,toTool *> &tools(void)
-  { if (!Tools) Tools=new std::map<QString,toTool *>; return *Tools; }
+  static std::map<QCString,toTool *> &tools(void)
+  { if (!Tools) Tools=new std::map<QCString,toTool *>; return *Tools; }
   /**
    * Get a pointer to the tool with a specified key.
    *
    * @see Tools
    * @return A pointer to the tool or NULL if tool doesn't exist.
    */
-  static toTool *tool(const QString &key);
+  static toTool *tool(const QCString &key);
   /**
    * Save configuration to file.
    */
@@ -261,7 +261,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  static const QString &globalConfig(const QString &tag,const QString &def);
+  static const QString &globalConfig(const QCString &tag,const QCString &def);
   /**
    * Change a setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -273,7 +273,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  static void globalSetConfig(const QString &tag,const QString &value);
+  static void globalSetConfig(const QCString &tag,const QString &value);
 
   /**
    * Get tool specific settings.
@@ -285,7 +285,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  const QString &config(const QString &tag,const QString &def);
+  const QString &config(const QCString &tag,const QCString &def);
   /**
    * Change toolspecific setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -297,21 +297,20 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  void setConfig(const QString &tag,const QString &value);
-  
+  void setConfig(const QCString &tag,const QString &value);
   /**
    * Load a string to string map from file saved by the @ref saveMap function.
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static void loadMap(const QString &filename,std::map<QString,QString> &map);
+  static void loadMap(const QString &filename,std::map<QCString,QString> &map);
   /**
    * Save a string to string map to file.
    * @see loadMap
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool saveMap(const QString &filename,std::map<QString,QString> &map);
+  static bool saveMap(const QString &filename,std::map<QCString,QString> &map);
 public slots:
   /**
    * Create a window of the current tool. This function sets up a toolwindow for
@@ -400,12 +399,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 };
 
 #endif

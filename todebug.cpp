@@ -187,22 +187,22 @@ toDebugWatch::toDebugWatch(toDebug *parent)
       curcol--;
     while(curcol<int(Default.length())&&!toIsIdent(Default[curcol]))
       curcol++;
-    Default.replace(0,curcol,"");
+    Default.replace(0,curcol,QString::null);
     curcol=1;
     while(curcol<int(Default.length())&&toIsIdent(Default[curcol]))
       curcol++;
     Default=Default.left(curcol);
   }
   QString type=Debugger->headEditor()->type();
-  if (type.left(7)=="PACKAGE"||type.left(4)=="TYPE")
-    HeadItems=findMisc("Head",items,Debugger->headEditor());
+  if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
+    HeadItems=findMisc(qApp->translate("toDebug","Head"),items,Debugger->headEditor());
   else {
     HeadScope->setEnabled(false);
     HeadItems=NULL;
   }
   type=Debugger->bodyEditor()->type();
-  if (type.left(7)=="PACKAGE"||type.left(4)=="TYPE")
-    BodyItems=findMisc("Body",items,Debugger->bodyEditor());
+  if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
+    BodyItems=findMisc(qApp->translate("toDebug","Body"),items,Debugger->bodyEditor());
   else {
     BodyScope->setEnabled(false);
     BodyItems=NULL;
@@ -239,10 +239,10 @@ void toDebugWatch::changeScope(int num)
     {
       Name->clear();
       QString str=Debugger->currentEditor()->schema();
-      str+=".";
+      str+=QString::fromLatin1(".");
       if (!Object.isEmpty()) {
 	str+=Object;
-	str+=".";
+	str+=QString::fromLatin1(".");
       }
       str+=Default;
       Name->insertItem(str);
@@ -258,25 +258,25 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   case 1:
     {
       toResultViewItem *item=new toResultViewItem(watches,NULL);
-      item->setText(0,"");
-      item->setText(1,"");
+      item->setText(0,QString::null);
+      item->setText(1,QString::null);
       item->setText(2,Name->currentText());
-      item->setText(3,"");
-      item->setText(4,"NOCHANGE");
+      item->setText(3,QString::null);
+      item->setText(4,QString::fromLatin1("NOCHANGE"));
       return item;
     }
   case 2:
     str=Debugger->headEditor()->schema();
-    str+=".";
+    str+=QString::fromLatin1(".");
     str+=Debugger->headEditor()->object();
-    str+=".";
+    str+=QString::fromLatin1(".");
     str+=Name->currentText();
     break;
   case 3:
     str=Debugger->bodyEditor()->schema();
-    str+=".";
+    str+=QString::fromLatin1(".");
     str+=Debugger->bodyEditor()->object();
-    str+=".";
+    str+=QString::fromLatin1(".");
     str+=Name->currentText();
     break;
   case 4:
@@ -286,15 +286,15 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   QString schema;
   QString object;
   QString name;
-  int pos=str.find(".");
+  int pos=str.find(QString::fromLatin1("."));
   if (pos>0) {
     schema=str.left(pos);
     str.remove(0,pos+1);
   } else {
-    toStatusMessage("Can't parse location");
+    toStatusMessage(tr("Can't parse location"));
     return NULL;
   }
-  pos=str.find(".");
+  pos=str.find(QString::fromLatin1("."));
   if (pos>0) {
     object=str.left(pos);
     str.remove(0,pos+1);
@@ -303,8 +303,8 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   item->setText(0,schema);
   item->setText(1,object);
   item->setText(2,str);
-  item->setText(3,"");
-  item->setText(4,"NOCHANGE");
+  item->setText(3,QString::null);
+  item->setText(4,QString::fromLatin1("NOCHANGE"));
   return item;
 }
 
@@ -402,7 +402,7 @@ public:
 	else
 	  connection().execute(SQLDebugOutputEnable);
       } catch (...) {
-	toStatusMessage("Couldn't enable/disable output for session");
+	toStatusMessage(tr("Couldn't enable/disable output for session"));
       }
     }
   }
@@ -437,7 +437,7 @@ void toDebug::targetTask::run(void)
       Connection.execute(SQLDebugEnable);
     } catch (...) {
       toLocker lock(Parent.Lock);
-      Parent.TargetLog+="Couldn't enable debugging for target session\n";
+      Parent.TargetLog+=QString::fromLatin1("Couldn't enable debugging for target session\n");
     }
     try {
       toQuery init(Connection,SQLDebugInit);
@@ -446,10 +446,10 @@ void toDebug::targetTask::run(void)
       toLocker lock(Parent.Lock);
       Parent.TargetID=init.readValue();
       Parent.ChildSemaphore.up();
-      Parent.TargetLog+="Debug session connected\n";
+      Parent.TargetLog+=QString::fromLatin1("Debug session connected\n");
     } catch (const QString &exc) {
       toLocker lock(Parent.Lock);
-      Parent.TargetLog+="Couldn't start debugging:";
+      Parent.TargetLog+=QString::fromLatin1("Couldn't start debugging:");
       Parent.TargetLog+=exc;
       Parent.DebuggerStarted=false;
       Parent.ChildSemaphore.up();
@@ -482,26 +482,26 @@ void toDebug::targetTask::run(void)
 
       try {
 	Parent.Lock.lock();
-	Parent.TargetLog+="Executing SQL\n";
+	Parent.TargetLog+=QString::fromLatin1("Executing SQL\n");
 	Parent.Lock.unlock();
 
 	outParams=toQuery::readQuery(Connection,sql,inParams);
       } catch (const QString &str) {
 	Parent.Lock.lock();
-	Parent.TargetLog+="Encountered error: ";
+	Parent.TargetLog+=QString::fromLatin1("Encountered error: ");
 	Parent.TargetLog+=str;
-	Parent.TargetLog+="\n";
+	Parent.TargetLog+=QString::fromLatin1("\n");
 	Parent.Lock.unlock();
       } catch (...) {
 	Parent.Lock.lock();
-	Parent.TargetLog+="Encountered unknown exception\n";
+	Parent.TargetLog+=QString::fromLatin1("Encountered unknown exception\n");
 	Parent.Lock.unlock();
       }
 
       {
 	toLocker lock(Parent.Lock);
 	Parent.OutputData=outParams;
-	Parent.TargetLog+="Execution ended\n";
+	Parent.TargetLog+=QString::fromLatin1("Execution ended\n");
       }
       Parent.ChildSemaphore.up();
     }
@@ -509,7 +509,7 @@ void toDebug::targetTask::run(void)
   } TOCATCH
   toLocker lock(Parent.Lock);
   Parent.DebuggerStarted=false;
-  Parent.TargetLog+="Closing debug session\n";
+  Parent.TargetLog+=QString::fromLatin1("Closing debug session\n");
   Parent.TargetThread=NULL;
   Parent.ChildSemaphore.up();
 }
@@ -550,10 +550,10 @@ static QListViewItem *toFindType(QListViewItem *parent,const QString &type)
 {
   QString dsc;
   if (type.isEmpty())
-    dsc="Misc";
+    dsc=qApp->translate("toDebug","Misc");
   else
     dsc=type;
-    
+
   {
     for(QListViewItem *item=parent->firstChild();item;item=item->nextSibling())
       if (item->text(0)==dsc)
@@ -615,9 +615,9 @@ void toDebug::reorderContent(QListViewItem *parent,int start,int diff)
 QString toDebug::currentName(void)
 {
   if (BodyEditor->isHidden())
-    return "Head";
+    return tr("Head");
   else
-    return "Body";
+    return tr("Body");
 }
 
 QString toDebug::currentSchema(void)
@@ -641,8 +641,8 @@ void toDebug::reorderContent(int start,int diff)
 
 bool toDebug::hasMembers(const QString &str)
 {
-  if (str=="PACKAGE"||str=="PACKAGE BODY"||
-      str=="TYPE"||str=="TYPE BODY")
+  if (str==QString::fromLatin1("PACKAGE")||str==QString::fromLatin1("PACKAGE BODY")||
+      str==QString::fromLatin1("TYPE")||str==QString::fromLatin1("TYPE BODY"))
     return true;
   else
     return false;
@@ -675,7 +675,7 @@ void toDebug::execute(void)
 		break;
 	      if (cont->Line>line) {
 		line=cont->Line;
-		if (type=="Procedure"||type=="Function")
+		if (type==QString::fromLatin1("Procedure")||type==QString::fromLatin1("Function"))
 		  valid=true;
 		else
 		  valid=false;
@@ -686,8 +686,8 @@ void toDebug::execute(void)
 	break;
       }
     }
-  } else if (currentEditor()->type()=="PROCEDURE"||
-	     currentEditor()->type()=="FUNCTION") {
+  } else if (currentEditor()->type()==QString::fromLatin1("PROCEDURE")||
+	     currentEditor()->type()==QString::fromLatin1("FUNCTION")) {
     valid=true;
     line=0;
   }
@@ -716,28 +716,29 @@ void toDebug::execute(void)
 
       do {
 	token=tokens.getToken();
-      } while(token.upper()=="CREATE"||token.upper()=="OR"||token.upper()=="REPLACE");
+      } while(token.upper()==QString::fromLatin1("CREATE")||token.upper()==QString::fromLatin1("OR")||
+	      token.upper()==QString::fromLatin1("REPLACE"));
 
-      if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
-	toStatusMessage("Expected function or procedure, internal error");
+      if (token.upper()!=QString::fromLatin1("FUNCTION")&&token.upper()!=QString::fromLatin1("PROCEDURE")) {
+	toStatusMessage(tr("Expected function or procedure, internal error"));
 	return;
       }
       do {
 	token=tokens.getToken();
 	if (token.isEmpty()) {
-	  toStatusMessage("Unexpected end of declaration.");
+	  toStatusMessage(tr("Unexpected end of declaration."));
 	  return;
 	}
 	if (state==returnType) {
-	  if (retType.isEmpty()||retType.at(retType.length()-1)=='.'||token==".")
+	  if (retType.isEmpty()||retType.at(retType.length()-1)=='.'||token==QString::fromLatin1("."))
 	    retType+=token;
 	  else
 	    state=done;
-	} else if (token.upper()=="RETURN"&&level==0) {
+	} else if (token.upper()==QString::fromLatin1("RETURN")&&level==0) {
 	  state=returnType;
-	} if (token=="(") {
+	} if (token==QString::fromLatin1("(")) {
 	  level++;
-	} else if (token==")")
+	} else if (token==QString::fromLatin1(")"))
 	  level--;
 	else if (level==1) {
 	  switch(state) {
@@ -751,22 +752,22 @@ void toDebug::execute(void)
 	      break;
 	    }
 	  case inOut:
-	    if (token.upper()=="IN") {
+	    if (token.upper()==QString::fromLatin1("IN")) {
 	      (*cp).In=true;
 	      break;
-	    } else if (token.upper()=="OUT") {
+	    } else if (token.upper()==QString::fromLatin1("OUT")) {
 	      (*cp).Out=true;
 	      break;
-	    } else if (token.upper()=="NOCOPY")
+	    } else if (token.upper()==QString::fromLatin1("NOCOPY"))
 	      break;
 	    if (!(*cp).In&&!(*cp).Out)
 	      (*cp).In=true;
 	    state=parType;
 	  case parType:
-	    if (token==",") {
+	    if (token==QString::fromLatin1(",")) {
 	      state=name;
 	      break;
-	    } else if (token.upper()=="DEFAULT"||token==":=") {
+	    } else if (token.upper()==QString::fromLatin1("DEFAULT")||token==QString::fromLatin1(":=")) {
 	      state=waitingEnd;
 	      break;
 	    } else {
@@ -774,12 +775,12 @@ void toDebug::execute(void)
 	    }
 	    break;
 	  case waitingEnd:
-	    if (token==",")
+	    if (token==QString::fromLatin1(","))
 	      state=name;
 	    else {
 	      if (token[0]=='\''&&token.length()>=2)
 		token=token.mid(1,token.length()-2);
-	      if (token.upper()=="NULL")
+	      if (token.upper()==QString::fromLatin1("NULL"))
 		toParamGet::setDefault(connection(),(*cp).Name,QString::null);
 	      else
 		toParamGet::setDefault(connection(),(*cp).Name,token);
@@ -799,20 +800,20 @@ void toDebug::execute(void)
       QChar sep='(';
       QString sql;
       if (!retType.isEmpty())
-	sql+="DECLARE\n  ret VARCHAR2(4000);\n";
-      sql+="BEGIN\n  ";
+	sql+=QString::fromLatin1("DECLARE\n  ret VARCHAR2(4000);\n");
+      sql+=QString::fromLatin1("BEGIN\n  ");
       if (!retType.isEmpty())
-	sql+="ret:=";
+	sql+=QString::fromLatin1("ret:=");
       sql+=currentEditor()->schema();
-      sql+=".";
+      sql+=QString::fromLatin1(".");
       if (hasMembers(currentEditor()->type())) {
 	sql+=currentEditor()->object();
-	sql+=".";
+	sql+=QString::fromLatin1(".");
       }
       sql+=callName;
 
       Parameters->clear();
-      QListViewItem *head=new toResultViewItem(Parameters,NULL,"Input");
+      QListViewItem *head=new toResultViewItem(Parameters,NULL,tr("Input"));
       QListViewItem *last=NULL;
       head->setOpen(true);
 
@@ -820,28 +821,28 @@ void toDebug::execute(void)
 	if ((*i).In)
 	  last=new toResultViewItem(head,last,(*i).Name);
 	sql+=sep;
-	sql+=":";
+	sql+=QString::fromLatin1(":");
 	QString nam=(*i).Name;
-	nam.replace(QRegExp("[^a-zA-Z0-9]+"),"_");
+	nam.replace(QRegExp(QString::fromLatin1("[^a-zA-Z0-9]+")),QString::fromLatin1("_"));
 	sql+=nam;
-	sql+="<char[";
+	sql+=QString::fromLatin1("<char[");
 	sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
-	sql+="],";
+	sql+=QString::fromLatin1("],");
 	if ((*i).In)
-	  sql+="in";
+	  sql+=QString::fromLatin1("in");
 	if ((*i).Out)
-	  sql+="out";
-	sql+=">";
+	  sql+=QString::fromLatin1("out");
+	sql+=QString::fromLatin1(">");
 	sep=',';
       }
       if (sep==',')
-	sql+=")";
+	sql+=QString::fromLatin1(")");
       if (!retType.isEmpty()) {
-	sql+=";\n  SELECT ret INTO :tora_int_return<char[";
+	sql+=QString::fromLatin1(";\n  SELECT ret INTO :tora_int_return<char[");
 	sql+=toTool::globalConfig(CONF_MAX_COL_SIZE,DEFAULT_MAX_COL_SIZE);
-	sql+="],out> FROM sys.DUAL";
+	sql+=QString::fromLatin1("],out> FROM sys.DUAL");
       }
-      sql+=";\nEND;\n";
+      sql+=QString::fromLatin1(";\nEND;\n");
 
       {
 	// Can't hold lock since refresh of output will try to lock
@@ -872,7 +873,7 @@ void toDebug::execute(void)
 	continueExecution(TO_BREAK_ANY_CALL);
     } TOCATCH
   } else
-    toStatusMessage("Couldn't find any function or procedure under cursor.");
+    toStatusMessage(tr("Couldn't find any function or procedure under cursor."));
 }
 
 static toSQL SQLSync("toDebug:Sync",
@@ -903,7 +904,7 @@ int toDebug::sync(void)
       reason=sync.readValue().toInt();
       {
 	toLocker lock(Lock);
-	TargetLog+="Syncing debug session\n";
+	TargetLog+=QString::fromLatin1("Syncing debug session\n");
 	if (!RunningTarget) {
 	  return TO_REASON_KNL_EXIT;
 	}
@@ -927,10 +928,10 @@ void toDebug::updateContent(bool body)
   toHighlightedText *current;
   QString topName;
   if (body) {
-    topName="Body";
+    topName=tr("Body");
     current=BodyEditor;
   } else {
-    topName="Head";
+    topName=tr("Head");
     current=HeadEditor;
   }
   
@@ -963,13 +964,13 @@ void toDebug::updateContent(bool body)
   std::stack<QString> parentType;
   std::stack<bool> parentDecl;
   std::stack<QListViewItem *> parentItem;
-  QString type="";
+  QString type;
   bool declaration=true;
   state=space;
   int startFirst=0;
   bool firstIgnore=true;
 
-  QString is("IS");
+  QString is(QString::fromLatin1("IS"));
   for(int cline=0;cline<current->numLines();cline++) {
     QString line=current->textLine(cline);
     QChar lc='\n';
@@ -994,7 +995,7 @@ void toDebug::updateContent(bool body)
 	  if (!toIsIdent(c))
 	    state=normal;
 	case normal:
-	  switch(char(c)) {
+	  switch(c.latin1()) {
 	  case '\'':
 	  case '\"':
 	    beforeState=state;
@@ -1011,14 +1012,16 @@ void toDebug::updateContent(bool body)
 	      if ((cb.Pos>0||!toIsIdent(lc))&&cb.Start[cb.Pos]==c.upper()) {
 		cb.Pos++;
 		if (!cb.Start[cb.Pos]) {
-		  if (!toIsIdent(nc)&&(is!=cb.Start||type=="Procedure"||type=="Function")) { // IS is a special case, only calid after procedure or function
+		  if (!toIsIdent(nc)&&(is!=QString::fromLatin1(cb.Start)||
+				       type==QString::fromLatin1("Procedure")||
+				       type==QString::fromLatin1("Function"))) { // IS is a special case, only calid after procedure or function
 		    if (cb.WantEnd&&(!declaration||cb.Declaration)) { // Ignore begin after declare
 		      parentDecl.push(declaration);
 		      parentType.push(type);
 		      parentItem.push(parent);
 		      if (!declaration) {
-			QListViewItem *tp=toFindType(parent,"Anonymous");
-			item=new toContentsItem(tp,cb.Start,cline);
+			QListViewItem *tp=toFindType(parent,tr("Anonymous"));
+			item=new toContentsItem(tp,QString::fromLatin1(cb.Start),cline);
 		      }
 		      if (item) {
 			parent=item;
@@ -1048,7 +1051,7 @@ void toDebug::updateContent(bool body)
 		    if (cb.SeparateType)
 		      type=cb.TypeName;
 		    else
-		      type="";
+		      type=QString::null;
 		    state=space;
 		  } else
 		    cb.Pos=0;
@@ -1063,7 +1066,7 @@ void toDebug::updateContent(bool body)
 		QString str=line;
 		str=str.left(i+1);
 		str=str.right(i+1-startFirst);
-		if (str.upper()!="PRAGMA") {
+		if (str.upper()!=QString::fromLatin1("PRAGMA")) {
 		  QListViewItem *tp=toFindType(parent,type);
 		  item=new toContentsItem(tp,str,cline);
 		}
@@ -1077,7 +1080,7 @@ void toDebug::updateContent(bool body)
 	    state=beforeState;
 	  break;
 	case endOfStatement:
-	  switch(char(c)) {
+	  switch(char(c.latin1())) {
 	  case '\'':
 	  case '\"':
 	    beforeState=state;
@@ -1086,7 +1089,7 @@ void toDebug::updateContent(bool body)
 	    break;
 	  case ';':
 	    state=space;
-	    type="";
+	    type=QString::null;
 	    break;
 	  default:
 	    break;
@@ -1105,10 +1108,10 @@ void toDebug::readLog(void)
 {
   toLocker lock(Lock);
   if (!TargetLog.isEmpty()) {
-    TargetLog.replace(TargetLog.length()-1,1,"");
+    TargetLog.replace(TargetLog.length()-1,1,QString::null);
     RuntimeLog->insertLine(TargetLog);
     RuntimeLog->setCursorPosition(RuntimeLog->numLines()-1,0);
-    TargetLog="";
+    TargetLog=QString::null;
   }
 }
 
@@ -1238,7 +1241,7 @@ void toDebug::updateState(int reason)
 	QListViewItem *head=Parameters->firstChild();
 	while(head&&head->nextSibling())
 	  head=head->nextSibling();
-	head=new toResultViewItem(Parameters,head,"Output");
+	head=new toResultViewItem(Parameters,head,tr("Output"));
 	head->setOpen(true);
 	std::list<debugParam>::iterator cp;
 	for(cp=CurrentParams.begin();cp!=CurrentParams.end()&&!(*cp).Out;cp++)
@@ -1253,7 +1256,7 @@ void toDebug::updateState(int reason)
 	      ;
 	  }
 	  if (name.isEmpty())
-	    name="Returning";
+	    name=tr("Returning");
 	  last=new toResultViewItem(head,last,name);
 	  last->setText(1,toDeepCopy(*i)); // Deep copy just to be sure
 	}
@@ -1262,7 +1265,7 @@ void toDebug::updateState(int reason)
     {
       QListViewItem *next=NULL;
       for (QListViewItem *item=Watch->firstChild();item;item=next) {
-	item->setText(4,"NOCHANGE");
+	item->setText(4,QString::fromLatin1("NOCHANGE"));
 	if (item->firstChild())
 	  next=item->firstChild();
 	else if (item->nextSibling())
@@ -1296,10 +1299,7 @@ void toDebug::updateState(int reason)
       ret=info.readValue().toInt();
       depth=info.readValue().toInt();
       if (ret!=TO_SUCCESS) {
-	QString str("Failed to get runtime info (Reason ");
-	str+=QString::number(ret);
-	str+=")";
-	toStatusMessage(str);
+	toStatusMessage(tr("Failed to get runtime info (Reason %1)").arg(ret));
 	return;
       }
 
@@ -1351,18 +1351,18 @@ void toDebug::updateState(int reason)
 	    value=query.readValue();
 	    space=query.readValue().toInt();
 	  }
-	  item->setText(4,"");
+	  item->setText(4,QString::null);
 	  if (ret==TO_SUCCESS)
 	    item->setText(3,value);
 	  else if (ret==TO_ERROR_NULLVALUE) {
 	    if (toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty())
-	      item->setText(3,"{null}");
+	      item->setText(3,QString::fromLatin1("{null}"));
 	    else
 	      item->setText(3,QString::null);
-	    item->setText(5,"NULL");
+	    item->setText(5,QString::fromLatin1("NULL"));
 	  } else if (ret==TO_ERROR_NULLCOLLECTION) {
-	    item->setText(3,"[Count 0]");
-	    item->setText(5,"LIST");
+	    item->setText(3,tr("[Count %1]").arg(0));
+	    item->setText(5,QString::fromLatin1("LIST"));
 	  } else if (ret==TO_ERROR_INDEX_TABLE) {
 	    if (item->text(0).isEmpty()) {
 	      toQuery query(connection(),SQLLocalIndex,item->text(2));
@@ -1384,30 +1384,28 @@ void toDebug::updateState(int reason)
 	      if (value.at(end)==',') {
 		if (start<end) {
 		  QString name=item->text(2);
-		  name+="(";
+		  name+=QString::fromLatin1("(");
 		  // Why do I have to add 1 here for it to work?
 		  name+=QString::number(value.mid(start,end-start).toInt()+1);
-		  name+=")";
+		  name+=QString::fromLatin1(")");
 		  last=new toResultViewItem(item,last);
 		  last->setText(0,item->text(0));
 		  last->setText(1,item->text(1));
 		  last->setText(2,name);
-		  last->setText(3,"");
-		  last->setText(4,"NOCHANGE");
+		  last->setText(3,QString::null);
+		  last->setText(4,QString::fromLatin1("NOCHANGE"));
 		  last->setText(5,value.mid(start,end-start));
 		  num++;
 		}
 		start=end+1;
 	      }
 	    }
-	    QString str="[Count ";
-	    str+=QString::number(num);
-	    str+="]";
+	    QString str=tr("[Count %1]").arg(num);
 	    item->setText(3,str);
-	    item->setText(5,"LIST");
+	    item->setText(5,QString::fromLatin1("LIST"));
 	  } else {
-	    item->setText(3,"{Unavailable}");
-	    item->setText(4,"NOCHANGE");
+	    item->setText(3,tr("{Unavailable}"));
+	    item->setText(4,QString::fromLatin1("NOCHANGE"));
 	  }
 	  if (item->firstChild())
 	    next=item->firstChild();
@@ -1495,7 +1493,7 @@ void toDebug::setDeferedBreakpoints(void)
   for (QListViewItem *item=Breakpoints->firstChild();item;item=item->nextSibling()) {
     toBreakpointItem *point=dynamic_cast<toBreakpointItem *>(item);
     if (point) {
-      if (point->text(4)=="DEFERED")
+      if (point->text(4)==tr("DEFERED"))
 	point->setBreakpoint();
     }
   }
@@ -1543,7 +1541,7 @@ int toDebug::continueExecution(int stopon)
   } else {
 #if 0
     // I don't want this since it can happen when compiling etc.
-    toStatusMessage("No running target");
+    toStatusMessage(tr("No running target"));
 #endif
     Lock.unlock();
   }
@@ -1575,11 +1573,11 @@ void toDebug::stop(void)
 toDebug::toDebug(QWidget *main,toConnection &connection)
   : toToolWidget(DebugTool,"debugger.html",main,connection),TargetThread()
 {
-  QToolBar *toolbar=toAllocBar(this,"Debugger");
+  QToolBar *toolbar=toAllocBar(this,tr("Debugger"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update object list",
-		  "Update object list",
+		  tr("Update object list"),
+		  tr("Update object list"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
@@ -1589,48 +1587,48 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)toworksheet_xpm),
-		  "Clean sheet",
-		  "Clean sheet",
+		  tr("Clean sheet"),
+		  tr("Clean sheet"),
 		  this,SLOT(newSheet(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)scansource_xpm),
-		  "Rescan source",
-		  "Rescan source",
+		  tr("Rescan source"),
+		  tr("Rescan source"),
 		  this,SLOT(scanSource(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)compile_xpm),
-		  "Compile",
-		  "Compile",
+		  tr("Compile"),
+		  tr("Compile"),
 		  this,SLOT(compile(void)),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  "Run current block",
-		  "Run current block",
+		  tr("Run current block"),
+		  tr("Run current block"),
 		  this,SLOT(execute(void)),
 		  toolbar);
   StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
-			     "Stop running",
-			     "Stop running",
+			     tr("Stop running"),
+			     tr("Stop running"),
 			     this,SLOT(stop(void)),
 			     toolbar);
   StopButton->setEnabled(false);
   toolbar->addSeparator();
   StepIntoButton=new QToolButton(QPixmap((const char **)stepinto_xpm),
-				 "Step into procedure or function",
-				 "Step into procedure or function",
+				 tr("Step into procedure or function"),
+				 tr("Step into procedure or function"),
 				 this,SLOT(stepInto(void)),
 				 toolbar);
   StepIntoButton->setEnabled(false);
   StepOverButton=new QToolButton(QPixmap((const char **)stepover_xpm),
-				 "Step over procedure or function",
-				 "Step over procedure or function",
+				 tr("Step over procedure or function"),
+				 tr("Step over procedure or function"),
 				 this,SLOT(stepOver(void)),
 				 toolbar);
   StepOverButton->setEnabled(false);
   ReturnButton=new QToolButton(QPixmap((const char **)returnfrom_xpm),
-			       "Return from procedure or function",
-			       "Return from procedure or function",
+			       tr("Return from procedure or function"),
+			       tr("Return from procedure or function"),
 			       this,SLOT(returnFrom(void)),
 			       toolbar);
   ReturnButton->setEnabled(false);
@@ -1641,58 +1639,58 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   ShowButton->setIconSet(QIconSet(QPixmap((const char **)showhead_xpm)),true);
   ShowButton->setIconSet(QIconSet(QPixmap((const char **)showbody_xpm)),false);
   connect(ShowButton,SIGNAL(toggled(bool)),this,SLOT(changeView(bool)));
-  QToolTip::add(ShowButton,"Show head or body of packages and procedures.");
+  QToolTip::add(ShowButton,tr("Show head or body of packages and procedures."));
 
   DebugButton=new QToolButton(toolbar);
   DebugButton->setToggleButton(true);
   DebugButton->setIconSet(QIconSet(QPixmap((const char **)todebug_xpm)));
   connect(DebugButton,SIGNAL(toggled(bool)),this,SLOT(showDebug(bool)));
-  QToolTip::add(DebugButton,"Show/hide debug info pane.");
+  QToolTip::add(DebugButton,tr("Show/hide debug info pane."));
 
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)nextbug_xpm),
-		  "Go to next error",
-		  "Go to next error",
+		  tr("Go to next error"),
+		  tr("Go to next error"),
 		  this,SLOT(nextError(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)prevbug_xpm),
-		  "Go to previous error",
-		  "Go to previous error",
+		  tr("Go to previous error"),
+		  tr("Go to previous error"),
 		  this,SLOT(prevError(void)),
 		  toolbar);
 
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)togglebreak_xpm),
-		  "Toggle breakpoint on current line",
-		  "Toggle breakpoint on current line",
+		  tr("Toggle breakpoint on current line"),
+		  tr("Toggle breakpoint on current line"),
 		  this,SLOT(toggleBreak(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)enablebreak_xpm),
-		  "Enable/disable breakpoint on current line",
-		  "Enable/disable breakpoint on current line",
+		  tr("Enable/disable breakpoint on current line"),
+		  tr("Enable/disable breakpoint on current line"),
 		  this,SLOT(toggleEnable(void)),
 		  toolbar);
 
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)addwatch_xpm),
-		  "Add new variable watch",
-		  "Add new variable watch",
+		  tr("Add new variable watch"),
+		  tr("Add new variable watch"),
 		  this,SLOT(addWatch(void)),
 		  toolbar);
   DelWatchButton=new QToolButton(QPixmap((const char **)delwatch_xpm),
-				 "Delete variable watch",
-				 "Delete variable watch",
+				 tr("Delete variable watch"),
+				 tr("Delete variable watch"),
 				 this,SLOT(deleteWatch(void)),
 				 toolbar);
   ChangeWatchButton=new QToolButton(QPixmap((const char **)changewatch_xpm),
-				    "Change value of watched variable",
-				    "Change value of watched variable",
+				    tr("Change value of watched variable"),
+				    tr("Change value of watched variable"),
 				    this,SLOT(changeWatch(void)),
 				    toolbar);
   DelWatchButton->setEnabled(false);
   ChangeWatchButton->setEnabled(false);
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   QSplitter *hsplitter=new QSplitter(Horizontal,splitter);
@@ -1712,7 +1710,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 
   Objects=new toListView(objSplitter);
-  Objects->addColumn("Objects");
+  Objects->addColumn(tr("Objects"));
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
   Objects->setSorting(0);
@@ -1720,7 +1718,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
   Contents=new toListView(objSplitter);
-  Contents->addColumn("Contents");
+  Contents->addColumn(tr("Contents"));
   Contents->setRootIsDecorated(true);
   Contents->setSorting(-1);
   Contents->setTreeStepSize(10);
@@ -1729,28 +1727,28 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 	  this,SLOT(changeContent(QListViewItem *)));
 
   StackTrace=new toListView(DebugTabs);
-  StackTrace->addColumn("Object");
-  StackTrace->addColumn("Line");
-  StackTrace->addColumn("Schema");
-  StackTrace->addColumn("Type");
+  StackTrace->addColumn(tr("Object"));
+  StackTrace->addColumn(tr("Line"));
+  StackTrace->addColumn(tr("Schema"));
+  StackTrace->addColumn(tr("Type"));
   StackTrace->setColumnAlignment(1,AlignRight);
   StackTrace->setSorting(-1);
   StackTrace->setRootIsDecorated(true);
   StackTrace->setTreeStepSize(10);
   StackTrace->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(StackTrace,"&Stack Trace");
+  DebugTabs->addTab(StackTrace,tr("&Stack Trace"));
   connect(StackTrace,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
   Watch=new toListView(DebugTabs);
-  Watch->addColumn("Schema");
-  Watch->addColumn("Object");
-  Watch->addColumn("Variable");
-  Watch->addColumn("Data");
+  Watch->addColumn(tr("Schema"));
+  Watch->addColumn(tr("Object"));
+  Watch->addColumn(tr("Variable"));
+  Watch->addColumn(tr("Data"));
   Watch->setRootIsDecorated(true);
   Watch->setTreeStepSize(10);
   Watch->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Watch,"W&atch");
+  DebugTabs->addTab(Watch,tr("W&atch"));
   Watch->setSelectionMode(QListView::Single);
   connect(Watch,SIGNAL(selectionChanged(void)),
 	  this,SLOT(selectedWatch(void)));
@@ -1758,32 +1756,32 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 	  this,SLOT(changeWatch(QListViewItem *)));
 
   Breakpoints=new toListView(DebugTabs);
-  Breakpoints->addColumn("Object");
-  Breakpoints->addColumn("Line");
-  Breakpoints->addColumn("Schema");
-  Breakpoints->addColumn("Object Type");
-  Breakpoints->addColumn("Enabled");
+  Breakpoints->addColumn(tr("Object"));
+  Breakpoints->addColumn(tr("Line"));
+  Breakpoints->addColumn(tr("Schema"));
+  Breakpoints->addColumn(tr("Object Type"));
+  Breakpoints->addColumn(tr("Enabled"));
   Breakpoints->setColumnAlignment(1,AlignRight);
   Breakpoints->setSorting(-1);
   Breakpoints->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Breakpoints,"&Breakpoints");
+  DebugTabs->addTab(Breakpoints,tr("&Breakpoints"));
   connect(Breakpoints,SIGNAL(clicked(QListViewItem *)),
 	  this,SLOT(showSource(QListViewItem *)));
 
   Parameters=new toListView(DebugTabs);
-  Parameters->addColumn("Name");
-  Parameters->addColumn("Content");
+  Parameters->addColumn(tr("Name"));
+  Parameters->addColumn(tr("Content"));
   Parameters->setSorting(-1);
   Parameters->setTreeStepSize(10);
   Parameters->setRootIsDecorated(true);
   Parameters->setAllColumnsShowFocus(true);
-  DebugTabs->addTab(Parameters,"&Parameters");
+  DebugTabs->addTab(Parameters,tr("&Parameters"));
 
   Output=new toDebugOutput(this,DebugTabs,connection);
-  DebugTabs->addTab(Output,"Debug &Output");
+  DebugTabs->addTab(Output,tr("Debug &Output"));
 
   RuntimeLog=new toMarkedText(DebugTabs);
-  DebugTabs->addTab(RuntimeLog,"&Runtime Log");
+  DebugTabs->addTab(RuntimeLog,tr("&Runtime Log"));
 
   HeadEditor=new toDebugText(Breakpoints,hsplitter,this);
   BodyEditor=new toDebugText(Breakpoints,hsplitter,this);
@@ -1826,7 +1824,7 @@ void toDebug::startTarget(void)
     TargetThread=new toThread(new targetTask(*this));
     TargetThread->start();
   } catch(...) {
-    toStatusMessage("Failed to start target task thread, close some other tools and try again");
+    toStatusMessage(tr("Failed to start target task thread, close some other tools and try again"));
     return;
   }
 
@@ -1834,10 +1832,10 @@ void toDebug::startTarget(void)
   if (!DebuggerStarted) {
     {
       toLocker lock(Lock);
-      TOMessageBox::critical(this,"Couldn't start debugging",
-			     QString("Couldn't connect to target session:\n")+
+      TOMessageBox::critical(this,tr("Couldn't start debugging"),
+			     tr("Couldn't connect to target session:\n")+
 			     TargetLog,
-			     "&Ok");
+			     tr("&Ok"));
     }
     close(false);
     return;
@@ -1901,7 +1899,10 @@ void toDebug::refresh(void)
 	if ((*i).Owner==selected) {
 	  any=true;
 	  QString type=(*i).Type;
-	  if (type=="FUNCTION"||type=="PACKAGE"||type=="PROCEDURE"||type=="TYPE") {
+	  if (type==QString::fromLatin1("FUNCTION")||
+	      type==QString::fromLatin1("PACKAGE")||
+	      type==QString::fromLatin1("PROCEDURE")||
+	      type==QString::fromLatin1("TYPE")) {
 	    QListViewItem *typeItem;
 	    std::map<QString,QListViewItem *>::iterator j=typeItems.find(type);
 	    if (j==typeItems.end()) {
@@ -1914,7 +1915,7 @@ void toDebug::refresh(void)
 	      typeItem=(*j).second;
 
 	    QString bodyType(type);
-	    bodyType+=" BODY";
+	    bodyType+=QString::fromLatin1(" BODY");
 	    QString name=(*i).Name;
 	    QListViewItem *item=new QListViewItem(typeItem,name,type);
 	    if (selected==currentEditor()->schema()&&
@@ -1942,9 +1943,9 @@ bool toDebug::checkStop(void)
   Lock.lock();
   if (RunningTarget) {
     Lock.unlock();
-    if (TOMessageBox::information(this,"Stop execution?",
-				  "Do you want to abort the current execution?",
-				  "&Ok","Cancel")!=0)
+    if (TOMessageBox::information(this,tr("Stop execution?"),
+				  tr("Do you want to abort the current execution?"),
+				  tr("&Ok"),tr("Cancel"))!=0)
       return false;
     stop();
   } else
@@ -1956,11 +1957,11 @@ bool toDebug::checkCompile(void)
 {
   if (HeadEditor->edited()) {
     switch (TOMessageBox::warning(this,
-				  "Header changed",
-				  "Header changed. Continuing will discard uncompiled or saved changes",
-				  "&Compile",
-				  "&Discard changes",
-				  "Cancel")) {
+				  tr("Header changed"),
+				  tr("Header changed. Continuing will discard uncompiled or saved changes"),
+				  tr("&Compile"),
+				  tr("&Discard changes"),
+				  tr("Cancel"))) {
     case 0:
       if (!checkStop())
 	return false;
@@ -1976,11 +1977,11 @@ bool toDebug::checkCompile(void)
   }
   if (BodyEditor->edited()) {
     switch (TOMessageBox::warning(this,
-				  "Body changed",
-				  "Body changed. Continuing will discard uncompiled or saved changes",
-				  "&Compile",
-				  "&Discard changes",
-				  "Cancel")) {
+				  tr("Body changed"),
+				  tr("Body changed. Continuing will discard uncompiled or saved changes"),
+				  tr("&Compile"),
+				  tr("&Discard changes"),
+				  tr("Cancel"))) {
     case 0:
       if (!checkStop())
 	return false;
@@ -2013,7 +2014,7 @@ void toDebug::updateCurrent()
       type=BodyEditor->type();
 
     QString bodyType=type;
-    bodyType+=" BODY";
+    bodyType+=QString::fromLatin1(" BODY");
     BodyEditor->setType(bodyType);
     if (!BodyEditor->readData(connection(),StackTrace)) {
       BodyEditor->setType(type);
@@ -2108,20 +2109,24 @@ bool toDebugText::compile(void)
     }
 
     int word=0;
-    if (words[word].upper()=="CREATE") {
+    if (words[word].upper()==QString::fromLatin1("CREATE")) {
       word++;
-      if (words[word].upper()=="OR"&&words[word+1].upper()=="REPLACE")
+      if (words[word].upper()==QString::fromLatin1("OR")&&
+	  words[word+1].upper()==QString::fromLatin1("REPLACE"))
 	word+=2;
     }
 
     QString type=words[word].upper();
-    if (type!="PROCEDURE"&&type!="TYPE"&&type!="FUNCTION"&&type!="PACKAGE") {
-      toStatusMessage("Invalid start of code");
+    if (type!=QString::fromLatin1("PROCEDURE")&&
+	type!=QString::fromLatin1("TYPE")&&
+	type!=QString::fromLatin1("FUNCTION")&&
+	type!=QString::fromLatin1("PACKAGE")) {
+      toStatusMessage(tr("Invalid start of code"));
       return false;
     }
     word++;
 
-    if (words[word].upper()=="BODY") {
+    if (words[word].upper()==QString::fromLatin1("BODY")) {
       body=true;
       word++;
     }
@@ -2131,12 +2136,12 @@ bool toDebugText::compile(void)
       what+=words[word];
       word++;
     }
-    if (what.right(1)==".") {
+    if (what.right(1)==QString::fromLatin1(".")) {
       what+=words[word];
       word++;
     }
     if (word>=curWord) {
-      toStatusMessage("Invalid start of code");
+      toStatusMessage(tr("Invalid start of code"));
       return false;
     }
 
@@ -2152,16 +2157,16 @@ bool toDebugText::compile(void)
       object=what.right(what.length()-pos-1);
     }
 
-    QString sql="CREATE OR REPLACE ";
+    QString sql=QString::fromLatin1("CREATE OR REPLACE ");
     sql.append(type);
     if (body)
-      sql.append(" BODY ");
+      sql.append(QString::fromLatin1(" BODY "));
     else
-      sql.append(" ");
+      sql.append(QString::fromLatin1(" "));
     sql.append(schema);
-    sql.append(".");
+    sql.append(QString::fromLatin1("."));
     sql.append(object);
-    sql.append(" ");
+    sql.append(QString::fromLatin1(" "));
     sql.append(str.right(str.length()-begin[word]));
 
     try {
@@ -2171,7 +2176,7 @@ bool toDebugText::compile(void)
       Object=object.upper();
       Type=type.upper();
       if (body)
-	Type+=" BODY";
+	Type+=QString::fromLatin1(" BODY");
       readErrors(Debugger->connection());
       setEdited(false);
       toConnection::objectName no;
@@ -2321,69 +2326,69 @@ void toDebug::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),
-			   "&New Sheet",this,SLOT(newSheet(void)),
+			   tr("&New Sheet"),this,SLOT(newSheet(void)),
 			   0,TO_ID_NEW_SHEET);
       ToolMenu->insertItem(QPixmap((const char **)scansource_xpm),
-			   "S&can Source",this,SLOT(scanSource(void)),
+			   tr("S&can Source"),this,SLOT(scanSource(void)),
 			   CTRL+Key_F9,TO_ID_SCAN_SOURCE);
       ToolMenu->insertItem(QPixmap((const char **)compile_xpm),
-			   "&Compile",this,SLOT(compile(void)),
+			   tr("&Compile"),this,SLOT(compile(void)),
 			   Key_F9,TO_ID_COMPILE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
-			   "&Execute",this,SLOT(execute(void)),
+			   tr("&Execute"),this,SLOT(execute(void)),
 			   CTRL+Key_Return,TO_ID_EXECUTE);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
-			   "&Stop",this,SLOT(stop(void)),
+			   tr("&Stop"),this,SLOT(stop(void)),
 			   Key_F12,TO_ID_STOP);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)stepinto_xpm),
-			   "Step &Into",this,SLOT(stepInto(void)),
+			   tr("Step &Into"),this,SLOT(stepInto(void)),
 			   Key_F7,TO_ID_STEP_INTO);
       ToolMenu->insertItem(QPixmap((const char **)stepover_xpm),
-			   "&Next Line",this,SLOT(stepOver(void)),
+			   tr("&Next Line"),this,SLOT(stepOver(void)),
 			   Key_F8,TO_ID_STEP_OVER);
       ToolMenu->insertItem(QPixmap((const char **)returnfrom_xpm),
-			   "&Return From",this,SLOT(returnFrom(void)),
+			   tr("&Return From"),this,SLOT(returnFrom(void)),
 			   Key_F6,TO_ID_RETURN_FROM);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("&Head Editor",this,SLOT(toggleHead(void)),
+      ToolMenu->insertItem(tr("&Head Editor"),this,SLOT(toggleHead(void)),
 			   CTRL+Key_Space,TO_ID_HEAD_TOGGLE);
-      ToolMenu->insertItem("&Debug Pane",this,SLOT(toggleDebug(void)),
+      ToolMenu->insertItem(tr("&Debug Pane"),this,SLOT(toggleDebug(void)),
 			   Key_F11,TO_ID_DEBUG_PANE);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)nextbug_xpm),
-			   "Next &Error",this,SLOT(nextError(void)),
+			   tr("Next &Error"),this,SLOT(nextError(void)),
 			   CTRL+Key_N);
       ToolMenu->insertItem(QPixmap((const char **)prevbug_xpm),
-			   "Pre&vious Error",this,SLOT(prevError(void)),
+			   tr("Pre&vious Error"),this,SLOT(prevError(void)),
 			   CTRL+Key_P);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)togglebreak_xpm),
-			   "&Toggle Breakpoint",this,SLOT(toggleBreak(void)),
+			   tr("&Toggle Breakpoint"),this,SLOT(toggleBreak(void)),
 			   CTRL+Key_F5);
       ToolMenu->insertItem(QPixmap((const char **)enablebreak_xpm),
-			   "D&isable Breakpoint",
+			   tr("D&isable Breakpoint"),
 			   this,SLOT(toggleEnable(void)),
 			   CTRL+Key_F6);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)addwatch_xpm),
-			   "&Add Watch...",this,SLOT(addWatch(void)),
+			   tr("&Add Watch..."),this,SLOT(addWatch(void)),
 			   Key_F4);
       ToolMenu->insertItem(QPixmap((const char **)delwatch_xpm),
-			   "Delete &Watch",this,SLOT(deleteWatch(void)),
+			   tr("Delete &Watch"),this,SLOT(deleteWatch(void)),
 			   CTRL+Key_Delete,TO_ID_DEL_WATCH);
       ToolMenu->insertItem(QPixmap((const char **)changewatch_xpm),
-			   "Chan&ge Watch...",this,SLOT(changeWatch(void)),
+			   tr("Chan&ge Watch..."),this,SLOT(changeWatch(void)),
 			   CTRL+Key_F4,TO_ID_CHANGE_WATCH);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Refresh Object List",this,SLOT(refresh()),
+      ToolMenu->insertItem(tr("Refresh Object List"),this,SLOT(refresh()),
 			   Key_F5);
-      ToolMenu->insertItem("Select Schema",Schema,SLOT(setFocus(void)),
+      ToolMenu->insertItem(tr("Select Schema"),Schema,SLOT(setFocus(void)),
 			   ALT+Key_S);
-      ToolMenu->insertItem("Erase Runtime &Log",this,SLOT(clearLog(void)));
+      ToolMenu->insertItem(tr("Erase Runtime &Log"),this,SLOT(clearLog(void)));
 
-      toMainWidget()->menuBar()->insertItem("&Debug",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
 
       if (!isRunning()) {
 	toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
@@ -2423,7 +2428,7 @@ void toDebug::selectedWatch()
 {
   QListViewItem *item=Watch->selectedItem();
   if (item) {
-    if (!item->text(5).isEmpty()&&item->text(5)!="LIST") {
+    if (!item->text(5).isEmpty()&&item->text(5)!=QString::fromLatin1("LIST")) {
       DelWatchButton->setEnabled(false);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
     } else {
@@ -2491,8 +2496,7 @@ static toSQL SQLChangeGlobal("toDebug:ChangeGlobalWatch",
 void toDebug::changeWatch(QListViewItem *item)
 {
   if (item&&item->text(4).isEmpty()) {
-    QString description="Enter new value to the watch ";
-    description+=item->text(2);
+    QString description=tr("Enter new value to the watch %1").arg(item->text(2));
     QString data;
 
     toDebugChangeUI dialog(this,"WatchChange",true);
@@ -2501,14 +2505,14 @@ void toDebug::changeWatch(QListViewItem *item)
     dialog.HeadLabel->setText(description);
     QString index=item->text(5);
 
-    if (item->text(5)=="NULL")
+    if (item->text(5)==QString::fromLatin1("NULL"))
       dialog.NullValue->setChecked(true);
     else
       data=item->text(3);
 
-    if (!index.isEmpty()&&index!="LIST")
+    if (!index.isEmpty()&&index!=QString::fromLatin1("LIST"))
       dialog.Index->setValue(item->text(5).toInt());
-    if (index!="LIST") {
+    if (index!=QString::fromLatin1("LIST")) {
       dialog.Index->setEnabled(false);
       dialog.Value->setText(data);
     }
@@ -2518,23 +2522,23 @@ void toDebug::changeWatch(QListViewItem *item)
       QString escdata;
       QString assign;
       if (dialog.NullValue->isChecked()) {
-	escdata="NULL";
+	escdata=QString::fromLatin1("NULL");
       } else {
 	escdata=data=dialog.Value->text();
-	escdata.replace(QRegExp("'"),"''");
-	escdata.prepend("'");
-	escdata+="'";
+	escdata.replace(QRegExp(QString::fromLatin1("'")),QString::fromLatin1("''"));
+	escdata.prepend(QString::fromLatin1("'"));
+	escdata+=QString::fromLatin1("'");
       }
       assign=item->text(2);
-      if (index=="LIST") {
-	assign+="(";
+      if (index==QString::fromLatin1("LIST")) {
+	assign+=QString::fromLatin1("(");
 	assign+=dialog.Index->text();
-	assign+=")";
+	assign+=QString::fromLatin1(")");
       }
       
-      assign+=":=";
+      assign+=QString::fromLatin1(":=");
       assign+=escdata;
-      assign+=";";
+      assign+=QString::fromLatin1(";");
       try {
 	if (item->text(0).isEmpty()) {
 	  toQuery local(connection(),SQLChangeLocal,assign);
@@ -2547,12 +2551,9 @@ void toDebug::changeWatch(QListViewItem *item)
 	  ret=local.readValue().toInt();
 	}
 	if (ret==TO_ERROR_UNIMPLEMENTED) {
-	  toStatusMessage("Unimplemented in PL/SQL debug interface");
+	  toStatusMessage(tr("Unimplemented in PL/SQL debug interface"));
 	} else if (ret!=TO_SUCCESS) {
-	  QString str("Assignment failed (Reason ");
-	  str+=QString::number(ret);
-	  str+=")";
-	  toStatusMessage(str);
+	  toStatusMessage(tr("Assignment failed (Reason %1)").arg(ret));
 	} else
 	  updateState(TO_REASON_WHATEVER);
       } TOCATCH
@@ -2560,7 +2561,7 @@ void toDebug::changeWatch(QListViewItem *item)
   }
 }
 
-void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toDebug::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   HeadEditor->exportData(data,prefix+":Head");
   BodyEditor->exportData(data,prefix+":Body");
@@ -2571,13 +2572,13 @@ void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
     toBreakpointItem *point=dynamic_cast<toBreakpointItem *>(item);
 
     if (point) {
-      QString key=prefix+":Breaks:"+QString::number(id);
+      QCString key=prefix+":Breaks:"+QString::number(id).latin1();
 
       data[key+":Schema"]=point->text(2);
       data[key+":Object"]=point->text(0);
       data[key+":Type"]=point->text(3);
       data[key+":Line"]=QString::number(point->line());
-      if (point->text(4)=="DISABLED")
+      if (point->text(4)==tr("DISABLED"))
 	data[key+":Status"]="DISABLED";
     }
 
@@ -2587,7 +2588,7 @@ void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
   for(QListViewItem *qitem=Watch->firstChild();qitem;qitem=qitem->nextSibling()) {
     toResultViewItem *item=dynamic_cast<toResultViewItem *>(qitem);
     if (item) {
-      QString key=prefix+":Watch:"+QString::number(id);
+      QCString key=prefix+":Watch:"+QString::number(id).latin1();
       data[key+":Schema"]=item->allText(0);
       data[key+":Object"]=item->allText(1);
       data[key+":Item"]=item->allText(2);
@@ -2595,14 +2596,14 @@ void toDebug::exportData(std::map<QString,QString> &data,const QString &prefix)
     id++;
   }
   if (DebugButton->isOn())
-    data[prefix+":Debug"]="Show";
+    data[prefix+":Debug"]=QString::fromLatin1("Show");
   if (ShowButton->isOn())
-    data[prefix+":Head"]="Show";
+    data[prefix+":Head"]=QString::fromLatin1("Show");
 
   toToolWidget::exportData(data,prefix);
 }
 
-void toDebug::importData(std::map<QString,QString> &data,const QString &prefix)
+void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   QString str=data[prefix+":Schema"];
   {
@@ -2618,35 +2619,35 @@ void toDebug::importData(std::map<QString,QString> &data,const QString &prefix)
   BodyEditor->importData(data,prefix+":Body");
 
   int id=1;
-  std::map<QString,QString>::iterator i;
+  std::map<QCString,QString>::iterator i;
   toBreakpointItem *debug=NULL;
-  while((i=data.find(prefix+":Breaks:"+QString::number(id)+":Line"))!=data.end()) {
-    QString key=prefix+":Breaks:"+QString::number(id);
+  while((i=data.find(prefix+":Breaks:"+QString::number(id).latin1()+":Line"))!=data.end()) {
+    QCString key=prefix+":Breaks:"+QString::number(id).latin1();
     int line=(*i).second.toInt();
     debug=new toBreakpointItem(Breakpoints,debug,
 			       data[key+":Schema"],
 			       data[key+":Type"],
 			       data[key+":Object"],
 			       line);
-    if (data[key+":Status"]=="DISABLED")
-      debug->setText(4,"DISABLED");
+    if (data[key+":Status"]==QString::fromLatin1("DISABLED"))
+      debug->setText(4,tr("DISABLED"));
     id++;
   }
   id=1;
   toResultViewItem *item=NULL;
-  while((i=data.find(prefix+":Watch:"+QString::number(id)+":Item"))!=data.end()) {
-    QString key=prefix+":Watch:"+QString::number(id);
+  while((i=data.find(prefix+":Watch:"+QString::number(id).latin1()+":Item"))!=data.end()) {
+    QCString key=prefix+":Watch:"+QString::number(id).latin1();
     item=new toResultViewItem(Watch,NULL,data[key+":Schema"]);
     item->setText(1,data[key+":Object"]);
     item->setText(2,data[key+":Item"]);
-    item->setText(3,"");
-    item->setText(4,"NOCHANGE");
+    item->setText(3,QString::fromLatin1(""));
+    item->setText(4,QString::fromLatin1("NOCHANGE"));
     id++;
   }
   scanSource();
 
-  DebugButton->setOn(data[prefix+":Debug"]=="Show");
-  ShowButton->setOn(data[prefix+":Head"]=="Show");
+  DebugButton->setOn(data[prefix+":Debug"]==QString::fromLatin1("Show"));
+  ShowButton->setOn(data[prefix+":Head"]==QString::fromLatin1("Show"));
 
   toToolWidget::importData(data,prefix);
 }

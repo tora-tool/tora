@@ -64,7 +64,7 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
 			      " WHERE owner = :owner<char[101]>\n"
 			      "   AND name = :name<char[101]>\n"
 			      " ORDER BY referenced_owner,referenced_type,referenced_name",
-			      QString::null,
+			      "",
 			      "7.3");
 
 bool toResultDepend::canHandle(toConnection &conn)
@@ -75,14 +75,14 @@ bool toResultDepend::canHandle(toConnection &conn)
 toResultDepend::toResultDepend(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
-  addColumn("Owner");
-  addColumn("Name");
-  addColumn("Type");
-  addColumn("Dependency");
+  addColumn(tr("Owner"));
+  addColumn(tr("Name"));
+  addColumn(tr("Type"));
+  addColumn(tr("Dependency"));
 
   setRootIsDecorated(true);
   setReadAll(true);
-  setSQLName("toResultDepend");
+  setSQLName(QString::fromLatin1("toResultDepend"));
 
   Query=NULL;
   Current=NULL;

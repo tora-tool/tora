@@ -186,30 +186,30 @@ toMain::toMain()
   FileMenu=new QPopupMenu(this);
 
   FileMenu->insertItem(QPixmap((const char **)connect_xpm),
-		       "&New Connection...",TO_NEW_CONNECTION);
+		       tr("&New Connection..."),TO_NEW_CONNECTION);
   FileMenu->insertItem(QPixmap((const char **)disconnect_xpm),
-		       "&Close Connection",this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
+		       tr("&Close Connection"),this,SLOT(delConnection()),0,TO_CLOSE_CONNECTION);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit Connection",TO_FILE_COMMIT);
-  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback Connection",TO_FILE_ROLLBACK);
-  FileMenu->insertItem("C&urrent Connection",TO_FILE_CURRENT);
-  FileMenu->insertItem(QPixmap((const char **)stop_xpm),"Stop All Queries",TO_STOP_ALL);
-  FileMenu->insertItem(QPixmap((const char **)refresh_xpm),"Reread Object Cache",TO_FILE_CLEARCACHE);
+  FileMenu->insertItem(QPixmap((const char **)commit_xpm),tr("&Commit Connection"),TO_FILE_COMMIT);
+  FileMenu->insertItem(QPixmap((const char **)rollback_xpm),tr("&Rollback Connection"),TO_FILE_ROLLBACK);
+  FileMenu->insertItem(tr("C&urrent Connection"),TO_FILE_CURRENT);
+  FileMenu->insertItem(QPixmap((const char **)stop_xpm),tr("Stop All Queries"),TO_STOP_ALL);
+  FileMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("Reread Object Cache"),TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
-  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
-  FileMenu->insertItem("Save A&s...",TO_FILE_SAVE_AS);
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),tr("&Open File..."),TO_FILE_OPEN);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),tr("&Save"),TO_FILE_SAVE);
+  FileMenu->insertItem(tr("Save A&s..."),TO_FILE_SAVE_AS);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"Open Session...",
+  FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),tr("Open Session..."),
 		       TO_FILE_OPEN_SESSION);
-  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),tr("Save Session..."),
 		       TO_FILE_SAVE_SESSION);
-  FileMenu->insertItem("Restore Last Session",TO_FILE_LAST_SESSION);
-  FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
+  FileMenu->insertItem(tr("Restore Last Session"),TO_FILE_LAST_SESSION);
+  FileMenu->insertItem(tr("Close Session"),TO_FILE_CLOSE_SESSION);
   FileMenu->insertSeparator();
-  FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print...",TO_FILE_PRINT);
+  FileMenu->insertItem(QPixmap((const char **)print_xpm),tr("&Print..."),TO_FILE_PRINT);
   FileMenu->insertSeparator();
-  FileMenu->insertItem("&Quit",TO_FILE_QUIT);
+  FileMenu->insertItem(tr("&Quit"),TO_FILE_QUIT);
 
   FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
   FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
@@ -221,24 +221,24 @@ toMain::toMain()
   updateRecent();
 
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
-  menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
+  menuBar()->insertItem(tr("&File"),FileMenu,TO_FILE_MENU);
   connect(FileMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   EditMenu=new QPopupMenu(this);
-  EditMenu->insertItem(QPixmap((const char **)undo_xpm),"&Undo",TO_EDIT_UNDO);
-  EditMenu->insertItem(QPixmap((const char **)redo_xpm),"&Redo",TO_EDIT_REDO);
+  EditMenu->insertItem(QPixmap((const char **)undo_xpm),tr("&Undo"),TO_EDIT_UNDO);
+  EditMenu->insertItem(QPixmap((const char **)redo_xpm),tr("&Redo"),TO_EDIT_REDO);
   EditMenu->insertSeparator();
-  EditMenu->insertItem(QPixmap((const char **)cut_xpm),"Cu&t",TO_EDIT_CUT);
-  EditMenu->insertItem(QPixmap((const char **)copy_xpm),"&Copy",TO_EDIT_COPY);
-  EditMenu->insertItem(QPixmap((const char **)paste_xpm),"&Paste",TO_EDIT_PASTE);
+  EditMenu->insertItem(QPixmap((const char **)cut_xpm),tr("Cu&t"),TO_EDIT_CUT);
+  EditMenu->insertItem(QPixmap((const char **)copy_xpm),tr("&Copy"),TO_EDIT_COPY);
+  EditMenu->insertItem(QPixmap((const char **)paste_xpm),tr("&Paste"),TO_EDIT_PASTE);
   EditMenu->insertSeparator();
-  EditMenu->insertItem(QPixmap((const char **)search_xpm),"&Search && Replace...",
+  EditMenu->insertItem(QPixmap((const char **)search_xpm),tr("&Search && Replace..."),
 		       TO_EDIT_SEARCH);
-  EditMenu->insertItem("Search &Next",TO_EDIT_SEARCH_NEXT);
-  EditMenu->insertItem("Select &All",TO_EDIT_SELECT_ALL);
-  EditMenu->insertItem("Read All &Items",TO_EDIT_READ_ALL);
+  EditMenu->insertItem(tr("Search &Next"),TO_EDIT_SEARCH_NEXT);
+  EditMenu->insertItem(tr("Select &All"),TO_EDIT_SELECT_ALL);
+  EditMenu->insertItem(tr("Read All &Items"),TO_EDIT_READ_ALL);
   EditMenu->insertSeparator();
-  EditMenu->insertItem("&Options...",TO_EDIT_OPTIONS);
+  EditMenu->insertItem(tr("&Options..."),TO_EDIT_OPTIONS);
   EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
   EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
   EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
@@ -247,53 +247,53 @@ toMain::toMain()
   EditMenu->setAccel(Key_F|CTRL,TO_EDIT_SEARCH);
   EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
   connect(EditMenu,SIGNAL(aboutToShow()),this,SLOT(editFileMenu()));
-  menuBar()->insertItem("&Edit",EditMenu,TO_EDIT_MENU);
+  menuBar()->insertItem(tr("&Edit"),EditMenu,TO_EDIT_MENU);
   connect(EditMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
-  std::map<QString,toTool *> &tools=toTool::tools();
+  std::map<QCString,toTool *> &tools=toTool::tools();
 
-  EditToolbar=toAllocBar(this,"Application");
+  EditToolbar=toAllocBar(this,tr("Application"));
 
   LoadButton=new QToolButton(QPixmap((const char **)fileopen_xpm),
-			     "Load file into editor",
-			     "Load file into editor",
+			     tr("Load file into editor"),
+			     tr("Load file into editor"),
 			     this,SLOT(loadButton()),EditToolbar);
   SaveButton=new QToolButton(QPixmap((const char **)filesave_xpm),
-			     "Save file from editor",
-			     "Save file from editor",
+			     tr("Save file from editor"),
+			     tr("Save file from editor"),
 			     this,SLOT(saveButton()),EditToolbar);
   PrintButton=new QToolButton(QPixmap((const char **)print_xpm),
-			     "Print",
-			     "Print",
+			     tr("Print"),
+			     tr("Print"),
 			     this,SLOT(printButton()),EditToolbar);
   PrintButton->setEnabled(false);
   LoadButton->setEnabled(false);
   SaveButton->setEnabled(false);
   EditToolbar->addSeparator();
   UndoButton=new QToolButton(QPixmap((const char **)undo_xpm),
-			     "Undo",
-			     "Undo",
+			     tr("Undo"),
+			     tr("Undo"),
 			     this,SLOT(undoButton()),EditToolbar);
   RedoButton=new QToolButton(QPixmap((const char **)redo_xpm),
-			     "Redo",
-			     "Redo",
+			     tr("Redo"),
+			     tr("Redo"),
 			     this,SLOT(redoButton()),EditToolbar);
   CutButton=new QToolButton(QPixmap((const char **)cut_xpm),
-			     "Cut to clipboard",
-			     "Cut to clipboard",
+			     tr("Cut to clipboard"),
+			     tr("Cut to clipboard"),
 			     this,SLOT(cutButton()),EditToolbar);
   CopyButton=new QToolButton(QPixmap((const char **)copy_xpm),
-			     "Copy to clipboard",
-			     "Copy to clipboard",
+			     tr("Copy to clipboard"),
+			     tr("Copy to clipboard"),
 			     this,SLOT(copyButton()),EditToolbar);
   PasteButton=new QToolButton(QPixmap((const char **)paste_xpm),
-			      "Paste from clipboard",
-			      "Paste from clipboard",
+			      tr("Paste from clipboard"),
+			      tr("Paste from clipboard"),
 			      this,SLOT(pasteButton()),EditToolbar);
   EditToolbar->addSeparator();
   SearchButton=new QToolButton(QPixmap((const char **)search_xpm),
-			       "Search & replace",
-			       "Search & replace",
+			       tr("Search & replace"),
+			       tr("Search & replace"),
 			       this,SLOT(searchButton()),EditToolbar);
 
   UndoButton->setEnabled(false);
@@ -305,42 +305,43 @@ toMain::toMain()
 
   ToolsMenu=new QPopupMenu(this);
 
-  QToolBar *toolbar=toAllocBar(this,"Tools");
+  QToolBar *toolbar=toAllocBar(this,tr("Tools"));
   if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
     moveToolBar(toolbar,Left);
+
+  HelpMenu=new QPopupMenu(this);
+  HelpMenu->insertItem(tr("C&urrent Context..."),TO_HELP_CONTEXT);
+  HelpMenu->insertItem(tr("&Contents..."),TO_HELP_CONTENTS);
+  HelpMenu->insertSeparator();
+  HelpMenu->insertItem(tr("&About TOra..."),TO_HELP_ABOUT);
+  HelpMenu->insertItem(tr("&License..."),TO_HELP_LICENSE);
+  HelpMenu->insertItem(tr("&Quotes..."),TO_HELP_QUOTES);
+  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
+  if (!toFreeware()) {
+    HelpMenu->insertSeparator();
+    HelpMenu->insertItem(tr("&Register..."),TO_HELP_REGISTER);
+  }
 
   int toolID=TO_TOOLS;
   int lastPriorityPix=0;
   int lastPriorityMenu=0;
   SQLEditor=-1;
   DefaultTool=toolID;
-  QString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"");
+  QCString defName=toTool::globalConfig(CONF_DEFAULT_TOOL,"").latin1();
 
-  HelpMenu=new QPopupMenu(this);
-  HelpMenu->insertItem("C&urrent Context...",TO_HELP_CONTEXT);
-  HelpMenu->insertItem("&Contents...",TO_HELP_CONTENTS);
-  HelpMenu->insertSeparator();
-  HelpMenu->insertItem("&About TOra...",TO_HELP_ABOUT);
-  HelpMenu->insertItem("&License...",TO_HELP_LICENSE);
-  HelpMenu->insertItem("&Quotes...",TO_HELP_QUOTES);
-  HelpMenu->setAccel(Key_F1,TO_HELP_CONTEXT);
-  if (!toFreeware()) {
-    HelpMenu->insertSeparator();
-    HelpMenu->insertItem("&Register...",TO_HELP_REGISTER);
-  }
   QPopupMenu *toolAbout=NULL;
 
-  for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
+  for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     const QPixmap *pixmap=(*i).second->toolbarImage();
     const char *toolTip=(*i).second->toolbarTip();
     const char *menuName=(*i).second->menuItem();
 
-    QString tmp=(*i).second->name();
+    QCString tmp=(*i).second->name();
     tmp+=CONF_TOOL_ENABLE;
     if (toTool::globalConfig(tmp,"Yes").isEmpty())
       continue;
 
-    if (defName==menuName)
+    if (defName==(*i).first)
       DefaultTool=toolID;
 
     int priority=(*i).second->priority();
@@ -359,8 +360,8 @@ toMain::toMain()
       if (!toolTip)
 	toolTip="";
       NeedConnection[new QToolButton(*pixmap,
-				     toolTip,
-				     toolTip,
+				     qApp->translate("toTool",toolTip),
+				     qApp->translate("toTool",toolTip),
 				     (*i).second,
 				     SLOT(createWindow(void)),
 				     toolbar)]=(*i).second;
@@ -368,21 +369,21 @@ toMain::toMain()
 
     if (menuName) {
       if (pixmap)
-	ToolsMenu->insertItem(*pixmap,menuName,toolID);
+	ToolsMenu->insertItem(*pixmap,qApp->translate("toTool",menuName),toolID);
       else
-	ToolsMenu->insertItem(menuName,toolID);
+	ToolsMenu->insertItem(qApp->translate("toTool",menuName),toolID);
       ToolsMenu->setItemEnabled(toolID,false);
     }
 
     if ((*i).second->hasAbout()&&menuName) {
       if (!toolAbout) {
 	toolAbout=new QPopupMenu(this);
-	HelpMenu->insertItem("Tools",toolAbout);
+	HelpMenu->insertItem(tr("Tools"),toolAbout);
       }
       if (pixmap)
-	toolAbout->insertItem(*pixmap,menuName,toolID+TO_ABOUT_ID_OFFSET);
+	toolAbout->insertItem(*pixmap,qApp->translate("toTool",menuName),toolID+TO_ABOUT_ID_OFFSET);
       else
-	toolAbout->insertItem(menuName,toolID+TO_ABOUT_ID_OFFSET);
+	toolAbout->insertItem(qApp->translate("toTool",menuName),toolID+TO_ABOUT_ID_OFFSET);
     }
 
     Tools[toolID]=(*i).second;
@@ -391,32 +392,32 @@ toMain::toMain()
   }
 
 #ifndef TOOL_TOOLBAR
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 #endif
 
-  ConnectionToolbar=toAllocBar(this,"Connections");
+  ConnectionToolbar=toAllocBar(this,tr("Connections"));
   new QToolButton(QPixmap((const char **)connect_xpm),
-		  "Connect to database",
-		  "Connect to database",
+		  tr("Connect to database"),
+		  tr("Connect to database"),
 		  this,SLOT(addConnection()),ConnectionToolbar);
   DisconnectButton=new QToolButton(QPixmap((const char **)disconnect_xpm),
-				   "Disconnect current connection",
-				   "Disconnect current connection",
+				   tr("Disconnect current connection"),
+				   tr("Disconnect current connection"),
 				   this,SLOT(delConnection()),ConnectionToolbar);
   DisconnectButton->setEnabled(false);
   ConnectionToolbar->addSeparator();
   NeedConnection[new QToolButton(QPixmap((const char **)commit_xpm),
-				 "Commit connection",
-				 "Commit connection",
+				 tr("Commit connection"),
+				 tr("Commit connection"),
 				 this,SLOT(commitButton()),ConnectionToolbar)]=NULL;
   NeedConnection[new QToolButton(QPixmap((const char **)rollback_xpm),
-				 "Rollback connection",
-				 "Rollback connection",
+				 tr("Rollback connection"),
+				 tr("Rollback connection"),
 				 this,SLOT(rollbackButton()),ConnectionToolbar)]=NULL;
   ConnectionToolbar->addSeparator();
   NeedConnection[new QToolButton(QPixmap((const char **)stop_xpm),
-				 "Stop all running queries on connection",
-				 "Stop all running queries on connection",
+				 tr("Stop all running queries on connection"),
+				 tr("Stop all running queries on connection"),
 				 this,SLOT(stopButton()),ConnectionToolbar)]=NULL;
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar);
@@ -424,34 +425,34 @@ toMain::toMain()
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
-  menuBar()->insertItem("&Tools",ToolsMenu,TO_TOOLS_MENU);
+  menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   WindowsMenu=new QPopupMenu(this);
 
   WindowsMenu->setCheckable(true);
-  WindowsMenu->insertItem("C&lose",TO_WINDOWS_CLOSE);
-  WindowsMenu->insertItem("Close &All",TO_WINDOWS_CLOSE_ALL);
+  WindowsMenu->insertItem(tr("C&lose"),TO_WINDOWS_CLOSE);
+  WindowsMenu->insertItem(tr("Close &All"),TO_WINDOWS_CLOSE_ALL);
   WindowsMenu->insertSeparator();
-  WindowsMenu->insertItem("&Cascade",TO_WINDOWS_CASCADE);
-  WindowsMenu->insertItem("&Tile",TO_WINDOWS_TILE);
+  WindowsMenu->insertItem(tr("&Cascade"),TO_WINDOWS_CASCADE);
+  WindowsMenu->insertItem(tr("&Tile"),TO_WINDOWS_TILE);
   WindowsMenu->insertSeparator();
 
   connect(WindowsMenu,SIGNAL(aboutToShow()),this,SLOT( windowsMenu()));
-  menuBar()->insertItem("&Window",WindowsMenu,TO_WINDOWS_MENU);
+  menuBar()->insertItem(tr("&Window"),WindowsMenu,TO_WINDOWS_MENU);
   connect(WindowsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   menuBar()->insertSeparator();
 
-  menuBar()->insertItem("&Help",HelpMenu,TO_HELP_MENU);
+  menuBar()->insertItem(tr("&Help"),HelpMenu,TO_HELP_MENU);
   connect(HelpMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   char buffer[100];
   sprintf(buffer,DEFAULT_TITLE,TOVERSION);
-  setCaption(buffer);
+  setCaption(tr(buffer));
 
 #ifdef TO_KDE
-  KDockWidget *mainDock=createDockWidget(buffer,QPixmap((const char **)toramini_xpm));
+  KDockWidget *mainDock=createDockWidget(tr(buffer),QPixmap((const char **)toramini_xpm));
   Workspace=new QWorkspace(mainDock);
   mainDock->setWidget(Workspace);
   setView(mainDock);
@@ -463,7 +464,7 @@ toMain::toMain()
 #endif
   setIcon(QPixmap((const char **)toramini_xpm));
 
-  statusBar()->message("Ready");
+  statusBar()->message(QString::null);
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
   menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
   menuBar()->setItemEnabled(TO_STOP_ALL,false);
@@ -495,7 +496,7 @@ toMain::toMain()
   connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
   toolID=TO_TOOLS;
-  for (std::map<QString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
+  for (std::map<QCString,toTool *>::iterator k=tools.begin();k!=tools.end();k++) {
     (*k).second->customSetup(toolID);
     toolID++;
   }
@@ -511,7 +512,7 @@ toMain::toMain()
     welcome=toCheckLicense(false);
   } while(welcome.isNull());
 
-  toStatusMessage(welcome,true);
+  toStatusMessage(tr(welcome),true);
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(checkCaching()));
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -519,7 +520,7 @@ toMain::toMain()
 
   if (!toTool::globalConfig(CONF_RESTORE_SESSION,"").isEmpty()) {
     try {
-      std::map<QString,QString> session;
+      std::map<QCString,QString> session;
       toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session);
       importData(session,"TOra");
     } TOCATCH
@@ -527,12 +528,12 @@ toMain::toMain()
 
 #if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK)
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
-    switch(TOMessageBox::information(this,"Check for upgrades?",
-				     "Do you want TOra to automatically check\n"
-				     "http://www.globecom.se/tora for updates on startup?\n"
-				     "During this check no information about your computer\n"
-				     "including TOra version is transmitted to the site",
-				     "&Yes","&No",QString::null,0)) {
+    switch(TOMessageBox::information(this,tr("Check for upgrades?"),
+				     tr("Do you want TOra to automatically check\n"
+					"http://www.globecom.se/tora for updates on startup?\n"
+					"During this check no information about your computer\n"
+					"including TOra version is transmitted to the site"),
+				     tr("&Yes"),tr("&No"),QString::null,0)) {
     case 0:
       toTool::globalSetConfig(CONF_UPGRADE_CHECK,"Yes");
       break;
@@ -543,8 +544,9 @@ toMain::toMain()
   }
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Yes") {
     qInitNetworkProtocols();
-    VersionUrl=new QUrlOperator(QString("http://www.globecom.se/tora/version.php?")+
-				TOTYPE+"=1");
+    VersionUrl=new QUrlOperator(QString::fromLatin1("http://www.globecom.se/tora/version.php?"
+						    TOTYPE
+						    "=1"));
     VersionUrl->get();
     connect(VersionUrl,SIGNAL(data(const QByteArray &,QNetworkOperation *)),
 	    this,SLOT(versionData(const QByteArray &,QNetworkOperation *)));
@@ -557,7 +559,7 @@ toMain::toMain()
 
   if (Connections.size()==0) {
     try {
-      toNewConnection newConnection(this,"First connection",true);
+      toNewConnection newConnection(this,tr("First connection"),true);
     
       toConnection *conn;
     
@@ -634,7 +636,7 @@ void toMain::updateRecent()
       first=false;
     }
     for (int i=0;i<num;i++) {
-      QString file=toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(i),QString::null);
+      QString file=toTool::globalConfig(QCString(CONF_RECENT_FILES ":")+QString::number(i).latin1(),"");
       if (!file.isEmpty()) {
 	QFileInfo fi(file);
 	if (FileMenu->indexOf(TO_LAST_FILE_ID+i)==-1)
@@ -654,7 +656,7 @@ void toMain::addRecentFile(const QString &file)
   int maxnum=toTool::globalConfig(CONF_RECENT_MAX,DEFAULT_RECENT_MAX).toInt();
   std::list<QString> files;
   for (int j=0;j<num;j++) {
-    QString t=toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(j),QString::null);
+    QString t=toTool::globalConfig(QCString(CONF_RECENT_FILES ":")+QString::number(j).latin1(),"");
     if (t!=file)
       toPush(files,t);
   }
@@ -662,7 +664,7 @@ void toMain::addRecentFile(const QString &file)
 
   num=0;
   for (std::list<QString>::iterator i=files.begin();i!=files.end();i++) {
-    toTool::globalSetConfig(QString(CONF_RECENT_FILES)+":"+QString::number(num),*i);
+    toTool::globalSetConfig(QCString(CONF_RECENT_FILES ":")+QString::number(num).latin1(),*i);
     num++;
     if (num>=maxnum)
       break;
@@ -676,7 +678,7 @@ void toMain::windowsMenu(void)
   WindowsMenu->setItemEnabled(TO_WINDOWS_CLOSE,workspace()->activeWindow());
 
   bool first=true;
-  QRegExp strip(" <[0-9]+>$");
+  QRegExp strip(QString::fromLatin1(" <[0-9]+>$"));
   int id=0;
   unsigned int i;
   for (i=0;i<workspace()->windowList().count();i++) {
@@ -685,7 +687,7 @@ void toMain::windowsMenu(void)
       if (first)
 	first=false;
       QString caption=widget->caption();
-      caption.replace(strip,"");
+      caption.replace(strip,QString::null);
       if(WindowsMenu->indexOf(TO_WINDOWS_WINDOWS+i)<0)
 	WindowsMenu->insertItem(caption,TO_WINDOWS_WINDOWS+i);
       else
@@ -693,9 +695,9 @@ void toMain::windowsMenu(void)
       WindowsMenu->setItemChecked(TO_WINDOWS_WINDOWS+i,workspace()->activeWindow()==workspace()->windowList().at(i));
       if (i<9) {
 	WindowsMenu->setAccel(Key_1+id|CTRL,TO_WINDOWS_WINDOWS+i);
-	caption+=" <";
+	caption+=QString::fromLatin1(" <");
 	caption+=QString::number(++id);
-	caption+=">";
+	caption+=QString::fromLatin1(">");
       }
       widget->setCaption(caption);
     }
@@ -745,7 +747,9 @@ void toMain::commandCallback(int cmd)
     }
     if (edit) {
       if (cmd>=TO_LAST_FILE_ID&&cmd<=TO_LAST_FILE_ID_END) {
-	edit->editOpen(toTool::globalConfig(QString(CONF_RECENT_FILES)+":"+QString::number(cmd-TO_LAST_FILE_ID),QString::null));
+	edit->editOpen(toTool::globalConfig(QCString(CONF_RECENT_FILES ":")+
+					    QString::number(cmd-TO_LAST_FILE_ID).latin1(),
+					    ""));
       } else {
 	switch(cmd) {
 	case TO_EDIT_REDO:
@@ -841,7 +845,7 @@ void toMain::commandCallback(int cmd)
       contextHelp();
       break;
     case TO_HELP_CONTENTS:
-      toHelp::displayHelp("toc.htm");
+      toHelp::displayHelp(QString::fromLatin1("toc.htm"));
       break;
     case TO_HELP_ABOUT:
     case TO_HELP_LICENSE:
@@ -878,7 +882,7 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_FILE_LAST_SESSION:
       try {
-	std::map<QString,QString> session;
+	std::map<QCString,QString> session;
 	toTool::loadMap(toTool::globalConfig(CONF_DEFAULT_SESSION,DEFAULT_SESSION),session);
 	importData(session,"TOra");
       } TOCATCH
@@ -912,7 +916,7 @@ toConnection &toMain::currentConnection()
       return *(*i);
     }
   }
-  throw QString("Can't find active connection");
+  throw tr("Can't find active connection");
 }
 
 toConnection *toMain::addConnection(toConnection *conn,bool def)
@@ -958,7 +962,7 @@ void toMain::setNeedCommit(toConnection &conn,bool needCommit)
     if (conn.description()==(*i)->description()) {
       QString dsc=conn.description();
       if (needCommit)
-	dsc+=" *";
+	dsc+=QString::fromLatin1(" *");
       ConnectionSelection->changeItem(dsc,pos);
       break;
     }
@@ -975,10 +979,8 @@ bool toMain::delConnection(void)
     if (ConnectionSelection->currentText().startsWith((*i)->description())) {
       conn=(*i);
       if (conn->needCommit()) {
-	QString str("Commit work in session to ");
-	str.append(conn->description());
-	str.append(" before closing it?");
-	switch(TOMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
+	QString str=tr("Commit work in session to %1  before closing it?").arg(conn->description());
+	switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("&Cancel"))) {
 	case 0:
 	  conn->commit();
 	  break;
@@ -1031,7 +1033,7 @@ toConnection &toMain::connection(const QString &str)
   for (std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++)
     if ((*i)->description()==str)
       return *(*i);
-  throw QString("Couldn't find specified connectionts (%1)").arg(str);
+  throw tr("Couldn't find specified connectionts (%1)").arg(str);
 }
 
 void toMain::loadButton(void)
@@ -1185,7 +1187,7 @@ void toMain::registerSQLEditor(int tool)
 
 bool toMain::close(bool del)
 {
-  std::map<QString,QString> session;
+  std::map<QCString,QString> session;
   exportData(session,"TOra");
   try {
     toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
@@ -1213,10 +1215,10 @@ void toMain::createDefault(void)
 
 void toMain::setCoordinates(int line,int col)
 {
-  QString str("Row: ");
+  QString str=tr("Row: ");
   str+=QString::number(line);
   RowLabel->setText(str);
-  str="Col:";
+  str=tr("Col:");
   str+=QString::number(col);
   ColumnLabel->setText(str);
   RowLabel->show();
@@ -1285,13 +1287,13 @@ void toMain::checkCaching(void)
     Poll.start(100);
 }
 
-void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toMain::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   try {
     if (isMaximized())
-      data[prefix+":State"]="Maximized";
+      data[prefix+":State"]=QString::fromLatin1("Maximized");
     else if (isMinimized())
-      data[prefix+":State"]="Minimized";
+      data[prefix+":State"]=QString::fromLatin1("Minimized");
     else {
       QRect rect=geometry();
       data[prefix+":X"]=QString::number(rect.x());
@@ -1304,7 +1306,7 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
     std::map<toConnection *,int> connMap;
     {
       for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
-	QString key=prefix+":Connection:"+QString::number(id);
+	QCString key=prefix+":Connection:"+QString::number(id).latin1();
 	if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
 	  data[key+":Password"]=(*i)->password();
 	data[key+":User"]=(*i)->user();
@@ -1321,7 +1323,7 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
     for (unsigned int i=0;i<workspace()->windowList().count();i++) {
       toToolWidget *tool=dynamic_cast<toToolWidget *>(workspace()->windowList().at(i));
       if (tool) {
-	QString key=prefix+":Tools:"+QString::number(id);
+	QCString key=prefix+":Tools:"+QString::number(id).latin1();
 	tool->exportData(data,key);
 	data[key+":Type"]=tool->tool().key();
 	data[key+":Connection"]=QString::number(connMap[&tool->connection()]);
@@ -1333,18 +1335,18 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
   } TOCATCH
 }
 
-void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
+void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
-  if (data[prefix+":State"]=="Maximized")
+  if (data[prefix+":State"]==QString::fromLatin1("Maximized"))
     showMaximized();
-  else if (data[prefix+":State"]=="Minimized")
+  else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
     showMinimized();
   else {
     showNormal();
     int width=data[prefix+":Width"].toInt();
     if (width==0) {
       TOMessageBox::warning(toMainWidget(),
-			    "Invalid session file","The session file is not valid, can't read it.");
+			    tr("Invalid session file"),tr("The session file is not valid, can't read it."));
       return;
     } else
       setGeometry(data[prefix+":X"].toInt(),
@@ -1356,9 +1358,9 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
   std::map<int,toConnection *> connMap;
 
   int id=1;
-  std::map<QString,QString>::iterator i;
-  while((i=data.find(prefix+":Connection:"+QString::number(id)+":Database"))!=data.end()) {
-    QString key=prefix+":Connection:"+QString::number(id);
+  std::map<QCString,QString>::iterator i;
+  while((i=data.find(prefix+":Connection:"+QString::number(id).latin1()+":Database"))!=data.end()) {
+    QCString key=prefix+":Connection:"+QString::number(id).latin1();
     QString database=(*i).second;
     QString user=data[key+":User"];
     QString host=data[key+":Host"];
@@ -1367,16 +1369,16 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
     QString provider=data[key+":Provider"];
     bool ok=true;
     if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)==password) {
-      password=QInputDialog::getText("Input password",
-				     "Enter password for "+database,
+      password=QInputDialog::getText(tr("Input password"),
+				     tr("Enter password for %1").arg(database),
 				     QLineEdit::Password,
-				     DEFAULT_SAVE_PWD,
+				     QString::fromLatin1(DEFAULT_SAVE_PWD),
 				     &ok,
 				     this);
     }
     if (ok) {
       try {
-	toConnection *conn=new toConnection(provider,user,password,host,database,mode);
+	toConnection *conn=new toConnection(provider.latin1(),user,password,host,database,mode);
 	if (conn) {
 	  conn=addConnection(conn,false);
 	  connMap[id]=conn;
@@ -1387,9 +1389,9 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
   }
 
   id=1;
-  while((i=data.find(prefix+":Tools:"+QString::number(id)+":Type"))!=data.end()) {
-    QString key=(*i).second;
-    int connid=data[prefix+":Tools:"+QString::number(id)+":Connection"].toInt();
+  while((i=data.find(prefix+":Tools:"+QString::number(id).latin1()+":Type"))!=data.end()) {
+    QCString key=(*i).second.latin1();
+    int connid=data[prefix+":Tools:"+QString::number(id).latin1()+":Connection"].toInt();
     std::map<int,toConnection *>::iterator j=connMap.find(connid);
     if (j!=connMap.end()) {
       toTool *tool=toTool::tool(key);
@@ -1403,7 +1405,7 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
 	  toToolWidget *tw=dynamic_cast<toToolWidget *>(widget);
 	  if (tw) {
 	    toToolCaption(tw,tool->name());
-	    tw->importData(data,prefix+":Tools:"+QString::number(id));
+	    tw->importData(data,prefix+":Tools:"+QString::number(id).latin1());
 	  }
 	}
       }
@@ -1417,9 +1419,9 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
 
 void toMain::saveSession(void)
 {
-  QString fn=toSaveFilename(QString::null,"*.tse",this);
+  QString fn=toSaveFilename(QString::null,QString::fromLatin1("*.tse"),this);
   if (!fn.isEmpty()) {
-    std::map<QString,QString> session;
+    std::map<QCString,QString> session;
     exportData(session,"TOra");
     try {
       toTool::saveMap(fn,session);
@@ -1429,10 +1431,10 @@ void toMain::saveSession(void)
 
 void toMain::loadSession(void)
 {
-  QString filename=toOpenFilename(QString::null,"*.tse",this);
+  QString filename=toOpenFilename(QString::null,QString::fromLatin1("*.tse"),this);
   if (!filename.isEmpty()) {
     try {
-      std::map<QString,QString> session;
+      std::map<QCString,QString> session;
       toTool::loadMap(filename,session);
       importData(session,"TOra");
     } TOCATCH
@@ -1441,7 +1443,7 @@ void toMain::loadSession(void)
 
 void toMain::closeSession(void)
 {
-  std::map<QString,QString> session;
+  std::map<QCString,QString> session;
   exportData(session,"TOra");
   try {
     toTool::saveMap(toTool::globalConfig(CONF_DEFAULT_SESSION,
@@ -1488,8 +1490,8 @@ void toMain::displayMessage(void)
   if (StatusMessages.size()>=50) {
     disabled=true;
     toUnShift(StatusMessages,
-	      QString("Message flood, temporary disabling of message box error reporting from now on.\n"
-		      "Restart TOra to reenable. You probably have a too high refreshrate in some tool."));
+	      tr("Message flood, temporary disabling of message box error reporting from now on.\n"
+		 "Restart TOra to reenable. You probably have a too high refreshrate in some tool."));
   }
 
   if (recursive)
@@ -1503,7 +1505,8 @@ void toMain::displayMessage(void)
     if (dialog.Statusbar->isChecked()) {
       toTool::globalSetConfig(CONF_MESSAGE_STATUSBAR,"Yes");
       TOMessageBox::information(toMainWidget(),
-				"Information","You can enable this through the Global Settings in the Options (Edit menu)");
+				tr("Information"),
+				tr("You can enable this through the Global Settings in the Options (Edit menu)"));
       toTool::saveConfig();
     }
   }
@@ -1531,8 +1534,8 @@ void toMain::versionFinished(QNetworkOperation *op)
   if (i>=0)
     VersionString=VersionString.mid(0,i);
   if (VersionString[0].isNumber()&&VersionString > TOVERSION)
-    toStatusMessage("A new version of TOra ("+VersionString+") is available from\n\n"
-		    "http://www.globecom.se/tora");
+    toStatusMessage(tr("A new version of TOra (%1) is available from\n\n"
+		       "http://www.globecom.se/tora").arg(VersionString));
   delete VersionUrl;
 #endif
 }

@@ -126,7 +126,7 @@ class toTuningOverview : public toTuningOverviewUI {
 
   bool Quit;
   toSemaphore Done;
-  std::map<QString,QString> Values;
+  std::map<QCString,QString> Values;
   toConnection *Connection;
   toLock Lock;
   QString UnitString;
@@ -137,7 +137,7 @@ class toTuningOverview : public toTuningOverviewUI {
       : Parent(parent)
     { }
     virtual void run(void);
-    void setValue(const QString &name,const QString &val);
+    void setValue(const QCString &name,const QString &val);
   };
 
   friend class overviewQuery;
@@ -146,7 +146,7 @@ class toTuningOverview : public toTuningOverviewUI {
 
   std::list<QLabel *> Backgrounds;
   void setupChart(toResultLine *chart,const QString &,const QString &,const toSQL &sql);
-  void setValue(QLabel *label,const QString &val);
+  void setValue(QLabel *label,const QCString &val);
 public:
   toTuningOverview(QWidget *parent=0,const char *name=0,WFlags fl=0);
   ~toTuningOverview();
@@ -176,18 +176,18 @@ class toTuning : public toToolWidget {
   toResultLong *ControlFiles;
   toWaitEvents *Waits;
 
-  std::map<QString,QGrid *> Charts;
+  std::map<QCString,QGrid *> Charts;
 
   QComboBox *Refresh;
   toTuningOverview *Overview;
   toTuningFileIO *FileIO;
   QWidget *LastTab;
 
-  virtual void enableTab(const QString &name,bool enable);
-  virtual QWidget *tabWidget(const QString &name);
+  virtual void enableTab(const QCString &name,bool enable);
+  virtual QWidget *tabWidget(const QCString &name);
 
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:

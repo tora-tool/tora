@@ -114,7 +114,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 
   QBoxLayout *l=new QVBoxLayout(this);
 
-  Toolbar=toAllocBar(this,"Memo Editor");
+  Toolbar=toAllocBar(this,tr("Memo Editor"));
   l->addWidget(Toolbar);
 
   if (sql)
@@ -128,83 +128,85 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
   QToolButton *btn;
   if (Row>=0&&Col>=0&&!listView()) {
     new QToolButton(QPixmap((const char **)commit_xpm),
-		    "Save changes",
-		    "Save changes",
+		    tr("Save changes"),
+		    tr("Save changes"),
 		    this,SLOT(store(void)),
 		    Toolbar);
     Toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)fileopen_xpm),
-		    "Open file",
-		    "Open file",
+		    tr("Open file"),
+		    tr("Open file"),
 		    this,SLOT(openFile()),Toolbar);
     new QToolButton(QPixmap((const char **)filesave_xpm),
-		    "Save file",
-		    "Save file",
+		    tr("Save file"),
+		    tr("Save file"),
 		    this,SLOT(saveFile()),Toolbar);
     Toolbar->addSeparator();
     btn=new QToolButton(QPixmap((const char **)cut_xpm),
-			"Cut to clipboard",
-			"Cut to clipboard",
+			tr("Cut to clipboard"),
+			tr("Cut to clipboard"),
 			Editor,SLOT(cut()),Toolbar);
     connect(Editor,SIGNAL(copyAvailable(bool)),
 	    btn,SLOT(setEnabled(bool)));
     btn->setEnabled(false);
   } else {
     new QToolButton(QPixmap((const char **)filesave_xpm),
-		    "Save file",
-		    "Save file",
+		    tr("Save file"),
+		    tr("Save file"),
 		    this,SLOT(saveFile()),Toolbar);
     Toolbar->addSeparator();
   }
   btn=new QToolButton(QPixmap((const char **)copy_xpm),
-			     "Copy to clipboard",
-			     "Copy to clipboard",
+			     tr("Copy to clipboard"),
+			     tr("Copy to clipboard"),
 			     Editor,SLOT(copy()),Toolbar);
   connect(Editor,SIGNAL(copyAvailable(bool)),
 	  btn,SLOT(setEnabled(bool)));
   btn->setEnabled(false);
   if (Row>=0&&Col>=0&&!listView())
     new QToolButton(QPixmap((const char **)paste_xpm),
-		    "Paste from clipboard",
-		    "Paste from clipboard",
+		    tr("Paste from clipboard"),
+		    tr("Paste from clipboard"),
 		    Editor,SLOT(paste()),Toolbar);
 
   toListView *lst=listView();
   if (lst||navigation) {
     Toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)rewind_xpm),
-		    "First column",
-		    "First column",
+		    tr("First column"),
+		    tr("First column"),
 		    this,SLOT(firstColumn()),Toolbar);
     new QToolButton(QPixmap((const char **)previous_xpm),
-		    "Previous column",
-		    "Previous column",
+		    tr("Previous column"),
+		    tr("Previous column"),
 		    this,SLOT(previousColumn()),Toolbar);
     new QToolButton(QPixmap((const char **)next_xpm),
-		    "Next column",
-		    "Next column",
+		    tr("Next column"),
+		    tr("Next column"),
 		    this,SLOT(nextColumn()),Toolbar);
     new QToolButton(QPixmap((const char **)forward_xpm),
-		    "Last column",
-		    "Last column",
+		    tr("Last column"),
+		    tr("Last column"),
 		    this,SLOT(lastColumn()),Toolbar);
   }
   Toolbar->addSeparator();
-  Null=new QCheckBox("NULL",Toolbar);
+  Null=new QCheckBox(tr("NULL"),Toolbar);
   connect(Null,SIGNAL(toggled(bool)),this,SLOT(null(bool)));
   Null->setEnabled(!Editor->isReadOnly());
   Null->setFocusPolicy(StrongFocus);
 
   setText(str);
 
-  Label=new QLabel("",Toolbar);
+  Label=new QLabel(QString::null,Toolbar);
   Label->setAlignment(AlignRight|AlignVCenter);
   Toolbar->setStretchableWidget(Label);
 
   if (lst) {
     connect(parent,SIGNAL(currentChanged(QListViewItem *)),
 	    this,SLOT(changeCurrent(QListViewItem *)));
-    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
+    Label->setText(QString::fromLatin1("<B>")+
+		   lst->header()->label(Col)+
+		   QString::fromLatin1("</B>"));
   }
 
   if (!modal)
@@ -254,7 +256,9 @@ void toMemoEditor::changePosition(int row,int cols)
 
   toListView *lst=listView();
   if (lst)
-    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
+    Label->setText(QString::fromLatin1("<B>")+
+		   lst->header()->label(Col)+
+		   QString::fromLatin1("</B>"));
 
   Row=row;
   Col=cols;
@@ -352,7 +356,9 @@ void toMemoEditor::previousColumn(void)
       else
 	setText(cur->text(Col));
     }
-    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
+    Label->setText(QString::fromLatin1("<B>")+
+		   lst->header()->label(Col)+
+		   QString::fromLatin1("</B>"));
   }
 }
 
@@ -395,7 +401,9 @@ void toMemoEditor::nextColumn(void)
       else
 	setText(cur->text(Col));
     }
-    Label->setText("<B>"+lst->header()->label(Col)+"</B>");
+    Label->setText(QString::fromLatin1("<B>")+
+		   lst->header()->label(Col)+
+		   QString::fromLatin1("</B>"));
   }
 }
 
@@ -425,7 +433,9 @@ void toMemoEditor::lastColumn(void)
 	lst->setCurrentItem(next);
     } else {
       Col=lst->columns()-1;
-      Label->setText("<B>"+lst->header()->label(Col)+"</B>");
+      Label->setText(QString::fromLatin1("<B>")+
+		     lst->header()->label(Col)+
+		     QString::fromLatin1("</B>"));
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)

@@ -191,24 +191,24 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
 
   Storage=new toStorageDefinition(DialogTabs);
   Storage->forRollback(true);
-  DialogTabs->addTab(Storage,"Storage");
+  DialogTabs->addTab(Storage,tr("Storage"));
 
   OkButton->setEnabled(false);
 }
 
 std::list<QString> toRollbackDialog::sql(void)
 {
-  QString str("CREATE ");
+  QString str(QString::fromLatin1("CREATE "));
   if (Public->isChecked())
-    str.append("PUBLIC ");
-  str.append("ROLLBACK SEGMENT \"");
+    str.append(QString::fromLatin1("PUBLIC "));
+  str.append(QString::fromLatin1("ROLLBACK SEGMENT \""));
   str.append(Name->text());
-  str.append("\" TABLESPACE \"");
+  str.append(QString::fromLatin1("\" TABLESPACE \""));
   str.append(Tablespace->currentText());
-  str.append("\"");
+  str.append(QString::fromLatin1("\""));
   std::list<QString> lst=Storage->sql();
   for(std::list<QString>::iterator i=lst.begin();i!=lst.end();i++) {
-    str+=" ";
+    str+=QString::fromLatin1(" ");
     str+=*i;
   }
   std::list<QString> ret;
@@ -222,13 +222,13 @@ void toRollbackDialog::displaySQL(void)
   QString res;
   for(std::list<QString>::iterator i=lines.begin();i!=lines.end();i++) {
     res+=*i;
-    res+=";\n";
+    res+=QString::fromLatin1(";\n");
   }
   if (res.length()>0) {
     toMemoEditor memo(this,res,-1,-1,true,true);
     memo.exec();
   } else
-    toStatusMessage("No changes made",false,false);
+    toStatusMessage(tr("No changes made"),false,false);
 }
 
 void toRollbackDialog::valueChanged(const QString &str)
@@ -384,10 +384,10 @@ public:
     toQList par;
     par.insert(par.end(),QString::number(toSizeDecode(unit)));
     toResultView::query(sql,(const toQList &)par);
-    QRegExp repl("(MB)");
-    QString res="(";
+    QRegExp repl(QString::fromLatin1("(MB)"));
+    QString res=QString::fromLatin1("(");
     res+=unit;
-    res+=")";
+    res+=QString::fromLatin1(")");
     for (int i=0;i<columns();i++) {
       QString str=header()->label(i);
       str.replace(repl,res);
@@ -489,13 +489,13 @@ public:
   toRollbackOpen(QWidget *parent)
     : toResultView(false,false,parent)
   {
-    addColumn("Started");
-    addColumn("User");
-    addColumn("Snapshot");
-    addColumn("SQL");
+    addColumn(tr("Started"));
+    addColumn(tr("User"));
+    addColumn(tr("Snapshot"));
+    addColumn(tr("SQL"));
     setSorting(0);
     NumExtents=0;
-    setSQLName("toRollbackOpen");
+    setSQLName(tr("toRollbackOpen"));
   }
   virtual void query(const QString &sql,const toQList &param)
   {
@@ -506,7 +506,7 @@ public:
       toQuery sql(conn,SQLStatementInfo);
       QListViewItem *last=NULL;
       while(!sql.eof()) {
-	QListViewItem *item=createItem(last,NULL);
+	QListViewItem *item=createItem(last,QString::null);
 	last=item;
 	item->setText(0,sql.readValue());
 	item->setText(1,sql.readValue());
@@ -600,47 +600,47 @@ toSQL SQLTransactionUsers("toRollback:TransactionUsers",
 toRollback::toRollback(QWidget *main,toConnection &connection)
   : toToolWidget(RollbackTool,"rollback.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Rollback analyzer");
+  QToolBar *toolbar=toAllocBar(this,tr("Rollback analyzer"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update segment list",
-		  "Update segment list",
+		  tr("Update segment list"),
+		  tr("Update segment list"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
 
   OnlineButton=new QToolButton(QPixmap((const char **)online_xpm),
-			       "Take segment online",
-			       "Take segment online",
+			       tr("Take segment online"),
+			       tr("Take segment online"),
 			       this,SLOT(online(void)),
 			       toolbar);
   OnlineButton->setEnabled(false);
   OfflineButton=new QToolButton(QPixmap((const char **)offline_xpm),
-				"Take segment offline",
-				"Take segment offline",
+				tr("Take segment offline"),
+				tr("Take segment offline"),
 				this,SLOT(offline(void)),
 				toolbar);
   OfflineButton->setEnabled(false);
   toolbar->addSeparator();
 
   new QToolButton(QPixmap((const char **)addrollback_xpm),
-		  "Create new rollback segment",
-		  "Create new rollback segment",
+		  tr("Create new rollback segment"),
+		  tr("Create new rollback segment"),
 		  this,SLOT(addSegment(void)),
 		  toolbar);
   DropButton=new QToolButton(QPixmap((const char **)trash_xpm),
-			     "Drop segment",
-			     "Drop segment",
+			     tr("Drop segment"),
+			     tr("Drop segment"),
 			     this,SLOT(dropSegment(void)),
 			     toolbar);
   DropButton->setEnabled(false);
   toolbar->addSeparator();
 
-  new QLabel("Refresh ",toolbar);
+  new QLabel(tr("Refresh "),toolbar);
   connect(Refresh=toRefreshCreate(toolbar),
 	  SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
@@ -651,10 +651,10 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 
   QTabWidget *tab=new QTabWidget(splitter,"TabWidget");
   QSplitter *horsplit=new QSplitter(Horizontal,splitter);
-  tab->addTab(horsplit,"Open Cursors");
+  tab->addTab(horsplit,tr("Open Cursors"));
   
   TransactionUsers=new toResultLong(false,false,toQuery::Background,tab);
-  tab->addTab(TransactionUsers,"Transaction Users");
+  tab->addTab(TransactionUsers,tr("Transaction Users"));
   TransactionUsers->setSQL(SQLTransactionUsers);
 
   Statements=new toRollbackOpen(horsplit);
@@ -687,22 +687,22 @@ void toRollback::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)online_xpm),"Online",
+      ToolMenu->insertItem(QPixmap((const char **)online_xpm),tr("Online"),
 			   this,SLOT(online(void)),0,TO_ID_ONLINE);
-      ToolMenu->insertItem(QPixmap((const char **)offline_xpm),"Offline",
+      ToolMenu->insertItem(QPixmap((const char **)offline_xpm),tr("Offline"),
 			   this,SLOT(offline(void)),0,TO_ID_OFFLINE);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm),"Create segment...",
+      ToolMenu->insertItem(QPixmap((const char **)addrollback_xpm),tr("Create segment..."),
 			   this,SLOT(addSegment(void)),0,TO_ID_CREATE);
-      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"Drop segment",
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),tr("Drop segment"),
 			   this,SLOT(dropSegment(void)),0,TO_ID_DROP);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+      ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
-      toMainWidget()->menuBar()->insertItem("&Rollback",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Rollback"),ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_ONLINE,OnlineButton->isEnabled());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_OFFLINE,OfflineButton->isEnabled());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DROP,DropButton->isEnabled());
@@ -752,11 +752,11 @@ void toRollback::changeStatement(QListViewItem *item)
 void toRollback::changeItem(QListViewItem *item)
 {
   if (item) {
-    if (item->text(3)=="OFFLINE")
+    if (item->text(3)==QString::fromLatin1("OFFLINE"))
       OfflineButton->setEnabled(false);
     else
       OfflineButton->setEnabled(true);
-    if (item->text(3)=="ONLINE")
+    if (item->text(3)==QString::fromLatin1("ONLINE"))
       OnlineButton->setEnabled(false);
     else
       OnlineButton->setEnabled(true);
@@ -781,7 +781,7 @@ QString toRollback::currentSegment(void)
 {
   QListViewItem *item=Segments->selectedItem();
   if (!item)
-    throw QString("No segment selected");
+    throw tr("No segment selected");
   return item->text(0);
 }
 
@@ -802,9 +802,9 @@ void toRollback::offline(void)
 {
   try {
     QString str;
-    str="ALTER ROLLBACK SEGMENT \"";
+    str=QString::fromLatin1("ALTER ROLLBACK SEGMENT \"");
     str.append(currentSegment());
-    str.append("\" OFFLINE");
+    str.append(QString::fromLatin1("\" OFFLINE"));
     connection().execute(str);
     refresh();
   } TOCATCH
@@ -814,14 +814,14 @@ void toRollback::dropSegment(void)
 {
   try {
     if (TOMessageBox::warning(this,
-			      "Drop rollback segment",
-			      QString("Are you sure you want to drop the segment %1.").arg(currentSegment()),
-			      "&Drop",
-			      "Cancel")==0) {
+			      tr("Drop rollback segment"),
+			      tr("Are you sure you want to drop the segment %1.").arg(currentSegment()),
+			      tr("&Drop"),
+			      tr("Cancel"))==0) {
       QString str;
-      str="DROP ROLLBACK SEGMENT \"";
+      str=QString::fromLatin1("DROP ROLLBACK SEGMENT \"");
       str.append(currentSegment());
-      str.append("\"");
+      str.append(QString::fromLatin1("\""));
       connection().execute(str);
       refresh();
     }
@@ -832,9 +832,9 @@ void toRollback::online(void)
 {
   try {
     QString str;
-    str="ALTER ROLLBACK SEGMENT \"";
+    str=QString::fromLatin1("ALTER ROLLBACK SEGMENT \"");
     str.append(currentSegment());
-    str.append("\" ONLINE");
+    str.append(QString::fromLatin1("\" ONLINE"));
     connection().execute(str);
     refresh();
   } TOCATCH

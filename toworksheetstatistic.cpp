@@ -60,17 +60,17 @@ toAnalyze *toWorksheetStatistic::Widget;
 toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   : QVBox(parent)
 {
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
+  QToolBar *toolbar=toAllocBar(this,tr("Server Tuning"));
 
   new QToolButton(QPixmap((const char **)fileopen_xpm),
-		  "Load statistics from file",
-		  "Load statistics from file",
+		  tr("Load statistics from file"),
+		  tr("Load statistics from file"),
 		  this,SLOT(load(void)),
 		  toolbar);
 
   QToolButton *button=new toPopupButton(QPixmap((const char **)filesave_xpm),
-			 	        "Save statistics to file",
-				        "Save statistics to file",
+			 	        tr("Save statistics to file"),
+				        tr("Save statistics to file"),
 				        toolbar);
   SaveMenu=new QPopupMenu(button);
   button->setPopup(SaveMenu);
@@ -80,8 +80,8 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   toolbar->addSeparator();
 
   button=new toPopupButton(QPixmap((const char **)trash_xpm),
-			   "Remove statistics",
-			   "Remove statistics",
+			   tr("Remove statistics"),
+			   tr("Remove statistics"),
 			   toolbar);
   RemoveMenu=new QPopupMenu(button);
   button->setPopup(RemoveMenu);
@@ -95,14 +95,14 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
   ShowCharts=new QToolButton(toolbar);
   ShowCharts->setToggleButton(true);
   ShowCharts->setIconSet(QIconSet(QPixmap((const char **)grid_xpm)));
-  QToolTip::add(ShowCharts,"Display charts");
+  QToolTip::add(ShowCharts,tr("Display charts"));
   ShowCharts->setOn(true);
   connect(ShowCharts,SIGNAL(toggled(bool)),this,SLOT(showCharts(bool)));
 
   ShowPlans=new QToolButton(toolbar);
   ShowPlans->setToggleButton(true);
   ShowPlans->setIconSet(QIconSet(QPixmap((const char **)tree_xpm)));
-  QToolTip::add(ShowPlans,"Display execution plans");
+  QToolTip::add(ShowPlans,tr("Display execution plans"));
   ShowPlans->setOn(true);
   connect(ShowPlans,SIGNAL(toggled(bool)),this,SLOT(showPlans(bool)));
 
@@ -123,7 +123,7 @@ toWorksheetStatistic::~toWorksheetStatistic()
     Widget=NULL;
 }
 
-void toWorksheetStatistic::saveStatistics(std::map<QString,QString> &stats)
+void toWorksheetStatistic::saveStatistics(std::map<QCString,QString> &stats)
 {
   if (!Widget)
     toAnalyze::createTool();
@@ -131,7 +131,7 @@ void toWorksheetStatistic::saveStatistics(std::map<QString,QString> &stats)
     Widget->worksheet()->addStatistics(stats);
 }
 
-void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
+void toWorksheetStatistic::addStatistics(std::map<QCString,QString> &stats)
 {
   data cur;
   cur.Top=new QVBox(Splitter);
@@ -139,7 +139,7 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
   box->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
   cur.Label=new QLabel(stats["Description"],box);
   cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
-  QCheckBox *check=new QCheckBox("Hide",box);
+  QCheckBox *check=new QCheckBox(tr("Hide"),box);
   cur.Charts=new toHideSplitter(Horizontal,cur.Top,this);
   connect(check,SIGNAL(toggled(bool)),cur.Charts,SLOT(setHidden(bool)));
   cur.Statistics=new toListView(cur.Charts);
@@ -208,9 +208,9 @@ void toWorksheetStatistic::save(int selid)
   int id=1;
   for(std::list<data>::iterator i=Open.begin();i!=Open.end();i++) {
     if (selid==id) {
-      QString fn=toSaveFilename(QString::null,"*.stat",this);
+      QString fn=toSaveFilename(QString::null,QString::fromLatin1("*.stat"),this);
       if (!fn.isEmpty()) {
-	std::map<QString,QString> stat;
+	std::map<QCString,QString> stat;
 	(*i).Statistics->exportData(stat,"Stat");
 	(*i).IO->exportData(stat,"IO");
 	(*i).Wait->exportData(stat,"Wait");
@@ -246,10 +246,10 @@ void toWorksheetStatistic::remove(int selid)
 
 void toWorksheetStatistic::load(void)
 {
-  QString filename=toOpenFilename(QString::null,"*.stat",this);
+  QString filename=toOpenFilename(QString::null,QString::fromLatin1("*.stat"),this);
   if (!filename.isEmpty()) {
     try {
-      std::map<QString,QString> ret;
+      std::map<QCString,QString> ret;
       toTool::loadMap(filename,ret);
       addStatistics(ret);
     } TOCATCH

@@ -259,9 +259,9 @@ void toBackground::start(int msec)
   }
   Animation->setSpeed(Running*100);
   if (Running>1)
-    QToolTip::add(Label,QString::number(Running)+" queries running in background.");
+    QToolTip::add(Label,tr("%1 queries running in background.").arg(Running));
   else
-    QToolTip::add(Label,"One query running in background.");
+    QToolTip::add(Label,tr("One query running in background."));
   toTimer::start(msec);
 }
 
@@ -277,11 +277,11 @@ void toBackground::stop(void)
       else
 	Animation->setSpeed(Running*100);
       if (Running>1)
-	QToolTip::add(Label,QString::number(Running)+" queries running in background.");
+	QToolTip::add(Label,tr("%1 queries running in background.").arg(Running));
       else if (Running==1)
-	QToolTip::add(Label,"One query running in background.");
+	QToolTip::add(Label,tr("One query running in background."));
       else
-	QToolTip::add(Label,"No background queries.");
+	QToolTip::add(Label,tr("No background queries."));
     }
   }
   toTimer::stop();
@@ -301,7 +301,7 @@ void toBackground::init(void)
   Label->setMovie(*Animation);
   Label->show();
   main->statusBar()->addWidget(Label,0,true);
-  QToolTip::add(Label,"No background queries.");
+  QToolTip::add(Label,tr("No background queries."));
 }
 
 toBackground::~toBackground()

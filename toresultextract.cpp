@@ -85,7 +85,7 @@ void toResultExtract::query(const QString &sql,const toQList &param)
       toQuery query(conn,SQLObjectType,owner,name);
 
       if(query.eof())
-	throw QString("Object not found");
+	throw tr("Object not found");
     
       type=query.readValue();
     } else
@@ -94,16 +94,17 @@ void toResultExtract::query(const QString &sql,const toQList &param)
     std::list<QString> objects;
 
     if (toIsOracle(conn)) {
-      if (type=="TABLE"||type=="TABLE PARTITION") {
-	objects.insert(objects.end(),"TABLE FAMILY:"+owner+"."+name);
-	objects.insert(objects.end(),"TABLE REFERENCES:"+owner+"."+name);
-      } else if (type.startsWith("PACKAGE")&&Prompt) {
-	objects.insert(objects.end(),"PACKAGE:"+owner+"."+name);
-	objects.insert(objects.end(),"PACKAGE BODY:"+owner+"."+name);
+      if (type==QString::fromLatin1("TABLE")||
+	  type==QString::fromLatin1("TABLE PARTITION")) {
+	objects.insert(objects.end(),QString::fromLatin1("TABLE FAMILY:")+owner+QString::fromLatin1(".")+name);
+	objects.insert(objects.end(),QString::fromLatin1("TABLE REFERENCES:")+owner+QString::fromLatin1(".")+name);
+      } else if (type.startsWith(QString::fromLatin1("PACKAGE"))&&Prompt) {
+	objects.insert(objects.end(),QString::fromLatin1("PACKAGE:")+owner+QString::fromLatin1(".")+name);
+	objects.insert(objects.end(),QString::fromLatin1("PACKAGE BODY:")+owner+QString::fromLatin1(".")+name);
       } else
-	objects.insert(objects.end(),type+":"+owner+"."+name);
+	objects.insert(objects.end(),type+QString::fromLatin1(":")+owner+QString::fromLatin1(".")+name);
     } else
-	objects.insert(objects.end(),type+":"+owner+"."+name);
+	objects.insert(objects.end(),type+QString::fromLatin1(":")+owner+QString::fromLatin1(".")+name);
 
     toExtract extract(conn,NULL);
     extract.setCode(true);

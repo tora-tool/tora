@@ -98,23 +98,23 @@ void toWaitEvents::setup(int session)
 {
   Session=session;
 
-  QToolBar *toolbar=toAllocBar(this,"Server Tuning");
-  new QLabel("Display ",toolbar);
+  QToolBar *toolbar=toAllocBar(this,tr("Server Tuning"));
+  new QLabel(tr("Display "),toolbar);
   QComboBox *type=new QComboBox(toolbar);
-  type->insertItem("Time");
-  type->insertItem("Count");
+  type->insertItem(tr("Time"));
+  type->insertItem(tr("Count"));
   connect(type,SIGNAL(activated(int)),this,SLOT(changeType(int)));
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
 
   Types=new QListView(splitter);
-  Types->addColumn("Color");
-  Types->addColumn("Wait type");
-  Types->addColumn("Delta (ms/s)");
-  Types->addColumn("Total (ms)");
-  Types->addColumn("Delta (1/s)");
-  Types->addColumn("Total");
+  Types->addColumn(tr("Color"));
+  Types->addColumn(tr("Wait type"));
+  Types->addColumn(tr("Delta (ms/s)"));
+  Types->addColumn(tr("Total (ms)"));
+  Types->addColumn(tr("Delta (1/s)"));
+  Types->addColumn(tr("Total"));
   Types->setColumnAlignment(2,AlignRight);
   Types->setColumnAlignment(3,AlignRight);
   Types->setColumnAlignment(4,AlignRight);
@@ -132,22 +132,22 @@ void toWaitEvents::setup(int session)
   QGridLayout *layout=new QGridLayout(frame);
   
   Delta=new toResultBar(frame);
-  Delta->setTitle("System wait events");
+  Delta->setTitle(tr("System wait events"));
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Delta->showLegend(false);
-  Delta->setYPostfix(" ms/sec");
-  Delta->setYPostfix(" ms/sec");
-  Delta->setSQLName("toTuning:WaitEvents");
+  Delta->setYPostfix(tr(" ms/s"));
+  Delta->setYPostfix(tr(" ms/s"));
+  Delta->setSQLName(QString::fromLatin1("toTuning:WaitEvents"));
   layout->addMultiCellWidget(Delta,0,0,0,1);
 
   DeltaTimes=new toResultBar(frame);
-  DeltaTimes->setTitle("System wait events count");
+  DeltaTimes->setTitle(tr("System wait events count"));
   DeltaTimes->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaTimes->showLegend(false);
-  DeltaTimes->setYPostfix(" ms/sec");
+  DeltaTimes->setYPostfix(tr(" ms/s"));
   DeltaTimes->hide();
-  DeltaTimes->setYPostfix(" waits/sec");
-  DeltaTimes->setSQLName("toTuning:WaitEventsCount");
+  DeltaTimes->setYPostfix(tr(" waits/s"));
+  DeltaTimes->setSQLName(QString::fromLatin1("toTuning:WaitEventsCount"));
   layout->addMultiCellWidget(DeltaTimes,0,0,0,1);
 
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
@@ -242,7 +242,7 @@ void toWaitEvents::changeSelection(void)
   for (QListViewItem *item=Types->firstChild();item;item=item->nextSibling()) {
     QString txt=item->text(1);
     if (usedMap.find(txt)==usedMap.end())
-      toStatusMessage("Internal error, can't find ("+txt+") in usedMap");
+      toStatusMessage(tr("Internal error, can't find (%1) in usedMap").arg(txt));
     if (item->isSelected())
       enabled[usedMap[txt]]=true;
   }
@@ -289,15 +289,15 @@ void toWaitEvents::changeSelection(void)
 	total+=*i;
     }
     AbsolutePie->setValues(absolute,Labels);
-    AbsolutePie->setTitle("Absolute system wait events\nTotal "+QString::number(total/1000)+
-			  (ShowTimes?"":" s"));
+    AbsolutePie->setTitle(tr("Absolute system wait events\nTotal %1%2").
+			  arg(total/1000).arg(QString::fromLatin1(ShowTimes?"":" s")));
     total=0;
     for (std::list<double>::iterator i=relative.begin();i!=relative.end();i++)
       total+=*i;
     DeltaPie->setValues(relative,Labels);
     if (total>0)
-      DeltaPie->setTitle("Delta system wait events\nTotal "+QString::number(total)+
-			 (ShowTimes?"/s":" ms/s"));
+      DeltaPie->setTitle(tr("Delta system wait events\nTotal %1%2").
+			 arg(total).arg(QString::fromLatin1(ShowTimes?"/s":" ms/s")));
 
     else
       DeltaPie->setTitle(QString::null);
@@ -543,23 +543,23 @@ void toWaitEvents::refresh(void)
   } TOCATCH
 }
 
-void toWaitEvents::importData(std::map<QString,QString> &data,const QString &prefix)
+void toWaitEvents::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
-  std::map<QString,QString>::iterator i;
+  std::map<QCString,QString>::iterator i;
   int id=1;
-  while((i=data.find(prefix+":"+QString::number(id)))!=data.end()) {
+  while((i=data.find(prefix+":"+QString::number(id).latin1()))!=data.end()) {
     HideMap[(*i).second]=true;
     id++;
   }
 }
 
-void toWaitEvents::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toWaitEvents::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   int id=1;
   for(QListViewItem *ci=Types->firstChild();ci;ci=ci->nextSibling()) {
     toWaitEventsItem *item=dynamic_cast<toWaitEventsItem *>(ci);
     if (!item->isSelected()) {
-      data[prefix+":"+QString::number(id)]=item->allText(1);
+      data[prefix+":"+QString::number(id).latin1()]=item->allText(1);
       id++;
     }
   }

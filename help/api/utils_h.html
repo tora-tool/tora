@@ -339,10 +339,6 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
  * @return Selected filename.
  */
 QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
-/**
- * Check if this is a registered TOra or freeware, otherwise quit.
- */
-void toCheckCommercial(const QString &reason);
 
 /** Get index of menu to insert tool specific menu at.
  * @return Index of the tool menu entry.
@@ -410,15 +406,15 @@ bool toCheckModal(QWidget *widget);
  * @param prefix Prefix to save map using.
  * @param src The map to save.
  */
-void toMapExport(std::map<QString,QString> &data,const QString &prefix,
-		 std::map<QString,QString> &src);
+void toMapExport(std::map<QCString,QString> &data,const QCString &prefix,
+		 std::map<QCString,QString> &src);
 /** Import the contents of a map from another map.
  * @param data The source map.
  * @param prefix Prefix to use for restoring from map.
  * @param dst The map to save into.
  */
-void toMapImport(std::map<QString,QString> &data,const QString &prefix,
-		 std::map<QString,QString> &dst);
+void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
+		 std::map<QCString,QString> &dst);
 
 /** Find an item in a listview.
  * @param list The list to search for the item.
@@ -442,6 +438,14 @@ public:
  * @param caption Caption to set to the tool.
  */
 void toToolCaption(toToolWidget *tool,const QString &caption);
+/**
+ * Translate string if the context and text is strictly ASCII7 and the context doesn't
+ * contain any spaces. Otherwise just return the text.
+ * @param context The context of the text.
+ * @param text The text to translate.
+ * @return Translated text if appropriate, or original text otherwise.
+ */
+QString toTranslateMayby(const QString &context,const QString &text);
 
 /**
  * Get maximum number of a and b.

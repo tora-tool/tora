@@ -37,8 +37,6 @@
 #include "tohelp.h"
 #include "tomain.h"
 #include "tomarkedtext.h"
-#include "toresultcontent.h"
-#include "toresultview.h"
 #include "tosearchreplace.h"
 
 #include <qaccel.h>
@@ -51,7 +49,7 @@
 #include "tosearchreplaceui.moc"
 
 toSearchReplace::toSearchReplace(QWidget *parent)
-  : toSearchReplaceUI(parent,"SearchReplace"),toHelpContext("searchreplace.html")
+  : toSearchReplaceUI(parent,"SearchReplace"),toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
   QAccel *a=new QAccel(this);
   a->connectItem(a->insertItem(Key_F1),
@@ -92,7 +90,7 @@ void toSearchReplace::searchNext(void)
       Replace->setEnabled(Target->searchCanReplace(false));
       ReplaceAll->setEnabled(Target->searchCanReplace(true));
     } else {
-      toStatusMessage("No more matches found",false,false);
+      toStatusMessage(tr("No more matches found"),false,false);
       Replace->setEnabled(false);
       ReplaceAll->setEnabled(false);
     }

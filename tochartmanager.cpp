@@ -90,10 +90,10 @@ public:
   virtual void customSetup(int toolid)
   {
     toMainWidget()->editMenu()->insertItem(QPixmap((const char **)grid_xpm),
-					   "Chart Manager...",toolid);
+					   tr("Chart Manager..."),toolid);
 
     Window=new toChartManager(toMainWidget()->workspace());
-    Window->setCaption("Chart Manager");
+    Window->setCaption(tr("Chart Manager"));
     Window->setIcon(QPixmap((const char **)grid_xpm));
     Window->close();
   }
@@ -115,7 +115,7 @@ public:
   virtual void changeValue(int val)
   { 
     if (val==1)
-      ExtraLabel->setText("Email");
+      ExtraLabel->setText(tr("Email"));
     else
       ExtraLabel->setText(QString::null);
 
@@ -132,7 +132,7 @@ public:
 
   virtual void browseFile()
   {
-    QString str=toOpenFilename(Filename->text(),"*.csv",this);
+    QString str=toOpenFilename(Filename->text(),QString::fromLatin1("*.csv"),this);
     if (!str.isEmpty())
       Filename->setText(str);
   }
@@ -148,7 +148,7 @@ public:
     diag.Value->setValidator(new QDoubleValidator(diag.Value));
     diag.Extra->setText(alarm.Extra);
     std::list<int>::iterator sel=alarm.Columns.begin();
-    diag.Charts->addColumn("Charts");
+    diag.Charts->addColumn(tr("Charts"));
     diag.Charts->setSelectionMode(QListView::Multi);
     QListViewItem *item=NULL;
     std::list<QString>::iterator lab=Chart->labels().begin();
@@ -183,17 +183,17 @@ public:
     toChartManager::chartAlarm alarm;
     QString str=modifyAlarm(alarm.toString(),alarm.Persistent);
     if (!str.isEmpty())
-      new QListViewItem(Alarms,str,alarm.Persistent?"Persistent":"Temporary");
+      new QListViewItem(Alarms,str,alarm.Persistent?tr("Persistent"):tr("Temporary"));
   }
   virtual void modifyAlarm()
   {
     QListViewItem *item=Alarms->selectedItem();
     if (item) {
-      bool pers=item->text(1)=="Persistent";
+      bool pers=item->text(1)==tr("Persistent");
       QString str=modifyAlarm(item->text(0),pers);
       if (!str.isEmpty()) {
 	item->setText(0,str);
-	item->setText(1,pers?"Persistent":"Temporary");
+	item->setText(1,pers?tr("Persistent"):tr("Temporary"));
       }
     }
   }
@@ -225,7 +225,7 @@ QString toChartReceiver::name(void)
   if (!Result||Result->sqlName().isEmpty())
     return QString::null;
   try {
-    LastName=Result->connection().description(false)+":"+Result->sqlName();
+    LastName=Result->connection().description(false)+QString::fromLatin1(":")+QString::fromLatin1(Result->sqlName());
   } catch(...) {
   }
   return LastName;
@@ -237,7 +237,7 @@ void toChartReceiver::valueAdded(std::list<double> &value,const QString &xValues
 }
 
 toChartManager::toChartManager(QWidget *main)
-  : QVBox(main),toHelpContext("chartmanager.html")
+  : QVBox(main),toHelpContext(QString::fromLatin1("chartmanager.html"))
 {
   loadSettings();
 
@@ -248,33 +248,33 @@ toChartManager::toChartManager(QWidget *main)
   connect(toMainWidget(),SIGNAL(chartSetup(toLineChart *)),
 	  this,SLOT(setupChart(toLineChart *)));
 
-  QToolBar *toolbar=toAllocBar(this,"Chart Manager");
+  QToolBar *toolbar=toAllocBar(this,tr("Chart Manager"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh list",
-		  "Refresh list",
+		  tr("Refresh list"),
+		  tr("Refresh list"),
 		  this,SLOT(refresh()),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)fileopen_xpm),
-		  "Open tracker file",
-		  "Open tracker file",
+		  tr("Open tracker file"),
+		  tr("Open tracker file"),
 		  this,SLOT(openChart()),
 		  toolbar);
   new QToolButton(QPixmap((const char **)grid_xpm),
-		  "Setup chart",
-		  "Setup chart",
+		  tr("Setup chart"),
+		  tr("Setup chart"),
 		  this,SLOT(setupChart()),
 		  toolbar);
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   List=new toListView(this);
-  List->addColumn("Connection");
-  List->addColumn("Title");
-  List->addColumn("ID");
-  List->addColumn("Tracking");
-  List->addColumn("Alarms");
+  List->addColumn(tr("Connection"));
+  List->addColumn(tr("Title"));
+  List->addColumn(tr("ID"));
+  List->addColumn(tr("Tracking"));
+  List->addColumn(tr("Alarms"));
   List->setSorting(2);
   List->setSelectionMode(QListView::Single);
 
@@ -292,10 +292,10 @@ void toChartManager::windowActivated(QWidget *widget)
   if (widget==this&&!isHidden()) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
 
-      toMainWidget()->menuBar()->insertItem("&Chart Manager",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Chart Manager"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -377,49 +377,49 @@ toChartManager::chartAlarm::chartAlarm(const QString &inp,bool pers)
     return;
   }
 
-  QString t=oper;
-  if(t=="min")
+  QString t=QString::fromLatin1(oper);
+  if(t==QString::fromLatin1("min"))
     Operation=Min;
-  else if (t=="all")
+  else if (t==QString::fromLatin1("all"))
     Operation=All;
-  else if (t=="sum")
+  else if (t==QString::fromLatin1("sum"))
     Operation=Sum;
-  else if (t=="average")
+  else if (t==QString::fromLatin1("average"))
     Operation=Average;
-  else if (t=="max")
+  else if (t==QString::fromLatin1("max"))
     Operation=Max;
   else
     Operation=Any;
 
   t=QString::fromUtf8(cols);
   if (t.length()>2) {
-    QStringList lst=QStringList::split(",",t.mid(1,t.length()-2));
+    QStringList lst=QStringList::split(QString::fromLatin1(","),t.mid(1,t.length()-2));
     for(unsigned int i=0;i<lst.count();i++)
       Columns.insert(Columns.end(),lst[i].toInt());
     Columns.sort();
   }
 
-  t=comp;
-  if (t=="=") {
+  t=QString::fromLatin1(comp);
+  if (t==QString::fromLatin1("=")) {
     Comparison=Equal;
-  } else if (t=="!=") {
+  } else if (t==QString::fromLatin1("!=")) {
     Comparison=NotEqual;
-  } else if (t=="<") {
+  } else if (t==QString::fromLatin1("<")) {
     Comparison=Less;
-  } else if (t==">") {
+  } else if (t==QString::fromLatin1(">")) {
     Comparison=Greater;
-  } else if (t=="<=") {
+  } else if (t==QString::fromLatin1("<=")) {
     Comparison=LessEqual;
-  } else if (t==">=") {
+  } else if (t==QString::fromLatin1(">=")) {
     Comparison=GreaterEqual;
   } else {
     Comparison=Equal;
   }
 
-  t=act;
-  if (t=="StatusMessage")
+  t=QString::fromLatin1(act);
+  if (t==QString::fromLatin1("StatusMessage"))
     Action=StatusMessage;
-  else if (t=="Email")
+  else if (t==QString::fromLatin1("Email"))
     Action=Email;
   else
     Action=Ignore;
@@ -456,68 +456,68 @@ QString toChartManager::chartAlarm::toString(void)
   QString t;
   switch (Operation) {
   case Any:
-    t="any";
+    t=QString::fromLatin1("any");
     break;
   case All:
-    t="all";
+    t=QString::fromLatin1("all");
     break;
   case Sum:
-    t="sum";
+    t=QString::fromLatin1("sum");
     break;
   case Average:
-    t="average";
+    t=QString::fromLatin1("average");
     break;
   case Max:
-    t="max";
+    t=QString::fromLatin1("max");
     break;
   case Min:
-    t="min";
+    t=QString::fromLatin1("min");
     break;
   }
-  t+=" (";
+  t+=QString::fromLatin1(" (");
   bool first=true;
   for(std::list<int>::iterator i=Columns.begin();i!=Columns.end();i++) {
     if (first)
       first=false;
     else
-      t+=",";
+      t+=QString::fromLatin1(",");
     t+=QString::number(*i);
   }
-  t+=")";
+  t+=QString::fromLatin1(")");
   switch (Comparison) {
   case Equal:
-    t+=" = ";
+    t+=QString::fromLatin1(" = ");
     break;
   case NotEqual:
-    t+=" != ";
+    t+=QString::fromLatin1(" != ");
     break;
   case Less:
-    t+=" < ";
+    t+=QString::fromLatin1(" < ");
     break;
   case Greater:
-    t+=" > ";
+    t+=QString::fromLatin1(" > ");
     break;
   case LessEqual:
-    t+=" <= ";
+    t+=QString::fromLatin1(" <= ");
     break;
   case GreaterEqual:
-    t+=" >= ";
+    t+=QString::fromLatin1(" >= ");
     break;
   }
   t+=QString::number(Value);
   switch (Action) {
   case StatusMessage:
-    t+=" StatusMessage";
+    t+=QString::fromLatin1(" StatusMessage");
     break;
   case Email:
-    t+=" Email";
+    t+=QString::fromLatin1(" Email");
     break;
   case Ignore:
-    t+=" Ignore";
+    t+=QString::fromLatin1(" Ignore");
     break;
   }
   if (!Extra.isEmpty()) {
-    t+=" ";
+    t+=QString::fromLatin1(" ");
     t+=Extra;
   }
   return t;
@@ -640,7 +640,7 @@ void toChartManager::saveSettings(void)
     for(std::map<QString,chartTrack>::iterator i=Files.begin();i!=Files.end();i++) {
       if ((*i).second.Persistent) {
 	num++;
-	QString name="Files:"+QString::number(num);
+	QCString name=QCString("Files:")+QString::number(num).latin1();
 	ChartTool.setConfig(name+":Name",(*i).first);
 	ChartTool.setConfig(name+":Spec",(*i).second.File.name());
       }
@@ -654,7 +654,7 @@ void toChartManager::saveSettings(void)
       for(std::list<chartAlarm>::iterator j=(*i).second.begin();j!=(*i).second.end();j++) {
 	if ((*j).Persistent) {
 	  num++;
-	  QString name="Alarms:"+QString::number(num);
+	  QCString name=QCString("Alarms:")+QString::number(num).latin1();
 	  ChartTool.setConfig(name+":Name",(*i).first);
 	  ChartTool.setConfig(name+":Spec",(*j).toString());
 	}
@@ -669,18 +669,18 @@ void toChartManager::loadSettings(void)
 {
   {
     for(int num=ChartTool.config("FilesCount","0").toInt();num>0;num--) {
-      QString name="Files:"+QString::number(num);
-      QString t=ChartTool.config(name+":Name",QString::null);
-      QString s=ChartTool.config(name+":Spec",QString::null);
+      QCString name=QCString("Files:")+QString::number(num).latin1();
+      QString t=ChartTool.config(name+":Name","");
+      QString s=ChartTool.config(name+":Spec","");
       if (!t.isEmpty()&&!s.isEmpty())
 	Files[t]=chartTrack(s,true);
     }
   }
   {
     for(int num=ChartTool.config("AlarmCount","0").toInt();num>0;num--) {
-      QString name="Alarms:"+QString::number(num);
-      QString t=ChartTool.config(name+":Name",QString::null);
-      QString s=ChartTool.config(name+":Spec",QString::null);
+      QCString name=QCString("Alarms:")+QString::number(num).latin1();
+      QString t=ChartTool.config(name+":Name","");
+      QString s=ChartTool.config(name+":Spec","");
       if (!t.isEmpty()&&!s.isEmpty())
 	Alarms[t].insert(Alarms[t].end(),chartAlarm(s,true));
     }
@@ -692,15 +692,12 @@ void toChartManager::alarm(void)
   while(SignalAlarms.size()>0) {
     alarmSignal signal=toShift(SignalAlarms);
     if (signal.Action==StatusMessage)
-      toStatusMessage("ALARM:"+signal.Chart+": "+signal.Alarm+": "+signal.xValue);
+      toStatusMessage(tr("ALARM:")+signal.Chart+QString::fromLatin1(": ")+signal.Alarm+QString::fromLatin1(": ")+signal.xValue);
     else if (signal.Action==Email)
-      new toSMTP("Toolkit for Oracle <noreply@localhost>",
+      new toSMTP(QString::fromLatin1("TOra <noreply@localhost>"),
 		 signal.Extra,
-		 "TOra alert: "+signal.Chart,
-		 "A defined alert value was detected:\n\n"+
-		 signal.Alarm+
-		 "\n\nAt: "+
-		 signal.xValue);
+		 tr("TOra alert: ")+signal.Chart,
+		 tr("A defined alert value was detected:\n\n%1\n\nAt: %2").arg(signal.Alarm).arg(signal.xValue));
   }
 }
 
@@ -726,23 +723,23 @@ void toChartManager::valueAdded(toLineChart *chart,
       file.open(IO_Raw|IO_WriteOnly|IO_Append);
     }
     if (file.isOpen()) {
-      static QRegExp quote("\"");
+      static QRegExp quote(QString::fromLatin1("\""));
       QCString out="\"";
       if (header) {
 	QString t=chart->title();
-	t.replace(quote,"\"\"");
+	t.replace(quote,QString::fromLatin1("\"\""));
 	out+=t.utf8();
 	std::list<QString> labels=chart->labels();
 	for(std::list<QString>::iterator i=labels.begin();i!=labels.end();i++) {
 	  out+="\";\"";
 	  QString t=(*i);
-	  t.replace(quote,"\"\"");
+	  t.replace(quote,QString::fromLatin1("\"\""));
 	  out+=t.utf8();
 	}
 	out+="\"\n\"";
       }
       QString t=xValue;
-      t.replace(quote,"\"\"");
+      t.replace(quote,QString::fromLatin1("\"\""));
       out+=t.utf8();
       for(std::list<double>::iterator i=value.begin();i!=value.end();i++) {
 	out+="\";\"";
@@ -758,7 +755,7 @@ static QString ReadCSV(const QCString &data,unsigned int &pos,bool &nl)
 {
   QCString ret;
   if (data.at(pos)!='\"')
-    throw QString("Initial value didn't start with \" in CSV file");
+    throw qApp->translate("toChartManager","Initial value didn't start with \" in CSV file");
   pos++;
   while(pos<data.length()&&
 	(data.at(pos)!='\"'||(pos+1<data.length()&&
@@ -769,7 +766,7 @@ static QString ReadCSV(const QCString &data,unsigned int &pos,bool &nl)
     pos++;
   }
   if (pos>=data.length())
-    throw QString("Missing closing \" in CSV file");
+    throw qApp->translate("toChartManager","Missing closing \" in CSV file");
   pos++;
   nl=false;
   while(pos<data.length()&&(isspace(data.at(pos))||data.at(pos)==','||data.at(pos)==';')) {
@@ -782,7 +779,7 @@ static QString ReadCSV(const QCString &data,unsigned int &pos,bool &nl)
 
 void toChartManager::openChart(void)
 {
-  QString name=toOpenFilename(QString::null,"*.csv",this);
+  QString name=toOpenFilename(QString::null,QString::fromLatin1("*.csv"),this);
   if (!name.isEmpty()) {
     try {
       QCString data=toReadFile(name);
@@ -790,9 +787,11 @@ void toChartManager::openChart(void)
       
       toLineChart *chart;
       switch(TOMessageBox::information(toMainWidget(),
-				       "Chart format",
-				       "Select format of the chart to display",
-				       "Barchart","Linechart","Cancel")) {
+				       tr("Chart format"),
+				       tr("Select format of the chart to display"),
+				       tr("Barchart"),
+				       tr("Linechart"),
+				       tr("Cancel"))) {
       case 0:
 	chart=new toBarChart(toMainWidget()->workspace(),NULL,
 			     WDestructiveClose);
@@ -865,8 +864,8 @@ void toChartManager::setupChart(toLineChart *chart)
 	  file=(*fndt).second;
 
 	toChartSetup setup(chart,this,NULL,true);
-	setup.Alarms->addColumn("Alarms");
-	setup.Alarms->addColumn("Persistent");
+	setup.Alarms->addColumn(tr("Alarms"));
+	setup.Alarms->addColumn(tr("Persistent"));
 	setup.Alarms->setSorting(0);
 	setup.Alarms->setSelectionMode(QListView::Single);
 	setup.Persistent->setChecked(file.Persistent);
@@ -884,7 +883,7 @@ void toChartManager::setupChart(toLineChart *chart)
 	for(std::list<chartAlarm>::iterator j=alarm.begin();j!=alarm.end();j++)
 	  new QListViewItem(setup.Alarms,
 			    (*j).toString(),
-			    (*j).Persistent?"Persistent":"Temporary");
+			    (*j).Persistent?tr("Persistent"):tr("Temporary"));
 
 	if (setup.exec()) {
 	  if (setup.Filename->text().isEmpty()||!setup.Enabled->isChecked()) {
@@ -900,7 +899,7 @@ void toChartManager::setupChart(toLineChart *chart)
 	  for(QListViewItem *item=setup.Alarms->firstChild();
 	      item;item=item->nextSibling()) {
 	    alarm.insert(alarm.end(),chartAlarm(item->text(0),
-						item->text(1)=="Persistent"));
+						item->text(1)==tr("Persistent")));
 	  }
 	  if (alarm.size()>0)
 	    Alarms[name]=alarm;
@@ -931,7 +930,7 @@ void toChartManager::refresh(void)
 	    QString t;
 	    for(std::list<chartAlarm>::iterator j=(*fnda).second.begin();j!=(*fnda).second.end();j++) {
 	      t+=(*j).toString();
-	      t+="\n";
+	      t+=QString::fromLatin1("\n");
 	    }
 	    if (t.length()>0)
 	      item->setText(4,t.mid(0,t.length()-1));

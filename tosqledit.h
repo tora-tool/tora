@@ -58,7 +58,7 @@ class toSQLEdit : public toToolWidget {
   QString LastVersion;
   QString Filename;
 
-  bool splitVersion(const QString &split,QString &provider,QString &version);
+  bool splitVersion(const QString &split,QCString &provider,QCString &version);
   void connectList(bool connect);
 protected:
   void updateStatements(const QString &def=QString::null);
@@ -86,11 +86,11 @@ public slots:
 };
 
 class toSQLTemplateItem : public toTemplateItem {
-  QString Name;
+  QCString Name;
 public:
   toSQLTemplateItem(QListView *parent);
   toSQLTemplateItem(toSQLTemplateItem *parent,
-		    const QString &name);
+		    const QCString &name);
   virtual void expand(void);
   virtual void collapse(void);
   virtual QWidget *selectedWidget(QWidget *parent);

@@ -119,19 +119,19 @@ static toSQL SQLHost("toAlert:Hostname",
 toAlert::toAlert(QWidget *main,toConnection &connection)
   : toToolWidget(AlertTool,"alert.html",main,connection),Connection(connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Alert Messenger");
+  QToolBar *toolbar=toAllocBar(this,tr("Alert Messenger"));
 
   QString def;
   try {
     toQList lst=toQuery::readQuery(connection,SQLHost);
     def+=toShift(lst);
     if (!def.isEmpty())
-      def+=":";
+      def+=QString::fromLatin1(":");
   } catch(...) {
   }
   def+=connection.user();
 
-  new QLabel("Registered ",toolbar);
+  new QLabel(tr("Registered "),toolbar);
   Registered=new QComboBox(toolbar);
   Registered->insertItem(def);
   Registered->setEditable(true);
@@ -142,35 +142,35 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   AddNames.insert(AddNames.end(),def);
 
   new QToolButton(QPixmap((const char **)commit_xpm),
-		  "Register current",
-		  "Register current",
+		  tr("Register current"),
+		  tr("Register current"),
 		  this,SLOT(add()),
 		  toolbar);
 
   new QToolButton(QPixmap((const char **)trash_xpm),
-		  "Remove registered",
-		  "Remove registered",
+		  tr("Remove registered"),
+		  tr("Remove registered"),
 		  this,SLOT(remove()),
 		  toolbar);
 
   toolbar->addSeparator();
 
-  new QLabel("Name ",toolbar);
+  new QLabel(tr("Name "),toolbar);
   Name=new QLineEdit(toolbar);
   Name->setText(def);
   connect(Name,SIGNAL(returnPressed()),this,SLOT(send()));
-  new QLabel("Message ",toolbar);
+  new QLabel(tr("Message "),toolbar);
   Message=new QLineEdit(toolbar);
   connect(Message,SIGNAL(returnPressed()),this,SLOT(send()));
   new QToolButton(QPixmap((const char **)toworksheet_xpm),
-		  "Edit message in memo",
-		  "Edit message in memo",
+		  tr("Edit message in memo"),
+		  tr("Edit message in memo"),
 		  this,SLOT(memo()),
 		  toolbar);
   toolbar->setStretchableWidget(Message);
   new QToolButton(QPixmap((const char **)return_xpm),
-		  "Send alert",
-		  "Send alert",
+		  tr("Send alert"),
+		  tr("Send alert"),
 		  this,SLOT(send()),
 		  toolbar);
 
@@ -178,9 +178,9 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   Timer.start(TIMEOUT*1000);
 
   Alerts=new toListView(this);
-  Alerts->addColumn("Time");
-  Alerts->addColumn("Name");
-  Alerts->addColumn("Message");
+  Alerts->addColumn(tr("Time"));
+  Alerts->addColumn(tr("Name"));
+  Alerts->addColumn(tr("Message"));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -191,7 +191,7 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
     toThread *thread=new toThread(new pollTask(*this));
     thread->start();
   } catch(...) {
-    toStatusMessage("Failed to start polling thread, try closing some other tools and restart Alert Messenger");
+    toStatusMessage(tr("Failed to start polling thread, try closing some other tools and restart Alert Messenger"));
   }
 
   setFocusProxy(Message);
@@ -202,18 +202,18 @@ void toAlert::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem("&Add name",Registered,SLOT(setFocus()),ALT+Key_R);
-      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),"&Remove name",
+      ToolMenu->insertItem(tr("&Add name"),Registered,SLOT(setFocus()),ALT+Key_R);
+      ToolMenu->insertItem(QPixmap((const char **)trash_xpm),tr("&Remove name"),
 			   this,SLOT(remove(void)),CTRL+Key_Backspace);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Edit &name",Name,SLOT(setFocus()),ALT+Key_N);
-      ToolMenu->insertItem("Edit &message",Message,SLOT(setFocus()),ALT+Key_M);
-      ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),"&Message in memo...",
+      ToolMenu->insertItem(tr("Edit &name"),Name,SLOT(setFocus()),ALT+Key_N);
+      ToolMenu->insertItem(tr("Edit &message"),Message,SLOT(setFocus()),ALT+Key_M);
+      ToolMenu->insertItem(QPixmap((const char **)toworksheet_xpm),tr("&Message in memo..."),
 			   this,SLOT(memo(void)),CTRL+Key_M);
-      ToolMenu->insertItem(QPixmap((const char **)return_xpm),"&Send alert",
+      ToolMenu->insertItem(QPixmap((const char **)return_xpm),tr("&Send alert"),
 			   this,SLOT(send(void)),CTRL+Key_Return);
 
-      toMainWidget()->menuBar()->insertItem("&Alert",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Alert"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -323,7 +323,7 @@ void toAlert::pollTask::run(void)
 #endif
       }
     } catch(const QString &str) {
-      printf("Exception in alert polling:\n%s\n",(const char *)str);
+      printf("Exception in alert polling:\n%s\n",(const char *)str.latin1());
     } catch(...) {
       printf("Unexpected alert in polling.\n");
     }

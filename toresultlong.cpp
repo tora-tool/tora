@@ -70,7 +70,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
 {
   if (!setSQLParams(sql,param)) {
     emit firstResult(toResult::sql(),
-		     toConnection::exception("Will not reexecute same query"),false);
+		     toConnection::exception(tr("Will not reexecute same query")),false);
     emit done();
     return;
   }
@@ -87,7 +87,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
   HasHeaders=false;
 
   if (NumberColumn) {
-    addColumn("#");
+    addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);
   }
   try {
@@ -132,15 +132,17 @@ void toResultLong::addItem(void)
     if (Query) {
       if (Query->poll()) {
 	bool em=false;
-	char buffer[100];
+	QString buffer;
 	if (First) {
 	  QString tmp=sql().simplifyWhiteSpace().mid(0,10).lower();
-	  if (tmp.startsWith("update")||tmp.startsWith("delete")||tmp.startsWith("insert"))
-	    sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
-	  else if (tmp.startsWith("select"))
-	    sprintf(buffer,"Query executed");
+	  if (tmp.startsWith(QString::fromLatin1("update"))||
+	      tmp.startsWith(QString::fromLatin1("delete"))||
+	      tmp.startsWith(QString::fromLatin1("insert")))
+	    buffer=tr("%1 rows processed").arg(Query->rowsProcessed());
+	  else if (tmp.startsWith(QString::fromLatin1("select")))
+	    buffer=tr("Query executed");
 	  else
-	    sprintf(buffer,"Statement executed");
+	    buffer=tr("Statement executed");
 	  em=true;
 	}
 	if (!HasHeaders) {
@@ -151,14 +153,14 @@ void toResultLong::addItem(void)
 	    QString name=(*i).Name;
 	    if (ReadableColumns)
 	      toReadableColumn(name);
-	    if (name.length()>0&&name[0]!=' ') {
+	    if (name.length()>0&&name[0].latin1()!=' ') {
 	      if (hidden)
-		throw QString("Can only hide last column in query");
-	      if (name[0]=='-') {
-		addColumn(name.right(name.length()-1));
+		throw tr("Can only hide last column in query");
+	      if (name[0].latin1()=='-') {
+		addColumn(toTranslateMayby(sqlName(),name.right(name.length()-1)));
 		setColumnAlignment(columns()-1,AlignRight);
 	      } else {
-		addColumn(name);
+		addColumn(toTranslateMayby(sqlName(),name));
 		if ((*i).AlignRight)
 		  setColumnAlignment(columns()-1,AlignRight);
 	      }
@@ -181,7 +183,7 @@ void toResultLong::addItem(void)
 	  }
 	  do {
 	    QListViewItem *last=LastItem;
-	    LastItem=createItem(LastItem,NULL);
+	    LastItem=createItem(LastItem,QString::null);
 	    if (NumberColumn)
 	      LastItem->setText(0,QString::number(RowNumber+1));
 	    else
@@ -197,7 +199,7 @@ void toResultLong::addItem(void)
 	}
 	if (em) {
 	  First=false;
-	  emit firstResult(sql(),toConnection::exception(QString(buffer)),false);
+	  emit firstResult(sql(),toConnection::exception(buffer),false);
 	}
 	if (Query->eof()) {
 	  cleanup();

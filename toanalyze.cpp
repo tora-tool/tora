@@ -116,7 +116,7 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "       last_analyzed\n"
 			    "  from sys.all_tables\n"
 			    " WHERE 1 = 1",
-			    QString::null,
+			    "",
 			    "7.3");
 
 static toSQL SQLListIndex("toAnalyze:ListIndex",
@@ -149,62 +149,62 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 {
   Tabs=new QTabWidget(this);
   QVBox *box=new QVBox(Tabs);
-  Tabs->addTab(box,"Analyze");
+  Tabs->addTab(box,tr("Analyze"));
 
-  QToolBar *toolbar=toAllocBar(box,"Statistics Manager");
+  QToolBar *toolbar=toAllocBar(box,tr("Statistics Manager"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh",
-		  "Refresh",
+		  tr("Refresh"),
+		  tr("Refresh"),
 		  this,SLOT(refresh()),
 		  toolbar);
 
   toolbar->addSeparator();
   Analyzed=new QComboBox(toolbar);
-  Analyzed->insertItem("All");
-  Analyzed->insertItem("Not analyzed");
-  Analyzed->insertItem("Analyzed");
+  Analyzed->insertItem(tr("All"));
+  Analyzed->insertItem(tr("Not analyzed"));
+  Analyzed->insertItem(tr("Analyzed"));
 
   Schema=new toResultCombo(toolbar);
-  Schema->setSelected("All");
-  Schema->additionalItem("All");
+  Schema->setSelected(tr("All"));
+  Schema->additionalItem(tr("All"));
   try {
     Schema->query(toSQL::sql(toSQL::TOSQL_USERLIST));
   } TOCATCH
 
   Type=new QComboBox(toolbar);
-  Type->insertItem("Tables");
-  Type->insertItem("Indexes");
+  Type->insertItem(tr("Tables"));
+  Type->insertItem(tr("Indexes"));
 
   toolbar->addSeparator();
   Operation=new QComboBox(toolbar);
-  Operation->insertItem("Compute statistics");
-  Operation->insertItem("Estimate statistics");
-  Operation->insertItem("Delete statistics");
-  Operation->insertItem("Validate references");
+  Operation->insertItem(tr("Compute statistics"));
+  Operation->insertItem(tr("Estimate statistics"));
+  Operation->insertItem(tr("Delete statistics"));
+  Operation->insertItem(tr("Validate references"));
   connect(Operation,SIGNAL(activated(int)),
 	  this,SLOT(changeOperation(int)));
 
-  new QLabel(" for ",toolbar);
+  new QLabel(tr(" for "),toolbar);
   For=new QComboBox(toolbar);
-  For->insertItem("All");
-  For->insertItem("Table");
-  For->insertItem("Indexed columns");
-  For->insertItem("Local indexes");
+  For->insertItem(tr("All"));
+  For->insertItem(tr("Table"));
+  For->insertItem(tr("Indexed columns"));
+  For->insertItem(tr("Local indexes"));
   toolbar->addSeparator();
-  new QLabel("Sample ",toolbar);
+  new QLabel(tr("Sample "),toolbar);
   Sample=new QSpinBox(1,100,1,toolbar);
   Sample->setValue(100);
-  Sample->setSuffix(" %");
+  Sample->setSuffix(tr(" %"));
   Sample->setEnabled(false);
   toolbar->addSeparator();
-  new QLabel("Parallel ",toolbar);
+  new QLabel(tr("Parallel "),toolbar);
   Parallel=new QSpinBox(1,100,1,toolbar);
   toolbar->addSeparator();
   
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  "Start analyzing",
-		  "Start analyzing",
+		  tr("Start analyzing"),
+		  tr("Start analyzing"),
 		  this,SLOT(execute()),
 		  toolbar);
 
@@ -213,8 +213,8 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   toolbar->setStretchableWidget(Current);
 
   Stop=new QToolButton(QPixmap((const char **)stop_xpm),
-		       "Stop current run",
-		       "Stop current run",
+		       tr("Stop current run"),
+		       tr("Stop current run"),
 		       this,SLOT(stop()),
 		       toolbar);
   Stop->setEnabled(false);
@@ -234,9 +234,9 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
   box=new QVBox(Tabs);
-  toolbar=toAllocBar(box,"Explain plans");
+  toolbar=toAllocBar(box,tr("Explain plans"));
 
-  Tabs->addTab(box,"Explain plans");
+  Tabs->addTab(box,tr("Explain plans"));
   QSplitter *splitter=new QSplitter(Horizontal,box);
   Plans=new toResultLong(false,false,toQuery::Background,splitter);
   Plans->setSelectionMode(QListView::Single);
@@ -249,8 +249,8 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   connect(Plans,SIGNAL(selectionChanged()),
 	  this,SLOT(selectPlan()));
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh",
-		  "Refresh",
+		  tr("Refresh"),
+		  tr("Refresh"),
 		  Plans,SLOT(refresh()),
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
@@ -258,7 +258,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   CurrentPlan=new toResultPlan(splitter);
 
   Worksheet=new toWorksheetStatistic(Tabs);
-  Tabs->addTab(Worksheet,"Worksheet statistics");
+  Tabs->addTab(Worksheet,tr("Worksheet statistics"));
 
   refresh();
   setFocusProxy(Tabs);
@@ -276,10 +276,10 @@ void toAnalyze::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
 
-      toMainWidget()->menuBar()->insertItem("&Statistics",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Statistics"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -309,18 +309,18 @@ void toAnalyze::refresh(void)
       sql=toSQL::string(SQLListTables,connection());
     else
       sql=toSQL::string(SQLListIndex,connection());
-    if (Schema->selected()!="All") {
+    if (Schema->selected()!=tr("All")) {
       par.insert(par.end(),Schema->selected());
-      sql+="\n   AND owner = :own<char[100]>";
+      sql+=QString::fromLatin1("\n   AND owner = :own<char[100]>");
     }
     switch (Analyzed->currentItem()) {
     default:
       break;
     case 1:
-      sql+="\n  AND Last_Analyzed IS NULL";
+      sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NULL");
       break;
     case 2:
-      sql+="\n  AND Last_Analyzed IS NOT NULL";
+      sql+=QString::fromLatin1("\n  AND Last_Analyzed IS NOT NULL");
       break;
     }
 
@@ -355,8 +355,7 @@ void toAnalyze::poll(void)
       refresh();
       stop();
     } else
-      Current->setText("Running "+QString::number(running)+
-		       " Pending "+QString::number(Pending.size()));
+      Current->setText(tr("Running %1 Pending %1").arg(running).arg(Pending.size()));
   } TOCATCH
 }
 
@@ -366,40 +365,40 @@ void toAnalyze::execute(void)
 
   for(QListViewItem *item=Statistics->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
-      QString sql="ANALYZE %3 %1.%2 ";
+      QString sql=QString::fromLatin1("ANALYZE %3 %1.%2 ");
       QString forc;
-      if (item->text(0)=="TABLE") {
+      if (item->text(0)==QString::fromLatin1("TABLE")) {
 	switch(For->currentItem()) {
 	case 0:
-	  forc="";
+	  forc=QString::null;
 	  break;
 	case 1:
-	  forc=" FOR TABLE";
+	  forc=QString::fromLatin1(" FOR TABLE");
 	  break;
 	case 2:
-	  forc=" FOR ALL INDEXED COLUMNS";
+	  forc=QString::fromLatin1(" FOR ALL INDEXED COLUMNS");
 	  break;
 	case 3:
-	  forc=" FOR ALL LOCAL INDEXES";
+	  forc=QString::fromLatin1(" FOR ALL LOCAL INDEXES");
 	  break;
 	}
       }
 
       switch(Operation->currentItem()) {
       case 0:
-	sql+="COMPUTE STATISTICS";
+	sql+=QString::fromLatin1("COMPUTE STATISTICS");
 	sql+=forc;
 	break;
       case 1:
-	sql+="ESTIMATE STATISTICS";
+	sql+=QString::fromLatin1("ESTIMATE STATISTICS");
 	sql+=forc;
-	sql+=" SAMPLE "+QString::number(Sample->value())+" PERCENT";
+	sql+=QString::fromLatin1(" SAMPLE %1 PERCENT").arg(Sample->value());
 	break;
       case 2:
-	sql+="DELETE STATISTICS";
+	sql+=QString::fromLatin1("DELETE STATISTICS");
 	break;
       case 3:
-	sql+="VALIDATE REF UPDATE";
+	sql+=QString::fromLatin1("VALIDATE REF UPDATE");
 	break;
       }
 

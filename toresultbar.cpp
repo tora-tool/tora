@@ -180,9 +180,9 @@ void toResultBar::connectionChanged(void)
 
 void toResultBar::addMenues(QPopupMenu *popup)
 {
-  if (sqlName().length()) {
+  if (!sqlName().isEmpty()) {
     popup->insertSeparator();
-    popup->insertItem("Edit SQL...",
+    popup->insertItem(tr("Edit SQL..."),
 		      this,SLOT(editSQL()));
   }
 }

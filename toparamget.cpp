@@ -58,11 +58,11 @@ std::map<QString,std::map<QString,QString> > toParamGet::DefaultCache;
 std::map<QString,std::map<QString,QString> > toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
-  : QDialog(parent,name,true),toHelpContext("common.html#param")
+  : QDialog(parent,name,true),toHelpContext(QString::fromLatin1("common.html#param"))
 {
   toHelp::connectDialog(this);
   resize(500,480);
-  setCaption("Define binding variables");
+  setCaption(tr("Define binding variables"));
 
   QGridLayout *layout=new QGridLayout(this,3,2);
   layout->setSpacing( 6 );
@@ -122,7 +122,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
   QString direction;
   QString res;
 
-  QString def="<char[4000]>";
+  QString def=QString::fromLatin1("<char[4000]>");
 
   int colon=1;
 
@@ -159,7 +159,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	  state=normal;
 	break;
       case normal:
-	switch(c) {
+	switch(c.latin1()) {
 	case '\'':
 	case '\"':
 	  endString=c;
@@ -172,10 +172,10 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	  fname="";
 	  break;
 	case '?':
-	  fname="f";
+	  fname=QString::fromLatin1("f");
 	  fname+=QString::number(colon);
 	  colon++;
-	  res+=":";
+	  res+=QString::fromLatin1(":");
 	  res+=fname;
 	  res+=def.mid(0,def.length()-1);
 	  c=def.at(def.length()-1);
@@ -188,8 +188,8 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	  break;
 	}
 	if (fname.isEmpty()) {
-	  toStatusMessage("Missing field name");
-	  throw QString("Missing field name");
+	  toStatusMessage(tr("Missing field name"));
+	  throw tr("Missing field name");
 	}
 	state=afterName;
       case afterName:
@@ -232,7 +232,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	      found=false;
 	  }
 	  QLineEdit *edit=new QLineEdit(widget->Container,QString::number(num));
-	  QCheckBox *box=new QCheckBox("NULL",widget->Container);
+	  QCheckBox *box=new QCheckBox(tr("NULL"),widget->Container);
 	  connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
 	  if (found) {
 	    edit->setText((*fnd).second);
@@ -240,7 +240,7 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
 	      box->setChecked(true);
 	  }
 	  toParamGetButton *btn=new toParamGetButton(num,widget->Container);
-	  btn->setText("Edit");
+	  btn->setText(tr("Edit"));
 	  btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed));
 	  connect(btn,SIGNAL(clicked(int)),widget,SLOT(showMemo(int)));
 	  connect(box,SIGNAL(toggled(bool)),btn,SLOT(setDisabled(bool)));
@@ -278,8 +278,8 @@ toQList toParamGet::getParam(toConnection &conn,QWidget *parent,QString &str)
       delete widget;
     } else {
       delete widget;
-      toStatusMessage("Aborted execution",false,false);
-      throw QString("Aborted execution");
+      toStatusMessage(tr("Aborted execution"),false,false);
+      throw tr("Aborted execution");
     }
   }
   str=res;

@@ -101,13 +101,13 @@ std::list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const Q
   }
 
   char c;
-  char nc=str[0];
+  char nc=str[0].latin1();
   for (int i=0;i<int(str.length());i++) {
     std::list<posibleHit>::iterator j=search.begin();
 
     c=nc;
     if (int(str.length())>i)
-      nc=str[i+1];
+      nc=str[i+1].latin1();
     else
       nc=' ';
 
@@ -207,7 +207,7 @@ bool toSyntaxAnalyzer::reservedWord(const QString &str)
   if(str.length()==0)
     return false;
   QString t=str.upper();
-  std::list<const char *> &curKey=Keywords[(unsigned char)char(str[0])];
+  std::list<const char *> &curKey=Keywords[(unsigned char)char(str[0].latin1())];
   for(std::list<const char *>::iterator i=curKey.begin();i!=curKey.end();i++)
     if (t==(*i))
       return true;
@@ -426,7 +426,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	cursorx=posx;
 
       if (c=="\t") {
-	int tab=painter->fontMetrics().width("xxxxxxxx");;
+	int tab=painter->fontMetrics().width(QString::fromLatin1("xxxxxxxx"));;
 	int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
 	int left=(posx==hMargin()-1?LeftIgnore:posx);
 	painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
@@ -687,7 +687,7 @@ void toHighlightedText::checkComplete(void)
       }
     }
     if (!owner.isEmpty()) {
-      name=owner+"."+name;
+      name=owner+QString::fromLatin1(".")+name;
     }
     if (!name.isEmpty()) {
       try {
@@ -698,7 +698,7 @@ void toHighlightedText::checkComplete(void)
 	     i!=desc.end();i++) {
 	  QString t=conn.quote((*i).Name);
 	  if (!(*i).Comment.isEmpty()) {
-	    t+=" - ";
+	    t+=QString::fromLatin1(" - ");
 	    t+=(*i).Comment;
 	  }
 	  complete.insert(complete.end(),t);
@@ -864,7 +864,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	  if ((*i).second.Type=="TABLE"||(*i).second.Type=="VIEW") {
 	    QString add=conn.quote((*i).first);
 	    if(!(*i).second.Comment.isEmpty()) {
-	      add+=" - ";
+	      add+=QString::fromLatin1(" - ");
 	      add+=(*i).second.Comment;
 	    }
 	    complete.insert(complete.end(),add);
@@ -879,7 +879,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	      if (synonyms.find((*i).Owner)==synonyms.end()) {
 		QString add=conn.quote((*i).Name);
 		if(!(*i).Comment.isEmpty()) {
-		  add+=" - ";
+		  add+=QString::fromLatin1(" - ");
 		  add+=(*i).Comment;
 		}
 		complete.insert(complete.end(),add);
@@ -888,10 +888,10 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	  } else {
 	    QString add=conn.quote((*i).Owner);
 	    if (!add.isEmpty())
-	      add+=".";
+	      add+=QString::fromLatin1(".");
 	    add+=conn.quote((*i).Name);
 	    if(!(*i).Comment.isEmpty()) {
-	      add+=" - ";
+	      add+=QString::fromLatin1(" - ");
 	      add+=(*i).Comment;
 	    }
 	    complete.insert(complete.end(),add);

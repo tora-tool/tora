@@ -128,16 +128,16 @@ class toTemplateProvider {
   /** List of currently available template providers.
    */
   static std::list<toTemplateProvider *> *Providers;
-  QString Name;
+  QCString Name;
   bool Open;
 public:
-  toTemplateProvider(const QString &name);
+  toTemplateProvider(const QCString &name);
   virtual ~toTemplateProvider()
   { }
 
   /** Get name of this template provider.
    */
-  const QString name()
+  const QCString name()
   { return Name; }
 
   /** Insert a parent item for this template provider into a list view.
@@ -150,24 +150,24 @@ public:
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
   /** Save settings for all template providers.
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  static void exportAllData(std::map<QString,QString> &data,const QString &prefix);
+  static void exportAllData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
   /** Import data for all template providers.
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  static void importAllData(std::map<QString,QString> &data,const QString &prefix);
+  static void importAllData(std::map<QCString,QString> &data,const QCString &prefix);
 
   friend class toTemplate;
 };

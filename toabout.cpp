@@ -336,7 +336,7 @@ void toAllocLogo(void)
   static bool Alloced=false;
   if (!Alloced) {
     Alloced=true;
-    QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",
+    QMimeSourceFactory::defaultFactory()->setPixmap(QString::fromLatin1("largelogo.xpm"),
 						    QPixmap((const char **)largelogo_xpm));
   }
 }
@@ -350,7 +350,7 @@ toSplash::toSplash(QWidget *parent,const char *name,WFlags f)
   QLabel *logo=new QLabel(this,"Logo");
   logo->setBackgroundColor(white);
   logo->setPixmap(QPixmap((const char **)largelogo_xpm));
-  Label=new QLabel("Loading plugins",this);
+  Label=new QLabel(tr("Loading plugins"),this);
   Label->setBackgroundColor(white);
   Progress=new QProgressBar(this,"Progress");
 
@@ -365,27 +365,27 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
 
   switch (page) {
   case 2:
-    setCaption("Quotes");
-    TextView->setText(QuoteText);
+    setCaption(tr("Quotes"));
+    TextView->setText(tr(QuoteText));
     TextView->setPaper(QColor(255,255,255));
     TextView->setTextFormat(RichText);
     CancelButton->hide();
     break;
   case 1:
 #ifdef TO_LICENSE
-    setCaption("TOra for Windows License");
+    setCaption(tr("TOra for Windows License"));
 #else
-    setCaption("GNU General Public License");
+    setCaption(tr("GNU General Public License"));
 #endif
-    TextView->setText(LicenseText);
+    TextView->setText(tr(LicenseText));
     TextView->setPaper(QColor(255,255,255));
     TextView->setTextFormat(PlainText);
     if (parent)
       CancelButton->hide();
     break;
   default:
-    setCaption(QString(ABOUT_CAPTION).arg(TOVERSION));
-    QString buffer=QString(AboutText).arg(TOVERSION);
+    setCaption(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TOVERSION)));
+    QString buffer=tr(AboutText).arg(QString::fromLatin1(TOVERSION));
     TextView->setText(buffer);
     TextView->setPaper(QColor(227,184,54));
     TextView->setTextFormat(RichText);

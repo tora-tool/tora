@@ -49,7 +49,7 @@ toResultStats::toResultStats(bool onlyChanged,int ses,QWidget *parent,
     return;
 
   SessionID=ses;
-  setSQLName("toResultStats");
+  setSQLName(QString::fromLatin1("toResultStats"));
   System=false;
   setup();
 }
@@ -102,10 +102,10 @@ void toResultStats::setup(void)
   for (int i=0;i<TO_STAT_MAX;i++)
     LastValues[i]=0;
 
-  addColumn("Name");
+  addColumn(tr("Name"));
   if (!OnlyChanged)
-    addColumn("Value");
-  addColumn("Delta");
+    addColumn(tr("Value"));
+  addColumn(tr("Delta"));
   setSorting(0);
 
   setColumnAlignment(1,AlignRight);
@@ -169,7 +169,7 @@ void toResultStats::changeSession(toQuery &query)
     return;
 
   if (System)
-    throw QString("Can't change session on system statistics");
+    throw tr("Can't change session on system statistics");
   try {
     toQList args;
     query.execute(SQLSession,args);
@@ -187,7 +187,7 @@ void toResultStats::changeSession(int ses)
     return;
 
   if (System)
-    throw QString("Can't change session on system statistics");
+    throw tr("Can't change session on system statistics");
   if (SessionID!=ses) {
     SessionID=ses;
     emit sessionChanged(SessionID);

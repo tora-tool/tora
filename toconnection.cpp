@@ -46,34 +46,34 @@
 
 // Connection provider implementation
 
-std::map<QString,toConnectionProvider *> *toConnectionProvider::Providers;
-std::map<QString,toConnectionProvider *> *toConnectionProvider::Types;
+std::map<QCString,toConnectionProvider *> *toConnectionProvider::Providers;
+std::map<QCString,toConnectionProvider *> *toConnectionProvider::Types;
 
 void toConnectionProvider::checkAlloc(void)
 {
   if (!Providers)
-    Providers=new std::map<QString,toConnectionProvider *>;
+    Providers=new std::map<QCString,toConnectionProvider *>;
 }
 
-void toConnectionProvider::addProvider(const QString &provider)
+void toConnectionProvider::addProvider(const QCString &provider)
 {
   checkAlloc();
   Provider=provider; (*Providers)[Provider]=this;
 }
 
-toConnectionProvider::toConnectionProvider(const QString &provider,bool add)
+toConnectionProvider::toConnectionProvider(const QCString &provider,bool add)
 {
   Provider=provider;
   if (add)
     addProvider(provider);
   if (!Types)
-    Types=new std::map<QString,toConnectionProvider *>;
+    Types=new std::map<QCString,toConnectionProvider *>;
   (*Types)[provider]=this;
 }
 
-void toConnectionProvider::removeProvider(const QString &provider)
+void toConnectionProvider::removeProvider(const QCString &provider)
 {
-  std::map<QString,toConnectionProvider *>::iterator i=Providers->find(Provider);
+  std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(Provider);
   if (i!=Providers->end())
     Providers->erase(i);
 }
@@ -83,25 +83,25 @@ toConnectionProvider::~toConnectionProvider()
   if (!Provider.isEmpty())
     removeProvider(Provider);
   try {
-    std::map<QString,toConnectionProvider *>::iterator i=Types->find(Provider);
+    std::map<QCString,toConnectionProvider *>::iterator i=Types->find(Provider);
     if (i!=Types->end())
       Types->erase(i);
   } catch(...) {
   }
 }
 
-std::list<QString> toConnectionProvider::providedHosts(const QString &)
+std::list<QString> toConnectionProvider::providedHosts(const QCString &)
 {
   std::list<QString> ret;
   return ret;
 }
 
-std::list<QString> toConnectionProvider::providers()
+std::list<QCString> toConnectionProvider::providers()
 {
-  std::list<QString> ret;
+  std::list<QCString> ret;
   if (!Providers)
     return ret;
-  for(std::map<QString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
+  for(std::map<QCString,toConnectionProvider *>::iterator i=Providers->begin();i!=Providers->end();i++)
     ret.insert(ret.end(),(*i).first);
   return ret;
 }
@@ -109,65 +109,65 @@ std::list<QString> toConnectionProvider::providers()
 void toConnectionProvider::initializeAll(void)
 {
   if (Types)
-    for(std::map<QString,toConnectionProvider *>::iterator i=Types->begin();
+    for(std::map<QCString,toConnectionProvider *>::iterator i=Types->begin();
 	i!=Types->end();i++)
       (*i).second->initialize();
 }
 
-std::list<QString> toConnectionProvider::providedModes(const QString &)
+std::list<QString> toConnectionProvider::providedModes(const QCString &)
 {
   std::list<QString> ret;
-  ret.insert(ret.end(),"Normal");
+  ret.insert(ret.end(),QString::fromLatin1("Normal"));
   return ret;
 }
 
-toConnectionProvider &toConnectionProvider::fetchProvider(const QString &provider)
+toConnectionProvider &toConnectionProvider::fetchProvider(const QCString &provider)
 {
   checkAlloc();
-  std::map<QString,toConnectionProvider *>::iterator i=Providers->find(provider);
+  std::map<QCString,toConnectionProvider *>::iterator i=Providers->find(provider);
   if (i==Providers->end())
-    throw QString("Tried to fetch unknown provider %1").arg(provider);
+    throw qApp->translate("toConnectionProvider","Tried to fetch unknown provider %1").arg(provider);
   return *((*i).second);
 }
 
-std::list<QString> toConnectionProvider::modes(const QString &provider)
+std::list<QString> toConnectionProvider::modes(const QCString &provider)
 {
   return fetchProvider(provider).providedModes(provider);
 }
 
-QWidget *toConnectionProvider::configurationTab(const QString &provider,QWidget *parent)
+QWidget *toConnectionProvider::configurationTab(const QCString &provider,QWidget *parent)
 {
   return fetchProvider(provider).providerConfigurationTab(provider,parent);
 }
 
-toConnection::connectionImpl *toConnectionProvider::connection(const QString &provider,
+toConnection::connectionImpl *toConnectionProvider::connection(const QCString &provider,
 							       toConnection *conn)
 {
   return fetchProvider(provider).provideConnection(provider,conn);
 }
 
-std::list<QString> toConnectionProvider::hosts(const QString &provider)
+std::list<QString> toConnectionProvider::hosts(const QCString &provider)
 {
   return fetchProvider(provider).providedHosts(provider);
 }
 
-std::list<QString> toConnectionProvider::databases(const QString &provider,const QString &host,
+std::list<QString> toConnectionProvider::databases(const QCString &provider,const QString &host,
 						   const QString &user,const QString &pwd)
 {
   return fetchProvider(provider).providedDatabases(provider,host,user,pwd);
 }
 
-const QString &toConnectionProvider::config(const QString &tag,const QString &def)
+const QString &toConnectionProvider::config(const QCString &tag,const QCString &def)
 {
-  QString str=Provider;
+  QCString str=Provider;
   str.append(":");
   str.append(tag);
   return toTool::globalConfig(str,def);
 }
 
-void toConnectionProvider::setConfig(const QString &tag,const QString &def)
+void toConnectionProvider::setConfig(const QCString &tag,const QCString &def)
 {
-  QString str=Provider;
+  QCString str=Provider;
   str.append(":");
   str.append(tag);
   toTool::globalSetConfig(str,def);
@@ -291,7 +291,7 @@ QCString toQValue::utf8Value(void) const
   case stringType:
     return Value.String->utf8();
   }
-  throw QString("Unknown type of query value");
+  throw qApp->translate("toQValue","Unknown type of query value");
 }
 
 int toQValue::toInt(void) const
@@ -306,7 +306,7 @@ int toQValue::toInt(void) const
   case stringType:
     return Value.String->toInt();
   }
-  throw QString("Unknown type of query value");
+  throw qApp->translate("toQValue","Unknown type of query value");
 }
 
 double toQValue::toDouble(void) const
@@ -321,7 +321,7 @@ double toQValue::toDouble(void) const
   case stringType:
     return Value.String->toDouble();
   }
-  throw QString("Unknown type of query value");
+  throw qApp->translate("toQValue","Unknown type of query value");
 }
 
 toQValue::operator QString() const
@@ -336,7 +336,7 @@ toQValue::operator QString() const
   case stringType:
     return *Value.String;
   }
-  throw QString("Unknown type of query value");
+  throw qApp->translate("toQValue","Unknown type of query value");
 }
 
 // toQuery implementation
@@ -758,7 +758,7 @@ toQValue toQuery::readValue(void)
 {
   toBusy busy;
   if (Connection.Abort)
-    throw QString("Query aborted");
+    throw qApp->translate("toQuery","Query aborted");
   if (Mode==All)
     eof();
   return toNull(Query->readValue());
@@ -768,7 +768,7 @@ toQValue toQuery::readValueNull(void)
 {
   toBusy busy;
   if (Connection.Abort)
-    throw QString("Query aborted");
+    throw qApp->translate("toQuery","Query aborted");
   if (Mode==All)
     eof();
   return Query->readValue();
@@ -795,7 +795,7 @@ void toConnection::addConnection(void)
   }
 }
 
-toConnection::toConnection(const QString &provider,
+toConnection::toConnection(const QCString &provider,
 			   const QString &user,const QString &password,
 			   const QString &host,const QString &database,
 			   const QString &mode,bool cache)
@@ -990,7 +990,7 @@ bool toConnection::closeWidgets(void)
       return false;
     std::list<QWidget *>::iterator nextI=Widgets.begin();
     if (i==nextI)
-      throw QString("All tool widgets need to have autodelete flag set");
+      throw qApp->translate("toConnection","All tool widgets need to have autodelete flag set");
   }
   return true;
 }
@@ -998,18 +998,18 @@ bool toConnection::closeWidgets(void)
 QString toConnection::description(bool version) const
 {
   QString ret(User);
-  ret+="@";
+  ret+=QString::fromLatin1("@");
   ret+=Database;
   if (!Host.isEmpty()&&Host!="SQL*Net") {
-    ret+=".";
+    ret+=QString::fromLatin1(".");
     ret+=Host;
   }
 
   if (version) {
     if (!Version.isEmpty()) {
-      ret+=" [";
-      ret+=Version;
-      ret+="]";
+      ret+=QString::fromLatin1(" [");
+      ret+=QString::fromLatin1(Version);
+      ret+=QString::fromLatin1("]");
     }
   }
   return ret;
@@ -1290,7 +1290,7 @@ void toConnection::allExecute(const QString &sql,
   }
 }
 
-const QString &toConnection::provider(void) const
+const QCString &toConnection::provider(void) const
 {
   return Provider;
 }
@@ -1326,7 +1326,8 @@ void toConnection::readObjects(void)
 void toConnection::rereadCache(void)
 {
   if(ReadingValues.getValue()<2&&ReadingCache) {
-    toStatusMessage("Not done caching objects, can not clear unread cache");
+    toStatusMessage(qApp->translate("toConnection",
+				    "Not done caching objects, can not clear unread cache"));
     return;
   }
   ReadingCache=false;
@@ -1362,15 +1363,16 @@ bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
     if (block) {
       toBusy busy;
       if (toThread::mainThread()) {
-	QProgressDialog waiting("Waiting for object caching to be completed.\n"
-				"Canceling this dialog will probably leave some list of\n"
-				"database objects empty.",
-				"&Cancel",
+	QProgressDialog waiting(qApp->translate("toConnection",
+						"Waiting for object caching to be completed.\n"
+						"Canceling this dialog will probably leave some list of\n"
+						"database objects empty."),
+				qApp->translate("toConnection","&Cancel"),
 				10,
 				toMainWidget(),
 				"progress",
 				true);
-	waiting.setCaption("Waiting for object cache");
+	waiting.setCaption(qApp->translate("toConnection","Waiting for object cache"));
 	int num=1;
 
 	int waitVal=(synonyms?2:1);
@@ -1398,7 +1400,7 @@ bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 std::list<toConnection::objectName> &toConnection::objects(bool block)
 {
   if (!cacheAvailable(false,block)) {
-    toStatusMessage("Not done caching objects",false,false);
+    toStatusMessage(qApp->translate("toConnection","Not done caching objects"),false,false);
     static std::list<objectName> ret;
     return ret;
   }
@@ -1409,7 +1411,7 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
 void toConnection::addIfNotExists(toConnection::objectName &obj)
 {
   if (!cacheAvailable(true,false)) {
-    toStatusMessage("Not done caching objects",false,false);
+    toStatusMessage(qApp->translate("toConnection","Not done caching objects"),false,false);
     return;
   }
   std::list<toConnection::objectName>::iterator i=ObjectNames.begin();
@@ -1423,7 +1425,7 @@ void toConnection::addIfNotExists(toConnection::objectName &obj)
 std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
 {
   if (!cacheAvailable(true,block)) {
-    toStatusMessage("Not done caching objects",false,false);
+    toStatusMessage(qApp->translate("toConnection","Not done caching objects"),false,false);
     static std::map<QString,objectName> ret;
     return ret;
   }
@@ -1436,19 +1438,22 @@ const toConnection::objectName &toConnection::realName(const QString &object,
 						       bool block)
 {
   if (!cacheAvailable(true,block))
-    throw QString("Not done caching objects");
+    throw qApp->translate("toConnection","Not done caching objects");
 
   QString name;
   QString owner;
 
+  QString q=QString::fromLatin1("\"");
+  QString c=QString::fromLatin1(".");
+
   bool quote=false;
   for (unsigned int pos=0;pos<object.length();pos++) {
-    if (object.at(pos)=="\"") {
+    if (object.at(pos)==q) {
       quote=!quote;
     } else {
-      if (!quote&&object.at(pos)=='.') {
+      if (!quote&&object.at(pos)==c) {
 	owner=name;
-	name="";
+	name=QString::null;
       } else
 	name+=object.at(pos);
     }
@@ -1478,7 +1483,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
       return (*i).second;
     }
   }
-  throw QString("Object %1 not available for %2").arg(object).arg(user());
+  throw qApp->translate("toConnection","Object %1 not available for %2").arg(object).arg(user());
 }
 
 const toConnection::objectName &toConnection::realName(const QString &object,bool block)

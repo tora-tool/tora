@@ -107,39 +107,39 @@ static toSQL SQLResourceLimit("toCurrent:ResourceLimit",
 toCurrent::toCurrent(QWidget *main,toConnection &connection)
   : toToolWidget(CurrentTool,"current.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Current Session");
+  QToolBar *toolbar=toAllocBar(this,tr("Current Session"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update",
-		  "Update",
+		  tr("Update"),
+		  tr("Update"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   Tabs=new QTabWidget(this);
 
   Grants=new toListView(Tabs);
   Grants->setSorting(0);
-  Grants->addColumn("Privilege");
-  Grants->addColumn("Type");
-  Grants->addColumn("Grantable");
+  Grants->addColumn(tr("Privilege"));
+  Grants->addColumn(tr("Type"));
+  Grants->addColumn(tr("Grantable"));
   Grants->setRootIsDecorated(true);
-  Tabs->addTab(Grants,"Privileges");
+  Tabs->addTab(Grants,tr("Privileges"));
 
   Version=new toResultLong(true,false,toQuery::Background,Tabs);
   Version->setSQL(SQLVersion);
-  Tabs->addTab(Version,"Version");
+  Tabs->addTab(Version,tr("Version"));
 
   Parameters=new toResultParam(Tabs);
-  Tabs->addTab(Parameters,"Parameters");
+  Tabs->addTab(Parameters,tr("Parameters"));
 
   Statistics=new toResultStats(false,Tabs);
-  Tabs->addTab(Statistics,"Statistics");
+  Tabs->addTab(Statistics,tr("Statistics"));
 
   ResourceLimit=new toResultLong(true,false,toQuery::Background,Tabs,"resource");
   ResourceLimit->setSQL(SQLResourceLimit);
-  Tabs->addTab(ResourceLimit,"Resource Limits");
+  Tabs->addTab(ResourceLimit,tr("Resource Limits"));
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -155,9 +155,9 @@ void toCurrent::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
-      toMainWidget()->menuBar()->insertItem("&Current Session",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Current Session"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -216,14 +216,14 @@ void toCurrent::addList(QListViewItem *parent,const QString &type,const toSQL &s
 void toCurrent::addRole(QListViewItem *parent)
 {
   try {
-    addList(parent,"System",SQLRoleSysPrivs,parent->text(0));
-    addList(parent,"Object",SQLRoleTabPrivs,parent->text(0));
+    addList(parent,tr("System"),SQLRoleSysPrivs,parent->text(0));
+    addList(parent,tr("Object"),SQLRoleTabPrivs,parent->text(0));
     toQList result=toQuery::readQuery(connection(),SQLRoleRolePrivs,parent->text(0));
     while(result.size()>0) {
       QListViewItem *item;
       item=new toResultViewItem(parent,NULL);
       item->setText(0,toShift(result));
-      item->setText(1,"Role");
+      item->setText(1,tr("Role"));
       item->setText(2,toShift(result));
       addRole(item);
     }
@@ -239,15 +239,15 @@ void toCurrent::refresh()
     Grants->clear();
     ResourceLimit->refresh();
 
-    addList(NULL,"System",SQLUserSysPrivs);
-    addList(NULL,"Object",SQLUserTabPrivs);
+    addList(NULL,tr("System"),SQLUserSysPrivs);
+    addList(NULL,tr("Object"),SQLUserTabPrivs);
 
     toQList result=toQuery::readQuery(connection(),SQLUserRolePrivs);
     while(result.size()>0) {
       QListViewItem *item;
       item=new toResultViewItem(Grants,NULL);
       item->setText(0,toShift(result));
-      item->setText(1,"Role");
+      item->setText(1,tr("Role"));
       item->setText(2,toShift(result));
       addRole(item);
     }

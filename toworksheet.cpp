@@ -253,10 +253,10 @@ public:
   {
     int ret=1;
     if (edited()) {
-      ret=TOMessageBox::information(this,"Save changes?",
-				    "The editor has been changed. Do you want to save them,\n"
-				    "discard changes or open file in new worksheet?",
-				    "&Save","&Discard","&New worksheet",0);
+      ret=TOMessageBox::information(this,tr("Save changes?"),
+				    tr("The editor has been changed. Do you want to save them,\n"
+				       "discard changes or open file in new worksheet?"),
+				    tr("&Save"),tr("&Discard"),tr("&New worksheet"),0);
       if (ret<0)
 	return false;
       else if (ret==0) {
@@ -301,27 +301,27 @@ void toWorksheet::viewResources(void)
 
 void toWorksheet::setup(bool autoLoad)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL worksheet");
+  QToolBar *toolbar=toAllocBar(this,tr("SQL worksheet"));
 
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  "Execute current statement",
-		  "Execute current statement",
+		  tr("Execute current statement"),
+		  tr("Execute current statement"),
 		  this,SLOT(execute(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)executeall_xpm),
-		  "Execute all statements",
-		  "Execute all statements",
+		  tr("Execute all statements"),
+		  tr("Execute all statements"),
 		  this,SLOT(executeAll(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)executestep_xpm),
-		  "Step through statements",
-		  "Step through statements",
+		  tr("Step through statements"),
+		  tr("Step through statements"),
 		  this,SLOT(executeStep(void)),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Reexecute Last Statement",
-		  "Reexecute Last Statement",
+		  tr("Reexecute Last Statement"),
+		  tr("Reexecute Last Statement"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
 
@@ -351,8 +351,8 @@ void toWorksheet::setup(bool autoLoad)
     WaitChart=IOChart=NULL;
     toolbar->addSeparator();
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
-			       "Stop execution",
-			       "Stop execution",
+			       tr("Stop execution"),
+			       tr("Stop execution"),
 			       Result,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
@@ -364,7 +364,7 @@ void toWorksheet::setup(bool autoLoad)
     Editor=new toWorksheetText(this,splitter);
     ResultTab=new QTabWidget(splitter);
     QVBox *box=new QVBox(ResultTab);
-    ResultTab->addTab(box,"&Result");
+    ResultTab->addTab(box,tr("&Result"));
 
     Current=Result=new toResultLong(box);
     connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
@@ -376,17 +376,17 @@ void toWorksheet::setup(bool autoLoad)
 
     ResultTab->setTabEnabled(Columns,false);
     Plan=new toResultPlan(ResultTab);
-    ResultTab->addTab(Plan,"E&xecution plan");
+    ResultTab->addTab(Plan,tr("E&xecution plan"));
     Resources=new toResultResources(ResultTab);
     Visualize=new toVisualize(Result,ResultTab);
-    ResultTab->addTab(Visualize,"&Visualize");
-    ResultTab->addTab(Resources,"&Information");
+    ResultTab->addTab(Visualize,tr("&Visualize"));
+    ResultTab->addTab(Resources,tr("&Information"));
     StatTab=new QVBox(ResultTab);
     {
-      QToolBar *stattool=toAllocBar(StatTab,"Worksheet Statistics");
+      QToolBar *stattool=toAllocBar(StatTab,tr("Worksheet Statistics"));
       new QToolButton(QPixmap((const char **)filesave_xpm),
-		      "Save statistics for later analysis",
-		      "Save statistics for later analysis",
+		      tr("Save statistics for later analysis"),
+		      tr("Save statistics for later analysis"),
 		      this,SLOT(saveStatistics(void)),
 		      stattool);
       stattool->setStretchableWidget(new QLabel(stattool));
@@ -395,49 +395,49 @@ void toWorksheet::setup(bool autoLoad)
     Statistics=new toResultStats(true,splitter);
     Statistics->setTabWidget(ResultTab);
     WaitChart=new toResultBar(splitter);
-    WaitChart->setSQL(TO_SESSION_WAIT);
-    WaitChart->setTitle("Wait states");
-    WaitChart->setYPostfix("ms/s");
+    WaitChart->setSQL(toSQL::sql(TO_SESSION_WAIT));
+    WaitChart->setTitle(tr("Wait states"));
+    WaitChart->setYPostfix(QString::fromLatin1("ms/s"));
     WaitChart->setSamples(-1);
     WaitChart->start();
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    WaitChart,SLOT(changeParams(const QString &)));
     IOChart=new toResultBar(splitter);
-    IOChart->setSQL(TO_SESSION_IO);
-    IOChart->setTitle("I/O");
-    IOChart->setYPostfix("blocks/s");
+    IOChart->setSQL(toSQL::sql(TO_SESSION_IO));
+    IOChart->setTitle(tr("I/O"));
+    IOChart->setYPostfix(tr("blocks/s"));
     IOChart->setSamples(-1);
     IOChart->start();
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    IOChart,SLOT(changeParams(const QString &)));
-    ResultTab->addTab(StatTab,"&Statistics");
+    ResultTab->addTab(StatTab,tr("&Statistics"));
     ResultTab->setTabEnabled(StatTab,false);
 
     Logging=new toListView(ResultTab);
-    ResultTab->addTab(Logging,"&Logging");
-    Logging->addColumn("SQL");
-    Logging->addColumn("Result");
-    Logging->addColumn("Timestamp");
-    Logging->addColumn("Duration");
+    ResultTab->addTab(Logging,tr("&Logging"));
+    Logging->addColumn(tr("SQL"));
+    Logging->addColumn(tr("Result"));
+    Logging->addColumn(tr("Timestamp"));
+    Logging->addColumn(tr("Duration"));
     Logging->setColumnAlignment(3,AlignRight);
     LastLogItem=NULL;
 
     toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)describe_xpm),
-		    "Describe under cursor",
-		    "Describe under cursor",
+		    tr("Describe under cursor"),
+		    tr("Describe under cursor"),
 		    this,SLOT(describe(void)),
 		    toolbar);
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
-			       "Stop execution",
-			       "Stop execution",
+			       tr("Stop execution"),
+			       tr("Stop execution"),
 			       Result,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
     toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)eraselog_xpm),
-		    "Clear execution log",
-		    "Clear execution log",
+		    tr("Clear execution log"),
+		    tr("Clear execution log"),
 		    this,SLOT(eraseLogButton(void)),
 		    toolbar);
 
@@ -446,8 +446,8 @@ void toWorksheet::setup(bool autoLoad)
     StatisticButton->setToggleButton(true);
     StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
     connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
-    QToolTip::add(StatisticButton,"Gather session statistic of execution");
-    new QLabel("Refresh ",toolbar);
+    QToolTip::add(StatisticButton,tr("Gather session statistic of execution"));
+    new QLabel(tr("Refresh "),toolbar);
     Refresh=toRefreshCreate(toolbar);
     connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
     connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
@@ -457,16 +457,16 @@ void toWorksheet::setup(bool autoLoad)
     toolbar->addSeparator();
 
     SavedButton=new toPopupButton(QPixmap((const char **)compile_xpm),
-				  "Run current saved SQL",
-				  "Run current saved SQL",
+				  tr("Run current saved SQL"),
+				  tr("Run current saved SQL"),
 				  toolbar);
     SavedMenu=new QPopupMenu(SavedButton);
     SavedButton->setPopup(SavedMenu);
     connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
     connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
     new QToolButton(QPixmap((const char **)previous_xpm),
-		    "Save last SQL",
-		    "Save last SQL",
+		    tr("Save last SQL"),
+		    tr("Save last SQL"),
 		    this,SLOT(saveLast(void)),
 		    toolbar);
 
@@ -543,51 +543,51 @@ void toWorksheet::windowActivated(QWidget *widget)
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)execute_xpm),
-			   "&Execute Current",this,SLOT(execute(void)),
+			   tr("&Execute Current"),this,SLOT(execute(void)),
 			   CTRL+Key_Return);
       ToolMenu->insertItem(QPixmap((const char **)executeall_xpm),
-			   "Execute &All",this,SLOT(executeAll(void)),
+			   tr("Execute &All"),this,SLOT(executeAll(void)),
 			   Key_F8);
       ToolMenu->insertItem(QPixmap((const char **)executestep_xpm),
-			   "Execute &Next",this,SLOT(executeStep(void)),
+			   tr("Execute &Next"),this,SLOT(executeStep(void)),
 			   Key_F9);
-      ToolMenu->insertItem("Execute &Newline Separated",this,
+      ToolMenu->insertItem(tr("Execute &Newline Separated"),this,
 			   SLOT(executeNewline(void)),SHIFT+Key_F9);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),
-			   "&Reexecute Last Statement",this,SLOT(refresh(void)),
+			   tr("&Reexecute Last Statement"),this,SLOT(refresh(void)),
 			   Key_F5);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(QPixmap((const char **)describe_xpm),
-			   "&Describe Under Cursor",this,SLOT(describe(void)),
+			   tr("&Describe Under Cursor"),this,SLOT(describe(void)),
 			   Key_F4);
-      ToolMenu->insertItem("&Explain current statement",this,SLOT(explainPlan(void)),
+      ToolMenu->insertItem(tr("&Explain current statement"),this,SLOT(explainPlan(void)),
 			   Key_F3);
-      ToolMenu->insertItem("&Enable Statistics",this,SLOT(toggleStatistic(void)),
+      ToolMenu->insertItem(tr("&Enable Statistics"),this,SLOT(toggleStatistic(void)),
 			   0,TO_ID_STATISTICS);
       ToolMenu->insertItem(QPixmap((const char **)stop_xpm),
-			   "&Stop Execution",Result,SLOT(stop(void)),
+			   tr("&Stop Execution"),Result,SLOT(stop(void)),
 			   0,TO_ID_STOP);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Execute Saved SQL",
+      ToolMenu->insertItem(tr("Execute Saved SQL"),
 			   this,SLOT(executeSaved()),
 			   Key_F7);
-      ToolMenu->insertItem("Select Saved SQL",
+      ToolMenu->insertItem(tr("Select Saved SQL"),
 			   this,SLOT(selectSaved()),
 			   CTRL+SHIFT+Key_S);
       ToolMenu->insertItem(QPixmap((const char **)previous_xpm),
-			   "Save last SQL",
+			   tr("Save last SQL"),
 			   this,SLOT(saveLast()));
-      ToolMenu->insertItem("Edit Saved SQL...",
+      ToolMenu->insertItem(tr("Edit Saved SQL..."),
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("Previous Log Entry",this,SLOT(executePreviousLog()),
+      ToolMenu->insertItem(tr("Previous Log Entry"),this,SLOT(executePreviousLog()),
 			   ALT+Key_Up);
-      ToolMenu->insertItem("Next Log Entry",this,SLOT(executeNextLog()),
+      ToolMenu->insertItem(tr("Next Log Entry"),this,SLOT(executeNextLog()),
 			   ALT+Key_Down);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
-			   "Erase &Log",this,SLOT(eraseLogButton(void)));
+			   tr("Erase &Log"),this,SLOT(eraseLogButton(void)));
 
-      toMainWidget()->menuBar()->insertItem("W&orksheet",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("W&orksheet"),ToolMenu,-1,toToolMenuIndex());
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
       toMainWidget()->menuBar()->setItemChecked(TO_ID_STATISTICS,
 						StatisticButton->isOn());
@@ -618,18 +618,19 @@ bool toWorksheet::checkSave(bool input)
        Editor->filename().isEmpty()) {
       if (!WorksheetTool.config(CONF_CHECK_SAVE,"Yes").isEmpty()) {
 	if (input) {
-	  QString str("Save changes to worksheet for ");
+	  QString conn;
 	  try {
-	    str.append(connection().description());
+	    conn=connection().description();
 	  } catch(...) {
-	    str+="unknown connection";
+	    conn+=QString::fromLatin1("unknown connection");
 	  }
+	  QString str=tr("Save changes to worksheet for %1").arg(conn);
 	  if (!Editor->filename().isEmpty())
-	    str+="\n("+Editor->filename()+")";
+	    str+=QString::fromLatin1("\n(")+Editor->filename()+QString::fromLatin1(")");
 	  int ret=TOMessageBox::information(this,
-					    "Save file",
+					    tr("Save file"),
 					    str,
-					    "&Yes","&No","&Cancel",0,2);
+					    tr("&Yes"),tr("&No"),tr("&Cancel"),0,2);
 	  if (ret==1)
 	    return true;
 	  else if (ret==2)
@@ -688,7 +689,7 @@ void toWorksheet::refresh(void)
 
 static QString unQuote(const QString &str)
 {
-  if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
+  if (str.at(0).latin1()=='\"'&&str.at(str.length()-1).latin1()=='\"')
     return str.left(str.length()-1).right(str.length()-2);
   return str.upper();
 }
@@ -696,10 +697,10 @@ static QString unQuote(const QString &str)
 bool toWorksheet::describe(const QString &query)
 {
   try {
-    QRegExp white("[ \r\n\t.]+");
+    QRegExp white(QString::fromLatin1("[ \r\n\t.]+"));
     QStringList part=QStringList::split(white,query);
-    if (part[0].upper()=="DESC"||
-	part[0].upper()=="DESCRIBE") {
+    if (part[0].upper()==QString::fromLatin1("DESC")||
+	part[0].upper()==QString::fromLatin1("DESCRIBE")) {
       if (Light)
 	return true;
       if (toIsOracle(connection())) {
@@ -708,12 +709,12 @@ bool toWorksheet::describe(const QString &query)
 	} else if (part.count()==3) {
 	  Columns->changeParams(unQuote(part[1]),unQuote(part[2]));
 	} else
-	  throw QString("Wrong number of parameters for describe");
+	  throw tr("Wrong number of parameters for describe");
       } else if (connection().provider()=="MySQL") {
 	if (part.count()==2) {
 	  Columns->changeParams(part[1]);
 	} else
-	  throw QString("Wrong number of parameters for describe");
+	  throw tr("Wrong number of parameters for describe");
       }
       Current->hide();
       Columns->show();
@@ -738,12 +739,12 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 {
   Result->stop();
 
-  QRegExp strq("'[^']*'");
+  QRegExp strq(QString::fromLatin1("'[^']*'"));
   QString chk=str.lower();
-  chk.replace(strq," ");
+  chk.replace(strq,QString::fromLatin1(" "));
   bool code=false;
-  static QRegExp codere("[^a-z0-9]end\\s+[a-z0-9_-]*;$",true);
-  static QRegExp codere2("[^a-z0-9]end;",true);
+  static QRegExp codere(QString::fromLatin1("[^a-z0-9]end\\s+[a-z0-9_-]*;$"),true);
+  static QRegExp codere2(QString::fromLatin1("[^a-z0-9]end;"),true);
 
   if (codere.match(chk)>=0||codere2.match(chk)>=0)
     code=true;
@@ -754,10 +755,10 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
   
   bool nobinds=false;
   chk=str.lower();
-  chk.replace(strq," ");
+  chk.replace(strq,QString::fromLatin1(" "));
   chk=chk.simplifyWhiteSpace();
-  chk.replace(QRegExp(" or replace ")," ");
-  if(chk.startsWith("create trigger "))
+  chk.replace(QRegExp(QString::fromLatin1(" or replace ")),QString::fromLatin1(" "));
+  if(chk.startsWith(QString::fromLatin1("create trigger ")))
     nobinds=true;
   
   if (onlyPlan) {
@@ -767,12 +768,12 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 
     toSQLParse::stringTokenizer tokens(str);
     QString first=tokens.getToken(true).upper();
-    if (first=="REM"||
-	first=="ASSIGN"||
-	first=="PROMPT"||
-	first=="SPOOL"||
-	first=="STORE") {
-      QString t="Ignoring SQL*Plus command";
+    if (first==QString::fromLatin1("REM")||
+	first==QString::fromLatin1("ASSIGN")||
+	first==QString::fromLatin1("PROMPT")||
+	first==QString::fromLatin1("SPOOL")||
+	first==QString::fromLatin1("STORE")) {
+      QString t=tr("Ignoring SQL*Plus command");
       addLog(QueryString,toConnection::exception(t),false);
       toStatusMessage(t,true);
       return;
@@ -785,7 +786,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       } catch (...) {
 	return;
       }
-    toStatusMessage("Processing query",true);
+    toStatusMessage(tr("Processing query"),true);
 
     if (direct) {
       try {
@@ -793,12 +794,12 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 	Timer.start();
 	toQuery query(connection(),toQuery::Long,QueryString,param);
 
-	char buffer[100];
+	QString buffer;
 	if (query.rowsProcessed()>0)
-	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
+	  buffer=tr("%1 rows processed").arg((int)query.rowsProcessed());
 	else
-	  sprintf(buffer,"Query executed");
-	addLog(QueryString,toConnection::exception(QString(buffer)),false);
+	  buffer=tr("Query executed");
+	addLog(QueryString,toConnection::exception(buffer),false);
       } catch (const QString &exc) {
 	addLog(QueryString,exc,true);
       }
@@ -807,7 +808,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
       Timer.start();
       StopButton->setEnabled(true);
       Poll.start(1000);
-      QToolTip::add(Started,"Duration while query has been running\n\n"+QueryString);
+      QToolTip::add(Started,tr("Duration while query has been running\n\n")+QueryString);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
@@ -877,7 +878,7 @@ QString toWorksheet::duration(int dur,bool hundreds)
     else
       sprintf(buf,"%d:%02d",dur/60000,(dur/1000)%60);
   }
-  return buf;
+  return QString::fromLatin1(buf);
 }
 
 void toWorksheet::addLog(const QString &sql,const toConnection::exception &result,bool error)
@@ -886,7 +887,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   try {
     now=toNow(connection());
   } catch(...) {
-    now="Unknown";
+    now=QString::fromLatin1("Unknown");
   }
   toResultViewItem *item;
 
@@ -949,9 +950,9 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
 
   {
     QString str=result;
-    str+="\n(Duration ";
+    str+=tr("\n(Duration ");
     str+=buf;
-    str+=")";
+    str+=QString::fromLatin1(")");
     if (error)
       toStatusMessage(str);
     else
@@ -960,7 +961,7 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   if (!Light&&!error)
     changeResult(CurrentTab);
 
-  static QRegExp re("^[1-9]\\d* rows processed$");
+  static QRegExp re(QString::fromLatin1("^[1-9]\\d* rows processed$"));
   try {
     if (result.contains(re)) {
       if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
@@ -974,6 +975,8 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
 
 void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan)
 {
+  LastLine=line;
+  LastOffset=pos;
   Editor->setCursorPosition(line,pos,false);
   Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
   QString t=Editor->markedText();
@@ -986,24 +989,24 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
 
   for(i=0;i<t.length()-1;i++) {
     if (comment) {
-      if (t.at(i)=='\n')
+      if (t.at(i).latin1()=='\n')
 	comment=false;
     } else if (multiComment) {
-      if (t.at(i)=='*'&&
-	  t.at(i+1)=='/') {
+      if (t.at(i).latin1()=='*'&&
+	  t.at(i+1).latin1()=='/') {
 	multiComment=false;
 	i++;
       }
-    } else if (t.at(i)=='-'&&
-	       t.at(i+1)=='-')
+    } else if (t.at(i).latin1()=='-'&&
+	       t.at(i+1).latin1()=='-')
       comment=true;
-    else if (t.at(i)=='/'&&
-	     t.at(i+1)=='*')
+    else if (t.at(i).latin1()=='/'&&
+	     t.at(i+1).latin1()=='*')
       multiComment=true;
     else if (!t.at(i).isSpace())
       break;
 
-    if (t.at(i)=='\n') {
+    if (t.at(i).latin1()=='\n') {
       line++;
       pos=0;
     } else
@@ -1012,6 +1015,8 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
 
   if (line!=oline||
       pos!=opos) {
+    LastLine=line;
+    LastOffset=pos;
     Editor->setCursorPosition(line,pos,false);
     Editor->setCursorPosition(tokens.line(),tokens.offset(),true);
     t=t.mid(i);
@@ -1119,7 +1124,7 @@ void toWorksheet::eraseLogButton()
 void toWorksheet::queryDone(void)
 {
   if (!First&&!QueryString.isEmpty())
-    addLog(QueryString,toConnection::exception("Aborted"),false);
+    addLog(QueryString,toConnection::exception(tr("Aborted")),false);
   else
     emit executed();
   try {
@@ -1162,13 +1167,13 @@ void toWorksheet::enableStatistic(bool ena)
     Statistics->clear();
     if (!WorksheetTool.config(CONF_TIMED_STATS,"Yes").isEmpty()) {
       try {
-	connection().allExecute(ENABLETIMED);
-	connection().addInit(ENABLETIMED);
+	connection().allExecute(QString::fromLatin1(ENABLETIMED));
+	connection().addInit(QString::fromLatin1(ENABLETIMED));
       } TOCATCH
     }
   } else {
     try {
-      connection().delInit(ENABLETIMED);
+      connection().delInit(QString::fromLatin1(ENABLETIMED));
     } catch(...) {
     }
     Result->setStatistics(NULL);
@@ -1187,7 +1192,7 @@ void toWorksheet::executeNewline(void)
     cline--;
   while(cline>0) {
     QString data=Editor->textLine(cline).simplifyWhiteSpace();
-    if (data.length()==0||data==" ") {
+    if (data.length()==0||data==QString::fromLatin1(" ")) {
       cline++;
       break;
     }
@@ -1196,7 +1201,7 @@ void toWorksheet::executeNewline(void)
 
   while(cline<Editor->numLines()) {
     QString data=Editor->textLine(cline).simplifyWhiteSpace();
-    if (data.length()!=0&&data!=" ")
+    if (data.length()!=0&&data!=QString::fromLatin1(" "))
       break;
     cline++;
   }
@@ -1205,7 +1210,7 @@ void toWorksheet::executeNewline(void)
 
   while(eline<Editor->numLines()) {
     QString data=Editor->textLine(eline).simplifyWhiteSpace();
-    if (data.length()==0||data==" ") {
+    if (data.length()==0||data==QString::fromLatin1(" ")) {
       eline--;
       break;
     }
@@ -1253,11 +1258,11 @@ void toWorksheet::executeSaved(void)
 
 void toWorksheet::executeSaved(int id)
 {
-  std::list<QString> def=toSQL::range(TOWORKSHEET);
-  for(std::list<QString>::iterator i=def.begin();i!=def.end();i++) {
+  std::list<QCString> def=toSQL::range(TOWORKSHEET);
+  for(std::list<QCString>::iterator i=def.begin();i!=def.end();i++) {
     id--;
     if (id==0) {
-      SavedLast=(*i);
+      SavedLast=*i;
       executeSaved();
       break;
     }
@@ -1266,16 +1271,16 @@ void toWorksheet::executeSaved(int id)
 
 void toWorksheet::showSaved(void)
 {
-  static QRegExp colon(":");
-  std::list<QString> def=toSQL::range(TOWORKSHEET);
+  static QRegExp colon(QString::fromLatin1(":"));
+  std::list<QCString> def=toSQL::range(TOWORKSHEET);
   SavedMenu->clear();
   std::map<QString,QPopupMenu *> menues;
   int id=0;
-  for(std::list<QString>::iterator sql=def.begin();sql!=def.end();sql++) {
+  for(std::list<QCString>::iterator sql=def.begin();sql!=def.end();sql++) {
 
     id++;
 
-    QStringList spl=QStringList::split(colon,*sql);
+    QStringList spl=QStringList::split(colon,QString::fromLatin1(*sql));
     spl.remove(spl.begin());
 
     if (spl.count()>0) {
@@ -1287,18 +1292,18 @@ void toWorksheet::showSaved(void)
 	menu=SavedMenu;
       else {
 	QStringList exs=spl;
-	while (exs.count()>0&&menues.find(exs.join(":"))==menues.end())
+	while (exs.count()>0&&menues.find(exs.join(QString::fromLatin1(":")))==menues.end())
 	  exs.remove(exs.fromLast());
 	if (exs.count()==0)
 	  menu=SavedMenu;
 	else
-	  menu=menues[exs.join(":")];
-	QString subname=exs.join(":");
+	  menu=menues[exs.join(QString::fromLatin1(":"))];
+	QString subname=exs.join(QString::fromLatin1(":"));
 	for (unsigned int i=exs.count();i<spl.count();i++) {
 	  QPopupMenu *next=new QPopupMenu(this);
 	  connect(next,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
 	  if (i!=0)
-	    subname+=":";
+	    subname+=QString::fromLatin1(":");
 	  subname+=spl[i];
 	  menu->insertItem(spl[i],next);
 	  menu=next;
@@ -1312,9 +1317,9 @@ void toWorksheet::showSaved(void)
 
 void toWorksheet::editSaved(void)
 {
-  QString sql=TOWORKSHEET;
+  QCString sql=TOWORKSHEET;
   sql+="Untitled";
-  toMainWidget()->editSQL(sql);
+  toMainWidget()->editSQL(QString::fromLatin1(sql));
 }
 
 void toWorksheet::selectSaved()
@@ -1388,21 +1393,21 @@ void toWorksheet::poll(void)
 void toWorksheet::saveLast(void)
 {
   if (QueryString.isEmpty()) {
-    TOMessageBox::warning(this,"No SQL to save",
-			  "You haven't executed any SQL yet",
-			  "&Ok");
+    TOMessageBox::warning(this,tr("No SQL to save"),
+			  tr("You haven't executed any SQL yet"),
+			  tr("&Ok"));
     return;
   }
   bool ok=false;
-  QString name=QInputDialog::getText("Enter title",
-				     "Enter the title in the menu of the saved SQL,\n"
-				     "submenues are separated by a ':' character.",
-				     QLineEdit::Normal,QString::null,&ok,this);
+  QCString name=QInputDialog::getText(tr("Enter title"),
+				      tr("Enter the title in the menu of the saved SQL,\n"
+					 "submenues are separated by a ':' character."),
+				      QLineEdit::Normal,QString::null,&ok,this).latin1();
   if (ok&&!name.isEmpty()) {
     try {
       toSQL::updateSQL(TOWORKSHEET+name,
 		       QueryString,
-		       "Undescribed",
+		       tr("Undescribed"),
 		       "Any",
 		       connection().provider());
       toSQL::saveSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
@@ -1412,7 +1417,7 @@ void toWorksheet::saveLast(void)
 
 void toWorksheet::saveStatistics(void)
 {
-  std::map<QString,QString> stat;
+  std::map<QCString,QString> stat;
 
   Statistics->exportData(stat,"Stat");
   IOChart->exportData(stat,"IO");
@@ -1420,13 +1425,13 @@ void toWorksheet::saveStatistics(void)
   if (Plan->firstChild())
     Plan->exportData(stat,"Plan");
   else
-    toStatusMessage("No plan available to save",false,false);
+    toStatusMessage(tr("No plan available to save"),false,false);
   stat["Description"]=QueryString;
   
   toWorksheetStatistic::saveStatistics(stat);
 }
 
-void toWorksheet::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toWorksheet::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   Editor->exportData(data,prefix+":Edit");
   if (StatisticButton->isOn())
@@ -1434,7 +1439,7 @@ void toWorksheet::exportData(std::map<QString,QString> &data,const QString &pref
   toToolWidget::exportData(data,prefix);
 }
 
-void toWorksheet::importData(std::map<QString,QString> &data,const QString &prefix)
+void toWorksheet::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   Editor->importData(data,prefix+":Edit");
   QString stat=data[prefix+":Stats"];
@@ -1458,7 +1463,7 @@ void toWorksheet::setCaption(void)
   QString name=WorksheetTool.name();
   if (! Editor->filename().isEmpty()) {
     QFileInfo file(Editor->filename());
-    name+=" "+file.fileName();
+    name+=QString::fromLatin1(" ")+file.fileName();
   }
   toToolCaption(this,name);
 }

@@ -155,7 +155,7 @@ static toSQL SQLUserObjects7("toScript:UserObjects",
 			     "          FROM sys.all_mviews\n"
 			     "         WHERE owner = :own<char[101]>)\n"
 			     " ORDER BY 1,2",
-			     QString::null,
+			     "",
 			     "7.3");
 
 static toSQL SQLUserObjectList("toScript:UserExtractObject",
@@ -174,14 +174,14 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 toScript::toScript(QWidget *parent,toConnection &connection)
   : toToolWidget(ScriptTool,"script.html",parent,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"SQL worksheet");
+  QToolBar *toolbar=toAllocBar(this,tr("Extraction and Compare"));
 
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  "Perform defined extraction",
-		  "Perform defined extraction",
+		  tr("Perform defined extraction"),
+		  tr("Perform defined extraction"),
 		  this,SLOT(execute(void)),
 		  toolbar);
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
 
   ScriptUI=new toScriptUI(this);
 
@@ -189,7 +189,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   QVBox *box=new QVBox(ScriptUI->ResultTab);
   Worksheet=new toWorksheet(box,connection);
   SearchList=new toListView(box);
-  SearchList->addColumn("Search result");
+  SearchList->addColumn(tr("Search result"));
   SearchList->setRootIsDecorated(true);
   SearchList->setSorting(0);
   SearchList->hide();
@@ -197,11 +197,11 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   Report->hide();
 
   DropList=new toListView(hsplitter);
-  DropList->addColumn("Dropped");
+  DropList->addColumn(tr("Dropped"));
   DropList->setRootIsDecorated(true);
   DropList->setSorting(0);
   CreateList=new toListView(hsplitter);
-  CreateList->addColumn("Created");
+  CreateList->addColumn(tr("Created"));
   CreateList->setRootIsDecorated(true);
   CreateList->setSorting(0);
   ScriptUI->Tabs->setTabEnabled(ScriptUI->ResultTab,false);
@@ -216,9 +216,9 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   layout=new QGridLayout(ScriptUI->DifferenceTab);
   layout->addWidget(hsplitter,0,0);
 
-  ScriptUI->Initial->setTitle("&Initial");
-  ScriptUI->Limit->setTitle("&Limit");
-  ScriptUI->Next->setTitle("&Next");
+  ScriptUI->Initial->setTitle(tr("&Initial"));
+  ScriptUI->Limit->setTitle(tr("&Limit"));
+  ScriptUI->Next->setTitle(tr("&Next"));
   connect(ScriptUI->ModeGroup,SIGNAL(clicked(int)),this,SLOT(changeMode(int)));
   ScriptUI->Tabs->setTabEnabled(ScriptUI->ResizeTab,false);
   ScriptUI->SourceObjects->setSorting(0);
@@ -319,18 +319,18 @@ std::list<QString> toScript::createObjectList(QListView *source)
       if (!user.isEmpty()) {
 	if (chk->isOn()&&chk->isEnabled()) {
 	  QString line;
-	  if (type=="TABLE") {
+	  if (type==QString::fromLatin1("TABLE")) {
 	    line=user;
-	    line+=".";
+	    line+=QString::fromLatin1(".");
 	    line+=name;
 	    toPush(tables,line);
 	  } else {
 	    line=type;
-	    line+=":";
+	    line+=QString::fromLatin1(":");
 	    line+=user;
-	    line+=".";
+	    line+=QString::fromLatin1(".");
 	    line+=name;
-	    if (type=="VIEW")
+	    if (type==QString::fromLatin1("VIEW"))
 	      toPush(userViews,line);
 	    else
 	      toPush(userOther,line);
@@ -339,15 +339,15 @@ std::list<QString> toScript::createObjectList(QListView *source)
       } else if (!type.isEmpty()) {
 	if (chk->isOn()&&chk->isEnabled()) {
 	  QString line=type;
-	  line+=":";
+	  line+=QString::fromLatin1(":");
 	  line+=name;
-	  if (type=="TABLESPACE")
+	  if (type==QString::fromLatin1("TABLESPACE"))
 	    toPush(tableSpace,line);
-	  else if (type=="PROFILE")
+	  else if (type==QString::fromLatin1("PROFILE"))
 	    toPush(profiles,line);
-	  else if (type=="ROLE")
+	  else if (type==QString::fromLatin1("ROLE"))
 	    toPush(roles,name);
-	  else if (type=="USER")
+	  else if (type==QString::fromLatin1("USER"))
 	    toPush(users,name);
 	  else
 	    toPush(otherGlobal,line);
@@ -384,21 +384,21 @@ std::list<QString> toScript::createObjectList(QListView *source)
     }
     {
       for(std::list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-	QString line="ROLE:";
+	QString line=QString::fromLatin1("ROLE:");
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
       for(std::list<QString>::iterator i=users.begin();i!=users.end();i++) {
-	QString line="USER:";
+	QString line=QString::fromLatin1("USER:");
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
       for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-	QString line="TABLE FAMILY:";
+	QString line=QString::fromLatin1("TABLE FAMILY:");
 	line+=*i;
 	toPush(lst,line);
       }
@@ -413,28 +413,28 @@ std::list<QString> toScript::createObjectList(QListView *source)
     }
   }
   for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-    QString line="TABLE CONTENTS:";
+    QString line=QString::fromLatin1("TABLE CONTENTS:");
     line+=*i;
     toPush(lst,line);
   }
   if (ScriptUI->IncludeDDL->isChecked()) {
     {
       for(std::list<QString>::iterator i=tables.begin();i!=tables.end();i++) {
-	QString line="TABLE REFERENCES:";
+	QString line=QString::fromLatin1("TABLE REFERENCES:");
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
       for(std::list<QString>::iterator i=roles.begin();i!=roles.end();i++) {
-	QString line="ROLE GRANTS:";
+	QString line=QString::fromLatin1("ROLE GRANTS:");
 	line+=*i;
 	toPush(lst,line);
       }
     }
     {
       for(std::list<QString>::iterator i=users.begin();i!=users.end();i++) {
-	QString line="USER GRANTS:";
+	QString line=QString::fromLatin1("USER GRANTS:");
 	line+=*i;
 	toPush(lst,line);
       }
@@ -458,7 +458,7 @@ void toScript::execute(void)
     else if (ScriptUI->Report->isChecked())
       mode=4;
     else {
-      toStatusMessage("No mode selected");
+      toStatusMessage(tr("No mode selected"));
       return;
     }
 
@@ -496,7 +496,7 @@ void toScript::execute(void)
 	break;
       case 1:
       case 3:
-	throw QString ("Destination shouldn't be enabled now, internal error");
+	throw tr("Destination shouldn't be enabled now, internal error");
       }
 
       std::list<QString> drop;
@@ -519,7 +519,7 @@ void toScript::execute(void)
       Report->hide();
       SearchList->show();
       QRegExp re(ScriptUI->SearchWord->text(),false);
-      QStringList words(QStringList::split(QRegExp(" "),
+      QStringList words(QStringList::split(QRegExp(QString::fromLatin1(" ")),
 						   ScriptUI->SearchWord->text().
 						   upper().simplifyWhiteSpace()));
       QString word=ScriptUI->SearchWord->text().upper();
@@ -536,7 +536,7 @@ void toScript::execute(void)
       for(std::list<QString>::iterator i=sourceDescription.begin();
 	  i!=sourceDescription.end();
 	  i++) {
-	QStringList ctx=QStringList::split("\01",(*i).upper());
+	QStringList ctx=QStringList::split(QString::fromLatin1("\01"),(*i).upper());
 	switch(searchMode) {
 	case 1:
 	case 2:
@@ -589,7 +589,7 @@ void toScript::fillDifference(std::list<QString> &objects,QListView *view)
   QStringList lstCtx;
   for(std::list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
     //    printf("Adding %s\n",(const char *)*i);
-    QStringList ctx=QStringList::split("\01",*i);
+    QStringList ctx=QStringList::split(QString::fromLatin1("\01"),*i);
     if (last) {
       while(last&&lastLevel>=int(ctx.count())) {
 	last=last->parent();
@@ -601,7 +601,7 @@ void toScript::fillDifference(std::list<QString> &objects,QListView *view)
       }
     }
     if (lastLevel<0)
-      throw QString("Internal error, lastLevel < 0");
+      throw tr("Internal error, lastLevel < 0");
     while(lastLevel<int(ctx.count())-1) {
       if (last)
 	last=new toResultViewMLine(last,NULL,ctx[lastLevel]);
@@ -672,7 +672,7 @@ void toScript::changeConnection(int,bool source)
     }
     (source?ScriptUI->SourceObjects:ScriptUI->DestinationObjects)->clear();
     (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->clear();
-    (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->insertItem("All");
+    (source?ScriptUI->SourceSchema:ScriptUI->DestinationSchema)->insertItem(tr("All"));
     toConnection &conn=toMainWidget()->connection((source?
 						   ScriptUI->SourceConnection:
 						   ScriptUI->DestinationConnection)
@@ -703,7 +703,7 @@ void toScript::changeConnection(int,bool source)
 				      top,QCheckListItem::CheckBox);
 	lastTop->setExpandable(true);
 	if (!second.isEmpty()||first.isEmpty())
-	  lastTop->setText(1,"USER");
+	  lastTop->setText(1,QString::fromLatin1("USER"));
       }
       if (first!=(lastFirst?lastFirst->text(0):QString::null)&&!first.isEmpty()) {
 	lastFirst=new toResultViewCheck(lastTop,first,QCheckListItem::CheckBox);
@@ -743,13 +743,13 @@ void toScript::readOwnerObjects(QListView *list,QListViewItem *item,toConnection
 	}
       }
 
-      if (top=="PUBLIC") {
+      if (top==QString::fromLatin1("PUBLIC")) {
 	object=toQuery::readQueryNull(conn,SQLPublicSynonymList);
-	QListViewItem *topItem=new toResultViewCheck(item,"SYNONYM",QCheckListItem::CheckBox);
+	QListViewItem *topItem=new toResultViewCheck(item,QString::fromLatin1("SYNONYM"),QCheckListItem::CheckBox);
 	while(object.size()>0) {
 	  QListViewItem *item=new toResultViewCheck(topItem,toShift(object),
 						    QCheckListItem::CheckBox);
-	  item->setText(1,"SYNONYM");
+	  item->setText(1,QString::fromLatin1("SYNONYM"));
 	  item->setText(2,top);
 	}
       }
@@ -858,7 +858,7 @@ void toScript::changeSchema(int,bool source)
       parent=parent->nextSibling()) {
     toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(parent);
     if (chk) {
-      bool ena=((src==chk->text(0))||(src=="All"));
+      bool ena=((src==chk->text(0))||(src==QString::fromLatin1("All")));
 
       QListViewItem *next=NULL;
       for (QListViewItem *item=parent;item;item=next) {
@@ -900,7 +900,7 @@ void toScript::newSize(void)
 
   for (QListViewItem *item=ScriptUI->Sizes->firstChild();item;item=item->nextSibling())
     if (max==item->text(0)) {
-      toStatusMessage("Replacing existing size with new",false,false);
+      toStatusMessage(tr("Replacing existing size with new"),false,false);
       delete item;
       break;
     }
@@ -941,9 +941,9 @@ void toScript::setupExtract(toExtract &extr)
   extr.setStorage    (ScriptUI->IncludeStorage->isEnabled()    &&
 		      ScriptUI->IncludeStorage->isChecked()    );
 
-  if (ScriptUI->Schema->currentText()=="Same")
-    extr.setSchema("1");
-  else if (ScriptUI->Schema->currentText()=="None")
+  if (ScriptUI->Schema->currentText()==tr("Same"))
+    extr.setSchema(QString::fromLatin1("1"));
+  else if (ScriptUI->Schema->currentText()==tr("None"))
     extr.setSchema(QString::null);
   else
     extr.setSchema(ScriptUI->Schema->currentText());
@@ -951,17 +951,17 @@ void toScript::setupExtract(toExtract &extr)
   if (ScriptUI->DontResize->isChecked())
     extr.setResize(QString::null);
   else if (ScriptUI->AutoResize->isChecked())
-    extr.setResize("1");
+    extr.setResize(QString::fromLatin1("1"));
   else {
     QString siz;
     for (QListViewItem *item=ScriptUI->Sizes->firstChild();item;item=item->nextSibling()) {
       siz+=item->text(0);
-      siz+=":";
+      siz+=QString::fromLatin1(":");
       siz+=item->text(1);
-      siz+=":";
+      siz+=QString::fromLatin1(":");
       siz+=item->text(2);
       if (item->nextSibling())
-	siz+=":";
+	siz+=QString::fromLatin1(":");
     }
     extr.setResize(siz);
   }

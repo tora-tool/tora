@@ -89,7 +89,7 @@ void toPreferences::saveSetting(void)
 }
 
 toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
-  : toPreferencesUI(parent,name,modal,fl),toHelpContext("preferences.html")
+  : toPreferencesUI(parent,name,modal,fl),toHelpContext(QString::fromLatin1("preferences.html"))
 {
   try {
     toHelp::connectDialog(this);
@@ -98,42 +98,42 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
     Layout=new QVBoxLayout(Parent);
 
     QListBoxText *item;
-    item=new QListBoxText(TabSelection,"Global Settings");
+    item=new QListBoxText(TabSelection,tr("Global Settings"));
     addWidget(item,new toGlobalSetting(Parent));
 
-    item=new QListBoxText(TabSelection,"Editor Settings");
+    item=new QListBoxText(TabSelection,tr("Editor Settings"));
     addWidget(item,new toSyntaxSetup(Parent));
   
-    item=new QListBoxText(TabSelection,"Database Settings");
+    item=new QListBoxText(TabSelection,tr("Database Settings"));
     addWidget(item,new toDatabaseSetting(Parent));
 
-    std::list<QString> prov=toConnectionProvider::providers();
-    for (std::list<QString>::iterator i=prov.begin();i!=prov.end();i++) {
+    std::list<QCString> prov=toConnectionProvider::providers();
+    for (std::list<QCString>::iterator i=prov.begin();i!=prov.end();i++) {
       QWidget *tab=toConnectionProvider::configurationTab(*i,Parent);
       if (tab) {
-	QString str(" ");
-	str.append(*i);
+	QString str(QString::fromLatin1(" "));
+	str.append(QString::fromLatin1(*i));
 	addWidget(new QListBoxText(TabSelection,str),tab);
       }
     }
 
-    item=new QListBoxText(TabSelection,"Tools");
+    item=new QListBoxText(TabSelection,tr("Tools"));
     addWidget(item,new toToolSetting(Parent));
 
     TabSelection->setCurrentItem(0);
 
-    std::map<QString,toTool *> tools=toTool::tools();
-    std::map<QString,toTool *> newSort;
+    std::map<QCString,toTool *> tools=toTool::tools();
+    std::map<QCString,toTool *> newSort;
     {
-      for (std::map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
+      for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++)
 	newSort[(*i).second->name()]=(*i).second;
     }
 
     {
-      for (std::map<QString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
+      for (std::map<QCString,toTool *>::iterator i=newSort.begin();i!=newSort.end();i++) {
 	QWidget *tab=(*i).second->configurationTab(Parent);
 	if (tab) {
-	  QString str(" ");
+	  QString str(QString::fromLatin1(" "));
 	  str.append((*i).first);
 	  addWidget(new QListBoxText(TabSelection,str),tab);
 	}

@@ -48,39 +48,39 @@
 toStorageDefinition::toStorageDefinition(QWidget* parent,const char* name,WFlags fl)
   : toStorageDefinitionUI(parent,name,fl)
 {
-  InitialSize->setTitle("&Initial size");
+  InitialSize->setTitle(tr("&Initial size"));
   InitialSize->setValue(50);
 
-  NextSize->setTitle("&Next size");
+  NextSize->setTitle(tr("&Next size"));
   NextSize->setValue(50);
 
-  OptimalSize->setTitle("&Size");
+  OptimalSize->setTitle(tr("&Size"));
   OptimalSize->setEnabled(false);
 }
 
 std::list<QString> toStorageDefinition::sql(void)
 {
-  QString str("STORAGE (INITIAL ");
+  QString str(QString::fromLatin1("STORAGE (INITIAL "));
   str.append(InitialSize->sizeString());
-  str.append(" NEXT ");
+  str.append(QString::fromLatin1(" NEXT "));
   str.append(NextSize->sizeString());
-  str.append(" MINEXTENTS ");
+  str.append(QString::fromLatin1(" MINEXTENTS "));
   str.append(InitialExtent->text());
-  str.append(" MAXEXTENTS ");
+  str.append(QString::fromLatin1(" MAXEXTENTS "));
   if (UnlimitedExtent->isChecked())
-    str.append("UNLIMITED");
+    str.append(QString::fromLatin1("UNLIMITED"));
   else
     str.append(MaximumExtent->text());
   if (!Optimal->isEnabled()) {
-    str.append(" PCTINCREASE ");
+    str.append(QString::fromLatin1(" PCTINCREASE "));
     str.append(PCTIncrease->text());
   }
 
   if (!OptimalNull->isChecked()) {
-    str.append(" OPTIMAL ");
+    str.append(QString::fromLatin1(" OPTIMAL "));
     str.append(OptimalSize->sizeString());
   }
-  str.append(")");
+  str.append(QString::fromLatin1(")"));
   std::list<QString> ret;
   ret.insert(ret.end(),str);
   return ret;

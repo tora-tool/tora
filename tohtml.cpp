@@ -32,6 +32,10 @@
  *
  ****************************************************************************/
 
+#include "toconf.h"
+
+
+#include "tomain.h"
 #include "tohtml.h"
 
 #include <ctype.h>
@@ -71,14 +75,14 @@ void toHtml::skipSpace(void)
 bool toHtml::eof(void)
 {
   if (Position>Length)
-    throw QString("Invalidly went beyond end of file");
+    throw qApp->translate("toHtml","Invalidly went beyond end of file");
   return Position==Length;
 }
 
 void toHtml::nextToken(void)
 {
   if (eof())
-    throw QString("Reading HTML after eof");
+    throw qApp->translate("toHtml","Reading HTML after eof");
   QualifierNum=0;
   char c=LastChar;
   if (!c)
@@ -89,7 +93,7 @@ void toHtml::nextToken(void)
     LastChar=0;
     skipSpace();
     if (Position>=Length)
-      throw QString("Lone < at end");
+      throw qApp->translate("toHtml","Lone < at end");
     if (Data[Position]!='/') {
       Open=true;
     } else {
@@ -108,7 +112,7 @@ void toHtml::nextToken(void)
     for(;;) {
       skipSpace();
       if (Position>=Length)
-	throw QString("Unended tag at end");
+	throw qApp->translate("toHtml","Unended tag at end");
 
       c=LastChar;
       if (!c)
@@ -135,7 +139,7 @@ void toHtml::nextToken(void)
       }
       skipSpace();
       if (Position>=Length)
-	throw QString("Unended tag qualifier at end");
+	throw qApp->translate("toHtml","Unended tag qualifier at end");
       c=LastChar;
       if (!c)
 	c=Data[Position];
@@ -144,7 +148,7 @@ void toHtml::nextToken(void)
 	Position++;
 	skipSpace();
 	if (Position>=Length)
-	  throw QString("Unended tag qualifier data at end");
+	  throw qApp->translate("toHtml","Unended tag qualifier data at end");
 	c=Data[Position];
 	if (c=='\''||c=='\"') {
 	  Position++;
@@ -152,7 +156,7 @@ void toHtml::nextToken(void)
 	  while(Data[Position]!=c) {
 	    Position++;
 	    if (Position>=Length)
-	      throw QString("Unended quoted string at end");
+	      throw qApp->translate("toHtml","Unended quoted string at end");
 	  }
 	  Qualifiers[QualifierNum].Value=mid(start,Position-start);
 	  Position++;
@@ -162,14 +166,14 @@ void toHtml::nextToken(void)
 	  while(!isspace(Data[Position])&&Data[Position]!='>') {
 	    Position++;
 	    if (Position>=Length)
-	      throw QString("Unended qualifier data at end");
+	      throw qApp->translate("toHtml","Unended qualifier data at end");
 	  }
 	  Qualifiers[QualifierNum].Value=mid(start,Position-start);
 	}
       }
       QualifierNum++;
       if (QualifierNum>=TO_HTML_MAX_QUAL)
-	throw QString("Exceded qualifier max in toHtml");
+	throw qApp->translate("toHtml","Exceded qualifier max in toHtml");
     }
   } else {
     IsTag=false;
@@ -206,12 +210,12 @@ QCString toHtml::text()
       QCString tmp(start,cur-start);
       if (tmp[0]=='#') {
 	tmp=tmp.right(tmp.length()-1);
-	ret+=QChar(char(tmp.toInt()));
+	ret+=char(tmp.toInt());
       } else if (tmp=="auml")
 	ret+="å";
       // The rest of the & codes...
     } else
-      ret+=QChar(c);
+      ret+=c;
   }
   return ret;
 }
@@ -221,11 +225,11 @@ const char *toHtml::mid(size_t start,size_t size)
   if (size==0)
     return "";
   if (start>=Length)
-    throw QString("Tried to access string out of bounds in mid (start=%1)").arg(start);
+    throw qApp->translate("toHtml","Tried to access string out of bounds in mid (start=%1)").arg(start);
   if (size>Length)
-    throw QString("Tried to access string out of bounds in mid (size=%1)").arg(size);
+    throw qApp->translate("toHtml","Tried to access string out of bounds in mid (size=%1)").arg(size);
   if (start+size>Length)
-    throw QString("Tried to access string out of bounds in mid (total=%1+%2>%3)").
+    throw qApp->translate("toHtml","Tried to access string out of bounds in mid (total=%1+%2>%3)").
       arg(start).
       arg(size).
       arg(Length);
@@ -291,9 +295,9 @@ QString toHtml::escape(const QString &html)
 {
   QString ret=html;
 
-  static QRegExp amp("\\&");
-  static QRegExp lt("\\<");
-  static QRegExp gt("\\>");
+  static QRegExp amp(QString::fromLatin1("\\&"));
+  static QRegExp lt(QString::fromLatin1("\\<"));
+  static QRegExp gt(QString::fromLatin1("\\>"));
 
 #if 0
   ret.replace(amp,"&amp;");

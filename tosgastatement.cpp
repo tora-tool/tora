@@ -53,7 +53,7 @@ void toSGAStatement::viewResources(void)
   try {
     Resources->changeParams(Address);
   } catch (...) {
-    toStatusMessage("Couldn't find SQL statement in SGA",false,false);
+    toStatusMessage(tr("Couldn't find SQL statement in SGA"),false,false);
   }
 }
 
@@ -69,11 +69,11 @@ toSGAStatement::toSGAStatement(QWidget *parent)
   : QTabWidget(parent)
 {
   SQLText=new toResultField(this);
-  addTab(SQLText,"SQL");
+  addTab(SQLText,tr("SQL"));
   Plan=new toResultPlan(this);
-  addTab(Plan,"Execution plan");
+  addTab(Plan,tr("Execution plan"));
   Resources=new toResultResources(this);
-  addTab(Resources,"Information");
+  addTab(Resources,tr("Information"));
   connect(this,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeTab(QWidget *)));
   CurrentTab=SQLText;

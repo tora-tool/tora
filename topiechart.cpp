@@ -37,6 +37,7 @@
 #include "toconf.h"
 #include "topiechart.h"
 #include "tomain.h"
+#include "toresult.h"
 #include "totool.h"
 
 #ifdef TO_HAS_KPRINT
@@ -146,8 +147,8 @@ void toPieChart::mousePressEvent(QMouseEvent *e)
   if (e->button()==RightButton) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
-      Menu->insertItem(QPixmap((const char *)print_xpm),"&Print...",this,SLOT(editPrint()));
-      Menu->insertItem("&Open in new window",this,SLOT(openCopy()));
+      Menu->insertItem(QPixmap((const char **)print_xpm),tr("&Print..."),this,SLOT(editPrint()));
+      Menu->insertItem(tr("&Open in new window"),this,SLOT(openCopy()));
     }
     Menu->popup(e->globalPos());
   }
@@ -182,6 +183,8 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
     int lwidth=0;
     int lheight=0;
 
+    toResult *Result=dynamic_cast<toResult *>(this);
+
     std::list<double>::iterator j=Values.begin();
     {
       for(std::list<QString>::iterator i=Labels.begin();i!=Labels.end();i++) {
@@ -194,10 +197,10 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
 	  sizstr+=Postfix;
 	}
         if (!(*i).isEmpty()) {
-  	  QString str=*i;
-	  str+=" (";
+  	  QString str=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toPieChart"),*i);
+	  str+=QString::fromLatin1(" (");
 	  str+=sizstr;
-	  str+=")";
+	  str+=QString::fromLatin1(")");
 	  QRect bounds=fm.boundingRect(0,0,10000,10000,FONT_ALIGN,str);
 	  if (lwidth<bounds.width())
 	    lwidth=bounds.width();
@@ -235,10 +238,10 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
       }
 
       if (!(*i).isEmpty()) {
-	QString str=*i;
-	str+=" (";
+	QString str=toTranslateMayby(Result?Result->sqlName():QString::fromLatin1("toPieChart"),*i);
+	str+=QString::fromLatin1(" (");
 	str+=sizstr;
-	str+=")";
+	str+=QString::fromLatin1(")");
 
 	QRect bounds=fm.boundingRect(lx,ly,100000,100000,FONT_ALIGN,str);
 	p->drawText(bounds,FONT_ALIGN,str);
@@ -262,7 +265,7 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
 
   if (tot==0) {
     p->drawText(QRect(2,2,right-4,bottom-4),
-		AlignCenter|WordBreak,"All values are 0 in this chart");
+		AlignCenter|WordBreak,tr("All values are 0 in this chart"));
     return;
   }
 
@@ -302,7 +305,7 @@ void toPieChart::editPrint(void)
   TOPrinter printer;
   printer.setMinMax(1,1);
   if (printer.setup()) {
-    printer.setCreator("TOra");
+    printer.setCreator(tr("TOra"));
     QPainter painter(&printer);
     QPaintDeviceMetrics metrics(&printer);
     QRect rect(0,0,metrics.width(),metrics.height());

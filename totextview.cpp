@@ -38,7 +38,7 @@
 
 bool toTextView::editSave(bool)
 {
-  QString fn=toSaveFilename(QString::null,"*.html",this);
+  QString fn=toSaveFilename(QString::null,QString::fromLatin1("*.html"),this);
   if (!fn.isEmpty()) {
     if (!toWriteFile(fn,text()))
       return false;

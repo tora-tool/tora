@@ -65,6 +65,7 @@
 
 #include "toeditwidget.h"
 #include "toresult.h"
+#include "toresultlistformatui.h"
 
 #include <qlistview.h>
 
@@ -103,13 +104,13 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
   { }
 };
 
@@ -363,7 +364,7 @@ class toListView : public QListView,public toEditWidget {
    */
   virtual QListViewItem *printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,
 				   int &column,int &level,int pageNo,bool paint=true);
-  int exportType(void);
+  int exportType(QString &separator,QString &delimiter);
 public:
   /** Create new list view.
    * @param parent Parent of list.
@@ -403,8 +404,10 @@ public:
    * @param includeHeader Include header.
    * @param onlySelection Only include selection.
    * @param type Format of exported list.
+   * @param separator Separator for CSV format.
+   * @param delimiter Delimiter for CSV format.
    */
-  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1);
+  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,const QString &separator=";",const QString &delimiter="\"");
   /** Export list as file.
    */
   virtual bool editSave(bool ask);
@@ -427,12 +430,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Create transposed copy of list
    * @return Pointer to newly allocated transposed listview.
    */
@@ -464,6 +467,10 @@ protected slots:
 
 class toResultView : public toListView, public toResult {
   Q_OBJECT
+
+  int SortColumn;
+  bool SortAscending;
+  bool SortConnected;
 
   /** Reimplemented for internal reasons.
    */
@@ -574,8 +581,7 @@ public:
    * @param str String to set first column to.
    * @return Allocated item.
    */
-  virtual QListViewItem *createItem(QListViewItem *last,const QString &str)
-  { return new toResultViewItem(this,last,str); }
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &str);
 
   /** Reimplemented for internal reasons.
    */
@@ -633,6 +639,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void addMenues(QPopupMenu *);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setSorting(int col,bool asc=true);
 public slots:
   /** Reimplemented for internal reasons.
    */
@@ -657,10 +666,22 @@ public slots:
    */
   virtual bool canHandle(toConnection &)
   { return true; }
+private slots:
+  void headingClicked(int col);
+  void checkHeading(void); 
 protected slots:
   /** Reimplemented for internal reasons.
    */
   virtual void menuCallback(int);
+};
+
+class toResultListFormat : public toResultListFormatUI {
+  Q_OBJECT
+public:
+  toResultListFormat(QWidget *parent,const char *name);
+  void saveDefault(void);
+public slots:
+  virtual void formatChanged(int pos);
 };
 
 #endif

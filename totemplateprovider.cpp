@@ -36,7 +36,7 @@
 
 std::list<toTemplateProvider *> *toTemplateProvider::Providers;
 
-toTemplateProvider::toTemplateProvider(const QString &name)
+toTemplateProvider::toTemplateProvider(const QCString &name)
   : Name(name)
 {
   if (!Providers)
@@ -44,7 +44,7 @@ toTemplateProvider::toTemplateProvider(const QString &name)
   Providers->insert(Providers->end(),this);
 }
 
-void toTemplateProvider::exportAllData(std::map<QString,QString> &data,const QString &prefix)
+void toTemplateProvider::exportAllData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   if (!Providers)
     return;
@@ -54,7 +54,7 @@ void toTemplateProvider::exportAllData(std::map<QString,QString> &data,const QSt
     (*i)->exportData(data,prefix+":"+(*i)->name());
 }
 
-void toTemplateProvider::importAllData(std::map<QString,QString> &data,const QString &prefix)
+void toTemplateProvider::importAllData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   if (!Providers)
     return;

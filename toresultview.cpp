@@ -79,7 +79,7 @@ void toResultViewMLine::setText (int col,const QString &text)
   int pos=0;
   int lines=0;
   do {
-    pos=text.find("\n",pos);
+    pos=text.find(QString::fromLatin1("\n"),pos);
     lines++;
     pos++;
   } while(pos>0);
@@ -94,8 +94,8 @@ void toResultViewMLine::setup(void)
   setHeight((listView()->fontMetrics().height()+1)*Lines+margin);
 }
 
-void toResultViewMLine::paintCell (QPainter *pnt,const QColorGroup & cg,
-				   int column,int width,int alignment)
+void toResultViewMLine::paintCell(QPainter *pnt,const QColorGroup & cg,
+				  int column,int width,int alignment)
 {
   toResultViewItem::paintCell(pnt,cg,column,
 			      max(QListViewItem::width(pnt->fontMetrics(),listView(),column),width),
@@ -107,10 +107,9 @@ static int TextWidth(const QFontMetrics &fm,const QString &str)
   int lpos=0;
   int pos=0;
   int maxWidth=0;
-  const char *strtext=str;
   do {
-    pos=str.find("\n",lpos);
-    QRect bounds=fm.boundingRect(strtext+lpos,pos-lpos);
+    pos=str.find(QString::fromLatin1("\n"),lpos);
+    QRect bounds=fm.boundingRect(str.mid(lpos,pos-lpos));
     if (bounds.width()>maxWidth)
       maxWidth=bounds.width();
     lpos=pos+1;
@@ -147,7 +146,7 @@ QString toResultViewItem::text(int col) const
   int pos=text.find('\n');
   if (pos!=-1) {
     text.remove(pos,text.length());
-    text.append("...");
+    text.append(QString::fromLatin1("..."));
   }
   
   return text;
@@ -155,18 +154,18 @@ QString toResultViewItem::text(int col) const
 
 QString toResultViewItem::key(int col,bool asc) const
 {
-  static QRegExp number("^\\d*\\.?\\d+E?-?\\d*.?.?$");
+  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
   QString val=text(col);
   if (number.match(val)>=0) {
     static char buf[100];
     sprintf(buf,"%015.5f",text(col).toFloat());
-    return buf;
-  } else if (val=="N/A") {
+    return QString::fromLatin1(buf);
+  } else if (val==QString::fromLatin1("N/A")) {
     if (asc)
-      return "\xff";
+      return QString::fromLatin1("\xff");
     else
-      return "\001";
+      return QString::fromLatin1("\001");
   }
   return val;
 }
@@ -177,7 +176,7 @@ void toResultViewMLCheck::setText (int col,const QString &text)
   int pos=0;
   int lines=0;
   do {
-    pos=text.find("\n",pos);
+    pos=text.find(QString::fromLatin1("\n"),pos);
     lines++;
     pos++;
   } while(pos>0);
@@ -196,8 +195,8 @@ void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
 				   int column,int width,int alignment)
 {
   toResultViewCheck::paintCell(pnt,cg,column,
-			      max(QCheckListItem::width(pnt->fontMetrics(),listView(),column),width),
-			      alignment);
+			       max(QCheckListItem::width(pnt->fontMetrics(),listView(),column),width),
+			       alignment);
 }
 
 int toResultViewMLCheck::width(const QFontMetrics &fm, const QListView *top, int column) const
@@ -230,7 +229,7 @@ QString toResultViewCheck::text(int col) const
   int pos=text.find('\n');
   if (pos!=-1) {
     text.remove(pos,text.length());
-    text.append("...");
+    text.append(QString::fromLatin1("..."));
   }
   
   return text;
@@ -238,17 +237,17 @@ QString toResultViewCheck::text(int col) const
 
 QString toResultViewCheck::key(int col,bool asc) const
 {
-  static QRegExp number("^\\d*\\.?\\d+$");
+  static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+$"));
   QString val=text(col);
   if (number.match(val)>=0) {
     static char buf[100];
     sprintf(buf,"%015f",text(col).toFloat());
-    return buf;
+    return QString::fromLatin1(buf);
   } else if (val=="N/A") {
     if (asc)
-      return "\xff";
+      return QString::fromLatin1("\xff");
     else
-      return "\001";
+      return QString::fromLatin1("\001");
   }
   return val;
 }
@@ -413,8 +412,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   double mheight=metrics.height()/wpscaley;
   double x=0;
   if (paint) {
-    QString numPage("Page: ");
-    numPage+=QString::number(pageNo);
+    QString numPage(tr("Page: %1").arg(pageNo));
     painter->drawText(0,int(metrics.height()/wpscaley)-header()->height(),int(metrics.width()/wpscalex),
 		      header()->height(),
 		      SingleLine|AlignRight|AlignVCenter,
@@ -515,7 +513,7 @@ void toListView::editPrint(void)
   printer.setMinMax(1,1000);
   printer.setFromTo(1,1000);
   if (printer.setup()) {
-    printer.setCreator("TOra");
+    printer.setCreator(tr("TOra"));
     QPainter painter(&printer);
 
     QListViewItem *item=firstChild();
@@ -530,12 +528,11 @@ void toListView::editPrint(void)
       printer.newPage();
       painter.resetXForm();
       qApp->processEvents();
-      QString str("Printing page ");
-      str+=QString::number(page);
+      QString str=tr("Printing page %1").arg(page);
       toStatusMessage(str,false,false);
     }
     painter.end();
-    toStatusMessage("Done printing",false,false);
+    toStatusMessage(tr("Done printing"),false,false);
   }
 }
 
@@ -554,24 +551,24 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
   if (item) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
-      Menu->insertItem("Display in editor...",TORESULT_MEMO);
+      Menu->insertItem(tr("Display in editor..."),TORESULT_MEMO);
       Menu->insertSeparator();
-      Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
+      Menu->insertItem(tr("&Copy field"),TORESULT_COPY_FIELD);
       if (selectionMode()==Multi||selectionMode()==Extended) {
-	Menu->insertItem("Copy selection",TORESULT_COPY_SEL);
-	Menu->insertItem("Copy selection with header",TORESULT_COPY_SEL_HEAD);
+	Menu->insertItem(tr("Copy selection"),TORESULT_COPY_SEL);
+	Menu->insertItem(tr("Copy selection with header"),TORESULT_COPY_SEL_HEAD);
       }
-      Menu->insertItem("Copy transposed",TORESULT_COPY_TRANS);
+      Menu->insertItem(tr("Copy transposed"),TORESULT_COPY_TRANS);
       if (selectionMode()==Multi||selectionMode()==Extended) {
 	Menu->insertSeparator();
-	Menu->insertItem("Select all",TORESULT_SELECT_ALL);
+	Menu->insertItem(tr("Select all"),TORESULT_SELECT_ALL);
 	Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
       }
       Menu->insertSeparator();
-      Menu->insertItem("Export to file...",TORESULT_EXPORT);
+      Menu->insertItem(tr("Export to file..."),TORESULT_EXPORT);
       if (!Name.isEmpty()) {
 	Menu->insertSeparator();
-	Menu->insertItem("Edit SQL...",TORESULT_SQL);
+	Menu->insertItem(tr("Edit SQL..."),TORESULT_SQL);
       }
       connect(Menu,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
       addMenues(Menu);
@@ -652,9 +649,9 @@ void toListView::focusInEvent (QFocusEvent *e)
 
 static QString QuoteString(const QString &str)
 {
-  static QRegExp quote("\"");
+  static QRegExp quote(QString::fromLatin1("\""));
   QString t=str;
-  t.replace(quote,"\"\"");
+  t.replace(quote,QString::fromLatin1("\"\""));
   return t;
 }
 
@@ -804,7 +801,7 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
   if (type<0)
     type=exportType(separator,delimiter);
   if (type<0)
-    throw QString("");
+    throw QString::null;
 
   int *sizes=NULL;
   try {
@@ -859,7 +856,7 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 
     QString output;
     if (type==3) {
-      output=QString("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0>").
+      output=QString::fromLatin1("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0>").
 	arg(sqlName());
     }
 
@@ -868,30 +865,30 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
     QString bgcolor;
     if (includeHeader) {
       if (bgcolor.isEmpty())
-	bgcolor="nonull";
+	bgcolor=QString::fromLatin1("nonull");
       else
-	bgcolor="";
+	bgcolor=QString::null;
       if (type==3)
-	output+="<TR BGCOLOR=#7f7f7f>";
+	output+=QString::fromLatin1("<TR BGCOLOR=#7f7f7f>");
       for (int j=0;j<columns();j++)
 	switch(type) {
 	case 0:
-	  output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
+	  output+=QString::fromLatin1("%1 ").arg(header()->label(j),-sizes[j]);
 	  break;
 	case 1:
-	  output+=QString("%1\t").arg(header()->label(j));
+	  output+=QString::fromLatin1("%1\t").arg(header()->label(j));
 	  break;
 	case 2:
-	  output+=QString("%1%2%3%4").
+	  output+=QString::fromLatin1("%1%2%3%4").
 	    arg(delimiter).
 	    arg(QuoteString(header()->label(j))).
 	    arg(delimiter).
 	    arg(separator);
 	  break;
 	case 3:
-	  output+="<TH ALIGN=LEFT BGCOLOR=#cfcfcf>";
+	  output+=QString::fromLatin1("<TH ALIGN=LEFT BGCOLOR=#cfcfcf>");
 	  output+=header()->label(j);
-	  output+="</TH>";
+	  output+=QString::fromLatin1("</TH>");
 	  break;
 	}
       if (output.length()>0&&type==2)
@@ -899,16 +896,16 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
       else if (output.length()>0&&type!=3)
 	output=output.left(output.length()-1);
       else if (type==3&&includeHeader)
-	output+="</TR>";
-      output+="\n";
+	output+=QString::fromLatin1("</TR>");
+      output+=QString::fromLatin1("\n");
       if (type==0) {
 	for (int k=0;k<columns();k++) {
 	  for (int l=0;l<sizes[k];l++)
-	    output+="=";
+	    output+=QString::fromLatin1("=");
 	  if (k!=columns()-1)
-	    output+=" ";
+	    output+=QString::fromLatin1(" ");
 	}
-	output+="\n";
+	output+=QString::fromLatin1("\n");
       }
     }
 
@@ -921,12 +918,12 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
 
 	if (bgcolor.isEmpty())
-	  bgcolor=" BGCOLOR=#cfcfff";
+	  bgcolor=QString::fromLatin1(" BGCOLOR=#cfcfff");
 	else
-	  bgcolor="";
+	  bgcolor=QString::null;
 	QString line;
 	if (type==3)
-	  line=QString("<TR%1>").arg(bgcolor);      
+	  line=QString::fromLatin1("<TR%1>").arg(bgcolor);      
 
 	for (int i=0;i<columns();i++) {
 	  QString text;
@@ -941,15 +938,15 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 	  switch(type) {
 	  case 0:
 	    line+=indent;
-	    line+=QString("%1 ").arg(text,(i==0?indent.length():0)-sizes[i]);
+	    line+=QString::fromLatin1("%1 ").arg(text,(i==0?indent.length():0)-sizes[i]);
 	    break;
 	  case 1:
 	    line+=indent;
-	    line+=QString("%1\t").arg(text);
+	    line+=QString::fromLatin1("%1\t").arg(text);
 	    break;
 	  case 2:
 	    line+=indent;
-	    line+=QString("%1%2%3%4").
+	    line+=QString::fromLatin1("%1%2%3%4").
 	      arg(delimiter).
 	      arg(QuoteString(text)).
 	      arg(delimiter).
@@ -957,29 +954,29 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
 
 	    break;
 	  case 3:
-	    line+=QString("<TD%1>").arg(bgcolor);
+	    line+=QString::fromLatin1("<TD%1>").arg(bgcolor);
 	    if (i==0)
 	      line+=indent;
 	    line+=text;
-	    line+="</TD>";
+	    line+=QString::fromLatin1("</TD>");
 	    break;
 	  }
 	}
 	if (type==3)
-	  line+="</TR>";
+	  line+=QString::fromLatin1("</TR>");
 	else if (type==2)
 	  line=line.left(line.length()-separator.length());
 	else 
 	  line=line.left(line.length()-1);
-	line+="\n";
+	line+=QString::fromLatin1("\n");
 	output+=line;
       }
 
       if (item->firstChild()) {
 	if (type!=3)
-	  indent+=" ";
+	  indent+=QString::fromLatin1(" ");
 	else
-	  indent+="&nbsp;";
+	  indent+=QString::fromLatin1("&nbsp;");
 	next=item->firstChild();
       } else if (item->nextSibling())
 	next=item->nextSibling();
@@ -997,7 +994,7 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
       }
     }
     if (type==3)
-      output+="</TABLE></BODY></HTML>";
+      output+=QString::fromLatin1("</TABLE></BODY></HTML>");
     delete[] sizes;
     return output;
   } catch(...) {
@@ -1006,31 +1003,31 @@ QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type,
   }
 }
 
-void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix)
+void toListView::exportData(std::map<QCString,QString> &ret,const QCString &prefix)
 {
   int id=0;
   for(int i=0;i<columns();i++) {
     id++;
-    ret[prefix+":Labels:"+QString::number(id)]=header()->label(i);
+    ret[prefix+":Labels:"+QString::number(id).latin1()]=header()->label(i);
   }
   std::map<QListViewItem *,int> itemMap;
   QListViewItem *next=NULL;
   id=0;
   if (rootIsDecorated())
-    ret[prefix+":Decorated"]="Yes";
+    ret[prefix+":Decorated"]=QString::fromLatin1("Yes");
   for (QListViewItem *item=firstChild();item;item=next) {
     id++;
-    QString nam=prefix;
+    QCString nam=prefix;
     nam+=":Items:";
-    nam+=QString::number(id);
+    nam+=QString::number(id).latin1();
     nam+=":";
     itemMap[item]=id;
     if (item->parent())
       ret[nam+"Parent"]=QString::number(itemMap[item->parent()]);
     else
-      ret[nam+"Parent"]="0";
+      ret[nam+"Parent"]=QString::fromLatin1("0");
     if (item->isOpen())
-      ret[nam+"Open"]="Yes";
+      ret[nam+"Open"]=QString::fromLatin1("Yes");
     for(int i=0;i<columns();i++) {
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
@@ -1041,7 +1038,7 @@ void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix
 	val=resItem->allText(i);
       else
 	val=item->text(i);
-      ret[nam+QString::number(i)]=val;
+      ret[nam+QString::number(i).latin1()]=val;
     }
 
     if (item->firstChild())
@@ -1059,14 +1056,14 @@ void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix
   }
 }
 
-void toListView::importData(std::map<QString,QString> &ret,const QString &prefix)
+void toListView::importData(std::map<QCString,QString> &ret,const QCString &prefix)
 {
   int id;
-  std::map<QString,QString>::iterator i;
+  std::map<QCString,QString>::iterator i;
   clear();
 
   id=1;
-  while((i=ret.find(prefix+":Labels:"+QString::number(id)))!=ret.end()) {
+  while((i=ret.find(prefix+":Labels:"+QString::number(id).latin1()))!=ret.end()) {
     addColumn((*i).second);
     id++;
   }
@@ -1077,8 +1074,8 @@ void toListView::importData(std::map<QString,QString> &ret,const QString &prefix
   std::map<int,QListViewItem *> itemMap;
 
   id=1;
-  while((i=ret.find(prefix+":Items:"+QString::number(id)+":Parent"))!=ret.end()) {
-    QString nam=prefix+":Items:"+QString::number(id)+":";
+  while((i=ret.find(prefix+":Items:"+QString::number(id).latin1()+":Parent"))!=ret.end()) {
+    QCString nam=prefix+":Items:"+QString::number(id).latin1()+":";
     int parent=(*i).second.toInt();
     toResultViewItem *item;
     if (parent)
@@ -1089,7 +1086,7 @@ void toListView::importData(std::map<QString,QString> &ret,const QString &prefix
       item->setOpen(true);
     itemMap[id]=item;
     for(int j=0;j<columns();j++)
-      item->setText(j,ret[nam+QString::number(j)]);
+      item->setText(j,ret[nam+QString::number(j).latin1()]);
     id++;
   }
 }
@@ -1114,7 +1111,7 @@ void toResultView::setup(bool readable,bool dispCol)
   ReadableColumns=readable;
   NumberColumn=dispCol;
   if (NumberColumn) {
-    addColumn("#");
+    addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);
   }
   Filter=NULL;
@@ -1156,7 +1153,7 @@ void toResultView::addItem(void)
       RowNumber++;
       int disp=0;
       QListViewItem *last=LastItem;
-      LastItem=createItem(LastItem,NULL);
+      LastItem=createItem(LastItem,QString::null);
       if (NumberColumn) {
 	LastItem->setText(0,QString::number(RowNumber));
 	disp=1;
@@ -1191,7 +1188,7 @@ void toResultView::query(const QString &sql,const toQList &param)
     removeColumn(0);
   }
   if (NumberColumn) {
-    addColumn("#");
+    addColumn(QString::fromLatin1("#"));
     setColumnAlignment(0,AlignRight);
   }
 
@@ -1209,12 +1206,12 @@ void toResultView::query(const QString &sql,const toQList &param)
 
       if (name.length()>0&&name.at(0)!=' ') {
 	if (hidden)
-	  throw QString("Can only hide last column in query");
+	  throw tr("Can only hide last column in query");
 	if (name.at(0)=='-') {
-	  addColumn(name.right(name.length()-1));
+	  addColumn(toTranslateMayby(sqlName(),name.right(name.length()-1)));
 	  setColumnAlignment(columns()-1,AlignRight);
 	} else {
-	  addColumn(name);
+	  addColumn(toTranslateMayby(sqlName(),name));
 	  if ((*i).AlignRight)
 	    setColumnAlignment(columns()-1,AlignRight);
 	}
@@ -1232,12 +1229,6 @@ void toResultView::query(const QString &sql,const toQList &param)
       addItem();
     if (ReadAll||MaxNumber<0)
       editReadAll();
-
-    char buffer[100];
-    if (Query->rowsProcessed()>0)
-      sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
-    else
-      sprintf(buffer,"Query executed");
   } TOCATCH
   updateContents();
 }
@@ -1245,7 +1236,7 @@ void toResultView::query(const QString &sql,const toQList &param)
 void toResultView::editReadAll(void)
 {
   if (!ReadAll)
-    toStatusMessage("Reading all entries",false,false);
+    toStatusMessage(tr("Reading all entries"),false,false);
   int i=0;
   while(!eof()) {
     addItem();
@@ -1279,7 +1270,7 @@ void toResultView::keyPressEvent(QKeyEvent *e)
 void toResultView::addMenues(QPopupMenu *menu)
 {
   menu->insertSeparator();
-  menu->insertItem("Read All",TORESULT_READ_ALL);
+  menu->insertItem(tr("Read All"),TORESULT_READ_ALL);
 }
 
 void toResultView::menuCallback(int cmd)
@@ -1333,10 +1324,10 @@ void toResultView::checkHeading(void)
 toResultListFormat::toResultListFormat(QWidget *parent,const char *name)
   : toResultListFormatUI(parent,name,true)
 {
-  Format->insertItem("Text");
-  Format->insertItem("Tab delimited");
-  Format->insertItem("CSV");
-  Format->insertItem("HTML");
+  Format->insertItem(tr("Text"));
+  Format->insertItem(tr("Tab delimited"));
+  Format->insertItem(tr("CSV"));
+  Format->insertItem(tr("HTML"));
   int num=toTool::globalConfig(CONF_DEFAULT_FORMAT,"").toInt();
   Format->setCurrentItem(num);
   formatChanged(num);

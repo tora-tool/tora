@@ -196,45 +196,45 @@ static toSQL SQLSessions("toSession:ListSession",
 toSession::toSession(QWidget *main,toConnection &connection)
   : toToolWidget(SessionTool,"session.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Session manager");
+  QToolBar *toolbar=toAllocBar(this,tr("Session manager"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Update sessionlist",
-		  "Update sessionlist",
+		  tr("Update sessionlist"),
+		  tr("Update sessionlist"),
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
   Select=new toResultCombo(toolbar);
-  Select->setSelected("All");
-  Select->additionalItem("All");
-  Select->additionalItem("No background");
-  Select->additionalItem("No system");
+  Select->setSelected(tr("All"));
+  Select->additionalItem(tr("All"));
+  Select->additionalItem(tr("No background"));
+  Select->additionalItem(tr("No system"));
   Select->query(toSQL::sql(toSQL::TOSQL_USERLIST));
 
   connect(Select,SIGNAL(activated(int)),this,SLOT(refresh()));
   
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)clock_xpm),
-		  "Enable timed statistics",
-		  "Enable timed statistics",
+		  tr("Enable timed statistics"),
+		  tr("Enable timed statistics"),
 		  this,SLOT(enableStatistics(void)),
 		  toolbar);
   new QToolButton(QPixmap((const char **)noclock_xpm),
-		  "Disable timed statistics",
-		  "Disable timed statistics",
+		  tr("Disable timed statistics"),
+		  tr("Disable timed statistics"),
 		  this,SLOT(disableStatistics(void)),
 		  toolbar);
   toolbar->addSeparator();
   new QToolButton(QPixmap((const char **)disconnect_xpm),
-		  "Disconnect selected session",
-		  "Disconnect selected session",
+		  tr("Disconnect selected session"),
+		  tr("Disconnect selected session"),
 		  this,SLOT(disconnectSession(void)),
 		  toolbar);
   toolbar->addSeparator();
-  new QLabel("Refresh ",toolbar);
+  new QLabel(tr("Refresh "),toolbar);
   connect(Refresh=toRefreshCreate(toolbar),SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
 
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
+  toolbar->setStretchableWidget(new QLabel(QString::null,toolbar));
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
@@ -247,36 +247,36 @@ toSession::toSession(QWidget *main,toConnection &connection)
   SessionStatistics=new toResultStats(false,0,StatisticSplitter);
   WaitBar=new toResultBar(StatisticSplitter);
   WaitBar->setSQL(SQLSessionWait);
-  WaitBar->setTitle("Session wait states");
-  WaitBar->setYPostfix("ms/s");
+  WaitBar->setTitle(tr("Session wait states"));
+  WaitBar->setYPostfix(QString::fromLatin1("ms/s"));
   IOBar=new toResultBar(StatisticSplitter);
   IOBar->setSQL(SQLSessionIO);
-  IOBar->setTitle("Session I/O");
-  IOBar->setYPostfix("blocks/s");
-  ResultTab->addTab(StatisticSplitter,"Statistics");
+  IOBar->setTitle(tr("Session I/O"));
+  IOBar->setYPostfix(QString::fromLatin1("blocks/s"));
+  ResultTab->addTab(StatisticSplitter,tr("Statistics"));
 
   Waits=new toWaitEvents(0,ResultTab,"waits");
-  ResultTab->addTab(Waits,"Wait events");
+  ResultTab->addTab(Waits,tr("Wait events"));
 
   ConnectInfo=new toResultLong(true,false,toQuery::Background,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
-  ResultTab->addTab(ConnectInfo,"Connect Info");
+  ResultTab->addTab(ConnectInfo,tr("Connect Info"));
   PendingLocks=new toResultLock(ResultTab);
-  ResultTab->addTab(PendingLocks,"Pending Locks");
+  ResultTab->addTab(PendingLocks,tr("Pending Locks"));
   LockedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
-  ResultTab->addTab(LockedObjects,"Locked Objects");
+  ResultTab->addTab(LockedObjects,tr("Locked Objects"));
   LockedObjects->setSQL(SQLLockedObject);
   CurrentStatement=new toSGAStatement(ResultTab);
-  ResultTab->addTab(CurrentStatement,"Current Statement");
+  ResultTab->addTab(CurrentStatement,tr("Current Statement"));
   AccessedObjects=new toResultLong(false,false,toQuery::Background,ResultTab);
   AccessedObjects->setSQL(SQLAccessedObjects);
-  ResultTab->addTab(AccessedObjects,"Accessing");
+  ResultTab->addTab(AccessedObjects,tr("Accessing"));
 
   PreviousStatement=new toSGAStatement(ResultTab);
-  ResultTab->addTab(PreviousStatement,"Previous Statement");
+  ResultTab->addTab(PreviousStatement,tr("Previous Statement"));
 
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
-  ResultTab->addTab(OpenSplitter,"Open Cursors");
+  ResultTab->addTab(OpenSplitter,tr("Open Cursors"));
   OpenCursors=new toResultLong(false,true,toQuery::Background,OpenSplitter);
   OpenCursors->setSQL(SQLOpenCursors);
   OpenStatement=new toSGAStatement(OpenSplitter);
@@ -309,20 +309,20 @@ void toSession::windowActivated(QWidget *widget)
   if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
-      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),"&Refresh",
+      ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
 			   this,SLOT(refresh(void)),Key_F5);
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)clock_xpm),"Enable timed statistics",
+      ToolMenu->insertItem(QPixmap((const char **)clock_xpm),tr("Enable timed statistics"),
 			   this,SLOT(enableStatistics(void)));
-      ToolMenu->insertItem(QPixmap((const char **)noclock_xpm),"Disable timed statistics",
+      ToolMenu->insertItem(QPixmap((const char **)noclock_xpm),tr("Disable timed statistics"),
 			   this,SLOT(disableStatistics(void)));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem(QPixmap((const char **)disconnect_xpm),"Disconnect session",
+      ToolMenu->insertItem(QPixmap((const char **)disconnect_xpm),tr("Disconnect session"),
 			   this,SLOT(disconnectSession(void)));
       ToolMenu->insertSeparator();
-      ToolMenu->insertItem("&Change Refresh",Refresh,SLOT(setFocus(void)),
+      ToolMenu->insertItem(tr("&Change Refresh"),Refresh,SLOT(setFocus(void)),
 			   Key_R+ALT);
-      toMainWidget()->menuBar()->insertItem("&Session",ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Session"),ToolMenu,-1,toToolMenuIndex());
     }
   } else {
     delete ToolMenu;
@@ -344,11 +344,11 @@ void toSession::refresh(void)
     if (Select->currentItem()==0)
       ; // Do nothing
     else if (Select->currentItem()==1)
-      extra="   AND a.Type != 'BACKGROUND'\n";
+      extra=QString::fromLatin1("   AND a.Type != 'BACKGROUND'\n");
     else if (Select->currentItem()==2)
-      extra="   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
+      extra=QString::fromLatin1("   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n");
     else
-      extra="   AND a.SchemaName = '"+Select->currentText()+"'\n";
+      extra=QString::fromLatin1("   AND a.SchemaName = '")+Select->currentText()+QString::fromLatin1("'\n");
     Sessions->setSQL(sql.arg(extra));
     Sessions->refresh();
   } TOCATCH
@@ -368,13 +368,13 @@ void toSession::enableStatistics(bool enable)
 {
   QString sql;
   if (enable)
-    sql="ALTER SYSTEM SET TIMED_STATISTICS = TRUE";
+    sql=QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = TRUE");
   else
-    sql="ALTER SYSTEM SET TIMED_STATISTICS = FALSE";
+    sql=QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = FALSE");
   try {
     connection().execute(sql);
   } catch (...) {
-    toStatusMessage("No access to timed statistics flags");
+    toStatusMessage(tr("No access to timed statistics flags"));
   }
 }
 
@@ -428,21 +428,21 @@ void toSession::disconnectSession(void)
 {
   QListViewItem *item=Sessions->selectedItem();
   if (item) {
-    QString sess="'";
+    QString sess=QString::fromLatin1("'");
     sess.append(item->text(0));
-    sess.append(",");
+    sess.append(QString::fromLatin1(","));
     sess.append(item->text(1));
-    sess.append("'");
-    QString str("Let current transaction finish before disconnecting session?");
+    sess.append(QString::fromLatin1("'"));
+    QString str(tr("Let current transaction finish before disconnecting session?"));
     QString sql;
-    switch(TOMessageBox::warning(this,"Commit work?",str,"&Yes","&No","&Cancel")) {
+    switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("&Cancel"))) {
     case 0:
-      sql="ALTER SYSTEM DISCONNECT SESSION ";
+      sql=QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
       sql.append(sess);
-      sql.append(" POST_TRANSACTION");
+      sql.append(QString::fromLatin1(" POST_TRANSACTION"));
       break;
     case 1:
-      sql="ALTER SYSTEM KILL SESSION ";
+      sql=QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
       sql.append(sess);
       break;
     case 2:

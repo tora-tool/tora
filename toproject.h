@@ -91,7 +91,7 @@ class toProjectTemplate : public QObject, public toTemplateProvider {
   Q_OBJECT
 
   toProjectTemplateItem *Root;
-  std::map<QString,QString> Import;
+  std::map<QCString,QString> Import;
 
   QToolButton *AddFile;
   QToolButton *DelFile;
@@ -102,8 +102,8 @@ public:
     : QObject(NULL,"projecttemplate"),toTemplateProvider("project")
   { Details=NULL; }
 
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 
   virtual void insertItems(QListView *parent,QToolBar *toolbar);
   virtual void removeItems(QListViewItem *item);

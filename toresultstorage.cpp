@@ -125,22 +125,22 @@ toResultStorage::toResultStorage(bool available,QWidget *parent,const char *name
   setAllColumnsShowFocus(true);
   setSorting(0);
   setRootIsDecorated(true);
-  addColumn("Name");
-  addColumn("Status");
-  addColumn("Information");
-  addColumn("Contents");
-  addColumn("Logging");
-  addColumn(QString("Size (%1)").arg(Unit));
-  addColumn(QString("Free (%1)").arg(Unit));
-  addColumn(QString("Autoextend (%1)").arg(Unit));
+  addColumn(tr("Name"));
+  addColumn(tr("Status"));
+  addColumn(tr("Information"));
+  addColumn(tr("Contents"));
+  addColumn(tr("Logging"));
+  addColumn(tr("Size (%1)").arg(Unit));
+  addColumn(tr("Free (%1)").arg(Unit));
+  addColumn(tr("Autoextend (%1)").arg(Unit));
   if (available)
-    addColumn("Used/Free/Autoextend");
+    addColumn(tr("Used/Free/Autoextend"));
   else
-    addColumn("Available");
-  addColumn("Coalesced");
-  addColumn(QString("Max free (%1)").arg(Unit));
-  addColumn("Free fragments");
-  setSQLName("toResultStorage");
+    addColumn(tr("Available"));
+  addColumn(tr("Coalesced"));
+  addColumn(tr("Max free (%1)").arg(Unit));
+  addColumn(tr("Free fragments"));
+  setSQLName(tr("toResultStorage"));
 
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);
@@ -229,7 +229,7 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                " WHERE d.tablespace_name = a.tablespace_name(+)\n"
                                "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                " ORDER BY d.tablespace_name",
-                               QString::null,
+                               "",
                                "8.0");
 
 static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
@@ -252,7 +252,7 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
                                " WHERE d.tablespace_name = a.tablespace_name(+)\n"
                                "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                " ORDER BY d.tablespace_name",
-                               QString::null,
+                               "",
                                "7.3");
 
 static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
@@ -320,7 +320,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  " WHERE d.tablespace_name = a.tablespace_name(+)\n"
                                  "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                  " ORDER BY d.tablespace_name",
-                                 QString::null,
+                                 "",
                                  "8.0");
 
 static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
@@ -343,7 +343,7 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
                                  " WHERE d.tablespace_name = a.tablespace_name(+)\n"
                                  "   AND d.tablespace_name = f.tablespace_name(+)\n"
                                  " ORDER BY d.tablespace_name",
-                                 QString::null,
+                                 "",
                                  "7.3");
 
 static toSQL SQLDatafile("toResultStorage:Datafile",
@@ -416,7 +416,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
                           "       (select :unt<int> unit from sys.dual) b\n"
                           " WHERE (s.file_id (+)= d.file_id)\n"
                           "   AND (d.file_name = v.name)",
-                          QString::null,
+                          "",
                           "8.0");
 
 static toSQL SQLDatafile7("toResultStorage:Datafile",
@@ -441,7 +441,7 @@ static toSQL SQLDatafile7("toResultStorage:Datafile",
 			  "        (select :unt<int> unit from sys.dual) b\n"
 			  " WHERE  (s.file_id (+)= d.file_id)\n"
 			  "   AND  (d.file_name = v.name)",
-			  QString::null,
+			  "",
 			  "7.3");
 
 #define FILECOLUMNS 14
@@ -520,7 +520,7 @@ void toResultStorage::updateList(void)
 	if (Files)
 	  break;
 	else
-	  throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
+	  throw tr("Couldn't find tablespace parent %1 for datafile").arg(name);
       }
       file=new toResultStorageItem(AvailableGraph,tablespace,NULL);
     }
@@ -585,14 +585,14 @@ QString toResultStorage::currentTablespace(void)
 {
   QListViewItem *item=selectedItem();
   if (!item)
-    throw QString("No tablespace selected");
+    throw tr("No tablespace selected");
   QString name;
   if (item->parent()||OnlyFiles)
     name=item->text(COLUMNS);
   else
     name=item->text(0);
   if (name.isEmpty())
-    throw QString("Weird, empty tablespace name");
+    throw tr("Weird, empty tablespace name");
   return name;
 }
 
@@ -600,7 +600,7 @@ QString toResultStorage::currentFilename(void)
 {
   QListViewItem *item=selectedItem();
   if (!item||(!item->parent()&&!OnlyFiles))
-    throw QString("No file selected");
+    throw tr("No file selected");
   QString name=item->text(0);
   return name;
 }
@@ -609,7 +609,7 @@ void toResultStorage::setOnlyFiles(bool only)
 {
   saveSelected();
   if (only&&!OnlyFiles) {
-    addColumn("Tablespace");
+    addColumn(tr("Tablespace"));
     setRootIsDecorated(false);
   } else if (!only&&OnlyFiles) {
     removeColumn(columns()-1);

@@ -53,7 +53,7 @@ static toSQL SQLVersion("toQSqlConnection:Version",
 
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
 			     "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
-			     QString::null,
+			     "",
 			     "7.1",
 			     "PostgreSQL");
 
@@ -69,7 +69,7 @@ static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
 				 "       c.relkind AS \"Type\"\n"
 				 "  FROM pg_class c LEFT OUTER JOIN pg_user u ON c.relowner=u.usesysid\n"
 				 " ORDER BY \"Tablename\"",
-				 QString::null,
+				 "",
 				 "7.1",
 				 "PostgreSQL");
 
@@ -109,7 +109,7 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
 				 "  and c.oid=a.attrelid\n"
 				 "  and (u.usename = :owner OR u.usesysid IS NULL)\n"
 				 "  and c.relname=:table",
-				 QString::null,
+				 "",
 				 "7.2",
 				 "PostgreSQL");
 
@@ -123,86 +123,89 @@ static QString QueryParam(const QString &in,toQList &params)
   std::map<QString,QString> binds;
 
   for(unsigned int i=0;i<query.length();i++) {
-    QChar c=query.at(i);
-    switch(char(c)) {
+    QChar rc=query.at(i);
+    char c=rc.latin1();
+    switch(c) {
     case '\\':
-      ret+=c;
+      ret+=rc;
       ret+=query.at(++i);
       break;
     case '\'':
       inString=!inString;
-      ret+=c;
+      ret+=rc;
       break;
     case ':':
       if (!inString) {
 	QString nam;
 	for (i++;i<query.length();i++) {
-	  c=query.at(i);
-	  if (!c.isLetterOrNumber())
+	  rc=query.at(i);
+	  if (!rc.isLetterOrNumber())
 	    break;
 	  nam+=c;
 	}
+	c=rc.latin1();
 	QString in;
 	if (c=='<') {
 	  for (i++;i<query.length();i++) {
-	    c=query.at(i);
+	    rc=query.at(i);
+	    c=rc.latin1();
 	    if (c=='>') {
 	      i++;
 	      break;
 	    }
-	    in+=c;
+	    in+=rc;
 	  }
 	}
 	i--;
 	
 	if (nam.isEmpty())
-	  throw QString("No bind name");
+	  throw QString::fromLatin1("No bind name");
 
 	if (binds.find(nam)!=binds.end()) {
 	  ret+=binds[nam];
 	  break;
 	}
 	if (cpar==params.end())
-	  throw QString("Not all bind variables suplied");
+	  throw QString::fromLatin1("Not all bind variables suplied");
 	QString str;
 	if ((*cpar).isNull()) {
-	  str="NULL";
+	  str=QString::fromLatin1("NULL");
 	} else if ((*cpar).isInt()||(*cpar).isDouble()) {
 	  str=QString(*cpar);
 	} else {
-	  if (in!="noquote")
-	    str+="'";
+	  if (in!=QString::fromLatin1("noquote"))
+	    str+=QString::fromLatin1("'");
 	  QString tmp=(*cpar);
 	  for(unsigned int j=0;j<tmp.length();j++) {
 	    QChar d=tmp.at(j);
-	    switch(char(d)) {
+	    switch(d.latin1()) {
 	    case 0:
-	      str+="\\0";
+	      str+=QString::fromLatin1("\\0");
 	      break;
 	    case '\n':
-	      str+="\\n";
+	      str+=QString::fromLatin1("\\n");
 	      break;
 	    case '\t':
-	      str+="\\t";
+	      str+=QString::fromLatin1("\\t");
 	      break;
 	    case '\r':
-	      str+="\\r";
+	      str+=QString::fromLatin1("\\r");
 	      break;
 	    case '\'':
-	      str+="\\\'";
+	      str+=QString::fromLatin1("\\\'");
 	      break;
 	    case '\"':
-	      str+="\\\"";
+	      str+=QString::fromLatin1("\\\"");
 	      break;
 	    case '\\':
-	      str+="\\\\";
+	      str+=QString::fromLatin1("\\\\");
 	      break;
 	    default:
 	      str+=d;
 	    }
 	  }
-	  if (in!="noquote")
-	    str+="'";
+	  if (in!=QString::fromLatin1("noquote"))
+	    str+=QString::fromLatin1("'");
 	}
 	binds[nam]=str;
 	ret+=str;
@@ -210,7 +213,7 @@ static QString QueryParam(const QString &in,toQList &params)
 	break;
       }
     default:
-      ret+=c;
+      ret+=rc;
     }
   }
   return ret;
@@ -221,13 +224,13 @@ static QString ErrorString(const QSqlError &err,const QString &sql=QString::null
   QString ret;
   if (err.databaseText().isEmpty()) {
     if (err.driverText().isEmpty())
-      ret="Unknown error";
+      ret=QString::fromLatin1("Unknown error");
     else
       ret=err.driverText();
   } else
     ret=err.databaseText();
   if (!sql.isEmpty())
-    ret+="\n\n"+sql;
+    ret+=QString::fromLatin1("\n\n")+sql;
   return ret;
 }
 
@@ -298,7 +301,7 @@ enum enum_field_types { FIELD_TYPE_DECIMAL, FIELD_TYPE_TINY,
                         FIELD_TYPE_STRING=254
 };
 
-static std::list<toQuery::queryDescribe> Describe(const QString &type,QSqlRecordInfo recInfo)
+static std::list<toQuery::queryDescribe> Describe(const QCString &type,QSqlRecordInfo recInfo)
 {
   std::list<toQuery::queryDescribe> ret;
   QSqlRecord record=recInfo.toRecord();
@@ -315,369 +318,369 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type,QSqlRecord
     if (type=="MySQL") {
       switch(info.typeID()) {
       case FIELD_TYPE_DECIMAL:
-	desc.Datatype="DECIMAL";
+	desc.Datatype=QString::fromLatin1("DECIMAL");
 	break;
       case FIELD_TYPE_TINY:
-	desc.Datatype="TINY";
+	desc.Datatype=QString::fromLatin1("TINY");
 	break;
       case FIELD_TYPE_SHORT:
-	desc.Datatype="SHORT";
+	desc.Datatype=QString::fromLatin1("SHORT");
 	break;
       case FIELD_TYPE_LONG:
-	desc.Datatype="LONG";
+	desc.Datatype=QString::fromLatin1("LONG");
 	break;
       case FIELD_TYPE_FLOAT:
-	desc.Datatype="FLOAT";
+	desc.Datatype=QString::fromLatin1("FLOAT");
 	break;
       case FIELD_TYPE_DOUBLE:
-	desc.Datatype="DOUBLE";
+	desc.Datatype=QString::fromLatin1("DOUBLE");
 	break;
       case FIELD_TYPE_NULL:
-	desc.Datatype="NULL";
+	desc.Datatype=QString::fromLatin1("NULL");
 	break;
       case FIELD_TYPE_TIMESTAMP:
-	desc.Datatype="TIMESTAMP";
+	desc.Datatype=QString::fromLatin1("TIMESTAMP");
 	break;
       case FIELD_TYPE_LONGLONG:
-	desc.Datatype="LONGLONG";
+	desc.Datatype=QString::fromLatin1("LONGLONG");
 	break;
       case FIELD_TYPE_INT24:
-	desc.Datatype="INT23";
+	desc.Datatype=QString::fromLatin1("INT23");
 	break;
       case FIELD_TYPE_DATE:
-	desc.Datatype="DATE";
+	desc.Datatype=QString::fromLatin1("DATE");
 	break;
       case FIELD_TYPE_TIME:
-	desc.Datatype="TIME";
+	desc.Datatype=QString::fromLatin1("TIME");
 	break;
       case FIELD_TYPE_DATETIME:
-	desc.Datatype="DATETIME";
+	desc.Datatype=QString::fromLatin1("DATETIME");
 	break;
       case FIELD_TYPE_YEAR:
-	desc.Datatype="YEAR";
+	desc.Datatype=QString::fromLatin1("YEAR");
 	break;
       case FIELD_TYPE_NEWDATE:
-	desc.Datatype="NEWDATE";
+	desc.Datatype=QString::fromLatin1("NEWDATE");
 	break;
       case FIELD_TYPE_ENUM:
-	desc.Datatype="ENUM";
+	desc.Datatype=QString::fromLatin1("ENUM");
 	break;
       case FIELD_TYPE_SET:
-	desc.Datatype="SET";
+	desc.Datatype=QString::fromLatin1("SET");
 	break;
       case FIELD_TYPE_TINY_BLOB:
-	desc.Datatype="TINY_BLOB";
+	desc.Datatype=QString::fromLatin1("TINY_BLOB");
 	break;
       case FIELD_TYPE_MEDIUM_BLOB:
-	desc.Datatype="MEDIUM_BLOB";
+	desc.Datatype=QString::fromLatin1("MEDIUM_BLOB");
 	break;
       case FIELD_TYPE_LONG_BLOB:
-	desc.Datatype="LONG_BLOB";
+	desc.Datatype=QString::fromLatin1("LONG_BLOB");
 	break;
       case FIELD_TYPE_BLOB:
-	desc.Datatype="BLOB";
+	desc.Datatype=QString::fromLatin1("BLOB");
 	break;
       case FIELD_TYPE_VAR_STRING:
-	desc.Datatype="VAR_STRING";
+	desc.Datatype=QString::fromLatin1("VAR_STRING");
 	break;
       case FIELD_TYPE_STRING:
-	desc.Datatype="STRING";
+	desc.Datatype=QString::fromLatin1("STRING");
 	break;
       default:
-	desc.Datatype="UNKNOWN";
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
 	break;
       }
     } else if (type=="PostgreSQL") {
       switch(info.typeID()) {
       case BOOLOID:
-	desc.Datatype="BOOL";
+	desc.Datatype=QString::fromLatin1("BOOL");
 	break;
       case BYTEAOID:
-	desc.Datatype="BYTEA";
+	desc.Datatype=QString::fromLatin1("BYTEA");
 	break;
       case CHAROID:
-	desc.Datatype="CHAR";
+	desc.Datatype=QString::fromLatin1("CHAR");
 	break;
       case NAMEOID:
 	size=32;
-	desc.Datatype="NAME";
+	desc.Datatype=QString::fromLatin1("NAME");
 	break;
       case INT8OID:
 	size=8;
-	desc.Datatype="INT8";
+	desc.Datatype=QString::fromLatin1("INT8");
 	break;
       case INT2OID:
 	size=2;
-	desc.Datatype="INT2";
+	desc.Datatype=QString::fromLatin1("INT2");
 	break;
       case INT2VECTOROID:
 	size=2;
-	desc.Datatype="INT2VECTOR";
+	desc.Datatype=QString::fromLatin1("INT2VECTOR");
 	break;
       case INT4OID:
 	size=4;
-	desc.Datatype="INT4";
+	desc.Datatype=QString::fromLatin1("INT4");
 	break;
       case REGPROCOID:
 	size=4;
-	desc.Datatype="REGPROC";
+	desc.Datatype=QString::fromLatin1("REGPROC");
 	break;
       case TEXTOID:
-	desc.Datatype="TEXT";
+	desc.Datatype=QString::fromLatin1("TEXT");
 	break;
       case OIDOID:
 	size=4;
-	desc.Datatype="OID";
+	desc.Datatype=QString::fromLatin1("OID");
 	break;
       case TIDOID:
 	size=6;
-	desc.Datatype="TID";
+	desc.Datatype=QString::fromLatin1("TID");
 	break;
       case XIDOID:
 	size=4;
-	desc.Datatype="XID";
+	desc.Datatype=QString::fromLatin1("XID");
 	break;
       case CIDOID:
 	size=4;
-	desc.Datatype="CID";
+	desc.Datatype=QString::fromLatin1("CID");
 	break;
       case OIDVECTOROID:
 	size=4;
-	desc.Datatype="OIDVECTOR";
+	desc.Datatype=QString::fromLatin1("OIDVECTOR");
 	break;
       case POINTOID:
 	size=16;
-	desc.Datatype="POINT";
+	desc.Datatype=QString::fromLatin1("POINT");
 	break;
       case LSEGOID:
 	size=32;
-	desc.Datatype="LSEG";
+	desc.Datatype=QString::fromLatin1("LSEG");
 	break;
       case PATHOID:
-	desc.Datatype="PATH";
+	desc.Datatype=QString::fromLatin1("PATH");
 	break;
       case BOXOID:
 	size=32;
-	desc.Datatype="BOX";
+	desc.Datatype=QString::fromLatin1("BOX");
 	break;
       case POLYGONOID:
-	desc.Datatype="POLYGON";
+	desc.Datatype=QString::fromLatin1("POLYGON");
 	break;
       case LINEOID:
 	size=32;
-	desc.Datatype="LINE";
+	desc.Datatype=QString::fromLatin1("LINE");
 	break;
       case FLOAT4OID:
 	size=4;
-	desc.Datatype="FLOAT4";
+	desc.Datatype=QString::fromLatin1("FLOAT4");
 	break;
       case FLOAT8OID:
 	size=8;
-	desc.Datatype="FLOAT8";
+	desc.Datatype=QString::fromLatin1("FLOAT8");
 	break;
       case ABSTIMEOID:
 	size=4;
-	desc.Datatype="ABSTIME";
+	desc.Datatype=QString::fromLatin1("ABSTIME");
 	break;
       case RELTIMEOID:
 	size=4;
-	desc.Datatype="RELTIME";
+	desc.Datatype=QString::fromLatin1("RELTIME");
 	break;
       case TINTERVALOID:
 	size=12;
-	desc.Datatype="TINTERVAL";
+	desc.Datatype=QString::fromLatin1("TINTERVAL");
 	break;
       case UNKNOWNOID:
-	desc.Datatype="UNKNOWN";
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
 	break;
       case CIRCLEOID:
 	size=24;
-	desc.Datatype="CIRCLE";
+	desc.Datatype=QString::fromLatin1("CIRCLE");
 	break;
       case CASHOID:
 	size=4;
-	desc.Datatype="MONEY";
+	desc.Datatype=QString::fromLatin1("MONEY");
 	break;
       case MACADDROID:
 	size=6;
-	desc.Datatype="MACADDR";
+	desc.Datatype=QString::fromLatin1("MACADDR");
 	break;
       case INETOID:
-	desc.Datatype="INET";	
+	desc.Datatype=QString::fromLatin1("INET");	
 	break;
       case CIDROID:
-	desc.Datatype="CIDR";
+	desc.Datatype=QString::fromLatin1("CIDR");
 	break;
       case BPCHAROID:
-	desc.Datatype="BPCHAR";
+	desc.Datatype=QString::fromLatin1("BPCHAR");
 	break;
       case VARCHAROID:
-	desc.Datatype="VARCHAR";
+	desc.Datatype=QString::fromLatin1("VARCHAR");
 	break;
       case DATEOID:
 	size=4;
-	desc.Datatype="DATE";
+	desc.Datatype=QString::fromLatin1("DATE");
 	break;
       case TIMEOID:
 	size=8;
-	desc.Datatype="TIME";
+	desc.Datatype=QString::fromLatin1("TIME");
 	break;
       case TIMESTAMPOID:
 	size=8;
-	desc.Datatype="TIMESTAMP";
+	desc.Datatype=QString::fromLatin1("TIMESTAMP");
 	break;
       case TIMESTAMPTZOID:
 	size=8;
-	desc.Datatype="TIMESTAMPTZ";
+	desc.Datatype=QString::fromLatin1("TIMESTAMPTZ");
 	break;
       case INTERVALOID:
 	size=12;
-	desc.Datatype="INTERVAL";
+	desc.Datatype=QString::fromLatin1("INTERVAL");
 	break;
       case TIMETZOID:
 	size=12;
-	desc.Datatype="TIMETZ";
+	desc.Datatype=QString::fromLatin1("TIMETZ");
 	break;
       case BITOID:
-	desc.Datatype="BIT";
+	desc.Datatype=QString::fromLatin1("BIT");
 	break;
       case VARBITOID:
-	desc.Datatype="VARBIT";
+	desc.Datatype=QString::fromLatin1("VARBIT");
 	break;
       case NUMERICOID:
-	desc.Datatype="NUMERIC";
+	desc.Datatype=QString::fromLatin1("NUMERIC");
 	break;
       case REFCURSOROID:
-	desc.Datatype="REFCURSOR";
+	desc.Datatype=QString::fromLatin1("REFCURSOR");
 	break;
       default:
-	desc.Datatype="UNKNOWN";
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
 	break;
       }
     } else {
       switch(info.type()) {
       default:
-	desc.Datatype="UNKNOWN";
+	desc.Datatype=QString::fromLatin1("UNKNOWN");
 	break;
       case QVariant::Invalid:
-	desc.Datatype="INVALID";
+	desc.Datatype=QString::fromLatin1("INVALID");
 	break;
       case QVariant::List:
-	desc.Datatype="LIST";
+	desc.Datatype=QString::fromLatin1("LIST");
 	break;
       case QVariant::Map:
-	desc.Datatype="MAP";
+	desc.Datatype=QString::fromLatin1("MAP");
 	break;
       case QVariant::String:
 	if (info.isTrim())
-	  desc.Datatype="CHAR";
+	  desc.Datatype=QString::fromLatin1("CHAR");
 	else
-	  desc.Datatype="VARCHAR";
+	  desc.Datatype=QString::fromLatin1("VARCHAR");
 	break;
       case QVariant::StringList:
-	desc.Datatype="STRINGLIST";
+	desc.Datatype=QString::fromLatin1("STRINGLIST");
 	break;
       case QVariant::Font:
-	desc.Datatype="FONT";
+	desc.Datatype=QString::fromLatin1("FONT");
 	break;
       case QVariant::Pixmap:
-	desc.Datatype="PIXMAP";
+	desc.Datatype=QString::fromLatin1("PIXMAP");
 	break;
       case QVariant::Brush:
-	desc.Datatype="BRUSH";
+	desc.Datatype=QString::fromLatin1("BRUSH");
 	break;
       case QVariant::Rect:
-	desc.Datatype="RECT";
+	desc.Datatype=QString::fromLatin1("RECT");
 	break;
       case QVariant::Size:
-	desc.Datatype="SIZE";
+	desc.Datatype=QString::fromLatin1("SIZE");
 	break;
       case QVariant::Color:
-	desc.Datatype="COLOR";
+	desc.Datatype=QString::fromLatin1("COLOR");
 	break;
       case QVariant::Palette:
-	desc.Datatype="PALETTE";
+	desc.Datatype=QString::fromLatin1("PALETTE");
 	break;
       case QVariant::ColorGroup:
-	desc.Datatype="COLORGROUP";
+	desc.Datatype=QString::fromLatin1("COLORGROUP");
 	break;
       case QVariant::IconSet:
-	desc.Datatype="ICONSET";
+	desc.Datatype=QString::fromLatin1("ICONSET");
 	break;
       case QVariant::Point:
-	desc.Datatype="POINT";
+	desc.Datatype=QString::fromLatin1("POINT");
 	break;
       case QVariant::Image:
-	desc.Datatype="IMAGE";
+	desc.Datatype=QString::fromLatin1("IMAGE");
 	break;
       case QVariant::Int:
-	desc.Datatype="INT";
+	desc.Datatype=QString::fromLatin1("INT");
 	desc.AlignRight=true;
 	break;
       case QVariant::UInt:       
-	desc.Datatype="UINT";
+	desc.Datatype=QString::fromLatin1("UINT");
 	desc.AlignRight=true;
 	break;
       case QVariant::Bool:       
-	desc.Datatype="BOOL";
+	desc.Datatype=QString::fromLatin1("BOOL");
 	break;
       case QVariant::Double:     
-	desc.Datatype="DOUBLE";
+	desc.Datatype=QString::fromLatin1("DOUBLE");
 	desc.AlignRight=true;
 	break;
       case QVariant::CString:
 	if (info.isTrim())
-	  desc.Datatype="CHAR";
+	  desc.Datatype=QString::fromLatin1("CHAR");
 	else
-	  desc.Datatype="VARCHAR";
+	  desc.Datatype=QString::fromLatin1("VARCHAR");
 	break;
       case QVariant::PointArray: 
-	desc.Datatype="POINTARRAY";
+	desc.Datatype=QString::fromLatin1("POINTARRAY");
 	break;
       case QVariant::Region:     
-	desc.Datatype="REGION";
+	desc.Datatype=QString::fromLatin1("REGION");
 	break;
       case QVariant::Bitmap:     
-	desc.Datatype="BITMAP";
+	desc.Datatype=QString::fromLatin1("BITMAP");
 	break;
       case QVariant::Cursor:     
-	desc.Datatype="CURSOR";
+	desc.Datatype=QString::fromLatin1("CURSOR");
 	break;
       case QVariant::Date:
-	desc.Datatype="DATE";
+	desc.Datatype=QString::fromLatin1("DATE");
 	break;
       case QVariant::Time:
-	desc.Datatype="TIME";
+	desc.Datatype=QString::fromLatin1("TIME");
 	break;
       case QVariant::DateTime:   
-	desc.Datatype="DATETIME";
+	desc.Datatype=QString::fromLatin1("DATETIME");
 	break;
       case QVariant::ByteArray:  
-	desc.Datatype="BLOB";
+	desc.Datatype=QString::fromLatin1("BLOB");
 	break;
       case QVariant::BitArray:
-	desc.Datatype="BITARRAY";
+	desc.Datatype=QString::fromLatin1("BITARRAY");
 	break;
       case QVariant::SizePolicy:
-	desc.Datatype="SIZEPOLICY";
+	desc.Datatype=QString::fromLatin1("SIZEPOLICY");
 	break;
       case QVariant::KeySequence:
-	desc.Datatype="KEYSEQUENCE";
+	desc.Datatype=QString::fromLatin1("KEYSEQUENCE");
 	break;
       }
     }
 
     if (info.length()>size) {
-      desc.Datatype+=" (";
+      desc.Datatype+=QString::fromLatin1(" (");
       if (info.length()%size==0)
 	desc.Datatype+=QString::number(info.length()/size);
       else
 	desc.Datatype+=QString::number(info.length());
       if (info.precision()>0) {
-	desc.Datatype+=",";
+	desc.Datatype+=QString::fromLatin1(",");
 	desc.Datatype+=QString::number(info.precision());
       }
-      desc.Datatype+=")";
+      desc.Datatype+=QString::fromLatin1(")");
     }
     desc.Null=!info.isRequired();
     
@@ -688,28 +691,28 @@ static std::list<toQuery::queryDescribe> Describe(const QString &type,QSqlRecord
 
 class toQSqlProvider : public toConnectionProvider {
 public:
-  static QString fromQSqlName(const QString &driv)
+  static QCString fromQSqlName(const QString &driv)
   {
-    if (driv=="QMYSQL3")
+    if (driv==QString::fromLatin1("QMYSQL3"))
       return "MySQL";
-    else if (driv=="QPSQL7")
+    else if (driv==QString::fromLatin1("QPSQL7"))
       return "PostgreSQL";
-    else if (driv=="QTDS")
+    else if (driv==QString::fromLatin1("QTDS"))
       return "Microsoft SQL/TDS";
-    else if (driv=="QODBC3")
+    else if (driv==QString::fromLatin1("QODBC3"))
       return "ODBC";
-    return QString::null;
+    return "";
   }
-  static QString toQSqlName(const QString &driv)
+  static QString toQSqlName(const QCString &driv)
   {
     if (driv=="MySQL")
-      return "QMYSQL3";
+      return QString::fromLatin1("QMYSQL3");
     else if (driv=="PostgreSQL")
-      return "QPSQL7";
+      return QString::fromLatin1("QPSQL7");
     else if (driv=="Microsoft SQL/TDS")
-      return "QTDS";
+      return QString::fromLatin1("QTDS");
     else if (driv=="ODBC")
-      return "QODBC3";
+      return QString::fromLatin1("QODBC3");
     return QString::null;
   }
 
@@ -724,7 +727,7 @@ public:
     { }
     ~qSqlSub()
     { QSqlDatabase::removeDatabase(name); }
-    void throwError(const QCString &sql)
+    void throwError(const QString &sql)
     { throw ErrorString(Connection->lastError(),QString::fromUtf8(sql)); }
   };
 
@@ -750,9 +753,9 @@ public:
     virtual toQValue readValue(void)
     {
       if (!Query)
-	throw QString("Fetching from unexecuted query");
+	throw QString::fromLatin1("Fetching from unexecuted query");
       if (EOQ)
-	throw QString("Tried to read past end of query");
+	throw QString::fromLatin1("Tried to read past end of query");
 
       Connection->Lock.down();
       QVariant val=Query->value(Column);
@@ -791,7 +794,7 @@ public:
     }
     virtual std::list<toQuery::queryDescribe> describe(void)
     {
-      QString provider=query()->connection().provider();
+      QCString provider=query()->connection().provider();
       Connection->Lock.down();
       QSqlRecordInfo recInfo=Connection->Connection->recordInfo(*Query);
       std::list<toQuery::queryDescribe> ret=Describe(provider,recInfo);
@@ -805,7 +808,7 @@ public:
     {
       qSqlSub *conn=dynamic_cast<qSqlSub *>(sub);
       if (!conn)
-	throw QString("Internal error, not QSql sub connection");
+	throw QString::fromLatin1("Internal error, not QSql sub connection");
       return conn;
     }
   public:
@@ -828,7 +831,7 @@ public:
 	if (tables.columns()>2)
 	  cur.Type=tables.readValueNull();
 	else
-	  cur.Type="TABLE";
+	  cur.Type=QString::fromLatin1("TABLE");
 	ret.insert(ret.end(),cur);
       }
 
@@ -841,7 +844,7 @@ public:
 
       try {
 	toConnection::objectName cur;
-	cur.Type="A";
+	cur.Type=QString::fromLatin1("A");
 
 	toQuery synonyms(connection(),SQLListSynonyms);
 	std::list<toConnection::objectName>::iterator i=objects.begin();
@@ -887,11 +890,11 @@ public:
 	    sub->Lock.up();
 	  }
 	} else {
-	  QString SQL="SELECT * FROM ";
+	  QString SQL=QString::fromLatin1("SELECT * FROM ");
 	  SQL+=quote(table.Owner);
-	  SQL+=".";
+	  SQL+=QString::fromLatin1(".");
 	  SQL+=quote(table.Name);
-	  SQL+=" WHERE NULL=NULL";
+	  SQL+=QString::fromLatin1(" WHERE NULL=NULL");
 	  toQuery query(connection(),SQL);
 	  desc=query.describe();
 	}
@@ -910,13 +913,13 @@ public:
     {
       qSqlSub *conn=qSqlConv(sub);
       if (!conn->Connection->commit())
-	conn->throwError("COMMIT");
+	conn->throwError(QString::fromLatin1("COMMIT"));
     }
     virtual void rollback(toConnectionSub *sub)
     {
       qSqlSub *conn=qSqlConv(sub);
       if (!conn->Connection->rollback())
-	conn->throwError("ROLLBACK");
+	conn->throwError(QString::fromLatin1("ROLLBACK"));
     }
 
     virtual toConnectionSub *createConnection(void);
@@ -926,9 +929,9 @@ public:
       delete conn;
     }
 
-    virtual QString version(toConnectionSub *sub)
+    virtual QCString version(toConnectionSub *sub)
     {
-      QString ret;
+      QCString ret;
       qSqlSub *conn=qSqlConv(sub);
       conn->Lock.down();
       try {
@@ -937,7 +940,7 @@ public:
 	  if (query.isValid()) {
 	    QSqlRecord record=conn->Connection->record(query);
 	    QVariant val=query.value(record.count()-1);
-	    ret=val.toString();
+	    ret=val.toString().latin1();
 	  }
 	}
       } catch(...) {
@@ -971,8 +974,8 @@ public:
   {
     QStringList lst=QSqlDatabase::drivers();
     for(unsigned int i=0;i<lst.count();i++) {
-      QString t=fromQSqlName(lst[i]);
-      if (!t.isNull())
+      QCString t=fromQSqlName(lst[i]);
+      if (!t.isEmpty())
 	addProvider(t);
     }
   }
@@ -981,21 +984,21 @@ public:
   {
     QStringList lst=QSqlDatabase::drivers();
     for(unsigned int i=0;i<lst.count();i++) {
-      QString t=fromQSqlName(lst[i]);
-      if (!t.isNull())
+      QCString t=fromQSqlName(lst[i]);
+      if (!t.isEmpty())
 	removeProvider(t);
     }
   }
 
-  virtual toConnection::connectionImpl *provideConnection(const QString &prov,toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QCString &prov,toConnection *conn)
   { return new qSqlConnection(conn); }
-  virtual std::list<QString> providedHosts(const QString &)
+  virtual std::list<QString> providedHosts(const QCString &)
   {
     std::list<QString> ret;
-    ret.insert(ret.end(),"localhost");
+    ret.insert(ret.end(),QString::fromLatin1("localhost"));
     return ret;
   }
-  virtual std::list<QString> providedDatabases(const QString &,const QString &host,const QString &,const QString &)
+  virtual std::list<QString> providedDatabases(const QCString &,const QString &host,const QString &,const QString &)
   {
     std::list<QString> ret;
 
@@ -1011,7 +1014,7 @@ void toQSqlProvider::qSqlQuery::execute(void)
 {
   while (Connection->Lock.getValue()>1) {
     Connection->Lock.down();
-    toStatusMessage("Too high value on connection lock semaphore");
+    toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
   }
   
   Connection->Lock.down();
@@ -1039,10 +1042,10 @@ toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
   QString dbName=QString::number(ID);
   QSqlDatabase *db=QSqlDatabase::addDatabase(toQSqlName(connection().provider()),dbName);
   if (!db)
-    throw QString("Couldn't create QSqlDatabase object");
+    throw QString(QString::fromLatin1("Couldn't create QSqlDatabase object"));
   db->setDatabaseName(connection().database());
   QString host=connection().host();
-  int pos=host.find(":");
+  int pos=host.find(QString::fromLatin1(":"));
   if (pos<0)
     db->setHostName(host);
   else {

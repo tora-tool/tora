@@ -403,17 +403,17 @@ public:
 toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   : toToolWidget(ProfilerTool,"toprofiler.html",parent,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Invalid Objects");
+  QToolBar *toolbar=toAllocBar(this,tr("Invalid Objects"));
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
-		  "Refresh list",
-		  "Refresh list",
+		  tr("Refresh list"),
+		  tr("Refresh list"),
 		  this,SLOT(refresh()),
 		  toolbar);
 
   toolbar->addSeparator();
 
-  new QLabel("Repeat run ",toolbar);
+  new QLabel(tr("Repeat run "),toolbar);
 
   Repeat=new QSpinBox(toolbar);
   Repeat->setValue(5);
@@ -421,9 +421,9 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   toolbar->addSeparator();
 
-  new QLabel("Comment ",toolbar);
+  new QLabel(tr("Comment "),toolbar);
   Comment=new QLineEdit(toolbar);
-  Comment->setText("Unknown");
+  Comment->setText(tr("Unknown"));
 
   toolbar->addSeparator();
   
@@ -431,14 +431,14 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   Background=new QToolButton(toolbar);
   Background->setToggleButton(true);
   Background->setIconSet(QIconSet(QPixmap((const char **)background_xpm)));
-  QToolTip::add(Background,"Run profiling in background");
+  QToolTip::add(Background,tr("Run profiling in background"));
 
   toolbar->addSeparator();
 #endif
 
   new QToolButton(QPixmap((const char **)execute_xpm),
-		  "Execute current profiling",
-		  "Execute current profiling",
+		  tr("Execute current profiling"),
+		  tr("Execute current profiling"),
 		  this,SLOT(execute()),
 		  toolbar);
 
@@ -448,10 +448,10 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   Tabs=new QTabWidget(this);
   Script=new toWorksheet(Tabs,NULL,connection);
-  Tabs->addTab(Script,"Script");
+  Tabs->addTab(Script,tr("Script"));
 
   Result=new QSplitter(Tabs);
-  Tabs->addTab(Result,"Result");
+  Tabs->addTab(Result,tr("Result"));
 
   QVBox *box=new QVBox(Result);
   Run=new QComboBox(box);
@@ -474,11 +474,11 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
     toQuery query(connection,SQLProfilerDetect);
   } catch(const QString &) {
     int ret=TOMessageBox::warning(this,
-				  "Profiler tables doesn't exist",
-				  "Profiler tables doesn't exist. Should TOra\n"
-				  "try to create them in the current schema.\n"
-				  "Should TOra try to create it?",
-				  "&Yes","&No",0,1);
+				  tr("Profiler tables doesn't exist"),
+				  tr("Profiler tables doesn't exist. Should TOra\n"
+				     "try to create them in the current schema.\n"
+				     "Should TOra try to create it?"),
+				  tr("&Yes"),tr("&No"),QString::null,0,1);
     if (ret==0) {
       try {
 	connection.execute(SQLProfilerRuns);
@@ -502,7 +502,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 void toProfiler::refresh(void)
 {
   Run->clear();
-  Run->insertItem("Select run");
+  Run->insertItem(tr("Select run"));
   try {
     toQuery query(connection(),SQLListRuns);
     int id=1;
@@ -512,9 +512,9 @@ void toProfiler::refresh(void)
       QString comment=query.readValueNull();
       double total=query.readValueNull().toDouble()/1E9;
       if (!owner.isEmpty())
-	owner="("+owner+")";
-      QString timstr=" ["+FormatTime(total)+"]";
-      Run->insertItem(runid+owner+": "+comment+timstr);
+	owner=QString::fromLatin1("(")+owner+QString::fromLatin1(")");
+      QString timstr=QString::fromLatin1(" [")+FormatTime(total)+QString::fromLatin1("]");
+      Run->insertItem(runid+owner+QString::fromLatin1(": ")+comment+timstr);
       if (runid.toInt()==CurrentRun) {
 	Run->setCurrentItem(id);
         changeRun();
@@ -531,29 +531,29 @@ void toProfiler::execute(void)
     exc=toSQL::string(SQLStartProfiler,connection());
     for(int i=0;i<Repeat->value();i++) {
       exc+=Script->editor()->text();
-      exc+="\n";
+      exc+=QString::fromLatin1("\n");
     }
     exc+=toSQL::string(SQLStopProfiler,connection());
 
     toQuery query(connection(),
 		  exc,
 		  Comment->text(),
-		  QString::number(Repeat->value())+" runs");
+		  tr("%1 runs").arg(Repeat->value()));
     CurrentRun=query.readValue().toInt();
     if (CurrentRun>0) {
       Tabs->showPage(Result);
       refresh();
     } else
-      toStatusMessage("Something went wrong collecting statistics");
+      toStatusMessage(tr("Something went wrong collecting statistics"));
   } TOCATCH
 }
 
 void toProfiler::changeRun(void)
 {
   QString t=Run->currentText();
-  int pos=t.find("(");
+  int pos=t.find(QString::fromLatin1("("));
   if (pos<0)
-    pos=t.find(":");
+    pos=t.find(QString::fromLatin1(":"));
   if (pos>=0)
     CurrentRun=t.mid(0,pos).toInt();
   QString run=QString::number(CurrentRun);

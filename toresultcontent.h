@@ -162,10 +162,10 @@ class toResultContentEditor : public QTable,public toEditWidget {
   bool AllFilter;
   /** Filter selection criteria
    */
-  std::map<QString,QString> Criteria;
+  std::map<QCString,QString> Criteria;
   /** Filter retrieve order
    */
-  std::map<QString,QString> Order;
+  std::map<QCString,QString> Order;
   /** Current filter name in map
    */
   QString FilterName;
@@ -299,12 +299,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
 public slots:
   /** Erase last parameters
    */
@@ -431,13 +431,13 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   { Editor->exportData(data,prefix); }
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
   { Editor->importData(data,prefix); }
   /** Indicate that editor should never use returning clauses even if this is oracle.
    */

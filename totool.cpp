@@ -115,15 +115,15 @@ toTimer *toToolWidget::timer(void)
   return Timer;
 }
 
-void toToolWidget::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toToolWidget::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   QWidget *par=parentWidget();
   if (!par)
     par=this;
   if (par->isMaximized()||par->width()>toMainWidget()->workspace()->width())
-    data[prefix+":State"]="Maximized";
+    data[prefix+":State"]=QString::fromLatin1("Maximized");
   else if (par->isMinimized())
-    data[prefix+":State"]="Minimized";
+    data[prefix+":State"]=QString::fromLatin1("Minimized");
   else {
     data[prefix+":X"]=QString::number(par->x());
     data[prefix+":Y"]=QString::number(par->y());
@@ -132,14 +132,14 @@ void toToolWidget::exportData(std::map<QString,QString> &data,const QString &pre
   }
 }
 
-void toToolWidget::importData(std::map<QString,QString> &data,const QString &prefix)
+void toToolWidget::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   QWidget *par=parentWidget();
   if (!par)
     par=this;
-  if (data[prefix+":State"]=="Maximized")
+  if (data[prefix+":State"]==QString::fromLatin1("Maximized"))
     par->showMaximized();
-  else if (data[prefix+":State"]=="Minimized")
+  else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
     par->showMinimized();
   else {
     par->showNormal();
@@ -150,8 +150,8 @@ void toToolWidget::importData(std::map<QString,QString> &data,const QString &pre
   }
 }
 
-std::map<QString,toTool *> *toTool::Tools;
-std::map<QString,QString> *toTool::Configuration;
+std::map<QCString,toTool *> *toTool::Tools;
+std::map<QCString,QString> *toTool::Configuration;
 
 #define CONFIG_FILE "/.torarc"
 #define DEF_CONFIG_FILE "/etc/torarc"
@@ -165,7 +165,7 @@ toTool::toTool(int priority,const char *name)
   : Name(name)
 {
   if (!Tools)
-    Tools=new std::map<QString,toTool *>;
+    Tools=new std::map<QCString,toTool *>;
   Priority=priority;
   Key.sprintf("%05d%s",priority,name);
   (*Tools)[Key]=this;
@@ -238,24 +238,23 @@ void toTool::createWindow(void)
   } TOCATCH
 }
 
-bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
+bool toTool::saveMap(const QString &file,std::map<QCString,QString> &pairs)
 {
   QCString data;
 
   {
-    QRegExp newline("\n");
-    QRegExp backslash("\\");
-    for (std::map<QString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
-      QString line=(*i).first;
-      line.append("=");
-      line.replace(backslash,"\\\\");
-      line.replace(newline,"\\n");
-      QCString str=line.latin1();
-      line=(*i).second;
-      line.replace(backslash,"\\\\");
-      line.replace(newline,"\\n");
+    QRegExp newline(QString::fromLatin1("\n"));
+    QRegExp backslash(QString::fromLatin1("\\"));
+    for (std::map<QCString,QString>::iterator i=pairs.begin();i!=pairs.end();i++) {
+      QCString str=(*i).first;
+      str.append(QString::fromLatin1("="));
+      str.replace(backslash,QString::fromLatin1("\\\\"));
+      str.replace(newline,QString::fromLatin1("\\n"));
+      QString line=(*i).second;
+      line.replace(backslash,QString::fromLatin1("\\\\"));
+      line.replace(newline,QString::fromLatin1("\\n"));
       str+=line.utf8();
-      str+="\n";
+      str+=QString::fromLatin1("\n");
       data+=str;
     }
   }
@@ -272,7 +271,7 @@ static char *toKeyPath(const QString &str,CRegistry &registry)
   for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
     ;
   if (pos<0)
-    throw QString("Couldn't find \\ in path");
+    throw qApp->translate("toKeyPath","Couldn't find \\ in path");
   QString ret=str.mid(0,pos);
   if (buf)
     free(buf);
@@ -287,7 +286,7 @@ static char *toKeyValue(const QString &str)
   for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
     ;
   if (pos<0)
-    throw QString("Couldn't find \\ in path");
+    throw qApp->translate("toKeyValue","Couldn't find \\ in path");
   if (buf)
     free(buf);
   buf=strdup(str.mid(pos+1));
@@ -302,8 +301,8 @@ void toTool::saveConfig(void)
 #ifdef WIN32
     CRegistry registry;
     QRegExp re(":");
-    for (std::map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
-      QString path=(*i).first;
+    for (std::map<QCString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+      QCString path=(*i).first;
       QString value=(*i).second;
       path.prepend(APPLICATION_NAME);
       path.replace(re,"\\");
@@ -324,7 +323,7 @@ void toTool::saveConfig(void)
 #else
     if (!Configuration)
       return;
-    QString conf;
+    QCString conf;
     if (getenv("HOME")) {
       conf=getenv("HOME");
     }
@@ -338,26 +337,26 @@ void toTool::loadConfig(void)
 {
   if (Configuration)
     delete Configuration;
-  Configuration=new std::map<QString,QString>;
+  Configuration=new std::map<QCString,QString>;
 
 #ifndef WIN32
   QString conf;
   if (getenv("HOME")) {
-    conf=getenv("HOME");
+    conf=QString::fromLatin1(getenv("HOME"));
   }
-  conf.append(CONFIG_FILE);
+  conf.append(QString::fromLatin1(CONFIG_FILE));
   try {
     loadMap(conf,*Configuration);
   } catch(...) {
     try {
-      loadMap(DEF_CONFIG_FILE,*Configuration);
+      loadMap(QString::fromLatin1(DEF_CONFIG_FILE),*Configuration);
     } catch(...) {
     }
   }
 #endif
 }
 
-void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
+void toTool::loadMap(const QString &filename,std::map<QCString,QString> &pairs)
 {
   QCString data=toReadFile(filename);
 
@@ -369,13 +368,13 @@ void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
   while(pos<size) {
     switch(data[pos]) {
     case '\n':
-      if (endtag==-1)
-	throw QString("Malformed tag in config file. Missing = on row. (%1)").
-	  arg(((const char *)data)+bol);
       data[wpos]=0;
+      if (endtag==-1)
+	throw qApp->translate("toTool","Malformed tag in config file. Missing = on row. (%1)").
+	  arg(data.mid(bol,wpos-bol));
       {
-	QString tag=((const char *)data)+bol;
-	QString val=((const char *)data)+endtag+1;
+	QCString tag=((const char *)data)+bol;
+	QCString val=((const char *)data)+endtag+1;
 	pairs[tag]=QString::fromUtf8(val);
       }
       bol=pos+1;
@@ -403,7 +402,7 @@ void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
 	  data[wpos]=':';
 	break;
       default:
-	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
+	throw qApp->translate("toTool","Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
       break;
     default:
@@ -415,33 +414,33 @@ void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
   return;
 }
 
-const QString &toTool::config(const QString &tag,const QString &def)
+const QString &toTool::config(const QCString &tag,const QCString &def)
 {
-  QString str=name();
+  QCString str=name();
   str.append(":");
   str.append(tag);
   return globalConfig(str,def);
 }
 
-void toTool::setConfig(const QString &tag,const QString &def)
+void toTool::setConfig(const QCString &tag,const QString &def)
 {
-  QString str=name();
+  QCString str=name();
   str.append(":");
   str.append(tag);
   globalSetConfig(str,def);
 }
 
-const QString &toTool::globalConfig(const QString &tag,const QString &def)
+const QString &toTool::globalConfig(const QCString &tag,const QCString &def)
 {
   if (!Configuration)
     loadConfig();
 
-  std::map<QString,QString>::iterator i=Configuration->find(tag);
+  std::map<QCString,QString>::iterator i=Configuration->find(tag);
   if (i==Configuration->end()) {
 #if defined(WIN32)
     CRegistry registry;
-    QRegExp re(":");
-    QString path=tag;
+    QRegExp re(QString::fromLatin1(":"));
+    QCString path=tag;
     path.prepend(APPLICATION_NAME);
     path.replace(re,"\\");
     DWORD siz=1024;
@@ -475,12 +474,13 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
     } catch (...) {
     }
 #endif
-    return def;
+    (*Configuration)[tag]=QString::fromLatin1(def);
+    return (*Configuration)[tag];
   }
   return (*i).second;
 }
 
-void toTool::globalSetConfig(const QString &tag,const QString &value)
+void toTool::globalSetConfig(const QCString &tag,const QString &value)
 {
   if (!Configuration)
     loadConfig();
@@ -493,11 +493,11 @@ bool toTool::canHandle(toConnection &conn)
   return (conn.provider()=="Oracle");
 }
 
-toTool *toTool::tool(const QString &key)
+toTool *toTool::tool(const QCString &key)
 {
   if (!Tools)
-    Tools=new std::map<QString,toTool *>;
-  std::map<QString,toTool *>::iterator i=Tools->find(key);
+    Tools=new std::map<QCString,toTool *>;
+  std::map<QCString,toTool *>::iterator i=Tools->find(key);
   if (i==Tools->end())
     return NULL;
   

@@ -107,25 +107,25 @@ static toSQL SQLListSynonyms("toOracleConnection:ListSynonyms",
 static void ThrowException(const otl_exception &exc)
 {
   if (exc.code==24344)
-    throw toConnection::exception("ORA-24344 success with compilation error");
+    throw toConnection::exception(QString::fromLatin1("ORA-24344 success with compilation error"));
   else {
     toConnection::exception ret(QString::fromUtf8((const char *)exc.msg));
 
     if (ret.isEmpty()) {
       if (exc.code!=0)
-	ret="ORA-"+QString::number(exc.code)+" missing error description";
+	ret=QString::fromLatin1("ORA-")+QString::number(exc.code)+QString::fromLatin1(" missing error description");
       else if (ret.isEmpty())
-	ret=QString("Missing error description, could occur if you have several ORACLE_HOME and the binary directory\n"
-		    "of the one which is not active is before the active ORACLE_HOME in your path");
+	ret=QString::fromLatin1("Missing error description, could occur if you have several ORACLE_HOME and the binary directory\n"
+				"of the one which is not active is before the active ORACLE_HOME in your path");
     }
 
     if (exc.stm_text&&strlen(exc.stm_text)) {
-      ret+="\n";
+      ret+=QString::fromLatin1("\n");
       QString sql=QString::fromUtf8((const char *)exc.stm_text);
       if (exc.errorofs>=0) {
 	QString t=QString::fromUtf8((const char *)exc.stm_text,exc.errorofs);
 	ret.setOffset(t.length());
-	sql.insert(t.length(),"<ERROR>");
+	sql.insert(t.length(),QString::fromLatin1("<ERROR>"));
       }
       ret+=sql;
     }
@@ -179,14 +179,14 @@ public:
       char *buffer=NULL;
       otl_var_desc *dsc=Query->describe_next_out_var();
       if (!dsc)
-	throw QString("Couldn't get description of next column to read");
+	throw QString::fromLatin1("Couldn't get description of next column to read");
 
       oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
       if (!conn)
-	throw QString("Internal error, not oracle sub connection");
+	throw QString::fromLatin1("Internal error, not oracle sub connection");
       conn->Lock.down();
       if (Cancel)
-	throw QString("Cancelled while waiting to read value");
+	throw QString::fromLatin1("Cancelled while waiting to read value");
       Running=true;
       try {
 	toQValue null;
@@ -261,7 +261,7 @@ public:
 	      while(!lob.eof())
 		lob>>sink;
 	      if (toThread::mainThread())
-		toStatusMessage("Data exists past length of LOB");
+		toStatusMessage(QString::fromLatin1("Data exists past length of LOB"));
 	      else
 		printf("Data exists past length of LOB in thread\n");
 	    }
@@ -342,7 +342,7 @@ public:
 	case 5:
 	case 9:
 	case 155:
-	  desc.Datatype="VARCHAR2";
+	  desc.Datatype=QString::fromLatin1("VARCHAR2");
 	  break;
 	case 2:
 	case 3:
@@ -350,63 +350,63 @@ public:
 	case 6:
 	case 68:
 	  desc.AlignRight=true;
-	  desc.Datatype="NUMBER";
+	  desc.Datatype=QString::fromLatin1("NUMBER");
 	  break;
 	case 8:
 	case 94:
 	case 95:
-	  desc.Datatype="LONG";
+	  desc.Datatype=QString::fromLatin1("LONG");
 	  break;
 	case 11:
 	case 104:
-	  desc.Datatype="ROWID";
+	  desc.Datatype=QString::fromLatin1("ROWID");
 	  break;
 	case 12:
 	case 156:
 	  desc.AlignRight=true;
-	  desc.Datatype="DATE";
+	  desc.Datatype=QString::fromLatin1("DATE");
 	  break;
 	case 15:
 	case 23:
 	case 24:
-	  desc.Datatype="RAW";
+	  desc.Datatype=QString::fromLatin1("RAW");
 	  break;
 	case 96:
 	case 97:
-	  desc.Datatype="CHAR";
+	  desc.Datatype=QString::fromLatin1("CHAR");
 	  break;
 	case 108:
-	  desc.Datatype="NAMED DATA TYPE";
+	  desc.Datatype=QString::fromLatin1("NAMED DATA TYPE");
 	  break;
 	case 110:
-	  desc.Datatype="REF";
+	  desc.Datatype=QString::fromLatin1("REF");
 	  break;
 	case 112:
-	  desc.Datatype="CLOB";
+	  desc.Datatype=QString::fromLatin1("CLOB");
 	  break;
 	case 113:
 	case 114:
-	  desc.Datatype="BLOB";
+	  desc.Datatype=QString::fromLatin1("BLOB");
 	  break;
 	default:
-	  desc.Datatype="UNKNOWN";
+	  desc.Datatype=QString::fromLatin1("UNKNOWN");
           break;
 	}
 
-	if (desc.Datatype=="NUMBER") {
+	if (desc.Datatype==QString::fromLatin1("NUMBER")) {
 	  if (description[i].prec) {
-	    desc.Datatype.append(" (");
+	    desc.Datatype.append(QString::fromLatin1(" ("));
 	    desc.Datatype.append(QString::number(description[i].prec));
 	    if (description[i].scale!=0) {
-	      desc.Datatype.append(",");
+	      desc.Datatype.append(QString::fromLatin1(","));
 	      desc.Datatype.append(QString::number(description[i].scale));
 	    }
-	    desc.Datatype.append(")");
+	    desc.Datatype.append(QString::fromLatin1(")"));
 	  }
 	} else {
-	  desc.Datatype.append(" (");
+	  desc.Datatype.append(QString::fromLatin1(" ("));
 	  desc.Datatype.append(QString::number(description[i].dbsize));
-	  desc.Datatype.append(")");
+	  desc.Datatype.append(QString::fromLatin1(")"));
 	}
 	desc.Null=description[i].nullok;
 
@@ -421,10 +421,10 @@ public:
     {
       QCString ret;
       ret=connection().user().utf8();
-      ret+="/";
+      ret+=QString::fromLatin1("/");
       ret+=connection().password().utf8();
       if (!connection().host().isEmpty()) {
-	ret+="@";
+	ret+=QString::fromLatin1("@");
 	ret+=connection().database().utf8();
       }
       return ret;
@@ -433,7 +433,7 @@ public:
     {
       oracleSub *conn=dynamic_cast<oracleSub *>(sub);
       if (!conn)
-	throw QString("Internal error, not oracle sub connection");
+	throw QString::fromLatin1("Internal error, not oracle sub connection");
       return conn;
     }
   public:
@@ -450,11 +450,11 @@ public:
       if (name.upper()==name)
 	return name.lower();
       else
-	return "\""+name+"\"";
+	return QString::fromLatin1("\"")+name+QString::fromLatin1("\"");
     }
     virtual QString unQuote(const QString &str)
     {
-      if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
+      if (str.at(0).latin1()=='\"'&&str.at(str.length()-1).latin1()=='\"')
 	return str.left(str.length()-1).right(str.length()-2);
       return str.upper();
     }
@@ -482,7 +482,7 @@ public:
       std::map<QString,toConnection::objectName> ret;
 
       toConnection::objectName cur;
-      cur.Type="A";
+      cur.Type=QString::fromLatin1("A");
       std::list<toQValue> par;
       par.insert(par.end(),toQValue(connection().user().upper()));
       toQuery synonyms(connection(),toQuery::Long,
@@ -505,11 +505,11 @@ public:
     virtual toQDescList columnDesc(const toConnection::objectName &table)
     {
       toBusy busy;
-      if(table.Type=="PACKAGE") {
+      if(table.Type==QString::fromLatin1("PACKAGE")) {
 	toQDescList ret;
 	try {
 	  toQuery::queryDescribe desc;
-	  desc.Datatype="MEMBER";
+	  desc.Datatype=QString::fromLatin1("MEMBER");
 	  desc.Null=false;
 	  QString lastName;
 	  QString lastOver;
@@ -520,23 +520,23 @@ public:
 	    QString arg = member.readValueNull();
 	    QString type = member.readValueNull();
 	    if (lastName!=name||overld!=lastOver) {
-	      if (desc.Name.contains("("))
-		desc.Name+=")";
+	      if (desc.Name.contains(QString::fromLatin1("(")))
+		desc.Name+=QString::fromLatin1(")");
 	      if (!desc.Name.isEmpty())
 		ret.insert(ret.end(),desc);
 	      desc.Name=name;
 	      lastName=name;
 	      lastOver=overld;
 	      if (!arg.isEmpty())
-		desc.Name+=" (";
+		desc.Name+=QString::fromLatin1(" (");
 	    } else
-	      desc.Name+=", ";
+	      desc.Name+=QString::fromLatin1(", ");
 	    desc.Name+=arg;
-	    desc.Name+=" ";
+	    desc.Name+=QString::fromLatin1(" ");
 	    desc.Name+=type;
 	  }
-	  if (desc.Name.contains("("))
-	    desc.Name+=")";
+	  if (desc.Name.contains(QString::fromLatin1("(")))
+	    desc.Name+=QString::fromLatin1(")");
 	  if (!desc.Name.isEmpty())
 	    ret.insert(ret.end(),desc);
 	} catch (...) {
@@ -555,11 +555,11 @@ public:
       }
 
       try {
-	QString SQL="SELECT * FROM \"";
+	QString SQL=QString::fromLatin1("SELECT * FROM \"");
 	SQL+=table.Owner;
-	SQL+="\".\"";
+	SQL+=QString::fromLatin1("\".\"");
 	SQL+=table.Name;
-	SQL+="\" WHERE NULL=NULL";
+	SQL+=QString::fromLatin1("\" WHERE NULL=NULL");
 	toQuery query(connection(),SQL);
 	toQDescList desc=query.describe();
 	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++)
@@ -599,15 +599,15 @@ public:
       delete conn;
     }
 
-    virtual QString version(toConnectionSub *sub)
+    virtual QCString version(toConnectionSub *sub)
     {
       oracleSub *conn=oracleConv(sub);
       try {
 	otl_stream version(1,
 			   "SELECT banner FROM v$version",
 			   *(conn->Connection));
-	QRegExp verre("[0-9]\\.[0-9\\.]+[0-9]");
-	QRegExp orare("^oracle",false);
+	QRegExp verre(QString::fromLatin1("[0-9]\\.[0-9\\.]+[0-9]"));
+	QRegExp orare(QString::fromLatin1("^oracle"),false);
 	while(!version.eof()) {
 	  char buffer[1024];
 	  version>>buffer;
@@ -617,13 +617,13 @@ public:
 	    int len;
 	    pos=verre.match(ver,0,&len);
 	    if (pos>=0)
-	      return ver.mid(pos,len);
+	      return ver.mid(pos,len).latin1();
 	  }
 	}
       } catch (...) {
 	// Ignore any errors here
       }
-      return QString::null;
+      return "";
     }
 
     virtual toQuery::queryImpl *createQuery(toQuery *query,toConnectionSub *sub)
@@ -639,7 +639,7 @@ public:
 	  ThrowException(exc);
 	}
       } else
-	toQuery query(connection(),sql,params);
+	toQuery query(connection(),QString::fromUtf8(sql),params);
     }
   };
 
@@ -651,29 +651,29 @@ public:
   virtual void initialize(void)
   {
     toMaxLong=toTool::globalConfig(CONF_MAX_LONG,
-				   QString::number(DEFAULT_MAX_LONG)).toInt();
+				   QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
     if (otl_connect::otl_initialize(1))
       addProvider("Oracle");
   }
 
-  virtual toConnection::connectionImpl *provideConnection(const QString &,toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
   { return new oracleConnection(conn); }
-  virtual std::list<QString> providedModes(const QString &)
+  virtual std::list<QString> providedModes(const QCString &)
   {
     std::list<QString> ret;
-    ret.insert(ret.end(),"Normal");
-    ret.insert(ret.end(),"SYS_OPER");
-    ret.insert(ret.end(),"SYS_DBA");
+    ret.insert(ret.end(),QString::fromLatin1("Normal"));
+    ret.insert(ret.end(),QString::fromLatin1("SYS_OPER"));
+    ret.insert(ret.end(),QString::fromLatin1("SYS_DBA"));
     return ret;
   }
-  virtual std::list<QString> providedHosts(const QString &)
+  virtual std::list<QString> providedHosts(const QCString &)
   {
     std::list<QString> ret;
     ret.insert(ret.end(),QString::null);
-    ret.insert(ret.end(),"SQL*Net");
+    ret.insert(ret.end(),QString::fromLatin1("SQL*Net"));
     return ret;
   }
-  virtual std::list<QString> providedDatabases(const QString &,const QString &host,const QString &,const QString &)
+  virtual std::list<QString> providedDatabases(const QCString &,const QString &host,const QString &,const QString &)
   {
     QString str;
 #ifdef WIN32
@@ -707,15 +707,15 @@ public:
     }
 #else
     if (!getenv("ORACLE_HOME"))
-      throw QString("ORACLE_HOME environment variable not set");
+      throw QString::fromLatin1("ORACLE_HOME environment variable not set");
     if (getenv("TNS_ADMIN")) {
       str=getenv("TNS_ADMIN");
     } else {
       str=getenv("ORACLE_HOME");
-      str.append("/network/admin");
+      str.append(QString::fromLatin1("/network/admin"));
     }
 #endif
-    str.append("/tnsnames.ora");
+    str.append(QString::fromLatin1("/tnsnames.ora"));
 
 
     std::list<QString> ret;
@@ -754,8 +754,8 @@ public:
       } else if (buf[pos]==')') {
 	if (parambeg>=0&&host.isEmpty()) {
 	  QString tmp=QString::fromLatin1(buf+parambeg,pos-parambeg);
-	  tmp.replace(QRegExp("\\s+"),"");
-	  if (tmp.lower().startsWith("sid="))
+	  tmp.replace(QRegExp(QString::fromLatin1("\\s+")),QString::null);
+	  if (tmp.lower().startsWith(QString::fromLatin1("sid=")))
 	    ret.insert(ret.end(),tmp.mid(4));
 	}
 	begname=-1;
@@ -769,7 +769,7 @@ public:
     delete[] buf;
     return ret;
   }
-  virtual QWidget *providerConfigurationTab(const QString &provider,QWidget *parent);
+  virtual QWidget *providerConfigurationTab(const QCString &provider,QWidget *parent);
 };
 
 static toOracleProvider OracleProvider;
@@ -778,19 +778,19 @@ void toOracleProvider::oracleQuery::execute(void)
 {
   oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
   if (!conn)
-    throw QString("Internal error, not oracle sub connection");
+    throw QString::fromLatin1("Internal error, not oracle sub connection");
   try {
     delete Query;
     Query=NULL;
 
     while (conn->Lock.getValue()>1) {
       conn->Lock.down();
-      toStatusMessage("Too high value on connection lock semaphore");
+      toStatusMessage(QString::fromLatin1("Too high value on connection lock semaphore"));
     }
 
     conn->Lock.down();
     if (Cancel)
-      throw QString("Query aborted before started");
+      throw QString::fromLatin1("Query aborted before started");
     Running=true;
     try {
       Query=new otl_stream;
@@ -844,7 +844,7 @@ void toOracleProvider::oracleQuery::cancel(void)
 {
   oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
   if (!conn)
-    throw QString("Internal error, not oracle sub connection");
+    throw QString::fromLatin1("Internal error, not oracle sub connection");
   if (Running)
     conn->Connection->cancel();
   else {
@@ -865,9 +865,9 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
   try {
     QString mode=connection().mode();
     int session_mode=OCI_DEFAULT;
-    if (mode=="SYS_OPER")
+    if (mode==QString::fromLatin1("SYS_OPER"))
       session_mode=OCI_SYSOPER;
-    else if (mode=="SYS_DBA")
+    else if (mode==QString::fromLatin1("SYS_DBA"))
       session_mode=OCI_SYSDBA;
     conn=new otl_connect;
     conn->set_stream_pool_size(max(toTool::globalConfig(CONF_OPEN_CURSORS,
@@ -899,9 +899,9 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
   
   try {
     {
-      QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
+      QString str=QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
       str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
-      str+="'";
+      str+=QString::fromLatin1("'");
       otl_stream date(1,str.utf8(),*conn);
     }
     {
@@ -912,7 +912,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
 		      *conn);
     }
   } catch(...) {
-    toStatusMessage("Failed to set new default date format for session");
+    toStatusMessage(QString::fromLatin1("Failed to set new default date format for session"));
   }
   return new oracleSub(conn);
 }
@@ -962,7 +962,7 @@ public:
 					       DEFAULT_OPEN_CURSORS).toInt());
     KeepPlans->setChecked(!toTool::globalConfig(CONF_KEEP_PLANS,"").isEmpty());
     int len=toTool::globalConfig(CONF_MAX_LONG,
-				 QString::number(DEFAULT_MAX_LONG)).toInt();
+				 QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
     if (len>=0) {
       MaxLong->setText(QString::number(len));
       MaxLong->setValidator(new QIntValidator(MaxLong));
@@ -984,7 +984,7 @@ public:
     toTool::globalSetConfig(CONF_OPEN_CURSORS,QString::number(OpenCursors->value()));
     if (Unlimited->isChecked()) {
       toMaxLong=-1;
-      toTool::globalSetConfig(CONF_MAX_LONG,"-1");
+      toTool::globalSetConfig(CONF_MAX_LONG,QString::fromLatin1("-1"));
     } else {
       toTool::globalSetConfig(CONF_MAX_LONG,MaxLong->text());
       toMaxLong=MaxLong->text().toInt();
@@ -1000,7 +1000,7 @@ public:
   }
 };
 
-QWidget *toOracleProvider::providerConfigurationTab(const QString &,QWidget *parent)
+QWidget *toOracleProvider::providerConfigurationTab(const QCString &,QWidget *parent)
 {
   return new toOracleSetting(parent);
 }

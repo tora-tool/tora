@@ -54,26 +54,30 @@ toBreakpointItem::toBreakpointItem(QListView *parent,QListViewItem *after,
 : QListViewItem(parent,after)
 {
   if (schema.isNull())
-    setText(2,"");
+    setText(2,QString::null);
   else
     setText(2,schema);
   if (object.isNull())
-    setText(0,"");
+    setText(0,QString::null);
   else
     setText(0,object);
   if (type.isNull())
-    setText(3,"");
+    setText(3,QString::null);
   else
     setText(3,type);
   setText(1,QString::number(line+1));
-  if(type=="PACKAGE"||type=="PROCEDURE"||type=="FUNCTION"||type=="TYPE")
+  if(type==QString::fromLatin1("PACKAGE")||
+     type==QString::fromLatin1("PROCEDURE")||
+     type==QString::fromLatin1("FUNCTION")||
+     type==QString::fromLatin1("TYPE"))
     Namespace=TO_NAME_TOPLEVEL;
-  else if (type=="PACKAGE BODY"||type=="TYPE BODY")
+  else if (type==QString::fromLatin1("PACKAGE BODY")||
+	   type==QString::fromLatin1("TYPE BODY"))
     Namespace=TO_NAME_BODY;
   else
     Namespace=TO_NAME_NONE;
   Line=line;
-  setText(4,"DEFERED");
+  setText(4,qApp->translate("toDebug","DEFERED"));
 }
 
 static toSQL SQLBreakpoint("toDebug:SetBreakpoint",
@@ -110,16 +114,16 @@ void toBreakpointItem::setBreakpoint(void)
     int ret=query.readValue().toInt();
     if (ret==TO_SUCCESS) {
       setText(TO_BREAK_COL,query.readValue());
-      setText(4,"ENABLED");
+      setText(4,qApp->translate("toDebug","ENABLED"));
       ok=true;
     } else if (ret==TO_ERROR_ILLEGAL_LINE) {
-      toStatusMessage("Can not enable breakpoint, not a valid line. Perhaps needs to recompile.");
+      toStatusMessage(qApp->translate("toDebug","Can not enable breakpoint, not a valid line. Perhaps needs to recompile."));
     } else if (ret==TO_ERROR_BAD_HANDLE) {
-      toStatusMessage("Can not enable breakpoint, not a valid object. Perhaps needs to compile.");
+      toStatusMessage(qApp->translate("toDebug","Can not enable breakpoint, not a valid object. Perhaps needs to compile."));
     }
   } TOCATCH
   if (!ok)
-    setText(4,"NOT SET");
+    setText(4,qApp->translate("toDebug","NOT SET"));
 }
 
 static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
@@ -135,7 +139,7 @@ static toSQL SQLClearBreakpoint("toDebug:ClearBreakpoint",
 
 void toBreakpointItem::clearBreakpoint()
 {
-  if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
+  if (text(4)==qApp->translate("toDebug","ENABLED")&&!text(TO_BREAK_COL).isEmpty()) {
     try {
       toConnection &conn=toCurrentConnection(listView());
       toQList args;
@@ -144,15 +148,12 @@ void toBreakpointItem::clearBreakpoint()
       int res=query.readValue().toInt();
       
       if (res!=TO_SUCCESS) {
-	QString str("Failed to remove breakpoint (Reason ");
-	str+=QString::number(res);
-	str+=")";
-	toStatusMessage(str);
+	toStatusMessage(qApp->translate("toDebug","Failed to remove breakpoint (Reason %1)").arg(res));
       }
     } TOCATCH
-    setText(TO_BREAK_COL,NULL);
+    setText(TO_BREAK_COL,QString::null);
   }
-  setText(4,"DISABLED");
+  setText(4,qApp->translate("toDebug","DISABLED"));
 }
 
 #define DEBUG_INDENT 10
@@ -183,7 +184,7 @@ bool toDebugText::readErrors(toConnection &conn)
 
     while(!errors.eof()) {
       int line=errors.readValue().toInt();
-      Errors[line]+=" ";
+      Errors[line]+=QString::fromLatin1(" ");
       Errors[line]+=errors.readValue();
     }
     setErrors(Errors);
@@ -266,7 +267,7 @@ bool toDebugText::checkItem(toBreakpointItem *item)
 
 void toDebugText::clear(void)
 {
-  setData("","","");
+  setData(QString::null,QString::null,QString::null);
   FirstItem=CurrentItem=NULL;
   NoBreakpoints=false;
   toHighlightedText::clear();
@@ -379,8 +380,8 @@ void toDebugText::toggleBreakpoint(int row,bool enable)
   if (row>=0) {
     if (hasBreakpoint(row)) {
       if (enable) {
-	if (CurrentItem->text(4)=="DISABLED")
-	  CurrentItem->setText(4,"DEFERED");
+	if (CurrentItem->text(4)==qApp->translate("toDebug","DISABLED"))
+	  CurrentItem->setText(4,qApp->translate("toDebug","DEFERED"));
 	else
 	  CurrentItem->clearBreakpoint();
       } else {
@@ -416,7 +417,7 @@ void toDebugText::mouseDoubleClickEvent(QMouseEvent *me)
   }
 }
 
-void toDebugText::exportData(std::map<QString,QString> &data,const QString &prefix)
+void toDebugText::exportData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   toHighlightedText::exportData(data,prefix);
   data[prefix+":Schema"]=Schema;
@@ -424,7 +425,7 @@ void toDebugText::exportData(std::map<QString,QString> &data,const QString &pref
   data[prefix+":Type"]=Type;
 }
 
-void toDebugText::importData(std::map<QString,QString> &data,const QString &prefix)
+void toDebugText::importData(std::map<QCString,QString> &data,const QCString &prefix)
 {
   toHighlightedText::importData(data,prefix);
   Schema=data[prefix+":Schema"];

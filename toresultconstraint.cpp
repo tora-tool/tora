@@ -47,12 +47,12 @@ toResultConstraint::toResultConstraint(QWidget *parent,const char *name)
   : toResultView(false,false,parent,name)
 {
   setReadAll(true);
-  addColumn("Constraint Name");
-  addColumn("Condition");
-  addColumn("Enabled");
-  addColumn("Delete Rule");
-  addColumn("Generated");
-  setSQLName("toResultConstraint");
+  addColumn(tr("Constraint Name"));
+  addColumn(tr("Condition"));
+  addColumn(tr("Enabled"));
+  addColumn(tr("Delete Rule"));
+  addColumn(tr("Generated"));
+  setSQLName(QString::fromLatin1("toResultConstraint"));
 
   setSorting(0);
 
@@ -79,7 +79,7 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
   while(!query.eof()) {
     QString value=query.readValue();
     if (!ret.isEmpty())
-      ret.append(",");
+      ret.append(QString::fromLatin1(","));
     ret.append(value);
     LastTable=query.readValue();
   }
@@ -114,7 +114,7 @@ static toSQL SQLConstraints7("toResultConstraint:ListConstraints",
 			     " WHERE Owner = :f1<char[101]>\n"
 			     "   AND Table_Name = :f2<char[101]>\n"
 			     " ORDER BY Constraint_Name",
-			     QString::null,
+			     "",
 			     "7.3");
 
 void toResultConstraint::query(const QString &sql,const toQList &param)
@@ -167,37 +167,37 @@ void toResultConstraint::poll()
 	item->setText(2,Query->readValue());
 	QString type=Query->readValue();
 	QString Condition;
-	char t=((const char *)type)[0];
+	char t=(type.latin1())[0];
 	switch(t) {
 	case 'U':
-	  Condition="unique (";
+	  Condition=QString::fromLatin1("unique (");
 	  Condition.append(colNames);
-	  Condition.append(")");
+	  Condition.append(QString::fromLatin1(")"));
 	  break;
 	case 'P':
-	  Condition="primary key (";
+	  Condition=QString::fromLatin1("primary key (");
 	  Condition.append(colNames);
-	  Condition.append(")");
+	  Condition.append(QString::fromLatin1(")"));
 	  break;
 	case 'C':
 	case 'V':
 	case 'O':
-	  Condition="check (";
+	  Condition=QString::fromLatin1("check (");
 	  Condition.append(check);
-	  Condition.append(")");
+	  Condition.append(QString::fromLatin1(")"));
 	  break;
 	case 'R':
-	  Condition="foreign key (";
+	  Condition=QString::fromLatin1("foreign key (");
 	  Condition.append(colNames);
-	  Condition.append(") references ");
+	  Condition.append(QString::fromLatin1(") references "));
 	  Condition.append(rConsOwner);
-	  Condition.append(".");
+	  Condition.append(QString::fromLatin1("."));
 	  QString cols(constraintCols(rConsOwner,rConsName));
 	
 	  Condition.append(LastTable);
-	  Condition.append("(");
+	  Condition.append(QString::fromLatin1("("));
 	  Condition.append(cols);
-	  Condition.append(")");
+	  Condition.append(QString::fromLatin1(")"));
 	  break;
 	}
 	item->setText(1,Condition);

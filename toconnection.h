@@ -397,13 +397,13 @@ typedef std::list<toQDescribe> toQDescList;
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
  */
 class toConnection {
-  QString Provider;
+  QCString Provider;
   QString User;
   QString Password;
   QString Host;
   QString Database;
   QString Mode;
-  QString Version;
+  QCString Version;
   std::list<QWidget *> Widgets;
   std::list<QCString> InitStrings;
   toLock Lock;
@@ -494,7 +494,7 @@ public:
 
     /** Get the version of the database connected to.
      */
-    virtual QString version(toConnectionSub *) = 0;
+    virtual QCString version(toConnectionSub *) = 0;
 
     /** Return a string representation to address an object.
      * @param name The name to be quoted.
@@ -583,7 +583,7 @@ public:
    * @param mode Mode to connect to the database with.
    * @param cache Enable object cache for this connection.
    */
-  toConnection(const QString &provider,const QString &user,const QString &password,
+  toConnection(const QCString &provider,const QString &user,const QString &password,
 	       const QString &host,const QString &database,const QString &mode=QString::null,
 	       bool cache=true);
   /** Create a copy of a connection. Will not cache objects, so objects will never be available
@@ -621,11 +621,11 @@ public:
   { return Mode; }
   /** Get version of connection.
    */
-  const QString &version() const
+  const QCString &version() const
   { return Version; }
   /** Get provider of connection.
    */
-  const QString &provider() const;
+  const QCString &provider() const;
 
   /** Get a description of this connection.
    * @version Include version in returned string.
@@ -820,28 +820,28 @@ public:
  */
 
 class toConnectionProvider {
-  static std::map<QString,toConnectionProvider *> *Providers;
-  static std::map<QString,toConnectionProvider *> *Types;
-  QString Provider;
+  static std::map<QCString,toConnectionProvider *> *Providers;
+  static std::map<QCString,toConnectionProvider *> *Types;
+  QCString Provider;
   static void checkAlloc(void);
 
   /** Get the provider object for a given provider name.
    * @param provider Name of provider.
    * @return Reference to provider object.
    */
-  static toConnectionProvider &fetchProvider(const QString &provider);
+  static toConnectionProvider &fetchProvider(const QCString &provider);
 protected:
   /** Add a provider to the list that this provider can handle.
    */
-  void addProvider(const QString &provider);
+  void addProvider(const QCString &provider);
   /** Remove a provider from the list that this provider can handle.
    */
-  void removeProvider(const QString &provider);
+  void removeProvider(const QCString &provider);
 public:
   /** Create a new provider with the specified name.
    * @param provider Name of the provider.
    */
-  toConnectionProvider(const QString &provider,bool add=true);
+  toConnectionProvider(const QCString &provider,bool add=true);
   /** Destructor.
    */
   virtual ~toConnectionProvider();
@@ -849,23 +849,23 @@ public:
   /** Create an implementation of a connection to this database.
    * @return A connection implementation created with new.
    */
-  virtual toConnection::connectionImpl *provideConnection(const QString &provider,
+  virtual toConnection::connectionImpl *provideConnection(const QCString &provider,
 							  toConnection *conn)=0;
   /** List the available modes for this database.
    * @return A list of modes that the connection implementation understands.
    */
-  virtual std::list<QString> providedModes(const QString &provider);
+  virtual std::list<QString> providedModes(const QCString &provider);
   /** List the available hosts this database provider knows about.
    * @return A list of hosts.
    */
-  virtual std::list<QString> providedHosts(const QString &provider);
+  virtual std::list<QString> providedHosts(const QCString &provider);
   /** List the available databases this provider knows about for a given host.
    * @param host Host to return connections for.
    * @param user That might be needed.
    * @param password That might be needed.
    * @return A list of databases available for a given host.
    */
-  virtual std::list<QString> providedDatabases(const QString &provider,
+  virtual std::list<QString> providedDatabases(const QCString &provider,
 					       const QString &host,
 					       const QString &user,
 					       const QString &pwd)=0;
@@ -882,26 +882,26 @@ public:
    * @return A pointer to the widget containing the setup tab for this tool or NULL of
    * no settings are available.
    */
-  virtual QWidget *providerConfigurationTab(const QString &provider,QWidget *parent)
+  virtual QWidget *providerConfigurationTab(const QCString &provider,QWidget *parent)
   { return NULL; }
 
   /** Get a list of names for providers.
    */
-  static QWidget *configurationTab(const QString &provider,QWidget *parent);
+  static QWidget *configurationTab(const QCString &provider,QWidget *parent);
   /** Get a list of names for providers.
    */
-  static std::list<QString> providers();
+  static std::list<QCString> providers();
   /** Get a list of modes for a given provider.
    */
-  static std::list<QString> modes(const QString &provider);
+  static std::list<QString> modes(const QCString &provider);
   /** Implement a connection for a given provider.
    * @param provider Provider to implement.
    * @param conn Connection to create implementation for.
    */
-  static toConnection::connectionImpl *connection(const QString &provider,toConnection *conn);
+  static toConnection::connectionImpl *connection(const QCString &provider,toConnection *conn);
   /** Get a list of hosts this provider knows about.
    */
-  static std::list<QString> hosts(const QString &provider);
+  static std::list<QString> hosts(const QCString &provider);
   /** Get a list of databases for a given provider and host.
    * @param provider Provider to fetch databases for.
    * @param host Host to fetch databases for.
@@ -909,7 +909,7 @@ public:
    * @param password That might be needed.
    * @return List of known databases.
    */
-  static std::list<QString> databases(const QString &provider,const QString &host,
+  static std::list<QString> databases(const QCString &provider,const QString &host,
 				      const QString &user,const QString &pwd);
   /**
    * Get connection specific settings.
@@ -922,7 +922,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  const QString &config(const QString &tag,const QString &def);
+  const QString &config(const QCString &tag,const QCString &def);
   /**
    * Change connectionspecific setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -935,7 +935,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  void setConfig(const QString &tag,const QString &value);
+  void setConfig(const QCString &tag,const QCString &value);
 
   /** Call all initializers
    */

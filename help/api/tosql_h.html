@@ -99,11 +99,11 @@ public:
     /**
      * The provider this version is made for.
      */
-    QString Provider;
+    QCString Provider;
     /**
      * Version string
      */
-    QString Version;
+    QCString Version;
     /**
      * SQL statement
      */
@@ -118,7 +118,7 @@ public:
      * @param sql Statement
      * @param modified Wether it is modified or not.
      */
-    version(const QString &provider,const QString &ver,const QString &sql,bool modified=false)
+    version(const QCString &provider,const QCString &ver,const QString &sql,bool modified=false)
       : Provider(provider),Version(ver),SQL(sql),Modified(modified)
     { }
   };
@@ -141,7 +141,7 @@ public:
 
   /** Type of map of statement names to statement definitions.
    */
-  typedef std::map<QString,definition> sqlMap;
+  typedef std::map<QCString,definition> sqlMap;
 private:
   /** Map of statement names to statement definitions for each provider.
    */
@@ -149,12 +149,12 @@ private:
 
   /** Name of this SQL statement
    */
-  QString Name;
+  QCString Name;
 
   /** Internal constructor used by some of the internal functions. Creates an
    * SQL statement with a name but without an entry in the @ref Definitions map.
    */
-  toSQL(const QString &name);
+  toSQL(const QCString &name);
 
   /** Check that @ref Definitions are allocated, if not allocate it.
    */
@@ -175,11 +175,11 @@ public:
    * @param modified Wether this is a modification or an addition to the map.
    * @return True if a new statement was saved, otherwise false.
    */
-  static bool updateSQL(const QString &name,
+  static bool updateSQL(const QCString &name,
 		        const QString &sql,
 		        const QString &description,
-		        const QString &ver="8.1",
-			const QString &provider="Oracle",
+		        const QCString &ver="8.1",
+			const QCString &provider="Oracle",
 			bool modified=true);
 
   /** Remove an SQL statement from a map. If the last version is removed
@@ -189,9 +189,9 @@ public:
    * @param provider Provider to delete.
    * @return True if a version was found to be removed.
    */
-  static bool deleteSQL(const QString &name,
-		        const QString &ver,
-			const QString &provider="Oracle");
+  static bool deleteSQL(const QCString &name,
+		        const QCString &ver,
+			const QCString &provider="Oracle");
 
   /** Get the statement of an SQL.
    * @param name Name of statement.
@@ -199,7 +199,7 @@ public:
    * @return String containing the statement.
    * @exception QString with description of problem fetching string.
    */
-  static QString string(const QString &name,const toConnection &conn);
+  static QString string(const QCString &name,const toConnection &conn);
   /** Get the statement of an SQL.
    * @param sqlDef SQL to get name of statement from.
    * @param conn Connection to get version from.
@@ -214,7 +214,7 @@ public:
    * @return String containing description.
    * @exception QString with description of problem fetching string.
    */
-  static QString description(const QString &name);
+  static QString description(const QCString &name);
   /** Get description of an SQL.
    * @param sqlDef SQL to get name of statement from.
    * @return String containing description.
@@ -229,7 +229,7 @@ public:
    * @return String containing the statement.
    * @exception QString with description of problem fetching string.
    */
-  static QCString sql(const QString &name,const toConnection &conn)
+  static QCString sql(const QCString &name,const toConnection &conn)
   { return string(name,conn).utf8(); }
   /** Get the statement of an SQL.
    * @param sqlDef SQL to get name of statement from.
@@ -244,14 +244,14 @@ public:
    * @param name Name to get SQL for.
    * @return a toSQL object for given name.
    */
-  static toSQL sql(const QString &name);
+  static toSQL sql(const QCString &name);
 
   /**
    * Get all defined names that start with a given substring.
    * @param startWith The string that the name should start with.
    * @return A list of names available.
    */
-  static std::list<QString> range(const QString &startWith);
+  static std::list<QCString> range(const QCString &startWith);
 
   /** Save SQL definitions to file.
    * @param file Filename to save to.
@@ -281,7 +281,7 @@ public:
   /** Get name of this SQL.
    * @return Name.
    */
-  const QString &name(void) const
+  const QCString &name(void) const
   { return Name; }
 
   /** Create a new SQL. Observe that the only thing this does is insert the supplied
@@ -293,11 +293,11 @@ public:
    * @param ver Version this statement applies to.
    * @param provider Provider this string is for.
    */
-  toSQL(const QString &name,
+  toSQL(const QCString &name,
 	const QString &sql,
 	const QString &description="",
-	const QString &ver="8.1",
-	const QString &provider="Oracle");
+	const QCString &ver="8.1",
+	const QCString &provider="Oracle");
 };
 
 #endif

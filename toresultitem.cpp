@@ -196,7 +196,7 @@ void toResultItem::query(const QString &sql,const toQList &param)
 
   } catch (const QString &str) {
     done();
-    toStatusMessage((const char *)str);
+    toStatusMessage(str);
   }
 }
 
@@ -226,7 +226,7 @@ void toResultItem::poll(void)
     delete Query;
     Query=NULL;
     done();
-    toStatusMessage((const char *)str);
+    toStatusMessage(str);
     Poll.stop();
   }
 }
