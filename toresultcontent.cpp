@@ -217,54 +217,63 @@ void toResultContent::changePosition(int row,int col)
       sql+=Table;
       sql+="\" SET ";
       QHeader *head=horizontalHeader();
-      for(int i=0;i<numCols();i++) {
-	sql+="\"";
-	sql+=head->label(i);
-	sql+="\" ";
-	if (nullString(text(CurrentRow,i)))
-	  sql+=" = NULL";
-	else {
-	  sql+="= :f";
-	  sql+=QString::number(i);
-	  sql+="<char[4000]>";
+      list<QString>::iterator k=OrigValues.begin();
+      bool first=false;
+      for(int i=0;i<numCols();i++,k++) {
+	if (*k!=text(CurrentRow,i)) {
+	  if (!first)
+	    first=true;
+	  else
+	    sql+=", ";
+	  sql+="\"";
+	  sql+=head->label(i);
+	  sql+="\" ";
+	  if (nullString(text(CurrentRow,i)))
+	    sql+=" = NULL";
+	  else {
+	    sql+="= :f";
+	    sql+=QString::number(i);
+	    sql+="<char[4000]>";
+	  }
 	}
-	if (i+1<numCols())
-	  sql+=", ";
       }
-      sql+=" WHERE ";
-      int col=0;
-      for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	sql+="\"";
-	sql+=head->label(col);
-	sql+="\" ";
-	if (nullString(*j))
-	  sql+=" IS NULL";
-	else {
-	  sql+="= :c";
-	  sql+=QString::number(col);
-	  sql+="<char[4000]>";
-	}
-	if (col+1<numCols())
-	  sql+=" AND ";
-      }
-      try {
-	otl_stream exec(1,
-			sql.utf8(),
-			Connection.connection());
-      
-	otl_null null;
-	for (int i=0;i<numCols();i++) {
-	  QString str=text(CurrentRow,i);
-	  if (!nullString(str))
-	    exec<<str.utf8();
-	}
+      if (first) {
+	sql+=" WHERE ";
+	int col=0;
 	for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
-	  QString str=(*j);
-	  if (!nullString(str))
-	    exec<<str.utf8();
+	  sql+="\"";
+	  sql+=head->label(col);
+	  sql+="\" ";
+	  if (nullString(*j))
+	    sql+=" IS NULL";
+	  else {
+	    sql+="= :c";
+	    sql+=QString::number(col);
+	    sql+="<char[4000]>";
+	  }
+	  if (col+1<numCols())
+	    sql+=" AND ";
 	}
-	Connection.setNeedCommit();
-      } TOCATCH
+	try {
+	  otl_stream exec(1,
+			  sql.utf8(),
+			  Connection.connection());
+      
+	  otl_null null;
+	  list<QString>::iterator k=OrigValues.begin();
+	  for (int i=0;i<numCols();i++,k++) {
+	    QString str=text(CurrentRow,i);
+	    if (str!=*k&&!nullString(str))
+	      exec<<str.utf8();
+	  }
+	  for(list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++) {
+	    QString str=(*j);
+	    if (!nullString(str))
+	      exec<<str.utf8();
+	  }
+	  Connection.setNeedCommit();
+	} TOCATCH
+      }
     }
     OrigValues.clear();
   }

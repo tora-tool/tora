@@ -58,7 +58,8 @@ static toSQL SQLUserNames(TOSQL_USERLIST,
 
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 {
-  char *buffer=new char[max(dsc.dbsize*2+1,100)];
+  char *buffer;
+
   try {
     switch (dsc.otl_var_dbtype) {
     default:  // Try using char if all else fails
@@ -66,6 +67,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
 	// The *2 is for raw columns, also dates and numbers are a bit tricky
 	// but if someone specifies a dateformat longer than 100 bytes he
 	// deserves everything he gets!
+	buffer=new char[max(dsc.dbsize*2+1,100)];
 	q>>buffer;
 	if (q.is_null()) {
 	  delete buffer;
@@ -81,6 +83,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
     case otl_var_clob:
     case otl_var_blob:
       {
+	buffer=new char[maxSize+1];
 	otl_long_string data(buffer,maxSize);
 	q>>data;
 	buffer[maxSize]=0;

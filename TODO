@@ -1,16 +1,15 @@
 Beta todo list:
 
-* SQL Browser
-	Schema filter
-	Object search
-* Modify storage in storage manager.
 * Edit memo in toResultContent.
 * Drag & drop from/to toResultContents.
 * Add search to toResultContent.
 * Info about current session.
 	Display parameters (v$param...)
 * Server statistics and tuning information.
-* Object search tool.
+* SQL Browser
+	Schema filter
+	Object search
+* Modify storage in storage manager.
 
 Extended functionality:
 

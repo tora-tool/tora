@@ -12,6 +12,8 @@
 2001-05-20: Open list if selected children in security.
 2001-05-21: Added search to results.
 2001-05-21: Fixed problem with disabled menu for toListView.
+2001-05-21: Only update changed columns in toResultContent.
+2001-05-21: Fixed SEGV in toReadValue and large hex longs.
 
 0.9.1: Released 2001-05-20
 
