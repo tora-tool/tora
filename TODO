@@ -49,6 +49,9 @@ Extended functionality:
 * Information about controlfiles in tuning.
 * Postgress support.
 * Make entire tuning polling in background.
+* Make content editor use ROWNUM initially.
+* Add a more detailed analysis of wait events in tuning.
+* Make it possible to disable tabs in tuning and set default tab.
 
 New tools:
 
