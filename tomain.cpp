@@ -136,7 +136,7 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_EDIT_OPTIONS		206
 #define TO_EDIT_READ_ALL	207
 #define TO_EDIT_SEARCH		208
-#define TO_EDIT_SEARCH_NEXT	209
+#define TO_EDIT_SEARCH_NEXT	209  // Used by edit extension
 
 #define TO_WINDOWS_TILE		300
 #define TO_WINDOWS_CASCADE	301

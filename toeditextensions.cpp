@@ -63,6 +63,8 @@ static int DeindentIndex;
 static int IndentIndex;
 static int ObfuscateBlock;
 static int ObfuscateBuffer;
+static int ReverseSearch;
+static int IncrementalSearch;
 
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_COMMA_BEFORE	"CommaBefore"
@@ -94,6 +96,8 @@ void toEditExtensions::receivedFocus(QWidget *widget)
   toMainWidget()->menuBar()->setItemEnabled(ObfuscateBlock,enable);
   toMainWidget()->menuBar()->setItemEnabled(AutoIndentBuffer,Current);
   toMainWidget()->menuBar()->setItemEnabled(ObfuscateBuffer,Current);
+  toMainWidget()->menuBar()->setItemEnabled(IncrementalSearch,Current);
+  toMainWidget()->menuBar()->setItemEnabled(ReverseSearch,Current);
   if(IndentButton)
     IndentButton->setEnabled(enable);
   if(DeindentButton)
@@ -312,6 +316,8 @@ public:
   virtual void saveSetting(void);
 };
 
+#define TO_EDIT_SEARCH_NEXT	209
+
 class toEditExtensionTool : public toTool {
 public:
   toEditExtensionTool()
@@ -337,7 +343,19 @@ public:
   {
     toMainWidget()->editMenu()->insertSeparator();
 
+    int idx=toMainWidget()->editMenu()->indexOf(TO_EDIT_SEARCH_NEXT);
+
     QPopupMenu *menu=new QPopupMenu(toMainWidget());
+    
+    IncrementalSearch=menu->insertItem("Forward");
+    ReverseSearch=menu->insertItem("Backward");
+
+    toMainWidget()->editMenu()->insertItem("Incremental Search",menu,-1,(idx>=0?idx+1:0));
+    
+    toMainWidget()->editMenu()->setAccel(Key_S+CTRL,IncrementalSearch);
+    toMainWidget()->editMenu()->setAccel(Key_R+CTRL,ReverseSearch);
+
+    menu=new QPopupMenu(toMainWidget());
     AutoIndentBlock=menu->insertItem("Selection",
 				     &EditExtensions,
 				     SLOT(autoIndentBlock()),
