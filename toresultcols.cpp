@@ -211,6 +211,10 @@ public:
     }
     return toResultViewMLine::key(column,ascending);
   }
+  virtual int width(const QFontMetrics &fm, const QListView *lst, int col) const
+  {
+    return QListViewItem::width(fm,lst,col);
+  }
   virtual QString tooltip(int col) const
   {
     toResultCols::resultCols *view=dynamic_cast<toResultCols::resultCols *>(listView());
