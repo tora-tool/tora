@@ -155,6 +155,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Limit=new QComboBox(toolbar,TO_KDE_TOOLBAR_WIDGET);
   Limit->insertItem(tr("All"));
   Limit->insertItem(tr("Unfinished"));
+  Limit->insertItem(tr("1 execution, 1 parse"));
   Limit->insertItem(tr("Top executions"));
   Limit->insertItem(tr("Top sorts"));
   Limit->insertItem(tr("Top diskreads"));
@@ -321,34 +322,38 @@ void toSGATrace::refresh(void)
 	toStatusMessage(tr("Unfinished is only available for long operations"));
       break;
     case 2:
-      order=QString::fromLatin1("a.Executions");
+      select+=QString::fromLatin("\n   and a.executions = 1 and a.parse = 1");
       break;
     case 3:
-      order=QString::fromLatin1("a.Sorts");
+      order=QString::fromLatin1("a.Executions");
       break;
     case 4:
-      order=QString::fromLatin1("a.Disk_Reads");
+      order=QString::fromLatin1("a.Sorts");
       break;
     case 5:
-      order=QString::fromLatin1("a.Buffer_Gets");
+      order=QString::fromLatin1("a.Disk_Reads");
       break;
     case 6:
-      order=QString::fromLatin1("a.Rows_Processed");
+      order=QString::fromLatin1("a.Buffer_Gets");
       break;
     case 7:
-      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Sorts/a.Executions)");
+      order=QString::fromLatin1("a.Rows_Processed");
       break;
     case 8:
-      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)");
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Sorts/a.Executions)");
       break;
     case 9:
-      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)");
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)");
       break;
     case 10:
-      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)");
       break;
     case 11:
+      order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
+      break;
+    case 12:
       order=QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed)");
+      break;
     default:
       toStatusMessage(tr("Unknown selection"));
       break;
