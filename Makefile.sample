@@ -354,7 +354,7 @@ install: $(TARGET) install-common
 	cp $(TARGET) $(INSTALLBIN)/tora
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
 	mkdir -p $(INSTALLLIB)/tora/help
-	rm -f $(INSTALLIB)/tora/*.tso
+	rm -f $(INSTALLLIB)/tora/*.tso
 	-cp plugins/* $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl $(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp help/* $(INSTALLLIB)/tora/help >/dev/null 2>&1

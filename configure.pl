@@ -230,6 +230,7 @@ my $QtLib;
 my $QtLibOrig;
 my $QtLibShared;
 my $QtLibStatic;
+my $QtSearch="libqt(?:-mt)?";
 my $StdCppLibStatic;
 my $LFlags;
 my $Target="tora-mono";
@@ -478,6 +479,268 @@ __TEMP__
 	$TestDB="-lmysqlclient";
     }
 
+    findFile("^libstdc\\+\\+.*\\.a",sub {
+	$StdCppLibStatic=$_[0];
+	return -f $_[0];
+    },
+	     "/usr/lib",
+	     "/usr/local/lib");
+    if (! -f $StdCppLibStatic) {
+	$StdCppLibStatic="";
+    }
+
+    if ($MySQLFound) {
+	print "checking for MySQL include files ... ";
+
+	$MySQLInclude=findFile("^mysql\\.h\$",
+			       undef,
+			       $MySQLInclude,
+			       "/usr/include",
+			       "/usr/include/mysql",
+			       "/usr/lib/mysql/include",
+			       "/usr/local/include",
+			       "/usr/local/include/mysql",
+			       "/ust/local/lib/mysql/include");
+	
+	if (!-d $MySQLInclude) {
+	    print "no\n";
+	    $MySQLFound=0;
+	} else {
+	    print "$MySQLInclude\n";
+	    print "checking for MySQL library ... ";
+	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
+		                                          return -f $_[0] && ! -l $_[0];
+						      },
+			       $MySQLLib,
+			       "/usr/lib",
+			       "/usr/lib/mysql",
+			       "/usr/lib/mysql/lib",
+			       "/usr/local/lib",
+			       "/usr/local/lib/mysql",
+			       "/usr/local/lib/mysql/lib");
+	    
+	    if (-d $MySQLLib) {
+		$MySQLShared=" -lmysqlclient";
+	    }
+	    if (!-d $MySQLLib) {
+		print "no\n";
+		$MySQLFound=0;
+	    } else {
+		print "$MySQLLib\n";
+	    }
+	    
+	    print "checking for MySQL static library ...";
+	    
+	    findFile("^libmysqlclient.*\\.a",sub {
+		                                 $MySQLStatic=$_[0];
+						 return -f $_[0];
+					     },
+		     $MySQLLib,
+		     "/usr/lib",
+		     "/usr/lib/mysql",
+		     "/usr/lib/mysql/lib",
+		     "/usr/local/lib",
+		     "/usr/local/lib/mysql",
+		     "/usr/local/lib/mysql/lib");
+	    if (! -f $MySQLStatic) {
+		$MySQLStatic="";
+		print "no\n";
+	    } else {
+		print "$MySQLStatic\n";
+		if (!$MySQLFound) {
+		    $MySQLFound=1;
+		    $MySQLLib=$MySQLStatic;
+		}
+	    }
+	}
+    }
+	
+    print "checking consistency ... ";
+
+    if (!$MySQLFound&&!$OracleFound) {
+	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
+	exit(2);
+    }
+    print "ok\n";
+
+    if (!$NoKDE||$KDEApplication) {
+	print "checking for KDE include files ... ";
+	$KDEInclude=findFile("^kapp\\.h\$",sub {
+	                                       return !system("egrep \"#define[ \t]+KDE_VERSION[ \t]+((2[12345678])|(3))\" '".$_[0]."' >/dev/null");
+					   },
+			     $KDEInclude,
+			     $ENV{KDEDIR}."/include",
+			     "/usr/include",
+			     "/usr/include/kde",
+			     "/usr/include/kde2",
+			     "/usr/local/kde/include",
+			     "/usr/local/kde2/include",
+			     "/opt/kde/include",
+			     "/opt/kde2/include",
+			     "/usr/local/include",
+			     "/usr/local/include/kde",
+			     "/usr/local/include/kde2"
+			     );
+
+	if (-d $KDEInclude) {
+	    $KDEApplication=1;
+	    print "$KDEInclude\n";
+	} else {
+	    print "no\n";
+	}
+    }
+    if ($KDEApplication) {
+	print "checking for KDE print support ... ";
+
+	my $kprint=findFile("^kprinter\\.h\$",sub {
+	                                          return -f $_[0] && ! -l $_[0];
+					      },
+			    $KDEInclude
+			    );
+	if (defined $kprint) {
+	    $Libs.=" -lkdeprint";
+	    print "yes\n";
+	} else {
+	    print "no\n";
+	}
+
+	$Includes.=" \"-I".$KDEInclude."\"";
+
+	print "checking for KDE libraries ... ";
+
+	$KDELibs=findFile("^libDCOP.so",sub {
+                                   	    return -f $_[0];
+					},
+			     $KDELibs,
+			     $ENV{KDEDIR}."/lib",
+			     "/usr/lib",
+			     "/usr/lib/kde",
+			     "/usr/lib/kde2",
+			     "/usr/local/kde/lib",
+			     "/usr/local/kde2/lib",
+			     "/opt/kde/lib",
+			     "/opt/kde2/lib",
+			     "/usr/local/lib",
+			     "/usr/local/lib/kde",
+			     "/usr/local/lib/kde2"
+			     );
+
+	if (!-d $KDELibs) {
+	    print "failed!\n\nCouldn't find libraries files for KDE, use --with-kde-libs to specify\n";
+	    exit(2);
+	} else {
+	    print "$KDELibs\n";
+	}
+
+	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile -lkhtml";
+	$LFlags.="\"-L".$KDELibs."\" ";
+	if (!$NoRPath) {
+	    $LFlags.="-Xlinker \"--rpath=$KDELibs\" ";
+	}
+
+	print "checking for Qt library linked to KDE ... ";
+	my $found=0;
+	if (open(LDD,"ldd $KDELibs/libkdecore.so 2>&1 |")) {
+	    while(<LDD>) {
+		if (/\/([^\/]+qt[^\.]*)/) {
+		    $QtSearch="$1";
+		    $found=1;
+		    last;
+		}
+	    }
+	    close LDD;
+	}
+	if ($found) {
+	    print "$QtSearch\n";
+	} else {
+	    print "not detected\n";
+	}
+    } else {
+	print "checking for KDE support ... no\n";
+    }
+
+    print "checking for Qt library ... ";
+
+    $QtLib=findFile("^".$QtSearch."[23]\\.so",sub {
+	                                        if (-f $_[0] && ! -l $_[0]) {
+						    ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+						    if (!defined $QtLibShared) {
+							return 0;
+						    }
+						    $QtLibShared=" -l$QtLibShared";
+						    return 1;
+						} else {
+						    return 0;
+						}
+					    },
+		    $QtLibOrig,
+		    $QtDir."/lib",
+		    "/usr/lib",
+		    "/usr/lib/qt2",
+		    "/usr/lib/qt2/lib",
+		    "/usr/lib/qt3",
+		    "/usr/lib/qt3/lib",
+		    "/usr/lib/qt",
+		    "/ust/lib/qt/lib",
+		    "/usr/local/lib",
+		    "/usr/local/lib/qt2",
+		    "/usr/local/lib/qt2/lib",
+		    "/usr/local/lib/qt3",
+		    "/usr/local/lib/qt3/lib",
+		    "/usr/local/lib/qt",
+		    "/ust/local/lib/qt/lib",
+		    "/usr/local/qt2",
+		    "/usr/local/qt2/lib",
+		    "/usr/local/qt3",
+		    "/usr/local/qt3/lib",
+		    "/usr/local/qt",
+		    "/usr/local/qt/lib"
+		    );
+
+    if (! -d $QtLib) {
+	$QtLib=findFile("^$QtSearch\\.so\\.[23]",sub {
+		                                     if (-f $_[0] && ! -l $_[0]) {
+							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+							 if (!defined $QtLibShared) {
+							     return 0;
+							 }
+							 $QtLibShared=" -l$QtLibShared";
+							 return 1;
+						     } else {
+							 return 0;
+						     }
+						 },
+			$QtLibOrig,
+			$QtDir."/lib",
+			"/usr/lib",
+			"/usr/lib/qt2",
+			"/usr/lib/qt2/lib",
+			"/usr/lib/qt3",
+			"/usr/lib/qt3/lib",
+			"/usr/lib/qt",
+			"/ust/lib/qt/lib",
+			"/usr/local/lib",
+			"/usr/local/lib/qt2",
+			"/usr/local/lib/qt2/lib",
+			"/usr/local/lib/qt3",
+			"/usr/local/lib/qt3/lib",
+			"/usr/local/lib/qt",
+			"/ust/local/lib/qt/lib",
+			"/usr/local/qt2",
+			"/usr/local/qt2/lib",
+			"/usr/local/qt3",
+			"/usr/local/qt3/lib",
+			"/usr/local/qt",
+			"/ust/local/qt/lib"
+			);
+    }
+    
+    if (!-d $QtLib) {
+	print "failed!\n\nCouldn't find library files for Qt, use --with-qt-libs to specify\n";
+	exit(2);
+    }
+    print "$QtLib\n";
+
     print "checking for moc ... ";
     if (!defined $MOC || ! -x $MOC) {
 	$MOC=findFile("moc2",sub { return -x $_[0]; },
@@ -591,87 +854,6 @@ __TEMP__
     }
     print "$QtInclude\n";
 
-    print "checking for Qt library ... ";
-
-    $QtLib=findFile("^libqt(-mt)?[23]\\.so",sub {
-	                                            if (-f $_[0] && ! -l $_[0]) {
-							($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
-							if (!defined $QtLibShared) {
-							    return 0;
-							}
-							$QtLibShared=" -l$QtLibShared";
-							return 1;
-						    } else {
-							return 0;
-						    }
-						},
-		    $QtLibOrig,
-		    $QtDir."/lib",
-		    "/usr/lib",
-		    "/usr/lib/qt2",
-		    "/usr/lib/qt2/lib",
-		    "/usr/lib/qt3",
-		    "/usr/lib/qt3/lib",
-		    "/usr/lib/qt",
-		    "/ust/lib/qt/lib",
-		    "/usr/local/lib",
-		    "/usr/local/lib/qt2",
-		    "/usr/local/lib/qt2/lib",
-		    "/usr/local/lib/qt3",
-		    "/usr/local/lib/qt3/lib",
-		    "/usr/local/lib/qt",
-		    "/ust/local/lib/qt/lib",
-		    "/usr/local/qt2",
-		    "/usr/local/qt2/lib",
-		    "/usr/local/qt3",
-		    "/usr/local/qt3/lib",
-		    "/usr/local/qt",
-		    "/usr/local/qt/lib"
-		    );
-
-    if (! -d $QtLib) {
-	$QtLib=findFile("^libqt(?:-mt)?\\.so\\.[23]",sub {
-	                                                 if (-f $_[0] && ! -l $_[0]) {
-							     ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
-							     if (!defined $QtLibShared) {
-								 return 0;
-							     }
-							     $QtLibShared=" -l$QtLibShared";
-							     return 1;
-							 } else {
-							     return 0;
-							 }
-						     },
-			$QtLibOrig,
-			$QtDir."/lib",
-			"/usr/lib",
-			"/usr/lib/qt2",
-			"/usr/lib/qt2/lib",
-			"/usr/lib/qt3",
-			"/usr/lib/qt3/lib",
-			"/usr/lib/qt",
-			"/ust/lib/qt/lib",
-			"/usr/local/lib",
-			"/usr/local/lib/qt2",
-			"/usr/local/lib/qt2/lib",
-			"/usr/local/lib/qt3",
-			"/usr/local/lib/qt3/lib",
-			"/usr/local/lib/qt",
-			"/ust/local/lib/qt/lib",
-			"/usr/local/qt2",
-			"/usr/local/qt2/lib",
-			"/usr/local/qt3",
-			"/usr/local/qt3/lib",
-			"/usr/local/qt",
-			"/ust/local/qt/lib"
-			);
-    }
-
-    if (!-d $QtLib) {
-	print "failed!\n\nCouldn't find library files for Qt, use --with-qt-libs to specify\n";
-	exit(2);
-    }
-    print "$QtLib\n";
     print "checking for static Qt library ... ";
 
     findFile("^libqt(-mt)?[23]\\.a",sub {
@@ -736,90 +918,6 @@ __TEMP__
 	}
     }
 
-    findFile("^libstdc\\+\\+.*\\.a",sub {
-	$StdCppLibStatic=$_[0];
-	return -f $_[0];
-    },
-	     "/usr/lib",
-	     "/usr/local/lib");
-    if (! -f $StdCppLibStatic) {
-	$StdCppLibStatic="";
-    }
-
-    if ($MySQLFound) {
-	print "checking for MySQL include files ... ";
-
-	$MySQLInclude=findFile("^mysql\\.h\$",
-			       undef,
-			       $MySQLInclude,
-			       "/usr/include",
-			       "/usr/include/mysql",
-			       "/usr/lib/mysql/include",
-			       "/usr/local/include",
-			       "/usr/local/include/mysql",
-			       "/ust/local/lib/mysql/include");
-	
-	if (!-d $MySQLInclude) {
-	    print "no\n";
-	    $MySQLFound=0;
-	} else {
-	    print "$MySQLInclude\n";
-	    print "checking for MySQL library ... ";
-	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
-		                                          return -f $_[0] && ! -l $_[0];
-						      },
-			       $MySQLLib,
-			       "/usr/lib",
-			       "/usr/lib/mysql",
-			       "/usr/lib/mysql/lib",
-			       "/usr/local/lib",
-			       "/usr/local/lib/mysql",
-			       "/usr/local/lib/mysql/lib");
-	    
-	    if (-d $MySQLLib) {
-		$MySQLShared=" -lmysqlclient";
-	    }
-	    if (!-d $MySQLLib) {
-		print "no\n";
-		$MySQLFound=0;
-	    } else {
-		print "$MySQLLib\n";
-	    }
-	    
-	    print "checking for MySQL static library ...";
-	    
-	    findFile("^libmysqlclient.*\\.a",sub {
-		                                 $MySQLStatic=$_[0];
-						 return -f $_[0];
-					     },
-		     $MySQLLib,
-		     "/usr/lib",
-		     "/usr/lib/mysql",
-		     "/usr/lib/mysql/lib",
-		     "/usr/local/lib",
-		     "/usr/local/lib/mysql",
-		     "/usr/local/lib/mysql/lib");
-	    if (! -f $MySQLStatic) {
-		$MySQLStatic="";
-		print "no\n";
-	    } else {
-		print "$MySQLStatic\n";
-		if (!$MySQLFound) {
-		    $MySQLFound=1;
-		    $MySQLLib=$MySQLStatic;
-		}
-	    }
-	}
-    }
-	
-    print "checking consistency ... ";
-
-    if (!$MySQLFound&&!$OracleFound) {
-	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
-	exit(2);
-    }
-    print "ok\n";
-
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     if (defined $MySQLLib) {
 	$LFlags.="\"-L".$MySQLLib."\" ";
@@ -861,84 +959,6 @@ __TEMP__
     $Includes.="\"-I".$QtInclude."\"";
     if (defined $MySQLInclude) {
 	$Includes.=" \"-I".$MySQLInclude."\"";
-    }
-
-    if (!$NoKDE||$KDEApplication) {
-	print "checking for KDE include files ... ";
-	$KDEInclude=findFile("^kapp\\.h\$",sub {
-	                                       return !system("egrep \"#define[ \t]+KDE_VERSION[ \t]+((2[12345678])|(3))\" '".$_[0]."' >/dev/null");
-					   },
-			     $KDEInclude,
-			     $ENV{KDEDIR}."/include",
-			     "/usr/include",
-			     "/usr/include/kde",
-			     "/usr/include/kde2",
-			     "/usr/local/kde/include",
-			     "/usr/local/kde2/include",
-			     "/opt/kde/include",
-			     "/opt/kde2/include",
-			     "/usr/local/include",
-			     "/usr/local/include/kde",
-			     "/usr/local/include/kde2"
-			     );
-
-	if (-d $KDEInclude) {
-	    $KDEApplication=1;
-	    print "$KDEInclude\n";
-	} else {
-	    print "no\n";
-	}
-    }
-    if ($KDEApplication) {
-	print "checking for KDE print support ... ";
-
-	my $kprint=findFile("^kprinter\\.h\$",sub {
-	                                          return -f $_[0] && ! -l $_[0];
-					      },
-			    $KDEInclude
-			    );
-	if (defined $kprint) {
-	    $Libs.=" -lkdeprint";
-	    print "yes\n";
-	} else {
-	    print "no\n";
-	}
-
-	$Includes.=" \"-I".$KDEInclude."\"";
-
-	print "checking for KDE libraries ... ";
-
-	$KDELibs=findFile("^libDCOP.so",sub {
-                                   	    return -f $_[0];
-					},
-			     $KDELibs,
-			     $ENV{KDEDIR}."/lib",
-			     "/usr/lib",
-			     "/usr/lib/kde",
-			     "/usr/lib/kde2",
-			     "/usr/local/kde/lib",
-			     "/usr/local/kde2/lib",
-			     "/opt/kde/lib",
-			     "/opt/kde2/lib",
-			     "/usr/local/lib",
-			     "/usr/local/lib/kde",
-			     "/usr/local/lib/kde2"
-			     );
-
-	if (!-d $KDELibs) {
-	    print "failed!\n\nCouldn't find libraries files for KDE, use --with-kde-libs to specify\n";
-	    exit(2);
-	} else {
-	    print "$KDELibs\n";
-	}
-
-	$Libs.=" -lkdecore -lkdeui -lDCOP -lkfile -lkhtml";
-	$LFlags.=" \"-L".$KDELibs."\"";
-	if (!$NoRPath) {
-	    $LFlags.=" -Xlinker \"--rpath=$KDELibs\"";
-	}
-    } else {
-	print "checking for KDE support ... no\n";
     }
 
     if (!-f $CC) {
@@ -1270,7 +1290,7 @@ install: \$(TARGET) install-common
 	cp \$(TARGET) \$(INSTALLBIN)/tora
 	if [ -f tora-plugin ] ; then rm tora-plugin ; fi
 	mkdir -p \$(INSTALLLIB)/tora/help
-	rm -f \$(INSTALLIB)/tora/*.tso
+	rm -f \$(INSTALLLIB)/tora/*.tso
 	-cp plugins/* \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp templates/*.tpl \$(INSTALLLIB)/tora >/dev/null 2>&1
 	-cp help/* \$(INSTALLLIB)/tora/help >/dev/null 2>&1
