@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>552</width>
+            <width>548</width>
             <height>527</height>
         </rect>
     </property>
@@ -200,7 +200,25 @@
                         <string>Text example</string>
                     </property>
                 </widget>
-                <spacer row="9"  column="1" >
+                <widget row="8"  column="1"  rowspan="1"  colspan="2" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Extensions</cstring>
+                    </property>
+                </widget>
+                <widget row="8"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Filename extensions</string>
+                    </property>
+                </widget>
+                <spacer row="10"  column="1" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -221,22 +239,38 @@
                         </size>
                     </property>
                 </spacer>
-                <widget row="8"  column="1"  rowspan="1"  colspan="2" >
-                    <class>QLineEdit</class>
+                <widget row="9"  column="2" >
+                    <class>QSpinBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>Extensions</cstring>
+                        <cstring>TabStop</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>minValue</name>
+                        <number>1</number>
                     </property>
                 </widget>
-                <widget row="8"  column="0" >
+                <widget row="9"  column="0"  rowspan="1"  colspan="2" >
                     <class>QLabel</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>TextLabel1</cstring>
+                        <cstring>TextLabel1_2</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Filename extensions</string>
+                        <string>Tab stop width</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>TabStop</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of character width of tabstops</string>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Number of character width of tabstops</string>
                     </property>
                 </widget>
             </grid>
@@ -398,11 +432,13 @@
     <tabstop>SyntaxHighlighting</tabstop>
     <tabstop>KeywordUpper</tabstop>
     <tabstop>CodeCompletion</tabstop>
-    <tabstop>CompletionSort</tabstop>
     <tabstop>AutoIndent</tabstop>
     <tabstop>PushButton1_2_2</tabstop>
     <tabstop>PushButton1_2</tabstop>
     <tabstop>PushButton1</tabstop>
+    <tabstop>Extensions</tabstop>
+    <tabstop>TabStop</tabstop>
     <tabstop>Example</tabstop>
+    <tabstop>CompletionSort</tabstop>
 </tabstops>
 </UI>

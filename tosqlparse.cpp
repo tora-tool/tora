@@ -897,7 +897,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens)
   return cur;
 }
 
-#define TABSTOP 8
+#define TABSTOP (toMarkedText::defaultTabStop())
 
 int toSQLParse::countIndent(const QString &txt,int &chars)
 {

@@ -482,10 +482,6 @@ toMain::toMain()
   }
   Search=NULL;
 
-  if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty())
-    showMaximized();
-  show();
-
   for (std::map<QToolButton *,bool>::iterator j=NeedConnection.begin();
        j!=NeedConnection.end();j++)
     (*j).first->setEnabled(false);
@@ -509,6 +505,11 @@ toMain::toMain()
       importData(session,"TOra");
     } TOCATCH
   }
+
+  if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty()&&Connections.size()==0)
+    showMaximized();
+  else
+    show();
 
 #if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK) && !defined (OAS)
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {

@@ -1,5 +1,7 @@
 1.3.11:
 
+2003-07-27: Don't show main window until after import of session (For more flickerfree startup).
+2003-07-27: Added tab stop setting.
 2003-07-27: Fixed QSql crash on non query statements.
 2003-07-27: Fixed initialization of allfilter in content editor.
 2003-07-27: Indicate if filter is used in content editor by pressing down the filter button.

@@ -135,6 +135,8 @@
 #define DEFAULT_NUMBER_DECIMALS	"2"
 #define CONF_CACHE_TIMEOUT	"CacheTimeout"
 #define DEFAULT_CACHE_TIMEOUT	"7"
+#define CONF_TAB_STOP		"TabStop"
+#define DEFAULT_TAB_STOP	"8"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"

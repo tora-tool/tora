@@ -437,7 +437,10 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	cursorx=posx;
 
       if (c=="\t") {
-	int tab=painter->fontMetrics().width(QString::fromLatin1("xxxxxxxx"));;
+	QString t;
+	for(int i=0;i<defaultTabStop();i++)
+	  t+="x";
+	int tab=painter->fontMetrics().width(t);;
 	int nx=((posx-hMargin()+1)/tab+1)*tab+hMargin()-1;
 	int left=(posx==hMargin()-1?LeftIgnore:posx);
 	painter->fillRect(left,0,nx-left,height,marked?painter->brush():bkg);
