@@ -2,7 +2,7 @@
 %define _version	1.3.1
 %define _release	1gc
 %define _prefix		/usr/X11R6
-%define _qt2dir		/usr/lib/qt2
+%define _qt3dir		/usr/local/qt3
 
 Summary:			Toolkit for Oracle
 Name:				%{_name}
@@ -12,7 +12,7 @@ Source:				%{_name}-%{_version}.tar.bz2
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 8.1
+Distribution:			Mandrake Linux 7.2
 Copyright:			GPL
 BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
@@ -84,19 +84,20 @@ This build is compiled with KDE support.
 
 %prep
 %setup -q
-export QTDIR="%{_qt2dir}"
+export QTDIR="%{_qt3dir}"
 CFLAGS="$RPM_OPT_FLAGS" \
 CXXFLAGS="$RPM_OPT_FLAGS" \
 ./configure \
 	 --prefix="%{_prefix}" \
 	 --prefix-bin="%{_prefix}/bin" \
 	 --prefix-lib="%{_prefix}/lib" \
-	 --with-qt="%{_qt2dir}" \
+	 --with-qt="%{_qt3dir}" \
+	 --without-kde \
 	 --with-static \
          --without-rpath
 
 %build
-export QTDIR="%{_qt2dir}"
+export QTDIR="%{_qt3dir}"
 %{__make}
 %{__strip} \
 	 tora

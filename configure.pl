@@ -1013,8 +1013,8 @@ __TEMP__
 	
     print "checking for any database ... ";
 
-    if (!$MySQLFound&&!$OracleFound) {
-	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
+    if (!$MySQLFound&&!$OracleFound&&$QtVersion lt "3") {
+	print "failed!\n\nNeed either MySQL, Oracle or Qt3. None were found.\n";
 	exit(2);
     }
     if ($OracleFound) {
