@@ -67,6 +67,7 @@
 #include "toresultpie.h"
 #include "toconf.h"
 #include "toresultitem.h"
+#include "toresultlong.h"
 
 #include "totuning.moc"
 #include "totuningoverviewui.moc"
@@ -987,7 +988,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Parameters=new toResultParam(Tabs);
   Tabs->addTab(Parameters,"&Parameters");
 
-  Options=new toResultView(true,false,Tabs);
+  Options=new toResultLong(true,false,toQuery::Normal,Tabs);
   Options->setSQL(SQLOptions);
   Tabs->addTab(Options,"&Options");
 

@@ -178,17 +178,17 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   QSplitter *hsplitter=new QSplitter(Horizontal,ScriptUI->DifferenceTab);
   QVBox *box=new QVBox(ScriptUI->ResultTab);
   Worksheet=new toWorksheet(box,connection);
-  SearchList=new toResultView(false,false,box);
+  SearchList=new toListView(box);
   SearchList->addColumn("Search result");
   SearchList->setRootIsDecorated(true);
   SearchList->setSorting(0);
   SearchList->hide();
 
-  DropList=new toResultView(false,false,hsplitter);
+  DropList=new toListView(hsplitter);
   DropList->addColumn("Dropped");
   DropList->setRootIsDecorated(true);
   DropList->setSorting(0);
-  CreateList=new toResultView(false,false,hsplitter);
+  CreateList=new toListView(hsplitter);
   CreateList->addColumn("Created");
   CreateList->setRootIsDecorated(true);
   CreateList->setSorting(0);

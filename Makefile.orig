@@ -228,9 +228,6 @@ plugins/toextract.tso:\
 	objs/toresultextract.o
 plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
-plugins/tonoblockquery.tso:\
-	objs/tonoblockquery.o \
-	objs/toresultlong.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
@@ -239,10 +236,10 @@ plugins/toresult.tso:\
 	objs/toresultdepend.o \
 	objs/toresultindexes.o \
 	objs/toresultlock.o \
+	objs/toresultlong.o \
 	objs/toresultplan.o \
 	objs/toresultparam.o \
 	objs/toresultreferences.o \
-	objs/toresultstats.o \
 	objs/toresultstorage.o
 plugins/torollback.tso:\
 	objs/torollback.o \
@@ -365,6 +362,7 @@ tora: \
 	objs/tomemoeditor.o \
 	objs/tonewconnection.o \
 	objs/tonewconnectionui.o \
+	objs/tonoblockquery.o \
 	objs/toparamget.o \
 	objs/topreferences.o \
 	objs/topreferencesui.o \
@@ -372,6 +370,7 @@ tora: \
 	objs/toresultfield.o \
 	objs/toresultitem.o \
 	objs/toresultlistformatui.o \
+	objs/toresultstats.o \
 	objs/toresultview.o \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \

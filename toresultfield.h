@@ -37,10 +37,13 @@
 #ifndef __TORESULTFIELD_H
 #define __TORESULTFIELD_H
 
+#include <qtimer.h>
+
 #include "tohighlightedtext.h"
 #include "toresult.h"
 
 class toSQL;
+class toNoBlockQuery;
 
 /** This widget displays the result of a query where each item in the stream
  * is added as a line in a text editer.
@@ -49,12 +52,19 @@ class toSQL;
 class toResultField : public toHighlightedText, public toResult {
   Q_OBJECT
 
+  QString Unapplied;
+  toNoBlockQuery *Query;
+  QTimer Poll;
+
 public:
   /** Create the widget.
    * @param parent Parent widget.
    * @param name Name of widget.
    */
   toResultField(QWidget *parent,const char *name=NULL);
+  /** Destruct object
+   */
+  ~toResultField();
 
   /** Reimplemented for internal reasons.
    */
@@ -107,6 +117,8 @@ public slots:
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
+private slots:
+  void poll(void);
 };
 
 #endif

@@ -48,11 +48,13 @@
 #include "totool.h"
 #include "tonoblockquery.h"
 
-toResultLong::toResultLong(bool readable,bool dispCol,QWidget *parent,const char *name)
+toResultLong::toResultLong(bool readable,bool dispCol,toQuery::queryMode mode,
+			   QWidget *parent,const char *name)
   : toResultView(readable,dispCol,parent,name)
 {
   Query=NULL;
   Statistics=NULL;
+  Mode=mode;
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
@@ -61,6 +63,7 @@ toResultLong::toResultLong(QWidget *parent,const char *name)
 {
   Query=NULL;
   Statistics=NULL;
+  Mode=toQuery::Long;
   connect(&Timer,SIGNAL(timeout(void)),this,SLOT(addItem(void)));
 }
 
@@ -83,7 +86,7 @@ void toResultLong::query(const QString &sql,const toQList &param)
     addColumn("#");
 
   try {
-    Query=new toNoBlockQuery(connection(),sql,param,Statistics);
+    Query=new toNoBlockQuery(connection(),Mode,sql,param,Statistics);
 
     MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     addItem();
@@ -152,17 +155,21 @@ void toResultLong::addItem(void)
 	}
 
 	if (!Query->eof()) {
-	  RowNumber++;
 	  int disp=0;
 	  unsigned int cols=Description.size();
-	  LastItem=createItem(LastItem,NULL);
 	  if (NumberColumn) {
-	    LastItem->setText(0,QString::number(RowNumber));
 	    disp=1;
-	  } else
-	    LastItem->setText(cols,QString::number(RowNumber));
-	  for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
-	    LastItem->setText(j+disp,Query->readValue());
+	  }
+	  do {
+	    RowNumber++;
+	    LastItem=createItem(LastItem,NULL);
+	    if (NumberColumn)
+	      LastItem->setText(0,QString::number(RowNumber));
+	    else
+	      LastItem->setText(cols,QString::number(RowNumber));
+	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
+	      LastItem->setText(j+disp,Query->readValue());
+	  } while(Query->poll()&&!Query->eof()&&MaxNumber>RowNumber);
 	}
 	if (em) {
 	  First=false;

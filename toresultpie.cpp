@@ -68,7 +68,7 @@ void toResultPie::query(const QString &sql,const toQList &param)
 void toResultPie::poll(void)
 {
   try {
-    if (Query) {
+    if (Query&&Query->poll()) {
       if (!Columns)
 	Columns=Query->describe().size();
       while(Query->poll()&&!Query->eof()) {

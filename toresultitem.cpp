@@ -47,6 +47,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tosql.h"
+#include "tonoblockquery.h"
 
 #include "toresultitem.moc"
 
@@ -81,6 +82,8 @@ void toResultItem::setup(int num,bool readable)
   ShowTitle=true;
   Right=true;
   DataFont.setBold(true);
+  Query=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
 toResultItem::toResultItem(int num,bool readable,QWidget *parent,const char *name)
@@ -93,6 +96,11 @@ toResultItem::toResultItem(int num,QWidget *parent,const char *name)
   : QScrollView(parent,name), DataFont(QFont::defaultFont())
 {
   setup(num,false);
+}
+
+toResultItem::~toResultItem()
+{
+  delete Query;
 }
 
 void toResultItem::start(void)
@@ -173,25 +181,52 @@ void toResultItem::query(const QString &sql,const toQList &param)
   setParams(param);
 
   start();
-  if (!handled()) {
-    done();
+  if (!handled()||Query) {
+    if (!Query)
+      done();
     return;
   }
 
   try {
-    toQuery query(connection(),sql,param);
-    toQDescList desc=query.describe();
-
-    for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
-      QString name=(*i).Name;
-      if (ReadableColumns)
-	toReadableColumn(name);
-
-      addItem(name,query.readValue());
+    if (Query) {
+      delete Query;
+      Query=NULL;
     }
-    done();
+    Query=new toNoBlockQuery(connection(),toQuery::Normal,
+			     sql,param);
+    Poll.start(100);
+
   } catch (const QString &str) {
     done();
     toStatusMessage((const char *)str);
+  }
+}
+
+void toResultItem::poll(void)
+{
+  try {
+    if (Query&&Query->poll()) {
+      toQDescList desc=Query->describe();
+
+      if (!Query->eof()) {
+	for (toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+	  QString name=(*i).Name;
+	  if (ReadableColumns)
+	    toReadableColumn(name);
+
+	  addItem(name,Query->readValue());
+	}
+      }
+      done();
+      delete Query;
+      Query=NULL;
+      Poll.stop();
+    }
+  } catch (const QString &str) {
+    delete Query;
+    Query=NULL;
+    done();
+    toStatusMessage((const char *)str);
+    Poll.stop();
   }
 }

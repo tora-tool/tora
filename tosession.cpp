@@ -62,6 +62,7 @@
 #include "toresultlock.h"
 #include "toresultbar.h"
 #include "toconnection.h"
+#include "toresultlong.h"
 
 #include "tosession.moc"
 
@@ -179,7 +180,10 @@ toSession::toSession(QWidget *main,toConnection &connection)
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Sessions=new toResultView(false,false,splitter);
+  Sessions=new toResultLong(false,false,toQuery::Normal,splitter);
+  Sessions->setReadAll(true);
+  connect(Sessions,SIGNAL(done()),this,SLOT(done()));
+
   ResultTab=new QTabWidget(splitter);
   StatisticSplitter=new QSplitter(Horizontal,ResultTab);
   SessionStatistics=new toResultStats(false,0,StatisticSplitter);
@@ -193,12 +197,12 @@ toSession::toSession(QWidget *main,toConnection &connection)
   IOBar->setYPostfix("blocks/s");
   ResultTab->addTab(StatisticSplitter,"Statistics");
 
-  ConnectInfo=new toResultView(true,false,ResultTab);
+  ConnectInfo=new toResultLong(true,false,toQuery::Normal,ResultTab);
   ConnectInfo->setSQL(SQLConnectInfo);
   ResultTab->addTab(ConnectInfo,"Connect Info");
   PendingLocks=new toResultLock(ResultTab);
   ResultTab->addTab(PendingLocks,"Pending Locks");
-  LockedObjects=new toResultView(false,false,ResultTab);
+  LockedObjects=new toResultLong(false,false,toQuery::Normal,ResultTab);
   ResultTab->addTab(LockedObjects,"Locked Objects");
   LockedObjects->setSQL(SQLLockedObject);
   CurrentStatement=new toSGAStatement(ResultTab);
@@ -208,7 +212,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
 
   OpenSplitter=new QSplitter(Horizontal,ResultTab);
   ResultTab->addTab(OpenSplitter,"Open Cursors");
-  OpenCursors=new toResultView(false,true,OpenSplitter);
+  OpenCursors=new toResultLong(false,true,toQuery::Normal,OpenSplitter);
   OpenCursors->setSQL(SQLOpenCursors);
   OpenStatement=new toSGAStatement(OpenSplitter);
 
@@ -279,16 +283,21 @@ static toSQL SQLSessions("toSession:ListSession",
 
 void toSession::refresh(void)
 {
-  QString session;
-  QString serial;
   if (CurrentItem) {
-    session=CurrentItem->text(0);
-    serial=CurrentItem->text(1);
+    Session=CurrentItem->text(0);
+    Serial=CurrentItem->text(1);
+  } else {
+    Session=Serial=QString::null;
   }
-  Sessions->query(SQLSessions);
+  toQList par;
+  Sessions->query(toSQL::string(SQLSessions,connection()),par);
+}
+
+void toSession::done(void)
+{
   for (CurrentItem=Sessions->firstChild();CurrentItem;CurrentItem=CurrentItem->nextSibling())
-    if (CurrentItem->text(0)==session&&
-	CurrentItem->text(1)==serial) {
+    if (CurrentItem->text(0)==Session&&
+	CurrentItem->text(1)==Serial) {
       Sessions->setSelected(CurrentItem,true);
       break;
     }

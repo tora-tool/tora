@@ -39,10 +39,12 @@
 
 #include <qscrollview.h>
 #include <qfont.h>
+#include <qtimer.h>
 #include "toresult.h"
 
 class QGrid;
 class toSQL;
+class toNoBlockQuery;
 
 /** Display the first row of a query with each column with a separate label.
  * If the label of the item is a single '-' character the data is treated as
@@ -79,6 +81,9 @@ class toResultItem : public QScrollView, public toResult {
    */
   QFont DataFont;
 
+  toNoBlockQuery *Query;
+  QTimer Poll;
+
   /** Setup widget.
    * @param num Number of columns.
    * @param readable Make columns more readable.
@@ -111,6 +116,9 @@ public:
    * @param name Name of widget.
    */
   toResultItem(int num,QWidget *parent,const char *name=NULL);
+  /** Destroy object
+   */
+  ~toResultItem(void);
 
   /** Set if titles are to be shown.
    * @param val If titles are to be shown.
@@ -178,6 +186,8 @@ public slots:
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
+private slots:
+  void poll(void);
 };
 
 #endif

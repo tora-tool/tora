@@ -55,6 +55,7 @@
 #include "toinvalid.h"
 #include "tochangeconnection.h"
 #include "toextract.h"
+#include "toresultlong.h"
 
 #include "toinvalid.moc"
 
@@ -112,7 +113,7 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
 
-  Objects=new toResultView(false,false,splitter);
+  Objects=new toResultLong(false,false,toQuery::Normal,splitter);
   Objects->setSQL(SQLListInvalid);
 
   connect(Objects,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));

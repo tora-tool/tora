@@ -41,7 +41,7 @@
 #include "totool.h"
 
 class toMain;
-class toResultView;
+class toResultLong;
 class QTabWidget;
 class QComboBox;
 class toSGAStatement;
@@ -53,7 +53,7 @@ class QPopupMenu;
 class toSGATrace : public toToolWidget {
   Q_OBJECT
 
-  toResultView *Trace;
+  toResultLong *Trace;
   QTabWidget *ResultTab;
   QComboBox *Schema;
   QComboBox *Type;

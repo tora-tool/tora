@@ -46,6 +46,7 @@
 #include "toresultview.h"
 #include "tomemoeditor.h"
 #include "toconnection.h"
+#include "toresultlong.h"
 
 #include "toresultparam.moc"
 
@@ -85,7 +86,7 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
 		  this,SLOT(applySession()),toolbar);
   toolbar->setStretchableWidget(new QLabel(toolbar));
 
-  Params=new toResultView(false,false,this);
+  Params=new toResultLong(false,false,toQuery::Normal,this);
   Params->setSQL(SQLParams);
   Params->setReadAll(true);
   connect(Params,SIGNAL(selectionChanged()),this,SLOT(changeItem()));

@@ -65,6 +65,7 @@
 #include "tosgastatement.h"
 #include "tomain.h"
 #include "toconnection.h"
+#include "toresultlong.h"
 
 #include "tosgatrace.moc"
 
@@ -151,7 +152,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
 
-  Trace=new toResultView(false,false,splitter);
+  Trace=new toResultLong(false,false,toQuery::Normal,splitter);
   Trace->setSorting(0);
   Trace->setReadAll(true);
   Statement=new toSGAStatement(splitter);

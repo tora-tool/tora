@@ -52,7 +52,7 @@ class toConnection;
 class toListView;
 class toResultStats;
 class toResultParam;
-class toResultView;
+class toResultLong;
 class toResultChart;
 class toResultItem;
 class QLabel;
@@ -111,7 +111,7 @@ class toTuning : public toToolWidget {
   QTabWidget *Tabs;
   toListView *Indicators;
   toResultParam *Parameters;
-  toResultView *Options;
+  toResultLong *Options;
   toResultItem *Licenses;
   toResultStats *Statistics;
   QComboBox *Refresh;

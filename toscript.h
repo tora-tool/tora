@@ -45,7 +45,7 @@
 class toWorksheet;
 class toConnection;
 class toScriptUI;
-class toResultView;
+class toListView;
 class toExtract;
 
 class toScript : public toToolWidget {
@@ -53,9 +53,9 @@ class toScript : public toToolWidget {
 
   toScriptUI *ScriptUI;
   toWorksheet *Worksheet;
-  toResultView *DropList;
-  toResultView *CreateList;
-  toResultView *SearchList;
+  toListView *DropList;
+  toListView *CreateList;
+  toListView *SearchList;
 
   void setupExtract(toExtract &);
   void changeConnection(int,bool source);

@@ -43,13 +43,13 @@ class QTabWidget;
 class toConnection;
 class toSGAStatement;
 class QListViewItem;
-class toResultView;
 class toMain;
 class toResultStats;
 class toResultLock;
 class toResultBar;
 class toPopupMenu;
 class QComboBox;
+class toResultLong;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
@@ -57,7 +57,7 @@ class QComboBox;
 class toSession : public toToolWidget {
   Q_OBJECT
 
-  toResultView *Sessions;
+  toResultLong *Sessions;
   QTabWidget *ResultTab;
 
   QWidget *CurrentTab;
@@ -66,18 +66,21 @@ class toSession : public toToolWidget {
   toSGAStatement *CurrentStatement;
   toSGAStatement *PreviousStatement;
   toResultStats *SessionStatistics;
-  toResultView *ConnectInfo;
-  toResultView *LockedObjects;
+  toResultLong *ConnectInfo;
+  toResultLong *LockedObjects;
   toResultLock *PendingLocks;
   toResultBar *WaitBar;
   toResultBar *IOBar;
   QSplitter *OpenSplitter;
   QSplitter *StatisticSplitter;
   toSGAStatement *OpenStatement;
-  toResultView *OpenCursors;
+  toResultLong *OpenCursors;
   QString LastSession;
   QPopupMenu *ToolMenu;
   QComboBox *Refresh;
+
+  QString Session;
+  QString Serial;
 
   void updateSchemas(void);
   void enableStatistics(bool enable);
@@ -96,6 +99,7 @@ public slots:
   { enableStatistics(false); }
   void disconnectSession(void);
   void windowActivated(QWidget *widget);
+  void done(void);
 };
 
 #endif

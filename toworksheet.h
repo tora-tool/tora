@@ -66,6 +66,7 @@ class QPopupMenu;
 class toTool;
 class QSplitter;
 class toVisualize;
+class toListView;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT
@@ -80,7 +81,7 @@ class toWorksheet : public toToolWidget {
   QString QueryString;
   toResultItem *Resources;
   toResultStats *Statistics;
-  toResultView *Logging;
+  toListView *Logging;
   toVisualize *Visualize;
   QListViewItem *LastLogItem;
   QToolButton *StopButton;

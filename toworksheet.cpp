@@ -406,7 +406,7 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(StatSplitter,"&Statistics");
     ResultTab->setTabEnabled(StatSplitter,false);
 
-    Logging=new toResultView(true,false,ResultTab);
+    Logging=new toListView(ResultTab);
     ResultTab->addTab(Logging,"&Logging");
     Logging->addColumn("SQL");
     Logging->addColumn("Result");

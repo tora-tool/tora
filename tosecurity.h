@@ -39,11 +39,10 @@
 
 #include <list>
 
-#include "toresultview.h"
 #include "totool.h"
 
 class toConnection;
-class toResultView;
+class toListView;
 class toSecurityPage;
 class toSecurityQuota;
 class QTabWidget;
@@ -108,7 +107,7 @@ class toSecurity : public toToolWidget {
   QString UserID;
 
   QPopupMenu *ToolMenu;
-  toResultView *UserList;
+  toListView *UserList;
   toSecuritySystem *SystemGrant;
   toSecurityRoleGrant *RoleGrant;
   toSecurityObject *ObjectGrant;

@@ -37,24 +37,44 @@
 #ifndef __TORESULTSTORAGE_H
 #define __TORESULTSTORAGE_H
 
+#include <qtimer.h>
+
 #include "toresultview.h"
 
+class toNoBlockQuery;
+
 class toResultStorage : public toResultView {
+  Q_OBJECT
+
   bool ShowCoalesced;
   QString Unit;
+  QTimer Poll;
+
+  toNoBlockQuery *Tablespaces;
+  toNoBlockQuery *Files;
+
+  std::list<QString> TablespaceValues;
+  std::list<QString> FileValues;
+
+  QString CurrentSpace;
+  QString CurrentFile;
 public:
   toResultStorage(QWidget *parent,const char *name=NULL);
+  ~toResultStorage();
 
   void showCoalesced(bool shw)
   { ShowCoalesced=shw; }
 
   QString currentTablespace(void);
   QString currentFilename(void);
-  virtual void query(void);
   /** Support Oracle
    */
   virtual bool canHandle(toConnection &conn)
   { return toIsOracle(conn); }
+public slots:
+  virtual void query(void);
+private slots:
+  void poll(void);
 };
 
 #endif

@@ -43,6 +43,9 @@
 #include "totool.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
+
+#include "toresultstorage.moc"
 
 class toResultStorageItem : public toResultViewItem {
 public:
@@ -106,6 +109,16 @@ toResultStorage::toResultStorage(QWidget *parent,const char *name)
   setColumnAlignment(11,AlignRight);
 
   ShowCoalesced=false;
+
+  Tablespaces=Files=NULL;
+
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+}
+
+toResultStorage::~toResultStorage()
+{
+  delete Tablespaces;
+  delete Files;
 }
 
 static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
@@ -362,60 +375,95 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 
 void toResultStorage::query(void)
 {
-  if (!handled())
+  if (!handled()||Tablespaces||Files)
     return;
 
   QListViewItem *item=selectedItem();
-  QString currentSpace;
-  QString currentFile;
   if (item) {
     if (item->parent()) {
-      currentSpace=item->text(13);
-      currentFile=item->text(0);
+      CurrentSpace=item->text(13);
+      CurrentFile=item->text(0);
     } else
-      currentSpace=item->text(0);
+      CurrentSpace=item->text(0);
   }
   clear();
 
+  toConnection &conn=connection();
+
+  toQList args;
+  toPush(args,toQValue(toSizeDecode(Unit)));
+
   try {
-    toConnection &conn=connection();
+    Tablespaces=new toNoBlockQuery(conn,toQuery::Normal,
+				   toSQL::string(ShowCoalesced?SQLShowCoalesced:SQLNoShowCoalesced,connection()),args);
+    Files=NULL;
+    Files=new toNoBlockQuery(conn,toQuery::Normal,
+			     toSQL::string(SQLDatafile,connection()),args);
+  
+    Poll.start(100);
+  } TOCATCH
+}
 
-    toQList args;
-    toPush(args,toQValue(toSizeDecode(Unit)));
+void toResultStorage::poll(void)
+{
+  try {
+    if (Tablespaces&&Tablespaces->poll()) {
+      int cols=Tablespaces->describe().size();
+      while(Tablespaces->poll()&&!Tablespaces->eof()) {
+	for (int i=0;i<cols&&!Tablespaces->eof();i++)
+	  toPush(TablespaceValues,QString(Tablespaces->readValue()));
+      }
+      if (Tablespaces->eof()) {
+	delete Tablespaces;
+	Tablespaces=NULL;
 
-    toQuery tblspc(conn,ShowCoalesced?SQLShowCoalesced:SQLNoShowCoalesced,args);
+	while(TablespaceValues.size()>0) {
+	  QListViewItem *tablespace=new toResultStorageItem(this,NULL);
+	  for (int i=0;i<cols;i++)
+	    tablespace->setText(i,toShift(TablespaceValues));
 
-    while(!tblspc.eof()) {
-      QListViewItem *tablespace=new toResultStorageItem(this,NULL);
-      for (int i=0;i<12;i++)
-	tablespace->setText(i,tblspc.readValue());
-
-      tablespace->setExpandable(true);
-      if (currentSpace==tablespace->text(0)) {
-	if (currentFile.isEmpty())
-	  setSelected(tablespace,true);
+	  if (CurrentSpace==tablespace->text(0)) {
+	    if (CurrentFile.isEmpty())
+	      setSelected(tablespace,true);
+	  }
+	}
       }
     }
 
-    toQuery datfil(conn,SQLDatafile,args);
-    while(!datfil.eof()) {
-      QString name=datfil.readValue();
-      QListViewItem *tablespace;
-      for (tablespace=firstChild();tablespace&&tablespace->text(0)!=name;tablespace=tablespace->nextSibling())
-	;
-      if (!tablespace)
-	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
-      QListViewItem *file=new toResultStorageItem(tablespace,NULL);
-      for (int i=0;i<13;i++)
-	file->setText(i,datfil.readValue());
+    if (Files&&Files->poll()) {
+      int cols=Files->describe().size();
+       while(Files->poll()&&!Files->eof()) {
+	for (int i=0;i<cols&&!Files->eof();i++)
+	  toPush(FileValues,QString(Files->readValue()));
+      }
+      if (Files->eof()) {
+	delete Files;
+	Files=NULL;
+      }
+    }
 
-      file->setText(13,name);
-      if (currentSpace==file->text(13)&&
-	  currentFile==file->text(0))
-	setSelected(file,true);
+    if (Tablespaces==NULL&&Files==NULL) {
+      while(FileValues.size()>0) {
+	QString name=toShift(FileValues);
+	QListViewItem *tablespace;
+	for (tablespace=firstChild();tablespace&&tablespace->text(0)!=name;tablespace=tablespace->nextSibling())
+	  ;
+	if (!tablespace)
+	  throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
+	QListViewItem *file=new toResultStorageItem(tablespace,NULL);
+	for (int i=0;i<13;i++)
+	  file->setText(i,toShift(FileValues));
+
+	file->setText(13,name);
+	if (CurrentSpace==file->text(13)&&
+	    CurrentFile==file->text(0)) {
+	  tablespace->setOpen(true);
+	  setSelected(file,true);
+	}
+      }
+      Poll.stop();
     }
   } TOCATCH
-  updateContents();
 }
 
 QString toResultStorage::currentTablespace(void)

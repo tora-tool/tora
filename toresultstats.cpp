@@ -38,6 +38,7 @@
 #include "toresultstats.h"
 #include "tosql.h"
 #include "toconnection.h"
+#include "tonoblockquery.h"
 
 #include "toresultstats.moc"
 
@@ -52,6 +53,12 @@ toResultStats::toResultStats(bool onlyChanged,int ses,QWidget *parent,
   setSQLName("toResultStats");
   System=false;
   setup();
+}
+
+toResultStats::~toResultStats()
+{
+  delete Query;
+  delete SessionIO;
 }
 
 static toSQL SQLSession("toResultStats:Session",
@@ -99,6 +106,9 @@ void toResultStats::setup(void)
 
   setColumnAlignment(1,AlignRight);
   setColumnAlignment(2,AlignRight);
+
+  Query=SessionIO=NULL;
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 }
 
 static toSQL SQLStatistics("toResultStats:Statistics",
@@ -221,10 +231,9 @@ void toResultStats::addValue(bool reset,int id,const QString &name,double value)
 
 void toResultStats::refreshStats(bool reset)
 {
-  if (!handled())
+  if (!handled()||Query||SessionIO)
     return;
 
-  toBusy busy;
   try {
     clear();
     Row=0;
@@ -232,29 +241,60 @@ void toResultStats::refreshStats(bool reset)
     toQList args;
     if (!System)
       args.insert(args.end(),SessionID);
-    toQuery query(conn,System?SQLSystemStatisticName:SQLStatisticName,args);
-    while(!query.eof()) {
-      QString name=query.readValue();
-      int id=query.readValue().toInt();
-      double value=query.readValue().toInt();
-      addValue(reset,id,name,value);
-    }
+    Query=new toNoBlockQuery(conn,
+			     toQuery::Normal,
+			     toSQL::string(System?SQLSystemStatisticName:SQLStatisticName,
+					   connection()),
+			     args);
+    if (!System)
+      SessionIO=new toNoBlockQuery(conn,toQuery::Normal,
+				   toSQL::string(SQLSessionIO,connection()),
+				   args);
+    Poll.start(100);
+    Reset=reset;
 
-    if (!System) {
+  } TOCATCH
+}
+
+void toResultStats::poll(void)
+{
+  try {
+    bool done=true;
+
+    if (Query&&Query->poll()) {
+      while(Query->poll()&&!Query->eof()) {
+	QString name=Query->readValue();
+	int id=Query->readValue().toInt();
+	double value=Query->readValue().toDouble();
+	addValue(Reset,id,name,value);
+      }
+
+      if (Query->eof()) {
+	delete Query;
+	Query=NULL;
+      } else
+	done=false;
+    } else if (Query)
+      done=false;
+
+    if (SessionIO&&SessionIO->poll()) {
       int id=0;
-      toQuery query(conn,SQLSessionIO,args);
-      toQDescList description=query.describe();
+      toQDescList description=SessionIO->describe();
       toQDescList::iterator i=description.begin();
-      while(!query.eof()) {
-	addValue(reset,id,(*i).Name,query.readValue().toDouble());
+      while(!SessionIO->eof()) {
+	addValue(Reset,id,(*i).Name,SessionIO->readValue().toDouble());
 	id++;
 	if (i==description.end())
 	  i=description.begin();
 	else
 	  i++;
       }
-    }
-  } TOCATCH
-  updateContents();
-}
+      delete SessionIO;
+      SessionIO=NULL;
+    } else
+      done=false;
 
+    if (done)
+      Poll.stop();
+  } TOCATCH
+}

@@ -1302,7 +1302,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Horizontal,this);
-  UserList=new toResultView(false,false,splitter);
+  UserList=new toListView(splitter);
   UserList->addColumn("Users/Roles");
   UserList->setSQLName("toSecurity:Users/Roles");
   UserList->setRootIsDecorated(true);

@@ -151,6 +151,8 @@ QString toNoBlockQuery::readValue()
     ReadingValues.clear();
     TO_DEBUGOUT("Continue running\n");
     Continue.up();
+    if (CurrentValue==Values.end())
+      throw QString("Reading past end of query");
   }
   checkError();
   QString ret=*CurrentValue;

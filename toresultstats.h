@@ -37,7 +37,11 @@
 #ifndef __TORESULTSTATS_H
 #define __TORESULTSTATS_H
 
+#include <qtimer.h>
+
 #include "toresultview.h"
+
+class toNoBlockQuery;
 
 #define TO_STAT_MAX 500
 #define TO_STAT_BLOCKS 10
@@ -62,6 +66,12 @@ class toResultStats : public toResultView {
   /** Last read values, used to calculate delta values.
    */
   double LastValues[TO_STAT_MAX+TO_STAT_BLOCKS];
+
+  bool Reset;
+  toNoBlockQuery *Query;
+  toNoBlockQuery *SessionIO;
+  QTimer Poll;
+
   /** Setup widget.
    */
   void setup();
@@ -87,6 +97,10 @@ public:
    * @param name Name of widget.
    */
   toResultStats(QWidget *parent,const char *name=NULL);
+
+  /** Destroy object.
+   */
+  ~toResultStats();
 
   /** Reset statistics. Read in last values without updating widget data.
    */
@@ -118,6 +132,8 @@ public slots:
    *              is updated the delta will be from the new values.
    */
   void refreshStats(bool reset=true);
+private slots:
+  void poll(void);
 };
 
 #endif

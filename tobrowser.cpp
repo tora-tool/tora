@@ -73,6 +73,7 @@
 #include "tobrowserfilterui.h"
 #include "tohelp.h"
 #include "toconnection.h"
+#include "toresultlong.h"
 
 #include "tobrowser.moc"
 #include "tobrowserfilterui.moc"
@@ -534,7 +535,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab=new QTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
   TopTab->addTab(splitter,"T&ables");
-  toResultView *resultView=new toResultView(true,false,splitter);
+  toResultView *resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   resultView->setSQL(SQLListTables);
   resultView->resize(FIRST_WIDTH,resultView->height());
@@ -593,13 +594,13 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultReferences,"&References");
   SecondMap[TAB_TABLE_DEPEND]=resultReferences;
 
-  resultView=new toResultView(true,false,curr,TAB_TABLE_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_TABLE_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
   SecondMap[TAB_TABLE_GRANTS]=resultView;
 
-  resultView=new toResultView(true,false,curr,TAB_TABLE_TRIGGERS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_TABLE_TRIGGERS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLTableTrigger);
   curr->addTab(resultView,"Triggers");
@@ -622,7 +623,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_VIEWS);
   TopTab->addTab(splitter,"&Views");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_VIEWS]=resultView;
   resultView->setTabWidget(TopTab);
@@ -647,7 +648,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(content,"&Data");
   SecondMap[TAB_VIEW_DATA]=content;
 
-  resultView=new toResultView(true,false,curr,TAB_VIEW_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_VIEW_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
@@ -665,7 +666,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
   TopTab->addTab(splitter,"Inde&xes");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_INDEX]=resultView;
   resultView->setTabWidget(TopTab);
@@ -677,7 +678,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr=new QTabWidget(splitter);
   splitter->setResizeMode(curr,QSplitter::Stretch);
 
-  resultView=new toResultView(true,false,curr,TAB_INDEX_COLS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_INDEX_COLS);
   resultView->setSQL(SQLIndexCols);
   curr->addTab(resultView,"&Columns");
   SecondMap[TAB_INDEX]=resultView;
@@ -696,7 +697,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
   TopTab->addTab(splitter,"Se&quences");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_SEQUENCES]=resultView;
   resultView->setTabWidget(TopTab);
@@ -713,7 +714,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
 
-  resultView=new toResultView(true,false,curr,TAB_SEQUENCES_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_SEQUENCES_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
@@ -727,7 +728,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SYNONYM);
   TopTab->addTab(splitter,"S&ynonyms");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_SYNONYM]=resultView;
   resultView->setTabWidget(TopTab);
@@ -744,7 +745,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
 
-  resultView=new toResultView(true,false,curr,TAB_SYNONYM_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_SYNONYM_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
@@ -758,7 +759,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_PLSQL);
   TopTab->addTab(splitter,"&PL/SQL");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_PLSQL]=resultView;
   resultView->setTabWidget(TopTab);
@@ -781,7 +782,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"B&ody");
   SecondMap[TAB_PLSQL_BODY]=resultField;
 
-  resultView=new toResultView(true,false,curr,TAB_PLSQL_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_PLSQL_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
@@ -799,7 +800,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_TRIGGER);
   TopTab->addTab(splitter,"Tri&ggers");
-  resultView=new toResultView(true,false,splitter);
+  resultView=new toResultLong(true,false,toQuery::Normal,splitter);
   resultView->setReadAll(true);
   Map[TAB_TRIGGER]=resultView;
   resultView->setTabWidget(TopTab);
@@ -822,12 +823,12 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultField,"C&ode");
   SecondMap[TAB_TRIGGER_SOURCE]=resultField;
 
-  resultView=new toResultView(true,false,curr,TAB_TRIGGER_COLS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_TRIGGER_COLS);
   resultView->setSQL(SQLTriggerCols);
   curr->addTab(resultView,"&Columns");
   SecondMap[TAB_TRIGGER_COLS]=resultView;
 
-  resultView=new toResultView(true,false,curr,TAB_TRIGGER_GRANTS);
+  resultView=new toResultLong(true,false,toQuery::Normal,curr,TAB_TRIGGER_GRANTS);
   resultView->setReadAll(true);
   resultView->setSQL(SQLAnyGrants);
   curr->addTab(resultView,"&Grants");
@@ -1069,7 +1070,7 @@ public:
 			    QString::null,
 			    par,
 			    Connection);
-      res=new toResultView(true,false,tool);
+      res=new toResultLong(true,false,toQuery::Normal,tool);
       res->setSQL(SQLAnyGrants);
     } else if (typ=="Dependencies") {
       tool=new toToolWidget(BrowserTool,
@@ -1171,7 +1172,7 @@ public:
 					  QString::null,
 					  par,
 					  Connection);
-      toResultView *resultView=new toResultView(true,false,tool);
+      toResultView *resultView=new toResultLong(true,false,toQuery::Normal,tool);
       resultView->setSQL(SQLIndexCols);
       resultView->changeParams(schema,object);
       return tool;

@@ -102,6 +102,10 @@ class toResultLong : public toResultView {
    */
   int MaxNumber;
 
+  /** The query mode to use for the executed query.
+   */
+  toQuery::queryMode Mode;
+
   /** Check if at eof.
    */
   virtual bool eof(void);
@@ -113,10 +117,11 @@ public:
    * @param readable Indicate if columns are to be made more readable. This means that the
    * descriptions are capitalised and '_' are converted to ' '.
    * @param numCol If number column is to be displayed.
+   * @param mode Query mode to use when executing query
    * @param parent Parent of list.
    * @param name Name of widget.
    */
-  toResultLong(bool readable,bool numCol,QWidget *parent,const char *name=NULL);
+  toResultLong(bool readable,bool numCol,toQuery::queryMode mode,QWidget *parent,const char *name=NULL);
   /** Create widget. The columns are not readable and the number column is displayed.
    * @param parent Parent of list.
    * @param name Name of widget.

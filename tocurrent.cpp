@@ -54,6 +54,7 @@
 #include "toresultstats.h"
 #include "toconnection.h"
 #include "toresultparam.h"
+#include "toresultlong.h"
 
 #include "tocurrent.moc"
 
@@ -119,7 +120,7 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Grants->addColumn("Grantable");
   Grants->setRootIsDecorated(true);
   Tabs->addTab(Grants,"Privileges");
-  Version=new toResultView(true,false,Tabs);
+  Version=new toResultLong(true,false,toQuery::Normal,Tabs);
   Version->setSQL(SQLVersion);
   Tabs->addTab(Version,"Version");
   Parameters=new toResultParam(Tabs);
