@@ -51,7 +51,7 @@ class toResultItem;
 class toResultStats;
 class toResultPlan;
 class toResultCols;
-class toMarkedText;
+class toHighlightedText;
 class QGroupBox;
 class QPushButton;
 class QToolButton;
@@ -66,7 +66,7 @@ class toWorksheet : public toToolWidget {
   Q_OBJECT
 
   bool Light;
-  toMarkedText *Editor;
+  toHighlightedText *Editor;
   QTabWidget *ResultTab;
   toResultLong *Result;
   toResultPlan *Plan;
@@ -101,7 +101,7 @@ public:
 
   void execute(bool all,bool step=false);
 
-  toMarkedText *editor(void)
+  toHighlightedText *editor(void)
   { return Editor; }
   bool describe(const QString &query);
 

@@ -27,5 +27,8 @@ toTemplate:
 toGetToken:
 	Doesn't handle comments when going backwards.
 
+toHighlightedText:
+	Doesn't handle quoted tablenames on code completion.
+
 toMysqlConnection:
 	Doesn't handle other locales than latin1 correctly.

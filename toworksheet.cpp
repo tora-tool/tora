@@ -1154,42 +1154,13 @@ void toWorksheet::describe(void)
   if (Light)
     return;
 
-  int curline,curcol;
-  Editor->getCursorPosition (&curline,&curcol);
-
-  QString owner;
-  QString table;
-  QString token=Editor->textLine(curline);
-  if (curcol>0&&toIsIdent(token[curcol-1]))
-    token=toGetToken(Editor,curline,curcol,false);
-  else
-    token=QString::null;
-
-  int lastline=curline;
-  int lastcol=curcol;
-
-  token=toGetToken(Editor,curline,curcol,false);
-  if (token==".") {
-    lastline=curline;
-    lastcol=curcol;
-    owner=toGetToken(Editor,curline,curcol,false);
-    toGetToken(Editor,lastline,lastcol,true);
-    table+=toGetToken(Editor,lastline,lastcol,true);
-  } else {
-    owner=toGetToken(Editor,lastline,lastcol,true);
-    token=toGetToken(Editor,lastline,lastcol,true);
-    if (token==".")
-      table=toGetToken(Editor,lastline,lastcol,true);
-    else {
-      table=owner;
-      owner=QString::null;
-    }
-  }
+  QString owner,table;
+  Editor->tableAtCursor(owner,table);
 
   if (owner.isNull())
-    Columns->changeParams(unQuote(table));
+    Columns->changeParams(table);
   else
-    Columns->changeParams(unQuote(owner),unQuote(table));
+    Columns->changeParams(owner,table);
   Columns->show();
   Result->hide();
 }

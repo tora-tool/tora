@@ -224,6 +224,12 @@ protected:
   /** Check if to view completion.
    */
   virtual void checkComplete(void);
+
+  /** Start a completion with a given completelist.
+   * @param completes List of available completions.
+   */
+  
+  virtual void startComplete(std::list<QString> &completes);
 public:
   /** Convert a linenumber after a change of the buffer to another linenumber. Can be
    * used to convert a specific linenumber after receiving a @ref insertedLines call.
@@ -288,6 +294,12 @@ public:
    */
   virtual void paintCell (QPainter *painter,int row,int col);
 
+  /** Get the tablename currently under the cursor.
+   * @param owner Filled with owner or table or QString::null if no owner specified.
+   * @param table Filled with tablename.
+   * @param highlight If true mark the extracted tablename
+   */
+  void tableAtCursor(QString &owner,QString &table,bool highlight=false);
 signals:
   /** Emitted when lines are inserted or removed.
    * @param start Start of line inserted.

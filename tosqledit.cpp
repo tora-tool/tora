@@ -56,7 +56,7 @@
 
 #include "totool.h"
 #include "toconf.h"
-#include "tomarkedtext.h"
+#include "tohighlightedtext.h"
 #include "tomain.h"
 #include "tosql.h"
 #include "toworksheet.h"

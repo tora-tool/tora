@@ -35,7 +35,7 @@
  ****************************************************************************/
 
 #include "toresultextract.h"
-#include "tomarkedtext.h"
+#include "tohighlightedtext.h"
 #include "tomain.h"
 #include "totool.h"
 #include "toconf.h"

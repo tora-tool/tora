@@ -46,7 +46,7 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 
-#include "tomarkedtext.h"
+#include "tohighlightedtext.h"
 #include "tofilesize.h"
 #include "toresultview.h"
 #include "toscript.h"

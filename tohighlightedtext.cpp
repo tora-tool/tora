@@ -461,6 +461,57 @@ bool toHighlightedText::invalidToken(int line,int col)
   return false;
 }
 
+void toHighlightedText::startComplete(std::list<QString> &completes)
+{
+  delete Completion;
+
+  AllComplete=completes;
+  if (!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty())
+    AllComplete.sort();
+  Completion=new QListBox(topLevelWidget());
+  Completion->setFocusPolicy(NoFocus);
+  Completion->setFont(font());
+  CompleteItem=-1;
+
+  QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
+			      cursorPoint().y()+cellHeight()-yOffset()));
+  p=topLevelWidget()->mapFromGlobal(p);
+  if (Completion->pos()!=p)
+    Completion->move(p);
+  connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
+
+  int curline,curcol;
+  getCursorPosition(&curline,&curcol);
+
+  QString beg=markedText();
+
+  if (beg.isEmpty()) {
+    QString line=textLine(curline);
+    int mrklen=0;
+    while(curcol+mrklen<int(line.length())&&toIsIdent(line[curcol+mrklen]))
+      mrklen++;
+
+    KeepCompletion=true;
+    if (mrklen>0) {
+      setCursorPosition(curline,curcol+mrklen,false);
+      setCursorPosition(curline,curcol,true);
+    }
+    KeepCompletion=false;
+  }
+
+  for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
+    if (beg.length()) {
+      if ((*i).upper().startsWith(beg.upper()))
+	Completion->insertItem(beg+(*i).mid(beg.length()));
+    } else
+      Completion->insertItem(*i);
+  }
+  QSize size=Completion->sizeHint();
+  size.setWidth(size.width()+20);
+  Completion->setFixedSize(size);
+  Completion->show();
+}
+
 void toHighlightedText::checkComplete(void)
 {
   if (Completion||NoCompletion)
@@ -472,11 +523,11 @@ void toHighlightedText::checkComplete(void)
   QString line=textLine(curline);
 
   if (!isReadOnly()&&curcol>0&&line[curcol-1]=='.') {
+    QString mrk=markedText();
+    if (!mrk.isEmpty())
+      return;
     if (toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty())
       return;
-    int mrklen=0;
-    while(curcol+mrklen<int(line.length())&&toIsIdent(line[curcol+mrklen]))
-      mrklen++;
 
     QString name=UpperIdent(toGetToken(this,curline,curcol,false));
     QString owner;
@@ -522,33 +573,7 @@ void toHighlightedText::checkComplete(void)
       try {
 	toConnection &conn=toCurrentConnection(this);
 	AllComplete=conn.columns(conn.realName(name));
-	if (!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty())
-	  AllComplete.sort();
-	Completion=new QListBox(topLevelWidget());
-	Completion->setFocusPolicy(NoFocus);
-	Completion->setFont(font());
-	CompleteItem=-1;
-	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	  Completion->insertItem(*i);
-	}
-	QPoint p=mapToGlobal(QPoint(cursorPoint().x()-xOffset(),
-				    cursorPoint().y()+cellHeight()-yOffset()));
-	p=topLevelWidget()->mapFromGlobal(p);
-	if (Completion->pos()!=p)
-	    Completion->move(p);
-	QSize size=Completion->sizeHint();
-	size.setWidth(size.width()+20);
-	Completion->setFixedSize(size);
-	Completion->show();
-	connect(Completion,SIGNAL(clicked(QListBoxItem *)),this,SLOT(selectComplete()));
-
-	getCursorPosition(&curline,&curcol);
-	KeepCompletion=true;
-	if (mrklen>0) {
-	  setCursorPosition(curline,curcol+mrklen,false);
-	  setCursorPosition(curline,curcol,true);
-	}
-	KeepCompletion=false;
+	startComplete(conn.columns(conn.realName(name)));
       } catch(...) {
       }
     }
@@ -601,6 +626,9 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	  } else if ((*i).upper().startsWith(mrk.upper()))
 	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
 	}
+	QSize size=Completion->sizeHint();
+	size.setWidth(size.width()+20);
+	Completion->setFixedSize(size);
 
 	KeepCompletion=true;
 	insert(mrk,true);
@@ -640,6 +668,34 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       }
     }
   }
+  if (e->state()==ControlButton&&e->key()==Key_T) {
+    try {
+      toConnection &conn=toCurrentConnection(this);
+      std::list<toConnection::tableName> &tables=conn.tables();
+
+      QString table;
+      QString owner;
+      tableAtCursor(owner,table,true);
+
+      std::list<QString> complete;
+      for(std::list<toConnection::tableName>::iterator i=tables.begin();i!=tables.end();i++) {
+	if((*i).Synonym.isEmpty()) {
+	  if (owner.isEmpty()) {
+	    if ((*i).Owner.upper()==conn.user().upper())
+	      complete.insert(complete.end(),(*i).Name);
+	  } else
+	    complete.insert(complete.end(),(*i).Owner+"."+(*i).Name);
+	} else if (owner.isEmpty())
+	  complete.insert(complete.end(),(*i).Synonym);
+      }
+      startComplete(complete);
+    } catch (...) {
+    }
+    
+    e->accept();
+    return;
+  }
+
   toMarkedText::keyPressEvent(e);
   NoCompletion=false;
   checkComplete();
@@ -686,4 +742,54 @@ toHighlightedText::~toHighlightedText()
 {
   delete Completion;
   Completion=NULL;
+}
+
+static QString unQuote(const QString &str)
+{
+  if (str.at(0)=='\"'&&str.at(str.length()-1)=='\"')
+    return str.left(str.length()-1).right(str.length()-2);
+  return str.upper();
+}
+
+void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
+{
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+
+  QString token=textLine(curline);
+  if (curcol>0&&toIsIdent(token[curcol-1]))
+    token=toGetToken(this,curline,curcol,false);
+  else
+    token=QString::null;
+
+  int lastline=curline;
+  int lastcol=curcol;
+
+  token=toGetToken(this,curline,curcol,false);
+  if (token==".") {
+    lastline=curline;
+    lastcol=curcol;
+    owner=unQuote(toGetToken(this,curline,curcol,false));
+    toGetToken(this,lastline,lastcol,true);
+    table+=unQuote(toGetToken(this,lastline,lastcol,true));
+  } else {
+    curline=lastline;
+    curcol=lastcol;
+    owner=unQuote(toGetToken(this,lastline,lastcol,true));
+    int tmplastline=lastline;
+    int tmplastcol=lastcol;
+    token=toGetToken(this,lastline,lastcol,true);
+    if (token==".")
+      table=unQuote(toGetToken(this,lastline,lastcol,true));
+    else {
+      lastline=tmplastline;
+      lastcol=tmplastcol;
+      table=owner;
+      owner=QString::null;
+    }
+  }
+  if (mark) {
+    setCursorPosition(curline,curcol,false);
+    setCursorPosition(lastline,lastcol,true);
+  }
 }
