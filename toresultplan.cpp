@@ -60,7 +60,7 @@ toResultPlan::toResultPlan(QWidget *parent,const char *name)
 }
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
-			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
+			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality), partition_start, partition_stop\n"
 			 "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
 			 "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
 
@@ -92,9 +92,13 @@ void toResultPlan::oracleSetup(void)
   addColumn(tr("Cost"));
   addColumn(tr("Bytes"));
   addColumn(tr("Cardinality"));
+  addColumn(tr("Startpartition"));
+  addColumn(tr("Endpartition"));
   setColumnAlignment(5,AlignRight);
   setColumnAlignment(6,AlignRight);
   setColumnAlignment(7,AlignRight);
+  setColumnAlignment(8,AlignRight);
+  setColumnAlignment(9,AlignRight);
 }
 
 void toResultPlan::oracleNext(void)
@@ -277,34 +281,29 @@ void toResultPlan::poll(void)
 	  QString cost=Query->readValueNull();
 	  QString bytes=Query->readValueNull();
 	  QString cardinality=Query->readValueNull();
+	  QString startpartition=Query->readValueNull();
+	  QString endpartition=Query->readValueNull();
 
 	  QListViewItem *item;
 	  if (parentid&&Parents[parentid]) {
-	    item=new QListViewItem(Parents[parentid],Last[parentid],
-				   id,
-				   operation,
-				   options,
-				   object,
-				   optimizer,
-				   cost,
-				   bytes,
-				   cardinality);
+	    item=new QListViewItem(Parents[parentid],Last[parentid]);
 	    setOpen(Parents[parentid],true);
-	    Parents[id]=item;
 	    Last[parentid]=item;
 	  } else {
-	    item=new QListViewItem(TopItem,LastTop,
-				   id,
-				   operation,
-				   options,
-				   object,
-				   optimizer,
-				   cost,
-				   bytes,
-				   cardinality);
-	    Parents[id]=item;
+	    item=new QListViewItem(TopItem,LastTop);
 	    LastTop=item;
 	  }
+	    item->setText(0,id);
+            item->setText(1,operation);
+            item->setText(2,options);
+            item->setText(3,object);
+            item->setText(4,optimizer);
+            item->setText(5,cost);
+            item->setText(6,bytes);
+            item->setText(7,cardinality);
+            item->setText(8,startpartition);
+            item->setText(9,endpartition);
+	    Parents[id]=item;
 	}
 	if (Query->eof()) {
 	  delete Query;
