@@ -1,6 +1,6 @@
 %define name tora
-%define group Developement/Databases
-%define version 0.13
+%define group Development/Databases
+%define version 1.0
 %define release 1static
 
 Name: %{name}
@@ -56,9 +56,11 @@ mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 strip tora-static
 cp tora-static $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/images
 cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
 cp help/*.* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
 cp help/api/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/api
+cp help/images/* $RPM_BUILD_ROOT%{_prefix}/lib/tora/help/images
 
 %post
 
