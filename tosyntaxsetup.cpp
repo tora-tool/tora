@@ -56,7 +56,8 @@
 #include "tomain.h"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
-  : toSyntaxSetupUI(parent,name,fl),toSettingTab("fonts.html"),Analyzer(toDefaultAnalyzer())
+  : toSyntaxSetupUI(parent,name,fl),toSettingTab("fonts.html"),
+    Analyzer(toSyntaxAnalyzer::defaultAnalyzer())
 {
   KeywordUpper->setChecked(!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty());
   SyntaxHighlighting->setChecked(!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty());
@@ -276,5 +277,5 @@ void toSyntaxSetup::saveSetting(void)
 		(*i).second.blue());
     toTool::globalSetConfig(str,res);
   }
-  toDefaultAnalyzer().updateSettings();
+  toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
 }

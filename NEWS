@@ -19,6 +19,8 @@
 2001-09-27: Don't exit in toExtract on exception (Skip object instead).
 2001-09-27: Added keyboard shortcuts to change tabs in worksheet.
 2001-09-27: Fixed drawing of background outside edit area in editors.
+2001-09-28: Speedup of drawing background fix, also set background on normal
+	editor.
 
 1.1.1: 2001-09-24
 

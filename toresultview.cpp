@@ -405,33 +405,38 @@ void toListView::contentsMouseReleaseEvent(QMouseEvent *e)
 
 QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
 {
+  QPaintDeviceMetrics wmetr(this);
   QPaintDeviceMetrics metrics(printer);
   double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();
+  if (scale<0.001)
+    scale=1;
+
+  double wpscalex=(double(metrics.width())*wmetr.widthMM()/metrics.widthMM()/wmetr.width());
+  double wpscaley=(double(metrics.height())*wmetr.heightMM()/metrics.heightMM()/wmetr.height());
+  
   double mwidth=metrics.width()/scale;
   double mheight=metrics.height()/scale;
   double x=0;
-  if (scale<0.001)
-    scale=1;
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
+    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
+		      header()->height()*wpscaley,
 		      SingleLine|AlignRight|AlignVCenter,
 		      numPage);
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
+    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
+		      header()->height()*wpscaley,
 		      SingleLine|AlignHCenter|AlignVCenter,
 		      middleString());
-    painter->drawText(0,metrics.height()-header()->height(),metrics.width(),
-		      header()->height(),
+    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
+		      header()->height()*wpscaley,
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
     painter->scale(scale,scale);
-    painter->drawLine(0,header()->height()-1,int(mwidth),header()->height()-1);
+    painter->drawLine(0,header()->height()*wpscaley-1,int(mwidth),header()->height()*wpscaley-1);
   }
   for (int i=column;i<columns();i++) {
-    double width=columnWidth(i);
+    double width=columnWidth(i)*wpscalex;
     if (width+x>=mwidth) {
       if (i==column)
 	width=mwidth-x-1;
@@ -439,13 +444,13 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 	break;
     }
     if (paint)
-      painter->drawText(int(x),0,int(width),header()->height(),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+      painter->drawText(int(x),0,columnWidth(i),header()->height()*wpscaley,SingleLine|AlignLeft|AlignVCenter,header()->label(i));
     x+=width;
   }
   if (paint)
-    painter->translate(0,header()->height());
+    painter->translate(0,header()->height()*wpscaley);
 
-  double y=(header()->height()+1)/scale+header()->height();
+  double y=(header()->height()*wpscaley+1)/scale+header()->height()*wpscaley;
   int curLevel=level;
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;
@@ -457,7 +462,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
       x=0;
     painter->translate(x,0);
     for (int i=column;i<columns();i++) {
-      double width=columnWidth(i);
+      double width=columnWidth(i)*wpscalex;
       if (width+x>=mwidth) {
 	if (i==column)
 	  width=mwidth-x-1;
@@ -475,8 +480,8 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
       x+=width;
     }
     if (paint)
-      painter->translate(-x,item->height());
-    y+=item->height();
+      painter->translate(-x,item->height()*wpscaley);
+    y+=item->height()*wpscaley;
     if (item->firstChild()) {
       item=item->firstChild();
       curLevel+=tree;

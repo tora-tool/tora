@@ -44,6 +44,10 @@ Extended functionality:
 * Cache database objects in background on connecting.
 * Use object cache in script & debug object lists.
 * Add support for Oracle7 in debugger.
+* Optionaly drop before create in toExtract.
+* Autoindent editors.
+* Tabbed source windows in debugger.
+* Schema filter by commaseparated list.
 
 New tools:
 

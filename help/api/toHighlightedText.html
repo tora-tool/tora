@@ -52,13 +52,15 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref34">paintCell</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *painter,int row,int col) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref35">tableAtCursor</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref38">nextError</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref36">tableAtCursor</A></b> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref39">previousError</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref39">nextError</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref36">insertedLines</A></b> (int start,int diff) 
+<LI>void &nbsp;<b><A HREF="#ref40">previousError</A></b> (void) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref37">insertedLines</A></b> (int start,int diff) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  int &nbsp;<b><A HREF="#ref22">convertLine</A></b> (int line,int start,int diff) 
 </LI>
@@ -72,7 +74,7 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref21">startComplete</A></b> (std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;completes) 
 </LI>
-</ul><h4>Protected Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref37">textChanged</A></b> (void) 
+</ul><h4>Protected Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref38">textChanged</A></b> (void) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A simple editor which supports syntax highlighting.
  </p>
@@ -177,7 +179,11 @@
 <br></td><td align="right"><h3><strong>paintCell</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#a74781">QMultiLineEdit</A>.</p>
-<A NAME="tableAtCursor"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false)
+<A NAME="paintEvent"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintEvent</strong> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *pe)
+<br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toMarkedText.html#paintEvent">toMarkedText</A>.</p>
+<A NAME="tableAtCursor"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>tableAtCursor</strong> (<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,<A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;table,bool highlight=false)
 <br></td><td align="right"><h3><strong>tableAtCursor</strong></h3></td></tr></table><p></p><p> Get the tablename currently under the cursor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -188,7 +194,7 @@
 <TR><TD align="left" valign="top"><i>highlight</i></TD><TD align="left" valign="top">If true mark the extracted tablename
    </TD></TR>
 </TABLE></P>
-<A NAME="insertedLines"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>insertedLines</strong> (int start,int diff)
+<A NAME="insertedLines"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>insertedLines</strong> (int start,int diff)
 <br></td><td align="right"><h3><strong>insertedLines</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when lines are inserted or removed.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -197,12 +203,12 @@
 <TR><TD align="left" valign="top"><i>diff</i></TD><TD align="left" valign="top">Number of lines inserted or removed.
    </TD></TR>
 </TABLE></P>
-<A NAME="textChanged"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>textChanged</strong> (void)
+<A NAME="textChanged"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>textChanged</strong> (void)
 <br></td><td align="right"><h3><strong>textChanged</strong></h3></td></tr></table><p> <small>[protected slots slot]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#c01b41">QMultiLineEdit</A>.</p>
-<A NAME="nextError"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>nextError</strong> (void)
+<A NAME="nextError"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>nextError</strong> (void)
 <br></td><td align="right"><h3><strong>nextError</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go to next error.
    </p>
-<A NAME="previousError"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>previousError</strong> (void)
+<A NAME="previousError"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>previousError</strong> (void)
 <br></td><td align="right"><h3><strong>previousError</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Go to previous error.
    </p>
 <HR>

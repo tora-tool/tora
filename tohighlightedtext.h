@@ -154,16 +154,14 @@ public:
    * @param typ @ref infoType to get color for.
    * @return Color of that type.
    */
-  QColor getColor(infoType typ)
-  { return Colors[typ]; }
+  QColor getColor(infoType typ);
 
   friend class toSyntaxSetup;
+  /** Get the default syntax analyzer.
+   * @return Reference to the default analyzer.
+   */
+  static toSyntaxAnalyzer &defaultAnalyzer();
 };
-
-/** Get the default syntax analyzer.
- * @return Reference to the default analyzer.
- */
-toSyntaxAnalyzer &toDefaultAnalyzer(void);
 
 /** A simple editor which supports syntax highlighting.
  */

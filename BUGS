@@ -11,6 +11,7 @@ Toolbars:
 Qt:
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
 	There are some redraw problems with QListItems that don't draw left justified text.
+	Looses titlebar on resulution change, seems to be a Qt bug.
 
 toResultContent:
 	Doesn't display multiline data correctly.
@@ -24,3 +25,10 @@ toMysqlConnection:
 
 toBrowser:
 	Crashes when closing application and browser open.
+
+toMarkedText:
+	Insert/replace toggle don't work.
+
+toHighlightedText:
+	Handle multiline strings correctly.
+

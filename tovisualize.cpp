@@ -38,6 +38,7 @@
 #include <qtoolbutton.h>
 #include <qtoolbar.h>
 #include <qlabel.h>
+#include <qtooltip.h>
 
 #include "tomain.h"
 #include "tobarchart.h"

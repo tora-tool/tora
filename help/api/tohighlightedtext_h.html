@@ -182,16 +182,14 @@ public:
    * @param typ @ref infoType to get color for.
    * @return Color of that type.
    */
-  QColor getColor(infoType typ)
-  { return Colors[typ]; }
+  QColor getColor(infoType typ);
 
   friend class toSyntaxSetup;
+  /** Get the default syntax analyzer.
+   * @return Reference to the default analyzer.
+   */
+  static toSyntaxAnalyzer &amp;defaultAnalyzer();
 };
-
-/** Get the default syntax analyzer.
- * @return Reference to the default analyzer.
- */
-toSyntaxAnalyzer &amp;toDefaultAnalyzer(void);
 
 /** A simple editor which supports syntax highlighting.
  */
@@ -321,6 +319,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell (QPainter *painter,int row,int col);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void paintEvent(QPaintEvent *pe);
 
   /** Get the tablename currently under the cursor.
    * @param owner Filled with owner or table or QString::null if no owner specified.

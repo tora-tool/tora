@@ -1554,7 +1554,8 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
       first=false;
     else
       ret+="\n  , ";
-    ret+=QString(toShift(cols)).rightJustify(32);
+    ret+=QString(toShift(cols)).leftJustify(32);
+    ret+=" ";
     ret+=toShift(cols);
     QString def=toShift(cols);
     QString notNull=toShift(cols);

@@ -73,6 +73,13 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
   connect(this,SIGNAL(redoAvailable(bool)),this,SLOT(setRedoAvailable(bool)));
   connect(this,SIGNAL(undoAvailable(bool)),this,SLOT(setUndoAvailable(bool)));
   connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
+
+  QPalette pal=palette();
+  pal.setColor(QColorGroup::Base,
+	       toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::NormalBkg));
+  pal.setColor(QColorGroup::Foreground,
+	       toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::Normal));
+  setPalette(pal);
 }
 
 void toMarkedText::setEdit(void)
