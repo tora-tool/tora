@@ -693,7 +693,6 @@ void toDebug::execute(void)
   }
 
   if (valid) {
-    int pos=0;
     QString token;
     int level=0;
 
@@ -712,8 +711,10 @@ void toDebug::execute(void)
     QString callName;
     QString retType;
 
+    toSQLParse::editorTokenizer tokens(current,0,line);
+
     do {
-      token=toSQLParse::getToken(current,line,pos);
+      token=tokens.getToken();
     } while(token.upper()=="CREATE"||token.upper()=="OR"||token.upper()=="REPLACE");
 
     if (token.upper()!="FUNCTION"&&token.upper()!="PROCEDURE") {
@@ -721,7 +722,7 @@ void toDebug::execute(void)
       return;
     }
     do {
-      token=toSQLParse::getToken(current,line,pos);
+      token=tokens.getToken();
       if (token.isEmpty()) {
 	toStatusMessage("Unexpected end of declaration.");
 	return;

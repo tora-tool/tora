@@ -645,40 +645,41 @@ void toHighlightedText::checkComplete(void)
     if (toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty())
       return;
 
-    QString name=toSQLParse::getToken(this,curline,curcol,false);
+    toSQLParse::editorTokenizer tokens(this,curcol,curline);
+    QString name=tokens.getToken(false);
     QString owner;
     if (name==".")
-      name=toSQLParse::getToken(this,curline,curcol,false);
+      name=tokens.getToken(false);
 
-    QString token=toSQLParse::getToken(this,curline,curcol,false);
+    QString token=tokens.getToken(false);
     if (token==".")
-      owner=toSQLParse::getToken(this,curline,curcol,false);
+      owner=tokens.getToken(false);
     else {
       QString cmp=UpperIdent(name);
       while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp)&&
 	     token!=";"&&!token.isEmpty()) {
-	token=toSQLParse::getToken(this,curline,curcol,false);
+	token=tokens.getToken(false);
       }
 
       if (token==";"||token.isEmpty()) {
 	getCursorPosition (&curline,&curcol);
-	token=toSQLParse::getToken(this,curline,curcol);
+	token=tokens.getToken();
 	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp)&&
 	       token!=";"&&!token.isEmpty())
-	  token=toSQLParse::getToken(this,curline,curcol);
-	toSQLParse::getToken(this,curline,curcol,false);
+	  token=tokens.getToken(curcol);
+	tokens.getToken(false);
       }
       if (token!=";"&&!token.isEmpty()) {
-	token=toSQLParse::getToken(this,curline,curcol,false);
+	token=tokens.getToken(false);
 	if (token!="TABLE"&&
 	    token!="UPDATE"&&
 	    token!="FROM"&&
 	    token!="INTO"&&
 	    (toIsIdent(token[0])||token[0]=='\"')) {
 	  name=token;
-	  token=toSQLParse::getToken(this,curline,curcol,false);
+	  token=tokens.getToken(false);
 	  if (token==".")
-	    owner=toSQLParse::getToken(this,curline,curcol,false);
+	    owner=tokens.getToken(false);
 	} else if (token==")") {
 	  return;
 	}
@@ -970,44 +971,43 @@ void toHighlightedText::tableAtCursor(QString &owner,QString &table,bool mark)
     getCursorPosition (&curline,&curcol);
 
     QString token=textLine(curline);
+    toSQLParse::editorTokenizer tokens(this,curcol,curline);
     if (curcol>0&&toIsIdent(token[curcol-1]))
-      token=toSQLParse::getToken(this,curline,curcol,false);
+      token=tokens.getToken(false);
     else
       token=QString::null;
 
-    int lastline=curline;
-    int lastcol=curcol;
-
-    token=toSQLParse::getToken(this,curline,curcol,false);
+    toSQLParse::editorTokenizer lastTokens(this,tokens.offset(),tokens.line());
+    token=tokens.getToken(false);
     if (token==".") {
-      lastline=curline;
-      lastcol=curcol;
-      owner=conn.unQuote(toSQLParse::getToken(this,curline,curcol,false));
-      toSQLParse::getToken(this,lastline,lastcol,true);
-      table+=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
+      lastTokens.setLine(tokens.line());
+      lastTokens.setOffset(tokens.offset());
+      owner=conn.unQuote(tokens.getToken(false));
+      lastTokens.getToken(true);
+      table+=conn.unQuote(lastTokens.getToken(true));
     } else {
-      curline=lastline;
-      curcol=lastcol;
-      owner=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
-      int tmplastline=lastline;
-      int tmplastcol=lastcol;
-      token=toSQLParse::getToken(this,lastline,lastcol,true);
+      tokens.setLine(lastTokens.line());
+      tokens.setOffset(lastTokens.offset());
+      owner=conn.unQuote(lastTokens.getToken(true));
+      int tmplastline=lastTokens.line();
+      int tmplastcol=lastTokens.offset();
+      token=lastTokens.getToken(true);
       if (token==".")
-	table=conn.unQuote(toSQLParse::getToken(this,lastline,lastcol,true));
+	table=conn.unQuote(lastTokens.getToken(true));
       else {
-	lastline=tmplastline;
-	lastcol=tmplastcol;
+	lastTokens.setLine(tmplastline);
+	lastTokens.setOffset(tmplastcol);
 	table=owner;
 	owner=QString::null;
       }
     }
     if (mark) {
-      setCursorPosition(curline,curcol,false);
-      if (lastline>=numLines()) {
-	lastline=numLines()-1;
-	lastcol=textLine(lastline).length();
+      setCursorPosition(tokens.line(),tokens.offset(),false);
+      if (lastTokens.line()>=numLines()) {
+	lastTokens.setLine(numLines()-1);
+	lastTokens.setOffset(textLine(numLines()-1).length());
       }
-      setCursorPosition(lastline,lastcol,true);
+      setCursorPosition(lastTokens.line(),lastTokens.offset(),true);
     }
   } catch(...) {
   }

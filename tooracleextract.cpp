@@ -343,14 +343,9 @@ QString toOracleExtract::displaySource(toExtract &ext,
   if (!ext.getCode())
     return "";
 
-  QString re("^");
+  QString re("^\\s*");
   re+=type;
   re+="\\s+";
-  for(unsigned int i=0;i<name.length();i++) {
-    if (!name.at(i).isLetterOrNumber())
-      re+="\\";
-    re+=name.at(i);
-  }
   QRegExp StripType(re,false);
 
   toQuery inf(CONNECTION,SQLDisplaySource,type,name,owner);
@@ -366,14 +361,16 @@ QString toOracleExtract::displaySource(toExtract &ext,
   bool first=true;
   while(!inf.eof()) {
     QString line=inf.readValue();
-    if (first&&!describe) {
+    if (first) {
       int len;
       int pos=StripType.match(line,0,&len);
       if (pos!=0)
 	throw QString("Displaying source of wrong type for %1. Got %2 expected 0.")
 	  .arg(type).arg(pos);
-      QString tmp=QString("CREATE OR REPLACE %1 %2%3")
-	.arg(type).arg(schema).arg(QUOTE(name));
+      QString tmp=QString("CREATE OR REPLACE %1 ")
+	.arg(type);
+      if (!describe)
+	tmp+=schema;
       tmp+=line.mid(len);
       line=tmp;
 

@@ -181,7 +181,8 @@ void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
     else if ((*i).Type==toSQLParse::statement::Statement) {
       if ((*i).subTokens().begin()!=(*i).subTokens().end()) {
 	QString t=(*((*i).subTokens().begin())).String.upper();
-	StripInto((*i).subTokens());
+	if (t=="SELECT")
+	  StripInto((*i).subTokens());
 
 	if (t=="SELECT"||t=="INSERT"||t=="UPDATE"||t=="DELETE")
 	  Statements.insert(Statements.end(),

@@ -24,14 +24,9 @@ toSQLParse:
 toThread:
 	Leaves defunct processes when running under gdb.
 
-toWorksheet:
-	Errors when displaying query plan will display two error dialogs.
-
 toSGATrace:
 	Doesn't work with Oracle7
 
-toDebug:
-	Creating a procedure should also add it to the object cache.
-
 toScript:
 	Seems to not update enable/disable status when changing to report mode.
+	Can't expand checkbox items in the comparison description.

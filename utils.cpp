@@ -389,7 +389,7 @@ void toSetSessionType(const QString &str)
   else if (str=="Platinum")
     qApp->setStyle(new QPlatinumStyle());
   else
-    throw QString("Failed to find style match");
+    toStatusMessage("Failed to find style "+str);
 }
 
 QString toGetSessionType(void)
@@ -441,9 +441,9 @@ void toSetSessionType(const QString &str)
 {
   QStyle *style=QStyleFactory::create(str);
   if (style)
-    qApp->setStyle(style);    
+    qApp->setStyle(style);
   else
-    throw QString("Failed to find style match");
+    toStatusMessage("Failed to find style "+str);
 }
 
 #  endif
