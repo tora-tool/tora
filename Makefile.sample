@@ -653,8 +653,7 @@ tora-static: $(OBJECTS) main.cpp
 
 tora.pro: Makefile
 	echo "# Not indended to be used for anything except lupdate" > tora.pro
-	echo 'SOURCES=	license/tolicense.cpp\' >> tora.pro
-	echo '	license/tolicenseui.cpp\' >> tora.pro
+	echo 'SOURCES=	\' >> tora.pro
 	echo '	main.cpp\' >> tora.pro
 	echo '	toextratranslations.cpp\' >> tora.pro
 	echo "	$(SOURCES)" >> tora.pro

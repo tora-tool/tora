@@ -84,7 +84,7 @@ egrep "^(UIC|MOC)" Makefile | $PERL -p -e 's/\$\(QTDIR\)/\$QTDIR/g' > configure.
 rm -f configure.setup
 
 echo $ac_n "creating designer files $ac_c"
-for a in *.ui license/*ui
+for a in *.ui 
 do
     base=`echo $a | sed 's/\.[^\.]*$//'`
     echo $ac_n ".$ac_c"
@@ -100,7 +100,7 @@ done
 echo " done"
 
 echo $ac_n "creating moc files ... $ac_c"
-for a in *.h qtlegacy/*.h license/*.h
+for a in *.h qtlegacy/*.h 
 do
     if grep -i Q_OBJECT $a >/dev/null
     then

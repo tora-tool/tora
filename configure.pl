@@ -1581,8 +1581,7 @@ $ProgramName-static: \$(OBJECTS) main.cpp
 
 $ProgramName.pro: Makefile
 	echo "# Not indended to be used for anything except lupdate" > $ProgramName.pro
-	echo 'SOURCES=	license/tolicense.cpp\\' >> $ProgramName.pro
-	echo '	license/tolicenseui.cpp\\' >> $ProgramName.pro
+	echo 'SOURCES=	\\' >> $ProgramName.pro
 	echo '	main.cpp\\' >> $ProgramName.pro
 	echo '	toextratranslations.cpp\\' >> $ProgramName.pro
 	echo "	\$(SOURCES)" >> $ProgramName.pro
