@@ -419,9 +419,10 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
 	  if (i==int(c.length()))
 	    painter->fillRect(LeftIgnore,0,posx-LeftIgnore,height,painter->backgroundColor());
+
 #if QT_VERSION == 0x030200 && defined (WIN32)
-	  rect.setHeight(rect.height()+1);
 	  rect.setWidth(rect.width()-1);
+	  rect.setHeight(rect.height()-1);
 #endif
 	  if (rect.height()<=height)
 	    painter->fillRect(posx,rect.height(),rect.width(),height-rect.height(),painter->backgroundColor());
@@ -475,7 +476,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       if (Cursor<2) {
 	if (!isReadOnly()) {
 	  painter->drawLine(cursorx-1,0,cursorx-1,
-			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
+			    painter->fontMetrics().height());
 	}
 	if (Completion&&!KeepCompletion) {
 	  int x=cursorPoint().x()-xOffset();
