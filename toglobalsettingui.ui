@@ -12,7 +12,7 @@
             <x>0</x>
             <y>0</y>
             <width>625</width>
-            <height>425</height>
+            <height>480</height>
         </rect>
     </property>
     <property stdset="1">
@@ -120,6 +120,44 @@
                         <string>Directory where to find plugins when starting tora.</string>
                     </property>
                 </widget>
+                <widget row="4"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CacheBrowse</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Browse</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CacheDirectory</cstring>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CacheLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Cache directory</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>CacheDirectory</cstring>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Directory where to find plugins when starting tora.</string>
+                    </property>
+                </widget>
+
                 <widget row="1"  column="0" >
                     <class>QLabel</class>
                     <property stdset="1">
@@ -696,6 +734,21 @@ Will leave the password unencryptet in the config file.</string>
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
+                        <cstring>DiskCaching</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Use Disk Caching</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Use Disk Caching of ObjectLists and Synonyms</string>
+                    </property>
+                </widget>
+                <widget row="5"  column="1"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
                         <cstring>UpgradeCheck</cstring>
                     </property>
                     <property stdset="1">
@@ -707,6 +760,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Check the TOra webpage for upgrades to the program. Does not send any information about the users computer or TOra installation.</string>
                     </property>
                 </widget>
+
                 <widget row="8"  column="1" >
                     <class>QLabel</class>
                     <property stdset="1">

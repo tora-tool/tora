@@ -856,8 +856,10 @@ public:
 	    i++;
 	  if (i==objects.end())
 	    break;
-	  if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner)
+	  if (cur.Name==(*i).Name&&cur.Owner==(*i).Owner) {
 	    ret[synonym]=(*i);
+            (*i).Synonyms.insert((*i).Synonyms.end(),synonym);
+          }
 	}
       } catch(...) {
       }

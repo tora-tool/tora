@@ -98,6 +98,13 @@
 #include "icons/modconstraint.xpm"
 #include "icons/modindex.xpm"
 #include "icons/modtable.xpm"
+#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
+
+#define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
+#define CONF_FILTER_INVERT  	"FilterInvert"
+#define CONF_FILTER_TYPE  	"FilterType"
+#define CONF_FILTER_TABLESPACE_TYPE  	"FilterTablespaceType"
+#define CONF_FILTER_TEXT  	"FilterText"
 
 class toBrowserTool : public toTool {
 protected:
@@ -145,10 +152,41 @@ public:
       Match.setPattern(str);
       Match.setCaseSensitive(cas);
     }
+    storeFilterSettings();
   }
+  
   toBrowserFilter(void)
     : Type(0),IgnoreCase(true),Invert(false),TablespaceType(0)
   {
+  	readFilterSettings();
+  }
+  
+  virtual void storeFilterSettings(void) 
+  {
+        BrowserTool.setConfig(CONF_FILTER_IGNORE_CASE,IgnoreCase?"Yes":"No");
+        BrowserTool.setConfig(CONF_FILTER_INVERT,Invert?"Yes":"No");
+        BrowserTool.setConfig(CONF_FILTER_TYPE,QString("%1").arg(Type));
+        BrowserTool.setConfig(CONF_FILTER_TABLESPACE_TYPE,QString("%1").arg(TablespaceType));
+	BrowserTool.setConfig(CONF_FILTER_TEXT,Text);
+	toTool::saveConfig();
+  }
+
+  virtual void readFilterSettings(void) 
+  {
+  	QString t;
+        Text = BrowserTool.config(CONF_FILTER_TEXT, "");
+  
+        if (BrowserTool.config(CONF_FILTER_IGNORE_CASE,"No") == "Yes") 
+ 		IgnoreCase=true;
+ 	else
+ 		IgnoreCase=false;
+		
+	if (BrowserTool.config(CONF_FILTER_INVERT,"No") == "Yes") 
+ 		Invert=true;
+ 	else
+ 		Invert=false;
+	Type=QString(BrowserTool.config(CONF_FILTER_TYPE,"0")).toInt();
+	TablespaceType=QString(BrowserTool.config(CONF_FILTER_TABLESPACE_TYPE,"0")).toInt();
   }
   virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
   {
@@ -725,7 +763,7 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
-  Filter=NULL;
+  Filter=new toBrowserFilter();
 
   QToolBar *toolbar=toAllocBar(this,tr("DB Browser"));
 

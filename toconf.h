@@ -68,6 +68,9 @@
 #define CONF_KEYWORD_UPPER	"KeywordUpper"
 #define CONF_COLOR		"KeywordColor"
 #define CONF_PLUGIN_DIR		"PluginDir"
+#define CONF_CACHE_DIR		"CacheDir"
+#define CONF_CACHE_DISK		"CacheDiskUse"
+#define DEFAULT_CACHE_DISK	"Yes"
 #define CONF_SQL_FILE		"SQLDictionary"
 #define DEFAULT_SQL_FILE	"$HOME/.torasql"
 #define CONF_DESKTOP_AWARE	"DesktopAware"
@@ -124,6 +127,11 @@
 #define DEFAULT_RECENT_MAX	"5"
 #define CONF_LAST_DIR		"LastDir"
 #define CONF_LOCALE		"Locale"
+#define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
+#define CONF_FILTER_INVERT  	"FilterInvert"
+#define CONF_FILTER_TYPE  	"FilterType"
+#define CONF_FILTER_TABLESPACE_TYPE  	"FilterTablespaceType"
+#define CONF_FILTER_TEXT  	"FilterText"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"

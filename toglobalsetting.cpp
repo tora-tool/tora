@@ -52,6 +52,7 @@
 #include <qfontdialog.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qdir.h>
 #include <qlayout.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
@@ -147,7 +148,25 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
     PluginDirectory->setText(toTool::globalConfig(CONF_PLUGIN_DIR,
 						  DEFAULT_PLUGIN_DIR));
   }
+  
+  /** disk caching options
+   */  
+  
+  QString home=QDir::homeDirPath();
+  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+  if (dirname == "")
+    dirname = QString(home+"/.tora_cache"); 
+     
+  CacheDirectory->setText(dirname);
+  
+  /** default is off
+   */
 
+  if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "Yes") 
+    DiskCaching->setChecked(true);   
+  else 
+    DiskCaching->setChecked(false);   
+  
   CustomSQL->setText(toTool::globalConfig(CONF_SQL_FILE,
 					  DEFAULT_SQL_FILE));
 #if QT_VERSION >= 300
@@ -191,6 +210,8 @@ void toGlobalSetting::saveSetting(void)
 {
   if (!toMonolithic())
     toTool::globalSetConfig(CONF_PLUGIN_DIR,PluginDirectory->text());
+  toTool::globalSetConfig(CONF_CACHE_DISK,DiskCaching->isChecked()?"Yes":"No");
+  toTool::globalSetConfig(CONF_CACHE_DIR,CacheDirectory->text());
   toTool::globalSetConfig(CONF_SQL_FILE,CustomSQL->text());
   toTool::globalSetConfig(CONF_DEFAULT_SESSION,DefaultSession->text());
   toTool::globalSetConfig(CONF_REFRESH,Refresh->currentText());

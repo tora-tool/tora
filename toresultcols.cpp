@@ -394,7 +394,6 @@ void toResultCols::query(const QString &,const toQList &param)
     }
 
     Columns->query(name,NoCache);
-    NoCache=false;
     Title->setText(label);
   } catch(const QString &) {
     try {
@@ -541,7 +540,7 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
     setSQLName(tr("Description of %1").
 	       arg(wholename));
 
-    toQDescList &desc=conn.columns(name,nocache);
+    toQDescList &desc=conn.columns(name,false);
 
     describe(desc);
     Edit->describe(desc,wholename,true);

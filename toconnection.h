@@ -452,6 +452,9 @@ public:
     /** Comment about this object
      */
     QString Comment;
+    /** synonyms (used for faster disk caching...)
+    */
+    std::list <QString> Synonyms;
 
     bool operator < (const objectName &) const;
     bool operator == (const objectName &) const;
@@ -813,6 +816,19 @@ public:
    */
   void cancelAll(void);
 
+  /** load disk cache
+   */
+
+  bool loadDiskCache(void);
+
+  /** write disk cache
+   */
+
+  void writeDiskCache(void);
+
+
+  void logMessage(QString text);
+  
   friend class toQuery;
 };
 

@@ -39,6 +39,10 @@
 #include "tomain.h"
 #include "tosql.h"
 #include "totool.h"
+#include <sstream>
+#include <string>
+#include <time.h>
+#include <qdir.h>
 
 #include <qapplication.h>
 #include <qprogressdialog.h>
@@ -48,6 +52,9 @@
 
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
+
+
+#define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
 // Connection provider implementation
 
@@ -1305,14 +1312,136 @@ const QCString &toConnection::provider(void) const
   return Provider;
 }
 
+bool toConnection::loadDiskCache() 
+{
+   if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "No")
+   	return false;
+
+   toConnection::objectName *cur;
+   int objCounter = 0;
+   int synCounter = 0;
+   
+   QString dbname (Database.stripWhiteSpace());
+   QString home=QDir::homeDirPath();
+   QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+
+   if (dirname == "")
+       dirname = QString(home+"/.tora_cache");
+
+   QString filename(dirname+"/"+dbname);
+   QFile file(filename.stripWhiteSpace());
+
+   if (!QFile::exists(filename.stripWhiteSpace())) 
+     return false;
+  
+   /** read in all data
+    */
+
+   if (!file.open(IO_ReadOnly)) 
+     return false;
+
+   QString data = file.readAll();
+
+   /** build cache lists
+    */
+   
+   QStringList records = QStringList::split("\x1D",data,true);
+   for ( QStringList::Iterator i = records.begin(); i != records.end(); i++) {
+     objCounter++;
+     QStringList record = QStringList::split("\x1E",(*i),true);
+     QStringList::Iterator rec = record.begin();
+     cur = new objectName;
+     (*cur).Owner = (*rec);
+     rec++;
+     (*cur).Name =  (*rec);
+     rec++;
+     (*cur).Type =  (*rec);
+     rec++;
+     (*cur).Comment = (*rec);
+     rec++;
+     QStringList slist = QStringList::split("\x1F",(*rec),false);
+     for (QStringList::Iterator s = slist.begin(); s != slist.end(); s++) {
+       SynonymMap[(*s)] = (*cur);
+       (*cur).Synonyms.insert((*cur).Synonyms.end(),(*s));
+       synCounter++;
+     }
+     ObjectNames.insert(ObjectNames.end(),(*cur));
+   }
+   return true;
+}
+
+void toConnection::writeDiskCache() 
+{
+  QString text;
+  long objCounter = 0;
+  long synCounter = 0;
+
+  if (toTool::globalConfig(CONF_CACHE_DISK,"No") == "No")
+   	return;
+
+
+  QString dbname (Database.stripWhiteSpace());
+  QString home=QDir::homeDirPath();
+  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+  if (dirname == "")
+    dirname = QString(home+"/.tora_cache");
+  QString filename(dirname+"/"+dbname);
+	
+  /** check pathnames and create
+   */
+
+  QDir dir;
+  dir.setPath(dirname);
+
+  if (!dir.exists(dirname)) 
+    dir.mkdir(dirname);
+  
+ 
+  /** build record to write out
+   */
+   
+  QStringList record;  
+  QStringList records;
+  QStringList recordSynonym;  
+  for(std::list<objectName>::iterator i=ObjectNames.begin();i!=ObjectNames.end();i++) {
+    record.clear();
+    record.append((*i).Owner);
+    record.append((*i).Name);
+    record.append((*i).Type);
+    record.append((*i).Comment);
+    for(std::list<QString>::iterator s=(*i).Synonyms.begin();s!=(*i).Synonyms.end();s++) {
+     recordSynonym.append((*s));
+     synCounter++;
+    }
+    record.append(recordSynonym.join("\x1F"));
+    recordSynonym.clear();
+    objCounter++;
+    records.append(record.join("\x1E"));
+  }
+  /** open file
+   */  
+  QFile file(filename.stripWhiteSpace());	
+  file.open( IO_ReadWrite  | IO_Truncate );
+  QTextStream t (&file);
+  t << records.join("\x1D");
+  file.flush();
+  file.close();
+}
+
 void toConnection::cacheObjects::run()
 {
+  bool diskloaded=false;
   try {
-    Connection.ObjectNames=Connection.Connection->objectNames();
+    diskloaded=Connection.loadDiskCache();
+    if (!diskloaded) {
+      Connection.ObjectNames=Connection.Connection->objectNames();
+    }	    
     Connection.ObjectNames.sort();
     Connection.ReadingValues.up();
-    if (Connection.ObjectNames.size()>0)
+    if (!diskloaded) {
       Connection.SynonymMap=Connection.Connection->synonymMap(Connection.ObjectNames);
+      Connection.writeDiskCache();
+    }
   } catch(...) {
     if (Connection.ReadingValues.getValue()==0)
       Connection.ReadingValues.up();
@@ -1323,6 +1452,12 @@ void toConnection::cacheObjects::run()
 
 void toConnection::readObjects(void)
 {
+
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3) {
+    ReadingCache=false;
+    return;
+  } 
+
   if (!ReadingCache) {
     ReadingCache=true;
     try {
@@ -1335,17 +1470,41 @@ void toConnection::readObjects(void)
 
 void toConnection::rereadCache(void)
 {
-  if(ReadingValues.getValue()<2&&ReadingCache) {
+
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3) {
+    ColumnCache.clear();
+    return;
+  }
+
+  if(ReadingValues.getValue() < 2 && ReadingCache) {
     toStatusMessage(qApp->translate("toConnection",
 				    "Not done caching objects, can not clear unread cache"));
     return;
   }
+
+
   ReadingCache=false;
   while(ReadingValues.getValue()>0)
     ReadingValues.down();
+
   ObjectNames.clear();
   ColumnCache.clear();
   SynonymMap.clear();
+
+  /** delete cache file to force reload
+   */
+
+  QString home=QDir::homeDirPath();
+  QString dirname = toTool::globalConfig(CONF_CACHE_DIR, "");
+  QString dbname (Database.stripWhiteSpace());
+
+  if (dirname == "")
+    dirname = QString(home+"/.tora_cache");
+  QString filename(dirname+"/"+dbname);
+
+  if (QFile::exists(filename.stripWhiteSpace())) 
+    QFile::remove(filename.stripWhiteSpace());
+ 
   readObjects();
 }
 
@@ -1361,6 +1520,9 @@ QString toConnection::unQuote(const QString &name)
 
 bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 {
+  if (toTool::globalConfig(CONF_OBJECT_CACHE,"0").toInt()==3)
+      return true;
+
   if (!ReadingCache) {
     if (!need)
       return true;

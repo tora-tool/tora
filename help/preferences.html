@@ -42,6 +42,11 @@ to the directory where the plugins for TOra are located. It should be set up
 correctly on installation if needed.
 </TD></TR>
 <TR><TD VALIGN=top>
+<B>Cache directory</B></TD>
+<TD VALIGN=top>Should point to where the TOra Disk Cache files are stored. There is one file for each 
+Connection. 
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Change current connection with active window</B></TD>
 <TD VALIGN=top>If this option is set, changing the current window will also change the current
 connection to that of the active window. The connection is only changed when you change window
@@ -68,6 +73,12 @@ database the window works on except for this.
 <TD VALIGN=top>Set this if Qt should try to figure out and interact nicely with the desktop environment.
 The reason for this switch is that in some versions of KDE TOra doesn't look nice if this is
 checked. This switch is only available for Qt only applications.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>use Disk Cache</B></TD>
+<TD VALIGN=top>This option tells TOra to Cache the Object List in the Cache Directory. Default is No Caching. When
+Caching is activated, you have to refresh the object cache with the menu option File->Reread Object Cache, because,
+the default source for the Object List is the diskfile.
 </TD></TR>
 <TR><TD VALIGN=top>
 <B>Antialias fonts</B></TD>

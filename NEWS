@@ -1,5 +1,8 @@
 1.3.9:
 
+2002-01-16: Added support for object cache disk caching (Whoah, lot of caching there) (Thanx Oliver Jehle)
+2002-01-16: Improved order of dirs in configure. (Thanx Oliver Jehle)
+2002-01-16: Remember last filter in browser. (Thanx Oliver Jehle)
 2002-12-13: Made configure detect lupdate.
 2002-10-29: Fix configure problem with qt-mt.
 2002-10-23: Use msleep if QT_THREAD_SUPPORT to help fink users.
