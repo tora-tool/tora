@@ -3550,10 +3550,12 @@ QString toExtract::createPartitionedIOT(const QString &schema,const QString &own
   list<QString> result=toReadQuery(Connection,SQLPartitionedIOTInfo(Connection),
 				   QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
-  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
-  if (overflow.size()==18) {
-    ret+="OVERFLOW\n";
-    ret+=segmentAttributes(overflow);
+  if (Storage) {
+    list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+    if (overflow.size()==18) {
+      ret+="OVERFLOW\n";
+      ret+=segmentAttributes(overflow);
+    }
   }
 
   otl_stream inf(1,
@@ -3594,11 +3596,13 @@ void toExtract::describePartitionedIOT(list<QString> &lst,list<QString> &ctx,
   addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
   describePartitions(lst,ctx,owner,index,"NONE","IOT");
   describeComments(lst,ctx,schema,owner,name);
-  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
   describeComments(lst,ctx,schema,owner,name);
-  if (overflow.size()==18) {
-    ctx.insert(ctx.end(),"OVERFLOW");
-    describeAttributes(lst,ctx,overflow);
+  if (Storage) {
+    list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+    if (overflow.size()==18) {
+      ctx.insert(ctx.end(),"OVERFLOW");
+      describeAttributes(lst,ctx,overflow);
+    }
   }
 }
 
@@ -3679,10 +3683,12 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
   list<QString> storage=toReadQuery(Connection,SQLIOTInfo(Connection),name,owner);
 
   QString ret=createTableText(storage,schema,owner,name);
-  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
-  if (overflow.size()==18) {
-    ret+="OVERFLOW\n";
-    ret+=segmentAttributes(overflow);
+  if (Storage) {
+    list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+    if (overflow.size()==18) {
+      ret+="OVERFLOW\n";
+      ret+=segmentAttributes(overflow);
+    }
   }
   ret+=";\n\n";
   ret+=createComments(schema,owner,name);
@@ -3695,11 +3701,13 @@ void toExtract::describeIOT(list<QString> &lst,list<QString> &ctx,
   list<QString> storage=toReadQuery(Connection,SQLIOTInfo(Connection),name,owner);
 
   describeTableText(lst,ctx,storage,schema,owner,name);
-  list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
   describeComments(lst,ctx,schema,owner,name);
-  if (overflow.size()==18) {
-    ctx.insert(ctx.end(),"OVERFLOW");
-    describeAttributes(lst,ctx,overflow);
+  if (Storage) {
+    list<QString> overflow=toReadQuery(Connection,SQLOverflowInfo(Connection),name,owner);
+    if (overflow.size()==18) {
+      ctx.insert(ctx.end(),"OVERFLOW");
+      describeAttributes(lst,ctx,overflow);
+    }
   }
 }
 

@@ -174,6 +174,8 @@ toScript::toScript(QWidget *parent,toConnection &connection)
   Worksheet=new toWorksheet(ResultTab,Connection);
   DropList=new toResultView(false,false,Connection,hsplitter);
   CreateList=new toResultView(false,false,Connection,hsplitter);
+  DropList->addColumn("Dropped");
+  CreateList->addColumn("Created");
   Tabs->setTabEnabled(ResultTab,false);
   Tabs->setTabEnabled(DifferenceTab,false);
 
