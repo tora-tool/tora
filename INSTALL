@@ -125,23 +125,5 @@ that's been done correctly, then TOra will
 automatically support PostgreSQL.
 
 
-Why I'm not using autoconf
-==========================
-
-Whenever I start out using autoconf in any of my projects I end up spending
-more time trying to get autoconf to work instead of time spent coding.
-
-People tend to think that autoconf is just a strapon fix all problems
-solution to configuring, but this is not the case. Especially if you
-need to find Qt (Which I could have just copied), but finding Oracle is
-a test I would have had to do myself and I can pretty much garantee it
-would have worked worse than this solution does based on my earlier
-experiences with autoconf (I'm sure it's ok if you know how to use it,
-but I know perl and that works too).
-
-Also I want a few other stuff done when you configure the metacompiling
-and dependency generating etc which sets up the makefiles to need as
-little work as possible to add new tools or sourcefiles to the project.
-
 /Henrik "Mauritz" Johnson
 Quest Software, Inc
