@@ -34,7 +34,6 @@
 
 TO_NAMESPACE;
 
-#include <stdio.h>
 #include <qdragobject.h>
 #include <qclipboard.h>
 #include <qpopupmenu.h>
@@ -243,6 +242,7 @@ QWidget *toResultContent::beginEdit(int row,int col,bool replace)
     for (int i=0;i<numCols();i++)
       OrigValues.insert(OrigValues.end(),text(row,i));
     CurrentRow=row;
+    toStatusMessage("Unsaved data in contents, select other row to store",true);
   }
 
   return QTable::beginEdit(row,col,replace);
@@ -253,9 +253,12 @@ static bool nullString(const QString &str)
   return str=="{null}"||str.isNull();
 }
 
+#include <stdio.h>
+
 void toResultContent::changePosition(int row,int col)
 {
   if (CurrentRow!=row&&OrigValues.size()>0) {
+    toStatusMessage("Saved row");
     if (CurrentRow>=Row) {
       QString sql="INSERT INTO \"";
       sql+=Owner;
@@ -360,8 +363,8 @@ void toResultContent::changePosition(int row,int col)
       }
     }
     OrigValues.clear();
+    CurrentRow=-1;
   }
-  CurrentRow=-1;
 }
 
 void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)

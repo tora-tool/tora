@@ -69,7 +69,7 @@ for a in *.cpp
 do
     b=.depends/`echo $a | sed 's/\.cpp$/\.d/'`
     true > $b
-    touch -t 73122100 $b
+    touch -t 7312210000 $b
 done
 
 if [ -f Makefile.orig ]

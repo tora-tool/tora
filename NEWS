@@ -16,6 +16,9 @@
 2001-06-14: Fixed problem with torollback tool.
 2001-06-14: Fixed problem with toSyntaxHighlighter.
 2001-06-15: Fixed the last part of the API documentation.
+2001-06-17: Some configure fixes.
+2001-06-19: Added status messages to help out how toResultContents work.
+2001-06-19: Fixed problem with saving data in update of toResultContents.
 
 0.11: Released 2001-06-03
 
