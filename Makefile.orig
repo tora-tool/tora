@@ -75,6 +75,7 @@ SOURCES=\
 	tosgatrace.cpp		\
 	tosql.cpp		\
 	tosqledit.cpp		\
+	tosimplequery.cpp	\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
@@ -177,6 +178,7 @@ plugins/totemplate.tso:\
 	objs/totemplatesetupui.o
 plugins/totuning.tso:objs/totuning.o
 plugins/toworksheet.tso:objs/toworksheet.o
+plugins/tosimplequery.tso:objs/tosimplequery.o
 
 # Monolithic target, for non ELF platforms
 
@@ -227,7 +229,8 @@ tora-plugin: \
 	plugins/tostoragedefinition.tso \
 	plugins/totemplate.tso \
 	plugins/totuning.tso \
-	plugins/toworksheet.tso
+	plugins/toworksheet.tso \
+	plugins/tosimplequery.tso
 
 # The binary for the pluginbased tora
 
@@ -272,6 +275,6 @@ tora: \
 # This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
 # configure won't try to detect those. It's up to you.
 
-api: $(API)
+apidoc: $(API)
 	mkdir -p help/api
-	kdoc -d help/api $^ -lqt -lkdeui -lkhtml
+	kdoc -n TOra -d help/api $^ -lqt -lkdeui -lkhtml

@@ -63,7 +63,8 @@ private:
 public:
   /** Get parameters for specified SQL string.
    * @param parent Parent widget if dialog is needed.
-   * @param str SQL to parse for bindings.
+   * @param str SQL to parse for bindings. Observe that this string can be changed to further
+   *            declare the binds.
    * @return Returns a list of values to feed into the query.
    */
   static list<QString> getParam(QWidget *parent,QString &str);

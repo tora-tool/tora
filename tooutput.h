@@ -35,7 +35,7 @@
 #ifndef __TOOUTPUT_H
 #define __TOOUTPUT_H
 
-#include <qvbox.h>
+#include "totool.h"
 
 class toConnection;
 class toMarkedText;
