@@ -25,11 +25,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOra for Windows License</source>
+        <source>GNU General Public License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>GNU General Public License</source>
+        <source>End User License</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -223,6 +223,10 @@
     </message>
     <message>
         <source>Running %1 Pending %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display SQL</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1750,7 +1754,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remember this alarm when restarting TOra.</source>
+        <source>Remember this alarm when restarting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toChartHandler</name>
+    <message>
+        <source>ALARM:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOra alert:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A defined alert value was detected:
+
+%1
+
+At: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alarms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Persistent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temporary</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1801,22 +1836,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ALARM:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOra alert:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A defined alert value was detected:
-
-%1
-
-At: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Initial value didn&apos;t start with &quot; in CSV file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1842,14 +1861,6 @@ At: %2</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Persistent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Temporary</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1887,10 +1898,6 @@ At: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Remember to track this chart to this file always when starting TOra.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable tracking</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1920,6 +1927,10 @@ At: %2</source>
     </message>
     <message>
         <source>&amp;Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remember to track this chart to this file always when starting.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2152,19 +2163,11 @@ fetch size. Will adjust value to be higher.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Run UI blocking queries exclusively in main thread</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Let the background queries normally running on the main connection run in a separate connection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Don&apos;t reread data if parameters are exactly same</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2220,15 +2223,51 @@ fetch size. Will adjust value to be higher.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never read object cache (Will leave parts of TOra nonfunctianal)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Keep alive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Never read object cache (Will leave parts of application nonfunctianal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If checked will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dataformat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The way numbers should be presented.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of decimals for fixed decimal format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scientific</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed decimal</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2240,10 +2279,6 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Body</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Misc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2260,10 +2295,6 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Couldn&apos;t find any function or procedure under cursor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Anonymous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2824,6 +2855,18 @@ fetch size. Will adjust value to be higher.</source>
         <source>De-indent block in editor</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Upper</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Case</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toExtract</name>
@@ -2987,19 +3030,11 @@ Error:          %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Directory where to find plugins when starting tora.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Help directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Default session</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>What session to use by TOra when saving session.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3096,10 +3131,6 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Docks use toolbars</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3117,10 +3148,6 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>Size Unit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Define the unit sizes should be displayed in tora.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3223,6 +3250,30 @@ Will leave the password unencryptet in the config file.</source>
         <source>Use Disk Caching of ObjectLists and Synonyms</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Directory where to find plugins when starting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory where to place cached dataaseinformation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory where to find help files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default session to use when saving a session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Define the unit sizes should be displayed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toHelp</name>
@@ -3251,10 +3302,6 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOra Help Browser</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Backward one help page</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3272,6 +3319,10 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>Help window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help Browser</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3414,15 +3465,15 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recompile all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Recompiling all invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recompile selected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3555,10 +3606,6 @@ Will leave the password unencryptet in the config file.</source>
         <source>Enabled charts</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>TOra</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>toLineChartSetupUI</name>
@@ -3630,10 +3677,6 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TOra</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Printing page %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3671,6 +3714,22 @@ Will leave the password unencryptet in the config file.</source>
     </message>
     <message>
         <source>Edit SQL...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alignment</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3859,10 +3918,6 @@ Will leave the password unencryptet in the config file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;About TOra...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;License...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3994,11 +4049,6 @@ including TOra version is transmitted to the site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Message flood, temporary disabling of message box error reporting from now on.
-Restart TOra to reenable. You probably have a too high refreshrate in some tool.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4012,13 +4062,14 @@ Restart TOra to reenable. You probably have a too high refreshrate in some tool.
 http://www.globecom.se/tora</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Message flood, temporary disabling of message box error reporting from now on.
+Restart to reenable. You probably have a too high refreshrate in some tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toMarkedText</name>
-    <message>
-        <source>TOra</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Printing page %1</source>
         <translation type="unfinished"></translation>
@@ -4115,10 +4166,6 @@ before opening a new file?</source>
 <context>
     <name>toMessageUI</name>
     <message>
-        <source>TOra warning message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Ok</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4131,8 +4178,8 @@ before opening a new file?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Message</source>
-        <translation type="obsolete"></translation>
+        <source>Warning message</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4277,6 +4324,25 @@ before opening a new file?</source>
     <name>toNow</name>
     <message>
         <source>Unexpected error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toOracleConnection</name>
+    <message>
+        <source>Password expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter new password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter password again for confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The two passwords doesn&apos;t match</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4595,10 +4661,6 @@ before opening a new file?</source>
     </message>
     <message>
         <source>All values are 0 in this chart</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>TOra</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4967,10 +5029,6 @@ try to create them in the current schema?</source>
     <message>
         <source>Failed to describe %1</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Description of %1.%2</source>
-        <translation type="obsolete"></translation>
     </message>
 </context>
 <context>
@@ -5792,6 +5850,10 @@ Should TOra try to create it?</source>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable snapshot too old detection.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toRollback:Information</name>
@@ -5990,6 +6052,14 @@ Should TOra try to create it?</source>
         <source>Always start from the left border when displaying extent usage.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Enable snapshot too old detection.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable snapshot too old detection, will put load on large databases.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toSGAStatement</name>
@@ -6126,6 +6196,10 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Unknown selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 execution, 1 parse</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6642,10 +6716,6 @@ Should TOra try to create it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Output to directory so that each object is placed in a different file with the objects file.</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>Output file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6656,10 +6726,6 @@ Should TOra try to create it?</source>
     <message>
         <source>Commit distance</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The number of insertstatements to make between each commit (0 means whole table)b</source>
-        <translation type="obsolete"></translation>
     </message>
     <message>
         <source>The number of insertstatements to make between each commit (0 means whole table)</source>
@@ -7129,10 +7195,6 @@ Should TOra try to create it?</source>
 <context>
     <name>toSemaphore</name>
     <message>
-        <source>Error in semaphore function &quot;%1&quot; didn&apos;t work</source>
-        <translation type="obsolete"></translation>
-    </message>
-    <message>
         <source>The semaphore function &quot;%1&quot; failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7257,6 +7319,26 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only active users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exclude selected sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deselect all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Long ops</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7544,6 +7626,10 @@ Should TOra try to create it?</source>
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blocks</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8144,6 +8230,25 @@ Should TOra try to create it?</source>
     </message>
 </context>
 <context>
+    <name>toTemporary</name>
+    <message>
+        <source>Temporary Objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Temporary</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toThread</name>
     <message>
         <source>Thread function &quot;%1&quot; failed.</source>
@@ -8236,6 +8341,14 @@ Should TOra try to create it?</source>
         <source>Unknown escape character in string (Only \\ and \n recognised)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Couldn&apos;t save empty value at key %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1 value at key %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toToolSettingUI</name>
@@ -8264,7 +8377,7 @@ Should TOra try to create it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You must restart TOra for any of these changes to have effect.</source>
+        <source>You must restart for any of these changes to have effect.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9138,6 +9251,26 @@ submenues are separated by a &apos;:&apos; character.</source>
         <source>No plan available to save</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Previous log entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next log entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Executing all statements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter refreshrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh rate of query in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toWorksheetSetupUI</name>
@@ -9231,6 +9364,16 @@ submenues are separated by a &apos;:&apos; character.</source>
     </message>
     <message>
         <source>Keep previous results in while worksheet is open. Will consume lot of memory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Execute directory when selecting in log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Execute a statement when it is
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>selected in the log, if disabled simply selected
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>the statement in the log.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

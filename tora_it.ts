@@ -26,11 +26,15 @@
     </message>
     <message>
         <source>TOra for Windows License</source>
-        <translation>Licenza di TOra per Windows</translation>
+        <translation type="obsolete">Licenza di TOra per Windows</translation>
     </message>
     <message>
         <source>GNU General Public License</source>
         <translation>GNU General Public LIcense</translation>
+    </message>
+    <message>
+        <source>End User License</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -84,7 +88,7 @@
     </message>
     <message>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tempo</translation>
     </message>
     <message>
         <source>Failed to start polling thread, try closing some other tools and restart Alert Messenger</source>
@@ -224,6 +228,10 @@
     <message>
         <source>Running %1 Pending %2</source>
         <translation>Attive %1 In attesa %2</translation>
+    </message>
+    <message>
+        <source>Display SQL</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -724,6 +732,10 @@
         <source>Remove any object filter for database browser</source>
         <translation>Elimina ogni filtro sugli oggetti per il database browser</translation>
     </message>
+    <message>
+        <source>Extents</source>
+        <translation type="unfinished">Extents</translation>
+    </message>
 </context>
 <context>
     <name>toBrowser:AnyGrants</name>
@@ -807,7 +819,7 @@
     </message>
     <message>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durata</translation>
     </message>
     <message>
         <source>Freelist Groups</source>
@@ -823,7 +835,7 @@
     </message>
     <message>
         <source>Generated</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Generato</translation>
     </message>
     <message>
         <source>Global Stats</source>
@@ -895,7 +907,7 @@
     </message>
     <message>
         <source>Num Rows</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Numero di righe</translation>
     </message>
     <message>
         <source>Owner</source>
@@ -935,7 +947,7 @@
     </message>
     <message>
         <source>Secondary</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Secondario</translation>
     </message>
     <message>
         <source>Status</source>
@@ -1141,7 +1153,7 @@
     </message>
     <message>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durata</translation>
     </message>
     <message>
         <source>Empty Blocks</source>
@@ -1157,7 +1169,7 @@
     </message>
     <message>
         <source>Global Stats</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statistiche Globali</translation>
     </message>
     <message>
         <source>Ini Trans</source>
@@ -1747,7 +1759,42 @@
     </message>
     <message>
         <source>Remember this alarm when restarting TOra.</source>
-        <translation>Ricorda questo allarme al riavvio di TOra.</translation>
+        <translation type="obsolete">Ricorda questo allarme al riavvio di TOra.</translation>
+    </message>
+    <message>
+        <source>Remember this alarm when restarting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>toChartHandler</name>
+    <message>
+        <source>ALARM:</source>
+        <translation type="unfinished">ALARM:</translation>
+    </message>
+    <message>
+        <source>TOra alert:</source>
+        <translation type="unfinished">Avviso di TOra:</translation>
+    </message>
+    <message>
+        <source>A defined alert value was detected:
+
+%1
+
+At: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alarms</source>
+        <translation type="unfinished">Avvisi</translation>
+    </message>
+    <message>
+        <source>Persistent</source>
+        <translation type="unfinished">Persistente</translation>
+    </message>
+    <message>
+        <source>Temporary</source>
+        <translation type="unfinished">Temporaneo</translation>
     </message>
 </context>
 <context>
@@ -1798,19 +1845,11 @@
     </message>
     <message>
         <source>ALARM:</source>
-        <translation>ALARM:</translation>
+        <translation type="obsolete">ALARM:</translation>
     </message>
     <message>
         <source>TOra alert:</source>
-        <translation>Avviso di TOra:</translation>
-    </message>
-    <message>
-        <source>A defined alert value was detected:
-
-%1
-
-At: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Avviso di TOra:</translation>
     </message>
     <message>
         <source>Initial value didn&apos;t start with &quot; in CSV file</source>
@@ -1842,11 +1881,11 @@ At: %2</source>
     </message>
     <message>
         <source>Persistent</source>
-        <translation>Persistente</translation>
+        <translation type="obsolete">Persistente</translation>
     </message>
     <message>
         <source>Temporary</source>
-        <translation>Temporaneo</translation>
+        <translation type="obsolete">Temporaneo</translation>
     </message>
 </context>
 <context>
@@ -1884,7 +1923,7 @@ At: %2</source>
     </message>
     <message>
         <source>Remember to track this chart to this file always when starting TOra.</source>
-        <translation>Ricorda di tracciare questo grafico sempre su questo file all&apos;avvio di TOra.</translation>
+        <translation type="obsolete">Ricorda di tracciare questo grafico sempre su questo file all&apos;avvio di TOra.</translation>
     </message>
     <message>
         <source>Enable tracking</source>
@@ -1917,6 +1956,10 @@ At: %2</source>
     <message>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
+    </message>
+    <message>
+        <source>Remember to track this chart to this file always when starting.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2153,7 +2196,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Run UI blocking queries exclusively in main thread</source>
-        <translation>Esegui query che bloccano l&apos;interfaccia solo nel thread principale</translation>
+        <translation type="obsolete">Esegui query che bloccano l&apos;interfaccia solo nel thread principale</translation>
     </message>
     <message>
         <source>Let the background queries normally running on the main connection run in a separate connection.</source>
@@ -2165,7 +2208,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
-        <translation>Se selezionato TOra non aggiornerà il risultato se viene eseguito due volte di seguito.</translation>
+        <translation type="obsolete">Se selezionato TOra non aggiornerà il risultato se viene eseguito due volte di seguito.</translation>
     </message>
     <message>
         <source>Query settings</source>
@@ -2215,6 +2258,58 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
         <source>Never read object cache until mandatory</source>
         <translation>Non leggere mai la cache degli oggetti finchè non è obbligatorio</translation>
     </message>
+    <message>
+        <source>Never read object cache (Will leave parts of application nonfunctianal)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep alive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run UI blocking queries exclusively in main connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If checked will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dataformat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The way numbers should be presented.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decimals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of decimals for fixed decimal format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished">Standard</translation>
+    </message>
+    <message>
+        <source>Scientific</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed decimal</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toDebug</name>
@@ -2228,7 +2323,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Misc</source>
-        <translation>Varie</translation>
+        <translation type="obsolete">Varie</translation>
     </message>
     <message>
         <source>Expected function or procedure, internal error</source>
@@ -2248,7 +2343,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Anonimo</translation>
+        <translation type="obsolete">Anonimo</translation>
     </message>
     <message>
         <source>Output</source>
@@ -2388,7 +2483,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dati</translation>
     </message>
     <message>
         <source>W&amp;atch</source>
@@ -2396,7 +2491,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>Object Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tipo oggetto</translation>
     </message>
     <message>
         <source>Enabled</source>
@@ -2692,7 +2787,7 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     </message>
     <message>
         <source>&amp;Global</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Globale</translation>
     </message>
     <message>
         <source>Global scope of variable.</source>
@@ -2807,6 +2902,18 @@ alla dimensione minima iniziale. Il valore verrà aumentato.
     <message>
         <source>De-indent block in editor</source>
         <translation>Annulla indentazione del blocco nell&apos;editor</translation>
+    </message>
+    <message>
+        <source>Upper</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Case</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2972,7 +3079,7 @@ Error:          %3</source>
     </message>
     <message>
         <source>Directory where to find plugins when starting tora.</source>
-        <translation>Cartella in cui cercare i plugin all&apos;avvio di TOra.</translation>
+        <translation type="obsolete">Cartella in cui cercare i plugin all&apos;avvio di TOra.</translation>
     </message>
     <message>
         <source>&amp;Help directory</source>
@@ -2984,7 +3091,7 @@ Error:          %3</source>
     </message>
     <message>
         <source>What session to use by TOra when saving session.</source>
-        <translation>File di sessione usato da TOra per salvare la sessione.</translation>
+        <translation type="obsolete">File di sessione usato da TOra per salvare la sessione.</translation>
     </message>
     <message>
         <source>Options</source>
@@ -3082,7 +3189,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</source>
-        <translation>Usa i font con antialias se supportati da QT. E&apos; necessario riavviare TOra per questo.</translation>
+        <translation type="obsolete">Usa i font con antialias se supportati da QT. E&apos; necessario riavviare TOra per questo.</translation>
     </message>
     <message>
         <source>Docks use toolbars</source>
@@ -3106,7 +3213,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>Define the unit sizes should be displayed in tora.</source>
-        <translation>Definisci l&apos;unità di dimensione da usare in TOra.</translation>
+        <translation type="obsolete">Definisci l&apos;unità di dimensione da usare in TOra.</translation>
     </message>
     <message>
         <source>Bytes</source>
@@ -3196,6 +3303,42 @@ Lascia la password non criptata nel file di configurazione.</translation>
         <source>Which translation locale to use for this program. Must restart to have effect.</source>
         <translation>Quale lingua usare per questo programma. Dovete riavviare per renderla effettiva.</translation>
     </message>
+    <message>
+        <source>Directory where to find plugins when starting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cache directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory where to place cached dataaseinformation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory where to find help files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default session to use when saving a session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Define the unit sizes should be displayed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Disk Caching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Disk Caching of ObjectLists and Synonyms</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toHelp</name>
@@ -3225,7 +3368,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>TOra Help Browser</source>
-        <translation>TOra Help Browser</translation>
+        <translation type="obsolete">TOra Help Browser</translation>
     </message>
     <message>
         <source>Backward one help page</source>
@@ -3246,6 +3389,10 @@ Lascia la password non criptata nel file di configurazione.</translation>
     <message>
         <source>Help window</source>
         <translation>Finestra dell&apos;help</translation>
+    </message>
+    <message>
+        <source>Help Browser</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3386,6 +3533,18 @@ Lascia la password non criptata nel file di configurazione.</translation>
         <source>&amp;Invalid</source>
         <translation>Non val&amp;ido</translation>
     </message>
+    <message>
+        <source>Recompile selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recompiling all invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toInvalid:ListInvalid</name>
@@ -3518,7 +3677,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
 </context>
 <context>
@@ -3592,7 +3751,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
     <message>
         <source>Printing page %1</source>
@@ -3633,6 +3792,22 @@ Lascia la password non criptata nel file di configurazione.</translation>
     <message>
         <source>Edit SQL...</source>
         <translation>Modifica SQL ...</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3821,7 +3996,7 @@ Lascia la password non criptata nel file di configurazione.</translation>
     </message>
     <message>
         <source>&amp;About TOra...</source>
-        <translation>&amp;Informazioni su TOra ...</translation>
+        <translation type="obsolete">&amp;Informazioni su TOra ...</translation>
     </message>
     <message>
         <source>&amp;License...</source>
@@ -3960,7 +4135,7 @@ riguardanti il computer o la versione di TOra</translation>
     <message>
         <source>Message flood, temporary disabling of message box error reporting from now on.
 Restart TOra to reenable. You probably have a too high refreshrate in some tool.</source>
-        <translation>Troppi messaggi, i messaggi di errore vengono temporaneamente disabilitati.
+        <translation type="obsolete">Troppi messaggi, i messaggi di errore vengono temporaneamente disabilitati.
 Riavvia TORa per riattivarli. Probabilmente hai un intervallo di aggiornamento troppo breve su qualche strumento.</translation>
     </message>
     <message>
@@ -3979,12 +4154,17 @@ http://www.globecom.se/tora</source>
 
 http://www.globecom.se/tora</translation>
     </message>
+    <message>
+        <source>Message flood, temporary disabling of message box error reporting from now on.
+Restart to reenable. You probably have a too high refreshrate in some tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toMarkedText</name>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
     <message>
         <source>Printing page %1</source>
@@ -4084,7 +4264,7 @@ prima di aprire un nuovo file?</translation>
     <name>toMessageUI</name>
     <message>
         <source>TOra warning message</source>
-        <translation>Avviso di TOra</translation>
+        <translation type="obsolete">Avviso di TOra</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
@@ -4097,6 +4277,10 @@ prima di aprire un nuovo file?</translation>
     <message>
         <source>Display alerts in messagebar instead of poping up a dialog with a warning.</source>
         <translation>Mostra gli avvisi nella barra dei messaggi invece di aprire una finestra con l&apos;avviso.</translation>
+    </message>
+    <message>
+        <source>Warning message</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4242,6 +4426,25 @@ prima di aprire un nuovo file?</translation>
     <message>
         <source>Unexpected error</source>
         <translation>Errore inatteso</translation>
+    </message>
+</context>
+<context>
+    <name>toOracleConnection</name>
+    <message>
+        <source>Password expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter new password</source>
+        <translation type="unfinished">Inserisci la nuova password</translation>
+    </message>
+    <message>
+        <source>Enter password again for confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The two passwords doesn&apos;t match</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4517,7 +4720,7 @@ prima di aprire un nuovo file?</translation>
     </message>
     <message>
         <source>NULL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">NULL</translation>
     </message>
     <message>
         <source>Edit</source>
@@ -4563,7 +4766,7 @@ prima di aprire un nuovo file?</translation>
     </message>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
 </context>
 <context>
@@ -5025,7 +5228,7 @@ try to create them in the current schema?</source>
     </message>
     <message>
         <source>&amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Tutte</translation>
     </message>
     <message>
         <source>&amp;This</source>
@@ -5564,6 +5767,10 @@ Crearla adesso?</translation>
         <source>Users Opening</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toResultStats</name>
@@ -5759,6 +5966,10 @@ Crearla adesso?</translation>
     <message>
         <source>Cancel</source>
         <translation>Annulla</translation>
+    </message>
+    <message>
+        <source>Enable snapshot too old detection.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5958,6 +6169,14 @@ Crearla adesso?</translation>
         <source>Always start from the left border when displaying extent usage.</source>
         <translation>Inizia sempre dal bordo sinistro mostrando l&apos;utilizzo degli extent.</translation>
     </message>
+    <message>
+        <source>&amp;Enable snapshot too old detection.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable snapshot too old detection, will put load on large databases.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toSGAStatement</name>
@@ -5994,7 +6213,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Qualsiasi</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -6014,7 +6233,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selezione</translation>
     </message>
     <message>
         <source>All</source>
@@ -6094,6 +6313,10 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Unknown selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 execution, 1 parse</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6328,7 +6551,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Prossimo</translation>
     </message>
     <message>
         <source>No mode selected</source>
@@ -6340,7 +6563,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Internal error, lastLevel &lt; 0</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Errore Interno, lastLevel &lt; 0</translation>
     </message>
     <message>
         <source>All</source>
@@ -6352,10 +6575,36 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Same</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stesso</translation>
     </message>
     <message>
         <source>None</source>
+        <translation type="unfinished">Nessuno</translation>
+    </message>
+    <message>
+        <source>No filename specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t open file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error writing to file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Script generated to file %1 successfully</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rem Master script for DDL reverse engineering by TOra
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- Scripts generate to directory %1 successfully</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6379,7 +6628,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tutto</translation>
     </message>
     <message>
         <source>Objects</source>
@@ -6439,7 +6688,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nessuno</translation>
     </message>
     <message>
         <source>Generated schema</source>
@@ -6572,6 +6821,38 @@ Crearla adesso?</translation>
     <message>
         <source>Difference</source>
         <translation>Differenze</translation>
+    </message>
+    <message>
+        <source>Commit distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The number of insertstatements to make between each commit (0 means whole table)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output dir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output to directory so that each object is placed in a different file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished">Sfoglia</translation>
     </message>
 </context>
 <context>
@@ -7015,7 +7296,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>&amp;Global</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Globale</translation>
     </message>
     <message>
         <source>&amp;Temporary Tablespace</source>
@@ -7158,6 +7439,26 @@ Crearla adesso?</translation>
     <message>
         <source>Cancel</source>
         <translation>Annulla</translation>
+    </message>
+    <message>
+        <source>Only active users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exclude selected sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deselect all sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Long ops</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7446,6 +7747,10 @@ Crearla adesso?</translation>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
+    <message>
+        <source>Blocks</source>
+        <translation type="unfinished">Blocchi</translation>
+    </message>
 </context>
 <context>
     <name>toStorageDatafile</name>
@@ -7649,6 +7954,10 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Blocks/line: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tablespace: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7886,7 +8195,7 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>Internal error, lastLevel &lt; 0</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Errore Interno, lastLevel &lt; 0</translation>
     </message>
 </context>
 <context>
@@ -8040,6 +8349,25 @@ Crearla adesso?</translation>
     </message>
 </context>
 <context>
+    <name>toTemporary</name>
+    <message>
+        <source>Temporary Objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh list</source>
+        <translation type="unfinished">Aggiorna lista</translation>
+    </message>
+    <message>
+        <source>&amp;Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Temporary</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>toThread</name>
     <message>
         <source>Thread function &quot;%1&quot; failed.</source>
@@ -8050,7 +8378,7 @@ Crearla adesso?</translation>
     <name>toTool</name>
     <message>
         <source>Alert Messenger</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avvisi</translation>
     </message>
     <message>
         <source>Backup Manager</source>
@@ -8132,6 +8460,14 @@ Crearla adesso?</translation>
         <source>Unknown escape character in string (Only \\ and \n recognised)</source>
         <translation>Carattere di escape sconosciuto nella stringa (Solo \\ e \n sono accettati)</translation>
     </message>
+    <message>
+        <source>Couldn&apos;t save empty value at key %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1 value at key %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toToolSettingUI</name>
@@ -8161,7 +8497,11 @@ Crearla adesso?</translation>
     </message>
     <message>
         <source>You must restart TOra for any of these changes to have effect.</source>
-        <translation>Dovete riavviare TOra affinchè questi cambiamenti diventino effettivi.</translation>
+        <translation type="obsolete">Dovete riavviare TOra affinchè questi cambiamenti diventino effettivi.</translation>
+    </message>
+    <message>
+        <source>You must restart for any of these changes to have effect.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9038,6 +9378,26 @@ submenues are separated by a &apos;:&apos; character.</source>
         <source>No plan available to save</source>
         <translation>Nessun piano disponibile per il salvataggio</translation>
     </message>
+    <message>
+        <source>Previous log entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next log entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Executing all statements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter refreshrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh rate of query in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>toWorksheetSetupUI</name>
@@ -9132,6 +9492,16 @@ submenues are separated by a &apos;:&apos; character.</source>
     <message>
         <source>Keep previous results in while worksheet is open. Will consume lot of memory.</source>
         <translation>Conserva i risultati precedenti finchè il foglio di lavoro è aperto. Richiede molta memoria.</translation>
+    </message>
+    <message>
+        <source>Execute directory when selecting in log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Execute a statement when it is
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>selected in the log, if disabled simply selected
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>the statement in the log.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

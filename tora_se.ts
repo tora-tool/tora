@@ -26,11 +26,15 @@
     </message>
     <message>
         <source>TOra for Windows License</source>
-        <translation>TOra för Windows Licens</translation>
+        <translation type="obsolete">TOra för Windows Licens</translation>
     </message>
     <message>
         <source>GNU General Public License</source>
         <translation>GNU GPL</translation>
+    </message>
+    <message>
+        <source>End User License</source>
+        <translation>Slutanvändar licens</translation>
     </message>
 </context>
 <context>
@@ -224,6 +228,10 @@
     <message>
         <source>Running %1 Pending %2</source>
         <translation>Aktiva %1 Väntande %2</translation>
+    </message>
+    <message>
+        <source>Display SQL</source>
+        <translation>Visa SQL</translation>
     </message>
 </context>
 <context>
@@ -1751,7 +1759,46 @@
     </message>
     <message>
         <source>Remember this alarm when restarting TOra.</source>
-        <translation>Kom ihåg detta alarm när TOra startar om.</translation>
+        <translation type="obsolete">Kom ihåg detta alarm när TOra startar om.</translation>
+    </message>
+    <message>
+        <source>Remember this alarm when restarting.</source>
+        <translation>Kom ihåg detta alarm efter omstart.</translation>
+    </message>
+</context>
+<context>
+    <name>toChartHandler</name>
+    <message>
+        <source>ALARM:</source>
+        <translation>ALARM:</translation>
+    </message>
+    <message>
+        <source>TOra alert:</source>
+        <translation>TOra alarm:</translation>
+    </message>
+    <message>
+        <source>A defined alert value was detected:
+
+%1
+
+At: %2</source>
+        <translation>Ett definierat alarm värde har detekterats:
+
+%1
+
+Vid: %2</translation>
+    </message>
+    <message>
+        <source>Alarms</source>
+        <translation>Alarm</translation>
+    </message>
+    <message>
+        <source>Persistent</source>
+        <translation>Permanent</translation>
+    </message>
+    <message>
+        <source>Temporary</source>
+        <translation>Tillfällig</translation>
     </message>
 </context>
 <context>
@@ -1802,11 +1849,11 @@
     </message>
     <message>
         <source>ALARM:</source>
-        <translation>ALARM:</translation>
+        <translation type="obsolete">ALARM:</translation>
     </message>
     <message>
         <source>TOra alert:</source>
-        <translation>TOra alarm:</translation>
+        <translation type="obsolete">TOra alarm:</translation>
     </message>
     <message>
         <source>A defined alert value was detected:
@@ -1814,7 +1861,7 @@
 %1
 
 At: %2</source>
-        <translation>Ett definierat alarm värde har detekterats:
+        <translation type="obsolete">Ett definierat alarm värde har detekterats:
 
 %1
 
@@ -1850,11 +1897,11 @@ Vid: %2</translation>
     </message>
     <message>
         <source>Persistent</source>
-        <translation>Permanent</translation>
+        <translation type="obsolete">Permanent</translation>
     </message>
     <message>
         <source>Temporary</source>
-        <translation>Tillfällig</translation>
+        <translation type="obsolete">Tillfällig</translation>
     </message>
 </context>
 <context>
@@ -1892,7 +1939,7 @@ Vid: %2</translation>
     </message>
     <message>
         <source>Remember to track this chart to this file always when starting TOra.</source>
-        <translation>Kom ihåg att spara detta diagram till denna fil om TOra startas om.</translation>
+        <translation type="obsolete">Kom ihåg att spara detta diagram till denna fil om TOra startas om.</translation>
     </message>
     <message>
         <source>Enable tracking</source>
@@ -1925,6 +1972,10 @@ Vid: %2</translation>
     <message>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
+    </message>
+    <message>
+        <source>Remember to track this chart to this file always when starting.</source>
+        <translation>Kom ihåg att spara detta diagram till fil efter omstart.</translation>
     </message>
 </context>
 <context>
@@ -2172,7 +2223,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
-        <translation>Om checkad TOra kommer inte läsa om data om omkörda frågan är exakt lika två gånger i rad.</translation>
+        <translation type="obsolete">Om checkad TOra kommer inte läsa om data om omkörda frågan är exakt lika två gånger i rad.</translation>
     </message>
     <message>
         <source>Query settings</source>
@@ -2228,7 +2279,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Never read object cache (Will leave parts of TOra nonfunctianal)</source>
-        <translation>Läs aldrig objekt cache (Lämnar delar av TOra icke fungerande)</translation>
+        <translation type="obsolete">Läs aldrig objekt cache (Lämnar delar av TOra icke fungerande)</translation>
     </message>
     <message>
         <source>Keep alive</source>
@@ -2237,6 +2288,46 @@ fetch size. Will adjust value to be higher.</source>
     <message>
         <source>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</source>
         <translation>Se till att anslutningar hålls vid liv genom att periodiskt (Var 5 minut) sända en fråga på alla inaktiva anslutningar.</translation>
+    </message>
+    <message>
+        <source>Never read object cache (Will leave parts of application nonfunctianal)</source>
+        <translation>Läs aldrig om cache (Kommer lämna delar av applikationen icke fungerande)</translation>
+    </message>
+    <message>
+        <source>If checked will not refresh a result if it is reexecuted exactly the same two times in a row.</source>
+        <translation>Updatera inte resultat om det exekveras exakt lika dann två gånger i rad.</translation>
+    </message>
+    <message>
+        <source>Dataformat</source>
+        <translation>Dataformat</translation>
+    </message>
+    <message>
+        <source>Number format</source>
+        <translation>Nummerformat</translation>
+    </message>
+    <message>
+        <source>The way numbers should be presented.</source>
+        <translation>Sättet sifror skall visas.</translation>
+    </message>
+    <message>
+        <source>Decimals</source>
+        <translation>Decimaler</translation>
+    </message>
+    <message>
+        <source>Number of decimals for fixed decimal format.</source>
+        <translation>Antal decimaler för fast decimalformat.</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>Standard</translation>
+    </message>
+    <message>
+        <source>Scientific</source>
+        <translation>Vetenskaplig</translation>
+    </message>
+    <message>
+        <source>Fixed decimal</source>
+        <translation>Fasta decimaler</translation>
     </message>
 </context>
 <context>
@@ -2251,7 +2342,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Misc</source>
-        <translation>Allmänt</translation>
+        <translation type="obsolete">Allmänt</translation>
     </message>
     <message>
         <source>Expected function or procedure, internal error</source>
@@ -2271,7 +2362,7 @@ fetch size. Will adjust value to be higher.</source>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Anonymt</translation>
+        <translation type="obsolete">Anonymt</translation>
     </message>
     <message>
         <source>Output</source>
@@ -2832,6 +2923,18 @@ fetch size. Will adjust value to be higher.</source>
         <source>De-indent block in editor</source>
         <translation>Avindentera block i editor</translation>
     </message>
+    <message>
+        <source>Upper</source>
+        <translation>Versaler</translation>
+    </message>
+    <message>
+        <source>Lower</source>
+        <translation>Gemener</translation>
+    </message>
+    <message>
+        <source>Modify Case</source>
+        <translation>Ändra versaler</translation>
+    </message>
 </context>
 <context>
     <name>toExtract</name>
@@ -3008,7 +3111,7 @@ Fel:            %3</translation>
     </message>
     <message>
         <source>Directory where to find plugins when starting tora.</source>
-        <translation>Bibliotek där plugin ligger när TOra startar.</translation>
+        <translation type="obsolete">Bibliotek där plugin ligger när TOra startar.</translation>
     </message>
     <message>
         <source>&amp;Help directory</source>
@@ -3020,7 +3123,7 @@ Fel:            %3</translation>
     </message>
     <message>
         <source>What session to use by TOra when saving session.</source>
-        <translation>Vilken fil som default skall användas när TOra sparar sessionen.</translation>
+        <translation type="obsolete">Vilken fil som default skall användas när TOra sparar sessionen.</translation>
     </message>
     <message>
         <source>Options</source>
@@ -3118,7 +3221,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>Use antialiase fonts if Qt supports this. You need to restart tora for this to take affect.</source>
-        <translation>Använd &quot;antialiase&quot; typsnitt om Qt stödjer detta. Du måste starta om för att detta skall verka.</translation>
+        <translation type="obsolete">Använd &quot;antialiase&quot; typsnitt om Qt stödjer detta. Du måste starta om för att detta skall verka.</translation>
     </message>
     <message>
         <source>Docks use toolbars</source>
@@ -3142,7 +3245,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>Define the unit sizes should be displayed in tora.</source>
-        <translation>Definierar vilken storleksenhet som skall visas i TOra.</translation>
+        <translation type="obsolete">Definierar vilken storleksenhet som skall visas i TOra.</translation>
     </message>
     <message>
         <source>Bytes</source>
@@ -3244,6 +3347,30 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
         <source>Use Disk Caching of ObjectLists and Synonyms</source>
         <translation>Använd disk cachning av objektlista och synonymer</translation>
     </message>
+    <message>
+        <source>Directory where to find plugins when starting.</source>
+        <translation>Bibliotek som plugins finns när du startar.</translation>
+    </message>
+    <message>
+        <source>Directory where to place cached dataaseinformation.</source>
+        <translation>Bibliotek att spara databas cache.</translation>
+    </message>
+    <message>
+        <source>Directory where to find help files.</source>
+        <translation>Bibliotek där hjälpfiler finns.</translation>
+    </message>
+    <message>
+        <source>Default session to use when saving a session.</source>
+        <translation>Standard filnamn att spara session.</translation>
+    </message>
+    <message>
+        <source>Use antialiase fonts if Qt supports this. You need to restart for this to take affect.</source>
+        <translation>Använd antialias typsnitt om Qt stöder det. Du måste starta om för att ändringar skall få effekt.</translation>
+    </message>
+    <message>
+        <source>Define the unit sizes should be displayed.</source>
+        <translation>Definiera enheted som storlekar skall visas med.</translation>
+    </message>
 </context>
 <context>
     <name>toHelp</name>
@@ -3273,7 +3400,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>TOra Help Browser</source>
-        <translation>TOra Hjälpläsare</translation>
+        <translation type="obsolete">TOra Hjälpläsare</translation>
     </message>
     <message>
         <source>Backward one help page</source>
@@ -3294,6 +3421,10 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>Help window</source>
         <translation>Hjälpfönster</translation>
+    </message>
+    <message>
+        <source>Help Browser</source>
+        <translation>Hjälpnavigerare</translation>
     </message>
 </context>
 <context>
@@ -3436,7 +3567,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>Recompile all</source>
-        <translation>Kompilera om allt</translation>
+        <translation type="obsolete">Kompilera om allt</translation>
     </message>
     <message>
         <source>Recompiling all invalid</source>
@@ -3445,6 +3576,10 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>Cancel</source>
         <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Recompile selected</source>
+        <translation>Kompilera om urval</translation>
     </message>
 </context>
 <context>
@@ -3578,7 +3713,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
 </context>
 <context>
@@ -3651,10 +3786,6 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
         <translation>Sida: %1</translation>
     </message>
     <message>
-        <source>TOra</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Printing page %1</source>
         <translation>Skriver ut sida %1</translation>
     </message>
@@ -3693,6 +3824,22 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     <message>
         <source>Edit SQL...</source>
         <translation>Editera SQL...</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Vänster</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>Mitten</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>Höger</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>Justering</translation>
     </message>
 </context>
 <context>
@@ -3881,7 +4028,7 @@ Kommer lämna lösenorden okrypterade i programmets konfigurationsfil.</translat
     </message>
     <message>
         <source>&amp;About TOra...</source>
-        <translation>&amp;Om TOra...</translation>
+        <translation type="obsolete">&amp;Om TOra...</translation>
     </message>
     <message>
         <source>&amp;License...</source>
@@ -4016,7 +4163,7 @@ om din dator inklusive version eller platform av TOra tll Underscore AB</transla
     <message>
         <source>Message flood, temporary disabling of message box error reporting from now on.
 Restart TOra to reenable. You probably have a too high refreshrate in some tool.</source>
-        <translation>Meddelande överbelastning. Stänger tillfälligt av meddelanden i dialogruta från och med nu.
+        <translation type="obsolete">Meddelande överbelastning. Stänger tillfälligt av meddelanden i dialogruta från och med nu.
 Starta om TOra för att börja visa igen. Du har troligtvis en för hög uppdateringshastighet i något verktyg.</translation>
     </message>
     <message>
@@ -4039,12 +4186,18 @@ http://www.globecom.se/tora</translation>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
+    <message>
+        <source>Message flood, temporary disabling of message box error reporting from now on.
+Restart to reenable. You probably have a too high refreshrate in some tool.</source>
+        <translation>Meddelande överbelastning, temporärt stängt av meddelandebox felrapportering från och med nu.
+Starta om för att slå på igen. Du har troligtvis för hög updateringsfrekvens i något verktyg.</translation>
+    </message>
 </context>
 <context>
     <name>toMarkedText</name>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
     <message>
         <source>Printing page %1</source>
@@ -4143,7 +4296,7 @@ before opening a new file?</source>
     <name>toMessageUI</name>
     <message>
         <source>TOra warning message</source>
-        <translation>TOra varningsmeddelande</translation>
+        <translation type="obsolete">TOra varningsmeddelande</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
@@ -4160,6 +4313,10 @@ before opening a new file?</source>
     <message>
         <source>Message</source>
         <translation type="obsolete">Meddelande</translation>
+    </message>
+    <message>
+        <source>Warning message</source>
+        <translation>Varningsmeddelande</translation>
     </message>
 </context>
 <context>
@@ -4306,6 +4463,25 @@ before opening a new file?</source>
     <message>
         <source>Unexpected error</source>
         <translation>Oväntat fel</translation>
+    </message>
+</context>
+<context>
+    <name>toOracleConnection</name>
+    <message>
+        <source>Password expired</source>
+        <translation>Lösenord utgånget</translation>
+    </message>
+    <message>
+        <source>Enter new password</source>
+        <translation>Ange nytt lösenord</translation>
+    </message>
+    <message>
+        <source>Enter password again for confirmation</source>
+        <translation>Ange nytt lösenord igen</translation>
+    </message>
+    <message>
+        <source>The two passwords doesn&apos;t match</source>
+        <translation>De två lösenorden stämmer inte</translation>
     </message>
 </context>
 <context>
@@ -4631,7 +4807,7 @@ before opening a new file?</source>
     </message>
     <message>
         <source>TOra</source>
-        <translation>TOra</translation>
+        <translation type="obsolete">TOra</translation>
     </message>
 </context>
 <context>
@@ -5842,6 +6018,10 @@ Skall TOra försöka skapa den?</translation>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
+    <message>
+        <source>Enable snapshot too old detection.</source>
+        <translation>Slå på snapshot too old detektering.</translation>
+    </message>
 </context>
 <context>
     <name>toRollback:Information</name>
@@ -6040,6 +6220,14 @@ Skall TOra försöka skapa den?</translation>
         <source>Always start from the left border when displaying extent usage.</source>
         <translation>Visa alltid från början av vänstra kanten när användandet av extent visas.</translation>
     </message>
+    <message>
+        <source>&amp;Enable snapshot too old detection.</source>
+        <translation>Slå på snapshot too old d&amp;etektering.</translation>
+    </message>
+    <message>
+        <source>Enable snapshot too old detection, will put load on large databases.</source>
+        <translation>Slå på snapshot too old detektering, belastar stora databaser.</translation>
+    </message>
 </context>
 <context>
     <name>toSGAStatement</name>
@@ -6177,6 +6365,10 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Top buffers/row</source>
         <translation>Top bufferhämtning/rad</translation>
+    </message>
+    <message>
+        <source>1 execution, 1 parse</source>
+        <translation>1 exekvering och 1 parsning</translation>
     </message>
 </context>
 <context>
@@ -7309,6 +7501,26 @@ Skall TOra försöka skapa den?</translation>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
+    <message>
+        <source>Only active users</source>
+        <translation>Endast aktiva användare</translation>
+    </message>
+    <message>
+        <source>Exclude selected sessions</source>
+        <translation>Exkludera valda sessioner</translation>
+    </message>
+    <message>
+        <source>Select all sessions</source>
+        <translation>Välj alla sessioner</translation>
+    </message>
+    <message>
+        <source>Deselect all sessions</source>
+        <translation>Avmarkera alla sessioner</translation>
+    </message>
+    <message>
+        <source>Long ops</source>
+        <translation>Långa operationer</translation>
+    </message>
 </context>
 <context>
     <name>toSession:AccessedObjects</name>
@@ -7595,6 +7807,10 @@ Skall TOra försöka skapa den?</translation>
     <message>
         <source>Cancel</source>
         <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Blocks</source>
+        <translation>Block</translation>
     </message>
 </context>
 <context>
@@ -8194,6 +8410,25 @@ Skall TOra försöka skapa den?</translation>
     </message>
 </context>
 <context>
+    <name>toTemporary</name>
+    <message>
+        <source>Temporary Objects</source>
+        <translation>Temporära Objekt</translation>
+    </message>
+    <message>
+        <source>Refresh list</source>
+        <translation>Uppdatera lista</translation>
+    </message>
+    <message>
+        <source>&amp;Refresh</source>
+        <translation>&amp;Uppdatera</translation>
+    </message>
+    <message>
+        <source>&amp;Temporary</source>
+        <translation>&amp;Temporär</translation>
+    </message>
+</context>
+<context>
     <name>toThread</name>
     <message>
         <source>Thread function &quot;%1&quot; failed.</source>
@@ -8286,6 +8521,14 @@ Skall TOra försöka skapa den?</translation>
         <source>Storage Manager</source>
         <translation>Lagrings Hanterare</translation>
     </message>
+    <message>
+        <source>Couldn&apos;t save empty value at key %1</source>
+        <translation>Kunde inte spara tomt värde på nyckel %1</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1 value at key %2</source>
+        <translation>Kunde inte spara värdet %1 på nyckel %2</translation>
+    </message>
 </context>
 <context>
     <name>toToolSettingUI</name>
@@ -8315,6 +8558,10 @@ Skall TOra försöka skapa den?</translation>
     </message>
     <message>
         <source>You must restart TOra for any of these changes to have effect.</source>
+        <translation type="obsolete">Du måste starta om TOra för att dessa ändringar skall ha effekt.</translation>
+    </message>
+    <message>
+        <source>You must restart for any of these changes to have effect.</source>
         <translation>Du måste starta om TOra för att dessa ändringar skall ha effekt.</translation>
     </message>
 </context>
@@ -9197,6 +9444,26 @@ separeras med ett &apos;:&apos; tecken.</translation>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
+    <message>
+        <source>Previous log entry</source>
+        <translation>Föregående i logg</translation>
+    </message>
+    <message>
+        <source>Next log entry</source>
+        <translation>Nästa i logg</translation>
+    </message>
+    <message>
+        <source>Executing all statements</source>
+        <translation>Exekvera alla satser</translation>
+    </message>
+    <message>
+        <source>Enter refreshrate</source>
+        <translation>Ange updateringsfrekvens</translation>
+    </message>
+    <message>
+        <source>Refresh rate of query in seconds</source>
+        <translation>Updateringsfrekvens i sekunder</translation>
+    </message>
 </context>
 <context>
     <name>toWorksheetSetupUI</name>
@@ -9291,6 +9558,17 @@ separeras med ett &apos;:&apos; tecken.</translation>
     <message>
         <source>Keep previous results in while worksheet is open. Will consume lot of memory.</source>
         <translation>Spara föregående resultat medan arbetsbladet är öppet. Kommer att ta upp mycket minne.</translation>
+    </message>
+    <message>
+        <source>Execute directory when selecting in log</source>
+        <translation>Exekvera fråga när det välja i log</translation>
+    </message>
+    <message>
+        <source>Execute a statement when it is
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>selected in the log, if disabled simply selected
+<byte value="x9"/><byte value="x9"/><byte value="x9"/>the statement in the log.</source>
+        <translation>Exekvera sats när den valdes i loggen. Om avslagen så väljs satsen bara i loggen.
+</translation>
     </message>
 </context>
 <context>
