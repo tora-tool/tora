@@ -63,6 +63,18 @@
 
 #include "icons/totemplate.xpm"
 
+static std::map<QString,QString> DefaultText(void)
+{
+  std::map<QString,QString> def;
+  QString file=toPluginPath();
+  file+="/sqlfunctions.tpl";
+  def["PL/SQL Functions"]=file;
+  file=toPluginPath();
+  file+="/hints.tpl";
+  def["Optimizer Hints"]=file;
+  return def;
+}
+
 class toTemplateEdit : public toTemplateEditUI, public toHelpContext {
   std::map<QString,QString> &TemplateMap;
   std::map<QString,QString>::iterator LastTemplate;
@@ -286,20 +298,20 @@ public:
   toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
     : toTemplateSetupUI(parent,name),toSettingTab("template.html#setup"),Tool(tool)
   {
+    std::map<QString,QString> def=DefaultText();
+
     int tot=Tool->config("Number",QString::number(-1)).toInt();
-    if(tot!=-1) {
-      for(int i=0;i<tot;i++) {
-	QString num=QString::number(i);
-	QString root=Tool->config(num,"");
-	num+="file";
-	QString file=Tool->config(num,"");
-	new QListViewItem(FileList,root,file);
-      }
-    } else {
-      QString file=toPluginPath();
-      file+="/sqlfunctions.tpl";
-      new QListViewItem(FileList,"PL/SQL Functions",file);
+    for(int i=0;i<tot;i++) {
+      QString num=QString::number(i);
+      QString root=Tool->config(num,"");
+      num+="file";
+      QString file=Tool->config(num,"");
+      new QListViewItem(FileList,root,file);
+      if (def.find(root)!=def.end())
+	def.erase(def.find(root));
     }
+    for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
+      new QListViewItem(FileList,(*i).first,(*i).second);
   }
   virtual void saveSetting(void)
   {
@@ -500,19 +512,19 @@ public:
 void toTextTemplate::insertItems(QListView *parent)
 {
   int tot=TemplateTool.config("Number",QString::number(-1)).toInt();
-  if(tot!=-1) {
-    for(int i=0;i<tot;i++) {
-      QString num=QString::number(i);
-      QString root=TemplateTool.config(num,"");
-      num+="file";
-      QString file=TemplateTool.config(num,"");
-      addFile(parent,root,file);
-    }
-  } else {
-    QString file=toPluginPath();
-    file+="/sqlfunctions.tpl";
-    addFile(parent,"PL/SQL Functions",file);
+  std::map<QString,QString> def=DefaultText();
+
+  for(int i=0;i<tot;i++) {
+    QString num=QString::number(i);
+    QString root=TemplateTool.config(num,"");
+    num+="file";
+    QString file=TemplateTool.config(num,"");
+    addFile(parent,root,file);
+    if (def.find(root)!=def.end())
+      def.erase(def.find(root));
   }
+  for (std::map<QString,QString>::iterator i=def.begin();i!=def.end();i++)
+    addFile(parent,(*i).first,(*i).second);
 }
 
 void toTextTemplate::addFile(QListView *parent,const QString &root,const QString &file)
