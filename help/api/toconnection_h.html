@@ -522,6 +522,7 @@ private:
 
   connectionImpl *Connection;
 
+  bool ReadTables;
   std::map&lt;tableName,std::list&lt;columnDesc&gt; &gt; ColumnCache;
   std::list&lt;tableName&gt; TableNames;
 

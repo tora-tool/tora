@@ -1,4 +1,4 @@
-1.1.1:
+1.1.1: Released 2001-09-21
 
 2001-09-10: Fixed bug with no graphs being drawn.
 2001-09-10: Fixed some problems with Qt3 support.
@@ -74,6 +74,7 @@
 2001-09-19: Made it possible to use toExtract without progress indication.
 2001-09-19: Fixed tooltip problem in toResultCols.
 2001-09-19: Fixed problem with triggers in Oracle8.
+2001-09-19: Fixed SQL type in show no coalesced storage and Oracle 8.
 
 1.1.0: Released 2001-09-09
 

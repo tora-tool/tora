@@ -167,7 +167,6 @@ static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
 			       "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 			       "   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
 			       " ORDER  BY d.tablespace_name",
-
 			       "",
 			       "8.0");
 
@@ -229,7 +228,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "  FROM  sys.dba_tablespaces d,\n"
 				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
-				 "       (select :unit<int> unit from dual) b,\n"
+				 "       (select :unit<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				 "   AND  NOT (d.extent_management like 'LOCAL' AND d.contents like 'TEMPORARY')\n"
