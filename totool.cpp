@@ -353,7 +353,7 @@ void toTool::loadConfig(void)
 #endif
 }
 
-bool toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
+void toTool::loadMap(const QString &filename,std::map<QString,QString> &pairs)
 {
   QCString data=toReadFile(filename);
 
