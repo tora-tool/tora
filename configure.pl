@@ -962,9 +962,6 @@ __TEMP__
 	}
 	$TestDB.=" -lclntsh";
     }
-    if ($MySQLFound) {
-	$TestDB.=" -lmysqlclient";
-    }
 
     findFile("^libstdc\\+\\+.*\\.a",sub {
 	                                $StdCppLibStatic=$_[0];
@@ -1045,6 +1042,10 @@ __TEMP__
 		    $MySQLLib=$MySQLStatic;
 		}
 	    }
+	}
+
+	if ($MySQLFound) {
+	    $TestDB.=" -lmysqlclient";
 	}
     }
 	
