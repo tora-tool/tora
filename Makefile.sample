@@ -171,6 +171,7 @@ API=	\
 	toresultstats.h		\
 	toresultview.h		\
 	tosgastatement.h	\
+	tosmtp.h		\
 	tosql.h			\
 	tosqlparse.h		\
 	totemplate.h		\
@@ -274,6 +275,7 @@ SOURCES=\
 	tosession.cpp \
 	tosgastatement.cpp \
 	tosgatrace.cpp \
+	tosmtp.cpp \
 	tosql.cpp \
 	tosqledit.cpp \
 	tosqlparse.cpp \
@@ -612,6 +614,7 @@ tora:\
 	objs/toresultview.o \
 	objs/tosearchreplace.o \
 	objs/tosearchreplaceui.o \
+	objs/tosmtp.o \
 	objs/tosql.o \
 	objs/tosqlparse.o \
 	objs/tosyntaxsetup.o \

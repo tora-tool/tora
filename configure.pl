@@ -67,6 +67,7 @@ my @source=(
 	    "toresultview",
 	    "tosearchreplace",
 	    "tosearchreplaceui",
+	    "tosmtp",
 	    "tosql",
 	    "tosqlparse",
 	    "tosyntaxsetup",
@@ -1338,6 +1339,7 @@ API=	\\
 	toresultstats.h		\\
 	toresultview.h		\\
 	tosgastatement.h	\\
+	tosmtp.h                \\
 	tosql.h			\\
 	tosqlparse.h		\\
 	totemplate.h		\\
@@ -1442,8 +1444,8 @@ __EOT__
 install-kde:
 	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
 	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
-	mkdir -p \$(KDE_BASE)/share/apps/kappfinder/apps/Development
-	cp -f rpm/tora.desktop \$(KDE_BASE)/share/apps/kappfinder/apps/Development
+	mkdir -p \$(KDE_BASE)/share/applnk/Development
+	cp -f rpm/tora.desktop \$(KDE_BASE)/share/applnk/Development
 
 __EOT__
 	} else {
