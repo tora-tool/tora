@@ -7283,9 +7283,9 @@ public:
   switch(rc){
   case OCI_SUCCESS:
    if(aoffset==1)
-    s.set_len(alob_len);
+    s.set_len(amt);
    else
-    s.set_len(alob_len-aoffset+1);
+    s.set_len(amt);
    break;
   case OCI_NEED_DATA:
    s.set_len(s.buf_size);
@@ -7295,7 +7295,7 @@ public:
    break;
   }
   if(rc==OCI_NEED_DATA||rc==OCI_SUCCESS){
-   aoffset+=s.length;
+    aoffset+=(alob_len<s.buf_size?alob_len:s.buf_size);
    return 1;
   }else
    return 0;
