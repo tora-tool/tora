@@ -17,7 +17,7 @@ Installing from source
 Before you try to compile TOra you will need the following prerequisites:
 
 1. A unix system which supports Qt (Dooh).
-2. Qt 2.2 or later.
+2. Qt 2.2 or later. Requires an interface compiler of at least version 3.0.
 3. Oracle 8i (At least Oracle 8.1.5), it might work partially with earlier
    versions of Oracle but is as of this version not supported (Please try and
    send me patches).

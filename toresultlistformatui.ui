@@ -1,137 +1,159 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI>
 <class>toResultListFormatUI</class>
-<widget class="QDialog">
-    <property name="name">
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
         <cstring>toResultListFormatUI</cstring>
     </property>
-    <property name="geometry">
+    <property stdset="1">
+        <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
             <width>311</width>
-            <height>236</height>
+            <height>118</height>
         </rect>
     </property>
-    <property name="caption">
+    <property stdset="1">
+        <name>caption</name>
         <string>Choose format</string>
     </property>
     <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
+        <property stdset="1">
+            <name>margin</name>
             <number>11</number>
         </property>
-        <property name="spacing">
+        <property stdset="1">
+            <name>spacing</name>
             <number>6</number>
         </property>
-        <widget class="QComboBox" row="1" column="0" rowspan="1" colspan="2">
-            <property name="name">
+        <widget row="5"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <widget row="5"  column="1" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+            <class>QComboBox</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>Format</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="0" column="0" rowspan="1" colspan="2">
-            <property name="name">
+        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
                 <cstring>TextLabel1</cstring>
             </property>
-            <property name="sizePolicy">
+            <property stdset="1">
+                <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
+                    <vsizetype>7</vsizetype>
                 </sizepolicy>
             </property>
-            <property name="text">
-                <string>&amp;Choose format.</string>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Choose format of exported file.</string>
             </property>
-            <property name="buddy" stdset="0">
+            <property>
+                <name>buddy</name>
                 <cstring>Format</cstring>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="0">
-            <property name="name">
+        <widget row="3" column="0">
+	    <class>QLineEdit</class>
+            <property>
+		<name>name</name>
                 <cstring>Separator</cstring>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
+        <widget row="2" column="0">
+	    <class>QLabel</class>
+            <property>
+		<name>name</name>
                 <cstring>TextLabel1_2</cstring>
             </property>
-            <property name="text">
+            <property>
+		<name>text</name>
                 <string>Separator</string>
             </property>
         </widget>
-        <widget class="QLabel" row="2" column="1">
-            <property name="name">
+        <widget row="2" column="1" rowspan="1" colspan="2">
+	    <class>QLabel</class>
+            <property>
+		<name>name</name>
                 <cstring>TextLabel2</cstring>
             </property>
-            <property name="text">
+            <property>
+		<name>text</name>
                 <string>Delimiter</string>
             </property>
         </widget>
-        <widget class="QLineEdit" row="3" column="1">
-            <property name="name">
+        <widget row="3" column="1" rowspan="1" colspan="2">
+	    <class>QLineEdit</class>
+            <property>
+		<name>name</name>
                 <cstring>Delimiter</cstring>
             </property>
         </widget>
         <spacer row="4" column="0">
-            <property name="name">
+            <property>
+		<name>name</name>
                 <cstring>Spacer2</cstring>
             </property>
-            <property name="orientation">
+            <property>
+		<name>orientation</name>
                 <enum>Vertical</enum>
             </property>
-            <property name="sizeType">
+            <property>
+		<name>sizeType</name>
                 <enum>Expanding</enum>
             </property>
         </spacer>
-        <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>Layout1</cstring>
+        <spacer row="5"  column="0" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer1</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>PushButton1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Ok</string>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>PushButton2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Cancel</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
     </grid>
 </widget>
 <connections>
@@ -147,12 +169,6 @@
         <receiver>toResultListFormatUI</receiver>
         <slot>reject()</slot>
     </connection>
-    <connection>
-        <sender>Format</sender>
-        <signal>activated(int)</signal>
-        <receiver>toResultListFormatUI</receiver>
-        <slot>formatChanged(int)</slot>
-    </connection>
 </connections>
 <tabstops>
     <tabstop>Format</tabstop>
@@ -161,8 +177,4 @@
     <tabstop>PushButton1</tabstop>
     <tabstop>PushButton2</tabstop>
 </tabstops>
-<slots>
-    <slot>formatChanged(int)</slot>
-</slots>
-<layoutdefaults spacing="6" margin="11"/>
 </UI>
