@@ -62,6 +62,7 @@ CLEAN :
 	-@erase "$(INTDIR)\tooutput.obj"
 	-@erase "$(INTDIR)\toparamget.obj"
 	-@erase "$(INTDIR)\topreferences.obj"
+	-@erase "$(INTDIR)\tora.res"
 	-@erase "$(INTDIR)\toresultcols.obj"
 	-@erase "$(INTDIR)\toresultconstraint.obj"
 	-@erase "$(INTDIR)\toresultcontent.obj"
@@ -110,7 +111,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GR /GX /O2 /I "$(QTDIR)\include" /I "$(ORACLE_HOME)\oci\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /ML /W3 /GR /GX /O2 /I "$(QTDIR)\include" /I "$(ORACLE_HOME)\oci\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "OTL_ORA8I" /D TO_NAMESPACE="namespace std {}; using namespace std" /D "QT_THREAD_SUPPORT" /D "QT_DLL" /D "NO_DEBUG" /Fp"$(INTDIR)\tora.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -145,12 +146,13 @@ CPP_PROJ=/nologo /MD /W3 /GR /GX /O2 /I "$(QTDIR)\include" /I "$(ORACLE_HOME)\oc
 MTL=midl.exe
 MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /win32 
 RSC=rc.exe
+RSC_PROJ=/l 0x41d /fo"$(INTDIR)\tora.res" /d "NDEBUG" 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\tora.bsc" 
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib imm32.lib winmm.lib wsock32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /machine:I386 /out:"$(OUTDIR)\tora.exe" /libpath:"$(ORACLE_HOME)\oci\lib\msvc" /libpath:"$(QTDIR)\lib" 
+LINK32_FLAGS=oci.lib qt-mt230nc.lib qtmain.lib imm32.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\tora.pdb" /machine:I386 /out:"$(OUTDIR)\tora.exe" /libpath:"$(ORACLE_HOME)\oci\lib\msvc" /libpath:"$(QTDIR)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\main.obj" \
 	"$(INTDIR)\toabout.obj" \
@@ -217,7 +219,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\totool.obj" \
 	"$(INTDIR)\totuning.obj" \
 	"$(INTDIR)\toworksheet.obj" \
-	"$(INTDIR)\utils.obj"
+	"$(INTDIR)\utils.obj" \
+	"$(INTDIR)\tora.res"
 
 "$(OUTDIR)\tora.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -261,6 +264,7 @@ CLEAN :
 	-@erase "$(INTDIR)\tooutput.obj"
 	-@erase "$(INTDIR)\toparamget.obj"
 	-@erase "$(INTDIR)\topreferences.obj"
+	-@erase "$(INTDIR)\tora.res"
 	-@erase "$(INTDIR)\toresultcols.obj"
 	-@erase "$(INTDIR)\toresultconstraint.obj"
 	-@erase "$(INTDIR)\toresultcontent.obj"
@@ -346,6 +350,7 @@ CPP_PROJ=/nologo /MTd /W3 /GR /GX /Zi /Od /I "$(QTDIR)\include" /I "$(ORACLE_HOM
 MTL=midl.exe
 MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
 RSC=rc.exe
+RSC_PROJ=/l 0x41d /fo"$(INTDIR)\tora.res" /d "_DEBUG" 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\tora.bsc" 
 BSC32_SBRS= \
@@ -418,7 +423,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\totool.obj" \
 	"$(INTDIR)\totuning.obj" \
 	"$(INTDIR)\toworksheet.obj" \
-	"$(INTDIR)\utils.obj"
+	"$(INTDIR)\utils.obj" \
+	"$(INTDIR)\tora.res"
 
 "$(OUTDIR)\tora.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -562,6 +568,24 @@ SOURCE=.\topreferences.cpp
 
 "$(INTDIR)\topreferences.obj" : $(SOURCE) "$(INTDIR)"
 
+
+SOURCE=.\windows\tora.rc
+
+!IF  "$(CFG)" == "tora - Win32 Release"
+
+
+"$(INTDIR)\tora.res" : $(SOURCE) "$(INTDIR)"
+	$(RSC) /l 0x41d /fo"$(INTDIR)\tora.res" /i "windows" /d "NDEBUG" $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "tora - Win32 Debug"
+
+
+"$(INTDIR)\tora.res" : $(SOURCE) "$(INTDIR)"
+	$(RSC) /l 0x41d /fo"$(INTDIR)\tora.res" /i "windows" /d "_DEBUG" $(SOURCE)
+
+
+!ENDIF 
 
 SOURCE=.\toresultcols.cpp
 

@@ -652,18 +652,16 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     connection().setNeedCommit();
 }
 
-void NewStatement(void)
+static void NewStatement(void)
 {
   for (int i=0;Blocks[i].Start;i++)
     Blocks[i].Pos=0;
 }
 
-#include <stdio.h>
-
 void toWorksheet::execute(bool all,bool step)
 {
   bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
-  bool code=true; // Don't strip from done selection
+  bool code=true;
   bool startCode=false;
   TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
