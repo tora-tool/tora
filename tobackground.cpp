@@ -37,6 +37,10 @@
 #include "tobackground.h"
 #include "tomain.h"
 
+#ifdef TO_KDE
+#include <kstatusbar.h>
+#endif
+
 #include <qlabel.h>
 #include <qmovie.h>
 #include <qstatusbar.h>
