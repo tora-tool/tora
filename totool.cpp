@@ -136,11 +136,13 @@ void toToolWidget::importData(std::map<QString,QString> &data,const QString &pre
     par->showMaximized();
   else if (data[prefix+":State"]=="Minimized")
     par->showMinimized();
-  else
+  else {
+    par->showNormal();
     par->setGeometry(data[prefix+":X"].toInt(),
 		     data[prefix+":Y"].toInt(),
 		     data[prefix+":Width"].toInt(),
 		     data[prefix+":Height"].toInt());
+  }
 }
 
 std::map<QString,toTool *> *toTool::Tools;

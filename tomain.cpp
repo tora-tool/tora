@@ -1141,6 +1141,7 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
   else if (data[prefix+":State"]=="Minimized")
     showMinimized();
   else {
+    showNormal();
     setGeometry(data[prefix+":X"].toInt(),
 		data[prefix+":Y"].toInt(),
 		data[prefix+":Width"].toInt(),
