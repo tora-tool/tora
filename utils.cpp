@@ -504,7 +504,7 @@ TODock *toAllocDock(const QString &name,
     frm->setCaption(str);
     return frm;
   } else {
-    QToolBar *toolbar=toAllocBar(toMainWidget(),name,db);
+    QToolBar *toolbar=toAllocBar(toMainWidget(),name);
     return toolbar;
   }
 #  else
