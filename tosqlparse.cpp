@@ -782,6 +782,7 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
     } else if (first==("ASSIGN")||
 	       first==("SET")||
 	       first==("PROMPT")||
+	       first==("COLUMN")||
 	       first==("SPOOL")||
 	       first==("STORE")||
 	       first==("REM")) {

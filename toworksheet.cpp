@@ -870,6 +870,7 @@ void toWorksheet::query(const QString &str,execType type)
     if (first==QString::fromLatin1("REM")||
 	first==QString::fromLatin1("ASSIGN")||
 	first==QString::fromLatin1("PROMPT")||
+	first==QString::fromLatin1("COLUMN")||
 	first==QString::fromLatin1("SPOOL")||
 	first==QString::fromLatin1("STORE")) {
       QString t=tr("Ignoring SQL*Plus command");
