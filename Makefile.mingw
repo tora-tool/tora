@@ -352,7 +352,7 @@ all: $(TARGET)
 	$(MOC) -o $@ $<
 
 %.cpp %.h: %.ui
-	echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
+	@echo Generating $(<:%.ui=%.cpp) \& $(<:%.ui=%.h)
 	$(UIC) -o $(<:%.ui=%.h) $<
 	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
 
