@@ -623,9 +623,10 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
 	  ret+="ON DELETE CASCADE\n";
       }
     }
-    if (Connection.version()<"8")
-      ret+=status;
-    else {
+    if (Connection.version()<"8") {
+      if (status!="ENABLED")
+	ret+=status;
+    } else {
       ret+=defferable;
       ret+="\nINITIALLY ";
       ret+=deffered;
@@ -5632,6 +5633,13 @@ static toSQL SQLViewSource("toExtract:ViewSource",
 			   "        AND owner = :own<char[100]>",
 			   "Get the source of the view, must have same binds and columns");
 
+static toSQL SQLViewColumns("toExtract:ViewColumns",
+			    "SELECT LOWER(column_name)\n"
+			    "  FROM all_tab_columns\n"
+			    " WHERE table_name = :nam<char[100]>\n"
+			    "   AND owner      = :own<char[100]>\n",
+			    "Get column names of the view, must have same binds and columns");
+
 QString toExtract::createView(const QString &schema,const QString &owner,const QString &name)
 {
   if (!Code)
@@ -5651,6 +5659,18 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
     ret+="\n";
   }
   ret+=sql;
+  list<QString> cols=toReadQuery(Connection,
+				 SQLViewColumns(Connection),
+				 name,owner);
+  ret+="(";
+  QString sep="\n    ";
+  while(cols.size()>0) {
+    QString str=toShift(cols);
+    ret+=sep;
+    ret+=str;
+    sep="\n  , ";
+  }
+  ret+="\n)\n";
   ret+="AS\n";
   ret+=text;
   ret+=";\n\n";
