@@ -804,9 +804,7 @@ static toSQL SQLExchangeIndex("toExtract:ExchangeIndex",
 			      "               ,'BITMAP',' BITMAP'\n"
 			      "               ,null\n"
 			      "              )                       AS index_type\n"
-			      "        -- Physical Properties\n"
 			      "      , 'INDEX'                       AS organization\n"
-			      "        -- Segment Attributes\n"
 			      "      , 'N/A'                         AS cache\n"
 			      "      , 'N/A'                         AS pct_used\n"
 			      "      , p.pct_free\n"
@@ -822,7 +820,6 @@ static toSQL SQLExchangeIndex("toExtract:ExchangeIndex",
 			      "               ,null,255\n"
 			      "               ,p.max_trans\n"
 			      "              )                       AS max_trans\n"
-			      "        -- Storage Clause\n"
 			      "      , p.initial_extent\n"
 			      "      , p.next_extent\n"
 			      "      , p.min_extent\n"
@@ -1207,7 +1204,8 @@ QString toExtract::segmentAttributes(toQList &result)
     ret+=indent;
     ret+="(\n";
     ret+=QString("%1  INITIAL           %2\n").arg(indent).arg(initial);
-    ret+=QString("%1  NEXT              %2\n").arg(indent).arg(next);
+    if (!next.isEmpty())
+      ret+=QString("%1  NEXT              %2\n").arg(indent).arg(next);
     ret+=QString("%1  MINEXTENTS        %2\n").arg(indent).arg(minExtents);
     ret+=QString("%1  MAXEXTENTS        %2\n").arg(indent).arg(maxExtents);
     ret+=QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
@@ -1270,7 +1268,8 @@ void toExtract::describeAttributes(std::list<QString> &dsp,std::list<QString> &c
   }
   addDescription(dsp,ctx,QString("MAXTRANS %1").arg(maxTrans));
   addDescription(dsp,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
-  addDescription(dsp,ctx,"STORAGE",QString("NEXT %1").arg(next));
+  if (!next.isEmpty())
+    addDescription(dsp,ctx,"STORAGE",QString("NEXT %1").arg(next));
   addDescription(dsp,ctx,"STORAGE",QString("MINEXTENTS %1").arg(minExtents));
   addDescription(dsp,ctx,"STORAGE",QString("MAXEXTENTS %1").arg(maxExtents));
   addDescription(dsp,ctx,"STORAGE",QString("PCTINCREASE %1").arg(pctIncrease));
@@ -1731,9 +1730,7 @@ static toSQL SQLIndexSegment("toExtract:IndexSegment",
 			     "               ,'ENABLED',i.prefix_length\n"
 			     "               ,0\n"
 			     "              )                             AS compressed\n"
-			     "        -- Physical Properties\n"
 			     "      , 'INDEX'                       AS organization\n"
-			     "        -- Segment Attributes\n"
 			     "      , 'N/A'                         AS cache\n"
 			     "      , 'N/A'                         AS pct_used\n"
 			     "      , i.pct_free\n"
@@ -1749,7 +1746,6 @@ static toSQL SQLIndexSegment("toExtract:IndexSegment",
 			     "               ,null,255\n"
 			     "               ,i.max_trans\n"
 			     "              )                       AS max_trans\n"
-			     "        -- Storage Clause\n"
 			     "      , i.initial_extent\n"
 			     "      , i.next_extent\n"
 			     "      , i.min_extents\n"
@@ -1782,9 +1778,7 @@ static toSQL SQLIndexSegment8("toExtract:IndexSegment",
 			      "SELECT  LTRIM(i.degree)\n"
 			      "      , LTRIM(i.instances)\n"
 			      "      , 0                             AS compressed\n"
-			      "        -- Physical Properties\n"
 			      "      , 'INDEX'                       AS organization\n"
-			      "        -- Segment Attributes\n"
 			      "      , 'N/A'                         AS cache\n"
 			      "      , 'N/A'                         AS pct_used\n"
 			      "      , i.pct_free\n"
@@ -1800,7 +1794,6 @@ static toSQL SQLIndexSegment8("toExtract:IndexSegment",
 			      "               ,null,255\n"
 			      "               ,i.max_trans\n"
 			      "              )                       AS max_trans\n"
-			      "        -- Storage Clause\n"
 			      "      , i.initial_extent\n"
 			      "      , i.next_extent\n"
 			      "      , i.min_extents\n"
@@ -1833,9 +1826,7 @@ static toSQL SQLIndexSegment7("toExtract:IndexSegment",
 			      "SELECT  'N/A'                         AS degree\n"
 			      "      , 'N/A'                         AS instances\n"
 			      "      , 0                             AS compressed\n"
-			      "        -- Physical Properties\n"
 			      "      , 'INDEX'                       AS organization\n"
-			      "        -- Segment Attributes\n"
 			      "      , 'N/A'                         AS cache\n"
 			      "      , 'N/A'                         AS pct_used\n"
 			      "      , i.pct_free\n"
@@ -1851,7 +1842,6 @@ static toSQL SQLIndexSegment7("toExtract:IndexSegment",
 			      "               ,null,255\n"
 			      "               ,i.max_trans\n"
 			      "              )                       AS max_trans\n"
-			      "        -- Storage Clause\n"
 			      "      , i.initial_extent\n"
 			      "      , i.next_extent\n"
 			      "      , i.min_extents\n"
@@ -2005,14 +1995,12 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
 }
 
 static toSQL SQLIndexPartition8("toExtract:IndexPartition",
-				"SELECT  -- 8.0 Indexes may partition only by RANGE\n"
+				"SELECT\n"
 				"        i.partitioning_type\n"
 				"      , 'N/A'                         AS subpartitioning_type\n"
 				"      , i.locality\n"
 				"      , 0                             AS compressed\n"
-				"        -- Physical Properties\n"
 				"      , 'INDEX'                       AS organization\n"
-				"        -- Segment Attributes\n"
 				"      , 'N/A'                         AS cache\n"
 				"      , 'N/A'                         AS pct_used\n"
 				"      , i.def_pct_free\n"
@@ -2028,7 +2016,6 @@ static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"               ,null,255\n"
 				"               ,i.def_max_trans\n"
 				"              )                       AS max_trans\n"
-				"        -- Storage Clause\n"
 				"      ,DECODE(\n"
 				"               i.def_initial_extent\n"
 				"              ,'DEFAULT',s.initial_extent\n"
@@ -2078,7 +2065,6 @@ static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"               ,     'LOGGING'\n"
 				"              )                       AS logging\n"
 				"      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))\n"
-				"        -- Don't have default blocks, so use larger of initial/next\n"
 				"      , GREATEST(\n"
 				"                  DECODE(\n"
 				"                          i.def_initial_extent\n"
@@ -2096,8 +2082,6 @@ static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"      , dba_tablespaces   s\n"
 				"      , all_part_tables   t\n"
 				" WHERE\n"
-				"            -- def_tablspace is sometimes NULL in PART_INDEXES,\n"
-				"            -- we'll have to go over to the table for the defaults\n"
 				"            i.index_name      = :nam<char[100]>\n"
 				"        AND t.table_name      = i.table_name\n"
 				"        AND s.tablespace_name = t.def_tablespace_name\n"
@@ -2109,7 +2093,7 @@ static toSQL SQLIndexPartition8("toExtract:IndexPartition",
 				"8.0");
 
 static toSQL SQLIndexPartition("toExtract:IndexPartition",
-			       "SELECT  -- Indexes may partition only by RANGE or RANGE/HASH\n"
+			       "SELECT\n"
 			       "        i.partitioning_type\n"
 			       "      , i.subpartitioning_type\n"
 			       "      , i.locality\n"
@@ -2118,9 +2102,7 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "               ,'ENABLED',n.prefix_length\n"
 			       "               ,0\n"
 			       "              )                             AS compressed\n"
-			       "        -- Physical Properties\n"
 			       "      , 'INDEX'                       AS organization\n"
-			       "        -- Segment Attributes\n"
 			       "      , 'N/A'                         AS cache\n"
 			       "      , 'N/A'                         AS pct_used\n"
 			       "      , i.def_pct_free\n"
@@ -2136,7 +2118,6 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "               ,null,255\n"
 			       "               ,i.def_max_trans\n"
 			       "              )                       AS max_trans\n"
-			       "        -- Storage Clause\n"
 			       "      ,DECODE(\n"
 			       "               i.def_initial_extent\n"
 			       "              ,'DEFAULT',s.initial_extent\n"
@@ -2186,7 +2167,6 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "               ,     'LOGGING'\n"
 			       "              )                       AS logging\n"
 			       "      , LOWER(NVL(i.def_tablespace_name,s.tablespace_name))\n"
-			       "        -- Don't have default blocks, so use larger of initial/next\n"
 			       "      , GREATEST(\n"
 			       "                  DECODE(\n"
 			       "                          i.def_initial_extent\n"
@@ -2205,8 +2185,6 @@ static toSQL SQLIndexPartition("toExtract:IndexPartition",
 			       "      , dba_tablespaces   s\n"
 			       "      , all_part_tables   t\n"
 			       " WHERE\n"
-			       "            -- def_tablspace is sometimes NULL in PART_INDEXES,\n"
-			       "            -- we'll have to go over to the table for the defaults\n"
 			       "            i.index_name      = :nam<char[100]>\n"
 			       "        AND n.index_name      = i.index_name\n"
 			       "        AND t.table_name      = i.table_name\n"
@@ -2338,7 +2316,6 @@ static toSQL SQLRangePartitions("toExtract:RangePartitions",
 				"      , pct_free\n"
 				"      , ini_trans\n"
 				"      , max_trans\n"
-				"        -- Storage Clause\n"
 				"      , initial_extent\n"
 				"      , next_extent\n"
 				"      , min_extent\n"
@@ -2374,7 +2351,6 @@ static toSQL SQLRangePartitions8("toExtract:RangePartitions",
 				 "      , pct_free\n"
 				 "      , ini_trans\n"
 				 "      , max_trans\n"
-				 "        -- Storage Clause\n"
 				 "      , initial_extent\n"
 				 "      , next_extent\n"
 				 "      , min_extent\n"
@@ -2635,8 +2611,7 @@ QString toExtract::createMView(const QString &schema,const QString &owner,
       ret+=QString("START WITH TO_DATE('%1','DD-MM-YYYY HH24:MI:SS')\n").
 	arg(startWith);
     if (!next.isEmpty())
-      ret+=QString("NEXT  %1\n").
-	arg(next);
+      ret+=QString("NEXT  %1\n").arg(next);
     if (!usingPK.isEmpty()) {
       ret+=usingPK;
       ret+="\n";
@@ -2690,7 +2665,8 @@ void toExtract::describeMView(std::list<QString> &lst,
 
   if (refreshMethod!="NEVER REFRESH") {
     addDescription(lst,ctx,QString("START WITH %1").arg(startWith));
-    addDescription(lst,ctx,QString("NEXT %1").arg(next));
+    if (!next.isEmpty())
+      addDescription(lst,ctx,QString("NEXT %1").arg(next));
     addDescription(lst,ctx,usingPK);
     if (!masterRBSeg.isEmpty()&&Storage)
       addDescription(lst,ctx,QString("USING MASTER ROLLBACK SEGMENT %1").
@@ -2976,23 +2952,19 @@ static toSQL SQLTableType7("toExtract:TableType",
 
 static toSQL SQLTableInfo("toExtract:TableInfo",
 			  "SELECT\n"
-			  "        -- Table Properties\n"
 			  "        DECODE(\n"
 			  "                t.monitoring\n"
 			  "               ,'NO','NOMONITORING'\n"
 			  "               ,     'MONITORING'\n"
 			  "              )                       AS monitoring\n"
 			  "      , 'N/A'                         AS table_name\n"
-			  "        -- Parallel Clause\n"
 			  "      , LTRIM(t.degree)\n"
 			  "      , LTRIM(t.instances)\n"
-			  "        -- Physical Properties\n"
 			  "      , DECODE(\n"
 			  "                t.iot_type\n"
 			  "               ,'IOT','INDEX'\n"
 			  "               ,      'HEAP'\n"
 			  "              )                       AS organization\n"
-			  "        -- Segment Attributes\n"
 			  "      , DECODE(\n"
 			  "                LTRIM(t.cache)\n"
 			  "               ,'Y','CACHE'\n"
@@ -3012,7 +2984,6 @@ static toSQL SQLTableInfo("toExtract:TableInfo",
 			  "               ,null,255\n"
 			  "               ,t.max_trans\n"
 			  "              )                       AS max_trans\n"
-			  "        -- Storage Clause\n"
 			  "      , t.initial_extent\n"
 			  "      , t.next_extent\n"
 			  "      , t.min_extents\n"
@@ -3045,19 +3016,15 @@ static toSQL SQLTableInfo("toExtract:TableInfo",
 
 static toSQL SQLTableInfo8("toExtract:TableInfo",
 			   "SELECT\n"
-			   "        -- Table Properties\n"
 			   "        'N/A'                         AS monitoring\n"
 			   "      , 'N/A'                         AS table_name\n"
-			   "        -- Parallel Clause\n"
 			   "      , LTRIM(t.degree)\n"
 			   "      , LTRIM(t.instances)\n"
-			   "        -- Physical Properties\n"
 			   "      , DECODE(\n"
 			   "                t.iot_type\n"
 			   "               ,'IOT','INDEX'\n"
 			   "               ,      'HEAP'\n"
 			   "              )                       AS organization\n"
-			   "        -- Segment Attributes\n"
 			   "      , DECODE(\n"
 			   "                LTRIM(t.cache)\n"
 			   "               ,'Y','CACHE'\n"
@@ -3077,7 +3044,6 @@ static toSQL SQLTableInfo8("toExtract:TableInfo",
 			   "               ,null,255\n"
 			   "               ,t.max_trans\n"
 			   "              )                       AS max_trans\n"
-			   "        -- Storage Clause\n"
 			   "      , t.initial_extent\n"
 			   "      , t.next_extent\n"
 			   "      , t.min_extents\n"
@@ -3110,15 +3076,11 @@ static toSQL SQLTableInfo8("toExtract:TableInfo",
 
 static toSQL SQLTableInfo7("toExtract:TableInfo",
 			   "SELECT\n"
-			   "        -- Table Properties\n"
 			   "        'N/A'                         AS monitoring\n"
 			   "      , 'N/A'                         AS table_name\n"
-			   "        -- Parallel Clause\n"
 			   "      , LTRIM(t.degree)\n"
 			   "      , LTRIM(t.instances)\n"
-			   "        -- Physical Properties\n"
 			   "      , 'N/A'                         AS organization\n"
-			   "        -- Segment Attributes\n"
 			   "      , DECODE(\n"
 			   "                LTRIM(t.cache)\n"
 			   "               ,'Y','CACHE'\n"
@@ -3138,7 +3100,6 @@ static toSQL SQLTableInfo7("toExtract:TableInfo",
 			   "               ,null,255\n"
 			   "               ,t.max_trans\n"
 			   "              )                       AS max_trans\n"
-			   "        -- Storage Clause\n"
 			   "      , t.initial_extent\n"
 			   "      , t.next_extent\n"
 			   "      , t.min_extents\n"
@@ -3224,7 +3185,6 @@ static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
 			     "SELECT\n"
 			     "        '  '\n"
 			     "      , 'N/A'\n"
-			     "        -- Segment Attributes\n"
 			     "      , DECODE(\n"
 			     "                LTRIM(t.cache)\n"
 			     "               ,'Y','CACHE'\n"
@@ -3244,7 +3204,6 @@ static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
 			     "               ,null,255\n"
 			     "               ,t.max_trans\n"
 			     "              )                       AS max_trans\n"
-			     "        -- Storage Clause\n"
 			     "      , t.initial_extent\n"
 			     "      , t.next_extent\n"
 			     "      , t.min_extents\n"
@@ -3277,19 +3236,15 @@ static toSQL SQLOverflowInfo("toExtract:OverflowInfo",
 
 static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 				   "SELECT\n"
-				   "        -- Table Properties\n"
 				   "        DECODE(\n"
 				   "                t.monitoring\n"
 				   "               ,'NO','NOMONITORING'\n"
 				   "               ,     'MONITORING'\n"
 				   "              )                       AS monitoring\n"
 				   "      , t.table_name\n"
-				   "        -- Parallel Clause\n"
 				   "      , LTRIM(t.degree)               AS degree\n"
 				   "      , LTRIM(t.instances)            AS instances\n"
-				   "        -- Physical Properties\n"
 				   "      , 'INDEX'                       AS organization\n"
-				   "        -- Segment Attributes\n"
 				   "      , DECODE(\n"
 				   "                LTRIM(t.cache)\n"
 				   "               ,'Y','CACHE'\n"
@@ -3299,7 +3254,6 @@ static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 				   "      , p.def_pct_free                AS pct_free\n"
 				   "      , p.def_ini_trans               AS ini_trans\n"
 				   "      , p.def_max_trans               AS max_trans\n"
-				   "        -- Storage Clause\n"
 				   "      ,DECODE(\n"
 				   "               p.def_initial_extent\n"
 				   "              ,'DEFAULT',s.initial_extent\n"
@@ -3364,15 +3318,11 @@ static toSQL SQLPartitionedIOTInfo("toExtract:PartitionedIOTInfo",
 
 static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 				    "SELECT\n"
-				    "        -- Table Properties\n"
 				    "        'N/A'                         AS monitoring\n"
 				    "      , t.table_name\n"
-				    "        -- Parallel Clause\n"
 				    "      , LTRIM(t.degree)               AS degree\n"
 				    "      , LTRIM(t.instances)            AS instances\n"
-				    "        -- Physical Properties\n"
 				    "      , 'INDEX'                       AS organization\n"
-				    "        -- Segment Attributes\n"
 				    "      , DECODE(\n"
 				    "                LTRIM(t.cache)\n"
 				    "               ,'Y','CACHE'\n"
@@ -3382,7 +3332,6 @@ static toSQL SQLPartitionedIOTInfo8("toExtract:PartitionedIOTInfo",
 				    "      , p.def_pct_free                AS pct_free\n"
 				    "      , p.def_ini_trans               AS ini_trans\n"
 				    "      , p.def_max_trans               AS max_trans\n"
-				    "        -- Storage Clause\n"
 				    "      ,DECODE(\n"
 				    "               p.def_initial_extent\n"
 				    "              ,'DEFAULT',s.initial_extent\n"
@@ -3513,19 +3462,15 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
 
 static toSQL SQLIOTInfo("toExtract:IOTInfo",
 			"SELECT\n"
-			"        -- Table Properties\n"
 			"        DECODE(\n"
 			"                b.monitoring\n"
 			"               ,'NO','NOMONITORING'\n"
 			"               ,     'MONITORING'\n"
 			"              )\n"
 			"      , 'N/A'                         AS table_name\n"
-			"        -- Parallel Clause\n"
 			"      , LTRIM(a.degree)\n"
 			"      , LTRIM(a.instances)\n"
-			"        -- Physical Properties\n"
 			"      , 'INDEX'                       AS organization\n"
-			"        -- Segment Attributes\n"
 			"      , 'N/A'                         AS cache\n"
 			"      , 'N/A'                         AS pct_used\n"
 			"      , a.pct_free\n"
@@ -3541,7 +3486,6 @@ static toSQL SQLIOTInfo("toExtract:IOTInfo",
 			"               ,null,255\n"
 			"               ,a.max_trans\n"
 			"              )                       AS max_trans\n"
-			"        -- Storage Clause\n"
 			"      , a.initial_extent\n"
 			"      , a.next_extent\n"
 			"      , a.min_extents\n"
@@ -3618,23 +3562,19 @@ void toExtract::describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
 
 static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
 				   "SELECT\n"
-				   "        -- Table Properties\n"
 				   "        DECODE(\n"
 				   "                t.monitoring\n"
 				   "               ,'NO','NOMONITORING'\n"
 				   "               ,     'MONITORING'\n"
 				   "              )                       AS monitoring\n"
 				   "      , t.table_name\n"
-				   "        -- Parallel Clause\n"
 				   "      , LTRIM(t.degree)               AS degree\n"
 				   "      , LTRIM(t.instances)            AS instances\n"
-				   "        -- Physical Properties\n"
 				   "      , DECODE(\n"
 				   "                t.iot_type\n"
 				   "               ,'IOT','INDEX'\n"
 				   "               ,      'HEAP'\n"
 				   "              )                       AS organization\n"
-				   "        -- Segment Attributes\n"
 				   "      , DECODE(\n"
 				   "                LTRIM(t.cache)\n"
 				   "               ,'Y','CACHE'\n"
@@ -3644,7 +3584,6 @@ static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
 				   "      , p.def_pct_free                AS pct_free\n"
 				   "      , p.def_ini_trans               AS ini_trans\n"
 				   "      , p.def_max_trans               AS max_trans\n"
-				   "        -- Storage Clause\n"
 				   "      ,DECODE(\n"
 				   "               p.def_initial_extent\n"
 				   "              ,'DEFAULT',s.initial_extent\n"
@@ -3709,19 +3648,15 @@ static toSQL SQLPartitionTableInfo("toExtract:PartitionTableInfo",
 
 static toSQL SQLPartitionTableInfo8("toExtract:PartitionTableInfo",
 				    "SELECT\n"
-				    "        -- Table Properties\n"
 				    "        'N/A'                         AS monitoring\n"
 				    "      , t.table_name\n"
-				    "        -- Parallel Clause\n"
 				    "      , LTRIM(t.degree)               AS degree\n"
 				    "      , LTRIM(t.instances)            AS instances\n"
-				    "        -- Physical Properties\n"
 				    "      , DECODE(\n"
 				    "                t.iot_type\n"
 				    "               ,'IOT','INDEX'\n"
 				    "               ,      'HEAP'\n"
 				    "              )                       AS organization\n"
-				    "        -- Segment Attributes\n"
 				    "      , DECODE(\n"
 				    "                LTRIM(t.cache)\n"
 				    "               ,'Y','CACHE'\n"
@@ -3731,7 +3666,6 @@ static toSQL SQLPartitionTableInfo8("toExtract:PartitionTableInfo",
 				    "      , p.def_pct_free                AS pct_free\n"
 				    "      , p.def_ini_trans               AS ini_trans\n"
 				    "      , p.def_max_trans               AS max_trans\n"
-				    "        -- Storage Clause\n"
 				    "      ,DECODE(\n"
 				    "               p.def_initial_extent\n"
 				    "              ,'DEFAULT',s.initial_extent\n"
@@ -3830,7 +3764,6 @@ static toSQL SQLPartitionSegment("toExtract:PartitionSegment",
 				 "      , pct_free\n"
 				 "      , ini_trans\n"
 				 "      , max_trans\n"
-				 "        -- Storage Clause\n"
 				 "      , initial_extent\n"
 				 "      , next_extent\n"
 				 "      , min_extent\n"
@@ -3868,7 +3801,6 @@ static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
 				  "      , pct_free\n"
 				  "      , ini_trans\n"
 				  "      , max_trans\n"
-				  "        -- Storage Clause\n"
 				  "      , initial_extent\n"
 				  "      , next_extent\n"
 				  "      , min_extent\n"
@@ -4443,15 +4375,17 @@ QString toExtract::createRollbackSegment(const QString &schema,const QString &ow
   if (Prompt)
     ret+=QString("PROMPT CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(name.lower());
   ret+=QString("CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(name.lower());
-  if (Storage)
+  if (Storage) {
     ret+=QString("STORAGE\n(\n"
-		 "  INITIAL      %1\n"
-		 "  NEXT         %2\n"
-		 "  MINEXTENTS   %3\n"
-		 "  MAXEXTENTS   %4\n"
+		 "  INITIAL      %1\n").arg(initialExtent);
+    if (!nextExtent.isEmpty())
+      ret+=QString("  NEXT         %1\n").arg(nextExtent);
+    ret+=QString("  MINEXTENTS   %1\n"
+		 "  MAXEXTENTS   %2\n"
 		 ")\n"
-		 "TABLESPACE     %5;\n\n").
-      arg(initialExtent).arg(nextExtent).arg(minExtent).arg(maxExtent).arg(tablespaceName.lower());
+		 "TABLESPACE     %3;\n\n").
+      arg(minExtent).arg(maxExtent).arg(tablespaceName.lower());
+  }
   return ret;
 }
 
@@ -4477,7 +4411,8 @@ void toExtract::describeRollbackSegment(std::list<QString> &lst,
   if (Storage) {
     ctx.insert(ctx.end(),"STORAGE");
     addDescription(lst,ctx,QString("INITIAL %1").arg(initialExtent));
-    addDescription(lst,ctx,QString("NEXT %1").arg(nextExtent));
+    if (!nextExtent.isEmpty())
+      addDescription(lst,ctx,QString("NEXT %1").arg(nextExtent));
     addDescription(lst,ctx,QString("MINEXTENTS %1").arg(minExtent));
     addDescription(lst,ctx,QString("MAXEXTENTS %1").arg(maxExtent));
   }
@@ -4911,7 +4846,6 @@ static toSQL SQLTriggerInfo8("toExtract:TriggerInfo",
 			     "      , RTRIM(triggering_event)\n"
 			     "      , table_owner\n"
 			     "      , table_name\n"
-			     "        -- Only table triggers before 8i\n"
 			     "      , 'TABLE'                           AS base_object_type\n"
 			     "      , referencing_names\n"
 			     "      , description\n"
@@ -5296,14 +5230,13 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
     } else {
       ret+=QString("DEFAULT STORAGE\n"
 		   "(\n"
-		   "  INITIAL        %1\n"
-		   "  NEXT           %2\n"
-		   "  MINEXTENTS     %3\n"
-		   "  MAXEXTENTS     %4\n"
-		   "  PCTINCREASE    %5\n"
+		   "  INITIAL        %1\n").arg(initial);
+      if (!next.isEmpty())
+	ret+=QString("  NEXT           %1\n").arg(next);
+      ret+=QString("  MINEXTENTS     %1\n"
+		   "  MAXEXTENTS     %2\n"
+		   "  PCTINCREASE    %3\n"
 		   ")\n").
-	arg(initial).
-	arg(next).
 	arg(minExtents).
 	arg(maxExtents).
 	arg(pctIncrease);
@@ -5396,7 +5329,8 @@ void toExtract::describeTablespace(std::list<QString> &lst,
       addDescription(lst,ctx,ret);
     } else {
       addDescription(lst,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
-      addDescription(lst,ctx,"STORAGE",QString("NEXT %1").arg(next));
+      if (!next.isEmpty())
+	addDescription(lst,ctx,"STORAGE",QString("NEXT %1").arg(next));
       addDescription(lst,ctx,"STORAGE",QString("MINEXTENTS %1").arg(minExtents));
       addDescription(lst,ctx,"STORAGE",QString("MAXEXTENTS %1").arg(maxExtents));
       addDescription(lst,ctx,"STORAGE",QString("PCTINCREASE %1").arg(pctIncrease));
@@ -5809,7 +5743,7 @@ static toSQL SQLSegmentInfo("toExtract:SegmentInfo",
 static toSQL SQLObjectPartitions("toExtract:ObjectPartitions",
 				 "SELECT\n"
 				 "        partition_name\n"
-				 "      , SUBSTR(segment_type,7)   -- PARTITION or SUBPARTITION\n"
+				 "      , SUBSTR(segment_type,7)\n"
 				 " FROM\n"
 				 "        %1\n"
 				 " WHERE\n"

@@ -19,6 +19,8 @@
 2001-10-10: Set default version in new sql editor.
 2001-10-10: Hide cancel button if not license about.
 2001-10-10: Removed all references to long sessions option.
+2001-10-10: Removed all comments from SQL in toExtract.
+2001-10-10: Fixed misspelling of autoallocate in storage.
 
 1.1.2: Released 2001-10-07
 

@@ -220,7 +220,7 @@ std::list<QString> toStorageTablespace::sql()
     else {
       str.append("LOCAL ");
       if (LocalAuto->isChecked())
-	str.append("AUTOALLOCATED");
+	str.append("AUTOALLOCATE");
       else {
 	str.append("UNIFORM SIZE ");
 	str.append(LocalUniform->sizeString());
