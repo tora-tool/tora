@@ -109,7 +109,7 @@ static toSQL SQLOpenCursors("toSession:OpenCursor",
 
 
 toSession::toSession(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("session.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

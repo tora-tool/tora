@@ -248,9 +248,11 @@ void toDebugText::setData(const QString &schema,const QString &type,const QStrin
 toDebugText::toDebugText(QListView *breakpoints,
 			 toConnection &connection,
 			 QWidget *parent,
+			 toDebug *debugger,
 			 const char *name)
   : toHighlightedText(parent,name),
     Connection(connection),
+    Debugger(debugger),
     Breakpoints(breakpoints)
 {
   setLeftIgnore(DEBUG_INDENT);

@@ -136,7 +136,7 @@ static toTuningTool TuningTool;
 static QPixmap *toRefreshPixmap;
 
 toTuning::toTuning(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("tuning.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

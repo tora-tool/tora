@@ -71,7 +71,7 @@ class toOutputPrefs : public QFrame, public toSettingTab
 
 public:
   toOutputPrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),Tool(tool)
+    : QFrame(parent,name),toSettingTab("unknown.html"),Tool(tool)
   {
     QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
@@ -134,7 +134,7 @@ static QPixmap *toOnlinePixmap;
 static QPixmap *toOfflinePixmap;
 
 toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
-  : toToolWidget(main,connection)
+  : toToolWidget("output.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

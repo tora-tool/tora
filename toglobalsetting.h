@@ -42,7 +42,7 @@
 #include "todatabasesettingui.h"
 #include "tohelp.h"
 
-class toGlobalSetting : public toGlobalSettingUI, public toSettingTab, public toHelpContext {
+class toGlobalSetting : public toGlobalSettingUI, public toSettingTab {
 public:
   toGlobalSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
 
@@ -53,7 +53,7 @@ public:
   virtual void helpBrowse(void);
 };
 
-class toDatabaseSetting : public toDatabaseSettingUI, public toSettingTab, public toHelpContext {
+class toDatabaseSetting : public toDatabaseSettingUI, public toSettingTab {
 public:
   toDatabaseSetting(QWidget *parent=0,const char *name=0,WFlags fl=0);
 

@@ -463,6 +463,7 @@ void toDebug::targetTask::run(void)
 	Parent.InputData.clear(); // To make sure data is not shared
 	Parent.OutputData.clear();
       }
+      Parent.StartedSemaphore.up();
       if (sql.isEmpty())
 	break;
 
@@ -935,6 +936,7 @@ void toDebug::execute(void)
 	TargetSQL=toDeepCopy(sql); // Deep copy of SQL
 	TargetSemaphore.up(); // Go go power rangers!
       }
+      StartedSemaphore.down();
       if (sync()>=0)
 	continueExecution(TO_BREAK_ANY_CALL);
     } TOCATCH
@@ -1638,10 +1640,29 @@ int toDebug::continueExecution(int stopon)
       return reason;
     } TOCATCH
   } else {
+#if 0
+    // I don't want this since it can happen when compiling etc.
     toStatusMessage("No running target");
+#endif
     Lock.unlock();
   }
   return -1;
+}
+
+void toDebug::executeInTarget(const QString &str,list<QString> &params)
+{
+  {
+    toLocker lock(Lock);
+    TargetSQL=toDeepCopy(str);
+    InputData=params;
+    TargetSemaphore.up();
+  }
+  StartedSemaphore.down();
+  int ret=sync();
+  while(ret>=0&&ret!=TO_REASON_EXIT&&ret!=TO_REASON_KNL_EXIT&&RunningTarget) {
+    ret=continueExecution(TO_BREAK_ANY_RETURN);
+  }
+  readLog();
 }
 
 void toDebug::stop(void)
@@ -1650,7 +1671,7 @@ void toDebug::stop(void)
 }
 
 toDebug::toDebug(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection),TargetThread()
+  : toToolWidget("debugger.html",main,connection),TargetThread()
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -1897,8 +1918,8 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   RuntimeLog=new toMarkedText(DebugTabs);
   DebugTabs->addTab(RuntimeLog,"&Runtime Log");
 
-  HeadEditor=new toDebugText(Breakpoints,connection,hsplitter);
-  BodyEditor=new toDebugText(Breakpoints,connection,hsplitter);
+  HeadEditor=new toDebugText(Breakpoints,connection,hsplitter,this);
+  BodyEditor=new toDebugText(Breakpoints,connection,hsplitter,this);
   HeadEditor->hide();
   connect(HeadEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
@@ -2065,6 +2086,7 @@ bool toDebug::checkCompile(void)
 	return false;
       if (!HeadEditor->compile())
 	return false;
+      refresh();
       break;
     case 1:
       HeadEditor->setEdited(false);
@@ -2085,6 +2107,7 @@ bool toDebug::checkCompile(void)
 	return false;
       if (!BodyEditor->compile())
 	return false;
+      refresh();
       break;
     case 1:
       BodyEditor->setEdited(false);
@@ -2255,8 +2278,8 @@ bool toDebugText::compile(void)
     sql.append(str.right(str.length()-begin[word]));
 
     try {
-      otl_cursor::direct_exec(Connection.connection(),
-			      sql.utf8());
+      list<QString> nopar;
+      Debugger->executeInTarget(sql,nopar);
       Schema=schema.upper();
       Object=object.upper();
       Type=type.upper();
@@ -2428,7 +2451,7 @@ void toDebug::windowActivated(QWidget *widget)
 			   Key_F5);
       ToolMenu->insertItem(*toEnableBreakPixmap,"D&isable Breakpoint",
 			   this,SLOT(toggleEnable(void)),
-			   CTRL+Key_F5);
+			   CTRL+Key_Space);
       ToolMenu->insertSeparator();
       ToolMenu->insertItem(*toAddWatchPixmap,"&Add Watch",this,SLOT(addWatch(void)),
 			   Key_F4);

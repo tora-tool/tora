@@ -1,10 +1,6 @@
 1.0 fixes:
 
-* Compile objects in target thread in toDebug.
 * Write help.
-* Problem creating new SQL in SQL editor.
-* Problem deleting template in template editor.
-* Add option to suppress line numbers in toworksheet.
 
 Extended functionality:
 
@@ -44,6 +40,7 @@ Extended functionality:
 * Completion on column & function names in editor.
 * Ability to disable tools from options.
 * Ability to select default tool in options.
+* Option to change current connection to the connection of the current tool.
 
 Windows problems:
 

@@ -122,7 +122,9 @@ public:
   {
     if (LastTemplate!=TemplateMap.end()) {
       TemplateMap.erase(LastTemplate);
-      LastTemplate=TemplateMap.begin();
+      LastTemplate=TemplateMap.end();
+      Name->setText("");
+      Description->setText("");
       updateFromMap();
     }
   }
@@ -179,12 +181,11 @@ public:
 	Preview->setText((*LastTemplate).second);
       } else {
 	Name->setText("");
-	printf("Didn't find %s\n",(const char *)str);
       }
     } else
       LastTemplate=TemplateMap.end();
     if (update)
-      Timer.start(20,true);
+      Timer.start(500,true);
   }
 };
 
@@ -217,7 +218,7 @@ class toTemplatePrefs : public toTemplateSetupUI, public toSettingTab
   toTool *Tool;
 public:
   toTemplatePrefs(toTool *tool,QWidget *parent,const char *name=0)
-    : toTemplateSetupUI(parent,name),Tool(tool)
+    : toTemplateSetupUI(parent,name),toSettingTab("unknown.html"),Tool(tool)
   {
     int tot=Tool->config("Number",QString::number(-1)).toInt();
     if(tot!=-1) {

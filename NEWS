@@ -27,6 +27,19 @@
 2001-07-06: Last part of general documentation done, only the tools left.
 2001-07-06: Fixed update problem in statistic widget.
 2001-07-06: Removed lots of stdio.h includes.
+2001-07-06: Compile in target thread in debugger.
+2001-07-06: Fixed potential racecondition in debugger.
+2001-07-06: Added ability to add new sql in sql editor.
+2001-07-06: Fixed some minor bugs in the sql editor.
+2001-07-06: Fixed some minor bugs in template editor.
+2001-07-06: Fixed bug in browser package body.
+2001-07-07: Fixed problem with default binds in worksheet.
+2001-07-07: Changed binding for toggle breakpoint in debugger.
+2001-07-07: Added help context to toolwidget.
+2001-07-07: Put all the result plugins in one package.
+2001-07-07: Fixed problem with browser grabbing focus.
+2001-07-07: Try finding g++ as well as gcc.
+2001-07-07: Fix for compiling for Solaris 2.6 in configure.
 
 0.12: Released 2001-07-01
 

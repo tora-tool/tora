@@ -97,7 +97,7 @@ public:
 };
 
 toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
-  : QFrame(parent,name),Tool(tool)
+  : QFrame(parent,name),toSettingTab("unknown.html"),Tool(tool)
 {
   GroupBox1 = new QGroupBox( this, "GroupBox1" );
   GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
@@ -637,7 +637,7 @@ static QPixmap *toWriteTablespacePixmap;
 static QPixmap *toModFilePixmap;
 
 toStorage::toStorage(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("storage.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

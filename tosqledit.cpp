@@ -71,6 +71,7 @@ TO_NAMESPACE;
 #include "icons/trash.xpm"
 #include "icons/commit.xpm"
 #include "icons/tosqledit.xpm"
+#include "icons/add.xpm"
 
 static QPixmap *toSQLEditPixmap;
 
@@ -140,9 +141,10 @@ static QPixmap *toLoadPixmap;
 static QPixmap *toSavePixmap;
 static QPixmap *toCommitPixmap;
 static QPixmap *toTrashPixmap;
+static QPixmap *toAddPixmap;
 
 toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("sqledit.html",main,connection)
 {
   if (!toLoadPixmap)
     toLoadPixmap=new QPixmap((const char **)fileopen_xpm);
@@ -152,6 +154,8 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
     toCommitPixmap=new QPixmap((const char **)commit_xpm);
   if (!toTrashPixmap)
     toTrashPixmap=new QPixmap((const char **)trash_xpm);
+  if (!toAddPixmap)
+    toAddPixmap=new QPixmap((const char **)add_xpm);
 
   QToolBar *toolbar=toAllocBar(this,"SQL editor",connection.connectString());
 
@@ -176,7 +180,12 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
 			      "Delete this version from the SQL dictionary",
 			      this,SLOT(deleteVersion()),
 			      toolbar);
-  CommitButton->setEnabled(false);
+  new QToolButton(*toAddPixmap,
+		  "Start new SQL definition",
+		  "Start new SQL definition",
+		  this,SLOT(newSQL()),
+		  toolbar);
+  CommitButton->setEnabled(true);
   TrashButton->setEnabled(false);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
@@ -232,7 +241,7 @@ void toSQLEdit::deleteVersion(void)
   selectionChanged(connection().version());
   if (Version->count()==0) {
     TrashButton->setEnabled(false);
-    CommitButton->setEnabled(false);
+    CommitButton->setEnabled(true);
     updateStatements();
     Name->clear();
     Description->clear();
@@ -255,10 +264,14 @@ void toSQLEdit::commitChanges(void)
   TrashButton->setEnabled(true);
   CommitButton->setEnabled(true);
 
+  bool update=Name->edited();
+
   Name->setEdited(false);
   Description->setEdited(false);
   Editor->editor()->setEdited(false);
   LastVersion=Version->currentText();
+  if (update)
+    updateStatements(Name->text());
 }
 
 bool toSQLEdit::checkStore(bool justVer)
@@ -278,8 +291,16 @@ bool toSQLEdit::checkStore(bool justVer)
 		       justVer?LastVersion:Version->currentText());
       TrashButton->setEnabled(true);
       CommitButton->setEnabled(true);
-      if (Name->edited())
-	updateStatements(Name->text());
+      {
+	bool update=Name->edited();
+	Name->setEdited(false);
+	Description->setEdited(false);
+	Editor->editor()->setEdited(false);
+	LastVersion=Version->currentText();
+	if (update)
+	  updateStatements(Name->text());
+      }
+      break;
     case 1:
       Name->setEdited(false);
       Description->setEdited(false);
@@ -336,7 +357,7 @@ void toSQLEdit::changeSQL(const QString &name,const QString &maxver)
   } else {
     Editor->editor()->clear();
     TrashButton->setEnabled(false);
-    CommitButton->setEnabled(false);
+    CommitButton->setEnabled(true);
   }
   Editor->editor()->setEdited(false);
 }
@@ -359,4 +380,11 @@ void toSQLEdit::editSQL(const QString &nam)
 {
   if (checkStore(false))
     changeSQL(nam,connection().version());
+}
+
+void toSQLEdit::newSQL(void)
+{
+  if (checkStore(false)) {
+    changeSQL(QString::null,QString::null);
+  }
 }

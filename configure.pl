@@ -519,7 +519,11 @@ __TEMP__
 	$Linux=1;
     } elsif (`uname`=~/sunos/i) {
 	$NoRPath=1;
-	$Libs.=" -lrt";
+	if (`uname -r`>=8.0) {
+	    $Libs.=" -lrt";
+	} else {
+	    $Libs.=" -lposix4";
+	}
     } else {
 	$NoRPath=1;
     }
@@ -608,7 +612,7 @@ __TEMP__
     }
 
     if (!-f $CC) {
-	findFile("^(gcc|cc|kgcc)\$",\&finalTest,
+	findFile("^(g\\+\\+|gcc|cc|kgcc)\$",\&finalTest,
 		 "/usr/bin",
 		 "/usr/local/bin");
     } elsif (!&finalTest($CC)) {

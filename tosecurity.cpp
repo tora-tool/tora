@@ -1311,7 +1311,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 }
 
 toSecurity::toSecurity(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("security.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

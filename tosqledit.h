@@ -79,6 +79,7 @@ public slots:
   void changeVersion(const QString &);
   void commitChanges(void);
   void editSQL(const QString &);
+  void newSQL();
 };
 
 #endif

@@ -85,6 +85,7 @@ class toWorksheet : public toToolWidget {
   void viewResources(void);
   void query(const QString &str,bool direct);
   bool checkSave(bool input);
+  void saveDefaults(void);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
   virtual ~toWorksheet();

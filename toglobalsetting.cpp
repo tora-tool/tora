@@ -67,7 +67,7 @@ TO_NAMESPACE;
 #include "todatabasesettingui.cpp"
 
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
-  : toGlobalSettingUI(parent,name,fl), toHelpContext("preferences.html#global")
+  : toGlobalSettingUI(parent,name,fl), toSettingTab("preferences.html#global")
 {
   LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
@@ -186,7 +186,7 @@ void toGlobalSetting::saveSetting(void)
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
-  : toDatabaseSettingUI(parent,name,fl),toHelpContext("database.html")
+  : toDatabaseSettingUI(parent,name,fl),toSettingTab("database.html")
 {
   MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
 					   DEFAULT_MAX_COL_DISP));

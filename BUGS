@@ -14,13 +14,10 @@ Toolbars:
 Qt:
 	Some layouts seem to expand far beyond the content of the screen until you resize it.
 	The toResultContent never seem to receive focus as it should, how should this be fixes?
+	There are some redraw problems with QListItems that don't draw left justified text.
 
 gcc-2.96:
 	Seems really bad at handling exceptions, won't work with TOra.
-
-toDebug:
-	Seems a recompiled object is invalidated the first time it is executed in the target
-	session. Just start again and you should be fine.
 
 toMain:
 	Traversing the menues using keys will disable some file/edit entries that should be
@@ -34,3 +31,7 @@ toTemplate:
 
 toResultCols:
 	Doesn't follow synonyms for comments and statistics.
+
+toResultContent:
+	Doesn't display multiline data correctly.
+	Doesn't sort numbers numerically.

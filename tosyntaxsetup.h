@@ -45,7 +45,7 @@
 
 class QFont;
 
-class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab, public toHelpContext { 
+class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
   QString Text;
   QString List;
   QListBoxItem *Current;

@@ -131,6 +131,7 @@ class toDebug : public toToolWidget {
   toLock Lock;
   toSemaphore TargetSemaphore;
   toSemaphore ChildSemaphore;
+  toSemaphore StartedSemaphore;
   toThread *TargetThread;
   QString TargetSQL;
   QString TargetLog;
@@ -188,6 +189,7 @@ public:
   { return BodyEditor; }
   QString currentSchema(void);
 
+  void executeInTarget(const QString &,list<QString> &params);
 public slots:
   void stop(void);
   void compile(void);

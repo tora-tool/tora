@@ -64,7 +64,8 @@ public:
       double val=ct.toDouble();
 
       p->fillRect(0,0,int(val*width/100),height(),QBrush(blue));
-      p->fillRect(int(val*width/100),0,width,height(),QBrush(isSelected()?cg.highlight():cg.base()));
+      p->fillRect(int(val*width/100),0,width,height(),
+		  QBrush(isSelected()?cg.highlight():cg.base()));
 
       QPen pen(isSelected()?cg.highlightedText():cg.foreground());
       p->setPen(pen);

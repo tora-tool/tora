@@ -112,15 +112,15 @@ void toResultLong::addItem(void)
   if (Query) {
     if (Query->poll()) {
       try {
+	bool em=false;
+	char buffer[100];
 	if (First) {
-	  char buffer[100];
 	  if (Query->getProcessed()>0)
 	    sprintf(buffer,"%d rows processed",(int)Query->getProcessed());
 	  else
 	    sprintf(buffer,"Query executed");
-	  emit firstResult(SQL,buffer);
 	  toStatusMessage(buffer);
-	  First=false;
+	  em=true;
 	}
 	if (!HasHeaders) {
 	  Description=Query->describe(DescriptionLen);
@@ -177,6 +177,10 @@ void toResultLong::addItem(void)
 	  for (int j=0;(j<DescriptionLen||j==0)&&!Query->eof();j++)
 	    LastItem->setText(j+disp,Query->readValue());
 	}
+	if (em) {
+	  First=false;
+	  emit firstResult(SQL,buffer);
+	}	  
 	if (Query->eof()) {
 	  delete Query;
 	  Query=NULL;

@@ -138,7 +138,7 @@ class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
 
 public:
   toWorksheetSetup(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : toWorksheetSetupUI(parent,name),Tool(tool)
+    : toWorksheetSetupUI(parent,name),toSettingTab("worksheet.html#preferences"),Tool(tool)
   {
     if (!tool->config(CONF_AUTO_COMMIT,"").isEmpty())
       AutoCommit->setChecked(true);
@@ -243,7 +243,7 @@ void toWorksheet::viewResources(void)
 }
 
 toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
-  : toToolWidget(main,connection)
+  : toToolWidget("worksheet.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -613,6 +613,7 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     connection().commit();
   else
     connection().setNeedCommit();
+  saveDefaults();
 }
 
 static void NewStatement(void)
@@ -858,6 +859,11 @@ void toWorksheet::queryDone(void)
 {
   StopButton->setEnabled(false);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
+  saveDefaults();
+}
+
+void toWorksheet::saveDefaults(void)
+{
   QListViewItem *item=Result->firstChild();
   if (item) {
     QHeader *head=Result->header();

@@ -78,7 +78,7 @@ class toSGATracePrefs : public QFrame, public toSettingTab
 
 public:
   toSGATracePrefs(toTool *tool,QWidget* parent = 0,const char* name = 0)
-    : QFrame(parent,name),Tool(tool)
+    : QFrame(parent,name),toSettingTab("unknown.html"),Tool(tool)
   {
     QGroupBox *GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setGeometry( QRect( 10, 10, 380, 380 ) ); 
@@ -164,7 +164,7 @@ static QComboBox *CreateSort(QWidget *parent,const char *name)
 }
 
 toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
-  : toToolWidget(main,connection)
+  : toToolWidget("sgatrace.html",main,connection)
 {
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);

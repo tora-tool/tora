@@ -41,8 +41,6 @@
 
 #include <map>
 
-#include "totool.h"
-
 class toListView;
 class QLineEdit;
 class QTextBrowser;
@@ -51,6 +49,37 @@ class QProgressBar;
 class toHelpBrowser;
 class QToolButton;
 class toHelpPrefs;
+class QComboBox;
+
+/** This class is used to indicate a help context of an object. When the current context
+ * is to be determined you start at the widget that currently has focus and walk upwards
+ * to it's parent until you find a widget that also inherits this class which specify the
+ * context of all underlying widgets.
+ */
+
+class toHelpContext {
+  /**
+   * The current context.
+   */
+  QString Name;
+public:
+  /** Create a context.
+   * @param file File in the help directory that describes the current context.
+   */
+  toHelpContext(const QString &file)
+    : Name(file)
+  { }
+  virtual ~toHelpContext()
+  { }
+  /**
+   * Get this context
+   * @return The location of a file that describes the current context.
+   */
+  virtual const QString &context(void) const
+  { return Name; }
+};
+
+#include "totool.h"
 
 /**
  * Additional help tool. Also used as object to connect to to display help
@@ -211,34 +240,6 @@ public:
   static void connectDialog(QDialog *dialog);
 
   friend toHelpPrefs;
-};
-
-/** This class is used to indicate a help context of an object. When the current context
- * is to be determined you start at the widget that currently has focus and walk upwards
- * to it's parent until you find a widget that also inherits this class which specify the
- * context of all underlying widgets.
- */
-
-class toHelpContext {
-  /**
-   * The current context.
-   */
-  QString Name;
-public:
-  /** Create a context.
-   * @param file File in the help directory that describes the current context.
-   */
-  toHelpContext(const QString &file)
-    : Name(file)
-  { }
-  virtual ~toHelpContext()
-  { }
-  /**
-   * Get this context
-   * @return The location of a file that describes the current context.
-   */
-  virtual const QString &context(void) const
-  { return Name; }
 };
 
 #endif

@@ -320,7 +320,7 @@ static toSQL SQLSQLHead("toBrowser:PL/SQLHead",
 static toSQL SQLSQLBody("toBrowser:PL/SQLBody",
 			"SELECT Text FROM ALL_SOURCE\n"
 			" WHERE Owner = :f1<char[31]> AND Name = :f2<char[31]>\n"
-			"   AND Type IN ('PACKAGE','PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
+			"   AND Type IN ('PROCEDURE','FUNCTION','PACKAGE BODY','TYPE BODY')",
 			"Implementation of object");
 
 static toSQL SQLListTrigger("toBrowser:ListTrigger",
@@ -361,7 +361,7 @@ void toBrowser::setNewFilter(toResultFilter *filter)
 }
 
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
-  : toToolWidget(parent,connection)
+  : toToolWidget("browser.html",parent,connection)
 {
   if (!RefreshPixmap)
     RefreshPixmap=new QPixmap((const char **)refresh_xpm);
@@ -722,7 +722,9 @@ void toBrowser::changeSecondTab(QWidget *tab)
 	    widget;
 	    widget=widget->parentWidget())
 	  if (widget->isA("QTabWidget")) {
+#if 0
 	    widget->setFocus();
+#endif
 	    break;
 	  }
       } catch(...) {
@@ -735,7 +737,7 @@ void toBrowser::changeSecondTab(QWidget *tab)
 
 void toBrowser::changeTab(QWidget *tab)
 {
-  if (tab) {
+  if (tab&&this==toMainWidget()->workspace()->activeWindow()) {
     FirstTab=Map[tab->name()];
     SecondTab=SecondMap[tab->name()];
     SecondText="";

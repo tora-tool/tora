@@ -62,8 +62,8 @@ TO_NAMESPACE;
 
 #include "totool.moc"
 
-toToolWidget::toToolWidget(QWidget *parent,toConnection &conn,const char *name)
-  : QVBox(parent,name,WDestructiveClose)
+toToolWidget::toToolWidget(const QString &ctx,QWidget *parent,toConnection &conn,const char *name)
+  : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx)
 {
   Connection=&conn;
   Connection->addWidget(this);

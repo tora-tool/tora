@@ -41,6 +41,7 @@
 
 #include "tohighlightedtext.h"
 class toConnection;
+class toDebug;
 
 class toBreakpointItem : public QListViewItem {
   int Line;
@@ -63,6 +64,7 @@ class toDebugText : public toHighlightedText {
   QString Type;
   toConnection &Connection;
   int LastX;
+  toDebug *Debugger;
 
   QListView *Breakpoints;
   bool NoBreakpoints;
@@ -75,6 +77,7 @@ public:
   toDebugText(QListView *breakpoints,
 	      toConnection &connection,
 	      QWidget *parent,
+	      toDebug *debugger,
 	      const char *name=NULL);
 
   void toggleBreakpoint(int row=-1,bool enable=false);

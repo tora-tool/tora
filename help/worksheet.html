@@ -1,0 +1,154 @@
+<HTML><HEAD><TITLE>SQL Worksheet</TITLE></HEAD><BODY>
+<H1>SQL Worksheet</H1>
+This tool provides a way to execute arbitrary SQL or PL/SQL code and also investigate how it is execute and it's resource consumtion.<P>
+<IMG SRC=images/worksheet.png><P>
+The worksheet is split into two panes. The upper one is the editor where you enter the queries you want to run. In the lower you can
+investigate the result.
+<H2>Toolbar &amp; menu</H2>
+There is a toolbar and a toolmenu available for the worksheet. They both contain the following commands.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Execute Current</B></TD>
+<TD VALIGN=top>This executes the statement you current are in or after. When the statement is executed
+the statement executed will be highlighted in the editor. The keyboard shortcut is <B>CTRL-Return</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Execute All</B></TD>
+<TD VALIGN=top>Execute all the statements in the editor. You get no result from the execution, the
+statement is simply executed. You can investigate the success of the commands in the <B>Logging</B>
+pane of the result. The keyboard shortcut is <B>F8</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Execute Next</B></TD>
+<TD VALIGN=top>This does exactly the same as the <B>execute current</B> command with one difference.
+If the cursor is after the last ; of the statement and before the first non whitespace character
+of the next statenebt this command will execute the next statement when
+the other command will execute the previous statement. The keyboard shortcut is <B>F9</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Refresh</B></TD>
+<TD VALIGN=top>This will re-execute the last executed statement. The
+keyboard shortcut is <B>F5</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Commit</B></TD>
+<TD VALIGN=top>Commit the changes of the database connection that this worksheet is connected to. The
+keyboard shortcut is <B>F2</B>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Rollback</B></TD>
+<TD VALIGN=top>Rollback the changes of the database connection that this worksheet is connected to. The
+keyboard shortcut is <B>CTRL+Backspace</B>
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Enable Statistics</B></TD>
+<TD VALIGN=top>Enable or disable collecting statistics when running the statements. This will cause
+TOra to execute at least two extra queries for every statement executed when enabled.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Stop execution</B></TD>
+<TD VALIGN=top>Abort execution of the currently running query. This will not work in Windows where
+TOra will hang until the first row of the statement is returned or the statement is finnished. When
+you execute a new statement the current execution will be aborted.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Erase Log</B></TD>
+<TD VALIGN=top>
+Erase the contents of the rows under the <B>Logging</B> pane of the result.</TD></TR>
+</TABLE><P>
+<H2>Using the worksheet editor</H2>
+TOra uses a ; to separate statements in the same way as SQL*Plus. One difference is that TOra doesn't
+count whitespaces in any way to separate statements. You could write several statements on the same
+row and it wouldn't be a problem.<P>
+Another difference to SQL*Plus is that TOra parses the SQL you write to determine if you are within
+a PL/SQL block. If that is the case the entire block will be executed. This feature can be enabled
+or disabled in the <A HREF=worksheet.html#preferences>options</A>.<P>
+<table width=100% border=0><tr><td bgcolor="#BEEAE0">
+<pre>
+SELECT * FROM dual; SELECT * FROM all_tables;
+
+BEGIN
+   DBMS_OUTPUT.PUT_LINE('Hello');
+END;
+</pre></td></tr></table><P>
+In the example above there are three statements that TOra will recognise and execute.<P>
+There are a few words that are treated as comments for compatibility with SQL*Plus scripts. They are
+<B>--</B>, <B>REM</B>, <B>PROMPT</B> and <B>SET</B>. Comments will disregard whatever is to the right on
+the line.<P>
+You can also use bind variables in the worksheet by using the normal <B>:</B> character. See
+<A HREF=common.html#param>getting bind parameters</A> for more information how this works. One nice
+feature is that the first line retreived from the result set is stored in the parameter cache with
+a bind name the same as the column name in lowercase. The example in the <A HREF=common.html#param>getting
+bind parameters</A> could have been used directly after executing the line <code>select * from essprc</code>
+and get the second row in the table by just using the defaults of the bind dialog.<P>
+You can also describe objects returned as in PL/SQL by using either <B>DESC</B> or <B>DESCRIBE</B> and an
+object name.<P>
+<H2>Exploring the result</H2>
+There are five different panes available with information about the executed statements.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Result</B></TD><TD>
+This contains the actual result of the query or describe. For some notes about descriptions
+see <A HREF=common.html#describe>this note</A>.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Execution plan</B></TD><TD>
+The <A HREF=common.html#explain>execution plan</A> of the current statement.</TD></TR>
+<TR><TD VALIGN=top><B>Information
+</B></TD><TD>The information available about the current statement in the SGA.
+</TD></TR>
+<TR><TD VALIGN=top><B>Statistics
+</B></TD><TD>The statistics collected when this statement was run. You need to <B>enable
+statistics</B> for this to be enabled.
+</TD></TR>
+<TR><TD VALIGN=top><B>Logging
+</B></TD><TD>This pane will display the history of the statements you have executed and
+their result. It can be sorted up or down depending on <A HREF=worksheet.html#preferences>options</A>.
+You can see the statement, it's result and the time (As recorded by the database) when it
+was executed. An new statement isn't added to the log until the first row of the query is
+returned or the statement has executed, whichever comes first.
+</TD></TR>
+</TABLE>
+<A NAME=preferences><H2>Options</H2>
+There are quite a few options available for the worksheet.<P>
+<IMG SRC=images/worksheetsetup.png><P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Auto commit</B></TD><TD>
+If this is set TOra will commit the connection after every every statement is executed.</TD></TR>
+<TR><TD VALIGN=top><B>
+Auto save</B></TD><TD>
+If checked the worksheet will always save changes to the editor <B>without asking</B> when the window is closed.</TD></TR>
+<TR><TD VALIGN=top><B>
+Ask about saving changes</B></TD><TD>
+Ask about saving changes to the worksheet when it is modified.</TD></TR>
+<TR><TD VALIGN=top><B>
+Add log entries at end</B></TD><TD>
+If checked new entries in the <B>Logging</B> pane will be added to the end of list, otherwise they will be added at the
+top.</TD></TR>
+<TR><TD VALIGN=top><B>
+Multiple lines in log</B></TD><TD>
+If checked the lines in the log will display all the lines of the SQL executed. If not checked only the first line is
+displayed, although you can still see all of it in the tooltip or editor if you want to. For more information see
+<A HREF=lists.html>using lists</A>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Parse PL/SQL blocks</B></TD><TD>
+If this is checked TOra will parse the text to determine PL/SQL blocks in the editor and execute them as one statement.
+If it isn't checked statements are strictly separated by <B>;</B>.</TD></TR>
+<TR><TD VALIGN=top><B>
+Enable statistics</B></TD><TD>
+Indicates if statistics should be enabled or disabled as default when a new worksheet is opened.</TD></TR>
+<TR><TD VALIGN=top><B>
+Enable timed statistics</B></TD><TD>
+Set this to make TOra always enable timed statistics for the sessions that it is collecting statistics for.
+Observe that timed statistics will not be disabled after the worksheet is closed. The change is strictly
+for the current session though.</TD></TR>
+<TR><TD VALIGN=top><B>
+Display number column</B></TD><TD>
+Indicate wether or not to display the number column as the first column of the result or suppress it.</TD></TR>
+<TR><TD VALIGN=top><B>
+Default file</B></TD><TD>
+A filename to open automatically when you start a new worksheet. Choose the <B>Browse</B> button to select
+the file in a file dialog.</TD></TR>
+</BODY>
+</HTML>
