@@ -74,17 +74,19 @@
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref34">editSelectAll</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref35">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>void &nbsp;<b><A HREF="#ref35">incrementalSearch</A></b> (bool forward) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref36">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref10">mousePressEvent</A></b> (<A HREF="http://doc.trolltech.com/qmouseevent.html">QMouseEvent</A> *e) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref11">keyPressEvent</A></b> (<A HREF="http://doc.trolltech.com/qkeyevent.html">QKeyEvent</A> *e) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">newLine</A></b> (void) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">newLine</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">dropEvent</A></b> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref39">dropEvent</A></b> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is the enhanced editor used in TOra. It mainly offers integration in the TOra
  menues and printsupport in addition to normal QMultiLineEdit.
@@ -212,7 +214,10 @@
 <br></td><td align="right"><h3><strong>editSelectAll</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toEditWidget.html#editSelectAll">toEditWidget</A>.</p>
-<A NAME="exportData"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="incrementalSearch"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>incrementalSearch</strong> (bool forward)
+<br></td><td align="right"><h3><strong>incrementalSearch</strong></h3></td></tr></table><p></p><p> Start incremental search mode, or search next if started.
+   </p>
+<A NAME="exportData"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -221,7 +226,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
+<A NAME="importData"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -230,9 +235,9 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
-<A NAME="newLine"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>newLine</strong> (void)
+<A NAME="newLine"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>newLine</strong> (void)
 <br></td><td align="right"><h3><strong>newLine</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#408c84">QMultiLineEdit</A>.</p>
-<A NAME="dropEvent"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *)
+<A NAME="dropEvent"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>dropEvent</strong> (<A HREF="http://doc.trolltech.com/qdropevent.html">QDropEvent</A> *)
 <br></td><td align="right"><h3><strong>dropEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qmultilineedit.html#421c20">QMultiLineEdit</A>.</p>
 <HR>
 	<table>

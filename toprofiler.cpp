@@ -469,6 +469,25 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
 
   LastUnit=CurrentRun=0;
   show();
+
+  try {
+    toQuery query(connection(),SQLProfilerDetect);
+  } catch(const QString &) {
+    int ret=TOMessageBox::warning(this,
+				  "Profiler tables doesn't exist",
+				  "Profiler tables doesn't exist. Should TOra\n"
+				  "try to create them in the current schema.\n"
+				  "Should TOra try to create it?",
+				  "&Yes","&No",0,1);
+    if (ret==0) {
+      connection().execute(SQLProfilerRuns);
+      connection().execute(SQLProfilerUnits);
+      connection().execute(SQLProfilerData);
+      connection().execute(SQLProfilerNumber);
+    } else
+      return;
+  }
+
   refresh();
 }
 
@@ -500,23 +519,6 @@ void toProfiler::refresh(void)
 void toProfiler::execute(void)
 {
   try {
-    try {
-      toQuery query(connection(),SQLProfilerDetect);
-    } catch(const QString &) {
-      int ret=TOMessageBox::warning(this,
-				    "Profiler tables doesn't exist",
-				    "Profiler tables doesn't exist. Should TOra\n"
-				    "try to create them in the current schema.\n"
-				    "Should TOra try to create it?",
-				    "&Yes","&No",0,1);
-      if (ret==0) {
-	connection().execute(SQLProfilerRuns);
-	connection().execute(SQLProfilerUnits);
-	connection().execute(SQLProfilerData);
-	connection().execute(SQLProfilerNumber);
-      } else
-	return;
-    }
     QString exc;
     exc=toSQL::string(SQLStartProfiler,connection());
     for(int i=0;i<Repeat->value();i++) {
