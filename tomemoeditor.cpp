@@ -96,6 +96,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 			   bool sql,bool modal)
   : QDialog(parent,NULL,modal,modal?0:WDestructiveClose)
 {
+  setMinimumSize(400,300);
   Row=row;
   Col=col;
 

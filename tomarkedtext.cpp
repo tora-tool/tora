@@ -92,7 +92,7 @@ void toMarkedText::setEdit(void)
   } else {
     toEditWidget::setEdit(true,true,true,
 			  undoEnabled(),redoEnabled(),
-			  hasMarkedText(),hasMarkedText(),true,
+			  false,hasMarkedText(),true,
 			  true,true,false);
   }
   toMain::editEnable(this);
@@ -235,8 +235,8 @@ void toMarkedText::newLine(void)
     if (curline>0) {
       QString str=textLine(curline-1);
       QString ind;
-      for(unsigned int i=0;i<str.length()&&str[i].isSpace();i++)
-	ind+=str[i];
+      for(unsigned int i=0;i<str.length()&&str.at(i).isSpace();i++)
+	ind+=str.at(i);
       if (ind.length())
 	insert(ind,false);
     }

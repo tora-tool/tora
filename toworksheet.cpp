@@ -263,6 +263,14 @@ public:
 	       e->key()==Key_Backspace) {
       Worksheet->rollbackButton();
       e->accept();
+    } else if (e->state()==ControlButton&&
+	       e->key()==Key_Up) {
+      Worksheet->executePreviousLog();
+      e->accept();
+    } else if (e->state()==ControlButton&&
+	       e->key()==Key_Down) {
+      Worksheet->executeNextLog();
+      e->accept();
     } else {
       toHighlightedText::keyPressEvent(e);
     }
@@ -569,6 +577,10 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem("Edit saved SQL",
 			   this,SLOT(editSaved()));
       ToolMenu->insertSeparator();
+      ToolMenu->insertItem("Execute previous log entry",this,SLOT(executePreviousLog()),
+			   CTRL+Key_Up);
+      ToolMenu->insertItem("Execute next log entry",this,SLOT(executeNextLog()),
+			   CTRL+Key_Down);
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   "Erase &Log",this,SLOT(eraseLogButton(void)));
 
@@ -829,8 +841,14 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
   if (!Light) {
     item->setText(3,buf);
 
-    Logging->setCurrentItem(item);
-    Logging->ensureItemVisible(item);
+    QListViewItem *last=Logging->currentItem();
+    toResultViewItem *citem=NULL;
+    if (last)
+      citem=dynamic_cast<toResultViewItem *>(last);
+    if (!citem||citem->allText(0)!=sql) {
+      Logging->setCurrentItem(item);
+      Logging->ensureItemVisible(item);
+    }
   }
 
   {
@@ -1245,4 +1263,35 @@ void toWorksheet::editSaved(void)
 void toWorksheet::selectSaved()
 {
   SavedSQL->setFocus();
+}
+
+void toWorksheet::executePreviousLog(void)
+{
+  if (Light)
+    return;
+  QListViewItem *item=Logging->currentItem();
+  if (item) {
+    QListViewItem *prev=Logging->firstChild();
+    while(prev&&prev->nextSibling()!=item)
+      prev=prev->nextSibling();
+    toResultViewItem *item=dynamic_cast<toResultViewItem *>(prev);
+    if (item) {
+      Logging->setCurrentItem(item);
+      query(item->allText(0),false);
+    }
+  }
+}
+
+void toWorksheet::executeNextLog(void)
+{
+  if (Light)
+    return;
+  QListViewItem *item=Logging->currentItem();
+  if (item&&item->nextSibling()) {
+    toResultViewItem *next=dynamic_cast<toResultViewItem *>(item->nextSibling());
+    if (next) {
+      Logging->setCurrentItem(next);
+      query(next->allText(0),false);
+    }
+  }
 }

@@ -413,31 +413,38 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 
   double wpscalex=(double(metrics.width())*wmetr.widthMM()/metrics.widthMM()/wmetr.width());
   double wpscaley=(double(metrics.height())*wmetr.heightMM()/metrics.heightMM()/wmetr.height());
-  
-  double mwidth=metrics.width()/scale;
-  double mheight=metrics.height()/scale;
+
+  painter->save();
+  QFont font=painter->font();
+  font.setPointSizeFloat(font.pointSizeFloat()/max(wpscalex,wpscaley));
+  painter->setFont(font);
+
+  painter->scale(wpscalex,wpscaley);
+
+  double mwidth=metrics.width()/scale/wpscalex;
+  double mheight=metrics.height()/scale/wpscaley;
   double x=0;
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);
-    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
-		      int(header()->height()*wpscaley),
+    painter->drawText(0,int(metrics.height()/wpscaley)-header()->height(),int(metrics.width()/wpscalex),
+		      header()->height(),
 		      SingleLine|AlignRight|AlignVCenter,
 		      numPage);
-    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
-		      int(header()->height()*wpscaley),
+    painter->drawText(0,int(metrics.height()/wpscaley)-header()->height(),int(metrics.width()/wpscalex),
+		      header()->height(),
 		      SingleLine|AlignHCenter|AlignVCenter,
 		      middleString());
-    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
-		      int(header()->height()*wpscaley),
+    painter->drawText(0,int(metrics.height()/wpscaley)-header()->height(),int(metrics.width()/wpscalex),
+		      header()->height(),
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
     painter->scale(scale,scale);
-    painter->drawLine(0,int(header()->height()*wpscaley)-1,
-		      int(mwidth),int(header()->height()*wpscaley)-1);
+    painter->drawLine(0,header()->height()-1,
+		      int(mwidth),header()->height()-1);
   }
   for (int i=column;i<columns();i++) {
-    double width=columnWidth(i)*wpscalex;
+    double width=columnWidth(i);
     if (width+x>=mwidth) {
       if (i==column)
 	width=mwidth-x-1;
@@ -446,13 +453,14 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
     }
     if (paint)
       painter->drawText(int(x),0,int(width),
-			int(header()->height()*wpscaley),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+			header()->height(),
+			SingleLine|AlignLeft|AlignVCenter,header()->label(i));
     x+=width;
   }
   if (paint)
-    painter->translate(0,header()->height()*wpscaley);
+    painter->translate(0,header()->height());
 
-  double y=(header()->height()*wpscaley+1)/scale+header()->height()*wpscaley;
+  double y=(header()->height()+1)/scale+header()->height();
   int curLevel=level;
   int tree=rootIsDecorated()?treeStepSize():0;
   int newCol=-1;
@@ -464,7 +472,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
       x=0;
     painter->translate(x,0);
     for (int i=column;i<columns();i++) {
-      double width=columnWidth(i)*wpscalex;
+      double width=columnWidth(i);
       if (width+x>=mwidth) {
 	if (i==column)
 	  width=mwidth-x-1;
@@ -482,8 +490,8 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
       x+=width;
     }
     if (paint)
-      painter->translate(-x,item->height()*wpscaley);
-    y+=item->height()*wpscaley;
+      painter->translate(-x,item->height());
+    y+=item->height();
     if (item->firstChild()) {
       item=item->firstChild();
       curLevel+=tree;
@@ -500,6 +508,7 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   }
   if (paint)
     painter->drawLine(0,0,int(mwidth),0);
+  painter->restore();
   if (newCol>=0) {
     column=newCol;
     return top;
@@ -516,6 +525,8 @@ void toListView::editPrint(void)
   if (printer.setup()) {
     printer.setCreator("TOra");
     QPainter painter(&printer);
+
+
     QListViewItem *item=firstChild();
     int column=0;
     int tree=rootIsDecorated()?treeStepSize():0;

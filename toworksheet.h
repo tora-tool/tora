@@ -136,6 +136,8 @@ public slots:
   void executeSaved(void);
   void editSaved(void);
   void selectSaved(void);
+  void executePreviousLog(void);
+  void executeNextLog(void);
   void addLog(const QString &sql,const QString &result);
   void changeRefresh(const QString &);
 };

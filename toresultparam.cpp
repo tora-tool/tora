@@ -65,7 +65,7 @@ bool toResultParam::canHandle(toConnection &conn)
   return toIsOracle(conn);
 }
 
-toResultParam::toResultParam(QWidget *parent,const char *name=NULL)
+toResultParam::toResultParam(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
   QToolBar *toolbar=toAllocBar(this,"Parameter editor",connection().description());

@@ -2277,12 +2277,18 @@ void toExtract::describePartitionedIndex(std::list<QString> &lst,std::list<QStri
     addDescription(lst,ctx,QString("COMPRESS %1").arg(compressed));
 
   if (locality=="GLOBAL") {
-    addDescription(lst,ctx,"GLOBAL PARTITION COLUMNS",partitionKeyColumns(owner,name,"INDEX"));
-    describePartitions(lst,ctx,owner,name,subPartitionType,"GLOBAL");
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("GLOBAL PARTITION COLUMNS"));
+    toPush(cctx,partitionKeyColumns(owner,name,"INDEX"));
+    
+    addDescription(lst,cctx);
+    describePartitions(lst,cctx,owner,name,subPartitionType,"GLOBAL");
   } else {
-    addDescription(lst,ctx,"LOCAL PARTITION");
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("LOCAL PARTITION"));
+    addDescription(lst,cctx);
     if (partitionType=="RANGE")
-      describePartitions(lst,ctx,owner,name,subPartitionType,"LOCAL");
+      describePartitions(lst,cctx,owner,name,subPartitionType,"LOCAL");
   }
 }
 
@@ -2489,7 +2495,6 @@ void toExtract::describePartitions(std::list<QString> &lst,std::list<QString> &c
       toPush(storage,toShift(result));
 
     std::list<QString> cctx=ctx;
-    cctx.insert(cctx.end(),"PARTITION");
     cctx.insert(cctx.end(),partition.lower());
 
     addDescription(lst,cctx);
@@ -3490,8 +3495,11 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
     if (!inf.eof())
       throw QString("Couldn't find index partitions for %1.%2").arg(owner).arg(name);
     QString index(inf.readValue());
-    addDescription(lst,ctx,"PARTITION COLUMNS",partitionKeyColumns(owner,name,"TABLE"));
-    describePartitions(lst,ctx,owner,index,"NONE","IOT");
+    std::list<QString> cctx=ctx;
+    toPush(cctx,QString("PARTITION COLUMNS"));
+    toPush(cctx,partitionKeyColumns(owner,name,"TABLE"));
+    addDescription(lst,cctx);
+    describePartitions(lst,cctx,owner,index,"NONE","IOT");
   }
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
@@ -4028,15 +4036,18 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
     QString subPartitionType (toShift(type));
     QString subPartitionCount(toShift(type));
 
-    addDescription(lst,ctx,QString("PARTITION BY %1 (%2)").
-		   arg(partitionType).
-		   arg(partitionKeyColumns(owner,name,"TABLE")));
+    QString prtstr=QString("PARTITION BY %1 (%2)").
+      arg(partitionType).
+      arg(partitionKeyColumns(owner,name,"TABLE"));
+    addDescription(lst,ctx,prtstr);
+    QString subprtstr;
 
     if (partitionType=="RANGE") {
       if (subPartitionType=="HASH") {
-	addDescription(lst,ctx,QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
-		       arg(subPartitionKeyColumns(owner,name,"TABLE")).
-		       arg(subPartitionCount));
+	subprtstr=QString("SUBPARTITIONED BY HASH (%1) SUBPARTITIONS %2").
+	  arg(subPartitionKeyColumns(owner,name,"TABLE")).
+	  arg(subPartitionCount);
+	addDescription(lst,ctx,subprtstr);
       }
 
       toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
@@ -4051,7 +4062,7 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
 	  toPush(storage,toShift(segment));
 
 	std::list<QString> cctx=ctx;
-	cctx.insert(cctx.end(),"PARTITION");
+	cctx.insert(cctx.end(),prtstr);
 	cctx.insert(cctx.end(),partition.lower());
 	addDescription(lst,cctx,"RANGE",QString("VALUES LESS THAN %2").
 		       arg(highValue.lower()));
@@ -4063,8 +4074,8 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
 	  while(subs.size()>0) {
 	    QString subpart=QString(toShift(subs)).lower();
 	    QString tabspac=toShift(subs);
-	    addDescription(lst,cctx,"SUBPARTITION",subpart);
-	    addDescription(lst,cctx,"SUBPARTITION",subpart,
+	    addDescription(lst,cctx,subprtstr,subpart);
+	    addDescription(lst,cctx,subprtstr,subpart,
 			   QString("TABLESPACE %1").arg(tabspac));
 	  }
 	}
@@ -4075,8 +4086,8 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
       while(hash.size()>0) {
 	QString partition=QString(toShift(hash)).lower();
 	QString tablespac=toShift(hash);
-	addDescription(lst,ctx,"PARTITION",partition);
-	addDescription(lst,ctx,"PARTITION",partition,
+	addDescription(lst,ctx,prtstr,partition);
+	addDescription(lst,ctx,prtstr,partition,
 		       QString("TABLESPACE %1").arg(tablespac));
       }
     }

@@ -210,12 +210,7 @@ void toResultLong::stop(void)
 toResultLong::~toResultLong()
 {
   if (Query) {
-#ifdef WIN32
-    toThread *thread=new toThread(new toDeleteQuery(Query));
-    thread->startAsync();
-#else
     delete Query;
-#endif
     Query=NULL;
   }
 }
