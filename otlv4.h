@@ -8574,7 +8574,7 @@ public:
    case inRaw:
     return max_long_size;
    default:
-    return maxsz+1;
+    return maxsz*5+1;
    }
   case extLongVarChar:
    return max_long_size;
