@@ -85,8 +85,10 @@ public:
     queryValue(int i);
     queryValue(const QString &str);
     queryValue(double d);
-    queryValue(const queryValue &copy);
     ~queryValue();
+    
+    queryValue(const queryValue &copy);
+    const queryValue &operator = (const queryValue &copy);
 
     bool isInt(void) const;
     bool isDouble(void) const;
@@ -100,13 +102,13 @@ public:
     operator QString() const;
   };
   class queryImpl {
-    toQuery *Query;
+    toQuery *Parent;
   public:
     toQuery *query()
-    { return Query; }
+    { return Parent; }
     
     queryImpl(toQuery *query)
-      : Query(query)
+      : Parent(query)
     { }
     virtual ~queryImpl()
     { }

@@ -42,9 +42,12 @@ TO_NAMESPACE;
 #include "otlv32.h"
 #include "toconnection.h"
 #include "tomain.h"
+#include "toconf.h"
+
+// Must be larger than max long size in otl.
 
 #ifndef TO_ORACLE_LONG_SIZE
-#define TO_ORACLE_LONG_SIZE (1024*512) 
+#define TO_ORACLE_LONG_SIZE 33000 
 #endif
 
 class toOracleProvider : public toConnectionProvider {
@@ -67,14 +70,12 @@ public:
       Query=NULL;
     }
     virtual ~oracleQuery()
-    {
-      delete Query;
-    }
+    { delete Query; }
     virtual void execute(void);
 
     virtual toQValue readValue(void)
     {
-      char *buffer;
+      char *buffer=NULL;
       otl_var_desc *dsc=Query->describe_next_out_var();
       if (!dsc)
 	throw QString("Couldn't get description of next column to read");
@@ -82,25 +83,41 @@ public:
       try {
 	toQValue null;
 	switch (dsc->ftype) {
-	default:  // Try using char if all else fails
+	case otl_var_double:
+	case otl_var_float:
 	  {
-	    // The *2 is for raw columns, also dates and numbers are a bit tricky
-	    // but if someone specifies a dateformat longer than 100 bytes he
-	    // deserves everything he gets!
-	    buffer=new char[max(dsc->elem_size*2+1,100)];
-	    buffer[0]=0;
-	    (*Query)>>buffer;
-	    if (Query->is_null()) {
-	      delete buffer;
+	    double d;
+	    (*Query)>>d;
+	    if (Query->is_null())
 	      return null;
-	    }
-	    QString buf(QString::fromUtf8(buffer));
-	    delete buffer;
-	    return buf;
+	    return toQValue(d);
+	  }
+	  break;
+	case otl_var_int:
+	case otl_var_unsigned_int:
+	case otl_var_short:
+	case otl_var_long_int:
+	  {
+	    int i;
+	    (*Query)>>i;
+	    if (Query->is_null())
+	      return null;
+	    return toQValue(i);
 	  }
 	  break;
 	case otl_var_varchar_long:
 	case otl_var_raw_long:
+	  {
+	    buffer=new char[TO_ORACLE_LONG_SIZE+1];
+	    buffer[TO_ORACLE_LONG_SIZE]=0;
+	    otl_long_string str(buffer,TO_ORACLE_LONG_SIZE);
+	    (*Query)>>str;
+	    if (!str.len())
+	      return null;
+	    QString buf(QString::fromUtf8(buffer));
+	    delete buffer;
+	    return buf;
+	  }
 	case otl_var_clob:
 	case otl_var_blob:
 	  {
@@ -117,9 +134,26 @@ public:
 	      while(!lob.eof()) {
 		lob>>sink;
 	      }
-	      //	      toStatusMessage("Weird data exists past length of LOB");
+	      toStatusMessage("Weird data exists past length of LOB");
 	    }
 	    buffer[data.len()]=0; // Not sure if this is needed
+	    QString buf(QString::fromUtf8(buffer));
+	    delete buffer;
+	    return buf;
+	  }
+	  break;
+	default:  // Try using char if all else fails
+	  {
+	    // The *2 is for raw columns, also dates and numbers are a bit tricky
+	    // but if someone specifies a dateformat longer than 100 bytes he
+	    // deserves everything he gets!
+	    buffer=new char[max(dsc->elem_size*2+1,100)];
+	    buffer[0]=0;
+	    (*Query)>>buffer;
+	    if (Query->is_null()) {
+	      delete buffer;
+	      return null;
+	    }
 	    QString buf(QString::fromUtf8(buffer));
 	    delete buffer;
 	    return buf;
@@ -316,7 +350,6 @@ public:
 	}
       }
 
-#if 0
       try {
 	QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
 	str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
@@ -325,7 +358,6 @@ public:
       } catch(...) {
 	toStatusMessage("Failed to set new default date format for session");
       }
-#endif
       return new oracleSub(conn);
     }
     void closeConnection(toConnectionSub *conn)

@@ -142,6 +142,28 @@ toQuery::queryValue::queryValue(const queryValue &copy)
   }
 }
 
+const toQuery::queryValue &toQuery::queryValue::operator = (const queryValue &copy)
+{
+  if (Type==stringType)
+    delete Value.String;
+
+  Type=copy.Type;
+  switch(Type) {
+  case intType:
+    Value.Int=copy.Value.Int;
+    break;
+  case doubleType:
+    Value.Double=copy.Value.Double;
+    break;
+  case stringType:
+    Value.String=new QString(*copy.Value.String);
+    break;
+  case nullType:
+    break;
+  }
+  return *this;
+}
+
 toQuery::queryValue::queryValue(const QString &str)
 {
   Type=stringType;

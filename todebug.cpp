@@ -378,7 +378,7 @@ public:
 	do {
 	  toQuery poll(connection(),SQLDebugOutputPoll);
 	  ret=poll.readValue().toInt();
-	  QString str=poll.readValue();
+	  QString str=poll.readValueNull();
 	  if (ret==0||str.length())
 	    insertLine(str);
 	} while(ret==0);

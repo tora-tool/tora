@@ -777,21 +777,24 @@ void toBrowser::changeItem(QListViewItem *item)
 void toBrowser::changeSecondTab(QWidget *tab)
 {
   if (tab) {
-    SecondTab=SecondMap[tab->name()];
+    toResult *newtab=SecondMap[tab->name()];
+    if (newtab==SecondTab)
+      return;
+    SecondTab=newtab;
     SecondMap[TopTab->currentPage()->name()]=SecondTab;
     if (SecondTab&&!SecondText.isEmpty()) {
+#if 0
       try {
 	for(QWidget *widget=dynamic_cast<QWidget *>(SecondTab)->parentWidget();
 	    widget;
 	    widget=widget->parentWidget())
 	  if (widget->isA("QTabWidget")) {
-#if 0
 	    widget->setFocus();
-#endif
 	    break;
 	  }
       } catch(...) {
       }
+#endif
       SecondTab->changeParams(Schema->currentText(),
 			      SecondText);
     }
@@ -801,6 +804,10 @@ void toBrowser::changeSecondTab(QWidget *tab)
 void toBrowser::changeTab(QWidget *tab)
 {
   if (tab&&this==toMainWidget()->workspace()->activeWindow()) {
+    toResultView *newtab=Map[tab->name()];
+    if (newtab==FirstTab)
+      return;
+    FirstTab=newtab;
     FirstTab=Map[tab->name()];
     SecondTab=SecondMap[tab->name()];
     SecondText="";

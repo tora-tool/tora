@@ -125,7 +125,7 @@ void toResultReferences::query(const QString &sql,const toQList &param)
       QString consOwner(query.readValue());
       item->setText(1,query.readValue());
       QString consName(query.readValue());
-      QString colNames(query.readValue());
+      QString colNames(constraintCols(Owner,consName));
       item->setText(0,consOwner);
       item->setText(2,consName);
       QString rConsOwner(query.readValue());

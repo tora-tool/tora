@@ -112,8 +112,8 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
       item=new QListViewItem(this,item,NULL);
 
       QString consName=query.readValue();
-      QString colNames=constraintCols(Owner,consName);
       QString check=query.readValue();
+      QString colNames=constraintCols(Owner,consName);
       item->setText(0,consName);
       QString rConsOwner=query.readValue();
       QString rConsName=query.readValue();
@@ -154,7 +154,7 @@ void toResultConstraint::query(const QString &sql,const toQList &param)
 	break;
       }
       item->setText(1,Condition);
-      item->setText(3,query.readValue());
+      item->setText(3,query.readValueNull());
       item->setText(4,query.readValue());
     }
   } TOCATCH

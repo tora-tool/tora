@@ -718,11 +718,11 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
   addColumn("Object");
   setRootIsDecorated(true);
   try {
-    toQuery object(Connection,SQLObjectList);
-    toQuery typelst(Connection);
     QString oType;
     QString oOwner;
     QString oName;
+    toQuery object(Connection,SQLObjectList);
+    toQuery typelst(Connection);
     QListViewItem *typeItem=NULL;
     QListViewItem *ownerItem=NULL;
     QListViewItem *nameItem=NULL;
@@ -1251,6 +1251,7 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 toSecurity::toSecurity(QWidget *main,toConnection &connection)
   : toToolWidget("security.html",main,connection)
 {
+  toBusy busy;
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
   if (!toCommitPixmap)
@@ -1421,7 +1422,7 @@ void toSecurity::refresh(void)
     toQuery roles(connection(),SQLRoles);
     item=NULL;
     while(!roles.eof()) {
-      QString tmp=user.readValue();
+      QString tmp=roles.readValue();
       QString id="ROLE:";
       id+=tmp;
       item=new toResultViewItem(parent,item,tmp);

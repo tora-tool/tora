@@ -208,8 +208,8 @@ static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
 
 static toSQL SQLChartsRedo("toTuning:Charts:7BSRedo log I/O",
 			   "select SYSDATE,\n"
-			   "       sum(decode(statistic#,101,value,0))/to_number(:unit<char[101]>) \"Redo size\",\n"
-			   "       sum(decode(statistic#,103,value,0))/to_number(:unit<char[101]>) \"Redo wastage\"\n"
+			   "       sum(decode(statistic#,101,value,0))/:unit<int> \"Redo size\",\n"
+			   "       sum(decode(statistic#,103,value,0))/:unit<int> \"Redo wastage\"\n"
 			   "  from v$sysstat where statistic# in (101,103)",
 			   "Used to generate chart for redo I/O statistics.");
 
@@ -333,7 +333,7 @@ void toTuningOverview::setupChart(toResultLine *chart,const QString &title,const
   toQList val;
   if (postfix=="b/s") {
     QString unitStr=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
-    val.insert(val.end(),QString::number(toSizeDecode(unitStr)));
+    val.insert(val.end(),toQValue(toSizeDecode(unitStr)));
     unitStr+="/s";
     chart->setYPostfix(unitStr);
   } else
@@ -381,8 +381,8 @@ toTuningOverview::toTuningOverview(QWidget *parent=0,const char *name=0,WFlags f
 
   toQList val;
   val.insert(val.end(),
-	     QString::number(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
-							       DEFAULT_SIZE_UNIT))));
+	     toQValue(toSizeDecode(toTool::globalConfig(CONF_SIZE_UNIT,
+							DEFAULT_SIZE_UNIT))));
   FileUsed->query(toSQL::string(SQLOverviewFilespace,toCurrentConnection(this)),val);
   FileUsed->showLegend(false);
 

@@ -109,6 +109,7 @@ static toSQL SQLSystemStatistics("toResultStats:SystemStatistics",
 
 void toResultStats::resetStats(void)
 {
+  toBusy busy;
   try {
     toConnection &conn=connection();
     toQList args;
@@ -204,6 +205,7 @@ void toResultStats::addValue(bool reset,int id,const QString &name,double value)
 
 void toResultStats::refreshStats(bool reset)
 {
+  toBusy busy;
   try {
     clear();
     Row=0;

@@ -231,7 +231,7 @@ void toOutput::poll()
 
       any=false;
       while(!query.eof()) {
-	QString line=query.readValue();
+	QString line=query.readValueNull();
 	int status=QString(query.readValue()).toInt();
 	if (status==0) {
 	  any=true;

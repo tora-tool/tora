@@ -119,7 +119,7 @@ void toResultLong::addItem(void)
 	  em=true;
 	}
 	if (!HasHeaders) {
-	  toQDescList Description=Query->describe();
+	  Description=Query->describe();
 	  bool hidden=false;
 
 	  for (toQDescList::iterator i=Description.begin();i!=Description.end();i++) {
@@ -148,13 +148,14 @@ void toResultLong::addItem(void)
 	if (!Query->eof()) {
 	  RowNumber++;
 	  int disp=0;
+	  unsigned int cols=Description.size();
 	  LastItem=createItem(LastItem,NULL);
 	  if (NumberColumn) {
 	    LastItem->setText(0,QString::number(RowNumber));
 	    disp=1;
 	  } else
-	    LastItem->setText(Description.size(),QString::number(RowNumber));
-	  for (unsigned int j=0;(j<Description.size()||j==0)&&!Query->eof();j++)
+	    LastItem->setText(cols,QString::number(RowNumber));
+	  for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
 	    LastItem->setText(j+disp,Query->readValue());
 	}
 	if (em) {

@@ -192,7 +192,7 @@ toConnection *toNewConnection::makeConnection(void)
     {
       for(QListViewItem *item=Previous->firstChild();item;item=item->nextSibling()) {
 	if (item->text(0)==Provider->currentText()&&
-	    item->text(1)==host&&
+	    ((item->text(1)==host)||(item->text(1).isEmpty()==host.isEmpty()))&&
 	    item->text(2)==Database->currentText()&&
 	    item->text(3)==Username->text()) {
 	  delete item;
