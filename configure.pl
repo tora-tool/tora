@@ -258,7 +258,7 @@ my $NoRPath;
 my $OracleFound=1;
 my $OracleRelease;
 my $OracleShared="-lclntsh";
-my $TestDB=$OracleShared;
+my $TestDB;
 my $RPMGenerate=0;
 
 my $MySQLInclude;
@@ -945,8 +945,10 @@ __TEMP__
 	} else {
 	    print "$OracleRelease\n";
 	}
-    } else {
-	$TestDB="-lmysqlclient";
+	$TestDB.=" $OracleShared";
+    }
+    if ($MySQLFound) {
+	$TestDB.=" -lmysqlclient";
     }
 
     findFile("^libstdc\\+\\+.*\\.a",sub {
