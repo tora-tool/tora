@@ -459,12 +459,12 @@ toMain::toMain()
   RowLabel=new QLabel(statusBar());
   statusBar()->addWidget(RowLabel,0,true);
   RowLabel->setMinimumWidth(60);
-  RowLabel->hide();
+  //  RowLabel->hide();
 
   ColumnLabel=new QLabel(statusBar());
   statusBar()->addWidget(ColumnLabel,0,true);
   ColumnLabel->setMinimumWidth(60);
-  ColumnLabel->hide();
+  //  ColumnLabel->hide();
 
   QToolButton *dispStatus=new toPopupButton(statusBar());
   dispStatus->setIconSet(QPixmap((const char **)up_xpm));
@@ -1074,8 +1074,13 @@ void toMain::setEditWidget(toEditWidget *edit)
     if (main->Edit)
       main->Edit->lostFocus();
     main->Edit=edit;
+#if 0
     main->RowLabel->hide();
     main->ColumnLabel->hide();
+#else
+    main->RowLabel->setText(QString::null);
+    main->ColumnLabel->setText(QString::null);
+#endif
     main->editEnable(edit);
   }
 }
@@ -1205,8 +1210,10 @@ void toMain::setCoordinates(int line,int col)
   str=tr("Col:")+" ";
   str+=QString::number(col);
   ColumnLabel->setText(str);
+#if 0
   RowLabel->show();
   ColumnLabel->show();
+#endif
 }
 
 void toMain::editSQL(const QString &str)
@@ -1365,7 +1372,6 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
   else if (data[prefix+":State"]==QString::fromLatin1("Minimized"))
     showMinimized();
   else {
-    showNormal();
     int width=data[prefix+":Width"].toInt();
     if (width==0) {
       TOMessageBox::warning(toMainWidget(),

@@ -286,7 +286,6 @@ static const char data[]=
 static int data_length=sizeof(data);
 
 static int Running=0;
-static QLabel *Label;
 static QMovie *Animation;
 
 class toBackgroundLabel : public QLabel {
@@ -299,10 +298,7 @@ public:
     arr.assign(data,data_length);
     Animation=new QMovie(arr);
     setMovie(*Animation);
-#if 0
-    Animation->pause();
-#endif
-    TimerID=startTimer(500);
+    TimerID=startTimer(2000);
   }
 
   virtual void timerEvent(QTimerEvent *time)
@@ -314,6 +310,9 @@ public:
 	Animation->pause();
     }
   }
+
+  int timerID()
+  { return TimerID; }
 
   virtual void mouseReleaseEvent(QMouseEvent *e)
   {
@@ -343,6 +342,8 @@ public:
   }
 };
 
+static toBackgroundLabel *Label;
+
 toBackground::toBackground(QObject* parent,const char* name)
   : toTimer(parent,name)
 {
@@ -360,7 +361,7 @@ void toBackground::start(int msec)
       return;
     Animation->unpause();
   }
-  Animation->setSpeed(Running*100);
+  Animation->setSpeed(min(Running,1)*100);
   if (Running>1)
     QToolTip::add(Label,tr("%1 queries running in background.").arg(Running));
   else
@@ -375,7 +376,7 @@ void toBackground::stop(void)
   if (isActive()) {
     Running--;
     if (Animation) {
-      if (Running==0)
+      if (Running==0&&Label->timerID()<0)
 	Animation->pause();
       else
 	Animation->setSpeed(Running*100);

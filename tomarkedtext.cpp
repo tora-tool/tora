@@ -82,6 +82,8 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
   pal.setColor(QColorGroup::Foreground,
 	       toSyntaxAnalyzer::defaultAnalyzer().getColor(toSyntaxAnalyzer::Normal));
   setPalette(pal);
+
+  CursorTimerID=-1;
 }
 
 void toMarkedText::setEdit(void)
@@ -107,6 +109,18 @@ void toMarkedText::focusInEvent (QFocusEvent *e)
   getCursorPosition (&curline,&curcol);
   toMainWidget()->setCoordinates(curline+1,curcol+1);
   toMultiLineEdit::focusInEvent(e);
+  if (CursorTimerID<0)
+    CursorTimerID=startTimer(500);
+}
+
+void toMarkedText::timerEvent(QTimerEvent *e)
+{
+  if (CursorTimerID==e->timerId()) {
+    int curline,curcol;
+    getCursorPosition (&curline,&curcol);
+    toMainWidget()->setCoordinates(curline+1,curcol+1);
+  } else
+    toMultiLineEdit::timerEvent(e);
 }
 
 void toMarkedText::focusOutEvent (QFocusEvent *e)
@@ -116,6 +130,8 @@ void toMarkedText::focusOutEvent (QFocusEvent *e)
     LastSearch=SearchString;
     toStatusMessage(QString::null);
   }
+  if (CursorTimerID>=0)
+    killTimer(CursorTimerID);
   toMultiLineEdit::focusOutEvent(e);
 }
 
@@ -128,11 +144,6 @@ void toMarkedText::dropEvent(QDropEvent *e)
 void toMarkedText::paintEvent(QPaintEvent *pe)
 {
   toMultiLineEdit::paintEvent(pe);
-  if (hasFocus()) {
-    int curline,curcol;
-    getCursorPosition (&curline,&curcol);
-    toMainWidget()->setCoordinates(curline+1,curcol+1);
-  }
 }
 
 void toMarkedText::editPrint(void)

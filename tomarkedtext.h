@@ -49,6 +49,7 @@
 
 #include <qglobal.h>
 #include <qstring.h>
+#include <qtimer.h>
 
 class TOPrinter;
 
@@ -68,6 +69,8 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
   bool SearchForward;
   QString SearchString;
   QString LastSearch;
+
+  int CursorTimerID;
 
   /** Print one page to printer.
    * @param printer Printer to print to.
@@ -226,6 +229,7 @@ public:
 protected:
   virtual void newLine(void);
   virtual void dropEvent(QDropEvent *);
+  virtual void timerEvent(QTimerEvent *);
 private slots:
   void setRedoAvailable(bool avail)
   { redoEnabled(avail); }
