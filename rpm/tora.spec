@@ -138,7 +138,7 @@ export QTDIR="%{_qt2dir}"
 %dir %{_prefix}/lib/tora/help
 %dir %{_prefix}/lib/tora/help/api
 %dir %{_prefix}/lib/tora/help/images
-%{_prefix}/lib/tora
+%{_prefix}/lib/tora/help
 
 %files mysql -f rpmmysql
 %defattr(-,root,root)
