@@ -35,30 +35,6 @@
 use strict;
 use File::Copy;
 
-my $tmpName="/tmp/toraconfig.$$";
-
-sub findFile {
-    my ($files)=shift(@_);
-    my ($check)=shift(@_);
-    my @dirs=@_;
-    for my $dir (@dirs) {
-	if (opendir(DIR,$dir)) {
-	    my @files = grep { /$files/ && -f "$dir/$_" } readdir(DIR);	    
-	    closedir(DIR);
-	    for (@files) {
-		if ($check) {
-		    if (&{$check}("$dir/$_")) {
-			return $dir;
-		    }
-		} else {
-		    return $dir;
-		}
-	    }
-	}
-    }
-    return undef;
-}
-
 my @source=(
 	    "toabout",
 	    "toaboutui",
@@ -215,12 +191,36 @@ __EOMK__
 __EOMK__
 	     );
 
+sub findFile {
+    my ($files)=shift(@_);
+    my ($check)=shift(@_);
+    my @dirs=@_;
+    for my $dir (@dirs) {
+	if (opendir(DIR,$dir)) {
+	    my @files = grep { /$files/ && -f "$dir/$_" } readdir(DIR);	    
+	    closedir(DIR);
+	    for (@files) {
+		if ($check) {
+		    if (&{$check}("$dir/$_")) {
+			return $dir;
+		    }
+		} else {
+		    return $dir;
+		}
+	    }
+	}
+    }
+    return undef;
+}
+
+my $tmpName="/tmp/toraconfig.$$";
+
 my $InstallPrefix="/usr/local";
 my $InstallBin;
 my $InstallLib;
 my $Includes;
 my $CC;
-my $Libs="-lcrypt -lm -lpthread -ldl";
+my $Libs="-lcrypt -lm -lpthread";
 my $MOC;
 my $UIC;
 my $QtDir;
@@ -248,6 +248,7 @@ my $OracleFound=1;
 my $OracleRelease;
 my $OracleShared="-lclntsh";
 my $TestDB=$OracleShared;
+my $RPMGenerate=0;
 
 my $MySQLInclude;
 my $MySQLLib;
@@ -302,6 +303,8 @@ for (@ARGV) {
 	    $KDEInclude="$1/include";
 	    $KDELibs="$1/lib";
 	}
+    } elsif (/^--with-rpm-contents$/) {
+	$RPMGenerate=1;
     } elsif (/^--without-rpath$/) {
 	$NoRPath=1;
     } elsif (/^--with-kde-include=(.*)$/) {
@@ -980,6 +983,17 @@ __TEMP__
 	$Includes.=" \"-I".$MySQLInclude."\"";
     }
 
+    if (!$ForceTarget) {
+	print "checking for plugin support ... ";
+	if ($Linux) {
+	    $Libs.=" -ldl";
+	    print "yes\n";
+	    $Target="tora-plugin";
+	} else {
+	    print "no\n";
+	}
+    }
+
     if (!-f $CC) {
 	findFile("^(g\\+\\+|gcc|cc)\$",\&finalTest,split(/:/,$ENV{PATH}));
     } elsif (!&finalTest($CC)) {
@@ -1001,16 +1015,6 @@ compiler used):
 
 __EOT__
 	exit(2);
-    }
-
-    if (!$ForceTarget) {
-	print "checking for plugin support ... ";
-	if ($Linux) {
-	    print "yes\n";
-	    $Target="tora-plugin";
-	} else {
-	    print "no\n";
-	}
     }
 
     print "creating Makefile\n";
@@ -1429,5 +1433,54 @@ __EOT__
     } else {
 	print "\nCouldn't open Makefile for writing\n";
 	exit(2);
+    }
+}
+
+if ($RPMGenerate) {
+    my @common;
+    my @oracle;
+    my @mysql;
+    for my $t (sort keys %plugins) {
+        if ($plugins{$t}{Oracle}&&!($plugins{$t}{MySQL}||
+				    $plugins{$t}{Qt3}||
+				    $plugins{$t}{Any})) {
+	    push(@oracle,"plugins/$t.tso");
+	} elsif ($plugins{$t}{MySQL}&&!($plugins{$t}{Oracle}||
+					$plugins{$t}{Qt3}||
+					$plugins{$t}{Any})) {
+	    push(@mysql,"plugins/$t.tso");
+	} else {
+	    if ($QtVersion lt "3"&&$plugins{$t}{Qt3}&&!($plugins{$t}{MySQL}||
+							$plugins{$t}{Oracle}||
+							$plugins{$t}{Any})) {
+		# Qt3 only without Qt3 support.
+	    } else {
+		push(@common,"plugins/$t.tso");
+	    }
+	}
+    }
+    print "creating rpmcommon\n";
+    if (open(FILE,">rpmcommon")) {
+        print FILE join("\n",@common)."\n";
+        close FILE;
+    }
+    if (! -f "rpmcommon") {
+        print "\nCouldn't open rpmcommon for writing\n";
+    }
+    print "creating rpmoracle\n";
+    if (open(FILE,">rpmoracle")) {
+        print FILE join("\n",@oracle)."\n";
+        close FILE;
+    }
+    if (! -f "rpmoracle") {
+        print "\nCouldn't open rpmoracle for writing\n";
+    }
+    print "creating rpmmysql\n";
+    if (open(FILE,">rpmmysql")) {
+        print FILE join("\n",@mysql)."\n";
+        close FILE;
+    }
+    if (! -f "rpmmysql") {
+        print "\nCouldn't open rpmmysql for writing\n";
     }
 }
