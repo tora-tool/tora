@@ -325,6 +325,27 @@ public:
       else
 	return toResultViewItem::text(col);
     }
+
+    virtual int compare (QListViewItem *i,int col,bool ascending) const
+    {
+      if (col==2||col==3||col==4){
+        toProfilerSource::listItem* item=dynamic_cast<toProfilerSource::listItem*>(i);
+	if(!i)
+	  return QListViewItem::compare(i,col,ascending);
+        else {
+          double val_in=allText(col).toDouble();
+	  double val_out=item->allText(col).toDouble(); 
+	  if (val_in>val_out)
+	    return 1;
+          else if (val_in<val_out)
+	    return -1;
+          else 
+	    return 0;
+	}
+      } else
+	return QListViewItem::compare(i,col,ascending);
+    }
+	
     virtual void paintCell(QPainter *p,const QColorGroup &cg,
 			   int column,int width,int alignment)
     {
