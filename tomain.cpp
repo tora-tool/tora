@@ -1196,7 +1196,7 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
 	if (widget) {
 	  toToolWidget *tw=dynamic_cast<toToolWidget *>(widget);
 	  if (tw) {
-	    toToolCaption(tw,name());
+	    toToolCaption(tw,tool->name());
 	    tw->importData(data,prefix+":Tools:"+QString::number(id));
 	  }
 	}
