@@ -47,27 +47,60 @@ class toConnection;
 class toConnectionProvider;
 class toSQL;
 
+/** This class is an abstract definition of an actual connection to a database.
+ * Each @ref toConnection object can have one or more actual connections to the
+ * database depending on long running queries. Normally you will never need to
+ * bother with this class if you aren't creating a new database provider
+ * (@ref toConnectionProvider).
+ */
+
 class toConnectionSub {
 public:
+  /** Create connection to database.
+   */
   toConnectionSub()
   { }
+  /** Close connection.
+   */
   virtual ~toConnectionSub()
   { }
 };
 
+/** This class is used to perform a query on a database connection.
+ */
+
 class toQuery {
 public:
+  /** Represent different modes to run a query in.
+   */
   enum queryMode {
+    /** Run the query normally on the main connection of the @ref toConnection object.
+     */
     Normal,
+    /** Run the query in a separate connection for long running queries.
+     */
     Long,
+    /** Run the query on all non occupied connections of the @ref toConnection object.
+     */
     All
   };
 
+  /** This structure is used to describe the resultset of a query.
+   */
+
   struct queryDescribe {
+    /** Column name
+     */
     QString Name;
+    /** Datatype of string.
+     */
     QString Datatype;
+    /** If column can contain null values.
+     */
     bool Null;
   };
+  /** This function is used to represent values that are passed to and from queries
+   */
   class queryValue {
     enum {
       intType,
@@ -81,42 +114,104 @@ public:
       QString *String;
     } Value;
   public:
+    /** Create null value.
+     */
     queryValue(void);
+    /** Create integer value.
+     * @param i Value.
+     */
     queryValue(int i);
+    /** Create string value.
+     * @param str Value.
+     */
     queryValue(const QString &str);
+    /** Create double value.
+     * @param d Value.
+     */
     queryValue(double d);
+    /** Destruct query.
+     */
     ~queryValue();
     
+    /** Create a copy of a value.
+     */
     queryValue(const queryValue &copy);
+    /** Assign this value from another value.
+     */
     const queryValue &operator = (const queryValue &copy);
 
+    /** Check if this is an int value.
+     */
     bool isInt(void) const;
+    /** Check if this is a double value.
+     */
     bool isDouble(void) const;
+    /** Check if this is a string value.
+     */
     bool isString(void) const;
+    /** Check if this value is null.
+     */
     bool isNull(void) const;
 
+    /** Get utf8 format of this value.
+     */
     QCString utf8Value(void) const;
+    /** Get integer representation of this value.
+     */
     int toInt(void) const;
+    /** Get double representation of this value.
+     */
     double toDouble(void) const;
 
+    /** Convert value to a string.
+     */
     operator QString() const;
   };
+  /** Abstract parent of implementations of a query for a database provider
+   * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
+   */
   class queryImpl {
     toQuery *Parent;
   public:
+    /** Get the parent query object. All the parameters of the query must be read from here.
+     * nothing is passed to the functions.
+     */
     toQuery *query()
     { return Parent; }
     
+    /** Create a query implementation. The constructor must not perform any actions with the
+     * database that could block for a noticable time (Like execute or parse a query). The
+     * data for the query may not be available when this object created.
+     * @param query Parent query object.
+     */
     queryImpl(toQuery *query)
       : Parent(query)
     { }
+    /** Destroy query implementation.
+     */
     virtual ~queryImpl()
     { }
+    /** Execute a query. Parameters can be gotten from the @ref toQuery object.
+     */
     virtual void execute(void) = 0;
+    /** Read the next value from the stream.
+     * @return The value read from the query.
+     */
     virtual queryValue readValue(void) = 0;
+    /** Check if the end of the query has been reached.
+     * @return True if all values have been read.
+     */
     virtual bool eof(void) = 0;
+    /** Get the number of rows processed in the last executed query.
+     */
     virtual int rowsProcessed(void) = 0;
+    /** Describe the currently running query.
+     * @return A list of column descriptions of the query.
+     */
     virtual list<queryDescribe> describe(void) = 0;
+    /** Get number of columns in the resultset.
+     * @return Column number.
+     */
     virtual int columns(void) = 0;
   };
 

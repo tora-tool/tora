@@ -109,7 +109,7 @@ void toBreakpointItem::setBreakpoint(void)
     toPush(args,toQValue(text(0)));
     toPush(args,toQValue(text(2)));
     toPush(args,toQValue(Line+1));
-    toQuery query(conn,SQLBreakpoint);
+    toQuery query(conn,SQLBreakpoint,args);
     int ret=query.readValue().toInt();
     if (ret==TO_SUCCESS) {
       setText(TO_BREAK_COL,query.readValue());

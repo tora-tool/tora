@@ -2539,10 +2539,10 @@ void toDebug::changeWatch(QListViewItem *item)
     dialog.HeadLabel->setText(description);
     QString index=item->text(5);
 
-    if (item->text(5)=="NULL") {
+    if (item->text(5)=="NULL")
       dialog.NullValue->setChecked(true);
+    else
       data=item->text(3);
-    }
 
     if (!index.isEmpty()&&index!="LIST")
       dialog.Index->setValue(item->text(5).toInt());

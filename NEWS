@@ -55,6 +55,7 @@
 2001-08-15: Totally rewritten DB generic DB access interface (A nice 5000 line change).
 2001-08-15: New Oracle DB access provider.
 2001-08-16: Fixed a lot of problem with new DB access.
+2001-08-16: Fixed problem with default value in changing watches.
 
 0.14: Released 2001-08-02
 
