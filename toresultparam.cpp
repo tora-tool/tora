@@ -104,7 +104,7 @@ void toResultParam::query(const QString &sql,const toQList &param)
     if (i!=NewValues.end()) {
       item->setText(1,(*i).second);
       item->setText(6,"FALSE");
-      item->setText(2,"*");
+      item->setText(2,"Changed");
     }
   }
 }
@@ -118,7 +118,7 @@ void toResultParam::saveChange()
       if (item->text(4).toInt()==LastItem) {
 	item->setText(1,LastValue);
 	item->setText(6,"FALSE");
-	item->setText(2,"*");
+	item->setText(2,"Changed");
 	break;
       }
     }
@@ -159,7 +159,7 @@ void toResultParam::applySession(void)
   saveChange();
   toConnection &conn=connection();
   for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
-    if (item->text(2)=="*") {
+    if (item->text(2)=="Changed") {
       try {
 	if (item->text(7)!="FALSE") {
 	  QString str="ALTER SESSION SET ";
@@ -187,7 +187,7 @@ void toResultParam::applySystem(void)
   saveChange();
   toConnection &conn=connection();
   for(QListViewItem *item=Params->firstChild();item;item=item->nextSibling()) {
-    if (item->text(2)=="*") {
+    if (item->text(2)=="Changed") {
       try {
 	if (item->text(8)!="FALSE") {
 	  QString str="ALTER SYSTEM SET ";
