@@ -223,20 +223,22 @@ plugins/todebug.tso:\
 	objs/todebugtext.o \
 	objs/todebugchange.o
 plugins/tocurrent.tso:objs/tocurrent.o
-plugins/toextract.tso:objs/toextract.o
+plugins/toextract.tso:\
+	objs/toextract.o \
+	objs/toresultextract.o
 plugins/toinvalid.tso:objs/toinvalid.o
 plugins/tooutput.tso:objs/tooutput.o
-plugins/tonoblockquery.tso:objs/tonoblockquery.o
+plugins/tonoblockquery.tso:\
+	objs/toresultlong.o \
+	objs/tonoblockquery.o
 plugins/toresult.tso:\
 	objs/toresultcols.o \
 	objs/toresultconstraint.o \
 	objs/toresultcontent.o \
 	objs/toresultcontentfilterui.o \
 	objs/toresultdepend.o \
-	objs/toresultextract.o \
 	objs/toresultindexes.o \
 	objs/toresultlock.o \
-	objs/toresultlong.o \
 	objs/toresultplan.o \
 	objs/toresultparam.o \
 	objs/toresultreferences.o \
@@ -324,9 +326,9 @@ tora-plugin: \
 	plugins/tocurrent.tso \
 	plugins/toextract.tso \
 	plugins/toinvalid.tso \
-	plugins/tonoblockquery.tso \
 	plugins/tooutput.tso \
 	plugins/tooracleconnection.tso \
+	plugins/tonoblockquery.tso \
 	plugins/toresult.tso \
 	plugins/torollback.tso \
 	plugins/toscript.tso \

@@ -8,6 +8,8 @@
 2001-10-24: Improved content editor (Thanx Selcuk Ozturk).
 2001-10-25: Added result history in worksheet (Disabled by default).
 2001-10-25: Fixed problem with cache reading indication only working once.
+2001-10-25: Bind now instead of lazy when using plugins.
+2001-10-25: Reorganized plugins a minor bit.
 
 1.1.3: Released 2001-10-19
 

@@ -119,7 +119,7 @@ int main(int argc,char **argv)
 	std::list<QString> current=failed;
 	failed.clear();
 	for(std::list<QString>::iterator i=current.begin();i!=current.end();i++) {
-	  if (!dlopen(*i,RTLD_LAZY|RTLD_GLOBAL)) {
+	  if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL)) {
 	    failed.insert(failed.end(),*i);
 	  } else {
 	    success=true;
@@ -133,12 +133,11 @@ int main(int argc,char **argv)
 	}
       } while(failed.begin()!=failed.end()&&success);
       for(std::list<QString>::iterator i=failed.begin();i!=failed.end();i++)
-	if (!dlopen(*i,RTLD_LAZY|RTLD_GLOBAL))
+	if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL))
 	  printf("Failed to load %s\n  %s\n",
 		 (const char *)(*i),dlerror());
     }
 #endif
-
 
     toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
 
