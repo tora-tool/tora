@@ -834,13 +834,14 @@ void toSecurityObject::changeUser(const QString &user)
     toQuery grant(toCurrentConnection(this),SQLObjectGrant,user);
     QString yes="YES";
     QString admstr="ADMIN";
+    QString normalstr="normal";
     while(!grant.eof()) {
       QString owner(grant.readValue());
       QString object(grant.readValue());
       QString priv(grant.readValue());
       QString admin(grant.readValue());
 
-      ((privs[owner])[object])[priv]=(admin==yes?admstr:"normal");
+      ((privs[owner])[object])[priv]=(admin==yes?admstr:normalstr);
     }
 
     for (QListViewItem *ownerItem=firstChild();ownerItem;ownerItem=ownerItem->nextSibling()) {

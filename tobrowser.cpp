@@ -1402,7 +1402,7 @@ void toBrowser::fixIndexCols(void)
   toResultLong *tmp=dynamic_cast<toResultLong *>(SecondMap[TAB_INDEX_COLS]);
   if (tmp)
     for(QListViewItem *item=tmp->firstChild();item;item=item->nextSibling()) {
-      if (!toUnnull(item->text(4)).isEmpty()) {
+      if (!toUnnull(item->text(4)).isNull()) {
 	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
 	if (resItem)
 	  resItem->setText(1,item->text(4));

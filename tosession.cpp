@@ -180,7 +180,6 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "       a.last_call_et \"Last SQL\",\n"
 			 "       a.Process \"-Client PID\",\n"
 			 "       e.SPid \"-Server PID\",\n"
-			 "       DECODE(f.sofar,NULL,NULL,f.sofar||'/'||f.totalwork) \"Progress\",\n"
 			 "       d.sql_text \"Current statement\",\n"
 			 "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
 			 "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
@@ -188,14 +187,12 @@ static toSQL SQLSessions("toSession:ListSession",
 			 "       v$sess_io b,\n"
 			 "       v$sesstat c,\n"
 			 "       v$sql d,\n"
-			 "       v$process e,\n"
-			 "       v$session_longops f\n"
+			 "       v$process e\n"
 			 " WHERE a.sid = b.sid(+)\n"
 			 "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
 			 "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
 			 "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
 			 "   AND a.paddr = e.addr\n"
-			 "   AND a.sql_address = f.sql_address(+) AND a.sql_hash_value = f.sql_hash_value(+)\n"
 			 "%1 ORDER BY a.Sid",
 			 "List sessions, must have same number of culumns and the first and last 2 must be "
 			 "the same");

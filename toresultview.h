@@ -98,6 +98,7 @@ class toResultViewItem : public QListViewItem {
   };
   int ColumnCount;
   keyData *ColumnData;
+  QString firstText(int col) const;
 protected:
   virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
 public:
@@ -124,6 +125,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setText (int col,const QString &txt);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &val);
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
@@ -184,6 +188,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setText (int,const QString &);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &val);
   /** Reimplemented for internal reasons.
    */
   virtual void setup(void);
@@ -212,6 +219,7 @@ class toResultViewCheck : public QCheckListItem {
   keyData *ColumnData;
 protected:
   virtual int realWidth(const QFontMetrics &fm, const QListView *top, int column) const;
+  QString firstText(int col) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
@@ -236,6 +244,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setText (int col,const QString &txt);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &val);
   /** Reimplemented for internal reasons.
    */
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
@@ -304,6 +315,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setText (int,const QString &);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &val);
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const

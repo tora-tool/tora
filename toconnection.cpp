@@ -40,7 +40,6 @@
 #include "tosql.h"
 #include "totool.h"
 
-#include <sstream>
 #include <string>
 #include <time.h>
 

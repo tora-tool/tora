@@ -38,6 +38,8 @@
 #include "tobackground.h"
 #include "toresultview.h"
 
+#include <qsplitter.h>
+
 class toNoBlockQuery;
 
 class toStorageExtent : public QWidget {
@@ -86,8 +88,13 @@ protected:
   virtual void paintEvent(QPaintEvent *);
 };
 
-class toResultExtent : public toStorageExtent,public toResult {
+class toResultLong;
+
+class toResultExtent : public QSplitter,public toResult {
   Q_OBJECT
+
+  toStorageExtent *Graph;
+  toResultLong *List;
 public:
   toResultExtent(QWidget *parent,const char *name=NULL);
 

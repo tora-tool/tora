@@ -657,7 +657,7 @@ void toHighlightedText::checkComplete(void)
     else {
       QString cmp=UpperIdent(name);
       QString lastToken;
-      while ((invalidToken(curline,curcol+token.length())||(UpperIdent(token)!=cmp&&lastToken!="."))&&
+      while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp||lastToken==".")&&
 	     token!=";"&&!token.isEmpty()) {
 	lastToken=token;
 	token=tokens.getToken(false);

@@ -47,6 +47,7 @@
 #include "toresultstats.h"
 #include "toresultview.h"
 #include "tosession.h"
+#include "tosgatrace.h"
 #include "totool.h"
 #include "tovisualize.h"
 #include "toworksheet.h"
@@ -298,6 +299,7 @@ void toWorksheet::viewResources(void)
     QString address=toSQLToAddress(connection(),QueryString);
 
     Resources->changeParams(address);
+    LongOps->changeParams(address);
   } TOCATCH
 }
 
@@ -383,10 +385,16 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->setTabEnabled(Columns,false);
     Plan=new toResultPlan(ResultTab);
     ResultTab->addTab(Plan,tr("E&xecution plan"));
-    Resources=new toResultResources(ResultTab);
+
+    ResourceSplitter=new QSplitter(Vertical,ResultTab);
+    Resources=new toResultResources(ResourceSplitter);
+    LongOps=new toResultLong(ResourceSplitter);
+    QString sql=toSQL::string(TOSQL_LONGOPS,connection());
+    sql+="   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
+    LongOps->setSQL(sql);
     Visualize=new toVisualize(Result,ResultTab);
     ResultTab->addTab(Visualize,tr("&Visualize"));
-    ResultTab->addTab(Resources,tr("&Information"));
+    ResultTab->addTab(ResourceSplitter,tr("&Information"));
     StatTab=new QVBox(ResultTab);
     {
       QToolBar *stattool=toAllocBar(StatTab,tr("Worksheet Statistics"));
@@ -686,7 +694,7 @@ void toWorksheet::changeResult(QWidget *widget)
   if (QueryString.length()) {
     if (CurrentTab==Plan)
       Plan->query(QueryString);
-    else if (CurrentTab==Resources)
+    else if (CurrentTab==ResourceSplitter)
       viewResources();
     else if (CurrentTab==Statistics&&Result->running())
       Statistics->refreshStats(false);
@@ -789,6 +797,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 	first==QString::fromLatin1("SPOOL")||
 	first==QString::fromLatin1("STORE")) {
       QString t=tr("Ignoring SQL*Plus command");
+      Timer.start();
       addLog(QueryString,toConnection::exception(t),false);
       toStatusMessage(t,true);
       return;
@@ -855,7 +864,7 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 	  Visualize->display();
 	else if (CurrentTab==Plan)
 	  Plan->query(QueryString);
-	else if (CurrentTab==Resources)
+	else if (CurrentTab==ResourceSplitter)
 	  viewResources();
       } catch (const toConnection::exception &exc) {
 	addLog(QueryString,exc,true);
@@ -1214,7 +1223,7 @@ void toWorksheet::saveDefaults(void)
 	str=item->text(i);
 
       try {
-	toParamGet::setDefault(connection(),head->label(i).lower(),toUnnull(str));
+	toParamGet::setDefault(connection(),head->label(i).lower(),toUnnull(toQValue(str)));
       } TOCATCH
     }
   }

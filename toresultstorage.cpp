@@ -37,6 +37,7 @@
 #include "toconf.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "toresultlong.h"
 #include "toresultstorage.h"
 #include "tosql.h"
 #include "totool.h"
@@ -911,9 +912,25 @@ std::list<toStorageExtent::extentName> toStorageExtent::objects(void)
   return ret;
 }
 
+static toSQL SQLListExtents("toResultStorage:ListExtents",
+			    "SELECT * \n"
+			    "  FROM SYS.DBA_EXTENTS WHERE OWNER = :f1<char[101]> AND SEGMENT_NAME = :f2<char[101]>\n"
+			    " ORDER BY extent_id",
+			    "List the extents of a table in a schema.",
+			    "" ,
+			    "Oracle");
+
 toResultExtent::toResultExtent(QWidget *parent,const char *name)
-  : toStorageExtent(parent,name)
+  : QSplitter(Vertical,parent,name)
 {
+  Graph=new toStorageExtent(this);
+  List=new toResultLong(this);
+  List->setSQL(SQLListExtents);
+
+  QValueList<int> sizes=QSplitter::sizes();
+  sizes[0]=400;
+  sizes[1]=200;
+  setSizes(sizes);
 }
 
 bool toResultExtent::canHandle(toConnection &conn)
@@ -940,8 +957,11 @@ void toResultExtent::query(const QString &sql,const toQList &params)
       return;
     QString table=(*i);
 
+    List->changeParams(owner,table);
+
     toQList res=toQuery::readQueryNull(connection(),SQLTableTablespace,owner,table);
-    setTablespace(toShift(res));
-    highlight(owner,table,QString::null);
+    
+    Graph->setTablespace(toShift(res));
+    Graph->highlight(owner,table,QString::null);
   } TOCATCH
 }

@@ -1,5 +1,15 @@
 1.3.9.1: Released 2003-02-11
 
+2003-02-11: Removed include of sstream.
+2003-02-11: Made toNull/Unnull use toQValues.
+2003-02-11: Made readValue return toQValues in noblock query.
+2003-02-11: Expand in tooltip precision of numerical resultsets.
+2003-02-11: Content editor always use maximum precision when reading numbers.
+2003-02-11: Fixed problem with code completion.
+2003-02-11: Added list of extents for schema browser extent viewer.
+2003-02-11: Fixed problems with multilinetext.
+2003-02-11: Added long ops to resources tab in worksheet.
+2003-02-11: Removed progress in sessionview (Long ops still there and that works better).
 2003-02-10: Changed tuning to remove some implicit number to character conversions.
 2003-02-10: Fixed problem with first tool... again.
 2003-02-10: Fixed hang in alert messenger... again.

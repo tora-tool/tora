@@ -188,8 +188,16 @@ void toResultLong::addItem(void)
 	      LastItem->setText(0,QString::number(RowNumber+1));
 	    else
 	      LastItem->setText(cols,QString::number(RowNumber+1));
-	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++)
-	      LastItem->setText(j+disp,Query->readValue());
+	    toResultViewItem *ri=dynamic_cast<toResultViewItem *>(LastItem);
+	    toResultViewCheck *ci=dynamic_cast<toResultViewCheck *>(LastItem);
+	    for (unsigned int j=0;(j<cols||j==0)&&!Query->eof();j++) {
+	      if (ri)
+		ri->setText(j+disp,Query->readValue());
+	      else if (ci)
+		ci->setText(j+disp,Query->readValue());
+	      else
+		LastItem->setText(j+disp,Query->readValue());
+	    }
 	    if (Filter&&!Filter->check(LastItem)) {
 	      delete LastItem;
 	      LastItem=last;

@@ -149,7 +149,7 @@ void toNoBlockQuery::queryTask::run(void)
   TO_DEBUGOUT("Done\n");
 }
 
-QString toNoBlockQuery::readValueNull()
+toQValue toNoBlockQuery::readValueNull()
 {
   if (CurrentValue==Values.end()) {
     TO_DEBUGOUT("Waiting for running\n");
@@ -169,12 +169,12 @@ QString toNoBlockQuery::readValueNull()
       throw qApp->translate("toNoBlockQuery","Reading past end of query");
   }
   checkError();
-  QString ret=*CurrentValue;
+  toQValue ret=*CurrentValue;
   CurrentValue++;
   return ret;
 }
 
-QString toNoBlockQuery::readValue()
+toQValue toNoBlockQuery::readValue()
 {
   return toNull(readValueNull());
 }

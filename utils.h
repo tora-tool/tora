@@ -89,8 +89,9 @@ class QListView;
 class QListViewItem;
 class QToolBar;
 class QWidget;
-class toMain;
 class toConnection;
+class toMain;
+class toQValue;
 class toTimer;
 class toToolWidget;
 
@@ -353,10 +354,10 @@ QString toSQLStripBind(const QString &sql);
 QString toExpandFile(const QString &file);
 /** Convert string read by readValue to value read by readValueNull
  */
-QString toUnnull(const QString &str);
+toQValue toUnnull(const toQValue &str);
 /** Convert string read by readValueNull to value to be read by readValue.
  */
-QString toNull(const QString &str);
+toQValue toNull(const toQValue &str);
 
 /** Take a string and make it illegible. Some security through obscurity here so you will
  * need to check the source to see what is actually done.

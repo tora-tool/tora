@@ -424,7 +424,11 @@ void toResultContentEditor::poll(void)
       for (int j=Row;(j<MaxNumber||MaxNumber<0)&&Query->poll()&&!Query->eof();j++) {
 	for (int k=0;k<numCols();k++)
 	  if (SkipNumber<=0||j<SkipNumber) {
-	    data.insert(data.end(),Query->readValueNull());
+	    toQValue val=Query->readValueNull();
+	    if (val.isDouble())
+	      data.insert(data.end(),QString::number(val.toDouble()));
+	    else
+	      data.insert(data.end(),val);
 	    dataSize++;
 	  } else
 	    Query->readValueNull();

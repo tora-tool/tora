@@ -87,6 +87,13 @@ void toResultViewMLine::setText (int col,const QString &text)
     Lines=lines;
 }
 
+void toResultViewMLine::setText (int col,const toQValue &text)
+{
+  if (text.isDouble())
+    toResultViewItem::setText(col,text);
+  setText(col,(const QString &)text);
+}
+
 void toResultViewMLine::setup(void)
 {
   toResultViewItem::setup();
@@ -98,7 +105,7 @@ void toResultViewMLine::paintCell(QPainter *pnt,const QColorGroup & cg,
 				  int column,int width,int alignment)
 {
   toResultViewItem::paintCell(pnt,cg,column,
-			      max(toResultViewItem::width(pnt->fontMetrics(),listView(),column),width),
+			      max(QListViewItem::width(pnt->fontMetrics(),listView(),column),width),
 			      alignment);
 }
 
@@ -124,15 +131,22 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const QListView *top, i
   return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
 }
 
-QString toResultViewItem::text(int col) const
+QString toResultViewItem::firstText(int col) const
 {
-  if (col>=ColumnCount)
-    return QString::null;
   QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)
     return txt.mid(0,pos)+"...";
   return txt;
+}
+
+QString toResultViewItem::text(int col) const
+{
+  if (col>=ColumnCount)
+    return QString::null;
+  if (ColumnData[col].Type==keyData::Number)
+    return QListViewItem::text(col);
+  return firstText(col);
 }
 
 int toResultViewItem::realWidth(const QFontMetrics &fm, const QListView *top, int column) const
@@ -196,7 +210,14 @@ void toResultViewItem::setText (int col,const QString &txt)
     }
     ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
   }
-  QListViewItem::setText(col,text(col));
+  QListViewItem::setText(col,firstText(col));
+}
+
+void toResultViewItem::setText (int col,const toQValue &text)
+{
+  setText(col,QString(text));
+  if (text.isDouble())
+    ColumnData[col].Data=QString::number(text.toDouble());
 }
 
 void toResultViewCheck::setText (int col,const QString &txt)
@@ -242,7 +263,14 @@ void toResultViewCheck::setText (int col,const QString &txt)
     }
     ColumnData[col].Width=realWidth(listView()->fontMetrics(),listView(),col);
   }
-  QCheckListItem::setText(col,text(col));
+  QCheckListItem::setText(col,firstText(col));
+}
+
+void toResultViewCheck::setText (int col,const toQValue &text)
+{
+  setText(col,QString(text));
+  if (text.isDouble())
+    ColumnData[col].Data=QString::number(text.toDouble());
 }
 
 void toResultViewMLCheck::setText (int col,const QString &text)
@@ -259,6 +287,13 @@ void toResultViewMLCheck::setText (int col,const QString &text)
     Lines=lines;
 }
 
+void toResultViewMLCheck::setText (int col,const toQValue &text)
+{
+  if (text.isDouble())
+    toResultViewCheck::setText(col,text);
+  setText(col,(const QString &)text);
+}
+
 void toResultViewMLCheck::setup(void)
 {
   toResultViewCheck::setup();
@@ -270,7 +305,7 @@ void toResultViewMLCheck::paintCell (QPainter *pnt,const QColorGroup & cg,
 				   int column,int width,int alignment)
 {
   toResultViewCheck::paintCell(pnt,cg,column,
-			       max(toResultViewCheck::width(pnt->fontMetrics(),listView(),column),width),
+			       max(QCheckListItem::width(pnt->fontMetrics(),listView(),column),width),
 			       alignment);
 }
 
@@ -302,6 +337,13 @@ QString toResultViewCheck::text(int col) const
 {
   if (col>=ColumnCount)
     return QString::null;
+  if (ColumnData[col].Type==keyData::Number)
+    return QCheckListItem::text(col);
+  return firstText(col);
+}
+
+QString toResultViewCheck::firstText(int col) const
+{
   QString txt=ColumnData[col].Data;
   int pos=txt.find('\n');
   if (pos!=-1)

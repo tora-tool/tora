@@ -153,11 +153,11 @@ public:
   /** Read the next value from the query.
    * @return The next available value.
    */
-  QString readValue(void);
+  toQValue readValue(void);
   /** Read the next value from the query. Don't send NULL as string.
    * @return The next available value.
    */
-  QString readValueNull(void);
+  toQValue readValueNull(void);
 
   /** Get the number of rows processed.
    * @return Number of rows processed.

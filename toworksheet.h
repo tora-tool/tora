@@ -84,6 +84,8 @@ class toWorksheet : public toToolWidget {
   toResultBar *WaitChart;
   toResultBar *IOChart;
   toListView *Logging;
+  QSplitter *ResourceSplitter;
+  toResultLong *LongOps;
   toVisualize *Visualize;
   QListViewItem *LastLogItem;
   QToolButton *StopButton;

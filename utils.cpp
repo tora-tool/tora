@@ -1167,24 +1167,24 @@ void toUpdateIndicateEmpty(void)
   IndicateEmpty=!toTool::globalConfig(CONF_INDICATE_EMPTY,"").isEmpty();
 }
 
-QString toNull(const QString &str)
+toQValue toNull(const toQValue &str)
 {
   if (IndicateEmpty) {
     if (str.isNull())
       return str;
-    if (str.isEmpty())
+    if (str==QString(""))
       return QString::fromLatin1("''");
   } else if (str.isNull())
     return QString::fromLatin1("{null}");
   return str;
 }
 
-QString toUnnull(const QString &str)
+toQValue toUnnull(const toQValue &str)
 {
   if (IndicateEmpty) {
-    if (str==QString::fromLatin1("''"))
+    if (QString(str)==QString::fromLatin1("''"))
       return QString::fromLatin1("");
-  } else if (str==QString::fromLatin1("{null}"))
+  } else if (QString(str)==QString::fromLatin1("{null}"))
     return QString::null;
   return str;
 }
