@@ -9,6 +9,8 @@ Extended functionality:
 			ALTER TABLE ... DEALLOCATE UNUSED
 		Add columns
 		Remove columns
+		Add constraints
+		Remove constraints
 	Rename table
 		ALTER TABLE ... RENAME TO ...
 	Editing triggers
@@ -41,6 +43,7 @@ Extended functionality:
 * Show only one bar in barchart/linechart.
 * Never lock while executing in debugger.
 * Database provider setup tabs.
+* Tool menu in all tools.
 
 New tools:
 

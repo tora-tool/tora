@@ -1,3 +1,5 @@
+# This spec file is no longer used
+
 %define name tora
 %define group Development/Databases
 %define version 1.1.0
