@@ -22,7 +22,6 @@ Extended functionality:
 	Pretty print
 	CVS support (Or whatever this is called in windows)
 	PL/SQL doc (Like JavaDoc)
-* Ability to save a session (Including breakpoints, parameter cache windows etc).
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
@@ -48,7 +47,6 @@ Extended functionality:
 * Information about controlfiles in tuning.
 * Postgress support.
 * Make entire tuning polling in background.
-* Add a more detailed analysis of wait events in tuning.
 * Use object cache in browser if possible.
 * Tooltips in content editor.
 
