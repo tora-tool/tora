@@ -17,7 +17,7 @@ Tool for Oracle (Tora) is a tool for DBAs and database software developers.
 It is inspired by TOAD for Windows. It features a schema browser, SQL
 worksheet, PL/SQL editor & debugger, storage manager, rollback segment
 monitor, instance manager, SQL output viewer, SQL template tree and
-schema extraction and compare.
+schema extraction and compare. Compiled with KDE and Mandrake Menu support.
 
 %prep
 %setup -q
