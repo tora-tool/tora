@@ -55,6 +55,7 @@ public:
 public slots:
   virtual void changeSelection(void);
   virtual void refresh(void);
+  virtual void recompileAll(void);
   virtual void windowActivated(QWidget *widget);
 };
 

@@ -55,6 +55,7 @@
 #include <qlineedit.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
+#include <qprogressdialog.h>
 #include <qsplitter.h>
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
@@ -64,6 +65,7 @@
 
 #include "icons/refresh.xpm"
 #include "icons/toinvalid.xpm"
+#include "icons/compile.xpm"
 
 static toSQL SQLListInvalid("toInvalid:ListInvalid",
 			    "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\"\n"
@@ -111,6 +113,12 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 		  this,SLOT(refresh()),
 		  toolbar);
 
+  new QToolButton(QPixmap((const char **)compile_xpm),
+		  tr("Recompile all"),
+		  tr("Recompile all"),
+		  this,SLOT(recompileAll()),
+		  toolbar);
+
   toolbar->setStretchableWidget(new QLabel(toolbar,TO_KDE_TOOLBAR_WIDGET));
   new toChangeConnection(toolbar,TO_KDE_TOOLBAR_WIDGET);
 
@@ -140,6 +148,33 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 
   refresh();
   setFocusProxy(Objects);
+}
+
+void toInvalid::recompileAll(void)
+{
+  QProgressDialog progress(tr("Recompiling all invalid"),
+			   tr("Cancel"),Objects->childCount(),this,"progress",true);
+  progress.setCaption("Recompiling");
+  progress.show();
+
+  int i=0;
+
+  for(QListViewItem *item=Objects->firstChild();item;item=item->nextSibling()) {
+    toResultViewItem *ci=dynamic_cast<toResultViewItem *>(item);
+    if (ci) {
+      progress.setLabelText("Recompiling "+ci->allText(1)+"."+ci->allText(2));
+      progress.setProgress(i);
+      qApp->processEvents();
+      QString sql="ALTER "+ci->allText(2)+" "+connection().quote(ci->allText(0))+"."+connection().quote(ci->allText(1))+
+	" REUSE SETTINGS";
+      try {
+	connection().execute(sql);
+      } catch(...) {
+      }
+    }
+    i++;
+  }
+  refresh();
 }
 
 void toInvalid::windowActivated(QWidget *widget)

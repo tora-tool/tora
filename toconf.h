@@ -127,11 +127,6 @@
 #define DEFAULT_RECENT_MAX	"5"
 #define CONF_LAST_DIR		"LastDir"
 #define CONF_LOCALE		"Locale"
-#define CONF_FILTER_IGNORE_CASE "FilterIgnoreCase"
-#define CONF_FILTER_INVERT  	"FilterInvert"
-#define CONF_FILTER_TYPE  	"FilterType"
-#define CONF_FILTER_TABLESPACE_TYPE  	"FilterTablespaceType"
-#define CONF_FILTER_TEXT  	"FilterText"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"
