@@ -41,6 +41,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include <qapplication.h>
 #include <qregexp.h>
 
 toHtml::toHtml(const QCString &data)
