@@ -47,6 +47,7 @@
 #include "tosql.h"
 #include "totool.h"
 
+
 #ifdef TO_KDE
 #  include <kmenubar.h>
 #endif
@@ -115,8 +116,8 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 		  toolbar);
 
   new QToolButton(QPixmap((const char **)compile_xpm),
-		  tr("Recompile selected"),
-		  tr("Recompile selected"),
+		  tr("Recompile all invalid"),
+		  tr("Recompile all invalid"),
 		  this,SLOT(recompileSelected()),
 		  toolbar);
 
@@ -128,10 +129,8 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
   Objects=new toResultLong(false,false,toQuery::Background,splitter);
   Objects->setSQL(SQLListInvalid);
 
-  Objects->setSelectionMode(QListView::Extended);
+  Objects->setSelectionMode(QListView::Single);
   connect(Objects,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
-  connect(Objects,SIGNAL(currentChanged(QListViewItem *)),
-	  this,SLOT(changeSelection()));
 
   Source=new toResultExtract(false,splitter);
   Source->setSQL(SQLListSource);
@@ -162,31 +161,34 @@ void toInvalid::recompileSelected(void)
   progress.setCaption("Recompiling");
   progress.show();
 
-  int i=0;
 
   for(QListViewItem *item=Objects->firstChild();item;item=item->nextSibling()) {
     toResultViewItem *ci=dynamic_cast<toResultViewItem *>(item);
-    if (ci&&ci->isSelected()) {
+    if (ci){
       toConnection &conn=connection();
       progress.setLabelText("Recompiling "+ci->allText(1)+"."+ci->allText(2));
-      progress.setProgress(i);
+      progress.setProgress(progress.progress()+1);
       qApp->processEvents();
+      if (progress.wasCancelled())
+        break; 
       QString type=ci->allText(2);
       QString sql;
       if (type=="INDEX")
 	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" REBUILD";
       else if (type=="PACKAGE BODY")
-	sql="ALTER PACKAGE "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE BODY REUSE SETTINGS";
+	sql="ALTER PACKAGE "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE BODY";
       else
-	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE REUSE SETTINGS";
+	sql="ALTER "+ci->allText(2)+" "+conn.quote(ci->allText(0))+"."+conn.quote(ci->allText(1))+" COMPILE";
       try {
 	conn.execute(sql);
       } catch(...) {
       }
     }
-    i++;
   }
-  refresh();
+  if (progress.isVisible())
+      progress.close();
+  qApp->processEvents();
+  this->refresh();
 }
 
 void toInvalid::windowActivated(QWidget *widget)
