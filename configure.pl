@@ -250,7 +250,7 @@ my $tmpName="/tmp/toraconfig.$$";
 my $InstallPrefix="/usr/local";
 my $InstallBin;
 my $InstallLib;
-my $Includes="\"-I/usr/include\"";
+my $Includes;
 my $CC;
 my $Libs="-lm -lpthread";
 my $MOC;

@@ -332,7 +332,6 @@ toResultCols::toResultCols(QWidget *parent,const char *name)
   Edit->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Maximum));
   connect(Edit,SIGNAL(toggled(bool)),this,SLOT(editComment(bool)));
   Columns=new resultCols(this);
-  NoCache=false;
 }
 
 void toResultCols::query(const QString &,const toQList &param)
@@ -393,7 +392,7 @@ void toResultCols::query(const QString &,const toQList &param)
       Edit->setEnabled(false);
     }
 
-    Columns->query(name,NoCache);
+    Columns->query(name);
     Title->setText(label);
   } catch(const QString &) {
     try {
@@ -526,7 +525,7 @@ void toResultCols::resultCols::query(const QString &object,
   }
 }
 
-void toResultCols::resultCols::query(const toConnection::objectName &name,bool nocache)
+void toResultCols::resultCols::query(const toConnection::objectName &name)
 {
   try {
     clear();

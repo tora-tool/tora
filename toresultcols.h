@@ -95,7 +95,7 @@ class toResultCols : public QVBox, public toResult {
     resultCols(QWidget *parent,const char *name=NULL);
     void editComment(bool val);
     void describe(toQDescList &desc);
-    void query(const toConnection::objectName &,bool nocache);
+    void query(const toConnection::objectName &);
     void query(const QString &table,const QString &owner,const QString &name);
     friend class toResultColsItem;
   };
@@ -105,7 +105,6 @@ class toResultCols : public QVBox, public toResult {
   toResultColsComment *EditComment;
   QCheckBox *Edit;
   resultCols *Columns;
-  bool NoCache;
 
   friend class resultCols;
 public:
@@ -159,7 +158,7 @@ public slots:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { toResult::clearParams(); NoCache=true; }
+  { toResult::clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
