@@ -1,5 +1,6 @@
 1.3.13:
 
+2003-11-09: Don't check to save changes when selecting a new package. (Thanx Francesco Dandrea)
 2003-11-06: Fixed refresh for content editor.
 2003-11-06: Removed a lot of latin1 explicit translations in content editor for legibility.
 2003-11-06: Only specify non null values of inserts in content editor.

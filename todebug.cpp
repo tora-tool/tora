@@ -1974,7 +1974,7 @@ void toDebug::updateCurrent()
 
 void toDebug::changePackage(QListViewItem *item)
 {
-  if (item&&item->parent()&&checkCompile()) {
+  if (item&&item->parent()) {
     viewSource(Schema->currentText(),item->text(0),item->text(1),0);
     if (item->text(1)=="PACKAGE"||item->text(1)=="TYPE")
       viewSource(Schema->currentText(),item->text(0),item->text(1)+" BODY",0);
