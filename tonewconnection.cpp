@@ -77,6 +77,12 @@ toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WF
       sel=cur;
     cur++;
   }
+  if (cur==0) {
+    TOMessageBox::information(this,
+			      "No connection provider",
+			      "No available connection provider, plugins probably missing");
+    throw QString("Coudln't make connection");
+  }
   Provider->setCurrentItem(sel);
   changeProvider();
 

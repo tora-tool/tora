@@ -45,6 +45,7 @@
 #include <qgrid.h>
 #include <qcombobox.h>
 #include <qscrollview.h>
+#include <qvbox.h>
 
 #include "tochangeconnection.h"
 #include "toconnection.h"
@@ -760,94 +761,225 @@ void toTuning::refresh(void)
     Parameters->refresh();
 }
 
-static toSQL SQLListFiles("toTuning:ListFiles",
-			  "select file#,name from v$datafile order by name",
-			  "Get filename and file# for all datafiles");
-
 static toSQL SQLFileIO("toTuning:FileIO",
-		       "select file#,sysdate,phyrds,phyblkrd,phywrts,phyblkwrt\n"
-		       "  from v$filestat",
-		       "Get file I/O for a given file, must have same binds");
+		       "select a.name,b.name,sysdate,\n"
+		       "       c.phyrds,c.phywrts,c.phyblkrd,c.phyblkwrt,\n"
+		       "       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"
+		       "  from v$tablespace a,v$datafile b,v$filestat c\n"
+		       " where a.ts# = b.ts# and b.file# = c.file#\n"
+		       " order by a.name",
+		       "Get file for files and tablespaces. Must have same columns.");
 
 toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
   : QScrollView(parent,name,fl)
 {
-  Box=NULL;
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 
   try {
-    toConnection &conn=toCurrentConnection(this);
-    toQList Files=toQuery::readQuery(conn,SQLListFiles);
     viewport()->setBackgroundColor(qApp->palette().active().background());
     
-    std::list<QString> labels;
-    labels.insert(labels.end(),"Reads");
-    labels.insert(labels.end(),"Blocks Read");
-    labels.insert(labels.end(),"Writes");
-    labels.insert(labels.end(),"Blocks Written");
-    Box=new QGrid(2,this->viewport());
+    QVBox *Box=new QVBox(this->viewport());
     addChild(Box);
-    while(Files.size()>0) {
-      std::list<QString> val;
-      toBarChart *chart=new toBarChart(Box);
-      Charts[toShift(Files)]=chart;
-      chart->setTitle(toShift(Files));
-      chart->setMinimumSize(200,170);
-      chart->setYPostfix("blocks/s");
-      chart->setLabels(labels);
-    }
-    Box->setFixedWidth(viewport()->width()-50);
-    Box->show();
-    LastStamp=0;
+
+    QComboBox *combo=new QComboBox(Box);
+    combo->insertItem("File I/O");
+    combo->insertItem("File timing");
+    combo->insertItem("Tablespace I/O");
+    combo->insertItem("Tablespace timing");
+    connect(combo,SIGNAL(activated(int)),this,SLOT(changeCharts(int)));
+
+    FileReads=new QGrid(2,Box);
+    FileTime=new QGrid(2,Box);
+    TablespaceReads=new QGrid(2,Box);
+    TablespaceTime=new QGrid(2,Box);
+
     refresh();
+    FileReads->setFixedWidth(viewport()->width()-50);
+    FileTime->setFixedWidth(viewport()->width()-50);
+    TablespaceReads->setFixedWidth(viewport()->width()-50);
+    TablespaceTime->setFixedWidth(viewport()->width()-50);
+    changeCharts(0);
   } TOCATCH
+}
+
+void toTuningFileIO::changeCharts(int val)
+{
+  FileReads->hide();
+  FileTime->hide();
+  TablespaceReads->hide();
+  TablespaceTime->hide();
+  switch(val) {
+  case 0:
+    FileReads->show();
+    break;
+  case 1:
+    FileTime->show();
+    break;
+  case 2:
+    TablespaceReads->show();
+    break;
+  case 3:
+    TablespaceTime->show();
+    break;
+  }
+}
+
+void toTuningFileIO::allocCharts(const QString &name,const QString &label)
+{
+  std::list<QString> labels;
+  labels.insert(labels.end(),"Reads");
+  labels.insert(labels.end(),"Blocks Read");
+  labels.insert(labels.end(),"Writes");
+  labels.insert(labels.end(),"Blocks Written");
+  std::list<QString> labelTime;
+  labelTime.insert(labelTime.end(),"Average");
+  labelTime.insert(labelTime.end(),"Minimum");
+  labelTime.insert(labelTime.end(),"Maximum Read");
+  labelTime.insert(labelTime.end(),"Maximum Write");
+
+  toBarChart *barchart;
+  if (name.startsWith("tspc:"))
+    barchart=new toBarChart(TablespaceReads);
+  else
+    barchart=new toBarChart(FileReads);
+  ReadsCharts[name]=barchart;
+  barchart->setTitle(name.mid(5));
+  barchart->setMinimumSize(200,170);
+  barchart->setYPostfix("blocks/s");
+  barchart->setLabels(labels);
+
+  toLineChart *linechart;
+  if (name.startsWith("tspc:"))
+    linechart=new toLineChart(TablespaceTime);
+  else
+    linechart=new toLineChart(FileTime);
+  TimeCharts[name]=linechart;
+  linechart->setTitle(name.mid(5));
+  linechart->setMinimumSize(200,170);
+  linechart->setYPostfix("ms");
+  linechart->setLabels(labelTime);
+}
+
+void toTuningFileIO::saveSample(const QString &name,const QString &label,
+				double reads,double writes,
+				double readBlk,double writeBlk,
+				double avgTim,double minTim,
+				double maxRead,double maxWrite)
+{
+  time_t now=time(NULL);
+  if (now!=LastStamp) {
+
+    std::list<double> vals;
+    vals.insert(vals.end(),reads);
+    vals.insert(vals.end(),writes);
+    vals.insert(vals.end(),readBlk);
+    vals.insert(vals.end(),writeBlk);
+
+    std::list<double> last=LastValues[name];
+    std::list<double> dispVal;
+    if (last.size()>0) {
+      std::list<double>::iterator i=vals.begin();
+      std::list<double>::iterator j=last.begin();
+      while(i!=vals.end()&&j!=last.end()) {
+	dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	i++;
+	j++;
+      }
+    }
+    LastValues[name]=vals;
+
+    if (ReadsCharts.find(name)==ReadsCharts.end())
+      allocCharts(name,label);
+
+    if (dispVal.size()>0) {
+      toBarChart *chart=ReadsCharts[name];
+      chart->addValues(dispVal,label);
+    }
+
+    vals.clear();
+    vals.insert(vals.end(),avgTim);
+    vals.insert(vals.end(),minTim);
+    vals.insert(vals.end(),maxRead);
+    vals.insert(vals.end(),maxWrite);
+
+    toLineChart *chart=TimeCharts[name];
+    chart->addValues(vals,label);
+  }
 }
 
 void toTuningFileIO::refresh(void)
 {
   try {
     toConnection &conn=toCurrentConnection(this);
-    time_t now=time(NULL);
-    if (now!=LastStamp) {
-      toQList FileInfo=toQuery::readQuery(conn,SQLFileIO);
-      while(FileInfo.size()>0) {
-	QString file=toShift(FileInfo);
-	QString label=toShift(FileInfo);
-	std::list<double> vals;
-	vals.insert(vals.end(),toShift(FileInfo).toDouble());
-	vals.insert(vals.end(),toShift(FileInfo).toDouble());
-	vals.insert(vals.end(),toShift(FileInfo).toDouble());
-	vals.insert(vals.end(),toShift(FileInfo).toDouble());
+    toQList Files=toQuery::readQuery(conn,SQLFileIO);
 
-	std::list<double> last=LastValues[file];
+    QString lastTablespace;
+    double tblReads;
+    double tblWrites;
+    double tblReadBlk;
+    double tblWriteBlk;
+    double tblAvg;
+    double tblMin;
+    double tblMaxRead;
+    double tblMaxWrite;
+    for(;;) {
+      QString tablespace=toShift(Files);
+      QString datafile=toShift(Files);
+      QString timestr=toShift(Files);
+      if (tablespace!=lastTablespace) {
+	if (!lastTablespace.isNull()) {
+	  QString name="tspc:";
+	  name+=lastTablespace;
 
-	std::list<double> dispVal;
-	if (last.size()>0) {
-	  std::list<double>::iterator i=vals.begin();
-	  std::list<double>::iterator j=last.begin();
-	  while(i!=vals.end()&&j!=last.end()) {
-	    dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
-	    i++;
-	    j++;
-	  }
+	  saveSample(name,timestr,
+		     tblReads,tblWrites,tblReadBlk,tblWriteBlk,
+		     tblAvg,tblMin,tblMaxRead,tblMaxWrite);
 	}
-	LastValues[file]=vals;
-      
-	if (dispVal.size()>0&&Charts.find(file)!=Charts.end()) {
-	  toBarChart *chart=Charts[file];
-	  chart->addValues(dispVal,label);
-	}
+
+	tblReads=tblWrites=tblReadBlk=tblWriteBlk=tblAvg=tblMin=tblMaxRead=tblMaxWrite=0;
+	lastTablespace=tablespace;
       }
-      LastStamp=now;
+      if (tablespace.isNull())
+	break;
+
+      double reads=toShift(Files).toDouble();
+      double writes=toShift(Files).toDouble();
+      double readBlk=toShift(Files).toDouble();
+      double writeBlk=toShift(Files).toDouble();
+      double avgTim=toShift(Files).toDouble();
+      double minTim=toShift(Files).toDouble();
+      double maxRead=toShift(Files).toDouble();
+      double maxWrite=toShift(Files).toDouble();
+
+      tblReads+=reads;
+      tblWrites+=writes;
+      tblReadBlk+=readBlk;
+      tblWriteBlk+=writeBlk;
+      tblAvg+=avgTim;
+      tblMin+=minTim;
+      tblMaxRead+=maxRead;
+      tblMaxWrite+=maxWrite;
+
+      QString name="file:";
+      name+=datafile;
+
+      saveSample(name,timestr,
+		 reads,writes,readBlk,writeBlk,
+		 avgTim,minTim,maxRead,maxWrite);
+
     }
+    LastStamp=time(NULL);
   } TOCATCH
 }
 
 void toTuningFileIO::resizeEvent(QResizeEvent *e)
 {
   QScrollView::resizeEvent(e);
-  if (Box)
-    Box->setFixedWidth(viewport()->width());
+
+  FileReads->setFixedWidth(viewport()->width()-50);
+  FileTime->setFixedWidth(viewport()->width()-50);
+  TablespaceReads->setFixedWidth(viewport()->width()-50);
+  TablespaceTime->setFixedWidth(viewport()->width()-50);
 }
 
 toTuningMiss::toTuningMiss(QWidget *parent=0,const char *name=0)

@@ -55,17 +55,19 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref49">registerSQLEditor</A></b> (int toolid) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref53">windowsMenu</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref54">windowsMenu</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref54">statusMenu</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref55">statusMenu</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref55">contextHelp</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref56">contextHelp</A></b> (void) 
 </LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref50">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref51">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref52">removedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref53">willCommit</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref37">editEnable</A></b> (bool open,bool save,bool print,
 			 bool undo,bool redo,
@@ -221,13 +223,22 @@
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Connection identifier.
    </TD></TR>
 </TABLE></P>
-<A NAME="windowsMenu"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowsMenu</strong> (void)
+<A NAME="willCommit"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>willCommit</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt)
+<br></td><td align="right"><h3><strong>willCommit</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted before a commit or rollback is made to the current connection.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection that is commited
+</TD></TR>
+<TR><TD align="left" valign="top"><i>cmt</i></TD><TD align="left" valign="top">True if commit, false if rollback.
+   </TD></TR>
+</TABLE></P>
+<A NAME="windowsMenu"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>windowsMenu</strong> (void)
 <br></td><td align="right"><h3><strong>windowsMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to enable/disable entries in the windows menu
    </p>
-<A NAME="statusMenu"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>statusMenu</strong> (void)
+<A NAME="statusMenu"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>statusMenu</strong> (void)
 <br></td><td align="right"><h3><strong>statusMenu</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Used to fill the status menu with the latest status entries
    </p>
-<A NAME="contextHelp"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>contextHelp</strong> (void)
+<A NAME="contextHelp"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>contextHelp</strong> (void)
 <br></td><td align="right"><h3><strong>contextHelp</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Display context help. 
    </p>
 <HR>

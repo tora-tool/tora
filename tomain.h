@@ -360,6 +360,11 @@ signals:
    * @param str Connection identifier.
    */
   void removedConnection(const QString &str);
+  /** Emitted before a commit or rollback is made to the current connection.
+   * @param conn Connection that is commited
+   * @param cmt True if commit, false if rollback.
+   */
+  void willCommit(toConnection &conn,bool cmt);
 public slots:
   /** Used to enable/disable entries in the windows menu
    */

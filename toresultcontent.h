@@ -290,6 +290,11 @@ public slots:
    */
   virtual void saveUnsaved(void)
   { Editor->saveUnsaved(); }
+  /** Commit connection
+   * @param conn Connection commit is made on.
+   * @param cmt If commit or rollback
+   */
+  virtual void saveUnsaved(toConnection &conn,bool cmt);
 };
 
 #endif

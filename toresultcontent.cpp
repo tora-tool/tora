@@ -616,6 +616,8 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Delete current record from table",
 		  "Delete current record from table",
 		  Editor,SLOT(deleteCurrent()),toolbar);
+  connect(toMainWidget(),SIGNAL(willCommit(toConnection &conn,bool cmt)),
+	  this,SLOT(saveUnsaved(toConnection &conn,bool cmt)));
 }
 
 void toResultContent::changeFilter(void)
@@ -634,4 +636,11 @@ void toResultContentEditor::changeFilter(const QString &crit,const QString &ord)
   Order=ord;
   saveUnsaved();
   changeParams(Owner,Table);
+}
+
+void toResultContent::saveUnsaved(toConnection &conn,bool cmt)
+{
+  toConnection &mycon=connection();
+  if (&mycon==&conn) // Is this same connection
+    saveUnsaved();
 }

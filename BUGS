@@ -29,3 +29,6 @@ toResultStat:
 
 Unknown:
 	Crashes when starting without any database providers.
+
+toBar/LineChart:
+	Problem with zoom rectangle if moving cursor to the left of widget.

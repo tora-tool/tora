@@ -591,7 +591,12 @@ void toWorksheet::query(const QString &str,bool direct)
   if (!describe(execSql)) {
     toQList param;
     if (!nobinds)
-      param=toParamGet::getParam(this,execSql);
+      try {
+	param=toParamGet::getParam(this,execSql);
+      } catch (const QString &str) {
+	toStatusMessage(str);
+	return;
+      }
     toStatusMessage("Processing query",true);
     if (direct) {
       try {

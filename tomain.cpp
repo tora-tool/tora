@@ -452,7 +452,7 @@ toMain::toMain()
   Search=NULL;
 
   show();
-  {
+  try {
     toNewConnection newConnection(this,"First connection",true);
     
     toConnection *conn;
@@ -470,7 +470,7 @@ toMain::toMain()
       addConnection(conn);
       toTool::saveConfig();
     }
-  }
+  } TOCATCH
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
@@ -667,18 +667,16 @@ void toMain::commandCallback(int cmd)
     switch (cmd) {
     case TO_FILE_COMMIT:
       try {
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if(cnt)
-	  cnt->saveUnsaved();
+	toConnection &conn=currentConnection();
+	emit willCommit(conn,true);
 	currentConnection().commit();
       } TOCATCH
       break;
     case TO_FILE_ROLLBACK:
       try {
-	toResultContent *cnt=toContent(qApp->focusWidget());
-	if(cnt)
-	  cnt->saveUnsaved();
-	currentConnection().rollback();
+	toConnection &conn=currentConnection();
+	emit willCommit(conn,false);
+	currentConnection().commit();
       } TOCATCH
       break;
     case TO_EDIT_READ_ALL:
@@ -795,16 +793,18 @@ void toMain::commandCallback(int cmd)
 
 void toMain::addConnection(void)
 {
-  toNewConnection newConnection(this,"New connection",true);
+  try {
+    toNewConnection newConnection(this,"New connection",true);
 
-  toConnection *conn=NULL;
+    toConnection *conn=NULL;
 
-  if (newConnection.exec()) {
-    conn=newConnection.makeConnection();
-  }
+    if (newConnection.exec()) {
+      conn=newConnection.makeConnection();
+    }
 
-  if (conn)
-    addConnection(conn);
+    if (conn)
+      addConnection(conn);
+  } TOCATCH
 }
 
 toConnection &toMain::currentConnection()

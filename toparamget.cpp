@@ -255,9 +255,11 @@ toQList toParamGet::getParam(QWidget *parent,QString &str)
 	}
 	ret.insert(ret.end(),val);
       }
-    } else
+      delete widget;
+    } else {
+      delete widget;
       throw QString("Aborted execution");
-    delete widget;
+    }
   }
   str=res;
   return ret;

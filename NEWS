@@ -94,6 +94,11 @@
 2001-08-25: Remade rollback dialog in designer and added show sql.
 2001-08-25: Don't display null in rollback manager.
 2001-08-25: Added readQueryNull member to query class.
+2001-08-27: Don't include parallel queries in statistics (Not reliable anyway).
+2001-08-27: Save unsaved data in all open content editors on commit.
+2001-08-27: Fixed memory leak in toparamget.
+2001-08-28: Fixed uncaught exception from toparamget.
+2001-08-28: Improved file I/O statistics in tuning.
 
 0.14: Released 2001-08-02
 
