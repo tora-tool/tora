@@ -50,9 +50,9 @@
 #ifndef __TORESULTCONTENT_H
 #define __TORESULTCONTENT_H
 
-#include <list>
-#include <qtable.h>
-#include <qvbox.h>
+#include &lt;list&gt;
+#include &lt;qtable.h&gt;
+#include &lt;qvbox.h&gt;
 
 #include "toresult.h"
 #include "toconnection.h"
@@ -75,7 +75,7 @@ class toResultContentEditor : public QTable,public toResult {
   QString Table;
   /** Original values of rows currently being edited.
    */
-  std::list<QString> OrigValues;
+  std::list&lt;QString&gt; OrigValues;
   /** Stream to read data from.
    */
   toQuery *Query;
@@ -131,7 +131,7 @@ class toResultContentEditor : public QTable,public toResult {
   virtual QWidget *beginEdit(int row,int col,bool replace);
   /** Reimplemented for internal reasons.
    */
-  virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
+  virtual void paintCell(QPainter *p,int row,int col,const QRect &amp;cr,bool selected);
   /** Reimplemented for internal reasons.
    */
   virtual void keyPressEvent(QKeyEvent *e);
@@ -169,15 +169,15 @@ public:
   toResultContentEditor(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param)
+  virtual void query(const QString &amp;sql,const toQList &amp;param)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
+  virtual void changeParams(const QString &amp;Param1)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
   { wrongUsage(); }
   
   /** Read all rows from the table.
@@ -193,7 +193,7 @@ public:
    * @param criteria Selection criteria.
    * @param order Sort order of retreive.
    */
-  virtual void changeFilter(const QString &criteria,const QString &order);
+  virtual void changeFilter(const QString &amp;criteria,const QString &amp;order);
 
   friend class toResultContent;
 public slots:
@@ -207,7 +207,7 @@ public slots:
   { changeParams(Owner,Table); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2);
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
   /** Current cell changed.
    * @param row New row.
    * @param col New column.
@@ -217,7 +217,7 @@ public slots:
   /** Display popup menu
    * @param p Point to display popup at.
    */
-  virtual void displayMenu(const QPoint &p);
+  virtual void displayMenu(const QPoint &amp;p);
   /** Display editable memo viewer at current position.
    */
   virtual void displayMemo(void);
@@ -237,7 +237,7 @@ protected slots:
    * @param col Column to change.
    * @param data New contents of data.
    */ 
-  virtual void changeData(int row,int col,const QString &data); 
+  virtual void changeData(int row,int col,const QString &amp;data); 
 };
 
 /** This widget allows the user to browse the contents of a table and also edit
@@ -265,49 +265,49 @@ public:
   /** Read all rows from the table.
    */
   void readAll(void)
-  { Editor->readAll(); }
+  { Editor-&gt;readAll(); }
   /** Print the contents.
    */
   void print(void)
-  { Editor->print(); }
+  { Editor-&gt;print(); }
   /** Export contents to file.
    */
   virtual void exportFile(void)
-  { Editor->exportFile(); }
+  { Editor-&gt;exportFile(); }
 private slots:
   void changeFilter(void);
   void removeFilter(void)
-  { Editor->changeFilter(QString::null,QString::null); }
+  { Editor-&gt;changeFilter(QString::null,QString::null); }
 public slots:
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { Editor->refresh(); }
+  { Editor-&gt;refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param)
-  { Editor->query(sql,param); }
+  virtual void query(const QString &amp;sql,const toQList &amp;param)
+  { Editor-&gt;query(sql,param); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
-  { Editor->changeParams(Param1); }
+  virtual void changeParams(const QString &amp;Param1)
+  { Editor-&gt;changeParams(Param1); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { Editor->changeParams(Param1,Param2); }
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { Editor-&gt;changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { Editor->changeParams(Param1,Param2,Param3); }
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { Editor-&gt;changeParams(Param1,Param2,Param3); }
   /** Save unsaved changes in the editor
    */
   virtual void saveUnsaved(void)
-  { Editor->saveUnsaved(); }
+  { Editor-&gt;saveUnsaved(); }
   /** Commit connection
    * @param conn Connection commit is made on.
    * @param cmt If commit or rollback
    */
-  virtual void saveUnsaved(toConnection &conn,bool cmt);
+  virtual void saveUnsaved(toConnection &amp;conn,bool cmt);
 };
 
 #endif

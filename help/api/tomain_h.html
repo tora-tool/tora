@@ -50,11 +50,11 @@
 #ifndef __TOMAIN_H
 #define __TOMAIN_H
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qmainwindow.h>
-#include <qtimer.h>
+#include &lt;qmainwindow.h&gt;
+#include &lt;qtimer.h&gt;
 
 #if 0
 /**
@@ -84,9 +84,9 @@ class TOMessageBox : public QMessageBox {
 #endif
 
 #ifdef TO_KDE
-#  include <kapp.h>
-#  include <kdockwidget.h>
-#  if KDE_VERSION < 220
+#  include &lt;kapp.h&gt;
+#  include &lt;kdockwidget.h&gt;
+#  if KDE_VERSION &lt; 220
 #    define TOPrinter QPrinter
 #  else
 #    define TOPrinter KPrinter
@@ -96,7 +96,7 @@ class TOMessageBox : public QMessageBox {
 #  define TOFileDialog KFileDialog
 #  include "tomainwindow.kde.h"
 #else
-#  include <qtoolbar.h>
+#  include &lt;qtoolbar.h&gt;
 #  define TOPrinter QPrinter
 #  define TODock QWidget
 #  define TOFileDialog QFileDialog
@@ -124,7 +124,7 @@ private:
   /**
    * The connections that have been opened in TOra.
    */
-  std::list<toConnection *> Connections;
+  std::list&lt;toConnection *&gt; Connections;
   /**
    * Workspace of main window.
    */
@@ -140,7 +140,7 @@ private:
   /**
    * A map from menu ID:s to tools.
    */
-  std::map<int,toTool *> Tools;
+  std::map&lt;int,toTool *&gt; Tools;
   /**
    * A map of toolbuttons to tools that need connection to be enabled.
    */
@@ -148,7 +148,7 @@ private:
    * A list of toolbuttons that need an open connection to be enabled. If tool pointer
    * is zero simply require any connection to be enabled.
    */
-  std::map<QToolButton *,toTool *> NeedConnection;
+  std::map&lt;QToolButton *,toTool *&gt; NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -224,7 +224,7 @@ private:
    */
   QLabel *RowLabel;
   /**
-   * Search & replace dialog if available.
+   * Search &amp; replace dialog if available.
    */
   toSearchReplace *Search;
   /**
@@ -279,7 +279,7 @@ public:
    * Get the current database connection
    * @return Reference to current connection.
    */
-  toConnection &currentConnection(void);
+  toConnection &amp;currentConnection(void);
 
   /**
    * Set available menu items in user interface. It is not enough to just call
@@ -346,17 +346,17 @@ public:
    * @return List of connection names. The returned list can then be used by
    * @ref connection to get the actual connection.
    */
-  std::list<QString> connections(void);
+  std::list&lt;QString&gt; connections(void);
   /** Get a connection identified by a string.
    * @return A reference to a connection.
    * @exception QString If connection wasn't found.
    */
-  toConnection &connection(const QString &);
+  toConnection &amp;connection(const QString &amp;);
 
   /** Edit an SQL statement in the SQL editor if any connected.
    * @param str Identifier of the SQL to edit.
    */
-  void editSQL(const QString &str);
+  void editSQL(const QString &amp;str);
   /**
    * Register a tool which to use as an SQL editor. When something is to be edited
    * first a toolwindow will be created and the @ref sqlEditor will be emited, so
@@ -371,20 +371,20 @@ signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.
    */
-  void sqlEditor(const QString &str);
+  void sqlEditor(const QString &amp;str);
   /** Invoked when a connection is added.
    * @param str Connection identifier.
    */
-  void addedConnection(const QString &str);
+  void addedConnection(const QString &amp;str);
   /** Invoked when a connection is removed.
    * @param str Connection identifier.
    */
-  void removedConnection(const QString &str);
+  void removedConnection(const QString &amp;str);
   /** Emitted before a commit or rollback is made to the current connection.
    * @param conn Connection that is commited
    * @param cmt True if commit, false if rollback.
    */
-  void willCommit(toConnection &conn,bool cmt);
+  void willCommit(toConnection &amp;conn,bool cmt);
 public slots:
   /** Used to enable/disable entries in the windows menu
    */
@@ -396,7 +396,7 @@ public slots:
    */
   void contextHelp(void);
 private slots:
-  /** Used to enable/disable entries in the edit & file menu
+  /** Used to enable/disable entries in the edit &amp; file menu
    */
   void editFileMenu(void);
   /** Add a connection
@@ -481,8 +481,9 @@ public:
 /** Display a message in the statusbar of the main window.
  * @param str Message to display
  * @param save If true don't remove the message after a specified interval.
+ * @param log Log message. Will never log saved messages.
  */
-void toStatusMessage(const QString &str,bool save=false);
+void toStatusMessage(const QString &amp;str,bool save=false,bool log=true);
 /** Get a pointer to the main window
  * @return Pointer to main window.
  */
@@ -495,7 +496,7 @@ toMain *toMainWidget(void);
  * @return String with address in.
  * @exception QString if address not found.
  */
-QString toSQLToAddress(toConnection &conn,const QString &sql);
+QString toSQLToAddress(toConnection &amp;conn,const QString &amp;sql);
 /** Get the full SQL of an address (See @ref toSQLToAddress) from the
  * SGA.
  * @param conn Connection to get address from
@@ -503,21 +504,21 @@ QString toSQLToAddress(toConnection &conn,const QString &sql);
  * @return String with SQL of statement.
  * @exception QString if address not found.
  */
-QString toSQLString(toConnection &conn,const QString &address);
+QString toSQLString(toConnection &amp;conn,const QString &amp;address);
 /** Make a column name more readable.
  * @param col Name of column name, will be modified.
  */
-void toReadableColumn(QString &col);
+void toReadableColumn(QString &amp;col);
 /** Get the current database time in the current sessions dateformat.
  * @param conn Connection to get address from.
  * @return String with the current date and time.
  */
-QString toNow(toConnection &conn);
+QString toNow(toConnection &amp;conn);
 /** Set the current session type (Style)
  * @param str Session to set, can be any of Motif, Motif Plus, SGI, CDE, Windows and Platinum
  * @exception QString if style not available.
  */
-void toSetSessionType(const QString &str);
+void toSetSessionType(const QString &amp;str);
 /** Get current session type (Style)
  * @return A string describing the current style.
  * @see toSetSessionType
@@ -529,13 +530,13 @@ QString toGetSessionType(void);
  * @param def Default value of the combobox.
  * @param item Combo box to fill. If not specified a new combobox is created.
  */
-QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &def=QString::null,
+QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &amp;def=QString::null,
 			   QComboBox *item=NULL);
 /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
  * @param timer Timer to set timeout in.
  * @param str String from currentText of combobox. If empty, set to default.
  */
-void toRefreshParse(toTimer *timer,const QString &str=QString::null);
+void toRefreshParse(toTimer *timer,const QString &amp;str=QString::null);
 /** Get information about wether this TOra has plugin support or not.
  * @return True if plugin support is enabled.
  */
@@ -544,14 +545,14 @@ bool toMonolithic(void);
  * @param str String to copy
  * @return Copied string.
  */
-QString toDeepCopy(const QString &str);
+QString toDeepCopy(const QString &amp;str);
 /** Allocate a toolbar. This is needed since Qt and KDE use different toolbars.
  * @param parent Parent of toolbar.
  * @param name Name of toolbar.
  * @param db Database name or empty if N/A.
  * @return A newly created toolbar.
  */
-QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
+QToolBar *toAllocBar(QWidget *parent,const QString &amp;name,const QString &amp;db);
 /** Allocate a new docked window. This is needed since Qt and KDE docks windows differently
  * (Qt 2.x doesn't even have support for docked windows). Observe that you must attach a
  * dock using @ref toAttachDock after allocating it.
@@ -560,9 +561,9 @@ QToolBar *toAllocBar(QWidget *parent,const QString &name,const QString &db);
  * @param icon Icon of new dock.
  * @return A newly allocated fock.
  */
-TODock *toAllocDock(const QString &name,
-		    const QString &db,
-		    const QPixmap &icon);
+TODock *toAllocDock(const QString &amp;name,
+		    const QString &amp;db,
+		    const QPixmap &amp;icon);
 /** Attach a dock to a specified position.
  * @param dock Dock to attach
  * @param container Whatever container is supposed to be in the dock window.
@@ -573,13 +574,13 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
  * everything else to 1.
  * @return Multiplier specified by string.
  */
-int toSizeDecode(const QString &str);
+int toSizeDecode(const QString &amp;str);
 
 /** Shift the first value out of a list.
  * @param lst List to shift value from (Also modified).
  * @return The first value in the list.
  */
-template <class T> T toShift(std::list<T> &lst)
+template &lt;class T&gt; T toShift(std::list&lt;T&gt; &amp;lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -594,7 +595,7 @@ template <class T> T toShift(std::list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toUnShift(std::list<T> &lst,const T &str)
+template &lt;class T&gt; void toUnShift(std::list&lt;T&gt; &amp;lst,const T &amp;str)
 {
   lst.insert(lst.begin(),str);
 }
@@ -603,7 +604,7 @@ template <class T> void toUnShift(std::list<T> &lst,const T &str)
  * @param lst List to pop value from (Also modified).
  * @return The value in the list of objects.
  */
-template <class T> T toPop(std::list<T> &lst)
+template &lt;class T&gt; T toPop(std::list&lt;T&gt; &amp;lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -618,7 +619,7 @@ template <class T> T toPop(std::list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toPush(std::list<T> &lst,const T &str)
+template &lt;class T&gt; void toPush(std::list&lt;T&gt; &amp;lst,const T &amp;str)
 {
   lst.push_back(str);
 }
@@ -628,12 +629,12 @@ template <class T> void toPush(std::list<T> &lst,const T &str)
  * @return Font structure represented by the string.
  * @see toFontToString
  */
-QFont toStringToFont(const QString &str);
+QFont toStringToFont(const QString &amp;str);
 /** Convert a font to a string representation.
  * @param fnt Font to convert.
  * @return String representation of font.
  */
-QString toFontToString(const QFont &fnt);
+QString toFontToString(const QFont &amp;fnt);
 /** Get the path to the help directory.
  * @return Path to the help directory.
  */
@@ -643,47 +644,47 @@ QString toHelpPath(void);
  * @return Contents of file.
  * @exception QString describing I/O problem.
  */
-QCString toReadFile(const QString &filename);
+QCString toReadFile(const QString &amp;filename);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QCString &data);
+bool toWriteFile(const QString &amp;filename,const QCString &amp;data);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QString &data);
+bool toWriteFile(const QString &amp;filename,const QString &amp;data);
 /** Compare two string lists.
  * @param l1 First list to compare.
  * @param l2 Second list to compare.
  * @param len Length of lists to compare.
  * @return True if all first len elements match.
  */
-bool toCompareLists(QStringList &l1,QStringList &l2,unsigned int len);
+bool toCompareLists(QStringList &amp;l1,QStringList &amp;l2,unsigned int len);
 /** Set environment variable.
  * @param var Variable name to set.
  * @param val Value to set variable to.
  */
-void toSetEnv(const QCString &var,const QCString &val);
+void toSetEnv(const QCString &amp;var,const QCString &amp;val);
 /** Delete an environment variable.
  * @param var Environment variable to delete.
  */
-void toUnSetEnv(const QCString &var);
+void toUnSetEnv(const QCString &amp;var);
 /** Pop up a dialog and choose a file to open.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toOpenFilename(const QString &amp;filename,const QString &amp;filter,QWidget *parent);
 /** Pop up a dialog and choose a file to save to.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toSaveFilename(const QString &amp;filename,const QString &amp;filter,QWidget *parent);
 /** Get index of menu to insert tool specific menu at.
  * @return Index of the tool menu entry.
  */
@@ -703,7 +704,7 @@ bool inline toIsIdent(QChar c)
 QString toPluginPath(void);
 /** Get a list of the latest status messages that have been shown.
  */
-std::list<QString> toStatusMessages(void);
+std::list&lt;QString&gt; toStatusMessages(void);
 /** Get a color for a chart item.
  * @param index Indicating which chart item to get color for.
  */
@@ -712,7 +713,7 @@ QColor toChartColor(int index);
  * only stored in toToolWidgets.
  * @return Reference toConnection object closest to the current.
  */
-toConnection &toCurrentConnection(QWidget *widget);
+toConnection &amp;toCurrentConnection(QWidget *widget);
 /** Return the tool widget most closely associated with a widget.
  * @return Pointer to tool widget.
  */
@@ -731,26 +732,26 @@ public:
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */
 #define TOCATCH \
-    catch (const QString &str) {\
+    catch (const QString &amp;str) {\
       toStatusMessage(str);\
     }
 
 /**
  * Get maximum number of a and b.
  */
-template <class T>
+template &lt;class T&gt;
 T max(T a, T b)
 {
-    return a > b ? a : b ;
+    return a &gt; b ? a : b ;
 }
 
 /**
  * Get minimum number of a and b.
  */
-template <class T>
+template &lt;class T&gt;
 T min(T a, T b)
 {
-    return a < b ? a : b ;
+    return a &lt; b ? a : b ;
 }
 
 #endif

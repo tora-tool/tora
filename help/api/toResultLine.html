@@ -33,27 +33,27 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref9">flow</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref10">setSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref10">setSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref11">setSQL</A></b> (<A HREF="toSQL.html">toSQL</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref11">setSQL</A></b> (<A HREF="toSQL.html">toSQL</A> &amp;sql) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref12">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref12">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref13">query</A></b> (<A HREF="toSQL.html">toSQL</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref13">query</A></b> (<A HREF="toSQL.html">toSQL</A> &amp;sql) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref14">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref14">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref15">clear</A></b> (void) 
 </LI>
-<LI>virtual  std::list<double> &nbsp;<b><A HREF="#ref16">transform</A></b> (std::list<double> &input) 
+<LI>virtual  std::list&lt;double&gt; &nbsp;<b><A HREF="#ref16">transform</A></b> (std::list&lt;double&gt; &amp;input) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref17">refresh</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref18">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref19">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref19">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref20">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">changeParams</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Display the result of a query in a piechart. The first column of the query should
  contain the x value and the rest of the columns should be values of the diagram. The
@@ -80,25 +80,25 @@
 </p>
 <p><b>Returns</b>: If flow is used.
    </p>
-<A NAME="setSQL"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="setSQL"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set SQL to query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Query to run.
    </TD></TR>
 </TABLE></P>
-<A NAME="setSQL"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (<A HREF="toSQL.html">toSQL</A> &sql)
+<A NAME="setSQL"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setSQL</strong> (<A HREF="toSQL.html">toSQL</A> &amp;sql)
 <br></td><td align="right"><h3><strong>setSQL</strong></h3></td></tr></table><p></p><p> Set the SQL statement of this list.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL containing statement.
    </TD></TR>
 </TABLE></P>
-<A NAME="query"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
+<A NAME="query"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (<A HREF="toSQL.html">toSQL</A> &sql)
+<A NAME="query"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (<A HREF="toSQL.html">toSQL</A> &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Perform the specified query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -106,7 +106,7 @@
    </TD></TR>
 </TABLE></P>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
-<A NAME="query"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="query"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#query">toResult</A>.</p>
@@ -114,7 +114,7 @@
 <br></td><td align="right"><h3><strong>clear</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toLineChart.html#clear">toLineChart</A>.</p>
-<A NAME="transform"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<double> &nbsp;<strong>transform</strong> (std::list<double> &input)
+<A NAME="transform"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;double&gt; &nbsp;<strong>transform</strong> (std::list&lt;double&gt; &amp;input)
 <br></td><td align="right"><h3><strong>transform</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Transform valueset. Make it possible to perform more complex transformation.
  called directly before adding the valueset to the chart. After flow transformation.
  Default is passthrough.
@@ -129,15 +129,15 @@
 <br></td><td align="right"><h3><strong>refresh</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Read another value to the chart.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#refresh">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1)
+<A NAME="changeParams"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2)
+<A NAME="changeParams"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>
-<A NAME="changeParams"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &Param3)
+<A NAME="changeParams"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changeParams</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param1,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param2,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;Param3)
 <br></td><td align="right"><h3><strong>changeParams</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResult.html#changeParams">toResult</A>.</p>

@@ -50,8 +50,8 @@
 #ifndef __TOHELPBROWSER_H
 #define __TOHELPBROWSER_H
 
-#include <list>
-#include <khtml_part.h>
+#include &lt;list&gt;
+#include &lt;khtml_part.h&gt;
 
 class KURL;
 
@@ -64,14 +64,14 @@ class toHelpBrowser : public KHTMLPart {
 
   /** List of backward history. The current page is at the end of the list.
    */
-  std::list<QString> Backward;
+  std::list&lt;QString&gt; Backward;
   /** List of forward history if you have started walking backwards.
    */
-  std::list<QString> Forward;
+  std::list&lt;QString&gt; Forward;
 private slots:
   /** Reimplemented for internal reasons.
    */
-  void openURLRequest(const KURL &url,const KParts::URLArgs &);
+  void openURLRequest(const KURL &amp;url,const KParts::URLArgs &amp;);
 public:
   /** Create a help browser.
    * @param parent Parent widget.
@@ -82,7 +82,7 @@ public:
    * @param url URL to open.
    * @return Success of operator.
    */
-  virtual bool openURL(const KURL &url);
+  virtual bool openURL(const KURL &amp;url);
   /** Get source of URL.
    * @return String containing the current localtion.
    */

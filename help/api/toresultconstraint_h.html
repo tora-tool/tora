@@ -66,7 +66,7 @@ class toResultConstraint : public toResultView {
    * @param conName Name of constraint.
    * @return String with column names separated by a ',' character.
    */
-  QString constraintCols(const QString &conOwner,const QString &conName);
+  QString constraintCols(const QString &amp;conOwner,const QString &amp;conName);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -75,7 +75,10 @@ public:
   toResultConstraint(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
+  /** Support Oracle
+   */
+  virtual bool canHandle(const toConnection &amp;conn);
 };
 
 #endif

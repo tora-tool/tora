@@ -27,21 +27,21 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toToolWidget</A></b> (<A HREF="toTool.html">toTool</A> &tool,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &ctx,
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref5">toToolWidget</A></b> (<A HREF="toTool.html">toTool</A> &amp;tool,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
 	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
-	       <A HREF="toConnection.html">toConnection</A> &conn,
+	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
 	       const char *name=NULL) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref6">~toToolWidget</A></b> () 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref7">connection</A></b> () 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref7">connection</A></b> () 
 </LI>
-<LI><A HREF="toTool.html">toTool</A> &&nbsp;<b><A HREF="#ref8">tool</A></b> (void) 
+<LI><A HREF="toTool.html">toTool</A> &amp;&nbsp;<b><A HREF="#ref8">tool</A></b> (void) 
 </LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref9">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
+<LI>virtual  bool &nbsp;<b><A HREF="#ref9">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref10">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
+<LI>void &nbsp;<b><A HREF="#ref10">setConnection</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn) 
 </LI>
 <LI><A HREF="toTimer.html">toTimer</A> *&nbsp;<b><A HREF="#ref11">timer</A></b> (void) 
 </LI>
@@ -53,10 +53,10 @@
 <A NAME="connectionChange"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>connectionChange</strong> (void)
 <br></td><td align="right"><h3><strong>connectionChange</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when the connection is changed.
    </p>
-<A NAME="toToolWidget"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (<A HREF="toTool.html">toTool</A> &tool,
-	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &ctx,
+<A NAME="toToolWidget"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toToolWidget</strong> (<A HREF="toTool.html">toTool</A> &amp;tool,
+	       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;ctx,
 	       <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,
-	       <A HREF="toConnection.html">toConnection</A> &conn,
+	       <A HREF="toConnection.html">toConnection</A> &amp;conn,
 	       const char *name=NULL)
 <br></td><td align="right"><h3><strong>toToolWidget</strong></h3></td></tr></table><p></p><p> Create widget.
 </p>
@@ -71,17 +71,17 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toToolWidget"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toToolWidget</strong> ()
-<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="connection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> ()
+<br></td><td align="right"><h3><strong>~toToolWidget</strong></h3></td></tr></table><p></p><A NAME="connection"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> ()
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get the current connection.
 </p>
 <p><b>Returns</b>: Reference to connection.
    </p>
-<A NAME="tool"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTool.html">toTool</A> &&nbsp;<strong>tool</strong> (void)
+<A NAME="tool"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTool.html">toTool</A> &amp;&nbsp;<strong>tool</strong> (void)
 <br></td><td align="right"><h3><strong>tool</strong></h3></td></tr></table><p></p><p> Get the tool for this tool widget.
 </p>
 <p><b>Returns</b>: Reference to a tool object.
    </p>
-<A NAME="canHandle"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
+<A NAME="canHandle"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
 <br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Check if this tool can handle a specific connection.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -90,7 +90,7 @@
 </TABLE></P>
 <p><b>Returns</b>: True if connection is handled.
    </p>
-<A NAME="setConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
+<A NAME="setConnection"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn)
 <br></td><td align="right"><h3><strong>setConnection</strong></h3></td></tr></table><p></p><p> Change connection of tool.
    </p>
 <A NAME="timer"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toTimer.html">toTimer</A> *&nbsp;<strong>timer</strong> (void)

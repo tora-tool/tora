@@ -80,7 +80,7 @@ class toResultStats : public toResultView {
   void setup();
   /** Add value
    */
-  void addValue(bool reset,int id,const QString &name,double value);
+  void addValue(bool reset,int id,const QString &amp;name,double value);
 public:
   /** Create statistics widget for session statistics.
    * @param OnlyChanged Only display changed items.
@@ -107,11 +107,14 @@ public:
   /** Change the session that the current query will run on.
    * @param query Query to check connection for.
    */
-  void changeSession(toQuery &conn);
+  void changeSession(toQuery &amp;conn);
   /** Change session to specified id.
    * @param ses Session ID to change to.
    */
   void changeSession(int ses);
+  /** Only work for Oracle.
+   */
+  virtual bool canHandle(const toConnection &amp;conn);
 signals:
   /** Emitted when session is changed.
    * @param ses New session ID.
@@ -120,7 +123,7 @@ signals:
   /** Emitted when session is changed.
    * @param ses New session ID as string.
    */
-  void sessionChanged(const QString &);
+  void sessionChanged(const QString &amp;);
 public slots:
   /** Update the statistics.
    * @param reset Set delta to current values. This means that the next time this widget

@@ -50,27 +50,27 @@
 #ifndef __TOHTML_H
 #define __TOHTML_H
 
-#include <qstring.h>
-#include <qcstring.h>
-#include <map>
+#include &lt;qstring.h&gt;
+#include &lt;qcstring.h&gt;
+#include &lt;map&gt;
 
 #define TO_HTML_MAX_QUAL 100
 
 /** A small and hopefully pretty efficient parser of HTML tags. No attempt what
  * so ever is made trying to check the validity of the text so if you forget
- * a closing > you will probably end up with an exception.
+ * a closing &gt; you will probably end up with an exception.
  *
  * A simple traverser counting the number of paragraphs might look like this.
  *
-<pre>
+&lt;pre&gt;
 int paragraphs++;
-toHtml count("Paragraphs<P>And some</P><P>Dobedoo");
+toHtml count("Paragraphs&lt;P&gt;And some&lt;/P&gt;&lt;P&gt;Dobedoo");
 while(!count.eof()) {
   count.nextToken();
-  if (count.isTag()&&count.open()&&QString(count.tag())=="p")
+  if (count.isTag()&amp;&amp;count.open()&amp;&amp;QString(count.tag())=="p")
     paragraphs++;
 }
-</pre>
+&lt;/pre&gt;
  */
 
 class toHtml {
@@ -132,7 +132,7 @@ public:
   /** Create a HTML parser.
    * @param data Data to parse.
    */
-  toHtml(const QCString &data);
+  toHtml(const QCString &amp;data);
   ~toHtml();
 
   /** Read the next token which can be either a open tag, close tag or text.
@@ -148,7 +148,7 @@ public:
    * @param name Name of qualifier in lowercase.
    * @return Value of qualifier or NULL.
    */
-  const char *value(const QCString &name);
+  const char *value(const QCString &amp;name);
   /** Return true if current token is a tag.
    * @return True if tag.
    */
@@ -160,7 +160,7 @@ public:
   bool open(void)
   { return Open; }
 
-  /** Get bread text if available. Expands &# characters are expanded before returned.
+  /** Get bread text if available. Expands &amp;# characters are expanded before returned.
    * Only valid if @ref isTag returns false.
    * @return The parsed text.
    */
@@ -182,7 +182,7 @@ public:
    * @param data Data to search.
    * @param str Substring to search for in data.
    */
-  static bool search(const QCString &data,const QString &str);
+  static bool search(const QCString &amp;data,const QString &amp;str);
 };
 
 #endif

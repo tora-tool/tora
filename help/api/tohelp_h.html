@@ -50,9 +50,9 @@
 #ifndef __TOHELP_H
 #define __TOHELP_H
 
-#include <qdialog.h>
+#include &lt;qdialog.h&gt;
 
-#include <map>
+#include &lt;map&gt;
 
 class toListView;
 class QLineEdit;
@@ -79,7 +79,7 @@ public:
   /** Create a context.
    * @param file File in the help directory that describes the current context.
    */
-  toHelpContext(const QString &file)
+  toHelpContext(const QString &amp;file)
     : Context(file)
   { }
   virtual ~toHelpContext()
@@ -88,7 +88,7 @@ public:
    * Get this context
    * @return The location of a file that describes the current context.
    */
-  virtual const QString &context(void) const
+  virtual const QString &amp;context(void) const
   { return Context; }
 };
 
@@ -105,7 +105,7 @@ public:
   toHelpTool()
     : toTool(501,"Additional Help")
   { }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &amp;connection)
   { return NULL; }
   virtual QWidget *configurationTab(QWidget *parent);
 public slots:
@@ -123,28 +123,28 @@ public slots:
  * The following file would result in two main headings with the first one having
  * one leaf widget as well.
  *
-<pre>
-<A HREF="first.html">1 Head</A><BR>
-<DL>
-<A HREF="second.html>1.1 Head Head</A></BR>
-</DL>
-<A HREF="third.html">2 Foot</A><BR>
-</pre>
+&lt;pre&gt;
+&lt;A HREF="first.html"&gt;1 Head&lt;/A&gt;&lt;BR&gt;
+&lt;DL&gt;
+&lt;A HREF="second.html&gt;1.1 Head Head&lt;/A&gt;&lt;/BR&gt;
+&lt;/DL&gt;
+&lt;A HREF="third.html"&gt;2 Foot&lt;/A&gt;&lt;BR&gt;
+&lt;/pre&gt;
  * 
  * The second file which is optional and should be called index.htm if it exists
  * should contain a file with links to keywords in the manual. This must be present
- * for search to be possible in the manual. Keywords are indicated by the <dd> tag
+ * for search to be possible in the manual. Keywords are indicated by the &lt;dd&gt; tag
  * in these files as well as a link to where the keyword is described. Indentation
- * is possible using the <dl> tag is possible here as well.
+ * is possible using the &lt;dl&gt; tag is possible here as well.
  *
  * The following will make the keywords "Head", "Head, Head Head" and "Foot" available.
-<pre>
-<DD><A HREF="first.html">Head</A><BR>
-<DL>
-    <DD><A HREF="second.html">Head Head</A><BR>
-</DL>
-<DD><A HREF="third.html">Foot</A>
-</pre>
+&lt;pre&gt;
+&lt;DD&gt;&lt;A HREF="first.html"&gt;Head&lt;/A&gt;&lt;BR&gt;
+&lt;DL&gt;
+    &lt;DD&gt;&lt;A HREF="second.html"&gt;Head Head&lt;/A&gt;&lt;BR&gt;
+&lt;/DL&gt;
+&lt;DD&gt;&lt;A HREF="third.html"&gt;Foot&lt;/A&gt;
+&lt;/pre&gt;
  * The reason the files look this way is that this way they are compatible with
  * the Oracle manuals from Oracle Corporation and these can be browsed as well in
  * this help viewer.
@@ -201,7 +201,7 @@ class toHelp : public QDialog {
    * @param lst Listview to update selected item in.
    * @param str Location of next help text.
    */
-  virtual void setSelection(toListView *lst,const QString &str);
+  virtual void setSelection(toListView *lst,const QString &amp;str);
   /**
    * Reimplemented for internal reasons.
    */
@@ -232,14 +232,14 @@ public:
    * @param path Path to strip.
    * @return Stripped path in string.
    */
-  static QString path(const QString &path=QString::null);
+  static QString path(const QString &amp;path=QString::null);
   virtual ~toHelp();
   /** Display a specific help context in the internal manual. Pops up a help window that
    * displays the selected topic.
    * @param context Context to diaplay.
    * @param parent If NULL use modal dialog and main window.
    */
-  static void displayHelp(const QString &context,QWidget *parent=NULL);
+  static void displayHelp(const QString &amp;context,QWidget *parent=NULL);
   /** Display a specific help context in the internal manual. The context is derived from
    * the widget that currently holds the focus.
    * @param parent If NULL use modal dialog and main window.

@@ -50,8 +50,8 @@
 #ifndef __TOPIECHART_H
 #define __TOPIECHART_H
 
-#include <list>
-#include <qwidget.h>
+#include &lt;list&gt;
+#include &lt;qwidget.h&gt;
 
 /** A widget that displays a piechart.
  */
@@ -59,8 +59,8 @@
 class toPieChart : public QWidget {
   Q_OBJECT
 
-  std::list<double> Values;
-  std::list<QString> Labels;
+  std::list&lt;double&gt; Values;
+  std::list&lt;QString&gt; Labels;
   QString Postfix;
   bool Legend;
   bool DisplayPercent;
@@ -78,23 +78,23 @@ public:
    * @param post Postfix string, no space will be added after the value before the string
    *             so if you want the space you need to specify it first in this string.
    */
-  void setPostfix(const QString &post)
+  void setPostfix(const QString &amp;post)
   { Postfix=post; update(); }
   /** Get the postfix string.
    * @return Current postfix string.
    */
-  const QString &postfix(void) const
+  const QString &amp;postfix(void) const
   { return Postfix; }
 
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
    */
-  void setTitle(const QString &title=QString::null)
+  void setTitle(const QString &amp;title=QString::null)
   { Title=title; update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
-  const QString &title(void)
+  const QString &amp;title(void)
   { return Title; }
 
   /** Display piecharts in percent instead of actual values
@@ -123,23 +123,23 @@ public:
    * @param values List of values to display.
    * @param labels List of labels, if label is empty it will not appear in legend.
    */
-  void setValues(std::list<double> &values,std::list<QString> &labels)
+  void setValues(std::list&lt;double&gt; &amp;values,std::list&lt;QString&gt; &amp;labels)
   { Values=values; Labels=labels; update(); }
   /** Add a value to the piechart.
    * @param value New value to add.
    * @param label Label of this new value.
    */
-  void addValue(double value,const QString &label)
+  void addValue(double value,const QString &amp;label)
   { Values.insert(Values.end(),value); Labels.insert(Labels.end(),label); update(); }
   /** Get list of values.
    * @return Values in piechart.
    */
-  std::list<double> &values(void)
+  std::list&lt;double&gt; &amp;values(void)
   { return Values; }
   /** Get labels of piechart.
    * @return List of labels.
    */
-  std::list<QString> &labels(void)
+  std::list&lt;QString&gt; &amp;labels(void)
   { return Labels; }
 
 protected:

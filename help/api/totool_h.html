@@ -50,10 +50,10 @@
 #ifndef __TOTOOL_H
 #define __TOTOOL_H
 
-#include <map>
-#include <qstring.h>
-#include <qobject.h>
-#include <qvbox.h>
+#include &lt;map&gt;
+#include &lt;qstring.h&gt;
+#include &lt;qobject.h&gt;
+#include &lt;qvbox.h&gt;
 
 class toConnection;
 class toTimer;
@@ -92,7 +92,7 @@ private:
    * A map of @ref Key to tools. Used to keep track of the different tools
    * available.
    */
-  static std::map<QString,toTool *> *Tools;
+  static std::map&lt;QString,toTool *&gt; *Tools;
   /**
    * A map containing the available configuration settings. By convention the
    * character ':' is used to separate parts of the path.
@@ -102,7 +102,7 @@ private:
    * @see config
    * @see setConfig
    */
-  static std::map<QString,QString> *Configuration;
+  static std::map&lt;QString,QString&gt; *Configuration;
   /**
    * Contain the pixmap of this tool if any. Used for the toolbar and menu entries.
    */
@@ -171,7 +171,7 @@ public:
    * connections from the provider Oracle.
    * @return True if connection can be handled.
    */
-  virtual bool canHandle(toConnection &conn);
+  virtual bool canHandle(toConnection &amp;conn);
   /**
    * This function is called as a last step after the main widget is created. It could
    * be used to insert the tool pretty much anywhere in the user interface if the toolmenu,
@@ -187,7 +187,7 @@ public:
    * @param parent Parent window, which is the worksheet of the main window.
    * @param connection The database connection that this tool should operate on.
    */
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection) = 0;
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &amp;connection) = 0;
   /**
    * Create and return configuration tab for this tool. The returned widget should also
    * be a childclass of @ref toSettingTab. The widget will be resized to 400x400 pixels.
@@ -217,8 +217,8 @@ public:
    * @see Tools
    * @return A reference to the tool map.
    */
-  static std::map<QString,toTool *> &tools(void)
-  { if (!Tools) Tools=new std::map<QString,toTool *>; return *Tools; }
+  static std::map&lt;QString,toTool *&gt; &amp;tools(void)
+  { if (!Tools) Tools=new std::map&lt;QString,toTool *&gt;; return *Tools; }
   /**
    * Save configuration to file.
    */
@@ -233,7 +233,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  static const QString &globalConfig(const QString &tag,const QString &def);
+  static const QString &amp;globalConfig(const QString &amp;tag,const QString &amp;def);
   /**
    * Change a setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -245,7 +245,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  static void globalSetConfig(const QString &tag,const QString &value);
+  static void globalSetConfig(const QString &amp;tag,const QString &amp;value);
 
   /**
    * Get tool specific settings.
@@ -257,7 +257,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  const QString &config(const QString &tag,const QString &def);
+  const QString &amp;config(const QString &amp;tag,const QString &amp;def);
   /**
    * Change toolspecific setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -269,21 +269,21 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  void setConfig(const QString &tag,const QString &value);
+  void setConfig(const QString &amp;tag,const QString &amp;value);
   
   /**
    * Load a string to string map from file saved by the @ref saveMap function.
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool loadMap(const QString &filename,std::map<QString,QString> &map);
+  static bool loadMap(const QString &amp;filename,std::map&lt;QString,QString&gt; &amp;map);
   /**
    * Save a string to string map to file.
    * @see loadMap
    * @param filename Filename to load
    * @param map Reference to the map to fill with the new values.
    */
-  static bool saveMap(const QString &filename,std::map<QString,QString> &map);
+  static bool saveMap(const QString &amp;filename,std::map&lt;QString,QString&gt; &amp;map);
 public slots:
   /**
    * Create a window of the current tool. This function sets up a toolwindow for
@@ -305,7 +305,7 @@ public:
    * Default constructor.
    * @param ctx Help context for this setting tab.
    */
-  toSettingTab(const QString &ctx)
+  toSettingTab(const QString &amp;ctx)
     : toHelpContext(ctx)
   { }
   /**
@@ -324,7 +324,7 @@ class toToolWidget : public QVBox, public toHelpContext {
   Q_OBJECT
   toConnection *Connection;
   toTimer *Timer;
-  toTool &Tool;
+  toTool &amp;Tool;
 signals:
   /** Emitted when the connection is changed.
    */
@@ -336,31 +336,31 @@ public:
    * @param conn Connection of widget.
    * @param name Name of widget.
    */
-  toToolWidget(toTool &tool,
-	       const QString &ctx,
+  toToolWidget(toTool &amp;tool,
+	       const QString &amp;ctx,
 	       QWidget *parent,
-	       toConnection &conn,
+	       toConnection &amp;conn,
 	       const char *name=NULL);
   ~toToolWidget();
   /** Get the current connection.
    * @return Reference to connection.
    */
-  toConnection &connection()
+  toConnection &amp;connection()
   { return *Connection; }
   /** Get the tool for this tool widget.
    * @return Reference to a tool object.
    */
-  toTool &tool(void)
+  toTool &amp;tool(void)
   { return Tool; }
   /** Check if this tool can handle a specific connection.
    * @param provider Name of connection.
    * @return True if connection is handled.
    */
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &amp;conn)
   { return Tool.canHandle(conn); }
   /** Change connection of tool.
    */
-  void setConnection(toConnection &conn);
+  void setConnection(toConnection &amp;conn);
   /** Get timer of tool. Used by some results to get update time.
    * @return Pointer to a timer object.
    */

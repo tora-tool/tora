@@ -50,7 +50,7 @@
 #ifndef __TORESULT_H
 #define __TORESULT_H
 
-#include <list>
+#include &lt;list&gt;
 
 #include "toqvalue.h"
 
@@ -66,7 +66,7 @@ protected:
   /** Get the current connection from the closest tool.
    * @return Reference to connection.
    */
-  toConnection &connection(void);
+  toConnection &amp;connection(void);
   /** Get the timer associated with the closest tool.
    * @return Pointer to tool timer.
    */
@@ -84,22 +84,22 @@ public:
    * @param sql Execute an SQL statement.
    * @param params Parameters needed as input to execute statement.
    */
-  virtual void query(const QString &sql,const toQList &params) = 0;
+  virtual void query(const QString &amp;sql,const toQList &amp;params) = 0;
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    */
-  virtual void changeParams(const QString &Param1) = 0;
+  virtual void changeParams(const QString &amp;Param1) = 0;
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    * @param Param1 Second parameter.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2) = 0;
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2) = 0;
   /** Reexecute with changed parameters.
    * @param Param1 First parameter.
    * @param Param2 Second parameter.
    * @param Param3 Third parameter.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3) = 0;
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3) = 0;
 };
 
 #endif

@@ -31,7 +31,7 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qworkspace.html">QWorkspace</A> *&nbsp;<b><A HREF="#ref37">workspace</A></b> () 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref38">currentConnection</A></b> (void) 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref38">currentConnection</A></b> (void) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref41">close</A></b> (bool del) 
 </LI>
@@ -47,11 +47,11 @@
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *&nbsp;<b><A HREF="#ref47">helpMenu</A></b> () 
 </LI>
-<LI>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &nbsp;<b><A HREF="#ref48">connections</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref48">connections</A></b> (void) 
 </LI>
-<LI><A HREF="toConnection.html">toConnection</A> &&nbsp;<b><A HREF="#ref49">connection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &) 
+<LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref49">connection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref50">editSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref50">editSQL</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref51">registerSQLEditor</A></b> (int toolid) 
 </LI>
@@ -61,13 +61,13 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref58">contextHelp</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref52">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref52">sqlEditor</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref53">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref53">addedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref54">removedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>void &nbsp;<b><A HREF="#ref54">removedConnection</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref55">willCommit</A></b> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt) 
+<LI>void &nbsp;<b><A HREF="#ref55">willCommit</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref39">editEnable</A></b> (bool open,bool save,bool print,
 			 bool undo,bool redo,
@@ -108,7 +108,7 @@
 </p>
 <p><b>Returns</b>: Workspace widget.
    </p>
-<A NAME="currentConnection"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>currentConnection</strong> (void)
+<A NAME="currentConnection"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>currentConnection</strong> (void)
 <br></td><td align="right"><h3><strong>currentConnection</strong></h3></td></tr></table><p></p><p>
  Get the current database connection
 </p>
@@ -173,20 +173,20 @@
 </p>
 <p><b>Returns</b>: Help menu
    </p>
-<A NAME="connections"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &nbsp;<strong>connections</strong> (void)
+<A NAME="connections"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<strong>connections</strong> (void)
 <br></td><td align="right"><h3><strong>connections</strong></h3></td></tr></table><p></p><p>
  Get a list of currently open connections.
 </p>
 <p><b>Returns</b>: List of connection names. The returned list can then be used by
  <A HREF="toMain.html#connection">connection</A> to get the actual connection.
    </p>
-<A NAME="connection"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &&nbsp;<strong>connection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &)
+<A NAME="connection"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<strong>connection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;)
 <br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p></p><p> Get a connection identified by a string.
 </p>
 <p><b>Returns</b>: A reference to a connection.
 </p>
 <p><b>Throws</b>: QString, If, connection, wasn't, found.</p>
-<A NAME="editSQL"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="editSQL"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editSQL</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>editSQL</strong></h3></td></tr></table><p></p><p> Edit an SQL statement in the SQL editor if any connected.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -206,28 +206,28 @@
                member.
    </TD></TR>
 </TABLE></P>
-<A NAME="sqlEditor"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sqlEditor</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="sqlEditor"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sqlEditor</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>sqlEditor</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked to start editing an SQL identifier.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Identifier to start editing.
    </TD></TR>
 </TABLE></P>
-<A NAME="addedConnection"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="addedConnection"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>addedConnection</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked when a connection is added.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Connection identifier.
    </TD></TR>
 </TABLE></P>
-<A NAME="removedConnection"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="removedConnection"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>removedConnection</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>removedConnection</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Invoked when a connection is removed.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Connection identifier.
    </TD></TR>
 </TABLE></P>
-<A NAME="willCommit"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>willCommit</strong> (<A HREF="toConnection.html">toConnection</A> &conn,bool cmt)
+<A NAME="willCommit"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>willCommit</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,bool cmt)
 <br></td><td align="right"><h3><strong>willCommit</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted before a commit or rollback is made to the current connection.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

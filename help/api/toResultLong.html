@@ -37,9 +37,9 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref14">running</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref16">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql) 
+<LI>void &nbsp;<b><A HREF="#ref16">query</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref17">readAll</A></b> (void) 
 </LI>
@@ -49,7 +49,7 @@
 </LI>
 </ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref18">done</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref19">firstResult</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &res) 
+<LI>void &nbsp;<b><A HREF="#ref19">firstResult</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;res) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget which contains the result of a query run in the background.
  </p>
@@ -89,11 +89,11 @@
 </p>
 <p><b>Returns</b>: True if query is still running.
    </p>
-<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const toQList &param)
+<A NAME="query"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const toQList &amp;param)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
-<A NAME="query"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql)
+<A NAME="query"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
 <br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
@@ -104,7 +104,7 @@
 <A NAME="done"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>done</strong> (void)
 <br></td><td align="right"><h3><strong>done</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when query is finnished.
    </p>
-<A NAME="firstResult"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>firstResult</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &res)
+<A NAME="firstResult"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>firstResult</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;res)
 <br></td><td align="right"><h3><strong>firstResult</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when the first result is available.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
