@@ -1272,22 +1272,22 @@ QString toSQLParse::indent(const QString &str)
   return ret.mid(0,pos)+QString::fromLatin1("\n");
 }
 
-std::list<statement> toSQLParse::parse(tokenizer &tokens,toConnection &)
+std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens,toConnection &)
 {
   return parse(tokens);
 }
 
-std::list<statement> toSQLParse::parse(const QString &str,toConnection &conn)
+std::list<toSQLParse::statement> toSQLParse::parse(const QString &str,toConnection &)
 {
   return parse(str);
 }
 
-statement toSQLParse::parseStatement(tokenizer &tokens,toConnection &conn)
+toSQLParse::statement toSQLParse::parseStatement(toSQLParse::tokenizer &tokens,toConnection &)
 {
   return parseStatement(tokens);
 }
 
-static QString toSQLParse::indent(const QString &str,toConnection &conn)
+QString toSQLParse::indent(const QString &str,toConnection &)
 {
   return indent(str);
 }
