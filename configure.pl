@@ -109,6 +109,8 @@ for (@ARGV) {
     } elsif (/^--with-mono$/) {
 	$Target="tora-mono";
 	$ForceTarget=1;
+    } elsif (/^--without-mysql$/) {
+	$MySQLFound=0;
     } elsif (/^--without-kde$/) {
 	$NoKDE=1;
     } elsif (/^--with-static$/) {
@@ -152,6 +154,7 @@ Options can be any of the following:
 --with-kde-libs      Where to find KDE libraries
 --with-mysql-include Where to find MySQL include files
 --with-mysql-libs    Where to find MySQL library files
+--without-mysql      Don't compile in MySQL support
 --without-rpath      Compile without rpath to Oracle libraries
 
 __USAGE__
