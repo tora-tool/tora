@@ -1,3 +1,5 @@
+# This specfile is no longer in use
+
 %define _name		tora
 %define _version	1.3.6.1
 %define _release	1gc
