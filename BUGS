@@ -26,9 +26,6 @@ toMysqlConnection:
 toBrowser:
 	Crashes when closing application and browser open.
 
-toMarkedText:
-	Insert/replace toggle don't work.
-
 toHighlightedText:
 	Handle multiline strings correctly.
 

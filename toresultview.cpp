@@ -420,20 +420,21 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
   if (paint) {
     QString numPage("Page: ");
     numPage+=QString::number(pageNo);
-    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
-		      header()->height()*wpscaley,
+    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
+		      int(header()->height()*wpscaley),
 		      SingleLine|AlignRight|AlignVCenter,
 		      numPage);
-    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
-		      header()->height()*wpscaley,
+    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
+		      int(header()->height()*wpscaley),
 		      SingleLine|AlignHCenter|AlignVCenter,
 		      middleString());
-    painter->drawText(0,metrics.height()-header()->height()*wpscaley,metrics.width(),
-		      header()->height()*wpscaley,
+    painter->drawText(0,metrics.height()-int(header()->height()*wpscaley),metrics.width(),
+		      int(header()->height()*wpscaley),
 		      SingleLine|AlignLeft|AlignVCenter,
 		      sqlName());
     painter->scale(scale,scale);
-    painter->drawLine(0,header()->height()*wpscaley-1,int(mwidth),header()->height()*wpscaley-1);
+    painter->drawLine(0,int(header()->height()*wpscaley)-1,
+		      int(mwidth),int(header()->height()*wpscaley)-1);
   }
   for (int i=column;i<columns();i++) {
     double width=columnWidth(i)*wpscalex;
@@ -444,7 +445,8 @@ QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListV
 	break;
     }
     if (paint)
-      painter->drawText(int(x),0,columnWidth(i),header()->height()*wpscaley,SingleLine|AlignLeft|AlignVCenter,header()->label(i));
+      painter->drawText(int(x),0,int(width),
+			int(header()->height()*wpscaley),SingleLine|AlignLeft|AlignVCenter,header()->label(i));
     x+=width;
   }
   if (paint)

@@ -109,7 +109,8 @@ void toResultLong::addItem(void)
 	bool em=false;
 	char buffer[100];
 	if (First) {
-	  if (Query->rowsProcessed()>0)
+	  QString tmp=sql().simplifyWhiteSpace().mid(0,10).lower();
+	  if (tmp.startsWith("update")||tmp.startsWith("delete")||tmp.startsWith("insert"))
 	    sprintf(buffer,"%d rows processed",(int)Query->rowsProcessed());
 	  else
 	    sprintf(buffer,"Query executed");

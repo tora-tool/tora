@@ -26,6 +26,8 @@
 2001-09-30: Added auto indent to editors.
 2001-09-30: Added filter option to filter on list of objects.
 2001-09-30: Make insert toggle overwrite in editors.
+2001-09-31: Fixed problem with printing lists in windows.
+2001-09-31: Made commit needed more intelligent in worksheet.
 
 1.1.1: 2001-09-24
 
