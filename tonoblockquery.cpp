@@ -70,7 +70,7 @@ void toNoBlockQuery::queryTask::run(void)
 	if ((*i).isNull())
 	  Query<<null;
 	else
-	  Query<<(const char *)(*i);
+	  Query<<(*i).utf8();
       }
       TO_DEBUGOUT("Locking description\n");
       toLocker lock(Parent.Lock);
@@ -141,7 +141,7 @@ void toNoBlockQuery::queryTask::run(void)
   } catch (const otl_exception &exc) {
     TO_DEBUGOUT("Locking exception\n");
     toLocker lock(Parent.Lock);
-    Parent.Error=(const char *)exc.msg;
+    Parent.Error=QString::fromUtf8((const char *)exc.msg);
   } catch (const QString &str) {
     TO_DEBUGOUT("Locking exception string\n");
     toLocker lock(Parent.Lock);

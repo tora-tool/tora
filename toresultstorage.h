@@ -43,7 +43,7 @@ public:
 
   QString currentTablespace(void);
   QString currentFilename(void);
-  virtual QString query(void);
+  virtual void query(void);
 };
 
 #endif

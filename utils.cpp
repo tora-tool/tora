@@ -60,7 +60,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
       q>>buffer;
       if (q.is_null())
 	return "{null}";
-      return buffer;
+      return QString::fromUtf8(buffer);
     }
     break;
   case otl_var_varchar_long:
@@ -75,7 +75,7 @@ QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize)
       if (q.is_null())
 	return "{null}";
       buffer[data.len()]=0; // Not sure if this is needed
-      return buffer;
+      return QString::fromUtf8(buffer);
     }
     break;
   }
@@ -95,12 +95,12 @@ QString toSQLString(toConnection &conn,const QString &address)
 	       SQLTextPiece(conn),
 	       conn.connection());
 
-  q<<(const char *)address;
+  q<<address.utf8();
 
   while(!q.eof()) {
     char buffer[100];
     q>>buffer;
-    sql.append(buffer);
+    sql.append(QString::fromUtf8(buffer));
   }
   if (sql.isEmpty())
     throw QString("SQL Address not found in SGA");
@@ -113,12 +113,13 @@ static toSQL SQLNow("Global:Now",
 
 QString toNow(toConnection &conn)
 {
+  printf("%s\n",(const char *)SQLNow(conn));
   otl_stream q(1,
 	       SQLNow(conn),
 	       conn.connection());
   char buffer[1024];
   q>>buffer;
-  return buffer;
+  return QString::fromUtf8(buffer);
 }
 
 static toSQL SQLAddress("Global:Address",
@@ -133,13 +134,13 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
 
   otl_stream q(1,SQLAddress(conn),conn.connection());
 
-  q<<(const char *)sql.left(CHUNK_SIZE);
+  q<<sql.left(CHUNK_SIZE).utf8();
 
   while(!q.eof()) {
     char buf[100];
     q>>buf;
-    if (sql==toSQLString(conn,buf))
-      return buf;
+    if (sql==toSQLString(conn,QString::fromUtf8(buf)))
+      return QString::fromUtf8(buf);
   }
   throw QString("SQL Query not found in SGA");
 }
@@ -199,6 +200,13 @@ void toRefreshParse(QTimer *timer,const QString &str)
     timer->start(600*1000);
   else
     throw QString("Unknown timer value");
+}
+
+QString toDeepCopy(const QString &str)
+{
+  QString ret=str;
+  ret+=" ";
+  return ret.left(ret.length()-1);
 }
 
 #ifdef ENABLE_STYLE

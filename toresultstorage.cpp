@@ -158,7 +158,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
  order by a.tablespace_name,b.name",
 			 "Display information about a datafile in a tablespace. All columns must be present in the output (Should be 12)");
 
-QString toResultStorage::query()
+void toResultStorage::query(void)
 {
   QListViewItem *item=selectedItem();
   QString currentSpace;
@@ -185,22 +185,22 @@ QString toResultStorage::query()
     otl_stream tblspc(1,sql,Connection.connection());
 
     otl_stream datfil(1,
-		      toSQL::sql(SQLDatafile,Connection),
+		      SQLDatafile(Connection),
 		      Connection.connection());
     QListViewItem *lastTablespace=NULL;
     while(!tblspc.eof()) {
       QListViewItem *tablespace=new toResultStorageItem(this,lastTablespace);
       for (int i=0;i<11;i++) {
 	tblspc>>buffer;
-	tablespace->setText(i,buffer);
+	tablespace->setText(i,QString::fromUtf8(buffer));
       }
-      datfil<<(const char *)tablespace->text(0);
+      datfil<<tablespace->text(0).utf8();
       QListViewItem *lastFile=NULL;
       while(!datfil.eof()) {
 	QListViewItem *file=new toResultStorageItem(tablespace,lastFile);
 	for (int i=0;i<12;i++) {
 	  datfil>>buffer;
-	  file->setText(i,buffer);
+	  file->setText(i,QString::fromUtf8(buffer));
 	}
 	lastFile=file;
 	if (currentSpace==file->text(11)&&
@@ -215,15 +215,8 @@ QString toResultStorage::query()
 	  setOpen(tablespace,true);
       }
     }
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-    return QString((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-    return str;
-  }
+  } TOCATCH
   updateContents();
-  return "";
 }
 
 QString toResultStorage::currentTablespace(void)
@@ -249,4 +242,3 @@ QString toResultStorage::currentFilename(void)
   QString name=item->text(0);
   return name;
 }
-

@@ -104,7 +104,7 @@ void toResultLock::query(const QString &sql,
     {
       toResultViewItem *lastItem=NULL;
       QString session=sql;
-      query<<session;
+      query<<session.utf8();
       while(!query.eof()) {
 	toResultViewItem *item;
 	if (!lastItem)
@@ -117,16 +117,12 @@ void toResultLock::query(const QString &sql,
 	for (int pos=0;!query.eof();pos++) {
 	  char buffer[1024];
 	  query>>buffer;
-	  item->setText(pos,buffer);
+	  item->setText(pos,QString::fromUtf8(buffer));
 	}
 	session=item->text(0);
-	query<<session;
+	query<<session.utf8();
       }
     }
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  }
+  } TOCATCH
   updateContents();
 }

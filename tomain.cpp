@@ -503,7 +503,7 @@ void toMain::commandCallback(int cmd)
 	      throw QString("Encountered problems read configuration");
 	    }
 	    buf[size]=0;
-	    mark->setText(buf);
+	    mark->setText(QString::fromLocal8Bit(buf));
 	    mark->setFilename(filename);
 	    toStatusMessage("File opened successfully");
 	  }
@@ -523,7 +523,7 @@ void toMain::commandCallback(int cmd)
 	    return;
 	  }
 	  QString data=mark->text();
-	  file.writeBlock(data,data.length());
+	  file.writeBlock(data.local8Bit(),data.length());
 	  mark->setFilename(filename);
 	  mark->setEdited(false);
 	  toStatusMessage("File saved successfully");
@@ -535,20 +535,12 @@ void toMain::commandCallback(int cmd)
     case TO_FILE_COMMIT:
       try {
 	currentConnection().commit();
-      } catch (const otl_exception &exc) {
-	toStatusMessage((const char *)exc.msg);
-      } catch (const QString &str) {
-	toStatusMessage((const char *)str);
-      }
+      } TOCATCH
       break;
     case TO_FILE_ROLLBACK:
       try {
 	currentConnection().rollback();
-      } catch (const otl_exception &exc) {
-	toStatusMessage((const char *)exc.msg);
-      } catch (const QString &str) {
-	toStatusMessage((const char *)str);
-      }
+      } TOCATCH
       break;
     case TO_EDIT_READ_ALL:
       {

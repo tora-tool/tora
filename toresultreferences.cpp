@@ -58,8 +58,8 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
 		   SQLConsColumns(Connection),
 		   Connection.connection());
 
-  Query<<(const char *)conOwner;
-  Query<<(const char *)conName;
+  Query<<conOwner.utf8();
+  Query<<conName.utf8();
 
   QString ret;
   while(!Query.eof()) {
@@ -67,7 +67,7 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(buffer);
+    ret.append(QString::fromUtf8(buffer));
   }
   return ret;
 }
@@ -121,8 +121,8 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
 
     Description=Query.describe_select(DescriptionLen);
 
-    Query<<Owner;
-    Query<<TableName;
+    Query<<Owner.utf8();
+    Query<<TableName.utf8();
 
     QListViewItem *item=NULL;
     while(!Query.eof()) {
@@ -131,20 +131,20 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
       char buffer[MaxColSize+1];
       buffer[MaxColSize]=0;
       Query>>buffer;
-      QString consOwner(buffer);
+      QString consOwner(QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(1,buffer);
+      item->setText(1,QString::fromUtf8(buffer));
       Query>>buffer;
-      QString consName(buffer);
-      QString colNames(constraintCols(Owner,buffer));
+      QString consName(QString::fromUtf8(buffer));
+      QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
       item->setText(0,consOwner);
       item->setText(2,consName);
       Query>>buffer;
-      QString rConsOwner(buffer);
+      QString rConsOwner(QString::fromUtf8(buffer));
       Query>>buffer;
-      QString rConsName(buffer);
+      QString rConsName(QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(4,buffer);
+      item->setText(4,QString::fromUtf8(buffer));
       QString Condition;
 
       Condition="foreign key (";
@@ -161,30 +161,26 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
 
       item->setText(3,Condition);
       Query>>buffer;
-      item->setText(5,buffer);
+      item->setText(5,QString::fromUtf8(buffer));
     }
 
     otl_stream Deps(1,
 		    SQLDependencies(Connection),
 		    Connection.connection());
-    Deps<<Owner;
-    Deps<<TableName;
+    Deps<<Owner.utf8();
+    Deps<<TableName.utf8();
     while(!Deps.eof()) {
       item=new QListViewItem(this,item,NULL);
       char buffer[MaxColSize+1];
       buffer[MaxColSize]=0;
       Deps>>buffer;
-      item->setText(0,buffer);
+      item->setText(0,QString::fromUtf8(buffer));
       Deps>>buffer;
-      item->setText(1,buffer);
+      item->setText(1,QString::fromUtf8(buffer));
       Deps>>buffer;
-      item->setText(3,buffer);
+      item->setText(3,QString::fromUtf8(buffer));
       item->setText(4,"DEPENDENCY");
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
   updateContents();
 }

@@ -156,11 +156,11 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
     Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
 
     Query.open(1,
-	       (const char *)sql,
+	       sql.utf8(),
 	       Connection.connection());
 
     for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
-      Query<<(const char *)(*i);
+      Query<<(*i).utf8();
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -168,7 +168,7 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
     buffer[MaxColSize]=0;
 
     for (int i=0;i<DescriptionLen&&!Query.eof();i++) {
-      QString name=Description[i].name;
+      QString name=QString::fromUtf8(Description[i].name);
       if (ReadableColumns) {
 	bool inWord=false;
 	for (unsigned int j=0;j<name.length();j++) {
@@ -194,7 +194,7 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
     toStatusMessage((const char *)str);
   } catch (const otl_exception &exc) {
     done();
-    toStatusMessage((const char *)exc.msg);
+    toStatusMessage(QString::fromUtf8((const char *)exc.msg));
   }
 }
 

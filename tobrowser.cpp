@@ -512,8 +512,8 @@ void toBrowser::refresh(void)
       for(int i=0;!users.eof();i++) {
 	char buffer[31];
 	users>>buffer;
-	Schema->insertItem(buffer);
-	if (selected==buffer)
+	Schema->insertItem(QString::fromUtf8(buffer));
+	if (selected==QString::fromUtf8(buffer))
 	  Schema->setCurrentItem(i);
       }
     }
@@ -534,11 +534,7 @@ void toBrowser::refresh(void)
     }
     if (SecondTab&&!SecondText.isEmpty())
       SecondTab->changeParams(Schema->currentText(),SecondText);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  }
+  } TOCATCH
 }
 
 void toBrowser::changeItem(QListViewItem *item)

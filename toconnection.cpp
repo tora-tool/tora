@@ -65,7 +65,7 @@ otl_connect *toConnection::newConnection(void)
   QString str="ALTER SESSION SET NLS_DATE_FORMAT = '";
   str+=toTool::globalConfig(CONF_DATE_FORMAT,DEFAULT_DATE_FORMAT);
   str+="'";
-  otl_stream date(1,str,*conn);
+  otl_stream date(1,str.utf8(),*conn);
   return conn;
 }
 
@@ -89,7 +89,7 @@ void toConnection::setup(void)
 	int len;
 	pos=verre.match(buffer,0,&len);
 	if (pos>=0) {
-	  Version=buffer+pos;
+	  Version=QString::fromUtf8(buffer+pos);
 	  Version.truncate(len);
 	  break;
 	}
@@ -180,8 +180,6 @@ otl_connect *toConnection::longOperation(void)
   }
   return newConnection();
 }
-
-#include <stdio.h>
 
 void toConnection::longOperationFree(otl_connect *conn)
 {

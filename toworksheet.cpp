@@ -758,7 +758,7 @@ void toWorksheet::execute(bool all,bool step)
   }
   if (Editor->hasMarkedText()&&!all) {
     QueryString=Editor->markedText();
-    if (!code&&((const char *)QueryString)[QueryString.length()-1]==';')
+    if (!code&&QueryString[QueryString.length()-1]==';')
       QueryString.remove(QueryString.length()-1,1);
     query(QueryString);
     if (CurrentTab==Plan)

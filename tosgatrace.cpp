@@ -277,15 +277,11 @@ void toSGATrace::updateSchemas(void)
     for(int i=0;!users.eof();i++) {
       char buffer[31];
       users>>buffer;
-      Schema->insertItem(buffer);
-      if (CurrentSchema==buffer)
+      Schema->insertItem(QString::fromUtf8(buffer));
+      if (CurrentSchema==QString::fromUtf8(buffer))
 	Schema->setCurrentItem(i+1);
     }
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage(str);
-  }
+  } TOCATCH
 }
 
 void toSGATrace::changeItem(QListViewItem *item)

@@ -20,6 +20,11 @@
 2001-03-07: Removed build reqs part (libqt2-devel/qt2-devel controversy)
 2001-03-07: Changed name of plugins to tso not to be misinterpreted as shared
 	libraries.
+2001-03-09: Fixed bug regarding missing config file.
+2001-03-13: Added Unicode UTF8 support. Huge boring change, almost everything
+	touched. For some more details, files are saved in the local 8bit
+	format (Gotten from LANG). Config values and sql strings are stored
+	in UTF8, the rest of the files are in Latin1.
 
 0.6: Released 2001-02-23
 

@@ -234,7 +234,7 @@ void toSession::enableStatistics(bool enable)
     sql="ALTER SYSTEM SET TIMED_STATISTICS = FALSE";
   try {
     otl_stream str(1,
-		   sql,
+		   sql.utf8(),
 		   Connection.connection());
   } catch (...) {
     toStatusMessage("No access to timed statistics flags");
@@ -307,13 +307,9 @@ void toSession::disconnectSession(void)
     }
     try {
       otl_stream str(1,
-		     sql,
+		     sql.utf8(),
 		     Connection.connection());
-    } catch (const QString &str) {
-      toStatusMessage((const char *)str);
-    } catch (const otl_exception &exc) {
-      toStatusMessage((const char *)exc.msg);
-    }
+    } TOCATCH
   }
 }
 

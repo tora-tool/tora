@@ -75,9 +75,9 @@ public:
   static bool deleteSQL(const QString &name,
 		        const QString &ver);
 
-  static const QString &sql(const QString &name,const toConnection &conn);
+  static QCString sql(const QString &name,const toConnection &conn);
 
-  static const QString &sql(const toSQL &sqldef,const toConnection &conn)
+  static QCString sql(const toSQL &sqldef,const toConnection &conn)
   { return sql(sqldef.Name,conn); }
 
   static bool saveSQL(const QString &file);
@@ -86,7 +86,7 @@ public:
   static const sqlMap &definitions(void)
   { allocCheck(); return *Definitions; }
 
-  const QString &operator () (const toConnection &conn)
+  const QCString operator () (const toConnection &conn)
   { return sql(Name,conn); }
 
   const QString &name(void)

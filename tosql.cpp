@@ -116,8 +116,8 @@ bool toSQL::deleteSQL(const QString &name,
   }
 }
 
-const QString &toSQL::sql(const QString &name,
-			  const toConnection &conn)
+QCString toSQL::sql(const QString &name,
+		       const toConnection &conn)
 {
   allocCheck();
   const QString &ver=conn.version();
@@ -130,10 +130,10 @@ const QString &toSQL::sql(const QString &name,
 	sql=&(*j).SQL;
       }
       if ((*j).Version>=ver)
-	return *sql;
+	return sql->utf8();
     }
     if (sql)
-      return *sql;
+      return sql->utf8();
   }
   QString str="Tried to get unknown SQL (";
   str+=name;
@@ -169,10 +169,14 @@ bool toSQL::saveSQL(const QString &filename)
 	line+="[";
 	line+=ver.Version;
 	line+="]=";
-	line+=ver.SQL;
 	line.replace(backslash,"\\\\");
 	line.replace(newline,"\\n");
 	file.writeBlock(line,line.length());
+	line=ver.SQL;
+	line.replace(backslash,"\\\\");
+	line.replace(newline,"\\n");
+	QCString str=line.utf8();
+	file.writeBlock(str,str.length());
 	file.writeBlock("\n",1);
       }
     }
@@ -214,7 +218,7 @@ bool toSQL::loadSQL(const QString &filename)
       buf[wpos]=0;
       {
 	QString nam=buf+bol;
-	QString val=buf+endtag+1;
+	QString val(QString::fromUtf8(buf+endtag+1));
 	if (vertag==-1)
 	  updateSQL(nam,QString::null,val,QString::null,true);
 	else

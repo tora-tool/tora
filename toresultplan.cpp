@@ -71,7 +71,7 @@ void toResultPlan::query(const QString &sql,
 
     QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
-    sprintf(buffer,"SAVEPOINT %s",(const char *)chkPoint);
+    sprintf(buffer,"SAVEPOINT %s",(const char *)chkPoint.utf8());
     otl_cursor::direct_exec(Connection.connection(),buffer);
 
     int ident=(int)time(NULL);
@@ -79,13 +79,13 @@ void toResultPlan::query(const QString &sql,
     QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
     sprintf(buffer,"EXPLAIN PLAN SET STATEMENT_ID = 'Tora %d' INTO %s FOR ",
-	    ident,(const char *)planTable);
-    QString explain(buffer);
+	    ident,(const char *)planTable.utf8());
+    QString explain=QString::fromUtf8(buffer);
     explain.append(sql);
-    otl_cursor::direct_exec (Connection.connection(),(const char *)explain);
+    otl_cursor::direct_exec (Connection.connection(),explain.utf8());
 
     sprintf(buffer,SQLViewPlan(Connection),
-	    (const char *)planTable,ident);
+	    (const char *)planTable.utf8(),ident);
 
     {
       map <QString,QListViewItem *> parents;
@@ -118,25 +118,37 @@ void toResultPlan::query(const QString &sql,
 
 	QListViewItem *item;
 	if (parentid&&parents[parentid]) {
-	  item=new QListViewItem(parents[parentid],last[parentid],id,operation,options,object,optimizer,cost,bytes,cardinality);
+	  item=new QListViewItem(parents[parentid],last[parentid],
+				 QString::fromUtf8(id),
+				 QString::fromUtf8(operation),
+				 QString::fromUtf8(options),
+				 QString::fromUtf8(object),
+				 QString::fromUtf8(optimizer),
+				 QString::fromUtf8(cost),
+				 QString::fromUtf8(bytes),
+				 QString::fromUtf8(cardinality));
 	  setOpen(parents[parentid],true);
 	  parents[id]=item;
 	  last[parentid]=item;
 	} else {
-	  item=new QListViewItem(this,lastTop,id,operation,options,object,optimizer,cost,bytes,cardinality);
+	  item=new QListViewItem(this,lastTop,
+				 QString::fromUtf8(id),
+				 QString::fromUtf8(operation),
+				 QString::fromUtf8(options),
+				 QString::fromUtf8(object),
+				 QString::fromUtf8(optimizer),
+				 QString::fromUtf8(cost),
+				 QString::fromUtf8(bytes),
+				 QString::fromUtf8(cardinality));
 	  parents[id]=item;
 	  lastTop=item;
 	}
       }
     }
 
-    sprintf(buffer,"ROLLBACK TO SAVEPOINT %s",(const char *)chkPoint);
+    sprintf(buffer,"ROLLBACK TO SAVEPOINT %s",(const char *)chkPoint.utf8());
     otl_cursor::direct_exec(Connection.connection(),buffer);
 
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  }
+  } TOCATCH
   updateContents();
 }

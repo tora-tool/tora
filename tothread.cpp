@@ -189,7 +189,8 @@ void *toThreadStartWrapper(void *t)
     thread->StartSemaphore.up();
     thread->Task->run();
   } catch (const otl_exception &exc) {
-    printf("Unhandled exception in thread:\n%s\n",exc.msg);
+    printf("Unhandled exception in thread:\n%s\n",
+	   (const char *)QString::fromUtf8((const char *)exc.msg));
   } catch(const QString &exc) {
     printf("Unhandled exception in thread:\n%s\n",(const char *)exc);
   } catch(...) {

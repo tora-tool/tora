@@ -583,7 +583,7 @@ void toStorage::coalesce(void)
     str.append(Storage->currentTablespace());
     str.append("\" COALESCE");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -596,7 +596,7 @@ void toStorage::online(void)
     str.append(Storage->currentTablespace());
     str.append("\" ONLINE");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -609,7 +609,7 @@ void toStorage::logging(void)
     str.append(Storage->currentTablespace());
     str.append("\" LOGGING");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -622,7 +622,7 @@ void toStorage::noLogging(void)
     str.append(Storage->currentTablespace());
     str.append("\" NOLOGGING");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -635,7 +635,7 @@ void toStorage::readOnly(void)
     str.append(Storage->currentTablespace());
     str.append("\" READ ONLY");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -648,7 +648,7 @@ void toStorage::readWrite(void)
     str.append(Storage->currentTablespace());
     str.append("\" READ WRITE");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -676,7 +676,7 @@ void toStorage::offline(void)
     str.append("\" OFFLINE ");
     str.append(reason);
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -745,7 +745,7 @@ void toStorage::newDatafile(void)
       str.append("\" ADD DATAFILE ");
       str.append(newFile.Datafile->getSQL());
       otl_cursor::direct_exec(Connection.connection(),
-			      (const char *)str);
+			      str.utf8());
       refresh();
     }
   } TOCATCH
@@ -769,7 +769,7 @@ void toStorage::newTablespace(void)
 	str.append(newSpace.Default->getSQL());
       }
       otl_cursor::direct_exec(Connection.connection(),
-			      (const char *)str);
+			      str.utf8());
       refresh();
     }
   } TOCATCH
@@ -792,7 +792,7 @@ void toStorage::moveFile(void)
       str.append(file);
       str.append("'");
       otl_cursor::direct_exec(Connection.connection(),
-			      (const char *)str);
+			      str.utf8());
       refresh();
     }
   } TOCATCH

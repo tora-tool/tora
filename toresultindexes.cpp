@@ -56,8 +56,8 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
 		   SQLColumns(Connection),
 		   Connection.connection());
 
-  Query<<(const char *)indOwner;
-  Query<<(const char *)indName;
+  Query<<indOwner.utf8();
+  Query<<indName.utf8();
 
   QString ret;
   while(!Query.eof()) {
@@ -65,7 +65,7 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(buffer);
+    ret.append(QString::fromUtf8(buffer));
   }
   return ret;
 }
@@ -104,8 +104,8 @@ void toResultIndexes::query(const QString &sql,const list<QString> &param)
 
     Description=Query.describe_select(DescriptionLen);
 
-    Query<<Owner;
-    Query<<TableName;
+    Query<<Owner.utf8();
+    Query<<TableName.utf8();
 
     QListViewItem *item;
     while(!Query.eof()) {
@@ -115,20 +115,16 @@ void toResultIndexes::query(const QString &sql,const list<QString> &param)
       char buffer[101];
       buffer[100]=0;
       Query>>buffer;
-      QString indexOwner(buffer);
+      QString indexOwner(QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(0,buffer);
-      item->setText(1,indexCols(indexOwner,buffer));
+      item->setText(0,QString::fromUtf8(buffer));
+      item->setText(1,indexCols(indexOwner,QString::fromUtf8(buffer)));
       Query>>buffer;
-      item->setText(2,buffer);
+      item->setText(2,QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(3,buffer);
+      item->setText(3,QString::fromUtf8(buffer));
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
   updateContents();
   return;
 }

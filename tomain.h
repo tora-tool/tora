@@ -131,6 +131,7 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const char *def
 void toRefreshParse(QTimer *timer,const QString &str);
 QString toReadValue(const otl_column_desc &dsc,otl_stream &q,int maxSize);
 bool toMonolithic(void);
+QString toDeepCopy(const QString &);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20
@@ -146,9 +147,9 @@ bool toMonolithic(void);
 
 #define TOCATCH \
     catch (const otl_exception &exc) {\
-      toStatusMessage((const char *)exc.msg);\
+      toStatusMessage(QString::fromUtf8((const char *)exc.msg));\
     } catch (const QString &str) {\
-      toStatusMessage((const char *)str);\
+      toStatusMessage(str);\
     }
 
 #define toIsIdent(c) (isalnum(c)||(c)=='_'||(c)=='%'||(c)=='$'||(c)=='#')

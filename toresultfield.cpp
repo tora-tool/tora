@@ -54,11 +54,11 @@ void toResultField::query(const QString &sql,const list<QString> &param)
 
     Query.set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query.open(1,
-	       (const char *)sql,
+	       sql.utf8(),
 	       Connection.connection());
 
     for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
-      Query<<(const char *)(*i);
+      Query<<(*i).utf8();
 
     QString text;
 
@@ -67,16 +67,10 @@ void toResultField::query(const QString &sql,const list<QString> &param)
 
     col=0;
     while(!Query.eof()) {
-      char buffer[MaxColSize+1];
-      buffer[MaxColSize]=0;
       text.append(toReadValue(Description[col],Query,MaxColSize));
       col++;
       col%=DescriptionLen;
     }
     setText(text);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
 }

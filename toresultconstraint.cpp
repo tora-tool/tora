@@ -57,8 +57,8 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
 		   SQLConsColumns(Connection),
 		   Connection.connection());
 
-  Query<<(const char *)conOwner;
-  Query<<(const char *)conName;
+  Query<<conOwner.utf8();
+  Query<<conName.utf8();
 
   QString ret;
   while(!Query.eof()) {
@@ -66,9 +66,9 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
-    ret.append(buffer);
+    ret.append(QString::fromUtf8(buffer));
     Query>>buffer;
-    LastTable=buffer;
+    LastTable=QString::fromUtf8(buffer);
   }
   return ret;
 }
@@ -117,8 +117,8 @@ void toResultConstraint::query(const QString &sql,const list<QString> &param)
 
     Description=Query.describe_select(DescriptionLen);
 
-    Query<<Owner;
-    Query<<TableName;
+    Query<<Owner.utf8();
+    Query<<TableName.utf8();
 
     QListViewItem *item;
     while(!Query.eof()) {
@@ -128,17 +128,17 @@ void toResultConstraint::query(const QString &sql,const list<QString> &param)
       char buffer[MaxColSize+1];
       buffer[MaxColSize]=0;
       Query>>buffer;
-      QString consName(buffer);
-      QString colNames(constraintCols(Owner,buffer));
+      QString consName(QString::fromUtf8(buffer));
+      QString colNames(constraintCols(Owner,QString::fromUtf8(buffer)));
       item->setText(0,consName);
       Query>>buffer;
-      QString Check(buffer);
+      QString Check(QString::fromUtf8(buffer));
       Query>>buffer;
-      QString rConsOwner(buffer);
+      QString rConsOwner(QString::fromUtf8(buffer));
       Query>>buffer;
-      QString rConsName(buffer);
+      QString rConsName(QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(2,buffer);
+      item->setText(2,QString::fromUtf8(buffer));
       Query>>buffer;
       QString Condition;
       switch(buffer[0]) {
@@ -175,16 +175,10 @@ void toResultConstraint::query(const QString &sql,const list<QString> &param)
       }
       item->setText(1,Condition);
       Query>>buffer;
-      item->setText(3,buffer);
+      item->setText(3,QString::fromUtf8(buffer));
       Query>>buffer;
-      item->setText(4,buffer);
+      item->setText(4,QString::fromUtf8(buffer));
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-    updateContents();
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-    updateContents();
-  }
+  } TOCATCH
   updateContents();
 }

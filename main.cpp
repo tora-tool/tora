@@ -28,6 +28,7 @@
 TO_NAMESPACE;
 
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <qapplication.h>
 
@@ -115,6 +116,19 @@ int main(int argc,char **argv)
 
     toDefaultAnalyzer().updateSettings();
 
+    {
+      QString nls=getenv("NLS_LANG");
+      if (nls.isEmpty())
+	nls="NLS_LANG=american_america.UTF8";
+      else {
+	int pos=nls.findRev('.');
+	if (pos>0)
+	  nls=nls.left(pos);
+	nls+=".UTF8";
+      }
+      setenv("NLS_LANG",nls,true);
+    }
+
     otl_connect::otl_initialize(1);
 
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
@@ -160,7 +174,7 @@ int main(int argc,char **argv)
     
     return mainApp.exec();
   } catch (const otl_exception &exc) {
-    printf("Unhandled exception:\n%s\n",exc.msg);
+    printf("Unhandled exception:\n%s\n",(const char *)QString::fromUtf8((const char *)exc.msg));
   } catch (const QString &str) {
     printf("Unhandled exception:\n%s\n",(const char *)str);
   } catch (...) {

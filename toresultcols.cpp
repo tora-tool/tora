@@ -70,7 +70,7 @@ public:
 			 SQLInfo(view->Connection),
 			 view->Connection.connection());
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
-      ColInfo<<(const char *)text(10)<<(const char *)text(11)<<(const char *)text(0);
+      ColInfo<<text(10).utf8()<<text(11).utf8()<<text(0).utf8();
       char buffer[4001];
       QString result("<B>");
       result.append(text(0));
@@ -80,7 +80,7 @@ public:
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	result.append("Default value: <B>");
-	result.append(buffer);
+	result.append(QString::fromUtf8(buffer));
 	result.append("</B><BR><BR>");
 	any++;
       }
@@ -89,63 +89,63 @@ public:
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Distinct values: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Low value: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("High value: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Density: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Number of nulls: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Number of histogram buckets: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Last analyzed: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Sample size: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
       ColInfo>>buffer;
       if (strlen(buffer)) {
 	analyze.append("Average column size: <B>");
-	analyze.append(buffer);
+	analyze.append(QString::fromUtf8(buffer));
 	analyze.append("</B><BR>");
 	any++;
       }
@@ -157,7 +157,7 @@ public:
 	return text(col);
       return result;
     } catch (const otl_exception &exc) {
-      toStatusMessage((const char *)exc.msg);
+      toStatusMessage(QString::fromUtf8((const char *)exc.msg));
       return text(col);
     }
   }
@@ -212,13 +212,11 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 
     QString str("SELECT * FROM ");
     str.append(SQL);
-#if 0
     str.append(" WHERE NULL = NULL");
-#endif
 
     otl_stream Query(1,
-		(const char *)str,
-		Connection.connection());
+		     str.utf8(),
+		     Connection.connection());
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -229,7 +227,7 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 
       item->setText(10,Owner);
       item->setText(11,TableName);
-      item->setText(1,Description[i].name);
+      item->setText(1,QString::fromUtf8(Description[i].name));
       item->setText(0,QString::number(i));
 
       QString datatype;
@@ -303,20 +301,13 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 	item->setText(3,"NULL");
       else
 	item->setText(3,"NOT NULL");
-      ColComment<<(const char *)Owner<<(const char *)TableName<<
-	Description[i].name;
+      ColComment<<Owner.utf8()<<TableName.utf8()<<Description[i].name;
       if (!ColComment.eof()) {
 	char buffer[4001];
 	ColComment>>buffer;
-	item->setText(4,buffer);
+	item->setText(4,QString::fromUtf8(buffer));
       }
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-    updateContents();
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-    updateContents();
-  }
+  } TOCATCH
   updateContents();
 }

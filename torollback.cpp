@@ -155,6 +155,10 @@ public:
 
 static toRollbackTool RollbackTool;
 
+static toSQL SQLTablespace("toRollbackDialog:TablespaceName",
+			   "select tablespace_name from dba_tablespaces order by tablespace_name",
+			   "Get a list of tablespace names, should only have one column and same binds");
+
 toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,const char* name)
   : QDialog(parent,name,true)
 {
@@ -188,12 +192,12 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,cons
 
   try {
     otl_stream q(1,
-		 "select tablespace_name from dba_tablespaces order by tablespace_name",
+		 SQLTablespace(Connection),
 		 Connection.connection());
     char buf[100];
     while(!q.eof()) {
       q>>buf;
-      Tablespace->insertItem(buf);
+      Tablespace->insertItem(QString::fromUtf8(buf));
     }
   } catch (...) {
 
@@ -401,11 +405,11 @@ public:
 		     SQLStartExt(Connection),
 		     Connection.connection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
-	trx<<i->text(TRANSCOL-1);
+	trx<<i->text(TRANSCOL-1).utf8();
 	for (int j=TRANSCOL;!trx.eof();j++) {
 	  char buffer[50];
 	  trx>>buffer;
-	  i->setText(j,buffer);
+	  i->setText(j,QString::fromUtf8(buffer));
 	}
       }
     } TOCATCH
@@ -514,17 +518,17 @@ public:
 	QListViewItem *item=createItem(this,last,NULL);
 	last=item;
 	sql>>buffer;
-	item->setText(0,buffer);
+	item->setText(0,QString::fromUtf8(buffer));
 	sql>>buffer;
-	item->setText(1,buffer);
+	item->setText(1,QString::fromUtf8(buffer));
 	sql>>buffer;
-	item->setText(3,buffer);
+	item->setText(3,QString::fromUtf8(buffer));
 	sql>>buffer;
-	item->setText(4,buffer);
+	item->setText(4,QString::fromUtf8(buffer));
 	sql>>buffer;
-	item->setText(5,buffer);
+	item->setText(5,QString::fromUtf8(buffer));
 	sql>>buffer;
-	item->setText(6,buffer);
+	item->setText(6,QString::fromUtf8(buffer));
       }
 
       otl_stream rlb(1,
@@ -761,7 +765,7 @@ void toRollback::addSegment(void)
   if (newSegment.exec()) {
     try {
       otl_cursor::direct_exec(Connection.connection(),
-			      (const char *)newSegment.getSQL());
+			      newSegment.getSQL().utf8());
       refresh();
     } TOCATCH
   }
@@ -775,7 +779,7 @@ void toRollback::offline(void)
     str.append(currentSegment());
     str.append("\" OFFLINE");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -788,7 +792,7 @@ void toRollback::dropSegment(void)
     str.append(currentSegment());
     str.append("\"");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }
@@ -801,7 +805,7 @@ void toRollback::online(void)
     str.append(currentSegment());
     str.append("\" ONLINE");
     otl_cursor::direct_exec(Connection.connection(),
-			    (const char *)str);
+			    str.utf8());
     refresh();
   } TOCATCH
 }

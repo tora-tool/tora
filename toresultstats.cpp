@@ -115,9 +115,7 @@ void toResultStats::resetStats(void)
       LastValues[id]=value;
       id++;
     }
-  } catch (otl_exc &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
 }
 
 void toResultStats::changeSession(otl_connect &conn)
@@ -129,8 +127,7 @@ void toResultStats::changeSession(otl_connect &conn)
     str>>SessionID;
     resetStats();
     refreshStats(true);
-  } catch (otl_exc &exc) {
-  }
+  } TOCATCH
 }
 
 void toResultStats::changeSession(int ses)
@@ -192,7 +189,7 @@ void toResultStats::refreshStats(bool reset)
 	    item=new toResultViewItem(this,last);
 	    if (reset)
 	      LastValues[id]=value;
-	    item->setText(0,buffer);
+	    item->setText(0,QString::fromUtf8(buffer));
 	    if (OnlyChanged)
 	      item->setText(1,delta);
 	    else {
@@ -204,9 +201,5 @@ void toResultStats::refreshStats(bool reset)
 	}
       }
     }
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exc &exc) { 
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
 }

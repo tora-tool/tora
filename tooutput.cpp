@@ -226,13 +226,9 @@ void toOutput::refresh(void)
       query>>lines;
       query>>numlines;
       for (int i=0;i<numlines;i++)
-	insertLine((const char *)lines.v[i]);
+	insertLine(QString::fromUtf8((const char *)lines.v[i]));
     } while(numlines>=254);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
 }
 
 void toOutput::clear(void)

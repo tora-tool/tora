@@ -93,11 +93,11 @@ void toBreakpointItem::setBreakpoint(void)
   try {
     clearBreakpoint();
     otl_stream str(1,
-		   toSQL::sql(SQLBreakpoint,Connection),
+		   SQLBreakpoint(Connection),
 		   Connection.connection());
     str<<Namespace;
-    str<<(const char *)text(0);
-    str<<(const char *)text(2);
+    str<<text(0).utf8();
+    str<<text(2).utf8();
     str<<Line+1;
     int ret;
     str>>ret;
@@ -133,7 +133,7 @@ void toBreakpointItem::clearBreakpoint()
   if (text(4)=="ENABLED"&&!text(TO_BREAK_COL).isEmpty()) {
     try {
       otl_stream str(1,
-		     toSQL::sql(SQLClearBreakpoint,Connection),
+		     SQLClearBreakpoint(Connection),
 		     Connection.connection());
       str<<text(TO_BREAK_COL).toInt();
       int res;
@@ -178,22 +178,22 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
       ;
   try {
     otl_stream lines(1,
-		     toSQL::sql(SQLReadSource,Connection),
+		     SQLReadSource(Connection),
 		     conn.connection());
     otl_stream errors(1,
-		      toSQL::sql(SQLReadErrors,Connection),
+		      SQLReadErrors(Connection),
 		      conn.connection());
 
     map<int,QString> Errors;
 
-    lines<<(const char *)Schema;
-    lines<<(const char *)Object;
-    lines<<(const char *)Type;
+    lines<<Schema.utf8();
+    lines<<Object.utf8();
+    lines<<Type.utf8();
     QString str;
     while(!lines.eof()) {
       char buffer[4001];
       lines>>buffer;
-      str+=buffer;
+      str+=QString::fromUtf8(buffer);
     }
     setText(str);
     setEdited(false);
@@ -201,16 +201,16 @@ bool toDebugText::readData(toConnection &conn,QListView *Stack)
     if (str.isEmpty())
       return false;
     else {
-      errors<<(const char *)Schema;
-      errors<<(const char *)Object;
-      errors<<(const char *)Type;
+      errors<<Schema.utf8();
+      errors<<Object.utf8();
+      errors<<Type.utf8();
       while(!errors.eof()) {
 	char buffer[4001];
 	int line;
 	errors>>line;
 	errors>>buffer;
 	Errors[line]+=" ";
-	Errors[line]+=buffer;
+	Errors[line]+=QString::fromUtf8(buffer);
       }
       setErrors(Errors);
       if (item&&

@@ -79,12 +79,7 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
 
     addItem();
 
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-    updateContents();
-  }
+  } TOCATCH
   updateContents();
 }
 
@@ -110,7 +105,7 @@ void toResultLong::addItem(void)
 	    bool hidden=false;
 
 	    for (int i=0;i<DescriptionLen;i++) {
-	      QString name=Description[i].name;
+	      QString name=QString::fromUtf8(Description[i].name);
 	      if (ReadableColumns) {
 		bool inWord=false;
 		for (unsigned int j=0;j<name.length();j++) {
@@ -161,16 +156,16 @@ void toResultLong::addItem(void)
 	}
       } catch (const otl_exception &exc) {
 	if (First) {
-	  emit firstResult(SQL,(const char *)exc.msg);
+	  emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));
 	  First=false;
 	}
-	toStatusMessage((const char *)exc.msg);
+	toStatusMessage(QString::fromUtf8((const char *)exc.msg));
       } catch (const QString &str) {
 	if (First) {
 	  emit firstResult(SQL,str);
 	  First=false;
 	}
-	toStatusMessage((const char *)str);
+	toStatusMessage(str);
       }
     } else if (Query->eof()) {
       delete Query;

@@ -75,11 +75,7 @@ void toSGAStatement::changeTab(QWidget *widget)
       else if (CurrentTab==Resources)
 	viewResources();
     }
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  } catch (const QString &str) {
-    toStatusMessage(str);
-  }
+  } TOCATCH
 }
 
 void toSGAStatement::changeAddress(const QString &str)

@@ -59,10 +59,10 @@ void toResultDepend::addChilds(QListViewItem *item)
 {
   try {
     otl_stream query(1,
-		     SQL,
+		     SQL.utf8(),
 		     Connection.connection());
-    query<<(const char *)item->text(0);
-    query<<(const char *)item->text(1);
+    query<<item->text(0).utf8();
+    query<<item->text(1).utf8();
     QListViewItem *last=NULL;
     while(!query.eof()) {
       QString owner=toReadValue(Description[0],query,TO_BUFFER_SIZE);

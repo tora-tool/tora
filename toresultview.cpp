@@ -247,7 +247,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     Query=new otl_stream;
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
-		(const char *)sql,
+		sql.utf8(),
 		Connection.connection());
 
     otl_null null;
@@ -255,7 +255,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       if ((*i).isNull())
 	(*Query)<<null;
       else
-	(*Query)<<(const char *)(*i);
+	(*Query)<<(*i).utf8();
     }
 
     Description=Query->describe_select(DescriptionLen);
@@ -263,7 +263,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     bool hidden=false;
 
     for (int i=0;i<DescriptionLen;i++) {
-      QString name=Description[i].name;
+      QString name(QString::fromUtf8(Description[i].name));
       if (ReadableColumns) {
 	bool inWord=false;
 	for (unsigned int j=0;j<name.length();j++) {
@@ -304,11 +304,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     else
       sprintf(buffer,"Query executed");
     toStatusMessage(buffer);
-  } catch (const QString &str) {
-    toStatusMessage((const char *)str);
-  } catch (const otl_exception &exc) {
-    toStatusMessage((const char *)exc.msg);
-  }
+  } TOCATCH
   updateContents();
 }
 

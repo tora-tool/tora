@@ -117,10 +117,14 @@ void toTool::saveConfig(void)
     for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
       QString line=(*i).first;
       line.append("=");
-      line.append((*i).second);
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
       file.writeBlock(line,line.length());
+      line=(*i).second;
+      line.replace(backslash,"\\\\");
+      line.replace(newline,"\\n");
+      QCString str=line.utf8();
+      file.writeBlock(str,str.length());
       file.writeBlock("\n",1);
     }
     if (file.status()!=IO_Ok) {
@@ -131,9 +135,9 @@ void toTool::saveConfig(void)
   QString oldconf=(conf);
   oldconf.append(".old");
   unlink(oldconf);
-  if (!link(conf,oldconf)&&
-      !unlink(conf))
-    link(newconf,conf);
+  if (!link(conf,oldconf))
+    unlink(conf);
+  link(newconf,conf);
   unlink(newconf);
 }
 
@@ -175,7 +179,7 @@ void toTool::loadConfig(void)
       {
 	QString tag=buf+bol;
 	QString val=buf+endtag+1;
-	(*Configuration)[tag]=val;
+	(*Configuration)[tag]=QString::fromUtf8(val);
       }
       bol=pos+1;
       endtag=-1;

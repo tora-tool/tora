@@ -183,8 +183,9 @@ toConnection *toNewConnection::makeConnection(void)
     return retCon;
   } catch (const otl_exception &exc) {
     QString str("Unable to connect to the database.\n");
-    str.append((const char *)exc.msg);
-    QMessageBox::information(this,"Unable to connect to the database",
+    str.append(QString::fromUtf8((const char *)exc.msg));
+    QMessageBox::information(this,
+			     "Unable to connect to the database",
 			     str);
     return NULL;
   }
