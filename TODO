@@ -30,8 +30,6 @@ Extended functionality:
 * Full support for Oracle 9i.
 * Install in KDE menu if KDE detected.
 * Statistics saving and comparison in worksheet.
-* Change parameters in tuning info.
-* Generate new pfile from modified parameters.
 * Printing of toResultItems.
 * Never lock while executing in debugger.
 * Different highlighter depending on connection.
@@ -44,7 +42,7 @@ Extended functionality:
 * Tabbed source windows in debugger.
 * Ability to modify rollback segment.
 * When not using SQL*Net use SID in database list.
-* Reorder fields in new connection dialog.
+* Reorder fields in new connection dialog?
 
 New tools:
 
@@ -52,5 +50,4 @@ New tools:
 * PL/SQL Profiler.
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
-* Analyze tool.
 * Alert log viewer.

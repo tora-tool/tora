@@ -26,3 +26,6 @@ toMysqlConnection:
 
 toWorksheet:
 	Doesn't handle multiline comment /* */ correctly.
+
+toDebug:
+	Doesn't seem to close the debugging connection correctly in all situations.

@@ -66,6 +66,7 @@
 2001-10-06: Made it possible to set up line & barcharts.
 2001-10-06: Use bytes not userbytes on available in storage.
 2001-10-06: Printing of piechart.
+2001-10-07: Added new statistics gathering tool.
 
 1.1.1: Released 2001-09-24
 
