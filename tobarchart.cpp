@@ -354,15 +354,16 @@ void toBarChart::paintEvent(QPaintEvent *e)
 	p.drawText(xoffset-bottom+2,0,bottom-4-xoffset,yoffset,
 		   AlignRight|AlignBottom|ExpandTabs,maxstr);
 	p.restore();
-      }
+      } else
+	yoffset=0;
       p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
 		 AlignLeft|AlignTop|ExpandTabs,minXstr);
       p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
 		 AlignRight|AlignTop|ExpandTabs,maxXstr);
       p.translate(left=yoffset,0);
+      right-=yoffset;
+      bottom-=xoffset;
     }
-    right-=yoffset;
-    bottom-=xoffset;
   }
 
   p.save();

@@ -36,6 +36,8 @@
 
 TO_NAMESPACE;
 
+#include <time.h>
+
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qtabwidget.h>
@@ -44,6 +46,7 @@ TO_NAMESPACE;
 #include <qlayout.h>
 #include <qgrid.h>
 #include <qcombobox.h>
+#include <qscrollview.h>
 
 #include "tochangeconnection.h"
 #include "toconnection.h"
@@ -73,38 +76,37 @@ static toSQL SQLLibraryCache("toTuning:Indicators:Important ratios:2LibraryCache
 			     "Library cache (Shared SQL) miss ratio (%). < 1%");
 
 static toSQL SQLDataCache("toTuning:Indicators:Important ratios:3DataCache",
-			  "SELECT TO_CHAR(ROUND((1-(physread/(dbblocks+consist)))*100,2))||' %'\n"
-			  "  FROM (SELECT MAX(value) dbblocks FROM v$sysstat WHERE name = 'db block gets') a,\n"
-			  "       (SELECT MAX(value) consist FROM v$sysstat WHERE name = 'consistent gets') b,\n"
-			  "       (SELECT MAX(value) physread FROM v$sysstat WHERE name = 'physical reads') c",
+			  "SELECT TO_CHAR(ROUND((1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100,2))||' %'\n"
+			  "  FROM v$sysstat\n"
+			  " WHERE statistic# IN (38,39,40)",
 			  "Data buffer cache hit ratio (%). > 60% - 70%");
 
 static toSQL SQLLogRedo("toTuning:Indicators:Redo log contention:1LogSpace",
-			"select value from v$sysstat where name='redo log space requests'",
+			"select value from v$sysstat where statistic# = 108",
 			"Redo log space requests. Close to 0");
 
 static toSQL SQLSystemHeadUndo("toTuning:Indicators:RBS contention:1SystemHeadUndo",
 			       "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			       "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo header') a,\n"
-			       "       (SELECT SUM(value) blocks FROM v$sysstat WHERE name IN ('consistent gets','db block gets')) b",
+			       "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			       "System undo header waits (%). < 1%");
 
 static toSQL SQLSystemBlockUndo("toTuning:Indicators:RBS contention:2SystemBlockUndo",
 				"SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 				"  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'system undo block') a,\n"
-				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE name IN ('consistent gets','db block gets')) b",
+				"       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 				"System undo block waits (%). < 1%");
 
 static toSQL SQLHeadUndo("toTuning:Indicators:RBS contention:3HeadUndo",
 			 "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			 "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo header') a,\n"
-			 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE name IN ('consistent gets','db block gets')) b",
+			 "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			 "Undo head waits (%). < 1%");
 
 static toSQL SQLBlockUndo("toTuning:Indicators:RBS contention:4BlockUndo",
 			  "SELECT TO_CHAR(ROUND(count/blocks*100,2))||' %'\n"
 			  "  FROM (SELECT MAX(count) count FROM v$waitstat WHERE class = 'undo block') a,\n"
-			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE name IN ('consistent gets','db block gets')) b",
+			  "       (SELECT SUM(value) blocks FROM v$sysstat WHERE statistic# IN (38,39)) b",
 			  "Undo block waits (%). < 1%");
 
 static toSQL SQLTotalWaits("toTuning:Indicators:RBS contention:5TotalWaits",
@@ -230,7 +232,9 @@ static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
 				     "Archive log write");
 
 static toSQL SQLOverviewBufferHit("toTuning:Overview:BufferHit",
-				  "select sysdate,100-100*sum(getmisses)/sum(gets) from v$rowcache",
+				  "SELECT SYSDATE,(1-SUM(DECODE(statistic#,40,value,0))/SUM(DECODE(statistic#,38,value,39,value,0)))*100\n"
+				  "  FROM v$sysstat\n"
+				  " WHERE statistic# IN (38,39,40)",
 				  "Buffer hitrate");
 
 static toSQL SQLOverviewClientInput("toTuning:Overview:ClientInput",
@@ -679,6 +683,9 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
 
   Tabs->addTab(grid,"Charts");
 
+  FileIO=new toTuningFileIO(this);
+  Tabs->addTab(FileIO,"File I/O");
+
   Indicators=new toListView(Tabs);
   Indicators->setRootIsDecorated(true);
   Indicators->addColumn("Indicator");
@@ -693,10 +700,11 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Parameters->setSQL(SQLParameters);
   Tabs->addTab(Parameters,"Parameters");
 
+  Tabs->setCurrentPage(0);
+
   connect(Tabs,SIGNAL(currentChanged(QWidget *)),this,SLOT(refresh()));
   connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
 
-  Tabs->setCurrentPage(0);
   refresh();
 }
 
@@ -737,4 +745,90 @@ void toTuning::refresh(void)
     Statistics->refreshStats();
   else if (current==Parameters)
     Parameters->refresh();
+}
+
+static toSQL SQLListFiles("toTuning:ListFiles",
+			  "select file#,name from v$datafile order by name",
+			  "Get filename and file# for all datafiles");
+
+static toSQL SQLFileIO("toTuning:FileIO",
+		       "select file#,sysdate,phyrds,phyblkrd,phywrts,phyblkwrt\n"
+		       "  from v$filestat",
+		       "Get file I/O for a given file, must have same binds");
+
+toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
+  : QScrollView(parent,name,fl)
+{
+  Box=NULL;
+  connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+
+  toConnection &conn=toCurrentConnection(this);
+  list<QString> Files=toReadQuery(conn,SQLListFiles(conn));
+  viewport()->setBackgroundColor(qApp->palette().active().background());
+    
+  list<QString> labels;
+  labels.insert(labels.end(),"Reads");
+  labels.insert(labels.end(),"Blocks Read");
+  labels.insert(labels.end(),"Writes");
+  labels.insert(labels.end(),"Blocks Written");
+  Box=new QVBox(this->viewport());
+  addChild(Box);
+  while(Files.size()>0) {
+    list<QString> val;
+    toBarChart *chart=new toBarChart(Box);
+    Charts[toShift(Files)]=chart;
+    chart->setTitle(toShift(Files));
+    chart->setMinimumSize(200,150);
+    chart->setYPostfix("blocks/s");
+    chart->setLabels(labels);
+  }
+  Box->setFixedWidth(viewport()->width()-50);
+  Box->show();
+  LastStamp=0;
+  refresh();
+}
+
+void toTuningFileIO::refresh(void)
+{
+  toConnection &conn=toCurrentConnection(this);
+  time_t now=time(NULL);
+  if (now!=LastStamp) {
+    list<QString> FileInfo=toReadQuery(conn,SQLFileIO(conn));
+    while(FileInfo.size()>0) {
+      QString file=toShift(FileInfo);
+      QString label=toShift(FileInfo);
+      list<double> vals;
+      vals.insert(vals.end(),toShift(FileInfo).toDouble());
+      vals.insert(vals.end(),toShift(FileInfo).toDouble());
+      vals.insert(vals.end(),toShift(FileInfo).toDouble());
+      vals.insert(vals.end(),toShift(FileInfo).toDouble());
+
+      list<double> last=LastValues[file];
+
+      list<double> dispVal;
+      if (last.size()>0) {
+	list<double>::iterator i=vals.begin();
+	list<double>::iterator j=last.begin();
+	while(i!=vals.end()&&j!=last.end()) {
+	  dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	  i++;
+	  j++;
+	}
+      }
+      LastValues[file]=vals;
+      
+      if (dispVal.size()>0&&Charts.find(file)!=Charts.end()) {
+	toBarChart *chart=Charts[file];
+	chart->addValues(dispVal,label);
+      }
+    }
+    LastStamp=now;
+  }
+}
+
+void toTuningFileIO::resizeEvent(QResizeEvent *e)
+{
+  QScrollView::resizeEvent(e);
+  if (Box)
+    Box->setFixedWidth(viewport()->width());
 }

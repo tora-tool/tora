@@ -38,6 +38,9 @@
 #define __TOTUNING_H
 
 #include <list>
+#include <map>
+
+#include <qscrollview.h>
 
 #include "totool.h"
 #include "totuningoverviewui.h"
@@ -50,6 +53,23 @@ class toResultStats;
 class toResultView;
 class toResultChart;
 class QLabel;
+class QGridLayout;
+class QVBox;
+class toBarChart;
+
+class toTuningFileIO : public QScrollView {
+  Q_OBJECT
+
+  QVBox *Box;
+  map<QString,toBarChart *> Charts;
+  time_t LastStamp;
+  map<QString,list<double> > LastValues;
+  virtual void resizeEvent(QResizeEvent *e);
+public:
+  toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0);
+public slots:
+  virtual void refresh(void);
+};
 
 class toTuningOverview : public toTuningOverviewUI {
   list<QLabel *> Backgrounds;
@@ -68,6 +88,7 @@ class toTuning : public toToolWidget {
   toResultStats *Statistics;
   QComboBox *Schema;
   toTuningOverview *Overview;
+  toTuningFileIO *FileIO;
 public:
   toTuning(QWidget *parent,toConnection &connection);
 public slots:
