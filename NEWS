@@ -24,6 +24,7 @@
 2001-05-14: Use "" instead of QString::null in empty descriptions of toSQL.
 2001-05-14: Some fixes to KDE support.
 2001-05-14: Added support for KDE in configure.
+2001-05-14: Fixed argument parsing again.
 
 0.8: Released 2001-05-07
 

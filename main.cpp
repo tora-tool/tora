@@ -38,6 +38,7 @@ TO_NAMESPACE;
 #include <unistd.h>
 #endif
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <qmessagebox.h>
 #include <qapplication.h>
@@ -172,12 +173,11 @@ int main(int argc,char **argv)
       toTool::globalSetConfig("LastVersion",TOVERSION);
     }
 
-#if 0
-    if (argc>2||(argc==2&&argv[1][0]=='-')) {
+    if (mainApp.argc()>2||(mainApp.argc()==2&&mainApp.argv()[1][0]=='-')) {
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
       exit(2);
-    } else if (argc==2) {
-      QString connect=argv[1];
+    } else if (mainApp.argc()==2) {
+      QString connect=mainApp.argv()[1];
       QString user;
       int pos=connect.find("@");
       if (pos>-1) {
@@ -198,7 +198,6 @@ int main(int argc,char **argv)
       if (!user.isEmpty())
 	toTool::globalSetConfig(CONF_USER,user);
     }
-#endif
 
     toMain *mainWidget=new toMain;
 
