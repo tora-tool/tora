@@ -619,7 +619,7 @@ void toScript::changeMode(int mode)
   if (mode==1||mode==2||mode==3) {
     IncludeHeader->setEnabled(true);
     IncludePrompt->setEnabled(true);
-  } else if (mode==3) {
+  } else if (mode==0) {
     IncludeHeader->setEnabled(false);
     IncludePrompt->setEnabled(false);
   }

@@ -54,6 +54,10 @@
 2001-07-09: Fixed a few bugs with handling arrays in watches.
 2001-07-09: Hide unimplemented buttons in extraction.
 2001-07-09: Allow resizing of add watch and change watch.
+2001-07-09: Fixed bug toScript to disable include prompts.
+2001-07-10: Removed extra status message in resultview query.
+2001-07-10: Fixed bug with object owner in wrong place in current.
+2001-07-10: Added parameters to tuning.
 
 0.12: Released 2001-07-01
 

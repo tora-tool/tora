@@ -138,7 +138,7 @@ toCurrent::~toCurrent()
 }
 
 static toSQL SQLRoleTabPrivs("toCurrent:RoleTabPrivs",
-			     "select owner||'.'||privilege||' on '||table_name,grantable from role_tab_privs where role = :role<char[100]>",
+			     "select privilege||' on '||owner||'.'||table_name,grantable from role_tab_privs where role = :role<char[100]>",
 			     "Get information about privileges granted on objects to a role, must have same binds and columns");
 
 static toSQL SQLRoleSysPrivs("toCurrent:RoleSysPrivs",
@@ -150,7 +150,7 @@ static toSQL SQLRoleRolePrivs("toCurrent:RoleRolePrivs",
 			      "Get information about roles granted to a role, must have same binds and columns");
 
 static toSQL SQLUserTabPrivs("toCurrent:UserTabPrivs",
-			     "select owner||'.'||privilege || ' on ' || table_name,grantable from user_tab_privs",
+			     "select privilege || ' on ' || owner||'.'||table_name,grantable from user_tab_privs",
 			     "Get information about privileges granted on objects to a user, must have same columns");
 
 static toSQL SQLUserSysPrivs("toCurrent:UserSysPrivs",

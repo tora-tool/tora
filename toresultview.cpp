@@ -868,7 +868,6 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       sprintf(buffer,"%d rows processed",(int)Query->get_rpc());
     else
       sprintf(buffer,"Query executed");
-    toStatusMessage(QString::number(MaxNumber));
   } TOCATCH
   updateContents();
 }

@@ -42,11 +42,13 @@
 class toConnection;
 class toListView;
 class toResultStats;
+class toResultView;
 
 class toTuning : public toToolWidget {
   Q_OBJECT
 
   toListView *Indicators;
+  toResultView *Parameters;
   toResultStats *Statistics;
 public:
   toTuning(QWidget *parent,toConnection &connection);

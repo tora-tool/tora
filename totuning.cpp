@@ -113,6 +113,10 @@ static toSQL SQLServerQueue("toTuning:MTS contention:3ServerQueue",
 			    "SELECT DECODE (NVL(SUM(totalq),0),0, 'No requests', ROUND(SUM(wait)/SUM(totalq),3)) FROM v$queue WHERE type='COMMON'",
 			    "Server request queue waits (1/100s).");
 
+static toSQL SQLParameters("toTuning:Parameters",
+			   "select name,value,description from v$parameter",
+			   "Display parameters of Oracle server");
+
 class toTuningTool : public toTool {
 protected:
   virtual char **pictureXPM(void)
@@ -161,6 +165,10 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Statistics=new toResultStats(connection,Tabs);
   Tabs->addTab(Statistics,"Statistics");
 
+  Parameters=new toResultView(true,false,connection,Tabs);
+  Parameters->setSQL(SQLParameters);
+  Tabs->addTab(Parameters,"Parameters");
+
   refresh();
 }
 
@@ -189,4 +197,5 @@ void toTuning::refresh(void)
     } TOCATCH
   }
   Statistics->refreshStats();
+  Parameters->refresh();
 }
