@@ -1,5 +1,7 @@
 1.3.6:
 
+2002-06-19: Now ports are specified as a colon after host instead of DB.
+2002-06-19: Applied patch for fixing package building. (Thanx Erik Selberg)
 2002-06-06: Implemented replace in content editor.
 2002-06-06: Added default values to configure help output.
 2002-06-06: Fixed problem with searching on text not shown in listviews.

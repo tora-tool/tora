@@ -1298,7 +1298,7 @@ __EOT__
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Base directory of KDE installation\n";
-	print MAKEFILE "KDE_BASE=$KDEBase\n";
+	print MAKEFILE "KDE_BASE=\$(ROOT)$KDEBase\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
@@ -1500,6 +1500,8 @@ __EOT__
         if (defined $KDEBase) {
 	    print MAKEFILE <<__EOT__;
 install-kde:
+	mkdir -p \$(KDE_BASE)/share/icons/hicolor/32x32/apps
+	mkdir -p \$(KDE_BASE)/share/icons/hicolor/16x16/apps 
 	cp -f icons/tora.xpm \$(KDE_BASE)/share/icons/hicolor/32x32/apps/tora.xpm
 	cp -f icons/toramini.xpm \$(KDE_BASE)/share/icons/hicolor/16x16/apps/tora.xpm
 	mkdir -p \$(KDE_BASE)/share/applnk/Development

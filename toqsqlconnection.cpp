@@ -1040,14 +1040,14 @@ toConnectionSub *toQSqlProvider::qSqlConnection::createConnection(void)
   QSqlDatabase *db=QSqlDatabase::addDatabase(toQSqlName(connection().provider()),dbName);
   if (!db)
     throw QString("Couldn't create QSqlDatabase object");
-  db->setHostName(connection().host());
-  QString dbname=connection().database();
-  int pos=dbname.find(":");
+  db->setDatabaseName(connection().database());
+  QString host=connection().host();
+  int pos=host.find(":");
   if (pos<0)
-    db->setDatabaseName(dbname);
+    db->setHostName(host);
   else {
-    db->setDatabaseName(dbname.mid(0,pos));
-    db->setPort(dbname.mid(pos+1).toInt());
+    db->setHostName(host.mid(0,pos));
+    db->setPort(host.mid(pos+1).toInt());
   }
   db->open(connection().user(),connection().password());
   if (!db->isOpen()) {
