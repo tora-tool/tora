@@ -28,6 +28,7 @@ AC_CHECK_HEADERS(unistd.h sys/param.h sys/time.h time.h sys/mkdev.h sys/sysmacro
 jm_CHECK_TYPE_STRUCT_UTIMBUF
 AC_HEADER_MAJOR
 AC_FUNC_ALLOCA
+AC_CHECK_FUNCS(snprintf vsnprintf)
 AC_STRUCT_TM
 AC_STRUCT_ST_BLOCKS
 AC_FUNC_CLOSEDIR_VOID
