@@ -83,7 +83,8 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
-GROUP BY a.TskCod HAVING COUNT(a.TspActOprID)>0;
+SELECT 1,2
+  FROM dual;
 SELECT a.Sid \"-Id\",
        a.Serial# \"-Serial#\",
        a.SchemaName \"Schema\",
@@ -127,7 +128,8 @@ FULL(a)
        COUNT(1) Tot,
        COUNT(a.TspActOprID) Lft,
        b.TraCod TraCod,
-       SUM(b.FinAmt) FinAmt
+       SUM(b.FinAmt) FinAmt,
+       TraCod
   FROM EssTsk a,EssTra b
  WHERE DECODE(a.TspActOprID,NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
    AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
@@ -769,7 +771,6 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	}
 	current=level+maxlev;
 	any=false;
-	first=true;
 	lineList=true;
       } else if (upp=="LOOP"||upp=="THEN"||upp=="AS"||upp=="IS") {
 	if (!Settings.BlockOpenLine) {

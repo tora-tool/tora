@@ -2,6 +2,7 @@ Extended functionality:
 
 * SQL Browser
 	Add information about partitions.
+	Implement filter in templatebased browser.
 	Modify tables
 		Caching/Nocaching
 			ALTER TABLE ... CACHE/NOCACHE
@@ -16,6 +17,7 @@ Extended functionality:
 * toResultContent improvements
 	Make it possible to reorder columns in toResultContent.
 	Add replace to toResultContent.
+	Add tooltips like in result lists.
 * Editor improvements
 	CVS support (Or whatever this is called in windows).
 	PL/SQL doc (Like JavaDoc).
@@ -45,7 +47,6 @@ Extended functionality:
 * Postgress support.
 * Make entire tuning polling in background.
 * Use object cache in browser if possible.
-* Tooltips in content editor.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
 * Proxy connection provider.

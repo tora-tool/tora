@@ -330,6 +330,25 @@ public:
   virtual void customSetup(int toolid)
   {
     toMainWidget()->editMenu()->insertSeparator();
+
+    QPopupMenu *menu=new QPopupMenu(toMainWidget());
+    AutoIndentBlock=menu->insertItem("Selection",
+				     &EditExtensions,
+				     SLOT(autoIndentBlock()),
+				     ALT+CTRL+Key_I);
+    AutoIndentBuffer=menu->insertItem("Editor",
+				      &EditExtensions,
+				      SLOT(autoIndentBuffer()),
+				      ALT+CTRL+SHIFT+Key_I);
+    menu->insertSeparator();
+    ObfuscateBlock=menu->insertItem("Obfuscate selection",
+				    &EditExtensions,
+				    SLOT(obfuscateBlock()));
+    ObfuscateBuffer=menu->insertItem("Obfuscate editor",
+				     &EditExtensions,
+				     SLOT(obfuscateBuffer()));
+    toMainWidget()->editMenu()->insertItem("Auto indent",menu);
+
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
 						       "Indent block",&EditExtensions,
 						       SLOT(indentBlock()),
@@ -350,23 +369,6 @@ public:
 				   "De-indent block in editor",
 				   &EditExtensions,SLOT(deindentBlock()),
 				   toMainWidget()->editToolbar());
-    QPopupMenu *menu=new QPopupMenu(toMainWidget());
-    AutoIndentBlock=menu->insertItem("Selection",
-				     &EditExtensions,
-				     SLOT(autoIndentBlock()),
-				     ALT+CTRL+Key_I);
-    AutoIndentBuffer=menu->insertItem("Editor",
-				      &EditExtensions,
-				      SLOT(autoIndentBuffer()),
-				      ALT+CTRL+SHIFT+Key_I);
-    menu->insertSeparator();
-    ObfuscateBlock=menu->insertItem("Obfuscate selection",
-				    &EditExtensions,
-				    SLOT(obfuscateBlock()));
-    ObfuscateBuffer=menu->insertItem("Obfuscate editor",
-				     &EditExtensions,
-				     SLOT(obfuscateBuffer()));
-    toMainWidget()->editMenu()->insertItem("Auto indent",menu);
 
     EditExtensions.receivedFocus(NULL);
   }

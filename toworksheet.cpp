@@ -1235,8 +1235,6 @@ void toWorksheet::queryDone(void)
   timer()->stop();
   StopButton->setEnabled(false);
   Poll.stop();
-  QToolTip::remove(Started);
-  Started->setText(QString::null);
   toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,false);
   saveDefaults();
 }
