@@ -746,66 +746,68 @@ __TEMP__
 	$StdCppLibStatic="";
     }
 
-    print "checking for MySQL include files ... ";
+    if ($MySQLFound) {
+	print "checking for MySQL include files ... ";
 
-    $MySQLInclude=findFile("^mysql\\.h\$",
-			   undef,
-			   $MySQLInclude,
-			   "/usr/include",
-			   "/usr/include/mysql",
-			   "/usr/lib/mysql/include",
-			   "/usr/local/include",
-			   "/usr/local/include/mysql",
-			   "/ust/local/lib/mysql/include");
-
-    if (!-d $MySQLInclude) {
-	print "no\n";
-	$MySQLFound=0;
-    } else {
-	print "$MySQLInclude\n";
-	print "checking for MySQL library ... ";
-	$MySQLLib=findFile("^libmysqlclient\\.so",sub {
-	                                              return -f $_[0] && ! -l $_[0];
-						  },
-			   $MySQLLib,
-			   "/usr/lib",
-			   "/usr/lib/mysql",
-			   "/usr/lib/mysql/lib",
-			   "/usr/local/lib",
-			   "/usr/local/lib/mysql",
-			   "/usr/local/lib/mysql/lib");
+	$MySQLInclude=findFile("^mysql\\.h\$",
+			       undef,
+			       $MySQLInclude,
+			       "/usr/include",
+			       "/usr/include/mysql",
+			       "/usr/lib/mysql/include",
+			       "/usr/local/include",
+			       "/usr/local/include/mysql",
+			       "/ust/local/lib/mysql/include");
 	
-	if (-d $MySQLLib) {
-	    $MySQLShared=" -lmysqlclient";
-	}
-	if (!-d $MySQLLib) {
+	if (!-d $MySQLInclude) {
 	    print "no\n";
 	    $MySQLFound=0;
 	} else {
-	    print "$MySQLLib\n";
-	}
-
-	print "checking for MySQL static library ...";
-
-	findFile("^libmysqlclient.*\\.a",sub {
-	                                     $MySQLStatic=$_[0];
-					     return -f $_[0];
-					 },
-		 $MySQLLib,
-		 "/usr/lib",
-		 "/usr/lib/mysql",
-		 "/usr/lib/mysql/lib",
-		 "/usr/local/lib",
-		 "/usr/local/lib/mysql",
-		 "/usr/local/lib/mysql/lib");
-	if (! -f $MySQLStatic) {
-	    $MySQLStatic="";
-	    print "no\n";
-	} else {
-	    print "$MySQLStatic\n";
-	    if (!$MySQLFound) {
-		$MySQLFound=1;
-		$MySQLLib=$MySQLStatic;
+	    print "$MySQLInclude\n";
+	    print "checking for MySQL library ... ";
+	    $MySQLLib=findFile("^libmysqlclient\\.so",sub {
+		                                          return -f $_[0] && ! -l $_[0];
+						      },
+			       $MySQLLib,
+			       "/usr/lib",
+			       "/usr/lib/mysql",
+			       "/usr/lib/mysql/lib",
+			       "/usr/local/lib",
+			       "/usr/local/lib/mysql",
+			       "/usr/local/lib/mysql/lib");
+	    
+	    if (-d $MySQLLib) {
+		$MySQLShared=" -lmysqlclient";
+	    }
+	    if (!-d $MySQLLib) {
+		print "no\n";
+		$MySQLFound=0;
+	    } else {
+		print "$MySQLLib\n";
+	    }
+	    
+	    print "checking for MySQL static library ...";
+	    
+	    findFile("^libmysqlclient.*\\.a",sub {
+		                                 $MySQLStatic=$_[0];
+						 return -f $_[0];
+					     },
+		     $MySQLLib,
+		     "/usr/lib",
+		     "/usr/lib/mysql",
+		     "/usr/lib/mysql/lib",
+		     "/usr/local/lib",
+		     "/usr/local/lib/mysql",
+		     "/usr/local/lib/mysql/lib");
+	    if (! -f $MySQLStatic) {
+		$MySQLStatic="";
+		print "no\n";
+	    } else {
+		print "$MySQLStatic\n";
+		if (!$MySQLFound) {
+		    $MySQLFound=1;
+		    $MySQLLib=$MySQLStatic;
+		}
 	    }
 	}
     }
@@ -940,7 +942,7 @@ __TEMP__
     }
 
     if (!-f $CC) {
-	findFile("^(g\\+\\+|gcc|cc|kgcc)\$",\&finalTest,split(/:/,$ENV{PATH}));
+	findFile("^(g\\+\\+|gcc|cc)\$",\&finalTest,split(/:/,$ENV{PATH}));
     } elsif (!&finalTest($CC)) {
 	printf("\n\nInvalid compiler specified\n");
 	exit(2);
@@ -1358,9 +1360,7 @@ tora-static: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_STATIC) \$(LIBS_GLOB) \$(MYSQL_STATIC) \\
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libXft.a /usr/X11R6/lib/libXrender.a \\
-		/usr/X11R6/lib/libX11.a /usr/X11R6/lib/libSM.a /usr/X11R6/lib/libICE.a\\
-		/usr/X11R6/lib/libXinerama.a /usr/X11R6/lib/libGL.a /usr/lib/libmng.a -lz -ljpeg
+		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a /usr/X11R6/lib/libGL.a
 
 # The binary for the pluginbased tora
 

@@ -172,6 +172,8 @@
 2001-12-14: Fixed windows icons in executable.
 2001-12-14: Added MySQL support to windows version.
 2001-12-14: Don't show sort indicators in lists.
+2001-12-14: Don't try to find mysql if specified not to.
+2001-12-14: Don't find compiler named kgcc.
 
 1.1.5: Released 2001-11-26
 
