@@ -46,7 +46,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "toresultstats.h"
 
-#define TO_DEBUG
+#undef TO_DEBUG
 #ifdef TO_DEBUG
 #include <stdio.h>
 #define TO_DEBUGOUT(x) printf(x);
