@@ -48,6 +48,24 @@
 
 #ifdef QT_THREAD_SUPPORT
 
+#ifdef WIN32
+bool toWaitCondition::wait(QMutex *mutex, unsigned long time)
+{
+    bool status = FALSE;
+    
+    // this implementation relies on existing wait() method
+    if (mutex) {
+        mutex->unlock();
+        status = QWaitCondition::wait(time);
+        mutex->lock();
+    }
+    else
+        status = QWaitCondition::wait(time);
+        
+    return status;
+}
+#endif
+
 void toSemaphore::up(void)
 {
   Mutex.lock();
@@ -61,14 +79,7 @@ void toSemaphore::down(void)
 {
   Mutex.lock();
   while(Value<=0) {
-// temporarily hack to make it work with QT Free port for WINDOWS
-#ifdef WIN32
-    Mutex.unlock();
-#endif
     Condition.wait(&Mutex);
-#ifdef WIN32
-    Mutex.lock();
-#endif
   }
   Value--;
   Mutex.unlock();
