@@ -57,9 +57,9 @@ Extended functionality:
 * Use new toSQLParse for tree structure in toDebug.
 * Configure key bindings.
 * Statistics manager.
-	* Index only analyzing.
-	* Display only analyzed/not analyzed.
-	* All schemas option.
+	Index only analyzing.
+	Display only analyzed/not analyzed.
+	All schemas option.
 * Use QTable to display the result in the worksheet.
 * Improved visualisation of any list and any columns.
 * Session:Long operations(v$session_longops)

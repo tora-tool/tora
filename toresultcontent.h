@@ -216,6 +216,8 @@ class toResultContentEditor : public QTable,public toEditWidget {
    */
   virtual void setCurrentCellFocus(int row, int col);
 
+  int MaxColDisp;
+
   QString table(void);
 
   toConnection &connection();
@@ -281,6 +283,7 @@ public:
   bool allFilter()
   { return AllFilter; }
 
+  friend class contentItem;
   friend class toResultContent;
 
   /** Export data to a map.

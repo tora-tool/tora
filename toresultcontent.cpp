@@ -275,6 +275,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,true,true)
 {
+  MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   Query=NULL;
   SingleEdit=NULL;
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
@@ -440,11 +441,23 @@ void toResultContentEditor::poll(void)
       if (numRows()!=rows) {
 	setNumRows(rows);
 
+	int origRow=Row;
 	while(data.size()>0) {
 	  verticalHeader()->setLabel(Row,QString::number(Row+1));
 	  for(int j=0;j<numCols();j++)
 	    setText(Row,j,toShift(data));
 	  Row++;
+	}
+	for(int j=0;j<numCols();j++) {
+	  int width=columnWidth(j);
+	  for(int k=origRow;k<Row;k++) {
+	    QRect bounds=fontMetrics().boundingRect(text(k,j));
+	    int cw=min(bounds.width(),MaxColDisp);
+	    if (cw>width)
+	      width=cw;
+	  }
+	  if (width!=columnWidth(j))
+	    setColumnWidth(j,width);
 	}
       }
       if (first&&SingleEdit) {
@@ -1018,7 +1031,7 @@ void toResultContentEditor::menuCallback(int cmd)
     break;
   case TORESULT_COPY_SEL:
     {
-      toListView *lst=copySelection(true);
+      toListView *lst=copySelection(false);
       if (lst) {
 	try {
 	  QClipboard *clip=qApp->clipboard();
