@@ -23,11 +23,18 @@
  *      all of the software in the executable aside from Qt and Oracle client
  *      libraries.
  *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB.
+ *
+ * All trademarks belong to their respective owners.
+ *
  ****************************************************************************/
 
 TO_NAMESPACE;
 
-#ifndef __WIN__
+#ifndef WIN32
 #include <unistd.h>
 #endif
 #include <stdlib.h>
@@ -70,7 +77,7 @@ int main(int argc,char **argv)
   otl_connect::otl_initialize(1);
   try {
 #ifdef ENABLE_QT_XFT
-#  ifndef __WIN__
+#  ifndef WIN32
 	  setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
 #  endif
 #endif
@@ -147,7 +154,7 @@ int main(int argc,char **argv)
 	  nls=nls.left(pos);
 	nls+=".UTF8";
       }
-#ifdef __WIN__
+#ifdef WIN32
       QString str="NLS_LANG=";
       str+=nls;
       _putenv(str);

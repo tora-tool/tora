@@ -18,10 +18,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  *      As a special exception, you have permission to link this program
- *      with the Qt and Oracle Client libraries and distribute executables,
- *      as long as you follow the requirements of the GNU GPL in regard to
- *      all of the software in the executable aside from Qt and Oracle client
- *      libraries.
+ *      with the Qt Free Edition and Oracle Client libraries and distribute
+ *      executables, as long as you follow the requirements of the GNU GPL in
+ *      regard to all of the software in the executable aside from Qt and
+ *      Oracle client libraries.
+ *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB.
+ *
+ * All trademarks belong to their respective owners.
  *
  ****************************************************************************/
 
@@ -51,6 +58,7 @@ TO_NAMESPACE;
 
 #include <stdio.h>
 
+#include "toconf.h"
 #include "tomain.h"
 #include "totool.h"
 #include "tonewconnection.h"

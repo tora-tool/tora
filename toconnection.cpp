@@ -23,6 +23,13 @@
  *      all of the software in the executable aside from Qt and Oracle client
  *      libraries.
  *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB.
+ *
+ * All trademarks belong to their respective owners.
+ *
  ****************************************************************************/
 
 TO_NAMESPACE;
@@ -42,7 +49,7 @@ otl_connect *toConnection::newConnection(void)
   QString oldSid;
   if (!SqlNet) {
     oldSid=getenv("ORACLE_SID");
-#ifdef __WIN__
+#ifdef WIN32
     QString str="ORACLE_SID=";
     str+=Host;
     putenv(str);
@@ -54,7 +61,7 @@ otl_connect *toConnection::newConnection(void)
   try {
     conn=new otl_connect((const char *)connectString(true),0);
   } catch (...) {
-#ifdef __WIN__
+#ifdef WIN32
     QString str="ORACLE_SID=";
     str+=oldSid;
     if (!SqlNet)
@@ -69,7 +76,7 @@ otl_connect *toConnection::newConnection(void)
 #endif
     throw;
   }
-#ifdef __WIN__
+#ifdef WIN32
   QString envStr="ORACLE_SID=";
   envStr+=oldSid;
   if (!SqlNet)

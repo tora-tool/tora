@@ -363,7 +363,7 @@ __TEMP__
     }
 
     if (`uname`=~/linux/i) {
-	$LFlags.=" -Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\"";
+	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
 	$Linux=1;
     }
 

@@ -23,6 +23,13 @@
  *      all of the software in the executable aside from Qt and Oracle client
  *      libraries.
  *
+ *      Specifically you are not permitted to link this program with the
+ *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
+ *      permitted to distribute binaries compiled against these libraries
+ *      without written consent from GlobeCom AB.
+ *
+ * All trademarks belong to their respective owners.
+ *
  ****************************************************************************/
 
 TO_NAMESPACE;
@@ -30,7 +37,7 @@ TO_NAMESPACE;
 #include <stdio.h>
 #include <map>
 
-#ifdef __WIN__
+#ifdef WIN32
 #include <time.h>
 #endif
 
