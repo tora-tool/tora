@@ -36,10 +36,6 @@
 
 #include <stack>
 
-#ifdef TO_KDE
-#include <kmenubar.h>
-#endif
-
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -60,6 +56,10 @@
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qworkspace.h>
+
+#ifdef TO_KDE
+#include <kmenubar.h>
+#endif
 
 #include "toconf.h"
 #include "todebug.h"

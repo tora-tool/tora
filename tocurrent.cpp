@@ -39,6 +39,7 @@
 #include <qtoolbutton.h>
 #include <qlabel.h>
 #include <qpopupmenu.h>
+#include <qmenubar.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>

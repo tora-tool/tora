@@ -48,6 +48,7 @@
 #include <qvalidator.h>
 #include <qpopupmenu.h>
 #include <qworkspace.h>
+#include <qmenubar.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>

@@ -57,6 +57,7 @@
 #include <qworkspace.h>
 #include <qpopupmenu.h>
 #include <qlayout.h>
+#include <qmenubar.h>
 
 #include "tomemoeditor.h"
 #include "tochangeconnection.h"
