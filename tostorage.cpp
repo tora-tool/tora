@@ -905,13 +905,13 @@ void toStorage::selectionChanged(void)
     } else
       Extents->setTablespace(item->text(0));
     std::list<toStorageExtent::extentName> obj=Extents->objects();
-    QListViewItem *item=NULL;
+    QListViewItem *objItem=NULL;
     Objects->clear();
     for (std::list<toStorageExtent::extentName>::iterator i=obj.begin();i!=obj.end();i++) {
-      item=new toResultViewItem(Objects,item,(*i).Owner);
-      item->setText(1,(*i).Table);
-      item->setText(2,(*i).Partition);
-      item->setText(3,QString::number((*i).Size));
+      objItem=new toResultViewItem(Objects,objItem,(*i).Owner);
+      objItem->setText(1,(*i).Table);
+      objItem->setText(2,(*i).Partition);
+      objItem->setText(3,QString::number((*i).Size));
     }
 
     QListViewItem *child=item->firstChild();
@@ -1269,8 +1269,8 @@ void toStorageExtent::paintEvent(QPaintEvent *e)
     int x2=int((block/lineblocks-y2)*width());
     paint.setPen(col);
     if (y1!=y2) {
-      paint.drawLine(x1,y1+offset+fileo,width(),y1+offset+fileo);
-      paint.drawLine(0,y2+offset+fileo,x2,y2+offset+fileo);
+      paint.drawLine(x1,y1+offset+fileo,width()-1,y1+offset+fileo);
+      paint.drawLine(0,y2+offset+fileo,x2-1,y2+offset+fileo);
       if (y1+1!=y2)
 	paint.fillRect(0,y1+1+offset+fileo,width(),y2-y1-1,col);
     } else
@@ -1284,9 +1284,9 @@ void toStorageExtent::paintEvent(QPaintEvent *e)
     int block=(*j).second;
     int y1=int(block/lineblocks);
     int x1=int((block/lineblocks-y1)*width());
-    paint.drawLine(x1,y1+fileo,width(),y1+fileo);
+    paint.drawLine(x1,y1+fileo,width()-1,y1+fileo);
     if (x1!=0)
-      paint.drawLine(0,y1+1+fileo,x1,y1+fileo+1);
+      paint.drawLine(0,y1+1+fileo,x1-1,y1+fileo+1);
     j++;
     fileo++;
   }
