@@ -334,24 +334,25 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
     if (row==curline) {
       if (LastRow!=curline||LastCol!=curcol)
-	Cursor=true;
-      if (Cursor) {
+	Cursor=0;
+      if (Cursor<2) {
 	LastRow=curline;
 	LastCol=curcol;
 	if (!isReadOnly()) {
 	  painter->drawLine(cursorx-1,0,cursorx-1,
 			    painter->fontMetrics().ascent()+painter->fontMetrics().descent());
 	}
-	Cursor=false;
+	Cursor++;
       } else
-	Cursor=true;
+	Cursor=0;
     }
   }
 }
 
 void toHighlightedText::setErrors(const std::map<int,QString> &errors)
 {
-  Errors=errors;
+  Errors=errors;	
+
   toStatusMessage(QString::null);
   update();
 }

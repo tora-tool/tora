@@ -21,6 +21,22 @@
 2001-09-12: Updates to the INSTALL file for 1.1 changes of the install.
 2001-09-13: Fixed problem with deleting rows in toResultContent.
 2001-09-13: Fixed problem with missing time.h header for solaris.
+2001-09-13: Created a light version of the worksheet for the browser.
+2001-09-13: Made changing connection in tools cascade to subtools as well.
+2001-09-14: Made a light version of worksheet.
+2001-09-14: Fixed some NULL problems with toExtract.
+2001-09-14: Added script tabs to database browser.
+2001-09-14: Don't list chained IOT parts in table browser.
+2001-09-14: Display comment of table in table information instead of own tab.
+2001-09-14: Fixed some tab ordering in dialogs.
+2001-09-15: Fixed problem with rollback in main window.
+2001-09-15: Added some buttons to administrate tables in browser.
+2001-09-15: Added long operation listings to SGA trace.
+2001-09-15: Fixed some problem with duplicat aborts.
+2001-09-16: Fixed sql templates with more than one columns.
+2001-09-16: Remade some of the ugliest icons.
+2001-09-16: Fixed problem with cursor on CTRL+Left/Right.
+2001-09-16: Fixed problem with configure and gcc-3.0.0.
 
 1.1.0: Released 2001-09-09
 

@@ -194,7 +194,7 @@ private:
   bool KeywordUpper;
   /** Used internally for drawing.
    */
-  bool Cursor;
+  int Cursor;
   /** Map of rows with errors and their error message.
    */
   std::map<int,QString> Errors;

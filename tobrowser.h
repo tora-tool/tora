@@ -81,6 +81,9 @@ public slots:
   void clearFilter(void);
   void defineFilter(void);
   void windowActivated(QWidget *widget);
+
+  void modifyTable(void);
+  void addTable(void);
 };
 
 class toBrowseTemplate : public QObject,public toTemplateProvider {

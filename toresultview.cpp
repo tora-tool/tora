@@ -874,7 +874,8 @@ void toResultView::query(const QString &sql,const toQList &param)
 
 void toResultView::readAll(void)
 {
-  toStatusMessage("Reading all entries",false,false);
+  if (!ReadAll)
+    toStatusMessage("Reading all entries",false,false);
   int i=0;
   while(!eof()) {
     addItem();

@@ -68,6 +68,7 @@
 #include "toresultcontent.h"
 #include "toresultcontent.h"
 #include "toresultdepend.h"
+#include "toresultextract.h"
 #include "tosql.h"
 #include "tobrowserfilterui.h"
 #include "tohelp.h"
@@ -78,17 +79,21 @@
 #include "tobrowserconstraintui.moc"
 #include "tobrowsertableui.moc"
 
-#include "icons/tobrowser.xpm"
+#include "icons/addtable.xpm"
+#include "icons/filter.xpm"
+#include "icons/function.xpm"
+#include "icons/index.xpm"
+#include "icons/modconstraint.xpm"
+#include "icons/modtable.xpm"
+#include "icons/modindex.xpm"
+#include "icons/nofilter.xpm"
 #include "icons/refresh.xpm"
 #include "icons/schema.xpm"
-#include "icons/index.xpm"
-#include "icons/view.xpm"
-#include "icons/table.xpm"
-#include "icons/function.xpm"
 #include "icons/sequence.xpm"
 #include "icons/synonym.xpm"
-#include "icons/filter.xpm"
-#include "icons/nofilter.xpm"
+#include "icons/table.xpm"
+#include "icons/tobrowser.xpm"
+#include "icons/view.xpm"
 
 class toBrowserTool : public toTool {
 protected:
@@ -113,9 +118,9 @@ public:
 static toBrowserTool BrowserTool;
 
 static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
-			   "SELECT Tablespace_Name FROM DBA_TABLESPACES\n"
-			   " ORDER BY Tablespace_Name",
-			   "List the available tablespaces in a database.");
+				"SELECT Tablespace_Name FROM DBA_TABLESPACES\n"
+				" ORDER BY Tablespace_Name",
+				"List the available tablespaces in a database.");
 
 class toBrowserFilter : public toBrowserFilterUI {
 public:
@@ -259,7 +264,8 @@ public:
 #define TAB_TABLE_GRANTS	"TablesGrants"
 #define TAB_TABLE_TRIGGERS	"TablesTriggers"
 #define TAB_TABLE_INFO		"TablesInfo"
-#define TAB_TABLE_COMMENT	"TablesComment"
+#define TAB_TABLE_EXTRACT	"TablesExtract"
+
 #define TAB_VIEWS		"Views"
 #define TAB_VIEW_COLUMNS	"ViewColumns"
 #define TAB_VIEW_SQL		"ViewSQL"
@@ -267,26 +273,37 @@ public:
 #define TAB_VIEW_GRANTS		"ViewGrants"
 #define TAB_VIEW_DEPEND		"ViewDepend"
 #define TAB_VIEW_COMMENT	"ViewComment"
+#define TAB_VIEW_EXTRACT	"ViewExtract"
+
 #define TAB_SEQUENCES		"Sequences"
 #define TAB_SEQUENCES_INFO	"SequencesInfo"
+#define TAB_SEQUENCES_EXTRACT	"SequencesExtract"
+
 #define TAB_INDEX		"Index"
 #define TAB_INDEX_COLS		"IndexCols"
 #define TAB_INDEX_INFO		"IndexInfo"
+#define TAB_INDEX_EXTRACT	"IndexExtract"
+
 #define TAB_SYNONYM		"Synonym"
 #define TAB_SYNONYM_INFO	"SynonymInfo"
+#define TAB_SYNONYM_EXTRACT	"SynonymExtract"
+
 #define TAB_PLSQL		"PLSQL"
 #define TAB_PLSQL_SOURCE	"PLSQLSource"
 #define TAB_PLSQL_BODY		"PLSQLBody"
 #define TAB_PLSQL_DEPEND	"PLSQLDepend"
+#define TAB_PLSQL_EXTRACT	"PLSQLExtract"
+
 #define TAB_TRIGGER		"Trigger"
 #define TAB_TRIGGER_INFO	"TriggerInfo"
 #define TAB_TRIGGER_SOURCE	"TriggerSource"
 #define TAB_TRIGGER_COLS	"TriggerCols"
 #define TAB_TRIGGER_DEPEND	"TriggerDepend"
+#define TAB_TRIGGER_EXTRACT	"TriggerExtract"
 
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
+			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]> AND IOT_Name IS NULL\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.");
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
@@ -305,19 +322,17 @@ static toSQL SQLTableTrigger("toBrowser:TableTrigger",
 			     " WHERE Table_Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
 			     "Display the triggers operating on a table");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
-			  "SELECT *\n"
-			  "  FROM ALL_TABLES\n"
-			  " WHERE OWNER = :f1<char[101]> AND Table_Name = :f2<char[101]>",
+			  "SELECT b.comments \"Comment\" ,a.*\n"
+			  "  FROM ALL_TABLES a,\n"
+			  "       ALL_TAB_COMMENTS b\n"
+			  " WHERE a.OWNER = :f1<char[101]> AND a.Table_Name = :f2<char[101]>\n"
+			  "   AND b.OWNER = :f1<char[101]> AND b.Table_Name = :f2<char[101]>",
 			  "Display information about a table");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
 			       "show table status from :own<noquote> like :tab",
 			       QString::null,
 			       "3.0",
 			       "MySQL");
-static toSQL SQLTableComment("toBrowser:TableComment",
-			     "SELECT Comments FROM ALL_TAB_COMMENTS\n"
-			     " WHERE Owner = :f1<char[101]> AND Table_Name = :f2<char[101]>",
-			     "Display comment on a table");
 
 static toSQL SQLListView("toBrowser:ListView",
 			 "SELECT View_Name FROM ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
@@ -487,8 +502,33 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
 
-  QTabWidget *curr=new QTabWidget(splitter);
-  splitter->setResizeMode(curr,QSplitter::Stretch);
+  QVBox *box=new QVBox(splitter);
+  splitter->setResizeMode(box,QSplitter::Stretch);
+  toolbar=toAllocBar(box,"Table browser",connection.description());
+  new QToolButton(QPixmap((const char **)addtable_xpm),
+		  "Create new table",
+		  "Create new table",
+		  this,SLOT(addTable()),
+		  toolbar);
+  toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)modtable_xpm),
+		  "Modify table columns",
+		  "Modify table columns",
+		  this,SLOT(modifyTable()),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)modconstraint_xpm),
+		  "Modify constraints",
+		  "Modify constraints",
+		  this,SLOT(modifyTable()),
+		  toolbar);
+  new QToolButton(QPixmap((const char **)modindex_xpm),
+		  "Modify indexes",
+		  "Modify indexes",
+		  this,SLOT(modifyTable()),
+		  toolbar);
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+
+  QTabWidget *curr=new QTabWidget(box);
   resultView=new toResultCols(curr,TAB_TABLE_COLUMNS);
   curr->addTab(resultView,"&Columns");
   SecondTab=resultView;
@@ -528,11 +568,9 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Information");
   SecondMap[TAB_TABLE_INFO]=resultItem;
 
-  resultItem=new toResultItem(1,true,curr,TAB_TABLE_COMMENT);
-  resultItem->showTitle(false);
-  resultItem->setSQL(SQLTableComment);
-  curr->addTab(resultItem,"Co&mment");
-  SecondMap[TAB_TABLE_COMMENT]=resultItem;
+  toResultExtract *resultExtract=new toResultExtract(this,TAB_TABLE_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_TABLE_EXTRACT]=resultExtract;
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
@@ -579,6 +617,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Co&mment");
   SecondMap[TAB_VIEW_COMMENT]=resultItem;
 
+  resultExtract=new toResultExtract(this,TAB_VIEW_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_VIEW_EXTRACT]=resultExtract;
+
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_INDEX);
@@ -606,6 +648,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_INDEX_INFO]=resultItem;
 
+  resultExtract=new toResultExtract(this,TAB_INDEX_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_INDEX_EXTRACT]=resultExtract;
+
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SEQUENCES);
@@ -627,6 +673,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   SecondMap[TAB_SEQUENCES]=resultItem;
   SecondMap[TAB_SEQUENCES_INFO]=resultItem;
 
+  resultExtract=new toResultExtract(this,TAB_SEQUENCES_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_SEQUENCES_EXTRACT]=resultExtract;
+
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
   splitter=new QSplitter(Horizontal,TopTab,TAB_SYNONYM);
@@ -647,6 +697,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   curr->addTab(resultItem,"Info");
   SecondMap[TAB_SYNONYM]=resultItem;
   SecondMap[TAB_SYNONYM_INFO]=resultItem;
+
+  resultExtract=new toResultExtract(this,TAB_SYNONYM_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_SYNONYM_EXTRACT]=resultExtract;
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
@@ -678,6 +732,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultDepend=new toResultDepend(curr,TAB_PLSQL_DEPEND);
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_PLSQL_DEPEND]=resultDepend;
+
+  resultExtract=new toResultExtract(this,TAB_PLSQL_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_PLSQL_EXTRACT]=resultExtract;
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
@@ -714,6 +772,10 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultDepend=new toResultDepend(curr,TAB_TRIGGER_DEPEND);
   curr->addTab(resultDepend,"De&pendencies");
   SecondMap[TAB_TRIGGER_DEPEND]=resultDepend;
+
+  resultExtract=new toResultExtract(this,TAB_TRIGGER_EXTRACT);
+  curr->addTab(resultExtract,"Script");
+  SecondMap[TAB_TRIGGER_EXTRACT]=resultExtract;
 
   connect(curr,SIGNAL(currentChanged(QWidget *)),this,SLOT(changeSecondTab(QWidget *)));
 
@@ -853,6 +915,21 @@ void toBrowser::defineFilter(void)
     if (filt.exec())
       setNewFilter(filt.getSetting());
   }
+}
+
+bool toBrowser::canHandle(toConnection &conn)
+{
+  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
+}
+
+void toBrowser::modifyTable(void)
+{
+
+}
+
+void toBrowser::addTable(void)
+{
+
 }
 
 void toBrowseTemplate::removeDatabase(const QString &name)
@@ -1122,11 +1199,6 @@ void toBrowseTemplate::addDatabase(const QString &name)
 {
   for(std::list<toTemplateItem *>::iterator i=Parents.begin();i!=Parents.end();i++)
     new toTemplateDBItem(toMainWidget()->connection(name),*i,name);
-}
-
-bool toBrowser::canHandle(toConnection &conn)
-{
-  return conn.provider()=="Oracle"||conn.provider()=="MySQL";
 }
 
 static toBrowseTemplate BrowseTemplate;

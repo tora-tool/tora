@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>522</width>
+            <width>518</width>
             <height>408</height>
         </rect>
     </property>
@@ -489,8 +489,10 @@
 </connections>
 <tabstops>
     <tabstop>Previous</tabstop>
+    <tabstop>Provider</tabstop>
     <tabstop>Username</tabstop>
     <tabstop>Password</tabstop>
+    <tabstop>Host</tabstop>
     <tabstop>SqlNet</tabstop>
     <tabstop>Database</tabstop>
     <tabstop>Mode</tabstop>

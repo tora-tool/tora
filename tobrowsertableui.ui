@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>663</width>
+            <width>651</width>
             <height>561</height>
         </rect>
     </property>
@@ -28,14 +28,7 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget row="1"  column="0"  rowspan="1"  colspan="4" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Name</cstring>
-            </property>
-        </widget>
-        <widget row="4"  column="2" >
+        <widget row="1"  column="2" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -50,7 +43,7 @@
                 <bool>true</bool>
             </property>
         </widget>
-        <widget row="4"  column="3" >
+        <widget row="1"  column="3" >
             <class>QPushButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -61,7 +54,7 @@
                 <string>Cancel</string>
             </property>
         </widget>
-        <widget row="4"  column="0" >
+        <widget row="1"  column="0" >
             <class>QToolButton</class>
             <property stdset="1">
                 <name>name</name>
@@ -84,7 +77,7 @@
                 <string>Display SQL to create this constraint</string>
             </property>
         </widget>
-        <spacer row="4"  column="1" >
+        <spacer row="1"  column="1" >
             <property>
                 <name>name</name>
                 <cstring>Spacer1</cstring>
@@ -106,41 +99,147 @@
             </property>
         </spacer>
         <widget row="0"  column="0"  rowspan="1"  colspan="4" >
-            <class>QLabel</class>
+            <class>QTabWidget</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>TextLabel1</cstring>
+                <cstring>Tabs</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Name</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Name</cstring>
-            </property>
-        </widget>
-        <widget row="2"  column="0"  rowspan="1"  colspan="4" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>TextLabel1_2</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>&amp;Columns</string>
-            </property>
-            <property>
-                <name>buddy</name>
-                <cstring>Columns</cstring>
-            </property>
-        </widget>
-        <widget row="3"  column="0"  rowspan="1"  colspan="4" >
-            <class>QScrollView</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>Columns</cstring>
-            </property>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>tab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;General</string>
+                </attribute>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="5"  column="0" >
+                        <class>QComboBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Tablespace</cstring>
+                        </property>
+                    </widget>
+                    <widget row="1"  column="0" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Name</cstring>
+                        </property>
+                    </widget>
+                    <widget row="4"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel1_2_2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>&amp;Tablespace</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>Tablespace</cstring>
+                        </property>
+                    </widget>
+                    <widget row="2"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel1_3</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>C&amp;omment</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>Comment</cstring>
+                        </property>
+                    </widget>
+                    <widget row="0"  column="0" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>&amp;Name</string>
+                        </property>
+                        <property>
+                            <name>buddy</name>
+                            <cstring>Name</cstring>
+                        </property>
+                    </widget>
+                    <widget row="3"  column="0" >
+                        <class>QLineEdit</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>Comment</cstring>
+                        </property>
+                    </widget>
+                    <spacer row="6"  column="0" >
+                        <property>
+                            <name>name</name>
+                            <cstring>Spacer2</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>orientation</name>
+                            <enum>Vertical</enum>
+                        </property>
+                        <property stdset="1">
+                            <name>sizeType</name>
+                            <enum>Expanding</enum>
+                        </property>
+                        <property>
+                            <name>sizeHint</name>
+                            <size>
+                                <width>20</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </grid>
+            </widget>
+            <widget>
+                <class>QWidget</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>tab</cstring>
+                </property>
+                <attribute>
+                    <name>title</name>
+                    <string>&amp;Columns</string>
+                </attribute>
+                <grid>
+                    <property stdset="1">
+                        <name>margin</name>
+                        <number>11</number>
+                    </property>
+                    <property stdset="1">
+                        <name>spacing</name>
+                        <number>6</number>
+                    </property>
+                    <widget row="0"  column="0" >
+                        <class>QScrollView</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>ColumnList</cstring>
+                        </property>
+                    </widget>
+                </grid>
+            </widget>
         </widget>
     </grid>
 </widget>
@@ -183,5 +282,21 @@
         <receiver>toBrowserTableUI</receiver>
         <slot>reject()</slot>
     </connection>
+    <connection>
+        <sender>ToolButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>toBrowserTableUI</receiver>
+        <slot>displaySQL()</slot>
+    </connection>
+    <slot access="public">displaySQL()</slot>
 </connections>
+<tabstops>
+    <tabstop>Tabs</tabstop>
+    <tabstop>Name</tabstop>
+    <tabstop>Comment</tabstop>
+    <tabstop>Tablespace</tabstop>
+    <tabstop>ToolButton1</tabstop>
+    <tabstop>PushButton1</tabstop>
+    <tabstop>PushButton2</tabstop>
+</tabstops>
 </UI>

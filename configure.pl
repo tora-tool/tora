@@ -204,7 +204,7 @@ void test(void) // Not called
 int main(int argv,char **argc)
 {
     QApplication app(argv,argc);
-    map<int,int> test;
+    std::map<int,int> test;
     test[2]=2;
     if (test[2]!=2) {
 	printf ("Maps doesn't seem to work\n");

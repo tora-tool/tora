@@ -172,8 +172,8 @@ toMain::toMain()
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
-  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),TO_FILE_SAVE);
-  FileMenu->insertItem("&Save As..",TO_FILE_SAVE_AS);
+  FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"&Save",TO_FILE_SAVE);
+  FileMenu->insertItem("Save A&s..",TO_FILE_SAVE_AS);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
   FileMenu->insertSeparator();
@@ -660,7 +660,7 @@ void toMain::commandCallback(int cmd)
       try {
 	toConnection &conn=currentConnection();
 	emit willCommit(conn,false);
-	currentConnection().commit();
+	currentConnection().rollback();
       } TOCATCH
       break;
     case TO_EDIT_READ_ALL:

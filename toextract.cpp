@@ -81,7 +81,7 @@ toExtract::toExtract(toConnection &conn,QWidget *parent)
 
   Schema="1";
 
-  toQList ret=toQuery::readQuery(Connection,SQLSetSizing);
+  toQList ret=toQuery::readQueryNull(Connection,SQLSetSizing);
   BlockSize=toShift(ret).toInt();
   setSizes();
 }
@@ -796,7 +796,7 @@ QString toExtract::createExchangeIndex(const QString &schema,const QString &owne
 
   QString sql=toSQL::string(SQLExchangeIndex,Connection).
     arg(type).arg(blocks);
-  toQList result=toQuery::readQuery(Connection,sql,segment,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,sql,segment,partition,owner);
   QString degree=toShift(result);
   QString instances=toShift(result);
   QString table=toShift(result);
@@ -844,7 +844,7 @@ void toExtract::describeExchangeIndex(std::list<QString> &lst,const QString &sch
   QString blocks=inf.readValue();
 
   QString sql=toSQL::string(SQLExchangeIndex,Connection).arg(type).arg(blocks);
-  toQList result=toQuery::readQuery(Connection,sql,segment,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,sql,segment,partition,owner);
   QString degree=toShift(result);
   QString instances=toShift(result);
   QString table=toShift(result);
@@ -1031,7 +1031,7 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
   QString blocks=inf.readValue();
 
   QString sql=toSQL::string(SQLExchangeTable,Connection).arg(type).arg(blocks);
-  toQList result=toQuery::readQuery(Connection,sql,segment,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,sql,segment,partition,owner);
   QString ret=createTableText(result,schema,owner,segment);
   ret+=";\n\n";
   return ret;
@@ -1053,7 +1053,7 @@ void toExtract::describeExchangeTable(std::list<QString> &lst,const QString &sch
   QString blocks=inf.readValue();
 
   QString sql=toSQL::string(SQLExchangeTable,Connection).arg(type).arg(blocks);
-  toQList result=toQuery::readQuery(Connection,sql,segment,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,sql,segment,partition,owner);
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"EXCHANGE TABLE");
@@ -1232,7 +1232,7 @@ QString toExtract::createTableText(toQList &result,const QString &schema,
   ret+=QString("CREATE TABLE %1%2\n(\n    ").arg(schema).arg(name.lower());
   ret+=tableColumns(owner,name);
   if (organization=="INDEX"&&Storage) {
-    toQList res=toQuery::readQuery(Connection,SQLPrimaryKey,name,owner);
+    toQList res=toQuery::readQueryNull(Connection,SQLPrimaryKey,name,owner);
     if (res.size()!=1)
       throw QString("Couldn't find primary key of %1.%2").arg(owner).arg(name);
     QString primary=*(res.begin());
@@ -1478,7 +1478,7 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 
 QString toExtract::tableColumns(const QString &owner,const QString &name)
 {
-  toQList cols=toQuery::readQuery(Connection,SQLTableColumns,name,owner);
+  toQList cols=toQuery::readQueryNull(Connection,SQLTableColumns,name,owner);
   bool first=true;
   QString ret;
   while(cols.size()>0) {
@@ -1503,7 +1503,7 @@ QString toExtract::tableColumns(const QString &owner,const QString &name)
 void toExtract::describeTableColumns(std::list<QString> &lst,std::list<QString> &ctx,
 				     const QString &owner,const QString &name)
 {
-  toQList cols=toQuery::readQuery(Connection,SQLTableColumns,name,owner);
+  toQList cols=toQuery::readQueryNull(Connection,SQLTableColumns,name,owner);
   while(cols.size()>0) {
     QString line=toShift(cols);
     QString def=toShift(cols);
@@ -1797,7 +1797,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   if (!Indexes)
     return "";
 
-  toQList res=toQuery::readQuery(Connection,SQLIndexInfo,name,owner);
+  toQList res=toQuery::readQueryNull(Connection,SQLIndexInfo,name,owner);
   if (res.size()!=9)
     throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
 
@@ -1811,7 +1811,7 @@ QString toExtract::createIndex(const QString &schema,const QString &owner,const 
   QString domName    =toShift(res);
   QString domParam   =toShift(res);
 
-  toQList storage=toQuery::readQuery(Connection,SQLIndexSegment,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLIndexSegment,name,owner);
   QString degree     =toShift(storage);
   QString instances  =toShift(storage);
   QString compressed =toShift(storage);
@@ -1867,7 +1867,7 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
   if (Indexes)
     return;
 
-  toQList res=toQuery::readQuery(Connection,SQLIndexInfo,name,owner);
+  toQList res=toQuery::readQueryNull(Connection,SQLIndexInfo,name,owner);
   if (res.size()!=9)
     throw QString("Couldn't find index %1.%2").arg(owner).arg(name);
 
@@ -1881,7 +1881,7 @@ void toExtract::describeIndex(std::list<QString> &lst,const QString &schema,
   QString domName    =toShift(res);
   QString domParam   =toShift(res);
 
-  toQList storage=toQuery::readQuery(Connection,SQLIndexSegment,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLIndexSegment,name,owner);
   QString degree     =toShift(storage);
   QString instances  =toShift(storage);
   QString compressed =toShift(storage);
@@ -2140,8 +2140,8 @@ QString toExtract::createPartitionedIndex(const QString &schema,const QString &o
     return "";
 
   QString ret=sql;
-  toQList result=toQuery::readQuery(Connection,SQLIndexPartition,
-				    QString::number(BlockSize),owner,name);
+  toQList result=toQuery::readQueryNull(Connection,SQLIndexPartition,
+					QString::number(BlockSize),owner,name);
   QString partitionType   =toShift(result);
   QString subPartitionType=toShift(result);
   QString locality        =toShift(result);
@@ -2179,8 +2179,8 @@ void toExtract::describePartitionedIndex(std::list<QString> &lst,std::list<QStri
   if (!Partition)
     return;
 
-  toQList result=toQuery::readQuery(Connection,SQLIndexPartition,
-				    QString::number(BlockSize),owner,name);
+  toQList result=toQuery::readQueryNull(Connection,SQLIndexPartition,
+					QString::number(BlockSize),owner,name);
   QString partitionType   =toShift(result);
   QString subPartitionType=toShift(result);
   QString locality        =toShift(result);
@@ -2328,7 +2328,7 @@ QString toExtract::rangePartitions(const QString &owner,const QString &name,
   if (!Partition)
     return "";
 
-  toQList result=toQuery::readQuery(Connection,SQLRangePartitions,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLRangePartitions,name,owner);
   if (result.size()==0||result.size()%18)
     throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
 
@@ -2390,7 +2390,7 @@ void toExtract::describePartitions(std::list<QString> &lst,std::list<QString> &c
   if (!Partition)
     return;
 
-  toQList result=toQuery::readQuery(Connection,SQLRangePartitions,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLRangePartitions,name,owner);
   if (result.size()==0||result.size()%18)
     throw QString("Couldn't find partition range %1.%2").arg(owner).arg(name);
 
@@ -2511,7 +2511,7 @@ static toSQL SQLIndexName("toExtract:TableIndexes",
 QString toExtract::createMView(const QString &schema,const QString &owner,
 			       const QString &name,const QString &type)
 {
-  toQList result=toQuery::readQuery(Connection,SQLMViewInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLMViewInfo,name,owner);
   if (result.size()==0)
     throw QString("Couldn't find materialised table %1.%2").arg(owner.lower()).arg(name.lower());
   QString table        =toShift(result);
@@ -2571,7 +2571,7 @@ void toExtract::describeMView(std::list<QString> &lst,
 			      const QString &schema,const QString &owner,
 			      const QString &name,const QString &type)
 {
-  toQList result=toQuery::readQuery(Connection,SQLMViewInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLMViewInfo,name,owner);
   if (result.size()==0)
     throw QString("Couldn't find materialised table %1.%2").arg(owner.lower()).arg(name.lower());
   QString table        =toShift(result);
@@ -2777,7 +2777,7 @@ static toSQL SQLSnapshotColumns("toExtract:SnapshotColumns",
 QString toExtract::createMViewLog(const QString &schema,const QString &owner,
 				  const QString &name,const QString &type)
 {
-  toQList result=toQuery::readQuery(Connection,SQLSnapshotInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLSnapshotInfo,name,owner);
   if (result.size()!=4)
     throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
 
@@ -2827,7 +2827,7 @@ void toExtract::describeMViewLog(std::list<QString> &lst,
 				 const QString &schema,const QString &owner,
 				 const QString &name,const QString &type)
 {
-  toQList result=toQuery::readQuery(Connection,SQLSnapshotInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLSnapshotInfo,name,owner);
   if (result.size()!=4)
     throw QString("Couldn't find log %1.%2").arg(owner).arg(name);
 
@@ -3093,7 +3093,7 @@ QString toExtract::createTable(const QString &schema,const QString &owner,const 
   } else if (partitioned=="YES"&&Partition)
     return createPartitionedTable(schema,owner,name);
 
-  toQList result=toQuery::readQuery(Connection,SQLTableInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLTableInfo,name,owner);
   QString ret=createTableText(result,schema,owner,name);
   ret+=";\n\n";
   ret+=createComments(schema,owner,name);
@@ -3126,7 +3126,7 @@ void toExtract::describeTable(std::list<QString> &lst,
     return;
   }
 
-  toQList result=toQuery::readQuery(Connection,SQLTableInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLTableInfo,name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
   describeComments(lst,ctx,schema,owner,name);
 }
@@ -3367,11 +3367,11 @@ static toSQL SQLPartitionIndexNames("toExtract:PartitionIndexNames",
 QString toExtract::createPartitionedIOT(const QString &schema,const QString &owner,
 					const QString &name)
 {
-  toQList result=toQuery::readQuery(Connection,SQLPartitionedIOTInfo,
-				    QString::number(BlockSize),name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLPartitionedIOTInfo,
+					QString::number(BlockSize),name,owner);
   QString ret=createTableText(result,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQuery(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
     if (overflow.size()==18) {
       ret+="OVERFLOW\n";
       ret+=segmentAttributes(overflow);
@@ -3396,8 +3396,8 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
 				       const QString &schema,const QString &owner,
 				       const QString &name)
 {
-  toQList result=toQuery::readQuery(Connection,SQLPartitionedIOTInfo,
-				    QString::number(BlockSize),name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLPartitionedIOTInfo,
+					QString::number(BlockSize),name,owner);
   describeTableText(lst,ctx,result,schema,owner,name);
   toQuery inf(Connection,SQLPartitionIndexNames,name,owner);
   if (!inf.eof())
@@ -3408,7 +3408,7 @@ void toExtract::describePartitionedIOT(std::list<QString> &lst,std::list<QString
   describeComments(lst,ctx,schema,owner,name);
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQuery(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
     if (overflow.size()==18) {
       ctx.insert(ctx.end(),"OVERFLOW");
       describeAttributes(lst,ctx,overflow);
@@ -3490,11 +3490,11 @@ static toSQL SQLIOTInfo("toExtract:IOTInfo",
 QString toExtract::createIOT(const QString &schema,const QString &owner,
 			     const QString &name)
 {
-  toQList storage=toQuery::readQuery(Connection,SQLIOTInfo,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLIOTInfo,name,owner);
 
   QString ret=createTableText(storage,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQuery(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
     if (overflow.size()==18) {
       ret+="OVERFLOW\n";
       ret+=segmentAttributes(overflow);
@@ -3508,12 +3508,12 @@ QString toExtract::createIOT(const QString &schema,const QString &owner,
 void toExtract::describeIOT(std::list<QString> &lst,std::list<QString> &ctx,
 			    const QString &schema,const QString &owner,const QString &name)
 {
-  toQList storage=toQuery::readQuery(Connection,SQLIOTInfo,name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLIOTInfo,name,owner);
 
   describeTableText(lst,ctx,storage,schema,owner,name);
   describeComments(lst,ctx,schema,owner,name);
   if (Storage) {
-    toQList overflow=toQuery::readQuery(Connection,SQLOverflowInfo,name,owner);
+    toQList overflow=toQuery::readQueryNull(Connection,SQLOverflowInfo,name,owner);
     if (overflow.size()==18) {
       ctx.insert(ctx.end(),"OVERFLOW");
       describeAttributes(lst,ctx,overflow);
@@ -3825,8 +3825,8 @@ static toSQL SQLPartitionName("toExtract:PartitionName",
 QString toExtract::createPartitionedTable(const QString &schema,const QString &owner,
 					  const QString &name)
 {
-  toQList storage=toQuery::readQuery(Connection,SQLPartitionTableInfo,
-				     QString::number(BlockSize),name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLPartitionTableInfo,
+					 QString::number(BlockSize),name,owner);
 
   QString organization;
   {
@@ -3836,7 +3836,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
   }
 
   QString ret=createTableText(storage,schema,owner,name);
-  toQList type=toQuery::readQuery(Connection,SQLPartitionType,name,owner);
+  toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
   QString partitionType    (toShift(type));
   QString partitionCount   (toShift(type));
   QString subPartitionType (toShift(type));
@@ -3856,7 +3856,7 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
     }
     ret+="(\n";
 
-    toQList segment=toQuery::readQuery(Connection,SQLPartitionSegment,name,owner);
+    toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
 
     QString comma="    ";
     while(segment.size()>0) {
@@ -3877,8 +3877,8 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
       comma="  , ";
 
       if (subPartitionType=="HASH") {
-	toQList subs=toQuery::readQuery(Connection,SQLSubPartitionName,
-					name,partition,owner);
+	toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					    name,partition,owner);
 	bool first=true;
 	ret+="        (\n            ";
 	while(subs.size()>0) {
@@ -3894,8 +3894,8 @@ QString toExtract::createPartitionedTable(const QString &schema,const QString &o
       }
     }
   } else {
-    toQList hash=toQuery::readQuery(Connection,SQLSubPartitionName,
-				    name,owner);
+    toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					name,owner);
     bool first=true;
     ret+="(\n    ";
     while(hash.size()>0) {
@@ -3918,8 +3918,8 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
 					 const QString &schema,const QString &owner,
 					 const QString &name)
 {
-  toQList storage=toQuery::readQuery(Connection,SQLPartitionTableInfo,
-				     QString::number(BlockSize),name,owner);
+  toQList storage=toQuery::readQueryNull(Connection,SQLPartitionTableInfo,
+					 QString::number(BlockSize),name,owner);
 
   QString organization;
   {
@@ -3929,7 +3929,7 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
   }
 
   describeTableText(lst,ctx,storage,schema,owner,name);
-  toQList type=toQuery::readQuery(Connection,SQLPartitionType,name,owner);
+  toQList type=toQuery::readQueryNull(Connection,SQLPartitionType,name,owner);
   QString partitionType    (toShift(type));
   QString partitionCount   (toShift(type));
   QString subPartitionType (toShift(type));
@@ -3946,7 +3946,7 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
 		     arg(subPartitionCount));
     }
 
-    toQList segment=toQuery::readQuery(Connection,SQLPartitionSegment,name,owner);
+    toQList segment=toQuery::readQueryNull(Connection,SQLPartitionSegment,name,owner);
 
     while(segment.size()>0) {
       toQList storage;
@@ -3965,8 +3965,8 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
       describeAttributes(lst,cctx,storage);
 
       if (subPartitionType=="HASH") {
-	toQList subs=toQuery::readQuery(Connection,SQLSubPartitionName,
-					name,partition,owner);
+	toQList subs=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					    name,partition,owner);
 	while(subs.size()>0) {
 	  QString subpart=QString(toShift(subs)).lower();
 	  QString tabspac=toShift(subs);
@@ -3977,8 +3977,8 @@ void toExtract::describePartitionedTable(std::list<QString> &lst,std::list<QStri
       }
     }
   } else {
-    toQList hash=toQuery::readQuery(Connection,SQLSubPartitionName,
-				    name,owner);
+    toQList hash=toQuery::readQueryNull(Connection,SQLSubPartitionName,
+					name,owner);
     while(hash.size()>0) {
       QString partition=QString(toShift(hash)).lower();
       QString tablespac=toShift(hash);
@@ -4075,9 +4075,9 @@ static toSQL SQLProfileInfo("toExtract:ProfileInfo",
 
 QString toExtract::createProfile(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLProfileInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLProfileInfo,
+				      name);
   if (info.size()==0)
     throw QString("Couldn't find profile %1").arg(name);
 
@@ -4098,9 +4098,9 @@ QString toExtract::createProfile(const QString &schema,const QString &owner,cons
 void toExtract::describeProfile(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLProfileInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLProfileInfo,
+				      name);
   if (info.size()==0)
     throw QString("Couldn't find profile %1").arg(name);
 
@@ -4135,9 +4135,9 @@ static toSQL SQLRoleInfo("toExtract:RoleInfo",
 
 QString toExtract::createRole(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLRoleInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLRoleInfo,
+				      name);
   if (info.size()==0)
     throw QString("Couldn't find role %1").arg(name);
 
@@ -4152,9 +4152,9 @@ QString toExtract::createRole(const QString &schema,const QString &owner,const Q
 void toExtract::describeRole(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLRoleInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLRoleInfo,
+				      name);
   if (info.size()==0)
     throw QString("Couldn't find role %1").arg(name);
 
@@ -4212,7 +4212,7 @@ QString toExtract::grantedPrivs(const QString &schema,const QString &name,int ty
 
   QString ret;
   if ((typ&1)==1) {
-    toQList result=toQuery::readQuery(Connection,SQLSystemPrivs,name);
+    toQList result=toQuery::readQueryNull(Connection,SQLSystemPrivs,name);
     while(result.size()>0) {
       QString priv=QString(toShift(result)).lower();
       QString sql=QString("GRANT %1 TO %2 %3").
@@ -4230,7 +4230,7 @@ QString toExtract::grantedPrivs(const QString &schema,const QString &name,int ty
   }
 
   if ((typ&2)==2) {
-    toQList result=toQuery::readQuery(Connection,SQLRolePrivs,name);
+    toQList result=toQuery::readQueryNull(Connection,SQLRolePrivs,name);
     while(result.size()>0) {
       QString priv=QString(toShift(result)).lower();
       QString sql=QString("GRANT %1 TO %2 %3").
@@ -4248,7 +4248,7 @@ QString toExtract::grantedPrivs(const QString &schema,const QString &name,int ty
   }
 
   if ((typ&4)==4) {
-    toQList result=toQuery::readQuery(Connection,SQLObjectPrivs,name);
+    toQList result=toQuery::readQueryNull(Connection,SQLObjectPrivs,name);
     while(result.size()>0) {
       QString priv=toShift(result);
       QString schema=intSchema(toShift(result));
@@ -4276,19 +4276,19 @@ void toExtract::describePrivs(std::list<QString> &lst,std::list<QString> &ctx,co
   if (!Grants)
     return;
 
-  toQList result=toQuery::readQuery(Connection,SQLRolePrivs,name);
+  toQList result=toQuery::readQueryNull(Connection,SQLRolePrivs,name);
   while(result.size()>0) {
     QString role=QString(toShift(result)).lower();
     addDescription(lst,ctx,"GRANT","ROLE",role,toShift(result));
   }
 
-  result=toQuery::readQuery(Connection,SQLSystemPrivs,name);
+  result=toQuery::readQueryNull(Connection,SQLSystemPrivs,name);
   while(result.size()>0) {
     QString priv=QString(toShift(result)).lower();
     addDescription(lst,ctx,"GRANT",priv,toShift(result));
   }
 
-  result=toQuery::readQuery(Connection,SQLObjectPrivs,name);
+  result=toQuery::readQueryNull(Connection,SQLObjectPrivs,name);
   while(result.size()>0) {
     QString priv=toShift(result);
     QString schema=intSchema(toShift(result));
@@ -4326,7 +4326,7 @@ static toSQL SQLRollbackSegment("toExtract:RollbackSegment",
 
 QString toExtract::createRollbackSegment(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList result=toQuery::readQuery(Connection,SQLRollbackSegment,name);
+  toQList result=toQuery::readQueryNull(Connection,SQLRollbackSegment,name);
   QString isPublic      = toShift(result);
   QString tablespaceName= toShift(result);
   QString initialExtent = toShift(result);
@@ -4354,7 +4354,7 @@ void toExtract::describeRollbackSegment(std::list<QString> &lst,
 					const QString &schema,const QString &owner,
 					const QString &name)
 {
-  toQList result=toQuery::readQuery(Connection,SQLRollbackSegment,name);
+  toQList result=toQuery::readQueryNull(Connection,SQLRollbackSegment,name);
   QString isPublic      = toShift(result);
   QString tablespaceName= toShift(result);
   QString initialExtent = toShift(result);
@@ -4418,9 +4418,9 @@ static toSQL SQLSequenceInfo("toExtract:SequenceInfo",
 
 QString toExtract::createSequence(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLSequenceInfo,
-				  name,owner);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLSequenceInfo,
+				      name,owner);
   if (info.size()==0)
     throw QString("Couldn't find sequence %1").arg(name);
 
@@ -4441,9 +4441,9 @@ QString toExtract::createSequence(const QString &schema,const QString &owner,con
 void toExtract::describeSequence(std::list<QString> &lst,
 				 const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLSequenceInfo,
-				  name,owner);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLSequenceInfo,
+				      name,owner);
   if (info.size()==0)
     throw QString("Couldn't find sequence %1").arg(name);
 
@@ -4471,9 +4471,9 @@ static toSQL SQLSynonymInfo("toExtract:SynonymInfo",
 
 QString toExtract::createSynonym(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLSynonymInfo,
-				  name,owner);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLSynonymInfo,
+				      name,owner);
   if (info.size()==0)
     throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
   
@@ -4505,9 +4505,9 @@ QString toExtract::createSynonym(const QString &schema,const QString &owner,cons
 void toExtract::describeSynonym(std::list<QString> &lst,
 				const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLSynonymInfo,
-				  name,owner);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLSynonymInfo,
+				      name,owner);
   if (info.size()==0)
     throw QString("Couldn't find synonym %1.%2").arg(owner).arg(name);
   
@@ -4591,7 +4591,7 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
 {
   QString ret=createTable(schema,owner,name);
 
-  toQList indexes=toQuery::readQuery(Connection,SQLIndexNames,name,owner);
+  toQList indexes=toQuery::readQueryNull(Connection,SQLIndexNames,name,owner);
   while(indexes.size()>0) {
     QString indOwner(toShift(indexes));
     ret+=createIndex(intSchema(indOwner),indOwner,toShift(indexes));
@@ -4604,7 +4604,7 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
   inf.readValue();
   QString iotType(inf.readValue());
 
-  toQList constraints=toQuery::readQuery(Connection,SQLTableConstraints,name,owner);
+  toQList constraints=toQuery::readQueryNull(Connection,SQLTableConstraints,name,owner);
   while(constraints.size()>0) {
     if (toShift(constraints)!="P"||iotType!="IOT")
       ret+=createConstraint(schema,owner,toShift(constraints));
@@ -4612,7 +4612,7 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
       toShift(constraints);
   }
 
-  toQList triggers=toQuery::readQuery(Connection,SQLTableTriggers,name,owner);
+  toQList triggers=toQuery::readQueryNull(Connection,SQLTableTriggers,name,owner);
   while(triggers.size()>0)
     ret+=createTrigger(schema,owner,toShift(triggers));
   return ret;
@@ -4692,7 +4692,7 @@ void toExtract::describeTableFamily(std::list<QString> &lst,
 {
   describeTable(lst,schema,owner,name);
 
-  toQList indexes=toQuery::readQuery(Connection,SQLIndexNames,name,owner);
+  toQList indexes=toQuery::readQueryNull(Connection,SQLIndexNames,name,owner);
   while(indexes.size()>0) {
     QString indOwner(toShift(indexes));
     describeIndex(lst,intSchema(indOwner),indOwner,toShift(indexes));
@@ -4705,7 +4705,7 @@ void toExtract::describeTableFamily(std::list<QString> &lst,
   inf.readValue();
   QString iotType(inf.readValue());
 
-  toQList constraints=toQuery::readQuery(Connection,SQLTableConstraints,name,owner);
+  toQList constraints=toQuery::readQueryNull(Connection,SQLTableConstraints,name,owner);
   while(constraints.size()>0) {
     if (toShift(constraints)!="P"||iotType!="IOT")
       describeConstraint(lst,schema,owner,toShift(constraints));
@@ -4713,7 +4713,7 @@ void toExtract::describeTableFamily(std::list<QString> &lst,
       toShift(constraints);
   }
 
-  toQList triggers=toQuery::readQuery(Connection,SQLTableTriggers,name,owner);
+  toQList triggers=toQuery::readQueryNull(Connection,SQLTableTriggers,name,owner);
   while(triggers.size()>0)
     describeTrigger(lst,schema,owner,toShift(triggers));
 }
@@ -4721,7 +4721,7 @@ void toExtract::describeTableFamily(std::list<QString> &lst,
 QString toExtract::createTableReferences(const QString &schema,const QString &owner,const QString &name)
 {
   QString ret;
-  toQList constraints=toQuery::readQuery(Connection,SQLTableReferences,name,owner);
+  toQList constraints=toQuery::readQueryNull(Connection,SQLTableReferences,name,owner);
   while(constraints.size()>0)
     ret+=createConstraint(schema,owner,toShift(constraints));
   return ret;
@@ -4730,7 +4730,7 @@ QString toExtract::createTableReferences(const QString &schema,const QString &ow
 void toExtract::describeTableReferences(std::list<QString> &lst,
 					const QString &schema,const QString &owner,const QString &name)
 {
-  toQList constraints=toQuery::readQuery(Connection,SQLTableReferences,name,owner);
+  toQList constraints=toQuery::readQueryNull(Connection,SQLTableReferences,name,owner);
   while(constraints.size()>0)
     describeConstraint(lst,schema,owner,toShift(constraints));
 }
@@ -4785,7 +4785,7 @@ QString toExtract::createTrigger(const QString &schema,const QString &owner,cons
 {
   if (!Code)
     return "";
-  toQList result=toQuery::readQuery(Connection,SQLTriggerInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLTriggerInfo,name,owner);
   if (result.size()!=9)
     throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
@@ -4858,7 +4858,7 @@ void toExtract::describeTrigger(std::list<QString> &lst,
   if (!Code)
     return;
 
-  toQList result=toQuery::readQuery(Connection,SQLTriggerInfo,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLTriggerInfo,name,owner);
   if (result.size()!=9)
     throw QString("Couldn't find trigger %1.%2").arg(owner).arg(name);
   QString triggerType=toShift(result);
@@ -5072,10 +5072,10 @@ static toSQL SQLDatafileInfo7("toExtract:DatafileInfo",
 
 QString toExtract::createTablespace(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLTablespaceInfo,
-				  QString::number(BlockSize),
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLTablespaceInfo,
+				      QString::number(BlockSize),
+				      name);
 
   if (info.size()!=10)
     throw QString("Couldn't find tablespace %1").arg(name);
@@ -5106,10 +5106,10 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
   }
   ret+=sql;
 
-  toQList files=toQuery::readQuery(Connection,
-				   SQLDatafileInfo,
-				   QString::number(BlockSize),
-				   name);
+  toQList files=toQuery::readQueryNull(Connection,
+				       SQLDatafileInfo,
+				       QString::number(BlockSize),
+				       name);
   if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
     ret+="TEMPFILE\n";
   else
@@ -5176,10 +5176,10 @@ QString toExtract::createTablespace(const QString &schema,const QString &owner,c
 void toExtract::describeTablespace(std::list<QString> &lst,
 				   const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLTablespaceInfo,
-				  QString::number(BlockSize),
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLTablespaceInfo,
+				      QString::number(BlockSize),
+				      name);
 
   if (info.size()!=10)
     throw QString("Couldn't find tablespace %1").arg(name);
@@ -5205,10 +5205,10 @@ void toExtract::describeTablespace(std::list<QString> &lst,
 
   addDescription(lst,ctx);
 
-  toQList files=toQuery::readQuery(Connection,
-				   SQLDatafileInfo,
-				   QString::number(BlockSize),
-				   name);
+  toQList files=toQuery::readQueryNull(Connection,
+				       SQLDatafileInfo,
+				       QString::number(BlockSize),
+				       name);
   while(files.size()>0) {
     QString fileName       =toShift(files);
     QString bytes          =toShift(files);
@@ -5306,9 +5306,9 @@ static toSQL SQLUserQuotas("toExtract:UserQuotas",
 
 QString toExtract::createUser(const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLUserInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLUserInfo,
+				      name);
 
   if (info.size()!=4)
     throw QString("Couldn't find user %1").arg(name);
@@ -5337,7 +5337,7 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
     arg(temporaryTablespace.lower());
 
   if (Storage) {
-    toQList quota=toQuery::readQuery(Connection,SQLUserQuotas,name);
+    toQList quota=toQuery::readQueryNull(Connection,SQLUserQuotas,name);
     while(quota.size()>0) {
       QString siz=toShift(quota);
       QString tab=toShift(quota);
@@ -5354,9 +5354,9 @@ QString toExtract::createUser(const QString &schema,const QString &owner,const Q
 void toExtract::describeUser(std::list<QString> &lst,
 			     const QString &schema,const QString &owner,const QString &name)
 {
-  toQList info=toQuery::readQuery(Connection,
-				  SQLUserInfo,
-				  name);
+  toQList info=toQuery::readQueryNull(Connection,
+				      SQLUserInfo,
+				      name);
 
   if (info.size()!=4)
     throw QString("Couldn't find user %1").arg(name);
@@ -5381,7 +5381,7 @@ void toExtract::describeUser(std::list<QString> &lst,
   addDescription(lst,ctx,QString("TEMPORARY TABLESPACE %1").arg(temporaryTablespace.lower()));
 
   if (Storage) {
-    toQList quota=toQuery::readQuery(Connection,SQLUserQuotas,name);
+    toQList quota=toQuery::readQueryNull(Connection,SQLUserQuotas,name);
     while(quota.size()>0) {
       QString siz=toShift(quota);
       QString tab=toShift(quota);
@@ -5413,9 +5413,9 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
 {
   if (!Code)
     return "";
-  toQList source=toQuery::readQuery(Connection,
-				    SQLViewSource,
-				    name,owner);
+  toQList source=toQuery::readQueryNull(Connection,
+					SQLViewSource,
+					name,owner);
   if (source.size()==0)
     throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
 
@@ -5428,9 +5428,9 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
     ret+="\n";
   }
   ret+=sql;
-  toQList cols=toQuery::readQuery(Connection,
-				  SQLViewColumns,
-				  name,owner);
+  toQList cols=toQuery::readQueryNull(Connection,
+				      SQLViewColumns,
+				      name,owner);
   ret+="(";
   QString sep="\n    ";
   while(cols.size()>0) {
@@ -5451,9 +5451,9 @@ void toExtract::describeView(std::list<QString> &lst,
 {
   if (!Code)
     return;
-  toQList source=toQuery::readQuery(Connection,
-				    SQLViewSource,
-				    name,owner);
+  toQList source=toQuery::readQueryNull(Connection,
+					SQLViewSource,
+					name,owner);
   if (source.size()==0)
     throw QString("Couldn't find user %1.%2").arg(owner.lower()).arg(name.lower());
 
@@ -5470,9 +5470,9 @@ void toExtract::describeView(std::list<QString> &lst,
 QString toExtract::dropConstraint(const QString &schema,const QString &owner,
 				  const QString &type,const QString &name)
 {
-  toQList tableName=toQuery::readQuery(Connection,
-				       SQLConstraintTable,
-				       owner,name);
+  toQList tableName=toQuery::readQueryNull(Connection,
+					   SQLConstraintTable,
+					   owner,name);
   if (tableName.size()==0)
     throw QString("Couldn't find constraint %1.%2").arg(owner.lower()).arg(name.lower());
   QString sql=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3").
@@ -5694,21 +5694,21 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
     partition=str.last();
 
   if (!partition.isEmpty()) {
-    toQList result=toQuery::readQuery(Connection,SQLPartitionSegmentType,
-				      index,partition);
+    toQList result=toQuery::readQueryNull(Connection,SQLPartitionSegmentType,
+					  index,partition);
 
     if (result.size()!=2)
       throw QString("Index partition %1.%2 not found").arg(owner).arg(name);
 
     return resizeIndexPartition(schema,owner,index,partition,toShift(result));
   }
-  toQList result=toQuery::readQuery(Connection,SQLIndexPartitioned,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLIndexPartitioned,name,owner);
   if (result.size()!=1)
     throw QString("Index %1.%2 not found").arg(owner).arg(name);
   QString partitioned=toShift(result);
   if (partitioned=="NO") {
-    toQList segment=toQuery::readQuery(Connection,SQLIndexSegmentInfo,
-				       name,"INDEX",owner);
+    toQList segment=toQuery::readQueryNull(Connection,SQLIndexSegmentInfo,
+					   name,"INDEX",owner);
     QString blocks =toShift(segment);
     QString initial=toShift(segment);
     QString next   =toShift(segment);
@@ -5729,9 +5729,9 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
 		 ");\n\n").arg(initial).arg(next);
     return ret;
   } else {
-    toQList partitions=toQuery::readQuery(Connection,
-					  SQLObjectPartitions,
-					  name,owner);
+    toQList partitions=toQuery::readQueryNull(Connection,
+					      SQLObjectPartitions,
+					      name,owner);
     QString ret;
     while(partitions.size()>0) {
       QString partition=toShift(partitions);
@@ -5764,8 +5764,8 @@ QString toExtract::resizeIndexPartition(const QString &schema,const QString &own
 					const QString &name,const QString &partition,
 					const QString &seqType)
 {
-  toQList result=toQuery::readQuery(Connection,SQLIndexPartitionSegment,
-				    name,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLIndexPartitionSegment,
+					name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);
   QString next            =toShift(result);
@@ -5840,16 +5840,16 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     partition=str.last();
 
   if (!partition.isEmpty()) {
-    toQList result=toQuery::readQuery(Connection,SQLPartitionSegmentType,
-				      table,partition);
+    toQList result=toQuery::readQueryNull(Connection,SQLPartitionSegmentType,
+					  table,partition);
 
     if (result.size()!=2)
       throw QString("Table partition %1.%2 not found").arg(owner).arg(name);
 
     QString ret=resizeTablePartition(schema,owner,table,partition,toShift(result));
 
-    toQList indexes=toQuery::readQuery(Connection,SQLTablePartIndex,
-				       table,owner);
+    toQList indexes=toQuery::readQueryNull(Connection,SQLTablePartIndex,
+					   table,owner);
     while(indexes.size()>0) {
       QString schema2=intSchema(toShift(indexes));
       QString index=intSchema(toShift(indexes));
@@ -5859,12 +5859,12 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     }
     return ret;
   }
-  toQList result=toQuery::readQuery(Connection,SQLTablePartitioned,name,owner);
+  toQList result=toQuery::readQueryNull(Connection,SQLTablePartitioned,name,owner);
   if (result.size()!=1)
     throw QString("Table %1.%2 not found").arg(owner).arg(name);
   QString partitioned=toShift(result);
   if (partitioned=="NO") {
-    toQList segment=toQuery::readQuery(Connection,SQLSegmentInfo,name,"TABLE",owner);
+    toQList segment=toQuery::readQueryNull(Connection,SQLSegmentInfo,name,"TABLE",owner);
     QString blocks =toShift(segment);
     QString initial=toShift(segment);
     QString next   =toShift(segment);
@@ -5885,9 +5885,9 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
 		 ");\n\n").arg(initial).arg(next);
     return ret;
   } else {
-    toQList partitions=toQuery::readQuery(Connection,
-					  SQLObjectPartitions,
-					  name,owner);
+    toQList partitions=toQuery::readQueryNull(Connection,
+					      SQLObjectPartitions,
+					      name,owner);
     QString ret;
     while(partitions.size()>0) {
       QString partition=toShift(partitions);
@@ -5895,8 +5895,8 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
       ret+=resizeTablePartition(schema,owner,name,partition,seqType);
     }
 
-    toQList indexes=toQuery::readQuery(Connection,SQLTablePartIndexes,
-				       name,owner);
+    toQList indexes=toQuery::readQueryNull(Connection,SQLTablePartIndexes,
+					   name,owner);
     while(indexes.size()>0) {
       QString schema2=intSchema(toShift(indexes));
       ret+=resizeIndex(schema2,owner,toShift(indexes));
@@ -5930,9 +5930,9 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
 					const QString &name,const QString &partition,
 					const QString &seqType)
 {
-  toQList result=toQuery::readQuery(Connection,
-				    toSQL::string(SQLTablePartitionSegment,Connection).arg(seqType),
-				    name,partition,owner);
+  toQList result=toQuery::readQueryNull(Connection,
+					toSQL::string(SQLTablePartitionSegment,Connection).arg(seqType),
+					name,partition,owner);
   QString blocks          =toShift(result);
   QString initial         =toShift(result);
   QString next            =toShift(result);

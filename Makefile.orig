@@ -89,6 +89,7 @@ SOURCES=\
 	toresultcontent.cpp		\
 	toresultcontentfilterui.cpp	\
 	toresultdepend.cpp	        \
+	toresultextract.cpp		\
 	toresultfield.cpp	        \
 	toresultindexes.cpp	        \
 	toresultitem.cpp	        \
@@ -211,6 +212,7 @@ plugins/tonoblockquery.tso:objs/tonoblockquery.o
 plugins/toresult.tso:\
 	objs/toresultconstraint.o \
 	objs/toresultdepend.o \
+	objs/toresultextract.o \
 	objs/toresultindexes.o \
 	objs/toresultlock.o \
 	objs/toresultlong.o \

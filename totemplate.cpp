@@ -487,10 +487,12 @@ void toTemplateSQL::expand(void)
   while(firstChild())
     delete firstChild();
   try {
-    toQList par=parameters();
-    toQList val=toQuery::readQuery(connection(),SQL,par);
-    for (toQList::iterator i=val.begin();i!=val.end();i++)
-      createChild(*i);
+    toQuery query(connection(),SQL,parameters());
+    while(!query.eof()) {
+      createChild(query.readValue());
+      for (int j=1;j<query.columns();j++)
+	query.readValue();
+    }
   } TOCATCH
 }
 

@@ -64,6 +64,21 @@ toToolWidget::toToolWidget(toTool &tool,const QString &ctx,QWidget *parent,toCon
   Connection=&conn;
   Timer=NULL;
   Connection->addWidget(this);
+
+  if (parent) {
+    // Voodoo for making connection changing cascade to sub tools.
+    try {
+      toToolWidget *tool=toCurrentTool(parent);
+      if (tool)
+	connect(tool,SIGNAL(connectionChange()),this,SLOT(parentConnection()));
+    } catch(...) {
+    }
+  }
+}
+
+void toToolWidget::parentConnection(void)
+{
+  setConnection(toCurrentConnection(parentWidget()));
 }
 
 toToolWidget::~toToolWidget()
@@ -165,7 +180,7 @@ void toTool::createWindow(void)
         if (newWin!=widget)
 	  tmp2=widget;
 	else
-	    tmp=newWin;
+	  tmp=newWin;
 	if (tmp2&&tmp)
 	  break;
       }

@@ -229,9 +229,9 @@ void toWorksheet::viewResources(void)
   } TOCATCH
 }
 
-toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
-  : toToolWidget(WorksheetTool,"worksheet.html",main,connection)
+void toWorksheet::setup(bool autoLoad)
 {
+  toConnection &connection=toWorksheet::connection();
   QToolBar *toolbar=toAllocBar(this,"SQL worksheet",connection.description());
 
   new QToolButton(QPixmap((const char **)execute_xpm),
@@ -267,123 +267,166 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 		  this,SLOT(rollbackButton(void)),
 		  toolbar);
 
-  QSplitter *splitter=new QSplitter(Vertical,this);
-
-  Editor=new toHighlightedText(splitter);
-  ResultTab=new QTabWidget(splitter);
-  QVBox *box=new QVBox(ResultTab);
-  ResultTab->addTab(box,"Result");
-
-  Result=new toResultLong(box);
-  connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
-  connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
-	  this,SLOT(addLog(const QString &,const QString &)));
-
-  Columns=new toResultCols(box);
-  Columns->hide();
-
-  ResultTab->setTabEnabled(Columns,false);
-  Plan=new toResultPlan(ResultTab);
-  ResultTab->addTab(Plan,"Execution plan");
-  Resources=new toResultResources(ResultTab);
-  ResultTab->addTab(Resources,"Information");
-  StatSplitter=new QSplitter(Horizontal,ResultTab);
-  Statistics=new toResultStats(true,StatSplitter);
-  Statistics->setTabWidget(ResultTab);
-  toResultBar *bar=new toResultBar(StatSplitter);
-  toSQL sql=toSQL::sql(TO_SESSION_WAIT);
-  bar->setSQL(sql);
-  bar->setTitle("Wait states");
-  bar->setYPostfix("ms/s");
-  bar->setSamples(-1);
-  connect(Statistics,SIGNAL(sessionChanged(const QString &)),
-	  bar,SLOT(changeParams(const QString &)));
-  bar=new toResultBar(StatSplitter);
-  sql=toSQL::sql(TO_SESSION_IO);
-  bar->setSQL(sql);
-  bar->setTitle("I/O");
-  bar->setYPostfix("blocks/s");
-  bar->setSamples(-1);
-  connect(Statistics,SIGNAL(sessionChanged(const QString &)),
-	  bar,SLOT(changeParams(const QString &)));
-  ResultTab->addTab(StatSplitter,"Statistics");
-  ResultTab->setTabEnabled(StatSplitter,false);
-
-  Logging=new toResultView(true,false,ResultTab);
-  ResultTab->addTab(Logging,"Logging");
-  Logging->addColumn("SQL");
-  Logging->addColumn("Result");
-  Logging->addColumn("Timestamp");
-  Logging->addColumn("Duration");
-  Logging->setColumnAlignment(3,AlignRight);
-  LastLogItem=NULL;
-
-  toolbar->addSeparator();
-  StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
-			     "Stop execution",
-			     "Stop execution",
-			     Result,SLOT(stop(void)),
-			     toolbar);
-  StopButton->setEnabled(false);
-  toolbar->addSeparator();
-  new QToolButton(QPixmap((const char **)eraselog_xpm),
-		  "Clear execution log",
-		  "Clear execution log",
-		  this,SLOT(eraseLogButton(void)),
-		  toolbar);
-
-  toolbar->addSeparator();
-  StatisticButton=new QToolButton(toolbar);
-  StatisticButton->setToggleButton(true);
-  StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
-  connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
-  QToolTip::add(StatisticButton,"Gather session statistic of execution");
-  new QLabel("Refresh",toolbar);
-  Refresh=toRefreshCreate(toolbar);
-  connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
-  connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
-  Refresh->setEnabled(false);
-
-  toolbar->setStretchableWidget(new QLabel("",toolbar));
-  new toChangeConnection(toolbar);
-
-  connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
-	  this,SLOT(changeResult(QWidget *)));
-
-  if (autoLoad) {
-    Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
-    if (!Editor->filename().isEmpty()) {
-      try {
-	QCString data=toReadFile(Editor->filename());
-	Editor->setText(QString::fromLocal8Bit(data));
-	Editor->setEdited(false);
-      } TOCATCH
-    }
-  }
-
-  ToolMenu=NULL;
-  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
-	  this,SLOT(windowActivated(QWidget *)));
-
-  if (connection.provider()=="Oracle") {
-    if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
-      show();
-      StatisticButton->setOn(true);
-    }
+  if (Light) {
+    Editor=new toHighlightedText(this);
+    Result=new toResultLong(this);
+    Result->hide();
+    connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
+    connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
+	    this,SLOT(addLog(const QString &,const QString &)));
+    ResultTab=NULL;
+    Plan=NULL;
+    CurrentTab=NULL;
+    Resources=NULL;
+    Statistics=NULL;
+    Logging=NULL;
+    LastLogItem=NULL;
+    StatisticButton=NULL;
+    StatSplitter=NULL;
+    Columns=NULL;
+    Refresh=NULL;
+    ToolMenu=NULL;
+    toolbar->addSeparator();
+    StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
+			       "Stop execution",
+			       "Stop execution",
+			       Result,SLOT(stop(void)),
+			       toolbar);
+    StopButton->setEnabled(false);
   } else {
-    StatisticButton->setEnabled(false);
+    QSplitter *splitter=new QSplitter(Vertical,this);
+
+    Editor=new toHighlightedText(splitter);
+    ResultTab=new QTabWidget(splitter);
+    QVBox *box=new QVBox(ResultTab);
+    ResultTab->addTab(box,"Result");
+
+    Result=new toResultLong(box);
+    connect(Result,SIGNAL(done(void)),this,SLOT(queryDone(void)));
+    connect(Result,SIGNAL(firstResult(const QString &,const QString &)),
+	    this,SLOT(addLog(const QString &,const QString &)));
+
+    Columns=new toResultCols(box);
+    Columns->hide();
+
+    ResultTab->setTabEnabled(Columns,false);
+    Plan=new toResultPlan(ResultTab);
+    ResultTab->addTab(Plan,"Execution plan");
+    Resources=new toResultResources(ResultTab);
+    ResultTab->addTab(Resources,"Information");
+    StatSplitter=new QSplitter(Horizontal,ResultTab);
+    Statistics=new toResultStats(true,StatSplitter);
+    Statistics->setTabWidget(ResultTab);
+    toResultBar *bar=new toResultBar(StatSplitter);
+    toSQL sql=toSQL::sql(TO_SESSION_WAIT);
+    bar->setSQL(sql);
+    bar->setTitle("Wait states");
+    bar->setYPostfix("ms/s");
+    bar->setSamples(-1);
+    connect(Statistics,SIGNAL(sessionChanged(const QString &)),
+	    bar,SLOT(changeParams(const QString &)));
+    bar=new toResultBar(StatSplitter);
+    sql=toSQL::sql(TO_SESSION_IO);
+    bar->setSQL(sql);
+    bar->setTitle("I/O");
+    bar->setYPostfix("blocks/s");
+    bar->setSamples(-1);
+    connect(Statistics,SIGNAL(sessionChanged(const QString &)),
+	    bar,SLOT(changeParams(const QString &)));
+    ResultTab->addTab(StatSplitter,"Statistics");
+    ResultTab->setTabEnabled(StatSplitter,false);
+
+    Logging=new toResultView(true,false,ResultTab);
+    ResultTab->addTab(Logging,"Logging");
+    Logging->addColumn("SQL");
+    Logging->addColumn("Result");
+    Logging->addColumn("Timestamp");
+    Logging->addColumn("Duration");
+    Logging->setColumnAlignment(3,AlignRight);
+    LastLogItem=NULL;
+
+    toolbar->addSeparator();
+    StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
+			       "Stop execution",
+			       "Stop execution",
+			       Result,SLOT(stop(void)),
+			       toolbar);
+    StopButton->setEnabled(false);
+    toolbar->addSeparator();
+    new QToolButton(QPixmap((const char **)eraselog_xpm),
+		    "Clear execution log",
+		    "Clear execution log",
+		    this,SLOT(eraseLogButton(void)),
+		    toolbar);
+
+    toolbar->addSeparator();
+    StatisticButton=new QToolButton(toolbar);
+    StatisticButton->setToggleButton(true);
+    StatisticButton->setIconSet(QIconSet(QPixmap((const char **)clock_xpm)));
+    connect(StatisticButton,SIGNAL(toggled(bool)),this,SLOT(enableStatistic(bool)));
+    QToolTip::add(StatisticButton,"Gather session statistic of execution");
+    new QLabel("Refresh",toolbar);
+    Refresh=toRefreshCreate(toolbar);
+    connect(Refresh,SIGNAL(activated(const QString &)),this,SLOT(changeRefresh(const QString &)));
+    connect(StatisticButton,SIGNAL(toggled(bool)),Refresh,SLOT(setEnabled(bool)));
+    Refresh->setEnabled(false);
+
+    toolbar->setStretchableWidget(new QLabel("",toolbar));
+    new toChangeConnection(toolbar);
+
+    connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
+	    this,SLOT(changeResult(QWidget *)));
+
+    if (autoLoad) {
+      Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
+      if (!Editor->filename().isEmpty()) {
+	try {
+	  QCString data=toReadFile(Editor->filename());
+	  Editor->setText(QString::fromLocal8Bit(data));
+	  Editor->setEdited(false);
+	} TOCATCH
+	    }
+    }
+
+    ToolMenu=NULL;
+    connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	    this,SLOT(windowActivated(QWidget *)));
+
+    if (connection.provider()=="Oracle") {
+      if (!WorksheetTool.config(CONF_STATISTICS,"").isEmpty()) {
+	show();
+	StatisticButton->setOn(true);
+      }
+    } else {
+      StatisticButton->setEnabled(false);
+    }
+    connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   }
-  connect(this,SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+}
+
+toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
+  : toToolWidget(WorksheetTool,"worksheet.html",main,connection),Light(false)
+{
+  setup(autoLoad);
+}
+
+toWorksheet::toWorksheet(QWidget *main,const char *name,toConnection &connection)
+  : toToolWidget(WorksheetTool,"worksheetlight.html",main,connection,name),Light(true)
+{
+  setup(false);
 }
 
 void toWorksheet::changeRefresh(const QString &str)
 {
-  if (StopButton->isEnabled()&&StatisticButton->isOn())
+  if (!Light&&StopButton->isEnabled()&&StatisticButton->isOn())
     toRefreshParse(timer(),str);
 }
 
 void toWorksheet::windowActivated(QWidget *widget)
 {
+  if (Light)
+    return;
+
   QWidget *w=this;
   while(w&&w!=widget) {
     w=w->parentWidget();
@@ -445,6 +488,8 @@ void toWorksheet::connectionChanged(void)
 
 bool toWorksheet::checkSave(bool input)
 {
+  if (Light)
+    return true;
   if (Editor->edited()) {
     if(WorksheetTool.config(CONF_AUTO_SAVE,"").isEmpty()||
        Editor->filename().isEmpty()) {
@@ -512,6 +557,8 @@ void toWorksheet::refresh(void)
     query(QueryString,false);
     StopButton->setEnabled(true);
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
+    if (Light)
+      return;
     if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
@@ -532,6 +579,8 @@ bool toWorksheet::describe(const QString &query)
   QStringList part=QStringList::split(white,query);
   if (part[0].upper()=="DESC"||
       part[0].upper()=="DESCRIBE") {
+    if (Light)
+      return true;
     if (toIsOracle(connection())) {
       if (part.count()==2) {
 	Columns->changeParams(unQuote(part[1]));
@@ -552,6 +601,8 @@ bool toWorksheet::describe(const QString &query)
       ResultTab->showPage(Columns);
     return true;
   } else {
+    if (Light)
+      return false;
     QWidget *curr=ResultTab->currentPage();
     Columns->hide();
     Result->show();
@@ -563,8 +614,7 @@ bool toWorksheet::describe(const QString &query)
 
 void toWorksheet::query(const QString &str,bool direct)
 {
-  if (!Timer.isNull()&&!QueryString.isEmpty())
-    addLog(QueryString,"Aborted");
+  Result->stop();
 
   QRegExp strq("'[^']*'");
   QString chk=str.lower();
@@ -605,9 +655,8 @@ void toWorksheet::query(const QString &str,bool direct)
     if (direct) {
       try {
 	Timer.start();
-	
 	toQuery query(connection(),QueryString,param);
-	
+
 	char buffer[100];
 	if (query.rowsProcessed()>0)
 	  sprintf(buffer,"%d rows processed",(int)query.rowsProcessed());
@@ -618,16 +667,17 @@ void toWorksheet::query(const QString &str,bool direct)
 	addLog(QueryString,exc);
       }
     } else {
+      Timer.start();
       Result->setNumberColumn(!WorksheetTool.config(CONF_NUMBER,"Yes").isEmpty());
       try {
 	Result->query(QueryString,param);
       } catch (const QString &exc) {
 	addLog(QueryString,exc);
       }
-      Timer.start();
-      if (StatisticButton->isOn())
-	toRefreshParse(timer(),Refresh->currentText());
-      
+      if (!Light) {
+	if (StatisticButton->isOn())
+	  toRefreshParse(timer(),Refresh->currentText());
+      }
       Result->setSQLName(QueryString.simplifyWhiteSpace().left(40));
     }
     StopButton->setEnabled(true);
@@ -647,30 +697,36 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     Timer=null;
   }
 
-  if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
-    if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-      item=new toResultViewItem(Logging,NULL);
+  if (!Light) {
+    if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
+      if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+	item=new toResultViewItem(Logging,NULL);
+      else
+	item=new toResultViewItem(Logging,LastLogItem);
+    } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
+      item=new toResultViewMLine(Logging,NULL);
     else
-      item=new toResultViewItem(Logging,LastLogItem);
-  } else if (WorksheetTool.config(CONF_LOG_AT_END,"Yes").isEmpty())
-    item=new toResultViewMLine(Logging,NULL);
-  else
-    item=new toResultViewMLine(Logging,LastLogItem);
-  item->setText(0,sql);
+      item=new toResultViewMLine(Logging,LastLogItem);
+    item->setText(0,sql);
   
-  LastLogItem=item;
-  item->setText(1,result);
-  item->setText(2,now);
+    LastLogItem=item;
+    item->setText(1,result);
+    item->setText(2,now);
+  }
+
   char buf[100];
   if (dur>=3600000) {
     sprintf(buf,"%d:%02d:%02d.%02d",dur/3600000,(dur/60000)%60,(dur/1000)%60,(dur/10)%100);
   } else {
     sprintf(buf,"%d:%02d.%02d",dur/60000,(dur/1000)%60,(dur/10)%100);
   }
-  item->setText(3,buf);
 
-  Logging->setCurrentItem(item);
-  Logging->ensureItemVisible(item);
+  if (!Light) {
+    item->setText(3,buf);
+
+    Logging->setCurrentItem(item);
+    Logging->ensureItemVisible(item);
+  }
 
   {
     QString str=result;
@@ -679,13 +735,14 @@ void toWorksheet::addLog(const QString &sql,const QString &result)
     str+=")";
     toStatusMessage(str);
   }
+  if (!Light)
+    changeResult(CurrentTab);
 
   if (!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty())
     connection().commit();
   else
     connection().setNeedCommit();
   saveDefaults();
-  changeResult(CurrentTab);
 }
 
 static void NewStatement(void)
@@ -918,7 +975,9 @@ void toWorksheet::execute(bool all,bool step)
   }
   if (Editor->hasMarkedText()&&!all) {
     query(Editor->markedText(),false);
-    if (CurrentTab==Plan)
+    if (Light)
+      return;
+    else if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
       viewResources();

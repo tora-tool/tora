@@ -340,6 +340,8 @@ class toToolWidget : public QVBox, public toHelpContext {
   toConnection *Connection;
   toTimer *Timer;
   toTool &amp;Tool;
+private slots:
+  void parentConnection(void);
 signals:
   /** Emitted when the connection is changed.
    */

@@ -55,6 +55,7 @@ class toSGATrace : public toToolWidget {
   toResultView *Trace;
   QTabWidget *ResultTab;
   QComboBox *Schema;
+  QComboBox *Type;
 
   toSGAStatement *Statement;
   QString CurrentSchema;

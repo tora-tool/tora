@@ -60,10 +60,12 @@ class QCheckBox;
 class QLabel;
 class QComboBox;
 class toTool;
+class QSplitter;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT
 
+  bool Light;
   toMarkedText *Editor;
   QTabWidget *ResultTab;
   toResultLong *Result;
@@ -89,8 +91,10 @@ class toWorksheet : public toToolWidget {
   void query(const QString &str,bool direct);
   bool checkSave(bool input);
   void saveDefaults(void);
+  void setup(bool autoLoad);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
+  toWorksheet(QWidget *parent,const char *name,toConnection &connection);
   virtual ~toWorksheet();
 
   virtual bool close(bool del);
