@@ -387,7 +387,7 @@ class toTemplateTool : public toTool {
   TODock *Dock;
   toTemplate *Window;
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return totemplate_xpm; }
 public:
   toTemplateTool()
@@ -401,14 +401,14 @@ public:
       Dock=toAllocDock(qApp->translate("toTemplateTool","Template"),QString::null,*toolbarImage());
       Window=new toTemplate(Dock);
     } else if (Dock->isHidden()) {
-#if TO_KDE
+#ifdef TO_KDE
       toAttachDock(Dock,Window,QMainWindow::Left);
 #else
       Dock->show();
 #endif
       Window->showResult(true);
     } else {
-#if TO_KDE
+#ifdef TO_KDE
       toAttachDock(Dock,Window,QMainWindow::Minimized);
 #else
       Dock->hide();
@@ -533,13 +533,13 @@ void toTemplate::showResult(bool show)
     return;
 
   if (show) {
-#if TO_KDE
+#ifdef TO_KDE
     toAttachDock((TODock *)Result,Frame,QMainWindow::Bottom);
 #else
     Result->show();
 #endif
   } else {
-#if TO_KDE
+#ifdef TO_KDE
     toAttachDock((TODock *)Result,Frame,QMainWindow::Minimized);
 #else
     Result->hide();

@@ -1,5 +1,5 @@
 /* XPM */
-static char * addwatch_xpm[] = {
+static const char * addwatch_xpm[] = {
 "16 16 82 1",
 " 	c None",
 ".	c #000000",

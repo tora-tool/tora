@@ -222,7 +222,7 @@ static toSQL SQLStopProfiler("toProfiler:StopProfiler",
 			     "Stop profiler run");
 
 class toProfilerTool : public toTool {
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return clock_xpm; }
 public:
   toProfilerTool()

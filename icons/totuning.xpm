@@ -1,5 +1,5 @@
 /* XPM */
-static char * totuning_xpm[] = {
+static const char * totuning_xpm[] = {
 "16 16 12 1",
 " 	c None",
 ".	c #000000",

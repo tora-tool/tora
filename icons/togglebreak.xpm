@@ -1,5 +1,5 @@
 /* XPM */
-static char * togglebreak_xpm[] = {
+static const char * togglebreak_xpm[] = {
 "16 16 19 1",
 " 	c None",
 ".	c #000000",

@@ -1,5 +1,5 @@
 /* XPM */
-static char * synonym_xpm[] = {
+static const char * synonym_xpm[] = {
 "16 11 32 1",
 " 	c None",
 ".	c #FFFFFF",

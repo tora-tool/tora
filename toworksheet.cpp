@@ -197,7 +197,7 @@ public slots:
 
 class toWorksheetTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return toworksheet_xpm; }
 public:
   toWorksheetTool()

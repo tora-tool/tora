@@ -1,5 +1,5 @@
 /* XPM */
-static char * schema_xpm[] = {
+static const char * schema_xpm[] = {
 "16 16 5 1",
 " 	c None",
 ".	c #0000FF",

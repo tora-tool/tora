@@ -1,5 +1,5 @@
 /* XPM */
-static char * tora_xpm[] = {
+static const char * tora_xpm[] = {
 "32 32 21 1",
 " 	c None",
 ".	c #75A5D1",

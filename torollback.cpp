@@ -168,7 +168,7 @@ void toRollbackPrefs::saveSetting(void)
 
 class toRollbackTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return torollback_xpm; }
 public:
   toRollbackTool()

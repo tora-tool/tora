@@ -72,7 +72,7 @@
 #include "icons/toanalyze.xpm"
 
 class toAnalyzeTool : public toTool {
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return toanalyze_xpm; }
 public:
   toAnalyzeTool()

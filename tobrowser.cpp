@@ -127,7 +127,7 @@
 #define CONF_FILTER_TEXT  	"FilterText"
 
 
-char **toBrowserTool::pictureXPM(void)
+const char **toBrowserTool::pictureXPM(void)
 {
   return tobrowser_xpm;
 }

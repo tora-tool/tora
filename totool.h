@@ -1,4 +1,4 @@
-//***************************************************************************
+/***************************************************************************
 /*
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2003 Quest Software, Inc
@@ -102,7 +102,7 @@ protected:
   /**
    * Should return the xpm used to create the @ref ButtonPicture.
    */
-  virtual char **pictureXPM(void);
+  virtual const char **pictureXPM(void);
 public:
   /**
    * Get the name.

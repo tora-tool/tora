@@ -106,7 +106,7 @@ static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
 				      "9.0");
 
 class toTemporaryTool : public toTool {
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return totemporary_xpm; }
 public:
   toTemporaryTool()

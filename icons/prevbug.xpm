@@ -1,5 +1,5 @@
 /* XPM */
-static char * prevbug_xpm[] = {
+static const char * prevbug_xpm[] = {
 "16 16 6 1",
 " 	c None",
 ".	c #000000",

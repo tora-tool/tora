@@ -199,9 +199,9 @@ std::map<QCString,QString> *toTool::Configuration;
 #define DEF_CONFIG_FILE "/etc/torarc"
 #endif
 
-char **toTool::pictureXPM(void)
+const char **toTool::pictureXPM(void)
 {
-  return NULL;
+  return (const char **) NULL;  // compiler warning
 }
 
 toTool::toTool(int priority,const char *name)
@@ -223,9 +223,9 @@ toTool::~toTool()
 const QPixmap *toTool::toolbarImage()
 {
   if (!ButtonPicture) {
-    char **picture=pictureXPM();
+    const char **picture=pictureXPM();
     if (picture)
-      ButtonPicture=new QPixmap((const char **)picture);
+      ButtonPicture=new QPixmap(picture);
   }
   return ButtonPicture;
 }

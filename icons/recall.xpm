@@ -1,5 +1,5 @@
 /* XPM */
-static char * recall_xpm[] = {
+static const char * recall_xpm[] = {
 "16 16 66 1",
 " 	c None",
 ".	c #929253",

@@ -1,5 +1,5 @@
 /* XPM */
-static char * disconnect_xpm[] = {
+static const char * disconnect_xpm[] = {
 "16 16 7 1",
 " 	c None",
 ".	c #000000",

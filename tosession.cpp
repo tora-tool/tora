@@ -81,7 +81,7 @@
 
 class toSessionTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return tosession_xpm; }
 public:
   toSessionTool()

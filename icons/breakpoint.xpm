@@ -1,5 +1,5 @@
 /* XPM */
-static char * breakpoint_xpm[] = {
+static const char * breakpoint_xpm[] = {
 "8 8 4 1",
 " 	c None",
 ".	c #000000",

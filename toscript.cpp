@@ -180,7 +180,7 @@ static toSQL SQLSchemas("toScript:ExtractSchema",
 
 class toScriptTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return toscript_xpm; }
 public:
   toScriptTool()

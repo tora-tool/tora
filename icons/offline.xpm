@@ -1,5 +1,5 @@
 /* XPM */
-static char * offline_xpm[] = {
+static const char * offline_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #000000",

@@ -1,5 +1,5 @@
 /* XPM */
-static char * tolongops_xpm[] = {
+static const char * tolongops_xpm[] = {
 "16 16 2 1",
 " 	c None",
 ".	c #000000",

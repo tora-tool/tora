@@ -80,7 +80,7 @@ class toAlertTool : public toTool {
 protected:
   std::map<toConnection *,QWidget *> Windows;
 
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return toalert_xpm; }
 public:
   toAlertTool()

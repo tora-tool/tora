@@ -1,5 +1,5 @@
 /* XPM */
-static char * view_xpm[] = {
+static const char * view_xpm[] = {
 "16 16 5 1",
 " 	c None",
 ".	c #FFFFFF",

@@ -1,5 +1,5 @@
 /* XPM */
-static char * refresh_xpm[] = {
+static const char * refresh_xpm[] = {
 "16 14 3 1",
 " 	c None",
 ".	c #7F7F7F",

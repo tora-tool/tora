@@ -182,7 +182,7 @@ class toBrowserTool : public toTool {
   Q_OBJECT
 
 protected:
-  virtual char **pictureXPM(void);
+  virtual const char **pictureXPM(void);
 public:
   toBrowserTool();
   virtual const char *menuItem();

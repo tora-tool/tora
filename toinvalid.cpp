@@ -88,7 +88,7 @@ static toSQL SQLReadErrors("toInvalid:ReadErrors",
 			   "Get lines with errors in object (Observe first line 0)");
 
 class toInvalidTool : public toTool {
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return toinvalid_xpm; }
 public:
   toInvalidTool()

@@ -176,7 +176,7 @@ static toSQL SQLRoleGrant("toSecurity:RoleGrant",
 
 class toSecurityTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return tosecurity_xpm; }
 public:
   toSecurityTool()

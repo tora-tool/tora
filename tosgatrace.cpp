@@ -102,7 +102,7 @@ public:
 
 class toSGATraceTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return tosgatrace_xpm; }
 public:
   toSGATraceTool()

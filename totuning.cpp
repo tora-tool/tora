@@ -139,7 +139,7 @@ public:
 
 class toTuningTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return totuning_xpm; }
 public:
   toTuningTool()

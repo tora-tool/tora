@@ -128,7 +128,7 @@ void toStoragePrefs::saveSetting(void)
 
 class toStorageTool : public toTool {
 protected:
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return tostorage_xpm; }
 public:
   toStorageTool()

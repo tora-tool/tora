@@ -1,5 +1,5 @@
 /* XPM */
-static char * deindent_xpm[] = {
+static const char * deindent_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #FFFFFF",

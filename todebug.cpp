@@ -117,7 +117,7 @@
 class toDebugTool : public toTool {
   std::map<toConnection *,QWidget *> Windows;
 
-  virtual char **pictureXPM(void)
+  virtual const char **pictureXPM(void)
   { return todebug_xpm; }
 public:
   toDebugTool()
@@ -828,8 +828,8 @@ int toDebug::sync(void)
 }
 
 static struct TypeMapType {
-  char *Type;
-  char *Description;
+  const char *Type;
+  const char *Description;
   bool WantName;
   bool Declaration;
 } TypeMap[] = { { "FUNCTION",  "Function",   true ,true }, // Must be first in list
