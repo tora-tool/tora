@@ -38,17 +38,22 @@
 #include "tosearchreplaceui.h"
 
 class toMarkedText;
+class toListView;
 
 class toSearchReplace : public toSearchReplaceUI {
   toMarkedText *Text;
+  toListView *List;
 
   int findIndex(const QString &str,int line,int col);
   void findPosition(const QString &str,int index,int &line,int &col);
+  bool findString(const QString &str,int &startPos,int &endPos);
+  void release(void);
 
 public:
   toSearchReplace(QWidget *parent);
 
   void setTarget(toMarkedText *parent);
+  void setTarget(toListView *parent);
   bool searchNextAvailable()
   { return SearchNext->isEnabled(); }
 public slots:

@@ -455,8 +455,6 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
     menuBar()->setItemEnabled(TO_FILE_PRINT,true);
     menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
-			      Search&&Search->searchNextAvailable());
   } else {
     menuBar()->setItemEnabled(TO_EDIT_UNDO,false);
     menuBar()->setItemEnabled(TO_EDIT_REDO,false);
@@ -467,12 +465,11 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH,false);
-    menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,false);
     if (dynamic_cast<toResultView *>(currWidget)||
 	toContent(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
+      menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
       if (dynamic_cast<toListView *>(currWidget))
@@ -481,6 +478,8 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
 	menuBar()->setItemEnabled(TO_FILE_PRINT,false);
     }
   }
+  menuBar()->setItemEnabled(TO_EDIT_SEARCH_NEXT,
+			    Search&&Search->searchNextAvailable());
 }
 
 void toMain::windowsMenu(void)
@@ -544,15 +543,6 @@ void toMain::commandCallback(int cmd)
 	break;
       case TO_EDIT_SELECT_ALL:
 	mark->selectAll();
-	break;
-      case TO_EDIT_SEARCH:
-	if (!Search)
-	  Search=new toSearchReplace(this);
-	Search->setTarget(mark);
-	break;
-      case TO_EDIT_SEARCH_NEXT:
-	if (Search)
-	  Search->searchNext();
 	break;
       case TO_FILE_OPEN:
 	if (!readOnly) {
@@ -638,6 +628,21 @@ void toMain::commandCallback(int cmd)
       break;
     case TO_FILE_QUIT:
       close(true);
+      break;
+    case TO_EDIT_SEARCH:
+      if (!Search)
+	Search=new toSearchReplace(this);
+      if (mark)
+	Search->setTarget(mark);
+      else {
+	toListView *lst=dynamic_cast<toListView *>(qApp->focusWidget());
+	if (lst)
+	  Search->setTarget(lst);
+      }
+      break;
+    case TO_EDIT_SEARCH_NEXT:
+      if (Search)
+	Search->searchNext();
       break;
     case TO_WINDOWS_CASCADE:
       workspace()->cascade();
