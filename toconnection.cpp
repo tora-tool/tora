@@ -1094,8 +1094,14 @@ std::list<QString> &toConnection::columns(const tableName &table)
     SQL+="\" WHERE NULL=NULL";
     toQuery query(*this,SQL);
     toQDescList desc=query.describe();
-    for(toQDescList::iterator j=desc.begin();j!=desc.end();j++)
-      toPush(cols,(*j).Name);
+    for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
+      QString name=(*j).Name;
+      if (name.upper()==name)
+	name=name.lower();
+      else
+	name="\""+name+"\"";
+      toPush(cols,name);
+    }
     ColumnCache[table]=cols;
   }
   return ColumnCache[table];

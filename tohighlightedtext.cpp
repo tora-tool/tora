@@ -595,10 +595,10 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	Completion->clear();
 	CompleteItem=-1;
 	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	  if ((*i)==mrk.upper()) {
+	  if ((*i).upper()==mrk.upper()) {
 	    insert(mrk,false);
 	    return;
-	  } else if ((*i).startsWith(mrk.upper()))
+	  } else if ((*i).upper().startsWith(mrk.upper()))
 	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
 	}
 
@@ -625,10 +625,10 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	Completion->clear();
 	CompleteItem=-1;
 	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	  if ((*i)==mrk.upper()) {
+	  if ((*i).upper()==mrk.upper()) {
 	    insert(mrk,false);
 	    return;
-	  } else if ((*i).startsWith(mrk.upper()))
+	  } else if ((*i).upper().startsWith(mrk.upper()))
 	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
 	}
 

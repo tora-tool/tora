@@ -48,6 +48,7 @@
 2001-09-17: Added describe under cursor to worksheet.
 2001-09-17: Lots of Oracle 7 improvements.
 2001-09-17: Optimized toResultCols.
+2001-09-17: Handle escaped columns in completion.
 
 1.1.0: Released 2001-09-09
 
