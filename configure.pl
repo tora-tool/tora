@@ -507,6 +507,11 @@ __TEMP__
 	print "checking for KDE version ... $KDEVersion\n";
     }
     if ($KDEApplication) {
+	if (!defined $KDEInclude) {
+	    print "\nKDE includes not found\n";
+	}
+	$Includes.="\"-I".$KDEInclude."\" ";
+
 	print "checking for KDE print support ... ";
 
 	my $kprint=findFile("^kprinter\\.h\$",sub {
@@ -520,8 +525,6 @@ __TEMP__
 	} else {
 	    print "no\n";
 	}
-
-	$Includes.="\"-I".$KDEInclude."\" ";
 
 	print "checking for KDE libraries ... ";
 
