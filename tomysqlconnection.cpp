@@ -379,7 +379,7 @@ public:
 
     void throwError(const QString &sql=QString::null)
     {
-      char *str=mysql_error(Connection);
+      const char *str=mysql_error(Connection);
       if (str) {
 	if (!sql.isEmpty()) {
 	  QString err=str;
@@ -410,7 +410,7 @@ public:
 
     virtual QCString version(toConnectionSub *sub)
     {
-      char *version=mysql_get_server_info(Connection);
+      const char *version=mysql_get_server_info(Connection);
       if (!version)
 	return "Unknown";
       return version;

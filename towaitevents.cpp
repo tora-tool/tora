@@ -166,7 +166,7 @@ void toWaitEvents::setup(int session)
     connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   } TOCATCH
 
-      QValueList<int> siz;
+  QValueList<int> siz;
   siz<<1<<2;
   splitter->setSizes(siz);
   LastTime=0;

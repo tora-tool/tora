@@ -445,7 +445,8 @@ void toDebug::targetTask::run(void)
 	Parent.Lock.lock();
 	Parent.TargetLog+=QString::fromLatin1("Encountered error: ");
 	Parent.TargetLog+=str;
-	Parent.TargetException+=str;
+	if (!str.startsWith("ORA-06543:"))
+	  Parent.TargetException+=str;
 	Parent.TargetLog+=QString::fromLatin1("\n");
 	Parent.Lock.unlock();
       } catch (...) {
@@ -1052,6 +1053,7 @@ void toDebug::updateState(int reason)
   case TO_REASON_EXIT:
   case TO_REASON_KNL_EXIT:
     ChildSemaphore.down();
+    // Intentionally no break here
   case TO_REASON_NO_SESSION:
     StopButton->setEnabled(false);
     StepOverButton->setEnabled(false);
@@ -1632,6 +1634,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   DebugTabs->hide();
 
 
+#if 0
   {
     QValueList<int> sizes=splitter->sizes();
     sizes[0]+=sizes[1]-200;
@@ -1639,6 +1642,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
     splitter->setSizes(sizes);
     splitter->setResizeMode(DebugTabs,QSplitter::KeepSize);
   }
+#endif
 
   QSplitter *objSplitter=new QSplitter(Vertical,hsplitter);
 
@@ -1731,12 +1735,14 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   connect(BodyEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
 
+#if 0
   {
     QValueList<int> sizes=hsplitter->sizes();
     sizes[0]=200;
     hsplitter->setSizes(sizes);
     hsplitter->setResizeMode(objSplitter,QSplitter::KeepSize);
   }
+#endif
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
