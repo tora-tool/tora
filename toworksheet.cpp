@@ -682,20 +682,8 @@ void toWorksheet::changeResult(QWidget *widget)
 
 void toWorksheet::refresh(void)
 {
-  if (!QueryString.isEmpty()) {
+  if (!QueryString.isEmpty())
     query(QueryString,false);
-    StopButton->setEnabled(true);
-    Poll.start(1000);
-    toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
-    if (Light)
-      return;
-    if (CurrentTab==Visualize)
-      Visualize->display();
-    else if (CurrentTab==Plan)
-      Plan->query(QueryString);
-    else if (CurrentTab==Resources)
-      viewResources();
-  }
 }
 
 static QString unQuote(const QString &str)
@@ -826,6 +814,14 @@ void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 	saveHistory();
 	Result->setSQL(QString::null);
 	Result->query(QueryString,param);
+	if (Light)
+	  return;
+	if (CurrentTab==Visualize)
+	  Visualize->display();
+	else if (CurrentTab==Plan)
+	  Plan->query(QueryString);
+	else if (CurrentTab==Resources)
+	  viewResources();
       } catch (const toConnection::exception &exc) {
 	addLog(QueryString,exc,true);
       } catch (const QString &exc) {
