@@ -114,6 +114,17 @@ static QPixmap *toCopyPixmap;
 static QPixmap *toPastePixmap;
 static QPixmap *toPrintPixmap;
 
+static toResultContent *toContent(QWidget *widget)
+{
+  while(widget) {
+    toResultContent *ret=dynamic_cast<toResultContent *>(widget);
+    if (ret)
+      return ret;
+    widget=widget->parentWidget();
+  }
+  return NULL;
+}
+
 toMain::toMain()
   : QMainWindow(0,"Main Window")
 {
@@ -415,7 +426,7 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
     if (dynamic_cast<toResultView *>(currWidget)||
-	dynamic_cast<toResultContent *>(currWidget)) {
+	toContent(currWidget)) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
     } else {
@@ -547,7 +558,7 @@ void toMain::commandCallback(int cmd)
     case TO_EDIT_READ_ALL:
       {
 	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
-	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
+	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  res->readAll();
 	else if (cnt)
@@ -557,10 +568,10 @@ void toMain::commandCallback(int cmd)
     case TO_FILE_PRINT:
       {
 	toResultView *res=dynamic_cast<toResultView *>(qApp->focusWidget());
-	toResultContent *cnt=dynamic_cast<toResultContent *>(qApp->focusWidget());
+	toResultContent *cnt=toContent(qApp->focusWidget());
 	if (res)
 	  res->print();
-	else if (res)
+	else if (cnt)
 	  cnt->print();
 	else if (mark)
 	  mark->print();

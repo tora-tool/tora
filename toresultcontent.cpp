@@ -254,12 +254,6 @@ void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)
     addRow();
 }
 
-void toResultContent::mousePressEvent(QMouseEvent *e)
-{
-  setFocus();
-  QTable::mousePressEvent(e);
-}
-
 void toResultContent::readAll(void)
 {
   while (Query&&!Query->eof()) {
@@ -272,26 +266,35 @@ void toResultContent::readAll(void)
 
 void toResultContent::print(void)
 {
-  toResultView *print=new toResultView(false,true,Connection,this);
-  print->hide();
+  toResultView print(false,true,Connection,this);
+  print.hide();
   QString name="Content of ";
   name+=Owner;
   name+=".";
   name+=Table;
-  print->setSQLName(name);
+  print.setSQLName(name);
   QString sql="SELECT * FROM \"";
   sql+=Owner;
   sql+="\".\"";
   sql+=Table;
   sql+="\"";
-  print->query(sql);
-  print->print();
-  delete print;
+  print.query(sql);
+  print.print();
+}
+
+void toResultContent::activateNextCell()
+{
+  if (currentColumn()+1<numCols())
+    setCurrentCell(currentRow(),currentColumn()+1);
+  else {
+    if (currentRow()+1>=numRows())
+      setNumRows(Row+2);
+    setCurrentCell(currentRow()+1,0);
+  }
 }
 
 void toResultContent::focusInEvent (QFocusEvent *e)
 {
-  printf("Focus received\n");
   toMain::editEnable(false,false,true,
 		     false,false,
 		     false,false,false);
@@ -300,7 +303,6 @@ void toResultContent::focusInEvent (QFocusEvent *e)
 
 void toResultContent::focusOutEvent (QFocusEvent *e)
 {
-  printf("Focus lost\n");
   toMain::editDisable();
   QTable::focusOutEvent(e);
 }

@@ -54,9 +54,9 @@ class toResultContent : public QTable,public toResult {
   virtual QWidget *beginEdit(int row,int col,bool replace);
   virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
   virtual void keyPressEvent(QKeyEvent *e);
-  virtual void mousePressEvent(QMouseEvent *);
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 
+  virtual void activateNextCell();
 public:
   toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL);
   virtual void query(const QString &sql,const list<QString> &param)
@@ -72,7 +72,6 @@ public slots:
   virtual void refresh(void)
   { changeParams(Owner,Table); }
   virtual void changeParams(const QString &Param1,const QString &Param2);
-
   void changePosition(int col,int row);
 };
 

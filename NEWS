@@ -35,7 +35,8 @@
 2001-03-23: Added security manager.
 2001-03-23: Fixed listview traversion in toDebug.
 2001-03-24: Changed undo to CTRL+Y (Standard Qt)
-2001-03-24: Changed toResultContent to be editable.
+2001-03-24: Changed toResultContent to be editable (In browser).
+2001-03-24: Accept Qt > 2.2 (Including 2.3 and 3.0) in configure script.
 
 0.6: Released 2001-02-23
 

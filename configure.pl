@@ -229,7 +229,7 @@ __TEMP__
     print "Using metacompiler $MOC\n";
 
     $QtInclude=findFile("^qglobal\\.h\$",sub {
-	                                     return !system("grep \"QT_VERSION.*[ \t]22\" '".$_[0]."' >/dev/null");
+	                                     return !system("grep -E \"QT_VERSION.*[ \t]((2[23456789])|(3))\" '".$_[0]."' >/dev/null");
 					 },
 			$QtDir."/include",
 			"/usr/include",

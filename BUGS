@@ -4,3 +4,7 @@ OCI:
 toDebug:
 	Seems a recompiled object seems invalidated the first time it is executed in the target
 	session.
+
+Qt:
+	Some layouts seem to expand far beyond the content of the screen until you resize it.
+	The toResultContent never seem to receive focus as it should, how should this be fixes?
