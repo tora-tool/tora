@@ -275,6 +275,10 @@ void toHighlightedText::setStatusMessage(void)
     toStatusMessage((*err).second,true);
 }
 
+#if QT_VERSION >= 0x030000 && QT_VERSION < 0x030200
+#  define FORCE_BREAK 20
+#endif
+
 void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 {
   if (!Highlight) {
@@ -347,9 +351,9 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
     QString c;
 
-#if QT_VERSION >= 300
+#ifdef FORCE_BREAK
     int lastcol=0;
-    int MAXCOL=20;
+    int MAXCOL=FORCE_BREAK;
 #endif
 
     for (int i=0;i<=int(str.length())&&posx<width;i++) {
@@ -386,11 +390,11 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       }
 
       if (wasMarked!=marked||col!=wasCol||str[i]=='\t'||(curline==row&&curcol==i)
-#if QT_VERSION >= 300
-	  ||(lastcol+MAXCOL>i)
+#ifdef FORCE_BREAK
+	  ||(lastcol+MAXCOL<i)
 #endif
 	  ) {
-#if QT_VERSION >= 300
+#ifdef FORCE_BREAK
 	lastcol=i;
 #endif
 	QChar nc;
@@ -415,7 +419,11 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 
 	  if (i==int(c.length()))
 	    painter->fillRect(LeftIgnore,0,posx-LeftIgnore,height,painter->backgroundColor());
-	  if (rect.height()<height)
+#if QT_VERSION == 0x030200 && defined (WIN32)
+	  rect.setHeight(rect.height()+1);
+	  rect.setWidth(rect.width()-1);
+#endif
+	  if (rect.height()<=height)
 	    painter->fillRect(posx,rect.height(),rect.width(),height-rect.height(),painter->backgroundColor());
 
 	  posx=rect.right()+1;
