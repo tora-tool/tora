@@ -311,7 +311,7 @@ toMain::toMain()
     const char *menuName=(*i).second->menuItem();
 
     QString tmp=(*i).second->name();
-    tmp+="Enabled";
+    tmp+=CONF_TOOL_ENABLE;
     if (toTool::globalConfig(tmp,"Yes").isEmpty())
       continue;
 
