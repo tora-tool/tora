@@ -7,7 +7,7 @@ bin_PROGRAMS=tora
 METASOURCES = AUTO
 
 INCLUDES = @KDE_INCLUDES@ @QT_INCLUDES@ $(LTDLINCL)
-CPPFLAGS  = $(PCRE_CFLAGS) -DDEFAULT_PLUGIN_DIR=\"$(libdir)\"
+CPPFLAGS  = $(PCRE_CFLAGS) -DDEFAULT_PLUGIN_DIR=\"$(libdir)\" $(ORACLE_CXXFLAGS)
 LDFLAGS = $(PCRE_LIBS) \
 	@KDE_LDFLAGS@ \
 	@X_LDFLAGS@ \
@@ -21,14 +21,107 @@ LDFLAGS = $(PCRE_LIBS) \
 	@LIB_DCOP@ \
 	@LIB_KHTML@ \
 	-lstdc++ \
-	@LIBPTHREAD@
+	@LIBPTHREAD@ \
+	$(ORACLE_LDFLAGS)
 
-# just tora. must -export-dynamic on linux in order to dlopen().
-# libtool will do the right thing.
-tora_LDFLAGS = -export-dynamic
+# fix for annoying automake naming problems.
+tora_CXXFLAGS  = $(AM_CXXFLAGS)
 
-if !ENABLE_PLUGIN
-tora_LDADD = $(lib_LTLIBRARIES)
+tora_LDADD = $(ORACLE_LIBS) $(@TORA_LINK_OTHERS@)
+
+if ENABLE_MONO
+EXTRA_tora_SOURCES = toalert.cpp toalert.h \
+    toanalyze.cpp toanalyze.h  \
+    tobackup.cpp tobackup.h \
+    tobrowser.cpp tobrowser.h  \
+    tobarchart.cpp tobarchart.h  \
+    tocurrent.cpp tocurrent.h \
+    todebug.cpp todebug.h  \
+    toeditextensions.cpp toeditextensions.h  \
+    todatatype.cpp todatatype.h  \
+    toinvalid.cpp toinvalid.h \
+    tooracleconnection.cpp  \
+    tooutput.cpp tooutput.h \
+    topassword.cpp \
+    toprofiler.cpp toprofiler.h \
+    toproject.cpp toproject.h \
+    toqsqlconnection.cpp \
+    torollback.cpp torollback.h  \
+    toscript.cpp toscript.h  \
+    tosecurity.cpp tosecurity.h  \
+    tosession.cpp tosession.h \
+    tosgatrace.cpp tosgatrace.h \
+    tosqledit.cpp tosqledit.h \
+    tostorage.cpp tostorage.h  \
+    tostoragedefinition.cpp tostoragedefinition.h  \
+    totemplate.cpp totemplate.h  \
+    totemporary.cpp totemporary.h \
+    totuning.cpp totuning.h  \
+    tochangeconnection.cpp tochangeconnection.h  \
+    toworksheet.cpp toworksheet.h  \
+    toworksheetstatistic.cpp toworksheetstatistic.h \
+    tobrowserconstraint.cpp tobrowserconstraint.h  \
+    tobrowserconstraintui.cpp tobrowserconstraintui.h  \
+    tobrowserfilterui.cpp tobrowserfilterui.h  \
+    tobrowserindex.cpp tobrowserindex.h  \
+    tobrowserindexui.cpp tobrowserindexui.h  \
+    tobrowsertable.cpp tobrowsertable.h  \
+    tobrowsertableui.cpp tobrowsertableui.h \
+    tochartalarmui.cpp tochartalarmui.h  \
+    tochartmanager.cpp tochartmanager.h  \
+    tochartsetupui.cpp tochartsetupui.h  \
+    tolegendchart.cpp tolegendchart.h  \
+    tolinechart.cpp tolinechart.h  \
+    tolinechartsetupui.cpp tolinechartsetupui.h  \
+    topiechart.cpp topiechart.h  \
+    toresultbar.cpp toresultbar.h  \
+    toresultline.cpp toresultline.h  \
+    toresultpie.cpp toresultpie.h \
+    todebugwatch.cpp todebugwatch.h  \
+    todebugtext.cpp todebugtext.h  \
+    todebugchangeui.cpp todebugchangeui.h \
+    toeditextensiongotoui.cpp toeditextensiongotoui.h  \
+    toeditextensionsetupui.cpp toeditextensionsetupui.h \
+    toextract.cpp toextract.h  \
+    toreport.cpp toreport.h  \
+    toresultconstraint.cpp toresultconstraint.h  \
+    toresultextract.cpp toresultextract.h \
+    tooracleextract.cpp  \
+    tooraclesettingui.cpp tooraclesettingui.h \
+    toresultcols.cpp toresultcols.h  \
+    toresultcombo.cpp toresultcombo.h  \
+    toresultcontent.cpp toresultcontent.h  \
+    toresultcontentfilterui.cpp toresultcontentfilterui.h  \
+    toresultdepend.cpp toresultdepend.h  \
+    toresultindexes.cpp toresultindexes.h  \
+    toresultlabel.cpp toresultlabel.h  \
+    toresultlock.cpp toresultlock.h  \
+    toresultlong.cpp toresultlong.h  \
+    toresultplan.cpp toresultplan.h  \
+    toresultparam.cpp toresultparam.h  \
+    toresultreferences.cpp toresultreferences.h  \
+    toresultstorage.cpp toresultstorage.h \
+    torollbackdialogui.cpp torollbackdialogui.h \
+    toscriptui.cpp toscriptui.h \
+    tosecurityquotaui.cpp tosecurityquotaui.h  \
+    tosecurityroleui.cpp tosecurityroleui.h  \
+    tosecurityuserui.cpp tosecurityuserui.h \
+    tostoragedatafileui.cpp tostoragedatafileui.h  \
+    tostoragedialogui.cpp tostoragedialogui.h  \
+    tostorageprefsui.cpp tostorageprefsui.h  \
+    tostoragetablespaceui.cpp tostoragetablespaceui.h \
+    tostoragedefinitionui.cpp tostoragedefinitionui.h \
+    totemplateaddfileui.cpp totemplateaddfileui.h  \
+    totemplateeditui.cpp totemplateeditui.h  \
+    totemplatesetupui.cpp totemplatesetupui.h \
+    totuningoverviewui.cpp totuningoverviewui.h  \
+    totuningsettingui.cpp totuningsettingui.h \
+    tofilesize.cpp tofilesize.h  \
+    tosgastatement.cpp tosgastatement.h  \
+    totableselect.cpp totableselect.h  \
+    tovisualize.cpp tovisualize.h  \
+    towaitevents.cpp towaitevents.h \
+    toworksheetsetupui.cpp toworksheetsetupui.h
 endif
 
 tora_SOURCES=main.cpp aclocal.m4 \
@@ -75,7 +168,8 @@ tora_SOURCES=main.cpp aclocal.m4 \
 	tothread.cpp tothread.h \
 	totool.cpp totool.h \
 	totoolsettingui.cpp totoolsettingui.h \
-	utils.cpp utils.h
+	utils.cpp utils.h \
+	$(EXTRA_tora_SOURCES)
 
 EXTRA_DIST = debian \
 	help \
@@ -327,8 +421,7 @@ else
 OPTlIB_ORA =
 endif
 
-# plugins
-lib_LTLIBRARIES = libtoalert.la \
+plugins = libtoalert.la \
 	libtoanalyze.la \
 	libtobackup.la \
 	libtobrowser.la \
@@ -359,10 +452,11 @@ lib_LTLIBRARIES = libtoalert.la \
 	libtoworksheet.la \
 	$(OPTLIB_ORA)
 
-if ENABLE_PLUGIN
-PLUGIN_PFLAGS = -module -shared
+if !ENABLE_MONO
+lib_LTLIBRARIES = $(plugins)
 endif
-PFLAGS = -avoid-version -rpath $(libdir) $(PLUGIN_PFLAGS)
+
+PFLAGS = -avoid-version -rpath $(libdir) -module -shared
 
 libtoalert_la_LDFLAGS = $(PFLAGS)
 libtoalert_la_SOURCES = toalert.cpp toalert.h
