@@ -8016,7 +8016,7 @@ public:
        0,
        OTL_SCAST(ub4,OCI_ATTR_PARSE_ERROR_OFFSET),
        errhp)==OCI_SUCCESS) {
-    exception_struct.errorofs=errorofs;
+    exception_struct.errorofs=min(int(errorofs),2023);
   }
  }
 

@@ -268,9 +268,7 @@ QString toExtract::create(std::list<QString> &objects)
       if (pos<0)
 	throw QString("Internal error, missing : in object description");
       parseObject(type.right(type.length()-pos-1),owner,name);
-      printf("BT %s\n",(const char *)type);
       type.truncate(pos);
-      printf("AT %s\n",(const char *)type);
       QString utype=type.upper();
       QString schema=intSchema(owner,false);
 

@@ -108,7 +108,7 @@ static void ThrowException(const otl_exception &exc)
 {
   toConnection::exception ret=QString::fromUtf8((const char *)exc.msg);
 #if 1
-  if (exc.errorofs>0&&strlen(exc.stm_text)) {
+  if (exc.stm_text&&strlen(exc.stm_text)) {
     ret+="\n";
     QString sql=QString::fromUtf8((const char *)exc.stm_text);
     if (exc.errorofs>=0) {
