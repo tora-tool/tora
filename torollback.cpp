@@ -259,7 +259,7 @@ void toRollbackDialog::valueChanged(const QString &)
 }
 
 #define MIN_HEIGHT 4
-#define TRANSCOL 18
+#define TRANSCOL 17
 
 static bool BarsAlignLeft=true;
 
@@ -312,34 +312,33 @@ static void PaintBars(QListViewItem *item,QPainter *p,const QColorGroup & cg,
 }
 
 static toSQL SQLRollback("toRollback:Information",
-			 "select a.segment_name \"Segment\",\n"
+			 "SELECT a.segment_name \"Segment\",\n"
 			 "       a.owner \"Owner\",\n"
 			 "       a.tablespace_name \"Tablespace\",\n"
 			 "       a.status \"Status\",\n"
 			 "       b.xacts \"-Transactions\",\n"
-			 "       ROUND(a.initial_extent/unit,3) \"-Initial (MB)\",\n"
-			 "       ROUND(a.next_extent/unit,3) \"-Next (MB)\",\n"
+			 "       ROUND ( a.initial_extent / :unit<char[100]>,\n"
+			 "	       3 ) \"-Initial (MB)\",\n"
+			 "       ROUND ( a.next_extent / :unit<char[100]>,\n"
+			 "	       3 ) \"-Next (MB)\",\n"
 			 "       a.pct_increase \"-PCT Increase\",\n"
-			 "       ROUND(b.rssize/unit,3) \"-Current (MB)\",\n"
-			 "       ROUND(b.optsize/unit,3) \"-Optimal (MB)\",\n"
-			 "       ROUND(b.aveactive/unit,3) \"-Used (MB)\",\n"
-			 "       b.Extents \"-Extents\",\n"
+			 "       ROUND ( b.rssize / :unit<char[100]>,\n"
+			 "	       3 ) \"-Current (MB)\",\n"
+			 "       ROUND ( b.optsize / :unit<char[100]>,\n"
+			 "	       3 ) \"-Optimal (MB)\",\n"
+			 "       ROUND ( b.aveactive / :unit<char[100]>,\n"
+			 "	       3 ) \"-Used (MB)\",\n"
+			 "       b.EXTENTS \"-Extents\",\n"
 			 "       b.CurExt \"-Current\",\n"
 			 "       b.CurBlk \"-Block\",\n"
-			 "       c.Blocks \"-Blocks\",\n"
 			 "       b.gets \"-Reads\",\n"
-			 "       ROUND((b.gets-b.waits)*100/b.gets,2)||'%' \"-Hitrate\",\n"
+			 "       ROUND ( ( b.gets - b.waits ) * 100 / b.gets,\n"
+			 "	       2 ) || '%' \"-Hitrate\",\n"
 			 "       a.segment_id \" USN\"\n"
-			 "  from sys.dba_rollback_segs a,\n"
+			 "  FROM sys.dba_rollback_segs a,\n"
 			 "       v$rollstat b,\n"
-			 "       sys.dba_extents c,\n"
-			 "       (select :unit<char[100]> unit from sys.dual) d\n"
-			 " where a.segment_id = b.usn(+)\n"
-			 "   and (a.owner = c.owner or a.owner = 'PUBLIC')\n"
-			 "   and a.segment_name = c.segment_name\n"
-			 "   and c.segment_type = 'ROLLBACK'\n"
-			 "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))\n"
-			 " order by a.segment_name",
+			 " WHERE a.segment_id = b.usn ( + )\n"
+			 " ORDER BY a.segment_name",
 			 "Get information about rollback segments.");
 
 static toSQL SQLStartExt("toRollback:StartExtent",
@@ -364,7 +363,7 @@ public:
 	std::list<double> maxExt;
 	for (int i=TRANSCOL;!text(i).isEmpty();i++) {
 	  items.insert(items.end(),text(i).toDouble());
-	  curExt.insert(curExt.end(),text(12).toDouble()+text(13).toDouble()/text(14).toDouble());
+	  curExt.insert(curExt.end(),text(12).toDouble());
 	  maxExt.insert(maxExt.end(),text(11).toDouble());
 	}
 	PaintBars(this,pnt,cg,width,items,

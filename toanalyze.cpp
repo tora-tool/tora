@@ -101,7 +101,8 @@ static toSQL SQLListTables("toAnalyze:ListTables",
 			   "       sample_size,\n"
 			   "       last_analyzed\n"
 			   "  from sys.all_all_tables\n"
-			   " where iot_name is null",
+			   " where iot_name is null\n"
+			   "   and temporary != 'Y' and secondary = 'N'",
 			   "Get table statistics, first three columns and binds must be same",
 			   "8.0");
 static toSQL SQLListTables7("toAnalyze:ListTables",
@@ -117,7 +118,7 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    "       sample_size,\n"
 			    "       last_analyzed\n"
 			    "  from sys.all_tables\n"
-			    " WHERE 1 = 1",
+			    " where temporary != 'Y' and secondary = 'N'",
 			    "",
 			    "7.3");
 

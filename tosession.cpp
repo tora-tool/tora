@@ -275,7 +275,7 @@ toSession::toSession(QWidget *main,toConnection &connection)
   ResultTab->addTab(CurrentStatement,tr("Current Statement"));
 
   QString sql=toSQL::string(TOSQL_LONGOPS,connection);
-  sql+=" AND b.sid = :sid<char[101]>";
+  sql+=" AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]>";
   LongOps=new toResultLong(true,false,toQuery::Background,ResultTab);
   LongOps->setSQL(sql);
   ResultTab->addTab(LongOps,tr("Long ops"));
@@ -512,7 +512,7 @@ void toSession::changeTab(QWidget *tab)
       } else if (CurrentTab==ConnectInfo)
 	ConnectInfo->changeParams(item->text(0));
       else if (CurrentTab==LongOps)
-	LongOps->changeParams(item->text(0));
+	LongOps->changeParams(item->text(0),item->text(1));
       else if (CurrentTab==PendingLocks)
 	PendingLocks->query(item->text(0));
       else if (CurrentTab==OpenSplitter) {

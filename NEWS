@@ -1,5 +1,8 @@
 1.3.10:
 
+2003-07-24: Optimized rollback view (Loosed some precision though). (Thanx Jeff Price)
+2003-07-24: Don't list temporary or secondary tables in analyze tool.
+2003-07-24: Find long ops based on sid and serial in sessions.
 2003-07-24: Fixed code completion again.
 2003-07-24: Moved tools toolbar back to old position, works better.
 2003-07-24: Make X11 link dynamically in the tora-static (Seems to crash otherwise on XFree4.3)
