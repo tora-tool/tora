@@ -54,9 +54,10 @@ make
 strip plugins/*.tso tora
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 cp tora $RPM_BUILD_ROOT%{_prefix}/X11R6/bin/tora
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
 cp plugins/*.tso $RPM_BUILD_ROOT%{_prefix}/lib/tora
 cp templates/*.tpl $RPM_BUILD_ROOT%{_prefix}/lib/tora
+cp help/* icons/*.xpm $RPM_BUILD_ROOT%{_prefix}/lib/tora/help
 
 %post
 
