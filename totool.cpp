@@ -45,6 +45,7 @@ TO_NAMESPACE;
 #include <qstring.h>
 #include <qworkspace.h>
 #include <qfile.h>
+#include <qtimer.h>
 #include <qregexp.h>
 #ifdef WIN32
 #  include "windows/cregistry.h"
@@ -66,6 +67,7 @@ toToolWidget::toToolWidget(const QString &ctx,QWidget *parent,toConnection &conn
   : QVBox(parent,name,WDestructiveClose),toHelpContext(ctx)
 {
   Connection=&conn;
+  Timer=NULL;
   Connection->addWidget(this);
 }
 
@@ -91,6 +93,13 @@ void toToolWidget::setConnection(toConnection &conn)
     setCaption(capt);
   }
   emit connectionChange();
+}
+
+QTimer *toToolWidget::timer(void)
+{
+  if (!Timer)
+    Timer=new QTimer(this);
+  return Timer;
 }
 
 otl_connect &toToolWidget::otlConnect()

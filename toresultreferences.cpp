@@ -65,7 +65,7 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
 {
   otl_stream Query(1,
 		   SQLConsColumns(connection()),
-		   connection().connection());
+		   otlConnection());
 
   Query<<conOwner.utf8();
   Query<<conName.utf8();
@@ -126,7 +126,7 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
 
     otl_stream Query(1,
 		     SQLConstraints(connection()),
-		     connection().connection());
+		     otlConnection());
 
     Description=Query.describe_select(DescriptionLen);
 
@@ -176,7 +176,7 @@ void toResultReferences::query(const QString &sql,const list<QString> &param)
 
       otl_stream Deps(1,
 	  	      SQLDependencies(connection()),
-		      connection().connection());
+		      otlConnection());
       Deps<<Owner.utf8();
       Deps<<TableName.utf8();
       while(!Deps.eof()) {

@@ -45,7 +45,6 @@ class toResultView;
 class QTabWidget;
 class QComboBox;
 class toSGAStatement;
-class QTimer;
 class toConnection;
 class toTool;
 class QListViewItem;
@@ -59,7 +58,6 @@ class toSGATrace : public toToolWidget {
 
   toSGAStatement *Statement;
   QString CurrentSchema;
-  QTimer *Timer;
 
   void updateSchemas(void);
 

@@ -54,14 +54,14 @@ TO_NAMESPACE;
 #include "icons/refresh.xpm"
 #include "icons/tocurrent.xpm"
 
-class toCurrentTool : public toTool {
+class toCurrentInfoTool : public toTool {
 protected:
   map<toConnection *,QWidget *> Windows;
 
   virtual char **pictureXPM(void)
   { return tocurrent_xpm; }
 public:
-  toCurrentTool()
+  toCurrentInfoTool()
     : toTool(103,"Current Session")
   { }
   virtual const char *menuItem()
@@ -87,7 +87,7 @@ public:
   }
 };
 
-static toCurrentTool CurrentTool;
+static toCurrentInfoTool CurrentTool;
 
 static QPixmap *toRefreshPixmap;
 

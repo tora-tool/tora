@@ -89,8 +89,6 @@ class toRollback : public toToolWidget {
   toSGAStatement *CurrentStatement;
   toResultItem *CurrentTransaction;
 
-  QTimer *Timer;
-
   QToolButton *OnlineButton;
   QToolButton *OfflineButton;
   QToolButton *DropButton;

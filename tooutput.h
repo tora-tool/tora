@@ -42,14 +42,12 @@
 class toConnection;
 class toMarkedText;
 class QToolButton;
-class QTimer;
 
 class toOutput : public toToolWidget {
   Q_OBJECT
 
   toMarkedText *Output;
   QToolButton *DisableButton;
-  QTimer *Timer;
   void poll(otl_connect &conn);
 public:
   toOutput(QWidget *parent,toConnection &connection,bool enabled=true);

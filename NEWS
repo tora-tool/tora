@@ -16,6 +16,7 @@
 2001-08-08: Added barchart class.
 2001-08-08: Added filter to content editor.
 2001-08-08: Added posibility to delete rows in content editor.
+2001-08-08: Added optional timer to tool widget.
 
 0.14: Released 2001-08-02
 

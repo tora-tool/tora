@@ -41,6 +41,8 @@
 
 class QString;
 class toConnection;
+class QTimer;
+class otl_connect;
 
 /** Abstract baseclass of widgets that can perform queries. Usefull because you can execute
  * the query without knowing how it's UI is presented.
@@ -48,7 +50,18 @@ class toConnection;
 
 class toResult {
 protected:
+  /** Get the current connection from the closest tool.
+   * @return Reference to connection.
+   */
   toConnection &connection(void);
+  /** Get the otl_connect structure of the current connection from the closest tool.
+   * @return Reference to otl_connect object.
+   */
+  otl_connect &otlConnection(void);
+  /** Get the timer associated with the closest tool.
+   * @return Pointer to tool timer.
+   */
+  QTimer *timer(void);
 public:
   toResult(void)
   { }

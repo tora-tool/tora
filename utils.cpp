@@ -891,20 +891,24 @@ QColor toChartColor(int index)
   return ChartColors[index%(sizeof(ChartColors)/sizeof(QColor))];
 }
 
-toConnection &toCurrentConnection(QWidget *cur)
+toToolWidget *toCurrentTool(QWidget *cur)
 {
   while(cur) {
     try {
       toToolWidget *tool=dynamic_cast<toToolWidget *>(cur);
-      if (tool) {
-	return tool->connection();
-      }
+      if (tool)
+	return tool;
     } catch(...) {
       // Catch problems with Visual C++ missing RTTI
     }
     cur=cur->parentWidget();
   }
   throw QString("Couldn't find parent connection. Internal error.");
+}
+
+toConnection &toCurrentConnection(QWidget *cur)
+{
+  return tool->connection();
 }
 
 toConnection &toResult::connection(void)
@@ -920,4 +924,14 @@ void toBusy(bool busy)
     else
       qApp->restoreOverrideCursor();
   }
+}
+
+otl_connect &toResult::otlConnection(void)
+{
+  return connection().connection();
+}
+
+QTimer *toResult::timer(void)
+{
+  return toCurrentTool(this)->timer();
 }

@@ -53,7 +53,7 @@ void toResultPie::query(const QString &sql,const list<QString> &param)
     str.set_all_column_types(otl_all_num2str|otl_all_date2str);
     str.open(1,
 	     sql.utf8(),
-	     connection().connection());
+	     otlConnection());
     {
       otl_null null;
       for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++) {

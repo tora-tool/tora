@@ -194,9 +194,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeTab(QWidget *)));
 
-  Timer=new QTimer(this);
-  connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
   CurrentTab=StatisticSplitter;
   CurrentItem=NULL;
   refresh();
@@ -330,7 +329,7 @@ void toSession::disconnectSession(void)
 
 void toSession::changeRefresh(const QString &str)
 {
-  toRefreshParse(Timer,str);
+  toRefreshParse(timer(),str);
 }
 
 void toSession::changeItem(QListViewItem *item)

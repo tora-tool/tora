@@ -125,13 +125,15 @@
 </LI>
 <LI><A HREF="toConnection.html">toConnection</A> &amp;&nbsp;<b><A HREF="#ref651">toCurrentConnection</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref652">toBusy</A></b> (bool busy=false) 
+<LI><A HREF="toToolWidget.html">toToolWidget</A> *&nbsp;<b><A HREF="#ref652">toCurrentTool</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref653">toBusy</A></b> (bool busy=false) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref653">max</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref654">max</A></b> (T a, T b) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref654">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref655">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -543,19 +545,24 @@ T &nbsp;<b><A HREF="#ref654">min</A></b> (T a, T b)
 </p>
 <p><b>Returns</b>: Reference toConnection object closest to the current.
  </p>
-<A NAME="toBusy"></A><A NAME="ref652"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toBusy</strong> (bool busy=false)
+<A NAME="toCurrentTool"></A><A NAME="ref652"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toToolWidget.html">toToolWidget</A> *&nbsp;<strong>toCurrentTool</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *widget)
+<br></td><td align="right"><h3><strong>toCurrentTool</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Return the tool widget most closely associated with a widget.
+</p>
+<p><b>Returns</b>: Pointer to tool widget.
+ </p>
+<A NAME="toBusy"></A><A NAME="ref653"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toBusy</strong> (bool busy=false)
 <br></td><td align="right"><h3><strong>toBusy</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Set if the thread is working or not. Will change the cursor to an hourgalass.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>busy</i></TD><TD align="left" valign="top">Wether busy or not.
  </TD></TR>
 </TABLE></P>
-<A NAME="max"></A><A NAME="ref653"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="max"></A><A NAME="ref654"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref654"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref655"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

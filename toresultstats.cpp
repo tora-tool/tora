@@ -63,7 +63,7 @@ toResultStats::toResultStats(bool onlyChanged,QWidget *parent,
   try {
     otl_stream str(1,
 		   SQLSession(connection()),
-		   connection().connection());
+		   otlConnection());
     str>>SessionID;
   } catch (otl_exc &) {
     SessionID=-1;
@@ -155,7 +155,7 @@ void toResultStats::changeSession(otl_connect &conn)
   try {
     otl_stream str(1,
 		   SQLSession(connection()),
-		   connection().connection());
+		   otlConnection());
     str>>SessionID;
     resetStats();
     refreshStats(true);

@@ -64,7 +64,7 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
 {
   otl_stream Query(1,
 		   SQLConsColumns(connection()),
-		   connection().connection());
+		   otlConnection());
 
   Query<<conOwner.utf8();
   Query<<conName.utf8();
@@ -122,7 +122,7 @@ void toResultConstraint::query(const QString &sql,const list<QString> &param)
     Query.set_column_type(2,otl_var_char,MaxColSize);
     Query.open(1,
 	       SQLConstraints(connection()),
-	       connection().connection());
+	       otlConnection());
 
     Description=Query.describe_select(DescriptionLen);
 

@@ -157,14 +157,13 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   CurrentSchema=connection.user().upper();
   updateSchemas();
 
-  Timer=new QTimer(this);
-  connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
 }
 
 void toSGATrace::changeRefresh(const QString &str)
 {
-  toRefreshParse(Timer,str);
+  toRefreshParse(timer(),str);
 }
 
 #define LARGE_BUFFER 4096

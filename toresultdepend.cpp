@@ -69,7 +69,7 @@ void toResultDepend::addChilds(QListViewItem *item)
   try {
     otl_stream query(1,
 		     SQL.utf8(),
-		     connection().connection());
+		     otlConnection());
     query<<item->text(0).utf8();
     query<<item->text(1).utf8();
     QListViewItem *last=NULL;

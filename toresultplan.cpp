@@ -177,7 +177,7 @@ void toResultPlan::query(const QString &sql,
 					      "Should TOra try to create it?").arg(planTable),
 				      "&Yes","&No",0,1);
 	if (ret==0) {
-	  otl_cursor::direct_exec(connection().connection(),
+	  otl_cursor::direct_exec(otlConnection(),
 				  toSQL::string(toSQL::TOSQL_CREATEPLAN,
 						connection()).arg(planTable).utf8());
 	  query(sql,param);

@@ -675,6 +675,10 @@ QColor toChartColor(int index);
  * @return Reference toConnection object closest to the current.
  */
 toConnection &toCurrentConnection(QWidget *widget);
+/** Return the tool widget most closely associated with a widget.
+ * @return Pointer to tool widget.
+ */
+toToolWidget *toCurrentTool(QWidget *widget);
 /** Set if the thread is working or not. Will change the cursor to an hourgalass.
  * @param busy Wether busy or not.
  */

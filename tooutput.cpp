@@ -174,9 +174,8 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
 
   Output=new toMarkedText(this);
 
-  Timer=new QTimer(this);
-  connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(Timer,OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
+  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+  toRefreshParse(timer(),OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
   if (enabled)
     disable(false);
 }
@@ -267,7 +266,7 @@ void toOutput::clear(void)
 
 void toOutput::changeRefresh(const QString &str)
 { 
-  toRefreshParse(Timer,str);
+  toRefreshParse(timer(),str);
 }
 
 bool toOutput::enabled(void)

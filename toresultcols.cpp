@@ -79,7 +79,7 @@ public:
       ColInfo.set_all_column_types(otl_all_num2str|otl_all_date2str);
       ColInfo.open(1,
 		   SQLInfo(view->connection()),
-		   view->connection().connection());
+		   view->otlConnection());
       list<QString> resLst=toReadQuery(ColInfo,text(10),text(11),text(1));
       QString result("<B>");
       result+=(text(1));
@@ -218,7 +218,7 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
   try {
     otl_stream ColComment(1,
 			  SQLComment(connection()),
-			  connection().connection());
+			  otlConnection());
 
     Query=new otl_stream;
 
@@ -228,7 +228,7 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
 
     otl_stream Query(1,
 		     str.utf8(),
-		     connection().connection());
+		     otlConnection());
 
     Description=Query.describe_select(DescriptionLen);
 

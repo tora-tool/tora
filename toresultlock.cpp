@@ -107,7 +107,7 @@ void toResultLock::query(const QString &sql,
 
     otl_stream query(1,
 		     SQLLock(connection()),
-		     connection().connection());
+		     otlConnection());
 
     {
       toResultViewItem *lastItem=NULL;

@@ -433,7 +433,7 @@ public:
     try {
       otl_stream trx(1,
 		     SQLStartExt(connection()),
-		     connection().connection());
+		     otlConnection());
       for(QListViewItem *i=firstChild();i;i=i->nextSibling()) {
 	trx<<i->text(TRANSCOL-1).utf8();
 	for (int j=TRANSCOL;!trx.eof();j++) {
@@ -714,9 +714,8 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 	  this,SLOT(changeStatement(QListViewItem *)));
   CurrentStatement=new toSGAStatement(horsplit);
 
-  Timer=new QTimer(this);
-  connect(Timer,SIGNAL(timeout(void)),this,SLOT(refresh(void)));
-  toRefreshParse(Timer,toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+  connect(timer(),SIGNAL(timeout(void)),this,SLOT(refresh(void)));
+  toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
 
   refresh();
 }
@@ -779,7 +778,7 @@ void toRollback::changeItem(QListViewItem *item)
 
 void toRollback::changeRefresh(const QString &str)
 {
-  toRefreshParse(Timer,str);
+  toRefreshParse(timer(),str);
 }
 
 QString toRollback::currentSegment(void)

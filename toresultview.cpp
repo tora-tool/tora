@@ -821,7 +821,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
     Query->open(1,
 		sql.utf8(),
-		connection().connection());
+		otlConnection());
 
     {
       otl_null null;

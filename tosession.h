@@ -40,7 +40,6 @@
 #include "totool.h"
 
 class QTabWidget;
-class QTimer;
 class toConnection;
 class toSGAStatement;
 class QListViewItem;
@@ -70,8 +69,6 @@ class toSession : public toToolWidget {
   QSplitter *StatisticSplitter;
   toSGAStatement *OpenStatement;
   toResultView *OpenCursors;
-
-  QTimer *Timer;
 
   void updateSchemas(void);
   void enableStatistics(bool enable);

@@ -63,7 +63,7 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
 {
   otl_stream Query(1,
 		   SQLColumns(connection()),
-		   connection().connection());
+		   otlConnection());
 
   Query<<indOwner.utf8();
   Query<<indName.utf8();
@@ -109,7 +109,7 @@ void toResultIndexes::query(const QString &sql,const list<QString> &param)
   try {
     otl_stream Query(1,
 		     SQLListIndex(connection()),
-		     connection().connection());
+		     otlConnection());
 
     Description=Query.describe_select(DescriptionLen);
 

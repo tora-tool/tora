@@ -163,7 +163,7 @@ void toResultItem::query(const QString &sql,const list<QString> &param)
 
     Query.open(1,
 	       sql.utf8(),
-	       connection().connection());
+	       otlConnection());
 
     {
       for (list<QString>::iterator i=((list<QString> &)param).begin();i!=((list<QString> &)param).end();i++)
