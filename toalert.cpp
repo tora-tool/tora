@@ -81,10 +81,10 @@ protected:
   { return toalert_xpm; }
 public:
   toAlertTool()
-    : toTool(302,"Alert Tool")
+    : toTool(302,"Alert Messenger")
   { }
   virtual const char *menuItem()
-  { return "Alert Tool"; }
+  { return "Alert Messenger"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
     std::map<toConnection *,QWidget *>::iterator i=Windows.find(&connection);
@@ -112,7 +112,7 @@ static toAlertTool AlertTool;
 toAlert::toAlert(QWidget *main,toConnection &connection)
   : toToolWidget(AlertTool,"alert.html",main,connection),Connection(connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Alert Tool",connection.description());
+  QToolBar *toolbar=toAllocBar(this,"Alert Messenger",connection.description());
 
   new QLabel("Registered ",toolbar);
   Registered=new QComboBox(toolbar);

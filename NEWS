@@ -1,5 +1,8 @@
 1.3.1:
 
+2001-12-21: Fixed bug when using the Windows close menu item.
+2001-12-21: Remove reference to Qt version in about.
+2001-12-21: Change name of alert tool to alert messenger.
 2001-12-20: Changed sort order of this file.
 2001-12-20: Include waitstate selection in saved session.
 2001-12-20: Added ability to sort waitstatelist.

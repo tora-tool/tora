@@ -26,3 +26,6 @@ otl:
 
 toSQLParse:
 	Doesn't handle case statements very well.
+
+toResultContent:
+	Goto last record doesn't work.
