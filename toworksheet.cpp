@@ -337,6 +337,7 @@ void toWorksheet::setup(bool autoLoad)
 			       Result,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
+    toolbar->setStretchableWidget(new QLabel(toolbar));
   } else {
     QSplitter *splitter=new QSplitter(Vertical,this);
 
