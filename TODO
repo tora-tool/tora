@@ -42,7 +42,6 @@ Extended functionality:
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
 * Cache results in worksheet.
-* Option to specify SQL output font.
 
 New tools:
 
