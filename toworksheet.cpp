@@ -59,6 +59,7 @@
 #include <kmenubar.h>
 #endif
 
+#include <qaccel.h>
 #include <qcheckbox.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -101,6 +102,8 @@
 #include "icons/refresh.xpm"
 #include "icons/stop.xpm"
 #include "icons/toworksheet.xpm"
+#include "icons/up.xpm"
+#include "icons/down.xpm"
 
 #define TO_ID_STATISTICS		(toMain::TO_TOOL_MENU_ID+ 0)
 #define TO_ID_STOP			(toMain::TO_TOOL_MENU_ID+ 1)
@@ -477,6 +480,17 @@ void toWorksheet::setup(bool autoLoad)
     Refresh->setFocusPolicy(NoFocus);
 
     toolbar->addSeparator();
+    new QToolButton(QPixmap((const char **)up_xpm),
+		    tr("Previous log entry"),
+		    tr("Previous log entry"),
+		    this,SLOT(executePreviousLog()),
+		    toolbar);
+    new QToolButton(QPixmap((const char **)down_xpm),
+		    tr("Next log entry"),
+		    tr("Next log entry"),
+		    this,SLOT(executeNextLog()),
+		    toolbar);
+    toolbar->addSeparator();
 
     SavedButton=new toPopupButton(QPixmap((const char **)compile_xpm),
 				  tr("Run current saved SQL"),
@@ -609,10 +623,10 @@ void toWorksheet::windowActivated(QWidget *widget)
       ToolMenu->insertItem(QPixmap((const char **)eraselog_xpm),
 			   tr("Erase &Log"),this,SLOT(eraseLogButton(void)));
 
+
       toMainWidget()->menuBar()->insertItem(tr("W&orksheet"),ToolMenu,-1,toToolMenuIndex());
       ToolMenu->setItemEnabled(TO_ID_STOP,StopButton->isEnabled());
-      ToolMenu->setItemChecked(TO_ID_STATISTICS,
-						StatisticButton->isOn());
+      ToolMenu->setItemChecked(TO_ID_STATISTICS,StatisticButton->isOn());
     }
   } else {
     delete ToolMenu;

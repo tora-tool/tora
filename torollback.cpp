@@ -95,13 +95,16 @@
 #define CONF_NEED_READ  "NeedRead"
 #define CONF_NEED_TWO   "NeedTwo"
 #define CONF_ALIGN_LEFT "AlignLeft"
+#define CONF_OLD_ENABLE "OldEnable"
 
 class toRollbackPrefs : public QGroupBox,public toSettingTab
 { 
+  QCheckBox *OldEnable;
   QCheckBox *NoExec;
   QCheckBox *NeedRead;
   QCheckBox *NeedTwo;
   QCheckBox *AlignLeft;
+
   toTool *Tool;
 
 public:
@@ -114,22 +117,36 @@ toRollbackPrefs::toRollbackPrefs(toTool *tool,QWidget* parent,const char* name)
 {
   setTitle(qApp->translate("toRollbackPrefs","Rollback Tool" ));
 
+  OldEnable=new QCheckBox(this,"OldEnable");
+  OldEnable->setText(qApp->translate("toRollbackPrefs","&Enable snapshot too old detection." ));
+  QToolTip::add(OldEnable,qApp->translate("toRollbackPrefs","Enable snapshot too old detection, will put load on large databases."));
+  
+  AlignLeft=new QCheckBox(this,"AlignLeft");
+  AlignLeft->setText(qApp->translate("toRollbackPrefs","&Disregard start extent." ));
+  AlignLeft->setEnabled(false);
+  connect(OldEnable,SIGNAL(toggled(bool)),AlignLeft,SLOT(setEnabled(bool)));
+  QToolTip::add(AlignLeft,qApp->translate("toRollbackPrefs","Always start from the left border when displaying extent usage."));
+  
   NoExec=new QCheckBox(this,"NoCopy");
   NoExec->setText(qApp->translate("toRollbackPrefs","&Restart reexecuted statements" ));
+  NoExec->setEnabled(false);
+  connect(OldEnable,SIGNAL(toggled(bool)),NoExec,SLOT(setEnabled(bool)));
   QToolTip::add(NoExec,qApp->translate("toRollbackPrefs","Start statements again that have been reexecuted."));
   
   NeedRead=new QCheckBox(this,"Needread");
   NeedRead->setText(qApp->translate("toRollbackPrefs","&Must read buffers" ));
+  NeedRead->setEnabled(false);
+  connect(OldEnable,SIGNAL(toggled(bool)),NeedRead,SLOT(setEnabled(bool)));
   QToolTip::add(NeedRead,qApp->translate("toRollbackPrefs","Don't display statements that have not read buffers."));
   
   NeedTwo=new QCheckBox(this,"NeedTwo");
   NeedTwo->setText(qApp->translate("toRollbackPrefs","&Exclude first appearance" ));
+  NeedTwo->setEnabled(false);
+  connect(OldEnable,SIGNAL(toggled(bool)),NeedTwo,SLOT(setEnabled(bool)));
   QToolTip::add(NeedTwo,qApp->translate("toRollbackPrefs","A statement must be visible at least two consecutive polls to be displayed."));
   
-  AlignLeft=new QCheckBox(this,"AlignLeft");
-  AlignLeft->setText(qApp->translate("toRollbackPrefs","&Disregard start extent." ));
-  QToolTip::add(AlignLeft,qApp->translate("toRollbackPrefs","Always start from the left border when displaying extent usage."));
-  
+  if (!tool->config(CONF_OLD_ENABLE,"").isEmpty())
+    OldEnable->setChecked(true);
   if (!tool->config(CONF_NO_EXEC,"Yes").isEmpty())
     NoExec->setChecked(true);
   if (!tool->config(CONF_NEED_READ,"Yes").isEmpty())
@@ -146,6 +163,7 @@ void toRollbackPrefs::saveSetting(void)
   Tool->setConfig(CONF_NEED_READ,NeedRead->isChecked()?"Yes":"");
   Tool->setConfig(CONF_NEED_TWO,NeedTwo->isChecked()?"Yes":"");
   Tool->setConfig(CONF_ALIGN_LEFT,AlignLeft->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_OLD_ENABLE,OldEnable->isChecked()?"Yes":"");
 }
 
 class toRollbackTool : public toTool {
@@ -609,6 +627,13 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->addSeparator();
 
+  QToolButton *enableOld=new QToolButton(toolbar);
+  enableOld->setToggleButton(true);
+  enableOld->setIconSet(QIconSet(QPixmap((const char **)torollback_xpm)));
+  connect(enableOld,SIGNAL(toggled(bool)),this,SLOT(enableOld(bool)));
+  QToolTip::add(enableOld,tr("Enable snapshot too old detection."));
+  toolbar->addSeparator();
+
   OnlineButton=new QToolButton(QPixmap((const char **)online_xpm),
 			       tr("Take segment online"),
 			       tr("Take segment online"),
@@ -650,13 +675,13 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 	  this,SLOT(changeItem(QListViewItem *)));
 
   QTabWidget *tab=new QTabWidget(splitter,"TabWidget");
-  QSplitter *horsplit=new QSplitter(Horizontal,splitter);
-  tab->addTab(horsplit,tr("Open Cursors"));
-  
   TransactionUsers=new toResultLong(false,false,toQuery::Background,tab);
   tab->addTab(TransactionUsers,tr("Transaction Users"));
   TransactionUsers->setSQL(SQLTransactionUsers);
 
+  QSplitter *horsplit=new QSplitter(Horizontal,splitter);
+  tab->addTab(horsplit,tr("Open Cursors"));
+  
   Statements=new toRollbackOpen(horsplit);
   Statements->setSelectionMode(QListView::Single);
   connect(Statements,SIGNAL(selectionChanged(QListViewItem *)),
@@ -671,6 +696,11 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
+
+  if (!RollbackTool.config(CONF_OLD_ENABLE,"").isEmpty())
+    enableOld->setOn(true);
+  else
+    Statements->setEnabled(false);
 
   refresh();
 
@@ -728,18 +758,20 @@ void toRollback::refresh(void)
 	Segments->setSelected(item,true);
 	break;
       }
-  item=Statements->selectedItem();
-  if (item)
-    current=item->text(4);
-  else
-    current="";
-  Statements->refresh();
-  if (!current.isEmpty())
-    for (item=Statements->firstChild();item;item=item->nextSibling())
-      if (item->text(4)==current) {
-	Statements->setSelected(item,true);
-	break;
-      }
+  if (Statements->isEnabled()) {
+    item=Statements->selectedItem();
+    if (item)
+      current=item->text(4);
+    else
+      current="";
+    Statements->refresh();
+    if (!current.isEmpty())
+      for (item=Statements->firstChild();item;item=item->nextSibling())
+	if (item->text(4)==current) {
+	  Statements->setSelected(item,true);
+	  break;
+	}
+  }
   TransactionUsers->refresh();
 }
 
@@ -838,4 +870,9 @@ void toRollback::online(void)
     connection().execute(str);
     refresh();
   } TOCATCH
+}
+
+void toRollback::enableOld(bool ena)
+{
+  Statements->setEnabled(ena);
 }

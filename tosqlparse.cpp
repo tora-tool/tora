@@ -86,214 +86,216 @@ void printStatement(toSQLParse::statement &stat,int level)
     printStatement(*i,level+1);
 }
 
-int main(int argc,char **argv) {
+int main(int,char **) {
   QString res="\n"
-"BEGIN\n"
-"IF 1 == 1 THEN\n"
-"NULL;\n"
-"END IF;\n"
-"IF appraisal IS NULL THEN\n"
-"NULL;\n"
-"END IF;\n"
-"END;\n"
-"\n"
-"DECLARE\n"
-"grade CHAR(1);\n"
-"appraisal VARCHAR2(20);\n"
-"BEGIN\n"
-"CASE grade\n"
-"WHEN 'A' THEN 'Excellent'\n"
-"WHEN 'B' THEN 'Very Good'\n"
-"WHEN 'C' THEN 'Good'\n"
-"WHEN 'D' THEN 'Fair'\n"
-"WHEN 'F' THEN 'Poor'\n"
-"ELSE 'No such grade'\n"
-"END;\n"
-"IF appraisal IS NULL THEN\n"
-"NULL;\n"
-"END IF;\n"
-"END;\n"
-"\n"
-"select count(case when dummy = 'Y' then dummy\n"
-"             else null end) as tot_str\n"
-"from dual;\n"
-"\n"
-"SET TRANSACTION READ ONLY\n"
-"\n"
-"PROMPT Hello\n"
-"\n"
-"/* Test comment\n"
-"*/\n"
-"INSERT INTO cdrProcess(ProcessID,\n"
-"		       StartDate,\n"
-"		       EnvDate,\n"
-"		       ProgramID,\n"
-"		       OSUser,\n"
-"		       SystemUser,\n"
-"		       ExecName,\n"
-"		       ExecVersion,\n"
-"		       ExecParameters,\n"
-"		       HostName)\n"
-"VALUES (:1,\n"
-"	SYSDATE,\n"
-"	SYSDATE,\n"
-"	:2,\n"
-"	:3,\n"
-"	:4,\n"
-"	:5,\n"
-"	:6,\n"
-"	:7,\n"
-"	:8);\n"
-"\n"
-"CREATE or REPLACE Procedure TEST_SPR\n"
-"(\n"
-"    IN_TICKET_NUM   IN  VARCHAR2\n"
-")\n"
-"IS\n"
-"\n"
-"BEGIN\n"
-"\n"
-"BEGIN\n"
-"\n"
-"for cur_rec in (select emp_id from employees) loop\n"
-"\n"
-"	update employees set emp_id = emp_id + 1\n"
-"	where emp_id = cur_rec.emp_id;\n"
-"	commit;\n"
-"end loop;\n"
-"	\n"
-"END;\n"
-"END TEST_SPR;\n"
+    "BEGIN\n"
+    "IF 1 == 1 THEN\n"
+    "NULL;\n"
+    "END IF;\n"
+    "IF appraisal IS NULL THEN\n"
+    "NULL;\n"
+    "ELSE\n"
+    "SELECT CASE WHEN dummy='X' THEN 'A' ELSE 'B' END,  2 FROM dual;\n"
+    "END IF;\n"
+    "END;\n"
+    "\n"
+    "DECLARE\n"
+    "grade CHAR(1);\n"
+    "appraisal VARCHAR2(20);\n"
+    "BEGIN\n"
+    "CASE grade\n"
+    "WHEN 'A' THEN 'Excellent'\n"
+    "WHEN 'B' THEN 'Very Good'\n"
+    "WHEN 'C' THEN 'Good'\n"
+    "WHEN 'D' THEN 'Fair'\n"
+    "WHEN 'F' THEN 'Poor'\n"
+    "ELSE 'No such grade'\n"
+    "END;\n"
+    "IF appraisal IS NULL THEN\n"
+    "NULL;\n"
+    "END IF;\n"
+    "END;\n"
+    "\n"
+    "select count(case when dummy = 'Y' then dummy\n"
+    "             else null end) as tot_str\n"
+    "from dual;\n"
+    "\n"
+    "SET TRANSACTION READ ONLY\n"
+    "\n"
+    "PROMPT Hello\n"
+    "\n"
+    "/* Test comment\n"
+    "*/\n"
+    "INSERT INTO cdrProcess(ProcessID,\n"
+    "		       StartDate,\n"
+    "		       EnvDate,\n"
+    "		       ProgramID,\n"
+    "		       OSUser,\n"
+    "		       SystemUser,\n"
+    "		       ExecName,\n"
+    "		       ExecVersion,\n"
+    "		       ExecParameters,\n"
+    "		       HostName)\n"
+    "VALUES (:1,\n"
+    "	SYSDATE,\n"
+    "	SYSDATE,\n"
+    "	:2,\n"
+    "	:3,\n"
+    "	:4,\n"
+    "	:5,\n"
+    "	:6,\n"
+    "	:7,\n"
+    "	:8);\n"
+    "\n"
+    "CREATE or REPLACE Procedure TEST_SPR\n"
+    "(\n"
+    "    IN_TICKET_NUM   IN  VARCHAR2\n"
+    ")\n"
+    "IS\n"
+    "\n"
+    "BEGIN\n"
+    "\n"
+    "BEGIN\n"
+    "\n"
+    "for cur_rec in (select emp_id from employees) loop\n"
+    "\n"
+    "	update employees set emp_id = emp_id + 1\n"
+    "	where emp_id = cur_rec.emp_id;\n"
+    "	commit;\n"
+    "end loop;\n"
+    "	\n"
+    "END;\n"
+    "END TEST_SPR;\n"
 
 #if 1
-"\n"
-"SELECT owner,\n"
-"       OBJECT,\n"
-"       TYPE FROM v$access\n"
-" WHERE sid=:f1<char[101]>\n"
-" ORDER BY owner,\n"
-"	  OBJECT,\n"
-"	  TYPE;\n"
-"\n"
-"CREATE TABLE ess.EssCalLog (\n"
-"        CalID		CHAR(5) NOT NULL,		-- Calender type\n"
-"	SeqID		NUMBER(8) NOT NULL,\n"
-"	ActStt		CHAR(1) NOT NULL\n"
-"		CONSTRAINT EssCalLog_CK_ActStt CHECK (ActStt IN ('A','D') ),\n"
-"	LogRun		CHAR(1) NOT NULL		-- Should runs of this type be logged\n"
-"		CONSTRAINT EssCalLog_CK_LogRun CHECK (LogRun IN ('Y','N') ),\n"
-"	PrcID		NUMBER(8) NOT NULL\n"
-"		CONSTRAINT EssCalDay_FK_PrcID REFERENCES ess.EssPrc(PrcID),\n"
-"	Dsc		VARCHAR2(4000) NOT NULL,	-- Description of this type\n"
-"	CONSTRAINT EssCal_PK PRIMARY KEY (CalID,SeqID)\n"
-"		USING INDEX TABLESPACE Index02 -- A Comment\n"
-");\n"
-"-- Another comment\n"
-"\n"
-"CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,\n"
-"					     oNumSwt                     OUT  NUMBER)\n"
-"IS\n"
-"  vYear  CHAR(4);\n"
-"BEGIN\n"
-"    <<label>>\n"
-"    DECLARE\n"
-"      oTrdStt NUMBER;\n"
-"    BEGIN\n"
-"      oTrdStt := 0;\n"
-"    END;\n"
-"\n"
-"    EXCEPTION\n"
-"        WHEN VALUE_ERROR THEN\n"
-"	    oRet := 3;\n"
-"	WHEN NO_DATA_FOUND THEN\n"
-"	    oRet := 2;\n"
-"	WHEN OTHERS THEN\n"
-"	    oRet := 1;\n"
-"END;\n"
-"CREATE OR REPLACE procedure spTuxGetAccData as\n"
-"  vYear  CHAR(4);\n"
-"begin\n"
-"  null;\n"
-"end;\n"
-"-------------------------------------------------------------------\n"
-"--    EssCal, Current calendar view\n"
-"\n"
-"CREATE VIEW ess.EssCal AS\n"
-"        SELECT CalID,\n"
-"	       LogRun,\n"
-"	       PrcID,\n"
-"	       Dsc\n"
-"	  FROM ess.EssCalLog a\n"
-"	 WHERE SeqID = (SELECT MAX(aa.SeqID) FROM EssCalLog aa WHERE aa.CalID = a.CalID)\n"
-"	   AND ActStt = 'A';\n"
-"\n"
-"    /* A little comment\n"
-"     */\n"
-"    SELECT /*+\n"
-"FULL(a)\n"
-"*/ a.TskCod TskCod -- Test comment\n"
-"      ,a.CreEdt CreEdt,\n"
-"       a.TspActOprID /* One comment OprID */ , -- Another comment\n"
-"       COUNT(1) Tot,\n"
-"       COUNT(a.TspActOprID) Lft,\n"
-"       b.TraCod TraCod,\n"
-"       SUM(b.FinAmt) FinAmt,\n"
-"       TraCod\n"
-"  FROM EssTsk a,EssTra b\n"
-" WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)\n"
-"   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)\n"
-" GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
-"HAVING COUNT(a.TspActOprID) > 0;\n"
-"SELECT a.Sid \"-Id\",\n"
-"       a.Serial# \"-Serial#\",\n"
-"       a.SchemaName \"Schema\",\n"
-"       a.Status \"Status\",\n"
-"       a.Server \"Server\",\n"
-"       a.OsUser \"Osuser\",\n"
-"       a.Machine \"Machine\",\n"
-"       a.Program \"Program\",\n"
-"       a.Type \"Type\",\n"
-"       a.Module \"Module\",\n"
-"       a.Action \"Action\",\n"
-"       a.Client_Info \"Client Info\",\n"
-"       b.Block_Gets \"-Block Gets\",\n"
-"       b.Consistent_Gets \"-Consistent Gets\",\n"
-"       b.Physical_Reads \"-Physical Reads\",\n"
-"       b.Block_Changes \"-Block Changes\",\n"
-"       b.Consistent_Changes \"-Consistent Changes\",\n"
-"       c.Value*10 \"-CPU (ms)\",\n"
-"       a.Process \"-Process\",\n"
-"       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
-"       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
-"  FROM v$session a,\n"
-"       v$sess_io b,\n"
-"       v$sesstat c\n"
-" WHERE a.sid = b.sid(+)\n"
-"   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
-" ORDER BY a.Sid;\n"
-"select a.TskCod TskCod,\n"
-"       count(1) Tot\n"
-"  from (select * from EssTsk where PrsID >= '1940') ,EssTra b\n"
-" where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
-" group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
-"having count(a.TspActOprID) > 0;\n"
-"\n"
-"CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
-"AS\n"
-"  vYear  CHAR(4);\n"
-"BEGIN\n"
-"    DECLARE\n"
-"      oTrdStt NUMBER;\n"
-"    BEGIN\n"
-"      oTrdStt := 0;\n"
-"    END;\n"
-"    EXCEPTION\n"
-"        WHEN VALUE_ERROR THEN\n"
-"	    oRet := 3;\n"
-"END;"
+    "\n"
+    "SELECT owner,\n"
+    "       OBJECT,\n"
+    "       TYPE FROM v$access\n"
+    " WHERE sid=:f1<char[101]>\n"
+    " ORDER BY owner,\n"
+    "	  OBJECT,\n"
+    "	  TYPE;\n"
+    "\n"
+    "CREATE TABLE ess.EssCalLog (\n"
+    "        CalID		CHAR(5) NOT NULL,		-- Calender type\n"
+    "	SeqID		NUMBER(8) NOT NULL,\n"
+    "	ActStt		CHAR(1) NOT NULL\n"
+    "		CONSTRAINT EssCalLog_CK_ActStt CHECK (ActStt IN ('A','D') ),\n"
+    "	LogRun		CHAR(1) NOT NULL		-- Should runs of this type be logged\n"
+    "		CONSTRAINT EssCalLog_CK_LogRun CHECK (LogRun IN ('Y','N') ),\n"
+    "	PrcID		NUMBER(8) NOT NULL\n"
+    "		CONSTRAINT EssCalDay_FK_PrcID REFERENCES ess.EssPrc(PrcID),\n"
+    "	Dsc		VARCHAR2(4000) NOT NULL,	-- Description of this type\n"
+    "	CONSTRAINT EssCal_PK PRIMARY KEY (CalID,SeqID)\n"
+    "		USING INDEX TABLESPACE Index02 -- A Comment\n"
+    ");\n"
+    "-- Another comment\n"
+    "\n"
+    "CREATE OR REPLACE procedure spTuxGetAccData (oRet                        OUT  NUMBER,\n"
+    "					     oNumSwt                     OUT  NUMBER)\n"
+    "IS\n"
+    "  vYear  CHAR(4);\n"
+    "BEGIN\n"
+    "    <<label>>\n"
+    "    DECLARE\n"
+    "      oTrdStt NUMBER;\n"
+    "    BEGIN\n"
+    "      oTrdStt := 0;\n"
+    "    END;\n"
+    "\n"
+    "    EXCEPTION\n"
+    "        WHEN VALUE_ERROR THEN\n"
+    "	    oRet := 3;\n"
+    "	WHEN NO_DATA_FOUND THEN\n"
+    "	    oRet := 2;\n"
+    "	WHEN OTHERS THEN\n"
+    "	    oRet := 1;\n"
+    "END;\n"
+    "CREATE OR REPLACE procedure spTuxGetAccData as\n"
+    "  vYear  CHAR(4);\n"
+    "begin\n"
+    "  null;\n"
+    "end;\n"
+    "-------------------------------------------------------------------\n"
+    "--    EssCal, Current calendar view\n"
+    "\n"
+    "CREATE VIEW ess.EssCal AS\n"
+    "        SELECT CalID,\n"
+    "	       LogRun,\n"
+    "	       PrcID,\n"
+    "	       Dsc\n"
+    "	  FROM ess.EssCalLog a\n"
+    "	 WHERE SeqID = (SELECT MAX(aa.SeqID) FROM EssCalLog aa WHERE aa.CalID = a.CalID)\n"
+    "	   AND ActStt = 'A';\n"
+    "\n"
+    "    /* A little comment\n"
+    "     */\n"
+    "    SELECT /*+\n"
+    "FULL(a)\n"
+    "*/ a.TskCod TskCod -- Test comment\n"
+    "      ,a.CreEdt CreEdt,\n"
+    "       a.TspActOprID /* One comment OprID */ , -- Another comment\n"
+    "       COUNT(1) Tot,\n"
+    "       COUNT(a.TspActOprID) Lft,\n"
+    "       b.TraCod TraCod,\n"
+    "       SUM(b.FinAmt) FinAmt,\n"
+    "       TraCod\n"
+    "  FROM EssTsk a,EssTra b\n"
+    " WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)\n"
+    "   AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)\n"
+    " GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
+    "HAVING COUNT(a.TspActOprID) > 0;\n"
+    "SELECT a.Sid \"-Id\",\n"
+    "       a.Serial# \"-Serial#\",\n"
+    "       a.SchemaName \"Schema\",\n"
+    "       a.Status \"Status\",\n"
+    "       a.Server \"Server\",\n"
+    "       a.OsUser \"Osuser\",\n"
+    "       a.Machine \"Machine\",\n"
+    "       a.Program \"Program\",\n"
+    "       a.Type \"Type\",\n"
+    "       a.Module \"Module\",\n"
+    "       a.Action \"Action\",\n"
+    "       a.Client_Info \"Client Info\",\n"
+    "       b.Block_Gets \"-Block Gets\",\n"
+    "       b.Consistent_Gets \"-Consistent Gets\",\n"
+    "       b.Physical_Reads \"-Physical Reads\",\n"
+    "       b.Block_Changes \"-Block Changes\",\n"
+    "       b.Consistent_Changes \"-Consistent Changes\",\n"
+    "       c.Value*10 \"-CPU (ms)\",\n"
+    "       a.Process \"-Process\",\n"
+    "       a.SQL_Address||':'||SQL_Hash_Value \" SQL Address\",\n"
+    "       a.Prev_SQL_Addr||':'||Prev_Hash_Value \" Prev SQl Address\"\n"
+    "  FROM v$session a,\n"
+    "       v$sess_io b,\n"
+    "       v$sesstat c\n"
+    " WHERE a.sid = b.sid(+)\n"
+    "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    " ORDER BY a.Sid;\n"
+    "select a.TskCod TskCod,\n"
+    "       count(1) Tot\n"
+    "  from (select * from EssTsk where PrsID >= '1940') ,EssTra b\n"
+    " where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
+    " group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
+    "having count(a.TspActOprID) > 0;\n"
+    "\n"
+    "CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+    "AS\n"
+    "  vYear  CHAR(4);\n"
+    "BEGIN\n"
+    "    DECLARE\n"
+    "      oTrdStt NUMBER;\n"
+    "    BEGIN\n"
+    "      oTrdStt := 0;\n"
+    "    END;\n"
+    "    EXCEPTION\n"
+    "        WHEN VALUE_ERROR THEN\n"
+    "	    oRet := 3;\n"
+    "END;"
 
 #endif
-  ;
+    ;
 #if 0
 
   QApplication test(argc,argv);
@@ -379,7 +381,10 @@ int main(int argc,char **argv) {
     printStatement(*i,1);
   }
 
-  printf("%s\n",(const char *)toSQLParse::indent(res));
+  QString firstparse=toSQLParse::indent(res);
+  QString secondparse=toSQLParse::indent(firstparse);
+  printf("%s\n\n",(const char *)firstparse);
+  printf("matches?\n\n%s\n",(const char *)secondparse);
 
   return 0;
 }
@@ -617,22 +622,22 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
     if (!ret.isNull()) {
       if (forward) {
 	QString end;
-	if (ret.startsWith(QString::fromLatin1("/*"))&&
+	if (ret.startsWith(("/*"))&&
 	    (ret.at(ret.length()-2)!='*'||
 	     ret.at(ret.length()-1)!='/')) {
-	  end=QString::fromLatin1("*/");
-	} else if (ret.startsWith(QString::fromLatin1("'"))&&(ret.length()<2||ret.at(ret.length()-1)!='\'')) {
-	  end=QString::fromLatin1("'");
-	} else if (ret.startsWith(QString::fromLatin1("\""))&&(ret.length()<2||ret.at(ret.length()-1)!='\"')) {
-	  end=QString::fromLatin1("\"");
+	  end=("*/");
+	} else if (ret.startsWith(("'"))&&(ret.length()<2||ret.at(ret.length()-1)!='\'')) {
+	  end=("'");
+	} else if (ret.startsWith(("\""))&&(ret.length()<2||ret.at(ret.length()-1)!='\"')) {
+	  end=("\"");
 	}
 	if (!end.isNull()) {
 	  for (Line++;
 	       Line<int(Editor->numLines())&&(Offset=Editor->textLine(Line).find(end))<0;
 	       Line++)
-	    ret+=QString::fromLatin1("\n")+Editor->textLine(Line);
+	    ret+=("\n")+Editor->textLine(Line);
 	  if (Line<int(Editor->numLines())) {
-	    ret+=QString::fromLatin1("\n")+Editor->textLine(Line).mid(0,Offset+2);
+	    ret+=("\n")+Editor->textLine(Line).mid(0,Offset+2);
 	    Offset+=2;
 	  }
 	}
@@ -641,27 +646,27 @@ QString toSQLParse::editorTokenizer::getToken(bool forward,bool comments)
 	if (ret.length()>=2&&
 	    ret.at(ret.length()-2)=='*'&&
 	    ret.at(ret.length()-1)=='/'&&
-	    !ret.startsWith(QString::fromLatin1("/*"))) {
-	  end=QString::fromLatin1("/*");
+	    !ret.startsWith(("/*"))) {
+	  end=("/*");
 	} else if ((ret.length()>=1&&ret.at(ret.length()-1)=='\'')&&
 		   (ret.length()<2||ret[0]!='\'')) {
-	  end=QString::fromLatin1("\'");
+	  end=("\'");
 	} else if ((ret.length()>=1&&ret.at(ret.length()-1)=='\"')&&
 		   (ret.length()<2||ret.at(0)!='\"')) {
-	  end=QString::fromLatin1("\"");
+	  end=("\"");
 	}
 	if (!end.isNull()) {
 	  for (Line--;
 	       Line>=0&&(Offset=Editor->textLine(Line).findRev(end))<0;
 	       Line--)
-	    ret.prepend(Editor->textLine(Line)+QString::fromLatin1("\n"));
+	    ret.prepend(Editor->textLine(Line)+("\n"));
 	  if (Line>=0) {
 	    QString str=Editor->textLine(Line);
-	    ret.prepend(str.mid(Offset,str.length()-Offset)+QString::fromLatin1("\n"));
+	    ret.prepend(str.mid(Offset,str.length()-Offset)+("\n"));
 	  }
 	}
       }
-      if (comments||(!ret.startsWith(QString::fromLatin1("/*"))&&!ret.startsWith(QString::fromLatin1("--"))))
+      if (comments||(!ret.startsWith(("/*"))&&!ret.startsWith(("--"))))
 	return ret;
       else {
 	first=true;
@@ -685,7 +690,7 @@ QString toSQLParse::editorTokenizer::remaining(bool eol)
       rows<<Editor->textLine(i);
     Line=Editor->numLines();
     Offset=0;
-    return rows.join(QString::fromLatin1("\n"));
+    return rows.join(("\n"));
   } else {
     QString line=Editor->textLine(Line);
     QString ret=line.mid(offset());
@@ -711,49 +716,48 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 #ifdef TOPARSE_DEBUG
     printf("%s\n",(const char*)token);
 #endif
-    if (first.isNull()&&!token.startsWith(QString::fromLatin1("/*"))&&!token.startsWith(QString::fromLatin1("--")))
+    if (first.isNull()&&!token.startsWith(("/*"))&&!token.startsWith(("--")))
       realfirst=first=upp;
 
-    if (upp==QString::fromLatin1("PROCEDURE")||
-	upp==QString::fromLatin1("FUNCTION")||
-	upp==QString::fromLatin1("PACKAGE"))
+    if (upp==("PROCEDURE")||
+	upp==("FUNCTION")||
+	upp==("PACKAGE"))
       block=true;
 
-    if (first!=QString::fromLatin1("END")&&((first==QString::fromLatin1("IF")&&upp==QString::fromLatin1("THEN"))||
-					    upp==QString::fromLatin1("LOOP")||
-					    upp==QString::fromLatin1("DECLARE")||
-					    (block&&upp==QString::fromLatin1("AS"))||
-					    (block&&upp==QString::fromLatin1("IS"))||
-					    (!declare&&upp==QString::fromLatin1("BEGIN")))) {
+    if (first!=("END")&&((first==("IF")&&upp==("THEN"))||
+			 upp==("LOOP")||
+			 upp==("DECLARE")||
+			 (block&&upp==("AS"))||
+			 (block&&upp==("IS"))||
+			 (!declare&&upp==("BEGIN")))) {
       statement blk(statement::Block);
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       blk.subTokens().insert(blk.subTokens().end(),ret);
       statement cur(statement::Statement);
-      bool dcl=(upp==QString::fromLatin1("DECLARE")||upp==QString::fromLatin1("IS")||upp==QString::fromLatin1("AS"));
+      bool dcl=(upp==("DECLARE")||upp==("IS")||upp==("AS"));
       do {
 	cur=parseStatement(tokens,dcl,false);
 	if (cur.Type==statement::List)
 	  toStatusMessage(qApp->translate("toSQLparse","Unbalanced parenthesis (Too many ')')"));
 	blk.subTokens().insert(blk.subTokens().end(),cur);
 	if (cur.subTokens().begin()!=cur.subTokens().end()&&
-	    (*(cur.subTokens().begin())).String.upper()==QString::fromLatin1("BEGIN"))
+	    (*(cur.subTokens().begin())).String.upper()==("BEGIN"))
 	  dcl=false;
       } while(cur.subTokens().begin()!=cur.subTokens().end()&&
-	      (*cur.subTokens().begin()).String.upper()!=QString::fromLatin1("END"));
+	      (*cur.subTokens().begin()).String.upper()!=("END"));
       return blk;
-    } else if ((upp==QString::fromLatin1("THEN")||
-		upp==QString::fromLatin1("BEGIN")||
-		upp==QString::fromLatin1("EXCEPTION")||
-		upp==QString::fromLatin1("ELSE"))&&!lst) {
+    } else if (((first=="IF"&&upp=="THEN")||
+		upp==("BEGIN")||
+		upp==("EXCEPTION")||
+		first==("ELSE"))&&!lst) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       return ret;
-      ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
-    } else if (first==QString::fromLatin1("ASSIGN")||
-	       first==QString::fromLatin1("SET")||
-	       first==QString::fromLatin1("PROMPT")||
-	       first==QString::fromLatin1("SPOOL")||
-	       first==QString::fromLatin1("STORE")||
-	       first==QString::fromLatin1("REM")) {
+    } else if (first==("ASSIGN")||
+	       first==("SET")||
+	       first==("PROMPT")||
+	       first==("SPOOL")||
+	       first==("STORE")||
+	       first==("REM")) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       int line=tokens.line();
       int offset=tokens.offset();
@@ -763,26 +767,28 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
       tokens.setOffset(offset);
       tokens.remaining(true);
       return ret;
-    } else if (upp==QString::fromLatin1(",")||
+    } else if (upp==(",")||
 	       (syntax.reservedWord(upp)&&
-		upp!=QString::fromLatin1("NOT")&&
-		upp!=QString::fromLatin1("IS")&&
-		upp!=QString::fromLatin1("LIKE")&&
-		upp!=QString::fromLatin1("IN")&&
-		upp!=QString::fromLatin1("BETWEEN")&&
-		upp!=QString::fromLatin1("ASC")&&
-		upp!=QString::fromLatin1("DESC")&&
-		upp!=QString::fromLatin1("NULL"))&&!nokey) {
+		upp!=("NOT")&&
+		upp!=("IS")&&
+		upp!=("LIKE")&&
+		upp!=("IN")&&
+		upp!=("ELSE")&&
+		upp!=("END")&&
+		upp!=("BETWEEN")&&
+		upp!=("ASC")&&
+		upp!=("DESC")&&
+		upp!=("NULL"))&&!nokey) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Keyword,token,tokens.line()));
       nokey=false;
-    } else if (upp==QString::fromLatin1("(")) {
+    } else if (upp==("(")) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,tokens.line()));
       statement lst=parseStatement(tokens,false,true);
       statement t=toPop(lst.subTokens());
       if (lst.Type!=statement::List)
 	toStatusMessage(qApp->translate("toSQLparse","Unbalanced parenthesis (Too many '(')"));
       nokey=false;
-      if (first==QString::fromLatin1("CREATE")&&!block) {
+      if (first==("CREATE")&&!block) {
 	statement end=parseStatement(tokens,false,true);
 	statement blk(statement::Block);
 	blk.subTokens().insert(blk.subTokens().end(),ret);
@@ -794,39 +800,39 @@ toSQLParse::statement toSQLParse::parseStatement(tokenizer &tokens,bool declare,
 	ret.subTokens().insert(ret.subTokens().end(),lst);
 	ret.subTokens().insert(ret.subTokens().end(),t);
       }
-    } else if (upp==QString::fromLatin1(")")) {
+    } else if (upp==(")")) {
       ret.Type=statement::List;
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,tokens.line()));
       return ret;
-    } else if (upp==QString::fromLatin1(";")) {
+    } else if (upp==(";")) {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,tokens.line()));
       return ret;
-    } else if (upp.startsWith(QString::fromLatin1("/*+"))||upp.startsWith(QString::fromLatin1("--+"))) {
+    } else if (upp.startsWith(("/*+"))||upp.startsWith(("--+"))) {
       QString com=token;
-      if (com.startsWith(QString::fromLatin1("--+")))
-	com=QString::fromLatin1("/*+ ")+com.mid(3)+QString::fromLatin1(" */");
+      if (com.startsWith(("--+")))
+	com=("/*+ ")+com.mid(3)+(" */");
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,
-							   com.simplifyWhiteSpace(),tokens.line()));
-    } else if (upp.startsWith(QString::fromLatin1("/*"))||upp.startsWith(QString::fromLatin1("--"))) {
+							     com.simplifyWhiteSpace(),tokens.line()));
+    } else if (upp.startsWith(("/*"))||upp.startsWith(("--"))) {
       if (ret.subTokens().begin()==ret.subTokens().end()) {
 	if (ret.Comment.isNull())
 	  ret.Comment=token;
 	else
-	  ret.Comment+=QString::fromLatin1("\n")+token;
+	  ret.Comment+=("\n")+token;
       } else {
 	QString &com=(*ret.subTokens().rbegin()).Comment;
 	if (com.isEmpty())
 	  com=token;
 	else
-	  com+=QString::fromLatin1("\n")+token;
+	  com+=("\n")+token;
       }
     } else {
       ret.subTokens().insert(ret.subTokens().end(),statement(statement::Token,token,tokens.line()));
-      nokey=(token==QString::fromLatin1("."));
+      nokey=(token==("."));
     }
-    if (upp==QString::fromLatin1("AS")||upp==QString::fromLatin1("IS"))
+    if (upp==("AS")||upp==("IS"))
       first=upp;
-    else if (first==QString::fromLatin1("IS")&&upp==QString::fromLatin1("NULL"))
+    else if (first==("IS")&&upp==("NULL"))
       first=realfirst;
   }
   return ret;
@@ -892,18 +898,18 @@ QString toSQLParse::indentString(int level)
   QString ret;
   if (Settings.ExpandSpaces) {
     for(int i=0;i<level/8;i++)
-      ret+=QString::fromLatin1("\t");
+      ret+=("\t");
     for(int j=0;j<level%8;j++)
-      ret+=QString::fromLatin1(" ");
+      ret+=(" ");
   } else
     for(int j=0;j<level;j++)
-      ret+=QString::fromLatin1(" ");
+      ret+=(" ");
   return ret;
 }
 
 static int CurrentColumn(const QString &txt)
 {
-  int pos=txt.findRev(QString::fromLatin1("\n"));
+  int pos=txt.findRev(("\n"));
   if (pos<0)
     pos=0;
   else
@@ -930,7 +936,7 @@ static QString IndentComment(int level,int current,const QString &comment,bool e
   QString ret;
   if (comment.length()) {
     if (level<=current&&(level||current)) {
-      ret+=QString::fromLatin1("\n");
+      ret+=("\n");
       current=0;
     }
     for (unsigned int i=0;i<comment.length();i++) {
@@ -940,12 +946,12 @@ static QString IndentComment(int level,int current,const QString &comment,bool e
 	    ret+=toSQLParse::indentString(level);
 	  else {
 	    while(current<level) {
-	      ret+=QString::fromLatin1(" ");
+	      ret+=(" ");
 	      current++;
 	    }
 	  }
-	  if (comment.at(i)==QString::fromLatin1("*")) {
-	    ret+=QString::fromLatin1(" ");
+	  if (comment.at(i)==("*")) {
+	    ret+=(" ");
 	    current++;
 	  }
 	  nl=false;
@@ -959,9 +965,9 @@ static QString IndentComment(int level,int current,const QString &comment,bool e
       }
     }
     if (!nl)
-      ret+=QString::fromLatin1("\n");
+      ret+=("\n");
   } else if (endNl) {
-    ret=QString::fromLatin1("\n");
+    ret=("\n");
   }
   return ret;
 }
@@ -970,7 +976,7 @@ static QString AddComment(const QString &old,const QString &comment)
 {
   QString ret=old;
   if (!ret.isEmpty()&&!comment.isEmpty())
-    ret+=QString::fromLatin1("\n");
+    ret+=("\n");
   ret+=comment;
   return ret;
 }
@@ -1001,9 +1007,9 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 
 	QString t;
 	if ((*i).subTokens().begin()!=(*i).subTokens().
-	  end())
+	    end())
 	  t=(*(*i).subTokens().begin()).String.upper();
-	if (t==QString::fromLatin1("BEGIN")||t==QString::fromLatin1("WHEN")||t==QString::fromLatin1("ELSE"))
+	if (t==("BEGIN")||t==("WHEN")||t==("ELSE"))
 	  add=0;
 	if ((*i).Type==statement::List)
 	  ret+=indentString(level+add+exc);
@@ -1013,14 +1019,14 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  for (i=ret.length()-1;i>=0&&ret[i].isSpace();i--)
 	    ;
 	  ret=ret.mid(0,max(i+1,0));
-	  ret+=QString::fromLatin1("\n");
+	  ret+=("\n");
 	  ret+=indentString(level+exc);
 	}
-	if (t==QString::fromLatin1("EXCEPTION"))
+	if (t==("EXCEPTION"))
 	  exc=Settings.IndentLevel*2;
       }
       if (Settings.EndBlockNewline&&level!=0)
-	ret+=QString::fromLatin1("\n");
+	ret+=("\n");
     }
     break;
   case statement::List:
@@ -1059,10 +1065,10 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if (any) {
 	  QString upp=(*i).String.upper();
 	  if ((*i).Type==statement::Keyword&&
-	      upp!=QString::fromLatin1("LOOP")&&
-	      upp!=QString::fromLatin1("THEN")&&
-	      upp!=QString::fromLatin1("AS")&&
-	      upp!=QString::fromLatin1("IS")) {
+	      upp!=("LOOP")&&
+	      upp!=("THEN")&&
+	      upp!=("AS")&&
+	      upp!=("IS")) {
 	    if (int((*i).String.length())+1>maxlev)
 	      maxlev=(*i).String.length()+1;
 	    count++;
@@ -1092,24 +1098,24 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 #endif
       if ((*i).Type==statement::List) {
 	if (Settings.OperatorSpace) {
-	  ret+=QString::fromLatin1(" ");
+	  ret+=(" ");
 	  current++;
 	}
 	QString t=indentStatement(*i,current);
-	if (t.find(QString::fromLatin1("\n"))>=0)
+	if (t.find(("\n"))>=0)
 	  current=CurrentColumn(t);
 	else
 	  current+=CurrentColumn(t);
 	ret+=t;
 	any=true;
-      } else if ((*i).String==QString::fromLatin1(",")) {
+      } else if ((*i).String==(",")) {
 	if (Settings.CommaBefore) {
 	  ret+=IndentComment(Settings.CommentColumn,current,comment,true);
 	  comment=QString::null;
 	  ret+=indentString(level+maxlev-(Settings.OperatorSpace?2:1));
-	  ret+=QString::fromLatin1(",");
+	  ret+=(",");
 	} else {
-	  ret+=QString::fromLatin1(",");
+	  ret+=(",");
 	  ret+=IndentComment(Settings.CommentColumn,current+1,comment,true);
 	  comment=QString::null;
 	  ret+=indentString(level+maxlev);
@@ -1117,17 +1123,17 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	current=level+maxlev;
 	any=false;
 	lineList=true;
-      } else if ((*i).Type==statement::Keyword&&(upp==QString::fromLatin1("LOOP")||
-						 upp==QString::fromLatin1("THEN")||
-						 upp==QString::fromLatin1("AS")||
-						 upp==QString::fromLatin1("IS"))) {
+      } else if ((*i).Type==statement::Keyword&&(upp==("LOOP")||
+						 upp==("THEN")||
+						 upp==("AS")||
+						 upp==("IS"))) {
 	if (!Settings.BlockOpenLine) {
 	  if (ret.length()>0) {
 	    if (toIsIdent(ret.at(ret.length()-1))||
 		ret.at(ret.length()-1)=='\"'||
 		ret.at(ret.length()-1)=='\''||
 		Settings.OperatorSpace) {
-	      ret+=QString::fromLatin1(" ");
+	      ret+=(" ");
 	      current++;
 	    }
 	  }
@@ -1154,14 +1160,14 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  current=level;
 	} else
 	  while(current<level) {
-	    ret+=QString::fromLatin1(" ");
+	    ret+=(" ");
 	    current++;
 	  }
 	maxlev=maxlevorig;
 	QString word=Settings.KeywordUpper?(*i).String.upper():(*i).String;
 	if (ret.length()) {
-	  ret+=QString::fromLatin1("%1").arg(word,
-					     Settings.RightSeparator?maxlev-1:1-maxlev);
+	  ret+=QString("%1").arg(word,
+				 Settings.RightSeparator?maxlev-1:1-maxlev);
 	  current=level+max(int(word.length()),maxlev-1);
 	} else {
 	  ret+=word;
@@ -1177,7 +1183,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	      !any&&
 	      (*i).Type==statement::Keyword&&
 	      !noKeyBreak&&
-	      upp==QString::fromLatin1("BY"))
+	      upp==("BY"))
 	    add=true;
 	} else {
 	  any=true;
@@ -1201,16 +1207,16 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 					)
 	       )
 	      ) {
-	    if (t!=QString::fromLatin1(";")&&
-		t!=QString::fromLatin1(".")&&
+	    if (t!=(";")&&
+		t!=(".")&&
 		ret.at(ret.length()-1)!='.'&&
 		current!=0) {
 	      current++;
-	      ret+=QString::fromLatin1(" ");
+	      ret+=(" ");
 	    }
 	  } else if (ret.length()>2&&ret.at(ret.length()-2)=='*'&&ret.at(ret.length()-1)=='/') {
 	    current++;
-	    ret+=QString::fromLatin1(" ");
+	    ret+=(" ");
 	  }
 	  extra=maxlev;
 	}
@@ -1219,15 +1225,15 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	    ret+=indentString(level+maxlev);
 	  else
 	    while(current<level+maxlev) {
-	      ret+=QString::fromLatin1(" ");
+	      ret+=(" ");
 	      current++;
 	    }
 	  current=level+maxlev;
 	}
 	ret+=t;
 	current+=t.length();
-	if(t.startsWith(QString::fromLatin1("<<"))) {
-	  ret+=QString::fromLatin1("\n");
+	if(t.startsWith(("<<"))) {
+	  ret+=("\n");
 	  current=0;
 	}
 
@@ -1241,8 +1247,8 @@ QString toSQLParse::indentStatement(statement &stat,int level)
       if (Settings.EndBlockNewline&&
 	  level==0&&
 	  stat.subTokens().begin()!=stat.subTokens().end()&&
-	  (*stat.subTokens().rbegin()).String==QString::fromLatin1(";"))
-	ret+=QString::fromLatin1("\n");
+	  (*stat.subTokens().rbegin()).String==(";"))
+	ret+=("\n");
     } else if (!comment.isEmpty()) {
       ret+=IndentComment(Settings.CommentColumn,current,comment,true);
       comment=QString::null;
@@ -1269,7 +1275,7 @@ QString toSQLParse::indent(const QString &str)
   while(pos>0&&ret[pos-1].isSpace()) {
     pos--;
   }
-  return ret.mid(0,pos)+QString::fromLatin1("\n");
+  return ret.mid(0,pos)+("\n");
 }
 
 std::list<toSQLParse::statement> toSQLParse::parse(tokenizer &tokens,toConnection &)

@@ -91,7 +91,7 @@ void toPieChart::openCopy(void)
   newWin->show();
   toMainWidget()->windowsMenu();
 
-#if 1
+#if QT_VERSION < 0x030100
   // This is a really ugly workaround for a Qt layout bug
   QWidget *tmp=NULL;
   QWidget *tmp2=NULL;

@@ -1,5 +1,13 @@
-1.3.9.1: Released 2003-02-11
+1.3.9.1: Released 2003-02-12
 
+2003-02-12: Added option to disable snapshot too old detection (Disabled by default).
+2003-02-12: Fixed indent problem with before mentioned case.
+2003-02-12: Fixed case problem in select sql parse.
+2003-02-12: Don't need resize workaround for Qt 3.1 anymore.
+2003-02-12: Added buttons for traversing previous entries.
+2003-02-12: Added windows legacy bindings for copy/paste/delete.
+2003-02-12: Get block size from parameters not alloced/free space (Much faster).
+2003-02-12: Changed version to 1.3.9.1.
 2003-02-11: Make it posible to view execution plan etc when recalling logged results.
 2003-02-11: Recall log results by clicking into logging list of worksheet.
 2003-02-11: Removed include of sstream.

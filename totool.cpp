@@ -221,7 +221,7 @@ void toTool::createWindow(void)
 	  newWin->showMaximized();
       }
 
-#if 1
+#if QT_VERSION < 0x030100
       // This is a really ugly workaround for a Qt layout bug
       QWidget *tmp=NULL;
       QWidget *tmp2=NULL;

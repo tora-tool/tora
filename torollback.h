@@ -92,6 +92,7 @@ public slots:
   void changeItem(QListViewItem *item);
   void changeRefresh(const QString &str);
 
+  void enableOld(bool);
   void refresh(void);
   void online(void);
   void offline(void);

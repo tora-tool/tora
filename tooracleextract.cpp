@@ -7422,18 +7422,8 @@ toOracleExtract::~toOracleExtract()
 }
 
 static toSQL SQLSetSizing("toOracleExtract:SetSizing",
-			  "SELECT block_size\n"
-			  "  FROM (SELECT bytes/blocks/1024   AS block_size\n"
-			  "          FROM user_segments\n"
-			  "         WHERE bytes  IS NOT NULL\n"
-			  "           AND blocks IS NOT NULL\n"
-			  "         UNION\n"
-			  "        SELECT bytes/blocks/1024   AS block_size\n"
-			  "          FROM user_free_space\n"
-			  "         WHERE bytes  IS NOT NULL\n"
-			  "           AND blocks IS NOT NULL)\n"
-			  " WHERE rownum < 2",
-			  "Get information about block sizes, same columns");
+			  "SELECT db_block_size FROM v$parameter WHERE name = 'db_block_size'",
+			  "Get information about block sizes from alloced space, same columns");
 
 void toOracleExtract::initialize(toExtract &ext) const
 {

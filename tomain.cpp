@@ -244,12 +244,10 @@ toMain::toMain()
   EditMenu->insertSeparator();
   EditMenu->insertItem(tr("&Options..."),TO_EDIT_OPTIONS);
 
-#if 0 // Doesn't work and I don't understand why
   QAccel *accel=new QAccel(this);
-  accel->connectItem(Key_Insert|CTRL,this,SLOT(copyButton));
-  accel->connectItem(Key_Delete|SHIFT,this,SLOT(cutButton));
-  accel->connectItem(Key_Insert|SHIFT,this,SLOT(pasteButton));
-#endif
+  accel->connectItem(accel->insertItem(Key_Insert|CTRL),this,SLOT(copyButton()));
+  accel->connectItem(accel->insertItem(Key_Delete|SHIFT),this,SLOT(cutButton()));
+  accel->connectItem(accel->insertItem(Key_Insert|SHIFT),this,SLOT(pasteButton()));
 
   EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
   EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
