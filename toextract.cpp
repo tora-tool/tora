@@ -3824,7 +3824,7 @@ static toSQL SQLPartitionSegment("toExtract:PartitionSegment",
 				 " FROM\n"
 				 "        all_tab_partitions\n"
 				 " WHERE  table_name = :nam<char[100]>\n"
-				 "   AND  owner = :nam<char[100]>\n"
+				 "   AND  table_owner = :own<char[100]>\n"
 				 " ORDER BY partition_name",
 				 "Information about segment storage for partitioned tables, "
 				 "must have same binds and columns",
@@ -3862,7 +3862,7 @@ static toSQL SQLPartitionSegment8("toExtract:PartitionSegment",
 				  " FROM\n"
 				  "        all_tab_partitions\n"
 				  " WHERE  table_name = :nam<char[100]>\n"
-				  "   AND  owner = :nam<char[100]>\n"
+				  "   AND  table_owner = :own<char[100]>\n"
 				  " ORDER BY partition_name",
 				  "",
 				  "8.0");

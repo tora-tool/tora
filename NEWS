@@ -55,6 +55,7 @@
 2001-09-18: Added code completion for MySQL connections.
 2001-09-18: Added quote function to connectionImpl.
 2001-09-18: Rewrote toResultCols to be more generic.
+2001-09-19: Fixed problem extracting partitions.
 
 1.1.0: Released 2001-09-09
 
