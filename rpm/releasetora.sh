@@ -59,6 +59,10 @@ strip tora-static
 mv tora-static tora
 cd ..
 echo Packing tora$TYPE-$1-oracle$ORA.tar.gz
+echo tar czf $SRCPWD/../tora$TYPE-$1-orale$ORA.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
+        tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
+	tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help
+
 tar czf $SRCPWD/../tora$TYPE-$1-orale$ORA.tar.gz tora-$1/tora tora-$1/README tora-$1/LICENSE \
         tora-$1/BUGS tora-$1/NEWS tora-$1/INSTALL tora-$1/TODO tora-$1/templates/sqlfunctions.tpl \
 	tora-$1/icons/tora.xpm tora-$1/icons/toramini.xpm tora-$1/help

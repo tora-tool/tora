@@ -139,6 +139,8 @@ class toTuningOverview : public toTuningOverviewUI {
     void setValue(const QString &name,const QString &val);
   };
 
+  friend class overviewQuery;
+
   toBackground Poll;
 
   std::list<QLabel *> Backgrounds;
