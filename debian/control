@@ -1,16 +1,15 @@
 Source: tora
-Section: contrib/misc
+Section: misc
 Priority: optional
-Maintainer: Robert CHERAMY <robert@cheramy.net>
-Build-Depends: debhelper (>> 2.0.0), libqt-dev, g++
-Standards-Version: 3.2.1
+Maintainer: Michael Meskes <meskes@debian.org>
+Build-Depends: debhelper (>> 3.0.0), libqt3-dev, g++
+Standards-Version: 3.5.2
 
 Package: tora
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: Toolkit For Oracle
- Tool for Oracle is a tool for DBA:s and database software developers. Inspired
- from the excellent software TOAD for Windows. It features a schema browser,
- SQL worksheet, PL/SQL editor & debugger, storage manager, rollback segment
- monitor, instance manager, and SQL output viewer.
-
+Description: A graphical toolkit for database developers and administrators.
+ Tora features a schema browser, SQL worksheet, PL/SQL editor & debugger,
+ storage manager, rollback segment monitor, instance manager, and SQL output
+ viewer. Via qt3 it can access PostgreSQL and MySQL directly. Any other
+ database systems can be accessed via ODBC.

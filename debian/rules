@@ -12,12 +12,13 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	./configure --prefix=/usr --without-rpath
+	./configure --prefix=/usr --without-oracle --without-mysql --without-rpath
 
 	touch configure-stamp
 
-build: configure-stamp build-stamp
-build-stamp:
+build: build-stamp
+
+build-stamp: configure-stamp 
 	dh_testdir
 
 	# Add here commands to compile the package.
@@ -34,7 +35,7 @@ clean:
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
 
-	dh_clean -X.orig
+	dh_clean
 
 install: build
 	dh_testdir
@@ -43,8 +44,9 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/tora.
-	$(MAKE) ROOT=$(CURDIR)/debian/tora/ install
-
+	$(MAKE) install ROOT=$(CURDIR)/debian/tora
+	-mv $(CURDIR)/debian/tora/usr/bin/tora $(CURDIR)/debian/tora/usr/lib/tora/tora.real
+	-install --owner root --group root --mode=755 debian/tora.wrapper $(CURDIR)/debian/tora/usr/bin/tora
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -57,22 +59,26 @@ binary-arch: build install
 #	dh_installdebconf	
 	dh_installdocs
 	dh_installexamples
-#	dh_installmenu
+	dh_installmenu
+#	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
+#	dh_installmime
 #	dh_installinit
 #	dh_installcron
-#	dh_installmanpages
-#	dh_installinfo
-#	dh_undocumented
+#	dh_installman
+	dh_installinfo
+	dh_undocumented tora.1
 	dh_installchangelogs 
 	dh_link
 	dh_strip
+#
+#	since the shared libs are named .tso we have to strip them manually
+#
+	strip --strip-unneeded --remove-section=.comment --remove-section=.note `pwd`/debian/tora/usr/lib/tora/*.tso
 	dh_compress
 	dh_fixperms
-	# You may want to make some executables suid here.
-#	dh_suidregister
-	dh_makeshlibs
+#	dh_makeshlibs
 	dh_installdeb
 #	dh_perl
 	dh_shlibdeps
