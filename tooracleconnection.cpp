@@ -362,7 +362,7 @@ public:
     virtual void cancel(void);
     virtual bool eof(void)
     {
-      if (!Query)
+      if (!Query || Cancel)
 	return true;
       return Query->eof();
     }
@@ -965,9 +965,10 @@ void toOracleProvider::oracleQuery::cancel(void)
   oracleSub *conn=dynamic_cast<oracleSub *>(query()->connectionSub());
   if (!conn)
     throw QString::fromLatin1("Internal error, not oracle sub connection");
-  if (Running)
+  if (Running) {
     conn->Connection->cancel();
-  else {
+    Cancel=true;
+  } else {
     Cancel=true;
     conn->Lock.up();
   }

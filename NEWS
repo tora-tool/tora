@@ -6,6 +6,7 @@
 2005-02-17: Applied patch to put open/save/etc. at more standard initial position and resize connection popup (#1001613)
 2005-02-17: Applied patch to show partition info for query plans (#1001615)
 2005-02-17: Applied patch 1025950 to fix bug 1001826
+2005-02-17: Applied patch 1048530 to correct races/crash
 
 1.3.14.1: 2004-07-01
 
