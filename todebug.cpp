@@ -75,6 +75,7 @@ TO_NAMESPACE;
 #include "toresultview.h"
 #include "totool.h"
 #include "tosql.h"
+#include "tohelp.h"
 
 #include "todebug.moc"
 #include "todebugchange.moc"
@@ -169,6 +170,7 @@ QListViewItem *toDebugWatch::findMisc(const QString &str,QListViewItem *item,toD
 toDebugWatch::toDebugWatch(toDebug *parent)
   : toDebugWatchUI(parent,"AddWatch",true),Debugger(parent)
 {
+  toHelp::connectDialog(this);
   QListViewItem *items=Debugger->contents();
   {
     int curline,curcol;
@@ -2546,6 +2548,8 @@ void toDebug::changeWatch(QListViewItem *item)
     QString data=item->text(3);
 
     toDebugChangeUI dialog(this,"WatchChange",true);
+    toHelp::connectDialog(&dialog);
+
     dialog.HeadLabel->setText(description);
     QString index=item->text(5);
     if (!index.isEmpty()&&index!="LIST")

@@ -286,6 +286,7 @@
         <receiver>toBrowserFilterUI</receiver>
         <slot>accept()</slot>
     </connection>
+    <slot access="public">displayHelp()</slot>
 </connections>
 <tabstops>
     <tabstop>None</tabstop>

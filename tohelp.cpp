@@ -41,6 +41,7 @@ TO_NAMESPACE;
 #include <khtml_part.h>
 #endif
 
+#include <qaccel.h>
 #include <qdir.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
@@ -144,7 +145,10 @@ class toHelpAddFile : public toHelpAddFileUI {
 public:
   toHelpAddFile(QWidget *parent,const char *name=0)
     : toHelpAddFileUI(parent,name,true)
-  { OkButton->setEnabled(false); }
+  {
+    OkButton->setEnabled(false);
+    toHelp::connectDialog(this);
+  }
   virtual void browse(void)
   {
     QString filename=toOpenFilename(Filename->text(),"toc.htm*",this);
@@ -235,16 +239,29 @@ public:
   }
 };
 
-class toHelpTool : public toTool {
-public:
-  toHelpTool()
-    : toTool(501,"Additional Help")
-  { }
-  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
-  { return NULL; }
-  virtual QWidget *configurationTab(QWidget *parent)
-  { return new toHelpPrefs(this,parent); }
-};
+QWidget *toHelpTool::configurationTab(QWidget *parent)
+{
+  return new toHelpPrefs(this,parent);
+}
+
+void toHelpTool::displayHelp(void)
+{
+  QWidget *cur=qApp->focusWidget();
+  while(cur) {
+    try {
+      QDialog *dlg=dynamic_cast<QDialog *>(cur);
+      if (dlg) {
+        toHelp::displayHelp(dlg);
+        return;
+      }
+    } catch(...) {
+      // Catch problems with Visual C++ missing RTTI
+    }
+    cur=cur->parentWidget();
+  }
+  // No dialog found
+  toHelp::displayHelp();
+}
 
 static toHelpTool HelpTool;
 
@@ -442,6 +459,32 @@ void toHelp::displayHelp(const QString &context,QWidget *parent)
     delete window;
   } else
     window->show();
+}
+
+void toHelp::displayHelp(QWidget *parent)
+{
+  QWidget *cur=qApp->focusWidget();
+  while(cur) {
+    try {
+      toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
+      if (ctx) {
+        toHelp::displayHelp(ctx->context(),parent);
+        return;
+      }
+    } catch(...) {
+      // Catch problems with Visual C++ missing RTTI
+    }
+    cur=cur->parentWidget();
+  }
+  toHelp::displayHelp("toc.htm",parent);
+}
+
+void toHelp::connectDialog(QDialog *dialog)
+{
+  QAccel *a=new QAccel(dialog);
+  a->connectItem(a->insertItem(Key_F1),
+		 &HelpTool,
+		 SLOT(displayHelp()));
 }
 
 void toHelp::changeContent(QListViewItem *item)

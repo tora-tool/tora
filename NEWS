@@ -15,6 +15,7 @@
 2001-07-04: Another parsing fix for worksheet (It was rediculous a long
 	time ago!)
 2001-07-04: Allow saving list to export them as files.
+2001-07-05: Added help quick key to dialogs.
 
 0.12: Released 2001-07-01
 

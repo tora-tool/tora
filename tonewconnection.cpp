@@ -59,10 +59,10 @@ TO_NAMESPACE;
 #include "tonewconnection.h"
 #include "tomain.h"
 
-
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
-  : toDialog(parent,name,modal,fl),toHelpContext("newconnection.html")
+  : QDialog(parent,name,modal,fl),toHelpContext("newconnection.html")
 {
+  toHelp::connectDialog(this);
   if (!name)
     setName("toNewConnection");
   resize(240,300); 

@@ -55,6 +55,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "tomarkedtext.h"
 #include "toconf.h"
+#include "tohelp.h"
 
 #include "totemplate.moc"
 #include "totemplatesetupui.moc"
@@ -111,6 +112,7 @@ public:
   toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
     : toTemplateEditUI(parent,name,true,WStyle_Maximize),TemplateMap(pairs)
   {
+    toHelp::connectDialog(this);
     LastTemplate=TemplateMap.end();
     connect(&Timer,SIGNAL(timeout()),this,SLOT(updateFromMap()));
     updateFromMap();
@@ -190,7 +192,10 @@ class toTemplateAddFile : public toTemplateAddFileUI {
 public:
   toTemplateAddFile(QWidget *parent,const char *name=0)
     : toTemplateAddFileUI(parent,name,true)
-  { OkButton->setEnabled(false); }
+  {
+    OkButton->setEnabled(false);
+    toHelp::connectDialog(this);
+  }
   virtual void browse(void)
   {
     QFileInfo file(Filename->text());

@@ -1008,20 +1008,7 @@ void toMain::editSQL(const QString &str)
 
 void toMain::contextHelp(void)
 {
-  QObject *cur=qApp->focusWidget();
-  while(cur) {
-    try {
-      toHelpContext *ctx=dynamic_cast<toHelpContext *>(cur);
-      if (ctx) {
-        toHelp::displayHelp(ctx->context());
-        return;
-      }
-    } catch(...) {
-      // Catch problems with Visual C++ missing RTTI
-    }
-    cur=cur->parent();
-  }
-  toHelp::displayHelp("toc.htm");
+  toHelp::displayHelp();
 }
 
 void toMain::statusMenu(void)

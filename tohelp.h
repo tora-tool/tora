@@ -41,6 +41,8 @@
 
 #include <map>
 
+#include "totool.h"
+
 class toListView;
 class QLineEdit;
 class QTextBrowser;
@@ -48,6 +50,24 @@ class QListViewItem;
 class QProgressBar;
 class toHelpBrowser;
 class QToolButton;
+
+/**
+ * Additional help tool. Also used as object to connect to to display help
+ * for modal dialogs. Only to be used internally.
+ * @internal
+ */
+class toHelpTool : public toTool {
+  Q_OBJECT
+public:
+  toHelpTool()
+    : toTool(501,"Additional Help")
+  { }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  { return NULL; }
+  virtual QWidget *configurationTab(QWidget *parent);
+public slots:
+  void displayHelp(void);
+};
 
 /**
  * Display a help browser. A help manual consists of HTML pages where at least
@@ -176,9 +196,19 @@ public:
   virtual ~toHelp();
   /** Display a specific help context in the internal manual. Pops up a help window that
    * displays the selected topic.
+   * @param context Context to diaplay.
    * @param parent If NULL use modal dialog and main window.
    */
   static void displayHelp(const QString &context,QWidget *parent=NULL);
+  /** Display a specific help context in the internal manual. The context is derived from
+   * the widget that currently holds the focus.
+   * @param parent If NULL use modal dialog and main window.
+   */
+  static void displayHelp(QWidget *parent=NULL);
+  /** Connect the F1 key to display help for a dialog.
+   * @param dialog Dialog to connect accelerator to.
+   */
+  static void connectDialog(QDialog *dialog);
 };
 
 /** This class is used to indicate a help context of an object. When the current context

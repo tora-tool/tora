@@ -36,6 +36,8 @@
 </LI>
 <LI>static  void &nbsp;<b><A HREF="#ref19">displayHelp</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
 </LI>
+<LI>static  void &nbsp;<b><A HREF="#ref20">displayHelp</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
  Display a help browser. A help manual consists of HTML pages where at least
  two pages are mandatory.
@@ -114,6 +116,16 @@
 <br></td><td align="right"><h3><strong>~toHelp</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="displayHelp"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;context,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
 <br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. Pops up a help window that
  displays the selected topic.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>context</i></TD><TD align="left" valign="top">Context to diaplay.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">If NULL use modal dialog and main window.
+   </TD></TR>
+</TABLE></P>
+<A NAME="displayHelp"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>displayHelp</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL)
+<br></td><td align="right"><h3><strong>displayHelp</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Display a specific help context in the internal manual. The context is derived from
+ the widget that currently holds the focus.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">If NULL use modal dialog and main window.

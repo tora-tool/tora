@@ -70,6 +70,7 @@ TO_NAMESPACE;
 #include "toresultdepend.h"
 #include "tosql.h"
 #include "tobrowserfilterui.h"
+#include "tohelp.h"
 
 #include "tobrowser.moc"
 #include "tobrowserfilterui.moc"
@@ -160,7 +161,9 @@ public:
   };
   toBrowserFilter(QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
-  { }
+  {
+    toHelp::connectDialog(this);
+  }
   toBrowserFilter(const setting &cur,QWidget *parent)
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {

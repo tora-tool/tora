@@ -31,7 +31,6 @@ SOURCES=\
 	todebugchange.cpp	\
 	todebugtext.cpp		\
 	todebugwatch.cpp	\
-	todialog.cpp		\
 	toextract.cpp		\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
@@ -95,7 +94,6 @@ API=	\
 	toconf.h		\
 	toconnection.h		\
 	todefaultkeywords.h	\
-	todialog.h		\
 	toextract.h		\
 	tofilesize.h		\
 	tohelpbrowser.h		\
@@ -240,7 +238,6 @@ tora: \
 	objs/main.o \
 	objs/toabout.o \
 	objs/toconnection.o \
-	objs/todialog.o \
 	objs/toglobalsetting.o \
 	objs/tohelp.o \
 	objs/tohelpaddfileui.o \

@@ -47,6 +47,7 @@ TO_NAMESPACE;
 #include "topreferences.h"
 #include "toglobalsetting.h"
 #include "tosyntaxsetup.h"
+#include "tohelp.h"
 
 #include "topreferences.moc"
 
@@ -98,6 +99,7 @@ void toPreferences::saveSetting(void)
 toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
   : QDialog(parent,name,modal,fl)
 {
+  toHelp::connectDialog(this);
   Shown=NULL;
   if (!name)
     setName("toPreferences");

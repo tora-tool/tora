@@ -38,7 +38,7 @@
 #define __TONEWCONNECTION_H
 
 #include <qvariant.h>
-#include "todialog.h"
+#include <qdialog.h>
 #include "toconnection.h"
 #include "tohelp.h"
 
@@ -51,7 +51,7 @@ class QLineEdit;
 class QPushButton;
 class QCheckBox;
 
-class toNewConnection : public toDialog, public toHelpContext
+class toNewConnection : public QDialog, public toHelpContext
 { 
     Q_OBJECT
 

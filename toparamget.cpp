@@ -50,6 +50,7 @@ TO_NAMESPACE;
 #include "totool.h"
 #include "toconf.h"
 #include "tomain.h"
+#include "tohelp.h"
 
 map<QString,QString> toParamGet::DefaultCache;
 map<QString,QString> toParamGet::Cache;
@@ -57,6 +58,7 @@ map<QString,QString> toParamGet::Cache;
 toParamGet::toParamGet(QWidget *parent,const char *name)
   : QDialog(parent,name,true)
 {
+  toHelp::connectDialog(this);
   resize(470,500);
   setMinimumSize(QSize(470,500));
   setMaximumSize(QSize(470,500));

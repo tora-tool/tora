@@ -69,6 +69,7 @@ TO_NAMESPACE;
 #include "tosql.h"
 #include "tostoragedefinition.h"
 #include "tosgastatement.h"
+#include "tohelp.h"
 
 #include "torollback.moc"
 
@@ -174,6 +175,7 @@ static toSQL SQLTablespace("toRollbackDialog:TablespaceName",
 toRollbackDialog::toRollbackDialog(toConnection &Connection,QWidget* parent,const char* name)
   : QDialog(parent,name,true)
 {
+  toHelp::connectDialog(this);
   if (!name)
     setName("Form1");
   resize(470,500); 

@@ -204,9 +204,15 @@ public:
   virtual ~toHelp();
   /** Display a specific help context in the internal manual. Pops up a help window that
    * displays the selected topic.
+   * @param context Context to diaplay.
    * @param parent If NULL use modal dialog and main window.
    */
   static void displayHelp(const QString &amp;context,QWidget *parent=NULL);
+  /** Display a specific help context in the internal manual. The context is derived from
+   * the widget that currently holds the focus.
+   * @param parent If NULL use modal dialog and main window.
+   */
+  static void displayHelp(QWidget *parent=NULL);
 };
 
 /** This class is used to indicate a help context of an object. When the current context

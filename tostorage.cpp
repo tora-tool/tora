@@ -64,6 +64,7 @@ TO_NAMESPACE;
 #include "tomain.h"
 #include "tofilesize.h"
 #include "tosql.h"
+#include "tohelp.h"
 
 #include "tostorage.moc"
 
@@ -468,6 +469,7 @@ void toStorageDialog::Setup(void)
   
   connect(OkButton,SIGNAL(clicked()),this,SLOT(accept()));
   connect(CancelButton,SIGNAL(clicked()),this,SLOT(reject()));
+  toHelp::connectDialog(this);
 }
 
 toStorageDialog::toStorageDialog(bool datafile,QWidget *parent)
