@@ -54,7 +54,6 @@
 
 #ifdef WIN32
 #  include "windows/cregistry.h"
-#  include "windows/cregistry.cpp"
 #endif
 
 #include "totool.moc"
