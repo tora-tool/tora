@@ -23,3 +23,6 @@ toThread:
 
 toScript:
 	Seems to not update enable/disable status when changing to report mode.
+
+toWaitEvents:
+	Doesn't clear when changinging session.

@@ -101,7 +101,7 @@ int main(int argc,char **argv)
       qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
     QTranslator torats(0);
-    torats.load(QString("tora_")+toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()),".");
+    torats.load(toPluginPath()+"/"+QString("tora_")+toTool::globalConfig(CONF_LOCALE,QTextCodec::locale()),".");
     qApp->installTranslator(&torats);
 
 #ifdef ENABLE_STYLE

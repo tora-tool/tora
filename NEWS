@@ -1,3 +1,9 @@
+1.3.8:
+
+2002-08-08: Fixed problem with edit file menu not being updated correctly.
+2002-08-08: Fixed compile problem on windows.
+2002-08-08: Fixed quote.
+
 1.3.7: Released 2002-08-05
 
 2002-08-01: Fixed problem with some windowmenu commands.

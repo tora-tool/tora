@@ -113,8 +113,8 @@ bool toSQL::updateSQL(const QCString &name,
 	    (*j).Modified=modified;
 	}
 	return false;
-      } else if ((*j).Provider>provider||
-		 ((*j).Provider==provider&&(*j).Version>ver)) {
+      } else if ((*j).Provider>provider.data()||
+		 ((*j).Provider==provider&&(*j).Version>ver.data())) {
 	if (!sql.isNull())
 	  cl.insert(j,def);
 	return true;
@@ -141,8 +141,8 @@ bool toSQL::deleteSQL(const QCString &name,
 	if (cl.begin()==cl.end())
 	  Definitions->erase(i);
 	return true;
-      } else if ((*j).Provider>provider||
-		 ((*j).Provider==provider&&(*j).Version>ver)) {
+      } else if ((*j).Provider>provider.data()||
+		 ((*j).Provider==provider&&(*j).Version>ver.data())) {
 	return false;
       }
     }
@@ -177,10 +177,10 @@ QString toSQL::string(const QCString &name,
       std::list<version> &cl=(*i).second.Versions;
       for (std::list<version>::iterator j=cl.begin();j!=cl.end();j++) {
 	if ((*j).Provider==prov) {
-	  if ((*j).Version<=ver||!sql) {
+	  if ((*j).Version<=ver.data()||!sql) {
 	    sql=&(*j).SQL;
 	  }
-	  if ((*j).Version>=ver)
+	  if ((*j).Version>=ver.data())
 	    return *sql;
 	}
       }
@@ -328,7 +328,7 @@ std::list<QCString> toSQL::range(const QCString &startWith)
 {
   std::list<QCString> ret;
   for(sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
-    if ((*i).first>startWith||startWith.isNull()) {
+    if ((*i).first>startWith.data()||startWith.isNull()) {
       if ((*i).first.mid(0,startWith.length())==startWith||startWith.isNull())
 	ret.insert(ret.end(),(*i).first);
       else

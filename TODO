@@ -63,7 +63,6 @@ Extended functionality:
 * Session:Long operations(v$session_longops)
 * Archive log info
 * Rollback:Shrink rollback segment(ALTER ROLLBACK SEGMENT TO {value})
-* Wait event analyzer in sessions.
 * Separate refresh of session info and session list.
 * Add auto extend information to the storage manager.
 * Add copy datafile/tablespace in storage manager.
@@ -84,6 +83,11 @@ Extended functionality:
 * Remember settings in print dialog.
 * Make it posible to configure CSV separator/delimiter in chartmanager.
 * Save state of SQL output window.
+* Make session waitstate analyzer also keep track of what SQL is executed.
+* Don't update tabs which never can be updated in session manager.
+* Add tooltips in waitstate charts to display waitstate name and value.
+* Make default schema any an option.
+* Initially sort descending on columns in SGA trace.
 
 New tools:
 
