@@ -1523,7 +1523,6 @@ distclean: clean
 	-rm -f rpmcommon rpmoracle >/dev/null 2>&1 
 	-rm -f \\#*\\# >/dev/null 2>&1
 	-rm -f Makefile >/dev/null 2>&1
-	-rm -f LICENSE.h >/dev/null 2>&1
 	-rm -f configure.setup >/dev/null 2>&1
 
 # This pretty requires a kdoc installtion and reference files for Qt and KDE Libs.
