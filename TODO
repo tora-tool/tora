@@ -86,6 +86,7 @@ Extended functionality:
 * Easier to grant all priviledges to a user.
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
+* Synchonize worksheets that edit the same file.
 
 New tools:
 
