@@ -1,7 +1,9 @@
-############################################################################
+
+#####
 #
 # TOra - An Oracle Toolkit for DBA's and developers
-# Copyright (C) 2005 Alexey Danilchenko
+# Copyright (C) 2003-2005 Quest Software, Inc
+# Portions Copyright (C) 2005 Other Contributors
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -22,9 +24,18 @@
 #      as you follow the requirements of the GNU GPL in regard to all of the
 #      software in the executable aside from Oracle client libraries.
 #
+#      Specifically you are not permitted to link this program with the
+#      Qt/UNIX, Qt/Windows or Qt Non Commercial products of TrollTech.
+#      And you are not permitted to distribute binaries compiled against
+#      these libraries without written consent from Quest Software, Inc.
+#      Observe that this does not disallow linking to the Qt Free Edition.
+#
+#      You may link this product with any GPL'd Qt library such as Qt/Free
+#
 # All trademarks belong to their respective owners.
 #
-############################################################################
+#####
+
 
 # This script only compiles the resources and windows classes in this directory
 

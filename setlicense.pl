@@ -1,8 +1,10 @@
 #!/usr/bin/perl
-############################################################################
+
+#####
 #
 # TOra - An Oracle Toolkit for DBA's and developers
-# Copyright (C) 2003 Quest Software, Inc
+# Copyright (C) 2003-2005 Quest Software, Inc
+# Portions Copyright (C) 2005 Other Contributors
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -29,9 +31,11 @@
 #      these libraries without written consent from Quest Software, Inc.
 #      Observe that this does not disallow linking to the Qt Free Edition.
 #
+#      You may link this product with any GPL'd Qt library such as Qt/Free
+#
 # All trademarks belong to their respective owners.
 #
-############################################################################
+#####
 
 use strict;
 
