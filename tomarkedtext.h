@@ -62,6 +62,12 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
   /** Filename of the file in this buffer.
    */
   QString Filename;
+
+  bool Search;
+  bool SearchFailed;
+  bool SearchForward;
+  QString SearchString;
+
   /** Print one page to printer.
    * @param printer Printer to print to.
    * @param painter Painter to print to.
@@ -72,7 +78,13 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
    */
   virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
 			int pageNo,bool paint=true);
+
+  void searchFound(int line,int col);
+  void incrementalSearch(bool forward,bool next);
 protected:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void mousePressEvent(QMouseEvent *e);
   /** Reimplemented for internal reasons.
    */
   virtual void keyPressEvent(QKeyEvent *e);
@@ -130,6 +142,9 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void focusInEvent (QFocusEvent *e);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void focusOutEvent (QFocusEvent *e);
   /** Reimplemented for internal reasons.
    */
   virtual void paintEvent(QPaintEvent *pe);

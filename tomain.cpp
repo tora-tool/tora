@@ -191,9 +191,9 @@ toMain::toMain()
   menuBar()->insertItem("&File",FileMenu,TO_FILE_MENU);
   FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
   FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
-  FileMenu->setAccel(Key_S|CTRL,TO_FILE_SAVE);
-  FileMenu->setAccel(Key_W|CTRL,TO_FILE_COMMIT);
-  FileMenu->setAccel(Key_R|CTRL,TO_FILE_ROLLBACK);
+  FileMenu->setAccel(Key_W|CTRL,TO_FILE_SAVE);
+  FileMenu->setAccel(Key_Greater|CTRL,TO_FILE_COMMIT);
+  FileMenu->setAccel(Key_Less|CTRL,TO_FILE_ROLLBACK);
   FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
 

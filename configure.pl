@@ -939,7 +939,7 @@ __TEMP__
     }
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
-    $LFlags.="\"-L".$QtLib."\"";
+    $LFlags.="\"-L".$QtLib."\" ";
     if (defined $MySQLLib) {
 	$LFlags.="\"-L".$MySQLLib."\" ";
     }
@@ -1054,6 +1054,7 @@ __EOT__
 # WARNING!!! This file will be overwritten by the configure script.
 
 __EOT__
+
         print MAKEFILE "# Where to install tora\n";
 	print MAKEFILE "INSTALLPREFIX=\$(ROOT)$InstallPrefix\n";
 	print MAKEFILE "\n";

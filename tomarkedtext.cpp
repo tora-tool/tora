@@ -67,6 +67,7 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
   : toMultiLineEdit(parent,name),toEditWidget()
 {
   setEdit();
+  Search=false;
   setFont(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
 
   connect(this,SIGNAL(redoAvailable(bool)),this,SLOT(setRedoAvailable(bool)));
@@ -104,6 +105,15 @@ void toMarkedText::focusInEvent (QFocusEvent *e)
   getCursorPosition (&curline,&curcol);
   toMainWidget()->setCoordinates(curline+1,curcol+1);
   toMultiLineEdit::focusInEvent(e);
+}
+
+void toMarkedText::focusOutEvent (QFocusEvent *e)
+{
+  if (Search) {
+    Search=false;
+    toStatusMessage(QString::null);
+  }
+  toMultiLineEdit::focusOutEvent(e);
 }
 
 void toMarkedText::dropEvent(QDropEvent *e)
@@ -249,6 +259,79 @@ void toMarkedText::newLine(void)
   }
 }
 
+void toMarkedText::searchFound(int line,int col)
+{
+  setCursorPosition(line,col+SearchString.length(),false);
+  setCursorPosition(line,col,true);
+}
+
+void toMarkedText::incrementalSearch(bool forward,bool next)
+{
+  int curline,curcol;
+  getCursorPosition (&curline,&curcol);
+  QString line;
+  if(SearchFailed) {
+    if (forward) {
+      curline=0;
+      curcol=0;
+      next=false;
+      line=textLine(curline);
+    } else {
+      curline=numLines()-1;
+      line=textLine(curline);
+      curcol=line.length();
+      next=false;
+    }
+  } else
+    line=textLine(curline);
+  if (forward) {
+    if (next)
+      curcol++;
+    if (curcol+SearchString.length()<line.length()) {
+      int pos=line.find(SearchString,curcol,false);
+      if (pos>=0) {
+	searchFound(curline,pos);
+	return;
+      }
+    }
+    for(curline++;curline<numLines();curline++) {
+      int pos=textLine(curline).find(SearchString,0,false);
+      if (pos>=0) {
+	searchFound(curline,pos);
+	return;
+      }
+    }
+  } else {
+    if (next)
+      curcol--;
+    if (curcol>=0) {
+      int pos=line.findRev(SearchString,curcol+SearchString.length(),false);
+      if (pos>=0) {
+	searchFound(curline,pos);
+	return;
+      }
+    }
+    for(curline--;curline>=0;curline--) {
+      int pos=textLine(curline).findRev(SearchString,0,false);
+      if (pos>=0) {
+	searchFound(curline,pos);
+	return;
+      }
+    }
+  }
+  toStatusMessage("Incremental search:"+SearchString+" (failed)",false,false);
+  SearchFailed=true;
+}
+
+void toMarkedText::mousePressEvent(QMouseEvent *e)
+{
+  if (Search) {
+    Search=false;
+    toStatusMessage(QString::null);
+  }
+  toMultiLineEdit::mousePressEvent(e);
+}
+
 void toMarkedText::keyPressEvent(QKeyEvent *e)
 {
   if(e->state()==0&&e->key()==Key_Insert) {
@@ -259,8 +342,48 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
     selectAll();
     e->accept();
     return;
-  } else
-    toMultiLineEdit::keyPressEvent(e);
+  } else if(e->state()==ControlButton&&(e->key()==Key_S||e->key()==Key_R)) {
+    SearchForward=e->key()==Key_I;
+    if (!Search) {
+      Search=true;
+      SearchFailed=false;
+      SearchString=QString::null;
+      toStatusMessage("Incremental search:",false,false);
+    } else if (Search&&SearchString.length())
+      incrementalSearch(SearchForward,true);
+    e->accept();
+    return;
+  } else if (Search) {
+    bool ok=false;
+    if (e->state()==NoButton&&e->key()==Key_Backspace) {
+      int len=SearchString.length();
+      if (len>0)
+	SearchString.truncate(len-1);
+      ok=true;
+    } else {
+      QString t=e->text();
+      if (t.length()) {
+	SearchString+=t;
+	ok=true;
+      } else if (e->key()==Key_Shift||
+		 e->key()==Key_Control||
+		 e->key()==Key_Meta||
+		 e->key()==Key_Alt) {
+	ok=true;
+      }
+    }
+    
+    if (ok) {
+      toStatusMessage("Incremental search:"+SearchString,false,false);
+      incrementalSearch(SearchForward,false);
+      e->accept();
+      return;
+    } else {
+      Search=false;
+      toStatusMessage(QString::null);
+    }
+  }
+  toMultiLineEdit::keyPressEvent(e);
 }
 
 void toMarkedText::exportData(std::map<QString,QString> &data,const QString &prefix)
