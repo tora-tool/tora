@@ -1,0 +1,16 @@
+Source: tora
+Section: contrib/misc
+Priority: optional
+Maintainer: Robert CHERAMY <robert@cheramy.net>
+Build-Depends: debhelper (>> 2.0.0), libqt-dev, g++
+Standards-Version: 3.2.1
+
+Package: tora
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Toolkit For Oracle
+ Tool for Oracle is a tool for DBA:s and database software developers. Inspired
+ from the excellent software TOAD for Windows. It features a schema browser,
+ SQL worksheet, PL/SQL editor & debugger, storage manager, rollback segment
+ monitor, instance manager, and SQL output viewer.
+

@@ -456,15 +456,15 @@ __EOT__
 
 __EOT__
         print MAKEFILE "# Where to install tora\n";
-	print MAKEFILE "INSTALLPREFIX=$InstallPrefix\n";
+	print MAKEFILE "INSTALLPREFIX=\$(ROOT)$InstallPrefix\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Where to install tora binary\n";
-	print MAKEFILE "INSTALLBIN=$InstallBin\n";
+	print MAKEFILE "INSTALLBIN=\$(ROOT)$InstallBin\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Where to install tora plugins\n";
-	print MAKEFILE "INSTALLLIB=$InstallLib\n";
+	print MAKEFILE "INSTALLLIB=\$(ROOT)$InstallLib\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Additional includes needed to compile program\n";
