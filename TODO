@@ -74,6 +74,7 @@ Extended functionality:
 * Explain plan without execute in worksheet.
 * Option to select newline format on saved text.
 * Make legacy CTRL+Shift etc keyboard bindings available.
+* Don't display statements not in the SGA in the SGA trace.
 
 New tools:
 

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>592</width>
+            <width>588</width>
             <height>480</height>
         </rect>
     </property>
@@ -25,7 +25,7 @@
     <grid>
         <property stdset="1">
             <name>margin</name>
-            <number>0</number>
+            <number>11</number>
         </property>
         <property stdset="1">
             <name>spacing</name>
@@ -76,7 +76,22 @@
                         <string>Display object and extent list on startup.</string>
                     </property>
                 </widget>
-                <spacer row="3"  column="0" >
+                <widget row="2"  column="0" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DispTablespaces</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Display tablespaces or just datafiles.</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Display tablespaces or just datafiles.</string>
+                    </property>
+                </widget>
+                <spacer row="4"  column="0" >
                     <property>
                         <name>name</name>
                         <cstring>Spacer1</cstring>
@@ -97,19 +112,15 @@
                         </size>
                     </property>
                 </spacer>
-                <widget row="2"  column="0" >
+                <widget row="3"  column="0" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>DispTablespaces</cstring>
+                        <cstring>DispAvailableGraph</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Display tablespaces or just datafiles.</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Display tablespaces or just datafiles.</string>
+                        <string>Display graph of autoextend information instead of just free space.</string>
                     </property>
                 </widget>
             </grid>

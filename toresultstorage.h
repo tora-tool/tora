@@ -51,6 +51,7 @@ class toResultStorage : public toResultView {
   toNoBlockQuery *Files;
 
   bool OnlyFiles;
+  bool AvailableGraph;
   std::list<QString> TablespaceValues;
   std::list<QString> FileValues;
 
@@ -58,9 +59,9 @@ class toResultStorage : public toResultView {
   QString CurrentFile;
 
   void saveSelected(void);
-  void update(void);
+  void updateList(void);
 public:
-  toResultStorage(QWidget *parent,const char *name=NULL);
+  toResultStorage(bool availableGraph,QWidget *parent,const char *name=NULL);
   ~toResultStorage();
 
   void showCoalesced(bool shw)

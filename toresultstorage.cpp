@@ -47,12 +47,15 @@
 #include "toresultstorage.moc"
 
 class toResultStorageItem : public toResultViewItem {
+  bool AvailableGraph;
 public:
-  toResultStorageItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
-    : toResultViewItem(parent,after,buf)
+  toResultStorageItem(bool available,QListView *parent,QListViewItem *after,
+		      const QString &buf=QString::null)
+    : toResultViewItem(parent,after,buf),AvailableGraph(available)
   { }
-  toResultStorageItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
-    : toResultViewItem(parent,after,buf)
+  toResultStorageItem(bool available,QListViewItem *parent,QListViewItem *after,
+		      const QString &buf=QString::null)
+    : toResultViewItem(parent,after,buf),AvailableGraph(available)
   { }
   virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align)
   {
@@ -66,21 +69,28 @@ public:
       double total=text(7).toDouble();
       double user=text(5).toDouble();
       double free=text(6).toDouble();
-      if (total<user)
+      if (total<user||!AvailableGraph)
 	total=user;
+
+      QString t;
 
       user/=total;
       free/=total;
+      if (AvailableGraph)
+	t.sprintf("%0.1f / %0.1f %%",free*100,(total-user)/total*100);
+      else
+	t.sprintf("%0.1f %%",free*100);
       p->fillRect(0,0,int((user-free)*width),height(),
-		  QBrush(isSelected()?cg.highlight():cg.base()));
+		  QBrush(red));
       p->fillRect(int((user-free)*width),0,int(user*width),height(),
 		  QBrush(blue));
-      p->fillRect(int(user*width),0,width,height(),
-		  QBrush(green));
+      if (AvailableGraph)
+	p->fillRect(int(user*width),0,width,height(),
+		    QBrush(green));
 
-      QPen pen(isSelected()?cg.highlightedText():cg.foreground());
+      QPen pen(white);
       p->setPen(pen);
-      p->drawText(0,0,width,height(),AlignCenter,text(column));
+      p->drawText(0,0,width,height(),AlignCenter,t);
     } else if (column==9) {
       QString ct=text(column);
       if (ct.isEmpty()) {
@@ -108,8 +118,8 @@ bool toResultStorage::canHandle(toConnection &conn)
   return toIsOracle(conn);
 }
 
-toResultStorage::toResultStorage(QWidget *parent,const char *name)
-  : toResultView(false,false,parent,name)
+toResultStorage::toResultStorage(bool available,QWidget *parent,const char *name)
+  : toResultView(false,false,parent,name),AvailableGraph(available)
 {
   Unit=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   setAllColumnsShowFocus(true);
@@ -117,13 +127,16 @@ toResultStorage::toResultStorage(QWidget *parent,const char *name)
   setRootIsDecorated(true);
   addColumn("Name");
   addColumn("Status");
-  addColumn("Enabled");
+  addColumn("Information");
   addColumn("Contents");
   addColumn("Logging");
   addColumn(QString("Size (%1)").arg(Unit));
   addColumn(QString("Free (%1)").arg(Unit));
   addColumn(QString("Autoextend (%1)").arg(Unit));
-  addColumn("Available/Autoextend");
+  if (available)
+    addColumn("Used/Free/Autoextend");
+  else
+    addColumn("Available");
   addColumn("Coalesced");
   addColumn(QString("Max free (%1)").arg(Unit));
   addColumn("Free fragments");
@@ -154,14 +167,13 @@ toResultStorage::~toResultStorage()
 static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 			      "SELECT d.tablespace_name, \n"
 			      "       d.status,\n"
-                              "       ' ',\n"
+                              "       d.extent_management,\n"
                               "       d.contents,\n"
                               "       d.logging,\n"
                               "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                               "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
                               "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-                              "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-			      "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+                              "       '-',\n"
                               "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
                               "       '-',\n"
                               "       TO_CHAR(f.total_extents)\n"
@@ -175,14 +187,13 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
                               " UNION ALL\n"
                               "SELECT d.tablespace_name, \n"
                               "       d.status,\n"
-                              "       ' ',\n"
+                              "       d.extent_management,\n"
                               "       d.contents,\n"
                               "       d.logging,\n"
                               "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                               "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
                               "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-                              "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-			      "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+                              "       '-',\n"
                               "       '-',\n"
                               "       TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
                               "       TO_CHAR(f.total_extents)\n"
@@ -201,14 +212,13 @@ static toSQL SQLShowCoalesced("toResultStorage:ShowCoalesced",
 static toSQL SQLShowCoalesced8("toResultStorage:ShowCoalesced",
                                "SELECT d.tablespace_name, \n"
                                "       d.status,\n"
-                               "       ' ',\n"
+			       "       d.extent_management,\n"
                                "       d.contents,\n"
                                "       d.logging,\n"
                                "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
                                "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-			       "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-			       "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+			       "       '-',\n"
                                "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
                                "       '-',\n"
                                "       TO_CHAR(f.total_extents)\n"
@@ -230,14 +240,13 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
                                "       'N/A',\n"
                                "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
-                               "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-			       "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-			       "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+                               "       '-',\n"
+			       "       '-',\n"
                                "       TO_CHAR(ROUND(f.percent_extents_coalesced,1))||'%',\n"
                                "       '-',\n"
                                "       TO_CHAR(f.total_extents)\n"
                                "  FROM sys.dba_tablespaces d,\n"
-                               "       (select tablespace_name, sum(bytes) bytes, sum(maxbytes) maxbytes from sys.dba_data_files group by tablespace_name) a,\n"
+                               "       (select tablespace_name, sum(bytes) bytes from sys.dba_data_files group by tablespace_name) a,\n"
                                "       (select tablespace_name, total_bytes bytes, total_extents, percent_extents_coalesced from sys.dba_free_space_coalesced) f,\n"
                                "       (select :unt<int> unit from sys.dual) b\n"
                                " WHERE d.tablespace_name = a.tablespace_name(+)\n"
@@ -249,14 +258,13 @@ static toSQL SQLShowCoalesced7("toResultStorage:ShowCoalesced",
 static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
                                 "SELECT d.tablespace_name, \n"
                                 "       d.status,\n"
-                                "       ' ',\n"
+				"       d.extent_management,\n"
                                 "       d.contents,\n"
                                 "       d.logging,\n"
                                 "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                 "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
                                 "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-				"       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-				"       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+				"       '-',\n"
                                 "       '-',\n"
                                 "       TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
                                 "       TO_CHAR(f.total_extents)\n"
@@ -270,14 +278,13 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
                                 " UNION ALL\n"
                                 "SELECT d.tablespace_name, \n"
                                 "       d.status,\n"
-                                "       ' ',\n"
+				"       d.extent_management,\n"
                                 "       d.contents,\n"
                                 "       d.logging,\n"
                                 "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                 "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)),\n"
                                 "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-				"       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-				"       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+				"       '-',\n"
                                 "       '-',\n"
                                 "       TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
                                 "       TO_CHAR(f.total_extents)\n"
@@ -296,14 +303,13 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
                                  "SELECT d.tablespace_name, \n"
                                  "       d.status,\n"
-                                 "       ' ',\n"
+				 "       d.extent_management,\n"
                                  "       d.contents,\n"
                                  "       d.logging,\n"
                                  "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                  "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
                                  "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-				 "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-				 "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+				 "       '-',\n"
                                  "       '-',\n"
                                  "       TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
                                  "       TO_CHAR(f.total_extents)\n"
@@ -325,14 +331,13 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
                                  "       'N/A',\n"
                                  "       TO_CHAR(ROUND(NVL(a.bytes / b.unit, 0),2)),\n"
                                  "       TO_CHAR(ROUND(NVL(f.bytes,0) / b.unit,2)), \n"
-                                 "       TO_CHAR(ROUND(NVL(a.maxbytes / b.unit, 0),2)),\n"
-				 "       TO_CHAR(ROUND(NVL(f.bytes, 0) / a.bytes * 100, 2))||'/'||\n"
-				 "       TO_CHAR(ROUND(NVL((case when a.maxbytes < a.bytes then 0 else a.maxbytes-a.bytes end)/a.bytes*100,0),2))||'%',\n"
+                                 "       '-',\n"
+				 "       '-',\n"
                                  "       '-',\n"
                                  "       TO_CHAR(ROUND(NVL(f.maxbytes,0) / b.unit,2)), \n"
                                  "       TO_CHAR(f.total_extents)\n"
                                  "  FROM sys.dba_tablespaces d,\n"
-                                 "       (select tablespace_name, sum(bytes) bytes, sum(maxbytes) maxbytes from sys.dba_data_files group by tablespace_name) a,\n"
+                                 "       (select tablespace_name, sum(bytes) bytes from sys.dba_data_files group by tablespace_name) a,\n"
                                  "       (select tablespace_name, sum(bytes) bytes, count(1) total_extents, max(bytes) maxbytes from sys.dba_free_space group by tablespace_name) f,\n"
                                  "       (select :unt<int> unit from sys.dual) b\n"
                                  " WHERE d.tablespace_name = a.tablespace_name(+)\n"
@@ -351,7 +356,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
                          "       to_char(round(d.bytes/b.unit,2)),\n"
                          "       to_char(round(s.bytes/b.unit,2)),\n"
                          "       to_char(round(d.maxbytes/b.unit,2)),\n"
-                         "       to_char(round(s.bytes*100/d.bytes,2))||'/'||to_char(round((case when d.maxbytes < d.bytes then 0 else d.maxbytes-d.bytes end)*100/d.bytes,2))||'%',\n"
+			 "       '-',\n"
                          "       ' ',\n"
                          "       to_char(round(s.maxbytes/b.unit,2)),\n"
                          "       to_char(s.num),\n"
@@ -373,8 +378,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
                          "       to_char(round(d.bytes/b.unit,2)),\n"
                          "       to_char(round((d.user_bytes-t.bytes_cached)/b.unit,2)),\n"
                          "       to_char(round(d.maxbytes/b.unit,2)),\n"
-                         "       to_char(round((d.bytes-t.bytes_cached)*100/d.bytes,2))||'/'||\n"
-			 "       to_char(round((case when d.maxbytes < d.bytes then 0 else d.maxbytes-d.bytes end)*100/d.bytes,2))||'%',\n"
+			 "       '-',\n"
                          "       ' ',\n"
                          "       ' ',\n"
                          "       '1',\n"
@@ -400,7 +404,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
                           "       to_char(round(d.bytes/b.unit,2)),\n"
                           "       to_char(round(s.bytes/b.unit,2)),\n"
                           "       to_char(round(d.maxbytes/b.unit,2)),\n"
-                          "       to_char(round(s.bytes*100/d.bytes,2))||'/'||to_char(round((case when d.maxbytes < d.bytes then 0 else d.maxbytes-d.bytes end)*100/d.bytes,2))||'%',\n"
+			  "       '-',\n"
                           "       ' ',\n"
                           "       to_char(round(s.maxbytes/b.unit,2)),\n"
                           "       to_char(s.num),\n"
@@ -415,6 +419,30 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
                           QString::null,
                           "8.0");
 
+static toSQL SQLDatafile7("toResultStorage:Datafile",
+			  "SELECT  d.tablespace_name,\n"
+			  "	   v.name,\n"
+			  "	   v.status,\n"
+			  "	   v.enabled,\n"
+			  "	   ' ',\n"
+			  "	   ' ',\n"
+			  "        to_char(round(d.bytes/b.unit,2)),\n"
+			  "        to_char(round(s.bytes/b.unit,2)),\n"
+			  "        '-',\n"
+			  "        '-',\n"
+			  "	   ' ',\n"
+			  "        to_char(round(s.maxbytes/b.unit,2)),\n"
+			  "	   to_char(s.num),\n"
+			  "        NULL,\n"
+			  "        v.file#\n"
+			  "  FROM  sys.dba_data_files d,\n"
+			  "	   v$datafile v,\n"
+			  "	   (SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num,NVL(MAX(bytes),0) maxbytes FROM sys.dba_free_space  GROUP BY file_id) s,\n"
+			  "        (select :unt<int> unit from sys.dual) b\n"
+			  " WHERE  (s.file_id (+)= d.file_id)\n"
+			  "   AND  (d.file_name = v.name)",
+			  QString::null,
+			  "7.3");
 
 #define FILECOLUMNS 14
 #define COLUMNS (FILECOLUMNS-2)
@@ -461,12 +489,12 @@ void toResultStorage::query(void)
   } TOCATCH
 }
 
-void toResultStorage::update(void)
+void toResultStorage::updateList(void)
 {
   clear();
   if (!OnlyFiles) {
     for(std::list<QString>::iterator j=TablespaceValues.begin();j!=TablespaceValues.end();) {
-      QListViewItem *tablespace=new toResultStorageItem(this,NULL);
+      QListViewItem *tablespace=new toResultStorageItem(AvailableGraph,this,NULL);
       for (int i=0;i<COLUMNS&&j!=TablespaceValues.end();i++,j++)
 	tablespace->setText(i,*j);
     
@@ -484,13 +512,17 @@ void toResultStorage::update(void)
     QListViewItem *file;
     QListViewItem *tablespace=NULL;
     if (OnlyFiles) {
-      file=new toResultStorageItem(this,NULL);
+      file=new toResultStorageItem(AvailableGraph,this,NULL);
     } else {
       for (tablespace=firstChild();tablespace&&tablespace->text(0)!=name;tablespace=tablespace->nextSibling())
 	;
-      if (!tablespace)
-	throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
-      file=new toResultStorageItem(tablespace,NULL);
+      if (!tablespace) {
+	if (Files)
+	  break;
+	else
+	  throw QString("Couldn't find tablespace parent %1 for datafile").arg(name);
+      }
+      file=new toResultStorageItem(AvailableGraph,tablespace,NULL);
     }
     for (int i=0;i<FILECOLUMNS&&k!=FileValues.end();i++,k++)
       file->setText(i,*k);
@@ -516,7 +548,7 @@ void toResultStorage::poll(void)
         for (int i=0;i<cols&&!Tablespaces->eof();i++)
           toPush(TablespaceValues,QString(Tablespaces->readValue()));
       }
-      update();
+      updateList();
       if (Tablespaces->eof()) {
         delete Tablespaces;
         Tablespaces=NULL;
@@ -536,7 +568,7 @@ void toResultStorage::poll(void)
     }
 
     if (Tablespaces==NULL&&Files==NULL) {
-      update();
+      updateList();
       Poll.stop();
     }
   } catch(const QString &exc) {
@@ -584,5 +616,5 @@ void toResultStorage::setOnlyFiles(bool only)
     setRootIsDecorated(true);
   }
   OnlyFiles=only;
-  update();
+  updateList();
 }

@@ -27,3 +27,9 @@ toThread:
 
 toWorksheet:
 	Errors when displaying query plan will display two error dialogs.
+
+toListView:
+	When sorting numerical columns always sort text after.
+
+toSGATrace:
+	Doesn't work with Oracle7

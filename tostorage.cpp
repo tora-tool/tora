@@ -97,6 +97,7 @@
 #define CONF_DISP_TABLESPACES "DispTablespaces"
 #define CONF_DISP_COALESCED "DispCoalesced"
 #define CONF_DISP_EXTENTS "DispExtents"
+#define CONF_DISP_AVAILABLEGRAPH "AvailableGraph"
 
 class toStoragePrefs : public toStoragePrefsUI, public toSettingTab
 {
@@ -113,6 +114,7 @@ toStoragePrefs::toStoragePrefs(toTool *tool,QWidget* parent,const char* name)
   DispCoalesced->setChecked(!tool->config(CONF_DISP_COALESCED,"").isEmpty());
   DispExtents->setChecked(!tool->config(CONF_DISP_EXTENTS,"").isEmpty());
   DispTablespaces->setChecked(!tool->config(CONF_DISP_TABLESPACES,"Yes").isEmpty());
+  DispAvailableGraph->setChecked(!tool->config(CONF_DISP_AVAILABLEGRAPH,"Yes").isEmpty());
 }
 
 void toStoragePrefs::saveSetting(void)
@@ -120,6 +122,7 @@ void toStoragePrefs::saveSetting(void)
   Tool->setConfig(CONF_DISP_COALESCED,DispCoalesced->isChecked()?"Yes":"");
   Tool->setConfig(CONF_DISP_EXTENTS,DispExtents->isChecked()?"Yes":"");
   Tool->setConfig(CONF_DISP_TABLESPACES,DispTablespaces->isChecked()?"Yes":"");
+  Tool->setConfig(CONF_DISP_AVAILABLEGRAPH,DispAvailableGraph->isChecked()?"Yes":"");
 }
 
 class toStorageTool : public toTool {
@@ -749,7 +752,8 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   new toChangeConnection(toolbar);
 
   QSplitter *splitter=new QSplitter(Vertical,this);
-  Storage=new toResultStorage(splitter);
+  Storage=new toResultStorage(!StorageTool.config(CONF_DISP_AVAILABLEGRAPH,"Yes").isEmpty(),
+			      splitter);
   ExtentParent=new QSplitter(Horizontal,splitter);
   Objects=new toListView(ExtentParent);
   Objects->addColumn("Owner");
@@ -761,9 +765,9 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   Extents=new toStorageExtent(ExtentParent);
   Objects->setSelectionMode(QListView::Single);
   Storage->setSelectionMode(QListView::Single);
-  if (extents) {
-    connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
-  } else
+  connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
+
+  if (!extents)
     ExtentParent->hide();
 
   if (!tablespaces)
@@ -975,20 +979,24 @@ void toStorage::selectionChanged(void)
   QListViewItem *item=Storage->selectedItem();
   if (item) {
     if (item->parent()||Storage->onlyFiles()) {
-      Extents->setFile(item->text(12),item->text(13).toInt());
+      if (!ExtentParent->isHidden())
+	Extents->setFile(item->text(12),item->text(13).toInt());
       item=item->parent();
       MoveFileButton->setEnabled(true);
       ModFileButton->setEnabled(true);
-    } else
+    } else if (!ExtentParent->isHidden())
       Extents->setTablespace(item->text(0));
-    std::list<toStorageExtent::extentName> obj=Extents->objects();
-    QListViewItem *objItem=NULL;
-    Objects->clear();
-    for (std::list<toStorageExtent::extentName>::iterator i=obj.begin();i!=obj.end();i++) {
-      objItem=new toResultViewItem(Objects,objItem,(*i).Owner);
-      objItem->setText(1,(*i).Table);
-      objItem->setText(2,(*i).Partition);
-      objItem->setText(3,QString::number((*i).Size));
+
+    if (!ExtentParent->isHidden()) {
+      std::list<toStorageExtent::extentName> obj=Extents->objects();
+      QListViewItem *objItem=NULL;
+      Objects->clear();
+      for (std::list<toStorageExtent::extentName>::iterator i=obj.begin();i!=obj.end();i++) {
+	objItem=new toResultViewItem(Objects,objItem,(*i).Owner);
+	objItem->setText(1,(*i).Table);
+	objItem->setText(2,(*i).Partition);
+	objItem->setText(3,QString::number((*i).Size));
+      }
     }
 
     if (item) {
@@ -1397,11 +1405,9 @@ std::list<toStorageExtent::extentName> toStorageExtent::objects(void)
 void toStorage::showExtent(bool ena)
 {
   if (ena) {
-    connect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
     ExtentParent->show();
     selectionChanged();
   } else {
-    disconnect(Storage,SIGNAL(selectionChanged(void)),this,SLOT(selectionChanged(void)));
     ExtentParent->hide();
   }
 }
