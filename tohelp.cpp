@@ -534,7 +534,7 @@ void toHelp::search(void)
   Searching=false;
 }
 
-void toHelp::removeSelected(void)
+void toHelp::removeSelection(void)
 {
   Sections->clearSelection();
   Result->clearSelection();

@@ -34,6 +34,7 @@
 2001-05-31: Some Qt fixes.
 2001-05-31: Added an optional memory debugging framework.
 2001-05-31: Added forward/backward buttons to help.
+2001-05-31: Fixed problem with missing .torarc.
 
 0.10: Released 2001-05-25
 

@@ -76,7 +76,7 @@ public:
 public slots:
   void search(void);
   void changeContent(QListViewItem *);
-  void removeSelected(void);
+  void removeSelection(void);
 };
 
 class toHelpContext {

@@ -224,7 +224,12 @@ void toTool::loadConfig(void)
 
 bool toTool::loadMap(const QString &filename,map<QString,QString> &pairs)
 {
-  QCString data=toReadFile(filename);
+  QCString data;
+  try {
+    data=toReadFile(filename);
+  } catch (...) {
+    return false;
+  }
 
   int pos=0;
   int bol=0;
