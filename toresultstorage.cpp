@@ -175,7 +175,7 @@ void toResultStorage::query(void)
   try {
     char buffer[1000];
 
-    const char *sql;
+    QCString sql;
 
     if (ShowCoalesced)
       sql=toSQL::sql(SQLShowCoalesced,Connection);

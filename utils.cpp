@@ -113,7 +113,6 @@ static toSQL SQLNow("Global:Now",
 
 QString toNow(toConnection &conn)
 {
-  printf("%s\n",(const char *)SQLNow(conn));
   otl_stream q(1,
 	       SQLNow(conn),
 	       conn.connection());

@@ -1,4 +1,4 @@
-0.7: Released 2001-03-04
+0.7:
 
 2001-02-27: Mixed up precision/scale in column definition.
 2001-03-01: Added support for separate session in worksheet.
