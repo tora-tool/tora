@@ -367,7 +367,18 @@ __TEMP__
 		 "/usr/local/bin");
     }
     if (!-f $CC) {
-	print "Failed to find compatible GCC compiler\n";
+	print <<__EOT__;
+Failed to find compatible GCC compiler. This doesn't necessary mean that
+there are no c++ compiler that won't work. This test includes compiling
+a Qt application using Oracle. So if anything went wrong finding these
+this test will fail.
+
+The command tried was the following (\$CC is replaced with whatever C
+compiler used):
+
+\$CC $LFlags -I`pwd` $Includes $Libs $QtLibShared -lclntsh -otemp temp.cc
+
+__EOT__
 	exit(2);
     }
     print "Using compiler $CC\n";
