@@ -440,6 +440,8 @@ void toWorksheet::setup(bool autoLoad)
     Logging->addColumn(tr("Timestamp"));
     Logging->addColumn(tr("Duration"));
     Logging->setColumnAlignment(3,AlignRight);
+    Logging->setSelectionMode(QListView::Single);
+    connect(Logging,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(executeLog()));
     LastLogItem=NULL;
 
     toolbar->addSeparator();
@@ -986,7 +988,9 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
     if (last)
       citem=dynamic_cast<toResultViewItem *>(last);
     if (!citem||citem->allText(0)!=sql) {
-      Logging->setCurrentItem(item);
+      disconnect(Logging,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(executeLog()));
+      Logging->setSelected(item,true);
+      connect(Logging,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(executeLog()));
       Logging->ensureItemVisible(item);
     }
   }
@@ -1443,20 +1447,36 @@ void toWorksheet::executePreviousLog(void)
     while(pt&&pt->nextSibling()!=item)
       pt=pt->nextSibling();
 
-    toResultViewItem *prev=dynamic_cast<toResultViewItem *>(pt);
-    if (prev) {
-      Logging->setCurrentItem(prev);
-      insertStatement(prev->allText(0));
+    if (pt)
+      Logging->setSelected(pt,true);
+  }
+}
 
-      if (prev->text(4).isEmpty())
-	query(prev->allText(0),false);
-      else {
-	std::map<int,QWidget *>::iterator i=History.find(prev->text(4).toInt());
-	if (i!=History.end()&&(*i).second) {
-	  Current->hide();
-	  Current=(*i).second;
-	  Current->show();
-	}
+void toWorksheet::executeLog(void)
+{
+  if (Light)
+    return;
+  
+  Result->stop();
+
+  LastLine=LastOffset=-1;
+  saveHistory();
+
+  QListViewItem *ci=Logging->currentItem();
+  toResultViewItem *item=dynamic_cast<toResultViewItem *>(ci);
+  if (item) {
+    insertStatement(item->allText(0));
+    
+    if (item->text(4).isEmpty())
+      query(item->allText(0),false);
+    else {
+      std::map<int,QWidget *>::iterator i=History.find(item->text(4).toInt());
+      QueryString=item->allText(0);
+      changeResult(ResultTab->currentPage());
+      if (i!=History.end()&&(*i).second) {
+	Current->hide();
+	Current=(*i).second;
+	Current->show();
       }
     }
   }
@@ -1475,21 +1495,8 @@ void toWorksheet::executeNextLog(void)
   QListViewItem *item=Logging->currentItem();
   if (item&&item->nextSibling()) {
     toResultViewItem *next=dynamic_cast<toResultViewItem *>(item->nextSibling());
-    if (next) {
-      Logging->setCurrentItem(next);
-      insertStatement(next->allText(0));
-
-      if (next->text(4).isEmpty())
-	query(next->allText(0),false);
-      else {
-	std::map<int,QWidget *>::iterator i=History.find(next->text(4).toInt());
-	if (i!=History.end()&&(*i).second) {
-	  Current->hide();
-	  Current=(*i).second;
-	  Current->show();
-	}
-      }
-    }
+    if (next)
+      Logging->setSelected(next,true);
   }
 }
 
