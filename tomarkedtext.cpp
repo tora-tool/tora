@@ -437,6 +437,8 @@ void toMarkedText::exportData(std::map<QCString,QString> &data,const QCString &p
   getCursorPosition (&curline,&curcol);
   data[prefix+":Column"]=QString::number(curcol);
   data[prefix+":Line"]=QString::number(curline);
+  if (edited())
+    data[prefix+":Edited"]="Yes";
 }
 
 void toMarkedText::importData(std::map<QCString,QString> &data,const QCString &prefix)
@@ -446,6 +448,8 @@ void toMarkedText::importData(std::map<QCString,QString> &data,const QCString &p
     setText(txt);
   Filename=data[prefix+":Filename"];
   setCursorPosition(data[prefix+":Line"].toInt(),data[prefix+":Column"].toInt());
+  if (data[prefix+":Edited"].isEmpty())
+    setEdited(false);
 }
 
 static int FindIndex(const QString &str,int line,int col)

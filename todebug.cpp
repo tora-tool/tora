@@ -156,29 +156,10 @@ public:
 
 static toDebugTool DebugTool;
 
-QListViewItem *toDebugWatch::findMisc(const QString &str,QListViewItem *item)
-{
-  if (item) {
-    while(item&&item->text(0)!=str) {
-      item=item->nextSibling();
-    }
-    if (item) {
-      item=item->firstChild();
-      while(item&&item->text(0)!="Misc") {
-	item=item->nextSibling();
-      }
-      if (item)
-	item=item->firstChild();
-    }
-  }
-  return item;
-}
-
 toDebugWatch::toDebugWatch(toDebug *parent)
   : toDebugWatchUI(parent,"AddWatch",true),Debugger(parent)
 {
   toHelp::connectDialog(this);
-  QListViewItem *items=Debugger->contents();
   {
     int curline,curcol;
     Debugger->currentEditor()->getCursorPosition (&curline,&curcol);
@@ -193,20 +174,6 @@ toDebugWatch::toDebugWatch(toDebug *parent)
       curcol++;
     Default=Default.left(curcol);
   }
-  QString type=Debugger->headEditor()->type();
-  if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
-    HeadItems=findMisc(qApp->translate("toDebug","Head"),items);
-  else {
-    HeadScope->setEnabled(false);
-    HeadItems=NULL;
-  }
-  type=Debugger->bodyEditor()->type();
-  if (type.left(7)==QString::fromLatin1("PACKAGE")||type.left(4)==QString::fromLatin1("TYPE"))
-    BodyItems=findMisc(qApp->translate("toDebug","Body"),items);
-  else {
-    BodyScope->setEnabled(false);
-    BodyItems=NULL;
-  }
   
   Object=Debugger->currentEditor()->object();
 
@@ -217,23 +184,9 @@ toDebugWatch::toDebugWatch(toDebug *parent)
 void toDebugWatch::changeScope(int num)
 {
   switch(num) {
-  case 1:
+  default:
     Name->clear();
     Name->insertItem(Default);
-    break;
-  case 2:
-    Name->clear();
-    {
-      for (QListViewItem *item=HeadItems;item;item=item->nextSibling())
-        Name->insertItem(item->text(0));
-    }
-    break;
-  case 3:
-    Name->clear();
-    {
-      for (QListViewItem *item=BodyItems;item;item=item->nextSibling())
-	Name->insertItem(item->text(0));
-    }
     break;
   case 4:
     {
@@ -256,6 +209,7 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
   QString str;
   switch(Scope->id(Scope->selected())) {
   case 1:
+  case 5:
     {
       toResultViewItem *item=new toResultViewItem(watches,NULL);
       item->setText(0,QString::null);
@@ -263,6 +217,7 @@ QListViewItem *toDebugWatch::createWatch(QListView *watches)
       item->setText(2,Name->currentText());
       item->setText(3,QString::null);
       item->setText(4,QString::fromLatin1("NOCHANGE"));
+      item->setText(6,Scope->id(Scope->selected())==5?"AUTO":"");
       return item;
     }
   case 2:
@@ -490,11 +445,13 @@ void toDebug::targetTask::run(void)
 	Parent.Lock.lock();
 	Parent.TargetLog+=QString::fromLatin1("Encountered error: ");
 	Parent.TargetLog+=str;
+	Parent.TargetException+=str;
 	Parent.TargetLog+=QString::fromLatin1("\n");
 	Parent.Lock.unlock();
       } catch (...) {
 	Parent.Lock.lock();
 	Parent.TargetLog+=QString::fromLatin1("Encountered unknown exception\n");
+	Parent.TargetException+=QString::fromLatin1("Encountered unknown exception\n");
 	Parent.Lock.unlock();
       }
 
@@ -606,19 +563,17 @@ void toDebug::execute(void)
     for (QListViewItem *parent=Contents->firstChild();parent;parent=parent->nextSibling()) {
       if (parent->text(0)==curName) {
 	for (parent=parent->firstChild();parent;parent=parent->nextSibling()) {
-	  for (QListViewItem *item=parent->firstChild();item;item=item->nextSibling()) {
-	    toContentsItem *cont=dynamic_cast<toContentsItem *>(item);
-	    if (cont) {
-	      QString type=cont->parent()->text(0);
-	      if (cont->Line>curline)
-		break;
-	      if (cont->Line>line) {
-		line=cont->Line;
-		if (type==QString::fromLatin1("Procedure")||type==QString::fromLatin1("Function"))
-		  valid=true;
-		else
-		  valid=false;
-	      }
+	  toContentsItem *cont=dynamic_cast<toContentsItem *>(parent);
+	  if (cont) {
+	    QString type=cont->text(0);
+	    if (cont->Line>curline)
+	      break;
+	    if (cont->Line>line) {
+	      line=cont->Line;
+	      if (type.startsWith("Procedure ")||type.startsWith("Function "))
+		valid=true;
+	      else
+		valid=false;
 	    }
 	  }
 	}
@@ -924,9 +879,12 @@ void toDebug::updateContent(toSQLParse::statement &statements,QListViewItem *par
   item=new toContentsItem(parent,name,line);
 
   std::list<toSQLParse::statement>::iterator i=statements.subTokens().begin();
-  for(i++;i!=statements.subTokens().end();i++) {
+  if (i!=statements.subTokens().end())
+    i++;
+  while(i!=statements.subTokens().end()) {
     if ((*i).Type==toSQLParse::statement::Block||(*i).Type==toSQLParse::statement::Statement)
       updateContent(*i,item);
+    i++;
   }
 }
 
@@ -959,8 +917,15 @@ void toDebug::updateContent(bool body)
 
   parent->setOpen(true);
 
-  for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++)
-    updateContent(*i,parent);
+  for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++) {
+    std::list<toSQLParse::statement>::iterator j=(*i).subTokens().begin();
+    if (j!=(*i).subTokens().end())
+      j++;
+    while(j!=(*i).subTokens().end()) {
+      updateContent(*j,parent);
+      j++;
+    }
+  }
   
   if (!parent->firstChild())
     delete parent;
@@ -974,6 +939,10 @@ void toDebug::readLog(void)
     RuntimeLog->insertLine(TargetLog);
     RuntimeLog->setCursorPosition(RuntimeLog->numLines()-1,0);
     TargetLog=QString::null;
+  }
+  if (!TargetException.isEmpty()) {
+    toStatusMessage(TargetException);
+    TargetException=QString::null;
   }
 }
 
@@ -1202,16 +1171,43 @@ void toDebug::updateState(int reason)
 	  int ret = -1;
 	  int space = 0;
 	  QString value;
-	  if (item->text(0).isEmpty()) {
+	  bool local=false;
+	  QString object;
+	  QString schema;
+	  if (!item->text(6).isEmpty()) {
+	    local=true;
 	    toQuery query(connection(),SQLLocalWatch,item->text(2));
 	    ret=query.readValue().toInt();
 	    value=query.readValue();
+	    if (ret!=TO_SUCCESS&&
+		ret!=TO_ERROR_NULLVALUE&&
+		ret!=TO_ERROR_INDEX_TABLE&&
+		ret!=TO_ERROR_NULLCOLLECTION) {
+	      object=currentEditor()->object();
+	      schema=currentEditor()->schema();
+	      local=false;
+	      toQuery q2(connection(),SQLGlobalWatch,
+			 object,
+			 schema,
+			 item->text(2));
+	      ret=q2.readValue().toInt();
+	      value=q2.readValue();
+	      space=q2.readValue().toInt();
+	    }
+	  } else if (item->text(0).isEmpty()) {
+	    toQuery query(connection(),SQLLocalWatch,item->text(2));
+	    ret=query.readValue().toInt();
+	    value=query.readValue();
+	    local=true;
 	  } else {
+	    object=item->text(1);
+	    schema=item->text(0);
 	    toQuery query(connection(),SQLGlobalWatch,
-			  item->text(1),item->text(0),item->text(2));
+			  object,schema,item->text(2));
 	    ret=query.readValue().toInt();
 	    value=query.readValue();
 	    space=query.readValue().toInt();
+	    local=false;
 	  }
 	  item->setText(4,QString::null);
 	  if (ret==TO_SUCCESS)
@@ -1226,14 +1222,14 @@ void toDebug::updateState(int reason)
 	    item->setText(3,tr("[Count %1]").arg(0));
 	    item->setText(5,QString::fromLatin1("LIST"));
 	  } else if (ret==TO_ERROR_INDEX_TABLE) {
-	    if (item->text(0).isEmpty()) {
+	    if (local) {
 	      toQuery query(connection(),SQLLocalIndex,item->text(2));
 	      value=query.readValue();
 	    } else {
 	      toQList args;
 	      toPush(args,toQValue(space));
-	      toPush(args,toQValue(item->text(1)));
-	      toPush(args,toQValue(item->text(0)));
+	      toPush(args,toQValue(object));
+	      toPush(args,toQValue(schema));
 	      toPush(args,toQValue(item->text(2)));
 	      toQuery query(connection(),SQLGlobalIndex,args);
 	      value=query.readValue();
@@ -1251,8 +1247,8 @@ void toDebug::updateState(int reason)
 		  name+=QString::number(value.mid(start,end-start).toInt()+1);
 		  name+=QString::fromLatin1(")");
 		  last=new toResultViewItem(item,last);
-		  last->setText(0,item->text(0));
-		  last->setText(1,item->text(1));
+		  last->setText(0,schema);
+		  last->setText(1,object);
 		  last->setText(2,name);
 		  last->setText(3,QString::null);
 		  last->setText(4,QString::fromLatin1("NOCHANGE"));
@@ -1401,11 +1397,9 @@ int toDebug::continueExecution(int stopon)
       return reason;
     } TOCATCH
   } else {
-#if 0
-    // I don't want this since it can happen when compiling etc.
     toStatusMessage(tr("No running target"));
-#endif
     Lock.unlock();
+    readLog();
   }
   return -1;
 }
@@ -2437,6 +2431,7 @@ void toDebug::exportData(std::map<QCString,QString> &data,const QCString &prefix
       data[key+":Schema"]=item->allText(0);
       data[key+":Object"]=item->allText(1);
       data[key+":Item"]=item->allText(2);
+      data[key+":Auto"]=item->allText(6);
     }
     id++;
   }
@@ -2487,6 +2482,8 @@ void toDebug::importData(std::map<QCString,QString> &data,const QCString &prefix
     item->setText(2,data[key+":Item"]);
     item->setText(3,QString::fromLatin1(""));
     item->setText(4,QString::fromLatin1("NOCHANGE"));
+    if (!data[key+":Auto"].isEmpty())
+      item->setText(6,"AUTO");
     id++;
   }
   scanSource();
