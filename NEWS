@@ -86,6 +86,7 @@
 2001-12-05: Some Qt only fixes.
 2001-12-05: Made memo editor follow current item in listviews.
 2001-12-05: Made memo editor follow current position in content editor.
+2001-12-05: Fixed a really pesky toBrowser problem when changing top tab.
 
 1.1.5: Released 2001-11-26
 

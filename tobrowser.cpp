@@ -1036,6 +1036,15 @@ void toBrowser::changeSecondTab(QWidget *tab)
     toResult *newtab=SecondMap[tab->name()];
     if (newtab==SecondTab)
       return;
+
+    // The change second tab can get called for other tabs than the current one. Ignore those
+    // calls.
+    QWidget *t=dynamic_cast<QWidget *>(newtab);
+    while(t&&t!=TopTab->currentPage())
+      t=t->parentWidget();
+    if (t)
+      return;
+
     SecondTab=newtab;
     SecondMap[TopTab->currentPage()->name()]=SecondTab;
     if (SecondTab&&!SecondText.isEmpty())
