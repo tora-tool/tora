@@ -1112,7 +1112,7 @@ void toTuningOverview::overviewQuery::run(void)
       QString nam=toShift(res);
       tmp=toShift(res);
       if (nam=="Database Buffers"||nam=="Redo Buffers")
-	setValue(nam.latin1(),tmp);
+	setValue(nam.latin1(),tmp+Parent.UnitString);
       else if (nam=="Fixed Size"||nam=="Variable Size")
 	sql+=tmp.toDouble();
       tot+=tmp.toDouble();
