@@ -171,11 +171,6 @@ void test(void) // Not called
     otl_connect *test=new otl_connect("Test",0);
 }
 
-void toBusy(bool)
-{
-
-}
-
 int main(int argv,char **argc)
 {
     QApplication app(argv,argc);
