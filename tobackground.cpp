@@ -47,44 +47,6 @@
 #include <qstatusbar.h>
 #include <qtooltip.h>
 
-class toBackgroundLabel : public QLabel {
-public:
-  toBackgroundLabel(QWidget *parent)
-    : QLabel(parent)
-  { }
-
-  virtual void mouseReleaseEvent(QMouseEvent *e)
-  {
-    try {
-      if (e->button()==LeftButton) {
-	QString str="Currently running SQL:\n\n";
-	std::list<QString> conns=toMainWidget()->connections();
-	for(std::list<QString>::iterator i=conns.begin();i!=conns.end();i++) {
-	  toConnection &conn=toMainWidget()->connection(*i);
-	  std::list<QString> running=conn.running();
-	  if (running.begin()!=running.end()) {
-	    str+="On connection "+conn.description(false)+":\n\n";
-	  }
-	  int num=1;
-	  for(std::list<QString>::iterator j=running.begin();j!=running.end();j++) {
-	    str+=QString::number(num)+". "+(*j)+"\n\n";
-	    num++;
-	  }
-	}
-	toMainWidget()->displayMessage(str);
-#if QT_VERSION >= 300
-	e->accept();
-#endif
-      } else
-	QLabel::mouseReleaseEvent(e);
-    } TOCATCH
-  }
-};
-
-int toBackground::Running=0;
-QLabel *toBackground::Label;
-QMovie *toBackground::Animation;
-
 static const char data[]=
 "\x8a\x4d\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x1c\x4d\x48\x44\x52\x00\x00\x00\x17\x00\x00\x00\x17\x00\x00\x00\x64\x00\x00"
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0b\x8b\x43\x26\x5f\x00\x00\x00\x0a\x54\x45\x52\x4d\x03\x00\x00\x00"
@@ -572,20 +534,72 @@ static const char data[]=
 "\x4e\x44\x21\x20\xf7\xd5";
 static int data_length=sizeof(data);
 
+static int Running=0;
+static QLabel *Label;
+static QMovie *Animation;
+
+class toBackgroundLabel : public QLabel {
+  int TimerID;
+public:
+  toBackgroundLabel(QWidget *parent)
+    : QLabel(parent)
+  {
+    QByteArray arr;
+    arr.assign(data,data_length);
+    Animation=new QMovie(arr);
+    setMovie(*Animation);
+    TimerID=startTimer(500);
+  }
+
+  virtual void timerEvent(QTimerEvent *time)
+  {
+    if (TimerID==time->timerId())
+      killTimer(TimerID);
+    if (Running==0)
+      Animation->pause();
+  }
+  virtual void mouseReleaseEvent(QMouseEvent *e)
+  {
+    try {
+      if (e->button()==LeftButton) {
+	QString str="Currently running SQL:\n\n";
+	std::list<QString> conns=toMainWidget()->connections();
+	for(std::list<QString>::iterator i=conns.begin();i!=conns.end();i++) {
+	  toConnection &conn=toMainWidget()->connection(*i);
+	  std::list<QString> running=conn.running();
+	  if (running.begin()!=running.end()) {
+	    str+="On connection "+conn.description(false)+":\n\n";
+	  }
+	  int num=1;
+	  for(std::list<QString>::iterator j=running.begin();j!=running.end();j++) {
+	    str+=QString::number(num)+". "+(*j)+"\n\n";
+	    num++;
+	  }
+	}
+	toMainWidget()->displayMessage(str);
+#if QT_VERSION >= 300
+	e->accept();
+#endif
+      } else
+	QLabel::mouseReleaseEvent(e);
+    } TOCATCH
+  }
+};
+
 toBackground::toBackground(QObject* parent,const char* name)
   : toTimer(parent,name)
 {
-  if (!Animation)
+  if (!Label)
     init();
 }
 
 void toBackground::start(int msec)
 {
-  if (!Animation)
+  if (!Label)
     init();
   if (!isActive()) {
     Running++;
-    if (!Animation)
+    if (!Label)
       return;
     Animation->unpause();
   }
@@ -625,12 +639,7 @@ void toBackground::init(void)
   if (!main)
     return;
 
-  QByteArray arr;
-  arr.assign(data,data_length);
-  Animation=new QMovie(arr);
-  Animation->pause();
   Label=new toBackgroundLabel(main->statusBar());
-  Label->setMovie(*Animation);
   Label->show();
   main->statusBar()->addWidget(Label,0,true);
   QToolTip::add(Label,tr("No background queries."));

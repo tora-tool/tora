@@ -230,7 +230,7 @@ toSecurityQuota::toSecurityQuota(QWidget *parent)
 
 void toSecurityQuota::update(void)
 {
-  clear();
+  Tablespaces->clear();
   try {
     toQuery tablespaces(toCurrentConnection(this),SQLTablespace);
     QListViewItem *item=NULL;
@@ -830,25 +830,31 @@ void toSecurityObject::changeUser(const QString &user)
   bool open=true;
   eraseUser();
   try {
+    std::map<QString,std::map<QString,std::map<QString,QString> > > privs;
     toQuery grant(toCurrentConnection(this),SQLObjectGrant,user);
+    QString yes="YES";
+    QString admstr="ADMIN";
     while(!grant.eof()) {
       QString owner(grant.readValue());
       QString object(grant.readValue());
       QString priv(grant.readValue());
       QString admin(grant.readValue());
 
-      for (QListViewItem *ownerItem=firstChild();ownerItem;ownerItem=ownerItem->nextSibling()) {
-	if (ownerItem->text(0)==owner) {
-	  QListViewItem *next=NULL;
-	  for (QListViewItem *item=ownerItem->firstChild();item&&item!=ownerItem;item=next) {
-	    toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(item);
-	    if (chk) {
-	      if (chk->text(2)==object&&
-		  chk->text(0)==priv) {
+      ((privs[owner])[object])[priv]=(admin==yes?admstr:"normal");
+    }
+
+    for (QListViewItem *ownerItem=firstChild();ownerItem;ownerItem=ownerItem->nextSibling()) {
+      for(QListViewItem *tmpitem=ownerItem->firstChild();tmpitem;tmpitem=tmpitem->nextSibling()) {
+	for(QListViewItem *object=tmpitem->firstChild();object;object=object->nextSibling()) {
+	  for(QListViewItem *type=object->firstChild();type;type=type->nextSibling()) {
+	    QString t=((privs[ownerItem->text(0)])[object->text(0)])[type->text(0)];
+	    if (!t.isNull()) {
+	      toResultViewCheck *chk=dynamic_cast<toResultViewCheck *>(type);
+	      if (chk) {
 		chk->setText(1,tr("ON"));
 		chk->setOn(true);
-		if (admin==QString::fromLatin1("YES")) {
-		  toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(item->firstChild());
+		if (t==admstr) {
+		  toResultViewCheck *chld=dynamic_cast<toResultViewCheck *>(type->firstChild());
 		  if (chld) {
 		    chld->setText(1,tr("ON"));
 		    chld->setOn(true);
@@ -856,26 +862,12 @@ void toSecurityObject::changeUser(const QString &user)
 		      chk->setOpen(true);
 		  }
 		}
-		if (open)
-		  for (QListViewItem *par=chk->parent();par;par=par->parent())
-		    par->setOpen(true);
-		break;
 	      }
-	    }
-	    if (!chk&&item->firstChild())
-	      next=item->firstChild();
-	    else if (item->nextSibling())
-	      next=item->nextSibling();
-	    else {
-	      next=item;
-	      do {
-		next=next->parent();
-	      } while(next&&!next->nextSibling());
-	      if (next)
-		next=next->nextSibling();
+	      if (open)
+		for(QListViewItem *par=chk->parent();par;par=par->parent())
+		  par->setOpen(true);
 	    }
 	  }
-	  break;
 	}
       }
     }
@@ -1479,6 +1471,7 @@ void toSecurity::changeUser(bool ask)
     QString sel;
     QListViewItem *item=UserList->selectedItem();
     if (item) {
+      toBusy busy;
       UserID=item->text(1);
       DropButton->setEnabled(item->parent());
       CopyButton->setEnabled(item->parent());
@@ -1505,6 +1498,7 @@ void toSecurity::changeUser(bool ask)
 
 void toSecurity::refresh(void)
 {
+  toBusy busy;
   disconnect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	     this,SLOT(changeUser(QListViewItem *)));
   SystemGrant->update();

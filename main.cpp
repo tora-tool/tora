@@ -185,6 +185,9 @@ int main(int argc,char **argv)
       toTool::globalSetConfig("FirstInstall",ctime(&t));
     }
 
+    toQValue::setNumberFormat(toTool::globalConfig(CONF_NUMBER_FORMAT,DEFAULT_NUMBER_FORMAT).toInt(),
+			      toTool::globalConfig(CONF_NUMBER_DECIMALS,DEFAULT_NUMBER_DECIMALS).toInt());
+
     if (qApp->argc()>2||(qApp->argc()==2&&qApp->argv()[1][0]=='-')) {
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
       exit(2);

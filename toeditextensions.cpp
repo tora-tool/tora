@@ -65,6 +65,8 @@ static int ObfuscateBlock;
 static int ObfuscateBuffer;
 static int ReverseSearch;
 static int IncrementalSearch;
+static int UpperCase;
+static int LowerCase;
 
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_COMMA_BEFORE	"CommaBefore"
@@ -98,6 +100,8 @@ void toEditExtensions::receivedFocus(toEditWidget *widget)
   toMainWidget()->editMenu()->setItemEnabled(ObfuscateBuffer,Current);
   toMainWidget()->editMenu()->setItemEnabled(IncrementalSearch,Current);
   toMainWidget()->editMenu()->setItemEnabled(ReverseSearch,Current);
+  toMainWidget()->editMenu()->setItemEnabled(UpperCase,Current);
+  toMainWidget()->editMenu()->setItemEnabled(LowerCase,Current);
   if(IndentButton)
     IndentButton->setEnabled(enable);
   if(DeindentButton)
@@ -189,6 +193,24 @@ void toEditExtensions::autoIndentBuffer(void)
     try {
       Current->insert(toSQLParse::indent(text.mid(pos)));
     } TOCATCH
+  }
+}
+
+void toEditExtensions::upperCase(void)
+{
+  if (Current) {
+    QString text=Current->markedText().upper();
+    if (!text.isEmpty())
+      Current->insert(text,true);
+  }
+}
+
+void toEditExtensions::lowerCase(void)
+{
+  if (Current) {
+    QString text=Current->markedText().lower();
+    if (!text.isEmpty())
+      Current->insert(text,true);
   }
 }
 
@@ -398,6 +420,15 @@ public:
 				     &EditExtensions,
 				     SLOT(obfuscateBuffer()));
     toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Auto Indent"),menu);
+
+    menu=new QPopupMenu(toMainWidget());
+    UpperCase=menu->insertItem(qApp->translate("toEditExtensionTool","Upper"),
+			       &EditExtensions,
+			       SLOT(upperCase()));
+    LowerCase=menu->insertItem(qApp->translate("toEditExtensionTool","Lower"),
+			       &EditExtensions,
+			       SLOT(lowerCase()));
+    toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Modify Case"),menu);
 
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
 						       qApp->translate("toEditExtensionTool","Indent Block"),&EditExtensions,

@@ -228,6 +228,7 @@ toAlert::~toAlert()
 {
   try {
     Lock.lock();
+    State=Quit;
     while(State!=Done) {
       Lock.unlock();
       Semaphore.down();

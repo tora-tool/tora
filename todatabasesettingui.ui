@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>514</width>
-            <height>468</height>
+            <width>547</width>
+            <height>501</height>
         </rect>
     </property>
     <property stdset="1">
@@ -46,101 +46,36 @@
                 <string>Specify if changes should be automatically commited.</string>
             </property>
         </widget>
-        <widget row="3"  column="0" >
-            <class>QGroupBox</class>
+        <widget row="1"  column="0" >
+            <class>QComboBox</class>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Start read object cache when needed</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Read object cache on connect</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Never read object cache until mandatory</string>
+                </property>
+            </item>
+            <item>
+                <property>
+                    <name>text</name>
+                    <string>Never read object cache (Will leave parts of TOra nonfunctianal)</string>
+                </property>
+            </item>
             <property stdset="1">
                 <name>name</name>
-                <cstring>GroupBox2</cstring>
+                <cstring>ObjectCache</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
-                <string>UI feedback settings</string>
-            </property>
-            <grid>
-                <property stdset="1">
-                    <name>margin</name>
-                    <number>11</number>
-                </property>
-                <property stdset="1">
-                    <name>spacing</name>
-                    <number>6</number>
-                </property>
-                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>AutoLong</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Abort long running queries and reexecute in own connection</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Reexecute a query taking more than 30 seconds in its own connection to prevent blocking other database access.</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="0" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Move to own connection after</string>
-                    </property>
-                </widget>
-                <widget row="3"  column="1" >
-                    <class>QSpinBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>MoveAfter</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
-                        <bool>false</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>suffix</name>
-                        <string> seconds</string>
-                    </property>
-                    <property stdset="1">
-                        <name>minValue</name>
-                        <number>5</number>
-                    </property>
-                </widget>
-                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>BkgndConnect</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Run UI blocking queries exclusively in main connection</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Let the background queries normally running on the main connection run in a separate connection.</string>
-                    </property>
-                </widget>
-                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>DontReread</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Don't reread data if parameters are exactly same</string>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
-                    </property>
-                </widget>
-            </grid>
         </widget>
         <widget row="2"  column="0" >
             <class>QGroupBox</class>
@@ -277,51 +212,120 @@
                         <string>&amp;All</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+            </grid>
+        </widget>
+        <widget row="5"  column="0" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>KeepAlive</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Keep alive</string>
+            </property>
+            <property>
+                <name>toolTip</name>
+                <string>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</string>
+            </property>
+        </widget>
+        <widget row="4"  column="0" >
+            <class>QGroupBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>GroupBox2</cstring>
+            </property>
+            <property stdset="1">
+                <name>title</name>
+                <string>UI feedback settings</string>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="2"  column="0"  rowspan="1"  colspan="2" >
                     <class>QCheckBox</class>
                     <property stdset="1">
                         <name>name</name>
-                        <cstring>IndicateEmpty</cstring>
+                        <cstring>AutoLong</cstring>
                     </property>
                     <property stdset="1">
                         <name>text</name>
-                        <string>Indicate empty values as '' instead of NULL as {null}.</string>
+                        <string>Abort long running queries and reexecute in own connection</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Reexecute a query taking more than 30 seconds in its own connection to prevent blocking other database access.</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Move to own connection after</string>
+                    </property>
+                </widget>
+                <widget row="3"  column="1" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>MoveAfter</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>suffix</name>
+                        <string> seconds</string>
+                    </property>
+                    <property stdset="1">
+                        <name>minValue</name>
+                        <number>5</number>
+                    </property>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>BkgndConnect</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Run UI blocking queries exclusively in main connection</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Let the background queries normally running on the main connection run in a separate connection.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DontReread</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Don't reread data if parameters are exactly same</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>If checked TOra will not refresh a result if it is reexecuted exactly the same two times in a row.</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <widget row="1"  column="0" >
-            <class>QComboBox</class>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Start read object cache when needed</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Read object cache on connect</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Never read object cache until mandatory</string>
-                </property>
-            </item>
-            <item>
-                <property>
-                    <name>text</name>
-                    <string>Never read object cache (Will leave parts of TOra nonfunctianal)</string>
-                </property>
-            </item>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ObjectCache</cstring>
-            </property>
-        </widget>
-        <spacer row="5"  column="0" >
+        <spacer row="6"  column="0" >
             <property>
                 <name>name</name>
                 <cstring>Spacer1</cstring>
@@ -342,20 +346,111 @@
                 </size>
             </property>
         </spacer>
-        <widget row="4"  column="0" >
-            <class>QCheckBox</class>
+        <widget row="3"  column="0" >
+            <class>QGroupBox</class>
             <property stdset="1">
                 <name>name</name>
-                <cstring>KeepAlive</cstring>
+                <cstring>GroupBox3</cstring>
             </property>
             <property stdset="1">
-                <name>text</name>
-                <string>Keep alive</string>
+                <name>title</name>
+                <string>Dataformat</string>
             </property>
-            <property>
-                <name>toolTip</name>
-                <string>Make sure connections are kept alive by periodically (5 minutes) sending a query on all idle connections.</string>
-            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="1"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel1_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Number format</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>The way numbers should be presented.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="4" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Decimals</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Number of decimals for fixed decimal format.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="5" >
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Decimals</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>20</number>
+                    </property>
+                    <property stdset="1">
+                        <name>value</name>
+                        <number>2</number>
+                    </property>
+                </widget>
+                <widget row="1"  column="1" >
+                    <class>QComboBox</class>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Default</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Scientific</string>
+                        </property>
+                    </item>
+                    <item>
+                        <property>
+                            <name>text</name>
+                            <string>Fixed decimal</string>
+                        </property>
+                    </item>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>NumberFormat</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="6" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>IndicateEmpty</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Indicate empty values as '' instead of NULL as {null}.</string>
+                    </property>
+                </widget>
+            </grid>
         </widget>
     </grid>
 </widget>
@@ -378,6 +473,13 @@
         <receiver>MaxContent</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
+    <connection>
+        <sender>NumberFormat</sender>
+        <signal>activated(const QString&amp;)</signal>
+        <receiver>toDatabaseSettingUI</receiver>
+        <slot>numberFormatChange()</slot>
+    </connection>
+    <slot access="public">numberFormatChange()</slot>
 </connections>
 <tabstops>
     <tabstop>AutoCommit</tabstop>
@@ -388,6 +490,8 @@
     <tabstop>UnlimitedContent</tabstop>
     <tabstop>MaxColDisp</tabstop>
     <tabstop>IndicateEmpty</tabstop>
+    <tabstop>NumberFormat</tabstop>
+    <tabstop>Decimals</tabstop>
     <tabstop>BkgndConnect</tabstop>
     <tabstop>DontReread</tabstop>
     <tabstop>AutoLong</tabstop>

@@ -348,7 +348,7 @@ void toSGATrace::refresh(void)
       order=QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
       break;
     case 11:
-      order=QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed,3)");
+      order=QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed)");
     default:
       toStatusMessage(tr("Unknown selection"));
       break;

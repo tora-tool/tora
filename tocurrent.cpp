@@ -39,6 +39,7 @@
 #include "toconf.h"
 #include "tocurrent.h"
 #include "tomain.h"
+#include "tonoblockquery.h"
 #include "toresultlong.h"
 #include "toresultparam.h"
 #include "toresultstats.h"
@@ -146,6 +147,9 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
 
+  connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
+
+  Query=NULL;
   refresh();
 
   setFocusProxy(Tabs);
@@ -197,38 +201,58 @@ static toSQL SQLUserRolePrivs("toCurrent:UserRolePrivs",
 			      "select granted_role,admin_option from user_role_privs",
 			      "Get information about roles granted to a user, must have same columns");
 
-void toCurrent::addList(QListViewItem *parent,const QString &type,const toSQL &sql,const QString &role)
+void toCurrent::addList(bool isrole,QListViewItem *parent,const QString &type,const toSQL &sql,const QString &role)
 {
-  try {
-    toQList result=toQuery::readQuery(connection(),sql,role);
-    while(result.size()>0) {
-      QListViewItem *item;
-      if (parent)
-	item=new toResultViewItem(parent,NULL);
-      else
-	item=new toResultViewItem(Grants,NULL);
-      item->setText(0,toShift(result));
-      item->setText(1,type);
-      item->setText(2,toShift(result));
-    }
-  } TOCATCH
+  Updates.insert(Updates.end(),update(isrole,parent,type,sql(connection()),role));
 }
 
-void toCurrent::addRole(QListViewItem *parent)
+void toCurrent::poll()
 {
   try {
-    addList(parent,tr("System"),SQLRoleSysPrivs,parent->text(0));
-    addList(parent,tr("Object"),SQLRoleTabPrivs,parent->text(0));
-    toQList result=toQuery::readQuery(connection(),SQLRoleRolePrivs,parent->text(0));
-    while(result.size()>0) {
-      QListViewItem *item;
-      item=new toResultViewItem(parent,NULL);
-      item->setText(0,toShift(result));
-      item->setText(1,tr("Role"));
-      item->setText(2,toShift(result));
-      addRole(item);
+    if (Query) {
+      while (Query&&Query->poll()) {
+	if (Query->eof()) {
+	  delete Query;
+	  Query=NULL;
+	} else {
+	  QListViewItem *item;
+	  if (CurrentUpdate.Parent)
+	    item=new toResultViewItem(CurrentUpdate.Parent,NULL);
+	  else
+	    item=new toResultViewItem(Grants,NULL);
+	  item->setText(0,Query->readValue());
+	  item->setText(1,CurrentUpdate.Type);
+	  item->setText(2,Query->readValue());
+	  if (CurrentUpdate.IsRole) {
+	    addList(false,item,tr("System"),SQLRoleSysPrivs,item->text(0));
+	    addList(false,item,tr("Object"),SQLRoleTabPrivs,item->text(0));
+	    addList(true,item,tr("Role"),SQLRoleRolePrivs,item->text(0));
+	  }
+	}
+      }
     }
-  } TOCATCH
+
+    if (!Query) {
+      if (Updates.begin()==Updates.end()) {
+	Poll.stop();
+	return;
+      }
+
+      CurrentUpdate=toShift(Updates);
+
+      toQList param;
+      if (!CurrentUpdate.Role.isEmpty())
+	toPush(param,toQValue(CurrentUpdate.Role));
+      Query=new toNoBlockQuery(connection(),
+			       toQuery::Background,
+			       CurrentUpdate.SQL,
+			       param);
+    }
+  } catch(const QString &exc) {
+    toStatusMessage(exc);
+    delete Query;
+    Query=NULL;
+  }
 }
 
 void toCurrent::refresh()
@@ -240,17 +264,15 @@ void toCurrent::refresh()
     Grants->clear();
     ResourceLimit->refresh();
 
-    addList(NULL,tr("System"),SQLUserSysPrivs);
-    addList(NULL,tr("Object"),SQLUserTabPrivs);
+    Updates.clear();
+    delete Query;
+    Query=NULL;
 
-    toQList result=toQuery::readQuery(connection(),SQLUserRolePrivs);
-    while(result.size()>0) {
-      QListViewItem *item;
-      item=new toResultViewItem(Grants,NULL);
-      item->setText(0,toShift(result));
-      item->setText(1,tr("Role"));
-      item->setText(2,toShift(result));
-      addRole(item);
-    }
+    addList(false,NULL,tr("System"),SQLUserSysPrivs);
+    addList(false,NULL,tr("Object"),SQLUserTabPrivs);
+    addList(true,NULL,tr("Role"),SQLUserRolePrivs);
+
+    poll();
+    Poll.start(100);
   } TOCATCH
 }

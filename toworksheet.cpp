@@ -326,8 +326,10 @@ void toWorksheet::setup(bool autoLoad)
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  tr("Reexecute Last Statement"),
 		  tr("Reexecute Last Statement"),
-		  this,SLOT(refresh(void)),
+		  this,SLOT(refreshSetup(void)),
 		  toolbar);
+  RefreshSeconds=60;
+  connect(&RefreshTimer,SIGNAL(timeout()),this,SLOT(refresh()));
 
   LastLine=LastOffset=-1;
   LastID=0;
@@ -441,7 +443,7 @@ void toWorksheet::setup(bool autoLoad)
     StopButton=new QToolButton(QPixmap((const char **)stop_xpm),
 			       tr("Stop execution"),
 			       tr("Stop execution"),
-			       Result,SLOT(stop(void)),
+			       this,SLOT(stop(void)),
 			       toolbar);
     StopButton->setEnabled(false);
     toolbar->addSeparator();
@@ -695,6 +697,8 @@ void toWorksheet::refresh(void)
 {
   if (!QueryString.isEmpty())
     query(QueryString,false);
+  if (RefreshSeconds>0)
+    RefreshTimer.start(RefreshSeconds*1000,true);
 }
 
 static QString unQuote(const QString &str)
@@ -748,6 +752,7 @@ bool toWorksheet::describe(const QString &query)
 void toWorksheet::query(const QString &str,bool direct,bool onlyPlan)
 {
   Result->stop();
+  RefreshTimer.stop();
 
   QRegExp strq(QString::fromLatin1("'[^']*'"));
   QString chk=str.lower();
@@ -1157,7 +1162,8 @@ void toWorksheet::executeAll()
       execute(tokens,line,pos,true);
       if (Current) {
 	toResultView *last=dynamic_cast<toResultView *>(Current);
-	if (last&&last->firstChild())
+	if (!WorksheetTool.config(CONF_HISTORY,"").isEmpty()&&
+	    last&&last->firstChild())
 	  History[LastID]=last;
       }
     }
@@ -1571,4 +1577,23 @@ toWorksheet *toWorksheet::fileWorksheet(const QString &file)
   worksheet->show();
   toMainWidget()->windowsMenu();
   return worksheet;
+}
+
+void toWorksheet::refreshSetup(void)
+{
+  bool ok=false;
+  int num=QInputDialog::getInteger(tr("Enter refreshrate"),
+				   tr("Refresh rate of query in seconds"),
+				   RefreshSeconds,0,1000000,1,&ok,this);
+  if (ok) {
+    RefreshSeconds=num;
+    RefreshTimer.start(num*1000);
+  } else
+    RefreshTimer.stop();
+}
+
+void toWorksheet::stop(void)
+{
+  RefreshTimer.stop();	
+  Result->stop();
 }

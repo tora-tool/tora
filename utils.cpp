@@ -1266,7 +1266,8 @@ QString toUnobfuscate(const QString &str)
     QByteArray ret=qUncompress(arr);
     return QString::fromUtf8(ret);
 #else
-    toStatusMessage("Tried to unobfuscate obfuscated text from a Qt of version 3.1 from one with Qt version 3.0.x which won't work");
+    toStatusMessage("Tried to unobfuscate obfuscated text from a Qt of version 3.1\n"
+		    "from one with Qt version 3.0.x which won't work");
     return QString::null;
 #endif
   } else

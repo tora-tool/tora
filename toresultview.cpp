@@ -608,6 +608,9 @@ void toListView::setDisplayMenu(QPopupMenu *m) {
 #define TORESULT_EXPORT   	7
 #define TORESULT_SELECT_ALL	8
 #define TORESULT_COPY_TRANS	9
+#define TORESULT_LEFT		10
+#define TORESULT_CENTER		11
+#define TORESULT_RIGHT		12
 
 void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
 {
@@ -615,6 +618,14 @@ void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
     if (!Menu) {
       Menu=new QPopupMenu(this);
       Menu->insertItem(tr("Display in editor..."),TORESULT_MEMO);
+
+      QPopupMenu *just=new QPopupMenu(this);
+      just->insertItem(tr("Left"),TORESULT_LEFT);
+      just->insertItem(tr("Center"),TORESULT_CENTER);
+      just->insertItem(tr("Right"),TORESULT_RIGHT);
+      Menu->insertItem(tr("Alignment"),just);
+      connect(just,SIGNAL(activated(int)),this,SLOT(menuCallback(int)));
+
       Menu->insertSeparator();
       Menu->insertItem(tr("&Copy field"),TORESULT_COPY_FIELD);
       if (selectionMode()==Multi||selectionMode()==Extended) {
@@ -664,6 +675,15 @@ void toListView::menuCallback(int cmd)
       QClipboard *clip=qApp->clipboard();
       clip->setText(str);
     } TOCATCH
+    break;
+  case TORESULT_LEFT:
+    setColumnAlignment(MenuColumn,AlignLeft);
+    break;
+  case TORESULT_CENTER:
+    setColumnAlignment(MenuColumn,AlignCenter);
+    break;
+  case TORESULT_RIGHT:
+    setColumnAlignment(MenuColumn,AlignRight);
     break;
   case TORESULT_COPY_SEL_HEAD:
     try {

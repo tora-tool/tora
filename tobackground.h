@@ -71,9 +71,6 @@ public:
  * periodic intervals.
  */
 class toBackground : public toTimer {
-  static int Running;
-  static QLabel *Label;
-  static QMovie *Animation;
 public:
   /**
    * Create a background timer widget.

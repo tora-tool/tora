@@ -94,6 +94,9 @@ class toWorksheet : public toToolWidget {
   QComboBox *Refresh;
   QLabel *Started;
 
+  int RefreshSeconds;
+  QTimer RefreshTimer;
+
   QPopupMenu *SavedMenu;
   QToolButton *SavedButton;
   QCString SavedLast;
@@ -169,6 +172,8 @@ public slots:
   void changeRefresh(const QString &);
   void saveLast(void);
   void saveStatistics(void);
+  void refreshSetup(void);
+  void stop(void);
 private slots:
   void poll(void);
 };

@@ -129,6 +129,10 @@
 #define CONF_LOCALE		"Locale"
 #define CONF_KEEP_ALIVE		"KeepAlive"
 #define DEFAULT_KEEP_ALIVE	"300"
+#define CONF_NUMBER_FORMAT	"NumberFormat"
+#define DEFAULT_NUMBER_FORMAT	"0"
+#define CONF_NUMBER_DECIMALS	"NumberDecimals"
+#define DEFAULT_NUMBER_DECIMALS	"2"
 
 #ifdef TO_KDE
 #define DEFAULT_EXTENSIONS	"*.sql *.pkg *.pkb|SQL files\n*.txt|Text files\n*|All files"

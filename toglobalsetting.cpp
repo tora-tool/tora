@@ -257,6 +257,11 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_LOCALE,Locale->text());
 }
 
+void toDatabaseSetting::numberFormatChange()
+{
+  Decimals->setEnabled(NumberFormat->currentItem()==2);
+}
+
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   : toDatabaseSettingUI(parent,name,fl),toSettingTab("database.html")
 {
@@ -278,6 +283,9 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
   MaxContent->setValidator(new QIntValidator(InitialFetch));
+
+  Decimals->setValue(toTool::globalConfig(CONF_NUMBER_DECIMALS,DEFAULT_NUMBER_DECIMALS).toInt());
+  NumberFormat->setCurrentItem(toTool::globalConfig(CONF_NUMBER_FORMAT,DEFAULT_NUMBER_FORMAT).toInt());
 
   AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
   DontReread->setChecked(!toTool::globalConfig(CONF_DONT_REREAD,"Yes").isEmpty());
@@ -332,12 +340,13 @@ toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
 {
   std::map<QCString,toTool *> &tools=toTool::tools();
 
+  QString first;
   Enabled->setSorting(0);
   for (std::map<QCString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {
     if ((*i).second->menuItem()) {
       QString menuName=qApp->translate("toTool",(*i).second->menuItem());
-      if(FirstTool.isEmpty())
-	FirstTool=menuName;
+      if(first.isEmpty())
+	first=menuName;
 
       new QListViewItem(Enabled,menuName,(*i).second->name(),(*i).first);
     }
@@ -350,7 +359,7 @@ toToolSetting::toToolSetting(QWidget *parent,const char *name,WFlags fl)
       item->setSelected(true);
   }
 
-  DefaultTool->setCurrentText(toTool::globalConfig(CONF_DEFAULT_TOOL,FirstTool.latin1()));
+  DefaultTool->insertItem(first);
   changeEnable();
 }
 
@@ -364,7 +373,7 @@ void toToolSetting::changeEnable(void)
   for(QListViewItem *item=Enabled->firstChild();item;item=item->nextSibling()) {
     if (item->isSelected()) {
       DefaultTool->insertItem(item->text(0),id);
-      if (item->text(2)==str)
+      if (item->text(0)==str)
 	sel=id;
       id++;
     }

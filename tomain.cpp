@@ -55,6 +55,7 @@
 #include <kstatusbar.h>
 #endif
 
+#include <qaccel.h>
 #include <qapplication.h>
 #include <qcheckbox.h>
 #include <qclipboard.h>
@@ -242,6 +243,14 @@ toMain::toMain()
   EditMenu->insertItem(tr("Read All &Items"),TO_EDIT_READ_ALL);
   EditMenu->insertSeparator();
   EditMenu->insertItem(tr("&Options..."),TO_EDIT_OPTIONS);
+
+#if 0 // Doesn't work and I don't understand why
+  QAccel *accel=new QAccel(this);
+  accel->connectItem(Key_Insert|CTRL,this,SLOT(copyButton));
+  accel->connectItem(Key_Delete|SHIFT,this,SLOT(cutButton));
+  accel->connectItem(Key_Insert|SHIFT,this,SLOT(pasteButton));
+#endif
+
   EditMenu->setAccel(Key_Z|CTRL,TO_EDIT_UNDO);
   EditMenu->setAccel(Key_Y|CTRL,TO_EDIT_REDO);
   EditMenu->setAccel(Key_X|CTRL,TO_EDIT_CUT);
@@ -249,6 +258,8 @@ toMain::toMain()
   EditMenu->setAccel(Key_V|CTRL,TO_EDIT_PASTE);
   EditMenu->setAccel(Key_F|CTRL,TO_EDIT_SEARCH);
   EditMenu->setAccel(Key_F3,TO_EDIT_SEARCH_NEXT);
+
+
   menuBar()->insertItem(tr("&Edit"),EditMenu,TO_EDIT_MENU);
   connect(EditMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));
 
@@ -1308,7 +1319,7 @@ void toMain::exportData(std::map<QCString,QString> &data,const QCString &prefix)
       for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
 	QCString key=prefix+":Connection:"+QString::number(id).latin1();
 	if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)!=DEFAULT_SAVE_PWD)
-	  data[key+":Password"]=(*i)->password();
+	  data[key+":Password"]=toObfuscate((*i)->password());
 	data[key+":User"]=(*i)->user();
 	data[key+":Host"]=(*i)->host();
 	data[key+":Mode"]=(*i)->mode();
@@ -1365,7 +1376,7 @@ void toMain::importData(std::map<QCString,QString> &data,const QCString &prefix)
     QString user=data[key+":User"];
     QString host=data[key+":Host"];
     QString mode=data[key+":Mode"];
-    QString password=data[key+":Password"];
+    QString password=toUnobfuscate(data[key+":Password"]);
     QString provider=data[key+":Provider"];
     bool ok=true;
     if (toTool::globalConfig(CONF_SAVE_PWD,DEFAULT_SAVE_PWD)==password) {

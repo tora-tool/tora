@@ -64,6 +64,9 @@ public slots:
 
   void searchForward(void);
   void searchBackward(void);
+
+  void upperCase(void);
+  void lowerCase(void);
 };
 
 #endif

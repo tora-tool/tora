@@ -55,13 +55,15 @@
 #undef QT_TRANSLATE_NOOP
 #define QT_TRANSLATE_NOOP(x,y) QTRANS(x,y)
 
-
 #define TO_DEBUGOUT(x) fprintf(stderr,(const char *)x);
 
 // Connection provider implementation
 
 std::map<QCString,toConnectionProvider *> *toConnectionProvider::Providers;
 std::map<QCString,toConnectionProvider *> *toConnectionProvider::Types;
+
+static int NumberFormat;
+static int NumberDecimals;
 
 void toConnectionProvider::checkAlloc(void)
 {
@@ -304,7 +306,20 @@ QCString toQValue::utf8Value(void) const
   case doubleType:
     {
       QCString ret;
-      ret.setNum(Value.Double);
+      char buf[100];
+      switch(NumberFormat) {
+      default:
+	ret.setNum(Value.Double);
+	break;
+      case 1:
+	sprintf(buf,"%g",Value.Double);
+	ret=buf;
+	break;
+      case 2:
+	sprintf(buf,"%0.*f",NumberDecimals,Value.Double);
+	ret=buf;
+	break;
+      }
       return ret;
     }
   case stringType:
@@ -343,6 +358,12 @@ double toQValue::toDouble(void) const
   throw qApp->translate("toQValue","Unknown type of query value");
 }
 
+void toQValue::setNumberFormat(int format,int decimals)
+{
+  NumberFormat=format;
+  NumberDecimals=decimals;
+}
+
 toQValue::operator QString() const
 {
   switch(Type) {
@@ -351,7 +372,22 @@ toQValue::operator QString() const
   case intType:
     return QString::number(Value.Int);
   case doubleType:
-    return QString::number(Value.Double);
+    switch(NumberFormat) {
+    case 1:
+      {
+	char buf[100];
+	sprintf(buf,"%g",Value.Double);
+	return buf;
+      }
+    case 2:
+      {
+	char buf[100];
+	sprintf(buf,"%0.*f",NumberDecimals,Value.Double);
+	return buf;
+      }
+    default:
+      return QString::number(Value.Double);
+    }
   case stringType:
     return *Value.String;
   }

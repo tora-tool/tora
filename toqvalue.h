@@ -107,6 +107,8 @@ public:
   /** Convert value to a string.
    */
   operator QString() const;
+
+  static void setNumberFormat(int format,int decimals);
 };
 
 /** A short representation of list<toQuery::queryValue>

@@ -36,9 +36,12 @@
 #define TOCURRENT_H
 
 #include "totool.h"
+#include "tosql.h"
+#include "tobackground.h"
 
 class QPopupMenu;
 class QTabWidget;
+class toNoBlockQuery;
 class toResultParam;
 class toResultStats;
 class toResultView;
@@ -47,6 +50,23 @@ class toResultLong;
 class toCurrent : public toToolWidget {
   Q_OBJECT
 
+  struct update {
+    bool IsRole;
+
+    QListViewItem *Parent;
+    QString Type;
+    QString SQL;
+    QString Role;
+
+    update()
+    { IsRole=false; Parent=NULL; }
+    update(bool isrole,QListViewItem *parent,const QString &type,const QString &sql,const QString &role)
+      : IsRole(isrole),Parent(parent),Type(type),SQL(sql),Role(role)
+    { }
+  };
+
+  std::list<update> Updates;
+
   QTabWidget *Tabs;
   toResultView *Version;
   toListView *Grants;
@@ -54,13 +74,18 @@ class toCurrent : public toToolWidget {
   toResultParam *Parameters;
   toResultStats *Statistics;
   QPopupMenu *ToolMenu;
-  virtual void addRole(QListViewItem *parent);
-  virtual void addList(QListViewItem *parent,const QString &typ,const toSQL &sql,const QString &role=QString::null);
+  toBackground Poll;
+
+  update CurrentUpdate;
+  toNoBlockQuery *Query;
+
+  virtual void addList(bool isrole,QListViewItem *parent,const QString &typ,const toSQL &sql,const QString &role=QString::null);
 public:
   toCurrent(QWidget *parent,toConnection &connection);
   virtual ~toCurrent();
 public slots:
   void refresh(void);
+  void poll(void); 
   void windowActivated(QWidget *widget);
 };
 

@@ -12,7 +12,7 @@ Source:				%{_name}-%{_version}.tar.gz
 URL:				http://www.globecom.se/tora
 Group:				Development/Databases
 Packager:			Henrik Johnson <tora@underscore.se>
-Distribution:			Mandrake Linux 7.2
+Distribution:			Mandrake Linux 9.0
 Copyright:			GPL
 BuildRoot:			%{_tmppath}/tora-root
 Prefix:				%{_prefix}
