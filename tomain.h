@@ -40,10 +40,10 @@
 
 #include "tobackground.h"
 
-#if TO_KDE
-#  include "tomainwindow.kde.h"
+#ifdef TO_KDE
+#include "tomainwindow.kde.h"
 #else
-#  include "tomainwindow.h"
+#include "tomainwindow.h"
 #endif
 
 #include <list>

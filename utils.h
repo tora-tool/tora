@@ -45,17 +45,17 @@
 #include <qtoolbutton.h>
 
 #ifdef TO_KDE
-#  include <kapp.h>
-#  if KDE_VERSION < 220
-#    define TOPrinter QPrinter
-#  else
-#    define TOPrinter KPrinter
-#    define TO_HAS_KPRINT
-#  endif
-#  define TOFileDialog KFileDialog
+#include <kapp.h>
+#if KDE_VERSION < 220
+#define TOPrinter QPrinter
 #else
-#  define TOPrinter QPrinter
-#  define TOFileDialog QFileDialog
+#define TOPrinter KPrinter
+#define TO_HAS_KPRINT
+#endif
+#define TOFileDialog KFileDialog
+#else
+#define TOPrinter QPrinter
+#define TOFileDialog QFileDialog
 #endif
 #define TOMessageBox QMessageBox
 #define TODock QWidget
