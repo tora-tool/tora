@@ -45,7 +45,9 @@ my $license=<<__EOT__;
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
- *      software in the executable aside from Oracle client libraries.
+ *      software in the executable aside from Oracle client libraries. You
+ *      are also allowed to link this program with the Qt Non Commercial for
+ *      Windows.
  *
  *      Specifically you are not permitted to link this program with the
  *      Qt/UNIX or Qt/Windows products of TrollTech. And you are not
