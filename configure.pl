@@ -402,7 +402,7 @@ Options can be any of the following:
 --without-rpath      Compile without rpath to Oracle libraries (Not enabled by default)
 --disable-new-check  Disable new version check globally in TOra (Not enabled by default)
 --enable-opt-flag    Set the optimize flag to use for the compile (Default -O3)
---only-prepare Don't generate makefile, just prepare files. Assumes a Makefile is in place.
+--only-prepare       Don't generate makefile, just prepare files. Assumes a Makefile is in place.
 __USAGE__
         exit(2);
     }
