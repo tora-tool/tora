@@ -97,7 +97,7 @@ void toTabBar::layoutTabs()
       (*i).Tab->setRect((*i).Rect);
     if ((*i).Shown) {
       QRect r=(*i).Tab->rect();
-      r.moveLeft(r.left()-offset);
+      r.moveBy(offset-r.left(),0);
       (*i).Tab->setRect(r);
     } else {
       QRect r;

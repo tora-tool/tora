@@ -121,6 +121,15 @@ void toEditExtensions::lostFocus(toEditWidget *widget)
   }
 }
 
+void toEditExtensions::gotoLine()
+{
+  if (Current) {
+    toEditExtensionGoto dialog(Current);
+    if (dialog.exec())
+      dialog.gotoLine();
+  }
+}
+
 void toEditExtensions::intIndent(int delta)
 {
   int line1,col1,line2,col2;
@@ -442,8 +451,7 @@ public:
 							 qApp->translate("toEditExtensionTool","De-indent Block"),&EditExtensions,
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
-    GotoLine=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
-						    qApp->translate("toEditExtensionTool","Goto Line"),&EditExtensions,
+    GotoLine=toMainWidget()->editMenu()->insertItem(qApp->translate("toEditExtensionTool","Goto Line"),&EditExtensions,
 						    SLOT(gotoLine()));
 
     IndentButton=new QToolButton(QPixmap((const char **)indent_xpm),
