@@ -1084,6 +1084,7 @@ void toMain::setEditWidget(toEditWidget *edit)
     main->RowLabel->hide();
     main->ColumnLabel->hide();
     main->editEnable(edit);
+    main->editFileMenu();
   }
 }
 
@@ -1121,6 +1122,7 @@ void toMain::editDisable(toEditWidget *edit)
       main->editEnable(edit,false,false,false,false,false,false,false,false,false,false,false);
       main->Edit->lostFocus();
       main->Edit=NULL;
+      main->editFileMenu();
     }
   }
 }
@@ -1154,7 +1156,6 @@ void toMain::editEnable(toEditWidget *edit,bool open,bool save,bool print,
     PasteButton->setEnabled(paste);
     SearchButton->setEnabled(search);
   }
-  editFileMenu();
 }
 
 void toMain::registerSQLEditor(int tool)

@@ -414,7 +414,7 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	  if (i==int(c.length()))
 	    painter->fillRect(LeftIgnore,0,posx-LeftIgnore,height,painter->backgroundColor());
 	  if (rect.height()<height)
-	    painter->fillRect(posx,rect.height(),rect.width()-posx,height-rect.height(),painter->backgroundColor());
+	    painter->fillRect(posx,rect.height(),rect.width(),height-rect.height(),painter->backgroundColor());
 
 	  posx=rect.right()+1;
 	}
