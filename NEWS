@@ -12,6 +12,8 @@
 2001-07-04: Fixed typo in Makefile.common (Thanx Jonas Rather).
 2001-07-04: Rewrote settings for worksheet to use designer.
 2001-07-04: Added option to remove numbering column in worksheet.
+2001-07-04: Another parsing fix for worksheet (It was rediculous a long
+	time ago!)
 
 0.12: Released 2001-07-01
 

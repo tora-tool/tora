@@ -113,21 +113,22 @@ static struct {
   bool WantSemi;
   bool CloseBlock;
   bool Comment;
+  bool BeforeCode;
   bool StartCode;
-} Blocks[] = { { 0,"begin",	true ,false,false,false,true  },
-	       { 0,"if",	true ,false,false,false,false },
-	       { 0,"loop",	true ,false,false,false,false },
-	       { 0,"while",	true ,false,false,false,false },
-	       { 0,"declare",	false,false,false,false,true  },
-	       { 0,"package",	true ,false,false,false,false },
-	       { 0,"create",	false,false,false,false,true  },
-	       { 0,"procedure",	false,false,false,false,false },
-	       { 0,"function",	false,false,false,false,false },
-	       { 0,"end",	false,true ,true ,false,false },
-	       { 0,"rem",	false,false,false,true ,false },
-	       { 0,"prompt",	false,false,false,true ,false },
-	       { 0,"set",	false,false,false,true ,false },
-	       { 0,NULL,	false,false,false,false,false }
+} Blocks[] = { { 0,"begin",	true ,false,false,false,true ,true },
+	       { 0,"if",	true ,false,false,false,false,false},
+	       { 0,"loop",	true ,false,false,false,false,false},
+	       { 0,"while",	true ,false,false,false,false,false},
+	       { 0,"declare",	false,false,false,false,true ,true },
+	       { 0,"create",	false,false,false,false,true ,false},
+	       { 0,"package",	true ,false,false,false,false,true },
+	       { 0,"procedure",	false,false,false,false,false,true },
+	       { 0,"function",	false,false,false,false,false,true },
+	       { 0,"end",	false,true ,true ,false,false,false},
+	       { 0,"rem",	false,false,false,true ,false,false},
+	       { 0,"prompt",	false,false,false,true ,false,false},
+	       { 0,"set",	false,false,false,true ,false,false},
+	       { 0,NULL,	false,false,false,false,false,false}
 };
 
 class toWorksheetSetup : public toWorksheetSetupUI, public toSettingTab
@@ -617,7 +618,7 @@ void toWorksheet::execute(bool all,bool step)
 {
   bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
   bool code=true;
-  bool startCode=false;
+  bool beforeCode=false;
   TryStrip=true;
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;
@@ -640,7 +641,7 @@ void toWorksheet::execute(bool all,bool step)
     lastState=state=beginning;
     NewStatement();
     int BlockCount=0;
-    startCode=code=TryStrip=false;
+    beforeCode=code=TryStrip=false;
     QChar lastChar;
     QChar c=' ';
     QChar nc;
@@ -730,7 +731,7 @@ void toWorksheet::execute(bool all,bool step)
 		state=done;
 		break;
 	      } else
-		startCode=code=false;
+		beforeCode=code=false;
 	      startLine=line;
 	      startPos=i;
 	      endLine=-1;
@@ -748,25 +749,27 @@ void toWorksheet::execute(bool all,bool step)
 		    pos++;
 		    if (!Blocks[j].Start[pos]) {
 		      if (!toIsIdent(nc)) {
-			if (Blocks[j].StartCode) {
-			  startCode=true;
+			if (Blocks[j].BeforeCode) {
+			  beforeCode=true;
 			  pos=0;
 			  br=true;
 			}
-			if (startCode) {
+			if (beforeCode) {
 			  if (Blocks[j].CloseBlock) {
 			    toStatusMessage("Ending unstarted block");
 			    return;
-			  } else if (Blocks[j].WantEnd)
-			    BlockCount++;
+			  } else if (Blocks[j].StartCode) {
+			    if (Blocks[j].WantEnd)
+			      BlockCount++;
 
-			  code=true;
-			  if (Blocks[j].WantSemi)
-			    state=endCode;
-			  else
-			    state=inCode;
-			  NewStatement();
-			  br=true;
+			    code=true;
+			    if (Blocks[j].WantSemi)
+			      state=endCode;
+			    else
+			      state=inCode;
+			    NewStatement();
+			    br=true;
+			  }
 			}
 		      } else
 			pos=0;
@@ -790,7 +793,7 @@ void toWorksheet::execute(bool all,bool step)
 		  query(Editor->markedText(),true);
 		  qApp->processEvents();
 		  NewStatement();
-		  startCode=code=false;
+		  beforeCode=code=false;
 		}
 	      } else if (step&&
 			 ((line==cline&&i>cpos)||(line>cline))) {
