@@ -42,7 +42,6 @@ Extended functionality:
 
 Windows problems:
 
-* Saving of settings
 * Locating tnsnames.ora without ORACLE_HOME
 * Can't abort queries when using QThreads
 

@@ -163,7 +163,32 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
   return toWriteFile(file,data);
 }
 
-#define APPLICATION_NAME "/tora/"
+#if QT_VERSION >= 300
+#  define APPLICATION_NAME "/tora/"
+#else
+#  define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\+"
+
+#  include "windows/cregistry.cpp"
+
+static QString toKeyPath(const QString &str,CRegistry &registry)
+{
+  int pos=str.find('\\',-1);
+  if (pos<0)
+    throw QString("Couldn't find \\ in path");
+  QString ret=str.mid(0,pos);
+  registry.CreateKey(HKEY_CURRENT_USER,str.mid(0,ret);
+  return str.mid(0,pos);
+}
+
+static QString toKeyValue(const QString &str)
+{
+  int pos=str.find('\\',-1);
+  if (pos<0)
+    throw QString("Couldn't find \\ in path");
+  return str.mid(pos+1);
+}
+
+#endif
 
 void toTool::saveConfig(void)
 {
@@ -190,6 +215,25 @@ void toTool::saveConfig(void)
     else
       settings.writeEntry(path,value);
   }
+#  else
+  CRegistry registry;
+  QRegExp re(":");
+  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+    QString path=(*i).first;
+    QString value=(*i).second;
+    path.prepend(APPLICATION_NAME);
+    path.replace(re,"\\");
+    if (value.isNull())
+      registry.SetStringValue(HKEY_CURRENT_USER,
+			      toKeyPath(path,registry),
+			      toKeyValue(path),
+			      "");
+    else
+      registry.SetStringValue(HKEY_CURRENT_USER,
+			      (const char *)path,
+			      (const char *)value.utf8());
+  }
+#  endif
 #  endif
 #endif
 }
@@ -325,8 +369,22 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
     loadConfig();
 
   map<QString,QString>::iterator i=Configuration->find(tag);
-  if (i==Configuration->end())
+  if (i==Configuration->end()) {
+#if defined(WIN32) && QT_VERSION < 300
+    CRegistry registry;
+    QRegExp re(":");
+    QString path=tag;
+    path.prepend(APPLICATION_NAME);
+    path.replace(re,"\\");
+    char buffer[1024];
+    if (registry.GetStringValue(HKEY_CURRENT_USER,toKeyPath(registry,path),toKeyValue(path),buffer,1024)) {
+      QString ret=QString::fromUtf8(buffer);
+      (*Configuration)[tag]=ret;
+      return ret;
+    }
+#endif
     return def;
+  }
   return (*i).second;
 }
 

@@ -31,6 +31,7 @@
 2001-06-27: Added makefile for windows. Observe that no version of Qt for
 	Windows is linkable without violating the GPL license.
 2001-06-29: Support for Oracle 9 manuals in help.
+2001-06-29: Saving settings in Windows registry.
 
 0.11: Released 2001-06-03
 
