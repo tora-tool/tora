@@ -414,6 +414,35 @@ class toConnection {
 
 public:
 
+  /** Contain information about a tablename.
+   */
+  struct tableName {
+    /** The object name
+     */
+    QString Name;
+    /** The schema that owns it
+     */
+    QString Owner;
+    /** Synonym name, only available if this is a synonym. The tablename &amp; owner will
+     * point to what it is a synonym for.
+     */
+    QString Synonym;
+
+    bool operator &lt; (const tableName &amp;) const;
+    bool operator == (const tableName &amp;) const;
+  };
+
+  /** Contain information about a column in a table.
+   */
+  struct columnDesc {
+    /** Column name
+     */
+    QString Name;
+    /** Column Description
+     */
+    QString Comment;
+  };
+
   /** This class is an abstract baseclass to actually implement the comunication with the
    * database. 
    * (See also @ref toQuery::queryImpl and @ref toConnectionProvider)
@@ -456,6 +485,23 @@ public:
      */
     virtual connectionImpl *clone(toConnection *newConn) const = 0;
 
+    /** Return a string representation to address an object.
+     * @param name The name to be quoted.
+     * @return String addressing table.
+     */
+    virtual QString quote(const QString &amp;name)
+    { return name; }
+
+    /** Extract available objects to query for connection.
+     * @return List of available objects.
+     */
+    virtual std::list&lt;tableName&gt; tableNames(void);
+    /** Extract available columns to query for a table.
+     * @param table Table to get column for.
+     * @return List of columns for table.
+     */
+    virtual std::list&lt;toConnection::columnDesc&gt; columnDesc(const tableName &amp;table);
+
     /** Create a new query implementation for this connection.
      * @return A query implementation, allocated with new.
      */
@@ -468,24 +514,6 @@ public:
     virtual void execute(toConnectionSub *conn,const QCString &amp;sql,toQList &amp;params) = 0;
   };
 
-  /** Contain information about a tablename.
-   */
-  struct tableName {
-    /** The object name
-     */
-    QString Name;
-    /** The schema that owns it
-     */
-    QString Owner;
-    /** Synonym name, only available if this is a synonym. The tablename &amp; owner will
-     * point to what it is a synonym for.
-     */
-    QString Synonym;
-
-    bool operator &lt; (const tableName &amp;) const;
-    bool operator == (const tableName &amp;) const;
-  };
-
 private:
 
   void addConnection(void);
@@ -494,7 +522,7 @@ private:
 
   connectionImpl *Connection;
 
-  std::map&lt;tableName,std::list&lt;QString&gt; &gt; ColumnCache;
+  std::map&lt;tableName,std::list&lt;columnDesc&gt; &gt; ColumnCache;
   std::list&lt;tableName&gt; TableNames;
 
   toConnectionSub *mainConnection(void);
@@ -671,6 +699,12 @@ public:
    */
   void delInit(const QString &amp;sql);
 
+  /** Return a string representation to address an object.
+   * @param name The name to be quoted.
+   * @return String addressing table.
+   */
+  QString quote(const QString &amp;name);
+
   /**
    * Get the tables available for the current user. This function caches the responses
    * and should be fairly fast after the first call. Do not modify the returned list.
@@ -683,7 +717,7 @@ public:
    * and should be fairly fast after the first call. Do not modify the returned list.
    * @return A list of the columns for a table.
    */
-  std::list&lt;QString&gt; &amp;columns(const tableName &amp;table);
+  std::list&lt;columnDesc&gt; &amp;columns(const tableName &amp;table);
   /**
    * Clear the object and column cache.
    */
@@ -766,6 +800,38 @@ public:
    */
   static std::list&lt;QString&gt; databases(const QString &amp;provider,const QString &amp;host,
 				      const QString &amp;user,const QString &amp;pwd);
+  /**
+   * Create and return configuration tab for this connectiontype. The returned widget should also
+   * be a childclass of @ref toSettingTab.
+   *
+   * @return A pointer to the widget containing the setup tab for this tool or NULL of
+   * no settings are available.
+   */
+  virtual QWidget *configurationTab(QWidget *parent)
+  { return NULL; }
+  /**
+   * Get connection specific settings.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Contents of this setting.
+   */
+  const QString &amp;config(const QString &amp;tag,const QString &amp;def);
+  /**
+   * Change connectionspecific setting. Depending on the implementation this can change the
+   * contents on disk or not.
+   *
+   * Setting names are hierachical separated by ':' instead of '/' usually used
+   * in filenames. As an example all settings for the tool 'Example' would be
+   * under the 'Example:{settingname}' name.
+   *
+   * @param tag The name of the configuration setting.
+   * @param def Default value of the setting, if it is not available.
+   */
+  void setConfig(const QString &amp;tag,const QString &amp;value);
 };
 
 #endif

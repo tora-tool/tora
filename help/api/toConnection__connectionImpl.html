@@ -46,9 +46,15 @@
 </LI>
 <LI>virtual  connectionImpl *&nbsp;<b><i><A HREF="#ref10">clone</A></i></b> (<A HREF="toConnection.html">toConnection</A> *newConn)  const
 </LI>
-<LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref11">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref11">quote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params) 
+<LI>virtual  std::list&lt;tableName&gt; &nbsp;<b><A HREF="#ref12">tableNames</A></b> (void) 
+</LI>
+<LI>virtual  std::list&lt;<A HREF="toConnection__columnDesc.html">toConnection::columnDesc</A>&gt; &nbsp;<b><A HREF="#ref13">columnDesc</A></b> (const tableName &amp;table) 
+</LI>
+<LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref14">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref15">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
  database. 
@@ -85,12 +91,35 @@
 <A NAME="clone"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> connectionImpl *&nbsp;<i><strong>clone</strong></i> (<A HREF="toConnection.html">toConnection</A> *newConn)
 <br></td><td align="right"><h3><i><strong>clone</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p> Create a copy of this implementation.
      </p>
-<A NAME="createQuery"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
+<A NAME="quote"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>quote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<br></td><td align="right"><h3><strong>quote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Return a string representation to address an object.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+     </p>
+<A NAME="tableNames"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;tableName&gt; &nbsp;<strong>tableNames</strong> (void)
+<br></td><td align="right"><h3><strong>tableNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection.
+</p>
+<p><b>Returns</b>: List of available objects.
+     </p>
+<A NAME="columnDesc"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;<A HREF="toConnection__columnDesc.html">toConnection::columnDesc</A>&gt; &nbsp;<strong>columnDesc</strong> (const tableName &amp;table)
+<br></td><td align="right"><h3><strong>columnDesc</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available columns to query for a table.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>table</i></TD><TD align="left" valign="top">Table to get column for.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: List of columns for table.
+     </p>
+<A NAME="createQuery"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
 <br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new query implementation for this connection.
 </p>
 <p><b>Returns</b>: A query implementation, allocated with new.
      </p>
-<A NAME="execute"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params)
+<A NAME="execute"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params)
 <br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

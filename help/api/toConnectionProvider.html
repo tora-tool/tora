@@ -42,6 +42,12 @@
 				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;user,
 				       const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;pwd) 
 </LI>
+<LI>virtual  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref17">configurationTab</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
+</LI>
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref18">config</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref19">setConfig</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value) 
+</LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toConnectionProvider.html">toConnectionProvider</A> &amp;&nbsp;<b><A HREF="#ref11">fetchProvider</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;provider) 
 </LI>
 <LI>static  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &nbsp;<b><A HREF="#ref12">providers</A></b> () 
@@ -143,6 +149,46 @@
 </TABLE></P>
 <p><b>Returns</b>: List of known databases.
    </p>
+<A NAME="configurationTab"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<strong>configurationTab</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
+<br></td><td align="right"><h3><strong>configurationTab</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+ Create and return configuration tab for this connectiontype. The returned widget should also
+ be a childclass of <A HREF="toSettingTab.html">toSettingTab</A>.
+</p>
+<p></p>
+<p><b>Returns</b>: A pointer to the widget containing the setup tab for this tool or NULL of
+ no settings are available.
+   </p>
+<A NAME="config"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>config</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def)
+<br></td><td align="right"><h3><strong>config</strong></h3></td></tr></table><p></p><p>
+ Get connection specific settings.
+</p>
+<p> Setting names are hierachical separated by ':' instead of '/' usually used
+ in filenames. As an example all settings for the tool 'Example' would be
+ under the 'Example:{settingname}' name.
+</p>
+<p></p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>tag</i></TD><TD align="left" valign="top">The name of the configuration setting.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Contents of this setting.
+   </TD></TR>
+</TABLE></P>
+<A NAME="setConfig"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConfig</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;tag,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;value)
+<br></td><td align="right"><h3><strong>setConfig</strong></h3></td></tr></table><p></p><p>
+ Change connectionspecific setting. Depending on the implementation this can change the
+ contents on disk or not.
+</p>
+<p> Setting names are hierachical separated by ':' instead of '/' usually used
+ in filenames. As an example all settings for the tool 'Example' would be
+ under the 'Example:{settingname}' name.
+</p>
+<p></p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>tag</i></TD><TD align="left" valign="top">The name of the configuration setting.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>def</i></TD><TD align="left" valign="top">Default value of the setting, if it is not available.
+   </TD></TR>
+</TABLE></P>
 <HR>
 	<table>
 	</table>
