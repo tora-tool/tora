@@ -68,7 +68,7 @@ protected:
   { return toscript_xpm; }
 public:
   toScriptTool()
-    : toTool(100,"Schema extraction")
+    : toTool(201,"Schema extraction")
   { }
   virtual const char *menuItem()
   { return "DB Extraction/Compare"; }

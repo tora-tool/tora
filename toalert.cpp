@@ -35,7 +35,9 @@
  ****************************************************************************/
 
 #include <stdio.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include <qlineedit.h>
 #include <qtoolbutton.h>
@@ -66,7 +68,7 @@ protected:
   { return toalert_xpm; }
 public:
   toAlertTool()
-    : toTool(104,"Alert Tool")
+    : toTool(202,"Alert Tool")
   { }
   virtual const char *menuItem()
   { return "Alert Tool"; }
@@ -155,7 +157,7 @@ toAlert::~toAlert()
   State=Quit;
   do {
     Lock.unlock();
-    sleep(1);
+    Semaphore.down();
     Lock.lock();
   } while(State==Quit);
   Lock.unlock();
@@ -253,6 +255,7 @@ void toAlert::pollTask::run(void)
     } catch(...) {
     }
   Parent.State=Done;
+  Parent.Semaphore.up();
   Parent.Lock.unlock();
 }
 

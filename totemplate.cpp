@@ -297,7 +297,7 @@ protected:
   { return totemplate_xpm; }
 public:
   toTemplateTool()
-    : toTool(301,"SQL Template")
+    : toTool(401,"SQL Template")
   { Dock=NULL; }
   virtual const char *menuItem()
   { return "SQL Template"; }

@@ -432,6 +432,8 @@ toMain::toMain()
   }
   Search=NULL;
 
+  if (!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty())
+    showMaximized();
   show();
   try {
     toNewConnection newConnection(this,"First connection",true);

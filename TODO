@@ -45,6 +45,7 @@ Extended functionality:
 * Database provider setup tabs.
 * Tool menu in all tools.
 * Different highlighter depending on connection.
+* Default names to listen to in alert.
 
 New tools:
 

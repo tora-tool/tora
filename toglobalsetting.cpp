@@ -78,6 +78,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
   HistorySize->setValue(toTool::globalConfig(CONF_STATUS_SAVE,
 					     DEFAULT_STATUS_SAVE).toInt());
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
+  MaximizeMain->setChecked(!toTool::globalConfig(CONF_MAXIMIZE_MAIN,"Yes").isEmpty());
   HelpDirectory->setText(toHelpPath());
   ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
   ConnectHistory->setValue(toTool::globalConfig(CONF_CONNECT_SIZE,DEFAULT_CONNECT_SIZE).toInt());
@@ -180,6 +181,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));
   toTool::globalSetConfig(CONF_CHART_SAMPLES,QString::number(ChartSamples->value()));
   toTool::globalSetConfig(CONF_CONNECT_SIZE,QString::number(ConnectHistory->value()));
+  toTool::globalSetConfig(CONF_MAXIMIZE_MAIN,MaximizeMain->isChecked()?"Yes":"");
 #if QT_VERSION < 300
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
 #endif

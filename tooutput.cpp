@@ -95,7 +95,7 @@ protected:
   { return tooutput_xpm; }
 public:
   toOutputTool()
-    : toTool(103,"SQL Output")
+    : toTool(203,"SQL Output")
   { }
   virtual const char *menuItem()
   { return "SQL Output"; }

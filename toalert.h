@@ -67,6 +67,7 @@ class toAlert : public toToolWidget {
   toConnection *SendConnection;
 
   toLock Lock;
+  toSemaphore Semaphore;
   std::list<QString> AddNames;
   std::list<QString> DelNames;
   std::list<QString> Names;

@@ -40,6 +40,8 @@
 2001-09-16: Added CPU time to wait chart.
 2001-09-16: Added object search to schema comparison.
 2001-09-16: Added alert tool.
+2001-09-17: Renumbered tools a bit.
+2001-09-17: Added option to maximize main window on startup.
 
 1.1.0: Released 2001-09-09
 
