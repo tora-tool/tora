@@ -939,6 +939,7 @@ __TEMP__
     }
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
+    $LFlags.="\"-L".$QtLib."\"";
     if (defined $MySQLLib) {
 	$LFlags.="\"-L".$MySQLLib."\" ";
     }
@@ -969,8 +970,6 @@ __TEMP__
     if (!$NoRPath) {
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
     }
-
-    $LFlags.="\"-L".$QtLib."\"";
 
     $Includes ="\"-I".$ENV{ORACLE_HOME}."/rdbms/demo\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/plsql/public\" ";
