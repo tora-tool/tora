@@ -453,8 +453,9 @@ public:
 /** Display a message in the statusbar of the main window.
  * @param str Message to display
  * @param save If true don't remove the message after a specified interval.
+ * @param log Log message. Will never log saved messages.
  */
-void toStatusMessage(const QString &str,bool save=false);
+void toStatusMessage(const QString &str,bool save=false,bool log=true);
 /** Get a pointer to the main window
  * @return Pointer to main window.
  */

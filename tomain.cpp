@@ -653,7 +653,7 @@ void toMain::commandCallback(int cmd)
 	      QCString data=toReadFile(filename);
 	      mark->setText(QString::fromLocal8Bit(data));
 	      mark->setFilename(filename);
-	      toStatusMessage("File opened successfully");
+	      toStatusMessage("File opened successfully",false,false);
 	    } TOCATCH
 	  }
 	}

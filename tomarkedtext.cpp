@@ -120,7 +120,7 @@ void toMarkedText::print(void)
       qApp->processEvents();
       QString str("Printing page ");
       str+=QString::number(page);
-      toStatusMessage(str);
+      toStatusMessage(str,false,false);
     }
     painter.end();
     toStatusMessage("Done printing");

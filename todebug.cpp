@@ -1515,7 +1515,6 @@ bool toDebug::viewSource(const QString &schema,const QString &name,const QString
     updateContent(true);
     ShowButton->setOn(false);
   } else if (!HeadEditor->edited()&&(setCurrent||HeadEditor->current()<0)) {
-    toStatusMessage("Reading source into head editor");
     HeadEditor->setData(schema,type,name);
     HeadEditor->readData(connection(),StackTrace);
     HeadEditor->setCursorPosition(line-1,0);

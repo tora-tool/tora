@@ -116,7 +116,7 @@ QString toSQLToAddress(toConnection &conn,const QString &sql)
 
 static std::list<QString> LastMessages;
 
-void toStatusMessage(const QString &str,bool save)
+void toStatusMessage(const QString &str,bool save,bool log)
 {
   toMain *main=dynamic_cast<toMain *>(qApp->mainWidget());
   if (main) {
@@ -125,7 +125,7 @@ void toStatusMessage(const QString &str,bool save)
       main->statusBar()->message(str);
     else
       main->statusBar()->message(str,sec*1000);
-    if (!save&&!str.isEmpty()) {
+    if (!save&&!str.isEmpty()&&log) {
       toPush(LastMessages,str);
       if (int(LastMessages.size())>toTool::globalConfig(CONF_STATUS_SAVE,
 							DEFAULT_STATUS_SAVE).toInt())
@@ -550,7 +550,7 @@ bool toWriteFile(const QString &filename,const QCString &data)
       return false;
     }
     file.unlink();
-    toStatusMessage("File saved successfully");
+    toStatusMessage("File saved successfully",false,false);
     return true;
   }
 #endif
@@ -565,7 +565,7 @@ bool toWriteFile(const QString &filename,const QCString &data)
     TOMessageBox::warning(toMainWidget(),"File error","Couldn't write data to file");
     return false;
   }
-  toStatusMessage("File saved successfully");
+  toStatusMessage("File saved successfully",false,false);
   return true;
 }
 
