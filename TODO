@@ -10,7 +10,6 @@ Extended functionality:
 	Rename table
 		ALTER TABLE ... RENAME TO ...
 * Modify storage in storage manager.
-* OTL Doesn't seem to support object types.
 * Being able to modify data in the toResultContent widget.
 * Ability to save a session (Including breakpoints, parameter cache windows etc)
 * Add context menues to all tools, like in debugger.

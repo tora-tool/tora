@@ -1,6 +1,9 @@
 OCI:
 	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an Oracle bug since other programs have same problem)
 
+OTL:
+	Doesn't seem to handle object types and some other types (Like ROWID).
+
 toDebug:
 	Seems a recompiled object seems invalidated the first time it is executed in the target
 	session.
