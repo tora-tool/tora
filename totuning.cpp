@@ -700,7 +700,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   Tabs->addTab(grid,"&Charts");
 
   FileIO=new toTuningFileIO(this);
-  Tabs->addTab(FileIO,"FFile I/O");
+  Tabs->addTab(FileIO,"&File I/O");
 
   Indicators=new toListView(Tabs);
   Indicators->setRootIsDecorated(true);
