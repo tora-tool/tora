@@ -1234,9 +1234,9 @@ void toMain::changeConnection(void)
 {
   try {
     toConnection &conn=currentConnection();
-    for (std::map<QToolButton *,bool>::iterator i=NeedConnection.begin();
-	 i!=NeedConnection.end();i++)
-      (*i).first->setEnabled(true);
+    for (std::map<QToolButton *,bool>::iterator j=NeedConnection.begin();
+	 j!=NeedConnection.end();j++)
+      (*j).first->setEnabled(true);
 
     int toolID=TO_TOOLS;
     int lastPriorityPix=0;

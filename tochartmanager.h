@@ -196,8 +196,8 @@ public:
 		  std::list<double> &vale,const QString &xValue);
 
   friend class toChartManager;
-  friend class toChartManager::alarmSignal;
-  friend class toChartManager::chartAlarm;
+  friend struct toChartManager::alarmSignal;
+  friend struct toChartManager::chartAlarm;
 public slots:
   void alarm(void);
   void addChart(toLineChart *chart);

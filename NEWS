@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-07-24: Fixed problem with missing new option in debugwatch.
+2003-07-24: Some last minute fixes for Windows.
 2003-07-24: Make sure tabs update on refresh in session view.
 2003-07-24: Replaced all header streatch calls with resizemode calls.
 2003-07-24: Fixed horrific bug in map import.
