@@ -322,7 +322,7 @@ BUILT_SOURCES = \
 # have_oracle conditional. these libraries are not built if oracle is
 # not present.
 if HAVE_ORACLE
-OPTLIB_ORA = libtooracleconnection.la libtooraclepreload.la
+OPTLIB_ORA = libtooracleconnection.la
 else
 OPTlIB_ORA =
 endif
@@ -422,15 +422,12 @@ libtoinvalid_la_LDFLAGS = $(PFLAGS)
 libtoinvalid_la_SOURCES = toinvalid.cpp toinvalid.h
 
 if HAVE_ORACLE
+libtooracleconnection_la_LIBADD    = $(ORACLE_LIBS)
 libtooracleconnection_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
-libtooracleconnection_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
-libtooracleconnection_la_SOURCES =	tooracleconnection.cpp \
+libtooracleconnection_la_LDFLAGS   = $(PFLAGS) $(ORACLE_LDFLAGS)
+libtooracleconnection_la_SOURCES   =	tooracleconnection.cpp \
 	tooracleextract.cpp \
 	tooraclesettingui.cpp tooraclesettingui.h
-
-libtooraclepreload_la_CXXFLAGS  = $(ORACLE_CXXFLAGS) -DOTL_FUNC_THROW_SPEC_ON
-libtooraclepreload_la_LDFLAGS = $(PFLAGS) $(ORACLE_LDFLAGS)
-libtooraclepreload_la_SOURCES = tooraclepreload.cpp
 endif
 
 libtooutput_la_LDFLAGS = $(PFLAGS)

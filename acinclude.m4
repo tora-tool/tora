@@ -135,51 +135,79 @@ AC_DEFUN(MRJ_CHECK_ORACLE,
 
   oracle_user_otl_ver=
   AC_ARG_WITH(oci-version,
-  [[  --with-oci-version=[8, 8I, 9I]
-                          this is the version of the client, not the database. use 9I for >= 9]],
+  [[  --with-oci-version=[8, 8I, 9I, 10G]
+                          this is the version of the client, not the database.]],
   [
     oracle_user_otl_ver=$withval
   ], )
 
   cflags_ora_save=$CFLAGS
   ldflags_ora_save=$LDFLAGS
+  libs_ora_save=$LIBS
 
+  ora_cflags=
   ora_libdir=
   ora_ldflags=
+  ora_lib=-lclntsh
 
   if test $have_oracle = no; then
     dnl yeah, this is backwards.
-    AC_DEFINE(TO_NO_ORACLE, 1, [Define if you do *not* have Oracle.])
+    AC_DEFINE(TO_NO_ORACLE, 1, [Define if you do _not_ have Oracle.])
+    AC_MSG_RESULT(no)
   elif test "x$ORACLE_HOME" != "x"; then
     AC_MSG_RESULT($ORACLE_HOME)
 
-    ora_cflags="-I$ORACLE_HOME/rdbms/demo -I$ORACLE_HOME/plsql/public -I$ORACLE_HOME/rdbms/public -I$ORACLE_HOME/network/public"
+    dnl try to find oracle includes
+    ora_check_inc="
+      $ORACLE_HOME/rdbms/demo
+      $ORACLE_HOME/plsql/public
+      $ORACLE_HOME/rdbms/public
+      $ORACLE_HOME/network/public
+      $ORACLE_HOME/sdk/
+      $ORACLE_HOME/include/"
 
-    if test -d $ORACLE_HOME/lib; then
-      ora_libdir=$ORACLE_HOME/lib
-    elif test -d $ORACLE_HOME/lib32; then
-      ora_libdir=$ORACLE_HOME/lib32
-    elif test -d $ORACLE_HOME/lib64; then
-      ora_libdir=$ORACLE_HOME/lib64
-    fi
+    for dir in $ora_check_inc; do
+      if test -d $dir; then
+        ora_cflags="$ora_cflags -I$dir"
+      fi
+    done
 
-    if test "x$ora_libdir" != "x"; then
-      ora_ldflags="-L$ora_libdir -lclntsh"
+    ora_check_lib="
+      $ORACLE_HOME/lib
+      $ORACLE_HOME/lib32
+      $ORACLE_HOME/lib64"
+
+    for dir in $ora_check_lib; do
+      if test -d $dir; then
+        ora_ldflags="$ora_ldflags -L$dir"
+      fi
+    done
+
+    dnl check real quick that ORACLE_HOME doesn't end with a slash
+    dnl for some stupid reason, the 10g instant client bombs.
+    ora_home_oops=`echo $ORACLE_HOME | $AWK '/\/@S|@/ {print "oops"}'`
+    if test "$ora_home_oops" = "oops"; then
+      AC_MSG_WARN([Your ORACLE_HOME environment variable ends with a
+slash (i.e. /). Oracle 10g Instant Client is known to have a problem
+with this. If you get the message "otl_initialize failed!" at the
+console when running TOra, this is probably why.])
     fi
   else
     dnl test if we have includes or libraries
     if test -z "$oracle_user_lib" || test -z "$oracle_user_inc"; then
-       AC_MSG_ERROR([ORACLE_HOME is not set and the oracle directories were not given manually. This will fail, so try --without-oracle or specifying the include and library directories.])
-    fi;
-
-    ora_ldflags="-L$oracle_user_lib"
-    ora_cflags="-I$oracle_user_inc"
+       AC_MSG_WARN(no)
+       have_oracle=no
+     else
+      ora_ldflags="-L$oracle_user_lib"
+      ora_cflags="-I$oracle_user_inc"
+    fi
   fi
 
 if test $have_oracle = yes; then
   AC_MSG_CHECKING([oci works])
   CFLAGS="$CFLAGS $ora_cflags"
-  LDFLAGS="$LDFLAGS $ora_ldflags -lclntsh"
+  LDFLAGS="$LDFLAGS $ora_ldflags"
+  LIBS="$ora_lib"
 
   # i pulled this from one of the examples in the demo dir.
   AC_RUN_IFELSE([[
@@ -210,14 +238,19 @@ if test $have_oracle = yes; then
   fi
 
   if test "x$oracle_user_otl_ver" != "x"; then
-    dnl use the version the user supplied
     otl_ver=$oracle_user_otl_ver
   elif test "x${sqlplus}" = "x"; then
     AC_MSG_ERROR([Couldn't find sqlplus. Set the Oracle version manually.])
   else
     # get oracle oci version. know a better way?
     sqlplus_ver=`$sqlplus -? | $AWK '/Release/ {print @S|@3}'`
-    if expr $sqlplus_ver \> 9 >/dev/null; then
+    echo "sqlplus_ver: $sqlplus_ver" >&5
+
+    dnl you have to test '10.1.0.3.0' is > 10
+    if expr $sqlplus_ver \> 10 >/dev/null; then
+      dnl our version of otl doesn't have 10g defined yet
+      otl_ver=10G
+    elif expr $sqlplus_ver \> 9 >/dev/null; then
       otl_ver=9I
     elif expr $sqlplus_ver \< 8.1 >/dev/null; then
       otl_ver=8
@@ -225,6 +258,7 @@ if test $have_oracle = yes; then
       otl_ver=8I
     fi
   fi
+
   ora_cflags="$ora_cflags -DOTL_ORA${otl_ver} -DOTL_ORA_TIMESTAMP -DOTL_ANSI_CPP"
 
   # don't change flags for all targets, just export ORA variables.
@@ -233,6 +267,9 @@ if test $have_oracle = yes; then
 
   LDFLAGS=$ldflags_ora_save
   AC_SUBST(ORACLE_LDFLAGS, $ora_ldflags)
+
+  LIBS=$libs_ora_save
+  AC_SUBST(ORACLE_LIBS, $ora_lib)
 
   # AM_CONDITIONAL in configure.in uses this variable to enable oracle
   # targets.
