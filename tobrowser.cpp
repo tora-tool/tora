@@ -408,14 +408,15 @@ static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
 			     "Display information about a sequence");
 
 static toSQL SQLListSynonym("toBrowser:ListSynonym",
-			    "SELECT Synonym_Name FROM SYS.ALL_SYNONYMS\n"
+			    "SELECT DECODE(Owner,'PUBLIC','',Owner||'.')||Synonym_Name \"Synonym Name\"\n"
+			    "  FROM Sys.All_Synonyms\n"
 			    " WHERE Table_Owner = :f1<char[101]>\n"
 			    "    OR Owner = :f1<char[101]>\n"
 			    " ORDER BY Synonym_Name",
 			    "List the available synonyms in a schema");
 static toSQL SQLSynonymInfo("toBrowser:SynonymInformation",
-			    "SELECT * FROM SYS.ALL_SYNONYMS\n"
-			    " WHERE (Table_Owner = :f1<char[101]> OR Owner = :f1<char[101]>)\n"
+			    "SELECT * FROM Sys.All_Synonyms a\n"
+			    " WHERE Owner = :f1<char[101]>\n"
 			    "   AND Synonym_Name = :f2<char[101]>",
 			    "Display information about a synonym");
 
@@ -913,7 +914,7 @@ void toBrowser::refresh(void)
       }
     }
     if (SecondTab&&!SecondText.isEmpty())
-      SecondTab->changeParams(schema(),SecondText);
+      changeSecond();
   } TOCATCH
 }
 
@@ -922,9 +923,30 @@ void toBrowser::changeItem(QListViewItem *item)
   if (item) {
     SecondText=item->text(0);
     if (SecondTab&&!SecondText.isEmpty())
-      SecondTab->changeParams(schema(),
-			      SecondText);
+      changeSecond();
   }
+}
+
+#include <stdio.h>
+
+void toBrowser::changeSecond(void)
+{
+  QWidget *tab=TopTab->currentPage();
+  if (tab&&!strcmp(tab->name(),TAB_SYNONYM)) {
+    QString owner;
+    QString name;
+    int pos=SecondText.find(".");
+    if (pos>=0) {
+      owner=SecondText.mid(0,pos);
+      name=SecondText.mid(pos+1);
+    } else {
+      owner="PUBLIC";
+      name=SecondText;
+    }
+    SecondTab->changeParams(owner,name);
+  } else
+    SecondTab->changeParams(schema(),
+			    SecondText);
 }
 
 void toBrowser::changeSecondTab(QWidget *tab)
@@ -939,10 +961,8 @@ void toBrowser::changeSecondTab(QWidget *tab)
       return;
     SecondTab=newtab;
     SecondMap[TopTab->currentPage()->name()]=SecondTab;
-    if (SecondTab&&!SecondText.isEmpty()) {
-      SecondTab->changeParams(schema(),
-			      SecondText);
-    }
+    if (SecondTab&&!SecondText.isEmpty())
+      changeSecond();
   }
 }
 

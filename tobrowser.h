@@ -66,6 +66,7 @@ class toBrowser : public toToolWidget {
   std::map<QString,toResult *> SecondMap;
   void setNewFilter(toResultFilter *filter);
   QString schema(void);
+  void changeSecond(void);
 public:
   toBrowser(QWidget *parent,toConnection &connection);
   virtual ~toBrowser();
