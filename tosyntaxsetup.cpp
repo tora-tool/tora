@@ -37,7 +37,7 @@
 #include "toconf.h"
 
 #include "tosyntaxsetup.ui.moc"
-#include "tosyntaxsetup.uicpp"
+#include "tosyntaxsetup.ui.cpp"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   : toSyntaxSetupUI(parent,name,fl),Analyzer(toDefaultAnalyzer())
