@@ -25,6 +25,7 @@ SOURCES=\
 	toabout.cpp 		\
 	tobrowser.cpp		\
 	toconnection.cpp	\
+	tocurrent.cpp		\
 	todebug.cpp		\
 	todebugchange.cpp	\
 	todebugtext.cpp		\
@@ -93,6 +94,7 @@ plugins/todebug.tso:\
 	objs/todebugwatch.o \
 	objs/todebugtext.o \
 	objs/todebugchange.o
+plugins/tocurrent.tso:objs/tocurrent.o
 plugins/toextract.tso:objs/toextract.o
 plugins/tofilesize.tso:objs/tofilesize.o
 plugins/tooutput.tso:objs/tooutput.o
@@ -152,6 +154,7 @@ tora-plugin: \
 	tora \
 	plugins/tobrowser.tso \
 	plugins/todebug.tso \
+	plugins/tocurrent.tso \
 	plugins/toextract.tso \
 	plugins/tofilesize.tso \
 	plugins/tonoblockquery.tso \

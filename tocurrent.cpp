@@ -120,7 +120,6 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
   Tabs->addTab(Version,"Version");
   Parameters=new toResultView(true,false,Connection,Tabs);
   Parameters->setSQL(SQLParameters);
-  Parameters->setSorting(0);
   Tabs->addTab(Parameters,"Parameters");
   Connection.addWidget(this);
   refresh();
@@ -187,6 +186,7 @@ void toCurrent::addRole(QListViewItem *parent)
 void toCurrent::refresh()
 {
   Parameters->refresh();
+  Parameters->setSorting(0);
   Version->refresh();
 
   addList(NULL,SQLUserSysPrivs);
