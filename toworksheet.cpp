@@ -404,6 +404,7 @@ void toWorksheet::setup(bool autoLoad)
     WaitChart->setTitle("Wait states");
     WaitChart->setYPostfix("ms/s");
     WaitChart->setSamples(-1);
+    WaitChart->start();
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    WaitChart,SLOT(changeParams(const QString &)));
     IOChart=new toResultBar(splitter);
@@ -415,6 +416,7 @@ void toWorksheet::setup(bool autoLoad)
     IOChart->setTitle("I/O");
     IOChart->setYPostfix("blocks/s");
     IOChart->setSamples(-1);
+    IOChart->start();
     connect(Statistics,SIGNAL(sessionChanged(const QString &)),
 	    IOChart,SLOT(changeParams(const QString &)));
     ResultTab->addTab(StatTab,"&Statistics");

@@ -50,7 +50,7 @@ toResultLine::toResultLine(QWidget *parent,const char *name)
   Flow=true;
   Columns=0;
   Query=NULL;
-  start();
+  Started=false;
 }
 
 toResultLine::~toResultLine()
@@ -60,12 +60,18 @@ toResultLine::~toResultLine()
 
 void toResultLine::start(void)
 {
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  if (!Started) {
+    connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    Started=true;
+  }
 }
 
 void toResultLine::stop(void)
 {
-  disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  if (Started) {
+    disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    Started=false;
+  }
 }
 
 void toResultLine::query(const QString &sql,const toQList &param,bool first)
@@ -73,6 +79,7 @@ void toResultLine::query(const QString &sql,const toQList &param,bool first)
   if (!handled()||Query)
     return;
 
+  start();
   setSQLParams(sql,param);
 
   try {

@@ -56,6 +56,7 @@ class toResultPie : public toPieChart, public toResult {
   std::list<double> Values;
   toBackground Poll;
   int Columns;
+  bool Started;
 public:
   /** Create widget.
    * @param parent Parent of list.

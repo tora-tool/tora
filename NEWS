@@ -73,10 +73,11 @@
 2001-12-01: Wait a small amount of time before updating right on browser.
 2001-12-01: Added keyboard shortcut ALT+N to move focus to browser object list.
 2001-12-01: Fixed problem with reading errors in debugger.
-2001-12-02: Added information about where to buy commercial licenses if not freeware.
-2001-12-02: Added top SQL to sga trace tool.
-2001-12-02: Added some basic statistics to the session list.
-2001-12-02: Fixed refresh in session list.
+2001-12-01: Added information about where to buy commercial licenses if not freeware.
+2001-12-01: Added top SQL to sga trace tool.
+2001-12-01: Added some basic statistics to the session list.
+2001-12-01: Fixed refresh in session list.
+2001-12-01: Don't start charts until first query.
 
 1.1.5: Released 2001-11-26
 

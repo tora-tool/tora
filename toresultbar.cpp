@@ -50,7 +50,7 @@ toResultBar::toResultBar(QWidget *parent,const char *name)
   Flow=true;
   Columns=0;
   Query=NULL;
-  start();
+  Started=false;
 }
 
 toResultBar::~toResultBar()
@@ -60,12 +60,18 @@ toResultBar::~toResultBar()
 
 void toResultBar::start(void)
 {
-  connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  if (!Started) {
+    connect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    Started=true;
+  }
 }
 
 void toResultBar::stop(void)
 {
-  disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+  if (Started) {
+    disconnect(timer(),SIGNAL(timeout()),this,SLOT(refresh()));
+    Started=false;
+  }
 }
 
 void toResultBar::query(const QString &sql,const toQList &param,bool first)
@@ -73,6 +79,7 @@ void toResultBar::query(const QString &sql,const toQList &param,bool first)
   if (!handled()||Query)
     return;
 
+  start();
   setSQLParams(sql,param);
 
   try {
