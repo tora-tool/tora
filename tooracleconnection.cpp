@@ -203,7 +203,7 @@ public:
     virtual ~oracleQuery()
     {
 #ifdef OTL_STREAM_POOLING_ON
-      if (!SaveInPool)
+      if (!SaveInPool&&Query)
 	Query->close(false);
 #endif
       delete Query;

@@ -440,6 +440,7 @@ static char *DefaultKeywords[]={
   "NOAUDIT",
   "NOCACHE",
   "NOCOMPRESS",
+  "NOCOPY",
   "NOCYCLE",
   "NODELAY",
   "NOFORCE",
