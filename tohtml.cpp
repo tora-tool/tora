@@ -32,10 +32,12 @@
  *
  ****************************************************************************/
 
+#include "tohtml.h"
+
 #include <ctype.h>
 #include <string.h>
 
-#include "tohtml.h"
+#include <qregexp.h>
 
 toHtml::toHtml(const QCString &data)
 {
@@ -283,4 +285,20 @@ bool toHtml::search(const QCString &all,const QString &str)
     }
   }
   return false;
+}
+
+QString toHtml::escape(const QString &html)
+{
+  QString ret=html;
+
+  static QRegExp amp("\\&");
+  static QRegExp lt("\\<");
+  static QRegExp gt("\\>");
+
+#if 0
+  ret.replace(amp,"&amp;");
+  ret.replace(lt,"&lt;");
+  ret.replace(gt,"&gt;");
+#endif
+  return ret;
 }

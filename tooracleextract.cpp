@@ -2794,14 +2794,14 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     if (cache!="N/A")
       addDescription(dsp,ctx,cache);
     if (!ext.state("IsASnapIndex").toBool())
-      addDescription(dsp,ctx,QString("PCTUSED %1").arg(pctUsed));
+      addDescription(dsp,ctx,"PARAMETERS",QString("PCTUSED %1").arg(pctUsed));
   }
   if (!ext.state("IsASnapIndex").toBool())
-    addDescription(dsp,ctx,QString("PCTFREE %1").arg(pctFree));
+    addDescription(dsp,ctx,"PARAMETERS",QString("PCTFREE %1").arg(pctFree));
   if (!ext.state("IsASnapTable").toBool())
-    addDescription(dsp,ctx,QString("INITRANS %1").arg(iniTrans));
+    addDescription(dsp,ctx,"PARAMETERS",QString("INITRANS %1").arg(iniTrans));
 
-  addDescription(dsp,ctx,QString("MAXTRANS %1").arg(maxTrans));
+  addDescription(dsp,ctx,"PARAMETERS",QString("MAXTRANS %1").arg(maxTrans));
   addDescription(dsp,ctx,"STORAGE",QString("INITIAL %1").arg(initial));
   if (!next.isEmpty())
     addDescription(dsp,ctx,"STORAGE",QString("NEXT %1").arg(next));
@@ -2815,7 +2815,7 @@ void toOracleExtract::describeAttributes(toExtract &ext,
   }
   if (CONNECTION.version()>="8.0")
     addDescription(dsp,ctx,QString("%1").arg(logging));
-  addDescription(dsp,ctx,QString("TABLESPACE %1").arg(QUOTE(tablespace)));
+  addDescription(dsp,ctx,"PARAMETERS",QString("TABLESPACE %1").arg(QUOTE(tablespace)));
 }
 
 void toOracleExtract::describeComments(toExtract &ext,
@@ -2900,6 +2900,7 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
   static QRegExp quote("\"");
   static QRegExp func("^sys_nc[0-9]g");
   toQuery inf(CONNECTION,SQLIndexColumns,name,owner);
+  int num=1;
   while(!inf.eof()) {
     QString col=inf.readValue();
     QString asc=inf.readValue();
@@ -2915,6 +2916,8 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
     } else
       row=QUOTE(col);
     addDescription(lst,ctx,"COLUMN",row);
+    addDescription(lst,ctx,"COLUMN",row,"ORDER",QString::number(num));
+    num++;
   }
 }
 
@@ -3323,6 +3326,7 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
 					   const QString &name) const
 {
   toQList cols=toQuery::readQueryNull(CONNECTION,SQLTableColumns,name,owner);
+  int num=1;
   while(cols.size()>0) {
     QString col=QUOTE(toShift(cols));
     QString line=toShift(cols);
@@ -3334,6 +3338,8 @@ void toOracleExtract::describeTableColumns(toExtract &ext,
     line+=toShift(cols);
     addDescription(lst,ctx,"COLUMN",col);
     addDescription(lst,ctx,"COLUMN",col,line.simplifyWhiteSpace());
+    addDescription(lst,ctx,"COLUMN",col,"ORDER",QString::number(num));
+    num++;
   }
 }
 
@@ -3454,8 +3460,8 @@ QString toOracleExtract::createConstraint(toExtract &ext,
 
       if (tchr=="R") {
 	toQuery query(CONNECTION,SQLConstraintTable,rOwner,rName);
-	ret+="REFERENCES ";
-	ret+=schema;
+	ret+=" REFERENCES ";
+	ret+=ext.intSchema(rOwner,false);
 	ret+=QUOTE(query.readValue());
 	ret+=constraintColumns(ext,rOwner,rName);
 
@@ -5268,6 +5274,7 @@ QString toOracleExtract::createView(toExtract &ext,
   ret+="AS\n";
   ret+=text;
   ret+=";\n\n";
+  ret+=createComments(ext,schema,owner,name);
   return ret;
 }
 
@@ -5316,8 +5323,8 @@ void toOracleExtract::describeConstraint(toExtract &ext,
 
       if (tchr=="R") {
 	toQuery query(CONNECTION,SQLConstraintTable,rOwner,rName);
-	ret+="REFERENCES ";
-	ret+=schema;
+	ret+=" REFERENCES ";
+	ret+=ext.intSchema(rOwner,false);
 	ret+=QUOTE(query.readValue());
 	ret+=constraintColumns(ext,rOwner,rName);
 
@@ -5325,7 +5332,7 @@ void toOracleExtract::describeConstraint(toExtract &ext,
 	  ret+="ON DELETE CASCADE";
       }
     }
-    addDescription(lst,ctx,ret);
+    addDescription(lst,ctx,"DEFINITION",ret);
 
     if (CONNECTION.version()<"8")
       ret=status;
@@ -5333,10 +5340,10 @@ void toOracleExtract::describeConstraint(toExtract &ext,
       ret=defferable;
       ret+="\nINITIALLY ";
       ret+=deffered;
-      addDescription(lst,ctx,ret);
+      addDescription(lst,ctx,"STATUS",ret);
       ret=status;
     }
-    addDescription(lst,ctx,ret);
+    addDescription(lst,ctx,"STATUS",ret);
   }
 }
 
@@ -5478,15 +5485,13 @@ void toOracleExtract::describeIndex(toExtract &ext,
   QString instances  =toShift(storage);
   QString compressed =toShift(storage);
 
-  QString schema2=ext.intSchema(tableOwner,true);
+  QString schema2=ext.intSchema(tableOwner,false);
 
   std::list<QString> ctx;
   ctx.insert(ctx.end(),schema);
   ctx.insert(ctx.end(),"INDEX");
-  ctx.insert(ctx.end(),QUOTE(table));
-  ctx.insert(ctx.end(),schema2);
-  ctx.insert(ctx.end(),"TABLE");
   ctx.insert(ctx.end(),QUOTE(name));
+  addDescription(lst,ctx,"ON "+schema2+QUOTE(table));
 
   addDescription(lst,ctx);
   if (!reverse.isEmpty())
@@ -6034,6 +6039,18 @@ void toOracleExtract::describeView(toExtract &ext,
   addDescription(lst,ctx);
   QString text=toShift(source);
   addDescription(lst,ctx,"AS",text.simplifyWhiteSpace());
+  describeComments(ext,lst,ctx,schema,owner,name);
+
+  toQuery query(CONNECTION,"SELECT * FROM "+QUOTE(owner)+"."+QUOTE(name)+" WHERE NULL = NULL");
+
+  toQDescList desc=query.describe();
+  int num=1;
+  for(toQDescList::iterator i=desc.begin();i!=desc.end();i++) {
+    addDescription(lst,ctx,"COLUMN",(*i).Name);
+    addDescription(lst,ctx,"COLUMN",(*i).Name,(*i).Datatype);
+    addDescription(lst,ctx,"COLUMN",(*i).Name,"ORDER",QString::number(num));
+    num++;
+  }
 }
 
 // Implementation drop functions

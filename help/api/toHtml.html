@@ -46,6 +46,8 @@
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref21">search</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
 </LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref22">escape</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &html) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A small and hopefully pretty efficient parser of HTML tags. No attempt what
  so ever is made trying to check the validity of the text so if you forget
  a closing > you will probably end up with an exception.
@@ -129,6 +131,9 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Substring to search for in data.
    </TD></TR>
 </TABLE></P>
+<A NAME="escape"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>escape</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &html)
+<br></td><td align="right"><h3><strong>escape</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Escape text to be HTML.
+   </p>
 <HR>
 	<table>
 	</table>

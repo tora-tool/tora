@@ -36,6 +36,7 @@
 
 #include "toconf.h"
 #include "toconnection.h"
+#include "tohtml.h"
 #include "toextract.h"
 #include "toreport.h"
 
@@ -78,7 +79,7 @@ static std::list<QString>::iterator FindItem(std::list<QString> &desc,
 					     const QString &search)
 {
   while(i!=desc.end()) {
-    if (!SameContext(*i,context))
+    if (!SameContext(*i,context)&&!context.isEmpty())
       return desc.end();
     if (toExtract::partDescribe(*i,level)==search)
       return i;
@@ -87,7 +88,133 @@ static std::list<QString>::iterator FindItem(std::list<QString> &desc,
   return desc.end();
 }
 
-#include <stdio.h>
+static QString GenerateConstraint(const QString &name,
+				  const QString &def,
+				  const QString &status)
+{
+  return QString("<TR><TD>%1</TD><TD>%2</TD><TD>%3</TD></TR>\n").
+    arg(toHtml::escape(name)).
+    arg(toHtml::escape(def)).
+    arg(toHtml::escape(status));
+}
+
+static QString DescribeConstraints(std::list<QString> &desc,
+				   std::list<QString>::iterator i,
+				   int level,
+				   const QString &context)
+{
+  QString ret=
+    "<H4>CONSTRAINT</H4>\n"
+    "<TABLE><TR><TH>Name</TH><TH>Constraint</TH><TH>Status</TH></TR>\n";
+
+  QString lastName;
+  QString status;
+  QString definition;
+
+  do {
+    if (!SameContext(*i,context))
+      break;
+
+    QString name=toExtract::partDescribe(*i,level);
+    QString extra=toExtract::partDescribe(*i,level+1);
+
+    if (lastName!=name) {
+      if (!lastName.isNull())
+	ret+=GenerateConstraint(lastName,definition,status);
+      definition=QString::null;
+      status=QString::null;
+      lastName=name;
+    }
+
+    if (extra=="DEFINITION")
+      definition+=toExtract::partDescribe(*i,level+2)+" ";
+    else if (extra=="STATUS")
+      status+=toExtract::partDescribe(*i,level+2)+" ";
+
+    i++;
+  } while(i!=desc.end());
+  ret+=GenerateConstraint(lastName,definition,status);
+  ret+="</TABLE>\n";
+  return ret;
+}
+
+struct toReportColumn {
+  QString Order;
+  QString Datatype;
+  QString Comment;
+};
+
+static QString DescribeColumns(std::list<QString> &desc,
+			       std::list<QString>::iterator i,
+			       int level,
+			       const QString &context)
+{
+  bool hasComments=false;
+  bool hasDatatype=false;
+
+  int maxCol=1;
+
+  std::map<QString,toReportColumn> cols;
+  do {
+    if (!SameContext(*i,context))
+      break;
+
+    QString col=toExtract::partDescribe(*i,level+0);
+    QString extra=toExtract::partDescribe(*i,level+1);
+
+    if (extra=="ORDER") {
+      cols[col].Order=toExtract::partDescribe(*i,level+2);
+      maxCol=max(maxCol,cols[col].Order.toInt());
+    } else if (extra=="COMMENT") {
+      cols[col].Comment=toExtract::partDescribe(*i,level+2);
+      hasComments=true;
+    } else if (!extra.isEmpty()) {
+      cols[col].Datatype+=extra+" ";
+      hasDatatype=true;
+    }
+
+    i++;
+  } while(i!=desc.end());
+
+  QString ret=
+    "<H4>COLUMN</H4>\n"
+    "<TABLE BORDER=0><TR><TH>Name</TH>";
+  if (hasDatatype)
+    ret+="<TH>Definition</TH>";
+  if (hasComments)
+    ret+="<TH>Description</TH>";
+  ret+="</TR>\n";
+
+  for(int j=1;j<=maxCol;j++) {
+    for(std::map<QString,toReportColumn>::iterator k=cols.begin();k!=cols.end();k++) {
+      if ((*k).second.Order.toInt()==j) {
+	ret+="<TR><TD>";
+	ret+=toHtml::escape((*k).first);
+	ret+="</TD>";
+	if (hasDatatype) {
+	  ret+="<TD>";
+	  if (!(*k).second.Datatype.isEmpty())
+	    ret+=toHtml::escape((*k).second.Datatype);
+	  else
+	    ret+="<BR>";
+	  ret+="</TD>";
+	}
+	if (hasComments) {
+	  ret+="<TD>";
+	  if (!(*k).second.Comment.isEmpty())
+	    ret+=toHtml::escape((*k).second.Comment);
+	  else
+	    ret+="&nbsp;";
+	  ret+="</TD>";
+	}
+	ret+="</TR>\n";
+	break;
+      }
+    }
+  }
+  ret+="</TABLE>\n";
+  return ret;
+}
 
 static QString DescribePart(std::list<QString> &desc,
 			    std::list<QString>::iterator &i,
@@ -96,47 +223,85 @@ static QString DescribePart(std::list<QString> &desc,
 {
   QString ret;
 
+  QString lastPart;
+
+  std::list<QString>::iterator start=i;
+
   do {
     if (!SameContext(*i,parentContext))
       return ret;
     QString part=toExtract::partDescribe(*i,level);
+    if (part.isNull()) {
+      i++;
+      continue;
+    }
+    if (lastPart!=part) {
+      if (lastPart.isNull()) {
+	i=FindItem(desc,start,level,parentContext,"TABLE");
+	if (i==desc.end())
+	  i=start;
+	else
+	  part=toExtract::partDescribe(*i,level);
+      } else {
+	while(part=="TABLE") {
+	  i++;
+	  if (i==desc.end())
+	    return ret;
+	  part=toExtract::partDescribe(*i,level);
+	}
+      }
+      if (lastPart=="TABLE") {
+	i=start;
+	part=toExtract::partDescribe(*i,level);
+      }
+      lastPart=part;
+    }
     QString child=parentContext+"\001"+part;
 
-#if 0
-    std::list<QString>::iterator col=FindItem(desc,
-					      i,
-					      level+1,
-					      child,
-					      "COLUMN");
-
-    if (col!=desc.end())
-      ret+=DescribeColumns(desc,col,level+1,child);
-#endif
-
-    if (part=="COLUMN"||part=="COMMENT") {
+    if (part=="COLUMN"||part=="COMMENT"||part=="CONSTRAINT") {
       i++;
     } else if (HasChildren(desc,i,child)) {
-      ret+=QString("<H%1>%2</H%3>\n").
-	arg(level).
-	arg(part).
-	arg(level);
+      ret+=QString("<P><H%1>%2</H%3></P>\n").
+	arg(level+1).
+	arg(toHtml::escape(part)).
+	arg(level+1);
       std::list<QString>::iterator com=FindItem(desc,
 						i,
 						level+1,
 						child,
 						"COMMENT");
       if (com!=desc.end())
-	ret+=toExtract::partDescribe(*com,level+2)+"<P>";
-      ret+=DescribePart(desc,i,level+1,child);
+	ret+="<P>"+toHtml::escape(toExtract::partDescribe(*com,level+2))+"</P>";
 
-      printf("%s\n\n",(const char *)ret);
+      std::list<QString>::iterator col=FindItem(desc,
+						i,
+						level+1,
+						child,
+						"COLUMN");
+
+      if (col!=desc.end())
+	ret+=DescribeColumns(desc,col,level+2,child+"\001COLUMN");
+
+      std::list<QString>::iterator con=FindItem(desc,
+						i,
+						level+1,
+						child,
+						"CONSTRAINT");
+
+      if (con!=desc.end())
+ 	ret+=DescribeConstraints(desc,con,level+2,child+"\001CONSTRAINT");
+
+      ret+=DescribePart(desc,i,level+1,child);
     } else {
-      ret+=part+"<P>\n";
+      if (!part.isEmpty())
+	ret+="<P>"+toHtml::escape(part)+"</P>\n";
       i++;
     }
   } while(i!=desc.end());
   return ret;
 }
+
+#include <stdio.h>
 
 QString toGenerateReport(toConnection &conn,std::list<QString> &desc)
 {
@@ -150,8 +315,8 @@ QString toGenerateReport(toConnection &conn,std::list<QString> &desc)
     db=QString::null;
   db+=conn.database();
 
-  QString ret=QString("<HTML><HEAD><TITLE>Report on database %6</TITLE></HEAD>\n"
-		      "<BODY><H1>Report on database %7</H1>\n"
+  QString ret=QString("<HTML><HEAD><TITLE>Report on database %7</TITLE></HEAD>\n"
+		      "<BODY><H1>Report on database %8</H1>\n"
 		      "<TABLE BORDER=0>\n"
 		      "<TR><TD>Generated by:</TD><TD>TOra, Version %1</TD></TR>\n"
 		      "<TR><TD>At:</TD><TD>%2</TD></TR>\n"
@@ -167,12 +332,28 @@ QString toGenerateReport(toConnection &conn,std::list<QString> &desc)
     arg(db).
     arg(db);
 
-  std::list<QString>::iterator i=desc.begin();
+  std::list<QString>::iterator i;
+  i=FindItem(desc,desc.begin(),0,QString::null,"NONE");
+  if (i!=desc.end()) {
+    ret+="<H1>Global Objects</H1>\n";
+    ret+=DescribePart(desc,i,1,"NONE");
+  }
+
+  i=desc.begin();
+  QString lastContext;
   while(i!=desc.end()) {
     QString context=toExtract::partDescribe(*i,0);
-    ret+=DescribePart(desc,i,1,context);
+    if (context!="NONE") {
+      if (context!=lastContext)
+	ret+="<H1>"+toHtml::escape(context)+"</H1>\n";
+      ret+=DescribePart(desc,i,1,context);
+      lastContext=context;
+    } else
+      i++;
   }
-  ret+="</BODY>\n</TABLE>";
+  ret+="</BODY>\n</HTML>";
+
+  printf("%s\n\n",(const char *)ret);
 
   return ret;
 

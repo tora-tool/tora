@@ -197,6 +197,10 @@ public:
    * @param str Substring to search for in data.
    */
   static bool search(const QCString &data,const QString &str);
+
+  /** Escape text to be HTML.
+   */
+  static QString escape(const QString &html);
 };
 
 #endif
