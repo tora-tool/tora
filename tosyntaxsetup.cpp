@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 
+#include <qfont.h>
 #include <qfontdialog.h>
 #include <qcolordialog.h>
 #include <qapplication.h>
@@ -52,6 +53,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   if (fnt.length())
     font.setRawName(fnt);
   Text=font.rawName();
+  checkFixedWidth(font);
   CodeExample->setFont(font);
   Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)]=Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
   Colors[Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)]=Analyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
@@ -164,6 +166,17 @@ void toSyntaxAnalyzer::updateSettings(void)
   readColor(Qt::green,Comment);
 }
 
+void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
+{
+  QFontMetrics mtr(fnt);
+  if (mtr.width("iiiiiiii")==mtr.width("MMMMMMMM"))
+    KeywordUpper->setEnabled(true);
+  else {
+    KeywordUpper->setChecked(false);
+    KeywordUpper->setEnabled(false);
+  }
+}
+
 void toSyntaxSetup::selectFont(void)
 {
   bool ok=true;
@@ -174,6 +187,7 @@ void toSyntaxSetup::selectFont(void)
     Text=font.rawName();
     CodeExample->setFont(font);
     Example->setFont(font);
+    checkFixedWidth(font);
   }
 }
 

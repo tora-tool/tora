@@ -47,7 +47,6 @@ public:
   { return QMultiLineEdit::markedText(); }
   bool hasMarkedText()
   { return QMultiLineEdit::hasMarkedText(); }
-  virtual void keyPressEvent(QKeyEvent *e);
   void clear(void)
   { Filename=""; RedoAvailable=false; UndoAvailable=false; setEdit(); QMultiLineEdit::clear(); setEdited(false); }
 
@@ -66,8 +65,6 @@ public:
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 
   virtual void paintEvent(QPaintEvent *pe);
-signals:
-  void execute(void);
 
 private slots:
   void setRedoAvailable(bool avail)

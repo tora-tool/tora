@@ -28,6 +28,7 @@
 
 #include <time.h>
 
+#include <qaccel.h>
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qmultilineedit.h>
@@ -75,6 +76,7 @@
 #define CONF_AUTO_LOAD   "AutoLoad"
 #define CONF_LOG_AT_END  "LogAtEnd"
 #define CONF_LOG_MULTI   "LogMulti"
+#define CONF_PLSQL_PARSE "PLSQLParse"
 
 static struct {
   int Pos;
@@ -87,8 +89,9 @@ static struct {
 	       { 0,"loop",	true ,false,false },
 	       { 0,"while",	true ,false,false },
 	       { 0,"declare",	false,false,false },
-	       { 0,"create",	false,false,false },
 	       { 0,"package",	true ,false,false },
+	       { 0,"procedure",	false,false,false },
+	       { 0,"function",	false,false,false },
 	       { 0,"end",	false,true ,true  },
 	       { 0,NULL,	false,false }
 };
@@ -126,15 +129,22 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
   LogMulti->setText( tr( "&Multiple lines in log."  ) );
   QToolTip::add(  LogMulti, tr( "Display multiple lines in logging SQL column.") );
   
+  PLSQLParse = new QCheckBox( GroupBox1, "PLSQLParse" );
+  PLSQLParse->setGeometry( QRect( 20, 230, 340, 20 ) ); 
+  PLSQLParse->setText( tr( "&Parse PL/SQL blocks."  ) );
+  QToolTip::add(PLSQLParse, tr( "Parse PL/SQL blocks in worksheet. You usually need this\n"
+				"but it if you forget one end the rest of the editor will\n"
+				"be one block.") );
+
   FileChoose = new QPushButton( GroupBox1, "FileChoose" );
-  FileChoose->setGeometry( QRect( 280, 224, 80, 32 ) ); 
+  FileChoose->setGeometry( QRect( 280, 264, 80, 32 ) ); 
   FileChoose->setText( tr( "&Browse"  ) );
   
   DefaultFile = new QLineEdit( GroupBox1, "DefaultFile" );
-  DefaultFile->setGeometry( QRect( 100, 230, 170, 23 ) ); 
+  DefaultFile->setGeometry( QRect( 100, 270, 170, 23 ) ); 
   
   TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
-  TextLabel2->setGeometry( QRect( 20, 230, 80, 20 ) ); 
+  TextLabel2->setGeometry( QRect( 20, 270, 80, 20 ) ); 
   TextLabel2->setText( tr( "&Default file"  ) );
   QToolTip::add(  TextLabel2, tr( "File to automatically load when opening a worksheet." ) );
   
@@ -150,6 +160,8 @@ toWorksheetPrefs::toWorksheetPrefs(toTool *tool,QWidget* parent = 0,const char* 
     LogAtEnd->setChecked(true);
   if (!tool->config(CONF_LOG_MULTI,"Yes").isEmpty())
     LogMulti->setChecked(true);
+  if (!tool->config(CONF_PLSQL_PARSE,"Yes").isEmpty())
+    PLSQLParse->setChecked(true);
   DefaultFile->setText(tool->config(CONF_AUTO_LOAD,""));
 
   connect(FileChoose,SIGNAL(clicked()),this,SLOT(chooseFile()));
@@ -177,6 +189,10 @@ void toWorksheetPrefs::saveSetting(void)
     Tool->setConfig(CONF_LOG_MULTI,"Yes");
   else
     Tool->setConfig(CONF_LOG_MULTI,"");
+  if (PLSQLParse->isChecked())
+    Tool->setConfig(CONF_PLSQL_PARSE,"Yes");
+  else
+    Tool->setConfig(CONF_PLSQL_PARSE,"");
   Tool->setConfig(CONF_AUTO_LOAD,DefaultFile->text());
 }
 
@@ -289,6 +305,17 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection)
 		  toolbar);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
   
+  Accelerators=new QAccel(this);
+  Accelerators->connectItem(Accelerators->insertItem(Key_F9),
+			    this,
+			    SLOT(executeAll(void)));
+  Accelerators->connectItem(Accelerators->insertItem(Key_F8),
+			    this,
+			    SLOT(executeStep(void)));
+  Accelerators->connectItem(Accelerators->insertItem(CTRL+Key_Return),
+			    this,
+			    SLOT(execute(void)));
+
   QSplitter *splitter=new QSplitter(Vertical,this);
 
   Editor=new toHighlightedText(splitter);
@@ -309,7 +336,6 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection)
 
   Connection.addWidget(this);
 
-  connect(Editor,SIGNAL(execute(void)),this,SLOT(execute(void)));
   connect(ResultTab,SIGNAL(currentChanged(QWidget *)),
 	  this,SLOT(changeResult(QWidget *)));
 
@@ -455,6 +481,7 @@ void NewStatement(void)
 
 void toWorksheet::execute(bool all,bool step)
 {
+  bool sqlparse=!WorksheetTool.config(CONF_PLSQL_PARSE,"Yes").isEmpty();
   bool code=true; // Don't strip from done selection
   if (!Editor->hasMarkedText()||all||step) {
     int cpos,cline,cbpos,cbline;
@@ -556,7 +583,7 @@ void toWorksheet::execute(bool all,bool step)
 	    } else
 	      break;
 	  case inStatement:
-	    if (!code) {
+	    if (!code&&sqlparse) {
 	      bool br=false;
 	      for (int j=0;Blocks[j].Start&&!br;j++) {
 		int &pos=Blocks[j].Pos;
@@ -589,12 +616,6 @@ void toWorksheet::execute(bool all,bool step)
 	      if (br)
 		break;
 	    }
-#if 0
-	    if (c==':') {
-	      toStatusMessage("Can't execute SQL with bind variables in SQL Worksheet");
-	      return;
-	    } else
-#endif
 	    if (c==';') {
 	      endLine=line;
 	      endPos=i+1;

@@ -51,15 +51,6 @@ toMarkedText::toMarkedText(QWidget *parent,const char *name)
   connect(this,SIGNAL(copyAvailable(bool)),this,SLOT(setCopyAvailable(bool)));
 }
 
-void toMarkedText::keyPressEvent(QKeyEvent *e)
-{
-  if (e->key()==Key_Return&&e->state()==ControlButton) {
-    emit execute();
-    e->accept();
-  } else
-    QMultiLineEdit::keyPressEvent(e);
-}
-
 void toMarkedText::setEdit(void)
 {
   if (isReadOnly()) {

@@ -62,7 +62,8 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
     KeywordUpper = new QCheckBox( Options, "KeywordUpper" );
     KeywordUpper->setGeometry( QRect( 10, 50, 150, 19 ) ); 
     KeywordUpper->setText( tr( "&Keyword Upper" ) );
-    QToolTip::add(  KeywordUpper, tr( "Convert all keywords to uppercase when displaying syntaxhighlighted text." ) );
+    QToolTip::add(  KeywordUpper, tr( "Convert all keywords to uppercase when displaying syntaxhighlighted text. \n"
+				      "Only available for monospaced fonts." ) );
 
     PushButton1 = new QPushButton( Options, "PushButton1" );
     PushButton1->setGeometry( QRect( 90, 75, 70, 32 ) ); 

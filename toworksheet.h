@@ -49,6 +49,7 @@ class QLineEdit;
 class QCheckBox;
 class QLabel;
 class toTool;
+class QAccel;
 
 class toWorksheetPrefs : public QFrame, public toSettingTab
 { 
@@ -62,6 +63,7 @@ class toWorksheetPrefs : public QFrame, public toSettingTab
   QCheckBox* CheckSave;
   QCheckBox* LogAtEnd;
   QCheckBox* LogMulti;
+  QCheckBox* PLSQLParse;
   QLabel* TextLabel2;
   toTool *Tool;
 
@@ -75,6 +77,7 @@ public slots:
 class toWorksheet : public QVBox {
   Q_OBJECT
 
+  QAccel *Accelerators;
   toMarkedText *Editor;
   QTabWidget *ResultTab;
   toResultView *Result;

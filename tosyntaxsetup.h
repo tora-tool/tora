@@ -34,6 +34,8 @@
 #include "tosyntaxsetup.ui.h"
 #include "tohighlightedtext.h"
 
+class QFont;
+
 class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
   QString Text;
   QListBoxItem *Current;
@@ -42,7 +44,7 @@ class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab {
 public:
   toSyntaxSetup(QWidget *parent=0,const char *name=0,WFlags fl=0);
   virtual void saveSetting(void);
-
+  void checkFixedWidth(const QFont &fnt);
 public slots:
   virtual void changeLine(QListBoxItem *);
   virtual void selectColor(void);

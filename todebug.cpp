@@ -1796,12 +1796,6 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 	  this,SLOT(reorderContent(int,int)));
   connect(BodyEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
-#if 0
-  connect(HeadEditor,SIGNAL(execute(void)),
-	  this,SLOT(execute(void)));
-  connect(BodyEditor,SIGNAL(execute(void)),
-	  this,SLOT(execute(void)));
-#endif
 
   {
     QValueList<int> sizes=hsplitter->sizes();

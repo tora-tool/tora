@@ -40,9 +40,10 @@
 #include "LICENSE.h"
 
 #include "icons/largelogo.xpm"
+#include "icons/tora.xpm"
 
 static const char *AboutText=
-"<IMG SRC=largelogo.xpm ALIGN=right>
+"<IMG SRC=tora.xpm ALIGN=left><IMG SRC=largelogo.xpm ALIGN=right>
 <H1>TOra</H1>
 Toolkit For Oracle %s
 <P>
@@ -117,6 +118,8 @@ toAbout::toAbout(QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl
 {
   QMimeSourceFactory::defaultFactory()->setPixmap("largelogo.xpm",
 						  QPixmap((const char **)largelogo_xpm));
+  QMimeSourceFactory::defaultFactory()->setPixmap("tora.xpm",
+						  QPixmap((const char **)tora_xpm));
 
   TextView=new QTextView(this);
   TextView->setTextFormat(RichText);

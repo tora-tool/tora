@@ -1,3 +1,10 @@
+0.5:
+
+2001-01-28: Fixed bug in explain plan.
+2001-01-28: Fix bug regarding CREATE when parsing PL/SQL in worksheet.
+2001-01-28: Created TOra icon.
+2001-01-28: Fixed bug regarding variable fonts and upper case keywords option.
+
 0.4: Released 2001-01-27
 
 2001-01-17: Added option in storage tool to display Coalesced column.
@@ -28,6 +35,7 @@
 2001-01-24: Changed otl so it forces char on number and date columns unless
 		explicitly forced.
 2001-01-24: Added support for CLOB/BLOB column types.
+2001-01-25: Added enable/disable to SQL output.
 2001-01-27: Finnished first working version of PL/SQL debugger.
 2001-01-27: Modified configure script to find moc better and work with
 		Oracle 8.0 better (Thanx Uwe Schneider)

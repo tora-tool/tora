@@ -89,7 +89,6 @@ QString toResultPlan::query(const QString &sql,
 		       Connection.connection());
       while(!query.eof()) {
 	char id[50];
-	char strId[50];
 	char parentid[50];
 	char operation[31];
 	char options[31];
@@ -110,12 +109,12 @@ QString toResultPlan::query(const QString &sql,
 
 	QListViewItem *item;
 	if (parentid&&parents[parentid]) {
-	  item=new QListViewItem(parents[parentid],last[parentid],strId,operation,options,object,optimizer,cost,bytes,cardinality);
+	  item=new QListViewItem(parents[parentid],last[parentid],id,operation,options,object,optimizer,cost,bytes,cardinality);
 	  setOpen(parents[parentid],true);
 	  parents[id]=item;
 	  last[parentid]=item;
 	} else {
-	  item=new QListViewItem(this,lastTop,strId,operation,options,object,optimizer,cost,bytes,cardinality);
+	  item=new QListViewItem(this,lastTop,id,operation,options,object,optimizer,cost,bytes,cardinality);
 	  parents[id]=item;
 	  lastTop=item;
 	}
