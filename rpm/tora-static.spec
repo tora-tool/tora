@@ -119,5 +119,4 @@ export QTDIR="%{_qt3dir}"
 %{_prefix}/bin/*
 %dir %{_prefix}/lib/tora
 %dir %{_prefix}/lib/tora/help
-%doc %{_prefix}/lib/tora/help/*
-%{_prefix}/lib/tora/*.tpl
+%{_prefix}/lib/tora
