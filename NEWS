@@ -77,6 +77,7 @@
 2001-09-19: Fixed SQL type in show no coalesced storage and Oracle 8.
 2001-09-21: Made it possible to compile without Oracle (MySQL only).
 2001-09-21: Added copy, cut and paste to memo editor.
+2001-09-21: More Oracle 7 fixes (In toExtract this time).
 
 1.1.0: Released 2001-09-09
 

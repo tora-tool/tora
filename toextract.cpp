@@ -1531,7 +1531,12 @@ static toSQL SQLTableColumns7("toExtract:TableColumns",
 			      "                        )\n"
 			      "             ,33\n"
 			      "            )\n"
-			      "     , data_default\n"
+			      "     , data_default,\n"
+			      "     , DECODE(\n"
+			      "                nullable\n"
+			      "               ,'N','NOT NULL'\n"
+			      "               ,     null\n"
+			      "              )\n"
 			      "  FROM all_tab_columns\n"
 			      " WHERE table_name = :nam<char[100]>\n"
 			      "   AND owner = :own<char[100]>\n"
@@ -4597,7 +4602,8 @@ void toExtract::describeSynonym(std::list<QString> &lst,
 static toSQL SQLTableConstraints("toExtract:TableConstraints",
 				 "SELECT\n"
 				 "        constraint_type,\n"
-				 "        constraint_name\n"
+				 "        constraint_name,\n"
+				 "        NULL\n"
 				 " FROM\n"
 				 "        all_constraints cn\n"
 				 " WHERE      table_name       = :nam<char[100]>\n"
@@ -4613,7 +4619,29 @@ static toSQL SQLTableConstraints("toExtract:TableConstraints",
 				 "              ,'C',4\n"
 				 "             )\n"
 				 "     , constraint_name",
-				 "Get constraints tied to a table except referential, same binds and columns");
+				 "Get constraints tied to a table except referential, same binds and columns",
+				 "8.0");
+static toSQL SQLTableConstraints7("toExtract:TableConstraints",
+				  "SELECT\n"
+				  "        constraint_type,\n"
+				  "        constraint_name,\n"
+				  "        search_condition\n"
+				  " FROM\n"
+				  "        all_constraints cn\n"
+				  " WHERE      table_name       = :nam<char[100]>\n"
+				  "        AND owner            = :own<char[100]>\n"
+				  "        AND constraint_type IN('P','U','C')\n"
+				  " ORDER\n"
+				  "    BY\n"
+				  "       DECODE(\n"
+				  "               constraint_type\n"
+				  "              ,'P',1\n"
+				  "              ,'U',2\n"
+				  "              ,'C',4\n"
+				  "             )\n"
+				  "     , constraint_name",
+				  QString::null,
+				  "7.3");
 
 static toSQL SQLTableReferences("toExtract:TableReferences",
 				"SELECT\n"
@@ -4631,7 +4659,26 @@ static toSQL SQLTableReferences("toExtract:TableReferences",
 				"              ,'R',1\n"
 				"             )\n"
 				"     , constraint_name",
-				"Get foreign constraints from a table, same binds and columns");
+				"Get foreign constraints from a table, same binds and columns",
+				"8.0");
+
+static toSQL SQLTableReferences7("toExtract:TableReferences",
+				 "SELECT\n"
+				 "        constraint_name\n"
+				 " FROM\n"
+				 "        all_constraints cn\n"
+				 " WHERE      table_name       = :nam<char[100]>\n"
+				 "        AND owner            = :own<char[100]>\n"
+				 "        AND constraint_type IN('R')\n"
+				 " ORDER\n"
+				 "    BY\n"
+				 "       DECODE(\n"
+				 "               constraint_type\n"
+				 "              ,'R',1\n"
+				 "             )\n"
+				 "     , constraint_name",
+				 QString::null,
+				 "7.3");
 
 static toSQL SQLTableTriggers("toExtract:TableTriggers",
 			      "SELECT  trigger_name\n"
@@ -4672,10 +4719,11 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
 
   toQList constraints=toQuery::readQueryNull(Connection,SQLTableConstraints,name,owner);
   while(constraints.size()>0) {
-    if (toShift(constraints)!="P"||iotType!="IOT")
-      ret+=createConstraint(schema,owner,toShift(constraints));
-    else
-      toShift(constraints);
+    QString type=toShift(constraints);
+    QString name=toShift(constraints);
+    QString search=toShift(constraints);
+    if ((type!="P"||iotType!="IOT")&&!search.contains(" IS NOT NULL"))
+      ret+=createConstraint(schema,owner,name);
   }
 
   toQList triggers=toQuery::readQueryNull(Connection,SQLTableTriggers,name,owner);
