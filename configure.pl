@@ -315,6 +315,7 @@ for (@ARGV) {
 	$MySQLFound=0;
     } elsif (/^--without-oracle$/) {
 	$OracleFound=0;
+	$OracleShared=""
     } elsif (/^--without-kde$/) {
 	$NoKDE=1;
     } elsif (/^--enable-onlymake$/) {
