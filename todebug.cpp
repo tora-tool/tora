@@ -845,7 +845,13 @@ void toDebug::execute(void)
     try {
       {
 	// Can't hold lock since refresh of output will try to lock
-	toQList input=toParamGet::getParam(this,sql);
+	toQList input;
+	try {
+	  input=toParamGet::getParam(this,sql);
+	} catch(const QString &str) {
+	  toStatusMessage(str,false,false);
+	  return;
+	}
 	toLocker lock(Lock);
 	InputData=input;
 	last=head->firstChild();
