@@ -46,6 +46,8 @@
 
 #ifdef TO_KDE
 #include <kfiledialog.h>
+#endif
+#ifdef TO_HAS_KPRINT
 #include <kprinter.h>
 #endif
 

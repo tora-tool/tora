@@ -1,5 +1,6 @@
 1.3.1: Released 2002-01-02
 
+2001-12-29: Accept KDE 2.1 includefiles in configure.pl
 2001-11-29: Fixes to tora-static.spec.
 2001-11-29: Fixed removing Makefile on distclean.
 2001-11-29: Fixed problem with oversized toolbars in Qt only versions.
