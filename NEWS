@@ -1,5 +1,7 @@
 1.3.10:
 
+2003-07-24: Moved tools toolbar back to old position, works better.
+2003-07-24: Make X11 link dynamically in the tora-static (Seems to crash otherwise on XFree4.3)
 2003-07-23: Moved connection toolbar to the left of the tools if they all are on top. (Tools now change size)
 2003-07-23: Hide tools not supported by current connection instead of just disabling them.
 2003-07-23: Added posibility for connection providers not to handle more than one query per real connection at a time.
@@ -46,7 +48,7 @@
 2003-04-23: Made session filter look at both serial and session id.
 2003-04-23: Made columns in left pane of schema browser and template help fill entire listview.
 2003-04-23: Added new filter functionality for sessions view.
-2003-04-23: Remember sortorder when refreshing resultlists when refreshing.
+2003-04-23: Remember sortorder when refreshing resultlists.
 2003-04-23: Remember sort order of sessions.
 2003-04-23: Change recompile all to recompile selection in invalid objects.
 2003-04-23: Added set module call on new connections.

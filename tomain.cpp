@@ -371,6 +371,10 @@ toMain::toMain()
     toolID++;
   }
 
+  ToolsToolbar=toAllocBar(this,tr("Tools"));
+  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
+    moveToolBar(ToolsToolbar,Left);
+
   ConnectionToolbar=toAllocBar(this,tr("Connections"));
   new QToolButton(QPixmap((const char **)connect_xpm),
 		  tr("Connect to database"),
@@ -404,10 +408,6 @@ toMain::toMain()
   ConnectionSelection->setMinimumWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
-
-  ToolsToolbar=toAllocBar(this,tr("Tools"));
-  if (!toTool::globalConfig(CONF_TOOLS_LEFT,"Yes").isEmpty())
-    moveToolBar(ToolsToolbar,Left);
 
   menuBar()->insertItem(tr("&Tools"),ToolsMenu,TO_TOOLS_MENU);
   connect(ToolsMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));

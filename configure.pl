@@ -1763,7 +1763,7 @@ tora-static: \$(OBJECTS) main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) \$(CFLAGS) \$(LFLAGS_GLOB) -DTOMONOLITHIC -o \$\@ \$(OBJECTS) main.cpp \\
 		\$(QT_STATIC) \$(STDCPP_STATIC) \$(ORACLE_SHARED) \$(LIBS_GLOB) \\
-		/usr/X11R6/lib/libXext.a /usr/X11R6/lib/libX11.a \\
+		-lXext -lX11 \\
 		\$(MYSQL_STATIC) /usr/lib/libpq.a /usr/lib/libssl.a /usr/lib/libcrypto.a
 
 # The binary for the pluginbased tora
