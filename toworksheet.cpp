@@ -347,7 +347,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 	  this,SLOT(addLog(const QString &,const QString &)));
   ResultTab->addTab(Result,"Data");
   Columns=new toResultCols(connection,ResultTab);
-  ResultTab->addTab(Result,"Describe");
+  ResultTab->addTab(Columns,"Describe");
   ResultTab->setTabEnabled(Columns,false);
   Plan=new toResultPlan(connection,ResultTab);
   ResultTab->addTab(Plan,"Execution plan");
@@ -552,7 +552,7 @@ static QString unQuote(const QString &str)
 bool toWorksheet::describe(const QString &query)
 {
   QRegExp white("[ \r\n\t.]+");
-  QStringList part=QStringList::split(query);
+  QStringList part=QStringList::split(white,query);
   if (part[0].upper()=="DESC"||
       part[0].upper()=="DESCRIBE") {
     if (part.count()==2) {
@@ -566,6 +566,7 @@ bool toWorksheet::describe(const QString &query)
     ResultTab->setTabEnabled(Result,false);
     if (curr==Result)
       ResultTab->showPage(Columns);
+    return true;
   } else {
     QWidget *curr=ResultTab->currentPage();
     ResultTab->setTabEnabled(Columns,false);

@@ -50,6 +50,7 @@ class toResultView;
 class toResultItem;
 class toResultStats;
 class toResultPlan;
+class toResultCols;
 class toMarkedText;
 class QGroupBox;
 class QPushButton;

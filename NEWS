@@ -39,6 +39,7 @@
 2001-05-18: Some more unicode fixes.
 2001-05-18: Added support for binds when executing all.
 2001-05-19: Added describe functionality to worksheet.
+2001-05-19: Fixed problem with toResultCols and one parameter.
 
 0.8: Released 2001-05-07
 

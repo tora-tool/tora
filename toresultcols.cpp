@@ -198,10 +198,11 @@ void toResultCols::query(const QString &sql,const list<QString> &param)
     SQL="\"";
     SQL+=*cp;
     Owner=*cp;
+    SQL+="\"";
   }
   cp++;
   if (cp!=((list<QString> &)param).end()) {
-    SQL.append("\".\"");
+    SQL.append(".\"");
     SQL.append(*cp);
     TableName=(*cp);
     SQL+="\"";
