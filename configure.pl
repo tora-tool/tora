@@ -118,7 +118,7 @@ my %plugins=(
 	     "toextract"           => { "Files" => [ "toextract",
 						     "toreport",
 						     "toresultextract" ],
-					"Oracle" => 1 },
+					"Any" => 1 },
 	     "toinvalid"           => { "Files" => [ "toinvalid" ],
 					"Oracle" => 1 },
 	     "tooutput"            => { "Files" => [ "tooutput" ],
