@@ -32,15 +32,16 @@ Extended functionality:
 	Use toSQLParse
 	Attaching to remote debugging session
 	Support for one referential cursor output variable
+* Full support for Oracle 9i.
+	Support for undo tablespaces.
 * Add consumer group settings to security manager.
 * Extract grants from objects.
 * Implement extract of temporary tables.
-* Implement migratghhgggion, resize and report in toExtract.
+* Implement migration, resize and report in toExtract.
 * Lots of more template texts including SQL syntax.
 * Ability to change/move redofiles.
 * Go through changes in DDL::Oracle and incorporate in toExtract.
 * Ability to generate into several script (One per object and type) in DB extraction.
-* Full support for Oracle 9i.
 * Printing of toResultItems.
 * Different highlighter depending on connection.
 * Default names to listen to in alert.
@@ -82,8 +83,6 @@ Extended functionality:
 * Save column order of open tools when saving/restoring session.
 * Remember last directory of save dialogs and settings in print dialog.
 * Use style factory if Qt3 when selecting styles.
-* SQL*Loader controlfile generator.
-* Support for undo tablespaces in Oracle 9.
 
 New tools:
 
@@ -98,3 +97,4 @@ New tools:
 	* Datafiles added within 30 days
 	* Objects added within 30 days
 	* Objects edited within 30 days
+* SQL*Loader controlfile generator.
