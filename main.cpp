@@ -3,17 +3,17 @@
  * TOra - An Oracle Toolkit for DBA's and developers
  * Copyright (C) 2003-2005 Quest Software, Inc
  * Portions Copyright (C) 2005 Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -113,7 +113,7 @@ int main(int argc,char **argv)
     QTranslator toadbindings(0);
     if (!toTool::globalConfig(CONF_TOAD_BINDINGS,DEFAULT_TOAD_BINDINGS).isEmpty()) {
       if (!toadbindings.load(tora_toad,sizeof(tora_toad)))
-	printf("Internal error, couldn't load TOAD bindings");
+        printf("Internal error, couldn't load TOAD bindings");
       qApp->installTranslator(&toadbindings);
     }
 
@@ -143,7 +143,7 @@ int main(int argc,char **argv)
       }
 
       for (unsigned int i=0;i<d.count();i++) {
-	failed.insert(failed.end(),d.filePath(d[i]));
+        failed.insert(failed.end(),d.filePath(d[i]));
       }
       QProgressBar *progress=splash.progress();
       QLabel *label=splash.label();
@@ -152,26 +152,26 @@ int main(int argc,char **argv)
       qApp->processEvents();
       bool success;
       do {
-	success=false;
-	std::list<QString> current=failed;
-	failed.clear();
-	for(std::list<QString>::iterator i=current.begin();i!=current.end();i++) {
-	  if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL)) {
-	    failed.insert(failed.end(),*i);
-	  } else {
-	    success=true;
-	    progress->setProgress(progress->progress()+1);
-	    QFileInfo file(*i);
-	    label->setText(qApp->translate("main","Loaded plugin %1").arg(file.fileName()));
-	    qApp->processEvents();
-	  }
-	}
+        success=false;
+        std::list<QString> current=failed;
+        failed.clear();
+        for(std::list<QString>::iterator i=current.begin();i!=current.end();i++) {
+          if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL)) {
+            failed.insert(failed.end(),*i);
+          } else {
+            success=true;
+            progress->setProgress(progress->progress()+1);
+            QFileInfo file(*i);
+            label->setText(qApp->translate("main","Loaded plugin %1").arg(file.fileName()));
+            qApp->processEvents();
+          }
+        }
       } while(failed.begin()!=failed.end()&&success);
 
       for(std::list<QString>::iterator i=failed.begin();i!=failed.end();i++)
-	if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL))
-	  fprintf(stderr,"Failed to load %s\n  %s\n",
-		  (const char *)(*i),dlerror());
+        if (!dlopen(*i,RTLD_NOW|RTLD_GLOBAL))
+          fprintf(stderr,"Failed to load %s\n  %s\n",
+                  (const char *)(*i),dlerror());
     }
 #endif
 
@@ -184,12 +184,12 @@ int main(int argc,char **argv)
     {
       QCString nls=getenv("NLS_LANG");
       if (nls.isEmpty())
-	nls="american_america.UTF8";
+        nls="american_america.UTF8";
       else {
-	int pos=nls.findRev('.');
-	if (pos>0)
-	  nls=nls.left(pos);
-	nls+=".UTF8";
+        int pos=nls.findRev('.');
+        if (pos>0)
+          nls=nls.left(pos);
+        nls+=".UTF8";
       }
       toSetEnv("NLS_LANG",nls);
     }
@@ -197,7 +197,7 @@ int main(int argc,char **argv)
     if (toTool::globalConfig("LastVersion","")!=TOVERSION) {
       toAbout *about=new toAbout(0,NULL,"About " TOAPPNAME,true);
       if (!about->exec()) {
-	exit (2);
+        exit (2);
       }
       delete about;
     }
@@ -209,8 +209,9 @@ int main(int argc,char **argv)
       toTool::globalSetConfig("FirstInstall",ctime(&t));
     }
 
-    toQValue::setNumberFormat(toTool::globalConfig(CONF_NUMBER_FORMAT,DEFAULT_NUMBER_FORMAT).toInt(),
-			      toTool::globalConfig(CONF_NUMBER_DECIMALS,DEFAULT_NUMBER_DECIMALS).toInt());
+    toQValue::setNumberFormat(
+      toTool::globalConfig(CONF_NUMBER_FORMAT,DEFAULT_NUMBER_FORMAT).toInt(),
+      toTool::globalConfig(CONF_NUMBER_DECIMALS,DEFAULT_NUMBER_DECIMALS).toInt());
 
     if (qApp->argc()>2||(qApp->argc()==2&&qApp->argv()[1][0]=='-')) {
       printf("Usage:\n\n  tora [{X options}] [connectstring]\n\n");
@@ -220,29 +221,30 @@ int main(int argc,char **argv)
       QString user;
       int pos=connect.find(QString::fromLatin1("@"));
       if (pos>-1) {
-	user=connect.left(pos);
-	connect=connect.right(connect.length()-pos-1);
+        user=connect.left(pos);
+        connect=connect.right(connect.length()-pos-1);
       } else {
-	user=connect;
-	if (getenv("ORACLE_SID"))
-	  connect=QString::fromLatin1(getenv("ORACLE_SID"));
+        user=connect;
+        if (getenv("ORACLE_SID"))
+          connect=QString::fromLatin1(getenv("ORACLE_SID"));
       }
       if (!connect.isEmpty())
-	toTool::globalSetConfig(CONF_DATABASE,connect);
+        toTool::globalSetConfig(CONF_DATABASE,connect);
       pos=user.find(QString::fromLatin1("/"));
       if (pos>-1) {
-	toTool::globalSetConfig(CONF_PASSWORD,user.right(user.length()-pos-1));
-	user=user.left(pos);
+        toTool::globalSetConfig(CONF_PASSWORD,user.right(user.length()-pos-1));
+        user=user.left(pos);
       }
       if (!user.isEmpty())
-	toTool::globalSetConfig(CONF_USER,user);
+        toTool::globalSetConfig(CONF_USER,user);
     }
 
-    toMarkedText::setDefaultTabStop(toTool::globalConfig(CONF_TAB_STOP,DEFAULT_TAB_STOP).toInt());
+    toMarkedText::setDefaultTabStop(
+      toTool::globalConfig(CONF_TAB_STOP,DEFAULT_TAB_STOP).toInt());
 
     toUpdateIndicateEmpty();
 
-    
+
 
     new toMain;
 
@@ -250,7 +252,7 @@ int main(int argc,char **argv)
     return ret;
   } catch (const QString &str) {
     fprintf(stderr,"Unhandled exception:\n\n%s\n",
-	    (const char *)str);
+            (const char *)str);
     TOMessageBox::critical(NULL,
                            qApp->translate("main","Unhandled exception"),
                            str,
