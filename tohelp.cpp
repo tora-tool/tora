@@ -127,6 +127,13 @@ void toHelpBrowser::forward(void)
   emit textChanged();
 }
 
+QString toHelpBrowser::source(void)
+{
+  if (Backward.begin()==Backward.end())
+    return QString::null;
+  return (*Backward.rbegin());
+}
+
 #endif
 
 toHelp *toHelp::Window;
@@ -281,6 +288,9 @@ toHelp::toHelp(QWidget *parent,const char *name)
   // Help->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
   setCaption("TOra Help Browser");
 
+  connect(Help,SIGNAL(textChanged(void)),
+	  this,SLOT(removeSelection(void)));
+
   QToolButton *button;
   button=new QToolButton(LeftArrow,toolbar);
   connect(Help,SIGNAL(backwardAvailable(bool)),
@@ -299,9 +309,6 @@ toHelp::toHelp(QWidget *parent,const char *name)
   QToolTip::add(button,"Forward one help page");
 
   toolbar->setStretchableWidget(new QLabel("",toolbar));
-
-  connect(Help,SIGNAL(textChanged(void)),
-	  this,SLOT(removeSelection(void)));
 
   map<QString,QString> Dsc;
   Dsc["TOra manual"]=toHelpPath();
@@ -360,7 +367,6 @@ toHelp::toHelp(QWidget *parent,const char *name)
 		    href.find("..")<0) {
 		  last=new QListViewItem(parent,last,dsc);
 		  filename=path;
-		  filename+="/";
 		  filename+=href;
 		  last->setText(2,filename);
 		}
@@ -434,12 +440,18 @@ void toHelp::changeContent(QListViewItem *item)
 #ifdef TO_KDE
   Window->Help->openURL(item->text(2));
 #else
+  disconnect(Help,SIGNAL(textChanged(void)),
+	     this,SLOT(removeSelection(void)));
+
   if (item->text(2).find("htm")>=0)
     Help->setTextFormat(RichText);
   else
     Help->setTextFormat(AutoText);
   if (!item->text(2).isEmpty())
     Help->setSource(item->text(2));
+
+  connect(Help,SIGNAL(textChanged(void)),
+	  this,SLOT(removeSelection(void)));
 #endif
 }
 
@@ -536,8 +548,38 @@ void toHelp::search(void)
   Searching=false;
 }
 
+void toHelp::setSelection(QListView *lst,const QString &source)
+{
+  disconnect(lst,SIGNAL(selectionChanged(QListViewItem *)),
+	     this,SLOT(changeContent(QListViewItem *)));
+
+  QListViewItem *next=NULL;
+  for (QListViewItem *item=lst->firstChild();item;item=next) {
+
+    if ((item->text(2)==source)!=bool(item->isSelected())) {
+      lst->setSelected(item,item->text(2)==source);
+    }
+
+    if (item->firstChild())
+      next=item->firstChild();
+    else if (item->nextSibling()) {
+      next=item->nextSibling();
+    } else {
+      next=item;
+      do {
+	next=next->parent();
+      } while(next&&!next->nextSibling());
+      if (next)
+	next=next->nextSibling();
+    }
+  }
+
+  connect(lst,SIGNAL(selectionChanged(QListViewItem *)),
+	  this,SLOT(changeContent(QListViewItem *)));
+}
+
 void toHelp::removeSelection(void)
 {
-  Sections->clearSelection();
-  Result->clearSelection();
+  setSelection(Sections,Help->source());
+  setSelection(Result,Help->source());
 }

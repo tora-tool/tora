@@ -66,6 +66,7 @@ class toHelp : public QDialog {
 #endif
   QProgressBar *Progress;
 
+  virtual void setSelection(QListView *lst,const QString &str);
   virtual void closeEvent(QCloseEvent *e)
   { if (!Searching) QDialog::closeEvent(e); }
 public:

@@ -50,6 +50,7 @@ private slots:
 public:
   toHelpBrowser(QWidget *parent,const char *name=NULL);
   virtual bool openURL(const KURL &url);
+  QString source(void);
 public slots:
   void forward(void);
   void backward(void);
