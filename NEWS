@@ -1,3 +1,8 @@
+1.3.3:
+
+2002-01-15: Change label of copy format selection dialog.
+2002-01-15: Fix for external authentication.
+
 1.3.2: Released 2002-01-15
 
 2002-01-14: Some fixes to fileextensions.

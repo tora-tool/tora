@@ -840,7 +840,9 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
       conn->server_attach();
     else
       conn->server_attach(connection().database().utf8());
-    conn->session_begin(connection().user().utf8(),connection().password().utf8(),0,session_mode);
+    const char *user=connection().user().utf8();
+    const char *pass=connection().password().utf8();
+    conn->session_begin(user?user:"",pass?pass:"",0,session_mode);
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())

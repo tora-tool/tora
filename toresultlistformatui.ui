@@ -76,7 +76,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Choose format of exported file.</string>
+                <string>&amp;Choose format.</string>
             </property>
             <property>
                 <name>buddy</name>
