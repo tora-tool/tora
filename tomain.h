@@ -215,6 +215,10 @@ private:
    */
   QLabel *RowLabel;
   /**
+   * Indicate if currently reading object cache.
+   */
+  QLabel *CachingLabel;
+  /**
    * Search & replace dialog if available.
    */
   toSearchReplace *Search;
@@ -454,6 +458,9 @@ private slots:
   /** Paste button pressed
    */
   void pasteButton(void);
+  /** Check if object caching is done.
+   */
+  void checkCaching(void);
 };
 
 

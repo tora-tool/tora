@@ -1152,7 +1152,7 @@ QString toConnection::unQuote(const QString &name)
   return Connection->unQuote(name);
 }
 
-bool toConnection::checkAvail(bool block)
+bool toConnection::cacheAvailable(bool block)
 {
   if (ReadingValues.getValue()==0) {
     if (block) {
@@ -1167,7 +1167,7 @@ bool toConnection::checkAvail(bool block)
 
 std::list<toConnection::objectName> &toConnection::objects(bool block)
 {
-  if (!checkAvail(block)) {
+  if (!cacheAvailable(block)) {
     toStatusMessage("Not done caching objects");
     static std::list<objectName> ret;
     return ret;
@@ -1178,7 +1178,7 @@ std::list<toConnection::objectName> &toConnection::objects(bool block)
 
 std::map<QString,toConnection::objectName> &toConnection::synonyms(bool block)
 {
-  if (!checkAvail(block)) {
+  if (!cacheAvailable(block)) {
     toStatusMessage("Not done caching objects");
     static std::map<QString,objectName> ret;
     return ret;
@@ -1191,7 +1191,7 @@ const toConnection::objectName &toConnection::realName(const QString &object,
 						       QString &synonym,
 						       bool block)
 {
-  if (!checkAvail(block))
+  if (!cacheAvailable(block))
     throw QString("Not done caching objects");
 
   QString name;

@@ -561,7 +561,6 @@ private:
   toConnectionSub *longConnection(void);
   void freeConnection(toConnectionSub *);
   void readObjects(void);
-  bool checkAvail(bool);
 public:
   /** Create a new connection.
    * @param provider Which database provider to use for this connection.
@@ -783,6 +782,11 @@ public:
    * @param block Block if not done caching object.
    */
   const objectName &realName(const QString &object,QString &synonym,bool block);
+  /** Check if cache is available or not.
+   * @param block Block until cache is done.
+   * @return True if cache is available.
+   */
+  bool cacheAvailable(bool block=false);
 
   friend class toQuery;
 };

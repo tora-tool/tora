@@ -447,6 +447,7 @@ toMain::toMain()
   } while(welcome.isNull());
 
   toStatusMessage(welcome,true);
+  CachingLabel=NULL;
 
   try {
     toNewConnection newConnection(this,"First connection",true);
@@ -632,6 +633,7 @@ void toMain::commandCallback(int cmd)
       } TOCATCH
       break;
     case TO_FILE_CLEARCACHE:
+      checkCaching();
       try {
 	currentConnection().rereadCache();
       } TOCATCH
@@ -745,6 +747,7 @@ void toMain::addConnection(toConnection *conn)
   changeConnection();
   emit addedConnection(conn->description());
   createDefault();
+  checkCaching();
 }
 
 void toMain::setNeedCommit(toConnection &conn,bool needCommit)
@@ -1050,5 +1053,29 @@ void toMain::changeConnection(void)
     else
       menuBar()->setItemEnabled((*j).first,false);
 
+  }
+}
+
+void toMain::checkCaching(void)
+{
+  int num=0;
+  for(std::list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+    if (!(*i)->cacheAvailable())
+      num++;
+  }
+  if (num==0) {
+    if (CachingLabel)
+      CachingLabel->hide();
+  } else {
+    if (!CachingLabel) {
+      CachingLabel=new QLabel(statusBar());
+      statusBar()->addWidget(CachingLabel,0,true);
+      CachingLabel->show();
+    }
+    if (num>1)
+      CachingLabel->setText("Caching "+QString::number(num));
+    else
+      CachingLabel->setText("Caching");
+    QTimer::singleShot(200,this,SLOT(checkCaching()));
   }
 }
