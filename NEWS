@@ -68,6 +68,7 @@
 2001-10-06: Printing of piechart.
 2001-10-07: Added new statistics gathering tool.
 2001-10-07: Use object cache to get objectlist in debugger.
+2001-10-07: Removed some obsoleted API pages.
 
 1.1.1: Released 2001-09-24
 
