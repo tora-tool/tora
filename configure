@@ -42,7 +42,7 @@ echo PERL=$PERL >> Makefile.setup
 
 # Get the MOC stuff
 
-grep -E "^(UIC)|(MOC)" Makefile.setup > configure.setup
+grep -E "^(UIC)|(MOC)|(TO_KDE)" Makefile.setup > configure.setup
 
 . ./configure.setup
 
@@ -61,7 +61,14 @@ do
 	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
 done
-echo Generating empty dependfiles
+for a in *.kde
+do
+    b=`echo $a | sed 's/\.kde$/\.h/'`
+    echo Generating $b from $a
+    $FIXKDE < $a > $b
+done
+
+echo Generating empty dependfiles and .h from .kde
 if [ \! -d .depends ]
 then
     mkdir .depends

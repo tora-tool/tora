@@ -111,7 +111,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
   if (!toDisconnectPixmap)
     toDisconnectPixmap=new QPixmap((const char **)disconnect_xpm);
 
-  QToolBar *toolbar=new QToolBar("SGA Trace",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
+
   new QToolButton(*toRefreshPixmap,
 		  "Update sessionlist",
 		  "Update sessionlist",

@@ -160,7 +160,8 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   if (!toRefreshPixmap)
     toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
 
-  QToolBar *toolbar=new QToolBar("SGA Trace",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
+
   new QToolButton(*toRefreshPixmap,
 		  "Fetch statements in SGA",
 		  "Fetch statements in SGA",

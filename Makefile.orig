@@ -73,7 +73,7 @@ SOURCES=\
 
 TARGET=tora-plugin
 
-TOVERSION=-DTOVERSION=\"0.7\"
+TOVERSION=-DTOVERSION=\"0.7.1\"
 
 include Makefile.setup
 include Makefile.common

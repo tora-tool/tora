@@ -252,4 +252,3 @@ QString toGetSessionType(void)
   throw QString("Failed to find style match");
 }
 #endif
-

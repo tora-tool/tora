@@ -24,7 +24,8 @@
 #
 ############################################################################
 
-# WARNING!!! This file will be overwritten by the configure script.
+# If you have problems with the configure script copy this file to
+# Makefile.setup and modify it to satisfy your need.
 
 # Where to install tora
 INSTALLPREFIX=/usr/local
@@ -36,7 +37,7 @@ INSTALLBIN=/usr/local/bin
 INSTALLLIB=/usr/local/lib
 
 # Additional includes needed to compile program
-INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/plsql/public" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/include/qt2"
+INCLUDES="-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/include/qt2"
 
 # C Compiler to use
 CC="/usr/bin/cc"
@@ -60,7 +61,7 @@ QT_STATIC=/usr/lib/qt2/lib/libqt.a
 MOC="/usr/lib/qt2/bin/moc"
 
 # Additional paths to find libraries
-LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/usr/lib/qt2/lib"
+LFLAGS="-L$(ORACLE_HOME)/lib" "-L/usr/lib/qt2/lib"
 
 # Path to Qt interface compiler
 UIC=uic

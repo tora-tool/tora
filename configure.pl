@@ -62,6 +62,8 @@ my $StdCppLibStatic;
 my $LFlags;
 my $Target="tora-mono";
 my $ForceTarget=0;
+my $Perl=`which perl`;
+chomp $Perl;
 
 $QtDir=$ENV{QTDIR};
 
@@ -492,6 +494,7 @@ __EOT__
 	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
 	print MAKEFILE "#   OTL_ORA8I    - Compile for Oracle 8.1.x\n";
 	print MAKEFILE "#   OTL_ORA8     - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   TO_KDE       - Compile as KDE application (Very experimental)\n";
 	print MAKEFILE "#   TO_NAMESPACE - Any namespaces that should be used\n";
 	
 	if ($ORACLE_RELEASE =~ /^8.0/) {
@@ -501,6 +504,14 @@ __EOT__
 	}
 	print MAKEFILE "DEFINES+=-DTO_NAMESPACE=\"using namespace std\"\n";
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat\n";
+	print MAKEFILE "FIXKDE=cat\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Where to find perl on your system\n";
+	print MAKEFILE "PERL=$Perl\n";
 	print MAKEFILE "\n";
 
 	print MAKEFILE "# Comment out this line if you want more output from compile\n";

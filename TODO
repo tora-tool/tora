@@ -17,7 +17,9 @@ Extended functionality:
 * Expand admin/default in security for all privtypes.
 * Copy/Paste in toResultContent.
 * Edit memo in toResultContent.
-* Make it posible to compile as KDE application.
+* Make it possible to compile as KDE application.
+* Make it possible to reorder columns in toResultContent.
+* Add function to create plan table from TOra.
 
 New tools:
 * Info about current session.

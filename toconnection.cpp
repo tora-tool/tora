@@ -202,7 +202,7 @@ void toConnection::commit(void)
   connection().commit();
   otl_connect *tmp=NULL;
   for (list<otl_connect *>::iterator i=FreeConnect.begin();i!=FreeConnect.end();i++) {
-    (*i)->rollback();
+    (*i)->commit();
     if (tmp)
       delete tmp;
     tmp=(*i);

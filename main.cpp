@@ -33,6 +33,10 @@ TO_NAMESPACE;
 #include <qapplication.h>
 #include <qtextcodec.h>
 
+#ifdef TO_KDE
+#include <kapp.h>
+#endif
+
 #include "tomain.h"
 #include "toconf.h"
 #include "tohighlightedtext.h"
@@ -62,9 +66,13 @@ bool toMonolithic(void)
 int main(int argc,char **argv)
 {
   try {
+#ifdef TO_KDE
+    KApplication mainApp(argc,argv,"tora");
+#else
     if (toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty())
       QApplication::setDesktopSettingsAware(false);
     QApplication mainApp(argc,argv);
+#endif
     if (getenv("LANG"))
       mainApp.setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 

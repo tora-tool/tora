@@ -285,7 +285,8 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   if (!toStatisticPixmap)
     toStatisticPixmap=new QPixmap((const char **)clock_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Worksheet",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
+
   new QToolButton(*toExecutePixmap,
 		  "Execute current statement",
 		  "Execute current statement",
@@ -383,7 +384,7 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
 	return;
 
       buf[size]=0;
-      Editor->setText(buf);
+      Editor->setText(QString::fromLocal8Bit(buf));
       Editor->setEdited(false);
     }
   }

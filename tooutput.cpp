@@ -136,8 +136,8 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   if (!toOfflinePixmap)
     toOfflinePixmap=new QPixmap((const char **)offline_xpm);
 
+  QToolBar *toolbar=toAllocBar(this);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",
 		  "Poll for output now",

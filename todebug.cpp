@@ -1654,7 +1654,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   if (!toDelWatchPixmap)
     toDelWatchPixmap=new QPixmap((const char **)delwatch_xpm);
 
-  QToolBar *toolbar=new QToolBar("PL/SQL Debugger",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
 
   new QToolButton(*toRefreshPixmap,
 		  "Update code list",

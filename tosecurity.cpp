@@ -1303,7 +1303,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   if (!toCopyUserPixmap)
     toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
+
   new QToolButton(*toRefreshPixmap,
 		  "Poll for output now",
 		  "Poll for output now",

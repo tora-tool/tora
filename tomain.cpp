@@ -39,10 +39,14 @@ TO_NAMESPACE;
 #include <qpopupmenu.h>
 #include <qstatusbar.h>
 #include <qtoolbar.h>
-#include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qworkspace.h>
 #include <qfileinfo.h>
+#include <qvbox.h>
+
+#ifdef TO_KDE
+#include <kmenubar.h>
+#endif
 
 #include <stdio.h>
 
@@ -126,8 +130,14 @@ static toResultContent *toContent(QWidget *widget)
 }
 
 toMain::toMain()
+#ifdef TO_KDE
+  : KMainWindow(0,"Main Window")
+#else
   : QMainWindow(0,"Main Window")
+#endif
 {
+  qApp->setMainWidget(this);
+
   if (!toConnectPixmap)
     toConnectPixmap=new QPixmap((const char **)connect_xpm);
   if (!toDisconnectPixmap)
@@ -199,7 +209,7 @@ toMain::toMain()
 
   map<QString,toTool *> &tools=toTool::tools();
 
-  QToolBar *toolbar=new QToolBar(this);
+  QToolBar *toolbar=toAllocBar(this);
   addToolBar(toolbar,tr("Main toolbar"),Top,false);
 
   LoadButton=new QToolButton(*toLoadPixmap,
@@ -247,7 +257,7 @@ toMain::toMain()
   ToolsMenu=new QPopupMenu(this);
 
 #ifdef TOOL_TOOLBAR
-  toolbar=new QToolBar(this);
+  toolbar=new toAllocBar(this);
   addToolBar(toolbar,tr("Tools toolbar"),Top,false);
 #else
   toolbar->addSeparator();
@@ -342,6 +352,7 @@ toMain::toMain()
 
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);
+
   statusBar()->message("Ready");
   menuBar()->setItemEnabled(TO_CLOSE_CONNECTION,false);
   menuBar()->setItemEnabled(TO_FILE_COMMIT,false);
@@ -383,8 +394,6 @@ toMain::toMain()
   statusBar()->addWidget(ColumnLabel,0,true);
   ColumnLabel->setMinimumWidth(60);
   ColumnLabel->show();
-
-  qApp->setMainWidget(this);
 
   toolID=TO_TOOLS;
   for (map<QString,toTool *>::iterator i=tools.begin();i!=tools.end();i++) {

@@ -56,6 +56,10 @@ include $(DEPENDS)
 	$(UIC) -o $(<:%.ui=%.h) $<
 	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
 
+%.h: %.kde
+	echo Preparing $@ from $< for kde/Qt
+	$(FIXKDE) < $< > $@
+
 plugins/%.tso:
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir plugins ; fi
@@ -93,6 +97,9 @@ distclean: clean
 	-rm -f *.moc 2>&1 >/dev/null
 	-for a in *.ui ; \
              do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
+         done
+	-for a in *.kde ; \
+             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n";' $$a`; \
          done
 	-rm \#*\# 2>&1 >/dev/null
 	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null

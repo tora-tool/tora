@@ -483,7 +483,8 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   if (!toWriteTablespacePixmap)
     toWriteTablespacePixmap=new QPixmap((const char **)writetablespace_xpm);
 
-  QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
+  QToolBar *toolbar=toAllocBar(this);
+
   new QToolButton(*toRefreshPixmap,
 		  "Update",
 		  "Update",
