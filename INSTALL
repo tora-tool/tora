@@ -1,0 +1,115 @@
+Installing TOra
+===============
+
+Using a binary distribution
+===========================
+
+There are a few different distributions available. First lets start with the
+similarities. They are all compiled using the following libraries and programs
+
+gcc 2.95.3
+stdc++ 2.95.2
+Qt 2.3 (Should be binary compatible with 2.2 and above)
+Oracle 8.1.7
+
+The base distribution was Mandrake 7.2.
+
+tora-{version}-1gc.i686.rpm
+---------------------------
+This version should work reasonable well on any glibc2.1 based system which
+uses GCC 2.95.* or EARLIER. Which means pretty much everyone except RedHat
+7.0 and above.
+
+You will probably get a complaint about clntsh.so missing. What you need to
+do is make sure that this is the only thing that it complains about and then
+install it anyway using the command.
+
+rpm -ivh --nodeps {rpm}
+
+After this you must also make sure ld.so can find the clntsh file which is
+in the $ORACLE_HOME/lib directory. You can either add this is /etc/ld.so.conf
+or add it in LD_LIBRARY_PATH. This should install tora in /usr/bin.
+
+tora-{version}-1mdk.i686.rpm
+----------------------------
+This version is excactly the same as the 1gc version mentioned before except
+that it will also install tora into the Mandrake menu system. The same library
+problems and solutions apply.
+
+tora-{version}-1static.i686.rpm
+-------------------------------
+This is a statically linked version. The libraries that are linked statically
+are stdc++, Qt and Oracle. This means that this version should probably work
+on RedHat 7.0 as well.
+
+tora-{version}-bin.tar.gz
+-------------------------
+This is a dynamically linked tora which is just to unpack wherever you want
+it.
+
+tora-{version}-static.tar.gz
+----------------------------
+This is a statically linked tora which you just unpack wherever you want it.
+
+Installing from source
+======================
+
+Before you try to compile TOra you will need the following prerequisites:
+
+1. A unix system which supports Qt (Dooh).
+2. Qt 2.2 or later.
+3. Oracle 8i (Later than Oracle 8.1.5), it might work partially with earlier
+   versions of Oracle but is as of this version not supported (Please try and
+   send me patches).
+4. PERL 5
+
+Thats about it, you should be set to start trying.
+
+There is a configure script available that is made to try to mimic the
+behaviour of autoconf generated configure scripts. There is no need to nag
+about me starting to use autoconf (See at the end for explanation).
+
+Just issue the command "configure" and it should probably point out if
+you need to issue any commands specifying locations of Qt for instance.
+To find out about the options type "configure --help".
+
+This will generate a Makefile.setup file that you can check if you have
+troubles. It will also copy the file Makefile.orig to Makefile so you
+can start compiling.
+
+After that you should be able to compile by just issuing "make" followed
+by "make install".
+
+If you experience problems with configure
+-----------------------------------------
+
+First contact me and let me know what isn't working so I can fix it in the
+next version (Henrik Johnson <tora@henrik.org>).
+
+Then copy the file Makefile.setup.orig to Makefile.setup and edit it to
+fill out the correct values in it.
+
+Lastly copy the file Makefile.orig to Makefile and you should be set to
+continue compiling as normal by "make", "make install".
+
+Why I'm not using autoconf
+==========================
+
+Whenever I start out using autoconf in any of my projects I end up spending
+more time trying to get autoconf to work instead of time actually spend
+getting the configure script to work instead of coding.
+
+People tend to think that autoconf is just a strapon fix all problems
+solution to configuring, but this is not the case. Especially if you
+need to find Qt (Which I could have just copied), but finding Oracle is
+a test I would have had to do myself and I can pretty much garantee it
+would have worked worse than this solution does based on my earlier
+experiences with autoconf (I'm sure it's ok if you know how to use it,
+but I know perl and that works too).
+
+Also I want a few other stuff done when you configure the metacompiling
+and dependency generating etc which sets up the makefiles to need as
+little work as possible to add new tools or sourcefiles to the project.
+
+/Henrik "Mauritz" Johnson
+GlobeCom AB

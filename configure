@@ -37,6 +37,7 @@ then
     exit 2
 fi
 
+echo "# Where to find perl on your system" >> Makefile.setup
 echo PERL=$PERL >> Makefile.setup
 
 # Get the MOC stuff
@@ -61,7 +62,10 @@ do
     fi
 done
 echo Generating empty dependfiles
-mkdir .depends
+if [ \! -d .depends ]
+then
+    mkdir .depends
+fi
 for a in *.cpp
 do
     b=.depends/`echo $a | sed 's/\.cpp$/\.d/'`
@@ -80,3 +84,5 @@ $PERL -e 'while(<>) { s/\\/\\\\/; s/\"/\\\"/g; print; }' < LICENSE >> LICENSE.h
 echo "</PRE>" >> LICENSE.h
 echo "\";" >> LICENSE.h
 
+echo
+echo "If you have any problems check the Makefile.setup for the settings."

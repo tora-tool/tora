@@ -24,12 +24,76 @@
 #
 ############################################################################
 
+# If you have problems with the configure script copy this file to Makefile.setup
+# and modify it to satisfy your need.
+
+# Where to install tora
 INSTALLPREFIX=/usr/local
+
+# Where to install tora binary
 INSTALLBIN=/usr/local/bin
+
+# Where to install tora plugins
 INSTALLLIB=/usr/local/lib
-INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/lib/qt2/include"
+
+# Additional includes needed to compile program
+INCLUDES="-I$(ORACLE_HOME)/rdbms/demo" "-I$(ORACLE_HOME)/plsql/public" "-I$(ORACLE_HOME)/rdbms/public" "-I$(ORACLE_HOME)/network/public" "-I/usr/include/qt2"
+
+# C Compiler to use
 CC="/usr/bin/cc"
-LIBS_GLOB=-lstdc++ -lcrypt -lqt -lclntsh -lm
-MOC="/usr/bin/moc2"
-LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/rdbms/lib" "-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/opt/oracle/app/oracle/product/8.1.7/precomp/lib" "-L/usr/lib/qt2/lib"
-PERL=perl
+
+# Additional libraries to link with
+LIBS_GLOB=-lcrypt -lm -lpthread -ldl
+
+# Standard C++ library
+STDCPP_SHARED=-lstdc++
+
+# Static version of C++ library (Only needed when linking statically
+STDCPP_STATIC=/usr/lib/libstdc++-3-libc6.1-2-2.10.0.a
+
+# Qt library
+QT_SHARED= -lqt
+
+# Static Qt library
+QT_STATIC=/usr/lib/qt2/lib/libqt.a
+
+# Path to Qt meta compiler
+MOC="/usr/lib/qt2/bin/moc"
+
+# Additional paths to find libraries
+LFLAGS="-L$(ORACLE_HOME)/lib" "-L/usr/lib/qt2/lib"
+
+# Path to Qt interface compiler
+UIC=uic
+
+# Oracle library
+ORACLE_SHARED=-lclntsh
+
+# Static Oracle libraries
+ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
+
+# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version
+TARGET=tora-plugin
+
+# Additional defines to use while compiling, except for the normal these are available
+#   OTL_ORA8I    - Compile for Oracle 8.1.x
+#   OTL_ORA8     - Compile for Oracle 8.0.x
+#   TO_NAMESPACE - Any namespaces that should be used
+DEFINES+=-DOTL_ORA8I
+DEFINES+=-DTO_NAMESPACE="using namespace std"
+DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
+
+# Comment out this line if you want more output from compile
+.SILENT:
+
+# Additional flags set when using only the precompiler.
+CPPFLAGS_GLOB=
+
+# Additional flags to set when linking.
+LFLAGS_GLOB=-g
+
+# Additional flags set when compiling.
+CFLAGS_GLOB=-g -fPIC -Wall
+
+# Where to find perl on your system
+PERL=/usr/bin/perl

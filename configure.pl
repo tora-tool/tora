@@ -395,20 +395,130 @@ __TEMP__
     }
 
     if (open (MAKEFILE,">Makefile.setup")) {
+	print MAKEFILE <<__EOT__;
+############################################################################
+#
+# TOra - An Oracle Toolkit for DBA's and developers
+# Copyright (C) 2000  GlobeCom AB
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#      As a special exception, you have permission to link this program
+#      with the Qt library and distribute executables, as long as you
+#      follow the requirements of the GNU GPL in regard to all of the
+#      software in the executable aside from Qt.
+#
+############################################################################
+
+# WARNING!!! This file will be overwritten by the configure script.
+
+__EOT__
+        print MAKEFILE "# Where to install tora\n";
 	print MAKEFILE "INSTALLPREFIX=$InstallPrefix\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Where to install tora binary\n";
 	print MAKEFILE "INSTALLBIN=$InstallBin\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Where to install tora plugins\n";
 	print MAKEFILE "INSTALLLIB=$InstallLib\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Additional includes needed to compile program\n";
 	print MAKEFILE "INCLUDES=$Includes\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# C Compiler to use\n";
 	print MAKEFILE "CC=\"$CC\"\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Additional libraries to link with\n";
 	print MAKEFILE "LIBS_GLOB=$Libs\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Standard C++ library\n";
 	print MAKEFILE "STDCPP_SHARED=-lstdc++\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Static version of C++ library (Only needed when linking statically\n";
 	print MAKEFILE "STDCPP_STATIC=$StdCppLibStatic\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Qt library\n";
 	print MAKEFILE "QT_SHARED=$QtLibShared\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Static Qt library\n";
 	print MAKEFILE "QT_STATIC=$QtLibStatic\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Path to Qt meta compiler\n";
 	print MAKEFILE "MOC=\"$MOC\"\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Additional paths to find libraries\n";
 	print MAKEFILE "LFLAGS=$LFlags\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Path to Qt interface compiler\n";
 	print MAKEFILE "UIC=uic\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Oracle library\n";
+	print MAKEFILE "ORACLE_SHARED=-lclntsh\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Static Oracle libraries\n";
+	print MAKEFILE "ORACLE_STATIC=\$(STATIC_ORACLETTLIBS)\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version\n";
 	print MAKEFILE "TARGET=$Target\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Additional defines to use while compiling, except for the normal these are available\n";
+	print MAKEFILE "#   OTL_ORA8I    - Compile for Oracle 8.1.x\n";
+	print MAKEFILE "#   OTL_ORA8     - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   TO_NAMESPACE - Any namespaces that should be used\n";
+	
+	if ($ORACLE_RELEASE =~ /^8.0/) {
+	    print MAKEFILE "DEFINES+=-DOTL_ORA8\n";
+	} else {
+	    print MAKEFILE "DEFINES+=-DOTL_ORA8I\n";
+	}
+	print MAKEFILE "DEFINES+=-DTO_NAMESPACE=\"using namespace std\"\n";
+	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Comment out this line if you want more output from compile\n";
+	print MAKEFILE ".SILENT:\n";
+	print MAKEFILE "\n";
+
+	print MAKEFILE <<__EOT__;
+# Additional flags set when using only the precompiler.
+CPPFLAGS_GLOB=
+
+# Additional flags to set when linking.
+LFLAGS_GLOB=-g
+
+# Additional flags set when compiling.
+CFLAGS_GLOB=-g -fPIC -Wall
+
+__EOT__
+
 	close MAKEFILE;
     } else {
 	print "Couldn't open Makefile.setup for writing\n";

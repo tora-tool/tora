@@ -1218,7 +1218,7 @@ void toSecurityRoleGrant::changed(QListViewItem *org)
       if (item)
 	item->setOn(true);
     } else {
-      for (QListViewItem *item=firstChild();item;item->nextSibling()) {
+      for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
 	QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item->firstChild());
 	if (chk)
 	  chk->setOn(false);

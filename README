@@ -1,0 +1,37 @@
+TOra - Toolkit for Oracle
+=========================
+Copyright (C) 2000  GlobeCom AB (http://www.globecom.se)
+
+For information about license see the LICENSE file. It is distributed under GPL
+which basically means that any derivatory work must be released under GPL as
+well.
+
+Toolkit for Oracle is a program for Oracle developers and administrators. It
+is still alpha quality which means it is not feature complete as regard to
+version 1.0. The main lacking as you will find is in documentation which is
+pretty much non existant. You will hopefully see that the program is pretty
+stable the parts there is.
+
+The features that are available so far is (As of version 0.7.1):
+
+* PL/SQL Editor and Debugger.
+* SQL Worksheet with statistics and explain plan functiontionality.
+* Rollback segment analyzer.
+* SQL Output viewer.
+* Security manager for handling users and roles.
+* Instance manager for handling connections to the DB.
+* Storage manager to handle tablespaces and datafiles.
+* Schema browser with editable content browser.
+* SGA Trace tool.
+* Handles multiple connections to Oracle from different versions of Oracle.
+* Easily extendable and customizable including SQL used to get information
+	from Oracle in different versions.
+* Syntax highlighting of SQL.
+* Print support.
+
+For installation instructions se the file INSTALL.
+
+TOra is developed by Henrik Johnson (tora@henrik.org) of GlobeCom AB
+(http://www.globecom.se) and has the homepage http://www.globecom.net/tora.
+
+Oracle is copyright of Oracle Corporation.

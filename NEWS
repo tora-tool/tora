@@ -1,8 +1,11 @@
-0.8:
+0.7.1:
 
 2001-03-24: Fixed bug in quotes.
 2001-03-24: Set need commit when editing toResultContent.
 2001-03-24: Fixed bug regarding long running sessions and toOutput.
+2001-03-24: Fixed bug regarding deselection role in toSecurity.
+2001-03-24: Added comments to Makefile.setup in configure script.
+2001-03-24: Separated settings and the rest into Makefile.setup better.
 
 0.7: Released 2001-03-24
 

@@ -1,15 +1,98 @@
+############################################################################
+#
+# TOra - An Oracle Toolkit for DBA's and developers
+# Copyright (C) 2000  GlobeCom AB
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#      As a special exception, you have permission to link this program
+#      with the Qt library and distribute executables, as long as you
+#      follow the requirements of the GNU GPL in regard to all of the
+#      software in the executable aside from Qt.
+#
+############################################################################
+
+# WARNING!!! This file will be overwritten by the configure script.
+
+# Where to install tora
 INSTALLPREFIX=/usr/local
+
+# Where to install tora binary
 INSTALLBIN=/usr/local/bin
+
+# Where to install tora plugins
 INSTALLLIB=/usr/local/lib
+
+# Additional includes needed to compile program
 INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/plsql/public" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/include/qt2"
+
+# C Compiler to use
 CC="/usr/bin/cc"
+
+# Additional libraries to link with
 LIBS_GLOB=-lcrypt -lm -lpthread -ldl
+
+# Standard C++ library
 STDCPP_SHARED=-lstdc++
+
+# Static version of C++ library (Only needed when linking statically
 STDCPP_STATIC=/usr/lib/libstdc++-3-libc6.1-2-2.10.0.a
+
+# Qt library
 QT_SHARED= -lqt
+
+# Static Qt library
 QT_STATIC=/usr/lib/qt2/lib/libqt.a
+
+# Path to Qt meta compiler
 MOC="/usr/lib/qt2/bin/moc"
+
+# Additional paths to find libraries
 LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/usr/lib/qt2/lib"
+
+# Path to Qt interface compiler
 UIC=uic
+
+# Oracle library
+ORACLE_SHARED=-lclntsh
+
+# Static Oracle libraries
+ORACLE_STATIC=$(STATIC_ORACLETTLIBS)
+
+# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version
 TARGET=tora-plugin
+
+# Additional defines to use while compiling, except for the normal these are available
+#   OTL_ORA8I    - Compile for Oracle 8.1.x
+#   OTL_ORA8     - Compile for Oracle 8.0.x
+#   TO_NAMESPACE - Any namespaces that should be used
+DEFINES+=-DOTL_ORA8I
+DEFINES+=-DTO_NAMESPACE="using namespace std"
+DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
+
+# Comment out this line if you want more output from compile
+.SILENT:
+
+# Additional flags set when using only the precompiler.
+CPPFLAGS_GLOB=
+
+# Additional flags to set when linking.
+LFLAGS_GLOB=-g
+
+# Additional flags set when compiling.
+CFLAGS_GLOB=-g -fPIC -Wall
+
+# Where to find perl on your system
 PERL=/usr/bin/perl
