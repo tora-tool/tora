@@ -248,10 +248,11 @@ public:
 
 static toHelpTool HelpTool;
 
-toHelp::toHelp(QWidget *parent,const char *name)
-  : QWidget(parent,name,WType_TopLevel|WDestructiveClose)
+toHelp::toHelp(QWidget *parent,const char *name,bool modal)
+  : QDialog(parent,name,modal,modal?0:WDestructiveClose),Modal(modal)
 {
-  Window=this;
+  if (modal)
+    Window=this;
   QBoxLayout *l=new QVBoxLayout(this);
   QToolBar *toolbar=toAllocBar(this,"Help Navigation",QString::null);
   l->addWidget(toolbar);
@@ -405,7 +406,8 @@ toHelp::toHelp(QWidget *parent,const char *name)
 
 toHelp::~toHelp()
 {
-  Window=NULL;
+  if (Modal)
+    Window=NULL;
 }
 
 QString toHelp::path(const QString &path)
@@ -419,22 +421,27 @@ QString toHelp::path(const QString &path)
   return cur;
 }
 
-void toHelp::displayHelp(const QString &context)
+void toHelp::displayHelp(const QString &context,QWidget *parent)
 {
-  if (!Window)
-    new toHelp(toMainWidget(),"Help window");
+  toHelp *window;
+  if (!Window||parent)
+    window=new toHelp(parent?parent:toMainWidget(),"Help window",parent);
 #ifdef TO_KDE
   QString file=path();
   file+=context;
-  Window->Help->openURL(file);
+  window->Help->openURL(file);
 #else
   if (context.find("htm")>=0)
-    Window->Help->setTextFormat(RichText);
+    window->Help->setTextFormat(RichText);
   else
-    Window->Help->setTextFormat(AutoText);
-  Window->Help->setSource(context);
+    window->Help->setTextFormat(AutoText);
+  window->Help->setSource(context);
 #endif
-  Window->show();
+  if (parent) {
+    window->exec();
+    delete window;
+  } else
+    window->show();
 }
 
 void toHelp::changeContent(QListViewItem *item)
@@ -552,7 +559,7 @@ void toHelp::search(void)
   Searching=false;
 }
 
-void toHelp::setSelection(QListView *lst,const QString &source)
+void toHelp::setSelection(toListView *lst,const QString &source)
 {
   disconnect(lst,SIGNAL(selectionChanged(QListViewItem *)),
 	     this,SLOT(changeContent(QListViewItem *)));

@@ -87,7 +87,7 @@ class QToolButton;
  * this help viewer.
  */
 
-class toHelp : public QWidget {
+class toHelp : public QDialog {
   Q_OBJECT
 
   /** @internal
@@ -119,7 +119,9 @@ class toHelp : public QWidget {
    * Manuals to include in search.
    */
   QComboBox *Manuals;
-
+  /** Indicate if this is help for a modal dialog
+   */
+  bool Modal;
 #ifdef TO_KDE
   /**
    * Displays the actual help window.
@@ -139,7 +141,7 @@ class toHelp : public QWidget {
    * @param lst Listview to update selected item in.
    * @param str Location of next help text.
    */
-  virtual void setSelection(QListView *lst,const QString &str);
+  virtual void setSelection(toListView *lst,const QString &str);
   /**
    * Reimplemented for internal reasons.
    */
@@ -163,8 +165,9 @@ public:
    * Create help widget.
    * @param parent Parent widget.
    * @param name Name of widget.
+   * @param modal If dialog is for a modal dialog or not
    */
-  toHelp(QWidget *parent,const char *name);
+  toHelp(QWidget *parent,const char *name,bool modal=true);
   /** Help function to get a clean path from a path string. Strips trailing / etc.
    * @param path Path to strip.
    * @return Stripped path in string.
@@ -173,9 +176,9 @@ public:
   virtual ~toHelp();
   /** Display a specific help context in the internal manual. Pops up a help window that
    * displays the selected topic.
-   * @param context Context to display.
+   * @param parent If NULL use modal dialog and main window.
    */
-  static void displayHelp(const QString &context);
+  static void displayHelp(const QString &context,QWidget *parent=NULL);
 };
 
 /** This class is used to indicate a help context of an object. When the current context

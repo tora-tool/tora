@@ -61,7 +61,7 @@ TO_NAMESPACE;
 
 
 toNewConnection::toNewConnection(QWidget* parent, const char* name,bool modal,WFlags fl)
-  : QDialog(parent,name,modal,fl)
+  : toDialog(parent,name,modal,fl),toHelpContext("newconnection.html")
 {
   if (!name)
     setName("toNewConnection");

@@ -361,13 +361,13 @@ public slots:
   /** Used to fill the status menu with the latest status entries
    */ 
   void statusMenu(void);
+  /** Display context help. 
+   */
+  void contextHelp(void);
 private slots:
   /** Used to enable/disable entries in the edit & file menu
    */
   void editFileMenu(void);
-  /** Display context help. 
-   */
-  void contextHelp(void);
   /** Add a connection
    */
   void addConnection(void);
