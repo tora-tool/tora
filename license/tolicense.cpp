@@ -60,57 +60,57 @@ toLicense::toLicense(QWidget *parent)
 
   switch(rand()%6) {
   case 0:
-    Button1->setText("Register");
+    Button1->setText(tr("Register"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button1->setDefault(true);
-    Button2->setText("Quit");
+    Button2->setText(tr("Quit"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button3->setText("Continue");
+    Button3->setText(tr("Continue"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   case 1:
-    Button2->setText("Register");
+    Button2->setText(tr("Register"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button2->setDefault(true);
-    Button1->setText("Quit");
+    Button1->setText(tr("Quit"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button3->setText("Continue");
+    Button3->setText(tr("Continue"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   case 2:
-    Button3->setText("Register");
+    Button3->setText(tr("Register"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button3->setDefault(true);
-    Button2->setText("Quit");
+    Button2->setText(tr("Quit"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button1->setText("Continue");
+    Button1->setText(tr("Continue"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   case 3:
-    Button2->setText("Register");
+    Button2->setText(tr("Register"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button2->setDefault(true);
-    Button3->setText("Quit");
+    Button3->setText(tr("Quit"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button1->setText("Continue");
+    Button1->setText(tr("Continue"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   case 4:
-    Button1->setText("Register");
+    Button1->setText(tr("Register"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button1->setDefault(true);
-    Button3->setText("Quit");
+    Button3->setText(tr("Quit"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button2->setText("Continue");
+    Button2->setText(tr("Continue"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   default:
-    Button3->setText("Register");
+    Button3->setText(tr("Register"));
     connect(Button3,SIGNAL(clicked()),this,SLOT(licenseButton()));
     Button3->setDefault(true);
-    Button1->setText("Quit");
+    Button1->setText(tr("Quit"));
     connect(Button1,SIGNAL(clicked()),this,SLOT(quitButton()));
-    Button2->setText("Continue");
+    Button2->setText(tr("Continue"));
     connect(Button2,SIGNAL(clicked()),this,SLOT(dontRegisterButton()));
     break;
   }
@@ -184,15 +184,15 @@ static QString CheckLicense(const QString &user,const QString &license)
   if (licstr==ret) {
     int license=DecodeChar(prepstr[4])*32+DecodeChar(prepstr[5]);
 
-    QString ret="Welcome to TOra";
+    QString ret=tr("Welcome to TOra");
     if (license==0)
-      ret+=" (Personal license, not for commerical use)";
+      ret+=tr(" (Personal license, not for commerical use)");
     else if (license==1)
-      ret+=" (Commercial license one user)";
+      ret+=tr(" (Commercial license one user)");
     else if (license==1000)
-      ret+=" (Commerical site license)";
+      ret+=tr(" (Commerical site license)");
     else
-      ret+=" (Commercial license "+QString::number(license)+" users)";
+      ret+=tr(" (Commercial license %1 users)").arg(license);
 
     return ret;
   }
@@ -208,19 +208,19 @@ void toLicense::licenseButton(void)
     hide();
   } else {
     TOMessageBox::information(this,
-			      "Not a valid license key",
-			      "Please check your name and registration key?",
-			      "Ok");
+			      tr("Not a valid license key"),
+			      tr("Please check your name and registration key?"),
+			      tr("Ok"));
   }
 }
 
 void toLicense::quitButton(void)
 {
   if (TOMessageBox::warning(this,
-			    "Really quit?",
-			    "Are you sure you want to quit?",
-			    "Yes",
-			    "No")==0) {
+			    tr("Really quit?"),
+			    tr("Are you sure you want to quit?"),
+			    tr("Yes"),
+			    tr("No"))==0) {
     Status=quit;
     hide();
   }
@@ -254,7 +254,7 @@ QString toCheckLicense(bool force)
     toTool::globalSetConfig("RegKey",regkey);
     ret=CheckLicense(user,regkey);
     if (ret.isNull())
-      ret="Welcome to TOra (Unregistered version, not for commercial use)";
+      ret=tr("Welcome to TOra (Unregistered version, not for commercial use)");
     else
       toTool::saveConfig();
   }

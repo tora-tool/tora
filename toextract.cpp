@@ -237,7 +237,7 @@ QString toExtract::create(std::list<QString> &objects)
   QProgressDialog *progress=NULL;
   QLabel *label;
   if (Parent) {
-    progress=new QProgressDialog(qApp->translate("toExtract","Creating create script"),qApp->translate("toExtract","&Cancel"),
+    progress=new QProgressDialog(qApp->translate("toExtract","Creating create script"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
     progress->setCaption(qApp->translate("toExtract","Creating script"));
     label=new QLabel(progress);
@@ -302,7 +302,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
   QProgressDialog *progress=NULL;
   QLabel *label;
   if (Parent) {
-    progress=new QProgressDialog(qApp->translate("toExtract","Creating description"),qApp->translate("toExtract","&Cancel"),
+    progress=new QProgressDialog(qApp->translate("toExtract","Creating description"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
     progress->setCaption(qApp->translate("toExtract","Creating description"));
     label=new QLabel(progress);
@@ -372,7 +372,7 @@ QString toExtract::drop(std::list<QString> &objects)
   QProgressDialog *progress=NULL;
   QLabel *label;
   if (Parent) {
-    progress=new QProgressDialog(qApp->translate("toExtract","Creating drop script"),qApp->translate("toExtract","&Cancel"),
+    progress=new QProgressDialog(qApp->translate("toExtract","Creating drop script"),qApp->translate("toExtract","Cancel"),
 				 objects.size(),Parent,"progress",true);
     progress->setCaption(qApp->translate("toExtract","Creating drop script"));
     label=new QLabel(progress);
@@ -466,7 +466,7 @@ QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst
     objDrp[(*j).first]; // Make sure all objects in the createlist also exists in the droplist
 
   if (Parent) {
-    progress=new QProgressDialog(qApp->translate("toExtract","Creating migration script"),qApp->translate("toExtract","&Cancel"),
+    progress=new QProgressDialog(qApp->translate("toExtract","Creating migration script"),qApp->translate("toExtract","Cancel"),
 				 objDrp.size(),Parent,"progress",true);
     progress->setCaption(qApp->translate("toExtract","Creating migration script"));
     label=new QLabel(progress);

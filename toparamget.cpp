@@ -80,7 +80,7 @@ toParamGet::toParamGet(QWidget *parent,const char *name)
   scroll->viewport()->setBackgroundColor(qApp->palette().active().background());
 
   QPushButton *OkButton = new QPushButton(this,"OkButton");
-  OkButton->setText(tr("&OK"));
+  OkButton->setText(tr("&Ok"));
   OkButton->setDefault(true);
   layout->addWidget(OkButton,0,1);
 

@@ -1287,7 +1287,7 @@ void toResultContent::removeFilter(void)
   if (!Editor->allFilter()) {
     switch(TOMessageBox::information(this,tr("Remove filter"),
 				     tr("Remove the filter for this table only or for all tables."),
-				     tr("&All"),tr("&This"),tr("&Cancel"),0)) {
+				     tr("&All"),tr("&This"),tr("Cancel"),0)) {
     case 0:
       Editor->Criteria.clear();
       Editor->Order.clear();

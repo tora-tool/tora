@@ -983,7 +983,7 @@ bool toMain::delConnection(void)
       conn=(*i);
       if (conn->needCommit()) {
 	QString str=tr("Commit work in session to %1  before closing it?").arg(conn->description());
-	switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("&Cancel"))) {
+	switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("Cancel"))) {
 	case 0:
 	  conn->commit();
 	  break;

@@ -43,7 +43,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Cancel</string>
+                <string>Cancel</string>
             </property>
         </widget>
         <widget row="14"  column="2" >

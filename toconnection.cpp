@@ -1367,7 +1367,7 @@ bool toConnection::cacheAvailable(bool synonyms,bool block,bool need)
 						"Waiting for object caching to be completed.\n"
 						"Canceling this dialog will probably leave some list of\n"
 						"database objects empty."),
-				qApp->translate("toConnection","&Cancel"),
+				qApp->translate("toConnection","Cancel"),
 				10,
 				toMainWidget(),
 				"progress",

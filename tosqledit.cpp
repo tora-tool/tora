@@ -359,7 +359,7 @@ bool toSQLEdit::checkStore(bool justVer)
       Version->currentText().length()>0) {
     switch (TOMessageBox::information(this,tr("Modified SQL dictionary"),
 				      tr("Save changes into the SQL dictionary"),
-				      tr("&Yes"),tr("&No"),tr("&Cancel"),0,2)) {
+				      tr("&Yes"),tr("&No"),tr("Cancel"),0,2)) {
     case 0:
       commitChanges(false);
       break;

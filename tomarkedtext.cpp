@@ -227,7 +227,7 @@ bool toMarkedText::editOpen(QString suggestedFile)
 				      tr("Save changes?"),
 				      tr("The editor has been changed, do you want to save them\n"
 					 "before opening a new file?"),
-				      tr("&Yes"),tr("&No"),tr("&Cancel"),0,2);
+				      tr("&Yes"),tr("&No"),tr("Cancel"),0,2);
     if (ret==2)
       return false;
     else if (ret==0)

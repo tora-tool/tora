@@ -435,7 +435,7 @@ void toSession::disconnectSession(void)
     sess.append(QString::fromLatin1("'"));
     QString str(tr("Let current transaction finish before disconnecting session?"));
     QString sql;
-    switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("&Cancel"))) {
+    switch(TOMessageBox::warning(this,tr("Commit work?"),str,tr("&Yes"),tr("&No"),tr("Cancel"))) {
     case 0:
       sql=QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
       sql.append(sess);

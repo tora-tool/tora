@@ -633,7 +633,7 @@ bool toWorksheet::checkSave(bool input)
 	  int ret=TOMessageBox::information(this,
 					    tr("Save file"),
 					    str,
-					    tr("&Yes"),tr("&No"),tr("&Cancel"),0,2);
+					    tr("&Yes"),tr("&No"),tr("Cancel"),0,2);
 	  if (ret==1)
 	    return true;
 	  else if (ret==2)
