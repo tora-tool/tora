@@ -205,7 +205,7 @@ public:
     QString tablespace=item->text(3);
     if (!tablespace.isEmpty()) {
       switch(TablespaceType) {
-      case 0:
+      default:
 	break;
       case 1:
 	{
@@ -228,7 +228,7 @@ public:
       }
     }
     switch(Type) {
-    case 0:
+    default:
       return true;
     case 1:
       if (IgnoreCase) {
@@ -289,7 +289,6 @@ public:
       Tablespaces->setSelectionMode(QListView::Multi);
     } else {
       TablespaceType->hide();
-      Tablespaces->query(SQLListTablespaces);
     }
   }
   toBrowserFilterSetup(bool temp,QWidget *parent)
@@ -301,9 +300,9 @@ public:
     : toBrowserFilterUI(parent,"Filter Setting",true)
   {
     setup(temp);
+    Buttons->setButton(cur.Type);
     if (!TablespaceType->isHidden()) {
       TablespaceType->setButton(cur.TablespaceType);
-      Buttons->setButton(cur.Type);
       for(std::list<QString>::iterator i=cur.Tablespaces.begin();i!=cur.Tablespaces.end();i++) {
 	for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
 	  if (item->text(0)==*i) {
@@ -328,7 +327,8 @@ public:
 			       Invert->isChecked(),
 			       String->text(),
 			       TablespaceType->id(TablespaceType->selected()),
-			       tablespaces);
+			       tablespaces,
+			       OnlyOwnSchema->isChecked());
   }
 };
 

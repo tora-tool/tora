@@ -186,9 +186,13 @@ void toResultObject::setup(void)
     toStatusMessage("Internal error, toResult is not a descendant of toResult");
     return;
   }
-  QObject::connect(toCurrentTool(obj),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
-  if (Result->Handled)
-    Result->Handled=Result->canHandle(Result->connection());
+  try {
+    QObject::connect(toCurrentTool(obj),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
+    if (Result->Handled)
+      Result->Handled=Result->canHandle(Result->connection());
+  } catch(...) {
+    Result->Handled=false;
+  }
   if (!Result->Handled)
     Result->changeHandle();
 }

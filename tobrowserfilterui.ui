@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>476</width>
+            <width>468</width>
             <height>378</height>
         </rect>
     </property>
@@ -124,29 +124,6 @@
                     <property stdset="1">
                         <name>enabled</name>
                         <bool>false</bool>
-                    </property>
-                </widget>
-                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>IgnoreCase</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
-                        <bool>false</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>Ignore &amp;Case</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>5</number>
                     </property>
                 </widget>
                 <widget row="0"  column="0" >
@@ -263,37 +240,7 @@
                         <string>Comma separated list of object names</string>
                     </property>
                 </widget>
-                <widget row="2"  column="3"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Invert</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
-                        <bool>false</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Invert selection</string>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>6</number>
-                    </property>
-                </widget>
             </grid>
-        </widget>
-        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>OnlyOwnSchema</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Only display own schema</string>
-            </property>
         </widget>
         <spacer row="3"  column="0" >
             <property>
@@ -391,6 +338,68 @@
                     </property>
                 </widget>
             </grid>
+        </widget>
+        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
+            <class>QLayoutWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Layout1</cstring>
+            </property>
+            <hbox>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>OnlyOwnSchema</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Only display own schema</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>IgnoreCase</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Ignore &amp;Case</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Invert</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Invert selection</string>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
     </grid>
 </widget>

@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-02-28: Made it posible to use resultsets without tool widget parents.
 2002-02-28: Fixed problem with font settings for code and text.
 2002-02-28: Fixed indication of uniqueness of MySQL indexes.
 2002-02-27: Added workaround for broken fontmetrics in Qt.

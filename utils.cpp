@@ -905,7 +905,7 @@ toToolWidget *toCurrentTool(QObject *cur)
       return tool;
     cur=cur->parent();
   }
-  throw QString("Couldn't find parent connection. Internal error.");
+  throw QString("Couldn't find parent tool. Internal error.");
 }
 
 toConnection &toCurrentConnection(QObject *cur)
