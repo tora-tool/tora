@@ -433,6 +433,7 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota,toConnection &conn,QWidget
   : toSecurityUserUI(parent),Connection(conn),Quota(quota)
 {
   Name->setValidator(new toSecurityUpper(Name));
+  setFocusProxy(Name);
   try {
     toQuery profiles(Connection,SQLProfiles);
     while(!profiles.eof())
@@ -555,7 +556,10 @@ class toSecurityRole : public toSecurityRoleUI {
 public:
   toSecurityRole(toSecurityQuota *quota,toConnection &conn,QWidget *parent)
     : toSecurityRoleUI(parent),Connection(conn),Quota(quota)
-  { Name->setValidator(new toSecurityUpper(Name)); }
+  {
+    Name->setValidator(new toSecurityUpper(Name));
+    setFocusProxy(Name);
+  }
   void clear(void);
   void changeRole(const QString &);
   QString sql(void);
@@ -656,6 +660,7 @@ public:
     Role=new toSecurityRole(quota,conn,this);
     Role->hide();
     User=new toSecurityUser(quota,conn,this);
+    setFocusProxy(User);
   }
   void changePage(const QString &nam,bool user)
   {
@@ -663,10 +668,12 @@ public:
       Role->hide();
       User->show();
       User->changeUser(nam);
+      setFocusProxy(User);
     } else {
       User->hide();
       Role->show();
       Role->changeRole(nam);
+      setFocusProxy(Role);
     }
   }
   QString name(void)
@@ -1315,7 +1322,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   ObjectGrant=new toSecurityObject(connection,Tabs);
   Tabs->addTab(ObjectGrant,"&Object Privileges");
   Tabs->addTab(Quota,"&Quota");
-  connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+  UserList->setSelectionMode(QListView::Single);
+  connect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -1387,10 +1395,6 @@ std::list<QString> toSecurity::sql(void)
     ObjectGrant->sql(name,ret);
     RoleGrant->sql(name,ret);
   }
-#if 0
-  for (std::list<QString>::iterator i=ret.begin();i!=ret.end();i++)
-    printf("SQL:%s\n",(const char *)(*i));
-#endif
 
   return ret;
 }
@@ -1545,6 +1549,8 @@ void toSecurity::addUser(void)
     if (item->text(1)=="USER:") {
       UserList->clearSelection();
       UserList->setCurrentItem(item);
+      Tabs->showPage(General);
+      General->setFocus();
       break;
     }
 }
@@ -1555,6 +1561,8 @@ void toSecurity::addRole(void)
     if (item->text(1)=="ROLE:") {
       UserList->clearSelection();
       UserList->setCurrentItem(item);
+      Tabs->showPage(General);
+      General->setFocus();
       break;
     }
 }

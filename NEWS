@@ -98,6 +98,7 @@
 2001-12-06: Added fallback on query lock wrong value.
 2001-12-06: Added blocking locks to tuning window.
 2001-12-06: Changed shortcut of options tab in tuning.
+2001-12-06: Change to general page on add in security manager.
 
 1.1.5: Released 2001-11-26
 
