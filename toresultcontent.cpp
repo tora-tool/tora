@@ -268,7 +268,7 @@ void toResultContentEditor::poll(void)
 	delete Query;
 	Query=NULL;
 	Poll.stop();
-      } else if (Row>=MaxNumber)
+      } else if (Row>=MaxNumber&&MaxNumber>=0)
 	Poll.stop();
     }
   } catch(const QString &str) {

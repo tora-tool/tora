@@ -14,6 +14,8 @@
 2001-11-03: Made animation longer in twirl logo.
 2001-11-03: Fixed problem with crashing toanalyze on stop.
 2001-11-05: Made some flicker improvements to the content editor.
+2001-11-05: Fixed problem with reading all in content editor.
+2001-11-05: Removed moving to long temporarily.
 
 1.1.4: Released 2001-11-02
 

@@ -178,7 +178,13 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,const QString &sql,
     Param(param),
     Statistics(stats)
 {
-  Query=new toQuery(conn,toQuery::Long);
+  try {
+    Query=NULL;
+    Query=new toQuery(conn,toQuery::Long);
+  } catch(...) {
+    delete Query;
+    throw;
+  }
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Quit=EOQ=false;
@@ -208,7 +214,13 @@ toNoBlockQuery::toNoBlockQuery(toConnection &conn,toQuery::queryMode mode,
     Param(param),
     Statistics(stats)
 {
-  Query=new toQuery(conn,mode);
+  try {
+    Query=NULL;
+    Query=new toQuery(conn,toQuery::Long);
+  } catch(...) {
+    delete Query;
+    throw;
+  }
   TO_DEBUGOUT("Created no block query\n");
   CurrentValue=Values.end();
   Quit=EOQ=false;
@@ -263,15 +275,12 @@ void toNoBlockQuery::stop(void)
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
       do {
-	if (Quit) {
-	  TO_DEBUGOUT("Sleeping and retrying cancel\n");
-	  Lock.unlock();
-	  toThread::msleep(100);
-	  Lock.lock();
-	}
 	if (Query)
 	  Query->cancel();
-	Quit=true;
+	TO_DEBUGOUT("Sleeping and retrying cancel\n");
+	Lock.unlock();
+	toThread::msleep(100);
+	Lock.lock();
       } while(Running.getValue()==0);
     }
     Lock.unlock();
@@ -313,14 +322,16 @@ bool toNoBlockQuery::poll(void)
   if ((count>=Description.size()&&Description.size()>0)||eof())
     return true;
 
+#if 0
   Lock.lock();
   if (Started>0&&Started<time(NULL)&&!Description.size()) {
     if (Query&&Query->mode()==toQuery::Normal) {
-      Lock.unlock();
       toStatusMessage("Restarting query in own connection");
       toConnection &conn=Query->connection();
+      Lock.unlock();
       TO_DEBUGOUT("Stopping normal query\n");
       stop();
+      toLocker lock(Lock);
       while(Running.getValue()>0)
 	Running.down();
       while(Continue.getValue()>0)
@@ -338,7 +349,6 @@ bool toNoBlockQuery::poll(void)
       if (Statistics)
 	Statistics->changeSession(*Query);
 
-      toLocker lock(Lock);
       TO_DEBUGOUT("Creating thread\n");
       Thread=new toThread(new queryTask(*this));
       TO_DEBUGOUT("Created thread\n");
@@ -348,6 +358,7 @@ bool toNoBlockQuery::poll(void)
       Lock.unlock();
   } else
     Lock.unlock();
+#endif
 
   return false;
 }
