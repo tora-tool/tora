@@ -5076,8 +5076,8 @@ static toSQL SQLTriggerInfo("toOracleExtract:TriggerInfo",
 			    "               ,null,null\n"
 			    "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
 			    "              )\n"
-			    "      , trigger_body,\n"
-			    "      , status\n"
+			    "      , trigger_body\n"
+			    "      , DECODE(status,'ENABLED','ENABLE','DISABLE')\n"
 			    " FROM\n"
 			    "        sys.all_triggers\n"
 			    " WHERE\n"
@@ -5100,8 +5100,8 @@ static toSQL SQLTriggerInfo8("toOracleExtract:TriggerInfo",
 			     "               ,null,null\n"
 			     "               ,'WHEN (' || when_clause || ')' || CHR(10)\n"
 			     "              )\n"
-			     "      , trigger_body,\n"
-			     "      , status\n"
+			     "      , trigger_body\n"
+			     "      , DECODE(status,'ENABLED','ENABLE','DISABLE')\n"
 			     " FROM\n"
 			     "        sys.all_triggers\n"
 			     " WHERE\n"
@@ -5181,7 +5181,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     ret+=when;
   ret+=body;
   ret+="\n/\n\n";
-  if (status!="ENABLED") {
+  if (status!="ENABLE") {
     ret+=QString("ALTER TRIGGER %1%2 DISABLE;\n\n").arg(schema).arg(QUOTE(name));
   }
   return ret;
