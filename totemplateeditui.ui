@@ -1,0 +1,336 @@
+<!DOCTYPE UI><UI>
+<class>toTemplateEditUI</class>
+<widget>
+    <class>QDialog</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>toTemplateEditUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>671</width>
+            <height>547</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>Template editor</string>
+    </property>
+    <grid>
+        <property stdset="1">
+            <name>margin</name>
+            <number>11</number>
+        </property>
+        <property stdset="1">
+            <name>spacing</name>
+            <number>6</number>
+        </property>
+        <widget row="0"  column="0" >
+            <class>QListView</class>
+            <column>
+                <property>
+                    <name>text</name>
+                    <string>Template</string>
+                </property>
+                <property>
+                    <name>clickable</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>resizeable</name>
+                    <bool>true</bool>
+                </property>
+            </column>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Templates</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>allColumnsShowFocus</name>
+                <bool>true</bool>
+            </property>
+            <property stdset="1">
+                <name>rootIsDecorated</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget row="0"  column="1"  rowspan="1"  colspan="3" >
+            <class>QFrame</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>Frame3</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>5</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>frameShape</name>
+                <enum>StyledPanel</enum>
+            </property>
+            <property stdset="1">
+                <name>frameShadow</name>
+                <enum>Raised</enum>
+            </property>
+            <grid>
+                <property stdset="1">
+                    <name>margin</name>
+                    <number>11</number>
+                </property>
+                <property stdset="1">
+                    <name>spacing</name>
+                    <number>6</number>
+                </property>
+                <widget row="0"  column="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TrashButton</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string></string>
+                    </property>
+                    <property stdset="1">
+                        <name>pixmap</name>
+                        <pixmap>image0</pixmap>
+                    </property>
+                </widget>
+                <widget row="1"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Name</cstring>
+                    </property>
+                </widget>
+                <widget row="3"  column="0"  rowspan="1"  colspan="3" >
+                    <class>toMarkedText</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Description</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget row="2"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Description</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Description</cstring>
+                    </property>
+                </widget>
+                <widget row="5"  column="0"  rowspan="1"  colspan="3" >
+                    <class>QTextView</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Preview</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                        </sizepolicy>
+                    </property>
+                </widget>
+                <widget row="4"  column="1"  rowspan="1"  colspan="2" >
+                    <class>QPushButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>PreviewButton</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Preview</string>
+                    </property>
+                </widget>
+                <widget row="4"  column="0" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel4</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>1</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Preview</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Preview</cstring>
+                    </property>
+                </widget>
+                <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>TextLabel2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>1</vsizetype>
+                        </sizepolicy>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Name</string>
+                    </property>
+                    <property>
+                        <name>buddy</name>
+                        <cstring>Name</cstring>
+                    </property>
+                </widget>
+            </grid>
+        </widget>
+        <spacer row="1"  column="0"  rowspan="1"  colspan="2" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer1</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+        <widget row="1"  column="3" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton2</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Cancel</string>
+            </property>
+        </widget>
+        <widget row="1"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>PushButton1</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Ok</string>
+            </property>
+            <property stdset="1">
+                <name>default</name>
+                <bool>true</bool>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<customwidgets>
+    <customwidget>
+        <class>toMarkedText</class>
+        <header location="local">tomarkedtext.h</header>
+        <sizehint>
+            <width>100</width>
+            <height>100</height>
+        </sizehint>
+        <container>0</container>
+        <sizepolicy>
+            <hordata>5</hordata>
+            <verdata>5</verdata>
+        </sizepolicy>
+        <pixmap>image1</pixmap>
+    </customwidget>
+</customwidgets>
+<images>
+    <image>
+        <name>image0</name>
+        <data format="XPM.GZ" length="424">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523234530022130543251d2e253d856405bffcbc54105b19c856360003103709c4354f324f314f02711341dc14d314b31453b0463480574c190c90c5949513c1002c0a115386f0c1243e316c7af59493207624a18a252581083a8b011d980416c61906b5d65c00e051587d</data>
+    </image>
+    <image>
+        <name>image1</name>
+        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+    </image>
+</images>
+<connections>
+    <connection>
+        <sender>PushButton1</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>PushButton2</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>reject()</slot>
+    </connection>
+    <connection>
+        <sender>PreviewButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>preview()</slot>
+    </connection>
+    <connection>
+        <sender>Templates</sender>
+        <signal>selectionChanged(QListViewItem*)</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>changeSelection()</slot>
+    </connection>
+    <connection>
+        <sender>TrashButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toTemplateEditUI</receiver>
+        <slot>remove()</slot>
+    </connection>
+    <slot access="public">changeSelection()</slot>
+    <slot access="public">remove()</slot>
+    <slot access="public">preview()</slot>
+</connections>
+</UI>

@@ -32,6 +32,7 @@
 2001-05-17: Added start of text and db browser template.
 2001-05-17: Added loadMap/saveMap functions to toTool.
 2001-05-17: Fixed problem browsing function source.
+2001-05-17: Added editor for text templates.
 
 0.8: Released 2001-05-07
 

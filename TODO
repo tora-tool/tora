@@ -30,6 +30,7 @@ Extended functionality:
 * Select font for toResultViews.
 * Segments view in storage view.
 * Drag & drop from/to toResultContents.
+* Lots of more template texts including hints and SQL syntax.
 
 Windows problems:
 * New window coredump
@@ -42,7 +43,6 @@ New tools:
       Display parameters (v$param...)
 * Server statistics and tuning information.
 * SQL Builder?
-* SQL Template windows (Functions/Tables/Hints/Keywords).
 * Display invalid objects.
 * Object search tool.
 * Links into Oracle HTML help.

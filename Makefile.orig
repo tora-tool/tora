@@ -74,6 +74,7 @@ SOURCES=\
 	tosyntaxsetup.cpp	\
 	totemplate.cpp		\
 	totemplateaddfileui.cpp	\
+	totemplateeditui.cpp	\
 	totemplateprovider.cpp	\
 	totemplatesetupui.cpp	\
 	tothread.cpp		\
@@ -119,6 +120,7 @@ plugins/tosecurity.tso:\
 plugins/totemplate.tso:\
 	objs/totemplate.o \
 	objs/totemplateaddfileui.o \
+	objs/totemplateeditui.o \
 	objs/totemplatesetupui.o
 plugins/tosgastatement.tso:objs/tosgastatement.o
 plugins/tosgatrace.tso:objs/tosgatrace.o

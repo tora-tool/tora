@@ -42,17 +42,138 @@ TO_NAMESPACE;
 #include <qtextview.h>
 #include <qfileinfo.h>
 #include <qfiledialog.h>
+#include <qpushbutton.h>
+#include <qmessagebox.h>
 
 #include "toresultview.h"
 #include "totool.h"
 #include "totemplate.h"
 #include "tomain.h"
+#include "tomarkedtext.h"
 
 #include "totemplate.moc"
 #include "totemplatesetupui.moc"
 #include "totemplateaddfileui.moc"
+#include "totemplateeditui.moc"
 
 #include "icons/totemplate.xpm"
+
+static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
+{
+  if (lst1.count()<len||lst2.count()<len)
+    return false;
+  for (unsigned int i=0;i<len;i++)
+    if (lst1[i]!=lst2[i])
+      return false;
+  return true;
+}
+
+#include <stdio.h>
+
+class toTemplateEdit : public toTemplateEditUI {
+  map<QString,QString> &TemplateMap;
+  map<QString,QString>::iterator LastTemplate;
+public:
+  void updateFromMap(void)
+  {
+    while(Templates->firstChild())
+      delete Templates->firstChild();
+    QListViewItem *last=NULL;
+    int lastLevel=0;
+    QStringList lstCtx;
+    for(map<QString,QString>::iterator i=TemplateMap.begin();i!=TemplateMap.end();i++) {
+      QStringList ctx=QStringList::split(":",(*i).first);
+      if (last) {
+	while(last&&lastLevel>=int(ctx.count())) {
+	  last=last->parent();
+	  lastLevel--;
+	}
+	while(last&&lastLevel>=0&&!CompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
+	  last=last->parent();
+	  lastLevel--;
+	}
+      }
+      if (lastLevel<0)
+	throw QString("Internal error, lastLevel < 0");
+      while(lastLevel<int(ctx.count())-1) {
+	if (last)
+	  last=new QListViewItem(last,ctx[lastLevel]);
+	else
+	  last=new QListViewItem(Templates,ctx[lastLevel]);
+	last->setOpen(true);
+	lastLevel++;
+      }
+      if (last)
+	last=new QListViewItem(last,ctx[lastLevel]);
+      else
+	last=new QListViewItem(Templates,ctx[lastLevel]);
+      last->setOpen(true);
+      if (i==LastTemplate)
+	last->setSelected(true);
+      lstCtx=ctx;
+      lastLevel++;
+    }
+    LastTemplate=TemplateMap.end();
+  }
+  toTemplateEdit(map<QString,QString> &pairs,QWidget *parent,const char *name=0)
+    : toTemplateEditUI(parent,name,true),TemplateMap(pairs)
+  {
+    LastTemplate=TemplateMap.end();
+    updateFromMap();
+  }
+  virtual void remove(void)
+  {
+    if (LastTemplate!=TemplateMap.end()) {
+      TemplateMap.erase(LastTemplate);
+      LastTemplate=TemplateMap.begin();
+      updateFromMap();
+    }
+  }
+  virtual void preview(void)
+  {
+    Preview->setText(Description->text());
+  }
+  virtual void changeSelection(void)
+  {
+    bool update=false;
+    if (LastTemplate!=TemplateMap.end()) {
+      if (Name->text()!=(*LastTemplate).first||
+	  Description->text()!=(*LastTemplate).second) {
+	TemplateMap.erase(LastTemplate);
+	TemplateMap[Name->text()]=Description->text();
+	update=true;
+      }
+    } else if (!Name->text().isEmpty()) {
+      TemplateMap[Name->text()]=Description->text();
+      update=true;
+    }
+    LastTemplate=TemplateMap.end();
+
+    QString name;
+    QListViewItem *item=Templates->selectedItem();
+    if (item) {
+      name=item->text(0);
+      for(item=item->parent();item;item=item->parent()) {
+	name.prepend(":");
+	name.prepend(item->text(0));
+      }
+      LastTemplate=TemplateMap.find(name);
+      if (LastTemplate!=TemplateMap.end()) {
+	Name->setText((*LastTemplate).first);
+	Description->setText((*LastTemplate).second);
+	Preview->setText((*LastTemplate).second);
+      } else {
+	Name->setText("");
+	printf("Didn't find %s\n",(const char *)name);
+      }
+    } else
+      LastTemplate=TemplateMap.end();
+    if (update) {
+      printf("Update\n");
+      updateFromMap();
+    }
+  }
+};
 
 class toTemplateAddFile : public toTemplateAddFileUI {
 public:
@@ -115,6 +236,27 @@ public:
     if (file.exec())
       new QListViewItem(FileList,file.Root->text(),file.Filename->text());
   }
+  virtual void editFile(void)
+  {
+    QListViewItem *item=FileList->selectedItem();
+    if (item) {
+      try {
+	QString file=item->text(1);
+	map<QString,QString> pairs;
+	if (toTool::loadMap(file,pairs)) {
+	  toTemplateEdit edit(pairs,this);
+	  if (edit.exec())
+	    toTool::saveMap(file,pairs);
+	} else
+	  throw QString("Couldn't read file");
+      } catch (const QString &str) {
+	TOMessageBox::warning(this,
+			      "Couldn't open file",
+			      str,
+			      "&Ok");
+      }
+    }
+  }
   virtual void delFile(void)
   {
     delete FileList->selectedItem();
@@ -134,15 +276,12 @@ public:
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    if (!Dock) {
-      Dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
-      QWidget *window=new toTemplate(Dock);
-      toAttachDock(Dock,window,QMainWindow::Left);
-      return Dock;
-    }
-    Dock->show();
-    Dock->setFocus();
-    return NULL;
+    if (Dock)
+      delete Dock;
+    Dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
+    QWidget *window=new toTemplate(Dock);
+    toAttachDock(Dock,window,QMainWindow::Left);
+    return Dock;
   }
   void closeWindow(toConnection &connection)
   { Dock=NULL; }
@@ -248,16 +387,6 @@ public:
   void addFile(QListView *parent,const QString &root,const QString &file);
   virtual void insertItems(QListView *parent);
 };
-
-static bool CompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
-{
-  if (lst1.count()<len||lst2.count()<len)
-    return false;
-  for (unsigned int i=0;i<len;i++)
-    if (lst1[i]!=lst2[i])
-      return false;
-  return true;
-}
 
 void toTextTemplate::insertItems(QListView *parent)
 {
