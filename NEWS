@@ -74,6 +74,7 @@
 2001-05-07: Added search & replace.
 2001-05-07: Fixed saving settings on color keywords.
 2001-05-07: Fixed typo in SQL edit menu.
+2001-05-07: Fixed support for some more exotic datatypes.
 
 0.7: Released 2001-03-24
 
