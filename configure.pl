@@ -273,6 +273,7 @@ my $MySQLStatic;
 my $MySQLFound=1;
 
 my $OnlyMake=0;
+my $NewCheck=1;
 
 $QtDir=$ENV{QTDIR};
 
@@ -324,6 +325,8 @@ for (@ARGV) {
 	    $KDELibs="$1/lib";
 	    $KDEBase=$1;
 	}
+    } elsif (/^--disable-new-check$/) {
+	$NewCheck=0;
     } elsif (/^--with-rpm-contents(?:=(.*))$/) {
 	$RPMGenerate=$1;
     } elsif (/^--without-rpath$/) {
@@ -361,7 +364,7 @@ Options can be any of the following:
 --without-oracle     Compile without Oracle support
 --without-mysql      Don't compile in MySQL support
 --without-rpath      Compile without rpath to Oracle libraries
-
+--disable-new-check  Disable new version check globally in TOra.
 __USAGE__
         exit(2);
     }
@@ -1301,6 +1304,7 @@ __EOT__
 	print MAKEFILE "#   OTL_ORA9I          - Compile for Oracle 9.x\n";
 	print MAKEFILE "#   OTL_ORA8I          - Compile for Oracle 8.1.x\n";
 	print MAKEFILE "#   OTL_ORA8           - Compile for Oracle 8.0.x\n";
+	print MAKEFILE "#   TO_NEW_CHECK       - Disable new version check globally\n";
 	print MAKEFILE "#   TO_KDE             - Compile as KDE application\n";
 	
 	if ($OracleRelease =~ /^8.0/) {
@@ -1309,6 +1313,9 @@ __EOT__
 	    print MAKEFILE "DEFINES+=-DOTL_ORA9I\n";
 	} else {
 	    print MAKEFILE "DEFINES+=-DOTL_ORA8I\n";
+	}
+	if (!$NewCheck) {
+	    print MAKEFILE "DEFINED+=-DTO_NO_NEW_CHECK\n";
 	}
 	print MAKEFILE "DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\\\"\$(INSTALLLIB)/tora\\\"\n";
 	if ($KDEApplication) {

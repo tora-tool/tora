@@ -478,7 +478,7 @@ toMain::toMain()
     } TOCATCH
   }
 
-#if QT_VERSION >= 300
+#if QT_VERSION >= 300 && !defined (TO_NO_NEW_CHECK)
   if (toTool::globalConfig(CONF_UPGRADE_CHECK,"Not specified")=="Not specified") {
     switch(TOMessageBox::information(this,"Check for upgrades?",
 				     "Do you want TOra to automatically check\n"

@@ -56,6 +56,7 @@
 #endif
 
 #include <time.h>
+#include <stdio.h>
 
 #include <qcombobox.h>
 #include <qgrid.h>
