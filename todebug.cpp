@@ -945,8 +945,19 @@ void toDebug::updateContent(bool body)
   toSQLParse::editorTokenizer tokenizer(current);
   std::list<toSQLParse::statement> statements=toSQLParse::parse(tokenizer);
 
-  QListViewItem *parent=new QListViewItem(Contents,NULL);
-  parent->setText(0,topName);
+  QListViewItem *parent=NULL;
+  for(parent=Contents->firstChild();parent;parent=parent->nextSibling())
+    if (parent->text(0)==topName)
+      break;
+  if (!parent) {
+    parent=new QListViewItem(Contents,NULL);
+    parent->setText(0,topName);
+  } else {
+    while(parent->firstChild())
+      delete parent->firstChild();
+  }
+
+  parent->setOpen(true);
 
   for(std::list<toSQLParse::statement>::iterator i=statements.begin();i!=statements.end();i++)
     updateContent(*i,parent);
@@ -1660,7 +1671,6 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
 
   {
     QValueList<int> sizes=hsplitter->sizes();
-    sizes[1]=sizes[1]+sizes[0]-200;
     sizes[0]=200;
     hsplitter->setSizes(sizes);
     hsplitter->setResizeMode(objSplitter,QSplitter::KeepSize);
