@@ -678,7 +678,7 @@ __EOT__
 #
 # See http://www.globecom.net/tora/ for more information.
 #
-# Contact tora@globecom.se if any conditions of this licensing are
+# Contact tora\@globecom.se if any conditions of this licensing are
 # not clear to you.
 #
 ############################################################################

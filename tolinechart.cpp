@@ -390,8 +390,8 @@ void toLineChart::paintEvent(QPaintEvent *e)
 
 void toLineChart::mouseReleaseEvent(QMouseEvent *e)
 {
-  if (e->button()==LeftButton&&MousePoint[0].x()>=0) {
-    if (MousePoint[1].x()>=0) {
+  if (e->button()==LeftButton&&MousePoint[0]!=QPoint(-1,-1)) {
+    if (MousePoint[1]!=QPoint(-1,-1)) {
       QRect rect=fixRect(MousePoint[0],MousePoint[1]);
       QPainter p(this);
       p.setRasterOp(NotROP);
@@ -447,10 +447,10 @@ void toLineChart::clearZoom(void)
 
 void toLineChart::mouseMoveEvent(QMouseEvent *e)
 {
-  if (MousePoint[0].x()>=0) {
+  if (MousePoint[0]!=QPoint(-1,-1)) {
     QPainter p(this);
     p.setRasterOp(NotROP);
-    if (MousePoint[1].x()>=0)
+    if (MousePoint[1]!=QPoint(-1,-1))
       p.drawRect(fixRect(MousePoint[0],MousePoint[1]));
     MousePoint[1]=e->pos();
     p.drawRect(fixRect(MousePoint[0],MousePoint[1]));

@@ -266,7 +266,7 @@ public:
 
 static toSQL SQLListTables("toBrowser:ListTables",
 			   "SELECT Table_Name,NULL \" Ignore\",Tablespace_name \" Ignore2\"\n"
-			   "  FROM ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
+			   "  FROM ALL_ALL_TABLES WHERE OWNER = :f1<char[101]>\n"
 			   " ORDER BY Table_Name",
 			   "List the available tables in a schema.");
 static toSQL SQLTableGrants("toBrowser:TableGrants",

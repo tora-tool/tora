@@ -601,7 +601,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Delete current record from table",
 		  "Delete current record from table",
 		  Editor,SLOT(deleteCurrent()),toolbar);
-  connect(toMainWidget(),SIGNAL(willCommit(toConnection &conn,bool cmt)),
+  connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool cmt)),
 	  this,SLOT(saveUnsaved(toConnection &conn,bool cmt)));
 }
 
