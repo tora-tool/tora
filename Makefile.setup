@@ -24,7 +24,8 @@
 #
 ############################################################################
 
-# WARNING!!! This file will be overwritten by the configure script.
+# If you have problems with the configure script copy this file to
+# Makefile.setup and modify it to satisfy your need.
 
 # Where to install tora
 INSTALLPREFIX=/usr/local
@@ -42,7 +43,7 @@ INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/
 CC="/usr/bin/cc"
 
 # Additional libraries to link with
-LIBS_GLOB=-lcrypt -lm -lpthread -ldl -lkdeui -lkdecore
+LIBS_GLOB=-lcrypt -lm -lpthread -ldl
 
 # Standard C++ library
 STDCPP_SHARED=-lstdc++
@@ -82,10 +83,9 @@ TARGET=tora-plugin
 DEFINES+=-DOTL_ORA8I
 DEFINES+=-DTO_NAMESPACE="using namespace std"
 DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
-DEFINES+=-DTO_KDE
 
 # How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat
-FIXKDE=perl fixkde.pl
+FIXKDE=cat
 
 # Where to find perl on your system
 PERL=/usr/bin/perl
@@ -102,3 +102,5 @@ LFLAGS_GLOB=-g
 # Additional flags set when compiling.
 CFLAGS_GLOB=-g -fPIC -Wall
 
+# Where to install tora
+INSTALLPREFIX=/usr/local
