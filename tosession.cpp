@@ -536,7 +536,7 @@ void toSession::changeTab(QWidget *tab)
 	CurrentStatement->clearParams();
 	CurrentStatement->changeAddress(item->text(Sessions->columns()+0));
       } else if (CurrentTab==AccessedObjects) {
-	AccessedObejcts->clearParams();
+	AccessedObjects->clearParams();
         AccessedObjects->changeParams(item->text(0));
       } else if (CurrentTab==LockedObjects) {
 	LockedObjects->clearParams();
