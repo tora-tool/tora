@@ -5335,7 +5335,10 @@ void toExtract::describeTablespace(list<QString> &lst,
     QString incrementBy    =toShift(files);
 
     list<QString> cctx=ctx;
-    cctx.insert(cctx.end(),"DATAFILE");
+    if (extentManagement=="LOCAL"&&contents=="TEMPORARY")
+      cctx.insert(cctx.end(),"TEMPFILE");
+    else
+      cctx.insert(cctx.end(),"DATAFILE");
     cctx.insert(cctx.end(),prepareDB(fileName));
 
     addDescription(lst,cctx);
