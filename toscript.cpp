@@ -50,6 +50,7 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -473,7 +474,60 @@ void toScript::execute(void)
     setupExtract(source);
     switch(mode) {
     case 1:
-      script+=source.create(sourceObjects);
+      if (ScriptUI->OutputTab->isChecked())
+	script+=source.create(sourceObjects);
+      else if (ScriptUI->OutputFile->isChecked()) {
+	QFile file(ScriptUI->Filename->text());
+	file.open(IO_WriteOnly);
+
+	if (file.status()!=IO_Ok)
+	  throw QString(tr("Couldn't open file %1")).arg(file.name());
+
+	QTextStream stream(&file);
+	source.create(stream,sourceObjects);
+
+	if (file.status()!=IO_Ok)
+	  throw QString(tr("Error writing to file %1")).arg(file.name());
+
+	script=tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
+      } else if (ScriptUI->OutputDir->isChecked()) {
+	QFile file(ScriptUI->Filename->text()+QDir::separator()+"script.sql");
+	file.open(IO_WriteOnly);
+
+	if (file.status()!=IO_Ok)
+	  throw QString(tr("Couldn't open file %1")).arg(file.name());
+
+	QTextStream stream(&file);
+	stream<<tr("rem Master script for DDL reverse engineering by TOra\n"
+		   "\n");
+	QRegExp repl("\\W+");
+	for(std::list<QString>::iterator i=sourceObjects.begin();i!=sourceObjects.end();i++) {
+	  std::list<QString> t;
+	  t.insert(t.end(),*i);
+	  QString fn=*i;
+	  fn.replace(repl,"_");
+	  fn+=".sql";
+	  stream<<"@"<<fn<<"\n";
+
+	  QFile tf(ScriptUI->Filename->text()+QDir::separator()+fn);
+	  tf.open(IO_WriteOnly);
+
+	  if (tf.status()!=IO_Ok)
+	    throw QString(tr("Couldn't open file %1")).arg(tf.name());
+
+	  QTextStream ts(&tf);
+	  source.create(ts,t);
+
+	  if (tf.status()!=IO_Ok)
+	    throw QString(tr("Error writing to file %1")).arg(tf.name());
+
+
+	  script=tr("-- Scripts generate to directory %1 successfully").arg(ScriptUI->Filename->text());;
+	}
+
+	if (file.status()!=IO_Ok)
+	  throw QString(tr("Error writing to file %1")).arg(file.name());
+      }
       break;
     case 0:
     case 2:

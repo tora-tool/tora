@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>642</width>
+            <width>638</width>
             <height>669</height>
         </rect>
     </property>
@@ -1021,7 +1021,7 @@
                                         <class>QLineEdit</class>
                                         <property stdset="1">
                                             <name>name</name>
-                                            <cstring>LineEdit2_2</cstring>
+                                            <cstring>Filename</cstring>
                                         </property>
                                         <property stdset="1">
                                             <name>enabled</name>
@@ -1471,7 +1471,7 @@
     <connection>
         <sender>OutputTab</sender>
         <signal>toggled(bool)</signal>
-        <receiver>LineEdit2_2</receiver>
+        <receiver>Filename</receiver>
         <slot>setDisabled(bool)</slot>
     </connection>
     <connection>
@@ -1506,7 +1506,7 @@
     <tabstop>IncludeHeader</tabstop>
     <tabstop>Schema</tabstop>
     <tabstop>OutputTab</tabstop>
-    <tabstop>LineEdit2_2</tabstop>
+    <tabstop>Filename</tabstop>
     <tabstop>Browse</tabstop>
     <tabstop>AnyWords</tabstop>
     <tabstop>SearchWord</tabstop>
