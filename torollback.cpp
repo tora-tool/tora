@@ -630,6 +630,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 
   QSplitter *splitter=new QSplitter(Vertical,this);
   Segments=new toRollbackView(splitter);
+  Segments->setSelectionMode(QListView::Single);
   connect(Segments,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
 
@@ -638,6 +639,7 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
   tab->addTab(horsplit,"Open Cursors");
   
   Statements=new toRollbackOpen(horsplit);
+  Statements->setSelectionMode(QListView::Single);
   connect(Statements,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeStatement(QListViewItem *)));
   CurrentStatement=new toSGAStatement(horsplit);

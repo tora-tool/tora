@@ -41,6 +41,7 @@ class toMarkedText;
 class toListView;
 class toResultContentEditor;
 class QListViewItem;
+class QLabel;
 
 /** Displays an text in a widget which can optionally be modified and saved back.
  */
@@ -58,6 +59,7 @@ class toMemoEditor : public QDialog {
    */
   int Col;
   QToolBar *Toolbar;
+  QLabel *Label;
 
   void setup(const QString &str,bool sql,bool modal);
 
@@ -70,6 +72,8 @@ protected:
   { return Toolbar; }
   toMarkedText *editor()
   { return Editor; }
+  QLabel *label()
+  { return Label; }
 public:
   /** Create this editor. If row and col is specified, editing is posible.
    * @param parent Parent widget.

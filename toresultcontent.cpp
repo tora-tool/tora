@@ -84,6 +84,9 @@ toResultContentMemo::toResultContentMemo(QWidget *parent,const QString &data,int
 					 bool sql=false)
   : toMemoEditor(parent,data,row,col,sql,false,true)
 {
+  toResultContentEditor *cnt=contentEditor();
+  if (cnt)
+    label()->setText(cnt->horizontalHeader()->label(col));
   connect(parent,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
 }
 
@@ -92,8 +95,10 @@ void toResultContentMemo::changePosition(int row,int cols)
   toMemoEditor::changePosition(row,cols);
   toResultContentEditor *cnt=contentEditor();
   if (cnt) {
+    cnt->setCurrentCell(row,cols); // Nasty workaround but it'll work I think.
     editor()->setText(cnt->text(row,cols));
     editor()->setEdited(false);
+    label()->setText(cnt->horizontalHeader()->label(cols));
   }
 }
 

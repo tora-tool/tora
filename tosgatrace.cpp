@@ -169,6 +169,7 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
   Trace->setReadAll(true);
   Statement=new toSGAStatement(splitter);
 
+  Trace->setSelectionMode(QListView::Single);
   connect(Trace,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   CurrentSchema=connection.user().upper();

@@ -93,6 +93,7 @@ toResultParam::toResultParam(QWidget *parent,const char *name)
   Params=new toResultLong(false,false,toQuery::Background,this);
   Params->setSQL(SQLParams);
   Params->setReadAll(true);
+  Params->setSelectionMode(QListView::Single);
   connect(Params,SIGNAL(selectionChanged()),this,SLOT(changeItem()));
   connect(Params,SIGNAL(done()),this,SLOT(done()));
   Value=new QLineEdit(this);

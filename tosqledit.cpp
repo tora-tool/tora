@@ -175,6 +175,7 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   Statements->setRootIsDecorated(true);
   Statements->addColumn("Text Name");
   Statements->setSorting(0);
+  Statements->setSelectionMode(QListView::Single);
   QVBox *vbox=new QVBox(splitter);
 
   QHBox *hbox=new QHBox(vbox);

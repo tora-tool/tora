@@ -288,6 +288,7 @@ toListView::toListView(QWidget *parent,const char *name)
 		 false,false,false,
 		 true,false,false)
 {
+  setSelectionMode(Extended);
   setAllColumnsShowFocus(true);
   AllTip=new toListTip(this);
   setShowSortIndicator(true);
@@ -518,18 +519,31 @@ void toListView::editPrint(void)
   }
 }
 
-#define TORESULT_COPY     1
-#define TORESULT_MEMO     2
-#define TORESULT_SQL      3
-#define TORESULT_READ_ALL 4
-#define TORESULT_EXPORT   5
+#define TORESULT_COPY_FIELD     1
+#define TORESULT_COPY_SEL	2
+#define TORESULT_COPY_SEL_HEAD	3
+#define TORESULT_MEMO     	4
+#define TORESULT_SQL      	5
+#define TORESULT_READ_ALL 	6
+#define TORESULT_EXPORT   	7
+#define TORESULT_SELECT_ALL	8
 
 void toListView::displayMenu(QListViewItem *item,const QPoint &p,int col)
 {
   if (item) {
     if (!Menu) {
       Menu=new QPopupMenu(this);
-      Menu->insertItem("&Copy",TORESULT_COPY);
+      Menu->insertItem("&Copy field",TORESULT_COPY_FIELD);
+      if (selectionMode()==Multi||selectionMode()==Extended) {
+	Menu->insertItem("Copy selection",TORESULT_COPY_SEL);
+	Menu->insertItem("Copy selection with header",TORESULT_COPY_SEL_HEAD);
+      }
+      if (selectionMode()==Multi||selectionMode()==Extended) {
+	Menu->insertSeparator();
+	Menu->insertItem("Select all",TORESULT_SELECT_ALL);
+	Menu->setAccel(CTRL+Key_A,TORESULT_SELECT_ALL);
+      }
+      Menu->insertSeparator();
       Menu->insertItem("Display in editor",TORESULT_MEMO);
       Menu->insertItem("Export to file",TORESULT_EXPORT);
       if (!Name.isEmpty()) {
@@ -555,11 +569,26 @@ void toListView::displayMemo(void)
 void toListView::menuCallback(int cmd)
 {
   switch(cmd) {
-  case TORESULT_COPY:
+  case TORESULT_COPY_FIELD:
     {
       QClipboard *clip=qApp->clipboard();
       clip->setText(menuText());
     }
+    break;
+  case TORESULT_COPY_SEL:
+    try {
+      QClipboard *clip=qApp->clipboard();
+      clip->setText(exportAsText(false,true));
+    } TOCATCH
+    break;
+  case TORESULT_COPY_SEL_HEAD:
+    try {
+      QClipboard *clip=qApp->clipboard();
+      clip->setText(exportAsText(true,true));
+    } TOCATCH
+    break;
+  case TORESULT_SELECT_ALL:
+    selectAll(true);
     break;
   case TORESULT_MEMO:
     displayMemo();
@@ -608,6 +637,32 @@ void toListView::editSearch(toSearchReplace *search)
 
 void toListView::editSave(bool ask)
 {
+  try {
+    int type=exportType();
+
+    QString nam;
+    switch(type) {
+    default:
+      nam="*.txt";
+      break;
+    case 2:
+      nam="*.csv";
+      break;
+    case 3:
+      nam="*.html";
+      break;
+    }
+
+    QString filename=toSaveFilename(QString::null,nam,this);
+    if (filename.isEmpty())
+      return;
+  
+    toWriteFile(filename,exportAsText(true,false,type));
+  } TOCATCH
+}
+
+int toListView::exportType(void)
+{
   toResultListFormatUI format(this,NULL,true);
   format.Format->insertItem("Text");
   format.Format->insertItem("Tab delimited");
@@ -615,34 +670,29 @@ void toListView::editSave(bool ask)
   format.Format->insertItem("HTML");
 
   if (!format.exec())
-    return;
+    return -1;
 
-  int type=format.Format->currentItem();
+  return format.Format->currentItem();
 
-  QString nam;
-  switch(type) {
-  default:
-    nam="*.txt";
-    break;
-  case 2:
-    nam="*.csv";
-    break;
-  case 3:
-    nam="*.html";
-    break;
-  }
+}
 
-  QString filename=toSaveFilename(QString::null,nam,this);
-  if (filename.isEmpty())
-    return;
-  
+QString toListView::exportAsText(bool includeHeader,bool onlySelection,int type)
+{
+  if (type<0)
+    type=exportType();
+  if (type<0)
+    throw QString("");
+
   int *sizes=NULL;
   try {
     if (type==0) {
       sizes=new int[columns()];
       int level=0;
       for (int i=0;i<columns();i++)
-	sizes[i]=header()->label(i).length();
+	if (includeHeader)
+	  sizes[i]=header()->label(i).length();
+	else
+	  sizes[i]=0;
 
       {
 	QListViewItem *next=NULL;
@@ -650,18 +700,20 @@ void toListView::editSave(bool ask)
 	  toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
 	  toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
 
-	  for (int i=0;i<columns();i++) {
-	    int csiz;
-	    if (resItem)
-	      csiz=resItem->text(i).length();
-	    else if (chkItem)
-	      csiz=chkItem->text(i).length();
-	    else
-	      csiz=item->text(i).length();
-	    if (i==0)
-	      csiz+=level;
-	    if (sizes[i]<csiz)
-	      sizes[i]=csiz;
+	  if (!onlySelection||item->isSelected()) {
+	    for (int i=0;i<columns();i++) {
+	      int csiz;
+	      if (resItem)
+		csiz=resItem->text(i).length();
+	      else if (chkItem)
+		csiz=chkItem->text(i).length();
+	      else
+		csiz=item->text(i).length();
+	      if (i==0)
+		csiz+=level;
+	      if (sizes[i]<csiz)
+		sizes[i]=csiz;
+	    }
 	  }
 
 	  if (item->firstChild()) {
@@ -684,32 +736,41 @@ void toListView::editSave(bool ask)
 
     QString output;
     if (type==3) {
-      output=QString("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0><TR BGCOLOR=#7f7f7f>").
+      output=QString("<HTML><HEAD><TITLE>%1</TITLE></HEAD><BODY><TABLE CELLSPACING=0 BORDER=0>").
 	arg(sqlName());
     }
 
     QString indent;
 
-    for (int j=0;j<columns();j++)
-      switch(type) {
-      case 0:
-	output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
-	break;
-      case 1:
-	output+=QString("%1\t").arg(header()->label(j));
-	break;
-      case 2:
-	output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
-	break;
-      case 3:
-	output+="<TH ALIGN=LEFT BGCOLOR=#cfcfcf>";
-	output+=header()->label(j);
-	output+="</TH>";
-	break;
-      }
+    QString bgcolor;
+    if (includeHeader) {
+      if (bgcolor.isEmpty())
+	bgcolor="nonull";
+      else
+	bgcolor="";
+      if (type==3)
+	output+="<TR BGCOLOR=#7f7f7f>";
+      for (int j=0;j<columns();j++)
+	switch(type) {
+	case 0:
+	  output+=QString("%1 ").arg(header()->label(j),-sizes[j]);
+	  break;
+	case 1:
+	  output+=QString("%1\t").arg(header()->label(j));
+	  break;
+	case 2:
+	  output+=QString("\"%1\";").arg(QuoteString(header()->label(j)));
+	  break;
+	case 3:
+	  output+="<TH ALIGN=LEFT BGCOLOR=#cfcfcf>";
+	  output+=header()->label(j);
+	  output+="</TH>";
+	  break;
+	}
+    }
     if (output.length()>0)
       output=output.left(output.length()-1);
-    if (type==3)
+    if (type==3&&includeHeader)
       output+="</TR>";
     output+="\n";
     if (type==0) {
@@ -723,57 +784,59 @@ void toListView::editSave(bool ask)
     }
 
     QListViewItem *next=NULL;
-    QString bgcolor="notnull";
     for (QListViewItem *item=firstChild();item;item=next) {
 
-      toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
-      toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
+      if (!onlySelection||item->isSelected()) {
 
-      if (bgcolor.isEmpty())
-	bgcolor=" BGCOLOR=#cfcfff";
-      else
-	bgcolor="";
-      QString line;
-      if (type==3)
-	line=QString("<TR%1>").arg(bgcolor);      
+	toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
+	toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
 
-      for (int i=0;i<columns();i++) {
-	QString text;
-
-	if (resItem)
-	  text=resItem->text(i);
-	else if (chkItem)
-	  text=chkItem->text(i);
+	if (bgcolor.isEmpty())
+	  bgcolor=" BGCOLOR=#cfcfff";
 	else
-	  text=item->text(i);
+	  bgcolor="";
+	QString line;
+	if (type==3)
+	  line=QString("<TR%1>").arg(bgcolor);      
 
-	switch(type) {
-	case 0:
-	  line+=indent;
-	  line+=QString("%1 ").arg(text,(i==0?indent.length():0)-sizes[i]);
-	  break;
-	case 1:
-	  line+=indent;
-	  line+=QString("%1\t").arg(text);
-	  break;
-	case 2:
-	  line+=indent;
-	  line+=QString("\"%1\";").arg(QuoteString(text));
-	  break;
-	case 3:
-	  line+=QString("<TD%1>").arg(bgcolor);
-	  line+=indent;
-	  line+=text;
-	  line+="</TD>";
-	  break;
+	for (int i=0;i<columns();i++) {
+	  QString text;
+
+	  if (resItem)
+	    text=resItem->text(i);
+	  else if (chkItem)
+	    text=chkItem->text(i);
+	  else
+	    text=item->text(i);
+
+	  switch(type) {
+	  case 0:
+	    line+=indent;
+	    line+=QString("%1 ").arg(text,(i==0?indent.length():0)-sizes[i]);
+	    break;
+	  case 1:
+	    line+=indent;
+	    line+=QString("%1\t").arg(text);
+	    break;
+	  case 2:
+	    line+=indent;
+	    line+=QString("\"%1\";").arg(QuoteString(text));
+	    break;
+	  case 3:
+	    line+=QString("<TD%1>").arg(bgcolor);
+	    line+=indent;
+	    line+=text;
+	    line+="</TD>";
+	    break;
+	  }
 	}
+	if (type==3)
+	  line+="</TR>";
+	else
+	  line=line.left(line.length()-1);
+	line+="\n";
+	output+=line;
       }
-      if (type==3)
-	line+="</TR>";
-      else
-	line=line.left(line.length()-1);
-      line+="\n";
-      output+=line;
 
       if (item->firstChild()) {
 	if (type==3)
@@ -798,13 +861,12 @@ void toListView::editSave(bool ask)
     }
     if (type==3)
       output+="</TABLE></BODY></HTML>";
-    toWriteFile(filename,output);
-
+    delete sizes;
+    return output;
   } catch(...) {
     delete sizes;
     throw;
   }
-  delete sizes;
 }
 
 void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix)

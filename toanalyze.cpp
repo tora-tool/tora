@@ -209,6 +209,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);
   Plans=new toResultLong(false,false,toQuery::Background,splitter);
+  Plans->setSelectionMode(QListView::Single);
   Plans->query(toSQL::string(SQLListPlans,
 			     connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
 								  DEFAULT_PLAN_TABLE)));

@@ -1696,6 +1696,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Objects->setRootIsDecorated(true);
   Objects->setTreeStepSize(10);
   Objects->setSorting(0);
+  Objects->setSelectionMode(QListView::Single);
   connect(Objects,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changePackage(QListViewItem *)));
   Contents=new toListView(objSplitter);
@@ -1703,6 +1704,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Contents->setRootIsDecorated(true);
   Contents->setSorting(-1);
   Contents->setTreeStepSize(10);
+  Contents->setSelectionMode(QListView::Single);
   connect(Contents,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
 
@@ -1729,6 +1731,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   Watch->setTreeStepSize(10);
   Watch->setAllColumnsShowFocus(true);
   DebugTabs->addTab(Watch,"W&atch");
+  Watch->setSelectionMode(QListView::Single);
   connect(Watch,SIGNAL(selectionChanged(void)),
 	  this,SLOT(selectedWatch(void)));
   connect(Watch,SIGNAL(doubleClicked(QListViewItem *)),

@@ -293,6 +293,8 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
   Result->setSorting(0);
   Result->addColumn("Result");
   Result->addColumn("Manual");
+  Result->setSelectionMode(QListView::Single);
+  Sections->setSelectionMode(QListView::Single);
   connect(Sections,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
   connect(Result,SIGNAL(selectionChanged(QListViewItem *)),

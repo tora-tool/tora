@@ -699,6 +699,8 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
   Objects->setColumnAlignment(3,AlignRight);
 
   Extents=new toStorageExtent(ExtentParent);
+  Objects->setSelectionMode(QListView::Single);
+  Storage->setSelectionMode(QListView::Single);
   if (extents) {
     connect(Objects,SIGNAL(selectionChanged(void)),this,SLOT(selectObject(void)));
   } else

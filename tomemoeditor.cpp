@@ -37,6 +37,7 @@
 #include <qtoolbutton.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qheader.h>
 
 #include "tomemoeditor.h"
 #include "tohighlightedtext.h"
@@ -181,10 +182,8 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 {
   setup(str,sql,modal);
 
-  if (listView()||navigation) {
-    if (listView())
-      connect(parent,SIGNAL(currentChanged(QListViewItem *)),
-	      this,SLOT(changeCurrent(QListViewItem *)));
+  toListView *lst=listView();
+  if (lst||navigation) {
 
     new QToolButton(QPixmap((const char **)rewind_xpm),
 		    "First column",
@@ -203,8 +202,15 @@ toMemoEditor::toMemoEditor(QWidget *parent,const QString &str,int row,int col,
 		    "Last column",
 		    this,SLOT(lastColumn()),Toolbar);
   }
+  Label=new QLabel("",Toolbar);
+  Label->setAlignment(AlignRight);
+  Toolbar->setStretchableWidget(Label);
 
-  Toolbar->setStretchableWidget(new QLabel("",Toolbar));
+  if (lst) {
+    connect(parent,SIGNAL(currentChanged(QListViewItem *)),
+	    this,SLOT(changeCurrent(QListViewItem *)));
+    Label->setText(lst->header()->label(Col));
+  }
 }
 
 QString toMemoEditor::text(void)
@@ -223,8 +229,15 @@ void toMemoEditor::store(void)
 
 void toMemoEditor::changePosition(int row,int cols)
 {
-  if (Editor->edited())
+  if (Editor->edited()) {
     emit changeData(Row,Col,Editor->text());
+    Editor->setEdited(false);
+  }
+
+  toListView *lst=listView();
+  if (lst)
+    Label->setText(lst->header()->label(Col));
+
   Row=row;
   Col=cols;
 }
@@ -263,6 +276,8 @@ void toMemoEditor::firstColumn(void)
       lst->setCurrentItem(item);
     } else {
       Col=0;
+      Label->setText(lst->header()->label(Col));
+
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)
@@ -314,6 +329,7 @@ void toMemoEditor::previousColumn(void)
       else
 	Editor->setText(cur->text(Col));
     }
+    Label->setText(lst->header()->label(Col));
   }
 }
 
@@ -353,6 +369,7 @@ void toMemoEditor::nextColumn(void)
       else
 	Editor->setText(cur->text(Col));
     }
+    Label->setText(lst->header()->label(Col));
   }
 }
 
@@ -382,6 +399,7 @@ void toMemoEditor::lastColumn(void)
 	lst->setCurrentItem(next);
     } else {
       Col=lst->columns()-1;
+      Label->setText(lst->header()->label(Col));
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(cur);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(cur);
       if (resItem)

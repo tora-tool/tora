@@ -114,6 +114,7 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
   Objects=new toResultLong(false,false,toQuery::Background,splitter);
   Objects->setSQL(SQLListInvalid);
 
+  Objects->setSelectionMode(QListView::Single);
   connect(Objects,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
 
   Source=new toResultExtract(false,splitter);

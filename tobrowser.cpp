@@ -553,7 +553,6 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : toToolWidget(BrowserTool,"browser.html",parent,connection)
 {
   Filter=NULL;
-  CurrentTop=NULL;
 
   QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.description());
 
@@ -582,6 +581,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   TopTab=new QTabWidget(this);
   QSplitter *splitter=new QSplitter(Horizontal,TopTab,TAB_TABLES);
   TopTab->addTab(splitter,"T&ables");
+  CurrentTop=splitter;
   toResultView *resultView=new toResultLong(true,false,toQuery::Background,splitter);
   resultView->setReadAll(true);
   resultView->setSQL(SQLListTables);
@@ -592,6 +592,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   FirstTab=resultView;
   Map[TAB_TABLES]=resultView;
   resultView->setTabWidget(TopTab);
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
 
@@ -723,6 +724,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListIndex);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
@@ -756,6 +758,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSequence);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
@@ -788,6 +791,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSynonym);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
@@ -820,6 +824,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListSQL);
   resultView->resize(FIRST_WIDTH*2,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
@@ -862,6 +867,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListTrigger);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);

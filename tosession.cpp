@@ -246,6 +246,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
   OpenCursors->setSQL(SQLOpenCursors);
   OpenStatement=new toSGAStatement(OpenSplitter);
 
+  Sessions->setSelectionMode(QListView::Single);
+  OpenCursors->setSelectionMode(QListView::Single);
   connect(Sessions,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   connect(OpenCursors,SIGNAL(selectionChanged(QListViewItem *)),

@@ -458,6 +458,7 @@ toProfiler::toProfiler(QWidget *parent,toConnection &connection)
   connect(Run,SIGNAL(activated(int)),this,SLOT(changeRun()));
   Units=new toProfilerUnits(vsplit);
   Units->setReadAll(true);
+  Units->setSelectionMode(QListView::Single);
   connect(Units,SIGNAL(selectionChanged()),this,SLOT(changeObject()));
   Lines=new toProfilerSource(Result);
   Lines->setReadAll(true);

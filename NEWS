@@ -88,6 +88,10 @@
 2001-12-05: Made memo editor follow current position in content editor.
 2001-12-05: Fixed a really pesky toBrowser problem when changing top tab.
 2001-12-05: Added doubleclick to connect in connection dialog.
+2001-12-05: Made default selection mode in lists be extended instead of Normal.
+2001-12-05: Display column name in memo editor when displaying lists.
+2001-12-05: Display column name in memo editor when displaying content editor.
+2001-12-06: Implemented copy selection from lists.
 
 1.1.5: Released 2001-11-26
 
