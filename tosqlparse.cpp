@@ -83,6 +83,12 @@ void printStatement(toSQLParse::statement &stat,int level)
 
 int main(int argc,char **argv) {
   QString res="
+ WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL);
+CREATE OR REPLACE procedure spTuxGetAccData as
+  vYear  CHAR(4);
+begin
+  null;
+end;
     /* A little comment
      */
     SELECT /*+
@@ -96,8 +102,7 @@ FULL(a)
        SUM(b.FinAmt) FinAmt,
        TraCod
   FROM EssTsk a,EssTra b
- WHERE DECODE(a.TspActOprID, --Hello?
-NULL,NULL,a.PrsID /* Dobedoo? */ )+5 = b.PrsID(+)
+ WHERE ((a.TspActOprID = 'Test') OR a.TspActOprID IS NULL)
    AND DECODE(a.TspActOprID,NULL,NULL,a.TskID) = b.TskID(+)
  GROUP BY a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod
 HAVING COUNT(a.TspActOprID) > 0;
@@ -535,7 +540,7 @@ toSQLParse::statement toSQLParse::parseStatement(const QString &str,int &pos,boo
     } else if (upp=="THEN"||upp=="BEGIN"||upp=="EXCEPTION") {
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
       return ret;
-    } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT")&&!nokey) {
+    } else if (upp==","||(syntax.reservedWord(upp)&&upp!="NOT"&&upp!="LIKE"&&upp!="IN"&&upp!="BETWEEN")&&!nokey) {
       ret.SubTokens->insert(ret.SubTokens->end(),statement(statement::Keyword,token));
       nokey=false;
     } else if (upp=="(") {
@@ -591,6 +596,8 @@ std::list<toSQLParse::statement> toSQLParse::parse(const QString &str)
   for(cur=parseStatement(str,pos,false);
       cur.SubTokens->begin()!=cur.SubTokens->end();
       cur=parseStatement(str,pos,false)) {
+    if (cur.Type==statement::List)
+      toStatusMessage("Unbalanced parenthesis (Too many ')')");
     ret.insert(ret.end(),cur);
   }
   if (pos<int(str.length()))
@@ -620,7 +627,7 @@ int toSQLParse::countIndent(const QString &txt,int &chars)
 toSQLParse::settings toSQLParse::Settings={true,
 					   false,
 					   false,
-					   true,
+					   false,
 					   true,
 					   true,
 					   true,
@@ -777,7 +784,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	if ((*i).Type==statement::List)
 	  count++;
       }
-      if (count<=1)
+      if (count<=1&&maxlev>0)
 	maxlev--;
       maxlevorig=maxlev;
       any=true;
@@ -880,7 +887,6 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	      (Settings.OperatorSpace||((toIsIdent(t[0])||
 					 t[0]=='\"')&&
 					(toIsIdent(ret.at(ret.length()-1))||
-					 ret.at(ret.length()-1)==')'||
 					 ret.at(ret.length()-1)=='\"')
 					)
 	       )
