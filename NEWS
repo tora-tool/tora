@@ -1,5 +1,7 @@
 1.3.11:
 
+2003-07-27: Fixed oracle quote to correct quote stuff with non ident chars.
+2003-07-27: Don't pool connections if they don't have results.
 2003-07-26: Added parameter name parsing in debugger.
 2003-07-26: Fixed problem parsing non packages in debugger.
 2003-07-26: Added variable names parsing in debugger again.

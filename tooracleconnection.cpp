@@ -190,16 +190,24 @@ public:
   class oracleQuery : public toQuery::queryImpl {
     bool Cancel;
     bool Running;
+    bool SaveInPool;
     otl_stream *Query;
   public:
     oracleQuery(toQuery *query,oracleSub *)
       : toQuery::queryImpl(query)
     {
       Running=Cancel=false;
+      SaveInPool=false;
       Query=NULL;
     }
     virtual ~oracleQuery()
-    { delete Query; }
+    {
+#ifdef OTL_STREAM_POOLING_ON
+      if (!SaveInPool)
+	Query->close(false);
+#endif
+      delete Query;
+    }
     virtual void execute(void);
 
     virtual toQValue readValue(void)
@@ -216,6 +224,7 @@ public:
       if (Cancel)
 	throw QString::fromLatin1("Cancelled while waiting to read value");
       Running=true;
+      SaveInPool=true;
       try {
 	toQValue null;
 	switch (dsc->ftype) {
@@ -485,7 +494,12 @@ public:
      */
     virtual QString quote(const QString &name)
     {
-      if (name.upper()==name)
+      bool ok=true;
+      for(unsigned int i=0;i<name.length();i++) {
+	if (name[i].upper()!=name[i]||!toIsIdent(name[i]))
+	  ok=false;
+      }
+      if (ok)
 	return name.lower();
       else
 	return QString::fromLatin1("\"")+name+QString::fromLatin1("\"");
