@@ -62,6 +62,8 @@ class toAbout : public toAboutUI {
 
 public:
   toAbout(int page,QWidget* parent=0,const char* name=0,bool modal=false,WFlags fl=0);
+
+  static const char *aboutText(void);
 };
 
 #endif

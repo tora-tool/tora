@@ -42,6 +42,7 @@
 #include <qlineedit.h>
 #include <qtoolbutton.h>
 #include <qlabel.h>
+#include <qcombobox.h>
 
 #include "totool.h"
 #include "toresultview.h"

@@ -301,3 +301,10 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     break;
   }
 }
+
+const char *toAbout::aboutText(void)
+{
+  toAllocLogo();
+
+  return AboutText;
+}
