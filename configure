@@ -67,7 +67,7 @@ do
     fi
 done
 
-echo Generating empty dependfiles and .h from .kde
+echo Generating empty dependfiles
 if [ \! -d .depends ]
 then
     mkdir .depends
