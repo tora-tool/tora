@@ -266,7 +266,10 @@ void toHelpTool::displayHelp(void)
 static toHelpTool HelpTool;
 
 toHelp::toHelp(QWidget *parent,const char *name,bool modal)
-  : QDialog(parent,name,modal,modal?0:WDestructiveClose),Modal(modal)
+  : QDialog(parent,name,modal,
+	    WStyle_Customize|WStyle_NormalBorder|
+	    WStyle_Title|WStyle_SysMenu|
+	    WStyle_Minimize|WStyle_Maximize)
 {
   if (!modal)
     Window=this;
@@ -423,7 +426,7 @@ toHelp::toHelp(QWidget *parent,const char *name,bool modal)
 
 toHelp::~toHelp()
 {
-  if (!Modal)
+  if (Window==this)
     Window=NULL;
 }
 
@@ -442,7 +445,9 @@ void toHelp::displayHelp(const QString &context,QWidget *parent)
 {
   toHelp *window;
   if (!Window||parent)
-    window=new toHelp(parent?parent:toMainWidget(),"Help window",parent);
+    window=new toHelp(NULL,"Help window",parent);
+  else
+    window=Window;
 #ifdef TO_KDE
   QString file=path();
   file+=context;

@@ -139,9 +139,6 @@ class toHelp : public QDialog {
    * Manuals to include in search.
    */
   QComboBox *Manuals;
-  /** Indicate if this is help for a modal dialog
-   */
-  bool Modal;
 #ifdef TO_KDE
   /**
    * Displays the actual help window.
