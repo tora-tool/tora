@@ -70,6 +70,7 @@ TO_NAMESPACE;
 #include "icons/function.xpm"
 #include "icons/sequence.xpm"
 #include "icons/synonym.xpm"
+#include "icons/filter.xpm"
 
 class toBrowserTool : public toTool {
 protected:
@@ -90,8 +91,6 @@ public:
 };
 
 static toBrowserTool BrowserTool;
-
-static QPixmap *toRefreshPixmap;
 
 #define FIRST_WIDTH 150
 
@@ -262,18 +261,21 @@ static toSQL SQLTriggerCols("toBrowser:TriggerCols",
 toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   : QVBox(parent,NULL,WDestructiveClose),Connection(connection)
 {
-  if (!toRefreshPixmap)
-    toRefreshPixmap=new QPixmap((const char **)refresh_xpm);
   Connection.addWidget(this);
 
   QToolBar *toolbar=toAllocBar(this,"DB Browser",connection.connectString());
 
-  new QToolButton(*toRefreshPixmap,
+  new QToolButton(QPixmap((const char *)refresh_xpm),
 		  "Update from DB",
 		  "Update from DB",
 		  this,SLOT(refresh(void)),
 		  toolbar);
   toolbar->addSeparator();
+  new QToolButton(QPixmap((const char *)filter_xpm),
+		  "Define the object filter",
+		  "Define the object filter",
+		  this,SLOT(refresh(void)),
+		  toolbar);
   Schema=new QComboBox(toolbar);
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(changeSchema(int)));

@@ -577,6 +577,8 @@ QString toFontToString(const QFont &fnt)
 
 QFont toStringToFont(const QString &str)
 {
+  if (str.isEmpty())
+    return QFont("Courier",12);
 #if QT_VERSION >= 300
   QFont fnt;
   fnt.fromString(str);
@@ -589,7 +591,7 @@ QFont toStringToFont(const QString &str)
 #  else
   QStringList lst=QStringList::split("/",str);
   if (lst.count()!=5)
-    return QFont( "Courier", 12, QFont::Bold);
+    return QFont("Courier",12);
   QFont font(lst[0],lst[1].toInt(),lst[2].toInt(),
 	     bool(lst[3].toInt()),QFont::CharSet(lst[4].toInt()));
   return font;

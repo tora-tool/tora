@@ -16,6 +16,7 @@ Extended functionality:
 		Add columns
 	Rename table
 		ALTER TABLE ... RENAME TO ...
+	Filter on tablespace
 * Ability to save a session (Including breakpoints, parameter cache windows etc)
 * Add consumer group settings to security manager.
 * Make it possible to reorder columns in toResultContent.

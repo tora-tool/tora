@@ -39,25 +39,11 @@
 
 #if QT_VERSION < 300
 #include <qmultilineedit.h>
-
-class toMultiLineEdit : public QMultiLineEdit {
-public:
-  toMultiLineEdit(QWidget *parent,const char *name)
-    : QMultiLineEdit(parent,name)
-  { }
-};
-
+#include "tomarkedtext.2.h"
 #else
 #include "qtlegacy/qttableview.h"
 #include "qtlegacy/qtmultilineedit.h"
-
-class toMultiLineEdit : public QtMultiLineEdit {
-public:
-  toMultiLineEdit(QWidget *parent,const char *name)
-    : QtMultiLineEdit(parent,name)
-  { }
-};
-
+#include "tomarkedtext.3.h"
 #endif
 #include <qstring.h>
 

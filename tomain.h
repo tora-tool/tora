@@ -48,25 +48,13 @@
 #  define TOPrinter QPrinter
 #  define TODock KDockWidget
 #  define TOFileDialog KFileDialog
-class toMainWindow : public KDockMainWindow {
-public:
-  toMainWindow()
-    : KDockMainWindow(0,"Main Window")
-  { }
-};
-
+#  include "tomainwindow.kde.h"
 #else
 #  include <qtoolbar.h>
 #  define TOPrinter QPrinter
 #  define TODock QWidget
 #  define TOFileDialog QFileDialog
-
-class toMainWindow : public QMainWindow {
-public:
-  toMainWindow()
-    : QMainWindow(0,"Main Window")
-  { }
-};
+#  include "tomainwindow.h"
 #endif
 #define TOMessageBox QMessageBox
 

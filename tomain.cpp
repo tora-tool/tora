@@ -69,6 +69,11 @@ TO_NAMESPACE;
 #include "tosearchreplace.h"
 
 #include "tomain.moc"
+#ifdef TO_KDE
+#include "tomainwindow.kde.moc"
+#else
+#include "tomainwindow.moc"
+#endif
 
 #include "icons/connect.xpm"
 #include "icons/disconnect.xpm"

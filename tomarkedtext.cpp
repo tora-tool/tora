@@ -52,6 +52,9 @@ TO_NAMESPACE;
 #include "qtlegacy/qttableview.cpp"
 #include "qtlegacy/qtmultilineedit.moc"
 #include "qtlegacy/qttableview.moc"
+#include "tomarkedtext.3.moc"
+#else
+#include "tomarkedtext.2.moc"
 #endif
 
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
