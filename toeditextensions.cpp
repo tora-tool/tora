@@ -167,7 +167,7 @@ void toEditExtensions::autoIndentBuffer(void)
       pos++;
     }
     Current->selectAll();
-    Current->insert(toSQLParse::indent(text.mid(pos)),true);
+    Current->insert(toSQLParse::indent(text.mid(pos)));
   }
 }
 
@@ -227,7 +227,7 @@ void toEditExtensions::obfuscateBuffer(void)
       Current->selectAll();
       QString res;
       ObfuscateStat(stat,res);
-      Current->insert(res,true);
+      Current->insert(res);
     }
   }
 }
