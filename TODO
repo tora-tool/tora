@@ -4,7 +4,6 @@ Beta todo list:
 	Schema filter
 	Object search
 * Modify storage in storage manager.
-* Expand admin/default in security for all privtypes.
 * Edit memo in toResultContent.
 * Add search to toResultContent/toResultView.
 * Display objects in tablespace storage manager.

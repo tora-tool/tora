@@ -1088,6 +1088,8 @@ void toSecuritySystem::changeUser(const QString &user)
 	    chk=dynamic_cast<QCheckListItem *>(item->firstChild());
 	    if (chk)
 	      chk->setOn(true);
+	    if (chk->parent())
+	      chk->parent()->setOpen(true);
 	    item->firstChild()->setText(1,"ON");
 	  }
 	  break;
@@ -1287,11 +1289,15 @@ void toSecurityRoleGrant::changeUser(bool user,const QString &username)
 	  if (admin=="YES"&&chk) {
 	    chk->setOn(true);
 	    chk->setText(1,"ON");
+	    if (chk->parent())
+	      chk->parent()->setOpen(true);
 	  }
 	  chk=findChild(item,"Default");
 	  if (def=="YES"&&chk) {
 	    chk->setOn(true);
 	    chk->setText(1,"ON");
+	    if (chk->parent())
+	      chk->parent()->setOpen(true);
 	  }
 	  break;
 	}
