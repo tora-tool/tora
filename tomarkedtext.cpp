@@ -225,3 +225,20 @@ void toMarkedText::editSearch(toSearchReplace *search)
 {
   search->setTarget(this);
 }
+
+void toMarkedText::newLine(void)
+{
+  toMultiLineEdit::newLine();
+  if (!toTool::globalConfig(CONF_AUTO_INDENT,"Yes").isEmpty()) {
+    int curline,curcol;
+    getCursorPosition (&curline,&curcol);
+    if (curline>0) {
+      QString str=textLine(curline-1);
+      QString ind;
+      for(unsigned int i=0;i<str.length()&&str[i].isSpace();i++)
+	ind+=str[i];
+      if (ind.length())
+	insert(ind,false);
+    }
+  }
+}

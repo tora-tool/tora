@@ -197,6 +197,17 @@ public:
 	  return !Invert;
 	break;
       case 4:
+	{
+	  QStringList lst=QStringList::split(QRegExp("\\s*,\\s*"),Text);
+	  for(unsigned int i=0;i<lst.count();i++)
+	    if (IgnoreCase) {
+	      if (str.upper()==lst[i])
+		return !Invert;
+	    } else if (str==lst[i])
+	      return !Invert;
+	}
+	break;
+      case 5:
 	if (Match.match(str)>=0)
 	  return !Invert;
 	break;

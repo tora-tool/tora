@@ -23,6 +23,8 @@
 	editor.
 2001-09-28: Fixed alignment of column name in extract.
 2001-09-29: Done parameter editor.
+2001-09-30: Added auto indent to editors.
+2001-09-30: Added filter option to filter on list of objects.
 
 1.1.1: 2001-09-24
 

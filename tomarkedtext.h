@@ -158,6 +158,8 @@ public:
   virtual void editSelectAll(void)
   { selectAll(); }
 
+protected:
+  virtual void newLine(void);
 private slots:
   void setRedoAvailable(bool avail)
   { redoEnabled(avail); }

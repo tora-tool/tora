@@ -11,8 +11,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>402</width>
-            <height>342</height>
+            <width>488</width>
+            <height>378</height>
         </rect>
     </property>
     <property stdset="1">
@@ -96,6 +96,13 @@
                 <cstring>Buttons</cstring>
             </property>
             <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>4</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
                 <name>title</name>
                 <string>Filter on name</string>
             </property>
@@ -117,25 +124,6 @@
                     <property stdset="1">
                         <name>enabled</name>
                         <bool>false</bool>
-                    </property>
-                </widget>
-                <widget row="2"  column="3"  rowspan="1"  colspan="3" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>Invert</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>enabled</name>
-                        <bool>false</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Invert selection</string>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>6</number>
                     </property>
                 </widget>
                 <widget row="2"  column="0"  rowspan="1"  colspan="3" >
@@ -194,8 +182,12 @@
                         <name>buttonGroupId</name>
                         <number>1</number>
                     </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Object name start with</string>
+                    </property>
                 </widget>
-                <widget row="0"  column="2"  rowspan="1"  colspan="2" >
+                <widget row="0"  column="2" >
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -209,8 +201,12 @@
                         <name>buttonGroupId</name>
                         <number>2</number>
                     </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Object name ends in</string>
+                    </property>
                 </widget>
-                <widget row="0"  column="4" >
+                <widget row="0"  column="3" >
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -223,6 +219,10 @@
                     <property stdset="1">
                         <name>buttonGroupId</name>
                         <number>3</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Object name contains</string>
                     </property>
                 </widget>
                 <widget row="0"  column="5" >
@@ -237,7 +237,49 @@
                     </property>
                     <property stdset="1">
                         <name>buttonGroupId</name>
+                        <number>5</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Object name matches RegExp</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="4" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>CommaSeparate</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Comma list</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
                         <number>4</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Comma separated list of object names</string>
+                    </property>
+                </widget>
+                <widget row="2"  column="3"  rowspan="1"  colspan="3" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Invert</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Invert selection</string>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>6</number>
                     </property>
                 </widget>
             </grid>
@@ -247,6 +289,13 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>TablespaceType</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                </sizepolicy>
             </property>
             <property stdset="1">
                 <name>title</name>

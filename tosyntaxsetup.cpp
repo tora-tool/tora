@@ -63,6 +63,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   SyntaxHighlighting->setChecked(!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty());
   CodeCompletion->setChecked(!toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty());
   CompletionSort->setChecked(!toTool::globalConfig(CONF_COMPLETION_SORT,"Yes").isEmpty());
+  AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT,"Yes").isEmpty());
 
   {
     QFont font(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
@@ -266,6 +267,7 @@ void toSyntaxSetup::saveSetting(void)
   toTool::globalSetConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_CODE_COMPLETION,highlight&&CodeCompletion->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_COMPLETION_SORT,CompletionSort->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_AUTO_INDENT,AutoIndent->isChecked()?"Yes":"");
   for (std::map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
     QString str(CONF_COLOR);
     str+=":";
