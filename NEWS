@@ -1,4 +1,4 @@
-1.1.1: 2001-09-23
+1.1.1: 2001-09-24
 
 2001-09-10: Fixed bug with no graphs being drawn.
 2001-09-10: Fixed some problems with Qt3 support.
@@ -98,6 +98,7 @@
 2001-09-23: Added tool menu to the rest of the tools.
 2001-09-23: Switch to result pane on extraction in toscript.
 2001-09-23: Made it possible to save changes in memo editor by CTRL+Return.
+2001-09-24: Made isMainThread work in windows.
 
 1.1.0: Released 2001-09-09
 

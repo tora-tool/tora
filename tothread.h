@@ -37,10 +37,6 @@
 #ifndef __TOTHREAD_H
 #define __TOTHREAD_H
 
-#ifdef WIN32
-#define TO_QTHREAD
-#endif
-
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
  */
@@ -52,7 +48,7 @@ public:
   virtual void run(void) = 0;
 };
 
-#ifdef TO_QTHREAD
+#ifdef WIN32
 #include <qthread.h>
 #include <list>
 
@@ -104,7 +100,10 @@ private:
   }			Thread;
   static std::list<toThread *> *Threads;
   static toLock *Lock;
-  static HANDLE MainThread;
+  static int LastID;
+  static __declspec( thread ) int ThreadID;
+  static int MainThread;
+
   toThread(const toThread &);
 public:
   toThread(toTask *);
@@ -113,6 +112,7 @@ public:
   void start(void);
   void startAsync(void);
   static bool mainThread(void);
+  friend class taskRunner;
 };
 
 #else

@@ -209,7 +209,7 @@ toNoBlockQuery::~toNoBlockQuery()
     toLocker lock(Lock);
     if (!EOQ) {
       TO_DEBUGOUT("Sending INT\n");
-#ifndef TO_QTHREAD
+#ifndef WIN32
       if (Query.connection().provider()=="Oracle")
 	Thread->kill(SIGINT);
 #else

@@ -40,6 +40,7 @@
 #include <qtoolbar.h>
 #include <qtoolbutton.h>
 #include <qlineedit.h>
+#include <qlabel.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -642,6 +643,7 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Delete current record from table",
 		  "Delete current record from table",
 		  Editor,SLOT(deleteCurrent()),toolbar);
+  toolbar->setStretchableWidget(new QLabel(toolbar));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));
 }

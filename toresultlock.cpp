@@ -110,23 +110,22 @@ void toResultLock::query(const QString &sql,
 
     query=new toQuery(connection(),SQLLock,sql);
 
-    {
-      toResultViewItem *lastItem=NULL;
-      while(!query->eof()) {
-	toResultViewItem *item;
-	if (!lastItem)
-	  item=new toResultViewItem(this,NULL);
-	else {
-	  item=new toResultViewItem(lastItem,NULL);
-	  setOpen(lastItem,true);
-	}
-	lastItem=item;
-	for (int pos=0;!query->eof();pos++)
-	  item->setText(pos,query->readValue());
-	QString session=item->text(0);
-	delete query;
-	query=new toQuery(connection(),SQLLock,session);
+    toResultViewItem *lastItem=NULL;
+    while(!query->eof()) {
+      toResultViewItem *item;
+      if (!lastItem)
+	item=new toResultViewItem(this,NULL);
+      else {
+	item=new toResultViewItem(lastItem,NULL);
+	setOpen(lastItem,true);
       }
+      lastItem=item;
+      for (int pos=0;!query->eof();pos++)
+	item->setText(pos,query->readValue());
+      QString session=item->text(0);
+      delete query;
+      query=NULL;
+      query=new toQuery(connection(),SQLLock,session);
     }
   } catch(const QString &exc) {
     delete query;

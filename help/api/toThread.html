@@ -26,56 +26,58 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toThread</A></b> (<A HREF="toTask.html">toTask</A> *) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref7">toThread</A></b> (<A HREF="toTask.html">toTask</A> *) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref7">~toThread</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref8">~toThread</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref8">start</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref9">start</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref9">startAsync</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref10">startAsync</A></b> (void) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref19">toThread</A></b> (<A HREF="toTask.html">toTask</A> *task) 
+<LI>&nbsp;<b><A HREF="#ref21">toThread</A></b> (<A HREF="toTask.html">toTask</A> *task) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref20">~toThread</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref22">~toThread</A></b> () 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref21">start</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref23">start</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref22">startAsync</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref24">startAsync</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref23">kill</A></b> (int signo) 
+<LI>void &nbsp;<b><A HREF="#ref25">kill</A></b> (int signo) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref10">mainThread</A></b> (void) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref11">mainThread</A></b> (void) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref24">mainThread</A></b> (void) 
+<LI>static  bool &nbsp;<b><A HREF="#ref26">mainThread</A></b> (void) 
 </LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref12">taskRunner</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Used to create new threads of execution. When a thread exits it will delete the
  thread and task objects so the calling thread must never delete a started thread.
  </p>
-<A NAME="toThread"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *)
-<br></td><td align="right"><h3><strong>toThread</strong></h3></td></tr></table><p></p><A NAME="~toThread"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
-<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
-<br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p></p><A NAME="startAsync"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
-<br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><A NAME="mainThread"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
-<br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="toThread"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *task)
+<A NAME="toThread"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *)
+<br></td><td align="right"><h3><strong>toThread</strong></h3></td></tr></table><p></p><A NAME="~toThread"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
+<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
+<br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p></p><A NAME="startAsync"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
+<br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><A NAME="mainThread"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
+<br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="taskRunner"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>taskRunner</strong>
+</td><td align="right"><h3><strong>taskRunner</strong></h3></td></tr></table><p></p><A NAME="toThread"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toThread</strong> (<A HREF="toTask.html">toTask</A> *task)
 <br></td><td align="right"><h3><strong>toThread</strong></h3></td></tr></table><p></p><p> Create thread.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>task</i></TD><TD align="left" valign="top">Task to run.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toThread"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
-<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
+<A NAME="~toThread"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toThread</strong> ()
+<br></td><td align="right"><h3><strong>~toThread</strong></h3></td></tr></table><p></p><A NAME="start"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>start</strong> (void)
 <br></td><td align="right"><h3><strong>start</strong></h3></td></tr></table><p></p><p> Start thread and wait for other thread to start running.
    </p>
-<A NAME="startAsync"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
+<A NAME="startAsync"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>startAsync</strong> (void)
 <br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><p> Start thread and continue executing this thread until normal scheduling
  handles over execution to child thread.
    </p>
-<A NAME="kill"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>kill</strong> (int signo)
+<A NAME="kill"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>kill</strong> (int signo)
 <br></td><td align="right"><h3><strong>kill</strong></h3></td></tr></table><p></p><p> Send a signal to this thread. This function is not available if using
  Qt Threads.
    </p>
-<A NAME="mainThread"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
+<A NAME="mainThread"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
 <br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Returns true if this is the main thread.
    </p>
 <HR>

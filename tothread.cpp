@@ -41,7 +41,7 @@
 
 #include "tothread.h"
 
-#ifndef TO_QTHREAD
+#ifndef WIN32
 
 pthread_t toThread::MainThread=pthread_self();
 
@@ -196,11 +196,13 @@ bool toThread::mainThread(void)
 
 std::list<toThread *> *toThread::Threads;
 toLock *toThread::Lock;
-HANDLE toThread::MainThread=QThread::currentThread();
+int toThread::LastID=0;
+__declspec( thread ) int toThread::ThreadID=0;
+int toThread::MainThread=0;
 
 bool toThread::mainThread(void)
 {
-  return MainThread==QThread::currentThread();
+  return MainThread==ThreadID;
 }
 
 void toSemaphore::up(void)
@@ -293,6 +295,10 @@ void toThread::taskRunner::run(void)
 {
   try {
     StartSemaphore.up();
+    Lock->lock();
+    toThread::LastID++;
+    toThread::ThreadID=LastID;
+    Lock->unlock();
     Task->run();
   } catch(const QString &exc) {
     printf("Unhandled exception in thread:\n%s\n",(const char *)exc);

@@ -824,9 +824,9 @@ void toResultView::query(const QString &sql,const toQList &param)
     return;
 
   delete Query;
+  Query=NULL;
   setSQL(sql);
   setParams(param);
-  Query=NULL;
   LastItem=NULL;
   RowNumber=0;
 
