@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>522</width>
+            <width>518</width>
             <height>448</height>
         </rect>
     </property>
@@ -133,8 +133,14 @@
         <receiver>toHelpSetupUI</receiver>
         <slot>addFile()</slot>
     </connection>
+    <connection>
+        <sender>RemoveButton</sender>
+        <signal>clicked()</signal>
+        <receiver>toHelpSetupUI</receiver>
+        <slot>delFile()</slot>
+    </connection>
     <slot access="public">addFile()</slot>
-    <slot access="public">editFile()</slot>
+    <slot access="public">delFile()</slot>
 </connections>
 <tabstops>
     <tabstop>FileList</tabstop>

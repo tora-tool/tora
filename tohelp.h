@@ -64,6 +64,8 @@ class toHelp : public QDialog {
   QTextBrowser *Help;
 #endif
   QProgressBar *Progress;
+
+  static QString path(const QString &path=QString::null);
 public:
   toHelp(QWidget *,const char *name);
   virtual ~toHelp();

@@ -559,7 +559,7 @@ void toMain::commandCallback(int cmd)
       case TO_FILE_OPEN:
 	if (!readOnly) {
 	  QFileInfo file(mark->filename());
-	  QString filename=TOFileDialog::getOpenFileName(file.dirPath(),"*.sql\n*.txt",this);
+	  QString filename=toOpenFilename(file.dirPath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
 	    QCString data=toReadFile(filename);
 	    mark->setText(QString::fromLocal8Bit(data));
@@ -574,7 +574,7 @@ void toMain::commandCallback(int cmd)
 	QFileInfo file(mark->filename());
 	QString filename=mark->filename();
 	if (newFilename||filename.isEmpty())
-	  filename=TOFileDialog::getSaveFileName(file.dirPath(),"*.sql\n*.txt",this);
+	  filename=toSaveFilename(file.dirPath(),"*.sql\n*.txt",this);
 	if (!filename.isEmpty()) {
 	  if (!toWriteFile(filename,mark->text()))
 	    return;

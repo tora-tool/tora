@@ -76,8 +76,7 @@ public:
   { OkButton->setEnabled(false); }
   virtual void browse(void)
   {
-    QFileInfo file(Filename->text());
-    QString filename=TOFileDialog::getExistingDirectory(file.dirPath(),this);
+    QString filename=toOpenFilename(Filename->text(),"toc.htm*",this);
     if (!filename.isEmpty())
       Filename->setText(filename);
   }
@@ -193,13 +192,12 @@ toHelp::toHelp(QWidget *parent,const char *name)
     }
   }
 #ifndef TO_KDE
-  Help->mimeSourceFactory()->addFilePath(toHelpPath());
+  Help->mimeSourceFactory()->addFilePath(path());
 #endif
   for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
-      QString path=(*i).second;
+      QString path=toHelp::path((*i).second);
       QString filename=path;
-      filename+="/toc.htm";
       QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first,filename);
       toHtml file(toReadFile(filename));
       bool inA=false;
@@ -272,14 +270,24 @@ toHelp::~toHelp()
   Window=NULL;
 }
 
+QString toHelp::path(const QString &path=QString::null)
+{
+  QString cur;
+  if (path.isNull())
+    cur=toHelpPath();
+  else
+    cur=path;
+  cur.replace(QRegExp("[^/]+$"),"");
+  return cur;
+}
+
 void toHelp::displayHelp(const QString &context)
 {
   if (!Window)
     new toHelp(toMainWidget(),"Help window");
 #ifdef TO_KDE
   QString file="file://";
-  file+=toHelpPath();
-  file+="/";
+  file+=path();
   file+=context;
   Window->Help->openURL(KURL(file));
 #else

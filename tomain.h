@@ -205,6 +205,8 @@ bool toWriteFile(const QString &filename,const QString &data);
 bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len);
 void toSetEnv(const QCString &var,const QCString &val);
 void toUnSetEnv(const QCString &var);
+QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
 
 #define TO_FILE_MENU		10
 #define TO_EDIT_MENU		20

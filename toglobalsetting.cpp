@@ -144,14 +144,14 @@ void toGlobalSetting::pluginBrowse(void)
 
 void toGlobalSetting::sqlBrowse(void)
 {
-  QString str=TOFileDialog::getOpenFileName(CustomSQL->text(),"*.sql",this);
+  QString str=toOpenFilename(CustomSQL->text(),"*.sql",this);
   if (!str.isEmpty())
     CustomSQL->setText(str);
 }
 
 void toGlobalSetting::helpBrowse(void)
 {
-  QString str=TOFileDialog::getExistingDirectory(PluginDirectory->text(),this);
+  QString str=toOpenFilename(HelpDirectory->text(),"toc.htm*",this);
   if (!str.isEmpty())
     HelpDirectory->setText(str);
 }

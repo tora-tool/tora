@@ -36,6 +36,13 @@ TO_NAMESPACE;
 
 #include <stdlib.h>
 
+#ifdef TO_KDE
+#include <kurl.h>
+#include <ktempfile.h>
+#include <kfiledialog.h>
+#include <kio/netaccess.h>
+#endif
+
 #include <qapplication.h>
 #include <qstatusbar.h>
 #include <qcombobox.h>
@@ -638,7 +645,36 @@ static QString toExpandFile(const QString &file)
 
 QCString toReadFile(const QString &filename)
 {
-  QFile file(toExpandFile(filename));
+  QString expanded=toExpandFile(filename);
+#ifdef TO_KDE
+  KURL url(expanded);
+  if (!url.isLocalFile()) {
+    QString tmpFile;
+    if(KIO::NetAccess::download(url,tmpFile)) {
+      QFile file(tmpFile);
+      if (!file.open(IO_ReadOnly)) {
+	KIO::NetAccess::removeTempFile(tmpFile);
+	throw QString("Couldn't open file %1.").arg(filename);
+      }
+
+      int size=file.size();
+
+      char *buf=new char[size+1];
+      if (file.readBlock(buf,size)==-1) {
+	delete buf;
+	KIO::NetAccess::removeTempFile(tmpFile);
+	throw QString("Encountered problems read configuration");
+      }
+      buf[size]=0;
+      QCString ret(buf,size+1);
+      delete buf;
+      KIO::NetAccess::removeTempFile(tmpFile);
+      return ret;
+    }
+    throw QString("Couldn't download file");
+  }
+#endif
+  QFile file(expanded);
   if (!file.open(IO_ReadOnly))
     throw QString("Couldn't open file %1.").arg(filename);
 	    
@@ -657,7 +693,30 @@ QCString toReadFile(const QString &filename)
 
 bool toWriteFile(const QString &filename,const QCString &data)
 {
-  QFile file(toExpandFile(filename));
+  QString expanded=toExpandFile(filename);
+#ifdef TO_KDE
+  KURL url(expanded);
+  if (!url.isLocalFile()) {
+    KTempFile file;
+    file.file()->writeBlock(data,data.length());
+    if (file.status()!=IO_Ok) {
+      TOMessageBox::warning(toMainWidget(),"File error","Couldn't write data to tempfile");
+      file.unlink();
+      return false;
+    }
+    file.close();
+    if (!KIO::NetAccess::upload(file.name(),url)) {
+      file.unlink();
+      TOMessageBox::warning(toMainWidget(),"File error","Couldn't upload data to URL");
+      return false;
+    }
+    file.unlink();
+    toStatusMessage("File saved successfully");
+    return true;
+  }
+#endif
+
+  QFile file(expanded);
   if (!file.open(IO_WriteOnly)) {
     TOMessageBox::warning(toMainWidget(),"File error","Couldn't open file for writing");
     return false;
@@ -684,6 +743,32 @@ bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)
     if (lst1[i]!=lst2[i])
       return false;
   return true;
+}
+
+QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent)
+{
+#ifdef TO_KDE
+  KURL url=TOFileDialog::getOpenURL(filename,filter,parent);
+  if (url.isEmpty())
+    return QString::null;
+  return url.url();
+#else
+  return TOFileDialog::getOpenFileName(filename,filter,parent);
+#endif
+}
+
+QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent)
+{
+#ifdef TO_KDE
+  KURL url=TOFileDialog::getSaveURL(filename,filter,parent);
+  if (url.hasPass())
+    TOMessageBox::warning(toMainWidget(),"File open password",url.pass());
+  if (url.isEmpty())
+    return QString::null;
+  return url.url();
+#else
+  return TOFileDialog::getSaveFileName(filename,filter,parent);
+#endif
 }
 
 void toSetEnv(const QCString &var,const QCString &val)

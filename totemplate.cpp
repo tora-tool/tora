@@ -192,7 +192,7 @@ public:
   virtual void browse(void)
   {
     QFileInfo file(Filename->text());
-    QString filename=TOFileDialog::getOpenFileName(file.dirPath(),"*.tpl",this);
+    QString filename=toOpenFilename(file.dirPath(),"*.tpl",this);
     if (!filename.isEmpty())
       Filename->setText(filename);
   }

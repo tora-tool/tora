@@ -637,7 +637,7 @@ void toListView::exportFile(void)
 	  next=next->nextSibling();
       }
     }
-    QString filename=TOFileDialog::getSaveFileName(QString::null,"*.txt",this);
+    QString filename=toSaveFilename(QString::null,"*.txt",this);
     if (!filename.isEmpty()) {
       toWriteFile(filename,output);
     }
