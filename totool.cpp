@@ -261,7 +261,7 @@ bool toTool::saveMap(const QString &file,std::map<QString,QString> &pairs)
 }
 
 #ifdef WIN32
-#  define APPLICATION_NAME "SOFTWARE\\Underscore\\tosqel\\"
+#  define APPLICATION_NAME "SOFTWARE\\Underscore\\tora\\"
 #  define FALLBACK_NAME    "SOFTWARE\\GlobeCom\\tora\\"
 
 static char *toKeyPath(const QString &str,CRegistry &registry)
