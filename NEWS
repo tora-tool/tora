@@ -14,6 +14,7 @@
 	Christopher R. Redinger for pointing it out).
 2001-03-26: Fixed numbering bug if column view.
 2001-03-26: Enabled sorting of content.
+2001-03-26: Set local8bit codec from LANG environment variable.
 
 0.7: Released 2001-03-24
 

@@ -31,6 +31,7 @@ TO_NAMESPACE;
 #include <stdlib.h>
 
 #include <qapplication.h>
+#include <qtextcodec.h>
 
 #include "tomain.h"
 #include "toconf.h"
@@ -64,6 +65,8 @@ int main(int argc,char **argv)
     if (toTool::globalConfig(CONF_DESKTOP_AWARE,"").isEmpty())
       QApplication::setDesktopSettingsAware(false);
     QApplication mainApp(argc,argv);
+    if (getenv("LANG"))
+      mainApp.setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
 #ifdef ENABLE_STYLE
     QString style=toTool::globalConfig(CONF_STYLE,"");
@@ -111,6 +114,7 @@ int main(int argc,char **argv)
 		 (const char *)(*i),dlerror());
     }
 #endif
+
 
     toSQL::loadSQL(toTool::globalConfig(CONF_SQL_FILE,DEFAULT_SQL_FILE));
 
