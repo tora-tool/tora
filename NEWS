@@ -37,6 +37,7 @@
 2001-05-31: Fixed problem with missing .torarc.
 2001-05-31: Use KPrinter if available.
 2001-05-31: Fixed problem with missing .torasql.
+2001-05-31: Done with analytic functions in PL/SQL documentation.
 
 0.10: Released 2001-05-25
 
