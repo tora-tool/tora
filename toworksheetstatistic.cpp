@@ -68,27 +68,23 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 		  this,SLOT(load(void)),
 		  toolbar);
 
-  QToolButton *button=new QToolButton(QPixmap((const char **)filesave_xpm),
-				      "Save statistics to file",
-				      "Save statistics to file",
-				      this,SLOT(displayMenu(void)),
-				      toolbar);
+  QToolButton *button=new toPopupButton(QPixmap((const char **)filesave_xpm),
+			 	        "Save statistics to file",
+				        "Save statistics to file",
+				        toolbar);
   SaveMenu=new QPopupMenu(button);
   button->setPopup(SaveMenu);
-  button->setPopupDelay(0);
   connect(SaveMenu,SIGNAL(aboutToShow()),this,SLOT(displayMenu()));
   connect(SaveMenu,SIGNAL(activated(int)),this,SLOT(save(int)));
 
   toolbar->addSeparator();
 
-  button=new QToolButton(QPixmap((const char **)trash_xpm),
-			 "Remove statistics",
-			 "Remove statistics",
-			 this,SLOT(displayMenu(void)),
-			 toolbar);
+  button=new toPopupButton(QPixmap((const char **)trash_xpm),
+			   "Remove statistics",
+			   "Remove statistics",
+			   toolbar);
   RemoveMenu=new QPopupMenu(button);
   button->setPopup(RemoveMenu);
-  button->setPopupDelay(0);
   connect(RemoveMenu,SIGNAL(aboutToShow()),this,SLOT(displayMenu()));
   connect(RemoveMenu,SIGNAL(activated(int)),this,SLOT(remove(int)));
 

@@ -44,14 +44,14 @@
 #include "icons/changeconnect.xpm"
 
 toChangeConnection::toChangeConnection(QToolBar *parent,const char *name)
-  : QToolButton(parent,name)
+  : toPopupButton(QPixmap((const char **)changeconnect_xpm),
+		  "Change the connection of the tool.",
+		  "Change the connection of the tool.",
+		  parent,name)
 {
   setPopup(new QPopupMenu(this));
   connect(popup(),SIGNAL(aboutToShow()),this,SLOT(popupMenu()));
   connect(popup(),SIGNAL(activated(int)),this,SLOT(changeConnection(int)));
-  setPopupDelay(0);
-  setOffIconSet(QPixmap((const char **)changeconnect_xpm));
-  QToolTip::add(this,"Change the connection of the tool.");
 }
 
 void toChangeConnection::popupMenu(void)

@@ -1171,14 +1171,12 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
   toRefreshParse(timer());
 
   toolbar->addSeparator();
-  TabButton=new QToolButton(QPixmap((const char **)compile_xpm),
-			    "Enable and disable tuning tabs",
-			    "Enable and disable tuning tabs",
-			    this,SLOT(showTabMenu(void)),
-			    toolbar);
+  TabButton=new toPopupButton(QPixmap((const char **)compile_xpm),
+		 	     "Enable and disable tuning tabs",
+			     "Enable and disable tuning tabs",
+			     toolbar);
   TabMenu=new QPopupMenu(TabButton);
   TabButton->setPopup(TabMenu);
-  TabButton->setPopupDelay(0);
   connect(TabMenu,SIGNAL(aboutToShow()),this,SLOT(showTabMenu()));
   connect(TabMenu,SIGNAL(activated(int)),this,SLOT(enableTabMenu(int)));
 

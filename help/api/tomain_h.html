@@ -66,6 +66,7 @@
 #include <list>
 #include <map>
 
+#include <qtoolbutton.h>
 #include <qmainwindow.h>
 #include <qtimer.h>
 
@@ -862,6 +863,23 @@ T min(T a, T b)
 {
     return a < b ? a : b ;
 }
+
+/** Popup toolbutton that works like I think they should under Qt 3.0 as well.
+ * this means they will pop up a tool menu when you click on the button as well.
+ */
+class toPopupButton : public QToolButton {
+  Q_OBJECT
+public:
+  /** Create button, same constructor as toolbutton except no slots
+   */
+  toPopupButton(const QIconSet &iconSet,const QString &textLabel,
+                const QString &grouptext,QToolBar *parent,const char *name=0);
+  /** Create button somewhere else than in a toolbar.
+   */
+  toPopupButton(QWidget *parent,const char *name=0);
+private slots:
+  void click(void);
+};
 
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.

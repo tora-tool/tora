@@ -472,7 +472,9 @@ TODock *toAllocDock(const QString &name,
     return toolbar;
   }
 #  else
-  return new QDockWindow(QDockWindow::InDock,toMainWidget());
+  QDockWindow *dock=new QDockWindow(QDockWindow::InDock,toMainWidget());
+  dock->setNewLine(true);
+  return dock;
 #  endif
 #endif
 }
@@ -1045,6 +1047,26 @@ QString toUnnull(const QString &str)
   } else if (str=="{null}")
     return QString::null;
   return str;
+}
+
+toPopupButton::toPopupButton(const QIconSet &iconSet,const QString &textLabel,
+			     const QString &grouptext,QToolBar *parent,const char *name)
+  : QToolButton(iconSet,textLabel,grouptext,NULL,NULL,parent,name)
+{
+  connect(this,SIGNAL(clicked()),this,SLOT(click()));
+  setPopupDelay(0);
+}
+
+toPopupButton::toPopupButton(QWidget *parent,const char *name)
+  : QToolButton(parent,name)
+{
+  connect(this,SIGNAL(clicked()),this,SLOT(click()));
+  setPopupDelay(0);
+}
+
+void toPopupButton::click(void)
+{
+  openPopup();
 }
 
 #ifndef TO_LICENSE

@@ -465,14 +465,12 @@ void toWorksheet::setup(bool autoLoad)
 
     toolbar->addSeparator();
 
-    SavedButton=new QToolButton(QPixmap((const char **)compile_xpm),
-				"Run current saved SQL",
-				"Run current saved SQL",
-				this,SLOT(executeSaved(void)),
-				toolbar);
+    SavedButton=new toPopupButton(QPixmap((const char **)compile_xpm),
+				  "Run current saved SQL",
+				  "Run current saved SQL",
+				  toolbar);
     SavedMenu=new QPopupMenu(SavedButton);
     SavedButton->setPopup(SavedMenu);
-    SavedButton->setPopupDelay(0);
     connect(SavedMenu,SIGNAL(aboutToShow()),this,SLOT(showSaved()));
     connect(SavedMenu,SIGNAL(activated(int)),this,SLOT(executeSaved(int)));
     new QToolButton(QPixmap((const char **)previous_xpm),

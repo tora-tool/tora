@@ -876,7 +876,7 @@ QString toSQLParse::indentStatement(statement &stat,int level)
 	  extra=0;
 	} else {
 	  if (ret.length()>0&&
-	      !ret[ret.length()-1].isSpace()&&
+	      !ret.at(ret.length()-1).isSpace()&&
 	      (Settings.OperatorSpace||((toIsIdent(t[0])||
 					 t[0]=='\"')&&
 					(toIsIdent(ret.at(ret.length()-1))||

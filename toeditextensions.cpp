@@ -344,20 +344,20 @@ public:
 				      SLOT(autoIndentBuffer()),
 				      ALT+CTRL+SHIFT+Key_I);
     menu->insertSeparator();
-    ObfuscateBlock=menu->insertItem("Obfuscate selection",
+    ObfuscateBlock=menu->insertItem("Obfuscate Selection",
 				    &EditExtensions,
 				    SLOT(obfuscateBlock()));
-    ObfuscateBuffer=menu->insertItem("Obfuscate editor",
+    ObfuscateBuffer=menu->insertItem("Obfuscate Editor",
 				     &EditExtensions,
 				     SLOT(obfuscateBuffer()));
-    toMainWidget()->editMenu()->insertItem("Auto indent",menu);
+    toMainWidget()->editMenu()->insertItem("Auto Indent",menu);
 
     IndentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)indent_xpm),
-						       "Indent block",&EditExtensions,
+						       "Indent Block",&EditExtensions,
 						       SLOT(indentBlock()),
 						       ALT+Key_Right);
     DeindentIndex=toMainWidget()->editMenu()->insertItem(QPixmap((const char **)deindent_xpm),
-							 "De-indent block",&EditExtensions,
+							 "De-indent Block",&EditExtensions,
 							 SLOT(deindentBlock()),
 							 ALT+Key_Left);
 

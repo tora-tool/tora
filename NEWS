@@ -165,6 +165,7 @@
 2001-12-13: Don't forget to display linking in custom plugins in configure.
 2001-12-13: Fixed building static oracle on Oracle9.
 2001-12-13: Fix to indent block.
+2001-12-13: A bunch of Qt 3.0 fixes.
 
 1.1.5: Released 2001-11-26
 

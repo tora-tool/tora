@@ -182,7 +182,7 @@ toMain::toMain()
 		       TO_FILE_OPEN_SESSION);
   FileMenu->insertItem(QPixmap((const char **)filesave_xpm),"Save Session...",
 		       TO_FILE_SAVE_SESSION);
-  FileMenu->insertItem("Restore last session",TO_FILE_LAST_SESSION);
+  FileMenu->insertItem("Restore Last Session",TO_FILE_LAST_SESSION);
   FileMenu->insertItem("Close Session",TO_FILE_CLOSE_SESSION);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)print_xpm),"&Print..",TO_FILE_PRINT);
@@ -435,12 +435,11 @@ toMain::toMain()
   ColumnLabel->setMinimumWidth(60);
   ColumnLabel->hide();
 
-  QToolButton *dispStatus=new QToolButton(statusBar());
+  QToolButton *dispStatus=new toPopupButton(statusBar());
   dispStatus->setIconSet(QPixmap((const char **)up_xpm));
   statusBar()->addWidget(dispStatus,0,true);
   StatusMenu=new QPopupMenu(dispStatus);
   dispStatus->setPopup(StatusMenu);
-  dispStatus->setPopupDelay(0);
   connect(StatusMenu,SIGNAL(aboutToShow()),
 	  this,SLOT(statusMenu()));
   connect(StatusMenu,SIGNAL(activated(int)),this,SLOT(commandCallback(int)));

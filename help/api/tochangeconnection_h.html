@@ -63,14 +63,14 @@
 #ifndef __TOCHANGECONNECTION_H
 #define __TOCHANGECONNECTION_H
 
-#include <qtoolbutton.h>
+#include "tomain.h"
 
 /**
  * This button will allow you to change the connection for the nearest toToolWidget
  * parent.
  */
 
-class toChangeConnection : public QToolButton {
+class toChangeConnection : public toPopupButton {
   Q_OBJECT
 private slots:
   void changeConnection(int id);
