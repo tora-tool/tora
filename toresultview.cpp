@@ -280,6 +280,11 @@ toListView::toListView(QWidget *parent,const char *name)
   Menu=NULL;
   connect(this,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
 	  this,SLOT(displayMenu(QListViewItem *,const QPoint &,int)));
+  QString str=toTool::globalConfig(CONF_LIST,"");
+  if (!str.isEmpty()) {
+    QFont font(toStringToFont(str));
+    setFont(font);
+  }
 }
 
 toListView::~toListView()
@@ -746,7 +751,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
     int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
     for (int j=0;j<MaxNumber&&!Query->eof();j++)
       addItem();
-    if (ReadAll)
+    if (ReadAll||MaxNumber<0)
       readAll();
 
     char buffer[100];
@@ -754,7 +759,7 @@ void toResultView::query(const QString &sql,const list<QString> &param)
       sprintf(buffer,"%d rows processed",(int)Query->get_rpc());
     else
       sprintf(buffer,"Query executed");
-    toStatusMessage(buffer);
+    toStatusMessage(QString::number(MaxNumber));
   } TOCATCH
   updateContents();
 }

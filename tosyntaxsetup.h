@@ -44,6 +44,7 @@ class QFont;
 
 class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
   QString Text;
+  QString List;
   QListBoxItem *Current;
   map<QString,QColor> Colors;
   toSyntaxAnalyzer Analyzer;
@@ -55,6 +56,7 @@ public slots:
   virtual void changeLine(QListBoxItem *);
   virtual void selectColor(void);
   virtual void selectFont(void);
+  virtual void selectResultFont(void);
   virtual void changeUpper(bool val)
   { Example->setKeywordUpper(val); Example->update(); }
   virtual void changeHighlight(bool val)

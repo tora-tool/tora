@@ -179,8 +179,11 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
 					   DEFAULT_MAX_COL_DISP));
   MaxColSize->setText(toTool::globalConfig(CONF_MAX_COL_SIZE,
 					   DEFAULT_MAX_COL_SIZE));
-  InitialFetch->setText(toTool::globalConfig(CONF_MAX_NUMBER,
-					     DEFAULT_MAX_NUMBER));
+  QString str=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER);
+  if (str.toInt()<0)
+    ReadAll->setChecked(true);
+  else
+    InitialFetch->setText(str);
   DefaultDate->setText(toTool::globalConfig(CONF_DATE_FORMAT,
 					    DEFAULT_DATE_FORMAT));
   CheckPoint->setText(toTool::globalConfig(CONF_PLAN_CHECKPOINT,
@@ -205,7 +208,10 @@ void toDatabaseSetting::saveSetting(void)
 {
   toTool::globalSetConfig(CONF_MAX_COL_DISP,MaxColDisp->text());
   toTool::globalSetConfig(CONF_MAX_COL_SIZE,MaxColSize->text());
-  toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
+  if (ReadAll->isChecked())
+    toTool::globalSetConfig(CONF_MAX_NUMBER,"-1");
+  else
+    toTool::globalSetConfig(CONF_MAX_NUMBER,InitialFetch->text());
   toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
   toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
   toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());

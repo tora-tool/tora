@@ -6,6 +6,8 @@
 2001-05-20: Some fixes to the template editor.
 2001-05-20: Implemented option to include DB in title or not.
 2001-05-20: Implemented option of size unit.
+2001-05-20: Added option to read all entries of tables.
+2001-05-20: Added option to select font in result.
 
 0.9.1: Released 2001-05-20
 

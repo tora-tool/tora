@@ -44,6 +44,7 @@ TO_NAMESPACE;
 #include <qfont.h>
 #include <qcolordialog.h>
 #include <qapplication.h>
+#include <qlistview.h>
 
 #include "tohighlightedtext.h"
 #include "tosyntaxsetup.h"
@@ -61,10 +62,24 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
   if (!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty())
     SyntaxHighlighting->setChecked(true);
 
-  QFont font(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
-  Text=toFontToString(font);
-  checkFixedWidth(font);
-  CodeExample->setFont(font);
+  {
+    QFont font(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
+    Text=toFontToString(font);
+    checkFixedWidth(font);
+    CodeExample->setFont(font);
+  }
+  {
+    QString str=toTool::globalConfig(CONF_LIST,"");
+    QFont font;
+    if (str.isEmpty()) {
+      QWidget *wid=new QListView;
+      font=qApp->font(wid);
+    } else {
+      font=toStringToFont(str);
+    }
+    List=toFontToString(font);
+    ResultExample->setFont(font);
+  }
   Colors[Analyzer.typeString(toSyntaxAnalyzer::NormalBkg)]=Analyzer.getColor(toSyntaxAnalyzer::NormalBkg);
   Colors[Analyzer.typeString(toSyntaxAnalyzer::ErrorBkg)]=Analyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
   Colors[Analyzer.typeString(toSyntaxAnalyzer::CurrentBkg)]=Analyzer.getColor(toSyntaxAnalyzer::CurrentBkg);
@@ -203,6 +218,21 @@ void toSyntaxSetup::selectFont(void)
   }
 }
 
+void toSyntaxSetup::selectResultFont(void)
+{
+#ifdef TO_KDE
+  QFont font=toStringToFont(List);
+  bool ok=KFontDialog::getFont(font,false,this);
+#else
+  bool ok=true;
+  QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);
+#endif
+  if (ok) {
+    List=toFontToString(font);
+    ResultExample->setFont(font);
+  }
+}
+
 void toSyntaxSetup::changeLine(QListBoxItem *item)
 {
   Current=item;
@@ -228,6 +258,7 @@ void toSyntaxSetup::selectColor(void)
 void toSyntaxSetup::saveSetting(void)
 {
   toTool::globalSetConfig(CONF_TEXT,Text);
+  toTool::globalSetConfig(CONF_LIST,List);
   toTool::globalSetConfig(CONF_HIGHLIGHT,SyntaxHighlighting->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
   for (map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {

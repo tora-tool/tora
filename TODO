@@ -9,7 +9,6 @@ Beta todo list:
 * Add search to toResultContent/toResultView.
 * Display objects in tablespace storage manager.
 * Display execution type of statements (Until first response if not next option).
-* Option to read all data (See before option as well).
 * Select font for toResultViews.
 * Drag & drop from/to toResultContents.
 * Segments view in storage view.

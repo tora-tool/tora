@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>388</width>
+            <width>384</width>
             <height>401</height>
         </rect>
     </property>
@@ -95,25 +95,18 @@
                         <string>The number of rows to always fetch when executing a query.</string>
                     </property>
                 </widget>
-                <widget row="2"  column="1" >
+                <widget row="2"  column="1"  rowspan="1"  colspan="2" >
                     <class>QLineEdit</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>MaxColDisp</cstring>
                     </property>
                 </widget>
-                <widget row="1"  column="1" >
+                <widget row="1"  column="1"  rowspan="1"  colspan="2" >
                     <class>QLineEdit</class>
                     <property stdset="1">
                         <name>name</name>
                         <cstring>MaxColSize</cstring>
-                    </property>
-                </widget>
-                <widget row="0"  column="1" >
-                    <class>QLineEdit</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>InitialFetch</cstring>
                     </property>
                 </widget>
                 <widget row="1"  column="0" >
@@ -152,6 +145,28 @@
                     <property>
                         <name>toolTip</name>
                         <string>The largest default size of a column in query results.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="1" >
+                    <class>QLineEdit</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>InitialFetch</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <widget row="0"  column="2" >
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>ReadAll</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;All</string>
                     </property>
                 </widget>
             </grid>
@@ -306,6 +321,12 @@
         <signal>clicked()</signal>
         <receiver>toDatabaseSettingUI</receiver>
         <slot>createPlanTable()</slot>
+    </connection>
+    <connection>
+        <sender>ReadAll</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>InitialFetch</receiver>
+        <slot>setDisabled(bool)</slot>
     </connection>
     <slot access="public">createPlanTable()</slot>
 </connections>

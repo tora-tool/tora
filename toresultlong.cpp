@@ -84,7 +84,11 @@ void toResultLong::query(const QString &sql,const list<QString> &param)
   try {
     Query=new toNoBlockQuery(Connection,sql,param,Statistics);
 
-    addItem();
+    int MaxNumber=toTool::globalConfig(CONF_MAX_NUMBER,DEFAULT_MAX_NUMBER).toInt();
+    if (MaxNumber<0)
+      readAll();
+    else
+      addItem();
 
   } catch (const otl_exception &exc) {
     emit firstResult(SQL,QString::fromUtf8((const char *)exc.msg));

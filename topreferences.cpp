@@ -114,7 +114,7 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   item=new QListBoxText(TabSelection,"Database Settings");
   addWidget(item,new toDatabaseSetting(this));
 
-  item=new QListBoxText(TabSelection,"Syntax Highlighting");
+  item=new QListBoxText(TabSelection,"Font Settings");
   addWidget(item,new toSyntaxSetup(this));
   
   item=new QListBoxText(TabSelection,"Tools");

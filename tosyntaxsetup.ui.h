@@ -60,7 +60,9 @@ public:
     QCheckBox* SyntaxHighlighting;
     QCheckBox* KeywordUpper;
     QPushButton* PushButton1;
+    QPushButton* PushButton2;
     QLabel* CodeExample;
+    QLabel* ResultExample;
     QGroupBox* GroupBox2;
     QPushButton* SelectColor;
     QLabel* ExampleColor;
@@ -71,6 +73,7 @@ public slots:
     virtual void changeLine(QListBoxItem *);
     virtual void selectColor(void);
     virtual void selectFont(void);
+    virtual void selectResultFont(void);
     virtual void changeUpper(bool);
     virtual void changeHighlight(bool);
 

@@ -112,6 +112,8 @@ void toResultContent::changeParams(const QString &Param1,const QString &Param2)
 	setNumRows(numRows()+INC_SIZE);
       addRow();
     }
+    if (MaxNumber<0)
+      readAll();
     setNumRows(Row+1);
   } TOCATCH
   OrigValues.clear();

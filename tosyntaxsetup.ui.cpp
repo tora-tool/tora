@@ -84,6 +84,15 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
     CodeExample->setText( tr( "Code Font" ) );
     QToolTip::add(  CodeExample, tr( "The font to display when editing SQL." ) );
 
+    PushButton2 = new QPushButton( Options, "PushButton2" );
+    PushButton2->setGeometry( QRect( 90, 105, 70, 32 ) ); 
+    PushButton2->setText( tr( "&Choose" ) );
+
+    ResultExample = new QLabel( Options, "CodeExample" );
+    ResultExample->setGeometry( QRect( 10, 110, 80, 16 ) ); 
+    ResultExample->setText( tr( "List Font" ) );
+    QToolTip::add(  CodeExample, tr( "The font to display in result lists." ) );
+
     GroupBox2 = new QGroupBox( this, "GroupBox2" );
     GroupBox2->setGeometry( QRect( 10, 10, 200, 220 ) ); 
     GroupBox2->setTitle( tr( "Sy&ntax Components" ) );
@@ -105,6 +114,7 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
 
     // signals and slots connections
     connect( PushButton1, SIGNAL( clicked() ), this, SLOT( selectFont(void) ) );
+    connect( PushButton2, SIGNAL( clicked() ), this, SLOT( selectResultFont(void) ) );
     connect( SelectColor, SIGNAL( clicked() ), this, SLOT( selectColor(void) ) );
     connect( KeywordUpper, SIGNAL( toggled(bool) ), this, SLOT( changeUpper(bool) ) );
     connect( SyntaxHighlighting, SIGNAL( toggled(bool) ), this, SLOT( changeHighlight(bool) ) );
@@ -115,6 +125,7 @@ toSyntaxSetupUI::toSyntaxSetupUI( QWidget* parent,  const char* name, WFlags fl 
     setTabOrder( SelectColor, SyntaxHighlighting );
     setTabOrder( SyntaxHighlighting, KeywordUpper );
     setTabOrder( KeywordUpper, PushButton1 );
+    setTabOrder( PushButton1, PushButton2 );
 }
 
 /*  
@@ -138,6 +149,11 @@ void toSyntaxSetupUI::selectColor(void)
 void toSyntaxSetupUI::selectFont(void)
 {
     qWarning( "toSyntaxSetupUI::selectFont(void): Not implemented yet!" );
+}
+
+void toSyntaxSetupUI::selectResultFont(void)
+{
+    qWarning( "toSyntaxSetupUI::selectResultFont(void): Not implemented yet!" );
 }
 
 void toSyntaxSetupUI::changeUpper(bool)
