@@ -90,6 +90,9 @@ public:
 
 class toThread {
 private:
+  /** Not part of the API.
+   */
+
   class taskRunner : public QThread {
   public:
     toSemaphore		StartSemaphore;

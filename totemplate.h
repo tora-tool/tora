@@ -50,6 +50,9 @@ class toListView;
 class toTemplateItem;
 class toTemplateProvider;
 
+/** Not part of the API.
+ */
+
 class toTemplate : public QVBox {
   Q_OBJECT
 

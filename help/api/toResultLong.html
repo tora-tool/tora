@@ -12,7 +12,7 @@
 		<TR><TD valign="top" align="left" cellspacing="10">
 		<h1>class toResultLong</h1>
 		</TD>
-		<TD valign="top" align="right" colspan="1"></TD></TR>
+		<TD valign="top" align="right" colspan="1"> A widget which contains the result of a query run in the background. <small><A HREF="#longdesc">More...</A></small></TD></TR>
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
@@ -49,37 +49,78 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref15">firstResult</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;res) 
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI>virtual  bool &nbsp;<b><A HREF="#ref6">eof</A></b> (void) 
-</LI>
-</ul><h4>Protected Members</h4><ul><LI>toNoBlockQuery *<b><A HREF="#ref1">Query</A></b></LI>
-<LI>QTimer <b><A HREF="#ref2">Timer</A></b></LI>
-<LI>bool <b><A HREF="#ref3">HasHeaders</A></b></LI>
-<LI>bool <b><A HREF="#ref4">First</A></b></LI>
-<LI>toResultStats *<b><A HREF="#ref5">Statistics</A></b></LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="Query"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toNoBlockQuery.html">toNoBlockQuery</A> * <strong>Query</strong>
-</td><td align="right"><h3><strong>Query</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Timer"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qtimer.html">QTimer</A>  <strong>Timer</strong>
-</td><td align="right"><h3><strong>Timer</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="HasHeaders"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>HasHeaders</strong>
-</td><td align="right"><h3><strong>HasHeaders</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="First"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>First</strong>
-</td><td align="right"><h3><strong>First</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Statistics"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toResultStats.html">toResultStats</A> * <strong>Statistics</strong>
-</td><td align="right"><h3><strong>Statistics</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="eof"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>eof</strong> (void)
-<br></td><td align="right"><h3><strong>eof</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="toResultView.html#eof">toResultView</A>.</p>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget which contains the result of a query run in the background.
+ </p>
 <A NAME="toResultLong"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultLong</strong> (bool readable,bool numCol,<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
-<br></td><td align="right"><h3><strong>toResultLong</strong></h3></td></tr></table><p></p><A NAME="toResultLong"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultLong</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
-<br></td><td align="right"><h3><strong>toResultLong</strong></h3></td></tr></table><p></p><A NAME="~toResultLong"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultLong</strong> ()
+<br></td><td align="right"><h3><strong>toResultLong</strong></h3></td></tr></table><p></p><p> Create widget.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>readable</i></TD><TD align="left" valign="top">Indicate if columns are to be made more readable. This means that the
+ descriptions are capitalised and '_' are converted to ' '.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>numCol</i></TD><TD align="left" valign="top">If number column is to be displayed.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to issue query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of list.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="toResultLong"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toResultLong</strong> (<A HREF="toConnection.html">toConnection</A> &amp;conn,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL)
+<br></td><td align="right"><h3><strong>toResultLong</strong></h3></td></tr></table><p></p><p> Create widget. The columns are not readable and the number column is displayed.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>conn</i></TD><TD align="left" valign="top">Connection to issue query on.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>parent</i></TD><TD align="left" valign="top">Parent of list.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="~toResultLong"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toResultLong</strong> ()
 <br></td><td align="right"><h3><strong>~toResultLong</strong></h3></td></tr></table><p></p><A NAME="setStatistics"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setStatistics</strong> (<A HREF="toResultStats.html">toResultStats</A> *stats)
-<br></td><td align="right"><h3><strong>setStatistics</strong></h3></td></tr></table><p></p><A NAME="running"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>running</strong> (void)
-<br></td><td align="right"><h3><strong>running</strong></h3></td></tr></table><p></p><A NAME="query"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;param)
-<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
+<br></td><td align="right"><h3><strong>setStatistics</strong></h3></td></tr></table><p></p><p> Set statistics widget.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>stats</i></TD><TD align="left" valign="top">Statistics widget.
+   </TD></TR>
+</TABLE></P>
+<A NAME="running"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>running</strong> (void)
+<br></td><td align="right"><h3><strong>running</strong></h3></td></tr></table><p></p><p> Check if query is still running.
+</p>
+<p><b>Returns</b>: True if query is still running.
+   </p>
+<A NAME="query"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;param)
+<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
 <A NAME="query"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>query</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql)
-<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
+<br></td><td align="right"><h3><strong>query</strong></h3></td></tr></table><p></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toResultView.html#query">toResultView</A>.</p>
 <A NAME="done"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>done</strong> (void)
-<br></td><td align="right"><h3><strong>done</strong></h3></td></tr></table><p> <small>[signal]</small></p><A NAME="firstResult"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>firstResult</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;res)
-<br></td><td align="right"><h3><strong>firstResult</strong></h3></td></tr></table><p> <small>[signal]</small></p><A NAME="stop"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>stop</strong> (void)
-<br></td><td align="right"><h3><strong>stop</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="addItem"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addItem</strong> (void)
-<br></td><td align="right"><h3><strong>addItem</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p>Reimplemented from <A HREF="toResultView.html#addItem">toResultView</A>.</p>
+<br></td><td align="right"><h3><strong>done</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when query is finnished.
+   </p>
+<A NAME="firstResult"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>firstResult</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;sql,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;res)
+<br></td><td align="right"><h3><strong>firstResult</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when the first result is available.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">SQL that was run.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>res</i></TD><TD align="left" valign="top">String describing result.
+   </TD></TR>
+</TABLE></P>
+<A NAME="stop"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>stop</strong> (void)
+<br></td><td align="right"><h3><strong>stop</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Stop running query.
+   </p>
+<A NAME="addItem"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addItem</strong> (void)
+<br></td><td align="right"><h3><strong>addItem</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><p> Reimplemented for internal reasons.
+   </p>
+<p>Reimplemented from <A HREF="toResultView.html#addItem">toResultView</A>.</p>
 <HR>
 	<table>
-	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 21:54:10 2001, using kdoc 2.0a53.</small></td></tr>
+	<tr><td><small>Generated by: hpj@gain.globecom.net on Wed Jun 13 22:22:57 2001, using kdoc 2.0a53.</small></td></tr>
 	</table>
 </BODY>
 </HTML>

@@ -114,7 +114,6 @@ API=	\
 	toresult.h		\
 	toresultindexes.h	\
 	toresultitem.h		\
-	toresultlock.h		\
 	toresultlong.h		\
 	toresultplan.h		\
 	toresultreferences.h	\
