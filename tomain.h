@@ -49,7 +49,6 @@
 #include <qtimer.h>
 
 #if QT_VERSION >= 300
-class QNetworkOperation;
 class QUrlOperator;
 #endif
 
@@ -59,6 +58,7 @@ class QComboBox;
 class QLabel;
 class QListView;
 class QListViewItem;
+class QNetworkOperation;
 class QPopupMenu;
 class QToolBar;
 class QToolButton;
@@ -503,10 +503,8 @@ private slots:
    */
   void displayMessage(void);
 
-#if QT_VERSION >= 300
   void versionData(const QByteArray &data,QNetworkOperation *op);
   void versionFinished(QNetworkOperation *op);
-#endif
 };
 
 /** Get a pointer to the main window

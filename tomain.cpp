@@ -1417,19 +1417,19 @@ void toMain::displayMessage(const QString &str)
   QTimer::singleShot(1,this,SLOT(displayMessage()));
 }
 
-#if QT_VERSION >= 300
-
 void toMain::versionData(const QByteArray &data,QNetworkOperation *op)
 {
+#if QT_VERSION >= 300
   VersionString+=QCString(data);
+#endif
 }
 
 void toMain::versionFinished(QNetworkOperation *op)
 {
+#if QT_VERSION >= 300
   if (VersionString[0].isNumber()&&VersionString.mid(0,strlen(TOVERSION)) >= TOVERSION)
     toStatusMessage("A new version of TOra ("+VersionString+") is available from\n\n"
 		    "http://www.globecom.se/tora");
   delete VersionUrl;
-}
-
 #endif
+}

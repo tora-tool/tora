@@ -441,7 +441,9 @@ void toResultContentEditor::poll(void)
       if (numRows()!=rows) {
 	setNumRows(rows);
 
+#if QT_VERSION >= 300
 	int origRow=Row;
+#endif
 	while(data.size()>0) {
 	  verticalHeader()->setLabel(Row,QString::number(Row+1));
 	  for(int j=0;j<numCols();j++)
