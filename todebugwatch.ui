@@ -12,7 +12,7 @@
             <x>0</x>
             <y>0</y>
             <width>188</width>
-            <height>230</height>
+            <height>228</height>
         </rect>
     </property>
     <property stdset="1">
@@ -79,7 +79,7 @@
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
+                    <vsizetype>0</vsizetype>
                 </sizepolicy>
             </property>
             <property stdset="1">
@@ -121,30 +121,7 @@
                     <name>spacing</name>
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QRadioButton</class>
-                    <property stdset="1">
-                        <name>name</name>
-                        <cstring>LocalScope</cstring>
-                    </property>
-                    <property stdset="1">
-                        <name>text</name>
-                        <string>&amp;Local</string>
-                    </property>
-                    <property stdset="1">
-                        <name>checked</name>
-                        <bool>true</bool>
-                    </property>
-                    <property stdset="1">
-                        <name>buttonGroupId</name>
-                        <number>1</number>
-                    </property>
-                    <property>
-                        <name>toolTip</name>
-                        <string>Currently running scope.</string>
-                    </property>
-                </widget>
-                <widget row="2"  column="0" >
+                <widget row="3"  column="0" >
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -163,7 +140,7 @@
                         <string>The scope of the file in the body editor.</string>
                     </property>
                 </widget>
-                <widget row="1"  column="0" >
+                <widget row="2"  column="0" >
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -182,7 +159,7 @@
                         <string>Currently package or type scope.</string>
                     </property>
                 </widget>
-                <widget row="3"  column="0" >
+                <widget row="4"  column="0" >
                     <class>QRadioButton</class>
                     <property stdset="1">
                         <name>name</name>
@@ -199,6 +176,52 @@
                     <property>
                         <name>toolTip</name>
                         <string>Global scope of variable.</string>
+                    </property>
+                </widget>
+                <widget row="1"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalScope</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Local</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>1</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Currently running scope.</string>
+                    </property>
+                </widget>
+                <widget row="0"  column="0" >
+                    <class>QRadioButton</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>LocalScope_2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>&amp;Autodetect</string>
+                    </property>
+                    <property stdset="1">
+                        <name>checked</name>
+                        <bool>true</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>buttonGroupId</name>
+                        <number>5</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Currently running scope.</string>
                     </property>
                 </widget>
             </grid>
@@ -220,12 +243,13 @@
     </connection>
 </connections>
 <tabstops>
+    <tabstop>LocalScope_2</tabstop>
+    <tabstop>Name</tabstop>
+    <tabstop>PushButton1</tabstop>
+    <tabstop>PushButton1_2</tabstop>
     <tabstop>LocalScope</tabstop>
     <tabstop>HeadScope</tabstop>
     <tabstop>BodyScope</tabstop>
     <tabstop>GlobalScope</tabstop>
-    <tabstop>Name</tabstop>
-    <tabstop>PushButton1</tabstop>
-    <tabstop>PushButton1_2</tabstop>
 </tabstops>
 </UI>
