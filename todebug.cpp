@@ -454,7 +454,10 @@ END;
 	while(!q.eof()) {
 	  char buffer[colSize];
 	  q>>buffer;
-	  outParams->insert(outParams->end(),buffer);
+	  if (q.is_null())
+	    outParams->insert(outParams->end(),"{null}");
+	  else
+	    outParams->insert(outParams->end(),buffer);
 	}
       } catch (const QString &str) {
 	Parent.Lock.lock();
@@ -796,6 +799,8 @@ void toDebug::execute(void)
 	    break;
 	  } else if (token.upper()=="NOCOPY")
 	    break;
+	  if (!(*cp).In&&!(*cp).Out)
+	    (*cp).In=true;
 	  state=parType;
 	case parType:
 	  if (token==",") {
@@ -835,13 +840,13 @@ void toDebug::execute(void)
     sql+=callName;
 
     Parameters->clear();
-    QListViewItem *head=new QListViewItem(Parameters,NULL,"Input");
+    QListViewItem *head=new toResultViewItem(Parameters,NULL,"Input");
     QListViewItem *last=NULL;
     head->setOpen(true);
 
     for(list<debugParam>::iterator i=CurrentParams.begin();i!=CurrentParams.end();i++) {
       if ((*i).In)
-	last=new QListViewItem(head,last,(*i).Name);
+	last=new toResultViewItem(head,last,(*i).Name);
       sql+=sep;
       sql+=":";
       QString nam=(*i).Name;
@@ -1168,7 +1173,7 @@ void toDebug::updateState(int reason)
 	QListViewItem *head=Parameters->firstChild();
 	while(head&&head->nextSibling())
 	  head=head->nextSibling();
-	head=new QListViewItem(Parameters,head,"Output");
+	head=new toResultViewItem(Parameters,head,"Output");
 	head->setOpen(true);
 	list<debugParam>::iterator cp;
 	for(cp=CurrentParams.begin();cp!=CurrentParams.end()&&!(*cp).Out;cp++)
@@ -1184,7 +1189,7 @@ void toDebug::updateState(int reason)
 	  }
 	  if (name.isEmpty())
 	    name="Returning";
-	  last=new QListViewItem(head,last,name);
+	  last=new toResultViewItem(head,last,name);
 	  last->setText(1,(const char *)*i); // Deep copy just to be sure
 	}
       }
@@ -2381,7 +2386,7 @@ void toDebug::selectedWatch()
 {
   QListViewItem *item=Watch->selectedItem();
   if (item) {
-    if (item->text(5).isEmpty()||item->text(5)!="LIST") {
+    if (!item->text(5).isEmpty()&&item->text(5)!="LIST") {
       DelWatchButton->setEnabled(false);
       toMainWidget()->menuBar()->setItemEnabled(TO_ID_DEL_WATCH,false);
     } else {

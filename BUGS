@@ -1,5 +1,6 @@
 OCI:
 	Empty strings seem to be indicated as NULL values from the OCI call. (This seems to be an Oracle bug since other programs have same problem)
 
-tohighlightedtext:
-	Won't work with non monospaced fonts when using uppercase keywords.
+toDebug:
+	Seems a recompiled object seems invalidated the first time it is executed in the target
+	session.

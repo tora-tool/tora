@@ -87,11 +87,15 @@ static int TextWidth(const QFontMetrics &fm,const QString &str)
 
 int toResultViewMLine::width(const QFontMetrics &fm, const QListView *top, int column) const
 {
+  if (!MaxColDisp)
+    MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   return min(TextWidth(fm,text(column)),MaxColDisp)+top->itemMargin()*2+2;
 }
 
 int toResultViewItem::width(const QFontMetrics &fm, const QListView *top, int column) const
 {
+  if (!MaxColDisp)
+    MaxColDisp=toTool::globalConfig(CONF_MAX_COL_DISP,DEFAULT_MAX_COL_DISP).toInt();
   QRect bounds=fm.boundingRect(text(column));
   return min(bounds.width(),MaxColDisp)+top->itemMargin()*2+2;
 }

@@ -1,10 +1,11 @@
-// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.7,
-// Copyright (C) Sergei Kuchin, 1996,2000
+//
+// Oracle, ODBC and DB2/CLI Template Library, Version 3.2.12,
+// Copyright (C) Sergei Kuchin, 1996,2001
 // Author: Sergei Kuchin
-// This library is free software. Permission to use, copy, 
-// modify and redistribute it for any purpose is hereby granted 
-// without fee, provided that the above copyright notice appear 
-// in all copies. 
+// This library is free software. Permission to use, copy,
+// modify and redistribute it for any purpose is hereby granted
+// without fee, provided that the above copyright notice appear
+// in all copies.
 
 #ifndef __OTL_H__
 #define __OTL_H__
@@ -18,22 +19,22 @@
 // Uncomment the following line in order to include the OTL for ODBC:
 //#define OTL_ODBC
 
-// Uncomment the following line in order to include the OTL for 
+// Uncomment the following line in order to include the OTL for
 // MySQL/MyODBC:
 //#define OTL_ODBC_MYSQL
 
 // Uncomment the following line in order to include the OTL for DB2 CLI:
 //#define OTL_DB2_CLI
 
-// Uncomment the following line in order to include the OTL for 
+// Uncomment the following line in order to include the OTL for
 // Oracle 7:
 //#define OTL_ORA7
 
-// Uncomment the following line in order to include the OTL for 
+// Uncomment the following line in order to include the OTL for
 // Oracle 8:
 //#define OTL_ORA8
 
-// Uncomment the following line in order to include the OTL for 
+// Uncomment the following line in order to include the OTL for
 // Oracle 8i:
 //#define OTL_ORA8I
 
@@ -50,6 +51,8 @@
 #ifdef OTL_ODBC_MYSQL
 #define OTL_ODBC
 #endif
+
+#define OTL_VALUE_TEMPLATE
 
 #if defined(OTL_ODBC_UNIX) && !defined(OTL_ODBC)
 #define OTL_ODBC
@@ -207,10 +210,25 @@
   OTL_SCAST(_to,*OTL_RCAST(_from*,OTL_CCAST(void*,_val)))
 
 #ifdef OTL_STL
+
+#if defined(OTL_STL_NOSTD_NAMESPACE)
+#define OTL_STL_STRING string
+#define STD_NAMESPACE_PREFIX
+#else
 #define OTL_STL_STRING std::string
+#define STD_NAMESPACE_PREFIX std::
+#endif
+
 #include <string>
 #include <iterator>
 #include <vector>
+
+#ifndef OTL_STL_NOSTD_NAMESPACE
+#include <iostream>
+#else
+#include <iostream.h>
+#endif
+
 #endif
 
 #ifdef OTL_DB2_CLI
@@ -245,25 +263,25 @@
 
 const int otl_var_list_size=512;
 
-const int otl_error_code_0=32000; 
+const int otl_error_code_0=32000;
 #define otl_error_msg_0 "Incompatible data types in stream operation"
 
-const int otl_error_code_1=32004; 
+const int otl_error_code_1=32004;
 #define otl_error_msg_1 "No input variables have been defined in SQL statement"
 
-const int otl_error_code_2=32003; 
+const int otl_error_code_2=32003;
 #define otl_error_msg_2 "Not all input variables have been initialized"
 
-const int otl_error_code_3=32001; 
+const int otl_error_code_3=32001;
 #define otl_error_msg_3 "Row must be full for flushing output stream"
 
-const int otl_error_code_4=32005; 
+const int otl_error_code_4=32005;
 #define otl_error_msg_4 "Input string value is too large to fit into the buffer"
 
-const int otl_error_code_5=32006; 
+const int otl_error_code_5=32006;
 #define otl_error_msg_5 "Input otl_long_string is too large to fit into the buffer"
 
-const int otl_error_code_6=32007; 
+const int otl_error_code_6=32007;
 #define otl_error_msg_6 "PL/SQL table size is too large (>32767)"
 
 const int otl_error_code_7=32008;
@@ -394,7 +412,8 @@ inline ostream& operator<<(ostream& s, const otl_datetime& dt)
 
 #endif
 
-static inline void convert_date(otl_datetime& t,const otl_oracle_date& s)
+//static 
+inline void convert_date(otl_datetime& t,const otl_oracle_date& s)
 {
  t.year=(OTL_SCAST(int, s.century-100)*100+(OTL_SCAST(int, s.year-100)));
  t.month=s.month;
@@ -404,7 +423,8 @@ static inline void convert_date(otl_datetime& t,const otl_oracle_date& s)
  t.second=s.second-1;
 }
 
-static inline void convert_date(otl_oracle_date& t,const otl_datetime& s)
+//static 
+inline void convert_date(otl_oracle_date& t,const otl_datetime& s)
 {
  t.year=(s.year%100)+100;
  t.century=(s.year/100)+100;
@@ -436,13 +456,14 @@ public:
 
 class otl_var_desc{
 public:
- int param_type;
- int ftype;
- int elem_size;
- int array_size;
- int pos;
- int name_pos;
- int pl_tab_flag;
+ int  param_type;
+ int  ftype;
+ int  elem_size;
+ int  array_size;
+ int  pos;
+ int  name_pos;
+ char name[128];
+ int  pl_tab_flag;
 
  otl_var_desc()
  {
@@ -452,10 +473,21 @@ public:
   array_size=0;
   pos=0;
   name_pos=0;
+  name[0]=0;
   pl_tab_flag=0;
  }
 
  ~otl_var_desc(){}
+
+ void copy_name(const char* nm)
+ {
+  if(!nm)
+   name[0]=0;
+  else{
+   strncpy(name,nm,sizeof(name));
+   name[sizeof(name)-1]=0;
+  }
+ }
 
 };
 
@@ -513,10 +545,11 @@ public:
  int len(void){return length;}
 
  unsigned char& operator[](int ndx){return v[ndx];}
- 
+
 };
 
-static inline const char* otl_var_type_name(const int ftype)
+//static 
+inline const char* otl_var_type_name(const int ftype)
 {static const char* const_CHAR="CHAR";
  static const char* const_DOUBLE="DOUBLE";
  static const char* const_FLOAT="FLOAT";
@@ -564,7 +597,8 @@ static inline const char* otl_var_type_name(const int ftype)
  }
 }
 
-static inline void otl_var_info_var
+//static 
+inline void otl_var_info_var
 (const char* name,
  const int ftype,
  const int type_code,
@@ -581,7 +615,8 @@ static inline void otl_var_info_var
  strcat(var_info,buf2);
 }
 
-static inline void otl_strcpy(
+//static 
+inline void otl_strcpy(
   unsigned char* trg,
   unsigned char* src,
   int& overflow,
@@ -602,7 +637,8 @@ static inline void otl_strcpy(
   overflow=1;
 }
 
-static inline void otl_itoa(int i,char* a)
+//static 
+inline void otl_itoa(int i,char* a)
 {
  int n=i,k;
  char buf[64];
@@ -640,7 +676,8 @@ static inline void otl_itoa(int i,char* a)
  *c1=0;
 }
 
-static inline void otl_var_info_col
+//static 
+inline void otl_var_info_col
 (const int pos,
  const int ftype,
  const int type_code,
@@ -719,10 +756,11 @@ public:
  {
   tab_len=new_len;
  }
- 
+
 };
 
-static inline int otl_numeric_convert_int(
+//static 
+inline int otl_numeric_convert_int(
   const int ftype,
   const void* val,
   int& n)
@@ -753,7 +791,8 @@ static inline int otl_numeric_convert_int(
  return rc;
 }
 
-static inline int otl_numeric_convert_unsigned(
+//static 
+inline int otl_numeric_convert_unsigned(
   const int ftype,
   const void* val,
   unsigned& n)
@@ -784,7 +823,8 @@ static inline int otl_numeric_convert_unsigned(
  return rc;
 }
 
-static inline int otl_numeric_convert_short(
+//static 
+inline int otl_numeric_convert_short(
   const int ftype,
   const void* val,
   short& n)
@@ -815,7 +855,8 @@ static inline int otl_numeric_convert_short(
  return rc;
 }
 
-static inline int otl_numeric_convert_long_int(
+//static 
+inline int otl_numeric_convert_long_int(
   const int ftype,
   const void* val,
   long int& n)
@@ -846,7 +887,8 @@ static inline int otl_numeric_convert_long_int(
  return rc;
 }
 
-static inline int otl_numeric_convert_float(
+//static 
+inline int otl_numeric_convert_float(
   const int ftype,
   const void* val,
   float& n)
@@ -877,7 +919,8 @@ static inline int otl_numeric_convert_float(
  return rc;
 }
 
-static inline int otl_numeric_convert_double(
+//static 
+inline int otl_numeric_convert_double(
   const int ftype,
   const void* val,
   double& n)
@@ -911,6 +954,65 @@ static inline int otl_numeric_convert_double(
 
 // =========================== COMMON TEMPLATES  ============================
 
+#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+
+template <class TData>
+class otl_value{
+public:
+
+ TData v;
+ bool ind;
+
+ otl_value(){ind=true;}
+ ~otl_value(){}
+
+ otl_value(const otl_value<TData>& var)
+ {
+  v=var.v;
+  ind=var.ind;
+ }
+
+ otl_value(const TData& var)
+ {
+  v=var;
+  ind=false;
+ }
+
+ otl_value(const otl_null&)
+ {
+  ind=true;
+ }
+
+
+ otl_value<TData>& operator=(const otl_value<TData>& var)
+ {
+  v=var.v;
+  ind=var.ind;
+  return *this;
+ }
+
+ otl_value<TData>& operator=(const TData& var)
+ {
+  v=var;
+  ind=false;
+  return *this;
+ }
+
+ otl_value<TData>& operator=(const otl_null&)
+ {
+  ind=true;
+  return *this;
+ }
+
+ bool is_null(void){return ind;} const
+ void set_null(void){ind=true;}
+ void set_non_null(void){ind=false;}
+
+};
+
+#endif
+
+
 template <class T>
 class otl_auto_array_ptr{
 public:
@@ -937,7 +1039,7 @@ public:
 template <class OTLStream,class OTLConnect>
 class otl_tmpl_nocommit_stream: public OTLStream{
 public:
- 
+
  otl_tmpl_nocommit_stream(): OTLStream()
  {
   OTLStream::set_commit(0);
@@ -971,7 +1073,7 @@ public:
 class otl_pl_vec_generic{
 public:
 
- typedef std::vector<bool> null_flag_type;
+ typedef STD_NAMESPACE_PREFIX vector<bool> null_flag_type;
 
  void* p_v;
  null_flag_type null_flag;
@@ -1018,7 +1120,7 @@ template <class T,const int avtype>
 class otl_tmpl_pl_vec: public otl_pl_vec_generic{
 public:
 
- typedef std::vector<T> v_type;
+ typedef typename STD_NAMESPACE_PREFIX vector<T> v_type;
  v_type v;
 
  otl_tmpl_pl_vec()
@@ -1042,7 +1144,7 @@ public:
 
  virtual void set_len(const int new_len=0)
  {int i,vsize;
-  
+
   v.resize(new_len);
   this->null_flag.resize(new_len);
   vsize=v.size();
@@ -1133,37 +1235,37 @@ public:
 
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_int_tab: public otl_tmpl_pl_tab<int,atab_size,otl_var_int>{
 public:
  otl_int_tab():otl_tmpl_pl_tab<int,atab_size,otl_var_int>(){}
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_double_tab: public otl_tmpl_pl_tab<double,atab_size,otl_var_double>{
 public:
  otl_double_tab():otl_tmpl_pl_tab<double,atab_size,otl_var_double>(){}
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_float_tab: public otl_tmpl_pl_tab<float,atab_size,otl_var_float>{
 public:
  otl_float_tab():otl_tmpl_pl_tab<float,atab_size,otl_var_float>(){}
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_unsigned_tab: public otl_tmpl_pl_tab<unsigned,atab_size,otl_var_unsigned_int>{
 public:
  otl_unsigned_tab():otl_tmpl_pl_tab<unsigned,atab_size,otl_var_unsigned_int>(){}
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_short_tab: public otl_tmpl_pl_tab<short,atab_size,otl_var_short>{
 public:
  otl_short_tab():otl_tmpl_pl_tab<short,atab_size,otl_var_short>(){}
 };
 
-template <const int atab_size> 
+template <const int atab_size>
 class otl_long_int_tab: public otl_tmpl_pl_tab<long,atab_size,otl_var_long_int>{
 public:
  otl_long_int_tab():otl_tmpl_pl_tab<long,atab_size,otl_var_long_int>(){}
@@ -1282,7 +1384,7 @@ public:
   :otl_tmpl_dyn_pl_tab<float,otl_var_float>(atab_size){}
 };
 
-class otl_dynamic_unsigned_tab: public 
+class otl_dynamic_unsigned_tab: public
 otl_tmpl_dyn_pl_tab<unsigned,otl_var_unsigned_int>{
 public:
  otl_dynamic_unsigned_tab(const int atab_size=1)
@@ -1412,8 +1514,8 @@ public:
  }
 
  otl_tmpl_exception
- (const char* msg, 
-  const int code, 
+ (const char* msg,
+  const int code,
   const char* sqlstm=0,
   const char* varinfo=0)
  {
@@ -1428,7 +1530,7 @@ public:
  }
 
  ~otl_tmpl_exception(){}
- 
+
 };
 
 template <class TExceptionStruct,class TConnectStruct,class TCursorStruct>
@@ -1441,22 +1543,41 @@ public:
  TConnectStruct connect_struct;
  int long_max_size;
  int retcode;
+ int throw_count;
 
- void set_max_long_size(const int amax_size){long_max_size=amax_size;}
- int get_max_long_size(void){return long_max_size;}
+
+ void set_max_long_size(const int amax_size)
+ {
+  reset_throw_count();
+  long_max_size=amax_size;
+ }
+
+ int get_max_long_size(void)
+ {
+  reset_throw_count();
+  return long_max_size;
+ }
 
  void set_timeout(const int atimeout=0)
  {
+  reset_throw_count();
   connect_struct.set_timeout(atimeout);
  }
 
  void set_cursor_type(const int acursor_type=0)
  {
+  reset_throw_count();
   connect_struct.set_cursor_type(acursor_type);
+ }
+
+ void reset_throw_count(void)
+ {
+  throw_count=0;
  }
 
  otl_tmpl_connect()
  {
+  throw_count=0;
   connected=0;
   long_max_size=32760;
   retcode=1;
@@ -1465,6 +1586,7 @@ public:
  otl_tmpl_connect(const char* connect_str,const int auto_commit=0)
  {
   connected=0;
+  throw_count=0;
   retcode=1;
   long_max_size=32760;
   rlogon(connect_str,auto_commit);
@@ -1482,11 +1604,13 @@ public:
 
  void rlogon(const char* connect_str,const int auto_commit=0)
  {
+  throw_count=0;
   retcode=connect_struct.rlogon(connect_str,auto_commit);
   if(retcode)
    connected=1;
   else{
    connected=0;
+   ++throw_count;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1500,6 +1624,9 @@ public:
   retcode=connect_struct.logoff();
   connected=0;
   if(retcode)return;
+  if(throw_count>0)
+   return;
+  ++throw_count;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1509,20 +1636,50 @@ public:
  void commit(void)
  {
   if(!connected)return;
+  reset_throw_count();
   retcode=connect_struct.commit();
   if(retcode)return;
+  ++throw_count;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
      TCursorStruct>(connect_struct);
-  
+ }
+
+ void auto_commit_on(void)
+ {
+  if(!connected)return;
+  reset_throw_count();
+  retcode=connect_struct.auto_commit_on();
+  if(retcode)return;
+  ++throw_count;
+  throw otl_tmpl_exception
+    <TExceptionStruct,
+     TConnectStruct,
+     TCursorStruct>(connect_struct);
+ }
+
+ void auto_commit_off(void)
+ {
+  if(!connected)return;
+  reset_throw_count();
+  retcode=connect_struct.auto_commit_off();
+  if(retcode)return;
+  ++throw_count;
+  throw otl_tmpl_exception
+    <TExceptionStruct,
+     TConnectStruct,
+     TCursorStruct>(connect_struct);
  }
 
  void rollback(void)
  {
   if(!connected)return;
+  reset_throw_count();
   retcode=connect_struct.rollback();
   if(retcode)return;
+  ++throw_count;
+  if(throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1562,6 +1719,11 @@ public:
   v.array_size=array_size;
   v.pos=pos;
   v.name_pos=name_pos;
+  if(name){
+   strncpy(v.name,name,sizeof(v.name));
+   v.name[sizeof(v.name)-1]=0;
+  }else
+   v.name[0]=0;
   v.pl_tab_flag=pl_tab_flag;
  }
 
@@ -1619,13 +1781,13 @@ public:
   pl_tab_flag=apl_tab_flag;
   bound=0;
   var_struct.init(aftype,aelem_size,aarray_size,connect_struct,pl_tab_flag);
- } 
+ }
 
  void set_param_type(const int aparam_type=OTL_INPUT_PARAM)
  {
   param_type=aparam_type;
  }
- 
+
  int get_param_type(void)
  {
   return param_type;
@@ -1672,18 +1834,17 @@ public:
 
  int get_pl_tab_len(void)
  {
-  return var_struct.get_pl_tab_len();
+  return this->var_struct.get_pl_tab_len();
  }
 
  int get_max_pl_tab_len(void)
  {
-  return var_struct.get_max_pl_tab_len();
+  return this->var_struct.get_max_pl_tab_len();
  }
-
 
  void set_pl_tab_len(const int pl_tab_len)
  {
-  var_struct.set_pl_tab_len(pl_tab_len);
+  this->var_struct.set_pl_tab_len(pl_tab_len);
  }
 
  int is_null(int ndx)
@@ -1697,9 +1858,9 @@ public:
  }
 
  static void map_ftype
- (otl_column_desc& desc, 
+ (otl_column_desc& desc,
   const int max_long_size,
-  int& ftype, 
+  int& ftype,
   int& elem_size,
   otl_select_struct_override& override,
   const int column_ndx)
@@ -1729,9 +1890,11 @@ public:
  int eof_desc;
  int retcode;
  long _rpc;
+ int in_destructor;
 
  otl_tmpl_cursor()
  {
+  in_destructor=0;
   connected=0;
   stm_text=0;
   vl_len=0;
@@ -1749,6 +1912,7 @@ public:
     TConnectStruct,
     TCursorStruct>& connect)
  {
+  in_destructor=0;
   connected=0;
   stm_text=0;
   vl_len=0;
@@ -1763,6 +1927,7 @@ public:
 
  virtual ~otl_tmpl_cursor()
  {
+  in_destructor=1;
   close();
   delete[] stm_text;
   stm_text=0;
@@ -1774,6 +1939,7 @@ public:
     TConnectStruct,
     TCursorStruct>& connect)
  {
+  in_destructor=0;
   eof_data=0;
   eof_desc=0;
   retcode=1;
@@ -1784,6 +1950,8 @@ public:
    connected=1;
    return;
   }
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1793,18 +1961,25 @@ public:
  virtual void close(void)
  {_rpc=0;
   if(!connected)return;
-  if(adb){
-   if(!adb->connected){
-    connected=0;
-    adb=0;
-    retcode=1;
-    return;
-   }
+  if(!this->adb)return;
+  if(!adb->connected){
+   connected=0;
+   adb=0;
+   retcode=1;
+   return;
   }
   connected=0;
-  adb=0;
   retcode=cursor_struct.close();
-  if(retcode)return;
+  if(retcode){
+   adb=0;
+   return;
+  }
+  if(this->adb->throw_count>0){
+   adb=0;
+   return;
+  }
+  this->adb->throw_count++;
+  adb=0;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1816,6 +1991,8 @@ public:
   if(!connected)return;
   retcode=cursor_struct.parse(stm_text);
   if(retcode)return;
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1841,10 +2018,17 @@ public:
 
  void exec(const int iters=1)
  {
+  typedef otl_tmpl_exception
+    <TExceptionStruct,
+     TConnectStruct,
+     TCursorStruct> otl_exception;
+
   if(!connected)return;
   retcode=cursor_struct.exec(iters);
   _rpc=cursor_struct.get_rpc();
   if(retcode)return;
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1870,6 +2054,8 @@ public:
    v.bound=1;
    return;
   }
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1889,6 +2075,8 @@ public:
     v.ftype,
     v.param_type);
   if(retcode)return;
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1910,6 +2098,7 @@ public:
   const char* sqlstm,
   const int exception_enabled=1)
  {
+  connect.reset_throw_count();
   try{
    otl_tmpl_cursor
    <TExceptionStruct,TConnectStruct,
@@ -1922,8 +2111,10 @@ public:
           <TExceptionStruct,
            TConnectStruct,
            TCursorStruct>){
-   if(exception_enabled)
+   if(exception_enabled){
+    connect.throw_count++;
     throw;
+   }
   }
   return -1;
  }
@@ -1939,6 +2130,8 @@ public:
    (col,column_num,eof_desc);
   if(eof_desc)return 0;
   if(retcode)return 1;
+  if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return 0;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -1947,7 +2140,8 @@ public:
 
 };
 
-static inline char otl_to_upper(char c)
+//static 
+inline char otl_to_upper(char c)
 {
  return OTL_SCAST(char,toupper(c));
 }
@@ -1977,11 +2171,11 @@ public:
  otl_tmpl_ext_hv_decl(char* stm,int arr_size=1)
  {int j;
   array_size=arr_size;
- 
-  int i=0; 
+
+  int i=0;
   short in_str=0;
   char *c=stm;
-  
+
   hv[i]=0;
   while(*c){
    if(*c=='\''){
@@ -1991,7 +2185,7 @@ public:
     if(c[1]=='\'')
      ++c;
     else
-     in_str=0; 
+     in_str=0;
    }
    }
    if(*c==':'&&!in_str){
@@ -2042,7 +2236,7 @@ public:
    }
    ++c;
   }
-  
+
   for(j=0;j<4;++j)vst[j]=0;
   i=0;
   while(hv[i]){
@@ -2064,7 +2258,7 @@ public:
   }
   len=i;
  }
- 
+
  ~otl_tmpl_ext_hv_decl()
  {int i;
   for(i=0;hv[i]!=0;++i)
@@ -2103,8 +2297,8 @@ public:
  }
 
  otl_tmpl_variable<TVariableStruct>* alloc_var
- (char* s, 
-  const int vstat, 
+ (char* s,
+  const int vstat,
   const int status,
   otl_tmpl_connect
    <TExceptionStruct,
@@ -2273,7 +2467,7 @@ public:
     vl[j]=tmp_vl[j];
   }
  }
- 
+
 };
 
 template <class TExceptionStruct,
@@ -2281,18 +2475,18 @@ template <class TExceptionStruct,
           class TCursorStruct,
           class TVariableStruct,
           class TSelectCursorStruct>
-class otl_tmpl_select_cursor: 
-public otl_tmpl_cursor 
+class otl_tmpl_select_cursor:
+public otl_tmpl_cursor
 <TExceptionStruct,TConnectStruct,TCursorStruct,TVariableStruct>{
 public:
-  
+
  int cur_row;
  int cur_size;
  int row_count;
  int array_size;
- 
+
  TSelectCursorStruct select_cursor_struct;
-  
+
  otl_tmpl_select_cursor
  (otl_tmpl_connect
    <TExceptionStruct,
@@ -2323,7 +2517,7 @@ public:
  (otl_tmpl_connect
    <TExceptionStruct,
     TConnectStruct,
-    TCursorStruct>& db, 
+    TCursorStruct>& db,
   short arr_size=1)
  {
   cur_row=-1;
@@ -2361,6 +2555,8 @@ public:
                     TCursorStruct,TVariableStruct>::eof_data,
     array_size);
   if(!rc){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2389,6 +2585,8 @@ public:
         TCursorStruct,TVariableStruct>::eof_data,
     array_size);
   if(!rc){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2401,7 +2599,7 @@ public:
   }
   return cur_size!=0;
  }
- 
+
 };
 
 const int otl_lob_stream_read_mode=1;
@@ -2504,6 +2702,8 @@ public:
    char* vinfo=0;
    if(var_info[0]!=0)
     vinfo=&var_info[0];
+   if(this->connect)this->connect->throw_count++;
+   if(this->connect&&this->connect->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2521,6 +2721,8 @@ public:
      bind_var->ftype,
      otl_var_long_string,
      var_info);
+   if(this->connect)this->connect->throw_count++;
+   if(this->connect&&this->connect->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2536,6 +2738,8 @@ public:
     close();
    return *this;
   }
+  if(this->connect)this->connect->throw_count++;
+  if(this->connect&&this->connect->throw_count>1)return *this;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2561,6 +2765,8 @@ public:
    char* vinfo=0;
    if(var_info[0]!=0)
     vinfo=&var_info[0];
+   if(this->connect)this->connect->throw_count++;
+   if(this->connect&&this->connect->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2587,6 +2793,8 @@ public:
    }
    return *this;
   }
+  if(this->connect)this->connect->throw_count++;
+  if(this->connect&&this->connect->throw_count>1)return *this;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2604,6 +2812,8 @@ public:
   int alen;
   retcode=bind_var->var_struct.get_blob_len(ndx,alen);
   if(retcode)return alen;
+  if(this->connect)this->connect->throw_count++;
+  if(this->connect&&this->connect->throw_count>1)return 0;
   throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -2615,14 +2825,14 @@ public:
   if(in_destructor){
    if(mode==otl_lob_stream_read_mode){
     bind_var->var_struct.set_lob_stream_flag(0);
-    bind_var->set_not_null(0); 
+    bind_var->set_not_null(0);
    }
    return;
   }
   if(mode==otl_lob_stream_zero_mode)return;
   if(mode==otl_lob_stream_read_mode){
    bind_var->var_struct.set_lob_stream_flag(0);
-   bind_var->set_not_null(0); 
+   bind_var->set_not_null(0);
    init(0,0,0,0,otl_lob_stream_zero_mode);
   }else{
    // write mode
@@ -2635,6 +2845,8 @@ public:
       bind_var->ftype,
       otl_var_long_string,
       var_info);
+    if(this->connect)this->connect->throw_count++;
+    if(this->connect&&this->connect->throw_count>1)return;
     throw otl_tmpl_exception
      <TExceptionStruct,
      TConnectStruct,
@@ -2645,10 +2857,10 @@ public:
       var_info);
    }
    bind_var->var_struct.set_lob_stream_flag(0);
-   bind_var->set_not_null(0); 
+   bind_var->set_not_null(0);
   }
  }
-  
+
 };
 
 template <class TExceptionStruct,
@@ -2657,7 +2869,7 @@ template <class TExceptionStruct,
           class TVariableStruct,
           class TSelectCursorStruct,
           class TTimestampStruct>
-class otl_tmpl_select_stream: public otl_tmpl_select_cursor 
+class otl_tmpl_select_stream: public otl_tmpl_select_cursor
 <TExceptionStruct,TConnectStruct,TCursorStruct,
 TVariableStruct,TSelectCursorStruct>
 {
@@ -2679,24 +2891,24 @@ public:
  {int i;
   delete[] sl;
   for(i=0;
-      i < otl_tmpl_select_cursor 
+      i < otl_tmpl_select_cursor
            <TExceptionStruct,TConnectStruct,TCursorStruct,
             TVariableStruct,TSelectCursorStruct>::vl_len;
       ++i)
-   delete otl_tmpl_select_cursor 
+   delete otl_tmpl_select_cursor
            <TExceptionStruct,TConnectStruct,TCursorStruct,
             TVariableStruct,TSelectCursorStruct>::vl[i];
-  delete[] otl_tmpl_select_cursor 
+  delete[] otl_tmpl_select_cursor
            <TExceptionStruct,TConnectStruct,TCursorStruct,
             TVariableStruct,TSelectCursorStruct>::vl;
-  delete[] sl_desc;  
+  delete[] sl_desc;
  }
 
  ~otl_tmpl_select_stream()
  {
   cleanup();
  }
-  
+
  otl_tmpl_select_stream
  (otl_select_struct_override* aoverride,
   const short arr_size,
@@ -2706,24 +2918,24 @@ public:
     TConnectStruct,
     TCursorStruct>& db,
   const int implicit_select=otl_explicit_select)
-  : otl_tmpl_select_cursor 
+  : otl_tmpl_select_cursor
      <TExceptionStruct,TConnectStruct,TCursorStruct,
       TVariableStruct,TSelectCursorStruct>(db,arr_size)
  {int i;
-  otl_tmpl_select_cursor 
+  otl_tmpl_select_cursor
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct>::select_cursor_struct.set_select_type
    (implicit_select);
   sl=0;
   sl_len=0;
   null_fetched=0;
-  otl_tmpl_select_cursor 
+  otl_tmpl_select_cursor
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct>::retcode=0;
   sl_desc=0;
   executed=0;
   cur_in=0;
-  otl_tmpl_select_cursor 
+  otl_tmpl_select_cursor
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct>::stm_text=0;
   eof_status=1;
@@ -2731,24 +2943,24 @@ public:
 
   {
    int len=strlen(sqlstm)+1;
-   otl_tmpl_select_cursor 
+   otl_tmpl_select_cursor
     <TExceptionStruct,TConnectStruct,TCursorStruct,
      TVariableStruct,TSelectCursorStruct>::stm_text=new char[len];
-   strcpy(otl_tmpl_select_cursor 
+   strcpy(otl_tmpl_select_cursor
            <TExceptionStruct,TConnectStruct,TCursorStruct,
             TVariableStruct,TSelectCursorStruct>::stm_text,
           sqlstm);
    otl_tmpl_ext_hv_decl
     <TVariableStruct,TTimestampStruct,TExceptionStruct,
      TConnectStruct,TCursorStruct> hvd
-       (otl_tmpl_select_cursor 
+       (otl_tmpl_select_cursor
          <TExceptionStruct,TConnectStruct,TCursorStruct,
           TVariableStruct,TSelectCursorStruct>::stm_text,1);
    hvd.alloc_host_var_list
-    (otl_tmpl_select_cursor 
+    (otl_tmpl_select_cursor
       <TExceptionStruct,TConnectStruct,TCursorStruct,
        TVariableStruct,TSelectCursorStruct>::vl,
-     otl_tmpl_select_cursor 
+     otl_tmpl_select_cursor
       <TExceptionStruct,TConnectStruct,TCursorStruct,
        TVariableStruct,TSelectCursorStruct>::vl_len,
      db
@@ -2756,10 +2968,10 @@ public:
   }
 
   try{
-   otl_tmpl_select_cursor 
+   otl_tmpl_select_cursor
     <TExceptionStruct,TConnectStruct,TCursorStruct,
      TVariableStruct,TSelectCursorStruct>::parse();
-   if(!otl_tmpl_select_cursor 
+   if(!otl_tmpl_select_cursor
       <TExceptionStruct,TConnectStruct,TCursorStruct,
        TVariableStruct,TSelectCursorStruct>
         ::select_cursor_struct.implicit_cursor){
@@ -2767,15 +2979,15 @@ public:
     bind_all();
    }else{
     for(i=0;
-        i < otl_tmpl_select_cursor 
+        i < otl_tmpl_select_cursor
              <TExceptionStruct,TConnectStruct,TCursorStruct,
               TVariableStruct,TSelectCursorStruct>::vl_len;
         ++i)
-     bind(*otl_tmpl_select_cursor 
+     bind(*otl_tmpl_select_cursor
             <TExceptionStruct,TConnectStruct,TCursorStruct,
              TVariableStruct,TSelectCursorStruct>::vl[i]);
    }
-   if(otl_tmpl_select_cursor 
+   if(otl_tmpl_select_cursor
        <TExceptionStruct,TConnectStruct,TCursorStruct,
         TVariableStruct,TSelectCursorStruct>::vl_len==0){
     rewind();
@@ -2786,18 +2998,19 @@ public:
          TConnectStruct,
          TCursorStruct>){
    cleanup();
+   if(this->adb)this->adb->throw_count++;
    throw;
   }
-  
+
  }
 
  void rewind(void)
  {int i;
-  if(otl_tmpl_select_cursor 
+  if(otl_tmpl_select_cursor
       <TExceptionStruct,TConnectStruct,TCursorStruct,
        TVariableStruct,TSelectCursorStruct>
       ::select_cursor_struct.implicit_cursor){
-   otl_tmpl_select_cursor 
+   otl_tmpl_select_cursor
      <TExceptionStruct,TConnectStruct,TCursorStruct,
       TVariableStruct,TSelectCursorStruct>::exec(1);
    if(sl){
@@ -2807,7 +3020,7 @@ public:
    get_select_list();
    for(i=0;i<sl_len;++i)bind(sl[i]);
   }
-  eof_status=otl_tmpl_select_cursor 
+  eof_status=otl_tmpl_select_cursor
              <TExceptionStruct,TConnectStruct,TCursorStruct,
               TVariableStruct,TSelectCursorStruct>::first();
   null_fetched=0;
@@ -2840,11 +3053,11 @@ public:
  void bind_all(void)
  {int i;
   for(i=0;
-      i < otl_tmpl_select_cursor 
+      i < otl_tmpl_select_cursor
            <TExceptionStruct,TConnectStruct,TCursorStruct,
             TVariableStruct,TSelectCursorStruct>::vl_len;
       ++i)
-   bind(*otl_tmpl_select_cursor 
+   bind(*otl_tmpl_select_cursor
           <TExceptionStruct,TConnectStruct,TCursorStruct,
            TVariableStruct,TSelectCursorStruct>::vl[i]
        );
@@ -2853,17 +3066,17 @@ public:
 
  void get_select_list(void)
  {int j;
-  
+
   otl_auto_array_ptr<otl_column_desc> loc_ptr(otl_var_list_size);
   otl_column_desc* sl_desc_tmp=loc_ptr.ptr;
   int sld_tmp_len=0;
   int ftype,elem_size,i;
-   
-  for(i=1; 
-      otl_tmpl_select_cursor 
+
+  for(i=1;
+      otl_tmpl_select_cursor
        <TExceptionStruct,TConnectStruct,TCursorStruct,
         TVariableStruct,TSelectCursorStruct>
-       ::describe_column(sl_desc_tmp[i-1],i); 
+       ::describe_column(sl_desc_tmp[i-1],i);
       ++i)
    ++sld_tmp_len;
   sl_len=sld_tmp_len;
@@ -2872,7 +3085,7 @@ public:
    sl=0;
   }
   sl=new otl_tmpl_variable<TVariableStruct>[sl_len];
-  int max_long_size=otl_tmpl_select_cursor 
+  int max_long_size=otl_tmpl_select_cursor
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct>
    ::adb->get_max_long_size();
@@ -2886,7 +3099,7 @@ public:
                <TExceptionStruct,TConnectStruct,TCursorStruct,
                 TVariableStruct,TSelectCursorStruct>
                ::array_size)),
-              &otl_tmpl_select_cursor 
+              &otl_tmpl_select_cursor
                <TExceptionStruct,TConnectStruct,TCursorStruct,
                 TVariableStruct,TSelectCursorStruct>
                ::adb->connect_struct
@@ -2902,17 +3115,20 @@ public:
 
  void check_if_executed(void)
  {
-  if(!executed)
+  if(!executed){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
      TCursorStruct>
     (otl_error_msg_2,
      otl_error_code_2,
-     otl_tmpl_select_cursor 
+     otl_tmpl_select_cursor
      <TExceptionStruct,TConnectStruct,TCursorStruct,
      TVariableStruct,TSelectCursorStruct>::stm_text,
      0);
+  }
  }
 
  int check_type(int type_code,int actual_data_type=0)
@@ -2927,13 +3143,15 @@ public:
      sl[cur_col].ftype,
      out_type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
      TCursorStruct>
     (otl_error_msg_0,
      otl_error_code_0,
-     otl_tmpl_select_cursor 
+     otl_tmpl_select_cursor
      <TExceptionStruct,TConnectStruct,TCursorStruct,
      TVariableStruct,TSelectCursorStruct>::stm_text,
      var_info);
@@ -2946,11 +3164,11 @@ public:
   if(cur_col<sl_len-1){
    ++cur_col;
    null_fetched=sl[cur_col].is_null
-    (otl_tmpl_select_cursor 
+    (otl_tmpl_select_cursor
      <TExceptionStruct,TConnectStruct,TCursorStruct,
      TVariableStruct,TSelectCursorStruct>::cur_row);
   }else{
-   eof_status=otl_tmpl_select_cursor 
+   eof_status=otl_tmpl_select_cursor
              <TExceptionStruct,TConnectStruct,TCursorStruct,
               TVariableStruct,TSelectCursorStruct>::next();
    cur_col=0;
@@ -2960,7 +3178,7 @@ public:
  void look_ahead(void)
  {
   if(cur_col==sl_len-1){
-   eof_status=otl_tmpl_select_cursor 
+   eof_status=otl_tmpl_select_cursor
     <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct>::next();
    cur_col=-1;
@@ -3075,7 +3293,7 @@ public:
   }
   return *this;
  }
- 
+
   otl_tmpl_select_stream
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct,
@@ -3097,7 +3315,7 @@ public:
   }
   return *this;
  }
- 
+
   otl_tmpl_select_stream
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct,
@@ -3119,7 +3337,7 @@ public:
   }
   return *this;
  }
- 
+
   otl_tmpl_select_stream
    <TExceptionStruct,TConnectStruct,TCursorStruct,
     TVariableStruct,TSelectCursorStruct,
@@ -3208,6 +3426,7 @@ public:
     TVariableStruct,TSelectCursorStruct,
     TTimestampStruct>& operator>>(otl_long_string& s)
  {
+  int len;
   check_if_executed();
   if(eof_intern())return *this;
   get_next();
@@ -3225,13 +3444,15 @@ public:
   }else if((sl[cur_col].ftype==otl_var_blob||
             sl[cur_col].ftype==otl_var_clob)&&
            !eof_intern()){
-   int len=0;
    int rc=sl[cur_col].var_struct.get_blob(this->cur_row,s.v,s.buf_size,len);
-   if(rc==0)
+   if(rc==0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_tmpl_exception
      <TExceptionStruct,
       TConnectStruct,
       TCursorStruct>(this->adb->connect_struct,this->stm_text);
+   }
    if(len>s.buf_size)len=s.buf_size;
    s.set_len(len);
    s.v[len]=0;
@@ -3243,6 +3464,8 @@ public:
      sl[cur_col].ftype,
      otl_var_long_string,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
     TConnectStruct,
@@ -3294,6 +3517,8 @@ public:
      sl[cur_col].ftype,
      otl_var_long_string,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
     TConnectStruct,
@@ -3318,6 +3543,8 @@ public:
      this->vl[cur_in]->ftype,
      type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -3332,7 +3559,9 @@ public:
 
  void check_in_var(void)
  {
-  if(this->vl_len==0)
+  if(this->vl_len==0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -3341,6 +3570,7 @@ public:
      otl_error_code_1,
      this->stm_text,
      0);
+  }
  }
 
  void get_in_next(void)
@@ -3375,6 +3605,7 @@ public:
    char* tmp=OTL_RCAST(char*,this->vl[cur_in]->val());
    tmp[0]=c;
    tmp[1]=0;
+   this->vl[cur_in]->set_not_null(0);
   }
   get_in_next();
   return *this;
@@ -3391,6 +3622,7 @@ public:
     OTL_RCAST(unsigned char*,this->vl[cur_in]->val());
    tmp[0]=c;
    tmp[1]=0;
+   this->vl[cur_in]->set_not_null(0);
   }
   get_in_next();
   return *this;
@@ -3418,6 +3650,8 @@ public:
       this->vl[cur_in]->ftype,
       otl_var_char,
       var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_tmpl_exception
      <TExceptionStruct,
      TConnectStruct,
@@ -3427,6 +3661,8 @@ public:
       this->stm_text,
       var_info);
    }
+
+   this->vl[cur_in]->set_not_null(0);
 
   }
   get_in_next();
@@ -3456,6 +3692,8 @@ public:
       this->vl[cur_in]->ftype,
       otl_var_char,
       var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_tmpl_exception
      <TExceptionStruct,
      TConnectStruct,
@@ -3465,6 +3703,8 @@ public:
       this->stm_text,
       var_info);
    }
+
+   this->vl[cur_in]->set_not_null(0);
 
   }
   get_in_next();
@@ -3496,6 +3736,8 @@ public:
       this->vl[cur_in]->ftype,
       otl_var_char,
       var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_tmpl_exception
      <TExceptionStruct,
      TConnectStruct,
@@ -3505,6 +3747,8 @@ public:
       this->stm_text,
       var_info);
    }
+
+   this->vl[cur_in]->set_not_null(0);
 
   }
   get_in_next();
@@ -3520,6 +3764,7 @@ public:
   if(check_in_type(otl_var_int,sizeof(int))){
    *OTL_RCAST(int*,this->vl[cur_in]->val())=n;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3533,6 +3778,7 @@ public:
   if(check_in_type(otl_var_unsigned_int,sizeof(unsigned))){
    *OTL_RCAST(unsigned*,this->vl[cur_in]->val())=u;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3546,6 +3792,7 @@ public:
   if(check_in_type(otl_var_short,sizeof(short))){
    *OTL_RCAST(short*,this->vl[cur_in]->val())=sh;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3559,6 +3806,7 @@ public:
   if(check_in_type(otl_var_long_int,sizeof(long))){
    *OTL_RCAST(long*,this->vl[cur_in]->val())=l;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3572,6 +3820,7 @@ public:
   if(check_in_type(otl_var_float,sizeof(float))){
    *OTL_RCAST(float*,this->vl[cur_in]->val())=f;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3585,6 +3834,7 @@ public:
   if(check_in_type(otl_var_double,sizeof(double))){
    *OTL_RCAST(double*,this->vl[cur_in]->val())=d;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3603,6 +3853,7 @@ public:
           sizeof(TTimestampStruct)
          );
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -3614,7 +3865,7 @@ template <class TExceptionStruct,
           class TCursorStruct,
           class TVariableStruct,
           class TTimestampStruct>
-class otl_tmpl_out_stream: public otl_tmpl_cursor 
+class otl_tmpl_out_stream: public otl_tmpl_cursor
 <TExceptionStruct,TConnectStruct,TCursorStruct,
 TVariableStruct
 >{
@@ -3637,7 +3888,7 @@ public:
    for(i=0;i<this->vl_len;++i)
     delete this->vl[i];
   }
-  delete this->vl;
+  delete[] this->vl;
  }
 
  otl_tmpl_out_stream
@@ -3680,6 +3931,7 @@ public:
          TConnectStruct,
          TCursorStruct>){
    cleanup();
+   if(this->adb)this->adb->throw_count++;
    throw;
   }
  }
@@ -3707,6 +3959,7 @@ public:
 
  ~otl_tmpl_out_stream()
  {in_destruct_flag=1;
+  this->in_destructor=1;
   if(dirty&&!in_exception_flag)flush();
   cleanup();
   in_destruct_flag=0;
@@ -3721,6 +3974,8 @@ public:
   }
   if(cur_x!=this->vl_len-1){
    in_exception_flag=1;
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -3735,6 +3990,8 @@ public:
    for(i=0;i<this->vl_len;++i){
     rc=this->vl[i]->var_struct.put_blob();
     if(rc==0){
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return;
      throw otl_tmpl_exception
       <TExceptionStruct,
        TConnectStruct,
@@ -3744,6 +4001,8 @@ public:
    if(!this->retcode){
     clean();
     in_exception_flag=1;
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return;
     throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -3753,6 +4012,8 @@ public:
     this->adb->retcode=this->adb->connect_struct.commit();
     if(!this->adb->retcode){
      clean();
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return;
      throw otl_tmpl_exception
        <TExceptionStruct,
         TConnectStruct,
@@ -3760,10 +4021,19 @@ public:
     }
    }
   }else{
-   exec(OTL_SCAST(short,(cur_y+1)));
-   for(i=0;i<this->vl_len;++i){
-    this->vl[i]->var_struct.put_blob();
-   }
+    int temp_rc;
+    exec(OTL_SCAST(short,(cur_y+1)));
+    for(i=0;i<this->vl_len;++i){
+      temp_rc=this->vl[i]->var_struct.put_blob();
+      if(temp_rc==0){
+        if(this->adb)this->adb->throw_count++;
+        if(this->adb&&this->adb->throw_count>1)return;
+        throw otl_tmpl_exception
+          <TExceptionStruct,
+          TConnectStruct,
+          TCursorStruct>(this->adb->connect_struct,this->stm_text);
+      }
+    }
    if(auto_commit_flag)
     this->adb->commit();
    clean();
@@ -3820,6 +4090,8 @@ public:
      this->vl[cur_x]->ftype,
      type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -3898,6 +4170,8 @@ public:
        otl_var_char,
        var_info);
      in_exception_flag=1;
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return *this;
      throw otl_tmpl_exception
       <TExceptionStruct,
       TConnectStruct,
@@ -3938,6 +4212,8 @@ public:
        otl_var_char,
        var_info);
      in_exception_flag=1;
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return *this;
      throw otl_tmpl_exception
       <TExceptionStruct,
       TConnectStruct,
@@ -3977,6 +4253,8 @@ public:
        otl_var_char,
        var_info);
      in_exception_flag=1;
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return *this;
      throw otl_tmpl_exception
       <TExceptionStruct,
       TConnectStruct,
@@ -4041,6 +4319,8 @@ public:
          this->vl[cur_x]->ftype,
          otl_var_char,
          var_info);
+       if(this->adb)this->adb->throw_count++;
+       if(this->adb&&this->adb->throw_count>1)return *this;
        throw otl_tmpl_exception
         <TExceptionStruct,
         TConnectStruct,
@@ -4099,7 +4379,7 @@ public:
       otl_strcpy
        (OTL_RCAST(unsigned char*,this->vl[cur_x]->val(i)),
         OTL_RCAST(unsigned char*,
-                  OTL_CCAST(char*,(*OTL_RCAST(std::vector<OTL_STL_STRING>*,
+                  OTL_CCAST(char*,(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STL_STRING>*,
                                               vec.p_v))[i].c_str())),
         overflow,
         this->vl[cur_x]->elem_size
@@ -4111,6 +4391,8 @@ public:
          this->vl[cur_x]->ftype,
          otl_var_char,
          var_info);
+       if(this->adb)this->adb->throw_count++;
+       if(this->adb&&this->adb->throw_count>1)return *this;
        throw otl_tmpl_exception
         <TExceptionStruct,
         TConnectStruct,
@@ -4129,7 +4411,7 @@ public:
       otl_datetime* ext_dt;
       for(j=0;j<tmp_len;++j){
        ext_dt=OTL_RCAST(otl_datetime*,
-                        &(*OTL_RCAST(std::vector<otl_datetime>*,
+                        &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<otl_datetime>*,
                                      vec.p_v))[j]);
        convert_date(*int_dt,*ext_dt);
        ++int_dt;
@@ -4139,37 +4421,37 @@ public:
     case otl_var_int:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<int>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<int>*,vec.p_v))[0]),
             sizeof(int)*tmp_len);
      break;
     case otl_var_double:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<double>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<double>*,vec.p_v))[0]),
             sizeof(double)*tmp_len);
      break;
     case otl_var_float:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<float>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<float>*,vec.p_v))[0]),
             sizeof(float)*tmp_len);
      break;
     case otl_var_unsigned_int:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<unsigned>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<unsigned>*,vec.p_v))[0]),
             sizeof(unsigned)*tmp_len);
      break;
     case otl_var_short:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<short>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<short>*,vec.p_v))[0]),
             sizeof(short)*tmp_len);
      break;
     case otl_var_long_int:
      memcpy(OTL_RCAST(char*,this->vl[cur_x]->val()),
             OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<long int>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<long int>*,vec.p_v))[0]),
             sizeof(long int)*tmp_len);
      break;
     }
@@ -4323,6 +4605,8 @@ public:
        this->vl[cur_x]->ftype,
        otl_var_char,
        var_info);
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return *this;
      throw otl_tmpl_exception
       <TExceptionStruct,
       TConnectStruct,
@@ -4345,6 +4629,8 @@ public:
        this->vl[cur_x]->ftype,
        otl_var_char,
        var_info);
+     if(this->adb)this->adb->throw_count++;
+     if(this->adb&&this->adb->throw_count>1)return *this;
      throw otl_tmpl_exception
       <TExceptionStruct,
       TConnectStruct,
@@ -4369,7 +4655,7 @@ public:
          TConnectStruct,   \
          TCursorStruct,    \
          TVariableStruct>
- 
+
  otl_tmpl_out_stream
    <TExceptionStruct,TConnectStruct,
     TCursorStruct,TVariableStruct,
@@ -4400,6 +4686,8 @@ public:
      this->vl[cur_x]->ftype,
      otl_var_long_string,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -4527,14 +4815,16 @@ public:
         otl_var_none,
         otl_var_none,
         var_info);
-       throw otl_tmpl_exception
-        <TExceptionStruct,
-        TConnectStruct,
-        TCursorStruct>
-        (otl_error_msg_6,
-         otl_error_code_6,
-         this->stm_text,
-         var_info);
+      if(this->adb)this->adb->throw_count++;
+      if(this->adb&&this->adb->throw_count>1)return;
+      throw otl_tmpl_exception
+       <TExceptionStruct,
+       TConnectStruct,
+       TCursorStruct>
+       (otl_error_msg_6,
+        otl_error_code_6,
+        this->stm_text,
+        var_info);
       }
      otl_tmpl_variable<TVariableStruct>* v=hvd.alloc_var
       (hvd[j],
@@ -4592,13 +4882,15 @@ public:
          TConnectStruct,
          TCursorStruct>){
    cleanup();
+   if(this->adb)this->adb->throw_count++;
    throw;
   }
-  
+
  }
 
  ~otl_tmpl_inout_stream()
- {if(!this->in_exception_flag)
+ {this->in_destructor=1;
+  if(!this->in_exception_flag)
    flush();
   cleanup();
  }
@@ -4697,6 +4989,8 @@ public:
      in_vl[cur_in_x]->ftype,
      type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_tmpl_exception
     <TExceptionStruct,
      TConnectStruct,
@@ -4941,7 +5235,7 @@ public:
     switch(vec.vtype){
     case otl_var_char:
      for(i=0;i<tmp_len;++i){
-      (*OTL_RCAST(std::vector<OTL_STL_STRING>*,vec.p_v))[i]=
+      (*OTL_RCAST(STD_NAMESPACE_PREFIX vector<OTL_STL_STRING>*,vec.p_v))[i]=
        OTL_RCAST(char*,in_vl[cur_in_x]->val(i));
      }
      break;
@@ -4953,7 +5247,7 @@ public:
       int j;
       for(j=0;j<tmp_len;++j){
        ext_dt=OTL_RCAST(otl_datetime*,
-                        &(*OTL_RCAST(std::vector<otl_datetime>*,vec.p_v))[j]);
+                        &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<otl_datetime>*,vec.p_v))[j]);
        convert_date(*ext_dt,*int_dt);
        ++int_dt;
       }
@@ -4961,37 +5255,37 @@ public:
      break;
     case otl_var_int:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<int>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<int>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(int)*tmp_len);
      break;
     case otl_var_double:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<double>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<double>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(double)*tmp_len);
      break;
     case otl_var_float:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<float>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<float>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(float)*tmp_len);
      break;
     case otl_var_unsigned_int:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<unsigned>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<unsigned>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(unsigned)*tmp_len);
      break;
     case otl_var_short:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<short>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<short>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(short)*tmp_len);
      break;
     case otl_var_long_int:
      memcpy(OTL_RCAST(char*,
-                      &(*OTL_RCAST(std::vector<long int>*,vec.p_v))[0]),
+                      &(*OTL_RCAST(STD_NAMESPACE_PREFIX vector<long int>*,vec.p_v))[0]),
             OTL_RCAST(char*,in_vl[cur_in_x]->val()),
             sizeof(long int)*tmp_len);
      break;
@@ -5031,12 +5325,13 @@ public:
     TCursorStruct,TVariableStruct,
     TTimestampStruct>& operator>>(otl_long_string& s)
  {
+  int len;
   if(eof())return *this;
   if(in_vl[cur_in_x]->ftype==otl_var_varchar_long||
      in_vl[cur_in_x]->ftype==otl_var_raw_long){
       unsigned char* c=
        OTL_RCAST(unsigned char*,in_vl[cur_in_x]->val(cur_in_y));
-   int len=in_vl[cur_in_x]->get_len();
+   len=in_vl[cur_in_x]->get_len();
    if(len>s.buf_size)len=s.buf_size;
    memcpy(s.v,c,len);
    s.set_len(len);
@@ -5045,13 +5340,15 @@ public:
    null_fetched=is_null_intern();
   }else if(in_vl[cur_in_x]->ftype==otl_var_clob||
            in_vl[cur_in_x]->ftype==otl_var_blob){
-   int len=0;
    int rc=in_vl[cur_in_x]->var_struct.get_blob(cur_in_y,s.v,s.buf_size,len);
-   if(rc==0)
+   if(rc==0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_tmpl_exception
      <TExceptionStruct,
      TConnectStruct,
      TCursorStruct>(this->adb->connect_struct,this->stm_text);
+   }
    if(len>s.buf_size)len=s.buf_size;
    s.set_len(len);
    s.v[len]=0;
@@ -5063,6 +5360,8 @@ public:
      in_vl[cur_in_x]->ftype,
      otl_var_long_string,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
     TConnectStruct,
@@ -5083,7 +5382,7 @@ public:
  TConnectStruct,                                \
  TCursorStruct,                                 \
  TVariableStruct>
- 
+
  otl_tmpl_inout_stream
   <TExceptionStruct,TConnectStruct,
     TCursorStruct,TVariableStruct,
@@ -5111,6 +5410,8 @@ public:
      in_vl[cur_in_x]->ftype,
      otl_var_long_string,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return *this;
    throw otl_tmpl_exception
     <TExceptionStruct,
     TConnectStruct,
@@ -5123,7 +5424,7 @@ public:
   get_in_next();
   return *this;
  }
-#undef OTL_TMPL_CUR_DUMMY 
+#undef OTL_TMPL_CUR_DUMMY
 #endif
 
 
@@ -5172,9 +5473,10 @@ public:
 
  long get_rpc()
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    return io->get_rpc();
-  else
+  }else
    return 0;
  }
 
@@ -5246,39 +5548,52 @@ public:
 
  int eof(void)
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    return io->eof();
-  else if(ss)
+  }else if(ss){
+   adb->reset_throw_count();
    return ss->eof();
-  else
+  }else
    return 1;
  }
 
  void flush(void)
  {
-  if(io)io->flush();
+  if(io){
+   adb->reset_throw_count();
+   io->flush();
+  }
  }
 
  void clean(const int clean_up_error_flag=0)
  {
-  if(io)io->clean(clean_up_error_flag);
+  if(io){
+   adb->reset_throw_count();
+   io->clean(clean_up_error_flag);
+  }
  }
 
  void rewind(void)
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    io->rewind();
-  else if(ss)
+  }else if(ss){
+   adb->reset_throw_count();
    ss->rewind();
+  }
  }
 
  int is_null(void)
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    return io->is_null();
-  else if(ss)
+  }else if(ss){
+   adb->reset_throw_count();
    return ss->is_null();
-  else
+  }else
    return 0;
  }
 
@@ -5293,6 +5608,7 @@ public:
  void set_commit(int auto_commit=0)
  {
   auto_commit_flag=auto_commit;
+  adb->reset_throw_count();
   if(io)io->set_commit(auto_commit);
  }
 
@@ -5326,6 +5642,7 @@ public:
    ++c;
   }
   adb=&db;
+  adb->reset_throw_count();
   if(strncmp(tmp,"SELECT",6)==0){
    ss=new otl_tmpl_select_stream
         <TExceptionStruct,
@@ -5802,7 +6119,7 @@ public:
   code=0;
   msg[0]=0;
  }
- 
+
  void init(const char* amsg, const int acode)
  {
   strcpy(OTL_RCAST(char*,msg),amsg);
@@ -5954,7 +6271,7 @@ public:
    if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
   }
 
-#ifndef OTL_ODBC_MYSQL  
+#ifndef OTL_ODBC_MYSQL
    if(auto_commit)
     status=SQLSetConnectAttr
      (hdbc,
@@ -5983,7 +6300,7 @@ public:
 
   if(oracle_format){
    status=SQLConnect
-    (hdbc, 
+    (hdbc,
      OTL_RCAST(unsigned char*,tnsname),SQL_NTS,
      OTL_RCAST(unsigned char*,username),SQL_NTS,
      OTL_RCAST(unsigned char*,passwd),SQL_NTS);
@@ -5991,7 +6308,7 @@ public:
    SQLCHAR out_str[2048];
    SQLSMALLINT out_len=0;
    status=SQLDriverConnect
-    (hdbc, 
+    (hdbc,
      0,
      OTL_RCAST(SQLCHAR*,OTL_CCAST(char*,connect_str)),
      OTL_SCAST(short,strlen(connect_str)),
@@ -6008,10 +6325,45 @@ public:
 
  }
 
+ int auto_commit_on(void)
+ {
+#ifdef OTL_ODBC_MYSQL
+  return 1;
+#else
+  status=SQLSetConnectAttr
+   (hdbc,
+    SQL_ATTR_AUTOCOMMIT,
+    (SQLPOINTER)SQL_AUTOCOMMIT_ON,
+    SQL_IS_POINTER);
+  if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
+   return 0;
+  else
+   return 1;
+#endif
+ }
+
+ int auto_commit_off(void)
+ {
+#ifdef OTL_ODBC_MYSQL
+  return 1;
+#else
+  status=SQLSetConnectAttr
+   (hdbc,
+    SQL_ATTR_AUTOCOMMIT,
+    (SQLPOINTER)SQL_AUTOCOMMIT_OFF,
+    SQL_IS_POINTER);
+  if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
+   return 0;
+  else
+   return 1;
+#endif
+ }
+
+
  int logoff(void)
  {
   commit();
-  status=SQLDisconnect(hdbc); 
+  status=SQLDisconnect(hdbc);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
    return 0;
   else
@@ -6023,12 +6375,12 @@ public:
   OTL_SQLSMALLINT msg_len;
   rc=SQLGetDiagRec
    (SQL_HANDLE_DBC,
-    hdbc, 
+    hdbc,
     1,
     OTL_RCAST(OTL_SQLCHAR_PTR,&exception_struct.sqlstate[0]),
     OTL_RCAST(OTL_SQLINTEGER_PTR,&exception_struct.code),
-    OTL_RCAST(OTL_SQLCHAR_PTR,&exception_struct.msg[0]), 
-    SQL_MAX_MESSAGE_LENGTH-1, 
+    OTL_RCAST(OTL_SQLCHAR_PTR,&exception_struct.msg[0]),
+    SQL_MAX_MESSAGE_LENGTH-1,
     OTL_RCAST(OTL_SQLSMALLINT_PTR,&msg_len));
   exception_struct.msg[msg_len]=0;
  }
@@ -6036,7 +6388,7 @@ public:
  int commit(void)
  {
 #ifndef OTL_ODBC_MYSQL
-  status=SQLEndTran(SQL_HANDLE_DBC,hdbc,SQL_COMMIT); 
+  status=SQLEndTran(SQL_HANDLE_DBC,hdbc,SQL_COMMIT);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
    return 0;
   else
@@ -6049,7 +6401,7 @@ public:
  int rollback(void)
  {
 #ifndef OTL_ODBC_MYSQL
-  status=SQLEndTran(SQL_HANDLE_DBC,hdbc,SQL_ROLLBACK); 
+  status=SQLEndTran(SQL_HANDLE_DBC,hdbc,SQL_ROLLBACK);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
    return 0;
   else
@@ -6058,7 +6410,7 @@ public:
   return 1;
 #endif
  }
- 
+
 };
 
 class otl_var{
@@ -6066,7 +6418,7 @@ public:
 
  unsigned char* p_v;
  OTL_SQLINTEGER* p_len;
- int ftype; 
+ int ftype;
  int act_elem_size;
 
  otl_var()
@@ -6214,17 +6566,17 @@ public:
    case SQL_DATE:
     return 40;
    case SQL_TYPE_TIMESTAMP:
-    return 40; 
+    return 40;
    case SQL_TYPE_TIME:
     return 40;
    default:
     return maxsz+1;
    }
-  case SQL_C_DOUBLE:   
+  case SQL_C_DOUBLE:
    return sizeof(double);
-  case SQL_C_SLONG:   
+  case SQL_C_SLONG:
    return sizeof(int);
-  case SQL_C_SSHORT:   
+  case SQL_C_SSHORT:
    return sizeof(short int);
   case SQL_C_TIMESTAMP:
    return sizeof(TIMESTAMP_STRUCT);
@@ -6242,9 +6594,9 @@ public:
  }
 
  static void map_ftype
- (otl_column_desc& desc, 
+ (otl_column_desc& desc,
   const int max_long_size,
-  int& ftype, 
+  int& ftype,
   int& elem_size,
   otl_select_struct_override& override,
   const int column_ndx)
@@ -6317,7 +6669,7 @@ public:
 class otl_cur{
 public:
 
- OTL_SQLHSTMT cda; 
+ OTL_SQLHSTMT cda;
  int status;
  otl_conn* adb;
  int direct_exec_flag;
@@ -6342,7 +6694,7 @@ public:
  {
   direct_exec_flag=0;
   adb=&connect;
-  status=SQLAllocHandle(SQL_HANDLE_STMT,connect.hdbc,&cda); 
+  status=SQLAllocHandle(SQL_HANDLE_STMT,connect.hdbc,&cda);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
   if(connect.timeout>0){
    status=SQLSetStmtAttr
@@ -6383,8 +6735,8 @@ public:
   if(direct_exec_flag){
    _rpc=0;
    status=SQLExecDirect
-    (cda, 
-     OTL_RCAST(OTL_SQLCHAR_PTR,stm_text), 
+    (cda,
+     OTL_RCAST(OTL_SQLCHAR_PTR,stm_text),
      SQL_NTS);
    if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
     return 0;
@@ -6407,7 +6759,7 @@ public:
      if(c[1]=='\'')
       ++c;
      else
-      in_str=0; 
+      in_str=0;
     }
    }
    if(*c==':'&&!in_str){
@@ -6422,9 +6774,9 @@ public:
   }
 
  status=SQLPrepare
-  (cda, 
+  (cda,
    OTL_RCAST(OTL_SQLCHAR_PTR,stm_text),
-   SQL_NTS); 
+   SQL_NTS);
  if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)
   return 0;
  else
@@ -6514,8 +6866,8 @@ public:
 
  int bind
  (const char* name,
-  otl_var& v, 
-  const int aelem_size, 
+  otl_var& v,
+  const int aelem_size,
   const int aftype,
   const int aparam_type,
   const int name_pos,
@@ -6566,11 +6918,11 @@ public:
   else
    return 1;
  }
- 
+
  int bind
  (const int column_num,
-  otl_var& v, 
-  const int elem_size, 
+  otl_var& v,
+  const int elem_size,
   const int aftype,
   const int param_type)
  {SWORD ftype=(SWORD)tmpl_ftype2odbc_ftype(aftype);
@@ -6616,14 +6968,14 @@ public:
    return 0;
   }
   status=SQLDescribeCol
-   (cda, 
+   (cda,
     OTL_SCAST(unsigned short,column_num),
-    name, 
-    sizeof(name), 
-    &nlen, 
-    &dbtype, 
-    &prec, 
-    &scale, 
+    name,
+    sizeof(name),
+    &nlen,
+    &dbtype,
+    &prec,
+    &scale,
     &nullok);
   if(status!=SQL_SUCCESS&&
      status!=SQL_SUCCESS_WITH_INFO)
@@ -6695,7 +7047,7 @@ public:
      status!=SQL_SUCCESS_WITH_INFO)
    return 0;
   status=SQLSetStmtAttr
-   (cur.cda,SQL_ATTR_ROWS_FETCHED_PTR,&crow,SQL_NTS); 
+   (cur.cda,SQL_ATTR_ROWS_FETCHED_PTR,&crow,SQL_NTS);
   if(status!=SQL_SUCCESS&&status!=SQL_SUCCESS_WITH_INFO)return 0;
   if(!implicit_cursor){
    status=SQLExecute(cur.cda);
@@ -7027,12 +7379,62 @@ public:
   (*OTL_RCAST(OTL_BASSTR*,this))<<n;
   return *this;
  }
-#undef OTL_BASSTR 
+#undef OTL_BASSTR
 };
+
+#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+template <class TData>
+otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<otl_null();
+ else
+  s<<var.v;
+ return s;
+}
+
+template <class TData>
+otl_stream& operator>>(otl_stream& s, otl_value<TData>& var)
+{
+  s>>var.v;
+  if(s.is_null())
+    var.ind=true;
+  else
+    var.ind=false;
+  return s;
+}
+
+template <class TData>
+STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<"NULL";
+ else
+  s<<var.v;
+ return s;
+}
+
+//static 
+inline STD_NAMESPACE_PREFIX ostream& operator<<(
+ STD_NAMESPACE_PREFIX ostream& s, 
+ const otl_value<otl_datetime>& var
+)
+{
+ if(var.ind)
+  s<<"NULL";
+ else{
+  s<<var.v.month<<"/"<<var.v.day<<"/"<<var.v.year<<" "
+   <<var.v.hour<<":"<<var.v.minute<<":"<<var.v.second;
+ }
+ return s;
+}
+
+#endif
+
 
 class otl_nocommit_stream: public otl_stream{
 public:
- 
+
  otl_nocommit_stream(): otl_stream()
  {
   set_commit(0);
@@ -7117,7 +7519,7 @@ public:
  {
   sqlstate[0]=0;
  }
- 
+
  void init(const char* amsg, const int acode)
  {
   strcpy(OTL_RCAST(char*,msg),amsg);
@@ -7146,7 +7548,7 @@ public:
   extern_lda=0;
   lda=new Lda_Def;
   memset(lda,0,sizeof(*lda));
-  memset(hda,0,sizeof(hda)); 
+  memset(hda,0,sizeof(hda));
  }
 
  ~otl_conn()
@@ -7178,12 +7580,12 @@ public:
   lda=new Lda_Def;
   extern_lda=0;
   memset(lda,0,sizeof(*lda));
-  memset(hda,0,sizeof(hda)); 
-  int rc=olog(lda,                                        
+  memset(hda,0,sizeof(hda));
+  int rc=olog(lda,
               hda,
               OTL_RCAST(unsigned char*,OTL_CCAST(char*,connect_str)),
-              -1,                                  
-              0,                                   
+              -1,
+              0,
               -1,
               0,
               -1,
@@ -7205,15 +7607,28 @@ public:
    extern_lda=0;
    return 1;
   }else{
+   if(!lda)return 1;
+   if(lda->rc==3113||lda->rc==1041||lda->rc==1033||lda->rc==1034){
+    delete lda;
+    lda=0;
+    return 1;
+   }
    int rc=ologof(lda);
    delete lda;
    lda=0;
-   return !rc; 
+   return !rc;
   }
  }
 
  void error(otl_exc& exception_struct)
  {
+  if(!lda){
+   exception_struct.code=3113;
+   strcpy(OTL_RCAST(char*,exception_struct.msg),
+          "ORA-03113: end-of-file on communication channel"
+         );
+   return;
+  }
   int len;
   exception_struct.code=lda->rc;
   oerhms
@@ -7221,7 +7636,7 @@ public:
     lda->rc,
     exception_struct.msg,
     sizeof(exception_struct.msg)
-   );
+    );
   len = strlen(OTL_RCAST(const char*,exception_struct.msg));
   exception_struct.msg[len]=0;
  }
@@ -7231,11 +7646,21 @@ public:
   return !ocom(lda);
  }
 
+ int auto_commit_on(void)
+ {
+  return !ocon(lda);
+ }
+
+ int auto_commit_off(void)
+ {
+  return !ocof(lda);
+ }
+
  int rollback(void)
  {
   return !orol(lda);
  }
- 
+
 };
 
 class otl_var{
@@ -7245,7 +7670,7 @@ public:
  sb2* p_ind;
  ub2* p_rlen;
  ub2* p_rcode;
- int ftype; 
+ int ftype;
  int act_elem_size;
  int array_size;
  ub4 max_tab_len;
@@ -7413,11 +7838,11 @@ public:
   switch(int_type){
   case inVarChar2: return extCChar;
   case inNumber:   return extFloat;
-  case inLong:     return extLongVarChar; 
-  case inRowId:    return extCChar; 
-  case inDate:     return extDate; 
-  case inRaw:      return extCChar; 
-  case inLongRaw:  return extLongVarRaw; 
+  case inLong:     return extLongVarChar;
+  case inRowId:    return extCChar;
+  case inDate:     return extDate;
+  case inRaw:      return extCChar;
+  case inLongRaw:  return extLongVarRaw;
   case inChar:     return extCChar;
   default:
    return -1;
@@ -7442,9 +7867,9 @@ public:
    return max_long_size;
   case extLongVarRaw:
    return max_long_size;
-  case extFloat:   
+  case extFloat:
    return sizeof(double);
-  case extDate:    
+  case extDate:
    return otl_oracle_date_size;
   default:
    return 0;
@@ -7452,9 +7877,9 @@ public:
  }
 
  static void map_ftype
- (otl_column_desc& desc, 
+ (otl_column_desc& desc,
   const int max_long_size,
-  int& ftype, 
+  int& ftype,
   int& elem_size,
   otl_select_struct_override& override,
   const int column_ndx)
@@ -7570,6 +7995,8 @@ public:
 
  int close(void)
  {
+  if(cda.rc==3113||cda.rc==1041||cda.rc==1033||cda.rc==1034)
+   return 1;
   return !oclose(&cda);
  }
 
@@ -7580,16 +8007,17 @@ public:
 
  int exec(const int iters)
  {
-  return !oexn(&cda,iters,0);
+  int rc=oexn(&cda,iters,0);
+  return !rc;
  }
 
  int fetch(const short iters,int& eof_data)
- {int rc=ofen(&cda,iters);
+ {int temp_rc=ofen(&cda,iters);
   eof_data=0;
   if(cda.rc==1403){
    eof_data=1;
    return 1;
-  }else if(rc==0)
+  }else if(temp_rc==0)
    return 1;
   else
    return 0;
@@ -7625,8 +8053,8 @@ public:
 
  int bind
  (const char* name,
-  otl_var& v, 
-  const int elem_size, 
+  otl_var& v,
+  const int elem_size,
   const int ftype,
   const int param_type,
   const int name_pos,
@@ -7640,7 +8068,7 @@ public:
                   -1,
                   OTL_RCAST(ub1*,v.p_v),
                   elem_size,
-	          tmpl_ftype2ora_ftype(ftype),
+                  tmpl_ftype2ora_ftype(ftype),
                   -1,
                   v.p_ind,
                   v.p_rlen,
@@ -7667,13 +8095,13 @@ public:
 
  int bind
  (const int column_num,
-  otl_var& v, 
-  const int elem_size, 
+  otl_var& v,
+  const int elem_size,
   const int ftype,
   const int param_type)
  {
   OTL_UNUSED_ARG(param_type)
-  
+
   return !odefin
    (&cda,
     column_num,
@@ -7695,17 +8123,17 @@ public:
   int& eof_desc)
  {
   sb1  name[241];
-  sb4  nlen;   
+  sb4  nlen;
   sb4  dbsize;
   sb2  dbtype;
 
   sb2  scale;
-  sb2  prec;    
-  sb4  dsize;   
+  sb2  prec;
+  sb4  dsize;
   sb2  nullok;
 
   nlen=sizeof(name);
-  int rc=odescr
+  int temp_rc=odescr
    (&cda,
     column_num,
     &dbsize,
@@ -7716,13 +8144,13 @@ public:
     &prec,
     &scale,
     &nullok);
-  if(rc==0)name[nlen]=0;
+  if(temp_rc==0)name[nlen]=0;
   eof_desc=0;
   if(cda.rc==1007){
    eof_desc=1;
    return 0;
   }
-  if(rc==0){
+  if(temp_rc==0){
    strcpy(col.name,OTL_RCAST(char*,name));
    col.dbtype=dbtype;
    col.dbsize=dbsize;
@@ -7743,8 +8171,8 @@ public:
     cda.rc,
     exception_struct.msg,
     sizeof(exception_struct.msg)
-   );
-  len = strlen(OTL_RCAST(const char*,exception_struct.msg));
+    );
+  len=strlen(OTL_RCAST(const char*,exception_struct.msg));
   exception_struct.msg[len]=0;
  }
 
@@ -7883,6 +8311,8 @@ public:
    connected=1;
   else{
    connected=0;
+   throw_count++;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -7900,7 +8330,7 @@ public:
 typedef otl_tmpl_variable<otl_var> otl_generic_variable;
 typedef otl_generic_variable* otl_p_generic_variable;
 
-class otl_ref_cursor: public 
+class otl_ref_cursor: public
 otl_tmpl_cursor
   <otl_exc,
    otl_conn,
@@ -7943,9 +8373,10 @@ public:
  sel_cur()
  {
  }
- 
+
  ~otl_ref_cursor()
  {
+  this->in_destructor=1;
   delete[] rvl;
   rvl=0;
  }
@@ -7982,7 +8413,7 @@ public:
    otl_cur,
    otl_var>::close();
  }
- 
+
  int first(void)
  {int i,rc;
   rc=obndrv
@@ -7992,7 +8423,11 @@ public:
     OTL_RCAST(ub1*,&sel_cur.cursor_struct.cda),
     sizeof(sel_cur.cursor_struct.cda),
     102,-1,0,0,-1,-1);
-  if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+  if(rc!=0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
+   throw otl_exception(cursor_struct,stm_text);
+  }
   if(cur_row==-2)
    ; // Special case -- calling describe_select() between parse() and first()
   else{
@@ -8005,7 +8440,11 @@ public:
   rc=sel_cur.cursor_struct.fetch
    (OTL_SCAST(short,array_size),
     sel_cur.eof_data);
-  if(rc==0)throw otl_exception(sel_cur.cursor_struct,stm_text);
+  if(rc==0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
+   throw otl_exception(sel_cur.cursor_struct,stm_text);
+  }
   row_count=sel_cur.cursor_struct.cda.rpc;
   cur_size=row_count;
   if(cur_size!=0)cur_row=0;
@@ -8025,7 +8464,11 @@ public:
    rc=sel_cur.cursor_struct.fetch
     (OTL_SCAST(short,array_size),
      sel_cur.eof_data);
-   if(rc==0)throw otl_exception(sel_cur.cursor_struct,stm_text);
+   if(rc==0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return 0;
+    throw otl_exception(sel_cur.cursor_struct,stm_text);
+   }
    cur_size=sel_cur.cursor_struct.cda.rpc-row_count;
    row_count=sel_cur.cursor_struct.cda.rpc;
    if(cur_size!=0)cur_row=0;
@@ -8077,7 +8520,11 @@ public:
     OTL_RCAST(ub1*,&sel_cur.cursor_struct.cda),
     sizeof(sel_cur.cursor_struct.cda),
     102,-1,0,0,-1,-1);
-  if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+  if(rc!=0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
+   throw otl_exception(cursor_struct,stm_text);
+  }
   exec(1); // Executing the PLSQL master block
   sel_cur.connected=1;
   cur_row=-2; // Special case -- describe_select() before first() or next()
@@ -8086,7 +8533,7 @@ public:
    ++desc_len;
   return 1;
  }
- 
+
 protected:
 
  int rvl_len;
@@ -8109,7 +8556,7 @@ public:
   for(i=0;i<vl_len;++i)
    delete vl[i];
   delete[] vl;
-  delete[] sl_desc;  
+  delete[] sl_desc;
  }
 
  otl_ref_select_stream
@@ -8121,7 +8568,7 @@ public:
   :otl_ref_cursor(db,cur_placeholder,arr_size)
  {
   init();
-  
+
   {
    int len=strlen(sqlstm)+1;
    stm_text=new char[len];
@@ -8138,9 +8585,10 @@ public:
    }
   }catch(otl_exception){
    cleanup();
+   if(this->adb)this->adb->throw_count++;
    throw;
   }
-  
+
  }
 
  ~otl_ref_select_stream()
@@ -8384,6 +8832,7 @@ public:
    otl_time0* tm=OTL_RCAST(otl_time0*,vl[cur_in]->val());
    memcpy(tm,OTL_RCAST(void*,OTL_CCAST(otl_time0*,&t)),otl_oracle_date_size);
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8406,6 +8855,7 @@ public:
    tmp[0]=c;
    tmp[1]=0;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8418,6 +8868,7 @@ public:
    tmp[0]=c;
    tmp[1]=0;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8437,20 +8888,22 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb&&this->adb->throw_count>1)return *this;
+    if(this->adb)this->adb->throw_count++;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
-
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8469,20 +8922,23 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb&&this->adb->throw_count>1)return *this;
+    if(this->adb)this->adb->throw_count++;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
 
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8500,20 +8956,23 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
 
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8524,6 +8983,7 @@ public:
   if(check_in_type(otl_var_int,sizeof(int))){
    *OTL_RCAST(int*,vl[cur_in]->val())=n;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8534,6 +8994,7 @@ public:
   if(check_in_type(otl_var_unsigned_int,sizeof(unsigned))){
    *OTL_RCAST(unsigned*,vl[cur_in]->val())=u;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8544,6 +9005,7 @@ public:
   if(check_in_type(otl_var_short,sizeof(short))){
    *OTL_RCAST(short*,vl[cur_in]->val())=sh;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8554,6 +9016,7 @@ public:
   if(check_in_type(otl_var_long_int,sizeof(long))){
    *OTL_RCAST(long*,vl[cur_in]->val())=l;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8564,6 +9027,7 @@ public:
   if(check_in_type(otl_var_float,sizeof(float))){
    *OTL_RCAST(float*,vl[cur_in]->val())=f;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8574,6 +9038,7 @@ public:
   if(check_in_type(otl_var_double,sizeof(double))){
    *OTL_RCAST(double*,vl[cur_in]->val())=d;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -8643,6 +9108,8 @@ protected:
      sl[cur_col].ftype,
      out_type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_exception
     (otl_error_msg_0,
      otl_error_code_0,
@@ -8667,7 +9134,7 @@ protected:
   otl_column_desc* sl_desc_tmp=loc_ptr.ptr;
   int sld_tmp_len=0;
   int ftype,elem_size;
-  
+
   rc=obndrv
    (&cursor_struct.cda,
     OTL_RCAST(unsigned char*,cur_placeholder),
@@ -8675,8 +9142,11 @@ protected:
     OTL_RCAST(ub1*,&sel_cur.cursor_struct.cda),
     sizeof(sel_cur.cursor_struct.cda),
     102,-1,0,0,-1,-1);
-  if(rc!=0)throw otl_exception(cursor_struct,stm_text);
-
+  if(rc!=0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
+   throw otl_exception(cursor_struct,stm_text);
+  }
   for(i=0;i<vl_len;++i)otl_tmpl_cursor
   <otl_exc,
    otl_conn,
@@ -8688,7 +9158,7 @@ protected:
    otl_cur,
    otl_var>::exec(1); // Executing the PLSQL master block
   sel_cur.connected=1;
-  cur_row=-2; 
+  cur_row=-2;
   sld_tmp_len=0;
   for(i=1;sel_cur.describe_column(sl_desc_tmp[i-1],i);++i)
    ++sld_tmp_len;
@@ -8738,6 +9208,8 @@ protected:
      vl[cur_in]->ftype,
      type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_exception
     (otl_error_msg_0,
      otl_error_code_0,
@@ -8749,22 +9221,28 @@ protected:
 
  void check_in_var(void)
  {
-  if(vl_len==0)
+  if(vl_len==0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_exception
     (otl_error_msg_1,
      otl_error_code_1,
      stm_text,
      0);
+  }
  }
 
  void check_if_executed(void)
  {
-  if(!executed)
+  if(!executed){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_exception
     (otl_error_msg_2,
      otl_error_code_2,
      stm_text,
      0);
+  }
  }
 
 };
@@ -8789,9 +9267,10 @@ public:
 
  long get_rpc()
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    return io->get_rpc();
-  else
+  }else
    return 0;
  }
 
@@ -8867,7 +9346,7 @@ public:
  otl_stream()
  {
   ref_ss=0;
-  io=0; 
+  io=0;
   ss=0;
   adb=0;
   ov=0; ov_len=0;
@@ -8883,35 +9362,47 @@ public:
 
  int eof(void)
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    return io->eof();
-  else if(ss)
+  }else if(ss){
+   adb->reset_throw_count();
    return ss->eof();
-  else if(ref_ss)
+  }else if(ref_ss){
+   adb->reset_throw_count();
    return ref_ss->eof();
-  else
+  }else
    return 1;
  }
 
  void flush(void)
  {
-  if(io)io->flush();
+  if(io){
+   adb->reset_throw_count();
+   io->flush();
+  }
  }
 
  void clean(const int clean_up_error_flag=0)
  {
-  if(io)io->clean(clean_up_error_flag);
+  if(io){
+   adb->reset_throw_count();
+   io->clean(clean_up_error_flag);
+  }
  }
-
 
  void rewind(void)
  {
-  if(io)
+  if(io){
+   adb->reset_throw_count();
    io->rewind();
-  else if(ss)
+  }else if(ss){
+   adb->reset_throw_count();
    ss->rewind();
-  else if(ref_ss)
+  }else if(ref_ss){
+   adb->reset_throw_count();
    ref_ss->rewind();
+  }
  }
 
  int is_null(void)
@@ -8929,7 +9420,10 @@ public:
  void set_commit(int auto_commit=0)
  {
   auto_commit_flag=auto_commit;
-  if(io)io->set_commit(auto_commit);
+  if(io){
+   adb->reset_throw_count();
+   io->set_commit(auto_commit);
+  }
  }
 
  void open
@@ -8956,6 +9450,7 @@ public:
    ++c;
   }
   adb=&db;
+  adb->reset_throw_count();
   if(strncmp(tmp,"SELECT",6)==0){
    ss=new otl_select_stream(&override,arr_size,sqlstm,db);
   }
@@ -8987,10 +9482,12 @@ public:
  {
   desc_len=0;
   if(ss){
+   adb->reset_throw_count();
    desc_len=ss->sl_len;
    return ss->sl_desc;
   }
   if(ref_ss){
+   adb->reset_throw_count();
    desc_len=ref_ss->sl_len;
    return ref_ss->sl_desc;
   }
@@ -9000,9 +9497,10 @@ public:
 
  int good(void)
  {
-  if(io||ss||ref_ss)
+  if(io||ss||ref_ss){
+   adb->reset_throw_count();
    return 1;
-  else
+  }else
    return 0;
  }
 
@@ -9384,6 +9882,56 @@ public:
 
 };
 
+#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+template <class TData>
+otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<otl_null();
+ else
+  s<<var.v;
+ return s;
+}
+
+template <class TData>
+otl_stream& operator>>(otl_stream& s, otl_value<TData>& var)
+{
+  s>>var.v;
+  if(s.is_null())
+    var.ind=true;
+  else
+    var.ind=false;
+  return s;
+}
+
+template <class TData>
+STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<"NULL";
+ else
+  s<<var.v;
+ return s;
+}
+
+//static 
+inline STD_NAMESPACE_PREFIX ostream& operator<<(
+ STD_NAMESPACE_PREFIX ostream& s, 
+ const otl_value<otl_datetime>& var
+)
+{
+ if(var.ind)
+  s<<"NULL";
+ else{
+  s<<var.v.month<<"/"<<var.v.day<<"/"<<var.v.year<<" "
+   <<var.v.hour<<":"<<var.v.minute<<":"<<var.v.second;
+ }
+ return s;
+}
+
+#endif
+
+
 typedef otl_tmpl_nocommit_stream<otl_stream,otl_connect> otl_nocommit_stream;
 
 
@@ -9470,7 +10018,7 @@ public:
  {
   sqlstate[0]=0;
  }
- 
+
  void init(const char* amsg, const int acode)
  {
   strcpy(OTL_RCAST(char*,msg),amsg);
@@ -9621,8 +10169,8 @@ public:
    cred_type=OCI_CRED_RDBMS;
   status=OCISessionBegin
    (svchp,
-    errhp, 
-    authp, 
+    errhp,
+    authp,
     cred_type,
     OTL_SCAST(ub4,OCI_DEFAULT));
   if(status)return 0;
@@ -9635,7 +10183,7 @@ public:
  }
 
  int session_begin
-   (const char* userid, 
+   (const char* userid,
     const char* password,
     const int aauto_commit)
  {int status;
@@ -9728,6 +10276,18 @@ public:
   return 1;
  }
 
+ int auto_commit_on(void)
+ {
+  auto_commit=1;
+  return 1;
+ }
+
+ int auto_commit_off(void)
+ {
+  auto_commit=0;
+  return 1;
+ }
+
  int rlogon(const char* connect_str,const int aauto_commit)
  {int status;
   char username[256];
@@ -9807,13 +10367,14 @@ public:
     0,
     0);
   if(status)return 0;
-  
+
   return 1;
 
  }
 
  int logoff(void)
  {
+  int rc;
   if(extern_lda){
    OCIHandleFree(OTL_RCAST(dvoid*,errhp), OTL_SCAST(ub4,OCI_HTYPE_ERROR));
    envhp=0;
@@ -9821,8 +10382,10 @@ public:
    errhp=0;
    extern_lda=0;
   }else{
-   session_end();
-   server_detach();
+   rc=session_end();
+   if(!rc)return 0;
+   rc=server_detach();
+   if(!rc)return 0;
   }
   auto_commit=0;
   return 1;
@@ -9853,7 +10416,7 @@ public:
  {
   return !OCITransRollback(svchp,errhp,OTL_SCAST(ub4,OCI_DEFAULT));
  }
- 
+
 };
 
 class otl_var{
@@ -9863,7 +10426,7 @@ public:
  sb2* p_ind;
  ub2* p_rlen;
  ub2* p_rcode;
- int ftype; 
+ int ftype;
  int array_size;
  int elem_size;
  OCILobLocator** lob;
@@ -9927,7 +10490,7 @@ public:
   int i;
   ub4 lobEmpty=0;
 
-  
+
   connect=OTL_RCAST(otl_conn*,OTL_CCAST(void*,connect_struct));
   ftype=aftype;
   pl_tab_flag=apl_tab_flag;
@@ -10013,9 +10576,9 @@ public:
   int rc;
   alen=0;
   rc=OCILobGetLength
-   (connect->svchp, 
-    connect->errhp, 
-    lob[ndx], 
+   (connect->svchp,
+    connect->errhp,
+    lob[ndx],
     &blen);
   alen=OTL_SCAST(int,blen);
   if(rc!=0)return 0;
@@ -10128,7 +10691,7 @@ public:
  {
   if(!lob_stream_flag)return 1;
   if(lob_len==0)return 1;
-  
+
   ub4 offset=OTL_SCAST(ub4,aoffset);
   ub4 amt=lob_len;
   int rc;
@@ -10140,7 +10703,7 @@ public:
    amt=s.length;
   }else if((aoffset-1)+s.length<lob_len)
    mode=OCI_NEXT_PIECE;
-  else 
+  else
    mode=OCI_LAST_PIECE;
   rc=OCILobWrite
    (connect->svchp,
@@ -10248,11 +10811,11 @@ public:
   switch(int_type){
   case inVarChar2: return extCChar;
   case inNumber:   return extFloat;
-  case inLong:     return extLongVarChar; 
-  case inRowId:    return extCChar; 
-  case inDate:     return extDate; 
-  case inRaw:      return extCChar; 
-  case inLongRaw:  return extLongVarRaw; 
+  case inLong:     return extLongVarChar;
+  case inRowId:    return extCChar;
+  case inDate:     return extDate;
+  case inRaw:      return extCChar;
+  case inLongRaw:  return extLongVarRaw;
   case inChar:     return extCChar;
   case inCLOB:     return extCLOB;
   case inBLOB:     return extBLOB;
@@ -10283,9 +10846,9 @@ public:
    return max_long_size;
   case extBLOB:
    return max_long_size;
-  case extFloat:   
+  case extFloat:
    return sizeof(double);
-  case extDate:    
+  case extDate:
    return otl_oracle_date_size;
   default:
    return 0;
@@ -10293,9 +10856,9 @@ public:
  }
 
  static void map_ftype
- (otl_column_desc& desc, 
+ (otl_column_desc& desc,
   const int max_long_size,
-  int& ftype, 
+  int& ftype,
   int& elem_size,
   otl_select_struct_override& override,
   const int column_ndx)
@@ -10936,6 +11499,11 @@ public:
 
  ~otl_connect(){}
 
+  void auto_commit_off(void)
+  {
+    otl_ora8_connect::auto_commit_off();
+  }
+
  void rlogon(OCIEnv *envhp,OCISvcCtx *svchp)
  {
   connected=0;
@@ -10945,6 +11513,8 @@ public:
    connected=1;
   else{
    connected=0;
+   throw_count++;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -10960,12 +11530,13 @@ public:
    connect_struct.session_end();
    connect_struct.server_detach();
   }else{
-   retcode=connect_struct.logoff();
+   if(connect_struct.extern_lda)
+    connect_struct.logoff();
+   else{
+    session_end();
+    server_detach();
+   }
    connected=0;
-   if(retcode)
-    return;
-   else
-    throw otl_exception(connect_struct);
   }
  }
 
@@ -10976,6 +11547,8 @@ public:
   long_max_size=32760;
   retcode=connect_struct.server_attach(tnsname);
   if(!retcode){
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -10984,12 +11557,14 @@ public:
  {
   retcode=connect_struct.server_detach();
   if(!retcode){
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
 
  void session_begin
-  (const char* username, 
+  (const char* username,
    const char* password,
    const int auto_commit=0)
  {
@@ -10998,6 +11573,8 @@ public:
    connected=1;
   else{
    connected=0;
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -11006,6 +11583,8 @@ public:
  {
   if(connect_struct.session_begin_count==0){
    connected=0;
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(otl_error_msg_11,otl_error_code_11);
   }
   retcode=connect_struct.session_begin(auto_commit);
@@ -11013,6 +11592,8 @@ public:
    connected=1;
   else{
    connected=0;
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -11022,6 +11603,8 @@ public:
   connected=0;
   retcode=connect_struct.session_end();
   if(!retcode){
+   ++throw_count;
+   if(throw_count>1)return;
    throw otl_exception(connect_struct);
   }
  }
@@ -11034,7 +11617,7 @@ public:
 typedef otl_tmpl_variable<otl_var> otl_generic_variable;
 typedef otl_generic_variable* otl_p_generic_variable;
 
-class otl_ref_cursor: public 
+class otl_ref_cursor: public
  otl_tmpl_cursor
   <otl_exc,
    otl_conn,
@@ -11077,7 +11660,7 @@ public:
   sel_cur()
  {
  }
- 
+
  ~otl_ref_cursor()
  {
   delete[] rvl;
@@ -11139,7 +11722,11 @@ public:
     0,
     0,
     OCI_DEFAULT);
-  if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+  if(rc!=0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
+   throw otl_exception(cursor_struct,stm_text);
+  }
   otl_tmpl_cursor
   <otl_exc,
    otl_conn,
@@ -11160,7 +11747,7 @@ public:
    otl_cur,
    otl_var>::close();
  }
- 
+
  int first(void)
  {int i,rc;
   OCIBind* bindpp;
@@ -11182,7 +11769,11 @@ public:
      0,
      0,
      OCI_DEFAULT);
-   if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+   if(rc!=0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return 0;
+    throw otl_exception(cursor_struct,stm_text);
+   }
   }
 
   if(cur_row==-2)
@@ -11195,7 +11786,11 @@ public:
   for(i=0;i<vl_cur_len;++i)
    sel_cur.bind(i+1,*rvl[i]);
   rc=sel_cur.cursor_struct.fetch(OTL_SCAST(short,array_size),sel_cur.eof_data);
-  if(rc==0)throw otl_exception(sel_cur.cursor_struct,stm_text);
+  if(rc==0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
+   throw otl_exception(sel_cur.cursor_struct,stm_text);
+  }
   row_count=sel_cur.cursor_struct.rpc();
   cur_size=row_count;
   if(cur_size!=0)cur_row=0;
@@ -11213,7 +11808,11 @@ public:
     return 0;
    }
    rc=sel_cur.cursor_struct.fetch(OTL_SCAST(short,array_size),sel_cur.eof_data);
-   if(rc==0)throw otl_exception(sel_cur.cursor_struct,stm_text);
+   if(rc==0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return 0;
+    throw otl_exception(sel_cur.cursor_struct,stm_text);
+   }
    cur_size=sel_cur.cursor_struct.rpc()-row_count;
    row_count=sel_cur.cursor_struct.rpc();
    if(cur_size!=0)cur_row=0;
@@ -11277,7 +11876,11 @@ public:
      0,
      0,
      OCI_DEFAULT);
-   if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+   if(rc!=0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return 0;
+    throw otl_exception(cursor_struct,stm_text);
+   }
   }
   exec(1); // Executing the PLSQL master block
   sel_cur.connected=1;
@@ -11288,7 +11891,7 @@ public:
    ++desc_len;
   return 1;
  }
- 
+
 protected:
 
  int rvl_len;
@@ -11305,6 +11908,7 @@ public:
 
  otl_select_struct_override *override;
  int delay_next;
+ int same_sl_flag;
 
  void cleanup(void)
  {int i;
@@ -11312,7 +11916,7 @@ public:
   for(i=0;i<vl_len;++i)
    delete vl[i];
   delete[] vl;
-  delete[] sl_desc;  
+  delete[] sl_desc;
  }
 
  otl_ref_select_stream
@@ -11335,7 +11939,7 @@ public:
   }
 
   try{
-   
+
    parse();
    if(vl_len==0){
     rewind();
@@ -11343,9 +11947,10 @@ public:
    }
   }catch(otl_exception){
    cleanup();
+   if(this->adb)this->adb->throw_count++;
    throw;
   }
-  
+
  }
 
  ~otl_ref_select_stream()
@@ -11405,6 +12010,7 @@ public:
    otl_time0* tm=OTL_RCAST(otl_time0*,vl[cur_in]->val());
    memcpy(tm,OTL_RCAST(void*,OTL_CCAST(otl_time0*,&t)),otl_oracle_date_size);
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11606,8 +12212,11 @@ public:
            !eof_intern()){
    int len;
    int rc=sl[cur_col].var_struct.get_blob(cur_row,s.v,s.buf_size,len);
-   if(rc==0)
+   if(rc==0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_exception(adb->connect_struct,stm_text);
+   }
    s.set_len(len);
    s.v[len]=0;
    look_ahead();
@@ -11642,6 +12251,7 @@ public:
   OTL_UNUSED_ARG(n)
   check_in_var();
   vl[cur_in]->set_null(0);
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11654,6 +12264,7 @@ public:
    tmp[0]=c;
    tmp[1]=0;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11666,6 +12277,7 @@ public:
    tmp[0]=c;
    tmp[1]=0;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11684,20 +12296,23 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
 
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11716,20 +12331,23 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
 
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11747,20 +12365,23 @@ public:
      vl[cur_in]->elem_size
     );
    if(overflow){
-    char var_info[256];
+    char temp_var_info[256];
     otl_var_info_var
      (vl[cur_in]->name,
       vl[cur_in]->ftype,
       otl_var_char,
-      var_info);
+      temp_var_info);
+    if(this->adb)this->adb->throw_count++;
+  if(this->adb&&this->adb->throw_count>1)return *this;
     throw otl_exception
      (otl_error_msg_4,
       otl_error_code_4,
       stm_text,
-      var_info);
+      temp_var_info);
    }
 
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11771,6 +12392,7 @@ public:
   if(check_in_type(otl_var_int,sizeof(int))){
    *OTL_RCAST(int*,vl[cur_in]->val())=n;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11781,6 +12403,7 @@ public:
   if(check_in_type(otl_var_unsigned_int,sizeof(unsigned))){
    *OTL_RCAST(unsigned*,vl[cur_in]->val())=u;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11791,6 +12414,7 @@ public:
   if(check_in_type(otl_var_short,sizeof(short))){
    *OTL_RCAST(short*,vl[cur_in]->val())=sh;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11801,6 +12425,7 @@ public:
   if(check_in_type(otl_var_long_int,sizeof(long))){
    *OTL_RCAST(long*,vl[cur_in]->val())=l;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11811,6 +12436,7 @@ public:
   if(check_in_type(otl_var_float,sizeof(float))){
    *OTL_RCAST(float*,vl[cur_in]->val())=f;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11821,6 +12447,7 @@ public:
   if(check_in_type(otl_var_double,sizeof(double))){
    *OTL_RCAST(double*,vl[cur_in]->val())=d;
   }
+  this->vl[cur_in]->set_not_null(0);
   get_in_next();
   return *this;
  }
@@ -11858,6 +12485,7 @@ protected:
 
  void init(void)
  {
+  same_sl_flag=0;
   sl=0;
   sl_len=0;
   null_fetched=0;
@@ -11891,6 +12519,8 @@ protected:
      sl[cur_col].ftype,
      out_type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_exception
     (otl_error_msg_0,
      otl_error_code_0,
@@ -11932,7 +12562,11 @@ protected:
      0,
      0,
      OCI_DEFAULT);
-   if(rc!=0)throw otl_exception(cursor_struct,stm_text);
+   if(rc!=0){
+    if(this->adb)this->adb->throw_count++;
+    if(this->adb&&this->adb->throw_count>1)return;
+    throw otl_exception(cursor_struct,stm_text);
+   }
   }
 
   for(i=0;i<vl_len;++i)
@@ -11948,34 +12582,41 @@ protected:
    otl_var>::exec(1); // Executing the PLSQL master block
   sel_cur.connected=1;
   cur_row=-2;
-  sld_tmp_len=0;
-  sel_cur.cursor_struct.straight_select=0;
-  for(i=1;sel_cur.describe_column(sl_desc_tmp[i-1],i);++i)
-   ++sld_tmp_len;
-  sl_len=sld_tmp_len;
-  if(sl){
-   delete[] sl;
-   sl=0;
+  if(same_sl_flag && sl){
+   // assuming that ref.cur's select list is the same as
+   // in previous executions of the master block.
+   for(i=0;i<sl_len;++i)sel_cur.bind(sl[i]);
+   return;
+  }else{
+   sld_tmp_len=0;
+   sel_cur.cursor_struct.straight_select=0;
+   for(i=1;sel_cur.describe_column(sl_desc_tmp[i-1],i);++i)
+    ++sld_tmp_len;
+   sl_len=sld_tmp_len;
+   if(sl){
+    delete[] sl;
+    sl=0;
+   }
+   sl=new otl_generic_variable[sl_len];
+   int max_long_size=adb->get_max_long_size();
+   for(j=0;j<sl_len;++j){
+    otl_generic_variable::map_ftype
+     (sl_desc_tmp[j],max_long_size,ftype,elem_size,*override,j+1);
+    sl[j].copy_pos(j+1);
+    sl[j].init(ftype,
+               elem_size,
+               OTL_SCAST(short,array_size),
+               &adb->connect_struct
+               );
+   }
+   if(sl_desc){
+    delete[] sl_desc;
+    sl_desc=0;
+   }
+   sl_desc=new otl_column_desc[sl_len];
+   memcpy(sl_desc,sl_desc_tmp,sizeof(otl_column_desc)*sl_len);
+   for(i=0;i<sl_len;++i)sel_cur.bind(sl[i]);
   }
-  sl=new otl_generic_variable[sl_len];
-  int max_long_size=adb->get_max_long_size();
-  for(j=0;j<sl_len;++j){
-   otl_generic_variable::map_ftype
-    (sl_desc_tmp[j],max_long_size,ftype,elem_size,*override,j+1);
-   sl[j].copy_pos(j+1);
-   sl[j].init(ftype,
-              elem_size,
-              OTL_SCAST(short,array_size),
-              &adb->connect_struct
-             );
-  }
-  if(sl_desc){
-   delete[] sl_desc;
-   sl_desc=0;
-  }
-  sl_desc=new otl_column_desc[sl_len];
-  memcpy(sl_desc,sl_desc_tmp,sizeof(otl_column_desc)*sl_len);
-  for(i=0;i<sl_len;++i)sel_cur.bind(sl[i]);
  }
 
  void get_in_next(void)
@@ -11998,6 +12639,8 @@ protected:
      vl[cur_in]->ftype,
      type_code,
      var_info);
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return 0;
    throw otl_exception
     (otl_error_msg_0,
      otl_error_code_0,
@@ -12009,22 +12652,28 @@ protected:
 
  void check_in_var(void)
  {
-  if(vl_len==0)
+  if(vl_len==0){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_exception
     (otl_error_msg_1,
      otl_error_code_1,
      stm_text,
      0);
+  }
  }
 
  void check_if_executed(void)
  {
-  if(!executed)
+  if(!executed){
+   if(this->adb)this->adb->throw_count++;
+   if(this->adb&&this->adb->throw_count>1)return;
    throw otl_exception
     (otl_error_msg_2,
      otl_error_code_2,
      stm_text,
      0);
+  }
  }
 
 };
@@ -12041,9 +12690,11 @@ public:
 
  otl_var_desc* iov;
  int iov_len;
- 
+ int next_iov_ndx;
+
  otl_var_desc* ov;
  int ov_len;
+ int next_ov_ndx;
 
  otl_select_struct_override override;
 
@@ -12052,6 +12703,24 @@ public:
                       const int col_size=0)
  {
   override.add_override(column_ndx,col_type,col_size);
+ }
+
+ void inc_next_ov(void)
+ {
+  if(ov_len==0)return;
+  if(next_ov_ndx<ov_len-1)
+   ++next_ov_ndx;
+  else
+   next_ov_ndx=0;
+ }
+
+ void inc_next_iov(void)
+ {
+  if(iov_len==0)return;
+  if(next_iov_ndx<iov_len-1)
+   ++next_iov_ndx;
+  else
+   next_iov_ndx=0;
  }
 
  long get_rpc()
@@ -12078,8 +12747,10 @@ public:
    if(ss->sl_len>0){
     ov=new otl_var_desc[ss->sl_len];
     ov_len=ss->sl_len;
-    for(i=0;i<ss->sl_len;++i)
+    for(i=0;i<ss->sl_len;++i){
      ss->sl[i].copy_var_desc(ov[i]);
+     ov[i].copy_name(ss->sl_desc[i].name);
+    }
    }
   }else if(io){
    if(io->vl_len>0){
@@ -12104,8 +12775,10 @@ public:
    if(ref_ss->sl_len>0){
     ov=new otl_var_desc[ref_ss->sl_len];
     ov_len=ref_ss->sl_len;
-    for(i=0;i<ref_ss->sl_len;++i)
+    for(i=0;i<ref_ss->sl_len;++i){
      ref_ss->sl[i].copy_var_desc(ov[i]);
+     ov[i].copy_name(ref_ss->sl_desc[i].name);
+    }
    }
   }
  }
@@ -12120,6 +12793,8 @@ public:
   iov=0; iov_len=0;
   ov=0; ov_len=0;
   auto_commit_flag=1;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
   adb=&db;
   open(arr_size,sqlstm,db,ref_cur_placeholder);
  }
@@ -12127,10 +12802,12 @@ public:
  otl_stream()
  {
   ref_ss=0;
-  io=0; 
+  io=0;
   ss=0;
   adb=0;
   ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
   auto_commit_flag=1;
   iov=0; iov_len=0;
  }
@@ -12203,6 +12880,8 @@ public:
 
   iov=0; iov_len=0;
   ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
 
   char tmp[7];
   char* c=(char*)sqlstm;
@@ -12216,6 +12895,7 @@ public:
    ++c;
   }
   adb=&db;
+  adb->reset_throw_count();
   if(strncmp(tmp,"SELECT",6)==0){
    ss=new otl_select_stream(&override,arr_size,sqlstm,db);
   }
@@ -12235,6 +12915,8 @@ public:
 
   iov=0; iov_len=0;
   ov=0; ov_len=0;
+  next_iov_ndx=0;
+  next_ov_ndx=0;
 
   delete ss;
   delete io;
@@ -12268,13 +12950,19 @@ public:
 
  otl_stream& operator>>(otl_pl_tab_generic& tab)
  {
-  if(io)io->operator>>(tab);
+  if(io){
+   io->operator>>(tab);
+   inc_next_ov();
+  }
   return *this;
  }
 
  otl_stream& operator<<(otl_pl_tab_generic& tab)
  {
-  if(io)io->operator<<(tab);
+  if(io){
+   io->operator<<(tab);
+   inc_next_iov();
+  }
   return *this;
  }
 
@@ -12282,13 +12970,19 @@ public:
 
  otl_stream& operator>>(otl_pl_vec_generic& vec)
  {
-  if(io)io->operator>>(vec);
+  if(io){
+   io->operator>>(vec);
+   inc_next_ov();
+  }
   return *this;
  }
 
  otl_stream& operator<<(otl_pl_vec_generic& vec)
  {
-  if(io)io->operator<<(vec);
+  if(io){
+   io->operator<<(vec);
+   inc_next_iov();
+  }
   return *this;
  }
 
@@ -12296,7 +12990,10 @@ public:
 
  otl_stream& operator<<(otl_lob_stream& s)
  {
-  if(io)io->operator<<(s);
+  if(io){
+   io->operator<<(s);
+   inc_next_iov();
+  }
   return *this;
  }
 
@@ -12333,6 +13030,7 @@ public:
   s.hour=tmp.hour-1;
   s.minute=tmp.minute-1;
   s.second=tmp.second-1;
+  inc_next_ov();
   return *this;
  }
 
@@ -12346,6 +13044,7 @@ public:
   tmp.minute=s.minute+1;
   tmp.second=s.second+1;
   (*this)<<tmp;
+  inc_next_iov();
   return *this;
  }
 
@@ -12357,6 +13056,7 @@ public:
    ss->operator>>(c);
   else if(ref_ss)
    ref_ss->operator>>(c);
+  inc_next_ov();
   return *this;
  }
 
@@ -12368,6 +13068,7 @@ public:
    ss->operator>>(c);
   else if(ref_ss)
    ref_ss->operator>>(c);
+  inc_next_ov();
   return *this;
  }
 
@@ -12380,6 +13081,7 @@ public:
    ss->operator>>(s);
   else if(ref_ss)
    ref_ss->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 #endif
@@ -12392,6 +13094,7 @@ public:
    ss->operator>>(s);
   else if(ref_ss)
    ref_ss->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 
@@ -12403,6 +13106,7 @@ public:
    ss->operator>>(s);
   else if(ref_ss)
    ref_ss->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 
@@ -12414,6 +13118,7 @@ public:
    ss->operator>>(n);
   else if(ref_ss)
    ref_ss->operator>>(n);
+  inc_next_ov();
   return *this;
  }
 
@@ -12425,6 +13130,7 @@ public:
    ss->operator>>(u);
   else if(ref_ss)
    ref_ss->operator>>(u);
+  inc_next_ov();
   return *this;
  }
 
@@ -12436,6 +13142,7 @@ public:
    ss->operator>>(sh);
   else if(ref_ss)
    ref_ss->operator>>(sh);
+  inc_next_ov();
   return *this;
  }
 
@@ -12447,6 +13154,7 @@ public:
    ss->operator>>(l);
   else if(ref_ss)
    ref_ss->operator>>(l);
+  inc_next_ov();
   return *this;
  }
 
@@ -12458,6 +13166,7 @@ public:
    ss->operator>>(f);
   else if(ref_ss)
    ref_ss->operator>>(f);
+  inc_next_ov();
   return *this;
  }
 
@@ -12469,6 +13178,7 @@ public:
    ss->operator>>(d);
   else if(ref_ss)
    ref_ss->operator>>(d);
+  inc_next_ov();
   return *this;
  }
 
@@ -12480,6 +13190,7 @@ public:
    ss->operator>>(s);
   else if(ref_ss)
    ref_ss->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 
@@ -12491,6 +13202,7 @@ public:
    ss->operator>>(s);
   else if(ref_ss)
    ref_ss->operator>>(s);
+  inc_next_ov();
   return *this;
  }
 
@@ -12505,6 +13217,7 @@ public:
    ref_ss->operator<<(c);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12518,6 +13231,7 @@ public:
    ref_ss->operator<<(c);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12532,6 +13246,7 @@ public:
    ref_ss->operator<<(s);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 #endif
@@ -12547,6 +13262,7 @@ public:
    ref_ss->operator<<(s);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12560,6 +13276,7 @@ public:
    ref_ss->operator<<(s);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12573,6 +13290,7 @@ public:
    ref_ss->operator<<(n);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12586,6 +13304,7 @@ public:
    ref_ss->operator<<(u);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12599,6 +13318,7 @@ public:
    ref_ss->operator<<(sh);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12612,6 +13332,7 @@ public:
    ref_ss->operator<<(l);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12625,6 +13346,7 @@ public:
    ref_ss->operator<<(f);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12638,6 +13360,7 @@ public:
    ref_ss->operator<<(d);
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
@@ -12650,16 +13373,70 @@ public:
    ref_ss->operator<<(otl_null());
    if(!ov&&ref_ss->sl) create_var_desc();
   }
+  inc_next_iov();
   return *this;
  }
 
  otl_stream& operator<<(const otl_long_string& d)
  {
-  if(io)io->operator<<(d);
+  if(io){
+   io->operator<<(d);
+   inc_next_iov();
+  }
   return *this;
  }
 
 };
+
+
+#if defined(OTL_STL) && defined(OTL_VALUE_TEMPLATE)
+template <class TData>
+otl_stream& operator<<(otl_stream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<otl_null();
+ else
+  s<<var.v;
+ return s;
+}
+
+template <class TData>
+otl_stream& operator>>(otl_stream& s, otl_value<TData>& var)
+{
+  s>>var.v;
+  if(s.is_null())
+    var.ind=true;
+  else
+    var.ind=false;
+  return s;
+}
+
+template <class TData>
+STD_NAMESPACE_PREFIX ostream& operator<<(STD_NAMESPACE_PREFIX ostream& s, const otl_value<TData>& var)
+{
+ if(var.ind)
+  s<<"NULL";
+ else
+  s<<var.v;
+ return s;
+}
+
+//static 
+inline STD_NAMESPACE_PREFIX ostream& operator<<(
+ STD_NAMESPACE_PREFIX ostream& s, 
+ const otl_value<otl_datetime>& var
+)
+{
+ if(var.ind)
+  s<<"NULL";
+ else{
+  s<<var.v.month<<"/"<<var.v.day<<"/"<<var.v.year<<" "
+   <<var.v.hour<<":"<<var.v.minute<<":"<<var.v.second;
+ }
+ return s;
+}
+
+#endif
 
 typedef otl_tmpl_nocommit_stream<otl_stream,otl_connect> otl_nocommit_stream;
 
@@ -12677,7 +13454,7 @@ template <class T, class Distance>                                      \
 class otl_input_iterator {                                              \
 public:                                                                 \
                                                                         \
-  typedef std::input_iterator_tag iterator_category;                    \
+  typedef STD_NAMESPACE_PREFIX input_iterator_tag iterator_category;    \
   typedef T                  value_type;                                \
   typedef Distance           difference_type;                           \
   typedef const T*           pointer;                                   \
@@ -12721,11 +13498,11 @@ public:                                                                 \
 };                                                                      \
                                                                         \
 template <class T, class Distance>                                      \
-inline std::input_iterator_tag iterator_category(                       \
+inline STD_NAMESPACE_PREFIX input_iterator_tag iterator_category(       \
   const otl_input_iterator<T, Distance>&                                \
 )                                                                       \
 {                                                                       \
-  return std::input_iterator_tag();                                     \
+  return STD_NAMESPACE_PREFIX input_iterator_tag();                     \
 }                                                                       \
                                                                         \
 template <class T, class Distance>                                      \
@@ -12761,11 +13538,11 @@ protected:                                                              \
  otl_stream* stream;                                                    \
 public:                                                                 \
                                                                         \
-  typedef std::output_iterator_tag iterator_category;                   \
-  typedef void                value_type;                               \
-  typedef void                difference_type;                          \
-  typedef void                pointer;                                  \
-  typedef void                reference;                                \
+  typedef STD_NAMESPACE_PREFIX output_iterator_tag iterator_category;   \
+  typedef void       value_type;                                        \
+  typedef void       difference_type;                                   \
+  typedef void       pointer;                                           \
+  typedef void       reference;                                         \
                                                                         \
  otl_output_iterator(otl_stream& s) : stream(&s){}                      \
  otl_output_iterator<T>& operator=(const T& value)                      \
@@ -12780,9 +13557,9 @@ public:                                                                 \
 };                                                                      \
                                                                         \
 template <class T>                                                      \
-inline std::output_iterator_tag                                         \
+inline STD_NAMESPACE_PREFIX output_iterator_tag                         \
 iterator_category(const otl_output_iterator<T>&) {                      \
-  return std::output_iterator_tag();                                    \
+  return STD_NAMESPACE_PREFIX output_iterator_tag();                    \
 }
 
 #ifdef OTL_ORA7
@@ -12850,7 +13627,7 @@ public:
 };
 
 template <class T>
-inline bool operator==(const otl_host_var<T>& x, const otl_host_var<T>& y) 
+inline bool operator==(const otl_host_var<T>& x, const otl_host_var<T>& y)
 {
  return !x.ind&&!y.ind&&x.v-y.v<0.001||y.v-x.v<0.001||x.ind&&y.ind;
 }
@@ -12908,7 +13685,7 @@ struct otl_host_string: public otl_base_host_string<char,size>{
 
  otl_host_string& operator=(const otl_host_string& var)
  {
-  
+
   strcpy(v,var.v);
   ind=var.ind;
   return *this;
@@ -12952,8 +13729,8 @@ struct otl_host_ustring: public otl_base_host_string<unsigned char,size>{
 };
 
 template <const int size>
-inline bool operator==(const otl_host_string<size>& x, 
-                       const otl_host_string<size>& y) 
+inline bool operator==(const otl_host_string<size>& x,
+                       const otl_host_string<size>& y)
 {
  return !x.ind&&!y.ind&&strcmp(x.v,y.v)==0||
         x.ind&&y.ind;
@@ -12963,7 +13740,7 @@ inline bool operator==(const otl_host_string<size>& x,
 // Oracle 7 compatible stream operators for the data container classes
 template <class T>
 OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
    otl_host_var<T>& var)
 {
  s>>var.v;
@@ -12976,7 +13753,7 @@ OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T>
 OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
    const otl_host_var<T>& var)
 {
  if(var.ind)
@@ -12988,7 +13765,7 @@ OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
 
 template <class T,const int size>
 OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
    otl_base_host_string<T,size>& var)
 {
  s>>var.v;
@@ -13001,7 +13778,7 @@ OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T,const int size>
 OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA7_NAMESPACE_PREFIX otl_stream& s,
    const otl_base_host_string<T,size>& var)
 {
  if(var.ind)
@@ -13017,7 +13794,7 @@ OTL_ORA7_NAMESPACE_PREFIX otl_stream& operator<<
 // Oracle 8 compatible stream operators for the data container classes
 template <class T>
 OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
    otl_host_var<T>& var)
 {
  s>>var.v;
@@ -13030,7 +13807,7 @@ OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T>
 OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
    const otl_host_var<T>& var)
 {
  if(var.ind)
@@ -13042,7 +13819,7 @@ OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
 
 template <class T,const int size>
 OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
    otl_base_host_string<T,size>& var)
 {
  s>>var.v;
@@ -13055,7 +13832,7 @@ OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T,const int size>
 OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ORA8_NAMESPACE_PREFIX otl_stream& s,
    const otl_base_host_string<T,size>& var)
 {
  if(var.ind)
@@ -13071,7 +13848,7 @@ OTL_ORA8_NAMESPACE_PREFIX otl_stream& operator<<
 // ODBC compatible stream operators for the data container classes
 template <class T>
 OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
    otl_host_var<T>& var)
 {
  s>>var.v;
@@ -13084,7 +13861,7 @@ OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T>
 OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
    const otl_host_var<T>& var)
 {
  if(var.ind)
@@ -13096,7 +13873,7 @@ OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator<<
 
 template <class T,const int size>
 OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
    otl_base_host_string<T,size>& var)
 {
  s>>var.v;
@@ -13109,7 +13886,7 @@ OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator>>
 
 template <class T,const int size>
 OTL_ODBC_NAMESPACE_PREFIX otl_stream& operator<<
-  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s, 
+  (OTL_ODBC_NAMESPACE_PREFIX otl_stream& s,
    const otl_base_host_string<T,size>& var)
 {
  if(var.ind)

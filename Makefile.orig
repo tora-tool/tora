@@ -27,6 +27,7 @@ SOURCES=\
 	tobrowser.cpp		\
 	toconnection.cpp	\
 	todebug.cpp		\
+	todebugchange.cpp	\
 	todebugtext.cpp		\
 	todebugwatch.cpp	\
 	tofilesize.cpp		\
