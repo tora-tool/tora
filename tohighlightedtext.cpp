@@ -293,7 +293,12 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	    left=LeftIgnore;
 	  }
 	  if (wasMarked) {
-	    painter->fillRect(left,0,cw,height,painter->brush());
+	    if (Completion&&Completion->count()==0) {
+	      painter->setBrush(Analyzer->getColor(toSyntaxAnalyzer::ErrorBkg));
+	      painter->fillRect(left,0,cw,height,painter->brush());
+	      painter->setBrush(cp.active().highlight());
+	    } else
+	      painter->fillRect(left,0,cw,height,painter->brush());
 	    painter->setPen(cp.active().highlightedText());
 	  } else {
 	    painter->setPen(wasCol);
@@ -633,10 +638,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	Completion->clear();
 	CompleteItem=-1;
 	for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	  if ((*i).upper()==mrk.upper()) {
-	    insert(mrk,false);
-	    return;
-	  } else if ((*i).upper().startsWith(mrk.upper()))
+	  if ((*i).upper().startsWith(mrk.upper()))
 	    Completion->insertItem(mrk+(*i).mid(mrk.length()));
 	}
 	QSize size=Completion->sizeHint();
@@ -673,12 +675,12 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	  Completion->clear();
 	  CompleteItem=-1;
 	  for (std::list<QString>::iterator i=AllComplete.begin();i!=AllComplete.end();i++) {
-	    if ((*i).upper()==mrk.upper()) {
-	      insert(mrk,false);
-	      return;
-	    } else if ((*i).upper().startsWith(mrk.upper()))
+	    if ((*i).upper().startsWith(mrk.upper()))
 	      Completion->insertItem(mrk+(*i).mid(mrk.length()));
 	  }
+	  QSize size=Completion->sizeHint();
+	  size.setWidth(size.width()+20);
+	  Completion->setFixedSize(size);
 
 	  KeepCompletion=true;
 	  insert(mrk,true);
@@ -703,20 +705,25 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       tableAtCursor(owner,table,true);
 
       std::list<QString> complete;
+      QString last;
       for(std::list<toConnection::tableName>::iterator i=tables.begin();i!=tables.end();i++) {
+	QString add;
 	if((*i).Synonym.isEmpty()) {
 	  if (owner.isEmpty()) {
 	    if ((*i).Owner.upper()==conn.user().upper())
-	      complete.insert(complete.end(),conn.quote((*i).Name));
+	      add=conn.quote((*i).Name);
 	  } else {
-	    QString tmp=conn.quote((*i).Owner);
-	    if (!tmp.isEmpty())
-	      tmp+=".";
-	    tmp+=conn.quote((*i).Name);
-	    complete.insert(complete.end(),tmp);
+	    add=conn.quote((*i).Owner);
+	    if (!add.isEmpty())
+	      add+=".";
+	    add+=conn.quote((*i).Name);
 	  }
 	} else if (owner.isEmpty())
-	  complete.insert(complete.end(),conn.quote((*i).Synonym));
+	  add=conn.quote((*i).Synonym);
+	if (add!=last) {
+	  complete.insert(complete.end(),add);
+	  last=add;
+	}
       }
       startComplete(complete);
     } catch (...) {

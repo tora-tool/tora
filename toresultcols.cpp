@@ -270,6 +270,7 @@ toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
   addColumn("NULL");
   addColumn("Comments");
   setSQLName("toResultCols");
+  setSorting(0);
 }
 
 static toSQL SQLComment("toResultCols:Comments",
@@ -309,7 +310,6 @@ void toResultCols::resultCols::query(const QString &,const toQList &param)
   RowNumber=0;
 
   clear();
-  setSorting(0);
 
   try {
     QString str("SELECT * FROM ");

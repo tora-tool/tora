@@ -360,7 +360,7 @@ public:
     {
       std::list<toConnection::tableName> ret;
       try {
-	toQuery tables(connection(),SQLListObjects,connection().user());
+	toQuery tables(connection(),SQLListObjects,connection().user().upper());
 	toConnection::tableName cur;
 	while(!tables.eof()) {
 	  cur.Name=tables.readValueNull();

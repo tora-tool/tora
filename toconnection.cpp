@@ -1102,7 +1102,7 @@ const toConnection::tableName &toConnection::realName(const QString &object)
     if (owner.isEmpty()) {
       if ((*i).Synonym==un||(*i).Synonym==name)
 	return *i;
-      if (((*i).Name==un||(*i).Name==name)&&(*i).Owner==user())
+      if (((*i).Name==un||(*i).Name==name)&&(*i).Owner==user().upper())
 	  return *i;
     } else {
       if (((*i).Name==un||(*i).Name==name)&&
@@ -1129,6 +1129,10 @@ bool toConnection::tableName::operator < (const tableName &nam) const
   if (Owner>nam.Owner)
     return false;
   if (Name<nam.Name)
+    return true;
+  if (Name>nam.Name)
+    return false;
+  if (Synonym.isNull()&&!nam.Synonym.isNull())
     return true;
   return false;
 }

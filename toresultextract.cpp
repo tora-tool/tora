@@ -67,7 +67,7 @@ void toResultExtract::query(const QString &sql,const toQList &param)
   }
   if (i==params().end()) {
     name=owner;
-    owner=toToolWidget::connection().user();
+    owner=toToolWidget::connection().user().upper();
   } else {
     name=*i;
   }

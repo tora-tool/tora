@@ -62,6 +62,11 @@
 2001-09-19: Add Oracle setting tab.
 2001-09-19: Display some object info on top of column descriptions.
 2001-09-19: Removed comments from views and tables (In column desc now) in browser.
+2001-09-19: Display in red if completion is missing.
+2001-09-19: Don't reset sorting in result cols.
+2001-09-19: Make sure synonyms are after actual tables in tablename list.
+2001-09-19: Remove duplicates in table completion.
+2001-09-19: Fixed some problems with logged in user case.
 
 1.1.0: Released 2001-09-09
 
