@@ -74,6 +74,7 @@ class toSGAStatement : public QTabWidget {
   /** Display resources of statement.
    */
   void viewResources(void);
+private slots:
   /** Change the displayed tab.
    */
   void changeTab(QWidget *widget);
