@@ -168,16 +168,16 @@ static QPixmap *toDisBreakpointPixmap;
 
 static toSQL SQLReadSource("toDebug:ReadSource",
 			   "SELECT Text FROM All_Source\n"
-			   " WHERE OWNER = :f1<char[31]>\n"
-			   "   AND NAME = :f2<char[31]>\n"
-			   "   AND TYPE = :f3<char[31]>\n"
+			   " WHERE OWNER = :f1<char[101]>\n"
+			   "   AND NAME = :f2<char[101]>\n"
+			   "   AND TYPE = :f3<char[101]>\n"
 			   " ORDER BY Type,Line",
 			   "Read sourcecode for object");
 static toSQL SQLReadErrors("toDebug:ReadErrors",
 			   "SELECT Line-1,Text FROM All_Errors\n"
-			   " WHERE OWNER = :f1<char[31]>\n"
-			   "   AND NAME = :f2<char[31]>\n"
-			   "   AND TYPE = :f3<char[31]>\n"
+			   " WHERE OWNER = :f1<char[101]>\n"
+			   "   AND NAME = :f2<char[101]>\n"
+			   "   AND TYPE = :f3<char[101]>\n"
 			   " ORDER BY Type,Line",
 			   "Get lines with errors in object (Observe first line 0)");
 

@@ -56,7 +56,7 @@ toResultConstraint::toResultConstraint(toConnection &conn,QWidget *parent,const 
 
 static toSQL SQLConsColumns("toResultConstraint:ForeignColumns",
 			    "SELECT Column_Name,Table_Name FROM All_Cons_Columns\n"
-			    " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>\n"
+			    " WHERE Owner = :f1<char[101]> AND Constraint_Name = :f2<char[101]>\n"
 			    " ORDER BY Position",
 			    "Get columns of foreign constraint, must return same number of cols");
 
@@ -71,7 +71,7 @@ QString toResultConstraint::constraintCols(const QString &conOwner,const QString
 
   QString ret;
   while(!Query.eof()) {
-    char buffer[31];
+    char buffer[101];
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
@@ -92,8 +92,8 @@ static toSQL SQLConstraints("toResultConstraint:ListConstraints",
 			    "       Delete_Rule,\n"
 			    "       Generated\n"
 			    "  FROM All_Constraints\n"
-			    " WHERE Owner = :f1<char[31]>\n"
-			    "   AND Table_Name = :f2<char[31]>\n"
+			    " WHERE Owner = :f1<char[101]>\n"
+			    "   AND Table_Name = :f2<char[101]>\n"
 			    " ORDER BY Constraint_Name",
 			    "List constraints on a table. Must have same column order");
 

@@ -94,7 +94,7 @@ static toSQL SQLLock("toResultLock:Locks",
 		     "                  and bb.object_id = c.object_id)\n"
 		     "   and a.id1 = e.id1\n"
 		     "   and a.id2 = e.id2\n"
-		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[31]> and aa.lmode != aa.request and aa.request != 0)",
+		     "   and (e.id1,e.id2,e.sid) in (select aa.id1,aa.id2,aa.sid from v$lock aa where aa.sid = :f1<char[101]> and aa.lmode != aa.request and aa.request != 0)",
 		     "List locks in a session");
 
 void toResultLock::query(const QString &sql,

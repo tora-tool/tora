@@ -195,7 +195,7 @@ void toSGATrace::refresh(void)
     "       all_users b"
     " where a.parsing_user_id = b.user_id";
   if (!CurrentSchema.isEmpty())
-    select.append("   and b.username = :f1<char[31]>");
+    select.append("   and b.username = :f1<char[101]>");
   if (!CurrentSchema.isEmpty()) {
     list<QString> p;
     p.insert(p.end(),CurrentSchema);
@@ -215,7 +215,7 @@ void toSGATrace::updateSchemas(void)
 		     otlConnect());
     Schema->insertItem("Any");
     for(int i=0;!users.eof();i++) {
-      char buffer[31];
+      char buffer[101];
       users>>buffer;
       Schema->insertItem(QString::fromUtf8(buffer));
       if (CurrentSchema==QString::fromUtf8(buffer))

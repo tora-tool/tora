@@ -49,8 +49,8 @@ static toSQL SQLResultDepend("toResultDepend:Depends",
 			     "       referenced_type \"Type\",\n"
 			     "       dependency_type \"Dependency Type\"\n"
 			     "  FROM dba_dependencies\n"
-			     " WHERE owner = :owner<char[31]>\n"
-			     "   AND name = :name<char[31]>\n"
+			     " WHERE owner = :owner<char[101]>\n"
+			     "   AND name = :name<char[101]>\n"
 			     " ORDER BY referenced_owner,referenced_type,referenced_name",
 			     "Display dependencies on an object, must have first two "
 			     "columns same and same bindings");

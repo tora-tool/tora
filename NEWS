@@ -18,6 +18,7 @@
 2001-07-18: Added duration entries in log for worksheet.
 2001-07-18: Fixed another pesky bug with long running queries.
 2001-07-22: Fixed some potential problems with browser.
+2001-07-23: Removed all 31 and 41 sized buffer and replaced with 101.
 
 0.13: Released 2001-07-11
 

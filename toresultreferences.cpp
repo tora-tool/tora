@@ -57,7 +57,7 @@ toResultReferences::toResultReferences(toConnection &conn,QWidget *parent,const 
 
 static toSQL SQLConsColumns("toResultReferences:ForeignColumns",
 			    "SELECT Column_Name FROM All_Cons_Columns\n"
-			    " WHERE Owner = :f1<char[31]> AND Constraint_Name = :f2<char[31]>\n"
+			    " WHERE Owner = :f1<char[101]> AND Constraint_Name = :f2<char[101]>\n"
 			    " ORDER BY Position",
 			    "Get columns of foreign constraint, must return same number of cols");
 
@@ -72,7 +72,7 @@ QString toResultReferences::constraintCols(const QString &conOwner,const QString
 
   QString ret;
   while(!Query.eof()) {
-    char buffer[31];
+    char buffer[101];
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
@@ -93,15 +93,15 @@ static toSQL SQLConstraints("toResultReferences:References",
 			    " WHERE constraint_type = 'R'\n"
 			    "   AND (r_owner,r_constraint_name) IN (SELECT b.owner,b.constraint_name\n"
 			    "                                         FROM all_constraints b\n"
-			    "                                        WHERE b.OWNER = :owner<char[31]>\n"
-			    "                                          AND b.TABLE_NAME = :tab<char[31]>)\n"
+			    "                                        WHERE b.OWNER = :owner<char[101]>\n"
+			    "                                          AND b.TABLE_NAME = :tab<char[101]>)\n"
 			    " ORDER BY Constraint_Name",
 			    "List the references from foreign constraints to specified table, must return same columns");
 static toSQL SQLDependencies("toResultReferences:Dependencies",
 			     "SELECT owner,name,type||' '||dependency_type\n"
 			     "  FROM dba_dependencies\n"
-			     " WHERE referenced_owner = :owner<char[31]>\n"
-			     "   AND referenced_name = :tab<char[31]>\n"
+			     " WHERE referenced_owner = :owner<char[101]>\n"
+			     "   AND referenced_name = :tab<char[101]>\n"
 			     " ORDER BY owner,type,name",
 			     "List the dependencies from other objects to this object, must return same number of columns");
 

@@ -82,7 +82,7 @@ static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 "Get information about a user, must have same columns and same binds.");
 
 static toSQL SQLRoleInfo("toSecurity:RoleInfo",
-			 "SELECT Role,Password_required FROM DBA_Roles WHERE Role = :f1<char[31]>",
+			 "SELECT Role,Password_required FROM DBA_Roles WHERE Role = :f1<char[101]>",
 			 "Get information about a role, must have same columns and same binds.");
 
 static toSQL SQLProfiles("toSecurity:Profiles",

@@ -1230,7 +1230,7 @@ static toSQL SQLStackTrace("toDebug:StackTrace",
 			   "                                                                 DBMS_DEBUG.LibunitType_package_body,'PACKAGE BODY',\n"
 			   "                                                                 DBMS_DEBUG.LibunitType_trigger,'TRIGGEER',\n"
 			   "                                                                 'UNKNOWN')\n"
-			   "    INTO :name<char[31],out>,:owner<char[31],out>,:line<int,out>,:type<char[31],out> FROM DUAL;\n"
+			   "    INTO :name<char[101],out>,:owner<char[101],out>,:line<int,out>,:type<char[101],out> FROM DUAL;\n"
 			   "END;",
 			   "Get stacktrace from debug session, must have same bindings");
 static toSQL SQLLocalWatch("toDebug:LocalWatch",	
@@ -1238,7 +1238,7 @@ static toSQL SQLLocalWatch("toDebug:LocalWatch",
 			   "  ret BINARY_INTEGER;\n"
 			   "  data VARCHAR2(4000);\n"
 			   "BEGIN\n"
-			   "  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,0,data,NULL);\n"
+			   "  ret:=DBMS_DEBUG.GET_VALUE(:name<char[101],in>,0,data,NULL);\n"
 			   "  SELECT ret,data INTO :ret<int,out>,:val<char[4001],out> FROM DUAL;\n"
 			   "END;",
 			   "Get data from local watch, must have same bindings");
@@ -1249,13 +1249,13 @@ static toSQL SQLGlobalWatch("toDebug:GlobalWatch",
 			    "  ret BINARY_INTEGER;\n"
 			    "BEGIN\n"
 			    "  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;\n"
-			    "  proginf.Name:=:object<char[41],in>;\n"
-			    "  proginf.Owner:=:owner<char[41],in>;\n"
+			    "  proginf.Name:=:object<char[101],in>;\n"
+			    "  proginf.Owner:=:owner<char[101],in>;\n"
 			    "  proginf.DBLink:=NULL;\n"
-			    "  ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);\n"
+			    "  ret:=DBMS_DEBUG.GET_VALUE(:name<char[101],in>,proginf,data,NULL);\n"
 			    "  IF ret =DBMS_DEBUG.error_no_such_object THEN\n"
 			    "    proginf.Namespace:=DBMS_DEBUG.namespace_pkgspec_or_toplevel;\n"
-			    "    ret:=DBMS_DEBUG.GET_VALUE(:name<char[41],in>,proginf,data,NULL);\n"
+			    "    ret:=DBMS_DEBUG.GET_VALUE(:name<char[101],in>,proginf,data,NULL);\n"
 			    "  END IF;\n"
 			    "  SELECT ret          ,data                ,proginf.Namespace\n"
 			    "    INTO :ret<int,out>,:val<char[4001],out>,:namespace<int,out>\n"
@@ -1270,7 +1270,7 @@ static toSQL SQLLocalIndex("toDebug:LocalIndex",
 			   "  indata DBMS_DEBUG.index_table;\n"
 			   "  outdata VARCHAR2(4000);\n"
 			   "BEGIN\n"
-			   "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,0,proginf,indata);\n"
+			   "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[101],in>,0,proginf,indata);\n"
 			   "  IF ret = DBMS_DEBUG.success THEN\n"
 			   "    i:=indata.first;\n"
 			   "    WHILE i IS NOT NULL AND (LENGTH(outdata)<3900 OR outdata IS NULL) LOOP\n"
@@ -1290,10 +1290,10 @@ static toSQL SQLGlobalIndex("toDebug:GlobalIndex",
 			    "  outdata VARCHAR2(4000);\n"
 			    "BEGIN\n"
 			    "  proginf.Namespace:=:namespace<int,in>;\n"
-			    "  proginf.Name:=:object<char[41],in>;\n"
-			    "  proginf.Owner:=:owner<char[41],in>;\n"
+			    "  proginf.Name:=:object<char[101],in>;\n"
+			    "  proginf.Owner:=:owner<char[101],in>;\n"
 			    "  proginf.DBLink:=NULL;\n"
-			    "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[41],in>,NULL,proginf,indata);\n"
+			    "  ret:=DBMS_DEBUG.GET_INDEXES(:name<char[101],in>,NULL,proginf,indata);\n"
 			    "  IF ret = DBMS_DEBUG.success THEN\n"
 			    "    i:=indata.first;\n"
 			    "    WHILE i IS NOT NULL AND (LENGTH(outdata)<3900 OR outdata IS NULL) LOOP\n"
@@ -1400,10 +1400,10 @@ void toDebug::updateState(int reason)
       otl_stream stack(1,
 		       SQLStackTrace(connection()),
 		       otlConnect());
-      char name[31];
-      char schema[31];
+      char name[101];
+      char schema[101];
       int line;
-      char type[31];
+      char type[101];
       QListViewItem *item=NULL;
       StackTrace->clear();
       for (int num=2;num<=depth;num++) {
@@ -1989,7 +1989,7 @@ void toDebug::changeSchema(int)
 
 static toSQL SQLListObjects("toDebug:ListObjects",
 			    "SELECT Object_Type,Object_Name Type FROM ALL_OBJECTS\n"
-			    " WHERE OWNER = :owner<char[31]>\n"
+			    " WHERE OWNER = :owner<char[101]>\n"
 			    "   AND Object_Type IN ('FUNCTION','PACKAGE',\n"
 			    "                       'PROCEDURE','TYPE')\n"
 			    " ORDER BY Object_Type,Object_Name",
@@ -2007,7 +2007,7 @@ void toDebug::refresh(void)
 		       toSQL::sql(toSQL::TOSQL_USERLIST,connection()),
 		       otlConnect());
       for(int i=0;!users.eof();i++) {
-	char buffer[31];
+	char buffer[101];
 	users>>buffer;
 	Schema->insertItem(QString::fromUtf8(buffer));
       }
@@ -2559,8 +2559,8 @@ static toSQL SQLChangeGlobal("toDebug:ChangeGlobalWatch",
 			     "  ret BINARY_INTEGER;\n"
 			     "BEGIN\n"
 			     "  proginf.Namespace:=DBMS_DEBUG.Namespace_pkg_body;\n"
-			     "  proginf.Name:=:object<char[41],in>;\n"
-			     "  proginf.Owner:=:owner<char[41],in>;\n"
+			     "  proginf.Name:=:object<char[101],in>;\n"
+			     "  proginf.Owner:=:owner<char[101],in>;\n"
 			     "  proginf.DBLink:=NULL;\n"
 			     "  ret:=DBMS_DEBUG.SET_VALUE(proginf,:assign<char[4001],in>);\n"
 			     "  IF ret =DBMS_DEBUG.error_no_such_object THEN\n"

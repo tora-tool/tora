@@ -55,7 +55,7 @@ toResultIndexes::toResultIndexes(toConnection &conn,QWidget *parent,const char *
 
 static toSQL SQLColumns("toResultIndexes:Columns",
 			"SELECT Column_Name FROM All_Ind_Columns\n"
-			" WHERE Index_Owner = :f1<char[31]> AND Index_Name = :f2<char[31]>\n"
+			" WHERE Index_Owner = :f1<char[101]> AND Index_Name = :f2<char[101]>\n"
 			" ORDER BY Column_Position",
 			"List columns an index is built on");
 
@@ -70,7 +70,7 @@ QString toResultIndexes::indexCols(const QString &indOwner,const QString &indNam
 
   QString ret;
   while(!Query.eof()) {
-    char buffer[31];
+    char buffer[101];
     Query>>buffer;
     if (!ret.isEmpty())
       ret.append(",");
@@ -85,8 +85,8 @@ static toSQL SQLListIndex("toResultIndexes:ListIndex",
 			  "       Index_Type,\n"
 			  "       Uniqueness\n"
 			  "  FROM All_Indexes\n"
-			  " WHERE Table_Owner = :f1<char[31]>\n"
-			  "   AND Table_Name = :f2<char[31]>\n"
+			  " WHERE Table_Owner = :f1<char[101]>\n"
+			  "   AND Table_Name = :f2<char[101]>\n"
 			  " ORDER BY Index_Name",
 			  "List the indexes available on a table");
 

@@ -90,7 +90,7 @@ static QPixmap *toDisconnectPixmap;
 
 static toSQL SQLConnectInfo("toSession:ConnectInfo",
 			    "select authentication_type,osuser,network_service_banner\n"
-			    "  from v$session_connect_info where sid = :f1<char[31]>",
+			    "  from v$session_connect_info where sid = :f1<char[101]>",
 			    "Get connection info for a session");
 static toSQL SQLLockedObject("toSession:LockedObject",
 			     "select b.Object_Name \"Object Name\",\n"
@@ -100,11 +100,11 @@ static toSQL SQLLockedObject("toSession:LockedObject",
 			     "                            6,'Exclusive',a.Locked_Mode) \"Locked Mode\"\n"
 			     "  from v$locked_object a,all_objects b\n"
 			     " where a.object_id = b.object_id\n"
-			     "   and a.session_id = :f1<char[31]>",
+			     "   and a.session_id = :f1<char[101]>",
 			     "Display info about objects locked by this session");
 static toSQL SQLOpenCursors("toSession:OpenCursor",
 			    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
-			    "  from v$open_cursor where sid = :f1<char[31]>",
+			    "  from v$open_cursor where sid = :f1<char[101]>",
 			    "Display open cursors of this session");
 
 

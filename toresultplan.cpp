@@ -114,9 +114,9 @@ void toResultPlan::query(const QString &sql,
       while(!query.eof()) {
 	char id[50];
 	char parentid[50];
-	char operation[31];
-	char options[31];
-	char object[31];
+	char operation[101];
+	char options[101];
+	char object[101];
 	char optimizer[256];
 	char cost[50];
 	char bytes[50];
