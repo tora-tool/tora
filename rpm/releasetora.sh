@@ -37,6 +37,8 @@ else
     echo Detected glibc-2.1
 fi
 
+SRCPWD=`pwd`
+
 rm -rf `find tora -name CVS`
 touch tora/* tora/*/*
 mv tora tora-$1
