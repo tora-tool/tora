@@ -23,5 +23,7 @@
 2001-01-23: Added support for bind variables in worksheet.
 2001-01-24: Stop forcing char when querying.
 2001-01-24: Changed otl so it forces char on number and date columns unless explicitly forced.
+2001-01-24: Added support for CLOB/BLOB column types.
+2001-01-27: Finnished first working version of PL/SQL debugger.
 
 0.3: Released 2001-01-17
