@@ -132,7 +132,7 @@ QSize toLegendChart::sizeHint(void)
   return QSize(width,height);
 }
 
-void toLegendChart::paintEvent(QPaintEvent *e)
+void toLegendChart::paintEvent(QPaintEvent *)
 {
   int height,items;
   std::list<int> widths=sizeHint(height,items);

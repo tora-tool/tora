@@ -722,7 +722,7 @@ public:
     QSqlDatabase *Connection;
     QString name;
 
-    qSqlSub(QSqlDatabase *conn,const QString &name)
+    qSqlSub(QSqlDatabase *conn,const QString &)
       : Lock(1),Connection(conn)
     { }
     ~qSqlSub()
@@ -990,7 +990,7 @@ public:
     }
   }
 
-  virtual toConnection::connectionImpl *provideConnection(const QCString &prov,toConnection *conn)
+  virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
   { return new qSqlConnection(conn); }
   virtual std::list<QString> providedHosts(const QCString &)
   {
@@ -998,7 +998,7 @@ public:
     ret.insert(ret.end(),QString::fromLatin1("localhost"));
     return ret;
   }
-  virtual std::list<QString> providedDatabases(const QCString &,const QString &host,const QString &,const QString &)
+  virtual std::list<QString> providedDatabases(const QCString &,const QString &,const QString &,const QString &)
   {
     std::list<QString> ret;
 
