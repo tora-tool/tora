@@ -1,4 +1,4 @@
-0.13:
+0.13: Released 2001-07-11
 
 2001-07-02: Upgraded to 3.2.20 of OTL.
 2001-07-02: Rewrote tns_names finding on Windows.
@@ -72,6 +72,9 @@
 2001-07-11: Added help context to template editor.
 2001-07-11: Changed Name to Context in helpcontext.
 2001-07-11: Fixed versions in specfiles.
+2001-07-11: Done with user manual.
+2001-07-11: Added add.xpm icon.
+2001-07-11: Added up.xpm icon.
 
 0.12: Released 2001-07-01
 
