@@ -377,21 +377,31 @@ sub finalTest {
 
 __TEMP__
     if ($OracleFound) {
+
+	if ($OracleRelease =~ /^8.0/) {
+	    print TEMP "#define OTL_ORA8\n";
+	} elsif ($OracleRelease ge "9") {
+	    print TEMP "#define OTL_ORA9I\n";
+	} else {
+	    print TEMP "#define OTL_ORA8I\n";
+	}
+
 	print TEMP <<__TEMP__;
-#define OTL_ORA8I
 #include "otlv4.h"
 
-void test(void) // Not called
+void testOracle(void) // Not called
 {
     int argc;
     QApplication app(argc,NULL);
     otl_connect *test=new otl_connect("Test",0);
 }
 __TEMP__
-    } else {
+    }
+    if ($MySQLFound) {
 	print TEMP <<__TEMP__;
+
 #include <mysql.h>
-void test(void)
+void testMySQL(void) // Not called
 {
     int argc;
     QApplication app(argc,NULL);
@@ -1219,15 +1229,17 @@ __EOT__
 	print MAKEFILE "ORACLE_SHARED=$OracleShared\n";
 	print MAKEFILE "\n";
 
+	print MAKEFILE "# Static Oracle libraries\n";
 	if ($OracleRelease ge "9") {
-	    print MAKEFILE "# Static Oracle libraries\n";
 	    print MAKEFILE "ORACLE_STATIC=\$(STATIC_CLIENTLIBS)\n";
-	    print MAKEFILE "\n";
 	} else {
-	    print MAKEFILE "# Static Oracle libraries\n";
 	    print MAKEFILE "ORACLE_STATIC=\$(STATIC_ORACLETTLIBS)\n";
-	    print MAKEFILE "\n";
 	}
+	print MAKEFILE "\n";
+
+	print MAKEFILE "# Oracle home path\n";
+	print MAKEFILE "ORACLE_HOME=".$ENV{ORACLE_HOME}."\n";
+	print MAKEFILE "\n";
 
 	print MAKEFILE "# What to compile, can be tora for plugin version, tora-mono for monolithic, tora-static for static version\n";
 	print MAKEFILE "TARGET=$Target\n";

@@ -272,6 +272,13 @@ class toOracleExtract : public toExtract::extractor {
 			 const QString &type,const QString &name) const;
   QString dropUser(toExtract &ext,const QString &schema,const QString &owner,
 		   const QString &type,const QString &name) const;
+
+  QString migrateConstraint(toExtract &ext,std::list<QString> &source,
+			    std::list<QString> &destin) const;
+  QString migrateDBLink(toExtract &ext,std::list<QString> &source,
+			std::list<QString> &destin) const;
+  QString migrateIndex(toExtract &ext,std::list<QString> &source,
+		       std::list<QString> &destin) const;
 public:
   // Public interface
 
@@ -6255,6 +6262,172 @@ QString toOracleExtract::dropUser(toExtract &ext,
   ret+=sql;
   ret+=";\n\n";
   return ret;
+}
+
+// Implementation of migration functions
+
+QString toOracleExtract::migrateConstraint(toExtract &ext,
+					   std::list<QString> &source,
+					   std::list<QString> &destin) const
+{
+  QString lastSchema;
+  QString lastTable;
+  QString lastName;
+  QString lastType;
+  QString sql;
+
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString schema=toShift(ctx);
+      QString table=toShift(ctx);
+      if (toShift(ctx)!="TABLE")
+	continue;
+      QString name=toShift(ctx);
+      if (toShift(ctx)!="CONSTRAINT")
+        continue;
+      QString type=toShift(ctx);
+      QString extra=toShift(ctx);
+      if ((schema!=lastSchema||
+  	   table!=lastTable||
+	   name!=lastName||
+	   type!=lastType)&&
+	  extra.isEmpty()) {
+	if (PROMPT)
+	  sql+=QString("PROMPT ALTER TABLE %1%2 DROP CONSTRAINT %3\n\n").
+	    arg(schema).arg(table).arg(name);
+        sql+=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3;\n\n").
+  	  arg(schema).arg(table).arg(name);
+	lastSchema=schema;
+	lastTable=table;
+	lastName=name;
+        lastType=type;
+      }
+    }
+  }
+
+  lastSchema=lastTable=lastName=lastType=QString::null;
+
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+    QString schema=toShift(ctx);
+    QString table=toShift(ctx);
+    if (toShift(ctx)!="TABLE")
+      continue;
+    QString name=toShift(ctx);
+    if (toShift(ctx)!="CONSTRAINT")
+      continue;
+    QString type=toShift(ctx);
+    if (toShift(ctx)!="DEFINITION")
+      continue;
+    QString extra=toShift(ctx);
+    if (schema==lastSchema&&
+	table==lastTable&&
+	name==lastName&&
+	type==lastType) {
+      sql+=" "+extra;
+    } else if (extra.isEmpty()) {
+      if (!sql.isEmpty())
+	sql+=";\n\n";
+      if (PROMPT)
+	sql+=QString("PROMPT ALTER TABLE %1%2 ADD CONSTRAINT %3\n\n").
+	  arg(schema).arg(table).arg(name);
+      sql+=QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4").
+	arg(schema).arg(table).arg(name).arg(type);
+      lastSchema=schema;
+      lastTable=table;
+      lastName=name;
+      lastType=type;
+    } else {
+      if (PROMPT)
+	sql+=QString("PROMPT ALTER TABLE %1%2 MODIFY CONSTRAINT %3\n\n").
+	  arg(schema).arg(table).arg(name);
+      sql+=QString("ALTER TABLE %1%2 MODIFY CONSTRAINT %3 %4\n\n").
+	arg(schema).arg(table).arg(name).arg(extra);
+    }
+  }
+  if (!sql.isEmpty())
+    sql+=";\n\n";
+  
+  return sql;
+}
+
+QString toOracleExtract::migrateDBLink(toExtract &ext,
+				       std::list<QString> &source,
+				       std::list<QString> &destin) const
+{
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+
+  QString ret;
+
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString owner=toShift(ctx);
+      if (toShift(ctx)!="DATABASE LINK")
+	continue;
+      QString sql;
+      if (owner=="PUBLIC")
+	sql="DROP PUBLIC DATABASE LINK ";
+      else
+	sql="DROP DATABASE LINK";
+      sql+=toShift(ctx);
+      if (PROMPT)
+	ret+="PROMPT "+sql+"\n\n";
+      ret+=sql;
+      ret+=";\n\n";
+    }
+  }
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+    QString owner=toShift(ctx);
+    if (toShift(ctx)!="DATABASE LINK")
+      continue;
+    QString sql;
+    if (owner=="PUBLIC")
+      sql="CREATE PUBLIC DATABASE LINK ";
+    else
+      sql="CREATE DATABASE LINK";
+    sql+=toShift(ctx);
+    if (PROMPT)
+      ret+="PROMPT "+sql+"\n\n";
+    ret+=sql;
+    ret+=toShift(ctx);
+    ret+=";\n\n";
+  }
+  return ret;
+}
+
+QString toOracleExtract::migrateIndex(toExtract &ext,
+				      std::list<QString> &source,
+				      std::list<QString> &destin) const
+{
+  std::list<QString> drop;
+  std::list<QString> create;
+
+  toExtract::srcDst2DropCreate(source,destin,drop,create);
+  {
+    for(std::list<QString>::iterator i=drop.begin();i!=drop.end();i++) {
+      std::list<QString> ctx=toExtract::splitDescribe(*i);
+      QString owner=toShift(ctx);
+      if (toShift(ctx)!="INDEX")
+	continue;
+      
+   }
+  }
+  for(std::list<QString>::iterator i=create.begin();i!=create.end();i++) {
+    std::list<QString> ctx=toExtract::splitDescribe(*i);
+  }
+
+  return QString::null;
 }
 
 // Implementation public interface
