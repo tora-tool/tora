@@ -100,7 +100,7 @@ CXXFLAGS="$RPM_OPT_FLAGS" \
 export QTDIR="%{_qt3dir}"
 %{__make}
 %{__strip} \
-	 tora
+	 tora-static
 
 %install
 %{__rm} -rf "${RPM_BUILD_ROOT}"
