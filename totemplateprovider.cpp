@@ -36,10 +36,30 @@
 
 std::list<toTemplateProvider *> *toTemplateProvider::Providers;
 
-toTemplateProvider::toTemplateProvider()
+toTemplateProvider::toTemplateProvider(const QString &name)
+  : Name(name)
 {
   if (!Providers)
     Providers=new std::list<toTemplateProvider *>;
   Providers->insert(Providers->end(),this);
 }
 
+void toTemplateProvider::exportAllData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (!Providers)
+    return;
+  for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
+       i!=toTemplateProvider::Providers->end();
+       i++)
+    (*i)->exportData(data,prefix+":"+(*i)->name());
+}
+
+void toTemplateProvider::importAllData(std::map<QString,QString> &data,const QString &prefix)
+{
+  if (!Providers)
+    return;
+  for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
+       i!=toTemplateProvider::Providers->end();
+       i++)
+    (*i)->importData(data,prefix+":"+(*i)->name());
+}

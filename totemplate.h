@@ -99,16 +99,45 @@ class toTemplateProvider {
   /** List of currently available template providers.
    */
   static std::list<toTemplateProvider *> *Providers;
+  QString Name;
 public:
-  toTemplateProvider();
+  toTemplateProvider(const QString &name);
   virtual ~toTemplateProvider()
   { }
+
+  /** Get name of this template provider.
+   */
+  const QString name()
+  { return Name; }
 
   /** Insert a parent item for this template provider into a list view.
    * @param parent The list into which to insert the item.
    * @param toolbar The template toolbar if any buttons are to be added on it.
    */
   virtual void insertItems(QListView *parent,QToolBar *toolbar)=0;
+
+  /** Save settings for this template provider.
+   * @param data Map of data.
+   * @param prefix Prefix of where to save info.
+   */
+  virtual void exportData(std::map<QString,QString> &data,const QString &prefix)
+  { }
+  /** Save settings for all template providers.
+   * @param data Map of data.
+   * @param prefix Prefix of where to save info.
+   */
+  static void exportAllData(std::map<QString,QString> &data,const QString &prefix);
+  /** Import data
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  virtual void importData(std::map<QString,QString> &data,const QString &prefix)
+  { }
+  /** Import data for all template providers.
+   * @param data Data to read from a map.
+   * @param prefix Prefix to read data from.
+   */
+  static void importAllData(std::map<QString,QString> &data,const QString &prefix);
 
   friend class toTemplate;
 };

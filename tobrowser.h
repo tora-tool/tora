@@ -109,10 +109,10 @@ class toBrowseTemplate : public QObject,public toTemplateProvider {
   bool Registered;
 public:
   toBrowseTemplate(void)
-    : QObject(NULL,"browsertemplate"),toTemplateProvider()
+    : QObject(NULL,"browsertemplate"),toTemplateProvider("Browser")
   { Registered=false; Filter=NULL; }
-  void insertItems(QListView *parent,QToolBar *toolbar);
-  void removeItem(QListViewItem *item);
+  virtual void insertItems(QListView *parent,QToolBar *toolbar);
+  virtual void removeItem(QListViewItem *item);
   toBrowserFilter *filter(void)
   { return Filter; }
 public slots:

@@ -45,6 +45,7 @@
 #include "tonewconnection.h"
 #include "topreferences.h"
 #include "tosearchreplace.h"
+#include "totemplate.h"
 #include "totool.h"
 
 #ifdef TO_KDE
@@ -1240,6 +1241,8 @@ void toMain::exportData(std::map<QString,QString> &data,const QString &prefix)
       id++;
     }
   }
+
+  toTemplateProvider::exportAllData(data,prefix+":Templates");
 }
 
 void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
@@ -1313,6 +1316,8 @@ void toMain::importData(std::map<QString,QString> &data,const QString &prefix)
     }
     id++;
   }
+
+  toTemplateProvider::importAllData(data,prefix+":Templates");
   windowsMenu();
 }
 

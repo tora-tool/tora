@@ -558,6 +558,7 @@ void toTemplate::setWidget(QWidget *widget)
 class toTextTemplate : toTemplateProvider {
 public:
   toTextTemplate()
+    : toTemplateProvider("Text")
   { }
   void addFile(QListView *parent,const QString &root,const QString &file);
   virtual void insertItems(QListView *parent,QToolBar *toolbar);
