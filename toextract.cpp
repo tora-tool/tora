@@ -444,9 +444,102 @@ QString toExtract::drop(std::list<QString> &objects)
   return ret;
 }
 
+std::map<QString,std::list<QString> > toExtract::migrateGroup(std::list<QString> &grpLst)
+{
+  std::map<QString,std::list<QString> > ret;
+  for(std::list<QString>::iterator i=grpLst.begin();i!=grpLst.end();i++) {
+    std::list<QString> ctx=splitDescribe(*i);
+    if (ctx.size()<3)
+      toStatusMessage(QString("Invalid describe context (<3 parts) \"%1\")").arg(*i));
+    else {
+      QString t=toShift(ctx);
+      t+=":";
+      t+=toShift(ctx);
+      t+=".";
+      t+=toShift(ctx);
+      toPush(ret[t],*i);
+    }
+  }
+  return ret;
+}
+
 QString toExtract::migrate(std::list<QString> &drpLst,std::list<QString> &crtLst)
 {
-  throw QString("Migration not implemented yet");
+  std::list<QString> t;
+  t.insert(t.end(),"Object list not available in migration");
+  QString ret=generateHeading("MIGRATE",t);
+
+  QProgressDialog *progress=NULL;
+  QLabel *label;
+
+  std::map<QString,std::list<QString> > objDrp;
+  std::map<QString,std::list<QString> > objCrt;
+
+  objDrp=migrateGroup(drpLst);
+  objCrt=migrateGroup(crtLst);
+
+  for (std::map<QString,std::list<QString> >::iterator j=objCrt.begin();j!=objCrt.end();j++)
+    objDrp[(*j).first]; // Make sure all objects in the createlist also exists in the droplist
+
+  if (Parent) {
+    progress=new QProgressDialog("Creating migration script","&Cancel",
+				 objDrp.size(),Parent,"progress",true);
+    progress->setCaption("Creating migration script");
+    label=new QLabel(progress);
+    progress->setLabel(label);
+  }
+  initialize();
+
+  try {
+    int num=1;
+
+    for (std::map<QString,std::list<QString> >::iterator i=objDrp.begin();i!=objDrp.end();i++) {
+      QString t=(*i).first;
+
+      progress->setProgress(num);
+      qApp->processEvents();
+      if (progress->wasCancelled())
+	throw QString("Creating drop script was cancelled");
+      num++;
+      label->setText(t);
+
+      std::list<QString> &crt=objCrt[t];
+      std::list<QString> &drp=objDrp[t];
+      crt.sort();
+      drp.sort();
+      std::list<QString> ctx=splitDescribe(t);
+      QString schema=toShift(ctx);
+      QString utype=toShift(ctx).upper();
+      QString name=toShift(ctx);
+
+      try {
+	try {
+	  extractor *ext=findExtractor("MIGRATE",utype);
+	  if (ext)
+	    ret+=ext->migrate(*this,
+			      utype,
+			      drp,
+			      crt);
+	  else {
+	    QString str="Invalid type ";
+	    str+=utype;
+	    str+=" to migrate";
+	    throw str;
+	  }
+	} catch (const QString &exc) {
+	  rethrow("Migration script",(*i).first,exc);
+	}
+      } catch (const QString &exc) {
+	toStatusMessage(exc);
+      }
+
+    }
+  } catch(...) {
+    delete progress;
+    throw;
+  }
+  delete progress;
+  return ret;
 }
 
 QString toExtract::generateHeading(const QString &action,

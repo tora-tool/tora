@@ -1,5 +1,7 @@
 1.3.3:
 
+2002-01-15: Implemented migrate in toExtract.
+2002-01-15: Updated version.
 2002-01-15: Change label of copy format selection dialog.
 2002-01-15: Fix for external authentication.
 2002-01-15: Fixed clipboard selection mode. (Thanx Volker Götz)

@@ -1,5 +1,5 @@
 %define _name		tora
-%define _version	1.3.2
+%define _version	1.3.3
 %define _release	1gc
 %define _prefix		/usr/X11R6
 %define _qt2dir		/usr/lib/qt2
