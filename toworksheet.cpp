@@ -1335,6 +1335,30 @@ void toWorksheet::selectSaved()
   SavedMenu->popup(SavedButton->mapToGlobal(QPoint(0,SavedButton->height())));
 }
 
+void toWorksheet::insertStatement(const QString &str)
+{
+  QString txt=Editor->text();
+
+  int i=txt.find(str);
+
+  if (i>=0) {
+    int col;
+    int line;
+    Editor->findPosition(i,line,col);
+    Editor->setCursorPosition(line,col,false);
+
+    Editor->findPosition(i+str.length(),line,col);
+    Editor->setCursorPosition(line,col,true);
+  } else {
+    QString t=str;
+    if (str.right(1)!=";") {
+      t+=";";
+    }
+
+    Editor->insert(t,true);
+  }
+}
+
 void toWorksheet::executePreviousLog(void)
 {
   if (Light)
@@ -1345,16 +1369,19 @@ void toWorksheet::executePreviousLog(void)
 
   QListViewItem *item=Logging->currentItem();
   if (item) {
-    QListViewItem *prev=Logging->firstChild();
-    while(prev&&prev->nextSibling()!=item)
-      prev=prev->nextSibling();
-    toResultViewItem *item=dynamic_cast<toResultViewItem *>(prev);
-    if (item) {
-      Logging->setCurrentItem(item);
-      if (item->text(4).isEmpty())
-	query(item->allText(0),false);
+    QListViewItem *pt=Logging->firstChild();
+    while(pt&&pt->nextSibling()!=item)
+      pt=pt->nextSibling();
+
+    toResultViewItem *prev=dynamic_cast<toResultViewItem *>(pt);
+    if (prev) {
+      Logging->setCurrentItem(prev);
+      insertStatement(prev->allText(0));
+
+      if (prev->text(4).isEmpty())
+	query(prev->allText(0),false);
       else {
-	std::map<int,toResultLong *>::iterator i=History.find(item->text(4).toInt());
+	std::map<int,toResultLong *>::iterator i=History.find(prev->text(4).toInt());
 	if (i!=History.end()&&(*i).second) {
 	  Current->hide();
 	  Current=(*i).second;
@@ -1378,6 +1405,7 @@ void toWorksheet::executeNextLog(void)
     toResultViewItem *next=dynamic_cast<toResultViewItem *>(item->nextSibling());
     if (next) {
       Logging->setCurrentItem(next);
+      insertStatement(next->allText(0));
 
       if (next->text(4).isEmpty())
 	query(next->allText(0),false);

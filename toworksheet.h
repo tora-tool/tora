@@ -119,6 +119,8 @@ class toWorksheet : public toToolWidget {
   void setup(bool autoLoad);
 
   void execute(toSQLParse::tokenizer &tokens,int line,int pos,bool direct,bool onlyPlan=false);
+
+  void insertStatement(const QString &);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
   toWorksheet(QWidget *parent,const char *name,toConnection &connection);

@@ -82,7 +82,6 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
 
   void searchFound(int line,int col);
   void incrementalSearch(bool forward,bool next);
-  void findPosition(int index,int &line,int &col);
 protected:
   /** Reimplemented for internal reasons.
    */
@@ -218,6 +217,12 @@ public:
    * @param prefix Prefix to read data from.
    */
   virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  /** Find the line and column of an index into the string of the entire editor.
+   * @param index Index to get line and col from.
+   * @param line Will be filled out with the line.
+   * @param col Will be filled out with the col.
+   */
+  void findPosition(int index,int &line,int &col);
 protected:
   virtual void newLine(void);
   virtual void dropEvent(QDropEvent *);

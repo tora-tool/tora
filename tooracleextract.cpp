@@ -2561,7 +2561,8 @@ QString toOracleExtract::segmentAttributes(toExtract &ext,toQList &result) const
       ret+=QString("%1  NEXT              %2\n").arg(indent).arg(next);
     ret+=QString("%1  MINEXTENTS        %2\n").arg(indent).arg(minExtents);
     ret+=QString("%1  MAXEXTENTS        %2\n").arg(indent).arg(maxExtents);
-    ret+=QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
+    if (!pctIncrease.isEmpty())
+      ret+=QString("%1  PCTINCREASE       %2\n").arg(indent).arg(pctIncrease);
     ret+=QString("%1  FREELISTS         %2\n").arg(indent).arg(freelists);
     ret+=QString("%1  FREELIST GROUPS   %2\n").arg(indent).arg(freelistGroups);
     if (CONNECTION.version()>="8.1") {
