@@ -162,17 +162,56 @@ __TEMP__
     }
     print "Using Oracle Home ".$ENV{ORACLE_HOME}."\n";
 
-    $MOC=findFile("moc2",undef,$QtDir."/bin","/usr/lib/qt2","/usr/lib/qt2/bin","/usr/local/lib/qt2","/usr/local/lib/qt2/bin",
-		  "/usr/lib/qt","/usr/bin","/usr/local/bin","/usr/local/lib/qt");
-
-    if (defined $MOC && -f $MOC) {
-	$MOC.="/moc2";
-    } else {
-	$MOC=findFile("moc",undef,$QtDir."/bin","/usr/lib/qt2","/usr/lib/qt2/bin","/usr/local/lib/qt2","/usr/local/lib/qt2/bin",
-		      "/usr/lib/qt","/usr/bin","/usr/local/bin","/usr/local/lib/qt");
-	$MOC.="/moc";
+    # try to find out the Oracle client release
+    my ($ORACLE_RELEASE) = undef;
+    open(ORA,"$ENV{ORACLE_HOME}/bin/sqlplus |") || die "Cannot call sqlplus: $!";
+    while (<ORA>) {
+        if (/Release\s(\S+)/) {
+             $ORACLE_RELEASE = $1;
+             last;
+        }
     }
-    if (!-f $MOC) {
+    close(ORA);
+    unless ($ORACLE_RELEASE) {
+        print "Could not find out your Oracle client release\n";
+        exit(2);
+    }
+    else {
+        print "Oracle client release seems to be $ORACLE_RELEASE\n";
+    }
+
+    if (!defined $MOC || ! -x $MOC) {
+	$MOC=findFile("moc2",sub { return -x $_[0]; },
+		      $QtDir."/bin",
+		      "/usr/lib/qt2",
+		      "/usr/lib/qt2/bin",
+		      "/usr/local/lib/qt2",
+		      "/usr/local/lib/qt2/bin",
+		      "/usr/lib/qt",
+		      "/usr/bin",
+		      "/usr/local/bin",
+		      "/usr/local/lib/qt");
+	if (defined $MOC && -d $MOC) {
+	    $MOC.="/moc2";
+	}
+    }
+
+    if (!defined $MOC || ! -x $MOC) {
+	$MOC=findFile("moc",sub { return -x $_[0]; },
+		      $QtDir."/bin",
+		      "/usr/lib/qt2",
+		      "/usr/lib/qt2/bin",
+		      "/usr/local/lib/qt2",
+		      "/usr/local/lib/qt2/bin",
+		      "/usr/lib/qt",
+		      "/usr/bin",
+		      "/usr/local/bin",
+		      "/usr/local/lib/qt");
+	if (defined $MOC && -d $MOC) {
+	    $MOC.="/moc";
+	}
+    }
+    if (!-x $MOC) {
 	print "Couldn't find metacompiler for Qt\n";
 	exit(2);
     }
@@ -275,13 +314,18 @@ __TEMP__
 	exit(2);
     }
     print "Qt library directory at $QtLib\n";
-
-    $LFlags ="\"-L".$ENV{ORACLE_HOME}."/rdbms/lib\" ";
+    
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
-    $LFlags.="\"-L".$ENV{ORACLE_HOME}."/precomp/lib\" ";
+    if ($ORACLE_RELEASE =~ /^8.0/) {
+        $LFlags.="\"$ENV{ORACLE_HOME}/lib/scorept.o\" ";
+        $LFlags.="\"-lcore4\" ";
+        $LFlags.="\"-lnlsrtl3\" ";
+    }
+
     $LFlags.="\"-L".$QtLib."\"";
 
     $Includes ="\"-I".$ENV{ORACLE_HOME}."/rdbms/demo\" ";
+    $Includes.="\"-I".$ENV{ORACLE_HOME}."/plsql/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/rdbms/public\" ";
     $Includes.="\"-I".$ENV{ORACLE_HOME}."/network/public\" ";
     $Includes.="\"-I".$QtInclude."\"";

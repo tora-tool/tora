@@ -1,11 +1,11 @@
 INSTALLPREFIX=/usr/local
 INSTALLBIN=/usr/local/bin
 INSTALLLIB=/usr/local/lib
-INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/lib/qt2/include"
+INCLUDES="-I/opt/oracle/app/oracle/product/8.1.7/rdbms/demo" "-I/opt/oracle/app/oracle/product/8.1.7/plsql/public" "-I/opt/oracle/app/oracle/product/8.1.7/rdbms/public" "-I/opt/oracle/app/oracle/product/8.1.7/network/public" "-I/usr/lib/qt2/include"
 CC="/usr/bin/cc"
 LIBS_GLOB=-lstdc++ -lcrypt -lclntsh -lm
 QT_SHARED= -lqt
 QT_STATIC=
-MOC="/usr/lib/qt2/bin/moc"
-LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/rdbms/lib" "-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/opt/oracle/app/oracle/product/8.1.7/precomp/lib" "-L/usr/lib/qt2/lib"
+MOC="/usr/bin/moc2"
+LFLAGS="-L/opt/oracle/app/oracle/product/8.1.7/lib" "-L/usr/lib/qt2/lib"
 PERL=/usr/bin/perl

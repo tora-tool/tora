@@ -4,10 +4,12 @@
 2001-01-17: Divide CurBlk by 1000000 instead of 1000 in rollback display.
 2001-01-17: Added connection add/delWidget calls toRollback and toStorage.
 2001-01-17: Fixed a moc bug in configure.pl (Thanx P. Laux).
-2001-01-17: Include block if possible in rollback monitor (Not in transaction start).
+2001-01-17: Include block if possible in rollback monitor (Not in
+		transaction start).
 2001-01-20: Removed any reference to FALSE or TRUE (Use true/false instead).
 2001-01-20: Fixed bug parsing PL/SQL in toWorksheet.
-2001-01-20: Figured out how to use Qt designer more intelligently, integrated uic in Makefile.
+2001-01-20: Figured out how to use Qt designer more intelligently,
+		integrated uic in Makefile.
 2001-01-20: Added settings to configure syntax highlighting.
 2001-01-20: Added functionality to display error lines in toHighlightedText.
 2001-01-20: Separated body and declaration in toBrowser.
@@ -19,11 +21,15 @@
 2001-01-22: Changed to use list of strings for queries (Big change).
 2001-01-23: Fixed bug in toResultCols.
 2001-01-23: Fixed bug in PL/SQL parsing of worksheet.
-2001-01-23: Make toTool::toolWindow take QWidget as first parameter (Tools can be empedded in other tools now).
+2001-01-23: Make toTool::toolWindow take QWidget as first parameter
+		(Tools can be empedded in other tools now).
 2001-01-23: Added support for bind variables in worksheet.
 2001-01-24: Stop forcing char when querying.
-2001-01-24: Changed otl so it forces char on number and date columns unless explicitly forced.
+2001-01-24: Changed otl so it forces char on number and date columns unless
+		explicitly forced.
 2001-01-24: Added support for CLOB/BLOB column types.
 2001-01-27: Finnished first working version of PL/SQL debugger.
+2001-01-27: Modified configure script to find moc better and work with
+		Oracle 8.0 better (Thanx Uwe Schneider)
 
 0.3: Released 2001-01-17
