@@ -464,8 +464,32 @@ toMain::toMain()
       toTool::saveConfig();
     }
   }
+  connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
+	  this,SLOT(windowActivated(QWidget *)));
 
   toStatusMessage("Welcome to Tora",true);
+}
+
+void toMain::windowActivated(QWidget *widget)
+{
+  if (toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty())
+    return;
+  try {
+    toToolWidget *tool=dynamic_cast<toToolWidget *>(widget);
+    if (tool) {
+      toConnection &conn=tool->connection();
+      int pos=0;
+      for (list<toConnection *>::iterator i=Connections.begin();i!=Connections.end();i++) {
+	if (&conn==*i) {
+	  ConnectionSelection->setCurrentItem(pos);
+	  break;
+	}
+	pos++;
+      }
+    }
+  } catch(...) {
+
+  }
 }
 
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows

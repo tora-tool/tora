@@ -80,6 +80,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
 					     DEFAULT_STATUS_SAVE).toInt());
   IncludeDB->setChecked(!toTool::globalConfig(CONF_DB_TITLE,"Yes").isEmpty());
   HelpDirectory->setText(toHelpPath());
+  ChangeConnection->setChecked(!toTool::globalConfig(CONF_CHANGE_CONNECTION,"Yes").isEmpty());
 
   QString typ=toTool::globalConfig(CONF_SIZE_UNIT,DEFAULT_SIZE_UNIT);
   if (typ=="KB")
@@ -173,6 +174,7 @@ void toGlobalSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_STATUS_MESSAGE,QString::number(Status->value()));
   toTool::globalSetConfig(CONF_STATUS_SAVE,QString::number(HistorySize->value()));
   toTool::globalSetConfig(CONF_DOCK_TOOLBAR,DockToolbar->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_CHANGE_CONNECTION,ChangeConnection->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_DB_TITLE,IncludeDB->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_SIZE_UNIT,SizeUnit->currentText());
   toTool::globalSetConfig(CONF_HELP_PATH,HelpDirectory->text());
@@ -208,6 +210,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
   MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
   InitialFetch->setValidator(new QIntValidator(InitialFetch));
 
+  AutoCommit->setChecked(!toTool::globalConfig(CONF_AUTO_COMMIT,"").isEmpty());
+
   try {
     // Check if connection exists
     toMainWidget()->currentConnection();
@@ -228,6 +232,7 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
   toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,CheckPoint->text());
   toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
+  toTool::globalSetConfig(CONF_AUTO_COMMIT,AutoCommit->isChecked()?"Yes":"");
 }
 
 static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,

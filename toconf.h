@@ -84,6 +84,7 @@
 #define CONF_STATUS_SAVE	"StatusSave"
 #define DEFAULT_STATUS_SAVE	"10"
 #define CONF_AUTO_COMMIT	"AutoCommit"
+#define CONF_CHANGE_CONNECTION	"ChangeConnection"
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program

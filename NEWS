@@ -44,6 +44,8 @@
 2001-07-08: Tried to be more intelligent when to save data in contenteditor.
 2001-07-08: Moved auto commit from worksheet to database settings.
 2001-07-08: Check the autocommit in content as well.
+2001-07-08: Added an option to change the connection to that of the
+	current window when changing window.
 
 0.12: Released 2001-07-01
 

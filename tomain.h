@@ -412,6 +412,9 @@ private slots:
   /** Paste button pressed
    */
   void pasteButton(void);
+  /** Called when active window is changed.
+   */
+  void windowActivated(QWidget *);
 };
 
 /** Display a message in the statusbar of the main window.
