@@ -72,6 +72,7 @@ SOURCES=\
 	tostorage.cpp		\
 	tostoragedefinition.cpp	\
 	tosyntaxsetup.cpp	\
+	totemplate.cpp		\
 	tothread.cpp		\
 	totool.cpp		\
 	toworksheet.cpp		\
@@ -117,6 +118,7 @@ plugins/tosgatrace.tso:objs/tosgatrace.o
 plugins/tosqledit.tso:objs/tosqledit.o
 plugins/tostorage.tso:objs/tostorage.o
 plugins/tostoragedefinition.tso:objs/tostoragedefinition.o
+plugins/totemplate.tso:objs/totemplate.o
 plugins/toworksheet.tso:objs/toworksheet.o
 
 # Monolithic target, for non ELF platforms
@@ -165,6 +167,7 @@ tora-plugin: \
 	plugins/tosqledit.tso \
 	plugins/tostorage.tso \
 	plugins/tostoragedefinition.tso \
+	plugins/totemplate.tso \
 	plugins/toworksheet.tso \
 
 # The binary for the pluginbased tora

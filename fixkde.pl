@@ -22,7 +22,9 @@
 
 use strict;
 
-while(<>) {
+while(<STDIN>) {
     s/QMainWindow/KDockMainWindow/;
     print;
 }
+
+1;

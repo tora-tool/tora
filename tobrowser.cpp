@@ -82,6 +82,7 @@ public:
   }
 };
 
+static toBrowseTemplate BrowseTemplate;
 static toBrowserTool BrowserTool;
 
 static QPixmap *toRefreshPixmap;
@@ -619,5 +620,3 @@ void toBrowseTemplate::removeItem(toTemplateItem *item)
     }
   delete item;
 }
-
-static toBrowseTemplate BrowseTemplate;

@@ -379,6 +379,7 @@ toMain::toMain()
   mainDock->setWidget(Workspace);
   setView(mainDock);
   setMainDockWidget(mainDock);
+  mainDock->setEnableDocking(KDockWidget::DockNone);
 #else
   Workspace=new QWorkspace(this);
   setCentralWidget(Workspace);

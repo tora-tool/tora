@@ -639,6 +639,8 @@ __EOT__
 	close MAKEFILE;
 	if ($KDEApplication) {
 	    print "Making KDE/Qt substitution\n";
+	    open(STDIN,"<tomain.kde");
+	    open(STDOUT,">tomain.h");
 	    require "fixkde.pl";
 	}
     } else {

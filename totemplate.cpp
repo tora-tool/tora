@@ -45,30 +45,30 @@
 #include "icons/totemplate.xpm"
 
 class toTemplateTool : public toTool {
-  TODock *Window;
+  TODock *Dock;
 protected:
   virtual char **pictureXPM(void)
   { return totemplate_xpm; }
 public:
   toTemplateTool()
     : toTool(301,"SQL Template")
-  { Window=NULL; }
+  { Dock=NULL; }
   virtual const char *menuItem()
   { return "SQL Template"; }
   virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
   {
-    if (!Window) {
-      TODock *dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
-      QWidget *window=new toTemplate(dock);
-      toAttachDock(dock,window,QMainWindow::Left);
-      return dock;
+    if (!Dock) {
+      Dock=toAllocDock("Template",connection.connectString(),*toolbarImage());
+      QWidget *window=new toTemplate(Dock);
+      toAttachDock(Dock,window,QMainWindow::Left);
+      return Dock;
     }
-    Window->show();
-    Window->setFocus();
+    Dock->show();
+    Dock->setFocus();
     return NULL;
   }
   void closeWindow(toConnection &connection)
-  { Window=NULL; }
+  { Dock=NULL; }
 };
 
 static toTemplateTool TemplateTool;
