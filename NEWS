@@ -1,5 +1,6 @@
 1.3.9: Released 2003-02-08
 
+2002-02-08: Some fixes in generating static binaries.
 2002-02-07: Added default option to only show active sessions in sessionmanager.
 2002-02-07: Changed default pane in session to current statement.
 2002-02-07: Added long ops pane to session manager.

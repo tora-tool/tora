@@ -399,6 +399,10 @@ __USAGE__
     }
 }
 
+if ($Target eq "tora-static") {
+    $NoRPath=1;
+}
+
 if (!$InstallBin) {
     $InstallBin=$InstallPrefix."/bin";
 }
@@ -1074,16 +1078,6 @@ __TEMP__
 	$TestDB.=" -lclntsh";
     }
 
-    findFile("^libstdc\\+\\+.*\\.a",sub {
-	                                $StdCppLibStatic=$_[0];
-					return -f $_[0];
-				    },
-	     "/usr/lib",
-	     "/usr/local/lib");
-    if (! -f $StdCppLibStatic) {
-	$StdCppLibStatic="";
-    }
-
     if ($QtVersion ge "3.0") {
 	$MySQLFound=0;
 	print "checking for MySQL support ... Available through QSql only with Qt >= 3.0.0\n";
@@ -1282,6 +1276,29 @@ compiler used):
 
 __EOT__
 	exit(2);
+    }
+
+    if ($Target eq "tora-static") {
+	print "checking for static libc++ ... ";
+	my $path=`$CC -v 2>&1`;
+	if ($path=~/\s(\S+)\/specs\s/s) {
+	    $path=$1;
+	} else {
+	    undef $path;
+	}
+	findFile("^libstdc\\+\\+.*\\.a",sub {
+	                                    $StdCppLibStatic=$_[0];
+				  	    return -f $_[0];
+					},
+		 "/usr/lib",
+		 "/usr/local/lib",
+		 $path);
+	if (! -f $StdCppLibStatic) {
+	    print "failed!\n";
+	    exit(2);
+	} else {
+	    print $StdCppLibStatic."\n";
+	}
     }
 
     print "creating Makefile\n";
