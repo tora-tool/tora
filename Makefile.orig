@@ -167,8 +167,6 @@ API=	\
 	tothread.h		\
 	totool.h
 
-TARGET=tora-plugin
-
 include Makefile.common
 
 plugins/tobrowser.tso:\

@@ -295,7 +295,6 @@ static toSQL SQLRollback("toRollback:Information",
 			 "       dba_extents c,\n"
 			 "       (select :unit<char[100]> unit from dual) d\n"
 			 " where a.segment_id = b.usn(+)\n"
-			 "   and (a.owner = c.owner or a.owner = 'PUBLIC')\n"
 			 "   and a.segment_name = c.segment_name\n"
 			 "   and c.segment_type = 'ROLLBACK'\n"
 			 "   and (c.extent_id = b.CurExt or (b.curext is null and c.extent_id = 0))\n"
