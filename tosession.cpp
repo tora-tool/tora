@@ -533,7 +533,6 @@ void toSession::changeTab(QWidget *tab)
 	      break;
 	    }
       } else if (CurrentTab==CurrentStatement) {
-	CurrentStatement->clearParams();
 	CurrentStatement->changeAddress(item->text(Sessions->columns()+0));
       } else if (CurrentTab==AccessedObjects) {
 	AccessedObjects->clearParams();
@@ -542,7 +541,6 @@ void toSession::changeTab(QWidget *tab)
 	LockedObjects->clearParams();
 	LockedObjects->changeParams(item->text(0));
       } else if (CurrentTab==PreviousStatement) {
-	PreviousStatement->clearParams();
 	PreviousStatement->changeAddress(item->text(Sessions->columns()+1));
       }
     }
