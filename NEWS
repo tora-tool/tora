@@ -1,44 +1,45 @@
 1.3.1:
 
-2001-11-15: Split tomain.h into toMain declaration and utils.h.
-2001-11-15: Big workover and cleanup of headerfiles.
-2001-11-15: Added some more quotes.
-2001-11-16: Added toLegendChart to api.
-2001-11-16: Make configure able to generate which plugins to what rpm packages.
-2001-11-16: Don't generate useless .new file when saving map.
-2001-11-16: Plugin support for all ELF systems.
-2001-11-16: Fixes to configure if Qt is not in a standard place.
-2001-11-16: Fixes to configure if KDE3 is used.
-2001-11-16: Last fixes to be able to compile in KDE3.
-2001-11-17: Some more fiddling with the analyzer.
-2001-11-17: Fixed paths with /ust.
-2001-11-17: Fixed some capital letters in menues.
-2001-11-17: Fixed sorting of waitstates according to suggestions from Fritz Hoogland.
-2001-11-17: Changed version to 1.3.1.
-2001-11-18: New specfile with oracle and MySQL in separate packages.
-2001-11-18: Mew specfile for static to match the new basic one.
-2001-11-18: Added incremental search menu items.
-2001-11-18: Better indentation of creating tables.
-2001-12-18: Fixed problem with missing license in Qt3.
-2001-12-18: Fixed problem with toolbar in security manager.
-2001-12-18: Added support for tempfiles in storage manager.
-2001-12-18: Fixed bug with permanent & online mixed up in new tablespace dialog.
-2001-12-18: Check if profiler tables exists on profiler startup, not in execute.
-2001-12-19: Some more fixes to when profiler tables are missing.
-2001-12-19: Added option to never read object cache unless mandatory.
-2001-12-19: Always start reading object cache when choosing reread in menu.
-2001-12-19: Fixed SIGSEGV on execute in lite worksheet.
-2001-12-19: Upgraded to OTL 4.0.
-2001-12-19: Enabled stream pooling since it seems to work now.
-2001-12-19: Added open cursors number in oracle settings.
-2001-12-20: Improved resultcols when object cache not ready.
-2001-12-20: Fixed no SQLNet connection in oracle provider.
-2001-12-20: Added tooltip to background running queries.
-2001-12-20: Ask before opening new file in changed editor.
-2001-12-20: Don't read stuff in background if modal widget open that isn't parent.
-2001-12-20: Added values in waitstate list.
-2001-12-20: Added ability to sort waitstatelist.
+2001-12-20: Changed sort order of this file.
 2001-12-20: Include waitstate selection in saved session.
+2001-12-20: Added ability to sort waitstatelist.
+2001-12-20: Added values in waitstate list.
+2001-12-20: Don't read stuff in background if modal widget open that isn't parent.
+2001-12-20: Ask before opening new file in changed editor.
+2001-12-20: Added tooltip to background running queries.
+2001-12-20: Fixed no SQLNet connection in oracle provider.
+2001-12-20: Improved resultcols when object cache not ready.
+2001-12-19: Added open cursors number in oracle settings.
+2001-12-19: Enabled stream pooling since it seems to work now.
+2001-12-19: Upgraded to OTL 4.0.
+2001-12-19: Fixed SIGSEGV on execute in lite worksheet.
+2001-12-19: Always start reading object cache when choosing reread in menu.
+2001-12-19: Added option to never read object cache unless mandatory.
+2001-12-19: Some more fixes to when profiler tables are missing.
+2001-12-18: Check if profiler tables exists on profiler startup, not in execute.
+2001-12-18: Fixed bug with permanent & online mixed up in new tablespace dialog.
+2001-12-18: Added support for tempfiles in storage manager.
+2001-12-18: Fixed problem with toolbar in security manager.
+2001-12-18: Fixed problem with missing license in Qt3.
+2001-11-18: Better indentation of creating tables.
+2001-11-18: Added incremental search menu items.
+2001-11-18: Mew specfile for static to match the new basic one.
+2001-11-18: New specfile with oracle and MySQL in separate packages.
+2001-11-17: Changed version to 1.3.1.
+2001-11-17: Fixed sorting of waitstates according to suggestions from Fritz Hoogland.
+2001-11-17: Fixed some capital letters in menues.
+2001-11-17: Fixed paths with /ust.
+2001-11-17: Some more fiddling with the analyzer.
+2001-11-16: Last fixes to be able to compile in KDE3.
+2001-11-16: Fixes to configure if KDE3 is used.
+2001-11-16: Fixes to configure if Qt is not in a standard place.
+2001-11-16: Plugin support for all ELF systems.
+2001-11-16: Don't generate useless .new file when saving map.
+2001-11-16: Make configure able to generate which plugins to what rpm packages.
+2001-11-16: Added toLegendChart to api.
+2001-11-15: Added some more quotes.
+2001-11-15: Big workover and cleanup of headerfiles.
+2001-11-15: Split tomain.h into toMain declaration and utils.h.
 
 1.3.0: Released 2001-12-17
 
