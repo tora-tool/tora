@@ -247,6 +247,7 @@ QString toExtract::create(std::list<QString> &objects)
     label=new QLabel(progress);
     progress->setLabel(label);
   }
+  initialize();
 
   try {
     int num=1;
@@ -317,6 +318,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     label=new QLabel(progress);
     progress->setLabel(label);
   }
+  initialize();
 
   try {
     int num=1;
@@ -389,6 +391,7 @@ QString toExtract::drop(std::list<QString> &objects)
     label=new QLabel(progress);
     progress->setLabel(label);
   }
+  initialize();
 
   try {
     int num=1;
