@@ -385,31 +385,3 @@ fi
 AC_SUBST([PCRE_LIBS], $PCRE_LIBS)
 AC_SUBST([PCRE_CFLAGS], $PCRE_CFLAGS)
 ])
-
-dnl i should write an AC_CHECK_LIB that doesn't suck.
-dnl this is mostly just for the mac, if you've compiled with it (i
-dnl think, i'm also too lazy to recompile qt to find out).
-AC_DEFUN([AX_PATH_LIB_IODBC],[dnl
-  AC_MSG_CHECKING([lib iodbc])
-
-  dnl where might it be? add 'em here, or a --with arg if it becomes a problem.
-  iodbc_loc="/usr/lib"
-  iodbc_lib=NONE
-  for dir in $iodbc_loc; do
-    try="ls -1 $dir/*iodbc*"
-    if test -n "`$try 2> /dev/null`"; then
-      iodbc_lib=$dir
-      break
-    else
-      echo "tried $dir" >&AC_FD_CC
-    fi
-  done
-
-  if test "$iodbc_lib" = "NONE"; then
-    AC_MSG_RESULT(no)
-  else
-    AC_MSG_RESULT($iodbc_lib)
-    CXXFLAGS="$CXXFLAGS -L$iodbc_lib"
-    LIBS="$LIBS -liodbc"
-  fi
-])
