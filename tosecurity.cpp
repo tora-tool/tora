@@ -61,6 +61,7 @@ TO_NAMESPACE;
 #include "icons/trash.xpm"
 #include "icons/addrole.xpm"
 #include "icons/adduser.xpm"
+#include "icons/copyuser.xpm"
 
 static toSQL SQLUserInfo("toSecurity:UserInfo",
 			 "SELECT Account_Status,
@@ -180,6 +181,7 @@ static QPixmap *toCommitPixmap;
 static QPixmap *toTrashPixmap;
 static QPixmap *toAddRolePixmap;
 static QPixmap *toAddUserPixmap;
+static QPixmap *toCopyUserPixmap;
 
 class toSecurityQuota : public toSecurityQuotaUI {
   toConnection &Connection;
@@ -191,6 +193,7 @@ public:
   toSecurityQuota(toConnection &conn,QWidget *parent);
   void changeUser(const QString &);
   QString sql(void);
+  void clear(void);
 };
 
 void toSecurityQuota::changeSize(void)
@@ -231,6 +234,12 @@ void toSecurityQuota::clearItem(QListViewItem *item)
   item->setText(1,"None");
   item->setText(2,QString::null);
   item->setText(3,"None");
+}
+
+void toSecurityQuota::clear(void)
+{
+  for (QListViewItem *item=Tablespaces->firstChild();item;item=item->nextSibling())
+    item->setText(3,"None");
 }
 
 void toSecurityQuota::changeUser(const QString &user)
@@ -350,7 +359,7 @@ class toSecurityUser : public toSecurityUserUI {
   bool OrgExpired;
 public:
   toSecurityUser(toSecurityQuota *quota,toConnection &conn,QWidget *parent);
-  void clear(void);
+  void clear(bool all=true);
   void changeUser(const QString &);
   QString name(void)
   { return Name->text(); }
@@ -457,19 +466,21 @@ toSecurityUser::toSecurityUser(toSecurityQuota *quota,toConnection &conn,QWidget
   } TOCATCH
 }
 
-void toSecurityUser::clear(void)
+void toSecurityUser::clear(bool all)
 {
   Name->setText("");
-  Profile->setCurrentItem(0);
-  Authentication->showPage(PasswordTab);
   Password->setText("");
   Password2->setText("");
-  ExpirePassword->setChecked(false);
-  ExpirePassword->setEnabled(true);
-  TempSpace->setCurrentItem(0);
-  DefaultSpace->setCurrentItem(0);
-  Locked->setChecked(false);
   GlobalName->setText("");
+  if (all) {
+    Profile->setCurrentItem(0);
+    Authentication->showPage(PasswordTab);
+    ExpirePassword->setChecked(false);
+    ExpirePassword->setEnabled(true);
+    TempSpace->setCurrentItem(0);
+    DefaultSpace->setCurrentItem(0);
+    Locked->setChecked(false);
+  }
 
   OrgProfile=OrgDefault=OrgTemp=OrgGlobal="";
   AuthType=password;
@@ -566,6 +577,7 @@ public:
   toSecurityRole(toSecurityQuota *quota,toConnection &conn,QWidget *parent)
     : toSecurityRoleUI(parent),Connection(conn),Quota(quota)
   { Name->setValidator(new toSecurityUpper(Name)); }
+  void clear(void);
   void changeRole(const QString &);
   QString sql(void);
   QString name(void)
@@ -614,6 +626,12 @@ QString toSecurityRole::sql(void)
   sql+="\"";
   sql+=extra;
   return sql;
+}
+
+void toSecurityRole::clear(void)
+{
+  Name->setText("");
+  Name->setEnabled(true);
 }
 
 void toSecurityRole::changeRole(const QString &role)
@@ -684,14 +702,19 @@ public:
     else
       return User->name();
   }
-
+  void clear(void)
+  {
+    if (User->isHidden())
+      return Role->clear();
+    else
+      return User->clear(false);
+  }
   bool user(void)
   {
     if (User->isHidden())
       return false;
     return true;
   }
-
   QString sql(void)
   {
     if (User->isHidden())
@@ -755,16 +778,18 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
   connect(this,SIGNAL(clicked(QListViewItem *)),this,SLOT(changed(QListViewItem *)));
 }
 
-void toSecurityObject::eraseUser(void)
+void toSecurityObject::eraseUser(bool all)
 {
   QListViewItem *next=NULL;
   for (QListViewItem *item=firstChild();item;item=next) {
     QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
     if (chk) {
-      chk->setOn(false);
+      if (all)
+	chk->setOn(false);
       chk->setText(1,QString::null);
     }
-    item->setOpen(false);
+    if (all)
+      item->setOpen(false);
     if (item->firstChild())
       next=item->firstChild();
     else if (item->nextSibling())
@@ -1012,17 +1037,17 @@ void toSecuritySystem::changed(QListViewItem *org)
   }
 }
 
-void toSecuritySystem::eraseUser()
+void toSecuritySystem::eraseUser(bool all)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
     QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
-    if (chk)
+    if (chk&&all)
       chk->setOn(false);
     item->setText(1,QString::null);
     for (QListViewItem *chld=item->firstChild();chld;chld=chld->nextSibling()) {
       chld->setText(1,QString::null);
       QCheckListItem *chk=dynamic_cast<QCheckListItem *>(chld);
-      if (chk)
+      if (chk&&all)
 	chk->setOn(false);
     }
   }
@@ -1204,20 +1229,22 @@ void toSecurityRoleGrant::changed(QListViewItem *org)
   }
 }
 
-void toSecurityRoleGrant::eraseUser(bool user)
+void toSecurityRoleGrant::eraseUser(bool user,bool all)
 {
   for (QListViewItem *item=firstChild();item;item=item->nextSibling()) {
     QCheckListItem *chk=dynamic_cast<QCheckListItem *>(item);
-    if (chk)
+    if (chk&&all)
       chk->setOn(false);
     item->setText(1,QString::null);
     for (QListViewItem *chld=item->firstChild();chld;chld=chld->nextSibling()) {
       chld->setText(1,QString::null);
       QCheckListItem *chk=dynamic_cast<QCheckListItem *>(chld);
       if (chk) {
-	chk->setOn(false);
-	if (chk->text(0)=="Default")
-	  chk->setEnabled(user);
+	if (all) {
+	  chk->setOn(false);
+	  if (chk->text(0)=="Default")
+	    chk->setEnabled(user);
+	}
       }
     }
   }
@@ -1275,6 +1302,8 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
     toAddRolePixmap=new QPixmap((const char **)addrole_xpm);
   if (!toAddUserPixmap)
     toAddUserPixmap=new QPixmap((const char **)adduser_xpm);
+  if (!toCopyUserPixmap)
+    toCopyUserPixmap=new QPixmap((const char **)copyuser_xpm);
 
   QToolBar *toolbar=new QToolBar("SQL Output",toMainWidget(),this);
   new QToolButton(*toRefreshPixmap,
@@ -1305,6 +1334,12 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
 		  "Add new role",
 		  this,SLOT(addRole(void)),
 		  toolbar);
+  CopyButton=new QToolButton(*toCopyUserPixmap,
+			     "Copy current user or role",
+			     "Copy current user or role",
+			     this,SLOT(copy(void)),
+			     toolbar);
+  CopyButton->setEnabled(false);
   toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   Connection.addWidget(this);
@@ -1347,7 +1382,7 @@ list<QString> toSecurity::sql(void)
     ObjectGrant->sql(name,ret);
     RoleGrant->sql(name,ret);
   }
-#if 1
+#if 0
   for (list<QString>::iterator i=ret.begin();i!=ret.end();i++)
     printf("SQL:%s\n",(const char *)(*i));
 #endif
@@ -1385,7 +1420,8 @@ void toSecurity::changeUser(bool ask)
     QListViewItem *item=UserList->currentItem();
     if (item) {
       UserID=item->text(1);
-      DropButton->setEnabled(true);
+      DropButton->setEnabled(item->parent());
+      CopyButton->setEnabled(item->parent());
 
       if (UserID[4]!=':')
 	throw QString("Invalid security ID");
@@ -1518,3 +1554,25 @@ void toSecurity::addRole(void)
     }
 }
 
+void toSecurity::copy(void)
+{
+  General->clear();
+  SystemGrant->eraseUser(false);
+  RoleGrant->eraseUser(General->user(),false);
+  ObjectGrant->eraseUser(false);
+  Quota->clear();
+  if (General->user())
+    UserID="USER:";
+  else
+    UserID="ROLE:";
+  for (QListViewItem *item=UserList->firstChild();item;item=item->nextSibling())
+    if (item->text(1)==UserID) {
+      disconnect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+		 this,SLOT(changeUser(QListViewItem *)));
+      UserList->clearSelection();
+      UserList->setCurrentItem(item);
+      connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+	      this,SLOT(changeUser(QListViewItem *)));
+      break;
+    }
+}

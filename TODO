@@ -14,6 +14,7 @@ Extended functionality:
 * Being able to modify data in the toResultContent widget.
 * Ability to save a session (Including breakpoints, parameter cache windows etc)
 * Add context menues to all tools, like in debugger.
+* Add consumer group settings to security manager.
 
 New tools:
 * Info about current session.
