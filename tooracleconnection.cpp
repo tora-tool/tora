@@ -86,7 +86,7 @@ static toSQL SQLMembers("toOracleConnection:Members",
 			"  FROM sys.All_Arguments\n"
 			" WHERE Owner = :f1<char[100]>\n"
 			"   AND Package_Name = :f2<char[100]>\n"
-			" ORDER BY object_name,overload,sequence",
+			" ORDER BY object_name,overload,DECODE(argument_name,NULL,9999,sequence)",
 			"Get list of package members");
 
 static toSQL SQLListObjects("toOracleConnection:ListObjects",
@@ -563,34 +563,47 @@ public:
 	toQDescList ret;
 	try {
 	  toQuery::queryDescribe desc;
-	  desc.Datatype=QString::fromLatin1("MEMBER");
+	  desc.Datatype=("MEMBER");
 	  desc.Null=false;
 	  QString lastName;
 	  QString lastOver;
 	  toQuery member(connection(),SQLMembers,table.Owner,table.Name);
+	  bool hasArgs=false;
 	  while(!member.eof()) {
 	    QString name = member.readValue();
 	    QString overld = member.readValue();
 	    QString arg = member.readValueNull();
 	    QString type = member.readValueNull();
 	    if (lastName!=name||overld!=lastOver) {
-	      if (desc.Name.contains(QString::fromLatin1("(")))
-		desc.Name+=QString::fromLatin1(")");
+	      if (hasArgs)
+		desc.Name+=")";
 	      if (!desc.Name.isEmpty())
 		ret.insert(ret.end(),desc);
 	      desc.Name=name;
 	      lastName=name;
 	      lastOver=overld;
-	      if (!arg.isEmpty())
-		desc.Name+=QString::fromLatin1(" (");
-	    } else
-	      desc.Name+=QString::fromLatin1(", ");
-	    desc.Name+=arg;
-	    desc.Name+=QString::fromLatin1(" ");
+	      hasArgs=false;
+	    }
+	    if (arg.isEmpty()) {
+	      if (hasArgs) {
+		desc.Name+=")";
+		hasArgs=false;
+	      }
+	      desc.Name+=" RETURNING ";
+	    } else {
+	      if (hasArgs)
+		desc.Name+=", ";
+	      else {
+		desc.Name+="(";
+		hasArgs=true;
+	      }
+	      desc.Name+=arg;
+	      desc.Name+=" ";
+	    }
 	    desc.Name+=type;
 	  }
-	  if (desc.Name.contains(QString::fromLatin1("(")))
-	    desc.Name+=QString::fromLatin1(")");
+	  if (desc.Name.contains("("))
+	    desc.Name+=")";
 	  if (!desc.Name.isEmpty())
 	    ret.insert(ret.end(),desc);
 	} catch (...) {

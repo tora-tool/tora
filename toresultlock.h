@@ -54,8 +54,8 @@ public:
   ~toResultLock();
 
   virtual void query(const QString &sql,const toQList &param);
-  // Why is this needed?
-  void query(const QString &sql)
+
+  virtual void query(const QString &sql)
   { toQList p; query(sql,p); }
   /** Support Oracle
    */

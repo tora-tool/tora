@@ -711,7 +711,12 @@ void toHighlightedText::checkComplete(void)
 	std::list<QString> complete;
 	for (toQDescList::iterator i=desc.begin();
 	     i!=desc.end();i++) {
-	  QString t=conn.quote((*i).Name);
+	  QString t;
+	  int ind=(*i).Name.find("(");
+	  if (ind>=0)
+	    t=conn.quote((*i).Name.mid(0,ind))+(*i).Name.mid(ind);
+	  else
+	    t=conn.quote((*i).Name);
 	  if (!(*i).Comment.isEmpty()) {
 	    t+=QString::fromLatin1(" - ");
 	    t+=(*i).Comment;

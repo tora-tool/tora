@@ -229,6 +229,24 @@ void toResultViewItem::setText (int col,const toQValue &text)
     ColumnData[col].Data=QString::number(text.toDouble());
 }
 
+toResultViewCheck::toResultViewCheck(QListView *parent,QListViewItem *after,const QString &text,QCheckListItem::Type type)
+#if QT_VERSION >= 0x030100
+  : QCheckListItem(parent,after,QString::null,type)
+{ ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+#else
+  : QCheckListItem(parent,QString::null,type)
+{ moveItem(after); ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+#endif
+
+toResultViewCheck::toResultViewCheck(QListViewItem *parent,QListViewItem *after,const QString &text,QCheckListItem::Type type)
+#if QT_VERSION >= 0x030100
+  : QCheckListItem(parent,after,QString::null,type)
+{ ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+#else
+  : QCheckListItem(parent,QString::null,type)
+{ moveItem(after); ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+#endif
+
 void toResultViewCheck::setText (int col,const QString &txt)
 {
   if (txt!=text(col)) {
