@@ -561,23 +561,9 @@ void toMain::commandCallback(int cmd)
 	  QFileInfo file(mark->filename());
 	  QString filename=TOFileDialog::getOpenFileName(file.dirPath(),"*.sql\n*.txt",this);
 	  if (!filename.isEmpty()) {
-	    QFile file(filename);
-	    if (!file.open(IO_ReadOnly)) {
-	      TOMessageBox::warning(this,"File error","Couldn't read file");
-	      return;
-	    }
-	    
-	    int size=file.size();
-	    
-	    char *buf=new char[size+1];
-	    if (file.readBlock(buf,size)==-1) {
-	      delete buf;
-	      throw QString("Encountered problems read configuration");
-	    }
-	    buf[size]=0;
-	    mark->setText(QString::fromLocal8Bit(buf));
+	    QCString data=toReadFile(filename);
+	    mark->setText(QString::fromLocal8Bit(data));
 	    mark->setFilename(filename);
-	    delete buf;
 	    toStatusMessage("File opened successfully");
 	  }
 	}
@@ -590,17 +576,10 @@ void toMain::commandCallback(int cmd)
 	if (newFilename||filename.isEmpty())
 	  filename=TOFileDialog::getSaveFileName(file.dirPath(),"*.sql\n*.txt",this);
 	if (!filename.isEmpty()) {
-	  QFile file(filename);
-	  if (!file.open(IO_WriteOnly)) {
-	    TOMessageBox::warning(this,"File error","Couldn't open file for writing");
+	  if (!toWriteFile(filename,mark->text()))
 	    return;
-	  }
-	  QString data=mark->text();
-	  QCString str=data.local8Bit();
-	  file.writeBlock(str,str.length());
 	  mark->setFilename(filename);
 	  mark->setEdited(false);
-	  toStatusMessage("File saved successfully");
 	}
 	break;
       }

@@ -395,18 +395,11 @@ toWorksheet::toWorksheet(QWidget *main,toConnection &connection,bool autoLoad)
   if (autoLoad) {
     Editor->setFilename(WorksheetTool.config(CONF_AUTO_LOAD,""));
     if (!Editor->filename().isEmpty()) {
-      QFile file(Editor->filename());
-      if (file.open(IO_ReadOnly)) {
-	int size=file.size();
-	    
-	char *buf=new char[size+1];
-	if (file.readBlock(buf,size)!=-1) {
-	  buf[size]=0;
-	  Editor->setText(QString::fromLocal8Bit(buf));
-	  Editor->setEdited(false);
-	}
-	delete buf;
-      }
+      try {
+	QCString data=toReadFile(Editor->filename());
+	Editor->setText(QString::fromLocal8Bit(data));
+	Editor->setEdited(false);
+      } TOCATCH
     }
   }
 
@@ -488,16 +481,8 @@ bool toWorksheet::checkSave(bool input)
       if (Editor->filename().isEmpty())
 	return false;	
     }
-    QFile file(Editor->filename());
-    if (!file.open(IO_WriteOnly)) {
-      TOMessageBox::warning(this,"File error","Couldn't open file for writing");
+    if (!toWriteFile(Editor->filename(),Editor->text()))
       return false;
-    }
-    QCString data=Editor->text().local8Bit();
-    if (file.writeBlock(data,data.length())==-1) {
-      TOMessageBox::warning(this,"File error","Couldn't save data to file");
-      return false;
-    }
     Editor->setEdited(false);
   }
   return true;

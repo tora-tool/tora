@@ -37,6 +37,7 @@ TO_NAMESPACE;
 #include <qfile.h>
 #include <qregexp.h>
 
+#include "tomain.h"
 #include "tosql.h"
 #include "toconnection.h"
 
@@ -178,13 +179,12 @@ QString toSQL::string(const QString &name,
 bool toSQL::saveSQL(const QString &filename,bool all)
 {
   allocCheck();
-  QFile file(expandFile(filename));
-  if (!file.open(IO_WriteOnly))
-    return false;
+  QCString data;
 
   QRegExp backslash("\\");
   QRegExp newline("\n");
   for (sqlMap::iterator i=Definitions->begin();i!=Definitions->end();i++) {
+    QCString str;
     definition &def=(*i).second;
     QString name=(*i).first;
     if (def.Modified||all) {
@@ -193,9 +193,8 @@ bool toSQL::saveSQL(const QString &filename,bool all)
       line+=def.Description;
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
-      QCString str=line.latin1();
-      file.writeBlock(str,str.length());
-      file.writeBlock("\n",1);
+      str=line.latin1();
+      str+="\n";
     }
     for (list<version>::iterator j=def.Versions.begin();j!=def.Versions.end();j++) {
       version &ver=(*j);
@@ -206,120 +205,95 @@ bool toSQL::saveSQL(const QString &filename,bool all)
 	line+="]=";
 	line.replace(backslash,"\\\\");
 	line.replace(newline,"\\n");
-	file.writeBlock(line,line.length());
+	str+=line.utf8();
 	line=ver.SQL;
 	line.replace(backslash,"\\\\");
 	line.replace(newline,"\\n");
-	QCString str=line.utf8();
-	file.writeBlock(str,str.length());
-	file.writeBlock("\n",1);
+	str+=line.utf8();
+	str+="\n";
       }
     }
+    data+=str;
   }
-  return true;
+  return toWriteFile(filename,data);
 }
 
-QString toSQL::expandFile(const QString &file)
-{
-  QString ret(file);
-  const char *home=getenv("HOME");
-  if (!home)
-    home="";
-  ret.replace(QRegExp("$HOME"),home);
-  return ret;
-}
-
-bool toSQL::loadSQL(const QString &filename)
+void toSQL::loadSQL(const QString &filename)
 {
   allocCheck();
-  QFile file(expandFile(filename));
-  if (!file.open(IO_ReadOnly))
-    return false;
+  QCString data=toReadFile(filename);
   
-  int size=file.size();
-  
-  char *buf=new char[size+1];
-  try {
-    if (file.readBlock(buf,size)==-1) {
-      throw QString("Encountered problems read configuration");
-    }
-    buf[size]=0;
-    int pos=0;
-    int bol=0;
-    int endtag=-1;
-    int vertag=-1;
-    int wpos=0;
-    while(pos<size) {
-      switch(buf[pos]) {
-      case '\n':
-	if (endtag==-1)
-	  throw QString("Malformed tag in config file. Missing = on row.");
-	buf[wpos]=0;
-	{
-	  QString nam=buf+bol;
-	  QString val(QString::fromUtf8(buf+endtag+1));
-	  if (vertag==-1)
-	    updateSQL(nam,QString::null,val,QString::null,true);
-	  else
-	    updateSQL(nam,val,QString::null,buf+vertag+1,true);
-	}
-	bol=pos+1;
-	vertag=endtag=-1;
+  int size=data.length();
+  int pos=0;
+  int bol=0;
+  int endtag=-1;
+  int vertag=-1;
+  int wpos=0;
+  while(pos<size) {
+    switch(data[pos]) {
+    case '\n':
+      if (endtag==-1)
+	throw QString("Malformed tag in config file. Missing = on row.");
+      data[wpos]=0;
+      {
+	QString nam=((const char *)data)+bol;
+	QString val(QString::fromUtf8(((const char *)data)+endtag+1));
+	if (vertag==-1)
+	  updateSQL(nam,QString::null,val,QString::null,true);
+	else
+	  updateSQL(nam,val,QString::null,QString::fromUtf8(((const char *)data)+vertag+1),true);
+      }
+      bol=pos+1;
+      vertag=endtag=-1;
+      wpos=pos;
+      break;
+    case '=':
+      if (endtag==-1) {
+	endtag=pos;
+	data[wpos]=0;
 	wpos=pos;
-	break;
-      case '=':
-	if (endtag==-1) {
-	  endtag=pos;
-	  buf[wpos]=0;
-	  wpos=pos;
-	} else
-	  buf[wpos]=buf[pos];
-	break;
-      case '[':
-	if (endtag==-1) {
-	  if (vertag>=0)
-	    throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
-	  vertag=pos;
-	  buf[wpos]=0;
-	  wpos=pos;
-	} else
-	  buf[wpos]=buf[pos];
-	break;
-      case ']':
-	if (endtag==-1) {
-	  buf[wpos]=0;
-	  wpos=pos;
-	} else
-	  buf[wpos]=buf[pos];
+      } else
+	data[wpos]=data[pos];
+      break;
+    case '[':
+      if (endtag==-1) {
+	if (vertag>=0)
+	  throw QString("Malformed line in SQL dictionary file. Two '[' before '='");
+	vertag=pos;
+	data[wpos]=0;
+	wpos=pos;
+      } else
+	data[wpos]=data[pos];
+      break;
+    case ']':
+      if (endtag==-1) {
+	data[wpos]=0;
+	wpos=pos;
+      } else
+	data[wpos]=data[pos];
+      break;
+    case '\\':
+      pos++;
+      switch(data[pos]) {
+      case 'n':
+	data[wpos]='\n';
 	break;
       case '\\':
-	pos++;
-	switch(buf[pos]) {
-	case 'n':
-	  buf[wpos]='\n';
-	  break;
-	case '\\':
-	  if (endtag>=0)
-	    buf[wpos]='\\';
-	  else
-	    buf[wpos]=':';
-	  break;
-	default:
-	  throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
-	}
+	if (endtag>=0)
+	  data[wpos]='\\';
+	else
+	  data[wpos]=':';
 	break;
       default:
-	buf[wpos]=buf[pos];
+	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
-      wpos++;
-      pos++;
+      break;
+    default:
+      data[wpos]=data[pos];
     }
-  } catch(...) {
-    delete buf;
-    throw;
+    wpos++;
+    pos++;
   }
-  delete buf;
-  return true;
 }
 
 list<QString> toSQL::range(const QString &startWith)

@@ -115,7 +115,9 @@ void toTool::createWindow(void)
 
 bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
 {
+  QCString data;
   QString newfile(file);
+
   newfile.append(".new");
   {
     QFile file(newfile);
@@ -130,36 +132,17 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
       QCString str=line.latin1();
+
       file.writeBlock(str,str.length());
       line=(*i).second;
       line.replace(backslash,"\\\\");
       line.replace(newline,"\\n");
-      str=line.utf8();
-      file.writeBlock(str,str.length());
-      file.writeBlock("\n",1);
-    }
-    if (file.status()!=IO_Ok) {
-      file.close();
-      unlink(newfile);
-      return false;
+      str+=line.utf8();
+      str+="\n";
+      data+=str;
     }
   }
-  QString oldfile=(file);
-  oldfile.append(".old");
-#ifndef WIN32
-  unlink(oldfile);
-  if (!link(file,oldfile)) {
-    unlink(file);
-    link(newfile,file);
-    unlink(newfile);
-    return true;
-  } else {
-    unlink(newfile);
-    return false;
-  }
-#else
-  return false;
-#endif
+  return toWriteFile(file,data);
 }
 
 #define APPLICATION_NAME "/tora/"
@@ -241,73 +224,59 @@ void toTool::loadConfig(void)
 
 bool toTool::loadMap(const QString &filename,map<QString,QString> &pairs)
 {
-  QFile file(filename);
-  if (!file.open(IO_ReadOnly))
-    return false;
+  QCString data=toReadFile(filename);
 
-  int size=file.size();
-  
-  char *buf=new char[size+1];
-  try {
-    if (file.readBlock(buf,size)==-1) {
-      throw QString("Encountered problems reading map");
-    }
-    buf[size]=0;
-    int pos=0;
-    int bol=0;
-    int endtag=-1;
-    int wpos=0;
-    while(pos<size) {
-      switch(buf[pos]) {
-      case '\n':
-	if (endtag==-1)
-	  throw QString("Malformed tag in config file. Missing = on row. (%1)").
-	    arg(buf+bol);
-        buf[wpos]=0;
-        {
-  	  QString tag=buf+bol;
-	  QString val=buf+endtag+1;
-	  pairs[tag]=QString::fromUtf8(val);
-	}
-	bol=pos+1;
-	endtag=-1;
+  int pos=0;
+  int bol=0;
+  int endtag=-1;
+  int wpos=0;
+  int size=data.length();
+  while(pos<size) {
+    switch(data[pos]) {
+    case '\n':
+      if (endtag==-1)
+	throw QString("Malformed tag in config file. Missing = on row. (%1)").
+	  arg(((const char *)data)+bol);
+      data[wpos]=0;
+      {
+	QString tag=((const char *)data)+bol;
+	QString val=((const char *)data)+endtag+1;
+	pairs[tag]=QString::fromUtf8(val);
+      }
+      bol=pos+1;
+      endtag=-1;
+      wpos=pos;
+      break;
+    case '=':
+      if (endtag==-1) {
+	endtag=pos;
+	data[wpos]=0;
 	wpos=pos;
-	break;
-      case '=':
-	if (endtag==-1) {
-	  endtag=pos;
-	  buf[wpos]=0;
-	  wpos=pos;
-	} else
-	  buf[wpos]=buf[pos];
+      } else
+	data[wpos]=data[pos];
+      break;
+    case '\\':
+      pos++;
+      switch(data[pos]) {
+      case 'n':
+	data[wpos]='\n';
 	break;
       case '\\':
-	pos++;
-	switch(buf[pos]) {
-	case 'n':
-	  buf[wpos]='\n';
-	  break;
-	case '\\':
-	  if (endtag>=0)
-	    buf[wpos]='\\';
-	  else
-	    buf[wpos]=':';
-	  break;
-	default:
-	  throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
-	}
+	if (endtag>=0)
+	  data[wpos]='\\';
+	else
+	  data[wpos]=':';
 	break;
       default:
-	buf[wpos]=buf[pos];
+	throw QString("Unknown escape character in string (Only \\\\ and \\n recognised)");
       }
-      wpos++;
-      pos++;
+      break;
+    default:
+      data[wpos]=data[pos];
     }
-  } catch(...) {
-    delete buf;
-    throw;
+    wpos++;
+    pos++;
   }
-  delete buf;
   return true;
 }
 

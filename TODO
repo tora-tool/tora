@@ -4,6 +4,7 @@
 * Search in help needs implementing.
 * Write help.
 * Finnish PL/SQL function templates.
+* Use KIO architecture when using KDE.
 
 Extended functionality:
 
@@ -46,6 +47,5 @@ New tools:
 * SQL Builder?
 * Object search
 * Display invalid objects.
-* Links into Oracle HTML help?
 * PL/SQL Profiler.
 * Visual reverse engineering of DB.

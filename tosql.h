@@ -67,8 +67,6 @@ private:
   toSQL(const QString &name);
 
   static void allocCheck(void);
-
-  static QString expandFile(const QString &file);
 public:
   static bool updateSQL(const QString &name,
 		        const QString &sql,
@@ -97,7 +95,7 @@ public:
   static list<QString> range(const QString &startWith);
 
   static bool saveSQL(const QString &file,bool all=false);
-  static bool loadSQL(const QString &file);
+  static void loadSQL(const QString &file);
 
   static const sqlMap &definitions(void)
   { allocCheck(); return *Definitions; }

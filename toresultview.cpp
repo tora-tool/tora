@@ -639,14 +639,7 @@ void toListView::exportFile(void)
     }
     QString filename=TOFileDialog::getSaveFileName(QString::null,"*.txt",this);
     if (!filename.isEmpty()) {
-      QFile file(filename);
-      if (!file.open(IO_WriteOnly)) {
-	TOMessageBox::warning(this,"File error","Couldn't open file for writing");
-	return;
-      }
-      QCString str=output.local8Bit();
-      file.writeBlock(str,str.length());
-      toStatusMessage("File saved successfully");
+      toWriteFile(filename,output);
     }
 
   } catch(...) {

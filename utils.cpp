@@ -626,9 +626,19 @@ QString toHelpPath(void)
   return str;
 }
 
+static QString toExpandFile(const QString &file)
+{
+  QString ret(file);
+  const char *home=getenv("HOME");
+  if (!home)
+    home="";
+  ret.replace(QRegExp("$HOME"),home);
+  return ret;
+}
+
 QCString toReadFile(const QString &filename)
 {
-  QFile file(filename);
+  QFile file(toExpandFile(filename));
   if (!file.open(IO_ReadOnly))
     throw QString("Couldn't open file %1.").arg(filename);
 	    
@@ -643,6 +653,27 @@ QCString toReadFile(const QString &filename)
   QCString ret(buf,size+1);
   delete buf;
   return ret;
+}
+
+bool toWriteFile(const QString &filename,const QCString &data)
+{
+  QFile file(toExpandFile(filename));
+  if (!file.open(IO_WriteOnly)) {
+    TOMessageBox::warning(toMainWidget(),"File error","Couldn't open file for writing");
+    return false;
+  }
+  file.writeBlock(data,data.length());
+  if (file.status()!=IO_Ok) {
+    TOMessageBox::warning(toMainWidget(),"File error","Couldn't write data to file");
+    return false;
+  }
+  toStatusMessage("File saved successfully");
+  return true;
+}
+
+bool toWriteFile(const QString &filename,const QString &data)
+{
+  return toWriteFile(filename,data.local8Bit());
 }
 
 bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len)

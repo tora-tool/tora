@@ -151,7 +151,7 @@ void toGlobalSetting::sqlBrowse(void)
 
 void toGlobalSetting::helpBrowse(void)
 {
-  QString str=TOFileDialog::getOpenFileName(HelpDirectory->text(),"*.sql",this);
+  QString str=TOFileDialog::getExistingDirectory(PluginDirectory->text(),this);
   if (!str.isEmpty())
     HelpDirectory->setText(str);
 }

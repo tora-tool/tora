@@ -17,7 +17,7 @@
 2001-05-26: Some cleanup to improve compilation speed.
 2001-05-28: Make distclean clean a little more.
 2001-05-28: Added simple HTML parser.
-2001-05-28: Added additional manuals to help viewer.
+2001-05-28: Added additional manuals to help viewer (Oracle compatible).
 2001-05-28: Use KHTML if KDE as help viewer.
 2001-05-28: Collapsed TORA10 branch (Everything done do far should be in 1.0).
 2001-05-29: Some layout changes to global settings.
@@ -26,6 +26,8 @@
 2001-05-30: Fixed refresh button bug in toCurrent.
 2001-05-30: Major rewrite of toHtml to be really fast.
 2001-05-30: Added another quote.
+2001-05-30: Fixed directory selection of help directory.
+2001-05-30: Major overhaul of the file reading/writing of TOra.
 
 0.10: Released 2001-05-25
 
