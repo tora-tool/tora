@@ -748,6 +748,8 @@ public:
 				   QString::number(DEFAULT_MAX_LONG).latin1()).toInt();
     if (otl_connect::otl_initialize(1))
       addProvider("Oracle");
+    else
+      fprintf(stderr, "otl_initialize failed!\n");
   }
 
   virtual toConnection::connectionImpl *provideConnection(const QCString &,toConnection *conn)
