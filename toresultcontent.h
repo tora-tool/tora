@@ -74,6 +74,9 @@ class toResultContentEditor : public QTable,public toEditWidget {
   /** Current row of editing.
    */
   int CurrentRow;
+  /** Current row of editing.
+   */
+  int NewRecordRow;
   /** Indicator to add more rows.
    */
   bool AddRow;
@@ -122,7 +125,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
    */
   virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
   /** Reimplemented for internal reasons.
-   */
+  */
   virtual void keyPressEvent(QKeyEvent *e);
   /** Reimplemented for internal reasons.
    */
@@ -218,6 +221,15 @@ public slots:
   /** Delete the current row from the table.
    */
   virtual void deleteCurrent(void);
+  /** Add a new record to the table.
+   */
+  virtual void addRecord(void);
+  /** Discard the changes made to the table.
+   */
+  virtual void cancelEdit(void);
+  /** Goto the last record in the table.
+   */
+  virtual void gotoLastRecord(void);
 protected slots:
   /** Callback from popup menu.
    * @param cmd Command ID.

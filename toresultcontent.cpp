@@ -59,6 +59,10 @@
 
 #include "icons/filter.xpm"
 #include "icons/nofilter.xpm"
+#include "icons/addrecord.xpm"
+#include "icons/saverecord.xpm"
+#include "icons/lastrecord.xpm"
+#include "icons/canceledit.xpm"
 #include "icons/trash.xpm"
 
 #define INC_SIZE 50
@@ -97,6 +101,7 @@ void toResultContentEditor::contentsMousePressEvent(QMouseEvent *e)
     displayMenu(e->globalPos());
   else
     QTable::contentsMousePressEvent(e);
+  viewport()->setFocus();
 }
 
 void toResultContentEditor::contentsMouseReleaseEvent(QMouseEvent *e)
@@ -179,6 +184,7 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
   Table=Param2;
   setNumRows(0);
   setNumCols(0);
+  NewRecordRow = -1;
 
   delete Query;
   Query=NULL;
@@ -277,6 +283,63 @@ QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
   return QTable::beginEdit(row,col,replace);
 }
 
+void toResultContentEditor::gotoLastRecord()
+{
+  editReadAll();
+  setNumRows(Row+1);
+  setCurrentCell(Row-1,0);
+}
+  
+void toResultContentEditor::addRecord()
+{
+  saveUnsaved();
+  
+  if(currentRow() > numRows()-3) {
+    setCurrentCell(numRows()-1,0);
+  } else {
+    setNumRows(numRows()+1);
+    int crow=currentRow();
+    if(crow < 0 || crow > numRows()-2)
+      crow = 0;
+    for (int row=numRows()-1;row>crow;row--)
+      swapRows(row,row-1);
+
+    for (int i=0;i<numCols();i++)
+      setText(crow,i,"");
+
+    NewRecordRow = crow;
+    setNumRows(numRows());
+    setCurrentCell(crow,0);
+  }
+}
+
+void toResultContentEditor::cancelEdit()
+{
+
+  if(CurrentRow < 0 && NewRecordRow < 0)
+    return;
+
+  int crow=CurrentRow;
+  int col=0;
+  for(std::list<QString>::iterator j=OrigValues.begin();j!=OrigValues.end();j++,col++)
+    setText(CurrentRow,col,*j);
+  CurrentRow=-1;
+  OrigValues.clear();
+
+  endEdit(currentRow(),currentColumn(),false,false);
+
+  if(NewRecordRow > -1) {
+    NewRecordRow = -1;
+    crow=currentRow();
+    for (int row=crow+1;row<numRows();row++)
+      swapRows(row-1,row);
+  }
+    
+  setNumRows(Row+1);
+  setCurrentCell(crow,0);
+  toStatusMessage("Edit cancelled",true);
+}
+
 void toResultContentEditor::deleteCurrent()
 {
   bool mysql=(connection().provider()=="MySQL");
@@ -336,7 +399,8 @@ void toResultContentEditor::saveUnsaved()
   if (OrigValues.size()>0) {
     bool mysql=(connection().provider()=="MySQL");
     toStatusMessage("Saved row");
-    if (CurrentRow>=Row) {
+    if (CurrentRow>=Row || CurrentRow == NewRecordRow) {
+      NewRecordRow = -1;
       QString sql="INSERT INTO ";
       sql+=table();
       sql+=" VALUES (";
@@ -639,6 +703,22 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Remove any filter",
 		  this,SLOT(removeFilter()),toolbar);
   toolbar->addSeparator();
+  new QToolButton(QPixmap((const char **)addrecord_xpm),
+		  "Add a new record",
+		  "Add a new record",
+		  Editor,SLOT(addRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)lastrecord_xpm),
+		  "Go to last row",
+		  "Go to last row",
+		  Editor,SLOT(gotoLastRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)saverecord_xpm),
+		  "Save changes",
+		  "Save changes",
+		  Editor,SLOT(saveUnsaved()),toolbar);
+  new QToolButton(QPixmap((const char **)canceledit_xpm),
+		  "Discard changes",
+		  "Discard changes",
+		  Editor,SLOT(cancelEdit()),toolbar);
   new QToolButton(QPixmap((const char **)trash_xpm),
 		  "Delete current record from table",
 		  "Delete current record from table",
