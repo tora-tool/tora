@@ -18,6 +18,7 @@
 	<TABLE BORDER="0">
 		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="tomemoeditor_h.html">tomemoeditor.h</A>&gt;</code></TD></TR>
 <TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qdialog.html">QDialog</A> <small>(qt)</small> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="toResultContentMemo.html">toResultContentMemo</A></TD></TR>
 <TR><TH><A HREF="full-list-toMemoEditor.html">List of all Methods</A></TH></TR>
 	</TABLE>
 	</TD>
@@ -27,19 +28,40 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">toMemoEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data,int row=-1,int col=-1,
-	       bool sql=false,bool modal=false) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref13">toMemoEditor</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data,int row=-1,int col=-1,
+	       bool sql=false,bool modal=false,bool navigation=false) 
 </LI>
-<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref7">text</A></b> (void) 
+<LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref14">text</A></b> (void) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref9">store</A></b> (void) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref16">store</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref8">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
+<LI>void &nbsp;<b><A HREF="#ref17">changeCurrent</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">firstColumn</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref19">nextColumn</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">previousColumn</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref21">lastColumn</A></b> () 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">changePosition</A></b> (int row,int cols) 
+</LI>
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref15">changeData</A></b> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data) 
+</LI>
+</ul><h4>Protected Methods</h4><ul><LI><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<b><A HREF="#ref10">toolbar</A></b> () 
+</LI>
+<LI><A HREF="toMarkedText.html">toMarkedText</A> *&nbsp;<b><A HREF="#ref11">editor</A></b> () 
+</LI>
+<LI><A HREF="http://doc.trolltech.com/qlabel.html">QLabel</A> *&nbsp;<b><A HREF="#ref12">label</A></b> () 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Displays an text in a widget which can optionally be modified and saved back.
  </p>
-<A NAME="toMemoEditor"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMemoEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data,int row=-1,int col=-1,
-	       bool sql=false,bool modal=false)
+<A NAME="toolbar"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qtoolbar.html">QToolBar</A> *&nbsp;<strong>toolbar</strong> ()
+<br></td><td align="right"><h3><strong>toolbar</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="editor"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="toMarkedText.html">toMarkedText</A> *&nbsp;<strong>editor</strong> ()
+<br></td><td align="right"><h3><strong>editor</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="label"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qlabel.html">QLabel</A> *&nbsp;<strong>label</strong> ()
+<br></td><td align="right"><h3><strong>label</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="toMemoEditor"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toMemoEditor</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data,int row=-1,int col=-1,
+	       bool sql=false,bool modal=false,bool navigation=false)
 <br></td><td align="right"><h3><strong>toMemoEditor</strong></h3></td></tr></table><p></p><p> Create this editor. If row and col is specified, editing is posible.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -54,14 +76,16 @@
 <TR><TD align="left" valign="top"><i>sql</i></TD><TD align="left" valign="top">Use SQL syntax highlighting of widget.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>modal</i></TD><TD align="left" valign="top">Display in modal dialog
+</TD></TR>
+<TR><TD align="left" valign="top"><i>navigation</i></TD><TD align="left" valign="top">Display navigation buttons
    </TD></TR>
 </TABLE></P>
-<A NAME="text"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>text</strong> (void)
+<A NAME="text"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>text</strong> (void)
 <br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p></p><p> Get editor text.
 </p>
 <p><b>Returns</b>: String of editor.
    </p>
-<A NAME="changeData"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
+<A NAME="changeData"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeData</strong> (int row,int col,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &data)
 <br></td><td align="right"><h3><strong>changeData</strong></h3></td></tr></table><p> <small>[signal]</small></p><p> Emitted when data is to be stored back to the creator
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -72,8 +96,14 @@
 <TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">New data to save.
    </TD></TR>
 </TABLE></P>
-<A NAME="store"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>store</strong> (void)
-<br></td><td align="right"><h3><strong>store</strong></h3></td></tr></table><p> <small>[slot]</small></p><HR>
+<A NAME="store"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>store</strong> (void)
+<br></td><td align="right"><h3><strong>store</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="changeCurrent"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>changeCurrent</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
+<br></td><td align="right"><h3><strong>changeCurrent</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="firstColumn"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>firstColumn</strong> ()
+<br></td><td align="right"><h3><strong>firstColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="nextColumn"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>nextColumn</strong> ()
+<br></td><td align="right"><h3><strong>nextColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="previousColumn"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>previousColumn</strong> ()
+<br></td><td align="right"><h3><strong>previousColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="lastColumn"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>lastColumn</strong> ()
+<br></td><td align="right"><h3><strong>lastColumn</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><A NAME="changePosition"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>changePosition</strong> (int row,int cols)
+<br></td><td align="right"><h3><strong>changePosition</strong></h3></td></tr></table><p> <small>[virtual slot]</small></p><HR>
 	<table>
 	</table>
 </BODY>

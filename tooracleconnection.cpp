@@ -737,17 +737,19 @@ void toOracleProvider::oracleQuery::execute(void)
     delete Query;
     Query=NULL;
 
-    if (conn->Lock.getValue()>1)
-      throw QString("Too high value on connection lock semaphore");
+    while (conn->Lock.getValue()>1) {
+      conn->Lock.down();
+      toStatusMessage("Too high value on connection lock semaphore");
+    }
 
     conn->Lock.down();
     if (Cancel)
       throw QString("Query aborted before started");
+    Running=true;
     try {
       Query=new otl_stream;
       Query->set_commit(0);
       Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-      Running=true;
       Query->open(1,
 		  query()->sql(),
 		  *(conn->Connection));
@@ -755,13 +757,11 @@ void toOracleProvider::oracleQuery::execute(void)
       conn->Lock.up();
       throw;
     }
-    Running=false;
   } catch (const otl_exception &exc) {
     Running=false;
     ThrowException(exc);
   }
   try {
-    conn->Lock.up();
     otl_null null;
     for(toQList::iterator i=query()->params().begin();i!=query()->params().end();i++) {
       if ((*i).isNull())
@@ -785,7 +785,11 @@ void toOracleProvider::oracleQuery::execute(void)
 	}
       }
     }
+    Running=false;
+    conn->Lock.up();
   } catch (const otl_exception &exc) {
+    Running=false;
+    conn->Lock.up();
     ThrowException(exc);
   }
 }

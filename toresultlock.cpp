@@ -119,6 +119,7 @@ void toResultLock::query(const QString &sql,
   clear();
 
   try {
+    LastItem=NULL;
     toQList par;
     par.insert(par.end(),sql);
     Query=new toNoBlockQuery(connection(),toQuery::Background,

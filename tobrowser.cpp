@@ -680,6 +680,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setTabWidget(TopTab);
   resultView->setSQL(SQLListView);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  resultView->setSelectionMode(QListView::Single);
   connect(resultView,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeItem(QListViewItem *)));
   splitter->setResizeMode(resultView,QSplitter::KeepSize);

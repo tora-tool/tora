@@ -362,6 +362,7 @@ class toListView : public QListView,public toEditWidget {
    */
   virtual QListViewItem *printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,
 				   int &column,int &level,int pageNo,bool paint=true);
+  int exportType(void);
 public:
   /** Create new list view.
    * @param parent Parent of list.
@@ -400,7 +401,13 @@ public:
    */
   virtual void addMenues(QPopupMenu *menu)
   { }
-  /** Export list as file
+  /** Export list as a string.
+   * @param includeHeader Include header.
+   * @param onlySelection Only include selection.
+   * @param type Format of exported list.
+   */
+  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1);
+  /** Export list as file.
    */
   virtual void editSave(bool ask);
 
