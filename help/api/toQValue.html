@@ -31,15 +31,15 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref4">toQValue</A></b> (int i) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref5">toQValue</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+<LI>&nbsp;<b><A HREF="#ref5">toQValue</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref6">toQValue</A></b> (double d) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref7">~toQValue</A></b> () 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref8">toQValue</A></b> (const <A HREF="toQValue.html">toQValue</A> &copy) 
+<LI>&nbsp;<b><A HREF="#ref8">toQValue</A></b> (const <A HREF="toQValue.html">toQValue</A> &amp;copy) 
 </LI>
-<LI>const <A HREF="toQValue.html">toQValue</A> &&nbsp;<b><A HREF="#ref9">operator = </A></b> (const <A HREF="toQValue.html">toQValue</A> &copy) 
+<LI>const <A HREF="toQValue.html">toQValue</A> &amp;&nbsp;<b><A HREF="#ref9">operator = </A></b> (const <A HREF="toQValue.html">toQValue</A> &amp;copy) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref10">isInt</A></b> (void)  const
 </LI>
@@ -57,6 +57,14 @@
 </LI>
 <LI>operator &nbsp;<b><A HREF="#ref17">QString</A></b> ()  const
 </LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref18">setNumberFormat</A></b> (int format,int decimals) 
+</LI>
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref19">formatNumber</A></b> (double number) 
+</LI>
+<LI>static  int &nbsp;<b><A HREF="#ref20">numberFormat</A></b> (void) 
+</LI>
+<LI>static  int &nbsp;<b><A HREF="#ref21">numberDecimals</A></b> (void) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This function is used to represent values that are passed to and from queries
  </p>
 <A NAME="toQValue"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (void)
@@ -69,7 +77,7 @@
 <TR><TD align="left" valign="top"><i>i</i></TD><TD align="left" valign="top">Value.
    </TD></TR>
 </TABLE></P>
-<A NAME="toQValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="toQValue"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>toQValue</strong></h3></td></tr></table><p></p><p> Create string value.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -86,10 +94,10 @@
 <A NAME="~toQValue"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toQValue</strong> ()
 <br></td><td align="right"><h3><strong>~toQValue</strong></h3></td></tr></table><p></p><p> Destruct query.
    </p>
-<A NAME="toQValue"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const <A HREF="toQValue.html">toQValue</A> &copy)
+<A NAME="toQValue"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toQValue</strong> (const <A HREF="toQValue.html">toQValue</A> &amp;copy)
 <br></td><td align="right"><h3><strong>toQValue</strong></h3></td></tr></table><p></p><p> Create a copy of a value.
    </p>
-<A NAME="operator%20=%20"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="toQValue.html">toQValue</A> &&nbsp;<strong>operator = </strong> (const <A HREF="toQValue.html">toQValue</A> &copy)
+<A NAME="operator%20=%20"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="toQValue.html">toQValue</A> &amp;&nbsp;<strong>operator = </strong> (const <A HREF="toQValue.html">toQValue</A> &amp;copy)
 <br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p> Assign this value from another value.
    </p>
 <A NAME="isInt"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>isInt</strong> (void)
@@ -116,5 +124,26 @@
 <A NAME="QString"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>operator &nbsp;<strong>QString</strong> ()
 <br></td><td align="right"><h3><strong>QString</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Convert value to a string.
    </p>
+<A NAME="setNumberFormat"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>setNumberFormat</strong> (int format,int decimals)
+<br></td><td align="right"><h3><strong>setNumberFormat</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Set numberformat.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>format</i></TD><TD align="left" valign="top">0 = Default, 1 = Scientific, 2 = Fixed Decimals
+</TD></TR>
+<TR><TD align="left" valign="top"><i>decimals</i></TD><TD align="left" valign="top">Number on decimals for fixed decimals.
+   </TD></TR>
+</TABLE></P>
+<A NAME="formatNumber"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>formatNumber</strong> (double number)
+<br></td><td align="right"><h3><strong>formatNumber</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Format a number according to current settings.
+   </p>
+<A NAME="numberFormat"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberFormat</strong> (void)
+<br></td><td align="right"><h3><strong>numberFormat</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get number format.
+</p>
+<p><b>Returns</b>: Format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
+   </p>
+<A NAME="numberDecimals"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> int &nbsp;<strong>numberDecimals</strong> (void)
+<br></td><td align="right"><h3><strong>numberDecimals</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get decimals if fixed decimals.
+   </p>
+<HR>
 </BODY>
 </HTML>

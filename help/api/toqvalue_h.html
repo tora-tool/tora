@@ -63,9 +63,9 @@
 #ifndef TOQVALUE_H
 #define TOQVALUE_H
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qstring.h>
+#include &lt;qstring.h&gt;
 
 /** This function is used to represent values that are passed to and from queries
  */
@@ -93,7 +93,7 @@ public:
   /** Create string value.
    * @param str Value.
    */
-  toQValue(const QString &str);
+  toQValue(const QString &amp;str);
   /** Create double value.
    * @param d Value.
    */
@@ -104,10 +104,10 @@ public:
     
   /** Create a copy of a value.
    */
-  toQValue(const toQValue &copy);
+  toQValue(const toQValue &amp;copy);
   /** Assign this value from another value.
    */
-  const toQValue &operator = (const toQValue &copy);
+  const toQValue &amp;operator = (const toQValue &amp;copy);
 
   /** Check if this is an int value.
    */
@@ -135,13 +135,30 @@ public:
   /** Convert value to a string.
    */
   operator QString() const;
+
+  /** Set numberformat.
+   * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
+   * @param decimals Number on decimals for fixed decimals.
+   */
+  static void setNumberFormat(int format,int decimals);
+  /** Format a number according to current settings.
+   */
+  static QString formatNumber(double number);
+  /** Get number format.
+   * @return Format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
+   */
+  static int numberFormat(void);
+  /** Get decimals if fixed decimals.
+   */
+  static int numberDecimals(void);
 };
 
-/** A short representation of list<toQuery::queryValue>
+/** A short representation of list&lt;toQuery::queryValue&gt;
  */
-typedef std::list<toQValue> toQList;
+typedef std::list&lt;toQValue&gt; toQList;
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -63,9 +63,9 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qwidget.h>
+#include &lt;qwidget.h&gt;
 
 class toSearchReplace;
 
@@ -106,7 +106,7 @@ private:
   bool ReadAll;
   void setMainSettings(void);
 
-  static std::list<editHandler *> *Handlers;
+  static std::list&lt;editHandler *&gt; *Handlers;
 public:
   /** Empty constructor, all functions are disabled.
    */
@@ -269,7 +269,7 @@ public:
   virtual bool searchNext(toSearchReplace *search);
   /** Replace entry with new data
    */
-  virtual void searchReplace(const QString &newData);
+  virtual void searchReplace(const QString &amp;newData);
   /** Check if data can be modified by search
    * @param all If true can replace all, otherwise can replace right now.
    */
@@ -292,5 +292,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

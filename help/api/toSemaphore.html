@@ -28,9 +28,9 @@
 </TABLE></TD></TR></TABLE>
 <h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">toSemaphore</A></b> () 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref5">toSemaphore</A></b> (const <A HREF="toSemaphore.html">toSemaphore</A> &) 
+<LI>&nbsp;<b><A HREF="#ref5">toSemaphore</A></b> (int val) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref6">toSemaphore</A></b> (int val) 
+<LI>&nbsp;<b><A HREF="#ref6">~toSemaphore</A></b> () 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref7">up</A></b> () 
 </LI>
@@ -40,9 +40,9 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref13">toSemaphore</A></b> () 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref14">toSemaphore</A></b> (int val) 
+<LI>&nbsp;<b><A HREF="#ref14">toSemaphore</A></b> (const <A HREF="toSemaphore.html">toSemaphore</A> &amp;) 
 </LI>
-<LI>&nbsp;<b><A HREF="#ref15">~toSemaphore</A></b> () 
+<LI>&nbsp;<b><A HREF="#ref15">toSemaphore</A></b> (int val) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref16">up</A></b> () 
 </LI>
@@ -56,23 +56,25 @@
  different than Qt semaphores.
  </p>
 <A NAME="toSemaphore"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> ()
-<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><A NAME="toSemaphore"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (const <A HREF="toSemaphore.html">toSemaphore</A> &)
-<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><A NAME="toSemaphore"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (int val)
-<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><A NAME="up"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>up</strong> ()
+<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><A NAME="toSemaphore"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (int val)
+<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><A NAME="~toSemaphore"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toSemaphore</strong> ()
+<br></td><td align="right"><h3><strong>~toSemaphore</strong></h3></td></tr></table><p></p><A NAME="up"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>up</strong> ()
 <br></td><td align="right"><h3><strong>up</strong></h3></td></tr></table><p></p><A NAME="down"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>down</strong> ()
 <br></td><td align="right"><h3><strong>down</strong></h3></td></tr></table><p></p><A NAME="getValue"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>getValue</strong> ()
 <br></td><td align="right"><h3><strong>getValue</strong></h3></td></tr></table><p></p><A NAME="toSemaphore"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> ()
 <br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><p> Create semaphore
    </p>
-<A NAME="toSemaphore"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (int val)
+<A NAME="toSemaphore"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (const <A HREF="toSemaphore.html">toSemaphore</A> &amp;)
+<br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><p> Unimplemented copy constructor.
+   </p>
+<A NAME="toSemaphore"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toSemaphore</strong> (int val)
 <br></td><td align="right"><h3><strong>toSemaphore</strong></h3></td></tr></table><p></p><p> Create semaphore
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>val</i></TD><TD align="left" valign="top">Value of new semaphore.
    </TD></TR>
 </TABLE></P>
-<A NAME="~toSemaphore"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~toSemaphore</strong> ()
-<br></td><td align="right"><h3><strong>~toSemaphore</strong></h3></td></tr></table><p></p><A NAME="up"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>up</strong> ()
+<A NAME="up"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>up</strong> ()
 <br></td><td align="right"><h3><strong>up</strong></h3></td></tr></table><p></p><p> Increase semaphore value by 1.
    </p>
 <A NAME="down"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>down</strong> ()
@@ -81,5 +83,6 @@
 <A NAME="getValue"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>getValue</strong> ()
 <br></td><td align="right"><h3><strong>getValue</strong></h3></td></tr></table><p></p><p> Get current semaphore value.
    </p>
+<HR>
 </BODY>
 </HTML>

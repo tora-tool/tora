@@ -67,9 +67,9 @@
 #include "toresult.h"
 #include "toresultlistformatui.h"
 
-#include <qlistview.h>
+#include &lt;qlistview.h&gt;
 
-#include <map>
+#include &lt;map&gt;
 
 class QListViewItem;
 class QPopupMenu;
@@ -104,12 +104,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
 };
 
 /** An item to display in a toListView or toResultView. They differ from normal
@@ -117,26 +117,48 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewItem : public QListViewItem {
+  struct keyData {
+    QString Data;
+    QString KeyAsc;
+    QString KeyDesc;
+    int Width;
+    enum { String,Number } Type;
+  };
+  int ColumnCount;
+  keyData *ColumnData;
+  QString firstText(int col) const;
+protected:
+  virtual int realWidth(const QFontMetrics &amp;fm, const QListView *top, int column,const QString &amp;txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
    * @param after Insert after this item.
    * @param buffer String to set as first column
    */
-  toResultViewItem(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+  toResultViewItem(QListView *parent,QListViewItem *after,const QString &amp;buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); }
+  { ColumnData=NULL; ColumnCount=0; if (buf) setText(0,buf); }
   /** Create a new item.
    * @param parent Parent to this item.
    * @param after Insert after this item.
    * @param buffer String to set as first column
    */
-  toResultViewItem(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
+  toResultViewItem(QListViewItem *parent,QListViewItem *after,const QString &amp;buf=QString::null)
     : QListViewItem(parent,after,QString::null)
-  { if (buf) setText(0,buf); }
+  { ColumnData=NULL; ColumnCount=0; if (buf) setText(0,buf); }
   /** Reimplemented for internal reasons.
    */
-  virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
+  virtual ~toResultViewItem()
+  { delete[] ColumnData; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setText (int col,const QString &amp;txt);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &amp;val);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void paintCell(QPainter * p,const QColorGroup &amp; cg,int column,int width,int align);
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const;
@@ -145,16 +167,18 @@ public:
    * @param col Column
    * @param asc Wether to sort ascending or not.
    */
-  virtual QString key(int col,bool asc) const;
+  virtual QString key(int col,bool asc) const
+  { if (col&gt;=ColumnCount) return QString::null; return asc?ColumnData[col].KeyAsc:ColumnData[col].KeyDesc; }
   /** Reimplemented for internal reasons.
    */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
-  /** Get all text for this item. This is used for copying, drag & drop and memo editing etc.
+  virtual int width(const QFontMetrics &amp;, const QListView *, int col) const
+  { if (col&gt;=ColumnCount) return 0; return ColumnData[col].Width; }
+  /** Get all text for this item. This is used for copying, drag &amp; drop and memo editing etc.
    * @param col Column.
    * @return All of the text.
    */
   virtual QString allText(int col) const
-  { return QListViewItem::text(col); }
+  { if (col&gt;=ColumnCount) return QString::null; return ColumnData[col].Data; }
   /** Get the text to be displayed as tooltip for this item.
    * @param col Column.
    * @return The text to display as tooltip.
@@ -170,13 +194,15 @@ private:
   /** Number of lines in the largest row.
    */
   int Lines;
+protected:
+  virtual int realWidth(const QFontMetrics &amp;fm, const QListView *top, int column,const QString &amp;txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
    * @param after Insert after this item.
    * @param buffer String to set as first column
    */
-  toResultViewMLine(QListView *parent,QListViewItem *after,const QString &buf=QString::null)
+  toResultViewMLine(QListView *parent,QListViewItem *after,const QString &amp;buf=QString::null)
     : toResultViewItem(parent,after,QString::null)
   { Lines=1; if (buf) setText(0,buf); }
   /** Create a new item.
@@ -184,29 +210,25 @@ public:
    * @param after Insert after this item.
    * @param buffer String to set as first column
    */
-  toResultViewMLine(QListViewItem *parent,QListViewItem *after,const QString &buf=QString::null)
+  toResultViewMLine(QListViewItem *parent,QListViewItem *after,const QString &amp;buf=QString::null)
     : toResultViewItem(parent,after,QString::null)
   { Lines=1; if (buf) setText(0,buf); }
   /** Reimplemented for internal reasons.
    */
-  virtual void setText (int,const QString &);
+  virtual void setText (int,const QString &amp;);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &amp;val);
   /** Reimplemented for internal reasons.
    */
   virtual void setup(void);
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const
-  { return QListViewItem::text(col); }
+  { return toResultViewItem::allText(col); }
   /** Reimplemented for internal reasons.
    */
-  virtual QString allText(int col) const
-  { return QListViewItem::text(col); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
-  /** Reimplemented for internal reasons.
-   */
-  virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
+  virtual void paintCell (QPainter *pnt,const QColorGroup &amp; cg,int column,int width,int alignment);
 };
 
 /** An item to display in a toListView or toResultView. They differ from normal
@@ -214,26 +236,66 @@ public:
  * than is displayed in the cell of the listview.
  */
 class toResultViewCheck : public QCheckListItem {
+  struct keyData {
+    QString Data;
+    QString KeyAsc;
+    QString KeyDesc;
+    int Width;
+    enum { String,Number } Type;
+  };
+  int ColumnCount;
+  keyData *ColumnData;
+protected:
+  virtual int realWidth(const QFontMetrics &amp;fm, const QListView *top, int column,const QString &amp;txt) const;
+  QString firstText(int col) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
    * @param text Text of first column.
    * @param type Type of check on this item.
    */
-  toResultViewCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
+  toResultViewCheck(QListView *parent,const QString &amp;text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); }
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
   /** Create a new item.
    * @param parent Parent item.
    * @param text Text of first column.
    * @param type Type of check on this item.
    */
-  toResultViewCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
+  toResultViewCheck(QListViewItem *parent,const QString &amp;text,QCheckListItem::Type type=Controller)
     : QCheckListItem(parent,QString::null,type)
-  { if (!text.isNull()) setText(0,text); }
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+  /** Create a new item.
+   * @param parent Parent list view.
+   * @param after After last item.
+   * @param text Text of first column.
+   * @param type Type of check on this item.
+   */
+  toResultViewCheck(QListView *parent,QListViewItem *after,const QString &amp;text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,after,QString::null,type)
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
+  /** Create a new item.
+   * @param parent Parent item.
+   * @param after After last item.
+   * @param text Text of first column.
+   * @param type Type of check on this item.
+   */
+  toResultViewCheck(QListViewItem *parent,QListViewItem *after,const QString &amp;text,QCheckListItem::Type type=Controller)
+    : QCheckListItem(parent,after,QString::null,type)
+  { ColumnData=NULL; ColumnCount=0; if (!text.isNull()) setText(0,text); }
   /** Reimplemented for internal reasons.
    */
-  virtual void paintCell(QPainter * p,const QColorGroup & cg,int column,int width,int align);
+  virtual ~toResultViewCheck()
+  { delete[] ColumnData; }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void setText (int col,const QString &amp;txt);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &amp;val);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void paintCell(QPainter * p,const QColorGroup &amp; cg,int column,int width,int align);
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const;
@@ -242,16 +304,23 @@ public:
    * @param col Column
    * @param asc Wether to sort ascending or not.
    */
-  virtual QString key(int col,bool) const;
+  /** String to sort the data on. This is reimplemented so that numbers are sorted as numbers
+   * and not as strings.
+   * @param col Column
+   * @param asc Wether to sort ascending or not.
+   */
+  virtual QString key(int col,bool asc) const
+  { if (col&gt;=ColumnCount) return QString::null; return asc?ColumnData[col].KeyAsc:ColumnData[col].KeyDesc; }
   /** Reimplemented for internal reasons.
    */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
-  /** Get all text for this item. This is used for copying, drag & drop and memo editing etc.
+  virtual int width(const QFontMetrics &amp;, const QListView *, int col) const
+  { if (col&gt;=ColumnCount) return 0; return ColumnData[col].Width; }
+  /** Get all text for this item. This is used for copying, drag &amp; drop and memo editing etc.
    * @param col Column.
    * @return All of the text.
    */
   virtual QString allText(int col) const
-  { return QCheckListItem::text(col); }
+  { if (col&gt;=ColumnCount) return QString::null; return ColumnData[col].Data; }
   /** Get the text to be displayed as tooltip for this item.
    * @param col Column.
    * @return The text to display as tooltip.
@@ -267,13 +336,15 @@ private:
   /** Number of lines in the largest row.
    */
   int Lines;
+protected:
+  virtual int realWidth(const QFontMetrics &amp;fm, const QListView *top, int column,const QString &amp;txt) const;
 public:
   /** Create a new item.
    * @param parent Parent list view.
    * @param text Text of first column.
    * @param type Type of check on this item.
    */
-  toResultViewMLCheck(QListView *parent,const QString &text,QCheckListItem::Type type=Controller)
+  toResultViewMLCheck(QListView *parent,const QString &amp;text,QCheckListItem::Type type=Controller)
     : toResultViewCheck(parent,QString::null,type)
   { Lines=1; if (!text.isNull()) setText(0,text); }
   /** Create a new item.
@@ -281,7 +352,7 @@ public:
    * @param text Text of first column.
    * @param type Type of check on this item.
    */
-  toResultViewMLCheck(QListViewItem *parent,const QString &text,QCheckListItem::Type type=Controller)
+  toResultViewMLCheck(QListViewItem *parent,const QString &amp;text,QCheckListItem::Type type=Controller)
     : toResultViewCheck(parent,QString::null,type)
   { Lines=1; if (!text.isNull()) setText(0,text); }
   /** Reimplemented for internal reasons.
@@ -289,7 +360,10 @@ public:
   virtual void setup(void);
   /** Reimplemented for internal reasons.
    */
-  virtual void setText (int,const QString &);
+  virtual void setText (int,const QString &amp;);
+  /** Set from database.
+   */
+  virtual void setText (int col,const toQValue &amp;val);
   /** Reimplemented for internal reasons.
    */
   virtual QString text(int col) const
@@ -300,16 +374,13 @@ public:
   { return QListViewItem::text(col); }
   /** Reimplemented for internal reasons.
    */
-  virtual int width(const QFontMetrics &fm, const QListView *top, int column) const;
-  /** Reimplemented for internal reasons.
-   */
-  virtual void paintCell (QPainter *pnt,const QColorGroup & cg,int column,int width,int alignment);
+  virtual void paintCell (QPainter *pnt,const QColorGroup &amp; cg,int column,int width,int alignment);
 };
 
 /**
  * The TOra implementation of a listview which offers a few extra goodies to the baseclass.
  * First of all tooltip which can display contents that doesn't fit in the list, printing,
- * integration into toMain with Edit menu etc, drag & drop, export as file, display item
+ * integration into toMain with Edit menu etc, drag &amp; drop, export as file, display item
  * as memo and context menu.
  */
 class toListView : public QListView,public toEditWidget {
@@ -361,8 +432,8 @@ class toListView : public QListView,public toEditWidget {
    * @return The next item to print to (Pass as top to this function).
    */
   virtual QListViewItem *printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,
-				   int &column,int &level,int pageNo,bool paint=true);
-  int exportType(QString &separator,QString &delimiter);
+				   int &amp;column,int &amp;level,int pageNo,bool paint=true);
+  int exportType(QString &amp;separator,QString &amp;delimiter);
 public:
   /** Create new list view.
    * @param parent Parent of list.
@@ -376,7 +447,7 @@ public:
   { return Name; }
   /** Set SQL name of list.
    */
-  virtual void setSQLName(const QString &name)
+  virtual void setSQLName(const QString &amp;name)
   { Name=name; }
   /** Get the whole text for the item and column selected when menu was poped up.
    */
@@ -404,7 +475,7 @@ public:
    * @param separator Separator for CSV format.
    * @param delimiter Delimiter for CSV format.
    */
-  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,const QString &separator=";",const QString &delimiter="\"");
+  virtual QString exportAsText(bool includeHeader,bool onlySelection,int type=-1,const QString &amp;separator=";",const QString &amp;delimiter="\"");
   /** Export list as file.
    */
   virtual bool editSave(bool ask);
@@ -426,23 +497,27 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Create transposed copy of list
    * @return Pointer to newly allocated transposed listview.
    */
   virtual toListView *copyTransposed(void);
 public slots:
+  /** set the popup menu --&gt; see displayMenu()
+   * @param item Item to display.
+   */
+  virtual void setDisplayMenu(QPopupMenu *item);
   /** Display the menu at the given point and column.
    * @param item Item to display.
    * @param pnt Point to display menu at.
    * @param col Column to display menu for.
    */
-  virtual void displayMenu(QListViewItem *item,const QPoint &pnt,int col);
+  virtual void displayMenu(QListViewItem *item,const QPoint &amp;pnt,int col);
   /** Display memo of selected menu column
    */
   virtual void displayMemo(void);
@@ -537,6 +612,11 @@ public:
    */
   int queryColumns() const;
 
+  /** Get the query used to execute this.
+   */
+  toQuery *query()
+  { return Query; }
+
   /** Set a filter to this list.
    * @param filter The new filter or NULL if no filter is to be used.
    */
@@ -577,11 +657,11 @@ public:
    * @param str String to set first column to.
    * @return Allocated item.
    */
-  virtual QListViewItem *createItem(QListViewItem *last,const QString &str);
+  virtual QListViewItem *createItem(QListViewItem *last,const QString &amp;str);
 
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
 
   /** Get SQL name of list.
    */
@@ -589,7 +669,7 @@ public:
   { return toListView::sqlName(); }
   /** Set SQL name of list.
    */
-  virtual void setSQLName(const QString &name)
+  virtual void setSQLName(const QString &amp;name)
   { toListView::setSQLName(name); }
 
   // Why are these needed?
@@ -597,30 +677,30 @@ public:
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
-  void setSQL(const QString &sql)
+  void setSQL(const QString &amp;sql)
   { toResult::setSQL(sql); }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(const toSQL &sql)
+  void setSQL(const toSQL &amp;sql)
   { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &sql)
+  void query(const QString &amp;sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const toSQL &sql)
+  void query(const toSQL &amp;sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const toSQL &sql,toQList &par)
+  void query(const toSQL &amp;sql,toQList &amp;par)
   { toResult::query(sql,par); }
 #endif
 
@@ -638,29 +718,32 @@ public:
   /** Reimplemented for internal reasons.
    */
   virtual void setSorting(int col,bool asc=true);
+  /** Reimplemented for internal reasons.
+   */
+  virtual int sortColumn() const
+  { return SortColumn; }
 public slots:
   /** Reimplemented for internal reasons.
    */
-  virtual void refresh(void)
-  { toResult::refresh(); }
+  virtual void refresh(void);
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
+  virtual void changeParams(const QString &amp;Param1)
   { toResult::changeParams(Param1); }
   /** Reimplemented For internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
   { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
   /** Try to add an item to the list if available.
    */
   virtual void addItem(void);
   /** Handle any connection by default
    */
-  virtual bool canHandle(toConnection &)
+  virtual bool canHandle(toConnection &amp;)
   { return true; }
 private slots:
   void headingClicked(int col);
@@ -687,5 +770,6 @@ public slots:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

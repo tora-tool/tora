@@ -69,10 +69,10 @@
 #include "tomemoeditor.h"
 #include "toresult.h"
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qtable.h>
-#include <qvbox.h>
+#include &lt;qtable.h&gt;
+#include &lt;qvbox.h&gt;
 
 class QChecBox;
 class QCheckBox;
@@ -91,7 +91,7 @@ class toResultContentMemo : public toMemoEditor {
 
   toResultContentEditor *contentEditor();
 public:
-  toResultContentMemo(QWidget *parent,const QString &data,int row,int col,
+  toResultContentMemo(QWidget *parent,const QString &amp;data,int row,int col,
 		      bool sql=false);
 public slots:
   virtual void firstColumn();
@@ -111,8 +111,8 @@ class toResultContentSingle : public QScrollView {
 
   int Row;
   QGrid *Container;
-  std::list<QCheckBox *> Null;
-  std::list<QLineEdit *> Value;
+  std::list&lt;QCheckBox *&gt; Null;
+  std::list&lt;QLineEdit *&gt; Value;
 public:
   toResultContentSingle(QWidget *parent);
 
@@ -145,7 +145,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
   QString SQL;
   /** Original values of rows currently being edited.
    */
-  std::list<QString> OrigValues;
+  std::list&lt;QString&gt; OrigValues;
   /** Stream to read data from.
    */
   toNoBlockQuery *Query;
@@ -190,10 +190,10 @@ class toResultContentEditor : public QTable,public toEditWidget {
   bool AllFilter;
   /** Filter selection criteria
    */
-  std::map<QCString,QString> Criteria;
+  std::map&lt;QCString,QString&gt; Criteria;
   /** Filter retrieve order
    */
-  std::map<QCString,QString> Order;
+  std::map&lt;QCString,QString&gt; Order;
   /** Current filter name in map
    */
   QString FilterName;
@@ -216,7 +216,7 @@ class toResultContentEditor : public QTable,public toEditWidget {
 
   /** Reimplemented for internal reasons.
    */
-  virtual void paintCell(QPainter *p,int row,int col,const QRect &cr,bool selected);
+  virtual void paintCell(QPainter *p,int row,int col,const QRect &amp;cr,bool selected);
   /** Reimplemented for internal reasons.
   */
   virtual bool eventFilter(QObject *o,QEvent *e);
@@ -253,14 +253,14 @@ class toResultContentEditor : public QTable,public toEditWidget {
 
   QString table(void);
 
-  toConnection &connection();
+  toConnection &amp;connection();
   QLineEdit *CurrentEditor;
   int SearchStart;
   int SearchEnd;
 
   class contentItem : public QTableItem {
   public:
-    contentItem(QTable *table,const QString &text);
+    contentItem(QTable *table,const QString &amp;text);
     virtual QString key(void) const;
   };
 
@@ -280,15 +280,15 @@ public:
   ~toResultContentEditor();
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &,const toQList &)
+  virtual void query(const QString &amp;,const toQList &amp;)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &)
+  virtual void changeParams(const QString &amp;)
   { wrongUsage(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &,const QString &,const QString &)
+  virtual void changeParams(const QString &amp;,const QString &amp;,const QString &amp;)
   { wrongUsage(); }
   
   /** Print this editor.
@@ -306,14 +306,14 @@ public:
 
   /** Reimplemented for internal reasons.
    */
-  virtual void setText(int row,int col,const QString &text);
+  virtual void setText(int row,int col,const QString &amp;text);
 
   /** Set a new filter setting.
    * @param all Apply filter to all tables, otherwise only for this table.
    * @param criteria Criteria to filter on.
    * @param order Order to read data on.
    */
-  void changeFilter(bool all,const QString &criteria,const QString &order);
+  void changeFilter(bool all,const QString &amp;criteria,const QString &amp;order);
 
   /** Get information about if filter affect all tables.
    */
@@ -327,12 +327,12 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
 public slots:
   /** Erase last parameters
    */
@@ -348,7 +348,7 @@ public slots:
   { QString t=Owner; Owner=QString::null; changeParams(t,Table); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2);
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2);
   /** Current cell changed.
    * @param row New row.
    * @param col New column.
@@ -358,7 +358,7 @@ public slots:
   /** Display popup menu
    * @param p Point to display popup at.
    */
-  virtual void displayMenu(const QPoint &p);
+  virtual void displayMenu(const QPoint &amp;p);
   /** Display editable memo viewer at current position.
    */
   virtual void displayMemo(void);
@@ -400,7 +400,7 @@ public slots:
   virtual bool searchNext(toSearchReplace *search);
   /** Replace entry with new data
    */
-  virtual void searchReplace(const QString &newData);
+  virtual void searchReplace(const QString &amp;newData);
   /** Check if data can be modified by search
    * @param all If true can replace all, otherwise can replace right now.
    */
@@ -415,7 +415,7 @@ protected slots:
    * @param col Column to change.
    * @param data New contents of data.
    */ 
-  virtual void changeData(int row,int col,const QString &data); 
+  virtual void changeData(int row,int col,const QString &amp;data); 
 private slots:
   virtual void poll(void);
 };
@@ -445,32 +445,32 @@ public:
   /** Read all rows from the table.
    */
   virtual void editReadAll(void)
-  { Editor->editReadAll(); }
+  { Editor-&gt;editReadAll(); }
   /** Print the contents.
    */
   virtual void editPrint(void)
-  { Editor->editPrint(); }
+  { Editor-&gt;editPrint(); }
   /** Export contents to file.
    */
   virtual void editSave(bool ask)
-  { Editor->editSave(ask); }
+  { Editor-&gt;editSave(ask); }
 
   /** Export data to a map.
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix)
-  { Editor->exportData(data,prefix); }
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+  { Editor-&gt;exportData(data,prefix); }
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix)
-  { Editor->importData(data,prefix); }
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix)
+  { Editor-&gt;importData(data,prefix); }
   /** Indicate that editor should never use returning clauses even if this is oracle.
    */
   void useNoReturning(bool use)
-  { Editor->useNoReturning(use); }
+  { Editor-&gt;useNoReturning(use); }
 private slots:
   void changeFilter(void);
   void removeFilter(void);
@@ -478,43 +478,44 @@ public slots:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { Editor->clearParams(); }
+  { Editor-&gt;clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { Editor->refresh(); }
+  { Editor-&gt;refresh(); }
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param)
-  { Editor->query(sql,param); }
+  virtual void query(const QString &amp;sql,const toQList &amp;param)
+  { Editor-&gt;query(sql,param); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
-  { Editor->changeParams(Param1); }
+  virtual void changeParams(const QString &amp;Param1)
+  { Editor-&gt;changeParams(Param1); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
-  { Editor->changeParams(Param1,Param2); }
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { Editor-&gt;changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
-  { Editor->changeParams(Param1,Param2,Param3); }
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { Editor-&gt;changeParams(Param1,Param2,Param3); }
   /** Save unsaved changes in the editor
    */
   virtual void saveUnsaved(void)
-  { Editor->saveUnsaved(); }
+  { Editor-&gt;saveUnsaved(); }
   /** Commit connection
    * @param conn Connection commit is made on.
    * @param cmt If commit or rollback
    */
-  virtual void saveUnsaved(toConnection &conn,bool cmt);
+  virtual void saveUnsaved(toConnection &amp;conn,bool cmt);
 
-  /** Handle Oracle & MySQL
+  /** Handle Oracle &amp; MySQL
    */
-  virtual bool canHandle(toConnection &);
+  virtual bool canHandle(toConnection &amp;);
 };
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

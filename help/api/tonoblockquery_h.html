@@ -66,7 +66,7 @@
 #include "toconnection.h"
 #include "tothread.h"
 
-#include <time.h>
+#include &lt;time.h&gt;
 
 class toResultStats;
 
@@ -79,9 +79,9 @@ private:
   /** A task to implement running the query.
    */
   class queryTask : public toTask {
-    toNoBlockQuery &Parent;
+    toNoBlockQuery &amp;Parent;
   public:
-    queryTask(toNoBlockQuery &parent)
+    queryTask(toNoBlockQuery &amp;parent)
       : Parent(parent)
     { }
     virtual void run(void);
@@ -150,9 +150,9 @@ public:
    * @param param Parameters to pass to query.
    * @param statistics Optional statistics widget to update with values from query.
    */
-  toNoBlockQuery(toConnection &conn,
-		 const QString &sql,
-		 const toQList &param,
+  toNoBlockQuery(toConnection &amp;conn,
+		 const QString &amp;sql,
+		 const toQList &amp;param,
 		 toResultStats *statistics=NULL);
   /** Create a new query.
    * @param conn Connection to run on.
@@ -161,10 +161,10 @@ public:
    * @param param Parameters to pass to query.
    * @param statistics Optional statistics widget to update with values from query.
    */
-  toNoBlockQuery(toConnection &conn,
+  toNoBlockQuery(toConnection &amp;conn,
 		 toQuery::queryMode mode,
-		 const QString &sql,
-		 const toQList &param,
+		 const QString &amp;sql,
+		 const toQList &amp;param,
 		 toResultStats *statistics=NULL);
   virtual ~toNoBlockQuery();
 
@@ -176,16 +176,16 @@ public:
   /** Get description of columns.
    * @return Description of columns list. Don't modify this list.
    */
-  toQDescList &describe(void);
+  toQDescList &amp;describe(void);
 
   /** Read the next value from the query.
    * @return The next available value.
    */
-  QString readValue(void);
+  toQValue readValue(void);
   /** Read the next value from the query. Don't send NULL as string.
    * @return The next available value.
    */
-  QString readValueNull(void);
+  toQValue readValueNull(void);
 
   /** Get the number of rows processed.
    * @return Number of rows processed.
@@ -200,5 +200,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -65,7 +65,7 @@
 
 #include "toeditwidget.h"
 
-#include <qtextview.h>
+#include &lt;qtextview.h&gt;
 
 /** A tora editwidget version of the @ref QTextView widget.
  */
@@ -83,7 +83,7 @@ public:
   { }
   /** See @ref QTextView
    */
-  toTextView(const QString&text,const QString &context=QString::null,
+  toTextView(const QString&amp;text,const QString &amp;context=QString::null,
 	    QWidget *parent=0,const char *name=0)
     : QTextView(text,context,parent,name)
     , toEditWidget(false,true,false,
@@ -110,5 +110,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

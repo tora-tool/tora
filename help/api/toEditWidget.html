@@ -114,7 +114,7 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref52">searchNext</A></b> (<A HREF="#toSearchReplace">toSearchReplace</A> *search) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref53">searchReplace</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &newData) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref53">searchReplace</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData) 
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref54">searchCanReplace</A></b> (bool all) 
 </LI>
@@ -262,7 +262,7 @@
 </p>
 <p><b>Returns</b>: True if found, should select the found text.
    </p>
-<A NAME="searchReplace"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &newData)
+<A NAME="searchReplace"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>searchReplace</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;newData)
 <br></td><td align="right"><h3><strong>searchReplace</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Replace entry with new data
    </p>
 <A NAME="searchCanReplace"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>searchCanReplace</strong> (bool all)
@@ -284,5 +284,6 @@
 <A NAME="delHandler"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>delHandler</strong> (editHandler *handler)
 <br></td><td align="right"><h3><strong>delHandler</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Removed a hook from being called every time focus changes.
    </p>
+<HR>
 </BODY>
 </HTML>

@@ -63,15 +63,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qmainwindow.h>
-#include <qtoolbutton.h>
+#include &lt;qmainwindow.h&gt;
+#include &lt;qtoolbutton.h&gt;
 
 #ifdef TO_KDE
-#  include <kapp.h>
-#  if KDE_VERSION < 220
+#  include &lt;kapp.h&gt;
+#  if KDE_VERSION &lt; 220
 #    define TOPrinter QPrinter
 #  else
 #    define TOPrinter KPrinter
@@ -117,8 +117,9 @@ class QListView;
 class QListViewItem;
 class QToolBar;
 class QWidget;
-class toMain;
 class toConnection;
+class toMain;
+class toQValue;
 class toTimer;
 class toToolWidget;
 
@@ -127,7 +128,7 @@ class toToolWidget;
  * @param save If true don't remove the message after a specified interval.
  * @param log Log message. Will never log saved messages.
  */
-void toStatusMessage(const QString &str,bool save=false,bool log=true);
+void toStatusMessage(const QString &amp;str,bool save=false,bool log=true);
 /** Get an address to a SQL statement in the SGA. The address has the form
  * 'address:hash_value' which are resolved from the v$sqltext_with_newlines
  * view in Oracle.
@@ -136,7 +137,7 @@ void toStatusMessage(const QString &str,bool save=false,bool log=true);
  * @return String with address in.
  * @exception QString if address not found.
  */
-QString toSQLToAddress(toConnection &conn,const QString &sql);
+QString toSQLToAddress(toConnection &amp;conn,const QString &amp;sql);
 /** Get the full SQL of an address (See @ref toSQLToAddress) from the
  * SGA.
  * @param conn Connection to get address from
@@ -144,21 +145,21 @@ QString toSQLToAddress(toConnection &conn,const QString &sql);
  * @return String with SQL of statement.
  * @exception QString if address not found.
  */
-QString toSQLString(toConnection &conn,const QString &address);
+QString toSQLString(toConnection &amp;conn,const QString &amp;address);
 /** Make a column name more readable.
  * @param col Name of column name, will be modified.
  */
-void toReadableColumn(QString &col);
+void toReadableColumn(QString &amp;col);
 /** Get the current database time in the current sessions dateformat.
  * @param conn Connection to get address from.
  * @return String with the current date and time.
  */
-QString toNow(toConnection &conn);
+QString toNow(toConnection &amp;conn);
 /** Set the current session type (Style)
  * @param str Session to set, can be any of Motif, Motif Plus, SGI, CDE, Windows and Platinum
  * @exception QString if style not available.
  */
-void toSetSessionType(const QString &str);
+void toSetSessionType(const QString &amp;str);
 /** Get current session type (Style)
  * @return A string describing the current style.
  * @see toSetSessionType
@@ -173,13 +174,13 @@ QStringList toGetSessionTypes(void);
  * @param def Default value of the combobox.
  * @param item Combo box to fill. If not specified a new combobox is created.
  */
-QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &def=QString::null,
+QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &amp;def=QString::null,
 			   QComboBox *item=NULL);
 /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
  * @param timer Timer to set timeout in.
  * @param str String from currentText of combobox. If empty, set to default.
  */
-void toRefreshParse(toTimer *timer,const QString &str=QString::null);
+void toRefreshParse(toTimer *timer,const QString &amp;str=QString::null);
 /** Get information about wether this TOra has plugin support or not.
  * @return True if plugin support is enabled.
  */
@@ -188,13 +189,13 @@ bool toMonolithic(void);
  * @param str String to copy
  * @return Copied string.
  */
-QString toDeepCopy(const QString &str);
+QString toDeepCopy(const QString &amp;str);
 /** Allocate a toolbar. This is needed since Qt and KDE use different toolbars.
  * @param parent Parent of toolbar.
  * @param name Name of toolbar.
  * @return A newly created toolbar.
  */
-QToolBar *toAllocBar(QWidget *parent,const QString &name);
+QToolBar *toAllocBar(QWidget *parent,const QString &amp;name);
 /** Allocate a new docked window. This is needed since Qt and KDE docks windows differently
  * (Qt 2.x doesn't even have support for docked windows). Observe that you must attach a
  * dock using @ref toAttachDock after allocating it.
@@ -203,9 +204,9 @@ QToolBar *toAllocBar(QWidget *parent,const QString &name);
  * @param icon Icon of new dock.
  * @return A newly allocated fock.
  */
-TODock *toAllocDock(const QString &name,
-		    const QString &db,
-		    const QPixmap &icon);
+TODock *toAllocDock(const QString &amp;name,
+		    const QString &amp;db,
+		    const QPixmap &amp;icon);
 /** Attach a dock to a specified position.
  * @param dock Dock to attach
  * @param container Whatever container is supposed to be in the dock window.
@@ -216,13 +217,13 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
  * everything else to 1.
  * @return Multiplier specified by string.
  */
-int toSizeDecode(const QString &str);
+int toSizeDecode(const QString &amp;str);
 
 /** Shift the first value out of a list.
  * @param lst List to shift value from (Also modified).
  * @return The first value in the list.
  */
-template <class T> T toShift(std::list<T> &lst)
+template &lt;class T&gt; T toShift(std::list&lt;T&gt; &amp;lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -237,7 +238,7 @@ template <class T> T toShift(std::list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toUnShift(std::list<T> &lst,const T &str)
+template &lt;class T&gt; void toUnShift(std::list&lt;T&gt; &amp;lst,const T &amp;str)
 {
   lst.insert(lst.begin(),str);
 }
@@ -246,7 +247,7 @@ template <class T> void toUnShift(std::list<T> &lst,const T &str)
  * @param lst List to pop value from (Also modified).
  * @return The value in the list of objects.
  */
-template <class T> T toPop(std::list<T> &lst)
+template &lt;class T&gt; T toPop(std::list&lt;T&gt; &amp;lst)
 {
   if (lst.begin()==lst.end()) {
     T ret;
@@ -261,7 +262,7 @@ template <class T> T toPop(std::list<T> &lst)
  * @param lst List to push value in from of.
  * @param str Object to push.
  */
-template <class T> void toPush(std::list<T> &lst,const T &str)
+template &lt;class T&gt; void toPush(std::list&lt;T&gt; &amp;lst,const T &amp;str)
 {
   lst.push_back(str);
 }
@@ -271,12 +272,12 @@ template <class T> void toPush(std::list<T> &lst,const T &str)
  * @return Font structure represented by the string.
  * @see toFontToString
  */
-QFont toStringToFont(const QString &str);
+QFont toStringToFont(const QString &amp;str);
 /** Convert a font to a string representation.
  * @param fnt Font to convert.
  * @return String representation of font.
  */
-QString toFontToString(const QFont &fnt);
+QString toFontToString(const QFont &amp;fnt);
 /** Get the path to the help directory.
  * @return Path to the help directory.
  */
@@ -286,47 +287,47 @@ QString toHelpPath(void);
  * @return Contents of file.
  * @exception QString describing I/O problem.
  */
-QCString toReadFile(const QString &filename);
+QCString toReadFile(const QString &amp;filename);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QCString &data);
+bool toWriteFile(const QString &amp;filename,const QCString &amp;data);
 /** Write file to filename.
  * @param filename Filename to write file to.
  * @param data Data to write to file.
  */
-bool toWriteFile(const QString &filename,const QString &data);
+bool toWriteFile(const QString &amp;filename,const QString &amp;data);
 /** Compare two string lists.
  * @param l1 First list to compare.
  * @param l2 Second list to compare.
  * @param len Length of lists to compare.
  * @return True if all first len elements match.
  */
-bool toCompareLists(QStringList &l1,QStringList &l2,unsigned int len);
+bool toCompareLists(QStringList &amp;l1,QStringList &amp;l2,unsigned int len);
 /** Set environment variable.
  * @param var Variable name to set.
  * @param val Value to set variable to.
  */
-void toSetEnv(const QCString &var,const QCString &val);
+void toSetEnv(const QCString &amp;var,const QCString &amp;val);
 /** Delete an environment variable.
  * @param var Environment variable to delete.
  */
-void toUnSetEnv(const QCString &var);
+void toUnSetEnv(const QCString &amp;var);
 /** Pop up a dialog and choose a file to open.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toOpenFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toOpenFilename(const QString &amp;filename,const QString &amp;filter,QWidget *parent);
 /** Pop up a dialog and choose a file to save to.
  * @param filename Default filename to open.
  * @param filter Filter of filenames (See @ref QFileDialog)
  * @param parent Parent of dialog.
  * @return Selected filename.
  */
-QString toSaveFilename(const QString &filename,const QString &filter,QWidget *parent);
+QString toSaveFilename(const QString &amp;filename,const QString &amp;filter,QWidget *parent);
 
 /** Get index of menu to insert tool specific menu at.
  * @return Index of the tool menu entry.
@@ -347,7 +348,7 @@ inline bool toIsIdent(QChar c)
 QString toPluginPath(void);
 /** Get a list of the latest status messages that have been shown.
  */
-std::list<QString> toStatusMessages(void);
+std::list&lt;QString&gt; toStatusMessages(void);
 /** Get a brush for a chart item.
  * @param index Indicating which chart item to get color for.
  */
@@ -356,35 +357,47 @@ QBrush toChartBrush(int index);
  * only stored in toToolWidgets.
  * @return Reference toConnection object closest to the current.
  */
-toConnection &toCurrentConnection(QObject *widget);
+toConnection &amp;toCurrentConnection(QObject *widget);
 /** Return the tool widget most closely associated with a widget.
  * @return Pointer to tool widget.
  */
 toToolWidget *toCurrentTool(QObject *widget);
 /** Check if this connection is an oracle connection.
  */
-bool toIsOracle(const toConnection &);
-/** Strip extra bind specifier from an SQL statement. (That means the extra <***> part after
+bool toIsOracle(const toConnection &amp;);
+/** Strip extra bind specifier from an SQL statement. (That means the extra &lt;***&gt; part after
  * the bind variable.
  * @param sql The sql to strip.
  * @return Return a string containing the same statement without qualifiers, which means the
  *         sql sent to Oracle and available in the SGA.
  */
-QString toSQLStripSpecifier(const QString &sql);
+QString toSQLStripSpecifier(const QString &amp;sql);
 /** Strip extra binds and replace with empty strings.
  * @param sql The sql to strip.
  * @return Return a string containing the same statement without binds.
  */
-QString toSQLStripBind(const QString &sql);
+QString toSQLStripBind(const QString &amp;sql);
 /** Expand filename with $HOME to be replaced with home directory or my documents.
  */
-QString toExpandFile(const QString &file);
+QString toExpandFile(const QString &amp;file);
 /** Convert string read by readValue to value read by readValueNull
  */
-QString toUnnull(const QString &str);
+toQValue toUnnull(const toQValue &amp;str);
 /** Convert string read by readValueNull to value to be read by readValue.
  */
-QString toNull(const QString &str);
+toQValue toNull(const toQValue &amp;str);
+
+/** Take a string and make it illegible. Some security through obscurity here so you will
+ * need to check the source to see what is actually done.
+ * @param str String to be made unreadable.
+ * @return Obfuscated string.
+ */
+QString toObfuscate(const QString &amp;str);
+/** Unmake the actions of @ref toObfuscate.
+ * @param Obfuscated string.
+ * @return Original string.
+ */
+QString toUnobfuscate(const QString &amp;str);
 /** Check if the current widget is within the active modal widget (Or no modal widget exists)
  */
 bool toCheckModal(QWidget *widget);
@@ -394,21 +407,21 @@ bool toCheckModal(QWidget *widget);
  * @param prefix Prefix to save map using.
  * @param src The map to save.
  */
-void toMapExport(std::map<QCString,QString> &data,const QCString &prefix,
-		 std::map<QCString,QString> &src);
+void toMapExport(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix,
+		 std::map&lt;QCString,QString&gt; &amp;src);
 /** Import the contents of a map from another map.
  * @param data The source map.
  * @param prefix Prefix to use for restoring from map.
  * @param dst The map to save into.
  */
-void toMapImport(std::map<QCString,QString> &data,const QCString &prefix,
-		 std::map<QCString,QString> &dst);
+void toMapImport(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix,
+		 std::map&lt;QCString,QString&gt; &amp;dst);
 
 /** Find an item in a listview.
  * @param list The list to search for the item.
  * @param str The string to search for. You can specify parent/child with : in the string.
  */
-QListViewItem *toFindItem(QListView *list,const QString &str);
+QListViewItem *toFindItem(QListView *list,const QString &amp;str);
 /** Whenever this class is instantiated the window will display a busy cursor. You
  * can instantiate this function as many time as you want, only when all of them are
  * destructed the curser will revert back to normal.
@@ -425,7 +438,7 @@ public:
  * @param tool Widget of tool.
  * @param caption Caption to set to the tool.
  */
-void toToolCaption(toToolWidget *tool,const QString &caption);
+void toToolCaption(toToolWidget *tool,const QString &amp;caption);
 /**
  * Translate string if the context and text is strictly ASCII7 and the context doesn't
  * contain any spaces. Otherwise just return the text.
@@ -433,24 +446,24 @@ void toToolCaption(toToolWidget *tool,const QString &caption);
  * @param text The text to translate.
  * @return Translated text if appropriate, or original text otherwise.
  */
-QString toTranslateMayby(const QString &context,const QString &text);
+QString toTranslateMayby(const QString &amp;context,const QString &amp;text);
 
 /**
  * Get maximum number of a and b.
  */
-template <class T>
+template &lt;class T&gt;
 T max(T a, T b)
 {
-    return a > b ? a : b ;
+    return a &gt; b ? a : b ;
 }
 
 /**
  * Get minimum number of a and b.
  */
-template <class T>
+template &lt;class T&gt;
 T min(T a, T b)
 {
-    return a < b ? a : b ;
+    return a &lt; b ? a : b ;
 }
 
 /** Popup toolbutton that works like I think they should under Qt 3.0 as well.
@@ -461,8 +474,8 @@ class toPopupButton : public QToolButton {
 public:
   /** Create button, same constructor as toolbutton except no slots
    */
-  toPopupButton(const QIconSet &iconSet,const QString &textLabel,
-                const QString &grouptext,QToolBar *parent,const char *name=0);
+  toPopupButton(const QIconSet &amp;iconSet,const QString &amp;textLabel,
+                const QString &amp;grouptext,QToolBar *parent,const char *name=0);
   /** Create button somewhere else than in a toolbar.
    */
   toPopupButton(QWidget *parent,const char *name=0);
@@ -474,13 +487,24 @@ private slots:
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */
 #define TOCATCH \
-    catch (const QString &str) {\
+    catch (const QString &amp;str) {\
       toStatusMessage(str);\
     }
+/* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
+ * might be sent by TOra or OTL and display the message in the statusbar of the main window.
+ */
+#define TOROLLBACK(x) \
+    catch (const QString &amp;str) { \
+      toStatusMessage(str); \
+      try { \
+        x.rollback(); \
+      } catch(...) { } \
+    }
 
-#define QTRANS(x,y) (qApp?qApp->translate(x,y):QString::fromLatin1(y))
+#define QTRANS(x,y) (qApp?qApp-&gt;translate(x,y):QString::fromLatin1(y))
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

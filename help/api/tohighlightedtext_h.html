@@ -65,8 +65,8 @@
 
 #include "tomarkedtext.h"
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
 class QListBox;
 class QPainter;
@@ -139,7 +139,7 @@ private:
   };
   /** An array of lists of keywords, indexed on the first character.
    */
-  std::list<const char *> Keywords[256];
+  std::list&lt;const char *&gt; Keywords[256];
 protected:
   /** Check if this is part of a symbol or not.
    */
@@ -150,7 +150,7 @@ private:
    * @param def Color to fill out.
    * @param pos @ref infoType to get color for.
    */
-  void readColor(const QColor &def,infoType pos);
+  void readColor(const QColor &amp;def,infoType pos);
   /** Get a string representation of an @ref infoType.
    * @param typ @ref infoType to get string for.
    * @return Description of infotype.
@@ -160,7 +160,7 @@ private:
    * @param str Description of @ref infoType.
    * @return @ref infoType described by string.
    */
-  static infoType typeString(const QCString &str);
+  static infoType typeString(const QCString &amp;str);
   /** Update configuration settings from this class color values.
    */
   void updateSettings(void);
@@ -177,7 +177,7 @@ public:
    * @param out Type at start of next line.
    * @return A list of where highlighting should change. Start as normal.
    */
-  virtual std::list<highlightInfo> analyzeLine(const QString &str,infoType in,infoType &out);
+  virtual std::list&lt;highlightInfo&gt; analyzeLine(const QString &amp;str,infoType in,infoType &amp;out);
   /** Get a colordefinition for a @ref infoType value.
    * @param typ @ref infoType to get color for.
    * @return Color of that type.
@@ -188,13 +188,13 @@ public:
    * @param word Word to check.
    * @return True if word is reserved.
    */
-  bool reservedWord(const QString &word);
+  bool reservedWord(const QString &amp;word);
 
   friend class toSyntaxSetup;
   /** Get the default syntax analyzer.
    * @return Reference to the default analyzer.
    */
-  static toSyntaxAnalyzer &defaultAnalyzer();
+  static toSyntaxAnalyzer &amp;defaultAnalyzer();
 };
 
 /** A simple editor which supports syntax highlighting.
@@ -230,10 +230,10 @@ private:
   int Cursor;
   /** Map of rows with errors and their error message.
    */
-  std::map<int,QString> Errors;
+  std::map&lt;int,QString&gt; Errors;
   /** Map of infoType that are NOT Normal
    */
-  std::map<int,toSyntaxAnalyzer::infoType> LineInput;
+  std::map&lt;int,toSyntaxAnalyzer::infoType&gt; LineInput;
   /** The syntax analyzer to use.
    */
   toSyntaxAnalyzer *Analyzer;
@@ -242,7 +242,7 @@ private:
   bool KeepCompletion;
   QListBox *Completion;
   int CompleteItem;
-  std::list<QString> AllComplete;
+  std::list&lt;QString&gt; AllComplete;
 
   bool invalidToken(int line,int col);
 
@@ -266,7 +266,7 @@ protected:
    * @param completes List of available completions.
    */
   
-  virtual void startComplete(std::list<QString> &completes);
+  virtual void startComplete(std::list&lt;QString&gt; &amp;completes);
 public:
   /** Convert a linenumber after a change of the buffer to another linenumber. Can be
    * used to convert a specific linenumber after receiving a @ref insertedLines call.
@@ -291,13 +291,13 @@ public:
   { Errors.clear(); LineInput.clear(); Current=-1; toMarkedText::clear(); }
   /** Set the text of this editor.
    */
-  void setText(const QString &str);
+  void setText(const QString &amp;str);
 
   /** Set the error list map.
    * @param errors A map of linenumbers to errorstrings. These will be displayed in the
    *               statusbar if the cursor is placed on the line.
    */
-  void setErrors(const std::map<int,QString> &errors);
+  void setErrors(const std::map&lt;int,QString&gt; &amp;errors);
   /** Set current line. Will be indicated with a different background.
    * @param current Current line.
    */
@@ -319,12 +319,12 @@ public:
   /** Set the syntax highlighter to use.
    * @param analyzer Analyzer to use.
    */
-  void setAnalyzer(toSyntaxAnalyzer &analyzer)
-  { Analyzer=&analyzer; update(); }
+  void setAnalyzer(toSyntaxAnalyzer &amp;analyzer)
+  { Analyzer=&amp;analyzer; update(); }
   /** Get the current syntaxhighlighter.
    * @return Analyzer used.
    */
-  toSyntaxAnalyzer &analyzer(void)
+  toSyntaxAnalyzer &amp;analyzer(void)
   { return *Analyzer; }
 
   /** Reimplemented for internal reasons.
@@ -339,7 +339,7 @@ public:
    * @param table Filled with tablename.
    * @param highlight If true mark the extracted tablename
    */
-  void tableAtCursor(QString &owner,QString &table,bool highlight=false);
+  void tableAtCursor(QString &amp;owner,QString &amp;table,bool highlight=false);
 signals:
   /** Emitted when lines are inserted or removed.
    * @param start Start of line inserted.
@@ -363,5 +363,6 @@ private slots:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

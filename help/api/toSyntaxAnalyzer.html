@@ -37,13 +37,13 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref13">~toSyntaxAnalyzer</A></b> () 
 </LI>
-<LI>virtual  std::list<highlightInfo> &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,infoType in,infoType &out) 
+<LI>virtual  std::list&lt;highlightInfo&gt; &nbsp;<b><A HREF="#ref14">analyzeLine</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,infoType in,infoType &amp;out) 
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qcolor.html">QColor</A> &nbsp;<b><A HREF="#ref15">getColor</A></b> (infoType typ) 
 </LI>
-<LI>bool &nbsp;<b><A HREF="#ref16">reservedWord</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &word) 
+<LI>bool &nbsp;<b><A HREF="#ref16">reservedWord</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;word) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<b><A HREF="#ref18">defaultAnalyzer</A></b> () 
+</ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<b><A HREF="#ref18">defaultAnalyzer</A></b> () 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref17">toSyntaxSetup</A></b></LI>
 </ul><h4>Protected Methods</h4><ul><LI>bool &nbsp;<b><A HREF="#ref7">isSymbol</A></b> (<A HREF="http://doc.trolltech.com/qchar.html">QChar</A> c) 
@@ -69,7 +69,7 @@
    </TD></TR>
 </TABLE></P>
 <A NAME="~toSyntaxAnalyzer"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~toSyntaxAnalyzer</strong> ()
-<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list<highlightInfo> &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str,infoType in,infoType &out)
+<br></td><td align="right"><h3><strong>~toSyntaxAnalyzer</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="analyzeLine"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;highlightInfo&gt; &nbsp;<strong>analyzeLine</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str,infoType in,infoType &amp;out)
 <br></td><td align="right"><h3><strong>analyzeLine</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Analyze a line. There is no guarantee that lines will be called in any kind of order.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -91,7 +91,7 @@
 </TABLE></P>
 <p><b>Returns</b>: Color of that type.
    </p>
-<A NAME="reservedWord"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>reservedWord</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &word)
+<A NAME="reservedWord"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool &nbsp;<strong>reservedWord</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;word)
 <br></td><td align="right"><h3><strong>reservedWord</strong></h3></td></tr></table><p></p><p> Check if a word is reserved.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -101,10 +101,11 @@
 <p><b>Returns</b>: True if word is reserved.
    </p>
 <A NAME="toSyntaxSetup"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>toSyntaxSetup</strong>
-</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><A NAME="defaultAnalyzer"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &&nbsp;<strong>defaultAnalyzer</strong> ()
+</td><td align="right"><h3><strong>toSyntaxSetup</strong></h3></td></tr></table><p></p><A NAME="defaultAnalyzer"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toSyntaxAnalyzer.html">toSyntaxAnalyzer</A> &amp;&nbsp;<strong>defaultAnalyzer</strong> ()
 <br></td><td align="right"><h3><strong>defaultAnalyzer</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Get the default syntax analyzer.
 </p>
 <p><b>Returns</b>: Reference to the default analyzer.
    </p>
+<HR>
 </BODY>
 </HTML>

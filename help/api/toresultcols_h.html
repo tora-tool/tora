@@ -65,11 +65,36 @@
 
 #include "toconnection.h"
 #include "toresultview.h"
+#include "toresultitem.h"
 
-#include <qvbox.h>
+#include &lt;qvbox.h&gt;
+#include &lt;qlineedit.h&gt;
 
+class QCheckBox;
 class QLabel;
 class toResultColsItem;
+
+/** This widget is used for single record view in the content editor. Only for internal use.
+ * @internal
+ */
+class toResultColsComment : public QLineEdit {
+  Q_OBJECT
+
+  bool Changed;
+  bool Table;
+  QString Name;
+  QString *Cached;
+private:
+  void saveUnchanged();
+protected:
+  virtual void focusOutEvent(QFocusEvent *);
+public:
+  toResultColsComment(QWidget *parent);
+  void setComment(bool table,const QString &amp;name,const QString &amp;comment);
+  void setCachedComment(bool table,const QString &amp;name,QString &amp;comment);
+public slots:
+  void commentChanged();
+};
 
 /** This widget displays information about the returned columns of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -77,25 +102,40 @@ class toResultColsItem;
  */
 
 class toResultCols : public QVBox, public toResult {
+  Q_OBJECT
+
+  class resultColsEdit : public toResultItem {
+    QString Table;
+    bool Cached;
+  public:
+    resultColsEdit(QWidget *parent)
+      : toResultItem(1,false,parent)
+    { }
+    virtual QWidget *createValue(QWidget *parent);
+    virtual void setValue(QWidget *widget,const QString &amp;title,const QString &amp;value);
+    void describe(toQDescList &amp;desc,const QString &amp;table,bool cached);
+  };
   class resultCols : public toListView {
+    resultColsEdit *Edit;
     QString Owner;
     QString Name;
   public:
-    /** Create the widget.
-     * @param parent Parent widget.
-     * @param name Name of widget.
-     */
     resultCols(QWidget *parent,const char *name=NULL);
-    virtual void describe(toQDescList &desc);
-    virtual void query(const toConnection::objectName &,bool nocache);
-    virtual void query(const QString &table,const QString &owner,const QString &name);
+    void editComment(bool val);
+    void describe(toQDescList &amp;desc);
+    void query(const toConnection::objectName &amp;,bool);
+    void query(const QString &amp;table,const QString &amp;owner,const QString &amp;name);
     friend class toResultColsItem;
   };
+
   QLabel *Title;
+  QLabel *Comment;
+  toResultColsComment *EditComment;
+  QCheckBox *Edit;
   resultCols *Columns;
-  bool NoCache;
 
   friend class resultCols;
+  virtual void query(const QString &amp;sql,const toQList &amp;param,bool nocache);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -104,10 +144,11 @@ public:
   toResultCols(QWidget *parent,const char *name=NULL);
   /** Reimplemented for internal reasons.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param)
+  { query(sql,param,false); }
   /** Handle any connection by default
    */
-  virtual bool canHandle(toConnection &)
+  virtual bool canHandle(toConnection &amp;)
   { return true; }
 
   // Why are these needed?
@@ -115,30 +156,30 @@ public:
   /** Set the SQL statement of this list
    * @param sql String containing statement.
    */
-  void setSQL(const QString &sql)
+  void setSQL(const QString &amp;sql)
   { toResult::setSQL(sql); }
   /** Set the SQL statement of this list. This will also affect @ref Name.
    * @param sql SQL containing statement.
    */
-  void setSQL(const toSQL &sql)
+  void setSQL(const toSQL &amp;sql)
   { toResult::setSQL(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const QString &sql)
+  void query(const QString &amp;sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const toSQL &sql)
+  void query(const toSQL &amp;sql)
   { toResult::query(sql); }
   /** Set new SQL and run query.
    * @param sql New sql.
    * @see setSQL
    */
-  void query(const toSQL &sql,toQList &par)
+  void query(const toSQL &amp;sql,toQList &amp;par)
   { toResult::query(sql,par); }
 #endif
 
@@ -147,26 +188,29 @@ public slots:
   /** Erase last parameters
    */
   virtual void clearParams(void)
-  { toResult::clearParams(); NoCache=true; }
+  { toResult::clearParams(); }
   /** Reimplemented for internal reasons.
    */
   virtual void refresh(void)
-  { toResult::refresh(); }
+  { query(sql(),params(),true); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1)
+  virtual void changeParams(const QString &amp;Param1)
   { toResult::changeParams(Param1); }
   /** Reimplemented For internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
   { toResult::changeParams(Param1,Param2); }
   /** Reimplemented for internal reasons.
    */
-  virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
+private slots:
+  void editComment(bool val);
 };
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

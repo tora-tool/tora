@@ -67,8 +67,8 @@
 #include "tosqlparse.h"
 #include "toresultview.h"
 
-#include <map>
-#include <stdio.h>
+#include &lt;map&gt;
+#include &lt;stdio.h&gt;
 
 class toNoBlockQuery;
 
@@ -81,20 +81,20 @@ class toResultPlan : public toResultView {
   Q_OBJECT
 
   QString Ident;
-  std::map <QString,QListViewItem *> Parents;
-  std::map <QString,QListViewItem *> Last;
-  std::list<QString> Statements;
+  std::map &lt;QString,QListViewItem *&gt; Parents;
+  std::map &lt;QString,QListViewItem *&gt; Last;
+  std::list&lt;QString&gt; Statements;
   QListViewItem *TopItem;
   QListViewItem *LastTop;
   bool Reading;
   toNoBlockQuery *Query;
   toBackground Poll;
   QString User;
-  void checkException(const QString &);
+  void checkException(const QString &amp;);
   void oracleSetup(void);
 
   void oracleNext(void);
-  void addStatements(std::list<toSQLParse::statement> &stats);
+  void addStatements(std::list&lt;toSQLParse::statement&gt; &amp;stats);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -109,19 +109,20 @@ public:
   /** Reimplemented for internal reasons. If you prepend "SAVED:" a saved plan is read
    * with the identified_by set to the string following the initial "SAVED:" string.
    */
-  virtual void query(const QString &sql,const toQList &param);
+  virtual void query(const QString &amp;sql,const toQList &amp;param);
   /** Reimplemented for internal reasons.
    */
-  void query(const QString &sql)
+  void query(const QString &amp;sql)
   { toQList p; query(sql,p); }
   /** Support Oracle
    */
-  virtual bool canHandle(toConnection &conn);
+  virtual bool canHandle(toConnection &amp;conn);
 private slots:
   void poll();
 };
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

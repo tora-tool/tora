@@ -35,9 +35,9 @@
 </LI>
 <LI>virtual  <A HREF="toResultFilter.html">toResultFilter</A> *&nbsp;<b><i><A HREF="#ref4">clone</A></i></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref5">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref5">exportData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref6">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref6">importData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Baseclass for filters to apply to the <A HREF="toResultView.html">toResultView</A> to filter out
  rows that you don't want to add as items to the list.
@@ -59,7 +59,7 @@
 </p>
 <p><b>Returns</b>: A newly created copy of this filter.
    </p>
-<A NAME="exportData"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix)
+<A NAME="exportData"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export data to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -68,7 +68,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix)
+<A NAME="importData"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -77,5 +77,6 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
+<HR>
 </BODY>
 </HTML>

@@ -63,9 +63,9 @@
 #ifndef TOSQLPARSE_H
 #define TOSQLPARSE_H
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qstring.h>
+#include &lt;qstring.h&gt;
 
 class toMarkedText;
 class toConnection;
@@ -92,7 +92,7 @@ public:
   class statement {
     /** Subtokens to this token.
      */
-    std::list<statement> *SubTokens;
+    std::list&lt;statement&gt; *SubTokens;
   public:
     /** Type of this token.
      */
@@ -129,16 +129,16 @@ public:
     int Line;
     /** Create statement
      */
-    statement(type ntype=Token,const QString &token=QString::null,int cline=-1);
+    statement(type ntype=Token,const QString &amp;token=QString::null,int cline=-1);
     /** Allocate subtokens if not available and return reference to subtokens
      */
-    std::list<statement> &subTokens();
+    std::list&lt;statement&gt; &amp;subTokens();
     /** Copy constructor
      */
-    statement(const statement &);
+    statement(const statement &amp;);
     /** Copy operator
      */
-    const statement &operator = (const statement &);
+    const statement &amp;operator = (const statement &amp;);
     /** Destroy statement
      */
     ~statement();
@@ -190,7 +190,7 @@ public:
   class stringTokenizer : public tokenizer {
     QString String;
   public:
-    stringTokenizer(const QString &str,int offset=0,int line=0)
+    stringTokenizer(const QString &amp;str,int offset=0,int line=0)
       : tokenizer(offset,line)
     { String=str; }
     /** Get a token from the string.
@@ -227,69 +227,65 @@ public:
    * @param tokens Tokenizer provider to generate parsed tree from.
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(tokenizer &tokens);
+  static std::list&lt;statement&gt; parse(tokenizer &amp;tokens);
   /** Parse a string.
    * @param tokens Tokenizer provider to generate parsed tree from.
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(tokenizer &tokens,toConnection &conn)
-  { return parse(tokens); }
+  static std::list&lt;statement&gt; parse(tokenizer &amp;tokens,toConnection &amp;conn);
   /** Parse a string.
    * @param str String to parse.
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(const QString &str)
+  static std::list&lt;statement&gt; parse(const QString &amp;str)
   { stringTokenizer tokens(str); return parse(tokens); }
   /** Parse a string.
    * @param str String to parse.
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return Parsed statement tree.
    */
-  static std::list<statement> parse(const QString &str,toConnection &conn)
-  { return parse(str); }
+  static std::list&lt;statement&gt; parse(const QString &amp;str,toConnection &amp;conn);
 
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(tokenizer &tokens);
+  static statement parseStatement(tokenizer &amp;tokens);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(const QString &str)
+  static statement parseStatement(const QString &amp;str)
   { stringTokenizer tokens(str); return parseStatement(tokens); }
   /** Get one statement (or block) from the root of an editor or string.
    * @param tokens Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(tokenizer &tokens,toConnection &conn)
-  { return parseStatement(tokens); }
+  static statement parseStatement(tokenizer &amp;tokens,toConnection &amp;conn);
   /** Get one statement (or block) from the root of an editor or string.
    * @param str Tokenizer to get tokens from.
    * @param conn Connection to determine SQL dialog. (For future use)
    */
-  static statement parseStatement(const QString &str,toConnection &conn)
+  static statement parseStatement(const QString &amp;str,toConnection &amp;conn)
   { stringTokenizer tokens(str); return parseStatement(tokens,conn); }
 
   /** Indent a string.
    * @param str String to indent.
    * @return An indented string.
    */
-  static QString indent(const QString &str);
+  static QString indent(const QString &amp;str);
   /** Indent a parse statement structure into a string.
    * @param stat Statement to indent.
    * @param level Initial indentation level to use.
    * @return A string with the indented statement.
    */
-  static QString indentStatement(statement &stat,int level=0);
+  static QString indentStatement(statement &amp;stat,int level=0);
   /** Indent a string.
    * @param str String to indent.
    * @param conn Connection to determine SQL dialect. (For future use)
    * @return An indented string.
    */
-  static QString indent(const QString &str,toConnection &conn)
-  { return indent(str); }
+  static QString indent(const QString &amp;str,toConnection &amp;conn);
 
   /** Create an indentation string.
    * @param level Number of characters to indent.
@@ -299,10 +295,10 @@ public:
    * @param str String to check.
    * @param chars Position in string.
    */
-  static int countIndent(const QString &str,int &chars);
+  static int countIndent(const QString &amp;str,int &amp;chars);
 private:
   static settings Settings;
-  static statement parseStatement(tokenizer &tokens,
+  static statement parseStatement(tokenizer &amp;tokens,
 				  bool declare,bool lst);
 public:
   /** Get current settings.
@@ -311,11 +307,12 @@ public:
   { return Settings; }
   /** Get current settings.
    */
-  static void setSetting(const settings &setting)
+  static void setSetting(const settings &amp;setting)
   { Settings=setting; }
 };
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

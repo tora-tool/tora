@@ -63,7 +63,7 @@
 #ifndef TOMEMOEDITOR_H
 #define TOMEMOEDITOR_H
 
-#include <qdialog.h>
+#include &lt;qdialog.h&gt;
 
 class QCheckBox;
 class QLabel;
@@ -113,7 +113,7 @@ public:
    * @param modal Display in modal dialog
    * @param navigation Display navigation buttons
    */
-  toMemoEditor(QWidget *parent,const QString &data,int row=-1,int col=-1,
+  toMemoEditor(QWidget *parent,const QString &amp;data,int row=-1,int col=-1,
 	       bool sql=false,bool modal=false,bool navigation=false);
 
   /** Get editor text.
@@ -134,7 +134,7 @@ signals:
    * @param col Pass on from creation.
    * @param data New data to save.
    */
-  void changeData(int row,int col,const QString &data);
+  void changeData(int row,int col,const QString &amp;data);
 public slots:
   /** Save changes and close.
    */
@@ -158,7 +158,7 @@ public slots:
   virtual void changePosition(int row,int cols);
   /** Change value of editor.
    */
-  virtual void setText(const QString &);
+  virtual void setText(const QString &amp;);
 private slots:
   void changeCurrent(QListViewItem *item);
   virtual void null(bool);
@@ -166,5 +166,6 @@ private slots:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -66,15 +66,16 @@
 #include "toqvalue.h"
 #include "tothread.h"
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qstring.h>
+#include &lt;qstring.h&gt;
 
 class QWidget;
 class toConnection;
 class toConnectionProvider;
 class toSQL;
+class toQuery;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -84,15 +85,24 @@ class toSQL;
  */
 
 class toConnectionSub {
+  toQuery *Query;
 public:
   /** Create connection to database.
    */
   toConnectionSub()
-  { }
+  { Query=NULL; }
   /** Close connection.
    */
   virtual ~toConnectionSub()
   { }
+  /** Query current running on connection or NULL.
+   */
+  toQuery *query()
+  { return Query; }
+  /** Set query currently running on connection. NULL means none.
+   */
+  void setQuery(toQuery *query)
+  { Query=query; }
   /** Cancel anything running on this sub.
    */
   virtual void cancel(void)
@@ -184,7 +194,7 @@ public:
     /** Describe the currently running query.
      * @return A list of column descriptions of the query.
      */
-    virtual std::list<queryDescribe> describe(void) = 0;
+    virtual std::list&lt;queryDescribe&gt; describe(void) = 0;
     /** Get number of columns in the resultset.
      * @return Column number.
      */
@@ -196,49 +206,49 @@ public:
   };
 
 private:
-  toConnection &Connection;
+  toConnection &amp;Connection;
   toConnectionSub *ConnectionSub;
-  std::list<toQValue> Params;
+  std::list&lt;toQValue&gt; Params;
   QCString SQL;
   queryMode Mode;
 
   queryImpl *Query;
-  toQuery(const toQuery &);
+  toQuery(const toQuery &amp;);
 public:
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  toQuery(toConnection &conn,const toSQL &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &amp;conn,const toSQL &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  toQuery(toConnection &conn,const QString &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &amp;conn,const QString &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
    * @param arg1 Arguments to pass to query.
    */
-  toQuery(toConnection &conn,const toSQL &sql,
-	  const QString &arg1=QString::null,const QString &arg2=QString::null,
-	  const QString &arg3=QString::null,const QString &arg4=QString::null,
-	  const QString &arg5=QString::null,const QString &arg6=QString::null,
-	  const QString &arg7=QString::null,const QString &arg8=QString::null,
-	  const QString &arg9=QString::null);
+  toQuery(toConnection &amp;conn,const toSQL &amp;sql,
+	  const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+	  const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+	  const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+	  const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+	  const QString &amp;arg9=QString::null);
   /** Create a normal query.
    * @param conn Connection to create query on.
    * @param sql SQL to run.
    * @param arg1 Arguments to pass to query.
    */
-  toQuery(toConnection &conn,const QString &sql,
-	  const QString &arg1=QString::null,const QString &arg2=QString::null,
-	  const QString &arg3=QString::null,const QString &arg4=QString::null,
-	  const QString &arg5=QString::null,const QString &arg6=QString::null,
-	  const QString &arg7=QString::null,const QString &arg8=QString::null,
-	  const QString &arg9=QString::null);
+  toQuery(toConnection &amp;conn,const QString &amp;sql,
+	  const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+	  const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+	  const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+	  const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+	  const QString &amp;arg9=QString::null);
 
   /** Create a query.
    * @param conn Connection to create query on.
@@ -246,14 +256,14 @@ public:
    * @param sql SQL to run.
    * @param params Arguments to pass to query.
    */
-  toQuery(toConnection &conn,queryMode mode,const toSQL &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &amp;conn,queryMode mode,const toSQL &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
   /** Create a query.
    * @param conn Connection to create query on.
    * @param mode Mode to run query in.
    * @param sql SQL to run.
    * @param params Arguments to pass to query.
    */
-  toQuery(toConnection &conn,queryMode mode,const QString &sql,const std::list<toQValue> &params);
+  toQuery(toConnection &amp;conn,queryMode mode,const QString &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
   /** Create a query. Don't runn any SQL using it yet. Observe though that the @ref
    * toConnectionSub object is assigned here so you know that all queries run using this
    * query object will run on the same actual connection to the database (Unless mode is All off
@@ -261,7 +271,7 @@ public:
    * @param conn Connection to create query for.
    * @param mode Mode to execute queries in.
    */
-  toQuery(toConnection &conn,queryMode mode=Normal);
+  toQuery(toConnection &amp;conn,queryMode mode=Normal);
   /** Destroy query.
    */
   virtual ~toQuery();
@@ -270,16 +280,16 @@ public:
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  void execute(const toSQL &sql,const std::list<toQValue> &params);
+  void execute(const toSQL &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
   /** Execute an SQL statement using this query.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    */
-  void execute(const QString &sql,const std::list<toQValue> &params);
+  void execute(const QString &amp;sql,const std::list&lt;toQValue&gt; &amp;params);
 
   /** Connection object of this object.
    */
-  toConnection &connection(void)
+  toConnection &amp;connection(void)
   { return Connection; }
   /** Actual database connection that this query is currently using.
    */
@@ -287,7 +297,7 @@ public:
   { return ConnectionSub; }
   /** Parameters of the current query.
    */
-  std::list<toQValue> &params(void)
+  std::list&lt;toQValue&gt; &amp;params(void)
   { return Params; }
   /** SQL to run. Observe that this string is in UTF8 format.
    */
@@ -314,15 +324,15 @@ public:
   /** Get the number of rows processed by the query.
    */
   int rowsProcessed(void)
-  { return Query->rowsProcessed(); }
+  { return Query-&gt;rowsProcessed(); }
   /** Get a list of descriptions for the columns. This function is relatively slow.
    */
-  std::list<queryDescribe> describe(void)
-  { return Query->describe(); }
+  std::list&lt;queryDescribe&gt; describe(void)
+  { return Query-&gt;describe(); }
   /** Get the number of columns in the resultset of the query.
    */
   int columns(void)
-  { return Query->columns(); }
+  { return Query-&gt;columns(); }
 
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
@@ -330,84 +340,84 @@ public:
    * @param params Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQuery(toConnection &conn,
-				       const toSQL &sql,
-				       std::list<toQValue> &params);
+  static std::list&lt;toQValue&gt; readQuery(toConnection &amp;conn,
+				       const toSQL &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQuery(toConnection &conn,
-				       const QString &sql,
-				       std::list<toQValue> &params);
+  static std::list&lt;toQValue&gt; readQuery(toConnection &amp;conn,
+				       const QString &amp;sql,
+				       std::list&lt;toQValue&gt; &amp;params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQuery(toConnection &conn,const toSQL &sql,
-				       const QString &arg1=QString::null,const QString &arg2=QString::null,
-				       const QString &arg3=QString::null,const QString &arg4=QString::null,
-				       const QString &arg5=QString::null,const QString &arg6=QString::null,
-				       const QString &arg7=QString::null,const QString &arg8=QString::null,
-				       const QString &arg9=QString::null);
+  static std::list&lt;toQValue&gt; readQuery(toConnection &amp;conn,const toSQL &amp;sql,
+				       const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+				       const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+				       const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+				       const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+				       const QString &amp;arg9=QString::null);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQuery(toConnection &conn,const QString &sql,
-				       const QString &arg1=QString::null,const QString &arg2=QString::null,
-				       const QString &arg3=QString::null,const QString &arg4=QString::null,
-				       const QString &arg5=QString::null,const QString &arg6=QString::null,
-				       const QString &arg7=QString::null,const QString &arg8=QString::null,
-				       const QString &arg9=QString::null);
+  static std::list&lt;toQValue&gt; readQuery(toConnection &amp;conn,const QString &amp;sql,
+				       const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+				       const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+				       const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+				       const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+				       const QString &amp;arg9=QString::null);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQueryNull(toConnection &conn,
-					   const toSQL &sql,
-					   std::list<toQValue> &params);
+  static std::list&lt;toQValue&gt; readQueryNull(toConnection &amp;conn,
+					   const toSQL &amp;sql,
+					   std::list&lt;toQValue&gt; &amp;params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param params Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQueryNull(toConnection &conn,
-					   const QString &sql,
-					   std::list<toQValue> &params);
+  static std::list&lt;toQValue&gt; readQueryNull(toConnection &amp;conn,
+					   const QString &amp;sql,
+					   std::list&lt;toQValue&gt; &amp;params);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQueryNull(toConnection &conn,const toSQL &sql,
-					   const QString &arg1=QString::null,const QString &arg2=QString::null,
-					   const QString &arg3=QString::null,const QString &arg4=QString::null,
-					   const QString &arg5=QString::null,const QString &arg6=QString::null,
-					   const QString &arg7=QString::null,const QString &arg8=QString::null,
-					   const QString &arg9=QString::null);
+  static std::list&lt;toQValue&gt; readQueryNull(toConnection &amp;conn,const toSQL &amp;sql,
+					   const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+					   const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+					   const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+					   const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+					   const QString &amp;arg9=QString::null);
   /** Execute a query and return all the values returned by it.
    * @param conn Connection to run query on.
    * @param sql SQL to run.
    * @param arg1 Parameters to pass to query.
    * @return A list of @ref toQValues:s read from the query.
    */
-  static std::list<toQValue> readQueryNull(toConnection &conn,const QString &sql,
-					   const QString &arg1=QString::null,const QString &arg2=QString::null,
-					   const QString &arg3=QString::null,const QString &arg4=QString::null,
-					   const QString &arg5=QString::null,const QString &arg6=QString::null,
-					   const QString &arg7=QString::null,const QString &arg8=QString::null,
-					   const QString &arg9=QString::null);
+  static std::list&lt;toQValue&gt; readQueryNull(toConnection &amp;conn,const QString &amp;sql,
+					   const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+					   const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+					   const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+					   const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+					   const QString &amp;arg9=QString::null);
   /** Cancel the current execution of a query.
    */
   void cancel(void);
@@ -416,9 +426,9 @@ public:
 /** A short representation of a @ref toQuery::queryDescribe
  */
 typedef toQuery::queryDescribe toQDescribe;
-/** A short representation of list<toQuery::queryDescribe>
+/** A short representation of list&lt;toQuery::queryDescribe&gt;
  */
-typedef std::list<toQDescribe> toQDescList;
+typedef std::list&lt;toQDescribe&gt; toQDescList;
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that ae expected to run a long time are sometimes
@@ -432,11 +442,11 @@ class toConnection {
   QString Database;
   QString Mode;
   QCString Version;
-  std::list<QWidget *> Widgets;
-  std::list<QCString> InitStrings;
+  std::list&lt;QObject *&gt; Widgets;
+  std::list&lt;QCString&gt; InitStrings;
   toLock Lock;
-  std::list<toConnectionSub *> Connections;
-  std::list<toConnectionSub *> Running;
+  std::list&lt;toConnectionSub *&gt; Connections;
+  std::list&lt;toConnectionSub *&gt; Running;
   int BackgroundCount;
   toConnectionSub *BackgroundConnection;
   bool NeedCommit;
@@ -452,7 +462,7 @@ public:
   public:
     /** Create an exception with a string description.
      */
-    exception(const QString &str,int offset=-1)
+    exception(const QString &amp;str,int offset=-1)
       : QString(str)
       { Offset=offset; }
     /** Get the offset of the error of the current statement.
@@ -480,9 +490,12 @@ public:
     /** Comment about this object
      */
     QString Comment;
+    /** synonyms (used for faster disk caching...)
+    */
+    std::list &lt;QString&gt; Synonyms;
 
-    bool operator < (const objectName &) const;
-    bool operator == (const objectName &) const;
+    bool operator &lt; (const objectName &amp;) const;
+    bool operator == (const objectName &amp;) const;
   };
 
   /** This class is an abstract baseclass to actually implement the comunication with the
@@ -494,7 +507,7 @@ public:
   public:
     /** Get the parent connection object of this connection.
      */
-    toConnection &connection(void)
+    toConnection &amp;connection(void)
     { return *Connection; }
     /** Create a new connection implementation for a connection.
      * @param conn Connection to implement.
@@ -528,13 +541,13 @@ public:
      * @param name The name to be quoted.
      * @return String addressing table.
      */
-    virtual QString quote(const QString &name)
+    virtual QString quote(const QString &amp;name)
     { return name; }
     /** Perform the opposite of @ref quote.
      * @param name The name to be un-quoted.
      * @return String addressing table.
      */
-    virtual QString unQuote(const QString &name)
+    virtual QString unQuote(const QString &amp;name)
     { return name; }
 
     /** Extract available objects to query for connection. Any access to the
@@ -542,7 +555,7 @@ public:
      * goes wrong should throw exception.
      * @return List of available objects.
      */
-    virtual std::list<objectName> objectNames(void);
+    virtual std::list&lt;objectName&gt; objectNames(void);
     /** Get synonyms available for connection. Any access to the
      * database should always be run using a long running query. If something
      * goes wrong should throw exception.
@@ -551,12 +564,12 @@ public:
      *                this list.
      * @return Map of synonyms to objectnames.
      */
-    virtual std::map<QString,objectName> synonymMap(std::list<objectName> &objects);
+    virtual std::map&lt;QString,objectName&gt; synonymMap(std::list&lt;objectName&gt; &amp;objects);
     /* Extract available columns to query for a table.
      * @param table Table to get column for.
      * @return List of columns for table or view.
      */
-    virtual toQDescList columnDesc(const objectName &table);
+    virtual toQDescList columnDesc(const objectName &amp;table);
 
     /** Create a new query implementation for this connection.
      * @return A query implementation, allocated with new.
@@ -567,21 +580,21 @@ public:
      * @param sql SQL to execute.
      * @param params Parameters to pass to query.
      */
-    virtual void execute(toConnectionSub *conn,const QCString &sql,toQList &params) = 0;
+    virtual void execute(toConnectionSub *conn,const QCString &amp;sql,toQList &amp;params) = 0;
   };
 
 private:
 
   void addConnection(void);
-  std::list<toConnectionSub *> &connections(void)
+  std::list&lt;toConnectionSub *&gt; &amp;connections(void)
   { return Connections; }
 
   connectionImpl *Connection;
 
   class cacheObjects : public toTask {
-    toConnection &Connection;
+    toConnection &amp;Connection;
   public:
-    cacheObjects(toConnection &conn)
+    cacheObjects(toConnection &amp;conn)
       : Connection(conn)
     { }
     virtual void run(void);
@@ -591,9 +604,9 @@ private:
   bool ReadingCache;
   toSemaphore ReadingValues;
   bool Abort;
-  std::map<objectName,toQDescList> ColumnCache;
-  std::list<objectName> ObjectNames;
-  std::map<QString,objectName> SynonymMap;
+  std::map&lt;objectName,toQDescList&gt; ColumnCache;
+  std::list&lt;objectName&gt; ObjectNames;
+  std::map&lt;QString,objectName&gt; SynonymMap;
 
   toConnectionSub *mainConnection(void);
   toConnectionSub *longConnection(void);
@@ -611,14 +624,14 @@ public:
    * @param mode Mode to connect to the database with.
    * @param cache Enable object cache for this connection.
    */
-  toConnection(const QCString &provider,const QString &user,const QString &password,
-	       const QString &host,const QString &database,const QString &mode=QString::null,
+  toConnection(const QCString &amp;provider,const QString &amp;user,const QString &amp;password,
+	       const QString &amp;host,const QString &amp;database,const QString &amp;mode=QString::null,
 	       bool cache=true);
   /** Create a copy of a connection. Will not cache objects, so objects will never be available
    *  in a subconnection.
    * @param conn Connection to copy.
    */
-  toConnection(const toConnection &conn);
+  toConnection(const toConnection &amp;conn);
   /** Destroy connection.
    */
   virtual ~toConnection();
@@ -629,31 +642,35 @@ public:
   bool closeWidgets(void);
   /** Get username of connection.
    */
-  const QString &user() const
+  const QString &amp;user() const
   { return User; }
   /** Get password of connection.
    */
-  const QString &password() const
+  const QString &amp;password() const
   { return Password; }
+  /** Change password of connection.
+   */
+  void setPassword(const QString &amp;pwd)
+  { Password=pwd; }
   /** Get host of connection.
    */
-  const QString &host() const
+  const QString &amp;host() const
   { return Host; }
   /** Get database of connection.
    */
-  const QString &database() const
+  const QString &amp;database() const
   { return Database; }
   /** Get mode of connection.
    */
-  const QString &mode() const
+  const QString &amp;mode() const
   { return Mode; }
   /** Get version of connection.
    */
-  const QCString &version() const
+  const QCString &amp;version() const
   { return Version; }
   /** Get provider of connection.
    */
-  const QCString &provider() const;
+  const QCString &amp;provider() const;
 
   /** Get a description of this connection.
    * @version Include version in returned string.
@@ -684,76 +701,76 @@ public:
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void execute(const toSQL &sql,
-	       toQList &params);
+  void execute(const toSQL &amp;sql,
+	       toQList &amp;params);
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void execute(const QString &sql,
-	       toQList &params);
+  void execute(const QString &amp;sql,
+	       toQList &amp;params);
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void execute(const toSQL &sql,
-	       const QString &arg1=QString::null,const QString &arg2=QString::null,
-	       const QString &arg3=QString::null,const QString &arg4=QString::null,
-	       const QString &arg5=QString::null,const QString &arg6=QString::null,
-	       const QString &arg7=QString::null,const QString &arg8=QString::null,
-	       const QString &arg9=QString::null);
+  void execute(const toSQL &amp;sql,
+	       const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+	       const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+	       const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+	       const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+	       const QString &amp;arg9=QString::null);
   /** Execute a statement without caring about the result.
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void execute(const QString &sql,
-	       const QString &arg1=QString::null,const QString &arg2=QString::null,
-	       const QString &arg3=QString::null,const QString &arg4=QString::null,
-	       const QString &arg5=QString::null,const QString &arg6=QString::null,
-	       const QString &arg7=QString::null,const QString &arg8=QString::null,
-	       const QString &arg9=QString::null);
+  void execute(const QString &amp;sql,
+	       const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+	       const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+	       const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+	       const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+	       const QString &amp;arg9=QString::null);
 
   /** Execute a statement without caring about the result on all open database connections.
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void allExecute(const toSQL &sql,
-		  toQList &params);
+  void allExecute(const toSQL &amp;sql,
+		  toQList &amp;params);
   /** Execute a statement without caring about the result on all open database connections.
    * @param sql SQL to execute
    * @param params Parameters to pass to query.
    */
-  void allExecute(const QString &sql,
-		  toQList &params);
+  void allExecute(const QString &amp;sql,
+		  toQList &amp;params);
   /** Execute a statement without caring about the result on all open database connections.
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void allExecute(const toSQL &sql,
-		  const QString &arg1=QString::null,const QString &arg2=QString::null,
-		  const QString &arg3=QString::null,const QString &arg4=QString::null,
-		  const QString &arg5=QString::null,const QString &arg6=QString::null,
-		  const QString &arg7=QString::null,const QString &arg8=QString::null,
-		  const QString &arg9=QString::null);
+  void allExecute(const toSQL &amp;sql,
+		  const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+		  const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+		  const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+		  const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+		  const QString &amp;arg9=QString::null);
   /** Execute a statement without caring about the result on all open database connections.
    * @param sql SQL to execute
    * @param arg1 Parameters to pass to query.
    */
-  void allExecute(const QString &sql,
-		  const QString &arg1=QString::null,const QString &arg2=QString::null,
-		  const QString &arg3=QString::null,const QString &arg4=QString::null,
-		  const QString &arg5=QString::null,const QString &arg6=QString::null,
-		  const QString &arg7=QString::null,const QString &arg8=QString::null,
-		  const QString &arg9=QString::null);
+  void allExecute(const QString &amp;sql,
+		  const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+		  const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+		  const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+		  const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+		  const QString &amp;arg9=QString::null);
 
   /**
-   * Add a widget that uses this connection. This is needed to ensure that all widgets
+   * Add a object that uses this connection. This is needed to ensure that all widgets
    * that make use of a connection are destroyed when the connection is closed. Usually
    * tool windows need to call this function.
    *
    * @param widget The widget to add to the connection.
    */
-  void addWidget(QWidget *widget)
+  void addWidget(QObject *widget)
   { Widgets.insert(Widgets.end(),widget); }
   /**
    * Remove a widget from this connection. Should be called by the destructor of the
@@ -762,28 +779,28 @@ public:
    * @see addWidget
    * @param widget Widget to remove from the widget list.
    */
-  void delWidget(QWidget *widget);
+  void delWidget(QObject *widget);
 
   /**
    * Add a statement to be run uppon making new connections.
    * @param sql Statement to run.
    */
-  void addInit(const QString &sql);
+  void addInit(const QString &amp;sql);
   /**
    * Remove a statement that was added using @ref addInit.
    */
-  void delInit(const QString &sql);
+  void delInit(const QString &amp;sql);
 
   /** Return a string representation to address an object.
    * @param name The name to be quoted.
    * @return String addressing table.
    */
-  QString quote(const QString &name);
+  QString quote(const QString &amp;name);
   /** Perform the opposite of @ref quote.
    * @param name The name to be un-quoted.
    * @return String addressing table.
    */
-  QString unQuote(const QString &name);
+  QString unQuote(const QString &amp;name);
 
   /**
    * Get the objects available for the current user. Do not modify the returned list.
@@ -791,19 +808,19 @@ public:
    * @return A list of object available for the current user. The list is sorted in
    *         owner and name order.
    */
-  std::list<objectName> &objects(bool block);
+  std::list&lt;objectName&gt; &amp;objects(bool block);
 
   /** Add a new object to the objectlist if it doesn't exist already.
    * @param object The object to add
    */
-  void addIfNotExists(objectName &object);
+  void addIfNotExists(objectName &amp;object);
 
   /**
    * Get the synonyms available for objects. Do not modify the returned list.
    * @param block Indicate wether or not to block until cached objects are available.
    * @return A list of synonyms to objects available for the current user.
    */
-  std::map<QString,objectName> &synonyms(bool block);
+  std::map&lt;QString,objectName&gt; &amp;synonyms(bool block);
   /**
    * Get a list of the available columns for a table. This function caches the responses
    * and should be fairly fast after the first call. Do not modify the returned list.
@@ -811,7 +828,7 @@ public:
    * @param nocache Don't use cached values even if they are available.
    * @return A list of the columns for a table.
    */
-  toQDescList &columns(const objectName &table,bool nocache=false);
+  toQDescList &amp;columns(const objectName &amp;table,bool nocache=false);
   /**
    * Reread the object and column cache.
    */
@@ -821,14 +838,14 @@ public:
    * @param object Object name
    * @param block Block if not done caching object.
    */
-  const objectName &realName(const QString &object,bool block);
+  const objectName &amp;realName(const QString &amp;object,bool block);
   /**
    * Get the real object name of a synonym.
    * @param object Object name
    * @param synonym Filled with the synonym used to access the object returned or empty.
    * @param block Block if not done caching object.
    */
-  const objectName &realName(const QString &object,QString &synonym,bool block);
+  const objectName &amp;realName(const QString &amp;object,QString &amp;synonym,bool block);
   /** Check if cache is available or not.
    * @param synonyms If synonyms are needed or not.
    * @param block Block until cache is done.
@@ -841,6 +858,22 @@ public:
    */
   void cancelAll(void);
 
+  /** load disk cache
+   */
+
+  bool loadDiskCache(void);
+
+  /** write disk cache
+   */
+
+  void writeDiskCache(void);
+
+  /** Get a list of currently running SQL.
+   */
+  std::list&lt;QString&gt; running(void);
+
+  void logMessage(QString text);
+  
   friend class toQuery;
 };
 
@@ -848,8 +881,8 @@ public:
  */
 
 class toConnectionProvider {
-  static std::map<QCString,toConnectionProvider *> *Providers;
-  static std::map<QCString,toConnectionProvider *> *Types;
+  static std::map&lt;QCString,toConnectionProvider *&gt; *Providers;
+  static std::map&lt;QCString,toConnectionProvider *&gt; *Types;
   QCString Provider;
   static void checkAlloc(void);
 
@@ -857,19 +890,19 @@ class toConnectionProvider {
    * @param provider Name of provider.
    * @return Reference to provider object.
    */
-  static toConnectionProvider &fetchProvider(const QCString &provider);
+  static toConnectionProvider &amp;fetchProvider(const QCString &amp;provider);
 protected:
   /** Add a provider to the list that this provider can handle.
    */
-  void addProvider(const QCString &provider);
+  void addProvider(const QCString &amp;provider);
   /** Remove a provider from the list that this provider can handle.
    */
-  void removeProvider(const QCString &provider);
+  void removeProvider(const QCString &amp;provider);
 public:
   /** Create a new provider with the specified name.
    * @param provider Name of the provider.
    */
-  toConnectionProvider(const QCString &provider,bool add=true);
+  toConnectionProvider(const QCString &amp;provider,bool add=true);
   /** Destructor.
    */
   virtual ~toConnectionProvider();
@@ -877,26 +910,26 @@ public:
   /** Create an implementation of a connection to this database.
    * @return A connection implementation created with new.
    */
-  virtual toConnection::connectionImpl *provideConnection(const QCString &provider,
+  virtual toConnection::connectionImpl *provideConnection(const QCString &amp;provider,
 							  toConnection *conn)=0;
   /** List the available modes for this database.
    * @return A list of modes that the connection implementation understands.
    */
-  virtual std::list<QString> providedModes(const QCString &provider);
+  virtual std::list&lt;QString&gt; providedModes(const QCString &amp;provider);
   /** List the available hosts this database provider knows about.
    * @return A list of hosts.
    */
-  virtual std::list<QString> providedHosts(const QCString &provider);
+  virtual std::list&lt;QString&gt; providedHosts(const QCString &amp;provider);
   /** List the available databases this provider knows about for a given host.
    * @param host Host to return connections for.
    * @param user That might be needed.
    * @param password That might be needed.
    * @return A list of databases available for a given host.
    */
-  virtual std::list<QString> providedDatabases(const QCString &provider,
-					       const QString &host,
-					       const QString &user,
-					       const QString &pwd)=0;
+  virtual std::list&lt;QString&gt; providedDatabases(const QCString &amp;provider,
+					       const QString &amp;host,
+					       const QString &amp;user,
+					       const QString &amp;pwd)=0;
   /** Will be called after program has been started and before connections have been opened.
    *  Use for initialization.
    */
@@ -910,25 +943,25 @@ public:
    * @return A pointer to the widget containing the setup tab for this tool or NULL of
    * no settings are available.
    */
-  virtual QWidget *providerConfigurationTab(const QCString &provider,QWidget *parent);
+  virtual QWidget *providerConfigurationTab(const QCString &amp;provider,QWidget *parent);
 
   /** Get a list of names for providers.
    */
-  static QWidget *configurationTab(const QCString &provider,QWidget *parent);
+  static QWidget *configurationTab(const QCString &amp;provider,QWidget *parent);
   /** Get a list of names for providers.
    */
-  static std::list<QCString> providers();
+  static std::list&lt;QCString&gt; providers();
   /** Get a list of modes for a given provider.
    */
-  static std::list<QString> modes(const QCString &provider);
+  static std::list&lt;QString&gt; modes(const QCString &amp;provider);
   /** Implement a connection for a given provider.
    * @param provider Provider to implement.
    * @param conn Connection to create implementation for.
    */
-  static toConnection::connectionImpl *connection(const QCString &provider,toConnection *conn);
+  static toConnection::connectionImpl *connection(const QCString &amp;provider,toConnection *conn);
   /** Get a list of hosts this provider knows about.
    */
-  static std::list<QString> hosts(const QCString &provider);
+  static std::list&lt;QString&gt; hosts(const QCString &amp;provider);
   /** Get a list of databases for a given provider and host.
    * @param provider Provider to fetch databases for.
    * @param host Host to fetch databases for.
@@ -936,8 +969,8 @@ public:
    * @param password That might be needed.
    * @return List of known databases.
    */
-  static std::list<QString> databases(const QCString &provider,const QString &host,
-				      const QString &user,const QString &pwd);
+  static std::list&lt;QString&gt; databases(const QCString &amp;provider,const QString &amp;host,
+				      const QString &amp;user,const QString &amp;pwd);
   /**
    * Get connection specific settings.
    *
@@ -949,7 +982,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Contents of this setting.
    */
-  const QString &config(const QCString &tag,const QCString &def);
+  const QString &amp;config(const QCString &amp;tag,const QCString &amp;def);
   /**
    * Change connectionspecific setting. Depending on the implementation this can change the
    * contents on disk or not.
@@ -962,7 +995,7 @@ public:
    * @param tag The name of the configuration setting.
    * @param def Default value of the setting, if it is not available.
    */
-  void setConfig(const QCString &tag,const QCString &value);
+  void setConfig(const QCString &amp;tag,const QCString &amp;value);
 
   /** Call all initializers
    */
@@ -971,5 +1004,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

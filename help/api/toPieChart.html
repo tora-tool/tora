@@ -32,13 +32,13 @@
 </LI>
 <LI>&nbsp;<b><A HREF="#ref11">toPieChart</A></b> (<A HREF="toPieChart.html">toPieChart</A> *pie,<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref12">setPostfix</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &post) 
+<LI>void &nbsp;<b><A HREF="#ref12">setPostfix</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;post) 
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref13">postfix</A></b> (void)  const
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref13">postfix</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref14">setTitle</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &title=QString::null) 
+<LI>void &nbsp;<b><A HREF="#ref14">setTitle</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null) 
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref15">title</A></b> (void) 
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref15">title</A></b> (void) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref16">setDisplayPercent</A></b> (bool pct) 
 </LI>
@@ -48,19 +48,19 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref19">legend</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref20">setValues</A></b> (std::list<double> &values,std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels) 
+<LI>void &nbsp;<b><A HREF="#ref20">setValues</A></b> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref21">addValue</A></b> (double value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &label) 
+<LI>void &nbsp;<b><A HREF="#ref21">addValue</A></b> (double value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;label) 
 </LI>
-<LI>std::list<double> &&nbsp;<b><A HREF="#ref22">values</A></b> (void) 
+<LI>std::list&lt;double&gt; &amp;&nbsp;<b><A HREF="#ref22">values</A></b> (void) 
 </LI>
-<LI>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<b><A HREF="#ref23">labels</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref23">labels</A></b> (void) 
 </LI>
 </ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref25">editPrint</A></b> (void) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref26">openCopy</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref24">newValues</A></b> (std::list<double> &values,std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels) 
+</ul><h4>Signals</h4><ul><LI>void &nbsp;<b><A HREF="#ref24">newValues</A></b> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref8">mouseDoubleClickEvent</A></b> (<A HREF="http://doc.trolltech.com/qmouseevent.html">QMouseEvent</A> *e) 
 </LI>
@@ -100,7 +100,7 @@
 <TR><TD align="left" valign="top"><i>f</i></TD><TD align="left" valign="top">Widget flags.
    </TD></TR>
 </TABLE></P>
-<A NAME="setPostfix"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPostfix</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &post)
+<A NAME="setPostfix"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setPostfix</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;post)
 <br></td><td align="right"><h3><strong>setPostfix</strong></h3></td></tr></table><p></p><p> Set the postfix text to append the current values when they are displayed in the
  pie.
 </p>
@@ -109,19 +109,19 @@
              so if you want the space you need to specify it first in this string.
    </TD></TR>
 </TABLE></P>
-<A NAME="postfix"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>postfix</strong> (void)
+<A NAME="postfix"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>postfix</strong> (void)
 <br></td><td align="right"><h3><strong>postfix</strong></h3></td></tr></table><p> <small>[const]</small></p><p> Get the postfix string.
 </p>
 <p><b>Returns</b>: Current postfix string.
    </p>
-<A NAME="setTitle"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setTitle</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &title=QString::null)
+<A NAME="setTitle"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setTitle</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null)
 <br></td><td align="right"><h3><strong>setTitle</strong></h3></td></tr></table><p></p><p> Set title of the chart. Set to empty string to not display title.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>title</i></TD><TD align="left" valign="top">Title of chart.
    </TD></TR>
 </TABLE></P>
-<A NAME="title"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>title</strong> (void)
+<A NAME="title"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>title</strong> (void)
 <br></td><td align="right"><h3><strong>title</strong></h3></td></tr></table><p></p><p> Get title of chart.
 </p>
 <p><b>Returns</b>: Title of chart.
@@ -150,7 +150,7 @@
 </p>
 <p><b>Returns</b>: If legend is displayed or not.
    </p>
-<A NAME="setValues"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setValues</strong> (std::list<double> &values,std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels)
+<A NAME="setValues"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setValues</strong> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
 <br></td><td align="right"><h3><strong>setValues</strong></h3></td></tr></table><p></p><p> Set value list of piechart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -159,7 +159,7 @@
 <TR><TD align="left" valign="top"><i>labels</i></TD><TD align="left" valign="top">List of labels, if label is empty it will not appear in legend.
    </TD></TR>
 </TABLE></P>
-<A NAME="addValue"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addValue</strong> (double value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &label)
+<A NAME="addValue"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>addValue</strong> (double value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;label)
 <br></td><td align="right"><h3><strong>addValue</strong></h3></td></tr></table><p></p><p> Add a value to the piechart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -168,17 +168,17 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">Label of this new value.
    </TD></TR>
 </TABLE></P>
-<A NAME="values"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<double> &&nbsp;<strong>values</strong> (void)
+<A NAME="values"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;double&gt; &amp;&nbsp;<strong>values</strong> (void)
 <br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
 </p>
 <p><b>Returns</b>: Values in piechart.
    </p>
-<A NAME="labels"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<strong>labels</strong> (void)
+<A NAME="labels"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
 <br></td><td align="right"><h3><strong>labels</strong></h3></td></tr></table><p></p><p> Get labels of piechart.
 </p>
 <p><b>Returns</b>: List of labels.
    </p>
-<A NAME="newValues"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>newValues</strong> (std::list<double> &values,std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels)
+<A NAME="newValues"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>newValues</strong> (std::list&lt;double&gt; &amp;values,std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
 <br></td><td align="right"><h3><strong>newValues</strong></h3></td></tr></table><p> <small>[signal]</small></p><A NAME="editPrint"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>editPrint</strong> (void)
 <br></td><td align="right"><h3><strong>editPrint</strong></h3></td></tr></table><p> <small>[slot]</small></p><p> Print the chart
    </p>
@@ -192,5 +192,6 @@
 <br></td><td align="right"><h3><strong>paintEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
 <p>Reimplemented from <A HREF="http://doc.trolltech.com/qwidget.html#ef2069">QWidget</A>.</p>
+<HR>
 </BODY>
 </HTML>

@@ -63,11 +63,13 @@
 #ifndef TO_EXTRACT
 #define TO_EXTRACT
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qstring.h>
-#include <qvariant.h>
+#include &lt;qfile.h&gt;
+#include &lt;qstring.h&gt;
+#include &lt;qtextstream.h&gt;
+#include &lt;qvariant.h&gt;
 
 class QWidget;
 class toConnection;
@@ -94,18 +96,18 @@ public:
      *             DESCRIBE, MIGRATE or DROP.
      * @param type The type of object that this is implemented for. Database specific.
      */
-    void registerExtract(const QString &db,
-			 const QString &oper,
-			 const QString &type);
+    void registerExtract(const QString &amp;db,
+			 const QString &amp;oper,
+			 const QString &amp;type);
     /** Unregister an operation to be handled by this extractor.
      * @param db Database this extractor works on.
      * @param oper What kind of operation to implement. Can be one of CREATE,
      *             DESCRIBE, MIGRATE or DROP.
      * @param type The type of object that this is implemented for. Database specific.
      */
-    void unregisterExtract(const QString &db,
-			   const QString &oper,
-			   const QString &type);
+    void unregisterExtract(const QString &amp;db,
+			   const QString &amp;oper,
+			   const QString &amp;type);
   public:
     /** Create an extractor. Normally called from a statical instantiator. Should register
      * objects it can handle @ref registerExtract. Apart from the objects it handles one
@@ -124,11 +126,11 @@ public:
      * toExtract::setBlocksize).
      * @param ext Extractor to generate script.
      */
-    virtual void initialize(toExtract &ext) const
-    { }
+    virtual void initialize(toExtract &amp;ext) const;
 
     /** Called to generate a script to recreate a database object.
      * @param ext Extractor to generate script.
+     * @param stream Stream to write script to.
      * @param type Type of object to recreate.
      * @param schema Specify the schema of the output script or description. If empty
      *               don't specify any object. If the string "1" use same object as input.
@@ -137,12 +139,12 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual QString create(toExtract &ext,
-			   const QString &type,
-			   const QString &schema,
-			   const QString &owner,
-			   const QString &name) const
-    { return QString::null; }
+    virtual void create(toExtract &amp;ext,
+			QTextStream &amp;stream,
+			const QString &amp;type,
+			const QString &amp;schema,
+			const QString &amp;owner,
+			const QString &amp;name) const;
     /** Called to describe a database object.
      * @param ext Extractor to generate script.
      * @param lst List of descriptions for the object. Should be appended.
@@ -153,13 +155,12 @@ public:
      * @param owner Owner of database object.
      * @param name Name of database object.
      */
-    virtual void describe(toExtract &ext,
-			  std::list<QString> &lst,
-			  const QString &type,
-			  const QString &schema,
-			  const QString &owner,
-			  const QString &name) const 
-    { }
+    virtual void describe(toExtract &amp;ext,
+			  std::list&lt;QString&gt; &amp;lst,
+			  const QString &amp;type,
+			  const QString &amp;schema,
+			  const QString &amp;owner,
+			  const QString &amp;name) const;
     /** Called to generate a script to migrate a database object from one description to
      * another description.
      * @param ext Extractor to generate script.
@@ -168,11 +169,12 @@ public:
      * @param dst Destination description list.
      * @return A script to change the src database object to dst.
      */
-    virtual QString migrate(toExtract &ext,
-			    const QString &type,
-			    std::list<QString> &src,
-			    std::list<QString> &dst) const
-    { return QString::null; }
+    virtual void migrate(toExtract &amp;ext,
+			 QTextStream &amp;stream,
+			 const QString &amp;type,
+			 std::list&lt;QString&gt; &amp;src,
+			 std::list&lt;QString&gt; &amp;dst) const;
+
     /** Called to generate a script to drop an object.
      * @param ext Extractor to generate script.
      * @param type Type of object to recreate.
@@ -183,16 +185,16 @@ public:
      * @param name Name of database object.
      * @return A string containing a script to recreate an object.
      */
-    virtual QString drop(toExtract &ext,
-			 const QString &type,
-			 const QString &schema,
-			 const QString &owner,
-			 const QString &name) const
-    { return QString::null; }
+    virtual void drop(toExtract &amp;ext,
+		      QTextStream &amp;stream,
+		      const QString &amp;type,
+		      const QString &amp;schema,
+		      const QString &amp;owner,
+		      const QString &amp;name) const;
   };
 
 private:
-  toConnection &Connection;
+  toConnection &amp;Connection;
   QWidget *Parent;
 
   // Attributes
@@ -211,27 +213,29 @@ private:
   bool Storage;
   bool Initialized;
 
+  int CommitDistance;
+
   // Database info
   int BlockSize;
-  std::list<QString> Initial;
-  std::list<QString> Next;
-  std::list<QString> Limit;
+  std::list&lt;QString&gt; Initial;
+  std::list&lt;QString&gt; Next;
+  std::list&lt;QString&gt; Limit;
 
   // Context, can be used by the extractor to save context
-  std::map<QCString,QVariant> Context;
+  std::map&lt;QCString,QVariant&gt; Context;
 
   // Stuff to handle extractors
-  static std::map<QString,extractor *> *Extractors;
+  static std::map&lt;QString,extractor *&gt; *Extractors;
 
   static void allocExtract(void);
-  static QString extractorName(const QString &db,
-			       const QString &oper,
-			       const QString &type);
-  static extractor *findExtractor(toConnection &conn,
-				  const QString &oper,
-				  const QString &type);
-  extractor *findExtractor(const QString &oper,
-			   const QString &type)
+  static QString extractorName(const QString &amp;db,
+			       const QString &amp;oper,
+			       const QString &amp;type);
+  static extractor *findExtractor(toConnection &amp;conn,
+				  const QString &amp;oper,
+				  const QString &amp;type);
+  extractor *findExtractor(const QString &amp;oper,
+			   const QString &amp;type)
   { return findExtractor(Connection,oper,type); }
   void initialize(void);
 
@@ -242,18 +246,18 @@ private:
    * @param owner Reference to string which will get the object owner.
    * @param name Reference to string which will get the object name.
    */
-  void parseObject(const QString &object,QString &owner,QString &name);
+  void parseObject(const QString &amp;object,QString &amp;owner,QString &amp;name);
   void setSizes(void);
 
-  void rethrow(const QString &what,const QString &object,const QString &exc);
-  QString generateHeading(const QString &action,std::list<QString> &list);
-  static std::map<QString,std::list<QString> > migrateGroup(std::list<QString> &grpLst);
+  void rethrow(const QString &amp;what,const QString &amp;object,const QString &amp;exc);
+  QString generateHeading(const QString &amp;action,std::list&lt;QString&gt; &amp;list);
+  static std::map&lt;QString,std::list&lt;QString&gt; &gt; migrateGroup(std::list&lt;QString&gt; &amp;grpLst);
 public:
   /** Create a new extractor.
    * @param conn Connection to extract from.
    * @param parent Parent widget of progress indicator.
    */
-  toExtract(toConnection &conn,QWidget *parent);
+  toExtract(toConnection &amp;conn,QWidget *parent);
 
   /** Create script to recreate list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -267,7 +271,21 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to recreate the specified objects.
    */
-  QString create(std::list<QString> &object);
+  QString create(std::list&lt;QString&gt; &amp;object)
+  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); create(s,object); return ret; }
+  /** Create script to recreate list of objects.
+   * @param stream Stream to write result to.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
+   */
+  void create(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;object);
 
   /** Create a description of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -283,7 +301,7 @@ public:
    *         considered like a list of strings separated by the character '\001'.
    *         The later in each string the smaller item the change and it is hierachical.
    */
-  std::list<QString> describe(std::list<QString> &object);
+  std::list&lt;QString&gt; describe(std::list&lt;QString&gt; &amp;object);
 
   /** Create script to drop a list of objects.
    * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -297,33 +315,60 @@ public:
    *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
    * @return A string containing a script to drop the specified objects.
    */
-  QString drop(std::list<QString> &object);
+  QString drop(std::list&lt;QString&gt; &amp;object)
+  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); drop(s,object); return ret; }
+
+  /** Create script to drop a list of objects.
+   * @param stream Stream to write result to.
+   * @param object List of object. This has the format {type}:{schema}.{object}.
+   *               The type is database dependent but can as an example be of
+   *               CONSTRAINT, DATABASE LINK, EXCHANGE INDEX,
+   *               EXCHANGE TABLE, FUNCTION, INDEX, MATERIALIZED VIEW,
+   *               MATERIALIZED VIEW LOG, PACKAGE, PACKAGE BODY, PROCEDURE,
+   *               PROFILE, ROLE, ROLE GRANTS, ROLLBACK SEGMENT, SEQUENCE,
+   *               SNAPSHOT, SNAPSHOT LOG, SYNONYM, TABLE, TABLE FAMILY,
+   *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
+   *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
+   * @return A string containing a script to drop the specified objects.
+   */
+  void drop(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;object);
 
   /** Called to generate a script to migrate a database object from one description to
    * another description.
+   * @param stream Stream to write result to.
    * @param src Source description list, generated by describes for the same database.
    * @param dst Destination description list, generated by describes for the same database.
    * @return A script to change the src database object to dst.
    */
-  QString migrate(std::list<QString> &drpLst,std::list<QString> &crtLst);
+  QString migrate(std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst)
+  { QString ret; QTextStream s(&amp;ret,IO_WriteOnly); migrate(s,drpLst,crtLst); return ret; }
+
+  /** Called to generate a script to migrate a database object from one description to
+   * another description.
+   * @param stream Stream to write result to.
+   * @param src Source description list, generated by describes for the same database.
+   * @param dst Destination description list, generated by describes for the same database.
+   * @return A script to change the src database object to dst.
+   */
+  void migrate(QTextStream &amp;stream,std::list&lt;QString&gt; &amp;drpLst,std::list&lt;QString&gt; &amp;crtLst);
 
   /** Set a context for this extractor.
    * @param name Name of this context
    * @param val Value of this context
    */
-  void setState(const QCString &name,const QVariant &val);
+  void setState(const QCString &amp;name,const QVariant &amp;val);
   /** Get the value of a context for the current extractor.
    * @param name Name of the context to extract.
    * @return The value of the context.
    */
-  QVariant state(const QCString &name);
+  QVariant state(const QCString &amp;name);
 
   /** Set the schema of the extraction.
    * @param schema Specify the schema of the output script or description. If empty
    *               don't specify any object. If the string "1" use same object as input.
    *               Otherwise use the specified schema.
    */
-  void setSchema(const QString &schema)
+  void setSchema(const QString &amp;schema)
   { Schema=schema; }
   /** Set sizes to use for resize of object on extraction.
    * @param A list of sizes separated by ':'. Should be an even multiple of three where
@@ -331,7 +376,7 @@ public:
    *        value is the initial value to use, the last is the next increment value to
    *        use. As a special case the string "1" can be used to set up auto resize.
    */
-  void setResize(const QString &resize)
+  void setResize(const QString &amp;resize)
   { Resize=resize; setSizes(); }
   /** Set inclusion of prompts.
    * @param prompt If prompt generation should be generated.
@@ -375,9 +420,10 @@ public:
   { Partition=val; }
   /** Include contents of tables in scripts.
    * @param val Include contents of tables.
+   * @param commitdistance The commit distance of the contents 0 means whole tables.
    */
-  void setContents(bool val)
-  { Contents=val; }
+  void setContents(bool val,int commitdistance)
+  { Contents=val; CommitDistance=commitdistance; }
   /** Include comments in extraction.
    * @param val Include indexes.
    */
@@ -398,7 +444,7 @@ public:
    * @return Schema specification.
    * @see setSchema
    */
-  const QString &getSchema(void)
+  const QString &amp;getSchema(void)
   { return Schema; }
   /** Get resize specification.
    * @return Resize specification.
@@ -451,6 +497,11 @@ public:
    */
   bool getContents(void)
   { return Contents; }
+  /** Get the distance of the commits when content is generated.
+   * @return Commit distance.
+   */
+  int getCommitDistance(void)
+  { return CommitDistance; }
   /** Check if comments are generated.
    * @return If comments are generated.
    */
@@ -467,7 +518,7 @@ public:
   { return BlockSize; }
   /** Get the connection this extractor is working on.
    */
-  toConnection &connection()
+  toConnection &amp;connection()
   { return Connection; }
 
   /** Fill in the initial and next value for an object currently holding a @ref number of
@@ -476,7 +527,7 @@ public:
    * @param initial New initial value.
    * @param next New next value.
    */
-  void initialNext(const QString &blocks,QString &initial,QString &next);
+  void initialNext(const QString &amp;blocks,QString &amp;initial,QString &amp;next);
 
   /** Get the schema name specified by the extractor setup. Will include the following '.'
    * if needed.
@@ -484,7 +535,7 @@ public:
    * @param desc Used from describe and not to generate script.
    * @return The translated schema.
    */
-  QString intSchema(const QString &owner,bool desc);
+  QString intSchema(const QString &amp;owner,bool desc);
 
   /** Create a source and destination object list to two other lists
    * containing dropped and created objects or attributes.
@@ -493,49 +544,50 @@ public:
    * @param drop Drop list output (Will be overwritten).
    * @param create Create list output (Will be overwritten).
    */
-  static void srcDst2DropCreate(std::list<QString> &source,std::list<QString> &destination,
-				std::list<QString> &drop,std::list<QString> &creat);
+  static void srcDst2DropCreate(std::list&lt;QString&gt; &amp;source,std::list&lt;QString&gt; &amp;destination,
+				std::list&lt;QString&gt; &amp;drop,std::list&lt;QString&gt; &amp;creat);
 
   /** Check if a database is supported at all by the extractor.
    * @param conn Connection to check for support.
    * @return True if the database is supported.
    */
-  static bool canHandle(toConnection &conn);
+  static bool canHandle(toConnection &amp;conn);
 
   /** Add a list to description.
    * @param ret The return list to add a line to.
    * @param ctx The current description context.
    * @param arg1 First extra argument to add.
    */
-  static void addDescription(std::list<QString> &ret,std::list<QString> &ctx,
-			     const QString &arg1=QString::null,const QString &arg2=QString::null,
-			     const QString &arg3=QString::null,const QString &arg4=QString::null,
-			     const QString &arg5=QString::null,const QString &arg6=QString::null,
-			     const QString &arg7=QString::null,const QString &arg8=QString::null,
-			     const QString &arg9=QString::null);
+  static void addDescription(std::list&lt;QString&gt; &amp;ret,std::list&lt;QString&gt; &amp;ctx,
+			     const QString &amp;arg1=QString::null,const QString &amp;arg2=QString::null,
+			     const QString &amp;arg3=QString::null,const QString &amp;arg4=QString::null,
+			     const QString &amp;arg5=QString::null,const QString &amp;arg6=QString::null,
+			     const QString &amp;arg7=QString::null,const QString &amp;arg8=QString::null,
+			     const QString &amp;arg9=QString::null);
   /** Split a description line into its components.
    * @param str The description line to split.
    * @return The list of components.
    */
-  static std::list<QString> splitDescribe(const QString &str);
+  static std::list&lt;QString&gt; splitDescribe(const QString &amp;str);
 
   /** Get the part of a description indicated by the level
    * @param str Description string
    * @param level The level to get (0 is the first level)
    */
-  static QString partDescribe(const QString &str,int level);
+  static QString partDescribe(const QString &amp;str,int level);
 
   /** Get the context of a given level.
    * @param str Description string
    * @param level The level to get the context for (1 is the first to not return empty string.
    * @return The context, if not enough parts are available null is returned.
    */
-  static QString contextDescribe(const QString &str,int level);
+  static QString contextDescribe(const QString &amp;str,int level);
 
   friend class extractor;
 };
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

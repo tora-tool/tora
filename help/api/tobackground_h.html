@@ -63,7 +63,7 @@
 #ifndef TOBACKGROUND_H
 #define TOBACKGROUND_H
 
-#include <qtimer.h>
+#include &lt;qtimer.h&gt;
 
 class QLabel;
 class QMovie;
@@ -99,9 +99,6 @@ public:
  * periodic intervals.
  */
 class toBackground : public toTimer {
-  static int Running;
-  static QLabel *Label;
-  static QMovie *Animation;
 public:
   /**
    * Create a background timer widget.
@@ -123,5 +120,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

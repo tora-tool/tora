@@ -26,13 +26,13 @@
 <TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
 <TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
 </TABLE></TD></TR></TABLE>
-<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toHtml</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &data) 
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref12">toHtml</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data) 
 </LI>
 <LI>&nbsp;<b><A HREF="#ref13">~toHtml</A></b> () 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref14">nextToken</A></b> (void) 
 </LI>
-<LI>const char *&nbsp;<b><A HREF="#ref15">value</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &name) 
+<LI>const char *&nbsp;<b><A HREF="#ref15">value</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name) 
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref16">isTag</A></b> (void) 
 </LI>
@@ -44,13 +44,13 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref20">eof</A></b> (void) 
 </LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref21">search</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str) 
+</ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref21">search</A></b> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
-<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref22">escape</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &html) 
+<LI>static  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref22">escape</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;html) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A small and hopefully pretty efficient parser of HTML tags. No attempt what
  so ever is made trying to check the validity of the text so if you forget
- a closing > you will probably end up with an exception.
+ a closing &gt; you will probably end up with an exception.
 </p>
 <p> A simple traverser counting the number of paragraphs might look like this.
 </p>
@@ -60,10 +60,10 @@
 <pre>
 
 int paragraphs++;
-<A HREF="toHtml.html#toHtml">toHtml</A> count("Paragraphs<P>And some</P><P>Dobedoo");
+<A HREF="toHtml.html#toHtml">toHtml</A> count("Paragraphs&lt;P&gt;And some&lt;/P&gt;&lt;P&gt;Dobedoo");
 while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
   count.<A HREF="toHtml.html#nextToken">nextToken</A>();
-  if (count.<A HREF="toHtml.html#isTag">isTag</A>()&&count.<A HREF="toHtml.html#open">open</A>()&&<A HREF="http://doc.trolltech.com/qstring.html">QString</A>(count.<A HREF="toHtml.html#tag">tag</A>())=="p")
+  if (count.<A HREF="toHtml.html#isTag">isTag</A>()&amp;&amp;count.<A HREF="toHtml.html#open">open</A>()&amp;&amp;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>(count.<A HREF="toHtml.html#tag">tag</A>())=="p")
     paragraphs++;
 }
 
@@ -72,7 +72,7 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
 
 </table> <p>
  </p>
-<A NAME="toHtml"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHtml</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &data)
+<A NAME="toHtml"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toHtml</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data)
 <br></td><td align="right"><h3><strong>toHtml</strong></h3></td></tr></table><p></p><p> Create a HTML parser.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -87,7 +87,7 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
  can't search it later. Searhing must be done on an new toHtml,
  several serches can be made though on the same toHtml.
    </p>
-<A NAME="value"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char *&nbsp;<strong>value</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &name)
+<A NAME="value"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char *&nbsp;<strong>value</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;name)
 <br></td><td align="right"><h3><strong>value</strong></h3></td></tr></table><p></p><p> Get value of a qualifier.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -107,7 +107,7 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
 <p><b>Returns</b>: True if open tag.
    </p>
 <A NAME="text"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &nbsp;<strong>text</strong> (void)
-<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p></p><p> Get bread text if available. Expands &# characters are expanded before returned.
+<br></td><td align="right"><h3><strong>text</strong></h3></td></tr></table><p></p><p> Get bread text if available. Expands &amp;# characters are expanded before returned.
  Only valid if <A HREF="toHtml.html#isTag">isTag</A> returns false.
 </p>
 <p><b>Returns</b>: The parsed text.
@@ -122,7 +122,7 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
 </p>
 <p><b>Returns</b>: True if at end of data.
    </p>
-<A NAME="search"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>search</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &str)
+<A NAME="search"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>search</strong> (const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;data,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>search</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Search data for a simple text.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -131,8 +131,9 @@ while(!count.<A HREF="toHtml.html#eof">eof</A>()) {
 <TR><TD align="left" valign="top"><i>str</i></TD><TD align="left" valign="top">Substring to search for in data.
    </TD></TR>
 </TABLE></P>
-<A NAME="escape"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>escape</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &html)
+<A NAME="escape"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>escape</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;html)
 <br></td><td align="right"><h3><strong>escape</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Escape text to be HTML.
    </p>
+<HR>
 </BODY>
 </HTML>

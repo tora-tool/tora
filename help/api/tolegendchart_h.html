@@ -63,9 +63,9 @@
 #ifndef TOLEGENDCHART_H
 #define TOLEGENDCHART_H
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qwidget.h>
+#include &lt;qwidget.h&gt;
 
 /** A widget that displays a legend to other charts.
  */
@@ -76,8 +76,8 @@ class toLegendChart : public QWidget {
   int Columns;
   QString Title;
 
-  std::list<QString> Labels;
-  std::list<int> sizeHint(int &height,int &items);
+  std::list&lt;QString&gt; Labels;
+  std::list&lt;int&gt; sizeHint(int &amp;height,int &amp;items);
 public:
   /** Create a new legend.
    * @param columns Columns.
@@ -90,27 +90,27 @@ public:
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
    */
-  void setTitle(const QString &title=QString::null)
+  void setTitle(const QString &amp;title=QString::null)
   { Title=title; update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
-  const QString &title(void)
+  const QString &amp;title(void)
   { return Title; }
 
   /** Set list of chart labels.
    * @param labels List of labels, if label is empty it will not appear in legend.
    */
-  void setLabels(std::list<QString> &labels);
+  void setLabels(std::list&lt;QString&gt; &amp;labels);
   /** Add a value to the chart.
    * @param value New value to add.
    * @param label Label of this new value.
    */
-  void addLabel(const QString &label);
+  void addLabel(const QString &amp;label);
   /** Get labels of chart.
    * @return List of labels.
    */
-  std::list<QString> &labels(void)
+  std::list&lt;QString&gt; &amp;labels(void)
   { return Labels; }
   /** Reimplemented for internal reasons.
    */
@@ -123,5 +123,6 @@ protected:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

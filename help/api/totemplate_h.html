@@ -67,10 +67,10 @@
 #include "tohelp.h"
 #include "toresultview.h"
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qvbox.h>
+#include &lt;qvbox.h&gt;
 
 class QListView;
 class QListViewItem;
@@ -96,7 +96,7 @@ class toTemplate : public QVBox, public toHelpContext {
   QWidget *Result;
   QVBox *Frame;
 public:
-  toTemplate(QWidget *parent);
+  toTemplate(TODock *parent);
   virtual ~toTemplate();
   void setWidget(QWidget *widget);
   QWidget *widget(void)
@@ -106,12 +106,16 @@ public:
   static QWidget *parentWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListViewItem *item);
   static toTemplate *templateWidget(QListView *obj);
+  static bool templateShown();
 
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &amp;)
   { return true; }
 
   void closeFrame(void);
-  void attachResult(void);
+  void showResult(bool show);
+
+  void hideEvent(QHideEvent *);
+  void showEvent(QShowEvent *);
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
@@ -127,11 +131,13 @@ public slots:
 class toTemplateProvider {
   /** List of currently available template providers.
    */
-  static std::list<toTemplateProvider *> *Providers;
+  static std::list&lt;toTemplateProvider *&gt; *Providers;
+  static bool Shown;
+  static QCString *ToolKey;;
   QCString Name;
   bool Open;
 public:
-  toTemplateProvider(const QCString &name);
+  toTemplateProvider(const QCString &amp;name);
   virtual ~toTemplateProvider()
   { }
 
@@ -150,22 +156,29 @@ public:
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Save settings for all template providers.
    * @param data Map of data.
    * @param prefix Prefix of where to save info.
    */
-  static void exportAllData(std::map<QCString,QString> &data,const QCString &prefix);
+  static void exportAllData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data for all template providers.
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  static void importAllData(std::map<QCString,QString> &data,const QCString &prefix);
+  static void importAllData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+
+  /** Used internally to indicate if template help is shown.
+   */
+  static void setShown(bool shown);
+  /** Used internally to indicate tool key string
+   */
+  static void setToolKey(const QCString &amp;key);
 
   friend class toTemplate;
 };
@@ -177,14 +190,14 @@ public:
 class toTemplateItem : public toResultViewItem {
   /** The provider responsible for this item.
    */
-  toTemplateProvider &Provider;
+  toTemplateProvider &amp;Provider;
 public:
   /** Create an item.
    * @param prov Provider for this item.
    * @param parent Parent of this item.
    * @param name Contents of the first column of the item.
    */
-  toTemplateItem(toTemplateProvider &prov,QListView *parent,const QString &name)
+  toTemplateItem(toTemplateProvider &amp;prov,QListView *parent,const QString &amp;name)
     : toResultViewItem(parent,NULL,name),Provider(prov)
   { }
   /** Create an item.
@@ -192,13 +205,13 @@ public:
    * @param name Contents of the first column of the item.
    * @param after The item to put this item after.
    */
-  toTemplateItem(toTemplateItem *parent,const QString &name,QListViewItem *after=NULL)
-    : toResultViewItem(parent,after,name),Provider(parent->provider())
+  toTemplateItem(toTemplateItem *parent,const QString &amp;name,QListViewItem *after=NULL)
+    : toResultViewItem(parent,after,name),Provider(parent-&gt;provider())
   { }
   /** Get a reference to the provider of this item.
    * @return Reference to provider.
    */
-  toTemplateProvider &provider(void)
+  toTemplateProvider &amp;provider(void)
   { return Provider; }
   /** This function is called when the item is expanded and can be used to fill up the
    * list when needed.
@@ -217,8 +230,7 @@ public:
    * this item. Return NULL if no widget is to be displayed. The widget will be deleted
    * when this item is no longer shown.
    */
-  virtual QWidget *selectedWidget(QWidget *parent)
-  { return NULL; }
+  virtual QWidget *selectedWidget(QWidget *parent);
   /** Reimplemented for internal reasons.
    */
   virtual void setSelected(bool sel);
@@ -238,7 +250,7 @@ public:
    * @param name Contents of the first column of the item.
    * @param note Extra text to display if item is selected.
    */
-  toTemplateText(toTemplateItem *parent,const QString &name,const QString &note)
+  toTemplateText(toTemplateItem *parent,const QString &amp;name,const QString &amp;note)
     : toTemplateItem(parent,name), Note(note)
   { }
   /** Reimplemented for internal reasons.
@@ -276,10 +288,20 @@ class toTemplateSQL :public toTemplateItem {
 
   /** Connection to run statement in
    */
-  toConnection &Connection;
+  toConnection *Connection;
   /** Statement to run.
    */
   QString SQL;
+protected:
+  /** Create an item.
+   * @param conn Connection to query.
+   * @param parent Parent of this item.
+   * @param name Contents of the first column of the item.
+   * @param sql SQL statement, observe that it is in @ref QCString format and you
+   *            should use utf8 if converting from QString.
+   */
+  toTemplateSQL(toTemplateItem *parent,
+		const QString &amp;name,const QString &amp;sql);
 public:
   /** Create an item.
    * @param conn Connection to query.
@@ -288,18 +310,18 @@ public:
    * @param sql SQL statement, observe that it is in @ref QCString format and you
    *            should use utf8 if converting from QString.
    */
-  toTemplateSQL(toConnection &conn,toTemplateItem *parent,
-		const QString &name,const QString &sql);
+  toTemplateSQL(toConnection &amp;conn,toTemplateItem *parent,
+		const QString &amp;name,const QString &amp;sql);
   /** Get connection of this item.
    * @return Reference to connection.
    */
-  toConnection &connection()
-  { return Connection; }
+  virtual toConnection &amp;connection()
+  { return *Connection; }
   /** Create a child of this item.
    * @param name Name of the child.
    * @return A newly created item.
    */
-  virtual toTemplateItem *createChild(const QString &name)
+  virtual toTemplateItem *createChild(const QString &amp;name)
   { return new toTemplateItem(this,name); }
   /** Get parameters to pass to query.
    * @return List of strings to pass as input parameters to query
@@ -314,5 +336,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -71,12 +71,12 @@
 #  include "tomainwindow.h"
 #endif
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qtimer.h>
+#include &lt;qtimer.h&gt;
 
-#if QT_VERSION >= 300
+#if QT_VERSION &gt;= 300
 class QUrlOperator;
 #endif
 
@@ -109,7 +109,7 @@ private:
   /**
    * The connections that have been opened in TOra.
    */
-  std::list<toConnection *> Connections;
+  std::list&lt;toConnection *&gt; Connections;
   /**
    * Workspace of main window.
    */
@@ -126,12 +126,12 @@ private:
   /**
    * A map from menu ID:s to tools.
    */
-  std::map<int,toTool *> Tools;
+  std::map&lt;int,toTool *&gt; Tools;
   /**
    * A list of toolbuttons that need an open connection to be enabled. If tool pointer
    * is zero simply require any connection to be enabled.
    */
-  std::map<QToolButton *,toTool *> NeedConnection;
+  std::map&lt;QToolButton *,toTool *&gt; NeedConnection;
   /**
    * The ID of the tool providing the SQL editor.
    */
@@ -139,7 +139,7 @@ private:
 
   /** Status messages to display
    */
-  std::list<QString> StatusMessages;
+  std::list&lt;QString&gt; StatusMessages;
 
   /**
    * Disconnect connection button.
@@ -225,7 +225,7 @@ private:
   QLabel *RowLabel;
   toBackground Poll;
   /**
-   * Search & replace dialog if available.
+   * Search &amp; replace dialog if available.
    */
   toSearchReplace *Search;
   /**
@@ -233,7 +233,9 @@ private:
    */
   int DefaultTool;
 
-#if QT_VERSION >= 300
+  QTimer KeepAlive;
+
+#if QT_VERSION &gt;= 300
   QUrlOperator *VersionUrl;
   QString VersionString;
 #endif
@@ -305,7 +307,7 @@ public:
    * Get the current database connection
    * @return Reference to current connection.
    */
-  toConnection &currentConnection(void);
+  toConnection &amp;currentConnection(void);
 
   /**
    * Set the widget to edit through menues and toolbar.
@@ -373,25 +375,29 @@ public:
   QPopupMenu *helpMenu()
   { return HelpMenu; }
 
+  /* Update the keepalive from configuration
+   */
+  void updateKeepAlive();
+
   /**
    * Get a list of currently open connections.
    * @return List of connection names. The returned list can then be used by
    * @ref connection to get the actual connection.
    */
-  std::list<QString> connections(void);
+  std::list&lt;QString&gt; connections(void);
   /** Get a connection identified by a string.
    * @return A reference to a connection.
    * @exception QString If connection wasn't found.
    */
-  toConnection &connection(const QString &);
+  toConnection &amp;connection(const QString &amp;);
   /** Set if a connection needs to be commited. Also updates visual feedback in interface.
    */
-  void setNeedCommit(toConnection &conn,bool needCommit=true);
+  void setNeedCommit(toConnection &amp;conn,bool needCommit=true);
 
   /** Edit an SQL statement in the SQL editor if any connected.
    * @param str Identifier of the SQL to edit.
    */
-  void editSQL(const QString &str);
+  void editSQL(const QString &amp;str);
   /**
    * Register a tool which to use as an SQL editor. When something is to be edited
    * first a toolwindow will be created and the @ref sqlEditor will be emited, so
@@ -407,12 +413,12 @@ public:
    * @param data A map that can be used to recreate the session.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Get edit toolbar pointer.
    */
   QToolBar *editToolbar()
@@ -432,15 +438,15 @@ public:
   void setupChart(toLineChart *chart);
   /** Display status message in dialog.
    */
-  void displayMessage(const QString &str);
+  void displayMessage(const QString &amp;str);
   /** Add recent file
    */
-  void addRecentFile(const QString &filename);
+  void addRecentFile(const QString &amp;filename);
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.
    */
-  void sqlEditor(const QString &str);
+  void sqlEditor(const QString &amp;str);
   /** Invoked when a new chart is created.
    */
   void chartAdded(toLineChart *chart);
@@ -453,16 +459,16 @@ signals:
   /** Invoked when a connection is added.
    * @param str Connection identifier.
    */
-  void addedConnection(const QString &str);
+  void addedConnection(const QString &amp;str);
   /** Invoked when a connection is removed.
    * @param str Connection identifier.
    */
-  void removedConnection(const QString &str);
+  void removedConnection(const QString &amp;str);
   /** Emitted before a commit or rollback is made to the current connection.
    * @param conn Connection that is commited
    * @param cmt True if commit, false if rollback.
    */
-  void willCommit(toConnection &conn,bool cmt);
+  void willCommit(toConnection &amp;conn,bool cmt);
 public slots:
   /** Used to enable/disable entries in the windows menu
    */
@@ -548,8 +554,9 @@ private slots:
    */
   void displayMessage(void);
 
-  void versionData(const QByteArray &data,QNetworkOperation *op);
+  void versionData(const QByteArray &amp;data,QNetworkOperation *op);
   void versionFinished(QNetworkOperation *op);
+  void keepAlive();
 };
 
 /** Get a pointer to the main window
@@ -559,5 +566,6 @@ toMain *toMainWidget(void);
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

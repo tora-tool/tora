@@ -63,18 +63,19 @@
 #ifndef TOREPORT_H
 #define TOREPORT_H
 
-#include <list>
+#include &lt;list&gt;
 
-#include <qstring.h>
+#include &lt;qstring.h&gt;
 
 /** Generate an HTML based report on a description of database objects from @ref toExtract.
  * @param conn Connection description list was generated from.
  * @param desc Description list to create report on.
  * @return An HTML formatted report on the contents of @ref desc.
  */
-QString toGenerateReport(toConnection &conn,std::list<QString> &desc);
+QString toGenerateReport(toConnection &amp;conn,std::list&lt;QString&gt; &amp;desc);
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

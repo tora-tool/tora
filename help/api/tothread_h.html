@@ -63,6 +63,8 @@
 #ifndef TOTHREAD_H
 #define TOTHREAD_H
 
+#include &lt;qthread.h&gt;
+
 /** This is an abstract class that defines something that is to be performed by a
  * thread.
  */
@@ -74,10 +76,32 @@ public:
   virtual void run(void) = 0;
 };
 
-#include <list>
+#ifndef QT_THREAD_SUPPORT
+#include &lt;semaphore.h&gt;
 
-#ifdef WIN32
-#include <qthread.h>
+class toSemaphore {
+private:
+  sem_t Semaphore;
+  void init(int val);
+
+  toSemaphore(const toSemaphore &amp;);
+public:
+  toSemaphore();
+  toSemaphore(int val);
+  ~toSemaphore();
+
+  void up();
+  void down();
+  int getValue();
+};
+
+#else
+
+/** Encapsulation of pthread semaphores. A semaphore can be raise to any value
+ * but will wait till raised above zero when lowered below 0. Can also be implemented
+ * without pthreads using Qt multithreaded primitives. Observe that these function
+ * different than Qt semaphores.
+ */
 
 class toSemaphore {
 private:
@@ -85,18 +109,37 @@ private:
   QWaitCondition Condition;
   int Value;
 public:
+  /** Create semaphore
+   */
   toSemaphore()
     : Condition()
   { Value=0; }
-  toSemaphore(const toSemaphore &);
+  /** Unimplemented copy constructor.
+   */
+  toSemaphore(const toSemaphore &amp;);
+  /** Create semaphore
+   * @param val Value of new semaphore.
+   */
   toSemaphore(int val)
     : Condition()
   { Value=val; }
 
+  /** Increase semaphore value by 1.
+   */
   void up();
+  /** Decrease semaphore value by 1, wait for it to never go below 0.
+   */
   void down();
+  /** Get current semaphore value.
+   */
   int getValue();
 };
+
+#endif
+
+#include &lt;list&gt;
+
+#ifdef WIN32
 
 class toLock {
 private:
@@ -105,7 +148,7 @@ public:
   toLock(void)
     : Mutex(false)
   { }
-  toLock(const toLock &);
+  toLock(const toLock &amp;);
 
   void lock(void)
   { Mutex.lock(); }
@@ -126,13 +169,13 @@ private:
     virtual void run(void);
     friend class toThread;
   } Thread;
-  static std::list<toThread *> *Threads;
+  static std::list&lt;toThread *&gt; *Threads;
   static toLock *Lock;
   static int LastID;
   static __declspec( thread ) int ThreadID;
   static int MainThread;
 
-  toThread(const toThread &);
+  toThread(const toThread &amp;);
 public:
   toThread(toTask *);
   ~toThread();
@@ -145,48 +188,9 @@ public:
 };
 
 #else
-#include <pthread.h>
-#include <semaphore.h>
-#include <signal.h>
-#include <time.h>
-
-/** Encapsulation of pthread semaphores. A semaphore can be raise to any value
- * but will wait till raised above zero when lowered below 0. Can also be implemented
- * without pthreads using Qt multithreaded primitives. Observe that these function
- * different than Qt semaphores.
- */
-
-class toSemaphore {
-private:
-  /** Actual semaphore.
-   */
-  sem_t Semaphore;
-  /** Initialise semaphore.
-   * @param val Value to init semaphore to.
-   */
-  void init(int val);
-
-  toSemaphore(const toSemaphore &);
-public:
-  /** Create semaphore
-   */
-  toSemaphore();
-  /** Create semaphore
-   * @param val Value of new semaphore.
-   */
-  toSemaphore(int val);
-  ~toSemaphore();
-
-  /** Increase semaphore value by 1.
-   */
-  void up();
-  /** Decrease semaphore value by 1, wait for it to never go below 0.
-   */
-  void down();
-  /** Get current semaphore value.
-   */
-  int getValue();
-};
+#include &lt;pthread.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;time.h&gt;
 
 /** A wrapper around the pthread mutexfunctions. A lock can only be locked
  *  by one thread at a time and is the basis of most thread synchronisation.
@@ -197,7 +201,7 @@ private:
   /** Actual pthread mutex of class.
    */
   pthread_mutex_t Mutex;
-  toLock(const toLock &);
+  toLock(const toLock &amp;);
 public:
   /** Create lock
    */
@@ -243,7 +247,7 @@ private:
    */
   static pthread_t MainThread;
   
-  toThread(const toThread &);
+  toThread(const toThread &amp;);
 public:
   /** Create thread.
    * @param task Task to run.
@@ -278,13 +282,13 @@ class toLocker {
 private:
   /** Lock held.
    */
-  toLock &Lock;
-  toLocker(const toLocker &);
+  toLock &amp;Lock;
+  toLocker(const toLocker &amp;);
 public:
   /** Create locker.
    * @param lock Lock to hold.
    */
-  toLocker(toLock &lock)
+  toLocker(toLock &amp;lock)
     : Lock(lock)
   { Lock.lock(); }
   ~toLocker()
@@ -293,5 +297,6 @@ public:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -42,9 +42,9 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref45">last</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref46">setTitle</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &title=QString::null) 
+<LI>void &nbsp;<b><A HREF="#ref46">setTitle</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null) 
 </LI>
-<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<b><A HREF="#ref47">title</A></b> (void) 
+<LI>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<b><A HREF="#ref47">title</A></b> (void) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref48">showGrid</A></b> (int div=0) 
 </LI>
@@ -54,7 +54,7 @@
 </LI>
 <LI>bool &nbsp;<b><A HREF="#ref51">axisLegend</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref52">setYPostfix</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &postfix) 
+<LI>void &nbsp;<b><A HREF="#ref52">setYPostfix</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;postfix) 
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref53">setMaxValueAuto</A></b> (void) 
 </LI>
@@ -72,23 +72,23 @@
 </LI>
 <LI>int &nbsp;<b><A HREF="#ref60">samples</A></b> (void)  const
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref61">setLabels</A></b> (const std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels) 
+<LI>void &nbsp;<b><A HREF="#ref61">setLabels</A></b> (const std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels) 
 </LI>
-<LI>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<b><A HREF="#ref62">labels</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref62">labels</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref63">addValues</A></b> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref63">addValues</A></b> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues) 
 </LI>
-<LI>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<b><A HREF="#ref64">xValues</A></b> (void) 
+<LI>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<b><A HREF="#ref64">xValues</A></b> (void) 
 </LI>
-<LI>std::list<std::list<double> > &&nbsp;<b><A HREF="#ref65">values</A></b> (void) 
+<LI>std::list&lt;std::list&lt;double&gt; &gt; &amp;&nbsp;<b><A HREF="#ref65">values</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref66">exportData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref66">exportData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref67">importData</A></b> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref67">importData</A></b> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix) 
 </LI>
-<LI>std::list<bool> &nbsp;<b><A HREF="#ref68">enabledCharts</A></b> (void) 
+<LI>std::list&lt;bool&gt; &nbsp;<b><A HREF="#ref68">enabledCharts</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref69">setEnabledCharts</A></b> (std::list<bool> &enabled) 
+<LI>void &nbsp;<b><A HREF="#ref69">setEnabledCharts</A></b> (std::list&lt;bool&gt; &amp;enabled) 
 </LI>
 <LI>virtual  <A HREF="toLineChart.html">toLineChart</A> *&nbsp;<b><A HREF="#ref70">openCopy</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent) 
 </LI>
@@ -100,7 +100,7 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref75">openCopy</A></b> (void) 
 </LI>
-</ul><h4>Signals</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref71">valueAdded</A></b> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues) 
+</ul><h4>Signals</h4><ul><LI>virtual  void &nbsp;<b><A HREF="#ref71">valueAdded</A></b> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues) 
 </LI>
 </ul><h4>Protected Methods</h4><ul><LI><A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &nbsp;<b><A HREF="#ref28">fixRect</A></b> (<A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> p1,<A HREF="http://doc.trolltech.com/qpoint.html">QPoint</A> p2) 
 </LI>
@@ -116,13 +116,13 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref34">clearZoom</A></b> (void) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref35">paintLegend</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref35">paintLegend</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">paintTitle</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref36">paintTitle</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">paintAxis</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref37">paintAxis</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">paintChart</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect) 
+<LI>virtual  void &nbsp;<b><A HREF="#ref38">paintChart</A></b> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect) 
 </LI>
 <LI>virtual  void &nbsp;<b><A HREF="#ref76">paintEvent</A></b> (<A HREF="http://doc.trolltech.com/qpaintevent.html">QPaintEvent</A> *e) 
 </LI>
@@ -130,10 +130,10 @@
 </LI>
 </ul><h4>Protected Static Methods</h4><ul><LI>static  double &nbsp;<b><A HREF="#ref27">round</A></b> (double round,bool up) 
 </LI>
-</ul><h4>Protected Members</h4><ul><LI>std::list<std::list<double> > <b><A HREF="#ref4">Values</A></b></LI>
-<LI>std::list<QString> <b><A HREF="#ref5">XValues</A></b></LI>
-<LI>std::list<QString> <b><A HREF="#ref6">Labels</A></b></LI>
-<LI>std::list<bool> <b><A HREF="#ref7">Enabled</A></b></LI>
+</ul><h4>Protected Members</h4><ul><LI>std::list&lt;std::list&lt;double&gt; &gt; <b><A HREF="#ref4">Values</A></b></LI>
+<LI>std::list&lt;QString&gt; <b><A HREF="#ref5">XValues</A></b></LI>
+<LI>std::list&lt;QString&gt; <b><A HREF="#ref6">Labels</A></b></LI>
+<LI>std::list&lt;bool&gt; <b><A HREF="#ref7">Enabled</A></b></LI>
 <LI>bool <b><A HREF="#ref8">Legend</A></b></LI>
 <LI>bool <b><A HREF="#ref9">Last</A></b></LI>
 <LI>int <b><A HREF="#ref10">Grid</A></b></LI>
@@ -155,10 +155,10 @@
 <LI>double <b><A HREF="#ref26">zMaxValue</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> A widget that displays a linechart with optional background throbber (Not implemented yet).
  </p>
-<A NAME="Values"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<std::list<double> >  <strong>Values</strong>
-</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="XValues"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>>  <strong>XValues</strong>
-</td><td align="right"><h3><strong>XValues</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>>  <strong>Labels</strong>
-</td><td align="right"><h3><strong>Labels</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Enabled"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<bool>  <strong>Enabled</strong>
+<A NAME="Values"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;std::list&lt;double&gt; &gt;  <strong>Values</strong>
+</td><td align="right"><h3><strong>Values</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="XValues"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>XValues</strong>
+</td><td align="right"><h3><strong>XValues</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Labels"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt;  <strong>Labels</strong>
+</td><td align="right"><h3><strong>Labels</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Enabled"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;bool&gt;  <strong>Enabled</strong>
 </td><td align="right"><h3><strong>Enabled</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Legend"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Legend</strong>
 </td><td align="right"><h3><strong>Legend</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Last"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>bool  <strong>Last</strong>
 </td><td align="right"><h3><strong>Last</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="Grid"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int  <strong>Grid</strong>
@@ -190,10 +190,10 @@
 <br></td><td align="right"><h3><strong>mousePressEvent</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p>Reimplemented from <A HREF="http://doc.trolltech.com/qwidget.html#fb611b">QWidget</A>.</p>
 <A NAME="countSamples"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>int &nbsp;<strong>countSamples</strong> (void)
 <br></td><td align="right"><h3><strong>countSamples</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="clearZoom"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>clearZoom</strong> (void)
-<br></td><td align="right"><h3><strong>clearZoom</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="paintLegend"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintLegend</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect)
-<br></td><td align="right"><h3><strong>paintLegend</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintTitle"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintTitle</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect)
-<br></td><td align="right"><h3><strong>paintTitle</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintAxis"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintAxis</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect)
-<br></td><td align="right"><h3><strong>paintAxis</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintChart"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintChart</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &rect)
+<br></td><td align="right"><h3><strong>clearZoom</strong></h3></td></tr></table><p> <small>[protected]</small></p><A NAME="paintLegend"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintLegend</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect)
+<br></td><td align="right"><h3><strong>paintLegend</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintTitle"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintTitle</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect)
+<br></td><td align="right"><h3><strong>paintTitle</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintAxis"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintAxis</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect)
+<br></td><td align="right"><h3><strong>paintAxis</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="paintChart"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>paintChart</strong> (<A HREF="http://doc.trolltech.com/qpainter.html">QPainter</A> *p,<A HREF="http://doc.trolltech.com/qrect.html">QRect</A> &amp;rect)
 <br></td><td align="right"><h3><strong>paintChart</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><A NAME="toLineChart"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>toLineChart</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent=NULL,const char *name=NULL,WFlags f=0)
 <br></td><td align="right"><h3><strong>toLineChart</strong></h3></td></tr></table><p></p><p> Create a new linechart.
 </p>
@@ -245,14 +245,14 @@
 </p>
 <p><b>Returns</b>: If value is displayed or not.
    </p>
-<A NAME="setTitle"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setTitle</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &title=QString::null)
+<A NAME="setTitle"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setTitle</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;title=QString::null)
 <br></td><td align="right"><h3><strong>setTitle</strong></h3></td></tr></table><p></p><p> Set title of the chart. Set to empty string to not display title.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>title</i></TD><TD align="left" valign="top">Title of chart.
    </TD></TR>
 </TABLE></P>
-<A NAME="title"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &&nbsp;<strong>title</strong> (void)
+<A NAME="title"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;&nbsp;<strong>title</strong> (void)
 <br></td><td align="right"><h3><strong>title</strong></h3></td></tr></table><p></p><p> Get title of chart.
 </p>
 <p><b>Returns</b>: Title of chart.
@@ -281,7 +281,7 @@
 </p>
 <p><b>Returns</b>: If legend is displayed or not.
    </p>
-<A NAME="setYPostfix"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setYPostfix</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &postfix)
+<A NAME="setYPostfix"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setYPostfix</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;postfix)
 <br></td><td align="right"><h3><strong>setYPostfix</strong></h3></td></tr></table><p></p><p> Set y postfix value. This will be appended to the values in the axis legend.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -330,19 +330,19 @@
 </p>
 <p><b>Returns</b>: Max number of samples.
    </p>
-<A NAME="setLabels"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLabels</strong> (const std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &labels)
+<A NAME="setLabels"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setLabels</strong> (const std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;labels)
 <br></td><td align="right"><h3><strong>setLabels</strong></h3></td></tr></table><p></p><p> Set the labels on the chart lines.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>labels</i></TD><TD align="left" valign="top">Labels of the lines. Empty labels will not show up in the legend.
    </TD></TR>
 </TABLE></P>
-<A NAME="labels"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<strong>labels</strong> (void)
+<A NAME="labels"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>labels</strong> (void)
 <br></td><td align="right"><h3><strong>labels</strong></h3></td></tr></table><p></p><p> Get the labels of the chart lines.
 </p>
 <p><b>Returns</b>: List of labels.
    </p>
-<A NAME="addValues"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues)
+<A NAME="addValues"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addValues</strong> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues)
 <br></td><td align="right"><h3><strong>addValues</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Add a new value set to the chart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -351,17 +351,17 @@
 <TR><TD align="left" valign="top"><i>label</i></TD><TD align="left" valign="top">X-value on these values.
    </TD></TR>
 </TABLE></P>
-<A NAME="xValues"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &&nbsp;<strong>xValues</strong> (void)
+<A NAME="xValues"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;&nbsp;<strong>xValues</strong> (void)
 <br></td><td align="right"><h3><strong>xValues</strong></h3></td></tr></table><p></p><p> Get list of labels
 </p>
 <p><b>Returns</b>: List of labels
    </p>
-<A NAME="values"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<std::list<double> > &&nbsp;<strong>values</strong> (void)
+<A NAME="values"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;std::list&lt;double&gt; &gt; &amp;&nbsp;<strong>values</strong> (void)
 <br></td><td align="right"><h3><strong>values</strong></h3></td></tr></table><p></p><p> Get list of values.
 </p>
 <p><b>Returns</b>: Values in piechart.
    </p>
-<A NAME="exportData"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix)
+<A NAME="exportData"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>exportData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
 <br></td><td align="right"><h3><strong>exportData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Export chart to a map.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -370,7 +370,7 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to add to the map.
    </TD></TR>
 </TABLE></P>
-<A NAME="importData"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map<<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &prefix)
+<A NAME="importData"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>importData</strong> (std::map&lt;<A HREF="http://doc.trolltech.com/qcstring.html">QCString</A>,<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;data,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;prefix)
 <br></td><td align="right"><h3><strong>importData</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Import data
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -379,17 +379,17 @@
 <TR><TD align="left" valign="top"><i>prefix</i></TD><TD align="left" valign="top">Prefix to read data from.
    </TD></TR>
 </TABLE></P>
-<A NAME="enabledCharts"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list<bool> &nbsp;<strong>enabledCharts</strong> (void)
+<A NAME="enabledCharts"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>std::list&lt;bool&gt; &nbsp;<strong>enabledCharts</strong> (void)
 <br></td><td align="right"><h3><strong>enabledCharts</strong></h3></td></tr></table><p></p><p> Get enabled datavalues. Values in this list with false are not drawn in the chart.
  Could be an empty list if everything is enabled.
    </p>
-<A NAME="setEnabledCharts"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setEnabledCharts</strong> (std::list<bool> &enabled)
+<A NAME="setEnabledCharts"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setEnabledCharts</strong> (std::list&lt;bool&gt; &amp;enabled)
 <br></td><td align="right"><h3><strong>setEnabledCharts</strong></h3></td></tr></table><p></p><p> Set enabled datavalues. Values in this list with false are not drawn in the chart.
    </p>
 <A NAME="openCopy"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toLineChart.html">toLineChart</A> *&nbsp;<strong>openCopy</strong> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent)
 <br></td><td align="right"><h3><strong>openCopy</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Open chart in new window.
    </p>
-<A NAME="valueAdded"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>valueAdded</strong> (std::list<double> &value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &xValues)
+<A NAME="valueAdded"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>valueAdded</strong> (std::list&lt;double&gt; &amp;value,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;xValues)
 <br></td><td align="right"><h3><strong>valueAdded</strong></h3></td></tr></table><p> <small>[virtual signal]</small></p><p> A new value set was added to the chart.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -415,5 +415,6 @@
 <A NAME="addMenues"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>addMenues</strong> (<A HREF="http://doc.trolltech.com/qpopupmenu.html">QPopupMenu</A> *)
 <br></td><td align="right"><h3><strong>addMenues</strong></h3></td></tr></table><p> <small>[protected virtual]</small></p><p> Reimplemented for internal reasons.
    </p>
+<HR>
 </BODY>
 </HTML>

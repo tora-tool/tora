@@ -63,8 +63,8 @@
 #ifndef TOSMTP_H
 #define TOSMTP_H
 
-#include <qobject.h>
-#include <qstring.h>
+#include &lt;qobject.h&gt;
+#include &lt;qstring.h&gt;
 
 class QDns;
 class QSocket;
@@ -87,8 +87,8 @@ public:
    * @param subject Subject of mail.
    * @param body Body of email message.
    */
-  toSMTP(const QString &from,const QString &to,
-	 const QString &subject,const QString &body);
+  toSMTP(const QString &amp;from,const QString &amp;to,
+	 const QString &amp;subject,const QString &amp;body);
   ~toSMTP();
 
 private slots:
@@ -119,5 +119,6 @@ private:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

@@ -31,47 +31,50 @@
 </LI>
 <LI>virtual  &nbsp;<b><A HREF="#ref4">~extractor</A></b> () 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref5">initialize</A></b> (<A HREF="toExtract.html">toExtract</A> &ext)  const
+<LI>virtual  void &nbsp;<b><A HREF="#ref5">initialize</A></b> (<A HREF="toExtract.html">toExtract</A> &amp;ext)  const
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref6">create</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)  const
+<LI>virtual  void &nbsp;<b><A HREF="#ref6">create</A></b> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			<A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)  const
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref7">describe</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			  std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &lst,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)  const
+<LI>virtual  void &nbsp;<b><A HREF="#ref7">describe</A></b> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;lst,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)  const
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref8">migrate</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			    const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			    std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &src,
-			    std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &dst)  const
+<LI>virtual  void &nbsp;<b><A HREF="#ref8">migrate</A></b> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			 <A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			 std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;src,
+			 std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;dst)  const
 </LI>
-<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref9">drop</A></b> (<A HREF="toExtract.html">toExtract</A> &ext,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)  const
+<LI>virtual  void &nbsp;<b><A HREF="#ref9">drop</A></b> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+		      <A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)  const
 </LI>
-</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref1">registerExtract</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &oper,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type) 
+</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref1">registerExtract</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;db,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;oper,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref2">unregisterExtract</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &oper,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type) 
+<LI>void &nbsp;<b><A HREF="#ref2">unregisterExtract</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;db,
+			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;oper,
+			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This is an abstract class to implement part of an extractor for a database. Observe
  that an extractor must be stateless and threadsafe except for constructors and
  destructors. Use the toExtract::context function for saving context.
    </p>
-<A NAME="registerExtract"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>registerExtract</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &oper,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type)
+<A NAME="registerExtract"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>registerExtract</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;db,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;oper,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type)
 <br></td><td align="right"><h3><strong>registerExtract</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Register an operation to be handled by this extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -83,9 +86,9 @@
 <TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">The type of object that this is implemented for. Database specific.
      </TD></TR>
 </TABLE></P>
-<A NAME="unregisterExtract"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>unregisterExtract</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &db,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &oper,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type)
+<A NAME="unregisterExtract"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>unregisterExtract</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;db,
+			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;oper,
+			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type)
 <br></td><td align="right"><h3><strong>unregisterExtract</strong></h3></td></tr></table><p> <small>[protected]</small></p><p> Unregister an operation to be handled by this extractor.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -108,7 +111,7 @@
 <A NAME="~extractor"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~extractor</strong> ()
 <br></td><td align="right"><h3><strong>~extractor</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Destructor.
      </p>
-<A NAME="initialize"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>initialize</strong> (<A HREF="toExtract.html">toExtract</A> &ext)
+<A NAME="initialize"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>initialize</strong> (<A HREF="toExtract.html">toExtract</A> &amp;ext)
 <br></td><td align="right"><h3><strong>initialize</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Initiate an extractor for a given connection. Can be used to set up states necessary
  for further processing. Should probably set blocksize to be used for resizing (toExtract::setBlocksize).
 </p>
@@ -116,15 +119,18 @@
 <TR><TD align="left" valign="top"><i>ext</i></TD><TD align="left" valign="top">Extractor to generate script.
      </TD></TR>
 </TABLE></P>
-<A NAME="create"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>create</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			   const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
+<A NAME="create"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>create</strong> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			<A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+			const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>create</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to recreate a database object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
 <TR><TD align="left" valign="top"><i>ext</i></TD><TD align="left" valign="top">Extractor to generate script.
+</TD></TR>
+<TR><TD align="left" valign="top"><i>stream</i></TD><TD align="left" valign="top">Stream to write script to.
 </TD></TR>
 <TR><TD align="left" valign="top"><i>type</i></TD><TD align="left" valign="top">Type of object to recreate.
 </TD></TR>
@@ -139,12 +145,12 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to recreate an object.
      </p>
-<A NAME="describe"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>describe</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			  std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &lst,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
+<A NAME="describe"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>describe</strong> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			  std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;lst,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+			  const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>describe</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to describe a database object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -163,10 +169,11 @@
 <TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">Name of database object.
      </TD></TR>
 </TABLE></P>
-<A NAME="migrate"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>migrate</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			    const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			    std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &src,
-			    std::list<<A HREF="http://doc.trolltech.com/qstring.html">QString</A>> &dst)
+<A NAME="migrate"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>migrate</strong> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+			 <A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+			 std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;src,
+			 std::list&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>&gt; &amp;dst)
 <br></td><td align="right"><h3><strong>migrate</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to migrate a database object from one description to
  another description.
 </p>
@@ -182,11 +189,12 @@
 </TABLE></P>
 <p><b>Returns</b>: A script to change the src database object to dst.
      </p>
-<A NAME="drop"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>drop</strong> (<A HREF="toExtract.html">toExtract</A> &ext,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &type,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &schema,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &owner,
-			 const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &name)
+<A NAME="drop"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>drop</strong> (<A HREF="toExtract.html">toExtract</A> &amp;ext,
+		      <A HREF="http://doc.trolltech.com/qtextstream.html">QTextStream</A> &amp;stream,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;type,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;schema,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;owner,
+		      const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
 <br></td><td align="right"><h3><strong>drop</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p> Called to generate a script to drop an object.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -205,5 +213,6 @@
 </TABLE></P>
 <p><b>Returns</b>: A string containing a script to recreate an object.
      </p>
+<HR>
 </BODY>
 </HTML>

@@ -65,7 +65,7 @@
 
 #include "toeditwidget.h"
 
-#if QT_VERSION < 300
+#if QT_VERSION &lt; 300
 #include "tomarkedtext.2.h"
 #else
 #include "qtlegacy/qttableview.h"
@@ -73,10 +73,10 @@
 #include "tomarkedtext.3.h"
 #endif
 
-#include <map>
+#include &lt;map&gt;
 
-#include <qglobal.h>
-#include <qstring.h>
+#include &lt;qglobal.h&gt;
+#include &lt;qstring.h&gt;
 
 class TOPrinter;
 
@@ -105,12 +105,11 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
    * @param pageNo Pagenumber.
    * @param paint Wether to paint or just test.
    */
-  virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
+  virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &amp;offset,
 			int pageNo,bool paint=true);
 
   void searchFound(int line,int col);
   void incrementalSearch(bool forward,bool next);
-  void findPosition(int index,int &line,int &col);
 protected:
   /** Reimplemented for internal reasons.
    */
@@ -128,12 +127,12 @@ public:
    * @param str String to insert.
    * @param mark True if mark inserted as selected.
    */
-  virtual void insert(const QString &str,bool mark)
+  virtual void insert(const QString &amp;str,bool mark)
   { toMultiLineEdit::insert(str,mark); }
   /** Insert text.
    * @param str String to insert.
    */
-  virtual void insert(const QString &str)
+  virtual void insert(const QString &amp;str)
   { toMultiLineEdit::insert(str); }
   /** Get selected text. This function is now public.
    * @return The selected text.
@@ -164,11 +163,11 @@ public:
   /** Open a file for editing.
    * @param file File to open for editing.
    */
-  virtual void openFilename(const QString &file);
+  virtual void openFilename(const QString &amp;file);
   /** Set the current filename of the file in editor.
    * @param str String containing filename.
    */
-  virtual void setFilename(const QString &str)
+  virtual void setFilename(const QString &amp;str)
   { Filename=str; }
   /** Update user interface with availability of copy/paste etc.
    */
@@ -226,7 +225,7 @@ public:
   virtual bool searchNext(toSearchReplace *search);
   /** Replace entry with new data
    */
-  virtual void searchReplace(const QString &newData);
+  virtual void searchReplace(const QString &amp;newData);
   /** Check if data can be modified by search
    * @param all If true can replace all, otherwise can replace right now.
    */
@@ -240,12 +239,18 @@ public:
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
+  /** Find the line and column of an index into the string of the entire editor.
+   * @param index Index to get line and col from.
+   * @param line Will be filled out with the line.
+   * @param col Will be filled out with the col.
+   */
+  void findPosition(int index,int &amp;line,int &amp;col);
 protected:
   virtual void newLine(void);
   virtual void dropEvent(QDropEvent *);
@@ -260,5 +265,6 @@ private slots:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>

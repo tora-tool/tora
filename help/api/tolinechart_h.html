@@ -63,10 +63,10 @@
 #ifndef TOLINECHART_H
 #define TOLINECHART_H
 
-#include <list>
-#include <map>
+#include &lt;list&gt;
+#include &lt;map&gt;
 
-#include <qwidget.h>
+#include &lt;qwidget.h&gt;
 
 class QPopupMenu;
 class QScrollBar;
@@ -83,10 +83,10 @@ class toLineChart : public QWidget {
   QScrollBar *Vertical;
 
 protected:
-  std::list<std::list<double> > Values;
-  std::list<QString> XValues;
-  std::list<QString> Labels;
-  std::list<bool> Enabled;
+  std::list&lt;std::list&lt;double&gt; &gt; Values;
+  std::list&lt;QString&gt; XValues;
+  std::list&lt;QString&gt; Labels;
+  std::list&lt;bool&gt; Enabled;
   bool Legend;
   bool Last;
   int Grid;
@@ -118,10 +118,10 @@ protected:
   int countSamples(void);
   void clearZoom(void);
 
-  virtual void paintLegend(QPainter *p,QRect &rect);
-  virtual void paintTitle(QPainter *p,QRect &rect);
-  virtual void paintAxis(QPainter *p,QRect &rect);
-  virtual void paintChart(QPainter *p,QRect &rect);
+  virtual void paintLegend(QPainter *p,QRect &amp;rect);
+  virtual void paintTitle(QPainter *p,QRect &amp;rect);
+  virtual void paintAxis(QPainter *p,QRect &amp;rect);
+  virtual void paintChart(QPainter *p,QRect &amp;rect);
 public:
   /** Create a new linechart.
    * @param parent Parent widget.
@@ -167,12 +167,12 @@ public:
   /** Set title of the chart. Set to empty string to not display title.
    * @param title Title of chart.
    */
-  void setTitle(const QString &title=QString::null)
+  void setTitle(const QString &amp;title=QString::null)
   { Title=title; setCaption(title); update(); }
   /** Get title of chart.
    * @return Title of chart.
    */
-  const QString &title(void)
+  const QString &amp;title(void)
   { return Title; }
 
   /** Specify if a grid should be displayed in the graph, default is on.
@@ -200,7 +200,7 @@ public:
   /** Set y postfix value. This will be appended to the values in the axis legend.
    * @param postfix The string to append.
    */
-  void setYPostfix(const QString &postfix)
+  void setYPostfix(const QString &amp;postfix)
   { YPostfix=postfix; update(); }
   /** Set max value on y-axis to auto.
    */
@@ -244,51 +244,51 @@ public:
   /** Set the labels on the chart lines.
    * @param labels Labels of the lines. Empty labels will not show up in the legend.
    */
-  void setLabels(const std::list<QString> &labels)
+  void setLabels(const std::list&lt;QString&gt; &amp;labels)
   { Labels=labels; update(); }
   /** Get the labels of the chart lines.
    * @return List of labels.
    */
-  std::list<QString> &labels(void)
+  std::list&lt;QString&gt; &amp;labels(void)
   { return Labels; }
 
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
    * @param label X-value on these values.
    */
-  virtual void addValues(std::list<double> &value,const QString &xValues);
+  virtual void addValues(std::list&lt;double&gt; &amp;value,const QString &amp;xValues);
 
   /** Get list of labels
    * @return List of labels
    */
-  std::list<QString> &xValues(void)
+  std::list&lt;QString&gt; &amp;xValues(void)
   { return XValues; }
 
   /** Get list of values.
    * @return Values in piechart.
    */
-  std::list<std::list<double> > &values(void)
+  std::list&lt;std::list&lt;double&gt; &gt; &amp;values(void)
   { return Values; }
 
   /** Export chart to a map.
    * @param data A map that can be used to recreate the data of a chart.
    * @param prefix Prefix to add to the map.
    */
-  virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void exportData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
   /** Import data
    * @param data Data to read from a map.
    * @param prefix Prefix to read data from.
    */
-  virtual void importData(std::map<QCString,QString> &data,const QCString &prefix);
+  virtual void importData(std::map&lt;QCString,QString&gt; &amp;data,const QCString &amp;prefix);
 
   /** Get enabled datavalues. Values in this list with false are not drawn in the chart.
    * Could be an empty list if everything is enabled.
    */
-  std::list<bool> enabledCharts(void)
+  std::list&lt;bool&gt; enabledCharts(void)
   { return Enabled; }
   /** Set enabled datavalues. Values in this list with false are not drawn in the chart.
    */
-  void setEnabledCharts(std::list<bool> &enabled)
+  void setEnabledCharts(std::list&lt;bool&gt; &amp;enabled)
   { Enabled=enabled; update(); }
   /** Open chart in new window.
    */
@@ -298,7 +298,7 @@ signals:
    * @param value New values for charts (One for each line).
    * @param label X-value on these values.
    */
-  virtual void valueAdded(std::list<double> &value,const QString &xValues);
+  virtual void valueAdded(std::list&lt;double&gt; &amp;value,const QString &amp;xValues);
 public slots:
   /** Clear the values from the chart.
    */
@@ -331,5 +331,6 @@ private slots:
 
 #endif
 </pre>
+<HR>
 </BODY>
 </HTML>
