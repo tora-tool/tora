@@ -133,9 +133,6 @@ private:
    */
   std::map<int,toTool *> Tools;
   /**
-   * A map of toolbuttons to tools that need connection to be enabled.
-   */
-  /**
    * A list of toolbuttons that need an open connection to be enabled. If tool pointer
    * is zero simply require any connection to be enabled.
    */
