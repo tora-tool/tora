@@ -64,49 +64,21 @@ class toExtract {
 			 const QString &owner);
   QString dropDatabaseLink(const QString &schema,const QString &name,const QString &type,
 			   const QString &owner);
-  QString dropDimension(const QString &schema,const QString &name,const QString &type,
-			const QString &owner);
-  QString dropDirectory(const QString &schema,const QString &name,const QString &type,
-			const QString &owner);
-  QString dropFunction(const QString &schema,const QString &name,const QString &type,
+  QString dropMViewLog(const QString &schema,const QString &name,const QString &type,
 		       const QString &owner);
-  QString dropIndex(const QString &schema,const QString &name,const QString &type,
-		    const QString &owner);
-  QString dropLibrary(const QString &schema,const QString &name,const QString &type,
-		      const QString &owner);
-  QString dropMaterializedView(const QString &schema,const QString &name,const QString &type,
-			       const QString &owner);
-  QString dropMaterializedViewLog(const QString &schema,const QString &name,const QString &type,
-				  const QString &owner);
-  QString dropPackage(const QString &schema,const QString &name,const QString &type,
-		      const QString &owner);
-  QString dropProcedure(const QString &schema,const QString &name,const QString &type,
-			const QString &owner);
+  QString dropObject(const QString &schema,const QString &name,const QString &type,
+		     const QString &owner);
   QString dropProfile(const QString &schema,const QString &name,const QString &type,
 		      const QString &owner);
-  QString dropRole(const QString &schema,const QString &name,const QString &type,
-		   const QString &owner);
-  QString dropRollbackSegment(const QString &schema,const QString &name,const QString &type,
-			      const QString &owner);
-  QString dropSequence(const QString &schema,const QString &name,const QString &type,
-		       const QString &owner);
-  QString dropSnapshot(const QString &schema,const QString &name,const QString &type,
-		       const QString &owner);
-  QString dropSnapshotLog(const QString &schema,const QString &name,const QString &type,
-			  const QString &owner);
+  QString dropSchemaObject(const QString &schema,const QString &name,const QString &type,
+			   const QString &owner);
   QString dropSynonym(const QString &schema,const QString &name,const QString &type,
 		      const QString &owner);
   QString dropTable(const QString &schema,const QString &name,const QString &type,
 		    const QString &owner);
   QString dropTablespace(const QString &schema,const QString &name,const QString &type,
 			 const QString &owner);
-  QString dropTrigger(const QString &schema,const QString &name,const QString &type,
-		      const QString &owner);
-  QString dropType(const QString &schema,const QString &name,const QString &type,
-		   const QString &owner);
   QString dropUser(const QString &schema,const QString &name,const QString &type,
-		   const QString &owner);
-  QString dropView(const QString &schema,const QString &name,const QString &type,
 		   const QString &owner);
 
   // Resize functions
@@ -116,43 +88,40 @@ class toExtract {
   // Misc extract functions
   QString constraintColumns(const QString &owner,const QString &name);
   QString createComments(const QString &schema,const QString &owner,const QString &name);
-  QString indexColumns(const QString &schema,const QString &owner,const QString &name);
-  QString createTableText(list<QString> &result,const QString &schema,
-			  const QString &owner,const QString &name);
-  QString tableColumns(const QString &owner,const QString &name);
-  QString displaySource(const QString &schema,
-			const QString &owner,const QString &name,
-			const QString &type);
-  QString createPartitionedIndex(const QString &schema,
-				 const QString &owner,const QString &name,
+  QString createIOT(const QString &schema,const QString &owner,const QString &name);
+  QString createMView(const QString &schema,const QString &owner,const QString &name,
+		      const QString &type);
+  QString createMViewIndex(const QString &schema,const QString &owner,const QString &name);
+  QString createMViewLog(const QString &schema,const QString &owner,const QString &name,
+			 const QString &type);
+  QString createMViewTable(const QString &schema,const QString &owner,const QString &name);
+  QString createPartitionedIOT(const QString &schema,const QString &owner,const QString &name);
+  QString createPartitionedIndex(const QString &schema,const QString &owner,const QString &name,
 				 const QString &soFar);
+  QString createPartitionedTable(const QString &schema,const QString &owner,const QString &name);
+  QString createTableText(list<QString> &result,const QString &schema,const QString &owner,const QString &name);
+  QString displaySource(const QString &schema,const QString &owner,const QString &name,
+			const QString &type);
+  QString grantedPrivs(const QString &name);
+  QString indexColumns(const QString &schema,const QString &owner,const QString &name);
+  QString keyColumns(const QString &owner,const QString &name,const QString &type,
+		     const QString &table);
+  QString partitionKeyColumns(const QString &owner,const QString &name,const QString &type);
   QString rangePartitions(const QString &owner,const QString &name,
 			  const QString &subPartitionType,const QString &locality);
-  QString keyColumns(const QString &owner,const QString &name,
-		     const QString &type,const QString &table);
-  QString partitionKeyColumns(const QString &owner,const QString &name,const QString &type);
   QString subPartitionKeyColumns(const QString &owner,const QString &name,const QString &type);
-  QString createMView(const QString &schema,const QString &owner,
-		      const QString &name,const QString &type);
-  QString createMViewLog(const QString &schema,const QString &owner,
-			 const QString &name,const QString &type);
-  QString createMViewTable(const QString &schema,const QString &owner,const QString &name);
-  QString createMViewIndex(const QString &schema,const QString &owner,const QString &name);
-  QString createPartitionedIOT(const QString &schema,const QString &owner,const QString &name);
-  QString createIOT(const QString &schema,const QString &owner,const QString &name);
-  QString createPartitionedTable(const QString &schema,const QString &owner,const QString &name);
-  QString grantedPrivs(const QString &name);
+  QString tableColumns(const QString &owner,const QString &name);
 
   // Misc functions
   QString generateHeading(const QString &action,
 			  const QString &type,
 			  list<QString> &list);
+  void initialNext(const QString &blocks,QString &initial,QString &next);
   void parseObject(const QString &object,QString &owner,QString &name);
   void objectExists(const QString &owner,const QString &name,const QString &type);
-  QString setSchema(const QString &owner);
   QString prepareDB(const QString &data);
   QString segmentAttributes(list<QString> &result);
-  void initialNext(const QString &blocks,QString &initial,QString &next);
+  QString setSchema(const QString &owner);
   void setSizes(void);
 public:
   toExtract(toConnection &conn);

@@ -369,7 +369,7 @@ static toSQL SQLListConstraint7("toExtract:ListConstraint",
 			       QString::null,
 			       "7.0");
 
-static toSQL SQLReferedTable("toExtract:ReferedTable",
+static toSQL SQLConstraintTable("toExtract:ConstraintTable",
 			     "SELECT table_name
   FROM all_constraint
  WHERE owner = :own<char[100]>
@@ -433,7 +433,7 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
 
     if (tchr=="R") {
       otl_stream str(1,
-		     SQLReferedTable(Connection),
+		     SQLConstraintTable(Connection),
 		     Connection.connection());
       str<<rOwner.utf8();
       str<<rName.utf8();
@@ -794,7 +794,20 @@ QString toExtract::createExchangeTable(const QString &schema,const QString &owne
 
 void toExtract::initialNext(const QString &blocks,QString &initial,QString &next)
 {
-  // Need to implement this
+  list<QString>::iterator iinit=Initial.begin();
+  list<QString>::iterator inext=Next.begin();
+  list<QString>::iterator ilimit=Limit.begin();
+  while(ilimit!=Initial.end()) {
+    if (*ilimit=="UNLIMITED"||
+	(*ilimit).toFloat()>blocks) {
+      initial=*iinit;
+      next=*inext;
+      return;
+    }
+    iinit++;
+    inext++;
+    ilimit++;
+  }
 }
 
 QString toExtract::segmentAttributes(list<QString> &result)
@@ -3943,6 +3956,174 @@ QString toExtract::createView(const QString &schema,const QString &owner,const Q
   return ret;
 }
 
+QString toExtract::dropConstraint(const QString &schema,const QString &owner,
+				  const QString &type,const QString &name)
+{
+  list<QString> tableName=toReadQuery(Connection,
+				      SQLConstraintTable(Connection),
+				      owner,name);
+  if (tableName.size()==0)
+    throw QString("Couldn't find constraint %1.%2").arg(owner.lower()).arg(name.lower());
+  QString sql=QString("ALTER TABLE %1%2 DROP CONSTRAINT %3").
+    arg(schema).
+    arg(toShift(tableName).lower()).
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropDatabaseLink(const QString &schema,const QString &owner,
+				    const QString &type,const QString &name)
+{
+  QString sql=QString("DROP%1 DATABASE LINK %2").
+    arg((owner=="PUBLIC")?" PUBLIC":"").
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropMViewLog(const QString &schema,const QString &owner,
+				const QString &type,const QString &name)
+{
+  QString sql=QString("DROP %1 ON %2%3").arg(type).arg(schema).arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+
+  return ret;
+}
+
+QString toExtract::dropObject(const QString &schema,const QString &owner,
+			      const QString &type,const QString &name)
+{
+  QString sql=QString("DROP %1 %2").arg(type).arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropSchemaObject(const QString &schema,const QString &owner,
+				    const QString &type,const QString &name)
+{
+  QString sql=QString("DROP %1 %2%3").arg(type).arg(schema).arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropProfile(const QString &schema,const QString &owner,
+			       const QString &type,const QString &name)
+{
+  QString sql=QString("DROP PROFILE %1 CASCADE").arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropSynonym(const QString &schema,const QString &owner,
+			       const QString &type,const QString &name)
+{
+  QString sql=QString("DROP%1 SYNONYM %2%3").
+    arg((owner=="PUBLIC")?" PUBLIC":"").
+    arg((owner=="PUBLIC")?schema:QString("")).
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropTable(const QString &schema,const QString &owner,
+			     const QString &type,const QString &name)
+{
+  QString sql=QString("DROP TABLE %1%2 CASCADE CONSTRAINTS").
+    arg(schema).
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropTablespace(const QString &schema,const QString &owner,
+				  const QString &type,const QString &name)
+{
+  QString sql=QString("DROP TABLESPACE %1 INCLUDING CONTENTS CASCADE CONSTRAINTS").
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
+QString toExtract::dropUser(const QString &schema,const QString &owner,
+			    const QString &type,const QString &name)
+{
+  QString sql=QString("DROP USER %1 CASCADE").
+    arg(name.lower());
+  QString ret;
+  if (Prompt) {
+    ret="PROMPT ";
+    ret+=sql;
+    ret+="\n\n";
+  }
+  ret+=sql;
+  ret+=";\n\n";
+  return ret;
+}
+
 QString toExtract::compile(const QString &type,list<QString> &objects)
 {
   QString ret=generateHeading("COMPILE",type,objects);
@@ -4035,7 +4216,74 @@ QString toExtract::create(const QString &type,list<QString> &objects)
     else {
       QString str="Invalid type ";
       str+=type;
-      str+=" to compile";
+      str+=" to create";
+      throw str;
+    }
+  }
+  return ret;
+}
+
+QString toExtract::drop(const QString &type,list<QString> &objects)
+{
+  QString ret=generateHeading("CREATE",type,objects);
+
+  QString utype=type.upper();
+  for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString owner;
+    QString name;
+    parseObject(*i,owner,name);
+    QString schema=setSchema(owner);
+
+    if (utype=="CONSTRAINT")
+      ret+=dropConstraint(schema,owner,type,name);
+    else if (utype=="DATABASE LINK")
+      ret+=dropDatabaseLink(schema,owner,type,name);
+    else if (utype=="DIMENSION")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="DIRECTORY")
+      ret+=dropObject(schema,owner,type,name);
+    else if (utype=="FUNCTION")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="INDEX")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="MATERIALIZED VIEW")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="MATERIALIZED VIEW LOG")
+      ret+=dropMViewLog(schema,owner,type,name);
+    else if (utype=="PACKAGE")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="PROCEDURE")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="PROFILE")
+      ret+=dropProfile(schema,owner,type,name);
+    else if (utype=="ROLE")
+      ret+=dropObject(schema,owner,type,name);
+    else if (utype=="ROLLBACK SEGMENT")
+      ret+=dropObject(schema,owner,type,name);
+    else if (utype=="SEQUENCE")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="SNAPSHOT")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="SNAPSHOT LOG")
+      ret+=dropMViewLog(schema,owner,type,name);
+    else if (utype=="SYNONYM")
+      ret+=dropSynonym(schema,owner,type,name);
+    else if (utype=="TABLE")
+      ret+=dropTable(schema,owner,type,name);
+    else if (utype=="TABLESPACE")
+      ret+=dropTablespace(schema,owner,type,name);
+    else if (utype=="TRIGGER")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="TYPE")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else if (utype=="USER")
+      ret+=dropUser(schema,owner,type,name);
+    else if (utype=="VIEW")
+      ret+=dropSchemaObject(schema,owner,type,name);
+    else {
+      QString str="Invalid type ";
+      str+=type;
+      str+=" to drop";
       throw str;
     }
   }
