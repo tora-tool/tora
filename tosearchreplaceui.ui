@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>574</width>
+            <width>570</width>
             <height>217</height>
         </rect>
     </property>
@@ -394,7 +394,14 @@
         <receiver>toSearchReplaceUI</receiver>
         <slot>searchChanged()</slot>
     </connection>
+    <connection>
+        <sender>Replace</sender>
+        <signal>clicked()</signal>
+        <receiver>toSearchReplaceUI</receiver>
+        <slot>replace()</slot>
+    </connection>
     <slot access="public">displayHelp()</slot>
+    <slot access="public">replace()</slot>
     <slot access="public">replaceAll()</slot>
     <slot access="public">search()</slot>
     <slot access="public">searchChanged()</slot>

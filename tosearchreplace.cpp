@@ -295,7 +295,7 @@ void toSearchReplace::searchNext(void)
 
 void toSearchReplace::replace(void)
 {
-  if (!Text)
+  if (!Text||Text->isReadOnly())
     return;
   Text->insert(ReplaceText->text());
   searchNext();
@@ -303,7 +303,7 @@ void toSearchReplace::replace(void)
 
 void toSearchReplace::replaceAll(void)
 {
-  if (!Text)
+  if (!Text||Text->isReadOnly())
     return;
   while(Replace->isEnabled())
     replace();

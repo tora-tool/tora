@@ -777,68 +777,72 @@ toTuningFileIO::toTuningFileIO(QWidget *parent=0,const char *name=0,WFlags fl=0)
   Box=NULL;
   connect(toCurrentTool(this)->timer(),SIGNAL(timeout()),this,SLOT(refresh()));
 
-  toConnection &conn=toCurrentConnection(this);
-  list<QString> Files=toReadQuery(conn,SQLListFiles(conn));
-  viewport()->setBackgroundColor(qApp->palette().active().background());
+  try {
+    toConnection &conn=toCurrentConnection(this);
+    list<QString> Files=toReadQuery(conn,SQLListFiles(conn));
+    viewport()->setBackgroundColor(qApp->palette().active().background());
     
-  list<QString> labels;
-  labels.insert(labels.end(),"Reads");
-  labels.insert(labels.end(),"Blocks Read");
-  labels.insert(labels.end(),"Writes");
-  labels.insert(labels.end(),"Blocks Written");
-  Box=new QGrid(2,this->viewport());
-  addChild(Box);
-  while(Files.size()>0) {
-    list<QString> val;
-    toBarChart *chart=new toBarChart(Box);
-    Charts[toShift(Files)]=chart;
-    chart->setTitle(toShift(Files));
-    chart->setMinimumSize(200,170);
-    chart->setYPostfix("blocks/s");
-    chart->setLabels(labels);
-  }
-  Box->setFixedWidth(viewport()->width()-50);
-  Box->show();
-  LastStamp=0;
-  refresh();
+    list<QString> labels;
+    labels.insert(labels.end(),"Reads");
+    labels.insert(labels.end(),"Blocks Read");
+    labels.insert(labels.end(),"Writes");
+    labels.insert(labels.end(),"Blocks Written");
+    Box=new QGrid(2,this->viewport());
+    addChild(Box);
+    while(Files.size()>0) {
+      list<QString> val;
+      toBarChart *chart=new toBarChart(Box);
+      Charts[toShift(Files)]=chart;
+      chart->setTitle(toShift(Files));
+      chart->setMinimumSize(200,170);
+      chart->setYPostfix("blocks/s");
+      chart->setLabels(labels);
+    }
+    Box->setFixedWidth(viewport()->width()-50);
+    Box->show();
+    LastStamp=0;
+    refresh();
+  } TOCATCH
 }
 
 void toTuningFileIO::refresh(void)
 {
-  toConnection &conn=toCurrentConnection(this);
-  time_t now=time(NULL);
-  if (now!=LastStamp) {
-    list<QString> FileInfo=toReadQuery(conn,SQLFileIO(conn));
-    while(FileInfo.size()>0) {
-      QString file=toShift(FileInfo);
-      QString label=toShift(FileInfo);
-      list<double> vals;
-      vals.insert(vals.end(),toShift(FileInfo).toDouble());
-      vals.insert(vals.end(),toShift(FileInfo).toDouble());
-      vals.insert(vals.end(),toShift(FileInfo).toDouble());
-      vals.insert(vals.end(),toShift(FileInfo).toDouble());
+  try {
+    toConnection &conn=toCurrentConnection(this);
+    time_t now=time(NULL);
+    if (now!=LastStamp) {
+      list<QString> FileInfo=toReadQuery(conn,SQLFileIO(conn));
+      while(FileInfo.size()>0) {
+	QString file=toShift(FileInfo);
+	QString label=toShift(FileInfo);
+	list<double> vals;
+	vals.insert(vals.end(),toShift(FileInfo).toDouble());
+	vals.insert(vals.end(),toShift(FileInfo).toDouble());
+	vals.insert(vals.end(),toShift(FileInfo).toDouble());
+	vals.insert(vals.end(),toShift(FileInfo).toDouble());
 
-      list<double> last=LastValues[file];
+	list<double> last=LastValues[file];
 
-      list<double> dispVal;
-      if (last.size()>0) {
-	list<double>::iterator i=vals.begin();
-	list<double>::iterator j=last.begin();
-	while(i!=vals.end()&&j!=last.end()) {
-	  dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
-	  i++;
-	  j++;
+	list<double> dispVal;
+	if (last.size()>0) {
+	  list<double>::iterator i=vals.begin();
+	  list<double>::iterator j=last.begin();
+	  while(i!=vals.end()&&j!=last.end()) {
+	    dispVal.insert(dispVal.end(),(*i-*j)/(now-LastStamp));
+	    i++;
+	    j++;
+	  }
+	}
+	LastValues[file]=vals;
+      
+	if (dispVal.size()>0&&Charts.find(file)!=Charts.end()) {
+	  toBarChart *chart=Charts[file];
+	  chart->addValues(dispVal,label);
 	}
       }
-      LastValues[file]=vals;
-      
-      if (dispVal.size()>0&&Charts.find(file)!=Charts.end()) {
-	toBarChart *chart=Charts[file];
-	chart->addValues(dispVal,label);
-      }
+      LastStamp=now;
     }
-    LastStamp=now;
-  }
+  } TOCATCH
 }
 
 void toTuningFileIO::resizeEvent(QResizeEvent *e)

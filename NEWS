@@ -47,6 +47,7 @@
 2001-08-14: File I/O statistics.
 2001-08-14: Fixed some SQL for the tuning.
 2001-08-14: Added hitrates moment values to tuning.
+2001-08-14: Fixed problem with replace not working.
 
 0.14: Released 2001-08-02
 
