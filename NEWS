@@ -3,6 +3,7 @@
 2001-07-02: Upgraded to 3.2.20 of OTL.
 2001-07-02: Rewrote tns_names finding on Windows.
 2001-07-02: New bindings and context menu for DB browser.
+2001-07-02: Fixed coredump in toMain (Thanx Norbert Kiesel).
 
 0.12: Released 2001-07-01
 

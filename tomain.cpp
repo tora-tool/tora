@@ -460,7 +460,7 @@ toMain::toMain()
 void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child windows
 {
   QWidget *currWidget=qApp->focusWidget();
-  if (currWidget->inherits("toMarkedText")) {
+  if (currWidget && currWidget->inherits("toMarkedText")) {
     toMarkedText *marked=dynamic_cast<toMarkedText *>(currWidget);
     bool readOnly=marked->isReadOnly();
     menuBar()->setItemEnabled(TO_EDIT_UNDO,!readOnly&&marked->getUndoAvailable());
@@ -490,14 +490,14 @@ void toMain::editFileMenu(void)	// Ugly hack to disable edit with closed child w
     menuBar()->setItemEnabled(TO_FILE_OPEN,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE,false);
     menuBar()->setItemEnabled(TO_FILE_SAVE_AS,false);
-    if (currWidget->inherits("toResultView")||
-	toContent(currWidget)) {
+    if (currWidget && (currWidget->inherits("toResultView")||
+	toContent(currWidget))) {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,true);
       menuBar()->setItemEnabled(TO_FILE_PRINT,true);
       menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
     } else {
       menuBar()->setItemEnabled(TO_EDIT_READ_ALL,false);
-      if (currWidget->inherits("toListView")) {
+      if (currWidget && currWidget->inherits("toListView")) {
 	menuBar()->setItemEnabled(TO_FILE_PRINT,true);
         menuBar()->setItemEnabled(TO_EDIT_SEARCH,true);
       } else {
