@@ -35,6 +35,7 @@
 TO_NAMESPACE;
 
 #include <stdio.h>
+#include <qdragobject.h>
 
 #include "toconf.h"
 #include "tomain.h"
@@ -44,6 +45,46 @@ TO_NAMESPACE;
 #include "toresultcontent.moc"
 
 #define INC_SIZE 50
+
+void toResultContent::contentsMouseMoveEvent (QMouseEvent *e)
+{
+  if (e->state()==LeftButton&&
+      e->stateAfter()==LeftButton) {
+    QPoint p=e->pos();
+    int col=columnAt(p.x());
+    int row=rowAt(p.y());
+    QString str=text(row,col);
+    if (str.length()) {
+      QDragObject *d=new QTextDrag(str,this);
+      d->dragCopy();
+    }
+  } else
+    QTable::contentsMouseMoveEvent(e);
+}
+
+void toResultContent::dragEnterEvent(QDragEnterEvent *e)
+{
+  e->accept(QTextDrag::canDecode(e));
+}
+
+void toResultContent::dropEvent(QDropEvent *e)
+{
+  QPoint p=e->pos();
+  int col=columnAt(p.x());
+  int row=rowAt(p.y());
+
+  changePosition(col,row);
+
+  if (CurrentRow!=row) {
+    OrigValues.clear();
+    for (int i=0;i<numCols();i++)
+      OrigValues.insert(OrigValues.end(),text(row,i));
+    CurrentRow=row;
+  }
+  QString text;
+  if ( QTextDrag::decode(e,text))
+    setText(row,col,text);
+}
 
 toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *name)
   : QTable(parent,name),Connection(conn)
@@ -55,6 +96,7 @@ toResultContent::toResultContent(toConnection &conn,QWidget *parent,const char *
   setSelectionMode(NoSelection);
   connect(horizontalHeader(),SIGNAL(clicked(int)),this,SLOT(changeSort(int)));
   SortRow=-1;
+  setAcceptDrops(true);
 }
 
 void toResultContent::wrongUsage(void)
@@ -164,9 +206,12 @@ void toResultContent::paintCell(QPainter *p,int row,int col,const QRect &cr,bool
 
 QWidget *toResultContent::beginEdit(int row,int col,bool replace)
 {
-  OrigValues.clear();
-  for (int i=0;i<numCols();i++)
-    OrigValues.insert(OrigValues.end(),text(row,i));
+  if (CurrentRow!=row) {
+    OrigValues.clear();
+    for (int i=0;i<numCols();i++)
+      OrigValues.insert(OrigValues.end(),text(row,i));
+    CurrentRow=row;
+  }
 
   return QTable::beginEdit(row,col,replace);
 }
@@ -277,7 +322,7 @@ void toResultContent::changePosition(int row,int col)
     }
     OrigValues.clear();
   }
-  CurrentRow=row;
+  CurrentRow=-1;
 }
 
 void toResultContent::drawContents(QPainter * p,int cx,int cy,int cw,int ch)

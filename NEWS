@@ -15,6 +15,9 @@
 2001-05-21: Only update changed columns in toResultContent.
 2001-05-21: Fixed SEGV in toReadValue and large hex longs.
 2001-05-21: Add search in toResultContent.
+2001-05-21: Added drag from toResultContent.
+2001-05-21: Added drop to toResultContent.
+2001-05-21: Include schema when dragging schema objects in templates.
 
 0.9.1: Released 2001-05-20
 

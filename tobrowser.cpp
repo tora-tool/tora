@@ -679,6 +679,15 @@ public:
       setPixmap(0,image);
     }
   }
+
+  virtual QString allText(int col) const
+  {
+    QString txt=parent()->parent()->text(0);
+    txt+=".";
+    txt+=text(col);
+    return txt;
+  }
+
   virtual QWidget *selectedWidget(QWidget *par)
   {
     QString object=text(0);

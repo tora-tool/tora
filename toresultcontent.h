@@ -66,6 +66,11 @@ class toResultContent : public QTable,public toResult {
   virtual void focusInEvent (QFocusEvent *e);
   virtual void focusOutEvent (QFocusEvent *e); 
   virtual void activateNextCell();
+
+  virtual void contentsMouseMoveEvent (QMouseEvent *e);
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual void dropEvent(QDropEvent *event);
+  
 public:
   toResultContent(toConnection &conn,QWidget *parent,const char *name=NULL);
   virtual void query(const QString &sql,const list<QString> &param)
