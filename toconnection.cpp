@@ -216,6 +216,8 @@ otl_connect *toConnection::longOperation(void)
 
 void toConnection::longOperationFree(otl_connect *conn)
 {
+  if (!conn)
+    throw QString("Tried to give back NULL long connection");
   FreeConnect.insert(FreeConnect.end(),conn);
 }
 

@@ -57,6 +57,7 @@ class toHelp : public QDialog {
   toListView *Sections;
   toListView *Result;
   QLineEdit *SearchLine;
+  QComboBox *Manuals;
 
 #ifdef TO_KDE
   KHTMLPart *Help;
@@ -65,8 +66,8 @@ class toHelp : public QDialog {
 #endif
   QProgressBar *Progress;
 
-  static QString path(const QString &path=QString::null);
 public:
+  static QString path(const QString &path=QString::null);
   toHelp(QWidget *,const char *name);
   virtual ~toHelp();
   static void displayHelp(const QString &context);

@@ -87,7 +87,10 @@ void toHtml::nextTag(void)
       {
 	size_t start=Position;
 	
-	while(Position<Length&&!isspace(Data[Position])&&Data[Position]!='=') {
+	while(Position<Length&&
+	      !isspace(Data[Position])&&
+	      Data[Position]!='='&&
+	      Data[Position]!='>') {
 	  Data[Position]=tolower(Data[Position]);
 	  Position++;
 	}

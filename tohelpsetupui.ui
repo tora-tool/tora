@@ -11,13 +11,21 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>518</width>
+            <width>514</width>
             <height>448</height>
         </rect>
     </property>
     <property stdset="1">
         <name>caption</name>
         <string>Form1</string>
+    </property>
+    <property>
+        <name>toolTip</name>
+        <string>Add manuals from an Oracle index page.</string>
+    </property>
+    <property>
+        <name>whatsThis</name>
+        <string>Add manuals from an Oracle index page. This is the index page that links to the actual manuals. Not the master index page that links to different categories of manuals.</string>
     </property>
     <grid>
         <property stdset="1">
@@ -85,6 +93,27 @@
                 <string>&amp;Add Path</string>
             </property>
         </widget>
+        <spacer row="1"  column="3" >
+            <property>
+                <name>name</name>
+                <cstring>Spacer2</cstring>
+            </property>
+            <property stdset="1">
+                <name>orientation</name>
+                <enum>Horizontal</enum>
+            </property>
+            <property stdset="1">
+                <name>sizeType</name>
+                <enum>Expanding</enum>
+            </property>
+            <property>
+                <name>sizeHint</name>
+                <size>
+                    <width>20</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
         <widget row="1"  column="0" >
             <class>QPushButton</class>
             <property stdset="1">
@@ -103,10 +132,28 @@
                 <string>&amp;Remove Path</string>
             </property>
         </widget>
-        <spacer row="1"  column="3" >
+        <widget row="1"  column="2" >
+            <class>QPushButton</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AddOracle</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                </sizepolicy>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>&amp;Oracle Manuals</string>
+            </property>
+        </widget>
+        <spacer row="1"  column="1" >
             <property>
                 <name>name</name>
-                <cstring>Spacer2</cstring>
+                <cstring>Spacer2_2</cstring>
             </property>
             <property stdset="1">
                 <name>orientation</name>
@@ -139,8 +186,15 @@
         <receiver>toHelpSetupUI</receiver>
         <slot>delFile()</slot>
     </connection>
+    <connection>
+        <sender>AddOracle</sender>
+        <signal>clicked()</signal>
+        <receiver>toHelpSetupUI</receiver>
+        <slot>oracleManuals()</slot>
+    </connection>
     <slot access="public">addFile()</slot>
     <slot access="public">delFile()</slot>
+    <slot access="public">oracleManuals()</slot>
 </connections>
 <tabstops>
     <tabstop>FileList</tabstop>

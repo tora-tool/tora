@@ -751,6 +751,8 @@ QString toOpenFilename(const QString &filename,const QString &filter,QWidget *pa
   KURL url=TOFileDialog::getOpenURL(filename,filter,parent);
   if (url.isEmpty())
     return QString::null;
+  if (url.isLocalFile())
+    return url.path();
   return url.url();
 #else
   return TOFileDialog::getOpenFileName(filename,filter,parent);
@@ -765,6 +767,8 @@ QString toSaveFilename(const QString &filename,const QString &filter,QWidget *pa
     TOMessageBox::warning(toMainWidget(),"File open password",url.pass());
   if (url.isEmpty())
     return QString::null;
+  if (url.isLocalFile())
+    return url.path();
   return url.url();
 #else
   return TOFileDialog::getSaveFileName(filename,filter,parent);

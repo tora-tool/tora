@@ -28,6 +28,9 @@
 2001-05-30: Added another quote.
 2001-05-30: Fixed directory selection of help directory.
 2001-05-30: Major overhaul of the file reading/writing of TOra.
+2001-05-30: Support for KIO in KDE.
+2001-05-30: Added support for search in help.
+2001-05-30: Added option to add entire Oracle manual collection in help setup.
 
 0.10: Released 2001-05-25
 

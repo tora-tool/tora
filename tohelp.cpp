@@ -129,6 +129,39 @@ public:
   {
     delete FileList->selectedItem();
   }
+  virtual void oracleManuals(void)
+  {
+    QString filename=toOpenFilename(QString::null,"index.htm*",this);
+    try {
+      toHtml file(toReadFile(filename));
+      QString dsc;
+      bool inDsc=false;
+      QRegExp isToc("toc\\.html?$");
+      while(!file.eof()) {
+	file.nextTag();
+	if (file.isTag()) {
+	  if (file.open()&&!strcmp(file.tag(),"a")) {
+	    QString href=toHelp::path(filename);
+	    href+=QString::fromLatin1(file.value("href"));
+	    if (!href.isEmpty()&&
+		!dsc.isEmpty()&&
+		href.find(isToc)>=0&&
+		file.value("title")) {
+	      new QListViewItem(FileList,dsc.simplifyWhiteSpace(),href);
+	      inDsc=false;
+	      dsc=QString::null;
+	    }
+	  } else if (file.open()&&!strcmp(file.tag(),"dd")) {
+	    dsc=QString::null;
+	    inDsc=true;
+	  }
+	} else if (inDsc)
+	  dsc+=QString::fromLatin1(file.text());
+      }
+    } catch (const QString &str) {
+      TOMessageBox::warning(toMainWidget(),"File error",str);
+    }
+  }
 };
 
 class toHelpTool : public toTool {
@@ -163,8 +196,12 @@ toHelp::toHelp(QWidget *parent,const char *name)
   tabs->addTab(box,"Search");
   SearchLine=new QLineEdit(box);
   connect(SearchLine,SIGNAL(returnPressed()),this,SLOT(search()));
+  Manuals=new QComboBox(box);
+  Manuals->insertItem("All manuals");
   Result=new toListView(box);
+  Result->setSorting(0);
   Result->addColumn("Result");
+  Result->addColumn("Manual");
   connect(Sections,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeContent(QListViewItem *)));
   connect(Result,SIGNAL(selectionChanged(QListViewItem *)),
@@ -194,11 +231,19 @@ toHelp::toHelp(QWidget *parent,const char *name)
 #ifndef TO_KDE
   Help->mimeSourceFactory()->addFilePath(path());
 #endif
+  QListViewItem *lastParent=NULL;
   for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
     try {
       QString path=toHelp::path((*i).second);
       QString filename=(*i).second;
-      QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first,filename);
+      QListViewItem *parent;
+      if ((*i).first=="TOra manual") {
+	parent=new QListViewItem(Sections,NULL,(*i).first,QString::null,filename);
+	if (!lastParent)
+	  parent=lastParent;
+      } else
+	parent=lastParent=new QListViewItem(Sections,lastParent,(*i).first,
+					    QString::null,filename);
       toHtml file(toReadFile(filename));
       bool inA=false;
       QString dsc;
@@ -229,7 +274,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
 		  filename=path;
 		  filename+="/";
 		  filename+=href;
-		  last->setText(1,filename);
+		  last->setText(2,filename);
 		}
 		dsc="";
 	      }
@@ -252,11 +297,11 @@ toHelp::toHelp(QWidget *parent,const char *name)
       }
     } TOCATCH
   }
+  for (QListViewItem *item=Sections->firstChild();item;item=item->nextSibling())
+    Manuals->insertItem(item->text(0));
 
   Progress=new QProgressBar(box);
-#if 0
-  Progress->setTotalSteps(Files->size());
-#endif
+  Progress->setTotalSteps(Dsc.size());
   Progress->hide();
 
   Searching=false;
@@ -304,18 +349,101 @@ void toHelp::changeContent(QListViewItem *item)
 {
 #ifdef TO_KDE
   QString file="file://";
-  file+=item->text(1);
+  file+=item->text(2);
   Window->Help->openURL(KURL(file));
 #else
-  if (item->text(1).find("htm")>=0)
+  if (item->text(2).find("htm")>=0)
     Help->setTextFormat(RichText);
   else
     Help->setTextFormat(AutoText);
-  if (!item->text(1).isEmpty())
-    Help->setSource(item->text(1));
+  if (!item->text(2).isEmpty())
+    Help->setSource(item->text(2));
 #endif
 }
 
 void toHelp::search(void)
 {
+  Result->clear();
+  QStringList words=QStringList::split(QRegExp("\\s+"),SearchLine->text().lower());
+  if (words.count()==0)
+    return;
+  QRegExp strip("\\d+-\\d+\\s*,\\s+");
+  QRegExp stripend(",$");
+  int steps=1;
+  Progress->setProgress(0);
+  Progress->show();
+  for (QListViewItem *parent=Sections->firstChild();parent;parent=parent->nextSibling()) {
+    if (Manuals->currentItem()==0||parent->text(0)==Manuals->currentText()) {
+      QString path=toHelp::path(parent->text(2));
+      QString filename=path;
+      filename+="index.htm";
+      try {
+	toHtml file(toReadFile(filename));
+	list<QString> Context;
+	bool inDsc=false;
+	bool aRestart=true;
+	QString dsc;
+	QString href;
+	while(!file.eof()) {
+	  file.nextTag();
+	  if (file.isTag()) {
+	    if (file.open()) {
+	      if (!strcmp(file.tag(),"a")) {
+		href=QString::fromLatin1(file.value("href"));
+		if (href[0]=='#')
+		  href=QString::null;
+		else if (href.find("..")>=0)
+		  href=QString::null;
+	      } else if (!strcmp(file.tag(),"dd")) {
+		inDsc=true;
+		aRestart=false;
+		href=dsc=QString::null;
+	      } else if (!strcmp(file.tag(),"dl")) {
+		toPush(Context,dsc.simplifyWhiteSpace());
+		href=dsc=QString::null;
+		inDsc=true;
+	      }
+	    } else if (!strcmp(file.tag(),"a")) {
+	      if (!dsc.isEmpty()&&
+		  !href.isEmpty()) {
+		QString tmp;
+		for (list<QString>::iterator i=Context.begin();i!=Context.end();i++)
+		  if (i!=Context.begin()&&!(*i).isEmpty()) {
+		    tmp+=*i;
+		    tmp+=", ";
+		  }
+		tmp+=dsc.simplifyWhiteSpace();
+		QString url=path;
+		url+=href;
+		aRestart=true;
+
+		bool incl=true;
+		for (size_t i=0;i<words.count();i++)
+		  if (!tmp.contains(words[i],false)) {
+		    incl=false;
+		    break;
+		  }
+
+		if (incl) {
+		  tmp.replace(strip," ");
+		  tmp.replace(stripend," ");
+		  QListViewItem *item=new toResultViewItem(Result,NULL,tmp.simplifyWhiteSpace());
+		  item->setText(1,parent->text(0));
+		  item->setText(2,url);
+		}
+		href=QString::null;
+	      }
+	    } else if (!strcmp(file.tag(),"dl")) {
+	      toPop(Context);
+	    }
+	  } else if (inDsc) {
+	    dsc+=QString::fromLatin1(file.text());
+	  }
+	}
+      } TOCATCH
+    }
+    Progress->setProgress(steps);
+    qApp->processEvents();
+  }
+  Progress->hide();
 }

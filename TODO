@@ -1,7 +1,6 @@
 1.0 fixes:
 
 * Compile objects in target thread in toDebug.
-* Search in help needs implementing.
 * Write help.
 * Finnish PL/SQL function templates.
 * Problem creating new SQL in SQL editor.
