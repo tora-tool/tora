@@ -262,7 +262,7 @@ QToolBar *toAllocBar(QWidget *parent,const QString &str,const QString &db)
     name+=db;
   }
   QToolBar *tool;
-#if 0 // Awaiting patched KToolBar from KDE
+#ifdef TO_KDE // Will only work after KDE2.2
   if (parent==toMainWidget())
     tool=new KToolBar(name,toMainWidget());
   else

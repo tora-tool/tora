@@ -1,4 +1,4 @@
-0.7.1:
+0.8:
 
 2001-03-24: Fixed bug in quotes.
 2001-03-24: Set need commit when editing toResultContent.
@@ -24,6 +24,8 @@
 2001-03-29: Made it possible to get toSQL as QString.
 2001-03-31: Added toExtract plugin, no tool uses this yet.
 2001-03-31: Fixed bug in toAllocBar.
+2001-04-01: Default version of sql change to 8.1.
+2001-04-01: Added Oracle 8.0 support in toResultStorage.
 
 0.7: Released 2001-03-24
 

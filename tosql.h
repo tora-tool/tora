@@ -70,7 +70,7 @@ public:
   static bool updateSQL(const QString &name,
 		        const QString &sql,
 		        const QString &description,
-		        const QString &ver="8.1.5",
+		        const QString &ver="8.1",
 			bool modified=true);
 
   static bool deleteSQL(const QString &name,
@@ -102,7 +102,7 @@ public:
   toSQL(const QString &name,
 	const QString &sql,
 	const QString &description=QString::null,
-	const QString &ver="8.1.5")
+	const QString &ver="8.1")
     : Name(name)
   { updateSQL(name,sql,description,ver,false); }
 };
