@@ -4,6 +4,12 @@ This page of the options contain settings on how to interact with the database.<
 <IMG SRC=images/database.png><P>
 <TABLE>
 <TR><TD VALIGN=top>
+<B>Autocommit changes</B></TD>
+<TD VALIGN=top>If this is set any changes made to the database will be automatically committed
+as soon as you make them. Use this with care, the transaction handling is there for a reason
+you know.
+</TD></TR>
+<TR><TD VALIGN=top>
 <B>Initial rows to fetch in query</B></TD>
 <TD VALIGN=top>This setting indicates how many rows to always fetch from a query when executing it.
 Observe that you can always read more from the individual query just by scrolling down. Check
@@ -17,12 +23,11 @@ the <B>All</B> box and reading a really large table could bring your machine to 
 is. This is so you can still see the rest of the columns even if one of the first can contain
 very large values. You can always resize the column by hand afterwards.
 </TD></TR>
-<TR><TD VALIGN=top>
-<B>Autocommit changes</B></TD>
-<TD VALIGN=top>If this is set any changes made to the database will be automatically committed
-as soon as you make them. Use this with care, the transaction handling is there for a reason
-you know.
-</TD></TR>
+</TABLE>
+There may also be pages under this for each individual database provider. Currently onlye Oracle uses
+this feature. That setup looks like this.<P>
+<IMG SRC=images/oracle.png>
+<TABLE>
 <TR><TD VALIGN=top>
 <B>Checkpoint name</B></TD>
 <TD VALIGN=top>This is a checkpoint TOra should use when it is making changes that need to be rolled back.
@@ -39,6 +44,11 @@ conversion specification. For more information see the Oracle SQL Reference.
 <B>Explain plan table</B></TD>
 <TD VALIGN=top>The table to use to temporarily store explained execution plans. Use the <B>Create Table</B>
 button to create the table if you don't have it.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Statement cache size</B></TD>
+<TD VALIGN=top>Indicate the number of open statement handles TOra can keep while it is running. This will reduce
+statement parsing needed when TOra extracts information from the database.
 </TD></TR>
 </TABLE>
 </BODY>

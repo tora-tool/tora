@@ -696,22 +696,29 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
   if (Completion) {
     if ((e->key()==Key_Down||e->key()==Key_Tab||e->key()==Key_Up)&&
 	e->state()==0) {
+      bool passon=false;
       if (e->key()==Key_Up) {
 	CompleteItem--;
-	if (CompleteItem<0)
+	if (CompleteItem<0) {
+	  passon=true;
 	  CompleteItem=0;
+	}
       } else {
 	CompleteItem++;
-	if (CompleteItem>=int(Completion->count()))
+	if (CompleteItem>=int(Completion->count())) {
 	  CompleteItem=Completion->count()-1;
+	  passon=true;
+	}
       }
-      Completion->setSelected(CompleteItem,true);
-      if (CompleteItem<Completion->topItem())
-	Completion->setTopItem(CompleteItem);
-      else if (CompleteItem-Completion->numItemsVisible()+1>=Completion->topItem())
-	Completion->setBottomItem(CompleteItem);
-      e->accept();
-      return;
+      if (!passon) {
+	Completion->setSelected(CompleteItem,true);
+	if (CompleteItem<Completion->topItem())
+	  Completion->setTopItem(CompleteItem);
+	else if (CompleteItem-Completion->numItemsVisible()+1>=Completion->topItem())
+	  Completion->setBottomItem(CompleteItem);
+	e->accept();
+	return;
+      }
     } else if (e->key()==Key_Right&&e->state()==0) {
       int curline,curcol;
       getCursorPosition(&curline,&curcol);
