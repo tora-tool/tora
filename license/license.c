@@ -48,6 +48,7 @@ static char Base[34]="0123456789ABCDEFGHJKMNPQRSTUVWXYZ";
 #include <stdio.h>
 #include <ctype.h>
 #include <time.h>
+#include <stdllib.h>
 
 /* MD5 stuff from RSA
  */
@@ -66,6 +67,11 @@ int main(int argc, char *argv[])
    int userlen=0;
 
    int licenses;
+
+   if (argc!=3) {
+     printf("Usage:\n\n  licgen {Name} {Number of licenses}\n\n");
+     exit(2);
+   }
 
    /** Just some garbage to make licenses different if same name.
     */

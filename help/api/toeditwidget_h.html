@@ -81,18 +81,16 @@ public:
   public:
     /** Constructor.
      */
-    editHandler()
-    { }
+    editHandler();
     /** Destructor.
      */
-    virtual ~editHandler()
-    { }
+    virtual ~editHandler();
     /** Called when a new widget receives the focus.
      */
-    virtual void receivedFocus(QWidget *widget);
+    virtual void receivedFocus(QWidget *widget) = 0;
     /** Called when a widget loses the focus.
      */
-    virtual void lostFocus(QWidget *widget);
+    virtual void lostFocus(QWidget *widget) = 0;
   };
 private:
   bool Open;

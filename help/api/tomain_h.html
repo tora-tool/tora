@@ -132,6 +132,7 @@ class toMarkedText;
 class QListView;
 class QListViewItem;
 class toEditWidget;
+class QToolBar;
 
 /** This class defines the main window. Observe that this class will have different baseclass
  * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
@@ -207,6 +208,11 @@ private:
    * Paste button.
    */
   QToolButton *PasteButton;
+
+  /**
+   * Edit buttons toolbar.
+   */
+  QToolBar *EditToolbar;
 
   /**
    * File menu.
@@ -411,6 +417,10 @@ public:
    * @param prefix Prefix to read data from.
    */
   virtual void importData(std::map<QString,QString> &data,const QString &prefix);
+  /** Get edit toolbar pointer.
+   */
+  QToolBar *editToolbar()
+  { return EditToolbar; }
 signals:
   /** Invoked to start editing an SQL identifier.
    * @param str Identifier to start editing.
@@ -673,6 +683,14 @@ template <class T> std::list<T>::iterator toFind(std::list<T> &lst,const T &str)
  * @return String with next token in editor
  */
 QString toGetToken(toMarkedText *text,int &curLine,int &pos,bool forward=true);
+
+/** Get next SQL token from a string.
+ * @param str String to get token from
+ * @param pos Current position when parsing, modified when calling.
+ * @param forward If true go forward from current position, otherwise backward.
+ * @return String with next token in editor
+ */
+QString toGetToken(const QString &sql,int &pos,bool forward=true);
 
 /** Convert a string representation to a font structure.
  * @param str String representing the font.

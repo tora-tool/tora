@@ -1002,9 +1002,10 @@ bool toMain::close(bool del)
 		      session);
     } TOCATCH
   }
-  while (workspace()->windowList().count()>0)
-    if (!workspace()->windowList().at(0)->close(true))
-      return false;
+  // Workaround in bug in Qt 3.0.0
+  while (workspace()->windowList().count()>0&&workspace()->windowList().at(0))
+    if (workspace()->windowList().at(0)&&
+       !workspace()->windowList().at(0)->close(true))
   while (Connections.end()!=Connections.begin()) {
     if (!delConnection())
       return false;

@@ -248,7 +248,7 @@ void toResultCols::query(const QString &,const toQList &param)
     Columns->query(name,NoCache);
     NoCache=false;
     Title->setText(label);
-  } catch(const QString &str) {
+  } catch(const QString &) {
     try {
       QString label="<B>";
       label+=object;

@@ -625,7 +625,7 @@ QString toExpandFile(const QString &file)
   char buffer[1024];
   try {
     if (registry.GetStringValue(HKEY_CURRENT_USER,
-				"HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+				"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
 				"Personal",
 				buffer,siz)) {
       if (siz>0)

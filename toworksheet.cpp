@@ -1489,7 +1489,7 @@ void toWorksheet::saveLast(void)
   QString name=QInputDialog::getText("Enter title",
 				     "Enter the title in the menu of the saved SQL,\n"
 				     "submenues are separated by a ':' character.",
-				     QString::null,&ok,this);
+				     QLineEdit::Normal,QString::null,&ok,this);
   if (ok&&!name.isEmpty()) {
     toSQL::updateSQL(TOWORKSHEET+name,
 		     QueryString,

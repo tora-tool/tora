@@ -54,6 +54,24 @@
 
 #include "icons/largelogo.xpm"
 
+#ifdef TO_LICENSE
+static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
+"Version %1\n"
+"<P>\n"
+"&copy; 2000-2001,2001 copyright of Underscore AB\n"
+"(<A HREF=http://www.underscore.se>http://www.underscore.se/</a>).<P>\n"
+"Written by Henrik Johnson.<P>\n"
+"Webhosting by GlobeCom AB (<A HREF=http://www.globecom.se>www.globecom.se</A>).<P>\n"
+"This program is <B>NOT FREE SOFTWARE</B> although you are allowed to use it in a non\n"
+"commercial setting. See the license for more information.<P>\n"
+"Uses the Qt library version 2.3 by TrollTech\n"
+"(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>\n"
+"\n"
+"<HR BREAK=ALL>\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+#else
 static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Version %1\n"
 "<P>\n"
@@ -63,7 +81,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "Webhosting by GlobeCom AB (<A HREF=http://www.globecom.se>www.globecom.se</A>).<P>\n"
 "This program is available\n"
 "under the GNU General Public License.<P>\n"
-"Uses the Qt library version 2.2 by TrollTech\n"
+"Uses the Qt library version 2.3 by TrollTech\n"
 "(<A HREF=http://www.troll.no>http://www.troll.no/</A>).<P>\n"
 "\n"
 "<HR BREAK=ALL>\n"
@@ -71,6 +89,7 @@ static const char *AboutText="<IMG SRC=largelogo.xpm><BR>\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
 "GNU General Public License for more details.";
+#endif
 
 static const char *QuoteText="<H3>People who think they know everything tend to irritate those of us who do.</H3>\n"
 "<DIV ALIGN=RIGHT>Oscar Wilde<DIV ALIGN=LEFT>\n"
@@ -295,12 +314,14 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     setCaption("Quotes");
     TextView->setText(QuoteText);
     TextView->setPaper(QColor(255,255,255));
+    TextView->setTextFormat(RichText);
     CancelButton->hide();
     break;
   case 1:
     setCaption("GNU General Public License");
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
+    TextView->setTextFormat(PlainText);
     if (parent)
       CancelButton->hide();
     break;
@@ -309,6 +330,7 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     QString buffer=QString(AboutText).arg(TOVERSION);
     TextView->setText(buffer);
     TextView->setPaper(QColor(227,184,54));
+    TextView->setTextFormat(RichText);
     CancelButton->hide();
     break;
   }

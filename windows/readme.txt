@@ -2,10 +2,10 @@ TOra - Toolkit for Oracle
 =========================
 Copyright (C) 2000-2001,2001 Underscore AB (http://www.underscore.se)
 
-TOra for Windows is NOT free software. You are allowed to use it free of charge
+TOra for Windows is NOT FREE SOFTWARE. You are allowed to use it free of charge
 in a non commercial setting. For more information about the license see the
-Help|License in the program. It is also displayed on the first startup and
-during the installation of the program.
+Help|License in the program. It is also displayed during the installation of the
+program.
 
 TOra is supported for running with an Oracle 8.1.7 client installation. It also
 probably works with any 8.x and 9.x client installation, but this is unsupported.

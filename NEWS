@@ -134,6 +134,9 @@
 2001-11-20: Fixed focus in all the other tools on startup as well.
 2001-11-22: Fixed problem with legend in charts.
 2001-11-22: Change label of refresh to reexecute in worksheet.
+2001-11-27: Added new about text for windows version.
+2001-11-27: Bunch of Windows compile fixes.
+2001-11-27: Fixed $HOME to my documents conversion for windows.
 
 1.1.4: Released 2001-11-02
 
