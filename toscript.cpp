@@ -28,4 +28,5 @@
 #include "toscript.h"
 
 #include "toscriptui.moc"
+#include "toscriptresizeui.moc"
 

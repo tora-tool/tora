@@ -57,6 +57,7 @@ SOURCES=\
 	torollback.cpp		\
 	toscript.cpp		\
 	toscriptui.cpp		\
+	toscriptresizeui.cpp	\
 	tosession.cpp		\
 	tosecurity.cpp		\
 	tosecurityquotaui.cpp	\
@@ -104,7 +105,8 @@ plugins/toresultstorage.tso:objs/toresultstorage.o
 plugins/torollback.tso:objs/torollback.o
 plugins/toscript.tso:\
 	objs/toscript.o \
-	objs/toscriptui.o
+	objs/toscriptui.o \
+	objs/toscriptresizeui.o
 plugins/tosession.tso:objs/tosession.o
 plugins/tosecurity.tso:\
 	objs/tosecurity.o \
