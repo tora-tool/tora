@@ -116,9 +116,10 @@ const int toMain::TO_TOOL_ABOUT_ID_END	= 3999;
 #define TO_FILE_SAVE_AS		104
 #define TO_FILE_COMMIT		105
 #define TO_FILE_ROLLBACK	106
-#define TO_FILE_CLEARCACHE	107
-#define TO_FILE_PRINT		108
-#define TO_FILE_QUIT		109
+#define TO_FILE_CURRENT         107
+#define TO_FILE_CLEARCACHE	108
+#define TO_FILE_PRINT		109
+#define TO_FILE_QUIT		110
 
 #define TO_EDIT_UNDO		200
 #define TO_EDIT_REDO		201
@@ -167,6 +168,7 @@ toMain::toMain()
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)commit_xpm),"&Commit connection",TO_FILE_COMMIT);
   FileMenu->insertItem(QPixmap((const char **)rollback_xpm),"&Rollback connection",TO_FILE_ROLLBACK);
+  FileMenu->insertItem("C&urrent connection",TO_FILE_CURRENT);
   FileMenu->insertItem(QPixmap((const char **)trash_xpm),"Reread object cache",TO_FILE_CLEARCACHE);
   FileMenu->insertSeparator();
   FileMenu->insertItem(QPixmap((const char **)fileopen_xpm),"&Open File...",TO_FILE_OPEN);
@@ -180,6 +182,9 @@ toMain::toMain()
   FileMenu->setAccel(Key_G|CTRL,TO_NEW_CONNECTION);
   FileMenu->setAccel(Key_O|CTRL,TO_FILE_OPEN);
   FileMenu->setAccel(Key_S|CTRL,TO_FILE_SAVE);
+  FileMenu->setAccel(Key_W|CTRL,TO_FILE_COMMIT);
+  FileMenu->setAccel(Key_R|CTRL,TO_FILE_ROLLBACK);
+  FileMenu->setAccel(Key_U|CTRL,TO_FILE_CURRENT);
   connect(FileMenu,SIGNAL(aboutToShow()),this,SLOT( editFileMenu()));
 
   EditMenu=new QPopupMenu(this);
@@ -645,6 +650,9 @@ void toMain::commandCallback(int cmd)
 	conn.rollback();
 	setNeedCommit(conn,false);
       } TOCATCH
+      break;
+    case TO_FILE_CURRENT:
+      ConnectionSelection->setFocus();
       break;
     case TO_FILE_QUIT:
       close(true);
