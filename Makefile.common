@@ -101,7 +101,7 @@ distclean: clean
 	-rm -rf icons/.xvpics >/dev/null 2>&1
 	-rm -f *.moc qtlegacy/*.moc >/dev/null 2>&1 
 	-rm \#*\# >/dev/null 2>&1
-	-cp Makefile.setup.orig Makefile.setup >/dev/null 2>&1
+	-rm Makefile.setup >/dev/null 2>&1
 	-mv Makefile Makefile.orig >/dev/null 2>&1
 	-rm LICENSE.h >/dev/null 2>&1
 	-rm configure.setup >/dev/null 2>&1
