@@ -461,6 +461,7 @@ toTemplate::toTemplate(QWidget *parent)
 
   connect(List,SIGNAL(expanded(QListViewItem *)),this,SLOT(expand(QListViewItem *)));
   connect(List,SIGNAL(collapsed(QListViewItem *)),this,SLOT(collapse(QListViewItem *)));
+  connect(List,SIGNAL(doubleClicked(QListViewItem *)),this,SLOT(doubleClick(QListViewItem *)));
 
   if (toTemplateProvider::Providers)
     for (std::list<toTemplateProvider *>::iterator i=toTemplateProvider::Providers->begin();
@@ -498,6 +499,16 @@ void toTemplate::expand(QListViewItem *item)
     toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
     if (ti)
       ti->expand();
+  } catch (...) {
+  }
+}
+
+void toTemplate::doubleClick(QListViewItem *item)
+{
+  try {
+    toTemplateItem *ti=dynamic_cast<toTemplateItem *>(item);
+    if (ti)
+      ti->doubleClick();
   } catch (...) {
   }
 }

@@ -109,7 +109,7 @@ class toBrowseTemplate : public QObject,public toTemplateProvider {
   bool Registered;
 public:
   toBrowseTemplate(void)
-    : toTemplateProvider()
+    : QObject(NULL,"browsertemplate"),toTemplateProvider()
   { Registered=false; Filter=NULL; }
   void insertItems(QListView *parent,QToolBar *toolbar);
   void removeItem(QListViewItem *item);

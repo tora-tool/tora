@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>480</width>
+            <width>476</width>
             <height>378</height>
         </rect>
     </property>
@@ -456,9 +456,13 @@
     <slot access="public">displayHelp()</slot>
 </connections>
 <tabstops>
+    <tabstop>OnlyOwnSchema</tabstop>
     <tabstop>None</tabstop>
     <tabstop>String</tabstop>
     <tabstop>IgnoreCase</tabstop>
+    <tabstop>IncludeAll</tabstop>
+    <tabstop>Include</tabstop>
+    <tabstop>Exclude</tabstop>
     <tabstop>Invert</tabstop>
     <tabstop>OkButton</tabstop>
     <tabstop>Cancel</tabstop>

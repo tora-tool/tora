@@ -87,6 +87,7 @@ public:
 public slots:
   void expand(QListViewItem *item);
   void collapse(QListViewItem *item);
+  void doubleClick(QListViewItem *item);
 };
 
 /**
@@ -145,6 +146,10 @@ public:
    * list when needed.
    */
   virtual void expand(void)
+  { }
+  /** This function is called when the item is doubleclicked.
+   */
+  virtual void doubleClick(void)
   { }
   /** This function is called when the item is collapsed.
    */

@@ -1,5 +1,6 @@
 1.3.4:
 
+2002-02-23: Added a doubleclick option to a template item.
 2002-02-23: Added filter setting to template DB browser.
 2002-02-23: Added toolbar to template help.
 2002-02-23: Add new objects in debugger to objectcache.
