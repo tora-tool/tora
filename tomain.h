@@ -48,11 +48,25 @@
 #  define TOPrinter QPrinter
 #  define TODock KDockWidget
 #  define TOFileDialog KFileDialog
+class toMainWindow : public KDockMainWindow {
+public:
+  toMainWindow()
+    : KDockMainWindow(0,"Main Window")
+  { }
+};
+
 #else
 #  include <qtoolbar.h>
 #  define TOPrinter QPrinter
 #  define TODock QWidget
 #  define TOFileDialog QFileDialog
+
+class toMainWindow : public QMainWindow {
+public:
+  toMainWindow()
+    : QMainWindow(0,"Main Window")
+  { }
+};
 #endif
 #define TOMessageBox QMessageBox
 
@@ -67,7 +81,7 @@ class toSearchReplace;
 #include "toconnection.h"
 #include "totool.h"
 
-class toMain : public QMainWindow {
+class toMain : public toMainWindow {
   Q_OBJECT
 private:
   list<toConnection *> Connections;

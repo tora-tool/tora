@@ -56,10 +56,6 @@ include $(DEPENDS)
 	$(UIC) -o $(<:%.ui=%.h) $<
 	$(UIC) -i $(<:%.ui=%.h) -o  $(<:%.ui=%.cpp) $<
 
-%.h: %.kde
-	echo Preparing $@ from $< for kde/Qt
-	$(FIXKDE) < $< > $@
-
 plugins/%.tso:
 	@echo Linking plugin $@
 	if [ ! -d plugins ] ; then mkdir plugins ; fi

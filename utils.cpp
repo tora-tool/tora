@@ -330,6 +330,7 @@ TODock *toAllocDock(const QString &name,
   else
     throw QString("Main widget not KDockMainWindow");
 #else
+#  if QT_VERSION < 300
   if (toTool::globalConfig(CONF_DOCK_TOOLBAR,"Yes").isEmpty()) {
     QVBox *frm=new QVBox(toMainWidget()->workspace());
     frm->setCaption(str);
@@ -338,6 +339,9 @@ TODock *toAllocDock(const QString &name,
     QToolBar *toolbar=toAllocBar(toMainWidget(),name,db);
     return toolbar;
   }
+#  else
+  return new QDockWindow(QDockWindow::InDock,toMainWidget());
+#  endif
 #endif
 }
 
@@ -368,11 +372,20 @@ void toAttachDock(TODock *dock,QWidget *container,QMainWindow::ToolBarDock place
   } else
     throw QString("Main widget not KDockMainWindow");
 #else
+#  if QT_VERSION < 300
   QToolBar *bar=dynamic_cast<QToolBar *>(dock);
   if (bar) {
     toMainWidget()->moveToolBar(bar,place);
     bar->setStretchableWidget(container);
   }
+#  else
+  QDockWindow *d=dynamic_cast<QDockWindow *>(dock);
+  if (d) {
+    d->setResizeEnabled(true);
+    d->setWidget(container);
+    toMainWidget()->moveDockWindow(d,place);
+  }
+#  endif
 #endif
 }
 
@@ -545,9 +558,12 @@ void toPush(list<QString> &lst,const QString &str)
 
 QString toFontToString(const QFont &fnt)
 {
-#ifdef TO_FONT_RAW_NAME
-  return fnt.rawName();
+#if QT_VERSION >= 300
+  return fnt.toString();
 #else
+#  ifdef TO_FONT_RAW_NAME
+  return fnt.rawName();
+#  else
   QStringList lst;
   lst.insert(lst.end(),fnt.family());
   lst.insert(lst.end(),QString::number(fnt.pointSize()));
@@ -555,22 +571,29 @@ QString toFontToString(const QFont &fnt)
   lst.insert(lst.end(),QString::number(fnt.italic()));
   lst.insert(lst.end(),QString::number(fnt.charSet()));
   return lst.join("/");
+#  endif
 #endif
 }
 
 QFont toStringToFont(const QString &str)
 {
-#ifdef TO_FONT_RAW_NAME
+#if QT_VERSION >= 300
+  QFont fnt;
+  fnt.fromString(str);
+  return fnt;
+#else
+#  ifdef TO_FONT_RAW_NAME
   QFont fnt;
   fnt.setRawName(str);
   return fnt;
-#else
+#  else
   QStringList lst=QStringList::split("/",str);
   if (lst.count()!=5)
     return QFont( "Courier", 12, QFont::Bold);
   QFont font(lst[0],lst[1].toInt(),lst[2].toInt(),
 	     bool(lst[3].toInt()),QFont::CharSet(lst[4].toInt()));
   return font;
+#  endif
 #endif
 }
 

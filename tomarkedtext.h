@@ -35,10 +35,32 @@
 #ifndef __TOMARKEDTEXT_H
 #define __TOMARKEDTEXT_H
 
+#include <qglobal.h>
+
+#if QT_VERSION < 300
 #include <qmultilineedit.h>
+
+class toMultLineEdit : public QMultiLineEdit {
+  toMultiLineEdit(QWidget *parent,const char *name)
+    : QMultiLineEdit(parent,name)
+  { }
+};
+
+#else
+#include "qtlegacy/qttableview.h"
+#include "qtlegacy/qtmultilineedit.h"
+
+class toMultiLineEdit : public QtMultiLineEdit {
+public:
+  toMultiLineEdit(QWidget *parent,const char *name)
+    : QtMultiLineEdit(parent,name)
+  { }
+};
+
+#endif
 #include <qstring.h>
 
-class toMarkedText : public QMultiLineEdit {
+class toMarkedText : public toMultiLineEdit {
   Q_OBJECT
 
   bool RedoAvailable;
@@ -52,18 +74,18 @@ public:
   ~toMarkedText();
 
   QString markedText()
-  { return QMultiLineEdit::markedText(); }
+  { return toMultiLineEdit::markedText(); }
   bool hasMarkedText()
-  { return QMultiLineEdit::hasMarkedText(); }
+  { return toMultiLineEdit::hasMarkedText(); }
   void clear(void)
-  { Filename=""; RedoAvailable=false; UndoAvailable=false; setEdit(); QMultiLineEdit::clear(); setEdited(false); }
+  { Filename=""; RedoAvailable=false; UndoAvailable=false; setEdit(); toMultiLineEdit::clear(); setEdited(false); }
 
   bool getRedoAvailable(void)
   { return RedoAvailable; }
   bool getUndoAvailable(void)
   { return UndoAvailable; }
   bool getMarkedRegion (int * line1,int * col1,int * line2,int * col2) const
-  { return QMultiLineEdit::getMarkedRegion(line1,col1,line2,col2); }
+  { return toMultiLineEdit::getMarkedRegion(line1,col1,line2,col2); }
 
   virtual const QString &filename(void) const
   { return Filename; }

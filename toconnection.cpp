@@ -35,6 +35,7 @@
 TO_NAMESPACE;
 
 #include <qstring.h>
+#include <qregexp.h>
 
 #include "otlv32.h"
 #include "totool.h"

@@ -47,8 +47,15 @@ TO_NAMESPACE;
 
 #include "tomarkedtext.moc"
 
+#if QT_VERSION >= 300
+#include "qtlegacy/qtmultilineedit.cpp"
+#include "qtlegacy/qttableview.cpp"
+#include "qtlegacy/qtmultilineedit.moc"
+#include "qtlegacy/qttableview.moc"
+#endif
+
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
-: QMultiLineEdit(parent,name)
+: toMultiLineEdit(parent,name)
 {
   setFont(toStringToFont(toTool::globalConfig(CONF_TEXT,"")));
 
@@ -75,13 +82,13 @@ void toMarkedText::setEdit(void)
 void toMarkedText::focusInEvent (QFocusEvent *e)
 {
   setEdit();
-  QMultiLineEdit::focusInEvent(e);
+  toMultiLineEdit::focusInEvent(e);
 }
 
 void toMarkedText::focusOutEvent (QFocusEvent *e)
 {
   toMain::editDisable();
-  QMultiLineEdit::focusOutEvent(e);
+  toMultiLineEdit::focusOutEvent(e);
 }
 
 toMarkedText::~toMarkedText()
@@ -92,7 +99,7 @@ toMarkedText::~toMarkedText()
 
 void toMarkedText::paintEvent(QPaintEvent *pe)
 {
-  QMultiLineEdit::paintEvent(pe);
+  toMultiLineEdit::paintEvent(pe);
   if (hasFocus()) {
     int curline,curcol;
     getCursorPosition (&curline,&curcol);

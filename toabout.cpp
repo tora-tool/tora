@@ -220,8 +220,8 @@ void toAllocLogo(void)
   }
 }
 
-toSplash::toSplash(QWidget *parent,const char *name,WFlags f,bool allowLines)
-  : QVBox(parent,name,f,allowLines)
+toSplash::toSplash(QWidget *parent,const char *name,WFlags f)
+  : QVBox(parent,name,f)
 {
   toAllocLogo();
 

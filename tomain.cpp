@@ -143,11 +143,7 @@ static toResultContent *toContent(QWidget *widget)
 }
 
 toMain::toMain()
-#ifdef TO_KDE
-  : KDockMainWindow(0,"Main Window")
-#else
-  : QMainWindow(0,"Main Window")
-#endif
+  : toMainWindow()
 {
   qApp->setMainWidget(this);
   setDockMenuEnabled(true);

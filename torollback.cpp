@@ -39,6 +39,7 @@ TO_NAMESPACE;
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
+#include <qregexp.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -48,6 +49,7 @@ TO_NAMESPACE;
 #include <qtabwidget.h>
 #include <qtimer.h>
 #include <qtoolbar.h>
+#include <qpainter.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
 #include <qvariant.h>

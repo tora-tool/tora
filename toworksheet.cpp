@@ -40,6 +40,7 @@ TO_NAMESPACE;
 #include <kfiledialog.h>
 #endif
 
+#include <qregexp.h>
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qmultilineedit.h>

@@ -24,3 +24,6 @@ toWorksheet:
 
 toTemplate:
 	TOra coredumps on close if template is opened more than once.
+
+toStringToFont:
+	Doesn't handle undefinied setting correctly.

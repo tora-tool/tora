@@ -38,12 +38,14 @@ TO_NAMESPACE;
 #include <kfiledialog.h>
 #endif
 
+#include <qtimer.h>
 #include <qsplitter.h>
 #include <qtextview.h>
 #include <qfileinfo.h>
 #include <qfiledialog.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
+#include <qlineedit.h>
 
 #include "toresultview.h"
 #include "totool.h"

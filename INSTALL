@@ -21,7 +21,8 @@ tora-{version}-1gc.i686.rpm
 ---------------------------
 This version should work reasonable well on any glibc2.1 based system which
 uses GCC 2.95.* or EARLIER. Which means pretty much everyone except RedHat
-7.x and Mandrake 8.
+7.x and Mandrake 8. This version is compiled with KDE support enabled and
+requires kdelibs to be installed.
 
 You will probably get a complaint about clntsh.so missing. What you need to
 do is make sure that this is the only thing that it complains about and then
@@ -37,25 +38,28 @@ tora-{version}-1mdk.i686.rpm
 ----------------------------
 This version is excactly the same as the 1gc version mentioned before except
 that it will also install tora into the Mandrake menu system. The same library
-problems and solutions apply.
+problems and solutions apply. This version is compiled with KDE support
+enabled and requires kdelibs to be installed.
 
 tora-{version}-1static.i686.rpm
 -------------------------------
 This is a statically linked version. The libraries that are linked statically
 are stdc++, Qt and Oracle. This means that this version should probably work
-on RedHat 7.x and Mandrake 8 as well.
+on RedHat 7.x and Mandrake 8 as well. This version does not have KDE support
+enabled.
 
 tora-{version}-bin.tar.gz
 -------------------------
 This is a dynamically linked tora which is just to unpack wherever you want
 it. To use the SQL templates copy the files in the template directory to
-the library /usr/lib/tora.
+the library /usr/lib/tora. This version has KDE support enabled and requires
+KDE libraries available.
 
 tora-{version}-static.tar.gz
 ----------------------------
 This is a statically linked tora which you just unpack wherever you want it.
  To use the SQL templates copy the files in the template directory to the
-library /usr/lib/tora.
+library /usr/lib/tora. This version does not have KDE support enabled.
 
 Installing from source
 ======================

@@ -245,8 +245,16 @@ __TEMP__
 		      $QtDir."/bin",
 		      "/usr/lib/qt2",
 		      "/usr/lib/qt2/bin",
+		      "/usr/lib/qt3",
+		      "/usr/lib/qt3/bin",
 		      "/usr/local/lib/qt2",
 		      "/usr/local/lib/qt2/bin",
+		      "/usr/local/lib/qt3",
+		      "/usr/local/lib/qt3/bin",
+		      "/usr/local/qt2",
+		      "/usr/local/qt2/bin",
+		      "/usr/local/qt3",
+		      "/usr/local/qt3/bin",
 		      "/usr/lib/qt",
 		      "/usr/bin",
 		      "/usr/local/bin",
@@ -261,8 +269,16 @@ __TEMP__
 		      $QtDir."/bin",
 		      "/usr/lib/qt2",
 		      "/usr/lib/qt2/bin",
+		      "/usr/lib/qt3",
+		      "/usr/lib/qt3/bin",
 		      "/usr/local/lib/qt2",
 		      "/usr/local/lib/qt2/bin",
+		      "/usr/local/lib/qt3",
+		      "/usr/local/lib/qt3/bin",
+		      "/usr/local/qt2",
+		      "/usr/local/qt2/bin",
+		      "/usr/local/qt3",
+		      "/usr/local/qt3/bin",
 		      "/usr/lib/qt",
 		      "/usr/bin",
 		      "/usr/local/bin",
@@ -282,8 +298,16 @@ __TEMP__
 		      $QtDir."/bin",
 		      "/usr/lib/qt2",
 		      "/usr/lib/qt2/bin",
+		      "/usr/lib/qt3",
+		      "/usr/lib/qt3/bin",
 		      "/usr/local/lib/qt2",
 		      "/usr/local/lib/qt2/bin",
+		      "/usr/local/lib/qt3",
+		      "/usr/local/lib/qt3/bin",
+		      "/usr/local/qt2",
+		      "/usr/local/qt2/bin",
+		      "/usr/local/qt3",
+		      "/usr/local/qt3/bin",
 		      "/usr/lib/qt",
 		      "/usr/bin",
 		      "/usr/local/bin",
@@ -305,14 +329,20 @@ __TEMP__
 			$QtDir."/include",
 			"/usr/include",
 			"/usr/include/qt2",
+			"/usr/include/qt3",
 			"/usr/lib/qt2/include",
+			"/usr/lib/qt3/include",
 			"/usr/include/qt",
 			"/ust/lib/qt/include",
 			"/usr/local/include",
 			"/usr/local/include/qt2",
+			"/usr/local/include/qt3",
 			"/usr/local/lib/qt2/include",
+			"/usr/local/lib/qt3/include",
 			"/usr/local/include/qt",
-			"/ust/local/lib/qt/include");
+			"/ust/local/qt/include",
+			"/ust/local/qt2/include",
+			"/ust/local/qt3/include");
 
     if (!-d $QtInclude) {
 	print "Couldn't find include files for Qt, use --with-qt-include to specify\n";
@@ -320,77 +350,137 @@ __TEMP__
     }
     print "Qt includefiles at $QtInclude\n";
 
-    $QtLib=findFile("^libqt2\\.so",sub {
-	                                   return -f $_[0] && ! -l $_[0];
-				       },
+    $QtLib=findFile("^libqt(-mt)?[23]\\.so",sub {
+	                                            if (-f $_[0] && ! -l $_[0]) {
+							print "Checking $_[0]\n";
+							($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+							if (!defined $QtLibShared) {
+							    return 0;
+							}
+							$QtLibShared=" -l$QtLibShared";
+							return 1;
+						    } else {
+							return 0;
+						    }
+						},
 		    $QtLibOrig,
 		    $QtDir."/lib",
 		    "/usr/lib",
 		    "/usr/lib/qt2",
 		    "/usr/lib/qt2/lib",
+		    "/usr/lib/qt3",
+		    "/usr/lib/qt3/lib",
 		    "/usr/lib/qt",
 		    "/ust/lib/qt/lib",
 		    "/usr/local/lib",
 		    "/usr/local/lib/qt2",
 		    "/usr/local/lib/qt2/lib",
+		    "/usr/local/lib/qt3",
+		    "/usr/local/lib/qt3/lib",
 		    "/usr/local/lib/qt",
-		    "/ust/local/lib/qt/lib");
+		    "/ust/local/lib/qt/lib",
+		    "/usr/local/qt2",
+		    "/usr/local/qt2/lib",
+		    "/usr/local/qt3",
+		    "/usr/local/qt3/lib",
+		    "/usr/local/qt",
+		    "/usr/local/qt/lib"
+		    );
 
-    if (-d $QtLib) {
-	$QtLibShared=" -lqt2";
-    } else {
-	$QtLib=findFile("^libqt\\.so\\.2",sub {
-	                                      return -f $_[0] && ! -l $_[0];
-					  },
+    if (! -d $QtLib) {
+	$QtLib=findFile("^libqt(?:-mt)?\\.so\\.[23]",sub {
+	                                                 if (-f $_[0] && ! -l $_[0]) {
+							     print "Checking $_[0]\n";
+							     ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+							     if (!defined $QtLibShared) {
+								 return 0;
+							     }
+							     $QtLibShared=" -l$QtLibShared";
+							     return 1;
+							 } else {
+							     return 0;
+							 }
+						     },
 			$QtLibOrig,
 			$QtDir."/lib",
 			"/usr/lib",
 			"/usr/lib/qt2",
 			"/usr/lib/qt2/lib",
+			"/usr/lib/qt3",
+			"/usr/lib/qt3/lib",
 			"/usr/lib/qt",
 			"/ust/lib/qt/lib",
 			"/usr/local/lib",
 			"/usr/local/lib/qt2",
 			"/usr/local/lib/qt2/lib",
+			"/usr/local/lib/qt3",
+			"/usr/local/lib/qt3/lib",
 			"/usr/local/lib/qt",
-			"/ust/local/lib/qt/lib");
-	$QtLibShared=" -lqt";
+			"/ust/local/lib/qt/lib",
+			"/usr/local/qt2",
+			"/usr/local/qt2/lib",
+			"/usr/local/qt3",
+			"/usr/local/qt3/lib",
+			"/usr/local/qt",
+			"/ust/local/qt/lib"
+			);
     }
 
-    $QtLibStatic=findFile("^libqt2\\.a",sub {
-	                                    return -f $_[0] && ! -l $_[0];
-				       },
-			  $QtDir."/lib",
-			  "/usr/lib",
-			  "/usr/lib/qt2",
-			  "/usr/lib/qt2/lib",
-			  "/usr/lib/qt",
-			  "/ust/lib/qt/lib",
-			  "/usr/local/lib",
-			  "/usr/local/lib/qt2",
-			  "/usr/local/lib/qt2/lib",
-			  "/usr/local/lib/qt",
-			  "/ust/local/lib/qt/lib");
-    if (-d $QtLibStatic) {
-	$QtLibStatic.="/libqt2.a";
-    } else {
-	$QtLibStatic=findFile("^libqt\\.a",sub {
-	                                        return -f $_[0] && ! -l $_[0];
-				       },
-			      $QtDir."/lib",
-			      "/usr/lib",
-			      "/usr/lib/qt2",
-			      "/usr/lib/qt2/lib",
-			      "/usr/lib/qt",
-			      "/ust/lib/qt/lib",
-			      "/usr/local/lib",
-			      "/usr/local/lib/qt2",
-			      "/usr/local/lib/qt2/lib",
-			      "/usr/local/lib/qt",
-			      "/ust/local/lib/qt/lib");
-	if (-d $QtLibStatic) {
-	    $QtLibStatic.="/libqt.a";
-	}
+    findFile("^libqt(-mt)?[23]\\.a",sub {
+	                                if (-f $_[0] && ! -l $_[0]) {
+					    $QtLibStatic=$_[0];
+					}
+				    },
+	     $QtDir."/lib",
+	     "/usr/lib",
+	     "/usr/lib/qt2",
+	     "/usr/lib/qt2/lib",
+	     "/usr/lib/qt3",
+	     "/usr/lib/qt3/lib",
+	     "/usr/lib/qt",
+	     "/ust/lib/qt/lib",
+	     "/usr/local/lib",
+	     "/usr/local/lib/qt2",
+	     "/usr/local/lib/qt2/lib",
+	     "/usr/local/lib/qt3",
+	     "/usr/local/lib/qt3/lib",
+	     "/usr/local/lib/qt",
+	     "/ust/local/lib/qt/lib",
+	     "/usr/local/qt2",
+	     "/usr/local/qt2/lib",
+	     "/usr/local/qt3",
+	     "/usr/local/qt3/lib",
+	     "/usr/local/qt",
+	     "/ust/local/qt/lib"
+	     );
+    if (!defined $QtLibStatic) {
+	findFile("^libqt(-mt)?\\.a",sub {
+	                                if ($_[0] && ! -l $_[0]) {
+					    $QtLibStatic=$_[0];
+					}
+				    },
+		 $QtDir."/lib",
+		 "/usr/lib",
+		 "/usr/lib/qt2",
+		 "/usr/lib/qt2/lib",
+		 "/usr/lib/qt3",
+		 "/usr/lib/qt3/lib",
+		 "/usr/lib/qt",
+		 "/ust/lib/qt/lib",
+		 "/usr/local/lib",
+		 "/usr/local/lib/qt2",
+		 "/usr/local/lib/qt2/lib",
+		 "/usr/local/lib/qt3",
+		 "/usr/local/lib/qt3/lib",
+		 "/usr/local/lib/qt",
+		 "/ust/local/lib/qt/lib",
+		 "/usr/local/qt2",
+		 "/usr/local/qt2/lib",
+		 "/usr/local/qt3",
+		 "/usr/local/qt3/lib",
+		 "/usr/local/qt",
+		 "/ust/local/qt/lib"
+		 );
     }
     if (!-d $QtLib) {
 	print "Couldn't find library files for Qt, use --with-qt-libs to specify\n";
@@ -402,17 +492,8 @@ __TEMP__
 	$StdCppLibStatic=$_[0];
 	return -f $_[0];
     },
-	     $QtDir."/lib",
 	     "/usr/lib",
-	     "/usr/lib/qt2",
-	     "/usr/lib/qt2/lib",
-	     "/usr/lib/qt",
-	     "/ust/lib/qt/lib",
-	     "/usr/local/lib",
-	     "/usr/local/lib/qt2",
-	     "/usr/local/lib/qt2/lib",
-	     "/usr/local/lib/qt",
-	     "/ust/local/lib/qt/lib");
+	     "/usr/local/lib");
     if (! -f $StdCppLibStatic) {
 	$StdCppLibStatic="";
     }
@@ -664,14 +745,6 @@ __EOT__
 	print MAKEFILE "PERL=$Perl\n";
 	print MAKEFILE "\n";
 
-	print MAKEFILE "# How to generate kde files, either \$PERL fixkde.pl (If TO_KDE is set) or cat\n";
-	if ($KDEApplication) {
-	    print MAKEFILE "FIXKDE=./fixkde.pl\n";
-	} else {
-	    print MAKEFILE "FIXKDE=cat\n";
-	}
-	print MAKEFILE "\n";
-
 	print MAKEFILE "# Comment out this line if you want more output from compile\n";
 	print MAKEFILE ".SILENT:\n";
 	print MAKEFILE "\n";
@@ -689,15 +762,6 @@ CFLAGS_GLOB=-g -fPIC -Wall
 __EOT__
 
 	close MAKEFILE;
-	if ($KDEApplication) {
-	    print "Making KDE/Qt substitution\n";
-	    open(STDIN,"<tomain.kde");
-	    open(STDOUT,">tomain.h");
-	    require "fixkde.pl";
-	} else {
-	    use File::Copy;
-	    copy("tomain.kde","tomain.h");
-	}
     } else {
 	print "Couldn't open Makefile.setup for writing\n";
 	exit(2);

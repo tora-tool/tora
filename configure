@@ -52,7 +52,7 @@ do
 done
 
 echo Metacompiling moc files
-for a in *.h
+for a in *.h qtlegacy/*.h
 do
     if grep -i Q_OBJECT $a >/dev/null
     then

@@ -35,6 +35,7 @@
 TO_NAMESPACE;
 
 #include <qapplication.h>
+#include <qpainter.h>
 
 #include "tomain.h"
 #include "todebugtext.h"

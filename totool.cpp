@@ -42,6 +42,10 @@ TO_NAMESPACE;
 #include <qstring.h>
 #include <qworkspace.h>
 #include <qfile.h>
+#include <qregexp.h>
+#if QT_VERSION >= 300
+#  include <qsettings.h>
+#endif
 
 #include "totool.h"
 #include "tomain.h"
@@ -153,9 +157,11 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
   }
 }
 
+#define APPLICATION_NAME "/tora/"
+
 void toTool::saveConfig(void)
 {
-#ifndef WIN32
+#if ! defined(WIN32) && QT_VERSION < 300
   if (!Configuration)
     return;
   QString conf;
@@ -164,15 +170,55 @@ void toTool::saveConfig(void)
   }
   conf.append(CONFIG_FILE);
   saveMap(conf,*Configuration);
+#else
+#  if QT_VERSION >= 300
+  QSettings settings;
+  QRegExp re(":");
+  for (map<QString,QString>::iterator i=Configuration->begin();i!=Configuration->end();i++) {
+    QString path=(*i).first;
+    QString value=(*i).second;
+    path.prepend(APPLICATION_NAME);
+    path.replace(re,"/");
+    if (value.isNull())
+      settings.writeEntry(path,"");
+    else
+      settings.writeEntry(path,value);
+  }
+#  endif
 #endif
 }
+
+#if QT_VERSION >= 300
+
+static void ReadConfig(QSettings &settings,const QString &path,map<QString,QString> &conf)
+{
+  QStringList lst=settings.entryList(path);
+  for(unsigned int i=0;i<lst.count();i++) {
+    QString fullpath=path;
+    fullpath+=lst[i];
+    QString confname=fullpath;
+    confname.replace(QRegExp("/"),":");
+    confname=confname.right(confname.length()-strlen(APPLICATION_NAME));
+    conf[confname]=settings.readEntry(fullpath);
+  }
+  lst=settings.subkeyList(path);
+  for (unsigned int j=0;j<lst.count();j++) {
+    QString fullpath=path;
+    fullpath+=lst[j];
+    fullpath+="/";
+    ReadConfig(settings,fullpath,conf);
+  }
+}
+
+#endif
 
 void toTool::loadConfig(void)
 {
   if (Configuration)
     delete Configuration;
   Configuration=new map<QString,QString>;
-#ifndef WIN32
+
+#if ! defined(WIN32) && QT_VERSION < 300
   QString conf;
   if (getenv("HOME")) {
     conf=getenv("HOME");
@@ -180,6 +226,11 @@ void toTool::loadConfig(void)
   conf.append(CONFIG_FILE);
   if (!loadMap(conf,*Configuration))
     loadMap(DEF_CONFIG_FILE,*Configuration);
+#else
+#  if QT_VERSION >= 300
+  QSettings settings;
+  ReadConfig(settings,APPLICATION_NAME,*Configuration);
+#  endif
 #endif
 }
 

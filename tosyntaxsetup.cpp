@@ -225,7 +225,7 @@ void toSyntaxSetup::selectResultFont(void)
   bool ok=KFontDialog::getFont(font,false,this);
 #else
   bool ok=true;
-  QFont font=QFontDialog::getFont (&ok,toStringToFont(Text),this);
+  QFont font=QFontDialog::getFont (&ok,toStringToFont(List),this);
 #endif
   if (ok) {
     List=toFontToString(font);

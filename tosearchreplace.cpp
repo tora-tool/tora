@@ -37,6 +37,8 @@ TO_NAMESPACE;
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
+#include <qmultilineedit.h>
 
 #include "tomarkedtext.h"
 #include "tosearchreplace.h"

@@ -88,9 +88,6 @@ DEFINES+=-D_REENTRANT -DDEFAULT_PLUGIN_DIR=\"$(INSTALLLIB)/tora\"
 # Where to find perl on your system
 PERL=/usr/bin/perl
 
-# How to generate kde files, either $PERL fixkde.pl (If TO_KDE is set) or cat
-FIXKDE=cat
-
 # Comment out this line if you want more output from compile
 .SILENT:
 
