@@ -65,7 +65,9 @@
 #define CONF_DESKTOP_AWARE	"DesktopAware"
 
 // Undefining this will leave out the style selection option stuff from the program
+#ifndef TO_KDE
 #define ENABLE_STYLE
+#endif
 #define CONF_STYLE		"Style"
 #define DEFAULT_STYLE		"Windows"
 

@@ -19,6 +19,8 @@
 	application.
 2001-03-27: Use local8bit when reading in toWorksheet.
 2001-03-28: Modified regexp to verify Qt version in configure.
+2001-03-28: Minor modification of how dependency files are generated.
+2001-03-28: Moved around a bit between clean/distclean in Makefile.common.
 
 0.7: Released 2001-03-24
 

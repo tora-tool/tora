@@ -89,18 +89,18 @@ clean:
 	-rm -f *~ */*~ 2>&1 >/dev/null
 	-rm -f *.bak 2>&1 >/dev/null
 	-rm -rf plugins 2>&1 >/dev/null
+	-for a in *.kde ; \
+             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n";' $$a`; \
+         done
+	-for a in *.ui ; \
+             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
+         done
 
 distclean: clean
 	-rm -rf .depends 2>&1 >/dev/null
 	-rm -rf .xvpics 2>&1 >/dev/null
 	-rm -rf icons/.xvpics 2>&1 >/dev/null
 	-rm -f *.moc 2>&1 >/dev/null
-	-for a in *.ui ; \
-             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n$$_.cpp";' $$a`; \
-         done
-	-for a in *.kde ; \
-             do rm `$(PERL) -e '$$_=shift(@ARGV); s/\.[^\.]*$$//; print "$$_.h\n";' $$a`; \
-         done
 	-rm \#*\# 2>&1 >/dev/null
 	-cp Makefile.setup.orig Makefile.setup 2>&1 >/dev/null
 	-mv Makefile Makefile.orig 2>&1 >/dev/null
