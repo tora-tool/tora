@@ -20,6 +20,9 @@
 2001-07-22: Fixed some potential problems with browser.
 2001-07-23: Removed all 31 and 41 sized buffer and replaced with 101.
 2001-07-24: Applied a patch for forked make to work (Thanx Jonas Rathert).
+2001-07-24: Reenable style selection for Qt.
+2001-07-29: Maximize tool window if there is only one.
+2001-07-29: Only fix layout on maximized tool windows.
 
 0.13: Released 2001-07-11
 

@@ -40,6 +40,7 @@ Extended functionality:
 * Option to change current connection to the connection of the current tool.
 * Parameter file editor in server tuning.
 * Install in KDE menu if KDE detected.
+* Doubleclicking on a listview should set param defaults to that line.
 
 New tools:
 
