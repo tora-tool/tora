@@ -124,7 +124,6 @@ class QWorkspace;
 class QComboBox;
 class QToolButton;
 class QPopupMenu;
-class QTimer;
 class QLabel;
 class toSearchReplace;
 
@@ -505,7 +504,7 @@ QComboBox *toRefreshCreate(QWidget *parent,const char *name=NULL,const QString &
  * @param timer Timer to set timeout in.
  * @param str String from currentText of combobox.
  */
-void toRefreshParse(QTimer *timer,const QString &amp;str);
+void toRefreshParse(toTimer *timer,const QString &amp;str);
 /** Read a value from a query. (Warning, this function will change when OTL 3.2.20 is
  * integrated in TOra)
  * @param dsc Description of query to read values from.
@@ -711,6 +710,34 @@ toToolWidget *toCurrentTool(QWidget *widget);
  * @param busy Wether busy or not.
  */
 void toBusy(bool busy=false);
+
+/** A timer descendant which also keep track of the last timer setting sent to it.
+ */
+class toTimer : public QTimer {
+  Q_OBJECT
+
+  int LastTimer;
+public:
+  /** Create timer.
+   * @param parent Parent object of timer.
+   * @param name Name of timer.
+   */
+  toTimer(QObject *parent=0,const char * name=0)
+    : QTimer(parent,name)
+  { }
+  /** Start timer.
+   * @param msec Milliseconds to timeout.
+   * @param sshot Set to true if only timeout once.
+   */
+  int start(int msec,bool sshot=false)
+  { LastTimer=msec; return QTimer::start(msec,sshot); }
+  /** Get last timer start timeout.
+   * @return Last timeout in millisecond.
+   */
+  int lastTimer(void)
+  { return LastTimer; }
+};
+
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
  * might be sent by TOra or OTL and display the message in the statusbar of the main window.
  */

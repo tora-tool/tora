@@ -47,7 +47,7 @@
 <LI><A HREF="http://doc.trolltech.com/qcombobox.html">QComboBox</A> *&nbsp;<b><A HREF="#ref618">toRefreshCreate</A></b> (<A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *parent,const char *name=NULL,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;def=QString::null,
 			   <A HREF="http://doc.trolltech.com/qcombobox.html">QComboBox</A> *item=NULL) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref619">toRefreshParse</A></b> (<A HREF="http://doc.trolltech.com/qtimer.html">QTimer</A> *timer,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
+<LI>void &nbsp;<b><A HREF="#ref619">toRefreshParse</A></b> (<A HREF="toTimer.html">toTimer</A> *timer,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str) 
 </LI>
 <LI><A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref620">toReadValue</A></b> (const <A HREF="#otl_column_desc">otl_column_desc</A> &amp;dsc,<A HREF="#otl_stream">otl_stream</A> &amp;q,int maxSize) 
 </LI>
@@ -130,10 +130,10 @@
 <LI>void &nbsp;<b><A HREF="#ref653">toBusy</A></b> (bool busy=false) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref654">max</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref655">max</A></b> (T a, T b) 
 </LI>
 <LI>template &lt;class T&gt;
-T &nbsp;<b><A HREF="#ref655">min</A></b> (T a, T b) 
+T &nbsp;<b><A HREF="#ref656">min</A></b> (T a, T b) 
 </LI>
 </ul>
 <h2>Global member Documentation</h2>
@@ -221,7 +221,7 @@ T &nbsp;<b><A HREF="#ref655">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>item</i></TD><TD align="left" valign="top">Combo box to fill. If not specified a new combobox is created.
  </TD></TR>
 </TABLE></P>
-<A NAME="toRefreshParse"></A><A NAME="ref619"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toRefreshParse</strong> (<A HREF="http://doc.trolltech.com/qtimer.html">QTimer</A> *timer,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
+<A NAME="toRefreshParse"></A><A NAME="ref619"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>toRefreshParse</strong> (<A HREF="toTimer.html">toTimer</A> *timer,const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;str)
 <br></td><td align="right"><h3><strong>toRefreshParse</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p> Set a timer with the value from a refresh combobox (See <A HREF="#toRefreshCreate">toRefreshCreate</A>).
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
@@ -557,12 +557,12 @@ T &nbsp;<b><A HREF="#ref655">min</A></b> (T a, T b)
 <TR><TD align="left" valign="top"><i>busy</i></TD><TD align="left" valign="top">Wether busy or not.
  </TD></TR>
 </TABLE></P>
-<A NAME="max"></A><A NAME="ref654"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="max"></A><A NAME="ref655"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>max</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32
  </p>
-<A NAME="min"></A><A NAME="ref655"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
+<A NAME="min"></A><A NAME="ref656"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template &lt;class T&gt;
 T &nbsp;<strong>min</strong> (T a, T b)
 <br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><p><small><code>#include &lt;<A HREF="tomain_h.html">tomain.h</A>&gt;</code></small></p><p>
  Only for WIN32

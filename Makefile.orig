@@ -52,6 +52,7 @@ SOURCES=\
 	toparamget.cpp		\
 	topiechart.cpp		\
 	topreferences.cpp	\
+	toresultbar.cpp		\
 	toresultcols.cpp	\
 	toresultconstraint.cpp	\
 	toresultcontent.cpp	\
@@ -59,6 +60,7 @@ SOURCES=\
 	toresultfield.cpp	\
 	toresultindexes.cpp	\
 	toresultitem.cpp	\
+	toresultline.cpp	\
 	toresultlock.cpp	\
 	toresultlong.cpp	\
 	toresultpie.cpp		\
@@ -118,6 +120,7 @@ API=	\
 	toparamget.h		\
 	topiechart.h		\
 	toresult.h		\
+	toresultbar.h		\
 	toresultcols.h		\
 	toresultconstraint.h	\
 	toresultcontent.h	\
@@ -125,6 +128,7 @@ API=	\
 	toresultfield.h		\
 	toresultindexes.h	\
 	toresultitem.h		\
+	toresultline.h		\
 	toresultlong.h		\
 	toresultpie.h		\
 	toresultplan.h		\
@@ -150,6 +154,8 @@ plugins/tocharts.tso:\
 	objs/tobarchart.o \
 	objs/tolinechart.o \
 	objs/topiechart.o \
+	objs/toresultbar.o \
+	objs/toresultline.o \
 	objs/toresultpie.o
 plugins/todebug.tso:\
 	objs/todebug.o \

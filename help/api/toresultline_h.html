@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: tosgastatement.h</TITLE>
+<TITLE>Source: toresultline.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: tosgastatement.h</h1>
+		<h1>Source: toresultline.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,61 +62,67 @@
  *
  ****************************************************************************/
 
-#ifndef __TOSGASTATEMENT_H
-#define __TOSGASTATEMENT_H
+#ifndef __TORESULTLINE_H
+#define __TORESULTLINE_H
 
-#include &lt;qtabwidget.h&gt;
+#include "toresult.h"
+#include "tolinechart.h"
 
-class toResultView;
-class QTabWidget;
-class toResultField;
-class QComboBox;
-class toResultPlan;
-class toResultItem;
+class toSQL;
 
-/** This widget displays information about a statement in the Oracle SGA. To get an
- * address use the @ref toSQLToAddress function.
+/** Display the result of a query in a piechart. The first column of the query should
+ * contain the x value and the rest of the columns should be values of the diagram. The
+ * legend is the column name. Connects to the tool timer for updates automatically.
  */
 
-class toSGAStatement : public QTabWidget {
+class toResultLine : public toLineChart, public toResult {
   Q_OBJECT
-  /** The SQL run.
+  /** Query to run.
    */
-  toResultField *SQLText;
-  /** Tab widget
-   */
-  QWidget *CurrentTab;
-  /** Resources used by the statement.
-   */
-  toResultItem *Resources;
-  /** Address of the statement.
-   */
-  QString Address;
-  /** Execution plan of the statement.
-   */
-  toResultPlan *Plan;
-
-  /** Display resources of statement.
-   */
-  void viewResources(void);
-private slots:
-  /** Change the displayed tab.
-   */
-  void changeTab(QWidget *widget);
+  QString SQL;
+  void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param,bool first);
 public:
   /** Create widget.
-   * @param parent Parent widget.
+   * @param parent Parent of list.
+   * @param name Name of widget.
    */
-  toSGAStatement(QWidget *parent);
+  toResultLine(QWidget *parent,const char *name=NULL);
+
+  /** Set SQL to query.
+   * @param sql Query to run.
+   */
+  void setSQL(const QString &amp;sql)
+  { SQL=sql; }
+  /** Set the SQL statement of this list.
+   * @param sql SQL containing statement.
+   */
+  void setSQL(toSQL &amp;sql);
+
+  /** Reimplemented for internal reasons.
+   */
+  virtual void query(const QString &amp;sql,const list&lt;QString&gt; &amp;param)
+  { query(sql,param,true); }
+  /** Reimplemented for internal reasons.
+   */
+  void query(const QString &amp;sql)
+  { list&lt;QString&gt; p; query(sql,p); }
 public slots:
-  /** Display another statement.
-   * @param address Address of the statement to display.
+  /** Read another value to the chart.
    */
-  virtual void changeAddress(const QString &amp;address);
-  /** Update the contents of this widget.
-   */ 
-  void refresh(void)
-  { changeTab(CurrentTab); }
+  virtual void refresh(void)
+  { list&lt;QString&gt; p; query(SQL,p,false); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); query(SQL,p); }
+  /** Reimplemented for internal reasons.
+   */
+  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
+  { list&lt;QString&gt; p; p.insert(p.end(),Param1); p.insert(p.end(),Param2); p.insert(p.end(),Param3); query(SQL,p); }
 };
 
 #endif
