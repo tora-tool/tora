@@ -316,6 +316,48 @@ public:
 				       const QString &arg5=QString::null,const QString &arg6=QString::null,
 				       const QString &arg7=QString::null,const QString &arg8=QString::null,
 				       const QString &arg9=QString::null);
+  /** Execute a query and return all the values returned by it.
+   * @param conn Connection to run query on.
+   * @param sql SQL to run.
+   * @param params Parameters to pass to query.
+   * @return A list of @ref toQValues:s read from the query.
+   */
+  static std::list<toQValue> readQueryNull(toConnection &conn,
+					   toSQL &sql,
+					   std::list<toQValue> &params);
+  /** Execute a query and return all the values returned by it.
+   * @param conn Connection to run query on.
+   * @param sql SQL to run.
+   * @param params Parameters to pass to query.
+   * @return A list of @ref toQValues:s read from the query.
+   */
+  static std::list<toQValue> readQueryNull(toConnection &conn,
+					   const QString &sql,
+					   std::list<toQValue> &params);
+  /** Execute a query and return all the values returned by it.
+   * @param conn Connection to run query on.
+   * @param sql SQL to run.
+   * @param arg1 Parameters to pass to query.
+   * @return A list of @ref toQValues:s read from the query.
+   */
+  static std::list<toQValue> readQueryNull(toConnection &conn,toSQL &sql,
+					   const QString &arg1=QString::null,const QString &arg2=QString::null,
+					   const QString &arg3=QString::null,const QString &arg4=QString::null,
+					   const QString &arg5=QString::null,const QString &arg6=QString::null,
+					   const QString &arg7=QString::null,const QString &arg8=QString::null,
+					   const QString &arg9=QString::null);
+  /** Execute a query and return all the values returned by it.
+   * @param conn Connection to run query on.
+   * @param sql SQL to run.
+   * @param arg1 Parameters to pass to query.
+   * @return A list of @ref toQValues:s read from the query.
+   */
+  static std::list<toQValue> readQueryNull(toConnection &conn,const QString &sql,
+					   const QString &arg1=QString::null,const QString &arg2=QString::null,
+					   const QString &arg3=QString::null,const QString &arg4=QString::null,
+					   const QString &arg5=QString::null,const QString &arg6=QString::null,
+					   const QString &arg7=QString::null,const QString &arg8=QString::null,
+					   const QString &arg9=QString::null);
 };
 
 /** A short representation of a @ref toQuery::queryDescribe

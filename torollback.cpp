@@ -399,7 +399,7 @@ public:
 	toPush(args,toQValue(QString(i->text(TRANSCOL-1))));
 	trx.execute(SQLStartExt,args);
 	for (int j=TRANSCOL;!trx.eof();j++)
-	  i->setText(j,trx.readValue());
+	  i->setText(j,trx.readValueNull());
       }
     } TOCATCH
   }

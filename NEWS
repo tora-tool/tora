@@ -92,6 +92,8 @@
 2001-08-24: Fixed problem with extracting package bodies.
 2001-08-24: Made rethrow shorter in toExtract.
 2001-08-25: Remade rollback dialog in designer and added show sql.
+2001-08-25: Don't display null in rollback manager.
+2001-08-25: Added readQueryNull member to query class.
 
 0.14: Released 2001-08-02
 
