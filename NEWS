@@ -1,4 +1,4 @@
-0.5:
+0.5: Released 2001-02-12
 
 2001-01-28: Fixed bug in explain plan.
 2001-01-28: Fix bug regarding CREATE when parsing PL/SQL in worksheet.
@@ -26,6 +26,7 @@
 2001-02-06: Fixed bug in toResultItem regarding eof queries.
 2001-02-09: Added support for TNS_ADMIN in finding tnsnames.ora. (Petr Sindylek)
 2001-02-10: Support for connecting through shared memory.
+2001-02-12: Added rpm spec file.
 
 0.4: Released 2001-01-27
 
