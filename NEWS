@@ -11,6 +11,7 @@
 2001-09-25: Zooming charts used one sample to many on left edge.
 2001-09-25: Security manager now uses object cache.
 2001-09-26: Some Oracle8 fixes for tuning.
+2001-09-26: Changed version to 1.1.2.
 
 1.1.1: 2001-09-24
 
