@@ -10,11 +10,12 @@ AC_DEFUN(mrj_SET_PREFIX,
 
 AC_DEFUN(TORA_CHECK_PUTENV,
 [
-  AC_CHECK_HEADERS(stdlib.h)
   AC_CACHE_CHECK([for putenv], tora_cv_sys_putenv,
     [AC_TRY_COMPILE(
       [
-#include <stdlib.h>
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
       ],
       [putenv("test=test");],
       tora_cv_sys_putenv=yes,
@@ -97,8 +98,21 @@ else
   ora_cflags="-I$ORACLE_HOME/rdbms/demo -I$ORACLE_HOME/plsql/public -I$ORACLE_HOME/rdbms/public -I$ORACLE_HOME/network/public"
   CFLAGS="$CFLAGS $ora_cflags"
 
+  ora_libdir=
+  if test -d $ORACLE_HOME/lib; then
+     ora_libdir=$ORACLE_HOME/lib
+  elif test -d $ORACLE_HOME/lib32; then
+     ora_libdir=$ORACLE_HOME/lib32
+  elif test -d $ORACLE_HOME/lib64; then
+     ora_libdir=$ORACLE_HOME/lib64
+  fi
+
+  ora_ldflags=
+  if test "x$ora_libdir" != "x"; then
+    ora_ldflags="-L$ora_libdir -lclntsh"
+  fi
+
   ldflags_ora_save=$LDFLAGS
-  ora_ldflags="-L$ORACLE_HOME/lib -lclntsh"
   LDFLAGS="$LDFLAGS $ora_ldflags"
 
   # i pulled this from one of the examples in the demo dir.
