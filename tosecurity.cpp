@@ -1314,6 +1314,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   UserList->addColumn("Users/Roles");
   UserList->setSQLName("toSecurity:Users/Roles");
   UserList->setRootIsDecorated(true);
+  UserList->setSelectionMode(QListView::Single);
   Tabs=new QTabWidget(splitter);
   Quota=new toSecurityQuota(connection,Tabs);
   General=new toSecurityPage(Quota,connection,Tabs);
@@ -1429,7 +1430,7 @@ void toSecurity::changeUser(bool ask)
 
   try {
     QString sel;
-    QListViewItem *item=UserList->currentItem();
+    QListViewItem *item=UserList->selectedItem();
     if (item) {
       UserID=item->text(1);
       DropButton->setEnabled(item->parent());
@@ -1583,11 +1584,11 @@ void toSecurity::copy(void)
     UserID="ROLE:";
   for (QListViewItem *item=UserList->firstChild();item;item=item->nextSibling())
     if (item->text(1)==UserID) {
-      disconnect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+      disconnect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 		 this,SLOT(changeUser(QListViewItem *)));
       UserList->clearSelection();
       UserList->setCurrentItem(item);
-      connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+      connect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	      this,SLOT(changeUser(QListViewItem *)));
       break;
     }
