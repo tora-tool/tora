@@ -203,9 +203,9 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
+  box=new QVBox(Tabs);
   toolbar=toAllocBar(box,"Explain plans",connection.description());
 
-  box=new QVBox(Tabs);
   Tabs->addTab(box,"Explain plans");
   QSplitter *splitter=new QSplitter(Horizontal,box);
   Plans=new toResultLong(false,false,toQuery::Background,splitter);

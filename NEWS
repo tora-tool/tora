@@ -114,6 +114,7 @@
 2001-12-06: Added hide button in worksheet statistics for each set.
 2001-12-06: Export charts also save open state of items.
 2001-12-06: Changed name of todebugchange.ui to todebugchangeui.ui
+2001-12-07: Fixed missplaced toolbar for explain plan browser.
 
 1.1.5: Released 2001-11-26
 

@@ -46,21 +46,17 @@ class QSplitter;
 class QLabel;
 class toBarChart;
 class toListView;
+class toWorksheetStatistic;
 
 class toHideSplitter : public QSplitter {
   Q_OBJECT
+  toWorksheetStatistic *StatList;
 public:
-  toHideSplitter(QSplitter::Orientation o,QWidget *parent)
-    : QSplitter(o,parent)
+  toHideSplitter(QSplitter::Orientation o,QWidget *parent,toWorksheetStatistic *statlist)
+    : QSplitter(o,parent),StatList(statlist)
   { }
 public slots:
-  void setHidden(bool hid)
-  {
-    if (hid)
-      hide();
-    else
-      show();
-  }
+  void setHidden(bool hid);
 };
 
 class toWorksheetStatistic : public QVBox {
@@ -96,6 +92,7 @@ public:
 
   void addStatistics(std::map<QString,QString> &stats);
 
+  void updateSplitter(void);
 public slots:
 
   virtual void showPlans(bool);

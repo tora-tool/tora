@@ -718,7 +718,7 @@ void toLineChart::importData(std::map<QString,QString> &ret,const QString &prefi
     Values.insert(Values.end(),vals);
     id++;
   }
-  Samples=id-1;
+  Samples=id-2;
   Title=ret[prefix+":Title"];
   update();
 }

@@ -138,7 +138,7 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
   cur.Label=new QLabel(stats["Description"],box);
   cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
   QCheckBox *check=new QCheckBox("Hide",box);
-  cur.Charts=new toHideSplitter(Horizontal,cur.Top);
+  cur.Charts=new toHideSplitter(Horizontal,cur.Top,this);
   connect(check,SIGNAL(toggled(bool)),cur.Charts,SLOT(setHidden(bool)));
   cur.Statistics=new toListView(cur.Charts);
   cur.Statistics->importData(stats,"Stat");
@@ -264,4 +264,28 @@ void toWorksheetStatistic::displayMenu(void)
     RemoveMenu->insertItem((*i).Label->text(),id);
     id++;
   }
+}
+
+void toWorksheetStatistic::updateSplitter(void)
+{
+  QValueList<int> sizes=Splitter->sizes();
+
+  int id=0;
+  for(std::list<data>::iterator i=Open.begin();i!=Open.end();i++) {
+    if ((*i).Charts->isHidden())
+      sizes[id]=0;
+    else
+      sizes[id]=(*i).Charts->height();
+    id++;
+  }
+  Splitter->setSizes(sizes);
+}
+
+void toHideSplitter::setHidden(bool hid)
+{
+  if (hid)
+    hide();
+  else
+    show();
+  StatList->updateSplitter();
 }
