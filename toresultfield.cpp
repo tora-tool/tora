@@ -62,6 +62,8 @@ void toResultField::query(const QString &sql,const toQList &param)
   if (!setSQLParams(sql,param))
     return;
 
+  setFilename(QString::null);
+
   try {
     clear();
     Unapplied=QString::null;
