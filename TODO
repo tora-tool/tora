@@ -75,6 +75,8 @@ Extended functionality:
 * Option to select newline format on saved text.
 * Make legacy CTRL+Shift etc keyboard bindings available.
 * Don't display statements not in the SGA in the SGA trace.
+* Include public objects in script tool.
+* Option wether tool button open new window or an already open tool.
 
 New tools:
 
@@ -82,7 +84,6 @@ New tools:
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
 * Alert log viewer.
-* RMAN and backup information.
 * Recent events:
 	* Number of redo switches
 	* Users added withing 30 days
