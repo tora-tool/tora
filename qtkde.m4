@@ -108,7 +108,7 @@ dnl ------------------------------------------------------------------------
 dnl
 AC_DEFUN(AC_PATH_QT,
 [
-  dnl AC_REQUIRE([K_PATH_X])
+  dnl AC_REQUIRE([K_PATH_X]) don't use until later, after qt native check
   AC_REQUIRE([AC_PATH_XTRA])
 
   dnl ------------------------------------------------------------------------
@@ -317,6 +317,7 @@ AC_DEFUN(AC_PATH_QT,
 
   if test $have_qt_mac_native != yes && test "x$kde_use_qt_emb" != "xyes"; then
     dnl don't append this until we're sure we're not using a native qt.
+    K_PATH_X
     LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
   fi
 
@@ -578,49 +579,64 @@ ac_x_libraries=],
 [LIBS="$ac_save_LIBS"
 # First see if replacing the include by lib works.
 # Check X11 before X11Rn because it is often a symlink to the current release.
-for ac_dir in `echo "$ac_x_includes" | sed s/include/lib${kdelibsuff}/` \
-    /usr/X11/lib${kdelibsuff}           \
-    /usr/X11R6/lib${kdelibsuff}         \
-    /usr/X11R5/lib${kdelibsuff}         \
-    /usr/X11R4/lib${kdelibsuff}         \
+for ac_dir in `echo "$ac_x_includes" | sed s/include/lib/` \
+    /usr/X11/lib                        \
+    /usr/X11R6/lib                      \
+    /usr/X11R5/lib                      \
+    /usr/X11R4/lib                      \
                                         \
-    /usr/lib${kdelibsuff}/X11           \
-    /usr/lib${kdelibsuff}/X11R6         \
-    /usr/lib${kdelibsuff}/X11R5         \
-    /usr/lib${kdelibsuff}/X11R4         \
+    /usr/lib/X11                        \
+    /usr/lib/X11R6                      \
+    /usr/lib/X11R5                      \
+    /usr/lib/X11R4                      \
                                         \
-    /usr/local/X11/lib${kdelibsuff}     \
-    /usr/local/X11R6/lib${kdelibsuff}   \
-    /usr/local/X11R5/lib${kdelibsuff}   \
-    /usr/local/X11R4/lib${kdelibsuff}   \
+    /usr/local/X11/lib                  \
+    /usr/local/X11R6/lib                \
+    /usr/local/X11R5/lib                \
+    /usr/local/X11R4/lib                \
                                         \
-    /usr/local/lib${kdelibsuff}/X11     \
-    /usr/local/lib${kdelibsuff}/X11R6   \
-    /usr/local/lib${kdelibsuff}/X11R5   \
-    /usr/local/lib${kdelibsuff}/X11R4   \
+    /usr/local/lib/X11                  \
+    /usr/local/lib/X11R6                \
+    /usr/local/lib/X11R5                \
+    /usr/local/lib/X11R4                \
                                         \
-    /usr/X386/lib${kdelibsuff}          \
-    /usr/x386/lib${kdelibsuff}          \
-    /usr/XFree86/lib${kdelibsuff}/X11   \
+    /usr/X386/lib                       \
+    /usr/x386/lib                       \
+    /usr/XFree86/lib/X11                \
                                         \
-    /usr/lib${kdelibsuff}               \
-    /usr/local/lib${kdelibsuff}         \
-    /usr/unsupported/lib${kdelibsuff}   \
-    /usr/athena/lib${kdelibsuff}        \
-    /usr/local/x11r5/lib${kdelibsuff}   \
-    /usr/lpp/Xamples/lib${kdelibsuff}   \
-    /lib/usr/lib${kdelibsuff}/X11       \
+    /usr/lib                            \
+    /usr/local/lib                      \
+    /usr/unsupported/lib                \
+    /usr/athena/lib                     \
+    /usr/local/x11r5/lib                \
+    /usr/lpp/Xamples/lib                \
+    /lib/usr/lib/X11                    \
                                         \
-    /usr/openwin/lib${kdelibsuff}       \
-    /usr/openwin/share/lib${kdelibsuff} \
+    /usr/openwin/lib                    \
+    /usr/openwin/share/lib              \
     ; \
 do
 dnl Don't even attempt the hair of trying to link an X program!
+
+dnl mrj: i removed the suffix {kdelibsuff} references above, so we
+dnl have to also test them here, too. this is needed because not all 64 bit
+dnl platforms use lib64 path exclusively (debian amd64 for one).
+
   for ac_extension in a so sl; do
     if test -r $ac_dir/lib${x_direct_test_library}.$ac_extension; then
+      echo "tried x dir $ac_dir" >&AC_FD_CC
       ac_x_libraries=$ac_dir
       break 2
     fi
+
+    for kdelibsuff in 32 64; do
+      ac_x_dir_with_suff=`echo $ac_dir | sed "s/lib/lib${kdelibsuff}/"`
+      if test -r $ac_x_dir_with_suff/lib${x_direct_test_library}.$ac_extension; then
+        echo "tried x dir $ac_dir" >&AC_FD_CC
+        ac_x_libraries=$ac_dir
+        break 3
+      fi
+    done
   done
 done])
 fi # $ac_x_libraries = NO
