@@ -57,8 +57,9 @@ void toResultPie::query(const QString &sql,const toQList &param)
   if (!handled()||Query)
     return;
 
-  setSQL(sql);
-  setParams(param);
+  if (!setSQLParams(sql,param))
+    return;
+
   try {
     Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,param);
     Poll.start(100);

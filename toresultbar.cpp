@@ -65,8 +65,8 @@ void toResultBar::query(const QString &sql,const toQList &param,bool first)
   if (!handled()||Query)
     return;
 
-  setSQL(sql);
-  setParams(param);
+  setSQLParams(sql,param);
+
   try {
     First=first;
     Query=new toNoBlockQuery(connection(),toQuery::Normal,sql,param);

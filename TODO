@@ -42,7 +42,7 @@ Extended functionality:
 * Ability to modify rollback segment.
 * Ability to drop tablespaces.
 * Information about controlfiles in tuning.
-* RMAN and backup information.
+* Postgress support.
 
 New tools:
 
@@ -51,3 +51,4 @@ New tools:
 * Visual reverse engineering of DB.
 * Change impact analyzing tool.
 * Alert log viewer.
+* RMAN and backup information.

@@ -39,6 +39,7 @@
 #include "toresult.h"
 #include "totool.h"
 #include "tomain.h"
+#include "toconf.h"
 
 #include "toresult.moc"
 
@@ -171,4 +172,25 @@ void toResultObject::setup(void)
     Result->Handled=Result->canHandle(Result->connection());
   if (!Result->Handled)
     Result->changeHandle();
+}
+
+bool toResult::setSQLParams(const QString &sql,const toQList &par)
+{
+  if (!toTool::globalConfig(CONF_DONT_REREAD,"").isEmpty()) {
+    if (SQL==sql&&par.size()==Params.size()) {
+      toQList::iterator i=((toQList &)par).begin();
+      toQList::iterator j=Params.begin();
+      while(i!=((toQList &)par).end()&&j!=Params.end()) {
+	if (QString(*i)!=QString(*j))
+	  break;
+	i++;
+	j++;
+      }
+      if (i==((toQList &)par).end()&&j==Params.end())
+	return false;
+    }
+  }
+  SQL=sql;
+  Params=par;
+  return true;
 }

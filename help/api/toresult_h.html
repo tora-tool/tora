@@ -124,6 +124,9 @@ protected:
    */
   void setParams(const toQList &par)
   { Params=par; ParametersSet=true; }
+  /** Set SQL and parameters and return false if query shouldn't be reexecuted.
+   */
+  bool setSQLParams(const QString &sql,const toQList &par);
 public:
   toResult(void);
   virtual ~toResult()

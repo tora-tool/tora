@@ -177,8 +177,8 @@ void toResultItem::done(void)
 
 void toResultItem::query(const QString &sql,const toQList &param)
 {
-  setSQL(sql);
-  setParams(param);
+  if (!setSQLParams(sql,param))
+    return;
 
   start();
   if (!handled()||Query) {

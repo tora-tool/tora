@@ -59,8 +59,8 @@ toResultField::~toResultField()
 
 void toResultField::query(const QString &sql,const toQList &param)
 {
-  setSQL(sql);
-  setParams(param);
+  if (!setSQLParams(sql,param))
+    return;
 
   try {
     clear();

@@ -58,7 +58,9 @@ static toSQL SQLObjectType("toResultExtract:ObjectType",
 
 void toResultExtract::query(const QString &sql,const toQList &param)
 {
-  setParams(param);
+  if (!setSQLParams(sql,param))
+    return;
+
   toQList::iterator i=params().begin();
   QString owner;
   QString name;
