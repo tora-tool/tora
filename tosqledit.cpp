@@ -223,7 +223,7 @@ toSQLEdit::~toSQLEdit()
 
 void toSQLEdit::loadSQL(void)
 {
-  QString filename=toOpenFilename(QString::null,"*.sql\n*.txt",this);
+  QString filename=toOpenFilename(QString::null,QString::null,this);
   if (!filename.isEmpty()) {
     toSQL::loadSQL(filename);
     Filename=filename;
@@ -232,7 +232,7 @@ void toSQLEdit::loadSQL(void)
 
 void toSQLEdit::saveSQL(void)
 {
-  QString filename=toSaveFilename(QString::null,"*.sql\n*.txt",this);
+  QString filename=toSaveFilename(QString::null,QString::null,this);
   if (!filename.isEmpty()) {
     Filename=filename;
     toSQL::saveSQL(filename);

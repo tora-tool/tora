@@ -171,7 +171,7 @@ void toGlobalSetting::pluginBrowse(void)
 
 void toGlobalSetting::sqlBrowse(void)
 {
-  QString str=toOpenFilename(CustomSQL->text(),"*.sql",this);
+  QString str=toOpenFilename(CustomSQL->text(),QString::null,this);
   if (!str.isEmpty())
     CustomSQL->setText(str);
 }

@@ -752,11 +752,11 @@ static QString AddExt(QString t,const QString &filter)
   static QRegExp hasext("\\.[^\\/]*$");
   if (t.isEmpty())
     return t;
-  if (!hasext.match(t)) {
+  if (hasext.match(t)<0) {
     static QRegExp findext("\\.[^ \t\r\n\\)\\|]*");
-    int pos=0;
-    int len=findext.match(filter,0,&pos);
-    if (len>=0)
+    int len=0;
+    int pos=findext.match(filter,0,&len);
+    if (pos>=0)
       t+=filter.mid(pos,len);
     else
       t+=".sql";
