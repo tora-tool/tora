@@ -1,4 +1,4 @@
-1.3.12:
+1.3.12: Released 2003-10-20
 
 2003-10-13: Fixed enabling XFT in Qt only mode.
 2003-10-13: Fixed bug in finding function to execute.
