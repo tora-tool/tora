@@ -177,6 +177,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   Statistics=new toResultView(true,false,this);
   Statistics->setSQL(SQLListTables);
   Statistics->setSelectionMode(QListView::Extended);
+  Statistics->setReadAll(true);
 
   connect(Schema,SIGNAL(activated(int)),
 	  this,SLOT(refresh()));
@@ -311,4 +312,6 @@ void toAnalyze::stop(void)
   Pending.clear();
   Stop->setEnabled(false);
   Current->setText(QString::null);
+  if (!connection().needCommit())
+    connection().commit();
 }

@@ -70,6 +70,7 @@
 #include "icons/toworksheet.xpm"
 #include "icons/return.xpm"
 #include "icons/trash.xpm"
+#include "icons/commit.xpm"
 
 class toAlertTool : public toTool {
 protected:
@@ -120,6 +121,12 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   Registered->setCurrentItem(0);
   connect(Registered,SIGNAL(activated(int)),this,SLOT(add()));
   AddNames.insert(AddNames.end(),"TOra");
+
+  new QToolButton(QPixmap((const char **)commit_xpm),
+		  "Register current",
+		  "Register current",
+		  this,SLOT(add()),
+		  toolbar);
 
   new QToolButton(QPixmap((const char **)trash_xpm),
 		  "Remove registered",

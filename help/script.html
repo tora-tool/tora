@@ -1,10 +1,10 @@
-<HTML><HEAD><TITLE>Schema Extraction or Compare</TITLE></HEAD><BODY>
-<H1>Schema Extraction or Compare</H1>
-This tool is used to either extract a script to recreate database objects, or to compare database objects.<P>
+<HTML><HEAD><TITLE>Schema extraction, compare and search</TITLE></HEAD><BODY>
+<H1>Schema extraction, compare and search</H1>
+This tool is used to either extract a script to recreate database objects, compare database objects or search database objects.<P>
 <IMG SRC=images/script.png><P>
 <H2>Defining the operation</H2>
-The first thing to select is if you want to <B>extract</B> script to recreate an object or to <B>compare</B>. You choose
-this by selecting one of the two radio buttons to the left of the screen.<P>
+The first thing to select is if you want to <B>extract</B> script to recreate an object, <B>compare</B> or <B>search</B>. You choose
+this by selecting one of the radio buttons to the left of the screen.<P>
 Next you should indicate what kind of information you want included in the extract or compare. This is selected with the
 checkboxes just to the right of the mode selection. Depending on the mode some options may be
 disabled.<P>
@@ -51,7 +51,33 @@ This specifies the schema to be used when extracting. If you select <B>Same</B>,
 schema as the source database is used. If you select <B>None</B>, no schema is generated.
 Specifying anything else will replace the source schema with the one entered here.
 </TD></TR>
-</TABLE><P>
+</TABLE>
+<P>
+If you are searching you also need to indicate what you are searching for in the bottom left of
+the front page.<P>
+<TABLE>
+<TR><TD VALIGN=top><B>
+Containing any words</B></TD><TD VALIGN=top>
+The object should contain at least one of the words in the line editor.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Containing all words</B></TD><TD VALIGN=top>
+The object should contain all of the words in the line editor.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+Exact match</B></TD><TD VALIGN=top>
+The object should contain the exact string as in the line editor include whitespaces.
+</TD></TR>
+<TR><TD VALIGN=top><B>
+RegExp</B></TD><TD VALIGN=top>
+The object should contain at least one of the words in the line editor. The dialect of RegExp:s
+is the ones in the version of Qt that TOra is compiled against.
+For more information on regular expressions check out
+<A HREF=http://doc.trolltech.com/qregexp.html>http://doc.trolltech.com/qregexp.html</A>, if you are using Qt 3.0
+or later you have a more advanced form of regular expressions.
+</TD></TR>
+</TABLE>
+<P>
 The next thing you need to do is to specify which objects you want to extract or compare. If you
 extract you only need to specify the source, if comparing destination objects are also needed.<P>
 Selecting or deselecting an item in this list will select all it's child items.<P>
