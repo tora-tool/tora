@@ -103,9 +103,9 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   new QLabel("Registered",toolbar);
   Registered=new QComboBox(toolbar);
   Registered->insertItem("TOra");
-  Registered->setCurrentItem(0);
   Registered->setEditable(true);
   Registered->setDuplicatesEnabled(false);
+  Registered->setCurrentItem(0);
   connect(Registered,SIGNAL(activated(int)),this,SLOT(add()));
   AddNames.insert(AddNames.end(),"TOra");
 
@@ -158,6 +158,7 @@ toAlert::~toAlert()
     sleep(1);
     Lock.lock();
   } while(State==Quit);
+  Lock.unlock();
   AlertTool.closeWindow(connection());
 }
 
@@ -223,13 +224,20 @@ void toAlert::pollTask::run(void)
 	Parent.Connection.commit();
       }
 
-      toQuery query(Parent.Connection,SQLPoll,QString::number(TIMEOUT));
-      QString name=query.readValue();
-      QString msg=query.readValue();
-      if (query.readValue().toInt()==0) {
-	toLocker lock(Parent.Lock);
-	Parent.NewAlerts.insert(Parent.NewAlerts.end(),name);
-	Parent.NewMessages.insert(Parent.NewMessages.end(),msg);
+      Parent.Lock.lock();
+      if (Parent.Names.size()) {
+	Parent.Lock.unlock();
+	toQuery query(Parent.Connection,SQLPoll,QString::number(TIMEOUT));
+	QString name=query.readValue();
+	QString msg=query.readValue();
+	if (query.readValue().toInt()==0) {
+	  toLocker lock(Parent.Lock);
+	  Parent.NewAlerts.insert(Parent.NewAlerts.end(),name);
+	  Parent.NewMessages.insert(Parent.NewMessages.end(),msg);
+	}
+      } else {
+	Parent.Lock.unlock();
+	sleep(TIMEOUT);
       }
     } catch(const QString &str) {
       printf("Exception in alert polling:\n%s\n",(const char *)str);
@@ -239,10 +247,11 @@ void toAlert::pollTask::run(void)
 
     Parent.Lock.lock();
   }
-  try {
-    Parent.Connection.execute(SQLRemoveAll);
-  } catch(...) {
-  }
+  if (Parent.Names.size()>0)
+    try {
+      Parent.Connection.execute(SQLRemoveAll);
+    } catch(...) {
+    }
   Parent.State=Done;
   Parent.Lock.unlock();
 }
