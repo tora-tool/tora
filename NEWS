@@ -41,6 +41,7 @@
 2001-10-17: Added indication of object caching.
 2001-10-17: Made debugger handle initial create or replace.
 2001-10-17: Fixed problem with save as.
+2001-10-18: Fixed problem with primary keys and extraction.
 
 1.1.2: Released 2001-10-07
 

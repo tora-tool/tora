@@ -580,7 +580,7 @@ QString toExtract::createConstraint(const QString &schema,const QString &owner,c
 	toQuery query(Connection,SQLConstraintTable,rOwner,rName);
 	ret+="REFERENCES ";
 	ret+=schema;
-	ret+=query.readValue();
+	ret+=QString(query.readValue()).lower();
 	ret+=constraintColumns(rOwner,rName);
 
 	if (delRule=="CASCADE")
@@ -644,7 +644,7 @@ void toExtract::describeConstraint(std::list<QString> &lst,const QString &schema
 	toQuery query(Connection,SQLConstraintTable,rOwner,rName);
 	ret+="REFERENCES ";
 	ret+=schema;
-	ret+=query.readValue();
+	ret+=QString(query.readValue()).lower();
 	ret+=constraintColumns(rOwner,rName);
 
 	if (delRule=="CASCADE")
@@ -1284,11 +1284,13 @@ void toExtract::describeAttributes(std::list<QString> &dsp,std::list<QString> &c
 }
 
 static toSQL SQLPrimaryKey("toExtract:PrimaryKey",
-			   "SELECT constraint_name\n"
-			   "  FROM all_constraints\n"
-			   " WHERE table_name = :nam<char[100]>\n"
-			   "   AND constraint_type = 'P'\n"
-			   "   AND owner = :own<char[100]>",
+			   "SELECT a.constraint_name,b.tablespace_name\n"
+			   "  FROM all_constraints a,all_indexes b\n"
+			   " WHERE a.table_name = :nam<char[100]>\n"
+			   "   AND a.constraint_type = 'P'\n"
+			   "   AND a.owner = :own<char[100]>\n"
+			   "   AND a.owner = b.owner\n"
+			   "   AND a.constraint_name = b.index_name",
 			   "Get constraint name for primary key of table, same binds and columns");
 
 QString toExtract::createTableText(toQList &result,const QString &schema,
@@ -1307,11 +1309,13 @@ QString toExtract::createTableText(toQList &result,const QString &schema,
   ret+=tableColumns(owner,name);
   if (organization=="INDEX"&&Storage) {
     toQList res=toQuery::readQueryNull(Connection,SQLPrimaryKey,name,owner);
-    if (res.size()!=1)
+    if (res.size()!=2)
       throw QString("Couldn't find primary key of %1.%2").arg(owner).arg(name);
     QString primary=*(res.begin());
+    QString tablespace=*(res.rbegin());
     ret+=QString("  , CONSTRAINT %1 PRIMARY KEY\n").arg(primary.lower());
     ret+=indexColumns("      ",owner,primary);
+    ret+=QString("      USING TABLESPACE %2\n").arg(tablespace.lower());
   }
   ret+=")\n";
   if (Connection.version()>="8.0"&&Storage) {
@@ -4671,23 +4675,12 @@ static toSQL SQLIndexNames("toExtract:IndexNames",
 			   "SELECT owner,index_name\n"
 			   "  FROM all_indexes a\n"
 			   " WHERE table_name = :nam<char[100]>\n"
-			   "   AND table_owner = :own<char[100]>\n"
-			   "   AND (owner,index_name) NOT IN (SELECT b.owner,\n"
-			   "                                         b.constraint_name\n"
-			   "                                    FROM all_constraints b\n"
-			   "                                   WHERE b.owner = a.table_owner\n"
-			   "                                     AND b.table_name = a.table_name)",
-			   "Get all indexes not tied to any constriaints, same binds and columns");
+			   "   AND table_owner = :own<char[100]>",
+			   "Get all indexes on table, same binds and columns");
 
 QString toExtract::createTableFamily(const QString &schema,const QString &owner,const QString &name)
 {
   QString ret=createTable(schema,owner,name);
-
-  toQList indexes=toQuery::readQueryNull(Connection,SQLIndexNames,name,owner);
-  while(indexes.size()>0) {
-    QString indOwner(toShift(indexes));
-    ret+=createIndex(intSchema(indOwner),indOwner,toShift(indexes));
-  }
 
   toQuery inf(Connection,SQLTableType,name,owner);
   if (inf.eof())
@@ -4697,6 +4690,28 @@ QString toExtract::createTableFamily(const QString &schema,const QString &owner,
   QString iotType(inf.readValue());
 
   toQList constraints=toQuery::readQueryNull(Connection,SQLTableConstraints,name,owner);
+  toQList indexes=toQuery::readQueryNull(Connection,SQLIndexNames,name,owner);
+
+  while(indexes.size()>0) {
+    QString indOwner(toShift(indexes));
+    QString indName(toShift(indexes));
+    bool add=true;
+    if (iotType=="IOT") {
+      for(toQList::iterator i=constraints.begin();i!=constraints.end();i++) {
+	QString consType=*i;
+	i++;
+	QString consName=*i;
+	i++;
+	if (consType=="P"&&consName==indName&&owner==indOwner) {
+	  add=false;
+	  break;
+	}
+      }
+    }
+    if (add)
+      ret+=createIndex(intSchema(indOwner),indOwner,indName);
+  }
+
   while(constraints.size()>0) {
     QString type=toShift(constraints);
     QString name=toShift(constraints);
