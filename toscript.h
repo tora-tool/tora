@@ -31,6 +31,7 @@
 #include <qvbox.h>
 
 class toWorksheet;
+class toConnection;
 
 class toScript : public QVBox {
   Q_OBJECT
@@ -38,7 +39,7 @@ class toScript : public QVBox {
 protected:
   toConnection &Connection;
 public:
-  toScript(QWidget *parent,toConnection &connection,bool enabled=true);
+  toScript(QWidget *parent,toConnection &connection);
   virtual ~toScript();
 };
 
