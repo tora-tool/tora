@@ -650,6 +650,8 @@ toRollback::toRollback(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
+
+  setFocusProxy(Segments);
 }
 
 #define TO_ID_ONLINE		(toMain::TO_TOOL_MENU_ID+ 0)

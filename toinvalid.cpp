@@ -133,6 +133,7 @@ toInvalid::toInvalid(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
+  setFocusProxy(Objects);
 }
 
 void toInvalid::windowActivated(QWidget *widget)

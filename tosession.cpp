@@ -229,6 +229,8 @@ toSession::toSession(QWidget *main,toConnection &connection)
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
 	  this,SLOT(windowActivated(QWidget *)));
   refresh();
+
+  setFocusProxy(Sessions);
 }
 
 void toSession::windowActivated(QWidget *widget)

@@ -168,6 +168,8 @@ toAlert::toAlert(QWidget *main,toConnection &connection)
   State=Started;
   toThread *thread=new toThread(new pollTask(*this));
   thread->start();
+
+  setFocusProxy(Message);
 }
 
 void toAlert::windowActivated(QWidget *widget)

@@ -254,7 +254,10 @@ void toResultContentEditor::changeParams(const QString &Param1,const QString &Pa
 
     toQList par;
 
-    Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
+    if (connection().provider()=="Oracle")
+      Query=new toNoBlockQuery(connection(),toQuery::Background,init,par);
+    else
+      Query=new toNoBlockQuery(connection(),toQuery::Background,SQL,par);
     Poll.start(100);
     OrigValues.clear();
     CurrentRow=-1;

@@ -448,6 +448,8 @@ toTemplate::toTemplate(QWidget *parent)
 
   WidgetExtra=NULL;
   setWidget(NULL);
+
+  setFocusProxy(List);
 }
 
 toTemplate::~toTemplate()

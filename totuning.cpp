@@ -1125,6 +1125,7 @@ toTuning::toTuning(QWidget *main,toConnection &connection)
       enableTab(*i,false);
 
   refresh();
+  setFocusProxy(Tabs);
 }
 
 QWidget *toTuning::tabWidget(const QString &name)

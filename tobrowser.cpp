@@ -548,6 +548,7 @@ toBrowser::toBrowser(QWidget *parent,toConnection &connection)
   resultView->setReadAll(true);
   resultView->setSQL(SQLListTables);
   resultView->resize(FIRST_WIDTH,resultView->height());
+  setFocusProxy(resultView);
   splitter->setResizeMode(resultView,QSplitter::KeepSize);
   connect(resultView,SIGNAL(done()),this,SLOT(firstDone()));
   FirstTab=resultView;
@@ -1002,6 +1003,7 @@ void toBrowser::changeTab(QWidget *tab)
     toResultView *newtab=Map[tab->name()];
     if (newtab==FirstTab)
       return;
+    setFocusProxy(newtab);
     FirstTab=newtab;
     SecondTab=SecondMap[tab->name()];
     SecondText="";

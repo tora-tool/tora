@@ -130,6 +130,8 @@ toCurrent::toCurrent(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   refresh();
+
+  setFocusProxy(Tabs);
 }
 
 void toCurrent::windowActivated(QWidget *widget)

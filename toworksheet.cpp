@@ -788,6 +788,7 @@ void toWorksheet::query(const QString &str,bool direct)
     toStatusMessage("Processing query",true);
     if (direct) {
       try {
+	First=false;
 	Timer.start();
 	toQuery query(connection(),toQuery::Long,QueryString,param);
 
@@ -802,6 +803,7 @@ void toWorksheet::query(const QString &str,bool direct)
       }
     } else {
       Result->stop();
+      First=false;
       Timer.start();
       StopButton->setEnabled(true);
       Poll.start(1000);
@@ -872,11 +874,9 @@ void toWorksheet::addLog(const QString &sql,const toConnection::exception &resul
   LastID++;
 
   int dur=0;
-  if (!Timer.isNull()) {
+  if (!Timer.isNull())
     dur=Timer.elapsed();
-    QTime null;
-    Timer=null;
-  }
+  First=true;
 
   if (!Light) {
     if (WorksheetTool.config(CONF_LOG_MULTI,"Yes").isEmpty()) {
@@ -1210,7 +1210,7 @@ void toWorksheet::eraseLogButton()
 
 void toWorksheet::queryDone(void)
 {
-  if (!Timer.isNull()&&!QueryString.isEmpty())
+  if (!First&&!QueryString.isEmpty())
     addLog(QueryString,toConnection::exception("Aborted"));
   else
     emit executed();

@@ -699,6 +699,7 @@ toStorage::toStorage(QWidget *main,toConnection &connection)
 
   refresh();
   selectionChanged();
+  setFocusProxy(Storage);
 }
 
 #define TO_ID_ONLINE		(toMain::TO_TOOL_MENU_ID+ 0)

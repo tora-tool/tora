@@ -96,6 +96,7 @@ class toWorksheet : public toToolWidget {
   QPopupMenu *SavedMenu;
   QToolButton *SavedButton;
   QString SavedLast;
+  bool First;
   QTime Timer;
   QTimer Poll;
 

@@ -249,6 +249,7 @@ toScript::toScript(QWidget *parent,toConnection &connection)
 	  this,SLOT(expandDestination(QListViewItem *)));
 
   ScriptUI->Schema->setCurrentItem(0);
+  setFocusProxy(ScriptUI->Tabs);
 }
 
 toScript::~toScript()

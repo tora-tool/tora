@@ -167,6 +167,8 @@ toSGATrace::toSGATrace(QWidget *main,toConnection &connection)
 	  this,SLOT(windowActivated(QWidget *)));
 
   toRefreshParse(timer(),toTool::globalConfig(CONF_REFRESH,DEFAULT_REFRESH));
+
+  setFocusProxy(Trace);
 }
 
 void toSGATrace::windowActivated(QWidget *widget)

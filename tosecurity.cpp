@@ -1323,6 +1323,7 @@ toSecurity::toSecurity(QWidget *main,toConnection &connection)
   refresh();
   connect(this,SIGNAL(connectionChange()),
 	  this,SLOT(refresh()));
+  setFocusProxy(Tabs);
 }
 
 #define TO_ID_COPY		(toMain::TO_TOOL_MENU_ID+ 0)

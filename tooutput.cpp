@@ -167,6 +167,8 @@ toOutput::toOutput(QWidget *main,toConnection &connection,bool enabled)
   toRefreshParse(timer(),OutputTool.config(CONF_POLLING,DEFAULT_POLLING));
   if (enabled)
     disable(false);
+
+  setFocusProxy(Output);
 }
 
 #define TO_ID_TOGGLE		(toMain::TO_TOOL_MENU_ID+ 0)

@@ -1765,6 +1765,7 @@ toDebug::toDebug(QWidget *main,toConnection &connection)
   HeadEditor=new toDebugText(Breakpoints,hsplitter,this);
   BodyEditor=new toDebugText(Breakpoints,hsplitter,this);
   HeadEditor->hide();
+  setFocusProxy(BodyEditor);
   connect(HeadEditor,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
   connect(BodyEditor,SIGNAL(insertedLines(int,int)),
@@ -1993,6 +1994,7 @@ void toDebug::updateCurrent()
     HeadEditor->clear();
     BodyEditor->show();
     HeadEditor->hide();
+    setFocusProxy(BodyEditor);
     ShowButton->setEnabled(false);
     ShowButton->setOn(false);
     if (ToolMenu)
@@ -2038,9 +2040,11 @@ void toDebug::changeView(bool head)
   if (head) {
     HeadEditor->show();
     BodyEditor->hide();    
+    setFocusProxy(HeadEditor);
   } else {
     BodyEditor->show();
     HeadEditor->hide();
+    setFocusProxy(BodyEditor);
   }
   if (ToolMenu)
     toMainWidget()->menuBar()->setItemChecked(TO_ID_HEAD_TOGGLE,head);

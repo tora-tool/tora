@@ -198,6 +198,8 @@ toSQLEdit::toSQLEdit(QWidget *main,toConnection &connection)
   connect(toMainWidget(),SIGNAL(sqlEditor(const QString &)),this,SLOT(editSQL(const QString &)));
 
   updateStatements();
+
+  setFocusProxy(Statements);
 }
 
 void toSQLEdit::connectList(bool conn)
