@@ -30,11 +30,40 @@
 #define __TOSECURITY_H
 
 #include <qvbox.h>
+#include <list>
 
 class toConnection;
 class toResultView;
 class toSecurityPage;
+class toSecurityQuota;
 class QTabWidget;
+
+class toSecuritySystem : public QListView {
+  Q_OBJECT
+
+  toConnection &Connection;
+  void eraseUser();
+  void setOn(QListViewItem *,bool);
+public:
+  toSecuritySystem(toConnection &conn,QWidget *parent);
+  void changeUser(const QString &);
+  void sql(const QString &user,list<QString> &sql);
+public slots:
+  virtual void changed(QListViewItem *item);
+};
+
+class toSecurityObject : public QListView {
+  Q_OBJECT
+
+  toConnection &Connection;
+  void eraseUser();
+public:
+  toSecurityObject(toConnection &conn,QWidget *parent);
+  void changeUser(const QString &);
+  void sql(const QString &user,list<QString> &sql);
+public slots:
+  virtual void changed(QListViewItem *item);
+};
 
 class toSecurity : public QVBox {
   Q_OBJECT
@@ -51,18 +80,24 @@ class toSecurity : public QVBox {
     { }
   };
 
+  QString UserID;
+
   toConnection &Connection;
 
   toResultView *UserList;
-  toResultView *ObjectGrant;
+  toSecuritySystem *SystemGrant;
+  toSecurityObject *ObjectGrant;
   toSecurityPage *General;
+  toSecurityQuota *Quota;
   QTabWidget *Tabs;
+  list<QString> sql(void);
 public:
   toSecurity(QWidget *parent,toConnection &connection);
   virtual ~toSecurity();
 public slots:
   virtual void refresh(void);
   virtual void changeUser(void);
+  virtual void saveChanges(void);
 };
 
 #endif

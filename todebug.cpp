@@ -1324,7 +1324,10 @@ void toDebug::updateState(int reason)
 	else if (item->nextSibling())
 	  next=item->nextSibling();
 	else {
-	  next=item->parent();
+	  next=item;
+	  do {
+	    next=next->parent();
+	  } while(next&&!next->nextSibling());
 	  if (next)
 	    next=next->nextSibling();
 	}
@@ -1474,7 +1477,10 @@ void toDebug::updateState(int reason)
 	  else if (item->nextSibling())
 	    next=item->nextSibling();
 	  else {
-	    next=item->parent();
+	    next=item;
+	    do {
+	      next=next->parent();
+	    } while(next&&!next->nextSibling());
 	    if (next)
 	      next=next->nextSibling();
 	  }

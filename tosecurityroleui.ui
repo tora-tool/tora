@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>580</width>
+            <width>576</width>
             <height>480</height>
         </rect>
     </property>
@@ -55,6 +55,13 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>Authentication</cstring>
+            </property>
+            <property stdset="1">
+                <name>sizePolicy</name>
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>1</vsizetype>
+                </sizepolicy>
             </property>
             <widget>
                 <class>QWidget</class>
@@ -135,27 +142,6 @@
                         <property stdset="1">
                             <name>orientation</name>
                             <enum>Horizontal</enum>
-                        </property>
-                        <property stdset="1">
-                            <name>sizeType</name>
-                            <enum>Expanding</enum>
-                        </property>
-                        <property>
-                            <name>sizeHint</name>
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                    <spacer row="2"  column="1" >
-                        <property>
-                            <name>name</name>
-                            <cstring>Spacer2</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>orientation</name>
-                            <enum>Vertical</enum>
                         </property>
                         <property stdset="1">
                             <name>sizeType</name>

@@ -41,9 +41,15 @@ class toFilesize : public QButtonGroup {
   QSpinBox *Value;
   QRadioButton *MBSize;
   QRadioButton *KBSize;
+  void setup(void);
 protected slots:
   void changeType(bool);
+  void changedSize(void)
+  { emit valueChanged(); }
+signals:
+  void valueChanged(void); 
 public:
+  toFilesize(QWidget* parent=0,const char* name=0);
   toFilesize(const QString &title,QWidget* parent=0,const char* name=0);
   void setValue(int sizeInKB);
   int value(void);

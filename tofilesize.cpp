@@ -37,8 +37,7 @@ TO_NAMESPACE;
 
 #include "tofilesize.moc"
 
-toFilesize::toFilesize(const QString &title,QWidget* parent=0,const char* name=0)
-  : QButtonGroup(title,parent,name)
+void toFilesize::setup()
 {
   QVBoxLayout *vlayout=new QVBoxLayout(this);
   vlayout->addSpacing(15);
@@ -67,7 +66,20 @@ toFilesize::toFilesize(const QString &title,QWidget* parent=0,const char* name=0
   KBSize->setText(tr("KB"));
   KBSize->setChecked(false);
   layout->addWidget(KBSize);
-  layout->setStretchFactor(KBSize,1); 
+  layout->setStretchFactor(KBSize,1);
+  connect(Value,SIGNAL(valueChanged(int)),this,SLOT(changedSize(void)));
+}
+
+toFilesize::toFilesize(QWidget* parent=0,const char* name=0)
+  : QButtonGroup(parent,name)
+{
+  setup();
+}
+
+toFilesize::toFilesize(const QString &title,QWidget* parent=0,const char* name=0)
+  : QButtonGroup(title,parent,name)
+{
+  setup();
 }
 
 int toFilesize::value(void)
