@@ -108,7 +108,7 @@ class toWorksheet : public QVBox {
   toConnection &Connection;
 
   void viewResources(void);
-  void query(const QString &str);
+  void query(const QString &str,bool direct);
   bool checkSave(bool input);
 public:
   toWorksheet(QWidget *parent,toConnection &connection,bool autoLoad=true);
