@@ -2094,38 +2094,22 @@ bool toDebugText::compile(void)
   QString str=text();
   bool ret=true;
   if (!str.isEmpty()) {
-    bool inWord=false;
-    int curWord=0;
-    QString words[10];
     bool body=false;
-    int begin[10];
 
-    for (unsigned int i=0;i<str.length();i++) {
-      if (str.at(i).isSpace()) {
-	if (inWord) {
-	  curWord++;
-	  if (curWord>=10)
-	    break;
-	  inWord=false;
-	}
-      } else {
-	if (!inWord) {
-	  begin[curWord]=i;
-	  inWord=true;
-	}
-	words[curWord]+=str.at(i);
+    toSQLParse::stringTokenizer tokens(str);
+
+    QString token=tokens.getToken();
+
+    if (token.upper()=="CREATE") {
+      token=tokens.getToken();
+      if (token.upper()=="OR") {
+	token=tokens.getToken();
+	if (token.upper()=="REPLACE")
+	  token=tokens.getToken();
       }
     }
 
-    int word=0;
-    if (words[word].upper()==QString::fromLatin1("CREATE")) {
-      word++;
-      if (words[word].upper()==QString::fromLatin1("OR")&&
-	  words[word+1].upper()==QString::fromLatin1("REPLACE"))
-	word+=2;
-    }
-
-    QString type=words[word].upper();
+    QString type=token.upper();
     if (type!=QString::fromLatin1("PROCEDURE")&&
 	type!=QString::fromLatin1("TYPE")&&
 	type!=QString::fromLatin1("FUNCTION")&&
@@ -2133,37 +2117,21 @@ bool toDebugText::compile(void)
       toStatusMessage(tr("Invalid start of code"));
       return false;
     }
-    word++;
 
-    if (words[word].upper()==QString::fromLatin1("BODY")) {
+    token=tokens.getToken();
+    if (token.upper()=="BODY") {
       body=true;
-      word++;
+      token=tokens.getToken();
     }
-    QString what=words[word];
-    word++;
-    if(!what.contains('.')&&words[word][0]=='.') {
-      what+=words[word];
-      word++;
-    }
-    if (what.right(1)==QString::fromLatin1(".")) {
-      what+=words[word];
-      word++;
-    }
-    if (word>=curWord) {
-      toStatusMessage(tr("Invalid start of code"));
-      return false;
-    }
+    QString object=token;
+    QString schema=Schema;
 
-    QString schema;
-    QString object;
-
-    int pos=what.find('.');
-    if (pos==-1) {
-      schema=Schema;
-      object=what;
-    } else {
-      schema=what.left(pos);
-      object=what.right(what.length()-pos-1);
+    int offset=tokens.offset();
+    token=tokens.getToken();
+    if (token==".") {
+      schema=object;
+      object=tokens.getToken();
+      offset=tokens.offset();
     }
 
     QString sql=QString::fromLatin1("CREATE OR REPLACE ");
@@ -2176,7 +2144,7 @@ bool toDebugText::compile(void)
     sql.append(QString::fromLatin1("."));
     sql.append(object);
     sql.append(QString::fromLatin1(" "));
-    sql.append(str.right(str.length()-begin[word]));
+    sql.append(str.mid(offset));
 
     try {
       toQList nopar;
