@@ -35,7 +35,6 @@ class toConnection;
 class toScriptUI;
 class toResultView;
 class toExtract;
-class toScriptProgress;
 
 class toScript : public toScriptUI {
   Q_OBJECT
@@ -45,13 +44,8 @@ class toScript : public toScriptUI {
   toResultView *DropList;
   toResultView *CreateList;
   toConnection &Connection;
-  toScriptProgress *Progress;
 
   void setupExtract(toExtract &)
-  { }
-  void displayProgress(const QString &,int pos,int of)
-  { }
-  void hideProgress(void)
   { }
 public:
   toScript(QWidget *parent,toConnection &connection);

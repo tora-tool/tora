@@ -48,7 +48,6 @@ TO_NAMESPACE;
 
 #include "toscript.moc"
 #include "toscriptui.moc"
-#include "toscriptprogressui.moc"
 
 #include "icons/toscript.xpm"
 #include "icons/execute.xpm"
@@ -293,37 +292,20 @@ void toScript::execute(void)
   }
 
   list<QString> sourceDescription;
-  QString sourceScript;
+  QString script;
   {
-    displayProgress("Initialising extractor",0,sourceObjects.size());
     toExtract source(toMainWidget()->connection(SourceConnection->name()));
     setupExtract(source);
-    int num=1;
-    for(list<QString>::iterator i=sourceObjects.begin();i!=sourceObjects.end();i++) {
-      displayProgress(*i,num,sourceObjects.size());
-      QString type=*i;
-      int pos=type.find(":");
-      if (pos<0)
-	throw QString("Internal error, missing : in operationlist");
-      list<QString> object;
-      toPush(object,type.right(type.length()-pos-1));
-      type.truncate(pos);
-      switch(mode) {
-      case 1:
-	sourceScript+=source.create(type,object);
-	break;
-      case 0:
-      case 2:
-	{
-	  list<QString> dsc=source.describe(type,object);
-	  dsc.sort();
-	  sourceDescription.merge(dsc);
-	}
-	break;
-      case 3:
-	break;
-      }
-      num++;
+    switch(mode) {
+    case 1:
+      script+=source.create(sourceObjects);
+      break;
+    case 0:
+    case 2:
+      sourceDescription=source.describe(sourceObjects);
+      break;
+    case 3:
+      break;
     }
   }
 

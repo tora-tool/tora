@@ -35,6 +35,7 @@
 
 class toExtract {
   toConnection &Connection;
+  QWidget *Parent;
 
   // Attributes
   QString Schema;
@@ -248,9 +249,7 @@ class toExtract {
 		      const QString &arg7=QString::null,const QString &arg8=QString::null,
 		      const QString &arg9=QString::null);
   void clearFlags(void);
-  QString generateHeading(const QString &action,
-			  const QString &type,
-			  list<QString> &list);
+  QString generateHeading(const QString &action,list<QString> &list);
   void initialNext(const QString &blocks,QString &initial,QString &next);
   void objectExists(const QString &owner,const QString &name,const QString &type);
   QString prepareDB(const QString &data);
@@ -259,13 +258,13 @@ class toExtract {
   void setSizes(void);
   QString reContext(list<QString> &ctx,int strip,const QString &str);
 public:
-  toExtract(toConnection &conn);
+  toExtract(toConnection &conn,QWidget *parent);
 
-  QString compile(const QString &type,list<QString> &object);
-  QString create(const QString &type,list<QString> &object);
-  list<QString> describe(const QString &type,list<QString> &object);
-  QString drop(const QString &type,list<QString> &object);
-  QString resize(const QString &type,list<QString> &object);
+  QString compile(list<QString> &object);
+  QString create(list<QString> &object);
+  list<QString> describe(list<QString> &object);
+  QString drop(list<QString> &object);
+  QString resize(list<QString> &object);
   QString migrate(list<QString> &drpLst,list<QString> &crtLst);
 
   void parseObject(const QString &object,QString &owner,QString &name);

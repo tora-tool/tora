@@ -34,6 +34,7 @@
 #include "toextract.h"
 #include "tosql.h"
 #include "tomain.h"
+#include "toextractprogressui.moc"
 
 static toSQL SQLSetSizing("toExtract:SetSizing",
 			  "SELECT block_size
@@ -49,8 +50,8 @@ static toSQL SQLSetSizing("toExtract:SetSizing",
  WHERE rownum < 2",
 			  "Get information about block sizes, same columns");
 
-toExtract::toExtract(toConnection &conn)
-  : Connection(conn)
+toExtract::toExtract(toConnection &conn,QWidget *parent)
+  : Connection(conn),Parent(parent)
 {
   Heading=true;
   Resize=true;
@@ -400,7 +401,6 @@ QString toExtract::intSchema(const QString &owner)
 }
 
 QString toExtract::generateHeading(const QString &action,
-				   const QString &type,
 				   list<QString> &lst)
 {
   if (!Heading)
@@ -427,9 +427,7 @@ REM
   else {
     str+="REM Generating ";
     str+=action;
-    str+=" ";
-    str+=type;
-    str+=" statement";
+    str+=" statements";
   }
   if (lst.size()!=1)
     str+="s";
@@ -5936,16 +5934,21 @@ QString toExtract::resizeTablePartition(const QString &schema,const QString &own
   return ret;
 }
 
-QString toExtract::compile(const QString &type,list<QString> &objects)
+QString toExtract::compile(list<QString> &objects)
 {
   clearFlags();
-  QString utype=type.upper();
-  QString ret=generateHeading("COMPILE",utype,objects);
+  QString ret=generateHeading("COMPILE",objects);
 
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString type=*i;
     QString owner;
     QString name;
-    parseObject(*i,owner,name);
+    int pos=type.find(":");
+    if (pos>=0)
+      throw QString("Internal error, missing : in object description");
+    parseObject(type.right(type.length()-pos-1),owner,name);
+    type.truncate(pos);
+    QString utype=type.upper();
     QString schema=intSchema(owner);
 
     if (utype=="FUNCTION"||
@@ -5965,16 +5968,21 @@ QString toExtract::compile(const QString &type,list<QString> &objects)
   return ret;
 }
 
-QString toExtract::create(const QString &type,list<QString> &objects)
+QString toExtract::create(list<QString> &objects)
 {
   clearFlags();
-  QString utype=type.upper();
-  QString ret=generateHeading("CREATE",utype,objects);
+  QString ret=generateHeading("CREATE",objects);
 
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString type=*i;
     QString owner;
     QString name;
-    parseObject(*i,owner,name);
+    int pos=type.find(":");
+    if (pos>=0)
+      throw QString("Internal error, missing : in object description");
+    parseObject(type.right(type.length()-pos-1),owner,name);
+    type.truncate(pos);
+    QString utype=type.upper();
     QString schema=intSchema(owner);
 
     if (utype=="CONSTRAINT")
@@ -6039,18 +6047,23 @@ QString toExtract::create(const QString &type,list<QString> &objects)
   return ret;
 }
 
-list<QString> toExtract::describe(const QString &type,list<QString> &objects)
+list<QString> toExtract::describe(list<QString> &objects)
 {
   clearFlags();
   Describe=true;
-  QString utype=type.upper();
 
   list<QString> ret;
 
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString type=*i;
     QString owner;
     QString name;
-    parseObject(*i,owner,name);
+    int pos=type.find(":");
+    if (pos>=0)
+      throw QString("Internal error, missing : in object description");
+    parseObject(type.right(type.length()-pos-1),owner,name);
+    type.truncate(pos);
+    QString utype=type.upper();
     QString schema=intSchema(owner);
 
     list<QString> cur;
@@ -6119,15 +6132,20 @@ list<QString> toExtract::describe(const QString &type,list<QString> &objects)
   return ret;
 }
 
-QString toExtract::drop(const QString &type,list<QString> &objects)
+QString toExtract::drop(list<QString> &objects)
 {
   clearFlags();
-  QString utype=type.upper();
-  QString ret=generateHeading("CREATE",utype,objects);
+  QString ret=generateHeading("CREATE",objects);
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString type=*i;
     QString owner;
     QString name;
-    parseObject(*i,owner,name);
+    int pos=type.find(":");
+    if (pos>=0)
+      throw QString("Internal error, missing : in object description");
+    parseObject(type.right(type.length()-pos-1),owner,name);
+    type.truncate(pos);
+    QString utype=type.upper();
     QString schema=intSchema(owner);
 
     if (utype=="CONSTRAINT")
@@ -6186,16 +6204,21 @@ QString toExtract::drop(const QString &type,list<QString> &objects)
   return ret;
 }
 
-QString toExtract::resize(const QString &type,list<QString> &objects)
+QString toExtract::resize(list<QString> &objects)
 {
   clearFlags();
-  QString ret=generateHeading("CREATE",type,objects);
+  QString ret=generateHeading("CREATE",objects);
 
-  QString utype=type.upper();
   for (list<QString>::iterator i=objects.begin();i!=objects.end();i++) {
+    QString type=*i;
     QString owner;
     QString name;
-    parseObject(*i,owner,name);
+    int pos=type.find(":");
+    if (pos>=0)
+      throw QString("Internal error, missing : in object description");
+    parseObject(type.right(type.length()-pos-1),owner,name);
+    type.truncate(pos);
+    QString utype=type.upper();
     QString schema=intSchema(owner);
 
     if (utype=="INDEX")

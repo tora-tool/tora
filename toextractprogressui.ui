@@ -1,17 +1,17 @@
 <!DOCTYPE UI><UI>
-<class>toScriptProgressUI</class>
+<class>toExtractProgressUI</class>
 <widget>
     <class>QDialog</class>
     <property stdset="1">
         <name>name</name>
-        <cstring>toScriptProgressUI</cstring>
+        <cstring>toExtractProgressUI</cstring>
     </property>
     <property stdset="1">
         <name>geometry</name>
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>276</width>
+            <width>272</width>
             <height>148</height>
         </rect>
     </property>
