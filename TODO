@@ -25,6 +25,7 @@ Extended functionality:
 * Add replace to toResultContent.
 * Ability to change/move redofiles.
 * Posibility to delete records in toResultContent.
+* Go through changes in DDL::Oracle and incorporate in toExtract.
 
 Windows problems:
 

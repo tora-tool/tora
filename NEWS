@@ -1,3 +1,8 @@
+0.11:
+
+2001-05-25: Move application declaration outside try catch in main.
+2001-05-25: Added the messageboxes on exception again.
+
 0.10: Released 2001-05-25
 
 2001-05-20: Added missing addtemplate.xpm

@@ -75,19 +75,19 @@ bool toMonolithic(void)
 int main(int argc,char **argv)
 {
   otl_connect::otl_initialize(1);
-  try {
 #ifdef ENABLE_QT_XFT
 #  ifndef WIN32
-	  setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
+  setenv("QT_XFT",toTool::globalConfig(CONF_QT_XFT,DEFAULT_QT_XFT),true);
 #  endif
 #endif
 #ifdef TO_KDE
-    KApplication mainApp(argc,argv,"tora");
+  KApplication mainApp(argc,argv,"tora");
 #else
-    if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())
-      QApplication::setDesktopSettingsAware(false);
-    QApplication mainApp(argc,argv);
+  if (toTool::globalConfig(CONF_DESKTOP_AWARE,"Yes").isEmpty())
+    QApplication::setDesktopSettingsAware(false);
+  QApplication mainApp(argc,argv);
 #endif
+  try {
 
     if (getenv("LANG"))
       mainApp.setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
@@ -205,11 +205,23 @@ int main(int argc,char **argv)
   } catch (const otl_exception &exc) {
     printf("Unhandled exception:\n\n%s\n",
 	   (const char *)QString::fromUtf8((const char *)exc.msg));
+    TOMessageBox::critical(NULL,
+                           "Unhandled exception",
+                           QString(QString::fromUtf8((const char *)exc.msg)),
+                           "Exit");
   } catch (const QString &str) {
     printf("Unhandled exception:\n\n%s\n",
 	   (const char *)str);
+    TOMessageBox::critical(NULL,
+                           "Unhandled exception",
+                           str,
+                           "Exit");
   } catch (...) {
     printf("Unhandled exception of unknown type.\n\n");
+    TOMessageBox::critical(NULL,
+                           "Unhandled exception",
+                           "Unknown type",
+                           "Exit");
   }
   return 1;
 }
