@@ -82,9 +82,14 @@ void toLineChart::setSamples(int samples)
     Samples=samples;
     AutoSamples=false;
   }
+
+  while (int(XValues.size())>Samples)
+    XValues.erase(XValues.begin());
+
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
     while (int((*i).size())>Samples)
       (*i).erase((*i).begin());
+
   update();
 }
 
@@ -110,11 +115,16 @@ toLineChart::toLineChart(QWidget *parent,const char *name,WFlags f)
   }
 }
 
-void toLineChart::addValues(list<double> &value)
+void toLineChart::addValues(list<double> &value,const QString &xValue)
 {
+  if (int(XValues.size())==Samples)
+    XValues.erase(XValues.begin());
+  XValues.insert(XValues.end(),xValue);
+
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end();i++)
     if (int((*i).size())==Samples)
       (*i).erase((*i).begin());
+
   list<double>::iterator j=value.begin();
   for(list<list<double> >::iterator i=Values.begin();i!=Values.end()&&j!=value.end();i++) {
     (*i).insert((*i).end(),*j);
@@ -221,11 +231,18 @@ void toLineChart::paintEvent(QPaintEvent *e)
     if (yoffset<bounds.height())
       yoffset=bounds.height();
     
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,MinAxis);
+    QString maxXstr;
+    QString minXstr;
+    if (XValues.begin()!=XValues.end()) {
+      maxXstr=*(XValues.begin());
+      minXstr=*(XValues.rbegin());
+    }
+    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,minXstr);
     int xoffset=bounds.height();
-    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,MaxAxis);
+    bounds=fm.boundingRect(0,0,100000,100000,FONT_ALIGN,maxXstr);
     if (xoffset<bounds.height())
       xoffset=bounds.height();
+
     p.save();
     p.rotate(-90);
 #if 0
@@ -239,9 +256,9 @@ void toLineChart::paintEvent(QPaintEvent *e)
 	       AlignRight|AlignBottom|ExpandTabs,maxstr);
     p.restore();
     p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignLeft|AlignTop|ExpandTabs,MinAxis);
+	       AlignLeft|AlignTop|ExpandTabs,minXstr);
     p.drawText(yoffset+2,bottom-xoffset-2,right-4-yoffset,xoffset,
-	       AlignRight|AlignTop|ExpandTabs,MaxAxis);
+	       AlignRight|AlignTop|ExpandTabs,maxXstr);
     p.translate(yoffset,0);
     right-=yoffset;
     bottom-=xoffset;

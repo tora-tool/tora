@@ -48,14 +48,13 @@ class toBarChart : public QWidget {
 
 protected:
   list<list<double> > Values;
+  list<QString> XValues;
   list<QString> Labels;
   bool Legend;
   int Grid;
   bool AxisText;
   double MaxValue;
   bool MaxAuto;
-  QString MinAxis;
-  QString MaxAxis;
   QString YPostfix;
   int Samples;
   bool AutoSamples;
@@ -133,24 +132,6 @@ public:
   double maxValue(void) const
   { return MaxValue; }
 
-  /** Set the oldest and newest legend on the x-axis. Leave empty to not display any text
-   * on the axises.
-   * @param minAxis Left legend on axis.
-   * @param maxAxis Right legend on axis.
-   */
-  void setAxisLegend(const QString &minAxis,const QString &maxAxis)
-  { MaxAxis=maxAxis; MinAxis=minAxis; update(); }
-  /** Get the legend of the left of the x-axis.
-   * @return Legend of oldest x-axis value.
-   */
-  const QString minAxis(void) const
-  { return MinAxis; }
-  /** Get the legend of the right of the x-axis.
-   * @return Legend of the most recent x-axis value.
-   */
-  const QString maxAxis(void) const
-  { return MaxAxis; }
-
   /** Set the number of samples on the x-axis. Setting samples to -1 will keep enough samples
    * to display one for each pixel of the screen. More samples than that will never be used
    * regardless of this setting.
@@ -176,8 +157,15 @@ public:
 
   /** Add a new value set to the chart.
    * @param value New values for charts (One for each line).
+   * @param label X-value on these values.
    */
-  virtual void addValues(list<double> &value);
+  virtual void addValues(list<double> &value,const QString &xValues);
+
+  /** Get list of labels
+   * @return List of labels
+   */
+  list<QString> &xValues(void)
+  { return XValues; }
 
   /** Get list of values.
    * @return Values in piechart.
