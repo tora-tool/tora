@@ -5,7 +5,7 @@
 **
 ** Created : 961005
 **
-** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
+** Copyright (C) 1992-2002 Trolltech AS.  All rights reserved.
 **
 ** This file contains a class moved out of the Qt GUI Toolkit API. It
 ** may be used, distributed and modified without limitation.
@@ -28,7 +28,6 @@
 #ifndef QT_NO_COMPAT
 #include "qstyle.h"
 #endif
-#include <ctype.h>
 
 
 class QtMultiLineEditCommand
@@ -151,7 +150,7 @@ public:
 /*!
     \property QtMultiLineEdit::atBeginning
     \brief whether the cursor is at the beginning
-  
+
     atBeginning() returns TRUE if the cursor is placed at the
     beginning of the text.
 */
@@ -169,7 +168,7 @@ public:
 /*!
     \property QtMultiLineEdit::alignment
     \brief the alignment
-    
+
     Possible values are \c AlignLeft, \c Align(H)Center and \c
     AlignRight.
   \sa Qt::AlignmentFlags
@@ -1721,7 +1720,7 @@ void QtMultiLineEdit::insert( const QString& str, bool mark )
 
 void QtMultiLineEdit::newLine()
 {
-    insert(QString::fromLatin1("\n"));
+    insert("\n");
 }
 
 /*!
@@ -2377,19 +2376,19 @@ void QtMultiLineEdit::mouseReleaseEvent( QMouseEvent *e )
 	turnMark( FALSE );
 
 #ifndef QT_NO_CLIPBOARD
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
     else if ( echoMode() == Normal )
 	copy();
 #endif
 
     if ( e->button() == MidButton && !readOnly ) {
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
 	paste();		// Will repaint the cursor line.
 #else
 #ifndef QT_NO_COMPAT
 	if ( style().styleHint(QStyle::SH_GUIStyle) == Qt::MotifStyle )
 	    paste();
-#endif	    
+#endif
 #endif
     }
 #endif
@@ -2472,7 +2471,7 @@ void QtMultiLineEdit::dropEvent( QDropEvent* event )
     if ( QTextDrag::decode(event, text, fmt) ) {
 	int i = -1;
 	while ( ( i = text.find( '\r' ) ) != -1 )
-	    text.replace( i,1,QString::fromLatin1("") );
+	    text.replace( i,1,"" );
 	if ( event->source() == this && event->action() == QDropEvent::Move ) {
 	    event->acceptAction();
 	    // Careful not to tread on my own feet
@@ -2667,8 +2666,7 @@ void QtMultiLineEdit::pasteSubType(const QCString& subtype)
 
 #if defined(_OS_WIN32_)
 	// Need to convert CRLF to NL
-	QRegExp crlf("\\r\\n");
-	t.replace( crlf, "\n" );
+	t.replace( "\r\n", "\n" );
 #endif
 
 	for (int i=0; (uint)i<t.length(); i++) {
@@ -2717,7 +2715,7 @@ QCString QtMultiLineEdit::pickSpecial(QMimeSource* ms, bool always_ask, const QP
 	int n=0;
 	QDict<void> done;
 	for (int i=0; !(fmt=ms->format(i)).isNull(); i++) {
-	    int semi=fmt.find(QString::fromLatin1(";"));
+	    int semi=fmt.find(";");
 	    if ( semi >= 0 )
 		fmt = fmt.left(semi);
 	    if ( fmt.left(5) == "text/" ) {
@@ -2847,7 +2845,7 @@ void QtMultiLineEdit::markWord( int posx, int posy )
     turnMark( markDragX != markAnchorX || markDragY != markAnchorY );
 
 #ifndef QT_NO_CLIPBOARD
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
     if ( echoMode() == Normal )
 	copy();
 #endif
@@ -2878,16 +2876,15 @@ void QtMultiLineEdit::copy() const
 {
     QString t = markedText();
     if ( !t.isEmpty() && echoMode() == Normal ) {
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
 	disconnect( QApplication::clipboard(), SIGNAL(dataChanged()), this, 0);
 #endif
 #if defined(_OS_WIN32_)
 	// Need to convert NL to CRLF
-	QRegExp nl("\\n");
-	t.replace( nl, "\r\n" );
+	t.replace( "\n", "\r\n" );
 #endif
 	QApplication::clipboard()->setText( t );
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
 	connect( QApplication::clipboard(), SIGNAL(dataChanged()),
 		 this, SLOT(clipboardChanged()) );
 #endif
@@ -2927,7 +2924,7 @@ void QtMultiLineEdit::cut()
 
 void QtMultiLineEdit::clipboardChanged()
 {
-#if defined(Q_WS_X11)
+#if defined(_WS_X11_)
     disconnect( QApplication::clipboard(), SIGNAL(dataChanged()),
 		this, SLOT(clipboardChanged()) );
     turnMark( FALSE );
@@ -4238,4 +4235,3 @@ bool QtMultiLineEdit::focusNextPrevChild( bool )
 }
 
 #endif
-

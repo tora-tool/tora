@@ -401,7 +401,7 @@ toMain::toMain()
 #endif
   ConnectionToolbar->addSeparator();
   ConnectionSelection=new QComboBox(ConnectionToolbar,TO_KDE_TOOLBAR_WIDGET);
-  // ConnectionSelection->setFixedWidth(200);
+  ConnectionSelection->setMinimumWidth(200);
   ConnectionSelection->setFocusPolicy(NoFocus);
   connect(ConnectionSelection,SIGNAL(activated(int)),this,SLOT(changeConnection()));
 
