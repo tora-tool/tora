@@ -37,6 +37,8 @@
 
 #include <qglobal.h>
 
+#include "tomain.h"
+
 #if QT_VERSION < 300
 #include <qmultilineedit.h>
 #include "tomarkedtext.2.h"
@@ -47,6 +49,8 @@
 #endif
 #include <qstring.h>
 
+class TOPrinter;
+
 class toMarkedText : public toMultiLineEdit {
   Q_OBJECT
 
@@ -54,7 +58,7 @@ class toMarkedText : public toMultiLineEdit {
   bool UndoAvailable;
 
   QString Filename;
-  virtual int printPage(QPrinter *printer,QPainter *painter,int line,int &offset,
+  virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
 			int pageNo,bool paint=true);
 public:
   toMarkedText(QWidget *parent,const char *name=NULL);

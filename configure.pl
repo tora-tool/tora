@@ -43,6 +43,7 @@ sub findFile {
 	    }
 	}
     }
+    return undef;
 }
 
 my $InstallPrefix="/usr/local";
@@ -358,7 +359,6 @@ __TEMP__
 
     $QtLib=findFile("^libqt(-mt)?[23]\\.so",sub {
 	                                            if (-f $_[0] && ! -l $_[0]) {
-							print "Checking $_[0]\n";
 							($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
 							if (!defined $QtLibShared) {
 							    return 0;
@@ -554,6 +554,16 @@ __TEMP__
 	    exit(2);
 	}
 	print "KDE includefiles at $KDEInclude\n";
+
+	my $kprint=findFile("^kprinter\\.h\$",sub {
+	                                          return -f $_[0] && ! -l $_[0];
+					      },
+			    $KDEInclude
+			    );
+	if (defined $kprint) {
+	    $Libs.=" -lkdeprint";
+	    print "KDEPrint detected, using it\n";
+	}
 
 	$Includes.=" \"-I".$KDEInclude."\"";
 

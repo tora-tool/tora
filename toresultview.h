@@ -37,12 +37,13 @@
 
 #include <qlistview.h>
 #include "toresult.h"
+#include "tomain.h"
 
 class QListViewItem;
 class QPopupMenu;
 class toResultView;
 class toListTip;
-class QPrinter;
+class TOPrinter;
 class toSQL;
 class toResultCols;
 class toConnection;
@@ -152,7 +153,7 @@ class toListView : public QListView {
   virtual void contentsMouseReleaseEvent(QMouseEvent *e);
   virtual void contentsMouseMoveEvent (QMouseEvent *e);
 
-  virtual QListViewItem *printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,
+  virtual QListViewItem *printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,
 				   int &column,int &level,int pageNo,bool paint=true);
 public:
   toListView(QWidget *parent,const char *name=NULL);

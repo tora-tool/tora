@@ -42,10 +42,13 @@
 
 #ifdef TO_KDE
 #  include <kdockwidget.h>
-#  include <ktoolbar.h>
-#  include <kmenubar.h>
-// In preparation of KPrinter landing
-#  define TOPrinter QPrinter
+#  include <kapp.h>
+#  if KDE_VERSION < 220
+#    define TOPrinter QPrinter
+#  else
+#    define TOPrinter KPrinter
+#    define TO_HAS_KPRINT
+#  endif
 #  define TODock KDockWidget
 #  define TOFileDialog KFileDialog
 #  include "tomainwindow.kde.h"

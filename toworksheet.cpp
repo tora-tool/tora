@@ -38,6 +38,7 @@ TO_NAMESPACE;
 
 #ifdef TO_KDE
 #include <kfiledialog.h>
+#include <kmenubar.h>
 #endif
 
 #include <qregexp.h>

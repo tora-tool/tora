@@ -112,7 +112,7 @@ public:
     LastTemplate=TemplateMap.end();
     connect(&Timer,SIGNAL(timeout()),this,SLOT(updateFromMap()));
     updateFromMap();
-    Description->setWordWrap(QMultiLineEdit::WidgetWidth);
+    Description->setWordWrap(toMarkedText::WidgetWidth);
   }
   virtual void remove(void)
   {

@@ -43,6 +43,7 @@ TO_NAMESPACE;
 #include <qfiledialog.h>
 #include <qfileinfo.h>
 #include <qlayout.h>
+#include <qlabel.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 #include <qprogressbar.h>
@@ -56,6 +57,7 @@ TO_NAMESPACE;
 #include <qtextview.h>
 #include <qcombobox.h>
 #include <qtimer.h>
+#include <qtooltip.h>
 #include <qvbox.h>
 
 #include "tomain.h"
@@ -295,6 +297,8 @@ toHelp::toHelp(QWidget *parent,const char *name)
   connect(button,SIGNAL(clicked(void)),
 	  Help,SLOT(forward(void)));
   QToolTip::add(button,"Forward one help page");
+
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
 
   connect(Help,SIGNAL(textChanged(void)),
 	  this,SLOT(removeSelection(void)));

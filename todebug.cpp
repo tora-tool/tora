@@ -37,6 +37,10 @@ TO_NAMESPACE;
 #include <ctype.h>
 #include <stack>
 
+#ifdef TO_KDE
+#include <kmenubar.h>
+#endif
+
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>

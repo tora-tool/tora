@@ -54,6 +54,7 @@ TO_NAMESPACE;
 #include <qvbox.h>
 #include <qfile.h>
 #include <qmessagebox.h>
+#include <qregexp.h>
 
 #ifdef TO_KDE
 #include <kapp.h>
@@ -640,7 +641,7 @@ static QString toExpandFile(const QString &file)
   const char *home=getenv("HOME");
   if (!home)
     home="";
-  ret.replace(QRegExp("$HOME"),home);
+  ret.replace(QRegExp("\\$HOME"),home);
   return ret;
 }
 

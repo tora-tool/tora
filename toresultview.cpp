@@ -52,13 +52,18 @@ TO_NAMESPACE;
 #include <qfiledialog.h>
 #include <qregexp.h>
 
-#include "toresultview.h"
-#include "toresultview.moc"
 #include "tomain.h"
+#include "toresultview.h"
 #include "tosql.h"
 #include "toconf.h"
 #include "totool.h"
 #include "tomemoeditor.h"
+
+#include "toresultview.moc"
+
+#ifdef TO_HAS_KPRINT
+#include <kprinter.h>
+#endif
 
 static int MaxColDisp;
 
@@ -353,7 +358,7 @@ void toListView::contentsMouseReleaseEvent(QMouseEvent *e)
   QListView::contentsMouseReleaseEvent(e);
 }
 
-QListViewItem *toListView::printPage(QPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
+QListViewItem *toListView::printPage(TOPrinter *printer,QPainter *painter,QListViewItem *top,int &column,int &level,int pageNo,bool paint)
 {
   QPaintDeviceMetrics metrics(printer);
   double scale=toTool::globalConfig(CONF_LIST_SCALE,DEFAULT_LIST_SCALE).toFloat();

@@ -40,8 +40,8 @@ TO_NAMESPACE;
 #include <qpalette.h>
 #include <qpaintdevicemetrics.h>
 
-#include "tomarkedtext.h"
 #include "tomain.h"
+#include "tomarkedtext.h"
 #include "totool.h"
 #include "toconf.h"
 
@@ -55,6 +55,10 @@ TO_NAMESPACE;
 #include "tomarkedtext.3.moc"
 #else
 #include "tomarkedtext.2.moc"
+#endif
+
+#ifdef TO_HAS_KPRINT
+#include <kprinter.h>
 #endif
 
 toMarkedText::toMarkedText(QWidget *parent,const char *name)
@@ -138,7 +142,7 @@ void toMarkedText::print(void)
   }
 }
 
-int toMarkedText::printPage(QPrinter *printer,QPainter *painter,int line,int &offset,
+int toMarkedText::printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
 			    int pageNo,bool paint)
 {
   QPaintDeviceMetrics metrics(printer);
