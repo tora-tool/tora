@@ -141,7 +141,7 @@ void toNoBlockQuery::queryTask::run(void)
   TO_DEBUGOUT("Locking EOQ\n");
   toLocker lock(Parent.Lock);
   TO_DEBUGOUT("Deleting query\n");
-  if (!Parent.Query->eof())
+  if (!Parent.Error&&!Parent.Query->eof())
     try {
       Parent.Query->cancel();
     } catch(...) {
