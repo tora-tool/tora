@@ -42,6 +42,7 @@
 
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qlabel.h>
 #include <qregexp.h>
 #include <qtimer.h>
 #include <qtoolbar.h>
