@@ -1,5 +1,6 @@
 1.3.5: Released 2002-04-17
 
+2002-04-16: Fixed wrong caption of license window in Windows.
 2002-04-16: Fixed configure problem with mysql and Qt3.
 2002-04-16: Added confirmation to change password tool.
 2002-04-16: Some fixes to the oci stub.

@@ -370,7 +370,11 @@ toAbout::toAbout(int page,QWidget* parent,const char* name,bool modal,WFlags fl)
     CancelButton->hide();
     break;
   case 1:
+#ifdef TO_LICENSE
+    setCaption("TOra for Windows License");
+#else
     setCaption("GNU General Public License");
+#endif
     TextView->setText(LicenseText);
     TextView->setPaper(QColor(255,255,255));
     TextView->setTextFormat(PlainText);
