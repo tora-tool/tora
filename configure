@@ -72,7 +72,7 @@ egrep "^(UIC|MOC)" Makefile > configure.setup
 . ./configure.setup
 rm -f configure.setup
 
-echo -n "compiling designer files "
+echo -n "creating designer files "
 for a in *.ui license/*ui
 do
     base=`echo $a | sed 's/\.[^\.]*$//'`
@@ -82,7 +82,7 @@ do
 done
 echo " done"
 
-echo -n "compiling moc files ... "
+echo -n "creating moc files ... "
 for a in *.h qtlegacy/*.h license/*.h
 do
     if grep -i Q_OBJECT $a >/dev/null
@@ -92,7 +92,7 @@ do
 done
 echo done
 
-echo -n generating empty dependfiles
+echo -n "creating empty dependfiles ... "
 if [ \! -d .depends ]
 then
     mkdir .depends
