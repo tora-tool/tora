@@ -965,8 +965,10 @@ void toWorksheet::execute(toSQLParse::tokenizer &tokens,int line,int pos,bool di
 	comment=false;
     } else if (multiComment) {
       if (t.at(i)=='*'&&
-	  t.at(i+1)=='/')
+	  t.at(i+1)=='/') {
 	multiComment=false;
+	i++;
+      }
     } else if (t.at(i)=='-'&&
 	       t.at(i+1)=='-')
       comment=true;
