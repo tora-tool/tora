@@ -36,7 +36,11 @@ dnl for NLS support. Call them in this order!
 dnl WITH_NLS is for the po files
 dnl AM_KDE_WITH_NLS
 
+AX_PATH_LIB_IODBC
+
 TORA_CHECK_PLUGIN
+TORA_CHECK_MONO
+TORA_CHECK_LINK_LIBS
 TORA_LIBTOOL_ALL
 TORA_HAVE_KDE
 MRJ_CHECK_ORACLE
@@ -44,7 +48,7 @@ AX_PATH_LIB_PCRE
 TORA_CHECK_PUTENV
 
 dnl Makefile.am uses these
-AM_CONDITIONAL(ENABLE_PLUGIN, test "$enable_plugin" = yes)
+AM_CONDITIONAL(ENABLE_MONO, test "$enable_mono" = yes)
 AM_CONDITIONAL(HAVE_ORACLE, test "$enable_oracle" = yes)
 
 dnl Checks for library functions.
