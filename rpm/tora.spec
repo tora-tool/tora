@@ -110,7 +110,7 @@ CXXFLAGS="$RPM_OPT_FLAGS" \
 	 --with-kde \
          --without-rpath \
          --with-static-oracle \
-         --with-rpm-contents="${RPM_BUILD_ROOT}"
+         --with-rpm-contents="%{_prefix}/lib"
 
 %build
 export QTDIR="%{_qt2dir}"
