@@ -1550,7 +1550,7 @@ void toMain::versionData(const QByteArray &data,QNetworkOperation *)
 {
 #if QT_VERSION >= 300
   if (data.size()>0)
-    VersionString+=QCString(data);
+    VersionString+=QCString(data.data(),data.size());
 #endif
 }
 

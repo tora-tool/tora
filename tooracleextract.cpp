@@ -5136,11 +5136,12 @@ QString toOracleExtract::createTrigger(toExtract &ext,
   else if (triggerType.find("INSTEAD OF")>=0)
     trgType="INSTEAD OF";
 
-  QRegExp src("\\s"+trgType+"\\s",false);
+  QString trgPart = trgType+" "+event;
+  QRegExp src("\\s"+trgPart+"\\s",false);
   int pos=description.find(src);
   QString columns;
   if (pos>=0) {
-    pos+=trgType.length()+2;
+    pos+=trgPart.length()+2;
     int endPos=description.find(" ON ",pos,false);
     if (endPos>=0) {
       columns=description.right(description.length()-pos);
@@ -5166,7 +5167,7 @@ QString toOracleExtract::createTrigger(toExtract &ext,
     ret+="\n";
   }
   ret+=sql;
-  ret+=QString("%1 %2%3 ON %4\n").arg(trgType).arg(event).arg(columns).arg(object);
+  ret+=QString("%1 %2 %3 ON %4\n").arg(trgType).arg(event).arg(columns).arg(object);
   if (baseType.find("TABLE")>=0||baseType.find("VIEW")>=0) {
     ret+=refNames;
     ret+="\n";
