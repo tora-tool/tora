@@ -191,7 +191,7 @@ public:
   {
     return new toWorksheetSetup(this,parent);
   }
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 };
 

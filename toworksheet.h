@@ -130,7 +130,7 @@ public:
   { return Editor; }
   bool describe(const QString &query);
 
-  virtual bool canHandle(toConnection &conn)
+  virtual bool canHandle(toConnection &)
   { return true; }
 
   virtual void exportData(std::map<QCString,QString> &data,const QCString &prefix);

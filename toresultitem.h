@@ -100,6 +100,9 @@ protected:
   /** Done with adding queries.
    */
   void done(void);
+  /** Reimplemented for internal reasons.
+   */
+  virtual void resizeEvent(QResizeEvent *e);
 public:
   /** Create widget.
    * @param num Number of columns to arrange data in.
@@ -133,6 +136,29 @@ public:
    */
   void dataFont(const QFont &val)
   { DataFont=val; }
+
+  /** Create title widget.
+   * @param parent Parent of widget.
+   * @return Title widget created.
+   */
+  virtual QWidget *createTitle(QWidget *parent);
+  /** Create value widget.
+   * @param parent Parent of widget.
+   * @return Title widget created.
+   */
+  virtual QWidget *createValue(QWidget *parent);
+  /** Set value of title widget.
+   * @param widget Widget to use for title.
+   * @param title The title of the new widget pair.
+   * @param value Vaue of new title widget.
+   */
+  virtual void setTitle(QWidget *widget,const QString &title,const QString &title);
+  /** Set value of value widget.
+   * @param widget Widget to use for value.
+   * @param title The title of the new widget pair.
+   * @param value Vaue of new title widget.
+   */
+  virtual void setValue(QWidget *widget,const QString &title,const QString &value);
 
   /** Reimplemented for internal reasons.
    */

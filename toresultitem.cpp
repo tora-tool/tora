@@ -45,6 +45,7 @@
 #include <qgrid.h>
 #include <qheader.h>
 #include <qlabel.h>
+#include <qlayout.h>
 #include <qtooltip.h>
 
 #include "toresultitem.moc"
@@ -75,6 +76,7 @@ void toResultItem::setup(int num,bool readable)
   WidgetPos=0;
   viewport()->setBackgroundMode(PaletteBackground);
   Result=new QGrid(2*num,viewport());
+  Result->setFixedWidth(width()-50);
   addChild(Result);
   Result->setSpacing(3);
   ShowTitle=true;
@@ -109,6 +111,45 @@ void toResultItem::start(void)
 // Must be alloced in multiples of 2
 #define ALLOC_SIZE 1000
 
+QWidget *toResultItem::createTitle(QWidget *parent)
+{
+  QLabel *widget=new QLabel(parent);
+  widget->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
+  return widget;
+}
+
+QWidget *toResultItem::createValue(QWidget *parent)
+{
+  QLabel *widget=new QLabel(parent);
+  return widget;
+}
+
+void toResultItem::setTitle(QWidget *widget,const QString &title,const QString &)
+{
+  QLabel *label=static_cast<QLabel *>(widget);
+  if (label)
+    label->setText(title);
+}
+
+void toResultItem::setValue(QWidget *widget,const QString &title,const QString &value)
+{
+  QLabel *label=static_cast<QLabel *>(widget);
+  if (label) {
+    if (title!="-") {
+      label->setFrameStyle(StyledPanel|Sunken);
+      label->setFont(DataFont);
+    } else {
+      label->setFrameStyle(NoFrame);
+      label->setFont(qApp->font());
+    }
+    label->setText(value);
+    if (Right)
+      label->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
+    else
+      label->setAlignment(AlignLeft|AlignVCenter|ExpandTabs|WordBreak);
+  }
+}
+
 void toResultItem::addItem(const QString &title,const QString &value)
 {
   if (WidgetPos>=NumWidgets) {
@@ -124,46 +165,32 @@ void toResultItem::addItem(const QString &title,const QString &value)
   QString t;
   if (title!="-")
     t=toTranslateMayby(sqlName(),title);
-  QLabel *widget;
+  QWidget *widget;
   if (!Widgets[WidgetPos]) {
-    widget=new QLabel(t,Result);
-    widget->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
-    if (ShowTitle)
-      widget->show();
+    widget=createTitle(Result);
     Widgets[WidgetPos]=widget;
-  } else {
+  } else
     widget=((QLabel *)Widgets[WidgetPos]);
-    widget->setText(t);
-    if (ShowTitle)
-      widget->show();
-    else
-      widget->hide();
-  }
+
+  setTitle(widget,t,value);
+  if (ShowTitle)
+    widget->show();
+  else
+    widget->hide();
+
   WidgetPos++;
   if (!Widgets[WidgetPos]) {
-    widget=new QLabel(value,Result);
-    if (title!="-") {
-      widget->setFont(DataFont);
-      widget->setFrameStyle(StyledPanel|Sunken);
-    }
-    if (Right)
-      widget->setAlignment(AlignRight|AlignVCenter|ExpandTabs|WordBreak);
-    else
-      widget->setAlignment(AlignLeft|AlignVCenter|ExpandTabs|WordBreak);
+    widget=createValue(Result);
     Widgets[WidgetPos]=widget;
-  } else {
-    widget=((QLabel *)Widgets[WidgetPos]);
-    if (title!="-") {
-      widget->setFrameStyle(StyledPanel|Sunken);
-      widget->setFont(DataFont);
-    } else {
-      widget->setFrameStyle(NoFrame);
-      widget->setFont(qApp->font());
-    }
-    widget->setText(value);
-  }
+  } else
+    widget=Widgets[WidgetPos];
+  setValue(widget,t,value);
+
   widget->show();
   WidgetPos++;
+  QLayout *l=layout();
+  if (l)
+    l->invalidate();
 }
 
 void toResultItem::done(void)
@@ -229,4 +256,10 @@ void toResultItem::poll(void)
     toStatusMessage(str);
     Poll.stop();
   }
+}
+
+void toResultItem::resizeEvent(QResizeEvent *e)
+{
+  QScrollView::resizeEvent(e);
+  Result->setFixedWidth(width()-50);
 }

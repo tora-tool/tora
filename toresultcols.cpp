@@ -41,7 +41,109 @@
 #include <map>
 
 #include <qapplication.h>
+#include <qcheckbox.h>
 #include <qlabel.h>
+#include <qregexp.h>
+
+#include "toresultcols.moc"
+
+toResultColsComment::toResultColsComment(QWidget *parent)
+  : QLineEdit(parent)
+{
+  connect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
+  Cached=NULL;
+  Changed=false;
+}
+
+void toResultColsComment::setComment(bool table,const QString &name,const QString &comment)
+{
+  saveUnchanged();
+  disconnect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
+  Table=table;
+  Name=name;
+  Cached=NULL;
+  Changed=false;
+  setText(comment);
+  connect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
+}
+
+void toResultColsComment::setCachedComment(bool table,const QString &name,QString &comment)
+{
+  saveUnchanged();
+  disconnect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
+  Table=table;
+  Name=name;
+  Cached=&comment;
+  Changed=false;
+  setText(comment);
+  connect(this,SIGNAL(textChanged(const QString &)),this,SLOT(commentChanged()));
+}
+
+static toSQL SQLChangeTableComment("toResultCols:ChangeTableComment",
+				   "COMMENT ON TABLE %1 IS %2",
+				   "Set a comment on a table. Must have same % signs");
+static toSQL SQLChangeColumnComment("toResultCols:ChangeColumnComment",
+				    "COMMENT ON COLUMN %1 IS %2",
+				    "Set a comment on a column. Must have same % signs");
+
+void toResultColsComment::commentChanged()
+{
+  Changed=true;
+}
+
+void toResultColsComment::focusOutEvent(QFocusEvent *e)
+{
+  QLineEdit::focusOutEvent(e);
+  saveUnchanged();
+}
+
+void toResultColsComment::saveUnchanged()
+{
+  try {
+    if (!Name.isEmpty()&&Changed) {
+      Changed=false;
+      toConnection &conn=toCurrentConnection(this);
+      QString sql;
+      if (Table)
+	sql=SQLChangeTableComment(conn);
+      else
+	sql=SQLChangeColumnComment(conn);
+      QString comment=text();
+      comment.replace(QRegExp("'"),"''");
+      comment="'"+comment+"'";
+      conn.execute(sql.arg(Name).arg(comment));
+      if (Cached)
+	*Cached=text();
+    }
+  } TOCATCH
+}
+
+QWidget *toResultCols::resultColsEdit::createValue(QWidget *parent)
+{
+  toResultColsComment *widget=new toResultColsComment(parent);
+  return widget;
+}
+
+void toResultCols::resultColsEdit::setValue(QWidget *widget,const QString &title,const QString &value)
+{
+  toResultColsComment *comment=dynamic_cast<toResultColsComment *>(widget);
+  if (comment) {
+    if (Cached)
+      comment->setCachedComment(false,Table+"."+connection().quote(title),const_cast<QString &>(value));
+    else
+      comment->setComment(false,Table+"."+connection().quote(title),value);
+  }
+}
+
+void toResultCols::resultColsEdit::describe(toQDescList &desc,const QString &table,bool cache)
+{
+  start();
+  Table=table;
+  Cached=cache;
+  for (toQDescList::iterator i=desc.begin();i!=desc.end();i++)
+    addItem((*i).Name,(*i).Comment);
+  done();
+}
 
 static toSQL SQLInfo("toResultCols:Info",
 		     "SELECT Data_Default,\n"
@@ -218,7 +320,17 @@ static toSQL SQLTableComment("toResultCols:TableComment",
 toResultCols::toResultCols(QWidget *parent,const char *name)
   : QVBox(parent,name)
 {
-  Title=new QLabel(this);
+  QHBox *box=new QHBox(this);
+  Title=new QLabel(box);
+  Title->setSizePolicy(QSizePolicy(QSizePolicy::Minimum,QSizePolicy::Maximum));
+  Comment=new QLabel(box);
+  Comment->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Maximum));
+  EditComment=new toResultColsComment(box);
+  EditComment->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Maximum));
+  EditComment->hide();
+  Edit=new QCheckBox("Edit comments",box);
+  Edit->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Maximum));
+  connect(Edit,SIGNAL(toggled(bool)),this,SLOT(editComment(bool)));
   Columns=new resultCols(this);
   NoCache=false;
 }
@@ -266,8 +378,19 @@ void toResultCols::query(const QString &,const toQList &param)
     
     label+=QString::fromLatin1("</B>");
     if (name.Comment) {
-      label+=QString::fromLatin1(" - ");
-      label+=name.Comment;
+      Comment->setText(QString::fromLatin1(" - ")+name.Comment);
+      EditComment->setCachedComment(true,
+				    conn.quote(name.Owner)+"."+conn.quote(name.Name),
+				    const_cast<QString &>(name.Comment));
+    } else
+      Comment->setText(QString::null);
+
+    if (connection().provider()=="Oracle") {
+      editComment(Edit->isChecked());
+      Edit->setEnabled(true);
+    } else {
+      editComment(false);
+      Edit->setEnabled(false);
     }
 
     Columns->query(name,NoCache);
@@ -277,13 +400,23 @@ void toResultCols::query(const QString &,const toQList &param)
     try {
       QString label=QString::fromLatin1("<B>");
       label+=object;
-      label+=QString::fromLatin1("</B> -");
+      label+=QString::fromLatin1("</B>");
       if (connection().provider()=="Oracle") {
-	toQuery query(connection(),SQLTableComment,Owner,Name);
+	toConnection &conn=connection();
+	toQuery query(conn,SQLTableComment,Owner,Name);
+	QString t;
 	while(!query.eof()) {
-	  label+=QString::fromLatin1(" ");
-	  label+=query.readValueNull();
+	  t+=QString::fromLatin1(" - ");
+	  QString comment=query.readValueNull();
+	  EditComment->setComment(true,conn.quote(Owner)+"."+conn.quote(Name),comment);
+	  t+=comment;
 	}
+	Comment->setText(t);
+	editComment(Edit->isChecked());
+	Edit->setEnabled(true);
+      } else {
+	editComment(false);
+	Edit->setEnabled(false);
       }
       label+=" "+tr("(Object cache not ready)");
       Columns->query(object,Owner,Name);
@@ -305,6 +438,19 @@ toResultCols::resultCols::resultCols(QWidget *parent,const char *name)
   addColumn(QString::fromLatin1("NULL"));
   addColumn(tr("Comments"));
   setSorting(0);
+  Edit=new resultColsEdit(parent);
+  Edit->hide();
+}
+
+void toResultCols::resultCols::editComment(bool val)
+{
+  if (val) {
+    Edit->show();
+    hide();
+  } else {
+    Edit->hide();
+    show();
+  }
 }
 
 void toResultCols::resultCols::describe(toQDescList &desc)
@@ -339,11 +485,14 @@ void toResultCols::resultCols::query(const QString &object,
   try {
     toConnection &conn=toCurrentConnection(this);
 
+    QString table;
+
     QString sql=QString::fromLatin1("SELECT * FROM ");
     if(conn.provider() == "PostgreSQL")
-      sql+=name;
+      table=name;
     else
-      sql+=object;
+      table=object;
+    sql+=table;
     sql+=QString::fromLatin1(" WHERE NULL=NULL");
 
     setSQLName(tr("Description of %1").
@@ -372,6 +521,7 @@ void toResultCols::resultCols::query(const QString &object,
     Name=name;
 
     describe(desc);
+    Edit->describe(desc,table,false);
   } catch(...) {
     toStatusMessage(tr("Failed to describe %1").arg(object));
   }
@@ -383,17 +533,31 @@ void toResultCols::resultCols::query(const toConnection::objectName &name,bool n
     clear();
     toConnection &conn=toCurrentConnection(this);
 
-    setSQLName(tr("Description of %1.%2").
-	       arg(conn.quote(name.Owner)).
-	       arg(conn.quote(name.Name)));
-
-    toQDescList desc=conn.columns(name,nocache);
-
     Owner=name.Owner;
     Name=name.Name;
 
+    QString wholename=conn.quote(Owner)+"."+conn.quote(Name);
+
+    setSQLName(tr("Description of %1").
+	       arg(wholename));
+
+    toQDescList &desc=conn.columns(name,nocache);
+
     describe(desc);
+    Edit->describe(desc,wholename,true);
   } catch(...) {
     toStatusMessage(tr("Failed to describe %1").arg(name.Owner+QString::fromLatin1(".")+name.Name));
+  }
+}
+
+void toResultCols::editComment(bool val)
+{
+  Columns->editComment(val);
+  if (val) {
+    Comment->hide();
+    EditComment->show();
+  } else {
+    Comment->show();
+    EditComment->hide();
   }
 }

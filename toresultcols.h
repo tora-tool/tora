@@ -37,11 +37,36 @@
 
 #include "toconnection.h"
 #include "toresultview.h"
+#include "toresultitem.h"
 
 #include <qvbox.h>
+#include <qlineedit.h>
 
+class QCheckBox;
 class QLabel;
 class toResultColsItem;
+
+/** This widget is used for single record view in the content editor. Only for internal use.
+ * @internal
+ */
+class toResultColsComment : public QLineEdit {
+  Q_OBJECT
+
+  bool Changed;
+  bool Table;
+  QString Name;
+  QString *Cached;
+private:
+  void saveUnchanged();
+protected:
+  virtual void focusOutEvent(QFocusEvent *);
+public:
+  toResultColsComment(QWidget *parent);
+  void setComment(bool table,const QString &name,const QString &comment);
+  void setCachedComment(bool table,const QString &name,QString &comment);
+public slots:
+  void commentChanged();
+};
 
 /** This widget displays information about the returned columns of an object
  * specified by the first and second parameter in the query. The sql is not
@@ -49,21 +74,36 @@ class toResultColsItem;
  */
 
 class toResultCols : public QVBox, public toResult {
+  Q_OBJECT
+
+  class resultColsEdit : public toResultItem {
+    QString Table;
+    bool Cached;
+  public:
+    resultColsEdit(QWidget *parent)
+      : toResultItem(1,false,parent)
+    { }
+    virtual QWidget *createValue(QWidget *parent);
+    virtual void setValue(QWidget *widget,const QString &title,const QString &value);
+    void describe(toQDescList &desc,const QString &table,bool cached);
+  };
   class resultCols : public toListView {
+    resultColsEdit *Edit;
     QString Owner;
     QString Name;
   public:
-    /** Create the widget.
-     * @param parent Parent widget.
-     * @param name Name of widget.
-     */
     resultCols(QWidget *parent,const char *name=NULL);
-    virtual void describe(toQDescList &desc);
-    virtual void query(const toConnection::objectName &,bool nocache);
-    virtual void query(const QString &table,const QString &owner,const QString &name);
+    void editComment(bool val);
+    void describe(toQDescList &desc);
+    void query(const toConnection::objectName &,bool nocache);
+    void query(const QString &table,const QString &owner,const QString &name);
     friend class toResultColsItem;
   };
+
   QLabel *Title;
+  QLabel *Comment;
+  toResultColsComment *EditComment;
+  QCheckBox *Edit;
   resultCols *Columns;
   bool NoCache;
 
@@ -136,6 +176,8 @@ public slots:
    */
   virtual void changeParams(const QString &Param1,const QString &Param2,const QString &Param3)
   { toResult::changeParams(Param1,Param2,Param3); }
+private slots:
+  void editComment(bool val);
 };
 
 #endif
