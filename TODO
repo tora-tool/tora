@@ -49,7 +49,6 @@ Extended functionality:
 * Tooltips in content editor.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
-* Add execution plan to saved statistics in worksheet.
 * Proxy connection provider.
 * QSql connection provider.
 

@@ -37,6 +37,7 @@
 
 #include <list>
 
+#include <qsplitter.h>
 #include <qvbox.h>
 
 class QPopupMenu;
@@ -46,15 +47,33 @@ class QLabel;
 class toBarChart;
 class toListView;
 
+class toHideSplitter : public QSplitter {
+  Q_OBJECT
+public:
+  toHideSplitter(QSplitter::Orientation o,QWidget *parent)
+    : QSplitter(o,parent)
+  { }
+public slots:
+  void setHidden(bool hid)
+  {
+    if (hid)
+      hide();
+    else
+      show();
+  }
+};
+
 class toWorksheetStatistic : public QVBox {
   Q_OBJECT
 
   struct data {
     QVBox *Top;
     QLabel *Label;
+    QSplitter *Charts;
     toListView *Statistics;
     toBarChart *Wait;
     toBarChart *IO;
+    toListView *Plan;
   };
 
   std::list<data> Open;
@@ -66,6 +85,9 @@ class toWorksheetStatistic : public QVBox {
   toAnalyze *Tool;
   QSplitter *Splitter;
   QWidget *Dummy;
+
+  QToolButton *ShowPlans;
+  QToolButton *ShowCharts;
 public:
   toWorksheetStatistic(QWidget *parent);
   ~toWorksheetStatistic();
@@ -75,6 +97,10 @@ public:
   void addStatistics(std::map<QString,QString> &stats);
 
 public slots:
+
+  virtual void showPlans(bool);
+  virtual void showCharts(bool); 
+
   virtual void save(int);
   virtual void remove(int); 
   virtual void load(void);

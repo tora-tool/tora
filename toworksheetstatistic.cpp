@@ -37,6 +37,7 @@
 #include <qpopupmenu.h>
 #include <qsplitter.h>
 #include <qlabel.h>
+#include <qcheckbox.h>
 
 #include "tomain.h"
 #include "toworksheetstatistic.h"
@@ -49,6 +50,9 @@
 #include "icons/filesave.xpm"
 #include "icons/fileopen.xpm"
 #include "icons/trash.xpm"
+
+#include "icons/grid.xpm"
+#include "icons/tree.xpm"
 
 toAnalyze *toWorksheetStatistic::Widget;
 
@@ -89,6 +93,22 @@ toWorksheetStatistic::toWorksheetStatistic(QWidget *parent)
 
   Splitter=new QSplitter(Vertical,this);
 
+  toolbar->addSeparator();
+
+  ShowCharts=new QToolButton(toolbar);
+  ShowCharts->setToggleButton(true);
+  ShowCharts->setIconSet(QIconSet(QPixmap((const char **)grid_xpm)));
+  QToolTip::add(ShowCharts,"Display charts");
+  ShowCharts->setOn(true);
+  connect(ShowCharts,SIGNAL(toggled(bool)),this,SLOT(showCharts(bool)));
+
+  ShowPlans=new QToolButton(toolbar);
+  ShowPlans->setToggleButton(true);
+  ShowPlans->setIconSet(QIconSet(QPixmap((const char **)tree_xpm)));
+  QToolTip::add(ShowPlans,"Display execution plans");
+  ShowPlans->setOn(true);
+  connect(ShowPlans,SIGNAL(toggled(bool)),this,SLOT(showPlans(bool)));
+
   Dummy=new QWidget(Splitter);
 
   Tool=dynamic_cast<toAnalyze *>(toCurrentTool(this));
@@ -114,21 +134,70 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
 {
   data cur;
   cur.Top=new QVBox(Splitter);
-  cur.Label=new QLabel(stats["Description"],cur.Top);
-  QSplitter *splitter=new QSplitter(Horizontal,cur.Top);
-  cur.Statistics=new toListView(splitter);
+  QHBox *box=new QHBox(cur.Top);
+  cur.Label=new QLabel(stats["Description"],box);
+  cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  QCheckBox *check=new QCheckBox("Hide",box);
+  cur.Charts=new toHideSplitter(Horizontal,cur.Top);
+  connect(check,SIGNAL(toggled(bool)),cur.Charts,SLOT(setHidden(vool)));
+  cur.Statistics=new toListView(cur.Charts);
   cur.Statistics->importData(stats,"Stat");
-  cur.Wait=new toBarChart(splitter);
+  cur.Wait=new toBarChart(cur.Charts);
   cur.Wait->importData(stats,"Wait");
-  cur.IO=new toBarChart(splitter);
+  cur.IO=new toBarChart(cur.Charts);
   cur.IO->importData(stats,"IO");
+  cur.Plan=new toListView(cur.Charts);
+  cur.Plan->importData(stats,"Plan");
+
+  QValueList<int> sizes;
+  sizes<<1<<1<<1<<1;
+  cur.Charts->setSizes(sizes);
+  if (!cur.Plan->firstChild()) {
+    delete cur.Plan;
+    cur.Plan=NULL;
+  } else if (!ShowPlans->isOn())
+    cur.Plan->hide();
+  if (!ShowCharts->isOn()) {
+    cur.Statistics->hide();
+    cur.Wait->hide();
+    cur.IO->hide();
+  }
   cur.Top->show();
+  cur.Top->setFocus();
 
   Open.insert(Open.end(),cur);
 
   if (Dummy) {
     delete Dummy;
     Dummy=NULL;
+  }
+}
+
+void toWorksheetStatistic::showPlans(bool show)
+{
+  for(std::list<data>::iterator i=Open.begin();i!=Open.end();i++) {
+    if ((*i).Plan) {
+      if (show) {
+	(*i).Plan->show();
+      } else {
+	(*i).Plan->hide();
+      }
+    }
+  }
+}
+
+void toWorksheetStatistic::showCharts(bool show)
+{
+  for(std::list<data>::iterator i=Open.begin();i!=Open.end();i++) {
+    if (show) {
+      (*i).Statistics->show();
+      (*i).Wait->show();
+      (*i).IO->show();
+    } else {
+      (*i).Statistics->hide();
+      (*i).Wait->hide();
+      (*i).IO->hide();
+    }
   }
 }
 
@@ -143,6 +212,8 @@ void toWorksheetStatistic::save(int selid)
 	(*i).Statistics->exportData(stat,"Stat");
 	(*i).IO->exportData(stat,"IO");
 	(*i).Wait->exportData(stat,"Wait");
+	if ((*i).Plan)
+	  (*i).Plan->exportData(stat,"Plan");
 	stat["Description"]=(*i).Label->text();
 	try {
 	  toTool::saveMap(fn,stat);

@@ -191,7 +191,7 @@ SOURCES=\
 	tocurrent.cpp \
 	todatabasesettingui.cpp \
 	todebug.cpp \
-	todebugchange.cpp \
+	todebugchangeui.cpp \
 	todebugtext.cpp \
 	todebugwatch.cpp \
 	toeditextensions.cpp \
@@ -423,7 +423,7 @@ plugins/todebug.tso:\
 	objs/todebug.o \
 	objs/todebugwatch.o \
 	objs/todebugtext.o \
-	objs/todebugchange.o
+	objs/todebugchangeui.o
 plugins/toeditextensions.tso:\
 	objs/toeditextensions.o \
 	objs/toeditextensionsetupui.o

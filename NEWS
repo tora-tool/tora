@@ -109,6 +109,11 @@
 2001-12-06: Fixed problem with multiline comments in worksheet.
 2001-12-06: Fixed wrong menu titles on toolmenues.
 2001-12-06: Fixed problem with closing all windows.
+2001-12-06: Save explain plan in worksheet statistics if available.
+2001-12-06: Worksheet statistic browser now displays execution plan if available.
+2001-12-06: Changed organization of worksheet statistic.
+2001-12-06: Export charts also save open state of items.
+2001-12-06: Changed name of todebugchange.ui to todebugchangeui.ui
 
 1.1.5: Released 2001-11-26
 

@@ -788,6 +788,7 @@ void toWorksheet::query(const QString &str,bool direct)
 	return;
       }
     toStatusMessage("Processing query",true);
+    Plan->clear();
     if (direct) {
       try {
 	First=false;
@@ -1520,6 +1521,10 @@ void toWorksheet::saveStatistics(void)
   Statistics->exportData(stat,"Stat");
   IOChart->exportData(stat,"IO");
   WaitChart->exportData(stat,"Wait");
+  if (Plan->firstChild())
+    Plan->exportData(stat,"Plan");
+  else
+    toStatusMessage("No plan available to save",false,false);
   stat["Description"]=QueryString;
   
   toWorksheetStatistic::saveStatistics(stat);

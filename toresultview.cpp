@@ -944,6 +944,8 @@ void toListView::exportData(std::map<QString,QString> &ret,const QString &prefix
       ret[nam+"Parent"]=QString::number(itemMap[item->parent()]);
     else
       ret[nam+"Parent"]="0";
+    if (item->isOpen())
+      ret[nam+"Open"]="Yes";
     for(int i=0;i<columns();i++) {
       toResultViewItem *resItem=dynamic_cast<toResultViewItem *>(item);
       toResultViewCheck *chkItem=dynamic_cast<toResultViewCheck *>(item);
@@ -998,6 +1000,8 @@ void toListView::importData(std::map<QString,QString> &ret,const QString &prefix
       item=new toResultViewItem(itemMap[parent],NULL);
     else
       item=new toResultViewItem(this,NULL);
+    if (!ret[nam+"Open"].isEmpty())
+      item->setOpen(true);
     itemMap[id]=item;
     for(int j=0;j<columns();j++)
       item->setText(j,ret[nam+QString::number(j)]);

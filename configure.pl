@@ -124,7 +124,7 @@ my %plugins=(
 	     "todebug"             => { "Files" => [ "todebug",
 						     "todebugwatch",
 						     "todebugtext",
-						     "todebugchange" ],
+						     "todebugchangeui" ],
 					"Oracle" => 1 },
 	     "tocurrent"           => { "Files" => [ "tocurrent" ],
 					"Oracle" => 1 },

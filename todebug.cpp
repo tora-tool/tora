@@ -71,9 +71,10 @@
 #include "totool.h"
 #include "tosql.h"
 #include "tohelp.h"
+#include "todebugchangeui.h"
 
 #include "todebug.moc"
-#include "todebugchange.moc"
+#include "todebugchangeui.moc"
 #include "todebugwatch.moc"
 
 #include "icons/addwatch.xpm"
