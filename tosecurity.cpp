@@ -1452,7 +1452,7 @@ void toSecurity::changeUser(bool ask)
 
 void toSecurity::refresh(void)
 {
-  disconnect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+  disconnect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	     this,SLOT(changeUser(QListViewItem *)));
   UserList->clear();
   try {
@@ -1487,7 +1487,7 @@ void toSecurity::refresh(void)
 	UserList->setSelected(item,true);
     }
   } TOCATCH
-  connect(UserList,SIGNAL(currentChanged(QListViewItem *)),
+  connect(UserList,SIGNAL(selectionChanged(QListViewItem *)),
 	  this,SLOT(changeUser(QListViewItem *)));
 }
 

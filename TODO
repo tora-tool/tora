@@ -52,8 +52,6 @@ Extended functionality:
 * Add execution plan to saved statistics in worksheet.
 * Proxy connection provider.
 * QSql connection provider.
-* New configure script with better support for multiple databases.
-* Add tooltip to content editor.
 
 New tools:
 
