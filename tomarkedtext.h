@@ -82,7 +82,17 @@ public:
    * @param name Name of this widget.
    */
   toMarkedText(QWidget *parent,const char *name=NULL);
-
+  /** Insert text and optionallly mark inserted text.
+   * @param str String to insert.
+   * @param mark True if mark inserted as selected.
+   */
+  virtual void insert(const QString &str,bool mark)
+  { toMultiLineEdit::insert(str,mark); }
+  /** Insert text.
+   * @param str String to insert.
+   */
+  virtual void insert(const QString &str)
+  { toMultiLineEdit::insert(str); }
   /** Get selected text. This function is now public.
    * @return The selected text.
    */

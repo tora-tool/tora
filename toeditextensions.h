@@ -55,6 +55,12 @@ public:
 public slots:
   void indentBlock(void);
   void deindentBlock(void);
+
+  void autoIndentBlock(void);
+  void autoIndentBuffer(void);
+
+  void obfuscateBlock(void);
+  void obfuscateBuffer(void);
 };
 
 #endif

@@ -109,6 +109,7 @@
 #define DEFAULT_SESSION		"$HOME/.tora.tse"
 #define CONF_TOOLS_LEFT		"ToolsLeft"
 #define CONF_DEFAULT_FORMAT	"DefaultFormat"
+#define CONF_AUTO_INDENT_RO	"AutoIndent"
 
 #ifndef TO_KDE
 #  ifndef WIN32

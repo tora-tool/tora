@@ -355,11 +355,11 @@ void toSession::changeTab(QWidget *tab)
 	      break;
 	    }
       } else if (CurrentTab==CurrentStatement)
-	CurrentStatement->changeAddress(item->text(13));
+	CurrentStatement->changeAddress(item->text(Sessions->columns()+0));
       else if (CurrentTab==LockedObjects)
 	LockedObjects->changeParams(item->text(0));
       else if (CurrentTab==PreviousStatement)
-	PreviousStatement->changeAddress(item->text(14));
+	PreviousStatement->changeAddress(item->text(Sessions->columns()+1));
     }
   }
 }

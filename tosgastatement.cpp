@@ -42,6 +42,7 @@
 #include "toconf.h"
 #include "tosgastatement.h"
 #include "tomain.h"
+#include "tosqlparse.h"
 
 #include "tosgastatement.moc"
 
@@ -73,9 +74,13 @@ void toSGAStatement::changeTab(QWidget *widget)
   try {
     CurrentTab=widget;
     if (!Address.isEmpty()) {
-      if (CurrentTab==SQLText)
-	SQLText->setText(toSQLString(toCurrentConnection(this),Address));
-      else if (CurrentTab==Plan)
+      if (CurrentTab==SQLText) {
+	if (!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty())
+	  SQLText->setText(toSQLParse::indent(toSQLString(toCurrentConnection(this),
+							  Address)));
+	else
+	  SQLText->setText(toSQLString(toCurrentConnection(this),Address));
+      } else if (CurrentTab==Plan)
 	Plan->query(toSQLString(toCurrentConnection(this),Address));
       else if (CurrentTab==Resources)
 	viewResources();

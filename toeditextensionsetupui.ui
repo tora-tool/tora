@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>541</width>
+            <width>533</width>
             <height>394</height>
         </rect>
     </property>
@@ -28,7 +28,7 @@
             <name>spacing</name>
             <number>6</number>
         </property>
-        <widget row="10"  column="0"  rowspan="1"  colspan="2" >
+        <widget row="11"  column="0"  rowspan="1"  colspan="2" >
             <class>toHighlightedText</class>
             <property stdset="1">
                 <name>name</name>
@@ -50,7 +50,7 @@
             </property>
             <property stdset="1">
                 <name>text</name>
-                <string>&amp;Right justify keywords in each statement.</string>
+                <string>&amp;Right align keywords in each statement.</string>
             </property>
             <property>
                 <name>toolTip</name>
@@ -96,17 +96,6 @@
             <property>
                 <name>toolTip</name>
                 <string></string>
-            </property>
-        </widget>
-        <widget row="9"  column="0"  rowspan="1"  colspan="2" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
-                <cstring>ExampleLabel</cstring>
-            </property>
-            <property stdset="1">
-                <name>text</name>
-                <string>Example</string>
             </property>
         </widget>
         <widget row="2"  column="0"  rowspan="1"  colspan="2" >
@@ -196,6 +185,28 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>CommentColumn</cstring>
+            </property>
+        </widget>
+        <widget row="10"  column="0"  rowspan="1"  colspan="2" >
+            <class>QLabel</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>ExampleLabel</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Example</string>
+            </property>
+        </widget>
+        <widget row="9"  column="0"  rowspan="1"  colspan="2" >
+            <class>QCheckBox</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>AutoIndent</cstring>
+            </property>
+            <property stdset="1">
+                <name>text</name>
+                <string>Auto indent read only SQL text editors</string>
             </property>
         </widget>
     </grid>

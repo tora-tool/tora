@@ -39,6 +39,7 @@
 #include "tosql.h"
 #include "toconnection.h"
 #include "tonoblockquery.h"
+#include "tosqlparse.h"
 
 #include "toresultfield.moc"
 
@@ -90,7 +91,10 @@ void toResultField::poll(void)
 	delete Query;
 	Query=NULL;
 	Poll.stop();
-	append(Unapplied);
+	if (!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty())
+	  setText(toSQLParse::indent(text()+Unapplied));
+	else
+	  append(Unapplied);
 	Unapplied=QString::null;
       }
     }

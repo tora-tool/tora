@@ -46,6 +46,7 @@
 #include "tohighlightedtext.h"
 #include "toeditextensionsetupui.h"
 #include "tosqlparse.h"
+#include "toconf.h"
 
 #include "toeditextensions.moc"
 #include "toeditextensionsetupui.moc"
@@ -55,6 +56,10 @@
 
 static int IndentIndex;
 static int DeindentIndex;
+static int AutoIndentBuffer;
+static int AutoIndentBlock;
+static int ObfuscateBuffer;
+static int ObfuscateBlock;
 
 #define CONF_EXPAND_SPACES	"ExpandSpaces"
 #define CONF_COMMA_BEFORE	"CommaBefore"
@@ -78,12 +83,18 @@ void toEditExtensions::receivedFocus(QWidget *widget)
   else
     Current=NULL;
 
-  toMainWidget()->menuBar()->setItemEnabled(IndentIndex,Current);
-  toMainWidget()->menuBar()->setItemEnabled(DeindentIndex,Current);
+  bool enable=Current&&!Current->isReadOnly();
+
+  toMainWidget()->menuBar()->setItemEnabled(IndentIndex,enable);
+  toMainWidget()->menuBar()->setItemEnabled(DeindentIndex,enable);
+  toMainWidget()->menuBar()->setItemEnabled(AutoIndentBlock,enable);
+  toMainWidget()->menuBar()->setItemEnabled(ObfuscateBlock,enable);
+  toMainWidget()->menuBar()->setItemEnabled(AutoIndentBuffer,Current);
+  toMainWidget()->menuBar()->setItemEnabled(ObfuscateBuffer,Current);
   if(IndentButton)
-    IndentButton->setEnabled(Current);
+    IndentButton->setEnabled(enable);
   if(DeindentButton)
-    DeindentButton->setEnabled(Current);
+    DeindentButton->setEnabled(enable);
 }
 
 void toEditExtensions::lostFocus(QWidget *widget)
@@ -115,10 +126,7 @@ void toEditExtensions::intIndent(int delta)
   Current->setCursorPosition(line1,0,false);
   Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
 
-  Current->insert(res.mid(1));
-
-  Current->setCursorPosition(line1,0,false);
-  Current->setCursorPosition(line2,Current->textLine(line2).length(),true);
+  Current->insert(res.mid(1),true);
 }
 
 void toEditExtensions::deindentBlock(void)
@@ -129,6 +137,94 @@ void toEditExtensions::deindentBlock(void)
 void toEditExtensions::indentBlock(void)
 {
   intIndent(toSQLParse::getSetting().IndentLevel);
+}
+
+void toEditExtensions::autoIndentBlock(void)
+{
+  if (Current) {
+    int line1,col1,line2,col2;
+    if (Current->getMarkedRegion(&line1,&col1,&line2,&col2)) {
+      QString ind=toSQLParse::indentString(col1);
+      QString mrk=Current->markedText();
+      QString res=toSQLParse::indent(ind+mrk);
+      res=res.mid(ind.length()); // Strip indent.
+      Current->insert(res,true);
+    }
+  }
+}
+
+void toEditExtensions::autoIndentBuffer(void)
+{
+  if (Current) {
+    QString text=Current->text();
+    unsigned int pos=0;
+    while(pos<text.length()&&text[pos].isSpace()) {
+      pos++;
+    }
+    Current->selectAll();
+    Current->insert(toSQLParse::indent(text.mid(pos)));
+  }
+}
+
+static int CountLine(const QString &str)
+{
+  int found=str.findRev("\n");
+  if (found<0)
+    return str.length();
+  else
+    return str.length()-found+1;
+}
+
+static void ObfuscateStat(toSQLParse::statement &stat,QString &ret)
+{
+  if (ret.length()>0&&
+      stat.String.length()>0&&
+      toIsIdent(ret[ret.length()-1])&&
+      toIsIdent(stat.String[0])) {
+    if (CountLine(ret)<60)
+      ret+=" ";
+    else
+      ret+="\n";
+  }
+  ret+=stat.String;
+  if (!stat.Comment.isEmpty()) {
+    ret+=stat.Comment;
+    ret+="\n";
+  }
+  for(std::list<toSQLParse::statement>::iterator i=stat.SubTokens.begin();
+      i!=stat.SubTokens.end();
+      i++) {
+    ObfuscateStat(*i,ret);
+  }
+}
+
+void toEditExtensions::obfuscateBlock(void)
+{
+  if (Current) {
+    QString str=Current->markedText();
+    if (!str.isEmpty()) {
+      toSQLParse::statement stat;
+      stat.SubTokens=toSQLParse::parse(str);
+      QString res;
+      ObfuscateStat(stat,res);
+      Current->insert(res);
+    }
+  }
+}
+
+void toEditExtensions::obfuscateBuffer(void)
+{
+  if (Current) {
+    QString str=Current->text();
+    if (!str.isEmpty()) {
+      toSQLParse::statement stat;
+      stat.SubTokens=toSQLParse::parse(str);
+      Current->selectAll();
+      QString res;
+      ObfuscateStat(stat,res);
+      Current->insert(res);
+    }
+  }
 }
 
 static toEditExtensions EditExtensions;
@@ -156,24 +252,21 @@ public:
     EndBlockNewline->setChecked(Current.EndBlockNewline);
     IndentLevel->setValue(Current.IndentLevel);
     CommentColumn->setValue(Current.CommentColumn);
+    AutoIndent->setChecked(!toTool::globalConfig(CONF_AUTO_INDENT_RO,"Yes").isEmpty());
     Ok=false;
-    Example->setText(toSQLParse::indent("select a.TskCod TskCod,\n"
-					"       count(1) Tot\n"
-					"  from EssTsk a,EssTra b\n"
-					" where decode(a.TspActOprID,NULL,NULL,a.PrsID)+5 = b.PrsID(+)\n"
-					" group by a.TskCod,a.CreEdt,a.TspActOprID,b.TraCod\n"
-					"having count(a.TspActOprID) > 0;\n"
-					"CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
+    Example->setText(toSQLParse::indent("CREATE OR REPLACE procedure spTuxGetAccData (oRet OUT  NUMBER)\n"
 					"AS\n"
 					"  vYear  CHAR(4);\n"
 					"BEGIN\n"
-					"\n"
+					"select a.TskCod TskCod, -- A Comment\n"
+					"       count(1) Tot\n"
+					"  from (select * from EssTsk where PrsID >= '1940');\n"
+					"having count(a.TspActOprID) > 0;\n"
 					"    DECLARE\n"
 					"      oTrdStt NUMBER;\n"
 					"    BEGIN\n"
 					"      oTrdStt := 0;\n"
 					"    END;\n"
-					"\n"
 					"    EXCEPTION\n"
 					"        WHEN VALUE_ERROR THEN\n"
 					"	    oRet := 3;\n"
@@ -252,6 +345,21 @@ public:
 				   "De-indent block in editor",
 				   &EditExtensions,SLOT(deindentBlock()),
 				   toMainWidget()->editToolbar());
+    QPopupMenu *menu=new QPopupMenu(toMainWidget());
+    AutoIndentBlock=menu->insertItem("Selection",
+				     &EditExtensions,
+				     SLOT(autoIndentBlock()));
+    AutoIndentBuffer=menu->insertItem("Editor",
+				      &EditExtensions,
+				      SLOT(autoIndentBuffer()));
+    ObfuscateBlock=menu->insertItem("Obfuscate selection",
+				    &EditExtensions,
+				    SLOT(obfuscateBlock()));
+    ObfuscateBuffer=menu->insertItem("Obfuscate editor",
+				     &EditExtensions,
+				     SLOT(obfuscateBuffer()));
+    toMainWidget()->editMenu()->insertItem("Auto indent",menu);
+
     EditExtensions.receivedFocus(NULL);
   }
   virtual QWidget *configurationTab(QWidget *parent)
@@ -272,6 +380,7 @@ void toEditExtensionSetup::saveSetting(void)
   Tool->setConfig(CONF_END_BLOCK_NEWLINE,EndBlockNewline->isChecked()?"Yes":"");
   Tool->setConfig(CONF_INDENT_LEVEL,QString::number(IndentLevel->value()));
   Tool->setConfig(CONF_COMMENT_COLUMN,QString::number(CommentColumn->value()));
+  toTool::globalSetConfig(CONF_AUTO_INDENT_RO,AutoIndent->isChecked()?"Yes":"");
   saveCurrent();
 }
 

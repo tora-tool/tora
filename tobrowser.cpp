@@ -1221,6 +1221,8 @@ public:
     QString object=parent()->text(0);
     QString typ=text(0);
     QString schema=parent()->parent()->parent()->text(0);
+    if (schema=="No schemas")
+      schema=Connection.database();
 
     toResultView *res;
 
@@ -1318,6 +1320,8 @@ public:
     QString object=text(0);
     QString typ=parent()->text(0);
     QString schema=parent()->parent()->text(0);
+    if (schema=="No schemas")
+      schema=Connection.database();
 
     if (typ=="Code"||typ=="Triggers") {
       toToolWidget *tool=new toToolWidget(BrowserTool,
