@@ -329,8 +329,9 @@ bool toTool::saveMap(const QString &file,std::map<QCString,QString> &pairs)
 static char *toKeyPath(const QString &str,CRegistry &registry)
 {
   static char *buf=NULL;
-  for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
-    ;
+  int pos=str.length()-1;
+  while (pos>=0&&str.at(pos)!='\\')
+    pos--;
   if (pos<0)
     throw QT_TRANSLATE_NOOP("toKeyPath","Couldn't find \\ in path");
   QString ret=str.mid(0,pos);
@@ -344,8 +345,9 @@ static char *toKeyPath(const QString &str,CRegistry &registry)
 static char *toKeyValue(const QString &str)
 {
   static char *buf=NULL;
-  for(int pos=str.length()-1;pos>=0&&str.at(pos)!='\\';pos--)
-    ;
+  int pos=str.length()-1;
+  while (pos>=0&&str.at(pos)!='\\')
+    pos--;
   if (pos<0)
     throw QT_TRANSLATE_NOOP("toKeyValue","Couldn't find \\ in path");
   if (buf)
