@@ -198,7 +198,7 @@ void toPush(list<QString> &lst,const QString &);
 QFont toStringToFont(const QString &str);
 QString toFontToString(const QFont &fnt);
 QString toHelpPath(void);
-QString toReadFile(const QString &,bool local=true);
+QCString toReadFile(const QString &);
 bool toCompareLists(QStringList &lst1,QStringList &lst2,unsigned int len);
 void toSetEnv(const QCString &var,const QCString &val);
 void toUnSetEnv(const QCString &var);

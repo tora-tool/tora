@@ -1,6 +1,7 @@
 1.0 fixes:
 
 * Compile objects in target thread in toDebug.
+* Search in help needs implementing.
 
 Extended functionality:
 

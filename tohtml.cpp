@@ -3,21 +3,34 @@
 
 #include "tohtml.h"
 
-toHtml::toHtml(const char *file,size_t siz)
+toHtml::toHtml(const QCString &data)
+  : Data(data)
 {
-  Data=QCString(file,siz);
   Position=0;
 }
 
 toHtml::~toHtml()
 {
-  delete Data;
 }
 
 void toHtml::skipSpace(void)
 {
-  while(Position<Data.length()&&isspace(Data[Position]))
+  while(isspace(data()))
     Position++;
+}
+
+bool toHtml::eof(void)
+{
+  if (Position>Data.length())
+    throw QString("Invalidly went beyond end of file");
+  return Position==Data.length();
+}
+
+char toHtml::data(size_t pos)
+{
+  if (pos>=Data.size())
+    throw QString("Tried to access string out of bounds in data (%d)").arg(pos);
+  return Data[pos];
 }
 
 toHtml::tag toHtml::nextTag(void)
@@ -36,13 +49,13 @@ toHtml::tag toHtml::nextTag(void)
     skipSpace();
     {
       size_t start=Position;
-      while(Position<Data.length()&&!isspace(Data[Position])&&Data[Position]!='>')
+      while(!isspace(data())&&data()!='>')
 	Position++;
-      ret.Tag=QString::fromLocal8Bit(Data.mid(start,Position-start)).lower();
+      ret.Tag=mid(start,Position-start).lower();
     }
     for(;;) {
       skipSpace();
-      if (Position>=Data.length()||Data[Position]=='>') {
+      if (data()=='>') {
 	Position++;
 	break;
       }
@@ -51,27 +64,27 @@ toHtml::tag toHtml::nextTag(void)
       QString val;
       {
 	size_t start=Position;
-	while(Position<Data.length()&&!isspace(Data[Position])&&Data[Position]!='=')
+	while(!isspace(data())&&data()!='=')
 	  Position++;
-	nam=QString::fromLocal8Bit(Data.mid(start,Position-start)).lower();
+	nam=mid(start,Position-start).lower();
       }
       skipSpace();
-      if (Position<Data.length()&&Data[Position]=='=') {
+      if (data()=='=') {
 	Position++;
 	skipSpace();
-	if (Position<Data.length()&&(Data[Position]=='\''||Data[Position]=='\"')) {
-	  char c=Data[Position];
+	char c=data();
+	if (c=='\''||c=='\"') {
 	  Position++;
 	  size_t start=Position;
-	  while(Position<Data.length()&&Data[Position]!=c)
+	  while(data()!=c)
 	    Position++;
-	  val=QString::fromLocal8Bit(Data.mid(start,Position-start));
+	  val=mid(start,Position-start);
 	  Position++;
 	} else {
 	  size_t start=Position;
-	  while(Position<Data.length()&&!isspace(Data[Position])&&Data[Position]!='>')
+	  while(!isspace(data())&&data()!='>')
 	    Position++;
-	  val=QString::fromLocal8Bit(Data.mid(start,Position-start));
+	  val=mid(start,Position-start);
 	}
       }
       ret.Qualifiers[nam]=val;
@@ -79,18 +92,50 @@ toHtml::tag toHtml::nextTag(void)
   } else {
     size_t start=Position;
     while(Position<Data.length()) {
-      if (Data[Position]=='<')
+      if (data()=='<')
 	break;
       Position++;
     }
-    ret.Text=QString::fromLocal8Bit(Data.mid(start,Position-start));
+    QCString str=Data.mid(start,Position-start);
+    for (size_t i=0;i<str.length();i++) {
+      char c=str[i];
+      if (c=='&') {
+	size_t start=i+1;
+	while(i<str.length()&&str[i]!=';')
+	  i++;
+	QCString tmp=str.mid(start,i-start);
+	if (tmp[0]=='#') {
+	  tmp=tmp.right(tmp.length()-1);
+	  ret.Text+=QChar(char(tmp.toInt()));
+	} else if (tmp=="auml")
+	  ret.Text+="å";
+	// The rest of the & codes...
+      } else
+	ret.Text+=QChar(c);
+    }
   }
   return ret;
 }
 
+QCString toHtml::mid(size_t start,size_t size)
+{
+  if (size==0)
+    return "";
+  if (start>=Data.length())
+    throw QString("Tried to access string out of bounds in mid (start=%1)").arg(start);
+  if (size>Data.length())
+    throw QString("Tried to access string out of bounds in mid (size=%1)").arg(size);
+  if (start+size>Data.length())
+    throw QString("Tried to access string out of bounds in mid (total=%1+%2>%3)").
+      arg(start).
+      arg(size).
+      arg(Data.length());
+  return Data.mid(start,size);
+}
+
 bool toHtml::search(const QString &str)
 {
-  QCString data(str.lower().local8Bit());
+  QCString data(str.lower().latin1());
   enum {
     beginning,
     inTag,

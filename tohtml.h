@@ -10,20 +10,23 @@ class toHtml {
   size_t Position;
 
   void skipSpace(void);
+  char data(void)
+  { return data(Position); }
+  char data(size_t pos);
+  QCString mid(size_t start,size_t size);
 public:
   struct tag {
     bool Open;
-    QString Tag;
+    QCString Tag;
     map<QString,QString> Qualifiers;
-    QString Text;
+    QCString Text;
   };
 
-  toHtml(const char *file,size_t siz);
+  toHtml(const QCString &data);
   ~toHtml();
 
   tag nextTag(void);
-  bool eof(void)
-  { return Position>=Data.length(); }
+  bool eof(void);
 
   bool search(const QString &str);
 };

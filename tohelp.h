@@ -49,7 +49,6 @@ class toHelp : public QDialog {
   Q_OBJECT
 
   static toHelp *Window;
-  static map<QString,QString> *Files;
 
   bool Searching;
   bool Quit;

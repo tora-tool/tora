@@ -3,6 +3,7 @@
 2001-05-26: Some cleanup to improve compilation speed.
 2001-05-28: Make distclean clean a little more.
 2001-05-28: Added simple HTML parser.
+2001-05-28: Added additional manuals to help viewer.
 
 0.11:
 

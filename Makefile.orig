@@ -35,6 +35,8 @@ SOURCES=\
 	tofilesize.cpp		\
 	toglobalsetting.cpp     \
 	tohelp.cpp		\
+	tohelpaddfileui.cpp	\
+	tohelpsetupui.cpp	\
 	tohighlightedtext.cpp	\
 	tohtml.cpp		\
 	tomain.cpp		\
@@ -203,6 +205,8 @@ tora: \
 	objs/toconnection.o \
 	objs/toglobalsetting.o \
 	objs/tohelp.o \
+	objs/tohelpaddfileui.o \
+	objs/tohelpsetupui.o \
 	objs/tohighlightedtext.o \
 	objs/tohtml.o \
 	objs/tomain.o \

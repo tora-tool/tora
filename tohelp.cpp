@@ -34,25 +34,115 @@
 
 TO_NAMESPACE;
 
-#include <qprogressbar.h>
+#ifdef TO_KDE
+#include <kfiledialog.h>
+#endif
+
 #include <qdir.h>
+#include <qfiledialog.h>
+#include <qfileinfo.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qtextbrowser.h>
+#include <qmessagebox.h>
+#include <qprogressbar.h>
+#include <qpushbutton.h>
+#include <qregexp.h>
+#include <qsplitter.h>
 #include <qsplitter.h>
 #include <qtabwidget.h>
+#include <qtextbrowser.h>
+#include <qtextview.h>
+#include <qtimer.h>
 #include <qvbox.h>
-#include <qregexp.h>
 
 #include "tomain.h"
+#include "tohtml.h"
 #include "tohelp.h"
 #include "toconf.h"
 #include "toresultview.h"
+#include "totool.h"
 
 #include "tohelp.moc"
+#include "tohelpaddfileui.moc"
+#include "tohelpsetupui.moc"
 
 toHelp *toHelp::Window;
-map<QString,QString> *toHelp::Files;
+
+class toHelpAddFile : public toHelpAddFileUI {
+public:
+  toHelpAddFile(QWidget *parent,const char *name=0)
+    : toHelpAddFileUI(parent,name,true)
+  { OkButton->setEnabled(false); }
+  virtual void browse(void)
+  {
+    QFileInfo file(Filename->text());
+    QString filename=TOFileDialog::getExistingDirectory(file.dirPath(),this);
+    if (!filename.isEmpty())
+      Filename->setText(filename);
+  }
+  virtual void valid(void)
+  {
+    if (Filename->text().isEmpty()||Root->text().isEmpty())
+      OkButton->setEnabled(false);
+    else
+      OkButton->setEnabled(true);
+  }
+};
+
+class toHelpPrefs : public toHelpSetupUI, public toSettingTab
+{
+  toTool *Tool;
+public:
+  toHelpPrefs(toTool *tool,QWidget *parent,const char *name=0)
+    : toHelpSetupUI(parent,name),Tool(tool)
+  {
+    int tot=Tool->config("Number",QString::number(-1)).toInt();
+    if(tot!=-1) {
+      for(int i=0;i<tot;i++) {
+	QString num=QString::number(i);
+	QString root=Tool->config(num,"");
+	num+="file";
+	QString file=Tool->config(num,"");
+	new QListViewItem(FileList,root,file);
+      }
+    }
+  }
+  virtual void saveSetting(void)
+  {
+    int i=0;
+    for(QListViewItem *item=FileList->firstChild();item;item=item->nextSibling()) {
+      QString nam=QString::number(i);
+      Tool->setConfig(nam,item->text(0));
+      nam+="file";
+      Tool->setConfig(nam,item->text(1));
+      i++;
+    }
+    Tool->setConfig("Number",QString::number(i));
+  }
+  virtual void addFile(void)
+  {
+    toHelpAddFile file(this);
+    if (file.exec())
+      new QListViewItem(FileList,file.Root->text(),file.Filename->text());
+  }
+  virtual void delFile(void)
+  {
+    delete FileList->selectedItem();
+  }
+};
+
+class toHelpTool : public toTool {
+public:
+  toHelpTool()
+    : toTool(501,"Additional Help")
+  { }
+  virtual QWidget *toolWindow(QWidget *parent,toConnection &connection)
+  { return NULL; }
+  virtual QWidget *configurationTab(QWidget *parent)
+  { return new toHelpPrefs(this,parent); }
+};
+
+static toHelpTool HelpTool;
 
 toHelp::toHelp(QWidget *parent,const char *name)
   : QDialog(parent,name,false,WDestructiveClose)
@@ -65,8 +155,7 @@ toHelp::toHelp(QWidget *parent,const char *name)
   QTabWidget *tabs=new QTabWidget(splitter);
   Sections=new toListView(tabs);
   Sections->addColumn("Contents");
-  Sections->addColumn("File");
-  Sections->setSorting(0);
+  Sections->setSorting(-1);
   Sections->setRootIsDecorated(true);
 
   tabs->addTab(Sections,"Contents");
@@ -82,67 +171,96 @@ toHelp::toHelp(QWidget *parent,const char *name)
 	  this,SLOT(changeContent(QListViewItem *)));
 
   Help=new QTextBrowser(splitter);
-  QString path=toHelpPath();
-  Help->mimeSourceFactory()->addFilePath(path);
   setCaption("TOra Help Browser");
   splitter->setResizeMode(tabs,QSplitter::KeepSize);
   setGeometry(x(),y(),640,480);
-  if (!Files) {
-    Files=new map<QString,QString>;
-    QDir d(path,"*.htm*",QDir::Name,QDir::Files);
-    QRegExp begin("<TITLE>",false);
-    QRegExp end("</TITLE>",false);
-    for (unsigned int i=0;i<d.count();i++) {
-      try {
-	QString path=d.filePath(d[i]);
-	QString file=toReadFile(path);
-	int pos=file.find(begin);
-	if (pos>=0) {
-	  int epos=file.find(end,pos);
-	  if (epos>=0)
-	    (*Files)[file.mid(pos+7,epos-pos-7)]=path;
-	}
-      } TOCATCH
+
+  map<QString,QString> Dsc;
+  Dsc["TOra manual"]=toHelpPath();
+  int tot=HelpTool.config("Number",QString::number(-1)).toInt();
+  if(tot!=-1) {
+    for(int i=0;i<tot;i++) {
+      QString num=QString::number(i);
+      QString dsc=HelpTool.config(num,"");
+      num+="file";
+      QString file=HelpTool.config(num,"");
+      Dsc[dsc]=file;
     }
   }
+  Help->mimeSourceFactory()->addFilePath(toHelpPath());
+  for(map<QString,QString>::iterator i=Dsc.begin();i!=Dsc.end();i++) {
+    try {
+      QListViewItem *parent=new QListViewItem(Sections,NULL,(*i).first);
+      QString path=(*i).second;
+      QString filename=path;
+      filename+="/toc.htm";
+      toHtml file(toReadFile(filename));
+      bool inA=false;
+      QString dsc;
+      QString href;
+      QListViewItem *last=NULL;
+      while(!file.eof()) {
+	toHtml::tag tag=file.nextTag();
 
-  QListViewItem *last=NULL;
-  int lastLevel=0;
-  QStringList lstCtx;
-  for(map<QString,QString>::iterator i=Files->begin();i!=Files->end();i++) {
-    QStringList ctx=QStringList::split(":",(*i).first);
-    if (last) {
-      while(last&&lastLevel>=int(ctx.count())) {
-	last=last->parent();
-	lastLevel--;
+#if 0
+	if (tag.Tag.isEmpty()) {
+	  printf("Text:%s\n",(const char *)tag.Text);
+	} else {
+	  if (tag.Open)
+	    printf("Open ");
+	  else
+	    printf("Close ");
+	  printf("Tag:%s\n",(const char *)tag.Tag);
+	  for(map<QString,QString>::iterator i=tag.Qualifiers.begin();i!=tag.Qualifiers.end();i++)
+	    printf("  %s=%s\n",(const char *)(*i).first,(const char *)(*i).second);
+	}
+#endif
+
+	if (tag.Tag.isEmpty()&&inA) {
+	  dsc+=QString::fromLatin1(tag.Text);
+	  dsc=dsc.simplifyWhiteSpace();
+	} else if (tag.Tag=="a") {
+	  if (tag.Open) {
+	    href=QString::fromLatin1(tag.Qualifiers["href"]);
+	    if (!href.isEmpty())
+	      inA=true;
+	  } else {
+	    if (inA&&
+		!dsc.isEmpty()&&
+		!href.isEmpty()) {
+	      if (href.find("//")<0&&
+		  href.find("..")<0) {
+		last=new QListViewItem(parent,last,dsc);
+		filename=path;
+		filename+="/";
+		filename+=href;
+		last->setText(1,filename);
+	      }
+	      dsc="";
+	    }
+	    inA=false;
+	  }
+	} else if (tag.Tag=="dl") {
+	  if (tag.Open) {
+	    if (!last)
+	      last=new QListViewItem(parent,NULL,"--------");
+	    parent=last;
+	    last=NULL;
+	  } else {
+	    last=parent;
+	    parent=parent->parent();
+	    if (!parent)
+	      throw QString("Missing parent, unbalanced dl in help file content");
+	  }
+	}
       }
-      while(last&&lastLevel>=0&&!toCompareLists(lstCtx,ctx,(unsigned int)lastLevel)) {
-	last=last->parent();
-	lastLevel--;
-      }
-    }
-    if (lastLevel<0)
-      throw QString("Internal error, lastLevel < 0");
-    while(lastLevel<int(ctx.count())-1) {
-      if (last)
-	last=new QListViewItem(last,ctx[lastLevel]);
-      else
-	last=new QListViewItem(Sections,ctx[lastLevel]);
-      lastLevel++;
-    }
-    if (last)
-      last=new QListViewItem(last,ctx[lastLevel]);
-    else
-      last=new QListViewItem(Sections,ctx[lastLevel]);
-    last->setText(1,(*i).second);
-    if ((*i).second==Help->source())
-      last->setSelected(true);
-    lstCtx=ctx;
-    lastLevel++;
+    } TOCATCH
   }
 
   Progress=new QProgressBar(box);
+#if 0
   Progress->setTotalSteps(Files->size());
+#endif
   Progress->hide();
 
   Searching=false;
@@ -160,6 +278,10 @@ void toHelp::displayHelp(const QString &context)
 {
   if (!Window)
     new toHelp(toMainWidget(),"Help window");
+  if (context.find("htm")>=0)
+    Window->Help->setTextFormat(RichText);
+  else
+    Window->Help->setTextFormat(AutoText);
   Window->Help->setSource(context);
   Window->show();
 }
@@ -170,45 +292,10 @@ void toHelp::changeContent(QListViewItem *item)
     Help->setTextFormat(RichText);
   else
     Help->setTextFormat(AutoText);
-  Help->setSource(item->text(1));
+  if (!item->text(1).isEmpty())
+    Help->setSource(item->text(1));
 }
 
 void toHelp::search(void)
 {
-  Quit=true;
-  while (Searching)
-    qApp->processEvents();
-  Searching=true;
-  Quit=false;
-  QRegExp white("\\s+");
-  QStringList words=QStringList::split(white,SearchLine->text());
-  QRegExp re("<[^>]*>");
-  Result->clear();
-  int count=1;
-  Progress->show();
-  for (map<QString,QString>::iterator i=Files->begin();i!=Files->end()&&!Quit;i++) {
-    try {
-      QString file=toReadFile((*i).second);
-      file.replace(re," ");
-      file.simplifyWhiteSpace();
-      file+=" ";
-      file.prepend(" ");
-
-      for(unsigned int j=0;j<words.count();j++) {
-	QString word=" ";
-	word+=words[j];
-	word+=" ";
-	if(file.find(word)<0)
-	  break;
-	if (j+1==words.count())
-	  (new toResultViewItem(Result,NULL,(*i).first))->setText(1,(*i).second);
-      }
-    } TOCATCH
-    Progress->setProgress(count++);
-    qApp->processEvents();
-  }
-  Progress->hide();
-  Searching=false;
-  if (!Result->firstChild())
-    new toResultViewItem(Result,NULL,"No hits");
 }

@@ -622,7 +622,7 @@ QString toHelpPath(void)
   return str;
 }
 
-QString toReadFile(const QString &filename,bool local)
+QCString toReadFile(const QString &filename)
 {
   QFile file(filename);
   if (!file.open(IO_ReadOnly))
@@ -636,11 +636,8 @@ QString toReadFile(const QString &filename,bool local)
     throw QString("Encountered problems read configuration");
   }
   buf[size]=0;
-  QString ret;
-  if (local)
-    ret=QString::fromLocal8Bit(buf);
-  else
-    ret=QString::fromLatin1(buf);
+  QCString ret(buf,size+1);
+  delete buf;
   return ret;
 }
 
