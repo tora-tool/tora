@@ -291,7 +291,7 @@ toChartManager::toChartManager(QWidget *main)
 
 void toChartManager::windowActivated(QWidget *widget)
 {
-  if (widget==this&&!isHidden()) {
+  if (widget==this) {
     if (!ToolMenu) {
       ToolMenu=new QPopupMenu(this);
       ToolMenu->insertItem(QPixmap((const char **)refresh_xpm),tr("&Refresh"),
