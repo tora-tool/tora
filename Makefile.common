@@ -91,6 +91,7 @@ clean:
 	@echo Cleaning $(TITLE)
 	-rm -f $(OBJECTS) tora tora-static tora-mono 2>&1 >/dev/null
 	-rm -f *~ 2>&1 >/dev/null
+	-rm -f *~ */*~ 2>&1 >/dev/null
 	-rm -f *.bak 2>&1 >/dev/null
 	-rm -rf plugins 2>&1 >/dev/null
 

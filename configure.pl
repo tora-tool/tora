@@ -60,6 +60,7 @@ my $QtLibShared;
 my $QtLibStatic;
 my $LFlags;
 my $Target="tora-mono";
+my $ForceTarget=0;
 
 $QtDir=$ENV{QTDIR};
 
@@ -80,6 +81,12 @@ for (@ARGV) {
 	$InstallLib=$1;
     } elsif (/^--with-gcc=(.*)$/) {
 	$CC=$1;
+    } elsif (/^--with-mono$/) {
+	$Target="tora-mono";
+	$ForceTarget=1;
+    } elsif (/^--with-static$/) {
+	$Target="tora-static";
+	$ForceTarget=1;
     } else {
 	print <<__USAGE__;
 configure [options...]
@@ -94,6 +101,8 @@ Options can be any of the following:
 --with-qt-include Specify Qt include directory
 --with-qt-libs    Specify Qt library directory
 --with-gcc        Specify which GCC compiler to use
+--with-mono       Force monolithic compilation
+--with-static     Force static binary compilation
 
 __USAGE__
         exit(2);
@@ -357,9 +366,11 @@ __TEMP__
     }
     print "Installing binaries to $InstallLib\n";
 
-    if (`uname`=~/linux/i) {
-	print "Compiling for linux. Generate pluginbased tora.\n";
-	$Target="tora-plugin";
+    if (!$ForceTarget) {
+	if (`uname`=~/linux/i) {
+	    print "Compiling for linux. Generate pluginbased tora.\n";
+	    $Target="tora-plugin";
+	}
     }
 
     if (open (MAKEFILE,">Makefile.setup")) {
