@@ -392,7 +392,7 @@ Options can be any of the following:
 --with-mono          Force monolithic compilation (Not enabled for linux by default)
 --with-lib           Add extra library to include (Include -l as well)
 --with-static-oracle Force use of static Oracle libraries only (Not enabled by default)
---with-kde           Compile as KDE application (Requires KDE 2.2 or later) (Enabled if detected)
+--with-kde           Compile as KDE application (Requires KDE 3.0 or later) (Enabled if detected)
 --without-kde        Dont compile as KDE application even though KDE available.
 --with-kde-include   Where to find KDE include files
 --with-kde-libs      Where to find KDE libraries
@@ -490,8 +490,8 @@ int main(int,char **)
     static int GCCVersion=__GNUC__;
     static int GCCVersionMinor=__GNUC_MINOR__;
     static int QtVersion=QT_VERSION;
-    if (QtVersion<220) {
-	printf ("Requires Qt version >= 2.2 (Found %s)\\n",QT_VERSION_STR);
+    if (QtVersion<300) {
+	printf ("Requires Qt version >= 3.0 (Found %s)\\n",QT_VERSION_STR);
 	exit(2);
     }
 #if 0
@@ -515,7 +515,7 @@ void test2(void)
 {
     QWidget *parent;
     QMainWindow *main;
-#if KDE_VERSION >= 220
+#if KDE_VERSION >= 300
     new KToolBar(main,parent);
 #endif
 }
@@ -548,13 +548,13 @@ __TEMP__
 						 while(<KDE>) {
 						     if (/#define\s+KDE_VERSION_STRING\s+\"([0-9\.]+)/) {
 							 $KDEVersion=$1;
-							 if ($KDEVersion ge "2.1") {
+							 if ($KDEVersion ge "3.0") {
 							     last;
 							 }
 						     }
 						 }
 						 close KDE;
-						 if ($KDEVersion ge "2.1") {
+						 if ($KDEVersion ge "3.0") {
 						     return 1;
 						 } else {
 						     return 0;
@@ -567,17 +567,13 @@ __TEMP__
 			     $ENV{KDEDIR}."/include",
 			     "/usr/include",
 			     "/usr/include/kde3",
-			     "/usr/include/kde2",
 			     "/usr/include/kde",
 			     "/usr/local/kde3/include",
-			     "/usr/local/kde2/include",
 			     "/usr/local/kde/include",
 			     "/opt/kde3/include",
-			     "/opt/kde2/include",
 			     "/opt/kde/include",
 			     "/usr/local/include",
 			     "/usr/local/include/kde3",
-			     "/usr/local/include/kde2",
 			     "/usr/local/include/kde"
 			     );
 
@@ -618,17 +614,13 @@ __TEMP__
 			     $ENV{KDEDIR}."/lib",
 			     "/usr/lib",
 			     "/usr/lib/kde3",
-			     "/usr/lib/kde2",
 			     "/usr/lib/kde",
 			     "/usr/local/kde3/lib",
-			     "/usr/local/kde2/lib",
 			     "/usr/local/kde/lib",
 			     "/opt/kde3/lib",
-			     "/opt/kde2/lib",
 			     "/opt/kde/lib",
 			     "/usr/local/lib",
 			     "/usr/local/lib/kde3",
-			     "/usr/local/lib/kde2",
 			     "/usr/local/lib/kde"
 			     );
 
@@ -647,11 +639,6 @@ __TEMP__
 		   "/usr/local/kde3",
 		   "/opt/kde3",
 		   "/usr/local/lib/kde3",
-		   "/usr/kde2",
-		   "/usr/lib/kde2",
-		   "/usr/local/kde2",
-		   "/usr/local/lib/kde2",
-		   "/opt/kde2",
 		   "/usr/kde",
 		   "/usr/lib/kde",
 		   "/usr/local/kde",
@@ -672,9 +659,6 @@ __TEMP__
 	}
 
 	$Libs.=" -lkdecore -lkdeui -lDCOP -lkhtml -lkparts -lkio";
-	if ($KDEVersion lt "2.9") {
-	    $Libs.=" -lkfile";
-	}
 	$LFlags.="\"-L".$KDELibs."\" ";
 	if (!$NoRPath) {
 	    $LFlags.="-Xlinker \"--rpath=$KDELibs\" ";
@@ -703,11 +687,11 @@ __TEMP__
 
     print "checking for Qt library ... ";
 
-    $QtLib=findFile("^".$QtSearch."\\.?[23]\\.(?:s[ol]|dylib)",sub {
+    $QtLib=findFile("^".$QtSearch."\\.?3\\.(?:s[ol]|dylib)",sub {
 	                                        my $file=$_[0];
 	                                        if (-f $file && (!-l $file || $file=~/dylib/ )) {
 						    my $lib;
-						    ($lib,$QtLibShared)=($file=~/^(.*)\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+						    ($lib,$QtLibShared)=($file=~/^(.*)\/lib(qt(?:-mt)?3?)[^\/]*$/);
 						    if (!defined $QtLibShared) {
 							return 0;
 						    }
@@ -732,12 +716,6 @@ __TEMP__
 		    "/usr/local/lib/qt3",
 		    "/usr/local/qt3",
 		    "/usr/local/qt3/lib",
-		    "/usr/lib/qt2",
-		    "/usr/lib/qt2/lib",
-		    "/usr/local/lib/qt2",
-		    "/usr/local/lib/qt2/lib",
-		    "/usr/local/qt2",
-		    "/usr/local/qt2/lib",
 		    "/usr/lib/qt",
 		    "/usr/lib/qt/lib",
 		    "/usr/local/lib",
@@ -748,9 +726,9 @@ __TEMP__
 		    );
 
     if (! -d $QtLib) {
-	$QtLib=findFile("^$QtSearch\\.(?:s[ol]|dylib)\\.[23]",sub {
+	$QtLib=findFile("^$QtSearch\\.(?:s[ol]|dylib)\\.3",sub {
 		                                     if (-f $_[0] && ! -l $_[0]) {
-							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?[23]?)[^\/]*$/);
+							 ($QtLibShared)=($_[0]=~/\/lib(qt(?:-mt)?3?)[^\/]*$/);
 							 if (!defined $QtLibShared) {
 							     return 0;
 							 }
@@ -769,12 +747,6 @@ __TEMP__
 			"/usr/local/lib/qt3/lib",
 			"/usr/local/qt3/lib",
 			"/usr/local/qt3",
-			"/usr/lib/qt2",
-			"/usr/lib/qt2/lib",
-			"/usr/local/lib/qt2",
-			"/usr/local/lib/qt2/lib",
-			"/usr/local/qt2",
-			"/usr/local/qt2/lib",
 			"/usr/lib/qt",
 			"/usr/lib/qt/lib",
 			"/usr/local/lib",
@@ -793,30 +765,6 @@ __TEMP__
 
     print "checking for moc ... ";
     if (!defined $MOC || ! -x $MOC) {
-	$MOC=findFile("moc2",sub { return -x $_[0]; },
-		      $QtDir."/bin",
-		      "/usr/lib/qt3",
-		      "/usr/lib/qt3/bin",
-		      "/usr/local/lib/qt3",
-		      "/usr/local/lib/qt3/bin",
-		      "/usr/local/qt3",
-		      "/usr/local/qt3/bin",
-		      "/usr/lib/qt2",
-		      "/usr/lib/qt2/bin",
-		      "/usr/local/lib/qt2",
-		      "/usr/local/lib/qt2/bin",
-		      "/usr/local/qt2",
-		      "/usr/local/qt2/bin",
-		      "/usr/lib/qt",
-		      "/usr/bin",
-		      "/usr/local/bin",
-		      "/usr/local/lib/qt");
-	if (defined $MOC && -d $MOC) {
-	    $MOC.="/moc2";
-	}
-    }
-
-    if (!defined $MOC || ! -x $MOC) {
 	$MOC=findFile("moc",sub { return -x $_[0]; },
 		      $QtDir."/bin",
 		      "/usr/lib/qt3",
@@ -825,14 +773,6 @@ __TEMP__
 		      "/usr/local/lib/qt3/bin",
 		      "/usr/local/qt3",
 		      "/usr/local/qt3/bin",
-		      "/usr/lib/qt2",
-		      "/usr/lib/qt2/bin",
-		      "/usr/local/lib/qt2",
-		      "/usr/local/lib/qt2/bin",
-		      "/usr/local/lib/qt",
-		      "/usr/local/lib/qt/bin",
-		      "/usr/local/qt2",
-		      "/usr/local/qt2/bin",
 		      "/usr/lib/qt",
 		      "/usr/lib/qt/bin",
 		      "/usr/lib/qt",
@@ -859,12 +799,6 @@ __TEMP__
 		      "/usr/local/lib/qt3/bin",
 		      "/usr/local/qt3",
 		      "/usr/local/qt3/bin",
-		      "/usr/lib/qt2",
-		      "/usr/lib/qt2/bin",
-		      "/usr/local/lib/qt2",
-		      "/usr/local/lib/qt2/bin",
-		      "/usr/local/qt2",
-		      "/usr/local/qt2/bin",
 		      "/usr/lib/qt",
 		      "/usr/bin",
 		      "/usr/local/bin",
@@ -889,12 +823,6 @@ __TEMP__
 		      "/usr/local/lib/qt3/bin",
 		      "/usr/local/qt3",
 		      "/usr/local/qt3/bin",
-		      "/usr/lib/qt2",
-		      "/usr/lib/qt2/bin",
-		      "/usr/local/lib/qt2",
-		      "/usr/local/lib/qt2/bin",
-		      "/usr/local/qt2",
-		      "/usr/local/qt2/bin",
 		      "/usr/lib/qt",
 		      "/usr/bin",
 		      "/usr/local/bin",
@@ -912,16 +840,10 @@ __TEMP__
     if (!defined $LUpdate || ! -x $LUpdate) {
 	$LUpdate=findFile("lupdate",sub { return -x $_[0]; },
 		      $QtDir."/bin",
-		      "/usr/lib/qt2",
-		      "/usr/lib/qt2/bin",
 		      "/usr/lib/qt3",
 		      "/usr/lib/qt3/bin",
-		      "/usr/local/lib/qt2",
-		      "/usr/local/lib/qt2/bin",
 		      "/usr/local/lib/qt3",
 		      "/usr/local/lib/qt3/bin",
-		      "/usr/local/qt2",
-		      "/usr/local/qt2/bin",
 		      "/usr/local/qt3",
 		      "/usr/local/qt3/bin",
 		      "/usr/lib/qt",
@@ -943,13 +865,13 @@ __TEMP__
 						 while(<QT>) {
 						     if (/#define\s+QT_VERSION_STR\s+\"([0-9\.]+[a-z0-9\.]+)[-"]+/i) {
 							 $QtVersion=$1;
-							 if ($QtVersion ge "2.2") {
+							 if ($QtVersion ge "3.0") {
 							     last;
 							 }
 						     }
 						 }
 						 close QT;
-						 if ($QtVersion ge "2.2") {
+						 if ($QtVersion ge "3.0") {
 						     return 1;
 						 } else {
 						     return 0;
@@ -966,10 +888,6 @@ __TEMP__
 			"/usr/local/include/qt3",
 			"/usr/local/lib/qt3/include",
 			"/usr/local/qt3/include",
-			"/usr/include/qt2",
-			"/usr/lib/qt2/include",
-			"/usr/local/include/qt2",
-			"/usr/local/lib/qt2/include",
 			"/usr/local/include/qt",
 			"/usr/local/qt/include",
 			"/usr/include/qt",
@@ -985,10 +903,7 @@ __TEMP__
 
     print "checking for Qt version ... $QtVersion\n";
     print "checking for library consistency ... ";
-    if (defined $KDEVersion &&
-	(substr($QtVersion,0,1) ne substr($KDEVersion,0,1) ||
-	 (substr($QtVersion,0,1) eq "2" && substr($KDEVersion,0,3) eq "2.9")) &&
-	!(substr($QtVersion,0,1) eq "3" && substr($KDEVersion,0,3) eq "2.9")) {
+    if (defined $KDEVersion && substr($QtVersion,0,1) ne substr($KDEVersion,0,1)) {
 	print "failed!\n\nKDE ($KDEVersion) and Qt ($QtVersion) versions doesn't match!\n";
 	print "Try specifying using --with-qt and --with-kde switches to configure.\n";
 	exit(1);
@@ -996,7 +911,7 @@ __TEMP__
     print "yes\n";
     print "checking for static Qt library ... ";
 
-    findFile("^libqt(-mt)?[23]\\.a",sub {
+    findFile("^libqt(-mt)?3\\.a",sub {
 	                                if (-f $_[0] && ! -l $_[0]) {
 					    $QtLibStatic=$_[0];
 					}
@@ -1009,12 +924,6 @@ __TEMP__
 	     "/usr/local/lib/qt3/lib",
 	     "/usr/local/qt3",
 	     "/usr/local/qt3/lib",
-	     "/usr/lib/qt2",
-	     "/usr/lib/qt2/lib",
-	     "/usr/local/lib/qt2",
-	     "/usr/local/lib/qt2/lib",
-	     "/usr/local/qt2",
-	     "/usr/local/qt2/lib",
 	     "/usr/lib/qt",
 	     "/usr/lib/qt/lib",
 	     "/usr/local/lib",
@@ -1037,12 +946,6 @@ __TEMP__
 		 "/usr/local/lib/qt3/lib",
 		 "/usr/local/qt3",
 		 "/usr/local/qt3/lib",
-		 "/usr/lib/qt2",
-		 "/usr/lib/qt2/lib",
-		 "/usr/local/lib/qt2",
-		 "/usr/local/lib/qt2/lib",
-		 "/usr/local/qt2",
-		 "/usr/local/qt2/lib",
 		 "/usr/local/qt",
 		 "/usr/local/qt/lib",
 		 "/usr/lib/qt",
