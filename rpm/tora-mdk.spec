@@ -1,7 +1,7 @@
 %define name tora
 %define group Developement/Databases
-%define version 0.6
-%define release 1gc
+%define version 0.7
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -11,7 +11,7 @@ Source0: %{name}-%{version}.tar.bz2
 Copyright: GPL
 BuildRoot: %{_tmppath}/tora-root
 Group: %{group}
-BuildRequires: qt-devel >= 2
+BuildRequires: qt2-devel
 
 %Description
 Tool for Oracle (Tora) is a tool for DBAs and database software developers.
@@ -41,10 +41,10 @@ mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/tora
 cp plugins/*.so $RPM_BUILD_ROOT%{_prefix}/lib/tora
 
 %post
-#%{update_menus}
+%{update_menus}
 
 %postun
-#%{clean_menus}
+%{clean_menus}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,7 +54,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,0755)
 
 %{_prefix}/X11R6/bin/tora
-#%{_menudir}/tora
-#%{_iconsdir}/tora.xpm
+%{_menudir}/tora
+%{_iconsdir}/tora.xpm
 %{_prefix}/lib/tora
-
