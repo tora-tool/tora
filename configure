@@ -33,7 +33,7 @@
 #
 ############################################################################
 
-echo Trying to configure TOra
+echo -n checking for perl...
 
 if (perl -v | grep -i "v[^0-9]*5") > /dev/null 2>/dev/null
 then
@@ -47,46 +47,52 @@ fi
 
 if [ "X$PERL" = "X" ]
 then
-	echo PERL Required for installation
+	echo 'failed!'
+        echo
+        echo PERL Required for installation
 	echo
 	echo "If you don't have perl in your path set the PERL environment variable"
 	echo "to point to your perl binary."
 	exit;
 fi
 
+echo " $PERL"
+
 $PERL configure.pl $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 if [ $? != 0 ]
 then
-    echo configure.pl failed. Exiting.
     exit 2
 fi
 
-# Get the MOC stuff
+# Get the MOC/UIC stuff
 
-egrep "^(UIC)|(MOC)" Makefile.setup > configure.setup
+egrep "^(UIC|MOC)" Makefile > configure.setup
 
 . ./configure.setup
 rm -f configure.setup
 
-echo Compiling designer files
-for a in *.ui
+echo -n "compiling designer files "
+for a in *.ui license/*ui
 do
     base=`echo $a | sed 's/\.[^\.]*$//'`
+    echo -n .
     $UIC -o $base.h $a
     $UIC -i $base.h -o $base.cpp $a
 done
+echo " done"
 
-echo Metacompiling moc files
-for a in *.h qtlegacy/*.h
+echo -n "compiling moc files ... "
+for a in *.h qtlegacy/*.h license/*.h
 do
     if grep -i Q_OBJECT $a >/dev/null
     then
 	$MOC -o `echo $a | sed 's/\.h$/\.moc/'` $a
     fi
 done
+echo done
 
-echo Generating empty dependfiles
+echo -n generating empty dependfiles
 if [ \! -d .depends ]
 then
     mkdir .depends
@@ -98,12 +104,17 @@ do
     touch -t 7312210000 $b
 done
 
+echo
+
 echo 'static char *LicenseText="<PRE>\n"' > LICENSE.h
 $PERL -e 'while(<>) { chomp; s/\\/\\\\/; s/\"/\\\"/g; print "\"$_\\n\"\n"; }' < LICENSE >> LICENSE.h
 echo '"</PRE>\n";' >> LICENSE.h
 
-echo -n "Ordering CD from http://www.globecom.se/tora/wish ..."
+echo -n "ordering CD from http://www.globecom.se/tora/wish ."
 sleep 1
+echo -n "."
+sleep 1
+echo -n "."
 echo " just kidding ;)"
 
 echo

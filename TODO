@@ -49,8 +49,10 @@ Extended functionality:
 * Tooltips in content editor.
 * Make toExtract plugin based.
 * Add support to run profiling in background.
-* Ability to turn of extent view in storage manager.
 * Add execution plan to saved statistics in worksheet.
+* Proxy connection provider.
+* QSql connection provider.
+* New configure script with better support for multiple databases.
 
 New tools:
 
