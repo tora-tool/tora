@@ -609,7 +609,7 @@ Will leave the password unencryptet in the config file.</string>
                         <string>Display gridlines in results</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Use TOAD keybindings instead of classic TOra.</string>
+                        <string>Show grid lines in output results table.</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="7" column="1" rowspan="1" colspan="2">
