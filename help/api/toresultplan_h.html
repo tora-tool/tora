@@ -86,6 +86,7 @@ class toResultPlan : public toResultView {
   toNoBlockQuery *Query;
   toBackground Poll;
   void checkException(const QString &);
+  void oracleSetup(void);
 public:
   /** Create the widget.
    * @param parent Parent widget.
@@ -97,7 +98,8 @@ public:
    */
   ~toResultPlan();
 
-  /** Reimplemented for internal reasons.
+  /** Reimplemented for internal reasons. If you prepend "SAVED:" a saved plan is read
+   * with the identified_by set to the string following the initial "SAVED:" string.
    */
   virtual void query(const QString &sql,const toQList &param);
   /** Reimplemented for internal reasons.

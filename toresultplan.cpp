@@ -54,11 +54,12 @@ toResultPlan::toResultPlan(QWidget *parent,const char *name)
   setSQLName("toResultPlan");
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
+  oracleSetup();
 }
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
 			 "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer, to_char(Cost), to_char(Bytes), to_char(Cardinality)\n"
-			 "  FROM %1 WHERE Statement_ID = 'Tora %2' ORDER BY NVL(Parent_ID,0),ID",
+			 "  FROM %1 WHERE Statement_ID = '%2' ORDER BY NVL(Parent_ID,0),ID",
 			 "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns");
 
 bool toResultPlan::canHandle(toConnection &conn)
@@ -69,6 +70,26 @@ bool toResultPlan::canHandle(toConnection &conn)
 toResultPlan::~toResultPlan()
 {
   delete Query;
+}
+
+void toResultPlan::oracleSetup(void)
+{
+  clear();
+
+  while(columns()>0) {
+    removeColumn(0);
+  }
+  setAllColumnsShowFocus(true);
+  setSorting(-1);
+  setRootIsDecorated(true);
+  addColumn("#");
+  addColumn("Operation");
+  addColumn("Options");
+  addColumn("Object name");
+  addColumn("Mode");
+  addColumn("Cost");
+  addColumn("Bytes");
+  addColumn("Cardinality");
 }
 
 void toResultPlan::query(const QString &sql,
@@ -91,49 +112,42 @@ void toResultPlan::query(const QString &sql,
     return;
   }
 
-  clear();
-
-  while(columns()>0) {
-    removeColumn(0);
-  }
-  setAllColumnsShowFocus(true);
-  setSorting(-1);
-  setRootIsDecorated(true);
-  addColumn("#");
-  addColumn("Operation");
-  addColumn("Options");
-  addColumn("Object name");
-  addColumn("Mode");
-  addColumn("Cost");
-  addColumn("Bytes");
-  addColumn("Cardinality");
+  oracleSetup();
 
   QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
   try {
-    QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
+    if (sql.startsWith("SAVED:")) {
+      Ident=sql.mid(6);
+      toQList par;
+      Query=new toNoBlockQuery(connection(),toQuery::Background,
+			       toSQL::string(SQLViewPlan,connection()).
+			       arg(planTable).arg(Ident),
+			       par);
+      Reading=true;
+    } else {
+      QString chkPoint=toTool::globalConfig(CONF_PLAN_CHECKPOINT,DEFAULT_PLAN_CHECKPOINT);
 
-    toConnection &conn=connection();
+      toConnection &conn=connection();
 
-    conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
+      conn.execute(QString("SAVEPOINT %1").arg(chkPoint));
 
-    Ident=(int)time(NULL);
+      Ident="TOra "+QString::number((int)time(NULL));
 
-    QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = 'Tora %1' INTO %2 FOR %3").
-      arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
-    Reading=false;
-    toQList par;
-    Query=new toNoBlockQuery(conn,toQuery::Background,explain,par);
+      QString explain=QString("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+	arg(Ident).arg(planTable).arg(toSQLStripSpecifier(sql));
+      Reading=false;
+      toQList par;
+      Query=new toNoBlockQuery(conn,toQuery::Background,explain,par);
+    }
     Parents.clear();
     Last.clear();
     Poll.start(100);
 
     LastTop=NULL;
-
   } catch (const QString &str) {
     checkException(str);
   }
-  updateContents();
 }
 
 void toResultPlan::poll(void)

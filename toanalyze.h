@@ -45,10 +45,12 @@ class QPopupMenu;
 class QComboBox;
 class QSpinBox;
 class QTimer;
+class toResultPlan;
 
 class toAnalyze : public toToolWidget {
   Q_OBJECT
 
+  QTabWidget *Tabs;
   toResultView *Statistics;
   QComboBox *Schema;
   QComboBox *Operation;
@@ -58,6 +60,8 @@ class toAnalyze : public toToolWidget {
   QLabel *Current;
   QToolButton *Stop;
   toBackground Poll;
+  toResultView *Plans;
+  toResultPlan *CurrentPlan;
 
   std::list<toNoBlockQuery *> Running;
   std::list<QString> Pending;
@@ -73,6 +77,7 @@ public slots:
   virtual void stop(void);
   virtual void refresh(void); 
   virtual void windowActivated(QWidget *widget);
+  virtual void selectPlan(void);
 };
 
 #endif

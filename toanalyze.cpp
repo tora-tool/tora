@@ -41,6 +41,8 @@
 #include <qpopupmenu.h>
 #include <qmenubar.h>
 #include <qtimer.h>
+#include <qtabwidget.h>
+#include <qsplitter.h>
 
 #ifdef TO_KDE
 #  include <kmenubar.h>
@@ -52,6 +54,8 @@
 #include "toconnection.h"
 #include "toanalyze.h"
 #include "toresultlong.h"
+#include "toresultplan.h"
+#include "toconf.h"
 
 #include "toanalyze.moc"
 
@@ -108,10 +112,19 @@ static toSQL SQLListTables7("toAnalyze:ListTables",
 			    QString::null,
 			    "7.3");
 
+static toSQL SQLListPlans("toAnalyze:ListPlans",
+			  "SELECT DISTINCT statement_id,timestamp,remarks FROM %1",
+			  "Display available saved statements. Must have same first "
+			  "column and %1");
+
 toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
   : toToolWidget(AnalyzeTool,"analyze.html",main,connection)
 {
-  QToolBar *toolbar=toAllocBar(this,"Statistics Manager",connection.description());
+  Tabs=new QTabWidget(this);
+  QVBox *box=new QVBox(Tabs);
+  Tabs->addTab(box,"Analyze");
+
+  QToolBar *toolbar=toAllocBar(box,"Statistics Manager",connection.description());
 
   new QToolButton(QPixmap((const char **)refresh_xpm),
 		  "Refresh",
@@ -172,7 +185,7 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 		       toolbar);
   Stop->setEnabled(false);
 
-  Statistics=new toResultLong(true,false,toQuery::Background,this);
+  Statistics=new toResultLong(true,false,toQuery::Background,box);
   Statistics->setSelectionMode(QListView::Extended);
   Statistics->setReadAll(true);
 
@@ -185,7 +198,34 @@ toAnalyze::toAnalyze(QWidget *main,toConnection &connection)
 
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
 
+  toolbar=toAllocBar(box,"Explain plans",connection.description());
+
+  box=new QVBox(Tabs);
+  Tabs->addTab(box,"Explain plans");
+  QSplitter *splitter=new QSplitter(Horizontal,box);
+  Plans=new toResultLong(true,false,toQuery::Background,splitter);
+  Plans->query(toSQL::string(SQLListPlans,
+			     connection).arg(toTool::globalConfig(CONF_PLAN_TABLE,
+								  DEFAULT_PLAN_TABLE)));
+
+  connect(Plans,SIGNAL(selectionChanged()),
+	  this,SLOT(selectPlan()));
+  new QToolButton(QPixmap((const char **)refresh_xpm),
+		  "Refresh",
+		  "Refresh",
+		  Plans,SLOT(refresh()),
+		  toolbar);
+
+  CurrentPlan=new toResultPlan(splitter);
+
   refresh();
+}
+
+void toAnalyze::selectPlan(void)
+{
+  QListViewItem *item=Plans->selectedItem();
+  if (item)
+    CurrentPlan->query("SAVED:"+item->text(0));
 }
 
 void toAnalyze::windowActivated(QWidget *widget)

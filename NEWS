@@ -10,6 +10,9 @@
 2001-11-19: Added signal on linecharts when values are added.
 2001-11-19: Added methods to stop/start automatic updating of charts.
 2001-11-19: Added options to disable tabs in tuning view.
+2001-11-19: Fixed identifier bug in explain plan.
+2001-11-19: Added saved plan browser to statistics manager.
+2001-11-19: Add oracle columns to explain plan in constructor.
 
 1.1.5:
 
