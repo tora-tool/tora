@@ -188,7 +188,7 @@ void toResultParam::applySession(void)
 	    str+="'";
 	  } else
 	    str+=item->text(1);
-	  conn.execute(str);
+	  conn.allExecute(str);
 	  std::map<int,QString>::iterator i=NewValues.find(item->text(4).toInt());
 	  if (i!=NewValues.end())
 	    NewValues.erase(i);

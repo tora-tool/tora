@@ -840,7 +840,7 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     {
       otl_stream info(1,
 		      "BEGIN\n"
-		      "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.net/tora)');\n"
+		      "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('TOra (http://www.globecom.se/tora)');\n"
 		      "END;",
 		      *conn);
     }

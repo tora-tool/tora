@@ -49,6 +49,8 @@
 2001-11-26: Fixed problem with compiling in debugger.
 2001-11-26: Implemented block indent in editor.
 2001-11-26: Added editor settings tab under tools.
+2001-11-27: Changed references from www.globecom.net to www.globecom.se.
+2001-11-28: Apply changes to session to all open sessions in connection.
 
 1.1.5:
 
