@@ -3910,7 +3910,7 @@ public:
   }catch(OTL_CONST_EXCEPTION otl_tmpl_exception
           <TExceptionStruct,
            TConnectStruct,
-           TCursorStruct>){
+           TCursorStruct>&){
    if(exception_enabled){
     connect.throw_count++;
     throw;
