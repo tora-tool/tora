@@ -27,6 +27,9 @@
 2001-11-21: Fixed a delay problem when deleting noblockqueries.
 2001-11-21: Added wait event analyzer to tuning.
 2001-11-21: Added legend only chart.
+2001-11-21: Made more chart colors available.
+2001-11-21: Don't draw piecharts if all values are 0.
+2001-11-21: Display wait events in ms, nor 100s of second.
 
 1.1.5:
 

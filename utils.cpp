@@ -805,24 +805,48 @@ int toToolMenuIndex(void)
   return toMainWidget()->menuBar()->indexOf(toMain::TO_WINDOWS_MENU);
 }
 
-static QColor ChartColors[]={
-  Qt::red,
-  Qt::green,
-  Qt::blue,
-  Qt::cyan,
-  Qt::magenta,
-  Qt::yellow,
-  Qt::darkRed,
-  Qt::darkGreen,
-  Qt::darkBlue,
-  Qt::darkCyan,
-  Qt::darkMagenta,
-  Qt::darkYellow
-};
+#define COLORS 4
+
+#define TYPES 7
 
 QColor toChartColor(int index)
 {
-  return ChartColors[index%(sizeof(ChartColors)/sizeof(QColor))];
+  index%=(COLORS*TYPES);
+  index=COLORS*TYPES-1-index;
+  int type=index%TYPES;
+  index/=TYPES;
+  int r=0,g=0,b=0;
+  int offset=2;
+  switch(type) {
+  case 6:
+    r=1;
+    break;
+  case 5:
+    g=1;
+    break;
+  case 4:
+    b=1;
+    break;
+  case 3:
+    r=g=1;
+    break;
+  case 2:
+    r=b=1;
+    break;
+  case 1:
+    b=g=1;
+    break;
+  case 0:
+    r=b=g=1;
+    offset=1;
+    break;
+  }
+
+  index+=offset;
+
+  return QColor(min(255,r*index*256/(COLORS+1)),
+		min(255,g*index*256/(COLORS+1)),
+		min(255,b*index*256/(COLORS+1)));
 }
 
 toToolWidget *toCurrentTool(QObject *cur)

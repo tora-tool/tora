@@ -90,8 +90,8 @@ static std::list<QString> TabList(void)
   std::list<QString> ret;
   ret.insert(ret.end(),CONF_OVERVIEW);
   ret.insert(ret.end(),CONF_CHARTS);
-  ret.insert(ret.end(),CONF_FILEIO);
   ret.insert(ret.end(),CONF_WAITS);
+  ret.insert(ret.end(),CONF_FILEIO);
   return ret;
 }
 
@@ -294,16 +294,16 @@ static toSQL SQLChartsLogical7("toTuning:Charts:2BBLogical I/O",
 
 static toSQL SQLChartsWait("toTuning:Charts:3BMWait events",
 			   "select sysdate,\n"
-			   "       cpu \"CPU\",\n"
-			   "       parallel \"Parallel execution\",\n"
-			   "       filewrite \"DB File Write\",\n"
-			   "       writecomplete \"Write Complete\",\n"
-			   "       fileread \"DB File Read\",\n"
-			   "       singleread \"DB Single File Read\",\n"
-			   "       control \"Control File I/O\",\n"
-			   "       direct \"Direct I/O\",\n"
-			   "       log \"Log file\",\n"
-			   "       net \"SQL*Net\"\n"
+			   "       cpu*10 \"CPU\",\n"
+			   "       parallel*10 \"Parallel execution\",\n"
+			   "       filewrite*10 \"DB File Write\",\n"
+			   "       writecomplete*10 \"Write Complete\",\n"
+			   "       fileread*10 \"DB File Read\",\n"
+			   "       singleread*10 \"DB Single File Read\",\n"
+			   "       control*10 \"Control File I/O\",\n"
+			   "       direct*10 \"Direct I/O\",\n"
+			   "       log*10 \"Log file\",\n"
+			   "       net*10 \"SQL*Net\"\n"
 			   "  from (select SUM(DECODE(SUBSTR(event,1,2),'PX',time_waited,0))-SUM(DECODE(event,'PX Idle Wait',time_waited,0)) parallel,\n"
 			   "               SUM(DECODE(event,'db file parallel write',time_waited,'db file single write',time_waited,0)) filewrite,\n"
 			   "               SUM(DECODE(event,'write complete waits',time_waited,NULL)) writecomplete,\n"
@@ -1579,37 +1579,62 @@ toTuningWait::toTuningWait(QWidget *parent)
 {
   QGridLayout *layout=new QGridLayout(this);
 
+  QToolBar *toolbar=toAllocBar(this,"Server Tuning",toCurrentConnection(this).description());
+  layout->addMultiCellWidget(toolbar,0,0,0,3);
+  new QLabel("Display ",toolbar);
+  QComboBox *type=new QComboBox(toolbar);
+  type->insertItem("Time");
+  type->insertItem("Count");
+  connect(type,SIGNAL(activated(int)),this,SLOT(changeType(int)));
+  toolbar->setStretchableWidget(new QLabel("",toolbar));
+
+  layout->setColStretch(1,1);
+  layout->setColStretch(2,2);
+  layout->setColStretch(3,2);
+
   Delta=new toBarChart(this);
   Delta->setTitle("System wait events");
   Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Delta->showLegend(false);
-  layout->addWidget(Delta,0,1);
+  Delta->setYPostfix(" ms/sec");
+  layout->addMultiCellWidget(Delta,1,1,2,3);
   Types=new toListView(this);
   Types->addColumn("Wait type");
   Types->setSelectionMode(QListView::Multi);
   Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   Types->setSorting(-1);
-  layout->addWidget(Types,0,2);
+  layout->addMultiCellWidget(Types,1,2,1,1);
   connect(Types,SIGNAL(selectionChanged()),this,SLOT(changeSelection()));
   DeltaPie=new toPieChart(this);
   DeltaPie->setTitle("Delta system wait events");
   DeltaPie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   DeltaPie->showLegend(false);
-  layout->addWidget(DeltaPie,1,1);
+  layout->addWidget(DeltaPie,2,2);
   AbsolutePie=new toPieChart(this);
   AbsolutePie->setTitle("Absolute system wait events");
   AbsolutePie->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
   AbsolutePie->showLegend(false);
-  layout->addWidget(AbsolutePie,1,2);
+  layout->addWidget(AbsolutePie,2,3);
   Legend=new toLegendChart(this);
   Legend->setTitle("Legend");
-  layout->addMultiCellWidget(Legend,0,1,0,0);
+  layout->addMultiCellWidget(Legend,1,2,0,0);
   connect(&Poll,SIGNAL(timeout()),this,SLOT(poll()));
   Query=NULL;
   start();
   connect(toCurrentTool(this),SIGNAL(connectionChange()),this,SLOT(connectionChanged()));
   First=true;
   ShowTimes=false;
+}
+
+void toTuningWait::changeType(int item)
+{
+  ShowTimes=item;
+  if (ShowTimes)
+    Delta->setYPostfix(" waits/sec");
+  else
+    Delta->setYPostfix(" ms/sec");
+    
+  changeSelection();
 }
 
 void toTuningWait::start(void)
@@ -1652,6 +1677,8 @@ void toTuningWait::changeSelection(void)
     std::list<double> lastAbsolute;
     std::list<double> relative;
     std::list<QString>::iterator xval=XValues.begin();
+    time_t last;
+    std::list<time_t>::iterator ctime=TimeStamp.begin();
 
     std::list<std::list<double> > &cur=(ShowTimes?Times:Values);
 
@@ -1665,7 +1692,7 @@ void toTuningWait::changeSelection(void)
 	if (enabled[typ]) {
 	  current.insert(current.end(),*j);
 	  if (k!=lastAbsolute.end()) {
-	    relative.insert(relative.end(),(*j)-(*k));
+	    relative.insert(relative.end(),((*j)-(*k))/((*ctime)-last));
 	    k++;
 	  }
 	}
@@ -1676,12 +1703,15 @@ void toTuningWait::changeSelection(void)
 	xval++;
       }
       lastAbsolute=current;
+      if (ctime!=TimeStamp.end()) {
+	last=*ctime;
+	ctime++;
+      }
     }
     AbsolutePie->setValues(lastAbsolute,used);
     DeltaPie->setValues(relative,used);
   } TOCATCH
   delete enabled;
-  refresh();
 }
 
 void toTuningWait::connectionChanged(void)
@@ -1713,17 +1743,19 @@ void toTuningWait::poll(void)
 	  First=false;
 	} else
 	  XValues.insert(XValues.end(),Now);
+	TimeStamp.insert(TimeStamp.end(),time(NULL));
 	Values.insert(Values.end(),Current);
 	Times.insert(Times.end(),CurrentTimes);
 	if (int(Values.size())>Delta->samples()+1) {
 	  Values.erase(Values.begin());
-	  Times.erase(Times.end());
+	  Times.erase(Times.begin());
 	  XValues.erase(XValues.begin());
+	  TimeStamp.erase(TimeStamp.begin());
 	}
 	changeSelection();
-	Poll.stop();
 	delete Query;
 	Query=NULL;
+	Poll.stop();
       }
     }
   } catch(const QString &exc) {
@@ -1735,13 +1767,13 @@ void toTuningWait::poll(void)
 }
 
 static toSQL SQLWaitEvents("toTuning:WaitEvents",
-			   "select event,sysdate,time_waited/100,total_waits\n"
+			   "select event,sysdate,time_waited*10,total_waits\n"
 			   "  from v$system_event order by event",
 			   "Get all available system wait events");
 
 void toTuningWait::refresh(void)
 {
-  if (Query)
+  if (Query||(TimeStamp.begin()!=TimeStamp.end()&&(*TimeStamp.rbegin())==time(NULL)))
     return;
   toConnection &conn=toCurrentTool(this)->connection();
   toQList par;

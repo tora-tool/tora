@@ -248,6 +248,13 @@ void toPieChart::paintChart(QPainter *p,QRect rect)
 	j++;
     }
   }
+
+  if (tot==0) {
+    p->drawText(QRect(2,2,right-4,bottom-4),
+		AlignCenter|WordBreak,"All values are 0 in this chart");
+    return;
+  }
+
   int cp=0;
   int pos=0;
   unsigned int count=0;

@@ -126,6 +126,7 @@ class toTuningWait : public QFrame {
   QString Now;
   std::list<QString> Labels;
   std::list<QString> XValues;
+  std::list<time_t> TimeStamp;
   std::list<std::list<double> > Values;
   std::list<std::list<double> > Times;
   std::list<double> Current;
@@ -139,6 +140,7 @@ public slots:
   virtual void refresh(void);
   virtual void start(void);
   virtual void stop(void);
+  virtual void changeType(int);
 };
 
 class toTuning : public toToolWidget {
