@@ -37,6 +37,7 @@
 
 #include "totool.h"
 
+class QLabel;
 class QPopupMenu;
 class QTabWidget;
 class toResultLong;
@@ -45,7 +46,11 @@ class toBackup : public toToolWidget {
   Q_OBJECT
 
   QTabWidget *Tabs;
+  toResultLong *LogSwitches;
   toResultLong *LogHistory;
+  QLabel *LastLabel;
+  toResultLong *LastBackup;
+  toResultLong *CurrentBackup;
   QPopupMenu *ToolMenu;
 public:
   toBackup(QWidget *parent,toConnection &connection);

@@ -92,133 +92,256 @@ public:
 
 static toBackupTool BackupTool;
 
-static toSQL SQLLogHistory("toBackup:LogHistory",
-			   "SELECT trunc(first_time)\"Date\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               0,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-00\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               1,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-01\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               2,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-02\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               3,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-03\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               4,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-04\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               5,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-05\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               6,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-06\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               7,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-07\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               8,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-08\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               9,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-09\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               10,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-10\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               11,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-11\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               12,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-12\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               13,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-13\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               14,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-14\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               15,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-15\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               16,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-16\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               17,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-17\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               18,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-18\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               19,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-19\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               20,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-20\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               21,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-21\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               22,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-22\",\n"
-			   "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
-			   "                                                 'HH24')),\n"
-			   "                               23,\n"
-			   "                               1))),\n"
-			   "           ' ')\"-23\"\n"
-			   "  FROM v$log_history\n"
-			   " GROUP BY trunc(first_time)\n"
-			   " ORDER BY trunc(first_time)DESC",
-			   "Log switch history");
+static toSQL SQLLogSwitches("toBackup:LogSwitches",
+			    "SELECT trunc(first_time)\"Date\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               0,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-00\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               1,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-01\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               2,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-02\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               3,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-03\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               4,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-04\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               5,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-05\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               6,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-06\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               7,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-07\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               8,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-08\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               9,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-09\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               10,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-10\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               11,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-11\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               12,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-12\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               13,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-13\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               14,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-14\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               15,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-15\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               16,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-16\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               17,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-17\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               18,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-18\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               19,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-19\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               20,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-20\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               21,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-21\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               22,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-22\",\n"
+			    "       nvl(to_char(SUM (decode(to_number(to_char(first_time,\n"
+			    "                                                 'HH24')),\n"
+			    "                               23,\n"
+			    "                               1))),\n"
+			    "           ' ')\"-23\"\n"
+			    "  FROM v$log_history\n"
+			    " GROUP BY trunc(first_time)\n"
+			    " ORDER BY trunc(first_time)DESC",
+			    "Log switch history");
 
+static toSQL SQLLogHistory("toBackup:LogHistory",
+			   "SELECT\n"
+			   "   THREAD# \"Thread#\",\n"
+			   "   SEQUENCE# \"Sequence#\",\n"
+			   "   FIRST_TIME \"Time of first entry\",\n"
+			   "   FIRST_CHANGE# \"Lowest  SCN\",\n"
+			   "   NEXT_CHANGE# \"Highest SCN\",\n"
+			   "   RECID \"Controlfile RecID\",\n"
+			   "   STAMP \"Controlfile stamp\"\n"
+			   "FROM V$LOG_HISTORY\n"
+			   "ORDER BY SEQUENCE# DESC",
+			   "Redo Log History",
+			   "8.0");
+
+static toSQL SQLLogHistory7("toBackup:LogHistory",
+			    "SELECT \n"
+			    "   THREAD# \"Thread#\",\n"
+			    "   SEQUENCE# \"Sequence#\",\n"
+			    "   TIME \"Time of first entry\",\n"
+			    "   LOW_CHANGE# \"Lowest  SCN\",\n"
+			    "   (HIGH_CHANGE#-1) \"Highest SCN\",\n"
+			    "   ARCHIVE_NAME \"Archived log name\"\n"
+			    "FROM V$LOG_HISTORY\n"
+			    "ORDER BY SEQUENCE# DESC",
+			    QString::null,
+			    "7.3");
+
+static toSQL SQLOnlineBackup("toBackup:OnlineBackup",
+			     "SELECT MIN(VBD.CHECKPOINT_CHANGE#)-MAX(VBD.CHECKPOINT_CHANGE#)\n"
+			     "  FROM V$BACKUP_DATAFILE VBD, V$DATAFILE VDF,\n"
+			     "       (SELECT CREATION_CHANGE#,\n"
+			     "               MAX(COMPLETION_TIME) COMPLETION_TIME\n"
+			     "          FROM V$BACKUP_DATAFILE \n"
+			     "         WHERE CREATION_CHANGE# IN (SELECT CREATION_CHANGE# FROM V$DATAFILE)\n"
+			     "         GROUP BY CREATION_CHANGE#) QUERY1\n"
+			     " WHERE VBD.CREATION_CHANGE# = VDF.CREATION_CHANGE#\n"
+			     "   AND VBD.CREATION_CHANGE# = QUERY1.CREATION_CHANGE#\n"
+			     "   AND VBD.COMPLETION_TIME = QUERY1.COMPLETION_TIME",
+			     "Check if online backup or not. Should return 0 if cold backup",
+			     "8.0");
+
+static toSQL SQLOnlineBackup7("toBackup:OnlineBackup",
+			      "SELECT 0 FROM DUAL",
+			      QString::null,
+			      "7.3");
+
+static toSQL SQLLastBackup("toBackup:LastBackup",
+			   "SELECT VDF.NAME \"Filename\",\n"
+			   "       VBD.COMPLETION_TIME \"Completion time\",\n"
+			   "       CASE WHEN VBD.COMPLETION_TIME > VDF.unrecoverable_time THEN 'Unrecoverable change' ELSE 'Backed up' END \"Type\",\n"
+			   "       VBD.DATAFILE_BLOCKS*VBD.BLOCK_SIZE \"File size\",\n"
+			   "       VBD.BLOCKS*VBD.BLOCK_SIZE \"Bytes written\",\n"
+			   "       VBD.INCREMENTAL_LEVEL \"Level\",\n"
+			   "       VBD.CHECKPOINT_CHANGE# \"Ckpt change#\",\n"
+			   "       VBD.CHECKPOINT_TIME \"Checkpoint time\",\n"
+			   "       VBD.MARKED_CORRUPT \"Mrkd crpt\",\n"
+			   "       VBD.MEDIA_CORRUPT \"Media crpt\",\n"
+			   "       VBD.LOGICALLY_CORRUPT \"Logically corrupt\"\n"
+			   "  FROM V$BACKUP_DATAFILE VBD, V$DATAFILE VDF,\n"
+			   "       (SELECT CREATION_CHANGE#,\n"
+			   "               MAX(COMPLETION_TIME) COMPLETION_TIME\n"
+			   "          FROM V$BACKUP_DATAFILE\n"
+			   "         WHERE CREATION_CHANGE# IN (SELECT CREATION_CHANGE# FROM V$DATAFILE)\n"
+			   "         GROUP BY CREATION_CHANGE#) QUERY1\n"
+			   " WHERE VBD.CREATION_CHANGE# = VDF.CREATION_CHANGE#\n"
+			   "   AND VBD.CREATION_CHANGE# = QUERY1.CREATION_CHANGE#\n"
+			   "   AND VBD.COMPLETION_TIME = QUERY1.COMPLETION_TIME\n"
+			   "UNION\n"
+			   "SELECT NAME,\n"
+			   "       CREATION_TIME,\n"
+			   "       'Added since last backup',\n"
+			   "       Bytes,\n"
+			   "       0,\n"
+			   "       0,\n"
+			   "       TO_NUMBER(NULL),\n"
+			   "       TO_DATE(NULL),\n"
+			   "       0,\n"
+			   "       0,\n"
+			   "       0\n"
+			   "  FROM V$DATAFILE\n"
+			   " WHERE CREATION_CHANGE# NOT IN (SELECT DISTINCT CREATION_CHANGE# FROM V$BACKUP_DATAFILE)\n"
+			   " ORDER BY 2 DESC, 5 DESC, 6 DESC",
+			   "Get datafiles in most recent backup",
+			   "8.0");
+
+static toSQL SQLLastBackup7("toBackup:LastBackup",
+			    "SELECT 'Backup information not available in Oracle 7' \"Unsupported\" FROM DUAL",
+			    QString::null,
+			    "7.3");
+
+static toSQL SQLCurrentBackup("toBackup:CurrentBackup",
+			      "SELECT SID \"Sid\",\n"
+			      "       SERIAL# \"Serial#\",\n"
+			      "       CONTEXT \"Context\",\n"
+			      "       SOFAR \"So far\",\n"
+			      "       TOTALWORK \"Total\",\n"
+			      "       ROUND(SOFAR/TOTALWORK*100,2) \"% Complete\"\n"
+			      "  FROM V$SESSION_LONGOPS\n"
+			      " WHERE OPNAME LIKE 'RMAN%'\n"
+			      "   AND OPNAME NOT LIKE '%aggregate%'\n"
+			      "   AND TOTALWORK != 0\n"
+			      "   AND SOFAR <> TOTALWORK",
+			      "Display current RMAN progress",
+			      "8.1");
+
+static toSQL SQLCurrentBackup8("toBackup:CurrentBackup",
+			       "SELECT SID \"Sid\",\n"
+			       "       SERIAL# \"Serial#\",\n"
+			       "       CONTEXT \"Context\",\n"
+			       "       SOFAR \"So far\",\n"
+			       "       TOTALWORK \"Total\",\n"
+			       "       ROUND(SOFAR/TOTALWORK*100,2)   \"% Complete\"\n"
+			       "  FROM GV$SESSION_LONGOPS\n"
+			       " WHERE COMPNAM = 'dbms_backup_restore'\n"
+			       "   AND ROUND(SOFAR/TOTALWORK*100,2) < 100\n"
+			       " ORDER BY 1 DESC",
+			       QString::null,
+			       "8.0");
+
+static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
+			       "SELECT * FROM DUAL WHERE NULL = NULL",
+			       QString::null,
+			       "7.3");
 
 toBackup::toBackup(QWidget *main,toConnection &connection)
   : toToolWidget(BackupTool,"backup.html",main,connection)
@@ -237,9 +360,23 @@ toBackup::toBackup(QWidget *main,toConnection &connection)
 
   QVBox *box=new QVBox(Tabs,"history");
   new QLabel("Logswitches per day and hour",box);
-  LogHistory=new toResultLong(true,false,toQuery::Background,box);
-  LogHistory->setSQL(SQLLogHistory);
+  LogSwitches=new toResultLong(true,false,toQuery::Background,box);
+  LogSwitches->setSQL(SQLLogSwitches);
   Tabs->addTab(box,"Redo Switches");
+
+  LogHistory=new toResultLong(true,false,toQuery::Background,Tabs);
+  LogHistory->setSQL(SQLLogHistory);
+  Tabs->addTab(LogHistory,"Archived Logs");
+
+  box=new QVBox(Tabs);
+  LastLabel=new QLabel(box);
+  LastBackup=new toResultLong(true,false,toQuery::Background,box);
+  LastBackup->setSQL(SQLLastBackup);
+  Tabs->addTab(box,"Last Backup");
+
+  CurrentBackup=new toResultLong(true,false,toQuery::Background,Tabs);
+  CurrentBackup->setSQL(SQLCurrentBackup);
+  Tabs->addTab(CurrentBackup,"Backup Progress");
 
   ToolMenu=NULL;
   connect(toMainWidget()->workspace(),SIGNAL(windowActivated(QWidget *)),
@@ -272,6 +409,19 @@ toBackup::~toBackup()
 
 void toBackup::refresh()
 {
+  LogSwitches->refresh();
   LogHistory->refresh();
+  int val=0;
+  try {
+    toQuery query(connection(),SQLOnlineBackup);
+    val=query.readValue().toInt();
+  } catch(...) {
+  }
+  if (val==0)
+    LastLabel->setText("This appears to be a cold backup database");
+  else
+    LastLabel->setText("This appears to be a hot backup database");
+  LastBackup->refresh();
+  CurrentBackup->refresh();
 }
 
