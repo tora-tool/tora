@@ -29,7 +29,7 @@ CPPFLAGS_GLOB=
 ARCH=$(shell uname)
 LFLAGS_GLOB=-g
 CFLAGS_GLOB=-g -Wall
-.SILENT:
+#.SILENT:
 
 CPPFLAGS=$(CPPFLAGS_GLOB) $(DEFINES) $(INCLUDES)
 CFLAGS=$(CFLAGS_GLOB) $(INCLUDES) $(DEFINES) $(TOVERSION)
@@ -51,7 +51,7 @@ all: $(TARGET)
 	@echo Making dependences for $<
 	if [ ! -d .depends ] ; then mkdir .depends ; fi
 	$(CC) -M $(CPPFLAGS) $< > $@.tmp && \
-		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o objs\/\1co \
+		( sed "s/^\(.*\.\)o\([ :]*\)/objs\/\1o \
 		$(subst /,\\/,$@)\2/g" < $@.tmp > $@ ; rm -f $@.tmp )
 
 include $(DEPENDS)
@@ -59,6 +59,11 @@ include $(DEPENDS)
 %.moc: %.h
 	@echo Metacompiling $<
 	$(MOC) -o $@ $<
+
+%.ui.h: %.ui
+	echo Generating $@
+	$(UIC) -i $(<:%.ui=%.ui.h) -o $(<:%.ui=%.ui.cpp) $<
+	$(UIC) -o $@ $<
 
 objs/%.o: %.cpp
 	@echo Compiling $<

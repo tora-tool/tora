@@ -33,6 +33,7 @@
 #include <qcombobox.h>
 #include <qtimer.h>
 
+#include "tohighlightedtext.h"
 #include "tonewconnection.h"
 #include "tomain.h"
 #include "toconf.h"
@@ -206,6 +207,7 @@ int main(int argc,char **argv)
     if (!style.isEmpty())
       toSetSessionType(style);
 #endif
+    toDefaultAnalyzer().updateSettings();
 
     otl_connect::otl_initialize(0);
 

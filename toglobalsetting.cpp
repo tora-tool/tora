@@ -144,7 +144,7 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   MaxColNum->setValidator(valid);
 
   GroupBox6 = new QGroupBox( this, "GroupBox6" );
-  GroupBox6->setGeometry( QRect( 230, 10, 160, 250 ) ); 
+  GroupBox6->setGeometry( QRect( 230, 10, 160, 180 ) ); 
   GroupBox6->setTitle( tr( "Options"  ) );
 
   SavePassword = new QCheckBox( GroupBox6, "SavePassword" );
@@ -154,52 +154,21 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   if (!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty())
     SavePassword->setChecked(true);
 
-  SyntaxHigh = new QCheckBox( GroupBox6, "SyntaxHigh" );
-  SyntaxHigh->setGeometry( QRect( 10, 60, 130, 20 ) ); 
-  SyntaxHigh->setText( tr( "S&yntax highlighting on SQL"  ) );
-  QToolTip::add(  SyntaxHigh, tr( "Use simple syntax highlighting when display SQL" ) );
-  if (!toTool::globalConfig(CONF_HIGHLIGHT,"Yes").isEmpty())
-    SyntaxHigh->setChecked(true);
-
-  KeywordUpper = new QCheckBox( GroupBox6, "KeywordUppper" );
-  KeywordUpper->setGeometry( QRect( 10, 100, 130, 20 ) ); 
-  KeywordUpper->setText( tr( "&Keywords upper"  ) );
-  QToolTip::add(  KeywordUpper, tr( "Make keywords uppercase when displaying\nsyntaxhighlighted SQL." ) );
-  if (!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty())
-    KeywordUpper->setChecked(true);
-
-  TextLabel1_3_3 = new QLabel( GroupBox6, "TextLabel1_3_3" );
-  TextLabel1_3_3->setGeometry( QRect( 10, 140, 69, 20 ) ); 
-  TextLabel1_3_3->setText( tr( "Code font"  ) );
-  QToolTip::add(  TextLabel1_3_3, tr( "What font to use when displaying SQL code" ) );
-
-  QFont font( "Courier", 12, QFont::Bold);
-  QString fnt=toTool::globalConfig(CONF_TEXT,"");
-  if (fnt.length())
-    font.setRawName(fnt);
-  Text=font.rawName();
-  TextLabel1_3_3->setFont(font);
-
-  SelectFont = new QPushButton( GroupBox6, "SelectFont" );
-  SelectFont->setGeometry( QRect( 80, 135, 70, 32 ) ); 
-  SelectFont->setText( tr( "Choose"  ) );
-  connect(SelectFont,SIGNAL(clicked()),this,SLOT(changeFont()));
-
   QLabel *label=new QLabel(tr("&Refresh"),GroupBox6);
-  label->setGeometry(QRect(10,180,45,20));
+  label->setGeometry(QRect(10,60,45,20));
   QToolTip::add(label,tr("Default refresh time"));
 
   RefreshList = toRefreshCreate(GroupBox6);
-  RefreshList->setGeometry(QRect(60,180,90,20));
+  RefreshList->setGeometry(QRect(60,60,90,20));
   label->setBuddy(RefreshList);
 
 #ifdef ENABLE_STYLE
   label=new QLabel(tr("S&tyle"),GroupBox6);
-  label->setGeometry(QRect(10,220,45,20));
+  label->setGeometry(QRect(10,100,45,20));
   QToolTip::add(label,tr("Select the theme for the controls of the window"));
 
   StyleList = new QComboBox(GroupBox6);
-  StyleList->setGeometry(QRect(60,220,90,20));
+  StyleList->setGeometry(QRect(60,100,90,20));
   StyleList->insertItem("CDE");
   StyleList->insertItem("Motif");
   StyleList->insertItem("Motif Plus");
@@ -230,8 +199,7 @@ toGlobalSettings::toGlobalSettings( QWidget* parent,  const char* name, bool mod
   setTabOrder( PlanTable, PlanCheckpoint );
   setTabOrder( PlanCheckpoint, DefaultDate );
   setTabOrder( DefaultDate, SavePassword );
-  setTabOrder( SavePassword, SelectFont );
-  setTabOrder( SelectFont, RefreshList );
+  setTabOrder( SavePassword,  RefreshList );
 #ifdef ENABLE_STYLE
   setTabOrder( RefreshList, StyleList );
 #endif
@@ -254,7 +222,6 @@ void toGlobalSettings::saveSetting(void)
   toTool::globalSetConfig(CONF_MAX_COL_NUM,MaxColNum->text());
   toTool::globalSetConfig(CONF_PLAN_TABLE,PlanTable->text());
   toTool::globalSetConfig(CONF_PLAN_CHECKPOINT,PlanCheckpoint->text());
-  toTool::globalSetConfig(CONF_TEXT,Text);
   toTool::globalSetConfig(CONF_DATE_FORMAT,DefaultDate->text());
   toTool::globalSetConfig(CONF_REFRESH,RefreshList->currentText());
 #ifdef ENABLE_STYLE
@@ -266,24 +233,4 @@ void toGlobalSettings::saveSetting(void)
     toTool::globalSetConfig(CONF_SAVE_PWD,"Yes");
   else
     toTool::globalSetConfig(CONF_SAVE_PWD,"");
-  if (SyntaxHigh->isChecked())
-    toTool::globalSetConfig(CONF_HIGHLIGHT,"Yes");
-  else
-    toTool::globalSetConfig(CONF_HIGHLIGHT,"");
-  if (KeywordUpper->isChecked())
-    toTool::globalSetConfig(CONF_KEYWORD_UPPER,"Yes");
-  else
-    toTool::globalSetConfig(CONF_KEYWORD_UPPER,"");
-}
-
-void toGlobalSettings::changeFont(void)
-{
-  bool ok=true;
-  QFont font;
-  font.setRawName(Text);
-  font=QFontDialog::getFont (&ok,font,this);
-  if (ok) {
-    Text=font.rawName();
-    TextLabel1_3_3->setFont(font);
-  }
 }

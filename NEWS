@@ -7,5 +7,8 @@
 2001-01-17: Include block if possible in rollback monitor (Not in transaction start).
 2001-01-20: Removed any reference to FALSE or TRUE (Use true/false instead).
 2001-01-20: Fixed bug parsing PL/SQL in toWorksheet.
+2001-01-20: Figured out how to use Qt designer more intelligently, integrated uic in Makefile.
+2001-01-20: Added settings to configure syntax highlighting.
+2001-01-20: Added functionality to display error lines in toHighlightedText.
 
 0.3: Released 2001-01-17

@@ -30,6 +30,7 @@
 #define __TOHIGHLIGHTEDTEXT_H
 
 #include <list>
+#include <map>
 
 #include "tomarkedtext.h"
 
@@ -37,16 +38,23 @@ class QPainter;
 
 class toSyntaxAnalyzer {
 public:
+  enum infoType {
+    Normal=0,
+    Keyword=1,
+    String=2,
+    Error=3,
+    Comment=4,
+    ErrorBkg=5,
+    NormalBkg=6
+  };
   struct highlightInfo {
-    highlightInfo(int start,bool keyword=false,bool str=false,bool error=false,bool comment=false)
-    { Start=start; Keyword=keyword; String=str; Error=error; Comment=comment; }
+    infoType Type;
     int Start;
-    bool Keyword;
-    bool String;
-    bool Error;
-    bool Comment;
+    highlightInfo(int start,infoType typ=Normal)
+    { Start=start; Type=typ; }
   };
 private:
+  QColor Colors[7];
   struct posibleHit {
     posibleHit(const char *);
     int Pos;
@@ -56,12 +64,19 @@ private:
 protected:
   bool isSymbol(QChar c)
   { return (c.isLetterOrNumber()||c=='_'||c=='#'||c=='$'||c=='.'); }
+private:
+  void readColor(const QString &str,const QColor &def,int pos);
 public:
   toSyntaxAnalyzer(const char **keywords);
   virtual ~toSyntaxAnalyzer()
   { }
   virtual list<highlightInfo> analyzeLine(const QString &str);
+  QColor getColor(infoType typ)
+  { return Colors[typ]; }
+  void updateSettings(void);
 };
+
+toSyntaxAnalyzer &toDefaultAnalyzer(void);
 
 class toHighlightedText : public toMarkedText {
 private:
@@ -69,9 +84,14 @@ private:
   int LastRow;
   bool Highlight;
   bool KeywordUpper;
+  map<int,QString> Errors;
 public:
 
   toHighlightedText(QWidget *parent,const char *name=NULL);
+
+  void setErrors(const map<int,QString> &errors)
+  { Errors=errors; repaint(); }
+
   virtual void paintCell (QPainter *painter,int row,int col);
 };
 

@@ -36,6 +36,7 @@
 
 #include "topreferences.h"
 #include "toglobalsetting.h"
+#include "tosyntaxsetup.h"
 
 #include "topreferences.moc"
 
@@ -102,6 +103,9 @@ toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags 
   item=new QListBoxText(TabSelection,"Global Settings");
   TabSelection->setCurrentItem(0);
   addWidget(item,new toGlobalSettings(this));
+
+  item=new QListBoxText(TabSelection,"Syntax highlighting");
+  addWidget(item,new toSyntaxSetup(this));
   
   item=new QListBoxText(TabSelection,"Tools");
   item->setSelectable(false);

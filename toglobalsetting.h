@@ -57,7 +57,6 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QLabel *TextLabel1;
   QLabel *TextLabel7;
   QGroupBox *GroupBox6;
-  QLabel *TextLabel1_3_3;
 
   QLineEdit *PlanCheckpoint;
   QLineEdit *PlanTable;
@@ -67,10 +66,6 @@ class toGlobalSettings : public QFrame, public toSettingTab {
   QLineEdit *MaxColNum;
   QLineEdit *DefaultDate;
   QCheckBox *SavePassword;
-  QCheckBox *SyntaxHigh;
-  QCheckBox *KeywordUpper;
-  QString Text;
-  QPushButton *SelectFont;
   QComboBox *StyleList;
   QComboBox *RefreshList;
 
@@ -78,9 +73,6 @@ public:
   toGlobalSettings(QWidget *parent=0,const char *name=0,bool modal=false,WFlags fl=0);
 
   virtual void saveSetting(void);
-
-public slots:
-  void changeFont(void);
 };
 
 #endif

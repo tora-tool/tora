@@ -73,7 +73,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
     bool nextSymbol=((int(str.length())!=i+1)&&isSymbol(str[i+1]));
     if (inString>=0) {
       if (str[i]==endString) {
-	highs.insert(highs.end(),highlightInfo(inString,false,true,false,false));
+	highs.insert(highs.end(),highlightInfo(inString,String));
 	highs.insert(highs.end(),highlightInfo(i+1));
 	inString=-1;
       }
@@ -83,7 +83,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
       search.clear();
       wasWord=false;
     } else if (str[i]=='-'&&str[i+1]=='-') {
-      highs.insert(highs.end(),highlightInfo(i,false,false,false,true));
+      highs.insert(highs.end(),highlightInfo(i,Comment));
       highs.insert(highs.end(),highlightInfo(str.length()+1));
       return highs;
     } else {
@@ -93,7 +93,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
 	  cur.Pos++;
 	  if (!cur.Text[cur.Pos]&&!nextSymbol) {
 	    search.clear();
-	    highs.insert(highs.end(),highlightInfo(i-cur.Pos,true,false,false,false));
+	    highs.insert(highs.end(),highlightInfo(i-cur.Pos,Keyword));
 	    highs.insert(highs.end(),highlightInfo(i+1));
 	    break;
 	  }
@@ -115,7 +115,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
 	     j!=curKey.end();j++) {
 	  if (strlen(*j)==1) {
 	    if (!nextSymbol) {
-	      highs.insert(highs.end(),highlightInfo(i,true,false,false,false));
+	      highs.insert(highs.end(),highlightInfo(i,Keyword));
 	      highs.insert(highs.end(),highlightInfo(i));
 	    }
 	  } else
@@ -126,7 +126,7 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
     }
   }
   if (inString>=0) {
-    highs.insert(highs.end(),highlightInfo(inString,false,false,true,false));
+    highs.insert(highs.end(),highlightInfo(inString,Error));
     highs.insert(highs.end(),highlightInfo(str.length()+1));
   }
 
@@ -134,6 +134,11 @@ list<toSyntaxAnalyzer::highlightInfo> toSyntaxAnalyzer::analyzeLine(const QStrin
 }
 
 static toSyntaxAnalyzer DefaultAnalyzer((const char **)DefaultKeywords);
+
+toSyntaxAnalyzer &toDefaultAnalyzer(void)
+{
+  return DefaultAnalyzer;
+}
 
 toHighlightedText::toHighlightedText(QWidget *parent,const char *name=NULL)
   : toMarkedText(parent,name)
@@ -164,25 +169,33 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
   int posx=MARGIN;
   QRect rect;
 
+  if (this->width()!=cellWidth())
+    setCellWidth(this->width());
+
   int height=cellHeight();
   int width=cellWidth();
   QPalette cp=qApp->palette();
 
   painter->setBrush(cp.active().highlight());
 
+  QColor bkg=DefaultAnalyzer.getColor(toSyntaxAnalyzer::NormalBkg);
+
+  map<int,QString>::iterator err=Errors.find(row);
+  if (err!=Errors.end())
+    bkg=DefaultAnalyzer.getColor(toSyntaxAnalyzer::ErrorBkg);
+
   if (!str.isEmpty()) {
     bool marked;
-    bool bold=false;
-    bool italic=false;
-    bool red=false;
-    bool green=false;
+    QColor col=DefaultAnalyzer.getColor(toSyntaxAnalyzer::Normal);
+    bool upper;
+
     bool wasMarked;
-    bool wasBold;
-    bool wasItalic;
-    bool wasRed;
-    bool wasGreen;
+    QColor wasCol;
+
     QString c;
+
     for (int i=0;i<=int(str.length())&&posx<width;i++) {
+
       if (i==int(str.length())) {
 	marked=!wasMarked;
       } else {
@@ -196,41 +209,29 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
       }
 
       while (highPos!=highs.end()&&(*highPos).Start<=i) {
-	bold=(*highPos).Keyword;
-	red=(*highPos).Error;
-	if ((*highPos).Comment) {
-	  green=true;
-	  italic=true;
-	} else {
-	  green=false;
-	  italic=(*highPos).String;
-	}
+	col=DefaultAnalyzer.getColor((*highPos).Type);
+	if ((*highPos).Type==toSyntaxAnalyzer::Keyword&&KeywordUpper)
+	  upper=true;
+	else
+	  upper=false;
 	highPos++;
       }
 
       if (i<int(str.length())) {
-	if (bold&&KeywordUpper)
+	if (upper)
 	  c.append(str[i].upper());
 	else
 	  c.append(str[i]);
       }
       if (i==0) {
+	wasCol=col;
 	wasMarked=marked;
-	wasBold=bold;
-	wasItalic=italic;
-	wasRed=red;
-	wasGreen=green;
       }
 
-      if (wasMarked!=marked||wasBold!=bold||wasItalic!=italic||wasRed!=red||wasGreen!=green) {
+      if (wasMarked!=marked||col!=wasCol) {
 	QString nc=QString(c[c.length()-1]);
 	if (i<int(str.length()))
 	  c.truncate(c.length()-1);
-
-	QFont font=painter->font();
-	font.setBold(wasBold);
-	font.setItalic(wasItalic);
-	painter->setFont(font);
 
 	rect=painter->boundingRect(0,0,width,height,AlignLeft|AlignTop|ExpandTabs,c);
 	int left=posx;
@@ -245,32 +246,33 @@ void toHighlightedText::paintCell(QPainter *painter,int row,int col)
 	  painter->fillRect(left,0,cw,height,painter->brush());
 	  painter->setPen(cp.active().highlightedText());
 	} else {
-	  painter->setPen(cp.active().text());
-	  painter->eraseRect(left,0,cw,height);
+	  painter->setPen(wasCol);
+	  painter->fillRect(left,0,cw,height,bkg);
 	}
-	if (wasRed)
-	  painter->setPen(Qt::red);
-	else if (wasGreen)
-	  painter->setPen(Qt::darkGreen);
 
 	painter->drawText(posx,0,width-posx,height,AlignLeft|AlignTop|ExpandTabs,c,c.length(),&rect);
 	posx=rect.right()+1;
+	wasCol=col;
 	wasMarked=marked;
-	wasBold=bold;
-	wasRed=red;
-	wasItalic=italic;
 	c=nc;
       }
     }
     if (posx<width)
-      painter->eraseRect(posx,0,width-posx,height);
+      painter->fillRect(posx,0,width-posx,height,bkg);
   } else
-      painter->eraseRect(0,0,width,height);
+      painter->fillRect(0,0,width,height,bkg);
   painter->setPen(cp.active().text());
 
   if (hasFocus()) {
     int curline,curcol;
     getCursorPosition (&curline,&curcol);
+    if (curline!=LastRow) {
+      if (err!=Errors.end())
+	toStatusMessage((*err).second);
+      else
+	toStatusMessage("");
+    }
+
     if (row==curline&&(LastRow!=curline||LastCol!=curcol)) {
       LastRow=curline;
       LastCol=curcol;
