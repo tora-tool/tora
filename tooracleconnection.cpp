@@ -157,6 +157,33 @@ public:
     { toThread *thread=new toThread(new connectionDeleter(Connection)); thread->start(); }
     virtual void cancel(void)
     { Connection->cancel(); }
+    virtual void throwExtendedException(toConnection &conn,const otl_exception &exc)
+    {
+      if (conn.version()<"8.0") {
+	// Serious OCI voodoo to get the Parse error location on Oracle7 servers
+
+	Lda_Def lda;
+	Cda_Def cda;
+	if (OCISvcCtxToLda(Connection->connect_struct.svchp,
+			   Connection->connect_struct.errhp,
+			   &lda)==OCI_SUCCESS) {
+	  if (oopen(&cda,
+		    &lda,
+		    (OraText *)0,-1,
+		    -1,
+		    (OraText *)0,-1)==OCI_SUCCESS) {
+	    cda.peo=0;
+	    int ret=oparse(&cda,(OraText *)exc.stm_text,-1,FALSE,1);
+	    ((otl_exception &)exc).errorofs=cda.peo;
+	    oclose(&cda);
+	  }
+	  OCILdaToSvcCtx(&Connection->connect_struct.svchp,
+			 Connection->connect_struct.errhp,
+			 &lda);
+	}
+      }
+      ThrowException(exc);
+    }
   };
 
   class oracleQuery : public toQuery::queryImpl {
@@ -297,7 +324,7 @@ public:
 	Running=false;
 	conn->Lock.up();
 	delete[] buffer;
-	ThrowException(exc);
+	conn->throwExtendedException(query()->connection(),exc);
       } catch (...) {
 	Running=false;
 	conn->Lock.up();
@@ -636,7 +663,7 @@ public:
 	try {
 	  otl_cursor::direct_exec(*(conn->Connection),sql);
 	} catch (const otl_exception &exc) {
-	  ThrowException(exc);
+	  conn->throwExtendedException(connection(),exc);
 	}
       } else
 	toQuery query(connection(),QString::fromUtf8(sql),params);
@@ -805,7 +832,7 @@ void toOracleProvider::oracleQuery::execute(void)
     }
   } catch (const otl_exception &exc) {
     Running=false;
-    ThrowException(exc);
+    conn->throwExtendedException(query()->connection(),exc);
   }
   try {
     otl_null null;
@@ -836,7 +863,7 @@ void toOracleProvider::oracleQuery::execute(void)
   } catch (const otl_exception &exc) {
     Running=false;
     conn->Lock.up();
-    ThrowException(exc);
+    conn->throwExtendedException(query()->connection(),exc);
   }
 }
 
