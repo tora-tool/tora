@@ -130,7 +130,7 @@ private slots:
   void pasteButton(void);
 };
 
-void toStatusMessage(const QString &str,bool save=true);
+void toStatusMessage(const QString &str,bool save=false);
 toMain *toMainWidget(void);
 QString toSQLToAddress(toConnection &conn,const QString &sql);
 QString toSQLString(toConnection &conn,const QString &address);
