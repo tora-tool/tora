@@ -1,0 +1,44 @@
+<HTML><HEAD><TITLE>Database Settings</TITLE></HEAD><BODY>
+<H1>Database Settings</H1>
+This page of the options contain settings on how to interact with the database.<P>
+<IMG SRC=images/database.png><P>
+<TABLE>
+<TR><TD VALIGN=top>
+<B>Initial rows to fetch in query</B></TD>
+<TD VALIGN=top>This setting indicates how many rows to always fetch from a query when executing it.
+Observe that you can always read more from the individual query just by scrolling down. Check
+the <B>All</B> checkbox to always read all the lines. Be aware that TOra will interact sluggishly
+or not at all while reading many lines. It will also keep the entire result in memory so checking
+the <B>All</B> box and reading a really large box could bring your machine to it's knees.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Maximum column size</B></TD>
+<TD VALIGN=top>The maximum size of a column to read. If a column contains data that is larger than this
+value the query will fail. Don't set this too low.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Maximum size display</B></TD>
+<TD VALIGN=top>The maximum width a list column will get automatically regardless of how large the content
+is. This is so you can still see the rest of the columns even if one of the first can contain
+very large values. You can always resize the column by hand afterwards.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Checkpoint name</B></TD>
+<TD VALIGN=top>This is a checkpoint TOra should use when it is making changes that need to be roll backed.
+One place where this is used is to perform explain plans without filling up the plan table. The
+name doesn't matter, just make sure you don't use this checkpoint name yourself.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Default date format</B></TD>
+<TD VALIGN=top>The format that you prefer dates to be displayed. Changing this will require a reconnect to
+the database before it starts to operate. The string should be a standard Oracle date to string
+conversion specification. For more information see the Oracle SQL Reference.
+</TD></TR>
+<TR><TD VALIGN=top>
+<B>Explain plan table</B></TD>
+<TD VALIGN=top>The table to use to temporarily store explained execution plans. Use the <B>Create Table</B>
+button to create the table if you don't have it.
+</TD></TR>
+</TABLE>
+</BODY>
+</HTML>

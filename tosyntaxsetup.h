@@ -41,10 +41,11 @@
 #include "totool.h"
 #include "tosyntaxsetup.ui.h"
 #include "tohighlightedtext.h"
+#include "tohelp.h"
 
 class QFont;
 
-class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab { 
+class toSyntaxSetup : public toSyntaxSetupUI, public toSettingTab, public toHelpContext { 
   QString Text;
   QString List;
   QListBoxItem *Current;

@@ -43,6 +43,8 @@ TO_NAMESPACE;
 #include <time.h>
 #endif
 
+#include <qmessagebox.h>
+
 #include "tomain.h"
 #include "toresultplan.h"
 #include "toconf.h"
@@ -79,6 +81,8 @@ void toResultPlan::query(const QString &sql,
 {
   clear();
 
+  QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
+
   try {
     char buffer[1000];
 
@@ -88,8 +92,6 @@ void toResultPlan::query(const QString &sql,
     otl_cursor::direct_exec(Connection.connection(),buffer);
 
     int ident=(int)time(NULL);
-
-    QString planTable=toTool::globalConfig(CONF_PLAN_TABLE,DEFAULT_PLAN_TABLE);
 
     sprintf(buffer,"EXPLAIN PLAN SET STATEMENT_ID = 'Tora %d' INTO %s FOR ",
 	    ident,(const char *)planTable.utf8());
@@ -162,6 +164,25 @@ void toResultPlan::query(const QString &sql,
     sprintf(buffer,"ROLLBACK TO SAVEPOINT %s",(const char *)chkPoint.utf8());
     otl_cursor::direct_exec(Connection.connection(),buffer);
 
-  } TOCATCH
+  } catch (const QString &str) {
+    toStatusMessage(str);
+  } catch (const otl_exception &exc) {
+    try {
+      if (exc.code==2404) {
+	int ret=TOMessageBox::warning(this,
+				      "Plan table doesn't exist",
+				      QString("Specified plan table %1 didn't exist.\n"
+					      "Should TOra try to create it?").arg(planTable),
+				      "&Yes","&No",0,1);
+	if (ret==0) {
+	  otl_cursor::direct_exec(Connection.connection(),
+				  toSQL::string(toSQL::TOSQL_CREATEPLAN,
+						Connection).arg(planTable).utf8());
+	  query(sql,param);
+	}
+      } else
+	throw;
+    } TOCATCH
+  }
   updateContents();
 }

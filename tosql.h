@@ -128,7 +128,9 @@ public:
   /** Name of the SQL to get a userlist
    */
   static const char * const TOSQL_USERLIST;
-
+  /** Name of the SQL to create a plan table
+   */
+  static const char * const TOSQL_CREATEPLAN;
   /** Update the map with new information.
    * @param name Name of this SQL statement.
    * @param sql Statement to execute for this SQL.

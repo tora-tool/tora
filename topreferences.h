@@ -41,6 +41,8 @@
 #include <qdialog.h>
 #include <map>
 
+#include "tohelp.h"
+
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
@@ -49,7 +51,7 @@ class QListBox;
 class QListBoxItem;
 class QPushButton;
 
-class toPreferences : public QDialog
+class toPreferences : public QDialog, public toHelpContext
 { 
   Q_OBJECT
 

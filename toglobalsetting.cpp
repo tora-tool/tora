@@ -67,7 +67,7 @@ TO_NAMESPACE;
 #include "todatabasesettingui.cpp"
 
 toGlobalSetting::toGlobalSetting(QWidget *parent,const char *name,WFlags fl)
-  : toGlobalSettingUI(parent,name,fl)
+  : toGlobalSettingUI(parent,name,fl), toHelpContext("preferences.html#global")
 {
   LongSession->setChecked(!toTool::globalConfig(CONF_LONG_SESSION,"").isEmpty());
   SavePassword->setChecked(!toTool::globalConfig(CONF_SAVE_PWD,"").isEmpty());
@@ -183,7 +183,7 @@ void toGlobalSetting::saveSetting(void)
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent,const char *name,WFlags fl)
-  : toDatabaseSettingUI(parent,name,fl)
+  : toDatabaseSettingUI(parent,name,fl),toHelpContext("database.html")
 {
   MaxColDisp->setText(toTool::globalConfig(CONF_MAX_COL_DISP,
 					   DEFAULT_MAX_COL_DISP));
@@ -227,7 +227,7 @@ void toDatabaseSetting::saveSetting(void)
   toTool::globalSetConfig(CONF_PLAN_TABLE,ExplainPlan->text());
 }
 
-static toSQL SQLCreatePlanTable("Global:CreatePlan",
+static toSQL SQLCreatePlanTable(toSQL::TOSQL_CREATEPLAN,
 				"CREATE TABLE %1 (\n"
 				"    STATEMENT_ID    VARCHAR2(30),\n"
 				"    TIMESTAMP       DATE,\n"

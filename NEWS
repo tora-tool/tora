@@ -17,6 +17,7 @@
 2001-07-04: Allow saving list to export them as files.
 2001-07-05: Added help quick key to dialogs.
 2001-07-05: Made help a dialog again.
+2001-07-06: Ask to create plan table if it doesn't exist when explaining plan.
 
 0.12: Released 2001-07-01
 

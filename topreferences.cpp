@@ -97,7 +97,7 @@ void toPreferences::saveSetting(void)
 }
 
 toPreferences::toPreferences(QWidget* parent,const char* name,bool modal,WFlags fl)
-  : QDialog(parent,name,modal,fl)
+  : QDialog(parent,name,modal,fl),toHelpContext("preferences.html")
 {
   toHelp::connectDialog(this);
   Shown=NULL;

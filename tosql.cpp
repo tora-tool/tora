@@ -45,6 +45,7 @@ TO_NAMESPACE;
 
 toSQL::sqlMap *toSQL::Definitions;
 const char * const toSQL::TOSQL_USERLIST= "Global:UserList";
+const char * const toSQL::TOSQL_CREATEPLAN= "Global:CreatePlan";
 
 toSQL::toSQL(const QString &name,
 	     const QString &sql,

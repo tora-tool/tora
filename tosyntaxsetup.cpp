@@ -57,7 +57,7 @@ TO_NAMESPACE;
 #include "tosyntaxsetup.ui.cpp"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)
-  : toSyntaxSetupUI(parent,name,fl),Analyzer(toDefaultAnalyzer())
+  : toSyntaxSetupUI(parent,name,fl),toHelpContext("fonts.html"),Analyzer(toDefaultAnalyzer())
 {
   if (!toTool::globalConfig(CONF_KEYWORD_UPPER,"").isEmpty())
     KeywordUpper->setChecked(true);
