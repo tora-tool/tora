@@ -140,6 +140,7 @@ SOURCES=\
 	totoolsettingui.cpp		\
 	totuning.cpp			\
 	totuningoverviewui.cpp		\
+	tovisualize.cpp			\
 	toworksheet.cpp			\
 	toworksheetsetupui.cpp		\
 	utils.cpp			\
@@ -265,7 +266,8 @@ plugins/totuning.tso:\
 plugins/towidgets.tso:\
 	objs/tochangeconnection.o \
 	objs/tofilesize.o \
-	objs/tosgastatement.o
+	objs/tosgastatement.o \
+	objs/tovisualize.o
 plugins/toworksheet.tso:\
 	objs/toworksheet.o \
 	objs/toworksheetsetupui.o

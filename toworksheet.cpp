@@ -78,6 +78,7 @@
 #include "toworksheetsetupui.h"
 #include "tosession.h"
 #include "toresultbar.h"
+#include "tovisualize.h"
 
 #include "toworksheet.moc"
 #include "toworksheetsetupui.moc"
@@ -336,6 +337,7 @@ void toWorksheet::setup(bool autoLoad)
     Columns=NULL;
     Refresh=NULL;
     ToolMenu=NULL;
+    Visualize=NULL;
     toolbar->addSeparator();
     new QToolButton(QPixmap((const char **)describe_xpm),
 		    "Describe under cursor",
@@ -365,6 +367,8 @@ void toWorksheet::setup(bool autoLoad)
     Columns->hide();
 
     ResultTab->setTabEnabled(Columns,false);
+    Visualize=new toVisualize(Result,ResultTab);
+    ResultTab->addTab(Visualize,"Visualize");
     Plan=new toResultPlan(ResultTab);
     ResultTab->addTab(Plan,"Execution plan");
     Resources=new toResultResources(ResultTab);
@@ -661,7 +665,9 @@ void toWorksheet::refresh(void)
     toMainWidget()->menuBar()->setItemEnabled(TO_ID_STOP,true);
     if (Light)
       return;
-    if (CurrentTab==Plan)
+    if (CurrentTab==Visualize)
+      Visualize->display();
+    else if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)
       viewResources();
@@ -1076,6 +1082,8 @@ void toWorksheet::execute(bool all,bool step)
     query(Editor->markedText(),false);
     if (Light)
       return;
+    else if (CurrentTab==Visualize)
+      Visualize->display();
     else if (CurrentTab==Plan)
       Plan->query(QueryString);
     else if (CurrentTab==Resources)

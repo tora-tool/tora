@@ -708,8 +708,14 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
       if (owner.isEmpty()) {
 	for(std::map<QString,toConnection::objectName>::iterator i=synonyms.begin();
 	    i!=synonyms.end();i++) {
-	  if ((*i).second.Type=="TABLE"||(*i).second.Type=="VIEW")
-	    complete.insert(complete.end(),conn.quote((*i).first));
+	  if ((*i).second.Type=="TABLE"||(*i).second.Type=="VIEW") {
+	    QString add=conn.quote((*i).first);
+	    if(!(*i).second.Comment.isEmpty()) {
+	      add+=" - ";
+	      add+=(*i).second.Comment;
+	    }
+	    complete.insert(complete.end(),add);
+	  }
 	}
       }
 
@@ -717,14 +723,24 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	if ((*i).Type=="TABLE"||(*i).Type=="VIEW") {
 	  if (owner.isEmpty()) {
 	    if ((*i).Owner.upper()==conn.user().upper()) {
-	      if (synonyms.find((*i).Owner)==synonyms.end())
-		complete.insert(complete.end(),conn.quote((*i).Name));
+	      if (synonyms.find((*i).Owner)==synonyms.end()) {
+		QString add=conn.quote((*i).Name);
+		if(!(*i).Comment.isEmpty()) {
+		  add+=" - ";
+		  add+=(*i).Comment;
+		}
+		complete.insert(complete.end(),add);
+	      }
 	    }
 	  } else {
 	    QString add=conn.quote((*i).Owner);
 	    if (!add.isEmpty())
 	      add+=".";
 	    add+=conn.quote((*i).Name);
+	    if(!(*i).Comment.isEmpty()) {
+	      add+=" - ";
+	      add+=(*i).Comment;
+	    }
 	    complete.insert(complete.end(),add);
 	  }
 	}

@@ -42,11 +42,9 @@
 </LI>
 <LI>void &nbsp;<b><A HREF="#ref24">startAsync</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref25">kill</A></b> (int signo) 
-</LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  bool &nbsp;<b><A HREF="#ref11">mainThread</A></b> (void) 
 </LI>
-<LI>static  bool &nbsp;<b><A HREF="#ref26">mainThread</A></b> (void) 
+<LI>static  bool &nbsp;<b><A HREF="#ref25">mainThread</A></b> (void) 
 </LI>
 </ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref12">taskRunner</A></b></LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Used to create new threads of execution. When a thread exits it will delete the
@@ -73,11 +71,7 @@
 <br></td><td align="right"><h3><strong>startAsync</strong></h3></td></tr></table><p></p><p> Start thread and continue executing this thread until normal scheduling
  handles over execution to child thread.
    </p>
-<A NAME="kill"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>kill</strong> (int signo)
-<br></td><td align="right"><h3><strong>kill</strong></h3></td></tr></table><p></p><p> Send a signal to this thread. This function is not available if using
- Qt Threads.
-   </p>
-<A NAME="mainThread"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
+<A NAME="mainThread"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>mainThread</strong> (void)
 <br></td><td align="right"><h3><strong>mainThread</strong></h3></td></tr></table><p> <small>[static]</small></p><p> Returns true if this is the main thread.
    </p>
 <HR>

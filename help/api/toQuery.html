@@ -84,6 +84,8 @@
 </LI>
 <LI>int &nbsp;<b><A HREF="#ref30">columns</A></b> (void) 
 </LI>
+<LI>void &nbsp;<b><A HREF="#ref39">cancel</A></b> (void) 
+</LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  std::list&lt;toQValue&gt; &nbsp;<b><A HREF="#ref31">readQuery</A></b> (<A HREF="toConnection.html">toConnection</A> &amp;conn,
 				       <A HREF="toSQL.html">toSQL</A> &amp;sql,
 				       std::list&lt;toQValue&gt; &amp;params) 
@@ -419,6 +421,9 @@
 </TD></TR>
 </TABLE></P>
 <p><b>Returns</b>: A list of toQValues:s read from the query.
+   </p>
+<A NAME="cancel"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>cancel</strong> (void)
+<br></td><td align="right"><h3><strong>cancel</strong></h3></td></tr></table><p></p><p> Cancel the current execution of a query.
    </p>
 <HR>
 	<table>

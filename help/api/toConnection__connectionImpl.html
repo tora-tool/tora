@@ -48,13 +48,17 @@
 </LI>
 <LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref11">quote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>virtual  std::list&lt;tableName&gt; &nbsp;<b><A HREF="#ref12">tableNames</A></b> (void) 
+<LI>virtual  <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<b><A HREF="#ref12">unQuote</A></b> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name) 
 </LI>
-<LI>virtual  std::list&lt;columnDescription&gt; &nbsp;<b><A HREF="#ref13">columnDesc</A></b> (const tableName &amp;table) 
+<LI>virtual  std::list&lt;objectName&gt; &nbsp;<b><A HREF="#ref13">objectNames</A></b> (void) 
 </LI>
-<LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref14">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+<LI>virtual  std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &nbsp;<b><A HREF="#ref14">synonymMap</A></b> (std::list&lt;objectName&gt; &amp;objects) 
 </LI>
-<LI>virtual  void &nbsp;<b><i><A HREF="#ref15">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params) 
+<LI>virtual  <A HREF="#toQDescList">toQDescList</A> &nbsp;<b><A HREF="#ref15">columnDesc</A></b> (const objectName &amp;table) 
+</LI>
+<LI>virtual  <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<b><i><A HREF="#ref16">createQuery</A></i></b> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref17">execute</A></i></b> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params) 
 </LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> This class is an abstract baseclass to actually implement the comunication with the
  database. 
@@ -100,26 +104,40 @@
 </TABLE></P>
 <p><b>Returns</b>: String addressing table.
      </p>
-<A NAME="tableNames"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;tableName&gt; &nbsp;<strong>tableNames</strong> (void)
-<br></td><td align="right"><h3><strong>tableNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection.
+<A NAME="unQuote"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &nbsp;<strong>unQuote</strong> (const <A HREF="http://doc.trolltech.com/qstring.html">QString</A> &amp;name)
+<br></td><td align="right"><h3><strong>unQuote</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Perform the opposite of <A HREF="toConnection__connectionImpl.html#quote">quote</A>.
+</p>
+<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
+<TR><TD align="left" valign="top"><i>name</i></TD><TD align="left" valign="top">The name to be un-quoted.
+</TD></TR>
+</TABLE></P>
+<p><b>Returns</b>: String addressing table.
+     </p>
+<A NAME="objectNames"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;objectName&gt; &nbsp;<strong>objectNames</strong> (void)
+<br></td><td align="right"><h3><strong>objectNames</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available objects to query for connection. Any access to the
+ database should always be run using a long running query.
 </p>
 <p><b>Returns</b>: List of available objects.
      </p>
-<A NAME="columnDesc"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::list&lt;columnDescription&gt; &nbsp;<strong>columnDesc</strong> (const tableName &amp;table)
-<br></td><td align="right"><h3><strong>columnDesc</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Extract available columns to query for a table.
+<A NAME="synonymMap"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> std::map&lt;<A HREF="http://doc.trolltech.com/qstring.html">QString</A>,objectName&gt; &nbsp;<strong>synonymMap</strong> (std::list&lt;objectName&gt; &amp;objects)
+<br></td><td align="right"><h3><strong>synonymMap</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p> Get synonyms available for connection. Any access to the
+ database should always be run using a long running query.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>table</i></TD><TD align="left" valign="top">Table to get column for.
+<TR><TD align="left" valign="top"><i>objects</i></TD><TD align="left" valign="top">Available objects for the connection. Objects
+                are sorted in owner and name order. Don't modify
+                this list.
 </TD></TR>
 </TABLE></P>
-<p><b>Returns</b>: List of columns for table.
+<p><b>Returns</b>: Map of synonyms to objectnames.
      </p>
-<A NAME="createQuery"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
+<A NAME="columnDesc"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="#toQDescList">toQDescList</A> &nbsp;<strong>columnDesc</strong> (const objectName &amp;table)
+<br></td><td align="right"><h3><strong>columnDesc</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="createQuery"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toQuery__queryImpl.html">toQuery::queryImpl</A> *&nbsp;<i><strong>createQuery</strong></i> (<A HREF="toQuery.html">toQuery</A> *query,<A HREF="toConnectionSub.html">toConnectionSub</A> *conn)
 <br></td><td align="right"><h3><i><strong>createQuery</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Create a new query implementation for this connection.
 </p>
 <p><b>Returns</b>: A query implementation, allocated with new.
      </p>
-<A NAME="execute"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params)
+<A NAME="execute"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>execute</strong></i> (<A HREF="toConnectionSub.html">toConnectionSub</A> *conn,const <A HREF="http://doc.trolltech.com/qcstring.html">QCString</A> &amp;sql,toQList &amp;params)
 <br></td><td align="right"><h3><i><strong>execute</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Execute a query on an actual connection without caring about the result.
 </p>
 <p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">

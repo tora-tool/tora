@@ -151,7 +151,8 @@ public:
 
 /** Encapsulation of pthread semaphores. A semaphore can be raise to any value
  * but will wait till raised above zero when lowered below 0. Can also be implemented
- * without pthreads using Qt multithreaded primitives.
+ * without pthreads using Qt multithreaded primitives. Observe that these function
+ * different than Qt semaphores.
  */
 
 class toSemaphore {
@@ -255,10 +256,6 @@ public:
    */
   void startAsync(void);
 
-  /** Send a signal to this thread. This function is not available if using
-   * Qt Threads.
-   */
-  void kill(int signo);
   /** Returns true if this is the main thread.
    */
   static bool mainThread(void);

@@ -34,65 +34,35 @@
  *
  ****************************************************************************/
 
-#include "toeditwidget.h"
-#include "tomain.h"
+#ifndef TOVISUALIZE_H
+#define TOVISUALIZE_H
 
-void toEditWidget::setMainSettings(void)
-{
-  toMain::editEnable(this);
-}
+#include <qvbox.h>
 
-toEditWidget::toEditWidget()
-{
-  Open=Save=Print=Undo=Redo=Cut=Copy=Paste=Search=SelectAll=ReadAll=false;
-}
+class toListView;
 
-toEditWidget::toEditWidget(bool open,bool save,bool print,
-			   bool undo,bool redo,
-			   bool cut,bool copy,bool paste,
-			   bool search,
-			   bool selectAll,bool readAll)
-{
-  Open=open;
-  Save=save;
-  Print=print;
-  Undo=undo;
-  Redo=redo;
-  Cut=cut;
-  Copy=copy;
-  Paste=paste;
-  Search=search;
-  SelectAll=selectAll;
-  ReadAll=readAll;
-}
+/** This widget is used to visualize the data in a toListView into charts.
+ */
+class toVisualize : public QVBox {
+  Q_OBJECT
 
-void toEditWidget::setEdit(bool open,bool save,bool print,
-			   bool undo,bool redo,
-			   bool cut,bool copy,bool paste,
-			   bool search,
-			   bool selectAll,bool readAll)
-{
-  Open=open;
-  Save=save;
-  Print=print;
-  Undo=undo;
-  Redo=redo;
-  Cut=cut;
-  Copy=copy;
-  Paste=paste;
-  Search=search;
-  SelectAll=selectAll;
-  ReadAll=readAll;
+  QComboBox *Type;
 
-  setMainSettings();
-}
+  QWidget *Result;
+  toListView *Source;
 
-toEditWidget::~toEditWidget()
-{
-  toMain::editDisable(this);
-}
+  QToolButton *Legend;
+  QToolButton *Grid;
+  QToolButton *Axis;
+public:
+  /** Create visualize widget.
+   * @param source Source list view to get data from.
+   */
+  toVisualize(toListView *Source,QWidget *parent,const char *name=NULL);
+public slots:
+  /** Refresh result
+   */
+  void display(void);
+};
 
-void toEditWidget::receivedFocus(void)
-{
-  toMain::setEditWidget(this);
-}
+#endif

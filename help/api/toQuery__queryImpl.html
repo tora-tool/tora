@@ -47,6 +47,8 @@
 </LI>
 <LI>virtual  int &nbsp;<b><i><A HREF="#ref10">columns</A></i></b> (void) 
 </LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref11">cancel</A></i></b> (void) 
+</LI>
 </ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p> Abstract parent of implementations of a query for a database provider
  (See <A HREF="toConnection__connectionImpl.html">toConnection::connectionImpl</A> and <A HREF="toConnectionProvider.html">toConnectionProvider</A>)
    </p>
@@ -91,6 +93,10 @@
 <br></td><td align="right"><h3><i><strong>columns</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Get number of columns in the resultset.
 </p>
 <p><b>Returns</b>: Column number.
+     </p>
+<A NAME="cancel"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>cancel</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>cancel</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p> Cancel the current execution of a query. This will usually be called from another
+ thread than is executing the query.
      </p>
 <HR>
 	<table>

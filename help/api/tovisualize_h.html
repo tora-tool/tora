@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<TITLE>Source: toresultcols.h</TITLE>
+<TITLE>Source: tovisualize.h</TITLE>
 
 <META NAME="Generator" CONTENT="KDOC ">
 </HEAD>
@@ -10,7 +10,7 @@
 <TD>
 	<TABLE BORDER="0">
 		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>Source: toresultcols.h</h1>
+		<h1>Source: tovisualize.h</h1>
 		</TD>
 		<TD valign="top" align="right" colspan="1"></TD></TR>
 	</TABLE>
@@ -62,96 +62,35 @@
  *
  ****************************************************************************/
 
-#ifndef __TORESULTCOLS_H
-#define __TORESULTCOLS_H
+#ifndef TOVISUALIZE_H
+#define TOVISUALIZE_H
 
 #include &lt;qvbox.h&gt;
-#include "toresultview.h"
-#include "toconnection.h"
 
-class toResultColsItem;
-class QLabel;
+class toListView;
 
-/** This widget displays information about the returned columns of an object
- * specified by the first and second parameter in the query. The sql is not
- * used in the query.
+/** This widget is used to visualize the data in a toListView into charts.
  */
+class toVisualize : public QVBox {
+  Q_OBJECT
 
-class toResultCols : public QVBox, public toResult {
-  class resultCols : public toListView {
-  public:
-    /** Create the widget.
-     * @param parent Parent widget.
-     * @param name Name of widget.
-     */
-    resultCols(QWidget *parent,const char *name=NULL);
-    /** Reimplemented for internal reasons.
-     */
-    virtual void query(const toConnection::objectName &amp;);
-    friend class toResultColsItem;
-  };
-  QLabel *Title;
-  resultCols *Columns;
+  QComboBox *Type;
 
-  friend class resultCols;
+  QWidget *Result;
+  toListView *Source;
+
+  QToolButton *Legend;
+  QToolButton *Grid;
+  QToolButton *Axis;
 public:
-  /** Create the widget.
-   * @param parent Parent widget.
-   * @param name Name of widget.
+  /** Create visualize widget.
+   * @param source Source list view to get data from.
    */
-  toResultCols(QWidget *parent,const char *name=NULL);
-  /** Reimplemented for internal reasons.
-   */
-  virtual void query(const QString &amp;sql,const toQList &amp;param);
-  /** Handle any connection by default
-   */
-  virtual bool canHandle(toConnection &amp;)
-  { return true; }
-
-  // Why are these needed?
-#if 1
-  /** Set the SQL statement of this list
-   * @param sql String containing statement.
-   */
-  void setSQL(const QString &amp;sql)
-  { toResult::setSQL(sql); }
-  /** Set the SQL statement of this list. This will also affect @ref Name.
-   * @param sql SQL containing statement.
-   */
-  void setSQL(toSQL &amp;sql)
-  { toResult::setSQL(sql); }
-  /** Set new SQL and run query.
-   * @param sql New sql.
-   * @see setSQL
-   */
-  void query(const QString &amp;sql)
-  { toResult::query(sql); }
-  /** Set new SQL and run query.
-   * @param sql New sql.
-   * @see setSQL
-   */
-  void query(toSQL &amp;sql)
-  { toResult::query(sql); }
-#endif
-
-  friend class toResultColsItem;
+  toVisualize(toListView *Source,QWidget *parent,const char *name=NULL);
 public slots:
-  /** Reimplemented for internal reasons.
+  /** Refresh result
    */
-  virtual void refresh(void)
-  { toResult::refresh(); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &amp;Param1)
-  { toResult::changeParams(Param1); }
-  /** Reimplemented For internal reasons.
-   */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2)
-  { toResult::changeParams(Param1,Param2); }
-  /** Reimplemented for internal reasons.
-   */
-  virtual void changeParams(const QString &amp;Param1,const QString &amp;Param2,const QString &amp;Param3)
-  { toResult::changeParams(Param1,Param2,Param3); }
+  void display(void);
 };
 
 #endif

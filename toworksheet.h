@@ -61,6 +61,7 @@ class QLabel;
 class QComboBox;
 class toTool;
 class QSplitter;
+class toVisualize;
 
 class toWorksheet : public toToolWidget {
   Q_OBJECT
@@ -76,6 +77,7 @@ class toWorksheet : public toToolWidget {
   toResultItem *Resources;
   toResultStats *Statistics;
   toResultView *Logging;
+  toVisualize *Visualize;
   QListViewItem *LastLogItem;
   QToolButton *StopButton;
   QToolButton *StatisticButton;
