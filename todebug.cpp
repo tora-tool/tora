@@ -2178,6 +2178,10 @@ void toDebug::newSheet(void)
   toDebugText *text=new toDebugText(Breakpoints,Editors,this);
   connect(text,SIGNAL(insertedLines(int,int)),
 	  this,SLOT(reorderContent(int,int)));
+  if (!Schema->currentText().isEmpty())
+    text->setSchema(Schema->currentText());
+  else
+    text->setSchema(connection().user().upper());
   Editors->addTab(text,tr("Unknown"));
   Editors->showPage(text);
 }
