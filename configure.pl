@@ -60,7 +60,6 @@ sub findFile {
 }
 
 my @source=(
-	    "main",
 	    "toabout",
 	    "toaboutui",
 	    "tobackground",
@@ -811,10 +810,10 @@ __TEMP__
     print "checking consistency ... ";
 
     if (!$MySQLFound&&!$OracleFound) {
-	print "checking consistency ... failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
+	print "failed!\n\nNeed either MySQL or Oracle. Neither found.\n";
 	exit(2);
     }
-    print "yes\n";
+    print "ok\n";
 
     $LFlags.="\"-L".$ENV{ORACLE_HOME}."/lib\" ";
     if (defined $MySQLLib) {
@@ -830,7 +829,7 @@ __TEMP__
 
     if (`uname`=~/linux/i) {
 	$Linux=1;
-	print "no\n";
+	print "nono\n";
     } elsif (`uname`=~/sunos/i) {
 	$NoRPath=1;
 	if (`uname -r`>=8.0) {
@@ -842,7 +841,7 @@ __TEMP__
 	}
     } else {
 	$NoRPath=1;
-	print "no\n";
+	print "nono\n";
     }
     if (!$NoRPath) {
 	$LFlags.="-Xlinker \"--rpath=".$ENV{ORACLE_HOME}."/lib\" ";
@@ -1360,8 +1359,9 @@ tora-static: \$(OBJECTS) main.cpp
 tora:\\
 __EOT__
 	print MAKEFILE "\tobjs/".join(".o \\\n\tobjs/",sort @source).
-	    ".o\n";
+	    ".o\\\n";
         print MAKEFILE <<__EOT__;
+	main.cpp
 	\@echo Linking \$\@
 	\$(GCC) \$(LFLAGS) -Xlinker "--export-dynamic" \$(LFLAGS_GLOB) \\
 		-o \$\@ \$^ \$(LIBS_GLOB) \$(STDCPP_SHARED) \$(QT_SHARED)
