@@ -260,9 +260,10 @@ void toSyntaxSetup::saveSetting(void)
 {
   toTool::globalSetConfig(CONF_TEXT,Text);
   toTool::globalSetConfig(CONF_LIST,List);
-  toTool::globalSetConfig(CONF_HIGHLIGHT,SyntaxHighlighting->isChecked()?"Yes":"");
+  bool highlight=SyntaxHighlighting->isChecked();
+  toTool::globalSetConfig(CONF_HIGHLIGHT,highlight?"Yes":"");
   toTool::globalSetConfig(CONF_KEYWORD_UPPER,KeywordUpper->isChecked()?"Yes":"");
-  toTool::globalSetConfig(CONF_CODE_COMPLETION,CodeCompletion->isChecked()?"Yes":"");
+  toTool::globalSetConfig(CONF_CODE_COMPLETION,highlight&&CodeCompletion->isChecked()?"Yes":"");
   toTool::globalSetConfig(CONF_COMPLETION_SORT,CompletionSort->isChecked()?"Yes":"");
   for (std::map<QString,QColor>::iterator i=Colors.begin();i!=Colors.end();i++) {
     QString str(CONF_COLOR);

@@ -450,6 +450,7 @@ toQuery::toQuery(toConnection &conn,queryMode mode)
 
 void toQuery::execute(toSQL &sql,const toQList &params)
 {
+  toBusy busy;
   SQL=sql(Connection);
   Params=params;
   Query->execute();
@@ -457,6 +458,7 @@ void toQuery::execute(toSQL &sql,const toQList &params)
 
 void toQuery::execute(const QString &sql,const toQList &params)
 {
+  toBusy busy;
   SQL=sql.utf8();
   Params=params;
   Query->execute();
@@ -1046,6 +1048,11 @@ void toConnection::readObjects(void)
   }
 }
 
+QString toConnection::quote(const QString &name)
+{
+  return Connection->quote(name);
+}
+
 std::list<toConnection::tableName> &toConnection::tables(void)
 {
   readObjects();
@@ -1054,13 +1061,37 @@ std::list<toConnection::tableName> &toConnection::tables(void)
 
 const toConnection::tableName &toConnection::realName(const QString &object)
 {
-  QString uo=object.upper();
+  QString name;
+  QString owner;
+
+  bool quote=false;
+  for (unsigned int pos=0;pos<object.length();pos++) {
+    if (object[pos]=="\"") {
+      quote=!quote;
+    } else {
+      if (!quote&&object[pos]=='.') {
+	owner=name;
+	name="";
+      } else
+	name+=object[pos];
+    }
+  }
+
+  QString uo=owner.upper();
+  QString un=name.upper();
+
   readObjects();
   for(std::list<tableName>::iterator i=TableNames.begin();i!=TableNames.end();i++) {
-    if ((*i).Synonym==uo)
-      return *i;
-    if ((*i).Name==uo&&(*i).Owner==user())
-      return *i;
+    if (owner.isEmpty()) {
+      if ((*i).Synonym==un||(*i).Synonym==name)
+	return *i;
+      if (((*i).Name==un||(*i).Name==name)&&(*i).Owner==user())
+	  return *i;
+    } else {
+      if (((*i).Name==un||(*i).Name==name)&&
+	  ((*i).Owner==uo||(*i).Owner==owner))
+	return *i;
+    }
   }
   throw QString("Object %1 not available for %2").arg(object).arg(user());
 }
@@ -1070,10 +1101,6 @@ std::list<toConnection::columnDesc> &toConnection::columns(const tableName &tabl
   std::map<tableName,std::list<columnDesc> >::iterator i=ColumnCache.find(table);
   if (i==ColumnCache.end())
     ColumnCache[table]=Connection->columnDesc(table);
-
-#if 0
-    std::list<QString> cols;
-#endif
 
   return ColumnCache[table];
 }

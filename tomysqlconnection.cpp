@@ -45,8 +45,15 @@
 #include "toconnection.h"
 #include "toconf.h"
 #include "totool.h"
+#include "tosql.h"
 
 #define BUF_SIZE 102400
+
+static toSQL SQLListTables("toMysqlConnection:ListTables",
+			   "show tables",
+			   "Get the available tables for a mysql connection",
+			   "3.0",
+			   "MySQL");
 
 static QCString QueryParam(const QString &query,toQList &params,const QString &codec)
 {
@@ -308,6 +315,42 @@ public:
 				    0,NULL,0);
       if (!Connection)
 	throw QString("Couldn't open MySQL connection");
+    }
+
+    virtual std::list<toConnection::tableName> tableNames(void)
+    {
+      std::list<toConnection::tableName> ret;
+      try {
+	toQuery tables(connection(),SQLListTables);
+	toConnection::tableName cur;
+	while(!tables.eof()) {
+	  cur.Name=tables.readValueNull();
+	  cur.Synonym=cur.Name;
+	  ret.insert(ret.end(),cur);
+	}
+      } catch (...) {
+      }
+      return ret;
+    }
+    virtual std::list<toConnection::columnDesc> columnDesc(const toConnection::tableName &table)
+    {
+      std::list<toConnection::columnDesc> ret;
+
+      try {
+	QString SQL="SELECT * FROM ";
+	SQL+=table.Name;
+	SQL+=" WHERE NULL=NULL";
+	toQuery query(connection(),SQL);
+	toQDescList desc=query.describe();
+	toConnection::columnDesc cur;
+	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
+	  cur.Name=(*j).Name;
+	  ret.insert(ret.end(),cur);
+	}
+      } catch(...) {
+      }
+
+      return ret;
     }
 
     virtual void commit(toConnectionSub *sub)

@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>572</width>
+            <width>568</width>
             <height>480</height>
         </rect>
     </property>
@@ -315,6 +315,12 @@
         <sender>CodeCompletion</sender>
         <signal>toggled(bool)</signal>
         <receiver>CompletionSort</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>SyntaxHighlighting</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>CodeCompletion</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <slot access="public">changeHighlight(bool)</slot>

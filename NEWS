@@ -50,6 +50,11 @@
 2001-09-17: Optimized toResultCols.
 2001-09-17: Handle escaped columns in completion.
 2001-09-18: Added table lookup on CTRL+t.
+2001-09-18: Moved object and column functions to connectionImpl.
+2001-09-18: Improved some busy indications.
+2001-09-18: Added code completion for MySQL connections.
+2001-09-18: Added quote function to connectionImpl.
+2001-09-18: Rewrote toResultCols to be more generic.
 
 1.1.0: Released 2001-09-09
 

@@ -529,38 +529,40 @@ void toHighlightedText::checkComplete(void)
     if (toTool::globalConfig(CONF_CODE_COMPLETION,"Yes").isEmpty())
       return;
 
-    QString name=UpperIdent(toGetToken(this,curline,curcol,false));
+    QString name=toGetToken(this,curline,curcol,false);
     QString owner;
     if (name==".")
-      name=UpperIdent(toGetToken(this,curline,curcol,false));
+      name=toGetToken(this,curline,curcol,false);
 
-    QString token=UpperIdent(toGetToken(this,curline,curcol,false));
+    QString token=toGetToken(this,curline,curcol,false);
     if (token==".")
-      owner=UpperIdent(toGetToken(this,curline,curcol,false));
+      owner=toGetToken(this,curline,curcol,false);
     else {
-      while ((invalidToken(curline,curcol+token.length())||token!=name)&&
+      QString cmp=UpperIdent(name);
+      while ((invalidToken(curline,curcol+token.length())||UpperIdent(token)!=cmp)&&
 	     token!=";"&&!token.isEmpty()) {
-	token=UpperIdent(toGetToken(this,curline,curcol,false));
+	token=toGetToken(this,curline,curcol,false);
       }
 
       if (token==";"||token.isEmpty()) {
 	getCursorPosition (&curline,&curcol);
-	token=UpperIdent(toGetToken(this,curline,curcol));
-	while ((invalidToken(curline,curcol)||token!=name)&&token!=";"&&!token.isEmpty())
-	  token=UpperIdent(toGetToken(this,curline,curcol));
-	UpperIdent(toGetToken(this,curline,curcol,false));
+	token=toGetToken(this,curline,curcol);
+	while ((invalidToken(curline,curcol)||UpperIdent(token)!=cmp)&&
+	       token!=";"&&!token.isEmpty())
+	  token=toGetToken(this,curline,curcol);
+	toGetToken(this,curline,curcol,false);
       }
       if (token!=";"&&!token.isEmpty()) {
-	token=UpperIdent(toGetToken(this,curline,curcol,false));
+	token=toGetToken(this,curline,curcol,false);
 	if (token!="TABLE"&&
 	    token!="UPDATE"&&
 	    token!="FROM"&&
 	    token!="INTO"&&
-	    toIsIdent(token[0])) {
+	    (toIsIdent(token[0])||token[0]=='\"')) {
 	  name=token;
 	  token=toGetToken(this,curline,curcol,false);
 	  if (token==".")
-	    owner=UpperIdent(toGetToken(this,curline,curcol,false));
+	    owner=toGetToken(this,curline,curcol,false);
 	} else if (token==")") {
 	  return;
 	}
@@ -576,7 +578,7 @@ void toHighlightedText::checkComplete(void)
 	std::list<QString> complete;
 	for (std::list<toConnection::columnDesc>::iterator i=desc.begin();
 	     i!=desc.end();i++) {
-	  QString t=(*i).Name;
+	  QString t=conn.quote((*i).Name);
 	  if (!(*i).Comment.isEmpty()) {
 	    t+=" - ";
 	    t+=(*i).Comment;
@@ -705,11 +707,16 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	if((*i).Synonym.isEmpty()) {
 	  if (owner.isEmpty()) {
 	    if ((*i).Owner.upper()==conn.user().upper())
-	      complete.insert(complete.end(),(*i).Name);
-	  } else
-	    complete.insert(complete.end(),(*i).Owner+"."+(*i).Name);
+	      complete.insert(complete.end(),conn.quote((*i).Name));
+	  } else {
+	    QString tmp=conn.quote((*i).Owner);
+	    if (!tmp.isEmpty())
+	      tmp+=".";
+	    tmp+=conn.quote((*i).Name);
+	    complete.insert(complete.end(),tmp);
+	  }
 	} else if (owner.isEmpty())
-	  complete.insert(complete.end(),(*i).Synonym);
+	  complete.insert(complete.end(),conn.quote((*i).Synonym));
       }
       startComplete(complete);
     } catch (...) {

@@ -213,55 +213,29 @@ void toResultCols::query(const QString &,const toQList &param)
     return;
 
   toConnection &conn=connection();
-  enum {
-    Oracle,
-    MySQL
-  } type;
-
-  if(conn.provider()=="Oracle")
-    type=Oracle;
-  else if (conn.provider()=="MySQL")
-    type=MySQL;
-  else
-    return;
 
   QString sql;
   QString Owner;
   QString TableName;
   toQList::iterator cp=((toQList &)param).begin();
   if (cp!=((toQList &)param).end()) {
-    if (type==Oracle) {
-      sql="\"";
-      sql+=*cp;
-      sql+="\"";
-    } else
-      sql="";
+    sql=conn.quote(*cp);
     Owner=*cp;
   }
   cp++;
   if (cp!=((toQList &)param).end()) {
-    if (type==Oracle)
-      sql.append(".\"");
-    sql.append(*cp);
-    if (type==Oracle)
-      sql+="\"";
+    sql+=".";
+    sql+=conn.quote(*cp);
     TableName=(*cp);
   } else {
     try {
-      if (type==Oracle) {
-	const toConnection::tableName &name=connection().realName(Owner);
-	sql="\"";
-	sql+=name.Owner;
-	sql+="\".\"";
-	sql+=name.Name;
-	sql+="\"";
-	Owner=name.Owner;
-	TableName=name.Name;
-      } else {
-	sql=Owner;
-	TableName=Owner;
-	Owner="";
-      }
+      const toConnection::tableName &name=conn.realName(Owner);
+      sql=conn.quote(name.Owner);
+      if (!sql.isEmpty())
+	sql+=".";
+      sql+=conn.quote(name.Name);
+      Owner=name.Owner;
+      TableName=name.Name;
     } catch(...) {
     }
   }
@@ -278,12 +252,13 @@ void toResultCols::query(const QString &,const toQList &param)
 
     toQuery Query(conn,str);
     std::map<QString,QString> comments;
-    if (type==Oracle) {
+    try {
       toQuery comment(conn,SQLComment,Owner,TableName);
       while(!comment.eof()) {
 	QString col=comment.readValue();
-	comments[col]=comment.readValue();
+	comments[col]=comment.readValueNull();
       }
+    } catch (...) {
     }
 
     toQDescList desc=Query.describe();
@@ -315,7 +290,5 @@ void toResultCols::query(const QString &,const toQList &param)
 
 bool toResultCols::canHandle(toConnection &conn)
 {
-  if (conn.provider()=="Oracle"||conn.provider()=="MySQL")
-    return true;
-  return false;
+  return true;
 }

@@ -457,6 +457,13 @@ public:
      */
     virtual connectionImpl *clone(toConnection *newConn) const = 0;
 
+    /** Return a string representation to address an object.
+     * @param name The name to be quoted.
+     * @return String addressing table.
+     */
+    virtual QString quote(const QString &name)
+    { return name; }
+
     /** Extract available objects to query for connection.
      * @return List of available objects.
      */
@@ -663,6 +670,12 @@ public:
    * Remove a statement that was added using @ref addInit.
    */
   void delInit(const QString &sql);
+
+  /** Return a string representation to address an object.
+   * @param name The name to be quoted.
+   * @return String addressing table.
+   */
+  QString quote(const QString &name);
 
   /**
    * Get the tables available for the current user. This function caches the responses

@@ -331,16 +331,31 @@ public:
       : toConnection::connectionImpl(conn)
     { }
 
+    /** Return a string representation to address an object.
+     * @param name The name to be quoted.
+     * @return String addressing table.
+     */
+    virtual QString quote(const QString &name)
+    {
+      if (name.upper()==name)
+	return name.lower();
+      else
+	return "\""+name+"\"";
+    }
+
     virtual std::list<toConnection::tableName> tableNames(void)
     {
       std::list<toConnection::tableName> ret;
-      toQuery tables(connection(),SQLListObjects,connection().user());
-      while(!tables.eof()) {
+      try {
+	toQuery tables(connection(),SQLListObjects,connection().user());
 	toConnection::tableName cur;
-	cur.Name=tables.readValueNull();
-	cur.Owner=tables.readValueNull();
-	cur.Synonym=tables.readValueNull();
-	ret.insert(ret.end(),cur);
+	while(!tables.eof()) {
+	  cur.Name=tables.readValueNull();
+	  cur.Owner=tables.readValueNull();
+	  cur.Synonym=tables.readValueNull();
+	  ret.insert(ret.end(),cur);
+	}
+      } catch (...) {
       }
       return ret;
     }
@@ -369,10 +384,6 @@ public:
 	for(toQDescList::iterator j=desc.begin();j!=desc.end();j++) {
 	  QString name=(*j).Name;
 	  cur.Comment=comments[name];
-	  if (name.upper()==name)
-	    name=name.lower();
-	  else
-	    name="\""+name+"\"";
 	  cur.Name=name;
 
 	  toPush(ret,cur);
