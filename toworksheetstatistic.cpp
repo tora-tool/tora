@@ -136,10 +136,10 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
   cur.Top=new QVBox(Splitter);
   QHBox *box=new QHBox(cur.Top);
   cur.Label=new QLabel(stats["Description"],box);
-  cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+  cur.Label->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred));
   QCheckBox *check=new QCheckBox("Hide",box);
   cur.Charts=new toHideSplitter(Horizontal,cur.Top);
-  connect(check,SIGNAL(toggled(bool)),cur.Charts,SLOT(setHidden(vool)));
+  connect(check,SIGNAL(toggled(bool)),cur.Charts,SLOT(setHidden(bool)));
   cur.Statistics=new toListView(cur.Charts);
   cur.Statistics->importData(stats,"Stat");
   cur.Wait=new toBarChart(cur.Charts);
@@ -163,7 +163,7 @@ void toWorksheetStatistic::addStatistics(std::map<QString,QString> &stats)
     cur.IO->hide();
   }
   cur.Top->show();
-  cur.Top->setFocus();
+  setFocus();
 
   Open.insert(Open.end(),cur);
 
