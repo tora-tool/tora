@@ -74,6 +74,10 @@ class toMarkedText : public toMultiLineEdit, public toEditWidget {
    */
   virtual int printPage(TOPrinter *printer,QPainter *painter,int line,int &offset,
 			int pageNo,bool paint=true);
+protected:
+  /** Reimplemented for internal reasons.
+   */
+  virtual void keyPressEvent(QKeyEvent *e);
 public:
   /** Create an editor.
    * @param parent Parent of this widget.

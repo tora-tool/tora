@@ -604,7 +604,8 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
   NoCompletion=true;
 
   if (Completion) {
-    if (e->key()==Key_Down||e->key()==Key_Tab||e->key()==Key_Up) {
+    if ((e->key()==Key_Down||e->key()==Key_Tab||e->key()==Key_Up)&&
+	e->state()==0) {
       if (e->key()==Key_Up) {
 	CompleteItem--;
 	if (CompleteItem<0)
@@ -621,12 +622,12 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	Completion->setBottomItem(CompleteItem);
       e->accept();
       return;
-    } else if (e->key()==Key_Escape) {
+    } else if (e->key()==Key_Escape&&e->state()==0) {
       delete Completion;
       Completion=NULL;
       e->accept();
       return;
-    } else if (e->key()==Key_Backspace) {
+    } else if (e->key()==Key_Backspace&&e->state()==0) {
       QString mrk=markedText();
       if (mrk.length()) {
 	mrk=mrk.left(mrk.length()-1);
@@ -647,7 +648,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent *e)
 	e->accept();
 	return;
       }
-    } else if (e->key()==Key_Return&&CompleteItem>=0) {
+    } else if (e->key()==Key_Return&&e->state()==0&&CompleteItem>=0) {
       if (CompleteItem>=0) {
 	QString tmp=Completion->text(CompleteItem);
 	unsigned int pos=0;

@@ -242,3 +242,13 @@ void toMarkedText::newLine(void)
     }
   }
 }
+
+void toMarkedText::keyPressEvent(QKeyEvent *e)
+{
+  if(e->state()==0&&e->key()==Key_Insert) {
+    setOverwriteMode(!isOverwriteMode());
+    e->accept();
+    return;
+  } else
+    toMultiLineEdit::keyPressEvent(e);
+}
