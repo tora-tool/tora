@@ -998,4 +998,8 @@ void toEnterLicense(void)
   throw QString("Should never need to ask for default license");
 }
 
+#else
+#include "toabout.h"
+#include "license/tolicense.cpp"
+#include "license/tolicenseui.cpp"
 #endif

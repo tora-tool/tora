@@ -128,16 +128,6 @@ static toSQL SQLSystemGrant("toSecurity:SystemGrant",
 			    "SELECT privilege, NVL(admin_option,'NO') FROM dba_sys_privs WHERE grantee = :f1<char[100]>",
 			    "Get information about the system privileges a user has, should have same bindings and columns");
 
-static toSQL SQLObjectList("toSecurity:ObjectList",
-			   "SELECT object_type,\n"
-			   "       owner,\n"
-			   "       object_name\n"
-			   "  FROM all_objects\n"
-			   " WHERE object_type IN ('FUNCTION','LIBRARY','PACKAGE','PROCEDURE','SEQUENCE',\n"
-			   "		       'TABLE','TYPE','VIEW','OPERATOR','DIRECTORY')\n"
-			   " ORDER BY owner,object_type,object_name",
-			   "List objects available to set privileges on, must have same columns");
-
 static toSQL SQLObjectPrivs("toSecurity:ObjectPrivs",
 			    "SELECT DECODE(:type<char[100]>,'FUNCTION','EXECUTE',\n"
 			    "			       'LIBRARY','EXECUTE',\n"
@@ -719,16 +709,17 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
     QString oType;
     QString oOwner;
     QString oName;
-    toQuery object(Connection,SQLObjectList);
+    std::list<toConnection::objectName> &objectList=conn.objects(true);
+    std::map<QString,QStringList> TypeOptions;
     toQuery typelst(Connection);
     QListViewItem *typeItem=NULL;
     QListViewItem *ownerItem=NULL;
     QListViewItem *nameItem=NULL;
     QStringList Options;
-    while(!object.eof()) {
-      QString type(object.readValue());
-      QString owner(object.readValue());
-      QString name(object.readValue());
+    for(std::list<toConnection::objectName>::iterator i=objectList.begin();i!=objectList.end();i++) {
+      QString type=(*i).Type;
+      QString owner=(*i).Owner;
+      QString name=(*i).Name;
       if (owner!=oOwner) {
 	oType=oName=QString::null;
 	typeItem=nameItem=NULL;
@@ -739,18 +730,32 @@ toSecurityObject::toSecurityObject(toConnection &conn,QWidget *parent)
 	oName=QString::null;
 	nameItem=NULL;
 	oType=type;
-	typeItem=new toResultViewItem(ownerItem,typeItem,type);
-	toQList args;
-	toPush(args,toQValue(type));
-	typelst.execute(SQLObjectPrivs,args);
-	Options=QStringList::split(",",typelst.readValue());
+	if (TypeOptions.find(type)==TypeOptions.end()) {
+	  toQList args;
+	  toPush(args,toQValue(type));
+	  typelst.execute(SQLObjectPrivs,args);
+	  Options=QStringList::split(",",typelst.readValue());
+	  TypeOptions[type]=Options;
+	} else
+	  Options=TypeOptions[type];
+
+	if (Options.count()>0) {
+	  for (typeItem=ownerItem->firstChild();typeItem;typeItem=typeItem->nextSibling()) {
+	    if (typeItem->text(0)==type)
+	      break;
+	  }
+	  if (!typeItem)
+	    typeItem=new toResultViewItem(ownerItem,typeItem,type);
+	}
       }
-      nameItem=new toResultViewItem(typeItem,nameItem,name);
-      for (QStringList::Iterator i=Options.begin();i!=Options.end();i++) {
-	QListViewItem *item=new toResultViewCheck(nameItem,*i,QCheckListItem::CheckBox);
-	item->setText(2,name);
-	item->setText(3,owner);
-	new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
+      if (Options.count()>0) {
+	nameItem=new toResultViewItem(typeItem,nameItem,name);
+	for (QStringList::Iterator i=Options.begin();i!=Options.end();i++) {
+	  QListViewItem *item=new toResultViewCheck(nameItem,*i,QCheckListItem::CheckBox);
+	  item->setText(2,name);
+	  item->setText(3,owner);
+	  new toResultViewCheck(item,"Admin",QCheckListItem::CheckBox);
+	}
       }
     }
   } TOCATCH

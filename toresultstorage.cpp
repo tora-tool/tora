@@ -225,7 +225,7 @@ static toSQL SQLNoShowCoalesced("toResultStorage:NoCoalesced",
 				"  FROM  sys.dba_tablespaces d,\n"
 				"	(select tablespace_name, sum(bytes) bytes, sum(user_bytes) user_bytes from dba_temp_files group by tablespace_name) a,\n"
 				"	(select tablespace_name, sum(bytes_cached) bytes, count(1) total_extents from v$temp_extent_pool group by tablespace_name) f,\n"
-				"       (select :unit<int> unit from dual) b\n"
+				"       (select :unt<int> unit from dual) b\n"
 				" WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				"   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				"   AND  d.extent_management = 'LOCAL'\n"
@@ -249,7 +249,7 @@ static toSQL SQLNoShowCoalesced8("toResultStorage:NoCoalesced",
 				 "  FROM  sys.dba_tablespaces d,\n"
 				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
-				 "       (select :unit<int> unit from dual) b\n"
+				 "       (select :unt<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				 " ORDER BY d.tablespace_name",
@@ -271,7 +271,7 @@ static toSQL SQLNoShowCoalesced7("toResultStorage:NoCoalesced",
 				 "  FROM  sys.dba_tablespaces d,\n"
 				 "	(select tablespace_name, sum(bytes) bytes from dba_data_files group by tablespace_name) a,\n"
 				 "	(select tablespace_name, sum(bytes) bytes, count(1) total_extents from dba_free_space group by tablespace_name) f,\n"
-				 "       (select :unit<int> unit from dual) b\n"
+				 "       (select :unt<int> unit from dual) b\n"
 				 " WHERE  d.tablespace_name = a.tablespace_name(+)\n"
 				 "   AND  d.tablespace_name = f.tablespace_name(+)\n"
 				 " ORDER BY d.tablespace_name",
@@ -294,7 +294,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "  FROM  sys.dba_data_files d,\n"
 			 "	v$datafile v,\n"
 			 "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
-			 "        (select :unit<int> unit from dual) b\n"
+			 "        (select :unt<int> unit from dual) b\n"
 			 " WHERE  (s.file_id (+)= d.file_id)\n"
 			 "   AND  (d.file_name = v.name)\n"
 			 " UNION  ALL\n"
@@ -313,7 +313,7 @@ static toSQL SQLDatafile("toResultStorage:Datafile",
 			 "  FROM  sys.dba_temp_files d,\n"
 			 "	v$tempfile v,\n"
 			 "	v$temp_extent_pool t,\n"
-			 "        (select :unit<int> unit from dual) b\n"
+			 "        (select :unt<int> unit from dual) b\n"
 			 " WHERE  (t.file_id (+)= d.file_id)\n"
 			 "   AND  (d.file_name = v.file#)",
 			 "Display information about a datafile in a tablespace. "
@@ -336,7 +336,7 @@ static toSQL SQLDatafile8("toResultStorage:Datafile",
 			  "  FROM  sys.dba_data_files d,\n"
 			  "	v$datafile v,\n"
 			  "	(SELECT file_id, NVL(SUM(bytes),0) bytes, COUNT(1) num FROM sys.dba_free_space  GROUP BY file_id) s,\n"
-			  "        (select :unit<int> unit from dual) b\n"
+			  "        (select :unt<int> unit from dual) b\n"
 			  " WHERE  (s.file_id (+)= d.file_id)\n"
 			  "   AND  (d.file_name = v.name)",
 			  "",

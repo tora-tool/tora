@@ -465,7 +465,7 @@ void toBarChart::mouseReleaseEvent(QMouseEvent *e)
 	MousePoint[0].y()!=e->y()) {
       QRect rect=fixRect(MousePoint[0],e->pos());
       int samples=countSamples();
-      UseSamples=samples*rect.width()/Chart.width()+2;
+      UseSamples=samples*rect.width()/Chart.width()+1;
       if (UseSamples<2)
 	UseSamples=2;
       SkipSamples+=samples*(Chart.width()+Chart.x()-rect.x()-rect.width())/Chart.width();

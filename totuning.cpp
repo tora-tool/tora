@@ -201,6 +201,15 @@ static toSQL SQLChartsClients("toTuning:Charts:4BAClients",
 			      "  from v$session where sid not in (select sid from v$px_process)",
 			      "Chart displaying connected clients");
 
+static toSQL SQLChartsClients8("toTuning:Charts:4BAClients",
+			       "select sysdate,\n"
+			       "       sum(decode(decode(type,'BACKGROUND','WHATEVER',status),'ACTIVE',1,0)) \"Active\",\n"
+			       "       sum(decode(status,'INACTIVE',1,0)) \"Inactive\",\n"
+			       "       sum(decode(type,'BACKGROUND',1,0)) \"System\"\n"
+			       "  from v$session",
+			       QString::null,
+			       "8.0");
+
 static toSQL SQLChartsCacheMisses("toTuning:Charts:5CPCache misses",
 				  "select sysdate,\n"
 				  "       pread \"Data buffer cache\",read \"Dictionary row cache\",\n"
@@ -305,6 +314,15 @@ static toSQL SQLOverviewClient("toTuning:Overview:Client",
 			       "  from v$session\n"
 			       " where type != 'BACKGROUND' and sid not in (select sid from v$px_process)",
 			       "Information about active/inactive clients");
+
+static toSQL SQLOverviewClient8("toTuning:Overview:Client",
+				"select sysdate,\n"
+				"       sum(decode(status,'INACTIVE',1,0)),\n"
+				"       sum(decode(status,'ACTIVE',1,0))\n"
+				"  from v$session\n"
+				" where type != 'BACKGROUND'",
+				"",
+				"8.0");
 
 static toSQL SQLOverviewSGAUsed("toTuning:Overview:SGAUsed",
 				"select sysdate,100*(total-free)/total\n"
