@@ -127,7 +127,9 @@ class toSearchReplace;
 #include "toconnection.h"
 #include "totool.h"
 
-/** This class defines the main window.
+/** This class defines the main window. Observe that this class will have different baseclass
+ * depending on if TOra is a Qt or KDE application. In the case of Qt this will be a
+ * QMainWindow descendant.
  */
 class toMain : public toMainWindow {
   Q_OBJECT
