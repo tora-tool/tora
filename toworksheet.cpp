@@ -1023,6 +1023,7 @@ void toWorksheet::execute(bool all,bool step)
 	} else {
 	  switch(state) {
 	  case comment:
+	  case multiComment:
 	    throw QString("Internal error, comment shouldn't have gotten here.");
 	  case endCode:
 	    if (c==';')

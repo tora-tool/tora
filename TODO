@@ -52,7 +52,6 @@ Extended functionality:
 * Proxy connection provider.
 * QSql connection provider.
 * Store worksheet statistic on save session.
-* Comments in autoindented text.
 
 New tools:
 

@@ -16,7 +16,7 @@
 	</TABLE>
 	<HR>
 	<TABLE BORDER="0">
-		<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totemplate_h.html">totemplate.h</A>&gt;</code></TD></TR>
+		<TR><TH colspan="2">Internal Use Only</TH></TR><TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="totemplate_h.html">totemplate.h</A>&gt;</code></TD></TR>
 <TR><TH>Inherits</TH><TD><A HREF="http://doc.trolltech.com/qvbox.html">QVBox</A> <small>(qt)</small> <small>[public ]</small>, <A HREF="toHelpContext.html">toHelpContext</A> <small>[public ]</small></TD></TR>
 <TR><TH><A HREF="full-list-toTemplate.html">List of all Methods</A></TH></TR>
 	</TABLE>
@@ -39,11 +39,13 @@
 </LI>
 <LI>virtual  bool &nbsp;<b><A HREF="#ref14">canHandle</A></b> (<A HREF="toConnection.html">toConnection</A> &conn) 
 </LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref15">closeFrame</A></b> (void) 
+<LI>void &nbsp;<b><A HREF="#ref15">closeFrame</A></b> (void) 
 </LI>
-</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref16">expand</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+<LI>void &nbsp;<b><A HREF="#ref16">attachResult</A></b> (void) 
 </LI>
-<LI>void &nbsp;<b><A HREF="#ref17">collapse</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+</ul><h4>Public Slots</h4><ul><LI>void &nbsp;<b><A HREF="#ref17">expand</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref18">collapse</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
 </LI>
 </ul><h4>Public Static Methods</h4><ul><LI>static  <A HREF="http://doc.trolltech.com/qwidget.html">QWidget</A> *&nbsp;<b><A HREF="#ref11">parentWidget</A></b> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item) 
 </LI>
@@ -62,9 +64,10 @@
 <br></td><td align="right"><h3><strong>parentWidget</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="templateWidget"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toTemplate.html">toTemplate</A> *&nbsp;<strong>templateWidget</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
 <br></td><td align="right"><h3><strong>templateWidget</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="templateWidget"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> <A HREF="toTemplate.html">toTemplate</A> *&nbsp;<strong>templateWidget</strong> (<A HREF="http://doc.trolltech.com/qlistview.html">QListView</A> *obj)
 <br></td><td align="right"><h3><strong>templateWidget</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="canHandle"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> bool &nbsp;<strong>canHandle</strong> (<A HREF="toConnection.html">toConnection</A> &conn)
-<br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="closeFrame"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>closeFrame</strong> (void)
-<br></td><td align="right"><h3><strong>closeFrame</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="expand"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>expand</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
-<br></td><td align="right"><h3><strong>expand</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="collapse"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>collapse</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
+<br></td><td align="right"><h3><strong>canHandle</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="closeFrame"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>closeFrame</strong> (void)
+<br></td><td align="right"><h3><strong>closeFrame</strong></h3></td></tr></table><p></p><A NAME="attachResult"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>attachResult</strong> (void)
+<br></td><td align="right"><h3><strong>attachResult</strong></h3></td></tr></table><p></p><A NAME="expand"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>expand</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
+<br></td><td align="right"><h3><strong>expand</strong></h3></td></tr></table><p> <small>[slot]</small></p><A NAME="collapse"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>collapse</strong> (<A HREF="http://doc.trolltech.com/qlistviewitem.html">QListViewItem</A> *item)
 <br></td><td align="right"><h3><strong>collapse</strong></h3></td></tr></table><p> <small>[slot]</small></p><HR>
 	<table>
 	</table>
