@@ -53,6 +53,11 @@
 // option, e.g.: -DOTL_ODBC, -DOTL_ORA7, -DOTL_ORA8, -DOTL_ORA8I, -DOTL_ODBC_UNIX
 // -DOTL_ODBC_MYSQL, -DOTL_DB2_CLI
 
+// mrj: this version doesn't support 10g yet. define 9I instead.
+#ifdef OTL_ORA10G
+# define OTL_ORA9I
+#endif
+
 #ifdef OTL_ORA8I
 #define OTL_ORA8
 #define OTL_ORA8_8I_REFCUR
