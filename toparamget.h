@@ -42,6 +42,7 @@
 #include <qpushbutton.h>
 
 #include "toconnection.h"
+#include "tohelp.h"
 
 class QLineEdit;
 class QGrid;
@@ -64,7 +65,7 @@ signals:
  * dialog and ask for values. Also maintains an internal cache of old values.
  */
 
-class toParamGet : public QDialog {
+class toParamGet : public QDialog, public toHelpContext {
   Q_OBJECT
   /** Default values cache
    */

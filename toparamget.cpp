@@ -57,7 +57,7 @@ std::map<QString,QString> toParamGet::DefaultCache;
 std::map<QString,QString> toParamGet::Cache;
 
 toParamGet::toParamGet(QWidget *parent,const char *name)
-  : QDialog(parent,name,true)
+  : QDialog(parent,name,true),toHelpContext("common.html#param")
 {
   toHelp::connectDialog(this);
   resize(500,480);

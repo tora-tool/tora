@@ -41,6 +41,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qmessagebox.h>
+#include <qgrid.h>
 
 #include "toconf.h"
 #include "tomemoeditor.h"
@@ -54,6 +55,7 @@
 #include "toconnection.h"
 #include "tosearchreplace.h"
 #include "tonoblockquery.h"
+#include "toparamget.h"
 
 #include "toresultcontent.moc"
 #include "toresultcontentfilterui.moc"
@@ -70,8 +72,7 @@
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 
-#define CONF_MAX_CONTENT "MaxContent"
-#define DEFAULT_MAX_CONTENT "3"
+#include "icons/single.xpm"
 
 void toResultContentEditor::editSearch(toSearchReplace *search)
 {
@@ -136,12 +137,7 @@ void toResultContentEditor::dropEvent(QDropEvent *e)
 
   changePosition(col,row);
 
-  if (CurrentRow!=row) {
-    OrigValues.clear();
-    for (int i=0;i<numCols();i++)
-      OrigValues.insert(OrigValues.end(),text(row,i));
-    CurrentRow=row;
-  }
+  saveRow(row);
   QString text;
   if ( QTextDrag::decode(e,text)) {
     setText(row,col,text);
@@ -157,6 +153,7 @@ toResultContentEditor::toResultContentEditor(QWidget *parent,const char *name)
 		 true,false,true)
 {
   Query=NULL;
+  SingleEdit=NULL;
   connect(this,SIGNAL(currentChanged(int,int)),this,SLOT(changePosition(int,int)));
   CurrentRow=-1;
   setFocusPolicy(StrongFocus);
@@ -268,6 +265,7 @@ void toResultContentEditor::poll(void)
 {
   try {
     if (Query&&Query->poll()) {
+      bool first=false;
       if (numRows()==0) {
 	Description=Query->describe();
 	setNumCols(Description.size());
@@ -279,6 +277,7 @@ void toResultContentEditor::poll(void)
 	  col++;
 	}
 	Row=0;
+	first=true;
       }
       
       std::list<QString> data;
@@ -303,6 +302,10 @@ void toResultContentEditor::poll(void)
 	    setText(Row,j,toShift(data));
 	  Row++;
 	}
+      }
+      if (first&&SingleEdit) {
+	SingleEdit->changeSource(this);
+	saveRow(currentRow());
       }
 
       if (Query->eof()) {
@@ -391,13 +394,9 @@ void toResultContentEditor::paintCell(QPainter *p,int row,int col,const QRect &c
 
 QWidget *toResultContentEditor::beginEdit(int row,int col,bool replace)
 {
-  if (CurrentRow!=row) {
-    OrigValues.clear();
-    for (int i=0;i<numCols();i++)
-      OrigValues.insert(OrigValues.end(),text(row,i));
-    CurrentRow=row;
+  if (CurrentRow!=row)
     toStatusMessage("Unsaved data in contents, select other row to store",true);
-  }
+  saveRow(row);
 
   return QTable::beginEdit(row,col,replace);
 }
@@ -476,7 +475,10 @@ void toResultContentEditor::cancelEdit()
   OrigValues.clear();
     
   setNumRows(Row+1);
-  setCurrentCellFocus(crow,0);
+  if (SingleEdit)
+    setCurrentCellFocus(crow,!currentColumn()); // Must change position
+  else
+    setCurrentCellFocus(crow,0);
   toStatusMessage("Edit cancelled",false,false);
 }
 
@@ -544,15 +546,31 @@ void toResultContentEditor::deleteCurrent()
     setNumRows(Row);
 
   setNumRows(Row+1);
-  setCurrentCellFocus(crow,0);
+  OrigValues.clear();
+  if (SingleEdit)
+    setCurrentCellFocus(crow,!currentColumn()); // Must change position
+  else
+    setCurrentCellFocus(crow,0);
 }
 
-#include <stdio.h>
-
-void toResultContentEditor::saveUnsaved()
+void toResultContentEditor::saveUnsaved(void)
 {
+  if (SingleEdit&&CurrentRow>=0)
+    SingleEdit->saveRow(this,CurrentRow);
+
   endEdit(currentRow(),currentColumn(),true,true);
+
   if (OrigValues.size()>0) {
+
+    // Check to make sure some changes were actually made
+
+    std::list<QString>::iterator j=OrigValues.begin();
+    for (int i=0;i<numCols()&&j!=OrigValues.end();i++,j++)
+      if (*j!=text(CurrentRow,i))
+	break;
+    if (j==OrigValues.end())
+      return;
+
     QString rowid = "";
     bool mysql=(connection().provider()=="MySQL");
     bool oracle=(connection().provider()=="Oracle");
@@ -671,7 +689,6 @@ void toResultContentEditor::saveUnsaved()
 	      toPush(args,toQValue(str));
 	    di++;
 	  }
-	  printf("%s %d\n",(const char *)sql,args.size());
 	  toQuery q(conn,sql,args);
 	  if(oracle)
 	    rowid = q.readValueNull();
@@ -707,11 +724,15 @@ void toResultContentEditor::saveUnsaved()
 
 void toResultContentEditor::changePosition(int row,int col)
 {
-  if (CurrentRow!=row)
+  if (CurrentRow!=row&&CurrentRow>=0)
     saveUnsaved();
+
   if (NewRecordRow>0 && NewRecordRow!=row) {
     cancelEdit();
     setCurrentCell(row,col);
+  } else if (SingleEdit) {
+    saveRow(currentRow()); // Don't use row here since row can have changed
+    SingleEdit->changeRow(this,currentRow());
   }
 }
 
@@ -816,12 +837,7 @@ void toResultContentEditor::displayMemo(void)
 void toResultContentEditor::changeData(int row,int col,const QString &str)
 {
   changePosition(col,row);
-  if (CurrentRow!=row) {
-    OrigValues.clear();
-    for (int i=0;i<numCols();i++)
-      OrigValues.insert(OrigValues.end(),text(MenuRow,i));
-    CurrentRow=row;
-  }
+  saveRow(row);
   setText(row,col,str);
   setCurrentCell(row,col);
 }
@@ -838,12 +854,7 @@ void toResultContentEditor::menuCallback(int cmd)
   case TORESULT_PASTE:
     {
       QClipboard *clip=qApp->clipboard();
-      if (CurrentRow!=MenuRow) {
-	OrigValues.clear();
-	for (int i=0;i<numCols();i++)
-	  OrigValues.insert(OrigValues.end(),text(MenuRow,i));
-	CurrentRow=MenuRow;
-      }
+      saveRow(MenuRow);
       setText(MenuRow,MenuColumn,clip->text());
     }
     break;
@@ -926,6 +937,14 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  "Go to last row",
 		  "Go to last row",
 		  Editor,SLOT(gotoLastRecord()),toolbar);
+  toolbar->addSeparator();
+
+  QToolButton *btn=new QToolButton(toolbar);
+  btn->setToggleButton(true);
+  btn->setIconSet(QIconSet(QPixmap((const char **)single_xpm)));
+  connect(btn,SIGNAL(toggled(bool)),Editor,SLOT(singleRecordForm(bool)));
+  QToolTip::add(btn,"Toggle between table or single record editing");
+  
   toolbar->setStretchableWidget(new QLabel(toolbar));
   connect(toMainWidget(),SIGNAL(willCommit(toConnection &,bool)),
 	  this,SLOT(saveUnsaved(toConnection &,bool)));
@@ -994,4 +1013,111 @@ void toResultContent::removeFilter(void)
     }
   } else
     Editor->changeFilter(Editor->allFilter(),QString::null,QString::null);
+}
+
+void toResultContentEditor::saveRow(int row)
+{
+  if (row!=CurrentRow) {
+    OrigValues.clear();
+    for (int i=0;i<numCols();i++)
+      OrigValues.insert(OrigValues.end(),text(row,i));
+    CurrentRow=row;
+  }
+}
+
+void toResultContentEditor::singleRecordForm(bool display)
+{
+  if (display&&!SingleEdit) {
+    SingleEdit=new toResultContentSingle(parentWidget());
+    SingleEdit->changeSource(this);
+    saveRow(currentRow());
+    SingleEdit->show();
+    hide();
+  } else if (SingleEdit) {
+    show();
+    SingleEdit->saveRow(this,currentRow());
+    delete SingleEdit;
+    SingleEdit=NULL;
+  }
+}
+
+toResultContentSingle::toResultContentSingle(QWidget *parent)
+  : QScrollView(parent)
+{
+  enableClipper(true);
+  Container=NULL;
+  Row=-1;
+  viewport()->setBackgroundColor(qApp->palette().active().background());
+}
+
+void toResultContentSingle::changeSource(QTable *table)
+{
+  delete Container;
+  Container=new QGrid(4,viewport());
+  addChild(Container,5,5);
+  Container->setSpacing(10);
+  Value.clear();
+  Null.clear();
+
+  QHeader *head=table->horizontalHeader();
+  for(int i=0;i<table->numCols();i++) {
+    new QLabel(head->label(i),Container);
+    QLineEdit *edit=new QLineEdit(Container,QString::number(i));
+    edit->setFixedWidth(300);
+    QCheckBox *box=new QCheckBox("NULL",Container);
+    connect(box,SIGNAL(toggled(bool)),edit,SLOT(setDisabled(bool)));
+
+    toParamGetButton *btn=new toParamGetButton(i,Container);
+    btn->setText("Edit");
+    btn->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed));
+    connect(btn,SIGNAL(clicked(int)),this,SLOT(showMemo(int)));
+    connect(box,SIGNAL(toggled(bool)),btn,SLOT(setDisabled(bool)));
+    Value.insert(Value.end(),edit);
+    Null.insert(Null.end(),box);
+  }
+  Row=table->currentRow();
+  Container->show();
+  changeRow(table,Row);
+}
+
+void toResultContentSingle::changeRow(QTable *table,int row)
+{
+  bool any=false;
+  std::list<QCheckBox *>::iterator chk=Null.begin();
+  std::list<QLineEdit *>::iterator val=Value.begin();
+  for(int i=0;i<table->numCols()&&chk!=Null.end()&&val!=Value.end();i++) {
+    QString str=table->text(row,i);
+    if (!str.isNull())
+      any=true;
+    (*chk)->setChecked(str.isNull());
+    (*val)->setText(str);
+    chk++;
+    val++;
+  }
+  if (!any)
+    for(chk=Null.begin();chk!=Null.end();chk++)
+      (*chk)->setChecked(false);
+  Row=row;
+}
+
+void toResultContentSingle::saveRow(QTable *table,int row)
+{
+  if (Row==row) {
+    std::list<QLineEdit *>::iterator val=Value.begin();
+    for(int i=0;i<table->numCols()&&val!=Value.end();i++) {
+      table->setText(row,i,(*val)->isEnabled()?(*val)->text():QString::null);
+      val++;
+    }
+  } else
+    toStatusMessage("Internal error, save different row than current in content editor");
+}
+
+void toResultContentSingle::showMemo(int row)
+{
+  QObject *obj=child(QString::number(row));
+  if (obj) {
+    toMemoEditor *memo=new toMemoEditor(this,((QLineEdit *)obj)->text(),row,0,false,true);
+    if (memo->exec())
+      ((QLineEdit *)obj)->setText(memo->text());
+  }
 }

@@ -30,6 +30,8 @@
 2001-11-21: Made more chart colors available.
 2001-11-21: Don't draw piecharts if all values are 0.
 2001-11-21: Display wait events in ms, nor 100s of second.
+2001-11-21: Fixed help context on bind parameter.
+2001-11-21: Added single record form editor in content editor.
 
 1.1.5:
 
@@ -112,8 +114,6 @@
 2001-11-17: Applied patch for completion on package members. (From Selcuk Ozturk)
 2001-11-19: Fixed problem with timer in worksheet after first result.
 2001-11-19: Fixed problem with rownum in result content for non oracle DB.
-2001-11-19: Fixed problem with plan identifier. (From 1.3.0)
-2001-11-20: Fixed focus in worksheet to be on editor on startup. (From 1.3.0)
 2001-11-20: Fixed focus in all the other tools on startup as well.
 
 1.1.4: Released 2001-11-02
