@@ -166,9 +166,10 @@ bool toTool::saveMap(const QString &file,map<QString,QString> &pairs)
 #if QT_VERSION >= 300
 #  define APPLICATION_NAME "/tora/"
 #else
-#  define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\+"
+#  if WIN32
+#    define APPLICATION_NAME "SOFTWARE\\GlobeCom\\tora\+"
 
-#  include "windows/cregistry.cpp"
+#    include "windows/cregistry.cpp"
 
 static QString toKeyPath(const QString &str,CRegistry &registry)
 {
@@ -188,6 +189,7 @@ static QString toKeyValue(const QString &str)
   return str.mid(pos+1);
 }
 
+#  endif
 #endif
 
 void toTool::saveConfig(void)
@@ -233,7 +235,6 @@ void toTool::saveConfig(void)
 			      (const char *)path,
 			      (const char *)value.utf8());
   }
-#  endif
 #  endif
 #endif
 }
@@ -376,8 +377,12 @@ const QString &toTool::globalConfig(const QString &tag,const QString &def)
     QString path=tag;
     path.prepend(APPLICATION_NAME);
     path.replace(re,"\\");
-    char buffer[1024];
-    if (registry.GetStringValue(HKEY_CURRENT_USER,toKeyPath(registry,path),toKeyValue(path),buffer,1024)) {
+    int siz=1024;
+    char buffer[siz];
+    if (registry.GetStringValue(HKEY_CURRENT_USER,
+				toKeyPath(path,registry),
+				toKeyValue(path),
+				buffer,siz)) {
       QString ret=QString::fromUtf8(buffer);
       (*Configuration)[tag]=ret;
       return ret;

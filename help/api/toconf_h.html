@@ -110,16 +110,18 @@
 
 #ifndef TO_KDE
 // Undefining this will leave out the style selection option stuff from the program
-#undef ENABLE_STYLE
+#  undef ENABLE_STYLE
+#  ifndef WIN32
 // Undefining this will enable choosing Qt_Xft support
-#define ENABLE_QT_XFT
+#    define ENABLE_QT_XFT
+#  endif
 #endif
 #define CONF_STYLE		"Style"
 #define DEFAULT_STYLE		"Windows"
 #ifdef WIN32
 // Wether to build monolithic TOra or not (Without plugin support
-#define TOMONOLITHIC
-#define DEFAULT_PLUGIN_DIR ""
+#  define TOMONOLITHIC
+#  define DEFAULT_PLUGIN_DIR ""
 #endif
 // Version of TOra, must also change rpm files
 #define TOVERSION               "0.12"
