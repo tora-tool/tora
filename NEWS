@@ -88,7 +88,7 @@
 2001-08-23: Did some include file dependency cleanups.
 2001-08-23: Fixed problem with public rollback. (Thanx Joachim Zetzsche)
 2001-08-24: Read nulls in explain plan.
-2001-08-24: Busy while execute in targe in debugger.
+2001-08-24: Busy while execute in target in debugger.
 2001-08-24: Fixed problem with extracting package bodies.
 2001-08-24: Made rethrow shorter in toExtract.
 2001-08-25: Remade rollback dialog in designer and added show sql.
@@ -101,7 +101,7 @@
 2001-08-28: Improved file I/O statistics in tuning.
 2001-08-28: Changed license to QPL.
 
-0.14: Released 2001-08-02
+0.14: Released 2001-08-02 (Branched TORA10 for 1.0 release)
 
 2001-07-12: Added check for Oracle Client in windows installer.
 2001-07-12: Removed the index.html file.
