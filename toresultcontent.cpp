@@ -68,6 +68,7 @@
 
 #include "icons/addrecord.xpm"
 #include "icons/canceledit.xpm"
+#include "icons/duplicaterecord.xpm"
 #include "icons/filter.xpm"
 #include "icons/forward.xpm"
 #include "icons/next.xpm"
@@ -685,6 +686,21 @@ void toResultContentEditor::addRecord()
   }
 }
 
+void toResultContentEditor::duplicateRecord()
+{
+  if(CurrentRow>0 || NewRecordRow>0) {
+    return;
+  }
+
+  int fromrow=currentRow();
+  addRecord();
+  if (currentRow()+1<numRows())
+    fromrow++;
+  if (fromrow!=currentRow())
+    for(int i=0;i<numCols();i++)
+      setText(currentRow(),i,text(fromrow,i));
+}
+
 void toResultContentEditor::cancelEdit()
 {
 
@@ -1241,6 +1257,10 @@ toResultContent::toResultContent(QWidget *parent,const char *name)
 		  tr("Add a new record"),
 		  tr("Add a new record"),
 		  Editor,SLOT(addRecord()),toolbar);
+  new QToolButton(QPixmap((const char **)duplicaterecord_xpm),
+		  tr("Duplicate an existing record"),
+		  tr("Duplicate an existing record"),
+		  Editor,SLOT(duplicateRecord()),toolbar);
   new QToolButton(QPixmap((const char **)saverecord_xpm),
 		  tr("Save changes"),
 		  tr("Save changes"),

@@ -6796,7 +6796,7 @@ QString toOracleExtract::migrateIndex(toExtract &ext,
 	lastOwner=owner;
 	lastName=name;
       }
-   }
+    }
   }
   lastOwner=lastName=QString::null;
 

@@ -331,6 +331,9 @@ public slots:
   /** Add a new record to the table.
    */
   virtual void addRecord(void);
+  /** Duplicate a new record for editing.
+   */
+  virtual void duplicateRecord(void);
   /** Discard the changes made to the table.
    */
   virtual void cancelEdit(void);
