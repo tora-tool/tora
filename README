@@ -2,16 +2,12 @@ TOra - Toolkit for Oracle
 =========================
 Copyright (C) 2000  GlobeCom AB (http://www.globecom.se)
 
-For information about license see the LICENSE file. It is distributed under GPL
-which basically means that any derivatory work must be released under GPL as
-well.
+For information about license see the LICENSE file. It is distributed under QPL
+which basically means that any derivatory work must be released under an open
+source license as well.
 
-Toolkit for Oracle is a program for Oracle developers and administrators. It
-is in beta testing and should be feature complete for version 1.0 except for
-some more testing and documentation. The main lacking as you will find is in
-documentation which is pretty much non existant.
-
-The features that are available so far is (As of version 1.0):
+Toolkit for Oracle is a program for Oracle developers and administrators. The
+features that are available so far is (As of version 1.0):
 
 * Handles multiple connections
 * SQL worksheet with explain plan and statement statistics
@@ -35,11 +31,11 @@ The features that are available so far is (As of version 1.0):
 * SQL template help
 * Full UNICODE support
 * Printing of any list or source
-* Cross platform support, known to work on Linux, Windows, Solaris and HP-UX.
+* Cross platform support, known to work on Linux, Windows and Solaris.
 
 For installation instructions se the file INSTALL.
 
-TOra is developed by Henrik Johnson (tora@henrik.org) of GlobeCom AB
+TOra is developed by Henrik Johnson (tora@globecom.se) of GlobeCom AB
 (http://www.globecom.se) and has the homepage http://www.globecom.net/tora.
 
 Oracle is copyright of Oracle Corporation.
