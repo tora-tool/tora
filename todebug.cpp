@@ -773,7 +773,10 @@ void toDebug::execute(void)
 	  else {
 	    if (token[0]=='\''&&token.length()>=2)
 	      token=token.mid(1,token.length()-2);
-	    toParamGet::setDefault((*cp).Name,token);
+	    if (token.upper()=="NULL")
+	      toParamGet::setDefault((*cp).Name,QString::null);
+	    else
+	      toParamGet::setDefault((*cp).Name,token);
 	  }
 	  break;
 	case done:

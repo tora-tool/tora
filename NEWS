@@ -4,6 +4,10 @@
 2001-10-08: Made some optimizations to analyzeLine (Don't use UNICODE).
 2001-10-08: Fixed problem with setText and analyzeLine.
 2001-10-09: Fixed problem with duplicated connections that are lost.
+2001-10-09: Fixed problem with extracting partitions.
+2001-10-09: Fixed problem with NULL default in debugger.
+2001-10-09: Fixed problem with reexecuting queries without binds.
+2001-10-09: Disabled OTL stream spooling due to problems with it.
 
 1.1.2: Released 2001-10-07
 

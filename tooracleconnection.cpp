@@ -46,8 +46,10 @@
 #  include "windows/cregistry.h"
 #endif
 
+#if 0
 #define OTL_STREAM_POOLING_ON
 #define OTL_STL
+#endif
 
 #include "otlv32.h"
 #include "toconnection.h"
@@ -115,7 +117,6 @@ public:
   };
 
   class oracleQuery : public toQuery::queryImpl {
-    QCString LastSQL;
     otl_stream *Query;
   public:
     oracleQuery(toQuery *query,oracleSub *conn)
@@ -647,19 +648,14 @@ void toOracleProvider::oracleQuery::execute(void)
   if (!conn)
     throw QString("Internal error, not oracle sub connection");
   try {
-    if (query()->params().begin()==query()->params().end()||LastSQL!=query()->sql()) {
-      delete Query;
-      Query=NULL;
-      LastSQL=query()->sql();
-    }
-    if (!Query) {
-      Query=new otl_stream;
-      Query->set_commit(0);
-      Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
-      Query->open(1,
-		  LastSQL,
-		  *(conn->Connection));
-    }
+    delete Query;
+
+    Query=new otl_stream;
+    Query->set_commit(0);
+    Query->set_all_column_types(otl_all_num2str|otl_all_date2str);
+    Query->open(1,
+		query()->sql(),
+		*(conn->Connection));
 
     otl_null null;
     for(toQList::iterator i=query()->params().begin();i!=query()->params().end();i++) {
@@ -715,7 +711,9 @@ toConnectionSub *toOracleProvider::oracleConnection::createConnection(void)
     else if (mode=="SYS_DBA")
       dba=1;
     conn=new otl_connect(connectString(),0,oper,dba);
+#ifdef OTL_STREAM_POOLING_ON
     conn->set_stream_pool_size(OracleProvider.config(CONF_POOL_SIZE,DEFAULT_POOL_SIZE).toInt());
+#endif
   } catch (const otl_exception &exc) {
     if (!sqlNet) {
       if (oldSid.isNull())

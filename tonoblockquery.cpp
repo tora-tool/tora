@@ -56,12 +56,15 @@
 
 #define PREFETCH_SIZE 1000
 
+#include <stdio.h>
+
 void toNoBlockQuery::queryTask::run(void)
 {
   TO_DEBUGOUT("Thread started\n");
   int Length;
   try {
     TO_DEBUGOUT("Open query\n");
+    printf("Executed %s\n",(const char *)Parent.SQL);
     Parent.Query.execute(Parent.SQL,Parent.Param);
 
     {
@@ -111,6 +114,7 @@ void toNoBlockQuery::queryTask::run(void)
 	  break;
       }
     }
+    printf("Done\n");
     TO_DEBUGOUT("EOQ\n");
     Parent.Processed=Parent.Query.rowsProcessed();
   } catch (const QString &str) {

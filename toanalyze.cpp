@@ -218,14 +218,19 @@ void toAnalyze::refresh(void)
   Statistics->changeParams(Schema->currentText());
 }
 
+#include <stdio.h>
+
 void toAnalyze::poll(void)
 {
   int running=0;
   for(std::list<toNoBlockQuery *>::iterator i=Running.begin();i!=Running.end();i++) {
-    bool eof=true;
+    bool eof=false;
     try {
       eof=(*i)->eof();
-    } TOCATCH
+    } catch(const QString &str) {
+      printf("Exception: %s\n",(const char *)str);
+      eof=true;
+    }
     if (eof) {
       QString sql=toShift(Pending);
       if (!sql.isEmpty()) {

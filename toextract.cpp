@@ -5811,7 +5811,7 @@ static toSQL SQLObjectPartitions("toExtract:ObjectPartitions",
 				 "        partition_name\n"
 				 "      , SUBSTR(segment_type,7)   -- PARTITION or SUBPARTITION\n"
 				 " FROM\n"
-				 "        all_segments\n"
+				 "        %1\n"
 				 " WHERE\n"
 				 "            segment_name = :nam<char[100]>\n"
 				 "        AND owner        = :own<char[100]>",
@@ -5878,7 +5878,7 @@ QString toExtract::resizeIndex(const QString &schema,const QString &owner,const 
     return ret;
   } else {
     toQList partitions=toQuery::readQueryNull(Connection,
-					      SQLObjectPartitions,
+					      dbaSegment(SQLObjectPartitions),
 					      name,owner);
     QString ret;
     while(partitions.size()>0) {
@@ -6035,7 +6035,7 @@ QString toExtract::resizeTable(const QString &schema,const QString &owner,const 
     return ret;
   } else {
     toQList partitions=toQuery::readQueryNull(Connection,
-					      SQLObjectPartitions,
+					      dbaSegment(SQLObjectPartitions),
 					      name,owner);
     QString ret;
     while(partitions.size()>0) {

@@ -161,7 +161,7 @@ void toResultLong::addItem(void)
 	if (em) {
 	  First=false;
 	  emit firstResult(sql(),buffer);
-	}	  
+	}
 	if (Query->eof()) {
 	  cleanup();
 	  return;
