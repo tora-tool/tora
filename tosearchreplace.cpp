@@ -46,6 +46,7 @@
 #include <qradiobutton.h>
 #include <qregexp.h>
 
+#include "tosearchreplace.moc"
 #include "tosearchreplaceui.moc"
 
 toSearchReplace::toSearchReplace(QWidget *parent)

@@ -105,7 +105,7 @@ class toTemplateProvider {
    */
   static std::list<toTemplateProvider *> *Providers;
   static bool Shown;
-  static QCString ToolKey;;
+  static QCString *ToolKey;;
   QCString Name;
   bool Open;
 public:
@@ -150,8 +150,7 @@ public:
   static void setShown(bool shown);
   /** Used internally to indicate tool key string
    */
-  static void setToolKey(const QCString &key)
-  { ToolKey=key; }
+  static void setToolKey(const QCString &key);
 
   friend class toTemplate;
 };

@@ -55,6 +55,7 @@
 #include <qlistbox.h>
 #include <qlistview.h>
 
+#include "tosyntaxsetup.moc"
 #include "tosyntaxsetupui.moc"
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent,const char *name,WFlags fl)

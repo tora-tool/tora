@@ -44,6 +44,8 @@ class toMarkedText;
 class toResultContentEditor;
 
 class toSearchReplace : public toSearchReplaceUI, public toHelpContext, public toEditWidget::editHandler {
+  Q_OBJECT
+
   toEditWidget *Target;
 public:
   toSearchReplace(QWidget *parent);

@@ -1,5 +1,8 @@
 1.3.10:
 
+2003-05-04: Fixed invisible menu in debugger.
+2003-06-02: Fixed some missing Q_OBJECT declarations.
+2003-05-28: Fixed bug with multiline list items.
 2003-05-26: Remember if template window was open or not.
 2003-05-26: Save values in extra columns of template SQL items.
 2003-05-20: Fixed refresh on long ops view in worksheet.

@@ -91,7 +91,7 @@ void toResultViewMLine::setText (int col,const toQValue &text)
 {
   if (text.isDouble())
     toResultViewItem::setText(col,text);
-  setText(col,(const QString &)text);
+  setText(col,QString(text));
 }
 
 void toResultViewMLine::setup(void)
@@ -299,7 +299,7 @@ void toResultViewMLCheck::setText (int col,const toQValue &text)
 {
   if (text.isDouble())
     toResultViewCheck::setText(col,text);
-  setText(col,(const QString &)text);
+  setText(col,QString(text));
 }
 
 void toResultViewMLCheck::setup(void)

@@ -2365,7 +2365,7 @@ void toDebug::windowActivated(QWidget *widget)
 			   ALT+Key_S);
       ToolMenu->insertItem(tr("Erase Runtime &Log"),this,SLOT(clearLog(void)));
 
-      ToolMenu->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
+      toMainWidget()->menuBar()->insertItem(tr("&Debug"),ToolMenu,-1,toToolMenuIndex());
 
       if (!isRunning()) {
 	ToolMenu->setItemEnabled(TO_ID_STOP,false);
