@@ -40,6 +40,7 @@
 #include "toeditwidget.h"
 #include "tohelp.h"
 #include "tomain.h"
+#include "tomarkedtext.h"
 #include "tomemoeditor.h"
 #include "tomessageui.h"
 #include "tonewconnection.h"
@@ -79,6 +80,7 @@
 #if QT_VERSION >= 300
 #include <qurloperator.h>
 #include <qnetwork.h>
+#include <qstyle.h>
 #endif
 
 #include "tomain.moc"
@@ -1498,6 +1500,10 @@ void toMain::displayMessage(void)
 
   for(QString str=toShift(StatusMessages);!str.isEmpty();str=toShift(StatusMessages)) {
     toMessageUI dialog(toMainWidget(),NULL,true);
+    dialog.Message->setReadOnly(true);
+#if QT_VERSION >= 300
+    dialog.Icon->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxWarning));
+#endif
     dialog.Message->setText(str);
     dialog.exec();
     if (dialog.Statusbar->isChecked()) {
